@@ -26,12 +26,10 @@ namespace rtps{
 //!@brief RTPS Header Structure
 typedef struct Header_t{
 			ProtocolVersion_t version;
-			VendorId_t vendorId;
+			VendorId_t vendorId;;
 			GuidPrefix_t guidPrefix;
 			Header_t(){
 				PROTOCOLVERSION(version);
-				vendorId = VENDORID_UNKNOWN;
-				guidPrefix = GUIDPREFIX_UNKNOWN;
 			}
 }Header_t;
 
@@ -62,13 +60,52 @@ typedef struct{
 // SUBMESSAGE types definition
 
 //!@brief RTPS Data Submessage
-typedef struct{
+typedef struct SubmsgData_t{
 	SubmessageHeader_t SubmessageHeader;
+	bool endiannessFlag;
+	bool inlineQosFlag;
+	bool dataFlag;
+	bool keyFlag;
 	EntityId_t readerId;
 	EntityId_t writerId;
+	SequenceNumber_t writerSN;
 	std::vector<Parameter_t> inlineQos;
 	SerializedPayload_t serializedPayload;
-}DataSubM_t;
+}SubmsgData_t;
+
+//!@brief RTPS Heartbeat Submessage
+typedef struct{
+	SubmessageHeader_t SubmessageHeader;
+	bool endiannessFlag;
+	bool finalFlag;
+	bool livelinessFlag;
+	EntityId_t readerId;
+	EntityId_t writerId;
+	SequenceNumber_t firstSN;
+	SequenceNumber_t lastSN;
+	Count_t count;
+}SubmsgHeartbeat_t;
+
+//!@brief RTPS AckNack Submessage
+typedef struct{
+	SubmessageHeader_t SubmessageHeader;
+	bool endiannessFlag;
+	bool finalFlag;
+	EntityId_t readerId;
+	EntityId_t writerId;
+	SequenceNumberSet_t readerSNState;
+	Count_t count;
+}SubmsgAcknack_t;
+
+//!@brief RTPS GAP Submessage
+typedef struct{
+	SubmessageHeader_t SubmessageHeader;
+	bool endiannessFlag;
+	EntityId_t readerId;
+	EntityId_t writerId;
+	SequenceNumber_t gapStart;
+	SequenceNumberSet_t gapList;
+}SubmsgGap_t;
 
 
 

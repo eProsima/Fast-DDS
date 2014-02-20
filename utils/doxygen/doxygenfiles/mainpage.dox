@@ -1,0 +1,24 @@
+/*!
+ * @mainpage eProsima RTPS Implementation
+ *
+ * <center><b>eProsima RTPS Implementation</b></center><br/>
+ * <center>
+ * @image html eProsimaLogo.png
+ * @image latex eProsimaLogo.png "" width=5cm
+ * <br/><a href="http://www.eprosima.com">eProsima</a></center>
+ *
+ * eProsima RTPS Implementation Description
+ *
+ */
+
+ /*!
+ * @defgroup EPROSIMARTPSAPIREFERENCE eProsima RTPS API Reference
+ * @brief eProsima RTPS API grouped in modules.
+ */
+
+ /*!
+ * @defgroup EXCEPTIONMODULE Exceptions
+ * @ingroup EPROSIMARTPSAPIREFERENCE
+ * @brief Exceptions used by the eProsima RTPS API.
+ * All exceptions defined in this module are thrown by the eProsima RTPS library.
+ */
