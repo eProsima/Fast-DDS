@@ -17,6 +17,8 @@
 #ifndef RTPS_ALL_H_
 #define RTPS_ALL_H_
 
+#include <stdint.h>
+
 /*!
  * @brief This enumeration represents endianness types.
  */

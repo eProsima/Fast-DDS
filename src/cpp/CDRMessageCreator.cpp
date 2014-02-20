@@ -16,9 +16,6 @@
 
 #include "eprosimartps/CDRMessageCreator.h"
 
-#include "submessages/DataSubMessage.hpp"
-
-
 namespace eprosima {
 namespace rtps{
 
@@ -30,6 +27,13 @@ namespace rtps{
 #else
 	const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif
+};
+};
+
+
+namespace eprosima {
+namespace rtps{
+
 
 CDRMessageCreator::CDRMessageCreator() {
 	// TODO Auto-generated constructor stub
@@ -146,6 +150,33 @@ bool CDRMessageCreator::addUshort(CDRMessage_t*msg,
 	return true;
 }
 
+bool CDRMessageCreator::addLong(CDRMessage_t* msg, long lo) {
+	octet* o= (octet*)&lo;
+	if(msg->msg_endian == DEFAULT_ENDIAN)
+		addData(msg,o,4);
+	else
+		addDataReversed(msg,o,4);
+	return true;
+}
+bool CDRMessageCreator::addULong(CDRMessage_t* msg, unsigned long lo) {
+	octet* o= (octet*)&lo;
+	if(msg->msg_endian == DEFAULT_ENDIAN)
+		addData(msg,o,4);
+	else
+		addDataReversed(msg,o,4);
+	return true;
+}
+
+bool CDRMessageCreator::addLongLong(CDRMessage_t* msg, long long lolo) {
+	octet* o= (octet*)&lolo;
+	if(msg->msg_endian == DEFAULT_ENDIAN)
+		addData(msg,o,8);
+	else
+		addDataReversed(msg,o,8);
+	return true;
+}
+
+
 bool CDRMessageCreator::addEntityId(CDRMessage_t* msg, EntityId_t*ID) {
 	if(msg->msg_endian == BIGEND){ //Big ENDIAN
 		addOctet(msg,ID->entityKey[0]);
@@ -165,7 +196,7 @@ bool CDRMessageCreator::addEntityId(CDRMessage_t* msg, EntityId_t*ID) {
 bool CDRMessageCreator::addParameter(CDRMessage_t*msg, Parameter_t*param) {
 	addUshort(msg,param->parameterId);
 	addUshort(msg,param->length);
-	if(msg->msg_endian ==DEFAULT_ENDIAN)
+	if(msg->msg_endian == DEFAULT_ENDIAN)
 		addData(msg,param->value,param->length);
 	else
 		addDataReversed(msg,param->value,(uint)param->length);
@@ -173,5 +204,30 @@ bool CDRMessageCreator::addParameter(CDRMessage_t*msg, Parameter_t*param) {
 	return true;
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
+
+bool CDRMessageCreator::addSequenceNumber(CDRMessage_t* msg,
+		SequenceNumber_t* sn) {
+	addLong(msg,sn->high);
+	addULong(msg,sn->low);
+
+	return true;
+}
+
+
+
+bool CDRMessageCreator::addSequenceNumberSet(CDRMessage_t* msg,
+		SequenceNumberSet_t* sns) {
+	long long bitmapbase = sns->base.to64long();
+	addLongLong(msg, bitmapbase);
+
+	return true;
+}
+
+}; /* namespace rtps */
+}; /* namespace eprosima */
+
+
+#include "submessages/DataMsg.hpp"
+#include "submessages/HeartbeatMsg.hpp"
+#include "submessages/AckNackMsg.hpp"
+#include "submessages/GapMsg.hpp"
