@@ -49,10 +49,10 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartb
 	catch(int t){
 		return false;
 	}
-	HBSubM->SubmessageHeader.flags[7] = HBSubM->endiannessFlag;
-	HBSubM->SubmessageHeader.flags[6] = HBSubM->finalFlag;
-	HBSubM->SubmessageHeader.flags[5] = HBSubM->livelinessFlag;
-	for (uint i =0;i<=4;i++)
+	HBSubM->SubmessageHeader.flags[0] = HBSubM->endiannessFlag;
+	HBSubM->SubmessageHeader.flags[1] = HBSubM->finalFlag;
+	HBSubM->SubmessageHeader.flags[2] = HBSubM->livelinessFlag;
+	for (uint i =7;i>=3;i--)
 		HBSubM->SubmessageHeader.flags[i] = false;
 	//Once the submessage elements are added, the header is created
 	createSubmessageHeader(msg, &HBSubM->SubmessageHeader,submsg->w_pos);

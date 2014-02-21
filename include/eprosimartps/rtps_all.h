@@ -25,16 +25,17 @@
 typedef enum
 {
 	//! @brief Big endianness.
-	BIGEND = 0x0,
+	BIGEND = 0x1,
 	//! @brief Little endianness.
-	LITTLEEND = 0x1
+	LITTLEEND = 0x0
 } Endianness_t;
 
 // //! @brief Default endiness in the system.
 //static Endianness_t DEFAULT_ENDIAN;
 
+using namespace std;
 
-
+#include "colors.h"
 #include "rtps_common.h"
 #include "rtps_messages.h"
 #include "rtps_error_codes.h"

@@ -49,8 +49,8 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM)
 	catch(int t){
 		return false;
 	}
-	SubM->SubmessageHeader.flags[7] = SubM->endiannessFlag;
-	for (uint i =0;i<=6;i++)
+	SubM->SubmessageHeader.flags[0] = SubM->endiannessFlag;
+	for (uint i =7;i>=1;i--)
 		SubM->SubmessageHeader.flags[i] = false;
 	//Once the submessage elements are added, the header is created
 	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->w_pos);

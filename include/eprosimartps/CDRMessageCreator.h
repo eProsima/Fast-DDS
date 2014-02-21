@@ -27,12 +27,13 @@ namespace rtps{
 typedef struct CDRMessage_t{
 	CDRMessage_t(){
 		w_pos = 0;
-		buffer = 0;
+		buffer = NULL;
 		max_size = RTPSMESSAGE_MAX_SIZE;
 		msg_endian = BIGEND;
 	}
 	~CDRMessage_t(){
-		free(buffer);
+		if(buffer != NULL)
+			free(buffer);
 	}
 	octet* buffer;
 	uint w_pos; //current w_pos in bytes
