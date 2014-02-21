@@ -30,11 +30,14 @@ typedef struct Header_t{
 			GuidPrefix_t guidPrefix;
 			Header_t(){
 				PROTOCOLVERSION(version);
+				VENDORID_UNKNOWN(vendorId);
+			}
+			~Header_t(){
 			}
 }Header_t;
 
 //!@brief Enumeration of the different Submessages types
-typedef enum {
+typedef enum SubmessageKind{
 	PAD=0x01,
 	ACKNACK=0x06,
 	HEARTBEAT=0x07,
