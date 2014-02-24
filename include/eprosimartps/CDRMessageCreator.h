@@ -21,25 +21,6 @@
 
 namespace eprosima {
 namespace rtps{
-/**
- * @brief CDR Serialized Message Structure.
- */
-typedef struct CDRMessage_t{
-	CDRMessage_t(){
-		w_pos = 0;
-		buffer = NULL;
-		max_size = RTPSMESSAGE_MAX_SIZE;
-		msg_endian = BIGEND;
-	}
-	~CDRMessage_t(){
-		if(buffer != NULL)
-			free(buffer);
-	}
-	octet* buffer;
-	uint w_pos; //current w_pos in bytes
-	uint max_size; // max size of buffer in bytes
-	Endianness_t msg_endian;
-}CDRMessage_t;
 
 /**
  * @brief Generation of serialized CDR RTPS Messages.
@@ -90,7 +71,7 @@ public:
 	 * @param Number of bytes
 	 * @return
 	 */
-	bool addData(CDRMessage_t*,const void*,uint);
+	bool addData(CDRMessage_t*,octet*,uint);
 	/**
 	 * add data to stream in a reversed manner
 	 * @param Pointer to message.
@@ -98,7 +79,7 @@ public:
 	 * @param Number of bytes
 	 * @return
 	 */
-	bool addDataReversed(CDRMessage_t*,const void*,uint);
+	bool addDataReversed(CDRMessage_t*,octet*,uint);
 	/**
 	 * Add octet to buffer.
 	 * @param Pointer to message.
@@ -112,28 +93,28 @@ public:
 	 * @param us
 	 * @return
 	 */
-	bool addUshort(CDRMessage_t*msg,unsigned short us);
+	bool addUInt16(CDRMessage_t*msg,uint16_t us);
 	/**
 	 *
 	 * @param msg
 	 * @param lo
 	 * @return
 	 */
-	bool addLong(CDRMessage_t*msg,long lo);
+	bool addInt32(CDRMessage_t*msg,int32_t lo);
 	/**
 	 *
 	 * @param msg
 	 * @param lo
 	 * @return
 	 */
-	bool addULong(CDRMessage_t*msg,unsigned long lo);
+	bool addUInt32(CDRMessage_t*msg,uint32_t lo);
 	/**
 	 *
 	 * @param msg
 	 * @param lo
 	 * @return
 	 */
-	bool addLongLong(CDRMessage_t*msg,long long lo);
+	bool addInt64(CDRMessage_t*msg,int64_t lo);
 	/**
 	 *
 	 * @param msg

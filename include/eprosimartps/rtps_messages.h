@@ -57,7 +57,7 @@ typedef enum SubmessageKind{
 typedef struct{
 	SubmessageKind submessageId;
 	unsigned short submessageLength;
-	SubmessageFlag flags[8];
+	SubmessageFlag flags;
 }SubmessageHeader_t;
 
 // SUBMESSAGE types definition
@@ -109,6 +109,30 @@ typedef struct{
 	SequenceNumber_t gapStart;
 	SequenceNumberSet_t gapList;
 }SubmsgGap_t;
+
+
+
+/**
+ * @brief CDR Serialized Message Structure.
+ */
+typedef struct CDRMessage_t{
+	CDRMessage_t(){
+		pos = 0;
+		buffer = NULL;
+		max_size = RTPSMESSAGE_MAX_SIZE;
+
+		msg_endian = BIGEND;
+	}
+	~CDRMessage_t(){
+		if(buffer != NULL)
+			free(buffer);
+	}
+	octet* buffer;
+	uint16_t pos; //current w_pos in bytes
+	uint16_t max_size; // max size of buffer in bytes
+	uint16_t length;
+	Endianness_t msg_endian;
+}CDRMessage_t;
 
 
 

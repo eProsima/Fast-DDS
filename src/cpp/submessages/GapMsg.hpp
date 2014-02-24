@@ -22,12 +22,13 @@ namespace rtps{
 bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidprefix,
 									SubmsgGap_t* SubM){
 	Header_t H = Header_t();
-	memcpy(H.guidPrefix,guidprefix,12);
+	H.guidPrefix = guidprefix;
 	try{
 		createHeader(msg,&H);
 		CDRMessage_t submsg;
 		createSubmessageGap(&submsg,SubM);
 		appendMsg(msg, &submsg);
+		msg->length = msg->pos;
 	}
 	catch(int e){
 		return false;
@@ -38,7 +39,6 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM){
 	CDRMessage_t* submsg = new CDRMessage_t();
 	initCDRMsg(submsg);
-	submsg->msg_endian = SubM->SubmessageHeader.flags[0] ? BIGEND : LITTLEEND;
 	try{
 		addEntityId(submsg,&SubM->readerId);
 		addEntityId(submsg,&SubM->writerId);
@@ -49,13 +49,24 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM)
 	catch(int t){
 		return false;
 	}
-	SubM->SubmessageHeader.flags[0] = SubM->endiannessFlag;
-	for (uint i =7;i>=1;i--)
-		SubM->SubmessageHeader.flags[i] = false;
+	SubM->SubmessageHeader.flags = 0x0;
+	for(int i=7;i>=0;i--)
+	{
+		if(SubM->endiannessFlag)
+		{
+			SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
+			submsg->msg_endian = BIGEND;
+		}
+		else
+		{
+			submsg->msg_endian = LITTLEEND;
+		}
+	}
 	//Once the submessage elements are added, the header is created
-	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->w_pos);
+	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->pos);
 	//Append Submessage elements to msg
 	appendMsg(msg, submsg);
+	msg->length = msg->pos;
 	return true;
 }
 
