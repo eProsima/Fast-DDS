@@ -39,6 +39,17 @@ public:
 	void processMsg(GuidPrefix_t participantguidprefix,
 					octet*address,
 			         void*data, short length);
+
+	bool readEntityId(CDRMessage_t* msg,EntityId_t*id);
+	bool readData(CDRMessage_t* msg,octet* o,uint16_t length);
+	bool readDataReversed(CDRMessage_t* msg,octet* o,uint16_t length);
+	bool readInt32(CDRMessage_t* msg,int32_t* lo);
+	bool readUInt32(CDRMessage_t* msg,uint32_t* ulo);
+	bool readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn);
+	bool readInt16(CDRMessage_t* msg,int16_t* i16);
+	bool readParameterList(CDRMessage_t* msg,ParameterList_t* list);
+	bool readOctet(CDRMessage_t* msg,octet* o);
+
 private:
 	CDRMessage_t msg;
 	ProtocolVersion_t sourceVersion;
@@ -57,6 +68,11 @@ private:
 	 * @return
 	 */
 	bool extractHeader(CDRMessage_t* msg, Header_t*H);
+
+
+
+
+
 };
 
 } /* namespace rtps */

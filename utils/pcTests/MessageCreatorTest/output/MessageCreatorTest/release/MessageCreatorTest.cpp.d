@@ -6,4 +6,5 @@
  ../../../include/eprosimartps/rtps_messages.h \
  ../../../include/eprosimartps/rtps_common.h \
  ../../../include/eprosimartps/rtps_error_codes.h \
+ ../../../include/eprosimartps/MessageReceiver.h \
  ../../../include/eprosimartps/colors.h

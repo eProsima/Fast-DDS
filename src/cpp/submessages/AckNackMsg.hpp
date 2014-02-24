@@ -21,12 +21,13 @@ namespace rtps{
 bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
 									SubmsgAcknack_t* SubM){
 	Header_t H = Header_t();
-	memcpy(H.guidPrefix,guidprefix,12);
+	H.guidPrefix = guidprefix;
 	try{
 		createHeader(msg,&H);
 		CDRMessage_t submsg;
 		createSubmessageAcknack(&submsg,SubM);
 		appendMsg(msg, &submsg);
+		msg->length = msg->pos;
 	}
 	catch(int e){
 		return false;
@@ -37,25 +38,37 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,SubmsgAcknack_t* SubM){
 	CDRMessage_t* submsg = new CDRMessage_t();
 	initCDRMsg(submsg);
-	submsg->msg_endian = SubM->SubmessageHeader.flags[0] ? BIGEND : LITTLEEND;
 	try{
 		addEntityId(submsg,&SubM->readerId);
 		addEntityId(submsg,&SubM->writerId);
 		//Add Sequence Number
 		addSequenceNumberSet(submsg,&SubM->readerSNState);
-		addLong(submsg,SubM->count);
+		addInt32(submsg,SubM->count);
 	}
 	catch(int t){
 		return false;
 	}
-	SubM->SubmessageHeader.flags[0] = SubM->endiannessFlag;
-	SubM->SubmessageHeader.flags[1] = SubM->finalFlag;;
-	for (uint i =7;i>=2;i--)
-		SubM->SubmessageHeader.flags[i] = false;
+	SubM->SubmessageHeader.flags = 0x0;
+	for(int i=7;i>=0;i--)
+	{
+		if(SubM->endiannessFlag)
+		{
+			SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
+			submsg->msg_endian = BIGEND;
+		}
+		else
+		{
+			submsg->msg_endian = LITTLEEND;
+		}
+		if(SubM->finalFlag)
+			SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(1);
+	}
+
 	//Once the submessage elements are added, the header is created
-	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->w_pos);
+	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->pos);
 	//Append Submessage elements to msg
 	appendMsg(msg, submsg);
+	msg->length = msg->pos;
 	return true;
 }
 
