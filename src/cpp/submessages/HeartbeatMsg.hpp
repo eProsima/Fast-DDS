@@ -26,7 +26,7 @@ bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t gu
 		createHeader(msg,&H);
 		CDRMessage_t submsg;
 		createSubmessageHeartbeat(&submsg,HBSubM);
-		appendMsg(msg, &submsg);
+		CDRMessage::appendMsg(msg, &submsg);
 		msg->length = msg->pos;
 	}
 	catch(int e){
@@ -37,14 +37,14 @@ bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t gu
 
 bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartbeat_t* HBSubM){
 	CDRMessage_t* submsg = new CDRMessage_t();
-	initCDRMsg(submsg);
+	CDRMessage::initCDRMsg(submsg);
 	try{
-		addEntityId(submsg,&HBSubM->readerId);
-		addEntityId(submsg,&HBSubM->writerId);
+		CDRMessage::addEntityId(submsg,&HBSubM->readerId);
+		CDRMessage::addEntityId(submsg,&HBSubM->writerId);
 		//Add Sequence Number
-		addSequenceNumber(submsg,&HBSubM->firstSN);
-		addSequenceNumber(submsg,&HBSubM->lastSN);
-		addInt32(submsg,HBSubM->count);
+		CDRMessage::addSequenceNumber(submsg,&HBSubM->firstSN);
+		CDRMessage::addSequenceNumber(submsg,&HBSubM->lastSN);
+		CDRMessage::addInt32(submsg,HBSubM->count);
 	}
 	catch(int t){
 		return false;
@@ -70,7 +70,7 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartb
 	//Once the submessage elements are added, the header is created
 	createSubmessageHeader(msg, &HBSubM->SubmessageHeader,submsg->pos);
 	//Append Submessage elements to msg
-	appendMsg(msg, submsg);
+	CDRMessage::appendMsg(msg, submsg);
 	msg->length = msg->pos;
 	return true;
 }
