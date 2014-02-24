@@ -40,6 +40,7 @@ using namespace std;
 #include "rtps_common.h"
 #include "rtps_messages.h"
 #include "rtps_error_codes.h"
+#include "../CDRMessage.h"
 
 
 

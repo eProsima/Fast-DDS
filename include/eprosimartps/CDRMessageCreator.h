@@ -17,7 +17,7 @@
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-#include "rtps_all.h"
+#include "common/rtps_all.h"
 
 namespace eprosima {
 namespace rtps{
@@ -46,104 +46,8 @@ public:
 	 * @return true or false
 	 */
 	bool createSubmessageHeader(CDRMessage_t* msg,SubmessageHeader_t* SubMH,unsigned short submsgsize);
-	/**
-	 * @brief Initialize CDR message with a given byte size.
-	 * @param size Given byte size.
-	 * @return
-	 */
-	bool initCDRMsg(CDRMessage_t*,uint size);
-	/**
-	 * Initialize with default size.
-	 * @return
-	 */
-	bool initCDRMsg(CDRMessage_t*);
-	/**
-	 * Append given CDRMessage to existing CDR Message.
-	 * @param Pointer to first message.
-	 * @param Pointer to second message.
-	 * @return
-	 */
-	bool appendMsg(CDRMessage_t*,CDRMessage_t*);
-	/**
-	 * Add data to buffer.
-	 * @param Pointer to message.
-	 * @param Pointer to data
-	 * @param Number of bytes
-	 * @return
-	 */
-	bool addData(CDRMessage_t*,octet*,uint);
-	/**
-	 * add data to stream in a reversed manner
-	 * @param Pointer to message.
-	 * @param Pointer to data
-	 * @param Number of bytes
-	 * @return
-	 */
-	bool addDataReversed(CDRMessage_t*,octet*,uint);
-	/**
-	 * Add octet to buffer.
-	 * @param Pointer to message.
-	 * @param octet to add.
-	 * @return
-	 */
-	bool addOctet(CDRMessage_t*msg,octet oc);
-	/**
-	 *
-	 * @param msg
-	 * @param us
-	 * @return
-	 */
-	bool addUInt16(CDRMessage_t*msg,uint16_t us);
-	/**
-	 *
-	 * @param msg
-	 * @param lo
-	 * @return
-	 */
-	bool addInt32(CDRMessage_t*msg,int32_t lo);
-	/**
-	 *
-	 * @param msg
-	 * @param lo
-	 * @return
-	 */
-	bool addUInt32(CDRMessage_t*msg,uint32_t lo);
-	/**
-	 *
-	 * @param msg
-	 * @param lo
-	 * @return
-	 */
-	bool addInt64(CDRMessage_t*msg,int64_t lo);
-	/**
-	 *
-	 * @param msg
-	 * @param id
-	 * @return
-	 */
-	bool addEntityId(CDRMessage_t*msg,EntityId_t* id);
-	/**
-	 *
-	 * @param msg
-	 * @param param
-	 * @return
-	 */
-	bool addParameter(CDRMessage_t*msg,Parameter_t* param);
-	/**
-	 *
-	 * @param msg
-	 * @param sn
-	 * @return
-	 */
-	bool addSequenceNumber(CDRMessage_t*msg,SequenceNumber_t* sn);
 
-	/**
-	 * Add a SequenceNumberSet to the serialized message. More information...
-	 * @param msg
-	 * @param sns
-	 * @return
-	 */
-	bool addSequenceNumberSet(CDRMessage_t*msg,SequenceNumberSet_t* sns);
+
 
 	//**************************************************************************
 	// SUBMESSAGES FUNCTION DEFINITION  ******************************

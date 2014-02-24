@@ -19,7 +19,8 @@
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 
-#include "rtps_all.h"
+#include "common/rtps_all.h"
+
 
 namespace eprosima {
 namespace rtps {
@@ -38,17 +39,9 @@ public:
 	 */
 	void processMsg(GuidPrefix_t participantguidprefix,
 					octet*address,
-			         void*data, short length);
+			         const void*data, short length);
 
-	bool readEntityId(CDRMessage_t* msg,EntityId_t*id);
-	bool readData(CDRMessage_t* msg,octet* o,uint16_t length);
-	bool readDataReversed(CDRMessage_t* msg,octet* o,uint16_t length);
-	bool readInt32(CDRMessage_t* msg,int32_t* lo);
-	bool readUInt32(CDRMessage_t* msg,uint32_t* ulo);
-	bool readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn);
-	bool readInt16(CDRMessage_t* msg,int16_t* i16);
-	bool readParameterList(CDRMessage_t* msg,ParameterList_t* list);
-	bool readOctet(CDRMessage_t* msg,octet* o);
+
 
 private:
 	CDRMessage_t msg;
@@ -61,14 +54,34 @@ private:
 	bool haveTimestamp;
 	Time_t timestamp;
 
+	ProtocolVersion_t destVersion;
+
+
 	/**
 	 * Extract header from data stream.
-	 * @param msg POinter to serialized Message
+	 * @param msg Pointer to serialized Message
 	 * @param H Pointer to header information.
 	 * @return
 	 */
-	bool extractHeader(CDRMessage_t* msg, Header_t*H);
+	bool readHeader(CDRMessage_t* msg, Header_t*H);
+	/**
+	 * Read the submessage header.
+	 * @param msg Pointer to the message.
+	 * @param smh Pointer to the structure where the data should be saved.
+	 * @return
+	 */
+	bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
 
+
+	bool readSubmessageData(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageHeartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageGap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageAcknak(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessagePad(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageInfoDestination(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageInfoSource(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageInfoTimestamp(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageInfoReply(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
 
 

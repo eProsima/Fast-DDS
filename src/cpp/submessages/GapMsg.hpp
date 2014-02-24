@@ -27,7 +27,7 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 		createHeader(msg,&H);
 		CDRMessage_t submsg;
 		createSubmessageGap(&submsg,SubM);
-		appendMsg(msg, &submsg);
+		CDRMessage::appendMsg(msg, &submsg);
 		msg->length = msg->pos;
 	}
 	catch(int e){
@@ -38,13 +38,13 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 
 bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM){
 	CDRMessage_t* submsg = new CDRMessage_t();
-	initCDRMsg(submsg);
+	CDRMessage::initCDRMsg(submsg);
 	try{
-		addEntityId(submsg,&SubM->readerId);
-		addEntityId(submsg,&SubM->writerId);
+		CDRMessage::addEntityId(submsg,&SubM->readerId);
+		CDRMessage::addEntityId(submsg,&SubM->writerId);
 		//Add Sequence Number
-		addSequenceNumber(submsg,&SubM->gapStart);
-		addSequenceNumberSet(submsg,&SubM->gapList);
+		CDRMessage::addSequenceNumber(submsg,&SubM->gapStart);
+		CDRMessage::addSequenceNumberSet(submsg,&SubM->gapList);
 	}
 	catch(int t){
 		return false;
@@ -65,7 +65,7 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM)
 	//Once the submessage elements are added, the header is created
 	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->pos);
 	//Append Submessage elements to msg
-	appendMsg(msg, submsg);
+	CDRMessage::appendMsg(msg, submsg);
 	msg->length = msg->pos;
 	return true;
 }

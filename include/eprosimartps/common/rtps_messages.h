@@ -18,7 +18,7 @@
 
 #include <vector>
 
-#include "eprosimartps/rtps_common.h"
+
 
 namespace eprosima{
 namespace rtps{
@@ -37,26 +37,25 @@ typedef struct Header_t{
 }Header_t;
 
 //!@brief Enumeration of the different Submessages types
-typedef enum SubmessageKind{
-	PAD=0x01,
-	ACKNACK=0x06,
-	HEARTBEAT=0x07,
-	GAP=0x08,
-	INFO_TS=0x09,
-	INFO_SRC=0x0c,
-	INFO_REPLY_IP4=0x0d,
-	INFO_DST=0x0e,
-	INFO_REPLY=0x0f,
-	NACK_FRAG=0x12,
-	HEARTBEAT_FRAG=0x13,
-	DATA=0x15,
-	DATA_FRAG=0x16
-}SubmessageKind;
+#define	PAD 0x01
+#define	ACKNACK 0x06
+#define	HEARTBEAT 0x07
+#define	GAP 0x08
+#define	INFO_TS 0x09
+#define	INFO_SRC 0x0c
+#define	INFO_REPLY_IP4 0x0d
+#define	INFO_DST 0x0e
+#define	INFO_REPLY 0x0f
+#define	NACK_FRAG 0x12
+#define	HEARTBEAT_FRAG 0x13
+#define	DATA 0x15
+#define	DATA_FRAG 0x16
+
 
 //!@brief RTPS SubmessageHeader Structure
 typedef struct{
-	SubmessageKind submessageId;
-	unsigned short submessageLength;
+	octet submessageId;
+	uint16_t submessageLength;
 	SubmessageFlag flags;
 }SubmessageHeader_t;
 
@@ -109,6 +108,13 @@ typedef struct{
 	SequenceNumber_t gapStart;
 	SequenceNumberSet_t gapList;
 }SubmsgGap_t;
+
+
+//!@brief RTPS InfoTS Submessage
+typedef struct{
+	SubmessageHeader_t SubmessageHeader;
+	Time_t timestamp;
+}SubmsgInfoTS_t;
 
 
 
