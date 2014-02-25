@@ -14,10 +14,12 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include "rtps_all.h"
+
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-#include "rtps_all.h"
+
 
 namespace eprosima {
 namespace rtps{

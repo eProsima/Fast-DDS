@@ -15,13 +15,15 @@
  */
 
 #include "rtps_all.h"
-
+#include "HistoryCache.h"
 
 #ifndef READERLOCATOR_H_
 #define READERLOCATOR_H_
 
 namespace eprosima {
 namespace rtps {
+
+
 
 class ReaderLocator {
 public:
@@ -33,8 +35,10 @@ public:
 	std::vector<CacheChange_t*> requested_changes;
 	std::vector<CacheChange_t*> unsent_changes;
 	//TODO Methods
-	CacheChange_t* next_requested_change();
-	CacheChange_t* next_unsent_change();
+	bool next_requested_change(CacheChange_t* cpoin);
+	bool remove_requested_change(CacheChange_t* cpoin);
+	bool next_unsent_change(CacheChange_t* cpoin);
+	bool remove_unsent_change(CacheChange_t* cpoin);
 	void requested_changes_set(std::vector<SequenceNumber_t> seqs,HistoryCache* history);
 };
 

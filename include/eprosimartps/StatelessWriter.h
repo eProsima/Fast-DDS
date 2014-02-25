@@ -15,6 +15,9 @@
  */
 
 #include "rtps_all.h"
+#include "RTPSWriter.h"
+#include "ReaderLocator.h"
+#include <boost/bind.hpp>
 
 #ifndef STATELESSWRITER_H_
 #define STATELESSWRITER_H_
@@ -30,9 +33,11 @@ public:
 	virtual ~StatelessWriter();
 	Duration_t resendDataPeriod;
 	std::vector<ReaderLocator> reader_locator;
-	void reader_locator_add(ReaderLocator locator);
-	void reader_locator_remove(Locator_t locator);
+	bool reader_locator_add(ReaderLocator locator);
+	bool reader_locator_remove(Locator_t locator);
 	void unsent_changes_reset();
+	void unsent_change_add(SequenceNumber_t sn);
+	void unsent_changes_not_empty();
 };
 
 } /* namespace rtps */

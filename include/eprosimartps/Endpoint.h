@@ -31,6 +31,7 @@ public:
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
 	GUID_t guid;
+
 };
 
 } /* namespace rtps */

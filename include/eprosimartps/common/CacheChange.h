@@ -35,7 +35,7 @@ typedef struct CacheChange_t{
 	GUID_t writerGUID;
 	InstanceHandle_t instanceHandle;
 	SequenceNumber_t sequenceNumber;
-
+	SerializedPayload_t serializedPayload;
 }CacheChange_t;
 
 }

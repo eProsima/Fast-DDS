@@ -16,6 +16,7 @@
 
 #include "eprosimartps/ReaderLocator.h"
 
+
 namespace eprosima {
 namespace rtps {
 
@@ -33,30 +34,36 @@ ReaderLocator::~ReaderLocator() {
 	// TODO Auto-generated destructor stub
 }
 
-CacheChange_t* ReaderLocator::next_requested_change() {
-	std::vector<CacheChange_t*>::iterator it;
-	SequenceNumber_t minseqnum = requested_changes[0]->sequenceNumber;
-	CacheChange_t* cpoin;
-	for(it=requested_changes.begin();it!=requested_changes.end();it++){
-		if(minseqnum > (*it)->sequenceNumber){
-			minseqnum = (*it)->sequenceNumber;
-			cpoin = *it;
+bool ReaderLocator::next_requested_change(CacheChange_t* cpoin) {
+	if(!requested_changes.empty()){
+		std::vector<CacheChange_t*>::iterator it;
+		SequenceNumber_t minseqnum = requested_changes[0]->sequenceNumber;
+
+		for(it=requested_changes.begin();it!=requested_changes.end();it++){
+			if(minseqnum > (*it)->sequenceNumber){
+				minseqnum = (*it)->sequenceNumber;
+				cpoin = *it;
+			}
 		}
+		return true;
 	}
-	return cpoin;
+	return false;
 }
 
-CacheChange_t* ReaderLocator::next_unsent_change() {
-	std::vector<CacheChange_t*>::iterator it;
-	SequenceNumber_t minseqnum = unsent_changes[0]->sequenceNumber;
-	CacheChange_t* cpoin;
-	for(it=unsent_changes.begin();it!=unsent_changes.end();it++){
-		if(minseqnum > (*it)->sequenceNumber){
-			minseqnum = (*it)->sequenceNumber;
-			cpoin = *it;
+bool ReaderLocator::next_unsent_change(CacheChange_t* cpoin) {
+	if(!unsent_changes.empty()){
+		std::vector<CacheChange_t*>::iterator it;
+		SequenceNumber_t minseqnum = unsent_changes[0]->sequenceNumber;
+		for(it=unsent_changes.begin();it!=unsent_changes.end();it++)
+		{
+			if(minseqnum > (*it)->sequenceNumber){
+				minseqnum = (*it)->sequenceNumber;
+				cpoin = *it;
+			}
 		}
+		return true;
 	}
-	return cpoin;
+	return false;
 }
 
 void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,HistoryCache* history) {
@@ -70,6 +77,32 @@ void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,Hist
 	}
 }
 
+bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
+	std::vector<CacheChange_t*>::iterator it;
+	for(it=requested_changes.begin();it!=requested_changes.end();it++)
+	{
+		if(cpoin == *it)
+		{
+			requested_changes.erase(it);
+			return true;
+		}
+	}
+	return false;
+
+}
+
+bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin){
+	std::vector<CacheChange_t*>::iterator it;
+	for(it=unsent_changes.begin();it!=unsent_changes.end();it++)
+	{
+		if(cpoin == *it)
+		{
+			unsent_changes.erase(it);
+			return true;
+		}
+	}
+	return false;
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

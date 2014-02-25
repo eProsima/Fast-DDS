@@ -13,8 +13,12 @@
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  */
-
 #include "eprosimartps/HistoryCache.h"
+#include "eprosimartps/ReaderLocator.h"
+#include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/StatelessWriter.h"
+
+
 
 namespace eprosima {
 namespace rtps {
@@ -44,6 +48,12 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 		return false;
 	changes.push_back(a_change);
 	maxSeqNum = a_change.sequenceNumber;
+	if(rtpswriter->stateType == STATELESS){
+		((StatelessWriter*)rtpswriter)->unsent_change_add(a_change.sequenceNumber);
+	}
+	else{
+
+	}
 	return true;
 }
 

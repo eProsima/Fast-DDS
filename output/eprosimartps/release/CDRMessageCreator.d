@@ -5,10 +5,6 @@
  include/eprosimartps/common/rtps_messages.h \
  include/eprosimartps/common/rtps_error_codes.h \
  include/eprosimartps/common/CacheChange.h \
- include/eprosimartps/CDRMessage.h include/eprosimartps/Endpoint.h \
- include/eprosimartps/HistoryCache.h \
- include/eprosimartps/MessageReceiver.h \
- include/eprosimartps/ReaderLocator.h include/eprosimartps/RTPSWriter.h \
- include/eprosimartps/StatelessWriter.h src/cpp/submessages/DataMsg.hpp \
+ include/eprosimartps/CDRMessage.h src/cpp/submessages/DataMsg.hpp \
  src/cpp/submessages/HeartbeatMsg.hpp src/cpp/submessages/AckNackMsg.hpp \
  src/cpp/submessages/GapMsg.hpp
