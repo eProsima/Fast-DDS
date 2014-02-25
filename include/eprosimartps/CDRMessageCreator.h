@@ -17,7 +17,7 @@
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-#include "common/rtps_all.h"
+#include "rtps_all.h"
 
 namespace eprosima {
 namespace rtps{

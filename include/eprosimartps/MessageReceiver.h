@@ -19,7 +19,7 @@
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 
-#include "common/rtps_all.h"
+#include "rtps_all.h"
 
 
 namespace eprosima {

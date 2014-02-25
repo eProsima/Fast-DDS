@@ -14,7 +14,7 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "common/rtps_all.h"
+#include "rtps_all.h"
 
 #ifndef CDRMESSAGE_H_
 #define CDRMESSAGE_H_
