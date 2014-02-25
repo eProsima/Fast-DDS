@@ -31,16 +31,22 @@ typedef enum
 	LITTLEEND = 0x0
 } Endianness_t;
 
-// //! @brief Default endiness in the system.
-//static Endianness_t DEFAULT_ENDIAN;
-
 using namespace std;
 
-#include "colors.h"
-#include "rtps_common.h"
-#include "rtps_messages.h"
-#include "rtps_error_codes.h"
-#include "../CDRMessage.h"
+#include "common/colors.h"
+#include "common/rtps_common.h"
+#include "common/rtps_messages.h"
+#include "common/rtps_error_codes.h"
+#include "common/CacheChange.h"
+#include "CDRMessage.h"
+#include "Endpoint.h"
+#include "HistoryCache.h"
+#include "MessageReceiver.h"
+#include "ReaderLocator.h"
+#include "RTPSWriter.h"
+#include "StatelessWriter.h"
+
+
 
 
 

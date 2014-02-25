@@ -1,5 +1,5 @@
-./output/eprosimartps/release/MessageReceiver.o: src/cpp/MessageReceiver.cpp \
- include/eprosimartps/MessageReceiver.h include/eprosimartps/rtps_all.h \
+./output/eprosimartps/debug/StatelessWriter.o: src/cpp/StatelessWriter.cpp \
+ include/eprosimartps/StatelessWriter.h include/eprosimartps/rtps_all.h \
  include/eprosimartps/common/colors.h \
  include/eprosimartps/common/rtps_common.h \
  include/eprosimartps/common/rtps_messages.h \
