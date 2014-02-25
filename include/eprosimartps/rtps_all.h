@@ -38,13 +38,15 @@ using namespace std;
 #include "common/rtps_messages.h"
 #include "common/rtps_error_codes.h"
 #include "common/CacheChange.h"
-#include "CDRMessage.h"
-#include "Endpoint.h"
-#include "HistoryCache.h"
-#include "MessageReceiver.h"
-#include "ReaderLocator.h"
-#include "RTPSWriter.h"
-#include "StatelessWriter.h"
+
+//#include "CDRMessage.h"
+//#include "Endpoint.h"
+//
+//#include "MessageReceiver.h"
+//#include "ReaderLocator.h"
+//#include "RTPSWriter.h"
+//#include "HistoryCache.h"
+//#include "StatelessWriter.h"
 
 
 

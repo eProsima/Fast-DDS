@@ -15,14 +15,18 @@
  */
 
 #include "rtps_all.h"
-//#include "HistoryCache.h"
-//#include "Endpoint.h"
+#include "HistoryCache.h"
+#include "Endpoint.h"
+#include "CDRMessageCreator.h"
+#include "Participant.h"
 
 #ifndef RTPSWRITER_H_
 #define RTPSWRITER_H_
 
 namespace eprosima {
 namespace rtps {
+
+
 
 typedef struct WriterParams{
 	bool pushMode;
@@ -40,12 +44,14 @@ public:
 	virtual ~RTPSWriter();
 	HistoryCache writer_cache;
 	bool pushMode;
+	StateKind_t stateType;
 	Duration_t heartbeatPeriod;
 	Duration_t nackResponseDelay;
 	Duration_t nackSupressionDuration;
 	SequenceNumber_t lastChangeSequenceNumber;
 	CacheChange_t new_change(ChangeKind_t changekind,SerializedPayload_t data,InstanceHandle_t handle);
-
+	CDRMessageCreator MC;
+	Participant* participant;
 
 };
 

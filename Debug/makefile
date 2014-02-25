@@ -8,6 +8,9 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include utils/pcTests/MsgCreateReceive/output/MessageCreatorTest/release/subdir.mk
+-include utils/pcTests/MsgCreateReceive/output/MessageCreatorTest/debug/subdir.mk
+-include utils/pcTests/MsgCreateReceive/subdir.mk
 -include utils/pcTests/MessageCreatorTest/output/MessageCreatorTest/release/subdir.mk
 -include utils/pcTests/MessageCreatorTest/output/MessageCreatorTest/debug/subdir.mk
 -include utils/pcTests/MessageCreatorTest/subdir.mk

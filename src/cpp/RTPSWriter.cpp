@@ -15,6 +15,7 @@
  */
 
 #include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/HistoryCache.h"
 
 namespace eprosima {
 namespace rtps {
@@ -37,6 +38,7 @@ CacheChange_t RTPSWriter::new_change(ChangeKind_t changeKind,
 	cache.sequenceNumber = lastChangeSequenceNumber;
 	cache.writerGUID = guid;
 	cache.instanceHandle = handle;
+	cache.serializedPayload = data;
 
 	return cache;
 }

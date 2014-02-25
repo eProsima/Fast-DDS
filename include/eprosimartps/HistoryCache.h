@@ -22,6 +22,8 @@
 namespace eprosima {
 namespace rtps {
 
+class RTPSWriter;
+
 class HistoryCache {
 public:
 	HistoryCache();
@@ -33,7 +35,7 @@ public:
 	SequenceNumber_t get_seq_num_min();
 	SequenceNumber_t get_seq_num_max();
 	std::vector<CacheChange_t> changes;
-
+	RTPSWriter* rtpswriter;
 private:
 
 	SequenceNumber_t minSeqNum;

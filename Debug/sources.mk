@@ -23,6 +23,9 @@ C_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+utils/pcTests/MsgCreateReceive/output/MessageCreatorTest/release \
+utils/pcTests/MsgCreateReceive/output/MessageCreatorTest/debug \
+utils/pcTests/MsgCreateReceive \
 utils/pcTests/MessageCreatorTest/output/MessageCreatorTest/release \
 utils/pcTests/MessageCreatorTest/output/MessageCreatorTest/debug \
 utils/pcTests/MessageCreatorTest \
