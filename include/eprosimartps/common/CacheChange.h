@@ -20,16 +20,21 @@
 namespace eprosima{
 namespace rtps{
 
+/**
+ * Enum ChangeKind_t, different types of changes.
+ */
 typedef enum ChangeKind_t{
-	ALIVE,
-	NOT_ALIVE_DISPOSED,
-	NOT_ALIVE_UNREGISTERED
+	ALIVE,                //!< ALIVE
+	NOT_ALIVE_DISPOSED,   //!< NOT_ALIVE_DISPOSED
+	NOT_ALIVE_UNREGISTERED//!< NOT_ALIVE_UNREGISTERED
 }ChangeKind_t;
 
 
 typedef void* InstanceHandle_t;
 
-
+/**
+ * Structure CacheChange_t, contains information on a specific CacheChange.
+ */
 typedef struct CacheChange_t{
 	ChangeKind_t kind;
 	GUID_t writerGUID;

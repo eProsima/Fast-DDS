@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$structeprosima_1_1rtps_1_1_sequence_number_set__t.html" title="Structure SequenceNumberSet_t, contains a group of sequencenumbers." alt="" coords="317,8,565,37"/>
+<area shape="rect" id="node4" href="$structeprosima_1_1rtps_1_1_sequence_number__t.html" title="Structure SequenceNumber_t, different for each change in the same writer." alt="" coords="7,8,233,37"/>
+<area shape="rect" id="node6" href="$structeprosima_1_1rtps_1_1_submessage_header__t.html" title="Structure SubmessageHeader_t." alt="" coords="320,61,563,91"/>
+<area shape="rect" id="node8" href="$structeprosima_1_1rtps_1_1_entity_id__t.html" title="Structure EntityId_t, entity id part of GUID_t." alt="" coords="357,127,525,156"/>
+</map>

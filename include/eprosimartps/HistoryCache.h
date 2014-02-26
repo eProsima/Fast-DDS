@@ -22,17 +22,50 @@
 namespace eprosima {
 namespace rtps {
 
+
 class RTPSWriter;
 
+/**
+ * Class HistoryCache, container of the different CacheChanges and the methods to access them.
+ */
 class HistoryCache {
 public:
 	HistoryCache();
 	virtual ~HistoryCache();
+	/**
+	 * Get a pointer to a specific change based on its SequenceNumber_t.
+	 * @param seqnum SequenceNumber_t of the change.
+	 * @param change Pointer to the change.
+	 * @return True if succeedeed.
+	 */
 	bool get_change(SequenceNumber_t seqnum,CacheChange_t* change);
+	/**
+	 * Add a change to the HistoryCache.
+	 * @param a_change The change to add.
+	 * @return True if suceedeed.
+	 */
 	bool add_change(CacheChange_t a_change);
+	/**
+	 * Remove a change from the list.
+	 * @param a_change
+	 * @return
+	 */
 	bool remove_change(CacheChange_t a_change);
+	/**
+	 * Remove a change based on its SequenceNumber_t.
+	 * @param seqNum
+	 * @return
+	 */
 	bool remove_change(SequenceNumber_t seqNum);
+	/**
+	 * Get the minimum sequence number in the HistoryCache.
+	 * @return
+	 */
 	SequenceNumber_t get_seq_num_min();
+	/**
+	 * Get the maximum sequence number in the HistoryCache.
+	 * @return
+	 */
 	SequenceNumber_t get_seq_num_max();
 	std::vector<CacheChange_t> changes;
 	RTPSWriter* rtpswriter;
@@ -40,6 +73,9 @@ private:
 
 	SequenceNumber_t minSeqNum;
 	SequenceNumber_t maxSeqNum;
+	/**
+	 * Update the max and min sequence number after a change in the cache changes.
+	 */
 	void updateMaxMinSeqNum();
 
 

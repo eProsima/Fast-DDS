@@ -25,12 +25,15 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
+ */
 class StatelessWriter : public RTPSWriter
 {
 public:
 	StatelessWriter();
-	StatelessWriter(WriterParams);
 	virtual ~StatelessWriter();
+	void init(WriterParams_t);
 	Duration_t resendDataPeriod;
 	std::vector<ReaderLocator> reader_locator;
 	bool reader_locator_add(ReaderLocator locator);

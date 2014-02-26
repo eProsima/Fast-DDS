@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$structeprosima_1_1rtps_1_1_sequence_number__t.html" title="Structure SequenceNumber_t, different for each change in the same writer." alt="" coords="13,9,240,39"/>
+<area shape="rect" id="node4" href="$structeprosima_1_1rtps_1_1_submessage_header__t.html" title="Structure SubmessageHeader_t." alt="" coords="5,63,248,92"/>
+<area shape="rect" id="node6" href="$structeprosima_1_1rtps_1_1_entity_id__t.html" title="Structure EntityId_t, entity id part of GUID_t." alt="" coords="43,128,211,157"/>
+</map>
