@@ -23,6 +23,7 @@ namespace rtps {
 StatelessWriter::StatelessWriter() {
 	// TODO Auto-generated constructor stub
 
+
 }
 
 void StatelessWriter::init(WriterParams_t param) {
@@ -36,6 +37,9 @@ void StatelessWriter::init(WriterParams_t param) {
 	lastChangeSequenceNumber = 0;
 	stateType = STATELESS;
 	writer_cache.rtpswriter = (RTPSWriter*)this;
+	//locator lists:
+	unicastLocatorList = param.unicastLocatorList;
+	multicastLocatorList = param.multicastLocatorList;
 }
 
 
