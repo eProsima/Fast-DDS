@@ -25,7 +25,7 @@ StatelessWriter::StatelessWriter() {
 
 }
 
-StatelessWriter::StatelessWriter(WriterParams param) {
+void StatelessWriter::init(WriterParams_t param) {
 	// TODO Auto-generated constructor stub
 	pushMode = param.pushMode;
 	heartbeatPeriod = param.heartbeatPeriod;
@@ -46,7 +46,7 @@ StatelessWriter::~StatelessWriter() {
 bool StatelessWriter::reader_locator_add(ReaderLocator a_locator) {
 	std::vector<ReaderLocator>::iterator rit;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++){
-		if(rit->locator == a_locator)
+		if(rit->locator == a_locator.locator)
 			return false;
 	}
 	std::vector<CacheChange_t>::iterator it;
@@ -92,8 +92,8 @@ void StatelessWriter::unsent_change_add(SequenceNumber_t sn) {
 
 void StatelessWriter::unsent_changes_not_empty(){
 	std::vector<ReaderLocator>::iterator rit;
-	CacheChange_t* change;
-	participant->sendMutex.lock();
+	CacheChange_t* change = NULL;
+	participant->threadSend.sendMutex.lock();
 	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
 	{
 		while(rit->next_unsent_change(change))
@@ -109,10 +109,10 @@ void StatelessWriter::unsent_changes_not_empty(){
 			DataSubM.serializedPayload = change->serializedPayload;
 			CDRMessage_t msg;
 			MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM);
-			participant->sendSync(msg,rit->locator);
+			participant->threadSend.sendSync(msg,rit->locator);
 		}
 	}
-	participant->sendMutex.unlock();
+	participant->threadSend.sendMutex.unlock();
 }
 
 

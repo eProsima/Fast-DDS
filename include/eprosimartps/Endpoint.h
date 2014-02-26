@@ -22,6 +22,12 @@
 namespace eprosima {
 namespace rtps {
 
+class ThreadListen;
+class Participant;
+
+/**
+ * Class Endpoint, all entities of the RTPS network are a specification of this class.
+ */
 class Endpoint {
 public:
 	Endpoint();
@@ -32,6 +38,8 @@ public:
 	std::vector<Locator_t> multicastLocatorList;
 	GUID_t guid;
 
+	std::vector<ThreadListen*> endpointThreadListenList;
+	Participant* participant;
 };
 
 } /* namespace rtps */

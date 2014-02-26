@@ -8,6 +8,6 @@
  include/eprosimartps/ReaderLocator.h include/eprosimartps/HistoryCache.h \
  include/eprosimartps/RTPSWriter.h include/eprosimartps/Endpoint.h \
  include/eprosimartps/CDRMessageCreator.h \
- include/eprosimartps/Participant.h \
- include/eprosimartps/StatelessWriter.h include/eprosimartps/RTPSWriter.h \
- include/eprosimartps/ReaderLocator.h
+ include/eprosimartps/Participant.h include/eprosimartps/ThreadListen.h \
+ include/eprosimartps/ThreadSend.h include/eprosimartps/StatelessWriter.h \
+ include/eprosimartps/RTPSWriter.h include/eprosimartps/ReaderLocator.h

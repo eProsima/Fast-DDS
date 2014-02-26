@@ -25,6 +25,9 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class MessageReceiver, process the received messages.
+ */
 class MessageReceiver {
 public:
 	MessageReceiver();

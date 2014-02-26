@@ -24,7 +24,9 @@ namespace eprosima {
 namespace rtps {
 
 
-
+/**
+ * Class ReaderLocator, contains information about a locator, without saving its state.
+ */
 class ReaderLocator {
 public:
 	ReaderLocator();

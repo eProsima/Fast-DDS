@@ -25,7 +25,7 @@ namespace eprosima {
 namespace rtps{
 
 /**
- * @brief Generation of serialized CDR RTPS Messages.
+ * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
  */
 class CDRMessageCreator {
 public:
@@ -70,17 +70,17 @@ public:
 	bool createSubmessageData(CDRMessage_t* submsg,SubmsgData_t* DataSubM);
 
 	/**
-	 *
-	 * @param msg
-	 * @param guidprefix
-	 * @param HBSubM
-	 * @return
+	 * Create a Heartbeat message.
+	 * @param msg Pointer to the message.
+	 * @param guidprefix GuidPrefix to store in Header.
+	 * @param HBSubM Pointer to the HB Submessage structure.
+	 * @return True if succeeded.
 	 */
 	bool createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,SubmsgHeartbeat_t* HBSubM);
 	/**
-	 *
-	 * @param submsg
-	 * @param HBSubM
+	 * Create a Heartbeat Submessage.
+	 * @param submsg Pointer to the submessage.
+	 * @param HBSubM Pointer to the data.
 	 * @return
 	 */
 	bool createSubmessageHeartbeat(CDRMessage_t* submsg,SubmsgHeartbeat_t* HBSubM);

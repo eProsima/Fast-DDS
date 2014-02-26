@@ -22,6 +22,9 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class CDRMessage, contains static methods to initialize CDRMessage_t and add or read different data types.
+ */
 class CDRMessage {
 public:
 	CDRMessage();
@@ -40,16 +43,16 @@ public:
 	/**
 	 * @brief Initialize CDR message with a given byte size.
 	 * @param size Given byte size.
-	 * @return
+	 * @return True if succeeded.
 	 */
 	static bool initCDRMsg(CDRMessage_t*,uint size);
 	/**
 	 * Initialize with default size.
-	 * @return
+	 * @return True if succeeded.
 	 */
 	static bool initCDRMsg(CDRMessage_t*);
 	/**
-	 * Append given CDRMessage to existing CDR Message.
+	 * Append given CDRMessage to existing CDR Message. Join two messages.
 	 * @param Pointer to first message.
 	 * @param Pointer to second message.
 	 * @return
@@ -60,22 +63,22 @@ public:
 	 * @param Pointer to message.
 	 * @param Pointer to data
 	 * @param Number of bytes
-	 * @return
+	 * @return True if succeeded.
 	 */
 	static bool addData(CDRMessage_t*,octet*,uint);
 	/**
-	 * add data to stream in a reversed manner
+	 * Add data to stream in a reversed manner.
 	 * @param Pointer to message.
 	 * @param Pointer to data
 	 * @param Number of bytes
-	 * @return
+	 * @return True if succeeded.
 	 */
 	static bool addDataReversed(CDRMessage_t*,octet*,uint);
 	/**
 	 * Add octet to buffer.
 	 * @param Pointer to message.
 	 * @param octet to add.
-	 * @return
+	 * @return True if succeeded.
 	 */
 	static bool addOctet(CDRMessage_t*msg,octet oc);
 	/**

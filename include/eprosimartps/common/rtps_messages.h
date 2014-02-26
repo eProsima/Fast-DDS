@@ -23,7 +23,7 @@
 namespace eprosima{
 namespace rtps{
 
-//!@brief RTPS Header Structure
+//!@brief Structure Header_t, RTPS Message Header Structure.
 typedef struct Header_t{
 			ProtocolVersion_t version;
 			VendorId_t vendorId;;
@@ -36,7 +36,7 @@ typedef struct Header_t{
 			}
 }Header_t;
 
-//!@brief Enumeration of the different Submessages types
+// //!@brief Enumeration of the different Submessages types
 #define	PAD 0x01
 #define	ACKNACK 0x06
 #define	HEARTBEAT 0x07
@@ -52,7 +52,7 @@ typedef struct Header_t{
 #define	DATA_FRAG 0x16
 
 
-//!@brief RTPS SubmessageHeader Structure
+//!@brief Structure SubmessageHeader_t.
 typedef struct{
 	octet submessageId;
 	uint16_t submessageLength;
@@ -61,7 +61,7 @@ typedef struct{
 
 // SUBMESSAGE types definition
 
-//!@brief RTPS Data Submessage
+//!@brief Structure SubmsgData_t, contains the information necessary to create a Data Submessage.
 typedef struct SubmsgData_t{
 	SubmessageHeader_t SubmessageHeader;
 	bool endiannessFlag;
@@ -75,7 +75,7 @@ typedef struct SubmsgData_t{
 	SerializedPayload_t serializedPayload;
 }SubmsgData_t;
 
-//!@brief RTPS Heartbeat Submessage
+//!@brief Structure SubmsgHeartbeat_t, contains the information necessary to create a Heartbeat Submessage.
 typedef struct{
 	SubmessageHeader_t SubmessageHeader;
 	bool endiannessFlag;
@@ -88,7 +88,7 @@ typedef struct{
 	Count_t count;
 }SubmsgHeartbeat_t;
 
-//!@brief RTPS AckNack Submessage
+//!@brief Structure SubmsgAcknack_t, contains the information necessary to create a Acknack Submessage.
 typedef struct{
 	SubmessageHeader_t SubmessageHeader;
 	bool endiannessFlag;
@@ -99,7 +99,7 @@ typedef struct{
 	Count_t count;
 }SubmsgAcknack_t;
 
-//!@brief RTPS GAP Submessage
+//!@brief Structure SubmsgGap_t, contains the information necessary to create a Gap Submessage.
 typedef struct{
 	SubmessageHeader_t SubmessageHeader;
 	bool endiannessFlag;
@@ -110,7 +110,7 @@ typedef struct{
 }SubmsgGap_t;
 
 
-//!@brief RTPS InfoTS Submessage
+//!@brief Structure SubmsgInfoTS_t, contains the information necessary to create a InfoTS Submessage.
 typedef struct{
 	SubmessageHeader_t SubmessageHeader;
 	Time_t timestamp;
@@ -119,7 +119,7 @@ typedef struct{
 
 
 /**
- * @brief CDR Serialized Message Structure.
+ * @brief Structure CDRMessage_t, contains a serialized message.
  */
 typedef struct CDRMessage_t{
 	CDRMessage_t(){
@@ -134,14 +134,14 @@ typedef struct CDRMessage_t{
 		if(buffer != NULL)
 			free(buffer);
 	}
-	CDRMessage_t(CDRMessage_t msg){
+	CDRMessage_t(CDRMessage_t& msg){
 		pos = msg.pos;
 		length = msg.length;
 		max_size = msg.max_size;
 		msg_endian = msg.msg_endian;
 		if(buffer !=NULL)
 			free(buffer);
-		buffer=(octet*)malloc()
+		buffer=(octet*)malloc(msg.length);
 	}
 	octet* buffer;
 	uint16_t pos; //current w_pos in bytes

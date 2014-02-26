@@ -26,18 +26,9 @@
 namespace eprosima {
 namespace rtps {
 
-
-
-typedef struct WriterParams{
-	bool pushMode;
-	Duration_t heartbeatPeriod;
-	Duration_t nackResponseDelay;
-	Duration_t nackSupressionDuration;
-	Duration_t resendDataPeriod;
-	int16_t HistorySize;
-}WriterParams;
-
-
+/**
+ * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
+ */
 class RTPSWriter: public Endpoint {
 public:
 	RTPSWriter();
@@ -51,7 +42,9 @@ public:
 	SequenceNumber_t lastChangeSequenceNumber;
 	CacheChange_t new_change(ChangeKind_t changekind,SerializedPayload_t data,InstanceHandle_t handle);
 	CDRMessageCreator MC;
-	Participant* participant;
+
+
+
 
 };
 
