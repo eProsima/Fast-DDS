@@ -13,6 +13,10 @@
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  */
+#include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
+
 
 #include "rtps_all.h"
 
@@ -26,7 +30,7 @@ class ThreadSend {
 public:
 	ThreadSend();
 	virtual ~ThreadSend();
-
+	Locator_t sendLocator;
 	boost::mutex sendMutex;
 	boost::asio::io_service sendService;
 	void sendSync(CDRMessage_t msg,Locator_t loc);

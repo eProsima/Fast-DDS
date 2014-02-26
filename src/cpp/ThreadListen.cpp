@@ -16,8 +16,8 @@
 
 #include "eprosimartps/ThreadListen.h"
 
-#include "RTPSWriter.h"
-#include "RTPSReader.h"
+#include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/RTPSReader.h"
 
 namespace eprosima {
 namespace rtps {
@@ -29,12 +29,16 @@ ThreadListen::ThreadListen() {
 
 ThreadListen::~ThreadListen() {
 	// TODO Auto-generated destructor stub
+	cout << "Removing thread " << b_thread->get_id() << endl;
+	b_thread->interrupt();
+
 }
 
 void ThreadListen::listen() {
 	while(1){
 		cout << "Thread: " << b_thread->get_id() << " listening" << endl;
-		boost::this_thread::sleep(1);
+		sleep(1);
+		//boost::this_thread::sleep(1);
 	}
 }
 

@@ -14,15 +14,16 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread.hpp>
+//#include <boost/asio.hpp>
+//#include <boost/thread/mutex.hpp>
+//#include <boost/thread.hpp>
 
+#include <unistd.h>
 
 #include "rtps_all.h"
+
 #include "ThreadListen.h"
 #include "ThreadSend.h"
-
 
 
 
@@ -66,11 +67,13 @@ public:
 	ThreadSend threadSend;
 
 private:
+	uint32_t IdCounter;
 	std::vector<RTPSWriter*> writerList;
 	std::vector<RTPSReader*> readerList;
-	std::vector<ThreadListen> threadListenList;
+	std::vector<ThreadListen*> threadListenList;
 	bool assignEnpointToListenThreads(Endpoint* endpoint,char type);
-	bool addNewListenThread(Locator_t loc,ThreadListen* listenthread);
+	bool addNewListenThread(Locator_t loc,ThreadListen** listenthread);
+
 };
 
 } /* namespace rtps */

@@ -14,6 +14,11 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
+
+
 #include "rtps_all.h"
 
 

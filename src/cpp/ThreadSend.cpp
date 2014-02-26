@@ -21,12 +21,25 @@ namespace rtps {
 
 ThreadSend::ThreadSend() {
 	// TODO Auto-generated constructor stub
-	boost::asio::io_service::work work(sendService);
+	//Create socket
+
+	//Found out about my IP
+	//Fake IP for now.
+	sendLocator.kind = LOCATOR_KIND_UDPv4;
+	sendLocator.port = 4243;
+	LOCATOR_ADDRESS_INVALID(sendLocator.address);
+	sendLocator.address[12] = 192;
+	sendLocator.address[13] = 168;
+	sendLocator.address[14] = 1;
+	sendLocator.address[15] = 18;
+
+
+	//boost::asio::io_service::work work(sendService);
 }
 
 ThreadSend::~ThreadSend() {
 	// TODO Auto-generated destructor stub
-	sendService.stop();
+	//sendService.stop();
 }
 
 void ThreadSend::sendSync(CDRMessage_t msg, Locator_t loc) {

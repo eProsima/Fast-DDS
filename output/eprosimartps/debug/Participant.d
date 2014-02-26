@@ -9,4 +9,5 @@
  include/eprosimartps/HistoryCache.h include/eprosimartps/Endpoint.h \
  include/eprosimartps/CDRMessageCreator.h \
  include/eprosimartps/Participant.h include/eprosimartps/ReaderLocator.h \
- include/eprosimartps/RTPSReader.h include/eprosimartps/RTPSWriter.h
+ include/eprosimartps/RTPSReader.h include/eprosimartps/RTPSWriter.h \
+ include/eprosimartps/DomainParticipant.hpp
