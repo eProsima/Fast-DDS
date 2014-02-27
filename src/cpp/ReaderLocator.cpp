@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #include "eprosimartps/ReaderLocator.h"
@@ -34,7 +35,7 @@ ReaderLocator::~ReaderLocator() {
 	// TODO Auto-generated destructor stub
 }
 
-bool ReaderLocator::next_requested_change(CacheChange_t* cpoin) {
+bool ReaderLocator::next_requested_change(CacheChange_t** cpoin) {
 	if(!requested_changes.empty()){
 		std::vector<CacheChange_t*>::iterator it;
 		SequenceNumber_t minseqnum = requested_changes[0]->sequenceNumber;
@@ -42,7 +43,7 @@ bool ReaderLocator::next_requested_change(CacheChange_t* cpoin) {
 		for(it=requested_changes.begin();it!=requested_changes.end();it++){
 			if(minseqnum > (*it)->sequenceNumber){
 				minseqnum = (*it)->sequenceNumber;
-				cpoin = *it;
+				*cpoin = *it;
 			}
 		}
 		return true;
@@ -50,15 +51,20 @@ bool ReaderLocator::next_requested_change(CacheChange_t* cpoin) {
 	return false;
 }
 
-bool ReaderLocator::next_unsent_change(CacheChange_t* cpoin) {
+bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin) {
 	if(!unsent_changes.empty()){
 		std::vector<CacheChange_t*>::iterator it;
+		std::vector<CacheChange_t*>::iterator it2;
 		SequenceNumber_t minseqnum = unsent_changes[0]->sequenceNumber;
+		(*cpoin) = unsent_changes[0];
+		it2 = it;
 		for(it=unsent_changes.begin();it!=unsent_changes.end();it++)
 		{
-			if(minseqnum > (*it)->sequenceNumber){
+			if(minseqnum > (*it)->sequenceNumber)
+			{
 				minseqnum = (*it)->sequenceNumber;
-				cpoin = *it;
+				(*cpoin) = *it;
+				it2 = it;
 			}
 		}
 		return true;
@@ -71,9 +77,9 @@ void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,Hist
 	requested_changes.clear();
 	for(it = seqs.begin();it!=seqs.end();it++)
 	{
-		CacheChange_t* cpoin;
-		history->get_change(*it,cpoin);
-		requested_changes.push_back(cpoin);
+		CacheChange_t** cpoin = NULL;
+		if(history->get_change(*it,cpoin))
+			requested_changes.push_back(*cpoin);
 	}
 }
 

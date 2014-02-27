@@ -12,10 +12,13 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
 
 
 #include "rtps_all.h"
@@ -33,7 +36,9 @@ public:
 	Locator_t sendLocator;
 	boost::mutex sendMutex;
 	boost::asio::io_service sendService;
-	void sendSync(CDRMessage_t msg,Locator_t loc);
+	boost::asio::ip::udp::socket send_socket;
+	void sendSync(CDRMessage_t* msg,Locator_t loc);
+
 	//void sendSync();
 };
 

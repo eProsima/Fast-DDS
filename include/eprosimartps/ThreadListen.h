@@ -12,11 +12,14 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
 
 
 #include "rtps_all.h"
@@ -43,6 +46,10 @@ public:
 	void init_thread();
 	std::vector<Locator_t> locList;
 	boost::thread* b_thread;
+	boost::asio::io_service io_service;
+	boost::asio::ip::udp::socket listen_socket;
+	//boost::asio::ip::udp::resolver resolver;
+
 
 };
 

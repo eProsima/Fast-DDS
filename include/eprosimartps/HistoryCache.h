@@ -24,6 +24,7 @@ namespace rtps {
 
 
 class RTPSWriter;
+class RTPSReader;
 
 /**
  * Class HistoryCache, container of the different CacheChanges and the methods to access them.
@@ -38,7 +39,7 @@ public:
 	 * @param change Pointer to the change.
 	 * @return True if succeedeed.
 	 */
-	bool get_change(SequenceNumber_t seqnum,CacheChange_t* change);
+	bool get_change(SequenceNumber_t seqnum,CacheChange_t** change);
 	/**
 	 * Add a change to the HistoryCache.
 	 * @param a_change The change to add.
@@ -68,7 +69,10 @@ public:
 	 */
 	SequenceNumber_t get_seq_num_max();
 	std::vector<CacheChange_t> changes;
+	int16_t historySize;
 	RTPSWriter* rtpswriter;
+	RTPSReader* rtpsreader;
+	HistoryKind_t historyKind;
 private:
 
 	SequenceNumber_t minSeqNum;

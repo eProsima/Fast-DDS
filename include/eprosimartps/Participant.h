@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 //#include <boost/asio.hpp>
@@ -34,6 +35,7 @@ namespace eprosima {
 namespace rtps {
 
 class StatelessWriter;
+class StatelessReader;
 class RTPSReader;
 class RTPSWriter;
 class Endpoint;
@@ -52,6 +54,13 @@ public:
 	 * @return True if succeeded.
 	 */
 	bool createStatelessWriter(StatelessWriter* SWriter, WriterParams_t Wparam);
+	/**
+	 * Create a StatelessReader from a parameter structure and add it to the participant.
+	 * @param SReader
+	 * @param RParam
+	 * @return
+	 */
+	bool createStatelessReader(StatelessReader* SReader,ReaderParams_t RParam);
 	//bool createStatefulWriter(StatefulWriter*);
 	//bool createStatelessReader(RTPSReader*);
 	//bool createStetefulReader(StatefulReader* Reader)

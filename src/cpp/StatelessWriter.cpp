@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *              grcanosa@gmail.com
  */
 
 #include "eprosimartps/StatelessWriter.h"
@@ -27,19 +28,22 @@ StatelessWriter::StatelessWriter() {
 }
 
 void StatelessWriter::init(WriterParams_t param) {
-	// TODO Auto-generated constructor stub
 	pushMode = param.pushMode;
 	heartbeatPeriod = param.heartbeatPeriod;
 	nackResponseDelay = param.nackResponseDelay;
 	nackSupressionDuration = param.nackSupressionDuration;
 	resendDataPeriod = param.resendDataPeriod;
-	writer_cache.changes.reserve(param.HistorySize);
+	//writer_cache.changes.reserve(param.historySize);
+	writer_cache.historySize = param.historySize;
+	writer_cache.historyKind = WRITER;
 	lastChangeSequenceNumber = 0;
 	stateType = STATELESS;
 	writer_cache.rtpswriter = (RTPSWriter*)this;
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
 	multicastLocatorList = param.multicastLocatorList;
+	reliabilityKind = param.reliabilityKind;
+	topicKind = param.topicKind;
 }
 
 
@@ -85,18 +89,27 @@ void StatelessWriter::unsent_changes_reset() {
 }
 
 void StatelessWriter::unsent_change_add(SequenceNumber_t sn) {
-	std::vector<ReaderLocator>::iterator rit;
-	CacheChange_t* cpoin;
-	writer_cache.get_change(sn,cpoin);
-	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++){
-		rit->unsent_changes.push_back(cpoin);
+	if(!reader_locator.empty())
+	{
+		std::vector<ReaderLocator>::iterator rit;
+		//Pointer to pointer;
+		CacheChange_t** cpoin = (CacheChange_t**)malloc(sizeof(CacheChange_t*));
+		if(writer_cache.get_change(sn,cpoin))
+		{
+			for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
+			{
+				rit->unsent_changes.push_back(*cpoin);
+			}
+			unsent_changes_not_empty();
+		}
+		else
+			cout << "Failed to get change" << endl;
 	}
-	unsent_changes_not_empty();
 }
 
 void StatelessWriter::unsent_changes_not_empty(){
 	std::vector<ReaderLocator>::iterator rit;
-	CacheChange_t* change = NULL;
+	CacheChange_t** change = (CacheChange_t**)malloc(sizeof(CacheChange_t*));
 	participant->threadSend.sendMutex.lock();
 	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
 	{
@@ -109,14 +122,16 @@ void StatelessWriter::unsent_changes_not_empty(){
 			DataSubM.keyFlag = false;
 			DataSubM.readerId = ENTITYID_UNKNOWN;
 			DataSubM.writerId = this->guid.entityId;
-			DataSubM.writerSN = change->sequenceNumber;
-			DataSubM.serializedPayload = change->serializedPayload;
+			DataSubM.writerSN = (*change)->sequenceNumber;
+			DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
 			CDRMessage_t msg;
 			MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM);
-			participant->threadSend.sendSync(msg,rit->locator);
+			participant->threadSend.sendSync(&msg,rit->locator);
+			rit->remove_unsent_change((*change));
 		}
 	}
 	participant->threadSend.sendMutex.unlock();
+	cout << "Finish sending unsent changes" << endl;
 }
 
 

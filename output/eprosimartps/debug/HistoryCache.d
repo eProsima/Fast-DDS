@@ -10,4 +10,6 @@
  include/eprosimartps/CDRMessageCreator.h \
  include/eprosimartps/Participant.h include/eprosimartps/ThreadListen.h \
  include/eprosimartps/ThreadSend.h include/eprosimartps/StatelessWriter.h \
- include/eprosimartps/RTPSWriter.h include/eprosimartps/ReaderLocator.h
+ include/eprosimartps/RTPSWriter.h include/eprosimartps/ReaderLocator.h \
+ include/eprosimartps/RTPSReader.h include/eprosimartps/StatelessReader.h \
+ include/eprosimartps/RTPSReader.h

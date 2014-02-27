@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #include "rtps_all.h"
@@ -40,7 +41,7 @@ public:
 	Duration_t nackResponseDelay;
 	Duration_t nackSupressionDuration;
 	SequenceNumber_t lastChangeSequenceNumber;
-	CacheChange_t new_change(ChangeKind_t changekind,SerializedPayload_t data,InstanceHandle_t handle);
+	bool new_change(ChangeKind_t changekind,SerializedPayload_t* data,InstanceHandle_t handle,CacheChange_t*change);
 	CDRMessageCreator MC;
 
 
