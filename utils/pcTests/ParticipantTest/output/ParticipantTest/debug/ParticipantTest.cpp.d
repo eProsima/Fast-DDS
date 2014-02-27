@@ -15,4 +15,6 @@
  ../../../include/eprosimartps/CDRMessageCreator.h \
  ../../../include/eprosimartps/Participant.h \
  ../../../include/eprosimartps/ReaderLocator.h \
+ ../../../include/eprosimartps/StatelessReader.h \
+ ../../../include/eprosimartps/RTPSReader.h \
  ../../../include/eprosimartps/common/colors.h

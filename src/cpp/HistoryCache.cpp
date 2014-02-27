@@ -12,11 +12,14 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 #include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/ReaderLocator.h"
 #include "eprosimartps/RTPSWriter.h"
 #include "eprosimartps/StatelessWriter.h"
+#include "eprosimartps/RTPSReader.h"
+#include "eprosimartps/StatelessReader.h"
 
 
 
@@ -32,11 +35,11 @@ HistoryCache::~HistoryCache() {
 	// TODO Auto-generated destructor stub
 }
 
-bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t* change) {
+bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t** change) {
 	std::vector<CacheChange_t>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
 		if(it->sequenceNumber == seqNum){
-			*change = *it;
+			*change = &(*it);
 			return true;
 		}
 	}
@@ -44,15 +47,32 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t* change) {
 }
 
 bool HistoryCache::add_change(CacheChange_t a_change) {
-	if(changes.size() == changes.capacity()) //History is full
+	if(changes.size() == (size_t)historySize) //History is full
 		return false;
-	changes.push_back(a_change);
-	maxSeqNum = a_change.sequenceNumber;
-	if(rtpswriter->stateType == STATELESS){
-		((StatelessWriter*)rtpswriter)->unsent_change_add(a_change.sequenceNumber);
+	//make copy of change to save
+	CacheChange_t* ch = new CacheChange_t();
+	ch->copy(&a_change);
+	if(historyKind == WRITER){
+		rtpswriter->lastChangeSequenceNumber++;
+		ch->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
 	}
-	else{
 
+
+	changes.push_back(*ch);
+	maxSeqNum = ch->sequenceNumber;
+	if(historyKind == WRITER){
+		if(rtpswriter->stateType == STATELESS){
+			((StatelessWriter*)rtpswriter)->unsent_change_add(ch->sequenceNumber);
+		}
+		else{
+
+		}
+	}
+	else if(historyKind == READER){
+		//Notify user... and maybe writer proxies
+		if(rtpsreader->stateType == STATEFUL){
+			//TODO Notify proxies
+		}
 	}
 	return true;
 }

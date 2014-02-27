@@ -125,7 +125,7 @@ typedef struct CDRMessage_t{
 	CDRMessage_t(){
 		pos = 0;
 		length = 0;
-		buffer = NULL;
+		buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
 		max_size = RTPSMESSAGE_MAX_SIZE;
 
 		msg_endian = BIGEND;

@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #include "eprosimartps/RTPSWriter.h"
@@ -29,18 +30,21 @@ RTPSWriter::~RTPSWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-CacheChange_t RTPSWriter::new_change(ChangeKind_t changeKind,
-		SerializedPayload_t data, InstanceHandle_t handle) {
+bool RTPSWriter::new_change(ChangeKind_t changeKind,
+		SerializedPayload_t* data, InstanceHandle_t handle,CacheChange_t* change) {
 
-	lastChangeSequenceNumber++;
-	CacheChange_t cache;
-	cache.kind = changeKind;
-	cache.sequenceNumber = lastChangeSequenceNumber;
-	cache.writerGUID = guid;
-	cache.instanceHandle = handle;
-	cache.serializedPayload = data;
+	if(writer_cache.changes.size()+1 >(size_t)writer_cache.historySize)
+		return false;
 
-	return cache;
+
+	change->kind = changeKind;
+	//change->sequenceNumber = lastChangeSequenceNumber;
+	change->writerGUID = guid;
+	change->instanceHandle = handle;
+	change->serializedPayload.copy(data);
+
+
+	return true;
 }
 
 } /* namespace rtps */

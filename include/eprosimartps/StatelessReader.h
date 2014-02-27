@@ -7,42 +7,33 @@
  *************************************************************************/
 
 /*
- * Endpoint.h
+ * StatelessReader.h
  *
- *  Created on: Feb 25, 2014
+ *  Created on: Feb 27, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *              grcanosa@gmail.com  	
  */
 
 #include "rtps_all.h"
+#include "RTPSReader.h"
 
-#ifndef ENDPOINT_H_
-#define ENDPOINT_H_
+#include <boost/bind.hpp>
+
+#ifndef STATELESSREADER_H_
+#define STATELESSREADER_H_
 
 namespace eprosima {
 namespace rtps {
 
-class ThreadListen;
-class Participant;
-
-/**
- * Class Endpoint, all entities of the RTPS network are a specification of this class.
- */
-class Endpoint {
+class StatelessReader: public RTPSReader {
 public:
-	Endpoint();
-	virtual ~Endpoint();
-	TopicKind_t topicKind;
-	ReliabilityKind_t reliabilityKind;
-	std::vector<Locator_t> unicastLocatorList;
-	std::vector<Locator_t> multicastLocatorList;
-	GUID_t guid;
-
-	std::vector<ThreadListen*> endpointThreadListenList;
-	Participant* participant;
+	StatelessReader();
+	virtual ~StatelessReader();
+	void init(ReaderParams_t);
 };
 
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* ENDPOINT_H_ */
+#endif /* STATELESSREADER_H_ */

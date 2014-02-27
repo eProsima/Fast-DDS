@@ -12,6 +12,7 @@
  *  Created on: Feb 26, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #include <stdio.h>
@@ -22,6 +23,7 @@
 //
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/StatelessWriter.h"
+#include "eprosimartps/StatelessReader.h"
 #include "eprosimartps/common/colors.h"
 
 #define TESTSTRLENGTH 30
@@ -79,9 +81,9 @@ int main(){
 	Participant p;
 	//CHECK PARTICIPANT
 	checkParticipant(&p);
-	StatelessWriter* SW = new StatelessWriter();
+	//cout << "After participant creation, threadListensize: " << p.threadListenList.size() << endl;
 	WriterParams_t Wparam;
-	Wparam.HistorySize = 2;
+	Wparam.historySize = 2;
 	Wparam.pushMode = true;
 	Duration_t dur;
 	dur.seconds = 1;
@@ -90,21 +92,52 @@ int main(){
 	Wparam.heartbeatPeriod = dur;
 	Wparam.nackResponseDelay = dur;
 	Wparam.nackSupressionDuration = dur;
-	cout << "Param writer created" << endl;
-	p.createStatelessWriter(SW,Wparam);
-	//Create another one, this time with a different locator list
+
 	Locator_t loc;
 	loc.kind = LOCATOR_KIND_UDPv4;
-	loc.port = 2222;
-	loc.set_IP4_address(192,168,1,74);
+	loc.port = 14244;
+	loc.set_IP4_address(127,0,0,1);
 	Wparam.unicastLocatorList.push_back(loc);
 	StatelessWriter* SW2 = new StatelessWriter();
 	p.createStatelessWriter(SW2,Wparam);
-	StatelessWriter* SW3 = new StatelessWriter();
-	p.createStatelessWriter(SW3,Wparam);
+//	StatelessWriter* SW3 = new StatelessWriter();
+//	p.createStatelessWriter(SW3,Wparam);
+
+	//Add a StatelessReader
+	ReaderParams_t Rparam;
+	Rparam.historySize = 2;
+
+	StatelessReader* SR1 = new StatelessReader();
+	p.createStatelessReader(SR1,Rparam);
+	cout << "Stateless Reader created correctly" << endl;
 
 
-	sleep(3);
+	sleep(1);
+	//Add a ReaderLocator
+	ReaderLocator RL2;
+	RL2.expectsInlineQos = false;
+	RL2.locator.kind = 1;
+	RL2.locator.port = 14244;
+	RL2.locator.set_IP4_address(127,0,0,1);
+	SW2->reader_locator_add(RL2);
+	RL2.locator.port = 14243;
+	SW2->reader_locator_add(RL2);
+	cout << "Reader LocatorS added " << endl;
+	int numbers[4] = {1,2,3,4};
+	SerializedPayload_t data;
+	data.length = 4*sizeof(int);
+	if(data.data !=NULL)
+		free(data.data);
+	data.data = (octet*)malloc(4*sizeof(int));
+	memcpy(data.data,(octet*)numbers,4*sizeof(int));
+	cout << "Before creating change" << endl;
+	//Create changes
+	CacheChange_t C21;
+	SW2->new_change(ALIVE,&data,(void*)numbers,&C21);
+	SW2->writer_cache.add_change(C21);
+
+
+	sleep(5);
 	return 0;
 
 }

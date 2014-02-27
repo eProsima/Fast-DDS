@@ -33,8 +33,14 @@ class RTPSReader : public Endpoint{
 public:
 	RTPSReader();
 	virtual ~RTPSReader();
+	StateKind_t stateType;
+	HistoryCache reader_cache;
+	bool expectsInlineQos;
+	Duration_t heartbeatResponseDelay;
+	Duration_t heartbeatSupressionDuration;
 
-
+	CDRMessageCreator MC;
+	Participant * participant;
 
 };
 

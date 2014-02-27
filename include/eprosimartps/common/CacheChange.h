@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #ifndef CACHECHANGE_H_
@@ -41,6 +42,22 @@ typedef struct CacheChange_t{
 	InstanceHandle_t instanceHandle;
 	SequenceNumber_t sequenceNumber;
 	SerializedPayload_t serializedPayload;
+	CacheChange_t(){
+
+	}
+	bool copy(CacheChange_t* ach){
+		kind = ach->kind;
+		writerGUID = ach->writerGUID;
+		instanceHandle = ach->instanceHandle;
+		sequenceNumber = ach->sequenceNumber;
+		if(serializedPayload.copy(&ach->serializedPayload))
+			return true;
+		else
+			return false;
+	}
+	~CacheChange_t(){
+
+	}
 }CacheChange_t;
 
 }

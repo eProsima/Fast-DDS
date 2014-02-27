@@ -12,6 +12,7 @@
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *      		grcanosa@gmail.com
  */
 
 #include "rtps_all.h"
@@ -37,9 +38,9 @@ public:
 	std::vector<CacheChange_t*> requested_changes;
 	std::vector<CacheChange_t*> unsent_changes;
 	//TODO Methods
-	bool next_requested_change(CacheChange_t* cpoin);
+	bool next_requested_change(CacheChange_t** cpoin);
 	bool remove_requested_change(CacheChange_t* cpoin);
-	bool next_unsent_change(CacheChange_t* cpoin);
+	bool next_unsent_change(CacheChange_t** cpoin);
 	bool remove_unsent_change(CacheChange_t* cpoin);
 	void requested_changes_set(std::vector<SequenceNumber_t> seqs,HistoryCache* history);
 };
