@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node1" href="$classeprosima_1_1rtps_1_1_endpoint.html" title="Class Endpoint, all entities of the RTPS network are a specification of this class." alt="" coords="7,32,169,61"/>
-<area shape="rect" id="node3" href="$classeprosima_1_1rtps_1_1_r_t_p_s_reader.html" title="Class RTPSReader, manages the reception of data from the writers." alt="" coords="220,5,409,35"/>
-<area shape="rect" id="node5" href="$classeprosima_1_1rtps_1_1_r_t_p_s_writer.html" title="Class RTPSWriter, manages the sending of data to the readers." alt="" coords="223,59,407,88"/>
-<area shape="rect" id="node7" href="$classeprosima_1_1rtps_1_1_stateless_writer.html" title="Class StatelessWriter, specialization of RTPSWriter that manages writers that don&#39;t keep state of the..." alt="" coords="459,59,661,88"/>
-</map>
