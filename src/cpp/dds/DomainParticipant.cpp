@@ -7,42 +7,18 @@
  *************************************************************************/
 
 /*
- * DomainParticipant.h
+ * DomainParticipant.cpp
  *
- *  Created on: Feb 26, 2014
+ *  Created on: Feb 27, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
+ *              grcanosa@gmail.com  	
  */
 
-
-#include <iostream>
-
-using namespace std;
-
-#ifndef DOMAINPARTICIPANT_H_
-#define DOMAINPARTICIPANT_H_
+#include "eprosimartps/DomainParticipant.h"
 
 namespace eprosima {
-namespace rtps {
-
-class DomainParticipant
-{
-private:
-	uint32_t id;
-    static bool instanceFlag;
-    static DomainParticipant *single;
-    DomainParticipant()
-    {
-        id = 0;//private constructor
-    }
-public:
-    static DomainParticipant* getInstance();
-    uint32_t getNewId();
-    ~DomainParticipant()
-    {
-        instanceFlag = false;
-    }
-};
+namespace dds {
 
 bool DomainParticipant::instanceFlag = false;
 DomainParticipant* DomainParticipant::single = NULL;
@@ -65,9 +41,5 @@ uint32_t DomainParticipant::getNewId()
 	return ++id;
 }
 
-
-
-} /* namespace rtps */
+} /* namespace dds */
 } /* namespace eprosima */
-
-#endif /* DOMAINPARTICIPANT_H_ */

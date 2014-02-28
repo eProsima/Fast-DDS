@@ -49,6 +49,7 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t** change) {
 bool HistoryCache::add_change(CacheChange_t a_change) {
 	if(changes.size() == (size_t)historySize) //History is full
 		return false;
+
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
 	ch->copy(&a_change);

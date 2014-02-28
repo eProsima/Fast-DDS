@@ -50,18 +50,18 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM)
 		return false;
 	}
 	SubM->SubmessageHeader.flags = 0x0;
-	for(int i=7;i>=0;i--)
+	if(SubM->endiannessFlag)
 	{
-		if(SubM->endiannessFlag)
-		{
-			SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
-			submsg->msg_endian = BIGEND;
-		}
-		else
-		{
-			submsg->msg_endian = LITTLEEND;
-		}
+		SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
+		submsg->msg_endian = BIGEND;
 	}
+	else
+	{
+		submsg->msg_endian = LITTLEEND;
+	}
+
+	SubM->SubmessageHeader.submessageLength = submsg->pos;
+	SubM->SubmessageHeader.submessageId = GAP;
 	//Once the submessage elements are added, the header is created
 	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->pos);
 	//Append Submessage elements to msg

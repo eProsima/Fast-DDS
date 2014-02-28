@@ -115,15 +115,21 @@ void StatelessWriter::unsent_changes_not_empty(){
 	{
 		while(rit->next_unsent_change(change))
 		{
+			cout << B_BLUE << "Creating message " << DEF << endl;
 			SubmsgData_t DataSubM;
 			DataSubM.dataFlag = true;
 			DataSubM.endiannessFlag = true;
-			DataSubM.inlineQosFlag = false;
+			DataSubM.inlineQosFlag = true;
 			DataSubM.keyFlag = false;
 			DataSubM.readerId = ENTITYID_UNKNOWN;
 			DataSubM.writerId = this->guid.entityId;
 			DataSubM.writerSN = (*change)->sequenceNumber;
 			DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
+			Parameter_t p1,p2;
+//			p1.create(PID_TOPIC_NAME,std::string("Nombre de topico largoxx"));
+//			DataSubM.inlineQos.push_back(p1);
+			p2.createParameterLocator(PID_UNICAST_LOCATOR,participant->defaultUnicastLocatorList[0]);
+			DataSubM.inlineQos.push_back(p2);
 			CDRMessage_t msg;
 			MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM);
 			participant->threadSend.sendSync(&msg,rit->locator);

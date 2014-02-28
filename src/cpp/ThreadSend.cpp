@@ -36,7 +36,7 @@ ThreadSend::ThreadSend() : send_socket(sendService) {
 	sendLocator.address[14] = 0;
 	sendLocator.address[15] = 1;
 
-	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string("127.0.0.1"),sendLocator.port);
+	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	send_socket.open(boost::asio::ip::udp::v4());
 	send_socket.bind(send_endpoint);
@@ -51,7 +51,8 @@ ThreadSend::~ThreadSend() {
 }
 
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc) {
-	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string("127.0.0.1"),loc.port);
+
+	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(loc.to_IP4_string()),loc.port);
 	cout <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
 	cout << YELLOW << send_socket.local_endpoint()  <<DEF <<endl;
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);

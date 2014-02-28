@@ -119,9 +119,14 @@ int main(){
 	RL2.locator.kind = 1;
 	RL2.locator.port = 14244;
 	RL2.locator.set_IP4_address(127,0,0,1);
+	cout << "IP ADDRESS: " <<
 	SW2->reader_locator_add(RL2);
-	RL2.locator.port = 14243;
-	SW2->reader_locator_add(RL2);
+	ReaderLocator RL3;
+	RL3.expectsInlineQos = false;
+	RL3.locator.kind = 1;
+	RL3.locator.port = 14244;
+	RL3.locator.set_IP4_address(192,168,1,18);
+	SW2->reader_locator_add(RL3);
 	cout << "Reader LocatorS added " << endl;
 	int numbers[4] = {1,2,3,4};
 	SerializedPayload_t data;

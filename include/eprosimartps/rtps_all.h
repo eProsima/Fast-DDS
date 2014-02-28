@@ -14,11 +14,21 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include <cstdlib>
+#include <cstring>
+#include <math.h>
+#include <vector>
+#include <iostream>
+ #include <bitset>
+ #include <string>
+#include <sstream>
+#include <stdint.h>
+#include <iomanip>
+
 #ifndef RTPS_ALL_H_
 #define RTPS_ALL_H_
 
-#include <stdint.h>
-#include <iomanip>
+
 
 /*!
  * @brief This enumeration represents endianness types.
