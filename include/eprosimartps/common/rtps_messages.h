@@ -30,7 +30,7 @@ typedef struct Header_t{
 			GuidPrefix_t guidPrefix;
 			Header_t(){
 				PROTOCOLVERSION(version);
-				VENDORID_UNKNOWN(vendorId);
+				VENDORID_EPROSIMA(vendorId);
 			}
 			~Header_t(){
 			}

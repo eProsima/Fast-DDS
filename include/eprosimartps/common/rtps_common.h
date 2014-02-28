@@ -1,0 +1,171 @@
+/*************************************************************************
+ * Copyright (c) 2013 eProsima. All rights reserved.
+ *
+ * This copy of FastCdr is licensed to you under the terms described in the
+ * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ *
+ *************************************************************************/
+
+/*
+ * $rtps_common.h
+ *
+ *  Created on: $Feb 18, 2014
+ *      Author: Gonzalo Rodriguez Canosa
+ *      		grcanosa@gmail.com
+ */
+
+
+#include <cstdlib>
+#include <cstring>
+#include <math.h>
+#include <vector>
+#include <iostream>
+ #include <bitset>
+ #include <string>
+#include <sstream>
+
+#ifndef RTPS_COMMON_H_
+#define RTPS_COMMON_H_
+
+
+namespace eprosima{
+namespace rtps{
+
+
+
+
+#include "rtps_elements.h"
+
+
+
+//!@brief Structure SerializedPayload_t.
+typedef struct SerializedPayload_t{
+	uint16_t length;
+	octet* data;
+	SerializedPayload_t(){
+		length = 0;
+		data = NULL;
+	}
+	SerializedPayload_t(short len){
+		length = len;
+		data = (octet*)malloc(length);
+	}
+	~SerializedPayload_t(){
+//		if(data!=NULL)
+//			free(data);
+	}
+	bool copy(SerializedPayload_t* serdata){
+		if(data !=NULL)
+			free(data);
+		length = serdata->length;
+		data = (octet*)malloc(length);
+		memcpy(data,serdata->data,length);
+		return true;
+	}
+}SerializedPayload_t;
+
+
+//!@brief Enum TopicKind_t.
+typedef enum TopicKind_t{
+	NO_KEY=1,
+	WITH_KEY=2
+}TopicKind_t;
+
+
+typedef uint32_t Count_t;
+
+//!Structure Time_t, used to describe times.
+typedef struct Time_t{
+	int32_t seconds;
+	uint32_t fraction;
+	int64_t to64time(){
+		return (int64_t)seconds+((int64_t)(fraction/pow(2,32)));
+	}
+}Time_t;
+
+#define TIME_ZERO(t){t.seconds=0;t.fraction=0;}
+#define TIME_INVALID(t){t.seconds=-1;t.fraction=0xffffffff;}
+#define TIME_INFINITE(t){t.seconds=0x7fffffff;t.fraction=0xffffffff;}
+
+/**
+ * Enum ReliabilityKind_t, reliability kind for reader or writer.
+ */
+typedef enum ReliabilityKind_t{
+	BEST_EFFORT,//!< BEST_EFFORT
+	RELIABLE    //!< RELIABLE
+}ReliabilityKind_t;
+
+/**
+ * Enum StateKind_t, type of Writer or reader.
+ */
+typedef enum StateKind_t{
+	STATELESS,//!< STATELESS
+	STATEFUL  //!< STATEFUL
+}StateKind_t;
+
+//!Enum HistoryKind_t, indicates whether the HistoryCache belongs to a reader or a writer
+typedef enum HistoryKind_t{
+	READER,
+	WRITER
+}HistoryKind_t;
+
+
+typedef Time_t Duration_t;
+
+/**
+ * Structure WriterParams_t, writer parameters passed on creation.
+ */
+typedef struct WriterParams_t{
+	bool pushMode;
+	Duration_t heartbeatPeriod;
+	Duration_t nackResponseDelay;
+	Duration_t nackSupressionDuration;
+	Duration_t resendDataPeriod;
+	int16_t historySize;
+	std::vector<Locator_t> unicastLocatorList;
+	std::vector<Locator_t> multicastLocatorList;
+	ReliabilityKind_t reliabilityKind;
+	TopicKind_t topicKind;
+	WriterParams_t(){
+		pushMode = true;
+		TIME_ZERO(heartbeatPeriod);
+		TIME_ZERO(nackResponseDelay);
+		TIME_ZERO(nackSupressionDuration);
+		TIME_ZERO(resendDataPeriod);
+		historySize = DEFAULT_HISTORY_SIZE;
+		unicastLocatorList.clear();
+		multicastLocatorList.clear();
+		reliabilityKind = BEST_EFFORT;
+		topicKind = NO_KEY;
+	}
+}WriterParams_t;
+
+typedef struct ReaderParams_t{
+	bool expectsInlineQos;
+	Duration_t heartbeatResponseDelay;
+	Duration_t heartbeatSupressionDuration;
+	int16_t historySize;
+	std::vector<Locator_t> unicastLocatorList;
+	std::vector<Locator_t> multicastLocatorList;
+	ReliabilityKind_t reliabilityKind;
+	TopicKind_t topicKind;
+	ReaderParams_t(){
+		expectsInlineQos = false;
+		TIME_ZERO(heartbeatResponseDelay);
+		TIME_ZERO(heartbeatSupressionDuration);
+		historySize = DEFAULT_HISTORY_SIZE;
+		unicastLocatorList.clear();
+		multicastLocatorList.clear();
+		reliabilityKind = BEST_EFFORT;
+		topicKind = NO_KEY;
+	}
+}ReaderParams_t;
+
+
+}
+}
+
+
+
+
+#endif /* RTPS_COMMON_H_ */

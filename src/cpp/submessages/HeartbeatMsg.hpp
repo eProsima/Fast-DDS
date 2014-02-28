@@ -50,23 +50,22 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartb
 		return false;
 	}
 	HBSubM->SubmessageHeader.flags = 0x0;
-	for(int i=7;i>=0;i--)
+	if(HBSubM->endiannessFlag)
 	{
-		if(HBSubM->endiannessFlag)
-		{
-			HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(0);
-			submsg->msg_endian = BIGEND;
-		}
-		else
-		{
-			submsg->msg_endian = LITTLEEND;
-		}
-		if(HBSubM->finalFlag)
-			HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(1);
-		if(HBSubM->livelinessFlag)
-			HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(2);
+		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(0);
+		submsg->msg_endian = BIGEND;
 	}
+	else
+	{
+		submsg->msg_endian = LITTLEEND;
+	}
+	if(HBSubM->finalFlag)
+		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(1);
+	if(HBSubM->livelinessFlag)
+		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(2);
 
+	HBSubM->SubmessageHeader.submessageLength = submsg->pos;
+	HBSubM->SubmessageHeader.submessageId = HEARTBEAT;
 	//Once the submessage elements are added, the header is created
 	createSubmessageHeader(msg, &HBSubM->SubmessageHeader,submsg->pos);
 	//Append Submessage elements to msg
