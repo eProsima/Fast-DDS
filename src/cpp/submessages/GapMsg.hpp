@@ -50,7 +50,7 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM)
 		return false;
 	}
 	SubM->SubmessageHeader.flags = 0x0;
-	if(SubM->endiannessFlag)
+	if(EPROSIMA_ENDIAN == BIGEND)
 	{
 		SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
 		submsg->msg_endian = BIGEND;

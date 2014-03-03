@@ -27,12 +27,12 @@ namespace eprosima {
 namespace rtps {
 
 HistoryCache::HistoryCache() {
-	// TODO Auto-generated constructor stub
+
 
 }
 
 HistoryCache::~HistoryCache() {
-	// TODO Auto-generated destructor stub
+
 }
 
 bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t** change) {
@@ -49,13 +49,14 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t** change) {
 bool HistoryCache::add_change(CacheChange_t a_change) {
 	if(changes.size() == (size_t)historySize) //History is full
 		return false;
-
+	//TODOG manage when a reader history is full
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
 	ch->copy(&a_change);
 	if(historyKind == WRITER){
 		rtpswriter->lastChangeSequenceNumber++;
 		ch->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
+		cout << "Change with seqnuM: " << ch->sequenceNumber.to64long() << endl;
 	}
 
 
@@ -63,6 +64,7 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	maxSeqNum = ch->sequenceNumber;
 	if(historyKind == WRITER){
 		if(rtpswriter->stateType == STATELESS){
+			cout << "New unsent change" << endl;
 			((StatelessWriter*)rtpswriter)->unsent_change_add(ch->sequenceNumber);
 		}
 		else{
@@ -71,8 +73,9 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	}
 	else if(historyKind == READER){
 		//Notify user... and maybe writer proxies
+		rtpsreader->Sub->newMessage();
 		if(rtpsreader->stateType == STATEFUL){
-			//TODO Notify proxies
+			//TODOG Notify proxies
 		}
 	}
 	return true;

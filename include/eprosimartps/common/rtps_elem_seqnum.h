@@ -18,6 +18,9 @@
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
 
+namespace eprosima{
+namespace rtps{
+
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
 typedef struct SequenceNumber_t{
@@ -96,6 +99,8 @@ typedef struct SequenceNumberSet_t{
 	}
 }SequenceNumberSet_t;
 
+}
+}
 
 
 

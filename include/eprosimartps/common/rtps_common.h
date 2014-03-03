@@ -32,21 +32,25 @@ namespace eprosima{
 namespace rtps{
 
 
-
-
-#include "rtps_elements.h"
-
+//Pre define data encapsulation schemes
+#define CDR_BE 0x0000
+#define CDR_LE 0x0001
+#define PL_CDR_BE 0x0002
+#define PL_CDR_LE 0x0003
 
 
 //!@brief Structure SerializedPayload_t.
 typedef struct SerializedPayload_t{
+	uint16_t encapsulation;
 	uint16_t length;
 	octet* data;
 	SerializedPayload_t(){
 		length = 0;
 		data = NULL;
+		encapsulation = CDR_BE;
 	}
 	SerializedPayload_t(short len){
+		encapsulation = CDR_BE;
 		length = len;
 		data = (octet*)malloc(length);
 	}
@@ -59,6 +63,7 @@ typedef struct SerializedPayload_t{
 			free(data);
 		length = serdata->length;
 		data = (octet*)malloc(length);
+		encapsulation = serdata->encapsulation;
 		memcpy(data,serdata->data,length);
 		return true;
 	}
@@ -126,6 +131,9 @@ typedef struct WriterParams_t{
 	std::vector<Locator_t> multicastLocatorList;
 	ReliabilityKind_t reliabilityKind;
 	TopicKind_t topicKind;
+	StateKind_t stateKind;
+	std::string topicName;
+	std::string topicDataType;
 	WriterParams_t(){
 		pushMode = true;
 		TIME_ZERO(heartbeatPeriod);
@@ -137,6 +145,7 @@ typedef struct WriterParams_t{
 		multicastLocatorList.clear();
 		reliabilityKind = BEST_EFFORT;
 		topicKind = NO_KEY;
+		stateKind = STATELESS;
 	}
 }WriterParams_t;
 
@@ -149,6 +158,9 @@ typedef struct ReaderParams_t{
 	std::vector<Locator_t> multicastLocatorList;
 	ReliabilityKind_t reliabilityKind;
 	TopicKind_t topicKind;
+	StateKind_t stateKind;
+	std::string topicName;
+	std::string topicDataType;
 	ReaderParams_t(){
 		expectsInlineQos = false;
 		TIME_ZERO(heartbeatResponseDelay);
@@ -158,6 +170,7 @@ typedef struct ReaderParams_t{
 		multicastLocatorList.clear();
 		reliabilityKind = BEST_EFFORT;
 		topicKind = NO_KEY;
+		stateKind = STATELESS;
 	}
 }ReaderParams_t;
 

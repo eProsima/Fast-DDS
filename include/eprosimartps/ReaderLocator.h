@@ -37,7 +37,6 @@ public:
 	bool expectsInlineQos;
 	std::vector<CacheChange_t*> requested_changes;
 	std::vector<CacheChange_t*> unsent_changes;
-	//TODO Methods
 	bool next_requested_change(CacheChange_t** cpoin);
 	bool remove_requested_change(CacheChange_t* cpoin);
 	bool next_unsent_change(CacheChange_t** cpoin);

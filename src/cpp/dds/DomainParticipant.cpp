@@ -16,6 +16,8 @@
  */
 
 #include "eprosimartps/DomainParticipant.h"
+#include "eprosimartps/StatelessWriter.h"
+#include "eprosimartps/StatelessReader.h"
 
 namespace eprosima {
 namespace dds {
@@ -41,5 +43,96 @@ uint32_t DomainParticipant::getNewId()
 	return ++id;
 }
 
+Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WParam)
+{
+	dds::DomainParticipant *dp;
+			dp = dds::DomainParticipant::getInstance();
+	//Look for the correct type registration
+	TypeReg_t typeR;
+	std::vector<TypeReg_t>::iterator it;
+	bool found = false;
+	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();it++)
+	{
+		if(it->dataType == WParam.topicDataType)
+		{
+			typeR = *it;
+			found = true;
+			break;
+		}
+	}
+	if(!found)
+		return NULL;
+	if(WParam.stateKind == STATELESS)
+	{
+		StatelessWriter* SW = new StatelessWriter();
+		if(!p->createStatelessWriter(SW,WParam))
+			return NULL;
+		Publisher* Pub = new Publisher((RTPSWriter*)SW);
+		SW->Pub = Pub;
+		Pub->topicName = WParam.topicName;
+		Pub->topicDataType = WParam.topicDataType;
+		Pub->type = typeR;
+
+		return Pub;
+	}
+	return NULL;
+}
+
+Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t RParam) {
+	//Look for the correct type registration
+	dds::DomainParticipant *dp;
+			dp = dds::DomainParticipant::getInstance();
+	TypeReg_t typeR;
+	std::vector<TypeReg_t>::iterator it;
+	bool found = false;
+	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();it++)
+	{
+		if(it->dataType == RParam.topicDataType)
+		{
+			typeR = *it;
+			found = true;
+			break;
+		}
+	}
+	if(!found)
+		return NULL;
+	if(RParam.stateKind == STATELESS)
+	{
+		StatelessReader* SR= new StatelessReader();
+		if(!p->createStatelessReader(SR,RParam))
+			return NULL;
+		Subscriber* Sub = new Subscriber((RTPSReader*) SR);
+		SR->Sub = Sub;
+		Sub->topicName = RParam.topicName;
+		Sub->topicDataType = RParam.topicDataType;
+		Sub->type = typeR;
+		return Sub;
+	}
+	return NULL;
+}
+
+bool DomainParticipant::registerType(std::string in_str,
+		void (*serialize)(SerializedPayload_t* data, void*),
+		void (*deserialize)(SerializedPayload_t* data, void*)) {
+	dds::DomainParticipant *dp;
+		dp = dds::DomainParticipant::getInstance();
+	std::vector<TypeReg_t>::iterator it;
+	for(it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();it++)
+	{
+		if(it->dataType == in_str)
+			return false;
+	}
+
+	TypeReg_t type;
+	type.dataType = in_str;
+	type.serialize = serialize;
+	type.deserialize = deserialize;
+	dp->typesRegistered.push_back(type);
+
+	return true;
+}
+
 } /* namespace dds */
 } /* namespace eprosima */
+
+

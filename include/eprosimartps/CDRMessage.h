@@ -38,7 +38,7 @@ public:
 	static bool readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn);
 	static bool readInt16(CDRMessage_t* msg,int16_t* i16);
 	static bool readUInt16(CDRMessage_t* msg,uint16_t* i16);
-	static bool readParameterList(CDRMessage_t* msg,ParameterList_t* list,int16_t* size);
+	//static bool readParameterList(CDRMessage_t* msg,ParameterList_t* list,int16_t* size);
 	static bool readOctet(CDRMessage_t* msg,octet* o);
 	/**
 	 * @brief Initialize CDR message with a given byte size.
@@ -116,13 +116,13 @@ public:
 	 * @return
 	 */
 	static bool addEntityId(CDRMessage_t*msg,EntityId_t* id);
-	/**
-	 *
-	 * @param msg
-	 * @param param
-	 * @return
-	 */
-	static bool addParameter(CDRMessage_t*msg,Parameter_t* param);
+//	/**
+//	 *
+//	 * @param msg
+//	 * @param param
+//	 * @return
+//	 */
+//	static bool addParameter(CDRMessage_t*msg,Parameter_t* param);
 	/**
 	 *
 	 * @param msg
@@ -138,6 +138,13 @@ public:
 	 * @return
 	 */
 	static bool addSequenceNumberSet(CDRMessage_t*msg,SequenceNumberSet_t* sns);
+	/**
+	 *
+	 * @param msg
+	 * @param loc
+	 * @return
+	 */
+	static bool addLocator(CDRMessage_t*msg,Locator_t*loc);
 
 };
 

@@ -16,6 +16,7 @@
  */
 
 #include "eprosimartps/Subscriber.h"
+#include "eprosimartps/RTPSReader.h"
 
 namespace eprosima {
 namespace dds {
@@ -25,9 +26,24 @@ Subscriber::Subscriber() {
 
 }
 
+Subscriber::Subscriber(RTPSReader* Rin) {
+	R = Rin;
+}
+
+
 Subscriber::~Subscriber() {
 	// TODO Auto-generated destructor stub
 }
 
+void Subscriber::read(void**) {
+}
+
+void Subscriber::take(void**) {
+}
+
+void Subscriber::newMessage() {
+}
+
 } /* namespace dds */
 } /* namespace eprosima */
+

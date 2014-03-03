@@ -49,7 +49,7 @@ bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,SubmsgAcknack_
 		return false;
 	}
 	SubM->SubmessageHeader.flags = 0x0;
-	if(SubM->endiannessFlag)
+	if(EPROSIMA_ENDIAN == BIGEND)
 	{
 		SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
 		submsg->msg_endian = BIGEND;

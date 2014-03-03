@@ -71,7 +71,6 @@ typedef struct SubmsgData_t{
 	EntityId_t readerId;
 	EntityId_t writerId;
 	SequenceNumber_t writerSN;
-	std::vector<Parameter_t> inlineQos;
 	SerializedPayload_t serializedPayload;
 }SubmsgData_t;
 

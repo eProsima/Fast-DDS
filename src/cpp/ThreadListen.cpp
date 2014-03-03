@@ -19,6 +19,7 @@
 
 #include "eprosimartps/RTPSWriter.h"
 #include "eprosimartps/RTPSReader.h"
+#include "eprosimartps/Participant.h"
 
 using boost::asio::ip::udp;
 
@@ -60,15 +61,22 @@ ThreadListen::~ThreadListen() {
 void ThreadListen::listen() {
 	//Initialize socket
 	boost::asio::ip::udp::endpoint sender_endpoint;
-		while(1){
-			cout << RED << "Thread: " << b_thread->get_id() << " listening in IP: " << DEF ;
-					 cout << RED << listen_socket.local_endpoint() << DEF <<endl;
-			CDRMessage_t msg;
-			std::size_t lengthbytes = listen_socket.receive_from(boost::asio::buffer((void*)msg.buffer, msg.max_size), sender_endpoint);
-			msg.length = lengthbytes;
-			cout << RED << "Message received of length: " << msg.length << " from endpoint: " << sender_endpoint << DEF << endl;
-		}
-
+	while(1){
+		cout << RED << "Thread: " << b_thread->get_id() << " listening in IP: " << DEF ;
+		cout << RED << listen_socket.local_endpoint() << DEF <<endl;
+		CDRMessage_t msg;
+		std::size_t lengthbytes = listen_socket.receive_from(boost::asio::buffer((void*)msg.buffer, msg.max_size), sender_endpoint);
+		msg.length = lengthbytes;
+		cout << RED << "Message received of length: " << msg.length << " from endpoint: " << sender_endpoint << DEF << endl;
+		//Get addrress
+		Locator_t send_loc;
+		send_loc.port = sender_endpoint.port();
+		LOCATOR_ADDRESS_INVALID(send_loc.address);
+		for(int i=0;i<4;i++)
+			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
+		MR.reset();
+		MR.processMsg(participant->guid.guidPrefix,send_loc.address,msg.buffer,lengthbytes);
+	}
 }
 
 void ThreadListen::init_thread() {

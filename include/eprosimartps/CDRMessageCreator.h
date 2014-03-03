@@ -15,6 +15,7 @@
  */
 
 #include "rtps_all.h"
+//#include "RTPSWriter.h"
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
@@ -23,6 +24,8 @@
 
 namespace eprosima {
 namespace rtps{
+
+class RTPSWriter;
 
 /**
  * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
@@ -60,14 +63,14 @@ public:
 	 * @param DataSubM Data submessage structure
 	 * @return
 	 */
-	bool createMessageData(CDRMessage_t* msg,GuidPrefix_t guidprefix,SubmsgData_t* DataSubM);
+	bool createMessageData(CDRMessage_t* msg,GuidPrefix_t guidprefix,SubmsgData_t* DataSubM,RTPSWriter* W);
 	/**
 	 * @brief This function creates a CDR submessage representation for the Data Submessage.
 	 * @param submsg pointer to the submessage
 	 * @param DataSubM  pointer to the submessage structure
 	 * @return true if everything is correct.
 	 */
-	bool createSubmessageData(CDRMessage_t* submsg,SubmsgData_t* DataSubM);
+	bool createSubmessageData(CDRMessage_t* submsg,SubmsgData_t* DataSubM,RTPSWriter* W);
 
 	/**
 	 * Create a Heartbeat message.

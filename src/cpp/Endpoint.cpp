@@ -20,12 +20,12 @@ namespace eprosima {
 namespace rtps {
 
 Endpoint::Endpoint() {
-	// TODO Auto-generated constructor stub
+
 
 }
 
 Endpoint::~Endpoint() {
-	// TODO Auto-generated destructor stub
+
 }
 
 } /* namespace rtps */
