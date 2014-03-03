@@ -18,6 +18,9 @@
 #ifndef RTPS_ELEM_LOCATOR_H_
 #define RTPS_ELEM_LOCATOR_H_
 
+namespace eprosima{
+namespace rtps{
+
 
 
 #define LOCATOR_INVALID(loc)  {loc.kind=LOCATOR_KIND_INVALID;loc.port= LOCATOR_PORT_INVALID;LOCATOR_ADDRESS_INVALID(loc.address);}
@@ -64,6 +67,9 @@ typedef struct Locator_t{
 } Locator_t;
 
 
+
+}
+}
 
 
 

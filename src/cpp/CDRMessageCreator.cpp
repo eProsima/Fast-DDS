@@ -16,6 +16,7 @@
 
 #include "eprosimartps/CDRMessageCreator.h"
 #include "eprosimartps/CDRMessage.h"
+#include "eprosimartps/RTPSWriter.h"
 
 namespace eprosima {
 namespace rtps{

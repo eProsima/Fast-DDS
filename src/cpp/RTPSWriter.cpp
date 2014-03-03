@@ -18,6 +18,8 @@
 #include "eprosimartps/RTPSWriter.h"
 #include "eprosimartps/HistoryCache.h"
 
+#include "eprosimartps/Publisher.h"
+
 namespace eprosima {
 namespace rtps {
 

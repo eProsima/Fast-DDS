@@ -76,6 +76,7 @@ public:
 	ThreadSend threadSend;
 
 private:
+
 	uint32_t IdCounter;
 	std::vector<RTPSWriter*> writerList;
 	std::vector<RTPSReader*> readerList;

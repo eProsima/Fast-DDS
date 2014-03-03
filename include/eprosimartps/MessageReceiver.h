@@ -76,7 +76,7 @@ private:
 	bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
 
 
-	bool readSubmessageData(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool readSubmessageData(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last,SubmsgData_t* SubmsgData);
 	bool readSubmessageHeartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool readSubmessageGap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool readSubmessageAcknak(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);

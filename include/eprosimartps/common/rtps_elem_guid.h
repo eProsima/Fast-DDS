@@ -18,6 +18,10 @@
 #ifndef RTPS_GUID_H_
 #define RTPS_GUID_H_
 
+namespace eprosima{
+namespace rtps{
+
+
 
 #define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<=12;i++) g.value[i]=0x0;}
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
@@ -129,6 +133,8 @@ typedef octet VendorId_t[2];
 
 #define PROTOCOL_RTPS "RTPS"
 
+}
+}
 
 
 #endif /* RTPS_GUID_H_ */

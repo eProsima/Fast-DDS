@@ -20,10 +20,15 @@
 #include "CDRMessageCreator.h"
 #include "Participant.h"
 
+#include "Subscriber.h"
+
 #ifndef RTPSREADER_H_
 #define RTPSREADER_H_
 
+
+using namespace eprosima::dds;
 namespace eprosima {
+
 namespace rtps {
 
 /**
@@ -41,6 +46,7 @@ public:
 
 	CDRMessageCreator MC;
 	Participant * participant;
+	Subscriber* Sub;
 
 };
 

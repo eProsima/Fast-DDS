@@ -31,6 +31,7 @@ public:
 	StatelessReader();
 	virtual ~StatelessReader();
 	void init(ReaderParams_t);
+
 };
 
 } /* namespace rtps */

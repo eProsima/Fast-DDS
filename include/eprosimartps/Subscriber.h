@@ -15,19 +15,54 @@
  *              grcanosa@gmail.com  	
  */
 
+#include <iostream>
+
 #include "rtps_all.h"
+#include <boost/signals2.hpp>
 
 
 #ifndef SUBSCRIBER_H_
 #define SUBSCRIBER_H_
 
 namespace eprosima {
+
+namespace rtps{
+class RTPSReader;
+}
+
+using namespace rtps;
+
 namespace dds {
 
 class Subscriber {
+	friend class DomainParticipant;
 public:
 	Subscriber();
+	Subscriber(RTPSReader* Rin);
 	virtual ~Subscriber();
+
+	const std::string& getTopicDataType() const {
+		return topicDataType;
+	}
+
+	const std::string& getTopicName() const {
+		return topicName;
+	}
+
+	void read(void**);
+	void take(void**);
+
+	void newMessage();
+
+	ParameterList ParamList;
+private:
+	RTPSReader* R;
+	//bool initialized;
+	std::string topicName;
+	std::string topicDataType;
+	TypeReg_t type;
+	boost::signals2::signal<void()> msg_signal;
+
 };
 
 } /* namespace dds */

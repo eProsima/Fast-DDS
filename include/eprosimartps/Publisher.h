@@ -23,27 +23,48 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
+
+
 namespace eprosima {
+
+namespace rtps{
+class RTPSWriter;
+}
+
+using namespace rtps;
+
 namespace dds {
 
+
+
 class Publisher {
+	friend class DomainParticipant;
 public:
 	Publisher();
+	Publisher(RTPSWriter* Win);
 	virtual ~Publisher();
 
 	const std::string& getTopicName() const {
 		return topicName;
 	}
 
-	void setTopicName(const std::string& topicName) {
-		if(!initialized)
-			this->topicName = topicName;
+	const std::string& getTopicDataType() const {
+		return topicDataType;
 	}
+	bool write(void*Data);
 
+	//Since there is no discovery:
+	bool addReaderLocator(Locator_t Loc,bool expectsInlineQos);
+
+
+	ParameterList ParamList;
 private:
-	bool initialized;
+	RTPSWriter* W;
+	//bool initialized;
 	std::string topicName;
 	std::string topicDataType;
+	TypeReg_t type;
+
 
 };
 

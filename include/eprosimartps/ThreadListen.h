@@ -24,6 +24,7 @@
 
 #include "rtps_all.h"
 
+#include "MessageReceiver.h"
 
 
 
@@ -35,6 +36,7 @@ namespace rtps {
 
 class RTPSReader;
 class RTPSWriter;
+class Participant;
 
 class ThreadListen {
 public:
@@ -42,12 +44,14 @@ public:
 	virtual ~ThreadListen();
 	std::vector<RTPSWriter*> assoc_writers;
 	std::vector<RTPSReader*> assoc_readers;
+	Participant* participant;
 	void listen();
 	void init_thread();
 	std::vector<Locator_t> locList;
 	boost::thread* b_thread;
 	boost::asio::io_service io_service;
 	boost::asio::ip::udp::socket listen_socket;
+	MessageReceiver MR;
 	//boost::asio::ip::udp::resolver resolver;
 
 

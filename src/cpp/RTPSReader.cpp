@@ -17,6 +17,8 @@
 #include "eprosimartps/RTPSReader.h"
 #include "eprosimartps/HistoryCache.h"
 
+#include "eprosimartps/Subscriber.h"
+
 namespace eprosima {
 namespace rtps {
 

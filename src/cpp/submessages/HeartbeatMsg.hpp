@@ -50,7 +50,7 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartb
 		return false;
 	}
 	HBSubM->SubmessageHeader.flags = 0x0;
-	if(HBSubM->endiannessFlag)
+	if(EPROSIMA_ENDIAN == BIGEND)
 	{
 		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(0);
 		submsg->msg_endian = BIGEND;

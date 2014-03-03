@@ -37,6 +37,7 @@ void StatelessWriter::init(WriterParams_t param) {
 	writer_cache.historySize = param.historySize;
 	writer_cache.historyKind = WRITER;
 	lastChangeSequenceNumber = 0;
+	heartbeatCount = 0;
 	stateType = STATELESS;
 	writer_cache.rtpswriter = (RTPSWriter*)this;
 	//locator lists:
@@ -105,6 +106,8 @@ void StatelessWriter::unsent_change_add(SequenceNumber_t sn) {
 		else
 			cout << "Failed to get change" << endl;
 	}
+	else
+		cout << "No reader locator" << endl;
 }
 
 void StatelessWriter::unsent_changes_not_empty(){
@@ -115,25 +118,45 @@ void StatelessWriter::unsent_changes_not_empty(){
 	{
 		while(rit->next_unsent_change(change))
 		{
-			cout << B_BLUE << "Creating message " << DEF << endl;
-			SubmsgData_t DataSubM;
-			DataSubM.dataFlag = true;
-			DataSubM.endiannessFlag = true;
-			DataSubM.inlineQosFlag = true;
-			DataSubM.keyFlag = false;
-			DataSubM.readerId = ENTITYID_UNKNOWN;
-			DataSubM.writerId = this->guid.entityId;
-			DataSubM.writerSN = (*change)->sequenceNumber;
-			DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
-			Parameter_t p1,p2;
-//			p1.create(PID_TOPIC_NAME,std::string("Nombre de topico largoxx"));
-//			DataSubM.inlineQos.push_back(p1);
-			p2.createParameterLocator(PID_UNICAST_LOCATOR,participant->defaultUnicastLocatorList[0]);
-			DataSubM.inlineQos.push_back(p2);
-			CDRMessage_t msg;
-			MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM);
-			participant->threadSend.sendSync(&msg,rit->locator);
-			rit->remove_unsent_change((*change));
+			cout << B_BLUE << "Creating message ";
+
+			if(pushMode)
+			{
+				cout << " Data" << endl;
+				//FIXME: creation of a message with each reader locator. Fix this.
+				SubmsgData_t DataSubM;
+				DataSubM.inlineQosFlag = rit->expectsInlineQos;
+				DataSubM.keyFlag = false; //ERROR: Preguntar que pasa con esto.
+				DataSubM.dataFlag = true;
+				DataSubM.readerId = ENTITYID_UNKNOWN;
+				DataSubM.writerId = this->guid.entityId;
+				DataSubM.writerSN = (*change)->sequenceNumber;
+				DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
+				//cout << "Mandando mensaje con seqnum: " << (*change)->sequenceNumber.to64long() << endl;
+				CDRMessage_t msg;
+				MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM,(RTPSWriter*)this);
+				cout << "Before sending message " << endl;
+				participant->threadSend.sendSync(&msg,rit->locator);
+				rit->remove_unsent_change((*change));
+			}
+			else
+			{
+				cout << " Heartbeat" << endl;
+				//FIXME: Send Heartbeats indicating new data
+				SubmsgHeartbeat_t HBSubM;
+				HBSubM.finalFlag = true;
+				HBSubM.livelinessFlag = false; //TODOG: esto es asi?
+				HBSubM.readerId = ENTITYID_UNKNOWN;
+				HBSubM.writerId = this->guid.entityId;
+				HBSubM.firstSN = writer_cache.get_seq_num_min();
+				HBSubM.lastSN = writer_cache.get_seq_num_max();
+				heartbeatCount++;
+				HBSubM.count = heartbeatCount;
+				CDRMessage_t msg;
+				MC.createMessageHeartbeat(&msg,participant->guid.guidPrefix,&HBSubM);
+				participant->threadSend.sendSync(&msg,rit->locator);
+				rit->remove_unsent_change((*change));
+			}
 		}
 	}
 	participant->threadSend.sendMutex.unlock();

@@ -15,8 +15,11 @@
  *              grcanosa@gmail.com  	
  */
 
+
 #ifndef RTPS_ELEM_PARAMETER_H_
 #define RTPS_ELEM_PARAMETER_H_
+
+
 
 
 typedef short ParameterId_t;
@@ -104,49 +107,6 @@ typedef struct Parameter_t{
 		value= (octet*)malloc(len);
 		return true;
 	}
-	bool create(ParameterId_t id,std::string str){
-		switch(id){
-		case PID_TOPIC_NAME:
-		case PID_TYPE_NAME:
-		{
-			parameterId = id;
-			length = str.size();
-			int rest = length%4;
-			cout << "length, rest " << length << " " << rest << endl;
-			if(value!=NULL)
-				free(value);
-			if(rest!=0){
-				value = (octet*)malloc(length+4-rest);
-				memset(value+length,'\0',4-rest);
-				length+=(4-rest);
-				memcpy(value,str.c_str(),length);
-			}
-			else{
-				value = (octet*)malloc(length);
-				memcpy(value,str.c_str(),length);
-			}
-			return true;
-			break;
-		}
-		default:
-			break;
-		}
-		return false;
-	}
-	bool createParameterLocator(ParameterId_t Pid, Locator_t loc){
-		parameterId = Pid;
-		length = 24;
-		octet* o;
-		o =(octet*)&(loc.kind);
-		value = (octet*)malloc(length);
-		value[0] = o[0];value[1] = o[1];value[2] = o[2];value[3] = o[3];
-		o = (octet*)&(loc.port);
-		value[4] = o[0];value[5] = o[1];value[6] = o[2];value[7] = o[3];
-		for(int i=0;i<16;i++)
-		 value[8+i] = loc.address[i];
-		return true;
-	}
-
 }Parameter_t;
 
 
@@ -155,9 +115,72 @@ class ParameterCreator{
 public:
 	static bool createParameterLocator(Parameter_t* p,ParameterId_t pid, Locator_t loc)
 	{
-
+		if(pid == PID_UNICAST_LOCATOR || pid == PID_MULTICAST_LOCATOR ||
+				pid == PID_DEFAULT_UNICAST_LOCATOR || pid == PID_DEFAULT_MULTICAST_LOCATOR ||
+				pid == PID_METATRAFFIC_UNICAST_LOCATOR || PID_METATRAFFIC_MULTICAST_LOCATOR)
+		{
+			if (p == NULL)
+				return false;
+			p->parameterId = pid;
+			p->length = 24;
+			octet* o;
+			o =(octet*)&(loc.kind);
+			if(p->value !=NULL)
+				free(p->value);
+			p->value = (octet*)malloc(p->length);
+			p->value[0] = o[0];p->value[1] = o[1];p->value[2] = o[2];p->value[3] = o[3];
+			o = (octet*)&(loc.port);
+			p->value[4] = o[0];p->value[5] = o[1];p->value[6] = o[2];p->value[7] = o[3];
+			for(int i=0;i<16;i++)
+				p->value[8+i] = loc.address[i];
+			return true;
+		}
+		return false;
 	}
-	static bool
+	static bool createParameterString(Parameter_t* p,ParameterId_t pid, std::string in_str)
+	{
+		if(pid == PID_TOPIC_NAME || pid == PID_TYPE_NAME )
+		{
+			if(p == NULL)
+				return false;
+			p->parameterId = pid;
+			int siz = in_str.size();
+			int rest = siz%4;
+			if(p->value != NULL)
+				free(p->value);
+			if(rest != 0)
+			{
+				p->value = (octet*)malloc(siz+4-rest);
+				memcpy(p->value,in_str.c_str(),siz);
+				memset(p->value+siz,'\0',4-rest);
+				p->length = siz + 4-rest;
+			}
+			else
+			{
+				p->value = (octet*)malloc(siz);
+				memcpy(p->value,in_str.c_str(),siz);
+				p->length = siz;
+			}
+			return true;
+		}
+		return false;
+	}
+	static bool createParameterPort(Parameter_t* p,ParameterId_t pid, int32_t port)
+	{
+		if(pid == PID_DEFAULT_UNICAST_PORT || pid == PID_METATRAFFIC_UNICAST_PORT ||
+				pid == PID_METATRAFFIC_MULTICAST_PORT)
+		{
+			if(p == NULL)
+				return false;
+			p->parameterId = pid;
+			p->length = 4;
+			if(p->value != NULL)
+				free(p->value);
+			p->value = (octet*)malloc(4);
+
+		}
+		return false;
+	}
 };
 
 typedef std::vector<Parameter_t> ParameterList_t;
