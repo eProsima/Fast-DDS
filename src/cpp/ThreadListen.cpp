@@ -73,14 +73,24 @@ void ThreadListen::listen() {
 		send_loc.port = sender_endpoint.port();
 		LOCATOR_ADDRESS_INVALID(send_loc.address);
 		for(int i=0;i<4;i++)
+		{
 			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
+			cout << (int)send_loc.address[i+12] << ".";
+		}
+		cout << endl;
+		cout << "Before processing the message" << endl;
 		MR.reset();
-		MR.processMsg(participant->guid.guidPrefix,send_loc.address,msg.buffer,lengthbytes);
+		cout << "reset exit ok";
+		cout << " length: " << msg.length << endl;
+		MR.processMsg(participant->guid.guidPrefix,send_loc,msg.buffer,msg.length);
+		cout << "Message processed " << endl;
 	}
 }
 
 void ThreadListen::init_thread() {
 	if(!locList.empty()){
+		MR.reset();
+		cout << "message receiver reseted " << endl;
 		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),locList[0].port);
 		listen_socket.open(boost::asio::ip::udp::v4());
 		listen_socket.bind(listen_endpoint);
