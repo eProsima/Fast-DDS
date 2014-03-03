@@ -17,6 +17,7 @@
 #define RTPS_MESSAGES_H_
 
 #include <vector>
+#include <iostream>
 
 
 
@@ -25,16 +26,27 @@ namespace rtps{
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
 typedef struct Header_t{
-			ProtocolVersion_t version;
-			VendorId_t vendorId;;
-			GuidPrefix_t guidPrefix;
-			Header_t(){
-				PROTOCOLVERSION(version);
-				VENDORID_EPROSIMA(vendorId);
-			}
-			~Header_t(){
-			}
+	ProtocolVersion_t version;
+	VendorId_t vendorId;;
+	GuidPrefix_t guidPrefix;
+	Header_t(){
+		PROTOCOLVERSION(version);
+		VENDORID_EPROSIMA(vendorId);
+	}
+	~Header_t(){
+	}
+	void print(){
+		cout << "RTPS HEADER of Version: " << (int)version.major << "." << (int)version.minor;
+		cout << "  || VendorId: " << (int)vendorId[0] << "." <<(int)vendorId[1] << endl;
+		cout << "GuidPrefix: ";
+		for(int i =0;i<12;i++)
+			cout << (int)guidPrefix.value[i] << ".";
+		cout << endl;
+	}
 }Header_t;
+
+
+
 
 // //!@brief Enumeration of the different Submessages types
 #define	PAD 0x01
@@ -53,11 +65,18 @@ typedef struct Header_t{
 
 
 //!@brief Structure SubmessageHeader_t.
-typedef struct{
+typedef struct SubmessageHeader_t{
 	octet submessageId;
 	uint16_t submessageLength;
 	SubmessageFlag flags;
+	void print (){
+		cout << "Submessage Header, ID: " << (int)submessageId;
+		cout << " length: " << (int)submessageLength << " flags " << hex << flags <<dec<< endl;
+	}
+
 }SubmessageHeader_t;
+
+
 
 // SUBMESSAGE types definition
 

@@ -41,8 +41,7 @@ public:
 	 * @param length Length of the message in bytes.
 	 */
 	void processMsg(GuidPrefix_t participantguidprefix,
-					octet*address,
-			         const void*data, short length);
+					Locator_t loc, void*data, short length);
 
 
 
