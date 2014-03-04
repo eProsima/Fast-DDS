@@ -14,6 +14,11 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+
 #include "rtps_all.h"
 #include "HistoryCache.h"
 #include "Endpoint.h"
@@ -45,8 +50,10 @@ public:
 	Duration_t heartbeatSupressionDuration;
 
 	CDRMessageCreator MC;
-	Participant * participant;
+	Participant* participant;
 	Subscriber* Sub;
+	boost::interprocess::interprocess_semaphore* newMessageSemaphore;
+	void (*newMessageCallback)();
 
 };
 

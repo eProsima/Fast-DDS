@@ -38,21 +38,19 @@ Publisher::~Publisher() {
 
 bool Publisher::write(void* Data) {
 	//Convert data to serialized Payload
-	cout << "Trying to write new data" << endl;
+	cout << "Writing New Data" << endl;
 	SerializedPayload_t Payload;
 	type.serialize(&Payload,Data);
-	cout << "Serialization OK" << endl;
 	//create new change
 	CacheChange_t change;
 	if(!W->new_change(ALIVE,&Payload,Data,&change))
 	{
-		cout << "falla new change" << endl;
+		cout<< B_RED << "New Change creation failed"<< DEF << endl;
 		return false;
 	}
-	cout << "New change creado con seqnum: " << change.sequenceNumber.to64long() << endl;
 	if(!W->writer_cache.add_change(change))
 	{
-		cout << "falla add change" << endl;
+		cout << B_RED << "Add change failed" << DEF << endl;
 		return false;
 	}
 	return true;
@@ -63,6 +61,7 @@ bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 	ReaderLocator RL;
 	RL.expectsInlineQos = expectsInlineQos;
 	RL.locator = Loc;
+	cout << "Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl;
 	if(W->stateType==STATELESS)
 		((StatelessWriter*)W)->reader_locator_add(RL);
 	//TODOG add proxy

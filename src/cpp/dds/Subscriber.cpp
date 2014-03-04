@@ -28,6 +28,8 @@ Subscriber::Subscriber() {
 
 Subscriber::Subscriber(RTPSReader* Rin) {
 	R = Rin;
+	R->newMessageCallback = NULL;
+	R->newMessageSemaphore = new boost::interprocess::interprocess_semaphore(0);
 }
 
 
@@ -41,9 +43,15 @@ void Subscriber::read(void**) {
 void Subscriber::take(void**) {
 }
 
-void Subscriber::newMessage() {
+void Subscriber::blockUntilNewMessage(){
+	R->newMessageSemaphore->wait();
+}
+
+void Subscriber::assignNewMessageCallback(void (*fun)()) {
+	R->newMessageCallback = fun;
 }
 
 } /* namespace dds */
 } /* namespace eprosima */
+
 

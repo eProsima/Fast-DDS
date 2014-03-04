@@ -25,11 +25,15 @@ namespace rtps {
 RTPSReader::RTPSReader() {
 	// TODO Auto-generated constructor stub
 
+
 }
 
 RTPSReader::~RTPSReader() {
 	// TODO Auto-generated destructor stub
 }
 
+
 } /* namespace rtps */
 } /* namespace eprosima */
+
+

@@ -34,18 +34,11 @@ RTPSWriter::~RTPSWriter() {
 
 bool RTPSWriter::new_change(ChangeKind_t changeKind,
 		SerializedPayload_t* data, InstanceHandle_t handle,CacheChange_t* change) {
-
-	if(writer_cache.changes.size()+1 >(size_t)writer_cache.historySize)
-		return false;
-
-
 	change->kind = changeKind;
 	//change->sequenceNumber = lastChangeSequenceNumber;
 	change->writerGUID = guid;
 	change->instanceHandle = handle;
 	change->serializedPayload.copy(data);
-
-
 	return true;
 }
 

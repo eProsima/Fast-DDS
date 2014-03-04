@@ -118,12 +118,8 @@ void StatelessWriter::unsent_changes_not_empty(){
 	{
 		while(rit->next_unsent_change(change))
 		{
-			cout << B_BLUE << "Creating message ";
-
 			if(pushMode)
 			{
-				cout << " Data" << endl;
-				//FIXME: creation of a message with each reader locator. Fix this.
 				SubmsgData_t DataSubM;
 				DataSubM.inlineQosFlag = rit->expectsInlineQos;
 				DataSubM.keyFlag = false; //ERROR: Preguntar que pasa con esto.
@@ -135,13 +131,11 @@ void StatelessWriter::unsent_changes_not_empty(){
 				//cout << "Mandando mensaje con seqnum: " << (*change)->sequenceNumber.to64long() << endl;
 				CDRMessage_t msg;
 				MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM,(RTPSWriter*)this);
-				cout << "Before sending message " << endl;
 				participant->threadSend.sendSync(&msg,rit->locator);
 				rit->remove_unsent_change((*change));
 			}
 			else
 			{
-				cout << " Heartbeat" << endl;
 				//FIXME: Send Heartbeats indicating new data
 				SubmsgHeartbeat_t HBSubM;
 				HBSubM.finalFlag = true;
