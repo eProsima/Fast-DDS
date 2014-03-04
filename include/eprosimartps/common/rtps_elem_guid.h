@@ -32,10 +32,13 @@ typedef struct GuidPrefix_t{
 		for(uint8_t i =0;i<12;i++)
 			value[i] = guid[i];
 	}
-	GuidPrefix_t operator=(GuidPrefix_t guid){
+	GuidPrefix_t operator=(GuidPrefix_t guidpre){
+
 		for(uint8_t i =0;i<12;i++)
-			value[i] = guid.value[i];
-		return guid;
+		{
+			value[i] = guidpre.value[i];
+		}
+		return guidpre;
 	}
 	bool operator==(GuidPrefix_t guid2){
 		for(uint8_t i =0;i<12;i++)

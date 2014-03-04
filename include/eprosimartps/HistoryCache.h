@@ -14,6 +14,9 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include <boost/thread/mutex.hpp>
+
+
 #include "rtps_all.h"
 
 #ifndef HISTORYCACHE_H_
@@ -73,6 +76,7 @@ public:
 	RTPSWriter* rtpswriter;
 	RTPSReader* rtpsreader;
 	HistoryKind_t historyKind;
+	boost::mutex historyMutex;
 private:
 
 	SequenceNumber_t minSeqNum;

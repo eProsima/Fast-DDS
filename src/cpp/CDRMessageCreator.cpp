@@ -66,7 +66,7 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, Header_t* header) {
 		msg->length = msg->pos;
 	}
 	catch(int e){
-		cout << B_RED << "FALLO MORTAL HEADER"<< endl;
+		cout << B_RED << "Header creation fails"<<DEF<< endl;
 						return false;
 	}
 

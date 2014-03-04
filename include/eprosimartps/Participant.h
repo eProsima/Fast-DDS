@@ -20,6 +20,10 @@
 //#include <boost/thread.hpp>
 
 #include <unistd.h>
+#include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "rtps_all.h"
 
@@ -44,6 +48,8 @@ class Endpoint;
  * Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
  */
 class Participant {
+	friend class ThreadSend;
+	friend class ThreadListen;
 public:
 	Participant();
 	virtual ~Participant();
@@ -76,7 +82,7 @@ public:
 	ThreadSend threadSend;
 
 private:
-
+	boost::interprocess::interprocess_semaphore* endpointToListenThreadSemaphore;
 	uint32_t IdCounter;
 	std::vector<RTPSWriter*> writerList;
 	std::vector<RTPSReader*> readerList;

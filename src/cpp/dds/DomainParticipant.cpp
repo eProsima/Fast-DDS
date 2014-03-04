@@ -45,8 +45,9 @@ uint32_t DomainParticipant::getNewId()
 
 Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WParam)
 {
+	cout << "Creating Publisher " << endl;
 	dds::DomainParticipant *dp;
-			dp = dds::DomainParticipant::getInstance();
+	dp = dds::DomainParticipant::getInstance();
 	//Look for the correct type registration
 	TypeReg_t typeR;
 	std::vector<TypeReg_t>::iterator it;

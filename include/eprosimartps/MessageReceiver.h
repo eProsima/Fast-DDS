@@ -25,6 +25,8 @@
 namespace eprosima {
 namespace rtps {
 
+class ThreadListen;
+
 /**
  * Class MessageReceiver, process the received messages.
  */
@@ -40,10 +42,10 @@ public:
 	 * @param data Pointer to data.
 	 * @param length Length of the message in bytes.
 	 */
-	void processMsg(GuidPrefix_t participantguidprefix,
+	void processCDRMsg(GuidPrefix_t participantguidprefix,
 					Locator_t loc, void*data, short length);
 
-
+	ThreadListen* threadListen_ptr;
 
 private:
 	CDRMessage_t msg;
@@ -67,6 +69,11 @@ private:
 	 */
 	bool readHeader(CDRMessage_t* msg, Header_t*H);
 	/**
+	 * Process a correctly received Header.
+	 * @param H
+	 */
+	void processHeader(Header_t*H);
+	/**
 	 * Read the submessage header.
 	 * @param msg Pointer to the message.
 	 * @param smh Pointer to the structure where the data should be saved.
@@ -76,6 +83,7 @@ private:
 
 
 	bool readSubmessageData(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last,SubmsgData_t* SubmsgData);
+	void processSubmessageData(SubmsgData_t* SubmsgData);
 	bool readSubmessageHeartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool readSubmessageGap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool readSubmessageAcknak(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
@@ -84,6 +92,7 @@ private:
 	bool readSubmessageInfoSource(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool readSubmessageInfoTimestamp(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool readSubmessageInfoReply(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+
 
 
 

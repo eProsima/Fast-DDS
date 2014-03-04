@@ -19,6 +19,7 @@
 
 #include "rtps_all.h"
 #include <boost/signals2.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 
 #ifndef SUBSCRIBER_H_
@@ -36,6 +37,7 @@ namespace dds {
 
 class Subscriber {
 	friend class DomainParticipant;
+	friend class RTPSReader;
 public:
 	Subscriber();
 	Subscriber(RTPSReader* Rin);
@@ -49,19 +51,27 @@ public:
 		return topicName;
 	}
 
+	void blockUntilNewMessage();
+
+	void assignNewMessageCallback(void(*fun)());
+
 	void read(void**);
 	void take(void**);
 
-	void newMessage();
+//	void processMsgs();
+//
+//	void blockUntilNewMessage();
 
 	ParameterList ParamList;
 private:
+
 	RTPSReader* R;
 	//bool initialized;
 	std::string topicName;
 	std::string topicDataType;
 	TypeReg_t type;
-	boost::signals2::signal<void()> msg_signal;
+
+	//boost::signals2::signal<void()> msg_signal;
 
 };
 

@@ -36,19 +36,23 @@ HistoryCache::~HistoryCache() {
 }
 
 bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t** change) {
+	historyMutex.lock();
 	std::vector<CacheChange_t>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
 		if(it->sequenceNumber == seqNum){
 			*change = &(*it);
+			historyMutex.unlock();
 			return true;
 		}
 	}
+	historyMutex.unlock();
 	return false;
 }
 
 bool HistoryCache::add_change(CacheChange_t a_change) {
 	if(changes.size() == (size_t)historySize) //History is full
 		return false;
+	historyMutex.lock();
 	//TODOG manage when a reader history is full
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
@@ -56,28 +60,37 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	if(historyKind == WRITER){
 		rtpswriter->lastChangeSequenceNumber++;
 		ch->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
-		cout << "Change with seqnuM: " << ch->sequenceNumber.to64long() << endl;
 	}
-
-
 	changes.push_back(*ch);
 	maxSeqNum = ch->sequenceNumber;
-	if(historyKind == WRITER){
-		if(rtpswriter->stateType == STATELESS){
-			cout << "New unsent change" << endl;
+	historyMutex.unlock();
+	//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED
+
+	if(historyKind == WRITER)
+	{
+		if(rtpswriter->stateType == STATELESS)
+		{
 			((StatelessWriter*)rtpswriter)->unsent_change_add(ch->sequenceNumber);
 		}
-		else{
+		else
+		{
 
 		}
 	}
-	else if(historyKind == READER){
+	else if(historyKind == READER)
+	{
 		//Notify user... and maybe writer proxies
-		rtpsreader->Sub->newMessage();
-		if(rtpsreader->stateType == STATEFUL){
+		if(rtpsreader->newMessageCallback !=NULL)
+			rtpsreader->newMessageCallback();
+		else
+			rtpsreader->newMessageSemaphore->post();
+
+		if(rtpsreader->stateType == STATEFUL)
+		{
 			//TODOG Notify proxies
 		}
 	}
+
 	return true;
 }
 
@@ -86,15 +99,17 @@ bool HistoryCache::remove_change(CacheChange_t a_change) {
 }
 
 bool HistoryCache::remove_change(SequenceNumber_t seqnum) {
-
+	historyMutex.lock();
 	std::vector<CacheChange_t>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
 		if(it->sequenceNumber == seqnum){
 			changes.erase(it);
 			updateMaxMinSeqNum();
+			historyMutex.unlock();
 			return true;
 		}
 	}
+	historyMutex.unlock();
 	return false;
 }
 
@@ -109,6 +124,7 @@ SequenceNumber_t HistoryCache::get_seq_num_max() {
 }
 
 void HistoryCache::updateMaxMinSeqNum() {
+	historyMutex.lock();
 	std::vector<CacheChange_t>::iterator it;
 	maxSeqNum = minSeqNum = changes[0].sequenceNumber;
 	for(it = changes.begin();it!=changes.end();it++){
@@ -117,6 +133,8 @@ void HistoryCache::updateMaxMinSeqNum() {
 		if(it->sequenceNumber < minSeqNum)
 			minSeqNum = it->sequenceNumber;
 	}
+	historyMutex.unlock();
+	return;
 }
 
 } /* namespace rtps */

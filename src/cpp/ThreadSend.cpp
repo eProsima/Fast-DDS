@@ -40,8 +40,8 @@ ThreadSend::ThreadSend() : send_socket(sendService) {
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	send_socket.open(boost::asio::ip::udp::v4());
 	send_socket.bind(send_endpoint);
-	cout << YELLOW<<"Sending through address " << send_socket.local_endpoint() << endl;
-	cout << "Socket state: " << send_socket.is_open() << DEF << endl;
+	cout << YELLOW<<"Sending through default address " << send_socket.local_endpoint();
+	cout << " Socket state: " << send_socket.is_open() << DEF << endl;
 	//boost::asio::io_service::work work(sendService);
 }
 
@@ -54,9 +54,9 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc) {
 
 	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(loc.to_IP4_string()),loc.port);
 	cout <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
-	cout << YELLOW << send_socket.local_endpoint()  <<DEF <<endl;
+	cout << YELLOW << send_socket.local_endpoint()  << " ....  ";
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
-	cout <<YELLOW <<  "Mandado mensaje de longitud: " << longitud << DEF << endl;
+	cout <<YELLOW <<  "SENT " << longitud << DEF << endl;
 }
 
 
