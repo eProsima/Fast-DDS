@@ -91,6 +91,12 @@ typedef struct SubmsgData_t{
 	EntityId_t writerId;
 	SequenceNumber_t writerSN;
 	SerializedPayload_t serializedPayload;
+	void print(){
+		cout << "DATA SubMsg,flags: E: " << endiannessFlag << " I: " << inlineQosFlag << " D: " << dataFlag << " K: " << keyFlag << endl;
+		cout << "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3];
+		cout << " || writerId: " << (int)writerId.value[0] << "." << (int)writerId.value[1] << "." << (int)writerId.value[2] << "." << (int)writerId.value[3] << endl;
+		cout << "SeqNum: " << writerSN.to64long() << " Payload: enc: " << serializedPayload.encapsulation << " length: " << serializedPayload.length << endl;
+	}
 }SubmsgData_t;
 
 //!@brief Structure SubmsgHeartbeat_t, contains the information necessary to create a Heartbeat Submessage.
