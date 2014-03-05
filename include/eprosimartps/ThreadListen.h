@@ -52,6 +52,7 @@ public:
 	boost::asio::io_service io_service;
 	boost::asio::ip::udp::socket listen_socket;
 	MessageReceiver MR;
+	bool first;
 	//boost::asio::ip::udp::resolver resolver;
 
 

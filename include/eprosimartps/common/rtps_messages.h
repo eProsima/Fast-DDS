@@ -18,7 +18,7 @@
 
 #include <vector>
 #include <iostream>
-
+#include <bitset>
 
 
 namespace eprosima{
@@ -71,7 +71,7 @@ typedef struct SubmessageHeader_t{
 	SubmessageFlag flags;
 	void print (){
 		cout << "Submessage Header, ID: " << (int)submessageId;
-		cout << " length: " << (int)submessageLength << " flags " << hex << flags <<dec<< endl;
+		cout << " length: " << (int)submessageLength << " flags " << (bitset<8>) flags << endl;
 	}
 
 }SubmessageHeader_t;

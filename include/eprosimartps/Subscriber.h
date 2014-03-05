@@ -55,16 +55,44 @@ public:
 
 	void assignNewMessageCallback(void(*fun)());
 
-	void read(void**);
-	void take(void**);
+	/**
+	 * Read all unread data.
+	 * @param changes
+	 * @return
+	 */
+	bool readAllUnread(std::vector<void*>* data);
+	/**
+	 * Read a specific data, based on its Sequence Number.
+	 * @param sn
+	 * @param ch
+	 * @return
+	 */
+	bool readSeqNum(SequenceNumber_t sn,void* data);
+	/**
+	 * Read the older unread change (lowest SequenceNumber).
+	 * @param ch
+	 * @return
+	 */
+	bool readOlderUnread(void* data);
+	/**
+	 * Take the older read change.
+	 * @return
+	 */
+	bool takeOlderRead();
+	/**
+	 * Take all read changes.
+	 * @return
+	 */
+	bool takeAllRead();
 
 //	void processMsgs();
 //
 //	void blockUntilNewMessage();
 
 	ParameterList ParamList;
-private:
 
+private:
+	std::vector<SequenceNumber_t> readCacheChanges;
 	RTPSReader* R;
 	//bool initialized;
 	std::string topicName;
