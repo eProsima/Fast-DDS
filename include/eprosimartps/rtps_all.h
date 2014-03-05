@@ -86,10 +86,13 @@ using namespace std;
 #include "common/rtps_elem_seqnum.h"
 #include "common/rtps_elem_locator.h"
 #include "common/rtps_common.h"
-#include "common/rtps_messages.h"
+
+//#include "ParameterList.h"
+
+
 #include "common/rtps_error_codes.h"
 #include "common/CacheChange.h"
-#include "ParameterList.h"
+
 
 namespace eprosima{
 

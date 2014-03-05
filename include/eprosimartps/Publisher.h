@@ -18,7 +18,8 @@
 #include <iostream>
 
 #include "rtps_all.h"
-
+#include "ParameterList.h"
+#include "common/rtps_messages.h"
 
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_

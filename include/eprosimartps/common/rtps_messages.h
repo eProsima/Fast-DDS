@@ -20,6 +20,7 @@
 #include <iostream>
 #include <bitset>
 
+#include "../ParameterList.h"
 
 namespace eprosima{
 namespace rtps{
@@ -91,10 +92,12 @@ typedef struct SubmsgData_t{
 	EntityId_t writerId;
 	SequenceNumber_t writerSN;
 	SerializedPayload_t serializedPayload;
+	ParameterList inlineQos;
 	void print(){
 		cout << "DATA SubMsg,flags: E: " << endiannessFlag << " I: " << inlineQosFlag << " D: " << dataFlag << " K: " << keyFlag << endl;
 		cout << "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3];
 		cout << " || writerId: " << (int)writerId.value[0] << "." << (int)writerId.value[1] << "." << (int)writerId.value[2] << "." << (int)writerId.value[3] << endl;
+		cout << "InlineQos: " << inlineQos.params.size() << " parameters." << endl;
 		cout << "SeqNum: " << writerSN.to64long() << " Payload: enc: " << serializedPayload.encapsulation << " length: " << serializedPayload.length << endl;
 	}
 }SubmsgData_t;
@@ -140,39 +143,6 @@ typedef struct{
 	Time_t timestamp;
 }SubmsgInfoTS_t;
 
-
-
-/**
- * @brief Structure CDRMessage_t, contains a serialized message.
- */
-typedef struct CDRMessage_t{
-	CDRMessage_t(){
-		pos = 0;
-		length = 0;
-		buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
-		max_size = RTPSMESSAGE_MAX_SIZE;
-
-		msg_endian = BIGEND;
-	}
-	~CDRMessage_t(){
-		if(buffer != NULL)
-			free(buffer);
-	}
-	CDRMessage_t(CDRMessage_t& msg){
-		pos = msg.pos;
-		length = msg.length;
-		max_size = msg.max_size;
-		msg_endian = msg.msg_endian;
-		if(buffer !=NULL)
-			free(buffer);
-		buffer=(octet*)malloc(msg.length);
-	}
-	octet* buffer;
-	uint16_t pos; //current w_pos in bytes
-	uint16_t max_size; // max size of buffer in bytes
-	uint16_t length;
-	Endianness_t msg_endian;
-}CDRMessage_t;
 
 
 

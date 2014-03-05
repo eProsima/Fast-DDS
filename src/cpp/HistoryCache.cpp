@@ -59,10 +59,6 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
 	ch->copy(&a_change);
-	cout << "Comprobando datos: ";
-	for(int i=0;i<10;i++)
-		cout<< ch->serializedPayload.data[i] << ".";
-	cout << endl;
 	if(historyKind == WRITER){
 		rtpswriter->lastChangeSequenceNumber++;
 		ch->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
@@ -152,13 +148,13 @@ void HistoryCache::updateMaxMinSeqNum() {
 	{
 		std::vector<CacheChange_t*>::iterator it;
 		maxSeqNum = minSeqNum = changes[0]->sequenceNumber;
-		cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
+		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
 		for(it = changes.begin();it!=changes.end();it++){
 			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
 				maxSeqNum = (*it)->sequenceNumber;
 			if((*it)->sequenceNumber.to64long() < minSeqNum.to64long())
 				minSeqNum = (*it)->sequenceNumber;
-			cout << "New: " << (*it)->sequenceNumber.to64long() << " Max: " << maxSeqNum.to64long() << " Min: " << minSeqNum.to64long() << endl;
+			//cout << "New: " << (*it)->sequenceNumber.to64long() << " Max: " << maxSeqNum.to64long() << " Min: " << minSeqNum.to64long() << endl;
 		}
 	}
 	return;

@@ -32,6 +32,43 @@ namespace eprosima{
 namespace rtps{
 
 
+
+/**
+ * @brief Structure CDRMessage_t, contains a serialized message.
+ */
+typedef struct CDRMessage_t{
+	CDRMessage_t(){
+		pos = 0;
+		length = 0;
+		buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
+		max_size = RTPSMESSAGE_MAX_SIZE;
+
+		msg_endian = BIGEND;
+	}
+	~CDRMessage_t(){
+		if(buffer != NULL)
+			free(buffer);
+	}
+	CDRMessage_t(CDRMessage_t& msg){
+		pos = msg.pos;
+		length = msg.length;
+		max_size = msg.max_size;
+		msg_endian = msg.msg_endian;
+		if(buffer !=NULL)
+			free(buffer);
+		buffer=(octet*)malloc(msg.length);
+	}
+	octet* buffer;
+	uint16_t pos; //current w_pos in bytes
+	uint16_t max_size; // max size of buffer in bytes
+	uint16_t length;
+	Endianness_t msg_endian;
+}CDRMessage_t;
+
+
+
+
+
 //Pre define data encapsulation schemes
 #define CDR_BE 0x0000
 #define CDR_LE 0x0001

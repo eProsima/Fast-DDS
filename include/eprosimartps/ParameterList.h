@@ -24,10 +24,10 @@
 
 #include "rtps_all.h"
 
-using namespace eprosima::rtps;
+//using namespace eprosima::rtps;
 
 namespace eprosima {
-namespace dds {
+namespace rtps {
 
 //Parameter Types
 #define PID_PAD 0x0000
@@ -85,16 +85,17 @@ namespace dds {
 #define PID_STATUS_INFO 0x0071
 
 
-typedef short ParameterId_t;
+typedef uint16_t ParameterId_t;
 
 class Parameter_t{
 public:
 	ParameterId_t Pid;
+	uint16_t length;
 };
 
 class ParameterLocator_t:public Parameter_t{
 public:
-	rtps::Locator_t locator;
+	Locator_t locator;
 };
 
 class ParameterString_t:public Parameter_t{
@@ -117,6 +118,7 @@ public:
 	bool addParameterString(ParameterId_t pid,std::string in_str);
 	bool addParameterPort(ParameterId_t pid,uint32_t port);
 	bool updateMsg();
+	bool assignParamList(CDRMessage_t* msg,uint32_t* size);
 };
 
 } /* namespace dds */
