@@ -114,7 +114,8 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t R
 
 bool DomainParticipant::registerType(std::string in_str,
 		void (*serialize)(SerializedPayload_t* data, void*),
-		void (*deserialize)(SerializedPayload_t* data, void*)) {
+		void (*deserialize)(SerializedPayload_t* data, void*),
+		int32_t size) {
 	dds::DomainParticipant *dp;
 		dp = dds::DomainParticipant::getInstance();
 	std::vector<TypeReg_t>::iterator it;
@@ -128,6 +129,7 @@ bool DomainParticipant::registerType(std::string in_str,
 	type.dataType = in_str;
 	type.serialize = serialize;
 	type.deserialize = deserialize;
+	type.byte_size = size;
 	dp->typesRegistered.push_back(type);
 
 	return true;

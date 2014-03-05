@@ -71,7 +71,7 @@ public:
 	 * @return
 	 */
 	SequenceNumber_t get_seq_num_max();
-	std::vector<CacheChange_t> changes;
+	std::vector<CacheChange_t*> changes;
 	int16_t historySize;
 	RTPSWriter* rtpswriter;
 	RTPSReader* rtpsreader;

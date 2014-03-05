@@ -58,9 +58,9 @@ bool StatelessWriter::reader_locator_add(ReaderLocator a_locator) {
 		if(rit->locator == a_locator.locator)
 			return false;
 	}
-	std::vector<CacheChange_t>::iterator it;
+	std::vector<CacheChange_t*>::iterator it;
 	for(it = writer_cache.changes.begin();it!=writer_cache.changes.end();it++){
-		a_locator.unsent_changes.push_back(&(*it));
+		a_locator.unsent_changes.push_back((*it));
 	}
 	reader_locator.push_back(a_locator);
 	return true;
@@ -79,11 +79,11 @@ bool StatelessWriter::reader_locator_remove(Locator_t locator) {
 
 void StatelessWriter::unsent_changes_reset() {
 	std::vector<ReaderLocator>::iterator rit;
-	std::vector<CacheChange_t>::iterator cit;
+	std::vector<CacheChange_t*>::iterator cit;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++){
 		rit->unsent_changes.clear();
 		for(cit=writer_cache.changes.begin();cit!=writer_cache.changes.end();cit++){
-			rit->unsent_changes.push_back(&(*cit));
+			rit->unsent_changes.push_back((*cit));
 		}
 	}
 	unsent_changes_not_empty();

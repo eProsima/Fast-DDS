@@ -46,7 +46,7 @@ public:
     static Publisher* createPublisher(Participant* p,WriterParams_t WParam);
     static Subscriber* createSubscriber(Participant* p,ReaderParams_t RParam);
     static bool registerType(std::string in_str, void (*serialize)(SerializedPayload_t*data,void*)
-    		,void (*deserialize)(SerializedPayload_t*data,void*));
+    		,void (*deserialize)(SerializedPayload_t*data,void*),int32_t size);
 
 
     static DomainParticipant* getInstance();
