@@ -32,7 +32,7 @@ typedef struct SequenceNumber_t{
 	}
 	//!Convert the number to 64 bit.
 	uint64_t to64long(){
-		return ((uint64_t)high *(uint64_t)pow(2,32) + (uint64_t)low);
+		return ((uint64_t)high *(uint64_t)pow(2.0,32) + (uint64_t)low);
 	}
 	//!Compares two SequenceNumber_t.
 	bool operator==(SequenceNumber_t sn){
@@ -42,15 +42,15 @@ typedef struct SequenceNumber_t{
 			return false;
 		return true;
 	}
-	//!Assign 64 bit number to sequencenumber.
-	SequenceNumber_t operator=(uint64_t ui){
-		low = ui % (int64_t)pow(2,32);
-		high = (ui-low)/pow(2,32);
-		return *this;
-	}
+	////!Assign 64 bit number to sequencenumber.
+	//SequenceNumber_t operator=(uint64_t ui){
+	//	low = ui % (int32_t)pow(2.0,32);
+	//	high = (int32_t)((ui-low)/pow(2.0,32));
+	//	return *this;
+	//}
 	//!Increase SequenceNumber in 1.
 	SequenceNumber_t operator++(int){
-		if(low == pow(2,32))
+		if(low == pow(2.0,32))
 			{high++;low = 0;}
 		else
 			low++;

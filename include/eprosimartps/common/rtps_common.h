@@ -121,7 +121,7 @@ typedef struct Time_t{
 	int32_t seconds;
 	uint32_t fraction;
 	int64_t to64time(){
-		return (int64_t)seconds+((int64_t)(fraction/pow(2,32)));
+		return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
 	}
 }Time_t;
 

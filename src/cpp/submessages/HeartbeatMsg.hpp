@@ -29,7 +29,9 @@ bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t gu
 		CDRMessage::appendMsg(msg, &submsg);
 		msg->length = msg->pos;
 	}
-	catch(int e){
+	catch(int e)
+	{
+		cout << " Message creator fails: " << e << DEF<< endl;
 		return false;
 	}
 	return true;
@@ -46,7 +48,9 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartb
 		CDRMessage::addSequenceNumber(submsg,&HBSubM->lastSN);
 		CDRMessage::addInt32(submsg,HBSubM->count);
 	}
-	catch(int t){
+	catch(int t)
+	{
+		cout << " Message creator fails: " << t << DEF<< endl;
 		return false;
 	}
 	HBSubM->SubmessageHeader.flags = 0x0;
