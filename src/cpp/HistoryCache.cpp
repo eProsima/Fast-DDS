@@ -27,6 +27,10 @@ namespace eprosima {
 namespace rtps {
 
 HistoryCache::HistoryCache() {
+	SEQUENCENUMBER_UNKOWN(minSeqNum);
+	SEQUENCENUMBER_UNKOWN(maxSeqNum);
+	GUID_UNKNOWN(minSeqNumGuid);
+	GUID_UNKNOWN(maxSeqNumGuid);
 
 
 }
@@ -35,12 +39,14 @@ HistoryCache::~HistoryCache() {
 
 }
 
-bool HistoryCache::get_change(SequenceNumber_t seqNum,CacheChange_t** change) {
+bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** change) {
 	historyMutex.lock();
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
-		if((*it)->sequenceNumber == seqNum){
-			*change = (*it);
+		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
+				(*it)->writerGUID == writerGuid)
+		{
+			(*change)->copy(*it);
 			historyMutex.unlock();
 			return true;
 		}
@@ -81,6 +87,7 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 		updateMaxMinSeqNum();
 	}
 	maxSeqNum = ch->sequenceNumber;
+	maxSeqNumGuid = ch->writerGUID;
 	historyMutex.unlock();
 	//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED
 
@@ -88,7 +95,7 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	{
 		if(rtpswriter->stateType == STATELESS)
 		{
-			((StatelessWriter*)rtpswriter)->unsent_change_add(ch->sequenceNumber);
+			((StatelessWriter*)rtpswriter)->unsent_change_add(ch);
 		}
 		else
 		{
@@ -120,10 +127,9 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum) {
 	historyMutex.lock();
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
-		if((*it)->sequenceNumber == seqnum){
-			changes.erase(it);
-			updateMaxMinSeqNum();
+		if((*it)->sequenceNumber.to64long() == seqnum.to64long()){
 			delete (*it);
+			changes.erase(it);
 			updateMaxMinSeqNum();
 			historyMutex.unlock();
 			return true;
@@ -135,12 +141,18 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum) {
 
 
 
-SequenceNumber_t HistoryCache::get_seq_num_min() {
-	return minSeqNum;
+bool HistoryCache::get_seq_num_min(SequenceNumber_t* seqnum,GUID_t* guid)
+{
+	*seqnum = minSeqNum;
+	*guid = minSeqNumGuid;
+	return true;
 }
 
-SequenceNumber_t HistoryCache::get_seq_num_max() {
-	return maxSeqNum;
+bool HistoryCache::get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid)
+{
+	*seqnum = maxSeqNum;
+	*guid = maxSeqNumGuid;
+	return true;
 }
 
 void HistoryCache::updateMaxMinSeqNum() {
@@ -148,13 +160,19 @@ void HistoryCache::updateMaxMinSeqNum() {
 	{
 		std::vector<CacheChange_t*>::iterator it;
 		maxSeqNum = minSeqNum = changes[0]->sequenceNumber;
+		maxSeqNumGuid = minSeqNumGuid = changes[0]->writerGUID;
 		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
 		for(it = changes.begin();it!=changes.end();it++){
 			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
+			{
 				maxSeqNum = (*it)->sequenceNumber;
+				maxSeqNumGuid = (*it)->writerGUID;
+			}
 			if((*it)->sequenceNumber.to64long() < minSeqNum.to64long())
+			{
 				minSeqNum = (*it)->sequenceNumber;
-			//cout << "New: " << (*it)->sequenceNumber.to64long() << " Max: " << maxSeqNum.to64long() << " Min: " << minSeqNum.to64long() << endl;
+				minSeqNumGuid = (*it)->writerGUID;
+			}
 		}
 	}
 	return;

@@ -41,7 +41,7 @@ public:
 	bool remove_requested_change(CacheChange_t* cpoin);
 	bool next_unsent_change(CacheChange_t** cpoin);
 	bool remove_unsent_change(CacheChange_t* cpoin);
-	void requested_changes_set(std::vector<SequenceNumber_t> seqs,HistoryCache* history);
+	void requested_changes_set(std::vector<SequenceNumber_t> seqs,GUID_t myGUI,HistoryCache* history);
 };
 
 } /* namespace rtps */

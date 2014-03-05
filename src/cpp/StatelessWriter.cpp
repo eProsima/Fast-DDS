@@ -89,22 +89,37 @@ void StatelessWriter::unsent_changes_reset() {
 	unsent_changes_not_empty();
 }
 
-void StatelessWriter::unsent_change_add(SequenceNumber_t sn) {
+//void StatelessWriter::unsent_change_add(SequenceNumber_t sn) {
+//	if(!reader_locator.empty())
+//	{
+//		std::vector<ReaderLocator>::iterator rit;
+//		//Pointer to pointer;
+//		CacheChange_t** cpoin = (CacheChange_t**)malloc(sizeof(CacheChange_t*));
+//		if(writer_cache.get_change(sn,cpoin))
+//		{
+//			for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
+//			{
+//				rit->unsent_changes.push_back(*cpoin);
+//			}
+//			unsent_changes_not_empty();
+//		}
+//		else
+//			cout << "Failed to get change" << endl;
+//	}
+//	else
+//		cout << "No reader locator" << endl;
+//}
+
+void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
+{
 	if(!reader_locator.empty())
 	{
 		std::vector<ReaderLocator>::iterator rit;
-		//Pointer to pointer;
-		CacheChange_t** cpoin = (CacheChange_t**)malloc(sizeof(CacheChange_t*));
-		if(writer_cache.get_change(sn,cpoin))
+		for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
 		{
-			for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
-			{
-				rit->unsent_changes.push_back(*cpoin);
-			}
-			unsent_changes_not_empty();
+			rit->unsent_changes.push_back(cptr);
 		}
-		else
-			cout << "Failed to get change" << endl;
+		unsent_changes_not_empty();
 	}
 	else
 		cout << "No reader locator" << endl;
@@ -142,8 +157,8 @@ void StatelessWriter::unsent_changes_not_empty(){
 				HBSubM.livelinessFlag = false; //TODOG: esto es asi?
 				HBSubM.readerId = ENTITYID_UNKNOWN;
 				HBSubM.writerId = this->guid.entityId;
-				HBSubM.firstSN = writer_cache.get_seq_num_min();
-				HBSubM.lastSN = writer_cache.get_seq_num_max();
+				writer_cache.get_seq_num_min(&HBSubM.firstSN,NULL);
+				writer_cache.get_seq_num_max(&HBSubM.lastSN,NULL);
 				heartbeatCount++;
 				HBSubM.count = heartbeatCount;
 				CDRMessage_t msg;

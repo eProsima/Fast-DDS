@@ -42,7 +42,7 @@ public:
 	 * @param change Pointer to the change.
 	 * @return True if succeedeed.
 	 */
-	bool get_change(SequenceNumber_t seqnum,CacheChange_t** change);
+	bool get_change(SequenceNumber_t seqnum,GUID_t writerGuid,CacheChange_t** change);
 	/**
 	 * Add a change to the HistoryCache.
 	 * @param a_change The change to add.
@@ -65,12 +65,12 @@ public:
 	 * Get the minimum sequence number in the HistoryCache.
 	 * @return
 	 */
-	SequenceNumber_t get_seq_num_min();
+	bool get_seq_num_min(SequenceNumber_t* seqnum,GUID_t* guid);
 	/**
 	 * Get the maximum sequence number in the HistoryCache.
 	 * @return
 	 */
-	SequenceNumber_t get_seq_num_max();
+	bool get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid);
 	std::vector<CacheChange_t*> changes;
 	int16_t historySize;
 	RTPSWriter* rtpswriter;
@@ -80,7 +80,9 @@ public:
 private:
 
 	SequenceNumber_t minSeqNum;
+	GUID_t minSeqNumGuid;
 	SequenceNumber_t maxSeqNum;
+	GUID_t maxSeqNumGuid;
 	/**
 	 * Update the max and min sequence number after a change in the cache changes.
 	 */

@@ -72,13 +72,13 @@ bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin) {
 	return false;
 }
 
-void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,HistoryCache* history) {
+void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,GUID_t myGUID,HistoryCache* history) {
 	std::vector<SequenceNumber_t>::iterator it;
 	requested_changes.clear();
 	for(it = seqs.begin();it!=seqs.end();it++)
 	{
 		CacheChange_t** cpoin = NULL;
-		if(history->get_change(*it,cpoin))
+		if(history->get_change(*it,myGUID,cpoin))
 			requested_changes.push_back(*cpoin);
 	}
 }

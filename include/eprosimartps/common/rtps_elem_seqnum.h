@@ -82,7 +82,7 @@ typedef struct SequenceNumber_t{
 	}
 } SequenceNumber_t;
 
-#define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0}
+#define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0;}
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 typedef struct SequenceNumberSet_t{
