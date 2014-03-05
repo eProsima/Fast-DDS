@@ -38,6 +38,11 @@ using namespace rtps;
 
 namespace dds {
 
+typedef struct ReadElement_t{
+	SequenceNumber_t seqNum;
+	GUID_t writerGuid;
+}ReadElement_t;
+
 class Subscriber {
 	friend class DomainParticipant;
 	friend class RTPSReader;
@@ -88,13 +93,22 @@ public:
 	 */
 	bool takeAllRead();
 
-//	void processMsgs();
-//
-//	void blockUntilNewMessage();
+	bool isCacheRead(SequenceNumber_t,GUID_t guid);
+
+	bool readMinSeqUnread(void* data_ptr);
+	bool readElement(ReadElement_t r_elem,void* data_ptr);
+	bool readAllUnread(std::vector<void*> data_vec);
+	bool takeMinSeqRead(void* data_ptr);
+
 
 	ParameterList ParamList;
+	bool isHistoryFull();
+	int getReadElements_n();
+	int getHistory_n();
+
 
 private:
+	std::vector<ReadElement_t> readElements;
 	std::vector<SequenceNumber_t> readCacheChanges;
 	RTPSReader* R;
 	//bool initialized;

@@ -39,7 +39,8 @@ public:
 	bool reader_locator_add(ReaderLocator locator);
 	bool reader_locator_remove(Locator_t locator);
 	void unsent_changes_reset();
-	void unsent_change_add(SequenceNumber_t sn);
+	//void unsent_change_add(SequenceNumber_t sn);
+	void unsent_change_add(CacheChange_t* p);
 	void unsent_changes_not_empty();
 };
 
