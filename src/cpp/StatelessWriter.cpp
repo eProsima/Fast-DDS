@@ -36,7 +36,8 @@ void StatelessWriter::init(WriterParams_t param) {
 	//writer_cache.changes.reserve(param.historySize);
 	writer_cache.historySize = param.historySize;
 	writer_cache.historyKind = WRITER;
-	lastChangeSequenceNumber = 0;
+	lastChangeSequenceNumber.high= 0;
+	lastChangeSequenceNumber.low = 0;
 	heartbeatCount = 0;
 	stateType = STATELESS;
 	writer_cache.rtpswriter = (RTPSWriter*)this;

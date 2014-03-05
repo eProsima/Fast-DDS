@@ -19,7 +19,16 @@
 //#include <boost/thread/mutex.hpp>
 //#include <boost/thread.hpp>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
+#if defined(_WIN32)
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
+
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>

@@ -29,7 +29,9 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 		CDRMessage::appendMsg(msg, &submsg);
 		msg->length = msg->pos;
 	}
-	catch(int e){
+	catch(int e)
+	{
+		cout << " Message creator fails: " << e << DEF<< endl;
 		return false;
 	}
 	return true;
@@ -45,7 +47,9 @@ bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,SubmsgAcknack_
 		CDRMessage::addSequenceNumberSet(submsg,&SubM->readerSNState);
 		CDRMessage::addInt32(submsg,SubM->count);
 	}
-	catch(int t){
+	catch(int e)
+	{
+		cout << " Message creator fails: " << e << DEF<< endl;
 		return false;
 	}
 	SubM->SubmessageHeader.flags = 0x0;

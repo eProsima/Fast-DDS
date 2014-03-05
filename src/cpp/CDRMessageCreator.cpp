@@ -65,9 +65,10 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, Header_t* header) {
 		}
 		msg->length = msg->pos;
 	}
-	catch(int e){
-		cout << B_RED << "Header creation fails"<<DEF<< endl;
-						return false;
+	catch(int e)
+	{
+		cout << B_RED << "Header creation fails: "<< e << DEF<< endl;
+		return false;
 	}
 
 	return true;
@@ -83,7 +84,7 @@ bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 		msg->length = msg->pos;
 	}
 	catch(int e){
-		cout << B_RED << "FALLO MORTAL SUBMSGHEADER" << DEF << endl;
+		cout << B_RED << "FALLO MORTAL SUBMSGHEADER"<< e << DEF<< endl;
 		return false;
 	}
 
