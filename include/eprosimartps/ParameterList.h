@@ -114,6 +114,7 @@ public:
 	virtual ~ParameterList();
 	std::vector<Parameter_t*> params;
 	CDRMessage_t ParamsMsg;
+	bool has_changed;
 	bool addParameterLocator(ParameterId_t pid,rtps::Locator_t loc);
 	bool addParameterString(ParameterId_t pid,std::string in_str);
 	bool addParameterPort(ParameterId_t pid,uint32_t port);

@@ -42,7 +42,7 @@ typedef enum
 	LITTLEEND = 0x0
 } Endianness_t;
 
-#define EPROSIMA_ENDIAN LITTLEEND
+#define EPROSIMA_ENDIAN LITTLEEND //ERROR CAMBIAR A LITTLEEND
 
 #define RTPSMESSAGE_MAX_SIZE 2048  //max size of ftps message in bytes
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
