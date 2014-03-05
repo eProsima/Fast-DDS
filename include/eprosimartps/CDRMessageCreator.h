@@ -15,6 +15,8 @@
  */
 
 #include "rtps_all.h"
+#include "ParameterList.h"
+#include "common/rtps_messages.h"
 //#include "RTPSWriter.h"
 
 #ifndef CDRMESSAGECREATOR_H_
