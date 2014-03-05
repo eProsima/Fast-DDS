@@ -35,4 +35,8 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
 Debug
+Release
+lib
+output
