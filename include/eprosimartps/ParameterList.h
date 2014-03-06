@@ -122,7 +122,7 @@ public:
 	bool assignParamList(CDRMessage_t* msg,uint32_t* size);
 };
 
-} /* namespace dds */
+} /* namespace rtps */
 } /* namespace eprosima */
 
 #endif /* PARAMETERLIST_H_ */

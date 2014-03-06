@@ -26,7 +26,7 @@ namespace rtps{
 #define LOCATOR_INVALID(loc)  {loc.kind=LOCATOR_KIND_INVALID;loc.port= LOCATOR_PORT_INVALID;LOCATOR_ADDRESS_INVALID(loc.address);}
 #define LOCATOR_KIND_INVALID -1
 
-#define LOCATOR_ADDRESS_INVALID(a) {for(uint8_t i=0;i<=16;i++) a[i]=0x0;}
+#define LOCATOR_ADDRESS_INVALID(a) {for(uint8_t i=0;i<16;i++) a[i]=0x0;}
 #define LOCATOR_PORT_INVALID 0
 #define LOCATOR_KIND_RESERVED 0
 #define LOCATOR_KIND_UDPv4 1
@@ -39,6 +39,11 @@ typedef struct Locator_t{
 	int32_t kind;
 	uint32_t port;
 	octet address[16];
+	Locator_t(){
+		kind = 1;
+		port = 0;
+		LOCATOR_ADDRESS_INVALID(address);
+	}
 	bool operator==(Locator_t loc){
 		if(kind!=loc.kind)
 			return false;

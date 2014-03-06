@@ -55,6 +55,7 @@ class Endpoint;
 
 /**
  * Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
+  * @ingroup RTPSMODULE
  */
 class Participant {
 	friend class ThreadSend;

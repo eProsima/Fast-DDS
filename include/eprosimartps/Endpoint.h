@@ -27,6 +27,7 @@ class Participant;
 
 /**
  * Class Endpoint, all entities of the RTPS network are a specification of this class.
+  * @ingroup RTPSMODULE
  */
 class Endpoint {
 public:
