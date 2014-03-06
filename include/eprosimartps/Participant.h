@@ -45,6 +45,10 @@
 #define PARTICIPANT_H_
 
 namespace eprosima {
+
+using namespace dds;
+
+
 namespace rtps {
 
 class StatelessWriter;
@@ -81,6 +85,12 @@ public:
 	//bool createStatelessReader(RTPSReader*);
 	//bool createStetefulReader(StatefulReader* Reader)
 
+	/**
+	 * Remove Endpoint from the participant. It closes all entities related to them that are no longer in use.
+	 * For example, if a ThreadListen is not useful anymore the thread is closed and the instance removed.
+	 * @param Endpoint Pointer to the Endpoint that is going to be removed.
+	 * @return True if correct.
+	 */
 	bool removeEndpoint(Endpoint* endpoint);
 
 	ProtocolVersion_t protocolVersion;

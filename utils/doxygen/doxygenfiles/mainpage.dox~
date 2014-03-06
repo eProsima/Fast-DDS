@@ -17,14 +17,14 @@
  */
 
  /*!
- * @defgroup RTPSMODULE RTPS
+ * @defgroup RTPSMODULE Exceptions
  * @ingroup EPROSIMARTPSAPIREFERENCE
  * @brief RTPS API
  * Edit description in utils doxygen doxyfiles mainpage
  */
 
 /*!
- * @defgroup DDSMODULE DDS
+ * @defgroup DDSMODULE Exceptions
  * @ingroup EPROSIMARTPSAPIREFERENCE
  * @brief DDS API
  * Edit description in utils doxygen doxyfiles mainpage

@@ -24,6 +24,7 @@ namespace rtps{
 
 
 #define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<12;i++) g.value[i]=0x0;}
+
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
 typedef struct GuidPrefix_t{
 	octet value[12];

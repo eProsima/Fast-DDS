@@ -43,6 +43,12 @@ typedef struct RTPS_DllAPI ReadElement_t{
 	GUID_t writerGuid;
 }ReadElement_t;
 
+
+/**
+ * Class Subscriber, contains the public API to perform actions when messages are received. This class should not be instantiated directly.
+ * DomainParticipant class should be used to correctly initialize this element.
+ * @ingroup DDSMODULE
+ */
 class RTPS_DllAPI Subscriber {
 	friend class DomainParticipant;
 	friend class RTPSReader;
@@ -51,63 +57,68 @@ public:
 	Subscriber(RTPSReader* Rin);
 	virtual ~Subscriber();
 
+	/**
+	 * Get the topic data type.
+	 */
 	const std::string& getTopicDataType() const {
 		return topicDataType;
 	}
-
+	/**
+	 * Get the topic Name.
+	 */
 	const std::string& getTopicName() const {
 		return topicName;
 	}
 
+	/**
+	 * Method to block the current thread until a new message is received.
+	 */
 	void blockUntilNewMessage();
 
+	/**
+	 * Assign a function to be executed each time a message is received.
+	 * @param fun Pointer to the function
+	 */
 	void assignNewMessageCallback(void(*fun)());
 
-	///**
-	// * Read all unread data.
-	// * @param changes
-	// * @return
-	// */
-	//bool readAllUnread(std::vector<void*>* data);
-	///**
-	// * Read a specific data, based on its Sequence Number.
-	// * @param sn
-	// * @param ch
-	// * @return
-	// */
-	//bool readSeqNum(SequenceNumber_t sn,void* data);
-	///**
-	// * Read the older unread change (lowest SequenceNumber).
-	// * @param ch
-	// * @return
-	// */
-	//bool readOlderUnread(void* data);
-	///**
-	// * Take the older read change.
-	// * @return
-	// */
-	//bool takeOlderRead();
-	///**
-	// * Take all read changes.
-	// * @return
-	// */
-	//bool takeAllRead();
 
-	bool isCacheRead(SequenceNumber_t,GUID_t guid);
-
+	/**
+	 * Read the older unread element: the one with the minimum sequence number for all possible writers that publish in the topic.
+	 * @param data_ptr Pointer to an already allocated memory to enough space to hold an instance of the type associated with the topic.
+	 * @return True if suceeded.
+	 */
 	bool readMinSeqUnread(void* data_ptr);
 	bool readElement(ReadElement_t r_elem,void* data_ptr);
+	/**
+	 * Read all unread elements in the associated RTPSReader HistoryCache.
+	 * @param data_vec
+	 * @return
+	 */
 	bool readAllUnread(std::vector<void*> data_vec);
 	bool takeMinSeqRead(void* data_ptr);
 
+	/**
+	 * Function to determine if the history is full
+	 */
+	bool isHistoryFull();
+	/**
+	 * Get number of read elements.
+	 */
+	int getReadElements_n();
+	/**
+	 * Get the number of elements currently stored in the HistoryCache.
+	 */
+	int getHistory_n();
 
 	ParameterList ParamList;
-	bool isHistoryFull();
-	int getReadElements_n();
-	int getHistory_n();
+
 
 
 private:
+	/**
+	 *
+	 */
+	bool isCacheRead(SequenceNumber_t sn,GUID_t guid);
 	std::vector<ReadElement_t> readElements;
 	std::vector<SequenceNumber_t> readCacheChanges;
 	RTPSReader* R;

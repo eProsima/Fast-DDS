@@ -1,7 +1,7 @@
 /*************************************************************************
  * Copyright (c) 2013 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsimaRTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
@@ -34,9 +34,18 @@ class StatelessWriter : public RTPSWriter
 public:
 	StatelessWriter();
 	virtual ~StatelessWriter();
+	/**
+	 * Initialize the StatelessWriter with the corresponding WriterParams Structure.
+	 * @param
+	 */
 	void init(WriterParams_t);
 	Duration_t resendDataPeriod;
 	std::vector<ReaderLocator> reader_locator;
+	/**
+	 * Add a ReaderLocator to the Writer.
+	 * @param locator ReaderLocator to add.
+	 * @return True if correct.
+	 */
 	bool reader_locator_add(ReaderLocator locator);
 	bool reader_locator_remove(Locator_t locator);
 	void unsent_changes_reset();
