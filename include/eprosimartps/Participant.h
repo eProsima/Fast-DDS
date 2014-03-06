@@ -60,7 +60,7 @@ class Participant {
 	friend class ThreadSend;
 	friend class ThreadListen;
 public:
-	Participant();
+	RTPS_DllAPI Participant();
 	virtual ~Participant();
 	/**
 	 * Create a StatelessWriter from a parameter structure.

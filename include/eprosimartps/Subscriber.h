@@ -38,12 +38,12 @@ using namespace rtps;
 
 namespace dds {
 
-typedef struct ReadElement_t{
+typedef struct RTPS_DllAPI ReadElement_t{
 	SequenceNumber_t seqNum;
 	GUID_t writerGuid;
 }ReadElement_t;
 
-class Subscriber {
+class RTPS_DllAPI Subscriber {
 	friend class DomainParticipant;
 	friend class RTPSReader;
 public:
@@ -63,35 +63,35 @@ public:
 
 	void assignNewMessageCallback(void(*fun)());
 
-	/**
-	 * Read all unread data.
-	 * @param changes
-	 * @return
-	 */
-	bool readAllUnread(std::vector<void*>* data);
-	/**
-	 * Read a specific data, based on its Sequence Number.
-	 * @param sn
-	 * @param ch
-	 * @return
-	 */
-	bool readSeqNum(SequenceNumber_t sn,void* data);
-	/**
-	 * Read the older unread change (lowest SequenceNumber).
-	 * @param ch
-	 * @return
-	 */
-	bool readOlderUnread(void* data);
-	/**
-	 * Take the older read change.
-	 * @return
-	 */
-	bool takeOlderRead();
-	/**
-	 * Take all read changes.
-	 * @return
-	 */
-	bool takeAllRead();
+	///**
+	// * Read all unread data.
+	// * @param changes
+	// * @return
+	// */
+	//bool readAllUnread(std::vector<void*>* data);
+	///**
+	// * Read a specific data, based on its Sequence Number.
+	// * @param sn
+	// * @param ch
+	// * @return
+	// */
+	//bool readSeqNum(SequenceNumber_t sn,void* data);
+	///**
+	// * Read the older unread change (lowest SequenceNumber).
+	// * @param ch
+	// * @return
+	// */
+	//bool readOlderUnread(void* data);
+	///**
+	// * Take the older read change.
+	// * @return
+	// */
+	//bool takeOlderRead();
+	///**
+	// * Take all read changes.
+	// * @return
+	// */
+	//bool takeAllRead();
 
 	bool isCacheRead(SequenceNumber_t,GUID_t guid);
 

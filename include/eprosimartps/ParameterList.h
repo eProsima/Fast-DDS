@@ -108,7 +108,7 @@ public:
 	uint32_t port;
 };
 
-class ParameterList {
+class RTPS_DllAPI ParameterList {
 public:
 	ParameterList();
 	virtual ~ParameterList();
