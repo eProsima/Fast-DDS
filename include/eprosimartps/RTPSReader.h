@@ -38,6 +38,7 @@ namespace rtps {
 
 /**
  * Class RTPSReader, manages the reception of data from the writers.
+  * @ingroup RTPSMODULE
  */
 class RTPSReader : public Endpoint{
 public:

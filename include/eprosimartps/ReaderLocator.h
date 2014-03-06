@@ -27,6 +27,7 @@ namespace rtps {
 
 /**
  * Class ReaderLocator, contains information about a locator, without saving its state.
+  * @ingroup RTPSMODULE
  */
 class ReaderLocator {
 public:

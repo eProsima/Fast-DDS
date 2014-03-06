@@ -30,6 +30,7 @@ class ThreadListen;
 
 /**
  * Class MessageReceiver, process the received messages.
+  * @ingroup RTPSMODULE
  */
 class MessageReceiver {
 public:

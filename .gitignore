@@ -35,8 +35,11 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
-*.opensdf
-*.sdf
+
+#VisuaL Studio Files:
+#############
+.opensdf
+.sdf
 
 Debug
 Release

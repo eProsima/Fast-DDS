@@ -31,6 +31,7 @@ class RTPSWriter;
 
 /**
  * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
+ * @ingroup RTPSMODULE
  */
 class CDRMessageCreator {
 public:
@@ -85,8 +86,8 @@ public:
 	/**
 	 * Create a Heartbeat Submessage.
 	 * @param submsg Pointer to the submessage.
-	 * @param HBSubM Pointer to the data.
-	 * @return
+	 * @param HBSubM Pointer to the submessage structure.
+	 * @return True if succeeded.
 	 */
 	bool createSubmessageHeartbeat(CDRMessage_t* submsg,SubmsgHeartbeat_t* HBSubM);
 	/**

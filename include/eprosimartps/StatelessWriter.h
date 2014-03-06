@@ -27,6 +27,7 @@ namespace rtps {
 
 /**
  * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
+  * @ingroup RTPSMODULE
  */
 class StatelessWriter : public RTPSWriter
 {

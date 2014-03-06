@@ -31,6 +31,7 @@ class RTPSReader;
 
 /**
  * Class HistoryCache, container of the different CacheChanges and the methods to access them.
+ * @ingroup RTPSMODULE
  */
 class HistoryCache {
 public:
