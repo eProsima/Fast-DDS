@@ -34,10 +34,18 @@ class RTPSWriter;
 
 using namespace rtps;
 
+/**
+ * DDS namespace. Contains the public API to interact with the DDS-RTPS protocol.
+ * @ingroup DDSMODULE
+ */
 namespace dds {
 
 
-
+/**
+ * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
+ * DomainParticipant class should be used to correctly initialize this element.
+ * @ingroup DDSMODULE
+ */
 class RTPS_DllAPI Publisher {
 	friend class DomainParticipant;
 public:
@@ -55,6 +63,12 @@ public:
 	bool write(void*Data);
 
 	//Since there is no discovery:
+	/**
+	 * Add a Reader Locator to the publisher.
+	 * @param Loc Locator to add.
+	 * @param expectsInlineQos Parameter to indicate wheter or not the locataor expects inline Qos with its Data messages.
+	 * @return True if correct.
+	 */
 	bool addReaderLocator(Locator_t Loc,bool expectsInlineQos);
 
 

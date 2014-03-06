@@ -30,23 +30,32 @@
 
 #ifndef RTPS_ALL_H_
 #define RTPS_ALL_H_
-
+/**
+ * @namespace eprosima
+ * @ingroup EPROSIMARTPSAPIREFERENCE
+ * eProsima namespace. It contains everything.
+ */
 namespace eprosima{
+
+/**
+ * RTPS namespace. Functions and structures dedicated to implement the RTPS protocol.
+ * @ingroup RTPSMODULE
+ */
 namespace rtps{
 
 /*!
  * @brief This enumeration represents endianness types.
  */
-typedef enum
-{
+typedef enum Endianness_t{
 	//! @brief Big endianness.
 	BIGEND = 0x1,
 	//! @brief Little endianness.
 	LITTLEEND = 0x0
-} Endianness_t;
+}Endianness_t;
 
 #define EPROSIMA_ENDIAN LITTLEEND //ERROR CAMBIAR A LITTLEEND
 
+//!Max size of RTPS message in bytes.
 #define RTPSMESSAGE_MAX_SIZE 2048  //max size of ftps message in bytes
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
 #define RTPSMESSAGE_SUBMESSAGEHEADER_SIZE 4
@@ -74,8 +83,6 @@ typedef unsigned short ushort;
 typedef octet SubmessageFlag;
 
 
-
-
 }
 }
 
@@ -101,6 +108,9 @@ namespace eprosima{
 
 using namespace rtps;
 
+/**
+ * Structure TypeReg_t used to save the name, size and serialization functions of a user-defined type.
+ */
 typedef struct TypeReg_t{
 	std::string dataType;
 	void (*serialize)(SerializedPayload_t*,void*);

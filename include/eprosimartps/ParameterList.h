@@ -87,6 +87,16 @@ namespace rtps {
 
 typedef uint16_t ParameterId_t;
 
+
+
+
+
+/** @defgroup inlineQoS Parameters
+ * @ingroup RTPSMODULE
+ * Specialization of parameter class for each of the inlineQos parameters.
+ *  @{
+ */
+//!Base Parameter class with parameter Pid and parameter length in bytes.
 class Parameter_t{
 public:
 	ParameterId_t Pid;
@@ -107,7 +117,13 @@ class ParameterPort_t:public Parameter_t{
 public:
 	uint32_t port;
 };
+/** @} */ // end of group1
 
+
+/**
+ * Class ParameterList to group all inlineQos parameters of a publisher or subscriber.
+ * @ingroup RTPSMODULE
+ */
 class RTPS_DllAPI ParameterList {
 public:
 	ParameterList();

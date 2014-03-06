@@ -29,6 +29,11 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class ThreadSend, used to manage the send operation. In future version it will contain the grouping
+ *  logic for merge different CDRMessages into a single RTPSMessages (HB piggybacking, for example).
+ * @ingroup RTPSMODULE
+ */
 class ThreadSend {
 public:
 	ThreadSend();
@@ -37,9 +42,13 @@ public:
 	boost::mutex sendMutex;
 	boost::asio::io_service sendService;
 	boost::asio::ip::udp::socket send_socket;
+	/**
+	 * Send a CDR message syncrhonously. No waiting is required.
+	 * @param msg Pointer to the message.
+	 * @param loc Locator where to send the message.
+	 */
 	void sendSync(CDRMessage_t* msg,Locator_t loc);
 
-	//void sendSync();
 };
 
 } /* namespace rtps */
