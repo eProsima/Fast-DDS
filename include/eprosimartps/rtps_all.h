@@ -25,6 +25,9 @@
 #include <stdint.h>
 #include <iomanip>
 
+#include "eprosimartps/eprosimartps_dll.h"
+
+
 #ifndef RTPS_ALL_H_
 #define RTPS_ALL_H_
 

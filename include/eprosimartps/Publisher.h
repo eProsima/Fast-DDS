@@ -38,7 +38,7 @@ namespace dds {
 
 
 
-class Publisher {
+class RTPS_DllAPI Publisher {
 	friend class DomainParticipant;
 public:
 	Publisher();

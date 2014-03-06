@@ -32,7 +32,7 @@ namespace dds {
 
 
 
-class DomainParticipant {
+class RTPS_DllAPI DomainParticipant {
 private:
 	uint32_t id;
     static bool instanceFlag;

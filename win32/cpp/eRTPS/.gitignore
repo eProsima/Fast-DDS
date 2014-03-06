@@ -1,12 +1,4 @@
-bin
-output
-
-
-Debug 
-Release
 #VisuaL Studio Files:
 #############
 *.opensdf
 *.sdf
-
-
