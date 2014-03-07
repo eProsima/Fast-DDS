@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * $rtps_common.h
+/**
+ * @file rtps_common.h
  *
  *  Created on: $Feb 18, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -60,10 +60,15 @@ typedef struct CDRMessage_t{
 			free(buffer);
 		buffer=(octet*)malloc(msg.length);
 	}
+	//!Pointer to the buffer where the data is stored.
 	octet* buffer;
-	uint16_t pos; //current w_pos in bytes
-	uint16_t max_size; // max size of buffer in bytes
+	//!Read or write position.
+	uint16_t pos;
+	//!Max size of the message.
+	uint16_t max_size;
+	//!Current length of the message.
 	uint16_t length;
+	//!Endianness of the message.
 	Endianness_t msg_endian;
 }CDRMessage_t;
 
@@ -80,8 +85,11 @@ typedef struct CDRMessage_t{
 
 //!@brief Structure SerializedPayload_t.
 typedef struct SerializedPayload_t{
+	//!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
 	uint16_t encapsulation;
+	//!Actual length of the data
 	uint16_t length;
+	//!Pointer to the data.
 	octet* data;
 	SerializedPayload_t(){
 		length = 0;
@@ -91,19 +99,24 @@ typedef struct SerializedPayload_t{
 	SerializedPayload_t(short len){
 		encapsulation = CDR_BE;
 		length = len;
+		if(data!=NULL)
+			free(data);
 		data = (octet*)malloc(length);
 	}
 	~SerializedPayload_t(){
-//		if(data!=NULL)
-//			free(data);
 	}
-	bool copy(SerializedPayload_t* serdata){
+	/*!
+	 * Copy another structure (including allocating new space for the data.)
+	 * @param[in] serData Pointer to the structure to copy
+	 * @return True if correct
+	 */
+	bool copy(SerializedPayload_t* serData){
 		if(data !=NULL)
 			free(data);
-		length = serdata->length;
+		length = serData->length;
 		data = (octet*)malloc(length);
-		encapsulation = serdata->encapsulation;
-		memcpy(data,serdata->data,length);
+		encapsulation = serData->encapsulation;
+		memcpy(data,serData->data,length);
 		return true;
 	}
 }SerializedPayload_t;

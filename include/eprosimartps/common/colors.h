@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * colors.h
+/**
+ * @file colors.h
  *
  *  Created on: Feb 20, 2014
  *      Author: Gonzalo Rodriguez Canosa

@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * rtps_elem_locator.h
+/**
+ * @file rtps_elem_locator.h
  *
  *  Created on: Feb 28, 2014
  *      Author: Gonzalo Rodriguez Canosa

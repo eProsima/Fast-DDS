@@ -86,7 +86,25 @@ typedef octet SubmessageFlag;
 }
 }
 
+/** @defgroup COMMONMODULE Common Module.
+ * @ingroup RTPSMODULE
+ * Common structures used by multiple elements.
+ */
 
+/** @defgroup WRITERMODULE Writer Module
+ * @ingroup RTPSMODULE
+ *
+ */
+
+/** @defgroup READERMODULE Reader Module
+ * @ingroup RTPSMODULE
+ *
+ */
+
+/** @defgroup MANAGEMENTMODULE Management Module
+ * @ingroup RTPSMODULE
+ *
+ */
 
 using namespace std;
 
@@ -108,6 +126,7 @@ namespace eprosima{
 
 using namespace rtps;
 
+namespace dds{
 /**
  * Structure TypeReg_t used to save the name, size and serialization functions of a user-defined type.
  */
@@ -117,7 +136,7 @@ typedef struct TypeReg_t{
 	void (*deserialize)(SerializedPayload_t*,void*);
 	int32_t byte_size;
 }TypeReg_t;
-
+}
 }
 
 //#include "CDRMessage.h"

@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * ParameterList.h
+/**
+ * @file ParameterList_t.h
  *
  *  Created on: Mar 3, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -28,6 +28,19 @@
 
 namespace eprosima {
 namespace rtps {
+
+
+
+
+
+
+
+/** @defgroup PARAMETERS inlineQoS Parameters
+ * @ingroup COMMONMODULE
+ * Specialization of parameter class for each of the inlineQos parameters.
+ *  @{
+ */
+
 
 //Parameter Types
 #define PID_PAD 0x0000
@@ -91,11 +104,9 @@ typedef uint16_t ParameterId_t;
 
 
 
-/** @defgroup inlineQoS Parameters
- * @ingroup RTPSMODULE
- * Specialization of parameter class for each of the inlineQos parameters.
- *  @{
- */
+
+
+
 //!Base Parameter class with parameter PID and parameter length in bytes.
 class Parameter_t{
 public:
@@ -117,12 +128,13 @@ class ParameterPort_t:public Parameter_t{
 public:
 	uint32_t port;
 };
+
 /** @} */ // end of group1
 
 
 /**
  * Class to group all inlineQos parameters of a publisher or subscriber.
- * @ingroup RTPSMODULE
+ * @ingroup COMMONMODULE
  */
 class RTPS_DllAPI ParameterList_t {
 public:

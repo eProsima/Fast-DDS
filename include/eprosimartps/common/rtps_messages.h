@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * rtps_messages.h
+/**
+ * @file rtps_messages.h
  *
  *  Created on: Feb 18, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -24,6 +24,12 @@
 
 namespace eprosima{
 namespace rtps{
+
+/** @defgroup RTPSMESSAGES RTPS Messages structures
+  * @ingroup COMMONMODULE
+ * Structures to hold different RTPS Messages and submessages structures.
+ *  @{
+ */
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
 typedef struct Header_t{
@@ -143,7 +149,7 @@ typedef struct{
 	Time_t timestamp;
 }SubmsgInfoTS_t;
 
-
+///@}
 
 
 }

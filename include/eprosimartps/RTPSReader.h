@@ -38,22 +38,25 @@ namespace rtps {
 
 /**
  * Class RTPSReader, manages the reception of data from the writers.
-  * @ingroup RTPSMODULE
+  * @ingroup READERMODULE
  */
 class RTPSReader : public Endpoint{
 public:
 	RTPSReader();
 	virtual ~RTPSReader();
+
 	StateKind_t stateType;
 	HistoryCache reader_cache;
 	bool expectsInlineQos;
 	Duration_t heartbeatResponseDelay;
 	Duration_t heartbeatSupressionDuration;
-
+	//!Structure used to create messages.
 	CDRMessageCreator MC;
-	Participant* participant;
+	//!Pointer to the associated subscriber
 	Subscriber* Sub;
+	//!Semaphore used to stop threads based on the arrival of messages.
 	boost::interprocess::interprocess_semaphore* newMessageSemaphore;
+	//!Function to call when a new message is received.
 	void (*newMessageCallback)();
 
 };
