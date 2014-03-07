@@ -50,28 +50,54 @@ class RTPS_DllAPI Publisher {
 	friend class DomainParticipant;
 public:
 	Publisher();
+	/**
+	 * Create a publisher, assigning its pointer to the associated writer.
+	 * Don't use directly, create Publisher using DomainParticipant static function.
+	 */
 	Publisher(RTPSWriter* Win);
 	virtual ~Publisher();
 
-	const std::string& getTopicName() const {
+	/**
+	* Get the topic name.
+	 */
+	const std::string& getTopicName()
+	{
 		return topicName;
 	}
-
-	const std::string& getTopicDataType() const {
+	/**
+	* Get the data type.
+	 */
+	const std::string& getTopicDataType()
+	{
 		return topicDataType;
 	}
+
+	/**
+	 * Write data to the topic.
+	 * @param Data Pointer to the data
+	 * @return True if correct
+	 * @par Calling example:
+	 * @snippet dds_example.cpp ex_PublisherWrite
+	 */
 	bool write(void*Data);
 
 	//Since there is no discovery:
+	/** @name Discovery substitution methods.
+	 * Since no discovery is implemented in this version, these methods are needed.
+	 */
+	/// @{
 	/**
 	 * Add a Reader Locator to the publisher.
 	 * @param Loc Locator to add.
-	 * @param expectsInlineQos Parameter to indicate wheter or not the locataor expects inline Qos with its Data messages.
+	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
 	 * @return True if correct.
 	 */
 	bool addReaderLocator(Locator_t Loc,bool expectsInlineQos);
 
 
+	///@}
+
+	//! Parameter List associated with this Publisher (Qos).
 	ParameterList_t ParamList;
 private:
 	RTPSWriter* W;
