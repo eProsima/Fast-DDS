@@ -12,3 +12,10 @@ readMinSeqUnread((void*)&tp);
 //! [ex_readMinSeqUnread]
 
 
+//! [ex_PublisherWrite]
+TypeStructure tp; //TypeStructure is your own define structure for the topic
+//Fill tp with the data you want.
+write((void*)&tp);
+//! [ex_PublisherWrite]
+
+
