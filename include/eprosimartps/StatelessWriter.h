@@ -27,18 +27,19 @@ namespace rtps {
 
 /**
  * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
-  * @ingroup RTPSMODULE
+ * @ingroup WRITERMODULE
  */
 class StatelessWriter : public RTPSWriter
 {
 public:
 	StatelessWriter();
 	virtual ~StatelessWriter();
+
 	/**
 	 * Initialize the StatelessWriter with the corresponding WriterParams Structure.
-	 * @param
+	 * @param wParam
 	 */
-	void init(WriterParams_t);
+	void init(WriterParams_t wParam);
 	Duration_t resendDataPeriod;
 	std::vector<ReaderLocator> reader_locator;
 	/**
@@ -47,10 +48,26 @@ public:
 	 * @return True if correct.
 	 */
 	bool reader_locator_add(ReaderLocator locator);
+	/**
+	 * Remove a ReaderLocator from this writer.
+	 * @param locator Locator to remove.
+	 * @return True if correct.
+	 */
 	bool reader_locator_remove(Locator_t locator);
+	/**
+	 * Reset the unsent changes. All the changes currently in the HistoryCache are added to all teh ReaderLocator associated
+	 * with this StatelessWriter, discarding the previous ones.
+	 */
 	void unsent_changes_reset();
-	//void unsent_change_add(SequenceNumber_t sn);
+
+	/**
+	 * Add a specific change to all ReaderLocators.
+	 * @param p Pointer to the change.
+	 */
 	void unsent_change_add(CacheChange_t* p);
+	/**
+	 * Method to indicate that there are changes not sent in some of all ReaderLocator.
+	 */
 	void unsent_changes_not_empty();
 };
 

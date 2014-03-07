@@ -42,7 +42,7 @@ class Participant;
  * Class ThreadListen, used to listen to a specific socket for RTPS messages. Each instance, when initialized, launches
  * a new thread that listen to a specific port (all possible IP addresses in this machine.). Multiple writers and readers can be associated
  * with the same ThreadListen. The MessageReceiver instance interprets where the messages need to be forwarded (which Writer or Reader, or both).
- * @ingroup RTPSMODULE
+ * @ingroup COMMONMODULE
  */
 class ThreadListen {
 public:

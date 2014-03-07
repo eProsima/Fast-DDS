@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * Subscriber.h
+/**
+ * @file Subscriber.h
  *
  *  Created on: Feb 27, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -112,9 +112,9 @@ public:
 	/**
 	 * Read the cache change with the minimum sequence number.
 	 * It dowsn't matter if it was already read previously.
-	 * @param[out] dataa_ptr Pointer to where teh data should be stored.
+	 * @param[out] data_ptr Pointer to where teh data should be stored.
 	 * @param[out] minSeqNum Pointer to save the sequence number
-	 * @param[out] Pointer to save the GUID_t
+	 * @param[out] minSeqNumGuid Pointer to save the GUID_t
 	 * @return True if correct.
 	 */
 	bool readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUID_t* minSeqNumGuid);

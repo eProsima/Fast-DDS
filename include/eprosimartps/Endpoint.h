@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * Endpoint.h
+/**
+ * @file Endpoint.h
  *
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -27,7 +27,10 @@ class Participant;
 
 /**
  * Class Endpoint, all entities of the RTPS network are a specification of this class.
-  * @ingroup RTPSMODULE
+ * Although the Participant is also defined as an endpoint in the RTPS specification in this implementation
+ * the Participant class DOESN'T inherit from this class. The elements needed where added directly to the
+ * Participant class. This way each instance of our class (Endpoint) has a pointer to the participant they belong to.
+ * @ingroup COMMONMODULE
  */
 class Endpoint {
 public:
@@ -38,8 +41,9 @@ public:
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
 	GUID_t guid;
-
+	//!Vector of pointer to the listening threads associated with this endpoint.
 	std::vector<ThreadListen*> endpointThreadListenList;
+	//!Pointer to the participant this endpoint belongs to.
 	Participant* participant;
 };
 

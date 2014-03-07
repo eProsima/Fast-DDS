@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * DomainParticipant.h
+/**
+ * @file DomainParticipant.h
  *
  *  Created on: Feb 27, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -31,10 +31,9 @@ namespace eprosima {
 namespace dds {
 
 
-
 /**
  * Class DomainParticipant, contains the static functions to create Publishers and Subscribers, as well as to register types. 
- * It can be directly accesed by the user. Is a singleton, so only one instance is ever created.
+ * It can be directly accessed by the user. Is a singleton, so only one instance is ever created.
   * @ingroup DDSMODULE
  */
 class RTPS_DllAPI DomainParticipant {
@@ -64,7 +63,7 @@ public:
     static Subscriber* createSubscriber(Participant* p,ReaderParams_t RParam);
 	/**
 	 * @brief Register a type to be used in the communication. Serialized and deserialized functions must be provided, as well as the byte size of the type.
-	 * @param str Type Name. Must be unique.
+	 * @param in_str Type Name. Must be unique.
 	 * @param serialize Pointer to serialization function.
 	 * @param deserialize Pointer to deserialization function.
 	 * @param size Size in bytes of the type.

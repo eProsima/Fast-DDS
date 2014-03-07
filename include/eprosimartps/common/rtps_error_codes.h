@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * error_codes.h
+/**
+ * @file rtps_error_codes.h
  *
  *  Created on: Feb 19, 2014
  *      Author: Gonzalo Rodriguez Canosa

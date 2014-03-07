@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * rpts_elem_seqnum.h
+/**
+ * @file rtps_elem_seqnum.h
  *
  *  Created on: Feb 28, 2014
  *      Author: Gonzalo Rodriguez Canosa

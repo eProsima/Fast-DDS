@@ -42,7 +42,7 @@ namespace rtps {
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
-  * @ingroup RTPSMODULE
+  * @ingroup WRITERMODULE
  */
 class RTPSWriter: public Endpoint {
 public:

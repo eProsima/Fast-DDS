@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * CacheChange.h
+/**
+ * @file CacheChange.h
  *
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -37,20 +37,31 @@ typedef void* InstanceHandle_t;
  * Structure CacheChange_t, contains information on a specific CacheChange.
  */
 typedef struct CacheChange_t{
+	//!Kind of change
 	ChangeKind_t kind;
+	//!GUID_t of the writer that generated this change.
 	GUID_t writerGUID;
+	//!Handle of the data associated wiht this change.
 	InstanceHandle_t instanceHandle;
+	//!SequenceNumber of the change
 	SequenceNumber_t sequenceNumber;
+	//!Serialized Payload associated with the change.
 	SerializedPayload_t serializedPayload;
 	CacheChange_t(){
 
 	}
-	bool copy(CacheChange_t* ach){
-		kind = ach->kind;
-		writerGUID = ach->writerGUID;
-		instanceHandle = ach->instanceHandle;
-		sequenceNumber = ach->sequenceNumber;
-		if(serializedPayload.copy(&ach->serializedPayload))
+	/*!
+	 * Copy a different change into this one. All the elements are copied, included the data, allocating new memory.
+	 * @param[in] ch_ptr Pointer to the change.
+	 * @return True if correct.
+	 */
+	bool copy(CacheChange_t* ch_ptr)
+	{
+		kind = ch_ptr->kind;
+		writerGUID = ch_ptr->writerGUID;
+		instanceHandle = ch_ptr->instanceHandle;
+		sequenceNumber = ch_ptr->sequenceNumber;
+		if(serializedPayload.copy(&ch_ptr->serializedPayload))
 			return true;
 		else
 			return false;

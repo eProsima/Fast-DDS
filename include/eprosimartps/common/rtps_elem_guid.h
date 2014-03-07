@@ -6,8 +6,8 @@
  *
  *************************************************************************/
 
-/*
- * rtps_guid.h
+/**
+ * @file rtps_elem_guid.h
  *
  *  Created on: Feb 28, 2014
  *      Author: Gonzalo Rodriguez Canosa
