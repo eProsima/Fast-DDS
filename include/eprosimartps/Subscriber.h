@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include "rtps_all.h"
-#include "ParameterList.h"
+#include "ParameterList_t.h"
 #include "common/rtps_messages.h"
 
 #include <boost/signals2.hpp>
@@ -38,10 +38,10 @@ using namespace rtps;
 
 namespace dds {
 
-typedef struct RTPS_DllAPI ReadElement_t{
+struct RTPS_DllAPI ReadElement_t{
 	SequenceNumber_t seqNum;
 	GUID_t writerGuid;
-}ReadElement_t;
+};
 
 
 /**
@@ -77,25 +77,65 @@ public:
 
 	/**
 	 * Assign a function to be executed each time a message is received.
-	 * @param fun Pointer to the function
+	 * @param[in] fun_ptr Pointer to the function that must be called.
 	 */
-	void assignNewMessageCallback(void(*fun)());
+	void assignNewMessageCallback(void(*fun_ptr)());
 
 
 	/**
 	 * Read the older unread element: the one with the minimum sequence number for all possible writers that publish in the topic.
-	 * @param data_ptr Pointer to an already allocated memory to enough space to hold an instance of the type associated with the topic.
-	 * @return True if suceeded.
+	 * @param[out] data_ptr Pointer to an already allocated memory to enough space to hold an instance of the type associated with the topic.
+	 * @return True if correct.
+	 * @par Calling example:
+	 * @snippet dds_example.cpp ex_readMinSeqUnread
 	 */
-	bool readMinSeqUnread(void* data_ptr);
-	bool readElement(ReadElement_t r_elem,void* data_ptr);
+	bool readMinSeqUnreadCache(void* data_ptr);
+	/**
+	 * Read a specific cache from the History. The sequence number and the
+	 * GUID_t of the writer should be provided, as well as a pointer to enough allocated space
+	 * to contain an instance of the type transmitted through the topic.
+	 * @param[in] sn SequenceNumber_t of the cache to read
+	 * @param[in] guid GUID_t of the writer that introduced that element.
+	 * @param[out] data_ptr Pointer to a memory space big enough to fit an instance of the data transmitted in the topic.
+	 * @return True if correct.
+	 */
+	bool readCache(SequenceNumber_t sn, GUID_t guid,void* data_ptr);
 	/**
 	 * Read all unread elements in the associated RTPSReader HistoryCache.
-	 * @param data_vec
-	 * @return
+     * @param[out] data_vec Pointer to a vector of pointers to elements.
+	 * @return True if correct.
+	 * @par Calling example:
+	 * @snippet dds_example.cpp ex_readAllUnreadCache
 	 */
-	bool readAllUnread(std::vector<void*> data_vec);
-	bool takeMinSeqRead(void* data_ptr);
+	bool readAllUnreadCache(std::vector<void*>* data_vec);
+
+	/**
+	 * Read the cache change with the minimum sequence number.
+	 * It dowsn't matter if it was already read previously.
+	 * @param[out] dataa_ptr Pointer to where teh data should be stored.
+	 * @param[out] minSeqNum Pointer to save the sequence number
+	 * @param[out] Pointer to save the GUID_t
+	 * @return True if correct.
+	 */
+	bool readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUID_t* minSeqNumGuid);
+	/**
+	 * Read all Caches in the History. Look Subscriber::readAllUnreadCache for calling example.
+	 * @param[out] data_vec Pointer to a vector of pointers to elements.
+	 * @return True if correct.
+	 */
+	bool readAllCache(std::vector<void*>* data_vec);
+	/**
+	 * Take the read element with the minimum sequence number.
+	 * @param[out] data_ptr Pointer to allocated space to contain an instance of the topic data.
+	 * @return True if correct.
+	 */
+	bool takeMinSeqCache(void* data_ptr);
+	/**
+	 * Take all elements in the cache. Look Subscriber::readAllUnreadCache for calling example.
+	 * @param[out] data_vec Pointer to a vector of pointers to elements.
+	 * @return True if correct.
+	 */
+	bool takeAllCache(std::vector<void*>* data_vec);
 
 	/**
 	 * Function to determine if the history is full
@@ -110,15 +150,14 @@ public:
 	 */
 	int getHistory_n();
 
-	ParameterList ParamList;
+	ParameterList_t ParamList;
 
 
 
 private:
-	/**
-	 *
-	 */
 	bool isCacheRead(SequenceNumber_t sn,GUID_t guid);
+	bool minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadElement_t>::iterator* min_it);
+	bool removeSeqFromRead(SequenceNumber_t sn, GUID_t guid);
 	std::vector<ReadElement_t> readElements;
 	std::vector<SequenceNumber_t> readCacheChanges;
 	RTPSReader* R;

@@ -46,7 +46,7 @@
 
 namespace eprosima {
 
-using namespace dds;
+
 
 
 namespace rtps {

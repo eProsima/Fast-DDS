@@ -96,7 +96,7 @@ typedef uint16_t ParameterId_t;
  * Specialization of parameter class for each of the inlineQos parameters.
  *  @{
  */
-//!Base Parameter class with parameter Pid and parameter length in bytes.
+//!Base Parameter class with parameter PID and parameter length in bytes.
 class Parameter_t{
 public:
 	ParameterId_t Pid;
@@ -121,22 +121,21 @@ public:
 
 
 /**
- * Class ParameterList to group all inlineQos parameters of a publisher or subscriber.
+ * Class to group all inlineQos parameters of a publisher or subscriber.
  * @ingroup RTPSMODULE
  */
-class RTPS_DllAPI ParameterList {
+class RTPS_DllAPI ParameterList_t {
 public:
-	ParameterList();
-	virtual ~ParameterList();
+	ParameterList_t();
+	virtual ~ParameterList_t();
 	std::vector<Parameter_t*> params;
 	CDRMessage_t ParamsMsg;
 	bool has_changed;
-	bool addParameterLocator(ParameterId_t pid,rtps::Locator_t loc);
-	bool addParameterString(ParameterId_t pid,std::string in_str);
-	bool addParameterPort(ParameterId_t pid,uint32_t port);
-	bool updateMsg();
-	bool assignParamList(CDRMessage_t* msg,uint32_t* size);
 };
+
+
+
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

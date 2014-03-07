@@ -15,7 +15,7 @@
  */
 
 #include <boost/thread/mutex.hpp>
-
+#include <boost/thread/recursive_mutex.hpp>
 
 #include "rtps_all.h"
 
@@ -50,18 +50,14 @@ public:
 	 * @return True if suceedeed.
 	 */
 	bool add_change(CacheChange_t a_change);
+
 	/**
-	 * Remove a change from the list.
-	 * @param a_change
-	 * @return
+	 * Remove a change based on its SequenceNumber_t and writer GUID.
+	 * @param[in] seqNum SequenceNumber_t of the change to eliminate.
+	 * @param[in] guid GUID of the writer of the change.
+	 * @return True if correct
 	 */
-	bool remove_change(CacheChange_t a_change);
-	/**
-	 * Remove a change based on its SequenceNumber_t.
-	 * @param seqNum
-	 * @return
-	 */
-	bool remove_change(SequenceNumber_t seqNum);
+	bool remove_change(SequenceNumber_t seqNum, GUID_t guid);
 	/**
 	 * Get the minimum sequence number in the HistoryCache.
 	 * @return
@@ -77,7 +73,7 @@ public:
 	RTPSWriter* rtpswriter;
 	RTPSReader* rtpsreader;
 	HistoryKind_t historyKind;
-	boost::mutex historyMutex;
+	boost::recursive_mutex historyMutex;
 private:
 
 	SequenceNumber_t minSeqNum;

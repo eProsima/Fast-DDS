@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include "rtps_all.h"
-#include "ParameterList.h"
+#include "ParameterList_t.h"
 #include "common/rtps_messages.h"
 
 #ifndef PUBLISHER_H_
@@ -72,7 +72,7 @@ public:
 	bool addReaderLocator(Locator_t Loc,bool expectsInlineQos);
 
 
-	ParameterList ParamList;
+	ParameterList_t ParamList;
 private:
 	RTPSWriter* W;
 	//bool initialized;

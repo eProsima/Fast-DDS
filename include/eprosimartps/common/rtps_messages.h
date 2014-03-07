@@ -20,7 +20,7 @@
 #include <iostream>
 #include <bitset>
 
-#include "../ParameterList.h"
+#include "../ParameterList_t.h"
 
 namespace eprosima{
 namespace rtps{
@@ -92,7 +92,7 @@ typedef struct SubmsgData_t{
 	EntityId_t writerId;
 	SequenceNumber_t writerSN;
 	SerializedPayload_t serializedPayload;
-	ParameterList inlineQos;
+	ParameterList_t inlineQos;
 	void print(){
 		cout << "DATA SubMsg,flags: E: " << endiannessFlag << " I: " << inlineQosFlag << " D: " << dataFlag << " K: " << keyFlag << endl;
 		cout << "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3];
