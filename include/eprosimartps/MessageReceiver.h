@@ -15,7 +15,7 @@
  */
 
 #include "rtps_all.h"
-#include "ParameterList.h"
+#include "ParameterList_t.h"
 #include "common/rtps_messages.h"
 
 #ifndef MESSAGERECEIVER_H_

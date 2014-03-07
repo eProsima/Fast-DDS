@@ -119,15 +119,14 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	return true;
 }
 
-bool HistoryCache::remove_change(CacheChange_t a_change) {
-	return remove_change(a_change.sequenceNumber);
-}
 
-bool HistoryCache::remove_change(SequenceNumber_t seqnum) {
+bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid) {
 	historyMutex.lock();
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
-		if((*it)->sequenceNumber.to64long() == seqnum.to64long()){
+		if((*it)->sequenceNumber.to64long() == seqnum.to64long()
+				&& (*it)->writerGUID == guid)
+		{
 			delete (*it);
 			changes.erase(it);
 			updateMaxMinSeqNum();
