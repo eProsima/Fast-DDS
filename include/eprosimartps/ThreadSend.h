@@ -49,6 +49,13 @@ public:
 	 */
 	void sendSync(CDRMessage_t* msg,Locator_t loc);
 
+	/**
+	 * Initialize the sending socket.
+	 * @param loc Locator of hte address from where to start the sending socket.
+	 * @return True if correct
+	 */
+	bool initSend(Locator_t loc);
+
 };
 
 } /* namespace rtps */

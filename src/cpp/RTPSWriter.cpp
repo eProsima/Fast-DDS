@@ -38,7 +38,8 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,
 	//change->sequenceNumber = lastChangeSequenceNumber;
 	change->writerGUID = guid;
 	change->instanceHandle = handle;
-	change->serializedPayload.copy(data);
+	if(change->kind == ALIVE)
+		change->serializedPayload.copy(data);
 	return true;
 }
 

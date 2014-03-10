@@ -26,15 +26,38 @@ ThreadSend::ThreadSend() : send_socket(sendService) {
 	// TODO Auto-generated constructor stub
 	//Create socket
 
-	//Found out about my IP
-	//Fake IP for now.
-	sendLocator.kind = LOCATOR_KIND_UDPv4;
-	sendLocator.port = 14444;
-	LOCATOR_ADDRESS_INVALID(sendLocator.address);
-	sendLocator.address[12] = 127;
-	sendLocator.address[13] = 0;
-	sendLocator.address[14] = 0;
-	sendLocator.address[15] = 1;
+
+}
+
+bool ThreadSend::initSend(Locator_t loc)
+{
+	boost::asio::ip::address addr;
+	sendLocator = loc;
+	try {
+		boost::asio::io_service netService;
+		udp::resolver   resolver(netService);
+		udp::resolver::query query(udp::v4(), "google.com", "");
+		udp::resolver::iterator endpoints = resolver.resolve(query);
+		udp::endpoint ep = *endpoints;
+		udp::socket socket(netService);
+		socket.connect(ep);
+		addr = socket.local_endpoint().address();
+		std::cout << "My IP according to google is: " << addr.to_string() << std::endl;
+
+		sendLocator.address[12] = addr.to_v4().to_bytes()[0];
+		sendLocator.address[13] = addr.to_v4().to_bytes()[1];
+		sendLocator.address[14] = addr.to_v4().to_bytes()[2];
+		sendLocator.address[15] = addr.to_v4().to_bytes()[3];
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Could not deal with socket. Exception: " << e.what() << std::endl;
+		sendLocator = loc;
+		sendLocator.address[12] = 127;
+		sendLocator.address[13] = 0;
+		sendLocator.address[14] = 0;
+		sendLocator.address[15] = 1;
+	}
 
 	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
@@ -43,7 +66,9 @@ ThreadSend::ThreadSend() : send_socket(sendService) {
 	cout << YELLOW<<"Sending through default address " << send_socket.local_endpoint();
 	cout << " Socket state: " << send_socket.is_open() << DEF << endl;
 	//boost::asio::io_service::work work(sendService);
+	return true;
 }
+
 
 ThreadSend::~ThreadSend() {
 	// TODO Auto-generated destructor stub
