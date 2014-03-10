@@ -61,6 +61,15 @@ public:
 	 * @return Pointer to the subscriber. 
 	 */
     static Subscriber* createSubscriber(Participant* p,ReaderParams_t RParam);
+
+    /**
+     * @brief Create a Participant.
+     * @param PParam Participant Parameters.
+     * @return Pointer to the participant.
+     */
+    static Participant* createParticipant(ParticipantParams_t PParam);
+
+
 	/**
 	 * @brief Register a type to be used in the communication. Serialized and deserialized functions must be provided, as well as the byte size of the type.
 	 * @param in_str Type Name. Must be unique.

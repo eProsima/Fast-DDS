@@ -56,6 +56,46 @@ bool Publisher::write(void* Data) {
 	return true;
 }
 
+bool Publisher::dispose(void* Data) {
+	//Convert data to serialized Payload
+	cout << "Disposing of Data" << endl;
+	//Find the data in the list:
+	//FIXME terminar funcion.
+	CacheChange_t change;
+	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
+	{
+		cout<< B_RED << "New Change creation failed"<< DEF << endl;
+		return false;
+	}
+	if(!W->writer_cache.add_change(change))
+	{
+		cout << B_RED << "Add change failed" << DEF << endl;
+		return false;
+	}
+	return true;
+}
+
+
+bool Publisher::unregister(void* Data) {
+	//Convert data to serialized Payload
+	cout << "Disposing of Data" << endl;
+	//Find the data in the list:
+	//FIXME terminar funcion.
+	CacheChange_t change;
+	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
+	{
+		cout<< B_RED << "New Change creation failed"<< DEF << endl;
+		return false;
+	}
+	if(!W->writer_cache.add_change(change))
+	{
+		cout << B_RED << "Add change failed" << DEF << endl;
+		return false;
+	}
+	return true;
+}
+
+
 bool Publisher::removeMinSeqChange()
 {
 	W->writer_cache.historyMutex.lock();

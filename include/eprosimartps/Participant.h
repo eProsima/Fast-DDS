@@ -62,6 +62,7 @@ class Participant{
 	friend class DomaninParticipant;
 public:
 	RTPS_DllAPI Participant();
+	Participant(ParticipantParams_t);
 	virtual ~Participant();
 
 

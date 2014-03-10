@@ -112,6 +112,13 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t R
 	return NULL;
 }
 
+Participant* DomainParticipant::createParticipant(ParticipantParams_t PParam)
+{
+	Participant* p = new Participant(PParam);
+	return p;
+}
+
+
 bool DomainParticipant::registerType(std::string in_str,
 		void (*serialize)(SerializedPayload_t* data, void*),
 		void (*deserialize)(SerializedPayload_t* data, void*),

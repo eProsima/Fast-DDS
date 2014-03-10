@@ -82,6 +82,20 @@ public:
 	bool write(void*Data);
 
 	/**
+	 * Dispose of a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
+	bool dispose(void*Data);
+	/**
+	 * Unregister a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
+	bool unregister(void*Data);
+
+
+	/**
 	 * Removes the cache change with the minimum sequence number
 	 * @return True if correct.
 	 */
