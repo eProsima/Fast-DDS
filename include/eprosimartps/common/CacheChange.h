@@ -1,15 +1,15 @@
 /*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
 /**
  * @file CacheChange.h
- *
- *  Created on: Feb 25, 2014
+ *	CacheChange definition.
+ *  Created on: Feb 20, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *      		grcanosa@gmail.com

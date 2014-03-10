@@ -29,7 +29,7 @@ ThreadSend::ThreadSend() : send_socket(sendService) {
 	//Found out about my IP
 	//Fake IP for now.
 	sendLocator.kind = LOCATOR_KIND_UDPv4;
-	sendLocator.port = 14242;
+	sendLocator.port = 14444;
 	LOCATOR_ADDRESS_INVALID(sendLocator.address);
 	sendLocator.address[12] = 127;
 	sendLocator.address[13] = 0;

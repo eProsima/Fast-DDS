@@ -56,6 +56,32 @@ bool Publisher::write(void* Data) {
 	return true;
 }
 
+bool Publisher::removeMinSeqChange()
+{
+	W->writer_cache.historyMutex.lock();
+	if(!W->writer_cache.changes.empty())
+	{
+		SequenceNumber_t sn;
+		GUID_t gui;
+		W->writer_cache.get_seq_num_min(&sn,&gui);
+		W->writer_cache.remove_change(sn,gui);
+		W->writer_cache.historyMutex.unlock();
+			return true;
+	}
+	W->writer_cache.historyMutex.unlock();
+	return false;
+}
+
+bool Publisher::removeAllChange()
+{
+	return W->writer_cache.removeAll();
+}
+
+int Publisher::getHistory_n()
+{
+	return W->writer_cache.changes.size();
+}
+
 bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 {
 	ReaderLocator RL;
