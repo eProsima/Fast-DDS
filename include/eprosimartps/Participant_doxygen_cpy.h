@@ -1,14 +1,14 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsimaRTPS is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
 /**
- * @file Participant.h
- *
+ * @file Participant_doxygen_cpy.h
+ *	Participant class definition (copy of original for doxygen.).
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -59,9 +59,12 @@ class Endpoint;
 class Participant{
 	friend class ThreadSend;
 	friend class ThreadListen;
+	friend class DomaninParticipant;
 public:
 	RTPS_DllAPI Participant();
 	virtual ~Participant();
+
+
 
 	/**
 	 * Create a StatelessWriter from a parameter structure.
@@ -101,8 +104,8 @@ public:
 	GUID_t guid;
 	//! Sending resources.
 	ThreadSend threadSend;
-
 private:
+
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* endpointToListenThreadSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.

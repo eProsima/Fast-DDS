@@ -1,14 +1,14 @@
 /*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 20134 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
-/*
- * ReaderLocator.h
- *
+/**
+ * @file ReaderLocator.h
+ * Reader Locator (for stateless writers).
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

@@ -1,14 +1,14 @@
 /*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsimaRTPS is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
-/*
- * StatelessWriter.h
- *
+/**
+ * @file StatelessWriter.h
+ *   StatelessWriter class.
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

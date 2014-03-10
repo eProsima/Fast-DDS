@@ -1,14 +1,14 @@
 /*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
-/*
- * Publisher.h
- *
+/**
+ * @file Publisher.h
+ *  Publisher public API.
  *  Created on: Feb 27, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -80,6 +80,24 @@ public:
 	 * @snippet dds_example.cpp ex_PublisherWrite
 	 */
 	bool write(void*Data);
+
+	/**
+	 * Removes the cache change with the minimum sequence number
+	 * @return True if correct.
+	 */
+	bool removeMinSeqChange();
+	/**
+	 * Removes all changes from the History.
+	 * @return True if correct.
+	 */
+	bool removeAllChange();
+
+	/**
+	 * Get the number of elements in the History.
+	 * @return Number of elements in the History.
+	 */
+	int getHistory_n();
+
 
 	//Since there is no discovery:
 	/** @name Discovery substitution methods.

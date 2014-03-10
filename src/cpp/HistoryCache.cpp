@@ -138,6 +138,25 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid) {
 	return false;
 }
 
+bool HistoryCache::removeAll()
+{
+	historyMutex.lock();
+	if(!changes.empty())
+	{
+		std::vector<CacheChange_t*>::iterator it;
+		for(it = changes.begin();it!=changes.end();it++)
+		{
+			delete (*it);
+		}
+		changes.clear();
+		updateMaxMinSeqNum();
+		historyMutex.unlock();
+		return true;
+	}
+	historyMutex.unlock();
+	return false;
+}
+
 
 
 bool HistoryCache::get_seq_num_min(SequenceNumber_t* seqnum,GUID_t* guid)
@@ -173,6 +192,13 @@ void HistoryCache::updateMaxMinSeqNum() {
 				minSeqNumGuid = (*it)->writerGUID;
 			}
 		}
+	}
+	else
+	{
+		SEQUENCENUMBER_UNKOWN(minSeqNum);
+		SEQUENCENUMBER_UNKOWN(maxSeqNum);
+		GUID_UNKNOWN(minSeqNumGuid);
+		GUID_UNKNOWN(maxSeqNumGuid);
 	}
 	return;
 }

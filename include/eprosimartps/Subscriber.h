@@ -1,14 +1,14 @@
 /*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
 /**
  * @file Subscriber.h
- *
+ *  Subscriber public API.
  *  Created on: Feb 27, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -83,7 +83,27 @@ public:
 
 
 	/**
-	 * Read the older unread element: the one with the minimum sequence number for all possible writers that publish in the topic.
+	 * Function to determine if the history is full
+	 */
+	bool isHistoryFull();
+	/**
+	 * Get number of read elements.
+	 */
+	int getReadElements_n();
+	/**
+	 * Get the number of elements currently stored in the HistoryCache.
+	 */
+	int getHistory_n();
+
+	/** @name Read or take data methods.
+	 * Methods to read or take data from the History.
+	 */
+
+	///@{
+
+
+	/**
+	 * Read the unread element with the minimum sequence number (for all possible writers).
 	 * @param[out] data_ptr Pointer to an already allocated memory to enough space to hold an instance of the type associated with the topic.
 	 * @return True if correct.
 	 * @par Calling example:
@@ -104,13 +124,13 @@ public:
 	 * Read all unread elements in the associated RTPSReader HistoryCache.
      * @param[out] data_vec Pointer to a vector of pointers to elements.
 	 * @return True if correct.
-	 * @par Calling example:
+	 * @par Calling example (NOT YET FULLY TESTED, possible memory allocation problems):
 	 * @snippet dds_example.cpp ex_readAllUnreadCache
 	 */
 	bool readAllUnreadCache(std::vector<void*>* data_vec);
 
 	/**
-	 * Read the cache change with the minimum sequence number.
+	 * Read the cache change with the minimum sequence number: the one with the minimum sequence number for all possible writers that publish in the topic.
 	 * It dowsn't matter if it was already read previously.
 	 * @param[out] data_ptr Pointer to where teh data should be stored.
 	 * @param[out] minSeqNum Pointer to save the sequence number
@@ -125,7 +145,7 @@ public:
 	 */
 	bool readAllCache(std::vector<void*>* data_vec);
 	/**
-	 * Take the read element with the minimum sequence number.
+	 * Take the element with the minimum sequence number.
 	 * @param[out] data_ptr Pointer to allocated space to contain an instance of the topic data.
 	 * @return True if correct.
 	 */
@@ -137,18 +157,7 @@ public:
 	 */
 	bool takeAllCache(std::vector<void*>* data_vec);
 
-	/**
-	 * Function to determine if the history is full
-	 */
-	bool isHistoryFull();
-	/**
-	 * Get number of read elements.
-	 */
-	int getReadElements_n();
-	/**
-	 * Get the number of elements currently stored in the HistoryCache.
-	 */
-	int getHistory_n();
+///@}
 
 	ParameterList_t ParamList;
 
