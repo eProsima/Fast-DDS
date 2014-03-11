@@ -123,7 +123,10 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 		unsent_changes_not_empty();
 	}
 	else
-		cout << "No reader locator" << endl;
+	{
+		RTPSLog::Warning << "No reader locator to add change" << std::endl;
+		RTPSLog::printWarning();
+	}
 }
 
 void StatelessWriter::unsent_changes_not_empty(){
@@ -144,7 +147,8 @@ void StatelessWriter::unsent_changes_not_empty(){
 				DataSubM.writerId = this->guid.entityId;
 				DataSubM.writerSN = (*change)->sequenceNumber;
 				DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
-				//cout << "Mandando mensaje con seqnum: " << (*change)->sequenceNumber.to64long() << endl;
+				RTPSLog::Info << "Sending message with seqNum: " << (*change)->sequenceNumber.to64long() << endl;
+				RTPSLog::printInfo();
 				CDRMessage_t msg;
 				MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM,(RTPSWriter*)this);
 				participant->threadSend.sendSync(&msg,rit->locator);
@@ -170,7 +174,7 @@ void StatelessWriter::unsent_changes_not_empty(){
 		}
 	}
 	participant->threadSend.sendMutex.unlock();
-	cout << "Finish sending unsent changes" << endl;
+	RTPSLog::Info << "Finish sending unsent changes" << endl;RTPSLog::printInfo();
 }
 
 

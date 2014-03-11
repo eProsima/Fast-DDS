@@ -38,19 +38,21 @@ Publisher::~Publisher() {
 
 bool Publisher::write(void* Data) {
 	//Convert data to serialized Payload
-	cout << "Writing New Data" << endl;
+	RTPSLog::Info << "Writing New Data" << endl;RTPSLog::printInfo();
 	SerializedPayload_t Payload;
 	type.serialize(&Payload,Data);
 	//create new change
 	CacheChange_t change;
 	if(!W->new_change(ALIVE,&Payload,Data,&change))
 	{
-		cout<< B_RED << "New Change creation failed"<< DEF << endl;
+		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
+		RTPSLog::printError();
 		return false;
 	}
 	if(!W->writer_cache.add_change(change))
 	{
-		cout << B_RED << "Add change failed" << DEF << endl;
+		RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
+		RTPSLog::printError();
 		return false;
 	}
 	return true;
@@ -64,12 +66,14 @@ bool Publisher::dispose(void* Data) {
 	CacheChange_t change;
 	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
 	{
-		cout<< B_RED << "New Change creation failed"<< DEF << endl;
+		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
+				RTPSLog::printError();
 		return false;
 	}
 	if(!W->writer_cache.add_change(change))
 	{
-		cout << B_RED << "Add change failed" << DEF << endl;
+		RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
+				RTPSLog::printError();
 		return false;
 	}
 	return true;
@@ -84,12 +88,14 @@ bool Publisher::unregister(void* Data) {
 	CacheChange_t change;
 	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
 	{
-		cout<< B_RED << "New Change creation failed"<< DEF << endl;
+		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
+		RTPSLog::printError();
 		return false;
 	}
 	if(!W->writer_cache.add_change(change))
 	{
-		cout << B_RED << "Add change failed" << DEF << endl;
+		RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
+		RTPSLog::printError();
 		return false;
 	}
 	return true;
@@ -109,6 +115,8 @@ bool Publisher::removeMinSeqChange()
 			return true;
 	}
 	W->writer_cache.historyMutex.unlock();
+	RTPSLog::Warning<< B_RED << "No changes in History"<< DEF << endl;
+			RTPSLog::printWarning();
 	return false;
 }
 
@@ -127,7 +135,8 @@ bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 	ReaderLocator RL;
 	RL.expectsInlineQos = expectsInlineQos;
 	RL.locator = Loc;
-	cout << "Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl;
+	RTPSLog::Info << "Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl;
+	RTPSLog::printInfo();
 	if(W->stateType==STATELESS)
 		((StatelessWriter*)W)->reader_locator_add(RL);
 	//TODOG add proxy

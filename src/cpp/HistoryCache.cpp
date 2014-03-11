@@ -20,6 +20,8 @@
 #include "eprosimartps/StatelessWriter.h"
 #include "eprosimartps/RTPSReader.h"
 #include "eprosimartps/StatelessReader.h"
+#include "eprosimartps/common/rtps_elem_seqnum.h"
+#include "eprosimartps/common/rtps_elem_guid.h"
 
 
 

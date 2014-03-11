@@ -34,7 +34,8 @@ ThreadListen::ThreadListen() : listen_socket(io_service) {
 
 ThreadListen::~ThreadListen() {
 	// TODO Auto-generated destructor stub
-	cout << "Removing thread " << b_thread->get_id() << endl;
+	RTPSLog::Warning << "Removing thread " << b_thread->get_id();
+	RTPSLog::printWarning();
 	b_thread->interrupt();
 
 }
@@ -45,8 +46,9 @@ void ThreadListen::listen() {
 	boost::asio::ip::udp::endpoint sender_endpoint;
 	if(first)
 	{
-		cout << BLUE << "Thread: " << b_thread->get_id() << " listening in IP: " << DEF ;
-		cout << BLUE << listen_socket.local_endpoint() << DEF << endl;
+		RTPSLog::Info << BLUE << "Thread: " << b_thread->get_id() << " listening in IP: " << DEF ;
+		RTPSLog::Info << BLUE << listen_socket.local_endpoint() << DEF << endl;
+		RTPSLog::printInfo();
 		participant->endpointToListenThreadSemaphore->post();
 		first = false;
 	}
@@ -56,7 +58,8 @@ void ThreadListen::listen() {
 		//Try to block all associated readers
 		std::size_t lengthbytes = listen_socket.receive_from(boost::asio::buffer((void*)msg.buffer, msg.max_size), sender_endpoint);
 		msg.length = lengthbytes;
-		cout << BLUE << "Message received of length: " << msg.length << " from endpoint: " << sender_endpoint << DEF << endl;
+		RTPSLog::Info << BLUE << "Message received of length: " << msg.length << " from endpoint: " << sender_endpoint << DEF << endl;
+		RTPSLog::printInfo();
 		//Get address into Locator
 		Locator_t send_loc;
 		send_loc.port = sender_endpoint.port();
@@ -66,7 +69,8 @@ void ThreadListen::listen() {
 			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
 		}
 		MR.processCDRMsg(participant->guid.guidPrefix,send_loc,msg.buffer,msg.length);
-		cout << "Message processed " << endl;
+		RTPSLog::Info << "Message processed " << endl;
+		RTPSLog::printInfo();
 	}
 }
 

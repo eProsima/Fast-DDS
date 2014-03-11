@@ -103,10 +103,16 @@ typedef octet SubmessageFlag;
 
 /** @defgroup MANAGEMENTMODULE Management Module
  * @ingroup RTPSMODULE
- *
  */
 
-using namespace std;
+/** @defgroup UTILITIESMODULE Shared Utilities
+ * @ingroup EPROSIMARTPSAPIREFERENCE
+ */
+
+using std::cout;
+using std::endl;
+using std::bitset;
+
 
 #include "common/colors.h"
 
@@ -120,6 +126,9 @@ using namespace std;
 
 #include "common/rtps_error_codes.h"
 #include "common/CacheChange.h"
+
+#include "utils/Exception.h"
+#include "utils/RTPSLog.h"
 
 
 namespace eprosima{

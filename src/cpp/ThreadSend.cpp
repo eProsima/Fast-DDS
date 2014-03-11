@@ -42,7 +42,9 @@ bool ThreadSend::initSend(Locator_t loc)
 		udp::socket socket(netService);
 		socket.connect(ep);
 		addr = socket.local_endpoint().address();
-		std::cout << "My IP according to google is: " << addr.to_string() << std::endl;
+
+		RTPSLog::Info << "My IP according to google is: " << addr.to_string() << endl;
+		RTPSLog::printInfo();
 
 		sendLocator.address[12] = addr.to_v4().to_bytes()[0];
 		sendLocator.address[13] = addr.to_v4().to_bytes()[1];
@@ -59,12 +61,14 @@ bool ThreadSend::initSend(Locator_t loc)
 		sendLocator.address[15] = 1;
 	}
 
-	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
+	//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
+	udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),sendLocator.port);
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	send_socket.open(boost::asio::ip::udp::v4());
 	send_socket.bind(send_endpoint);
-	cout << YELLOW<<"Sending through default address " << send_socket.local_endpoint();
-	cout << " Socket state: " << send_socket.is_open() << DEF << endl;
+	RTPSLog::Info << YELLOW<<"Sending through default address " << send_socket.local_endpoint();
+	RTPSLog::Info << " Socket state: " << send_socket.is_open() << DEF << endl;
+	RTPSLog::printInfo();
 	//boost::asio::io_service::work work(sendService);
 	return true;
 }
@@ -78,10 +82,11 @@ ThreadSend::~ThreadSend() {
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc) {
 
 	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(loc.to_IP4_string()),loc.port);
-	cout <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
-	cout << YELLOW << send_socket.local_endpoint()  << " ....  ";
+	RTPSLog::Info <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
+	RTPSLog::Info << YELLOW << send_socket.local_endpoint()  << " ....  ";
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
-	cout <<YELLOW <<  "SENT " << longitud << DEF << endl;
+	RTPSLog::Info <<YELLOW <<  "SENT " << longitud << DEF << endl;;
+	RTPSLog::printInfo();
 }
 
 

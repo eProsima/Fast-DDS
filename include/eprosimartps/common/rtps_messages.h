@@ -43,12 +43,13 @@ typedef struct Header_t{
 	~Header_t(){
 	}
 	void print(){
-		cout << "RTPS HEADER of Version: " << (int)version.major << "." << (int)version.minor;
-		cout << "  || VendorId: " << (int)vendorId[0] << "." <<(int)vendorId[1] << endl;
-		cout << "GuidPrefix: ";
+		RTPSLog::LongInfo << "RTPS HEADER of Version: " << (int)version.major << "." << (int)version.minor;
+		RTPSLog::LongInfo << "  || VendorId: " << (int)vendorId[0] << "." <<(int)vendorId[1] << endl;
+		RTPSLog::LongInfo << "GuidPrefix: ";
 		for(int i =0;i<12;i++)
-			cout << (int)guidPrefix.value[i] << ".";
-		cout << endl;
+			RTPSLog::LongInfo << (int)guidPrefix.value[i] << ".";
+		RTPSLog::LongInfo << endl;
+		RTPSLog::printLongInfo();
 	}
 }Header_t;
 
@@ -77,8 +78,9 @@ typedef struct SubmessageHeader_t{
 	uint16_t submessageLength;
 	SubmessageFlag flags;
 	void print (){
-		cout << "Submessage Header, ID: " << (int)submessageId;
-		cout << " length: " << (int)submessageLength << " flags " << (bitset<8>) flags << endl;
+		RTPSLog::LongInfo << "Submessage Header, ID: " << (int)submessageId;
+		RTPSLog::LongInfo << " length: " << (int)submessageLength << " flags " << (bitset<8>) flags << endl;
+		RTPSLog::printLongInfo();
 	}
 
 }SubmessageHeader_t;
@@ -100,11 +102,12 @@ typedef struct SubmsgData_t{
 	SerializedPayload_t serializedPayload;
 	ParameterList_t inlineQos;
 	void print(){
-		cout << "DATA SubMsg,flags: E: " << endiannessFlag << " I: " << inlineQosFlag << " D: " << dataFlag << " K: " << keyFlag << endl;
-		cout << "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3];
-		cout << " || writerId: " << (int)writerId.value[0] << "." << (int)writerId.value[1] << "." << (int)writerId.value[2] << "." << (int)writerId.value[3] << endl;
-		cout << "InlineQos: " << inlineQos.params.size() << " parameters." << endl;
-		cout << "SeqNum: " << writerSN.to64long() << " Payload: enc: " << serializedPayload.encapsulation << " length: " << serializedPayload.length << endl;
+		RTPSLog::LongInfo << "DATA SubMsg,flags: E: " << endiannessFlag << " I: " << inlineQosFlag << " D: " << dataFlag << " K: " << keyFlag << endl;
+		RTPSLog::LongInfo << "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3];
+		RTPSLog::LongInfo << " || writerId: " << (int)writerId.value[0] << "." << (int)writerId.value[1] << "." << (int)writerId.value[2] << "." << (int)writerId.value[3] << endl;
+		RTPSLog::LongInfo << "InlineQos: " << inlineQos.params.size() << " parameters." << endl;
+		RTPSLog::LongInfo << "SeqNum: " << writerSN.to64long() << " Payload: enc: " << serializedPayload.encapsulation << " length: " << serializedPayload.length << endl;
+		RTPSLog::printLongInfo();
 	}
 }SubmsgData_t;
 
