@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/IPFinder.h"
+#include "eprosimartps/utils/IPFinder.h"
 
 namespace eprosima {
 
@@ -66,7 +66,6 @@ bool IPFinder::getIP_win(std::vector<std::string>* vec_name)
 	}
 
 	free(adapter_addresses);
-	return true;
 }
 
 #else

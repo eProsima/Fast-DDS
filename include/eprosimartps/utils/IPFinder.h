@@ -39,6 +39,11 @@
 
 namespace eprosima {
 
+
+/**
+ * Find IPs of the computer.
+ * @ingroup UTILITIESMODULE
+ */
 class IPFinder {
 public:
 	IPFinder();

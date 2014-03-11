@@ -68,7 +68,8 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, Header_t* header) {
 	}
 	catch(int e)
 	{
-		cout << B_RED << "Header creation fails: "<< e << DEF<< endl;
+		RTPSLog::Error << B_RED << "Header creation fails: "<< e << DEF<< endl;
+		RTPSLog::printError();
 		return false;
 	}
 
@@ -85,7 +86,8 @@ bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 		msg->length = msg->pos;
 	}
 	catch(int e){
-		cout << B_RED << "FALLO MORTAL SUBMSGHEADER"<< e << DEF<< endl;
+		RTPSLog::Error << B_RED << "Submessage Header creation fails: "<< e << DEF<< endl;
+		RTPSLog::printError();
 		return false;
 	}
 

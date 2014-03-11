@@ -37,6 +37,8 @@ namespace dds {
   * @ingroup DDSMODULE
  */
 class RTPS_DllAPI DomainParticipant {
+public:
+
 private:
 	uint32_t id;
     static bool instanceFlag;
@@ -95,6 +97,9 @@ public:
     {
     	instanceFlag = false;
     }
+
+
+
 };
 
 } /* namespace dds */
