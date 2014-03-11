@@ -92,14 +92,21 @@ private:
 
 
 
-
+	//!NOT IMPLEMENTED
 	bool readSubmessageHeartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessageGap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessageAcknak(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessagePad(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessageInfoDestination(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessageInfoSource(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessageInfoTimestamp(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	//!NOT IMPLEMENTED
 	bool readSubmessageInfoReply(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
 
