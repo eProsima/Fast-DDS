@@ -129,6 +129,16 @@ public:
 	uint32_t port;
 };
 
+class ParameterKey_t:public Parameter_t{
+public:
+	octet value[16];
+};
+
+class ParameterStatus_t:public Parameter_t{
+public:
+	octet status;
+};
+
 /** @} */ // end of group1
 
 

@@ -41,9 +41,11 @@ bool Publisher::write(void* Data) {
 	RTPSLog::Info << "Writing New Data" << endl;RTPSLog::printInfo();
 	SerializedPayload_t Payload;
 	type.serialize(&Payload,Data);
+	InstanceHandle_t handle;
+	type.getKey(Data,&handle);
 	//create new change
 	CacheChange_t change;
-	if(!W->new_change(ALIVE,&Payload,Data,&change))
+	if(!W->new_change(ALIVE,&Payload,handle,&change))
 	{
 		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
 		RTPSLog::printError();
@@ -64,7 +66,9 @@ bool Publisher::dispose(void* Data) {
 	//Find the data in the list:
 	//FIXME terminar funcion.
 	CacheChange_t change;
-	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
+	InstanceHandle_t handle;
+		type.getKey(Data,&handle);
+	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change))
 	{
 		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
 				RTPSLog::printError();
@@ -86,7 +90,9 @@ bool Publisher::unregister(void* Data) {
 	//Find the data in the list:
 	//FIXME terminar funcion.
 	CacheChange_t change;
-	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
+	InstanceHandle_t handle;
+			type.getKey(Data,&handle);
+	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change))
 	{
 		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
 		RTPSLog::printError();

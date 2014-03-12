@@ -143,6 +143,7 @@ typedef struct TypeReg_t{
 	std::string dataType;
 	void (*serialize)(SerializedPayload_t*,void*);
 	void (*deserialize)(SerializedPayload_t*,void*);
+	void (*getKey)(void*,InstanceHandle_t*);
 	int32_t byte_size;
 }TypeReg_t;
 }

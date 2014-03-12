@@ -123,6 +123,7 @@ Participant* DomainParticipant::createParticipant(ParticipantParams_t PParam)
 bool DomainParticipant::registerType(std::string in_str,
 		void (*serialize)(SerializedPayload_t* data, void*),
 		void (*deserialize)(SerializedPayload_t* data, void*),
+		void (*getKey)(void*,InstanceHandle_t*),
 		int32_t size) {
 	dds::DomainParticipant *dp;
 		dp = dds::DomainParticipant::getInstance();
@@ -137,6 +138,7 @@ bool DomainParticipant::registerType(std::string in_str,
 	type.dataType = in_str;
 	type.serialize = serialize;
 	type.deserialize = deserialize;
+	type.getKey = getKey;
 	type.byte_size = size;
 	dp->typesRegistered.push_back(type);
 

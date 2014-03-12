@@ -60,6 +60,8 @@ public:
 	static bool addParameterLocator(ParameterList_t* plist,ParameterId_t pid,rtps::Locator_t loc);
 	static bool addParameterString(ParameterList_t* plist,ParameterId_t pid,std::string in_str);
 	static bool addParameterPort(ParameterList_t* plist,ParameterId_t pid,uint32_t port);
+	static bool addParameterKey(ParameterList_t* plist,ParameterId_t pid,InstanceHandle_t handle);
+	static bool addParameterStatus(ParameterList_t* plist,ParameterId_t pid,octet status);
 	///@}
 };
 

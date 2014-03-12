@@ -96,6 +96,8 @@ typedef struct SubmsgData_t{
 	bool inlineQosFlag;
 	bool dataFlag;
 	bool keyFlag;
+	InstanceHandle_t instanceHandle;
+	ChangeKind_t changeKind;
 	EntityId_t readerId;
 	EntityId_t writerId;
 	SequenceNumber_t writerSN;
