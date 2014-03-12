@@ -41,6 +41,16 @@ public:
 	 * @return True if correct.
 	 */
 	static bool updateMsg(ParameterList_t* pList);
+
+
+	/**
+	 * Get the KeyHash and the status from a parameter list.
+	 * @param[in] plist Pointer to the parameter list;
+	 * @param[out] handle Pointer to the handle.
+	 * @param[out] status Pointer to the status.
+	 * @return True if correct.
+	 */
+	static bool getKeyStatus(ParameterList_t* plist,InstanceHandle_t* handle, octet* status);
 	/*!
 	 * Read a ParameterList from a CDRmessage.
 	 * The message read position must be correct or the reading with return false.

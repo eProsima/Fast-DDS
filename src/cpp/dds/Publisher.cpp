@@ -62,7 +62,8 @@ bool Publisher::write(void* Data) {
 
 bool Publisher::dispose(void* Data) {
 	//Convert data to serialized Payload
-	cout << "Disposing of Data" << endl;
+	RTPSLog::Info << "Disposing of Data" << endl;
+	RTPSLog::printInfo();
 	//Find the data in the list:
 	//FIXME terminar funcion.
 	CacheChange_t change;
@@ -86,13 +87,14 @@ bool Publisher::dispose(void* Data) {
 
 bool Publisher::unregister(void* Data) {
 	//Convert data to serialized Payload
-	cout << "Disposing of Data" << endl;
+	RTPSLog::Info << "Unregistering of Data" << endl;
+	RTPSLog::printInfo();
 	//Find the data in the list:
 	//FIXME terminar funcion.
 	CacheChange_t change;
 	InstanceHandle_t handle;
 			type.getKey(Data,&handle);
-	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change))
+	if(!W->new_change(NOT_ALIVE_UNREGISTERED,NULL,handle,&change))
 	{
 		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
 		RTPSLog::printError();
