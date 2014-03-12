@@ -68,9 +68,16 @@ void ThreadListen::listen() {
 		{
 			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
 		}
-		MR.processCDRMsg(participant->guid.guidPrefix,send_loc,msg.buffer,msg.length);
-		RTPSLog::Info << "Message processed " << endl;
-		RTPSLog::printInfo();
+		try{
+			MR.processCDRMsg(participant->guid.guidPrefix,send_loc,msg.buffer,msg.length);
+			RTPSLog::Info << "Message processed " << endl;
+			RTPSLog::printInfo();
+		}
+		catch(int e)
+		{
+			RTPSLog::Error << "Error processing message of type: " << e << endl;
+			RTPSLog::printError();
+		}
 	}
 }
 

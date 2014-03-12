@@ -58,11 +58,14 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 }
 
 bool HistoryCache::add_change(CacheChange_t a_change) {
+	RTPSLog::Info << "Trying to lock history " << endl;
+	RTPSLog::printInfo();
+	historyMutex.lock();
 	if(changes.size() == (size_t)historySize) //History is full
 	{
 		return false;
 	}
-	historyMutex.lock();
+
 	//TODOG manage when a reader history is full
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
@@ -91,6 +94,8 @@ bool HistoryCache::add_change(CacheChange_t a_change) {
 	maxSeqNum = ch->sequenceNumber;
 	maxSeqNumGuid = ch->writerGUID;
 	historyMutex.unlock();
+	RTPSLog::Info << "Cache added to History" << endl;
+	RTPSLog::printInfo();
 	//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED
 
 	if(historyKind == WRITER)
@@ -130,7 +135,9 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid) {
 				&& (*it)->writerGUID == guid)
 		{
 			delete (*it);
+			cout << changes.size() << endl;
 			changes.erase(it);
+			cout << changes.size() << endl;
 			updateMaxMinSeqNum();
 			historyMutex.unlock();
 			return true;
