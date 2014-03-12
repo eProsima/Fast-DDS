@@ -151,6 +151,7 @@ public:
 	ParameterList_t();
 	virtual ~ParameterList_t();
 	std::vector<Parameter_t*> params;
+	std::vector<Parameter_t*> inlineqos_params;
 	CDRMessage_t ParamsMsg;
 	bool has_changed;
 };

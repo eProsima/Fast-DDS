@@ -74,7 +74,6 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 		Pub->topicName = WParam.topicName;
 		Pub->topicDataType = WParam.topicDataType;
 		Pub->type = typeR;
-
 		return Pub;
 	}
 	return NULL;
