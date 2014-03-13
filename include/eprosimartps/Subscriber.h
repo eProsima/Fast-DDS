@@ -168,7 +168,6 @@ private:
 	bool minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadElement_t>::iterator* min_it);
 	bool removeSeqFromRead(SequenceNumber_t sn, GUID_t guid);
 	std::vector<ReadElement_t> readElements;
-	std::vector<SequenceNumber_t> readCacheChanges;
 	RTPSReader* R;
 	//bool initialized;
 	std::string topicName;

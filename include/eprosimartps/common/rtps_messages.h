@@ -16,9 +16,15 @@
 #ifndef RTPS_MESSAGES_H_
 #define RTPS_MESSAGES_H_
 
+
+
 #include <vector>
 #include <iostream>
 #include <bitset>
+
+using std::cout;
+using std::endl;
+using std::bitset;
 
 #include "../ParameterList_t.h"
 
@@ -92,17 +98,16 @@ typedef struct SubmessageHeader_t{
 //!@brief Structure SubmsgData_t, contains the information necessary to create a Data Submessage.
 typedef struct SubmsgData_t{
 	SubmessageHeader_t SubmessageHeader;
-	bool endiannessFlag;
-	bool inlineQosFlag;
-	bool dataFlag;
-	bool keyFlag;
+	bool expectsInlineQos;
+	InstanceHandle_t instanceHandle;
+	ChangeKind_t changeKind;
 	EntityId_t readerId;
 	EntityId_t writerId;
 	SequenceNumber_t writerSN;
 	SerializedPayload_t serializedPayload;
 	ParameterList_t inlineQos;
 	void print(){
-		RTPSLog::LongInfo << "DATA SubMsg,flags: E: " << endiannessFlag << " I: " << inlineQosFlag << " D: " << dataFlag << " K: " << keyFlag << endl;
+		RTPSLog::LongInfo << "DATA SubMsg,flags: " << (bitset<8>) SubmessageHeader.flags << endl;
 		RTPSLog::LongInfo << "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3];
 		RTPSLog::LongInfo << " || writerId: " << (int)writerId.value[0] << "." << (int)writerId.value[1] << "." << (int)writerId.value[2] << "." << (int)writerId.value[3] << endl;
 		RTPSLog::LongInfo << "InlineQos: " << inlineQos.params.size() << " parameters." << endl;

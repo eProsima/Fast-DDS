@@ -129,6 +129,16 @@ public:
 	uint32_t port;
 };
 
+class ParameterKey_t:public Parameter_t{
+public:
+	octet value[16];
+};
+
+class ParameterStatus_t:public Parameter_t{
+public:
+	octet status;
+};
+
 /** @} */ // end of group1
 
 
@@ -141,6 +151,7 @@ public:
 	ParameterList_t();
 	virtual ~ParameterList_t();
 	std::vector<Parameter_t*> params;
+	std::vector<Parameter_t*> inlineqos_params;
 	CDRMessage_t ParamsMsg;
 	bool has_changed;
 };

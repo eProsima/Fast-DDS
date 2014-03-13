@@ -53,7 +53,7 @@ typedef enum Endianness_t{
 	LITTLEEND = 0x0
 }Endianness_t;
 
-#define EPROSIMA_ENDIAN LITTLEEND //ERROR CAMBIAR A LITTLEEND
+#define EPROSIMA_ENDIAN BIGEND //ERROR CAMBIAR A LITTLEEND
 
 //!Max size of RTPS message in bytes.
 #define RTPSMESSAGE_MAX_SIZE 2048  //max size of ftps message in bytes
@@ -143,6 +143,7 @@ typedef struct TypeReg_t{
 	std::string dataType;
 	void (*serialize)(SerializedPayload_t*,void*);
 	void (*deserialize)(SerializedPayload_t*,void*);
+	void (*getKey)(void*,InstanceHandle_t*);
 	int32_t byte_size;
 }TypeReg_t;
 }
