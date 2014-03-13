@@ -67,6 +67,7 @@ void RTPSLog::printLongInfo()
 }
 
 
+
 void RTPSLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL lvl,std::string s)
 {
 	RTPSLog* RL = getInstance();
