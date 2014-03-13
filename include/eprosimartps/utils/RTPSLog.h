@@ -24,6 +24,14 @@
 #ifndef RTPSLOG_H_
 #define RTPSLOG_H_
 
+
+#define pE RTPSLog::printError();
+#define pW RTPSLog::printWarning();
+#define pI RTPSLog::printInfo();
+#define pLI RTPSLog::printLongInfo();
+
+
+
 namespace eprosima {
 
 /**
@@ -69,6 +77,7 @@ public:
 	static void printWarning();
 	static void printInfo();
 	static void printLongInfo();
+
 	///@}
 
 	/**

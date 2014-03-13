@@ -41,6 +41,16 @@ public:
 	 * @return True if correct.
 	 */
 	static bool updateMsg(ParameterList_t* pList);
+
+
+	/**
+	 * Get the KeyHash and the status from a parameter list.
+	 * @param[in] plist Pointer to the parameter list;
+	 * @param[out] handle Pointer to the handle.
+	 * @param[out] status Pointer to the status.
+	 * @return True if correct.
+	 */
+	static bool getKeyStatus(ParameterList_t* plist,InstanceHandle_t* handle, octet* status);
 	/*!
 	 * Read a ParameterList from a CDRmessage.
 	 * The message read position must be correct or the reading with return false.
@@ -60,6 +70,8 @@ public:
 	static bool addParameterLocator(ParameterList_t* plist,ParameterId_t pid,rtps::Locator_t loc);
 	static bool addParameterString(ParameterList_t* plist,ParameterId_t pid,std::string in_str);
 	static bool addParameterPort(ParameterList_t* plist,ParameterId_t pid,uint32_t port);
+	static bool addParameterKey(ParameterList_t* plist,ParameterId_t pid,InstanceHandle_t handle);
+	static bool addParameterStatus(ParameterList_t* plist,ParameterId_t pid,octet status);
 	///@}
 };
 

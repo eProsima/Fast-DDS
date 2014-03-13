@@ -31,7 +31,7 @@ typedef enum ChangeKind_t{
 }ChangeKind_t;
 
 
-typedef void* InstanceHandle_t;
+//typedef void* InstanceHandle_t;
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.

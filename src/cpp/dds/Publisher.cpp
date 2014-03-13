@@ -41,9 +41,11 @@ bool Publisher::write(void* Data) {
 	RTPSLog::Info << "Writing New Data" << endl;RTPSLog::printInfo();
 	SerializedPayload_t Payload;
 	type.serialize(&Payload,Data);
+	InstanceHandle_t handle;
+	type.getKey(Data,&handle);
 	//create new change
 	CacheChange_t change;
-	if(!W->new_change(ALIVE,&Payload,Data,&change))
+	if(!W->new_change(ALIVE,&Payload,handle,&change))
 	{
 		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
 		RTPSLog::printError();
@@ -60,45 +62,63 @@ bool Publisher::write(void* Data) {
 
 bool Publisher::dispose(void* Data) {
 	//Convert data to serialized Payload
-	cout << "Disposing of Data" << endl;
-	//Find the data in the list:
-	//FIXME terminar funcion.
-	CacheChange_t change;
-	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
+	RTPSLog::Info << "Disposing of Data" << endl;
+	RTPSLog::printInfo();
+	if(W->topicKind == WITH_KEY)
 	{
-		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
-				RTPSLog::printError();
-		return false;
+		//Find the data in the list:
+		//FIXME terminar funcion.
+		CacheChange_t change;
+		InstanceHandle_t handle;
+		type.getKey(Data,&handle);
+		if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change))
+		{
+			RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
+			RTPSLog::printError();
+			return false;
+		}
+		if(!W->writer_cache.add_change(change))
+		{
+			RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
+			RTPSLog::printError();
+			return false;
+		}
+		return true;
 	}
-	if(!W->writer_cache.add_change(change))
-	{
-		RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
-				RTPSLog::printError();
-		return false;
-	}
-	return true;
+	RTPSLog::Warning << "Not in NOKEY Topic" << endl;
+	RTPSLog::printWarning();
+	return false;
 }
 
 
 bool Publisher::unregister(void* Data) {
 	//Convert data to serialized Payload
-	cout << "Disposing of Data" << endl;
-	//Find the data in the list:
-	//FIXME terminar funcion.
-	CacheChange_t change;
-	if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,Data,&change))
+	RTPSLog::Info << "Unregistering of Data" << endl;
+	RTPSLog::printInfo();
+	if(W->topicKind == WITH_KEY)
 	{
-		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
-		RTPSLog::printError();
-		return false;
+		//Find the data in the list:
+		//FIXME terminar funcion.
+		CacheChange_t change;
+		InstanceHandle_t handle;
+		type.getKey(Data,&handle);
+		if(!W->new_change(NOT_ALIVE_UNREGISTERED,NULL,handle,&change))
+		{
+			RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
+			RTPSLog::printError();
+			return false;
+		}
+		if(!W->writer_cache.add_change(change))
+		{
+			RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
+			RTPSLog::printError();
+			return false;
+		}
+		return true;
 	}
-	if(!W->writer_cache.add_change(change))
-	{
-		RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
-		RTPSLog::printError();
-		return false;
-	}
-	return true;
+	RTPSLog::Warning << "Not in NOKEY Topic" << endl;
+	RTPSLog::printWarning();
+	return false;
 }
 
 
@@ -112,17 +132,17 @@ bool Publisher::removeMinSeqChange()
 		W->writer_cache.get_seq_num_min(&sn,&gui);
 		W->writer_cache.remove_change(sn,gui);
 		W->writer_cache.historyMutex.unlock();
-			return true;
+		return true;
 	}
 	W->writer_cache.historyMutex.unlock();
 	RTPSLog::Warning<< B_RED << "No changes in History"<< DEF << endl;
-			RTPSLog::printWarning();
+	RTPSLog::printWarning();
 	return false;
 }
 
 bool Publisher::removeAllChange()
 {
-	return W->writer_cache.removeAll();
+	return W->writer_cache.remove_all_changes();
 }
 
 int Publisher::getHistory_n()

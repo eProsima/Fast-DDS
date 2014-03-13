@@ -77,11 +77,13 @@ public:
 	 * @param in_str Type Name. Must be unique.
 	 * @param serialize Pointer to serialization function.
 	 * @param deserialize Pointer to deserialization function.
+	 * @param getKey Pointer to getKeyhashFunction.
 	 * @param size Size in bytes of the type.
 	 * @return True if suceeded. 
 	 */
     static bool registerType(std::string in_str, void (*serialize)(SerializedPayload_t*data,void*)
-    		,void (*deserialize)(SerializedPayload_t*data,void*),int32_t size);
+    		,void (*deserialize)(SerializedPayload_t*data,void*),
+    		void (*getKey)(void*,InstanceHandle_t*),int32_t size);
 
 	/**
 	 * @brief Get pointer to the unique instance of this class.
