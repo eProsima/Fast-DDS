@@ -31,7 +31,7 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 	}
 	catch(int e)
 	{
-		cout << " Message creator fails: " << e << DEF<< endl;
+		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
 		return false;
 	}
 	return true;
@@ -49,7 +49,7 @@ bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,SubmsgAcknack_
 	}
 	catch(int e)
 	{
-		cout << " Message creator fails: " << e << DEF<< endl;
+		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
 		return false;
 	}
 	SubM->SubmessageHeader.flags = 0x0;

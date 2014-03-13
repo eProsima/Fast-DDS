@@ -55,22 +55,24 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 	return false;
 }
 
-bool HistoryCache::add_change(CacheChange_t a_change)
+bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 {
-	RTPSLog::Info << "Trying to lock history " << endl;
-		RTPSLog::printInfo();
+	RTPSLog::DebugInfo << "Trying to lock history " << endl;
+	RTPSLog::printDebugInfo();
 	boost::lock_guard<HistoryCache> guard(*this);
 
 	if(changes.size() == (size_t)historySize) //History is full
 	{
+		RTPSLog::Warning << "Attempting to add change with Full History" << endl;pW
 		return false;
 	}
 
 	//TODOG manage when a reader history is full
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
-	ch->copy(&a_change);
-	if(historyKind == WRITER){
+	ch->copy(a_change);
+	if(historyKind == WRITER)
+	{
 		rtpswriter->lastChangeSequenceNumber++;
 		ch->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
 		changes.push_back(ch);
@@ -78,54 +80,33 @@ bool HistoryCache::add_change(CacheChange_t a_change)
 	}
 	else if(historyKind == READER)
 	{
+
 		//Check that the same change has not been already introduced
 		std::vector<CacheChange_t*>::iterator it;
 		for(it=changes.begin();it!=changes.end();it++)
 		{
-			if((*it)->sequenceNumber == ch->sequenceNumber)
+			if((*it)->sequenceNumber.to64long() == ch->sequenceNumber.to64long() &&
+					(*it)->writerGUID == ch->writerGUID)
 			{
+				RTPSLog::Warning << "Change with the same seqNum already in History" << endl;pW
 				return false;
 			}
 		}
 		changes.push_back(ch);
 		updateMaxMinSeqNum();
 	}
-	maxSeqNum = ch->sequenceNumber;
-	maxSeqNumGuid = ch->writerGUID;
+	(*ch_ptr) = ch;
 	if(changes.size()==historySize)
 		isHistoryFull = true;
+	RTPSLog::DebugInfo << "Cache added to History" << endl;
+	RTPSLog::printDebugInfo();
 
-	RTPSLog::Info << "Cache added to History" << endl;
-	RTPSLog::printInfo();
-	//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED
-	//FIXME:remove this from here.
-	if(historyKind == WRITER)
-	{
-		if(rtpswriter->stateType == STATELESS)
-		{
-			((StatelessWriter*)rtpswriter)->unsent_change_add(ch);
-		}
-		else
-		{
-
-		}
-	}
-	else if(historyKind == READER)
-	{
-		//Notify user... and maybe writer proxies
-		if(rtpsreader->newMessageCallback !=NULL)
-			rtpsreader->newMessageCallback();
-		//else //FIXME: removed for testing, put back.
-			rtpsreader->newMessageSemaphore->post();
-
-		if(rtpsreader->stateType == STATEFUL)
-		{
-			//TODOG Notify proxies
-		}
-	}
 
 	return true;
 }
+
+
+
 
 
 bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)

@@ -42,47 +42,38 @@ bool Publisher::write(void* Data) {
 	SerializedPayload_t Payload;
 	type.serialize(&Payload,Data);
 	InstanceHandle_t handle;
-	type.getKey(Data,&handle);
+	if(W->topicKind == WITH_KEY)
+		type.getKey(Data,&handle);
 	//create new change
 	CacheChange_t change;
-	if(!W->new_change(ALIVE,&Payload,handle,&change))
-	{
-		RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
-		RTPSLog::printError();
+	W->new_change(ALIVE,NULL,handle,&change);
+	CacheChange_t* ch_ptr;
+	if(!W->writer_cache.add_change(&change,&ch_ptr))
 		return false;
-	}
-	if(!W->writer_cache.add_change(change))
-	{
-		RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
-		RTPSLog::printError();
-		return false;
-	}
+	if(W->stateType == STATELESS)
+		((StatelessWriter*)W)->unsent_change_add(ch_ptr);
+	else
+	{}
 	return true;
+
 }
 
 bool Publisher::dispose(void* Data) {
 	//Convert data to serialized Payload
-	RTPSLog::Info << "Disposing of Data" << endl;
-	RTPSLog::printInfo();
+	RTPSLog::Info << "Disposing of Data" << endl;pI
 	if(W->topicKind == WITH_KEY)
 	{
-		//Find the data in the list:
-		//FIXME terminar funcion.
 		CacheChange_t change;
 		InstanceHandle_t handle;
 		type.getKey(Data,&handle);
-		if(!W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change))
-		{
-			RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
-			RTPSLog::printError();
+		W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change);
+		CacheChange_t* ch_ptr;
+		if(!W->writer_cache.add_change(&change,&ch_ptr))
 			return false;
-		}
-		if(!W->writer_cache.add_change(change))
-		{
-			RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
-			RTPSLog::printError();
-			return false;
-		}
+		if(W->stateType == STATELESS)
+			((StatelessWriter*)W)->unsent_change_add(ch_ptr);
+		else
+		{}
 		return true;
 	}
 	RTPSLog::Warning << "Not in NOKEY Topic" << endl;
@@ -97,23 +88,17 @@ bool Publisher::unregister(void* Data) {
 	RTPSLog::printInfo();
 	if(W->topicKind == WITH_KEY)
 	{
-		//Find the data in the list:
-		//FIXME terminar funcion.
 		CacheChange_t change;
 		InstanceHandle_t handle;
 		type.getKey(Data,&handle);
-		if(!W->new_change(NOT_ALIVE_UNREGISTERED,NULL,handle,&change))
-		{
-			RTPSLog::Error<< B_RED << "New Change creation failed"<< DEF << endl;
-			RTPSLog::printError();
+		W->new_change(NOT_ALIVE_UNREGISTERED,NULL,handle,&change);
+		CacheChange_t* ch_ptr;
+		if(!W->writer_cache.add_change(&change,&ch_ptr))
 			return false;
-		}
-		if(!W->writer_cache.add_change(change))
-		{
-			RTPSLog::Error << B_RED << "Add change failed" << DEF << endl;
-			RTPSLog::printError();
-			return false;
-		}
+		if(W->stateType == STATELESS)
+			((StatelessWriter*)W)->unsent_change_add(ch_ptr);
+		else
+		{}
 		return true;
 	}
 	RTPSLog::Warning << "Not in NOKEY Topic" << endl;

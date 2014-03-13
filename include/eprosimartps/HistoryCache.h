@@ -53,10 +53,11 @@ public:
 	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** change_ptr_ptr);
 	/**
 	 * Add a change to the HistoryCache.
-	 * @param[in] a_change The change to add.
+	 * @param[in] a_change Pointer to the change to add.
+	 * @param[out] ch_ptr Pointer to pointer of cachechange, to return a pointer to the real change in the history.
 	 * @return True if correct.
 	 */
-	bool add_change(CacheChange_t a_change);
+	bool add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr);
 
 	/**
 	 * Remove a change based on its SequenceNumber_t and writer GUID.

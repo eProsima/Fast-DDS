@@ -32,7 +32,7 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 	}
 	catch(int e)
 	{
-		cout << " Message creator fails: " << e << DEF<< endl;
+		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
 		return false;
 	}
 	return true;
@@ -48,9 +48,9 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SubmsgGap_t* SubM)
 		CDRMessage::addSequenceNumber(submsg,&SubM->gapStart);
 		CDRMessage::addSequenceNumberSet(submsg,&SubM->gapList);
 	}
-	catch(int t)
+	catch(int e)
 	{
-		cout << " Message creator fails: " << t << DEF<< endl;
+		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
 		return false;
 	}
 	SubM->SubmessageHeader.flags = 0x0;

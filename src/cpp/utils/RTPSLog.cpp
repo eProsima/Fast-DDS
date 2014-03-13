@@ -23,6 +23,7 @@ namespace eprosima {
 std::ostringstream RTPSLog::Error;
 std::ostringstream RTPSLog::Warning;
 std::ostringstream RTPSLog::Info;
+std::ostringstream RTPSLog::DebugInfo;
 std::ostringstream RTPSLog::LongInfo;
 
 
@@ -55,6 +56,15 @@ void RTPSLog::printInfo()
 	RTPSLog::printString(EPROSIMA_INFO_VERBOSITY_LEVEL,ss.str());
 	RTPSLog::Info.str("");
 	RTPSLog::Info.clear();
+}
+
+void RTPSLog::printDebugInfo()
+{
+	std::stringstream ss;
+		ss << B_GREEN << "[eRTPS-DebugInfo] " << DEF <<  RTPSLog::DebugInfo.str() << DEF;
+	RTPSLog::printString(EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL,ss.str());
+	RTPSLog::DebugInfo.str("");
+	RTPSLog::DebugInfo.clear();
 }
 
 void RTPSLog::printLongInfo()
