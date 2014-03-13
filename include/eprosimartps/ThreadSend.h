@@ -15,10 +15,12 @@
  *      		grcanosa@gmail.com
  */
 #include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
+#include <boost/thread.hpp>
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 
 #include "rtps_all.h"
@@ -34,12 +36,11 @@ namespace rtps {
  *  logic for merge different CDRMessages into a single RTPSMessages (HB piggybacking, for example).
  * @ingroup COMMONMODULE
  */
-class ThreadSend {
+class ThreadSend: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	ThreadSend();
 	virtual ~ThreadSend();
 	Locator_t sendLocator;
-	boost::mutex sendMutex;
 	boost::asio::io_service sendService;
 	boost::asio::ip::udp::socket send_socket;
 	/**

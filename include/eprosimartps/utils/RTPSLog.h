@@ -28,6 +28,7 @@
 #define pE RTPSLog::printError();
 #define pW RTPSLog::printWarning();
 #define pI RTPSLog::printInfo();
+#define pDI RTPSLog::printDebugInfo();
 #define pLI RTPSLog::printLongInfo();
 
 
@@ -47,7 +48,8 @@ public:
 		EPROSIMA_ERROR_VERBOSITY_LEVEL = 1,
 		EPROSIMA_WARNING_VERBOSITY_LEVEL = 2,
 		EPROSIMA_INFO_VERBOSITY_LEVEL = 3,
-		EPROSIMA_LONGINFO_VERBOSITY_LEVEL = 4
+		EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL = 4,
+		EPROSIMA_LONGINFO_VERBOSITY_LEVEL = 5
 	} EPROSIMA_LOG_VERBOSITY_LEVEL;
 
 	/**
@@ -76,6 +78,7 @@ public:
 	static void printError();
 	static void printWarning();
 	static void printInfo();
+	static void printDebugInfo();
 	static void printLongInfo();
 
 	///@}
@@ -87,6 +90,7 @@ public:
 	static std::ostringstream Error;
 	static std::ostringstream Warning;
 	static std::ostringstream Info;
+	static std::ostringstream DebugInfo;
 	static std::ostringstream LongInfo;
 	///@}
 

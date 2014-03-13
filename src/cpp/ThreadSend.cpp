@@ -79,14 +79,15 @@ ThreadSend::~ThreadSend() {
 	//sendService.stop();
 }
 
-void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc) {
-
+void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc)
+{
+	boost::lock_guard<ThreadSend> guard(*this);
 	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(loc.to_IP4_string()),loc.port);
-	RTPSLog::Info <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
-	RTPSLog::Info << YELLOW << send_socket.local_endpoint()  << " ....  ";
+	RTPSLog::DebugInfo <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
+	RTPSLog::DebugInfo << YELLOW << send_socket.local_endpoint()  << " ....  ";
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
-	RTPSLog::Info <<YELLOW <<  "SENT " << longitud << DEF << endl;;
-	RTPSLog::printInfo();
+	RTPSLog::DebugInfo <<YELLOW <<  "SENT " << longitud << DEF << endl;
+	RTPSLog::printDebugInfo();
 }
 
 
