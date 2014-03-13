@@ -14,10 +14,16 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+
+
+#include <boost/thread.hpp>
+#include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
 #include "rtps_all.h"
+
+using namespace boost;
 
 #ifndef HISTORYCACHE_H_
 #define HISTORYCACHE_H_
@@ -33,7 +39,7 @@ class RTPSReader;
  * Class HistoryCache, container of the different CacheChanges and the methods to access them.
  * @ingroup COMMONMODULE
  */
-class HistoryCache {
+class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	HistoryCache();
 	virtual ~HistoryCache();
@@ -99,10 +105,9 @@ public:
 	RTPSWriter* rtpswriter;
 	RTPSReader* rtpsreader;
 	//!@}
-	//!TYpe of History (WRITER or READER).
+	//!Type of History (WRITER or READER).
 	HistoryKind_t historyKind;
-	//!Recursive mutex to protect the access to the HistoryCache.
-	boost::recursive_mutex historyMutex;
+
 
 private:
 	//!Variable to know if the history is full without needing to block the History mutex.
