@@ -142,7 +142,7 @@ bool Publisher::removeMinSeqChange()
 
 bool Publisher::removeAllChange()
 {
-	return W->writer_cache.removeAll();
+	return W->writer_cache.remove_all_changes();
 }
 
 int Publisher::getHistory_n()

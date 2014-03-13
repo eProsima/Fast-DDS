@@ -135,9 +135,7 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid) {
 				&& (*it)->writerGUID == guid)
 		{
 			delete (*it);
-			cout << changes.size() << endl;
 			changes.erase(it);
-			cout << changes.size() << endl;
 			updateMaxMinSeqNum();
 			historyMutex.unlock();
 			return true;
@@ -147,7 +145,24 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid) {
 	return false;
 }
 
-bool HistoryCache::removeAll()
+bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
+{
+	if(historyMutex.try_lock())
+	{
+		delete(*it);
+		changes.erase(it);
+		updateMaxMinSeqNum();
+		historyMutex.unlock();
+		return true;
+	}
+	RTPSLog::Warning<< "Problem locking History, element no removed"<< endl;
+	RTPSLog::printWarning();
+	return false;
+}
+
+
+
+bool HistoryCache::remove_all_changes()
 {
 	historyMutex.lock();
 	if(!changes.empty())
