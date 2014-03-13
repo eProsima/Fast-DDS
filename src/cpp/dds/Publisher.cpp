@@ -124,17 +124,18 @@ bool Publisher::unregister(void* Data) {
 
 bool Publisher::removeMinSeqChange()
 {
-	W->writer_cache.historyMutex.lock();
+	boost::lock_guard<HistoryCache> guard(W->writer_cache);
+
 	if(!W->writer_cache.changes.empty())
 	{
 		SequenceNumber_t sn;
 		GUID_t gui;
 		W->writer_cache.get_seq_num_min(&sn,&gui);
 		W->writer_cache.remove_change(sn,gui);
-		W->writer_cache.historyMutex.unlock();
+
 		return true;
 	}
-	W->writer_cache.historyMutex.unlock();
+
 	RTPSLog::Warning<< B_RED << "No changes in History"<< DEF << endl;
 	RTPSLog::printWarning();
 	return false;
@@ -142,11 +143,13 @@ bool Publisher::removeMinSeqChange()
 
 bool Publisher::removeAllChange()
 {
+	boost::lock_guard<HistoryCache> guard(W->writer_cache);
 	return W->writer_cache.remove_all_changes();
 }
 
 int Publisher::getHistory_n()
 {
+	boost::lock_guard<HistoryCache> guard(W->writer_cache);
 	return W->writer_cache.changes.size();
 }
 
