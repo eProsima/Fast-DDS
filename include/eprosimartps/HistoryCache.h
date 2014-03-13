@@ -61,10 +61,17 @@ public:
 	bool remove_change(SequenceNumber_t seqNum, GUID_t writerGuid);
 
 	/**
+	 * Remove a change based on a vector iterator.
+	 * @param[in] it Iterator to the elements
+	 * @return True if correct
+	 */
+	bool remove_change(std::vector<CacheChange_t*>::iterator it);
+
+	/**
 	 * Remove all elements of the History.
 	 * @return True if correct.
 	 */
-	bool removeAll();
+	bool remove_all_changes();
 
 	/**
 	 * Get the minimum sequence number in the HistoryCache.
