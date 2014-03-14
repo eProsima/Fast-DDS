@@ -67,7 +67,6 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 		return false;
 	}
 
-	//TODOG manage when a reader history is full
 	//make copy of change to save
 	CacheChange_t* ch = new CacheChange_t();
 	ch->copy(a_change);
@@ -104,10 +103,6 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 
 	return true;
 }
-
-
-
-
 
 bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
 {

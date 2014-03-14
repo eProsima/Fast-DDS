@@ -41,7 +41,7 @@ namespace eprosima {
  */
 class RTPS_DllAPI RTPSLog {
 public:
-	//!Verbosity levels available
+	//! Verbosity levels available
 	typedef enum EPROSIMA_LOG_VERBOSITY_LEVEL
 	{
 		EPROSIMA_QUIET_VERBOSITY_LEVEL = 0,
@@ -53,7 +53,7 @@ public:
 	} EPROSIMA_LOG_VERBOSITY_LEVEL;
 
 	/**
-	 * Set verbosity for all outputs
+	 * Set verbosity for all outputs.
 	 * @param level Verbosity level
 	 */
 	static void setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level);
