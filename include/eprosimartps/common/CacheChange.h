@@ -30,6 +30,14 @@ typedef enum ChangeKind_t{
 	NOT_ALIVE_UNREGISTERED//!< NOT_ALIVE_UNREGISTERED
 }ChangeKind_t;
 
+typedef enum ChangeForReaderStatus_t{
+	UNSENT,
+	UNACKNOWLEDGED,
+	REQUESTED,
+	ACKNOWLEDGED,
+	UNDERWAY
+}ChangeForReaderStatus_t;
+
 
 //typedef void* InstanceHandle_t;
 
@@ -71,6 +79,11 @@ typedef struct CacheChange_t{
 	}
 }CacheChange_t;
 
+typedef struct ChangeForReader_t{
+	CacheChange_t* change;
+	ChangeForReaderStatus_t status;
+	bool is_relevant;
+}ChangeForReader_t;
 
 
 

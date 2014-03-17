@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file CDRMessageCreator.h
+ * @file CDRMessageCreator2.h
  *	CDR Message creator functions.
  *  Created on: Feb 19, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -15,8 +15,7 @@
  */
 
 #include "rtps_all.h"
-#include "common/rtps_messages.h"
-//#include "RTPSWriter.h"
+
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
@@ -26,33 +25,44 @@
 namespace eprosima {
 namespace rtps{
 
-class RTPSWriter;
+
 
 /**
  * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
  * @ingroup COMMONMODULE
  */
-class CDRMessageCreator {
+class CDRMessageCreator2 {
 public:
 	CDRMessageCreator();
 	virtual ~CDRMessageCreator();
 
 
 	/**
-	 * @brief Create a Header to the serialized message.
+	 * Create a Header to the serialized message.
 	 * @param msg Pointer to the Message.
-	 * @param H Pointer to the header structure.
+	 * @param Prefix Participant prefix of the message.
+	 * @param version Protocol version.
+	 * @param vendorId Vendor Id.
 	 * @return True if correct.
 	 */
-	bool createHeader(CDRMessage_t*msg ,Header_t* H);
+	static bool createHeader(CDRMessage_t*msg ,GuidPrefix_t Prefix,ProtocolVersion_t version,VendorId_t vendorId);
+
 	/**
-	 * @brief Create SubmessageHeader.
+	 * Create SubmessageHeader.
 	 * @param msg Pointer to the CDRMessage.
-	 * @param SubMH Pointer to the SubMessageHeader.
-	 * @param submsgsize Length of the corresponding message.
+	 * @param id SubMessage Id.
+	 * @param flags Submessage flags.
+	 * @param size Submessage size.
 	 * @return True if correct.
 	 */
-	bool createSubmessageHeader(CDRMessage_t* msg,SubmessageHeader_t* SubMH,unsigned short submsgsize);
+	static bool createSubmessageHeader(CDRMessage_t* msg,octet id,octet flags,uint16_t size);
+
+
+
+	static bool createMessageData(CDRMessage_t* msg,GuidPrefix_t guidprefix,CacheChange_t* change,TopicKind_t topicKind,bool expectsInline);
+	static bool createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,TopicKind_t topicKind,bool expectsInline);
+
+
 
 
 
@@ -69,7 +79,8 @@ public:
 	//!Create a Data Message
 	bool createMessageData(CDRMessage_t* msg,GuidPrefix_t guidprefix,SubmsgData_t* DataSubM,RTPSWriter* W);
 
-	bool createMessageData(CDRMessage_t* msg,GuidPrefix_t guidprefix,CacheChange_t* change);
+
+
 	//! Create a Data Submessage.
 	bool createSubmessageData(CDRMessage_t* submsg,SubmsgData_t* DataSubM,RTPSWriter* W);
 	//! Create a Heartbeat message. NOT YET TESTED.

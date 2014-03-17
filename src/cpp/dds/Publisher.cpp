@@ -19,6 +19,8 @@
 #include "eprosimartps/RTPSWriter.h"
 #include "eprosimartps/ReaderLocator.h"
 #include "eprosimartps/StatelessWriter.h"
+#include "eprosimartps/StatefulWriter.h"
+#include "eprosimartps/ReaderProxy.h"
 
 namespace eprosima {
 namespace dds {
@@ -39,46 +41,13 @@ Publisher::~Publisher() {
 bool Publisher::write(void* Data) {
 	//Convert data to serialized Payload
 	RTPSLog::Info << "Writing New Data" << endl;RTPSLog::printInfo();
-	SerializedPayload_t Payload;
-	type.serialize(&Payload,Data);
-	InstanceHandle_t handle;
-	if(W->topicKind == WITH_KEY)
-		type.getKey(Data,&handle);
-	//create new change
-	CacheChange_t change;
-	W->new_change(ALIVE,NULL,handle,&change);
-	CacheChange_t* ch_ptr;
-	if(!W->writer_cache.add_change(&change,&ch_ptr))
-		return false;
-	if(W->stateType == STATELESS)
-		((StatelessWriter*)W)->unsent_change_add(ch_ptr);
-	else
-	{}
-	return true;
-
+	return add_new_change(ALIVE,Data);
 }
 
 bool Publisher::dispose(void* Data) {
 	//Convert data to serialized Payload
 	RTPSLog::Info << "Disposing of Data" << endl;pI
-	if(W->topicKind == WITH_KEY)
-	{
-		CacheChange_t change;
-		InstanceHandle_t handle;
-		type.getKey(Data,&handle);
-		W->new_change(NOT_ALIVE_DISPOSED,NULL,handle,&change);
-		CacheChange_t* ch_ptr;
-		if(!W->writer_cache.add_change(&change,&ch_ptr))
-			return false;
-		if(W->stateType == STATELESS)
-			((StatelessWriter*)W)->unsent_change_add(ch_ptr);
-		else
-		{}
-		return true;
-	}
-	RTPSLog::Warning << "Not in NOKEY Topic" << endl;
-	RTPSLog::printWarning();
-	return false;
+	return add_new_change(NOT_ALIVE_DISPOSED,Data);
 }
 
 
@@ -86,23 +55,46 @@ bool Publisher::unregister(void* Data) {
 	//Convert data to serialized Payload
 	RTPSLog::Info << "Unregistering of Data" << endl;
 	RTPSLog::printInfo();
+	return add_new_change(NOT_ALIVE_UNREGISTERED,Data);
+}
+
+
+bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
+{
+	if(kind != ALIVE && W->topicKind == NO_KEY)
+	{
+		RTPSLog::Warning << "NOT ALIVE change in NO KEY Topic " << endl;pW
+		return false;
+	}
+
+	CacheChange_t change;
+	InstanceHandle_t handle;
+	SerializedPayload_t Payload;
 	if(W->topicKind == WITH_KEY)
 	{
-		CacheChange_t change;
-		InstanceHandle_t handle;
 		type.getKey(Data,&handle);
-		W->new_change(NOT_ALIVE_UNREGISTERED,NULL,handle,&change);
-		CacheChange_t* ch_ptr;
-		if(!W->writer_cache.add_change(&change,&ch_ptr))
-			return false;
-		if(W->stateType == STATELESS)
-			((StatelessWriter*)W)->unsent_change_add(ch_ptr);
-		else
-		{}
-		return true;
 	}
-	RTPSLog::Warning << "Not in NOKEY Topic" << endl;
-	RTPSLog::printWarning();
+	if(kind == ALIVE)
+	{
+		type.serialize(&Payload,Data);
+		W->new_change(kind,&Payload,handle,&change);
+	}
+	else
+		W->new_change(kind,NULL,handle,&change);
+
+	CacheChange_t* ch_ptr;
+	if(!W->writer_cache.add_change(&change,&ch_ptr))
+		return false;
+	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
+	if(W->stateType == STATELESS)
+		((StatelessWriter*)W)->unsent_change_add(ch_ptr);
+	else if(W->stateType == STATEFUL)
+	{
+		((StatefulWriter*)W)->unsent_change_add(ch_ptr);
+	}
+	return true;
+
+
 	return false;
 }
 

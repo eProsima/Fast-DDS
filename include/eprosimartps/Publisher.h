@@ -138,6 +138,8 @@ private:
 	std::string topicDataType;
 	TypeReg_t type;
 
+	bool add_new_change(ChangeKind_t kind,void* Data);
+
 
 };
 
