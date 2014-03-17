@@ -18,60 +18,74 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
-									SubmsgAcknack_t* SubM){
-	Header_t H = Header_t();
-	H.guidPrefix = guidprefix;
-	try{
-		createHeader(msg,&H);
-		CDRMessage_t submsg;
-		createSubmessageAcknack(&submsg,SubM);
-		CDRMessage::appendMsg(msg, &submsg);
+bool CDRMessageCreator2::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
+		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag){
+	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
+	try
+	{
+		CDRMessage_t header;
+		VendorId_t vendor;
+		VENDORID_EPROSIMA(vendor);
+		ProtocolVersion_t version;
+		PROTOCOLVERSION(version);
+		CDRMessageCreator2::createHeader(&header,guidprefix,version,vendor);
+		CDRMessage::appendMsg(msg, &header);
+
+		CDRMessage_t submsgdata;
+		CDRMessageCreator2::createSubmessageAcknack(&submsgdata,readerId, writerId,SNSet,count,finalFlag);
+		CDRMessage::appendMsg(msg, &submsgdata);
+		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
 	}
 	catch(int e)
 	{
-		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
+		RTPSLog::Error << "Data message not created: " << e << DEF<< endl;
+		RTPSLog::printError();
 		return false;
 	}
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,SubmsgAcknack_t* SubM){
-	CDRMessage_t* submsg = new CDRMessage_t();
-	CDRMessage::initCDRMsg(submsg);
+bool CDRMessageCreator2::createSubmessageAcknack(CDRMessage_t* msg,
+		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag)
+{
+	CDRMessage::initCDRMsg(msg);
+	//Create the two CDR msgs
+	CDRMessage_t submsgHeader,submsgElem;
+	CDRMessage::initCDRMsg(&submsgHeader,RTPSMESSAGE_SUBMESSAGEHEADER_SIZE);
+	CDRMessage::initCDRMsg(&submsgElem,RTPSMESSAGE_MAX_SIZE);
+	octet flags = 0x0;
+	if(EPROSIMA_ENDIAN == BIGEND)
+	{
+		flags = flags | BIT(0);
+				submsgElem.msg_endian = submsgHeader.msg_endian = BIGEND;
+	}
+	else
+	{
+		submsgElem.msg_endian = submsgHeader.msg_endian = LITTLEEND;
+	}
+	if(finalFlag)
+		flags = flags | BIT(1);
+
+
 	try{
-		CDRMessage::addEntityId(submsg,&SubM->readerId);
-		CDRMessage::addEntityId(submsg,&SubM->writerId);
+		CDRMessage::addEntityId(&submsgElem,&readerId);
+		CDRMessage::addEntityId(&submsgElem,&writerId);
 		//Add Sequence Number
-		CDRMessage::addSequenceNumberSet(submsg,&SubM->readerSNState);
-		CDRMessage::addInt32(submsg,SubM->count);
+		CDRMessage::addSequenceNumberSet(&submsgElem,&SNSet);
+		CDRMessage::addInt32(&submsgElem,count);
 	}
 	catch(int e)
 	{
 		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
 		return false;
 	}
-	SubM->SubmessageHeader.flags = 0x0;
-	if(EPROSIMA_ENDIAN == BIGEND)
-	{
-		SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(0);
-		submsg->msg_endian = BIGEND;
-	}
-	else
-	{
-		submsg->msg_endian = LITTLEEND;
-	}
-	if(SubM->finalFlag)
-		SubM->SubmessageHeader.flags = SubM->SubmessageHeader.flags | BIT(1);
 
-	//Once the submessage elements are added, the submessage header is created, assigning the correct size.
-	SubM->SubmessageHeader.submessageLength = submsg->pos;
-	SubM->SubmessageHeader.submessageId = ACKNACK;
 	//Once the submessage elements are added, the header is created
-	createSubmessageHeader(msg, &SubM->SubmessageHeader,submsg->pos);
+	CDRMessageCreator2::createSubmessageHeader(&submsgHeader,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
-	CDRMessage::appendMsg(msg, submsg);
+	CDRMessage::appendMsg(msg, &submsgHeader);
+	CDRMessage::appendMsg(msg, &submsgElem);
 	msg->length = msg->pos;
 	return true;
 }

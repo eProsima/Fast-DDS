@@ -16,7 +16,6 @@
 
 #include "eprosimartps/CDRMessageCreator2.h"
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/RTPSWriter.h"
 #include "eprosimartps/ParameterListCreator.h"
 
 namespace eprosima {
@@ -31,26 +30,27 @@ namespace rtps{
 };
 };
 
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps{
 
 
-CDRMessageCreator::CDRMessageCreator() {
+CDRMessageCreator2::CDRMessageCreator2() {
 	// TODO Auto-generated constructor stub
 
 
 }
 
-CDRMessageCreator::~CDRMessageCreator() {
+CDRMessageCreator2::~CDRMessageCreator2() {
 	// TODO Auto-generated destructor stub
 }
 
 
-bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
+bool CDRMessageCreator2::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
-	CDRMessage::initCDRMsg(msg,RTPSMESSAGE_HEADER_SIZE);
+
 	try{
 		CDRMessage::addOctet(msg,'R');
 		CDRMessage::addOctet(msg,'T');
@@ -78,9 +78,9 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
+bool CDRMessageCreator2::createSubmessageHeader(CDRMessage_t* msg,
 		octet id,octet flags,uint16_t size) {
-	CDRMessage::initCDRMsg(msg,RTPSMESSAGE_SUBMESSAGEHEADER_SIZE);
+
 	try{
 		CDRMessage::addOctet(msg,id);
 		CDRMessage::addOctet(msg,flags);
