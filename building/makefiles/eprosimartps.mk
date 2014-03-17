@@ -29,7 +29,7 @@ EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x
 EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 		  -I$(EPROSIMADIR)/code
 
-EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/CDRMessageCreator.cpp \
+EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/CDRMessageCreator2.cpp \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
 		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
 		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
@@ -49,8 +49,8 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/CDRMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/dds/ParameterListCreator.cpp \
 		  $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
-		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
-		  $(BASEDIR)/src/cpp/StatefulWriter.cpp \
+		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp 
+		 # $(BASEDIR)/src/cpp/StatefulWriter.cpp \
 		  $(BASEDIR)/src/cpp/ReaderProxy.cpp 
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/NotEnoughMemoryException.cpp \

@@ -83,6 +83,24 @@ typedef unsigned short ushort;
 typedef octet SubmessageFlag;
 
 
+// //!@brief Enumeration of the different Submessages types
+#define	PAD 0x01
+#define	ACKNACK 0x06
+#define	HEARTBEAT 0x07
+#define	GAP 0x08
+#define	INFO_TS 0x09
+#define	INFO_SRC 0x0c
+#define	INFO_REPLY_IP4 0x0d
+#define	INFO_DST 0x0e
+#define	INFO_REPLY 0x0f
+#define	NACK_FRAG 0x12
+#define	HEARTBEAT_FRAG 0x13
+#define	DATA 0x15
+#define	DATA_FRAG 0x16
+
+
+
+
 }
 }
 
