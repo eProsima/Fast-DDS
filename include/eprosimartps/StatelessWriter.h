@@ -17,7 +17,7 @@
 #include "rtps_all.h"
 #include "RTPSWriter.h"
 #include "ReaderLocator.h"
-#include <boost/bind.hpp>
+
 
 #ifndef STATELESSWRITER_H_
 #define STATELESSWRITER_H_

@@ -106,7 +106,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 			rit->unsent_changes.push_back(cptr);
 		}
 		//Order vector.
-		std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+		//std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
 		unsent_changes_not_empty();
 	}
 	else
