@@ -117,13 +117,13 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		{
 			SubmsgData_t* SubmsgData = new SubmsgData_t();
 			valid = readSubmessageData(&msg,&submsgh,&last_submsg,SubmsgData);
-			RTPSLog::DebugInfo << "Message Read"<< endl;pDI;
+			pDebugInfo( "Message Read")
 			if(valid)
 			{
 			//	SubMessages.push_back(std::make_pair(count,(SubmessageHeader_t*)SubmsgData));
 				SubmsgData->print();
 				processSubmessageData(SubmsgData);
-				RTPSLog::DebugInfo << "Sub Message DATA processed"<< endl;pDI;
+				pDebugInfo("Sub Message DATA processed")
 			}
 			break;
 		}
@@ -213,8 +213,7 @@ bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
 	bool keyFlag = DSM.SubmessageHeader.flags & BIT(3) ? true : false;
 	if(keyFlag && dataFlag)
 	{
-		RTPSLog::Warning << "Message received with Data and Key Flag set." << endl;
-		RTPSLog::printWarning();
+		pWarning( "Message received with Data and Key Flag set.")
 		return false;
 	}
 

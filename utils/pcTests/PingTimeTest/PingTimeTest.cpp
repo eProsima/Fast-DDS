@@ -119,7 +119,7 @@ void newMsgCallback()
 
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_ERROR_VERBOSITY_LEVEL);
 	int type;
 	if(argc > 1)
 	{
@@ -180,8 +180,8 @@ int main(int argc, char** argv){
 	sub->readMinSeqUnreadCache((void*)&tp);
 	boost::posix_time::ptime t3(boost::posix_time::microsec_clock::local_time());
 	cout<< "TIMES: " << endl;
-	cout << (t2-t1).total_microseconds();
-	cout << (t3-t1).total_microseconds();
+	cout << (t2-t1).total_microseconds() << endl;
+	cout << (t3-t2).total_microseconds() << endl;
 
 	cout << "Enter numer "<< endl;
 	int n;

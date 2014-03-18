@@ -75,8 +75,7 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 	}
 	catch(int e)
 	{
-		RTPSLog::Error << B_RED << "Header creation fails: "<< e << DEF<< endl;
-		RTPSLog::printError();
+		pError("Header creation fails.");
 		return false;
 	}
 
@@ -103,8 +102,8 @@ bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 		msg->length = msg->pos;
 	}
 	catch(int e){
-		RTPSLog::Error << B_RED << "Submessage Header creation fails: "<< e << DEF<< endl;
-		RTPSLog::printError();
+
+		pError("Submessage Header creation fails.");
 		return false;
 	}
 
@@ -142,8 +141,7 @@ bool CDRMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,boo
 	}
 	catch(int e)
 	{
-		RTPSLog::Error << B_RED << "Submessage creation fails: "<< e << DEF<< endl;
-		RTPSLog::printError();
+		pError("Submessage Header creation fails.");
 		return false;
 	}
 	return true;
@@ -168,7 +166,7 @@ bool CDRMessageCreator::createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invali
 }; /* namespace eprosima */
 
 
-#include "submessages/DataMsg2.hpp"
-#include "submessages/HeartbeatMsg2.hpp"
-#include "submessages/AckNackMsg2.hpp"
-#include "submessages/GapMsg2.hpp"
+#include "submessages/DataMsg.hpp"
+#include "submessages/HeartbeatMsg.hpp"
+#include "submessages/AckNackMsg.hpp"
+#include "submessages/GapMsg.hpp"
