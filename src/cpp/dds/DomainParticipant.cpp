@@ -18,6 +18,7 @@
 #include "eprosimartps/DomainParticipant.h"
 #include "eprosimartps/StatelessWriter.h"
 #include "eprosimartps/StatelessReader.h"
+#include "eprosimartps/StatefulWriter.h"
 
 namespace eprosima {
 namespace dds {
@@ -71,6 +72,18 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SW);
 		SW->Pub = Pub;
+		Pub->topicName = WParam.topicName;
+		Pub->topicDataType = WParam.topicDataType;
+		Pub->type = typeR;
+		return Pub;
+	}
+	else if(WParam.stateKind == STATEFUL)
+	{
+		StatefulWriter* SF = new StatefulWriter();
+		if(!p->createStatefulWriter(SF,WParam))
+			return NULL;
+		Publisher* Pub = new Publisher((RTPSWriter*)SF);
+		SF->Pub = Pub;
 		Pub->topicName = WParam.topicName;
 		Pub->topicDataType = WParam.topicDataType;
 		Pub->type = typeR;

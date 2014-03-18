@@ -53,13 +53,14 @@ typedef enum Endianness_t{
 	LITTLEEND = 0x0
 }Endianness_t;
 
-#define EPROSIMA_ENDIAN LITTLEEND
+#define EPROSIMA_ENDIAN BIGEND
 
 //!Max size of RTPS message in bytes.
 #define RTPSMESSAGE_MAX_SIZE 2048  //max size of ftps message in bytes
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
 #define RTPSMESSAGE_SUBMESSAGEHEADER_SIZE 4
 #define RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE 4
+#define RTPSMESSAGE_INFOTS_SIZE 12
 
 #define RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG 16 //may change in future versions
 

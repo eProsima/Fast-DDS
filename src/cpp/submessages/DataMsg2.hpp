@@ -20,7 +20,7 @@ namespace rtps{
 
 
 
-bool CDRMessageCreator2::createMessageData(CDRMessage_t* msg,
+bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
 		GuidPrefix_t guidprefix,CacheChange_t* change,TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos){
 
 	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
@@ -30,11 +30,13 @@ bool CDRMessageCreator2::createMessageData(CDRMessage_t* msg,
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator2::createHeader(&header,guidprefix,version,vendor);
+		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
 		CDRMessage::appendMsg(msg, &header);
-
+		CDRMessage_t submsginfots;
+		CDRMessageCreator::createSubmessageInfoTS_Now(&submsginfots,false);
+		CDRMessage::appendMsg(msg, &submsginfots);
 		CDRMessage_t submsgdata;
-		CDRMessageCreator2::createSubmessageData(&submsgdata,change,topicKind,readerId,inlineQos);
+		CDRMessageCreator::createSubmessageData(&submsgdata,change,topicKind,readerId,inlineQos);
 		CDRMessage::appendMsg(msg, &submsgdata);
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -50,7 +52,7 @@ bool CDRMessageCreator2::createMessageData(CDRMessage_t* msg,
 
 
 
-bool CDRMessageCreator2::createSubmessageData(CDRMessage_t* submessage,CacheChange_t* change,
+bool CDRMessageCreator::createSubmessageData(CDRMessage_t* submessage,CacheChange_t* change,
 		TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos) {
 
 	CDRMessage::initCDRMsg(submessage,RTPSMESSAGE_MAX_SIZE);
@@ -123,7 +125,8 @@ bool CDRMessageCreator2::createSubmessageData(CDRMessage_t* submessage,CacheChan
 			RTPSLog::printError();
 			return false;
 		}
-		if(dataFlag){
+		if(dataFlag)
+		{
 			CDRMessage::addOctet(&submsgElem,0); //ENCAPSULATION
 			CDRMessage::addOctet(&submsgElem,change->serializedPayload.encapsulation); //ENCAPSULATION
 			CDRMessage::addUInt16(&submsgElem,0); //OPTIONS
@@ -155,7 +158,7 @@ bool CDRMessageCreator2::createSubmessageData(CDRMessage_t* submessage,CacheChan
 		}
 
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.
-		CDRMessageCreator2::createSubmessageHeader(&submsgHeader, DATA,flags,submsgElem.length);
+		CDRMessageCreator::createSubmessageHeader(&submsgHeader, DATA,flags,submsgElem.length);
 		//Append Submessage elements to msg
 		CDRMessage::appendMsg(submessage, &submsgHeader);
 		CDRMessage::appendMsg(submessage, &submsgElem);

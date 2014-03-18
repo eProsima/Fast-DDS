@@ -17,6 +17,8 @@
 
 #include "eprosimartps/StatefulWriter.h"
 #include "eprosimartps/ReaderProxy.h"
+#include "eprosimartps/CDRMessage.h"
+#include "eprosimartps/ParameterListCreator.h"
 
 
 
@@ -169,6 +171,13 @@ bool sort_changeForReader (ChangeForReader_t* c1,ChangeForReader_t* c2)
 	return(c1->change->sequenceNumber.to64long() < c2->change->sequenceNumber.to64long());
 }
 
+bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
+{
+	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
+}
+
+
+
 void StatefulWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderProxy*>::iterator rit;
@@ -178,110 +187,140 @@ void StatefulWriter::unsent_changes_not_empty()
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
-			std::sort(ch_vec.begin(),ch_vec.end(),sort_cacheChanges);
+			std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader);
+			//Get relevant data cache changes
+			std::vector<CacheChange_t*> relevant_changes;
+			std::vector<CacheChange_t*> not_relevant_changes;
 			std::vector<ChangeForReader_t*>::iterator cit;
-			for(cit=ch_vec.begin();cit!=ch_vec.end();cit++)
+			for(cit = ch_vec.begin();cit!=ch_vec.end();cit++)
 			{
-				if((*cit)->is_relevant) //DATA Message
+				(*cit)->status = UNDERWAY;
+				if((*cit)->is_relevant)
 				{
-					SubmsgData_t DataSubM;
-					DataSubM.expectsInlineQos = (*rit)->param.expectsInlineQos;
-					if(DataSubM.expectsInlineQos)
-					{
-						DataSubM.inlineQos.params = Pub->ParamList.inlineqos_params;
-						if(topicKind == WITH_KEY)
-						{
-							ParameterListCreator::addParameterKey(&DataSubM.inlineQos,PID_KEY_HASH,(*cit)->change->instanceHandle);
-							if((*cit)->change->kind !=ALIVE)
-							{
-								octet status = (*cit)->change->kind == NOT_ALIVE_DISPOSED ? 1:0;
-								status = (*cit)->change->kind == NOT_ALIVE_UNREGISTERED ? 2:status;
-								ParameterListCreator::addParameterStatus(&DataSubM.inlineQos,PID_STATUS_INFO,status);
-							}
-						}
-					}
-					DataSubM.instanceHandle = (*cit)->change->instanceHandle;
-					DataSubM.changeKind = (*cit)->change->kind;
-					DataSubM.readerId = ENTITYID_UNKNOWN;
-					DataSubM.writerId = this->guid.entityId;
-					DataSubM.writerSN = (*cit)->change->sequenceNumber;
-					DataSubM.serializedPayload.copy(&(*cit)->change->serializedPayload);
-					RTPSLog::DebugInfo << "Sending message with seqNum: " << (*cit)->change->sequenceNumber.to64long() << endl;
-					RTPSLog::printDebugInfo();
-					CDRMessage_t msg;
-					MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM,(RTPSWriter*)this);
-
+					relevant_changes.push_back((*cit)->change);
 				}
-				else //GAP message
+				else
 				{
-
-				}
-				std::vector<Locator_t>::iterator lit;
-				for(lit=(*rit)->param.unicastLocatorList.begin();lit!=(*rit)->param.unicastLocatorList.end();lit++)
-				{
-					participant->threadSend.sendSync(&msg,*lit);
-				}
-				for(lit=(*rit)->param.multicastLocatorList.begin();lit!=(*rit)->param.multicastLocatorList.end();lit++)
-				{
-					participant->threadSend.sendSync(&msg,*lit);
+					not_relevant_changes.push_back((*cit)->change);
 				}
 			}
-		}
-		while(rit->next_unsent_change(change))
-		{
-			if(pushMode)
-			{
-				SubmsgData_t DataSubM;
-				DataSubM.expectsInlineQos = rit->expectsInlineQos;
-				if(DataSubM.expectsInlineQos)
-				{
-					DataSubM.inlineQos.params = Pub->ParamList.inlineqos_params;
-					if(topicKind == WITH_KEY)
-					{
-						ParameterListCreator::addParameterKey(&DataSubM.inlineQos,PID_KEY_HASH,(*change)->instanceHandle);
-						if((*change)->kind !=ALIVE)
-						{
-							octet status = (*change)->kind == NOT_ALIVE_DISPOSED ? 1:0;
-							status = (*change)->kind == NOT_ALIVE_UNREGISTERED ? 2:status;
-							ParameterListCreator::addParameterStatus(&DataSubM.inlineQos,PID_STATUS_INFO,status);
-						}
-					}
-				}
+			if(!relevant_changes.empty())
+				sendChangesList(relevant_changes,&(*rit)->param.unicastLocatorList,
+					&(*rit)->param.multicastLocatorList,
+					(*rit)->param.expectsInlineQos,
+					(*rit)->param.remoteReaderGuid.entityId);
+			if(!not_relevant_changes.empty())
+				sendChangesListAsGap(&not_relevant_changes,
+					(*rit)->param.remoteReaderGuid.entityId,
+					&(*rit)->param.unicastLocatorList,
+					&(*rit)->param.multicastLocatorList);
 
-				DataSubM.instanceHandle = (*change)->instanceHandle;
-				DataSubM.changeKind = (*change)->kind;
-				DataSubM.readerId = ENTITYID_UNKNOWN;
-				DataSubM.writerId = this->guid.entityId;
-				DataSubM.writerSN = (*change)->sequenceNumber;
-				DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
-				RTPSLog::DebugInfo << "Sending message with seqNum: " << (*change)->sequenceNumber.to64long() << endl;
-				RTPSLog::printDebugInfo();
-				CDRMessage_t msg;
-				MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM,(RTPSWriter*)this);
-				participant->threadSend.sendSync(&msg,rit->locator);
-				rit->remove_unsent_change((*change));
-			}
-			else
-			{
-				//FIXME: Send Heartbeats indicating new data
-				SubmsgHeartbeat_t HBSubM;
-				HBSubM.finalFlag = true;
-				HBSubM.livelinessFlag = false; //TODOG: esto es asi?
-				HBSubM.readerId = ENTITYID_UNKNOWN;
-				HBSubM.writerId = this->guid.entityId;
-				writer_cache.get_seq_num_min(&HBSubM.firstSN,NULL);
-				writer_cache.get_seq_num_max(&HBSubM.lastSN,NULL);
-				heartbeatCount++;
-				HBSubM.count = heartbeatCount;
-				CDRMessage_t msg;
-				MC.createMessageHeartbeat(&msg,participant->guid.guidPrefix,&HBSubM);
-				participant->threadSend.sendSync(&msg,rit->locator);
-				rit->remove_unsent_change((*change));
-			}
+
+
 		}
 	}
 	RTPSLog::DebugInfo << "Finish sending unsent changes" << endl;RTPSLog::printDebugInfo();
 }
+
+
+void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
+				EntityId_t readerId,std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast)
+{
+	//First compute the number of GAP messages we need:
+	std::vector<CacheChange_t*>::iterator it;
+	std::sort(changes->begin(),changes->end(),sort_changes);
+	std::pair<SequenceNumber_t,SequenceNumberSet_t> pair;
+	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
+
+	SequenceNumber_t start;
+	SequenceNumberSet_t set;
+	start = (*changes->begin())->sequenceNumber;
+	uint32_t count = 1;
+	bool set_first = true;
+	bool new_pair = false;
+	for(it=changes->begin()+1;it!=changes->end();it++)
+	{
+		if(new_pair)
+		{
+			start = (*it)->sequenceNumber;
+			count = 1;
+			new_pair = false;
+			continue;
+		}
+		if(((*it)->sequenceNumber.to64long() - start.to64long()) == count) //continuous seqNum from start to base
+		{
+			count++;
+			continue;
+		}
+		else
+		{
+			if(set_first)
+			{
+				set.base = (*it-1)->sequenceNumber; //add the last one as the base
+				set.add((*it-1)->sequenceNumber); //also add it to the set
+				set_first = false;
+			}
+			if(set.add((*it)->sequenceNumber)) //try to add the current one to the base
+				continue;
+			else //if we fail to add the element to the set is because they are to far away.
+			{
+				new_pair = true;
+				set_first = true;
+				it--;
+				pair.first = start;
+				pair.second = set;
+				Sequences.push_back(pair);
+				continue;
+			}
+		}
+	}
+	//Prepare the send operation
+	CDRMessage_t header;
+	CDRMessage::initCDRMsg(&header,RTPSMESSAGE_HEADER_SIZE);
+	CDRMessageCreator::createHeader(&header,participant->guid.guidPrefix);
+	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit;
+	seqit = Sequences.begin();
+	std::vector<Locator_t>::iterator lit;
+	uint16_t gap_msg_size = 0;
+	uint16_t gap_n = 1;
+	//FIRST SUBMESSAGE
+	CDRMessage_t submessage;
+	CDRMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
+			readerId,this->guid.entityId);
+
+	gap_msg_size = submessage.length;
+	if(gap_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
+	{
+		RTPSLog::Error << "The Gap messages are larger than max size, fragmentation needed" << endl;pE
+	}
+	bool first = true;
+	do
+	{
+		CDRMessage_t fullmsg;
+		CDRMessage::initCDRMsg(&fullmsg,RTPSMESSAGE_MAX_SIZE);
+		CDRMessage::appendMsg(&fullmsg,&header);
+		if(first)
+		{
+			CDRMessage::appendMsg(&fullmsg,&submessage);
+			first = false;
+		}
+		while(fullmsg.length + gap_msg_size < fullmsg.max_size
+				&& (gap_n + 1) <=Sequences.size()) //another one fits in the full message
+		{
+			gap_n++;
+			seqit++;
+			CDRMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
+						readerId,this->guid.entityId);
+			CDRMessage::appendMsg(&fullmsg,&submessage);
+		}
+		for(lit = unicast->begin();lit!=unicast->end();lit++)
+			participant->threadSend.sendSync(&fullmsg,*lit);
+		for(lit = multicast->begin();lit!=multicast->end();lit++)
+			participant->threadSend.sendSync(&fullmsg,*lit);
+
+	}while(gap_n < Sequences.size()); //There is still a message to add
+}
+
 
 
 } /* namespace rtps */

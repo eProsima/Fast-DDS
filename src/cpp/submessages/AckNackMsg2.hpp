@@ -18,7 +18,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator2::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
+bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
 		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag){
 	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
 	try
@@ -28,11 +28,11 @@ bool CDRMessageCreator2::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t gui
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator2::createHeader(&header,guidprefix,version,vendor);
+		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
 		CDRMessage::appendMsg(msg, &header);
 
 		CDRMessage_t submsgdata;
-		CDRMessageCreator2::createSubmessageAcknack(&submsgdata,readerId, writerId,SNSet,count,finalFlag);
+		CDRMessageCreator::createSubmessageAcknack(&submsgdata,readerId, writerId,SNSet,count,finalFlag);
 		CDRMessage::appendMsg(msg, &submsgdata);
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -46,7 +46,7 @@ bool CDRMessageCreator2::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t gui
 	return true;
 }
 
-bool CDRMessageCreator2::createSubmessageAcknack(CDRMessage_t* msg,
+bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag)
 {
 	CDRMessage::initCDRMsg(msg);
@@ -82,7 +82,7 @@ bool CDRMessageCreator2::createSubmessageAcknack(CDRMessage_t* msg,
 	}
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator2::createSubmessageHeader(&submsgHeader,ACKNACK,flags,submsgElem.length);
+	CDRMessageCreator::createSubmessageHeader(&submsgHeader,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgHeader);
 	CDRMessage::appendMsg(msg, &submsgElem);

@@ -73,6 +73,11 @@ public:
 	CDRMessageCreator MC;
 	Publisher* Pub;
 
+	void sendChangesList(std::vector<CacheChange_t*> changes,
+			std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
+			bool expectsInlineQos,EntityId_t ReaderId);
+
+	void DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,EntityId_t ReaderId);
 
 
 
