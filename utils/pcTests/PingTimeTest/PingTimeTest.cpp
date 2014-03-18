@@ -154,8 +154,8 @@ int main(int argc, char** argv){
 	Wparam.topicName = std::string("This is a test topic");
 	Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 	//One of this two as locators.
-	loc.set_IP4_address(192,168,1,18);
-	pub->addReaderLocator(loc,true);
+	//loc.set_IP4_address(192,168,1,18);
+	//pub->addReaderLocator(loc,true);
 	loc.set_IP4_address(192,168,1,21);
 	pub->addReaderLocator(loc,true);
 
