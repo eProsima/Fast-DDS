@@ -43,8 +43,7 @@ bool ThreadSend::initSend(Locator_t loc)
 		socket.connect(ep);
 		addr = socket.local_endpoint().address();
 
-		RTPSLog::Info << "My IP according to google is: " << addr.to_string() << endl;
-		RTPSLog::printInfo();
+		pInfo("My IP according to google is: " << addr.to_string() << endl);
 
 		sendLocator.address[12] = addr.to_v4().to_bytes()[0];
 		sendLocator.address[13] = addr.to_v4().to_bytes()[1];
@@ -66,9 +65,9 @@ bool ThreadSend::initSend(Locator_t loc)
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	send_socket.open(boost::asio::ip::udp::v4());
 	send_socket.bind(send_endpoint);
-	RTPSLog::Info << YELLOW<<"Sending through default address " << send_socket.local_endpoint();
-	RTPSLog::Info << " Socket state: " << send_socket.is_open() << DEF << endl;
-	RTPSLog::printInfo();
+	pInfo ( YELLOW<<"Sending through default address " << send_socket.local_endpoint());
+	pInfo ( " Socket state: " << send_socket.is_open() << DEF << endl);
+
 	//boost::asio::io_service::work work(sendService);
 	return true;
 }
@@ -83,11 +82,10 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc)
 {
 	boost::lock_guard<ThreadSend> guard(*this);
 	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(loc.to_IP4_string()),loc.port);
-	RTPSLog::DebugInfo <<YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF;
-	RTPSLog::DebugInfo << YELLOW << send_socket.local_endpoint()  << " ....  ";
+	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF);
+	pDebugInfo ( YELLOW << send_socket.local_endpoint()  << " ....  ");
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
-	RTPSLog::DebugInfo <<YELLOW <<  "SENT " << longitud << DEF << endl;
-	RTPSLog::printDebugInfo();
+	pDebugInfo (YELLOW <<  "SENT " << longitud << DEF << endl);
 }
 
 

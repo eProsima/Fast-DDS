@@ -64,7 +64,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 	{
 		if((*it)->param.remoteReaderGuid == RPparam.remoteReaderGuid)
 		{
-			RTPSLog::Warning << "Attempting to add existing reader" << endl;pW
+			pWarning("Attempting to add existing reader" << endl);
 			return false;
 		}
 	}
@@ -85,7 +85,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 		rp->changes.push_back(changeForReader);
 	}
 	matched_readers.push_back(rp);
-	RTPSLog::DebugInfo << "Reader Proxy added" << endl;pDI
+	pDebugInfo("Reader Proxy added" << endl);
 	return true;
 }
 
@@ -103,11 +103,11 @@ bool StatefulWriter::matched_reader_remove(GUID_t readerGuid)
 		{
 			delete(*it);
 			matched_readers.erase(it);
-			RTPSLog::DebugInfo << "Reader Proxy removed" << endl;pDI
+			pDebugInfo("Reader Proxy removed" << endl);
 			return true;
 		}
 	}
-	RTPSLog::Info << "Reader Proxy doesn't exist in this writer" << endl;pI
+	pInfo("Reader Proxy doesn't exist in this writer" << endl)
 	return false;
 }
 
@@ -136,8 +136,8 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 			if(!changeForReader.is_relevant
 					|| !(changeForReader.status == ACKNOWLEDGED))
 			{
-				RTPSLog::DebugInfo << "Change not acked. Relevant: " << changeForReader.is_relevant;
-				RTPSLog::DebugInfo << " status: " << changeForReader.status << endl;pDI
+				pDebugInfo("Change not acked. Relevant: " << changeForReader.is_relevant);
+				pDebugInfo(" status: " << changeForReader.status << endl);
 				return false;
 			}
 		}
@@ -162,7 +162,7 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 	}
 	else
 	{
-		RTPSLog::Warning << "No reader proxy to add change." << endl;pW
+		pWarning("No reader proxy to add change." << endl);
 	}
 }
 
@@ -219,7 +219,7 @@ void StatefulWriter::unsent_changes_not_empty()
 
 		}
 	}
-	RTPSLog::DebugInfo << "Finish sending unsent changes" << endl;RTPSLog::printDebugInfo();
+	pDebugInfo("Finish sending unsent changes" << endl);
 }
 
 
@@ -291,7 +291,7 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 	gap_msg_size = submessage.length;
 	if(gap_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
 	{
-		RTPSLog::Error << "The Gap messages are larger than max size, fragmentation needed" << endl;pE
+		pError("The Gap messages are larger than max size, fragmentation needed" << endl);
 	}
 	bool first = true;
 	do

@@ -39,22 +39,24 @@ Publisher::~Publisher() {
 }
 
 bool Publisher::write(void* Data) {
-	//Convert data to serialized Payload
-	RTPSLog::Info << "Writing New Data" << endl;RTPSLog::printInfo();
+
+	pInfo("Writing new data"<<endl)
+
 	return add_new_change(ALIVE,Data);
 }
 
 bool Publisher::dispose(void* Data) {
-	//Convert data to serialized Payload
-	RTPSLog::Info << "Disposing of Data" << endl;pI
+
+	pInfo("Disposing of Data"<<endl)
+
 	return add_new_change(NOT_ALIVE_DISPOSED,Data);
 }
 
 
 bool Publisher::unregister(void* Data) {
 	//Convert data to serialized Payload
-	RTPSLog::Info << "Unregistering of Data" << endl;
-	RTPSLog::printInfo();
+	pInfo("Unregistering of Data"<<endl)
+
 	return add_new_change(NOT_ALIVE_UNREGISTERED,Data);
 }
 
@@ -63,7 +65,7 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 {
 	if(kind != ALIVE && W->topicKind == NO_KEY)
 	{
-		RTPSLog::Warning << "NOT ALIVE change in NO KEY Topic " << endl;pW
+		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
 		return false;
 	}
 
@@ -113,8 +115,7 @@ bool Publisher::removeMinSeqChange()
 		return true;
 	}
 
-	RTPSLog::Warning<< B_RED << "No changes in History"<< DEF << endl;
-	RTPSLog::printWarning();
+	pWarning("No changes in History"<<endl)
 	return false;
 }
 
@@ -137,8 +138,7 @@ bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 		ReaderLocator RL;
 		RL.expectsInlineQos = expectsInlineQos;
 		RL.locator = Loc;
-		RTPSLog::DebugInfo << "Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl;
-		RTPSLog::printDebugInfo();
+		pDebugInfo("Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl);
 		((StatelessWriter*)W)->reader_locator_add(RL);
 	}
 	else if(W->stateType==STATEFUL)
@@ -147,8 +147,9 @@ bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 		RL.expectsInlineQos = expectsInlineQos;
 		GUID_UNKNOWN(RL.remoteReaderGuid);
 		RL.unicastLocatorList.push_back(Loc);
-		RTPSLog::DebugInfo << "Adding ReaderProxy at: "<< Loc.to_IP4_string()<<":"<< Loc.port<< endl;
-		RTPSLog::printDebugInfo();
+
+		pDebugInfo("Adding ReaderProxy at: "<< Loc.to_IP4_string()<<":"<< Loc.port<< endl);
+
 		((StatefulWriter*)W)->matched_reader_add(RL);
 	}
 	//TODOG add proxy

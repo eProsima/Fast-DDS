@@ -44,7 +44,7 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 	}
 	catch(int e)
 	{
-		pError("Gap message error")
+		pError("Gap message error"<<endl)
 		return false;
 	}
 	return true;
@@ -78,7 +78,7 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber_
 	}
 	catch(int e)
 	{
-		pError("Gap submessage error")
+		pError("Gap submessage error"<<endl)
 		return false;
 	}
 

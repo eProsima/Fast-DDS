@@ -111,8 +111,8 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 	}
 	else
 	{
-		RTPSLog::Warning << "No reader locator to add change" << std::endl;
-		RTPSLog::printWarning();
+		pWarning( "No reader locator to add change" << std::endl);
+
 	}
 }
 
@@ -147,7 +147,7 @@ void StatelessWriter::unsent_changes_not_empty()
 		}
 
 	}
-	RTPSLog::DebugInfo << "Finish sending unsent changes" << endl;RTPSLog::printDebugInfo();
+	pDebugInfo ( "Finish sending unsent changes" << endl);
 }
 
 

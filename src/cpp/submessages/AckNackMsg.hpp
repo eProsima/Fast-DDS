@@ -39,7 +39,7 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 	}
 	catch(int e)
 	{
-		pError("Data message not created");
+		pError("Data message not created"<<endl);
 		return false;
 	}
 	return true;
@@ -76,7 +76,7 @@ bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		pError("Message creator fails")
+		pError("Message creator fails"<<endl)
 		return false;
 	}
 

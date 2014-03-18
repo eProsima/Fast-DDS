@@ -77,11 +77,10 @@ Participant::Participant() {
 	guid.guidPrefix.value[10] = ((octet*)&ID)[2];
 	guid.guidPrefix.value[11] = ((octet*)&ID)[3];
 	guid.entityId = ENTITYID_PARTICIPANT;
-	RTPSLog::Info << "Participant created with guidPrefix: ";
+	pInfo("Participant created with guidPrefix: ");
 	for(int i =0;i<12;i++)
-		RTPSLog::Info << (int)guid.guidPrefix.value[i] << ".";
-	RTPSLog::Info << endl;
-	RTPSLog::printInfo();
+		pInfo((int)guid.guidPrefix.value[i] << ".");
+	pInfo( << endl);
 	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
 }
 
@@ -126,11 +125,10 @@ Participant::Participant(ParticipantParams_t PParam) {
 	guid.guidPrefix.value[10] = ((octet*)&ID)[2];
 	guid.guidPrefix.value[11] = ((octet*)&ID)[3];
 	guid.entityId = ENTITYID_PARTICIPANT;
-	RTPSLog::Info << "Participant created with guidPrefix: ";
-	for(int i =0;i<12;i++)
-		RTPSLog::Info << (int)guid.guidPrefix.value[i] << ".";
-	RTPSLog::Info << endl;
-	RTPSLog::printInfo();
+	pInfo("Participant created with guidPrefix: ");
+		for(int i =0;i<12;i++)
+			pInfo((int)guid.guidPrefix.value[i] << ".");
+		pInfo( << endl);
 	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
 }
 

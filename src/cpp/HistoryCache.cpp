@@ -63,7 +63,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 
 	if(changes.size() == (size_t)historySize) //History is full
 	{
-		RTPSLog::Warning << "Attempting to add change with Full History" << endl;pW
+		pWarning("Attempting to add change with Full History" << endl);
 		return false;
 	}
 
@@ -87,7 +87,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 			if((*it)->sequenceNumber.to64long() == ch->sequenceNumber.to64long() &&
 					(*it)->writerGUID == ch->writerGUID)
 			{
-				RTPSLog::Warning << "Change with the same seqNum already in History" << endl;pW
+				pWarning("Change with the same seqNum already in History" << endl);
 				return false;
 			}
 		}
@@ -97,9 +97,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 	(*ch_ptr) = ch;
 	if(changes.size()==historySize)
 		isHistoryFull = true;
-	RTPSLog::DebugInfo << "Cache added to History" << endl;
-	RTPSLog::printDebugInfo();
-
+	pDebugInfo("Cache added to History" << endl);
 
 	return true;
 }
