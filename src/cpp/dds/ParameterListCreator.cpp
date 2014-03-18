@@ -44,8 +44,8 @@ bool ParameterListCreator::addParameterLocator(ParameterList_t* plist,ParameterI
 		plist->has_changed = true;
 		return true;
 	}
-	RTPSLog::Warning << "PID not correspond with Locator Parameter."<<endl;
-		RTPSLog::printWarning();
+	pWarning("PID not correspond with Locator Parameter.")
+
 	return false;
 }
 
@@ -61,8 +61,8 @@ bool ParameterListCreator::addParameterString(ParameterList_t* plist,ParameterId
 		plist->has_changed = true;
 		return true;
 	}
-	RTPSLog::Warning << "PID not correspond with String Parameter."<<endl;
-		RTPSLog::printWarning();
+	pWarning("PID not correspond with String Parameter.")
+
 	return false;
 }
 
@@ -78,8 +78,8 @@ bool ParameterListCreator::addParameterPort(ParameterList_t* plist,ParameterId_t
 		plist->has_changed = true;
 		return true;
 	}
-	RTPSLog::Warning << "PID not correspond with Port Parameter."<<endl;
-		RTPSLog::printWarning();
+
+		pWarning("PID not correspond with Port Parameter.")
 	return false;
 }
 

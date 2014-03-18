@@ -24,12 +24,19 @@
 #ifndef RTPSLOG_H_
 #define RTPSLOG_H_
 
-
-#define pE RTPSLog::printError();
-#define pW RTPSLog::printWarning();
-#define pI RTPSLog::printInfo();
-#define pDI RTPSLog::printDebugInfo();
-#define pLI RTPSLog::printLongInfo();
+#if DEBUG
+#define pError(str) {RTPSLog::Error << str << endl;RTPSLog::printError();}
+#define pWarning(str) {RTPSLog::Warning << str << endl;RTPSLog::printWarning();}
+#define pInfo(str) {RTPSLog::Info << str << endl;RTPSLog::printInfo();}
+#define pDebugInfo(str) {RTPSLog::DebugInfo << str << endl;RTPSLog::printDebugInfo();}
+#define pLongInfo(str) {RTPSLog::LongInfo << str << endl;RTPSLog::printLongInfo();}
+#else
+#define pError(str) {RTPSLog::Error << str << endl;RTPSLog::printError();}
+#define pWarning(str)
+#define pInfo(str)
+#define pDebugInfo(str)
+#define pLongInfo(str)
+#endif
 
 
 

@@ -18,62 +18,81 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,
-									SubmsgHeartbeat_t* HBSubM){
-	Header_t H = Header_t();
-	H.guidPrefix = guidprefix;
-	try{
-		createHeader(msg,&H);
-		CDRMessage_t submsg;
-		createSubmessageHeartbeat(&submsg,HBSubM);
-		CDRMessage::appendMsg(msg, &submsg);
+bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
+		SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
+{
+	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
+	try
+	{
+		CDRMessage_t header;
+		VendorId_t vendor;
+		VENDORID_EPROSIMA(vendor);
+		ProtocolVersion_t version;
+		PROTOCOLVERSION(version);
+		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
+		CDRMessage::appendMsg(msg, &header);
+
+		CDRMessage_t submsgdata;
+		CDRMessageCreator::createSubmessageHeartbeat(&submsgdata,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+		CDRMessage::appendMsg(msg, &submsgdata);
+		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
 	}
 	catch(int e)
 	{
-		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
+		pError("HB message not created")
 		return false;
 	}
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,SubmsgHeartbeat_t* HBSubM){
-	CDRMessage_t* submsg = new CDRMessage_t();
-	CDRMessage::initCDRMsg(submsg);
-	try{
-		CDRMessage::addEntityId(submsg,&HBSubM->readerId);
-		CDRMessage::addEntityId(submsg,&HBSubM->writerId);
-		//Add Sequence Number
-		CDRMessage::addSequenceNumber(submsg,&HBSubM->firstSN);
-		CDRMessage::addSequenceNumber(submsg,&HBSubM->lastSN);
-		CDRMessage::addInt32(submsg,HBSubM->count);
-	}
-	catch(int e)
-	{
-		RTPSLog::Error << "Message creator fails: " << B_RED << e << DEF<< endl;pE
-		return false;
-	}
-	HBSubM->SubmessageHeader.flags = 0x0;
+bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,
+		EntityId_t writerId,SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
+{
+	CDRMessage::initCDRMsg(msg,RTPSMESSAGE_MAX_SIZE);
+	//Create the two CDR msgs
+	CDRMessage_t submsgHeader,submsgElem;
+	CDRMessage::initCDRMsg(&submsgHeader,RTPSMESSAGE_SUBMESSAGEHEADER_SIZE);
+	CDRMessage::initCDRMsg(&submsgElem,RTPSMESSAGE_MAX_SIZE);
+
+	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)
 	{
-		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(0);
-		submsg->msg_endian = BIGEND;
+		flags = flags | BIT(0);
+		submsgElem.msg_endian = submsgHeader.msg_endian = BIGEND;
 	}
 	else
 	{
-		submsg->msg_endian = LITTLEEND;
+		submsgElem.msg_endian = submsgHeader.msg_endian = LITTLEEND;
 	}
-	if(HBSubM->finalFlag)
-		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(1);
-	if(HBSubM->livelinessFlag)
-		HBSubM->SubmessageHeader.flags = HBSubM->SubmessageHeader.flags | BIT(2);
+	if(isFinal)
+		flags = flags | BIT(1);
+	if(livelinessFlag)
+		flags = flags | BIT(2);
 
-	HBSubM->SubmessageHeader.submessageLength = submsg->pos;
-	HBSubM->SubmessageHeader.submessageId = HEARTBEAT;
+
+	try{
+		CDRMessage::addEntityId(&submsgElem,&readerId);
+		CDRMessage::addEntityId(&submsgElem,&writerId);
+		//Add Sequence Number
+		CDRMessage::addSequenceNumber(&submsgElem,&firstSN);
+		CDRMessage::addSequenceNumber(&submsgElem,&lastSN);
+		CDRMessage::addInt32(&submsgElem,count);
+	}
+	catch(int e)
+	{
+		pError("MessageCreator fails")
+		return false;
+	}
+
+
+
 	//Once the submessage elements are added, the header is created
-	createSubmessageHeader(msg, &HBSubM->SubmessageHeader,submsg->pos);
+	CDRMessageCreator::createSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
 	//Append Submessage elements to msg
-	CDRMessage::appendMsg(msg, submsg);
+	//Append Submessage elements to msg
+	CDRMessage::appendMsg(msg, &submsgHeader);
+	CDRMessage::appendMsg(msg, &submsgElem);
 	msg->length = msg->pos;
 	return true;
 }

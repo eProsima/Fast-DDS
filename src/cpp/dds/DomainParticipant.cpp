@@ -46,8 +46,7 @@ uint32_t DomainParticipant::getNewId()
 
 Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WParam)
 {
-	RTPSLog::Info << "Creating Publisher " << endl;
-	RTPSLog::printInfo();
+	pInfo("Creating Publisher")
 	dds::DomainParticipant *dp;
 	dp = dds::DomainParticipant::getInstance();
 	//Look for the correct type registration
