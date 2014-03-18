@@ -44,7 +44,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 			changeForReader->is_relevant = it->is_relevant;
 			changeForReader->status = it->status;
 			changeForReader->change = it->change;
-			RTPSLog::DebugInfo << "Change found in Reader Proxy " << endl;pDI;
+			pDebugInfo("Change found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -80,7 +80,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t> seqNumSet)
 			}
 		}
 	}
-	RTPSLog::DebugInfo << "Requested Changes Set" << endl;pDI
+	pDebugInfo("Requested Changes Set" << endl);
 	return true;
 }
 

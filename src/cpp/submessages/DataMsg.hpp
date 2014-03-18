@@ -43,7 +43,7 @@ bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		pError("Data message error")
+		pError("Data message error"<<endl)
 
 		return false;
 	}
@@ -159,7 +159,7 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* submessage,CacheChang
 		submessage->length = submessage->pos;
 	}
 	catch(int t){
-		pError("Data SUBmessage not created")
+		pError("Data SUBmessage not created"<<endl)
 
 		return false;
 	}

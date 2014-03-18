@@ -75,7 +75,7 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 	}
 	catch(int e)
 	{
-		pError("Header creation fails.");
+		pError("Header creation fails."<<endl);
 		return false;
 	}
 
@@ -103,7 +103,7 @@ bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 	}
 	catch(int e){
 
-		pError("Submessage Header creation fails.");
+		pError("Submessage Header creation fails."<<endl);
 		return false;
 	}
 
@@ -141,7 +141,7 @@ bool CDRMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,boo
 	}
 	catch(int e)
 	{
-		pError("Submessage Header creation fails.");
+		pError("Submessage Header creation fails."<<endl);
 		return false;
 	}
 	return true;

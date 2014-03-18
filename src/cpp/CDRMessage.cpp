@@ -182,8 +182,8 @@ bool CDRMessage::readOctet(CDRMessage_t* msg, octet* o) {
 bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
 	if(msg->pos + length > msg->max_size)
 	{
-		RTPSLog::Error << "Message size not enough " << DEF<< endl;
-		RTPSLog::printError();
+		pError( "Message size not enough "<<endl);
+
 		return false;
 	}
 
@@ -196,8 +196,7 @@ bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
 bool CDRMessage::addDataReversed(CDRMessage_t*msg, octet* data, uint length) {
 	if(msg->pos + length > msg->max_size)
 	{
-		RTPSLog::Error << "Message size not enough " << DEF<< endl;
-		RTPSLog::printError();
+		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	for(uint i = 0;i<length;i++)
@@ -269,8 +268,7 @@ bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 bool CDRMessage::addEntityId(CDRMessage_t* msg, EntityId_t*ID) {
 	if(msg->pos+4>=msg->max_size)
 	{
-		RTPSLog::Error << "Message size not enough " << DEF<< endl;
-		RTPSLog::printError();
+		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	int* aux1;

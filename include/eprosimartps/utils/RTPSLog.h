@@ -25,17 +25,19 @@
 #define RTPSLOG_H_
 
 #if DEBUG
-#define pError(str) {RTPSLog::Error << str << endl;RTPSLog::printError();}
-#define pWarning(str) {RTPSLog::Warning << str << endl;RTPSLog::printWarning();}
-#define pInfo(str) {RTPSLog::Info << str << endl;RTPSLog::printInfo();}
-#define pDebugInfo(str) {RTPSLog::DebugInfo << str << endl;RTPSLog::printDebugInfo();}
-#define pLongInfo(str) {RTPSLog::LongInfo << str << endl;RTPSLog::printLongInfo();}
+#define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
+#define pWarning(str) {RTPSLog::Warning << str;RTPSLog::printWarning();}
+#define pInfo(str) {RTPSLog::Info << str;RTPSLog::printInfo();}
+#define pDebugInfo(str) {RTPSLog::DebugInfo << str ;RTPSLog::printDebugInfo();}
+#define pLongInfo(str) {RTPSLog::LongInfo << str ;}
+#define pLongInfoPrint {RTPSLog::printLongInfo();}
 #else
-#define pError(str) {RTPSLog::Error << str << endl;RTPSLog::printError();}
+#define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
 #define pWarning(str)
 #define pInfo(str)
 #define pDebugInfo(str)
 #define pLongInfo(str)
+#define pLongInfoPrint
 #endif
 
 

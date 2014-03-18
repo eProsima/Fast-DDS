@@ -73,7 +73,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 		bool expectsInlineQos,EntityId_t ReaderId)
 {
 	boost::lock_guard<ThreadSend> guard(participant->threadSend);
-	RTPSLog::DebugInfo << "Sending relevant changes as data messages" << endl;pDI
+	pDebugInfo("Sending relevant changes as data messages" << endl);
 	std::vector<Locator_t>::iterator lit;
 
 	std::vector<CacheChange_t*>::iterator cit;
@@ -89,7 +89,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 	data_msg_size = submessage.length;
 	if(data_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
 	{
-		RTPSLog::Error << "The Data messages are larger than max size, fragmentation needed" << endl;pE
+		pError("The Data messages are larger than max size, fragmentation needed" << endl);
 	}
 	bool first = true;
 	do

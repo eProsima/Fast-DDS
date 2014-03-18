@@ -40,7 +40,7 @@ bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t gu
 	}
 	catch(int e)
 	{
-		pError("HB message not created")
+		pError("HB message not created"<<endl)
 		return false;
 	}
 	return true;
@@ -81,7 +81,7 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t r
 	}
 	catch(int e)
 	{
-		pError("MessageCreator fails")
+		pError("MessageCreator fails"<<endl)
 		return false;
 	}
 

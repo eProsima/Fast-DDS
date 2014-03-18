@@ -34,7 +34,8 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 
-MessageReceiver::MessageReceiver() {
+MessageReceiver::MessageReceiver()
+{
 	// TODO Auto-generated constructor stub
 	PROTOCOLVERSION(destVersion);
 	PROTOCOLVERSION(sourceVersion);
@@ -213,7 +214,7 @@ bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
 	bool keyFlag = DSM.SubmessageHeader.flags & BIT(3) ? true : false;
 	if(keyFlag && dataFlag)
 	{
-		pWarning( "Message received with Data and Key Flag set.")
+		pWarning( "Message received with Data and Key Flag set."<<endl)
 		return false;
 	}
 
