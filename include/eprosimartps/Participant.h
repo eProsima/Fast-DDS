@@ -46,6 +46,8 @@ namespace rtps {
 
 class StatelessWriter;
 class StatelessReader;
+class StatefulWriter;
+class StatefulReader;
 class RTPSReader;
 class RTPSWriter;
 class Endpoint;
@@ -74,6 +76,12 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatelessWriter(StatelessWriter* SWriter, WriterParams_t Wparam);
+
+
+
+
+	bool createStatefulWriter(StatefulWriter* SWriter,WriterParams_t Wparam);
+
 	/**
 	 * Create a StatelessReader from a parameter structure and add it to the participant.
 	 * @param[out] SReader Pointer to the stateless reader.

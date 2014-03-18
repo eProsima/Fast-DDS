@@ -14,6 +14,7 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include <algorithm>
 
 #include "eprosimartps/CDRMessage.h"
 
@@ -294,14 +295,54 @@ bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 	return true;
 }
 
-
+bool sort_seqNum (SequenceNumber_t s1,SequenceNumber_t s2)
+{
+	return(s1.to64long() < s2.to64long());
+}
 
 bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		SequenceNumberSet_t* sns) {
-	int64_t bitmapbase = sns->base.to64long();
-	addInt64(msg, bitmapbase);
-	//TODOG: Finish addSequenceNumberSet to CDR Message
-
+	addSequenceNumber(msg, &sns->base);
+	//Add set
+	std::sort(sns->set.begin(),sns->set.end(),sort_seqNum);
+	SequenceNumber_t maxseqNum = *std::max_element(sns->set.begin(),sns->set.end(),sort_seqNum);
+	uint32_t numBits = (uint32_t)(maxseqNum.to64long() - sns->base.to64long());
+	addUInt32(msg,numBits);
+	std::vector<SequenceNumber_t>::iterator it;
+	uint32_t n_octet = 0;
+	uint8_t bit = 0;
+	octet o = 0;
+	//Compute the bitmap in terms of octets:
+	for(it=sns->set.begin();it!=sns->set.end();it++)
+	{
+		bit = it->to64long()-sns->base.to64long()-n_octet*8;
+		switch(bit)
+		{
+			case 0: o= o| BIT(7); break;
+			case 1: o= o| BIT(6); break;
+			case 2: o= o| BIT(5); break;
+			case 3: o= o| BIT(4); break;
+			case 4: o= o| BIT(3); break;
+			case 5: o= o| BIT(2); break;
+			case 6: o= o| BIT(1); break;
+			case 7: o= o| BIT(0); break;
+		}
+		if(bit>7)
+		{
+			addOctet(msg,o);
+			o = 0x0;
+			for(int i=0;i<(floor(bit/8)-1);i++)
+				addOctet(msg,o);
+			n_octet += floor(bit/8);
+			it--;
+		}
+	}
+	//add enough octets as gap
+	while((n_octet+1)%4 != 0)
+	{
+		o=0;
+		addOctet(msg,o);
+	}
 	return true;
 }
 

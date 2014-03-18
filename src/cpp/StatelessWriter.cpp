@@ -119,62 +119,33 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 void StatelessWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderLocator>::iterator rit;
-	CacheChange_t** change = (CacheChange_t**)malloc(sizeof(CacheChange_t*));
 	boost::lock_guard<ThreadSend> guard(participant->threadSend);
 	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
 	{
-		while(rit->next_unsent_change(change))
+		if(pushMode)
 		{
-			if(pushMode)
+			if(!rit->unsent_changes.empty())
 			{
-				SubmsgData_t DataSubM;
-				DataSubM.expectsInlineQos = rit->expectsInlineQos;
-				if(DataSubM.expectsInlineQos)
-				{
-					DataSubM.inlineQos.params = Pub->ParamList.inlineqos_params;
-					if(topicKind == WITH_KEY)
-					{
-						ParameterListCreator::addParameterKey(&DataSubM.inlineQos,PID_KEY_HASH,(*change)->instanceHandle);
-						if((*change)->kind !=ALIVE)
-						{
-							octet status = (*change)->kind == NOT_ALIVE_DISPOSED ? 1:0;
-							status = (*change)->kind == NOT_ALIVE_UNREGISTERED ? 2:status;
-							ParameterListCreator::addParameterStatus(&DataSubM.inlineQos,PID_STATUS_INFO,status);
-						}
-					}
-				}
-
-				DataSubM.instanceHandle = (*change)->instanceHandle;
-				DataSubM.changeKind = (*change)->kind;
-				DataSubM.readerId = ENTITYID_UNKNOWN;
-				DataSubM.writerId = this->guid.entityId;
-				DataSubM.writerSN = (*change)->sequenceNumber;
-				DataSubM.serializedPayload.copy(&(*change)->serializedPayload);
-				RTPSLog::DebugInfo << "Sending message with seqNum: " << (*change)->sequenceNumber.to64long() << endl;
-				RTPSLog::printDebugInfo();
-				CDRMessage_t msg;
-				MC.createMessageData(&msg,participant->guid.guidPrefix,&DataSubM,(RTPSWriter*)this);
-				participant->threadSend.sendSync(&msg,rit->locator);
-				rit->remove_unsent_change((*change));
-			}
-			else
-			{
-				//FIXME: Send Heartbeats indicating new data
-				SubmsgHeartbeat_t HBSubM;
-				HBSubM.finalFlag = true;
-				HBSubM.livelinessFlag = false; //TODOG: esto es asi?
-				HBSubM.readerId = ENTITYID_UNKNOWN;
-				HBSubM.writerId = this->guid.entityId;
-				writer_cache.get_seq_num_min(&HBSubM.firstSN,NULL);
-				writer_cache.get_seq_num_max(&HBSubM.lastSN,NULL);
-				heartbeatCount++;
-				HBSubM.count = heartbeatCount;
-				CDRMessage_t msg;
-				MC.createMessageHeartbeat(&msg,participant->guid.guidPrefix,&HBSubM);
-				participant->threadSend.sendSync(&msg,rit->locator);
-				rit->remove_unsent_change((*change));
+				std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+				std::vector<Locator_t> loc;
+				loc.push_back(rit->locator);
+				sendChangesList(rit->unsent_changes,&loc,NULL,rit->expectsInlineQos,ENTITYID_UNKNOWN);
+				rit->unsent_changes.clear();
 			}
 		}
+		else
+		{
+			CDRMessage_t msg;
+			SequenceNumber_t first,last;
+			writer_cache.get_seq_num_min(&first,NULL);
+			writer_cache.get_seq_num_max(&last,NULL);
+			heartbeatCount++;
+			CDRMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
+					first,last,heartbeatCount,true,false);
+			participant->threadSend.sendSync(&msg,rit->locator);
+			rit->unsent_changes.clear();
+		}
+
 	}
 	RTPSLog::DebugInfo << "Finish sending unsent changes" << endl;RTPSLog::printDebugInfo();
 }

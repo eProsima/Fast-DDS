@@ -18,7 +18,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator2::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
+bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
 		SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
@@ -29,11 +29,11 @@ bool CDRMessageCreator2::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t g
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator2::createHeader(&header,guidprefix,version,vendor);
+		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
 		CDRMessage::appendMsg(msg, &header);
 
 		CDRMessage_t submsgdata;
-		CDRMessageCreator2::createSubmessageHeartbeat(&submsgdata,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+		CDRMessageCreator::createSubmessageHeartbeat(&submsgdata,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
 		CDRMessage::appendMsg(msg, &submsgdata);
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -47,7 +47,7 @@ bool CDRMessageCreator2::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t g
 	return true;
 }
 
-bool CDRMessageCreator2::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,
+bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,
 		EntityId_t writerId,SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 	CDRMessage::initCDRMsg(msg,RTPSMESSAGE_MAX_SIZE);
@@ -89,7 +89,7 @@ bool CDRMessageCreator2::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t 
 
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator2::createSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
+	CDRMessageCreator::createSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgHeader);

@@ -95,7 +95,7 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	return true;
 
 
-	return false;
+
 }
 
 
@@ -132,13 +132,25 @@ int Publisher::getHistory_n()
 
 bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 {
-	ReaderLocator RL;
-	RL.expectsInlineQos = expectsInlineQos;
-	RL.locator = Loc;
-	RTPSLog::Info << "Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl;
-	RTPSLog::printInfo();
 	if(W->stateType==STATELESS)
+	{
+		ReaderLocator RL;
+		RL.expectsInlineQos = expectsInlineQos;
+		RL.locator = Loc;
+		RTPSLog::DebugInfo << "Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl;
+		RTPSLog::printDebugInfo();
 		((StatelessWriter*)W)->reader_locator_add(RL);
+	}
+	else if(W->stateType==STATEFUL)
+	{
+		ReaderProxy_t RL;
+		RL.expectsInlineQos = expectsInlineQos;
+		GUID_UNKNOWN(RL.remoteReaderGuid);
+		RL.unicastLocatorList.push_back(Loc);
+		RTPSLog::DebugInfo << "Adding ReaderProxy at: "<< Loc.to_IP4_string()<<":"<< Loc.port<< endl;
+		RTPSLog::printDebugInfo();
+		((StatefulWriter*)W)->matched_reader_add(RL);
+	}
 	//TODOG add proxy
 	return true;
 }

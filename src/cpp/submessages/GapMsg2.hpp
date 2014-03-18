@@ -19,7 +19,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator2::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidprefix,
+bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidprefix,
 		SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,
 		EntityId_t readerId,EntityId_t writerId)
 {
@@ -31,11 +31,13 @@ bool CDRMessageCreator2::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpre
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator2::createHeader(&header,guidprefix,version,vendor);
+		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
 		CDRMessage::appendMsg(msg, &header);
-
+		CDRMessage_t submsginfots;
+		CDRMessageCreator::createSubmessageInfoTS_Now(&submsginfots,false);
+		CDRMessage::appendMsg(msg, &submsginfots);
 		CDRMessage_t submsgdata;
-		CDRMessageCreator2::createSubmessageGap(&submsgdata,seqNumFirst,seqNumList,readerId, writerId);
+		CDRMessageCreator::createSubmessageGap(&submsgdata,seqNumFirst,seqNumList,readerId, writerId);
 		CDRMessage::appendMsg(msg, &submsgdata);
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -49,7 +51,7 @@ bool CDRMessageCreator2::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpre
 	return true;
 }
 
-bool CDRMessageCreator2::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId)
+bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId)
 {
 	CDRMessage::initCDRMsg(submsg);
 
@@ -68,8 +70,6 @@ bool CDRMessageCreator2::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber
 		submsgElem.msg_endian = submsgHeader.msg_endian = LITTLEEND;
 	}
 
-
-
 	try{
 		CDRMessage::addEntityId(&submsgElem,&readerId);
 		CDRMessage::addEntityId(&submsgElem,&writerId);
@@ -85,7 +85,7 @@ bool CDRMessageCreator2::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber
 
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator2::createSubmessageHeader(&submsgHeader, GAP,flags,submsg->length);
+	CDRMessageCreator::createSubmessageHeader(&submsgHeader, GAP,flags,submsg->length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(submsg, &submsgHeader);
 	CDRMessage::appendMsg(submsg, &submsgElem);

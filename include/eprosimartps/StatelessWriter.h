@@ -14,9 +14,9 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "rtps_all.h"
-#include "RTPSWriter.h"
-#include "ReaderLocator.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/ReaderLocator.h"
 
 
 #ifndef STATELESSWRITER_H_
