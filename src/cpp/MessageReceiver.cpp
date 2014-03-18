@@ -97,15 +97,17 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		throw ERR_MESSAGE_INCORRECT_HEADER;
 	processHeader(&H);
 	// Loop until there are no more submessages
-	SubmessageHeader_t submsgh; //Current submessage header
+
 	bool last_submsg = false;
 	bool valid;
 	int count = 0;
-	std::vector<std::pair<int,SubmessageHeader_t*>> SubMessages;
+	//std::vector<std::pair<int,SubmessageHeader_t*>> SubMessages;
 	while(msg.pos < msg.length)// end of the message
 	{
 		//First 4 bytes must contain: ID | flags | octets to next header
+		SubmessageHeader_t submsgh; //Current submessage header
 		readSubmessageHeader(&msg,&submsgh);
+		//cout << "submsg length: " << submsgh.submessageLength << " pos: " << msg.pos << " length: " << msg.length <<endl;
 		if(msg.pos + submsgh.submessageLength > msg.length)
 			throw ERR_SUBMSG_LENGTH_INVALID;
 		valid = true;
@@ -115,10 +117,13 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		{
 			SubmsgData_t* SubmsgData = new SubmsgData_t();
 			valid = readSubmessageData(&msg,&submsgh,&last_submsg,SubmsgData);
-			if(valid){
-				SubMessages.push_back(std::make_pair(count,(SubmessageHeader_t*)SubmsgData));
+			RTPSLog::DebugInfo << "Message Read"<< endl;pDI;
+			if(valid)
+			{
+			//	SubMessages.push_back(std::make_pair(count,(SubmessageHeader_t*)SubmsgData));
 				SubmsgData->print();
 				processSubmessageData(SubmsgData);
+				RTPSLog::DebugInfo << "Sub Message DATA processed"<< endl;pDI;
 			}
 			break;
 		}
@@ -135,6 +140,7 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		case INFO_SRC:
 			break;
 		case INFO_TS:
+			msg.pos+=8;
 			break;
 		case INFO_REPLY:
 			break;
@@ -156,7 +162,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 	smh->submessageId = msg->buffer[msg->pos];msg->pos++;
 	smh->flags = msg->buffer[msg->pos];msg->pos++;
 	//Set endianness of message
-	msg->msg_endian = smh->flags & BIT(0) ? LITTLEEND:BIGEND;
+	msg->msg_endian = smh->flags & BIT(0) ? LITTLEEND : BIGEND;
 	CDRMessage::readUInt16(msg,&smh->submessageLength);
 	return true;
 }
@@ -207,7 +213,7 @@ bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
 	bool keyFlag = DSM.SubmessageHeader.flags & BIT(3) ? true : false;
 	if(keyFlag && dataFlag)
 	{
-		RTPSLog::Warning << "Message recevied with Data and Key Flag set." << endl;
+		RTPSLog::Warning << "Message received with Data and Key Flag set." << endl;
 		RTPSLog::printWarning();
 		return false;
 	}
@@ -220,7 +226,6 @@ bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
 
 	//Extra flags don't matter now. Avoid those bytes
 	msg->pos+=2;
-
 	int16_t octetsToInlineQos;
 	CDRMessage::readInt16(msg,&octetsToInlineQos); //it should be 16 in this implementation
 
