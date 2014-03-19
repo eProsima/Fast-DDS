@@ -203,35 +203,67 @@ bool CDRMessage::addDataReversed(CDRMessage_t*msg, octet* data, uint length) {
 	return true;
 }
 
-bool CDRMessage::addOctet(CDRMessage_t*msg, octet O) {
+bool CDRMessage::addOctet(CDRMessage_t*msg, octet O)
+{
+	if(msg->pos + 1 > msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
 	//const void* d = (void*)&O;
-	addData(msg,&O,1);
+	msg->buffer[msg->pos+1] = O;
+	msg->pos++;
+	msg->length++;
 	return true;
 }
 
 bool CDRMessage::addUInt16(CDRMessage_t*msg,
-		unsigned short U) {
-	if(msg->msg_endian == DEFAULT_ENDIAN){
-		addData(msg,(octet*)&U,2);
+		unsigned short U)
+{
+	if(msg->pos + 2 > msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
 	}
-	else{
-		octet* o= (octet*)&U;
-		addData(msg,&o[1],1);
-		addData(msg,o,1);
+	octet* o= (octet*)&U;
+	if(msg->msg_endian == DEFAULT_ENDIAN)
+	{
+		msg->buffer[msg->pos] = *(o);
+		msg->buffer[msg->pos+1] = *(o+1);
 	}
+	else
+	{
+		msg->buffer[msg->pos] = *(o+1);
+		msg->buffer[msg->pos+1] = *(o);
+	}
+	msg->pos+=2;
+	msg->length+=2;
 	return true;
 }
 
 bool CDRMessage::addInt32(CDRMessage_t* msg, int32_t lo) {
 	octet* o= (octet*)&lo;
-	if(msg->msg_endian == DEFAULT_ENDIAN){
-		addData(msg,o,4);
+	if(msg->pos + 4 > msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
+	if(msg->msg_endian == DEFAULT_ENDIAN)
+	{
+		for(uint8_t i=0;i<4;i++)
+		{
+			msg->buffer[msg->pos+i] = *(o+i);
+		}
 	}
 	else
 	{
-		addDataReversed(msg,o,4);
-
+		for(uint8_t i=0;i<4;i++)
+		{
+			msg->buffer[msg->pos+i] = *(o+3-i);
+		}
 	}
+	msg->pos+=4;
+	msg->length+=4;
 	return true;
 }
 
@@ -239,23 +271,53 @@ bool CDRMessage::addInt32(CDRMessage_t* msg, int32_t lo) {
 
 bool CDRMessage::addUInt32(CDRMessage_t* msg, uint32_t ulo) {
 	octet* o= (octet*)&ulo;
-
+	if(msg->pos + 4 > msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
 	if(msg->msg_endian == DEFAULT_ENDIAN)
 	{
-		addData(msg,o,4);
+		for(uint8_t i=0;i<4;i++)
+		{
+			msg->buffer[msg->pos+i] = *(o+i);
+		}
 	}
-	else{
-		addDataReversed(msg,o,4);
+	else
+	{
+		for(uint8_t i=0;i<4;i++)
+		{
+			msg->buffer[msg->pos+i] = *(o+3-i);
+		}
 	}
+	msg->pos+=4;
+	msg->length+=4;
 	return true;
 }
 
 bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 	octet* o= (octet*)&lolo;
+	if(msg->pos + 8 > msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
 	if(msg->msg_endian == DEFAULT_ENDIAN)
-		addData(msg,o,8);
+	{
+		for(uint8_t i=0;i<8;i++)
+		{
+			msg->buffer[msg->pos+i] = *(o+i);
+		}
+	}
 	else
-		addDataReversed(msg,o,8);
+	{
+		for(uint8_t i=0;i<8;i++)
+		{
+			msg->buffer[msg->pos+i] = *(o+7-i);
+		}
+	}
+	msg->pos+=8;
+	msg->length+=8;
 	return true;
 }
 
