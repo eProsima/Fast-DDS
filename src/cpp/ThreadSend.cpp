@@ -65,8 +65,7 @@ bool ThreadSend::initSend(Locator_t loc)
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	send_socket.open(boost::asio::ip::udp::v4());
 	send_socket.bind(send_endpoint);
-	pInfo ( YELLOW<<"Sending through default address " << send_socket.local_endpoint());
-	pInfo ( " Socket state: " << send_socket.is_open() << DEF << endl);
+	pInfo ( YELLOW<<"Sending through default address " << send_socket.local_endpoint()<<" Socket state: " << send_socket.is_open() << DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
 	return true;
@@ -81,10 +80,16 @@ ThreadSend::~ThreadSend() {
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc)
 {
 	boost::lock_guard<ThreadSend> guard(*this);
-	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(loc.to_IP4_string()),loc.port);
-	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << DEF);
-	pDebugInfo ( YELLOW << send_socket.local_endpoint()  << " ....  ");
+
+	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(loc.to_IP4_long()),loc.port);
+
+
+	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << send_socket.local_endpoint()  << endl);
+//	boost::posix_time::ptime t1,t2;
+//	t1 = boost::posix_time::microsec_clock::local_time();
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
+//	t2 = boost::posix_time::microsec_clock::local_time();
+//	cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
 	pDebugInfo (YELLOW <<  "SENT " << longitud << DEF << endl);
 }
 

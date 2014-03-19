@@ -42,11 +42,10 @@ public:
 	 * Process a new CDR message.
 	 * @param[in] participantguidprefix Participant Guid Prefix
 	 * @param[in] loc Locator indicating the sending address.
-	 * @param[in] buffer Pointer to buffer.
-	 * @param[in] length Length of the message in bytes.
+	 * @param[in] msg Pointer to the message
 	 */
 	void processCDRMsg(GuidPrefix_t participantguidprefix,
-					Locator_t loc, void* buffer, short length);
+					Locator_t loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Thread that contains this MessageReceiver.
 	ThreadListen* threadListen_ptr;
@@ -126,6 +125,18 @@ private:
 	void processSubmessageData(SubmsgData_t* SubmsgData);
 
 	///@}
+
+	/** @name Reading and process methods.
+	 * These methods read the specific message type and perform the necesary actions in the MessageReceiver.
+	 * @return True if correct.
+	 */
+	///@{
+
+	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+
+
+	///@}
+
 
 };
 

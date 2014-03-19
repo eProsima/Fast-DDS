@@ -55,7 +55,8 @@ typedef struct CacheChange_t{
 	SequenceNumber_t sequenceNumber;
 	//!Serialized Payload associated with the change.
 	SerializedPayload_t serializedPayload;
-	CacheChange_t(){
+	CacheChange_t()
+	{
 
 	}
 	/*!

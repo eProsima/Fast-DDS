@@ -47,10 +47,11 @@ public:
 	 * Get a pointer to a specific change based on its SequenceNumber_t.
 	 * @param[in] seqNum SequenceNumber_t of the change.
 	 * @param[in] writerGuid GUID_t of the writer that generated the change.
-	 * @param[out] change_ptr_ptr Pointer to a pointer where to store the change.
+	 * @param[out] ch_ptr_ptr Pointer to pointer to a cachechange.
 	 * @return True if correct.
 	 */
-	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** change_ptr_ptr);
+	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr_ptr,uint16_t *ch_number);
+	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr_ptr);
 	/**
 	 * Add a change to the HistoryCache.
 	 * @param[in] a_change Pointer to the change to add.
@@ -124,6 +125,10 @@ private:
 
 	//!Update the max and min sequence number and Guid after a change in the cache changes.
 	void updateMaxMinSeqNum();
+//	//!Update the max  sequence number and Guid after a change in the cache changes.
+//	void updateMaxSeqNum();
+//	//!Update the  min sequence number and Guid after a change in the cache changes.
+//	void updateMinSeqNum();
 
 
 };

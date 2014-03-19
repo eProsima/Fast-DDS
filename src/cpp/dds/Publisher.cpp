@@ -84,15 +84,21 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	else
 		W->new_change(kind,NULL,handle,change);
 
+
 	if(!W->writer_cache.add_change(change))
+	{
+		pWarning("Change not added"<<endl);
 		return false;
+	}
 	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
+
 	if(W->stateType == STATELESS)
 		((StatelessWriter*)W)->unsent_change_add(change);
 	else if(W->stateType == STATEFUL)
 	{
 		((StatefulWriter*)W)->unsent_change_add(change);
 	}
+
 	return true;
 
 
@@ -110,7 +116,6 @@ bool Publisher::removeMinSeqChange()
 		GUID_t gui;
 		W->writer_cache.get_seq_num_min(&sn,&gui);
 		W->writer_cache.remove_change(sn,gui);
-
 		return true;
 	}
 

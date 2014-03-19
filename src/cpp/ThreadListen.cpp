@@ -46,8 +46,7 @@ void ThreadListen::listen() {
 	boost::asio::ip::udp::endpoint sender_endpoint;
 	if(first)
 	{
-		pInfo ( BLUE << "Thread: " << b_thread->get_id() << " listening in IP: " << DEF) ;
-		pInfo ( BLUE << listen_socket.local_endpoint() << DEF << endl);
+		pInfo ( BLUE << "Thread: " << b_thread->get_id() << " listening in IP: " <<listen_socket.local_endpoint() << DEF << endl) ;
 		participant->endpointToListenThreadSemaphore->post();
 		first = false;
 	}
@@ -68,7 +67,7 @@ void ThreadListen::listen() {
 			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
 		}
 		try{
-			MR.processCDRMsg(participant->guid.guidPrefix,send_loc,msg.buffer,msg.length);
+			MR.processCDRMsg(participant->guid.guidPrefix,send_loc,&msg);
 			pDebugInfo ("Message processed " << endl);
 
 		}

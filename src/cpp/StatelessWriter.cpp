@@ -108,12 +108,14 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 		//Order vector.
 		//std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
 		unsent_changes_not_empty();
+
 	}
 	else
 	{
 		pWarning( "No reader locator to add change" << std::endl);
 
 	}
+
 }
 
 void StatelessWriter::unsent_changes_not_empty()
@@ -124,14 +126,11 @@ void StatelessWriter::unsent_changes_not_empty()
 	{
 		if(pushMode)
 		{
-			if(!rit->unsent_changes.empty())
-			{
-				std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-				std::vector<Locator_t> loc;
-				loc.push_back(rit->locator);
-				sendChangesList(rit->unsent_changes,&loc,NULL,rit->expectsInlineQos,ENTITYID_UNKNOWN);
-				rit->unsent_changes.clear();
-			}
+			std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+			std::vector<Locator_t> loc;
+			loc.push_back(rit->locator);
+			sendChangesList(rit->unsent_changes,&loc,NULL,rit->expectsInlineQos,ENTITYID_UNKNOWN);
+			rit->unsent_changes.clear();
 		}
 		else
 		{

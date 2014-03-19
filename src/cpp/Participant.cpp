@@ -77,10 +77,10 @@ Participant::Participant() {
 	guid.guidPrefix.value[10] = ((octet*)&ID)[2];
 	guid.guidPrefix.value[11] = ((octet*)&ID)[3];
 	guid.entityId = ENTITYID_PARTICIPANT;
-	pInfo("Participant created with guidPrefix: ");
-	for(int i =0;i<12;i++)
-		pInfo((int)guid.guidPrefix.value[i] << ".");
-	pInfo( << endl);
+	std::stringstream ss;
+			for(int i =0;i<12;i++)
+				ss << (int)guid.guidPrefix.value[i] << ".";
+			pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
 	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
 }
 
@@ -125,10 +125,10 @@ Participant::Participant(ParticipantParams_t PParam) {
 	guid.guidPrefix.value[10] = ((octet*)&ID)[2];
 	guid.guidPrefix.value[11] = ((octet*)&ID)[3];
 	guid.entityId = ENTITYID_PARTICIPANT;
-	pInfo("Participant created with guidPrefix: ");
+	std::stringstream ss;
 		for(int i =0;i<12;i++)
-			pInfo((int)guid.guidPrefix.value[i] << ".");
-		pInfo( << endl);
+			ss << (int)guid.guidPrefix.value[i] << ".";
+		pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
 	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
 }
 

@@ -119,7 +119,9 @@ void newMsgCallback()
 
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_ERROR_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
+	cout << "Starting "<< endl;
+	pInfo("Starting"<<endl)
 	int type;
 	if(argc > 1)
 	{
@@ -160,7 +162,7 @@ int main(int argc, char** argv){
 	pub->addReaderLocator(loc,true);
 
 	ReaderParams_t Rparam;
-	Rparam.historySize = 5;
+	Rparam.historySize = 15;
 	Rparam.stateKind = STATELESS;
 	Rparam.topicDataType = std::string("TestType");
 	Rparam.topicName = std::string("This is a test topic");
@@ -171,21 +173,29 @@ int main(int argc, char** argv){
 	tp.value = 0;
 	tp.price = 1.3;
 	boost::posix_time::ptime t1,t2,t3;
-	for(int i =0;i<10;i++)
+	SequenceNumber_t seq;
+	GUID_t guid;
+	uint32_t total=0;
+	int samples = 0;
+	for(int i=1;i<1000;i++)
 	{
-		cout << "Send... ";
+		cout << "S ";
 		t1 = boost::posix_time::microsec_clock::local_time();
 		pub->write((void*)&tp);
 		sub->blockUntilNewMessage();
-		sub->readMinSeqUnreadCache((void*)&tp);
+		sub->readMinSeqCache((void*)&tp,&seq,&guid);
 		t2 = boost::posix_time::microsec_clock::local_time();
-		cout << " Receive " << i<< endl;
-		cout<< "TIME: " <<(t2-t1).total_microseconds()<< endl;
+		cout<< "T: " <<(t2-t1).total_microseconds()<< " | ";
+		total+=(t2-t1).total_microseconds();
+		samples++;
+		if(samples%10==0)
+			cout << endl;
+		//cout<< "TIME write: " <<(t3-t1).total_microseconds()<< endl;
+		pub->removeMinSeqChange();
+		sub->takeMinSeqCache((void*)&tp);
 	}
-	cout << "Enter numer "<< endl;
-	int n;
-	cin >> n;
-
+	cout << endl;
+	cout << "Mean: " << total/samples << endl;
 	//my_sleep(3);
 //
 //
