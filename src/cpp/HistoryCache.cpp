@@ -55,10 +55,10 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 	return false;
 }
 
-bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
+bool HistoryCache::add_change(CacheChange_t* a_change)
 {
-	RTPSLog::DebugInfo << "Trying to lock history " << endl;
-	RTPSLog::printDebugInfo();
+	pDebugInfo ( "Trying to lock history " << endl);
+
 	boost::lock_guard<HistoryCache> guard(*this);
 
 	if(changes.size() == (size_t)historySize) //History is full
@@ -68,13 +68,12 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 	}
 
 	//make copy of change to save
-	CacheChange_t* ch = new CacheChange_t();
-	ch->copy(a_change);
+
 	if(historyKind == WRITER)
 	{
 		rtpswriter->lastChangeSequenceNumber++;
-		ch->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
-		changes.push_back(ch);
+		a_change->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
+		changes.push_back(a_change);
 		updateMaxMinSeqNum();
 	}
 	else if(historyKind == READER)
@@ -84,17 +83,16 @@ bool HistoryCache::add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr)
 		std::vector<CacheChange_t*>::iterator it;
 		for(it=changes.begin();it!=changes.end();it++)
 		{
-			if((*it)->sequenceNumber.to64long() == ch->sequenceNumber.to64long() &&
-					(*it)->writerGUID == ch->writerGUID)
+			if((*it)->sequenceNumber.to64long() == a_change->sequenceNumber.to64long() &&
+					(*it)->writerGUID == a_change->writerGUID)
 			{
 				pWarning("Change with the same seqNum already in History" << endl);
 				return false;
 			}
 		}
-		changes.push_back(ch);
+		changes.push_back(a_change);
 		updateMaxMinSeqNum();
 	}
-	(*ch_ptr) = ch;
 	if(changes.size()==historySize)
 		isHistoryFull = true;
 	pDebugInfo("Cache added to History" << endl);

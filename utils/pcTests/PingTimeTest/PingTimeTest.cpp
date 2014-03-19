@@ -171,19 +171,17 @@ int main(int argc, char** argv){
 	tp.value = 0;
 	tp.price = 1.3;
 	boost::posix_time::ptime t1,t2,t3;
-	t1 = boost::posix_time::microsec_clock::local_time();
-	pub->write((void*)&tp);
-	sub->blockUntilNewMessage();
-	sub->readMinSeqUnreadCache((void*)&tp);
-	t2 = boost::posix_time::microsec_clock::local_time();
-	pub->write((void*)&tp);
-	sub->blockUntilNewMessage();
-	sub->readMinSeqUnreadCache((void*)&tp);
-	t3 = boost::posix_time::microsec_clock::local_time();
-	cout<< "TIMES: " << endl;
-	cout << (t2-t1).total_microseconds() << endl;
-	cout << (t3-t2).total_microseconds() << endl;
-
+	for(int i =0;i<10;i++)
+	{
+		cout << "Send... ";
+		t1 = boost::posix_time::microsec_clock::local_time();
+		pub->write((void*)&tp);
+		sub->blockUntilNewMessage();
+		sub->readMinSeqUnreadCache((void*)&tp);
+		t2 = boost::posix_time::microsec_clock::local_time();
+		cout << " Receive " << i<< endl;
+		cout<< "TIME: " <<(t2-t1).total_microseconds()<< endl;
+	}
 	cout << "Enter numer "<< endl;
 	int n;
 	cin >> n;

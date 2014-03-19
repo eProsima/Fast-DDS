@@ -57,7 +57,7 @@ public:
 	 * @param[out] ch_ptr Pointer to pointer of cachechange, to return a pointer to the real change in the history.
 	 * @return True if correct.
 	 */
-	bool add_change(CacheChange_t* a_change,CacheChange_t** ch_ptr);
+	bool add_change(CacheChange_t* a_change);
 
 	/**
 	 * Remove a change based on its SequenceNumber_t and writer GUID.

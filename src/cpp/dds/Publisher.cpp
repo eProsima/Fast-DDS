@@ -69,7 +69,7 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 		return false;
 	}
 
-	CacheChange_t change;
+	CacheChange_t* change = new CacheChange_t();
 	InstanceHandle_t handle;
 	SerializedPayload_t Payload;
 	if(W->topicKind == WITH_KEY)
@@ -79,20 +79,19 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	if(kind == ALIVE)
 	{
 		type.serialize(&Payload,Data);
-		W->new_change(kind,&Payload,handle,&change);
+		W->new_change(kind,&Payload,handle,change);
 	}
 	else
-		W->new_change(kind,NULL,handle,&change);
+		W->new_change(kind,NULL,handle,change);
 
-	CacheChange_t* ch_ptr;
-	if(!W->writer_cache.add_change(&change,&ch_ptr))
+	if(!W->writer_cache.add_change(change))
 		return false;
 	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
 	if(W->stateType == STATELESS)
-		((StatelessWriter*)W)->unsent_change_add(ch_ptr);
+		((StatelessWriter*)W)->unsent_change_add(change);
 	else if(W->stateType == STATEFUL)
 	{
-		((StatefulWriter*)W)->unsent_change_add(ch_ptr);
+		((StatefulWriter*)W)->unsent_change_add(change);
 	}
 	return true;
 
