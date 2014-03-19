@@ -275,8 +275,7 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 		}
 	}
 	//Prepare the send operation
-	CDRMessage_t header;
-	CDRMessage::initCDRMsg(&header,RTPSMESSAGE_HEADER_SIZE);
+	CDRMessage_t header(RTPSMESSAGE_HEADER_SIZE);
 	CDRMessageCreator::createHeader(&header,participant->guid.guidPrefix);
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit;
 	seqit = Sequences.begin();
@@ -297,7 +296,6 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 	do
 	{
 		CDRMessage_t fullmsg;
-		CDRMessage::initCDRMsg(&fullmsg,RTPSMESSAGE_MAX_SIZE);
 		CDRMessage::appendMsg(&fullmsg,&header);
 		if(first)
 		{
@@ -309,6 +307,7 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 		{
 			gap_n++;
 			seqit++;
+			CDRMessage::initCDRMsg(&submessage);
 			CDRMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
 						readerId,this->guid.entityId);
 			CDRMessage::appendMsg(&fullmsg,&submessage);

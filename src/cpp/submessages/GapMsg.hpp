@@ -23,24 +23,18 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 		SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,
 		EntityId_t readerId,EntityId_t writerId)
 {
-	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
+
 	try
 	{
-		CDRMessage_t header;
 		VendorId_t vendor;
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
-		CDRMessage::appendMsg(msg, &header);
-		CDRMessage_t submsginfots;
-		CDRMessageCreator::createSubmessageInfoTS_Now(&submsginfots,false);
-		CDRMessage::appendMsg(msg, &submsginfots);
-		CDRMessage_t submsgdata;
-		CDRMessageCreator::createSubmessageGap(&submsgdata,seqNumFirst,seqNumList,readerId, writerId);
-		CDRMessage::appendMsg(msg, &submsgdata);
+		CDRMessageCreator::createHeader(msg,guidprefix,version,vendor);
+		CDRMessageCreator::createSubmessageInfoTS_Now(msg,false);
+		CDRMessageCreator::createSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
 		//cout << "SubMEssage created and added to message" << endl;
-		msg->length = msg->pos;
+
 	}
 	catch(int e)
 	{
@@ -50,23 +44,21 @@ bool CDRMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpref
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId)
+bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId)
 {
-	CDRMessage::initCDRMsg(submsg);
 
 	//Create the two CDR msgs
-	CDRMessage_t submsgHeader,submsgElem;
-	CDRMessage::initCDRMsg(&submsgHeader,RTPSMESSAGE_SUBMESSAGEHEADER_SIZE);
-	CDRMessage::initCDRMsg(&submsgElem,RTPSMESSAGE_MAX_SIZE);
+	CDRMessage_t submsgElem;
+
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)
 	{
 		flags = flags | BIT(0);
-		submsgElem.msg_endian = submsgHeader.msg_endian = BIGEND;
+		submsgElem.msg_endian   = BIGEND;
 	}
 	else
 	{
-		submsgElem.msg_endian = submsgHeader.msg_endian = LITTLEEND;
+		submsgElem.msg_endian  = LITTLEEND;
 	}
 
 	try{
@@ -84,11 +76,10 @@ bool CDRMessageCreator::createSubmessageGap(CDRMessage_t* submsg,SequenceNumber_
 
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator::createSubmessageHeader(&submsgHeader, GAP,flags,submsg->length);
+	CDRMessageCreator::createSubmessageHeader(msg, GAP,flags,submsgElem.length);
 	//Append Submessage elements to msg
-	CDRMessage::appendMsg(submsg, &submsgHeader);
-	CDRMessage::appendMsg(submsg, &submsgElem);
-	submsg->length = submsg->pos;
+	CDRMessage::appendMsg(msg, &submsgElem);
+
 	return true;
 }
 

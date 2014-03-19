@@ -274,8 +274,8 @@ bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
 				msg->msg_endian = LITTLEEND;
 			else
 			{
-				RTPSLog::Error<< "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl;
-				RTPSLog::printError();
+				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
+
 			}
 			ParameterList_t p;
 			uint32_t param_size;

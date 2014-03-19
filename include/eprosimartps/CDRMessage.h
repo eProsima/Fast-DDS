@@ -54,13 +54,13 @@ public:
 	static bool readOctet(CDRMessage_t* msg,octet* o);
 
 	///@}
-	/**
-	 * @brief Initialize given CDR message with a given byte size. It frees the memory already allocated and reserves new one.
-	 * @param[in,out] msg Pointer to the message to initialize.
-	 * @param[in] size Maximum size of the message.
-	 * @return True if correct.
-	 */
-	static bool initCDRMsg(CDRMessage_t* msg,uint size);
+//	/**
+//	 * @brief Initialize given CDR message with a given byte size. It frees the memory already allocated and reserves new one.
+//	 * @param[in,out] msg Pointer to the message to initialize.
+//	 * @param[in] size Maximum size of the message.
+//	 * @return True if correct.
+//	 */
+//	static bool initCDRMsg(CDRMessage_t* msg,uint size);
 	/**
 	 * Initialize given CDR message with default size. It frees the memory already allocated and reserves new one.
 	 * @param[in,out] msg Pointer to the message to initialize.
