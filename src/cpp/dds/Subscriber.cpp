@@ -220,14 +220,20 @@ bool Subscriber::readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUI
 		rElem.writerGuid = *minSeqNumGuid;
 		if(!isCacheRead(*minSeqNum,*minSeqNumGuid))
 			readElements.push_back(rElem);
-		CacheChange_t* ch = new CacheChange_t();
-		R->reader_cache.get_change(*minSeqNum,*minSeqNumGuid,&ch);
-		if(ch->kind == ALIVE)
-			type.deserialize(&ch->serializedPayload,data_ptr);
-		else
+		CacheChange_t* ch;
+		if(R->reader_cache.get_change(*minSeqNum,*minSeqNumGuid,&ch))
+		{
+			if(ch->kind == ALIVE)
+				type.deserialize(&ch->serializedPayload,data_ptr);
+			else
 			{pWarning("Cache with NOT ALIVE" << endl)}
-		delete(ch);
-		return true;
+			return true;
+		}
+		else
+		{
+			pWarning("Min element not found")
+					return false;
+		}
 	}
 	pWarning("No elements in history " << endl);
 	return false;
@@ -282,17 +288,41 @@ bool Subscriber::takeAllCache(std::vector<void*>* data_vec)
 bool Subscriber::takeMinSeqCache(void* data_ptr)
 {
 	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	SequenceNumber_t sn;
-	GUID_t guid;
-	if(readMinSeqCache(data_ptr,&sn,&guid))
+	if(!R->reader_cache.changes.empty())
 	{
-		if(R->reader_cache.remove_change(sn,guid))
+		SequenceNumber_t seq;
+		GUID_t guid;
+		R->reader_cache.get_seq_num_min(&seq,&guid);
+
+		ReadElement_t rElem;
+		rElem.seqNum = seq;
+		rElem.writerGuid = guid;
+		if(!isCacheRead(seq,guid))
+			readElements.push_back(rElem);
+		CacheChange_t* change;
+		uint16_t ch_number;
+		if(R->reader_cache.get_change(seq,guid,&change,&ch_number))
 		{
-			removeSeqFromRead(sn,guid);
+
+
+			if(change->kind == ALIVE)
+				type.deserialize(&change->serializedPayload,data_ptr);
+			else
+			{
+				pWarning("Cache with NOT ALIVE" << endl)
+			}
+			delete(change);
+			R->reader_cache.changes.erase(R->reader_cache.changes.begin()+ch_number);
+			removeSeqFromRead(seq,guid);
 			return true;
 		}
-		return false;
+		else
+		{
+			pWarning("Min Element not found"<<endl);
+			return false;
+		}
 	}
+	pWarning("No elements in history " << endl);
 	return false;
 }
 

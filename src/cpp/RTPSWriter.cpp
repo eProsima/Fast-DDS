@@ -34,7 +34,8 @@ RTPSWriter::~RTPSWriter() {
 }
 
 bool RTPSWriter::new_change(ChangeKind_t changeKind,
-		SerializedPayload_t* data, InstanceHandle_t handle,CacheChange_t* change) {
+		SerializedPayload_t* data, InstanceHandle_t handle,CacheChange_t* change)
+{
 	change->kind = changeKind;
 	//change->sequenceNumber = lastChangeSequenceNumber;
 	change->writerGUID = guid;
@@ -111,13 +112,14 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 		}
 		if(unicast!=NULL)
 		{
-		for(lit = unicast->begin();lit!=unicast->end();lit++)
-			participant->threadSend.sendSync(&fullmsg,*lit);
+			for(lit = unicast->begin();lit!=unicast->end();lit++)
+				participant->threadSend.sendSync(&fullmsg,*lit);
 		}
+
 		if(multicast!=NULL)
 		{
-		for(lit = multicast->begin();lit!=multicast->end();lit++)
-			participant->threadSend.sendSync(&fullmsg,*lit);
+			for(lit = multicast->begin();lit!=multicast->end();lit++)
+				participant->threadSend.sendSync(&fullmsg,*lit);
 		}
 
 	}while(change_n < changes.size()); //There is still a message to add

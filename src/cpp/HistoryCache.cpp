@@ -41,14 +41,31 @@ HistoryCache::~HistoryCache() {
 
 }
 
-bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** change) {
+bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr,uint16_t *ch_number) {
+	boost::lock_guard<HistoryCache> guard(*this);
+	std::vector<CacheChange_t*>::iterator it;
+	(*ch_number)=0;
+	for(it = changes.begin();it!=changes.end();it++){
+		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
+				(*it)->writerGUID == writerGuid)
+		{
+			*ch_ptr = *it;
+			return true;
+		}
+		(*ch_number)++;
+	}
+	return false;
+}
+
+bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr) {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = changes.begin();it!=changes.end();it++){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
 				(*it)->writerGUID == writerGuid)
 		{
-			(*change)->copy(*it);
+			*ch_ptr = *it;
+
 			return true;
 		}
 	}
@@ -75,10 +92,10 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 		a_change->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
 		changes.push_back(a_change);
 		updateMaxMinSeqNum();
+
 	}
 	else if(historyKind == READER)
 	{
-
 		//Check that the same change has not been already introduced
 		std::vector<CacheChange_t*>::iterator it;
 		for(it=changes.begin();it!=changes.end();it++)
@@ -104,7 +121,8 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = changes.begin();it!=changes.end();it++){
+	for(it = changes.begin();it!=changes.end();it++)
+	{
 		if((*it)->sequenceNumber.to64long() == seqnum.to64long()
 				&& (*it)->writerGUID == guid)
 		{
@@ -112,9 +130,11 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
 			changes.erase(it);
 			isHistoryFull = false;
 			updateMaxMinSeqNum();
+			pDebugInfo("Change removed"<<endl)
 			return true;
 		}
 	}
+	pWarning("Change NOT removed"<<endl);
 	return false;
 }
 
@@ -126,7 +146,7 @@ bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
 	changes.erase(it);
 	isHistoryFull = false;
 	updateMaxMinSeqNum();
-
+	pDebugInfo("Change removed"<<endl);
 	return true;
 
 }
@@ -182,7 +202,7 @@ void HistoryCache::updateMaxMinSeqNum()
 		std::vector<CacheChange_t*>::iterator it;
 		maxSeqNum = minSeqNum = changes[0]->sequenceNumber;
 		maxSeqNumGuid = minSeqNumGuid = changes[0]->writerGUID;
-		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
+
 		for(it = changes.begin();it!=changes.end();it++){
 			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
 			{
@@ -205,6 +225,60 @@ void HistoryCache::updateMaxMinSeqNum()
 	}
 	return;
 }
+/* ********  REMOVED FROM THIS VERSION, NOT NECESSARY
+void HistoryCache::updateMinSeqNum()
+{
+	boost::lock_guard<HistoryCache> guard(*this);
+	if(!changes.empty())
+	{
+		std::vector<CacheChange_t*>::iterator it;
+		minSeqNum = changes[0]->sequenceNumber;
+		minSeqNumGuid = changes[0]->writerGUID;
+		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
+		for(it = changes.begin();it!=changes.end();it++)
+		{
+			if((*it)->sequenceNumber.to64long() < minSeqNum.to64long())
+			{
+				minSeqNum = (*it)->sequenceNumber;
+				minSeqNumGuid = (*it)->writerGUID;
+			}
+		}
+	}
+	else
+	{
+		SEQUENCENUMBER_UNKOWN(minSeqNum);
+		GUID_UNKNOWN(minSeqNumGuid);
+	}
+	return;
+}
+
+void HistoryCache::updateMaxSeqNum()
+{
+	boost::lock_guard<HistoryCache> guard(*this);
+	if(!changes.empty())
+	{
+		std::vector<CacheChange_t*>::iterator it;
+		maxSeqNum = changes[0]->sequenceNumber;
+		maxSeqNumGuid = changes[0]->writerGUID;
+		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
+		for(it = changes.begin();it!=changes.end();it++){
+			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
+			{
+				maxSeqNum = (*it)->sequenceNumber;
+				maxSeqNumGuid = (*it)->writerGUID;
+			}
+		}
+	}
+	else
+	{
+		SEQUENCENUMBER_UNKOWN(maxSeqNum);
+		GUID_UNKNOWN(minSeqNumGuid);
+	}
+	return;
+}
+
+*/
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

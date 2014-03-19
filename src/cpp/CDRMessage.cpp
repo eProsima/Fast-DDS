@@ -23,12 +23,6 @@
 namespace eprosima {
 namespace rtps {
 
-#if defined(__LITTLE_ENDIAN__)
-const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
-#elif defined (__BIG_ENDIAN__)
-const Endianness_t DEFAULT_ENDIAN = BIGEND;
-#endif
-
 
 CDRMessage::CDRMessage() {
 	// TODO Auto-generated constructor stub

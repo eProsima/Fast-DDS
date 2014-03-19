@@ -24,7 +24,7 @@
 #ifndef RTPSLOG_H_
 #define RTPSLOG_H_
 
-#if DEBUG
+#if defined(__DEBUG)
 #define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
 #define pWarning(str) {RTPSLog::Warning << str;RTPSLog::printWarning();}
 #define pInfo(str) {RTPSLog::Info << str;RTPSLog::printInfo();}

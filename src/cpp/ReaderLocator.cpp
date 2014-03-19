@@ -78,6 +78,7 @@ void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,GUID
 	for(it = seqs.begin();it!=seqs.end();it++)
 	{
 		CacheChange_t** cpoin = NULL;
+
 		if(history->get_change(*it,myGUID,cpoin))
 			requested_changes.push_back(*cpoin);
 	}

@@ -67,6 +67,14 @@ typedef enum Endianness_t{
 #define DEFAULT_HISTORY_SIZE 10
 
 
+#if defined(__LITTLE_ENDIAN__)
+const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
+#elif defined (__BIG_ENDIAN__)
+const Endianness_t DEFAULT_ENDIAN = BIGEND;
+#endif
+
+
+
 #define BIT0 0x1
 #define BIT1 0x2
 #define BIT2 0x4
