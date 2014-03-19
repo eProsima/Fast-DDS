@@ -40,21 +40,22 @@ CDRMessage::~CDRMessage() {
 }
 
 
-bool CDRMessage::initCDRMsg(CDRMessage_t* msg, uint size) {
-	if(msg->buffer!=NULL)
-		free(msg->buffer);
-	msg->buffer = (octet*)malloc(size);
-	msg->max_size = size;
-	msg->pos = 0;
-	msg->length = 0;
-	return true;
-}
+//bool CDRMessage::initCDRMsg(CDRMessage_t* msg, uint size) {
+//	if(msg->buffer!=NULL)
+//		free(msg->buffer);
+//	msg->buffer = (octet*)malloc(size);
+//	msg->max_size = size;
+//	msg->pos = 0;
+//	msg->length = 0;
+//	return true;
+//}
 
 bool CDRMessage::initCDRMsg(CDRMessage_t*msg) {
-	if(msg->buffer!=NULL)
-		free(msg->buffer);
-	msg->buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
-	msg->max_size = RTPSMESSAGE_MAX_SIZE;
+	if(msg->buffer==NULL)
+	{
+		msg->buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
+		msg->max_size = RTPSMESSAGE_MAX_SIZE;
+	}
 	msg->pos = 0;
 	msg->length = 0;
 	return true;

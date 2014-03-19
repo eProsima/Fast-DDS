@@ -20,20 +20,18 @@ namespace rtps{
 
 bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
 		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag){
-	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
+
 	try
 	{
-		CDRMessage_t header;
 		VendorId_t vendor;
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
-		CDRMessage::appendMsg(msg, &header);
+		CDRMessageCreator::createHeader(msg,guidprefix,version,vendor);
 
-		CDRMessage_t submsgdata;
-		CDRMessageCreator::createSubmessageAcknack(&submsgdata,readerId, writerId,SNSet,count,finalFlag);
-		CDRMessage::appendMsg(msg, &submsgdata);
+
+		CDRMessageCreator::createSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
+
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
 	}
@@ -48,20 +46,20 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag)
 {
-	CDRMessage::initCDRMsg(msg);
+
 	//Create the two CDR msgs
-	CDRMessage_t submsgHeader,submsgElem;
-	CDRMessage::initCDRMsg(&submsgHeader,RTPSMESSAGE_SUBMESSAGEHEADER_SIZE);
-	CDRMessage::initCDRMsg(&submsgElem,RTPSMESSAGE_MAX_SIZE);
+	CDRMessage_t submsgElem;
+
+
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)
 	{
 		flags = flags | BIT(0);
-				submsgElem.msg_endian = submsgHeader.msg_endian = BIGEND;
+				submsgElem.msg_endian  = BIGEND;
 	}
 	else
 	{
-		submsgElem.msg_endian = submsgHeader.msg_endian = LITTLEEND;
+		submsgElem.msg_endian =  LITTLEEND;
 	}
 	if(finalFlag)
 		flags = flags | BIT(1);
@@ -81,9 +79,8 @@ bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 	}
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator::createSubmessageHeader(&submsgHeader,ACKNACK,flags,submsgElem.length);
+	CDRMessageCreator::createSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
-	CDRMessage::appendMsg(msg, &submsgHeader);
 	CDRMessage::appendMsg(msg, &submsgElem);
 	msg->length = msg->pos;
 	return true;

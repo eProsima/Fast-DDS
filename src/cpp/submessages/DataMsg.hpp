@@ -23,21 +23,18 @@ namespace rtps{
 bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
 		GuidPrefix_t guidprefix,CacheChange_t* change,TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos){
 
-	CDRMessage::initCDRMsg(msg, RTPSMESSAGE_MAX_SIZE);
+
 	try{
-		CDRMessage_t header;
 		VendorId_t vendor;
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator::createHeader(&header,guidprefix,version,vendor);
-		CDRMessage::appendMsg(msg, &header);
-		CDRMessage_t submsginfots;
-		CDRMessageCreator::createSubmessageInfoTS_Now(&submsginfots,false);
-		CDRMessage::appendMsg(msg, &submsginfots);
-		CDRMessage_t submsgdata;
-		CDRMessageCreator::createSubmessageData(&submsgdata,change,topicKind,readerId,inlineQos);
-		CDRMessage::appendMsg(msg, &submsgdata);
+		CDRMessageCreator::createHeader(msg,guidprefix,version,vendor);
+
+		CDRMessageCreator::createSubmessageInfoTS_Now(msg,false);
+
+		CDRMessageCreator::createSubmessageData(msg,change,topicKind,readerId,inlineQos);
+
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
 	}
@@ -52,30 +49,26 @@ bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
 
 
 
-bool CDRMessageCreator::createSubmessageData(CDRMessage_t* submessage,CacheChange_t* change,
+bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 		TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos) {
 
-	CDRMessage::initCDRMsg(submessage,RTPSMESSAGE_MAX_SIZE);
-	//Create the two CDR msgs
-	CDRMessage_t submsgHeader,submsgElem;
-	CDRMessage::initCDRMsg(&submsgHeader,RTPSMESSAGE_SUBMESSAGEHEADER_SIZE);
-	CDRMessage::initCDRMsg(&submsgElem,RTPSMESSAGE_MAX_SIZE);
 
+	//Create the two CDR msgs
+	CDRMessage_t submsgElem;
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
 	{
 		flags = flags | BIT(0);
-		submsgHeader.msg_endian = submsgElem.msg_endian = LITTLEEND;
+		 submsgElem.msg_endian = LITTLEEND;
 	}
 	else
 	{
-		submsgHeader.msg_endian = submsgElem.msg_endian = BIGEND;
+		 submsgElem.msg_endian = BIGEND;
 	}
 	//Find out flags
 	bool dataFlag,keyFlag;
 	if(change->kind == ALIVE)
-	{
-		dataFlag = true;
+	{		dataFlag = true;
 		keyFlag = false;
 	}
 	else
@@ -152,11 +145,11 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* submessage,CacheChang
 		}
 
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.
-		CDRMessageCreator::createSubmessageHeader(&submsgHeader, DATA,flags,submsgElem.length);
+		CDRMessageCreator::createSubmessageHeader(msg, DATA,flags,submsgElem.length);
 		//Append Submessage elements to msg
-		CDRMessage::appendMsg(submessage, &submsgHeader);
-		CDRMessage::appendMsg(submessage, &submsgElem);
-		submessage->length = submessage->pos;
+
+		CDRMessage::appendMsg(msg, &submsgElem);
+
 	}
 	catch(int t){
 		pError("Data SUBmessage not created"<<endl)

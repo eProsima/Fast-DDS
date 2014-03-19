@@ -78,8 +78,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 
 	std::vector<CacheChange_t*>::iterator cit;
 	cit = changes.begin();
-	CDRMessage_t header;
-	CDRMessage::initCDRMsg(&header,RTPSMESSAGE_HEADER_SIZE);
+	CDRMessage_t header(RTPSMESSAGE_HEADER_SIZE);
 	CDRMessageCreator::createHeader(&header,participant->guid.guidPrefix);
 	uint16_t data_msg_size = 0;
 	uint16_t change_n = 1;
@@ -95,11 +94,8 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 	do
 	{
 		CDRMessage_t fullmsg;
-		CDRMessage::initCDRMsg(&fullmsg,RTPSMESSAGE_MAX_SIZE);
 		CDRMessage::appendMsg(&fullmsg,&header);
-		CDRMessage_t submsginfots;
-		CDRMessageCreator::createSubmessageInfoTS_Now(&submsginfots,false);
-		CDRMessage::appendMsg(&fullmsg, &submsginfots);
+		CDRMessageCreator::createSubmessageInfoTS_Now(&fullmsg,false);
 		if(first)
 		{
 			CDRMessage::appendMsg(&fullmsg,&submessage);

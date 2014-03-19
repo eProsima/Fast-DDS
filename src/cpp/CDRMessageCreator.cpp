@@ -112,7 +112,6 @@ bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 
 bool CDRMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,bool invalidateFlag)
 {
-	CDRMessage::initCDRMsg(msg,RTPSMESSAGE_INFOTS_SIZE);
 	octet flags = 0x0;
 	uint16_t size = 8;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
