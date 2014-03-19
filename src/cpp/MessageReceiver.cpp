@@ -70,7 +70,10 @@ void MessageReceiver::reset(){
 void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t loc,CDRMessage_t*msg)
 {
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
+	{
+		pWarning("Too short message")
 		throw ERR_MESSAGE_TOO_SHORT;
+	}
 	reset();
 	destGuidPrefix = participantguidprefix;
 	for(uint8_t i = 0;i<16;i++)
@@ -83,7 +86,10 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 	//Once everything is set, the reading begins:
 	Header_t H;
 	if(!readHeader(msg, &H))
+	{
+		pWarning("Message NOT RTPS")
 		throw ERR_MESSAGE_INCORRECT_HEADER;
+	}
 	processHeader(&H);
 	// Loop until there are no more submessages
 

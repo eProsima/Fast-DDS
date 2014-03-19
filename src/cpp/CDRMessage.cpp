@@ -211,7 +211,7 @@ bool CDRMessage::addOctet(CDRMessage_t*msg, octet O)
 		return false;
 	}
 	//const void* d = (void*)&O;
-	msg->buffer[msg->pos+1] = O;
+	msg->buffer[msg->pos] = O;
 	msg->pos++;
 	msg->length++;
 	return true;
