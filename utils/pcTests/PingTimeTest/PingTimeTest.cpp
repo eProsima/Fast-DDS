@@ -158,7 +158,7 @@ int main(int argc, char** argv){
 	//One of this two as locators.
 	//loc.set_IP4_address(192,168,1,18);
 	//pub->addReaderLocator(loc,true);
-	loc.set_IP4_address(192,168,1,21);
+	loc.set_IP4_address(192,168,1,18);
 	pub->addReaderLocator(loc,true);
 
 	ReaderParams_t Rparam;
