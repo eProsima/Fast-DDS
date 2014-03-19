@@ -300,19 +300,19 @@ bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
 void MessageReceiver::processSubmessageData(SubmsgData_t* SMD)
 {
 	//Create CacheChange_t with data:
-	CacheChange_t ch;
-	ch.writerGUID.guidPrefix = sourceGuidPrefix;
-	ch.writerGUID.entityId = SMD->writerId;
-	ch.sequenceNumber = SMD->writerSN;
-	ch.kind = SMD->changeKind;
+	CacheChange_t* ch = new CacheChange_t();
+	ch->writerGUID.guidPrefix = sourceGuidPrefix;
+	ch->writerGUID.entityId = SMD->writerId;
+	ch->sequenceNumber = SMD->writerSN;
+	ch->kind = SMD->changeKind;
 	if(!SMD->inlineQos.params.empty())
 	{
 		octet status;
-		ParameterListCreator::getKeyStatus(&SMD->inlineQos,&ch.instanceHandle,&status);
+		ParameterListCreator::getKeyStatus(&SMD->inlineQos,&ch->instanceHandle,&status);
 	}
 	if(SMD->changeKind == ALIVE)
 	{
-		ch.serializedPayload.copy(&SMD->serializedPayload);
+		ch->serializedPayload.copy(&SMD->serializedPayload);
 
 	}
 	//Look for the correct reader to add the change
@@ -321,8 +321,8 @@ void MessageReceiver::processSubmessageData(SubmsgData_t* SMD)
 	{
 		if(SMD->readerId == ENTITYID_UNKNOWN || (*it)->guid.entityId == SMD->readerId) //add to all
 		{
-			CacheChange_t* ch_ptr;
-			if((*it)->reader_cache.add_change(&ch,&ch_ptr))
+
+			if((*it)->reader_cache.add_change(ch))
 			{
 				if((*it)->newMessageCallback !=NULL)
 					(*it)->newMessageCallback();
