@@ -16,17 +16,15 @@
 
 #include "rtps_all.h"
 
-
+#include "eprosimartps/ParameterList.h"
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps{
-
-class ParameterList_t;
 
 /**
  * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.

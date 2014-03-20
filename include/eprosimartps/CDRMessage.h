@@ -98,6 +98,9 @@ public:
 	static bool addSequenceNumber(CDRMessage_t*msg,SequenceNumber_t* sn);
 	static bool addSequenceNumberSet(CDRMessage_t*msg,SequenceNumberSet_t* sns);
 	static bool addLocator(CDRMessage_t*msg,Locator_t*loc);
+	static bool addParameterStatus(CDRMessage_t*msg,octet status);
+	static bool addParameterKey(CDRMessage_t*msg,InstanceHandle_t* iHandle);
+	static bool addParameterSentinel(CDRMessage_t*msg);
 	///@}
 };
 

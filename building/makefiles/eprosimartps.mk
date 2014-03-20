@@ -45,8 +45,7 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/CDRMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
 		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
-		  $(BASEDIR)/src/cpp/ParameterList_t.cpp \
-		  $(BASEDIR)/src/cpp/dds/ParameterListCreator.cpp \
+		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
 		  $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
 		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
