@@ -17,8 +17,9 @@
 #include <algorithm>
 
 #include "eprosimartps/CDRMessage.h"
+#include "eprosimartps/ParameterTypes.h"
 
-
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -53,6 +54,7 @@ bool CDRMessage::initCDRMsg(CDRMessage_t*msg)
 	}
 	msg->pos = 0;
 	msg->length = 0;
+	msg->msg_endian = EPROSIMA_ENDIAN;
 	return true;
 }
 
@@ -415,6 +417,58 @@ bool CDRMessage::addLocator(CDRMessage_t* msg, Locator_t* loc) {
 
 	return true;
 }
+
+bool CDRMessage::addParameterStatus(CDRMessage_t* msg, octet status)
+{
+	if(msg->pos+8>=msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
+	CDRMessage::addUInt16(msg,PID_STATUS_INFO);
+	CDRMessage::addUInt16(msg,4);
+	CDRMessage::addOctet(msg,0);
+	CDRMessage::addOctet(msg,0);
+	CDRMessage::addOctet(msg,0);
+	CDRMessage::addOctet(msg,status);
+	return true;
+}
+
+
+bool CDRMessage::addParameterKey(CDRMessage_t* msg, InstanceHandle_t* iHandle)
+{
+	if(msg->pos+20>=msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
+	CDRMessage::addUInt16(msg,PID_KEY_HASH);
+	CDRMessage::addUInt16(msg,16);
+	for(uint8_t i=0;i<16;i++)
+		msg->buffer[msg->pos+i] = iHandle->value[i];
+	return true;
+}
+
+bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
+{
+	if(msg->pos+4>=msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+		return false;
+	}
+	CDRMessage::addUInt16(msg,PID_SENTINEL);
+	CDRMessage::addUInt16(msg,0);
+
+	return true;
+}
+
+
+
+
+
+
+
+
 
 
 

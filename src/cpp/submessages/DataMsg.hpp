@@ -14,6 +14,10 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+#include "eprosimartps/ParameterList.h"
+
+using namespace eprosima::dds;
+
 namespace eprosima{
 namespace rtps{
 
@@ -88,6 +92,13 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* ch
 	if(keyFlag)
 		flags = flags | BIT(3);
 
+	octet status = 0;
+	if(change->kind == NOT_ALIVE_DISPOSED)
+		status = status | BIT(0);
+	if(change->kind == NOT_ALIVE_UNREGISTERED)
+		status = status | BIT(1);
+
+
 	try{
 		//First we create the submsgElements:
 		//extra flags. not in this version.
@@ -104,11 +115,14 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* ch
 
 		if(inlineQos != NULL) //inlineQoS
 		{
-			if(inlineQos->has_changed)
+			if(inlineQos->has_changed_inlineQos)
 			{
-				ParameterListCreator::updateMsg(inlineQos);
+				ParameterList::updateInlineQosMsg(inlineQos);
 			}
-			CDRMessage::appendMsg(&submsgElem,&inlineQos->ParamsMsg);
+			CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
+			CDRMessage::addParameterStatus(&submsgElem,status);
+			CDRMessage::appendMsg(&submsgElem,&inlineQos->inlineQosMsg);
+
 		}
 
 		//Add Serialized Payload
@@ -121,18 +135,6 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* ch
 		}
 		if(keyFlag)
 		{
-			octet status = 0;
-			if(change->kind == NOT_ALIVE_DISPOSED)
-				status = status | BIT(0);
-			if(change->kind == NOT_ALIVE_UNREGISTERED)
-				status = status | BIT(1);
-
-			ParameterList_t p;
-			ParameterListCreator::addParameterKey(&p,PID_KEY_HASH,change->instanceHandle);
-			ParameterListCreator::addParameterStatus(&p,PID_STATUS_INFO,status);
-			p.ParamsMsg.msg_endian = submsgElem.msg_endian;
-			ParameterListCreator::updateMsg(&p);
-
 			CDRMessage::addOctet(&submsgElem,0); //ENCAPSULATION
 			if(submsgElem.msg_endian == BIGEND)
 				CDRMessage::addOctet(&submsgElem,PL_CDR_BE); //ENCAPSULATION
@@ -140,8 +142,9 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* ch
 				CDRMessage::addOctet(&submsgElem,PL_CDR_LE); //ENCAPSULATION
 
 			CDRMessage::addUInt16(&submsgElem,0); //ENCAPSULATION OPTIONS
-			CDRMessage::appendMsg(&submsgElem,&p.ParamsMsg); //Parameters
-
+			CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
+			CDRMessage::addParameterStatus(&submsgElem,status);
+			CDRMessage::addParameterSentinel(&submsgElem);
 		}
 
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.

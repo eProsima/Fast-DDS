@@ -19,7 +19,8 @@
 #include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/Publisher.h"
-#include "eprosimartps/ParameterListCreator.h"
+
+#include "eprosimartps/ParameterList.h"
 
 namespace eprosima {
 namespace rtps {
@@ -49,20 +50,7 @@ void RTPSWriter::DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange
 {
 	ParameterList_t* inlineQos;
 	if(expectsInlineQos)
-	{
-		inlineQos = new ParameterList_t();
-		inlineQos->params = Pub->ParamList.inlineqos_params;
-		if(topicKind == WITH_KEY)
-		{
-			ParameterListCreator::addParameterKey(inlineQos,PID_KEY_HASH,change->instanceHandle);
-			if(change->kind !=ALIVE)
-			{
-				octet status = change->kind == NOT_ALIVE_DISPOSED ? 1:0;
-				status = change->kind == NOT_ALIVE_UNREGISTERED ? 2:status;
-				ParameterListCreator::addParameterStatus(inlineQos,PID_STATUS_INFO,status);
-			}
-		}
-	}
+		inlineQos = &Pub->ParamList;
 	else
 		inlineQos = NULL;
 	CDRMessageCreator::createSubmessageData(submsg,change,topicKind,ReaderId,inlineQos);
