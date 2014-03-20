@@ -44,7 +44,8 @@ CDRMessage::~CDRMessage() {
 //	return true;
 //}
 
-bool CDRMessage::initCDRMsg(CDRMessage_t*msg) {
+bool CDRMessage::initCDRMsg(CDRMessage_t*msg)
+{
 	if(msg->buffer==NULL)
 	{
 		msg->buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
@@ -90,7 +91,9 @@ bool CDRMessage::readInt32(CDRMessage_t* msg,int32_t* lo) {
 		return false;
 	octet* dest = (octet*)lo;
 	if(msg->msg_endian == DEFAULT_ENDIAN){
-		readData(msg,dest,4);
+		for(uint8_t i =0;i<4;i++)
+			dest[i] = msg->buffer[msg->pos+i];
+		msg->pos+=4;
 	}
 	else{
 		readDataReversed(msg,dest,4);
@@ -103,7 +106,9 @@ bool CDRMessage::readUInt32(CDRMessage_t* msg,uint32_t* ulo) {
 		return false;
 	octet* dest = (octet*)ulo;
 	if(msg->msg_endian == DEFAULT_ENDIAN){
-		readData(msg,dest,4);
+		for(uint8_t i =0;i<4;i++)
+			dest[i] = msg->buffer[msg->pos+i];
+		msg->pos+=4;
 	}
 	else{
 		readDataReversed(msg,dest,4);
@@ -365,13 +370,13 @@ bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	addUInt32(msg,numBits);
 	std::vector<SequenceNumber_t>::iterator it;
 	uint32_t n_octet = 0;
-	uint8_t bit = 0;
+	uint8_t bit_n = 0;
 	octet o = 0;
 	//Compute the bitmap in terms of octets:
 	for(it=sns->set.begin();it!=sns->set.end();it++)
 	{
-		bit = it->to64long()-sns->base.to64long()-n_octet*8;
-		switch(bit)
+		bit_n = it->to64long()-sns->base.to64long()-n_octet*8;
+		switch(bit_n)
 		{
 			case 0: o= o| BIT(7); break;
 			case 1: o= o| BIT(6); break;
@@ -382,13 +387,13 @@ bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 			case 6: o= o| BIT(1); break;
 			case 7: o= o| BIT(0); break;
 		}
-		if(bit>7)
+		if(bit_n>7)
 		{
 			addOctet(msg,o);
 			o = 0x0;
-			for(int i=0;i<(floor(bit/8)-1);i++)
+			for(int i=0;i<(floor(bit_n/8)-1);i++)
 				addOctet(msg,o);
-			n_octet += floor(bit/8);
+			n_octet += floor(bit_n/8);
 			it--;
 		}
 	}
