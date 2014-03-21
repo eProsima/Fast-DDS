@@ -17,7 +17,7 @@
 #include <algorithm>
 
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/ParameterTypes.h"
+#include "eprosimartps/dds/ParameterTypes.h"
 
 using namespace eprosima::dds;
 using eprosima::dds::ParameterId_t;

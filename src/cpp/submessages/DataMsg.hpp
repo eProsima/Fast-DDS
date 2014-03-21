@@ -14,8 +14,6 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/ParameterList.h"
-
 using namespace eprosima::dds;
 
 namespace eprosima{

@@ -16,10 +16,10 @@
 
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/MessageReceiver.h"
-#include "eprosimartps/ThreadListen.h"
-#include "eprosimartps/RTPSReader.h"
-#include "eprosimartps/Subscriber.h"
-#include "eprosimartps/ParameterList.h"
+#include "eprosimartps/threadtype/ThreadListen.h"
+#include "eprosimartps/reader/RTPSReader.h"
+#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/dds/ParameterList.h"
 
 
 namespace eprosima {
@@ -84,13 +84,8 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 	msg->pos = 0; //Start reading at 0
 
 	//Once everything is set, the reading begins:
-	Header_t H;
-	if(!readHeader(msg, &H))
-	{
-		pWarning("Message NOT RTPS")
-		throw ERR_MESSAGE_INCORRECT_HEADER;
-	}
-	processHeader(&H);
+	if(!checkRTPSHeader(msg))
+		return;
 	// Loop until there are no more submessages
 
 	bool last_submsg = false;
@@ -102,9 +97,13 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 	while(msg->pos < msg->length)// end of the message
 	{
 		//First 4 bytes must contain: ID | flags | octets to next header
-		readSubmessageHeader(msg,&submsgh);
+		if(!readSubmessageHeader(msg,&submsgh))
+			return;
 		if(msg->pos + submsgh.submessageLength > msg->length)
+		{
+			pWarning("SubMsg of invalid length"<<endl);
 			throw ERR_SUBMSG_LENGTH_INVALID;
+		}
 		valid = true;
 		count++;
 		switch(submsgh.submessageId)
@@ -112,20 +111,8 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		case DATA:
 		{
 			valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
-			if(valid)
-			{
-				pDebugInfo("Sub Message DATA processed"<<endl)
-			}
 
-//			SubmsgData_t* SubmsgData = new SubmsgData_t();
-//			valid = readSubmessageData(msg,&submsgh,&last_submsg,SubmsgData);
-//			pDebugInfo( "Message Read")
-//			if(valid)
-//			{
-//				SubmsgData->print();
-//				processSubmessageData(SubmsgData);
-//				pDebugInfo("Sub Message DATA processed")
-//			}
+
 			break;
 		}
 		case GAP:
@@ -157,10 +144,45 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 
 }
 
+bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
+{
+	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
+			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
+	{
+		pWarning("Message NOT RTPS"<<endl);
+		return false;
+	}
+	msg->pos+=4;
+	//CHECK AND SET protocol version
+	if(msg->buffer[msg->pos] <= destVersion.major)
+	{
+		sourceVersion.major = msg->buffer[msg->pos];msg->pos++;
+		sourceVersion.minor = msg->buffer[msg->pos];msg->pos++;
+	}
+	else
+	{
+		pWarning("Major RTPS Version not supported"<<endl);
+		throw ERR_MESSAGE_VERSION_UNSUPPORTED;
+	}
+	//Set source vendor id
+	sourceVendorId[0] = msg->buffer[msg->pos];msg->pos++;
+	sourceVendorId[1] = msg->buffer[msg->pos];msg->pos++;
+	//set source guid prefix
+	memcpy(sourceGuidPrefix.value,&msg->buffer[msg->pos],12);
+	msg->pos+=12;
+	haveTimestamp = false;
+	return true;
+}
+
+
+
 bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t* smh)
 {
 	if(msg->length - msg->pos < 4)
-		throw ERR_SUBMSGHEADER_TOO_SHORT;
+	{
+		pWarning("SubmessageHeader too short");
+		return false;
+	}
 	smh->submessageId = msg->buffer[msg->pos];msg->pos++;
 	smh->flags = msg->buffer[msg->pos];msg->pos++;
 	//Set endianness of message
@@ -169,79 +191,8 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 	return true;
 }
 
-bool MessageReceiver::readHeader(CDRMessage_t* msg, Header_t* H) {
-	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
-			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
-		return false;
-	msg->pos+=4;
-	//CHECK AND SET protocol version
-	if(msg->buffer[msg->pos] <= destVersion.major)
-	{
-		H->version.major = msg->buffer[msg->pos];msg->pos++;
-		H->version.minor = msg->buffer[msg->pos];msg->pos++;
-	}
-	else
-		throw ERR_MESSAGE_VERSION_UNSUPPORTED;
-	//Set source vendor id
-	H->vendorId[0] = msg->buffer[msg->pos];msg->pos++;
-	H->vendorId[1] = msg->buffer[msg->pos];msg->pos++;
-	//set source guid prefix
-	memcpy(H->guidPrefix.value,&msg->buffer[msg->pos],12);
-	msg->pos+=12;
-	return true;
-}
-
-void MessageReceiver::processHeader(Header_t* H)
-{
-	sourceGuidPrefix = H->guidPrefix;
-	sourceVersion = H->version;
-	sourceVendorId[0] = H->vendorId[0];
-	sourceVendorId[1] = H->vendorId[1];
-	haveTimestamp = false;
-	return;
-}
 
 
-
-bool MessageReceiver::readSubmessageHeartbeat(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageGap(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageAcknak(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessagePad(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoDestination(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoSource(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoTimestamp(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoReply(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
 
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 		SubmessageHeader_t* smh, bool* last)
@@ -291,7 +242,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 	if(inlineQosFlag)
 	{
 		if(!ParameterList::readParameterList(msg,&ParamList,&inlineQosSize,&ch->kind,&ch->instanceHandle))
+		{
+			pDebugInfo("SubMessage Data ERROR"<<endl);
 			return false;
+		}
 	}
 
 	if(dataFlag || keyFlag)
@@ -324,7 +278,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 			}
 			uint32_t param_size;
 			if(!ParameterList::readParameterList(msg,&ParamList,&param_size,&ch->kind,&ch->instanceHandle))
-						return false;
+			{
+				pDebugInfo("SubMessage Data ERROR"<<endl);
+				return false;
+			}
 			msg->msg_endian = previous_endian;
 		}
 	}
@@ -354,13 +311,53 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 			}
 		}
 	}
-
-
-
-
-
+	pDebugInfo("Sub Message DATA processed"<<endl);
 	return true;
 }
+
+
+
+bool MessageReceiver::readSubmessageHeartbeat(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessageGap(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessageAcknak(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessagePad(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessageInfoDestination(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessageInfoSource(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessageInfoTimestamp(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+bool MessageReceiver::readSubmessageInfoReply(CDRMessage_t* msg,
+		SubmessageHeader_t* smh,bool*last) {
+	return true;
+}
+
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

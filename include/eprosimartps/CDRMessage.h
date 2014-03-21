@@ -14,9 +14,9 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/ParameterTypes.h"
+#include "eprosimartps/dds/ParameterTypes.h"
 
 using eprosima::dds::ParameterId_t;
 

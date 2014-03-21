@@ -14,10 +14,10 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/RTPSReader.h"
+#include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/HistoryCache.h"
 
-#include "eprosimartps/Subscriber.h"
+#include "eprosimartps/dds/Subscriber.h"
 
 namespace eprosima {
 namespace rtps {

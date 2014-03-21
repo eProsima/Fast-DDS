@@ -15,10 +15,10 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/StatefulWriter.h"
-#include "eprosimartps/ReaderProxy.h"
+#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/writer/ReaderProxy.h"
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/ParameterList.h"
+#include "eprosimartps/dds/ParameterList.h"
 
 
 
@@ -38,9 +38,7 @@ StatefulWriter::~StatefulWriter() {
 void StatefulWriter::init(WriterParams_t param)
 {
 	pushMode = param.pushMode;
-	heartbeatPeriod = param.heartbeatPeriod;
-	nackResponseDelay = param.nackResponseDelay;
-	nackSupressionDuration = param.nackSupressionDuration;
+	reliability = param.reliablility;
 
 	//writer_cache.changes.reserve(param.historySize);
 	writer_cache.historySize = param.historySize;
@@ -53,8 +51,14 @@ void StatefulWriter::init(WriterParams_t param)
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
 	multicastLocatorList = param.multicastLocatorList;
-	reliabilityKind = param.reliabilityKind;
+
 	topicKind = param.topicKind;
+
+	eventTh.init_thread();
+	boost::posix_time::time_duration interval(boost::posix_time::milliseconds(reliability.heartbeatPeriod.to64time()*1000));
+	periodicHBtimer = new boost::asio::deadline_timer(eventTh.io_service,interval);
+	interval = boost::posix_time::milliseconds(reliability.nackSupressionDuration.to64time()*1000);
+	nackSupressiontimer = new boost::asio::deadline_timer(eventTh.io_service,interval);
 }
 
 bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
@@ -214,9 +218,11 @@ void StatefulWriter::unsent_changes_not_empty()
 					(*rit)->param.remoteReaderGuid.entityId,
 					&(*rit)->param.unicastLocatorList,
 					&(*rit)->param.multicastLocatorList);
-
-
-
+			periodicHBtimer->async_wait(boost::bind(&StatefulWriter::periodic_HB,this));
+			for(cit = ch_vec.begin();cit!=ch_vec.end();cit++)
+			{
+				(*cit)->status = UNDERWAY;
+			}
 		}
 	}
 	pDebugInfo("Finish sending unsent changes" << endl);

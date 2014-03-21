@@ -15,6 +15,9 @@
  *      		grcanosa@gmail.com
  */
 
+#ifndef THREADLISTEN_H_
+#define THREADLISTEN_H_
+
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
@@ -22,14 +25,12 @@
 #include <boost/asio/ip/udp.hpp>
 
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
-#include "MessageReceiver.h"
+#include "eprosimartps/MessageReceiver.h"
 
 
 
-#ifndef THREADLISTEN_H_
-#define THREADLISTEN_H_
 
 namespace eprosima {
 namespace rtps {

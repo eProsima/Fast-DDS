@@ -33,15 +33,15 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
 		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
 		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
-		  $(BASEDIR)/src/cpp/RTPSWriter.cpp \
-		  $(BASEDIR)/src/cpp/StatelessWriter.cpp \
-		  $(BASEDIR)/src/cpp/ReaderLocator.cpp \
+		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
+		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
+		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
 		  $(BASEDIR)/src/cpp/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/Participant.cpp \
-		  $(BASEDIR)/src/cpp/ThreadListen.cpp \
-		  $(BASEDIR)/src/cpp/ThreadSend.cpp \
-		  $(BASEDIR)/src/cpp/RTPSReader.cpp \
-		  $(BASEDIR)/src/cpp/StatelessReader.cpp \
+		  $(BASEDIR)/src/cpp/threadtype/ThreadListen.cpp \
+		  $(BASEDIR)/src/cpp/threadtype/ThreadSend.cpp \
+		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
+		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \
 		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
 		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
@@ -49,8 +49,10 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
 		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
-		  $(BASEDIR)/src/cpp/StatefulWriter.cpp \
-		  $(BASEDIR)/src/cpp/ReaderProxy.cpp 
+		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
+		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
+		  $(BASEDIR)/src/cpp/threadtype/ThreadEvent.cpp \
+		  $(BASEDIR)/src/cpp/timedevent/PeriodicHeartbeat.cpp
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/NotEnoughMemoryException.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/BadParamException.cpp

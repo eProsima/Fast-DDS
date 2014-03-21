@@ -17,7 +17,7 @@
 #include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/CDRMessage.h"
 
-#include "eprosimartps/ParameterList.h"
+#include "eprosimartps/dds/ParameterList.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"

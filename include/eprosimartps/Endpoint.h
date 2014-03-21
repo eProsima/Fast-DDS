@@ -14,7 +14,7 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
@@ -37,7 +37,6 @@ public:
 	Endpoint();
 	virtual ~Endpoint();
 	TopicKind_t topicKind;
-	ReliabilityKind_t reliabilityKind;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
 	GUID_t guid;

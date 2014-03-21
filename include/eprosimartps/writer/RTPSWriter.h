@@ -15,13 +15,13 @@
  *      		grcanosa@gmail.com
  */
 
-#include "rtps_all.h"
-#include "HistoryCache.h"
-#include "Endpoint.h"
-#include "RTPSMessageCreator.h"
-#include "Participant.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/HistoryCache.h"
+#include "eprosimartps/Endpoint.h"
+#include "eprosimartps/RTPSMessageCreator.h"
+#include "eprosimartps/Participant.h"
 
-#include "Publisher.h"
+#include "eprosimartps/dds/Publisher.h"
 
 
 #ifndef RTPSWRITER_H_
@@ -54,9 +54,6 @@ public:
 	bool pushMode;
 	//!Type of the writer, either STATELESS or STATEFUL
 	StateKind_t stateType;
-	Duration_t heartbeatPeriod;
-	Duration_t nackResponseDelay;
-	Duration_t nackSupressionDuration;
 	SequenceNumber_t lastChangeSequenceNumber;
 	Count_t heartbeatCount;
 	/**

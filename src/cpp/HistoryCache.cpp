@@ -15,11 +15,11 @@
  *      		grcanosa@gmail.com
  */
 #include "eprosimartps/HistoryCache.h"
-#include "eprosimartps/ReaderLocator.h"
-#include "eprosimartps/RTPSWriter.h"
-#include "eprosimartps/StatelessWriter.h"
-#include "eprosimartps/RTPSReader.h"
-#include "eprosimartps/StatelessReader.h"
+#include "eprosimartps/writer/ReaderLocator.h"
+#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/RTPSReader.h"
+#include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/common/rtps_elem_seqnum.h"
 #include "eprosimartps/common/rtps_elem_guid.h"
 

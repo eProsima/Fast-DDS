@@ -17,8 +17,9 @@
 
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/ReaderProxy.h"
-#include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/threadtype/ThreadEvent.h"
 
 
 
@@ -78,13 +79,22 @@ public:
 
 	void unsent_changes_not_empty();
 
-
 	std::vector<ReaderProxy*> matched_readers;
-
 
 	void sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 					EntityId_t readerId,std::vector<Locator_t>* unicast,
 					std::vector<Locator_t>* multicast);
+
+	DDS_Reliability_t reliability;
+
+	ThreadEvent eventTh;
+
+	void periodic_HB();
+	void unacked_changes();
+	boost::asio::deadline_timer* periodicHBtimer;
+	boost::asio::deadline_timer* nackSupressiontimer;
+
+
 
 };
 

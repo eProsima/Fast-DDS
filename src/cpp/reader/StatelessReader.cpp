@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/StatelessReader.h"
+#include "eprosimartps/reader/StatelessReader.h"
 
 namespace eprosima {
 namespace rtps {
@@ -41,7 +41,6 @@ void StatelessReader::init(ReaderParams_t param) {
 	heartbeatResponseDelay = param.heartbeatResponseDelay;
 	heartbeatSupressionDuration = param.heartbeatSupressionDuration;
     expectsInlineQos = param.expectsInlineQos;
-    reliabilityKind = param.reliabilityKind;
     topicKind = param.topicKind;
     reader_cache.historySize = param.historySize;
 }

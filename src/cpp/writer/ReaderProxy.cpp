@@ -16,7 +16,7 @@
  */
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/ReaderProxy.h"
+#include "eprosimartps/writer/ReaderProxy.h"
 
 namespace eprosima {
 namespace rtps {

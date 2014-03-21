@@ -19,13 +19,13 @@
 #include <boost/thread.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include "rtps_all.h"
-#include "HistoryCache.h"
-#include "Endpoint.h"
-#include "RTPSMessageCreator.h"
-#include "Participant.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/HistoryCache.h"
+#include "eprosimartps/Endpoint.h"
+#include "eprosimartps/RTPSMessageCreator.h"
+#include "eprosimartps/Participant.h"
 
-#include "Subscriber.h"
+#include "eprosimartps/dds/Subscriber.h"
 
 #ifndef RTPSREADER_H_
 #define RTPSREADER_H_

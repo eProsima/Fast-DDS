@@ -21,7 +21,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
 using namespace boost;
 

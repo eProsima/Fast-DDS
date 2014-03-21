@@ -15,7 +15,7 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/ThreadSend.h"
+#include "eprosimartps/threadtype/ThreadSend.h"
 
 using boost::asio::ip::udp;
 

@@ -22,12 +22,12 @@
 #include <bitset>
 #include <cstdint>
 //
-#include "eprosimartps/DomainParticipant.h"
+#include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/Participant.h"
-#include "eprosimartps/Publisher.h"
-#include "eprosimartps/Subscriber.h"
+#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/ParameterListCreator.h"
+#include "eprosimartps/dds/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"

@@ -15,9 +15,9 @@
  *              grcanosa@gmail.com
  */
 
-#include "eprosimartps/StatelessWriter.h"
-#include "eprosimartps/ReaderLocator.h"
-#include "eprosimartps/ParameterList.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/writer/ReaderLocator.h"
+#include "eprosimartps/dds/ParameterList.h"
 
 namespace eprosima {
 namespace rtps {
@@ -30,10 +30,6 @@ StatelessWriter::StatelessWriter() {
 
 void StatelessWriter::init(WriterParams_t param) {
 	pushMode = param.pushMode;
-	heartbeatPeriod = param.heartbeatPeriod;
-	nackResponseDelay = param.nackResponseDelay;
-	nackSupressionDuration = param.nackSupressionDuration;
-	resendDataPeriod = param.resendDataPeriod;
 	//writer_cache.changes.reserve(param.historySize);
 	writer_cache.historySize = param.historySize;
 	writer_cache.historyKind = WRITER;
@@ -45,7 +41,6 @@ void StatelessWriter::init(WriterParams_t param) {
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
 	multicastLocatorList = param.multicastLocatorList;
-	reliabilityKind = param.reliabilityKind;
 	topicKind = param.topicKind;
 }
 

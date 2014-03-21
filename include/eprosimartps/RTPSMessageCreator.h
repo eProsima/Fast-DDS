@@ -14,9 +14,8 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "rtps_all.h"
-
-#include "eprosimartps/ParameterList.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/dds/ParameterList.h"
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
