@@ -24,7 +24,7 @@ namespace rtps{
 
 
 
-bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
+bool RTPSMessageCreator::createMessageData(CDRMessage_t* msg,
 		GuidPrefix_t guidprefix,CacheChange_t* change,TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos){
 
 
@@ -33,11 +33,11 @@ bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator::createHeader(msg,guidprefix,version,vendor);
+		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
 
-		CDRMessageCreator::createSubmessageInfoTS_Now(msg,false);
+		RTPSMessageCreator::createSubmessageInfoTS_Now(msg,false);
 
-		CDRMessageCreator::createSubmessageData(msg,change,topicKind,readerId,inlineQos);
+		RTPSMessageCreator::createSubmessageData(msg,change,topicKind,readerId,inlineQos);
 
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -53,7 +53,7 @@ bool CDRMessageCreator::createMessageData(CDRMessage_t* msg,
 
 
 
-bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
+bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 		TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos) {
 
 
@@ -148,7 +148,7 @@ bool CDRMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* ch
 		}
 
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.
-		CDRMessageCreator::createSubmessageHeader(msg, DATA,flags,submsgElem.length);
+		RTPSMessageCreator::createSubmessageHeader(msg, DATA,flags,submsgElem.length);
 		//Append Submessage elements to msg
 
 		CDRMessage::appendMsg(msg, &submsgElem);

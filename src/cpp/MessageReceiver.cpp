@@ -19,7 +19,7 @@
 #include "eprosimartps/ThreadListen.h"
 #include "eprosimartps/RTPSReader.h"
 #include "eprosimartps/Subscriber.h"
-#include "eprosimartps/ParameterListCreator.h"
+#include "eprosimartps/ParameterList.h"
 
 
 namespace eprosima {
@@ -202,142 +202,6 @@ void MessageReceiver::processHeader(Header_t* H)
 }
 
 
-bool MessageReceiver::readSubmessageData(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last,SubmsgData_t* SubmsgData) {
-
-	//VALIDITY
-	SubmsgData_t DSM;
-	DSM.SubmessageHeader = *smh; //Copy SubmessageHeader
-	//Fill flags bool values
-	bool endiannessFlag = DSM.SubmessageHeader.flags & BIT(0) ? true : false;
-	bool inlineQosFlag = DSM.SubmessageHeader.flags & BIT(1) ? true : false;
-	bool dataFlag = DSM.SubmessageHeader.flags & BIT(2) ? true : false;
-	bool keyFlag = DSM.SubmessageHeader.flags & BIT(3) ? true : false;
-	if(keyFlag && dataFlag)
-	{
-		pWarning( "Message received with Data and Key Flag set."<<endl)
-				return false;
-	}
-
-	//Assign message endianness
-	if(endiannessFlag)
-		msg->msg_endian = LITTLEEND;
-	else
-		msg->msg_endian = BIGEND;
-
-	//Extra flags don't matter now. Avoid those bytes
-	msg->pos+=2;
-	int16_t octetsToInlineQos;
-	CDRMessage::readInt16(msg,&octetsToInlineQos); //it should be 16 in this implementation
-
-	//reader and writer ID
-	CDRMessage::readEntityId(msg,&DSM.readerId);
-	CDRMessage::readEntityId(msg,&DSM.writerId);
-
-	//Get sequence number
-	CDRMessage::readSequenceNumber(msg,&DSM.writerSN);
-	if(DSM.writerSN.to64long()<=0 || (DSM.writerSN.high == -1 && DSM.writerSN.low == 0)) //message invalid
-		return false;
-
-	//Jump ahead if more paraemters are before inlineQos (not in this version, maybe if further minor versions.)
-	if(octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
-		msg->pos += (octetsToInlineQos-RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
-
-	uint32_t inlineQosSize = 0;
-	if(inlineQosFlag)
-	{
-		if(!ParameterListCreator::readParamListfromCDRmessage(&DSM.inlineQos,msg,&inlineQosSize))
-			return false;
-	}
-	if(dataFlag || keyFlag)
-	{
-		int16_t payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
-		msg->pos+=1;
-		octet encapsulation;
-		CDRMessage::readOctet(msg,&encapsulation);
-		DSM.serializedPayload.encapsulation = (uint16_t)encapsulation;
-		msg->pos+=2; //CDR Options, not used in this version
-		if(dataFlag)
-		{
-			if(DSM.serializedPayload.data !=NULL)
-				free(DSM.serializedPayload.data);
-			DSM.serializedPayload.data = (octet*)malloc(payload_size-2-2);
-			DSM.serializedPayload.length = payload_size-2-2;
-			CDRMessage::readData(msg,DSM.serializedPayload.data,DSM.serializedPayload.length);
-			DSM.changeKind = ALIVE;
-		}
-		else if(keyFlag)
-		{
-			Endianness_t previous_endian = msg->msg_endian;
-			if(DSM.serializedPayload.encapsulation == PL_CDR_BE)
-				msg->msg_endian = BIGEND;
-			else if(DSM.serializedPayload.encapsulation == PL_CDR_LE)
-				msg->msg_endian = LITTLEEND;
-			else
-			{
-				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
-
-			}
-			ParameterList_t p;
-			uint32_t param_size;
-			if(!ParameterListCreator::readParamListfromCDRmessage(&p,msg,&param_size))
-				return false;
-			octet status;
-			ParameterListCreator::getKeyStatus(&p,&DSM.instanceHandle,&status);
-			if(status == 1)
-				DSM.changeKind = NOT_ALIVE_DISPOSED;
-			else if (status == 2)
-				DSM.changeKind = NOT_ALIVE_UNREGISTERED;
-			msg->msg_endian = previous_endian;
-		}
-	}
-	//Is the final message?
-	if(smh->submessageLength == 0)
-		*last = true;
-	*SubmsgData = DSM;
-	return true;
-}
-
-void MessageReceiver::processSubmessageData(SubmsgData_t* SMD)
-{
-	//Create CacheChange_t with data:
-	CacheChange_t* ch = new CacheChange_t();
-	ch->writerGUID.guidPrefix = sourceGuidPrefix;
-	ch->writerGUID.entityId = SMD->writerId;
-	ch->sequenceNumber = SMD->writerSN;
-	ch->kind = SMD->changeKind;
-	if(!SMD->inlineQos.params.empty())
-	{
-		octet status;
-		ParameterListCreator::getKeyStatus(&SMD->inlineQos,&ch->instanceHandle,&status);
-	}
-	if(SMD->changeKind == ALIVE)
-	{
-		ch->serializedPayload.copy(&SMD->serializedPayload);
-
-	}
-	//Look for the correct reader to add the change
-	std::vector<RTPSReader*>::iterator it;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();it++)
-	{
-		if(SMD->readerId == ENTITYID_UNKNOWN || (*it)->guid.entityId == SMD->readerId) //add to all
-		{
-
-			if((*it)->reader_cache.add_change(ch))
-			{
-				if((*it)->newMessageCallback !=NULL)
-					(*it)->newMessageCallback();
-				//else ///FIXME: removed for testing, put back.
-				(*it)->newMessageSemaphore->post();
-				if((*it)->stateType == STATEFUL)
-				{
-					//FIXME: Stateful implementation
-				}
-			}
-		}
-	}
-}
-
 
 bool MessageReceiver::readSubmessageHeartbeat(CDRMessage_t* msg,
 		SubmessageHeader_t* smh,bool*last) {
@@ -426,18 +290,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 	ParameterList_t ParamList;
 	if(inlineQosFlag)
 	{
-		if(!ParameterListCreator::readParamListfromCDRmessage(&ParamList,msg,&inlineQosSize))
+		if(!ParameterList::readParameterList(msg,&ParamList,&inlineQosSize,&ch->kind,&ch->instanceHandle))
 			return false;
-		octet status;
-		if(!ParamList.inlineqos_params.empty())
-		{
-			ParameterListCreator::getKeyStatus(&ParamList,&ch->instanceHandle,&status);
-			if(status == 1)
-				ch->kind = NOT_ALIVE_DISPOSED;
-			else if (status == 2)
-				ch->kind = NOT_ALIVE_UNREGISTERED;
-		}
 	}
+
 	if(dataFlag || keyFlag)
 	{
 		int16_t payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
@@ -467,14 +323,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
 			}
 			uint32_t param_size;
-			if(!ParameterListCreator::readParamListfromCDRmessage(&ParamList,msg,&param_size))
-				return false;
-			octet status;
-			ParameterListCreator::getKeyStatus(&ParamList,&ch->instanceHandle,&status);
-			if(status == 1)
-				ch->kind = NOT_ALIVE_DISPOSED;
-			else if (status == 2)
-				ch->kind = NOT_ALIVE_UNREGISTERED;
+			if(!ParameterList::readParameterList(msg,&ParamList,&param_size,&ch->kind,&ch->instanceHandle))
+						return false;
 			msg->msg_endian = previous_endian;
 		}
 	}
@@ -483,8 +333,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 		*last = true;
 
 
-
-	//Create CacheChange_t with data:
+	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 
 	//Look for the correct reader to add the change
 	std::vector<RTPSReader*>::iterator it;

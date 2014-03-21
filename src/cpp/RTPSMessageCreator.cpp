@@ -14,7 +14,7 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/CDRMessageCreator.h"
+#include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/CDRMessage.h"
 
 #include "eprosimartps/ParameterList.h"
@@ -32,18 +32,18 @@ namespace eprosima {
 namespace rtps{
 
 
-CDRMessageCreator::CDRMessageCreator() {
+RTPSMessageCreator::RTPSMessageCreator() {
 	// TODO Auto-generated constructor stub
 
 
 }
 
-CDRMessageCreator::~CDRMessageCreator() {
+RTPSMessageCreator::~RTPSMessageCreator() {
 	// TODO Auto-generated destructor stub
 }
 
 
-bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
+bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
 
@@ -73,7 +73,7 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 	return true;
 }
 
-bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix)
+bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix)
 {
 	ProtocolVersion_t prot;
 	PROTOCOLVERSION(prot);
@@ -83,7 +83,7 @@ bool CDRMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix)
 }
 
 
-bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
+bool RTPSMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 		octet id,octet flags,uint16_t size) {
 
 	try{
@@ -101,7 +101,7 @@ bool CDRMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,bool invalidateFlag)
+bool RTPSMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,bool invalidateFlag)
 {
 	octet flags = 0x0;
 	uint16_t size = 8;
@@ -137,7 +137,7 @@ bool CDRMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,boo
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
+bool RTPSMessageCreator::createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
 	Time_t time_now;
 	boost::posix_time::ptime t(microsec_clock::local_time());
@@ -149,7 +149,7 @@ bool CDRMessageCreator::createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invali
 //	cout << (t-t_epoch) << endl;
 //	cout << time_now.seconds << endl;
 //	cout << time_now.fraction << endl;
-	return CDRMessageCreator::createSubmessageInfoTS(msg,time_now,invalidateFlag);
+	return RTPSMessageCreator::createSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
 
 }; /* namespace rtps */

@@ -53,7 +53,7 @@ void RTPSWriter::DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange
 		inlineQos = &Pub->ParamList;
 	else
 		inlineQos = NULL;
-	CDRMessageCreator::createSubmessageData(submsg,change,topicKind,ReaderId,inlineQos);
+	RTPSMessageCreator::createSubmessageData(submsg,change,topicKind,ReaderId,inlineQos);
 }
 
 
@@ -68,7 +68,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 	std::vector<CacheChange_t*>::iterator cit;
 	cit = changes.begin();
 	CDRMessage_t header(RTPSMESSAGE_HEADER_SIZE);
-	CDRMessageCreator::createHeader(&header,participant->guid.guidPrefix);
+	RTPSMessageCreator::createHeader(&header,participant->guid.guidPrefix);
 	uint16_t data_msg_size = 0;
 	uint16_t change_n = 1;
 	//FIRST SUBMESSAGE
@@ -84,7 +84,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*> changes,
 	{
 		CDRMessage_t fullmsg;
 		CDRMessage::appendMsg(&fullmsg,&header);
-		CDRMessageCreator::createSubmessageInfoTS_Now(&fullmsg,false);
+		RTPSMessageCreator::createSubmessageInfoTS_Now(&fullmsg,false);
 		if(first)
 		{
 			CDRMessage::appendMsg(&fullmsg,&submessage);

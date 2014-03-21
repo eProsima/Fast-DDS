@@ -17,7 +17,7 @@
 
 #include "eprosimartps/StatelessWriter.h"
 #include "eprosimartps/ReaderLocator.h"
-#include "eprosimartps/ParameterListCreator.h"
+#include "eprosimartps/ParameterList.h"
 
 namespace eprosima {
 namespace rtps {
@@ -139,7 +139,7 @@ void StatelessWriter::unsent_changes_not_empty()
 			writer_cache.get_seq_num_min(&first,NULL);
 			writer_cache.get_seq_num_max(&last,NULL);
 			heartbeatCount++;
-			CDRMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
+			RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
 					first,last,heartbeatCount,true,false);
 			participant->threadSend.sendSync(&msg,rit->locator);
 			rit->unsent_changes.clear();

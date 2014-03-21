@@ -16,6 +16,10 @@
 
 #include "rtps_all.h"
 
+#include "eprosimartps/ParameterTypes.h"
+
+using eprosima::dds::ParameterId_t;
+
 #ifndef CDRMESSAGE_H_
 #define CDRMESSAGE_H_
 
@@ -101,6 +105,7 @@ public:
 	static bool addParameterStatus(CDRMessage_t*msg,octet status);
 	static bool addParameterKey(CDRMessage_t*msg,InstanceHandle_t* iHandle);
 	static bool addParameterSentinel(CDRMessage_t*msg);
+	static bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
 	///@}
 };
 

@@ -22,7 +22,9 @@
 namespace eprosima {
 namespace dds {
 
-typedef enum ParameterId_t:uint16_t
+
+
+enum ParameterId_t :uint16_t
 {
  PID_PAD =0x0000,
  PID_SENTINEL =0x0001,
@@ -77,7 +79,7 @@ typedef enum ParameterId_t:uint16_t
  PID_ENTITY_NAME =0x0062,
  PID_KEY_HASH =0x0070,
  PID_STATUS_INFO =0x0071
-}ParameterId_t;
+};
 
 
 
@@ -87,21 +89,29 @@ class Parameter_t{
 public:
 	ParameterId_t Pid;
 	uint16_t length;
+	Parameter_t(){};
+	Parameter_t(Parameter_t* P):Pid(P->Pid),length(P->length){};
 };
 
 class ParameterLocator_t:public Parameter_t{
 public:
 	Locator_t locator;
+	ParameterLocator_t(){};
+	ParameterLocator_t(Parameter_t* P):Parameter_t(P){};
 };
 
 class ParameterString_t:public Parameter_t{
 public:
 	std::string p_str;
+	ParameterString_t(){};
+	ParameterString_t(Parameter_t* P):Parameter_t(P){};
 };
 
 class ParameterPort_t:public Parameter_t{
 public:
 	uint32_t port;
+	ParameterPort_t(){};
+	ParameterPort_t(Parameter_t* P):Parameter_t(P){};
 };
 
 

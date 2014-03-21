@@ -18,7 +18,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
+bool RTPSMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
 		SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 
@@ -29,11 +29,11 @@ bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t gu
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator::createHeader(msg,guidprefix,version,vendor);
+		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
 
 
 
-		CDRMessageCreator::createSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+		RTPSMessageCreator::createSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
 
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -46,7 +46,7 @@ bool CDRMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t gu
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,
+bool RTPSMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,
 		EntityId_t writerId,SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 
@@ -87,7 +87,7 @@ bool CDRMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t r
 
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator::createSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
+	RTPSMessageCreator::createSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
