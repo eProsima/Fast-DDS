@@ -15,8 +15,8 @@
  */
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/RTPSWriter.h"
-#include "eprosimartps/ReaderLocator.h"
+#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/writer/ReaderLocator.h"
 
 
 #ifndef STATELESSWRITER_H_

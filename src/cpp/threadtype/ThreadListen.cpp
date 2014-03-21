@@ -15,10 +15,10 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/ThreadListen.h"
+#include "eprosimartps/threadtype/ThreadListen.h"
 
-#include "eprosimartps/RTPSWriter.h"
-#include "eprosimartps/RTPSReader.h"
+#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/Participant.h"
 
 using boost::asio::ip::udp;

@@ -18,10 +18,10 @@
 #ifndef PARAMETERLIST_H_
 #define PARAMETERLIST_H_
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 #include <vector>
 
-#include "eprosimartps/ParameterTypes.h"
+#include "eprosimartps/dds/ParameterTypes.h"
 
 namespace eprosima {
 namespace dds {

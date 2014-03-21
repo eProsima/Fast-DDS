@@ -14,8 +14,8 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "rtps_all.h"
-#include "ParameterList.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/dds/ParameterList.h"
 #include "common/rtps_messages.h"
 
 #ifndef MESSAGERECEIVER_H_
@@ -73,6 +73,28 @@ private:
 	ProtocolVersion_t destVersion;
 
 
+	/**@name Processing methods.
+	 * These methods are designed to read a part of the message
+	 * and perform the corresponding actions:
+	 * -Modify the message receiver state if necessary.
+	 * -Add information to the history.
+	 * -Return an error if the message is malformed.
+	 * @param[in] msg Pointer to the message
+	 * @param[out] params Different parameters depending on the message
+	 * @return True if correct, false otherwise
+	 */
+
+	///@{
+
+	bool checkRTPSHeader(CDRMessage_t*msg);
+	bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
+
+	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+
+	///@}
+
+
+
 	/** @name Read methods.
 	 * These methods read a specific structure from a CDRMessage.
 	 * @param[in] msg Pointer to the message that is being read.
@@ -83,13 +105,6 @@ private:
 	 */
 
 	///@{
-	bool readHeader(CDRMessage_t* msg, Header_t*H);
-
-	bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
-
-	bool readSubmessageData(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last,SubmsgData_t* SubmsgData);
-
-
 
 	//!NOT IMPLEMENTED
 	bool readSubmessageHeartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
@@ -110,33 +125,6 @@ private:
 
 
 	///@}
-
-	/** @name Process methods.
-	 * These methods process a specific message structure.
-	 * These methods change the state of the MessageReceiver.
-	 * @param[in] SubM Pointer to the structure that is being processed.
-	 * @return True if correct.
-	 */
-
-	///@{
-
-	void processHeader(Header_t*H);
-
-	void processSubmessageData(SubmsgData_t* SubmsgData);
-
-	///@}
-
-	/** @name Reading and process methods.
-	 * These methods read the specific message type and perform the necesary actions in the MessageReceiver.
-	 * @return True if correct.
-	 */
-	///@{
-
-	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-
-
-	///@}
-
 
 };
 

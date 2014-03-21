@@ -17,9 +17,9 @@
 
 #include <iostream>
 #include <ostream>
-#include <eprosimartps/common/colors.h>
+#include "eprosimartps/common/colors.h"
 
-#include <eprosimartps/rtps_all.h>
+#include "eprosimartps/rtps_all.h"
 
 #ifndef RTPSLOG_H_
 #define RTPSLOG_H_

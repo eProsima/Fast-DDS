@@ -23,7 +23,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
 #ifndef THREADSEND_H_
 #define THREADSEND_H_

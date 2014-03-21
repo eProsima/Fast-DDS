@@ -197,33 +197,44 @@ typedef enum HistoryKind_t{
 
 typedef Time_t Duration_t;
 
+
+struct DDS_Reliability_t{
+	ReliabilityKind_t kind;
+	Duration_t heartbeatPeriod;
+	Duration_t nackResponseDelay;
+	Duration_t nackSupressionDuration;
+	Duration_t resendDataPeriod;
+	uint8_t hb_per_max_samples;
+	DDS_Reliability_t()
+	{
+		TIME_ZERO(heartbeatPeriod);
+		TIME_ZERO(nackResponseDelay);
+		TIME_ZERO(nackSupressionDuration);
+		TIME_ZERO(resendDataPeriod);
+		hb_per_max_samples= 5;
+		kind = BEST_EFFORT;
+	}
+};
+
+
 /**
  * Structure WriterParams_t, writer parameters passed on creation.
  */
 typedef struct WriterParams_t{
 	bool pushMode;
-	Duration_t heartbeatPeriod;
-	Duration_t nackResponseDelay;
-	Duration_t nackSupressionDuration;
-	Duration_t resendDataPeriod;
 	int16_t historySize;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
-	ReliabilityKind_t reliabilityKind;
+	DDS_Reliability_t reliablility;
 	TopicKind_t topicKind;
 	StateKind_t stateKind;
 	std::string topicName;
 	std::string topicDataType;
 	WriterParams_t(){
 		pushMode = true;
-		TIME_ZERO(heartbeatPeriod);
-		TIME_ZERO(nackResponseDelay);
-		TIME_ZERO(nackSupressionDuration);
-		TIME_ZERO(resendDataPeriod);
 		historySize = DEFAULT_HISTORY_SIZE;
 		unicastLocatorList.clear();
 		multicastLocatorList.clear();
-		reliabilityKind = BEST_EFFORT;
 		topicKind = NO_KEY;
 		stateKind = STATELESS;
 	}

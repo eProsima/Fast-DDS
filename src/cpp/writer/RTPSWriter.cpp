@@ -15,12 +15,12 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/Publisher.h"
+#include "eprosimartps/dds/Publisher.h"
 
-#include "eprosimartps/ParameterList.h"
+#include "eprosimartps/dds/ParameterList.h"
 
 namespace eprosima {
 namespace rtps {

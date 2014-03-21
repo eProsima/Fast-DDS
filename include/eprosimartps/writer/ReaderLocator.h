@@ -15,8 +15,8 @@
  *      		grcanosa@gmail.com
  */
 
-#include "rtps_all.h"
-#include "HistoryCache.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/HistoryCache.h"
 
 #ifndef READERLOCATOR_H_
 #define READERLOCATOR_H_

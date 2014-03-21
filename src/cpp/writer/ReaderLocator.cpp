@@ -15,7 +15,7 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/ReaderLocator.h"
+#include "eprosimartps/writer/ReaderLocator.h"
 
 
 namespace eprosima {

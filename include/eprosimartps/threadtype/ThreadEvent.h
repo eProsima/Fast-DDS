@@ -7,38 +7,45 @@
  *************************************************************************/
 
 /**
- * @file StatelessReader.h
- *  StatelessReader class.
- *  Created on: Feb 27, 2014
+ * @file ThreadEvent.h
+ *
+ *  Created on: Mar 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "rtps_all.h"
-#include "RTPSReader.h"
+#ifndef THREADEVENT_H_
+#define THREADEVENT_H_
 
+
+#include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
-#ifndef STATELESSREADER_H_
-#define STATELESSREADER_H_
+#include "eprosimartps/rtps_all.h"
+
 
 namespace eprosima {
 namespace rtps {
 
-/**
- * Class StatelessReader,
- * @ingroup READERMODULE
- */
-class StatelessReader: public RTPSReader {
+class ThreadEvent {
 public:
-	StatelessReader();
-	virtual ~StatelessReader();
-	void init(ReaderParams_t);
+	ThreadEvent();
+	virtual ~ThreadEvent();
+	boost::thread* b_thread;
+	boost::asio::io_service io_service;
+	boost::asio::io_service::work work;
 
+	/**
+	 * Method to initialize the thread.
+	 */
+	void init_thread();
+	void announce_thread();
 };
 
-} /* namespace rtps */
+} /* namespace dds */
 } /* namespace eprosima */
 
-#endif /* STATELESSREADER_H_ */
+#endif /* THREADEVENT_H_ */

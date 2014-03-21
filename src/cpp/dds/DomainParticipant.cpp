@@ -15,10 +15,10 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/DomainParticipant.h"
-#include "eprosimartps/StatelessWriter.h"
-#include "eprosimartps/StatelessReader.h"
-#include "eprosimartps/StatefulWriter.h"
+#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/writer/StatefulWriter.h"
 
 namespace eprosima {
 namespace dds {

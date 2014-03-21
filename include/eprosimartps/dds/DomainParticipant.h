@@ -17,11 +17,11 @@
 
 #include <iostream>
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
-#include "Publisher.h"
-#include "Subscriber.h"
-#include "Participant.h"
+#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/Participant.h"
 
 #ifndef DOMAINPARTICIPANT_H_
 #define DOMAINPARTICIPANT_H_

@@ -15,12 +15,12 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/Publisher.h"
-#include "eprosimartps/RTPSWriter.h"
-#include "eprosimartps/ReaderLocator.h"
-#include "eprosimartps/StatelessWriter.h"
-#include "eprosimartps/StatefulWriter.h"
-#include "eprosimartps/ReaderProxy.h"
+#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/writer/ReaderLocator.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/writer/ReaderProxy.h"
 
 namespace eprosima {
 namespace dds {

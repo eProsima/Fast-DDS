@@ -17,13 +17,13 @@
 
 #include "eprosimartps/Participant.h"
 
-#include "eprosimartps/StatelessWriter.h"
-#include "eprosimartps/StatelessReader.h"
-#include "eprosimartps/StatefulWriter.h"
-#include "eprosimartps/RTPSReader.h"
-#include "eprosimartps/RTPSWriter.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/reader/RTPSReader.h"
+#include "eprosimartps/writer/RTPSWriter.h"
 
-#include "eprosimartps/DomainParticipant.h"
+#include "eprosimartps/dds/DomainParticipant.h"
 
 
 

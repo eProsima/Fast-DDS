@@ -15,8 +15,8 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/Subscriber.h"
-#include "eprosimartps/RTPSReader.h"
+#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/reader/RTPSReader.h"
 
 namespace eprosima {
 namespace dds {

@@ -30,10 +30,10 @@
 #include <boost/thread.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include "rtps_all.h"
+#include "eprosimartps/rtps_all.h"
 
-#include "ThreadListen.h"
-#include "ThreadSend.h"
+#include "eprosimartps/threadtype/ThreadListen.h"
+#include "eprosimartps/threadtype/ThreadSend.h"
 
 
 
