@@ -147,8 +147,8 @@ Participant::~Participant() {
 bool Participant::createStatelessWriter(StatelessWriter* SWriter,WriterParams_t Wparam) {
 
 	if(SWriter == NULL)
-		SWriter = new StatelessWriter();
-	SWriter->init(Wparam); //initialize with the correct values
+		SWriter = new StatelessWriter(&Wparam);
+
 	//Check if locator lists are empty:
 	if(SWriter->unicastLocatorList.empty())
 		SWriter->unicastLocatorList = defaultUnicastLocatorList;
@@ -175,34 +175,33 @@ bool Participant::createStatelessWriter(StatelessWriter* SWriter,WriterParams_t 
 	return true;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter* SWriter,WriterParams_t Wparam) {
+bool Participant::createStatefulWriter(StatefulWriter* SFWriter,WriterParams_t Wparam) {
 
-	if(SWriter == NULL)
-		SWriter = new StatefulWriter();
-	SWriter->init(Wparam); //initialize with the correct values
+	if(SFWriter == NULL)
+		SFWriter = new StatefulWriter(&Wparam);
 	//Check if locator lists are empty:
-	if(SWriter->unicastLocatorList.empty())
-		SWriter->unicastLocatorList = defaultUnicastLocatorList;
-	if(SWriter->unicastLocatorList.empty())
-		SWriter->multicastLocatorList = defaultMulticastLocatorList;
+	if(SFWriter->unicastLocatorList.empty())
+		SFWriter->unicastLocatorList = defaultUnicastLocatorList;
+	if(SFWriter->unicastLocatorList.empty())
+		SFWriter->multicastLocatorList = defaultMulticastLocatorList;
 	//Assign participant pointer
-	SWriter->participant = this;
+	SFWriter->participant = this;
 	//Assign GUID
-	SWriter->guid.guidPrefix = guid.guidPrefix;
-	if(SWriter->topicKind == NO_KEY)
-		SWriter->guid.entityId.value[3] = 0x03;
-	else if(SWriter->topicKind == WITH_KEY)
-		SWriter->guid.entityId.value[3] = 0x02;
+	SFWriter->guid.guidPrefix = guid.guidPrefix;
+	if(SFWriter->topicKind == NO_KEY)
+		SFWriter->guid.entityId.value[3] = 0x03;
+	else if(SFWriter->topicKind == WITH_KEY)
+		SFWriter->guid.entityId.value[3] = 0x02;
 	IdCounter++;
 	octet* c = (octet*)&IdCounter;
-	SWriter->guid.entityId.value[2] = c[0];
-	SWriter->guid.entityId.value[1] = c[1];
-	SWriter->guid.entityId.value[0] = c[2];
+	SFWriter->guid.entityId.value[2] = c[0];
+	SFWriter->guid.entityId.value[1] = c[1];
+	SFWriter->guid.entityId.value[0] = c[2];
 	//Look for receiving threads that are already listening to this writer receiving addreesses.
-	assignEnpointToListenThreads((Endpoint*)SWriter,'W');
+	assignEnpointToListenThreads((Endpoint*)SFWriter,'W');
 	//Wait until the thread is correctly created
 
-	writerList.push_back((RTPSWriter*)SWriter);
+	writerList.push_back((RTPSWriter*)SFWriter);
 	return true;
 }
 
@@ -213,8 +212,8 @@ bool Participant::createStatelessReader(StatelessReader* SReader,
 		ReaderParams_t RParam) {
 
 	if(SReader == NULL)
-		SReader = new StatelessReader();
-	SReader->init(RParam);
+		SReader = new StatelessReader(&RParam);
+
 	//If NO UNICAST
 	if(SReader->unicastLocatorList.empty())
 		SReader->unicastLocatorList = defaultUnicastLocatorList;

@@ -19,12 +19,13 @@
 #define PERIODICHEARTBEAT_H_
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
 
 
 namespace eprosima {
 namespace rtps{
+
+class StatefulWriter;
 
 class PeriodicHeartbeat:public TimedEvent {
 public:
@@ -32,7 +33,7 @@ public:
 	PeriodicHeartbeat(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
 	virtual ~PeriodicHeartbeat();
 
-	void operator();
+	void event(const boost::system::error_code& ec);
 	StatefulWriter* SW;
 };
 

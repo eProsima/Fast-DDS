@@ -34,13 +34,9 @@ class StatelessWriter : public RTPSWriter
 public:
 	StatelessWriter();
 	virtual ~StatelessWriter();
+	StatelessWriter(WriterParams_t* wParam);
 
-	/**
-	 * Initialize the StatelessWriter with the corresponding WriterParams Structure.
-	 * @param wParam
-	 */
-	void init(WriterParams_t wParam);
-	Duration_t resendDataPeriod;
+	Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
 	/**
 	 * Add a ReaderLocator to the Writer.

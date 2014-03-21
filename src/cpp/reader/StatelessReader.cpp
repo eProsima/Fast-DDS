@@ -29,21 +29,22 @@ StatelessReader::~StatelessReader() {
 	// TODO Auto-generated destructor stub
 }
 
-void StatelessReader::init(ReaderParams_t param) {
-
+StatelessReader::StatelessReader(ReaderParams_t* param)
+{
 	//reader_cache.changes.reserve(param.historySize);
 	stateType = STATELESS;
 	reader_cache.rtpsreader = (RTPSReader*)this;
 	reader_cache.historyKind = READER;
 	//locator lists:
-	unicastLocatorList = param.unicastLocatorList;
-	multicastLocatorList = param.multicastLocatorList;
-	heartbeatResponseDelay = param.heartbeatResponseDelay;
-	heartbeatSupressionDuration = param.heartbeatSupressionDuration;
-    expectsInlineQos = param.expectsInlineQos;
-    topicKind = param.topicKind;
-    reader_cache.historySize = param.historySize;
+	unicastLocatorList = param->unicastLocatorList;
+	multicastLocatorList = param->multicastLocatorList;
+	heartbeatResponseDelay = param->heartbeatResponseDelay;
+	heartbeatSupressionDuration = param->heartbeatSupressionDuration;
+	expectsInlineQos = param->expectsInlineQos;
+	topicKind = param->topicKind;
+	reader_cache.historySize = param->historySize;
 }
+
 
 } /* namespace rtps */
 } /* namespace eprosima */
