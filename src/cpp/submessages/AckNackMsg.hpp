@@ -18,7 +18,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
+bool RTPSMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
 		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag){
 
 	try
@@ -27,10 +27,10 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 		VENDORID_EPROSIMA(vendor);
 		ProtocolVersion_t version;
 		PROTOCOLVERSION(version);
-		CDRMessageCreator::createHeader(msg,guidprefix,version,vendor);
+		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
 
 
-		CDRMessageCreator::createSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
+		RTPSMessageCreator::createSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
 
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -43,7 +43,7 @@ bool CDRMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guid
 	return true;
 }
 
-bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
+bool RTPSMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag)
 {
 
@@ -79,7 +79,7 @@ bool CDRMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 	}
 
 	//Once the submessage elements are added, the header is created
-	CDRMessageCreator::createSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
+	RTPSMessageCreator::createSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
 	msg->length = msg->pos;

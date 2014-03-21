@@ -20,6 +20,7 @@
 #include "eprosimartps/ParameterTypes.h"
 
 using namespace eprosima::dds;
+using eprosima::dds::ParameterId_t;
 
 namespace eprosima {
 namespace rtps {
@@ -224,8 +225,7 @@ bool CDRMessage::addOctet(CDRMessage_t*msg, octet O)
 	return true;
 }
 
-bool CDRMessage::addUInt16(CDRMessage_t*msg,
-		unsigned short U)
+bool CDRMessage::addUInt16(CDRMessage_t*msg,unsigned short U)
 {
 	if(msg->pos + 2 > msg->max_size)
 	{
@@ -247,6 +247,14 @@ bool CDRMessage::addUInt16(CDRMessage_t*msg,
 	msg->length+=2;
 	return true;
 }
+
+
+bool CDRMessage::addParameterId(CDRMessage_t*msg,ParameterId_t p)
+{
+	return CDRMessage::addUInt16(msg,(uint16_t)p);
+}
+
+
 
 bool CDRMessage::addInt32(CDRMessage_t* msg, int32_t lo) {
 	octet* o= (octet*)&lo;

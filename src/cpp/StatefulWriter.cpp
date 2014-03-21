@@ -18,7 +18,7 @@
 #include "eprosimartps/StatefulWriter.h"
 #include "eprosimartps/ReaderProxy.h"
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/ParameterListCreator.h"
+#include "eprosimartps/ParameterList.h"
 
 
 
@@ -276,7 +276,7 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 	}
 	//Prepare the send operation
 	CDRMessage_t header(RTPSMESSAGE_HEADER_SIZE);
-	CDRMessageCreator::createHeader(&header,participant->guid.guidPrefix);
+	RTPSMessageCreator::createHeader(&header,participant->guid.guidPrefix);
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit;
 	seqit = Sequences.begin();
 	std::vector<Locator_t>::iterator lit;
@@ -284,8 +284,8 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 	uint16_t gap_n = 1;
 	//FIRST SUBMESSAGE
 	CDRMessage_t submessage;
-	CDRMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
-			readerId,this->guid.entityId);
+	RTPSMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
+											readerId,this->guid.entityId);
 
 	gap_msg_size = submessage.length;
 	if(gap_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
@@ -308,8 +308,8 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 			gap_n++;
 			seqit++;
 			CDRMessage::initCDRMsg(&submessage);
-			CDRMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
-						readerId,this->guid.entityId);
+			RTPSMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
+													readerId,this->guid.entityId);
 			CDRMessage::appendMsg(&fullmsg,&submessage);
 		}
 		for(lit = unicast->begin();lit!=unicast->end();lit++)

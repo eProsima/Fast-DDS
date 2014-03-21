@@ -29,7 +29,7 @@ EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x
 EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 		  -I$(EPROSIMADIR)/code
 
-EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/CDRMessageCreator.cpp \
+EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
 		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
 		  $(BASEDIR)/src/cpp/HistoryCache.cpp \

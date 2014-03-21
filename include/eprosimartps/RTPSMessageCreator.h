@@ -30,10 +30,10 @@ namespace rtps{
  * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
  * @ingroup COMMONMODULE
  */
-class CDRMessageCreator {
+class RTPSMessageCreator {
 public:
-	CDRMessageCreator();
-	virtual ~CDRMessageCreator();
+	RTPSMessageCreator();
+	virtual ~RTPSMessageCreator();
 
 
 	/**

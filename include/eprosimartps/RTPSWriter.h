@@ -18,7 +18,7 @@
 #include "rtps_all.h"
 #include "HistoryCache.h"
 #include "Endpoint.h"
-#include "CDRMessageCreator.h"
+#include "RTPSMessageCreator.h"
 #include "Participant.h"
 
 #include "Publisher.h"
@@ -70,7 +70,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changekind,SerializedPayload_t* data,InstanceHandle_t handle,CacheChange_t*change);
-	CDRMessageCreator MC;
+	RTPSMessageCreator MC;
 	Publisher* Pub;
 
 	void sendChangesList(std::vector<CacheChange_t*> changes,

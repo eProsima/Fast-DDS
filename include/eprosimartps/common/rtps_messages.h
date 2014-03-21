@@ -26,7 +26,9 @@ using std::cout;
 using std::endl;
 using std::bitset;
 
-#include "../ParameterList_t.h"
+#include "../ParameterList.h"
+
+using eprosima::dds::ParameterList_t;
 
 namespace eprosima{
 namespace rtps{
@@ -110,7 +112,7 @@ typedef struct SubmsgData_t{
 		pLongInfo( "DATA SubMsg,flags: " << (bitset<8>) SubmessageHeader.flags << endl);
 		pLongInfo(  "readerId: " << (int)readerId.value[0] << "." << (int)readerId.value[1] << "." << (int)readerId.value[2] << "." << (int)readerId.value[3]);
 		pLongInfo(  " || writerId: " << (int)writerId.value[0] << "." << (int)writerId.value[1] << "." << (int)writerId.value[2] << "." << (int)writerId.value[3] << endl);
-		pLongInfo(  "InlineQos: " << inlineQos.params.size() << " parameters." << endl);
+		pLongInfo(  "InlineQos: " << inlineQos.QosParams.size() << " parameters." << endl);
 		pLongInfo(  "SeqNum: " << writerSN.to64long() << " Payload: enc: " << serializedPayload.encapsulation << " length: " << serializedPayload.length << endl);
 		pLongInfoPrint;
 	}

@@ -22,7 +22,7 @@
 #include "rtps_all.h"
 #include "HistoryCache.h"
 #include "Endpoint.h"
-#include "CDRMessageCreator.h"
+#include "RTPSMessageCreator.h"
 #include "Participant.h"
 
 #include "Subscriber.h"
@@ -51,7 +51,7 @@ public:
 	Duration_t heartbeatResponseDelay;
 	Duration_t heartbeatSupressionDuration;
 	//!Structure used to create messages.
-	CDRMessageCreator MC;
+	RTPSMessageCreator MC;
 	//!Pointer to the associated subscriber
 	Subscriber* Sub;
 	//!Semaphore used to stop threads based on the arrival of messages.

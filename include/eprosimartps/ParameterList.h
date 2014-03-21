@@ -53,8 +53,8 @@ public:
 	static bool addParameterLocator(ParameterList_t* plist,ParameterId_t pid,Locator_t* loc);
 	static bool addParameterPort(ParameterList_t* plist,ParameterId_t pid,uint32_t port);
 
-	static bool readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size);
-	static bool readInlineQos(CDRMessage_t*msg,ParameterList* plist,InstanceHandle_t* iHandle,octet*status,uint32_t*size);
+	static bool readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle);
+
 };
 
 
