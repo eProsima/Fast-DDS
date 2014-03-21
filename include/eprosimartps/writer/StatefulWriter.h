@@ -15,16 +15,15 @@
  *              grcanosa@gmail.com  	
  */
 
+#ifndef STATEFULWRITER_H_
+#define STATEFULWRITER_H_
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/writer/ReaderProxy.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/threadtype/ThreadEvent.h"
+#include "eprosimartps/timedevent/PeriodicHeartbeat.h"
 
-
-
-#ifndef STATEFULWRITER_H_
-#define STATEFULWRITER_H_
 
 namespace eprosima {
 namespace rtps {
@@ -34,11 +33,12 @@ public:
 	StatefulWriter();
 	virtual ~StatefulWriter();
 
-	/**
-	 * Initialize Stateful Writer.
-	 * @param param Structure containing parameters.
-	 */
-	void init(WriterParams_t param);
+	StatefulWriter(WriterParams_t* param);
+//	/**
+//	 * Initialize Stateful Writer.
+//	 * @param param Structure containing parameters.
+//	 */
+//	void init(WriterParams_t param);
 
 	/**
 	 * Add a matched reader to the writer.
@@ -88,11 +88,7 @@ public:
 	DDS_Reliability_t reliability;
 
 	ThreadEvent eventTh;
-
-	void periodic_HB();
-	void unacked_changes();
-	boost::asio::deadline_timer* periodicHBtimer;
-	boost::asio::deadline_timer* nackSupressiontimer;
+	PeriodicHeartbeat periodicHB;
 
 
 

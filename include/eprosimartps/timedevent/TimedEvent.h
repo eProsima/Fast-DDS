@@ -21,7 +21,9 @@
 #define PERIODICEVENT_H_
 
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/bind.hpp>
 
 namespace eprosima {
 namespace rtps{
@@ -31,10 +33,11 @@ class TimedEvent {
 public:
 	TimedEvent();
 	virtual ~TimedEvent();
-	TimedEvent(boost::asio::io_service serv,boost::posix_time::milliseconds interval):
-		timer(new boost::asio::deadline_timer(serv,interval)){}
+	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval):
+		timer(new boost::asio::deadline_timer(*serv,interval)){}
+
 	boost::asio::deadline_timer* timer;
-	virtual void operator();
+	virtual void event(const boost::system::error_code& ec);
 };
 
 

@@ -66,7 +66,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 		return NULL;
 	if(WParam.stateKind == STATELESS)
 	{
-		StatelessWriter* SW = new StatelessWriter();
+		StatelessWriter* SW=NULL;
 		if(!p->createStatelessWriter(SW,WParam))
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SW);
@@ -78,7 +78,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 	}
 	else if(WParam.stateKind == STATEFUL)
 	{
-		StatefulWriter* SF = new StatefulWriter();
+		StatefulWriter* SF = NULL;
 		if(!p->createStatefulWriter(SF,WParam))
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SF);

@@ -34,7 +34,8 @@ class StatelessReader: public RTPSReader {
 public:
 	StatelessReader();
 	virtual ~StatelessReader();
-	void init(ReaderParams_t);
+	StatelessReader(ReaderParams_t* param);
+
 
 };
 

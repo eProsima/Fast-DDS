@@ -34,14 +34,13 @@ StatefulWriter::~StatefulWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-
-void StatefulWriter::init(WriterParams_t param)
+StatefulWriter::StatefulWriter(WriterParams_t* param):
+		periodicHB(this,boost::posix_time::milliseconds(param->reliablility.heartbeatPeriod.to64time()*1000))
 {
-	pushMode = param.pushMode;
-	reliability = param.reliablility;
-
-	//writer_cache.changes.reserve(param.historySize);
-	writer_cache.historySize = param.historySize;
+	pushMode = param->pushMode;
+	reliability=param->reliablility;
+	topicKind=param->topicKind;
+	writer_cache.historySize = param->historySize;
 	writer_cache.historyKind = WRITER;
 	lastChangeSequenceNumber.high= 0;
 	lastChangeSequenceNumber.low = 0;
@@ -49,17 +48,11 @@ void StatefulWriter::init(WriterParams_t param)
 	stateType = STATEFUL;
 	writer_cache.rtpswriter = (RTPSWriter*)this;
 	//locator lists:
-	unicastLocatorList = param.unicastLocatorList;
-	multicastLocatorList = param.multicastLocatorList;
-
-	topicKind = param.topicKind;
-
+	unicastLocatorList = param->unicastLocatorList;
+	multicastLocatorList = param->multicastLocatorList;
 	eventTh.init_thread();
-	boost::posix_time::time_duration interval(boost::posix_time::milliseconds(reliability.heartbeatPeriod.to64time()*1000));
-	periodicHBtimer = new boost::asio::deadline_timer(eventTh.io_service,interval);
-	interval = boost::posix_time::milliseconds(reliability.nackSupressionDuration.to64time()*1000);
-	nackSupressiontimer = new boost::asio::deadline_timer(eventTh.io_service,interval);
 }
+
 
 bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 {
@@ -218,11 +211,8 @@ void StatefulWriter::unsent_changes_not_empty()
 					(*rit)->param.remoteReaderGuid.entityId,
 					&(*rit)->param.unicastLocatorList,
 					&(*rit)->param.multicastLocatorList);
-			periodicHBtimer->async_wait(boost::bind(&StatefulWriter::periodic_HB,this));
-			for(cit = ch_vec.begin();cit!=ch_vec.end();cit++)
-			{
-				(*cit)->status = UNDERWAY;
-			}
+			periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&SW->periodicHB,
+				boost::asio::placeholders::error))
 		}
 	}
 	pDebugInfo("Finish sending unsent changes" << endl);

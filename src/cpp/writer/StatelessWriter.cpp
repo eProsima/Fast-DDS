@@ -28,10 +28,11 @@ StatelessWriter::StatelessWriter() {
 
 }
 
-void StatelessWriter::init(WriterParams_t param) {
-	pushMode = param.pushMode;
-	//writer_cache.changes.reserve(param.historySize);
-	writer_cache.historySize = param.historySize;
+StatelessWriter::StatelessWriter(WriterParams_t* param)
+{
+	pushMode = param->pushMode;
+	//writer_cache.changes.reserve(param->historySize);
+	writer_cache.historySize = param->historySize;
 	writer_cache.historyKind = WRITER;
 	lastChangeSequenceNumber.high= 0;
 	lastChangeSequenceNumber.low = 0;
@@ -39,10 +40,12 @@ void StatelessWriter::init(WriterParams_t param) {
 	stateType = STATELESS;
 	writer_cache.rtpswriter = (RTPSWriter*)this;
 	//locator lists:
-	unicastLocatorList = param.unicastLocatorList;
-	multicastLocatorList = param.multicastLocatorList;
-	topicKind = param.topicKind;
+	unicastLocatorList = param->unicastLocatorList;
+	multicastLocatorList = param->multicastLocatorList;
+	topicKind = param->topicKind;
 }
+
+
 
 
 StatelessWriter::~StatelessWriter() {
