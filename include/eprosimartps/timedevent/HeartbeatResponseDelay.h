@@ -7,41 +7,37 @@
  *************************************************************************/
 
 /**
- * @file StatelessReader.h
- *  StatelessReader class.
- *  Created on: Feb 27, 2014
+ * @file HeartbeatResponseDelay.h
+ *
+ *  Created on: Mar 24, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-
-#ifndef STATELESSREADER_H_
-#define STATELESSREADER_H_
-
-
+#ifndef HEARTBEATRESPONSEDELAY_H_
+#define HEARTBEATRESPONSEDELAY_H_
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/reader/RTPSReader.h"
-
-#include <boost/bind.hpp>
-
+#include "eprosimartps/timedevent/TimedEvent.h"
 namespace eprosima {
 namespace rtps {
 
-/**
- * Class StatelessReader,
- * @ingroup READERMODULE
- */
-class StatelessReader: public RTPSReader {
-public:
-	StatelessReader();
-	virtual ~StatelessReader();
-	StatelessReader(ReaderParams_t* param);
+class StatefulReader;
+class WriterProxy;
 
+class HeartbeatResponseDelay:public TimedEvent {
+public:
+	HeartbeatResponseDelay();
+	virtual ~HeartbeatResponseDelay();
+	HeartbeatResponseDelay(StatefulReader* SW_ptr,boost::posix_time::milliseconds interval);
+
+	void event(const boost::system::error_code& ec,WriterProxy* wp);
+
+	StatefulReader* SR;
 
 };
 
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* STATELESSREADER_H_ */
+#endif /* HEARTBEATRESPONSEDELAY_H_ */

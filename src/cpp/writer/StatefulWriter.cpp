@@ -34,9 +34,8 @@ StatefulWriter::~StatefulWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-StatefulWriter::StatefulWriter(WriterParams_t* param):
-		periodicHB(this,boost::posix_time::milliseconds(param->reliablility.heartbeatPeriod.to64time()*1000)),
-		nackResponse(this,boost::posix_time::milliseconds(param->reliablility.nackResponseDelay.to64time()*1000))
+StatefulWriter::StatefulWriter(WriterParams_t* param)
+
 {
 	pushMode = param->pushMode;
 	reliability=param->reliablility;
@@ -51,7 +50,7 @@ StatefulWriter::StatefulWriter(WriterParams_t* param):
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
-	eventTh.init_thread();
+
 }
 
 
@@ -66,8 +65,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 			return false;
 		}
 	}
-	ReaderProxy* rp = new ReaderProxy();
-	rp->param = RPparam;
+	ReaderProxy* rp = new ReaderProxy(&RPparam,this);
 
 	std::vector<CacheChange_t*>::iterator cit;
 	for(cit=writer_cache.changes.begin();cit!=writer_cache.changes.end();it++)
@@ -219,9 +217,9 @@ void StatefulWriter::unsent_changes_not_empty()
 							(*rit)->param.remoteReaderGuid.entityId,
 							&(*rit)->param.unicastLocatorList,
 							&(*rit)->param.multicastLocatorList);
-				periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&periodicHB,
+				(*rit)->periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&(*rit)->periodicHB,
 						boost::asio::placeholders::error,(*rit)));
-				nackSupression.timer->async_wait(boost::bind(&NackSupressionDuration::event,&nackSupression,
+				(*rit)->nackSupression.timer->async_wait(boost::bind(&NackSupressionDuration::event,&(*rit)->nackSupression,
 						boost::asio::placeholders::error,(*rit)));
 			}
 			else

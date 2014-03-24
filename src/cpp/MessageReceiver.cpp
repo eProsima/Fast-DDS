@@ -23,6 +23,9 @@
 #include "eprosimartps/dds/ParameterList.h"
 #include "eprosimartps/writer/ReaderProxy.h"
 
+#include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/reader/WriterProxy.h"
+
 
 
 namespace eprosima {
@@ -327,7 +330,62 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-return true;
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	bool finalFlag = smh->flags & BIT(1) ? true : false;
+	bool livelinessFlag = smh->flags & BIT(2) ? true : false;
+	//Assign message endianness
+		if(endiannessFlag)
+			msg->msg_endian = LITTLEEND;
+		else
+			msg->msg_endian = BIGEND;
+
+	GUID_t readerGUID,writerGUID;
+	readerGUID.guidPrefix = destGuidPrefix;
+	CDRMessage::readEntityId(msg,&readerGUID.entityId);
+	writerGUID.guidPrefix = sourceGuidPrefix;
+	CDRMessage::readEntityId(msg,&writerGUID.entityId);
+	SequenceNumber_t firstSN, lastSN;
+	CDRMessage::readSequenceNumber(msg,&firstSN);
+	CDRMessage::readSequenceNumber(msg,&lastSN);
+	uint32_t HBCount;
+	CDRMessage::readUInt32(msg,&HBCount);
+
+	//Look for the correct reader and writers:
+
+	std::vector<RTPSReader*>::iterator it;
+	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();it++)
+	{
+		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
+		{
+			if((*it)->stateType == STATEFUL)
+			{
+				StatefulReader* SR = (StatefulReader*)(*it);
+				//Look for the associated writer
+				WriterProxy* WP;
+				if(SR->matched_writer_lookup(writerGUID,&WP))
+				{
+					WP->missing_changes_update(&lastSN);
+					WP->lost_changes_update(&firstSN);
+					//Analyze wheter a acknack message is needed:
+					if(!finalFlag)
+					{
+						WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
+																	boost::asio::placeholders::error,WP));
+					}
+					else if(finalFlag && !livelinessFlag)
+					{
+						if(!WP->isMissingChangesEmpty)
+							WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
+											boost::asio::placeholders::error,WP));
+					}
+				}
+				else
+					pWarning("HB received from NOT associated writer");
+			}
+		}
+	}
+
+	return true;
 }
 
 
@@ -338,6 +396,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	CDRMessage::readEntityId(msg,&readerGUID.entityId);
 	writerGUID.guidPrefix = destGuidPrefix;
 	CDRMessage::readEntityId(msg,&writerGUID.entityId);
+
+
 	SequenceNumberSet_t SNSet;
 	CDRMessage::readSequenceNumberSet(msg,&SNSet);
 	uint32_t count;
@@ -365,7 +425,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 						(*rit)->acked_changes_set(&SNSet.base);
 						(*rit)->requested_changes_set(&SNSet.set);
 						if(!(*rit)->isRequestedChangesEmpty)
-							SF->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&SF->nackResponse,
+							(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,(*rit)->nackResponse,
 											boost::asio::placeholders::error,(*rit)));
 						break;
 					}

@@ -38,6 +38,14 @@ typedef enum ChangeForReaderStatus_t{
 	UNDERWAY
 }ChangeForReaderStatus_t;
 
+typedef enum ChangeFromWriterStatus_t{
+	UNKNOWN,
+	MISSING,
+	REQUESTED_WITH_NACK,
+	RECEIVED,
+	LOST
+}ChangeFromWriterStatus_t;
+
 
 //typedef void* InstanceHandle_t;
 
@@ -85,6 +93,13 @@ typedef struct ChangeForReader_t{
 	ChangeForReaderStatus_t status;
 	bool is_relevant;
 }ChangeForReader_t;
+
+
+typedef struct ChangeFromWriter_t{
+	CacheChange_t* change;
+	ChangeFromWriterStatus_t status;
+	bool is_relevant;
+}ChangeFromWriter_t;
 
 
 

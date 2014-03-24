@@ -42,6 +42,9 @@ Participant::Participant() {
 	//threadSend();
 	//Initialize threadlisten list to 0;
 	threadListenList.clear();
+
+	eventThread.init_thread();
+
 	//cout << "Listen thread with size: " << threadListenList.size() << endl;
 	//Initialize default Unicast Multicast locators.
 	//TODOG Definir default send and receive locator.
@@ -82,6 +85,7 @@ Participant::Participant() {
 				ss << (int)guid.guidPrefix.value[i] << ".";
 			pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
 	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
+
 }
 
 Participant::Participant(ParticipantParams_t PParam) {
@@ -99,6 +103,8 @@ Participant::Participant(ParticipantParams_t PParam) {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	threadSend.initSend(loc);
+
+	eventThread.init_thread();
 
 	// Create Unique GUID
 	dds::DomainParticipant *dp;
@@ -129,7 +135,9 @@ Participant::Participant(ParticipantParams_t PParam) {
 		for(int i =0;i<12;i++)
 			ss << (int)guid.guidPrefix.value[i] << ".";
 		pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
-	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
+		//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
+
+
 }
 
 
@@ -289,6 +297,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	}
 	for(locit_e = endpoint->multicastLocatorList.begin();locit_e!=endpoint->multicastLocatorList.end();locit_e++)
 	{
+		//FIXME: in multicast the IP is important, change this.
 		assigned = false;
 		for(thit=threadListenList.begin();thit!=threadListenList.end();thit++)
 		{

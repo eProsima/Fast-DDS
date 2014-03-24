@@ -33,7 +33,7 @@ NackResponseDelay::~NackResponseDelay() {
 }
 
 NackResponseDelay::NackResponseDelay(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SW_ptr->eventTh.io_service,interval),
+		TimedEvent(&SW_ptr->participant->eventThread.io_service,interval),
 		SW(SW_ptr)
 {
 

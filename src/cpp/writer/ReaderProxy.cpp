@@ -17,6 +17,7 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/writer/StatefulWriter.h"
 
 namespace eprosima {
 namespace rtps {
@@ -25,6 +26,16 @@ ReaderProxy::ReaderProxy() {
 	// TODO Auto-generated constructor stub
 
 }
+
+ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
+				periodicHB(SW,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
+				nackResponse(SW,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
+				nackSupression(SW,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000))
+{
+	param = *RPparam;
+	isRequestedChangesEmpty = true;
+}
+
 
 ReaderProxy::~ReaderProxy() {
 	// TODO Auto-generated destructor stub
@@ -35,6 +46,7 @@ ReaderProxy::~ReaderProxy() {
 bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		ChangeForReader_t* changeForReader)
 {
+	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<ChangeForReader_t>::iterator it;
 	for(it=changes.begin();it!=changes.end();it++)
 	{
@@ -54,6 +66,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 
 bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 {
+	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<ChangeForReader_t>::iterator it;
 	for(it=changes.begin();it!=changes.end();it++)
 	{
@@ -67,6 +80,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet)
 {
+	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<SequenceNumber_t>::iterator sit;
 	for(sit=seqNumSet->begin();sit!=seqNumSet->end();sit++)
 	{
@@ -106,6 +120,7 @@ bool ReaderProxy::unacked_changes(std::vector<ChangeForReader_t*>* Changes)
 bool ReaderProxy::next_requested_change(ChangeForReader_t* changeForReader)
 {
 	std::vector<ChangeForReader_t*> changesList;
+	boost::lock_guard<ReaderProxy> guard(*this);
 	if(requested_changes(&changesList))
 	{
 		return minChange(&changesList,changeForReader);
@@ -127,6 +142,7 @@ bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
 		ChangeForReaderStatus_t status)
 {
 	changesList->clear();
+	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<ChangeForReader_t>::iterator it;
 	for(it=changes.begin();it!=changes.end();it++)
 	{
@@ -146,6 +162,7 @@ bool change_min(ChangeForReader_t* ch1,ChangeForReader_t* ch2)
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 		ChangeForReader_t* changeForReader)
 {
+	boost::lock_guard<ReaderProxy> guard(*this);
 	*changeForReader = **std::min_element(Changes->begin(),Changes->end(),change_min);
 	return true;
 }

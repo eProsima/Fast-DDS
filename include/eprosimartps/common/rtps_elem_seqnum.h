@@ -57,6 +57,16 @@ typedef struct SequenceNumber_t{
 			low+=inc;
 		return *this;
 	}
+	SequenceNumber_t operator-(int inc){
+		if(low-inc < 0)
+		{
+			high--;
+			low = pow(2,32)-(inc-low);
+		}
+		else
+			low-=inc;
+		return *this;
+	}
 	bool operator>(SequenceNumber_t seq2){
 		return islarger(&seq2);
 	}

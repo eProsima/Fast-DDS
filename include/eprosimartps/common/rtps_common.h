@@ -204,13 +204,20 @@ struct DDS_Reliability_t{
 	Duration_t nackResponseDelay;
 	Duration_t nackSupressionDuration;
 	Duration_t resendDataPeriod;
+	Duration_t heartbeatResponseDelay;
+	Duration_t heartbeatSupressionDuration;
 	uint8_t hb_per_max_samples;
 	DDS_Reliability_t()
 	{
 		TIME_ZERO(heartbeatPeriod);
+		heartbeatPeriod.seconds = 3;
 		TIME_ZERO(nackResponseDelay);
+		nackResponseDelay.fraction = 200*1000*1000;
 		TIME_ZERO(nackSupressionDuration);
 		TIME_ZERO(resendDataPeriod);
+		TIME_ZERO(heartbeatResponseDelay);
+		heartbeatResponseDelay.fraction = 500*1000*1000;
+		TIME_ZERO(heartbeatSupressionDuration);
 		hb_per_max_samples= 5;
 		kind = BEST_EFFORT;
 	}
@@ -242,24 +249,20 @@ typedef struct WriterParams_t{
 
 typedef struct ReaderParams_t{
 	bool expectsInlineQos;
-	Duration_t heartbeatResponseDelay;
-	Duration_t heartbeatSupressionDuration;
+
 	int16_t historySize;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
-	ReliabilityKind_t reliabilityKind;
+	DDS_Reliability_t reliablility;
 	TopicKind_t topicKind;
 	StateKind_t stateKind;
 	std::string topicName;
 	std::string topicDataType;
 	ReaderParams_t(){
 		expectsInlineQos = false;
-		TIME_ZERO(heartbeatResponseDelay);
-		TIME_ZERO(heartbeatSupressionDuration);
 		historySize = DEFAULT_HISTORY_SIZE;
 		unicastLocatorList.clear();
 		multicastLocatorList.clear();
-		reliabilityKind = BEST_EFFORT;
 		topicKind = NO_KEY;
 		stateKind = STATELESS;
 	}
@@ -284,16 +287,7 @@ typedef struct ParticipantParams_t{
 }ParticipantParams_t;
 
 
-typedef struct ReaderProxy_t{
-	GUID_t remoteReaderGuid;
-	bool expectsInlineQos;
-	std::vector<Locator_t> unicastLocatorList;
-	std::vector<Locator_t> multicastLocatorList;
-	ReaderProxy_t(){
-		GUID_UNKNOWN(remoteReaderGuid);
-		expectsInlineQos = false;
-	}
-}ReaderProxy_t;
+
 
 }
 }

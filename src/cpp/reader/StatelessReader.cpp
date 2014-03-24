@@ -38,8 +38,6 @@ StatelessReader::StatelessReader(ReaderParams_t* param)
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
-	heartbeatResponseDelay = param->heartbeatResponseDelay;
-	heartbeatSupressionDuration = param->heartbeatSupressionDuration;
 	expectsInlineQos = param->expectsInlineQos;
 	topicKind = param->topicKind;
 	reader_cache.historySize = param->historySize;

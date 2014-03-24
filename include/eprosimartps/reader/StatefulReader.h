@@ -7,41 +7,42 @@
  *************************************************************************/
 
 /**
- * @file StatelessReader.h
- *  StatelessReader class.
- *  Created on: Feb 27, 2014
+ * @file StatefulReader.h
+ *
+ *  Created on: Mar 24, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-
-#ifndef STATELESSREADER_H_
-#define STATELESSREADER_H_
-
+#ifndef STATEFULREADER_H_
+#define STATEFULREADER_H_
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/reader/RTPSReader.h"
-
+#include "eprosimartps/reader/WriterProxy.h"
 #include <boost/bind.hpp>
 
 namespace eprosima {
 namespace rtps {
 
-/**
- * Class StatelessReader,
- * @ingroup READERMODULE
- */
-class StatelessReader: public RTPSReader {
+class StatefulReader:public RTPSReader {
 public:
-	StatelessReader();
-	virtual ~StatelessReader();
-	StatelessReader(ReaderParams_t* param);
+	StatefulReader();
+	virtual ~StatefulReader();
+	StatefulReader(ReaderParams_t* param);
 
+	bool matched_writer_add(WriterProxy_t* WP);
+	bool matched_writer_remove(WriterProxy_t WP);
+	bool matched_writer_remove(GUID_t writerGUID);
+	bool matched_writer_lookup(GUID_t writerGUID,WriterProxy** WP);
 
+	DDS_Reliability_t reliability;
+private:
+	std::vector<WriterProxy*> matched_writers;
 };
 
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* STATELESSREADER_H_ */
+#endif /* STATEFULREADER_H_ */
