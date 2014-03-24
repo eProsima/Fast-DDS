@@ -127,6 +127,36 @@ bool CDRMessage::readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn) {
 	return true;
 }
 
+bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sns)
+{
+	CDRMessage::readSequenceNumber(msg,&sns->base);
+	uint32_t numBits;
+	CDRMessage::readUInt32(msg,&numBits);
+	uint32_t n_octets = 4*((numBits+31)/32);
+	SequenceNumber_t auxSN;
+	for(uint8_t i=0;i<n_octets;i++)
+	{
+		octet o;
+		CDRMessage::readOctet(msg,&o);
+		if(8*i<numBits)
+		{
+			for(uint8_t bit=0;bit<8;bit++)
+			{
+				if((bit+i*8)>numBits) //no more bits to analyze
+					break;
+				bool addSN = o & BIT(bit) ? true : false;
+				if(addSN)
+				{
+					auxSN = sns->base;
+					auxSN += (i*8+bit);
+					sns->set.push_back(auxSN);
+				}
+			}
+		}
+	}
+	return true;
+}
+
 
 bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc) {
 	if(msg->pos+24>msg->length)
@@ -408,14 +438,14 @@ bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		}
 	}
 	//add enough octets as gap
+	o=0;
 	while((n_octet+1)%4 != 0)
 	{
-		o=0;
 		addOctet(msg,o);
+		n_octet++;
 	}
 	return true;
 }
-
 
 bool CDRMessage::addLocator(CDRMessage_t* msg, Locator_t* loc) {
 	addInt32(msg,loc->kind);

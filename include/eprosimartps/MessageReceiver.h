@@ -91,40 +91,16 @@ private:
 
 	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
-	///@}
-
-
-
-	/** @name Read methods.
-	 * These methods read a specific structure from a CDRMessage.
-	 * @param[in] msg Pointer to the message that is being read.
-	 * @param[out] SubM Pointer to the structure that is being read.
-	 * @param[in] W Pointer to the writer (if needed to retrieve inlineQos).
-	 * @param[out] last Pointer to a bool field to indicate if the submessage if the last.
-	 * @return True if correct.
-	 */
-
-	///@{
-
-	//!NOT IMPLEMENTED
-	bool readSubmessageHeartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessageGap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessageAcknak(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessagePad(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessageInfoDestination(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessageInfoSource(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessageInfoTimestamp(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-	//!NOT IMPLEMENTED
-	bool readSubmessageInfoReply(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
-
+	bool proc_Submsg_Acknack(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_Heartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_Gap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_InfoTS(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
 	///@}
+
+
+
+
 
 };
 

@@ -42,18 +42,19 @@ typedef struct SequenceNumber_t{
 			return false;
 		return true;
 	}
-	////!Assign 64 bit number to sequencenumber.
-	//SequenceNumber_t operator=(uint64_t ui){
-	//	low = ui % (int32_t)pow(2.0,32);
-	//	high = (int32_t)((ui-low)/pow(2.0,32));
-	//	return *this;
-	//}
 	//!Increase SequenceNumber in 1.
 	SequenceNumber_t operator++(int){
 		if(low == pow(2.0,32))
-			{high++;low = 0;}
+		{high++;low = 0;}
 		else
 			low++;
+		return *this;
+	}
+	SequenceNumber_t operator+=(int inc){
+		if(low+inc>pow(2,32))
+		{high++;low +=inc-(pow(2,32)-low);}
+		else
+			low+=inc;
 		return *this;
 	}
 	bool operator>(SequenceNumber_t seq2){
