@@ -48,8 +48,7 @@ public:
 	StateKind_t stateType;
 	HistoryCache reader_cache;
 	bool expectsInlineQos;
-	Duration_t heartbeatResponseDelay;
-	Duration_t heartbeatSupressionDuration;
+
 	//!Structure used to create messages.
 	RTPSMessageCreator MC;
 	//!Pointer to the associated subscriber

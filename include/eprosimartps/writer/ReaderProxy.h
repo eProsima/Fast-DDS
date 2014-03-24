@@ -19,17 +19,39 @@
 
 #ifndef READERPROXY_H_
 #define READERPROXY_H_
+
+#include "eprosimartps/rtps_all.h"
+
 #include <algorithm>
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#include "eprosimartps/timedevent/PeriodicHeartbeat.h"
+#include "eprosimartps/timedevent/NackResponseDelay.h"
+#include "eprosimartps/timedevent/NackSupressionDuration.h"
+
 namespace eprosima {
 namespace rtps {
+
+class StatefulWriter;
+
+typedef struct ReaderProxy_t{
+	GUID_t remoteReaderGuid;
+	bool expectsInlineQos;
+	std::vector<Locator_t> unicastLocatorList;
+	std::vector<Locator_t> multicastLocatorList;
+	ReaderProxy_t(){
+		GUID_UNKNOWN(remoteReaderGuid);
+		expectsInlineQos = false;
+	}
+}ReaderProxy_t;
+
 
 class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	ReaderProxy();
 	virtual ~ReaderProxy();
+	ReaderProxy(ReaderProxy_t*RPparam,StatefulWriter* SW);
 
 	ReaderProxy_t param;
 
@@ -61,6 +83,9 @@ public:
 
 	bool isRequestedChangesEmpty;
 
+	PeriodicHeartbeat periodicHB;
+		NackResponseDelay nackResponse;
+		NackSupressionDuration nackSupression;
 
 
 private:

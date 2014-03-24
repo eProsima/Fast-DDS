@@ -21,10 +21,8 @@
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/writer/ReaderProxy.h"
 #include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/threadtype/ThreadEvent.h"
-#include "eprosimartps/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/timedevent/NackResponseDelay.h"
-#include "eprosimartps/timedevent/NackSupressionDuration.h"
+
+
 
 
 namespace eprosima {
@@ -36,11 +34,6 @@ public:
 	virtual ~StatefulWriter();
 
 	StatefulWriter(WriterParams_t* param);
-//	/**
-//	 * Initialize Stateful Writer.
-//	 * @param param Structure containing parameters.
-//	 */
-//	void init(WriterParams_t param);
 
 	/**
 	 * Add a matched reader to the writer.
@@ -89,10 +82,8 @@ public:
 
 	DDS_Reliability_t reliability;
 
-	ThreadEvent eventTh;
-	PeriodicHeartbeat periodicHB;
-	NackResponseDelay nackResponse;
-	NackSupressionDuration nackSupression;
+
+
 
 
 

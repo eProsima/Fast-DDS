@@ -31,7 +31,7 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "eprosimartps/rtps_all.h"
-
+#include "eprosimartps/threadtype/ThreadEvent.h"
 #include "eprosimartps/threadtype/ThreadListen.h"
 #include "eprosimartps/threadtype/ThreadSend.h"
 
@@ -113,6 +113,9 @@ public:
 	GUID_t guid;
 	//! Sending resources.
 	ThreadSend threadSend;
+
+	ThreadEvent eventThread;
+
 private:
 
 	//!Semaphore to wait for the listen thread creation.
