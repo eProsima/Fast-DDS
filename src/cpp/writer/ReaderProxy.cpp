@@ -34,6 +34,7 @@ ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
 {
 	param = *RPparam;
 	isRequestedChangesEmpty = true;
+	lastAcknackCount = 0;
 }
 
 

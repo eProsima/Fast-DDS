@@ -319,7 +319,12 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				(*it)->newMessageSemaphore->post();
 				if((*it)->stateType == STATEFUL)
 				{
-					//FIXME: Stateful implementation
+					StatefulReader* SR = (StatefulReader*)(*it);
+					WriterProxy* WP;
+					if(SR->matched_writer_lookup(ch->writerGUID,&WP))
+					{
+						WP->received_change_set(ch);
+					}
 				}
 			}
 		}
@@ -364,19 +369,23 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				WriterProxy* WP;
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
-					WP->missing_changes_update(&lastSN);
-					WP->lost_changes_update(&firstSN);
-					//Analyze wheter a acknack message is needed:
-					if(!finalFlag)
+					if(WP->lastHeartbeatCount < HBCount)
 					{
-						WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-																	boost::asio::placeholders::error,WP));
-					}
-					else if(finalFlag && !livelinessFlag)
-					{
-						if(!WP->isMissingChangesEmpty)
+						WP->lastHeartbeatCount = HBCount;
+						WP->missing_changes_update(&lastSN);
+						WP->lost_changes_update(&firstSN);
+						//Analyze wheter a acknack message is needed:
+						if(!finalFlag)
+						{
 							WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-											boost::asio::placeholders::error,WP));
+									boost::asio::placeholders::error,WP));
+						}
+						else if(finalFlag && !livelinessFlag)
+						{
+							if(!WP->isMissingChangesEmpty)
+								WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
+										boost::asio::placeholders::error,WP));
+						}
 					}
 				}
 				else
@@ -391,6 +400,13 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 
 bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
+
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	//Assign message endianness
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
 	GUID_t readerGUID,writerGUID;
 	readerGUID.guidPrefix = sourceGuidPrefix;
 	CDRMessage::readEntityId(msg,&readerGUID.entityId);
@@ -400,8 +416,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 	SequenceNumberSet_t SNSet;
 	CDRMessage::readSequenceNumberSet(msg,&SNSet);
-	uint32_t count;
-	CDRMessage::readUInt32(msg,&count);
+	uint32_t Ackcount;
+	CDRMessage::readUInt32(msg,&Ackcount);
 	//Is the final message?
 	if(smh->submessageLength == 0)
 		*last = true;
@@ -422,11 +438,16 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 				{
 					if((*rit)->param.remoteReaderGuid == readerGUID)
 					{
-						(*rit)->acked_changes_set(&SNSet.base);
-						(*rit)->requested_changes_set(&SNSet.set);
-						if(!(*rit)->isRequestedChangesEmpty)
-							(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,(*rit)->nackResponse,
-											boost::asio::placeholders::error,(*rit)));
+						if((*rit)->lastAcknackCount < Ackcount)
+						{
+							(*rit)->lastAcknackCount = Ackcount;
+							(*rit)->acked_changes_set(&SNSet.base);
+							(*rit)->requested_changes_set(&SNSet.set);
+							if(!(*rit)->isRequestedChangesEmpty)
+								(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,(*rit)->nackResponse,
+										boost::asio::placeholders::error,(*rit)));
+
+						}
 						break;
 					}
 				}
@@ -441,12 +462,69 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	//Assign message endianness
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
+	GUID_t writerGUID,readerGUID;
+	readerGUID.guidPrefix = destGuidPrefix;
+	CDRMessage::readEntityId(msg,&readerGUID.entityId);
+	writerGUID.guidPrefix = sourceGuidPrefix;
+	CDRMessage::readEntityId(msg,&writerGUID.entityId);
+	SequenceNumber_t gapStart;
+	CDRMessage::readSequenceNumber(msg,&gapStart);
+	SequenceNumberSet_t gapList;
+	CDRMessage::readSequenceNumberSet(msg,&gapList);
+	if(gapStart.to64long()<=0)
+		return false;
+
+	std::vector<RTPSReader*>::iterator it;
+	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();it++)
+	{
+		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
+		{
+			if((*it)->stateType == STATEFUL)
+			{
+				StatefulReader* SR = (StatefulReader*)(*it);
+				//Look for the associated writer
+				WriterProxy* WP;
+				if(SR->matched_writer_lookup(writerGUID,&WP))
+				{
+					SequenceNumber_t auxSN;
+					for(auxSN = gapStart;auxSN<=gapList.base-1;auxSN++)
+						WP->irrelevant_change_set(&auxSN);
+					std::vector<SequenceNumber_t>::iterator it;
+					for(it=gapList.set.begin();it!=gapList.set.end();it++)
+						WP->irrelevant_change_set(&(*it));
+				}
+				else
+					pWarning("GAP received from NOT associated writer");
+			}
+		}
+	}
 	return true;
 }
 
 bool MessageReceiver::proc_Submsg_InfoTS(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	msg->pos+=8;
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	bool timeFlag = smh->flags & BIT(1) ? true : false;
+	//Assign message endianness
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
+
+	if(!timeFlag)
+	{
+		haveTimestamp = true;
+		CDRMessage::readTimestamp(msg,&timestamp);
+	}
+	else
+		haveTimestamp = false;
+
 	return true;
 }
 

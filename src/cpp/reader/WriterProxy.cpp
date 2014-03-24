@@ -40,6 +40,7 @@ WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :
 	param = *WPparam;
 	acknackCount = 0;
 	isMissingChangesEmpty = true;
+	lastHeartbeatCount = 0;
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)

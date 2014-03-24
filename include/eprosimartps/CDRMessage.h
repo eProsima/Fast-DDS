@@ -57,6 +57,7 @@ public:
 	static bool readLocator(CDRMessage_t* msg,Locator_t* loc);
 	static bool readOctet(CDRMessage_t* msg,octet* o);
 	static bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* snset);
+	static bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 
 	///@}
 //	/**
