@@ -56,6 +56,7 @@ public:
 	static bool readUInt16(CDRMessage_t* msg,uint16_t* i16);
 	static bool readLocator(CDRMessage_t* msg,Locator_t* loc);
 	static bool readOctet(CDRMessage_t* msg,octet* o);
+	static bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* snset);
 
 	///@}
 //	/**

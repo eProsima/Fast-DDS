@@ -7,42 +7,37 @@
  *************************************************************************/
 
 /**
- * @file PeriodicHeartbeat.h
+ * @file NackSupressionDuration.h
  *
- *  Created on: Mar 21, 2014
+ *  Created on: Mar 24, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#ifndef PERIODICHEARTBEAT_H_
-#define PERIODICHEARTBEAT_H_
+#ifndef NACKSUPRESSIONDURATION_H_
+#define NACKSUPRESSIONDURATION_H_
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
 
-
 namespace eprosima {
-namespace rtps{
+namespace rtps {
 
 class StatefulWriter;
 class ReaderProxy;
 
-class PeriodicHeartbeat:public TimedEvent {
+class NackSupressionDuration:public TimedEvent {
 public:
-	PeriodicHeartbeat();
-	PeriodicHeartbeat(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
-	virtual ~PeriodicHeartbeat();
+	NackSupressionDuration();
+	virtual ~NackSupressionDuration();
+	NackSupressionDuration(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
 
-	void event(const boost::system::error_code& ec,ReaderProxy*RP);
-	StatefulWriter* SW;
+	void event(const boost::system::error_code& ec,ReaderProxy* RP);
+		StatefulWriter* SW;
 };
 
-
-
-
-
-}
+} /* namespace dds */
 } /* namespace eprosima */
 
-#endif /* PERIODICHEARTBEAT_H_ */
+#endif /* NACKSUPRESSIONDURATION_H_ */

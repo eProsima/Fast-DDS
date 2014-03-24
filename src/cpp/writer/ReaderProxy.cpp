@@ -52,12 +52,12 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 	return false;
 }
 
-bool ReaderProxy::acked_changes_set(SequenceNumber_t seqNum)
+bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 {
 	std::vector<ChangeForReader_t>::iterator it;
 	for(it=changes.begin();it!=changes.end();it++)
 	{
-		if(it->change->sequenceNumber.to64long() <= seqNum.to64long())
+		if(it->change->sequenceNumber.to64long() < seqNum->to64long())
 		{
 			it->status = ACKNOWLEDGED;
 		}
@@ -65,10 +65,10 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t seqNum)
 	return true;
 }
 
-bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t> seqNumSet)
+bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet)
 {
 	std::vector<SequenceNumber_t>::iterator sit;
-	for(sit=seqNumSet.begin();sit!=seqNumSet.end();sit++)
+	for(sit=seqNumSet->begin();sit!=seqNumSet->end();sit++)
 	{
 		std::vector<ChangeForReader_t>::iterator it;
 		for(it=changes.begin();it!=changes.end();it++)
@@ -76,6 +76,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t> seqNumSet)
 			if(it->change->sequenceNumber.to64long() == sit->to64long())
 			{
 				it->status = REQUESTED;
+				isRequestedChangesEmpty = false;
 				break;
 			}
 		}
@@ -83,6 +84,8 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t> seqNumSet)
 	pDebugInfo("Requested Changes Set" << endl);
 	return true;
 }
+
+
 
 
 bool ReaderProxy::requested_changes(std::vector<ChangeForReader_t*>* Changes)

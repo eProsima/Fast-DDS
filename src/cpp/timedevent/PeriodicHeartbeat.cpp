@@ -38,25 +38,34 @@ PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* SW_ptr,boost::posix_time::m
 
 }
 
-void PeriodicHeartbeat::event(const boost::system::error_code& ec)
+void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* RP)
 {
 	if(!ec)
 	{
-		std::vector<ReaderProxy*>::iterator rit;
-		for(rit=SW->matched_readers.begin();rit!=SW->matched_readers.end();rit++)
+		boost::lock_guard<ReaderProxy> guard(*RP);
+		std::vector<ChangeForReader_t*> unack;
+		RP->unacked_changes(&unack);
+		if(!unack.empty())
 		{
-			std::vector<ChangeForReader_t*> unack;
-			(*rit)->unacked_changes(&unack);
-			if(!unack.empty())
-			{
-				//FIXME: send HB
-			}
+			CDRMessage_t msg;
+			SequenceNumber_t first,last;
+			SW->writer_cache.get_seq_num_min(&first,NULL);
+			SW->writer_cache.get_seq_num_max(&last,NULL);
+			SW->heartbeatCount++;
+			RTPSMessageCreator::createMessageHeartbeat(&msg,SW->participant->guid.guidPrefix,ENTITYID_UNKNOWN,SW->guid.entityId,
+					first,last,SW->heartbeatCount,false,false);
+			std::vector<Locator_t>::iterator lit;
+			for(lit = RP->param.unicastLocatorList.begin();lit!=RP->param.unicastLocatorList.end();lit++)
+				SW->participant->threadSend.sendSync(&msg,*lit);
+			for(lit = RP->param.multicastLocatorList.begin();lit!=RP->param.multicastLocatorList.end();lit++)
+				SW->participant->threadSend.sendSync(&msg,*lit);
 		}
-		//Reset TIMER, the cancellation is managed in the receiving thread,
-		//when an acknack msg acknowledges all cachechanges.
-		timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&SW->periodicHB,
-				boost::asio::placeholders::error));
 	}
+	//Reset TIMER, the cancellation is managed in the receiving thread,
+	//when an acknack msg acknowledges all cache changes.
+	timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&SW->periodicHB,
+			boost::asio::placeholders::error,RP));
+
 	if(ec==boost::asio::error::operation_aborted)
 	{
 		pInfo("Periodic Heartbeat aborted");

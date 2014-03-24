@@ -35,7 +35,8 @@ StatefulWriter::~StatefulWriter() {
 }
 
 StatefulWriter::StatefulWriter(WriterParams_t* param):
-		periodicHB(this,boost::posix_time::milliseconds(param->reliablility.heartbeatPeriod.to64time()*1000))
+		periodicHB(this,boost::posix_time::milliseconds(param->reliablility.heartbeatPeriod.to64time()*1000)),
+		nackResponse(this,boost::posix_time::milliseconds(param->reliablility.nackResponseDelay.to64time()*1000))
 {
 	pushMode = param->pushMode;
 	reliability=param->reliablility;
@@ -151,7 +152,10 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 		{
 			ChangeForReader_t changeForReader;
 			changeForReader.change = change;
-			changeForReader.status = UNSENT;
+			if(pushMode)
+				changeForReader.status = UNSENT;
+			else
+				changeForReader.status = UNACKNOWLEDGED;
 			changeForReader.is_relevant = (*it)->dds_is_relevant(change);
 			(*it)->changes.push_back(changeForReader);
 		}
@@ -181,10 +185,12 @@ void StatefulWriter::unsent_changes_not_empty()
 	boost::lock_guard<ThreadSend> guard(participant->threadSend);
 	for(rit=matched_readers.begin();rit!=matched_readers.end();rit++)
 	{
+		boost::lock_guard<ReaderProxy> guard(*(*rit));
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
 			std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader);
+
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<CacheChange_t*> not_relevant_changes;
@@ -201,18 +207,38 @@ void StatefulWriter::unsent_changes_not_empty()
 					not_relevant_changes.push_back((*cit)->change);
 				}
 			}
-			if(!relevant_changes.empty())
-				sendChangesList(relevant_changes,&(*rit)->param.unicastLocatorList,
-					&(*rit)->param.multicastLocatorList,
-					(*rit)->param.expectsInlineQos,
-					(*rit)->param.remoteReaderGuid.entityId);
-			if(!not_relevant_changes.empty())
-				sendChangesListAsGap(&not_relevant_changes,
-					(*rit)->param.remoteReaderGuid.entityId,
-					&(*rit)->param.unicastLocatorList,
-					&(*rit)->param.multicastLocatorList);
-			periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&SW->periodicHB,
-				boost::asio::placeholders::error))
+			if(pushMode)
+			{
+				if(!relevant_changes.empty())
+					sendChangesList(relevant_changes,&(*rit)->param.unicastLocatorList,
+							&(*rit)->param.multicastLocatorList,
+							(*rit)->param.expectsInlineQos,
+							(*rit)->param.remoteReaderGuid.entityId);
+				if(!not_relevant_changes.empty())
+					sendChangesListAsGap(&not_relevant_changes,
+							(*rit)->param.remoteReaderGuid.entityId,
+							&(*rit)->param.unicastLocatorList,
+							&(*rit)->param.multicastLocatorList);
+				periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&periodicHB,
+						boost::asio::placeholders::error,(*rit)));
+				nackSupression.timer->async_wait(boost::bind(&NackSupressionDuration::event,&nackSupression,
+						boost::asio::placeholders::error,(*rit)));
+			}
+			else
+			{
+				CDRMessage_t msg;
+				SequenceNumber_t first,last;
+				writer_cache.get_seq_num_min(&first,NULL);
+				writer_cache.get_seq_num_max(&last,NULL);
+				heartbeatCount++;
+				RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
+						first,last,heartbeatCount,true,false);
+				std::vector<Locator_t>::iterator lit;
+				for(lit = (*rit)->param.unicastLocatorList.begin();lit!=(*rit)->param.unicastLocatorList.end();lit++)
+					participant->threadSend.sendSync(&msg,*lit);
+				for(lit = (*rit)->param.multicastLocatorList.begin();lit!=(*rit)->param.multicastLocatorList.end();lit++)
+					participant->threadSend.sendSync(&msg,*lit);
+			}
 		}
 	}
 	pDebugInfo("Finish sending unsent changes" << endl);

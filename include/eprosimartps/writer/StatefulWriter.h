@@ -23,6 +23,8 @@
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/threadtype/ThreadEvent.h"
 #include "eprosimartps/timedevent/PeriodicHeartbeat.h"
+#include "eprosimartps/timedevent/NackResponseDelay.h"
+#include "eprosimartps/timedevent/NackSupressionDuration.h"
 
 
 namespace eprosima {
@@ -89,6 +91,8 @@ public:
 
 	ThreadEvent eventTh;
 	PeriodicHeartbeat periodicHB;
+	NackResponseDelay nackResponse;
+	NackSupressionDuration nackSupression;
 
 
 

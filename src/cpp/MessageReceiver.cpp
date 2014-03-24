@@ -18,8 +18,11 @@
 #include "eprosimartps/MessageReceiver.h"
 #include "eprosimartps/threadtype/ThreadListen.h"
 #include "eprosimartps/reader/RTPSReader.h"
+#include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/writer/ReaderProxy.h"
+
 
 
 namespace eprosima {
@@ -111,16 +114,23 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		case DATA:
 		{
 			valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
-
-
 			break;
 		}
 		case GAP:
+		{
+			valid = proc_Submsg_Gap(msg,&submsgh,&last_submsg);
 			break;
+		}
 		case ACKNACK:
+		{
+			valid = proc_Submsg_Acknack(msg,&submsgh,&last_submsg);
 			break;
+		}
 		case HEARTBEAT:
+		{
+			valid = proc_Submsg_Heartbeat(msg,&submsgh,&last_submsg);
 			break;
+		}
 		case PAD:
 			break;
 		case INFO_DST:
@@ -128,8 +138,10 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 		case INFO_SRC:
 			break;
 		case INFO_TS:
-			msg->pos+=8;
+		{
+			valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
 			break;
+		}
 		case INFO_REPLY:
 			break;
 		case INFO_REPLY_IP4:
@@ -175,7 +187,6 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
 }
 
 
-
 bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t* smh)
 {
 	if(msg->length - msg->pos < 4)
@@ -194,8 +205,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 
 
 
-bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
-		SubmessageHeader_t* smh, bool* last)
+bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	//READ and PROCESS
 	CacheChange_t* ch = new CacheChange_t();
@@ -315,49 +325,70 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,
 	return true;
 }
 
-
-
-bool MessageReceiver::readSubmessageHeartbeat(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageGap(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageAcknak(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessagePad(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoDestination(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoSource(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoTimestamp(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
-}
-
-bool MessageReceiver::readSubmessageInfoReply(CDRMessage_t* msg,
-		SubmessageHeader_t* smh,bool*last) {
-	return true;
+bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
+{
+return true;
 }
 
 
+bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
+{
+	GUID_t readerGUID,writerGUID;
+	readerGUID.guidPrefix = sourceGuidPrefix;
+	CDRMessage::readEntityId(msg,&readerGUID.entityId);
+	writerGUID.guidPrefix = destGuidPrefix;
+	CDRMessage::readEntityId(msg,&writerGUID.entityId);
+	SequenceNumberSet_t SNSet;
+	CDRMessage::readSequenceNumberSet(msg,&SNSet);
+	uint32_t count;
+	CDRMessage::readUInt32(msg,&count);
+	//Is the final message?
+	if(smh->submessageLength == 0)
+		*last = true;
+
+	//Look for the correct writer to use the acknack
+
+	std::vector<RTPSWriter*>::iterator it;
+	for(it=threadListen_ptr->assoc_writers.begin();it!=threadListen_ptr->assoc_writers.end();it++)
+	{
+		if((*it)->guid == writerGUID)
+		{
+			if((*it)->stateType == STATEFUL)
+			{
+				StatefulWriter* SF = (StatefulWriter*)(*it);
+				//Look for the readerProxy the acknack is from
+				std::vector<ReaderProxy*>::iterator rit;
+				for(rit = SF->matched_readers.begin();rit!=SF->matched_readers.end();rit++)
+				{
+					if((*rit)->param.remoteReaderGuid == readerGUID)
+					{
+						(*rit)->acked_changes_set(&SNSet.base);
+						(*rit)->requested_changes_set(&SNSet.set);
+						if(!(*rit)->isRequestedChangesEmpty)
+							SF->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&SF->nackResponse,
+											boost::asio::placeholders::error,(*rit)));
+						break;
+					}
+				}
+			}
+			break;
+		}
+	}
+	return true;
+}
+
+
+
+bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
+{
+	return true;
+}
+
+bool MessageReceiver::proc_Submsg_InfoTS(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
+{
+	msg->pos+=8;
+	return true;
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */
