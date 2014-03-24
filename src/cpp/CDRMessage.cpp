@@ -122,22 +122,23 @@ bool CDRMessage::readUInt32(CDRMessage_t* msg,uint32_t* ulo) {
 bool CDRMessage::readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn) {
 	if(msg->pos+8>msg->length)
 		return false;
-	readInt32(msg,&sn->high);
-	readUInt32(msg,&sn->low);
+	bool valid=readInt32(msg,&sn->high);
+	valid&=readUInt32(msg,&sn->low);
 	return true;
 }
 
-bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sns)
+bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sns)
 {
-	CDRMessage::readSequenceNumber(msg,&sns->base);
+	bool valid = true;
+	valid &=CDRMessage::readSequenceNumber(msg,&sns->base);
 	uint32_t numBits;
-	CDRMessage::readUInt32(msg,&numBits);
+	valid &=CDRMessage::readUInt32(msg,&numBits);
 	uint32_t n_octets = 4*((numBits+31)/32);
 	SequenceNumber_t auxSN;
 	for(uint8_t i=0;i<n_octets;i++)
 	{
 		octet o;
-		CDRMessage::readOctet(msg,&o);
+		valid &=CDRMessage::readOctet(msg,&o);
 		if(8*i<numBits)
 		{
 			for(uint8_t bit=0;bit<8;bit++)
@@ -154,19 +155,27 @@ bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sns)
 			}
 		}
 	}
-	return true;
+	return valid;
+}
+
+bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
+{
+	bool valid = true;
+	valid &=CDRMessage::readInt32(msg,&ts->seconds);
+	valid &=CDRMessage::readUInt32(msg,&ts->fraction);
+	return valid;
 }
 
 
 bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc) {
 	if(msg->pos+24>msg->length)
 		return false;
-	readInt32(msg,&loc->kind);
-	readUInt32(msg,&loc->port);
+	bool valid = readInt32(msg,&loc->kind);
+	valid&=readUInt32(msg,&loc->port);
 
-	readData(msg,loc->address,16);
+	valid&=readData(msg,loc->address,16);
 
-	return true;
+	return valid;
 }
 
 bool CDRMessage::readInt16(CDRMessage_t* msg,int16_t* i16) {
@@ -512,6 +521,5 @@ bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 
 } /* namespace rtps */
 } /* namespace eprosima */
-
 
 

@@ -62,6 +62,8 @@ public:
 	bool missing_changes(std::vector<ChangeFromWriter_t*>* missing);
 
 	uint32_t acknackCount;
+
+	uint32_t lastHeartbeatCount;
 	bool isMissingChangesEmpty;
 
 	HeartbeatResponseDelay heartbeatResponse;

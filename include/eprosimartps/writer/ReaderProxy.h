@@ -87,6 +87,8 @@ public:
 		NackResponseDelay nackResponse;
 		NackSupressionDuration nackSupression;
 
+		uint32_t lastAcknackCount;
+
 
 private:
 
