@@ -45,8 +45,8 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* R
 
 		std::vector<ChangeForReader_t*> unack;
 		{
-		boost::lock_guard<ReaderProxy> guard(*RP);
-		RP->unacked_changes(&unack);
+			boost::lock_guard<ReaderProxy> guard(*RP);
+			RP->unacked_changes(&unack);
 		}
 		if(!unack.empty())
 		{
@@ -62,13 +62,13 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* R
 				SW->participant->threadSend.sendSync(&msg,*lit);
 			for(lit = RP->param.multicastLocatorList.begin();lit!=RP->param.multicastLocatorList.end();lit++)
 				SW->participant->threadSend.sendSync(&msg,*lit);
+			//Reset TIMER
+			if(SW->reliability.heartbeatPeriod.to64time() > 0)
+				timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&RP->periodicHB,
+						boost::asio::placeholders::error,RP));
 		}
 	}
-	//Reset TIMER, the cancellation is managed in the receiving thread,
-	//when an acknack msg acknowledges all cache changes.
-	if(SW->reliability.heartbeatPeriod.to64time() > 0)
-		timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&RP->periodicHB,
-			boost::asio::placeholders::error,RP));
+
 
 	if(ec==boost::asio::error::operation_aborted)
 	{

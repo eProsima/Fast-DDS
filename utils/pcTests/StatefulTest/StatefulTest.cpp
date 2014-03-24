@@ -22,12 +22,12 @@
 #include <bitset>
 #include <cstdint>
 //
-#include "eprosimartps/DomainParticipant.h"
+#include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/Participant.h"
-#include "eprosimartps/Publisher.h"
-#include "eprosimartps/Subscriber.h"
+#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/ParameterListCreator.h"
+#include "eprosimartps/dds/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 
@@ -151,10 +151,10 @@ int main(int argc, char** argv){
 		Wparam.topicName = std::string("This is a test topic");
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		//inline Qos parameters
-		ParameterListCreator::addParameterLocator(&pub->ParamList,PID_UNICAST_LOCATOR,loc);
-		ParameterListCreator::addParameterPort(&pub->ParamList,PID_METATRAFFIC_UNICAST_PORT,1203);
-		ParameterListCreator::addParameterString(&pub->ParamList,PID_TOPIC_NAME,Wparam.topicName);
-		ParameterListCreator::addParameterString(&pub->ParamList,PID_TYPE_NAME,Wparam.topicDataType);
+		ParameterList::addParameterLocator(&pub->ParamList,PID_UNICAST_LOCATOR,&loc);
+			ParameterList::addParameterPort(&pub->ParamList,PID_METATRAFFIC_UNICAST_PORT,1203);
+			ParameterList::addParameterString(&pub->ParamList,PID_TOPIC_NAME,Wparam.topicName);
+			ParameterList::addParameterString(&pub->ParamList,PID_TYPE_NAME,Wparam.topicDataType);
 		loc.set_IP4_address(192,168,1,18);
 		pub->addReaderLocator(loc,true);
 		//Create new data and send it

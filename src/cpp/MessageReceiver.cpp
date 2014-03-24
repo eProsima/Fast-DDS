@@ -446,6 +446,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							if(!(*rit)->isRequestedChangesEmpty)
 								(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,(*rit)->nackResponse,
 										boost::asio::placeholders::error,(*rit)));
+							//Check if UNACKED CHANGES IS EMPTY
+
 
 						}
 						break;

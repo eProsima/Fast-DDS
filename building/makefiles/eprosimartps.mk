@@ -55,6 +55,7 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/PeriodicHeartbeat.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/NackResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/HeartbeatResponseDelay.cpp \
+		  $(BASEDIR)/src/cpp/timedevent/NackSupressionDuration.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \

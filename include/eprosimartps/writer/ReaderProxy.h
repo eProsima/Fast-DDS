@@ -84,10 +84,10 @@ public:
 	bool isRequestedChangesEmpty;
 
 	PeriodicHeartbeat periodicHB;
-		NackResponseDelay nackResponse;
-		NackSupressionDuration nackSupression;
+	NackResponseDelay nackResponse;
+	NackSupressionDuration nackSupression;
 
-		uint32_t lastAcknackCount;
+	uint32_t lastAcknackCount;
 
 
 private:
