@@ -41,11 +41,11 @@ void NackSupressionDuration::event(const boost::system::error_code& ec,ReaderPro
 	if(!ec)
 	{
 		boost::lock_guard<ReaderProxy> guard(*RP);
-		std::vector<ChangeForReader_t*>::iterator cit;
+		std::vector<ChangeForReader_t>::iterator cit;
 		for(cit=RP->changes.begin();cit!=RP->changes.end();cit++)
 		{
-			if((*cit)->status == UNDERWAY)
-				(*cit)->status = UNACKNOWLEDGED;
+			if(cit->status == UNDERWAY)
+				cit->status = UNACKNOWLEDGED;
 		}
 	}
 	if(ec==boost::asio::error::operation_aborted)
