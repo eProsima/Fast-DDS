@@ -99,10 +99,10 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 
 	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << send_socket.local_endpoint()  << endl);
 //	boost::posix_time::ptime t1,t2;
-//	t1 = boost::posix_time::microsec_clock::local_time();
+	//t1 = boost::posix_time::microsec_clock::local_time();
 	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
-//	t2 = boost::posix_time::microsec_clock::local_time();
-//	cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
+	//t2 = boost::posix_time::microsec_clock::local_time();
+	//cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
 	pDebugInfo (YELLOW <<  "SENT " << longitud << DEF << endl);
 }
 

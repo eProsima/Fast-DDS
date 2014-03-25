@@ -51,6 +51,7 @@ public:
 	ThreadListen* threadListen_ptr;
 
 	CDRMessage_t rec_msg;
+	ParameterList_t ParamList;
 
 private:
 	//!CDRMEssage_t being processed.

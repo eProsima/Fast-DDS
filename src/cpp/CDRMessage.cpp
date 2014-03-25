@@ -141,7 +141,7 @@ bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sn
 		valid &=CDRMessage::readOctet(msg,&o);
 		if(8*i<numBits)
 		{
-			for(uint8_t bit=0;bit<8;bit++)
+			for(uint8_t bit=0;bit<8;++bit)
 			{
 				if((bit+i*8)>numBits) //no more bits to analyze
 					break;
@@ -422,7 +422,7 @@ bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	uint8_t bit_n = 0;
 	octet o = 0;
 	//Compute the bitmap in terms of octets:
-	for(it=sns->set.begin();it!=sns->set.end();it++)
+	for(it=sns->set.begin();it!=sns->set.end();++it)
 	{
 		bit_n = it->to64long()-sns->base.to64long()-n_octet*8;
 		switch(bit_n)

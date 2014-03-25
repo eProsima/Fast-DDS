@@ -56,7 +56,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec,ReaderProxy* r
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<CacheChange_t*> not_relevant_changes;
 			std::vector<ChangeForReader_t*>::iterator cit;
-			for(cit = ch_vec.begin();cit!=ch_vec.end();cit++)
+			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
 				(*cit)->status = UNDERWAY;
 				if((*cit)->is_relevant)

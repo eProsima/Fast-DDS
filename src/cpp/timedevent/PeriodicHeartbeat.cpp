@@ -57,9 +57,9 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* R
 			RTPSMessageCreator::createMessageHeartbeat(&msg,SW->participant->guid.guidPrefix,ENTITYID_UNKNOWN,SW->guid.entityId,
 					first,last,SW->heartbeatCount,false,false);
 			std::vector<Locator_t>::iterator lit;
-			for(lit = RP->param.unicastLocatorList.begin();lit!=RP->param.unicastLocatorList.end();lit++)
+			for(lit = RP->param.unicastLocatorList.begin();lit!=RP->param.unicastLocatorList.end();++lit)
 				SW->participant->threadSend.sendSync(&msg,&(*lit));
-			for(lit = RP->param.multicastLocatorList.begin();lit!=RP->param.multicastLocatorList.end();lit++)
+			for(lit = RP->param.multicastLocatorList.begin();lit!=RP->param.multicastLocatorList.end();++lit)
 				SW->participant->threadSend.sendSync(&msg,&(*lit));
 			//Reset TIMER
 			if(SW->reliability.heartbeatPeriod.to64time() > 0)

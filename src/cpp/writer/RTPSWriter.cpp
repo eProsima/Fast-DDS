@@ -34,15 +34,11 @@ RTPSWriter::~RTPSWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool RTPSWriter::new_change(ChangeKind_t changeKind,
-		SerializedPayload_t* data, InstanceHandle_t handle,CacheChange_t* change)
+bool RTPSWriter::new_change(ChangeKind_t changeKind,CacheChange_t* change)
 {
 	change->kind = changeKind;
 	//change->sequenceNumber = lastChangeSequenceNumber;
 	change->writerGUID = guid;
-	change->instanceHandle = handle;
-	if(change->kind == ALIVE)
-		change->serializedPayload.copy(data);
 	return true;
 }
 
@@ -91,20 +87,20 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,
 		while(rtpsw_fullmsg.length + data_msg_size < rtpsw_fullmsg.max_size
 				&& (change_n + 1) <= changes->size()) //another one fits in the full message
 		{
-			change_n++;
-			cit++;
+			++change_n;
+			++cit;
 			DataSubM(&rtpsw_fullmsg, expectsInlineQos,*cit,ReaderId);
 			CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_fullmsg);
 		}
 		if(unicast!=NULL)
 		{
-			for(lit = unicast->begin();lit!=unicast->end();lit++)
+			for(lit = unicast->begin();lit!=unicast->end();++lit)
 				participant->threadSend.sendSync(&rtpsw_fullmsg,&(*lit));
 		}
 
 		if(multicast!=NULL)
 		{
-			for(lit = multicast->begin();lit!=multicast->end();lit++)
+			for(lit = multicast->begin();lit!=multicast->end();++lit)
 				participant->threadSend.sendSync(&rtpsw_fullmsg,&(*lit));
 		}
 
@@ -143,8 +139,8 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t*
 		while(rtpsw_fullmsg.length + data_msg_size < rtpsw_fullmsg.max_size
 				&& (change_n + 1) <= changes->size()) //another one fits in the full message
 		{
-			change_n++;
-			cit++;
+			++change_n;
+			++cit;
 			DataSubM(&rtpsw_fullmsg, expectsInlineQos,*cit,ReaderId);
 			CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_fullmsg);
 		}

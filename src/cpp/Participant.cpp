@@ -147,7 +147,7 @@ Participant::~Participant() {
 
 	//Destruct threads:
 	std::vector<ThreadListen*>::iterator it;
-	for(it=threadListenList.begin();it!=threadListenList.end();it++)
+	for(it=threadListenList.begin();it!=threadListenList.end();++it)
 		(*it)->~ThreadListen();
 
 }
@@ -275,12 +275,12 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	std::vector<Locator_t>::iterator locit_e;
 	bool assigned = false;
 
-	for(locit_e = endpoint->unicastLocatorList.begin();locit_e!=endpoint->unicastLocatorList.end();locit_e++)
+	for(locit_e = endpoint->unicastLocatorList.begin();locit_e!=endpoint->unicastLocatorList.end();++locit_e)
 	{
 		assigned = false;
-		for(thit=threadListenList.begin();thit!=threadListenList.end();thit++)
+		for(thit=threadListenList.begin();thit!=threadListenList.end();++thit)
 		{
-			for(locit_th = (*thit)->locList.begin();locit_th != (*thit)->locList.end();locit_th++)
+			for(locit_th = (*thit)->locList.begin();locit_th != (*thit)->locList.end();++locit_th)
 			{
 				if((*locit_th).port == (*locit_e).port) //Found a match, assign to this thread
 				{
@@ -298,13 +298,13 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 			assigned = true;
 		}
 	}
-	for(locit_e = endpoint->multicastLocatorList.begin();locit_e!=endpoint->multicastLocatorList.end();locit_e++)
+	for(locit_e = endpoint->multicastLocatorList.begin();locit_e!=endpoint->multicastLocatorList.end();++locit_e)
 	{
 		//FIXME: in multicast the IP is important, change this.
 		assigned = false;
-		for(thit=threadListenList.begin();thit!=threadListenList.end();thit++)
+		for(thit=threadListenList.begin();thit!=threadListenList.end();++thit)
 		{
-			for(locit_th = (*thit)->locList.begin();locit_th != (*thit)->locList.end();locit_th++)
+			for(locit_th = (*thit)->locList.begin();locit_th != (*thit)->locList.end();++locit_th)
 			{
 				if((*locit_th).port == (*locit_e).port) //Found a match, assign to this thread
 				{
@@ -340,7 +340,7 @@ bool Participant::removeEndpoint(Endpoint* end){
 	std::vector<RTPSReader*>::iterator rit;
 	bool found = false;
 	char type = 'W';
-	for(wit=writerList.begin();wit!=writerList.end();wit++)
+	for(wit=writerList.begin();wit!=writerList.end();++wit)
 	{
 		if((*wit)->guid == end->guid) //Found it
 		{
@@ -351,7 +351,7 @@ bool Participant::removeEndpoint(Endpoint* end){
 	}
 	if(!found)
 	{
-		for(rit=readerList.begin();rit!=readerList.end();rit++)
+		for(rit=readerList.begin();rit!=readerList.end();++rit)
 		{
 			if((*rit)->guid == end->guid) //Found it
 			{
@@ -370,7 +370,7 @@ bool Participant::removeEndpoint(Endpoint* end){
 	{
 		if(type == 'W')
 		{
-			for(wit = (*thit)->assoc_writers.begin();wit!=(*thit)->assoc_writers.end();wit++)
+			for(wit = (*thit)->assoc_writers.begin();wit!=(*thit)->assoc_writers.end();++wit)
 			{
 				if((*wit)->guid == end->guid)
 				{
@@ -383,7 +383,7 @@ bool Participant::removeEndpoint(Endpoint* end){
 		}
 		else if(type == 'R')
 		{
-			for(rit = (*thit)->assoc_readers.begin();rit!=(*thit)->assoc_readers.end();rit++)
+			for(rit = (*thit)->assoc_readers.begin();rit!=(*thit)->assoc_readers.end();++rit)
 			{
 				if((*rit)->guid == end->guid)
 				{

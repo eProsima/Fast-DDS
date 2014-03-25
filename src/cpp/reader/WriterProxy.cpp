@@ -54,7 +54,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
 
 	std::vector<ChangeFromWriter_t>::iterator cit;
 
-	for(cit=changes.begin();cit!=changes.end();cit++)
+	for(cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->status == UNKNOWN)
 		{
@@ -77,7 +77,7 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t* seqNum)
 		add_unknown_changes((seqNum++));
 
 	std::vector<ChangeFromWriter_t>::iterator cit;
-	for(cit=changes.begin();cit!=changes.end();cit++)
+	for(cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->status == UNKNOWN || cit->status == MISSING)
 		{
@@ -92,7 +92,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
 	std::vector<ChangeFromWriter_t>::iterator cit;
-	for(cit=changes.begin();cit!=changes.end();cit++)
+	for(cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->change->sequenceNumber.to64long() == change->sequenceNumber.to64long())
 		{
@@ -120,7 +120,7 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
 	std::vector<ChangeFromWriter_t>::iterator cit;
-	for(cit=changes.begin();cit!=changes.end();cit++)
+	for(cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->change->sequenceNumber.to64long() == seqNum->to64long())
 		{
@@ -173,7 +173,7 @@ bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
 	boost::lock_guard<WriterProxy> guard(*this);
 	missing->clear();
 	std::vector<ChangeFromWriter_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();it++)
+	for(it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->status == MISSING)
 			missing->push_back(&(*it));
@@ -196,7 +196,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 		else
 			return false;
 		std::vector<ChangeFromWriter_t>::iterator it;
-		for(it=changes.begin()+1;it!=changes.end();it++)
+		for(it=changes.begin()+1;it!=changes.end();++it)
 		{
 			if(it->status == RECEIVED || it->status == LOST)
 				*seqNum = it->change->sequenceNumber;

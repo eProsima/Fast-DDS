@@ -66,7 +66,7 @@ public:
 	 * @param change Pointer to store the change.
 	 * @return True if correct.
 	 */
-	bool new_change(ChangeKind_t changekind,SerializedPayload_t* data,InstanceHandle_t handle,CacheChange_t*change);
+	bool new_change(ChangeKind_t changekind,CacheChange_t*change);
 	RTPSMessageCreator MC;
 	Publisher* Pub;
 

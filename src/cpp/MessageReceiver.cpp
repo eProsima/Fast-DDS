@@ -251,7 +251,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
 		msg->pos += (octetsToInlineQos-RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
 	uint32_t inlineQosSize = 0;
-	ParameterList_t ParamList;
+
 	if(inlineQosFlag)
 	{
 		if(!ParameterList::readParameterList(msg,&ParamList,&inlineQosSize,&ch->kind,&ch->instanceHandle))
@@ -307,16 +307,12 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	//Look for the correct reader to add the change
 	std::vector<RTPSReader*>::iterator it;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();it++)
+	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
 			if((*it)->reader_cache.add_change(ch))
 			{
-				if((*it)->newMessageCallback !=NULL)
-					(*it)->newMessageCallback();
-				//else ///FIXME: removed for testing, put back.
-				(*it)->newMessageSemaphore->post();
 				if((*it)->stateType == STATEFUL)
 				{
 					StatefulReader* SR = (StatefulReader*)(*it);
@@ -326,6 +322,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WP->received_change_set(ch);
 					}
 				}
+				if((*it)->newMessageCallback !=NULL)
+					(*it)->newMessageCallback();
+				else ///FIXME: removed for testing, put back.
+					(*it)->newMessageSemaphore->post();
 			}
 		}
 	}
@@ -358,7 +358,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	//Look for the correct reader and writers:
 
 	std::vector<RTPSReader*>::iterator it;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();it++)
+	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
@@ -425,7 +425,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	//Look for the correct writer to use the acknack
 
 	std::vector<RTPSWriter*>::iterator it;
-	for(it=threadListen_ptr->assoc_writers.begin();it!=threadListen_ptr->assoc_writers.end();it++)
+	for(it=threadListen_ptr->assoc_writers.begin();it!=threadListen_ptr->assoc_writers.end();++it)
 	{
 		if((*it)->guid == writerGUID)
 		{
@@ -434,7 +434,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 				StatefulWriter* SF = (StatefulWriter*)(*it);
 				//Look for the readerProxy the acknack is from
 				std::vector<ReaderProxy*>::iterator rit;
-				for(rit = SF->matched_readers.begin();rit!=SF->matched_readers.end();rit++)
+				for(rit = SF->matched_readers.begin();rit!=SF->matched_readers.end();++rit)
 				{
 					if((*rit)->param.remoteReaderGuid == readerGUID)
 					{
@@ -483,7 +483,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 		return false;
 
 	std::vector<RTPSReader*>::iterator it;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();it++)
+	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
@@ -498,7 +498,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 					for(auxSN = gapStart;auxSN<=gapList.base-1;auxSN++)
 						WP->irrelevant_change_set(&auxSN);
 					std::vector<SequenceNumber_t>::iterator it;
-					for(it=gapList.set.begin();it!=gapList.set.end();it++)
+					for(it=gapList.set.begin();it!=gapList.set.end();++it)
 						WP->irrelevant_change_set(&(*it));
 				}
 				else
