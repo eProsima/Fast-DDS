@@ -45,7 +45,6 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* R
 
 		std::vector<ChangeForReader_t*> unack;
 		{
-			boost::lock_guard<ReaderProxy> guard(*RP);
 			RP->unacked_changes(&unack);
 		}
 		if(!unack.empty())

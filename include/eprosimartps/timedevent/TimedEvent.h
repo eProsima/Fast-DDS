@@ -32,12 +32,11 @@ namespace rtps{
 class TimedEvent {
 public:
 	TimedEvent();
-	virtual ~TimedEvent();
-	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval):
-		timer(new boost::asio::deadline_timer(*serv,interval)){}
+	virtual ~TimedEvent(){};
+	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
 
 	boost::asio::deadline_timer* timer;
-	virtual void event(const boost::system::error_code& ec);
+
 };
 
 
