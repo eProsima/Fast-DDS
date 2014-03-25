@@ -493,6 +493,8 @@ bool CDRMessage::addParameterKey(CDRMessage_t* msg, InstanceHandle_t* iHandle)
 	CDRMessage::addUInt16(msg,16);
 	for(uint8_t i=0;i<16;i++)
 		msg->buffer[msg->pos+i] = iHandle->value[i];
+	msg->pos+=16;
+	msg->length+=16;
 	return true;
 }
 

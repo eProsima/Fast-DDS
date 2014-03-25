@@ -21,20 +21,20 @@
 namespace eprosima {
 namespace dds {
 
-void ParameterList_t::get_QosMsg(CDRMessage_t** msg)
+void ParameterList_t::get_QosMsg(CDRMessage_t** msg,Endianness_t endian)
 {
-	if(has_changed_Qos)
+	if(has_changed_Qos || endian != QosMsg.msg_endian)
 	{
-		ParameterList::updateQosMsg(this);
+		ParameterList::updateQosMsg(this,endian);
 	}
 	*msg = &QosMsg;
 }
 
-void ParameterList_t::get_inlineQosMsg(CDRMessage_t** msg)
+void ParameterList_t::get_inlineQosMsg(CDRMessage_t** msg,Endianness_t endian)
 {
-	if(has_changed_inlineQos)
+	if(has_changed_inlineQos || endian != inlineQosMsg.msg_endian)
 	{
-		ParameterList::updateInlineQosMsg(this);
+		ParameterList::updateInlineQosMsg(this,endian);
 	}
 	*msg = &inlineQosMsg;
 }
@@ -95,9 +95,9 @@ bool ParameterList::addParameterPort(ParameterList_t* plist,ParameterId_t pid, u
 	return false;
 }
 
-bool ParameterList::updateQosMsg(ParameterList_t* plist)
+bool ParameterList::updateQosMsg(ParameterList_t* plist,Endianness_t endian)
 {
-	if(updateMsg(&plist->QosParams,&plist->QosMsg))
+	if(updateMsg(&plist->QosParams,&plist->QosMsg,endian))
 	{
 		plist->has_changed_Qos = false;
 		return true;
@@ -106,9 +106,9 @@ bool ParameterList::updateQosMsg(ParameterList_t* plist)
 		return false;
 }
 
-bool ParameterList::updateInlineQosMsg(ParameterList_t* plist)
+bool ParameterList::updateInlineQosMsg(ParameterList_t* plist,Endianness_t endian)
 {
-	if(updateMsg(&plist->QosParams,&plist->QosMsg))
+	if(updateMsg(&plist->inlineQosParams,&plist->inlineQosMsg,endian))
 	{
 		plist->has_changed_inlineQos = false;
 		return true;
@@ -118,10 +118,12 @@ bool ParameterList::updateInlineQosMsg(ParameterList_t* plist)
 }
 
 
-bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg)
+bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,Endianness_t endian)
 {
 	std::vector<Parameter_t*>::iterator it;
 	CDRMessage::initCDRMsg(msg);
+	msg->msg_endian = endian;
+//	pDebugInfo("Adding parameters to list: " << vec->size() << endl;);
 	for(it = vec->begin();it!=vec->end();it++)
 	{
 		switch((*it)->Pid)
@@ -175,9 +177,11 @@ bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg)
 		}
 		}
 	}
+	//pDebugInfo("Adding sentinel parameter "<<endl);
 	//Last parameter is always PID SENTINEL FOLLOWED BY two 0 octets.
 	CDRMessage::addUInt16(msg,PID_SENTINEL);
 	CDRMessage::addUInt16(msg,0);
+	pDebugInfo("Param msg created of size: " << msg->length << endl;)
 	return true;
 }
 
