@@ -62,11 +62,10 @@ public:
 	 * the call to add_change in the HistoryCache, to prevent incorrect increments.
 	 * @param changekind The type of change.
 	 * @param data Pointer to the serialized data that must be included in the change.
-	 * @param handle Instance Handle of the data.
-	 * @param change Pointer to store the change.
+	 * @param change Pointer to pointer to return the change.
 	 * @return True if correct.
 	 */
-	bool new_change(ChangeKind_t changekind,CacheChange_t*change);
+	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
 	RTPSMessageCreator MC;
 	Publisher* Pub;
 

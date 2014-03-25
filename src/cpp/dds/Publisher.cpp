@@ -69,23 +69,8 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 		return false;
 	}
 
-	CacheChange_t* change = new CacheChange_t();
-	if(W->topicKind == WITH_KEY)
-	{
-		type.getKey(Data,&change->instanceHandle);
-	}
-	if(kind == ALIVE)
-	{
-		//boost::posix_time::ptime t1,t2;
-	//	t1 = boost::posix_time::microsec_clock::local_time();
-		type.serialize(&change->serializedPayload,Data);
-		//t2 = boost::posix_time::microsec_clock::local_time();
-	//	cout<< "TIME total serialize operation: " <<(t2-t1).total_microseconds()<< endl;
-		W->new_change(kind,change);
-	}
-	else
-		W->new_change(kind,change);
-
+	CacheChange_t* change;
+	W->new_change(kind,Data,&change);
 
 	if(!W->writer_cache.add_change(change))
 	{

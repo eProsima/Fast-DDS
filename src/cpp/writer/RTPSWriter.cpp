@@ -34,11 +34,26 @@ RTPSWriter::~RTPSWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool RTPSWriter::new_change(ChangeKind_t changeKind,CacheChange_t* change)
+bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out)
 {
-	change->kind = changeKind;
+	CacheChange_t* ch;
+	TypeReg_t* type = Pub->getType();
+	if(changeKind == ALIVE)
+	{
+		ch = new CacheChange_t(type->byte_size);
+		type->serialize(&ch->serializedPayload,data);
+	}
+	else
+		ch = new CacheChange_t();
+
+	ch->kind = changeKind;
+	if(topicKind == WITH_KEY)
+		type->getKey(data,&ch->instanceHandle);
+
 	//change->sequenceNumber = lastChangeSequenceNumber;
-	change->writerGUID = guid;
+	ch->writerGUID = guid;
+
+	*change_out = ch;
 	return true;
 }
 
