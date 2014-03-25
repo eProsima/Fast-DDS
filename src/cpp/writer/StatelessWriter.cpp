@@ -121,15 +121,12 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 void StatelessWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderLocator>::iterator rit;
-	boost::lock_guard<ThreadSend> guard(participant->threadSend);
 	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
 	{
 		if(pushMode)
 		{
 			std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-			std::vector<Locator_t> loc;
-			loc.push_back(rit->locator);
-			sendChangesList(rit->unsent_changes,&loc,NULL,rit->expectsInlineQos,ENTITYID_UNKNOWN);
+			sendChangesList(&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,ENTITYID_UNKNOWN);
 			rit->unsent_changes.clear();
 		}
 		else
@@ -141,7 +138,7 @@ void StatelessWriter::unsent_changes_not_empty()
 			heartbeatCount++;
 			RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
 					first,last,heartbeatCount,true,false);
-			participant->threadSend.sendSync(&msg,rit->locator);
+			participant->threadSend.sendSync(&msg,&rit->locator);
 			rit->unsent_changes.clear();
 		}
 

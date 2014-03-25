@@ -34,7 +34,8 @@ public:
 	RTPSMessageCreator();
 	virtual ~RTPSMessageCreator();
 
-
+	CDRMessage_t rtpsmc_submsgElem;
+	CDRMessage_t rtpsmc_submsgHeader;
 	/**
 	 * Create a Header to the serialized message.
 	 * @param msg Pointer to the Message.

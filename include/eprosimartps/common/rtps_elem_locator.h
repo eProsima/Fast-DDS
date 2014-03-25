@@ -68,9 +68,9 @@ typedef struct Locator_t{
 		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
 		return ss.str();
 	}
-	unsigned long to_IP4_long()
+	uint32_t to_IP4_long()
 	{
-		long addr;
+		uint32_t addr;
 		octet* oaddr = (octet*)&addr;
 		if(DEFAULT_ENDIAN == LITTLEEND)
 		{

@@ -48,8 +48,8 @@ bool RTPSMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 {
 
 	//Create the two CDR msgs
-	CDRMessage_t submsgElem;
-
+	//CDRMessage_t submsgElem;
+	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)

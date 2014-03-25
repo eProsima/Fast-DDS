@@ -210,7 +210,7 @@ void StatefulWriter::unsent_changes_not_empty()
 			if(pushMode)
 			{
 				if(!relevant_changes.empty())
-					sendChangesList(relevant_changes,&(*rit)->param.unicastLocatorList,
+					sendChangesList(&relevant_changes,&(*rit)->param.unicastLocatorList,
 							&(*rit)->param.multicastLocatorList,
 							(*rit)->param.expectsInlineQos,
 							(*rit)->param.remoteReaderGuid.entityId);
@@ -235,9 +235,9 @@ void StatefulWriter::unsent_changes_not_empty()
 						first,last,heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
 				for(lit = (*rit)->param.unicastLocatorList.begin();lit!=(*rit)->param.unicastLocatorList.end();lit++)
-					participant->threadSend.sendSync(&msg,*lit);
+					participant->threadSend.sendSync(&msg,&(*lit));
 				for(lit = (*rit)->param.multicastLocatorList.begin();lit!=(*rit)->param.multicastLocatorList.end();lit++)
-					participant->threadSend.sendSync(&msg,*lit);
+					participant->threadSend.sendSync(&msg,&(*lit));
 			}
 		}
 	}
@@ -335,9 +335,9 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 			CDRMessage::appendMsg(&fullmsg,&submessage);
 		}
 		for(lit = unicast->begin();lit!=unicast->end();lit++)
-			participant->threadSend.sendSync(&fullmsg,*lit);
+			participant->threadSend.sendSync(&fullmsg,&(*lit));
 		for(lit = multicast->begin();lit!=multicast->end();lit++)
-			participant->threadSend.sendSync(&fullmsg,*lit);
+			participant->threadSend.sendSync(&fullmsg,&(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add
 }
