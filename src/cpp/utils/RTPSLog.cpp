@@ -27,6 +27,7 @@ std::ostringstream RTPSLog::DebugInfo;
 std::ostringstream RTPSLog::LongInfo;
 
 
+
 bool RTPSLog::instanceFlag = false;
 RTPSLog* RTPSLog::single = NULL;
 
@@ -37,7 +38,7 @@ void RTPSLog::printError()
 	ss << B_RED << "[eRTPS- Err] " << DEF <<  RTPSLog::Error.str() << DEF;
 	RTPSLog::printString(EPROSIMA_ERROR_VERBOSITY_LEVEL,ss.str());
 	RTPSLog::Error.str("");
-	RTPSLog::Info.clear();
+	RTPSLog::Error.clear();
 }
 
 void RTPSLog::printWarning()
@@ -46,7 +47,7 @@ void RTPSLog::printWarning()
 		ss << B_YELLOW << "[eRTPS-Warn] " << DEF <<  RTPSLog::Warning.str() << DEF;
 	RTPSLog::printString(EPROSIMA_WARNING_VERBOSITY_LEVEL,ss.str());
 	RTPSLog::Warning.str("");
-	RTPSLog::Info.clear();
+	RTPSLog::Warning.clear();
 }
 
 void RTPSLog::printInfo()
@@ -70,7 +71,7 @@ void RTPSLog::printDebugInfo()
 void RTPSLog::printLongInfo()
 {
 	std::stringstream ss;
-			ss << B_GREEN << "[eRTPS-Long Info] " << endl << DEF <<  RTPSLog::LongInfo.str() << DEF <<  B_GREEN << "[/eRTPS-Long Info] "<< DEF << endl ;
+			ss << B_GREEN << "[eRTPS-Long Info] " << std::endl << DEF <<  RTPSLog::LongInfo.str() << DEF <<  B_GREEN << "[/eRTPS-Long Info] "<< DEF << endl ;
 	RTPSLog::printString(EPROSIMA_LONGINFO_VERBOSITY_LEVEL,ss.str());
 	RTPSLog::LongInfo.str("");
 	RTPSLog::LongInfo.clear();
@@ -82,7 +83,11 @@ void RTPSLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL lvl,std::string s)
 {
 	RTPSLog* RL = getInstance();
 	if(RL->verbosityLevel >= lvl)
+	{
+		RL->print_mutex.lock();
 		std::cout << s;
+		RL->print_mutex.unlock();
+	}
 }
 
 RTPSLog* RTPSLog::getInstance()

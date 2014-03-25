@@ -1,0 +1,91 @@
+/*!
+ * @mainpage eProsima RTPS Implementation
+ * <div id="mainpage" style="width:95%;text-align:justify;text-justify:inter-word">
+ * <b>Purpose</b><br/>
+ * Real-Time Publish-Subscribe (RTPS) is the wire interoperability protocol defined for the Data-Distribution Service (DDS) standard by 
+ *the Object Management Group (OMG) consortium. This protocol standard is also defined by the OMG in the specification document 
+ *“The Real-Time Publish-Subscribe Wire Protocol. DDS Interoperability Wire Protocol Specification (DDS-RTPS)” that can 
+ *be obtained from the OMG web-page. The main objective of this specification is that all participants in a DDS communication 
+ *structure, even if they use different vendor's implementations, can interoperate.
+ * <br/><br/>
+ *<b>Scope</b><br/>
+ * The scope of this implementation is going to be limited by the RTPS protocol specification of the OMG. Since the main purpose 
+ *of this design is to facilitate the implementation of a standalone RTPS wire protocol as close to the specification as possible, 
+ *the included features will be the ones described in the OMG document. The OMG specification defines message formats, interpretation 
+ *and usage scenarios for any application willing to use RTPS protocol
+* The most important features are:
+*<ul>
+* <li>Enable best-effort and reliable publish-subscribe communications for real-time applications.</li>
+* <li>Plug and play connectivity so that any new application are automatically discovered by the other members of the network.</li>
+* <li>Modularity and scalability to allow continuous growth with complex and simple devices in the network.</li>
+*</ul>
+ *
+ *<b>System architecture</b><br/>
+ * A general view of the system architecture can be found below:
+ * <img src="general_architecture.png" width="500" align="left" style="padding:0px 20px 0px 0px">
+ *This diagram schematically shows how the user will be able to create and manage a participant on the network, 
+ *as well as send and receive message through the Publisher and Subscriber APIs. This process will be internally 
+ *managed by the Writer and Reader endpoints. The User APIs, although included in the library, are not part of the 
+ *RTPS implementation. These are created to facilitate the testing of the system. To achieve full DDS functionality 
+ *the user should interact with the Writer and Reader through a DDS application.  
+ 
+ *<b>Modules</b><br/>
+There are five different modules in the designed implementation:
+<ul>
+<li><b>Public (DDS) Module:</b> This module presents a public API to use this RTPS implementation. It allows the creation of Publisher and 
+Subscribers and sending and receiving data messages.</li>
+<li><b>Management Module:</b> This module allows the user to create a RTPS Participant for its application manages the creation of 
+Writers and Readers. Furthermore, this module will contain the Discovery methods when they are implemented in following versions.</li>
+<li><b>Writer Module:</b> This module allows the user to send messages to its matched subscribers. In order to tackle the absence of a 
+Discovery module in the current version, this module also allows to add subscribers to a certain publisher. 
+This module also keeps track of a history of the changes in the data and transmit them to all its subscribers.</li>
+<li><b>Reader Module:</b> This module manages the subscription end of the RTPS protocol. Its a mirrored module of the Writer Module, 
+since it provides the user with the tools to manage the changes received from the publisher. </li>
+<li><b>Common Module:</b> All common data structures and data types are included here. A structure type is considered common if 
+it is needed by two or more modules. The HistoryCache and the RTPS Messages definitions are one of the most important of this common structures.
+</ul>
+ <br/>
+ <b>Interaction</b><br/>
+There are two different types on interaction defined in this architecture. On one side the interaction with the user of the protocol and on the other, the interaction between the modules of the library. These two types of interaction will now be detailed:
+<ul><li><b>User Interaction:</b> The user of this library will interact with two or more of the modules that contain public APIs (Management Writer and Reader). Using the APIs the user will be able to create a Participant and add Publisher and/or Subscriber. When this entities have been created the user will be able to send and receive data as RTPS Messages. 
+<li><b>Modules Interaction:</b> Both the Writer and the Reader include in their classes an instance of HistoryCache where they maintain information about the changes in the data-objects. Depending on the user interaction with the corresponding methods of the API, the Writer and the Reader will add, get or remove CacheChanges from theirs corresponding history.
+</ul>
+<br/>
+ <b>Behavior Implementation</b><br/>
+The correct behavior of the RTPS protocol will be achieved by using an event-based implementation. Multiple events will be handled by different threads allowing the application to efficiently tackle the different tasks. The thread structure, as well as the main events will be discussed in this section.
+<br/>
+ <b>Thread Structure</b><br/>
+For each RTPS participant, there would be different threads that manage different aspects of the RTPS implementation. Each application using this implementation will have at least these threads: helo 
+<ul><li><b>Main thread:</b> This thread will be the thread managed by the dds application or the user. The user will interact with the objects through the defined public API's. The API will provide blocking mechanism to wait for new messages to arrive in case of a Subscriber. 
+<li><b>Send thread:</b> A single thread will be in charge of sending all RTPS messages to the different Writers and Readers need. This thread will be created when for each Participant. This version sends all messages synchronously, so no actual thread will be created. However, future versions will allow the delay of some messages in order to group them and this will be performed in a different thread.
+<li><b>Listen thread:</b> These threads will be in charge of listening to the different ports our application needs. These threads will be in charge of waiting until a new RTPS message is received. Each listen thread can be associated with one or more writers and readers. These thread process each new received message and transmit it to the corresponding entities.
+<li><b>Event thread(s):</b> This thread will be in charge of processing the different events triggered wither by some periodic condition or by actions performed by the user in the main thread. More than one thread can be consigned to this task depending on the work load in the application. These threads are indistinguishable from each other and no control to in which thread a specific action is performed will be provided. Thus, the tasks triggered by a specific event should be bundled into a single function to assure they are performed in the correct order. Examples of this events would be the periodic sending of heartbeats or the removal of Caches from the History. This type of threads is NOT implemented in the first version.
+</ul>
+ <b> Main events</b><br/>
+There are multiple events that are triggered wither directly by some action performed by the user, the reception of messages or even periodically. A list of the main events and the actions that need to be performed after them is included below, whereas a detailed description of all the events associated with each class of the design will be included in the detailed implementation chapter.
+<ul><li><b>User-triggered events:</b> These events are triggered directly after the user performs some action, either directly to the RTPS Writer or its associated HistoryCache. 
+<li><b>Messages-triggered events:</b> These events are triggered by the reception of an RTPS message. For example, the reception of an ACKNACK message would trigger a change in the status of some CacheChanges in the HistoryCache and, maybe, the re-send of some packets to a specific Reader.
+<li><b>Periodic events:</b> Some events must be triggered periodically according to DDS rules. For example, heartbeat packages must be send each heartbeatPeriod to all matching Readers.
+</ul>
+</div>
+*
+ */
+
+ /*!
+ * @defgroup EPROSIMARTPSAPIREFERENCE eProsima RTPS API Reference
+ * @brief eProsima RTPS API grouped in modules.
+ */
+
+ /*!
+ * @defgroup RTPSMODULE RTPS
+ * @ingroup EPROSIMARTPSAPIREFERENCE
+ * @brief RTPS API
+ * Edit description in utils doxygen doxyfiles mainpage
+ */
+
+/*!
+ * @defgroup DDSMODULE DDS
+ * @ingroup EPROSIMARTPSAPIREFERENCE
+ * @brief DDS API
+ * Edit description in utils doxygen doxyfiles mainpage
+ */

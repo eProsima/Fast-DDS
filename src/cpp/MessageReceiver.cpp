@@ -271,8 +271,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		msg->pos+=2; //CDR Options, not used in this version
 		if(dataFlag)
 		{
-			if(ch->serializedPayload.data !=NULL)
-				free(ch->serializedPayload.data);
 			ch->serializedPayload.data = (octet*)malloc(payload_size-2-2);
 			ch->serializedPayload.length = payload_size-2-2;
 			CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);

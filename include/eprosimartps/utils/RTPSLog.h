@@ -15,14 +15,17 @@
  *              grcanosa@gmail.com  	
  */
 
+
+#ifndef RTPSLOG_H_
+#define RTPSLOG_H_
+
 #include <iostream>
 #include <ostream>
 #include "eprosimartps/common/colors.h"
 
 #include "eprosimartps/rtps_all.h"
+#include <boost/thread/mutex.hpp>
 
-#ifndef RTPSLOG_H_
-#define RTPSLOG_H_
 
 #if defined(__DEBUG)
 #define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
@@ -101,11 +104,13 @@ public:
 	static std::ostringstream Info;
 	static std::ostringstream DebugInfo;
 	static std::ostringstream LongInfo;
+
 	///@}
 
 
 private:
 	EPROSIMA_LOG_VERBOSITY_LEVEL verbosityLevel;
+	boost::mutex print_mutex;
 	static bool instanceFlag;
 	static RTPSLog *single;
 	RTPSLog()

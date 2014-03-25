@@ -129,9 +129,23 @@ int main(int argc, char** argv){
 	loc.port = 10469;
 	loc.set_IP4_address(192,168,1,16);
 
-	//Create both publisher and subscriber.
+	ReaderParams_t Rparam;
 	WriterParams_t Wparam;
-	Wparam.historySize = 10;
+	if(type == 1)
+	{
+		Wparam.historySize = 10;
+		Rparam.historySize = 15;
+	}
+	else if(type == 2)
+	{
+		Wparam.historySize = 1000;
+		Rparam.historySize = 1000;
+	}
+
+
+	//Create both publisher and subscriber.
+
+
 	Wparam.pushMode = true;
 	Wparam.stateKind = STATELESS;
 	Wparam.topicKind = NO_KEY;
@@ -152,8 +166,7 @@ int main(int argc, char** argv){
 		pub->addReaderLocator(loc,false);
 	}
 
-	ReaderParams_t Rparam;
-	Rparam.historySize = 15;
+
 	Rparam.stateKind = STATELESS;
 	Rparam.topicDataType = std::string("LatencyType");
 	Rparam.topicName = std::string("This is a test topic");
