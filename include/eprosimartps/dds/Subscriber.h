@@ -157,6 +157,11 @@ public:
 	 */
 	bool takeAllCache(std::vector<void*>* data_vec);
 
+	/**
+	 * Read the last element added to the history.
+	 */
+	bool readLastAdded(void* data_ptr);
+
 ///@}
 
 	ParameterList_t ParamList;

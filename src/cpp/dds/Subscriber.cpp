@@ -113,7 +113,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 		rElem.seqNum = minSeqNum;
 		rElem.writerGuid = minSeqNumGuid;
 		readElements.push_back(rElem);
-		CacheChange_t* ch = new CacheChange_t();
+		CacheChange_t* ch;
 		R->reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
 		if(ch->kind == ALIVE)
 			type.deserialize(&ch->serializedPayload,data_ptr);
@@ -122,7 +122,6 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 			pWarning("Reading a NOT ALIVE change ");
 		}
 
-		delete(ch);
 		return true;
 	}
 	pWarning("Not read anything. Reader Cache empty" << endl);
@@ -131,7 +130,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 bool Subscriber::readCache(SequenceNumber_t sn, GUID_t wGuid,void* data_ptr)
 {
 	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	CacheChange_t* ch = new CacheChange_t();
+	CacheChange_t* ch;
 	if(R->reader_cache.get_change(sn,wGuid,&ch))
 	{
 		if(ch->kind == ALIVE)
@@ -148,7 +147,6 @@ bool Subscriber::readCache(SequenceNumber_t sn, GUID_t wGuid,void* data_ptr)
 			r_elem.writerGuid = wGuid;
 			readElements.push_back(r_elem);
 		}
-		delete(ch);
 		return true;
 	}
 	else
@@ -158,6 +156,36 @@ bool Subscriber::readCache(SequenceNumber_t sn, GUID_t wGuid,void* data_ptr)
 		return false;
 	}
 }
+
+bool Subscriber::readLastAdded(void* data_ptr)
+{
+	boost::lock_guard<HistoryCache> guard(R->reader_cache);
+	if(!R->reader_cache.changes.empty())
+	{
+		CacheChange_t* change;
+		if(R->reader_cache.get_last_added_cache(&change))
+		{
+			ReadElement_t rElem;
+			rElem.seqNum = change->sequenceNumber;
+			rElem.writerGuid = change->writerGUID;
+			readElements.push_back(rElem);
+
+			if(change->kind == ALIVE)
+				type.deserialize(&change->serializedPayload,data_ptr);
+			else
+			{
+				pWarning("Reading a NOT ALIVE change ");
+			}
+
+			return true;
+		}
+		else
+			pWarning("Problem reading last addded"<<endl);
+	}
+	pWarning("Not read anything. Reader Cache empty" << endl);
+	return false;
+}
+
 
 bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 {
@@ -190,7 +218,7 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 				rElem.seqNum = minSeqNum;
 				rElem.writerGuid = minSeqNumGuid;
 				readElements.push_back(rElem);
-				CacheChange_t* ch = new CacheChange_t();
+				CacheChange_t* ch;
 				R->reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
 				if(ch->kind == ALIVE)
 				{
@@ -200,7 +228,7 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 				}
 				else
 					{pWarning("Cache with NOT ALIVE" << endl);}
-				delete(ch);
+
 			}
 		}
 	}
