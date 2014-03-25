@@ -73,6 +73,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 	//	pDebugInfo("Publisher with name: "<<Pub->getTopicName()<<" created."<<endl);
 		SW->Pub = Pub;
 		Pub->type = typeR;
+		SW->type = typeR;
 		return Pub;
 	}
 	else if(WParam.stateKind == STATEFUL)
@@ -83,6 +84,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 		Publisher* Pub = new Publisher((RTPSWriter*)SF);
 		SF->Pub = Pub;
 		Pub->type = typeR;
+		SF->type = typeR;
 		return Pub;
 	}
 	return NULL;
