@@ -45,7 +45,7 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
 	(*ch_number)=0;
-	for(it = changes.begin();it!=changes.end();it++){
+	for(it = changes.begin();it!=changes.end();++it){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
 				(*it)->writerGUID == writerGuid)
 		{
@@ -60,7 +60,7 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr) {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = changes.begin();it!=changes.end();it++){
+	for(it = changes.begin();it!=changes.end();++it){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
 				(*it)->writerGUID == writerGuid)
 		{
@@ -98,7 +98,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	{
 		//Check that the same change has not been already introduced
 		std::vector<CacheChange_t*>::iterator it;
-		for(it=changes.begin();it!=changes.end();it++)
+		for(it=changes.begin();it!=changes.end();++it)
 		{
 			if((*it)->sequenceNumber.to64long() == a_change->sequenceNumber.to64long() &&
 					(*it)->writerGUID == a_change->writerGUID)
@@ -121,7 +121,7 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = changes.begin();it!=changes.end();it++)
+	for(it = changes.begin();it!=changes.end();++it)
 	{
 		if((*it)->sequenceNumber.to64long() == seqnum.to64long()
 				&& (*it)->writerGUID == guid)
@@ -159,7 +159,7 @@ bool HistoryCache::remove_all_changes()
 	if(!changes.empty())
 	{
 		std::vector<CacheChange_t*>::iterator it;
-		for(it = changes.begin();it!=changes.end();it++)
+		for(it = changes.begin();it!=changes.end();++it)
 		{
 			delete (*it);
 		}
@@ -203,7 +203,7 @@ void HistoryCache::updateMaxMinSeqNum()
 		maxSeqNum = minSeqNum = changes[0]->sequenceNumber;
 		maxSeqNumGuid = minSeqNumGuid = changes[0]->writerGUID;
 
-		for(it = changes.begin();it!=changes.end();it++){
+		for(it = changes.begin();it!=changes.end();++it){
 			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
 			{
 				maxSeqNum = (*it)->sequenceNumber;
@@ -235,7 +235,7 @@ void HistoryCache::updateMinSeqNum()
 		minSeqNum = changes[0]->sequenceNumber;
 		minSeqNumGuid = changes[0]->writerGUID;
 		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
-		for(it = changes.begin();it!=changes.end();it++)
+		for(it = changes.begin();it!=changes.end();++it)
 		{
 			if((*it)->sequenceNumber.to64long() < minSeqNum.to64long())
 			{
@@ -261,7 +261,7 @@ void HistoryCache::updateMaxSeqNum()
 		maxSeqNum = changes[0]->sequenceNumber;
 		maxSeqNumGuid = changes[0]->writerGUID;
 		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
-		for(it = changes.begin();it!=changes.end();it++){
+		for(it = changes.begin();it!=changes.end();++it){
 			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
 			{
 				maxSeqNum = (*it)->sequenceNumber;

@@ -70,19 +70,21 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	}
 
 	CacheChange_t* change = new CacheChange_t();
-	InstanceHandle_t handle;
-	SerializedPayload_t Payload;
 	if(W->topicKind == WITH_KEY)
 	{
-		type.getKey(Data,&handle);
+		type.getKey(Data,&change->instanceHandle);
 	}
 	if(kind == ALIVE)
 	{
-		type.serialize(&Payload,Data);
-		W->new_change(kind,&Payload,handle,change);
+		//boost::posix_time::ptime t1,t2;
+	//	t1 = boost::posix_time::microsec_clock::local_time();
+		type.serialize(&change->serializedPayload,Data);
+		//t2 = boost::posix_time::microsec_clock::local_time();
+	//	cout<< "TIME total serialize operation: " <<(t2-t1).total_microseconds()<< endl;
+		W->new_change(kind,change);
 	}
 	else
-		W->new_change(kind,NULL,handle,change);
+		W->new_change(kind,change);
 
 
 	if(!W->writer_cache.add_change(change))

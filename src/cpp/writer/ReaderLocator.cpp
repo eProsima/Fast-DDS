@@ -40,7 +40,7 @@ bool ReaderLocator::next_requested_change(CacheChange_t** cpoin) {
 		std::vector<CacheChange_t*>::iterator it;
 		SequenceNumber_t minseqnum = requested_changes[0]->sequenceNumber;
 
-		for(it=requested_changes.begin();it!=requested_changes.end();it++){
+		for(it=requested_changes.begin();it!=requested_changes.end();++it){
 			if(minseqnum > (*it)->sequenceNumber){
 				minseqnum = (*it)->sequenceNumber;
 				*cpoin = *it;
@@ -58,7 +58,7 @@ bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin) {
 		SequenceNumber_t minseqnum = unsent_changes[0]->sequenceNumber;
 		(*cpoin) = unsent_changes[0];
 		it2 = it;
-		for(it=unsent_changes.begin();it!=unsent_changes.end();it++)
+		for(it=unsent_changes.begin();it!=unsent_changes.end();++it)
 		{
 			if(minseqnum > (*it)->sequenceNumber)
 			{
@@ -75,7 +75,7 @@ bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin) {
 void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,GUID_t myGUID,HistoryCache* history) {
 	std::vector<SequenceNumber_t>::iterator it;
 	requested_changes.clear();
-	for(it = seqs.begin();it!=seqs.end();it++)
+	for(it = seqs.begin();it!=seqs.end();++it)
 	{
 		CacheChange_t** cpoin = NULL;
 
@@ -86,7 +86,7 @@ void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>seqs,GUID
 
 bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
 	std::vector<CacheChange_t*>::iterator it;
-	for(it=requested_changes.begin();it!=requested_changes.end();it++)
+	for(it=requested_changes.begin();it!=requested_changes.end();++it)
 	{
 		if(cpoin == *it)
 		{
@@ -100,7 +100,7 @@ bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
 
 bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin){
 	std::vector<CacheChange_t*>::iterator it;
-	for(it=unsent_changes.begin();it!=unsent_changes.end();it++)
+	for(it=unsent_changes.begin();it!=unsent_changes.end();++it)
 	{
 		if(cpoin->sequenceNumber.to64long() == (*it)->sequenceNumber.to64long())
 		{

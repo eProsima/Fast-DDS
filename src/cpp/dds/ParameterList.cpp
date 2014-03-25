@@ -124,7 +124,7 @@ bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,E
 	CDRMessage::initCDRMsg(msg);
 	msg->msg_endian = endian;
 //	pDebugInfo("Adding parameters to list: " << vec->size() << endl;);
-	for(it = vec->begin();it!=vec->end();it++)
+	for(it = vec->begin();it!=vec->end();++it)
 	{
 		switch((*it)->Pid)
 		{

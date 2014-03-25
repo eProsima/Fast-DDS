@@ -59,7 +59,7 @@ StatefulWriter::StatefulWriter(WriterParams_t* param)
 bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 {
 	std::vector<ReaderProxy*>::iterator it;
-	for(it=matched_readers.begin();it!=matched_readers.end();it++)
+	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->param.remoteReaderGuid == RPparam.remoteReaderGuid)
 		{
@@ -70,7 +70,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 	ReaderProxy* rp = new ReaderProxy(&RPparam,this);
 
 	std::vector<CacheChange_t*>::iterator cit;
-	for(cit=writer_cache.changes.begin();cit!=writer_cache.changes.end();it++)
+	for(cit=writer_cache.changes.begin();cit!=writer_cache.changes.end();++it)
 	{
 		ChangeForReader_t changeForReader;
 		changeForReader.change = (*cit);
@@ -95,7 +95,7 @@ bool StatefulWriter::matched_reader_remove(ReaderProxy_t Rp)
 bool StatefulWriter::matched_reader_remove(GUID_t readerGuid)
 {
 	std::vector<ReaderProxy*>::iterator it;
-	for(it=matched_readers.begin();it!=matched_readers.end();it++)
+	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->param.remoteReaderGuid == readerGuid)
 		{
@@ -112,7 +112,7 @@ bool StatefulWriter::matched_reader_remove(GUID_t readerGuid)
 bool StatefulWriter::matched_reader_lookup(GUID_t readerGuid,ReaderProxy** RP)
 {
 	std::vector<ReaderProxy*>::iterator it;
-	for(it=matched_readers.begin();it!=matched_readers.end();it++)
+	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->param.remoteReaderGuid == readerGuid)
 		{
@@ -126,7 +126,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t readerGuid,ReaderProxy** RP)
 bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 {
 	std::vector<ReaderProxy*>::iterator it;
-	for(it=matched_readers.begin();it!=matched_readers.end();it++)
+	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		ChangeForReader_t changeForReader;
 		if((*it)->getChangeForReader(change,&changeForReader))
@@ -148,7 +148,7 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 	if(!matched_readers.empty())
 	{
 		std::vector<ReaderProxy*>::iterator it;
-		for(it=matched_readers.begin();it!=matched_readers.end();it++)
+		for(it=matched_readers.begin();it!=matched_readers.end();++it)
 		{
 			ChangeForReader_t changeForReader;
 			changeForReader.change = change;
@@ -183,7 +183,7 @@ void StatefulWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderProxy*>::iterator rit;
 	boost::lock_guard<ThreadSend> guard(participant->threadSend);
-	for(rit=matched_readers.begin();rit!=matched_readers.end();rit++)
+	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
 		boost::lock_guard<ReaderProxy> guard(*(*rit));
 		std::vector<ChangeForReader_t*> ch_vec;
@@ -195,7 +195,7 @@ void StatefulWriter::unsent_changes_not_empty()
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<CacheChange_t*> not_relevant_changes;
 			std::vector<ChangeForReader_t*>::iterator cit;
-			for(cit = ch_vec.begin();cit!=ch_vec.end();cit++)
+			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
 				(*cit)->status = UNDERWAY;
 				if((*cit)->is_relevant)
@@ -234,9 +234,9 @@ void StatefulWriter::unsent_changes_not_empty()
 				RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
 						first,last,heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
-				for(lit = (*rit)->param.unicastLocatorList.begin();lit!=(*rit)->param.unicastLocatorList.end();lit++)
+				for(lit = (*rit)->param.unicastLocatorList.begin();lit!=(*rit)->param.unicastLocatorList.end();++lit)
 					participant->threadSend.sendSync(&msg,&(*lit));
-				for(lit = (*rit)->param.multicastLocatorList.begin();lit!=(*rit)->param.multicastLocatorList.end();lit++)
+				for(lit = (*rit)->param.multicastLocatorList.begin();lit!=(*rit)->param.multicastLocatorList.end();++lit)
 					participant->threadSend.sendSync(&msg,&(*lit));
 			}
 		}
@@ -260,7 +260,7 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 	uint32_t count = 1;
 	bool set_first = true;
 	bool new_pair = false;
-	for(it=changes->begin()+1;it!=changes->end();it++)
+	for(it=changes->begin()+1;it!=changes->end();++it)
 	{
 		if(new_pair)
 		{
@@ -327,16 +327,16 @@ void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
 		while(fullmsg.length + gap_msg_size < fullmsg.max_size
 				&& (gap_n + 1) <=Sequences.size()) //another one fits in the full message
 		{
-			gap_n++;
-			seqit++;
+			++gap_n;
+			++seqit;
 			CDRMessage::initCDRMsg(&submessage);
 			RTPSMessageCreator::createSubmessageGap(&submessage,seqit->first,seqit->second,
 													readerId,this->guid.entityId);
 			CDRMessage::appendMsg(&fullmsg,&submessage);
 		}
-		for(lit = unicast->begin();lit!=unicast->end();lit++)
+		for(lit = unicast->begin();lit!=unicast->end();++lit)
 			participant->threadSend.sendSync(&fullmsg,&(*lit));
-		for(lit = multicast->begin();lit!=multicast->end();lit++)
+		for(lit = multicast->begin();lit!=multicast->end();++lit)
 			participant->threadSend.sendSync(&fullmsg,&(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add

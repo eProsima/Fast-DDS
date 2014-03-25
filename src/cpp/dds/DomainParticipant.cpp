@@ -53,7 +53,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 	TypeReg_t typeR;
 	std::vector<TypeReg_t>::iterator it;
 	bool found = false;
-	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();it++)
+	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
 	{
 		if(it->dataType == WParam.topicDataType)
 		{
@@ -95,7 +95,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t R
 	TypeReg_t typeR;
 	std::vector<TypeReg_t>::iterator it;
 	bool found = false;
-	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();it++)
+	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
 	{
 		if(it->dataType == RParam.topicDataType)
 		{
@@ -136,7 +136,7 @@ bool DomainParticipant::registerType(std::string in_str,
 	dds::DomainParticipant *dp;
 		dp = dds::DomainParticipant::getInstance();
 	std::vector<TypeReg_t>::iterator it;
-	for(it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();it++)
+	for(it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
 	{
 		if(it->dataType == in_str)
 			return false;

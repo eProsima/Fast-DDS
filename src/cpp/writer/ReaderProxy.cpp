@@ -49,7 +49,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<ChangeForReader_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();it++)
+	for(it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->change->sequenceNumber.to64long() == change->sequenceNumber.to64long()
 				&& it->change->writerGUID == change->writerGUID)
@@ -69,7 +69,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<ChangeForReader_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();it++)
+	for(it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->change->sequenceNumber.to64long() < seqNum->to64long())
 		{
@@ -83,10 +83,10 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<SequenceNumber_t>::iterator sit;
-	for(sit=seqNumSet->begin();sit!=seqNumSet->end();sit++)
+	for(sit=seqNumSet->begin();sit!=seqNumSet->end();++sit)
 	{
 		std::vector<ChangeForReader_t>::iterator it;
-		for(it=changes.begin();it!=changes.end();it++)
+		for(it=changes.begin();it!=changes.end();++it)
 		{
 			if(it->change->sequenceNumber.to64long() == sit->to64long())
 			{
@@ -145,7 +145,7 @@ bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
 	changesList->clear();
 	boost::lock_guard<ReaderProxy> guard(*this);
 	std::vector<ChangeForReader_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();it++)
+	for(it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->status == status)
 		{

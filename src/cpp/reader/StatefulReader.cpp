@@ -50,7 +50,7 @@ StatefulReader::StatefulReader(ReaderParams_t* param)
 bool StatefulReader::matched_writer_add(WriterProxy_t* WPparam)
 {
 	std::vector<WriterProxy*>::iterator it;
-	for(it=matched_writers.begin();it!=matched_writers.end();it++)
+	for(it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == WPparam->remoteWriterGuid)
 		{
@@ -67,7 +67,7 @@ bool StatefulReader::matched_writer_add(WriterProxy_t* WPparam)
 bool StatefulReader::matched_writer_remove(GUID_t writerGuid)
 {
 	std::vector<WriterProxy*>::iterator it;
-	for(it=matched_writers.begin();it!=matched_writers.end();it++)
+	for(it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == writerGuid)
 		{
@@ -90,7 +90,7 @@ bool StatefulReader::matched_writer_remove(WriterProxy_t Wp)
 bool StatefulReader::matched_writer_lookup(GUID_t writerGUID,WriterProxy** WP)
 {
 	std::vector<WriterProxy*>::iterator it;
-	for(it=matched_writers.begin();it!=matched_writers.end();it++)
+	for(it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == writerGUID)
 		{

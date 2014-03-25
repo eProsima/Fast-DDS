@@ -65,7 +65,7 @@ int Subscriber::getHistory_n()
 bool Subscriber::isCacheRead(SequenceNumber_t seqNum, GUID_t guid)
 {
 	std::vector<ReadElement_t>::iterator it;
-	for(it=readElements.begin();it!=readElements.end();it++)
+	for(it=readElements.begin();it!=readElements.end();++it)
 	{
 		if(seqNum.to64long()== it->seqNum.to64long() &&
 				guid == it->writerGuid)
@@ -96,7 +96,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 		}
 		else
 		{
-			for(it=R->reader_cache.changes.begin();it!=R->reader_cache.changes.end();it++)
+			for(it=R->reader_cache.changes.begin();it!=R->reader_cache.changes.end();++it)
 			{
 				if(!isCacheRead((*it)->sequenceNumber,(*it)->writerGUID))
 				{
@@ -174,7 +174,7 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 		bool read_this = false;
 		if(readElements.empty())
 			noneRead = true;
-		for(it=R->reader_cache.changes.begin();it!=R->reader_cache.changes.end();it++)
+		for(it=R->reader_cache.changes.begin();it!=R->reader_cache.changes.end();++it)
 		{
 			read_this = false;
 			if(noneRead)
@@ -224,7 +224,14 @@ bool Subscriber::readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUI
 		if(R->reader_cache.get_change(*minSeqNum,*minSeqNumGuid,&ch))
 		{
 			if(ch->kind == ALIVE)
+			{
+
+				//boost::posix_time::ptime t1,t2;
+				//t1 = boost::posix_time::microsec_clock::local_time();
 				type.deserialize(&ch->serializedPayload,data_ptr);
+				//t2 = boost::posix_time::microsec_clock::local_time();
+				//cout<< "TIME total deserialize operation: " <<(t2-t1).total_microseconds()<< endl;
+			}
 			else
 			{pWarning("Cache with NOT ALIVE" << endl)}
 			return true;
@@ -246,7 +253,7 @@ bool Subscriber::readAllCache(std::vector<void*>* data_vec)
 	{
 		std::vector<CacheChange_t*>::iterator it;
 		std::vector<ReadElement_t> readElem2;
-		for(it=R->reader_cache.changes.begin();it!=R->reader_cache.changes.end();it++)
+		for(it=R->reader_cache.changes.begin();it!=R->reader_cache.changes.end();++it)
 		{
 			ReadElement_t r_elem;
 			r_elem.seqNum = (*it)->sequenceNumber;
@@ -333,7 +340,7 @@ bool Subscriber::minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadEl
 		std::vector<ReadElement_t>::iterator it;
 		ReadElement_t minRead;
 		minRead.seqNum.high = -1;
-		for(it=readElements.begin();it!=readElements.end();it++)
+		for(it=readElements.begin();it!=readElements.end();++it)
 		{
 			if(minRead.seqNum.high == -1 ||
 				minRead.seqNum.to64long() > it->seqNum.to64long())
@@ -357,7 +364,7 @@ bool Subscriber::removeSeqFromRead(SequenceNumber_t sn,GUID_t guid)
 	{
 		std::vector<ReadElement_t>::iterator it;
 
-		for(it=readElements.begin();it!=readElements.end();it++)
+		for(it=readElements.begin();it!=readElements.end();++it)
 		{
 			if(it->seqNum.to64long()==sn.to64long()&&
 					it->writerGuid == guid)

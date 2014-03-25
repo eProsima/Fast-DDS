@@ -54,7 +54,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec,WriterPro
 			wp->available_changes_max(&sns.base);
 			sns.base++;
 			std::vector<ChangeFromWriter_t*>::iterator cit;
-			for(cit = ch_vec.begin();cit!=ch_vec.end();cit++)
+			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
 				sns.set.push_back((*cit)->change->sequenceNumber);
 			}
@@ -63,9 +63,9 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec,WriterPro
 			RTPSMessageCreator::createMessageAcknack(&msg,SR->participant->guid.guidPrefix,
 					SR->guid.entityId,wp->param.remoteWriterGuid.entityId,sns,wp->acknackCount,false);
 			std::vector<Locator_t>::iterator lit;
-			for(lit = wp->param.unicastLocatorList.begin();lit!=wp->param.unicastLocatorList.end();lit++)
+			for(lit = wp->param.unicastLocatorList.begin();lit!=wp->param.unicastLocatorList.end();++lit)
 				SR->participant->threadSend.sendSync(&msg,&(*lit));
-			for(lit = wp->param.multicastLocatorList.begin();lit!=wp->param.multicastLocatorList.end();lit++)
+			for(lit = wp->param.multicastLocatorList.begin();lit!=wp->param.multicastLocatorList.end();++lit)
 				SR->participant->threadSend.sendSync(&msg,&(*lit));
 
 		}

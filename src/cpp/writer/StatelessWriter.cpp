@@ -56,12 +56,12 @@ StatelessWriter::~StatelessWriter() {
 
 bool StatelessWriter::reader_locator_add(ReaderLocator a_locator) {
 	std::vector<ReaderLocator>::iterator rit;
-	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++){
+	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		if(rit->locator == a_locator.locator)
 			return false;
 	}
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = writer_cache.changes.begin();it!=writer_cache.changes.end();it++){
+	for(it = writer_cache.changes.begin();it!=writer_cache.changes.end();++it){
 		a_locator.unsent_changes.push_back((*it));
 	}
 	reader_locator.push_back(a_locator);
@@ -70,7 +70,7 @@ bool StatelessWriter::reader_locator_add(ReaderLocator a_locator) {
 
 bool StatelessWriter::reader_locator_remove(Locator_t locator) {
 	std::vector<ReaderLocator>::iterator it;
-	for(it=reader_locator.begin();it!=reader_locator.end();it++){
+	for(it=reader_locator.begin();it!=reader_locator.end();++it){
 		if(it->locator == locator){
 			reader_locator.erase(it);
 			return true;
@@ -82,9 +82,9 @@ bool StatelessWriter::reader_locator_remove(Locator_t locator) {
 void StatelessWriter::unsent_changes_reset() {
 	std::vector<ReaderLocator>::iterator rit;
 	std::vector<CacheChange_t*>::iterator cit;
-	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++){
+	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		rit->unsent_changes.clear();
-		for(cit=writer_cache.changes.begin();cit!=writer_cache.changes.end();cit++){
+		for(cit=writer_cache.changes.begin();cit!=writer_cache.changes.end();++cit){
 			rit->unsent_changes.push_back((*cit));
 		}
 	}
@@ -101,13 +101,32 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 	if(!reader_locator.empty())
 	{
 		std::vector<ReaderLocator>::iterator rit;
-		for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
+		for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 		{
 			rit->unsent_changes.push_back(cptr);
+
+			if(pushMode)
+			{
+				std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+				sendChangesList(&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,ENTITYID_UNKNOWN);
+				rit->unsent_changes.clear();
+			}
+			else
+			{
+				CDRMessage_t msg;
+				SequenceNumber_t first,last;
+				writer_cache.get_seq_num_min(&first,NULL);
+				writer_cache.get_seq_num_max(&last,NULL);
+				heartbeatCount++;
+				RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
+						first,last,heartbeatCount,true,false);
+				participant->threadSend.sendSync(&msg,&rit->locator);
+				rit->unsent_changes.clear();
+			}
 		}
 		//Order vector.
 		//std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-		unsent_changes_not_empty();
+		//unsent_changes_not_empty();
 
 	}
 	else
@@ -121,7 +140,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 void StatelessWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderLocator>::iterator rit;
-	for(rit=reader_locator.begin();rit!=reader_locator.end();rit++)
+	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 	{
 		if(pushMode)
 		{
