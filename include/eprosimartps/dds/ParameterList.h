@@ -39,21 +39,24 @@ public:
 	CDRMessage_t inlineQosMsg;
 	bool has_changed_Qos;
 	bool has_changed_inlineQos;
-	void get_QosMsg(CDRMessage_t** msg_out);
-	void get_inlineQosMsg(CDRMessage_t** msg_out);
+	void get_QosMsg(CDRMessage_t** msg_out,Endianness_t endian);
+	void get_inlineQosMsg(CDRMessage_t** msg_out,Endianness_t endian);
 };
 
 
 class ParameterList{
 public:
-	static bool updateQosMsg(ParameterList_t* plist);
-	static bool updateInlineQosMsg(ParameterList_t* plist);
-	static bool updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg);
+	static bool updateQosMsg(ParameterList_t* plist,Endianness_t endian);
+	static bool updateInlineQosMsg(ParameterList_t* plist,Endianness_t endian);
+	static bool updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,Endianness_t endian);
 	static bool addParameterString(ParameterList_t* plist,ParameterId_t pid,std::string& in_str);
 	static bool addParameterLocator(ParameterList_t* plist,ParameterId_t pid,Locator_t* loc);
 	static bool addParameterPort(ParameterList_t* plist,ParameterId_t pid,uint32_t port);
 
 	static bool readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle);
+
+	static Endianness_t get_Qos_endian(ParameterList_t* plist){return plist->QosMsg.msg_endian;};
+	static Endianness_t get_inlineQos_endian(ParameterList_t* plist){return plist->inlineQosMsg.msg_endian;};
 
 };
 

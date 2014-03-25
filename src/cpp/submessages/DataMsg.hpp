@@ -70,7 +70,8 @@ bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* c
 	//Find out flags
 	bool dataFlag,keyFlag;
 	if(change->kind == ALIVE)
-	{		dataFlag = true;
+	{
+		dataFlag = true;
 		keyFlag = false;
 	}
 	else
@@ -113,14 +114,16 @@ bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* c
 
 		if(inlineQos != NULL) //inlineQoS
 		{
-			if(inlineQos->has_changed_inlineQos)
+			if(inlineQos->has_changed_inlineQos || ParameterList::get_inlineQos_endian(inlineQos)!=submsgElem.msg_endian)
 			{
-				ParameterList::updateInlineQosMsg(inlineQos);
+			//	cout << "Updating endian message" << endl;
+				ParameterList::updateInlineQosMsg(inlineQos,submsgElem.msg_endian);
 			}
 			CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
-			CDRMessage::addParameterStatus(&submsgElem,status);
+			if(change->kind != ALIVE)
+				CDRMessage::addParameterStatus(&submsgElem,status);
+			//cout << "Adding message of length: " << inlineQos->inlineQosMsg.length <<" and endian: " << inlineQos->inlineQosMsg.msg_endian<< endl;
 			CDRMessage::appendMsg(&submsgElem,&inlineQos->inlineQosMsg);
-
 		}
 
 		//Add Serialized Payload
