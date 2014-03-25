@@ -67,7 +67,7 @@ public:
 	MessageReceiver MR;
 	bool first;
 	//boost::asio::ip::udp::resolver resolver;
-
+	Locator_t send_locator;
 
 };
 

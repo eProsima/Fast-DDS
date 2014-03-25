@@ -16,7 +16,7 @@ STATETEST_SED_OUTPUT_DIR_DEBUG= $(subst /,\\/,$(STATETEST_OUTDIR_DEBUG))
 STATETEST_SED_OUTPUT_DIR_RELEASE= $(subst /,\\/,$(STATETEST_OUTDIR_RELEASE))
 
 STATETEST_CFLAGS = $(CFLAGS) -std=c++0x 
-STATETEST_CFLAGS_DEBUG = $(CFLAGS_DEBUG) -std=c++0x 
+STATETEST_CFLAGS_DEBUG = $(CFLAGS_DEBUG) -std=c++0x  
 
 STATETEST_TARGET_DEBUG= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTestd
 STATETEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTest
@@ -24,7 +24,7 @@ STATETEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTest
 STATETEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(EPROSIMADIR)/code
 
-STATETEST_LIBS_DEBUG=   $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartpsd -lboost_system -lboost_thread
+STATETEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartpsd -lboost_system -lboost_thread
 STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartps -lboost_system -lboost_thread
 
 STATETEST_SRC_CFILES=

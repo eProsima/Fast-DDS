@@ -60,15 +60,15 @@ void ThreadListen::listen() {
 		pDebugInfo (BLUE << "Message received of length: " << MR.rec_msg.length << " from endpoint: " << sender_endpoint << DEF << endl);
 
 		//Get address into Locator
-		Locator_t send_loc;
-		send_loc.port = sender_endpoint.port();
-		LOCATOR_ADDRESS_INVALID(send_loc.address);
+
+		send_locator.port = sender_endpoint.port();
+		LOCATOR_ADDRESS_INVALID(send_locator.address);
 		for(int i=0;i<4;i++)
 		{
-			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
+			send_locator.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
 		}
 		try{
-			MR.processCDRMsg(participant->guid.guidPrefix,send_loc,&MR.rec_msg);
+			MR.processCDRMsg(participant->guid.guidPrefix,&send_locator,&MR.rec_msg);
 			pDebugInfo ("Message processed " << endl);
 
 		}
