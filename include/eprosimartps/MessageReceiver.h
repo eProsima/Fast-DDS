@@ -45,7 +45,7 @@ public:
 	 * @param[in] msg Pointer to the message
 	 */
 	void processCDRMsg(GuidPrefix_t participantguidprefix,
-					Locator_t loc, CDRMessage_t*msg);
+					Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Thread that contains this MessageReceiver.
 	ThreadListen* threadListen_ptr;
@@ -74,6 +74,8 @@ private:
 	Time_t timestamp;
 	//!Version of the protocol used by the receiving end.
 	ProtocolVersion_t destVersion;
+	//!Default locator used in reset
+	Locator_t defUniLoc;
 
 
 	/**@name Processing methods.

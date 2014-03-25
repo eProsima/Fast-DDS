@@ -45,6 +45,10 @@ MessageReceiver::MessageReceiver()
 	haveTimestamp = false;
 	TIME_INVALID(timestamp);
 
+	defUniLoc.kind = LOCATOR_KIND_UDPv4;
+	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
+	defUniLoc.port = LOCATOR_PORT_INVALID;
+
 	/*unicastReplyLocatorList.clear();
 	multicastReplyLocatorList.clear();*/
 }
@@ -65,15 +69,13 @@ void MessageReceiver::reset(){
 		unicastReplyLocatorList.clear();
 	if(!multicastReplyLocatorList.empty())
 		multicastReplyLocatorList.clear();
-	Locator_t defUniL;
-	defUniL.kind = LOCATOR_KIND_UDPv4;
-	LOCATOR_ADDRESS_INVALID(defUniL.address);
-	defUniL.port = LOCATOR_PORT_INVALID;
-	unicastReplyLocatorList.push_back(defUniL);
-	multicastReplyLocatorList.push_back(defUniL);
+
+
+	unicastReplyLocatorList.push_back(defUniLoc);
+	multicastReplyLocatorList.push_back(defUniLoc);
 }
 
-void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t loc,CDRMessage_t*msg)
+void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t* loc,CDRMessage_t*msg)
 {
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
@@ -82,9 +84,9 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t participantguidprefix,Locator_t
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
-	for(uint8_t i = 0;i<16;i++)
+	for(uint8_t i = 12;i<16;i++)
 	{
-		unicastReplyLocatorList[0].address[i] = loc.address[i];
+		unicastReplyLocatorList[0].address[i] = loc->address[i];
 	}
 
 	msg->pos = 0; //Start reading at 0

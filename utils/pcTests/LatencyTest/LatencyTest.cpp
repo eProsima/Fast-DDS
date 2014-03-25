@@ -113,7 +113,7 @@ int main(int argc, char** argv){
 		t2= boost::posix_time::microsec_clock::local_time();
 
 	overhead = (t2-t1);
-	long overhead_value = overhead.total_microseconds()/400;
+	long overhead_value = ceil(overhead.total_microseconds()/400);
 	cout << "Overhead " << overhead.total_microseconds()/400 << endl;
 
 
