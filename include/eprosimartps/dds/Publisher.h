@@ -60,17 +60,13 @@ public:
 	/**
 	* Get the topic name.
 	 */
-	const std::string& getTopicName()
-	{
-		return topicName;
-	}
+	std::string getTopicName();
+
 	/**
 	* Get the data type.
 	 */
-	const std::string& getTopicDataType()
-	{
-		return topicDataType;
-	}
+	std::string getTopicDataType();
+
 
 	/**
 	 * Write data to the topic.
@@ -134,8 +130,7 @@ public:
 private:
 	RTPSWriter* W;
 	//bool initialized;
-	std::string topicName;
-	std::string topicDataType;
+
 	TypeReg_t type;
 
 	bool add_new_change(ChangeKind_t kind,void* Data);

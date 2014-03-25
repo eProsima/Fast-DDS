@@ -50,6 +50,8 @@ StatefulWriter::StatefulWriter(WriterParams_t* param)
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
+	topicName = param->topicName;
+		topicDataType = param->topicDataType;
 
 }
 

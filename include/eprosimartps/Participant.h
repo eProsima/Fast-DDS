@@ -75,12 +75,12 @@ public:
 	 * @param[in] Wparam Parameters to use in the creation.
 	 * @return True if correct.
 	 */
-	bool createStatelessWriter(StatelessWriter* SWriter, WriterParams_t Wparam);
+	bool createStatelessWriter(StatelessWriter** SWriter, WriterParams_t Wparam);
 
 
 
 
-	bool createStatefulWriter(StatefulWriter* SWriter,WriterParams_t Wparam);
+	bool createStatefulWriter(StatefulWriter** SWriter,WriterParams_t Wparam);
 
 	/**
 	 * Create a StatelessReader from a parameter structure and add it to the participant.
@@ -88,7 +88,7 @@ public:
 	 * @param[in] RParam Parameters to use in the creation.
 	 * @return True if correct.
 	 */
-	bool createStatelessReader(StatelessReader* SReader,ReaderParams_t RParam);
+	bool createStatelessReader(StatelessReader** SReader,ReaderParams_t RParam);
 	//bool createStatefulWriter(StatefulWriter*);
 	//bool createStatelessReader(RTPSReader*);
 	//bool createStetefulReader(StatefulReader* Reader)

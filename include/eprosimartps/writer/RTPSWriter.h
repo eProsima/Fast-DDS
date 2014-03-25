@@ -76,7 +76,8 @@ public:
 
 	void DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,EntityId_t ReaderId);
 
-
+	std::string topicName;
+	std::string topicDataType;
 
 };
 
