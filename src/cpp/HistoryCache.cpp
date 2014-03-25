@@ -72,6 +72,21 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 	return false;
 }
 
+bool HistoryCache::get_last_added_cache(CacheChange_t** ch_ptr)
+{
+	boost::lock_guard<HistoryCache> guard(*this);
+	if(!changes.empty())
+	{
+		*ch_ptr = *(changes.end()-1);
+		return true;
+	}
+	else
+	{
+		*ch_ptr = NULL;
+		return false;
+	}
+}
+
 bool HistoryCache::add_change(CacheChange_t* a_change)
 {
 	pDebugInfo ( "Trying to lock history " << endl);
@@ -91,7 +106,6 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 		rtpswriter->lastChangeSequenceNumber++;
 		a_change->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
 		changes.push_back(a_change);
-		updateMaxMinSeqNum();
 
 	}
 	else if(historyKind == READER)
@@ -108,7 +122,6 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 			}
 		}
 		changes.push_back(a_change);
-		updateMaxMinSeqNum();
 	}
 	if(changes.size()==historySize)
 		isHistoryFull = true;
@@ -129,7 +142,6 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
 			delete (*it);
 			changes.erase(it);
 			isHistoryFull = false;
-			updateMaxMinSeqNum();
 			pDebugInfo("Change removed"<<endl)
 			return true;
 		}
@@ -145,7 +157,6 @@ bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
 	delete(*it);
 	changes.erase(it);
 	isHistoryFull = false;
-	updateMaxMinSeqNum();
 	pDebugInfo("Change removed"<<endl);
 	return true;
 
@@ -164,7 +175,6 @@ bool HistoryCache::remove_all_changes()
 			delete (*it);
 		}
 		changes.clear();
-		updateMaxMinSeqNum();
 		isHistoryFull = false;
 		return true;
 	}
@@ -173,7 +183,7 @@ bool HistoryCache::remove_all_changes()
 
 bool HistoryCache::isFull()
 {
-	boost::lock_guard<HistoryCache> guard(*this);
+	//boost::lock_guard<HistoryCache> guard(*this);
 	if(isHistoryFull)
 		return true;
 	else
@@ -182,6 +192,8 @@ bool HistoryCache::isFull()
 
 bool HistoryCache::get_seq_num_min(SequenceNumber_t* seqnum,GUID_t* guid)
 {
+	boost::lock_guard<HistoryCache> guard(*this);
+		updateMaxMinSeqNum();
 	*seqnum = minSeqNum;
 	*guid = minSeqNumGuid;
 	return true;
@@ -189,6 +201,8 @@ bool HistoryCache::get_seq_num_min(SequenceNumber_t* seqnum,GUID_t* guid)
 
 bool HistoryCache::get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid)
 {
+	boost::lock_guard<HistoryCache> guard(*this);
+	updateMaxMinSeqNum();
 	*seqnum = maxSeqNum;
 	*guid = maxSeqNumGuid;
 	return true;
@@ -196,7 +210,7 @@ bool HistoryCache::get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid)
 
 void HistoryCache::updateMaxMinSeqNum()
 {
-	boost::lock_guard<HistoryCache> guard(*this);
+	//boost::lock_guard<HistoryCache> guard(*this);
 	if(!changes.empty())
 	{
 		std::vector<CacheChange_t*>::iterator it;

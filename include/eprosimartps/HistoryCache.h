@@ -52,6 +52,13 @@ public:
 	 */
 	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr_ptr,uint16_t *ch_number);
 	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr_ptr);
+
+	/**
+	 * Get the last element added to the history.
+	 * @param ch_ptr
+	 * @return True if correct.
+	 */
+	bool get_last_added_cache(CacheChange_t** ch_ptr);
 	/**
 	 * Add a change to the HistoryCache.
 	 * @param[in] a_change Pointer to the change to add.

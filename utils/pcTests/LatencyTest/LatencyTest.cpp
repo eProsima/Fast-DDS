@@ -191,7 +191,7 @@ int main(int argc, char** argv){
 			t1 = boost::posix_time::microsec_clock::local_time();
 			pub->write((void*)&Latency);
 			sub->blockUntilNewMessage();
-			sub->readMinSeqCache((void*)&Latency,&seq,&guid);
+			sub->readLastAdded((void*)&Latency);
 			t2 = boost::posix_time::microsec_clock::local_time();
 			cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
 			total+=(t2-t1).total_microseconds()-overhead_value;
@@ -211,7 +211,7 @@ int main(int argc, char** argv){
 	}
 	cout << endl;
 	cout << "Mean: " << total/samples << endl;
-	uint64_t min_us= 0;
+	uint64_t min_us= 150000;
 	for(int i =0;i<n_samples;i++)
 	{
 		min_us = min(min_us,us[i]);
