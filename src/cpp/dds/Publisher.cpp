@@ -160,6 +160,17 @@ bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
 	return true;
 }
 
+std::string Publisher::getTopicName()
+	{
+		return W->topicName;
+	}
+
+	std::string Publisher::getTopicDataType()
+	{
+		return W->topicDataType;
+	}
+
+
 
 } /* namespace dds */
 } /* namespace eprosima */

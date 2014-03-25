@@ -43,6 +43,8 @@ StatelessWriter::StatelessWriter(WriterParams_t* param)
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
 	topicKind = param->topicKind;
+	topicName = param->topicName;
+	topicDataType = param->topicDataType;
 }
 
 

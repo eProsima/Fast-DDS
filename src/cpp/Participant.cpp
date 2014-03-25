@@ -152,10 +152,9 @@ Participant::~Participant() {
 
 }
 
-bool Participant::createStatelessWriter(StatelessWriter* SWriter,WriterParams_t Wparam) {
+bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t Wparam) {
 
-	if(SWriter == NULL)
-		SWriter = new StatelessWriter(&Wparam);
+	StatelessWriter* SWriter = new StatelessWriter(&Wparam);
 
 	//Check if locator lists are empty:
 	if(SWriter->unicastLocatorList.empty())
@@ -175,18 +174,19 @@ bool Participant::createStatelessWriter(StatelessWriter* SWriter,WriterParams_t 
 	SWriter->guid.entityId.value[2] = c[0];
 	SWriter->guid.entityId.value[1] = c[1];
 	SWriter->guid.entityId.value[0] = c[2];
-	//Look for receiving threads that are already listening to this writer receiving addreesses.
+	//Look for receiving threads that are already listening to this writer receiving addresses.
 	assignEnpointToListenThreads((Endpoint*)SWriter,'W');
 	//Wait until the thread is correctly created
 
 	writerList.push_back((RTPSWriter*)SWriter);
+
+	*SW_out = SWriter;
 	return true;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter* SFWriter,WriterParams_t Wparam) {
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t Wparam) {
 
-	if(SFWriter == NULL)
-		SFWriter = new StatefulWriter(&Wparam);
+	StatefulWriter* SFWriter = new StatefulWriter(&Wparam);
 	//Check if locator lists are empty:
 	if(SFWriter->unicastLocatorList.empty())
 		SFWriter->unicastLocatorList = defaultUnicastLocatorList;
@@ -205,22 +205,23 @@ bool Participant::createStatefulWriter(StatefulWriter* SFWriter,WriterParams_t W
 	SFWriter->guid.entityId.value[2] = c[0];
 	SFWriter->guid.entityId.value[1] = c[1];
 	SFWriter->guid.entityId.value[0] = c[2];
-	//Look for receiving threads that are already listening to this writer receiving addreesses.
+	//Look for receiving threads that are already listening to this writer receiving addresses.
 	assignEnpointToListenThreads((Endpoint*)SFWriter,'W');
 	//Wait until the thread is correctly created
 
 	writerList.push_back((RTPSWriter*)SFWriter);
+
+	*SFW_out = SFWriter;
 	return true;
 }
 
 
 
 
-bool Participant::createStatelessReader(StatelessReader* SReader,
+bool Participant::createStatelessReader(StatelessReader** SR_out,
 		ReaderParams_t RParam) {
 
-	if(SReader == NULL)
-		SReader = new StatelessReader(&RParam);
+		StatelessReader* SReader = new StatelessReader(&RParam);
 
 	//If NO UNICAST
 	if(SReader->unicastLocatorList.empty())
@@ -248,6 +249,8 @@ bool Participant::createStatelessReader(StatelessReader* SReader,
 	assignEnpointToListenThreads((Endpoint*)SReader,'R');
 
 	readerList.push_back((RTPSReader*)SReader);
+
+	*SR_out = SReader;
 	return true;
 
 
