@@ -107,8 +107,6 @@ typedef struct SerializedPayload_t{
 	SerializedPayload_t(short len){
 		encapsulation = CDR_BE;
 		length = len;
-		if(data!=NULL)
-			free(data);
 		data = (octet*)malloc(length);
 	}
 	~SerializedPayload_t(){

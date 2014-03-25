@@ -92,6 +92,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 
 Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t RParam) {
 	//Look for the correct type registration
+	pInfo("Creating Subscriber"<<endl;);
 	dds::DomainParticipant *dp;
 			dp = dds::DomainParticipant::getInstance();
 	TypeReg_t typeR;
