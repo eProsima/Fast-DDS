@@ -84,6 +84,8 @@ public:
 	CDRMessage_t rtpsw_submessage;
 	CDRMessage_t rtpsw_fullmsg;
 
+	TypeReg_t type;
+
 };
 
 } /* namespace rtps */
