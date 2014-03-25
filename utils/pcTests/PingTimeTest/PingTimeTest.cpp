@@ -164,15 +164,15 @@ int main(int argc, char** argv){
 	Wparam.historySize = 10;
 	Wparam.pushMode = true;
 	Wparam.stateKind = STATELESS;
-	Wparam.topicKind = WITH_KEY;
+	Wparam.topicKind = NO_KEY;
 	Wparam.topicDataType = std::string("TestType");
 	Wparam.topicName = std::string("This is a test topic");
 	Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 	//One of this two as locators.
-	//loc.set_IP4_address(192,168,1,18);
-	//pub->addReaderLocator(loc,true);
+//	loc.set_IP4_address(192,168,1,18);
+//	pub->addReaderLocator(loc,true);
 	loc.set_IP4_address(192,168,1,21);
-	pub->addReaderLocator(loc,true);
+	pub->addReaderLocator(loc,false);
 
 	ReaderParams_t Rparam;
 	Rparam.historySize = 15;
@@ -181,6 +181,7 @@ int main(int argc, char** argv){
 	Rparam.topicName = std::string("This is a test topic");
 	Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+
 	TestType tp;
 	COPYSTR(tp.name,"Obje1");
 	tp.value = 0;

@@ -67,6 +67,11 @@ typedef struct CacheChange_t{
 	{
 
 	}
+	CacheChange_t(uint32_t payload_size):
+		serializedPayload(payload_size)
+	{
+
+	}
 	/*!
 	 * Copy a different change into this one. All the elements are copied, included the data, allocating new memory.
 	 * @param[in] ch_ptr Pointer to the change.

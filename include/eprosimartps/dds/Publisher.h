@@ -48,6 +48,7 @@ namespace dds {
  */
 class RTPS_DllAPI Publisher {
 	friend class DomainParticipant;
+	friend class RTPSWriter;
 public:
 	Publisher();
 	/**
@@ -127,6 +128,8 @@ public:
 
 	//! Parameter List associated with this Publisher (Qos).
 	ParameterList_t ParamList;
+
+	TypeReg_t* getType(){return (&type);};
 private:
 	RTPSWriter* W;
 	//bool initialized;
