@@ -135,6 +135,19 @@ int main(int argc, char** argv){
 	else
 		type = WR;
 
+	boost::posix_time::ptime t1,t2,t3;
+		boost::posix_time::time_duration overhead;
+	//CLOCK OVERHEAD
+	t1 = boost::posix_time::microsec_clock::local_time();
+	for(int i=0;i<400;i++)
+		t2= boost::posix_time::microsec_clock::local_time();
+
+	overhead = (t2-t1);
+	long overhead_value = overhead.total_microseconds()/400;
+	cout << "Overhead " << overhead.total_microseconds()/400 << endl;
+
+
+
 	//my_sleep(1);
 	ParticipantParams_t PParam;
 	PParam.defaultSendPort = 14456;
@@ -172,11 +185,12 @@ int main(int argc, char** argv){
 	COPYSTR(tp.name,"Obje1");
 	tp.value = 0;
 	tp.price = 1.3;
-	boost::posix_time::ptime t1,t2,t3;
+
 	SequenceNumber_t seq;
 	GUID_t guid;
 	uint32_t total=0;
 	int samples = 0;
+
 	for(int i=1;i<1000;i++)
 	{
 		cout << "S ";
@@ -185,8 +199,8 @@ int main(int argc, char** argv){
 		sub->blockUntilNewMessage();
 		sub->readMinSeqCache((void*)&tp,&seq,&guid);
 		t2 = boost::posix_time::microsec_clock::local_time();
-		cout<< "T: " <<(t2-t1).total_microseconds()<< " | ";
-		total+=(t2-t1).total_microseconds();
+		cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
+		total+=(t2-t1).total_microseconds()-overhead_value;
 		samples++;
 		if(samples%10==0)
 			cout << endl;

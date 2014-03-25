@@ -140,7 +140,7 @@ bool ReaderProxy::next_unsent_change(ChangeForReader_t* changeForReader)
 }
 
 bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
-		ChangeForReaderStatus_t status)
+								ChangeForReaderStatus_t status)
 {
 	changesList->clear();
 	boost::lock_guard<ReaderProxy> guard(*this);

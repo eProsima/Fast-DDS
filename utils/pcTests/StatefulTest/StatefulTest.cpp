@@ -118,14 +118,21 @@ void newMsgCallback()
 int main(int argc, char** argv){
 	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
 	int type;
+	int address[4];
 	if(argc > 1)
 	{
-		RTPSLog::Info << "Parsing arguments: " << argv[1] << endl;
-		RTPSLog::printInfo();
+		cout << "Parsing arguments: " << argv[1] << endl;
 		if(strcmp(argv[1],"writer")==0)
 			type = 1;
 		if(strcmp(argv[1],"reader")==0)
 			type = 2;
+		if(argc > 2)
+		{
+			address[0] = atoi(argv[2]);
+			address[1] = atoi(argv[3]);
+			address[2] = atoi(argv[4]);
+			address[3] = atoi(argv[5]);
+		}
 	}
 	else
 		type = WR;
