@@ -69,7 +69,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec,ReaderProxy* r
 				}
 			}
 			if(!relevant_changes.empty())
-				SW->sendChangesList(relevant_changes,&rp->param.unicastLocatorList,
+				SW->sendChangesList(&relevant_changes,&rp->param.unicastLocatorList,
 						&rp->param.multicastLocatorList,
 						rp->param.expectsInlineQos,
 						rp->param.remoteReaderGuid.entityId);

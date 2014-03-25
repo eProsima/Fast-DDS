@@ -31,6 +31,9 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps{
 
+// Auxiliary message to avoid creation of new messages each time.
+CDRMessage_t submsgElem;
+
 
 RTPSMessageCreator::RTPSMessageCreator() {
 	// TODO Auto-generated constructor stub

@@ -50,6 +50,8 @@ public:
 	//!Pointer to the Listen Thread that contains this MessageReceiver.
 	ThreadListen* threadListen_ptr;
 
+	CDRMessage_t rec_msg;
+
 private:
 	//!CDRMEssage_t being processed.
 	CDRMessage_t msg;

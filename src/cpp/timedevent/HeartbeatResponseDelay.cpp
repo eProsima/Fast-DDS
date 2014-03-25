@@ -64,9 +64,9 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec,WriterPro
 					SR->guid.entityId,wp->param.remoteWriterGuid.entityId,sns,wp->acknackCount,false);
 			std::vector<Locator_t>::iterator lit;
 			for(lit = wp->param.unicastLocatorList.begin();lit!=wp->param.unicastLocatorList.end();lit++)
-				SR->participant->threadSend.sendSync(&msg,*lit);
+				SR->participant->threadSend.sendSync(&msg,&(*lit));
 			for(lit = wp->param.multicastLocatorList.begin();lit!=wp->param.multicastLocatorList.end();lit++)
-				SR->participant->threadSend.sendSync(&msg,*lit);
+				SR->participant->threadSend.sendSync(&msg,&(*lit));
 
 		}
 	}

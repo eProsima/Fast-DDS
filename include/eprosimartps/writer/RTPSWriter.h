@@ -70,14 +70,20 @@ public:
 	RTPSMessageCreator MC;
 	Publisher* Pub;
 
-	void sendChangesList(std::vector<CacheChange_t*> changes,
+	void sendChangesList(std::vector<CacheChange_t*>* changes,
 			std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
+			bool expectsInlineQos,EntityId_t ReaderId);
+	void sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t* loc,
 			bool expectsInlineQos,EntityId_t ReaderId);
 
 	void DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,EntityId_t ReaderId);
 
 	std::string topicName;
 	std::string topicDataType;
+
+	CDRMessage_t rtpsw_header;
+	CDRMessage_t rtpsw_submessage;
+	CDRMessage_t rtpsw_fullmsg;
 
 };
 

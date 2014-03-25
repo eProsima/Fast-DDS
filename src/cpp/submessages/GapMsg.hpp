@@ -48,8 +48,8 @@ bool RTPSMessageCreator::createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t 
 {
 
 	//Create the two CDR msgs
-	CDRMessage_t submsgElem;
-
+	//CDRMessage_t submsgElem;
+	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)
 	{

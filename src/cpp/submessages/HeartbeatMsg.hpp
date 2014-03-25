@@ -51,8 +51,8 @@ bool RTPSMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t 
 {
 
 	//Create the two CDR msgs
-	CDRMessage_t submsgElem;
-
+	//CDRMessage_t submsgElem;
+	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)

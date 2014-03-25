@@ -15,6 +15,8 @@
  *      		grcanosa@gmail.com
  */
 #include <boost/asio.hpp>
+#include <boost/asio/ip/address_v4.hpp>
+#include <boost/asio/ip/address_v6.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <boost/thread.hpp>
@@ -48,7 +50,7 @@ public:
 	 * @param msg Pointer to the message.
 	 * @param loc Locator where to send the message.
 	 */
-	void sendSync(CDRMessage_t* msg,Locator_t loc);
+	void sendSync(CDRMessage_t* msg,Locator_t* loc);
 
 	/**
 	 * Initialize the sending socket.

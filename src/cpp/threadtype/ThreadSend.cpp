@@ -77,11 +77,24 @@ ThreadSend::~ThreadSend() {
 	//sendService.stop();
 }
 
-void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t loc)
+void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 {
 	boost::lock_guard<ThreadSend> guard(*this);
-
-	udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(loc.to_IP4_long()),loc.port);
+	udp::endpoint send_endpoint;
+	if(loc->kind == LOCATOR_KIND_UDPv4)
+	{
+		boost::asio::ip::address_v4::bytes_type addr;
+		for(uint8_t i=0;i<4;i++)
+			addr[i] = loc->address[12+i];
+		send_endpoint = udp::endpoint(boost::asio::ip::address_v4(addr),loc->port);
+	}
+	else if(loc->kind == LOCATOR_KIND_UDPv6)
+	{
+		boost::asio::ip::address_v6::bytes_type addr;
+		for(uint8_t i=0;i<16;i++)
+			addr[i] = loc->address[i];
+		send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
+	}
 
 
 	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << send_socket.local_endpoint()  << endl);

@@ -16,7 +16,7 @@
  */
 
 #include "eprosimartps/threadtype/ThreadListen.h"
-
+#include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/Participant.h"
@@ -52,11 +52,12 @@ void ThreadListen::listen() {
 	}
 	while(1) //TODOG: Add more reasonable condition, something with boost::thread
 	{
-		CDRMessage_t msg;
+		//CDRMessage_t msg;
+		CDRMessage::initCDRMsg(&MR.rec_msg);
 		//Try to block all associated readers
-		std::size_t lengthbytes = listen_socket.receive_from(boost::asio::buffer((void*)msg.buffer, msg.max_size), sender_endpoint);
-		msg.length = lengthbytes;
-		pDebugInfo (BLUE << "Message received of length: " << msg.length << " from endpoint: " << sender_endpoint << DEF << endl);
+		std::size_t lengthbytes = listen_socket.receive_from(boost::asio::buffer((void*)MR.rec_msg.buffer, MR.rec_msg.max_size), sender_endpoint);
+		MR.rec_msg.length = lengthbytes;
+		pDebugInfo (BLUE << "Message received of length: " << MR.rec_msg.length << " from endpoint: " << sender_endpoint << DEF << endl);
 
 		//Get address into Locator
 		Locator_t send_loc;
@@ -67,7 +68,7 @@ void ThreadListen::listen() {
 			send_loc.address[i+12] = sender_endpoint.address().to_v4().to_bytes()[i];
 		}
 		try{
-			MR.processCDRMsg(participant->guid.guidPrefix,send_loc,&msg);
+			MR.processCDRMsg(participant->guid.guidPrefix,send_loc,&MR.rec_msg);
 			pDebugInfo ("Message processed " << endl);
 
 		}
