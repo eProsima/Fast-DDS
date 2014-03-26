@@ -42,7 +42,7 @@ namespace rtps {
  */
 class RTPSReader : public Endpoint{
 public:
-	RTPSReader();
+	RTPSReader(uint16_t historysize,uint32_t payload_size);
 	virtual ~RTPSReader();
 
 	StateKind_t stateType;
@@ -50,7 +50,7 @@ public:
 	bool expectsInlineQos;
 
 	//!Structure used to create messages.
-	RTPSMessageCreator MC;
+	//RTPSMessageCreator MC;
 	//!Pointer to the associated subscriber
 	Subscriber* Sub;
 	//!Semaphore used to stop threads based on the arrival of messages.

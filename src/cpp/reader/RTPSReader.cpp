@@ -22,7 +22,10 @@
 namespace eprosima {
 namespace rtps {
 
-RTPSReader::RTPSReader() {
+RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
+		reader_cache(historysize,payload_size)
+
+{
 	// TODO Auto-generated constructor stub
 
 

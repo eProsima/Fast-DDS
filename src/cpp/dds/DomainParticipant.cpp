@@ -67,7 +67,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 	if(WParam.stateKind == STATELESS)
 	{
 		StatelessWriter* SW;
-		if(!p->createStatelessWriter(&SW,WParam))
+		if(!p->createStatelessWriter(&SW,WParam,typeR.byte_size))
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SW);
 	//	pDebugInfo("Publisher with name: "<<Pub->getTopicName()<<" created."<<endl);
@@ -79,7 +79,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 	else if(WParam.stateKind == STATEFUL)
 	{
 		StatefulWriter* SF;
-		if(!p->createStatefulWriter(&SF,WParam))
+		if(!p->createStatefulWriter(&SF,WParam,typeR.byte_size))
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SF);
 		SF->Pub = Pub;
@@ -112,7 +112,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t R
 	if(RParam.stateKind == STATELESS)
 	{
 		StatelessReader* SR;
-		if(!p->createStatelessReader(&SR,RParam))
+		if(!p->createStatelessReader(&SR,RParam,typeR.byte_size))
 			return NULL;
 		Subscriber* Sub = new Subscriber((RTPSReader*) SR);
 		SR->Sub = Sub;

@@ -32,9 +32,9 @@ namespace rtps {
 class StatelessWriter : public RTPSWriter
 {
 public:
-	StatelessWriter();
+	//StatelessWriter();
 	virtual ~StatelessWriter();
-	StatelessWriter(WriterParams_t* wParam);
+	StatelessWriter(WriterParams_t* wParam,uint32_t payload_size);
 
 	Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;

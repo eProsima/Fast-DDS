@@ -46,7 +46,7 @@ namespace rtps {
  */
 class RTPSWriter: public Endpoint {
 public:
-	RTPSWriter();
+	RTPSWriter(uint16_t historysize,uint32_t payload_size);
 	virtual ~RTPSWriter();
 	//!Changes associated with this writer.
 	HistoryCache writer_cache;

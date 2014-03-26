@@ -28,13 +28,23 @@
 namespace eprosima {
 namespace rtps {
 
-HistoryCache::HistoryCache() {
-	SEQUENCENUMBER_UNKOWN(minSeqNum);
-	SEQUENCENUMBER_UNKOWN(maxSeqNum);
-	GUID_UNKNOWN(minSeqNumGuid);
-	GUID_UNKNOWN(maxSeqNumGuid);
+//HistoryCache::HistoryCache() {
+//	SEQUENCENUMBER_UNKOWN(minSeqNum);
+//	SEQUENCENUMBER_UNKOWN(maxSeqNum);
+//	GUID_UNKNOWN(minSeqNumGuid);
+//	GUID_UNKNOWN(maxSeqNumGuid);
+//
+//
+//}
 
 
+HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
+		changePool(historysize,payload_size)
+{
+		SEQUENCENUMBER_UNKOWN(minSeqNum);
+		SEQUENCENUMBER_UNKOWN(maxSeqNum);
+		GUID_UNKNOWN(minSeqNumGuid);
+		GUID_UNKNOWN(maxSeqNumGuid);
 }
 
 HistoryCache::~HistoryCache() {
@@ -139,7 +149,7 @@ bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
 		if((*it)->sequenceNumber.to64long() == seqnum.to64long()
 				&& (*it)->writerGUID == guid)
 		{
-			delete (*it);
+			changePool.release_Cache(*it);
 			changes.erase(it);
 			isHistoryFull = false;
 			pDebugInfo("Change removed"<<endl)
@@ -154,7 +164,7 @@ bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
 
-	delete(*it);
+	changePool.release_Cache(*it);
 	changes.erase(it);
 	isHistoryFull = false;
 	pDebugInfo("Change removed"<<endl);
@@ -172,7 +182,7 @@ bool HistoryCache::remove_all_changes()
 		std::vector<CacheChange_t*>::iterator it;
 		for(it = changes.begin();it!=changes.end();++it)
 		{
-			delete (*it);
+			changePool.release_Cache(*it);
 		}
 		changes.clear();
 		isHistoryFull = false;
@@ -239,59 +249,17 @@ void HistoryCache::updateMaxMinSeqNum()
 	}
 	return;
 }
-/* ********  REMOVED FROM THIS VERSION, NOT NECESSARY
-void HistoryCache::updateMinSeqNum()
+
+CacheChange_t* HistoryCache::reserve_Cache()
 {
-	boost::lock_guard<HistoryCache> guard(*this);
-	if(!changes.empty())
-	{
-		std::vector<CacheChange_t*>::iterator it;
-		minSeqNum = changes[0]->sequenceNumber;
-		minSeqNumGuid = changes[0]->writerGUID;
-		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
-		for(it = changes.begin();it!=changes.end();++it)
-		{
-			if((*it)->sequenceNumber.to64long() < minSeqNum.to64long())
-			{
-				minSeqNum = (*it)->sequenceNumber;
-				minSeqNumGuid = (*it)->writerGUID;
-			}
-		}
-	}
-	else
-	{
-		SEQUENCENUMBER_UNKOWN(minSeqNum);
-		GUID_UNKNOWN(minSeqNumGuid);
-	}
-	return;
+	return changePool.reserve_Cache();
 }
 
-void HistoryCache::updateMaxSeqNum()
+void HistoryCache::release_Cache(CacheChange_t* ch)
 {
-	boost::lock_guard<HistoryCache> guard(*this);
-	if(!changes.empty())
-	{
-		std::vector<CacheChange_t*>::iterator it;
-		maxSeqNum = changes[0]->sequenceNumber;
-		maxSeqNumGuid = changes[0]->writerGUID;
-		//cout << "Seqnum init a " << maxSeqNum.to64long() << endl;
-		for(it = changes.begin();it!=changes.end();++it){
-			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
-			{
-				maxSeqNum = (*it)->sequenceNumber;
-				maxSeqNumGuid = (*it)->writerGUID;
-			}
-		}
-	}
-	else
-	{
-		SEQUENCENUMBER_UNKOWN(maxSeqNum);
-		GUID_UNKNOWN(minSeqNumGuid);
-	}
-	return;
+	return changePool.release_Cache(ch);
 }
 
-*/
 
 
 } /* namespace rtps */

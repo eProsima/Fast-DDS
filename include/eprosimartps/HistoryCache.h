@@ -16,17 +16,21 @@
 
 
 
+
+
+
+
+#ifndef HISTORYCACHE_H_
+#define HISTORYCACHE_H_
+
 #include <boost/thread.hpp>
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
-
+using namespace boost;
 #include "eprosimartps/rtps_all.h"
 
-using namespace boost;
-
-#ifndef HISTORYCACHE_H_
-#define HISTORYCACHE_H_
+#include "eprosimartps/CacheChangePool.h"
 
 namespace eprosima {
 namespace rtps {
@@ -41,7 +45,8 @@ class RTPSReader;
  */
 class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
-	HistoryCache();
+//	HistoryCache();
+	HistoryCache(uint16_t historysize,uint32_t payload_size);
 	virtual ~HistoryCache();
 	/**
 	 * Get a pointer to a specific change based on its SequenceNumber_t.
@@ -117,6 +122,8 @@ public:
 	//!Type of History (WRITER or READER).
 	HistoryKind_t historyKind;
 
+	CacheChange_t* reserve_Cache();
+	void release_Cache(CacheChange_t*);
 
 private:
 	//!Variable to know if the history is full without needing to block the History mutex.
@@ -137,6 +144,7 @@ private:
 //	//!Update the  min sequence number and Guid after a change in the cache changes.
 //	void updateMinSeqNum();
 
+	CacheChangePool changePool;
 
 };
 

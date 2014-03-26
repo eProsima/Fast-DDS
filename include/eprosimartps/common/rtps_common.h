@@ -117,10 +117,7 @@ typedef struct SerializedPayload_t{
 	 * @return True if correct
 	 */
 	bool copy(SerializedPayload_t* serData){
-		if(data !=NULL)
-			free(data);
 		length = serData->length;
-		data = (octet*)malloc(length);
 		encapsulation = serData->encapsulation;
 		memcpy(data,serData->data,length);
 		return true;
@@ -227,7 +224,7 @@ struct DDS_Reliability_t{
  */
 typedef struct WriterParams_t{
 	bool pushMode;
-	int16_t historySize;
+	uint16_t historySize;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
 	DDS_Reliability_t reliablility;
@@ -248,7 +245,7 @@ typedef struct WriterParams_t{
 typedef struct ReaderParams_t{
 	bool expectsInlineQos;
 
-	int16_t historySize;
+	uint16_t historySize;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
 	DDS_Reliability_t reliablility;

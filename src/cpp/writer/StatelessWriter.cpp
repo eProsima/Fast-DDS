@@ -22,13 +22,10 @@
 namespace eprosima {
 namespace rtps {
 
-StatelessWriter::StatelessWriter() {
-	// TODO Auto-generated constructor stub
 
 
-}
-
-StatelessWriter::StatelessWriter(WriterParams_t* param)
+StatelessWriter::StatelessWriter(WriterParams_t* param,uint32_t payload_size):
+		RTPSWriter(param->historySize,payload_size)
 {
 	pushMode = param->pushMode;
 	//writer_cache.changes.reserve(param->historySize);

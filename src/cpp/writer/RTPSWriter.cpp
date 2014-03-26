@@ -25,7 +25,16 @@
 namespace eprosima {
 namespace rtps {
 
-RTPSWriter::RTPSWriter():rtpsw_header(RTPSMESSAGE_HEADER_SIZE) {
+//RTPSWriter::RTPSWriter():rtpsw_header(RTPSMESSAGE_HEADER_SIZE) {
+//	// TODO Auto-generated constructor stub
+//		RTPSMessageCreator::createHeader(&rtpsw_header,participant->guid.guidPrefix);
+//}
+
+RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
+		writer_cache(historysize,payload_size),
+		rtpsw_header(RTPSMESSAGE_HEADER_SIZE)
+
+{
 	// TODO Auto-generated constructor stub
 		RTPSMessageCreator::createHeader(&rtpsw_header,participant->guid.guidPrefix);
 }
@@ -36,7 +45,7 @@ RTPSWriter::~RTPSWriter() {
 
 bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out)
 {
-	CacheChange_t* ch;
+	CacheChange_t* ch = writer_cache.reserve_Cache();
 	if(changeKind == ALIVE)
 	{
 		ch = new CacheChange_t(type.byte_size);

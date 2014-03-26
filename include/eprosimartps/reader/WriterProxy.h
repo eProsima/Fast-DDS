@@ -67,6 +67,7 @@ public:
 	bool isMissingChangesEmpty;
 
 	HeartbeatResponseDelay heartbeatResponse;
+	StatefulReader* SFR;
 private:
 	bool max_seq_num(SequenceNumber_t* sn);
 

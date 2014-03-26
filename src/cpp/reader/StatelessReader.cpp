@@ -20,16 +20,14 @@
 namespace eprosima {
 namespace rtps {
 
-StatelessReader::StatelessReader() {
-	// TODO Auto-generated constructor stub
 
-}
 
 StatelessReader::~StatelessReader() {
 	// TODO Auto-generated destructor stub
 }
 
-StatelessReader::StatelessReader(ReaderParams_t* param)
+StatelessReader::StatelessReader(ReaderParams_t* param,uint32_t payload_size):
+		RTPSReader(param->historySize,payload_size)
 {
 	//reader_cache.changes.reserve(param.historySize);
 	stateType = STATELESS;
