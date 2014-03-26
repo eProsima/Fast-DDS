@@ -79,10 +79,11 @@ void LatencyDeSer(SerializedPayload_t* payload,void*data)
 
 
 
-
+boost::posix_time::ptime t1,t2,t3;
 
 void newMsgCallback()
 {
+	t2 = boost::posix_time::microsec_clock::local_time();
 	cout << MAGENTA"New Message Callback" <<DEF<< endl;
 }
 
@@ -105,7 +106,7 @@ int main(int argc, char** argv){
 	else
 		type = WR;
 
-	boost::posix_time::ptime t1,t2,t3;
+
 	boost::posix_time::time_duration overhead;
 	//CLOCK OVERHEAD
 	t1 = boost::posix_time::microsec_clock::local_time();
@@ -172,6 +173,7 @@ int main(int argc, char** argv){
 	Rparam.topicName = std::string("This is a test topic");
 	Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+	sub->assignNewMessageCallback(newMsgCallback);
 
 	LatencyType Latency;
 
@@ -192,7 +194,7 @@ int main(int argc, char** argv){
 			pub->write((void*)&Latency);
 			sub->blockUntilNewMessage();
 		//	sub->readLastAdded((void*)&Latency);
-			t2 = boost::posix_time::microsec_clock::local_time();
+
 			cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
 			total+=(t2-t1).total_microseconds()-overhead_value;
 			us[i] = (t2-t1).total_microseconds()-overhead_value;

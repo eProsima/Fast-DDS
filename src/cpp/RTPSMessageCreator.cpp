@@ -33,6 +33,9 @@ namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
 CDRMessage_t submsgElem;
+const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
+boost::posix_time::ptime boost_time_now;
+Time_t time_now;
 
 
 RTPSMessageCreator::RTPSMessageCreator() {
@@ -82,7 +85,7 @@ bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix
 	PROTOCOLVERSION(prot);
 	VendorId_t vend;
 	VENDORID_EPROSIMA(vend);
-	return createHeader(msg,guidPrefix,prot,vend);
+	return RTPSMessageCreator::createHeader(msg,guidPrefix,prot,vend);
 }
 
 
@@ -142,12 +145,11 @@ bool RTPSMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,b
 
 bool RTPSMessageCreator::createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
-	Time_t time_now;
-	boost::posix_time::ptime t(microsec_clock::local_time());
-	boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
 
-	time_now.seconds = (int32_t)(t-t_epoch).total_seconds();
-	time_now.fraction = (t-t_epoch).fractional_seconds()*(int32_t)(pow(2,32)*pow(10,-boost::posix_time::time_duration::num_fractional_digits()));
+	boost_time_now = microsec_clock::local_time();
+
+	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
+	time_now.fraction = (boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2,32)*pow(10,-boost::posix_time::time_duration::num_fractional_digits()));
 //	cout << t << endl;
 //	cout << (t-t_epoch) << endl;
 //	cout << time_now.seconds << endl;
