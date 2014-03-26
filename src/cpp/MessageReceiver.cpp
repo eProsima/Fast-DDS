@@ -352,7 +352,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				}
 				if((*it)->newMessageCallback !=NULL)
 					(*it)->newMessageCallback();
-				else ///FIXME: removed for testing, put back.
+				///FIXME: removed for testing, put back.
 					(*it)->newMessageSemaphore->post();
 			}
 		}
