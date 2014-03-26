@@ -19,18 +19,15 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidprefix,
-		SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,
-		EntityId_t readerId,EntityId_t writerId)
+bool RTPSMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+		SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,
+		const EntityId_t& readerId,const EntityId_t& writerId)
 {
 
 	try
 	{
-		VendorId_t vendor;
-		VENDORID_EPROSIMA(vendor);
-		ProtocolVersion_t version;
-		PROTOCOLVERSION(version);
-		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
+
+		RTPSMessageCreator::createHeader(msg,guidprefix);
 		RTPSMessageCreator::createSubmessageInfoTS_Now(msg,false);
 		RTPSMessageCreator::createSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
 		//cout << "SubMEssage created and added to message" << endl;
@@ -44,7 +41,7 @@ bool RTPSMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidpre
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId)
+bool RTPSMessageCreator::createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId)
 {
 
 	//Create the two CDR msgs

@@ -18,18 +18,14 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
-		SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
+bool RTPSMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
+		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 
 	try
 	{
 
-		VendorId_t vendor;
-		VENDORID_EPROSIMA(vendor);
-		ProtocolVersion_t version;
-		PROTOCOLVERSION(version);
-		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
+		RTPSMessageCreator::createHeader(msg,guidprefix);
 
 
 
@@ -46,8 +42,8 @@ bool RTPSMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t g
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,
-		EntityId_t writerId,SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag)
+bool RTPSMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
+		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 
 	//Create the two CDR msgs

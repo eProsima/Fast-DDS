@@ -18,16 +18,13 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
-		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag){
+bool RTPSMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
 
 	try
 	{
-		VendorId_t vendor;
-		VENDORID_EPROSIMA(vendor);
-		ProtocolVersion_t version;
-		PROTOCOLVERSION(version);
-		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
+
+		RTPSMessageCreator::createHeader(msg,guidprefix);
 
 
 		RTPSMessageCreator::createSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
@@ -44,7 +41,7 @@ bool RTPSMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t gui
 }
 
 bool RTPSMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
-		EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag)
+		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
 
 	//Create the two CDR msgs

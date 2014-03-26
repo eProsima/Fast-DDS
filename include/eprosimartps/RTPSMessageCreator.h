@@ -44,9 +44,9 @@ public:
 	 * @param vendorId Vendor Id.
 	 * @return True if correct.
 	 */
-	static bool createHeader(CDRMessage_t*msg ,GuidPrefix_t Prefix,ProtocolVersion_t version,VendorId_t vendorId);
+	static bool createHeader(CDRMessage_t*msg ,GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
 
-	static bool createHeader(CDRMessage_t*msg ,GuidPrefix_t Prefix);
+	static bool createHeader(CDRMessage_t*msg ,GuidPrefix_t& Prefix);
 
 	/**
 	 * Create SubmessageHeader.
@@ -72,29 +72,29 @@ public:
 
 
 
-	static bool createMessageData(CDRMessage_t* msg,GuidPrefix_t guidprefix,CacheChange_t* change,
-			TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos);
+	static bool createMessageData(CDRMessage_t* msg,GuidPrefix_t& guidprefix,CacheChange_t* change,
+			TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos);
 	static bool createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
-			TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos);
+			TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos);
 
-	static bool createMessageGap(CDRMessage_t* msg,GuidPrefix_t guidprefix,
-			SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId);
-	static bool createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t seqNumFirst,SequenceNumberSet_t seqNumList,EntityId_t readerId,EntityId_t writerId);
+	static bool createMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+			SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
+	static bool createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
 
-	static bool createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t guidprefix,EntityId_t readerId,EntityId_t writerId,
-			SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag);
+	static bool createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
+			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag);
 
-	static bool createSubmessageHeartbeat(CDRMessage_t* msg,EntityId_t readerId,EntityId_t writerId,
-			SequenceNumber_t firstSN,SequenceNumber_t lastSN,int32_t count,bool isFinal,bool livelinessFlag);
+	static bool createSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,const EntityId_t& writerId,
+			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag);
 
-	static bool createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t guidprefix,
-			EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag);
+	static bool createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
 	static bool createSubmessageAcknack(CDRMessage_t* msg,
-			EntityId_t readerId,EntityId_t writerId,SequenceNumberSet_t SNSet,int32_t count,bool finalFlag);
+			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
 
-	static bool createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,bool invalidateFlag);
+	static bool createSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
 	static bool createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
 
 	///@}

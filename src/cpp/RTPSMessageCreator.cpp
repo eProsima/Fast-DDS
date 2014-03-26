@@ -46,7 +46,7 @@ RTPSMessageCreator::~RTPSMessageCreator() {
 }
 
 
-bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
+bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
 
@@ -76,7 +76,7 @@ bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix,
 	return true;
 }
 
-bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t guidPrefix)
+bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix)
 {
 	ProtocolVersion_t prot;
 	PROTOCOLVERSION(prot);
@@ -104,7 +104,7 @@ bool RTPSMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t time,bool invalidateFlag)
+bool RTPSMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag)
 {
 	octet flags = 0x0;
 	uint16_t size = 8;

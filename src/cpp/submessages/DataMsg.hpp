@@ -23,15 +23,12 @@ namespace rtps{
 
 
 bool RTPSMessageCreator::createMessageData(CDRMessage_t* msg,
-		GuidPrefix_t guidprefix,CacheChange_t* change,TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos){
+		GuidPrefix_t& guidprefix,CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos){
 
 
 	try{
-		VendorId_t vendor;
-		VENDORID_EPROSIMA(vendor);
-		ProtocolVersion_t version;
-		PROTOCOLVERSION(version);
-		RTPSMessageCreator::createHeader(msg,guidprefix,version,vendor);
+
+		RTPSMessageCreator::createHeader(msg,guidprefix);
 
 		RTPSMessageCreator::createSubmessageInfoTS_Now(msg,false);
 
@@ -52,7 +49,7 @@ bool RTPSMessageCreator::createMessageData(CDRMessage_t* msg,
 
 
 bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
-		TopicKind_t topicKind,EntityId_t readerId,ParameterList_t* inlineQos) {
+		TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos) {
 
 
 	//Create the two CDR msgs

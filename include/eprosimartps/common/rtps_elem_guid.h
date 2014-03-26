@@ -33,15 +33,15 @@ typedef struct GuidPrefix_t{
 		for(uint8_t i =0;i<12;i++)
 			value[i] = guid[i];
 	}
-	GuidPrefix_t operator=(GuidPrefix_t guidpre){
+	GuidPrefix_t& operator=(const GuidPrefix_t& guidpre){
 
 		for(uint8_t i =0;i<12;i++)
 		{
 			value[i] = guidpre.value[i];
 		}
-		return guidpre;
+		return *this;
 	}
-	bool operator==(GuidPrefix_t guid2){
+	bool operator==(GuidPrefix_t& guid2){
 		for(uint8_t i =0;i<12;i++)
 		{
 			if(value[i] != guid2.value[i])
@@ -60,14 +60,29 @@ typedef struct EntityId_t{
 		*aux = id;
 		reverse();
 	}
-	EntityId_t operator=(uint32_t id){
+	EntityId_t& operator=(const EntityId_t& id)
+	{
+		value[0] = id.value[0];
+		value[1] = id.value[1];
+		value[2] = id.value[2];
+		value[3] = id.value[3];
+		return *this;
+	}
+	EntityId_t& operator=(uint32_t id){
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
 		reverse();
 		return *this;
 		//return id;
 	}
-	bool operator==(EntityId_t id2){
+	bool operator==(uint32_t id2)
+				{
+		uint32_t* aux1 = (uint32_t*)(value);
+		if(*aux1 == id2)
+			return true;
+		return false;
+				}
+	bool operator==(EntityId_t& id2){
 		uint32_t* aux1 = (uint32_t*)(value);
 		uint32_t* aux2 = (uint32_t*)(id2.value);
 		if(*aux1 == *aux2)
@@ -99,11 +114,20 @@ typedef struct EntityId_t{
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_WRITER  0x000200C2
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER  0x000200C7
 
+const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
+
+
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
 typedef struct GUID_t{
 	GuidPrefix_t guidPrefix;
 	EntityId_t entityId;
-	bool operator==(GUID_t g2){
+	GUID_t& operator=(const GUID_t& guid)
+	{
+		guidPrefix = guid.guidPrefix;
+		entityId = guid.entityId;
+		return *this;
+	}
+	bool operator==(GUID_t& g2){
 		if(guidPrefix == g2.guidPrefix && entityId==g2.entityId)
 			return true;
 		else

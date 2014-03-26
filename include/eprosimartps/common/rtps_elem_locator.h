@@ -44,7 +44,7 @@ typedef struct Locator_t{
 		port = 0;
 		LOCATOR_ADDRESS_INVALID(address);
 	}
-	bool operator==(Locator_t loc){
+	bool operator==(Locator_t& loc){
 		if(kind!=loc.kind)
 			return false;
 		if(port !=loc.port)

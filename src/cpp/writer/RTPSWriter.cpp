@@ -69,7 +69,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	return true;
 }
 
-void RTPSWriter::DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,EntityId_t ReaderId)
+void RTPSWriter::DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId)
 {
 	ParameterList_t* inlineQos;
 	if(expectsInlineQos)
@@ -83,7 +83,7 @@ void RTPSWriter::DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange
 
 void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,
 		std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
-		bool expectsInlineQos,EntityId_t ReaderId)
+		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);
 	std::vector<Locator_t>::iterator lit;
@@ -135,7 +135,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,
 }
 
 void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t* loc,
-		bool expectsInlineQos,EntityId_t ReaderId)
+		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);
 	std::vector<Locator_t>::iterator lit;
@@ -157,7 +157,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t*
 	{
 		CDRMessage::initCDRMsg(&rtpsw_fullmsg);
 		CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_header);
-		//RTPSMessageCreator::createSubmessageInfoTS_Now(&rtpsw_fullmsg,false);
+		RTPSMessageCreator::createSubmessageInfoTS_Now(&rtpsw_fullmsg,false);
 		if(first)
 		{
 			CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_submessage);

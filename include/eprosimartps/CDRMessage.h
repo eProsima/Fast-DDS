@@ -43,7 +43,7 @@ namespace CDRMessage{
 	 */
 
 	/// @{
-	  inline bool readEntityId(CDRMessage_t* msg,EntityId_t*id);
+	  inline bool readEntityId(CDRMessage_t* msg,const EntityId_t*id);
 	  inline bool readData(CDRMessage_t* msg,octet* o,uint16_t length);
 	  inline bool readDataReversed(CDRMessage_t* msg,octet* o,uint16_t length);
 	  inline bool readInt32(CDRMessage_t* msg,int32_t* lo);
@@ -97,7 +97,7 @@ namespace CDRMessage{
 	  inline bool addInt32(CDRMessage_t*msg,int32_t lo);
 	  inline bool addUInt32(CDRMessage_t*msg,uint32_t lo);
 	  inline bool addInt64(CDRMessage_t*msg,int64_t lo);
-	  inline bool addEntityId(CDRMessage_t*msg,EntityId_t* id);
+	  inline bool addEntityId(CDRMessage_t*msg,const EntityId_t* id);
 	  inline bool addSequenceNumber(CDRMessage_t*msg,SequenceNumber_t* sn);
 	  inline bool addSequenceNumberSet(CDRMessage_t*msg,SequenceNumberSet_t* sns);
 	  inline bool addLocator(CDRMessage_t*msg,Locator_t*loc);
