@@ -157,7 +157,7 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t*
 	{
 		CDRMessage::initCDRMsg(&rtpsw_fullmsg);
 		CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_header);
-		RTPSMessageCreator::createSubmessageInfoTS_Now(&rtpsw_fullmsg,false);
+		//RTPSMessageCreator::createSubmessageInfoTS_Now(&rtpsw_fullmsg,false);
 		if(first)
 		{
 			CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_submessage);
@@ -169,7 +169,6 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t*
 			++change_n;
 			++cit;
 			DataSubM(&rtpsw_fullmsg, expectsInlineQos,*cit,ReaderId);
-			CDRMessage::appendMsg(&rtpsw_fullmsg,&rtpsw_fullmsg);
 		}
 		participant->threadSend.sendSync(&rtpsw_fullmsg,loc);
 	}while(change_n < changes->size()); //There is still a message to add
