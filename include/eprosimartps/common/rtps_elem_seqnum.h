@@ -112,7 +112,14 @@ typedef struct SequenceNumber_t{
 typedef struct SequenceNumberSet_t{
 	SequenceNumber_t base;
 	std::vector<SequenceNumber_t> set;
-	bool add(SequenceNumber_t& in){
+	SequenceNumberSet_t& operator=(const SequenceNumberSet_t& set2)
+	{
+		base = set2.base;
+		set = set2.set;
+		return *this;
+	}
+	bool add(SequenceNumber_t& in)
+	{
 		uint64_t base64 = base.to64long();
 		uint64_t in64 = in.to64long();
 		if(in64 >= base64 && in64<=base64+255 )

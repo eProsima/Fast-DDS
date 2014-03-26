@@ -34,7 +34,7 @@ StatefulWriter::~StatefulWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-StatefulWriter::StatefulWriter(WriterParams_t* param,uint32_t payload_size):
+StatefulWriter::StatefulWriter(const WriterParams_t* param,uint32_t payload_size):
 		RTPSWriter(param->historySize,payload_size)
 
 {
@@ -57,7 +57,7 @@ StatefulWriter::StatefulWriter(WriterParams_t* param,uint32_t payload_size):
 }
 
 
-bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
+bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 {
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
@@ -88,12 +88,12 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t RPparam)
 	return true;
 }
 
-bool StatefulWriter::matched_reader_remove(ReaderProxy_t Rp)
+bool StatefulWriter::matched_reader_remove(ReaderProxy_t& Rp)
 {
 	return matched_reader_remove(Rp.remoteReaderGuid);
 }
 
-bool StatefulWriter::matched_reader_remove(GUID_t readerGuid)
+bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 {
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
@@ -110,7 +110,7 @@ bool StatefulWriter::matched_reader_remove(GUID_t readerGuid)
 	return false;
 }
 
-bool StatefulWriter::matched_reader_lookup(GUID_t readerGuid,ReaderProxy** RP)
+bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
@@ -247,7 +247,7 @@ void StatefulWriter::unsent_changes_not_empty()
 
 
 void StatefulWriter::sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
-				EntityId_t readerId,std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast)
+				const EntityId_t& readerId,std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast)
 {
 	//First compute the number of GAP messages we need:
 	std::vector<CacheChange_t*>::iterator it;

@@ -30,12 +30,12 @@ class StatefulReader:public RTPSReader {
 public:
 	//StatefulReader();
 	virtual ~StatefulReader();
-	StatefulReader(ReaderParams_t* param,uint32_t payload_size);
+	StatefulReader(const ReaderParams_t* param,uint32_t payload_size);
 
 	bool matched_writer_add(WriterProxy_t* WP);
-	bool matched_writer_remove(WriterProxy_t WP);
-	bool matched_writer_remove(GUID_t writerGUID);
-	bool matched_writer_lookup(GUID_t writerGUID,WriterProxy** WP);
+	bool matched_writer_remove(WriterProxy_t& WP);
+	bool matched_writer_remove(GUID_t& writerGUID);
+	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 
 	DDS_Reliability_t reliability;
 private:

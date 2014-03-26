@@ -36,7 +36,7 @@ class StatelessReader: public RTPSReader {
 public:
 	//StatelessReader();
 	virtual ~StatelessReader();
-	StatelessReader(ReaderParams_t* param,uint32_t payload_size);
+	StatelessReader(const ReaderParams_t* param,uint32_t payload_size);
 
 
 };

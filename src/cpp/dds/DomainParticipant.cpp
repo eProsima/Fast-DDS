@@ -44,7 +44,7 @@ uint32_t DomainParticipant::getNewId()
 	return ++id;
 }
 
-Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WParam)
+Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_t& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
 	dds::DomainParticipant *dp;
@@ -92,7 +92,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 	return NULL;
 }
 
-Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t RParam) {
+Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderParams_t& RParam) {
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
 	dds::DomainParticipant *dp;
@@ -126,7 +126,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	ReaderParams_t R
 	return NULL;
 }
 
-Participant* DomainParticipant::createParticipant(ParticipantParams_t PParam)
+Participant* DomainParticipant::createParticipant(const ParticipantParams_t& PParam)
 {
 	Participant* p = new Participant(PParam);
 	return p;

@@ -28,7 +28,7 @@ StatefulReader::~StatefulReader()
 
 
 
-StatefulReader::StatefulReader(ReaderParams_t* param,uint32_t payload_size):
+StatefulReader::StatefulReader(const ReaderParams_t* param,uint32_t payload_size):
 		RTPSReader(param->historySize,payload_size)
 {
 	//reader_cache.changes.reserve(param.historySize);
@@ -63,7 +63,7 @@ bool StatefulReader::matched_writer_add(WriterProxy_t* WPparam)
 	return true;
 }
 
-bool StatefulReader::matched_writer_remove(GUID_t writerGuid)
+bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
 {
 	std::vector<WriterProxy*>::iterator it;
 	for(it=matched_writers.begin();it!=matched_writers.end();++it)
@@ -81,12 +81,12 @@ bool StatefulReader::matched_writer_remove(GUID_t writerGuid)
 }
 
 
-bool StatefulReader::matched_writer_remove(WriterProxy_t Wp)
+bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
 {
 	return matched_writer_remove(Wp.remoteWriterGuid);
 }
 
-bool StatefulReader::matched_writer_lookup(GUID_t writerGUID,WriterProxy** WP)
+bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
 	std::vector<WriterProxy*>::iterator it;
 	for(it=matched_writers.begin();it!=matched_writers.end();++it)

@@ -125,7 +125,7 @@ public:
 	 * @param[out] data_ptr Pointer to a memory space big enough to fit an instance of the data transmitted in the topic.
 	 * @return True if correct.
 	 */
-	bool readCache(SequenceNumber_t sn, GUID_t guid,void* data_ptr);
+	bool readCache(SequenceNumber_t& sn, GUID_t& guid,void* data_ptr);
 	/**
 	 * Read all unread elements in the associated RTPSReader HistoryCache.
      * @param[out] data_vec Pointer to a vector of pointers to elements.
@@ -175,9 +175,9 @@ public:
 
 
 private:
-	bool isCacheRead(SequenceNumber_t sn,GUID_t guid);
+	bool isCacheRead(SequenceNumber_t& sn,GUID_t& guid);
 	bool minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadElement_t>::iterator* min_it);
-	bool removeSeqFromRead(SequenceNumber_t sn, GUID_t guid);
+	bool removeSeqFromRead(SequenceNumber_t& sn, GUID_t& guid);
 	std::vector<ReadElement_t> readElements;
 	RTPSReader* R;
 	//bool initialized;

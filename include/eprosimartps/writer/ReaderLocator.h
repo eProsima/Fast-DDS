@@ -32,7 +32,7 @@ namespace rtps {
 class ReaderLocator {
 public:
 	ReaderLocator();
-	ReaderLocator(Locator_t locator, bool expectsInlineQos);
+	ReaderLocator(Locator_t& locator, bool expectsInlineQos);
 	virtual ~ReaderLocator();
 	//!Address of this ReaderLocator.
 	Locator_t locator;
@@ -72,7 +72,7 @@ public:
 	 * @param readerGUI
 	 * @param history
 	 */
-	void requested_changes_set(std::vector<SequenceNumber_t> seqs,GUID_t readerGUI,HistoryCache* history);
+	void requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& readerGUI,HistoryCache* history);
 };
 
 } /* namespace rtps */

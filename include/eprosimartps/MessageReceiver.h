@@ -44,7 +44,7 @@ public:
 	 * @param[in] loc Locator indicating the sending address.
 	 * @param[in] msg Pointer to the message
 	 */
-	void processCDRMsg(GuidPrefix_t participantguidprefix,
+	void processCDRMsg(GuidPrefix_t& participantguidprefix,
 					Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Thread that contains this MessageReceiver.

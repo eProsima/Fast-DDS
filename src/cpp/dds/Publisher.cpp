@@ -123,7 +123,7 @@ int Publisher::getHistory_n()
 	return W->writer_cache.changes.size();
 }
 
-bool Publisher::addReaderLocator(Locator_t Loc,bool expectsInlineQos)
+bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 {
 	if(W->stateType==STATELESS)
 	{
