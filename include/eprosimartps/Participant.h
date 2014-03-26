@@ -63,8 +63,8 @@ class Participant{
 	friend class ThreadListen;
 	friend class DomaninParticipant;
 public:
-	RTPS_DllAPI Participant();
-	RTPS_DllAPI Participant(ParticipantParams_t);
+
+	RTPS_DllAPI Participant(const ParticipantParams_t&param);
 	virtual ~Participant();
 
 
@@ -75,12 +75,12 @@ public:
 	 * @param[in] Wparam Parameters to use in the creation.
 	 * @return True if correct.
 	 */
-	bool createStatelessWriter(StatelessWriter** SWriter, WriterParams_t Wparam,uint32_t payload_size);
+	bool createStatelessWriter(StatelessWriter** SWriter,const WriterParams_t& Wparam,uint32_t payload_size);
 
 
 
 
-	bool createStatefulWriter(StatefulWriter** SWriter,WriterParams_t Wparam,uint32_t payload_size);
+	bool createStatefulWriter(StatefulWriter** SWriter, const WriterParams_t& Wparam,uint32_t payload_size);
 
 	/**
 	 * Create a StatelessReader from a parameter structure and add it to the participant.
@@ -88,7 +88,7 @@ public:
 	 * @param[in] RParam Parameters to use in the creation.
 	 * @return True if correct.
 	 */
-	bool createStatelessReader(StatelessReader** SReader,ReaderParams_t RParam,uint32_t payload_size);
+	bool createStatelessReader(StatelessReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
 	//bool createStatefulWriter(StatefulWriter*);
 	//bool createStatelessReader(RTPSReader*);
 	//bool createStetefulReader(StatefulReader* Reader)
@@ -141,7 +141,7 @@ private:
 	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
 	 * @return True if correct.
 	 */
-	bool addNewListenThread(Locator_t loc,ThreadListen** listenthread);
+	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread);
 
 };
 

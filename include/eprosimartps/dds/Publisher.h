@@ -121,7 +121,7 @@ public:
 	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
 	 * @return True if correct.
 	 */
-	bool addReaderLocator(Locator_t Loc,bool expectsInlineQos);
+	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos);
 
 
 	///@}

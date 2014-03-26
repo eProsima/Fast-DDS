@@ -57,7 +57,7 @@ public:
 	 * @param loc Locator of hte address from where to start the sending socket.
 	 * @return True if correct
 	 */
-	bool initSend(Locator_t loc);
+	bool initSend(const Locator_t& loc);
 
 };
 

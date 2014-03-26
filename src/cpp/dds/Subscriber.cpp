@@ -62,7 +62,7 @@ int Subscriber::getHistory_n()
 	return R->reader_cache.changes.size();
 }
 
-bool Subscriber::isCacheRead(SequenceNumber_t seqNum, GUID_t guid)
+bool Subscriber::isCacheRead(SequenceNumber_t& seqNum, GUID_t& guid)
 {
 	std::vector<ReadElement_t>::iterator it;
 	for(it=readElements.begin();it!=readElements.end();++it)
@@ -127,7 +127,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 	pWarning("Not read anything. Reader Cache empty" << endl);
 	return false;
 }
-bool Subscriber::readCache(SequenceNumber_t sn, GUID_t wGuid,void* data_ptr)
+bool Subscriber::readCache(SequenceNumber_t& sn, GUID_t& wGuid,void* data_ptr)
 {
 	boost::lock_guard<HistoryCache> guard(R->reader_cache);
 	CacheChange_t* ch = NULL;
@@ -383,7 +383,7 @@ bool Subscriber::minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadEl
 	return false;
 }
 
-bool Subscriber::removeSeqFromRead(SequenceNumber_t sn,GUID_t guid)
+bool Subscriber::removeSeqFromRead(SequenceNumber_t& sn,GUID_t& guid)
 {
 	if(!readElements.empty())
 	{

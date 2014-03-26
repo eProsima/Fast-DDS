@@ -29,7 +29,7 @@ ThreadSend::ThreadSend() : send_socket(sendService) {
 
 }
 
-bool ThreadSend::initSend(Locator_t loc)
+bool ThreadSend::initSend(const Locator_t& loc)
 {
 	boost::asio::ip::address addr;
 	sendLocator = loc;

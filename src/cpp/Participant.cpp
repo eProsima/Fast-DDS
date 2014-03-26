@@ -30,65 +30,8 @@
 namespace eprosima {
 namespace rtps {
 
-Participant::Participant() {
 
-	endpointToListenThreadSemaphore = new boost::interprocess::interprocess_semaphore(0);
-
-	// TODO Auto-generated constructor stub
-	PROTOCOLVERSION(protocolVersion);
-	VENDORID_EPROSIMA(vendorId);
-	IdCounter = 0;
-	//Create send socket in threadSend
-	//threadSend();
-	//Initialize threadlisten list to 0;
-	threadListenList.clear();
-
-	eventThread.init_thread();
-
-	//cout << "Listen thread with size: " << threadListenList.size() << endl;
-	//Initialize default Unicast Multicast locators.
-	//TODOG Definir default send and receive locator.
-	Locator_t defUni;
-	defUni.kind = LOCATOR_KIND_UDPv4;
-	for(uint8_t i=0;i<16;i++)
-		defUni.address[i]= threadSend.sendLocator.address[i];
-	defUni.port = 14445;
-	defaultUnicastLocatorList.push_back(defUni);
-
-	// Create Unique GUID
-	dds::DomainParticipant *dp;
-	dp = dds::DomainParticipant::getInstance();
-	uint32_t ID = dp->getNewId();
-	int pid;
-	#if defined(_WIN32)
-		pid = (int)_getpid();
-	#else
-		pid = (int)getpid();
-	#endif
-	//cout << "PID: " << pid << " ID:"<< ID << endl;
-
-	guid.guidPrefix.value[0] = threadSend.sendLocator.address[12];
-	guid.guidPrefix.value[1] = threadSend.sendLocator.address[13];
-	guid.guidPrefix.value[2] = threadSend.sendLocator.address[14];
-	guid.guidPrefix.value[3] = threadSend.sendLocator.address[15];
-	guid.guidPrefix.value[4] = ((octet*)&pid)[0];
-	guid.guidPrefix.value[5] = ((octet*)&pid)[1];
-	guid.guidPrefix.value[6] = ((octet*)&pid)[2];
-	guid.guidPrefix.value[7] = ((octet*)&pid)[3];
-	guid.guidPrefix.value[8] = ((octet*)&ID)[0];
-	guid.guidPrefix.value[9] = ((octet*)&ID)[1];
-	guid.guidPrefix.value[10] = ((octet*)&ID)[2];
-	guid.guidPrefix.value[11] = ((octet*)&ID)[3];
-	guid.entityId = ENTITYID_PARTICIPANT;
-	std::stringstream ss;
-			for(int i =0;i<12;i++)
-				ss << (int)guid.guidPrefix.value[i] << ".";
-			pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
-	//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
-
-}
-
-Participant::Participant(ParticipantParams_t PParam) {
+Participant::Participant(const ParticipantParams_t& PParam) {
 
 	endpointToListenThreadSemaphore = new boost::interprocess::interprocess_semaphore(0);
 
@@ -152,7 +95,7 @@ Participant::~Participant() {
 
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t Wparam,uint32_t payload_size)
+bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterParams_t& Wparam,uint32_t payload_size)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	StatelessWriter* SWriter = new StatelessWriter(&Wparam,payload_size);
@@ -188,7 +131,7 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t 
 	return true;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t Wparam,uint32_t payload_size) {
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterParams_t& Wparam,uint32_t payload_size) {
 
 	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
 	//Check if locator lists are empty:
@@ -225,7 +168,7 @@ bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t W
 
 
 bool Participant::createStatelessReader(StatelessReader** SR_out,
-		ReaderParams_t RParam,uint32_t payload_size)
+		const ReaderParams_t& RParam,uint32_t payload_size)
 {
 	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
 	//If NO UNICAST
@@ -330,7 +273,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	return true;
 }
 
-bool Participant::addNewListenThread(Locator_t loc,ThreadListen** thlisten_in) {
+bool Participant::addNewListenThread(Locator_t& loc,ThreadListen** thlisten_in) {
 	*thlisten_in = new ThreadListen();
 	(*thlisten_in)->locList.push_back(loc);
 	(*thlisten_in)->participant = this;

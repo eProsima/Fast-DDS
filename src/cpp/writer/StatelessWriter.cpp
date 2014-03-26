@@ -24,7 +24,7 @@ namespace rtps {
 
 
 
-StatelessWriter::StatelessWriter(WriterParams_t* param,uint32_t payload_size):
+StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_size):
 		RTPSWriter(param->historySize,payload_size)
 {
 	pushMode = param->pushMode;
@@ -51,7 +51,7 @@ StatelessWriter::~StatelessWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-bool StatelessWriter::reader_locator_add(ReaderLocator a_locator) {
+bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 	std::vector<ReaderLocator>::iterator rit;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		if(rit->locator == a_locator.locator)
@@ -65,7 +65,7 @@ bool StatelessWriter::reader_locator_add(ReaderLocator a_locator) {
 	return true;
 }
 
-bool StatelessWriter::reader_locator_remove(Locator_t locator) {
+bool StatelessWriter::reader_locator_remove(Locator_t& locator) {
 	std::vector<ReaderLocator>::iterator it;
 	for(it=reader_locator.begin();it!=reader_locator.end();++it){
 		if(it->locator == locator){

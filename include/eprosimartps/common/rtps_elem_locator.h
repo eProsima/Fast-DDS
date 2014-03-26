@@ -44,6 +44,14 @@ typedef struct Locator_t{
 		port = 0;
 		LOCATOR_ADDRESS_INVALID(address);
 	}
+	Locator_t& operator=(const Locator_t& loc)
+	{
+		kind = loc.kind;
+		port = loc.port;
+		for(uint8_t i=0;i<16;i++)
+			address[i] = loc.address[i];
+		return *this;
+	}
 	bool operator==(Locator_t& loc){
 		if(kind!=loc.kind)
 			return false;

@@ -34,7 +34,7 @@ class StatelessWriter : public RTPSWriter
 public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
-	StatelessWriter(WriterParams_t* wParam,uint32_t payload_size);
+	StatelessWriter(const WriterParams_t* wParam,uint32_t payload_size);
 
 	Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
@@ -43,13 +43,13 @@ public:
 	 * @param locator ReaderLocator to add.
 	 * @return True if correct.
 	 */
-	bool reader_locator_add(ReaderLocator locator);
+	bool reader_locator_add(ReaderLocator& locator);
 	/**
 	 * Remove a ReaderLocator from this writer.
 	 * @param locator Locator to remove.
 	 * @return True if correct.
 	 */
-	bool reader_locator_remove(Locator_t locator);
+	bool reader_locator_remove(Locator_t& locator);
 	/**
 	 * Reset the unsent changes. All the changes currently in the HistoryCache are added to all teh ReaderLocator associated
 	 * with this StatelessWriter, discarding the previous ones.

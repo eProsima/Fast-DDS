@@ -55,8 +55,8 @@ public:
 	 * @param[out] ch_ptr_ptr Pointer to pointer to a cachechange.
 	 * @return True if correct.
 	 */
-	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr_ptr,uint16_t *ch_number);
-	bool get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr_ptr);
+	bool get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr_ptr,uint16_t *ch_number);
+	bool get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr_ptr);
 
 	/**
 	 * Get the last element added to the history.
@@ -78,7 +78,7 @@ public:
 	 * @param[in] writerGuid GUID of the writer of the change.
 	 * @return True if correct
 	 */
-	bool remove_change(SequenceNumber_t seqNum, GUID_t writerGuid);
+	bool remove_change(SequenceNumber_t& seqNum, GUID_t& writerGuid);
 
 	/**
 	 * Remove a change based on a vector iterator.

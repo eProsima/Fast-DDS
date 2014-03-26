@@ -210,15 +210,17 @@ int main(int argc, char** argv){
 		}
 	}
 	cout << endl;
-	cout << "Mean: " << total/samples << endl;
-	uint64_t min_us= 150000;
-	for(int i =0;i<n_samples;i++)
+	if(type == 1)
 	{
-		min_us = min(min_us,us[i]);
+		cout << "Mean: " << total/samples << endl;
+		uint64_t min_us= 150000;
+		for(int i =0;i<n_samples;i++)
+		{
+			min_us = min(min_us,us[i]);
+		}
+		cout << "Min us: " << min_us << endl;
+
 	}
-	cout << "Min us: " << min_us << endl;
-
-
 
 
 

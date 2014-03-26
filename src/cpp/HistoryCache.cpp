@@ -52,7 +52,7 @@ HistoryCache::~HistoryCache() {
 
 }
 
-bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr,uint16_t *ch_number) {
+bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr,uint16_t *ch_number) {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
 	(*ch_number)=0;
@@ -68,7 +68,7 @@ bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheCha
 	return false;
 }
 
-bool HistoryCache::get_change(SequenceNumber_t seqNum,GUID_t writerGuid,CacheChange_t** ch_ptr) {
+bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr) {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = changes.begin();it!=changes.end();++it){
@@ -141,7 +141,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	return true;
 }
 
-bool HistoryCache::remove_change(SequenceNumber_t seqnum, GUID_t guid)
+bool HistoryCache::remove_change(SequenceNumber_t& seqnum, GUID_t& guid)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
