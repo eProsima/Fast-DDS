@@ -41,6 +41,7 @@ WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :
 	acknackCount = 0;
 	isMissingChangesEmpty = true;
 	lastHeartbeatCount = 0;
+	SFR = SR;
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
@@ -96,7 +97,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	{
 		if(cit->change->sequenceNumber.to64long() == change->sequenceNumber.to64long())
 		{
-			delete(cit->change);
+			SFR->reader_cache.release_Cache(cit->change);
 			cit->change = change;
 			cit->status = RECEIVED;
 			return true;
@@ -132,7 +133,7 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t* seqNum)
 	ChangeFromWriter_t chfw;
 	chfw.is_relevant = false;
 	chfw.status = RECEIVED;
-	CacheChange_t* ch = new CacheChange_t();
+	CacheChange_t* ch = SFR->reader_cache.reserve_Cache();
 	ch->sequenceNumber = *seqNum;
 	chfw.change = ch;
 	SequenceNumber_t maxSeqNum;
@@ -224,7 +225,7 @@ bool WriterProxy::add_unknown_changes(SequenceNumber_t* sn)
 	}
 	while(n_to_add>0)
 	{
-		CacheChange_t* ch = new CacheChange_t();
+		CacheChange_t* ch = SFR->reader_cache.reserve_Cache();
 		ch->sequenceNumber = (*sn)-n_to_add;
 		ChangeFromWriter_t chfw;
 		chfw.change = ch;

@@ -65,10 +65,10 @@ void MessageReceiver::reset(){
 	GUIDPREFIX_UNKNOWN(destGuidPrefix);
 	haveTimestamp = false;
 	TIME_INVALID(timestamp);
-	if(!unicastReplyLocatorList.empty())
-		unicastReplyLocatorList.clear();
-	if(!multicastReplyLocatorList.empty())
-		multicastReplyLocatorList.clear();
+
+	unicastReplyLocatorList.clear();
+
+	multicastReplyLocatorList.clear();
 
 
 	unicastReplyLocatorList.push_back(defUniLoc);
@@ -213,7 +213,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	//READ and PROCESS
-	CacheChange_t* ch = new CacheChange_t();
+
 	//Fill flags bool values
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	bool inlineQosFlag = smh->flags & BIT(1) ? true : false;
@@ -238,6 +238,24 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//reader and writer ID
 	EntityId_t reader;
 	CDRMessage::readEntityId(msg,&reader);
+	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
+	std::vector<RTPSReader*>::iterator it;
+	RTPSReader* firstReader = NULL;
+	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
+	{
+		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
+		{
+			firstReader = *it;
+		}
+	}
+	if(firstReader == NULL) //Reader not found
+	{
+		pWarning("Data Message received for unknown reader");
+		return false;
+	}
+	//FOUND THE READER.
+	//We ask the reader for a cachechange
+	CacheChange_t* ch = firstReader->reader_cache.reserve_Cache();
 	ch->writerGUID.guidPrefix = sourceGuidPrefix;
 	CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
 
@@ -267,13 +285,12 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	{
 		int16_t payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
 		msg->pos+=1;
-		octet encapsulation;
+		octet encapsulation =0;
 		CDRMessage::readOctet(msg,&encapsulation);
 		ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
 		msg->pos+=2; //CDR Options, not used in this version
 		if(dataFlag)
 		{
-			ch->serializedPayload.data = (octet*)malloc(payload_size-2-2);
 			ch->serializedPayload.length = payload_size-2-2;
 			CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
 			ch->kind = ALIVE;
@@ -306,20 +323,31 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 
 	//Look for the correct reader to add the change
-	std::vector<RTPSReader*>::iterator it;
 	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
-			if((*it)->reader_cache.add_change(ch))
+			CacheChange_t* change_to_add;
+			if(firstReader->guid.entityId == (*it)->guid.entityId) //IS the same as the first one
+			{
+				change_to_add = ch;
+			}
+			else
+			{
+				change_to_add = (*it)->reader_cache.reserve_Cache(); //Reserve a new cache from the corresponding cache pool
+				change_to_add->copy(ch);
+			}
+
+
+			if((*it)->reader_cache.add_change(change_to_add))
 			{
 				if((*it)->stateType == STATEFUL)
 				{
 					StatefulReader* SR = (StatefulReader*)(*it);
 					WriterProxy* WP;
-					if(SR->matched_writer_lookup(ch->writerGUID,&WP))
+					if(SR->matched_writer_lookup(change_to_add->writerGUID,&WP))
 					{
-						WP->received_change_set(ch);
+						WP->received_change_set(change_to_add);
 					}
 				}
 				if((*it)->newMessageCallback !=NULL)

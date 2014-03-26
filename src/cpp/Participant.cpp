@@ -152,9 +152,9 @@ Participant::~Participant() {
 
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t Wparam) {
+bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t Wparam,uint32_t payload_size) {
 
-	StatelessWriter* SWriter = new StatelessWriter(&Wparam);
+	StatelessWriter* SWriter = new StatelessWriter(&Wparam,payload_size);
 
 	//Check if locator lists are empty:
 	if(SWriter->unicastLocatorList.empty())
@@ -184,9 +184,9 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t 
 	return true;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t Wparam) {
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t Wparam,uint32_t payload_size) {
 
-	StatefulWriter* SFWriter = new StatefulWriter(&Wparam);
+	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
 	//Check if locator lists are empty:
 	if(SFWriter->unicastLocatorList.empty())
 		SFWriter->unicastLocatorList = defaultUnicastLocatorList;
@@ -219,9 +219,9 @@ bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t W
 
 
 bool Participant::createStatelessReader(StatelessReader** SR_out,
-		ReaderParams_t RParam) {
+		ReaderParams_t RParam,uint32_t payload_size) {
 
-		StatelessReader* SReader = new StatelessReader(&RParam);
+		StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
 
 	//If NO UNICAST
 	if(SReader->unicastLocatorList.empty())

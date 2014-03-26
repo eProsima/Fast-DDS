@@ -7,41 +7,41 @@
  *************************************************************************/
 
 /**
- * @file StatelessReader.h
- *  StatelessReader class.
- *  Created on: Feb 27, 2014
+ * @file CacheChangePool.h
+ *
+ *  Created on: Mar 26, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
 
-#ifndef STATELESSREADER_H_
-#define STATELESSREADER_H_
+#include <vector>
 
 
+#ifndef CACHECHANGEPOOL_H_
+#define CACHECHANGEPOOL_H_
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/reader/RTPSReader.h"
 
-#include <boost/bind.hpp>
 
 namespace eprosima {
 namespace rtps {
 
-/**
- * Class StatelessReader,
- * @ingroup READERMODULE
- */
-class StatelessReader: public RTPSReader {
+class CacheChangePool {
 public:
-	//StatelessReader();
-	virtual ~StatelessReader();
-	StatelessReader(ReaderParams_t* param,uint32_t payload_size);
-
-
+	virtual ~CacheChangePool();
+	CacheChangePool(uint16_t pool_size,uint32_t payload_size);
+	CacheChange_t* reserve_Cache();
+	void release_Cache(CacheChange_t*);
+private:
+	uint32_t payload_size;
+	uint16_t pool_size;
+	std::vector<CacheChange_t*> freeCaches;
+	std::vector<CacheChange_t*> allCaches;
+	void allocateGroup(uint16_t pool_size);
 };
 
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* STATELESSREADER_H_ */
+#endif /* CACHECHANGEPOOL_H_ */

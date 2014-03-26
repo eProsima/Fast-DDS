@@ -25,16 +25,17 @@
 namespace eprosima {
 namespace rtps {
 
-StatefulWriter::StatefulWriter() {
-	// TODO Auto-generated constructor stub
-
-}
+//StatefulWriter::StatefulWriter() {
+//	// TODO Auto-generated constructor stub
+//
+//}
 
 StatefulWriter::~StatefulWriter() {
 	// TODO Auto-generated destructor stub
 }
 
-StatefulWriter::StatefulWriter(WriterParams_t* param)
+StatefulWriter::StatefulWriter(WriterParams_t* param,uint32_t payload_size):
+		RTPSWriter(param->historySize,payload_size)
 
 {
 	pushMode = param->pushMode;

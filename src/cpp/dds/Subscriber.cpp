@@ -130,7 +130,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 bool Subscriber::readCache(SequenceNumber_t sn, GUID_t wGuid,void* data_ptr)
 {
 	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	CacheChange_t* ch;
+	CacheChange_t* ch = NULL;
 	if(R->reader_cache.get_change(sn,wGuid,&ch))
 	{
 		if(ch->kind == ALIVE)
@@ -152,7 +152,6 @@ bool Subscriber::readCache(SequenceNumber_t sn, GUID_t wGuid,void* data_ptr)
 	else
 	{
 		pWarning("Change not found ");
-		delete(ch);
 		return false;
 	}
 }
@@ -334,19 +333,17 @@ bool Subscriber::takeMinSeqCache(void* data_ptr)
 		rElem.writerGuid = guid;
 		if(!isCacheRead(seq,guid))
 			readElements.push_back(rElem);
-		CacheChange_t* change;
+		CacheChange_t* change = NULL;
 		uint16_t ch_number;
 		if(R->reader_cache.get_change(seq,guid,&change,&ch_number))
 		{
-
-
 			if(change->kind == ALIVE)
 				type.deserialize(&change->serializedPayload,data_ptr);
 			else
 			{
 				pWarning("Cache with NOT ALIVE" << endl)
 			}
-			delete(change);
+			R->reader_cache.release_Cache(change);
 			R->reader_cache.changes.erase(R->reader_cache.changes.begin()+ch_number);
 			removeSeqFromRead(seq,guid);
 			return true;

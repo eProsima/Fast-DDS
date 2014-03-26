@@ -75,7 +75,7 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	if(!W->writer_cache.add_change(change))
 	{
 		pWarning("Change not added"<<endl);
-		delete(change);
+		W->writer_cache.release_Cache(change);
 		return false;
 	}
 	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.

@@ -28,9 +28,9 @@ namespace rtps {
 
 class StatefulReader:public RTPSReader {
 public:
-	StatefulReader();
+	//StatefulReader();
 	virtual ~StatefulReader();
-	StatefulReader(ReaderParams_t* param);
+	StatefulReader(ReaderParams_t* param,uint32_t payload_size);
 
 	bool matched_writer_add(WriterProxy_t* WP);
 	bool matched_writer_remove(WriterProxy_t WP);

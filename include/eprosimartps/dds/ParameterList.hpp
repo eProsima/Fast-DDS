@@ -196,10 +196,7 @@ inline bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t
 
 inline bool ParameterList::readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle)
 {
-	if(plist==NULL)
-		plist = new ParameterList_t();
-	else
-		plist->QosParams.clear();
+	plist->QosParams.clear();
 	uint32_t params_byte_size = 0;
 	bool is_sentinel = false;
 	bool valid;

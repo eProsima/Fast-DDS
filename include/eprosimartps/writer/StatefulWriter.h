@@ -30,10 +30,10 @@ namespace rtps {
 
 class StatefulWriter: public RTPSWriter {
 public:
-	StatefulWriter();
+	//StatefulWriter();
 	virtual ~StatefulWriter();
 
-	StatefulWriter(WriterParams_t* param);
+	StatefulWriter(WriterParams_t* param,uint32_t payload_size);
 
 	/**
 	 * Add a matched reader to the writer.

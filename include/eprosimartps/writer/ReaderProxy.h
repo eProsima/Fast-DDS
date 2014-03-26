@@ -88,6 +88,7 @@ public:
 	NackSupressionDuration nackSupression;
 
 	uint32_t lastAcknackCount;
+	StatefulWriter* SFW;
 
 
 private:
