@@ -68,12 +68,12 @@ typedef struct LatencyType{
 
 void LatencySer(SerializedPayload_t* payload,void*data)
 {
-	memcpy(payload->data,data,sizeof(LatencyType));
+	memcpy(payload->data,data,8);
 }
 
 void LatencyDeSer(SerializedPayload_t* payload,void*data)
 {
-	memcpy(data,payload->data,sizeof(LatencyType));
+	memcpy(data,payload->data,8);
 }
 
 
@@ -191,7 +191,7 @@ int main(int argc, char** argv){
 			t1 = boost::posix_time::microsec_clock::local_time();
 			pub->write((void*)&Latency);
 			sub->blockUntilNewMessage();
-			sub->readLastAdded((void*)&Latency);
+		//	sub->readLastAdded((void*)&Latency);
 			t2 = boost::posix_time::microsec_clock::local_time();
 			cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
 			total+=(t2-t1).total_microseconds()-overhead_value;
@@ -205,7 +205,7 @@ int main(int argc, char** argv){
 		else if (type == 2)
 		{
 			sub->blockUntilNewMessage();
-			sub->readMinSeqCache((void*)&Latency,&seq,&guid);
+			sub->readLastAdded((void*)&Latency);
 			pub->write((void*)&Latency);
 		}
 	}
