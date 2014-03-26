@@ -44,24 +44,27 @@ public:
 };
 
 
-class ParameterList{
-public:
-	static bool updateQosMsg(ParameterList_t* plist,Endianness_t endian);
-	static bool updateInlineQosMsg(ParameterList_t* plist,Endianness_t endian);
-	static bool updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,Endianness_t endian);
-	static bool addParameterString(ParameterList_t* plist,ParameterId_t pid,std::string& in_str);
-	static bool addParameterLocator(ParameterList_t* plist,ParameterId_t pid,Locator_t* loc);
-	static bool addParameterPort(ParameterList_t* plist,ParameterId_t pid,uint32_t port);
+namespace ParameterList{
 
-	static bool readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle);
+	inline bool updateQosMsg(ParameterList_t* plist,Endianness_t endian);
+	inline bool updateInlineQosMsg(ParameterList_t* plist,Endianness_t endian);
+	inline bool updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,Endianness_t endian);
+	inline bool addParameterString(ParameterList_t* plist,ParameterId_t pid,std::string& in_str);
+	inline bool addParameterLocator(ParameterList_t* plist,ParameterId_t pid,Locator_t* loc);
+	inline bool addParameterPort(ParameterList_t* plist,ParameterId_t pid,uint32_t port);
 
-	static Endianness_t get_Qos_endian(ParameterList_t* plist){return plist->QosMsg.msg_endian;};
-	static Endianness_t get_inlineQos_endian(ParameterList_t* plist){return plist->inlineQosMsg.msg_endian;};
+	inline bool readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle);
 
-};
+	inline Endianness_t get_Qos_endian(ParameterList_t* plist){return plist->QosMsg.msg_endian;};
+	inline Endianness_t get_inlineQos_endian(ParameterList_t* plist){return plist->inlineQosMsg.msg_endian;};
+
+}
+
 
 
 } /* namespace dds */
 } /* namespace eprosima */
+
+#include "ParameterList.hpp"
 
 #endif /* PARAMETERLIST_H_ */

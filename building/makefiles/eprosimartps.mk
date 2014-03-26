@@ -44,7 +44,6 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
 		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
-		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
 		  $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
 		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
@@ -58,6 +57,7 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/NackSupressionDuration.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp
+		  #$(BASEDIR)/src/cpp/dds/ParameterList.cpp \
 		  #$(BASEDIR)/src/cpp/CDRMessage.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/NotEnoughMemoryException.cpp \
