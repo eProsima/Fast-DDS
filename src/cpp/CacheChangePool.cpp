@@ -32,6 +32,7 @@ CacheChangePool::~CacheChangePool() {
 
 CacheChangePool::CacheChangePool(uint16_t pool_size_in, uint32_t payload_size_in)
 {
+	pDebugInfo("Creating CacheChangePool of size: "<<pool_size_in << " with payload of size: " << payload_size_in << endl);
 	payload_size = payload_size_in;
 	pool_size = pool_size_in;
 	allocateGroup(pool_size_in);
@@ -53,13 +54,14 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 
 void CacheChangePool::allocateGroup(uint16_t group_size)
 {
-
+pDebugInfo("Allocating memory"<<endl);
 	for(uint16_t i = 0;i<group_size;i++)
 	{
 		CacheChange_t* ch = new CacheChange_t(payload_size);
 		allCaches.push_back(ch);
 		freeCaches.push_back(ch);
 	}
+	pDebugInfo("Finish allocating memory"<<endl);
 }
 
 } /* namespace rtps */

@@ -21,7 +21,10 @@ namespace eprosima {
 namespace rtps {
 
 
+StatefulReader::~StatefulReader()
+{
 
+}
 
 
 

@@ -69,6 +69,8 @@ public:
 	RTPSMessageCreator MC;
 	Publisher* Pub;
 
+	void init_header();
+
 	void sendChangesList(std::vector<CacheChange_t*>* changes,
 			std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
 			bool expectsInlineQos,EntityId_t ReaderId);

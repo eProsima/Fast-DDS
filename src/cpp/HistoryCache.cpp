@@ -45,6 +45,7 @@ HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
 		SEQUENCENUMBER_UNKOWN(maxSeqNum);
 		GUID_UNKNOWN(minSeqNumGuid);
 		GUID_UNKNOWN(maxSeqNumGuid);
+		pDebugInfo("History created"<<endl);
 }
 
 HistoryCache::~HistoryCache() {

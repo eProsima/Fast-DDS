@@ -74,6 +74,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 		SW->Pub = Pub;
 		Pub->type = typeR;
 		SW->type = typeR;
+		pDebugInfo("Publisher creation finished"<<endl);
 		return Pub;
 	}
 	else if(WParam.stateKind == STATEFUL)
@@ -85,6 +86,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,WriterParams_t WPar
 		SF->Pub = Pub;
 		Pub->type = typeR;
 		SF->type = typeR;
+		pDebugInfo("Publisher creation finished"<<endl);
 		return Pub;
 	}
 	return NULL;
