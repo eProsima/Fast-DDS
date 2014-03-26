@@ -104,8 +104,8 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 
 			if(pushMode)
 			{
-				std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-				sendChangesList(&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,ENTITYID_UNKNOWN);
+//				std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+				sendChangesList(&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
 				rit->unsent_changes.clear();
 			}
 			else
@@ -115,7 +115,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 				writer_cache.get_seq_num_min(&first,NULL);
 				writer_cache.get_seq_num_max(&last,NULL);
 				heartbeatCount++;
-				RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
+				RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,c_EntityId_Unknown,this->guid.entityId,
 						first,last,heartbeatCount,true,false);
 				participant->threadSend.sendSync(&msg,&rit->locator);
 				rit->unsent_changes.clear();
@@ -141,8 +141,8 @@ void StatelessWriter::unsent_changes_not_empty()
 	{
 		if(pushMode)
 		{
-			std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-			sendChangesList(&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,ENTITYID_UNKNOWN);
+		//	std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+			sendChangesList(&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
 			rit->unsent_changes.clear();
 		}
 		else
@@ -152,7 +152,7 @@ void StatelessWriter::unsent_changes_not_empty()
 			writer_cache.get_seq_num_min(&first,NULL);
 			writer_cache.get_seq_num_max(&last,NULL);
 			heartbeatCount++;
-			RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,ENTITYID_UNKNOWN,this->guid.entityId,
+			RTPSMessageCreator::createMessageHeartbeat(&msg,participant->guid.guidPrefix,c_EntityId_Unknown,this->guid.entityId,
 					first,last,heartbeatCount,true,false);
 			participant->threadSend.sendSync(&msg,&rit->locator);
 			rit->unsent_changes.clear();

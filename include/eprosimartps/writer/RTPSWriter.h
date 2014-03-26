@@ -73,11 +73,11 @@ public:
 
 	void sendChangesList(std::vector<CacheChange_t*>* changes,
 			std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
-			bool expectsInlineQos,EntityId_t ReaderId);
+			bool expectsInlineQos,const EntityId_t& ReaderId);
 	void sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t* loc,
-			bool expectsInlineQos,EntityId_t ReaderId);
+			bool expectsInlineQos,const EntityId_t& ReaderId);
 
-	void DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,EntityId_t ReaderId);
+	void DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId);
 
 	std::string topicName;
 	std::string topicDataType;

@@ -34,8 +34,14 @@ typedef struct SequenceNumber_t{
 	uint64_t to64long(){
 		return ((uint64_t)high *(uint64_t)pow(2.0,32) + (uint64_t)low);
 	}
+	SequenceNumber_t& operator=(const SequenceNumber_t& seq)
+	{
+		high = seq.high;
+		low = seq.low;
+		return *this;
+	}
 	//!Compares two SequenceNumber_t.
-	bool operator==(SequenceNumber_t sn){
+	bool operator==(SequenceNumber_t& sn){
 		if(high != sn.high)
 			return false;
 		if(low != sn.low)
@@ -43,21 +49,28 @@ typedef struct SequenceNumber_t{
 		return true;
 	}
 	//!Increase SequenceNumber in 1.
-	SequenceNumber_t operator++(int){
+	SequenceNumber_t& operator++(){
 		if(low == pow(2.0,32))
 		{high++;low = 0;}
 		else
 			low++;
 		return *this;
 	}
-	SequenceNumber_t operator+=(int inc){
+	SequenceNumber_t& operator++(int unused){
+		if(low == pow(2.0,32))
+		{high++;low = 0;}
+		else
+			low++;
+		return *this;
+	}
+	SequenceNumber_t& operator+=(int inc){
 		if(low+inc>pow(2,32))
 		{high++;low +=inc-(pow(2,32)-low);}
 		else
 			low+=inc;
 		return *this;
 	}
-	SequenceNumber_t operator-(int inc){
+	SequenceNumber_t& operator-(int inc){
 		if(low-inc < 0)
 		{
 			high--;
@@ -67,26 +80,26 @@ typedef struct SequenceNumber_t{
 			low-=inc;
 		return *this;
 	}
-	bool operator>(SequenceNumber_t seq2){
-		return islarger(&seq2);
+	bool operator>(SequenceNumber_t& seq2){
+		return islarger(seq2);
 	}
-	bool operator<(SequenceNumber_t seq2){
-		return islarger(&seq2);
+	bool operator<(SequenceNumber_t& seq2){
+		return islarger(seq2);
 	}
-	bool operator>=(SequenceNumber_t seq){
-		if(islarger(&seq) || *this==seq)
+	bool operator>=(SequenceNumber_t& seq){
+		if(islarger(seq) || *this==seq)
 			return true;
 		else
 			return false;
 	}
-	bool operator<=(SequenceNumber_t seq){
-		if(!islarger(&seq) || *this==seq)
+	bool operator<=(SequenceNumber_t& seq){
+		if(!islarger(seq) || *this==seq)
 			return true;
 		else
 			return false;
 	}
-	bool islarger(SequenceNumber_t* seq2){
-		if(this->to64long() > seq2->to64long())
+	bool islarger(SequenceNumber_t& seq2){
+		if(this->to64long() > seq2.to64long())
 			return true;
 		else
 			return false;
@@ -99,7 +112,7 @@ typedef struct SequenceNumber_t{
 typedef struct SequenceNumberSet_t{
 	SequenceNumber_t base;
 	std::vector<SequenceNumber_t> set;
-	bool add(SequenceNumber_t in){
+	bool add(SequenceNumber_t& in){
 		uint64_t base64 = base.to64long();
 		uint64_t in64 = in.to64long();
 		if(in64 >= base64 && in64<=base64+255 )

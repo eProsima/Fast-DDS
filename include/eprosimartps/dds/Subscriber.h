@@ -41,6 +41,12 @@ namespace dds {
 struct RTPS_DllAPI ReadElement_t{
 	SequenceNumber_t seqNum;
 	GUID_t writerGuid;
+	ReadElement_t& operator=(const ReadElement_t& rElem)
+	{
+		seqNum = rElem.seqNum;
+		writerGuid = rElem.writerGuid;
+		return *this;
+	}
 };
 
 

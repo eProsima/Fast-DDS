@@ -56,7 +56,7 @@ inline bool CDRMessage::appendMsg(CDRMessage_t*first, CDRMessage_t*second) {
 }
 
 
-inline bool CDRMessage::readEntityId(CDRMessage_t* msg,EntityId_t* id) {
+inline bool CDRMessage::readEntityId(CDRMessage_t* msg,const EntityId_t* id) {
 	if(msg->pos+4>msg->length)
 		return false;
 	uint32_t* aux1 = (uint32_t*) id->value;
@@ -368,7 +368,7 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 }
 
 
-inline bool CDRMessage::addEntityId(CDRMessage_t* msg, EntityId_t*ID) {
+inline bool CDRMessage::addEntityId(CDRMessage_t* msg, const EntityId_t*ID) {
 	if(msg->pos+4>=msg->max_size)
 	{
 		pError( "Message size not enough "<<endl);
