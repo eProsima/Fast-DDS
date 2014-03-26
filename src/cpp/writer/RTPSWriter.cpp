@@ -36,8 +36,15 @@ RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 
 {
 	// TODO Auto-generated constructor stub
-		RTPSMessageCreator::createHeader(&rtpsw_header,participant->guid.guidPrefix);
+	pDebugInfo("RTPSWriter created"<<endl)
 }
+
+void RTPSWriter::init_header()
+{
+	RTPSMessageCreator::createHeader(&rtpsw_header,participant->guid.guidPrefix);
+}
+
+
 
 RTPSWriter::~RTPSWriter() {
 	// TODO Auto-generated destructor stub
@@ -185,4 +192,5 @@ void RTPSWriter::sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t*
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
 

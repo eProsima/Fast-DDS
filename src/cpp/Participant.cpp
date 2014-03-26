@@ -152,10 +152,11 @@ Participant::~Participant() {
 
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t Wparam,uint32_t payload_size) {
-
+bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t Wparam,uint32_t payload_size)
+{
+	pDebugInfo("Creating Stateless Writer"<<endl);
 	StatelessWriter* SWriter = new StatelessWriter(&Wparam,payload_size);
-
+	pDebugInfo("Finished Writer creation"<<endl);
 	//Check if locator lists are empty:
 	if(SWriter->unicastLocatorList.empty())
 		SWriter->unicastLocatorList = defaultUnicastLocatorList;
@@ -165,6 +166,8 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t 
 	SWriter->participant = this;
 	//Assign GUID
 	SWriter->guid.guidPrefix = guid.guidPrefix;
+	SWriter->init_header();
+
 	if(SWriter->topicKind == NO_KEY)
 		SWriter->guid.entityId.value[3] = 0x03;
 	else if(SWriter->topicKind == WITH_KEY)
@@ -181,6 +184,7 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,WriterParams_t 
 	writerList.push_back((RTPSWriter*)SWriter);
 
 	*SW_out = SWriter;
+	pDebugInfo("Finished Writer initialization"<<endl);
 	return true;
 }
 
@@ -196,6 +200,8 @@ bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t W
 	SFWriter->participant = this;
 	//Assign GUID
 	SFWriter->guid.guidPrefix = guid.guidPrefix;
+	SFWriter->init_header();
+
 	if(SFWriter->topicKind == NO_KEY)
 		SFWriter->guid.entityId.value[3] = 0x03;
 	else if(SFWriter->topicKind == WITH_KEY)
@@ -219,10 +225,9 @@ bool Participant::createStatefulWriter(StatefulWriter** SFW_out,WriterParams_t W
 
 
 bool Participant::createStatelessReader(StatelessReader** SR_out,
-		ReaderParams_t RParam,uint32_t payload_size) {
-
-		StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
-
+		ReaderParams_t RParam,uint32_t payload_size)
+{
+	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
 	//If NO UNICAST
 	if(SReader->unicastLocatorList.empty())
 		SReader->unicastLocatorList = defaultUnicastLocatorList;
