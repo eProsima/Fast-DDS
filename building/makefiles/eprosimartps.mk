@@ -31,7 +31,6 @@ EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 
 EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
-		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
 		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
 		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
@@ -59,6 +58,7 @@ EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/NackSupressionDuration.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp
+		  #$(BASEDIR)/src/cpp/CDRMessage.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/NotEnoughMemoryException.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/BadParamException.cpp
