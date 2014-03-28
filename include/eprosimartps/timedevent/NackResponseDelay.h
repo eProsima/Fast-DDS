@@ -20,6 +20,7 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/writer/RTPSMessageGroup.h"
 
 
 namespace eprosima {
@@ -30,12 +31,12 @@ class ReaderProxy;
 
 class NackResponseDelay:public TimedEvent {
 public:
-	NackResponseDelay();
 	NackResponseDelay(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
 	virtual ~NackResponseDelay();
 
 	void event(const boost::system::error_code& ec,ReaderProxy* rp);
 	StatefulWriter* SW;
+	RTPSMessageGroup_t m_cdrmessages;
 };
 
 } /* namespace dds */

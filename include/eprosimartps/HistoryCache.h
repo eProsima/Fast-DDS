@@ -108,12 +108,16 @@ public:
 	 */
 	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid);
 
+
+	CacheChange_t* reserve_Cache();
+	void release_Cache(CacheChange_t*);
+
 	//!Returns true if the History is full.
 	bool isFull();
+
 	//!Vector of pointers to the CacheChange_t.
-	std::vector<CacheChange_t*> changes;
-	//!Maximum history size.
-	uint16_t historySize;
+	std::vector<CacheChange_t*> m_changes;
+
 	///@name Pointer to the associated entity. Only one of them is initialized.
 	//! @{
 	RTPSWriter* rtpswriter;
@@ -122,10 +126,11 @@ public:
 	//!Type of History (WRITER or READER).
 	HistoryKind_t historyKind;
 
-	CacheChange_t* reserve_Cache();
-	void release_Cache(CacheChange_t*);
+
 
 private:
+	//!Maximum history size.
+	uint16_t m_history_max_size;
 	//!Variable to know if the history is full without needing to block the History mutex.
 	bool isHistoryFull;
 	//!Minimum sequence number in the history
@@ -136,15 +141,14 @@ private:
 	SequenceNumber_t maxSeqNum;
 	//!Writer Guid of the maximum seqNum in the History.
 	GUID_t maxSeqNumGuid;
+	//! Pool of changes created in the beginning
+	CacheChangePool changePool;
 
 	//!Update the max and min sequence number and Guid after a change in the cache changes.
 	void updateMaxMinSeqNum();
-//	//!Update the max  sequence number and Guid after a change in the cache changes.
-//	void updateMaxSeqNum();
-//	//!Update the  min sequence number and Guid after a change in the cache changes.
-//	void updateMinSeqNum();
 
-	CacheChangePool changePool;
+
+
 
 };
 

@@ -25,13 +25,9 @@
 namespace eprosima {
 namespace dds {
 
-Publisher::Publisher(){
-
-}
-
-Publisher::Publisher(RTPSWriter* Win) {
+Publisher::Publisher(RTPSWriter* Win):W(Win)
+{
 	// TODO Auto-generated constructor stub
-	W = Win;
 }
 
 Publisher::~Publisher() {
@@ -72,17 +68,17 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	CacheChange_t* change;
 	W->new_change(kind,Data,&change);
 
-	if(!W->writer_cache.add_change(change))
+	if(!W->m_writer_cache.add_change(change))
 	{
 		pWarning("Change not added"<<endl);
-		W->writer_cache.release_Cache(change);
+		W->m_writer_cache.release_Cache(change);
 		return false;
 	}
 	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
 
-	if(W->stateType == STATELESS)
+	if(W->m_stateType == STATELESS)
 		((StatelessWriter*)W)->unsent_change_add(change);
-	else if(W->stateType == STATEFUL)
+	else if(W->m_stateType == STATEFUL)
 	{
 		((StatefulWriter*)W)->unsent_change_add(change);
 	}
@@ -96,14 +92,14 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 
 bool Publisher::removeMinSeqChange()
 {
-	boost::lock_guard<HistoryCache> guard(W->writer_cache);
+	boost::lock_guard<HistoryCache> guard(W->m_writer_cache);
 
-	if(!W->writer_cache.changes.empty())
+	if(!W->m_writer_cache.m_changes.empty())
 	{
 		SequenceNumber_t sn;
 		GUID_t gui;
-		W->writer_cache.get_seq_num_min(&sn,&gui);
-		W->writer_cache.remove_change(sn,gui);
+		W->m_writer_cache.get_seq_num_min(&sn,&gui);
+		W->m_writer_cache.remove_change(sn,gui);
 		return true;
 	}
 
@@ -113,19 +109,19 @@ bool Publisher::removeMinSeqChange()
 
 bool Publisher::removeAllChange()
 {
-	boost::lock_guard<HistoryCache> guard(W->writer_cache);
-	return W->writer_cache.remove_all_changes();
+	boost::lock_guard<HistoryCache> guard(W->m_writer_cache);
+	return W->m_writer_cache.remove_all_changes();
 }
 
 int Publisher::getHistory_n()
 {
-	boost::lock_guard<HistoryCache> guard(W->writer_cache);
-	return W->writer_cache.changes.size();
+	boost::lock_guard<HistoryCache> guard(W->m_writer_cache);
+	return W->m_writer_cache.m_changes.size();
 }
 
 bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 {
-	if(W->stateType==STATELESS)
+	if(W->m_stateType==STATELESS)
 	{
 		ReaderLocator RL;
 		RL.expectsInlineQos = expectsInlineQos;
@@ -133,8 +129,9 @@ bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 		pDebugInfo("Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl);
 		((StatelessWriter*)W)->reader_locator_add(RL);
 	}
-	else if(W->stateType==STATEFUL)
+	else if(W->m_stateType==STATEFUL)
 	{
+		//FIXME: Improve this.
 		ReaderProxy_t RL;
 		RL.expectsInlineQos = expectsInlineQos;
 		GUID_UNKNOWN(RL.remoteReaderGuid);
@@ -148,15 +145,15 @@ bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 	return true;
 }
 
-std::string Publisher::getTopicName()
-	{
-		return W->topicName;
-	}
+const std::string& Publisher::getTopicName()
+{
+	return W->getTopicName();
+}
 
-	std::string Publisher::getTopicDataType()
-	{
-		return W->topicDataType;
-	}
+const std::string& Publisher::getTopicDataType()
+{
+	return W->getTopicDataType();
+}
 
 
 

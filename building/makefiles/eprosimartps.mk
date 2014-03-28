@@ -29,37 +29,47 @@ EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x
 EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 		  -I$(EPROSIMADIR)/code
 
-EPROSIMARTPS_SRC_CPPFILES= $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
+EPROSIMARTPS_SRC_CPPFILES= \
+ 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
+		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
+		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
+		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
 		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
+		  $(BASEDIR)/src/cpp/Endpoint.cpp \
+		  $(BASEDIR)/src/cpp/Participant.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
-		  $(BASEDIR)/src/cpp/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/Participant.cpp \
+		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
+		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
+		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/threadtype/ThreadListen.cpp \
 		  $(BASEDIR)/src/cpp/threadtype/ThreadSend.cpp \
+		  $(BASEDIR)/src/cpp/threadtype/ThreadEvent.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \
+		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
+		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
 		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
-		  $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
-		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
-		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
-		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
-		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
-		  $(BASEDIR)/src/cpp/threadtype/ThreadEvent.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/timedevent/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/PeriodicHeartbeat.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/NackResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/HeartbeatResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/NackSupressionDuration.cpp \
-		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
-		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp
-		  #$(BASEDIR)/src/cpp/dds/ParameterList.cpp \
-		  #$(BASEDIR)/src/cpp/CDRMessage.cpp \
+		  
+#		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
+#		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/NotEnoughMemoryException.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/BadParamException.cpp

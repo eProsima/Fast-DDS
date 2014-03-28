@@ -22,12 +22,6 @@ namespace eprosima{
 namespace rtps{
 
 
-
-TimedEvent::TimedEvent()
-{
-
-}
-
 TimedEvent::TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval):
 		timer(new boost::asio::deadline_timer(*serv,interval))
 {

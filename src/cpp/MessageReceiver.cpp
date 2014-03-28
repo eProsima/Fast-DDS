@@ -239,9 +239,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	EntityId_t reader;
 	CDRMessage::readEntityId(msg,&reader);
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-	std::vector<RTPSReader*>::iterator it;
+
 	RTPSReader* firstReader = NULL;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
+			it!=threadListen_ptr->m_assoc_readers.end();++it)
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
@@ -323,7 +324,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 
 	//Look for the correct reader to add the change
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
+			it!=threadListen_ptr->m_assoc_readers.end();++it)
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
@@ -385,8 +387,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 
 	//Look for the correct reader and writers:
 
-	std::vector<RTPSReader*>::iterator it;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
+
+	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
+			it!=threadListen_ptr->m_assoc_readers.end();++it)
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
@@ -452,12 +455,13 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 	//Look for the correct writer to use the acknack
 
-	std::vector<RTPSWriter*>::iterator it;
-	for(it=threadListen_ptr->assoc_writers.begin();it!=threadListen_ptr->assoc_writers.end();++it)
+
+	for(std::vector<RTPSWriter*>::iterator it=threadListen_ptr->m_assoc_writers.begin();
+			it!=threadListen_ptr->m_assoc_writers.end();++it)
 	{
 		if((*it)->guid == writerGUID)
 		{
-			if((*it)->stateType == STATEFUL)
+			if((*it)->m_stateType == STATEFUL)
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
 				//Look for the readerProxy the acknack is from
@@ -472,9 +476,9 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							(*rit)->acked_changes_set(&SNSet.base);
 							(*rit)->requested_changes_set(&SNSet.set);
 							if(!(*rit)->isRequestedChangesEmpty)
-								(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,(*rit)->nackResponse,
+								(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->nackResponse,
 										boost::asio::placeholders::error,(*rit)));
-							//Check if UNACKED CHANGES IS EMPTY
+							//FIXME: Check if UNACKED CHANGES IS EMPTY
 
 
 						}
@@ -510,8 +514,9 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart.to64long()<=0)
 		return false;
 
-	std::vector<RTPSReader*>::iterator it;
-	for(it=threadListen_ptr->assoc_readers.begin();it!=threadListen_ptr->assoc_readers.end();++it)
+
+	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
+			it!=threadListen_ptr->m_assoc_readers.end();++it)
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{

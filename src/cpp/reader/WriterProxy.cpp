@@ -22,40 +22,30 @@
 namespace eprosima {
 namespace rtps {
 
-WriterProxy::WriterProxy() {
-	// TODO Auto-generated constructor stub
-
-}
 
 WriterProxy::~WriterProxy() {
 	// TODO Auto-generated destructor stub
 }
 
 WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :
-		heartbeatResponse(SR,boost::posix_time::milliseconds(SR->reliability.heartbeatResponseDelay.to64time()*1000))
-//				periodicHB(SW,boost::posix_time::milliseconds(reliability->heartbeatPeriod.to64time()*1000)),
-//				nackResponse(SW,boost::posix_time::milliseconds(reliability->nackResponseDelay.to64time()*1000)),
-//				nackSupression(SW,boost::posix_time::milliseconds(reliability->nackSupressionDuration.to64time()*1000))
+		param(*WPparam),
+		acknackCount(0),lastHeartbeatCount(0),isMissingChangesEmpty(true),
+		heartbeatResponse(SR,boost::posix_time::milliseconds(SR->reliability.heartbeatResponseDelay.to64time()*1000)),
+		SFR(SR)
 {
-	param = *WPparam;
-	acknackCount = 0;
-	isMissingChangesEmpty = true;
-	lastHeartbeatCount = 0;
-	SFR = SR;
+
+
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
 	SequenceNumber_t maxSeqNum;
-	max_seq_num(&maxSeqNum);
+	this->max_seq_num(&maxSeqNum);
 	if(maxSeqNum < *seqNum)
 		add_unknown_changes((seqNum++));
 
-
-	std::vector<ChangeFromWriter_t>::iterator cit;
-
-	for(cit=changes.begin();cit!=changes.end();++cit)
+	for(std::vector<ChangeFromWriter_t>::iterator cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->status == UNKNOWN)
 		{
@@ -73,12 +63,11 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
 	SequenceNumber_t maxSeqNum;
-	max_seq_num(&maxSeqNum);
+	this->max_seq_num(&maxSeqNum);
 	if(maxSeqNum < *seqNum)
 		add_unknown_changes((seqNum++));
 
-	std::vector<ChangeFromWriter_t>::iterator cit;
-	for(cit=changes.begin();cit!=changes.end();++cit)
+	for(std::vector<ChangeFromWriter_t>::iterator cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->status == UNKNOWN || cit->status == MISSING)
 		{
@@ -92,8 +81,7 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t* seqNum)
 bool WriterProxy::received_change_set(CacheChange_t* change)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
-	std::vector<ChangeFromWriter_t>::iterator cit;
-	for(cit=changes.begin();cit!=changes.end();++cit)
+	for(std::vector<ChangeFromWriter_t>::iterator cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->change->sequenceNumber.to64long() == change->sequenceNumber.to64long())
 		{
@@ -120,8 +108,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 bool WriterProxy::irrelevant_change_set(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
-	std::vector<ChangeFromWriter_t>::iterator cit;
-	for(cit=changes.begin();cit!=changes.end();++cit)
+	for(std::vector<ChangeFromWriter_t>::iterator cit=changes.begin();cit!=changes.end();++cit)
 	{
 		if(cit->change->sequenceNumber.to64long() == seqNum->to64long())
 		{
@@ -173,8 +160,7 @@ bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
 	missing->clear();
-	std::vector<ChangeFromWriter_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();++it)
+	for(std::vector<ChangeFromWriter_t>::iterator it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->status == MISSING)
 			missing->push_back(&(*it));
@@ -196,8 +182,8 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 			*seqNum = changes.begin()->change->sequenceNumber;
 		else
 			return false;
-		std::vector<ChangeFromWriter_t>::iterator it;
-		for(it=changes.begin()+1;it!=changes.end();++it)
+
+		for(std::vector<ChangeFromWriter_t>::iterator it=changes.begin()+1;it!=changes.end();++it)
 		{
 			if(it->status == RECEIVED || it->status == LOST)
 				*seqNum = it->change->sequenceNumber;

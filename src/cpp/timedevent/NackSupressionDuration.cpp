@@ -20,17 +20,14 @@
 namespace eprosima {
 namespace rtps {
 
-NackSupressionDuration::NackSupressionDuration() {
-	// TODO Auto-generated constructor stub
 
-}
 
 NackSupressionDuration::~NackSupressionDuration() {
-	// TODO Auto-generated destructor stub
+
 }
 
 NackSupressionDuration::NackSupressionDuration(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SW_ptr->participant->eventThread.io_service,interval),
+		TimedEvent(&SW_ptr->participant->m_event_thr.io_service,interval),
 		SW(SW_ptr)
 {
 
@@ -41,8 +38,9 @@ void NackSupressionDuration::event(const boost::system::error_code& ec,ReaderPro
 	if(!ec)
 	{
 		boost::lock_guard<ReaderProxy> guard(*RP);
-		std::vector<ChangeForReader_t>::iterator cit;
-		for(cit=RP->changes.begin();cit!=RP->changes.end();cit++)
+
+		for(std::vector<ChangeForReader_t>::iterator cit=RP->changes.begin();
+				cit!=RP->changes.end();++cit)
 		{
 			if(cit->status == UNDERWAY)
 				cit->status = UNACKNOWLEDGED;

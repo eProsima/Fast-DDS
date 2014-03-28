@@ -59,7 +59,6 @@ class RTPS_DllAPI Subscriber {
 	friend class DomainParticipant;
 	friend class RTPSReader;
 public:
-	Subscriber();
 	Subscriber(RTPSReader* Rin);
 	virtual ~Subscriber();
 

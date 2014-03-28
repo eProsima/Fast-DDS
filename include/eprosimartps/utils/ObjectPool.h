@@ -7,36 +7,39 @@
  *************************************************************************/
 
 /**
- * @file NackSupressionDuration.h
+ * @file ObjectPool.h
  *
- *  Created on: Mar 24, 2014
+ *  Created on: Mar 28, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#ifndef NACKSUPRESSIONDURATION_H_
-#define NACKSUPRESSIONDURATION_H_
+#ifndef OBJECTPOOL_H_
+#define OBJECTPOOL_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include <vector>
+#include <cstdint>
 
 namespace eprosima {
 namespace rtps {
 
-class StatefulWriter;
-class ReaderProxy;
-
-class NackSupressionDuration:public TimedEvent {
+template <typename T>
+class ObjectPool {
 public:
-	virtual ~NackSupressionDuration();
-	NackSupressionDuration(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
+	ObjectPool(uint16_t defaultGroupSize);
+	virtual ~ObjectPool();
+	T& reserve_Object();
+	void release_Object(T& obj);
+protected:
+	std::vector<T*> m_free_objects;
+	std::vector<T*> m_all_objects;
+	uint16_t m_group_size;
+	void allocateGroup();
 
-	void event(const boost::system::error_code& ec,ReaderProxy* RP);
-		StatefulWriter* SW;
 };
 
-} /* namespace dds */
+} /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* NACKSUPRESSIONDURATION_H_ */
+#endif /* OBJECTPOOL_H_ */

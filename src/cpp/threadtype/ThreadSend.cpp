@@ -22,17 +22,16 @@ using boost::asio::ip::udp;
 namespace eprosima {
 namespace rtps {
 
-ThreadSend::ThreadSend() : send_socket(sendService) {
-	// TODO Auto-generated constructor stub
-	//Create socket
-
+ThreadSend::ThreadSend() :
+	m_send_socket(m_send_service)
+{
 
 }
 
 bool ThreadSend::initSend(const Locator_t& loc)
 {
 	boost::asio::ip::address addr;
-	sendLocator = loc;
+	m_sendLocator = loc;
 	try {
 		boost::asio::io_service netService;
 		udp::resolver   resolver(netService);
@@ -45,62 +44,62 @@ bool ThreadSend::initSend(const Locator_t& loc)
 
 		pInfo("My IP according to google is: " << addr.to_string() << endl);
 
-		sendLocator.address[12] = addr.to_v4().to_bytes()[0];
-		sendLocator.address[13] = addr.to_v4().to_bytes()[1];
-		sendLocator.address[14] = addr.to_v4().to_bytes()[2];
-		sendLocator.address[15] = addr.to_v4().to_bytes()[3];
+		m_sendLocator.address[12] = addr.to_v4().to_bytes()[0];
+		m_sendLocator.address[13] = addr.to_v4().to_bytes()[1];
+		m_sendLocator.address[14] = addr.to_v4().to_bytes()[2];
+		m_sendLocator.address[15] = addr.to_v4().to_bytes()[3];
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << "Could not deal with socket. Exception: " << e.what() << std::endl;
-		sendLocator = loc;
-		sendLocator.address[12] = 127;
-		sendLocator.address[13] = 0;
-		sendLocator.address[14] = 0;
-		sendLocator.address[15] = 1;
+		m_sendLocator = loc;
+		m_sendLocator.address[12] = 127;
+		m_sendLocator.address[13] = 0;
+		m_sendLocator.address[14] = 0;
+		m_sendLocator.address[15] = 1;
 	}
 
 	//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-	udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),sendLocator.port);
+	udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),m_sendLocator.port);
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
-	send_socket.open(boost::asio::ip::udp::v4());
-	send_socket.bind(send_endpoint);
-	pInfo ( YELLOW<<"Sending through default address " << send_socket.local_endpoint()<<" Socket state: " << send_socket.is_open() << DEF<<endl);
+	m_send_socket.open(boost::asio::ip::udp::v4());
+	m_send_socket.bind(send_endpoint);
+	pInfo ( YELLOW<<"Sending through default address " << m_send_socket.local_endpoint()<<" Socket state: " << m_send_socket.is_open() << DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
 	return true;
 }
 
 
-ThreadSend::~ThreadSend() {
-	// TODO Auto-generated destructor stub
-	//sendService.stop();
+ThreadSend::~ThreadSend()
+{
+
 }
 
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 {
 	boost::lock_guard<ThreadSend> guard(*this);
-	udp::endpoint send_endpoint;
+
 	if(loc->kind == LOCATOR_KIND_UDPv4)
 	{
 		boost::asio::ip::address_v4::bytes_type addr;
 		for(uint8_t i=0;i<4;i++)
 			addr[i] = loc->address[12+i];
-		send_endpoint = udp::endpoint(boost::asio::ip::address_v4(addr),loc->port);
+		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v4(addr),loc->port);
 	}
 	else if(loc->kind == LOCATOR_KIND_UDPv6)
 	{
 		boost::asio::ip::address_v6::bytes_type addr;
 		for(uint8_t i=0;i<16;i++)
 			addr[i] = loc->address[i];
-		send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
+		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
 	}
 
 
-	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << send_endpoint << " FROM " << send_socket.local_endpoint()  << endl);
-//	boost::posix_time::ptime t1,t2;
+	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+	//	boost::posix_time::ptime t1,t2;
 	//t1 = boost::posix_time::microsec_clock::local_time();
-	size_t longitud = send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),send_endpoint);
+	size_t longitud = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
 	//t2 = boost::posix_time::microsec_clock::local_time();
 	//cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
 	pDebugInfo (YELLOW <<  "SENT " << longitud << DEF << endl);

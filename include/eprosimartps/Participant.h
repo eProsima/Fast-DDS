@@ -101,33 +101,33 @@ public:
 	 */
 	bool removeEndpoint(Endpoint* endpoint);
 
-	//!Protocol Version used by this participant.
-	ProtocolVersion_t protocolVersion;
-	//!VendodId of the participant.
-	VendorId_t vendorId;
+//	//!Protocol Version used by this participant.
+//	ProtocolVersion_t protocolVersion;
+//	//!VendodId of the participant.
+//	VendorId_t vendorId;
 	//!Default listening addresses.
-	std::vector<Locator_t> defaultUnicastLocatorList;
+	std::vector<Locator_t> m_defaultUnicastLocatorList;
 	//!Default listening addresses.
-	std::vector<Locator_t> defaultMulticastLocatorList;
+	std::vector<Locator_t> m_defaultMulticastLocatorList;
 	//!Guid of the participant.
-	GUID_t guid;
+	GUID_t m_guid;
 	//! Sending resources.
-	ThreadSend threadSend;
+	ThreadSend m_send_thr;
 
-	ThreadEvent eventThread;
+	ThreadEvent m_event_thr;
 
 private:
 
 	//!Semaphore to wait for the listen thread creation.
-	boost::interprocess::interprocess_semaphore* endpointToListenThreadSemaphore;
+	boost::interprocess::interprocess_semaphore* m_endpointToListenThreadSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
 	uint32_t IdCounter;
 	//!Writer List.
-	std::vector<RTPSWriter*> writerList;
+	std::vector<RTPSWriter*> m_writerList;
 	//!Reader List
-	std::vector<RTPSReader*> readerList;
+	std::vector<RTPSReader*> m_readerList;
 	//!Listen thread list.
-	std::vector<ThreadListen*> threadListenList;
+	std::vector<ThreadListen*> m_threadListenList;
 	/*!
 	 * Assign a given Endpoint to one of the current listen thread or create a new one.
 	 * @param[in] endpoint Pointer to the Endpoint to add.

@@ -21,6 +21,27 @@
 namespace eprosima {
 namespace dds {
 
+ParameterList_t::ParameterList_t():
+		QosMsg(RTPSMESSAGE_MAX_SIZE),
+		inlineQosMsg(RTPSMESSAGE_MAX_SIZE),
+		has_changed_Qos(true),has_changed_inlineQos(true)
+{
+
+}
+
+ParameterList_t::~ParameterList_t()
+{
+	std::vector<Parameter_t*>::iterator it;
+	for(it=QosParams.begin();it!=QosParams.end();++it)
+	{
+		delete(*it);
+	}
+	for(it=inlineQosParams.begin();it!=inlineQosParams.end();++it)
+	{
+		delete(*it);
+	}
+}
+
 void ParameterList_t::get_QosMsg(CDRMessage_t** msg,Endianness_t endian)
 {
 	if(has_changed_Qos || endian != QosMsg.msg_endian)
@@ -120,11 +141,10 @@ bool ParameterList::updateInlineQosMsg(ParameterList_t* plist,Endianness_t endia
 
 bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,Endianness_t endian)
 {
-	std::vector<Parameter_t*>::iterator it;
 	CDRMessage::initCDRMsg(msg);
 	msg->msg_endian = endian;
 //	pDebugInfo("Adding parameters to list: " << vec->size() << endl;);
-	for(it = vec->begin();it!=vec->end();++it)
+	for(std::vector<Parameter_t*>::iterator it = vec->begin();it!=vec->end();++it)
 	{
 		switch((*it)->Pid)
 		{
@@ -188,17 +208,15 @@ bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,E
 
 bool ParameterList::readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle)
 {
-	if(plist==NULL)
-		plist = new ParameterList_t();
-	else
-		plist->QosParams.clear();
+	plist->QosParams.clear();
+	plist->inlineQosParams.clear();
 	uint32_t params_byte_size = 0;
 	bool is_sentinel = false;
 	bool valid;
+	Parameter_t P;
 	while(!is_sentinel)
 	{
 		valid = true;
-		Parameter_t P;
 		valid&=CDRMessage::readUInt16(msg,(uint16_t*)&P.Pid);
 		valid&=CDRMessage::readUInt16(msg,&P.length);
 		params_byte_size+=4;

@@ -22,17 +22,12 @@
 namespace eprosima {
 namespace rtps {
 
-HeartbeatResponseDelay::HeartbeatResponseDelay() {
-	// TODO Auto-generated constructor stub
-
-}
-
 HeartbeatResponseDelay::~HeartbeatResponseDelay() {
 	// TODO Auto-generated destructor stub
 }
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(StatefulReader* SR_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SR_ptr->participant->eventThread.io_service,interval),
+		TimedEvent(&SR_ptr->participant->m_event_thr.io_service,interval),
 		SR(SR_ptr)
 {
 
@@ -59,14 +54,14 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec,WriterPro
 				sns.set.push_back((*cit)->change->sequenceNumber);
 			}
 			wp->acknackCount++;
-			CDRMessage_t msg;
-			RTPSMessageCreator::createMessageAcknack(&msg,SR->participant->guid.guidPrefix,
+			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
+			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,SR->participant->m_guid.guidPrefix,
 					SR->guid.entityId,wp->param.remoteWriterGuid.entityId,sns,wp->acknackCount,false);
 			std::vector<Locator_t>::iterator lit;
 			for(lit = wp->param.unicastLocatorList.begin();lit!=wp->param.unicastLocatorList.end();++lit)
-				SR->participant->threadSend.sendSync(&msg,&(*lit));
+				SR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
 			for(lit = wp->param.multicastLocatorList.begin();lit!=wp->param.multicastLocatorList.end();++lit)
-				SR->participant->threadSend.sendSync(&msg,&(*lit));
+				SR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
 
 		}
 	}

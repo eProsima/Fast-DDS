@@ -18,20 +18,13 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
+bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
-
 	try
 	{
-
-		RTPSMessageCreator::createHeader(msg,guidprefix);
-
-
-
-		RTPSMessageCreator::createSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
-
-		//cout << "SubMEssage created and added to message" << endl;
+		RTPSMessageCreator::addHeader(msg,guidprefix);
+		RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
 		msg->length = msg->pos;
 	}
 	catch(int e)
@@ -42,12 +35,11 @@ bool RTPSMessageCreator::createMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& 
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
+bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
 		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 
-	//Create the two CDR msgs
-	//CDRMessage_t submsgElem;
+	CDRMessage_t& submsgElem = pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
@@ -83,11 +75,11 @@ bool RTPSMessageCreator::createSubmessageHeartbeat(CDRMessage_t* msg,const Entit
 
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::createSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg, HEARTBEAT,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
-
+	pool_submsg.release_Object(submsgElem);
 	return true;
 }
 

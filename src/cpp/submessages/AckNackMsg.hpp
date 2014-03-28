@@ -18,18 +18,13 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
 		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
 
 	try
 	{
-
-		RTPSMessageCreator::createHeader(msg,guidprefix);
-
-
-		RTPSMessageCreator::createSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
-
-		//cout << "SubMEssage created and added to message" << endl;
+		RTPSMessageCreator::addHeader(msg,guidprefix);
+		RTPSMessageCreator::addSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
 		msg->length = msg->pos;
 	}
 	catch(int e)
@@ -40,12 +35,10 @@ bool RTPSMessageCreator::createMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& gu
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
+bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
-
-	//Create the two CDR msgs
-	//CDRMessage_t submsgElem;
+	CDRMessage_t& submsgElem = pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
@@ -76,9 +69,10 @@ bool RTPSMessageCreator::createSubmessageAcknack(CDRMessage_t* msg,
 	}
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::createSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
+	pool_submsg.release_Object(submsgElem);
 	msg->length = msg->pos;
 	return true;
 }

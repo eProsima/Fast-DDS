@@ -22,17 +22,14 @@
 namespace eprosima {
 namespace rtps{
 
-PeriodicHeartbeat::PeriodicHeartbeat() {
-	// TODO Auto-generated constructor stub
 
-}
 
 PeriodicHeartbeat::~PeriodicHeartbeat() {
 	// TODO Auto-generated destructor stub
 }
 
 PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SW_ptr->participant->eventThread.io_service,interval),
+		TimedEvent(&SW_ptr->participant->m_event_thr.io_service,interval),
 		SW(SW_ptr)
 {
 
@@ -49,18 +46,18 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* R
 		}
 		if(!unack.empty())
 		{
-			CDRMessage_t msg;
 			SequenceNumber_t first,last;
-			SW->writer_cache.get_seq_num_min(&first,NULL);
-			SW->writer_cache.get_seq_num_max(&last,NULL);
-			SW->heartbeatCount++;
-			RTPSMessageCreator::createMessageHeartbeat(&msg,SW->participant->guid.guidPrefix,ENTITYID_UNKNOWN,SW->guid.entityId,
-					first,last,SW->heartbeatCount,false,false);
+			SW->m_writer_cache.get_seq_num_min(&first,NULL);
+			SW->m_writer_cache.get_seq_num_max(&last,NULL);
+			SW->heartbeatCount_increment();
+			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
+			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,SW->participant->m_guid.guidPrefix,ENTITYID_UNKNOWN,SW->guid.entityId,
+					first,last,SW->getHeartbeatCount(),false,false);
 			std::vector<Locator_t>::iterator lit;
 			for(lit = RP->param.unicastLocatorList.begin();lit!=RP->param.unicastLocatorList.end();++lit)
-				SW->participant->threadSend.sendSync(&msg,&(*lit));
+				SW->participant->m_send_thr.sendSync(&m_periodic_hb_msg,&(*lit));
 			for(lit = RP->param.multicastLocatorList.begin();lit!=RP->param.multicastLocatorList.end();++lit)
-				SW->participant->threadSend.sendSync(&msg,&(*lit));
+				SW->participant->m_send_thr.sendSync(&m_periodic_hb_msg,&(*lit));
 			//Reset TIMER
 			if(SW->reliability.heartbeatPeriod.to64time() > 0)
 				timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&RP->periodicHB,
