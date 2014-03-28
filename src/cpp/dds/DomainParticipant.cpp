@@ -71,9 +71,9 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SW);
 	//	pDebugInfo("Publisher with name: "<<Pub->getTopicName()<<" created."<<endl);
-		SW->Pub = Pub;
+		SW->m_Pub = Pub;
 		Pub->type = typeR;
-		SW->type = typeR;
+		SW->m_type = typeR;
 		pDebugInfo("Publisher creation finished"<<endl);
 		return Pub;
 	}
@@ -83,9 +83,9 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 		if(!p->createStatefulWriter(&SF,WParam,typeR.byte_size))
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SF);
-		SF->Pub = Pub;
+		SF->m_Pub = Pub;
 		Pub->type = typeR;
-		SF->type = typeR;
+		SF->m_type = typeR;
 		pDebugInfo("Publisher creation finished"<<endl);
 		return Pub;
 	}
@@ -139,7 +139,7 @@ bool DomainParticipant::registerType(std::string in_str,
 		void (*getKey)(void*,InstanceHandle_t*),
 		int32_t size) {
 	dds::DomainParticipant *dp;
-		dp = dds::DomainParticipant::getInstance();
+	dp = dds::DomainParticipant::getInstance();
 	std::vector<TypeReg_t>::iterator it;
 	for(it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
 	{

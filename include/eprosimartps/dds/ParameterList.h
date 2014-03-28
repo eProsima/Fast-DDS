@@ -31,7 +31,7 @@ namespace dds {
 
 class ParameterList_t {
 public:
-	ParameterList_t():has_changed_Qos(true),has_changed_inlineQos(true){};
+	ParameterList_t();
 	virtual ~ParameterList_t(){};
 	std::vector<Parameter_t*> QosParams;
 	std::vector<Parameter_t*> inlineQosParams;

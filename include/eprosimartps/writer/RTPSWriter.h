@@ -20,7 +20,7 @@
 #include "eprosimartps/Endpoint.h"
 #include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/Participant.h"
-
+#include "eprosimartps/writer/RTPSMessageGroup.h"
 #include "eprosimartps/dds/Publisher.h"
 
 
@@ -45,17 +45,11 @@ namespace rtps {
   * @ingroup WRITERMODULE
  */
 class RTPSWriter: public Endpoint {
+	friend class HistoryCache;
 public:
 	RTPSWriter(uint16_t historysize,uint32_t payload_size);
 	virtual ~RTPSWriter();
-	//!Changes associated with this writer.
-	HistoryCache writer_cache;
-	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
-	bool pushMode;
-	//!Type of the writer, either STATELESS or STATEFUL
-	StateKind_t stateType;
-	SequenceNumber_t lastChangeSequenceNumber;
-	Count_t heartbeatCount;
+
 	/**
 	 * Create a new change based on the provided data and instance handle.
 	 * It assigns the correct values to each field and copies the data from data to change. The SequenceNumber is NOT assigned here but actually during
@@ -66,27 +60,48 @@ public:
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
-	RTPSMessageCreator MC;
-	Publisher* Pub;
+
 
 	void init_header();
 
-	void sendChangesList(std::vector<CacheChange_t*>* changes,
-			std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
-			bool expectsInlineQos,const EntityId_t& ReaderId);
-	void sendChangesList(std::vector<CacheChange_t*>* changes,Locator_t* loc,
-			bool expectsInlineQos,const EntityId_t& ReaderId);
 
-	void DataSubM(CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId);
+	const std::string& getTopicDataType() const {
+		return m_topicDataType;
+	}
 
-	std::string topicName;
-	std::string topicDataType;
+	const std::string& getTopicName() const {
+		return m_topicName;
+	}
 
-	CDRMessage_t rtpsw_header;
-	CDRMessage_t rtpsw_submessage;
-	CDRMessage_t rtpsw_fullmsg;
+	//!State type fo the writer
+	StateKind_t m_stateType;
+	//!Changes associated with this writer.
+	HistoryCache m_writer_cache;
+	void heartbeatCount_increment() {
+		++m_heartbeatCount;
+	}
+	Count_t getHeartbeatCount() const {
+		return m_heartbeatCount;
+	}
 
-	TypeReg_t type;
+protected:
+
+	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
+	bool m_pushMode;
+	//!Type of the writer, either STATELESS or STATEFUL
+
+	SequenceNumber_t m_lastChangeSequenceNumber;
+	Count_t m_heartbeatCount;
+
+
+	std::string m_topicName;
+	std::string m_topicDataType;
+
+	RTPSMessageGroup_t m_cdrmessages;
+public:
+	TypeReg_t m_type;
+
+	Publisher* m_Pub;
 
 };
 

@@ -32,10 +32,9 @@ namespace eprosima {
 namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
-CDRMessage_t submsgElem;
+ObjectPool<CDRMessage_t> pool_submsg(100);
 const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
-boost::posix_time::ptime boost_time_now;
-Time_t time_now;
+
 
 
 RTPSMessageCreator::RTPSMessageCreator() {
@@ -49,7 +48,7 @@ RTPSMessageCreator::~RTPSMessageCreator() {
 }
 
 
-bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
+bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
 
@@ -79,17 +78,17 @@ bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix
 	return true;
 }
 
-bool RTPSMessageCreator::createHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix)
+bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix)
 {
 	ProtocolVersion_t prot;
 	PROTOCOLVERSION(prot);
 	VendorId_t vend;
 	VENDORID_EPROSIMA(vend);
-	return RTPSMessageCreator::createHeader(msg,guidPrefix,prot,vend);
+	return RTPSMessageCreator::addHeader(msg,guidPrefix,prot,vend);
 }
 
 
-bool RTPSMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
+bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 		octet id,octet flags,uint16_t size) {
 
 	try{
@@ -107,7 +106,7 @@ bool RTPSMessageCreator::createSubmessageHeader(CDRMessage_t* msg,
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag)
+bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag)
 {
 	octet flags = 0x0;
 	uint16_t size = 8;
@@ -143,18 +142,17 @@ bool RTPSMessageCreator::createSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,b
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
+bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
-
-	boost_time_now = microsec_clock::local_time();
-
+	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
+	Time_t time_now;
 	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
 	time_now.fraction = (boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2,32)*pow(10,-boost::posix_time::time_duration::num_fractional_digits()));
 //	cout << t << endl;
 //	cout << (t-t_epoch) << endl;
 //	cout << time_now.seconds << endl;
 //	cout << time_now.fraction << endl;
-	return RTPSMessageCreator::createSubmessageInfoTS(msg,time_now,invalidateFlag);
+	return RTPSMessageCreator::addSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
 
 }; /* namespace rtps */

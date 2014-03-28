@@ -49,9 +49,6 @@ class ThreadListen {
 public:
 	ThreadListen();
 	virtual ~ThreadListen();
-	std::vector<RTPSWriter*> assoc_writers;
-	std::vector<RTPSReader*> assoc_readers;
-	Participant* participant;
 	/**
 	 * This functions blocks the execution until a new message is received. The threads are launched with this function.
 	 */
@@ -60,14 +57,20 @@ public:
 	 * Method to initialize the thread.
 	 */
 	void init_thread();
-	std::vector<Locator_t> locList;
-	boost::thread* b_thread;
-	boost::asio::io_service io_service;
-	boost::asio::ip::udp::socket listen_socket;
-	MessageReceiver MR;
-	bool first;
+
+
+	std::vector<RTPSWriter*> m_assoc_writers;
+	std::vector<RTPSReader*> m_assoc_readers;
+	Participant* m_participant_ptr;
+	std::vector<Locator_t> m_locList;
+	boost::thread* m_b_thread_ptr;
+	boost::asio::io_service m_io_service;
+	boost::asio::ip::udp::socket m_listen_socket;
+	MessageReceiver m_MessageReceiver;
+	bool m_first;
 	//boost::asio::ip::udp::resolver resolver;
-	Locator_t send_locator;
+	Locator_t m_send_locator;
+	boost::asio::ip::udp::endpoint m_sender_endpoint;
 
 };
 

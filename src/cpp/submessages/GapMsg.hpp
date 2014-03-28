@@ -19,19 +19,15 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
 		SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,
 		const EntityId_t& readerId,const EntityId_t& writerId)
 {
-
 	try
 	{
-
-		RTPSMessageCreator::createHeader(msg,guidprefix);
-		RTPSMessageCreator::createSubmessageInfoTS_Now(msg,false);
-		RTPSMessageCreator::createSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
-		//cout << "SubMEssage created and added to message" << endl;
-
+		RTPSMessageCreator::addHeader(msg,guidprefix);
+		RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
+		RTPSMessageCreator::addSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
 	}
 	catch(int e)
 	{
@@ -41,12 +37,11 @@ bool RTPSMessageCreator::createMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidpr
 	return true;
 }
 
-bool RTPSMessageCreator::createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId)
+bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId)
 {
 
-	//Create the two CDR msgs
-	//CDRMessage_t submsgElem;
-	CDRMessage::initCDRMsg(&submsgElem);
+	CDRMessage_t& submsgElem = pool_submsg.reserve_Object();
+		CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)
 	{
@@ -73,9 +68,10 @@ bool RTPSMessageCreator::createSubmessageGap(CDRMessage_t* msg,SequenceNumber_t&
 
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::createSubmessageHeader(msg, GAP,flags,submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg, GAP,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
+	pool_submsg.release_Object(submsgElem);
 
 	return true;
 }

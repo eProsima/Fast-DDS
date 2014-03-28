@@ -31,6 +31,7 @@ namespace rtps {
  */
 class StatelessWriter : public RTPSWriter
 {
+	friend class DomainParticipant;
 public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();

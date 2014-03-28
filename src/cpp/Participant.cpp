@@ -31,23 +31,17 @@ namespace eprosima {
 namespace rtps {
 
 
-Participant::Participant(const ParticipantParams_t& PParam) {
-
-	endpointToListenThreadSemaphore = new boost::interprocess::interprocess_semaphore(0);
-
-	// TODO Auto-generated constructor stub
-	PROTOCOLVERSION(protocolVersion);
-	VENDORID_EPROSIMA(vendorId);
-	IdCounter = 0;
-	//Create send socket in threadSend
-	threadListenList.clear();
-	defaultUnicastLocatorList = PParam.defaultUnicastLocatorList;
-	defaultMulticastLocatorList = PParam.defaultMulticastLocatorList;
+Participant::Participant(const ParticipantParams_t& PParam):
+		m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
+		m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
+		m_endpointToListenThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+		IdCounter(0)
+{
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
-	threadSend.initSend(loc);
+	m_send_thr.initSend(loc);
 
-	eventThread.init_thread();
+	m_event_thr.init_thread();
 
 	// Create Unique GUID
 	dds::DomainParticipant *dp;
@@ -61,38 +55,40 @@ Participant::Participant(const ParticipantParams_t& PParam) {
 	#endif
 	//cout << "PID: " << pid << " ID:"<< ID << endl;
 
-	guid.guidPrefix.value[0] = threadSend.sendLocator.address[12];
-	guid.guidPrefix.value[1] = threadSend.sendLocator.address[13];
-	guid.guidPrefix.value[2] = threadSend.sendLocator.address[14];
-	guid.guidPrefix.value[3] = threadSend.sendLocator.address[15];
-	guid.guidPrefix.value[4] = ((octet*)&pid)[0];
-	guid.guidPrefix.value[5] = ((octet*)&pid)[1];
-	guid.guidPrefix.value[6] = ((octet*)&pid)[2];
-	guid.guidPrefix.value[7] = ((octet*)&pid)[3];
-	guid.guidPrefix.value[8] = ((octet*)&ID)[0];
-	guid.guidPrefix.value[9] = ((octet*)&ID)[1];
-	guid.guidPrefix.value[10] = ((octet*)&ID)[2];
-	guid.guidPrefix.value[11] = ((octet*)&ID)[3];
-	guid.entityId = ENTITYID_PARTICIPANT;
+	m_guid.guidPrefix.value[0] = m_send_thr.m_sendLocator.address[12];
+	m_guid.guidPrefix.value[1] = m_send_thr.m_sendLocator.address[13];
+	m_guid.guidPrefix.value[2] = m_send_thr.m_sendLocator.address[14];
+	m_guid.guidPrefix.value[3] = m_send_thr.m_sendLocator.address[15];
+	m_guid.guidPrefix.value[4] = ((octet*)&pid)[0];
+	m_guid.guidPrefix.value[5] = ((octet*)&pid)[1];
+	m_guid.guidPrefix.value[6] = ((octet*)&pid)[2];
+	m_guid.guidPrefix.value[7] = ((octet*)&pid)[3];
+	m_guid.guidPrefix.value[8] = ((octet*)&ID)[0];
+	m_guid.guidPrefix.value[9] = ((octet*)&ID)[1];
+	m_guid.guidPrefix.value[10] = ((octet*)&ID)[2];
+	m_guid.guidPrefix.value[11] = ((octet*)&ID)[3];
+	m_guid.entityId = ENTITYID_PARTICIPANT;
 	std::stringstream ss;
 		for(int i =0;i<12;i++)
-			ss << (int)guid.guidPrefix.value[i] << ".";
+			ss << (int)m_guid.guidPrefix.value[i] << ".";
 		pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
-		//TODOG CREATE DEFAULT ENDPOINTS. (NOT YET)
-
-
 }
 
 
 
-Participant::~Participant() {
-	// TODO Auto-generated destructor stub
+Participant::~Participant()
+{
 
 	//Destruct threads:
-	std::vector<ThreadListen*>::iterator it;
-	for(it=threadListenList.begin();it!=threadListenList.end();++it)
+	for(std::vector<ThreadListen*>::iterator it=m_threadListenList.begin();
+			it!=m_threadListenList.end();++it)
 		(*it)->~ThreadListen();
-
+	for(std::vector<RTPSReader*>::iterator it=m_readerList.begin();
+			it!=m_readerList.end();++it)
+		delete(*it);
+	for(std::vector<RTPSWriter*>::iterator it=m_writerList.begin();
+			it!=m_writerList.end();++it)
+		delete(*it);
 }
 
 bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterParams_t& Wparam,uint32_t payload_size)
@@ -102,13 +98,13 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterPar
 	pDebugInfo("Finished Writer creation"<<endl);
 	//Check if locator lists are empty:
 	if(SWriter->unicastLocatorList.empty())
-		SWriter->unicastLocatorList = defaultUnicastLocatorList;
+		SWriter->unicastLocatorList = m_defaultUnicastLocatorList;
 	if(SWriter->unicastLocatorList.empty())
-		SWriter->multicastLocatorList = defaultMulticastLocatorList;
+		SWriter->multicastLocatorList = m_defaultMulticastLocatorList;
 	//Assign participant pointer
 	SWriter->participant = this;
 	//Assign GUID
-	SWriter->guid.guidPrefix = guid.guidPrefix;
+	SWriter->guid.guidPrefix = m_guid.guidPrefix;
 	SWriter->init_header();
 
 	if(SWriter->topicKind == NO_KEY)
@@ -124,7 +120,7 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterPar
 	assignEnpointToListenThreads((Endpoint*)SWriter,'W');
 	//Wait until the thread is correctly created
 
-	writerList.push_back((RTPSWriter*)SWriter);
+m_writerList.push_back((RTPSWriter*)SWriter);
 
 	*SW_out = SWriter;
 	pDebugInfo("Finished Writer initialization"<<endl);
@@ -136,13 +132,13 @@ bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterPara
 	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
 	//Check if locator lists are empty:
 	if(SFWriter->unicastLocatorList.empty())
-		SFWriter->unicastLocatorList = defaultUnicastLocatorList;
+		SFWriter->unicastLocatorList = m_defaultUnicastLocatorList;
 	if(SFWriter->unicastLocatorList.empty())
-		SFWriter->multicastLocatorList = defaultMulticastLocatorList;
+		SFWriter->multicastLocatorList = m_defaultMulticastLocatorList;
 	//Assign participant pointer
 	SFWriter->participant = this;
 	//Assign GUID
-	SFWriter->guid.guidPrefix = guid.guidPrefix;
+	SFWriter->guid.guidPrefix = m_guid.guidPrefix;
 	SFWriter->init_header();
 
 	if(SFWriter->topicKind == NO_KEY)
@@ -158,7 +154,7 @@ bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterPara
 	assignEnpointToListenThreads((Endpoint*)SFWriter,'W');
 	//Wait until the thread is correctly created
 
-	writerList.push_back((RTPSWriter*)SFWriter);
+	m_writerList.push_back((RTPSWriter*)SFWriter);
 
 	*SFW_out = SFWriter;
 	return true;
@@ -173,16 +169,16 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
 	//If NO UNICAST
 	if(SReader->unicastLocatorList.empty())
-		SReader->unicastLocatorList = defaultUnicastLocatorList;
+		SReader->unicastLocatorList = m_defaultUnicastLocatorList;
 	//IF NO MULTICAST
 	if(SReader->multicastLocatorList.empty())
-		SReader->multicastLocatorList = defaultMulticastLocatorList;
+		SReader->multicastLocatorList = m_defaultMulticastLocatorList;
 
 
 	//Assign participant pointer
 	SReader->participant = this;
 	//Assign GUID
-	SReader->guid.guidPrefix = guid.guidPrefix;
+	SReader->guid.guidPrefix = m_guid.guidPrefix;
 	if(SReader->topicKind == NO_KEY)
 		SReader->guid.entityId.value[3] = 0x04;
 	else if(SReader->topicKind == WITH_KEY)
@@ -196,7 +192,7 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 
 	assignEnpointToListenThreads((Endpoint*)SReader,'R');
 
-	readerList.push_back((RTPSReader*)SReader);
+	m_readerList.push_back((RTPSReader*)SReader);
 
 	*SR_out = SReader;
 	return true;
@@ -208,9 +204,9 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 inline void addEndpoint(ThreadListen* th,Endpoint* end,char type)
 {
 	if(type == 'W')
-		th->assoc_writers.push_back((RTPSWriter*)end);
+		th->m_assoc_writers.push_back((RTPSWriter*)end);
 	else if(type =='R')
-		th->assoc_readers.push_back((RTPSReader*)end);
+		th->m_assoc_readers.push_back((RTPSReader*)end);
 }
 
 
@@ -226,9 +222,11 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	for(locit_e = endpoint->unicastLocatorList.begin();locit_e!=endpoint->unicastLocatorList.end();++locit_e)
 	{
 		assigned = false;
-		for(thit=threadListenList.begin();thit!=threadListenList.end();++thit)
+		for(thit=m_threadListenList.begin();
+				thit!=m_threadListenList.end();++thit)
 		{
-			for(locit_th = (*thit)->locList.begin();locit_th != (*thit)->locList.end();++locit_th)
+			for(locit_th = (*thit)->m_locList.begin();
+					locit_th != (*thit)->m_locList.end();++locit_th)
 			{
 				if((*locit_th).port == (*locit_e).port) //Found a match, assign to this thread
 				{
@@ -241,7 +239,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		{
 			ThreadListen* thListen = NULL;
 			addNewListenThread(*locit_e,&thListen); //Add new listen thread to participant
-			endpointToListenThreadSemaphore->wait();
+			m_endpointToListenThreadSemaphore->wait();
 			addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
 			assigned = true;
 		}
@@ -250,9 +248,11 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	{
 		//FIXME: in multicast the IP is important, change this.
 		assigned = false;
-		for(thit=threadListenList.begin();thit!=threadListenList.end();++thit)
+		for(thit=m_threadListenList.begin();
+				thit!=m_threadListenList.end();++thit)
 		{
-			for(locit_th = (*thit)->locList.begin();locit_th != (*thit)->locList.end();++locit_th)
+			for(locit_th = (*thit)->m_locList.begin();
+					locit_th != (*thit)->m_locList.end();++locit_th)
 			{
 				if((*locit_th).port == (*locit_e).port) //Found a match, assign to this thread
 				{
@@ -265,7 +265,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		{
 			ThreadListen* thListen = NULL;
 			addNewListenThread(*locit_e,&thListen); //Add new listen thread to participant
-			endpointToListenThreadSemaphore->wait();
+			m_endpointToListenThreadSemaphore->wait();
 			addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
 			assigned = true;
 		}
@@ -275,35 +275,35 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 
 bool Participant::addNewListenThread(Locator_t& loc,ThreadListen** thlisten_in) {
 	*thlisten_in = new ThreadListen();
-	(*thlisten_in)->locList.push_back(loc);
-	(*thlisten_in)->participant = this;
-	threadListenList.push_back(*thlisten_in);
+	(*thlisten_in)->m_locList.push_back(loc);
+	(*thlisten_in)->m_participant_ptr = this;
+	m_threadListenList.push_back(*thlisten_in);
 	(*thlisten_in)->init_thread();
 
 	return true;
 }
 
 bool Participant::removeEndpoint(Endpoint* end){
-	std::vector<RTPSWriter*>::iterator wit;
-	std::vector<RTPSReader*>::iterator rit;
 	bool found = false;
 	char type = 'W';
-	for(wit=writerList.begin();wit!=writerList.end();++wit)
+	for(std::vector<RTPSWriter*>::iterator wit=m_writerList.begin();
+			wit!=m_writerList.end();++wit)
 	{
 		if((*wit)->guid == end->guid) //Found it
 		{
-			writerList.erase(wit);
+			m_writerList.erase(wit);
 			found = true;
 			break;
 		}
 	}
 	if(!found)
 	{
-		for(rit=readerList.begin();rit!=readerList.end();++rit)
+		for(std::vector<RTPSReader*>::iterator rit=m_readerList.begin()
+				;rit!=m_readerList.end();++rit)
 		{
 			if((*rit)->guid == end->guid) //Found it
 			{
-				readerList.erase(rit);
+				m_readerList.erase(rit);
 				found = true;
 				type = 'R';
 				break;
@@ -314,30 +314,32 @@ bool Participant::removeEndpoint(Endpoint* end){
 		return false;
 	//Remove it from threadListenList
 	std::vector<ThreadListen*>::iterator thit;
-	for(thit=threadListenList.begin();thit!=threadListenList.end();thit++)
+	for(thit=m_threadListenList.begin();
+			thit!=m_threadListenList.end();thit++)
 	{
 		if(type == 'W')
 		{
-			for(wit = (*thit)->assoc_writers.begin();wit!=(*thit)->assoc_writers.end();++wit)
+			for(std::vector<RTPSWriter*>::iterator wit = (*thit)->m_assoc_writers.begin();
+					wit!=(*thit)->m_assoc_writers.end();++wit)
 			{
 				if((*wit)->guid == end->guid)
 				{
-					(*thit)->assoc_writers.erase(wit);
-					if((*thit)->assoc_writers.empty() && (*thit)->assoc_readers.empty())
-						threadListenList.erase(thit);
+					(*thit)->m_assoc_writers.erase(wit);
+					if((*thit)->m_assoc_writers.empty() && (*thit)->m_assoc_readers.empty())
+						m_threadListenList.erase(thit);
 
 				}
 			}
 		}
 		else if(type == 'R')
 		{
-			for(rit = (*thit)->assoc_readers.begin();rit!=(*thit)->assoc_readers.end();++rit)
+			for(std::vector<RTPSReader*>::iterator rit = (*thit)->m_assoc_readers.begin();rit!=(*thit)->m_assoc_readers.end();++rit)
 			{
 				if((*rit)->guid == end->guid)
 				{
-					(*thit)->assoc_readers.erase(rit);
-					if((*thit)->assoc_readers.empty() && (*thit)->assoc_writers.empty())
-						threadListenList.erase(thit);
+					(*thit)->m_assoc_readers.erase(rit);
+					if((*thit)->m_assoc_readers.empty() && (*thit)->m_assoc_writers.empty())
+						m_threadListenList.erase(thit);
 
 				}
 			}

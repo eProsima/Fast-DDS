@@ -22,17 +22,17 @@ namespace rtps{
 
 
 
-bool RTPSMessageCreator::createMessageData(CDRMessage_t* msg,
+bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 		GuidPrefix_t& guidprefix,CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos){
 
 
 	try{
 
-		RTPSMessageCreator::createHeader(msg,guidprefix);
+		RTPSMessageCreator::addHeader(msg,guidprefix);
 
-		RTPSMessageCreator::createSubmessageInfoTS_Now(msg,false);
+		RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
 
-		RTPSMessageCreator::createSubmessageData(msg,change,topicKind,readerId,inlineQos);
+		RTPSMessageCreator::addSubmessageData(msg,change,topicKind,readerId,inlineQos);
 
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -48,13 +48,13 @@ bool RTPSMessageCreator::createMessageData(CDRMessage_t* msg,
 
 
 
-bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
+bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 		TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos) {
 
-
+	CDRMessage_t& submsgElem = pool_submsg.reserve_Object();
+	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
 	//CDRMessage_t submsgElem;
-	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
 	{
@@ -95,7 +95,7 @@ bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* c
 	if(change->kind == NOT_ALIVE_UNREGISTERED)
 		status = status | BIT(1);
 
-
+	CDRMessage::initCDRMsg(&submsgElem);
 	try{
 		//First we create the submsgElements:
 		//extra flags. not in this version.
@@ -147,11 +147,11 @@ bool RTPSMessageCreator::createSubmessageData(CDRMessage_t* msg,CacheChange_t* c
 		}
 
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.
-		RTPSMessageCreator::createSubmessageHeader(msg, DATA,flags,submsgElem.length);
+		RTPSMessageCreator::addSubmessageHeader(msg, DATA,flags,submsgElem.length);
 		//Append Submessage elements to msg
 
 		CDRMessage::appendMsg(msg, &submsgElem);
-
+		pool_submsg.release_Object(submsgElem);
 	}
 	catch(int t){
 		pError("Data SUBmessage not created"<<endl)

@@ -41,6 +41,7 @@ namespace rtps {
   * @ingroup READERMODULE
  */
 class RTPSReader : public Endpoint{
+
 public:
 	RTPSReader(uint16_t historysize,uint32_t payload_size);
 	virtual ~RTPSReader();
@@ -52,7 +53,9 @@ public:
 	//!Structure used to create messages.
 	//RTPSMessageCreator MC;
 	//!Pointer to the associated subscriber
+
 	Subscriber* Sub;
+
 	//!Semaphore used to stop threads based on the arrival of messages.
 	boost::interprocess::interprocess_semaphore* newMessageSemaphore;
 	//!Function to call when a new message is received.

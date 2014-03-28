@@ -21,8 +21,10 @@
 namespace eprosima {
 namespace rtps {
 
-ThreadEvent::ThreadEvent():work(io_service) {
-	// TODO Auto-generated constructor stub
+ThreadEvent::ThreadEvent():
+		b_thread(NULL),
+		work(io_service)
+{
 
 }
 

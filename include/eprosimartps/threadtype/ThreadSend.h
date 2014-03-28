@@ -38,13 +38,12 @@ namespace rtps {
  *  logic for merge different CDRMessages into a single RTPSMessages (HB piggybacking, for example).
  * @ingroup COMMONMODULE
  */
-class ThreadSend: public boost::basic_lockable_adapter<boost::recursive_mutex> {
+class ThreadSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
+{
+	friend class Participant;
 public:
 	ThreadSend();
 	virtual ~ThreadSend();
-	Locator_t sendLocator;
-	boost::asio::io_service sendService;
-	boost::asio::ip::udp::socket send_socket;
 	/**
 	 * Send a CDR message syncrhonously. No waiting is required.
 	 * @param msg Pointer to the message.
@@ -58,7 +57,11 @@ public:
 	 * @return True if correct
 	 */
 	bool initSend(const Locator_t& loc);
-
+private:
+	Locator_t m_sendLocator;
+	boost::asio::io_service m_send_service;
+	boost::asio::ip::udp::socket m_send_socket;
+	boost::asio::ip::udp::endpoint m_send_endpoint;
 };
 
 } /* namespace rtps */

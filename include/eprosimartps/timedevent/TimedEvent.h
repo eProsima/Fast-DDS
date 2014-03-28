@@ -31,7 +31,6 @@ namespace rtps{
 
 class TimedEvent {
 public:
-	TimedEvent();
 	virtual ~TimedEvent(){};
 	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
 

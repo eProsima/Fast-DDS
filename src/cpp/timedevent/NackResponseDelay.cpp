@@ -23,17 +23,12 @@
 namespace eprosima {
 namespace rtps {
 
-NackResponseDelay::NackResponseDelay() {
-	// TODO Auto-generated constructor stub
-
-}
-
 NackResponseDelay::~NackResponseDelay() {
 	// TODO Auto-generated destructor stub
 }
 
 NackResponseDelay::NackResponseDelay(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SW_ptr->participant->eventThread.io_service,interval),
+		TimedEvent(&SW_ptr->participant->m_event_thr.io_service,interval),
 		SW(SW_ptr)
 {
 
@@ -55,8 +50,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec,ReaderProxy* r
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<CacheChange_t*> not_relevant_changes;
-			std::vector<ChangeForReader_t*>::iterator cit;
-			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
+			for(std::vector<ChangeForReader_t*>::iterator cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
 				(*cit)->status = UNDERWAY;
 				if((*cit)->is_relevant)
@@ -69,12 +63,15 @@ void NackResponseDelay::event(const boost::system::error_code& ec,ReaderProxy* r
 				}
 			}
 			if(!relevant_changes.empty())
-				SW->sendChangesList(&relevant_changes,&rp->param.unicastLocatorList,
+				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)SW,
+						&relevant_changes,
+						&rp->param.unicastLocatorList,
 						&rp->param.multicastLocatorList,
 						rp->param.expectsInlineQos,
 						rp->param.remoteReaderGuid.entityId);
 			if(!not_relevant_changes.empty())
-				SW->sendChangesListAsGap(&not_relevant_changes,
+				RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)SW,
+						&not_relevant_changes,
 						rp->param.remoteReaderGuid.entityId,
 						&rp->param.unicastLocatorList,
 						&rp->param.multicastLocatorList);

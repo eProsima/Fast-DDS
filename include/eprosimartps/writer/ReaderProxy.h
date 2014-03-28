@@ -49,13 +49,10 @@ typedef struct ReaderProxy_t{
 
 class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
-	ReaderProxy();
 	virtual ~ReaderProxy();
 	ReaderProxy(ReaderProxy_t*RPparam,StatefulWriter* SW);
 
-	ReaderProxy_t param;
 
-	std::vector<ChangeForReader_t> changes;
 
 	/**
 	 * Get the ChangeForReader struct associated with a determined change
@@ -80,7 +77,8 @@ public:
 
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
-
+	ReaderProxy_t param;
+	std::vector<ChangeForReader_t> changes;
 	bool isRequestedChangesEmpty;
 
 	PeriodicHeartbeat periodicHB;

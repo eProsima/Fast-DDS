@@ -22,20 +22,16 @@
 namespace eprosima {
 namespace rtps {
 
-ReaderProxy::ReaderProxy() {
-	// TODO Auto-generated constructor stub
 
-}
 
 ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
+				param(*RPparam),isRequestedChangesEmpty(true),
 				periodicHB(SW,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
 				nackResponse(SW,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
-				nackSupression(SW,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000))
+				nackSupression(SW,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000)),
+				lastAcknackCount(0),SFW(SW)
 {
-	param = *RPparam;
-	isRequestedChangesEmpty = true;
-	lastAcknackCount = 0;
-	SFW = SW;
+
 }
 
 
@@ -69,8 +65,8 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
-	std::vector<ChangeForReader_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();++it)
+
+	for(std::vector<ChangeForReader_t>::iterator it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->change->sequenceNumber.to64long() < seqNum->to64long())
 		{
@@ -83,11 +79,10 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
-	std::vector<SequenceNumber_t>::iterator sit;
-	for(sit=seqNumSet->begin();sit!=seqNumSet->end();++sit)
+
+	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet->begin();sit!=seqNumSet->end();++sit)
 	{
-		std::vector<ChangeForReader_t>::iterator it;
-		for(it=changes.begin();it!=changes.end();++it)
+		for(std::vector<ChangeForReader_t>::iterator it=changes.begin();it!=changes.end();++it)
 		{
 			if(it->change->sequenceNumber.to64long() == sit->to64long())
 			{
@@ -100,8 +95,6 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet
 	pDebugInfo("Requested Changes Set" << endl);
 	return true;
 }
-
-
 
 
 bool ReaderProxy::requested_changes(std::vector<ChangeForReader_t*>* Changes)
@@ -145,8 +138,8 @@ bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
 {
 	changesList->clear();
 	boost::lock_guard<ReaderProxy> guard(*this);
-	std::vector<ChangeForReader_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();++it)
+
+	for(std::vector<ChangeForReader_t>::iterator it=changes.begin();it!=changes.end();++it)
 	{
 		if(it->status == status)
 		{
@@ -169,7 +162,8 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 	return true;
 }
 
-bool ReaderProxy::dds_is_relevant(CacheChange_t* change) {
+bool ReaderProxy::dds_is_relevant(CacheChange_t* change)
+{
 	return true;
 }
 

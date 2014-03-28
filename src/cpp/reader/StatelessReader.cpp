@@ -31,14 +31,11 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 {
 	//reader_cache.changes.reserve(param.historySize);
 	stateType = STATELESS;
-	reader_cache.rtpsreader = (RTPSReader*)this;
-	reader_cache.historyKind = READER;
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
 	expectsInlineQos = param->expectsInlineQos;
 	topicKind = param->topicKind;
-	reader_cache.historySize = param->historySize;
 }
 
 

@@ -23,12 +23,15 @@ namespace eprosima {
 namespace rtps {
 
 RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
-		reader_cache(historysize,payload_size)
-
+		stateType(STATELESS),
+		reader_cache(historysize,payload_size),
+		expectsInlineQos(true),
+		Sub(NULL),
+		newMessageSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+		newMessageCallback(NULL)
 {
-	// TODO Auto-generated constructor stub
-
-
+	reader_cache.rtpsreader = this;
+	reader_cache.historyKind = READER;
 }
 
 RTPSReader::~RTPSReader() {

@@ -27,13 +27,13 @@ class WriterProxy;
 
 class HeartbeatResponseDelay:public TimedEvent {
 public:
-	HeartbeatResponseDelay();
 	virtual ~HeartbeatResponseDelay();
 	HeartbeatResponseDelay(StatefulReader* SW_ptr,boost::posix_time::milliseconds interval);
 
 	void event(const boost::system::error_code& ec,WriterProxy* wp);
 
 	StatefulReader* SR;
+	CDRMessage_t m_heartbeat_response_msg;
 
 };
 

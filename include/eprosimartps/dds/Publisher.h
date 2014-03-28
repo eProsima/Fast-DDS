@@ -50,7 +50,7 @@ class RTPS_DllAPI Publisher {
 	friend class DomainParticipant;
 	friend class RTPSWriter;
 public:
-	Publisher();
+
 	/**
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainParticipant static function.
@@ -58,15 +58,13 @@ public:
 	Publisher(RTPSWriter* Win);
 	virtual ~Publisher();
 
-	/**
-	* Get the topic name.
-	 */
-	std::string getTopicName();
 
-	/**
-	* Get the data type.
-	 */
-	std::string getTopicDataType();
+	//! Get the topic name.
+	const std::string& getTopicName();
+
+
+	//!Get the data type.
+	const std::string& getTopicDataType();
 
 
 	/**
@@ -133,9 +131,7 @@ public:
 private:
 	RTPSWriter* W;
 	//bool initialized;
-
 	TypeReg_t type;
-
 	bool add_new_change(ChangeKind_t kind,void* Data);
 
 

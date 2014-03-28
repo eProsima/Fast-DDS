@@ -28,18 +28,15 @@
 namespace eprosima {
 namespace rtps {
 
-//HistoryCache::HistoryCache() {
-//	SEQUENCENUMBER_UNKOWN(minSeqNum);
-//	SEQUENCENUMBER_UNKOWN(maxSeqNum);
-//	GUID_UNKNOWN(minSeqNumGuid);
-//	GUID_UNKNOWN(maxSeqNumGuid);
-//
-//
-//}
 
 
 HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
+		rtpswriter(NULL),rtpsreader(NULL),
+		historyKind(UDEF),
+		m_history_max_size(historysize),
+		isHistoryFull(false),
 		changePool(historysize,payload_size)
+
 {
 		SEQUENCENUMBER_UNKOWN(minSeqNum);
 		SEQUENCENUMBER_UNKOWN(maxSeqNum);
@@ -48,15 +45,21 @@ HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
 		pDebugInfo("History created"<<endl);
 }
 
-HistoryCache::~HistoryCache() {
-
+HistoryCache::~HistoryCache()
+{
+	for(std::vector<CacheChange_t*>::iterator it=m_changes.begin();
+			it!=m_changes.end();++it)
+	{
+		changePool.release_Cache(*it);
+	}
 }
 
 bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr,uint16_t *ch_number) {
 	boost::lock_guard<HistoryCache> guard(*this);
-	std::vector<CacheChange_t*>::iterator it;
+
 	(*ch_number)=0;
-	for(it = changes.begin();it!=changes.end();++it){
+	for(	std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+			it!=m_changes.end();++it){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
 				(*it)->writerGUID == writerGuid)
 		{
@@ -71,7 +74,7 @@ bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheC
 bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr) {
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = changes.begin();it!=changes.end();++it){
+	for(it = m_changes.begin();it!=m_changes.end();++it){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
 				(*it)->writerGUID == writerGuid)
 		{
@@ -86,9 +89,9 @@ bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheC
 bool HistoryCache::get_last_added_cache(CacheChange_t** ch_ptr)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
-	if(!changes.empty())
+	if(!m_changes.empty())
 	{
-		*ch_ptr = *(changes.end()-1);
+		*ch_ptr = *(m_changes.end()-1);
 		return true;
 	}
 	else
@@ -104,7 +107,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 
 	boost::lock_guard<HistoryCache> guard(*this);
 
-	if(changes.size() == (size_t)historySize) //History is full
+	if(m_changes.size() == (size_t)m_history_max_size) //History is full
 	{
 		pWarning("Attempting to add change with Full History" << endl);
 		return false;
@@ -114,16 +117,16 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 
 	if(historyKind == WRITER)
 	{
-		rtpswriter->lastChangeSequenceNumber++;
-		a_change->sequenceNumber = rtpswriter->lastChangeSequenceNumber;
-		changes.push_back(a_change);
+		rtpswriter->m_lastChangeSequenceNumber++;
+		a_change->sequenceNumber = rtpswriter->m_lastChangeSequenceNumber;
+		m_changes.push_back(a_change);
 
 	}
 	else if(historyKind == READER)
 	{
 		//Check that the same change has not been already introduced
 		std::vector<CacheChange_t*>::iterator it;
-		for(it=changes.begin();it!=changes.end();++it)
+		for(it=m_changes.begin();it!=m_changes.end();++it)
 		{
 			if((*it)->sequenceNumber.to64long() == a_change->sequenceNumber.to64long() &&
 					(*it)->writerGUID == a_change->writerGUID)
@@ -132,9 +135,14 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 				return false;
 			}
 		}
-		changes.push_back(a_change);
+		m_changes.push_back(a_change);
 	}
-	if(changes.size()==historySize)
+	else
+	{
+		pError(B_RED<<"HistoryType UNDEFINED"<<DEF <<endl);
+		return false;
+	}
+	if(m_changes.size()==m_history_max_size)
 		isHistoryFull = true;
 	pDebugInfo("Cache added to History" << endl);
 
@@ -144,14 +152,14 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 bool HistoryCache::remove_change(SequenceNumber_t& seqnum, GUID_t& guid)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
-	std::vector<CacheChange_t*>::iterator it;
-	for(it = changes.begin();it!=changes.end();++it)
+	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+			it!=m_changes.end();++it)
 	{
 		if((*it)->sequenceNumber.to64long() == seqnum.to64long()
 				&& (*it)->writerGUID == guid)
 		{
 			changePool.release_Cache(*it);
-			changes.erase(it);
+			m_changes.erase(it);
 			isHistoryFull = false;
 			pDebugInfo("Change removed"<<endl)
 			return true;
@@ -166,7 +174,7 @@ bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
 	boost::lock_guard<HistoryCache> guard(*this);
 
 	changePool.release_Cache(*it);
-	changes.erase(it);
+	m_changes.erase(it);
 	isHistoryFull = false;
 	pDebugInfo("Change removed"<<endl);
 	return true;
@@ -178,14 +186,13 @@ bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
 bool HistoryCache::remove_all_changes()
 {
 	boost::lock_guard<HistoryCache> guard(*this);
-	if(!changes.empty())
+	if(!m_changes.empty())
 	{
-		std::vector<CacheChange_t*>::iterator it;
-		for(it = changes.begin();it!=changes.end();++it)
+		for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();it!=m_changes.end();++it)
 		{
 			changePool.release_Cache(*it);
 		}
-		changes.clear();
+		m_changes.clear();
 		isHistoryFull = false;
 		return true;
 	}
@@ -222,13 +229,13 @@ bool HistoryCache::get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid)
 void HistoryCache::updateMaxMinSeqNum()
 {
 	//boost::lock_guard<HistoryCache> guard(*this);
-	if(!changes.empty())
+	if(!m_changes.empty())
 	{
-		std::vector<CacheChange_t*>::iterator it;
-		maxSeqNum = minSeqNum = changes[0]->sequenceNumber;
-		maxSeqNumGuid = minSeqNumGuid = changes[0]->writerGUID;
+		maxSeqNum = minSeqNum = m_changes[0]->sequenceNumber;
+		maxSeqNumGuid = minSeqNumGuid = m_changes[0]->writerGUID;
 
-		for(it = changes.begin();it!=changes.end();++it){
+		for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+				it!=m_changes.end();++it){
 			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
 			{
 				maxSeqNum = (*it)->sequenceNumber;

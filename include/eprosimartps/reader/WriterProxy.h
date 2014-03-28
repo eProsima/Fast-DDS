@@ -42,12 +42,9 @@ typedef struct WriterProxy_t{
 
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
-	WriterProxy();
 	virtual ~WriterProxy();
 	WriterProxy(WriterProxy_t*RPparam,StatefulReader* SR);
-	WriterProxy_t param;
 
-	std::vector<ChangeFromWriter_t> changes;
 
 	bool available_changes_max(SequenceNumber_t* seqNum);
 
@@ -61,13 +58,14 @@ public:
 
 	bool missing_changes(std::vector<ChangeFromWriter_t*>* missing);
 
+	WriterProxy_t param;
+	std::vector<ChangeFromWriter_t> changes;
 	uint32_t acknackCount;
-
 	uint32_t lastHeartbeatCount;
 	bool isMissingChangesEmpty;
-
 	HeartbeatResponseDelay heartbeatResponse;
 	StatefulReader* SFR;
+
 private:
 	bool max_seq_num(SequenceNumber_t* sn);
 
