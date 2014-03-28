@@ -468,15 +468,15 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 				std::vector<ReaderProxy*>::iterator rit;
 				for(rit = SF->matched_readers.begin();rit!=SF->matched_readers.end();++rit)
 				{
-					if((*rit)->param.remoteReaderGuid == readerGUID)
+					if((*rit)->m_param.remoteReaderGuid == readerGUID)
 					{
-						if((*rit)->lastAcknackCount < Ackcount)
+						if((*rit)->m_lastAcknackCount < Ackcount)
 						{
-							(*rit)->lastAcknackCount = Ackcount;
+							(*rit)->m_lastAcknackCount = Ackcount;
 							(*rit)->acked_changes_set(&SNSet.base);
 							(*rit)->requested_changes_set(&SNSet.set);
-							if(!(*rit)->isRequestedChangesEmpty)
-								(*rit)->nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->nackResponse,
+							if(!(*rit)->m_isRequestedChangesEmpty)
+								(*rit)->m_nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->m_nackResponse,
 										boost::asio::placeholders::error,(*rit)));
 							//FIXME: Check if UNACKED CHANGES IS EMPTY
 

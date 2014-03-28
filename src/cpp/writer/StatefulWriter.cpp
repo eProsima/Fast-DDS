@@ -54,7 +54,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
-		if((*it)->param.remoteReaderGuid == RPparam.remoteReaderGuid)
+		if((*it)->m_param.remoteReaderGuid == RPparam.remoteReaderGuid)
 		{
 			pWarning("Attempting to add existing reader" << endl);
 			return false;
@@ -73,7 +73,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 			changeForReader.status = UNSENT;
 		else
 			changeForReader.status = UNACKNOWLEDGED;
-		rp->changes.push_back(changeForReader);
+		rp->m_changesForReader.push_back(changeForReader);
 	}
 	matched_readers.push_back(rp);
 	pDebugInfo("Reader Proxy added" << endl);
@@ -89,7 +89,7 @@ bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 {
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
-		if((*it)->param.remoteReaderGuid == readerGuid)
+		if((*it)->m_param.remoteReaderGuid == readerGuid)
 		{
 			delete(*it);
 			matched_readers.erase(it);
@@ -106,7 +106,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
-		if((*it)->param.remoteReaderGuid == readerGuid)
+		if((*it)->m_param.remoteReaderGuid == readerGuid)
 		{
 			*RP = *it;
 			return true;
@@ -149,7 +149,7 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 			else
 				changeForReader.status = UNACKNOWLEDGED;
 			changeForReader.is_relevant = (*it)->dds_is_relevant(change);
-			(*it)->changes.push_back(changeForReader);
+			(*it)->m_changesForReader.push_back(changeForReader);
 		}
 		unsent_changes_not_empty();
 	}
@@ -203,19 +203,19 @@ void StatefulWriter::unsent_changes_not_empty()
 			{
 				if(!relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&relevant_changes,&(*rit)->param.unicastLocatorList,
-							&(*rit)->param.multicastLocatorList,
-							(*rit)->param.expectsInlineQos,
-							(*rit)->param.remoteReaderGuid.entityId);
+							&relevant_changes,&(*rit)->m_param.unicastLocatorList,
+							&(*rit)->m_param.multicastLocatorList,
+							(*rit)->m_param.expectsInlineQos,
+							(*rit)->m_param.remoteReaderGuid.entityId);
 				if(!not_relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,
 							&not_relevant_changes,
-							(*rit)->param.remoteReaderGuid.entityId,
-							&(*rit)->param.unicastLocatorList,
-							&(*rit)->param.multicastLocatorList);
-				(*rit)->periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&(*rit)->periodicHB,
+							(*rit)->m_param.remoteReaderGuid.entityId,
+							&(*rit)->m_param.unicastLocatorList,
+							&(*rit)->m_param.multicastLocatorList);
+				(*rit)->m_periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&(*rit)->m_periodicHB,
 						boost::asio::placeholders::error,(*rit)));
-				(*rit)->nackSupression.timer->async_wait(boost::bind(&NackSupressionDuration::event,&(*rit)->nackSupression,
+				(*rit)->m_nackSupression.timer->async_wait(boost::bind(&NackSupressionDuration::event,&(*rit)->m_nackSupression,
 						boost::asio::placeholders::error,(*rit)));
 			}
 			else
@@ -228,9 +228,9 @@ void StatefulWriter::unsent_changes_not_empty()
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,participant->m_guid.guidPrefix,
 						ENTITYID_UNKNOWN,this->guid.entityId,first,last,m_heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
-				for(lit = (*rit)->param.unicastLocatorList.begin();lit!=(*rit)->param.unicastLocatorList.end();++lit)
+				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
 					participant->m_send_thr.sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
-				for(lit = (*rit)->param.multicastLocatorList.begin();lit!=(*rit)->param.multicastLocatorList.end();++lit)
+				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
 					participant->m_send_thr.sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
 			}
 		}
