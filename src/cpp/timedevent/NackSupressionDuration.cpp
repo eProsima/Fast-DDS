@@ -39,8 +39,8 @@ void NackSupressionDuration::event(const boost::system::error_code& ec,ReaderPro
 	{
 		boost::lock_guard<ReaderProxy> guard(*RP);
 
-		for(std::vector<ChangeForReader_t>::iterator cit=RP->changes.begin();
-				cit!=RP->changes.end();++cit)
+		for(std::vector<ChangeForReader_t>::iterator cit=RP->m_changesForReader.begin();
+				cit!=RP->m_changesForReader.end();++cit)
 		{
 			if(cit->status == UNDERWAY)
 				cit->status = UNACKNOWLEDGED;

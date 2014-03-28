@@ -77,16 +77,16 @@ public:
 
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
-	ReaderProxy_t param;
-	std::vector<ChangeForReader_t> changes;
-	bool isRequestedChangesEmpty;
+	ReaderProxy_t m_param;
+	std::vector<ChangeForReader_t> m_changesForReader;
+	bool m_isRequestedChangesEmpty;
 
-	PeriodicHeartbeat periodicHB;
-	NackResponseDelay nackResponse;
-	NackSupressionDuration nackSupression;
+	PeriodicHeartbeat m_periodicHB;
+	NackResponseDelay m_nackResponse;
+	NackSupressionDuration m_nackSupression;
 
-	uint32_t lastAcknackCount;
-	StatefulWriter* SFW;
+	uint32_t m_lastAcknackCount;
+	StatefulWriter* m_SFW;
 
 
 private:

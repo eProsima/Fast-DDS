@@ -25,18 +25,18 @@ namespace rtps {
 
 
 ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
-				param(*RPparam),isRequestedChangesEmpty(true),
-				periodicHB(SW,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
-				nackResponse(SW,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
-				nackSupression(SW,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000)),
-				lastAcknackCount(0),SFW(SW)
+				m_param(*RPparam),m_isRequestedChangesEmpty(true),
+				m_periodicHB(SW,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
+				m_nackResponse(SW,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
+				m_nackSupression(SW,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000)),
+				m_lastAcknackCount(0),m_SFW(SW)
 {
 
 }
 
 
 ReaderProxy::~ReaderProxy() {
-	// TODO Auto-generated destructor stub
+
 }
 
 
@@ -45,8 +45,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		ChangeForReader_t* changeForReader)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
-	std::vector<ChangeForReader_t>::iterator it;
-	for(it=changes.begin();it!=changes.end();++it)
+	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->change->sequenceNumber.to64long() == change->sequenceNumber.to64long()
 				&& it->change->writerGUID == change->writerGUID)
@@ -66,7 +65,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
 
-	for(std::vector<ChangeForReader_t>::iterator it=changes.begin();it!=changes.end();++it)
+	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->change->sequenceNumber.to64long() < seqNum->to64long())
 		{
@@ -82,12 +81,12 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet
 
 	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet->begin();sit!=seqNumSet->end();++sit)
 	{
-		for(std::vector<ChangeForReader_t>::iterator it=changes.begin();it!=changes.end();++it)
+		for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 		{
 			if(it->change->sequenceNumber.to64long() == sit->to64long())
 			{
 				it->status = REQUESTED;
-				isRequestedChangesEmpty = false;
+				m_isRequestedChangesEmpty = false;
 				break;
 			}
 		}
@@ -139,7 +138,7 @@ bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
 	changesList->clear();
 	boost::lock_guard<ReaderProxy> guard(*this);
 
-	for(std::vector<ChangeForReader_t>::iterator it=changes.begin();it!=changes.end();++it)
+	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->status == status)
 		{

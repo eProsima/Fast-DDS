@@ -66,16 +66,16 @@ void NackResponseDelay::event(const boost::system::error_code& ec,ReaderProxy* r
 			if(!relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)SW,
 						&relevant_changes,
-						&rp->param.unicastLocatorList,
-						&rp->param.multicastLocatorList,
-						rp->param.expectsInlineQos,
-						rp->param.remoteReaderGuid.entityId);
+						&rp->m_param.unicastLocatorList,
+						&rp->m_param.multicastLocatorList,
+						rp->m_param.expectsInlineQos,
+						rp->m_param.remoteReaderGuid.entityId);
 			if(!not_relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)SW,
 						&not_relevant_changes,
-						rp->param.remoteReaderGuid.entityId,
-						&rp->param.unicastLocatorList,
-						&rp->param.multicastLocatorList);
+						rp->m_param.remoteReaderGuid.entityId,
+						&rp->m_param.unicastLocatorList,
+						&rp->m_param.multicastLocatorList);
 		}
 	}
 	if(ec==boost::asio::error::operation_aborted)
