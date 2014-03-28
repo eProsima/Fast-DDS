@@ -31,7 +31,8 @@ NackResponseDelay::NackResponseDelay(StatefulWriter* SW_ptr,boost::posix_time::m
 		TimedEvent(&SW_ptr->participant->m_event_thr.io_service,interval),
 		SW(SW_ptr)
 {
-
+	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
+	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,SW->participant->m_guid.guidPrefix);
 }
 
 bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)

@@ -25,10 +25,6 @@
 namespace eprosima {
 namespace rtps {
 
-//StatefulWriter::StatefulWriter() {
-//	// TODO Auto-generated constructor stub
-//
-//}
 
 StatefulWriter::~StatefulWriter() {
 	// TODO Auto-generated destructor stub
