@@ -31,8 +31,8 @@ public:
 	CDRMessage_t m_rtpsmsg_fullmsg;
 	RTPSMessageGroup_t():
 		m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-				m_rtpsmsg_submessage(RTPSMESSAGE_HEADER_SIZE),
-				m_rtpsmsg_fullmsg(RTPSMESSAGE_HEADER_SIZE){};
+				m_rtpsmsg_submessage(RTPSMESSAGE_MAX_SIZE),
+				m_rtpsmsg_fullmsg(RTPSMESSAGE_MAX_SIZE){};
 };
 
 class RTPSWriter;
