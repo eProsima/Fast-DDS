@@ -16,6 +16,7 @@
  */
 
 #include "eprosimartps/utils/ObjectPool.h"
+#include "eprosimartps/rtps_all.h"
 
 namespace eprosima {
 namespace rtps {
@@ -66,7 +67,7 @@ inline void ObjectPool<T>::release_Object(T& obj)
 	m_free_objects.push_back(&obj);
 }
 
-
+template class ObjectPool<CDRMessage_t>;
 
 
 } /* namespace rtps */

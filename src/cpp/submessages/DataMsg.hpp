@@ -51,7 +51,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 		TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos) {
 
-	CDRMessage_t& submsgElem = pool_submsg.reserve_Object();
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
 	//CDRMessage_t submsgElem;
@@ -151,7 +151,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		//Append Submessage elements to msg
 
 		CDRMessage::appendMsg(msg, &submsgElem);
-		pool_submsg.release_Object(submsgElem);
+		g_pool_submsg.release_Object(submsgElem);
 	}
 	catch(int t){
 		pError("Data SUBmessage not created"<<endl)

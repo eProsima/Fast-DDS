@@ -32,7 +32,7 @@ namespace eprosima {
 namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
-ObjectPool<CDRMessage_t> pool_submsg(100);
+ObjectPool<CDRMessage_t> g_pool_submsg(100);
 const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
 
 

@@ -195,6 +195,8 @@ bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,E
 			}
 			break;
 		}
+		default:
+			break;
 		}
 	}
 	//pDebugInfo("Adding sentinel parameter "<<endl);

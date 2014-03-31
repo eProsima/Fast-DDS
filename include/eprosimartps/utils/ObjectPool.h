@@ -21,6 +21,7 @@
 #include <vector>
 #include <cstdint>
 
+
 namespace eprosima {
 namespace rtps {
 

@@ -83,8 +83,8 @@ boost::posix_time::ptime t1,t2,t3;
 
 void newMsgCallback()
 {
-	t2 = boost::posix_time::microsec_clock::local_time();
-	cout << MAGENTA"New Message Callback" <<DEF<< endl;
+//	t2 = boost::posix_time::microsec_clock::local_time();
+//	cout << MAGENTA"New Message Callback" <<DEF<< endl;
 }
 
 
@@ -193,7 +193,7 @@ int main(int argc, char** argv){
 			t1 = boost::posix_time::microsec_clock::local_time();
 			pub->write((void*)&Latency);
 			sub->blockUntilNewMessage();
-		//	sub->readLastAdded((void*)&Latency);
+			sub->readLastAdded((void*)&Latency);
 
 			cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
 			total+=(t2-t1).total_microseconds()-overhead_value;
