@@ -32,11 +32,11 @@ ObjectPool<T>::ObjectPool(uint16_t defaultGroupsize):
 template <typename T>
 void ObjectPool<T>::allocateGroup()
 {
-	T* newObjects = new T[m_group_size];
 	for(uint16_t i=0;i<m_group_size;++i)
 	{
-		m_free_objects.push_back(&newObjects[i]);
-		m_all_objects.push_back(&newObjects[i]);
+		T* newObject = new T();
+		m_free_objects.push_back(newObject);
+		m_all_objects.push_back(newObject);
 	}
 }
 
