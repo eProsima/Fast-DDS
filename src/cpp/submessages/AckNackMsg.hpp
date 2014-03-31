@@ -38,7 +38,7 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidp
 bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
-	CDRMessage_t& submsgElem = pool_submsg.reserve_Object();
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
@@ -72,7 +72,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	RTPSMessageCreator::addSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
-	pool_submsg.release_Object(submsgElem);
+	g_pool_submsg.release_Object(submsgElem);
 	msg->length = msg->pos;
 	return true;
 }

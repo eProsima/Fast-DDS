@@ -31,8 +31,21 @@ namespace dds {
 
 class ParameterList_t {
 public:
-	ParameterList_t();
-	virtual ~ParameterList_t(){};
+	ParameterList_t():	QosMsg(RTPSMESSAGE_MAX_SIZE),
+	inlineQosMsg(RTPSMESSAGE_MAX_SIZE),
+	has_changed_Qos(true),has_changed_inlineQos(true){};
+	virtual ~ParameterList_t()
+	{
+		std::vector<Parameter_t*>::iterator it;
+		for(it=QosParams.begin();it!=QosParams.end();++it)
+		{
+			delete(*it);
+		}
+		for(it=inlineQosParams.begin();it!=inlineQosParams.end();++it)
+		{
+			delete(*it);
+		}
+	};
 	std::vector<Parameter_t*> QosParams;
 	std::vector<Parameter_t*> inlineQosParams;
 	CDRMessage_t QosMsg;
@@ -44,7 +57,8 @@ public:
 };
 
 
-namespace ParameterList{
+namespace ParameterList
+{
 
 	inline bool updateQosMsg(ParameterList_t* plist,Endianness_t endian);
 	inline bool updateInlineQosMsg(ParameterList_t* plist,Endianness_t endian);
