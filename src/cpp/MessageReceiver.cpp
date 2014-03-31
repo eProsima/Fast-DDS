@@ -241,6 +241,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = NULL;
+	if(mp_threadListen->m_assoc_readers.empty())
+	{
+		pWarning("Data received when NO readers are created"<<endl);
+		return false;
+	}
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
@@ -345,11 +350,23 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			{
 				if((*it)->m_stateType == STATEFUL)
 				{
-					StatefulReader* SR = (StatefulReader*)(*it);
+					StatefulReader* SFR = (StatefulReader*)(*it);
 					WriterProxy* WP;
-					if(SR->matched_writer_lookup(change_to_add->writerGUID,&WP))
+					if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
 					{
 						WP->received_change_set(change_to_add);
+					}
+					else
+					{
+						WriterProxy_t newWriterProxy;
+						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
+						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
+						newWriterProxy.unicastLocatorList = this->unicastReplyLocatorList;
+						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
+						SFR->matched_writer_add(&newWriterProxy);
+						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
+						WP->received_change_set(change_to_add);
+
 					}
 				}
 				if((*it)->newMessageCallback !=NULL)
@@ -422,7 +439,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 					}
 				}
 				else
-					pWarning("HB received from NOT associated writer");
+					pWarning("HB received from NOT associated writer"<<endl);
 			}
 		}
 	}
@@ -538,7 +555,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 						WP->irrelevant_change_set(&(*it));
 				}
 				else
-					pWarning("GAP received from NOT associated writer");
+					pWarning("GAP received from NOT associated writer"<<endl);
 			}
 		}
 	}
