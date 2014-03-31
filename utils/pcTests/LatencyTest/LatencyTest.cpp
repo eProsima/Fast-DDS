@@ -158,12 +158,12 @@ int main(int argc, char** argv){
 	//	pub->addReaderLocator(loc,true);
 	if(type == 1)
 	{
-		loc.set_IP4_address(192,168,1,21);
+		loc.set_IP4_address(192,168,1,23);
 		pub->addReaderLocator(loc,false);
 	}
 	else if(type == 2)
 	{
-		loc.set_IP4_address(192,168,1,16);
+		loc.set_IP4_address(192,168,1,27);
 		pub->addReaderLocator(loc,false);
 	}
 
@@ -181,7 +181,8 @@ int main(int argc, char** argv){
 	GUID_t guid;
 	uint64_t total=0;
 	uint16_t n_samples = 1000;
-	uint64_t us[n_samples];
+	uint64_t us;
+	uint64_t min_us= 150000;
 	int samples = 0;
 
 	for(int i=1;i<n_samples;i++)
@@ -194,10 +195,12 @@ int main(int argc, char** argv){
 			pub->write((void*)&Latency);
 			sub->blockUntilNewMessage();
 			sub->readLastAdded((void*)&Latency);
-
-			cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
-			total+=(t2-t1).total_microseconds()-overhead_value;
-			us[i] = (t2-t1).total_microseconds()-overhead_value;
+			t2 = boost::posix_time::microsec_clock::local_time();
+			us = (t2-t1).total_microseconds()-overhead_value;
+			cout<< "T: " <<us<< " | ";
+			total+=us;
+			if(us<min_us)
+				min_us = us;
 			samples++;
 			if(samples%10==0)
 				cout << endl;
@@ -215,13 +218,7 @@ int main(int argc, char** argv){
 	if(type == 1)
 	{
 		cout << "Mean: " << total/samples << endl;
-		uint64_t min_us= 150000;
-		for(int i =0;i<n_samples;i++)
-		{
-			min_us = min(min_us,us[i]);
-		}
 		cout << "Min us: " << min_us << endl;
-
 	}
 
 
