@@ -31,7 +31,7 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefi
 	}
 	catch(int e)
 	{
-		pError("Gap message error"<<endl)
+		pError("Gap message error"<<e<<endl)
 		return false;
 	}
 	return true;
@@ -62,7 +62,7 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& se
 	}
 	catch(int e)
 	{
-		pError("Gap submessage error"<<endl)
+		pError("Gap submessage error"<<e<<endl)
 		return false;
 	}
 

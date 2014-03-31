@@ -39,7 +39,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		pError("Data message error"<<endl)
+		pError("Data message error"<<e<<endl)
 
 		return false;
 	}
@@ -128,7 +128,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		if(dataFlag)
 		{
 			CDRMessage::addOctet(&submsgElem,0); //ENCAPSULATION
-			CDRMessage::addOctet(&submsgElem,change->serializedPayload.encapsulation); //ENCAPSULATION
+			CDRMessage::addOctet(&submsgElem,(octet)change->serializedPayload.encapsulation); //ENCAPSULATION
 			CDRMessage::addUInt16(&submsgElem,0); //OPTIONS
 			CDRMessage::addData(&submsgElem,change->serializedPayload.data,change->serializedPayload.length);
 		}
@@ -154,7 +154,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		g_pool_submsg.release_Object(submsgElem);
 	}
 	catch(int t){
-		pError("Data SUBmessage not created"<<endl)
+		pError("Data SUBmessage not created"<<t<<endl)
 
 		return false;
 	}

@@ -29,7 +29,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& gui
 	}
 	catch(int e)
 	{
-		pError("HB message not created"<<endl)
+		pError("HB message not created"<<e<<endl)
 		return false;
 	}
 	return true;
@@ -68,7 +68,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 	}
 	catch(int e)
 	{
-		pError("MessageCreator fails"<<endl)
+		pError("MessageCreator fails"<<e<<endl)
 		return false;
 	}
 

@@ -200,11 +200,11 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 bool WriterProxy::add_unknown_changes(SequenceNumber_t* sn)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
-	uint32_t n_to_add;
+	uint64_t n_to_add;
 	if(!changes.empty())
 	{
 		std::sort(changes.begin(),changes.end(),sort_chFW);
-		n_to_add = sn->to64long() - (*changes.end()).change->sequenceNumber.to64long()-1;
+		n_to_add = (sn->to64long() - (*changes.end()).change->sequenceNumber.to64long()-1);
 	}
 	else
 	{

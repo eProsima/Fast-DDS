@@ -71,7 +71,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
 	}
 	catch(int e)
 	{
-		pError("Header creation fails."<<endl);
+		pError("Header creation fails. "<< e <<endl);
 		return false;
 	}
 
@@ -99,7 +99,7 @@ bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 	}
 	catch(int e){
 
-		pError("Submessage Header creation fails."<<endl);
+		pError("Submessage Header creation fails. "<< e <<endl);
 		return false;
 	}
 
@@ -136,7 +136,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 	}
 	catch(int e)
 	{
-		pError("Submessage Header creation fails."<<endl);
+		pError("Submessage Header creation fails."<<e<<endl);
 		return false;
 	}
 	return true;
@@ -147,7 +147,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalida
 	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
 	Time_t time_now;
 	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
-	time_now.fraction = (boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2,32)*pow(10,-boost::posix_time::time_duration::num_fractional_digits()));
+	time_now.fraction = (uint32_t)((boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2.0,32)*pow(10.0,-boost::posix_time::time_duration::num_fractional_digits())));
 //	cout << t << endl;
 //	cout << (t-t_epoch) << endl;
 //	cout << time_now.seconds << endl;

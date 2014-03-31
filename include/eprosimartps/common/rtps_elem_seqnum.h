@@ -64,20 +64,20 @@ typedef struct SequenceNumber_t{
 		return *this;
 	}
 	SequenceNumber_t& operator+=(int inc){
-		if(low+inc>pow(2,32))
-		{high++;low +=inc-(pow(2,32)-low);}
+		if(low+inc>(uint32_t)pow(2.0,32))
+		{high++;low +=inc-((uint32_t)pow(2.0,32)-low);}
 		else
 			low+=inc;
 		return *this;
 	}
-	SequenceNumber_t& operator-(int inc){
+	SequenceNumber_t& operator-(uint64_t inc){
 		if(low-inc < 0)
 		{
 			high--;
-			low = pow(2,32)-(inc-low);
+			low = (uint32_t)(pow(2.0,32)-(inc-low));
 		}
 		else
-			low-=inc;
+			low-=(uint32_t)inc;
 		return *this;
 	}
 	bool operator>(SequenceNumber_t& seq2){
