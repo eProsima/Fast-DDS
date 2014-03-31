@@ -95,7 +95,6 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 {
 	if(!reader_locator.empty())
 	{
-
 		for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 		{
 			rit->unsent_changes.push_back(cptr);
