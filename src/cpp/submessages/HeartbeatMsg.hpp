@@ -25,7 +25,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& gui
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
 		RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
-		msg->length = msg->pos;
+													msg->length = msg->pos;
 	}
 	catch(int e)
 	{
@@ -38,19 +38,18 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& gui
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
 		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
-
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
-	if(EPROSIMA_ENDIAN == BIGEND)
+	if(EPROSIMA_ENDIAN == LITTLEEND)
 	{
 		flags = flags | BIT(0);
-		submsgElem.msg_endian  = BIGEND;
+		submsgElem.msg_endian  = LITTLEEND;
 	}
 	else
 	{
-		submsgElem.msg_endian  = LITTLEEND;
+		submsgElem.msg_endian  = BIGEND;
 	}
 	if(isFinal)
 		flags = flags | BIT(1);

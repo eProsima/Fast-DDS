@@ -171,6 +171,7 @@ public:
 
 	ParameterList_t ParamList;
 
+	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
 
 
 private:
@@ -178,7 +179,7 @@ private:
 	bool minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadElement_t>::iterator* min_it);
 	bool removeSeqFromRead(SequenceNumber_t& sn, GUID_t& guid);
 	std::vector<ReadElement_t> readElements;
-	RTPSReader* R;
+	RTPSReader* mp_Reader;
 	//bool initialized;
 	std::string topicName;
 	std::string topicDataType;

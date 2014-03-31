@@ -19,60 +19,58 @@
 #include "eprosimartps/writer/StatefulWriter.h"
 
 
+
 namespace eprosima {
 namespace rtps{
 
 
 
-PeriodicHeartbeat::~PeriodicHeartbeat() {
-	// TODO Auto-generated destructor stub
-}
-
-PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SW_ptr->participant->m_event_thr.io_service,interval),
-		SW(SW_ptr)
+PeriodicHeartbeat::~PeriodicHeartbeat()
 {
 
 }
 
-void PeriodicHeartbeat::event(const boost::system::error_code& ec,ReaderProxy* RP)
+PeriodicHeartbeat::PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):
+		TimedEvent(&p_RP->mp_SFW->participant->m_event_thr.io_service,interval),
+		mp_RP(p_RP)
 {
-	if(!ec)
+
+}
+
+void PeriodicHeartbeat::event(const boost::system::error_code& ec)
+{
+	if(ec == boost::system::errc::success)
 	{
-
+		pDebugInfo("Sending Heartbeat"<<endl);
 		std::vector<ChangeForReader_t*> unack;
-		{
-			RP->unacked_changes(&unack);
-		}
+		mp_RP->unacked_changes(&unack);
 		if(!unack.empty())
 		{
 			SequenceNumber_t first,last;
-			SW->m_writer_cache.get_seq_num_min(&first,NULL);
-			SW->m_writer_cache.get_seq_num_max(&last,NULL);
-			SW->heartbeatCount_increment();
+			mp_RP->mp_SFW->m_writer_cache.get_seq_num_min(&first,NULL);
+			mp_RP->mp_SFW->m_writer_cache.get_seq_num_max(&last,NULL);
+			mp_RP->mp_SFW->heartbeatCount_increment();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
-			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,SW->participant->m_guid.guidPrefix,ENTITYID_UNKNOWN,SW->guid.entityId,
-					first,last,SW->getHeartbeatCount(),false,false);
+			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_RP->mp_SFW->participant->m_guid.guidPrefix,ENTITYID_UNKNOWN,mp_RP->mp_SFW->guid.entityId,
+					first,last,mp_RP->mp_SFW->getHeartbeatCount(),false,false);
 			std::vector<Locator_t>::iterator lit;
-			for(lit = RP->m_param.unicastLocatorList.begin();lit!=RP->m_param.unicastLocatorList.end();++lit)
-				SW->participant->m_send_thr.sendSync(&m_periodic_hb_msg,&(*lit));
-			for(lit = RP->m_param.multicastLocatorList.begin();lit!=RP->m_param.multicastLocatorList.end();++lit)
-				SW->participant->m_send_thr.sendSync(&m_periodic_hb_msg,&(*lit));
+			for(lit = mp_RP->m_param.unicastLocatorList.begin();lit!=mp_RP->m_param.unicastLocatorList.end();++lit)
+				mp_RP->mp_SFW->participant->m_send_thr.sendSync(&m_periodic_hb_msg,&(*lit));
+			for(lit = mp_RP->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
+				mp_RP->mp_SFW->participant->m_send_thr.sendSync(&m_periodic_hb_msg,&(*lit));
+
+			this->m_isWaiting = false;
 			//Reset TIMER
-			if(SW->reliability.heartbeatPeriod.to64time() > 0)
-				timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&RP->m_periodicHB,
-						boost::asio::placeholders::error,RP));
+			this->restart_timer();
 		}
 	}
-
-
-	if(ec==boost::asio::error::operation_aborted)
+	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("Periodic Heartbeat aborted");
+		pWarning("Periodic Heartbeat aborted"<<endl);
 	}
 	else
 	{
-		pError(ec.message()<<endl);
+		pInfo("Periodic Heartbeat boost message: " <<ec.message()<<endl);
 	}
 }
 

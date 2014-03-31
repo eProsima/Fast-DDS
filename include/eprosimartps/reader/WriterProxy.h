@@ -57,14 +57,14 @@ public:
 	bool irrelevant_change_set(SequenceNumber_t* seqNum);
 
 	bool missing_changes(std::vector<ChangeFromWriter_t*>* missing);
-
+	StatefulReader* mp_SFR;
 	WriterProxy_t param;
 	std::vector<ChangeFromWriter_t> changes;
 	uint32_t acknackCount;
 	uint32_t lastHeartbeatCount;
 	bool isMissingChangesEmpty;
 	HeartbeatResponseDelay heartbeatResponse;
-	StatefulReader* SFR;
+
 
 private:
 	bool max_seq_num(SequenceNumber_t* sn);

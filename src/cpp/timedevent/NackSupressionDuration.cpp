@@ -22,38 +22,39 @@ namespace rtps {
 
 
 
-NackSupressionDuration::~NackSupressionDuration() {
-
-}
-
-NackSupressionDuration::NackSupressionDuration(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval):
-		TimedEvent(&SW_ptr->participant->m_event_thr.io_service,interval),
-		SW(SW_ptr)
+NackSupressionDuration::~NackSupressionDuration()
 {
 
 }
 
-void NackSupressionDuration::event(const boost::system::error_code& ec,ReaderProxy* RP)
+NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):
+		TimedEvent(&p_RP->mp_SFW->participant->m_event_thr.io_service,interval),
+		mp_RP(p_RP)
 {
-	if(!ec)
+
+}
+
+void NackSupressionDuration::event(const boost::system::error_code& ec)
+{
+	if(ec == boost::system::errc::success)
 	{
-		boost::lock_guard<ReaderProxy> guard(*RP);
-
-		for(std::vector<ChangeForReader_t>::iterator cit=RP->m_changesForReader.begin();
-				cit!=RP->m_changesForReader.end();++cit)
+		boost::lock_guard<ReaderProxy> guard(*mp_RP);
+		pDebugInfo("Nack Supression Timer"<<endl);
+		for(std::vector<ChangeForReader_t>::iterator cit=mp_RP->m_changesForReader.begin();
+				cit!=mp_RP->m_changesForReader.end();++cit)
 		{
 			if(cit->status == UNDERWAY)
 				cit->status = UNACKNOWLEDGED;
 		}
 	}
-	if(ec==boost::asio::error::operation_aborted)
-	{
-		pInfo("Nack Response delay aborted");
-	}
-	else
-	{
-		pError(ec.message()<<endl);
-	}
+	else if(ec==boost::asio::error::operation_aborted)
+		{
+			pInfo("Nack Supression aborted"<<endl);
+		}
+		else
+		{
+			pInfo("Nack SUpression boost message: " <<ec.message()<<endl);
+		}
 }
 
 } /* namespace dds */

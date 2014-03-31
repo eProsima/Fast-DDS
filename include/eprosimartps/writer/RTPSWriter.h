@@ -103,6 +103,7 @@ public:
 
 	Publisher* m_Pub;
 
+
 };
 
 } /* namespace rtps */

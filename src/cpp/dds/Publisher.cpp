@@ -68,13 +68,14 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 
 	CacheChange_t* change;
 	W->new_change(kind,Data,&change);
-
+	pDebugInfo("New change created"<<endl);
 	if(!W->m_writer_cache.add_change(change))
 	{
 		pWarning("Change not added"<<endl);
 		W->m_writer_cache.release_Cache(change);
 		return false;
 	}
+
 	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
 
 	if(W->m_stateType == STATELESS)
@@ -132,18 +133,31 @@ bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 	}
 	else if(W->m_stateType==STATEFUL)
 	{
-		//FIXME: Improve this.
-		ReaderProxy_t RL;
-		RL.expectsInlineQos = expectsInlineQos;
-		GUID_UNKNOWN(RL.remoteReaderGuid);
-		RL.unicastLocatorList.push_back(Loc);
-
-		pDebugInfo("Adding ReaderProxy at: "<< Loc.to_IP4_string()<<":"<< Loc.port<< endl);
-
-		((StatefulWriter*)W)->matched_reader_add(RL);
+		pError("StatefulWriter expects Reader Proxies"<<endl);
+		return false;
 	}
-	//TODOG add proxy
 	return true;
+}
+
+
+bool Publisher::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
+{
+	if(W->m_stateType==STATELESS)
+	{
+		pError("StatelessWriter expects reader locator"<<endl);
+		return false;
+	}
+	else if(W->m_stateType==STATEFUL)
+	{
+		ReaderProxy_t RL;
+		RL.expectsInlineQos = expectsInline;
+		RL.remoteReaderGuid = guid;
+		RL.unicastLocatorList.push_back(loc);
+		pDebugInfo("Adding ReaderProxy at: "<< loc.to_IP4_string()<<":"<<loc.port<< endl);
+		((StatefulWriter*)W)->matched_reader_add(RL);
+		return true;
+	}
+	return false;
 }
 
 const std::string& Publisher::getTopicName()

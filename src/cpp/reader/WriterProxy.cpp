@@ -23,18 +23,22 @@ namespace eprosima {
 namespace rtps {
 
 
-WriterProxy::~WriterProxy() {
+WriterProxy::~WriterProxy()
+{
 	// TODO Auto-generated destructor stub
 	pDebugInfo("WriterProxy destructor"<<endl;);
 }
 
 WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :
+		mp_SFR(SR),
 		param(*WPparam),
-		acknackCount(0),lastHeartbeatCount(0),isMissingChangesEmpty(true),
-		heartbeatResponse(SR,boost::posix_time::milliseconds(SR->reliability.heartbeatResponseDelay.to64time()*1000)),
-		SFR(SR)
-{
+		acknackCount(0),
+		lastHeartbeatCount(0),
+		isMissingChangesEmpty(true),
+		heartbeatResponse(this,boost::posix_time::milliseconds(SR->reliability.heartbeatResponseDelay.to64time()*1000))
 
+{
+pDebugInfo("WriterProxy created"<<endl);
 
 }
 
@@ -86,7 +90,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	{
 		if(cit->change->sequenceNumber.to64long() == change->sequenceNumber.to64long())
 		{
-			SFR->reader_cache.release_Cache(cit->change);
+			mp_SFR->m_reader_cache.release_Cache(cit->change);
 			cit->change = change;
 			cit->status = RECEIVED;
 			return true;
@@ -121,7 +125,7 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t* seqNum)
 	ChangeFromWriter_t chfw;
 	chfw.is_relevant = false;
 	chfw.status = RECEIVED;
-	CacheChange_t* ch = SFR->reader_cache.reserve_Cache();
+	CacheChange_t* ch = mp_SFR->m_reader_cache.reserve_Cache();
 	ch->sequenceNumber = *seqNum;
 	chfw.change = ch;
 	SequenceNumber_t maxSeqNum;
@@ -212,7 +216,7 @@ bool WriterProxy::add_unknown_changes(SequenceNumber_t* sn)
 	}
 	while(n_to_add>0)
 	{
-		CacheChange_t* ch = SFR->reader_cache.reserve_Cache();
+		CacheChange_t* ch = mp_SFR->m_reader_cache.reserve_Cache();
 		ch->sequenceNumber = (*sn)-n_to_add;
 		ChangeFromWriter_t chfw;
 		chfw.change = ch;

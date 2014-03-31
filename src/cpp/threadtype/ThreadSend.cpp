@@ -23,7 +23,9 @@ namespace eprosima {
 namespace rtps {
 
 ThreadSend::ThreadSend() :
-	m_send_socket(m_send_service)
+	m_send_socket(m_send_service),
+	m_bytes_sent(0),
+	m_send_next(true)
 {
 
 }
@@ -96,13 +98,19 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 	}
 
 
-	pDebugInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+	pInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
 	//	boost::posix_time::ptime t1,t2;
 	//t1 = boost::posix_time::microsec_clock::local_time();
-	size_t longitud = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+	m_bytes_sent = 0;
+	if(m_send_next)
+	{
+		m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+	}
+	else
+		m_send_next = true;
 	//t2 = boost::posix_time::microsec_clock::local_time();
 	//cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
-	pDebugInfo (YELLOW <<  "SENT " << longitud << DEF << endl);
+	pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
 }
 
 

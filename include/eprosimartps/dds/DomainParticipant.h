@@ -37,7 +37,6 @@ namespace dds {
   * @ingroup DDSMODULE
  */
 class RTPS_DllAPI DomainParticipant {
-public:
 
 private:
 	uint32_t id;

@@ -76,7 +76,20 @@ void LatencyDeSer(SerializedPayload_t* payload,void*data)
 	memcpy(data,payload->data,sizeof(LatencyType));
 }
 
-
+void LatencyGetKey(void* data,InstanceHandle_t* handle )
+{
+	handle->value[0]  = 0;
+	handle->value[1]  = 0;
+	handle->value[2]  = 0;
+	handle->value[3]  = 5; //length of string in CDR BE
+	handle->value[4]  = 1;
+	handle->value[5]  = 2;
+	handle->value[6]  = 3;
+	handle->value[7]  = 4;
+	handle->value[8]  = 5;
+	for(uint8_t i=9;i<16;i++)
+		handle->value[i]  = 0;
+}
 
 
 boost::posix_time::ptime t1,t2,t3;
@@ -116,112 +129,69 @@ int main(int argc, char** argv){
 	overhead = (t2-t1);
 	long overhead_value = ceil(overhead.total_microseconds()/400);
 	cout << "Overhead " << overhead.total_microseconds()/400 << endl;
+	Locator_t loc;
+	loc.kind = 1;
+	loc.port = 10469;
 
-
-
-	//my_sleep(1);
+	LatencyType Latency;
+	//***********  PARTICIPANT  ******************//
 	ParticipantParams_t PParam;
 	PParam.defaultSendPort = 14456;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	//Registrar tipo de dato.
-	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,NULL,sizeof(LatencyType));
-	Locator_t loc;
-	loc.kind = 1;
-	loc.port = 10469;
-	loc.set_IP4_address(192,168,1,16);
-
-	ReaderParams_t Rparam;
-	WriterParams_t Wparam;
+	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,&LatencyGetKey,sizeof(LatencyType));
+	//************* PUBLISHER  **********************//
 	if(type == 1)
 	{
+		WriterParams_t Wparam;
+		Wparam.pushMode = true;
+		Wparam.stateKind = STATEFUL;
+		Wparam.topicKind = WITH_KEY;
+		Wparam.topicDataType = std::string("LatencyType");
+		Wparam.topicName = std::string("This is a test topic");
 		Wparam.historySize = 10;
-		Rparam.historySize = 15;
-	}
-	else if(type == 2)
-	{
-		Wparam.historySize = 100;
-		Rparam.historySize = 100;
-	}
+		Wparam.reliablility.heartbeatPeriod.seconds = 4;
+		Wparam.reliablility.kind = RELIABLE;
+		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+		if(pub == NULL)
+			return 0;
+		//Reader Proxy
+		loc.set_IP4_address(192,168,1,18);
+		GUID_t readerGUID;
+		readerGUID.entityId = ENTITYID_UNKNOWN;
+		pub->addReaderProxy(loc,readerGUID,true);
 
-	//Create both publisher and subscriber.
-
-	Wparam.pushMode = true;
-	Wparam.stateKind = STATEFUL;
-	Wparam.topicKind = WITH_KEY;
-	Wparam.topicDataType = std::string("LatencyType");
-	Wparam.topicName = std::string("This is a test topic");
-	Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-	//  One of these two as locators.
-	//	loc.set_IP4_address(192,168,1,18);
-	//	pub->addReaderLocator(loc,true);
-	if(type == 1)
-	{
-		loc.set_IP4_address(192,168,1,21);
-		pub->addReaderLocator(loc,false);
-	}
-	else if(type == 2)
-	{
-		loc.set_IP4_address(192,168,1,16);
-		pub->addReaderLocator(loc,false);
-	}
-
-	Rparam.stateKind = STATELESS;
-	Rparam.topicDataType = std::string("LatencyType");
-	Rparam.topicName = std::string("This is a test topic");
-	Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
-	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-	sub->assignNewMessageCallback(newMsgCallback);
-
-	LatencyType Latency;
-
-	SequenceNumber_t seq;
-	GUID_t guid;
-	uint64_t total=0;
-	uint16_t n_samples = 1000;
-	uint64_t us[n_samples];
-	int samples = 0;
-
-	for(int i=1;i<n_samples;i++)
-	{
-
-		if(type == 1)
+		for(uint8_t i = 0;i<10;i++)
 		{
-			Latency.seqnum++;
-			t1 = boost::posix_time::microsec_clock::local_time();
+			if(i == 2)
+				p->loose_next_change();
 			pub->write((void*)&Latency);
-			sub->blockUntilNewMessage();
-		//	sub->readLastAdded((void*)&Latency);
-
-			cout<< "T: " <<(t2-t1).total_microseconds()-overhead_value<< " | ";
-			total+=(t2-t1).total_microseconds()-overhead_value;
-			us[i] = (t2-t1).total_microseconds()-overhead_value;
-			samples++;
-			if(samples%10==0)
-				cout << endl;
-			pub->removeMinSeqChange();
-			sub->takeMinSeqCache((void*)&Latency);
+			cout << "Going to sleep "<< (int)i <<endl;
+			sleep(3);
+			cout << "Wakes "<<endl;
 		}
-		else if (type == 2)
+	}
+	else if (type ==2) //**********SUBSCRIBER  **************//
+	{
+		ReaderParams_t Rparam;
+		Rparam.historySize = 15;
+		Rparam.stateKind = STATEFUL;
+		Rparam.topicDataType = std::string("LatencyType");
+		Rparam.topicName = std::string("This is a test topic");
+		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		loc.set_IP4_address(192,168,1,27);
+		GUID_t writerGUID;
+		writerGUID.entityId = ENTITYID_UNKNOWN;
+		sub->addWriterProxy(loc,writerGUID);
+		while(1)
 		{
+			cout << "Waiting for new message "<<endl;
 			sub->blockUntilNewMessage();
 			sub->readLastAdded((void*)&Latency);
-			pub->write((void*)&Latency);
 		}
-	}
-	cout << endl;
-	if(type == 1)
-	{
-		cout << "Mean: " << total/samples << endl;
-		uint64_t min_us= 150000;
-		for(int i =0;i<n_samples;i++)
-		{
-			min_us = min(min_us,us[i]);
-		}
-		cout << "Min us: " << min_us << endl;
 
 	}
-
-
 
 	return 0;
 

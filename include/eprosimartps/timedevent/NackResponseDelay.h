@@ -31,11 +31,11 @@ class ReaderProxy;
 
 class NackResponseDelay:public TimedEvent {
 public:
-	NackResponseDelay(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
+	NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
 	virtual ~NackResponseDelay();
 
-	void event(const boost::system::error_code& ec,ReaderProxy* rp);
-	StatefulWriter* SW;
+	void event(const boost::system::error_code& ec);
+	ReaderProxy* mp_RP;
 	RTPSMessageGroup_t m_cdrmessages;
 };
 

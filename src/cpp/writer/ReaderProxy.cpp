@@ -25,11 +25,13 @@ namespace rtps {
 
 
 ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
-				m_param(*RPparam),m_isRequestedChangesEmpty(true),
-				m_periodicHB(SW,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
-				m_nackResponse(SW,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
-				m_nackSupression(SW,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000)),
-				m_lastAcknackCount(0),m_SFW(SW)
+				mp_SFW(SW),
+				m_param(*RPparam),
+				m_isRequestedChangesEmpty(true),
+				m_periodicHB(this,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
+				m_nackResponse(this,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
+				m_nackSupression(this,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000)),
+				m_lastAcknackCount(0)
 {
 
 }

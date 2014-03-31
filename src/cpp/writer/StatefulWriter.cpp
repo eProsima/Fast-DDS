@@ -214,10 +214,8 @@ void StatefulWriter::unsent_changes_not_empty()
 							(*rit)->m_param.remoteReaderGuid.entityId,
 							&(*rit)->m_param.unicastLocatorList,
 							&(*rit)->m_param.multicastLocatorList);
-				(*rit)->m_periodicHB.timer->async_wait(boost::bind(&PeriodicHeartbeat::event,&(*rit)->m_periodicHB,
-						boost::asio::placeholders::error,(*rit)));
-				(*rit)->m_nackSupression.timer->async_wait(boost::bind(&NackSupressionDuration::event,&(*rit)->m_nackSupression,
-						boost::asio::placeholders::error,(*rit)));
+				(*rit)->m_periodicHB.restart_timer();
+				(*rit)->m_nackSupression.restart_timer();
 			}
 			else
 			{

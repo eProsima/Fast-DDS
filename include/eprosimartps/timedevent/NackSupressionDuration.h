@@ -30,10 +30,10 @@ class ReaderProxy;
 class NackSupressionDuration:public TimedEvent {
 public:
 	virtual ~NackSupressionDuration();
-	NackSupressionDuration(StatefulWriter* SW_ptr,boost::posix_time::milliseconds interval);
+	NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
 
-	void event(const boost::system::error_code& ec,ReaderProxy* RP);
-		StatefulWriter* SW;
+	void event(const boost::system::error_code& ec);
+		ReaderProxy* mp_RP;
 };
 
 } /* namespace dds */
