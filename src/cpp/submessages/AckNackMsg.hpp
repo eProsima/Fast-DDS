@@ -29,7 +29,7 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidp
 	}
 	catch(int e)
 	{
-		pError("Data message not created"<<endl);
+		pError("Data message not created"<<e<<endl);
 		return false;
 	}
 	return true;
@@ -64,7 +64,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		pError("Message creator fails"<<endl)
+		pError("Message creator fails"<<e<<endl)
 		return false;
 	}
 

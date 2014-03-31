@@ -131,11 +131,11 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 	{
 		octet o=0;
 		valid &=CDRMessage::readOctet(msg,&o);
-		if(8*i<numBits)
+		if((uint32_t)(8*i)<numBits)
 		{
 			for(uint8_t bit=0;bit<8;++bit)
 			{
-				if((bit+i*8)>numBits) //no more bits to analyze
+				if((uint32_t)(bit+i*8)>numBits) //no more bits to analyze
 					break;
 				bool addSN = o & BIT(bit) ? true : false;
 				if(addSN)
@@ -416,7 +416,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	//Compute the bitmap in terms of octets:
 	for(it=sns->set.begin();it!=sns->set.end();++it)
 	{
-		bit_n = it->to64long()-sns->base.to64long()-n_octet*8;
+		bit_n = (uint8_t)(it->to64long()-sns->base.to64long()-n_octet*8);
 		switch(bit_n)
 		{
 			case 0: o= o| BIT(7); break;
@@ -432,9 +432,9 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		{
 			addOctet(msg,o);
 			o = 0x0;
-			for(int i=0;i<(floor(bit_n/8)-1);i++)
+			for(int i=0;i<((long)floor((double)bit_n/8)-1);i++)
 				addOctet(msg,o);
-			n_octet += floor(bit_n/8);
+			n_octet += (uint32_t)floor((double)bit_n/8);
 			it--;
 		}
 	}

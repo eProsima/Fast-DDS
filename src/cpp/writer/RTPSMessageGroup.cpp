@@ -120,7 +120,7 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 			first = false;
 		}
 		while(cdrmsg_fullmsg->length + gap_msg_size < cdrmsg_fullmsg->max_size
-				&& (gap_n + 1) <=Sequences.size()) //another one fits in the full message
+				&& (gap_n + 1) <=(uint16_t)Sequences.size()) //another one fits in the full message
 		{
 			++gap_n;
 			++seqit;
@@ -184,7 +184,7 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			first = false;
 		}
 		while(cdrmsg_fullmsg->length + data_msg_size < cdrmsg_fullmsg->max_size
-				&& (change_n + 1) <= changes->size()) //another one fits in the full message
+				&& (change_n + 1) <= (uint16_t)changes->size()) //another one fits in the full message
 		{
 			++change_n;
 			++cit;
@@ -237,7 +237,7 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			first = false;
 		}
 		while(cdrmsg_fullmsg->length + data_msg_size < cdrmsg_fullmsg->max_size
-				&& (change_n + 1) <= changes->size()) //another one fits in the full message
+				&& (change_n + 1) <= (uint16_t)changes->size()) //another one fits in the full message
 		{
 			++change_n;
 			++cit;

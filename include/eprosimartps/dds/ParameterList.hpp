@@ -238,10 +238,10 @@ inline bool ParameterList::readParameterList(CDRMessage_t* msg,ParameterList_t* 
 		case PID_TYPE_NAME:
 		{
 			ParameterString_t* param_str = new ParameterString_t(&P);
-			uint32_t str_size;
+			uint32_t str_size = 1;
 			CDRMessage::readUInt32(msg,&str_size);
 			param_str->p_str.resize(str_size);
-			octet oc[str_size];
+			octet* oc=new octet[str_size];
 			valid &= CDRMessage::readData(msg,oc,str_size);
 			for(uint32_t i =0;i<str_size;i++)
 				param_str->p_str.at(i) = oc[i];
