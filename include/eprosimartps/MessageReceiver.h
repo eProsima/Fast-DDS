@@ -48,14 +48,14 @@ public:
 					Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Thread that contains this MessageReceiver.
-	ThreadListen* threadListen_ptr;
+	ThreadListen* mp_threadListen;
 
-	CDRMessage_t rec_msg;
-	ParameterList_t ParamList;
+	CDRMessage_t m_rec_msg;
+	ParameterList_t m_ParamList;
 
 private:
-	//!CDRMEssage_t being processed.
-	CDRMessage_t msg;
+//	//!CDRMEssage_t being processed.
+//	CDRMessage_t msg;
 	//!Protocolverison of the message
 	ProtocolVersion_t sourceVersion;
 	//!VendorID that created the message

@@ -58,7 +58,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 	
 typedef struct LatencyType{
 	int64_t seqnum;
-	unsigned char data[5];
+	unsigned char data[500];
 	LatencyType()
 	{
 		seqnum = 0;

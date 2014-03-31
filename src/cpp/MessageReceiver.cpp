@@ -36,7 +36,6 @@ namespace rtps {
 
 MessageReceiver::MessageReceiver()
 {
-	// TODO Auto-generated constructor stub
 	PROTOCOLVERSION(destVersion);
 	PROTOCOLVERSION(sourceVersion);
 	VENDORID_UNKNOWN(sourceVendorId);
@@ -48,13 +47,12 @@ MessageReceiver::MessageReceiver()
 	defUniLoc.kind = LOCATOR_KIND_UDPv4;
 	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
 	defUniLoc.port = LOCATOR_PORT_INVALID;
+	mp_threadListen = NULL;
 
-	/*unicastReplyLocatorList.clear();
-	multicastReplyLocatorList.clear();*/
 }
 
 MessageReceiver::~MessageReceiver() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void MessageReceiver::reset(){
@@ -75,7 +73,8 @@ void MessageReceiver::reset(){
 	multicastReplyLocatorList.push_back(defUniLoc);
 }
 
-void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,Locator_t* loc,CDRMessage_t*msg)
+void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
+		Locator_t* loc,CDRMessage_t*msg)
 {
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
@@ -241,8 +240,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = NULL;
-	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
-			it!=threadListen_ptr->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
+			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
@@ -275,7 +274,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	if(inlineQosFlag)
 	{
-		if(!ParameterList::readParameterList(msg,&ParamList,&inlineQosSize,&ch->kind,&ch->instanceHandle))
+		if(!ParameterList::readParameterList(msg,&m_ParamList,&inlineQosSize,&ch->kind,&ch->instanceHandle))
 		{
 			pDebugInfo("SubMessage Data ERROR"<<endl);
 			return false;
@@ -308,7 +307,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
 			}
 			uint32_t param_size;
-			if(!ParameterList::readParameterList(msg,&ParamList,&param_size,&ch->kind,&ch->instanceHandle))
+			if(!ParameterList::readParameterList(msg,&m_ParamList,&param_size,&ch->kind,&ch->instanceHandle))
 			{
 				pDebugInfo("SubMessage Data ERROR"<<endl);
 				return false;
@@ -324,8 +323,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 
 	//Look for the correct reader to add the change
-	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
-			it!=threadListen_ptr->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
+			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
@@ -388,8 +387,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	//Look for the correct reader and writers:
 
 
-	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
-			it!=threadListen_ptr->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
+			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
@@ -456,8 +455,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	//Look for the correct writer to use the acknack
 
 
-	for(std::vector<RTPSWriter*>::iterator it=threadListen_ptr->m_assoc_writers.begin();
-			it!=threadListen_ptr->m_assoc_writers.end();++it)
+	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
+			it!=mp_threadListen->m_assoc_writers.end();++it)
 	{
 		if((*it)->guid == writerGUID)
 		{
@@ -515,8 +514,8 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 		return false;
 
 
-	for(std::vector<RTPSReader*>::iterator it=threadListen_ptr->m_assoc_readers.begin();
-			it!=threadListen_ptr->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
+			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
