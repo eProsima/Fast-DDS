@@ -156,7 +156,7 @@ int main(int argc, char** argv){
 		if(pub == NULL)
 			return 0;
 		//Reader Proxy
-		loc.set_IP4_address(192,168,1,18);
+		loc.set_IP4_address(192,168,1,23);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
 		pub->addReaderProxy(loc,readerGUID,true);
