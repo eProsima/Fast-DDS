@@ -33,8 +33,8 @@ RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 		m_heartbeatCount(0),
 		m_Pub(NULL)
 {
-	m_writer_cache.historyKind = WRITER;
-	m_writer_cache.rtpswriter = this;
+	m_writer_cache.m_historyKind = WRITER;
+	m_writer_cache.mp_rtpswriter = this;
 	pDebugInfo("RTPSWriter created"<<endl)
 }
 
@@ -53,6 +53,7 @@ RTPSWriter::~RTPSWriter()
 
 bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out)
 {
+	pDebugInfo("Creating new change"<<endl);
 	CacheChange_t* ch = m_writer_cache.reserve_Cache();
 	if(changeKind == ALIVE)
 	{
@@ -61,7 +62,13 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 
 	ch->kind = changeKind;
 	if(topicKind == WITH_KEY)
-		m_type.getKey(data,&ch->instanceHandle);
+	{
+		if(m_type.getKey !=NULL)
+			m_type.getKey(data,&ch->instanceHandle);
+		else
+			pWarning("Get key function not defined"<<endl);
+	}
+
 
 	//change->sequenceNumber = lastChangeSequenceNumber;
 	ch->writerGUID = guid;

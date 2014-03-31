@@ -46,15 +46,15 @@ public:
 	RTPSReader(uint16_t historysize,uint32_t payload_size);
 	virtual ~RTPSReader();
 
-	StateKind_t stateType;
-	HistoryCache reader_cache;
+	StateKind_t m_stateType;
+	HistoryCache m_reader_cache;
 	bool expectsInlineQos;
 
 	//!Structure used to create messages.
 	//RTPSMessageCreator MC;
 	//!Pointer to the associated subscriber
 
-	Subscriber* Sub;
+	Subscriber* mp_Sub;
 
 	//!Semaphore used to stop threads based on the arrival of messages.
 	boost::interprocess::interprocess_semaphore* newMessageSemaphore;

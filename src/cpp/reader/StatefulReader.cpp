@@ -36,7 +36,7 @@ StatefulReader::~StatefulReader()
 StatefulReader::StatefulReader(const ReaderParams_t* param,uint32_t payload_size):
 		RTPSReader(param->historySize,payload_size)
 {
-	stateType = STATEFUL;
+	m_stateType = STATEFUL;
 	reliability=param->reliablility;
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;

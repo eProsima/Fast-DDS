@@ -82,11 +82,10 @@ void RTPSLog::printLongInfo()
 void RTPSLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL lvl,std::string s)
 {
 	RTPSLog* RL = getInstance();
+	boost::lock_guard<RTPSLog> guard(*RL);
 	if(RL->verbosityLevel >= lvl)
 	{
-		RL->print_mutex.lock();
 		std::cout << s;
-		RL->print_mutex.unlock();
 	}
 }
 
@@ -108,7 +107,9 @@ void RTPSLog::setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level)
 {
 	RTPSLog* RL = getInstance();
 	RL->verbosityLevel = level;
+
 }
+
 
 
 } /* namespace eprosima */

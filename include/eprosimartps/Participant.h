@@ -42,6 +42,10 @@
 
 namespace eprosima {
 
+namespace dds{
+class DomainParticipant;
+}
+
 namespace rtps {
 
 class StatelessWriter;
@@ -53,6 +57,7 @@ class RTPSWriter;
 class Endpoint;
 
 
+
 /**
  * @class Participant
  * @brief Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -61,13 +66,11 @@ class Endpoint;
 class Participant{
 	friend class ThreadSend;
 	friend class ThreadListen;
-	friend class DomaninParticipant;
-public:
+	friend class eprosima::dds::DomainParticipant;
+private:
 
 	RTPS_DllAPI Participant(const ParticipantParams_t&param);
 	virtual ~Participant();
-
-
 
 	/**
 	 * Create a StatelessWriter from a parameter structure.
@@ -77,10 +80,9 @@ public:
 	 */
 	bool createStatelessWriter(StatelessWriter** SWriter,const WriterParams_t& Wparam,uint32_t payload_size);
 
-
-
-
 	bool createStatefulWriter(StatefulWriter** SWriter, const WriterParams_t& Wparam,uint32_t payload_size);
+
+	bool initWriter(RTPSWriter* W);
 
 	/**
 	 * Create a StatelessReader from a parameter structure and add it to the participant.
@@ -89,9 +91,9 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatelessReader(StatelessReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
-	//bool createStatefulWriter(StatefulWriter*);
-	//bool createStatelessReader(RTPSReader*);
-	//bool createStetefulReader(StatefulReader* Reader)
+	bool createStatefulReader(StatefulReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
+	bool initReader(RTPSReader* R);
+
 
 	/**
 	 * Remove Endpoint from the participant. It closes all entities related to them that are no longer in use.
@@ -109,15 +111,16 @@ public:
 	std::vector<Locator_t> m_defaultUnicastLocatorList;
 	//!Default listening addresses.
 	std::vector<Locator_t> m_defaultMulticastLocatorList;
+public:
 	//!Guid of the participant.
 	GUID_t m_guid;
+
 	//! Sending resources.
 	ThreadSend m_send_thr;
 
 	ThreadEvent m_event_thr;
 
 private:
-
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* m_endpointToListenThreadSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
@@ -142,6 +145,9 @@ private:
 	 * @return True if correct.
 	 */
 	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread);
+public:
+	//!Used for tests
+	void loose_next_change(){m_send_thr.m_send_next = false;};
 
 };
 

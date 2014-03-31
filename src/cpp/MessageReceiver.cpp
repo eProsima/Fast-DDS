@@ -256,7 +256,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	//FOUND THE READER.
 	//We ask the reader for a cachechange
-	CacheChange_t* ch = firstReader->reader_cache.reserve_Cache();
+	CacheChange_t* ch = firstReader->m_reader_cache.reserve_Cache();
 	ch->writerGUID.guidPrefix = sourceGuidPrefix;
 	CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
 
@@ -336,14 +336,14 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			else
 			{
-				change_to_add = (*it)->reader_cache.reserve_Cache(); //Reserve a new cache from the corresponding cache pool
+				change_to_add = (*it)->m_reader_cache.reserve_Cache(); //Reserve a new cache from the corresponding cache pool
 				change_to_add->copy(ch);
 			}
 
 
-			if((*it)->reader_cache.add_change(change_to_add))
+			if((*it)->m_reader_cache.add_change(change_to_add))
 			{
-				if((*it)->stateType == STATEFUL)
+				if((*it)->m_stateType == STATEFUL)
 				{
 					StatefulReader* SR = (StatefulReader*)(*it);
 					WriterProxy* WP;
@@ -393,7 +393,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
-			if((*it)->stateType == STATEFUL)
+			if((*it)->m_stateType == STATEFUL)
 			{
 				StatefulReader* SR = (StatefulReader*)(*it);
 				//Look for the associated writer
@@ -408,14 +408,16 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 						//Analyze wheter a acknack message is needed:
 						if(!finalFlag)
 						{
-							WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-									boost::asio::placeholders::error,WP));
+							WP->heartbeatResponse.restart_timer();
+						//	WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
+							//		boost::asio::placeholders::error,WP));
 						}
 						else if(finalFlag && !livelinessFlag)
 						{
 							if(!WP->isMissingChangesEmpty)
-								WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-										boost::asio::placeholders::error,WP));
+								WP->heartbeatResponse.restart_timer();
+//								WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
+//										boost::asio::placeholders::error,WP));
 						}
 					}
 				}
@@ -476,8 +478,9 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							(*rit)->acked_changes_set(&SNSet.base);
 							(*rit)->requested_changes_set(&SNSet.set);
 							if(!(*rit)->m_isRequestedChangesEmpty)
-								(*rit)->m_nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->m_nackResponse,
-										boost::asio::placeholders::error,(*rit)));
+								(*rit)->m_nackResponse.restart_timer();
+//								(*rit)->m_nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->m_nackResponse,
+//										boost::asio::placeholders::error,(*rit)));
 							//FIXME: Check if UNACKED CHANGES IS EMPTY
 
 
@@ -520,7 +523,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	{
 		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
-			if((*it)->stateType == STATEFUL)
+			if((*it)->m_stateType == STATEFUL)
 			{
 				StatefulReader* SR = (StatefulReader*)(*it);
 				//Look for the associated writer

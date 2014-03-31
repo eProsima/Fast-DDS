@@ -17,13 +17,16 @@
 
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/reader/RTPSReader.h"
+#include "eprosimartps/reader/StatefulReader.h"
 
 namespace eprosima {
 namespace dds {
 
 
 
-Subscriber::Subscriber(RTPSReader* Rin):R(Rin) {
+Subscriber::Subscriber(RTPSReader* Rin):
+		mp_Reader(Rin)
+{
 
 }
 
@@ -35,16 +38,16 @@ Subscriber::~Subscriber() {
 
 
 void Subscriber::blockUntilNewMessage(){
-	R->newMessageSemaphore->wait();
+	mp_Reader->newMessageSemaphore->wait();
 }
 
 void Subscriber::assignNewMessageCallback(void (*fun)()) {
-	R->newMessageCallback = fun;
+	mp_Reader->newMessageCallback = fun;
 }
 
 bool Subscriber::isHistoryFull()
 {
-	return R->reader_cache.isFull();
+	return mp_Reader->m_reader_cache.isFull();
 }
 
 int Subscriber::getReadElements_n()
@@ -54,7 +57,7 @@ int Subscriber::getReadElements_n()
 
 int Subscriber::getHistory_n()
 {
-	return R->reader_cache.m_changes.size();
+	return mp_Reader->m_reader_cache.m_changes.size();
 }
 
 bool Subscriber::isCacheRead(SequenceNumber_t& seqNum, GUID_t& guid)
@@ -73,10 +76,10 @@ bool Subscriber::isCacheRead(SequenceNumber_t& seqNum, GUID_t& guid)
 
 bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	if(!R->reader_cache.m_changes.empty())
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
+	if(!mp_Reader->m_reader_cache.m_changes.empty())
 	{
-		if(R->reader_cache.m_changes.size() == readElements.size())
+		if(mp_Reader->m_reader_cache.m_changes.size() == readElements.size())
 		{
 			pWarning( "No unread elements " << endl);
 			return false; //No elements unread
@@ -87,11 +90,12 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 
 		if(readElements.empty()) // No element is read yet
 		{
-			R->reader_cache.get_seq_num_min(&minSeqNum,&minSeqNumGuid);
+			mp_Reader->m_reader_cache.get_seq_num_min(&minSeqNum,&minSeqNumGuid);
 		}
 		else
 		{
-			for(std::vector<CacheChange_t*>::iterator it=R->reader_cache.m_changes.begin();it!=R->reader_cache.m_changes.end();++it)
+			for(std::vector<CacheChange_t*>::iterator it=mp_Reader->m_reader_cache.m_changes.begin();
+					it!=mp_Reader->m_reader_cache.m_changes.end();++it)
 			{
 				if(!isCacheRead((*it)->sequenceNumber,(*it)->writerGUID))
 				{
@@ -109,7 +113,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 		rElem.writerGuid = minSeqNumGuid;
 		readElements.push_back(rElem);
 		CacheChange_t* ch;
-		R->reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
+		mp_Reader->m_reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
 		if(ch->kind == ALIVE)
 			type.deserialize(&ch->serializedPayload,data_ptr);
 		else
@@ -124,9 +128,9 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 }
 bool Subscriber::readCache(SequenceNumber_t& sn, GUID_t& wGuid,void* data_ptr)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
 	CacheChange_t* ch = NULL;
-	if(R->reader_cache.get_change(sn,wGuid,&ch))
+	if(mp_Reader->m_reader_cache.get_change(sn,wGuid,&ch))
 	{
 		if(ch->kind == ALIVE)
 			type.deserialize(&ch->serializedPayload,data_ptr);
@@ -153,11 +157,11 @@ bool Subscriber::readCache(SequenceNumber_t& sn, GUID_t& wGuid,void* data_ptr)
 
 bool Subscriber::readLastAdded(void* data_ptr)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	if(!R->reader_cache.m_changes.empty())
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
+	if(!mp_Reader->m_reader_cache.m_changes.empty())
 	{
 		CacheChange_t* change;
-		if(R->reader_cache.get_last_added_cache(&change))
+		if(mp_Reader->m_reader_cache.get_last_added_cache(&change))
 		{
 			ReadElement_t rElem;
 			rElem.seqNum = change->sequenceNumber;
@@ -183,10 +187,10 @@ bool Subscriber::readLastAdded(void* data_ptr)
 
 bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	if(!R->reader_cache.m_changes.empty())
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
+	if(!mp_Reader->m_reader_cache.m_changes.empty())
 	{
-		if(R->reader_cache.m_changes.size() == readElements.size())
+		if(mp_Reader->m_reader_cache.m_changes.size() == readElements.size())
 			return false; //No elements unread
 		SequenceNumber_t minSeqNum;
 		GUID_t minSeqNumGuid;
@@ -196,7 +200,7 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 		bool read_this = false;
 		if(readElements.empty())
 			noneRead = true;
-		for(std::vector<CacheChange_t*>::iterator it=R->reader_cache.m_changes.begin();it!=R->reader_cache.m_changes.end();++it)
+		for(std::vector<CacheChange_t*>::iterator it=mp_Reader->m_reader_cache.m_changes.begin();it!=mp_Reader->m_reader_cache.m_changes.end();++it)
 		{
 			read_this = false;
 			if(noneRead)
@@ -213,7 +217,7 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 				rElem.writerGuid = minSeqNumGuid;
 				readElements.push_back(rElem);
 				CacheChange_t* ch;
-				R->reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
+				mp_Reader->m_reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
 				if(ch->kind == ALIVE)
 				{
 					void * data_ptr = malloc(type.byte_size);
@@ -233,17 +237,17 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 
 bool Subscriber::readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUID_t* minSeqNumGuid)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	if(!R->reader_cache.m_changes.empty())
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
+	if(!mp_Reader->m_reader_cache.m_changes.empty())
 	{
-		R->reader_cache.get_seq_num_min(minSeqNum,minSeqNumGuid);
+		mp_Reader->m_reader_cache.get_seq_num_min(minSeqNum,minSeqNumGuid);
 		ReadElement_t rElem;
 		rElem.seqNum = *minSeqNum;
 		rElem.writerGuid = *minSeqNumGuid;
 		if(!isCacheRead(*minSeqNum,*minSeqNumGuid))
 			readElements.push_back(rElem);
 		CacheChange_t* ch;
-		if(R->reader_cache.get_change(*minSeqNum,*minSeqNumGuid,&ch))
+		if(mp_Reader->m_reader_cache.get_change(*minSeqNum,*minSeqNumGuid,&ch))
 		{
 			if(ch->kind == ALIVE)
 			{
@@ -270,13 +274,13 @@ bool Subscriber::readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUI
 
 bool Subscriber::readAllCache(std::vector<void*>* data_vec)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	if(!R->reader_cache.m_changes.empty())
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
+	if(!mp_Reader->m_reader_cache.m_changes.empty())
 	{
 
 		std::vector<ReadElement_t> readElem2;
-		for(std::vector<CacheChange_t*>::iterator it=R->reader_cache.m_changes.begin();
-				it!=R->reader_cache.m_changes.end();++it)
+		for(std::vector<CacheChange_t*>::iterator it=mp_Reader->m_reader_cache.m_changes.begin();
+				it!=mp_Reader->m_reader_cache.m_changes.end();++it)
 		{
 			ReadElement_t r_elem;
 			r_elem.seqNum = (*it)->sequenceNumber;
@@ -301,10 +305,10 @@ bool Subscriber::readAllCache(std::vector<void*>* data_vec)
 
 bool Subscriber::takeAllCache(std::vector<void*>* data_vec)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
 	if(readAllCache(data_vec))
 	{
-		R->reader_cache.remove_all_changes();
+		mp_Reader->m_reader_cache.remove_all_changes();
 		readElements.clear();
 		return true;
 	}
@@ -317,12 +321,12 @@ bool Subscriber::takeAllCache(std::vector<void*>* data_vec)
 
 bool Subscriber::takeMinSeqCache(void* data_ptr)
 {
-	boost::lock_guard<HistoryCache> guard(R->reader_cache);
-	if(!R->reader_cache.m_changes.empty())
+	boost::lock_guard<HistoryCache> guard(mp_Reader->m_reader_cache);
+	if(!mp_Reader->m_reader_cache.m_changes.empty())
 	{
 		SequenceNumber_t seq;
 		GUID_t guid;
-		R->reader_cache.get_seq_num_min(&seq,&guid);
+		mp_Reader->m_reader_cache.get_seq_num_min(&seq,&guid);
 
 		ReadElement_t rElem;
 		rElem.seqNum = seq;
@@ -331,7 +335,7 @@ bool Subscriber::takeMinSeqCache(void* data_ptr)
 			readElements.push_back(rElem);
 		CacheChange_t* change = NULL;
 		uint16_t ch_number;
-		if(R->reader_cache.get_change(seq,guid,&change,&ch_number))
+		if(mp_Reader->m_reader_cache.get_change(seq,guid,&change,&ch_number))
 		{
 			if(change->kind == ALIVE)
 				type.deserialize(&change->serializedPayload,data_ptr);
@@ -339,8 +343,8 @@ bool Subscriber::takeMinSeqCache(void* data_ptr)
 			{
 				pWarning("Cache with NOT ALIVE" << endl)
 			}
-			R->reader_cache.release_Cache(change);
-			R->reader_cache.m_changes.erase(R->reader_cache.m_changes.begin()+ch_number);
+			mp_Reader->m_reader_cache.release_Cache(change);
+			mp_Reader->m_reader_cache.m_changes.erase(mp_Reader->m_reader_cache.m_changes.begin()+ch_number);
 			removeSeqFromRead(seq,guid);
 			return true;
 		}
@@ -399,7 +403,24 @@ bool Subscriber::removeSeqFromRead(SequenceNumber_t& sn,GUID_t& guid)
 	return false;
 }
 
-
+bool Subscriber::addWriterProxy(Locator_t& loc, GUID_t& guid)
+{
+	if(mp_Reader->m_stateType==STATELESS)
+	{
+		pError("StatelessReader cannot have writerProxy"<<endl);
+		return false;
+	}
+	else if(mp_Reader->m_stateType==STATEFUL)
+	{
+		WriterProxy_t WL;
+		WL.unicastLocatorList.push_back(loc);
+		WL.remoteWriterGuid = guid;
+		pDebugInfo("Adding WriterProxy at: "<< loc.to_IP4_string()<<":"<< loc.port<< endl);
+		((StatefulReader*)mp_Reader)->matched_writer_add(&WL);
+		return true;
+	}
+	return false;
+}
 
 } /* namespace dds */
 } /* namespace eprosima */

@@ -121,6 +121,8 @@ public:
 	 */
 	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos);
 
+	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline);
+
 
 	///@}
 
@@ -128,6 +130,8 @@ public:
 	ParameterList_t ParamList;
 
 	TypeReg_t* getType(){return (&type);};
+
+
 private:
 	RTPSWriter* W;
 	//bool initialized;

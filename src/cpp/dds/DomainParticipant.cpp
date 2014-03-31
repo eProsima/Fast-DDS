@@ -18,6 +18,7 @@
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 
 namespace eprosima {
@@ -64,14 +65,25 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 	}
 	if(!found)
 		return NULL;
+	if(typeR.serialize == NULL || typeR.deserialize==NULL)
+	{
+		pError("Serialization and deserialization functions cannot be NULL"<<endl);
+		return NULL;
+	}
+	if(WParam.topicKind == WITH_KEY && typeR.getKey == NULL)
+	{
+		pError("Keyed Topic needs getKey function"<<endl);
+		return NULL;
+	}
 	if(WParam.stateKind == STATELESS)
 	{
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,typeR.byte_size))
 			return NULL;
 		Publisher* Pub = new Publisher((RTPSWriter*)SW);
-	//	pDebugInfo("Publisher with name: "<<Pub->getTopicName()<<" created."<<endl);
+		pDebugInfo("Publisher in topic: "<<Pub->getTopicName()<<" created."<<endl);
 		SW->m_Pub = Pub;
+
 		Pub->type = typeR;
 		SW->m_type = typeR;
 		pDebugInfo("Publisher creation finished"<<endl);
@@ -96,7 +108,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
 	dds::DomainParticipant *dp;
-			dp = dds::DomainParticipant::getInstance();
+	dp = dds::DomainParticipant::getInstance();
 	TypeReg_t typeR;
 	std::vector<TypeReg_t>::iterator it;
 	bool found = false;
@@ -110,20 +122,56 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		}
 	}
 	if(!found)
+	{
+		pError("Type Not registered"<<endl);
 		return NULL;
+	}
+	if(typeR.serialize == NULL || typeR.deserialize==NULL)
+	{
+		pError("Serialization and deserialization functions cannot be NULL"<<endl);
+		return NULL;
+	}
+	if(RParam.topicKind == WITH_KEY && typeR.getKey == NULL)
+	{
+		pError("Keyed Topic needs getKey function"<<endl);
+		return NULL;
+	}
+	Subscriber* Sub = NULL;
 	if(RParam.stateKind == STATELESS)
 	{
+		pDebugInfo("Stateless"<<endl);
 		StatelessReader* SR;
 		if(!p->createStatelessReader(&SR,RParam,typeR.byte_size))
+		{
+			pError("Error creating subscriber"<<endl);
 			return NULL;
-		Subscriber* Sub = new Subscriber((RTPSReader*) SR);
-		SR->Sub = Sub;
+		}
+		Sub = new Subscriber((RTPSReader*) SR);
+		SR->mp_Sub = Sub;
 		Sub->topicName = RParam.topicName;
 		Sub->topicDataType = RParam.topicDataType;
 		Sub->type = typeR;
-		return Sub;
 	}
-	return NULL;
+	else if(RParam.stateKind == STATEFUL)
+	{
+		pDebugInfo("Stateful"<<endl);
+		StatefulReader* SFR;
+		if(!p->createStatefulReader(&SFR,RParam,typeR.byte_size))
+		{
+			pError("Error creating subscriber"<<endl);
+			return NULL;
+		}
+		Sub = new Subscriber((RTPSReader*) SFR);
+		SFR->mp_Sub = Sub;
+		Sub->topicName = RParam.topicName;
+		Sub->topicDataType = RParam.topicDataType;
+		Sub->type = typeR;
+	}
+	if(Sub!=NULL)
+		{pDebugInfo("Subscriber created"<<endl);}
+	else
+		{pError("Subscriber not created"<<endl);}
+	return Sub;
 }
 
 Participant* DomainParticipant::createParticipant(const ParticipantParams_t& PParam)

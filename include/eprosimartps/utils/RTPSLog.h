@@ -25,23 +25,8 @@
 
 #include "eprosimartps/rtps_all.h"
 #include <boost/thread/mutex.hpp>
-
-
-#if defined(__DEBUG)
-#define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
-#define pWarning(str) {RTPSLog::Warning << str;RTPSLog::printWarning();}
-#define pInfo(str) {RTPSLog::Info << str;RTPSLog::printInfo();}
-#define pDebugInfo(str) {RTPSLog::DebugInfo << str ;RTPSLog::printDebugInfo();}
-#define pLongInfo(str) {RTPSLog::LongInfo << str ;}
-#define pLongInfoPrint {RTPSLog::printLongInfo();}
-#else
-#define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
-#define pWarning(str)
-#define pInfo(str)
-#define pDebugInfo(str)
-#define pLongInfo(str)
-#define pLongInfoPrint
-#endif
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread.hpp>
 
 
 
@@ -51,7 +36,8 @@ namespace eprosima {
  * Class RTPSLog designed to output information in 3 different levels.
  * @ingroup UTILITIESMODULE
  */
-class RTPS_DllAPI RTPSLog {
+class RTPS_DllAPI RTPSLog: public boost::basic_lockable_adapter<boost::recursive_mutex>
+{
 public:
 	//! Verbosity levels available
 	typedef enum EPROSIMA_LOG_VERBOSITY_LEVEL
@@ -110,7 +96,6 @@ public:
 
 private:
 	EPROSIMA_LOG_VERBOSITY_LEVEL verbosityLevel;
-	boost::mutex print_mutex;
 	static bool instanceFlag;
 	static RTPSLog *single;
 	RTPSLog()
@@ -127,7 +112,26 @@ public:
 };
 
 
+#if defined(__DEBUG)
+#define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
+#define pWarning(str) {RTPSLog::Warning << str;RTPSLog::printWarning();}
+#define pInfo(str) {RTPSLog* r = RTPSLog::getInstance();r->lock();RTPSLog::Info << str;RTPSLog::printInfo();r->unlock();}
+#define pDebugInfo(str) {RTPSLog* r = RTPSLog::getInstance();r->lock();RTPSLog::DebugInfo << str ;RTPSLog::printDebugInfo();r->unlock();}
+#define pLongInfo(str) {RTPSLog* r = RTPSLog::getInstance();r->lock();RTPSLog::LongInfo << str ;r->unlock();}
+#define pLongInfoPrint {RTPSLog::printLongInfo();}
+#else
+#define pError(str) {RTPSLog::Error << str;RTPSLog::printError();}
+#define pWarning(str) {RTPSLog::Warning << str;RTPSLog::printWarning();}
+#define pInfo(str)
+#define pDebugInfo(str)
+#define pLongInfo(str)
+#define pLongInfoPrint
+#endif
 
 } /* namespace eprosima */
+
+
+
+
 
 #endif /* RTPSLOG_H_ */

@@ -19,6 +19,7 @@
 
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/RTPSWriter.h"
@@ -94,69 +95,48 @@ Participant::~Participant()
 bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterParams_t& Wparam,uint32_t payload_size)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
-	StatelessWriter* SWriter = new StatelessWriter(&Wparam,payload_size);
-	pDebugInfo("Finished Writer creation"<<endl);
-	//Check if locator lists are empty:
-	if(SWriter->unicastLocatorList.empty())
-		SWriter->unicastLocatorList = m_defaultUnicastLocatorList;
-	if(SWriter->unicastLocatorList.empty())
-		SWriter->multicastLocatorList = m_defaultMulticastLocatorList;
-	//Assign participant pointer
-	SWriter->participant = this;
-	//Assign GUID
-	SWriter->guid.guidPrefix = m_guid.guidPrefix;
-	SWriter->init_header();
-
-	if(SWriter->topicKind == NO_KEY)
-		SWriter->guid.entityId.value[3] = 0x03;
-	else if(SWriter->topicKind == WITH_KEY)
-		SWriter->guid.entityId.value[3] = 0x02;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	SWriter->guid.entityId.value[2] = c[0];
-	SWriter->guid.entityId.value[1] = c[1];
-	SWriter->guid.entityId.value[0] = c[2];
-	//Look for receiving threads that are already listening to this writer receiving addresses.
-	assignEnpointToListenThreads((Endpoint*)SWriter,'W');
-	//Wait until the thread is correctly created
-
-m_writerList.push_back((RTPSWriter*)SWriter);
-
-	*SW_out = SWriter;
-	pDebugInfo("Finished Writer initialization"<<endl);
+	StatelessWriter* SLWriter = new StatelessWriter(&Wparam,payload_size);
+	this->initWriter((RTPSWriter*)SLWriter);
+	*SW_out = SLWriter;
 	return true;
 }
 
 bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterParams_t& Wparam,uint32_t payload_size) {
 
 	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
-	//Check if locator lists are empty:
-	if(SFWriter->unicastLocatorList.empty())
-		SFWriter->unicastLocatorList = m_defaultUnicastLocatorList;
-	if(SFWriter->unicastLocatorList.empty())
-		SFWriter->multicastLocatorList = m_defaultMulticastLocatorList;
-	//Assign participant pointer
-	SFWriter->participant = this;
-	//Assign GUID
-	SFWriter->guid.guidPrefix = m_guid.guidPrefix;
-	SFWriter->init_header();
+	this->initWriter((RTPSWriter*)SFWriter);
+	*SFW_out = SFWriter;
+	return true;
+}
 
-	if(SFWriter->topicKind == NO_KEY)
-		SFWriter->guid.entityId.value[3] = 0x03;
-	else if(SFWriter->topicKind == WITH_KEY)
-		SFWriter->guid.entityId.value[3] = 0x02;
+bool Participant::initWriter(RTPSWriter*W)
+{
+	pDebugInfo("Finished Writer creation"<<endl);
+	//Check if locator lists are empty:
+	if(W->unicastLocatorList.empty())
+		W->unicastLocatorList = m_defaultUnicastLocatorList;
+	if(W->unicastLocatorList.empty())
+		W->multicastLocatorList = m_defaultMulticastLocatorList;
+	//Assign participant pointer
+	W->participant = this;
+	//Assign GUID
+	W->guid.guidPrefix = m_guid.guidPrefix;
+	W->init_header();
+
+	if(W->topicKind == NO_KEY)
+		W->guid.entityId.value[3] = 0x03;
+	else if(W->topicKind == WITH_KEY)
+		W->guid.entityId.value[3] = 0x02;
 	IdCounter++;
 	octet* c = (octet*)&IdCounter;
-	SFWriter->guid.entityId.value[2] = c[0];
-	SFWriter->guid.entityId.value[1] = c[1];
-	SFWriter->guid.entityId.value[0] = c[2];
+	W->guid.entityId.value[2] = c[0];
+	W->guid.entityId.value[1] = c[1];
+	W->guid.entityId.value[0] = c[2];
 	//Look for receiving threads that are already listening to this writer receiving addresses.
-	assignEnpointToListenThreads((Endpoint*)SFWriter,'W');
+	assignEnpointToListenThreads((Endpoint*)W,'W');
 	//Wait until the thread is correctly created
 
-	m_writerList.push_back((RTPSWriter*)SFWriter);
-
-	*SFW_out = SFWriter;
+	m_writerList.push_back(W);
 	return true;
 }
 
@@ -167,39 +147,55 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 		const ReaderParams_t& RParam,uint32_t payload_size)
 {
 	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
-	//If NO UNICAST
-	if(SReader->unicastLocatorList.empty())
-		SReader->unicastLocatorList = m_defaultUnicastLocatorList;
-	//IF NO MULTICAST
-	if(SReader->multicastLocatorList.empty())
-		SReader->multicastLocatorList = m_defaultMulticastLocatorList;
-
-
-	//Assign participant pointer
-	SReader->participant = this;
-	//Assign GUID
-	SReader->guid.guidPrefix = m_guid.guidPrefix;
-	if(SReader->topicKind == NO_KEY)
-		SReader->guid.entityId.value[3] = 0x04;
-	else if(SReader->topicKind == WITH_KEY)
-		SReader->guid.entityId.value[3] = 0x07;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	SReader->guid.entityId.value[2] = c[3];
-	SReader->guid.entityId.value[1] = c[2];
-	SReader->guid.entityId.value[0] = c[1];
-	//Look for receiving threads that are already listening to this writer receiving addreesses.
-
-	assignEnpointToListenThreads((Endpoint*)SReader,'R');
-
-	m_readerList.push_back((RTPSReader*)SReader);
-
+	initReader((RTPSReader*)SReader);
 	*SR_out = SReader;
 	return true;
-
-
-
 }
+
+bool Participant::createStatefulReader(StatefulReader** SR_out,
+		const ReaderParams_t& RParam,uint32_t payload_size)
+{
+	pDebugInfo("Creating StatefulReader"<<endl);
+	StatefulReader* SReader = new StatefulReader(&RParam, payload_size);
+	initReader((RTPSReader*)SReader);
+	*SR_out = SReader;
+	return true;
+}
+
+
+
+bool Participant::initReader(RTPSReader* p_R)
+{
+	//If NO UNICAST
+	if(p_R->unicastLocatorList.empty())
+		p_R->unicastLocatorList = m_defaultUnicastLocatorList;
+	//IF NO MULTICAST
+	if(p_R->multicastLocatorList.empty())
+		p_R->multicastLocatorList = m_defaultMulticastLocatorList;
+	//Assign participant pointer
+	p_R->participant = this;
+	//Assign GUID
+	p_R->guid.guidPrefix = m_guid.guidPrefix;
+	if(p_R->topicKind == NO_KEY)
+		p_R->guid.entityId.value[3] = 0x04;
+	else if(p_R->topicKind == WITH_KEY)
+		p_R->guid.entityId.value[3] = 0x07;
+	IdCounter++;
+	octet* c = (octet*)&IdCounter;
+	p_R->guid.entityId.value[2] = c[3];
+	p_R->guid.entityId.value[1] = c[2];
+	p_R->guid.entityId.value[0] = c[1];
+	//Look for receiving threads that are already listening to this writer receiving addreesses.
+
+	this->assignEnpointToListenThreads((Endpoint*)p_R,'R');
+
+	m_readerList.push_back(p_R);
+	return true;
+}
+
+
+
+
 
 inline void addEndpoint(ThreadListen* th,Endpoint* end,char type)
 {

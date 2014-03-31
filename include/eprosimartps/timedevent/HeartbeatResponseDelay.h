@@ -19,6 +19,7 @@
 #define HEARTBEATRESPONSEDELAY_H_
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -28,11 +29,11 @@ class WriterProxy;
 class HeartbeatResponseDelay:public TimedEvent {
 public:
 	virtual ~HeartbeatResponseDelay();
-	HeartbeatResponseDelay(StatefulReader* SW_ptr,boost::posix_time::milliseconds interval);
+	HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_time::milliseconds interval);
 
-	void event(const boost::system::error_code& ec,WriterProxy* wp);
+	void event(const boost::system::error_code& ec);
 
-	StatefulReader* SR;
+	WriterProxy* mp_WP;
 	CDRMessage_t m_heartbeat_response_msg;
 
 };

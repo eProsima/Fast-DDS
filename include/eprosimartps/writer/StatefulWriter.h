@@ -76,9 +76,9 @@ public:
 
 	std::vector<ReaderProxy*> matched_readers;
 
-	void sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
-					const EntityId_t& readerId,std::vector<Locator_t>* unicast,
-					std::vector<Locator_t>* multicast);
+//	void sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
+//					const EntityId_t& readerId,std::vector<Locator_t>* unicast,
+//					std::vector<Locator_t>* multicast);
 
 	DDS_Reliability_t reliability;
 

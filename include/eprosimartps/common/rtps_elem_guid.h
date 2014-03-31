@@ -145,6 +145,8 @@ typedef struct GUID_t{
 
 #define GUID_UNKNOWN(gui) {GUIDPREFIX_UNKNOWN(gui.guidPrefix); gui.entityId = ENTITYID_UNKNOWN;}
 
+
+
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
 typedef struct{
 	octet major;

@@ -62,6 +62,10 @@ private:
 	boost::asio::io_service m_send_service;
 	boost::asio::ip::udp::socket m_send_socket;
 	boost::asio::ip::udp::endpoint m_send_endpoint;
+	size_t m_bytes_sent;
+public:
+	//!Used in tests
+	bool m_send_next;
 };
 
 } /* namespace rtps */

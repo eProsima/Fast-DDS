@@ -120,11 +120,11 @@ public:
 
 	///@name Pointer to the associated entity. Only one of them is initialized.
 	//! @{
-	RTPSWriter* rtpswriter;
-	RTPSReader* rtpsreader;
+	RTPSWriter* mp_rtpswriter;
+	RTPSReader* mp_rtpsreader;
 	//!@}
 	//!Type of History (WRITER or READER).
-	HistoryKind_t historyKind;
+	HistoryKind_t m_historyKind;
 
 
 
@@ -134,18 +134,19 @@ private:
 	//!Variable to know if the history is full without needing to block the History mutex.
 	bool isHistoryFull;
 	//!Minimum sequence number in the history
-	SequenceNumber_t minSeqNum;
+	SequenceNumber_t m_minSeqNum;
 	//!Writer Guid of the minimum seqNum in the History.
-	GUID_t minSeqNumGuid;
+	GUID_t m_minSeqNumGuid;
 	//!Maximum sequence number in the history
-	SequenceNumber_t maxSeqNum;
+	SequenceNumber_t m_maxSeqNum;
 	//!Writer Guid of the maximum seqNum in the History.
-	GUID_t maxSeqNumGuid;
+	GUID_t m_maxSeqNumGuid;
 	//! Pool of changes created in the beginning
 	CacheChangePool changePool;
 
 	//!Update the max and min sequence number and Guid after a change in the cache changes.
 	void updateMaxMinSeqNum();
+	bool m_isMaxMinUpdated;
 
 
 

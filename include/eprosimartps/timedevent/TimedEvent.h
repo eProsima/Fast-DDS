@@ -25,6 +25,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/bind.hpp>
 
+#include <boost/system/error_code.hpp>
+
 namespace eprosima {
 namespace rtps{
 
@@ -33,8 +35,13 @@ class TimedEvent {
 public:
 	virtual ~TimedEvent(){};
 	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
-
+	virtual void event(const boost::system::error_code& ec)=0;
+private:
 	boost::asio::deadline_timer* timer;
+	boost::posix_time::milliseconds m_interval_msec;
+public:
+	bool m_isWaiting;
+	void restart_timer();
 
 };
 

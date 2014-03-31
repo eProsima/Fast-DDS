@@ -31,17 +31,18 @@ namespace rtps {
 
 
 HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
-		rtpswriter(NULL),rtpsreader(NULL),
-		historyKind(UDEF),
+		mp_rtpswriter(NULL),mp_rtpsreader(NULL),
+		m_historyKind(UDEF),
 		m_history_max_size(historysize),
 		isHistoryFull(false),
-		changePool(historysize,payload_size)
+		changePool(historysize,payload_size),
+		m_isMaxMinUpdated(false)
 
 {
-		SEQUENCENUMBER_UNKOWN(minSeqNum);
-		SEQUENCENUMBER_UNKOWN(maxSeqNum);
-		GUID_UNKNOWN(minSeqNumGuid);
-		GUID_UNKNOWN(maxSeqNumGuid);
+		SEQUENCENUMBER_UNKOWN(m_minSeqNum);
+		SEQUENCENUMBER_UNKOWN(m_maxSeqNum);
+		GUID_UNKNOWN(m_minSeqNumGuid);
+		GUID_UNKNOWN(m_maxSeqNumGuid);
 		pDebugInfo("History created"<<endl);
 }
 
@@ -117,14 +118,14 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 
 	//make copy of change to save
 
-	if(historyKind == WRITER)
+	if(m_historyKind == WRITER)
 	{
-		rtpswriter->m_lastChangeSequenceNumber++;
-		a_change->sequenceNumber = rtpswriter->m_lastChangeSequenceNumber;
+		mp_rtpswriter->m_lastChangeSequenceNumber++;
+		a_change->sequenceNumber = mp_rtpswriter->m_lastChangeSequenceNumber;
 		m_changes.push_back(a_change);
 
 	}
-	else if(historyKind == READER)
+	else if(m_historyKind == READER)
 	{
 		//Check that the same change has not been already introduced
 		std::vector<CacheChange_t*>::iterator it;
@@ -146,6 +147,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	}
 	if(m_changes.size()==m_history_max_size)
 		isHistoryFull = true;
+	m_isMaxMinUpdated = false;
 	pDebugInfo("Cache added to History" << endl);
 
 	return true;
@@ -163,6 +165,7 @@ bool HistoryCache::remove_change(SequenceNumber_t& seqnum, GUID_t& guid)
 			changePool.release_Cache(*it);
 			m_changes.erase(it);
 			isHistoryFull = false;
+			m_isMaxMinUpdated = false;
 			pDebugInfo("Change removed"<<endl)
 			return true;
 		}
@@ -178,6 +181,7 @@ bool HistoryCache::remove_change(std::vector<CacheChange_t*>::iterator it)
 	changePool.release_Cache(*it);
 	m_changes.erase(it);
 	isHistoryFull = false;
+	m_isMaxMinUpdated = false;
 	pDebugInfo("Change removed"<<endl);
 	return true;
 
@@ -196,6 +200,7 @@ bool HistoryCache::remove_all_changes()
 		}
 		m_changes.clear();
 		isHistoryFull = false;
+		m_isMaxMinUpdated = false;
 		return true;
 	}
 	return false;
@@ -214,8 +219,9 @@ bool HistoryCache::get_seq_num_min(SequenceNumber_t* seqnum,GUID_t* guid)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
 		updateMaxMinSeqNum();
-	*seqnum = minSeqNum;
-	*guid = minSeqNumGuid;
+	*seqnum =m_minSeqNum;
+	if(guid!=NULL)
+		*guid = m_minSeqNumGuid;
 	return true;
 }
 
@@ -223,8 +229,9 @@ bool HistoryCache::get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid)
 {
 	boost::lock_guard<HistoryCache> guard(*this);
 	updateMaxMinSeqNum();
-	*seqnum = maxSeqNum;
-	*guid = maxSeqNumGuid;
+	*seqnum = m_maxSeqNum;
+	if(guid!=NULL)
+		*guid = m_maxSeqNumGuid;
 	return true;
 }
 
@@ -233,29 +240,33 @@ void HistoryCache::updateMaxMinSeqNum()
 	//boost::lock_guard<HistoryCache> guard(*this);
 	if(!m_changes.empty())
 	{
-		maxSeqNum = minSeqNum = m_changes[0]->sequenceNumber;
-		maxSeqNumGuid = minSeqNumGuid = m_changes[0]->writerGUID;
+		if(!m_isMaxMinUpdated)
+		{
+			m_maxSeqNum = m_minSeqNum = m_changes[0]->sequenceNumber;
+			m_maxSeqNumGuid = m_minSeqNumGuid = m_changes[0]->writerGUID;
 
-		for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
-				it!=m_changes.end();++it){
-			if((*it)->sequenceNumber.to64long() > maxSeqNum.to64long())
-			{
-				maxSeqNum = (*it)->sequenceNumber;
-				maxSeqNumGuid = (*it)->writerGUID;
+			for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+					it!=m_changes.end();++it){
+				if((*it)->sequenceNumber.to64long() > m_maxSeqNum.to64long())
+				{
+					m_maxSeqNum = (*it)->sequenceNumber;
+					m_maxSeqNumGuid = (*it)->writerGUID;
+				}
+				if((*it)->sequenceNumber.to64long() < m_minSeqNum.to64long())
+				{
+					m_minSeqNum = (*it)->sequenceNumber;
+					m_minSeqNumGuid = (*it)->writerGUID;
+				}
 			}
-			if((*it)->sequenceNumber.to64long() < minSeqNum.to64long())
-			{
-				minSeqNum = (*it)->sequenceNumber;
-				minSeqNumGuid = (*it)->writerGUID;
-			}
+			m_isMaxMinUpdated = true;
 		}
 	}
 	else
 	{
-		SEQUENCENUMBER_UNKOWN(minSeqNum);
-		SEQUENCENUMBER_UNKOWN(maxSeqNum);
-		GUID_UNKNOWN(minSeqNumGuid);
-		GUID_UNKNOWN(maxSeqNumGuid);
+		SEQUENCENUMBER_UNKOWN(m_minSeqNum);
+		SEQUENCENUMBER_UNKOWN(m_maxSeqNum);
+		GUID_UNKNOWN(m_minSeqNumGuid);
+		GUID_UNKNOWN(m_maxSeqNumGuid);
 	}
 	return;
 }

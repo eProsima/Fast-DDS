@@ -76,7 +76,7 @@ public:
 	bool unsent_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
-
+	StatefulWriter* mp_SFW;
 	ReaderProxy_t m_param;
 	std::vector<ChangeForReader_t> m_changesForReader;
 	bool m_isRequestedChangesEmpty;
@@ -86,7 +86,7 @@ public:
 	NackSupressionDuration m_nackSupression;
 
 	uint32_t m_lastAcknackCount;
-	StatefulWriter* m_SFW;
+
 
 
 private:
