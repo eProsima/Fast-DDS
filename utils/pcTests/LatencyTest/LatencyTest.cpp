@@ -115,7 +115,7 @@ int main(int argc, char** argv){
 
 	overhead = (t2-t1);
 	long overhead_value = ceil(overhead.total_microseconds()/400);
-	cout << "Overhead " << overhead.total_microseconds()/400 << endl;
+	cout << "Overhead " << overhead_value << endl;
 
 
 
@@ -142,7 +142,6 @@ int main(int argc, char** argv){
 		Wparam.historySize = 1000;
 		Rparam.historySize = 1000;
 	}
-
 
 	//Create both publisher and subscriber.
 

@@ -15,6 +15,10 @@
  */
 
 
+
+
+#ifndef RTPS_COMMON_H_
+#define RTPS_COMMON_H_
 #include <cstdlib>
 #include <cstring>
 #include <math.h>
@@ -24,9 +28,7 @@
  #include <string>
 #include <sstream>
 
-#ifndef RTPS_COMMON_H_
-#define RTPS_COMMON_H_
-
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima{
 
@@ -47,11 +49,15 @@ typedef struct CDRMessage_t{
 
 		msg_endian = EPROSIMA_ENDIAN;
 	}
-	~CDRMessage_t(){
+	~CDRMessage_t()
+	{
+//		cout << "CDRMessage destructor" << endl;
 		if(buffer != NULL)
 			free(buffer);
+//		cout << "CDRMessage destructor" << endl;
 	}
-	CDRMessage_t(CDRMessage_t& msg){
+	CDRMessage_t(CDRMessage_t& msg)
+	{
 		pos = msg.pos;
 		length = msg.length;
 		max_size = msg.max_size;
