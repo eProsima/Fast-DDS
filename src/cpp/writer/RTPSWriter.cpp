@@ -48,7 +48,7 @@ void RTPSWriter::init_header()
 
 RTPSWriter::~RTPSWriter()
 {
-
+	pDebugInfo("RTPSWriter destructor"<<endl;);
 }
 
 bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out)

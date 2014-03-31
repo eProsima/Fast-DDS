@@ -30,6 +30,7 @@ Subscriber::Subscriber(RTPSReader* Rin):R(Rin) {
 
 Subscriber::~Subscriber() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("Subscriber destructor"<<endl;);
 }
 
 

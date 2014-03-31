@@ -21,8 +21,9 @@ namespace eprosima {
 namespace rtps {
 
 
-CacheChangePool::~CacheChangePool() {
-	// TODO Auto-generated destructor stub
+CacheChangePool::~CacheChangePool()
+{
+	pDebugInfo("ChangePool destructor"<<endl);
 	for(std::vector<CacheChange_t*>::iterator it = allCaches.begin();
 			it!=allCaches.end();++it)
 	{

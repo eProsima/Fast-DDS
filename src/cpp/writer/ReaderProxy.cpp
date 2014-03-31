@@ -36,7 +36,7 @@ ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
 
 
 ReaderProxy::~ReaderProxy() {
-
+	pDebugInfo("ReaderProxy destructor"<<endl;);
 }
 
 

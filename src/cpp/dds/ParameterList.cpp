@@ -31,6 +31,7 @@ ParameterList_t::ParameterList_t():
 
 ParameterList_t::~ParameterList_t()
 {
+	pDebugInfo("ParameterList destructor"<<endl;);
 	std::vector<Parameter_t*>::iterator it;
 	for(it=QosParams.begin();it!=QosParams.end();++it)
 	{

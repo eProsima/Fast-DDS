@@ -22,8 +22,10 @@
 namespace eprosima {
 namespace rtps {
 
-HeartbeatResponseDelay::~HeartbeatResponseDelay() {
+HeartbeatResponseDelay::~HeartbeatResponseDelay()
+{
 	// TODO Auto-generated destructor stub
+	pDebugInfo("HeartbeatResponse destructor"<<endl;);
 }
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(StatefulReader* SR_ptr,boost::posix_time::milliseconds interval):

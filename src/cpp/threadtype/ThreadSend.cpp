@@ -73,7 +73,7 @@ bool ThreadSend::initSend(const Locator_t& loc)
 
 ThreadSend::~ThreadSend()
 {
-
+	pDebugInfo("Send Thread destructor"<<endl;);
 }
 
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)

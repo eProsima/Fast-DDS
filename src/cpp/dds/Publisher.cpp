@@ -32,6 +32,7 @@ Publisher::Publisher(RTPSWriter* Win):W(Win)
 
 Publisher::~Publisher() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("Publisher destructor"<<endl;);
 }
 
 bool Publisher::write(void* Data) {

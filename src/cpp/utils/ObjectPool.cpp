@@ -43,6 +43,7 @@ void ObjectPool<T>::allocateGroup()
 template <typename T>
 ObjectPool<T>::~ObjectPool()
 {
+	pDebugInfo("ObjectPool destructor"<<endl;);
 	for(typename std::vector<T*>::iterator it=m_all_objects.begin();
 			it!=m_all_objects.end();++it)
 	{

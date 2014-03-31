@@ -23,6 +23,7 @@ namespace rtps {
 
 StatefulReader::~StatefulReader()
 {
+	pDebugInfo("StatefulReader destructor"<<endl;);
 	for(std::vector<WriterProxy*>::iterator it = matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{

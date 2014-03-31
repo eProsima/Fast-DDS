@@ -36,6 +36,7 @@ RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
 
 RTPSReader::~RTPSReader() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("RTPSReader destructor"<<endl;);
 }
 
 
