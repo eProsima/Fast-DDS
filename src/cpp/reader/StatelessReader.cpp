@@ -24,6 +24,7 @@ namespace rtps {
 
 StatelessReader::~StatelessReader() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("StatelessReader destructor"<<endl;);
 }
 
 StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_size):

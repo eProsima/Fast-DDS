@@ -22,6 +22,7 @@
 #ifndef CACHECHANGEPOOL_H_
 #define CACHECHANGEPOOL_H_
 #include "eprosimartps/rtps_all.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 
 namespace eprosima {

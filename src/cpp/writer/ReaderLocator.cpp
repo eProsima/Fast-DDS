@@ -33,6 +33,7 @@ ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos){
 
 ReaderLocator::~ReaderLocator() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("ReaderLocator destructor"<<endl;);
 }
 
 bool ReaderLocator::next_requested_change(CacheChange_t** cpoin) {

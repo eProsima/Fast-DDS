@@ -28,6 +28,7 @@ namespace rtps {
 
 StatefulWriter::~StatefulWriter() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("StatefulWriter destructor"<<endl;);
 }
 
 StatefulWriter::StatefulWriter(const WriterParams_t* param,uint32_t payload_size):

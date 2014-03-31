@@ -97,6 +97,7 @@ public:
     uint32_t getNewId();
     ~DomainParticipant()
     {
+    	pDebugInfo("DomainParticipant destructor"<<endl;);
     	instanceFlag = false;
     }
 

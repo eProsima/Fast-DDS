@@ -78,7 +78,7 @@ Participant::Participant(const ParticipantParams_t& PParam):
 
 Participant::~Participant()
 {
-
+	pDebugInfo("Participant destructor"<<endl;);
 	//Destruct threads:
 	for(std::vector<ThreadListen*>::iterator it=m_threadListenList.begin();
 			it!=m_threadListenList.end();++it)

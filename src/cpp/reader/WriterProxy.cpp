@@ -25,6 +25,7 @@ namespace rtps {
 
 WriterProxy::~WriterProxy() {
 	// TODO Auto-generated destructor stub
+	pDebugInfo("WriterProxy destructor"<<endl;);
 }
 
 WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :

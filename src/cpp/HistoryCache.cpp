@@ -47,11 +47,13 @@ HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
 
 HistoryCache::~HistoryCache()
 {
+	pDebugInfo("HistoryCache destructor"<<endl;);
 	for(std::vector<CacheChange_t*>::iterator it=m_changes.begin();
 			it!=m_changes.end();++it)
 	{
 		changePool.release_Cache(*it);
 	}
+
 }
 
 bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr,uint16_t *ch_number) {

@@ -71,7 +71,7 @@ void RTPSLog::printDebugInfo()
 void RTPSLog::printLongInfo()
 {
 	std::stringstream ss;
-			ss << B_GREEN << "[eRTPS-Long Info] " << std::endl << DEF <<  RTPSLog::LongInfo.str() << DEF <<  B_GREEN << "[/eRTPS-Long Info] "<< DEF << endl ;
+	ss << B_GREEN << "[eRTPS-Long Info] " << std::endl << DEF <<  RTPSLog::LongInfo.str() << DEF <<  B_GREEN << "[/eRTPS-Long Info] "<< DEF << std::endl ;
 	RTPSLog::printString(EPROSIMA_LONGINFO_VERBOSITY_LEVEL,ss.str());
 	RTPSLog::LongInfo.str("");
 	RTPSLog::LongInfo.clear();

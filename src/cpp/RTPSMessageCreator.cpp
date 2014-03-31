@@ -38,13 +38,13 @@ const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::p
 
 
 RTPSMessageCreator::RTPSMessageCreator() {
-	// TODO Auto-generated constructor stub
+
 
 
 }
 
 RTPSMessageCreator::~RTPSMessageCreator() {
-	// TODO Auto-generated destructor stub
+	pDebugInfo("RTPSMessageCreator destructor"<<endl;);
 }
 
 

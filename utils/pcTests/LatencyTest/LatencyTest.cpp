@@ -221,10 +221,7 @@ int main(int argc, char** argv){
 		cout << "Min us: " << min_us << endl;
 	}
 
-
-
 	return 0;
-
 }
 
 

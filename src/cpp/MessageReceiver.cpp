@@ -51,8 +51,9 @@ MessageReceiver::MessageReceiver()
 
 }
 
-MessageReceiver::~MessageReceiver() {
-
+MessageReceiver::~MessageReceiver()
+{
+	pDebugInfo("MessageReceiver destructor"<<endl;);
 }
 
 void MessageReceiver::reset(){
