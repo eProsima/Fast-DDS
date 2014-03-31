@@ -63,7 +63,7 @@ public:
 	std::vector<RTPSReader*> m_assoc_readers;
 	Participant* m_participant_ptr;
 	std::vector<Locator_t> m_locList;
-	boost::thread* m_b_thread_ptr;
+	boost::thread* mp_thread;
 	boost::asio::io_service m_io_service;
 	boost::asio::ip::udp::socket m_listen_socket;
 	MessageReceiver m_MessageReceiver;
