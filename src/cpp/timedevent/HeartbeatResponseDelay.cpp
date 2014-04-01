@@ -38,13 +38,13 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 {
 	if(ec == boost::system::errc::success)
 	{
-
+		pDebugInfo("Sending Heartbeat Response: ACKNACK msg"<<endl);
 		std::vector<ChangeFromWriter_t*> ch_vec;
 		{
 		boost::lock_guard<WriterProxy> guard(*mp_WP);
 		mp_WP->missing_changes(&ch_vec);
 		}
-		if(!ch_vec.empty())
+		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
 			mp_WP->available_changes_max(&sns.base);
@@ -60,7 +60,8 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 					mp_WP->mp_SFR->participant->m_guid.guidPrefix,
 					mp_WP->mp_SFR->guid.entityId,
 					mp_WP->param.remoteWriterGuid.entityId,
-					sns,mp_WP->acknackCount,
+					sns,
+					mp_WP->acknackCount,
 					false);
 
 			std::vector<Locator_t>::iterator lit;

@@ -125,24 +125,27 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 	valid &=CDRMessage::readSequenceNumber(msg,&sns->base);
 	uint32_t numBits;
 	valid &=CDRMessage::readUInt32(msg,&numBits);
-	uint32_t n_octets = 4*((numBits+31)/32);
-	SequenceNumber_t auxSN;
-	for(uint8_t i=0;i<n_octets;i++)
+	if(numBits>0)
 	{
-		octet o=0;
-		valid &=CDRMessage::readOctet(msg,&o);
-		if((uint32_t)(8*i)<numBits)
+		uint32_t n_octets = 4*((numBits+31)/32);
+		SequenceNumber_t auxSN;
+		for(uint8_t i=0;i<n_octets;i++)
 		{
-			for(uint8_t bit=0;bit<8;++bit)
+			octet o=0;
+			valid &=CDRMessage::readOctet(msg,&o);
+			if((uint32_t)(8*i)<numBits)
 			{
-				if((uint32_t)(bit+i*8)>numBits) //no more bits to analyze
-					break;
-				bool addSN = o & BIT(bit) ? true : false;
-				if(addSN)
+				for(uint8_t bit=0;bit<8;++bit)
 				{
-					auxSN = sns->base;
-					auxSN += (i*8+bit);
-					sns->set.push_back(auxSN);
+					if((uint32_t)(bit+i*8)>numBits) //no more bits to analyze
+						break;
+					bool addSN = o & BIT(bit) ? true : false;
+					if(addSN)
+					{
+						auxSN = sns->base;
+						auxSN += (i*8+bit);
+						sns->set.push_back(auxSN);
+					}
 				}
 			}
 		}
@@ -403,8 +406,14 @@ inline bool sort_seqNum (SequenceNumber_t s1,SequenceNumber_t s2)
 
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		SequenceNumberSet_t* sns) {
+	//FIXME: que pasa si SNS is empty
 	addSequenceNumber(msg, &sns->base);
 	//Add set
+	if(sns->set.empty())
+	{
+		addUInt32(msg,0); //numbits 0
+		return true;
+	}
 	std::sort(sns->set.begin(),sns->set.end(),sort_seqNum);
 	SequenceNumber_t maxseqNum = *std::max_element(sns->set.begin(),sns->set.end(),sort_seqNum);
 	uint32_t numBits = (uint32_t)(maxseqNum.to64long() - sns->base.to64long());

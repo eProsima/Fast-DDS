@@ -55,14 +55,15 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 
 void CacheChangePool::allocateGroup(uint16_t group_size)
 {
-pDebugInfo("Allocating memory"<<endl);
+	pDebugInfo("Allocating group of cache changes"<<endl);
 	for(uint16_t i = 0;i<group_size;i++)
 	{
 		CacheChange_t* ch = new CacheChange_t(payload_size);
 		allCaches.push_back(ch);
 		freeCaches.push_back(ch);
 	}
-	pDebugInfo("Finish allocating memory"<<endl);
+	pDebugInfo("Finish allocating cachechanges"<<endl);
+	sleep(5);
 }
 
 } /* namespace rtps */

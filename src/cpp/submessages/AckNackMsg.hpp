@@ -19,7 +19,8 @@ namespace eprosima{
 namespace rtps{
 
 bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
-		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
+		const EntityId_t& readerId,const EntityId_t& writerId,
+		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
 
 	try
 	{
@@ -36,7 +37,8 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidp
 }
 
 bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
-		const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
+		const EntityId_t& readerId,const EntityId_t& writerId,
+		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);

@@ -64,6 +64,7 @@ public:
 	uint32_t lastHeartbeatCount;
 	bool isMissingChangesEmpty;
 	HeartbeatResponseDelay heartbeatResponse;
+	bool m_heartbeatFinalFlag;
 
 
 private:

@@ -58,7 +58,7 @@ void ThreadListen::listen() {
 		//Try to block all associated readers
 		std::size_t lengthbytes = m_listen_socket.receive_from(boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size), m_sender_endpoint);
 		m_MessageReceiver.m_rec_msg.length = lengthbytes;
-		pDebugInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
+		pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
 
 		//Get address into Locator
 		m_send_locator.port = m_sender_endpoint.port();
@@ -70,7 +70,7 @@ void ThreadListen::listen() {
 		try
 		{
 			m_MessageReceiver.processCDRMsg(m_participant_ptr->m_guid.guidPrefix,&m_send_locator,&m_MessageReceiver.m_rec_msg);
-			pDebugInfo ("Message processed " << endl);
+			pInfo ("Message processed " << endl);
 
 		}
 		catch(int e)
