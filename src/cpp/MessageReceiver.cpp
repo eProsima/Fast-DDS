@@ -118,21 +118,25 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 		{
 		case DATA:
 		{
+			pDebugInfo("Data Submsg received, processing..."<<endl);
 			valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
 			break;
 		}
 		case GAP:
 		{
+			pDebugInfo("Gap Submsg received, processing..."<<endl);
 			valid = proc_Submsg_Gap(msg,&submsgh,&last_submsg);
 			break;
 		}
 		case ACKNACK:
 		{
+			pDebugInfo("Acknack Submsg received, processing..."<<endl);
 			valid = proc_Submsg_Acknack(msg,&submsgh,&last_submsg);
 			break;
 		}
 		case HEARTBEAT:
 		{
+			pDebugInfo("Heartbeat Submsg received, processing..."<<endl);
 			valid = proc_Submsg_Heartbeat(msg,&submsgh,&last_submsg);
 			break;
 		}
@@ -144,6 +148,7 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 			break;
 		case INFO_TS:
 		{
+			pDebugInfo("InfoTS Submsg received, processing..."<<endl);
 			valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
 			break;
 		}
@@ -252,6 +257,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
 		{
 			firstReader = *it;
+			break;
 		}
 	}
 	if(firstReader == NULL) //Reader not found
@@ -358,6 +364,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 					else
 					{
+						//FIXME: REMOVE THIS ONCE DISCOVERY WORKS.
 						WriterProxy_t newWriterProxy;
 						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
 						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
@@ -366,7 +373,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						SFR->matched_writer_add(&newWriterProxy);
 						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
 						WP->received_change_set(change_to_add);
-
 					}
 				}
 				if((*it)->newMessageCallback !=NULL)
@@ -374,6 +380,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				///FIXME: removed for testing, put back.
 					(*it)->newMessageSemaphore->post();
 			}
+			else
+			{
+				pWarning("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+			}
+
 		}
 	}
 	pDebugInfo("Sub Message DATA processed"<<endl);
@@ -422,6 +433,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 						WP->lastHeartbeatCount = HBCount;
 						WP->missing_changes_update(&lastSN);
 						WP->lost_changes_update(&firstSN);
+						WP->m_heartbeatFinalFlag = finalFlag;
 						//Analyze wheter a acknack message is needed:
 						if(!finalFlag)
 						{
@@ -433,9 +445,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 						{
 							if(!WP->isMissingChangesEmpty)
 								WP->heartbeatResponse.restart_timer();
-//								WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-//										boost::asio::placeholders::error,WP));
 						}
+						//TODOG: Livelinessflag behaviour
 					}
 				}
 				else

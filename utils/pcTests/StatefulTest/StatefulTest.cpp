@@ -171,7 +171,7 @@ int main(int argc, char** argv){
 			cout << "Wakes "<<endl;
 		}
 	}
-	else if (type ==2) //**********SUBSCRIBER  **************//
+	else if (type ==2) //**********  SUBSCRIBER  **************//
 	{
 		ReaderParams_t Rparam;
 		Rparam.historySize = 15;
@@ -180,10 +180,10 @@ int main(int argc, char** argv){
 		Rparam.topicName = std::string("This is a test topic");
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-		loc.set_IP4_address(192,168,1,27);
-		GUID_t writerGUID;
-		writerGUID.entityId = ENTITYID_UNKNOWN;
-		sub->addWriterProxy(loc,writerGUID);
+//		loc.set_IP4_address(192,168,1,27);
+//		GUID_t writerGUID;
+//		writerGUID.entityId = ENTITYID_UNKNOWN;
+//		sub->addWriterProxy(loc,writerGUID);
 		while(1)
 		{
 			cout << "Waiting for new message "<<endl;

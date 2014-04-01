@@ -106,10 +106,7 @@ bool HistoryCache::get_last_added_cache(CacheChange_t** ch_ptr)
 
 bool HistoryCache::add_change(CacheChange_t* a_change)
 {
-	pDebugInfo ( "Trying to lock history " << endl);
-
 	boost::lock_guard<HistoryCache> guard(*this);
-
 	if(m_changes.size() == (size_t)m_history_max_size) //History is full
 	{
 		pWarning("Attempting to add change with Full History" << endl);
@@ -148,7 +145,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	if(m_changes.size()==m_history_max_size)
 		isHistoryFull = true;
 	m_isMaxMinUpdated = false;
-	pDebugInfo("Cache added to History" << endl);
+	pDebugInfo("Cache added to History with seqNum: " << a_change->sequenceNumber.to64long()<< endl);
 
 	return true;
 }

@@ -80,29 +80,24 @@ typedef struct SequenceNumber_t{
 			low-=(uint32_t)inc;
 		return *this;
 	}
+	SequenceNumber_t& operator+(uint64_t inc){
+		if(low+inc>(uint32_t)pow(2.0,32))
+		{high++;low +=inc-((uint32_t)pow(2.0,32)-low);}
+		else
+			low+=inc;
+		return *this;
+	}
 	bool operator>(SequenceNumber_t& seq2){
-		return islarger(seq2);
+		return this->to64long() > seq2.to64long();
 	}
 	bool operator<(SequenceNumber_t& seq2){
-		return islarger(seq2);
+		return this->to64long() < seq2.to64long();
 	}
-	bool operator>=(SequenceNumber_t& seq){
-		if(islarger(seq) || *this==seq)
-			return true;
-		else
-			return false;
+	bool operator>=(SequenceNumber_t& seq2){
+		return this->to64long() >= seq2.to64long();
 	}
-	bool operator<=(SequenceNumber_t& seq){
-		if(!islarger(seq) || *this==seq)
-			return true;
-		else
-			return false;
-	}
-	bool islarger(SequenceNumber_t& seq2){
-		if(this->to64long() > seq2.to64long())
-			return true;
-		else
-			return false;
+	bool operator<=(SequenceNumber_t& seq2){
+		return this->to64long()<= seq2.to64long();
 	}
 } SequenceNumber_t;
 

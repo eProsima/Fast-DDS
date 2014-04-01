@@ -58,7 +58,7 @@ bool StatefulReader::matched_writer_add(WriterProxy_t* WPparam)
 	}
 	WriterProxy* wp = new WriterProxy(WPparam,this);
 	matched_writers.push_back(wp);
-	pDebugInfo("Writer Proxy added" << endl);
+	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
 	return true;
 }
 
@@ -86,6 +86,7 @@ bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
+	pDebugInfo("StatefulReader looking for matched writerProxy"<<endl);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == writerGUID)

@@ -75,33 +75,36 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
+	Publisher* Pub = NULL;
 	if(WParam.stateKind == STATELESS)
 	{
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,typeR.byte_size))
 			return NULL;
-		Publisher* Pub = new Publisher((RTPSWriter*)SW);
+		Pub = new Publisher((RTPSWriter*)SW);
 		pDebugInfo("Publisher in topic: "<<Pub->getTopicName()<<" created."<<endl);
 		SW->m_Pub = Pub;
 
 		Pub->type = typeR;
 		SW->m_type = typeR;
-		pDebugInfo("Publisher creation finished"<<endl);
-		return Pub;
+
 	}
 	else if(WParam.stateKind == STATEFUL)
 	{
 		StatefulWriter* SF;
 		if(!p->createStatefulWriter(&SF,WParam,typeR.byte_size))
 			return NULL;
-		Publisher* Pub = new Publisher((RTPSWriter*)SF);
+		Pub = new Publisher((RTPSWriter*)SF);
 		SF->m_Pub = Pub;
 		Pub->type = typeR;
 		SF->m_type = typeR;
-		pDebugInfo("Publisher creation finished"<<endl);
-		return Pub;
+
 	}
-	return NULL;
+	if(Pub!=NULL)
+		{pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);}
+	else
+		{pError("Publisher not created"<<endl);}
+	return Pub;
 }
 
 Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderParams_t& RParam) {
@@ -168,7 +171,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		Sub->type = typeR;
 	}
 	if(Sub!=NULL)
-		{pDebugInfo("Subscriber created"<<endl);}
+		{pInfo(B_YELLOW<<"SUBSCRIBER CORRECTLY CREATED"<<DEF<<endl);}
 	else
 		{pError("Subscriber not created"<<endl);}
 	return Sub;
