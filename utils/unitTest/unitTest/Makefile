@@ -29,7 +29,7 @@ UNITTEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -l
 
 UNITTEST_SRC_CFILES=
 
-UNITTEST_SRC_CPPFILES= $(BASEDIR)/test_CDRMessage.cpp
+UNITTEST_SRC_CPPFILES= $(BASEDIR)/unit_test.cpp
 
 # Project sources are copied to the current directory
 UNITTEST_SRCS= $(UNITTEST_SRC_CFILES) $(UNITTEST_SRC_CPPFILES)
