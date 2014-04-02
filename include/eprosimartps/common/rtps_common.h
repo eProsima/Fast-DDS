@@ -56,16 +56,16 @@ typedef struct CDRMessage_t{
 			free(buffer);
 //		cout << "CDRMessage destructor" << endl;
 	}
-	CDRMessage_t(CDRMessage_t& msg)
-	{
-		pos = msg.pos;
-		length = msg.length;
-		max_size = msg.max_size;
-		msg_endian = msg.msg_endian;
-		if(buffer !=NULL)
-			free(buffer);
-		buffer=(octet*)malloc(msg.length);
-	}
+//	CDRMessage_t(CDRMessage_t& msg)
+//	{
+//		pos = msg.pos;
+//		length = msg.length;
+//		max_size = msg.max_size;
+//		msg_endian = msg.msg_endian;
+//		if(buffer !=NULL)
+//			free(buffer);
+//		buffer=(octet*)malloc(msg.length);
+//	}
 	CDRMessage_t(uint16_t size)
 	{
 		pos = 0;
