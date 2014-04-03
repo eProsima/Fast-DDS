@@ -62,9 +62,19 @@ public:
 	 */
 	bool getChangeForReader(CacheChange_t* change,ChangeForReader_t* changeForReader);
 
-
+	/**
+	 * Mark all changes up to the one indicated by the seqNum as Acknowledged.
+	 * If seqNum == 30, changes 1-29 are marked as ack.
+	 * @param seqNum Pointer to the seqNum
+	 * @return True if correct.
+	 */
 	bool acked_changes_set(SequenceNumber_t* seqNum);
 
+	/**
+	 * Mark all changes in the vector as requested.
+	 * @param seqNumVec Vector of sequenceNumbers
+	 * @return True if correct.
+	 */
 	bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
 	bool next_requested_change(ChangeForReader_t* changeForReader);
