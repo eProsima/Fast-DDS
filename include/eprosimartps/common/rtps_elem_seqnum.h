@@ -17,7 +17,7 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
-
+#include <algorithm>
 namespace eprosima{
 namespace rtps{
 
@@ -48,6 +48,7 @@ typedef struct SequenceNumber_t{
 			return false;
 		return true;
 	}
+
 	//!Increase SequenceNumber in 1.
 	SequenceNumber_t& operator++(){
 		if(low == pow(2.0,32))
@@ -63,30 +64,15 @@ typedef struct SequenceNumber_t{
 			low++;
 		return *this;
 	}
-	SequenceNumber_t& operator+=(int inc){
+	SequenceNumber_t& operator+=(int inc)
+	{
 		if(low+inc>(uint32_t)pow(2.0,32))
 		{high++;low +=inc-((uint32_t)pow(2.0,32)-low);}
 		else
 			low+=inc;
 		return *this;
 	}
-	SequenceNumber_t& operator-(uint64_t inc){
-		if(low-inc < 0)
-		{
-			high--;
-			low = (uint32_t)(pow(2.0,32)-(inc-low));
-		}
-		else
-			low-=(uint32_t)inc;
-		return *this;
-	}
-	SequenceNumber_t& operator+(uint64_t inc){
-		if(low+inc>(uint32_t)pow(2.0,32))
-		{high++;low +=inc-((uint32_t)pow(2.0,32)-low);}
-		else
-			low+=inc;
-		return *this;
-	}
+
 	bool operator>(SequenceNumber_t& seq2){
 		return this->to64long() > seq2.to64long();
 	}
@@ -101,12 +87,39 @@ typedef struct SequenceNumber_t{
 	}
 } SequenceNumber_t;
 
+inline SequenceNumber_t operator-(SequenceNumber_t seq,uint64_t inc)
+{
+	if(seq.low-inc < 0)
+	{
+		seq.high--;
+		seq.low = (uint32_t)(pow(2.0,32)-(inc-seq.low));
+	}
+	else
+		seq.low-=(uint32_t)inc;
+	return seq;
+}
+inline SequenceNumber_t operator+(SequenceNumber_t seq,uint64_t inc){
+	if(seq.low+inc>(uint32_t)pow(2.0,32))
+	{
+		seq.high++;
+		seq.low +=inc-((uint32_t)pow(2.0,32)-seq.low);}
+	else
+		seq.low+=inc;
+	return seq;
+}
+
+
 #define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0;}
 
+inline bool sort_seqNum (SequenceNumber_t s1,SequenceNumber_t s2)
+{
+	return(s1.to64long() < s2.to64long());
+}
+
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
-typedef struct SequenceNumberSet_t{
+typedef class SequenceNumberSet_t{
+public:
 	SequenceNumber_t base;
-	std::vector<SequenceNumber_t> set;
 	SequenceNumberSet_t& operator=(const SequenceNumberSet_t& set2)
 	{
 		base = set2.base;
@@ -123,6 +136,32 @@ typedef struct SequenceNumberSet_t{
 			return false;
 		return true;
 	}
+	SequenceNumber_t get_maxSeqNum()
+	{
+		return *std::max_element(set.begin(),set.end(),sort_seqNum);
+	}
+	bool isSetEmpty()
+		{
+			return set.empty();
+		}
+	std::vector<SequenceNumber_t>::iterator get_begin()
+	{
+		return set.begin();
+	}
+	std::vector<SequenceNumber_t>::iterator get_end()
+	{
+		return set.end();
+	}
+	size_t get_size()
+	{
+		return set.size();
+	}
+	std::vector<SequenceNumber_t> get_set()
+		{
+		return set;
+		}
+private:
+	std::vector<SequenceNumber_t> set;
 }SequenceNumberSet_t;
 
 }

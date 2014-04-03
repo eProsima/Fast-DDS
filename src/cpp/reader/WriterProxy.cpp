@@ -51,6 +51,8 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
 
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
 	{
+		if(cit->status == MISSING)
+			m_isMissingChangesEmpty = false;
 		if(cit->status == UNKNOWN)
 		{
 			if(cit->change->sequenceNumber.to64long() <= seqNum->to64long())
@@ -59,6 +61,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
 				m_isMissingChangesEmpty = false;
 			}
 		}
+
 	}
 	return true;
 }
@@ -182,18 +185,15 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 		boost::lock_guard<WriterProxy> guard(*this);
 		//Order changesFromWriter
 		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-		//If the first one is not received or lost, then none is available and we return false
-		if(m_changesFromW.begin()->status == RECEIVED || m_changesFromW.begin()->status == LOST)
-			*seqNum = m_changesFromW.begin()->change->sequenceNumber;
-		else
-			return false;
+		seqNum->high = 0;
+		seqNum->low = 0;
 		//We check the rest for the largest one with Status Received or lost
-		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin()+1;it!=m_changesFromW.end();++it)
+		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 		{
 			if(it->status == RECEIVED || it->status == LOST)
 				*seqNum = it->change->sequenceNumber;
 			else
-				return true;
+				break;
 		}
 		return true;
 
@@ -204,22 +204,14 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 
 bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 {
-	pDebugInfo("WriterProxy: add_unknown_changes: up to: "<<seq.to64long()<<endl;);
+
 	boost::lock_guard<WriterProxy> guard(*this);
 	uint64_t n_to_add;
 	SequenceNumber_t maxseqNum = max_seq_num();
-	cout << "MaxseqNum: " << maxseqNum.to64long() << " sn: " << seq.to64long()<<endl;
 	if((maxseqNum+1) < (seq)) //if the maximum plus one is less than our seqNum we need to add
 	{
-		if(!m_changesFromW.empty())
-		{
-			n_to_add = (seq.to64long() - maxseqNum.to64long() -1);
-		}
-		else
-		{
-			n_to_add = seq.to64long()-1;
-		}
-		cout << "Number of changes to add: "<< n_to_add <<endl;
+		n_to_add = (seq.to64long() - maxseqNum.to64long() -1);
+		pDebugInfo("WriterProxy:add_unknown_changes: up to: "<<seq.to64long() << " || adding " << n_to_add << " changes."<<endl;);
 		while(n_to_add>0)
 		{
 			CacheChange_t* ch = mp_SFR->m_reader_cache.reserve_Cache();
