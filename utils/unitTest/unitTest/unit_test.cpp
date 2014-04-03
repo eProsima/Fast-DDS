@@ -60,8 +60,11 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 	#define COPYSTR strcpy
 #endif
 
+#include "ertps_unit/test_common.cpp"
 
-#include "ertps_unit/test_CDRMessage.hpp"
+#include "ertps_unit/test_CDRMessage.cpp"
+
+
 
 
 

@@ -1,24 +1,6 @@
 #include "eprosimartps/CDRMessage.h"
 
-TEST(CDRMessage, constructor)
-{
-	CDRMessage_t msg;
-	ASSERT_EQ(0,msg.pos);
-	ASSERT_EQ(0,msg.length);
-	ASSERT_EQ(RTPSMESSAGE_MAX_SIZE,msg.max_size);
-	ASSERT_TRUE(NULL != msg.buffer);
-	ASSERT_EQ(EPROSIMA_ENDIAN,msg.msg_endian);
-}
 
-TEST(CDRMessage, constructor_size)
-{
-	CDRMessage_t msg2(20);
-	ASSERT_EQ(0,msg2.pos);
-	ASSERT_EQ(0,msg2.length);
-	ASSERT_EQ(20,msg2.max_size);
-	ASSERT_TRUE(NULL != msg2.buffer);
-	ASSERT_EQ(EPROSIMA_ENDIAN,msg2.msg_endian);
-}
 
 class CDRMessageTest: public ::testing::Test
 {
