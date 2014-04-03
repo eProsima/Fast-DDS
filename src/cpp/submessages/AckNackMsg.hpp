@@ -44,14 +44,14 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
-	if(EPROSIMA_ENDIAN == BIGEND)
+	if(EPROSIMA_ENDIAN == LITTLEEND)
 	{
 		flags = flags | BIT(0);
-				submsgElem.msg_endian  = BIGEND;
+				submsgElem.msg_endian  = LITTLEEND;
 	}
 	else
 	{
-		submsgElem.msg_endian =  LITTLEEND;
+		submsgElem.msg_endian =  BIGEND;
 	}
 	if(finalFlag)
 		flags = flags | BIT(1);

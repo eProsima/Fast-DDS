@@ -379,7 +379,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WriterProxy_t newWriterProxy;
 						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
 						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
-						this->unicastReplyLocatorList[0].port = 14445; //default receiving port
+						this->unicastReplyLocatorList[0].port = 10043; //default receiving port
 						newWriterProxy.unicastLocatorList = this->unicastReplyLocatorList;
 						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
 						SFR->matched_writer_add(&newWriterProxy);

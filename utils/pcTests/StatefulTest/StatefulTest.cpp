@@ -128,13 +128,13 @@ int main(int argc, char** argv){
 
 	overhead = (t2-t1);
 	long overhead_value = ceil(overhead.total_microseconds()/400);
-	cout << "Overhead " << overhead.total_microseconds()/400 << endl;
+	cout << "Overhead " << overhead_value << endl;
 
 
 	LatencyType Latency;
 	//***********  PARTICIPANT  ******************//
 	ParticipantParams_t PParam;
-	PParam.defaultSendPort = 14456;
+	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	//Registrar tipo de dato.
 	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,&LatencyGetKey,sizeof(LatencyType));
