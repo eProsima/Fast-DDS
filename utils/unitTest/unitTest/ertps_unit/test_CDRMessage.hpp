@@ -124,15 +124,9 @@ TEST_F(CDRMessageTest, SequenceNumber)
 	EXPECT_TRUE(checkLengthIncrement(8));
 	EXPECT_TRUE(checkPosIncrement(8));
 	t_msg.pos-=8;
-	CDRMessage::readSequenceNumber(&t_msg,&n);
-	ASSERT_EQ(123456,n);
-	n = -123456;
-	saveLengthPos();
-	CDRMessage::addInt32(&t_msg,n);
-	EXPECT_TRUE(checkLengthIncrement(4));
-	EXPECT_TRUE(checkPosIncrement(4));
-	t_msg.pos-=4;
-	CDRMessage::readInt32(&t_msg,&n);
-	ASSERT_EQ(-123456,n);
+	CDRMessage::readSequenceNumber(&t_msg,&seq);
+	ASSERT_EQ(10,seq.high);
+	ASSERT_EQ(25,seq.low);
+
 }
 
