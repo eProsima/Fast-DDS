@@ -275,7 +275,7 @@ typedef struct ParticipantParams_t{
 	std::vector<Locator_t> defaultMulticastLocatorList;
 	uint32_t defaultSendPort;
 	ParticipantParams_t(){
-		defaultSendPort = 14444;
+		defaultSendPort = 10042;
 		Locator_t defUni;
 		defUni.kind = LOCATOR_KIND_UDPv4;
 		LOCATOR_ADDRESS_INVALID(defUni.address);
@@ -283,7 +283,7 @@ typedef struct ParticipantParams_t{
 		defUni.address[13] = 0;
 		defUni.address[14] = 0;
 		defUni.address[15] = 1;
-		defUni.port = 14445;
+		defUni.port = 10043;
 		defaultUnicastLocatorList.push_back(defUni);
 	}
 }ParticipantParams_t;
