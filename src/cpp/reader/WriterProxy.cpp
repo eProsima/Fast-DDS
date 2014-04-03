@@ -204,6 +204,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 
 bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 {
+	pDebugInfo("WriterProxy: add_unknown_changes: up to: "<<seq.to64long()<<endl;);
 	boost::lock_guard<WriterProxy> guard(*this);
 	uint64_t n_to_add;
 	SequenceNumber_t maxseqNum = max_seq_num();

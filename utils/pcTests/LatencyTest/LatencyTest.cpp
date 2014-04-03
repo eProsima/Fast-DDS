@@ -121,7 +121,7 @@ int main(int argc, char** argv){
 
 	//my_sleep(1);
 	ParticipantParams_t PParam;
-	PParam.defaultSendPort = 14456;
+	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	//Registrar tipo de dato.
 	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,NULL,sizeof(LatencyType));
