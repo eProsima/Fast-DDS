@@ -447,7 +447,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 						WP->lost_changes_update(&firstSN);
 						WP->m_heartbeatFinalFlag = finalFlag;
 						//Analyze wheter a acknack message is needed:
-						cout << "CHANGESFROMW SIZE: " << WP->m_changesFromW.size()<<endl;
+
 						if(!finalFlag)
 						{
 							WP->m_heartbeatResponse.restart_timer();
@@ -496,7 +496,6 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 	//Look for the correct writer to use the acknack
 
-
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
 			it!=mp_threadListen->m_assoc_writers.end();++it)
 	{
@@ -506,10 +505,10 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
 				//Look for the readerProxy the acknack is from
-				std::vector<ReaderProxy*>::iterator rit;
-				for(rit = SF->matched_readers.begin();rit!=SF->matched_readers.end();++rit)
+				for(std::vector<ReaderProxy*>::iterator rit = SF->matched_readers.begin();
+						rit!=SF->matched_readers.end();++rit)
 				{
-					if((*rit)->m_param.remoteReaderGuid == readerGUID)
+					if((*rit)->m_param.remoteReaderGuid == readerGUID || (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
 					{
 						if((*rit)->m_lastAcknackCount < Ackcount)
 						{
@@ -518,21 +517,24 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
 							(*rit)->requested_changes_set(set_vec);
 							if(!(*rit)->m_isRequestedChangesEmpty)
+							{
 								(*rit)->m_nackResponse.restart_timer();
-//								(*rit)->m_nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->m_nackResponse,
-//										boost::asio::placeholders::error,(*rit)));
-							//FIXME: Check if UNACKED CHANGES IS EMPTY
-
-
+							}
 						}
 						break;
 					}
 				}
+				return true;
 			}
-			break;
+			else
+			{
+				pDebugInfo("Acknack msg to NOT stateful writer "<<endl);
+				return false;
+			}
 		}
 	}
-	return true;
+	pDebugInfo("Acknack msg to unknown writer");
+	return false;
 }
 
 

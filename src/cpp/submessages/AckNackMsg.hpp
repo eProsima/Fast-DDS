@@ -42,7 +42,6 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 {
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
-	cout << "submsg length: "<< submsgElem.length << endl;
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
 	{
@@ -59,15 +58,10 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 
 	try{
 		CDRMessage::addEntityId(&submsgElem,&readerId);
-		cout << "submsg length: "<< submsgElem.length << endl;
 		CDRMessage::addEntityId(&submsgElem,&writerId);
-		cout << "submsg length: "<< submsgElem.length << endl;
 		//Add Sequence Number
-		cout << "SNSize: " << SNSet.get_size() << endl;
 		CDRMessage::addSequenceNumberSet(&submsgElem,&SNSet);
-		cout << "submsg length: "<< submsgElem.length << endl;
 		CDRMessage::addInt32(&submsgElem,count);
-		cout << "submsg length: "<< submsgElem.length << endl;
 	}
 	catch(int e)
 	{
@@ -78,10 +72,9 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	//Once the submessage elements are added, the header is created
 	RTPSMessageCreator::addSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
 	//Append Submessage elements to msg
-	cout << "Submsg length: " << submsgElem.length << endl;
-	cout << "msg length before: " <<msg->length << " " << msg->pos << endl;
+
 	CDRMessage::appendMsg(msg, &submsgElem);
-	cout << "msg length after: " <<msg->length << " " << msg->pos << endl;
+
 	g_pool_submsg.release_Object(submsgElem);
 	msg->length = msg->pos;
 	return true;

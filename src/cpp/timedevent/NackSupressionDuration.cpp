@@ -39,7 +39,7 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 	if(ec == boost::system::errc::success)
 	{
 		boost::lock_guard<ReaderProxy> guard(*mp_RP);
-		pDebugInfo("Nack Supression Timer"<<endl);
+		pDebugInfo("NackSupression: changing underway to unacked"<<endl);
 		for(std::vector<ChangeForReader_t>::iterator cit=mp_RP->m_changesForReader.begin();
 				cit!=mp_RP->m_changesForReader.end();++cit)
 		{

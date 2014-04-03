@@ -44,6 +44,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 {
 	if(ec == boost::system::errc::success)
 	{
+		pDebugInfo("NackResponse:event:"<<endl;);
 		std::vector<ChangeForReader_t*> ch_vec;
 		if(mp_RP->requested_changes(&ch_vec))
 		{

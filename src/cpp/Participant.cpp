@@ -35,7 +35,7 @@ namespace rtps {
 Participant::Participant(const ParticipantParams_t& PParam):
 		m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 		m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-		m_endpointToListenThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+		m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 		IdCounter(0)
 {
 	Locator_t loc;
@@ -235,7 +235,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		{
 			ThreadListen* thListen = NULL;
 			addNewListenThread(*locit_e,&thListen); //Add new listen thread to participant
-			m_endpointToListenThreadSemaphore->wait();
+			m_ThreadSemaphore->wait();
 			addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
 			assigned = true;
 		}
@@ -261,7 +261,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		{
 			ThreadListen* thListen = NULL;
 			addNewListenThread(*locit_e,&thListen); //Add new listen thread to participant
-			m_endpointToListenThreadSemaphore->wait();
+			m_ThreadSemaphore->wait();
 			addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
 			assigned = true;
 		}

@@ -122,7 +122,7 @@ public:
 
 private:
 	//!Semaphore to wait for the listen thread creation.
-	boost::interprocess::interprocess_semaphore* m_endpointToListenThreadSemaphore;
+	boost::interprocess::interprocess_semaphore* m_ThreadSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
 	uint32_t IdCounter;
 	//!Writer List.
