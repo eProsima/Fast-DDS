@@ -380,7 +380,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
 						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
 						this->unicastReplyLocatorList[0].port = 10043; //default receiving port
-						newWriterProxy.unicastLocatorList = this->unicastReplyLocatorList;
+						newWriterProxy.unicastLocatorList   = this->unicastReplyLocatorList;
 						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
 						SFR->matched_writer_add(&newWriterProxy);
 						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
@@ -515,7 +515,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 						{
 							(*rit)->m_lastAcknackCount = Ackcount;
 							(*rit)->acked_changes_set(&SNSet.base);
-							(*rit)->requested_changes_set(&SNSet.set);
+							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
+							(*rit)->requested_changes_set(set_vec);
 							if(!(*rit)->m_isRequestedChangesEmpty)
 								(*rit)->m_nackResponse.restart_timer();
 //								(*rit)->m_nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->m_nackResponse,
@@ -570,10 +571,11 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
 					SequenceNumber_t auxSN;
-					for(auxSN = gapStart;auxSN<=gapList.base-1;auxSN++)
+					SequenceNumber_t finalSN = gapList.base -1;
+					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)
 						WP->irrelevant_change_set(&auxSN);
-					std::vector<SequenceNumber_t>::iterator it;
-					for(it=gapList.set.begin();it!=gapList.set.end();++it)
+
+					for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
 						WP->irrelevant_change_set(&(*it));
 				}
 				else

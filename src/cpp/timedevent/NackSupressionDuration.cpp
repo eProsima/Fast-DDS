@@ -46,6 +46,7 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 			if(cit->status == UNDERWAY)
 				cit->status = UNACKNOWLEDGED;
 		}
+		m_isWaiting = false;
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 		{

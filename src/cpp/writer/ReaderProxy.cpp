@@ -77,11 +77,11 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 	return true;
 }
 
-bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet)
+bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
 
-	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet->begin();sit!=seqNumSet->end();++sit)
+	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
 	{
 		for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 		{

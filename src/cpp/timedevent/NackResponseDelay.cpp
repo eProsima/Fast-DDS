@@ -77,6 +77,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 						&mp_RP->m_param.unicastLocatorList,
 						&mp_RP->m_param.multicastLocatorList);
 		}
+		m_isWaiting = false;
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 			{
