@@ -112,7 +112,7 @@ typedef struct SerializedPayload_t{
 	}
 	SerializedPayload_t(short len){
 		encapsulation = CDR_BE;
-		length = len;
+		length = 0;
 		data = (octet*)malloc(length);
 	}
 	~SerializedPayload_t(){
@@ -125,6 +125,8 @@ typedef struct SerializedPayload_t{
 	bool copy(SerializedPayload_t* serData){
 		length = serData->length;
 		encapsulation = serData->encapsulation;
+		if(data == NULL)
+			data = (octet*)malloc(length);
 		memcpy(data,serData->data,length);
 		return true;
 	}
@@ -166,6 +168,11 @@ typedef struct Time_t{
 	uint32_t fraction;
 	int64_t to64time(){
 		return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
+	}
+	Time_t()
+	{
+		seconds = 0;
+		fraction = 0;
 	}
 }Time_t;
 
