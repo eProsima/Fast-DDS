@@ -59,18 +59,25 @@ public:
 	bool missing_changes(std::vector<ChangeFromWriter_t*>* missing);
 	StatefulReader* mp_SFR;
 	WriterProxy_t param;
-	std::vector<ChangeFromWriter_t> changes;
-	uint32_t acknackCount;
-	uint32_t lastHeartbeatCount;
-	bool isMissingChangesEmpty;
-	HeartbeatResponseDelay heartbeatResponse;
+	std::vector<ChangeFromWriter_t> m_changesFromW;
+	uint32_t m_acknackCount;
+	uint32_t m_lastHeartbeatCount;
+	bool m_isMissingChangesEmpty;
+	HeartbeatResponseDelay m_heartbeatResponse;
 	bool m_heartbeatFinalFlag;
 
 
 private:
-	bool max_seq_num(SequenceNumber_t* sn);
+	SequenceNumber_t max_seq_num();
 
-	bool add_unknown_changes(SequenceNumber_t* sn);
+	/**
+	 * Add changesFromWriter up to the sequenceNumber passed, but not including.
+	 * Ex: If you hace seqNums 1,2,3 and you receive seqNum 6, you need 4 and 5 as unknown.
+	 * You then marked them as Missing or lost or whathever.
+	 * @param seqNum SequenceNumber to use.
+	 * @return True if correct
+	 */
+	bool add_unknown_changes(SequenceNumber_t& seqNum);
 
 
 };

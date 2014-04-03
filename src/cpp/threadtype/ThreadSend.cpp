@@ -97,20 +97,28 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
 	}
 
-
-	pInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
-	//	boost::posix_time::ptime t1,t2;
-	//t1 = boost::posix_time::microsec_clock::local_time();
-	m_bytes_sent = 0;
-	if(m_send_next)
+	if(m_send_endpoint.port()>0)
 	{
-		m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+		pInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+		//	boost::posix_time::ptime t1,t2;
+		//t1 = boost::posix_time::microsec_clock::local_time();
+		m_bytes_sent = 0;
+		if(m_send_next)
+		{
+			m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+		}
+		else
+			m_send_next = true;
+		//t2 = boost::posix_time::microsec_clock::local_time();
+		//cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
+		pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
+	}
+	else if(m_send_endpoint.port()<=0)
+	{
+		pWarning("ThreadSend: sendSync: port invalid"<<endl);
 	}
 	else
-		m_send_next = true;
-	//t2 = boost::posix_time::microsec_clock::local_time();
-	//cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
-	pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
+		pError("ThreadSend: sendSync: port error"<<endl);
 }
 
 

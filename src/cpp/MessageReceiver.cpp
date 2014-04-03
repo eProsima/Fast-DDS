@@ -84,11 +84,22 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
-	for(uint8_t i = 12;i<16;i++)
+	unicastReplyLocatorList[0].kind = loc->kind;
+	uint8_t n_start = 0;
+	if(loc->kind == 1)
+		n_start = 12;
+	else if(loc->kind == 2)
+		n_start = 0;
+	else
+	{
+		pWarning("MesReceiver:processCDRMsg:Locator kind invalid"<<endl);
+		return;
+	}
+	for(uint8_t i = n_start;i<16;i++)
 	{
 		unicastReplyLocatorList[0].address[i] = loc->address[i];
 	}
-
+	unicastReplyLocatorList[0].port = loc->port;
 	msg->pos = 0; //Start reading at 0
 
 	//Once everything is set, the reading begins:
@@ -368,6 +379,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WriterProxy_t newWriterProxy;
 						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
 						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
+						this->unicastReplyLocatorList[0].port = 14445; //default receiving port
 						newWriterProxy.unicastLocatorList = this->unicastReplyLocatorList;
 						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
 						SFR->matched_writer_add(&newWriterProxy);
@@ -428,23 +440,22 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				WriterProxy* WP;
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
-					if(WP->lastHeartbeatCount < HBCount)
+					if(WP->m_lastHeartbeatCount < HBCount)
 					{
-						WP->lastHeartbeatCount = HBCount;
+						WP->m_lastHeartbeatCount = HBCount;
 						WP->missing_changes_update(&lastSN);
 						WP->lost_changes_update(&firstSN);
 						WP->m_heartbeatFinalFlag = finalFlag;
 						//Analyze wheter a acknack message is needed:
+						cout << "CHANGESFROMW SIZE: " << WP->m_changesFromW.size()<<endl;
 						if(!finalFlag)
 						{
-							WP->heartbeatResponse.restart_timer();
-						//	WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-							//		boost::asio::placeholders::error,WP));
+							WP->m_heartbeatResponse.restart_timer();
 						}
 						else if(finalFlag && !livelinessFlag)
 						{
-							if(!WP->isMissingChangesEmpty)
-								WP->heartbeatResponse.restart_timer();
+							if(!WP->m_isMissingChangesEmpty)
+								WP->m_heartbeatResponse.restart_timer();
 						}
 						//TODOG: Livelinessflag behaviour
 					}

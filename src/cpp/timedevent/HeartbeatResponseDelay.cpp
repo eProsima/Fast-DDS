@@ -41,27 +41,31 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 		pDebugInfo("Sending Heartbeat Response: ACKNACK msg"<<endl);
 		std::vector<ChangeFromWriter_t*> ch_vec;
 		{
-		boost::lock_guard<WriterProxy> guard(*mp_WP);
-		mp_WP->missing_changes(&ch_vec);
+			boost::lock_guard<WriterProxy> guard(*mp_WP);
+			mp_WP->missing_changes(&ch_vec);
 		}
+		cout << "Missing changes: " << ch_vec.size() << " changesformW " << mp_WP->m_changesFromW.size() << endl;
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
-			mp_WP->available_changes_max(&sns.base);
+			if(!mp_WP->available_changes_max(&sns.base)) //if no changes are available
+			{
+
+			}
 			sns.base++;
 			std::vector<ChangeFromWriter_t*>::iterator cit;
 			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
 				sns.set.push_back((*cit)->change->sequenceNumber);
 			}
-			mp_WP->acknackCount++;
+			mp_WP->m_acknackCount++;
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
 					mp_WP->mp_SFR->participant->m_guid.guidPrefix,
 					mp_WP->mp_SFR->guid.entityId,
 					mp_WP->param.remoteWriterGuid.entityId,
 					sns,
-					mp_WP->acknackCount,
+					mp_WP->m_acknackCount,
 					false);
 
 			std::vector<Locator_t>::iterator lit;

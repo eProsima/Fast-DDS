@@ -63,7 +63,6 @@ void CacheChangePool::allocateGroup(uint16_t group_size)
 		freeCaches.push_back(ch);
 	}
 	pDebugInfo("Finish allocating cachechanges"<<endl);
-	sleep(5);
 }
 
 } /* namespace rtps */
