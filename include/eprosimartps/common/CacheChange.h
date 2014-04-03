@@ -63,11 +63,13 @@ typedef struct CacheChange_t{
 	SequenceNumber_t sequenceNumber;
 	//!Serialized Payload associated with the change.
 	SerializedPayload_t serializedPayload;
-	CacheChange_t()
+	CacheChange_t():
+		kind(ALIVE)
 	{
 
 	}
 	CacheChange_t(uint32_t payload_size):
+		kind(ALIVE),
 		serializedPayload(payload_size)
 	{
 

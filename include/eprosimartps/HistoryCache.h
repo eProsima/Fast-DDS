@@ -143,7 +143,8 @@ private:
 	GUID_t m_maxSeqNumGuid;
 	//! Pool of changes created in the beginning
 	CacheChangePool changePool;
-
+//!lastchangeseqNum
+	SequenceNumber_t m_lastChangeSequenceNumber;
 	//!Update the max and min sequence number and Guid after a change in the cache changes.
 	void updateMaxMinSeqNum();
 	bool m_isMaxMinUpdated;

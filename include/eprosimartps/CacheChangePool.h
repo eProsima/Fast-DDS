@@ -34,6 +34,8 @@ public:
 	CacheChangePool(uint16_t pool_size,uint32_t payload_size);
 	CacheChange_t* reserve_Cache();
 	void release_Cache(CacheChange_t*);
+	size_t get_allCachesSize(){return allCaches.size();}
+	size_t get_freeCachesSize(){return freeCaches.size();}
 private:
 	uint32_t payload_size;
 	uint16_t pool_size;

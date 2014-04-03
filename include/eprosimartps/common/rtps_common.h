@@ -105,15 +105,18 @@ typedef struct SerializedPayload_t{
 	uint16_t length;
 	//!Pointer to the data.
 	octet* data;
+	uint16_t max_size;
 	SerializedPayload_t(){
 		length = 0;
 		data = NULL;
 		encapsulation = CDR_BE;
+		max_size = 0;
 	}
 	SerializedPayload_t(short len){
 		encapsulation = CDR_BE;
 		length = 0;
-		data = (octet*)malloc(length);
+		data = (octet*)malloc(len);
+		max_size = len;
 	}
 	~SerializedPayload_t(){
 	}
@@ -124,11 +127,21 @@ typedef struct SerializedPayload_t{
 	 */
 	bool copy(SerializedPayload_t* serData){
 		length = serData->length;
+		max_size = length;
 		encapsulation = serData->encapsulation;
 		if(data == NULL)
 			data = (octet*)malloc(length);
 		memcpy(data,serData->data,length);
 		return true;
+	}
+	void empty()
+	{
+		length= 0;
+		encapsulation = CDR_BE;
+		max_size = 0;
+		if(data!=NULL)
+			free(data);
+		data = NULL;
 	}
 }SerializedPayload_t;
 

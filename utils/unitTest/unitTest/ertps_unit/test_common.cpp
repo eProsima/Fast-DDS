@@ -15,8 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#ifndef TEST_COMMON_HPP_
-#define TEST_COMMON_HPP_
+#include "eprosimartps/common/CacheChange.h"
 
 TEST(CommonTypes, CDRMessage)
 {
@@ -77,12 +76,20 @@ TEST(CommonTypes,SerializedPayload)
 	SerializedPayload_t payload;
 	ASSERT_TRUE(NULL == payload.data);
 	EXPECT_EQ(0,payload.length);
+	EXPECT_EQ(0,payload.max_size);
+
 	SerializedPayload_t payload2(20);
-	ASSERT_FALSE(NULL == payload2.data);
+	ASSERT_FALSE(payload2.data ==NULL);
+	EXPECT_EQ(20,payload2.max_size);
+	EXPECT_EQ(0,payload2.length);
+
 	payload2.length = 10;
 	payload.copy(&payload2);
 	EXPECT_TRUE(payload.data !=NULL);
 	EXPECT_EQ(10,payload.length);
+	EXPECT_EQ(10,payload.max_size);
+	payload.empty();
+	EXPECT_TRUE(payload.data ==NULL);
 }
 
 TEST(CommonTypes,InstanceHandle)
@@ -100,6 +107,22 @@ TEST(CommonTypes,InstanceHandle)
 	}
 }
 
+TEST(CommonTypes,CacheChange_t)
+{
+	EXPECT_NO_THROW(CacheChange_t change5);
+	CacheChange_t change;
+	EXPECT_EQ(ALIVE,change.kind);
+	EXPECT_EQ(0,change.sequenceNumber.high);
+	EXPECT_EQ(0,change.sequenceNumber.low);
+	EXPECT_EQ(0,change.serializedPayload.length);
+	EXPECT_EQ(0,change.serializedPayload.max_size);
+	EXPECT_TRUE(change.serializedPayload.data == NULL);
+	EXPECT_NO_THROW(CacheChange_t change4(30));
+	CacheChange_t change2(30);
+	EXPECT_EQ(30,change2.serializedPayload.max_size);
+	EXPECT_FALSE(change2.serializedPayload.data==NULL);
+
+}
 
 
-#endif /* TEST_COMMON_HPP_ */
+

@@ -90,7 +90,7 @@ protected:
 	bool m_pushMode;
 	//!Type of the writer, either STATELESS or STATEFUL
 
-	SequenceNumber_t m_lastChangeSequenceNumber;
+	//SequenceNumber_t m_lastChangeSequenceNumber;
 	Count_t m_heartbeatCount;
 
 
