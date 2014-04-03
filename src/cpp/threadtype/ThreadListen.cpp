@@ -48,7 +48,7 @@ void ThreadListen::listen() {
 	if(m_first)
 	{
 		pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " <<m_listen_socket.local_endpoint() << DEF << endl) ;
-		m_participant_ptr->m_endpointToListenThreadSemaphore->post();
+		m_participant_ptr->m_ThreadSemaphore->post();
 		m_first = false;
 	}
 	while(1) //TODOG: Add more reasonable condition, something with boost::thread
@@ -70,7 +70,7 @@ void ThreadListen::listen() {
 		try
 		{
 			m_MessageReceiver.processCDRMsg(m_participant_ptr->m_guid.guidPrefix,&m_send_locator,&m_MessageReceiver.m_rec_msg);
-			pInfo ("Message processed " << endl);
+			pInfo (BLUE<<"Message processed " <<DEF<< endl);
 
 		}
 		catch(int e)
