@@ -44,7 +44,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			boost::lock_guard<WriterProxy> guard(*mp_WP);
 			mp_WP->missing_changes(&ch_vec);
 		}
-		cout << "Missing changes: " << ch_vec.size() << " changesformW " << mp_WP->m_changesFromW.size() << endl;
+//		cout << "Missing changes: " << ch_vec.size() << " changesformW " << mp_WP->m_changesFromW.size() << endl;
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
@@ -75,12 +75,14 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 
 			for(lit = mp_WP->param.unicastLocatorList.begin();lit!=mp_WP->param.unicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
+			{
 			//FIXME: remove, only to check acknack
 			Locator_t loc;
 			loc.kind = 1;
 			loc.port = 10000;
 			loc.set_IP4_address(192,168,1,18);
 			mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(loc));
+			}
 			for(lit = mp_WP->param.multicastLocatorList.begin();lit!=mp_WP->param.multicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
 

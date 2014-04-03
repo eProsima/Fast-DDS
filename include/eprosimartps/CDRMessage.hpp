@@ -410,9 +410,9 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	}
 
 	SequenceNumber_t maxseqNum = sns->get_maxSeqNum();
-	cout << maxseqNum.to64long() << "/ " << sns->base.to64long()<<endl;
+
 	uint32_t numBits = (uint32_t)(maxseqNum.to64long() - sns->base.to64long()+1);
-	cout << "numBits: " << numBits << endl;
+
 	if(numBits > 256)
 	{
 		pWarning("CDRMessage:addSequenceNumberSet:seqNum max - base >256"<<std::endl);
@@ -437,41 +437,6 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	{
 		addInt32(msg,bitmap[i]);
 	}
-//	//BITMAP
-//	cout << 0%32 << " "<< 32%32 << endl;
-//	int32_t aux = 1 << 31;
-//	cout << "aux: " << (std::bitset<32>)aux << endl;
-//
-//	uint32_t numOctets = 4*(uint32_t)floor((numBits+31)/32);
-//	octet oc;
-//	uint8_t bit_n = 0;
-//	std::vector<SequenceNumber_t>::iterator it=sns->get_begin();
-//	for(uint32_t i_oc = 0;i_oc<numOctets;++i_oc)
-//	{
-//		oc = 0x0;
-//		while(it!=sns->get_end())
-//		{
-//			bit_n = (uint8_t)(it->to64long()-sns->base.to64long()-i_oc*8);
-//			switch(bit_n)
-//			{
-//			case 0: oc= oc| BIT(7); ++it; break;
-//			case 1: oc= oc| BIT(6); ++it; break;
-//			case 2: oc= oc| BIT(5); ++it; break;
-//			case 3: oc= oc| BIT(4); ++it; break;
-//			case 4: oc= oc| BIT(3); ++it; break;
-//			case 5: oc= oc| BIT(2); ++it; break;
-//			case 6: oc= oc| BIT(1); ++it; break;
-//			case 7: oc= oc| BIT(0); ++it; break;
-//			default: break;
-//			}
-//     		if(bit_n>7)
-//			{
-//				break;
-//			}
-//		}
-//		CDRMessage::addOctet(msg,oc);
-//	}
-
 	return true;
 }
 

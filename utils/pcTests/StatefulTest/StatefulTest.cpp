@@ -148,7 +148,8 @@ int main(int argc, char** argv){
 		Wparam.topicDataType = std::string("LatencyType");
 		Wparam.topicName = std::string("This is a test topic");
 		Wparam.historySize = 10;
-		Wparam.reliablility.heartbeatPeriod.seconds = 4;
+		Wparam.reliablility.heartbeatPeriod.seconds = 2;
+		Wparam.reliablility.nackResponseDelay.seconds = 2;
 		Wparam.reliablility.kind = RELIABLE;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		if(pub == NULL)
@@ -164,11 +165,11 @@ int main(int argc, char** argv){
 
 		for(uint8_t i = 0;i<10;i++)
 		{
-			if(i == 2)
+			if(i == 2 || i==4||i==5)
 				p->loose_next_change();
 			pub->write((void*)&Latency);
 			cout << "Going to sleep "<< (int)i <<endl;
-			sleep(3);
+			sleep(1);
 			cout << "Wakes "<<endl;
 		}
 	}

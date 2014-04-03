@@ -42,6 +42,7 @@ void ThreadEvent::init_thread()
 void ThreadEvent::announce_thread()
 {
 	pInfo(BLUE<<"Thread: " << b_thread->get_id() << " created and waiting for tasks."<<DEF<<endl);
+
 }
 
 } /* namespace dds */
