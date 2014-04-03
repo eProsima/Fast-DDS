@@ -128,15 +128,13 @@ int main(int argc, char** argv){
 
 	overhead = (t2-t1);
 	long overhead_value = ceil(overhead.total_microseconds()/400);
-	cout << "Overhead " << overhead.total_microseconds()/400 << endl;
-	Locator_t loc;
-	loc.kind = 1;
-	loc.port = 10469;
+	cout << "Overhead " << overhead_value << endl;
+
 
 	LatencyType Latency;
 	//***********  PARTICIPANT  ******************//
 	ParticipantParams_t PParam;
-	PParam.defaultSendPort = 14456;
+	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	//Registrar tipo de dato.
 	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,&LatencyGetKey,sizeof(LatencyType));
@@ -156,6 +154,9 @@ int main(int argc, char** argv){
 		if(pub == NULL)
 			return 0;
 		//Reader Proxy
+		Locator_t loc;
+		loc.kind = 1;
+		loc.port = 10043;
 		loc.set_IP4_address(192,168,1,23);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
@@ -178,12 +179,7 @@ int main(int argc, char** argv){
 		Rparam.stateKind = STATEFUL;
 		Rparam.topicDataType = std::string("LatencyType");
 		Rparam.topicName = std::string("This is a test topic");
-		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-//		loc.set_IP4_address(192,168,1,27);
-//		GUID_t writerGUID;
-//		writerGUID.entityId = ENTITYID_UNKNOWN;
-//		sub->addWriterProxy(loc,writerGUID);
 		while(1)
 		{
 			cout << "Waiting for new message "<<endl;

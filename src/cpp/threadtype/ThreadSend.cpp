@@ -66,7 +66,7 @@ bool ThreadSend::initSend(const Locator_t& loc)
 	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	m_send_socket.open(boost::asio::ip::udp::v4());
 	m_send_socket.bind(send_endpoint);
-	pInfo ( YELLOW<<"Sending through default address " << m_send_socket.local_endpoint()<<" Socket state: " << m_send_socket.is_open() << DEF<<endl);
+	pInfo (YELLOW<<"ThreadSend: initSend: through address " << m_send_socket.local_endpoint()<<"||Socket state: " << m_send_socket.is_open() << DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
 	return true;
@@ -75,7 +75,7 @@ bool ThreadSend::initSend(const Locator_t& loc)
 
 ThreadSend::~ThreadSend()
 {
-	pDebugInfo("Send Thread destructor"<<endl;);
+	pDebugInfo("ThreadSend: destructor"<<endl;);
 }
 
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
@@ -96,21 +96,26 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 			addr[i] = loc->address[i];
 		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
 	}
-
-
-	pInfo (YELLOW<< "Sending: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
-	//	boost::posix_time::ptime t1,t2;
-	//t1 = boost::posix_time::microsec_clock::local_time();
-	m_bytes_sent = 0;
-	if(m_send_next)
+	pInfo(YELLOW<< "ThreadSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+	if(m_send_endpoint.port()>0)
 	{
-		m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+		m_bytes_sent = 0;
+		if(m_send_next)
+		{
+			m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+		}
+		else
+		{
+			m_send_next = true;
+		}
+		pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
+	}
+	else if(m_send_endpoint.port()<=0)
+	{
+		pWarning("ThreadSend: sendSync: port invalid"<<endl);
 	}
 	else
-		m_send_next = true;
-	//t2 = boost::posix_time::microsec_clock::local_time();
-	//cout<< "TIME total send operation: " <<(t2-t1).total_microseconds()<< endl;
-	pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
+		pError("ThreadSend: sendSync: port error"<<endl);
 }
 
 
