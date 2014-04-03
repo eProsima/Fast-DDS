@@ -165,7 +165,7 @@ int main(int argc, char** argv){
 
 		for(uint8_t i = 0;i<10;i++)
 		{
-			if(i == 2 || 0i==4||i==5)
+			if(i == 2 || i==4||i==5)
 				p->loose_next_change();
 			pub->write((void*)&Latency);
 			cout << "Going to sleep "<< (int)i <<endl;
