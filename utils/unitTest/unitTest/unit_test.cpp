@@ -44,6 +44,7 @@ using namespace eprosima;
 using namespace dds;
 using namespace rtps;
 using namespace std;
+using namespace eprosima::rtps;
 
 
 #define WR 1 //Writer 1, Reader 2
@@ -63,7 +64,8 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #include "ertps_unit/test_common.cpp"
 
 #include "ertps_unit/test_CDRMessage.cpp"
-
+#include "ertps_unit/test_CacheChangePool.cpp"
+#include "ertps_unit/test_HistoryCache.cpp"
 
 
 

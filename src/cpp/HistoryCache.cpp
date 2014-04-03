@@ -117,8 +117,8 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 
 	if(m_historyKind == WRITER)
 	{
-		mp_rtpswriter->m_lastChangeSequenceNumber++;
-		a_change->sequenceNumber = mp_rtpswriter->m_lastChangeSequenceNumber;
+		m_lastChangeSequenceNumber++;
+		a_change->sequenceNumber = m_lastChangeSequenceNumber;
 		m_changes.push_back(a_change);
 
 	}
@@ -156,15 +156,18 @@ bool HistoryCache::remove_change(SequenceNumber_t& seqnum, GUID_t& guid)
 	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
 			it!=m_changes.end();++it)
 	{
-		if((*it)->sequenceNumber.to64long() == seqnum.to64long()
-				&& (*it)->writerGUID == guid)
+		if((*it)->sequenceNumber.to64long() == seqnum.to64long())
 		{
-			changePool.release_Cache(*it);
-			m_changes.erase(it);
-			isHistoryFull = false;
-			m_isMaxMinUpdated = false;
-			pDebugInfo("Change removed"<<endl)
-			return true;
+			if(m_historyKind == WRITER ||
+					(m_historyKind == READER && (*it)->writerGUID == guid))
+			{
+				changePool.release_Cache(*it);
+				m_changes.erase(it);
+				isHistoryFull = false;
+				m_isMaxMinUpdated = false;
+				pDebugInfo("Change removed"<<endl)
+				return true;
+			}
 		}
 	}
 	pWarning("Change NOT removed"<<endl);

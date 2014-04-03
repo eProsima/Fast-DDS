@@ -42,7 +42,9 @@ CacheChangePool::CacheChangePool(uint16_t pool_size_in, uint32_t payload_size_in
 CacheChange_t* CacheChangePool::reserve_Cache()
 {
 	if(freeCaches.empty())
-		allocateGroup(pool_size/10);
+	{
+		allocateGroup((uint16_t)(ceil(pool_size/10)+10));
+	}
 	CacheChange_t* ch = freeCaches.front();
 	freeCaches.erase(freeCaches.begin());
 	return ch;
@@ -50,6 +52,13 @@ CacheChange_t* CacheChangePool::reserve_Cache()
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
+	ch->kind = ALIVE;
+	ch->sequenceNumber.high = 0;
+	ch->sequenceNumber.low = 0;
+	GUID_UNKNOWN(ch->writerGUID);
+	ch->serializedPayload.length = 0;
+	for(uint8_t i=0;i<16;++i)
+		ch->instanceHandle.value[i] = 0;
 	freeCaches.push_back(ch);
 }
 
