@@ -84,11 +84,22 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
-	for(uint8_t i = 12;i<16;i++)
+	unicastReplyLocatorList[0].kind = loc->kind;
+	uint8_t n_start = 0;
+	if(loc->kind == 1)
+		n_start = 12;
+	else if(loc->kind == 2)
+		n_start = 0;
+	else
+	{
+		pWarning("MesReceiver:processCDRMsg:Locator kind invalid"<<endl);
+		return;
+	}
+	for(uint8_t i = n_start;i<16;i++)
 	{
 		unicastReplyLocatorList[0].address[i] = loc->address[i];
 	}
-
+	unicastReplyLocatorList[0].port = loc->port;
 	msg->pos = 0; //Start reading at 0
 
 	//Once everything is set, the reading begins:
@@ -368,7 +379,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WriterProxy_t newWriterProxy;
 						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
 						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
-						newWriterProxy.unicastLocatorList = this->unicastReplyLocatorList;
+						this->unicastReplyLocatorList[0].port = 10043; //default receiving port
+						newWriterProxy.unicastLocatorList   = this->unicastReplyLocatorList;
 						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
 						SFR->matched_writer_add(&newWriterProxy);
 						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
@@ -428,23 +440,22 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				WriterProxy* WP;
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
-					if(WP->lastHeartbeatCount < HBCount)
+					if(WP->m_lastHeartbeatCount < HBCount)
 					{
-						WP->lastHeartbeatCount = HBCount;
+						WP->m_lastHeartbeatCount = HBCount;
 						WP->missing_changes_update(&lastSN);
 						WP->lost_changes_update(&firstSN);
 						WP->m_heartbeatFinalFlag = finalFlag;
 						//Analyze wheter a acknack message is needed:
+						cout << "CHANGESFROMW SIZE: " << WP->m_changesFromW.size()<<endl;
 						if(!finalFlag)
 						{
-							WP->heartbeatResponse.restart_timer();
-						//	WP->heartbeatResponse.timer->async_wait(boost::bind(&HeartbeatResponseDelay::event,&WP->heartbeatResponse,
-							//		boost::asio::placeholders::error,WP));
+							WP->m_heartbeatResponse.restart_timer();
 						}
 						else if(finalFlag && !livelinessFlag)
 						{
-							if(!WP->isMissingChangesEmpty)
-								WP->heartbeatResponse.restart_timer();
+							if(!WP->m_isMissingChangesEmpty)
+								WP->m_heartbeatResponse.restart_timer();
 						}
 						//TODOG: Livelinessflag behaviour
 					}
@@ -504,7 +515,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 						{
 							(*rit)->m_lastAcknackCount = Ackcount;
 							(*rit)->acked_changes_set(&SNSet.base);
-							(*rit)->requested_changes_set(&SNSet.set);
+							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
+							(*rit)->requested_changes_set(set_vec);
 							if(!(*rit)->m_isRequestedChangesEmpty)
 								(*rit)->m_nackResponse.restart_timer();
 //								(*rit)->m_nackResponse.timer->async_wait(boost::bind(&NackResponseDelay::event,&(*rit)->m_nackResponse,
@@ -559,10 +571,11 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
 					SequenceNumber_t auxSN;
-					for(auxSN = gapStart;auxSN<=gapList.base-1;auxSN++)
+					SequenceNumber_t finalSN = gapList.base -1;
+					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)
 						WP->irrelevant_change_set(&auxSN);
-					std::vector<SequenceNumber_t>::iterator it;
-					for(it=gapList.set.begin();it!=gapList.set.end();++it)
+
+					for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
 						WP->irrelevant_change_set(&(*it));
 				}
 				else

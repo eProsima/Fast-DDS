@@ -15,7 +15,7 @@
  */
 
 #include <algorithm>
-
+#include "eprosimartps/rtps_all.h"
 //#include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/dds/ParameterTypes.h"
 
@@ -125,27 +125,20 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 	valid &=CDRMessage::readSequenceNumber(msg,&sns->base);
 	uint32_t numBits;
 	valid &=CDRMessage::readUInt32(msg,&numBits);
-	if(numBits>0)
+	int32_t bitmap;
+	SequenceNumber_t seqNum;
+	for(uint32_t i=0;i<(numBits+31)/32;++i)
 	{
-		uint32_t n_octets = 4*((numBits+31)/32);
-		SequenceNumber_t auxSN;
-		for(uint8_t i=0;i<n_octets;i++)
+		valid &= CDRMessage::readInt32(msg,&bitmap);
+		for(uint8_t bit=0;bit<32;++bit)
 		{
-			octet o=0;
-			valid &=CDRMessage::readOctet(msg,&o);
-			if((uint32_t)(8*i)<numBits)
+			if((bitmap & (1<<(31-bit%32)))==(1<<(31-bit%32)))
 			{
-				for(uint8_t bit=0;bit<8;++bit)
+				seqNum = sns->base+i*32+bit;
+				if(!sns->add(seqNum))
 				{
-					if((uint32_t)(bit+i*8)>numBits) //no more bits to analyze
-						break;
-					bool addSN = o & BIT(bit) ? true : false;
-					if(addSN)
-					{
-						auxSN = sns->base;
-						auxSN += (i*8+bit);
-						sns->set.push_back(auxSN);
-					}
+					pWarning("CDRMessage:readSequenceNumberSet:malformed seqNumSet"<<endl;);
+					return false;
 				}
 			}
 		}
@@ -162,7 +155,8 @@ inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
 }
 
 
-inline bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc) {
+inline bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc)
+{
 	if(msg->pos+24>msg->length)
 		return false;
 	bool valid = readInt32(msg,&loc->kind);
@@ -173,11 +167,13 @@ inline bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc) {
 	return valid;
 }
 
-inline bool CDRMessage::readInt16(CDRMessage_t* msg,int16_t* i16) {
+inline bool CDRMessage::readInt16(CDRMessage_t* msg,int16_t* i16)
+{
 	if(msg->pos+2>msg->length)
 		return false;
 	octet* o = (octet*)i16;
-	if(msg->msg_endian == DEFAULT_ENDIAN){
+	if(msg->msg_endian == DEFAULT_ENDIAN)
+	{
 		*o = msg->buffer[msg->pos];
 		*(o+1) = msg->buffer[msg->pos+1];
 	}
@@ -189,7 +185,8 @@ inline bool CDRMessage::readInt16(CDRMessage_t* msg,int16_t* i16) {
 	return true;
 }
 
-inline bool CDRMessage::readUInt16(CDRMessage_t* msg,uint16_t* i16) {
+inline bool CDRMessage::readUInt16(CDRMessage_t* msg,uint16_t* i16)
+{
 	if(msg->pos+2>msg->length)
 		return false;
 	octet* o = (octet*)i16;
@@ -399,61 +396,82 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 	return true;
 }
 
-inline bool sort_seqNum (SequenceNumber_t s1,SequenceNumber_t s2)
-{
-	return(s1.to64long() < s2.to64long());
-}
+
 
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		SequenceNumberSet_t* sns) {
 	//FIXME: que pasa si SNS is empty
-	addSequenceNumber(msg, &sns->base);
+	CDRMessage::addSequenceNumber(msg, &sns->base);
 	//Add set
-	if(sns->set.empty())
+	if(sns->isSetEmpty())
 	{
 		addUInt32(msg,0); //numbits 0
 		return true;
 	}
-	std::sort(sns->set.begin(),sns->set.end(),sort_seqNum);
-	SequenceNumber_t maxseqNum = *std::max_element(sns->set.begin(),sns->set.end(),sort_seqNum);
-	uint32_t numBits = (uint32_t)(maxseqNum.to64long() - sns->base.to64long());
+
+	SequenceNumber_t maxseqNum = sns->get_maxSeqNum();
+	cout << maxseqNum.to64long() << "/ " << sns->base.to64long()<<endl;
+	uint32_t numBits = (uint32_t)(maxseqNum.to64long() - sns->base.to64long()+1);
+	cout << "numBits: " << numBits << endl;
+	if(numBits > 256)
+	{
+		pWarning("CDRMessage:addSequenceNumberSet:seqNum max - base >256"<<std::endl);
+		return false;
+	}
+
 	addUInt32(msg,numBits);
-	std::vector<SequenceNumber_t>::iterator it;
-	uint32_t n_octet = 0;
-	uint8_t bit_n = 0;
-	octet o = 0;
-	//Compute the bitmap in terms of octets:
-	for(it=sns->set.begin();it!=sns->set.end();++it)
+	uint8_t n_longs = (numBits+31)/32;
+	int32_t bitmap[n_longs];
+	for(uint32_t i= 0;i<n_longs;i++)
 	{
-		bit_n = (uint8_t)(it->to64long()-sns->base.to64long()-n_octet*8);
-		switch(bit_n)
-		{
-			case 0: o= o| BIT(7); break;
-			case 1: o= o| BIT(6); break;
-			case 2: o= o| BIT(5); break;
-			case 3: o= o| BIT(4); break;
-			case 4: o= o| BIT(3); break;
-			case 5: o= o| BIT(2); break;
-			case 6: o= o| BIT(1); break;
-			case 7: o= o| BIT(0); break;
-		}
-		if(bit_n>7)
-		{
-			addOctet(msg,o);
-			o = 0x0;
-			for(int i=0;i<((long)floor((double)bit_n/8)-1);i++)
-				addOctet(msg,o);
-			n_octet += (uint32_t)floor((double)bit_n/8);
-			it--;
-		}
+		bitmap[i] = 0;
 	}
-	//add enough octets as gap
-	o=0;
-	while((n_octet+1)%4 != 0)
+	uint32_t deltaN = 0;
+	for(std::vector<SequenceNumber_t>::iterator it=sns->get_begin();
+			it!=sns->get_end();++it)
 	{
-		addOctet(msg,o);
-		n_octet++;
+		deltaN = it->to64long() - sns->base.to64long();
+		bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
 	}
+	for(uint32_t i= 0;i<n_longs;i++)
+	{
+		addInt32(msg,bitmap[i]);
+	}
+//	//BITMAP
+//	cout << 0%32 << " "<< 32%32 << endl;
+//	int32_t aux = 1 << 31;
+//	cout << "aux: " << (std::bitset<32>)aux << endl;
+//
+//	uint32_t numOctets = 4*(uint32_t)floor((numBits+31)/32);
+//	octet oc;
+//	uint8_t bit_n = 0;
+//	std::vector<SequenceNumber_t>::iterator it=sns->get_begin();
+//	for(uint32_t i_oc = 0;i_oc<numOctets;++i_oc)
+//	{
+//		oc = 0x0;
+//		while(it!=sns->get_end())
+//		{
+//			bit_n = (uint8_t)(it->to64long()-sns->base.to64long()-i_oc*8);
+//			switch(bit_n)
+//			{
+//			case 0: oc= oc| BIT(7); ++it; break;
+//			case 1: oc= oc| BIT(6); ++it; break;
+//			case 2: oc= oc| BIT(5); ++it; break;
+//			case 3: oc= oc| BIT(4); ++it; break;
+//			case 4: oc= oc| BIT(3); ++it; break;
+//			case 5: oc= oc| BIT(2); ++it; break;
+//			case 6: oc= oc| BIT(1); ++it; break;
+//			case 7: oc= oc| BIT(0); ++it; break;
+//			default: break;
+//			}
+//     		if(bit_n>7)
+//			{
+//				break;
+//			}
+//		}
+//		CDRMessage::addOctet(msg,oc);
+//	}
+
 	return true;
 }
 

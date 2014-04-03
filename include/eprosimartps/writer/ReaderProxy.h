@@ -65,7 +65,7 @@ public:
 
 	bool acked_changes_set(SequenceNumber_t* seqNum);
 
-	bool requested_changes_set(std::vector<SequenceNumber_t>* seqNumSet);
+	bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
 	bool next_requested_change(ChangeForReader_t* changeForReader);
 

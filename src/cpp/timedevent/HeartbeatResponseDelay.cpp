@@ -38,41 +38,54 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 {
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("Sending Heartbeat Response: ACKNACK msg"<<endl);
+		pDebugInfo("HeartbeatResponse:event: Sending ACKNACK"<<endl);
 		std::vector<ChangeFromWriter_t*> ch_vec;
 		{
-		boost::lock_guard<WriterProxy> guard(*mp_WP);
-		mp_WP->missing_changes(&ch_vec);
+			boost::lock_guard<WriterProxy> guard(*mp_WP);
+			mp_WP->missing_changes(&ch_vec);
 		}
+		cout << "Missing changes: " << ch_vec.size() << " changesformW " << mp_WP->m_changesFromW.size() << endl;
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
-			mp_WP->available_changes_max(&sns.base);
+			if(!mp_WP->available_changes_max(&sns.base)) //if no changes are available
+			{
+				pError("HeartbeatResponse: event: no available changes max"<<endl;);
+			}
 			sns.base++;
 			std::vector<ChangeFromWriter_t*>::iterator cit;
 			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
-				sns.set.push_back((*cit)->change->sequenceNumber);
+				if(!sns.add((*cit)->change->sequenceNumber))
+				{
+					pWarning("HBResponse:event:error adding seqNum"<<endl;);
+				}
 			}
-			mp_WP->acknackCount++;
+			mp_WP->m_acknackCount++;
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
-					mp_WP->mp_SFR->participant->m_guid.guidPrefix,
-					mp_WP->mp_SFR->guid.entityId,
-					mp_WP->param.remoteWriterGuid.entityId,
-					sns,
-					mp_WP->acknackCount,
-					false);
+												mp_WP->mp_SFR->participant->m_guid.guidPrefix,
+												mp_WP->mp_SFR->guid.entityId,
+												mp_WP->param.remoteWriterGuid.entityId,
+												sns,
+												mp_WP->m_acknackCount,
+												false);
 
 			std::vector<Locator_t>::iterator lit;
 
 			for(lit = mp_WP->param.unicastLocatorList.begin();lit!=mp_WP->param.unicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
-
+			//FIXME: remove, only to check acknack
+			Locator_t loc;
+			loc.kind = 1;
+			loc.port = 10000;
+			loc.set_IP4_address(192,168,1,18);
+			mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(loc));
 			for(lit = mp_WP->param.multicastLocatorList.begin();lit!=mp_WP->param.multicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
 
 		}
+		m_isWaiting = false;
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
