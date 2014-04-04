@@ -48,8 +48,7 @@ uint32_t DomainParticipant::getNewId()
 Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_t& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
-	dds::DomainParticipant *dp;
-	dp = dds::DomainParticipant::getInstance();
+		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 	//Look for the correct type registration
 	TypeReg_t typeR;
 	std::vector<TypeReg_t>::iterator it;
@@ -110,8 +109,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderParams_t& RParam) {
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
-	dds::DomainParticipant *dp;
-	dp = dds::DomainParticipant::getInstance();
+	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 	TypeReg_t typeR;
 	std::vector<TypeReg_t>::iterator it;
 	bool found = false;
@@ -180,6 +178,8 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 Participant* DomainParticipant::createParticipant(const ParticipantParams_t& PParam)
 {
 	Participant* p = new Participant(PParam);
+	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+	dp->m_participants.push_back(p);
 	return p;
 }
 
@@ -189,10 +189,8 @@ bool DomainParticipant::registerType(std::string in_str,
 		void (*deserialize)(SerializedPayload_t* data, void*),
 		void (*getKey)(void*,InstanceHandle_t*),
 		int32_t size) {
-	dds::DomainParticipant *dp;
-	dp = dds::DomainParticipant::getInstance();
-	std::vector<TypeReg_t>::iterator it;
-	for(it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
+	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+	for(std::vector<TypeReg_t>::iterator it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
 	{
 		if(it->dataType == in_str)
 			return false;
@@ -208,6 +206,32 @@ bool DomainParticipant::registerType(std::string in_str,
 
 	return true;
 }
+
+bool DomainParticipant::removeParticipant(Participant* p)
+{
+	if(p!=NULL)
+	{
+		delete(p);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)
+{
+	if(p==NULL || pub==NULL)
+		return false;
+	return p->removeEndpoint((Endpoint*)(pub->mp_Writer));
+}
+
+bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
+{
+	if(p==NULL || sub==NULL)
+			return false;
+	return p->removeEndpoint((Endpoint*)(sub->mp_Reader));
+}
+
 
 } /* namespace dds */
 } /* namespace eprosima */

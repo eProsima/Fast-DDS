@@ -47,6 +47,7 @@ private:
         id = 0;//private constructor
     }
     std::vector<TypeReg_t> typesRegistered;
+    std::vector<Participant*> m_participants;
 public:
 	/**
 	 * @brief Create a Publisher in the given Participant. 
@@ -69,6 +70,21 @@ public:
      * @return Pointer to the participant.
      */
     static Participant* createParticipant(const ParticipantParams_t& PParam);
+
+    /**
+     * Remove a participant and delete all its associated Writers, Readers, threads, etc.
+     * @param[in] p Pointer to the Participant;
+     * @return True if correct.
+     */
+    static bool removeParticipant(Participant* p);
+    /**
+     * Remove a publisher from the Participant.
+     */
+    static bool removePublisher(Participant* p,Publisher* pub);
+    /**
+     * Remove a subscriber from a participant.
+     */
+    static bool removeSubscriber(Participant* p,Subscriber* sub);
 
 
 	/**
@@ -97,6 +113,11 @@ public:
     ~DomainParticipant()
     {
     	pDebugInfo("DomainParticipant destructor"<<endl;);
+    	for(std::vector<Participant*>::iterator it=m_participants.begin();
+    		it!=m_participants.end();++it)
+		{
+			DomainParticipant::removeParticipant(*it);
+		}
     	instanceFlag = false;
     }
 

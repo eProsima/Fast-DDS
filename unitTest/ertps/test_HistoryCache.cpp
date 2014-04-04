@@ -115,4 +115,45 @@ TEST_F(HistoryCacheTest,RemoveChange)
 	EXPECT_EQ(siz-1,history.m_changes.size());
 }
 
+TEST_F(HistoryCacheTest,GetChange)
+{
+	history.m_historyKind = WRITER;
+	for(uint i = 0;i<historySize;i++)
+	{
+		CacheChange_t* change = history.reserve_Cache();
+		ASSERT_TRUE(change!=NULL);
+		EXPECT_TRUE(history.add_change(change));
+	}
+	CacheChange_t* change2;
+	SequenceNumber_t seq;
+	GUID_t guid;
+	seq.low = 2;
+	ASSERT_TRUE(history.get_change(seq,guid,&change2));
+	EXPECT_EQ(2,change2->sequenceNumber.to64long());
+	ASSERT_TRUE(history.get_last_added_cache(&change2));
+	EXPECT_EQ(historySize,change2->sequenceNumber.to64long());
+}
+
+TEST_F(HistoryCacheTest,GetMaxMinSeqNum)
+{
+	history.m_historyKind = WRITER;
+	for(uint i = 0;i<historySize;i++)
+	{
+		CacheChange_t* change = history.reserve_Cache();
+		ASSERT_TRUE(change!=NULL);
+		EXPECT_TRUE(history.add_change(change));
+	}
+	SequenceNumber_t seq;
+	GUID_t guid;
+	EXPECT_TRUE(history.get_seq_num_min(&seq,&guid));
+	EXPECT_EQ(1,seq.to64long());
+	EXPECT_TRUE(history.get_seq_num_max(&seq,&guid));
+	EXPECT_EQ(historySize,seq.to64long());
+	EXPECT_TRUE(history.remove_change(seq,guid));
+	EXPECT_TRUE(history.get_seq_num_max(&seq,&guid));
+		EXPECT_EQ(historySize-1,seq.to64long());
+}
+
+
+
 

@@ -133,7 +133,7 @@ public:
 
 
 private:
-	RTPSWriter* W;
+	RTPSWriter* mp_Writer;
 	//bool initialized;
 	TypeReg_t type;
 	bool add_new_change(ChangeKind_t kind,void* Data);

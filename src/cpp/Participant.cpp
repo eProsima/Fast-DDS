@@ -45,8 +45,7 @@ Participant::Participant(const ParticipantParams_t& PParam):
 	m_event_thr.init_thread();
 
 	// Create Unique GUID
-	dds::DomainParticipant *dp;
-	dp = dds::DomainParticipant::getInstance();
+	dds::DomainParticipant *dp = dds::DomainParticipant::getInstance();
 	uint32_t ID = dp->getNewId();
 	int pid;
 	#if defined(_WIN32)
