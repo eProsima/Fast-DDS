@@ -123,7 +123,6 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 			//cout << "Adding message of length: " << inlineQos->inlineQosMsg.length <<" and endian: " << inlineQos->inlineQosMsg.msg_endian<< endl;
 			CDRMessage::appendMsg(&submsgElem,&inlineQos->inlineQosMsg);
 		}
-
 		//Add Serialized Payload
 		if(dataFlag)
 		{
