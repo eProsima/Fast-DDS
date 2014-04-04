@@ -55,27 +55,34 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 	#define COPYSTR strcpy
 #endif
 
-	
+const int num_length = 100;
+const int len_laten = num_length+8;
+
 typedef struct LatencyType{
 	int64_t seqnum;
-	std::vector<unsigned char> nums;
-	LatencyType():
-		nums(std::vector<unsigned char>(500,4))
+	unsigned char nums[num_length];
+	LatencyType()
 	{
 		seqnum = 0;
+		cout << num_length << " "<< len_laten << endl;
+		for(int i=0;i<num_length;i++)
+		{
+			nums[i] = 1;
+		}
 	}
 }LatencyType;
 
+LatencyType g_latency;
 
 void LatencySer(SerializedPayload_t* payload,void*data)
 {
-
-	memcpy(payload->data,data,sizeof(LatencyType));
+	memcpy(payload->data,data,len_laten);
+	payload->length = len_laten;
 }
 
 void LatencyDeSer(SerializedPayload_t* payload,void*data)
 {
-	memcpy(data,payload->data,sizeof(LatencyType));
+	memcpy(data,payload->data,payload->length);
 }
 
 
@@ -126,7 +133,7 @@ int main(int argc, char** argv){
 	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	//Registrar tipo de dato.
-	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,NULL,sizeof(LatencyType));
+	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,NULL,len_laten);
 	Locator_t loc;
 	loc.kind = 1;
 	loc.port = 10469;
@@ -176,7 +183,6 @@ int main(int argc, char** argv){
 	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 	sub->assignNewMessageCallback(newMsgCallback);
 
-	LatencyType Latency;
 
 	SequenceNumber_t seq;
 	GUID_t guid;
@@ -191,11 +197,11 @@ int main(int argc, char** argv){
 
 		if(type == 1)
 		{
-			Latency.seqnum++;
+			g_latency.seqnum++;
 			t1 = boost::posix_time::microsec_clock::local_time();
-			pub->write((void*)&Latency);
+			pub->write((void*)&g_latency);
 			sub->blockUntilNewMessage();
-			sub->readLastAdded((void*)&Latency);
+			sub->readLastAdded((void*)&g_latency);
 			t2 = boost::posix_time::microsec_clock::local_time();
 			us = (t2-t1).total_microseconds()-overhead_value;
 			cout<< "T: " <<us<< " | ";
@@ -206,13 +212,13 @@ int main(int argc, char** argv){
 			if(samples%10==0)
 				cout << endl;
 			pub->removeMinSeqChange();
-			sub->takeMinSeqCache((void*)&Latency);
+			sub->takeMinSeqCache((void*)&g_latency);
 		}
 		else if (type == 2)
 		{
 			sub->blockUntilNewMessage();
-			sub->readLastAdded((void*)&Latency);
-			pub->write((void*)&Latency);
+			sub->readLastAdded((void*)&g_latency);
+			pub->write((void*)&g_latency);
 		}
 	}
 	cout << endl;
