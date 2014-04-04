@@ -144,11 +144,19 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 
 bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
+	time_t time_epoch_seconds;
+		tm time_epoch;
+		time_epoch.tm_year = 0;
+			time_epoch.tm_mon = 0;
+			time_epoch.tm_mday = 1;
+			time_epoch_seconds = mktime(&time_epoch);
+			cout << "seconds epoch: "<< time_epoch_seconds << endl;
 	timeval now;
 	gettimeofday(&now,NULL);
+	cout << "seconds now: "<< now.tv_sec << endl;
 	Time_t time_now;
-	time_now.seconds = (int32_t)now.tv_sec;
-	time_now.fraction = (uint32_t)now.tv_usec*pow(2.0,32)*pow(10.0,-6);
+	time_now.seconds = (int32_t)now.tv_sec-time_epoch_seconds;
+	time_now.fraction = 0;//(uint32_t)now.tv_usec*pow(2.0,32)*pow(10.0,-6);
 //	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
 //	Time_t time_now;
 //	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();

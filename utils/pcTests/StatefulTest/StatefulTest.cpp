@@ -158,7 +158,7 @@ int main(int argc, char** argv){
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10043;
-		loc.set_IP4_address(192,168,1,23);
+		loc.set_IP4_address(192,168,1,18);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
 		pub->addReaderProxy(loc,readerGUID,true);
