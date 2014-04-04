@@ -25,7 +25,7 @@
 namespace eprosima {
 namespace dds {
 
-Publisher::Publisher(RTPSWriter* Win):W(Win)
+Publisher::Publisher(RTPSWriter* Win):mp_Writer(Win)
 {
 	// TODO Auto-generated constructor stub
 }
@@ -60,29 +60,29 @@ bool Publisher::unregister(void* Data) {
 
 bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 {
-	if(kind != ALIVE && W->topicKind == NO_KEY)
+	if(kind != ALIVE && mp_Writer->topicKind == NO_KEY)
 	{
 		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
 		return false;
 	}
 
 	CacheChange_t* change;
-	W->new_change(kind,Data,&change);
+	mp_Writer->new_change(kind,Data,&change);
 	pDebugInfo("New change created"<<endl);
-	if(!W->m_writer_cache.add_change(change))
+	if(!mp_Writer->m_writer_cache.add_change(change))
 	{
 		pWarning("Change not added"<<endl);
-		W->m_writer_cache.release_Cache(change);
+		mp_Writer->m_writer_cache.release_Cache(change);
 		return false;
 	}
 
 	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
 
-	if(W->m_stateType == STATELESS)
-		((StatelessWriter*)W)->unsent_change_add(change);
-	else if(W->m_stateType == STATEFUL)
+	if(mp_Writer->m_stateType == STATELESS)
+		((StatelessWriter*)mp_Writer)->unsent_change_add(change);
+	else if(mp_Writer->m_stateType == STATEFUL)
 	{
-		((StatefulWriter*)W)->unsent_change_add(change);
+		((StatefulWriter*)mp_Writer)->unsent_change_add(change);
 	}
 
 	return true;
@@ -94,14 +94,14 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 
 bool Publisher::removeMinSeqChange()
 {
-	boost::lock_guard<HistoryCache> guard(W->m_writer_cache);
+	boost::lock_guard<HistoryCache> guard(mp_Writer->m_writer_cache);
 
-	if(!W->m_writer_cache.m_changes.empty())
+	if(!mp_Writer->m_writer_cache.m_changes.empty())
 	{
 		SequenceNumber_t sn;
 		GUID_t gui;
-		W->m_writer_cache.get_seq_num_min(&sn,&gui);
-		W->m_writer_cache.remove_change(sn,gui);
+		mp_Writer->m_writer_cache.get_seq_num_min(&sn,&gui);
+		mp_Writer->m_writer_cache.remove_change(sn,gui);
 		return true;
 	}
 
@@ -111,27 +111,27 @@ bool Publisher::removeMinSeqChange()
 
 bool Publisher::removeAllChange()
 {
-	boost::lock_guard<HistoryCache> guard(W->m_writer_cache);
-	return W->m_writer_cache.remove_all_changes();
+	boost::lock_guard<HistoryCache> guard(mp_Writer->m_writer_cache);
+	return mp_Writer->m_writer_cache.remove_all_changes();
 }
 
 int Publisher::getHistory_n()
 {
-	boost::lock_guard<HistoryCache> guard(W->m_writer_cache);
-	return W->m_writer_cache.m_changes.size();
+	boost::lock_guard<HistoryCache> guard(mp_Writer->m_writer_cache);
+	return mp_Writer->m_writer_cache.m_changes.size();
 }
 
 bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 {
-	if(W->m_stateType==STATELESS)
+	if(mp_Writer->m_stateType==STATELESS)
 	{
 		ReaderLocator RL;
 		RL.expectsInlineQos = expectsInlineQos;
 		RL.locator = Loc;
 		pDebugInfo("Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl);
-		((StatelessWriter*)W)->reader_locator_add(RL);
+		((StatelessWriter*)mp_Writer)->reader_locator_add(RL);
 	}
-	else if(W->m_stateType==STATEFUL)
+	else if(mp_Writer->m_stateType==STATEFUL)
 	{
 		pError("StatefulWriter expects Reader Proxies"<<endl);
 		return false;
@@ -142,19 +142,19 @@ bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 
 bool Publisher::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
 {
-	if(W->m_stateType==STATELESS)
+	if(mp_Writer->m_stateType==STATELESS)
 	{
 		pError("StatelessWriter expects reader locator"<<endl);
 		return false;
 	}
-	else if(W->m_stateType==STATEFUL)
+	else if(mp_Writer->m_stateType==STATEFUL)
 	{
 		ReaderProxy_t RL;
 		RL.expectsInlineQos = expectsInline;
 		RL.remoteReaderGuid = guid;
 		RL.unicastLocatorList.push_back(loc);
 		pDebugInfo("Adding ReaderProxy at: "<< loc.to_IP4_string()<<":"<<loc.port<< endl);
-		((StatefulWriter*)W)->matched_reader_add(RL);
+		((StatefulWriter*)mp_Writer)->matched_reader_add(RL);
 		return true;
 	}
 	return false;
@@ -162,12 +162,12 @@ bool Publisher::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
 
 const std::string& Publisher::getTopicName()
 {
-	return W->getTopicName();
+	return mp_Writer->getTopicName();
 }
 
 const std::string& Publisher::getTopicDataType()
 {
-	return W->getTopicDataType();
+	return mp_Writer->getTopicDataType();
 }
 
 

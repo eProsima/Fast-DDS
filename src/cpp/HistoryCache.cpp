@@ -63,12 +63,14 @@ bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheC
 	(*ch_number)=0;
 	for(	std::vector<CacheChange_t*>::iterator it = m_changes.begin();
 			it!=m_changes.end();++it){
-		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
-				(*it)->writerGUID == writerGuid)
-		{
-			*ch_ptr = *it;
-			return true;
-		}
+		if((*it)->sequenceNumber.to64long() == seqNum.to64long() )
+			if(m_historyKind == WRITER ||
+					(m_historyKind == READER && (*it)->writerGUID == writerGuid))
+
+			{
+				*ch_ptr = *it;
+				return true;
+			}
 		(*ch_number)++;
 	}
 	return false;
@@ -78,15 +80,19 @@ bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheC
 	boost::lock_guard<HistoryCache> guard(*this);
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = m_changes.begin();it!=m_changes.end();++it){
-		if((*it)->sequenceNumber.to64long() == seqNum.to64long() &&
-				(*it)->writerGUID == writerGuid)
+		if((*it)->sequenceNumber.to64long() == seqNum.to64long())
 		{
-			*ch_ptr = *it;
+			if(m_historyKind == WRITER ||
+					(m_historyKind == READER && (*it)->writerGUID == writerGuid))
 
-			return true;
-		}
+			{
+				*ch_ptr = *it;
+
+				return true;
+			}
 	}
-	return false;
+}
+return false;
 }
 
 bool HistoryCache::get_last_added_cache(CacheChange_t** ch_ptr)
