@@ -24,11 +24,11 @@ namespace rtps {
 
 NackSupressionDuration::~NackSupressionDuration()
 {
-
+	timer->cancel();
 }
 
 NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):
-		TimedEvent(&p_RP->mp_SFW->participant->m_event_thr.io_service,interval),
+		TimedEvent(&p_RP->mp_SFW->mp_event_thr->io_service,interval),
 		mp_RP(p_RP)
 {
 

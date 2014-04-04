@@ -24,11 +24,11 @@ namespace rtps {
 
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
-
+	timer->cancel();
 }
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_time::milliseconds interval):
-		TimedEvent(&p_WP->mp_SFR->participant->m_event_thr.io_service,interval),
+		TimedEvent(&p_WP->mp_SFR->mp_event_thr->io_service,interval),
 		mp_WP(p_WP)
 {
 
@@ -64,8 +64,8 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			mp_WP->m_acknackCount++;
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
-												mp_WP->mp_SFR->participant->m_guid.guidPrefix,
-												mp_WP->mp_SFR->guid.entityId,
+												mp_WP->mp_SFR->m_guid.guidPrefix,
+												mp_WP->mp_SFR->m_guid.entityId,
 												mp_WP->param.remoteWriterGuid.entityId,
 												sns,
 												mp_WP->m_acknackCount,
@@ -74,17 +74,17 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			std::vector<Locator_t>::iterator lit;
 
 			for(lit = mp_WP->param.unicastLocatorList.begin();lit!=mp_WP->param.unicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
+				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(*lit));
 			{
 			//FIXME: remove, only to check acknack
 			Locator_t loc;
 			loc.kind = 1;
 			loc.port = 10000;
 			loc.set_IP4_address(192,168,1,18);
-			mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(loc));
+			mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(loc));
 			}
 			for(lit = mp_WP->param.multicastLocatorList.begin();lit!=mp_WP->param.multicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->participant->m_send_thr.sendSync(&m_heartbeat_response_msg,&(*lit));
+				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(*lit));
 
 		}
 		m_isWaiting = false;

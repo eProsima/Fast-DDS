@@ -57,6 +57,7 @@ TEST_F(ParticipantTest,WriterReaderCreation)
 	WriterParams_t Wparam;
 	uint32_t payload_size = 20;
 	EXPECT_TRUE(p->createStatelessWriter(&W,Wparam,payload_size));
+	EXPECT_EQ(1,p->m_writerList.size());
 }
 
 

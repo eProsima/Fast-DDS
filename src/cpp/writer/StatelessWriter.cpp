@@ -43,7 +43,8 @@ StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_si
 
 
 
-StatelessWriter::~StatelessWriter() {
+StatelessWriter::~StatelessWriter()
+{
 	// TODO Auto-generated destructor stub
 	pDebugInfo("StatelessWriter destructor"<<endl;);
 }
@@ -114,9 +115,9 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 				m_writer_cache.get_seq_num_max(&last,NULL);
 				m_heartbeatCount++;
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,participant->m_guid.guidPrefix,
-										ENTITYID_UNKNOWN,this->guid.entityId,first,last,m_heartbeatCount,true,false);
-				participant->m_send_thr.sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+										ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
 				rit->unsent_changes.clear();
 			}
 		}
@@ -149,9 +150,9 @@ void StatelessWriter::unsent_changes_not_empty()
 			m_writer_cache.get_seq_num_max(&last,NULL);
 			m_heartbeatCount++;
 			CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-			RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,participant->m_guid.guidPrefix,
-					ENTITYID_UNKNOWN,this->guid.entityId,first,last,m_heartbeatCount,true,false);
-			participant->m_send_thr.sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+			RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+					ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+			mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
 			rit->unsent_changes.clear();
 		}
 

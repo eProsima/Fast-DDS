@@ -48,22 +48,13 @@ uint32_t DomainParticipant::getNewId()
 Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_t& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
-		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 	//Look for the correct type registration
 	TypeReg_t typeR;
-	std::vector<TypeReg_t>::iterator it;
-	bool found = false;
-	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
-	{
-		if(it->dataType == WParam.topicDataType)
+	if(!DomainParticipant::getType(&typeR,WParam.topicDataType))
 		{
-			typeR = *it;
-			found = true;
-			break;
+			pError("Type Not Registered"<<endl;);
+			return NULL;
 		}
-	}
-	if(!found)
-		return NULL;
 	if(typeR.serialize == NULL || typeR.deserialize==NULL)
 	{
 		pError("Serialization and deserialization functions cannot be NULL"<<endl);
@@ -106,25 +97,29 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 	return Pub;
 }
 
+
+bool DomainParticipant::getType(TypeReg_t*type,std::string data_type)
+{
+	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+	for(std::vector<TypeReg_t>::iterator it=dp->typesRegistered.begin();
+			it!=dp->typesRegistered.end();++it)
+	{
+		if(it->dataType == data_type)
+		{
+			*type= *it;
+			return true;
+		}
+	}
+	return false;
+}
+
 Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderParams_t& RParam) {
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
-	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 	TypeReg_t typeR;
-	std::vector<TypeReg_t>::iterator it;
-	bool found = false;
-	for(it=dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
+	if(!DomainParticipant::getType(&typeR,RParam.topicDataType))
 	{
-		if(it->dataType == RParam.topicDataType)
-		{
-			typeR = *it;
-			found = true;
-			break;
-		}
-	}
-	if(!found)
-	{
-		pError("Type Not registered"<<endl);
+		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
 	if(typeR.serialize == NULL || typeR.deserialize==NULL)
@@ -222,14 +217,28 @@ bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)
 {
 	if(p==NULL || pub==NULL)
 		return false;
-	return p->removeEndpoint((Endpoint*)(pub->mp_Writer));
+	if(p->removeEndpoint((Endpoint*)(pub->mp_Writer)))
+	{
+		delete(pub->mp_Writer);
+		delete(pub);
+		return true;
+	}
+	else
+		return false;
 }
 
 bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
 {
 	if(p==NULL || sub==NULL)
-			return false;
-	return p->removeEndpoint((Endpoint*)(sub->mp_Reader));
+		return false;
+	if(p->removeEndpoint((Endpoint*)(sub->mp_Reader)))
+	{
+		delete(sub->mp_Reader);
+		delete(sub);
+		return true;
+	}
+	else
+		return false;
 }
 
 

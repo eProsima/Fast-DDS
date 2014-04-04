@@ -265,7 +265,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
+		if(reader == ENTITYID_UNKNOWN || (*it)->m_guid.entityId == reader) //add
 		{
 			firstReader = *it;
 			break;
@@ -349,10 +349,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if(reader == ENTITYID_UNKNOWN || (*it)->guid.entityId == reader) //add
+		if(reader == ENTITYID_UNKNOWN || (*it)->m_guid.entityId == reader) //add
 		{
 			CacheChange_t* change_to_add;
-			if(firstReader->guid.entityId == (*it)->guid.entityId) //IS the same as the first one
+			if(firstReader->m_guid.entityId == (*it)->m_guid.entityId) //IS the same as the first one
 			{
 				change_to_add = ch;
 			}
@@ -431,7 +431,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
+		if((*it)->m_guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
 			if((*it)->m_stateType == STATEFUL)
 			{
@@ -499,7 +499,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
 			it!=mp_threadListen->m_assoc_writers.end();++it)
 	{
-		if((*it)->guid == writerGUID)
+		if((*it)->m_guid == writerGUID)
 		{
 			if((*it)->m_stateType == STATEFUL)
 			{
@@ -563,7 +563,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if((*it)->guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
+		if((*it)->m_guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
 		{
 			if((*it)->m_stateType == STATEFUL)
 			{

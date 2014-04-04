@@ -100,6 +100,7 @@ public:
     		,void (*deserialize)(SerializedPayload_t*data,void*),
     		void (*getKey)(void*,InstanceHandle_t*),int32_t size);
 
+    static bool getType(TypeReg_t* type,std::string data_type);
 	/**
 	 * @brief Get pointer to the unique instance of this class.
 	 * @return Pointer to the instance.

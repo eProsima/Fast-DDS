@@ -102,7 +102,7 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	//FIRST SUBMESSAGE
 	CDRMessage::initCDRMsg(cdrmsg_submessage);
 	RTPSMessageCreator::addSubmessageGap(cdrmsg_submessage,seqit->first,seqit->second,
-			readerId,W->guid.entityId);
+			readerId,W->m_guid.entityId);
 
 	gap_msg_size = cdrmsg_submessage->length;
 	if(gap_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
@@ -126,14 +126,14 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 			++seqit;
 			CDRMessage::initCDRMsg(cdrmsg_submessage);
 			RTPSMessageCreator::addSubmessageGap(cdrmsg_submessage,seqit->first,seqit->second,
-					readerId,W->guid.entityId);
+					readerId,W->m_guid.entityId);
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_fullmsg);
 		}
 		std::vector<Locator_t>::iterator lit;
 		for(lit = unicast->begin();lit!=unicast->end();++lit)
-			W->participant->m_send_thr.sendSync(cdrmsg_fullmsg,&(*lit));
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
 		for(lit = multicast->begin();lit!=multicast->end();++lit)
-			W->participant->m_send_thr.sendSync(cdrmsg_fullmsg,&(*lit));
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add
 }
@@ -194,13 +194,13 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		if(unicast!=NULL)
 		{
 			for(std::vector<Locator_t>::iterator lit = unicast->begin();lit!=unicast->end();++lit)
-				W->participant->m_send_thr.sendSync(cdrmsg_fullmsg,&(*lit));
+				W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
 		}
 
 		if(multicast!=NULL)
 		{
 			for(std::vector<Locator_t>::iterator lit = multicast->begin();lit!=multicast->end();++lit)
-				W->participant->m_send_thr.sendSync(cdrmsg_fullmsg,&(*lit));
+				W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
 		}
 
 	}while(change_n < changes->size()); //There is still a message to add
@@ -244,7 +244,7 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
 		}
-		W->participant->m_send_thr.sendSync(cdrmsg_fullmsg,loc);
+		W->mp_send_thr->sendSync(cdrmsg_fullmsg,loc);
 	}while(change_n < changes->size()); //There is still a message to add
 }
 
