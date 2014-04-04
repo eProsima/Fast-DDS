@@ -36,7 +36,7 @@ public:
 	virtual ~TimedEvent(){};
 	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
 	virtual void event(const boost::system::error_code& ec)=0;
-private:
+protected:
 	boost::asio::deadline_timer* timer;
 	boost::posix_time::milliseconds m_interval_msec;
 public:

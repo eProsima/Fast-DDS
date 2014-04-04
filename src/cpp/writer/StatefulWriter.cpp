@@ -175,7 +175,7 @@ bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
 void StatefulWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderProxy*>::iterator rit;
-	boost::lock_guard<ThreadSend> guard(participant->m_send_thr);
+	boost::lock_guard<ThreadSend> guard(*mp_send_thr);
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
 		boost::lock_guard<ReaderProxy> guard(*(*rit));
@@ -224,13 +224,13 @@ void StatefulWriter::unsent_changes_not_empty()
 				m_writer_cache.get_seq_num_max(&last,NULL);
 				m_heartbeatCount++;
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,participant->m_guid.guidPrefix,
-						ENTITYID_UNKNOWN,this->guid.entityId,first,last,m_heartbeatCount,true,false);
+				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
 				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
-					participant->m_send_thr.sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
+					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
 				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
-					participant->m_send_thr.sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
+					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
 			}
 		}
 	}

@@ -41,7 +41,7 @@ RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 void RTPSWriter::init_header()
 {
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
-	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,participant->m_guid.guidPrefix);
+	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,m_guid.guidPrefix);
 }
 
 
@@ -71,7 +71,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 
 
 	//change->sequenceNumber = lastChangeSequenceNumber;
-	ch->writerGUID = guid;
+	ch->writerGUID = m_guid;
 
 	*change_out = ch;
 	return true;

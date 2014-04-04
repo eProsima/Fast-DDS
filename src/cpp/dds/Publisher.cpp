@@ -25,7 +25,8 @@
 namespace eprosima {
 namespace dds {
 
-Publisher::Publisher(RTPSWriter* Win):mp_Writer(Win)
+Publisher::Publisher(RTPSWriter* Win):
+		mp_Writer(Win)
 {
 	// TODO Auto-generated constructor stub
 }
@@ -86,9 +87,6 @@ bool Publisher::add_new_change(ChangeKind_t kind,void*Data)
 	}
 
 	return true;
-
-
-
 }
 
 

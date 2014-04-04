@@ -14,16 +14,19 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/rtps_all.h"
+
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
+#include "eprosimartps/rtps_all.h"
 
 namespace eprosima {
 namespace rtps {
 
 class ThreadListen;
 class Participant;
+class ThreadSend;
+class ThreadEvent;
 
 /**
  * Class Endpoint, all entities of the RTPS network are a specification of this class.
@@ -39,11 +42,12 @@ public:
 	TopicKind_t topicKind;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
-	GUID_t guid;
+	GUID_t m_guid;
 	//!Vector of pointer to the listening threads associated with this endpoint.
-	std::vector<ThreadListen*> endpointThreadListenList;
+	std::vector<ThreadListen*> m_listenThList;
 	//!Pointer to the participant this endpoint belongs to.
-	Participant* participant;
+	ThreadSend* mp_send_thr;
+	ThreadEvent* mp_event_thr;
 };
 
 } /* namespace rtps */

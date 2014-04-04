@@ -24,15 +24,15 @@ namespace eprosima {
 namespace rtps {
 
 NackResponseDelay::~NackResponseDelay() {
-	// TODO Auto-generated destructor stub
+	timer->cancel();
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):
-		TimedEvent(&p_RP->mp_SFW->participant->m_event_thr.io_service,interval),
+		TimedEvent(&p_RP->mp_SFW->mp_event_thr->io_service,interval),
 		mp_RP(p_RP)
 {
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
-	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->participant->m_guid.guidPrefix);
+	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->m_guid.guidPrefix);
 }
 
 bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)
