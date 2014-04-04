@@ -58,8 +58,9 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 	
 typedef struct LatencyType{
 	int64_t seqnum;
-	unsigned char data[500];
-	LatencyType()
+	std::vector<unsigned char> nums;
+	LatencyType():
+		nums(std::vector<unsigned char>(500,4))
 	{
 		seqnum = 0;
 	}
@@ -68,6 +69,7 @@ typedef struct LatencyType{
 
 void LatencySer(SerializedPayload_t* payload,void*data)
 {
+
 	memcpy(payload->data,data,sizeof(LatencyType));
 }
 
