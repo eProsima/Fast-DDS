@@ -21,7 +21,7 @@
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
-
+#include <sys/time.h>
 using namespace boost::posix_time;
 
 
@@ -144,10 +144,15 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 
 bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
-	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
+	timeval now;
+	gettimeofday(&now,NULL);
 	Time_t time_now;
-	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
-	time_now.fraction = (uint32_t)((boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2.0,32)*pow(10.0,-boost::posix_time::time_duration::num_fractional_digits())));
+	time_now.seconds = (int32_t)now.tv_sec;
+	time_now.fraction = (uint32_t)now.tv_usec*pow(2.0,32)*pow(10.0,-6);
+//	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
+//	Time_t time_now;
+//	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
+//	time_now.fraction = (uint32_t)((boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2.0,32)*pow(10.0,-boost::posix_time::time_duration::num_fractional_digits())));
 //	cout << t << endl;
 //	cout << (t-t_epoch) << endl;
 //	cout << time_now.seconds << endl;
