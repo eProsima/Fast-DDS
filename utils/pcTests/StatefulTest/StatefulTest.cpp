@@ -58,7 +58,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 	
 typedef struct LatencyType{
 	int64_t seqnum;
-	unsigned char data[500];
+	uint8_t data[500];
 	LatencyType()
 	{
 		seqnum = 0;
@@ -149,7 +149,7 @@ int main(int argc, char** argv){
 		Wparam.topicName = std::string("This is a test topic");
 		Wparam.historySize = 10;
 		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-		Wparam.reliablility.nackResponseDelay.seconds = 2;
+		Wparam.reliablility.nackResponseDelay.seconds = 5;
 		Wparam.reliablility.kind = RELIABLE;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		if(pub == NULL)

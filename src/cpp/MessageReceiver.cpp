@@ -510,6 +510,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 				{
 					if((*rit)->m_param.remoteReaderGuid == readerGUID || (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
 					{
+
 						if((*rit)->m_lastAcknackCount < Ackcount)
 						{
 							(*rit)->m_lastAcknackCount = Ackcount;
