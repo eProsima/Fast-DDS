@@ -67,7 +67,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	}
 	//Find out flags
 	bool dataFlag,keyFlag;
-	if(change->kind == ALIVE)
+	if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
 	{
 		dataFlag = true;
 		keyFlag = false;
