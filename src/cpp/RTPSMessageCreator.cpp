@@ -19,9 +19,11 @@
 
 #include "eprosimartps/dds/ParameterList.h"
 
+#include "eprosimartps/utils/eClock.h"
+
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
-#include <sys/time.h>
+
 using namespace boost::posix_time;
 
 
@@ -33,8 +35,8 @@ namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
 ObjectPool<CDRMessage_t> g_pool_submsg(100);
-const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
-
+//const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
+eClock clock;
 
 
 RTPSMessageCreator::RTPSMessageCreator() {
@@ -144,19 +146,30 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 
 bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
-	time_t time_epoch_seconds;
-		tm time_epoch;
-		time_epoch.tm_year = 0;
-			time_epoch.tm_mon = 0;
-			time_epoch.tm_mday = 1;
-			time_epoch_seconds = mktime(&time_epoch);
-			cout << "seconds epoch: "<< time_epoch_seconds << endl;
-	timeval now;
-	gettimeofday(&now,NULL);
-	cout << "seconds now: "<< now.tv_sec << endl;
 	Time_t time_now;
-	time_now.seconds = (int32_t)now.tv_sec-time_epoch_seconds;
-	time_now.fraction = 0;//(uint32_t)now.tv_usec*pow(2.0,32)*pow(10.0,-6);
+	clock.setTimeNow(&time_now);
+//	std::chrono::seconds sec_since_epoch_1970;
+//
+//	time_t time_epoch_seconds,time1970_sec;
+//	tm time_epoch,time1970;
+//	time_epoch.tm_year = 0;
+//	time_epoch.tm_mon = 0;
+//	time_epoch.tm_mday = 1;
+//	time1970.tm_year = 70;
+//	time1970.tm_mon = 0;
+//	time1970.tm_mday = 1;
+//	time_epoch_seconds = mktime(&time_epoch);
+//	time1970_sec = mktime(&time1970);
+//	cout << "seconds epoch: "<< time_epoch_seconds << endl;
+//	cout << "seconds 1970: "<< time1970_sec << endl;
+//	timeval now;
+//	gettimeofday(&now,NULL);
+//	cout << "seconds now: "<< now.tv_sec << endl;
+//	Time_t time_now;
+//	time_now.seconds = (int32_t)now.tv_sec+2208988800+2*60*60;
+//	time_now.fraction = 0;//(uint32_t)now.tv_usec*pow(2.0,32)*pow(10.0,-6);
+
+
 //	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
 //	Time_t time_now;
 //	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
