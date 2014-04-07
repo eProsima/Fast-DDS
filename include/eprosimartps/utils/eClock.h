@@ -15,21 +15,25 @@
  *              grcanosa@gmail.com  	
  */
 
-#ifndef CLOCK_H_
-#define CLOCK_H_
+#ifndef ECLOCK_H_
+#define ECLOCK_H_
 
 //#include <ctime>
 #include <sys/time.h>
-
+#include <chrono>
+#include "eprosimartps/rtps_all.h"
 namespace eprosima {
 namespace rtps {
 
-class Clock {
+class eClock {
 public:
-	Clock();
-	virtual ~Clock();
-	time_t time_epoch_seconds;
-	tm time_epoch;
+	eClock();
+	virtual ~eClock();
+	int32_t m_seconds_from_1900_to_1970;
+	int32_t m_utc_seconds_diff;
+	timeval m_now;
+	bool setTimeNow(Time_t* now);
+
 };
 
 } /* namespace rtps */
