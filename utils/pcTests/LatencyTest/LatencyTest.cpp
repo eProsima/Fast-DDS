@@ -194,25 +194,44 @@ int main(int argc, char** argv){
 
 	for(int i=1;i<n_samples;i++)
 	{
-
 		if(type == 1)
 		{
+			timeval t1,t2;
+			int64_t seqnum;
 			g_latency.seqnum++;
-			t1 = boost::posix_time::microsec_clock::local_time();
+			seqnum = g_latency.seqnum;
+			//t1 = boost::posix_time::microsec_clock::local_time();
+			gettimeofday(&t1,NULL);
 			pub->write((void*)&g_latency);
 			sub->blockUntilNewMessage();
 			sub->readLastAdded((void*)&g_latency);
-			t2 = boost::posix_time::microsec_clock::local_time();
-			us = (t2-t1).total_microseconds()-overhead_value;
-			cout<< "T: " <<us<< " | ";
+			gettimeofday(&t2,NULL);
+			//t2 = boost::posix_time::microsec_clock::local_time();
+			if(seqnum == g_latency.seqnum)
+			{
+				cout << "ok ";
+			}
+			us=(t2.tv_sec-t1.tv_sec)*1000000+t2.tv_usec-t1.tv_usec;
+			//if((t2.tv_usec-t1.tv_usec)>0)
+			//us = (t2-t1).total_microseconds()-overhead_value;
+			//{	us = t2.tv_usec-t1.tv_usec;}
+			//else
+			//{us = pow(10.0,6)+t2.tv_usec-t1.tv_usec;}
+			cout<< "T: " <<us<< " | "<<endl;
 			total+=us;
 			if(us<min_us)
+			{
 				min_us = us;
+			}
 			samples++;
 			if(samples%10==0)
+			{
 				cout << endl;
+			}
 			pub->removeMinSeqChange();
 			sub->takeMinSeqCache((void*)&g_latency);
+			//boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			//sleep(1);
 		}
 		else if (type == 2)
 		{

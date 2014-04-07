@@ -23,7 +23,6 @@ namespace rtps {
 eClock::eClock():
 		m_seconds_from_1900_to_1970(2208988800),
 		m_utc_seconds_diff(2*60*60)
-
 {
 	gettimeofday(&m_now,NULL);
 }
