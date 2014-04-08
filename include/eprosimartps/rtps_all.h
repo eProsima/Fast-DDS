@@ -147,6 +147,7 @@ using std::bitset;
 #include "common/rtps_elem_seqnum.h"
 #include "common/rtps_elem_locator.h"
 #include "common/rtps_common.h"
+#include "eprosimartps/common/rtps_parameter_types.h"
 
 //#include "ParameterList.h"
 

@@ -6,37 +6,29 @@
  *
  *************************************************************************/
 
-/*
- * CDRMessage.cpp
+/**
+ * @file CDRMessage.cpp
  *
  *  Created on: Feb 24, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include <algorithm>
-#include "eprosimartps/rtps_all.h"
-//#include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/dds/ParameterTypes.h"
 
-using namespace eprosima::dds;
-using eprosima::dds::ParameterId_t;
 
 namespace eprosima {
 namespace rtps {
 
+#include <algorithm>
+//#include "eprosimartps/rtps_all.h"
+////#include "eprosimartps/CDRMessage.h"
+//#include "eprosimartps/dds/ParameterTypes.h"
+
+//using namespace eprosima::dds;
+//using eprosima::dds::ParameterId_t;
 
 
 
-//bool CDRMessage::initCDRMsg(CDRMessage_t* msg, uint size) {
-//	if(msg->buffer!=NULL)
-//		free(msg->buffer);
-//	msg->buffer = (octet*)malloc(size);
-//	msg->max_size = size;
-//	msg->pos = 0;
-//	msg->length = 0;
-//	return true;
-//}
 
 inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg)
 {

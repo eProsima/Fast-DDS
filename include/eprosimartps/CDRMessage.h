@@ -14,14 +14,15 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/dds/ParameterTypes.h"
-
-using eprosima::dds::ParameterId_t;
 
 #ifndef CDRMESSAGE_H_
 #define CDRMESSAGE_H_
+
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/dds/ParameterTypes.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {

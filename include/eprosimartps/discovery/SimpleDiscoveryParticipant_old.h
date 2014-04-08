@@ -22,19 +22,21 @@
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/timedevent/ResendDataPeriod.h"
-#include "eprosimartps/discovery/ParticipantDiscoveryData.h"
+
+#include "eprosimartps/discovery/DiscoveredParticipantData.h"
 
 namespace eprosima {
 namespace rtps {
 
-#define ERTPS_SPDP_RESEND_DATA_PERIOD_SECONDS 30;
 
 
-class SimpleDiscoveryParticipant {
+
+class SimpleDiscoveryParticipant_old {
 public:
-	SimpleDiscoveryParticipant(Participant*p,uint16_t domainId,uint16_t participantId,uint16_t resendDataPeriodSec);
+	SimpleDiscoveryParticipant(uint16_t domainId,uint16_t resendDataPeriodSec);
 	virtual ~SimpleDiscoveryParticipant();
 
+	void addParticipant(Participant* p,uint16_t participantId);
 
 private:
 	StatelessWriter m_SPDPbuiltinParticipantWriter;
@@ -42,8 +44,9 @@ private:
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
 	Locator_t m_defaultMulticastLocator;
+	uint16_t m_domainId;
 	ResendDataPeriod m_resendData;
-	SPDPdiscoveredParticipantData m_SPDPdiscoveredParticipantData;
+
 };
 
 } /* namespace rtps */

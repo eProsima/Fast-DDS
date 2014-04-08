@@ -18,13 +18,31 @@
 #ifndef DISCOVEREDPARTICIPANTDATA_H_
 #define DISCOVEREDPARTICIPANTDATA_H_
 
+#include "eprosimartps/ParticipantProxy.h"
+#include "eprosimartps/dds/ParameterList.h"
+
 namespace eprosima {
 namespace rtps {
 
+#define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 400
+
+
+typedef InstanceHandle_t BuiltinTopicKey_t;
+
+typedef struct ParticipantBuiltinTopicData{
+	BuiltinTopicKey_t m_key;
+	ParameterUserData_t m_user_data;
+}ParticipantBuiltinTopicData;
+
+
 class DiscoveredParticipantData {
 public:
-	DiscoveredParticipantData();
-	virtual ~DiscoveredParticipantData();
+	DiscoveredParticipantData(){};
+	virtual ~DiscoveredParticipantData(){};
+	bool updateMsg(CacheChange_t* change);
+	ParticipantProxy m_proxy;
+	ParticipantBuiltinTopicData m_topicData;
+	CDRMessage_t m_cdrmsg;
 };
 
 } /* namespace rtps */

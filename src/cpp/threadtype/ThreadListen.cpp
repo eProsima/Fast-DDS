@@ -40,6 +40,7 @@ ThreadListen::~ThreadListen()
 {
 	pWarning( "Removing thread " << mp_thread->get_id() << std::endl);
 	mp_thread->interrupt();
+	delete(mp_thread);
 }
 
 void ThreadListen::listen() {

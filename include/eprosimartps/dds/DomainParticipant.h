@@ -15,6 +15,11 @@
  *              grcanosa@gmail.com  	
  */
 
+
+
+#ifndef DOMAINPARTICIPANT_H_
+#define DOMAINPARTICIPANT_H_
+
 #include <iostream>
 
 #include "eprosimartps/rtps_all.h"
@@ -23,9 +28,7 @@
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/Participant.h"
 
-#ifndef DOMAINPARTICIPANT_H_
-#define DOMAINPARTICIPANT_H_
-
+#include "eprosimartps/discovery/SimpleDiscoveryParticipant.h"
 
 namespace eprosima {
 namespace dds {
@@ -122,10 +125,20 @@ public:
     {
     	pDebugInfo("DomainParticipant destructor"<<endl;);
     	for(std::vector<Participant*>::iterator it=m_participants.begin();
-    		it!=m_participants.end();++it)
-		{
-			DomainParticipant::removeParticipant(*it);
-		}
+    			it!=m_participants.end();++it)
+    	{
+    		delete(*it);
+    	}
+    	for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
+    			it!=m_publisherList.end();++it)
+    	{
+    		delete(*it);
+    	}
+    	for(std::vector<Publisher*>::iterator it=m_subscriberList.begin();
+    			it!=m_subscriberList.end();++it)
+    	{
+    		delete(*it);
+    	}
     	instanceFlag = false;
     }
 
@@ -176,6 +189,9 @@ private:
     uint16_t m_offsetd1;
     uint16_t m_offsetd2;
     uint16_t m_offsetd3;
+
+    std::vector<Publisher*> m_publisherList;
+    std::vector<Subscriber*> m_subscriberList;
 
 
 };

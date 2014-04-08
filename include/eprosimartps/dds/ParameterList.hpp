@@ -63,7 +63,7 @@ inline bool ParameterList::addParameterString(ParameterList_t* plist,ParameterId
 	{
 		ParameterString_t* p = new ParameterString_t();
 		p->Pid = pid;
-		p->p_str = in_str;
+		p->m_string = in_str;
 		plist->QosParams.push_back((Parameter_t*)p);
 		if(pid==PID_TOPIC_NAME)
 		{
@@ -135,44 +135,47 @@ inline bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t
 		case PID_METATRAFFIC_UNICAST_LOCATOR:
 		case PID_METATRAFFIC_MULTICAST_LOCATOR:
 		{
-			ParameterLocator_t* p_loc = (ParameterLocator_t*)(*it);
-			CDRMessage::addUInt16(msg,p_loc->Pid);
-			CDRMessage::addUInt16(msg,p_loc->length);
-			CDRMessage::addLocator(msg,&p_loc->locator);
+			(*it)->addToCDRMessage(msg);
+//			ParameterLocator_t* p_loc = (ParameterLocator_t*)(*it);
+//			CDRMessage::addUInt16(msg,p_loc->Pid);
+//			CDRMessage::addUInt16(msg,p_loc->length);
+//			CDRMessage::addLocator(msg,&p_loc->locator);
 			break;
 		}
 		case PID_DEFAULT_UNICAST_PORT:
 		case PID_METATRAFFIC_UNICAST_PORT:
 		case PID_METATRAFFIC_MULTICAST_PORT:
 		{
-			ParameterPort_t* p_port = (ParameterPort_t*)(*it);
-			CDRMessage::addUInt16(msg,p_port->Pid);
-			CDRMessage::addUInt16(msg,p_port->length);
-			CDRMessage::addUInt32(msg,p_port->port);
+			(*it)->addToCDRMessage(msg);
+//			ParameterPort_t* p_port = (ParameterPort_t*)(*it);
+//			CDRMessage::addUInt16(msg,p_port->Pid);
+//			CDRMessage::addUInt16(msg,p_port->length);
+//			CDRMessage::addUInt32(msg,p_port->port);
 			break;
 		}
 		case PID_TOPIC_NAME:
 		case PID_TYPE_NAME:
 		{
-			ParameterString_t* p_str = (ParameterString_t*)(*it);
-			CDRMessage::addUInt16(msg,p_str->Pid);
-			//Str size
-			uint32_t str_siz = p_str->p_str.size();
-			int rest = str_siz%4;
-			if(rest!=0)
-				rest = 4-rest; //how many you have to add
-			p_str->length = str_siz+4+rest;
-			CDRMessage::addUInt16(msg,p_str->length);
-			CDRMessage::addUInt32(msg,str_siz);
-			CDRMessage::addData(msg,(unsigned char*)p_str->p_str.c_str(),str_siz);
-			if(rest!=0)
-			{
-				octet oc = '\0';
-				for(int i=0;i<rest;i++)
-				{
-					CDRMessage::addOctet(msg,oc);
-				}
-			}
+			(*it)->addToCDRMessage(msg);
+//			ParameterString_t* p_str = (ParameterString_t*)(*it);
+//			CDRMessage::addUInt16(msg,p_str->Pid);
+//			//Str size
+//			uint32_t str_siz = p_str->p_str.size();
+//			int rest = str_siz%4;
+//			if(rest!=0)
+//				rest = 4-rest; //how many you have to add
+//			p_str->length = str_siz+4+rest;
+//			CDRMessage::addUInt16(msg,p_str->length);
+//			CDRMessage::addUInt32(msg,str_siz);
+//			CDRMessage::addData(msg,(unsigned char*)p_str->p_str.c_str(),str_siz);
+//			if(rest!=0)
+//			{
+//				octet oc = '\0';
+//				for(int i=0;i<rest;i++)
+//				{
+//					CDRMessage::addOctet(msg,oc);
+//				}
+//			}
 			break;
 		}
 		case PID_SENTINEL:
@@ -240,11 +243,11 @@ inline bool ParameterList::readParameterList(CDRMessage_t* msg,ParameterList_t* 
 			ParameterString_t* param_str = new ParameterString_t(&P);
 			uint32_t str_size = 1;
 			CDRMessage::readUInt32(msg,&str_size);
-			param_str->p_str.resize(str_size);
+			param_str->m_string.resize(str_size);
 			octet* oc=new octet[str_size];
 			valid &= CDRMessage::readData(msg,oc,str_size);
 			for(uint32_t i =0;i<str_size;i++)
-				param_str->p_str.at(i) = oc[i];
+				param_str->m_string.at(i) = oc[i];
 			plist->QosParams.push_back((Parameter_t*)param_str);
 			params_byte_size+=P.length;
 			msg->pos += (P.length-str_size-4);

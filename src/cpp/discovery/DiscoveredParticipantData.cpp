@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "DiscoveredParticipantData.h"
+#include "eprosimartps/discovery/DiscoveredParticipantData.h"
 
 namespace eprosima {
 namespace rtps {
@@ -29,5 +29,18 @@ DiscoveredParticipantData::~DiscoveredParticipantData() {
 	// TODO Auto-generated destructor stub
 }
 
+
+bool DiscoveredParticipantData::updateMsg(CacheChange_t* change)
+{
+	CDRMessage::initCDRMsg(&m_cdrmsg);
+	RTPSMessageCreator::addHeader(&m_cdrmsg,m_proxy.m_guidPrefix);
+	RTPSMessageCreator::addSubmessageInfoTS_Now(&m_cdrmsg,false);
+	RTPSMessageCreator::addSubmessageData(&m_cdrmsg,change,
+											WITH_KEY,c_EntityId_Unknown,NULL);
+}
+
+
+
 } /* namespace rtps */
 } /* namespace eprosima */
+

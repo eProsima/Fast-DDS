@@ -28,7 +28,11 @@ namespace rtps{
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
 typedef struct GuidPrefix_t{
 	octet value[12];
-	GuidPrefix_t(){	}
+	GuidPrefix_t()
+	{
+		for(uint8_t i =0;i<12;i++)
+			value[i] = 0;
+	}
 	GuidPrefix_t(octet guid[12]){
 		for(uint8_t i =0;i<12;i++)
 			value[i] = guid[i];
@@ -50,6 +54,12 @@ typedef struct GuidPrefix_t{
 		return true;
 	}
 }GuidPrefix_t;
+
+
+const GuidPrefix_t c_GuidPrefix_Unknown;
+
+
+
 
 #define ENTITYID_UNKNOWN 0x00000000
 #define ENTITYID_PARTICIPANT  0x000001c1

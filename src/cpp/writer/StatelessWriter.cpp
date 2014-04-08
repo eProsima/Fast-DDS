@@ -30,7 +30,6 @@ StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_si
 	m_pushMode = param->pushMode;
 	//writer_cache.changes.reserve(param->historySize);
 
-
 	m_stateType = STATELESS;
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;

@@ -91,7 +91,10 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 
 	}
 	if(Pub!=NULL)
-		{pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);}
+	{
+		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
+		m_publisherList.push_back(Pub);
+	}
 	else
 		{pError("Publisher not created"<<endl);}
 	return Pub;
@@ -164,7 +167,10 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		Sub->type = typeR;
 	}
 	if(Sub!=NULL)
-		{pInfo(B_YELLOW<<"SUBSCRIBER CORRECTLY CREATED"<<DEF<<endl);}
+	{
+		pInfo(B_YELLOW<<"SUBSCRIBER CORRECTLY CREATED"<<DEF<<endl);
+		m_subscriberList.push_back(Sub);
+	}
 	else
 		{pError("Subscriber not created"<<endl);}
 	return Sub;
@@ -206,6 +212,14 @@ bool DomainParticipant::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
+		for(std::vector<Participant*>::iterator it=m_participants.begin();
+				it!=m_participants.end();++it)
+		{
+			if((*it)->m_guid == p->m_guid)
+			{
+				m_participants.erase(it);
+			}
+		}
 		delete(p);
 		return true;
 	}
@@ -219,6 +233,14 @@ bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)
 		return false;
 	if(p->removeEndpoint((Endpoint*)(pub->mp_Writer)))
 	{
+		for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
+				it!=m_publisherList.end();++it)
+		{
+			if((*it)->mp_Writer->m_guid == pub->mp_Writer->m_guid)
+			{
+				m_publisherList.erase(it);
+			}
+		}
 		delete(pub->mp_Writer);
 		delete(pub);
 		return true;
@@ -233,6 +255,14 @@ bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
 		return false;
 	if(p->removeEndpoint((Endpoint*)(sub->mp_Reader)))
 	{
+		for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
+				it!=m_subscriberList.end();++it)
+		{
+			if((*it)->mp_Reader->m_guid == sub->mp_Reader->m_guid)
+			{
+				m_subscriberList.erase(it);
+			}
+		}
 		delete(sub->mp_Reader);
 		delete(sub);
 		return true;

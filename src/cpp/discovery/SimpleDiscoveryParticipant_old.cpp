@@ -20,29 +20,38 @@
 namespace eprosima {
 namespace rtps {
 
-SimpleDiscoveryParticipant::SimpleDiscoveryParticipant(Participant*p,uint16_t domainId,uint16_t participantId,uint16_t resendDataPeriodSec):
+SimpleDiscoveryParticipant::SimpleDiscoveryParticipant(uint16_t domainId,uint16_t resendDataPeriodSec):
+	m_domainId(domainId),
 	m_resendData(&m_SPDPbuiltinParticipantWriter,boost::posix_time::milliseconds(resendDataPeriodSec*1000))
 {
 	DomainParticipant* dp = DomainParticipant::getInstance();
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getPortBase()
 									+ dp->getDomainIdGain() * domainId
 									+ dp->getOffsetd0();
-	m_SPDP_WELL_KNOWN_UNICAST_PORT = dp->getPortBase()
-									+ dp->getDomainIdGain() * domainId
-									+ dp->getOffsetd1()
-									+ dp->getParticipantIdGain() * participantId;
+	m_SPDP_WELL_KNOWN_UNICAST_PORT = 0;
 	m_defaultMulticastLocator.kind = LOCATOR_KIND_UDPv4;
 	m_defaultMulticastLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	m_defaultMulticastLocator.set_IP4_address(239,255,0,1);
 	m_SPDPbuiltinParticipantWriter.multicastLocatorList.push_back(m_defaultMulticastLocator);
 	m_SPDPbuiltinParticipantReader.multicastLocatorList.push_back(m_defaultMulticastLocator);
 
-
 }
 
 SimpleDiscoveryParticipant::~SimpleDiscoveryParticipant()
 {
 	// TODO Auto-generated destructor stub
+}
+
+void SimpleDiscoveryParticipant::addParticipant(Participant* p,uint16_t participantId)
+{
+	DomainParticipant* dp = DomainParticipant::getInstance();
+	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getPortBase()
+									+ dp->getDomainIdGain() * m_domainId
+									+ dp->getOffsetd1()
+									+ dp->getParticipantIdGain() *participantId;
+
+
+
 }
 
 } /* namespace rtps */
