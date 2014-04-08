@@ -18,113 +18,109 @@
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
 
+#include "eprosimartps/CDRMessage.h"
+
+using namespace eprosima::rtps;
 
 namespace eprosima {
 namespace dds {
 
-
-
-enum ParameterId_t :uint16_t
-{
- PID_PAD =0x0000,
- PID_SENTINEL =0x0001,
- PID_USER_DATA =0x002c,
- PID_TOPIC_NAME =0x0005,
- PID_TYPE_NAME =0x0007,
-// PID_GROUP_DATA =0x002d,
-// PID_TOPIC_DATA =0x002e,
-// PID_DURABILITY =0x001d,
-// PID_DURABILITY_SERVICE =0x001e,
-// PID_DEADLINE =0x0023,
-// PID_LATENCY_BUDGET =0x0027,
-// PID_LIVELINESS =0x001b,
-// PID_RELIABILITY =0x001A,
-// PID_LIFESPAN =0x002b,
-// PID_DESTINATION_ORDER =0x0025,
-// PID_HISTORY =0x0040,
-// PID_RESOURCE_LIMITS =0x0041,
-// PID_OWNERSHIP =0x001f,
-// PID_OWNERSHIP_STRENGTH =0x0006,
-// PID_PRESENTATION =0x0021,
-// PID_PARTITION =0x0029,
-// PID_TIME_BASED_FILTER =0x0004,
-// PID_TRANSPORT_PRIORITY =0x0049,
-// PID_PROTOCOL_VERSION =0x0015,
-// PID_VENDORID =0x0016,
- PID_UNICAST_LOCATOR =0x002f,
- PID_MULTICAST_LOCATOR =0x0030,
- //PID_MULTICAST_IPADDRESS =0x0011,
- PID_DEFAULT_UNICAST_LOCATOR =0x0031,
- PID_DEFAULT_MULTICAST_LOCATOR =0x0048,
- PID_METATRAFFIC_UNICAST_LOCATOR =0x0032,
- PID_METATRAFFIC_MULTICAST_LOCATOR =0x0033,
- //PID_DEFAULT_UNICAST_IPADDRESS =0x000c,
- PID_DEFAULT_UNICAST_PORT =0x000e,
- //PID_METATRAFFIC_UNICAST_IPADDRESS =0x0045,
- PID_METATRAFFIC_UNICAST_PORT =0x000d,
-// PID_METATRAFFIC_MULTICAST_IPADDRESS =0x000b,
- PID_METATRAFFIC_MULTICAST_PORT =0x0046,
-// PID_EXPECTS_INLINE_QOS =0x0043,
-// PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT =0x0034,
-// PID_PARTICIPANT_BUILTIN_ENDPOINTS =0x0044,
-// PID_PARTICIPANT_LEASE_DURATION =0x0002,
-// PID_CONTENT_FILTER_PROPERTY =0x0035,
-// PID_PARTICIPANT_GUID =0x0050,
-// PID_PARTICIPANT_ENTITYID =0x0051,
-// PID_GROUP_GUID =0x0052,
-// PID_GROUP_ENTITYID =0x0053,
-// PID_BUILTIN_ENDPOINT_SET =0x0058,
-// PID_PROPERTY_LIST =0x0059,
-// PID_TYPE_MAX_SIZE_SERIALIZED =0x0060,
-// PID_ENTITY_NAME =0x0062,
- PID_KEY_HASH =0x0070,
- PID_STATUS_INFO =0x0071
-};
-
-
-
-
 //!Base Parameter class with parameter PID and parameter length in bytes.
-class Parameter_t{
+class Parameter_t {
 public:
 	ParameterId_t Pid;
 	uint16_t length;
-	Parameter_t(){};
-	Parameter_t(Parameter_t* P):Pid(P->Pid),length(P->length){};
+	Parameter_t();
+	virtual ~Parameter_t();
+	Parameter_t(Parameter_t* P);
+	virtual bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class ParameterLocator_t:public Parameter_t{
+class ParameterLocator_t: public Parameter_t {
 public:
 	Locator_t locator;
-	ParameterLocator_t(){};
-	ParameterLocator_t(Parameter_t* P):Parameter_t(P){};
+	ParameterLocator_t();
+	ParameterLocator_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class ParameterString_t:public Parameter_t{
+class ParameterString_t: public Parameter_t {
 public:
-	std::string p_str;
-	ParameterString_t(){};
-	ParameterString_t(Parameter_t* P):Parameter_t(P){};
+	std::string m_string;
+	ParameterString_t();
+	ParameterString_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class ParameterPort_t:public Parameter_t{
+class ParameterPort_t: public Parameter_t {
 public:
 	uint32_t port;
-	ParameterPort_t(){};
-	ParameterPort_t(Parameter_t* P):Parameter_t(P),port(0){};
+	ParameterPort_t();
+	ParameterPort_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class ParameterUserData_t:public Parameter_t{
+class ParameterGuid_t: public Parameter_t {
+	GUID_t guid;
+	ParameterGuid_t();
+	ParameterGuid_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+class ParameterProtocolVersion_t: public Parameter_t {
+	ProtocolVersion_t protocolVersion;
+	ParameterProtocolVersion_t();
+	ParameterProtocolVersion_t(Parameter_t*P);
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+class ParameterVendorId_t:public Parameter_t{
+	VendorId_t vendorId;
+	ParameterVendorId_t();
+	ParameterVendorId_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+class ParameterIP4Address_t :public Parameter_t{
+	octet address[4];
+	ParameterIP4Address_t();
+	ParameterIP4Address_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
+	void setIP4Address(octet o1,octet o2,octet o3,octet o4);
+};
+
+class ParameterBool_t:public Parameter_t{
+	bool value;
+	ParameterBool_t();
+	ParameterBool_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+class ParameterCount_t:public Parameter_t{
+	Count_t count;
+	ParameterCount_t();
+	ParameterCount_t(Parameter_t*P);
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+class ParameterEntityId_t:public Parameter_t{
+	EntityId_t entityId;
+	ParameterEntityId_t();
+	ParameterEntityId_t(Parameter_t*);
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+class ParameterUserData_t: public Parameter_t {
 	std::vector<octet> value;
-	ParameterUserData_t(){};
-	ParameterUserData_t(Parameter_t* P):Parameter_t(P){};
+	ParameterUserData_t();
+	ParameterUserData_t(Parameter_t* P);
+	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
 
-
-}//end of namespace dds
-}//end of namespace rtps
-
+} //end of namespace dds
+} //end of namespace eprosima
 
 
 #endif /* PARAMETERTYPES_H_ */
+

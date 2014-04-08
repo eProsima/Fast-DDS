@@ -38,23 +38,25 @@ namespace rtps {
 
 
 
-
 class ParticipantProxy {
 public:
-	ParticipantProxy():
+	ParticipantProxy(GuidPrefix_t guidPrefix):
+		m_guidPrefix(guidPrefix),
 		m_expectsInlineQos(false),
 		m_availableBuiltinEndpoints(0),
 		m_manualLivelinessCount(0)
-		{
-			VENDORID_EPROSIMA(m_VendorId);
-			PROTOCOLVERSION(m_protocolVersion);
-			m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-			m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-			m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-			m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-			m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-			m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-		};
+	{
+		VENDORID_EPROSIMA(m_VendorId);
+		PROTOCOLVERSION(m_protocolVersion);
+		//TODOG FIX AVAILABLE BUILTIN ENDPOINTS
+//		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+//		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+//		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+//		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+//		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+//		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+
+	};
 	virtual ~ParticipantProxy()
 	{
 

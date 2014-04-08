@@ -36,7 +36,8 @@ Participant::Participant(const ParticipantParams_t& PParam):
 		m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 		m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 		m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-		IdCounter(0)
+		IdCounter(0),
+		m_SPDP(this)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -72,8 +73,10 @@ Participant::Participant(const ParticipantParams_t& PParam):
 		for(int i =0;i<12;i++)
 			ss << (int)m_guid.guidPrefix.value[i] << ".";
 		pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
-}
 
+
+
+}
 
 
 Participant::~Participant()
