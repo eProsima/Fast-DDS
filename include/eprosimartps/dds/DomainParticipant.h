@@ -45,6 +45,13 @@ private:
     DomainParticipant()
     {
         id = 0;//private constructor
+        m_portBase = 7400;
+        m_participantIdGain = 2;
+        m_domainIdGain = 250;
+        m_offsetd0 = 0;
+        m_offsetd1 = 10;
+        m_offsetd2 = 1;
+        m_offsetd3 = 11;
     }
     std::vector<TypeReg_t> typesRegistered;
     std::vector<Participant*> m_participants;
@@ -122,6 +129,53 @@ public:
     	instanceFlag = false;
     }
 
+    void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
+    {
+    	m_portBase = PB;
+    	m_domainIdGain = DG;
+    	m_participantIdGain = PG;
+    	m_offsetd0 = d0;
+    	m_offsetd1 = d1;
+    	m_offsetd2 = d2;
+    	m_offsetd3 = d3;
+    }
+
+	uint16_t getDomainIdGain() const {
+		return m_domainIdGain;
+	}
+
+	uint16_t getOffsetd0() const {
+		return m_offsetd0;
+	}
+
+	uint16_t getOffsetd1() const {
+		return m_offsetd1;
+	}
+
+	uint16_t getOffsetd2() const {
+		return m_offsetd2;
+	}
+
+	uint16_t getOffsetd3() const {
+		return m_offsetd3;
+	}
+
+	uint16_t getParticipantIdGain() const {
+		return m_participantIdGain;
+	}
+
+	uint16_t getPortBase() const {
+		return m_portBase;
+	}
+
+private:
+    uint16_t m_portBase;
+    uint16_t m_domainIdGain;
+    uint16_t m_participantIdGain;
+    uint16_t m_offsetd0;
+    uint16_t m_offsetd1;
+    uint16_t m_offsetd2;
+    uint16_t m_offsetd3;
 
 
 };

@@ -60,8 +60,8 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
 		CDRMessage::addOctet(msg,'P');
 		CDRMessage::addOctet(msg,'S');
 
-		CDRMessage::addOctet(msg,version.major);
-		CDRMessage::addOctet(msg,version.minor);
+		CDRMessage::addOctet(msg,version.m_major);
+		CDRMessage::addOctet(msg,version.m_minor);
 
 		CDRMessage::addOctet(msg,vendorId[0]);
 		CDRMessage::addOctet(msg,vendorId[1]);

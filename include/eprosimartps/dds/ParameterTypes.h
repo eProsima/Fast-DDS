@@ -28,7 +28,7 @@ enum ParameterId_t :uint16_t
 {
  PID_PAD =0x0000,
  PID_SENTINEL =0x0001,
- //PID_USER_DATA =0x002c,
+ PID_USER_DATA =0x002c,
  PID_TOPIC_NAME =0x0005,
  PID_TYPE_NAME =0x0007,
 // PID_GROUP_DATA =0x002d,
@@ -111,7 +111,13 @@ class ParameterPort_t:public Parameter_t{
 public:
 	uint32_t port;
 	ParameterPort_t(){};
-	ParameterPort_t(Parameter_t* P):Parameter_t(P){};
+	ParameterPort_t(Parameter_t* P):Parameter_t(P),port(0){};
+};
+
+class ParameterUserData_t:public Parameter_t{
+	std::vector<octet> value;
+	ParameterUserData_t(){};
+	ParameterUserData_t(Parameter_t* P):Parameter_t(P){};
 };
 
 

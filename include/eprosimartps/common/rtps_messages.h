@@ -51,7 +51,7 @@ typedef struct Header_t{
 	~Header_t(){
 	}
 	void print(){
-		pLongInfo ( "RTPS HEADER of Version: " << (int)version.major << "." << (int)version.minor);
+		pLongInfo ( "RTPS HEADER of Version: " << (int)version.m_major << "." << (int)version.m_minor);
 		pLongInfo ( "  || VendorId: " << (int)vendorId[0] << "." <<(int)vendorId[1] << endl);
 		pLongInfo ( "GuidPrefix: ");
 		for(int i =0;i<12;i++)

@@ -187,10 +187,10 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
 	}
 	msg->pos+=4;
 	//CHECK AND SET protocol version
-	if(msg->buffer[msg->pos] <= destVersion.major)
+	if(msg->buffer[msg->pos] <= destVersion.m_major)
 	{
-		sourceVersion.major = msg->buffer[msg->pos];msg->pos++;
-		sourceVersion.minor = msg->buffer[msg->pos];msg->pos++;
+		sourceVersion.m_major = msg->buffer[msg->pos];msg->pos++;
+		sourceVersion.m_minor = msg->buffer[msg->pos];msg->pos++;
 	}
 	else
 	{

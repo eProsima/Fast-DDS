@@ -91,7 +91,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("HB response aborted");
+		pInfo("HB response aborted"<<endl);
 	}
 	else
 	{
