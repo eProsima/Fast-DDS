@@ -136,6 +136,13 @@ int main(int argc, char** argv){
 	ParticipantParams_t PParam;
 	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
+
+//	std::vector<Locator_t> loc;
+//	DomainParticipant::getIPAddress(&loc);
+//	for(std::vector<Locator_t>::iterator it=loc.begin();it!=loc.end();++it)
+//	{
+//		cout << (int)it->address[12] << endl;
+//	}
 	//Registrar tipo de dato.
 	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,&LatencyGetKey,sizeof(LatencyType));
 	//************* PUBLISHER  **********************//

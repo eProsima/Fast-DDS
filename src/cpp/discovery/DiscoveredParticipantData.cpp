@@ -30,14 +30,7 @@ DiscoveredParticipantData::~DiscoveredParticipantData() {
 }
 
 
-bool DiscoveredParticipantData::updateMsg(CacheChange_t* change)
-{
-	CDRMessage::initCDRMsg(&m_cdrmsg);
-	RTPSMessageCreator::addHeader(&m_cdrmsg,m_proxy.m_guidPrefix);
-	RTPSMessageCreator::addSubmessageInfoTS_Now(&m_cdrmsg,false);
-	RTPSMessageCreator::addSubmessageData(&m_cdrmsg,change,
-											WITH_KEY,c_EntityId_Unknown,NULL);
-}
+
 
 
 

@@ -30,7 +30,7 @@ IPFinder::~IPFinder() {
 
 #if defined(_WIN32)
 
-bool IPFinder::getIP_win(std::vector<std::string>* vec_name)
+bool IPFinder::getIP(std::vector<std::string>* vec_name)
 {
 	DWORD rv, size;
 	PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
@@ -71,7 +71,7 @@ bool IPFinder::getIP_win(std::vector<std::string>* vec_name)
 
 #else
 
-bool IPFinder::getIP_unix(std::vector<std::string>* vec_name )
+bool IPFinder::getIP(std::vector<std::string>* vec_name )
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, s;

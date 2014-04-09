@@ -71,7 +71,9 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/timedevent/NackResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/HeartbeatResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/NackSupressionDuration.cpp \
-		  
+		  \
+		#  $(BASEDIR)/src/cpp/discovery/SimpleDiscoveryParticipantProtocol.cpp 
+#		  
 #		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
 #		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
 #		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
