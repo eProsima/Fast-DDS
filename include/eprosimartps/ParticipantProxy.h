@@ -65,7 +65,7 @@ public:
 	GuidPrefix_t m_guidPrefix;
 	VendorId_t m_VendorId;
 	bool m_expectsInlineQos;
-	uint32_t m_availableBuiltinEndpoints;
+	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
 	std::vector<Locator_t> m_metatrafficUnicastLocatorList;
 	std::vector<Locator_t> m_metatrafficMulticastLocatorList;
 	std::vector<Locator_t> m_defaultUnicastLocatorList;

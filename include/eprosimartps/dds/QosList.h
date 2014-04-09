@@ -42,7 +42,8 @@ static bool addQos(QosList_t* qos,ParameterId_t pid ,VendorId_t& vendor);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,octet o1,octet o2,octet o3,octet o4);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,Count_t& count);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,EntityId_t& entity);
-
+static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
+static bool addQos(QosList_t* qos,ParameterId_t pid ,BuiltinEndpointSet_t& set);
 
 };
 

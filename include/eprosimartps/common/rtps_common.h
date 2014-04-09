@@ -163,7 +163,7 @@ typedef struct InstanceHandle_t{
 	}
 }InstanceHandle_t;
 
-
+typedef uint32_t BuiltinEndpointSet_t;
 
 
 //!@brief Enum TopicKind_t.

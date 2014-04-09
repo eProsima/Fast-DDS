@@ -54,42 +54,72 @@ bool SimpleDiscoveryParticipantProtocol::initSPDP(uint16_t domainId,
 										+ dp->getOffsetd1()
 										+ dp->getParticipantIdGain() *participantId;
 
-	Locator_t locator;
-	locator.kind = LOCATOR_KIND_UDPv4;
-	locator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
-	locator.set_IP4_address(239,255,0,1);
-	m_DPD.m_proxy.m_metatrafficMulticastLocatorList.push_back(locator);
+
+	m_DPD.m_proxy.m_guidPrefix = mp_Participant->m_guid.guidPrefix;
+
+	//FIXME: register type correctly
+	//dp->registerType("DiscoveredParticipantData",&this->ser,&this->deser,&this->getKey);
+
+
+	Locator_t multiLocator;
+	multiLocator.kind = LOCATOR_KIND_UDPv4;
+	multiLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
+	multiLocator.set_IP4_address(239,255,0,1);
+	m_DPD.m_proxy.m_metatrafficMulticastLocatorList.push_back(multiLocator);
 
 	std::vector<Locator_t> locators;
 	DomainParticipant::getIPAddress(&locators);
 	for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
 	{
-		locator.port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
+		it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
+		m_DPD.m_proxy.m_metatrafficUnicastLocatorList.push_back(*it);
+		m_DPD.m_proxy.m_defaultUnicastLocatorList.push_back(*it);
 	}
 
+	m_DPD.leaseDuration.seconds = 100;
+
+
+
+	//SPDP BUILTIN PARTICIPANT WRITER
 	WriterParams_t Wparam;
 	Wparam.pushMode = true;
 	Wparam.historySize = 1;
-	Wparam.multicastLocatorList.push_back(m_defaultMulticastLocator);
-	Wparam.unicastLocatorList.push_back(m_defaultUnicastLocator);
+	//Locators where it is going to listen
+	Wparam.multicastLocatorList = m_DPD.m_proxy.m_metatrafficMulticastLocatorList;
+	Wparam.unicastLocatorList = m_DPD.m_proxy.m_metatrafficUnicastLocatorList;
 	Wparam.topicName = "DCPSParticipant";
 	Wparam.topicDataType = "DiscoveredParticipantData";
 	Wparam.topicKind = WITH_KEY;
 	mp_Participant->createStatelessWriter(&m_SPDPbPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	//m_SPDPbPWriter = new StatelessWriter(Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
+	m_SPDPbPWriter->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER;
+	ReaderLocator multiReaderLoc;
+	multiReaderLoc.expectsInlineQos = false;
+	multiReaderLoc.locator = multiLocator;
+	m_SPDPbPWriter->reader_locator_add(multiReaderLoc);
+
+
+
+
+
+	//SPDP BUILTIN PARTICIPANT READER
 	ReaderParams_t Rparam;
-	Rparam.multicastLocatorList.push_back(m_defaultMulticastLocator);
+	Rparam.historySize = 100;
+	//Locators where it is going to listen
+	Rparam.multicastLocatorList = m_DPD.m_proxy.m_metatrafficMulticastLocatorList;
+	Rparam.unicastLocatorList = m_DPD.m_proxy.m_metatrafficUnicastLocatorList;
 	Rparam.topicKind = WITH_KEY;
 	Rparam.topicName = "DCPSParticipant";
 	Rparam.topicDataType = "DiscoveredParticipantData";
 //	m_SPDPbPReader = new StatelessReader(Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	mp_Participant->createStatelessReader(&m_SPDPbPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
-	m_DPD.m_proxy.m_guidPrefix = mp_Participant->m_guid.guidPrefix;
+	m_SPDPbPReader->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
 
 
 
 	m_resendData = new ResendDataPeriod((&m_SPDPbPWriter,
 					boost::posix_time::milliseconds(resendDataPeriod_sec*1000)));
+
 	const boost::system::error_code ec_sucess(boost::system::errc::success);
 	m_resendData->event(ec_sucess);
 
@@ -105,7 +135,23 @@ bool SimpleDiscoveryParticipantProtocol::updateParamList()
 	QosList::addQos(&m_DPDAsParamList,PID_VENDORID,m_DPD.m_proxy.m_VendorId);
 	QosList::addQos(&m_DPDAsParamList,PID_EXPECTS_INLINE_QOS,m_DPD.m_proxy.m_expectsInlineQos);
 	QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_GUID,mp_Participant->m_guid);
-
+	for(std::vector<Locator_t>::iterator it=m_DPD.m_proxy.m_metatrafficMulticastLocatorList.begin();
+			it!=m_DPD.m_proxy.m_metatrafficMulticastLocatorList.end();++it)
+	{
+		QosList::addQos(&m_DPDAsParamList,PID_METATRAFFIC_MULTICAST_LOCATOR,*it);
+	}
+	for(std::vector<Locator_t>::iterator it=m_DPD.m_proxy.m_metatrafficUnicastLocatorList.begin();
+			it!=m_DPD.m_proxy.m_metatrafficUnicastLocatorList.end();++it)
+	{
+		QosList::addQos(&m_DPDAsParamList,PID_METATRAFFIC_UNICAST_LOCATOR,*it);
+	}
+	for(std::vector<Locator_t>::iterator it=m_DPD.m_proxy.m_defaultUnicastLocatorList.begin();
+			it!=m_DPD.m_proxy.m_defaultUnicastLocatorList.end();++it)
+	{
+		QosList::addQos(&m_DPDAsParamList,PID_DEFAULT_UNICAST_LOCATOR,*it);
+	}
+	QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_LEASE_DURATION,m_DPD.leaseDuration);
+	QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_BUILTIN_ENDPOINTS,m_DPD.m_proxy.m_availableBuiltinEndpoints);
 
 
 	ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);

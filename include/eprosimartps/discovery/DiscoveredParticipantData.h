@@ -41,6 +41,7 @@ public:
 	virtual ~DiscoveredParticipantData(){};
 	ParticipantProxy m_proxy;
 	ParticipantBuiltinTopicData m_topicData;
+	Duration_t leaseDuration;
 
 };
 

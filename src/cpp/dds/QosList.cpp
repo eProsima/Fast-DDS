@@ -58,7 +58,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Locator_t& loc) {
 		ParameterLocator_t* p = new ParameterLocator_t();
 		p->Pid = pid;
 		p->locator = loc;
-		p->length = 24;
+		p->length = PARAMETER_LOCATOR_LENGTH;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		qos->allQos.m_hasChangedMsg = true;
 		return true;
@@ -101,6 +101,17 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	EntityId_t& entity) {
 	//TODOG: Finish
 	return true;
 }
+
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& entity) {
+	//TODOG: Finish
+	return true;
+}
+
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	BuiltinEndpointSet_t& endpointset) {
+	//TODOG: Finish
+	return true;
+}
+
 
 
 } /* namespace dds */

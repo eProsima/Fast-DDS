@@ -43,7 +43,7 @@ public:
 	ParameterLocator_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
-#define PARAMETERLOCATOR_LENGTH 24
+#define PARAMETER_LOCATOR_LENGTH 24
 
 class ParameterString_t: public Parameter_t {
 public:
@@ -61,7 +61,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERPORT_LENGTH 4
+#define PARAMETER_PORT_LENGTH 4
 
 class ParameterGuid_t: public Parameter_t {
 public:
@@ -71,7 +71,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERGUID_LENGTH 16
+#define PARAMETER_GUID_LENGTH 16
 
 class ParameterProtocolVersion_t: public Parameter_t {
 public:
@@ -81,7 +81,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERPROTOCOL_LENGTH 4
+#define PARAMETER_PROTOCOL_LENGTH 4
 
 class ParameterVendorId_t:public Parameter_t{
 public:
@@ -91,7 +91,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERVENDOR_LENGTH 4
+#define PARAMETER_VENDOR_LENGTH 4
 
 class ParameterIP4Address_t :public Parameter_t{
 public:
@@ -102,7 +102,7 @@ public:
 	void setIP4Address(octet o1,octet o2,octet o3,octet o4);
 };
 
-#define PARAMETERIP4_LENGTH 4
+#define PARAMETER_IP4_LENGTH 4
 
 class ParameterBool_t:public Parameter_t{
 public:
@@ -112,7 +112,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERBOOL_LENGTH 4
+#define PARAMETER_BOOL_LENGTH 4
 
 class ParameterCount_t:public Parameter_t{
 public:
@@ -122,7 +122,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERCOUNT_LENGTH 4
+#define PARAMETER_COUNT_LENGTH 4
 
 class ParameterEntityId_t:public Parameter_t{
 public:
@@ -132,16 +132,36 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-#define PARAMETERENTITYID_LENGTH 4
+#define PARAMETER_ENTITYID_LENGTH 4
+
+class ParameterTime_t:public Parameter_t{
+public:
+	Time_t time;
+	ParameterTime_t(){};
+	ParameterTime_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+#define PARAMETER_TIME_LENGTH 8
+
+
+class ParameterBuiltinEndpointSet_t:public Parameter_t{
+public:
+	BuiltinEndpointSet_t endpointSet;
+	ParameterBuiltinEndpointSet_t():endpointSet(0){};
+	ParameterBuiltinEndpointSet_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),endpointSet(0){};
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+#define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
+
 
 class ParameterUserData_t: public Parameter_t {
 public:
 	std::vector<octet> value;
 	ParameterUserData_t();
-	ParameterUserData_t(Parameter_t* P);
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
-
 
 } //end of namespace dds
 } //end of namespace eprosima
