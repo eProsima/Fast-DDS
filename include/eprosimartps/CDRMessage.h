@@ -56,6 +56,7 @@ namespace CDRMessage{
 	  inline bool readOctet(CDRMessage_t* msg,octet* o);
 	  inline bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* snset);
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
+	  inline bool readString(CDRMessage_t*msg,std::string* p_str);
 
 	///@}
 //	/**
@@ -106,6 +107,7 @@ namespace CDRMessage{
 	  inline bool addParameterKey(CDRMessage_t*msg,InstanceHandle_t* iHandle);
 	  inline bool addParameterSentinel(CDRMessage_t*msg);
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
+	  inline bool addString(CDRMessage_t*msg,std::string& in_str);
 	///@}
 
 }

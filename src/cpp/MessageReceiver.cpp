@@ -53,6 +53,7 @@ MessageReceiver::MessageReceiver()
 
 MessageReceiver::~MessageReceiver()
 {
+	this->m_ParamList.deleteParams();
 	pDebugInfo("MessageReceiver destructor"<<endl;);
 }
 
@@ -297,7 +298,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	if(inlineQosFlag)
 	{
-		if(!ParameterList::readParameterList(msg,&m_ParamList,&inlineQosSize,&ch->kind,&ch->instanceHandle))
+		if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) > 0)
 		{
 			pDebugInfo("SubMessage Data ERROR"<<endl);
 			return false;
@@ -329,8 +330,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			{
 				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
 			}
-			uint32_t param_size;
-			if(!ParameterList::readParameterList(msg,&m_ParamList,&param_size,&ch->kind,&ch->instanceHandle))
+			//uint32_t param_size;
+			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) > 0)
 			{
 				pDebugInfo("SubMessage Data ERROR"<<endl);
 				return false;

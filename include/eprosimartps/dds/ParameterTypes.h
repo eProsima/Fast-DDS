@@ -32,85 +32,110 @@ public:
 	uint16_t length;
 	Parameter_t();
 	virtual ~Parameter_t();
-	Parameter_t(Parameter_t* P);
-	virtual bool addToCDRMessage(CDRMessage_t* msg);
+	Parameter_t(ParameterId_t pid,uint16_t length);
+	virtual bool addToCDRMessage(CDRMessage_t* msg) = 0;
 };
 
 class ParameterLocator_t: public Parameter_t {
 public:
 	Locator_t locator;
-	ParameterLocator_t();
-	ParameterLocator_t(Parameter_t* P);
+	ParameterLocator_t(){};
+	ParameterLocator_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+#define PARAMETERLOCATOR_LENGTH 24
 
 class ParameterString_t: public Parameter_t {
 public:
 	std::string m_string;
-	ParameterString_t();
-	ParameterString_t(Parameter_t* P);
+	ParameterString_t(){};
+	ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
 class ParameterPort_t: public Parameter_t {
 public:
 	uint32_t port;
-	ParameterPort_t();
-	ParameterPort_t(Parameter_t* P);
+	ParameterPort_t():port(0){};
+	ParameterPort_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),port(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+#define PARAMETERPORT_LENGTH 4
 
 class ParameterGuid_t: public Parameter_t {
+public:
 	GUID_t guid;
-	ParameterGuid_t();
-	ParameterGuid_t(Parameter_t* P);
+	ParameterGuid_t(){GUID_UNKNOWN(guid)};
+	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){GUID_UNKNOWN(guid)};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+#define PARAMETERGUID_LENGTH 16
 
 class ParameterProtocolVersion_t: public Parameter_t {
+public:
 	ProtocolVersion_t protocolVersion;
-	ParameterProtocolVersion_t();
-	ParameterProtocolVersion_t(Parameter_t*P);
+	ParameterProtocolVersion_t(){PROTOCOLVERSION(protocolVersion)};
+	ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){PROTOCOLVERSION(protocolVersion)};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+#define PARAMETERPROTOCOL_LENGTH 4
 
 class ParameterVendorId_t:public Parameter_t{
+public:
 	VendorId_t vendorId;
-	ParameterVendorId_t();
-	ParameterVendorId_t(Parameter_t* P);
+	ParameterVendorId_t(){VENDORID_EPROSIMA(vendorId);};
+	ParameterVendorId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){VENDORID_EPROSIMA(vendorId);};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+#define PARAMETERVENDOR_LENGTH 4
+
 class ParameterIP4Address_t :public Parameter_t{
+public:
 	octet address[4];
-	ParameterIP4Address_t();
-	ParameterIP4Address_t(Parameter_t* P);
+	ParameterIP4Address_t(){this->setIP4Address(0,0,0,0);};
+	ParameterIP4Address_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){this->setIP4Address(0,0,0,0);};
 	bool addToCDRMessage(CDRMessage_t* msg);
 	void setIP4Address(octet o1,octet o2,octet o3,octet o4);
 };
 
+#define PARAMETERIP4_LENGTH 4
+
 class ParameterBool_t:public Parameter_t{
+public:
 	bool value;
-	ParameterBool_t();
-	ParameterBool_t(Parameter_t* P);
+	ParameterBool_t():value(false){};
+	ParameterBool_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),value(false){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+#define PARAMETERBOOL_LENGTH 4
 
 class ParameterCount_t:public Parameter_t{
+public:
 	Count_t count;
-	ParameterCount_t();
-	ParameterCount_t(Parameter_t*P);
+	ParameterCount_t():count(0){};
+	ParameterCount_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),count(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+#define PARAMETERCOUNT_LENGTH 4
 
 class ParameterEntityId_t:public Parameter_t{
+public:
 	EntityId_t entityId;
-	ParameterEntityId_t();
-	ParameterEntityId_t(Parameter_t*);
+	ParameterEntityId_t():entityId(ENTITYID_UNKNOWN){};
+	ParameterEntityId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),entityId(ENTITYID_UNKNOWN){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+#define PARAMETERENTITYID_LENGTH 4
+
 class ParameterUserData_t: public Parameter_t {
+public:
 	std::vector<octet> value;
 	ParameterUserData_t();
 	ParameterUserData_t(Parameter_t* P);

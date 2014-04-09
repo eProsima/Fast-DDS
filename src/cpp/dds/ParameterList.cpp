@@ -7,310 +7,243 @@
  *************************************************************************/
 
 /**
- * @file ParameterList.cpp
+ * @file ParamListt.cpp
  *
- *  Created on: Mar 20, 2014
+ *  Created on: Apr 9, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
 #include "eprosimartps/dds/ParameterList.h"
-#include "eprosimartps/CDRMessage.h"
 
 namespace eprosima {
 namespace dds {
 
-ParameterList_t::ParameterList_t():
-		QosMsg(RTPSMESSAGE_MAX_SIZE),
-		inlineQosMsg(RTPSMESSAGE_MAX_SIZE),
-		has_changed_Qos(true),has_changed_inlineQos(true)
+bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 {
-
-}
-
-ParameterList_t::~ParameterList_t()
-{
-	pDebugInfo("ParameterList destructor"<<endl;);
-	std::vector<Parameter_t*>::iterator it;
-	for(it=QosParams.begin();it!=QosParams.end();++it)
+	CDRMessage::initCDRMsg(&plist->m_cdrmsg);
+	plist->m_cdrmsg.msg_endian = endian;
+	for(std::vector<Parameter_t*>::iterator it=plist->m_parameters.begin();
+			it!=plist->m_parameters.end();++it)
 	{
-		delete(*it);
-	}
-	for(it=inlineQosParams.begin();it!=inlineQosParams.end();++it)
-	{
-		delete(*it);
-	}
-}
-
-void ParameterList_t::get_QosMsg(CDRMessage_t** msg,Endianness_t endian)
-{
-	if(has_changed_Qos || endian != QosMsg.msg_endian)
-	{
-		ParameterList::updateQosMsg(this,endian);
-	}
-	*msg = &QosMsg;
-}
-
-void ParameterList_t::get_inlineQosMsg(CDRMessage_t** msg,Endianness_t endian)
-{
-	if(has_changed_inlineQos || endian != inlineQosMsg.msg_endian)
-	{
-		ParameterList::updateInlineQosMsg(this,endian);
-	}
-	*msg = &inlineQosMsg;
-}
-
-bool ParameterList::addParameterLocator(ParameterList_t* plist,ParameterId_t pid, rtps::Locator_t* loc) {
-	if(pid == PID_UNICAST_LOCATOR || pid == PID_MULTICAST_LOCATOR ||
-			pid == PID_DEFAULT_UNICAST_LOCATOR || pid == PID_DEFAULT_MULTICAST_LOCATOR ||
-			pid == PID_METATRAFFIC_UNICAST_LOCATOR || PID_METATRAFFIC_MULTICAST_LOCATOR)
-	{
-		ParameterLocator_t* p = new ParameterLocator_t();
-		p->Pid = pid;
-		p->locator = *loc;
-		p->length = 24;
-		plist->QosParams.push_back((Parameter_t*)p);
-		plist->has_changed_Qos = true;
-		return true;
-	}
-	pWarning("PID not correspond with Locator Parameter."<<endl)
-
-	return false;
-}
-
-bool ParameterList::addParameterString(ParameterList_t* plist,ParameterId_t pid, std::string& in_str)
-{
-	if(pid == PID_TOPIC_NAME || pid == PID_TYPE_NAME )
-	{
-		ParameterString_t* p = new ParameterString_t();
-		p->Pid = pid;
-		p->p_str = in_str;
-		plist->QosParams.push_back((Parameter_t*)p);
-		if(pid==PID_TOPIC_NAME)
+		if(!(*it)->addToCDRMessage(&plist->m_cdrmsg))
 		{
-			plist->inlineQosParams.push_back((Parameter_t*)p);
-			plist->has_changed_inlineQos = true;
+			return false;
 		}
-		plist->has_changed_Qos = true;
-		return true;
 	}
-	pWarning("PID not correspond with String Parameter."<<endl)
-
-	return false;
-}
-
-bool ParameterList::addParameterPort(ParameterList_t* plist,ParameterId_t pid, uint32_t port) {
-	if(pid == PID_DEFAULT_UNICAST_PORT || pid == PID_METATRAFFIC_UNICAST_PORT ||
-			pid == PID_METATRAFFIC_MULTICAST_PORT)
+	if(!CDRMessage::addParameterSentinel(&plist->m_cdrmsg))
 	{
-		ParameterPort_t* p = new ParameterPort_t();
-		p->Pid = pid;
-		p->port = port;
-		p->length = 4;
-		plist->QosParams.push_back((Parameter_t*)p);
-		plist->has_changed_Qos = true;
-		return true;
-	}
-
-		pWarning("PID not correspond with Port Parameter."<<endl)
-	return false;
-}
-
-bool ParameterList::updateQosMsg(ParameterList_t* plist,Endianness_t endian)
-{
-	if(updateMsg(&plist->QosParams,&plist->QosMsg,endian))
-	{
-		plist->has_changed_Qos = false;
-		return true;
+		return false;
 	}
 	else
-		return false;
-}
-
-bool ParameterList::updateInlineQosMsg(ParameterList_t* plist,Endianness_t endian)
-{
-	if(updateMsg(&plist->inlineQosParams,&plist->inlineQosMsg,endian))
 	{
-		plist->has_changed_inlineQos = false;
+		plist->m_hasChangedMsg = false;
+		pDebugInfo("Param msg created correctly"<<endl);
 		return true;
 	}
-	else
-		return false;
 }
 
 
-bool ParameterList::updateMsg(std::vector<Parameter_t*>* vec,CDRMessage_t* msg,Endianness_t endian)
+uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind)
 {
-	CDRMessage::initCDRMsg(msg);
-	msg->msg_endian = endian;
-//	pDebugInfo("Adding parameters to list: " << vec->size() << endl;);
-	for(std::vector<Parameter_t*>::iterator it = vec->begin();it!=vec->end();++it)
-	{
-		switch((*it)->Pid)
-		{
-		case PID_UNICAST_LOCATOR:
-		case PID_MULTICAST_LOCATOR:
-		case PID_DEFAULT_UNICAST_LOCATOR:
-		case PID_DEFAULT_MULTICAST_LOCATOR:
-		case PID_METATRAFFIC_UNICAST_LOCATOR:
-		case PID_METATRAFFIC_MULTICAST_LOCATOR:
-		{
-			ParameterLocator_t* p_loc = (ParameterLocator_t*)(*it);
-			CDRMessage::addUInt16(msg,p_loc->Pid);
-			CDRMessage::addUInt16(msg,p_loc->length);
-			CDRMessage::addLocator(msg,&p_loc->locator);
-			break;
-		}
-		case PID_DEFAULT_UNICAST_PORT:
-		case PID_METATRAFFIC_UNICAST_PORT:
-		case PID_METATRAFFIC_MULTICAST_PORT:
-		{
-			ParameterPort_t* p_port = (ParameterPort_t*)(*it);
-			CDRMessage::addUInt16(msg,p_port->Pid);
-			CDRMessage::addUInt16(msg,p_port->length);
-			CDRMessage::addUInt32(msg,p_port->port);
-			break;
-		}
-		case PID_TOPIC_NAME:
-		case PID_TYPE_NAME:
-		{
-			ParameterString_t* p_str = (ParameterString_t*)(*it);
-			CDRMessage::addUInt16(msg,p_str->Pid);
-			//Str size
-			uint32_t str_siz = p_str->p_str.size();
-			int rest = str_siz%4;
-			if(rest!=0)
-				rest = 4-rest; //how many you have to add
-			p_str->length = str_siz+4+rest;
-			CDRMessage::addUInt16(msg,p_str->length);
-			CDRMessage::addUInt32(msg,str_siz);
-			CDRMessage::addData(msg,(unsigned char*)p_str->p_str.c_str(),str_siz);
-			if(rest!=0)
-			{
-				octet oc = '\0';
-				for(int i=0;i<rest;i++)
-				{
-					CDRMessage::addOctet(msg,oc);
-				}
-			}
-			break;
-		}
-		default:
-			break;
-		}
-	}
-	//pDebugInfo("Adding sentinel parameter "<<endl);
-	//Last parameter is always PID SENTINEL FOLLOWED BY two 0 octets.
-	CDRMessage::addUInt16(msg,PID_SENTINEL);
-	CDRMessage::addUInt16(msg,0);
-	pDebugInfo("Param msg created of size: " << msg->length << endl;)
-	return true;
-}
-
-
-bool ParameterList::readParameterList(CDRMessage_t* msg,ParameterList_t* plist,uint32_t* size,ChangeKind_t* kind,InstanceHandle_t* iHandle)
-{
-	plist->QosParams.clear();
-	plist->inlineQosParams.clear();
-	uint32_t params_byte_size = 0;
+	uint32_t paramlist_byte_size = 0;
 	bool is_sentinel = false;
-	bool valid;
-	Parameter_t P;
+	bool valid = true;
+	ParameterId_t pid;
+	uint16_t plength;
 	while(!is_sentinel)
 	{
 		valid = true;
-		valid&=CDRMessage::readUInt16(msg,(uint16_t*)&P.Pid);
-		valid&=CDRMessage::readUInt16(msg,&P.length);
-		params_byte_size+=4;
-		switch(P.Pid)
+		valid&=CDRMessage::readUInt16(msg,(uint16_t*)&pid);
+		valid&=CDRMessage::readUInt16(msg,&plength);
+		paramlist_byte_size +=4;
+		if(valid)
 		{
-		case PID_UNICAST_LOCATOR:
-		case PID_MULTICAST_LOCATOR:
-		case PID_DEFAULT_UNICAST_LOCATOR:
-		case PID_DEFAULT_MULTICAST_LOCATOR:
-		case PID_METATRAFFIC_UNICAST_LOCATOR:
-		case PID_METATRAFFIC_MULTICAST_LOCATOR:
-		{
-			ParameterLocator_t* p_loc = new ParameterLocator_t(&P);
-			valid &= CDRMessage::readLocator(msg,&p_loc->locator);
-			plist->QosParams.push_back((Parameter_t*)p_loc);
-			params_byte_size+=P.length;
-			plist->has_changed_Qos = true;
-			break;
-		}
-		case PID_DEFAULT_UNICAST_PORT:
-		case PID_METATRAFFIC_UNICAST_PORT:
-		case PID_METATRAFFIC_MULTICAST_PORT:
-		{
-			ParameterPort_t* p_port = new ParameterPort_t(&P);
-			valid &= CDRMessage::readUInt32(msg,&p_port->port);
-			plist->QosParams.push_back((Parameter_t*)p_port);
-			params_byte_size+=P.length;
-			plist->has_changed_Qos = true;
-			break;
-		}
-		case PID_TOPIC_NAME:
-		case PID_TYPE_NAME:
-		{
-			ParameterString_t* param_str = new ParameterString_t(&P);
-			uint32_t str_size;
-			CDRMessage::readUInt32(msg,&str_size);
-			param_str->p_str.resize(str_size);
-			octet oc[str_size];
-			valid &= CDRMessage::readData(msg,oc,str_size);
-			for(uint32_t i =0;i<str_size;i++)
-				param_str->p_str.at(i) = oc[i];
-			plist->QosParams.push_back((Parameter_t*)param_str);
-			params_byte_size+=P.length;
-			msg->pos += (P.length-str_size-4);
-			if(P.Pid == PID_TOPIC_NAME)
+			switch(pid)
 			{
-				plist->inlineQosParams.push_back((Parameter_t*)param_str);
-				plist->has_changed_inlineQos = true;
+			case PID_UNICAST_LOCATOR:
+			case PID_MULTICAST_LOCATOR:
+			case PID_DEFAULT_UNICAST_LOCATOR:
+			case PID_DEFAULT_MULTICAST_LOCATOR:
+			case PID_METATRAFFIC_UNICAST_LOCATOR:
+			case PID_METATRAFFIC_MULTICAST_LOCATOR:
+			{
+				ParameterLocator_t* p = new ParameterLocator_t(pid,plength);
+				valid &= CDRMessage::readLocator(msg,&p->locator);
+				if(plength == PARAMETERLOCATOR_LENGTH && valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
 			}
-			plist->has_changed_Qos = true;
-			break;
+			case PID_DEFAULT_UNICAST_PORT:
+			case PID_METATRAFFIC_UNICAST_PORT:
+			case PID_METATRAFFIC_MULTICAST_PORT:
+			{
+				ParameterPort_t* p = new ParameterPort_t(pid,plength);
+				valid &= CDRMessage::readUInt32(msg,&p->port);
+				if(plength == PARAMETERLOCATOR_LENGTH && valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
+			}
+			case PID_PROTOCOL_VERSION:
+			{
+				ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(pid,plength);
+				valid &= CDRMessage::readOctet(msg,&p->protocolVersion.m_major);
+				valid &= CDRMessage::readOctet(msg,&p->protocolVersion.m_minor);
+				if(plength == PARAMETERPROTOCOL_LENGTH && valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
+			}
+			case PID_VENDORID:
+			{
+				ParameterVendorId_t* p = new ParameterVendorId_t(pid,plength);
+				valid &= CDRMessage::readOctet(msg,&p->vendorId[0]);
+				valid &= CDRMessage::readOctet(msg,&p->vendorId[1]);
+				if(plength == PARAMETERVENDOR_LENGTH && valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
+			}
+			case PID_MULTICAST_IPADDRESS:
+			case PID_DEFAULT_UNICAST_IPADDRESS:
+			case PID_METATRAFFIC_UNICAST_IPADDRESS:
+			case PID_METATRAFFIC_MULTICAST_IPADDRESS:
+			{
+				ParameterIP4Address_t* p = new ParameterIP4Address_t(pid,plength);
+				if(plength == PARAMETERIP4_LENGTH)
+				{
+					p->address[0] = msg->buffer[msg->pos];
+					p->address[1] = msg->buffer[msg->pos+1];
+					p->address[2] = msg->buffer[msg->pos+2];
+					p->address[3] = msg->buffer[msg->pos+3];
+					msg->pos +=4;
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
+			}
+			case PID_PARTICIPANT_GUID:
+			case PID_GROUP_GUID:
+			{
+				ParameterGuid_t* p = new ParameterGuid_t(pid,plength);
+				valid &= CDRMessage::readData(msg,p->guid.guidPrefix.value,12);
+				valid &= CDRMessage::readData(msg,p->guid.entityId.value,4);
+				if(plength == PARAMETERGUID_LENGTH && valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
+			}
+			case PID_TOPIC_NAME:
+			case PID_TYPE_NAME:
+			{
+				ParameterString_t* p = new ParameterString_t(pid,plength);
+				uint32_t str_size = 1;
+				valid&=CDRMessage::readUInt32(msg,&str_size);
+				p->m_string.resize(str_size);
+				octet* oc=new octet[str_size];
+				valid &= CDRMessage::readData(msg,oc,str_size);
+				for(uint32_t i =0;i<str_size;i++)
+					p->m_string.at(i) = oc[i];
+				if(valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChangedMsg = true;
+					paramlist_byte_size += plength;
+				}
+				else
+				{
+					delete(p);
+					return -1;
+				}
+				break;
+			}
+			case PID_STATUS_INFO:
+			{
+				octet status = msg->buffer[msg->pos+3];
+				if(status == 1)
+					*chkind = NOT_ALIVE_DISPOSED;
+				else if (status == 2)
+					*chkind = NOT_ALIVE_UNREGISTERED;
+				msg->pos+=4;
+				paramlist_byte_size+=4;
+				break;
+			}
+			case PID_KEY_HASH:
+			{
+				CDRMessage::readData(msg,handle->value,16);
+				paramlist_byte_size+=16;
+				break;
+			}
+			case PID_SENTINEL:
+			{
+				is_sentinel = true;
+				break;
+			}
+			case PID_PAD:
+			default:
+			{
+				msg->pos +=plength;
+				paramlist_byte_size +=plength;
+				break;
+			}
+			}
 		}
-		case PID_KEY_HASH:
+		else
 		{
-			CDRMessage::readData(msg,iHandle->value,16);
-			params_byte_size+=16;
-			break;
+			return -1;
 		}
-		case PID_STATUS_INFO:
-		{
-			octet status = msg->buffer[msg->pos+3];
-			if(status == 1)
-				*kind = NOT_ALIVE_DISPOSED;
-			else if (status == 2)
-				*kind = NOT_ALIVE_UNREGISTERED;
-			msg->pos+=4;
-			params_byte_size+=4;
-			break;
-		}
-		case PID_SENTINEL:
-		{
-			is_sentinel = true;
-			break;
-		}
-		default: //WE DONT KNOW WHAT PARAMETER IS
-		{
-			msg->pos+=P.length; //we dont process it
-			params_byte_size +=P.length;
-		}
-		}
-		if(!valid)
-			return false;
 	}
-	*size = params_byte_size;
-	return true;
+	return paramlist_byte_size;
 }
-
-
-
-
-
 
 } /* namespace dds */
 } /* namespace eprosima */

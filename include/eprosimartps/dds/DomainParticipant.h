@@ -28,7 +28,7 @@
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/Participant.h"
 
-#include "eprosimartps/discovery/SimpleDiscoveryParticipant.h"
+
 
 namespace eprosima {
 namespace dds {
@@ -134,7 +134,7 @@ public:
     	{
     		delete(*it);
     	}
-    	for(std::vector<Publisher*>::iterator it=m_subscriberList.begin();
+    	for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
     			it!=m_subscriberList.end();++it)
     	{
     		delete(*it);

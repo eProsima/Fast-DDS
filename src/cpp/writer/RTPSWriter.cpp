@@ -48,6 +48,7 @@ void RTPSWriter::init_header()
 
 RTPSWriter::~RTPSWriter()
 {
+
 	pDebugInfo("RTPSWriter destructor"<<endl;);
 }
 

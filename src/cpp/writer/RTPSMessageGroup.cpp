@@ -142,7 +142,7 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 {
 	ParameterList_t* inlineQos;
 	if(expectsInlineQos)
-		inlineQos = &W->m_Pub->ParamList;
+		inlineQos = &W->m_qosList.inlineQos;
 	else
 		inlineQos = NULL;
 	CDRMessage::initCDRMsg(submsg);

@@ -126,8 +126,7 @@ public:
 
 	///@}
 
-	//! Parameter List associated with this Publisher (Qos).
-	ParameterList_t ParamList;
+
 
 	TypeReg_t* getType(){return (&type);};
 
