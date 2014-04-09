@@ -23,7 +23,7 @@
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/timedevent/ResendDataPeriod.h"
 
-#include "eprosimartps/discovery/DiscoveredParmpticipantData.h"
+#include "eprosimartps/discovery/DiscoveredParticipantData.h"
 
 namespace eprosima {
 namespace rtps {
