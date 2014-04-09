@@ -33,6 +33,7 @@ eClock::~eClock() {
 
 bool eClock::setTimeNow(Time_t* tnow)
 {
+	//FIXME: UTC SECONDS AUTOMATICALLY
 	gettimeofday(&m_now,NULL);
 	tnow->seconds = m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff;
 	tnow->fraction = m_now.tv_usec*pow(2.0,32)*pow(10.0,-6);

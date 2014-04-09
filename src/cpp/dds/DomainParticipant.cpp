@@ -276,6 +276,34 @@ bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
 		return false;
 }
 
+void DomainParticipant::getIPAddress(std::vector<Locator_t>* locators)
+{
+	DomainParticipant* dp = DomainParticipant::getInstance();
+	std::vector<std::string> ip_names;
+	dp->m_IPFinder.getIP(&ip_names);
+	//cout << "IPs" << endl;
+	locators->clear();
+	for(std::vector<std::string>::iterator it=ip_names.begin();
+			it!=ip_names.end();++it)
+	{
+		std::stringstream ss(*it);
+		int a,b,c,d;
+		char ch;
+		ss >> a >>ch >>b >> ch >> c >>ch >>d;
+		if(ip_names.size()>1 && a==127)
+			continue;
+		Locator_t loc;
+		loc.kind = 1;
+		loc.port = 0;
+		loc.address[12] = (octet)a;
+		loc.address[13] = (octet)b;
+		loc.address[14] = (octet)c;
+		loc.address[15] = (octet)d;
+		locators->push_back(loc);
+	//	cout << *it << endl;
+	}
+}
+
 
 } /* namespace dds */
 } /* namespace eprosima */

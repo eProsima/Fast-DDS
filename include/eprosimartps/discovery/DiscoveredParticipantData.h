@@ -39,10 +39,9 @@ class DiscoveredParticipantData {
 public:
 	DiscoveredParticipantData(){};
 	virtual ~DiscoveredParticipantData(){};
-	bool updateMsg(CacheChange_t* change);
 	ParticipantProxy m_proxy;
 	ParticipantBuiltinTopicData m_topicData;
-	CDRMessage_t m_cdrmsg;
+
 };
 
 } /* namespace rtps */

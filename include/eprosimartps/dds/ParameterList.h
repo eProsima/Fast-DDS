@@ -37,6 +37,11 @@ public:
 				it!=m_parameters.end();++it)
 			delete(*it);
 	}
+	void resetList(){
+		m_parameters.clear();
+		CDRMessage::initCDRMsg(&m_cdrmsg);
+		m_hasChangedMsg = true;
+	}
 	std::vector<Parameter_t*> m_parameters;
 	CDRMessage_t m_cdrmsg;
 	bool m_hasChangedMsg;

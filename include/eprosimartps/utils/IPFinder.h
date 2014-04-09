@@ -49,9 +49,9 @@ public:
 	IPFinder();
 	virtual ~IPFinder();
 #if defined(_WIN32)
-	static bool getIP_win(std::vector<std::string>* vec_name);
+	static bool getIP(std::vector<std::string>* vec_name);
 #else
-	static bool getIP_unix(std::vector<std::string>* vec_name);
+	static bool getIP(std::vector<std::string>* vec_name);
 #endif
 };
 

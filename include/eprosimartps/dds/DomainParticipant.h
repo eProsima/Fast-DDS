@@ -27,6 +27,7 @@
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/Participant.h"
+#include "eprosimartps/utils/IPFinder.h"
 
 
 
@@ -55,6 +56,7 @@ private:
         m_offsetd1 = 10;
         m_offsetd2 = 1;
         m_offsetd3 = 11;
+        m_DomainId = 80;
     }
     std::vector<TypeReg_t> typesRegistered;
     std::vector<Participant*> m_participants;
@@ -181,6 +183,8 @@ public:
 		return m_portBase;
 	}
 
+	static void getIPAddress(std::vector<Locator_t>* locators);
+
 private:
     uint16_t m_portBase;
     uint16_t m_domainIdGain;
@@ -189,9 +193,12 @@ private:
     uint16_t m_offsetd1;
     uint16_t m_offsetd2;
     uint16_t m_offsetd3;
+    IPFinder m_IPFinder;
 
     std::vector<Publisher*> m_publisherList;
     std::vector<Subscriber*> m_subscriberList;
+
+    uint16_t m_DomainId;
 
 
 };
