@@ -93,7 +93,8 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 	if(Pub!=NULL)
 	{
 		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
-		m_publisherList.push_back(Pub);
+		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+		dp->m_publisherList.push_back(Pub);
 	}
 	else
 		{pError("Publisher not created"<<endl);}
@@ -169,7 +170,8 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 	if(Sub!=NULL)
 	{
 		pInfo(B_YELLOW<<"SUBSCRIBER CORRECTLY CREATED"<<DEF<<endl);
-		m_subscriberList.push_back(Sub);
+		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+		dp->m_subscriberList.push_back(Sub);
 	}
 	else
 		{pError("Subscriber not created"<<endl);}
@@ -212,12 +214,13 @@ bool DomainParticipant::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
-		for(std::vector<Participant*>::iterator it=m_participants.begin();
-				it!=m_participants.end();++it)
+		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+		for(std::vector<Participant*>::iterator it=dp->m_participants.begin();
+				it!=dp->m_participants.end();++it)
 		{
 			if((*it)->m_guid == p->m_guid)
 			{
-				m_participants.erase(it);
+				dp->m_participants.erase(it);
 			}
 		}
 		delete(p);
@@ -233,12 +236,13 @@ bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)
 		return false;
 	if(p->removeEndpoint((Endpoint*)(pub->mp_Writer)))
 	{
-		for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
-				it!=m_publisherList.end();++it)
+		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+		for(std::vector<Publisher*>::iterator it=dp->m_publisherList.begin();
+				it!=dp->m_publisherList.end();++it)
 		{
 			if((*it)->mp_Writer->m_guid == pub->mp_Writer->m_guid)
 			{
-				m_publisherList.erase(it);
+				dp->m_publisherList.erase(it);
 			}
 		}
 		delete(pub->mp_Writer);
@@ -255,12 +259,13 @@ bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
 		return false;
 	if(p->removeEndpoint((Endpoint*)(sub->mp_Reader)))
 	{
-		for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
-				it!=m_subscriberList.end();++it)
+		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+		for(std::vector<Subscriber*>::iterator it=dp->m_subscriberList.begin();
+				it!=dp->m_subscriberList.end();++it)
 		{
 			if((*it)->mp_Reader->m_guid == sub->mp_Reader->m_guid)
 			{
-				m_subscriberList.erase(it);
+				dp->m_subscriberList.erase(it);
 			}
 		}
 		delete(sub->mp_Reader);

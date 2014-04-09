@@ -62,6 +62,9 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
 		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
+		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
+		  $(BASEDIR)/src/cpp/dds/ParameterTypes.cpp \
+		  $(BASEDIR)/src/cpp/dds/QosList.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/timedevent/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/PeriodicHeartbeat.cpp \

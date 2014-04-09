@@ -112,16 +112,16 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 
 		if(inlineQos != NULL) //inlineQoS
 		{
-			if(inlineQos->has_changed_inlineQos || ParameterList::get_inlineQos_endian(inlineQos)!=submsgElem.msg_endian)
+			if(inlineQos->m_hasChangedMsg || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
 			{
 			//	cout << "Updating endian message" << endl;
-				ParameterList::updateInlineQosMsg(inlineQos,submsgElem.msg_endian);
+				ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
 			}
 			CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
 			if(change->kind != ALIVE)
 				CDRMessage::addParameterStatus(&submsgElem,status);
 			//cout << "Adding message of length: " << inlineQos->inlineQosMsg.length <<" and endian: " << inlineQos->inlineQosMsg.msg_endian<< endl;
-			CDRMessage::appendMsg(&submsgElem,&inlineQos->inlineQosMsg);
+			CDRMessage::appendMsg(&submsgElem,&inlineQos->m_cdrmsg);
 		}
 		//Add Serialized Payload
 		if(dataFlag)

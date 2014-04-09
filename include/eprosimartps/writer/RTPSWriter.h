@@ -22,6 +22,7 @@
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 #include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/QosList.h"
 
 
 #ifndef RTPSWRITER_H_
@@ -102,6 +103,7 @@ public:
 	TypeReg_t m_type;
 
 	Publisher* m_Pub;
+	QosList_t m_qosList;
 
 
 };

@@ -35,7 +35,7 @@
 #include "eprosimartps/threadtype/ThreadListen.h"
 #include "eprosimartps/threadtype/ThreadSend.h"
 
-#include "eprosimartps/discovery/DiscoveredParticipantData.h"
+
 
 
 
@@ -148,7 +148,7 @@ private:
 	 */
 	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread);
 
-	SimpleDiscoveryParticipantProtocol m_SPDP;
+
 public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};

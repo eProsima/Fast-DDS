@@ -497,6 +497,8 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 
 
 
+
+
 } /* namespace rtps */
 } /* namespace eprosima */
 
