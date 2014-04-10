@@ -26,7 +26,7 @@ namespace dds {
 
 class ParameterList_t {
 public:
-	ParameterList_t():m_cdrmsg(RTPSMESSAGE_MAX_SIZE),m_hasChangedMsg(true){};
+	ParameterList_t():m_cdrmsg(RTPSMESSAGE_MAX_SIZE),m_hasChanged(true){};
 	virtual ~ParameterList_t()
 	{
 
@@ -40,11 +40,11 @@ public:
 	void resetList(){
 		m_parameters.clear();
 		CDRMessage::initCDRMsg(&m_cdrmsg);
-		m_hasChangedMsg = true;
+		m_hasChanged = true;
 	}
 	std::vector<Parameter_t*> m_parameters;
 	CDRMessage_t m_cdrmsg;
-	bool m_hasChangedMsg;
+	bool m_hasChanged;
 };
 
 class ParameterList

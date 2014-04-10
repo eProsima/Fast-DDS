@@ -56,7 +56,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 {
 	pDebugInfo("Creating new change"<<endl);
 	CacheChange_t* ch = m_writer_cache.reserve_Cache();
-	if(changeKind == ALIVE)
+	if(changeKind == ALIVE && data !=NULL)
 	{
 		m_type.serialize(&ch->serializedPayload,data);
 	}
