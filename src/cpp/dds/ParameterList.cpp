@@ -71,7 +71,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				ParameterLocator_t* p = new ParameterLocator_t(pid,plength);
 				valid &= CDRMessage::readLocator(msg,&p->locator);
-				if(plength == PARAMETERLOCATOR_LENGTH && valid)
+				if(plength == PARAMETER_LOCATOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChangedMsg = true;
@@ -90,7 +90,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				ParameterPort_t* p = new ParameterPort_t(pid,plength);
 				valid &= CDRMessage::readUInt32(msg,&p->port);
-				if(plength == PARAMETERLOCATOR_LENGTH && valid)
+				if(plength == PARAMETER_LOCATOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChangedMsg = true;
@@ -108,7 +108,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(pid,plength);
 				valid &= CDRMessage::readOctet(msg,&p->protocolVersion.m_major);
 				valid &= CDRMessage::readOctet(msg,&p->protocolVersion.m_minor);
-				if(plength == PARAMETERPROTOCOL_LENGTH && valid)
+				if(plength == PARAMETER_PROTOCOL_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChangedMsg = true;
@@ -126,7 +126,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterVendorId_t* p = new ParameterVendorId_t(pid,plength);
 				valid &= CDRMessage::readOctet(msg,&p->vendorId[0]);
 				valid &= CDRMessage::readOctet(msg,&p->vendorId[1]);
-				if(plength == PARAMETERVENDOR_LENGTH && valid)
+				if(plength == PARAMETER_VENDOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChangedMsg = true;
@@ -145,7 +145,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			case PID_METATRAFFIC_MULTICAST_IPADDRESS:
 			{
 				ParameterIP4Address_t* p = new ParameterIP4Address_t(pid,plength);
-				if(plength == PARAMETERIP4_LENGTH)
+				if(plength == PARAMETER_IP4_LENGTH)
 				{
 					p->address[0] = msg->buffer[msg->pos];
 					p->address[1] = msg->buffer[msg->pos+1];
@@ -169,7 +169,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterGuid_t* p = new ParameterGuid_t(pid,plength);
 				valid &= CDRMessage::readData(msg,p->guid.guidPrefix.value,12);
 				valid &= CDRMessage::readData(msg,p->guid.entityId.value,4);
-				if(plength == PARAMETERGUID_LENGTH && valid)
+				if(plength == PARAMETER_GUID_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChangedMsg = true;
