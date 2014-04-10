@@ -37,6 +37,8 @@ public:
 
 	bool initSPDP(uint16_t domainId,uint16_t participantId,uint16_t resendDataPeriod_sec);
 
+
+	bool sendDPDMsg();
 	bool updateDPDMsg();
 	bool updateParamList();
 
@@ -49,8 +51,10 @@ private:
 	//Locator_t m_defaultMulticastLocator;
 	uint16_t m_domainId;
 	ResendDataPeriod* m_resendData;
+	CDRMessage_t m_DPDMsgHeader;
+	CDRMessage_t m_DPDMsgData;
 	CDRMessage_t m_DPDMsg;
-	bool m_hasChanged_DPDMsg;
+	bool m_hasChanged_DPD;
 	DiscoveredParticipantData m_DPD;
 	QosList_t m_DPDAsParamList;
 

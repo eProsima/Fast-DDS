@@ -22,7 +22,8 @@ namespace eprosima {
 namespace rtps {
 
 SimpleDiscoveryParticipantProtocol::SimpleDiscoveryParticipantProtocol(Participant* p):
-		mp_Participant(p)
+		mp_Participant(p),
+		m_DPDMsgHeader(RTPSMESSAGE_HEADER_SIZE)
 {
 	// TODO Auto-generated constructor stub
 	m_resendData = NULL;
@@ -59,6 +60,9 @@ bool SimpleDiscoveryParticipantProtocol::initSPDP(uint16_t domainId,
 
 	//FIXME: register type correctly
 	//dp->registerType("DiscoveredParticipantData",&this->ser,&this->deser,&this->getKey);
+
+	CDRMessage::initCDRMsg(&m_DPDMsgHeader);
+	RTPSMessageCreator::addHeader(&m_DPDMsg,m_DPD.m_proxy.m_guidPrefix);
 
 
 	Locator_t multiLocator;
@@ -155,6 +159,27 @@ bool SimpleDiscoveryParticipantProtocol::updateParamList()
 
 
 	ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);
+}
+
+bool SimpleDiscoveryParticipantProtocol::sendDPDMsg()
+{
+	CacheChange_t* change=NULL;
+	if(m_DPDAsParamList.allQos.m_hasChanged || m_hasChanged_DPD)
+	{
+		m_SPDPbPWriter->m_writer_cache.remove_all_changes();
+		m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
+		updateParamList();
+		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+		change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
+		memcpy(change->serializedPayload.data,m_DPDAsParamList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+		m_SPDPbPWriter->m_writer_cache.add_change(change);
+	}
+	else
+	{
+		m_SPDPbPWriter->m_writer_cache.get_last_added_cache(&change);
+	}
+	m_SPDPbPWriter->unsent_change_add(change);
+	return true;
 }
 
 bool SimpleDiscoveryParticipantProtocol::updateDPDMsg()
