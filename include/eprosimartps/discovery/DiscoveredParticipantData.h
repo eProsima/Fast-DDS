@@ -31,7 +31,7 @@ typedef InstanceHandle_t BuiltinTopicKey_t;
 
 typedef struct ParticipantBuiltinTopicData{
 	BuiltinTopicKey_t m_key;
-	ParameterUserData_t m_user_data;
+//	ParameterUserData_t m_user_data;
 }ParticipantBuiltinTopicData;
 
 

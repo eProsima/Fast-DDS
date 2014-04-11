@@ -156,12 +156,12 @@ public:
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
 
-class ParameterUserData_t: public Parameter_t {
-public:
-	std::vector<octet> value;
-	ParameterUserData_t();
-	bool addToCDRMessage(CDRMessage_t* msg);
-};
+//class ParameterUserData_t: public Parameter_t {
+//public:
+//	std::vector<octet> value;
+//	ParameterUserData_t();
+//	bool addToCDRMessage(CDRMessage_t* msg);
+//};
 
 } //end of namespace dds
 } //end of namespace eprosima

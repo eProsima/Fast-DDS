@@ -40,8 +40,7 @@ namespace rtps {
 
 class ParticipantProxy {
 public:
-	ParticipantProxy(GuidPrefix_t guidPrefix):
-		m_guidPrefix(guidPrefix),
+	ParticipantProxy():
 		m_expectsInlineQos(false),
 		m_availableBuiltinEndpoints(0),
 		m_manualLivelinessCount(0)

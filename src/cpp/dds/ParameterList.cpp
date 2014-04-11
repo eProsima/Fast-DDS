@@ -38,7 +38,7 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 	}
 	else
 	{
-		plist->m_hasChangedMsg = false;
+		plist->m_hasChanged = false;
 		pDebugInfo("Param msg created correctly"<<endl);
 		return true;
 	}
@@ -74,7 +74,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				if(plength == PARAMETER_LOCATOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else
@@ -93,7 +93,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				if(plength == PARAMETER_LOCATOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else
@@ -111,7 +111,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				if(plength == PARAMETER_PROTOCOL_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else
@@ -129,7 +129,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				if(plength == PARAMETER_VENDOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else
@@ -153,7 +153,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					p->address[3] = msg->buffer[msg->pos+3];
 					msg->pos +=4;
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else
@@ -172,7 +172,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				if(plength == PARAMETER_GUID_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else
@@ -196,7 +196,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				if(valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
-					plist->m_hasChangedMsg = true;
+					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
 				}
 				else

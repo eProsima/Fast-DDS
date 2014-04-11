@@ -36,7 +36,8 @@ Participant::Participant(const ParticipantParams_t& PParam):
 		m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 		m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 		m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-		IdCounter(0)
+		IdCounter(0),
+		m_SPDP(this)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -74,7 +75,7 @@ Participant::Participant(const ParticipantParams_t& PParam):
 		pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
 
 
-
+		m_SPDP.initSPDP(80,ID,1);
 }
 
 

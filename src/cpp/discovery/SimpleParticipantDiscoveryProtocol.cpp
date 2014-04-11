@@ -15,13 +15,14 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "SimpleDiscoveryParticipantProtocol.h"
+#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
 #include "eprosimartps/Participant.h"
-
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
 namespace eprosima {
 namespace rtps {
 
-SimpleDiscoveryParticipantProtocol::SimpleDiscoveryParticipantProtocol(Participant* p):
+SimpleParticipantDiscoveryProtocol::SimpleParticipantDiscoveryProtocol(Participant* p):
 		mp_Participant(p),
 		m_DPDMsgHeader(RTPSMESSAGE_HEADER_SIZE)
 {
@@ -32,17 +33,17 @@ SimpleDiscoveryParticipantProtocol::SimpleDiscoveryParticipantProtocol(Participa
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = 0;
 	m_SPDP_WELL_KNOWN_UNICAST_PORT = 0;
 	m_domainId = 0;
-	m_hasChanged_DPDMsg = true;
+	m_hasChanged_DPD = true;
 }
 
-SimpleDiscoveryParticipantProtocol::~SimpleDiscoveryParticipantProtocol()
+SimpleParticipantDiscoveryProtocol::~SimpleParticipantDiscoveryProtocol()
 {
 	delete(m_resendData);
 	delete(m_SPDPbPWriter);
 	delete(m_SPDPbPReader);
 }
 
-bool SimpleDiscoveryParticipantProtocol::initSPDP(uint16_t domainId,
+bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 		uint16_t participantId, uint16_t resendDataPeriod_sec)
 {
 	m_domainId = domainId;
@@ -121,53 +122,62 @@ bool SimpleDiscoveryParticipantProtocol::initSPDP(uint16_t domainId,
 
 
 
-	m_resendData = new ResendDataPeriod((&m_SPDPbPWriter,
-					boost::posix_time::milliseconds(resendDataPeriod_sec*1000)));
+	m_resendData = new ResendDiscoveryDataPeriod(this,boost::posix_time::milliseconds(resendDataPeriod_sec*1000));
 
-	const boost::system::error_code ec_sucess(boost::system::errc::success);
-	m_resendData->event(ec_sucess);
+//	const boost::system::error_code ec_sucess(boost::system::errc::success);
+//	m_resendData->event(ec_sucess);
+
+	this->sendDPDMsg();
 
 	return true;
 }
 
-bool SimpleDiscoveryParticipantProtocol::updateParamList()
+bool SimpleParticipantDiscoveryProtocol::updateParamList()
 {
 	m_DPDAsParamList.allQos.deleteParams();
 	m_DPDAsParamList.allQos.resetList();
 	m_DPDAsParamList.inlineQos.resetList();
-	QosList::addQos(&m_DPDAsParamList,PID_PROTOCOL_VERSION,m_DPD.m_proxy.m_protocolVersion);
-	QosList::addQos(&m_DPDAsParamList,PID_VENDORID,m_DPD.m_proxy.m_VendorId);
-	QosList::addQos(&m_DPDAsParamList,PID_EXPECTS_INLINE_QOS,m_DPD.m_proxy.m_expectsInlineQos);
-	QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_GUID,mp_Participant->m_guid);
+	bool valid = QosList::addQos(&m_DPDAsParamList,PID_PROTOCOL_VERSION,m_DPD.m_proxy.m_protocolVersion);
+	valid &=QosList::addQos(&m_DPDAsParamList,PID_VENDORID,m_DPD.m_proxy.m_VendorId);
+	valid &=QosList::addQos(&m_DPDAsParamList,PID_EXPECTS_INLINE_QOS,m_DPD.m_proxy.m_expectsInlineQos);
+	valid &=QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_GUID,mp_Participant->m_guid);
 	for(std::vector<Locator_t>::iterator it=m_DPD.m_proxy.m_metatrafficMulticastLocatorList.begin();
 			it!=m_DPD.m_proxy.m_metatrafficMulticastLocatorList.end();++it)
 	{
-		QosList::addQos(&m_DPDAsParamList,PID_METATRAFFIC_MULTICAST_LOCATOR,*it);
+		valid &=QosList::addQos(&m_DPDAsParamList,PID_METATRAFFIC_MULTICAST_LOCATOR,*it);
 	}
 	for(std::vector<Locator_t>::iterator it=m_DPD.m_proxy.m_metatrafficUnicastLocatorList.begin();
 			it!=m_DPD.m_proxy.m_metatrafficUnicastLocatorList.end();++it)
 	{
-		QosList::addQos(&m_DPDAsParamList,PID_METATRAFFIC_UNICAST_LOCATOR,*it);
+		valid &=QosList::addQos(&m_DPDAsParamList,PID_METATRAFFIC_UNICAST_LOCATOR,*it);
 	}
 	for(std::vector<Locator_t>::iterator it=m_DPD.m_proxy.m_defaultUnicastLocatorList.begin();
 			it!=m_DPD.m_proxy.m_defaultUnicastLocatorList.end();++it)
 	{
-		QosList::addQos(&m_DPDAsParamList,PID_DEFAULT_UNICAST_LOCATOR,*it);
+		valid &=QosList::addQos(&m_DPDAsParamList,PID_DEFAULT_UNICAST_LOCATOR,*it);
 	}
-	QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_LEASE_DURATION,m_DPD.leaseDuration);
-	QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_BUILTIN_ENDPOINTS,m_DPD.m_proxy.m_availableBuiltinEndpoints);
+	valid &=QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_LEASE_DURATION,m_DPD.leaseDuration);
+	valid &=QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_BUILTIN_ENDPOINTS,m_DPD.m_proxy.m_availableBuiltinEndpoints);
 
 
-	ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);
+	valid &=ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);
+
+	return valid;
+
 }
 
-bool SimpleDiscoveryParticipantProtocol::sendDPDMsg()
+bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 {
+	boost::lock_guard<SimpleParticipantDiscoveryProtocol> guard(*this);
 	CacheChange_t* change=NULL;
 	if(m_DPDAsParamList.allQos.m_hasChanged || m_hasChanged_DPD)
 	{
 		m_SPDPbPWriter->m_writer_cache.remove_all_changes();
 		m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
+		for(uint8_t i = 0;i<12;++i)
+			change->instanceHandle.value[i] = this->mp_Participant->m_guid.guidPrefix.value[i];
+		for(uint8_t i = 12;i<16;++i)
+			change->instanceHandle.value[i] = this->mp_Participant->m_guid.entityId.value[i];
 		updateParamList();
 		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 		change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
@@ -182,7 +192,7 @@ bool SimpleDiscoveryParticipantProtocol::sendDPDMsg()
 	return true;
 }
 
-bool SimpleDiscoveryParticipantProtocol::updateDPDMsg()
+bool SimpleParticipantDiscoveryProtocol::updateDPDMsg()
 {
 	m_SPDPbPWriter->m_writer_cache.remove_all_changes();
 	CacheChange_t* change=NULL;
@@ -206,7 +216,7 @@ bool SimpleDiscoveryParticipantProtocol::updateDPDMsg()
 
 	m_SPDPbPWriter->m_writer_cache.get_last_added_cache(&change);
 	RTPSMessageCreator::addSubmessageData(&m_DPDMsg,change,WITH_KEY,c_EntityId_Unknown,NULL);
-	m_hasChanged_DPDMsg = false;
+	m_hasChanged_DPD = false;
 	return true;
 }
 

@@ -15,30 +15,30 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/timedevent/ResendDataPeriod.h"
+#include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 
 namespace eprosima {
 namespace rtps {
 
-ResendDataPeriod::ResendDataPeriod(StatelessWriter* pSLW,boost::posix_time::milliseconds interval):
-		TimedEvent(&pSLW->mp_event_thr->io_service,interval),
-		mp_SLW(pSLW)
+ResendDiscoveryDataPeriod::ResendDiscoveryDataPeriod(SimpleParticipantDiscoveryProtocol* pSLW,boost::posix_time::milliseconds interval):
+		TimedEvent(&pSLW->m_SPDPbPWriter->mp_event_thr->io_service,interval),
+		mp_SPDP(pSLW)
 {
 
 
 }
 
-ResendDataPeriod::~ResendDataPeriod()
+ResendDiscoveryDataPeriod::~ResendDiscoveryDataPeriod()
 {
 	timer->cancel();
 }
 
-void ResendDataPeriod::event(const boost::system::error_code& ec)
+void ResendDiscoveryDataPeriod::event(const boost::system::error_code& ec)
 {
 	if(ec == boost::system::errc::success)
 	{
-
+		mp_SPDP->sendDPDMsg();
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
