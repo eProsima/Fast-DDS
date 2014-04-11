@@ -34,6 +34,7 @@
 #include "eprosimartps/threadtype/ThreadEvent.h"
 #include "eprosimartps/threadtype/ThreadListen.h"
 #include "eprosimartps/threadtype/ThreadSend.h"
+#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
 
 
 
@@ -60,6 +61,7 @@ class Endpoint;
 
 
 
+
 /**
  * @class Participant
  * @brief Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -69,6 +71,7 @@ class Participant{
 	friend class ThreadSend;
 	friend class ThreadListen;
 	friend class eprosima::dds::DomainParticipant;
+	friend class SimpleParticipantDiscoveryProtocol;
 private:
 
 	RTPS_DllAPI Participant(const ParticipantParams_t&param);
@@ -148,7 +151,7 @@ private:
 	 */
 	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread);
 
-
+	SimpleParticipantDiscoveryProtocol m_SPDP;
 public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};

@@ -26,10 +26,16 @@
 
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/Participant.h"
+//#include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/IPFinder.h"
 
+namespace eprosima{
+namespace rtps{
+class Participant;
+}
+}
 
+using namespace eprosima::rtps;
 
 namespace eprosima {
 namespace dds {
@@ -46,18 +52,7 @@ private:
 	uint32_t id;
     static bool instanceFlag;
     static DomainParticipant *single;
-    DomainParticipant()
-    {
-        id = 0;//private constructor
-        m_portBase = 7400;
-        m_participantIdGain = 2;
-        m_domainIdGain = 250;
-        m_offsetd0 = 0;
-        m_offsetd1 = 10;
-        m_offsetd2 = 1;
-        m_offsetd3 = 11;
-        m_DomainId = 80;
-    }
+    DomainParticipant();
     std::vector<TypeReg_t> typesRegistered;
     std::vector<Participant*> m_participants;
 public:
@@ -123,26 +118,8 @@ public:
 	 * @return Different ID for each call.
 	 */
     uint32_t getNewId();
-    ~DomainParticipant()
-    {
-    	pDebugInfo("DomainParticipant destructor"<<endl;);
-    	for(std::vector<Participant*>::iterator it=m_participants.begin();
-    			it!=m_participants.end();++it)
-    	{
-    		delete(*it);
-    	}
-    	for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
-    			it!=m_publisherList.end();++it)
-    	{
-    		delete(*it);
-    	}
-    	for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
-    			it!=m_subscriberList.end();++it)
-    	{
-    		delete(*it);
-    	}
-    	instanceFlag = false;
-    }
+    ~DomainParticipant();
+
 
     void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
     {

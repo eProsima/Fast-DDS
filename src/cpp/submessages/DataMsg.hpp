@@ -112,7 +112,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 
 		if(inlineQos != NULL) //inlineQoS
 		{
-			if(inlineQos->m_hasChangedMsg || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
+			if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
 			{
 			//	cout << "Updating endian message" << endl;
 				ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);

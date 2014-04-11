@@ -33,6 +33,7 @@ public:
 
 class QosList
 {
+public:
 static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& string_in);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,Locator_t& loc);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,uint32_t uintlong);

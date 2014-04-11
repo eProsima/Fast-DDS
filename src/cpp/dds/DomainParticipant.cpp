@@ -20,6 +20,7 @@
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/Participant.h"
 
 namespace eprosima {
 namespace dds {
@@ -39,6 +40,41 @@ DomainParticipant* DomainParticipant::getInstance()
         return single;
     }
 }
+
+DomainParticipant::DomainParticipant()
+   {
+       id = 0;//private constructor
+       m_portBase = 7400;
+       m_participantIdGain = 2;
+       m_domainIdGain = 250;
+       m_offsetd0 = 0;
+       m_offsetd1 = 10;
+       m_offsetd2 = 1;
+       m_offsetd3 = 11;
+       m_DomainId = 80;
+   }
+
+DomainParticipant::~DomainParticipant()
+{
+	pDebugInfo("DomainParticipant destructor"<<endl;);
+	for(std::vector<Participant*>::iterator it=m_participants.begin();
+			it!=m_participants.end();++it)
+	{
+		delete(*it);
+	}
+	for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
+			it!=m_publisherList.end();++it)
+	{
+		delete(*it);
+	}
+	for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
+			it!=m_subscriberList.end();++it)
+	{
+		delete(*it);
+	}
+	instanceFlag = false;
+}
+
 
 uint32_t DomainParticipant::getNewId()
 {

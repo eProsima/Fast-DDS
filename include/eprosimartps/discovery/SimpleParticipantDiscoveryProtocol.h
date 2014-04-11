@@ -18,22 +18,28 @@
 #ifndef SIMPLEDISCOVERYPARTICIPANTPROTOCOL_H_
 #define SIMPLEDISCOVERYPARTICIPANTPROTOCOL_H_
 
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/reader/StatelessReader.h"
-#include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/timedevent/ResendDataPeriod.h"
 
+#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
+#include "eprosimartps/dds/QosList.h"
 #include "eprosimartps/discovery/DiscoveredParticipantData.h"
+
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
 namespace rtps {
 
+class StatelessWriter;
+class StatelessReader;
 
 
-class SimpleDiscoveryParticipantProtocol {
+class SimpleParticipantDiscoveryProtocol: public boost::basic_lockable_adapter<boost::recursive_mutex> {
+	friend class ResendDiscoveryDataPeriod;
 public:
-	SimpleDiscoveryParticipantProtocol(Participant* p);
-	virtual ~SimpleDiscoveryParticipantProtocol();
+	SimpleParticipantDiscoveryProtocol(Participant* p);
+	virtual ~SimpleParticipantDiscoveryProtocol();
 
 	bool initSPDP(uint16_t domainId,uint16_t participantId,uint16_t resendDataPeriod_sec);
 
@@ -50,7 +56,7 @@ private:
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
 	//Locator_t m_defaultMulticastLocator;
 	uint16_t m_domainId;
-	ResendDataPeriod* m_resendData;
+	ResendDiscoveryDataPeriod* m_resendData;
 	CDRMessage_t m_DPDMsgHeader;
 	CDRMessage_t m_DPDMsgData;
 	CDRMessage_t m_DPDMsg;

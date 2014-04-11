@@ -24,17 +24,17 @@
 namespace eprosima {
 namespace rtps {
 
-class StatelessWriter;
+class SimpleParticipantDiscoveryProtocol;
 
-class ResendDataPeriod: public TimedEvent {
+class ResendDiscoveryDataPeriod: public TimedEvent {
 public:
-	ResendDataPeriod(StatelessWriter* SLW,boost::posix_time::milliseconds interval);
-	virtual ~ResendDataPeriod();
+	ResendDiscoveryDataPeriod(SimpleParticipantDiscoveryProtocol* p_SPDP,boost::posix_time::milliseconds interval);
+	virtual ~ResendDiscoveryDataPeriod();
 
 	void event(const boost::system::error_code& ec);
 
 	CDRMessage_t m_data_msg;
-	StatelessWriter* mp_SLW;
+	SimpleParticipantDiscoveryProtocol* mp_SPDP;
 };
 
 } /* namespace rtps */

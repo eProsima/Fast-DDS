@@ -14,6 +14,11 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
+
+
+#ifndef RTPSREADER_H_
+#define RTPSREADER_H_
+
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
@@ -27,11 +32,8 @@
 
 #include "eprosimartps/dds/Subscriber.h"
 
-#ifndef RTPSREADER_H_
-#define RTPSREADER_H_
-
-
 using namespace eprosima::dds;
+
 namespace eprosima {
 
 namespace rtps {
