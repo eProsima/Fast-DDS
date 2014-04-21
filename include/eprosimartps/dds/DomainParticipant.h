@@ -94,9 +94,20 @@ public:
      */
     static bool removeSubscriber(Participant* p,Subscriber* sub);
 
-
+    /**
+     * Register a type in the domain.
+     * The name must be unique, the size > 0.
+     * @param[in] type Pointer to the Data Type Object.
+     * @return True if correct.
+     */
     static bool registerType(DDSTopicDataType* type);
 
+    /**
+     * Get a pointer to a registered type.
+     * @param[in] type_name Name of the type to add.
+     * @param[out] type_ptr Pointer to pointer of the type, is used to return the object.
+     * @return True if the type is found.
+     */
     static bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr);
 
 
@@ -112,7 +123,9 @@ public:
     uint32_t getNewId();
     ~DomainParticipant();
 
-
+    /**
+     * Set the parameters used to calculate the default ports in the discovery.
+     */
     void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
     {
     	m_portBase = PB;
@@ -123,7 +136,10 @@ public:
     	m_offsetd2 = d2;
     	m_offsetd3 = d3;
     }
+    /** @name Methods to get the Port parameters.
+     */
 
+    	///@{
 	uint16_t getDomainIdGain() const {
 		return m_domainIdGain;
 	}
@@ -151,7 +167,13 @@ public:
 	uint16_t getPortBase() const {
 		return m_portBase;
 	}
+	///@}
 
+	/**
+	 * Get IP addresses of the machine
+	 * @param[out] locators Pointer to vector of locators used to return the different IPs of the machine.
+	 *
+	 */
 	static void getIPAddress(std::vector<Locator_t>* locators);
 
 private:

@@ -57,19 +57,27 @@ public:
 	 * the call to add_change in the HistoryCache, to prevent incorrect increments.
 	 * @param changekind The type of change.
 	 * @param data Pointer to the serialized data that must be included in the change.
-	 * @param change Pointer to pointer to return the change.
+	 * @param change_out Pointer to pointer to return the change.
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
 
-
+	/**
+	 * Initialize the header message that is used in all RTPS Messages.
+	 */
 	void init_header();
 
-
+	/**
+	 * Get the topic Data Type Name
+	 * @return The name of the data type.
+	 */
 	const std::string& getTopicDataType() const {
 		return m_topicDataType;
 	}
-
+	/**
+	 * Get the topic name.
+	 * @return Topic name.
+	 */
 	const std::string& getTopicName() const {
 		return m_topicName;
 	}
@@ -78,9 +86,16 @@ public:
 	StateKind_t m_stateType;
 	//!Changes associated with this writer.
 	HistoryCache m_writer_cache;
+	/**
+	 * Increment the heartbeatCound.
+	 */
 	void heartbeatCount_increment() {
 		++m_heartbeatCount;
 	}
+	/**
+	 * Get the heartbeatCount.
+	 * @return HeartbeatCount.
+	 */
 	Count_t getHeartbeatCount() const {
 		return m_heartbeatCount;
 	}

@@ -23,30 +23,45 @@
 namespace eprosima {
 namespace dds {
 
+/**
+ * QosList_t class contains two ParameterList_t for the Qos.
+ */
 class QosList_t {
 public:
 	QosList_t();
 	virtual ~QosList_t();
+	//! All the Qos as a parameter List.
 	ParameterList_t allQos;
+	//! Only the Qos that can be send as inline.
 	ParameterList_t inlineQos;
 };
 
+/**
+ * QosList class.
+ * Contains static methods to add Qos to a QosList_t structure.
+ */
 class QosList
 {
 public:
-static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& string_in);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,Locator_t& loc);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,uint32_t uintlong);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,GUID_t& guid);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,ProtocolVersion_t& protocol);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,VendorId_t& vendor);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,octet o1,octet o2,octet o3,octet o4);
-//static bool addQos(QosList_t* qos,ParameterId_t pid ,Count_t& count);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,EntityId_t& entity);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
-static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
-//static bool addQos(QosList_t* qos,ParameterId_t pid ,BuiltinEndpointSet_t& set);
-
+	/**
+	 * @name AddQos methods.
+	 * @param qos Pointer to the QOsList_t list.
+	 * @param pid Pid to add
+	 * @param param Parameter to add.
+	 * @return True if correct.
+	 */
+	///@{
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& string_in);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,Locator_t& loc);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,uint32_t uintlong);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,GUID_t& guid);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,ProtocolVersion_t& protocol);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,VendorId_t& vendor);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,octet o1,octet o2,octet o3,octet o4);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,EntityId_t& entity);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
+	///@}
 };
 
 } /* namespace rtps */
