@@ -72,10 +72,13 @@ Participant::Participant(const ParticipantParams_t& PParam):
 	std::stringstream ss;
 		for(int i =0;i<12;i++)
 			ss << (int)m_guid.guidPrefix.value[i] << ".";
-		pInfo("Participant created with guidPrefix: " <<ss.str()<< endl);
 
+	m_participantName = PParam.name;
+	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<ss.str()<< endl);
 
-		m_SPDP.initSPDP(80,ID,1);
+//	cout << "PParam name: "<< PParam.name << endl;
+//	cout << "Participant name: " << m_participantName << endl;
+	m_SPDP.initSPDP(PParam.domainId,ID,PParam.resendSPDPDataPeriod_sec);
 }
 
 

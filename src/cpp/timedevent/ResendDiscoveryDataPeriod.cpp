@@ -40,6 +40,7 @@ void ResendDiscoveryDataPeriod::event(const boost::system::error_code& ec)
 	{
 		pDebugInfo("ResendDiscoveryData Period" << endl);
 		mp_SPDP->sendDPDMsg();
+		m_isWaiting = false;
 		this->restart_timer();
 	}
 	else if(ec==boost::asio::error::operation_aborted)

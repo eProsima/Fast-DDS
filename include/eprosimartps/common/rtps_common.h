@@ -303,6 +303,10 @@ typedef struct ParticipantParams_t{
 	std::vector<Locator_t> defaultUnicastLocatorList;
 	std::vector<Locator_t> defaultMulticastLocatorList;
 	uint32_t defaultSendPort;
+	uint16_t resendSPDPDataPeriod_sec;
+	uint16_t domainId;
+	std::string name;
+	bool staticEndpointDiscovery;
 	ParticipantParams_t(){
 		defaultSendPort = 7359;
 		Locator_t defUni;
@@ -314,6 +318,11 @@ typedef struct ParticipantParams_t{
 		defUni.address[15] = 1;
 		defUni.port = 10043;
 		defaultUnicastLocatorList.push_back(defUni);
+		resendSPDPDataPeriod_sec = 2;
+		domainId = 80;
+		name = "defaultParticipant";
+		//cout << "pparam name: " << name << endl;
+		staticEndpointDiscovery = true;
 	}
 }ParticipantParams_t;
 

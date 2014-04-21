@@ -32,11 +32,14 @@ QosList_t::~QosList_t()
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)
 {
-	if(pid == PID_TOPIC_NAME || pid == PID_TYPE_NAME )
+	if(string_in.size()==0)
+		return false;
+	if(pid == PID_TOPIC_NAME || pid == PID_TYPE_NAME || pid == PID_ENTITY_NAME)
 	{
 		ParameterString_t* p = new ParameterString_t();
 		p->Pid = pid;
 		p->m_string = string_in;
+		//p->length = string_in.size()+2;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		qos->allQos.m_hasChanged = true;
 		if(pid==PID_TOPIC_NAME)
