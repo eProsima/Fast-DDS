@@ -60,6 +60,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 		paramlist_byte_size +=4;
 		if(valid)
 		{
+		//	cout << "readparameterlistfromcdrmsg Param with pid: " << pid << endl;
 			switch(pid)
 			{
 			case PID_UNICAST_LOCATOR:
@@ -108,6 +109,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(pid,plength);
 				valid &= CDRMessage::readOctet(msg,&p->protocolVersion.m_major);
 				valid &= CDRMessage::readOctet(msg,&p->protocolVersion.m_minor);
+				msg->pos+=2;
 				if(plength == PARAMETER_PROTOCOL_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
@@ -126,6 +128,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterVendorId_t* p = new ParameterVendorId_t(pid,plength);
 				valid &= CDRMessage::readOctet(msg,&p->vendorId[0]);
 				valid &= CDRMessage::readOctet(msg,&p->vendorId[1]);
+				msg->pos+=2;
 				if(plength == PARAMETER_VENDOR_LENGTH && valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
@@ -184,6 +187,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			}
 			case PID_TOPIC_NAME:
 			case PID_TYPE_NAME:
+			case PID_ENTITY_NAME:
 			{
 				ParameterString_t* p = new ParameterString_t(pid,plength);
 				uint32_t str_size = 1;

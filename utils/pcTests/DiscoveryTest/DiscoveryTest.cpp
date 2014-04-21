@@ -134,6 +134,9 @@ int main(int argc, char** argv){
 	LatencyType Latency;
 	//***********  PARTICIPANT  ******************//
 	ParticipantParams_t PParam;
+	PParam.name = "participant1";
+	cout << "param domain id: " << PParam.domainId << endl;
+	cout << "param name: " << PParam.name << endl;
 	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	int a;

@@ -161,6 +161,7 @@ bool SimpleParticipantDiscoveryProtocol::updateParamList()
 	}
 	valid &=QosList::addQos(&m_DPDAsParamList,PID_PARTICIPANT_LEASE_DURATION,m_DPD.leaseDuration);
 	valid &=QosList::addQos(&m_DPDAsParamList,PID_BUILTIN_ENDPOINT_SET,m_DPD.m_proxy.m_availableBuiltinEndpoints);
+	valid &=QosList::addQos(&m_DPDAsParamList,PID_ENTITY_NAME,this->mp_Participant->m_participantName);
 
 
 	valid &=ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);
@@ -181,16 +182,26 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 			change->instanceHandle.value[i] = this->mp_Participant->m_guid.guidPrefix.value[i];
 		for(uint8_t i = 12;i<16;++i)
 			change->instanceHandle.value[i] = this->mp_Participant->m_guid.entityId.value[i];
-		updateParamList();
+		if(updateParamList())
+		{
 		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 		change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
 		memcpy(change->serializedPayload.data,m_DPDAsParamList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
 		m_SPDPbPWriter->m_writer_cache.add_change(change);
-
+		}
+		else
+		{
+			pWarning("Parameter List update failed"<<endl);
+			return false;
+		}
 	}
 	else
 	{
-		m_SPDPbPWriter->m_writer_cache.get_last_added_cache(&change);
+		if(!m_SPDPbPWriter->m_writer_cache.get_last_added_cache(&change))
+		{
+			pWarning("Error getting last added change"<<endl);
+			return false;
+		}
 	}
 	m_SPDPbPWriter->unsent_change_add(change);
 	return true;
@@ -226,27 +237,43 @@ bool SimpleParticipantDiscoveryProtocol::updateDPDMsg()
 
 void SimpleParticipantDiscoveryProtocol::new_change_added()
 {
-	pWarning("REPARE HISTORY"<<endl);
-	cout << "is full: ";
-			cout << m_SPDPbPReader->m_reader_cache.isFull() << endl;
+	pInfo("New SPDP Message received"<<endl);
 	CacheChange_t* change = NULL;
-	cout << "1"<<endl;
 	if(m_SPDPbPReader->m_reader_cache.get_last_added_cache(&change))
 	{
-		cout << "1"<<endl;
 		ParameterList_t param;
 		CDRMessage_t msg;
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
+
 		msg.length = change->serializedPayload.length;
+		//cout << "msg length: " << msg.length << endl;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		cout << "1"<<endl;
 		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
-		cout << "1"<<endl;
 		DiscoveredParticipantData pdata;
-		cout << "1"<<endl;
 		if(processParameterList(param,&pdata))
 		{
-			cout << "1"<<endl;
+			pDebugInfo("ParameterList correctly processed"<<endl);
+			for(uint8_t i = 0;i<12;++i)
+				change->instanceHandle.value[i] = pdata.m_proxy.m_guidPrefix.value[i];
+			for(uint8_t i = 12;i<16;++i)
+				change->instanceHandle.value[i] = this->mp_Participant->m_guid.entityId.value[i];
+			bool from_me = true;
+			for(uint8_t i =0;i<12;i++)
+			{
+				//cout << (int)change->instanceHandle.value[i] << "//"<< (int)this->mp_Participant->m_guid.guidPrefix.value[i] << endl;
+				if(change->instanceHandle.value[i] != this->mp_Participant->m_guid.guidPrefix.value[i])
+				{
+					from_me = false;
+					break;
+				}
+			}
+
+			if(from_me)
+			{
+				pInfo("SPDP Message from own participant"<<endl);
+				m_SPDPbPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+				return;
+			}
 			bool found = false;
 			for(std::vector<DiscoveredParticipantData>::iterator it = m_matched_participants.begin();
 					it!=m_matched_participants.end();++it)
@@ -292,6 +319,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 		}
 		else
 		{
+			pDebugInfo("Error Processing parameter List"<<endl);
 			m_SPDPbPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
 		}
 
@@ -303,10 +331,13 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& param,
 		DiscoveredParticipantData* Pdata)
 {
+	//cout << "Size of param list:  "<< param.m_parameters.size() << endl;
 	for(std::vector<Parameter_t*>::iterator it = param.m_parameters.begin();
 			it!=param.m_parameters.end();++it)
 	{
-		switch((*it)->Pid){
+		//cout << "Parameter with PID: "<< (int)(*it)->Pid << endl;
+		switch((*it)->Pid)
+		{
 		case PID_PROTOCOL_VERSION:
 		{
 			ProtocolVersion_t pv;
@@ -372,6 +403,12 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 		{
 			ParameterBuiltinEndpointSet_t* p = (ParameterBuiltinEndpointSet_t*)(*it);
 			Pdata->m_proxy.m_availableBuiltinEndpoints = p->endpointSet;
+			break;
+		}
+		case PID_ENTITY_NAME:
+		{
+			ParameterString_t* p = (ParameterString_t*)(*it);
+			Pdata->m_proxy.m_participantName = p->m_string;
 			break;
 		}
 		default: break;

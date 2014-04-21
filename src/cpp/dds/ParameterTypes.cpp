@@ -40,6 +40,8 @@ bool ParameterLocator_t::addToCDRMessage(CDRMessage_t* msg)
 // PARAMETER_ STRING
 bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 {
+	if(this->m_string.size()==0)
+		return false;
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	//Str size
 	uint32_t str_siz = this->m_string.size();
@@ -47,6 +49,8 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
 	this->length = str_siz + 4 + rest;
+//	cout << "string: "<<this->m_string << endl;
+//	cout << "param length: " << this->length << " str size: "<< str_siz << " rest: " << rest << endl;
 	valid &= CDRMessage::addUInt16(msg, this->length);
 	valid &= CDRMessage::addUInt32(msg, str_siz);
 	valid &= CDRMessage::addData(msg,

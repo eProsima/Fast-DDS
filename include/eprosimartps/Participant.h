@@ -152,6 +152,7 @@ private:
 	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread);
 
 	SimpleParticipantDiscoveryProtocol m_SPDP;
+	std::string m_participantName;
 public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};

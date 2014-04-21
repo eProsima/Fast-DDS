@@ -47,6 +47,7 @@ public:
 	{
 		VENDORID_EPROSIMA(m_VendorId);
 		PROTOCOLVERSION(m_protocolVersion);
+		m_participantName = "undefined";
 		//TODOG FIX AVAILABLE BUILTIN ENDPOINTS
 //		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 //		m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
@@ -70,6 +71,7 @@ public:
 	std::vector<Locator_t> m_defaultUnicastLocatorList;
 	std::vector<Locator_t> m_defaultMulticastLocatorList;
 	Count_t m_manualLivelinessCount;
+	std::string m_participantName;
 };
 
 } /* namespace rtps */
