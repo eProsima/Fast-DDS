@@ -54,7 +54,6 @@ private:
     static bool instanceFlag;
     static DomainParticipant *single;
     DomainParticipant();
-    std::vector<TypeReg_t> typesRegistered;
     std::vector<DDSTopicDataType*> m_registeredTypes;
     std::vector<Participant*> m_participants;
 public:
@@ -96,22 +95,11 @@ public:
     static bool removeSubscriber(Participant* p,Subscriber* sub);
 
 
-	/**
-	 * @brief Register a type to be used in the communication. Serialized and deserialized functions must be provided, as well as the byte size of the type.
-	 * @param in_str Type Name. Must be unique.
-	 * @param serialize Pointer to serialization function.
-	 * @param deserialize Pointer to deserialization function.
-	 * @param getKey Pointer to getKeyhashFunction.
-	 * @param size Size in bytes of the type.
-	 * @return True if suceeded. 
-	 */
-    static bool registerType(std::string in_str, void (*serialize)(SerializedPayload_t*data,void*)
-    		,void (*deserialize)(SerializedPayload_t*data,void*),
-    		void (*getKey)(void*,InstanceHandle_t*),int32_t size);
-
     static bool registerType(DDSTopicDataType* type);
 
-    static bool getType(TypeReg_t* type,std::string data_type);
+    static bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr);
+
+
 	/**
 	 * @brief Get pointer to the unique instance of this class.
 	 * @return Pointer to the instance.

@@ -31,7 +31,9 @@ RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 		m_writer_cache(historysize,payload_size),
 		m_pushMode(true),
 		m_heartbeatCount(0),
+		mp_type(NULL),
 		m_Pub(NULL)
+
 {
 	m_writer_cache.m_historyKind = WRITER;
 	m_writer_cache.mp_rtpswriter = this;
@@ -63,15 +65,19 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	}
 	if(changeKind == ALIVE && data !=NULL)
 	{
-		m_type.serialize(&ch->serializedPayload,data);
+		if(!mp_type->serialize(data,&ch->serializedPayload))
+		{
+			pWarning("RTPSWriter:Serialization returns false"<<endl);
+			return false;
+		}
 	}
 
 	ch->kind = changeKind;
 
 	if(topicKind == WITH_KEY)
 	{
-		if(m_type.getKey !=NULL)
-			m_type.getKey(data,&ch->instanceHandle);
+		if(mp_type->m_isGetKeyDefined)
+			mp_type->getKey(data,&ch->instanceHandle);
 		else
 			pWarning("Get key function not defined"<<endl);
 	}

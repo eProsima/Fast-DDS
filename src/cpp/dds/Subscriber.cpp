@@ -115,7 +115,13 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 		CacheChange_t* ch;
 		mp_Reader->m_reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
 		if(ch->kind == ALIVE)
-			type.deserialize(&ch->serializedPayload,data_ptr);
+		{
+			if(!mp_type->deserialize(&ch->serializedPayload,data_ptr))
+			{
+				pWarning("Subscriber:Deserialization returns false"<<endl);
+				return false;
+			}
+		}
 		else
 		{
 			pWarning("Reading a NOT ALIVE change ");
@@ -133,7 +139,13 @@ bool Subscriber::readCache(SequenceNumber_t& sn, GUID_t& wGuid,void* data_ptr)
 	if(mp_Reader->m_reader_cache.get_change(sn,wGuid,&ch))
 	{
 		if(ch->kind == ALIVE)
-			type.deserialize(&ch->serializedPayload,data_ptr);
+		{
+			if(!mp_type->deserialize(&ch->serializedPayload,data_ptr))
+			{
+				pWarning("Subscriber:Deserialization returns false"<<endl);
+				return false;
+			}
+		}
 		else
 		{
 			pWarning("Reading a NOT ALIVE change " << endl);
@@ -169,7 +181,13 @@ bool Subscriber::readLastAdded(void* data_ptr)
 			readElements.push_back(rElem);
 
 			if(change->kind == ALIVE)
-				type.deserialize(&change->serializedPayload,data_ptr);
+			{
+				if(!mp_type->deserialize(&change->serializedPayload,data_ptr))
+				{
+					pWarning("Subscriber:Deserialization returns false"<<endl);
+					return false;
+				}
+			}
 			else
 			{
 				pWarning("Reading a NOT ALIVE change ");
@@ -220,8 +238,12 @@ bool Subscriber::readAllUnreadCache(std::vector<void*>* data_vec)
 				mp_Reader->m_reader_cache.get_change(minSeqNum,minSeqNumGuid,&ch);
 				if(ch->kind == ALIVE)
 				{
-					void * data_ptr = malloc(type.byte_size);
-					type.deserialize(&ch->serializedPayload,data_ptr);
+					void * data_ptr = malloc(mp_type->m_typeSize);
+					if(!mp_type->deserialize(&ch->serializedPayload,data_ptr))
+					{
+						pWarning("Subscriber:Deserialization returns false"<<endl);
+						return false;
+					}
 					data_vec->push_back(data_ptr);
 				}
 				else
@@ -254,7 +276,11 @@ bool Subscriber::readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUI
 
 				//boost::posix_time::ptime t1,t2;
 				//t1 = boost::posix_time::microsec_clock::local_time();
-				type.deserialize(&ch->serializedPayload,data_ptr);
+				if(!mp_type->deserialize(&ch->serializedPayload,data_ptr))
+				{
+					pWarning("Subscriber:Deserialization returns false"<<endl);
+					return false;
+				}
 				//t2 = boost::posix_time::microsec_clock::local_time();
 				//cout<< "TIME total deserialize operation: " <<(t2-t1).total_microseconds()<< endl;
 			}
@@ -288,12 +314,17 @@ bool Subscriber::readAllCache(std::vector<void*>* data_vec)
 			readElem2.push_back(r_elem);
 			if((*it)->kind==ALIVE)
 			{
-				void * data_ptr = malloc(type.byte_size);
-				type.deserialize(&(*it)->serializedPayload,data_ptr);
+				void * data_ptr = malloc(mp_type->m_typeSize);
+				if(!mp_type->deserialize(&(*it)->serializedPayload,data_ptr))
+				{
+					pWarning("Subscriber:Deserialization returns false"<<endl);
+					return false;
+				}
+
 				data_vec->push_back(data_ptr);
 			}
 			else
-				{pWarning("Cache with NOT ALIVE" << endl);}
+			{pWarning("Cache with NOT ALIVE" << endl);}
 		}
 		readElements = readElem2;
 		return true;
@@ -338,7 +369,13 @@ bool Subscriber::takeMinSeqCache(void* data_ptr)
 		if(mp_Reader->m_reader_cache.get_change(seq,guid,&change,&ch_number))
 		{
 			if(change->kind == ALIVE)
-				type.deserialize(&change->serializedPayload,data_ptr);
+			{
+				if(!mp_type->deserialize(&change->serializedPayload,data_ptr))
+				{
+					pWarning("Subscriber:Deserialization returns false"<<endl);
+					return false;
+				}
+			}
 			else
 			{
 				pWarning("Cache with NOT ALIVE" << endl)

@@ -15,16 +15,16 @@
  *              grcanosa@gmail.com  	
  */
 
+
+
+#ifndef PUBLISHER_H_
+#define PUBLISHER_H_
 #include <iostream>
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/dds/ParameterList.h"
 #include "eprosimartps/common/rtps_messages.h"
-
-#ifndef PUBLISHER_H_
-#define PUBLISHER_H_
-
-
+#include "eprosimartps/dds/DDSTopicDataType.h"
 
 namespace eprosima {
 
@@ -128,13 +128,12 @@ public:
 
 
 
-	TypeReg_t* getType(){return (&type);};
+	DDSTopicDataType* getType(){return (mp_type);};
 
 
 private:
 	RTPSWriter* mp_Writer;
-	//bool initialized;
-	TypeReg_t type;
+	DDSTopicDataType* mp_type;
 	bool add_new_change(ChangeKind_t kind,void* Data);
 
 
