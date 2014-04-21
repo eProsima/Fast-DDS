@@ -32,10 +32,25 @@ public:
 	uint16_t length;
 	Parameter_t();
 	virtual ~Parameter_t();
+	/**
+	 * Constructor using a parameter PID and the parameter length
+	 * @param pid Pid of the parameter
+	 * @param length Its associated length
+	 */
 	Parameter_t(ParameterId_t pid,uint16_t length);
+	/**
+	 * Virtual method used to add the parameter to a CDRMessage_t message.
+	 * @param[in,out] msg Pointer to the message where the parameter should be added.
+	 * @return True if the parameter was correctly added.
+	 */
 	virtual bool addToCDRMessage(CDRMessage_t* msg) = 0;
 };
 
+/**
+ * @name Parameter Types.
+ * Each of the parameters represent a type of parameter based on the data it contains
+ */
+///@{
 class ParameterLocator_t: public Parameter_t {
 public:
 	Locator_t locator;
@@ -66,8 +81,8 @@ public:
 class ParameterGuid_t: public Parameter_t {
 public:
 	GUID_t guid;
-	ParameterGuid_t(){GUID_UNKNOWN(guid)};
-	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){GUID_UNKNOWN(guid)};
+	ParameterGuid_t(){GUID_UNKNOWN(guid);};
+	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){GUID_UNKNOWN(guid);};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -76,8 +91,8 @@ public:
 class ParameterProtocolVersion_t: public Parameter_t {
 public:
 	ProtocolVersion_t protocolVersion;
-	ParameterProtocolVersion_t(){PROTOCOLVERSION(protocolVersion)};
-	ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){PROTOCOLVERSION(protocolVersion)};
+	ParameterProtocolVersion_t(){PROTOCOLVERSION(protocolVersion);};
+	ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){PROTOCOLVERSION(protocolVersion);};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -155,13 +170,9 @@ public:
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
+///@}
 
-//class ParameterUserData_t: public Parameter_t {
-//public:
-//	std::vector<octet> value;
-//	ParameterUserData_t();
-//	bool addToCDRMessage(CDRMessage_t* msg);
-//};
+
 
 } //end of namespace dds
 } //end of namespace eprosima

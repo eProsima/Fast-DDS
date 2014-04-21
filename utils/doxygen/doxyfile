@@ -669,7 +669,13 @@ WARN_LOGFILE           =
 INPUT                  = utils/doxygen/doxygenfiles \
 			 				include/eprosimartps \
 			 				include/eprosimartps/common \
-			 				include/eprosimartps/utils
+			 				include/eprosimartps/utils \
+							include/eprosimartps/writer \
+							include/eprosimartps/reader \
+							include/eprosimartps/discovery \
+							include/eprosimartps/dds \
+							include/eprosimartps/threadtype \
+							include/eprosimartps/timedevent
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

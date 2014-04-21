@@ -171,6 +171,9 @@ public:
 
 	ParameterList_t ParamList;
 
+	/**
+	 * Add a writer proxy. Only until Discovery is good.
+	 */
 	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
 
 

@@ -121,19 +121,29 @@ public:
 	 */
 	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos);
 
+	/**
+	 * Add a reader proxy to the publisher.
+	 */
 	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline);
 
 
 	///@}
 
 
-
+	/**
+	 * Get the type associated with the Publisher.
+	 * @return Pointer to the type object.
+	 */
 	DDSTopicDataType* getType(){return (mp_type);};
 
 
 private:
+	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_Writer;
+	//! Pointer to the DDSTopicDataType object.
 	DDSTopicDataType* mp_type;
+
+
 	bool add_new_change(ChangeKind_t kind,void* Data);
 
 
