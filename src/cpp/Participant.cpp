@@ -241,7 +241,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		if(!assigned) //Create new listen thread
 		{
 			ThreadListen* thListen = NULL;
-			addNewListenThread(*locit_e,&thListen); //Add new listen thread to participant
+			addNewListenThread(*locit_e,&thListen,false); //Add new listen thread to participant
 			m_ThreadSemaphore->wait();
 			addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
 			assigned = true;
@@ -267,7 +267,7 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		if(!assigned) //Create new listen thread
 		{
 			ThreadListen* thListen = NULL;
-			addNewListenThread(*locit_e,&thListen); //Add new listen thread to participant
+			addNewListenThread(*locit_e,&thListen,true); //Add new listen thread to participant
 			m_ThreadSemaphore->wait();
 			addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
 			assigned = true;
@@ -276,12 +276,14 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	return true;
 }
 
-bool Participant::addNewListenThread(Locator_t& loc,ThreadListen** thlisten_in) {
+bool Participant::addNewListenThread(Locator_t& loc,ThreadListen** thlisten_in,bool isMulticast) {
 	*thlisten_in = new ThreadListen();
 	(*thlisten_in)->m_locList.push_back(loc);
+	(*thlisten_in)->m_isMulticast = isMulticast;
 	(*thlisten_in)->m_participant_ptr = this;
 	m_threadListenList.push_back(*thlisten_in);
 	(*thlisten_in)->init_thread();
+
 
 	return true;
 }
