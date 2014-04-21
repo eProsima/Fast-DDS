@@ -246,6 +246,25 @@ bool DomainParticipant::registerType(std::string in_str,
 	return true;
 }
 
+bool DomainParticipant::registerType(DDSTopicDataType* type)
+{
+	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+	for(std::vector<DDSTopicDataType*>::iterator it = dp->m_registeredTypes.begin();it!=dp->m_registeredTypes.end();++it)
+	{
+		if((*it)->m_topicDataTypeName == type->m_topicDataTypeName)
+			return false;
+	}
+	if(type->m_typeSize <=0)
+	{
+		pError("Registered Type must have size > 0"<<endl);
+		return false;
+	}
+	dp->m_registeredTypes.push_back(type);
+	return true;
+}
+
+
+
 bool DomainParticipant::removeParticipant(Participant* p)
 {
 	if(p!=NULL)

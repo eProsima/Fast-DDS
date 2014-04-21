@@ -28,6 +28,7 @@
 #include "eprosimartps/dds/Subscriber.h"
 //#include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/IPFinder.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
 
 namespace eprosima{
 namespace rtps{
@@ -54,6 +55,7 @@ private:
     static DomainParticipant *single;
     DomainParticipant();
     std::vector<TypeReg_t> typesRegistered;
+    std::vector<DDSTopicDataType*> m_registeredTypes;
     std::vector<Participant*> m_participants;
 public:
 	/**
@@ -106,6 +108,8 @@ public:
     static bool registerType(std::string in_str, void (*serialize)(SerializedPayload_t*data,void*)
     		,void (*deserialize)(SerializedPayload_t*data,void*),
     		void (*getKey)(void*,InstanceHandle_t*),int32_t size);
+
+    static bool registerType(DDSTopicDataType* type);
 
     static bool getType(TypeReg_t* type,std::string data_type);
 	/**
