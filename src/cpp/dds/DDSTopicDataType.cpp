@@ -23,6 +23,7 @@ namespace dds {
 DDSTopicDataType::DDSTopicDataType() {
 	// TODO Auto-generated constructor stub
 	this->m_typeSize = 0;
+	this->m_isGetKeyDefined = false;
 }
 
 DDSTopicDataType::~DDSTopicDataType() {

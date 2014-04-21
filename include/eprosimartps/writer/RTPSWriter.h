@@ -100,7 +100,7 @@ protected:
 
 	RTPSMessageGroup_t m_cdrmessages;
 public:
-	TypeReg_t m_type;
+	DDSTopicDataType* mp_type;
 
 	Publisher* m_Pub;
 	QosList_t m_qosList;

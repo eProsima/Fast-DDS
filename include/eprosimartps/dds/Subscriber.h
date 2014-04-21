@@ -15,6 +15,9 @@
  *              grcanosa@gmail.com  	
  */
 
+
+#ifndef SUBSCRIBER_H_
+#define SUBSCRIBER_H_
 #include <iostream>
 
 #include "eprosimartps/rtps_all.h"
@@ -24,10 +27,7 @@
 #include <boost/signals2.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-
-#ifndef SUBSCRIBER_H_
-#define SUBSCRIBER_H_
-
+#include "eprosimartps/dds/DDSTopicDataType.h"
 namespace eprosima {
 
 namespace rtps{
@@ -180,12 +180,10 @@ private:
 	bool removeSeqFromRead(SequenceNumber_t& sn, GUID_t& guid);
 	std::vector<ReadElement_t> readElements;
 	RTPSReader* mp_Reader;
-	//bool initialized;
 	std::string topicName;
 	std::string topicDataType;
-	TypeReg_t type;
+	DDSTopicDataType* mp_type;
 
-	//boost::signals2::signal<void()> msg_signal;
 
 };
 

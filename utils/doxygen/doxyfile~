@@ -32,7 +32,7 @@ PROJECT_NAME           = "eProsima RTPS"
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = "Version 0.0.1"
+PROJECT_NUMBER         = "Version 0.1.1"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description 
 # for a project that appears at the top of each page and should give viewer 
@@ -45,7 +45,8 @@ PROJECT_BRIEF          = "eProsima RTPS Implementation"
 # exceed 55 pixels and the maximum width should not exceed 200 pixels. 
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           = 
+#PROJECT_LOGO           = /home/grcanosa/workspace/eRTPS/utils/doxygen/doxygenfiles/eProsimaLogo.png
+PROJECT_LOGO           = ./utils/doxygen/doxygenfiles/eProsimaLogo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -667,7 +668,8 @@ WARN_LOGFILE           =
 
 INPUT                  = utils/doxygen/doxygenfiles \
 			 				include/eprosimartps \
-			 				include/eprosimartps/common
+			 				include/eprosimartps/common \
+			 				include/eprosimartps/utils
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -925,8 +927,8 @@ HTML_FILE_EXTENSION    = .html
 # have to redo this when upgrading to a newer version of doxygen or when 
 # changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            = 
-
+#HTML_HEADER            = ./utils/doxygen/doxygenfiles/eprosima_header.html
+HTML_HEADER            =
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
@@ -1530,7 +1532,7 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor.
 
-INCLUDE_PATH           = 
+INCLUDE_PATH           = utils/doxygen/doxygenfiles/
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 
@@ -1688,7 +1690,7 @@ GROUP_GRAPHS           = YES
 # collaboration diagrams in a style similar to the OMG's Unified Modeling 
 # Language.
 
-UML_LOOK               = YES
+UML_LOOK               = NO
 
 # If the UML_LOOK tag is enabled, the fields and methods are shown inside 
 # the class node. If there are many fields or methods and many nodes the 

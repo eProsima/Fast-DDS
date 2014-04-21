@@ -34,6 +34,7 @@ public:
 	virtual bool getKey(void*data,InstanceHandle_t* ihandle);
 	std::string m_topicDataTypeName;
 	uint32_t m_typeSize;
+	bool m_isGetKeyDefined;
 };
 
 } /* namespace dds */

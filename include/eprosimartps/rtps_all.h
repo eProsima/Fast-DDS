@@ -159,39 +159,6 @@ using std::bitset;
 #include "utils/RTPSLog.h"
 
 
-namespace eprosima{
-
-using namespace rtps;
-
-namespace dds{
-/**
- * Structure TypeReg_t used to save the name, size and serialization functions of a user-defined type.
- */
-typedef struct TypeReg_t{
-	std::string dataType;
-	void (*serialize)(SerializedPayload_t*,void*);
-	void (*deserialize)(SerializedPayload_t*,void*);
-	void (*getKey)(void*,InstanceHandle_t*);
-	int32_t byte_size;
-	TypeReg_t()
-	{
-		serialize = NULL;
-		deserialize = NULL;
-		getKey = NULL;
-		byte_size = 0;
-	}
-}TypeReg_t;
-}
-}
-
-//#include "CDRMessage.h"
-//#include "Endpoint.h"
-//
-//#include "MessageReceiver.h"
-//#include "ReaderLocator.h"
-//#include "RTPSWriter.h"
-//#include "HistoryCache.h"
-//#include "StatelessWriter.h"
 
 
 

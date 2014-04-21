@@ -29,30 +29,30 @@ bool DomainParticipant::instanceFlag = false;
 DomainParticipant* DomainParticipant::single = NULL;
 DomainParticipant* DomainParticipant::getInstance()
 {
-    if(! instanceFlag)
-    {
-        single = new DomainParticipant();
-        instanceFlag = true;
-        return single;
-    }
-    else
-    {
-        return single;
-    }
+	if(! instanceFlag)
+	{
+		single = new DomainParticipant();
+		instanceFlag = true;
+		return single;
+	}
+	else
+	{
+		return single;
+	}
 }
 
 DomainParticipant::DomainParticipant()
-   {
-       id = 0;//private constructor
-       m_portBase = 7400;
-       m_participantIdGain = 2;
-       m_domainIdGain = 250;
-       m_offsetd0 = 0;
-       m_offsetd1 = 10;
-       m_offsetd2 = 1;
-       m_offsetd3 = 11;
-       m_DomainId = 80;
-   }
+{
+	id = 0;//private constructor
+	m_portBase = 7400;
+	m_participantIdGain = 2;
+	m_domainIdGain = 250;
+	m_offsetd0 = 0;
+	m_offsetd1 = 10;
+	m_offsetd2 = 1;
+	m_offsetd3 = 11;
+	m_DomainId = 80;
+}
 
 DomainParticipant::~DomainParticipant()
 {
@@ -84,19 +84,19 @@ uint32_t DomainParticipant::getNewId()
 Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_t& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
-	//Look for the correct type registration
-	TypeReg_t typeR;
-	if(!DomainParticipant::getType(&typeR,WParam.topicDataType))
-		{
-			pError("Type Not Registered"<<endl;);
-			return NULL;
-		}
-	if(typeR.serialize == NULL || typeR.deserialize==NULL)
+									//Look for the correct type registration
+										DDSTopicDataType* p_type = NULL;
+	if(!DomainParticipant::getRegisteredType(WParam.topicDataType,&p_type))
 	{
-		pError("Serialization and deserialization functions cannot be NULL"<<endl);
+		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
-	if(WParam.topicKind == WITH_KEY && typeR.getKey == NULL)
+//	if(typeR.serialize == NULL || typeR.deserialize==NULL)
+//	{
+//		pError("Serialization and deserialization functions cannot be NULL"<<endl);
+//		return NULL;
+//	}
+	if(WParam.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
@@ -105,25 +105,25 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 	if(WParam.stateKind == STATELESS)
 	{
 		StatelessWriter* SW;
-		if(!p->createStatelessWriter(&SW,WParam,typeR.byte_size))
+		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize))
 			return NULL;
 		Pub = new Publisher((RTPSWriter*)SW);
 		pDebugInfo("Publisher in topic: "<<Pub->getTopicName()<<" created."<<endl);
 		SW->m_Pub = Pub;
 
-		Pub->type = typeR;
-		SW->m_type = typeR;
+		Pub->mp_type = p_type;
+		SW->mp_type = p_type;
 
 	}
 	else if(WParam.stateKind == STATEFUL)
 	{
 		StatefulWriter* SF;
-		if(!p->createStatefulWriter(&SF,WParam,typeR.byte_size))
+		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize))
 			return NULL;
 		Pub = new Publisher((RTPSWriter*)SF);
 		SF->m_Pub = Pub;
-		Pub->type = typeR;
-		SF->m_type = typeR;
+		Pub->mp_type = p_type;
+		SF->mp_type = p_type;
 
 	}
 	if(Pub!=NULL)
@@ -133,41 +133,23 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 		dp->m_publisherList.push_back(Pub);
 	}
 	else
-		{pError("Publisher not created"<<endl);}
+	{pError("Publisher not created"<<endl);}
 	return Pub;
 }
 
 
-bool DomainParticipant::getType(TypeReg_t*type,std::string data_type)
-{
-	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-	for(std::vector<TypeReg_t>::iterator it=dp->typesRegistered.begin();
-			it!=dp->typesRegistered.end();++it)
-	{
-		if(it->dataType == data_type)
-		{
-			*type= *it;
-			return true;
-		}
-	}
-	return false;
-}
 
 Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderParams_t& RParam) {
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
-	TypeReg_t typeR;
-	if(!DomainParticipant::getType(&typeR,RParam.topicDataType))
+	DDSTopicDataType* p_type = NULL;
+	if(!DomainParticipant::getRegisteredType(RParam.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
-	if(typeR.serialize == NULL || typeR.deserialize==NULL)
-	{
-		pError("Serialization and deserialization functions cannot be NULL"<<endl);
-		return NULL;
-	}
-	if(RParam.topicKind == WITH_KEY && typeR.getKey == NULL)
+
+	if(RParam.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
@@ -177,7 +159,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 	{
 		pDebugInfo("Stateless"<<endl);
 		StatelessReader* SR;
-		if(!p->createStatelessReader(&SR,RParam,typeR.byte_size))
+		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize))
 		{
 			pError("Error creating subscriber"<<endl);
 			return NULL;
@@ -186,13 +168,13 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		SR->mp_Sub = Sub;
 		Sub->topicName = RParam.topicName;
 		Sub->topicDataType = RParam.topicDataType;
-		Sub->type = typeR;
+		Sub->mp_type = p_type;
 	}
 	else if(RParam.stateKind == STATEFUL)
 	{
 		pDebugInfo("Stateful"<<endl);
 		StatefulReader* SFR;
-		if(!p->createStatefulReader(&SFR,RParam,typeR.byte_size))
+		if(!p->createStatefulReader(&SFR,RParam,p_type->m_typeSize))
 		{
 			pError("Error creating subscriber"<<endl);
 			return NULL;
@@ -201,7 +183,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		SFR->mp_Sub = Sub;
 		Sub->topicName = RParam.topicName;
 		Sub->topicDataType = RParam.topicDataType;
-		Sub->type = typeR;
+		Sub->mp_type = p_type;
 	}
 	if(Sub!=NULL)
 	{
@@ -210,7 +192,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		dp->m_subscriberList.push_back(Sub);
 	}
 	else
-		{pError("Subscriber not created"<<endl);}
+	{pError("Subscriber not created"<<endl);}
 	return Sub;
 }
 
@@ -223,28 +205,22 @@ Participant* DomainParticipant::createParticipant(const ParticipantParams_t& PPa
 }
 
 
-bool DomainParticipant::registerType(std::string in_str,
-		void (*serialize)(SerializedPayload_t* data, void*),
-		void (*deserialize)(SerializedPayload_t* data, void*),
-		void (*getKey)(void*,InstanceHandle_t*),
-		int32_t size) {
+
+bool DomainParticipant::getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
+{
 	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-	for(std::vector<TypeReg_t>::iterator it = dp->typesRegistered.begin();it!=dp->typesRegistered.end();++it)
+	for(std::vector<DDSTopicDataType*>::iterator it=dp->m_registeredTypes.begin();
+			it!=dp->m_registeredTypes.end();++it)
 	{
-		if(it->dataType == in_str)
-			return false;
+		if((*it)->m_topicDataTypeName == type_name)
+		{
+			*type_ptr = *it;
+			return true;
+		}
 	}
-
-	TypeReg_t type;
-	type.dataType = in_str;
-	type.serialize = serialize;
-	type.deserialize = deserialize;
-	type.getKey = getKey;
-	type.byte_size = size;
-	dp->typesRegistered.push_back(type);
-
-	return true;
+	return false;
 }
+
 
 bool DomainParticipant::registerType(DDSTopicDataType* type)
 {
@@ -336,7 +312,7 @@ void DomainParticipant::getIPAddress(std::vector<Locator_t>* locators)
 	DomainParticipant* dp = DomainParticipant::getInstance();
 	std::vector<std::string> ip_names;
 	dp->m_IPFinder.getIP(&ip_names);
-	//cout << "IPs" << endl;
+
 	locators->clear();
 	for(std::vector<std::string>::iterator it=ip_names.begin();
 			it!=ip_names.end();++it)
@@ -355,7 +331,7 @@ void DomainParticipant::getIPAddress(std::vector<Locator_t>* locators)
 		loc.address[14] = (octet)c;
 		loc.address[15] = (octet)d;
 		locators->push_back(loc);
-	//	cout << *it << endl;
+
 	}
 }
 
