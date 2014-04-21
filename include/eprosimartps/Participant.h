@@ -149,7 +149,7 @@ private:
 	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
 	 * @return True if correct.
 	 */
-	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread);
+	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread,bool isMulticast);
 
 	SimpleParticipantDiscoveryProtocol m_SPDP;
 	std::string m_participantName;

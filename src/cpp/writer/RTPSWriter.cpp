@@ -63,7 +63,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 		pWarning("Problem reserving Cache"<<endl);
 		return false;
 	}
-	if(changeKind == ALIVE && data !=NULL)
+	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
 	{
 		if(!mp_type->serialize(data,&ch->serializedPayload))
 		{
@@ -74,12 +74,16 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 
 	ch->kind = changeKind;
 
-	if(topicKind == WITH_KEY)
+	if(topicKind == WITH_KEY && mp_type !=NULL)
 	{
 		if(mp_type->m_isGetKeyDefined)
+		{
 			mp_type->getKey(data,&ch->instanceHandle);
+		}
 		else
+		{
 			pWarning("Get key function not defined"<<endl);
+		}
 	}
 
 

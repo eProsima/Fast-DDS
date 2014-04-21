@@ -33,7 +33,7 @@ ThreadListen::ThreadListen() :
 		m_first(true)
 {
 	m_MessageReceiver.mp_threadListen = this;
-
+	m_isMulticast = false;
 }
 
 ThreadListen::~ThreadListen()
@@ -43,7 +43,8 @@ ThreadListen::~ThreadListen()
 	delete(mp_thread);
 }
 
-void ThreadListen::listen() {
+void ThreadListen::listen()
+{
 	//Initialize socket
 
 	if(m_first)
@@ -93,10 +94,17 @@ void ThreadListen::init_thread()
 		{
 			//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
 			udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList[0].port);
-			//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 			try{
-
+				if(m_isMulticast)
+				{
+					m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+				}
 				m_listen_socket.bind(listen_endpoint);
+				if(m_isMulticast)
+				{
+					boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList[0].to_IP4_string());
+					m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
+				}
 				not_bind = false;
 			}
 			catch (boost::system::system_error const& e)

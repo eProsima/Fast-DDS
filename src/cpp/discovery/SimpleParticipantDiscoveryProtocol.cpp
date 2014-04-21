@@ -105,9 +105,9 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	multiReaderLoc.locator = multiLocator;
 	m_SPDPbPWriter->reader_locator_add(multiReaderLoc);
 
-	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-	 boost::asio::ip::address address = boost::asio::ip::address::from_string("239.255.0.1");
-	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
+//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+//	 boost::asio::ip::address address = boost::asio::ip::address::from_string("239.255.0.1");
+//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
 
 
 	//SPDP BUILTIN PARTICIPANT READER

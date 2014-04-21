@@ -71,6 +71,7 @@ public:
 	//boost::asio::ip::udp::resolver resolver;
 	Locator_t m_send_locator;
 	boost::asio::ip::udp::endpoint m_sender_endpoint;
+	bool m_isMulticast;
 
 };
 
