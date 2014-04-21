@@ -87,9 +87,24 @@ void ThreadListen::init_thread()
 	if(!m_locList.empty())
 	{
 		m_first = true;
-		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList[0].port);
 		m_listen_socket.open(boost::asio::ip::udp::v4());
-		m_listen_socket.bind(listen_endpoint);
+		bool not_bind = true;
+		while(not_bind)
+		{
+			//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
+			udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList[0].port);
+			//boost::asio::ip::udp::socket s(sendService,send_endpoint);
+			try{
+
+				m_listen_socket.bind(listen_endpoint);
+				not_bind = false;
+			}
+			catch (boost::system::system_error const& e)
+			{
+				pWarning(e.what() << endl);
+				m_locList[0].port++;
+			}
+		}
 		mp_thread = new boost::thread(&ThreadListen::listen,this);
 	}
 }

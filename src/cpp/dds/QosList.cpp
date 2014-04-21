@@ -103,9 +103,28 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with Uint32_t Parameter."<<endl)
+	pWarning("PID not correspond with UInt32_t Parameter "<< (int)pid << endl)
 	return false;
 }
+
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
+{
+	if(pid == PID_EXPECTS_INLINE_QOS)
+	{
+		//TODOG: Finish
+		ParameterBool_t* p = new ParameterBool_t();
+		p->Pid = pid;
+		p->length = PARAMETER_BOOL_LENGTH;
+		p->value = in_bool;
+		qos->allQos.m_parameters.push_back((Parameter_t*)p);
+		qos->allQos.m_hasChanged = true;
+		return true;
+	}
+	pWarning("PID not correspond with ExpectsInlineQos" << endl);
+	return false;
+}
+
+
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	GUID_t& guid)
 {

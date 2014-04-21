@@ -44,6 +44,7 @@ static bool addQos(QosList_t* qos,ParameterId_t pid ,octet o1,octet o2,octet o3,
 //static bool addQos(QosList_t* qos,ParameterId_t pid ,Count_t& count);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,EntityId_t& entity);
 static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
+static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
 //static bool addQos(QosList_t* qos,ParameterId_t pid ,BuiltinEndpointSet_t& set);
 
 };

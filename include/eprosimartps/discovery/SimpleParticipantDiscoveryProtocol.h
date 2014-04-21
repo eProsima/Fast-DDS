@@ -24,6 +24,8 @@
 #include "eprosimartps/dds/QosList.h"
 #include "eprosimartps/discovery/DiscoveredParticipantData.h"
 
+#include "eprosimartps/discovery/SPDPListener.h"
+
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -33,6 +35,8 @@ namespace rtps {
 
 class StatelessWriter;
 class StatelessReader;
+
+
 
 
 class SimpleParticipantDiscoveryProtocol: public boost::basic_lockable_adapter<boost::recursive_mutex> {
@@ -47,6 +51,10 @@ public:
 	bool sendDPDMsg();
 	bool updateDPDMsg();
 	bool updateParamList();
+
+	void new_change_added();
+	//void (SimpleParticipantDiscoveryProtocol::*new_change_added_ptr)();
+	bool processParameterList(ParameterList_t& param, DiscoveredParticipantData* Pdata);
 
 private:
 	Participant* mp_Participant;
@@ -63,7 +71,8 @@ private:
 	bool m_hasChanged_DPD;
 	DiscoveredParticipantData m_DPD;
 	QosList_t m_DPDAsParamList;
-
+	std::vector<DiscoveredParticipantData> m_matched_participants;
+	SPDPListener m_listener;
 
 };
 

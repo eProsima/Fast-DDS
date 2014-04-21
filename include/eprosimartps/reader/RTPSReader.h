@@ -31,6 +31,7 @@
 #include "eprosimartps/Participant.h"
 
 #include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/reader/RTPSListener.h"
 
 using namespace eprosima::dds;
 
@@ -62,6 +63,7 @@ public:
 	boost::interprocess::interprocess_semaphore* newMessageSemaphore;
 	//!Function to call when a new message is received.
 	void (*newMessageCallback)();
+	RTPSListener* m_listener;
 
 };
 

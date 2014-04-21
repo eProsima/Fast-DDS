@@ -60,12 +60,24 @@ bool ThreadSend::initSend(const Locator_t& loc)
 		m_sendLocator.address[14] = 0;
 		m_sendLocator.address[15] = 1;
 	}
-
-	//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-	udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),m_sendLocator.port);
-	//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 	m_send_socket.open(boost::asio::ip::udp::v4());
-	m_send_socket.bind(send_endpoint);
+	bool not_bind = true;
+	while(not_bind)
+	{
+		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
+		udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),m_sendLocator.port);
+		//boost::asio::ip::udp::socket s(sendService,send_endpoint);
+		try{
+
+			m_send_socket.bind(send_endpoint);
+			not_bind = false;
+		}
+		catch (boost::system::system_error const& e)
+		{
+			pWarning(e.what() << endl);
+			m_sendLocator.port++;
+		}
+	}
 	pInfo (YELLOW<<"ThreadSend: initSend: through address " << m_send_socket.local_endpoint()<<"||Socket state: " << m_send_socket.is_open() << DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);

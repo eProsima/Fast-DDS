@@ -136,6 +136,8 @@ int main(int argc, char** argv){
 	ParticipantParams_t PParam;
 	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
+	int a;
+	cin >> a;
 //
 ////	std::vector<Locator_t> loc;
 ////	DomainParticipant::getIPAddress(&loc);
