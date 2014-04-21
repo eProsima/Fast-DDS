@@ -42,6 +42,7 @@ protected:
 public:
 	bool m_isWaiting;
 	void restart_timer();
+	bool update_interval_sec(uint32_t inter);
 
 };
 

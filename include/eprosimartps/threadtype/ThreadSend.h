@@ -41,6 +41,7 @@ namespace rtps {
 class ThreadSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
 	friend class Participant;
+	friend class SimpleParticipantDiscoveryProtocol;
 public:
 	ThreadSend();
 	virtual ~ThreadSend();

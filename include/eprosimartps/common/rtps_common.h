@@ -161,6 +161,15 @@ typedef struct InstanceHandle_t{
 		}
 		return *this;
 	}
+	bool operator==(const InstanceHandle_t& ihandle)
+	{
+		for(uint8_t i =0;i<16;++i)
+		{
+			if(this->value[i] != ihandle.value[i])
+				return false;
+		}
+		return true;
+	}
 }InstanceHandle_t;
 
 typedef uint32_t BuiltinEndpointSet_t;

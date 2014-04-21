@@ -45,7 +45,8 @@ class Participant;
  * with the same ThreadListen. The MessageReceiver instance interprets where the messages need to be forwarded (which Writer or Reader, or both).
  * @ingroup COMMONMODULE
  */
-class ThreadListen {
+class ThreadListen
+{
 public:
 	ThreadListen();
 	virtual ~ThreadListen();
@@ -57,7 +58,6 @@ public:
 	 * Method to initialize the thread.
 	 */
 	void init_thread();
-
 
 	std::vector<RTPSWriter*> m_assoc_writers;
 	std::vector<RTPSReader*> m_assoc_readers;

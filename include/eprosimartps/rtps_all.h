@@ -173,6 +173,13 @@ typedef struct TypeReg_t{
 	void (*deserialize)(SerializedPayload_t*,void*);
 	void (*getKey)(void*,InstanceHandle_t*);
 	int32_t byte_size;
+	TypeReg_t()
+	{
+		serialize = NULL;
+		deserialize = NULL;
+		getKey = NULL;
+		byte_size = 0;
+	}
 }TypeReg_t;
 }
 }
