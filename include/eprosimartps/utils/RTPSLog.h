@@ -105,10 +105,8 @@ private:
 
 public:
 	 static RTPSLog* getInstance();
-	 ~RTPSLog()
-	 {
-		 instanceFlag = false;
-	 }
+	 ~RTPSLog();
+
 };
 
 

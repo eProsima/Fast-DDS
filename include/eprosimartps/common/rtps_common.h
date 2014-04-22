@@ -119,6 +119,7 @@ typedef struct SerializedPayload_t{
 		max_size = len;
 	}
 	~SerializedPayload_t(){
+		this->empty();
 	}
 	/*!
 	 * Copy another structure (including allocating new space for the data.)
@@ -306,7 +307,8 @@ typedef struct ParticipantParams_t{
 	uint16_t resendSPDPDataPeriod_sec;
 	uint16_t domainId;
 	std::string name;
-	bool staticEndpointDiscovery;
+	bool m_useStaticEndpointDiscovery;
+	bool m_useSimpleParticipantDiscovery;
 	ParticipantParams_t(){
 		defaultSendPort = 7359;
 		Locator_t defUni;
@@ -322,7 +324,8 @@ typedef struct ParticipantParams_t{
 		domainId = 80;
 		name = "defaultParticipant";
 		//cout << "pparam name: " << name << endl;
-		staticEndpointDiscovery = true;
+		m_useStaticEndpointDiscovery = true;
+		m_useSimpleParticipantDiscovery = true;
 	}
 }ParticipantParams_t;
 

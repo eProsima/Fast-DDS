@@ -102,6 +102,11 @@ RTPSLog* RTPSLog::getInstance()
 		return single;
 	}
 }
+RTPSLog::~RTPSLog()
+{
+	RTPSLog::instanceFlag = false;
+
+}
 
 void RTPSLog::setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level)
 {

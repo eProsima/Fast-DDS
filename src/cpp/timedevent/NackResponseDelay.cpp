@@ -25,6 +25,7 @@ namespace rtps {
 
 NackResponseDelay::~NackResponseDelay() {
 	timer->cancel();
+	delete(timer);
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):

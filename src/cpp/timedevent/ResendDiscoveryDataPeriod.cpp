@@ -32,6 +32,7 @@ ResendDiscoveryDataPeriod::ResendDiscoveryDataPeriod(SimpleParticipantDiscoveryP
 ResendDiscoveryDataPeriod::~ResendDiscoveryDataPeriod()
 {
 	timer->cancel();
+	delete(timer);
 }
 
 void ResendDiscoveryDataPeriod::event(const boost::system::error_code& ec)

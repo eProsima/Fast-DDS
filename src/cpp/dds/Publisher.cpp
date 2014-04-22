@@ -26,7 +26,8 @@ namespace eprosima {
 namespace dds {
 
 Publisher::Publisher(RTPSWriter* Win):
-		mp_Writer(Win)
+		mp_Writer(Win),
+		mp_type(NULL)
 {
 	// TODO Auto-generated constructor stub
 }

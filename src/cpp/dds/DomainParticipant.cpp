@@ -72,7 +72,8 @@ DomainParticipant::~DomainParticipant()
 	{
 		delete(*it);
 	}
-	instanceFlag = false;
+	DomainParticipant::instanceFlag = false;
+	delete(RTPSLog::getInstance());
 }
 
 
@@ -80,6 +81,14 @@ uint32_t DomainParticipant::getNewId()
 {
 	return ++id;
 }
+
+void DomainParticipant::stopAll()
+{
+
+	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+	delete(dp);
+}
+
 
 Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_t& WParam)
 {
@@ -236,6 +245,7 @@ bool DomainParticipant::registerType(DDSTopicDataType* type)
 		return false;
 	}
 	dp->m_registeredTypes.push_back(type);
+	pInfo("Type "<<type->m_topicDataTypeName << " registered"<<endl);
 	return true;
 }
 
@@ -252,6 +262,7 @@ bool DomainParticipant::removeParticipant(Participant* p)
 			if((*it)->m_guid == p->m_guid)
 			{
 				dp->m_participants.erase(it);
+				break;
 			}
 		}
 		delete(p);

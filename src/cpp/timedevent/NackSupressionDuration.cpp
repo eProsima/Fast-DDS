@@ -25,6 +25,7 @@ namespace rtps {
 NackSupressionDuration::~NackSupressionDuration()
 {
 	timer->cancel();
+	delete(timer);
 }
 
 NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):

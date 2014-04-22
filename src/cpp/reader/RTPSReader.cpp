@@ -28,7 +28,8 @@ RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
 		expectsInlineQos(true),
 		mp_Sub(NULL),
 		newMessageSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-		newMessageCallback(NULL)
+		mp_listener(NULL)
+
 {
 	m_reader_cache.mp_rtpsreader = this;
 	m_reader_cache.m_historyKind = READER;

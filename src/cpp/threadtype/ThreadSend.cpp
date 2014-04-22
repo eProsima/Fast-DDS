@@ -88,6 +88,8 @@ bool ThreadSend::initSend(const Locator_t& loc)
 ThreadSend::~ThreadSend()
 {
 	pDebugInfo("ThreadSend: destructor"<<endl;);
+	m_send_socket.close();
+	m_send_service.stop();
 }
 
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)

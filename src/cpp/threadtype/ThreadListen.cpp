@@ -28,9 +28,9 @@ namespace eprosima {
 namespace rtps {
 
 ThreadListen::ThreadListen() :
-		m_participant_ptr(NULL),mp_thread(NULL),
-		m_listen_socket(m_io_service),
-		m_first(true)
+						m_participant_ptr(NULL),mp_thread(NULL),
+						m_listen_socket(m_io_service),
+						m_first(true)
 {
 	m_MessageReceiver.mp_threadListen = this;
 	m_isMulticast = false;
@@ -38,9 +38,19 @@ ThreadListen::ThreadListen() :
 
 ThreadListen::~ThreadListen()
 {
-	pWarning( "Removing thread " << mp_thread->get_id() << std::endl);
-	mp_thread->interrupt();
+	pWarning( "Removing listening thread " << mp_thread->get_id() << std::endl);
+
+//	cout << "shutdown" << endl;
+//	m_listen_socket.shutdown(boost::asio::ip::udp::socket::shutdown_receive);
+//	cout << "done"<<endl;
+	m_listen_socket.close();
+	m_io_service.stop();
+//	pInfo("Joining with thread"<<endl);
+//	mp_thread->join();
+
+
 	delete(mp_thread);
+
 }
 
 void ThreadListen::listen()
@@ -53,13 +63,27 @@ void ThreadListen::listen()
 		m_participant_ptr->m_ThreadSemaphore->post();
 		m_first = false;
 	}
-	while(1) //TODOG: Add more reasonable condition, something with boost::thread
+	while(m_listen_socket.is_open()) //TODOG: Add more reasonable condition, something with boost::thread
 	{
 		//CDRMessage_t msg;
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		//Try to block all associated readers
-		std::size_t lengthbytes = m_listen_socket.receive_from(boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size), m_sender_endpoint);
-		m_MessageReceiver.m_rec_msg.length = lengthbytes;
+		try{
+			std::size_t lengthbytes = m_listen_socket.receive_from(boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size), m_sender_endpoint);
+			m_MessageReceiver.m_rec_msg.length = lengthbytes;
+		}
+		catch(boost::system::system_error const& ec)
+		{
+			if(ec.code() == boost::asio::error::eof)
+			{
+				pWarning("Socket receives error: "<< ec.what()<<endl);
+				break;
+			}
+		}
+		if(m_MessageReceiver.m_rec_msg.length == 0)
+		{
+			break;
+		}
 		pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
 
 		//Get address into Locator
@@ -81,40 +105,42 @@ void ThreadListen::listen()
 
 		}
 	}
+
 }
 
-void ThreadListen::init_thread()
+
+bool ThreadListen::init_thread()
 {
 	if(!m_locList.empty())
 	{
 		m_first = true;
 		m_listen_socket.open(boost::asio::ip::udp::v4());
-		bool not_bind = true;
-		while(not_bind)
-		{
-			//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-			udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList[0].port);
-			try{
-				if(m_isMulticast)
-				{
-					m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-				}
-				m_listen_socket.bind(listen_endpoint);
-				if(m_isMulticast)
-				{
-					boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList[0].to_IP4_string());
-					m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
-				}
-				not_bind = false;
-			}
-			catch (boost::system::system_error const& e)
+
+		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
+		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList[0].port);
+		try{
+			if(m_isMulticast)
 			{
-				pWarning(e.what() << endl);
-				m_locList[0].port++;
+				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
 			}
+			m_listen_socket.bind(listen_endpoint);
+			if(m_isMulticast)
+			{
+				boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList[0].to_IP4_string());
+				m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
+			}
+
 		}
+		catch (boost::system::system_error const& e)
+		{
+			pError(e.what() << endl);
+			return false;
+		}
+
 		mp_thread = new boost::thread(&ThreadListen::listen,this);
+		return true;
 	}
+	return false;
 }
 
 
