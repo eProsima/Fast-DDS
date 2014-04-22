@@ -206,6 +206,7 @@ int main(int argc, char** argv)
 		break;
 	}
 	case 2:
+	case 3:
 	{
 		ReaderParams_t Rparam;
 		Rparam.historySize = 5;
@@ -244,10 +245,11 @@ int main(int argc, char** argv)
 				cout << " and is FUll?: " << sub->isHistoryFull() << endl;
 			}
 		}
+		break;
 	}
-	break;
+	default:
+		break;
 	}
-
 
 
 	cout << "Enter numer "<< endl;
