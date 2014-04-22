@@ -25,6 +25,7 @@ namespace rtps {
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
 	timer->cancel();
+	delete(timer);
 }
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_time::milliseconds interval):

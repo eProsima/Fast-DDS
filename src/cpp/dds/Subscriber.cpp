@@ -25,7 +25,8 @@ namespace dds {
 
 
 Subscriber::Subscriber(RTPSReader* Rin):
-		mp_Reader(Rin)
+		mp_Reader(Rin),
+		mp_type(NULL)
 {
 
 }
@@ -41,8 +42,8 @@ void Subscriber::blockUntilNewMessage(){
 	mp_Reader->newMessageSemaphore->wait();
 }
 
-void Subscriber::assignNewMessageCallback(void (*fun)()) {
-	mp_Reader->newMessageCallback = fun;
+void Subscriber::assignListener(RTPSListener* p_listener) {
+	mp_Reader->mp_listener = p_listener;
 }
 
 bool Subscriber::isHistoryFull()

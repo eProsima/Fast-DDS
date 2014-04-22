@@ -28,6 +28,7 @@ namespace rtps{
 PeriodicHeartbeat::~PeriodicHeartbeat()
 {
 	timer->cancel();
+	delete(timer);
 }
 
 PeriodicHeartbeat::PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):

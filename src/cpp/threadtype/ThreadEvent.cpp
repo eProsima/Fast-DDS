@@ -29,13 +29,22 @@ ThreadEvent::ThreadEvent():
 }
 
 ThreadEvent::~ThreadEvent() {
-	pWarning( "Removing thread " << b_thread->get_id() << std::endl);
-	b_thread->interrupt();
+	pWarning( "Removing event thread " << b_thread->get_id() << std::endl);
+	io_service.stop();
+	b_thread->join();
+	delete(b_thread);
+
+}
+
+void ThreadEvent::run_io_service()
+{
+	io_service.run();
 }
 
 void ThreadEvent::init_thread()
 {
-	b_thread = new boost::thread(boost::bind(&boost::asio::io_service::run,&io_service));
+	b_thread = new boost::thread(&ThreadEvent::run_io_service,this);
+
 	io_service.post(boost::bind(&ThreadEvent::announce_thread,this));
 }
 

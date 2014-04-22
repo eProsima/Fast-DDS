@@ -50,6 +50,9 @@ public:
 	 * Task to announce the correctness of the thread.
 	 */
 	void announce_thread();
+
+	//!Method to run the tasks
+	void run_io_service();
 };
 
 } /* namespace dds */

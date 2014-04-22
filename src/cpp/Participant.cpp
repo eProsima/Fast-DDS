@@ -78,7 +78,10 @@ Participant::Participant(const ParticipantParams_t& PParam):
 
 //	cout << "PParam name: "<< PParam.name << endl;
 //	cout << "Participant name: " << m_participantName << endl;
-	m_SPDP.initSPDP(PParam.domainId,ID,PParam.resendSPDPDataPeriod_sec);
+	if(PParam.m_useSimpleParticipantDiscovery)
+	{
+		m_SPDP.initSPDP(PParam.domainId,ID,PParam.resendSPDPDataPeriod_sec);
+	}
 }
 
 
@@ -88,30 +91,41 @@ Participant::~Participant()
 	//Destruct threads:
 	for(std::vector<ThreadListen*>::iterator it=m_threadListenList.begin();
 			it!=m_threadListenList.end();++it)
-		(*it)->~ThreadListen();
+		delete(*it);
+
 	for(std::vector<RTPSReader*>::iterator it=m_readerList.begin();
 			it!=m_readerList.end();++it)
 		delete(*it);
+
 	for(std::vector<RTPSWriter*>::iterator it=m_writerList.begin();
 			it!=m_writerList.end();++it)
 		delete(*it);
+
+	delete(this->m_ThreadSemaphore);
 }
 
 bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterParams_t& Wparam,uint32_t payload_size)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	StatelessWriter* SLWriter = new StatelessWriter(&Wparam,payload_size);
-	this->initWriter((RTPSWriter*)SLWriter);
+	if(this->initWriter((RTPSWriter*)SLWriter))
+	{
 	*SW_out = SLWriter;
 	return true;
+	}
+	else
+		return false;
 }
 
 bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterParams_t& Wparam,uint32_t payload_size) {
 
 	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
-	this->initWriter((RTPSWriter*)SFWriter);
+	if(this->initWriter((RTPSWriter*)SFWriter))
+	{
 	*SFW_out = SFWriter;
 	return true;
+	}
+	else return false;
 }
 
 bool Participant::initWriter(RTPSWriter*W)
@@ -139,11 +153,15 @@ bool Participant::initWriter(RTPSWriter*W)
 	W->m_guid.entityId.value[1] = c[1];
 	W->m_guid.entityId.value[0] = c[2];
 	//Look for receiving threads that are already listening to this writer receiving addresses.
-	assignEnpointToListenThreads((Endpoint*)W,'W');
-	//Wait until the thread is correctly created
+	if(assignEnpointToListenThreads((Endpoint*)W,'W'))
+	{
+		//Wait until the thread is correctly created
+			m_writerList.push_back(W);
+			return true;
+	}
+	else
+		return false;
 
-	m_writerList.push_back(W);
-	return true;
 }
 
 
@@ -153,9 +171,13 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 		const ReaderParams_t& RParam,uint32_t payload_size)
 {
 	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
-	initReader((RTPSReader*)SReader);
+	if(initReader((RTPSReader*)SReader))
+	{
 	*SR_out = SReader;
 	return true;
+	}
+	else
+		return false;
 }
 
 bool Participant::createStatefulReader(StatefulReader** SR_out,
@@ -163,9 +185,13 @@ bool Participant::createStatefulReader(StatefulReader** SR_out,
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
 	StatefulReader* SReader = new StatefulReader(&RParam, payload_size);
-	initReader((RTPSReader*)SReader);
-	*SR_out = SReader;
-	return true;
+	if(initReader((RTPSReader*)SReader))
+	{
+		*SR_out = SReader;
+		return true;
+	}
+	else
+		return false;
 }
 
 
@@ -194,10 +220,15 @@ bool Participant::initReader(RTPSReader* p_R)
 	p_R->m_guid.entityId.value[0] = c[1];
 	//Look for receiving threads that are already listening to this writer receiving addreesses.
 
-	this->assignEnpointToListenThreads((Endpoint*)p_R,'R');
+	if(this->assignEnpointToListenThreads((Endpoint*)p_R,'R'))
+	{
+		m_readerList.push_back(p_R);
+		return true;
+	}
+	else
+		return false;
 
-	m_readerList.push_back(p_R);
-	return true;
+
 }
 
 
@@ -215,7 +246,9 @@ inline void addEndpoint(ThreadListen* th,Endpoint* end,char type)
 
 bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	if(type !='R' && type!='W')
-		throw ERR_PARTICIPANT_INCORRECT_ENDPOINT_TYPE;
+	{
+		return false;
+	}
 
 	std::vector<ThreadListen*>::iterator thit;
 	std::vector<Locator_t>::iterator locit_th;
@@ -241,10 +274,14 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		if(!assigned) //Create new listen thread
 		{
 			ThreadListen* thListen = NULL;
-			addNewListenThread(*locit_e,&thListen,false); //Add new listen thread to participant
-			m_ThreadSemaphore->wait();
-			addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
-			assigned = true;
+			if(addNewListenThread(*locit_e,&thListen,false))
+			{//Add new listen thread to participant
+				m_ThreadSemaphore->wait();
+				addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
+				assigned = true;
+			}
+			else
+				return false;
 		}
 	}
 	for(locit_e = endpoint->multicastLocatorList.begin();locit_e!=endpoint->multicastLocatorList.end();++locit_e)
@@ -267,10 +304,14 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		if(!assigned) //Create new listen thread
 		{
 			ThreadListen* thListen = NULL;
-			addNewListenThread(*locit_e,&thListen,true); //Add new listen thread to participant
-			m_ThreadSemaphore->wait();
-			addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
-			assigned = true;
+			if(addNewListenThread(*locit_e,&thListen,true))
+			{//Add new listen thread to participant
+				m_ThreadSemaphore->wait();
+				addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
+				assigned = true;
+			}
+			else
+				return false;
 		}
 	}
 	return true;
@@ -282,10 +323,10 @@ bool Participant::addNewListenThread(Locator_t& loc,ThreadListen** thlisten_in,b
 	(*thlisten_in)->m_isMulticast = isMulticast;
 	(*thlisten_in)->m_participant_ptr = this;
 	m_threadListenList.push_back(*thlisten_in);
-	(*thlisten_in)->init_thread();
-
-
-	return true;
+	if((*thlisten_in)->init_thread())
+		return true;
+	else
+		return false;
 }
 
 bool Participant::removeEndpoint(Endpoint* p_endpoint){

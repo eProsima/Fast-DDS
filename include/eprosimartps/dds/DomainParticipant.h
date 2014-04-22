@@ -57,6 +57,11 @@ private:
     std::vector<DDSTopicDataType*> m_registeredTypes;
     std::vector<Participant*> m_participants;
 public:
+    /**
+     * Method to shut down all participants, readers, writers, etc.
+     * It must be called at the end of the process to avoid memory leaks.
+     */
+    static void stopAll();
 	/**
 	 * @brief Create a Publisher in the given Participant. 
 	 * @param p Pointer to the Participant.

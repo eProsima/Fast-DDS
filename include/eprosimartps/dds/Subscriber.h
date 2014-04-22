@@ -28,6 +28,7 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/reader/RTPSListener.h"
 namespace eprosima {
 
 namespace rtps{
@@ -81,10 +82,10 @@ public:
 	void blockUntilNewMessage();
 
 	/**
-	 * Assign a function to be executed each time a message is received.
-	 * @param[in] fun_ptr Pointer to the function that must be called.
+	 * Assign a RTPSListener to perform actions when certain events happen.
+	 * @param[in] p_listener Pointer to the RTPSListener.
 	 */
-	void assignNewMessageCallback(void(*fun_ptr)());
+	void assignListener(RTPSListener* p_listener);
 
 
 	/**
