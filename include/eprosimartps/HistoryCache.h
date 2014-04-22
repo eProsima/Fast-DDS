@@ -55,8 +55,17 @@ public:
 	 * @param[out] ch_ptr_ptr Pointer to pointer to a cachechange.
 	 * @return True if correct.
 	 */
-	bool get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr_ptr,uint16_t *ch_number);
 	bool get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr_ptr);
+	/**
+	 * Get a pointer to a specific change based on its SequenceNumber_t.
+	 * @param[in] seqNum SequenceNumber_t of the change.
+	 * @param[in] writerGuid GUID_t of the writer that generated the change.
+	 * @param[out] ch_ptr_ptr Pointer to pointer to a cachechange.
+	 * @param[out] ch_number Number of the change.
+	 * @return True if correct.
+	 */
+	bool get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheChange_t** ch_ptr_ptr,uint16_t *ch_number);
+
 
 	/**
 	 * Get the last element added to the history.
@@ -67,7 +76,6 @@ public:
 	/**
 	 * Add a change to the HistoryCache.
 	 * @param[in] a_change Pointer to the change to add.
-	 * @param[out] ch_ptr Pointer to pointer of cachechange, to return a pointer to the real change in the history.
 	 * @return True if correct.
 	 */
 	bool add_change(CacheChange_t* a_change);

@@ -388,7 +388,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WP->received_change_set(change_to_add);
 					}
 				}
-				(*it)->m_listener->newMessageCallback();
+				(*it)->mp_listener->newMessageCallback();
 //				if((*it)->newMessageCallback !=NULL)
 //					(*it)->newMessageCallback();
 				///FIXME: removed for testing, put back.

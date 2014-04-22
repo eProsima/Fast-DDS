@@ -48,22 +48,26 @@ class RTPSReader : public Endpoint{
 public:
 	RTPSReader(uint16_t historysize,uint32_t payload_size);
 	virtual ~RTPSReader();
-
+	//!Type of Reader, STATELESS or STATEFUL.
 	StateKind_t m_stateType;
+	//!History Cache of the Reader.
 	HistoryCache m_reader_cache;
+	//!Whether the Reader expects Inline QOS.
 	bool expectsInlineQos;
 
 	//!Structure used to create messages.
 	//RTPSMessageCreator MC;
-	//!Pointer to the associated subscriber
 
+	//!Pointer to the associated subscriber
 	Subscriber* mp_Sub;
 
 	//!Semaphore used to stop threads based on the arrival of messages.
 	boost::interprocess::interprocess_semaphore* newMessageSemaphore;
-	//!Function to call when a new message is received.
-	void (*newMessageCallback)();
-	RTPSListener* m_listener;
+//	//!Function to call when a new message is received.
+//	void (*newMessageCallback)();
+
+	//!Pointer to the object used by the user to implement the behaviour when messages are received.
+	RTPSListener* mp_listener;
 
 };
 

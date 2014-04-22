@@ -128,6 +128,11 @@ typedef octet SubmessageFlag;
  *
  */
 
+/** @defgroup DISCOVERYMODULE Discovery Module
+ * @ingroup RTPSMODULE
+ *
+ */
+
 /** @defgroup MANAGEMENTMODULE Management Module
  * @ingroup RTPSMODULE
  */

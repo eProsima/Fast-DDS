@@ -25,6 +25,11 @@
 namespace eprosima {
 namespace rtps {
 
+
+/**
+ * ObjectPool class used to define an object pool of different types.
+ * @ingroup UTILITIESMODULE
+ */
 template <typename T>
 class ObjectPool {
 public:

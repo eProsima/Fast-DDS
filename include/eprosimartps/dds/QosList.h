@@ -46,7 +46,7 @@ public:
 	/**
 	 * @name AddQos methods.
 	 * @param qos Pointer to the QOsList_t list.
-	 * @param pid Pid to add
+	 * @param pid PID of the parameter to add to the QosList_t.
 	 * @param param Parameter to add.
 	 * @return True if correct.
 	 */

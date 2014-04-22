@@ -74,10 +74,10 @@ public:
 	static bool updateCDRMsg(ParameterList_t* plist,Endianness_t endian);
 	/**
 	 * Read a parameterList from a CDRMessage
-	 * @param msg[in] Pointer to the message (the pos should be correct, otherwise the behaviour is unexpected).
-	 * @param plist[out] Pointer to the parameter list.
-	 * @param handle[out] Pointer to the handle.
-	 * @param chkind[out] Pointer to the change Kind.
+	 * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is unexpected).
+	 * @param[out] plist Pointer to the parameter list.
+	 * @param[out] handle Pointer to the handle.
+	 * @param[out] chkind Pointer to the change Kind.
 	 * @return Number of bytes of the parameter list.
 	 */
 	static uint32_t readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind);

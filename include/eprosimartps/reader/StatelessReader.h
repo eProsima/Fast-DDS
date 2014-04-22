@@ -29,7 +29,7 @@ namespace eprosima {
 namespace rtps {
 
 /**
- * Class StatelessReader,
+ * Class StatelessReader, specialization of the RTPSReader.
  * @ingroup READERMODULE
  */
 class StatelessReader: public RTPSReader {

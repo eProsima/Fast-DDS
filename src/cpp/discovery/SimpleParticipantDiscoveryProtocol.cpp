@@ -121,7 +121,7 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	Rparam.topicDataType = "DiscoveredParticipantData";
 	mp_Participant->createStatelessReader(&m_SPDPbPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	m_SPDPbPReader->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
-	m_SPDPbPReader->m_listener = &this->m_listener;
+	m_SPDPbPReader->mp_listener = &this->m_listener;
 
 
 	this->sendDPDMsg();

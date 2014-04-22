@@ -24,7 +24,7 @@
 namespace eprosima {
 namespace rtps {
 
-class ParticipantProxy2 {
+class ParticipantProxy {
 public:
 public:
 	ParticipantProxy():

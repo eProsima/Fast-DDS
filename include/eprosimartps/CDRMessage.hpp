@@ -20,13 +20,6 @@ namespace eprosima {
 namespace rtps {
 
 #include <algorithm>
-//#include "eprosimartps/rtps_all.h"
-////#include "eprosimartps/CDRMessage.h"
-//#include "eprosimartps/dds/ParameterTypes.h"
-
-//using namespace eprosima::dds;
-//using eprosima::dds::ParameterId_t;
-
 
 
 
@@ -248,14 +241,14 @@ inline bool CDRMessage::addOctet(CDRMessage_t*msg, octet O)
 	return true;
 }
 
-inline bool CDRMessage::addUInt16(CDRMessage_t*msg,unsigned short U)
+inline bool CDRMessage::addUInt16(CDRMessage_t*msg,uint16_t us)
 {
 	if(msg->pos + 2 > msg->max_size)
 	{
 		pError( "Message size not enough "<<endl);
 		return false;
 	}
-	octet* o= (octet*)&U;
+	octet* o= (octet*)&us;
 	if(msg->msg_endian == DEFAULT_ENDIAN)
 	{
 		msg->buffer[msg->pos] = *(o);
@@ -272,9 +265,9 @@ inline bool CDRMessage::addUInt16(CDRMessage_t*msg,unsigned short U)
 }
 
 
-inline bool CDRMessage::addParameterId(CDRMessage_t*msg,ParameterId_t p)
+inline bool CDRMessage::addParameterId(CDRMessage_t*msg,ParameterId_t pid)
 {
-	return CDRMessage::addUInt16(msg,(uint16_t)p);
+	return CDRMessage::addUInt16(msg,(uint16_t)pid);
 }
 
 

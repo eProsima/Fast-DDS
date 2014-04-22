@@ -26,14 +26,19 @@ namespace rtps {
 class StatefulReader;
 class WriterProxy;
 
+/**
+ * HeartbeatResponseDelay class used to response to a specific HB.
+ * @ingroup READERMODULE
+ */
 class HeartbeatResponseDelay:public TimedEvent {
 public:
 	virtual ~HeartbeatResponseDelay();
 	HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_time::milliseconds interval);
 
 	void event(const boost::system::error_code& ec);
-
+	//!Pointer to the WriterProxy associated with this specific event.
 	WriterProxy* mp_WP;
+	//!CDRMessage_t used in the response.
 	CDRMessage_t m_heartbeat_response_msg;
 
 };

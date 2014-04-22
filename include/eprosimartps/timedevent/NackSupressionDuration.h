@@ -27,13 +27,18 @@ namespace rtps {
 class StatefulWriter;
 class ReaderProxy;
 
+/**
+ * NackSupressionDuration class, used to delay the response to a specific AckNack Message.
+ * @ingroup WRITERMODULE
+ */
 class NackSupressionDuration:public TimedEvent {
 public:
 	virtual ~NackSupressionDuration();
 	NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
 
 	void event(const boost::system::error_code& ec);
-		ReaderProxy* mp_RP;
+
+	ReaderProxy* mp_RP;
 };
 
 } /* namespace dds */

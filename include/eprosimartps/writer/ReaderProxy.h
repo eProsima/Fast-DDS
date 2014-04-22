@@ -35,6 +35,10 @@ namespace rtps {
 
 class StatefulWriter;
 
+/**
+ * ReaderProxy_t structure that contains the information of a specific ReaderProxy.
+ * @ingroup WRITERMODULE
+ */
 typedef struct ReaderProxy_t{
 	GUID_t remoteReaderGuid;
 	bool expectsInlineQos;
@@ -46,7 +50,10 @@ typedef struct ReaderProxy_t{
 	}
 }ReaderProxy_t;
 
-
+/**
+ * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWRITER.
+ * @ingroup WRITERMODULE
+ */
 class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~ReaderProxy();
@@ -72,27 +79,58 @@ public:
 
 	/**
 	 * Mark all changes in the vector as requested.
-	 * @param seqNumVec Vector of sequenceNumbers
+	 * @param seqNumSet Vector of sequenceNumbers
 	 * @return True if correct.
 	 */
 	bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
+	/**
+	 * Get the next requested change.
+	 * @param[out] changeForReader Pointer to a ChangeForReader to modify with the information.
+	 * @return True if correct.
+	 */
 	bool next_requested_change(ChangeForReader_t* changeForReader);
 
+	/**
+	 * Get the next unsent change.
+	 * @param[out] changeForReader Pointer to a ChangeForReader to modify with the information.
+	 * @return True if correct.
+	 */
 	bool next_unsent_change(ChangeForReader_t* changeForReader);
 
+	/**
+	 * Get a vector of all requested changes by this Reader.
+	 * @param reqChanges Pointer to a vector of pointers.
+	 * @return True if correct.
+	 */
 	bool requested_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
+	/**
+	 * Get a vector of all unsent changes to this Reader.
+	 * @param reqChanges Pointer to a vector of pointers.
+	 * @return True if correct.
+	 */
 	bool unsent_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
+	/**
+	 * Get a vector of all unacked changes by this Reader.
+	 * @param reqChanges Pointer to a vector of pointers.
+	 * @return True if correct.
+	 */
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
+	//!Pointer to the associated StatefulWriter.
 	StatefulWriter* mp_SFW;
+	//!Parameters of the ReaderProxy
 	ReaderProxy_t m_param;
+	//!Vector of the changes and its state.
 	std::vector<ChangeForReader_t> m_changesForReader;
 	bool m_isRequestedChangesEmpty;
 
+	//!Timed Event to manage the periodic HB to the Reader.
 	PeriodicHeartbeat m_periodicHB;
+	//!Timed Event to manage the Acknack response delay.
 	NackResponseDelay m_nackResponse;
+	//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
 	NackSupressionDuration m_nackSupression;
 
 	uint32_t m_lastAcknackCount;
