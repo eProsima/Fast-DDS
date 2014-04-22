@@ -25,6 +25,10 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Clock used to obtain the time in us since 1900.
+ * @ingroup UTILITIESMODULE
+ */
 class eClock {
 public:
 	eClock();

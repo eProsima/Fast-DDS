@@ -29,12 +29,17 @@ namespace rtps {
 class StatefulWriter;
 class ReaderProxy;
 
+/**
+ * NackResponseDelay class use to delay the response to an ACKNACK message.
+ * @ingroup WRITERMODULE
+ */
 class NackResponseDelay:public TimedEvent {
 public:
 	NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
 	virtual ~NackResponseDelay();
 
 	void event(const boost::system::error_code& ec);
+
 	ReaderProxy* mp_RP;
 	RTPSMessageGroup_t m_cdrmessages;
 };

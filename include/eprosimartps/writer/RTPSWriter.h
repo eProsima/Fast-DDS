@@ -55,7 +55,7 @@ public:
 	 * Create a new change based on the provided data and instance handle.
 	 * It assigns the correct values to each field and copies the data from data to change. The SequenceNumber is NOT assigned here but actually during
 	 * the call to add_change in the HistoryCache, to prevent incorrect increments.
-	 * @param changekind The type of change.
+	 * @param changeKind The type of change.
 	 * @param data Pointer to the serialized data that must be included in the change.
 	 * @param change_out Pointer to pointer to return the change.
 	 * @return True if correct.

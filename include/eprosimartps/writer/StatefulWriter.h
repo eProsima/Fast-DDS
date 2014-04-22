@@ -28,6 +28,10 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
+ * @ingroup WRITERMODULE
+ */
 class StatefulWriter: public RTPSWriter {
 public:
 	//StatefulWriter();
@@ -69,11 +73,18 @@ public:
 	 */
 	bool is_acked_by_all(CacheChange_t* change);
 
-
+	/**
+	 * Add the provided change to the unsent changes vectors of all matched Readers.
+	 * @param[in] change Pointer to the change
+	 */
 	void unsent_change_add(CacheChange_t* change);
 
+	/**
+	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
+	 */
 	void unsent_changes_not_empty();
 
+	//! Vector containin all the associated ReaderProxies.
 	std::vector<ReaderProxy*> matched_readers;
 
 //	void sendChangesListAsGap(std::vector<CacheChange_t*>* changes,

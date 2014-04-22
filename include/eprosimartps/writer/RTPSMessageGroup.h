@@ -24,6 +24,10 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
+ * @ingroup WRITERMODULE
+ */
 class RTPSMessageGroup_t{
 public:
 	CDRMessage_t m_rtpsmsg_header;
@@ -37,6 +41,10 @@ public:
 
 class RTPSWriter;
 
+/**
+ * RTPSMessageGroup class used to send multiple changes as a single CDRMessage.
+ * @ingroup WRITERMODULE
+ */
 class RTPSMessageGroup {
 public:
 static void send_Changes_AsGap(RTPSMessageGroup_t* msg_group,

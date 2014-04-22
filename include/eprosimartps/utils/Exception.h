@@ -52,14 +52,9 @@ namespace eprosima
          * @brief Default constructor.
          * @param message A error message. This message is copied.
          */
-        Exception(const std::string &message);
+        Exception(const std::string& message);
 
-//        /*!
-//         * @brief Default constructor.
-//         *
-//         * @param message A error message. This message is moved.
-//         */
-//        Exception(std::string&& message);
+
 
         /*!
          * @brief Default copy constructor.
@@ -67,12 +62,7 @@ namespace eprosima
          */
         Exception(const Exception &ex);
 
-//        /*!
-//         * @brief Default move constructor.
-//         *
-//         * @param ex Exception that will be moved.
-//         */
-//        Exception(Exception&& ex);
+
 
         /*!
          * @brief Assigment operation.
@@ -80,11 +70,7 @@ namespace eprosima
          */
         Exception& operator=(const Exception &ex);
 
-//        /*!
-//         * @brief Assigment operation.
-//         * @param ex Exception that will be moved.
-//         */
-//        Exception& operator=(Exception&&);
+
 
     private:
         std::string m_message;

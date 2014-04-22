@@ -29,6 +29,10 @@ namespace rtps {
 
 class StatefulReader;
 
+/**
+ * WriterProxy_t structure that stores information for each WriterProxy.
+ * @ingroup READERMODULE
+ */
 typedef struct WriterProxy_t{
 	GUID_t remoteWriterGuid;
 	std::vector<Locator_t> unicastLocatorList;
@@ -39,35 +43,73 @@ typedef struct WriterProxy_t{
 }WriterProxy_t;
 
 
-
+/**
+ * WriterProxy class that contains the state of each matched writer for a specific reader.
+ * @ingroup READERMODULE
+ */
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~WriterProxy();
 	WriterProxy(WriterProxy_t*RPparam,StatefulReader* SR);
 
-
+	/**
+	 * Get the maximum sequenceNumber received from this Writer.
+	 * @param[out] seqNum Pointer to the sequenceNumber
+	 * @return True if correct.
+	 */
 	bool available_changes_max(SequenceNumber_t* seqNum);
-
+	/**
+	 * Update the missing changes up to the provided sequenceNumber.
+	 * All changes with status UNKNOWN with seqNum <= input seqNum are marked MISSING.
+	 * @param[in] seqNum Pointer to the SequenceNumber.
+	 * @return True if correct.
+	 */
 	bool missing_changes_update(SequenceNumber_t* seqNum);
-
+	/**
+	 * Update the lost changes up to the provided sequenceNumber.
+	 * All changes with status UNKNOWN or MISSING with seqNum < input seqNum are marked LOST.
+	 * @param[in] seqNum Pointer to the SequenceNumber.
+	 * @return True if correct.
+	 */
 	bool lost_changes_update(SequenceNumber_t* seqNum);
-
+	/**
+	 * The provided change is marked as RECEIVED.
+	 * @param[in] change Pointer to the change
+	 * @return True if correct.
+	 */
 	bool received_change_set(CacheChange_t* change);
-
+	/**
+	 * The change of the input seqNum is marked as RECEIVED and NOT RELEVANT.
+	 * @param seqNum
+	 * @return
+	 */
 	bool irrelevant_change_set(SequenceNumber_t* seqNum);
 
+	/**
+	 * THe method returns a vector containing all missing changes.
+	 * @param missing Pointer to vector of pointers to ChangeFromWriter_t structure.
+	 * @return True if correct.
+	 */
 	bool missing_changes(std::vector<ChangeFromWriter_t*>* missing);
+	//! Pointer to associated StatefulReader.
 	StatefulReader* mp_SFR;
+	//! Parameters of the WriterProxy
 	WriterProxy_t param;
+	//!Vector containing the ChangeFromWriter_t objects.
 	std::vector<ChangeFromWriter_t> m_changesFromW;
+	//! Acknack Count
 	uint32_t m_acknackCount;
+	//! LAst HEartbeatcount.
 	uint32_t m_lastHeartbeatCount;
+
 	bool m_isMissingChangesEmpty;
+	//!Timed event to postpone the heartbeatResponse.
 	HeartbeatResponseDelay m_heartbeatResponse;
 	bool m_heartbeatFinalFlag;
 
 
 private:
+	//!Get the maximum sequenceNumber in the list.
 	SequenceNumber_t max_seq_num();
 
 	/**

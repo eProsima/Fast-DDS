@@ -28,6 +28,11 @@ namespace rtps{
 class StatefulWriter;
 class ReaderProxy;
 
+
+/**
+ * PeriodicHeartbeat class.
+ * @ingroup WRITERMODULE
+ */
 class PeriodicHeartbeat: public TimedEvent {
 public:
 	PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);

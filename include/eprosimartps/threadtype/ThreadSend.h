@@ -36,7 +36,7 @@ namespace rtps {
 /**
  * Class ThreadSend, used to manage the send operation. In future version it will contain the grouping
  *  logic for merge different CDRMessages into a single RTPSMessages (HB piggybacking, for example).
- * @ingroup COMMONMODULE
+ * @ingroup MANAGEMENTMODULE
  */
 class ThreadSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {

@@ -26,6 +26,10 @@ namespace rtps {
 
 class SimpleParticipantDiscoveryProtocol;
 
+/**
+ * ResendDiscoveryDataPeriod class use to periodically send the ParticipantDiscovery Data.
+ * @ingroup DISCOVERYMODULE
+ */
 class ResendDiscoveryDataPeriod: public TimedEvent {
 public:
 	ResendDiscoveryDataPeriod(SimpleParticipantDiscoveryProtocol* p_SPDP,boost::posix_time::milliseconds interval);

@@ -30,6 +30,10 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class ThreadEvent used to manage the temporal events.
+ * @ingroup MANAGEMENTMODULE
+ */
 class ThreadEvent {
 public:
 	ThreadEvent();
@@ -42,6 +46,9 @@ public:
 	 * Method to initialize the thread.
 	 */
 	void init_thread();
+	/**
+	 * Task to announce the correctness of the thread.
+	 */
 	void announce_thread();
 };
 

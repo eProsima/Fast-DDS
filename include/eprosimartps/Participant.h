@@ -81,10 +81,17 @@ private:
 	 * Create a StatelessWriter from a parameter structure.
 	 * @param[out] SWriter Pointer to the stateless writer.
 	 * @param[in] Wparam Parameters to use in the creation.
+	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
 	bool createStatelessWriter(StatelessWriter** SWriter,const WriterParams_t& Wparam,uint32_t payload_size);
-
+	/**
+	 * Create a StatefulWriter from a parameter structure.
+	 * @param[out] SWriter Pointer to the stateful writer.
+	 * @param[in] Wparam Parameters to use in the creation.
+	 * @param[in] payload_size Size of the payload in this writer.
+	 * @return True if correct.
+	 */
 	bool createStatefulWriter(StatefulWriter** SWriter, const WriterParams_t& Wparam,uint32_t payload_size);
 
 	bool initWriter(RTPSWriter* W);
@@ -93,9 +100,17 @@ private:
 	 * Create a StatelessReader from a parameter structure and add it to the participant.
 	 * @param[out] SReader Pointer to the stateless reader.
 	 * @param[in] RParam Parameters to use in the creation.
+	 * @param[in] payload_size Size of the payload associated with this Reader.
 	 * @return True if correct.
 	 */
 	bool createStatelessReader(StatelessReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
+	/**
+		 * Create a StatefulReader from a parameter structure and add it to the participant.
+		 * @param[out] SReader Pointer to the stateful reader.
+		 * @param[in] RParam Parameters to use in the creation.
+		 * @param[in] payload_size Size of the payload associated with this Reader.
+		 * @return True if correct.
+		 */
 	bool createStatefulReader(StatefulReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
 	bool initReader(RTPSReader* R);
 
@@ -147,6 +162,7 @@ private:
 	 * Create a new listen thread in the specified locator.
 	 * @param[in] loc Locator to use.
 	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
+	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
 	 * @return True if correct.
 	 */
 	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread,bool isMulticast);
