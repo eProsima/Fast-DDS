@@ -80,7 +80,7 @@ public:
 	 * @param error Error code associated with the operation.
 	 * @param size NUmber of bytes received
 	 */
-	void newCDRMessage(const boost::system::error_code& error, std::size_t size/*bytes_transferred*/);
+	void newCDRMessage(const boost::system::error_code& error, std::size_t size);
 	//! Method to run the io_service.
 	void run_io_service();
 

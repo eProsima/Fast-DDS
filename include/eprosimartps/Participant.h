@@ -72,6 +72,7 @@ class Participant{
 	friend class ThreadListen;
 	friend class eprosima::dds::DomainParticipant;
 	friend class SimpleParticipantDiscoveryProtocol;
+	friend class StaticEndpointDiscoveryProtocol;
 private:
 
 	RTPS_DllAPI Participant(const ParticipantParams_t&param);

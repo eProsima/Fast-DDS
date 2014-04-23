@@ -1,0 +1,22 @@
+<!--  StaticParticipantInfo.xml -->
+<!--  Created on: Apr 23, 2014 -->
+<!--      Author: grcanosa -->
+
+     
+<?xml version="1.0" encoding="utf-8"?>
+<staticdiscovery>
+	<participant>
+		<participantName>participant1</participantName>
+		
+		<endpoint>
+			<type>READER</type>
+			<topicName>topic1</topic_name>
+			<stateKind>STATELESS</stateKind>
+			<expectsInlineQos>true</expectsInlineQos>
+			<unicastLocator address="192.168.1.23" port=2000></unicastLocator>	
+			<unicastLocator address="192.168.1.23" port=2000></unicastLocator>
+			<multicastLocator address="235.55.0.1" port=2000></multicastLocator>
+		</endpoint>
+		
+	</participant>
+</participants>

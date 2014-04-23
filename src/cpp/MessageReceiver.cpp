@@ -285,7 +285,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		return false;
 	}
 	//FOUND THE READER.
-	//We ask the reader for a cachechange
+	//We ask the reader for a cachechange to store the information.
 	CacheChange_t* ch = firstReader->m_reader_cache.reserve_Cache();
 	ch->writerGUID.guidPrefix = sourceGuidPrefix;
 	CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
