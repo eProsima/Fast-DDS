@@ -31,8 +31,9 @@
 namespace eprosima {
 namespace rtps {
 
-StaticEndpointDiscoveryProtocol::StaticEndpointDiscoveryProtocol() {
-	// TODO Auto-generated constructor stub
+StaticEndpointDiscoveryProtocol::StaticEndpointDiscoveryProtocol(Participant* p_par):
+		mp_Participant(p_par)
+{
 
 }
 
@@ -40,14 +41,22 @@ StaticEndpointDiscoveryProtocol::~StaticEndpointDiscoveryProtocol() {
 	// TODO Auto-generated destructor stub
 }
 
-bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
+bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& filename)
 {
+	this->m_StaticParticipantInfo.clear();
 	// Create an empty property tree object
 	using boost::property_tree::ptree;
 	ptree pt;
 	// Load the XML file into the property tree. If reading fails
 	// (cannot open file, parse error), an exception is thrown.
-	read_xml("StaticParticipantInfo.xml", pt);
+	try{
+		read_xml(filename, pt);
+	}
+	catch (std::exception &e)
+	{
+		pError("Error reading xml file: " << e.what() << endl);
+		return false;
+	}
 	BOOST_FOREACH(ptree::value_type& xml_participant ,pt.get_child("staticdiscovery.participant"))
 	{
 		ParticipantStaticInfo_t participantInfo;
@@ -56,6 +65,7 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
 		{
 			EndpointStaticInfo_t endpointInfo;
 			endpointInfo.m_expectsInlineQos = xml_endpoint.second.get<bool>("expectsInlineQos");
+			//FIXME: handle expections when parameters are not found.
 			std::string auxString = xml_endpoint.second.get<std::string>("type");
 			if(auxString == "READER")
 				endpointInfo.m_kind = READER;
@@ -74,6 +84,32 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
 			else
 			{
 				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
+				break;
+			}
+			auxString = xml_endpoint.second.get<std::string>("realibilityKind");
+			if(auxString == "RELIABLE")
+			{
+				if(endpointInfo.m_state == STATEFUL)
+					endpointInfo.m_reliability = RELIABLE;
+				else
+				{
+					pError("Unsupported combination of realiabilityKind and stateKind"<<endl);
+					break;
+				}
+			}
+			else if(auxString == "BEST_EFFORT")
+			{
+				if(endpointInfo.m_state == STATELESS)
+					endpointInfo.m_reliability = BEST_EFFORT;
+				else
+				{
+					pError("Unsupported combination of realiabilityKind and stateKind"<<endl);
+					break;
+				}
+			}
+			else
+			{
+				pError("Bad XML file, endpoint of reliabilityKind: " << auxString << " is not valid"<<endl);
 				break;
 			}
 			endpointInfo.m_topicName = xml_endpoint.second.get<std::string>("topicName");
@@ -96,7 +132,7 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
 			}
 			participantInfo.m_endpoints.push_back(endpointInfo);
 		}
-		this->m_participants.push_back(participantInfo);
+		this->m_StaticParticipantInfo.push_back(participantInfo);
 	}
 	return true;
 }
@@ -107,8 +143,8 @@ bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 	pInfo("Number of participant: " <<this->m_participants.size());
 	pLongInfoPrint;
 	std::string auxString;
-	for(std::vector<ParticipantStaticInfo_t>::iterator pit =this->m_participants.begin();
-			pit!=m_participants.end();++pit)
+	for(std::vector<ParticipantStaticInfo_t>::iterator pit =this->m_StaticParticipantInfo.begin();
+			pit!=m_StaticParticipantInfo.end();++pit)
 	{
 		pInfo("Participant with name: " << pit->m_name <<" has " << pit->m_endpoints.size() << "endpoints"<<endl);
 		for(std::vector<EndpointStaticInfo_t>::iterator eit =pit->m_endpoints.begin();
@@ -134,12 +170,12 @@ bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 }
 
 
-bool StaticEndpointDiscoveryProtocol::matchEndpoints(std::string participant_name,GuidPrefix_t& outpartGuidPrefix, Participant* p_MyPart)
+bool StaticEndpointDiscoveryProtocol::remoteParticipantMatching(std::string participant_name,GuidPrefix_t& outpartGuidPrefix, Participant* p_MyPart)
 {
 	ParticipantStaticInfo_t* p_OutPart;
 	bool found = false;
-	for(std::vector<ParticipantStaticInfo_t>::iterator it= m_participants.begin();
-			it!=m_participants.end();++it)
+	for(std::vector<ParticipantStaticInfo_t>::iterator it= m_StaticParticipantInfo.begin();
+			it!=m_StaticParticipantInfo.end();++it)
 	{
 		if(it->m_name == participant_name)
 		{
@@ -228,6 +264,41 @@ bool StaticEndpointDiscoveryProtocol::matchEndpoints(std::string participant_nam
 	}
 	return true;
 }
+
+
+bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer)
+{
+	std::string topic_name = writer->m_topicName;
+	std::vector<std::string> matched_part_names = mp_Participant->m_SPDP.getMatchedParticipantsNames();
+	//Look in all the participants that have been found by the SPDP
+	for(std::vector<std::string>::iterator it = matched_part_names.begin();
+			it!=matched_part_names.end();++it)
+	{
+		//Look in the participants defined by the StaticEndpointDiscovery.
+		for(std::vector<ParticipantStaticInfo_t>::iterator remotepit = m_StaticParticipantInfo.begin();
+				remotepit != m_StaticParticipantInfo.end();++remotepit)
+		{
+			if(*it == remotepit->m_name) // Found a match, begin pairing
+			{
+				for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
+						eit!=remotepit->m_endpoints.end();++eit)
+				{
+					if(eit->m_kind == READER && writer->m_stateType == eit->m_state)
+					{
+
+					}
+				}
+			}
+		}
+	}
+
+}
+
+bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader)
+{
+
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

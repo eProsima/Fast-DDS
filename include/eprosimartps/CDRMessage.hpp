@@ -385,7 +385,8 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 		SequenceNumberSet_t* sns) {
-	//FIXME: que pasa si SNS is empty
+	if(sns->base.to64long()== 0)
+		return false;
 	CDRMessage::addSequenceNumber(msg, &sns->base);
 	//Add set
 	if(sns->isSetEmpty())

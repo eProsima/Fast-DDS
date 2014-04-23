@@ -53,9 +53,11 @@ public:
 	bool updateParamList();
 
 	void new_change_added();
-	//void (SimpleParticipantDiscoveryProtocol::*new_change_added_ptr)();
+
 	bool processParameterList(ParameterList_t& param, DiscoveredParticipantData* Pdata);
 
+
+	std::vector<std::string> getMatchedParticipantsNames();
 private:
 	Participant* mp_Participant;
 	StatelessWriter* m_SPDPbPWriter;
@@ -73,6 +75,8 @@ private:
 	QosList_t m_DPDAsParamList;
 	std::vector<DiscoveredParticipantData> m_matched_participants;
 	SPDPListener m_listener;
+public:
+	bool m_useStaticEDP;
 
 };
 

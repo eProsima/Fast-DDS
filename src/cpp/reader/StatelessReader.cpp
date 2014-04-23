@@ -23,7 +23,7 @@ namespace rtps {
 
 
 StatelessReader::~StatelessReader() {
-	// TODO Auto-generated destructor stub
+
 	pDebugInfo("StatelessReader destructor"<<endl;);
 }
 

@@ -27,7 +27,7 @@ SimpleParticipantDiscoveryProtocol::SimpleParticipantDiscoveryProtocol(Participa
 		m_DPDMsgHeader(RTPSMESSAGE_HEADER_SIZE),
 		m_listener(this)
 {
-	// TODO Auto-generated constructor stub
+
 	m_resendData = NULL;
 	m_SPDPbPWriter = NULL;
 	m_SPDPbPReader = NULL;
@@ -35,6 +35,7 @@ SimpleParticipantDiscoveryProtocol::SimpleParticipantDiscoveryProtocol(Participa
 	m_SPDP_WELL_KNOWN_UNICAST_PORT = 0;
 	m_domainId = 0;
 	m_hasChanged_DPD = true;
+	m_useStaticEDP = false;
 	//new_change_added_ptr = (void *())boost::bind(SimpleParticipantDiscoveryProtocol::new_change_added,this);
 }
 
@@ -61,8 +62,6 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 
 	m_DPD.m_proxy.m_guidPrefix = mp_Participant->m_guid.guidPrefix;
 
-	//FIXME: register type correctly
-	//dp->registerType("DiscoveredParticipantData",&this->ser,&this->deser,&this->getKey);
 
 	CDRMessage::initCDRMsg(&m_DPDMsgHeader);
 	RTPSMessageCreator::addHeader(&m_DPDMsg,m_DPD.m_proxy.m_guidPrefix);
@@ -212,7 +211,7 @@ bool SimpleParticipantDiscoveryProtocol::updateDPDMsg()
 	m_SPDPbPWriter->m_writer_cache.remove_all_changes();
 	CacheChange_t* change=NULL;
 	m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
-	//FIXME: update change serialized payload
+
 	if(EPROSIMA_ENDIAN == BIGEND)
 		change->serializedPayload.encapsulation = PL_CDR_BE;
 	else
@@ -322,7 +321,13 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 			pDebugInfo("Error Processing parameter List"<<endl);
 			m_SPDPbPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
 		}
-
+		//Once we have added the new participant we perform the Static EndpointDiscoveryProtocol
+		if(this->m_useStaticEDP)
+		{
+			mp_Participant->m_StaticEDP.matchEndpoints(pdata.m_proxy.m_participantName,
+														pdata.m_proxy.m_guidPrefix,
+														mp_Participant);
+		}
 	}
 
 }
@@ -417,6 +422,17 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 	return true;
 }
 
+
+std::vector<std::string> SimpleParticipantDiscoveryProtocol::getMatchedParticipantsNames()
+{
+	std::vector<std::string> part_names;
+	for(std::vector<DiscoveredParticipantData>::iterator it = this->m_matched_participants.begin();
+			it!=this->m_matched_participants.end();++it)
+	{
+		part_names.push_back(it->m_proxy.m_participantName);
+	}
+	return part_names;
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

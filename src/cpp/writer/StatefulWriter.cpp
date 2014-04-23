@@ -27,7 +27,7 @@ namespace rtps {
 
 
 StatefulWriter::~StatefulWriter() {
-	// TODO Auto-generated destructor stub
+
 	pDebugInfo("StatefulWriter destructor"<<endl;);
 }
 
@@ -214,7 +214,8 @@ void StatefulWriter::unsent_changes_not_empty()
 							(*rit)->m_param.remoteReaderGuid.entityId,
 							&(*rit)->m_param.unicastLocatorList,
 							&(*rit)->m_param.multicastLocatorList);
-				(*rit)->m_periodicHB.restart_timer();
+				if((*rit)->m_param.m_reliablility == RELIABLE)
+					(*rit)->m_periodicHB.restart_timer();
 				(*rit)->m_nackSupression.restart_timer();
 			}
 			else

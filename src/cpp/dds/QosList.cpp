@@ -86,7 +86,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 	}
 	else if(pid == PID_BUILTIN_ENDPOINT_SET)
 	{
-		//TODOG: Finish
+
 		ParameterBuiltinEndpointSet_t* p = new ParameterBuiltinEndpointSet_t();
 		p->Pid = pid;
 		p->length = PARAMETER_BUILTINENDPOINTSET_LENGTH;
@@ -97,7 +97,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 	}
 	else if(pid == PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT)
 	{
-		//TODOG: Finish
+
 		ParameterCount_t* p = new ParameterCount_t();
 		p->Pid = pid;
 		p->length = PARAMETER_COUNT_LENGTH;
@@ -114,7 +114,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 {
 	if(pid == PID_EXPECTS_INLINE_QOS)
 	{
-		//TODOG: Finish
+
 		ParameterBool_t* p = new ParameterBool_t();
 		p->Pid = pid;
 		p->length = PARAMETER_BOOL_LENGTH;
@@ -133,7 +133,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	GUID_t& guid)
 {
 	if(pid == PID_PARTICIPANT_GUID || pid == PID_GROUP_GUID)
 	{
-		//TODOG: Finish
+
 		ParameterGuid_t* p = new ParameterGuid_t();
 		p->Pid = pid;
 		p->length = PARAMETER_GUID_LENGTH;
@@ -149,8 +149,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	ProtocolVersion_t& proto
 {
 	if(pid == PID_PROTOCOL_VERSION)
 	{
-		//TODOG: Finish
-		ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t();
+			ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t();
 		p->Pid = pid;
 		p->length = PARAMETER_PROTOCOL_LENGTH;
 		p->protocolVersion = protocol;
@@ -165,7 +164,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	VendorId_t& vendor)
 {
 	if(pid == PID_VENDORID)
 		{
-			//TODOG: Finish
 			ParameterVendorId_t* p = new ParameterVendorId_t();
 			p->Pid = pid;
 			p->length = PARAMETER_VENDOR_LENGTH;
@@ -183,7 +181,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid, octet o1,	octet o2, octe
 	if(pid == PID_METATRAFFIC_MULTICAST_IPADDRESS || pid == PID_DEFAULT_UNICAST_IPADDRESS ||
 			pid == PID_METATRAFFIC_UNICAST_IPADDRESS || pid == PID_MULTICAST_IPADDRESS)
 	{
-		//TODOG: Finish
 		ParameterIP4Address_t* p = new ParameterIP4Address_t();
 		p->Pid = pid;
 		p->length = PARAMETER_IP4_LENGTH;
@@ -202,7 +199,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid, octet o1,	octet o2, octe
 //{
 //	if(pid == PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT)
 //	{
-//		//TODOG: Finish
 //		ParameterCount_t* p = new ParameterCount_t();
 //		p->Pid = pid;
 //		p->length = PARAMETER_COUNT_LENGTH;
@@ -217,7 +213,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid, octet o1,	octet o2, octe
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	EntityId_t& entity) {
 	if(pid == PID_GROUP_ENTITYID)
 	{
-		//TODOG: Finish
 		ParameterEntityId_t* p = new ParameterEntityId_t();
 		p->Pid = pid;
 		p->length = PARAMETER_ENTITYID_LENGTH;
@@ -232,7 +227,6 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	EntityId_t& entity) {
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 	if(pid == PID_PARTICIPANT_LEASE_DURATION)
 	{
-		//TODOG: Finish
 		ParameterTime_t* p = new ParameterTime_t();
 		p->Pid = pid;
 		p->length = PARAMETER_TIME_LENGTH;
@@ -248,7 +242,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 //{
 //	if(pid == PID_BUILTIN_ENDPOINT_SET)
 //	{
-//		//TODOG: Finish
+//
 //		ParameterBuiltinEndpointSet_t* p = new ParameterBuiltinEndpointSet_t();
 //		p->Pid = pid;
 //		p->length = PARAMETER_BUILTINENDPOINTSET_LENGTH;

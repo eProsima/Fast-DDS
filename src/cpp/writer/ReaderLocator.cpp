@@ -22,7 +22,7 @@ namespace eprosima {
 namespace rtps {
 
 ReaderLocator::ReaderLocator() {
-	// TODO Auto-generated constructor stub
+	this->expectsInlineQos = false;
 
 }
 
@@ -32,7 +32,7 @@ ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos){
 }
 
 ReaderLocator::~ReaderLocator() {
-	// TODO Auto-generated destructor stub
+
 	pDebugInfo("ReaderLocator destructor"<<endl;);
 }
 

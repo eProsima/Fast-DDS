@@ -35,6 +35,7 @@
 #include "eprosimartps/threadtype/ThreadListen.h"
 #include "eprosimartps/threadtype/ThreadSend.h"
 #include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#include "eprosimartps/discovery/StaticEndpointDiscoveryProtocol.h"
 
 
 
@@ -170,6 +171,7 @@ private:
 
 	SimpleParticipantDiscoveryProtocol m_SPDP;
 	std::string m_participantName;
+	StaticEndpointDiscoveryProtocol m_StaticEDP;
 public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};

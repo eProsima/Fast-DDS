@@ -20,6 +20,7 @@
 namespace eprosima {
 namespace rtps {
 
+//FIXME: UTC SECONDS AUTOMATICALLY
 eClock::eClock():
 		m_seconds_from_1900_to_1970(2208988800),
 		m_utc_seconds_diff(2*60*60)
@@ -28,12 +29,12 @@ eClock::eClock():
 }
 
 eClock::~eClock() {
-	// TODO Auto-generated destructor stub
+
 }
 
 bool eClock::setTimeNow(Time_t* tnow)
 {
-	//FIXME: UTC SECONDS AUTOMATICALLY
+
 	gettimeofday(&m_now,NULL);
 	tnow->seconds = m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff;
 	tnow->fraction = m_now.tv_usec*pow(2.0,32)*pow(10.0,-6);

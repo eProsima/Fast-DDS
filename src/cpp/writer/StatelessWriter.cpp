@@ -44,7 +44,7 @@ StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_si
 
 StatelessWriter::~StatelessWriter()
 {
-	// TODO Auto-generated destructor stub
+
 	pDebugInfo("StatelessWriter destructor"<<endl;);
 }
 

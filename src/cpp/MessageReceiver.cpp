@@ -403,9 +403,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 				}
 				(*it)->mp_listener->newMessageCallback();
-//				if((*it)->newMessageCallback !=NULL)
-//					(*it)->newMessageCallback();
-				///FIXME: removed for testing, put back.
+				///FIXME: put semaphore in listener class
 				(*it)->newMessageSemaphore->post();
 			}
 			else

@@ -44,9 +44,11 @@ typedef struct ReaderProxy_t{
 	bool expectsInlineQos;
 	std::vector<Locator_t> unicastLocatorList;
 	std::vector<Locator_t> multicastLocatorList;
+	ReliabilityKind_t m_reliablility;
 	ReaderProxy_t(){
 		GUID_UNKNOWN(remoteReaderGuid);
 		expectsInlineQos = false;
+		m_reliablility = RELIABLE;
 	}
 }ReaderProxy_t;
 
