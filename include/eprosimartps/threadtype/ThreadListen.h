@@ -51,10 +51,6 @@ public:
 	ThreadListen();
 	virtual ~ThreadListen();
 	/**
-	 * This functions blocks the execution until a new message is received. The threads are launched with this function.
-	 */
-	void listen();
-	/**
 	 * Method to initialize the thread.
 	 */
 	bool init_thread();
@@ -79,11 +75,13 @@ public:
 	boost::asio::ip::udp::endpoint m_sender_endpoint;
 	//! Variable indicating whether the listen thread is Multicast.
 	bool m_isMulticast;
-
-
-
-	void newCDRMessage(const boost::system::error_code& error, std::size_t /*bytes_transferred*/);
-	bool init_thread2();
+	/**
+	 * Callback to be executed when a new Message is received in the socket.
+	 * @param error Error code associated with the operation.
+	 * @param size NUmber of bytes received
+	 */
+	void newCDRMessage(const boost::system::error_code& error, std::size_t size/*bytes_transferred*/);
+	//! Method to run the io_service.
 	void run_io_service();
 
 
