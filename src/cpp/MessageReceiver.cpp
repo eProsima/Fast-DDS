@@ -332,9 +332,9 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
 			}
 			//uint32_t param_size;
-			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) > 0)
+			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
 			{
-				pDebugInfo("SubMessage Data ERROR"<<endl);
+				pDebugInfo("SubMessage Data ERROR, keyFlag ParameterList"<<endl);
 				return false;
 			}
 			msg->msg_endian = previous_endian;
