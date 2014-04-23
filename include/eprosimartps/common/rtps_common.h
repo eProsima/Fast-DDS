@@ -307,6 +307,7 @@ typedef struct ParticipantParams_t{
 	uint16_t resendSPDPDataPeriod_sec;
 	uint16_t domainId;
 	std::string name;
+	std::string m_staticEndpointXMLFilename;
 	bool m_useStaticEndpointDiscovery;
 	bool m_useSimpleParticipantDiscovery;
 	ParticipantParams_t(){
@@ -326,6 +327,7 @@ typedef struct ParticipantParams_t{
 		//cout << "pparam name: " << name << endl;
 		m_useStaticEndpointDiscovery = true;
 		m_useSimpleParticipantDiscovery = true;
+		m_staticEndpointXMLFilename = "/home/grcanosa/workspace/eRTPS/utils/pcTests/StaticParticipantInfo.xml";
 	}
 }ParticipantParams_t;
 

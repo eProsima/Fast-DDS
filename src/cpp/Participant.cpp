@@ -37,7 +37,8 @@ Participant::Participant(const ParticipantParams_t& PParam):
 		m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 		m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 		IdCounter(0),
-		m_SPDP(this)
+		m_SPDP(this),
+		m_StaticEDP(this)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -80,7 +81,16 @@ Participant::Participant(const ParticipantParams_t& PParam):
 //	cout << "Participant name: " << m_participantName << endl;
 	if(PParam.m_useSimpleParticipantDiscovery)
 	{
+		m_SPDP.m_useStaticEDP = PParam.m_useStaticEndpointDiscovery;
 		m_SPDP.initSPDP(PParam.domainId,ID,PParam.resendSPDPDataPeriod_sec);
+		if(PParam.m_useStaticEndpointDiscovery)
+		{
+			m_StaticEDP.loadStaticEndpointFile(PParam.m_staticEndpointXMLFilename);
+		}
+		else
+		{
+
+		}
 	}
 }
 

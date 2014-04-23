@@ -28,6 +28,7 @@ typedef struct EndpointStaticInfo_t{
 	std::vector<Locator_t> m_multicastLocatorList;
 	bool m_expectsInlineQos;
 	StateKind_t m_state;
+	ReliabilityKind_t m_reliability;
 	HistoryKind_t m_kind;
 	std::string m_topicName;
 }EndpointStaticInfo_t;
@@ -42,11 +43,14 @@ class Participant;
 
 class StaticEndpointDiscoveryProtocol {
 public:
-	StaticEndpointDiscoveryProtocol();
+	StaticEndpointDiscoveryProtocol(Participant* p_par);
 	virtual ~StaticEndpointDiscoveryProtocol();
-	bool loadStaticEndpointFile();
-	bool matchEndpoints(std::string participant_name,GuidPrefix_t& outpartGuidPrefix,Participant* p_Par);
-	std::vector<ParticipantStaticInfo_t> m_participants;
+	bool loadStaticEndpointFile(const std::string& filename);
+	bool remoteParticipantMatching(std::string participant_name,GuidPrefix_t& outpartGuidPrefix,Participant* p_Par);
+	bool localWriterMatching(RTPSWriter* writer);
+	bool localReaderMatching(RTPSReader* reader);
+	std::vector<ParticipantStaticInfo_t> m_StaticParticipantInfo;
+	Participant* mp_Participant;
 	bool printLoadedXMLInfo();
 };
 

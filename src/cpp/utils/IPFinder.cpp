@@ -20,12 +20,12 @@
 namespace eprosima {
 
 IPFinder::IPFinder() {
-	// TODO Auto-generated constructor stub
+
 
 }
 
 IPFinder::~IPFinder() {
-	// TODO Auto-generated destructor stub
+
 }
 
 #if defined(_WIN32)

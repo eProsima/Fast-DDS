@@ -29,11 +29,11 @@ Publisher::Publisher(RTPSWriter* Win):
 		mp_Writer(Win),
 		mp_type(NULL)
 {
-	// TODO Auto-generated constructor stub
+
 }
 
 Publisher::~Publisher() {
-	// TODO Auto-generated destructor stub
+
 	pDebugInfo("Publisher destructor"<<endl;);
 }
 
