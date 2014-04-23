@@ -76,7 +76,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/timedevent/ResendDiscoveryDataPeriod.cpp \
 		  \
 		   $(BASEDIR)/src/cpp/discovery/SimpleParticipantDiscoveryProtocol.cpp \
-		   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp
+		   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp \
+		   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp
 		#  $(BASEDIR)/src/cpp/discovery/SimpleDiscoveryParticipantProtocol.cpp 
 #		  
 #		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \

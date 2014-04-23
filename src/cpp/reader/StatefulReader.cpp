@@ -43,6 +43,7 @@ StatefulReader::StatefulReader(const ReaderParams_t* param,uint32_t payload_size
 	multicastLocatorList = param->multicastLocatorList;
 	expectsInlineQos = param->expectsInlineQos;
 	topicKind = param->topicKind;
+	m_topicName = param->topicName;
 }
 
 bool StatefulReader::matched_writer_add(WriterProxy_t* WPparam)

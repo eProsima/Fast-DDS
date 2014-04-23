@@ -37,6 +37,7 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 	multicastLocatorList = param->multicastLocatorList;
 	expectsInlineQos = param->expectsInlineQos;
 	topicKind = param->topicKind;
+	m_topicName = param->topicName;
 }
 
 

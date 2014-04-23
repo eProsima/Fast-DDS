@@ -68,6 +68,8 @@ public:
 
 	//!Pointer to the object used by the user to implement the behaviour when messages are received.
 	RTPSListener* mp_listener;
+	//! Name of the topic associated with the reader.
+	std::string m_topicName;
 
 };
 
