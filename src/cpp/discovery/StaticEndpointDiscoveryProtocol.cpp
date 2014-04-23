@@ -101,6 +101,38 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
 	return true;
 }
 
+bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
+{
+	pInfo("Printing Loaded XML Info"<<endl);
+	pInfo("Number of participant: " <<this->m_participants.size());
+	pLongInfoPrint;
+	std::string auxString;
+	for(std::vector<ParticipantStaticInfo_t>::iterator pit =this->m_participants.begin();
+			pit!=m_participants.end();++pit)
+	{
+		pInfo("Participant with name: " << pit->m_name <<" has " << pit->m_endpoints.size() << "endpoints"<<endl);
+		for(std::vector<EndpointStaticInfo_t>::iterator eit =pit->m_endpoints.begin();
+				eit!=pit->m_endpoints.end();++eit)
+		{
+			auxString = eit->m_state == STATELESS ? "STATELESS" : "STATEFUL";
+			pLongInfo("Endoint " << auxString << " ");
+			auxString = eit->m_kind == READER ? "READER" : "WRITER";
+			pLongInfo(auxString << " expectsInlineQos: " << eit->m_expectsInlineQos <<endl);
+			for(std::vector<Locator_t>::iterator lit = eit->m_unicastLocatorList.begin();
+					lit!=eit->m_unicastLocatorList.end();++lit)
+				pLongInfo("Unicast Locator: " << lit->to_IP4_string() << ":" << lit->port << endl);
+
+			for(std::vector<Locator_t>::iterator lit = eit->m_multicastLocatorList.begin();
+					lit!=eit->m_multicastLocatorList.end();++lit)
+				pLongInfo("Multicast Locator: " << lit->to_IP4_string() << ":" << lit->port << endl);
+
+			pLongInfoPrint;
+
+		}
+	}
+	return true;
+}
+
 
 bool StaticEndpointDiscoveryProtocol::matchEndpoints(std::string participant_name,GuidPrefix_t& outpartGuidPrefix, Participant* p_MyPart)
 {
