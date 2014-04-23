@@ -40,6 +40,11 @@ using namespace dds;
 using namespace rtps;
 using namespace std;
 
+#define IPTEST1 23
+#define IPTEST2 25
+#define IPTEST3 27
+#define IPTESTWIN 11
+
 
 #define WR 1 //Writer 1, Reader 2
 
@@ -187,7 +192,7 @@ int main(int argc, char** argv){
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
-		loc.set_IP4_address(192,168,1,11);
+		loc.set_IP4_address(192,168,1,IPTEST1);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
 		pub->addReaderProxy(loc,readerGUID,true);
