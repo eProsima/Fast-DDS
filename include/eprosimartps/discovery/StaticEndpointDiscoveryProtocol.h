@@ -47,6 +47,7 @@ public:
 	bool loadStaticEndpointFile();
 	bool matchEndpoints(std::string participant_name,GuidPrefix_t& outpartGuidPrefix,Participant* p_Par);
 	std::vector<ParticipantStaticInfo_t> m_participants;
+	bool printLoadedXMLInfo();
 };
 
 } /* namespace rtps */
