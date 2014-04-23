@@ -148,8 +148,10 @@ int main(int argc, char** argv)
 		RTPSLog::printInfo();
 		if(strcmp(argv[1],"1")==0)
 			type = 1;
-		if(strcmp(argv[1],"2")==0)
+		else if(strcmp(argv[1],"2")==0)
 			type = 2;
+		else if(strcmp(argv[1],"3")==0)
+			type = 3;
 	}
 	else
 		type = WR;

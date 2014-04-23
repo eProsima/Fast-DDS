@@ -244,6 +244,11 @@ bool DomainParticipant::registerType(DDSTopicDataType* type)
 		pError("Registered Type must have size > 0"<<endl);
 		return false;
 	}
+	if(type->m_topicDataTypeName.size() <=0)
+	{
+		pError("Registered Type must have a name"<<endl);
+		return false;
+	}
 	dp->m_registeredTypes.push_back(type);
 	pInfo("Type "<<type->m_topicDataTypeName << " registered"<<endl);
 	return true;
