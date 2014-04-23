@@ -298,9 +298,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	if(inlineQosFlag)
 	{
-		if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) > 0)
+		if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
 		{
-			pDebugInfo("SubMessage Data ERROR"<<endl);
+			pDebugInfo("SubMessage Data ERROR, Inline Qos ParameterList error"<<endl);
+			firstReader->m_reader_cache.release_Cache(ch);
 			return false;
 		}
 	}
