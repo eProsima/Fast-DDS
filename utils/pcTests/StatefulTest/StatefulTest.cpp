@@ -192,7 +192,7 @@ int main(int argc, char** argv){
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
-		loc.set_IP4_address(192,168,1,IPTEST1);
+		loc.set_IP4_address(192,168,1,IPTEST2);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
 		pub->addReaderProxy(loc,readerGUID,true);
@@ -230,9 +230,9 @@ int main(int argc, char** argv){
 		Rparam.topicName = std::string("Test_Topic");
 		Locator_t loc;
 		if(type == 2)
-			loc.port = 10469;
+			loc.port = 10046;
 		else if(type ==3)
-			loc.port = 10469;
+			loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
@@ -243,6 +243,16 @@ int main(int argc, char** argv){
 			sub->blockUntilNewMessage();
 			TestType tp;
 			sub->readLastAdded((void*)&tp);
+			if(sub->isHistoryFull())
+			{
+				cout << "Taking all" <<endl;
+				std::vector<void*> data_vec;
+				sub->takeAllCache(&data_vec);
+				for(unsigned int i=0;i<data_vec.size();i++)
+					((TestType*)data_vec[i])->print();
+				cout << "History has now: " << sub->getHistory_n() << " elements ";
+				cout << " and is FUll?: " << sub->isHistoryFull() << endl;
+			}
 		}
 		break;
 	}

@@ -95,7 +95,8 @@ ThreadSend::~ThreadSend()
 void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 {
 	boost::lock_guard<ThreadSend> guard(*this);
-
+	if(loc->port == 0)
+		return;
 	if(loc->kind == LOCATOR_KIND_UDPv4)
 	{
 		boost::asio::ip::address_v4::bytes_type addr;
