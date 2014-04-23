@@ -28,9 +28,9 @@ namespace eprosima {
 namespace rtps {
 
 ThreadListen::ThreadListen() :
-								m_participant_ptr(NULL),mp_thread(NULL),
-								m_listen_socket(m_io_service),
-								m_first(true)
+										m_participant_ptr(NULL),mp_thread(NULL),
+										m_listen_socket(m_io_service),
+										m_first(true)
 {
 	m_MessageReceiver.mp_threadListen = this;
 	m_isMulticast = false;
@@ -53,100 +53,12 @@ ThreadListen::~ThreadListen()
 
 }
 
-void ThreadListen::listen()
-{
-	//Initialize socket
-
-	if(m_first)
-	{
-		pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " <<m_listen_socket.local_endpoint() << DEF << endl) ;
-		m_participant_ptr->m_ThreadSemaphore->post();
-		m_first = false;
-	}
-	while(m_listen_socket.is_open()) //TODOG: Add more reasonable condition, something with boost::thread
-	{
-		//CDRMessage_t msg;
-		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
-		//Try to block all associated readers
-		try{
-			std::size_t lengthbytes = m_listen_socket.receive_from(boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size), m_sender_endpoint);
-			m_MessageReceiver.m_rec_msg.length = lengthbytes;
-		}
-		catch(boost::system::system_error const& ec)
-		{
-			if(ec.code() == boost::asio::error::eof)
-			{
-				pWarning("Socket receives error: "<< ec.what()<<endl);
-				break;
-			}
-		}
-		if(m_MessageReceiver.m_rec_msg.length == 0)
-		{
-			break;
-		}
-		pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
-
-		//Get address into Locator
-		m_send_locator.port = m_sender_endpoint.port();
-		LOCATOR_ADDRESS_INVALID(m_send_locator.address);
-		for(int i=0;i<4;i++)
-		{
-			m_send_locator.address[i+12] = m_sender_endpoint.address().to_v4().to_bytes()[i];
-		}
-		try
-		{
-			m_MessageReceiver.processCDRMsg(m_participant_ptr->m_guid.guidPrefix,&m_send_locator,&m_MessageReceiver.m_rec_msg);
-			pInfo (BLUE<<"Message processed " <<DEF<< endl);
-
-		}
-		catch(int e)
-		{
-			pError( "Error processing message of type: " << e << std::endl);
-
-		}
-	}
-
-}
-
-
-bool ThreadListen::init_thread2()
-{
-	if(!m_locList.empty())
-	{
-		m_first = true;
-		m_listen_socket.open(boost::asio::ip::udp::v4());
-		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList[0].port);
-		try{
-			if(m_isMulticast)
-			{
-				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-			}
-			m_listen_socket.bind(listen_endpoint);
-			if(m_isMulticast)
-			{
-				boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList[0].to_IP4_string());
-				m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
-			}
-		}
-		catch (boost::system::system_error const& e)
-		{
-			pError(e.what() << endl);
-			return false;
-		}
-
-		mp_thread = new boost::thread(&ThreadListen::listen,this);
-		return true;
-	}
-	return false;
-}
-
 void ThreadListen::run_io_service()
 {
 
-		pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " <<m_listen_socket.local_endpoint() << DEF << endl) ;
-		m_participant_ptr->m_ThreadSemaphore->post();
-		m_first = false;
+	pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " <<m_listen_socket.local_endpoint() << DEF << endl) ;
+	m_participant_ptr->m_ThreadSemaphore->post();
+	m_first = false;
 
 	this->m_io_service.run();
 }
@@ -190,42 +102,60 @@ bool ThreadListen::init_thread(){
 }
 
 
-void ThreadListen::newCDRMessage(const boost::system::error_code& error, std::size_t msg_size)
+void ThreadListen::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
-
-	m_MessageReceiver.m_rec_msg.length = msg_size;
-
-	if(m_MessageReceiver.m_rec_msg.length == 0)
+	if(err == boost::system::errc::success)
 	{
+		m_MessageReceiver.m_rec_msg.length = msg_size;
+
+		if(m_MessageReceiver.m_rec_msg.length == 0)
+		{
+			return;
+		}
+		pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
+
+		//Get address into Locator
+		m_send_locator.port = m_sender_endpoint.port();
+		LOCATOR_ADDRESS_INVALID(m_send_locator.address);
+		for(int i=0;i<4;i++)
+		{
+			m_send_locator.address[i+12] = m_sender_endpoint.address().to_v4().to_bytes()[i];
+		}
+		try
+		{
+			m_MessageReceiver.processCDRMsg(m_participant_ptr->m_guid.guidPrefix,&m_send_locator,&m_MessageReceiver.m_rec_msg);
+			pInfo (BLUE<<"Message processed " <<DEF<< endl);
+		}
+		catch(int e)
+		{
+			pError( "Error processing message of type: " << e << std::endl);
+
+		}
+		//CDRMessage_t msg;
+		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
+		m_listen_socket.async_receive_from(
+				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
+				m_sender_endpoint,
+				boost::bind(&ThreadListen::newCDRMessage, this,
+						boost::asio::placeholders::error,
+						boost::asio::placeholders::bytes_transferred));
+	}
+	else if(err == boost::asio::error::operation_aborted)
+	{
+		pInfo("Operation in listening socket aborted..."<<endl);
 		return;
 	}
-	pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
-
-	//Get address into Locator
-	m_send_locator.port = m_sender_endpoint.port();
-	LOCATOR_ADDRESS_INVALID(m_send_locator.address);
-	for(int i=0;i<4;i++)
+	else
 	{
-		m_send_locator.address[i+12] = m_sender_endpoint.address().to_v4().to_bytes()[i];
+		//CDRMessage_t msg;
+		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
+		m_listen_socket.async_receive_from(
+				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
+				m_sender_endpoint,
+				boost::bind(&ThreadListen::newCDRMessage, this,
+						boost::asio::placeholders::error,
+						boost::asio::placeholders::bytes_transferred));
 	}
-	try
-	{
-		m_MessageReceiver.processCDRMsg(m_participant_ptr->m_guid.guidPrefix,&m_send_locator,&m_MessageReceiver.m_rec_msg);
-		pInfo (BLUE<<"Message processed " <<DEF<< endl);
-	}
-	catch(int e)
-	{
-		pError( "Error processing message of type: " << e << std::endl);
-
-	}
-	//CDRMessage_t msg;
-	CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
-	m_listen_socket.async_receive_from(
-			boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
-			m_sender_endpoint,
-			boost::bind(&ThreadListen::newCDRMessage, this,
-					boost::asio::placeholders::error,
-					boost::asio::placeholders::bytes_transferred));
 }
 
 
