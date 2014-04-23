@@ -119,6 +119,10 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 		//First 4 bytes must contain: ID | flags | octets to next header
 		if(!readSubmessageHeader(msg,&submsgh))
 			return;
+//		cout << "pos: " << msg->pos;
+//		cout << " submsg length: " << submsgh.submessageLength;
+//		cout << " total length: " << msg->length << endl;
+//		cout << "submsg endian: " << msg->msg_endian << endl;
 		if(msg->pos + submsgh.submessageLength > msg->length)
 		{
 			pWarning("SubMsg of invalid length"<<endl);
@@ -250,11 +254,14 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	//Extra flags don't matter now. Avoid those bytes
 	msg->pos+=2;
+
 	int16_t octetsToInlineQos;
 	CDRMessage::readInt16(msg,&octetsToInlineQos); //it should be 16 in this implementation
+
 	//reader and writer ID
 	EntityId_t reader;
 	CDRMessage::readEntityId(msg,&reader);
+
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = NULL;
@@ -285,6 +292,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	//Get sequence number
 	CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
+
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		pWarning("Invalid message received, bad sequence Number"<<endl)
@@ -294,16 +302,19 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
 	if(octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
 		msg->pos += (octetsToInlineQos-RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
+
 	uint32_t inlineQosSize = 0;
 
 	if(inlineQosFlag)
 	{
-		if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
+		inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind);
+		if(inlineQosSize <= 0)
 		{
 			pDebugInfo("SubMessage Data ERROR, Inline Qos ParameterList error"<<endl);
 			firstReader->m_reader_cache.release_Cache(ch);
 			return false;
 		}
+
 	}
 
 	if(dataFlag || keyFlag)
@@ -312,8 +323,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		msg->pos+=1;
 		octet encapsulation =0;
 		CDRMessage::readOctet(msg,&encapsulation);
+
 		ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
 		msg->pos+=2; //CDR Options, not used in this version
+
 		if(dataFlag)
 		{
 			ch->serializedPayload.length = payload_size-2-2;

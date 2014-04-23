@@ -76,14 +76,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 
 			for(lit = mp_WP->param.unicastLocatorList.begin();lit!=mp_WP->param.unicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(*lit));
-			{
-			//FIXME: remove, only to check acknack
-			Locator_t loc;
-			loc.kind = 1;
-			loc.port = 10000;
-			loc.set_IP4_address(192,168,1,18);
-			mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(loc));
-			}
+
 			for(lit = mp_WP->param.multicastLocatorList.begin();lit!=mp_WP->param.multicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(*lit));
 
