@@ -80,6 +80,13 @@ public:
 	//! Variable indicating whether the listen thread is Multicast.
 	bool m_isMulticast;
 
+
+
+	void newCDRMessage(const boost::system::error_code& error, std::size_t /*bytes_transferred*/);
+	bool init_thread2();
+	void run_io_service();
+
+
 };
 
 } /* namespace rtps */
