@@ -312,15 +312,15 @@ typedef struct ParticipantParams_t{
 	bool m_useSimpleParticipantDiscovery;
 	ParticipantParams_t(){
 		defaultSendPort = 7359;
-		Locator_t defUni;
-		defUni.kind = LOCATOR_KIND_UDPv4;
-		LOCATOR_ADDRESS_INVALID(defUni.address);
-		defUni.address[12] = 127;
-		defUni.address[13] = 0;
-		defUni.address[14] = 0;
-		defUni.address[15] = 1;
-		defUni.port = 10043;
-		defaultUnicastLocatorList.push_back(defUni);
+//		Locator_t defUni;
+//		defUni.kind = LOCATOR_KIND_UDPv4;
+//		LOCATOR_ADDRESS_INVALID(defUni.address);
+//		defUni.address[12] = 127;
+//		defUni.address[13] = 0;
+//		defUni.address[14] = 0;
+//		defUni.address[15] = 1;
+//		defUni.port = 10043;
+//		defaultUnicastLocatorList.push_back(defUni);
 		resendSPDPDataPeriod_sec = 2;
 		domainId = 80;
 		name = "defaultParticipant";
