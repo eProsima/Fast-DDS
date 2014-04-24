@@ -71,6 +71,11 @@ public:
 	//! Name of the topic associated with the reader.
 	std::string m_topicName;
 
+	virtual bool removeMinSeqCacheChange();
+
+	virtual bool removeAllCacheChange(int32_t* n_removed);
+
+
 };
 
 } /* namespace rtps */
