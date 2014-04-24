@@ -170,6 +170,25 @@ public:
 
 ///@}
 
+	/** @name Read or take data methods.
+	 * Methods to read or take data from the History.
+	 */
+
+	///@{
+
+	bool readNextData(void* data);
+	bool takeNextData(void* data);
+	bool readAllData(std::vector<void*>* data_vec);
+	bool takeAllData(std::vector<void*>* data_vec);
+	bool readData(SequenceNumber_t& seq,GUID_t& gui,void* data);
+
+
+	///@}
+
+
+
+
+
 	ParameterList_t ParamList;
 
 	/**

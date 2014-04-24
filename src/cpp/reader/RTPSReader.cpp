@@ -40,6 +40,21 @@ RTPSReader::~RTPSReader() {
 	delete(newMessageSemaphore);
 }
 
+bool RTPSReader::readNextCacheChange(void* data)
+{
+	if(!m_reader_cache.m_changes.empty())
+	{
+
+	}
+	return false;
+}
+
+
+bool RTPSReader::readAllCacheChange(std::vector<void*>* data_vec)
+{
+return false;
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

@@ -28,7 +28,10 @@
 namespace eprosima {
 namespace rtps {
 
-
+bool sort_CacheChanges_History (CacheChange_t* c1,CacheChange_t* c2)
+{
+	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
+}
 
 HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size,
 						HistoryKind_t kind,Endpoint* endp):
@@ -246,6 +249,8 @@ bool HistoryCache::get_seq_num_max(SequenceNumber_t* seqnum,GUID_t* guid)
 	return true;
 }
 
+
+
 void HistoryCache::updateMaxMinSeqNum()
 {
 	//boost::lock_guard<HistoryCache> guard(*this);
@@ -253,22 +258,29 @@ void HistoryCache::updateMaxMinSeqNum()
 	{
 		if(!m_isMaxMinUpdated)
 		{
-			m_maxSeqNum = m_minSeqNum = m_changes[0]->sequenceNumber;
-			m_maxSeqNumGuid = m_minSeqNumGuid = m_changes[0]->writerGUID;
+			std::sort(m_changes.begin(),m_changes.end(),sort_CacheChanges_History);
+			m_maxSeqNum = (*(m_changes.end()-1))->sequenceNumber;
+			m_maxSeqNumGuid = (*(m_changes.end()-1))->writerGUID;
 
-			for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
-					it!=m_changes.end();++it){
-				if((*it)->sequenceNumber.to64long() > m_maxSeqNum.to64long())
-				{
-					m_maxSeqNum = (*it)->sequenceNumber;
-					m_maxSeqNumGuid = (*it)->writerGUID;
-				}
-				if((*it)->sequenceNumber.to64long() < m_minSeqNum.to64long())
-				{
-					m_minSeqNum = (*it)->sequenceNumber;
-					m_minSeqNumGuid = (*it)->writerGUID;
-				}
-			}
+			m_minSeqNum = (*(m_changes.begin()-1))->sequenceNumber;
+			m_minSeqNumGuid = (*(m_changes.begin()-1))->writerGUID;
+
+//			m_maxSeqNum = m_minSeqNum = m_changes[0]->sequenceNumber;
+//			m_maxSeqNumGuid = m_minSeqNumGuid = m_changes[0]->writerGUID;
+//
+//			for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+//					it!=m_changes.end();++it){
+//				if((*it)->sequenceNumber.to64long() > m_maxSeqNum.to64long())
+//				{
+//					m_maxSeqNum = (*it)->sequenceNumber;
+//					m_maxSeqNumGuid = (*it)->writerGUID;
+//				}
+//				if((*it)->sequenceNumber.to64long() < m_minSeqNum.to64long())
+//				{
+//					m_minSeqNum = (*it)->sequenceNumber;
+//					m_minSeqNumGuid = (*it)->writerGUID;
+//				}
+//			}
 			m_isMaxMinUpdated = true;
 		}
 	}

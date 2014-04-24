@@ -63,14 +63,18 @@ typedef struct CacheChange_t{
 	SequenceNumber_t sequenceNumber;
 	//!Serialized Payload associated with the change.
 	SerializedPayload_t serializedPayload;
+	//!Indicates if the cache has been read (only used in READERS)
+	bool isRead;
 	CacheChange_t():
-		kind(ALIVE)
+		kind(ALIVE),
+		isRead(false)
 	{
 
 	}
 	CacheChange_t(uint32_t payload_size):
 		kind(ALIVE),
-		serializedPayload(payload_size)
+		serializedPayload(payload_size),
+		isRead(false)
 	{
 
 	}
