@@ -193,7 +193,7 @@ int main(int argc, char** argv)
 		loc.set_IP4_address(192,168,1,IPTEST2);
 		pub1->addReaderLocator(loc,true);
 		pub2->addReaderLocator(loc,true);
-		TestType tp1,tp2;
+		TestType tp1,tp2,tp_in;
 		COPYSTR(tp1.name,"Obje1");
 		COPYSTR(tp2.name,"Obje2");
 		tp1.value = 0;
@@ -228,7 +228,11 @@ int main(int argc, char** argv)
 				tp2.value = 0;
 				tp2.price = 1.5;
 			}
-			if(sub->getHistory_n() >= 0.7*Rparam.historySize)
+			while(sub->readMinSeqUnreadCache((void*)&tp_in))
+			{
+				tp_in.print();
+			}
+			if(sub->getHistory_n() >= 0.8*Rparam.historySize)
 			{
 				cout << "Taking all from subscriber" <<endl;
 				std::vector<void*> data_vec;
