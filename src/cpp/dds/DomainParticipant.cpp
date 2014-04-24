@@ -126,6 +126,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 	}
 	else if(WParam.stateKind == STATEFUL)
 	{
+		//FIXME: if unicast and multicast locator list is empty return false;
 		StatefulWriter* SF;
 		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize))
 			return NULL;
