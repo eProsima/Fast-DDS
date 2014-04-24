@@ -402,7 +402,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WP->received_change_set(change_to_add);
 					}
 				}
-				(*it)->mp_listener->newMessageCallback();
+				if((*it)->mp_listener!=NULL)
+					(*it)->mp_listener->newMessageCallback();
 				///FIXME: put semaphore in listener class
 				(*it)->newMessageSemaphore->post();
 			}
