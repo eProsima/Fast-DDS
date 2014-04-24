@@ -144,7 +144,7 @@ public:
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_INFO_VERBOSITY_LEVEL);
 	int type;
 	if(argc > 1)
 	{
@@ -178,57 +178,89 @@ int main(int argc, char** argv)
 		WParam.topicDataType = "TestType";
 		WParam.topicName = "Test_topic";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
-
+		Publisher* pub2 = DomainParticipant::createPublisher(p,WParam);
+		ReaderParams_t Rparam;
+		Rparam.historySize = 10;
+		Rparam.topicDataType = std::string("TestType");
+		Rparam.topicName = std::string("Test_topic");
+		Rparam.topicKind = NO_KEY;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10469;
-		loc.set_IP4_address(192,168,1,IPTESTWIN);
-		pub1->addReaderLocator(loc,true);
+		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+
 		loc.set_IP4_address(192,168,1,IPTEST2);
-		pub1->addReaderLocator(loc,false);
-		TestType tp;
-		COPYSTR(tp.name,"Obje1");
-		tp.value = 0;
-		tp.price = 1.3;
+		pub1->addReaderLocator(loc,true);
+		pub2->addReaderLocator(loc,true);
+		TestType tp1,tp2;
+		COPYSTR(tp1.name,"Obje1");
+		COPYSTR(tp2.name,"Obje2");
+		tp1.value = 0;
+		tp1.price = 1.3;
+		tp2.value = 0;
+		tp2.price = -1.3;
 		int n;
 		cout << "Enter number to start: ";
 		cin >> n;
 		for(uint i = 0;i<10;i++)
 		{
-			tp.value++;
-			tp.price *= (i+1);
-			pub1->write((void*)&tp);
+			tp1.value++;
+			tp1.price *= (i+1);
+			tp2.value++;
+			tp2.price *= (i+1);
+			pub1->write((void*)&tp1);
+			pub2->write((void*)&tp2);
 			if(pub1->getHistory_n() >= 0.8*WParam.historySize)
 				pub1->removeMinSeqChange();
+			if(pub2->getHistory_n() >= 0.8*WParam.historySize)
+				pub2->removeMinSeqChange();
 			if(i==8)
 			{
-				pub1->dispose((void*)&tp);
-				pub1->unregister((void*)&tp);
-				COPYSTR(tp.name,"Obje2");
-				tp.value = 0;
-				tp.price = 1.5;
+				pub1->dispose((void*)&tp1);
+				pub1->unregister((void*)&tp1);
+				pub2->dispose((void*)&tp2);
+				pub2->unregister((void*)&tp2);
+				COPYSTR(tp1.name,"Obje3");
+				tp1.value = 0;
+				tp1.price = 1.5;
+				COPYSTR(tp2.name,"Obje4");
+				tp2.value = 0;
+				tp2.price = 1.5;
+			}
+			if(sub->getHistory_n() >= 0.7*Rparam.historySize)
+			{
+				cout << "Taking all from subscriber" <<endl;
+				std::vector<void*> data_vec;
+				sub->takeAllCache(&data_vec);
+				for(unsigned int i=0;i<data_vec.size();i++)
+					((TestType*)data_vec[i])->print();
+				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
 			}
 		}
 		break;
 	}
 	case 2:
-	case 3:
 	{
 		ReaderParams_t Rparam;
-		Rparam.historySize = 5;
-		Rparam.stateKind = STATELESS;
+		Rparam.historySize = 8;
 		Rparam.topicDataType = std::string("TestType");
 		Rparam.topicName = std::string("Test_topic");
 		Rparam.topicKind = WITH_KEY;
 		Locator_t loc;
-		if(type == 2)
-			loc.port = 10469;
-		else if(type ==3)
-			loc.port = 10469;
-		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
+		loc.kind = 1;
+		loc.port = 10469;
+		Rparam.unicastLocatorList.push_back(loc); //Listen in port 10469
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
 		sub->assignListener((RTPSListener*)&listener);
+		WriterParams_t WParam;
+		WParam.historySize = 10;
+		WParam.topicKind = NO_KEY;
+		WParam.topicDataType = "TestType";
+		WParam.topicName = "Test_topic";
+		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
+
 		while(1)
 		{
 			cout << "Blocking until new message arrives " << endl;
@@ -238,8 +270,9 @@ int main(int argc, char** argv)
 			if(sub->readMinSeqUnreadCache((void*)&tp))
 			{
 				tp.print();
+				pub1->write((void*)&tp);
 			}
-			cout << "Read: " << sub->getReadElements_n()<<" from History: "<<sub->getHistory_n()<< endl;
+			cout << "Read: " << sub->getReadElements_n() <<" from History: "<<sub->getHistory_n()<< endl;
 			if(sub->isHistoryFull())
 			{
 				cout << "Taking all" <<endl;
