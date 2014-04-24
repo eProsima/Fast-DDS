@@ -173,14 +173,14 @@ int main(int argc, char** argv)
 	case 1:
 	{
 		WriterParams_t WParam;
-		WParam.historySize = 10;
+		WParam.historySize = 20;
 		WParam.topicKind = WITH_KEY;
 		WParam.topicDataType = "TestType";
 		WParam.topicName = "Test_topic";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
 		Publisher* pub2 = DomainParticipant::createPublisher(p,WParam);
 		ReaderParams_t Rparam;
-		Rparam.historySize = 10;
+		Rparam.historySize = 50;
 		Rparam.topicDataType = std::string("TestType");
 		Rparam.topicName = std::string("Test_topic");
 		Rparam.topicKind = NO_KEY;
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 	case 2:
 	{
 		ReaderParams_t Rparam;
-		Rparam.historySize = 20;
+		Rparam.historySize = 50;
 		Rparam.topicDataType = std::string("TestType");
 		Rparam.topicName = std::string("Test_topic");
 		Rparam.topicKind = WITH_KEY;
@@ -255,7 +255,7 @@ int main(int argc, char** argv)
 		TestTypeListener listener;
 		sub->assignListener((RTPSListener*)&listener);
 		WriterParams_t WParam;
-		WParam.historySize = 10;
+		WParam.historySize = 50;
 		WParam.topicKind = NO_KEY;
 		WParam.topicDataType = "TestType";
 		WParam.topicName = "Test_topic";
