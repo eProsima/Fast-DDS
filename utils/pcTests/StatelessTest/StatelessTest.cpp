@@ -238,7 +238,7 @@ int main(int argc, char** argv)
 				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
 			}
 		}
-		cout << "Sleeping 2 seconds"<<endl;
+		cout << "Sleeping 3 seconds"<<endl;
 		sleep(3);
 		while(sub->readMinSeqUnreadCache((void*)&tp_in))
 		{
@@ -279,6 +279,9 @@ int main(int argc, char** argv)
 			{
 				tp.print();
 				pub1->write((void*)&tp);
+				tp.value = -1;
+				tp.price = 0;
+				COPYSTR(tp.name,"UNDEF");
 			}
 			cout << "Read: " << sub->getReadElements_n() <<" from History: "<<sub->getHistory_n()<< endl;
 			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
