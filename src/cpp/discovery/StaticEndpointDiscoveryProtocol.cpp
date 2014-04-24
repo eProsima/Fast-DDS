@@ -200,9 +200,9 @@ bool StaticEndpointDiscoveryProtocol::remoteParticipantMatching(std::string part
 			{
 				p_rit = *rit;
 				if(p_rit->getTopicName() == eit->m_topicName &&
-						p_rit->m_stateType == eit->m_state)
+						p_rit->getStateType() == eit->m_state)
 				{
-					if(p_rit->m_stateType == STATELESS)
+					if(p_rit->getStateType() == STATELESS)
 					{
 						StatelessWriter* p_SLW = (StatelessWriter*)p_rit;
 						ReaderLocator RL;
@@ -220,7 +220,7 @@ bool StaticEndpointDiscoveryProtocol::remoteParticipantMatching(std::string part
 							p_SLW->reader_locator_add(RL);
 						}
 					}
-					else if(p_rit->m_stateType == STATEFUL)
+					else if(p_rit->getStateType() == STATEFUL)
 					{
 						StatefulWriter* p_SFW = (StatefulWriter*)p_rit;
 						ReaderProxy_t RP;
@@ -283,7 +283,7 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer)
 				for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
 						eit!=remotepit->m_endpoints.end();++eit)
 				{
-					if(eit->m_kind == READER && writer->m_stateType == eit->m_state)
+					if(eit->m_kind == READER && writer->getStateType() == eit->m_state)
 					{
 
 					}

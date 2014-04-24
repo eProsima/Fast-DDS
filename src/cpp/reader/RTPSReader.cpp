@@ -24,15 +24,14 @@ namespace rtps {
 
 RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
 		m_stateType(STATELESS),
-		m_reader_cache(historysize,payload_size),
+		m_reader_cache(historysize,payload_size,READER,(Endpoint*)this),
 		expectsInlineQos(true),
 		mp_Sub(NULL),
 		newMessageSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 		mp_listener(NULL)
 
 {
-	m_reader_cache.mp_rtpsreader = this;
-	m_reader_cache.m_historyKind = READER;
+	pDebugInfo("RTPSReader created correctly"<<endl);
 }
 
 RTPSReader::~RTPSReader() {

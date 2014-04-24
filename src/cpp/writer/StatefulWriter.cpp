@@ -124,12 +124,14 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 		ChangeForReader_t changeForReader;
 		if((*it)->getChangeForReader(change,&changeForReader))
 		{
-			if(!changeForReader.is_relevant
-					|| !(changeForReader.status == ACKNOWLEDGED))
+			if(changeForReader.is_relevant)
 			{
-				pDebugInfo("Change not acked. Relevant: " << changeForReader.is_relevant);
-				pDebugInfo(" status: " << changeForReader.status << endl);
-				return false;
+				if(changeForReader.status != ACKNOWLEDGED)
+				{
+					pDebugInfo("Change not acked. Relevant: " << changeForReader.is_relevant);
+					pDebugInfo(" status: " << changeForReader.status << endl);
+					return false;
+				}
 			}
 		}
 	}
@@ -160,9 +162,14 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 	}
 }
 
-bool sort_changeForReader (ChangeForReader_t* c1,ChangeForReader_t* c2)
+bool sort_changeForReader_ptr (ChangeForReader_t* c1,ChangeForReader_t* c2)
 {
 	return(c1->change->sequenceNumber.to64long() < c2->change->sequenceNumber.to64long());
+}
+
+bool sort_changeForReader(ChangeForReader_t c1,ChangeForReader_t c2)
+{
+	return(c1.change->sequenceNumber.to64long() < c2.change->sequenceNumber.to64long());
 }
 
 bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
@@ -182,7 +189,7 @@ void StatefulWriter::unsent_changes_not_empty()
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
-			std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader);
+			std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader_ptr);
 
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
@@ -238,7 +245,44 @@ void StatefulWriter::unsent_changes_not_empty()
 	pDebugInfo("Finish sending unsent changes" << endl);
 }
 
+bool StatefulWriter::removeMinSeqCacheChange()
+{
+	SequenceNumber_t seq;
+	GUID_t gui;
+	m_writer_cache.get_seq_num_min(&seq,&gui);
+	CacheChange_t* change=NULL;
+	if(m_writer_cache.get_change(seq,gui,&change))
+	{
+		if(is_acked_by_all(change))
+		{
+			ReaderProxy* rp;
+			for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+					it!=this->matched_readers.end();++it)
+			{
+				rp = *it;
+				std::sort(rp->m_changesForReader.begin(),rp->m_changesForReader.end(),sort_changeForReader);
+				rp->m_changesForReader.erase(rp->m_changesForReader.begin());
+			}
+			m_writer_cache.remove_change(change->sequenceNumber,change->writerGUID);
+			return true;
+		}
+	}
+	return false;
+}
 
+bool StatefulWriter::removeAllCacheChange(int32_t* removed)
+{
+	int32_t n_count = 0;
+	while(this->removeMinSeqCacheChange())
+	{
+		n_count++;
+	}
+	*removed = n_count;
+	if(this->m_writer_cache.getHistorySize()==0)
+		return true;
+	else
+		return false;
+}
 
 
 

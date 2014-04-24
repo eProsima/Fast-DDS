@@ -47,12 +47,9 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 		mp_RP->unacked_changes(&unack);
 		if(!unack.empty())
 		{
-			SequenceNumber_t firstall,firstrp,first,last;
-			mp_RP->mp_SFW->m_writer_cache.get_seq_num_min(&firstall,NULL);
-			mp_RP->max_acked_change(&firstrp);
-			firstrp++;
-			first = firstrp > firstall ? firstrp :firstall;
-			mp_RP->mp_SFW->m_writer_cache.get_seq_num_max(&last,NULL);
+			SequenceNumber_t first,last;
+			mp_RP->mp_SFW->get_seq_num_min(&first,NULL);
+			mp_RP->mp_SFW->get_seq_num_max(&last,NULL);
 			mp_RP->mp_SFW->heartbeatCount_increment();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
 			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_RP->mp_SFW->m_guid.guidPrefix,

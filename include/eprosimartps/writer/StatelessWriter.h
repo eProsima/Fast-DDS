@@ -66,6 +66,9 @@ public:
 	 * Method to indicate that there are changes not sent in some of all ReaderLocator.
 	 */
 	void unsent_changes_not_empty();
+
+	 bool removeMinSeqCacheChange();
+		 bool removeAllCacheChange(int32_t* n_removed);
 };
 
 } /* namespace rtps */

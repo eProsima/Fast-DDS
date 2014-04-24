@@ -38,7 +38,7 @@ namespace rtps {
 
 class RTPSWriter;
 class RTPSReader;
-
+class Endpoint;
 /**
  * Class HistoryCache, container of the different CacheChanges and the methods to access them.
  * @ingroup COMMONMODULE
@@ -46,7 +46,7 @@ class RTPSReader;
 class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 //	HistoryCache();
-	HistoryCache(uint16_t historysize,uint32_t payload_size);
+	HistoryCache(uint16_t historysize,uint32_t payload_size,HistoryKind_t kind,Endpoint* endp);
 	virtual ~HistoryCache();
 	/**
 	 * Get a pointer to a specific change based on its SequenceNumber_t.
@@ -123,8 +123,14 @@ public:
 	//!Returns true if the History is full.
 	bool isFull();
 
+	size_t getHistorySize(){
+		return m_changes.size();
+	}
+
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;
+
+protected:
 
 	///@name Pointer to the associated entity. Only one of them is initialized.
 	//! @{
@@ -136,7 +142,7 @@ public:
 
 
 
-private:
+
 	//!Maximum history size.
 	uint16_t m_history_max_size;
 	//!Variable to know if the history is full without needing to block the History mutex.

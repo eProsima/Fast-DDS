@@ -30,15 +30,20 @@ namespace rtps {
 
 
 
-HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size):
+HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size,
+						HistoryKind_t kind,Endpoint* endp):
 		mp_rtpswriter(NULL),mp_rtpsreader(NULL),
-		m_historyKind(UDEF),
+		m_historyKind(kind),
 		m_history_max_size(historysize),
 		isHistoryFull(false),
 		changePool(historysize,payload_size),
 		m_isMaxMinUpdated(false)
 
 {
+		if(m_historyKind == WRITER)
+			mp_rtpswriter = (RTPSWriter*)endp;
+		else if(m_historyKind == READER)
+			mp_rtpsreader = (RTPSReader*)endp;
 		SEQUENCENUMBER_UNKOWN(m_minSeqNum);
 		SEQUENCENUMBER_UNKOWN(m_maxSeqNum);
 		GUID_UNKNOWN(m_minSeqNumGuid);
