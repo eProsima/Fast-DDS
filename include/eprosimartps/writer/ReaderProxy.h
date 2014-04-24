@@ -70,6 +70,13 @@ public:
 	 * @return True if found.
 	 */
 	bool getChangeForReader(CacheChange_t* change,ChangeForReader_t* changeForReader);
+	/**
+	 * Get the ChangeForReader struct associated with a determined sequenceNumber
+	 * @param[in] seq SequenceNumber
+	 * @param[out] changeForReader Pointer to a changeforreader structure.
+	 * @return True if found.
+	 */
+	bool getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* changeForReader);
 
 	/**
 	 * Mark all changes up to the one indicated by the seqNum as Acknowledged.

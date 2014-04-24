@@ -93,7 +93,8 @@ public:
 
 	DDS_Reliability_t reliability;
 
-
+	virtual bool removeMinSeqCacheChange();
+		virtual bool removeAllCacheChange(int32_t* n_removed);
 
 
 

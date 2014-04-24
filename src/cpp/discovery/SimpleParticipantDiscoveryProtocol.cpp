@@ -175,7 +175,7 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 	CacheChange_t* change=NULL;
 	if(m_DPDAsParamList.allQos.m_hasChanged || m_hasChanged_DPD)
 	{
-		m_SPDPbPWriter->m_writer_cache.remove_all_changes();
+		m_SPDPbPWriter->removeMinSeqCacheChange();
 		m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
 		for(uint8_t i = 0;i<12;++i)
 			change->instanceHandle.value[i] = this->mp_Participant->m_guid.guidPrefix.value[i];
@@ -186,7 +186,7 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 		change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
 		memcpy(change->serializedPayload.data,m_DPDAsParamList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
-		m_SPDPbPWriter->m_writer_cache.add_change(change);
+		m_SPDPbPWriter->add_change(change);
 		}
 		else
 		{
@@ -196,7 +196,7 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 	}
 	else
 	{
-		if(!m_SPDPbPWriter->m_writer_cache.get_last_added_cache(&change))
+		if(!m_SPDPbPWriter->get_last_added_cache(&change))
 		{
 			pWarning("Error getting last added change"<<endl);
 			return false;
@@ -208,7 +208,7 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 
 bool SimpleParticipantDiscoveryProtocol::updateDPDMsg()
 {
-	m_SPDPbPWriter->m_writer_cache.remove_all_changes();
+	m_SPDPbPWriter->removeMinSeqCacheChange();
 	CacheChange_t* change=NULL;
 	m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
 
@@ -222,13 +222,13 @@ bool SimpleParticipantDiscoveryProtocol::updateDPDMsg()
 	change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
 	memcpy(change->serializedPayload.data,m_DPDAsParamList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
 
-	m_SPDPbPWriter->m_writer_cache.add_change(change);
+	m_SPDPbPWriter->add_change(change);
 
 	CDRMessage::initCDRMsg(&m_DPDMsg);
 	RTPSMessageCreator::addHeader(&m_DPDMsg,m_DPD.m_proxy.m_guidPrefix);
 	RTPSMessageCreator::addSubmessageInfoTS_Now(&m_DPDMsg,false);
 
-	m_SPDPbPWriter->m_writer_cache.get_last_added_cache(&change);
+	m_SPDPbPWriter->get_last_added_cache(&change);
 	RTPSMessageCreator::addSubmessageData(&m_DPDMsg,change,WITH_KEY,c_EntityId_Unknown,NULL);
 	m_hasChanged_DPD = false;
 	return true;

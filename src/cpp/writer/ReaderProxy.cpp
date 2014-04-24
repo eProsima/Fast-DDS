@@ -63,6 +63,25 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 	return false;
 }
 
+
+bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* changeForReader)
+{
+	boost::lock_guard<ReaderProxy> guard(*this);
+	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
+	{
+		if(it->change->sequenceNumber.to64long() == seq.to64long())
+		{
+			changeForReader->is_relevant = it->is_relevant;
+			changeForReader->status = it->status;
+			changeForReader->change = it->change;
+			pDebugInfo("Change found in Reader Proxy " << endl);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);

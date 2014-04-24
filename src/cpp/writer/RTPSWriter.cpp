@@ -28,15 +28,13 @@ namespace rtps {
 
 RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 		m_stateType(STATELESS),
-		m_writer_cache(historysize,payload_size),
+		m_writer_cache(historysize,payload_size,WRITER,(Endpoint*)this),
 		m_pushMode(true),
 		m_heartbeatCount(0),
 		mp_type(NULL),
 		m_Pub(NULL)
 
 {
-	m_writer_cache.m_historyKind = WRITER;
-	m_writer_cache.mp_rtpswriter = this;
 	pDebugInfo("RTPSWriter created"<<endl)
 }
 
@@ -94,7 +92,32 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	return true;
 }
 
+bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
+{
+	if(kind != ALIVE && topicKind == NO_KEY)
+	{
+		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
+		return false;
+	}
 
+	CacheChange_t* change;
+	if(new_change(kind,Data,&change))
+	{
+	pDebugInfo("New change created"<<endl);
+	if(!m_writer_cache.add_change(change))
+	{
+		pWarning("Change not added"<<endl);
+		m_writer_cache.release_Cache(change);
+		return false;
+	}
+
+	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
+	unsent_change_add(change);
+	return true;
+	}
+	else
+		return false;
+}
 
 
 

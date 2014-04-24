@@ -97,9 +97,10 @@ public:
 	bool removeMinSeqChange();
 	/**
 	 * Removes all changes from the History.
+	 * @param[out] removed Number of removed elements
 	 * @return True if correct.
 	 */
-	bool removeAllChange();
+	bool removeAllChange(int32_t* removed);
 
 	/**
 	 * Get the number of elements in the History.
@@ -144,7 +145,7 @@ private:
 	DDSTopicDataType* mp_type;
 
 
-	bool add_new_change(ChangeKind_t kind,void* Data);
+
 
 
 };

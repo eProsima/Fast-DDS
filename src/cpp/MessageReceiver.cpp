@@ -516,7 +516,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	{
 		if((*it)->m_guid == writerGUID)
 		{
-			if((*it)->m_stateType == STATEFUL)
+			if((*it)->getStateType() == STATEFUL)
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
 				//Look for the readerProxy the acknack is from

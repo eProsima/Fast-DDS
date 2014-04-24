@@ -82,10 +82,6 @@ public:
 		return m_topicName;
 	}
 
-	//!State type fo the writer
-	StateKind_t m_stateType;
-	//!Changes associated with this writer.
-	HistoryCache m_writer_cache;
 	/**
 	 * Increment the heartbeatCound.
 	 */
@@ -100,8 +96,57 @@ public:
 		return m_heartbeatCount;
 	}
 
-protected:
+	virtual bool removeMinSeqCacheChange();
+	virtual bool removeAllCacheChange(int32_t* n_removed);
 
+	StateKind_t getStateType() const {
+		return m_stateType;
+	}
+
+	size_t getHistoryCacheSize()
+	{
+		return this->m_writer_cache.getHistorySize();
+	}
+
+	virtual void unsent_change_add(CacheChange_t* change);
+
+	bool add_new_change(ChangeKind_t kind,void*Data);
+
+	/**
+	 * Get the minimum sequence number in the HistoryCache.
+	 * @param[out] seqNum Pointer to store the sequence number
+	 * @param[out] writerGuid Pointer to store the writerGuid.
+	 * @return True if correct.
+	 */
+	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
+	{
+		return m_writer_cache.get_seq_num_min(seqNum,writerGuid);
+	}
+	/**
+	 * Get the maximum sequence number in the HistoryCache.
+	 * @param[out] seqNum Pointer to store the sequence number
+	 * @param[out] writerGuid Pointer to store the writerGuid.
+	 * @return True if correct.
+	 */
+	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid)
+	{
+		return m_writer_cache.get_seq_num_max(seqNum,writerGuid);
+	}
+	bool add_change(CacheChange_t*change)
+	{
+		return m_writer_cache.add_change(change);
+	}
+	bool get_last_added_cache(CacheChange_t**change)
+	{
+		return m_writer_cache.get_last_added_cache(change);
+	}
+
+
+protected:
+	//!State type fo the writer
+	StateKind_t m_stateType;
+	//!Changes associated with this writer.
+	HistoryCache m_writer_cache;
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
 	bool m_pushMode;
 	//!Type of the writer, either STATELESS or STATEFUL

@@ -54,7 +54,6 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 		if(rit->locator == a_locator.locator)
 			return false;
 	}
-
 	for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.m_changes.begin();
 			it!=m_writer_cache.m_changes.end();++it){
 		a_locator.unsent_changes.push_back((*it));
@@ -159,6 +158,26 @@ void StatelessWriter::unsent_changes_not_empty()
 	pDebugInfo ( "Finish sending unsent changes" << endl);
 }
 
+
+bool StatelessWriter::removeMinSeqCacheChange()
+{
+	SequenceNumber_t seq;
+	GUID_t gui;
+	this->m_writer_cache.get_seq_num_min(&seq,&gui);
+	return this->m_writer_cache.remove_change(seq,gui);
+}
+
+bool StatelessWriter::removeAllCacheChange(int32_t* n_removed)
+{
+	int32_t n_r=this->m_writer_cache.getHistorySize();
+	if(this->m_writer_cache.remove_all_changes())
+	{
+		*n_removed = n_r;
+		return true;
+	}
+	else
+		return false;
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */
