@@ -137,6 +137,8 @@ public:
 
 	uint32_t m_lastAcknackCount;
 
+	bool max_acked_change(SequenceNumber_t* sn);
+
 
 
 private:
