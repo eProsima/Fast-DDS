@@ -243,6 +243,7 @@ int main(int argc, char** argv)
 		while(sub->readMinSeqUnreadCache((void*)&tp_in))
 		{
 			tp_in.print();
+			tp_in.value = -111;
 		}
 		break;
 	}
