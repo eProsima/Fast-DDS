@@ -140,7 +140,7 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 {
 	pInfo("Printing Loaded XML Info"<<endl);
-	pInfo("Number of participant: " <<this->m_participants.size());
+	pInfo("Number of participants: " <<this->m_StaticParticipantInfo.size());
 	pLongInfoPrint;
 	std::string auxString;
 	for(std::vector<ParticipantStaticInfo_t>::iterator pit =this->m_StaticParticipantInfo.begin();
@@ -268,7 +268,7 @@ bool StaticEndpointDiscoveryProtocol::remoteParticipantMatching(std::string part
 
 bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer)
 {
-	std::string topic_name = writer->m_topicName;
+	std::string topic_name = writer->getTopicName();
 	std::vector<std::string> matched_part_names = mp_Participant->m_SPDP.getMatchedParticipantsNames();
 	//Look in all the participants that have been found by the SPDP
 	for(std::vector<std::string>::iterator it = matched_part_names.begin();
@@ -291,12 +291,12 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer)
 			}
 		}
 	}
-
+return true;
 }
 
 bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader)
 {
-
+return false;
 }
 
 
