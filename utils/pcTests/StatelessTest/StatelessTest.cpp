@@ -228,10 +228,6 @@ int main(int argc, char** argv)
 				tp2.value = 0;
 				tp2.price = 1.5;
 			}
-			while(sub->readMinSeqUnreadCache((void*)&tp_in))
-			{
-				tp_in.print();
-			}
 			if(sub->getHistory_n() >= 0.8*Rparam.historySize)
 			{
 				cout << "Taking all from subscriber" <<endl;
@@ -241,6 +237,12 @@ int main(int argc, char** argv)
 					((TestType*)data_vec[i])->print();
 				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
 			}
+		}
+		cout << "Sleeping 2 seconds"<<endl;
+		sleep(3);
+		while(sub->readMinSeqUnreadCache((void*)&tp_in))
+		{
+			tp_in.print();
 		}
 		break;
 	}
