@@ -185,6 +185,10 @@ int main(int argc, char** argv){
 		Wparam.reliablility.heartbeatPeriod.seconds = 2;
 		Wparam.reliablility.nackResponseDelay.seconds = 5;
 		Wparam.reliablility.kind = RELIABLE;
+		Locator_t loc;
+		loc.kind = 1;
+		loc.port = 10046;
+		Wparam.unicastLocatorList.push_back(loc);
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		if(pub == NULL)
 			return 0;
