@@ -324,7 +324,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 		//Once we have added the new participant we perform the Static EndpointDiscoveryProtocol
 		if(this->m_useStaticEDP)
 		{
-			mp_Participant->m_StaticEDP.matchEndpoints(pdata.m_proxy.m_participantName,
+			mp_Participant->m_StaticEDP.remoteParticipantMatching(pdata.m_proxy.m_participantName,
 														pdata.m_proxy.m_guidPrefix,
 														mp_Participant);
 		}

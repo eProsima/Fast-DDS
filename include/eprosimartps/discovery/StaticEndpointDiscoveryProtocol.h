@@ -23,6 +23,10 @@
 namespace eprosima {
 namespace rtps {
 
+class RTPSWriter;
+class RTPSReader;
+
+
 typedef struct EndpointStaticInfo_t{
 	std::vector<Locator_t> m_unicastLocatorList;
 	std::vector<Locator_t> m_multicastLocatorList;
