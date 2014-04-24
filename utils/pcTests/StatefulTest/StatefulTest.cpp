@@ -193,9 +193,6 @@ int main(int argc, char** argv){
 		if(pub == NULL)
 			return 0;
 		//Reader Proxy
-		Locator_t loc;
-		loc.kind = 1;
-		loc.port = 10046;
 		loc.set_IP4_address(192,168,1,IPTEST2);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
