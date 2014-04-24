@@ -137,25 +137,6 @@ bool sort_chFW (ChangeFromWriter_t c1,ChangeFromWriter_t c2)
 }
 
 
-SequenceNumber_t WriterProxy::max_seq_num()
-{
-	SequenceNumber_t seq;
-	if(!m_changesFromW.empty())
-	{
-		boost::lock_guard<WriterProxy> guard(*this);
-		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-		std::vector<ChangeFromWriter_t>::iterator it = m_changesFromW.end()-1;
-		seq = it->change->sequenceNumber;
-	}
-	else
-	{
-		seq.high = 0;
-		seq.low = 0;
-	}
-	return seq;
-}
-
-
 bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
 {
 	if(!m_changesFromW.empty())
@@ -201,6 +182,25 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	return false;
 }
 
+SequenceNumber_t WriterProxy::max_seq_num()
+{
+	SequenceNumber_t seq;
+	if(!m_changesFromW.empty())
+	{
+		boost::lock_guard<WriterProxy> guard(*this);
+		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
+		std::vector<ChangeFromWriter_t>::iterator it = m_changesFromW.end()-1;
+		seq = it->change->sequenceNumber;
+	}
+	else
+	{
+		seq.high = 0;
+		seq.low = 0;
+	}
+	return seq;
+}
+
+
 bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 {
 
@@ -225,6 +225,28 @@ bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 	}
 	return true;
 
+}
+
+bool WriterProxy::removeChangeFromWriter(SequenceNumber_t& seq)
+{
+	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+	{
+		if(it->change !=NULL)
+		{
+			if(it->change->sequenceNumber.to64long() == seq.to64long())
+			{
+				if(it->status == RECEIVED || it->status == LOST)
+				{
+					m_lastRemovedSeqNum = it->change->sequenceNumber;
+					m_changesFromW.erase(it);
+					return true;
+				}
+				else
+					return false;
+			}
+		}
+	}
+	return false;
 }
 
 

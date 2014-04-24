@@ -163,8 +163,10 @@ bool StatelessWriter::removeMinSeqCacheChange()
 {
 	SequenceNumber_t seq;
 	GUID_t gui;
-	this->m_writer_cache.get_seq_num_min(&seq,&gui);
-	return this->m_writer_cache.remove_change(seq,gui);
+	if(this->m_writer_cache.get_seq_num_min(&seq,&gui))
+		return this->m_writer_cache.remove_change(seq,gui);
+	else
+		return false;
 }
 
 bool StatelessWriter::removeAllCacheChange(int32_t* n_removed)

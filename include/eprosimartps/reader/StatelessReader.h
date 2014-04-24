@@ -37,6 +37,9 @@ public:
 	//StatelessReader();
 	virtual ~StatelessReader();
 	StatelessReader(const ReaderParams_t* param,uint32_t payload_size);
+	bool removeMinSeqCacheChange();
+		bool removeAllCacheChange(int32_t* n_removed);
+
 
 
 };

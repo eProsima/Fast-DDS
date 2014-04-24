@@ -62,6 +62,10 @@ public:
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 	//!Reliability parameters of the StatefulReader, times mainly.
 	DDS_Reliability_t reliability;
+
+	bool removeMinSeqCacheChange();
+	bool removeAllCacheChange(int32_t* n_removed);
+
 private:
 	//! Vector containing pointers to the matched writers.
 	std::vector<WriterProxy*> matched_writers;

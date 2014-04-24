@@ -108,6 +108,16 @@ public:
 	bool m_heartbeatFinalFlag;
 
 
+	SequenceNumber_t m_lastRemovedSeqNum;
+
+	/**
+	 * Remove a ChangeFromWriter based on the SequenceNumber of its associated change.
+	 * @param seq SequenceNumber
+	 * @return True if correct.
+	 */
+	bool removeChangeFromWriter(SequenceNumber_t& seq);
+
+
 private:
 	//!Get the maximum sequenceNumber in the list.
 	SequenceNumber_t max_seq_num();

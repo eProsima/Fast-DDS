@@ -125,7 +125,7 @@ bool Subscriber::readMinSeqUnreadCache(void* data_ptr)
 		}
 		else
 		{
-			pWarning("Reading a NOT ALIVE change ");
+			pWarning("Reading a NOT ALIVE change "<<endl);
 		}
 
 		return true;
@@ -191,7 +191,7 @@ bool Subscriber::readLastAdded(void* data_ptr)
 			}
 			else
 			{
-				pWarning("Reading a NOT ALIVE change ");
+				pWarning("Reading a NOT ALIVE change "<<endl);
 			}
 
 			return true;

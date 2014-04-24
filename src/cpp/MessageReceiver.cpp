@@ -401,17 +401,29 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
 						WP->received_change_set(change_to_add);
 					}
+					if((*it)->mp_listener!=NULL)
+					{
+						SequenceNumber_t maxSeqNumAvailable;
+						WP->available_changes_max(&maxSeqNumAvailable);
+						if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
+						{
+							(*it)->mp_listener->newMessageCallback();
+							(*it)->newMessageSemaphore->post();
+						}
+					}
 				}
-				if((*it)->mp_listener!=NULL)
-					(*it)->mp_listener->newMessageCallback();
-				///FIXME: put semaphore in listener class
-				(*it)->newMessageSemaphore->post();
+				else
+				{
+					if((*it)->mp_listener!=NULL)
+						(*it)->mp_listener->newMessageCallback();
+					///FIXME: put semaphore in listener class
+					(*it)->newMessageSemaphore->post();
+				}
 			}
 			else
 			{
 				pWarning("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
 			}
-
 		}
 	}
 	pDebugInfo("Sub Message DATA processed"<<endl);
