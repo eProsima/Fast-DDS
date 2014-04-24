@@ -75,6 +75,9 @@ public:
 
 	virtual bool removeAllCacheChange(int32_t* n_removed);
 
+	bool readNextCacheChange(void* data);
+	bool readAllCacheChange(std::vector<void*>* data_vec);
+
 
 };
 
