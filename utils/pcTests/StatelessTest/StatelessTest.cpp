@@ -268,7 +268,7 @@ int main(int argc, char** argv)
 			sub->blockUntilNewMessage();
 			cout << "After new message block " << sub->getHistory_n() << endl;
 			TestType tp;
-			if(sub->readMinSeqUnreadCache((void*)&tp))
+			while(sub->readMinSeqUnreadCache((void*)&tp))
 			{
 				tp.print();
 				pub1->write((void*)&tp);
