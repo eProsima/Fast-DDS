@@ -225,9 +225,10 @@ bool Participant::initReader(RTPSReader* p_R)
 		p_R->m_guid.entityId.value[3] = 0x07;
 	IdCounter++;
 	octet* c = (octet*)&IdCounter;
-	p_R->m_guid.entityId.value[2] = c[3];
-	p_R->m_guid.entityId.value[1] = c[2];
-	p_R->m_guid.entityId.value[0] = c[1];
+	p_R->m_guid.entityId.value[2] = c[0];
+	p_R->m_guid.entityId.value[1] = c[1];
+	p_R->m_guid.entityId.value[0] = c[2];
+
 	//Look for receiving threads that are already listening to this writer receiving addreesses.
 
 	if(this->assignEnpointToListenThreads((Endpoint*)p_R,'R'))
