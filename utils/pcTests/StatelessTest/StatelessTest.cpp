@@ -260,7 +260,8 @@ int main(int argc, char** argv)
 		WParam.topicDataType = "TestType";
 		WParam.topicName = "Test_topic";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
-
+		loc.set_IP4_address(192,168,1,IPTEST1);
+		pub1->addReaderLocator(loc,false);
 		while(1)
 		{
 			cout << "Blocking until new message arrives " << endl;
