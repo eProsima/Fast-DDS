@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 	case 2:
 	{
 		ReaderParams_t Rparam;
-		Rparam.historySize = 8;
+		Rparam.historySize = 20;
 		Rparam.topicDataType = std::string("TestType");
 		Rparam.topicName = std::string("Test_topic");
 		Rparam.topicKind = WITH_KEY;
@@ -274,7 +274,7 @@ int main(int argc, char** argv)
 				pub1->write((void*)&tp);
 			}
 			cout << "Read: " << sub->getReadElements_n() <<" from History: "<<sub->getHistory_n()<< endl;
-			if(sub->isHistoryFull())
+			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
 			{
 				cout << "Taking all" <<endl;
 				std::vector<void*> data_vec;
