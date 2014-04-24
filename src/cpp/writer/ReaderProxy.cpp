@@ -113,6 +113,8 @@ bool ReaderProxy::unacked_changes(std::vector<ChangeForReader_t*>* Changes)
 	return changesList(Changes,UNACKNOWLEDGED);
 }
 
+
+
 bool ReaderProxy::next_requested_change(ChangeForReader_t* changeForReader)
 {
 	std::vector<ChangeForReader_t*> changesList;
@@ -154,6 +156,31 @@ bool change_min(ChangeForReader_t* ch1,ChangeForReader_t* ch2)
 {
 	return ch1->change->sequenceNumber.to64long() < ch2->change->sequenceNumber.to64long();
 }
+
+bool change_min2(ChangeForReader_t ch1,ChangeForReader_t ch2)
+{
+	return ch1.change->sequenceNumber.to64long() < ch2.change->sequenceNumber.to64long();
+}
+
+bool ReaderProxy::max_acked_change(SequenceNumber_t* sn)
+{
+	if(!m_changesForReader.empty())
+	{
+		std::sort(m_changesForReader.begin(),m_changesForReader.end(),change_min2);
+		for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();
+				it!=m_changesForReader.end();++it)
+		{
+			if(it->status != ACKNOWLEDGED)
+			{
+				*sn = ((*it).change->sequenceNumber-1);
+				return true;
+			}
+		}
+		*sn = (m_changesForReader.end()-1)->change->sequenceNumber;
+	}
+	return false;
+}
+
 
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 		ChangeForReader_t* changeForReader)
