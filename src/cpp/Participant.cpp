@@ -247,6 +247,7 @@ bool Participant::initReader(RTPSReader* p_R)
 
 inline void addEndpoint(ThreadListen* th,Endpoint* end,char type)
 {
+	pInfo("Endpoint of type " << type << " added to listen Thread"<<endl);
 	if(type == 'W')
 		th->m_assoc_writers.push_back((RTPSWriter*)end);
 	else if(type =='R')
