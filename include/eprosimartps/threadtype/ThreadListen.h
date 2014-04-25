@@ -61,7 +61,7 @@ public:
 	//! Pointer to the participant.
 	Participant* m_participant_ptr;
 	//!Vector containing the locators that are being listened with this thread. Currently the thread only listens to one Locator.
-	std::vector<Locator_t> m_locList;
+	LocatorList_t m_locList;
 	//!Pointer to the thread.
 	boost::thread* mp_thread;
 	boost::asio::io_service m_io_service;

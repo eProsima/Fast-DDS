@@ -109,6 +109,44 @@ typedef struct Locator_t{
 
 } Locator_t;
 
+typedef std::vector<Locator_t>::iterator LocatorListIterator;
+
+class LocatorList_t{
+public:
+	LocatorList_t(){};
+	~LocatorList_t(){};
+	LocatorListIterator begin(){
+		return m_locators.begin();
+	}
+	LocatorListIterator end(){
+		return m_locators.end();
+	}
+	void clear(){
+		m_locators.clear();
+		return;
+	}
+	void push_back(Locator_t loc)
+	{
+		bool already = false;
+		for(LocatorListIterator it=this->begin();it!=this->end();++it)
+		{
+			if(loc == *it)
+			{
+				already = true;
+				break;
+			}
+		}
+		if(!already)
+			m_locators.push_back(loc);
+	}
+	bool empty(){
+		return m_locators.empty();
+	}
+private:
+	std::vector<Locator_t> m_locators;
+
+};
+
 
 
 }

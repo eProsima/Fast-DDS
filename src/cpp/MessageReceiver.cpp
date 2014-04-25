@@ -85,7 +85,7 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
-	unicastReplyLocatorList[0].kind = loc->kind;
+	unicastReplyLocatorList.begin()->kind = loc->kind;
 	uint8_t n_start = 0;
 	if(loc->kind == 1)
 		n_start = 12;
@@ -98,9 +98,9 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 	}
 	for(uint8_t i = n_start;i<16;i++)
 	{
-		unicastReplyLocatorList[0].address[i] = loc->address[i];
+		unicastReplyLocatorList.begin()->address[i] = loc->address[i];
 	}
-	unicastReplyLocatorList[0].port = loc->port;
+	unicastReplyLocatorList.begin()->port = loc->port;
 	msg->pos = 0; //Start reading at 0
 
 	//Once everything is set, the reading begins:
@@ -394,7 +394,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WriterProxy_t newWriterProxy;
 						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
 						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
-						this->unicastReplyLocatorList[0].port = 10046; //default receiving port
+						this->unicastReplyLocatorList.begin()->port = 10046; //default receiving port
 						newWriterProxy.unicastLocatorList   = this->unicastReplyLocatorList;
 						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
 						SFR->matched_writer_add(&newWriterProxy);

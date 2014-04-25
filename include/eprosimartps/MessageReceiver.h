@@ -65,9 +65,9 @@ private:
 	//!GuidPrefix of the entity that receives the message. GuidPrefix of the Participant.
 	GuidPrefix_t destGuidPrefix;
 	//!Reply addresses (unicast).
-	std::vector<Locator_t> unicastReplyLocatorList;
+	LocatorList_t unicastReplyLocatorList;
 	//!Reply addresses (multicast).
-	std::vector<Locator_t> multicastReplyLocatorList;
+	LocatorList_t multicastReplyLocatorList;
 	//!Has the message timestamp?
 	bool haveTimestamp;
 	//!Timestamp associated with the message
