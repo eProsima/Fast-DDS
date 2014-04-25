@@ -63,11 +63,11 @@ public:
 	//!Reliability parameters of the StatefulReader, times mainly.
 	DDS_Reliability_t reliability;
 
-	bool takeNextCacheChange();
-	bool takeAllCacheChange(int32_t* n_removed);
-
 	bool readNextCacheChange(void*data);
-		bool readAllCacheChange(std::vector<void*>* data);
+	bool takeNextCacheChange(void*data);
+
+//	bool readAllCacheChange(std::vector<void*>* data);
+//	bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
 
 private:
 	//! Vector containing pointers to the matched writers.

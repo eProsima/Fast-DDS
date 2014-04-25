@@ -72,12 +72,12 @@ public:
 	std::string m_topicName;
 
 
-	virtual bool readNextCacheChange(void*data);
-	virtual bool readAllCacheChange(std::vector<void*>* data);
+//	virtual bool readNextCacheChange(void*data);
+//	virtual bool takeNextCacheChange(void*data);
 
 
-	virtual bool takeNextCacheChange(void*data);
 	virtual bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
+	virtual bool readAllCacheChange(std::vector<void*>* data);
 
 
 

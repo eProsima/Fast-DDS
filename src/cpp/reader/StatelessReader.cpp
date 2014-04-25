@@ -40,26 +40,30 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 	m_topicName = param->topicName;
 }
 
-bool StatelessReader::takeNextCacheChange()
+
+
+bool StatelessReader::takeNextCacheChange(void* data)
 {
 	SequenceNumber_t seq;
 	GUID_t gui;
 	if(this->m_reader_cache.get_seq_num_min(&seq,&gui))
-		return this->m_reader_cache.remove_change(seq,gui);
-	else
-		return false;
-}
-bool StatelessReader::takeAllCacheChange(int32_t* n_removed)
-{
-	int32_t n_r=this->m_reader_cache.getHistorySize();
-	if(this->m_reader_cache.remove_all_changes())
 	{
-		*n_removed = n_r;
-		return true;
+		CacheChange_t* change;
+		if(this->m_reader_cache.get_change(seq,gui,&change))
+		{
+			if(change->serializedPayload.data !=NULL)
+			{
+				if(this->mp_type->deserialize(&change->serializedPayload,data))
+				{
+					return this->m_reader_cache.remove_change(seq,gui);
+				}
+			}
+
+		}
 	}
-	else
-		return false;
+	return false;
 }
+
 
 bool StatelessReader::readNextCacheChange(void*data)
 {
@@ -67,12 +71,16 @@ bool StatelessReader::readNextCacheChange(void*data)
 	int i = 0;
 	while((*(m_reader_cache.m_changes.begin()+i))->isRead)
 		i++;
-	this->mp_Sub->
+	if((*(m_reader_cache.m_changes.begin()+i))->serializedPayload.data !=NULL)
+	{
+		if(this->mp_type->deserialize(&(*(m_reader_cache.m_changes.begin()+i))->serializedPayload,data))
+		{
+			return true;
+		}
+	}
+return false;
 }
-bool StatelessReader::readAllCacheChange(std::vector<void*>* data)
-{
 
-}
 
 
 
