@@ -99,7 +99,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 	return false;
 }
 
-bool StatefulReader::takeNextCacheChange()
+bool StatefulReader::takeNextCacheChange(void* data)
 {
 	SequenceNumber_t seq;
 	GUID_t gui;
@@ -123,28 +123,11 @@ bool StatefulReader::takeNextCacheChange()
 	return false;
 }
 
-bool StatefulReader::takeAllCacheChange(int32_t* removed)
-{
-	int32_t n_count = 0;
-	while(this->takeNextCacheChange())
-	{
-		n_count++;
-	}
-	*removed = n_count;
-	if(this->m_reader_cache.getHistorySize()==0)
-		return true;
-	else
-		return false;
-}
-
 bool StatefulReader::readNextCacheChange(void*data)
 {
-
+ return true;
 }
-bool StatefulReader::readAllCacheChange(std::vector<void*>* data)
-{
 
-}
 
 
 } /* namespace rtps */

@@ -31,7 +31,6 @@ RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 		m_writer_cache(historysize,payload_size,WRITER,(Endpoint*)this),
 		m_pushMode(true),
 		m_heartbeatCount(0),
-		mp_type(NULL),
 		m_Pub(NULL)
 
 {

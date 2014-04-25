@@ -107,68 +107,68 @@ public:
 
 	///@{
 
-
-	/**
-	 * Read the unread element with the minimum sequence number (for all possible writers).
-	 * @param[out] data_ptr Pointer to an already allocated memory to enough space to hold an instance of the type associated with the topic.
-	 * @return True if correct.
-	 * @par Calling example:
-	 * @snippet dds_example.cpp ex_readMinSeqUnread
-	 */
-	bool readMinSeqUnreadCache(void* data_ptr);
-	/**
-	 * Read a specific cache from the History. The sequence number and the
-	 * GUID_t of the writer should be provided, as well as a pointer to enough allocated space
-	 * to contain an instance of the type transmitted through the topic.
-	 * @param[in] sn SequenceNumber_t of the cache to read
-	 * @param[in] guid GUID_t of the writer that introduced that element.
-	 * @param[out] data_ptr Pointer to a memory space big enough to fit an instance of the data transmitted in the topic.
-	 * @return True if correct.
-	 */
-	bool readCache(SequenceNumber_t& sn, GUID_t& guid,void* data_ptr);
-	/**
-	 * Read all unread elements in the associated RTPSReader HistoryCache.
-     * @param[out] data_vec Pointer to a vector of pointers to elements.
-	 * @return True if correct.
-	 * @par Calling example (NOT YET FULLY TESTED, possible memory allocation problems):
-	 * @snippet dds_example.cpp ex_readAllUnreadCache
-	 */
-	bool readAllUnreadCache(std::vector<void*>* data_vec);
-
-	/**
-	 * Read the cache change with the minimum sequence number: the one with the minimum sequence number for all possible writers that publish in the topic.
-	 * It dowsn't matter if it was already read previously.
-	 * @param[out] data_ptr Pointer to where teh data should be stored.
-	 * @param[out] minSeqNum Pointer to save the sequence number
-	 * @param[out] minSeqNumGuid Pointer to save the GUID_t
-	 * @return True if correct.
-	 */
-	bool readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUID_t* minSeqNumGuid);
-	/**
-	 * Read all Caches in the History. Look Subscriber::readAllUnreadCache for calling example.
-	 * @param[out] data_vec Pointer to a vector of pointers to elements.
-	 * @return True if correct.
-	 */
-	bool readAllCache(std::vector<void*>* data_vec);
-	/**
-	 * Take the element with the minimum sequence number.
-	 * @param[out] data_ptr Pointer to allocated space to contain an instance of the topic data.
-	 * @return True if correct.
-	 */
-	bool takeMinSeqCache(void* data_ptr);
-	/**
-	 * Take all elements in the cache. Look Subscriber::readAllUnreadCache for calling example.
-	 * @param[out] data_vec Pointer to a vector of pointers to elements.
-	 * @return True if correct.
-	 */
-	bool takeAllCache(std::vector<void*>* data_vec);
-
-	/**
-	 * Read the last element added to the history.
-	 */
-	bool readLastAdded(void* data_ptr);
-
-///@}
+//
+//	/**
+//	 * Read the unread element with the minimum sequence number (for all possible writers).
+//	 * @param[out] data_ptr Pointer to an already allocated memory to enough space to hold an instance of the type associated with the topic.
+//	 * @return True if correct.
+//	 * @par Calling example:
+//	 * @snippet dds_example.cpp ex_readMinSeqUnread
+//	 */
+//	bool readMinSeqUnreadCache(void* data_ptr);
+//	/**
+//	 * Read a specific cache from the History. The sequence number and the
+//	 * GUID_t of the writer should be provided, as well as a pointer to enough allocated space
+//	 * to contain an instance of the type transmitted through the topic.
+//	 * @param[in] sn SequenceNumber_t of the cache to read
+//	 * @param[in] guid GUID_t of the writer that introduced that element.
+//	 * @param[out] data_ptr Pointer to a memory space big enough to fit an instance of the data transmitted in the topic.
+//	 * @return True if correct.
+//	 */
+//	bool readCache(SequenceNumber_t& sn, GUID_t& guid,void* data_ptr);
+//	/**
+//	 * Read all unread elements in the associated RTPSReader HistoryCache.
+//     * @param[out] data_vec Pointer to a vector of pointers to elements.
+//	 * @return True if correct.
+//	 * @par Calling example (NOT YET FULLY TESTED, possible memory allocation problems):
+//	 * @snippet dds_example.cpp ex_readAllUnreadCache
+//	 */
+//	bool readAllUnreadCache(std::vector<void*>* data_vec);
+//
+//	/**
+//	 * Read the cache change with the minimum sequence number: the one with the minimum sequence number for all possible writers that publish in the topic.
+//	 * It dowsn't matter if it was already read previously.
+//	 * @param[out] data_ptr Pointer to where teh data should be stored.
+//	 * @param[out] minSeqNum Pointer to save the sequence number
+//	 * @param[out] minSeqNumGuid Pointer to save the GUID_t
+//	 * @return True if correct.
+//	 */
+//	bool readMinSeqCache(void* data_ptr,SequenceNumber_t* minSeqNum, GUID_t* minSeqNumGuid);
+//	/**
+//	 * Read all Caches in the History. Look Subscriber::readAllUnreadCache for calling example.
+//	 * @param[out] data_vec Pointer to a vector of pointers to elements.
+//	 * @return True if correct.
+//	 */
+//	bool readAllCache(std::vector<void*>* data_vec);
+//	/**
+//	 * Take the element with the minimum sequence number.
+//	 * @param[out] data_ptr Pointer to allocated space to contain an instance of the topic data.
+//	 * @return True if correct.
+//	 */
+//	bool takeMinSeqCache(void* data_ptr);
+//	/**
+//	 * Take all elements in the cache. Look Subscriber::readAllUnreadCache for calling example.
+//	 * @param[out] data_vec Pointer to a vector of pointers to elements.
+//	 * @return True if correct.
+//	 */
+//	bool takeAllCache(std::vector<void*>* data_vec);
+//
+//	/**
+//	 * Read the last element added to the history.
+//	 */
+//	bool readLastAdded(void* data_ptr);
+//
+/////@}
 
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.
@@ -205,7 +205,7 @@ private:
 	RTPSReader* mp_Reader;
 	std::string topicName;
 	std::string topicDataType;
-	DDSTopicDataType* mp_type;
+	//DDSTopicDataType* mp_type;
 
 
 };

@@ -19,6 +19,7 @@
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
 #include "eprosimartps/rtps_all.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
 
 using namespace eprosima::dds;
 

@@ -39,11 +39,13 @@ public:
 	StatelessReader(const ReaderParams_t* param,uint32_t payload_size);
 
 
-	bool takeNextCacheChange();
-	bool takeAllCacheChange(int32_t* n_removed);
 
-	bool readNextCacheChange(void*data);
-	bool readAllCacheChange(std::vector<void*>* data);
+	 bool readNextCacheChange(void*data);
+	 bool takeNextCacheChange(void*data);
+
+
+//	 bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
+//	 bool readAllCacheChange(std::vector<void*>* data);
 
 };
 

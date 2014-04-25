@@ -176,9 +176,9 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		}
 		Sub = new Subscriber((RTPSReader*) SR);
 		SR->mp_Sub = Sub;
+		SR->mp_type = p_type;
 		Sub->topicName = RParam.topicName;
 		Sub->topicDataType = RParam.topicDataType;
-		Sub->mp_type = p_type;
 	}
 	else if(RParam.stateKind == STATEFUL)
 	{
@@ -191,9 +191,10 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		}
 		Sub = new Subscriber((RTPSReader*) SFR);
 		SFR->mp_Sub = Sub;
+		SFR->mp_type = p_type;
 		Sub->topicName = RParam.topicName;
 		Sub->topicDataType = RParam.topicDataType;
-		Sub->mp_type = p_type;
+
 	}
 	if(Sub!=NULL)
 	{
