@@ -130,6 +130,8 @@ public:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;
 
+	void sortCacheChangesBySeqNum();
+
 protected:
 
 	///@name Pointer to the associated entity. Only one of them is initialized.
