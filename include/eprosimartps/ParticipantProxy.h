@@ -66,10 +66,10 @@ public:
 	VendorId_t m_VendorId;
 	bool m_expectsInlineQos;
 	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
-	std::vector<Locator_t> m_metatrafficUnicastLocatorList;
-	std::vector<Locator_t> m_metatrafficMulticastLocatorList;
-	std::vector<Locator_t> m_defaultUnicastLocatorList;
-	std::vector<Locator_t> m_defaultMulticastLocatorList;
+	LocatorList_t m_metatrafficUnicastLocatorList;
+	LocatorList_t m_metatrafficMulticastLocatorList;
+	LocatorList_t m_defaultUnicastLocatorList;
+	LocatorList_t m_defaultMulticastLocatorList;
 	Count_t m_manualLivelinessCount;
 	std::string m_participantName;
 };

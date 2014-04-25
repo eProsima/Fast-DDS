@@ -28,8 +28,8 @@ class RTPSReader;
 
 
 typedef struct EndpointStaticInfo_t{
-	std::vector<Locator_t> m_unicastLocatorList;
-	std::vector<Locator_t> m_multicastLocatorList;
+LocatorList_t m_unicastLocatorList;
+LocatorList_t m_multicastLocatorList;
 	bool m_expectsInlineQos;
 	StateKind_t m_state;
 	ReliabilityKind_t m_reliability;

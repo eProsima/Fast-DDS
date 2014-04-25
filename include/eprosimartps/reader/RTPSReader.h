@@ -78,6 +78,12 @@ public:
 	bool readNextCacheChange(void* data);
 	bool readAllCacheChange(std::vector<void*>* data_vec);
 
+//	virtual bool readNextCacheChange(void*data);
+//	virtual bool readAllCacheChange(std::vector<void*>* data);
+//	virtual bool takeNextCacheChange(void*data);
+//	virtual bool takeAllCacheChange(std::vector<void*>* data);
+
+
 
 };
 

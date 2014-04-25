@@ -35,8 +35,8 @@ class StatefulReader;
  */
 typedef struct WriterProxy_t{
 	GUID_t remoteWriterGuid;
-	std::vector<Locator_t> unicastLocatorList;
-	std::vector<Locator_t> multicastLocatorList;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
 	WriterProxy_t(){
 		GUID_UNKNOWN(remoteWriterGuid);
 	}

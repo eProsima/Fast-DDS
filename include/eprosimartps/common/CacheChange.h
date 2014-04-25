@@ -65,6 +65,8 @@ typedef struct CacheChange_t{
 	SerializedPayload_t serializedPayload;
 	//!Indicates if the cache has been read (only used in READERS)
 	bool isRead;
+	//!Source TimeStamp (only used in Readers)
+	Time_t sourceTimestamp;
 	CacheChange_t():
 		kind(ALIVE),
 		isRead(false)
@@ -89,6 +91,7 @@ typedef struct CacheChange_t{
 		writerGUID = ch_ptr->writerGUID;
 		instanceHandle = ch_ptr->instanceHandle;
 		sequenceNumber = ch_ptr->sequenceNumber;
+		sourceTimestamp = ch_ptr->sourceTimestamp;
 		if(serializedPayload.copy(&ch_ptr->serializedPayload))
 			return true;
 		else

@@ -261,8 +261,8 @@ struct DDS_Reliability_t{
 typedef struct WriterParams_t{
 	bool pushMode;
 	uint16_t historySize;
-	std::vector<Locator_t> unicastLocatorList;
-	std::vector<Locator_t> multicastLocatorList;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
 	DDS_Reliability_t reliablility;
 	TopicKind_t topicKind;
 	StateKind_t stateKind;
@@ -282,8 +282,8 @@ typedef struct ReaderParams_t{
 	bool expectsInlineQos;
 
 	uint16_t historySize;
-	std::vector<Locator_t> unicastLocatorList;
-	std::vector<Locator_t> multicastLocatorList;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
 	DDS_Reliability_t reliablility;
 	TopicKind_t topicKind;
 	StateKind_t stateKind;
@@ -300,8 +300,8 @@ typedef struct ReaderParams_t{
 }ReaderParams_t;
 
 typedef struct ParticipantParams_t{
-	std::vector<Locator_t> defaultUnicastLocatorList;
-	std::vector<Locator_t> defaultMulticastLocatorList;
+	LocatorList_t defaultUnicastLocatorList;
+	LocatorList_t defaultMulticastLocatorList;
 	uint32_t defaultSendPort;
 	uint16_t resendSPDPDataPeriod_sec;
 	uint16_t domainId;

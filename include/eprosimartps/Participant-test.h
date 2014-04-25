@@ -108,9 +108,9 @@ public:
 //	//!VendodId of the participant.
 //	VendorId_t vendorId;
 	//!Default listening addresses.
-	std::vector<Locator_t> m_defaultUnicastLocatorList;
+	LocatorList_t m_defaultUnicastLocatorList;
 	//!Default listening addresses.
-	std::vector<Locator_t> m_defaultMulticastLocatorList;
+	LocatorList_t m_defaultMulticastLocatorList;
 
 	//!Guid of the participant.
 	GUID_t m_guid;

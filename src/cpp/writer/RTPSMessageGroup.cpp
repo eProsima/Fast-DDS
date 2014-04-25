@@ -87,7 +87,7 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<CacheChange_t*>* ch
 void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes, const EntityId_t& readerId,
-		std::vector<Locator_t>* unicast, std::vector<Locator_t>* multicast)
+		LocatorList_t* unicast, LocatorList_t* multicast)
 {
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
 	RTPSMessageGroup::prepare_SequenceNumberSet(changes,&Sequences);
@@ -153,7 +153,7 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
-		std::vector<Locator_t>* unicast,std::vector<Locator_t>* multicast,
+		LocatorList_t* unicast,LocatorList_t* multicast,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);

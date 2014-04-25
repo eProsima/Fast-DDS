@@ -40,8 +40,8 @@ public:
 	Endpoint();
 	virtual ~Endpoint();
 	TopicKind_t topicKind;
-	std::vector<Locator_t> unicastLocatorList;
-	std::vector<Locator_t> multicastLocatorList;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
 	GUID_t m_guid;
 	//!Vector of pointer to the listening threads associated with this endpoint.
 	std::vector<ThreadListen*> m_listenThList;
