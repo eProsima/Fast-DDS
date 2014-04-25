@@ -20,6 +20,8 @@
 #define ENDPOINT_H_
 #include "eprosimartps/rtps_all.h"
 
+using namespace eprosima::dds;
+
 namespace eprosima {
 namespace rtps {
 
@@ -27,6 +29,7 @@ class ThreadListen;
 class Participant;
 class ThreadSend;
 class ThreadEvent;
+
 
 /**
  * Class Endpoint, all entities of the RTPS network are a specification of this class.
@@ -48,6 +51,8 @@ public:
 	//!Pointer to the participant this endpoint belongs to.
 	ThreadSend* mp_send_thr;
 	ThreadEvent* mp_event_thr;
+
+	DDSTopicDataType* mp_type;
 };
 
 } /* namespace rtps */

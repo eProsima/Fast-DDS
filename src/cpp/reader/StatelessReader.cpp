@@ -40,7 +40,7 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 	m_topicName = param->topicName;
 }
 
-bool StatelessReader::removeMinSeqCacheChange()
+bool StatelessReader::takeNextCacheChange()
 {
 	SequenceNumber_t seq;
 	GUID_t gui;
@@ -49,7 +49,7 @@ bool StatelessReader::removeMinSeqCacheChange()
 	else
 		return false;
 }
-bool StatelessReader::removeAllCacheChange(int32_t* n_removed)
+bool StatelessReader::takeAllCacheChange(int32_t* n_removed)
 {
 	int32_t n_r=this->m_reader_cache.getHistorySize();
 	if(this->m_reader_cache.remove_all_changes())
@@ -59,6 +59,19 @@ bool StatelessReader::removeAllCacheChange(int32_t* n_removed)
 	}
 	else
 		return false;
+}
+
+bool StatelessReader::readNextCacheChange(void*data)
+{
+	m_reader_cache.sortCacheChangesBySeqNum();
+	int i = 0;
+	while((*(m_reader_cache.m_changes.begin()+i))->isRead)
+		i++;
+	this->mp_Sub->
+}
+bool StatelessReader::readAllCacheChange(std::vector<void*>* data)
+{
+
 }
 
 

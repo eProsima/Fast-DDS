@@ -28,7 +28,7 @@
 namespace eprosima {
 namespace rtps {
 
-bool sort_CacheChanges_History (CacheChange_t* c1,CacheChange_t* c2)
+bool sort_CacheChanges_History_SeqNum (CacheChange_t* c1,CacheChange_t* c2)
 {
 	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
 }
@@ -258,7 +258,7 @@ void HistoryCache::updateMaxMinSeqNum()
 	{
 		if(!m_isMaxMinUpdated)
 		{
-			std::sort(m_changes.begin(),m_changes.end(),sort_CacheChanges_History);
+			std::sort(m_changes.begin(),m_changes.end(),sort_CacheChanges_History_SeqNum);
 			m_maxSeqNum = (*(m_changes.end()-1))->sequenceNumber;
 			m_maxSeqNumGuid = (*(m_changes.end()-1))->writerGUID;
 
@@ -304,6 +304,11 @@ void HistoryCache::release_Cache(CacheChange_t* ch)
 	return changePool.release_Cache(ch);
 }
 
+
+void HistoryCache::sortCacheChangesBySeqNum()
+{
+	std::sort(m_changes.begin(),m_changes.end(),sort_CacheChanges_History_SeqNum);
+}
 
 
 } /* namespace rtps */

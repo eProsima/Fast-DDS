@@ -20,7 +20,10 @@ namespace eprosima {
 namespace rtps {
 
 Endpoint::Endpoint() {
-
+	mp_type = NULL;
+	mp_send_thr = NULL;
+	mp_event_thr = NULL;
+	topicKind = NO_KEY;
 
 }
 

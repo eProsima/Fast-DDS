@@ -99,7 +99,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 	return false;
 }
 
-bool StatefulReader::removeMinSeqCacheChange()
+bool StatefulReader::takeNextCacheChange()
 {
 	SequenceNumber_t seq;
 	GUID_t gui;
@@ -111,18 +111,22 @@ bool StatefulReader::removeMinSeqCacheChange()
 		wp->available_changes_max(&seq2);
 		if(seq.to64long()<=seq2.to64long())
 		{
-			wp->removeChangeFromWriter(seq);
-			m_reader_cache.remove_change(seq,gui);
-			return true;
+			if(wp->removeChangeFromWriter(seq))
+			{
+				m_reader_cache.remove_change(seq,gui);
+				return true;
+			}
+			else
+				return false;
 		}
 	}
 	return false;
 }
 
-bool StatefulReader::removeAllCacheChange(int32_t* removed)
+bool StatefulReader::takeAllCacheChange(int32_t* removed)
 {
 	int32_t n_count = 0;
-	while(this->removeMinSeqCacheChange())
+	while(this->takeNextCacheChange())
 	{
 		n_count++;
 	}
@@ -131,6 +135,15 @@ bool StatefulReader::removeAllCacheChange(int32_t* removed)
 		return true;
 	else
 		return false;
+}
+
+bool StatefulReader::readNextCacheChange(void*data)
+{
+
+}
+bool StatefulReader::readAllCacheChange(std::vector<void*>* data)
+{
+
 }
 
 
