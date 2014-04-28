@@ -173,134 +173,156 @@ bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 }
 
 
-bool StaticEndpointDiscoveryProtocol::remoteParticipantMatching(std::string participant_name,GuidPrefix_t& outpartGuidPrefix, Participant* p_MyPart)
-{
-	ParticipantStaticInfo_t* p_OutPart;
-	bool found = false;
-	for(std::vector<ParticipantStaticInfo_t>::iterator it= m_StaticParticipantInfo.begin();
-			it!=m_StaticParticipantInfo.end();++it)
-	{
-		if(it->m_name == participant_name)
-		{
-			p_OutPart = &(*it);
-			found = true;
-			break;
-		}
-	}
-	if(!found)
-	{
-		pWarning("Participant not defined in Static Information"<<endl);
-		return false;
-	}
-	for(std::vector<EndpointStaticInfo_t>::iterator eit=p_OutPart->m_endpoints.begin();
-			eit!=p_OutPart->m_endpoints.end();++eit)
-	{
-		if(eit->m_kind == READER)
-		{
-			RTPSWriter* p_rit;
-			for(std::vector<RTPSWriter*>::iterator rit = p_MyPart->m_writerList.begin();
-					rit!=p_MyPart->m_writerList.end();++rit)
-			{
-				p_rit = *rit;
-				if(p_rit->getTopicName() == eit->m_topicName &&
-						p_rit->getStateType() == eit->m_state)
-				{
-					if(p_rit->getStateType() == STATELESS)
-					{
-						StatelessWriter* p_SLW = (StatelessWriter*)p_rit;
-						ReaderLocator RL;
-						RL.expectsInlineQos = eit->m_expectsInlineQos;
-						for(std::vector<Locator_t>::iterator lit = eit->m_unicastLocatorList.begin();
-								lit != eit->m_unicastLocatorList.end();++lit)
-						{
-							RL.locator = *lit;
-							p_SLW->reader_locator_add(RL);
-						}
-						for(std::vector<Locator_t>::iterator lit = eit->m_multicastLocatorList.begin();
-								lit != eit->m_multicastLocatorList.end();++lit)
-						{
-							RL.locator = *lit;
-							p_SLW->reader_locator_add(RL);
-						}
-					}
-					else if(p_rit->getStateType() == STATEFUL)
-					{
-						StatefulWriter* p_SFW = (StatefulWriter*)p_rit;
-						ReaderProxy_t RP;
-						RP.expectsInlineQos = eit->m_expectsInlineQos;
-						RP.unicastLocatorList = eit->m_unicastLocatorList;
-						RP.multicastLocatorList = eit->m_multicastLocatorList;
-						RP.remoteReaderGuid.guidPrefix = outpartGuidPrefix;
-						RP.remoteReaderGuid.entityId = ENTITYID_UNKNOWN;
-						p_SFW->matched_reader_add(RP);
-					}
-				}
-			}
-		}
-		else if(eit->m_kind == WRITER)
-		{
-			RTPSReader* p_rit;
-			for(std::vector<RTPSReader*>::iterator rit = p_MyPart->m_readerList.begin();
-					rit!=p_MyPart->m_readerList.end();++rit)
-			{
-				p_rit = *rit;
-				if(p_rit->m_topicName == eit->m_topicName &&
-						p_rit->m_stateType == eit->m_state)
-				{
-					if(p_rit->m_stateType == STATELESS)
-					{
 
-					}
-					else if(p_rit->m_stateType == STATEFUL)
+bool StaticEndpointDiscoveryProtocol::localEndpointMatching(Endpoint* endpoint, char type)
+{
+	for(std::vector<DiscoveredParticipantData*>::iterator it = mp_Participant->m_SPDP.m_matched_participants.begin();
+			it!=mp_Participant->m_SPDP.m_matched_participants.end();++it)
+	{
+		localEndpointMatching(endpoint,*it,type);
+	}
+	return true;
+}
+
+bool StaticEndpointDiscoveryProtocol::localEndpointMatching(Endpoint* endpoint,DiscoveredParticipantData* dpd, char type)
+{
+	if(type == 'W')
+	{
+		localWriterMatching((RTPSWriter*)endpoint,dpd);
+	}
+	else if(type == 'R')
+	{
+		localReaderMatching((RTPSReader*)endpoint,dpd);
+	}
+	return false;
+}
+
+bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,DiscoveredParticipantData* dpd)
+{
+	std::string topic_name = writer->getTopicName();
+	std::string remote_part_name = dpd->m_proxy.m_participantName;
+
+	//Look in the participants defined by the StaticEndpointDiscovery.
+	for(std::vector<ParticipantStaticInfo_t>::iterator remotepit = m_StaticParticipantInfo.begin();
+			remotepit != m_StaticParticipantInfo.end();++remotepit)
+	{
+		if(remote_part_name == remotepit->m_name) // Found a match, begin pairing
+		{
+			for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
+					eit!=remotepit->m_endpoints.end();++eit)
+			{
+				if(eit->m_kind == READER)
+				{
+					//look for real entityId in dpd
+					bool found = false;
+					EntityId_t readerId;
+					for(std::vector<std::pair<uint16_t,EntityId_t>>::iterator entityit = dpd->m_staticedpEntityId.begin();
+							entityit != dpd->m_staticedpEntityId.end();++entityit )
 					{
-						StatefulReader* p_SFR = (StatefulReader*)p_rit;
-						WriterProxy_t WP;
-						WP.unicastLocatorList = eit->m_unicastLocatorList;
-						WP.multicastLocatorList = eit->m_multicastLocatorList;
-						WP.remoteWriterGuid.guidPrefix = outpartGuidPrefix;
-						WP.remoteWriterGuid.entityId = ENTITYID_UNKNOWN;
-						p_SFR->matched_writer_add(&WP);
+						if(eit->m_id == entityit->first)
+						{
+							found = true;
+							readerId = entityit->second;
+							break;
+						}
 					}
+					if(found)
+					{
+						if(writer->getStateType() == STATELESS)
+						{
+							StatelessWriter* p_SLW = (StatelessWriter*)writer;
+							ReaderLocator RL;
+							RL.expectsInlineQos = eit->m_expectsInlineQos;
+							for(std::vector<Locator_t>::iterator lit = eit->m_unicastLocatorList.begin();
+									lit != eit->m_unicastLocatorList.end();++lit)
+							{
+								RL.locator = *lit;
+								p_SLW->reader_locator_add(RL);
+							}
+							for(std::vector<Locator_t>::iterator lit = eit->m_multicastLocatorList.begin();
+									lit != eit->m_multicastLocatorList.end();++lit)
+							{
+								RL.locator = *lit;
+								p_SLW->reader_locator_add(RL);
+							}
+						}
+						else if(writer->getStateType() == STATEFUL)
+						{
+							StatefulWriter* p_SFW = (StatefulWriter*)writer;
+							ReaderProxy_t RP;
+							RP.expectsInlineQos = eit->m_expectsInlineQos;
+							RP.unicastLocatorList = eit->m_unicastLocatorList;
+							RP.multicastLocatorList = eit->m_multicastLocatorList;
+							RP.remoteReaderGuid.guidPrefix = dpd->m_proxy.m_guidPrefix;
+							RP.remoteReaderGuid.entityId = readerId;
+							p_SFW->matched_reader_add(RP);
+						}
+					}
+
 				}
 			}
 		}
+		break;
+	}
+	return true;
+}
+
+bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader,DiscoveredParticipantData* dpd)
+{
+	std::string topic_name = reader->getTopicName();
+	std::string remote_part_name = dpd->m_proxy.m_participantName;
+
+	//Look in the participants defined by the StaticEndpointDiscovery.
+	for(std::vector<ParticipantStaticInfo_t>::iterator remotepit = m_StaticParticipantInfo.begin();
+			remotepit != m_StaticParticipantInfo.end();++remotepit)
+	{
+		if(remote_part_name == remotepit->m_name) // Found a match, begin pairing
+		{
+			for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
+					eit!=remotepit->m_endpoints.end();++eit)
+			{
+				if(eit->m_kind == WRITER)
+				{
+					//look for real entityId in dpd
+					bool found = false;
+					EntityId_t writerId;
+					for(std::vector<std::pair<uint16_t,EntityId_t>>::iterator entityit = dpd->m_staticedpEntityId.begin();
+							entityit != dpd->m_staticedpEntityId.end();++entityit )
+					{
+						if(eit->m_id == entityit->first)
+						{
+							found = true;
+							writerId = entityit->second;
+							break;
+						}
+					}
+					if(found)
+					{
+						if(reader->getStateType() == STATELESS)
+						{
+
+						}
+						else if(reader->getStateType() == STATEFUL)
+						{
+							StatefulReader* p_SFR = (StatefulReader*)reader;
+							WriterProxy_t WP;
+							WP.unicastLocatorList = eit->m_unicastLocatorList;
+							WP.multicastLocatorList = eit->m_multicastLocatorList;
+							WP.remoteWriterGuid.guidPrefix = dpd->m_proxy.m_guidPrefix;
+							WP.remoteWriterGuid.entityId = writerId;
+							p_SFR->matched_writer_add(&WP);
+						}
+					}
+
+				}
+			}
+		}
+		break;
 	}
 	return true;
 }
 
 
-bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer)
-{
-	std::string topic_name = writer->getTopicName();
-	std::vector<std::string> matched_part_names = mp_Participant->m_SPDP.getMatchedParticipantsNames();
-	//Look in all the participants that have been found by the SPDP
-	for(std::vector<std::string>::iterator it = matched_part_names.begin();
-			it!=matched_part_names.end();++it)
-	{
-		//Look in the participants defined by the StaticEndpointDiscovery.
-		for(std::vector<ParticipantStaticInfo_t>::iterator remotepit = m_StaticParticipantInfo.begin();
-				remotepit != m_StaticParticipantInfo.end();++remotepit)
-		{
-			if(*it == remotepit->m_name) // Found a match, begin pairing
-			{
-				for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
-						eit!=remotepit->m_endpoints.end();++eit)
-				{
-					if(eit->m_kind == READER && writer->getStateType() == eit->m_state)
-					{
-
-					}
-				}
-			}
-		}
-	}
-return true;
-}
-
-bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader)
-{
-return false;
-}
 
 
 } /* namespace rtps */

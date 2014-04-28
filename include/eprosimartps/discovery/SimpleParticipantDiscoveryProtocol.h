@@ -41,6 +41,7 @@ class StatelessReader;
 
 class SimpleParticipantDiscoveryProtocol: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 	friend class ResendDiscoveryDataPeriod;
+	friend class StaticEndpointDiscoveryProtocol;
 public:
 	SimpleParticipantDiscoveryProtocol(Participant* p);
 	virtual ~SimpleParticipantDiscoveryProtocol();
@@ -73,7 +74,7 @@ private:
 	bool m_hasChanged_DPD;
 	DiscoveredParticipantData m_DPD;
 	QosList_t m_DPDAsParamList;
-	std::vector<DiscoveredParticipantData> m_matched_participants;
+	std::vector<DiscoveredParticipantData*> m_matched_participants;
 	SPDPListener m_listener;
 public:
 	bool m_useStaticEDP;
