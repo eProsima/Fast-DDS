@@ -55,55 +55,81 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 	#define COPYSTR strcpy
 #endif
 
-	
-typedef struct LatencyType{
-	int64_t seqnum;
-	uint8_t data[500];
-	LatencyType()
+typedef struct TestType{
+	char name[6]; //KEY
+	int32_t value;
+	double price;
+	TestType()
 	{
-		seqnum = 0;
+		value = -1;
+		price = 0;
+		strcpy(name,"UNDEF");
 	}
-}LatencyType;
-
-
-void LatencySer(SerializedPayload_t* payload,void*data)
+	void print()
+	{
+		cout << "Name: ";
+		printf("%s",name);
+		cout << " |Value: "<< value;
+		cout << " |Price: "<< price;
+		cout << endl;
+	}
+}TestType;
+	
+class TestTypeDataType:public DDSTopicDataType
 {
-	memcpy(payload->data,data,sizeof(LatencyType));
+public:
+	TestTypeDataType()
+{
+		m_topicDataTypeName = "TestType";
+		m_typeSize = 6+4+sizeof(double);
+		m_isGetKeyDefined = true;
+};
+	~TestTypeDataType(){};
+	bool serialize(void*data,SerializedPayload_t* payload);
+	bool deserialize(SerializedPayload_t* payload,void * data);
+	bool getKey(void*data,InstanceHandle_t* ihandle);
+};
+
+//Funciones de serializacion y deserializacion para el ejemplo
+bool TestTypeDataType::serialize(void*data,SerializedPayload_t* payload)
+{
+	payload->length = sizeof(TestType);
+	payload->encapsulation = CDR_LE;
+	if(payload->data !=NULL)
+		free(payload->data);
+	payload->data = (octet*)malloc(payload->length);
+	memcpy(payload->data,data,payload->length);
+	return true;
 }
 
-void LatencyDeSer(SerializedPayload_t* payload,void*data)
+bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
-	memcpy(data,payload->data,sizeof(LatencyType));
+	//cout << "Deserializando length: " << payload->length << endl;
+	memcpy(data,payload->data,payload->length);
+	return true;
 }
 
-void LatencyGetKey(void* data,InstanceHandle_t* handle )
+bool TestTypeDataType::getKey(void*data,InstanceHandle_t* handle)
 {
+	TestType* tp = (TestType*)data;
 	handle->value[0]  = 0;
 	handle->value[1]  = 0;
 	handle->value[2]  = 0;
 	handle->value[3]  = 5; //length of string in CDR BE
-	handle->value[4]  = 1;
-	handle->value[5]  = 2;
-	handle->value[6]  = 3;
-	handle->value[7]  = 4;
-	handle->value[8]  = 5;
+	handle->value[4]  = tp->name[0];
+	handle->value[5]  = tp->name[1];
+	handle->value[6]  = tp->name[2];
+	handle->value[7]  = tp->name[3];
+	handle->value[8]  = tp->name[4];
 	for(uint8_t i=9;i<16;i++)
 		handle->value[i]  = 0;
-}
-
-
-boost::posix_time::ptime t1,t2,t3;
-
-void newMsgCallback()
-{
-	t2 = boost::posix_time::microsec_clock::local_time();
-	cout << MAGENTA"New Message Callback" <<DEF<< endl;
+	return true;
 }
 
 
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_LONGINFO_VERBOSITY_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
 	int type;
@@ -120,25 +146,42 @@ int main(int argc, char** argv){
 		type = WR;
 
 
-	boost::posix_time::time_duration overhead;
-	//CLOCK OVERHEAD
-	t1 = boost::posix_time::microsec_clock::local_time();
-	for(int i=0;i<400;i++)
-		t2= boost::posix_time::microsec_clock::local_time();
+	TestTypeDataType TestTypeData;
+		DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
-	overhead = (t2-t1);
-	long overhead_value = ceil(overhead.total_microseconds()/400);
-	cout << "Overhead " << overhead_value << endl;
-
-
-	LatencyType Latency;
 	//***********  PARTICIPANT  ******************//
 	ParticipantParams_t PParam;
 	PParam.name = "participant1";
 	cout << "param domain id: " << PParam.domainId << endl;
 	cout << "param name: " << PParam.name << endl;
 	PParam.defaultSendPort = 10042;
+	PParam.m_useStaticEndpointDiscovery = true;
 	Participant* p = DomainParticipant::createParticipant(PParam);
+	WriterParams_t Wparam;
+	Wparam.stateKind = STATEFUL;
+	Wparam.topicKind = WITH_KEY;
+	Wparam.topicDataType = std::string("TestType");
+	Wparam.topicName = std::string("Test_topic");
+	Wparam.historySize = 14;
+	Wparam.reliablility.heartbeatPeriod.seconds = 2;
+	Wparam.reliablility.nackResponseDelay.seconds = 5;
+	Wparam.reliablility.kind = RELIABLE;
+	Wparam.userDefinedId = 2;
+	Locator_t loc;
+	loc.kind = 1;
+	loc.port = 10046;
+	Wparam.unicastLocatorList.push_back(loc);
+	Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+	ReaderParams_t Rparam;
+	Rparam.historySize = 50;
+	Rparam.topicDataType = std::string("TestType");
+	Rparam.topicName = std::string("Test_topic");
+	Rparam.topicKind = NO_KEY;
+	loc.kind = 1;
+	loc.port = 10469;
+	Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+	Rparam.userDefinedId = 3;
+	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 	int a;
 	cin >> a;
 //

@@ -36,7 +36,7 @@ LocatorList_t m_multicastLocatorList;
 	ReliabilityKind_t m_reliability;
 	HistoryKind_t m_kind;
 	std::string m_topicName;
-	uint16_t m_id;
+	int16_t m_id;
 }EndpointStaticInfo_t;
 
 
@@ -52,6 +52,7 @@ public:
 	StaticEndpointDiscoveryProtocol(Participant* p_par);
 	virtual ~StaticEndpointDiscoveryProtocol();
 	bool loadStaticEndpointFile(const std::string& filename);
+	bool loadStaticEndpointFile();
 	std::vector<ParticipantStaticInfo_t> m_StaticParticipantInfo;
 	Participant* mp_Participant;
 	bool printLoadedXMLInfo();
@@ -60,6 +61,8 @@ public:
 	bool localEndpointMatching(Endpoint* endpoint,DiscoveredParticipantData* dpd,char type);
 	bool localWriterMatching(RTPSWriter* pwriter,DiscoveredParticipantData* dpd);
 	bool localReaderMatching(RTPSReader* preader,DiscoveredParticipantData* dpd);
+
+	std::string m_staticEndpointFilename;
 };
 
 } /* namespace rtps */

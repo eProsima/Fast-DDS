@@ -54,7 +54,7 @@ public:
 	ThreadEvent* mp_event_thr;
 
 	DDSTopicDataType* mp_type;
-	uint16_t m_userDefinedId;
+	int16_t m_userDefinedId;
 };
 
 } /* namespace rtps */

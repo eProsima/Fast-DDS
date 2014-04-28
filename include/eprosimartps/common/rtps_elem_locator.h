@@ -71,17 +71,17 @@ typedef struct Locator_t{
 		address[15] = o4;
 		return true;
 	}
-	bool set_IP4_address(std::string& address)
+	bool set_IP4_address(std::string& in_address)
 	{
-		std::stringstream ss(address);
+		std::stringstream ss(in_address);
 		int a,b,c,d; //to store the 4 ints
 		char ch; //to temporarily store the '.'
 		ss >> a >> ch >> b >> ch >> c >> ch >> d;
 		LOCATOR_ADDRESS_INVALID(address);
-		address[12] = a;
-		address[13] = b;
-		address[14] = c;
-		address[15] = d;
+		address[12] = (octet)a;
+		address[13] = (octet)b;
+		address[14] = (octet)c;
+		address[15] = (octet)d;
 		return true;
 	}
 	std::string to_IP4_string(){

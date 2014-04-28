@@ -32,13 +32,18 @@ namespace eprosima {
 namespace rtps {
 
 StaticEndpointDiscoveryProtocol::StaticEndpointDiscoveryProtocol(Participant* p_par):
-		mp_Participant(p_par)
+														mp_Participant(p_par)
 {
 
 }
 
 StaticEndpointDiscoveryProtocol::~StaticEndpointDiscoveryProtocol() {
 	// TODO Auto-generated destructor stub
+}
+
+bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
+{
+	return loadStaticEndpointFile(this->m_staticEndpointFilename);
 }
 
 bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& filename)
@@ -57,114 +62,152 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 		pError("Error reading xml file: " << e.what() << endl);
 		return false;
 	}
-	BOOST_FOREACH(ptree::value_type& xml_participant ,pt.get_child("staticdiscovery.participant"))
+
+	BOOST_FOREACH(ptree::value_type& xml_participant ,pt.get_child("staticdiscovery"))
 	{
-		ParticipantStaticInfo_t participantInfo;
-		participantInfo.m_name = xml_participant.second.get<std::string>("participantName");
-		BOOST_FOREACH(ptree::value_type& xml_endpoint ,xml_participant.second.get_child("participant.endpoint"))
+		if(xml_participant.first == "participant")
 		{
-			EndpointStaticInfo_t endpointInfo;
-
-			endpointInfo.m_id = xml_endpoint.second.get<uint16_t>("id");
-
-			endpointInfo.m_expectsInlineQos = xml_endpoint.second.get<bool>("expectsInlineQos");
-			//FIXME: handle expections when parameters are not found.
-			std::string auxString = xml_endpoint.second.get<std::string>("type");
-			if(auxString == "READER")
-				endpointInfo.m_kind = READER;
-			else if (auxString == "WRITER")
-				endpointInfo.m_kind = WRITER;
-			else
+			ParticipantStaticInfo_t participantInfo;
+			BOOST_FOREACH(ptree::value_type& xml_participant_child,xml_participant.second)
 			{
-				pError("Bad XML file, endpoint of type: " << auxString << " is not valid"<<endl);
-				break;
-			}
-			auxString = xml_endpoint.second.get<std::string>("stateKind");
-			if(auxString == "STATELESS")
-				endpointInfo.m_state = STATELESS;
-			else if (auxString == "STATEFUL")
-				endpointInfo.m_state = STATEFUL;
-			else
-			{
-				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
-				break;
-			}
-			auxString = xml_endpoint.second.get<std::string>("realibilityKind");
-			if(auxString == "RELIABLE")
-			{
-				if(endpointInfo.m_state == STATEFUL)
-					endpointInfo.m_reliability = RELIABLE;
-				else
+				if(xml_participant_child.first == "name")
+					participantInfo.m_name = xml_participant_child.second.data();
+				else if(xml_participant_child.first == "endpoint")
 				{
-					pError("Unsupported combination of realiabilityKind and stateKind"<<endl);
-					break;
+					EndpointStaticInfo_t endpointInfo;
+					BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_participant_child.second)
+					{
+						if(xml_endpoint_child.first == "id")
+						{
+							endpointInfo.m_id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
+						}
+						else if(xml_endpoint_child.first == "expectsInlineQos")
+						{
+							std::string auxString = (std::string)xml_endpoint_child.second.data();
+							if(auxString == "true")
+								endpointInfo.m_expectsInlineQos = true;
+							else if (auxString == "false")
+								endpointInfo.m_expectsInlineQos = false;
+							else
+							{
+								pError("Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid"<<endl);
+								break;
+							}
+													}
+						else if(xml_endpoint_child.first == "type")
+						{
+							std::string auxString = (std::string)xml_endpoint_child.second.data();
+							if(auxString == "READER")
+								endpointInfo.m_kind = READER;
+							else if (auxString == "WRITER")
+								endpointInfo.m_kind = WRITER;
+							else
+							{
+								pError("Bad XML file, endpoint of type: " << auxString << " is not valid"<<endl);
+								break;
+							}
+
+						}
+						else if(xml_endpoint_child.first == "topicName")
+						{
+							endpointInfo.m_topicName = (std::string)xml_endpoint_child.second.data();
+						}
+						else if(xml_endpoint_child.first == "stateKind")
+						{
+							std::string auxString = (std::string)xml_endpoint_child.second.data();
+							if(auxString == "STATELESS")
+								endpointInfo.m_state = STATELESS;
+							else if (auxString == "STATEFUL")
+								endpointInfo.m_state = STATEFUL;
+							else
+							{
+								pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
+								break;
+							}
+						}
+						else if(xml_endpoint_child.first == "reliabilityKind")
+						{
+							std::string auxString = (std::string)xml_endpoint_child.second.data();
+							if(auxString == "RELIABLE")
+								endpointInfo.m_reliability = RELIABLE;
+							else if (auxString == "BEST_EFFORT")
+								endpointInfo.m_reliability = BEST_EFFORT;
+							else
+							{
+								pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
+								break;
+							}
+						}
+						else if(xml_endpoint_child.first == "unicastLocator")
+						{
+							Locator_t loc;
+							loc.kind = 1;
+							std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
+							loc.set_IP4_address(auxString);
+							loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
+							endpointInfo.m_unicastLocatorList.push_back(loc);
+						}
+						else if(xml_endpoint_child.first == "multicastLocator")
+						{
+							Locator_t loc;
+							loc.kind = 1;
+							std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
+							loc.set_IP4_address(auxString);
+							loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
+							endpointInfo.m_multicastLocatorList.push_back(loc);
+						}
+						else
+						{
+							pWarning("Unkown Endpoint-XML tag, ignoring..."<<endl)
+						}
+					}
+					if((endpointInfo.m_reliability == RELIABLE && endpointInfo.m_state == STATELESS)
+						|| (endpointInfo.m_reliability == BEST_EFFORT && endpointInfo.m_state == STATEFUL))
+					{
+						pWarning("Slected combination of reliability and statekind is not yet supported"<<endl);
+					}
+					else
+					{
+						participantInfo.m_endpoints.push_back(endpointInfo);
+					}
+
 				}
+
 			}
-			else if(auxString == "BEST_EFFORT")
-			{
-				if(endpointInfo.m_state == STATELESS)
-					endpointInfo.m_reliability = BEST_EFFORT;
-				else
-				{
-					pError("Unsupported combination of realiabilityKind and stateKind"<<endl);
-					break;
-				}
-			}
-			else
-			{
-				pError("Bad XML file, endpoint of reliabilityKind: " << auxString << " is not valid"<<endl);
-				break;
-			}
-			endpointInfo.m_topicName = xml_endpoint.second.get<std::string>("topicName");
-			Locator_t loc;
-			BOOST_FOREACH(ptree::value_type &xml_unicast,xml_endpoint.second.get_child("endpoint.unicastLocator"))
-			{
-				loc.kind = 1;
-				auxString = xml_unicast.second.get<std::string>("address");
-				loc.set_IP4_address(auxString);
-				loc.port = xml_unicast.second.get<uint32_t>("port");
-				endpointInfo.m_unicastLocatorList.push_back(loc);
-			}
-			BOOST_FOREACH(ptree::value_type &xml_multicast,xml_endpoint.second.get_child("endpoint.multicastLocator"))
-			{
-				loc.kind = 1;
-				auxString = xml_multicast.second.get<std::string>("address");
-				loc.set_IP4_address(auxString);
-				loc.port = xml_multicast.second.get<uint32_t>("port");
-				endpointInfo.m_multicastLocatorList.push_back(loc);
-			}
-			participantInfo.m_endpoints.push_back(endpointInfo);
+
+
+			this->m_StaticParticipantInfo.push_back(participantInfo);
 		}
-		this->m_StaticParticipantInfo.push_back(participantInfo);
 	}
+	printLoadedXMLInfo();
 	return true;
 }
 
 bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 {
 	pInfo("Printing Loaded XML Info"<<endl);
-	pInfo("Number of participants: " <<this->m_StaticParticipantInfo.size());
-	pLongInfoPrint;
+	pInfo("Number of participants: " <<this->m_StaticParticipantInfo.size()<<endl);
 	std::string auxString;
 	for(std::vector<ParticipantStaticInfo_t>::iterator pit =this->m_StaticParticipantInfo.begin();
 			pit!=m_StaticParticipantInfo.end();++pit)
 	{
-		pInfo("Participant with name: " << pit->m_name <<" has " << pit->m_endpoints.size() << "endpoints"<<endl);
+		pInfo("Participant with name: " << pit->m_name <<" has " << pit->m_endpoints.size() << " endpoints"<<endl);
 		for(std::vector<EndpointStaticInfo_t>::iterator eit =pit->m_endpoints.begin();
 				eit!=pit->m_endpoints.end();++eit)
 		{
 			auxString = eit->m_state == STATELESS ? "STATELESS" : "STATEFUL";
 			pLongInfo("Endoint " << auxString << " ");
+			auxString = eit->m_reliability == RELIABLE ? "RELIABLE" : "BEST_EFFORT";
+			pLongInfo(auxString << " ");
 			auxString = eit->m_kind == READER ? "READER" : "WRITER";
-			pLongInfo(auxString << " expectsInlineQos: " << eit->m_expectsInlineQos <<endl);
+			pLongInfo(auxString << " with id: " << eit->m_id << " expectsInlineQos: " << eit->m_expectsInlineQos <<endl);
 			for(std::vector<Locator_t>::iterator lit = eit->m_unicastLocatorList.begin();
 					lit!=eit->m_unicastLocatorList.end();++lit)
-				pLongInfo("Unicast Locator: " << lit->to_IP4_string() << ":" << lit->port << endl);
+				pLongInfo("ULoc: " << lit->to_IP4_string() << ":" << lit->port << endl);
 
 			for(std::vector<Locator_t>::iterator lit = eit->m_multicastLocatorList.begin();
 					lit!=eit->m_multicastLocatorList.end();++lit)
-				pLongInfo("Multicast Locator: " << lit->to_IP4_string() << ":" << lit->port << endl);
-
+				pLongInfo("MLoc: " << lit->to_IP4_string() << ":" << lit->port << endl);
 			pLongInfoPrint;
 
 		}

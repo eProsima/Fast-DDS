@@ -46,7 +46,7 @@ StatefulWriter::StatefulWriter(const WriterParams_t* param,uint32_t payload_size
 	multicastLocatorList = param->multicastLocatorList;
 	m_topicName = param->topicName;
 	m_topicDataType = param->topicDataType;
-
+	this->m_userDefinedId = param->userDefinedId;
 }
 
 

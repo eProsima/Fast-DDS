@@ -83,15 +83,10 @@ Participant::Participant(const ParticipantParams_t& PParam):
 	if(PParam.m_useSimpleParticipantDiscovery)
 	{
 		m_SPDP.m_useStaticEDP = PParam.m_useStaticEndpointDiscovery;
+		if(m_SPDP.m_useStaticEDP)
+			m_StaticEDP.m_staticEndpointFilename = PParam.m_staticEndpointXMLFilename;
 		m_SPDP.initSPDP(PParam.domainId,ID,PParam.resendSPDPDataPeriod_sec);
-		if(PParam.m_useStaticEndpointDiscovery)
-		{
-			m_StaticEDP.loadStaticEndpointFile(PParam.m_staticEndpointXMLFilename);
-		}
-		else
-		{
 
-		}
 	}
 }
 
@@ -178,6 +173,7 @@ bool Participant::initWriter(RTPSWriter*W)
 	{
 		//Wait until the thread is correctly created
 		m_writerList.push_back(W);
+		this->m_SPDP.setHasChangedDpd(true);
 		this->m_StaticEDP.localEndpointMatching((Endpoint*)W,'W');
 		return true;
 	}
@@ -256,6 +252,7 @@ bool Participant::initReader(RTPSReader* p_R)
 	if(this->assignEnpointToListenThreads((Endpoint*)p_R,'R'))
 	{
 		m_readerList.push_back(p_R);
+		this->m_SPDP.setHasChangedDpd(true);
 		this->m_StaticEDP.localEndpointMatching((Endpoint*)p_R,'R');
 		return true;
 	}

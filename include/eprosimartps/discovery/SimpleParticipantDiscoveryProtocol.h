@@ -59,6 +59,15 @@ public:
 
 
 	std::vector<std::string> getMatchedParticipantsNames();
+
+	bool HasChangedDpd() const {
+		return m_hasChanged_DPD;
+	}
+
+	void setHasChangedDpd(bool hasChangedDpd) {
+		m_hasChanged_DPD = hasChangedDpd;
+	}
+
 private:
 	Participant* mp_Participant;
 	StatelessWriter* m_SPDPbPWriter;

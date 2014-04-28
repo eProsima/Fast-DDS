@@ -8,7 +8,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <staticdiscovery>
 	<participant>
-		<participantName>participant1</participantName>
+		<name>participant1</name>
 		
 		<endpoint>
 			<id>1</id>
@@ -17,10 +17,52 @@
 			<stateKind>STATEFUL</stateKind>
 			<reliabilityKind>RELIABLE</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.23" port=2000></unicastLocator>	
-			<unicastLocator address="192.168.1.23" port=2000></unicastLocator>
-			<multicastLocator address="235.55.0.1" port=2000></multicastLocator>
+			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
+			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
+			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
+		</endpoint>
+		
+		<endpoint>
+			<id>2</id>
+			<type>WRITER</type>
+			<topicName>topic2</topicName>
+			<stateKind>STATEFUL</stateKind>
+			<reliabilityKind>RELIABLE</reliabilityKind>
+			<expectsInlineQos>true</expectsInlineQos>
+			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
+			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
+			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
 		</endpoint>
 		
 	</participant>
+	
+	<participant>
+		<name>participant2</name>
+		
+		<endpoint>
+			<id>1</id>
+			<type>READER</type>
+			<topicName>topic1</topicName>
+			<stateKind>STATEFUL</stateKind>
+			<reliabilityKind>RELIABLE</reliabilityKind>
+			<expectsInlineQos>true</expectsInlineQos>
+			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
+			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
+			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
+		</endpoint>
+		
+		<endpoint>
+			<id>2</id>
+			<type>WRITER</type>
+			<topicName>topic2</topicName>
+			<stateKind>STATEFUL</stateKind>
+			<reliabilityKind>RELIABLE</reliabilityKind>
+			<expectsInlineQos>true</expectsInlineQos>
+			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
+			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
+			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
+		</endpoint>
+		
+	</participant>
+	
 </participants>

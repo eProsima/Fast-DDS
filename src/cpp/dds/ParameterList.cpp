@@ -215,6 +215,8 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			case PID_PROPERTY_LIST:
 			{
 				ParameterPropertyList_t* p = new ParameterPropertyList_t(pid,plength);
+				uint32_t num_properties;
+				valid&=CDRMessage::readUInt32(msg,&num_properties);
 				uint16_t msg_pos_first = msg->pos;
 				std::string str;
 				std::pair<std::string,std::string> pair;

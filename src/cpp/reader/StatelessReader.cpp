@@ -38,6 +38,7 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 	expectsInlineQos = param->expectsInlineQos;
 	topicKind = param->topicKind;
 	m_topicName = param->topicName;
+	this->m_userDefinedId = param->userDefinedId;
 }
 
 

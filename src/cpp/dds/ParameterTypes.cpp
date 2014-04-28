@@ -171,6 +171,7 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	uint16_t pos_str = msg->pos;
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addUInt32(msg,this->properties.size());
 	for(std::vector<std::pair<std::string,std::string>>::iterator it = this->properties.begin();
 			it!=this->properties.end();++it)
 	{
