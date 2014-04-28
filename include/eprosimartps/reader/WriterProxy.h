@@ -59,6 +59,12 @@ public:
 	 */
 	bool available_changes_max(SequenceNumber_t* seqNum);
 	/**
+	 * Get the minimum sequenceNumber available from this Writer.
+	 * @param[out] seqNum Pointer to the sequenceNumber
+	 * @return True if correct.
+	 */
+	bool available_changes_min(SequenceNumber_t* seqNum);
+	/**
 	 * Update the missing changes up to the provided sequenceNumber.
 	 * All changes with status UNKNOWN with seqNum <= input seqNum are marked MISSING.
 	 * @param[in] seqNum Pointer to the SequenceNumber.

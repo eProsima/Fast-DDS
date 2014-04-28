@@ -182,6 +182,40 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	return false;
 }
 
+
+bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
+{
+	if(!m_changesFromW.empty())
+	{
+		boost::lock_guard<WriterProxy> guard(*this);
+		//Order changesFromWriter
+		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
+		seqNum->high = 0;
+		seqNum->low = 0;
+		bool cont = false;
+
+		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+		{
+			if(it->status == RECEIVED)
+			{
+				*seqNum = it->change->sequenceNumber;
+				return true;
+			}
+			else if(it->status == LOST)
+			{
+
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	pDebugInfo("WriterProxy:available_changes_max:no changesFromW"<<endl);
+	return false;
+}
+
+
 SequenceNumber_t WriterProxy::max_seq_num()
 {
 	SequenceNumber_t seq;

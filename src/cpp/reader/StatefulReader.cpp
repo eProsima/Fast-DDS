@@ -34,7 +34,7 @@ StatefulReader::~StatefulReader()
 
 
 StatefulReader::StatefulReader(const ReaderParams_t* param,uint32_t payload_size):
-		RTPSReader(param->historySize,payload_size)
+				RTPSReader(param->historySize,payload_size)
 {
 	m_stateType = STATEFUL;
 	reliability=param->reliablility;
@@ -101,23 +101,33 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 
 bool StatefulReader::takeNextCacheChange(void* data)
 {
-	SequenceNumber_t seq;
-	GUID_t gui;
-	m_reader_cache.get_seq_num_min(&seq,&gui);
-	WriterProxy* wp;
-	if(matched_writer_lookup(gui,&wp))
+	std::vector<SequenceNumber_t> seq_vec;
+	SequenceNumber_t seq, seqmin;
+	WriterProxy* wpmin;
+	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
+			it!=this->matched_writers.end();++it)
 	{
-		SequenceNumber_t seq2;
-		wp->available_changes_max(&seq2);
-		if(seq.to64long()<=seq2.to64long())
+		if((*it)->available_changes_min(&seq))
 		{
-			if(wp->removeChangeFromWriter(seq))
+			if(seqmin.to64long() == 0 || seqmin > seq)
 			{
-				m_reader_cache.remove_change(seq,gui);
+				wpmin = *it;
+				seqmin = seq;
+			}
+		}
+	}
+	if(seqmin.to64long() == 0)
+		return false;
+	CacheChange_t* change;
+	if(this->m_reader_cache.get_change(seqmin,wpmin->param.remoteWriterGuid,&change))
+	{
+		if(this->mp_type->deserialize(&change->serializedPayload,data))
+		{
+			if(wpmin->removeChangeFromWriter(seqmin))
+			{
+				m_reader_cache.remove_change(seq,wpmin->param.remoteWriterGuid);
 				return true;
 			}
-			else
-				return false;
 		}
 	}
 	return false;
@@ -125,7 +135,29 @@ bool StatefulReader::takeNextCacheChange(void* data)
 
 bool StatefulReader::readNextCacheChange(void*data)
 {
- return true;
+	m_reader_cache.sortCacheChangesBySeqNum();
+	int i = 0;
+	while((*(m_reader_cache.m_changes.begin()+i))->isRead)
+		i++;
+	WriterProxy* wp;
+	SequenceNumber_t seq;
+	std::vector<CacheChange_t*>::iterator chit = m_reader_cache.m_changes.begin()+i;
+	while(chit != m_reader_cache.m_changes.end())
+	{
+		if(this->matched_writer_lookup((*chit)->writerGUID,&wp))
+		{
+			wp->available_changes_max(&seq);
+			if((*chit)->sequenceNumber <= seq)
+			{
+				if(this->mp_type->deserialize(&(*chit)->serializedPayload,data))
+				{
+					return true;
+				}
+			}
+		}
+		++chit;
+	}
+	return false;
 }
 
 
