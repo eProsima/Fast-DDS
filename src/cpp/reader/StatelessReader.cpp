@@ -75,6 +75,7 @@ bool StatelessReader::readNextCacheChange(void*data)
 	{
 		if(this->mp_type->deserialize(&(*(m_reader_cache.m_changes.begin()+i))->serializedPayload,data))
 		{
+			(*(m_reader_cache.m_changes.begin()+i))->isRead = true;
 			return true;
 		}
 	}
