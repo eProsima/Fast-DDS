@@ -42,6 +42,7 @@ public:
 	ParticipantProxy m_proxy;
 	ParticipantBuiltinTopicData m_topicData;
 	Duration_t leaseDuration;
+	std::vector<std::pair<uint16_t,EntityId_t>> m_staticedpEntityId;
 
 };
 

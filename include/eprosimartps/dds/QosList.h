@@ -61,6 +61,7 @@ public:
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,EntityId_t& entity);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2);
 	///@}
 };
 

@@ -11,8 +11,9 @@
 		<participantName>participant1</participantName>
 		
 		<endpoint>
+			<id>1</id>
 			<type>READER</type>
-			<topicName>topic1</topic_name>
+			<topicName>topic1</topicName>
 			<stateKind>STATEFUL</stateKind>
 			<reliabilityKind>RELIABLE</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>

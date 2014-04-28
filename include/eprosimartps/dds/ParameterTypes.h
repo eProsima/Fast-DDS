@@ -170,6 +170,14 @@ public:
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
+class ParameterPropertyList_t:public Parameter_t{
+public:
+	std::vector<std::pair<std::string,std::string>> properties;
+	ParameterPropertyList_t(){};
+	ParameterPropertyList_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
 ///@}
 
 

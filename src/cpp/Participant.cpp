@@ -33,12 +33,12 @@ namespace rtps {
 
 
 Participant::Participant(const ParticipantParams_t& PParam):
-		m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
-		m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-		m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-		IdCounter(0),
-		m_SPDP(this),
-		m_StaticEDP(this)
+				m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
+				m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
+				m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+				IdCounter(0),
+				m_SPDP(this),
+				m_StaticEDP(this)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -50,11 +50,11 @@ Participant::Participant(const ParticipantParams_t& PParam):
 	dds::DomainParticipant *dp = dds::DomainParticipant::getInstance();
 	uint32_t ID = dp->getNewId();
 	int pid;
-	#if defined(_WIN32)
-		pid = (int)_getpid();
-	#else
-		pid = (int)getpid();
-	#endif
+#if defined(_WIN32)
+	pid = (int)_getpid();
+#else
+	pid = (int)getpid();
+#endif
 	//cout << "PID: " << pid << " ID:"<< ID << endl;
 
 	m_guid.guidPrefix.value[0] = m_send_thr.m_sendLocator.address[12];
@@ -71,14 +71,15 @@ Participant::Participant(const ParticipantParams_t& PParam):
 	m_guid.guidPrefix.value[11] = ((octet*)&ID)[3];
 	m_guid.entityId = ENTITYID_PARTICIPANT;
 	std::stringstream ss;
-		for(int i =0;i<12;i++)
-			ss << (int)m_guid.guidPrefix.value[i] << ".";
+	for(int i =0;i<12;i++)
+		ss << (int)m_guid.guidPrefix.value[i] << ".";
 
 	m_participantName = PParam.name;
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<ss.str()<< endl);
 
-//	cout << "PParam name: "<< PParam.name << endl;
-//	cout << "Participant name: " << m_participantName << endl;
+	//	cout << "PParam name: "<< PParam.name << endl;
+	//	cout << "Participant name: " << m_participantName << endl;
+	m_useStaticEDP = PParam.m_useSimpleParticipantDiscovery;
 	if(PParam.m_useSimpleParticipantDiscovery)
 	{
 		m_SPDP.m_useStaticEDP = PParam.m_useStaticEndpointDiscovery;
@@ -117,23 +118,33 @@ Participant::~Participant()
 bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterParams_t& Wparam,uint32_t payload_size)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
+	if(this->m_useStaticEDP && Wparam.userDefinedId == 0)
+	{
+		pError("Static EDP requires user defined Id"<<endl);
+		return false;
+	}
 	StatelessWriter* SLWriter = new StatelessWriter(&Wparam,payload_size);
 	if(this->initWriter((RTPSWriter*)SLWriter))
 	{
-	*SW_out = SLWriter;
-	return true;
+		*SW_out = SLWriter;
+		return true;
 	}
 	else
 		return false;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterParams_t& Wparam,uint32_t payload_size) {
-
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterParams_t& Wparam,uint32_t payload_size)
+{
+	if(this->m_useStaticEDP && Wparam.userDefinedId == 0)
+	{
+		pError("Static EDP requires user defined Id"<<endl);
+		return false;
+	}
 	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
 	if(this->initWriter((RTPSWriter*)SFWriter))
 	{
-	*SFW_out = SFWriter;
-	return true;
+		*SFW_out = SFWriter;
+		return true;
 	}
 	else return false;
 }
@@ -166,8 +177,8 @@ bool Participant::initWriter(RTPSWriter*W)
 	if(assignEnpointToListenThreads((Endpoint*)W,'W'))
 	{
 		//Wait until the thread is correctly created
-			m_writerList.push_back(W);
-			return true;
+		m_writerList.push_back(W);
+		return true;
 	}
 	else
 		return false;
@@ -180,11 +191,16 @@ bool Participant::initWriter(RTPSWriter*W)
 bool Participant::createStatelessReader(StatelessReader** SR_out,
 		const ReaderParams_t& RParam,uint32_t payload_size)
 {
+	if(this->m_useStaticEDP && RParam.userDefinedId == 0)
+	{
+		pError("Static EDP requires user defined Id"<<endl);
+		return false;
+	}
 	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
 	if(initReader((RTPSReader*)SReader))
 	{
-	*SR_out = SReader;
-	return true;
+		*SR_out = SReader;
+		return true;
 	}
 	else
 		return false;
@@ -194,6 +210,11 @@ bool Participant::createStatefulReader(StatefulReader** SR_out,
 		const ReaderParams_t& RParam,uint32_t payload_size)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
+	if(this->m_useStaticEDP && RParam.userDefinedId == 0)
+	{
+		pError("Static EDP requires user defined Id"<<endl);
+		return false;
+	}
 	StatefulReader* SReader = new StatefulReader(&RParam, payload_size);
 	if(initReader((RTPSReader*)SReader))
 	{
