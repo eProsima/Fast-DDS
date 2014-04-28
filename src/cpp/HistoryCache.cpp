@@ -262,8 +262,8 @@ void HistoryCache::updateMaxMinSeqNum()
 			m_maxSeqNum = (*(m_changes.end()-1))->sequenceNumber;
 			m_maxSeqNumGuid = (*(m_changes.end()-1))->writerGUID;
 
-			m_minSeqNum = (*(m_changes.begin()-1))->sequenceNumber;
-			m_minSeqNumGuid = (*(m_changes.begin()-1))->writerGUID;
+			m_minSeqNum = (*m_changes.begin())->sequenceNumber;
+			m_minSeqNumGuid = (*m_changes.begin())->writerGUID;
 
 //			m_maxSeqNum = m_minSeqNum = m_changes[0]->sequenceNumber;
 //			m_maxSeqNumGuid = m_minSeqNumGuid = m_changes[0]->writerGUID;
