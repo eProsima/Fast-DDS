@@ -420,6 +420,15 @@ bool Subscriber::minSeqRead(SequenceNumber_t* sn,GUID_t* guid,std::vector<ReadEl
 	return false;
 }
 
+bool Subscriber::readNextData(void* data)
+{
+	return this->mp_Reader->readNextCacheChange(data);
+}
+
+bool Subscriber::takeNextData(void* data) {
+	return this->mp_Reader->takeNextCacheChange(data);
+}
+
 bool Subscriber::removeSeqFromRead(SequenceNumber_t& sn,GUID_t& guid)
 {
 	if(!readElements.empty())

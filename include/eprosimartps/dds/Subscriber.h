@@ -178,9 +178,8 @@ public:
 
 	bool readNextData(void* data);
 	bool takeNextData(void* data);
-	bool readAllData(std::vector<void*>* data_vec);
-	bool takeAllData(std::vector<void*>* data_vec);
-	bool readData(SequenceNumber_t& seq,GUID_t& gui,void* data);
+
+	//bool readData(SequenceNumber_t& seq,GUID_t& gui,void* data);
 
 
 	///@}

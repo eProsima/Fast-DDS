@@ -228,19 +228,17 @@ int main(int argc, char** argv)
 				tp2.value = 0;
 				tp2.price = 1.5;
 			}
-			if(sub->getHistory_n() >= 0.8*Rparam.historySize)
+			if(sub->getHistory_n() >= 1)
 			{
-				cout << "Taking all from subscriber" <<endl;
-				std::vector<void*> data_vec;
-				sub->takeAllCache(&data_vec);
-				for(unsigned int i=0;i<data_vec.size();i++)
-					((TestType*)data_vec[i])->print();
+				cout << "Taking from subscriber" <<endl;
+				if(sub->readNextData(&tp_in))
+					tp_in.print();
 				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
 			}
 		}
 		cout << "Sleeping 3 seconds"<<endl;
 		sleep(3);
-		while(sub->readMinSeqUnreadCache((void*)&tp_in))
+		while(sub->takeNextData((void*)&tp_in))
 		{
 			tp_in.print();
 			tp_in.value = -111;
@@ -275,7 +273,7 @@ int main(int argc, char** argv)
 			sub->blockUntilNewMessage();
 			cout << "After new message block " << sub->getHistory_n() << endl;
 			TestType tp;
-			while(sub->readMinSeqUnreadCache((void*)&tp))
+			while(sub->readNextData((void*)&tp))
 			{
 				tp.print();
 				pub1->write((void*)&tp);
@@ -287,12 +285,8 @@ int main(int argc, char** argv)
 			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
 			{
 				cout << "Taking all" <<endl;
-				std::vector<void*> data_vec;
-				sub->takeAllCache(&data_vec);
-				for(unsigned int i=0;i<data_vec.size();i++)
-					((TestType*)data_vec[i])->print();
-				cout << "History has now: " << sub->getHistory_n() << " elements ";
-				cout << " and is FUll?: " << sub->isHistoryFull() << endl;
+				while(sub->takeNextData(&tp))
+					tp.print();
 			}
 		}
 		break;
