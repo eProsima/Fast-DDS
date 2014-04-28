@@ -175,11 +175,10 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 			else
 				break;
 		}
-		return true;
-
 	}
-	pDebugInfo("WriterProxy:available_changes_max:no changesFromW"<<endl);
-	return false;
+	else
+		*seqNum = this->m_lastRemovedSeqNum;
+	return true;
 }
 
 
