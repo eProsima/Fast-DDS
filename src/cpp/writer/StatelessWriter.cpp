@@ -54,6 +54,8 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 		if(rit->locator == a_locator.locator)
 			return false;
 	}
+	a_locator.requested_changes.clear();
+	a_locator.unsent_changes.clear();
 	for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.m_changes.begin();
 			it!=m_writer_cache.m_changes.end();++it){
 		a_locator.unsent_changes.push_back((*it));

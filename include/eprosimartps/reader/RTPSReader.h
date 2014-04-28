@@ -79,8 +79,13 @@ public:
 //	virtual bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
 //	virtual bool readAllCacheChange(std::vector<void*>* data);
 
+	const std::string& getTopicName() const {
+		return m_topicName;
+	}
 
-
+	StateKind_t getStateType() const {
+		return m_stateType;
+	}
 };
 
 } /* namespace rtps */

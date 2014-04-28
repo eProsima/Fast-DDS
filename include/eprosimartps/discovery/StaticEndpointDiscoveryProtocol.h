@@ -19,12 +19,13 @@
 #define STATICENDPOINTDISCOVERYPROTOCOL_H_
 
 #include "eprosimartps/rtps_all.h"
-
+#include "eprosimartps/discovery/DiscoveredParticipantData.h"
 namespace eprosima {
 namespace rtps {
 
 class RTPSWriter;
 class RTPSReader;
+class Endpoint;
 
 
 typedef struct EndpointStaticInfo_t{
@@ -51,12 +52,14 @@ public:
 	StaticEndpointDiscoveryProtocol(Participant* p_par);
 	virtual ~StaticEndpointDiscoveryProtocol();
 	bool loadStaticEndpointFile(const std::string& filename);
-	bool remoteParticipantMatching(std::string participant_name,GuidPrefix_t& outpartGuidPrefix,Participant* p_Par);
-	bool localWriterMatching(RTPSWriter* writer);
-	bool localReaderMatching(RTPSReader* reader);
 	std::vector<ParticipantStaticInfo_t> m_StaticParticipantInfo;
 	Participant* mp_Participant;
 	bool printLoadedXMLInfo();
+
+	bool localEndpointMatching(Endpoint* endpoint, char type);
+	bool localEndpointMatching(Endpoint* endpoint,DiscoveredParticipantData* dpd,char type);
+	bool localWriterMatching(RTPSWriter* pwriter,DiscoveredParticipantData* dpd);
+	bool localReaderMatching(RTPSReader* preader,DiscoveredParticipantData* dpd);
 };
 
 } /* namespace rtps */

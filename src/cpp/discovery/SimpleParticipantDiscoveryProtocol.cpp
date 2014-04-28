@@ -41,6 +41,9 @@ SimpleParticipantDiscoveryProtocol::SimpleParticipantDiscoveryProtocol(Participa
 
 SimpleParticipantDiscoveryProtocol::~SimpleParticipantDiscoveryProtocol()
 {
+	for(std::vector<DiscoveredParticipantData*>::iterator it = m_matched_participants.begin();
+			it!=m_matched_participants.end();++it)
+		delete(*it);
 	delete(m_resendData);
 	delete(m_SPDPbPWriter);
 	delete(m_SPDPbPReader);
@@ -276,12 +279,12 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 		//cout << "msg length: " << msg.length << endl;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
 		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
-		DiscoveredParticipantData pdata;
-		if(processParameterList(param,&pdata))
+		DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
+		if(processParameterList(param,pdata))
 		{
 			pDebugInfo("ParameterList correctly processed"<<endl);
 			for(uint8_t i = 0;i<12;++i)
-				change->instanceHandle.value[i] = pdata.m_proxy.m_guidPrefix.value[i];
+				change->instanceHandle.value[i] = pdata->m_proxy.m_guidPrefix.value[i];
 			for(uint8_t i = 12;i<16;++i)
 				change->instanceHandle.value[i] = this->mp_Participant->m_guid.entityId.value[i];
 			bool from_me = true;
@@ -302,13 +305,14 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 				return;
 			}
 			bool found = false;
-			for(std::vector<DiscoveredParticipantData>::iterator it = m_matched_participants.begin();
+			for(std::vector<DiscoveredParticipantData*>::iterator it = m_matched_participants.begin();
 					it!=m_matched_participants.end();++it)
 			{
-				if(it->m_proxy.m_guidPrefix == pdata.m_proxy.m_guidPrefix)
+				if((*it)->m_proxy.m_guidPrefix == pdata->m_proxy.m_guidPrefix)
 				{
-					*it = pdata;
+					*(*it) = *pdata;
 					found = true;
+					delete(pdata);
 					break;
 				}
 			}
@@ -317,15 +321,15 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 				m_matched_participants.push_back(pdata);
 				//Create Reader Locators
 				ReaderLocator rl;
-				rl.expectsInlineQos = pdata.m_proxy.m_expectsInlineQos;
-				for(std::vector<Locator_t>::iterator it = pdata.m_proxy.m_metatrafficUnicastLocatorList.begin();
-						it!=pdata.m_proxy.m_metatrafficUnicastLocatorList.end();++it)
+				rl.expectsInlineQos = pdata->m_proxy.m_expectsInlineQos;
+				for(std::vector<Locator_t>::iterator it = pdata->m_proxy.m_metatrafficUnicastLocatorList.begin();
+						it!=pdata->m_proxy.m_metatrafficUnicastLocatorList.end();++it)
 				{
 					rl.locator = *it;
 					m_SPDPbPWriter->reader_locator_add(rl);
 				}
-				for(std::vector<Locator_t>::iterator it = pdata.m_proxy.m_metatrafficMulticastLocatorList.begin();
-						it!=pdata.m_proxy.m_metatrafficMulticastLocatorList.end();++it)
+				for(std::vector<Locator_t>::iterator it = pdata->m_proxy.m_metatrafficMulticastLocatorList.begin();
+						it!=pdata->m_proxy.m_metatrafficMulticastLocatorList.end();++it)
 				{
 					rl.locator = *it;
 					m_SPDPbPWriter->reader_locator_add(rl);
@@ -352,9 +356,16 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 		//Once we have added the new participant we perform the Static EndpointDiscoveryProtocol
 		if(this->m_useStaticEDP)
 		{
-			mp_Participant->m_StaticEDP.remoteParticipantMatching(pdata.m_proxy.m_participantName,
-														pdata.m_proxy.m_guidPrefix,
-														mp_Participant);
+			for(std::vector<RTPSReader*>::iterator it = mp_Participant->m_readerList.begin();
+					it!=mp_Participant->m_readerList.end();++it)
+			{
+				mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'R');
+			}
+			for(std::vector<RTPSWriter*>::iterator it = mp_Participant->m_writerList.begin();
+					it!=mp_Participant->m_writerList.end();++it)
+			{
+				mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'W');
+			}
 		}
 	}
 
@@ -478,10 +489,10 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 std::vector<std::string> SimpleParticipantDiscoveryProtocol::getMatchedParticipantsNames()
 {
 	std::vector<std::string> part_names;
-	for(std::vector<DiscoveredParticipantData>::iterator it = this->m_matched_participants.begin();
+	for(std::vector<DiscoveredParticipantData*>::iterator it = this->m_matched_participants.begin();
 			it!=this->m_matched_participants.end();++it)
 	{
-		part_names.push_back(it->m_proxy.m_participantName);
+		part_names.push_back((*it)->m_proxy.m_participantName);
 	}
 	return part_names;
 }

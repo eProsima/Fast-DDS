@@ -178,6 +178,7 @@ bool Participant::initWriter(RTPSWriter*W)
 	{
 		//Wait until the thread is correctly created
 		m_writerList.push_back(W);
+		this->m_StaticEDP.localEndpointMatching((Endpoint*)W,'W');
 		return true;
 	}
 	else
@@ -255,6 +256,7 @@ bool Participant::initReader(RTPSReader* p_R)
 	if(this->assignEnpointToListenThreads((Endpoint*)p_R,'R'))
 	{
 		m_readerList.push_back(p_R);
+		this->m_StaticEDP.localEndpointMatching((Endpoint*)p_R,'R');
 		return true;
 	}
 	else
