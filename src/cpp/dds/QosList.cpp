@@ -195,6 +195,34 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid, octet o1,	octet o2, octe
 	return false;
 }
 
+bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2)
+{
+	if(pid == PID_PROPERTY_LIST)
+	{
+		ParameterPropertyList_t* p = NULL;
+		bool found = false;
+		for(std::vector<Parameter_t*>::iterator it = qos->allQos.m_parameters.begin();
+				it!=qos->allQos.m_parameters.end();++it)
+		{
+			if((*it)->Pid == PID_PROPERTY_LIST)
+			{
+				p = (ParameterPropertyList_t*)(*it);
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+			p = new ParameterPropertyList_t();
+		p->Pid = PID_PROPERTY_LIST;
+		p->properties.push_back(std::pair<std::string,std::string>(str1,str2));
+		return true;
+	}
+	return false;
+}
+
+
+
+
 //bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Count_t& count)
 //{
 //	if(pid == PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT)

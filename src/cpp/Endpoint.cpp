@@ -24,6 +24,7 @@ Endpoint::Endpoint() {
 	mp_send_thr = NULL;
 	mp_event_thr = NULL;
 	topicKind = NO_KEY;
+	m_userDefinedId = 0;
 
 }
 

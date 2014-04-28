@@ -166,6 +166,26 @@ bool ParameterBuiltinEndpointSet_t::addToCDRMessage(CDRMessage_t*msg)
 	return valid;
 }
 
+bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
+{
+	bool valid = CDRMessage::addUInt16(msg, this->Pid);
+	uint16_t pos_str = msg->pos;
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	for(std::vector<std::pair<std::string,std::string>>::iterator it = this->properties.begin();
+			it!=this->properties.end();++it)
+	{
+		valid &= CDRMessage::addString(msg,it->first);
+		valid &= CDRMessage::addString(msg,it->second);
+	}
+	uint16_t pos_param_end = msg->pos;
+	this->length = pos_param_end-pos_str-2;
+	msg->pos = pos_str;
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	msg->pos = pos_param_end;
+	msg->length-=2;
+	return valid;
+}
+
 
 } /* namespace dds */
 } /* namespace eprosima */

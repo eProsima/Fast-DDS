@@ -163,7 +163,35 @@ bool SimpleParticipantDiscoveryProtocol::updateParamList()
 	valid &=QosList::addQos(&m_DPDAsParamList,PID_ENTITY_NAME,this->mp_Participant->m_participantName);
 
 
+	if(this->m_useStaticEDP)
+	{
+		std::stringstream ss;
+		std::string str1,str2;
+		for(std::vector<RTPSWriter*>::iterator it = this->mp_Participant->m_writerList.begin();
+				it!=this->mp_Participant->m_writerList.end();++it)
+		{
+			ss.clear();
+			ss << "staticedp_writer_" << (*it)->m_userDefinedId;
+			str1 = ss.str();
+			ss.clear();
+			ss << (*it)->m_guid.entityId.value[0] << (*it)->m_guid.entityId.value[1] << (*it)->m_guid.entityId.value[2] << (*it)->m_guid.entityId.value[3];
+			str2 = ss.str();
+			valid &=QosList::addQos(&m_DPDAsParamList,PID_PROPERTY_LIST,str1,str2);
+		}
+		for(std::vector<RTPSReader*>::iterator it = this->mp_Participant->m_readerList.begin();
+				it!=this->mp_Participant->m_readerList.end();++it)
+		{
+			ss.clear();
+			ss << "staticedp_reader_" << (*it)->m_userDefinedId;
+			str1 = ss.str();
+			ss.clear();
+			ss << (*it)->m_guid.entityId.value[0] << (*it)->m_guid.entityId.value[1] << (*it)->m_guid.entityId.value[2] << (*it)->m_guid.entityId.value[3];
+			str2 = ss.str();
+			valid &=QosList::addQos(&m_DPDAsParamList,PID_PROPERTY_LIST,str1,str2);
+		}
+	}
 	valid &=ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);
+
 
 	return valid;
 
@@ -414,6 +442,30 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 		{
 			ParameterString_t* p = (ParameterString_t*)(*it);
 			Pdata->m_proxy.m_participantName = p->m_string;
+			break;
+		}
+		case PID_PROPERTY_LIST:
+		{
+			Pdata->m_staticedpEntityId.clear();
+			ParameterPropertyList_t* p = (ParameterPropertyList_t*)(*it);
+			std::stringstream ss;
+			std::pair<uint16_t,EntityId_t> pair;
+			for(std::vector<std::pair<std::string,std::string>>::iterator it = p->properties.begin();
+					it != p->properties.end();++it)
+			{
+				std::string first_str = it->first.substr(0, it->first.find("_"));
+				if(first_str == "staticedp")
+				{
+					first_str = it->first.substr(17, it->first.find("_"));
+					ss.clear();
+					ss << first_str;
+					ss >> pair.first;
+					pair.second.value[0] = it->second.c_str()[0];
+					pair.second.value[1] = it->second.c_str()[1];
+					pair.second.value[2] = it->second.c_str()[2];
+					pair.second.value[3] = it->second.c_str()[3];
+				}
+			}
 			break;
 		}
 		default: break;

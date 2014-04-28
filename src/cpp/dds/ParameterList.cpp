@@ -202,12 +202,55 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
+					delete(oc);
+				}
+				else
+				{
+					delete(p);
+					delete(oc);
+					return -1;
+				}
+				break;
+			}
+			case PID_PROPERTY_LIST:
+			{
+				ParameterPropertyList_t* p = new ParameterPropertyList_t(pid,plength);
+				uint16_t msg_pos_first = msg->pos;
+				std::string str;
+				std::pair<std::string,std::string> pair;
+				while(msg->pos < msg_pos_first + plength)
+				{
+					uint32_t str_size = 1;
+					valid&=CDRMessage::readUInt32(msg,&str_size);
+					str.resize(str_size);
+					octet* oc1=new octet[str_size];
+					valid &= CDRMessage::readData(msg,oc1,str_size);
+					for(uint32_t i =0;i<str_size;i++)
+						str.at(i) = oc1[i];
+					pair.first = str;
+					valid&=CDRMessage::readUInt32(msg,&str_size);
+					str.resize(str_size);
+					octet* oc2=new octet[str_size];
+					valid &= CDRMessage::readData(msg,oc2,str_size);
+					for(uint32_t i =0;i<str_size;i++)
+						str.at(i) = oc2[i];
+					pair.second = str;
+					p->properties.push_back(pair);
+					delete(oc1);
+					delete(oc2);
+				}
+				if(valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChanged = true;
+					paramlist_byte_size += plength;
 				}
 				else
 				{
 					delete(p);
 					return -1;
 				}
+				break;
 				break;
 			}
 			case PID_STATUS_INFO:

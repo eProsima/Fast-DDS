@@ -481,7 +481,24 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 	return true;
 }
 
+inline bool CDRMessage::addString(CDRMessage_t*msg,std::string& in_str)
+{
+	uint32_t str_siz = in_str.size();
+	int rest = str_siz % 4;
+	if (rest != 0)
+		rest = 4 - rest; //how many you have to add
 
+	bool valid = CDRMessage::addUInt32(msg, str_siz);
+	valid &= CDRMessage::addData(msg,
+			(unsigned char*) in_str.c_str(), str_siz);
+	if (rest != 0) {
+		octet oc = '\0';
+		for (int i = 0; i < rest; i++) {
+			valid &= CDRMessage::addOctet(msg, oc);
+		}
+	}
+	return valid;
+}
 
 
 

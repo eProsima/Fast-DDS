@@ -176,6 +176,8 @@ public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};
 
+	bool m_useStaticEDP;
+
 };
 
 } /* namespace rtps */

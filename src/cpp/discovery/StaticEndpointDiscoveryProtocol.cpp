@@ -64,6 +64,9 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 		BOOST_FOREACH(ptree::value_type& xml_endpoint ,xml_participant.second.get_child("participant.endpoint"))
 		{
 			EndpointStaticInfo_t endpointInfo;
+
+			endpointInfo.m_id = xml_endpoint.second.get<uint16_t>("id");
+
 			endpointInfo.m_expectsInlineQos = xml_endpoint.second.get<bool>("expectsInlineQos");
 			//FIXME: handle expections when parameters are not found.
 			std::string auxString = xml_endpoint.second.get<std::string>("type");
