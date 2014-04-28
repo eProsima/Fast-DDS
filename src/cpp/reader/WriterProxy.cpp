@@ -176,7 +176,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 				break;
 		}
 	}
-	else
+	if(*seqNum<this->m_lastRemovedSeqNum)
 		*seqNum = this->m_lastRemovedSeqNum;
 	return true;
 }
