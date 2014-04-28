@@ -151,6 +151,7 @@ bool StatefulReader::readNextCacheChange(void*data)
 			{
 				if(this->mp_type->deserialize(&(*chit)->serializedPayload,data))
 				{
+					(*chit)->isRead = true;
 					return true;
 				}
 			}
