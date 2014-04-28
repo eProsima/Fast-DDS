@@ -268,7 +268,7 @@ typedef struct WriterParams_t{
 	StateKind_t stateKind;
 	std::string topicName;
 	std::string topicDataType;
-	uint16_t userDefinedId;
+	int16_t userDefinedId;
 	WriterParams_t(){
 		pushMode = true;
 		historySize = DEFAULT_HISTORY_SIZE;
@@ -291,7 +291,7 @@ typedef struct ReaderParams_t{
 	StateKind_t stateKind;
 	std::string topicName;
 	std::string topicDataType;
-	uint16_t userDefinedId;
+	int16_t userDefinedId;
 	ReaderParams_t(){
 		expectsInlineQos = false;
 		historySize = DEFAULT_HISTORY_SIZE;

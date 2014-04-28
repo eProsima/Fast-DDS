@@ -212,9 +212,14 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 			}
 		}
 		if(!found)
+		{
 			p = new ParameterPropertyList_t();
+		}
 		p->Pid = PID_PROPERTY_LIST;
 		p->properties.push_back(std::pair<std::string,std::string>(str1,str2));
+		qos->allQos.m_hasChanged = true;
+		if(!found)
+			qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		return true;
 	}
 	return false;

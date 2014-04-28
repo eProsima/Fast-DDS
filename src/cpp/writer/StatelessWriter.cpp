@@ -37,6 +37,7 @@ StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_si
 	topicKind = param->topicKind;
 	m_topicName = param->topicName;
 	m_topicDataType = param->topicDataType;
+	this->m_userDefinedId = param->userDefinedId;
 }
 
 

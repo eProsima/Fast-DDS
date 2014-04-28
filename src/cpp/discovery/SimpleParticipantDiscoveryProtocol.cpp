@@ -23,9 +23,9 @@ namespace eprosima {
 namespace rtps {
 
 SimpleParticipantDiscoveryProtocol::SimpleParticipantDiscoveryProtocol(Participant* p):
-		mp_Participant(p),
-		m_DPDMsgHeader(RTPSMESSAGE_HEADER_SIZE),
-		m_listener(this)
+				mp_Participant(p),
+				m_DPDMsgHeader(RTPSMESSAGE_HEADER_SIZE),
+				m_listener(this)
 {
 
 	m_resendData = NULL;
@@ -55,12 +55,12 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	m_domainId = domainId;
 	DomainParticipant* dp = DomainParticipant::getInstance();
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getPortBase()
-									+ dp->getDomainIdGain() * domainId
-									+ dp->getOffsetd0();
+											+ dp->getDomainIdGain() * domainId
+											+ dp->getOffsetd0();
 	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getPortBase()
-										+ dp->getDomainIdGain() * m_domainId
-										+ dp->getOffsetd1()
-										+ dp->getParticipantIdGain() * participantId;
+												+ dp->getDomainIdGain() * m_domainId
+												+ dp->getOffsetd1()
+												+ dp->getParticipantIdGain() * participantId;
 
 
 	m_DPD.m_proxy.m_guidPrefix = mp_Participant->m_guid.guidPrefix;
@@ -88,6 +88,11 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	m_DPD.leaseDuration.seconds = 100;
 
 
+	if(this->m_useStaticEDP)
+	{
+		mp_Participant->m_StaticEDP.loadStaticEndpointFile();
+	}
+
 
 	//SPDP BUILTIN PARTICIPANT WRITER
 	WriterParams_t Wparam;
@@ -99,6 +104,7 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	Wparam.topicName = "DCPSParticipant";
 	Wparam.topicDataType = "DiscoveredParticipantData";
 	Wparam.topicKind = WITH_KEY;
+	Wparam.userDefinedId = -1;
 	mp_Participant->createStatelessWriter(&m_SPDPbPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	//m_SPDPbPWriter = new StatelessWriter(Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	m_SPDPbPWriter->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER;
@@ -107,9 +113,9 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	multiReaderLoc.locator = multiLocator;
 	m_SPDPbPWriter->reader_locator_add(multiReaderLoc);
 
-//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-//	 boost::asio::ip::address address = boost::asio::ip::address::from_string("239.255.0.1");
-//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
+	//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+	//	 boost::asio::ip::address address = boost::asio::ip::address::from_string("239.255.0.1");
+	//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
 
 
 	//SPDP BUILTIN PARTICIPANT READER
@@ -121,6 +127,7 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	Rparam.topicKind = WITH_KEY;
 	Rparam.topicName = "DCPSParticipant";
 	Rparam.topicDataType = "DiscoveredParticipantData";
+	Rparam.userDefinedId = -1;
 	mp_Participant->createStatelessReader(&m_SPDPbPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	m_SPDPbPReader->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
 	m_SPDPbPReader->mp_listener = &this->m_listener;
@@ -168,33 +175,49 @@ bool SimpleParticipantDiscoveryProtocol::updateParamList()
 
 	if(this->m_useStaticEDP)
 	{
+		pDebugInfo("Adding Writers and Readers IDs to QosList"<<endl);
 		std::stringstream ss;
 		std::string str1,str2;
 		for(std::vector<RTPSWriter*>::iterator it = this->mp_Participant->m_writerList.begin();
 				it!=this->mp_Participant->m_writerList.end();++it)
 		{
+			if((*it)->m_userDefinedId <= 0)
+				continue;
 			ss.clear();
+			ss.str(std::string());
 			ss << "staticedp_writer_" << (*it)->m_userDefinedId;
 			str1 = ss.str();
 			ss.clear();
-			ss << (*it)->m_guid.entityId.value[0] << (*it)->m_guid.entityId.value[1] << (*it)->m_guid.entityId.value[2] << (*it)->m_guid.entityId.value[3];
+			ss.str(std::string());
+			ss << (int)(*it)->m_guid.entityId.value[0] <<".";
+			ss << (int)(*it)->m_guid.entityId.value[1] <<".";
+			ss << (int)(*it)->m_guid.entityId.value[2] <<".";
+			ss << (int)(*it)->m_guid.entityId.value[3];
 			str2 = ss.str();
 			valid &=QosList::addQos(&m_DPDAsParamList,PID_PROPERTY_LIST,str1,str2);
 		}
 		for(std::vector<RTPSReader*>::iterator it = this->mp_Participant->m_readerList.begin();
 				it!=this->mp_Participant->m_readerList.end();++it)
 		{
+			if((*it)->m_userDefinedId <= 0)
+				continue;
 			ss.clear();
+			ss.str(std::string());
 			ss << "staticedp_reader_" << (*it)->m_userDefinedId;
 			str1 = ss.str();
 			ss.clear();
-			ss << (*it)->m_guid.entityId.value[0] << (*it)->m_guid.entityId.value[1] << (*it)->m_guid.entityId.value[2] << (*it)->m_guid.entityId.value[3];
+			ss.str(std::string());
+			ss << (int)(*it)->m_guid.entityId.value[0] <<".";
+			ss << (int)(*it)->m_guid.entityId.value[1] <<".";
+			ss << (int)(*it)->m_guid.entityId.value[2] <<".";
+			ss << (int)(*it)->m_guid.entityId.value[3];
 			str2 = ss.str();
 			valid &=QosList::addQos(&m_DPDAsParamList,PID_PROPERTY_LIST,str1,str2);
 		}
 	}
 	valid &=ParameterList::updateCDRMsg(&m_DPDAsParamList.allQos,EPROSIMA_ENDIAN);
-
+	if(valid)
+		m_hasChanged_DPD = false;
 
 	return valid;
 
@@ -214,10 +237,10 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 			change->instanceHandle.value[i] = this->mp_Participant->m_guid.entityId.value[i];
 		if(updateParamList())
 		{
-		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
-		change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
-		memcpy(change->serializedPayload.data,m_DPDAsParamList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
-		m_SPDPbPWriter->add_change(change);
+			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+			change->serializedPayload.length = m_DPDAsParamList.allQos.m_cdrmsg.length;
+			memcpy(change->serializedPayload.data,m_DPDAsParamList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+			m_SPDPbPWriter->add_change(change);
 		}
 		else
 		{
@@ -422,13 +445,13 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 		case PID_METATRAFFIC_UNICAST_LOCATOR:
 		{
 			ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-						Pdata->m_proxy.m_metatrafficUnicastLocatorList.push_back(p->locator);
+			Pdata->m_proxy.m_metatrafficUnicastLocatorList.push_back(p->locator);
 			break;
 		}
 		case PID_DEFAULT_UNICAST_LOCATOR:
 		{
 			ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-						Pdata->m_proxy.m_defaultUnicastLocatorList.push_back(p->locator);
+			Pdata->m_proxy.m_defaultUnicastLocatorList.push_back(p->locator);
 			break;
 		}
 		case PID_DEFAULT_MULTICAST_LOCATOR:
@@ -469,12 +492,19 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 				{
 					first_str = it->first.substr(17, it->first.find("_"));
 					ss.clear();
+					ss.str(std::string());
 					ss << first_str;
 					ss >> pair.first;
-					pair.second.value[0] = it->second.c_str()[0];
-					pair.second.value[1] = it->second.c_str()[1];
-					pair.second.value[2] = it->second.c_str()[2];
-					pair.second.value[3] = it->second.c_str()[3];
+					ss.clear();
+					ss.str(std::string());
+					ss << it->second;
+					int a,b,c,d;
+					char ch;
+					ss >> a >> ch >> b >> ch >> c >>ch >> d;
+					pair.second.value[0] = (octet)a;
+					pair.second.value[1] = (octet)b;
+					pair.second.value[2] = (octet)c;
+					pair.second.value[3] = (octet)d;
 				}
 			}
 			break;
