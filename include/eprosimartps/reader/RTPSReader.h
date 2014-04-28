@@ -72,8 +72,8 @@ public:
 	std::string m_topicName;
 
 
-	virtual bool readNextCacheChange(void*data);
-	virtual bool takeNextCacheChange(void*data);
+	virtual bool readNextCacheChange(void*data)=0;
+	virtual bool takeNextCacheChange(void*data)=0;
 
 
 //	virtual bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);

@@ -103,7 +103,7 @@ bool StatefulReader::takeNextCacheChange(void* data)
 {
 	std::vector<SequenceNumber_t> seq_vec;
 	SequenceNumber_t seq, seqmin;
-	WriterProxy* wpmin;
+	WriterProxy* wpmin = NULL;
 	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
 			it!=this->matched_writers.end();++it)
 	{

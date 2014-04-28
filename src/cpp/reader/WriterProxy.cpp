@@ -192,8 +192,6 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
 		seqNum->high = 0;
 		seqNum->low = 0;
-		bool cont = false;
-
 		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 		{
 			if(it->status == RECEIVED)
@@ -203,7 +201,7 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 			}
 			else if(it->status == LOST)
 			{
-
+				continue;
 			}
 			else
 			{
