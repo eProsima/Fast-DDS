@@ -144,7 +144,7 @@ public:
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_INFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
 	int type;
 	if(argc > 1)
 	{
@@ -277,6 +277,7 @@ int main(int argc, char** argv)
 			{
 				tp.print();
 				pub1->write((void*)&tp);
+				cout << "Write OK"<< endl;
 				tp.value = -1;
 				tp.price = 0;
 				COPYSTR(tp.name,"UNDEF");
