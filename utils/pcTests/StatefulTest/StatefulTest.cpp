@@ -243,7 +243,7 @@ int main(int argc, char** argv){
 			cout << "Waiting for new message "<<endl;
 			sub->blockUntilNewMessage();
 			TestType tp;
-			if(sub->readNextData((void*)&tp))
+			if(sub->takeNextData((void*)&tp))
 				tp.print();
 			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
 			{

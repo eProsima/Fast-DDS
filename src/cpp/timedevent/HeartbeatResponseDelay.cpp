@@ -53,6 +53,8 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			{
 				pError("HeartbeatResponse: event: no available changes max"<<endl;);
 			}
+			if(sns.base < mp_WP->m_lastRemovedSeqNum)
+				sns.base = mp_WP->m_lastRemovedSeqNum;
 			sns.base++;
 			std::vector<ChangeFromWriter_t*>::iterator cit;
 			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
