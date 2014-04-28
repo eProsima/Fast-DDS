@@ -225,8 +225,7 @@ SequenceNumber_t WriterProxy::max_seq_num()
 	}
 	else
 	{
-		seq.high = 0;
-		seq.low = 0;
+		seq = this->m_lastRemovedSeqNum;
 	}
 	return seq;
 }
