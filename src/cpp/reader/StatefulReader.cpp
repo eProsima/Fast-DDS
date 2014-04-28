@@ -136,27 +136,45 @@ bool StatefulReader::takeNextCacheChange(void* data)
 bool StatefulReader::readNextCacheChange(void*data)
 {
 	m_reader_cache.sortCacheChangesBySeqNum();
-	int i = 0;
-	while((*(m_reader_cache.m_changes.begin()+i))->isRead)
-		i++;
-	WriterProxy* wp;
-	SequenceNumber_t seq;
-	std::vector<CacheChange_t*>::iterator chit = m_reader_cache.m_changes.begin()+i;
-	while(chit != m_reader_cache.m_changes.end())
+	bool found = false;
+	std::vector<CacheChange_t*>::iterator chit;
+	for(chit = m_reader_cache.m_changes.begin();
+			chit!=m_reader_cache.m_changes.end();++chit)
 	{
-		if(this->matched_writer_lookup((*chit)->writerGUID,&wp))
+		if(!(*chit)->isRead)
 		{
-			wp->available_changes_max(&seq);
-			if((*chit)->sequenceNumber <= seq)
+			found = true;
+			break;
+		}
+	}
+	if(found)
+	{
+		WriterProxy* wp;
+		SequenceNumber_t seq;
+		while(chit != m_reader_cache.m_changes.end())
+		{
+			if(!(*chit)->isRead)
 			{
-				if(this->mp_type->deserialize(&(*chit)->serializedPayload,data))
+				if(this->matched_writer_lookup((*chit)->writerGUID,&wp))
 				{
-					(*chit)->isRead = true;
-					return true;
+					wp->available_changes_max(&seq);
+					if((*chit)->sequenceNumber <= seq)
+					{
+						if((*chit)->serializedPayload.data !=NULL)
+						{
+							if(this->mp_type->deserialize(&(*chit)->serializedPayload,data))
+							{
+								(*chit)->isRead = true;
+								return true;
+							}
+						}
+						else
+							(*chit)->isRead = true;
+					}
 				}
 			}
+			++chit;
 		}
-		++chit;
 	}
 	return false;
 }

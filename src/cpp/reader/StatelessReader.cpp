@@ -68,18 +68,30 @@ bool StatelessReader::takeNextCacheChange(void* data)
 bool StatelessReader::readNextCacheChange(void*data)
 {
 	m_reader_cache.sortCacheChangesBySeqNum();
-	int i = 0;
-	while((*(m_reader_cache.m_changes.begin()+i))->isRead)
-		i++;
-	if((*(m_reader_cache.m_changes.begin()+i))->serializedPayload.data !=NULL)
+	bool found = false;
+	std::vector<CacheChange_t*>::iterator it;
+	for(it = m_reader_cache.m_changes.begin();
+			it!=m_reader_cache.m_changes.end();++it)
 	{
-		if(this->mp_type->deserialize(&(*(m_reader_cache.m_changes.begin()+i))->serializedPayload,data))
+		if(!(*it)->isRead)
 		{
-			(*(m_reader_cache.m_changes.begin()+i))->isRead = true;
-			return true;
+			found = true;
+			break;
 		}
 	}
-return false;
+	if(found)
+	{
+		if((*it)->serializedPayload.data !=NULL)
+		{
+			if(this->mp_type->deserialize(&(*it)->serializedPayload,data))
+			{
+				(*it)->isRead = true;
+				return true;
+			}
+		}
+		(*it)->isRead = true;
+	}
+	return false;
 }
 
 
