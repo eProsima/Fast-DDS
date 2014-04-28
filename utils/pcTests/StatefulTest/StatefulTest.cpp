@@ -243,16 +243,13 @@ int main(int argc, char** argv){
 			cout << "Waiting for new message "<<endl;
 			sub->blockUntilNewMessage();
 			TestType tp;
-			sub->readLastAdded((void*)&tp);
-			if(sub->isHistoryFull())
+			if(sub->readNextData((void*)&tp))
+				tp.print();
+			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
 			{
 				cout << "Taking all" <<endl;
-				std::vector<void*> data_vec;
-				sub->takeAllCache(&data_vec);
-				for(unsigned int i=0;i<data_vec.size();i++)
-					((TestType*)data_vec[i])->print();
-				cout << "History has now: " << sub->getHistory_n() << " elements ";
-				cout << " and is FUll?: " << sub->isHistoryFull() << endl;
+				while(sub->takeNextData(&tp))
+					tp.print();
 			}
 		}
 		break;
