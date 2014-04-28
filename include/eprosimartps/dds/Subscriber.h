@@ -101,6 +101,8 @@ public:
 	 */
 	int getHistory_n();
 
+	bool updateParameters(const ReaderParams_t& param);
+
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.
 	 */

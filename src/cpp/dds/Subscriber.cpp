@@ -468,6 +468,13 @@ bool Subscriber::addWriterProxy(Locator_t& loc, GUID_t& guid)
 	return false;
 }
 
+bool Subscriber::updateParameters(const ReaderParams_t& param)
+{
+
+	return true;
+}
+
+
 } /* namespace dds */
 } /* namespace eprosima */
 

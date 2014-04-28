@@ -96,8 +96,7 @@ public:
 		return m_heartbeatCount;
 	}
 
-	virtual bool removeMinSeqCacheChange();
-	virtual bool removeAllCacheChange(int32_t* n_removed);
+
 
 	StateKind_t getStateType() const {
 		return m_stateType;
@@ -108,7 +107,9 @@ public:
 		return this->m_writer_cache.getHistorySize();
 	}
 
-	virtual void unsent_change_add(CacheChange_t* change);
+	virtual void unsent_change_add(CacheChange_t* change)=0;
+	virtual bool removeMinSeqCacheChange()=0;
+	virtual bool removeAllCacheChange(int32_t* n_removed)=0;
 
 	bool add_new_change(ChangeKind_t kind,void*Data);
 
@@ -132,10 +133,12 @@ public:
 	{
 		return m_writer_cache.get_seq_num_max(seqNum,writerGuid);
 	}
+
 	bool add_change(CacheChange_t*change)
 	{
 		return m_writer_cache.add_change(change);
 	}
+
 	bool get_last_added_cache(CacheChange_t**change)
 	{
 		return m_writer_cache.get_last_added_cache(change);
