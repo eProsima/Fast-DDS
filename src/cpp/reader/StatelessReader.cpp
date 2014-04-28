@@ -44,6 +44,7 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 
 bool StatelessReader::takeNextCacheChange(void* data)
 {
+	pDebugInfo("Taking Data from Reader"<<endl);
 	SequenceNumber_t seq;
 	GUID_t gui;
 	if(this->m_reader_cache.get_seq_num_min(&seq,&gui))

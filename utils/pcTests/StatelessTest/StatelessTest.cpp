@@ -238,6 +238,7 @@ int main(int argc, char** argv)
 		}
 		cout << "Sleeping 3 seconds"<<endl;
 		sleep(3);
+		cout << "Slept for 3 seconds"<< endl;
 		while(sub->takeNextData((void*)&tp_in))
 		{
 			tp_in.print();
