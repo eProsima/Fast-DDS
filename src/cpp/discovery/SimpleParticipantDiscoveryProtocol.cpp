@@ -485,6 +485,7 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 			ParameterPropertyList_t* p = (ParameterPropertyList_t*)(*it);
 			std::stringstream ss;
 			std::pair<uint16_t,EntityId_t> pair;
+			Pdata->m_staticedpEntityId.clear();
 			for(std::vector<std::pair<std::string,std::string>>::iterator it = p->properties.begin();
 					it != p->properties.end();++it)
 			{
@@ -506,6 +507,7 @@ bool SimpleParticipantDiscoveryProtocol::processParameterList(ParameterList_t& p
 					pair.second.value[1] = (octet)b;
 					pair.second.value[2] = (octet)c;
 					pair.second.value[3] = (octet)d;
+					Pdata->m_staticedpEntityId.push_back(pair);
 				}
 			}
 			break;
