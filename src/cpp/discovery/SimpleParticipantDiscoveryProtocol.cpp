@@ -140,7 +140,6 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	m_resendData->restart_timer();
 
 
-
 	return true;
 }
 
