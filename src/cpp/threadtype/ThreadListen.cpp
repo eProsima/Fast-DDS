@@ -28,9 +28,9 @@ namespace eprosima {
 namespace rtps {
 
 ThreadListen::ThreadListen() :
-										m_participant_ptr(NULL),mp_thread(NULL),
-										m_listen_socket(m_io_service),
-										m_first(true)
+												m_participant_ptr(NULL),mp_thread(NULL),
+												m_listen_socket(m_io_service),
+												m_first(true)
 {
 	m_MessageReceiver.mp_threadListen = this;
 	m_isMulticast = false;
@@ -68,18 +68,23 @@ bool ThreadListen::init_thread(){
 	{
 		m_first = true;
 		m_listen_socket.open(boost::asio::ip::udp::v4());
-		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
+		boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList.begin()->to_IP4_string());
 		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
+		if(m_isMulticast)
+		{
+			m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+			m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( false ) );
+			listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
+		}
+
 		try{
-			if(m_isMulticast)
-			{
-				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-			}
+
 			m_listen_socket.bind(listen_endpoint);
 			if(m_isMulticast)
 			{
-				boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList.begin()->to_IP4_string());
+
 				m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
+
 			}
 		}
 		catch (boost::system::system_error const& e)
@@ -132,6 +137,7 @@ void ThreadListen::newCDRMessage(const boost::system::error_code& err, std::size
 
 		}
 		//CDRMessage_t msg;
+		pInfo(BLUE<< "Socket async receive put again to listen "<< endl);
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
@@ -148,6 +154,7 @@ void ThreadListen::newCDRMessage(const boost::system::error_code& err, std::size
 	else
 	{
 		//CDRMessage_t msg;
+		pInfo(BLUE<< "Socket async receive put again to listen "<< endl);
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),

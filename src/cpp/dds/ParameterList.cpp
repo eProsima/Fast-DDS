@@ -217,32 +217,43 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterPropertyList_t* p = new ParameterPropertyList_t(pid,plength);
 				uint32_t num_properties;
 				valid&=CDRMessage::readUInt32(msg,&num_properties);
-				uint16_t msg_pos_first = msg->pos;
+								//uint16_t msg_pos_first = msg->pos;
 				std::string str;
 				std::pair<std::string,std::string> pair;
-				while(msg->pos < msg_pos_first + plength)
+				uint32_t rest=0;
+				for(uint32_t n_prop =0;n_prop<num_properties;++n_prop)
 				{
+
+					//STRING 1
 					uint32_t str_size = 1;
 					valid&=CDRMessage::readUInt32(msg,&str_size);
-					str.resize(str_size);
-					octet* oc1=new octet[str_size];
+
+					str = std::string();str.resize(str_size);
+					octet oc1[str_size];
 					valid &= CDRMessage::readData(msg,oc1,str_size);
 					for(uint32_t i =0;i<str_size;i++)
 						str.at(i) = oc1[i];
 					pair.first = str;
+					rest = (str_size-4*floor(str_size/4));
+					rest = rest==0 ? 0 : 4-rest;
+					msg->pos+=rest;
+					//STRING 2
 					valid&=CDRMessage::readUInt32(msg,&str_size);
-					str.resize(str_size);
-					octet* oc2=new octet[str_size];
+					str = std::string();str.resize(str_size);
+
+					octet oc2[str_size];
 					valid &= CDRMessage::readData(msg,oc2,str_size);
 					for(uint32_t i =0;i<str_size;i++)
 						str.at(i) = oc2[i];
 					pair.second = str;
+					rest = (str_size-4*floor(str_size/4));
+										rest = rest==0 ? 0 : 4-rest;
+										msg->pos+=rest;
 					p->properties.push_back(pair);
-					delete(oc1);
-					delete(oc2);
 				}
 				if(valid)
 				{
+
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;

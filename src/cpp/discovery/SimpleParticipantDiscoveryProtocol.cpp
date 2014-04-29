@@ -99,8 +99,8 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	Wparam.pushMode = true;
 	Wparam.historySize = 1;
 	//Locators where it is going to listen
-	Wparam.multicastLocatorList = m_DPD.m_proxy.m_metatrafficMulticastLocatorList;
-	Wparam.unicastLocatorList = m_DPD.m_proxy.m_metatrafficUnicastLocatorList;
+//	Wparam.multicastLocatorList = m_DPD.m_proxy.m_metatrafficMulticastLocatorList;
+//	Wparam.unicastLocatorList = m_DPD.m_proxy.m_metatrafficUnicastLocatorList;
 	Wparam.topicName = "DCPSParticipant";
 	Wparam.topicDataType = "DiscoveredParticipantData";
 	Wparam.topicKind = WITH_KEY;
@@ -225,6 +225,7 @@ bool SimpleParticipantDiscoveryProtocol::updateParamList()
 
 bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 {
+	pInfo("SPDP sending DPD msg"<<endl);
 	boost::lock_guard<SimpleParticipantDiscoveryProtocol> guard(*this);
 	CacheChange_t* change=NULL;
 	if(m_DPDAsParamList.allQos.m_hasChanged || m_hasChanged_DPD)
@@ -294,6 +295,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 	CacheChange_t* change = NULL;
 	if(m_SPDPbPReader->m_reader_cache.get_last_added_cache(&change))
 	{
+
 		ParameterList_t param;
 		CDRMessage_t msg;
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
@@ -302,9 +304,12 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 		//cout << "msg length: " << msg.length << endl;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
 		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
+
 		DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
+
 		if(processParameterList(param,pdata))
 		{
+
 			pDebugInfo("ParameterList correctly processed"<<endl);
 			for(uint8_t i = 0;i<12;++i)
 				change->instanceHandle.value[i] = pdata->m_proxy.m_guidPrefix.value[i];
@@ -327,6 +332,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 				m_SPDPbPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
 				return;
 			}
+
 			bool found = false;
 			for(std::vector<DiscoveredParticipantData*>::iterator it = m_matched_participants.begin();
 					it!=m_matched_participants.end();++it)
@@ -339,6 +345,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 					break;
 				}
 			}
+
 			if(!found)
 			{
 				m_matched_participants.push_back(pdata);
