@@ -301,7 +301,6 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 
 		if(processParameterList(param,pdata))
 		{
-
 			pDebugInfo("ParameterList correctly processed"<<endl);
 			for(uint8_t i = 0;i<12;++i)
 				change->instanceHandle.value[i] = pdata->m_proxy.m_guidPrefix.value[i];
