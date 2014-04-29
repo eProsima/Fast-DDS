@@ -341,6 +341,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 					*(*it) = *pdata;
 					found = true;
 					delete(pdata);
+					pdata = *it;
 					break;
 				}
 			}

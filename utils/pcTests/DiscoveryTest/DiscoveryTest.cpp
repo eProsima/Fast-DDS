@@ -221,6 +221,9 @@ int main(int argc, char** argv){
 
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 
+		sleep(4);
+
+
 		break;
 	}
 	}

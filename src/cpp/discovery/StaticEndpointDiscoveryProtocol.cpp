@@ -232,6 +232,7 @@ bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 
 bool StaticEndpointDiscoveryProtocol::localEndpointMatching(Endpoint* endpoint, char type)
 {
+
 	for(std::vector<DiscoveredParticipantData*>::iterator it = mp_Participant->m_SPDP.m_matched_participants.begin();
 			it!=mp_Participant->m_SPDP.m_matched_participants.end();++it)
 	{
@@ -255,6 +256,7 @@ bool StaticEndpointDiscoveryProtocol::localEndpointMatching(Endpoint* endpoint,D
 
 bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,DiscoveredParticipantData* dpd)
 {
+	pInfo(MAGENTA "Matching local  WRITER"<<endl);
 	std::string topic_name = writer->getTopicName();
 	std::string remote_part_name = dpd->m_proxy.m_participantName;
 
@@ -325,6 +327,7 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 
 bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader,DiscoveredParticipantData* dpd)
 {
+	pInfo(MAGENTA "Matching local  READER"<<endl);
 	std::string topic_name = reader->getTopicName();
 	std::string remote_part_name = dpd->m_proxy.m_participantName;
 
