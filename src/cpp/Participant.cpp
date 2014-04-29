@@ -427,6 +427,11 @@ bool Participant::removeEndpoint(Endpoint* p_endpoint){
 	return true;
 }
 
+void Participant::announceParticipantState()
+{
+	this->m_SPDP.sendDPDMsg();
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

@@ -156,6 +156,7 @@ int main(int argc, char** argv){
 	cout << "param name: " << PParam.name << endl;
 	PParam.defaultSendPort = 10042;
 	PParam.m_useStaticEndpointDiscovery = true;
+	PParam.resendSPDPDataPeriod_sec = 30;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	WriterParams_t Wparam;
 	Wparam.stateKind = STATEFUL;

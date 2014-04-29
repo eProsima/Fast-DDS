@@ -178,6 +178,9 @@ public:
 
 	bool m_useStaticEDP;
 
+	//! Announce ParticipantState
+	void announceParticipantState();
+
 };
 
 } /* namespace rtps */

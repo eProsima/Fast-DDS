@@ -17,9 +17,7 @@
 			<stateKind>STATEFUL</stateKind>
 			<reliabilityKind>RELIABLE</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
-			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
-			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
+			<unicastLocator address="192.168.1.16" port="10046"></unicastLocator>	
 		</endpoint>
 		
 		<endpoint>
@@ -29,9 +27,7 @@
 			<stateKind>STATEFUL</stateKind>
 			<reliabilityKind>RELIABLE</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
-			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
-			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
+			
 		</endpoint>
 		
 	</participant>
