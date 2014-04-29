@@ -256,27 +256,33 @@ bool StaticEndpointDiscoveryProtocol::localEndpointMatching(Endpoint* endpoint,D
 
 bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,DiscoveredParticipantData* dpd)
 {
-	pInfo(MAGENTA "Matching local  WRITER"<<endl);
+	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	std::string topic_name = writer->getTopicName();
 	std::string remote_part_name = dpd->m_proxy.m_participantName;
-
+	cout << "Topic name: " << topic_name << endl;
+	cout << "Remote part name: " << remote_part_name<<endl;
 	//Look in the participants defined by the StaticEndpointDiscovery.
 	for(std::vector<ParticipantStaticInfo_t>::iterator remotepit = m_StaticParticipantInfo.begin();
 			remotepit != m_StaticParticipantInfo.end();++remotepit)
 	{
-		if(remote_part_name == remotepit->m_name) // Found a match, begin pairing
+		cout << "Participant: "<< remotepit->m_name << endl;
+		if(remote_part_name == remotepit->m_name) // Found a match for the participant, begin pairing
 		{
+			cout << "Matched participant "<<endl;
 			for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
 					eit!=remotepit->m_endpoints.end();++eit)
 			{
+				cout << "endpoint with id: " << eit->m_id << " of type: " << eit->m_kind << endl;
 				if(eit->m_kind == READER)
 				{
+					cout << "reader, trying to find realID" << endl;
 					//look for real entityId in dpd
 					bool found = false;
 					EntityId_t readerId;
 					for(std::vector<std::pair<uint16_t,EntityId_t>>::iterator entityit = dpd->m_staticedpEntityId.begin();
 							entityit != dpd->m_staticedpEntityId.end();++entityit )
 					{
+						cout << "ID of received: "<< entityit->first<<endl;
 						if(eit->m_id == entityit->first)
 						{
 							found = true;
@@ -294,6 +300,7 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 							for(std::vector<Locator_t>::iterator lit = eit->m_unicastLocatorList.begin();
 									lit != eit->m_unicastLocatorList.end();++lit)
 							{
+								cout << "added unicast RL to my STATELESSWRITER"<<endl;
 								RL.locator = *lit;
 								p_SLW->reader_locator_add(RL);
 							}
@@ -319,8 +326,8 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 
 				}
 			}
+			break;
 		}
-		break;
 	}
 	return true;
 }
