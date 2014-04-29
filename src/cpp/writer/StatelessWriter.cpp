@@ -62,6 +62,8 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 		a_locator.unsent_changes.push_back((*it));
 	}
 	reader_locator.push_back(a_locator);
+	if(!a_locator.unsent_changes.empty())
+		this->unsent_changes_not_empty();
 	return true;
 }
 
