@@ -182,6 +182,28 @@ int main(int argc, char** argv){
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
 		Rparam.userDefinedId = 2;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+
+		p->announceParticipantState();
+		sleep(4);
+		TestType tp1,tp_in;
+		COPYSTR(tp1.name,"Obje1");
+		tp1.value = 0;
+		tp1.price = 1.3;
+		int n;
+		cout << "Enter number to start: ";
+		cin >> n;
+		for(uint i = 0;i<10;i++)
+		{
+			tp1.value++;
+			tp1.price *= (i+1);
+
+			pub->write((void*)&tp1);
+			sub->blockUntilNewMessage();
+			sub->readNextData((void*)&tp_in);
+			if(tp_in.value == tp1.value &&
+					tp_in.price ==tp1.price)
+				cout << "Message RECEIVED = AS SEND: "<< i << endl;
+		}
 		break;
 	}
 	case 2:
@@ -221,16 +243,23 @@ int main(int argc, char** argv){
 
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 
-		sleep(4);
+		p->announceParticipantState();
 
+		sleep(4);
+		TestType tp_in;
+		for(uint i = 0;i<10;i++)
+		{
+			sub->blockUntilNewMessage();
+			sub->readNextData((void*)&tp_in);
+
+			pub->write((void*)&tp_in);
+		}
 
 		break;
 	}
 	}
 
 
-	int a;
-	cin >> a;
 
 
 	return 0;

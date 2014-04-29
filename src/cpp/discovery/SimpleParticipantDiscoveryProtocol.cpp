@@ -99,8 +99,6 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	Wparam.pushMode = true;
 	Wparam.historySize = 1;
 	//Locators where it is going to listen
-//	Wparam.multicastLocatorList = m_DPD.m_proxy.m_metatrafficMulticastLocatorList;
-//	Wparam.unicastLocatorList = m_DPD.m_proxy.m_metatrafficUnicastLocatorList;
 	Wparam.topicName = "DCPSParticipant";
 	Wparam.topicDataType = "DiscoveredParticipantData";
 	Wparam.topicKind = WITH_KEY;
@@ -112,11 +110,6 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	multiReaderLoc.expectsInlineQos = false;
 	multiReaderLoc.locator = multiLocator;
 	m_SPDPbPWriter->reader_locator_add(multiReaderLoc);
-
-	//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-	//	 boost::asio::ip::address address = boost::asio::ip::address::from_string("239.255.0.1");
-	//	m_SPDPbPWriter->mp_send_thr->m_send_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
-
 
 	//SPDP BUILTIN PARTICIPANT READER
 	ReaderParams_t Rparam;
