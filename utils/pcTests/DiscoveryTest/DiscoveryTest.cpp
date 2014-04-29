@@ -50,9 +50,9 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
 #if defined(_WIN32)
-	#define COPYSTR strcpy_s
+#define COPYSTR strcpy_s
 #else
-	#define COPYSTR strcpy
+#define COPYSTR strcpy
 #endif
 
 typedef struct TestType{
@@ -74,7 +74,7 @@ typedef struct TestType{
 		cout << endl;
 	}
 }TestType;
-	
+
 class TestTypeDataType:public DDSTopicDataType
 {
 public:
@@ -137,9 +137,9 @@ int main(int argc, char** argv){
 	{
 		RTPSLog::Info << "Parsing arguments: " << argv[1] << endl;
 		RTPSLog::printInfo();
-		if(strcmp(argv[1],"publisher")==0)
+		if(strcmp(argv[1],"1")==0)
 			type = 1;
-		if(strcmp(argv[1],"subscriber")==0)
+		if(strcmp(argv[1],"2")==0)
 			type = 2;
 	}
 	else
@@ -147,104 +147,88 @@ int main(int argc, char** argv){
 
 
 	TestTypeDataType TestTypeData;
-		DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
-	//***********  PARTICIPANT  ******************//
-	ParticipantParams_t PParam;
-	PParam.name = "participant1";
-	cout << "param domain id: " << PParam.domainId << endl;
-	cout << "param name: " << PParam.name << endl;
-	PParam.defaultSendPort = 10042;
-	PParam.m_useStaticEndpointDiscovery = true;
-	PParam.resendSPDPDataPeriod_sec = 30;
-	Participant* p = DomainParticipant::createParticipant(PParam);
-	WriterParams_t Wparam;
-	Wparam.stateKind = STATEFUL;
-	Wparam.topicKind = WITH_KEY;
-	Wparam.topicDataType = std::string("TestType");
-	Wparam.topicName = std::string("Test_topic");
-	Wparam.historySize = 14;
-	Wparam.reliablility.heartbeatPeriod.seconds = 2;
-	Wparam.reliablility.nackResponseDelay.seconds = 5;
-	Wparam.reliablility.kind = RELIABLE;
-	Wparam.userDefinedId = 2;
-	Locator_t loc;
-	loc.kind = 1;
-	loc.port = 10046;
-	Wparam.unicastLocatorList.push_back(loc);
-	Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-	ReaderParams_t Rparam;
-	Rparam.historySize = 50;
-	Rparam.topicDataType = std::string("TestType");
-	Rparam.topicName = std::string("Test_topic");
-	Rparam.topicKind = NO_KEY;
-	loc.kind = 1;
-	loc.port = 10469;
-	Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
-	Rparam.userDefinedId = 3;
-	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+	switch(type)
+	{
+	case 1:
+	{
+		//***********  PARTICIPANT  ******************//
+		ParticipantParams_t PParam;
+		PParam.name = "participant1";
+		PParam.defaultSendPort = 10042;
+		PParam.m_useStaticEndpointDiscovery = true;
+		PParam.resendSPDPDataPeriod_sec = 30;
+		Participant* p = DomainParticipant::createParticipant(PParam);
+		WriterParams_t Wparam;
+		Wparam.stateKind = STATELESS;
+		Wparam.topicKind = WITH_KEY;
+		Wparam.topicDataType = std::string("TestType");
+		Wparam.topicName = std::string("Test_topic");
+		Wparam.historySize = 14;
+		Wparam.reliablility.heartbeatPeriod.seconds = 2;
+		Wparam.reliablility.nackResponseDelay.seconds = 5;
+		Wparam.reliablility.kind = BEST_EFFORT;
+		Wparam.userDefinedId = 1;
+		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+		ReaderParams_t Rparam;
+		Rparam.historySize = 50;
+		Rparam.topicDataType = std::string("TestType");
+		Rparam.topicName = std::string("Test_topic");
+		Rparam.topicKind = NO_KEY;
+		Locator_t loc;
+		loc.kind = 1;
+		loc.port = 10046;
+		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+		Rparam.userDefinedId = 2;
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		break;
+	}
+	case 2:
+	{
+		//***********  PARTICIPANT  ******************//
+		ParticipantParams_t PParam;
+		PParam.name = "participant2";
+		PParam.defaultSendPort = 10042;
+		PParam.m_useStaticEndpointDiscovery = true;
+		PParam.resendSPDPDataPeriod_sec = 30;
+		Participant* p = DomainParticipant::createParticipant(PParam);
+		ReaderParams_t Rparam;
+		Rparam.userDefinedId = 17;
+		Rparam.historySize = 50;
+		Rparam.topicDataType = std::string("TestType");
+		Rparam.topicName = std::string("Test_topic");
+		Rparam.topicKind = WITH_KEY;
+		Rparam.stateKind == STATELESS;
+		Locator_t loc;
+		loc.kind = 1;
+		loc.port = 10046;
+		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
+
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+
+		WriterParams_t Wparam;
+		Wparam.userDefinedId = 18;
+		Wparam.stateKind = STATELESS;
+		Wparam.topicKind = NO_KEY;
+		Wparam.reliablility.kind = BEST_EFFORT;
+		Wparam.topicDataType = std::string("TestType");
+		Wparam.topicName = std::string("Test_topic");
+		Wparam.historySize = 14;
+		Wparam.reliablility.heartbeatPeriod.seconds = 2;
+		Wparam.reliablility.nackResponseDelay.seconds = 5;
+
+
+		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+
+		break;
+	}
+	}
+
+
 	int a;
 	cin >> a;
-//
-////	std::vector<Locator_t> loc;
-////	DomainParticipant::getIPAddress(&loc);
-////	for(std::vector<Locator_t>::iterator it=loc.begin();it!=loc.end();++it)
-////	{
-////		cout << (int)it->address[12] << endl;
-////	}
-//	//Registrar tipo de dato.
-//	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,&LatencyGetKey,sizeof(LatencyType));
-//	//************* PUBLISHER  **********************//
-//	if(type == 1)
-//	{
-//		WriterParams_t Wparam;
-//		Wparam.pushMode = true;
-//		Wparam.stateKind = STATEFUL;
-//		Wparam.topicKind = WITH_KEY;
-//		Wparam.topicDataType = std::string("LatencyType");
-//		Wparam.topicName = std::string("This is a test topic");
-//		Wparam.historySize = 10;
-//		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-//		Wparam.reliablility.nackResponseDelay.seconds = 5;
-//		Wparam.reliablility.kind = RELIABLE;
-//		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-//		if(pub == NULL)
-//			return 0;
-//		//Reader Proxy
-//		Locator_t loc;
-//		loc.kind = 1;
-//		loc.port = 10043;
-//		loc.set_IP4_address(192,168,1,18);
-//		GUID_t readerGUID;
-//		readerGUID.entityId = ENTITYID_UNKNOWN;
-//		pub->addReaderProxy(loc,readerGUID,true);
-//
-//		for(uint8_t i = 0;i<10;i++)
-//		{
-//			if(i == 2 || i==4||i==5)
-//				p->loose_next_change();
-//			pub->write((void*)&Latency);
-//			cout << "Going to sleep "<< (int)i <<endl;
-//			sleep(1);
-//			cout << "Wakes "<<endl;
-//		}
-//	}
-//	else if (type ==2) //**********  SUBSCRIBER  **************//
-//	{
-//		ReaderParams_t Rparam;
-//		Rparam.historySize = 15;
-//		Rparam.stateKind = STATEFUL;
-//		Rparam.topicDataType = std::string("LatencyType");
-//		Rparam.topicName = std::string("This is a test topic");
-//		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-//		while(1)
-//		{
-//			cout << "Waiting for new message "<<endl;
-//			sub->blockUntilNewMessage();
-//			sub->readLastAdded((void*)&Latency);
-//		}
-//
-//	}
+
 
 	return 0;
 

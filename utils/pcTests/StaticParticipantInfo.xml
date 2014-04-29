@@ -9,25 +9,24 @@
 <staticdiscovery>
 	<participant>
 		<name>participant1</name>
+		<endpoint>
+			<id>1</id>
+			<type>WRITER</type>
+			<topicName>Test_topic</topicName>
+			<topicKind>WITH_KEY</topicKind>
+			<stateKind>STATELESS</stateKind>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+     	</endpoint>
 		
 		<endpoint>
 			<id>1</id>
 			<type>READER</type>
-			<topicName>topic1</topicName>
-			<stateKind>STATEFUL</stateKind>
-			<reliabilityKind>RELIABLE</reliabilityKind>
+			<topicName>Test_topic</topicName>
+			<stateKind>STATELESS</stateKind>
+			<topicKind>NO_KEY</topicKind>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
 			<unicastLocator address="192.168.1.16" port="10046"></unicastLocator>	
-		</endpoint>
-		
-		<endpoint>
-			<id>2</id>
-			<type>WRITER</type>
-			<topicName>topic2</topicName>
-			<stateKind>STATEFUL</stateKind>
-			<reliabilityKind>RELIABLE</reliabilityKind>
-			<expectsInlineQos>true</expectsInlineQos>
-			
 		</endpoint>
 		
 	</participant>
@@ -36,27 +35,24 @@
 		<name>participant2</name>
 		
 		<endpoint>
-			<id>1</id>
+			<id>17</id>
 			<type>READER</type>
-			<topicName>topic1</topicName>
-			<stateKind>STATEFUL</stateKind>
-			<reliabilityKind>RELIABLE</reliabilityKind>
+			<topicName>Test_topic</topicName>
+			<stateKind>STATELESS</stateKind>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<topicKind>WITH_KEY</topicKind>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
-			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
-			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
+			<unicastLocator address="192.168.1.23" port="10046"></unicastLocator>	
 		</endpoint>
 		
 		<endpoint>
-			<id>2</id>
+			<id>18</id>
 			<type>WRITER</type>
 			<topicName>topic2</topicName>
-			<stateKind>STATEFUL</stateKind>
-			<reliabilityKind>RELIABLE</reliabilityKind>
+			<stateKind>STATELESS</stateKind>
+			<topicKind>NO_KEY</topicKind>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.23" port="2000"></unicastLocator>	
-			<unicastLocator address="192.168.1.26" port="2000"></unicastLocator>
-			<multicastLocator address="235.55.0.1" port="2000"></multicastLocator>
 		</endpoint>
 		
 	</participant>

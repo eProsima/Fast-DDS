@@ -36,6 +36,7 @@ LocatorList_t m_multicastLocatorList;
 	ReliabilityKind_t m_reliability;
 	HistoryKind_t m_kind;
 	std::string m_topicName;
+	TopicKind_t m_topicKind;
 	int16_t m_id;
 }EndpointStaticInfo_t;
 

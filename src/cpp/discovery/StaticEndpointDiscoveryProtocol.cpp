@@ -112,6 +112,19 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 						{
 							endpointInfo.m_topicName = (std::string)xml_endpoint_child.second.data();
 						}
+						else if(xml_endpoint_child.first == "topicKind")
+						{
+							std::string auxString = (std::string)xml_endpoint_child.second.data();
+							if(auxString == "NO_KEY")
+								endpointInfo.m_topicKind = NO_KEY;
+							else if (auxString == "WITH_KEY")
+								endpointInfo.m_topicKind = WITH_KEY;
+							else
+							{
+								pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
+								break;
+							}
+						}
 						else if(xml_endpoint_child.first == "stateKind")
 						{
 							std::string auxString = (std::string)xml_endpoint_child.second.data();
