@@ -19,7 +19,7 @@
      	</endpoint>
 		
 		<endpoint>
-			<id>1</id>
+			<id>2</id>
 			<type>READER</type>
 			<topicName>Test_topic</topicName>
 			<stateKind>STATELESS</stateKind>

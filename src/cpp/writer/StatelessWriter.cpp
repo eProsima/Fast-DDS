@@ -51,9 +51,14 @@ StatelessWriter::~StatelessWriter()
 
 bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 
+	pDebugInfo("Adding new Reader Locator to StatelessWriter"<<endl);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
+
 		if(rit->locator == a_locator.locator)
+		{
+			pWarning("Reader Locator already in list"<<endl);
 			return false;
+		}
 	}
 	a_locator.requested_changes.clear();
 	a_locator.unsent_changes.clear();
@@ -139,26 +144,28 @@ void StatelessWriter::unsent_changes_not_empty()
 
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 	{
-		if(m_pushMode)
+		if(!rit->unsent_changes.empty())
 		{
-			//	std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-					&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
-			rit->unsent_changes.clear();
+			if(m_pushMode)
+			{
+				//	std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
+						&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+				rit->unsent_changes.clear();
+			}
+			else
+			{
+				SequenceNumber_t first,last;
+				m_writer_cache.get_seq_num_min(&first,NULL);
+				m_writer_cache.get_seq_num_max(&last,NULL);
+				m_heartbeatCount++;
+				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+				rit->unsent_changes.clear();
+			}
 		}
-		else
-		{
-			SequenceNumber_t first,last;
-			m_writer_cache.get_seq_num_min(&first,NULL);
-			m_writer_cache.get_seq_num_max(&last,NULL);
-			m_heartbeatCount++;
-			CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-			RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-					ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-			mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-			rit->unsent_changes.clear();
-		}
-
 	}
 	pDebugInfo ( "Finish sending unsent changes" << endl);
 }
