@@ -188,6 +188,7 @@ bool Participant::initWriter(RTPSWriter*W)
 bool Participant::createStatelessReader(StatelessReader** SR_out,
 		const ReaderParams_t& RParam,uint32_t payload_size)
 {
+	pInfo("Creating StatelessReader"<<endl);
 	if(this->m_useStaticEDP && RParam.userDefinedId == 0)
 	{
 		pError("Static EDP requires user defined Id"<<endl);

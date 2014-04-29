@@ -167,7 +167,6 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 	Subscriber* Sub = NULL;
 	if(RParam.stateKind == STATELESS)
 	{
-		pDebugInfo("Stateless"<<endl);
 		StatelessReader* SR;
 		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize))
 		{
