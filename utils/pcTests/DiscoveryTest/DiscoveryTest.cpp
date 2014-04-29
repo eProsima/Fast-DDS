@@ -259,7 +259,7 @@ int main(int argc, char** argv){
 	}
 	}
 
-
+	DomainParticipant::stopAll();
 
 
 	return 0;

@@ -263,60 +263,6 @@ int main(int argc, char** argv){
 		DomainParticipant::stopAll();
 
 
-//
-//
-//	//************* PUBLISHER  **********************//
-//	if(type == 1)
-//	{
-//		WriterParams_t Wparam;
-//		Wparam.pushMode = true;
-//		Wparam.stateKind = STATEFUL;
-//		Wparam.topicKind = WITH_KEY;
-//		Wparam.topicDataType = std::string("LatencyType");
-//		Wparam.topicName = std::string("This is a test topic");
-//		Wparam.historySize = 10;
-//		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-//		Wparam.reliablility.nackResponseDelay.seconds = 5;
-//		Wparam.reliablility.kind = RELIABLE;
-//		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-//		if(pub == NULL)
-//			return 0;
-//		//Reader Proxy
-//		Locator_t loc;
-//		loc.kind = 1;
-//		loc.port = 10043;
-//		loc.set_IP4_address(192,168,1,18);
-//		GUID_t readerGUID;
-//		readerGUID.entityId = ENTITYID_UNKNOWN;
-//		pub->addReaderProxy(loc,readerGUID,true);
-//
-//		for(uint8_t i = 0;i<10;i++)
-//		{
-//			if(i == 2 || i==4||i==5)
-//				p->loose_next_change();
-//			pub->write((void*)&Latency);
-//			cout << "Going to sleep "<< (int)i <<endl;
-//			sleep(1);
-//			cout << "Wakes "<<endl;
-//		}
-//	}
-//	else if (type ==2) //**********  SUBSCRIBER  **************//
-//	{
-//		ReaderParams_t Rparam;
-//		Rparam.historySize = 15;
-//		Rparam.stateKind = STATEFUL;
-//		Rparam.topicDataType = std::string("LatencyType");
-//		Rparam.topicName = std::string("This is a test topic");
-//		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-//		while(1)
-//		{
-//			cout << "Waiting for new message "<<endl;
-//			sub->blockUntilNewMessage();
-//			sub->readLastAdded((void*)&Latency);
-//		}
-//
-//	}
-
 	return 0;
 
 }
