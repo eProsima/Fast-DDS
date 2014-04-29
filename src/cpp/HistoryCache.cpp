@@ -159,7 +159,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	if(m_changes.size()==m_history_max_size)
 		isHistoryFull = true;
 	m_isMaxMinUpdated = false;
-	pDebugInfo("Cache added to History with seqNum: " << a_change->sequenceNumber.to64long() << " from entityId: "<<
+	pDebugInfo("Cache added to History (kind:"<<m_historyKind<<") with seqNum: " << a_change->sequenceNumber.to64long() << " from entityId: "<<
 			   (int)a_change->writerGUID.entityId.value[0] << "."
 			<< (int)a_change->writerGUID.entityId.value[1] << "."
 			<< (int)a_change->writerGUID.entityId.value[2] << "."

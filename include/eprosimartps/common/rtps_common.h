@@ -221,8 +221,8 @@ typedef enum StateKind_t{
 
 //!Enum HistoryKind_t, indicates whether the HistoryCache belongs to a reader or a writer
 typedef enum HistoryKind_t{
-	READER,
-	WRITER
+	READER = 0,
+	WRITER = 1
 }HistoryKind_t;
 
 
