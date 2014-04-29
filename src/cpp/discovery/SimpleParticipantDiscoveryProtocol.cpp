@@ -389,12 +389,14 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 			for(std::vector<RTPSReader*>::iterator it = mp_Participant->m_readerList.begin();
 					it!=mp_Participant->m_readerList.end();++it)
 			{
-				mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'R');
+				if((*it)->m_userDefinedId > 0)
+					mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'R');
 			}
 			for(std::vector<RTPSWriter*>::iterator it = mp_Participant->m_writerList.begin();
 					it!=mp_Participant->m_writerList.end();++it)
 			{
-				mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'W');
+				if((*it)->m_userDefinedId > 0)
+					mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'W');
 			}
 		}
 	}
