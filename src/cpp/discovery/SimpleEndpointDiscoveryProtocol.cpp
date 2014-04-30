@@ -7,25 +7,25 @@
  *************************************************************************/
 
 /**
- * @file DiscoveredWriterData.cpp
+ * @file SimpleEndpointDiscoveryProtocol.cpp
  *
- *  Created on: Apr 8, 2014
+ *  Created on: Apr 30, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
+#include "SimpleEndpointDiscoveryProtocol.h"
 
 namespace eprosima {
 namespace rtps {
 
-DiscoveredWriterData::DiscoveredWriterData() {
+SimpleEndpointDiscoveryProtocol::SimpleEndpointDiscoveryProtocol() {
 	// TODO Auto-generated constructor stub
 
 }
 
-DiscoveredWriterData::~DiscoveredWriterData() {
+SimpleEndpointDiscoveryProtocol::~SimpleEndpointDiscoveryProtocol() {
 	// TODO Auto-generated destructor stub
 }
 
