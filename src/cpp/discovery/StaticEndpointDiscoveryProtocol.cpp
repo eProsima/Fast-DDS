@@ -34,7 +34,9 @@ namespace rtps {
 StaticEndpointDiscoveryProtocol::StaticEndpointDiscoveryProtocol(Participant* p_par):
 														mp_Participant(p_par)
 {
-
+	ParticipantStaticInfo_t pinfo;
+	pinfo.m_name = p_par->m_participantName;
+	this->m_StaticParticipantInfo.push_back(pinfo);
 }
 
 StaticEndpointDiscoveryProtocol::~StaticEndpointDiscoveryProtocol() {
@@ -45,6 +47,8 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
 {
 	return loadStaticEndpointFile(this->m_staticEndpointFilename);
 }
+
+
 
 bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& filename)
 {
@@ -232,7 +236,8 @@ bool StaticEndpointDiscoveryProtocol::printLoadedXMLInfo()
 
 bool StaticEndpointDiscoveryProtocol::localEndpointMatching(Endpoint* endpoint, char type)
 {
-
+	//First we match agains our own participant:
+	localEndpointMatching(endpoint,&mp_Participant->m_SPDP.m_DPD,type);
 	for(std::vector<DiscoveredParticipantData*>::iterator it = mp_Participant->m_SPDP.m_matched_participants.begin();
 			it!=mp_Participant->m_SPDP.m_matched_participants.end();++it)
 	{

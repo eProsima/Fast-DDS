@@ -164,7 +164,7 @@ int main(int argc, char** argv){
 		Wparam.stateKind = STATELESS;
 		Wparam.topicKind = WITH_KEY;
 		Wparam.topicDataType = std::string("TestType");
-		Wparam.topicName = std::string("Test_topic");
+		Wparam.topicName = std::string("Test_topic1");
 		Wparam.historySize = 14;
 		Wparam.reliablility.heartbeatPeriod.seconds = 2;
 		Wparam.reliablility.nackResponseDelay.seconds = 5;
@@ -174,7 +174,7 @@ int main(int argc, char** argv){
 		ReaderParams_t Rparam;
 		Rparam.historySize = 50;
 		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_topic");
+		Rparam.topicName = std::string("Test_topic2");
 		Rparam.topicKind = NO_KEY;
 		Locator_t loc;
 		loc.kind = 1;
@@ -219,7 +219,7 @@ int main(int argc, char** argv){
 		Rparam.userDefinedId = 17;
 		Rparam.historySize = 50;
 		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_topic");
+		Rparam.topicName = std::string("Test_topic1");
 		Rparam.topicKind = WITH_KEY;
 		Rparam.stateKind == STATELESS;
 		Locator_t loc;
@@ -235,7 +235,7 @@ int main(int argc, char** argv){
 		Wparam.topicKind = NO_KEY;
 		Wparam.reliablility.kind = BEST_EFFORT;
 		Wparam.topicDataType = std::string("TestType");
-		Wparam.topicName = std::string("Test_topic");
+		Wparam.topicName = std::string("Test_topic2");
 		Wparam.historySize = 14;
 		Wparam.reliablility.heartbeatPeriod.seconds = 2;
 		Wparam.reliablility.nackResponseDelay.seconds = 5;

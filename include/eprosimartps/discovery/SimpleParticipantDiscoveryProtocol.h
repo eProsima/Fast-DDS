@@ -68,6 +68,8 @@ public:
 		m_hasChanged_DPD = hasChangedDpd;
 	}
 
+	bool updateLocalParticipantEntityInfo();
+
 private:
 	Participant* mp_Participant;
 	StatelessWriter* m_SPDPbPWriter;
