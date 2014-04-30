@@ -18,19 +18,13 @@
 #ifndef DDS_QOS_POLICIES_H_
 #define DDS_QOS_POLICIES_H_
 
+#include "eprosimartps/qos/ParameterTypes.h"
+
 using namespace eprosima::rtps;
 
 namespace eprosima{
 
 namespace dds{
-
-
-
-class Qos
-{
-	ParameterId_t pid;
-
-};
 
 
 typedef enum DurabilityQosPolicyKind_t: octet{
@@ -40,16 +34,19 @@ typedef enum DurabilityQosPolicyKind_t: octet{
 			PERSISTENT_DURABILITY_QOS = 0x08
 };
 
-typedef struct DurabilityQosPolicy
+
+class DurabilityQosPolicy : public Parameter_t
 {
+	DurabilityQosPolicy():kind(VOLATILE_DURABILITY_QOS){};
 	DurabilityQosPolicyKind_t kind;
 };
 
-typedef struct DeadlineQosPolicy {
+
+class DeadlineQosPolicy : public Parameter_t {
 	Duration_t period;
 };
 
-typedef struct LatencyBudgetQosPolicy {
+class LatencyBudgetQosPolicy : public Parameter_t {
 	Duration_t duration;
 };
 
@@ -59,7 +56,7 @@ typedef enum LivelinessQosPolicyKind:octet {
 			MANUAL_BY_TOPIC_LIVELINESS_QOS=0x04
 };
 
-typedef struct LivelinessQosPolicy {
+class LivelinessQosPolicy : public Parameter_t {
 	LivelinessQosPolicyKind kind;
 	Duration_t lease_duration;
 };
@@ -73,7 +70,7 @@ typedef enum OwnershipQosPolicyKind:octet {
 	SHARED_OWNERSHIP_QOS=0x01,
 			EXCLUSIVE_OWNERSHIP_QOS=0x02
 };
-typedef struct OwnershipQosPolicy {
+class OwnershipQosPolicy : public Parameter_t {
 	OwnershipQosPolicyKind kind;
 };
 
@@ -82,21 +79,21 @@ typedef enum DestinationOrderQosPolicyKind :octet{
 	BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS
 };
 
-struct ReliabilityQosPolicy
+struct ReliabilityQosPolicy : public Parameter_t
 {
 	ReliabilityQosPolicyKind kind;
 	Duration_t max_blocking_time;
 };
 
-typedef struct DestinationOrderQosPolicy {
+class DestinationOrderQosPolicy : public Parameter_t {
 	DestinationOrderQosPolicyKind kind;
 };
 
-typedef struct UserDataQosPolicy{
+class UserDataQosPolicy : public Parameter_t{
 	std::string data;
 };
 
-typedef struct TimeBasedFilterQosPolicy {
+class TimeBasedFilterQosPolicy : public Parameter_t {
 	Duration_t minimum_separation;
 };
 
@@ -106,23 +103,23 @@ typedef enum PresentationQosPolicyAccessScopeKind:octet
 	TOPIC_PRESENTATION_QOS=0x02,
 	GROUP_PRESENTATION_QOS=0x04
 };
-typedef struct PresentationQosPolicy
+class PresentationQosPolicy : public Parameter_t
 {
 	PresentationQosPolicyAccessScopeKind access_scope;
 	bool coherent_access;
 	bool ordered_access;
 };
 
-typedef struct PartitionQosPolicy
+class PartitionQosPolicy : public Parameter_t
 {
 	std::vector<std::string> name;
 };
 
-typedef struct TopicDataQosPolicy
+class TopicDataQosPolicy : public Parameter_t
 {
 	std::vector<std::string> value;
 };
-typedef struct GroupDataQosPolicy
+class GroupDataQosPolicy : public Parameter_t
 {
 	std::vector<std::string> value;
 };
@@ -132,12 +129,12 @@ typedef enum HistoryQosPolicyKind:octet {
 	KEEP_ALL_HISTORY_QOS=0x02
 };
 
-typedef struct HistoryQosPolicy {
+class HistoryQosPolicy : public Parameter_t {
 HistoryQosPolicyKind kind;
 long depth;
 };
 
-typedef struct DurabilityServiceQosPolicy {
+class DurabilityServiceQosPolicy : public Parameter_t {
 	Duration_t service_cleanup_delay;
 	HistoryQosPolicyKind history_kind;
 	uint32_t history_depth;
@@ -146,22 +143,22 @@ typedef struct DurabilityServiceQosPolicy {
 	uint32_t max_samples_per_instance;
 };
 
-typedef struct LifespanQosPolicy {
+class LifespanQosPolicy : public Parameter_t {
 	Duration_t duration;
 };
 
 
-typedef struct OwnershipStrengthQosPolicy {
+class OwnershipStrengthQosPolicy : public Parameter_t {
 	uint32_t value;
 };
 
-typedef struct ResourceLimitsQosPolicy {
+class ResourceLimitsQosPolicy : public Parameter_t {
 	uint32_t max_samples;
 	uint32_t max_instances;
 	uint32_t max_samples_per_instance;
 };
 
-typedef struct TransportPriorityQosPolicy {
+class TransportPriorityQosPolicy : public Parameter_t {
 	uint32_t value;
 };
 
