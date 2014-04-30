@@ -25,6 +25,26 @@ class DiscoveredTopicData {
 public:
 	DiscoveredTopicData();
 	virtual ~DiscoveredTopicData();
+	InstanceHandle_t m_key;
+	std::string m_typeName;
+	std::string m_topicName;
+
+	DurabilityQosPolicy m_durability;
+	DeadlineQosPolicy m_deadline;
+	LatencyBudgetQosPolicy m_latencyBudget;
+	LivelinessQosPolicy m_liveliness;
+	ReliabilityQosPolicy m_reliability;
+	TransportPriorityQosPolicy m_transportPriority;
+	LifespanQosPolicy m_lifespan;
+	DestinationOrderQosPolicy m_destinationOrder;
+	PresentationQosPolicy m_presentation;
+	HistoryQosPolicy m_history;
+	ResourceLimitsQosPolicy m_resourceLimits;
+	OwnershipQosPolicy m_ownership;
+	TopicDataQosPolicy m_topicData;
+
+
+
 };
 
 } /* namespace rtps */

@@ -19,7 +19,7 @@
 #define STATICENDPOINTDISCOVERYPROTOCOL_H_
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/discovery/DiscoveredParticipantData.h"
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 namespace eprosima {
 namespace rtps {
 

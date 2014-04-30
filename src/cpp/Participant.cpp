@@ -430,7 +430,6 @@ bool Participant::removeEndpoint(Endpoint* p_endpoint){
 					(*thit)->m_assoc_readers.erase(rit);
 					if((*thit)->m_assoc_readers.empty() && (*thit)->m_assoc_writers.empty())
 						m_threadListenList.erase(thit);
-
 				}
 			}
 		}

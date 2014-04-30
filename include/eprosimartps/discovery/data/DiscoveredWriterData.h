@@ -25,6 +25,31 @@ class DiscoveredWriterData {
 public:
 	DiscoveredWriterData();
 	virtual ~DiscoveredWriterData();
+	WriterProxy_t m_writerProxy;
+	InstanceHandle_t m_key;
+	InstanceHandle_t m_participantKey;
+	std::string m_typeName;
+	std::string m_topicName;
+
+	DurabilityQosPolicy m_durability;
+	DurabilityServiceQosPolicy m_durabilityService;
+	DeadlineQosPolicy m_deadline;
+	LatencyBudgetQosPolicy m_latencyBudget;
+	LivelinessQosPolicy m_liveliness;
+	ReliabilityQosPolicy m_reliability;
+	LifespanQosPolicy m_lifespan;
+	UserDataQosPolicy m_userData;
+	TimeBasedFilterQosPolicy m_timeBasedFilter;
+	OwnershipQosPolicy m_ownership;
+	OwnershipStrengthQosPolicy m_ownershipStrength;
+	DestinationOrderQosPolicy m_destinationOrder;
+	PresentationQosPolicy m_presentation;
+	PartitionQosPolicy m_partition;
+	TopicDataQosPolicy m_topicData;
+	GroupDataQosPolicy m_groupData;
+
+
+
 };
 
 } /* namespace rtps */

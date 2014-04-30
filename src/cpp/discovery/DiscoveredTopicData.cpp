@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "DiscoveredTopicData.h"
+#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 
 namespace eprosima {
 namespace rtps {

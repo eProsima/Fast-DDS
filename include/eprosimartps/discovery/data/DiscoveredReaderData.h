@@ -25,6 +25,27 @@ class DiscoveredReaderData {
 public:
 	DiscoveredReaderData();
 	virtual ~DiscoveredReaderData();
+	ReaderProxy_t m_readerProxy;
+	InstanceHandle_t m_key;
+	InstanceHandle_t m_participantKey;
+	std::string m_typeName;
+	std::string m_topicName;
+
+	DurabilityQosPolicy m_durability;
+	DeadlineQosPolicy m_deadline;
+	LatencyBudgetQosPolicy m_latencyBudget;
+	LivelinessQosPolicy m_liveliness;
+	ReliabilityQosPolicy m_reliability;
+	OwnershipQosPolicy m_ownership;
+	DestinationOrderQosPolicy m_destinationOrder;
+	UserDataQosPolicy m_userData;
+	TimeBasedFilterQosPolicy m_timeBasedFilter;
+	PresentationQosPolicy m_presentation;
+	PartitionQosPolicy m_partition;
+	TopicDataQosPolicy m_topicData;
+	GroupDataQosPolicy m_groupData;
+	DurabilityServiceQosPolicy m_durabilityService;
+	LifespanQosPolicy m_lifespan;
 };
 
 } /* namespace rtps */
