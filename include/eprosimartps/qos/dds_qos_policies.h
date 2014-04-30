@@ -18,9 +18,20 @@
 #ifndef DDS_QOS_POLICIES_H_
 #define DDS_QOS_POLICIES_H_
 
+using namespace eprosima::rtps;
+
 namespace eprosima{
 
-namespace rtps{
+namespace dds{
+
+
+
+class Qos
+{
+	ParameterId_t pid;
+
+};
+
 
 typedef enum DurabilityQosPolicyKind_t: octet{
 	VOLATILE_DURABILITY_QOS = 0x01,
