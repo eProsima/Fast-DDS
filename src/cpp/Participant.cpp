@@ -69,7 +69,10 @@ Participant::Participant(const ParticipantParams_t& PParam):
 	m_guid.guidPrefix.value[9] = ((octet*)&ID)[1];
 	m_guid.guidPrefix.value[10] = ((octet*)&ID)[2];
 	m_guid.guidPrefix.value[11] = ((octet*)&ID)[3];
+
+
 	m_guid.entityId = ENTITYID_PARTICIPANT;
+
 	std::stringstream ss;
 	for(int i =0;i<12;i++)
 		ss << (int)m_guid.guidPrefix.value[i] << ".";

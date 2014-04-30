@@ -52,6 +52,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #include "ertps/test_CacheChangePool.cpp"
 #include "ertps/test_HistoryCache.cpp"
 #include "ertps/test_Participant.cpp"
+#include "ertps/dds/test_DomainParticipant.cpp"
 
 
 
