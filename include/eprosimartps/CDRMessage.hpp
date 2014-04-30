@@ -406,8 +406,8 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	}
 
 	addUInt32(msg,numBits);
-	uint8_t n_longs = (numBits+31)/32;
-	int32_t bitmap[n_longs];
+	const uint8_t n_longs = (numBits+31)/32;
+	int32_t* bitmap = new int32_t[n_longs];
 	for(uint32_t i= 0;i<n_longs;i++)
 	{
 		bitmap[i] = 0;
@@ -416,13 +416,14 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	for(std::vector<SequenceNumber_t>::iterator it=sns->get_begin();
 			it!=sns->get_end();++it)
 	{
-		deltaN = it->to64long() - sns->base.to64long();
+		deltaN = (uint32_t)(it->to64long() - sns->base.to64long());
 		bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
 	}
 	for(uint32_t i= 0;i<n_longs;i++)
 	{
 		addInt32(msg,bitmap[i]);
 	}
+	delete(bitmap);
 	return true;
 }
 
