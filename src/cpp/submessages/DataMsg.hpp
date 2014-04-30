@@ -66,7 +66,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		 submsgElem.msg_endian = BIGEND;
 	}
 	//Find out flags
-	bool dataFlag,keyFlag;
+	bool dataFlag,keyFlag,inlineQosFlag;
 	if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
 	{
 		dataFlag = true;
@@ -79,10 +79,15 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	}
 	 if(topicKind == NO_KEY)
 		 keyFlag = false;
+	 inlineQosFlag = false;
 	if(inlineQos != NULL) //expects inline qos
 	{
-		flags = flags | BIT(1);
-		keyFlag = false;
+		if(inlineQos->m_parameters.size()>0 || topicKind == WITH_KEY)
+		{
+			flags = flags | BIT(1);
+			inlineQosFlag = true;
+			keyFlag = false;
+		}
 	}
 	if(dataFlag)
 		flags = flags | BIT(2);
@@ -110,14 +115,17 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		//Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
 
 
-		if(inlineQos != NULL) //inlineQoS
+		if(inlineQosFlag) //inlineQoS
 		{
 			if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
 			{
 			//	cout << "Updating endian message" << endl;
 				ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
 			}
-			CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
+			if(topicKind == WITH_KEY)
+			{
+				CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
+			}
 			if(change->kind != ALIVE)
 				CDRMessage::addParameterStatus(&submsgElem,status);
 			//cout << "Adding message of length: " << inlineQos->inlineQosMsg.length <<" and endian: " << inlineQos->inlineQosMsg.msg_endian<< endl;
