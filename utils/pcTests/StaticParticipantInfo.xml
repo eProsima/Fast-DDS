@@ -12,7 +12,7 @@
 		<endpoint>
 			<id>1</id>
 			<type>WRITER</type>
-			<topicName>Test_topic</topicName>
+			<topicName>Test_topic1</topicName>
 			<topicKind>WITH_KEY</topicKind>
 			<stateKind>STATELESS</stateKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
@@ -21,7 +21,7 @@
 		<endpoint>
 			<id>2</id>
 			<type>READER</type>
-			<topicName>Test_topic</topicName>
+			<topicName>Test_topic2</topicName>
 			<stateKind>STATELESS</stateKind>
 			<topicKind>NO_KEY</topicKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
@@ -37,7 +37,7 @@
 		<endpoint>
 			<id>17</id>
 			<type>READER</type>
-			<topicName>Test_topic</topicName>
+			<topicName>Test_topic1</topicName>
 			<stateKind>STATELESS</stateKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<topicKind>WITH_KEY</topicKind>
@@ -48,7 +48,7 @@
 		<endpoint>
 			<id>18</id>
 			<type>WRITER</type>
-			<topicName>topic2</topicName>
+			<topicName>Test_topic2</topicName>
 			<stateKind>STATELESS</stateKind>
 			<topicKind>NO_KEY</topicKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>

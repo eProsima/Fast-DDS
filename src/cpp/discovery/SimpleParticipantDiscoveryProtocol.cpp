@@ -213,6 +213,38 @@ bool SimpleParticipantDiscoveryProtocol::updateParamList()
 
 }
 
+bool SimpleParticipantDiscoveryProtocol::updateLocalParticipantEntityInfo()
+{
+	this->m_DPD.m_staticedpEntityId.clear();
+	std::pair<uint16_t,EntityId_t> pair;
+	for(std::vector<RTPSWriter*>::iterator it = this->mp_Participant->m_writerList.begin();
+			it!=this->mp_Participant->m_writerList.end();++it)
+	{
+		if((*it)->m_userDefinedId <= 0)
+			continue;
+		pair.first = (*it)->m_userDefinedId;
+		pair.second = (*it)->m_guid.entityId;
+		this->m_DPD.m_staticedpEntityId.push_back(pair);
+	}
+	for(std::vector<RTPSReader*>::iterator it = this->mp_Participant->m_readerList.begin();
+			it!=this->mp_Participant->m_readerList.end();++it)
+	{
+		if((*it)->m_userDefinedId <= 0)
+			continue;
+		pair.first = (*it)->m_userDefinedId;
+				pair.second = (*it)->m_guid.entityId;
+				this->m_DPD.m_staticedpEntityId.push_back(pair);
+	}
+	return true;
+}
+
+
+
+
+
+
+
+
 bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 {
 	pInfo("SPDP sending DPD msg"<<endl);
