@@ -17,7 +17,7 @@
 
 #include "gtest/gtest.h"
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/Participant-test.h"
+#include "eprosimartps/Participant.h"
 #include "eprosimartps/dds/DomainParticipant.h"
 
 using namespace eprosima;
@@ -33,11 +33,13 @@ protected:
 	Participant* p;
 	void SetUp()
 	{
-		p = new Participant(param);
+		param.domainId = 80;
+		p = DomainParticipant::createParticipant(param);
 	}
 	void TearDown()
 	{
 		dds::DomainParticipant *dp = dds::DomainParticipant::getInstance();
+		dp->removeParticipant(p);
 		//	dp->removeParticipant();
 	}
 };
@@ -45,19 +47,11 @@ protected:
 }
 }
 
-TEST_F(ParticipantTest, Constructor)
-{
-	EXPECT_TRUE(p->m_guid.entityId == ENTITYID_PARTICIPANT);
-}
+//TEST_F(ParticipantTest, Constructor)
+//{
+//	EXPECT_TRUE(p->m_guid.entityId == ENTITYID_PARTICIPANT);
+//}
 
-TEST_F(ParticipantTest,WriterReaderCreation)
-{
-	ASSERT_TRUE(p!=NULL);
-	StatelessWriter* W;
-	WriterParams_t Wparam;
-	uint32_t payload_size = 20;
-	EXPECT_TRUE(p->createStatelessWriter(&W,Wparam,payload_size));
-	EXPECT_EQ(1,p->m_writerList.size());
-}
+
 
 

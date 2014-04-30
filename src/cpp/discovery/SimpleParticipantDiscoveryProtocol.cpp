@@ -45,8 +45,6 @@ SimpleParticipantDiscoveryProtocol::~SimpleParticipantDiscoveryProtocol()
 			it!=m_matched_participants.end();++it)
 		delete(*it);
 	delete(m_resendData);
-	delete(m_SPDPbPWriter);
-	delete(m_SPDPbPReader);
 }
 
 bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,

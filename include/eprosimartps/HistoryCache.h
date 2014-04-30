@@ -47,6 +47,7 @@ class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex>
 public:
 //	HistoryCache();
 	HistoryCache(uint16_t historymaxsize,uint32_t payload_size,HistoryKind_t kind,Endpoint* endp);
+
 	virtual ~HistoryCache();
 	/**
 	 * Get a pointer to a specific change based on its SequenceNumber_t.

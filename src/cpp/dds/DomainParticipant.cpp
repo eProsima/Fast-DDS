@@ -261,21 +261,26 @@ bool DomainParticipant::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
+		bool found = false;
 		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 		for(std::vector<Participant*>::iterator it=dp->m_participants.begin();
 				it!=dp->m_participants.end();++it)
 		{
 			if((*it)->m_guid == p->m_guid)
 			{
+				found = true;
 				dp->m_participants.erase(it);
 				break;
 			}
 		}
-		delete(p);
-		return true;
+		if(found)
+		{
+			delete(p);
+					return true;
+		}
+
 	}
-	else
-		return false;
+	return false;
 }
 
 bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)

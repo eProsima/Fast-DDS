@@ -77,6 +77,8 @@ const GuidPrefix_t c_GuidPrefix_Unknown;
 
 
 
+
+
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 typedef struct EntityId_t{
 	octet value[4];
@@ -99,17 +101,25 @@ typedef struct EntityId_t{
 	EntityId_t& operator=(uint32_t id){
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
-		reverse();
+		if(DEFAULT_ENDIAN == LITTLEEND)
+			reverse();
 		return *this;
 		//return id;
 	}
 	bool operator==(uint32_t id2)
-				{
+	{
+		if(DEFAULT_ENDIAN == LITTLEEND)
+			reverse();
 		uint32_t* aux1 = (uint32_t*)(value);
+		bool result = true;
 		if(*aux1 == id2)
-			return true;
-		return false;
-				}
+			result = true;
+		else
+			result = false;
+		if(DEFAULT_ENDIAN == LITTLEEND)
+			reverse();
+		return result;
+	}
 	bool operator==(EntityId_t& id2){
 		uint32_t* aux1 = (uint32_t*)(value);
 		uint32_t* aux2 = (uint32_t*)(id2.value);
