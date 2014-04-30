@@ -206,6 +206,8 @@ int main(int argc, char** argv){
 		cin >> n;
 		for(uint8_t i = 0;i<10;i++)
 		{
+			tp.value++;
+			tp.price *= (i+1);
 			if(i == 2 || i==4||i==5)
 				p->loose_next_change();
 			pub->write((void*)&tp);
