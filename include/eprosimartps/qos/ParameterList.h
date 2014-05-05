@@ -18,7 +18,7 @@
 #ifndef PARAMLISTT_H_
 #define PARAMLISTT_H_
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/ParameterTypes.h"
+#include "eprosimartps/qos/ParameterTypes.h"
 
 
 namespace eprosima {

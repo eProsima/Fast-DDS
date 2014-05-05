@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/dds/QosList.h"
+#include "eprosimartps/qos/QosList.h"
 
 namespace eprosima {
 namespace dds {
