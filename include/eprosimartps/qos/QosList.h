@@ -18,7 +18,7 @@
 #ifndef QOSLIST_H_
 #define QOSLIST_H_
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
 namespace dds {

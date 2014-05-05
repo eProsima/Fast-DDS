@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/dds/ParameterTypes.h"
+#include "eprosimartps/qos/ParameterTypes.h"
 
 #include "eprosimartps/CDRMessage.h"
 
