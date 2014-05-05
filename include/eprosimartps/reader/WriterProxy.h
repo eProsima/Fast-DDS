@@ -137,6 +137,10 @@ private:
 	 */
 	bool add_unknown_changes(SequenceNumber_t& seqNum);
 
+	SequenceNumber_t m_max_available_seqNum;
+	SequenceNumber_t m_min_available_seqNum;
+	bool m_hasMaxAvailableSeqNumChanged;
+	bool m_hasMinAvailableSeqNumChanged;
 
 };
 

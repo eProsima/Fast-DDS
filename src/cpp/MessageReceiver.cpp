@@ -407,7 +407,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WP->available_changes_max(&maxSeqNumAvailable);
 						if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
 						{
-							(*it)->mp_listener->newMessageCallback();
+							(*it)->mp_listener->onNewDataMessage();
 							(*it)->newMessageSemaphore->post();
 						}
 					}
@@ -415,7 +415,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				else
 				{
 					if((*it)->mp_listener!=NULL)
-						(*it)->mp_listener->newMessageCallback();
+						(*it)->mp_listener->onNewDataMessage();
 					///FIXME: put semaphore in listener class
 					(*it)->newMessageSemaphore->post();
 				}

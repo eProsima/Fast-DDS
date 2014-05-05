@@ -7,24 +7,39 @@
  *************************************************************************/
 
 /**
- * @file SPDPListener2.cpp
+ * @file SubscriberParams.h
  *
- *  Created on: Apr 21, 2014
+ *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/SPDPListener.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#ifndef SUBSCRIBERPARAMS_H_
+#define SUBSCRIBERPARAMS_H_
 
 namespace eprosima {
 namespace rtps {
 
-void SPDPListener::onNewDataMessage()
-	{
-		mp_SPDP->new_change_added();
-	}
+class SubscriberAttributes {
+public:
+	SubscriberAttributes()
+{
+		expectsInlineQos = false;
+		historyMaxSize = 50;
+		userDefinedId = -1;
+};
+	virtual ~SubscriberAttributes();
+	bool expectsInlineQos;
+	uint16_t historyMaxSize;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
+	SubscriberReliability reliability;
+	TopicAttributes topic;
+	int16_t userDefinedId;
+};
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+#endif /* SUBSCRIBERPARAMS_H_ */

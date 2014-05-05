@@ -135,7 +135,7 @@ inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
 {
 	bool valid = true;
 	valid &=CDRMessage::readInt32(msg,&ts->seconds);
-	valid &=CDRMessage::readUInt32(msg,&ts->fraction);
+	valid &=CDRMessage::readUInt32(msg,&ts->nanoseconds);
 	return valid;
 }
 

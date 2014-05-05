@@ -35,7 +35,7 @@ class StatelessWriter : public RTPSWriter
 public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
-	StatelessWriter(const WriterParams_t* wParam,uint32_t payload_size);
+	StatelessWriter(const PublisherAttributes* wParam,uint32_t payload_size);
 
 	Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;

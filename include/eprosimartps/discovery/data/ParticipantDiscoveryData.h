@@ -54,7 +54,7 @@ public:
 	ParticipantBuiltinTopicData();
 	virtual ~ParticipantBuiltinTopicData();
 	BuiltinTopicKey_t m_builtinTopicKey;
-	ParameterUserData_t m_userData;
+	UserDataQosPolicy m_userData;
 };
 
 

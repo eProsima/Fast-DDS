@@ -37,7 +37,7 @@ bool DeadlineQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addInt32(msg,period.seconds);
-	valid &= CDRMessage::addUInt32(msg,period.fraction);
+	valid &= CDRMessage::addUInt32(msg,period.nanoseconds);
 	return valid;
 }
 
@@ -46,7 +46,7 @@ bool LatencyBudgetQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 		valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 		valid &= CDRMessage::addInt32(msg,duration.seconds);
-		valid &= CDRMessage::addUInt32(msg,duration.fraction);
+		valid &= CDRMessage::addUInt32(msg,duration.nanoseconds);
 		return valid;
 }
 
@@ -55,7 +55,7 @@ bool LivelinessQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addOctet(msg,kind);msg->pos+=3;msg->length+=3;
 	valid &= CDRMessage::addInt32(msg,lease_duration.seconds);
-	valid &= CDRMessage::addUInt32(msg,lease_duration.fraction);
+	valid &= CDRMessage::addUInt32(msg,lease_duration.nanoseconds);
 	return valid;
 }
 
@@ -71,7 +71,7 @@ bool ReliabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addOctet(msg,kind);msg->pos+=3;msg->length+=3;
 	valid &= CDRMessage::addInt32(msg,max_blocking_time.seconds);
-	valid &= CDRMessage::addUInt32(msg,max_blocking_time.fraction);
+	valid &= CDRMessage::addUInt32(msg,max_blocking_time.nanoseconds);
 	return valid;
 }
 
@@ -86,7 +86,7 @@ bool TimeBasedFilterQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addInt32(msg,minimum_separation.seconds);
-	valid &= CDRMessage::addUInt32(msg,minimum_separation.fraction);
+	valid &= CDRMessage::addUInt32(msg,minimum_separation.nanoseconds);
 	return valid;
 }
 
@@ -141,7 +141,7 @@ bool DurabilityServiceQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addInt32(msg,service_cleanup_delay.seconds);
-	valid &= CDRMessage::addUInt32(msg,service_cleanup_delay.fraction);
+	valid &= CDRMessage::addUInt32(msg,service_cleanup_delay.nanoseconds);
 	valid &= CDRMessage::addOctet(msg,history_kind);msg->pos+=3;msg->length+=3;
 	valid &= CDRMessage::addUInt32(msg,history_depth);
 	valid &= CDRMessage::addUInt32(msg,max_samples);
@@ -154,7 +154,7 @@ bool LifespanQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addInt32(msg,duration.seconds);
-	valid &= CDRMessage::addUInt32(msg,duration.fraction);
+	valid &= CDRMessage::addUInt32(msg,duration.nanoseconds);
 	return valid;
 }
 

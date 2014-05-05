@@ -7,24 +7,28 @@
  *************************************************************************/
 
 /**
- * @file SPDPListener2.cpp
+ * @file SampleInfo.h
  *
- *  Created on: Apr 21, 2014
+ *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/SPDPListener.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#ifndef SAMPLEINFO_H_
+#define SAMPLEINFO_H_
 
 namespace eprosima {
-namespace rtps {
+namespace dds {
 
-void SPDPListener::onNewDataMessage()
-	{
-		mp_SPDP->new_change_added();
-	}
+class SampleInfo_t {
+public:
+	SampleInfo_t():sampleKind(ALIVE){};
+	virtual ~SampleInfo_t(){};
+	ChangeKind_t sampleKind;
+};
 
-} /* namespace rtps */
+} /* namespace dds */
 } /* namespace eprosima */
+
+#endif /* SAMPLEINFO_H_ */

@@ -7,34 +7,27 @@
  *************************************************************************/
 
 /**
- * @file RTPSListener.cpp
+ * @file Semaphore.cpp
  *
- *  Created on: Apr 21, 2014
+ *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/reader/RTPSListener.h"
-namespace eprosima{
-namespace rtps{
+#include "Semaphore.h"
 
-RTPSListener::RTPSListener()
-{
+namespace eprosima {
+namespace dds {
 
-}
-RTPSListener::~RTPSListener()
-{
+Semaphore::Semaphore() {
+	// TODO Auto-generated constructor stub
 
 }
 
-void RTPSListener::newMessageCallback()
-{
-
+Semaphore::~Semaphore() {
+	// TODO Auto-generated destructor stub
 }
 
-}
-}
-
-
-
+} /* namespace dds */
+} /* namespace eprosima */

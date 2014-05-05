@@ -32,7 +32,7 @@ namespace eprosima {
 namespace rtps {
 
 
-Participant::Participant(const ParticipantParams_t& PParam):
+Participant::Participant(const ParticipantAttributes& PParam):
 				m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 				m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 				m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
@@ -82,13 +82,15 @@ Participant::Participant(const ParticipantParams_t& PParam):
 
 	//	cout << "PParam name: "<< PParam.name << endl;
 	//	cout << "Participant name: " << m_participantName << endl;
-	m_useStaticEDP = PParam.m_useSimpleParticipantDiscovery;
-	if(PParam.m_useSimpleParticipantDiscovery)
+
+	m_discovery = PParam.discovery;
+
+	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
-		m_SPDP.m_useStaticEDP = PParam.m_useStaticEndpointDiscovery;
+		m_SPDP.m_useStaticEDP = m_discovery.use_STATIC_EndpointDiscoveryProtocol;
 		if(m_SPDP.m_useStaticEDP)
-			m_StaticEDP.m_staticEndpointFilename = PParam.m_staticEndpointXMLFilename;
-		m_SPDP.initSPDP(PParam.domainId,ID,PParam.resendSPDPDataPeriod_sec);
+			m_StaticEDP.m_staticEndpointFilename = m_discovery.m_staticEndpointXMLFilename;
+		m_SPDP.initSPDP(PParam.domainId,ID,m_discovery.resendSPDPDataPeriod_sec);
 
 	}
 }
@@ -113,15 +115,15 @@ Participant::~Participant()
 	delete(this->m_ThreadSemaphore);
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterParams_t& Wparam,uint32_t payload_size)
+bool Participant::createStatelessWriter(StatelessWriter** SW_out,const PublisherAttributes& param,uint32_t payload_size)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
-	if(this->m_useStaticEDP && Wparam.userDefinedId == 0)
+	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
 	{
 		pError("Static EDP requires user defined Id"<<endl);
 		return false;
 	}
-	StatelessWriter* SLWriter = new StatelessWriter(&Wparam,payload_size);
+	StatelessWriter* SLWriter = new StatelessWriter(&param,payload_size);
 	if(this->initWriter((RTPSWriter*)SLWriter))
 	{
 		*SW_out = SLWriter;
@@ -131,14 +133,14 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,const WriterPar
 		return false;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const WriterParams_t& Wparam,uint32_t payload_size)
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const PublisherAttributes& param,uint32_t payload_size)
 {
-	if(this->m_useStaticEDP && Wparam.userDefinedId == 0)
+	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
 	{
 		pError("Static EDP requires user defined Id"<<endl);
 		return false;
 	}
-	StatefulWriter* SFWriter = new StatefulWriter(&Wparam, payload_size);
+	StatefulWriter* SFWriter = new StatefulWriter(&param, payload_size);
 	if(this->initWriter((RTPSWriter*)SFWriter))
 	{
 		*SFW_out = SFWriter;
@@ -177,7 +179,7 @@ bool Participant::initWriter(RTPSWriter*W)
 		//Wait until the thread is correctly created
 		m_writerList.push_back(W);
 		this->m_SPDP.setHasChangedDpd(true);
-		if(this->m_useStaticEDP)
+		if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 		{
 			this->m_SPDP.updateLocalParticipantEntityInfo();
 			this->m_StaticEDP.localEndpointMatching((Endpoint*)W,'W');
@@ -193,15 +195,15 @@ bool Participant::initWriter(RTPSWriter*W)
 
 
 bool Participant::createStatelessReader(StatelessReader** SR_out,
-		const ReaderParams_t& RParam,uint32_t payload_size)
+		const SubscriberAttributes& param,uint32_t payload_size)
 {
 	pInfo("Creating StatelessReader"<<endl);
-	if(this->m_useStaticEDP && RParam.userDefinedId == 0)
+	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
 	{
 		pError("Static EDP requires user defined Id"<<endl);
 		return false;
 	}
-	StatelessReader* SReader = new StatelessReader(&RParam, payload_size);
+	StatelessReader* SReader = new StatelessReader(&param, payload_size);
 	if(initReader((RTPSReader*)SReader))
 	{
 		*SR_out = SReader;
@@ -212,15 +214,15 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 }
 
 bool Participant::createStatefulReader(StatefulReader** SR_out,
-		const ReaderParams_t& RParam,uint32_t payload_size)
+		const SubscriberAttributes& param,uint32_t payload_size)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
-	if(this->m_useStaticEDP && RParam.userDefinedId == 0)
+	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
 	{
 		pError("Static EDP requires user defined Id"<<endl);
 		return false;
 	}
-	StatefulReader* SReader = new StatefulReader(&RParam, payload_size);
+	StatefulReader* SReader = new StatefulReader(&param, payload_size);
 	if(initReader((RTPSReader*)SReader))
 	{
 		*SR_out = SReader;
@@ -261,7 +263,7 @@ bool Participant::initReader(RTPSReader* p_R)
 	{
 		m_readerList.push_back(p_R);
 		this->m_SPDP.setHasChangedDpd(true);
-		if(this->m_useStaticEDP)
+		if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 		{
 			this->m_SPDP.updateLocalParticipantEntityInfo();
 			this->m_StaticEDP.localEndpointMatching((Endpoint*)p_R,'R');

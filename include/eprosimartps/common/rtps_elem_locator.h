@@ -21,8 +21,6 @@
 namespace eprosima{
 namespace rtps{
 
-
-
 #define LOCATOR_INVALID(loc)  {loc.kind=LOCATOR_KIND_INVALID;loc.port= LOCATOR_PORT_INVALID;LOCATOR_ADDRESS_INVALID(loc.address);}
 #define LOCATOR_KIND_INVALID -1
 
@@ -33,9 +31,9 @@ namespace rtps{
 #define LOCATOR_KIND_UDPv6 2
 
 
-
-//!@brief Structure Locator_t, uniquely identifies a address+port combination.
-typedef struct Locator_t{
+//!@brief Class Locator_t, uniquely identifies a address+port combination.
+class Locator_t{
+public:
 	int32_t kind;
 	uint32_t port;
 	octet address[16];
@@ -107,10 +105,14 @@ typedef struct Locator_t{
 	}
 
 
-} Locator_t;
+};
 
 typedef std::vector<Locator_t>::iterator LocatorListIterator;
 
+
+/**
+ * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
+ */
 class LocatorList_t{
 public:
 	LocatorList_t(){};

@@ -28,9 +28,9 @@ ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
 				mp_SFW(SW),
 				m_param(*RPparam),
 				m_isRequestedChangesEmpty(true),
-				m_periodicHB(this,boost::posix_time::milliseconds(SW->reliability.heartbeatPeriod.to64time()*1000)),
-				m_nackResponse(this,boost::posix_time::milliseconds(SW->reliability.nackResponseDelay.to64time()*1000)),
-				m_nackSupression(this,boost::posix_time::milliseconds(SW->reliability.nackSupressionDuration.to64time()*1000)),
+				m_periodicHB(this,boost::posix_time::milliseconds(SW->m_reliability.heartbeatPeriod.to64time()*1000)),
+				m_nackResponse(this,boost::posix_time::milliseconds(SW->m_reliability.nackResponseDelay.to64time()*1000)),
+				m_nackSupression(this,boost::posix_time::milliseconds(SW->m_reliability.nackSupressionDuration.to64time()*1000)),
 				m_lastAcknackCount(0)
 {
 

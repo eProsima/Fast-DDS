@@ -37,7 +37,7 @@ public:
 	//StatefulWriter();
 	virtual ~StatefulWriter();
 
-	StatefulWriter(const WriterParams_t* param,uint32_t payload_size);
+	StatefulWriter(const PublisherAttributes* param,uint32_t payload_size);
 
 	/**
 	 * Add a matched reader to the writer.
@@ -91,7 +91,7 @@ public:
 //					const EntityId_t& readerId,std::vector<Locator_t>* unicast,
 //					std::vector<Locator_t>* multicast);
 
-	DDS_Reliability_t reliability;
+	PublisherReliability m_reliability;
 
 	virtual bool removeMinSeqCacheChange();
 		virtual bool removeAllCacheChange(int32_t* n_removed);

@@ -68,21 +68,21 @@ public:
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @return Pointer to the publisher. 
 	 */
-    static Publisher* createPublisher(Participant* p,const WriterParams_t& WParam);
+    static Publisher* createPublisher(Participant* p,const PublisherAttributes& WParam);
 	/**
 	 * @brief Create a Subscriber in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @return Pointer to the subscriber. 
 	 */
-    static Subscriber* createSubscriber(Participant* p,const ReaderParams_t& RParam);
+    static Subscriber* createSubscriber(Participant* p,const SubscriberAttributes& RParam);
 
     /**
      * @brief Create a Participant.
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
-    static Participant* createParticipant(const ParticipantParams_t& PParam);
+    static Participant* createParticipant(const ParticipantAttributes& PParam);
 
     /**
      * Remove a participant and delete all its associated Writers, Readers, threads, etc.

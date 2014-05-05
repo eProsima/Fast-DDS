@@ -133,7 +133,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 		if(!invalidateFlag)
 		{
 			CDRMessage::addInt32(msg,time.seconds);
-			CDRMessage::addUInt32(msg,time.fraction);
+			CDRMessage::addUInt32(msg,time.nanoseconds);
 		}
 	}
 	catch(int e)
@@ -148,36 +148,6 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalida
 {
 	Time_t time_now;
 	clock.setTimeNow(&time_now);
-//	std::chrono::seconds sec_since_epoch_1970;
-//
-//	time_t time_epoch_seconds,time1970_sec;
-//	tm time_epoch,time1970;
-//	time_epoch.tm_year = 0;
-//	time_epoch.tm_mon = 0;
-//	time_epoch.tm_mday = 1;
-//	time1970.tm_year = 70;
-//	time1970.tm_mon = 0;
-//	time1970.tm_mday = 1;
-//	time_epoch_seconds = mktime(&time_epoch);
-//	time1970_sec = mktime(&time1970);
-//	cout << "seconds epoch: "<< time_epoch_seconds << endl;
-//	cout << "seconds 1970: "<< time1970_sec << endl;
-//	timeval now;
-//	gettimeofday(&now,NULL);
-//	cout << "seconds now: "<< now.tv_sec << endl;
-//	Time_t time_now;
-//	time_now.seconds = (int32_t)now.tv_sec+2208988800+2*60*60;
-//	time_now.fraction = 0;//(uint32_t)now.tv_usec*pow(2.0,32)*pow(10.0,-6);
-
-
-//	boost::posix_time::ptime boost_time_now= microsec_clock::local_time();
-//	Time_t time_now;
-//	time_now.seconds = (int32_t)(boost_time_now-t_epoch).total_seconds();
-//	time_now.fraction = (uint32_t)((boost_time_now-t_epoch).fractional_seconds()*(int32_t)(pow(2.0,32)*pow(10.0,-boost::posix_time::time_duration::num_fractional_digits())));
-//	cout << t << endl;
-//	cout << (t-t_epoch) << endl;
-//	cout << time_now.seconds << endl;
-//	cout << time_now.fraction << endl;
 	return RTPSMessageCreator::addSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
 

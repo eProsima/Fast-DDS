@@ -124,7 +124,9 @@ const std::string& Publisher::getTopicDataType()
 	return mp_Writer->getTopicDataType();
 }
 
-
+void Publisher::assignListener(PublisherListener* listen) {
+	mp_Writer->mp_listener = listen;
+}
 
 } /* namespace dds */
 } /* namespace eprosima */

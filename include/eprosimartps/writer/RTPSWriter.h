@@ -166,6 +166,7 @@ public:
 
 
 	Publisher* m_Pub;
+	PublisherListener* mp_listener;
 	QosList_t m_qosList;
 
 
