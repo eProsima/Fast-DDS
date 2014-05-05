@@ -7,24 +7,31 @@
  *************************************************************************/
 
 /**
- * @file SPDPListener2.cpp
+ * @file PublisherListener.h
  *
- *  Created on: Apr 21, 2014
+ *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/SPDPListener.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#ifndef PUBLISHERLISTENER_H_
+#define PUBLISHERLISTENER_H_
 
 namespace eprosima {
 namespace rtps {
 
-void SPDPListener::onNewDataMessage()
-	{
-		mp_SPDP->new_change_added();
-	}
+class PublisherListener {
+public:
+	PublisherListener();
+	virtual ~PublisherListener();
+
+	virtual void onPublicationMatched();
+
+	virtual void onHistoryFull();
+};
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+#endif /* PUBLISHERLISTENER_H_ */

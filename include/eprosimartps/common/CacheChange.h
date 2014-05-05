@@ -30,14 +30,19 @@ typedef enum ChangeKind_t{
 	NOT_ALIVE_UNREGISTERED//!< NOT_ALIVE_UNREGISTERED
 }ChangeKind_t;
 
+/**
+ * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
+ */
 typedef enum ChangeForReaderStatus_t{
-	UNSENT,
-	UNACKNOWLEDGED,
-	REQUESTED,
-	ACKNOWLEDGED,
-	UNDERWAY
+	UNSENT,        //!< UNSENT
+	UNACKNOWLEDGED,//!< UNACKNOWLEDGED
+	REQUESTED,     //!< REQUESTED
+	ACKNOWLEDGED,  //!< ACKNOWLEDGED
+	UNDERWAY       //!< UNDERWAY
 }ChangeForReaderStatus_t;
-
+/**
+ * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
+ */
 typedef enum ChangeFromWriterStatus_t{
 	UNKNOWN,
 	MISSING,
@@ -46,8 +51,6 @@ typedef enum ChangeFromWriterStatus_t{
 	LOST
 }ChangeFromWriterStatus_t;
 
-
-//typedef void* InstanceHandle_t;
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
@@ -102,13 +105,18 @@ typedef struct CacheChange_t{
 	}
 }CacheChange_t;
 
+/**
+ * Struct ChangeForReader_t used to indicate the state of a specific change with respect to a specific reader, as well as its relevance.
+ */
 typedef struct ChangeForReader_t{
 	CacheChange_t* change;
 	ChangeForReaderStatus_t status;
 	bool is_relevant;
 }ChangeForReader_t;
 
-
+/**
+ * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
+ */
 typedef struct ChangeFromWriter_t{
 	CacheChange_t* change;
 	ChangeFromWriterStatus_t status;

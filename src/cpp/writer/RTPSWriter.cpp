@@ -31,7 +31,8 @@ RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
 		m_writer_cache(historysize,payload_size,WRITER,(Endpoint*)this),
 		m_pushMode(true),
 		m_heartbeatCount(0),
-		m_Pub(NULL)
+		m_Pub(NULL),
+		mp_listener(NULL)
 
 {
 	pDebugInfo("RTPSWriter created"<<endl)
@@ -110,8 +111,10 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 		return false;
 	}
 
-	//DO SOMETHING ONCE THE NEW HCANGE HAS BEEN ADDED.
+	//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
 	unsent_change_add(change);
+	if(m_writer_cache.isFull() && mp_listener !=NULL)
+		mp_listener->onHistoryFull();
 	return true;
 	}
 	else

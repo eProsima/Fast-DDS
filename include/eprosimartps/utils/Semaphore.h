@@ -7,35 +7,52 @@
  *************************************************************************/
 
 /**
- * @file DDSListener.h
+ * @file Semaphore.h
  *
- *  Created on: Apr 21, 2014
+ *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#ifndef RTPSLISTENER_H_
-#define RTPSLISTENER_H_
+#ifndef SEMAPHORE_H_
+#define SEMAPHORE_H_
+
+#include <boost/thread/condition.hpp>
+#include <boost/thread/mutex.hpp>
 
 namespace eprosima {
 namespace rtps {
 
-/**
- * Class RTPSListener, to be used as a base by the user to program the actions to be performed when a new message is received.
- * @ingroup READERMODULE
- */
-class RTPSListener {
+class Semaphore {
 public:
-	RTPSListener() ;
-	virtual ~RTPSListener();
-	/**
-	 * Virtual function to be implemented by the user containing the actions to be performed when a new Message is received.
-	 */
-	virtual void newMessageCallback();
+	Semaphore():m_count(0){};
+	virtual ~Semaphore(){};
+	void wait()
+	{
+		boost::mutex::scoped_lock lock(m_mutex);
+		if(m_count == 0)
+			m_condition.wait(lock);
+		--m_count;
+	}
+
+	void post()
+	{
+		boost::mutex::scoped_lock lock(m_mutex);
+		++m_count;
+		m_condition.notify_one();
+	}
+
+private:
+	uint32_t m_count;
+	boost::mutex m_mutex;
+	boost::condition_variable m_condition;
+
+
+
 };
 
 } /* namespace dds */
 } /* namespace eprosima */
 
-#endif /* DDSLISTENER_H_ */
+#endif /* SEMAPHORE_H_ */

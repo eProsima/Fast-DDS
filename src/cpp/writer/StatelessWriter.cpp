@@ -24,8 +24,8 @@ namespace rtps {
 
 
 
-StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_size):
-		RTPSWriter(param->historySize,payload_size)
+StatelessWriter::StatelessWriter(const PublisherAttributes* param,uint32_t payload_size):
+		RTPSWriter(param->historyMaxSize,payload_size)
 {
 	m_pushMode = param->pushMode;
 	//writer_cache.changes.reserve(param->historySize);
@@ -34,9 +34,9 @@ StatelessWriter::StatelessWriter(const WriterParams_t* param,uint32_t payload_si
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
-	topicKind = param->topicKind;
-	m_topicName = param->topicName;
-	m_topicDataType = param->topicDataType;
+	topicKind = param->topic.topicKind;
+	m_topicName = param->topic.topicName;
+	m_topicDataType = param->topic.topicDataType;
 	this->m_userDefinedId = param->userDefinedId;
 }
 

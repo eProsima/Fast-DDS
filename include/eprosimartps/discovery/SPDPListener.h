@@ -18,19 +18,19 @@
 #ifndef SPDPLISTENER2_H_
 #define SPDPLISTENER2_H_
 
-#include "eprosimartps/reader/RTPSListener.h"
+#include "eprosimartps/dds/SubscriberListener.h"
 
 namespace eprosima {
 namespace rtps {
 
 class SimpleParticipantDiscoveryProtocol;
 
-class SPDPListener: public RTPSListener {
+class SPDPListener: public SubscriberListener {
 public:
 	SPDPListener(SimpleParticipantDiscoveryProtocol* in_SPDP):mp_SPDP(in_SPDP){};
 	virtual ~SPDPListener(){};
 	SimpleParticipantDiscoveryProtocol* mp_SPDP;
-	void newMessageCallback();
+	void onNewDataMessage();
 };
 
 } /* namespace rtps */

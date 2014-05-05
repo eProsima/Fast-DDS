@@ -93,13 +93,13 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 
 
 	//SPDP BUILTIN PARTICIPANT WRITER
-	WriterParams_t Wparam;
+	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
-	Wparam.historySize = 1;
+	Wparam.historyMaxSize = 1;
 	//Locators where it is going to listen
-	Wparam.topicName = "DCPSParticipant";
-	Wparam.topicDataType = "DiscoveredParticipantData";
-	Wparam.topicKind = WITH_KEY;
+	Wparam.topic.topicName = "DCPSParticipant";
+	Wparam.topic.topicDataType = "DiscoveredParticipantData";
+	Wparam.topic.topicKind = WITH_KEY;
 	Wparam.userDefinedId = -1;
 	mp_Participant->createStatelessWriter(&m_SPDPbPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	//m_SPDPbPWriter = new StatelessWriter(Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
@@ -110,14 +110,14 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	m_SPDPbPWriter->reader_locator_add(multiReaderLoc);
 
 	//SPDP BUILTIN PARTICIPANT READER
-	ReaderParams_t Rparam;
-	Rparam.historySize = 100;
+	SubscriberAttributes Rparam;
+	Rparam.historyMaxSize = 100;
 	//Locators where it is going to listen
 	Rparam.multicastLocatorList = m_DPD.m_proxy.m_metatrafficMulticastLocatorList;
 	Rparam.unicastLocatorList = m_DPD.m_proxy.m_metatrafficUnicastLocatorList;
-	Rparam.topicKind = WITH_KEY;
-	Rparam.topicName = "DCPSParticipant";
-	Rparam.topicDataType = "DiscoveredParticipantData";
+	Rparam.topic.topicKind = WITH_KEY;
+	Rparam.topic.topicName = "DCPSParticipant";
+	Rparam.topic.topicDataType = "DiscoveredParticipantData";
 	Rparam.userDefinedId = -1;
 	mp_Participant->createStatelessReader(&m_SPDPbPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
 	m_SPDPbPReader->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;

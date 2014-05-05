@@ -36,12 +36,13 @@ class StatelessReader: public RTPSReader {
 public:
 	//StatelessReader();
 	virtual ~StatelessReader();
-	StatelessReader(const ReaderParams_t* param,uint32_t payload_size);
+	StatelessReader(const SubscriberAttributes* param,uint32_t payload_size);
 
 
 
-	 bool readNextCacheChange(void*data);
-	 bool takeNextCacheChange(void*data);
+	 bool readNextCacheChange(void*data,SampleInfo_t* info);
+	 bool takeNextCacheChange(void*data,SampleInfo_t* info);
+	 bool isUnreadCacheChange();
 
 
 //	 bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);

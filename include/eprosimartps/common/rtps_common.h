@@ -51,21 +51,9 @@ typedef struct CDRMessage_t{
 	}
 	~CDRMessage_t()
 	{
-//		cout << "CDRMessage destructor" << endl;
 		if(buffer != NULL)
 			free(buffer);
-//		cout << "CDRMessage destructor" << endl;
 	}
-//	CDRMessage_t(CDRMessage_t& msg)
-//	{
-//		pos = msg.pos;
-//		length = msg.length;
-//		max_size = msg.max_size;
-//		msg_endian = msg.msg_endian;
-//		if(buffer !=NULL)
-//			free(buffer);
-//		buffer=(octet*)malloc(msg.length);
-//	}
 	CDRMessage_t(uint16_t size)
 	{
 		pos = 0;
@@ -176,11 +164,7 @@ typedef struct InstanceHandle_t{
 typedef uint32_t BuiltinEndpointSet_t;
 
 
-//!@brief Enum TopicKind_t.
-typedef enum TopicKind_t{
-	NO_KEY=1,
-	WITH_KEY=2
-}TopicKind_t;
+
 
 
 typedef uint32_t Count_t;
@@ -188,28 +172,22 @@ typedef uint32_t Count_t;
 //!Structure Time_t, used to describe times.
 typedef struct Time_t{
 	int32_t seconds;
-	uint32_t fraction;
+	uint32_t nanoseconds;
 	int64_t to64time(){
-		return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
+		return (int64_t)seconds+((int64_t)(nanoseconds/pow(2.0,32)));
 	}
 	Time_t()
 	{
 		seconds = 0;
-		fraction = 0;
+		nanoseconds = 0;
 	}
 }Time_t;
 
-#define TIME_ZERO(t){t.seconds=0;t.fraction=0;}
-#define TIME_INVALID(t){t.seconds=-1;t.fraction=0xffffffff;}
-#define TIME_INFINITE(t){t.seconds=0x7fffffff;t.fraction=0xffffffff;}
+#define TIME_ZERO(t){t.seconds=0;t.nanoseconds=0;}
+#define TIME_INVALID(t){t.seconds=-1;t.nanoseconds=0xffffffff;}
+#define TIME_INFINITE(t){t.seconds=0x7fffffff;t.nanoseconds=0xffffffff;}
 
-/**
- * Enum ReliabilityKind_t, reliability kind for reader or writer.
- */
-typedef enum ReliabilityKind_t{
-	BEST_EFFORT,//!< BEST_EFFORT
-	RELIABLE    //!< RELIABLE
-}ReliabilityKind_t;
+
 
 /**
  * Enum StateKind_t, type of Writer or reader.
@@ -228,111 +206,40 @@ typedef enum HistoryKind_t{
 
 typedef Time_t Duration_t;
 
-
-struct DDS_Reliability_t{
-	ReliabilityKind_t kind;
-	Duration_t heartbeatPeriod;
-	Duration_t nackResponseDelay;
-	Duration_t nackSupressionDuration;
-	Duration_t resendDataPeriod;
-	Duration_t heartbeatResponseDelay;
-	Duration_t heartbeatSupressionDuration;
-	uint8_t hb_per_max_samples;
-	DDS_Reliability_t()
+//!@brief Structure ProtocolVersion_t, contains the protocol version.
+typedef struct ProtocolVersion_t{
+	octet m_major;
+	octet m_minor;
+	ProtocolVersion_t():
+		m_major(2),
+		m_minor(1)
 	{
-		TIME_ZERO(heartbeatPeriod);
-		heartbeatPeriod.seconds = 3;
-		TIME_ZERO(nackResponseDelay);
-		nackResponseDelay.fraction = 200*1000*1000;
-		TIME_ZERO(nackSupressionDuration);
-		TIME_ZERO(resendDataPeriod);
-		TIME_ZERO(heartbeatResponseDelay);
-		heartbeatResponseDelay.fraction = 500*1000*1000;
-		TIME_ZERO(heartbeatSupressionDuration);
-		hb_per_max_samples= 5;
-		kind = BEST_EFFORT;
+
+	};
+	ProtocolVersion_t(octet maj,octet min):
+		m_major(maj),
+		m_minor(min)
+	{
+
 	}
-};
+} ProtocolVersion_t;
+
+#define PROTOCOLVERSION_1_0(pv) {pv.m_major=1;pv.m_minor=0;}
+#define PROTOCOLVERSION_1_1(pv) {pv.m_major=1;pv.m_minor=1;}
+#define PROTOCOLVERSION_2_0(pv) {pv.m_major=2;pv.m_minor=0;}
+#define PROTOCOLVERSION_2_1(pv) {pv.m_major=2;pv.m_minor=1;}
+#define PROTOCOLVERSION PROTOCOLVERSION_2_1
 
 
-/**
- * Structure WriterParams_t, writer parameters passed on creation.
- */
-typedef struct WriterParams_t{
-	bool pushMode;
-	uint16_t historySize;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	DDS_Reliability_t reliablility;
-	TopicKind_t topicKind;
-	StateKind_t stateKind;
-	std::string topicName;
-	std::string topicDataType;
-	int16_t userDefinedId;
-	WriterParams_t(){
-		pushMode = true;
-		historySize = DEFAULT_HISTORY_SIZE;
-		unicastLocatorList.clear();
-		multicastLocatorList.clear();
-		topicKind = NO_KEY;
-		stateKind = STATELESS;
-		userDefinedId = 0;
-	}
-}WriterParams_t;
 
-typedef struct ReaderParams_t{
-	bool expectsInlineQos;
 
-	uint16_t historySize;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	DDS_Reliability_t reliablility;
-	TopicKind_t topicKind;
-	StateKind_t stateKind;
-	std::string topicName;
-	std::string topicDataType;
-	int16_t userDefinedId;
-	ReaderParams_t(){
-		expectsInlineQos = false;
-		historySize = DEFAULT_HISTORY_SIZE;
-		unicastLocatorList.clear();
-		multicastLocatorList.clear();
-		topicKind = NO_KEY;
-		stateKind = STATELESS;
-		userDefinedId = 0;
-	}
-}ReaderParams_t;
+#define VENDORID_UNKNOWN(vi) {vi[0]=0;vi[1]=0;}
+#define VENDORID_EPROSIMA(vi) {vi[0]=42;vi[1]=42;}
+//!@brief Structure VendorId_t.
+typedef octet VendorId_t[2];
 
-typedef struct ParticipantParams_t{
-	LocatorList_t defaultUnicastLocatorList;
-	LocatorList_t defaultMulticastLocatorList;
-	uint32_t defaultSendPort;
-	uint16_t resendSPDPDataPeriod_sec;
-	uint16_t domainId;
-	std::string name;
-	std::string m_staticEndpointXMLFilename;
-	bool m_useStaticEndpointDiscovery;
-	bool m_useSimpleParticipantDiscovery;
-	ParticipantParams_t(){
-		defaultSendPort = 7359;
-//		Locator_t defUni;
-//		defUni.kind = LOCATOR_KIND_UDPv4;
-//		LOCATOR_ADDRESS_INVALID(defUni.address);
-//		defUni.address[12] = 127;
-//		defUni.address[13] = 0;
-//		defUni.address[14] = 0;
-//		defUni.address[15] = 1;
-//		defUni.port = 10043;
-//		defaultUnicastLocatorList.push_back(defUni);
-		resendSPDPDataPeriod_sec = 2;
-		domainId = 80;
-		name = "defaultParticipant";
-		//cout << "pparam name: " << name << endl;
-		m_useStaticEndpointDiscovery = true;
-		m_useSimpleParticipantDiscovery = true;
-		m_staticEndpointXMLFilename = "/home/grcanosa/workspace/eRTPS/utils/pcTests/StaticParticipantInfo.xml";
-	}
-}ParticipantParams_t;
+
+#define PROTOCOL_RTPS "RTPS"
 
 
 

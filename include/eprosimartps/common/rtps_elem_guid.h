@@ -167,40 +167,7 @@ typedef struct GUID_t{
 
 
 
-//!@brief Structure ProtocolVersion_t, contains the protocol version.
-typedef struct ProtocolVersion_t{
-	octet m_major;
-	octet m_minor;
-	ProtocolVersion_t():
-		m_major(2),
-		m_minor(1)
-	{
 
-	};
-	ProtocolVersion_t(octet maj,octet min):
-		m_major(maj),
-		m_minor(min)
-	{
-
-	}
-} ProtocolVersion_t;
-
-#define PROTOCOLVERSION_1_0(pv) {pv.m_major=1;pv.m_minor=0;}
-#define PROTOCOLVERSION_1_1(pv) {pv.m_major=1;pv.m_minor=1;}
-#define PROTOCOLVERSION_2_0(pv) {pv.m_major=2;pv.m_minor=0;}
-#define PROTOCOLVERSION_2_1(pv) {pv.m_major=2;pv.m_minor=1;}
-#define PROTOCOLVERSION PROTOCOLVERSION_2_1
-
-
-
-
-#define VENDORID_UNKNOWN(vi) {vi[0]=0;vi[1]=0;}
-#define VENDORID_EPROSIMA(vi) {vi[0]=42;vi[1]=42;}
-//!@brief Structure VendorId_t.
-typedef octet VendorId_t[2];
-
-
-#define PROTOCOL_RTPS "RTPS"
 
 }
 }

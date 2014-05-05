@@ -146,13 +146,20 @@ using std::endl;
 using std::bitset;
 
 
-#include "common/colors.h"
+#include "eprosimartps/common/colors.h"
 
-#include "common/rtps_elem_guid.h"
-#include "common/rtps_elem_seqnum.h"
-#include "common/rtps_elem_locator.h"
-#include "common/rtps_common.h"
+#include "eprosimartps/common/rtps_elem_guid.h"
+#include "eprosimartps/common/rtps_elem_seqnum.h"
+#include "eprosimartps/common/rtps_elem_locator.h"
+#include "eprosimartps/common/rtps_common.h"
 #include "eprosimartps/common/rtps_parameter_types.h"
+
+#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+#include "eprosimartps/common/attributes/PublisherAttributes.h"
+#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+
 
 //#include "ParameterList.h"
 

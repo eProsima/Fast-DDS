@@ -76,7 +76,7 @@ class Participant{
 	friend class StaticEndpointDiscoveryProtocol;
 private:
 
-	RTPS_DllAPI Participant(const ParticipantParams_t&param);
+	RTPS_DllAPI Participant(const ParticipantAttributes &param);
 	virtual ~Participant();
 
 	/**
@@ -86,7 +86,7 @@ private:
 	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
-	bool createStatelessWriter(StatelessWriter** SWriter,const WriterParams_t& Wparam,uint32_t payload_size);
+	bool createStatelessWriter(StatelessWriter** SWriter,const PublisherAttributes& Wparam,uint32_t payload_size);
 	/**
 	 * Create a StatefulWriter from a parameter structure.
 	 * @param[out] SWriter Pointer to the stateful writer.
@@ -94,7 +94,7 @@ private:
 	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
-	bool createStatefulWriter(StatefulWriter** SWriter, const WriterParams_t& Wparam,uint32_t payload_size);
+	bool createStatefulWriter(StatefulWriter** SWriter, const PublisherAttributes& Wparam,uint32_t payload_size);
 
 	bool initWriter(RTPSWriter* W);
 
@@ -105,7 +105,7 @@ private:
 	 * @param[in] payload_size Size of the payload associated with this Reader.
 	 * @return True if correct.
 	 */
-	bool createStatelessReader(StatelessReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
+	bool createStatelessReader(StatelessReader** SReader,const SubscriberAttributes& RParam,uint32_t payload_size);
 	/**
 		 * Create a StatefulReader from a parameter structure and add it to the participant.
 		 * @param[out] SReader Pointer to the stateful reader.
@@ -113,7 +113,7 @@ private:
 		 * @param[in] payload_size Size of the payload associated with this Reader.
 		 * @return True if correct.
 		 */
-	bool createStatefulReader(StatefulReader** SReader,const ReaderParams_t& RParam,uint32_t payload_size);
+	bool createStatefulReader(StatefulReader** SReader,const SubscriberAttributes& RParam,uint32_t payload_size);
 	bool initReader(RTPSReader* R);
 
 
@@ -176,7 +176,7 @@ public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};
 
-	bool m_useStaticEDP;
+	DiscoveryAttributes m_discovery;
 
 	//! Announce ParticipantState
 	void announceParticipantState();

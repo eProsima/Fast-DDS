@@ -27,8 +27,8 @@ StatelessReader::~StatelessReader() {
 	pDebugInfo("StatelessReader destructor"<<endl;);
 }
 
-StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_size):
-		RTPSReader(param->historySize,payload_size)
+StatelessReader::StatelessReader(const SubscriberAttributes* param,uint32_t payload_size):
+		RTPSReader(param->historyMaxSize,payload_size)
 {
 	//reader_cache.changes.reserve(param.historySize);
 	m_stateType = STATELESS;
@@ -36,14 +36,14 @@ StatelessReader::StatelessReader(const ReaderParams_t* param,uint32_t payload_si
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
 	expectsInlineQos = param->expectsInlineQos;
-	topicKind = param->topicKind;
-	m_topicName = param->topicName;
+	topicKind = param->topic.topicKind;
+	m_topicName = param->topic.topicName;
 	this->m_userDefinedId = param->userDefinedId;
 }
 
 
 
-bool StatelessReader::takeNextCacheChange(void* data)
+bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	pDebugInfo("Taking Data from Reader"<<endl);
 	SequenceNumber_t seq;
@@ -53,21 +53,20 @@ bool StatelessReader::takeNextCacheChange(void* data)
 		CacheChange_t* change;
 		if(this->m_reader_cache.get_change(seq,gui,&change))
 		{
-			if(change->serializedPayload.data !=NULL)
+			if(change->kind == ALIVE)
 			{
-				if(this->mp_type->deserialize(&change->serializedPayload,data))
-				{
-					return this->m_reader_cache.remove_change(seq,gui);
-				}
+				this->mp_type->deserialize(&change->serializedPayload,data);
 			}
-
+			info->sampleKind = change->kind;
+			return this->m_reader_cache.remove_change(seq,gui);
 		}
+
 	}
 	return false;
 }
 
 
-bool StatelessReader::readNextCacheChange(void*data)
+bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
 	m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
@@ -83,15 +82,30 @@ bool StatelessReader::readNextCacheChange(void*data)
 	}
 	if(found)
 	{
-		if((*it)->serializedPayload.data !=NULL)
+		if((*it)->kind == ALIVE)
 		{
-			if(this->mp_type->deserialize(&(*it)->serializedPayload,data))
-			{
-				(*it)->isRead = true;
-				return true;
-			}
+			this->mp_type->deserialize(&(*it)->serializedPayload,data);
+			info->sampleKind = ALIVE;
 		}
+		info->sampleKind = (*it)->kind;
 		(*it)->isRead = true;
+		return true;
+	}
+	return false;
+}
+
+bool StatelessReader::isUnreadCacheChange()
+{
+	m_reader_cache.sortCacheChangesBySeqNum();
+	bool found = false;
+	std::vector<CacheChange_t*>::iterator it;
+	for(it = m_reader_cache.m_changes.begin();
+			it!=m_reader_cache.m_changes.end();++it)
+	{
+		if(!(*it)->isRead)
+		{
+			return true;
+		}
 	}
 	return false;
 }

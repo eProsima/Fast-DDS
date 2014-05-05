@@ -27,7 +27,7 @@
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -154,28 +154,28 @@ int main(int argc, char** argv){
 	case 1:
 	{
 		//***********  PARTICIPANT  ******************//
-		ParticipantParams_t PParam;
+		ParticipantAttributes PParam;
 		PParam.name = "participant1";
 		PParam.defaultSendPort = 10042;
-		PParam.m_useStaticEndpointDiscovery = true;
-		PParam.resendSPDPDataPeriod_sec = 30;
+		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
+		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+		PParam.discovery.resendSPDPDataPeriod_sec = 30;
 		Participant* p = DomainParticipant::createParticipant(PParam);
-		WriterParams_t Wparam;
-		Wparam.stateKind = STATELESS;
-		Wparam.topicKind = WITH_KEY;
-		Wparam.topicDataType = std::string("TestType");
-		Wparam.topicName = std::string("Test_topic1");
-		Wparam.historySize = 14;
-		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-		Wparam.reliablility.nackResponseDelay.seconds = 5;
-		Wparam.reliablility.kind = BEST_EFFORT;
+		PublisherAttributes Wparam;
+		Wparam.topic.topicKind = WITH_KEY;
+		Wparam.topic.topicDataType = std::string("TestType");
+		Wparam.topic.topicName = std::string("Test_topic1");
+		Wparam.historyMaxSize = 14;
+		Wparam.reliability.heartbeatPeriod.seconds = 2;
+		Wparam.reliability.nackResponseDelay.seconds = 5;
+		Wparam.reliability.reliabilityKind = BEST_EFFORT;
 		Wparam.userDefinedId = 1;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-		ReaderParams_t Rparam;
-		Rparam.historySize = 50;
-		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_topic2");
-		Rparam.topicKind = NO_KEY;
+		SubscriberAttributes Rparam;
+		Rparam.historyMaxSize = 50;
+		Rparam.topic.topicDataType = std::string("TestType");
+		Rparam.topic.topicName = std::string("Test_topic2");
+		Rparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
@@ -209,19 +209,20 @@ int main(int argc, char** argv){
 	case 2:
 	{
 		//***********  PARTICIPANT  ******************//
-		ParticipantParams_t PParam;
+		ParticipantAttributes PParam;
 		PParam.name = "participant2";
 		PParam.defaultSendPort = 10042;
-		PParam.m_useStaticEndpointDiscovery = true;
-		PParam.resendSPDPDataPeriod_sec = 30;
+		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol= true;
+		PParam.discovery.resendSPDPDataPeriod_sec = 30;
 		Participant* p = DomainParticipant::createParticipant(PParam);
-		ReaderParams_t Rparam;
+		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
-		Rparam.historySize = 50;
-		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_topic1");
-		Rparam.topicKind = WITH_KEY;
-		Rparam.stateKind == STATELESS;
+		Rparam.historyMaxSize = 50;
+		Rparam.topic.topicDataType = std::string("TestType");
+		Rparam.topic.topicName = std::string("Test_topic1");
+		Rparam.topic.topicKind = WITH_KEY;
+		Rparam.reliability.reliabilityKind = BEST_EFFORT;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
@@ -229,16 +230,15 @@ int main(int argc, char** argv){
 
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
-		WriterParams_t Wparam;
+		PublisherAttributes Wparam;
 		Wparam.userDefinedId = 18;
-		Wparam.stateKind = STATELESS;
-		Wparam.topicKind = NO_KEY;
-		Wparam.reliablility.kind = BEST_EFFORT;
-		Wparam.topicDataType = std::string("TestType");
-		Wparam.topicName = std::string("Test_topic2");
-		Wparam.historySize = 14;
-		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-		Wparam.reliablility.nackResponseDelay.seconds = 5;
+		Wparam.topic.topicKind = NO_KEY;
+		Wparam.reliability.reliabilityKind = BEST_EFFORT;
+		Wparam.topic.topicDataType = std::string("TestType");
+		Wparam.topic.topicName = std::string("Test_topic2");
+		Wparam.historyMaxSize = 14;
+		Wparam.reliability.heartbeatPeriod.seconds = 2;
+		Wparam.reliability.nackResponseDelay.seconds = 5;
 
 
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);

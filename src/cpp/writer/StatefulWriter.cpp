@@ -31,21 +31,21 @@ StatefulWriter::~StatefulWriter() {
 	pDebugInfo("StatefulWriter destructor"<<endl;);
 }
 
-StatefulWriter::StatefulWriter(const WriterParams_t* param,uint32_t payload_size):
-		RTPSWriter(param->historySize,payload_size)
+StatefulWriter::StatefulWriter(const PublisherAttributes* param,uint32_t payload_size):
+		RTPSWriter(param->historyMaxSize,payload_size)
 
 {
 	m_pushMode = param->pushMode;
-	reliability=param->reliablility;
-	topicKind=param->topicKind;
+	m_reliability = param->reliability;
+	topicKind=param->topic.topicKind;
 
 	m_stateType = STATEFUL;
 
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
-	m_topicName = param->topicName;
-	m_topicDataType = param->topicDataType;
+	m_topicName = param->topic.topicName;
+	m_topicDataType = param->topic.topicDataType;
 	this->m_userDefinedId = param->userDefinedId;
 }
 

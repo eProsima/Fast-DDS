@@ -25,6 +25,7 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/common/rtps_messages.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/dds/PublisherListener.h"
 
 namespace eprosima {
 
@@ -136,6 +137,8 @@ public:
 	 * @return Pointer to the type object.
 	 */
 	DDSTopicDataType* getType(){return (mp_type);};
+
+	void assignListener(PublisherListener* listen);
 
 
 private:

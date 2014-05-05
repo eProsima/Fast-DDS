@@ -34,7 +34,7 @@ class StatefulReader:public RTPSReader {
 public:
 	//StatefulReader();
 	virtual ~StatefulReader();
-	StatefulReader(const ReaderParams_t* param,uint32_t payload_size);
+	StatefulReader(const SubscriberAttributes* param,uint32_t payload_size);
 	/**
 	 * Add a matched writer.
 	 * @param[in] WP Pointer to the WriterProxy_t to add.
@@ -61,10 +61,11 @@ public:
 	 */
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 	//!Reliability parameters of the StatefulReader, times mainly.
-	DDS_Reliability_t reliability;
+	SubscriberReliability m_reliability;
 
-	bool readNextCacheChange(void*data);
-	bool takeNextCacheChange(void*data);
+	bool readNextCacheChange(void*data,SampleInfo_t* info);
+	bool takeNextCacheChange(void*data,SampleInfo_t* info);
+	bool isUnreadCacheChange();
 
 //	bool readAllCacheChange(std::vector<void*>* data);
 //	bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);

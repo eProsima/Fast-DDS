@@ -90,12 +90,12 @@ void DomainParticipant::stopAll()
 }
 
 
-Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_t& WParam)
+Publisher* DomainParticipant::createPublisher(Participant* p,const PublisherAttributes& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
 									//Look for the correct type registration
 										DDSTopicDataType* p_type = NULL;
-	if(!DomainParticipant::getRegisteredType(WParam.topicDataType,&p_type))
+	if(!DomainParticipant::getRegisteredType(WParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
 		return NULL;
@@ -105,13 +105,13 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 //		pError("Serialization and deserialization functions cannot be NULL"<<endl);
 //		return NULL;
 //	}
-	if(WParam.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
+	if(WParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
 	Publisher* Pub = NULL;
-	if(WParam.stateKind == STATELESS)
+	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize))
@@ -124,7 +124,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 		SW->mp_type = p_type;
 
 	}
-	else if(WParam.stateKind == STATEFUL)
+	else if(WParam.reliability.reliabilityKind == RELIABLE)
 	{
 		//FIXME: if unicast and multicast locator list is empty return false;
 		StatefulWriter* SF;
@@ -149,23 +149,23 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const WriterParams_
 
 
 
-Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderParams_t& RParam) {
+Subscriber* DomainParticipant::createSubscriber(Participant* p,	const SubscriberAttributes& RParam) {
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
 	DDSTopicDataType* p_type = NULL;
-	if(!DomainParticipant::getRegisteredType(RParam.topicDataType,&p_type))
+	if(!DomainParticipant::getRegisteredType(RParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
 
-	if(RParam.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
+	if(RParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
 	Subscriber* Sub = NULL;
-	if(RParam.stateKind == STATELESS)
+	if(RParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
 		StatelessReader* SR;
 		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize))
@@ -176,10 +176,10 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		Sub = new Subscriber((RTPSReader*) SR);
 		SR->mp_Sub = Sub;
 		SR->mp_type = p_type;
-		Sub->topicName = RParam.topicName;
-		Sub->topicDataType = RParam.topicDataType;
+		Sub->topicName = RParam.topic.topicName;
+		Sub->topicDataType = RParam.topic.topicDataType;
 	}
-	else if(RParam.stateKind == STATEFUL)
+	else if(RParam.reliability.reliabilityKind == RELIABLE)
 	{
 		pDebugInfo("Stateful"<<endl);
 		StatefulReader* SFR;
@@ -191,8 +191,8 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 		Sub = new Subscriber((RTPSReader*) SFR);
 		SFR->mp_Sub = Sub;
 		SFR->mp_type = p_type;
-		Sub->topicName = RParam.topicName;
-		Sub->topicDataType = RParam.topicDataType;
+		Sub->topicName = RParam.topic.topicName;
+		Sub->topicDataType = RParam.topic.topicDataType;
 
 	}
 	if(Sub!=NULL)
@@ -206,7 +206,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const ReaderPara
 	return Sub;
 }
 
-Participant* DomainParticipant::createParticipant(const ParticipantParams_t& PParam)
+Participant* DomainParticipant::createParticipant(const ParticipantAttributes& PParam)
 {
 	Participant* p = new Participant(PParam);
 	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();

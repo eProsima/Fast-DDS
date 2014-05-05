@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file SPDPListener2.cpp
+ * @file RTPSListener.cpp
  *
  *  Created on: Apr 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -15,16 +15,26 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/SPDPListener.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+namespace eprosima{
+namespace rtps{
 
-namespace eprosima {
-namespace rtps {
+SubscriberListener::SubscriberListener()
+{
 
-void SPDPListener::onNewDataMessage()
-	{
-		mp_SPDP->new_change_added();
-	}
+}
+SubscriberListener::~SubscriberListener()
+{
 
-} /* namespace rtps */
-} /* namespace eprosima */
+}
+
+void SubscriberListener::onNewDataMessage()
+{
+
+}
+
+}
+}
+
+
+

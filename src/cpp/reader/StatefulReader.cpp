@@ -33,17 +33,17 @@ StatefulReader::~StatefulReader()
 
 
 
-StatefulReader::StatefulReader(const ReaderParams_t* param,uint32_t payload_size):
-				RTPSReader(param->historySize,payload_size)
+StatefulReader::StatefulReader(const SubscriberAttributes* param,uint32_t payload_size):
+				RTPSReader(param->historyMaxSize,payload_size)
 {
 	m_stateType = STATEFUL;
-	reliability=param->reliablility;
+	m_reliability=param->reliability;
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
 	expectsInlineQos = param->expectsInlineQos;
-	topicKind = param->topicKind;
-	m_topicName = param->topicName;
+	topicKind = param->topic.topicKind;
+	m_topicName = param->topic.topicName;
 	this->m_userDefinedId = param->userDefinedId;
 }
 
@@ -100,7 +100,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 	return false;
 }
 
-bool StatefulReader::takeNextCacheChange(void* data)
+bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	std::vector<SequenceNumber_t> seq_vec;
 	SequenceNumber_t seq, seqmin;
@@ -122,11 +122,38 @@ bool StatefulReader::takeNextCacheChange(void* data)
 	CacheChange_t* change;
 	if(this->m_reader_cache.get_change(seqmin,wpmin->param.remoteWriterGuid,&change))
 	{
-		if(this->mp_type->deserialize(&change->serializedPayload,data))
+		if(change->kind == ALIVE)
+			this->mp_type->deserialize(&change->serializedPayload,data);
+		if(wpmin->removeChangeFromWriter(seqmin))
 		{
-			if(wpmin->removeChangeFromWriter(seqmin))
+			info->sampleKind = change->kind;
+			return m_reader_cache.remove_change(seq,wpmin->param.remoteWriterGuid);
+		}
+	}
+	return false;
+}
+
+bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
+{
+	m_reader_cache.sortCacheChangesBySeqNum();
+	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
+			it!=m_reader_cache.m_changes.end();++it)
+	{
+		if((*it)->isRead)
+			continue;
+		WriterProxy* wp;
+		if(this->matched_writer_lookup((*it)->writerGUID,&wp))
+		{
+			SequenceNumber_t seq;
+			wp->available_changes_max(&seq);
+			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
 			{
-				m_reader_cache.remove_change(seq,wpmin->param.remoteWriterGuid);
+				if((*it)->kind == ALIVE)
+				{
+					this->mp_type->deserialize(&(*it)->serializedPayload,data);
+				}
+				(*it)->isRead = true;
+				info->sampleKind = (*it)->kind;
 				return true;
 			}
 		}
@@ -134,52 +161,26 @@ bool StatefulReader::takeNextCacheChange(void* data)
 	return false;
 }
 
-bool StatefulReader::readNextCacheChange(void*data)
+
+bool StatefulReader::isUnreadCacheChange()
 {
 	m_reader_cache.sortCacheChangesBySeqNum();
-	bool found = false;
-	std::vector<CacheChange_t*>::iterator chit;
-	for(chit = m_reader_cache.m_changes.begin();
-			chit!=m_reader_cache.m_changes.end();++chit)
+	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
+			it!=m_reader_cache.m_changes.end();++it)
 	{
-		if(!(*chit)->isRead)
-		{
-			found = true;
-			break;
-		}
-	}
-	if(found)
-	{
+		if((*it)->isRead)
+			continue;
 		WriterProxy* wp;
-		SequenceNumber_t seq;
-		while(chit != m_reader_cache.m_changes.end())
+		if(this->matched_writer_lookup((*it)->writerGUID,&wp))
 		{
-			if(!(*chit)->isRead)
-			{
-				if(this->matched_writer_lookup((*chit)->writerGUID,&wp))
-				{
-					wp->available_changes_max(&seq);
-					if((*chit)->sequenceNumber <= seq)
-					{
-						if((*chit)->serializedPayload.data !=NULL)
-						{
-							if(this->mp_type->deserialize(&(*chit)->serializedPayload,data))
-							{
-								(*chit)->isRead = true;
-								return true;
-							}
-						}
-						else
-							(*chit)->isRead = true;
-					}
-				}
-			}
-			++chit;
+			SequenceNumber_t seq;
+			wp->available_changes_max(&seq);
+			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
+				return true;
 		}
 	}
 	return false;
 }
-
 
 
 } /* namespace rtps */

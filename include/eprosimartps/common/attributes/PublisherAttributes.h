@@ -7,24 +7,41 @@
  *************************************************************************/
 
 /**
- * @file SPDPListener2.cpp
+ * @file PublisherParameters.h
  *
- *  Created on: Apr 21, 2014
+ *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/SPDPListener.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#ifndef PUBLISHERPARAMETERS_H_
+#define PUBLISHERPARAMETERS_H_
 
 namespace eprosima {
 namespace rtps {
 
-void SPDPListener::onNewDataMessage()
-	{
-		mp_SPDP->new_change_added();
-	}
+
+
+class PublisherAttributes {
+public:
+	PublisherAttributes()
+{
+		pushMode = true;
+		historyMaxSize = 10;
+		userDefinedId = -1;
+};
+	virtual ~PublisherAttributes();
+	bool pushMode;
+	uint16_t historyMaxSize;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
+	PublisherReliability reliability;
+	TopicAttributes topic;
+	int16_t userDefinedId;
+};
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+#endif /* PUBLISHERPARAMETERS_H_ */

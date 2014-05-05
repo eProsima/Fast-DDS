@@ -31,7 +31,8 @@
 #include "eprosimartps/Participant.h"
 
 #include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/reader/RTPSListener.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/SampleInfo.h"
 
 using namespace eprosima::dds;
 
@@ -67,17 +68,16 @@ public:
 //	void (*newMessageCallback)();
 
 	//!Pointer to the object used by the user to implement the behaviour when messages are received.
-	RTPSListener* mp_listener;
+	SubscriberListener* mp_listener;
 	//! Name of the topic associated with the reader.
 	std::string m_topicName;
 
 
-	virtual bool readNextCacheChange(void*data)=0;
-	virtual bool takeNextCacheChange(void*data)=0;
+	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
+	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
 
+	virtual bool isUnreadCacheChange()=0;
 
-//	virtual bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
-//	virtual bool readAllCacheChange(std::vector<void*>* data);
 
 	const std::string& getTopicName() const {
 		return m_topicName;
