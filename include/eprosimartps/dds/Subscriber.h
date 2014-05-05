@@ -21,7 +21,7 @@
 #include <iostream>
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/common/rtps_messages.h"
 
 #include <boost/signals2.hpp>

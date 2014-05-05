@@ -17,7 +17,7 @@
 #include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/CDRMessage.h"
 
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 
 #include "eprosimartps/utils/eClock.h"
 

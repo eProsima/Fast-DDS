@@ -15,7 +15,7 @@
  */
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/ObjectPool.h"
 
 #ifndef CDRMESSAGECREATOR_H_

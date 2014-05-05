@@ -20,7 +20,7 @@
 #define CDRMESSAGE_H_
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/ParameterTypes.h"
+#include "eprosimartps/qos/ParameterTypes.h"
 
 using namespace eprosima::dds;
 
