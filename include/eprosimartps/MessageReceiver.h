@@ -14,14 +14,14 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/ParameterList.h"
-#include "common/rtps_messages.h"
+
 
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 
-
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/common/rtps_messages.h"
 
 namespace eprosima {
 namespace rtps {

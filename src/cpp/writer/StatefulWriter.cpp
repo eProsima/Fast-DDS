@@ -18,7 +18,7 @@
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 
 
 

@@ -26,7 +26,7 @@ using std::cout;
 using std::endl;
 using std::bitset;
 
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 
 using eprosima::dds::ParameterList_t;
 

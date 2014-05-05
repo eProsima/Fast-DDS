@@ -21,8 +21,8 @@
 
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
-#include "eprosimartps/dds/QosList.h"
-#include "eprosimartps/discovery/DiscoveredParticipantData.h"
+#include "eprosimartps/qos/QosList.h"
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 
 #include "eprosimartps/discovery/SPDPListener.h"
 

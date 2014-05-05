@@ -22,7 +22,7 @@
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 #include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/QosList.h"
+#include "eprosimartps/qos/QosList.h"
 
 
 #ifndef RTPSWRITER_H_

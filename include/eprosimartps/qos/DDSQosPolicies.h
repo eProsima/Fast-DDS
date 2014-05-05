@@ -27,18 +27,20 @@ namespace eprosima{
 namespace dds{
 
 
+
+
 typedef enum DurabilityQosPolicyKind_t: octet{
 	VOLATILE_DURABILITY_QOS = 0x01,
 			TRANSIENT_LOCAL_DURABILITY_QOS =0x02,
 			TRANSIENT_DURABILITY_QOS = 0x04,
 			PERSISTENT_DURABILITY_QOS = 0x08
-};
+}DurabilityQosPolicyKind_t;
 
 #define PARAMETER_KIND_LENGTH 4
 
 class DurabilityQosPolicy : public Parameter_t
 {
-	DurabilityQosPolicy():kind(VOLATILE_DURABILITY_QOS),Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH){};
+	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),kind(VOLATILE_DURABILITY_QOS){};
 	DurabilityQosPolicyKind_t kind;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -60,11 +62,11 @@ typedef enum LivelinessQosPolicyKind:octet {
 	AUTOMATIC_LIVELINESS_QOS = 0x01,
 			MANUAL_BY_PARTICIPANT_LIVELINESS_QOS=0x02,
 			MANUAL_BY_TOPIC_LIVELINESS_QOS=0x04
-};
+}LivelinessQosPolicyKind;
 
 class LivelinessQosPolicy : public Parameter_t {
-	LivelinessQosPolicy():kind(AUTOMATIC_LIVELINESS_QOS),
-			Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH){};
+	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
+			kind(AUTOMATIC_LIVELINESS_QOS){};
 	LivelinessQosPolicyKind kind;
 	Duration_t lease_duration;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -73,15 +75,16 @@ class LivelinessQosPolicy : public Parameter_t {
 typedef enum ReliabilityQosPolicyKind:octet {
 	BEST_EFFORT_RELIABILITY_QOS= 0x01,
 	RELIABLE_RELIABILITY_QOS=0x02
-};
+}ReliabilityQosPolicyKind;
 
 typedef enum OwnershipQosPolicyKind:octet {
 	SHARED_OWNERSHIP_QOS=0x01,
 			EXCLUSIVE_OWNERSHIP_QOS=0x02
-};
+}OwnershipQosPolicyKind;
 
 class OwnershipQosPolicy : public Parameter_t {
-	OwnershipQosPolicy():kind(SHARED_OWNERSHIP_QOS),Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH){};
+	OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),
+			kind(SHARED_OWNERSHIP_QOS){};
 	OwnershipQosPolicyKind kind;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -89,12 +92,12 @@ class OwnershipQosPolicy : public Parameter_t {
 typedef enum DestinationOrderQosPolicyKind :octet{
 	BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS,
 	BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS
-};
+}DestinationOrderQosPolicyKind;
 
 struct ReliabilityQosPolicy : public Parameter_t
 {
-	ReliabilityQosPolicy():kind(BEST_EFFORT_RELIABILITY_QOS),
-			Parameter_t(PID_RELIABILITY,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH){};
+	ReliabilityQosPolicy():	Parameter_t(PID_RELIABILITY,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
+			kind(BEST_EFFORT_RELIABILITY_QOS){};
 	ReliabilityQosPolicyKind kind;
 	Duration_t max_blocking_time;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -102,15 +105,13 @@ struct ReliabilityQosPolicy : public Parameter_t
 
 class DestinationOrderQosPolicy : public Parameter_t {
 	DestinationOrderQosPolicyKind kind;
-	DestinationOrderQosPolicy():kind(BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS),
-			Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH){};
+	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),
+			kind(BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class UserDataQosPolicy : public Parameter_t{
-	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0){};
-	std::string data;
-	bool addToCDRMessage(CDRMessage_t* msg);
+class UserDataQosPolicy : public ParameterString_t{
+	UserDataQosPolicy():ParameterString_t(PID_USER_DATA,0){};
 };
 
 class TimeBasedFilterQosPolicy : public Parameter_t {
@@ -124,7 +125,7 @@ typedef enum PresentationQosPolicyAccessScopeKind:octet
 	INSTANCE_PRESENTATION_QOS=0x01,
 	TOPIC_PRESENTATION_QOS=0x02,
 	GROUP_PRESENTATION_QOS=0x04
-};
+}PresentationQosPolicyAccessScopeKind;
 
 #define PARAMETER_PRESENTATION_LENGTH 12
 
@@ -133,9 +134,9 @@ class PresentationQosPolicy : public Parameter_t
 	PresentationQosPolicyAccessScopeKind access_scope;
 	bool coherent_access;
 	bool ordered_access;
-	PresentationQosPolicy():access_scope(INSTANCE_PRESENTATION_QOS),
-			coherent_access(false),ordered_access(false),
-			Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH){};
+	PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),
+			access_scope(INSTANCE_PRESENTATION_QOS),
+			coherent_access(false),ordered_access(false){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -162,13 +163,13 @@ class GroupDataQosPolicy : public Parameter_t
 typedef enum HistoryQosPolicyKind:octet {
 	KEEP_LAST_HISTORY_QOS=0x01,
 	KEEP_ALL_HISTORY_QOS=0x02
-};
+}HistoryQosPolicyKind;
 
 class HistoryQosPolicy : public Parameter_t {
 	HistoryQosPolicyKind kind;
 	int32_t depth;
-	HistoryQosPolicy():kind(KEEP_LAST_HISTORY_QOS),depth(0),
-					Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4){};
+	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),
+			kind(KEEP_LAST_HISTORY_QOS),depth(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -179,10 +180,9 @@ class DurabilityServiceQosPolicy : public Parameter_t {
 	uint32_t max_samples;
 	uint32_t max_instances;
 	uint32_t max_samples_per_instance;
-	DurabilityServiceQosPolicy():history_kind(KEEP_LAST_HISTORY_QOS),
-			history_depth(0),max_samples(0),max_instances(0),max_samples_per_instance(0),
-			Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+
-												4+4+4+4){};
+	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),
+			history_kind(KEEP_LAST_HISTORY_QOS),
+			history_depth(0),max_samples(0),max_instances(0),max_samples_per_instance(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -195,7 +195,7 @@ class LifespanQosPolicy : public Parameter_t {
 
 class OwnershipStrengthQosPolicy : public Parameter_t {
 	uint32_t value;
-	OwnershipStrengthQosPolicy():value(0),Parameter_t(PID_OWNERSHIP_STRENGTH,4){};
+	OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),value(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -203,14 +203,14 @@ class ResourceLimitsQosPolicy : public Parameter_t {
 	uint32_t max_samples;
 	uint32_t max_instances;
 	uint32_t max_samples_per_instance;
-	ResourceLimitsQosPolicy():max_samples(0),max_instances(0),max_samples_per_instance(0),
-			Parameter_t(PID_RESOURCE_LIMITS,4+4+4){};
+	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),
+			max_samples(0),max_instances(0),max_samples_per_instance(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
 class TransportPriorityQosPolicy : public Parameter_t {
 	uint32_t value;
-	TransportPriorityQosPolicy():value(0),Parameter_t(PID_TRANSPORT_PRIORITY,4){};
+	TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),value(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
