@@ -16,19 +16,19 @@
  */
 
 
-#include "eprosimartps/threadtype/ThreadEvent.h"
+#include "eprosimartps/resources/ResourceEvent.h"
 
 namespace eprosima {
 namespace rtps {
 
-ThreadEvent::ThreadEvent():
+ResourceEvent::ResourceEvent():
 		b_thread(NULL),
 		work(io_service)
 {
 
 }
 
-ThreadEvent::~ThreadEvent() {
+ResourceEvent::~ResourceEvent() {
 	pWarning( "Removing event thread " << b_thread->get_id() << std::endl);
 	io_service.stop();
 	b_thread->join();
@@ -36,19 +36,19 @@ ThreadEvent::~ThreadEvent() {
 
 }
 
-void ThreadEvent::run_io_service()
+void ResourceEvent::run_io_service()
 {
 	io_service.run();
 }
 
-void ThreadEvent::init_thread()
+void ResourceEvent::init_thread()
 {
-	b_thread = new boost::thread(&ThreadEvent::run_io_service,this);
+	b_thread = new boost::thread(&ResourceEvent::run_io_service,this);
 
-	io_service.post(boost::bind(&ThreadEvent::announce_thread,this));
+	io_service.post(boost::bind(&ResourceEvent::announce_thread,this));
 }
 
-void ThreadEvent::announce_thread()
+void ResourceEvent::announce_thread()
 {
 	pInfo(BLUE<<"Thread: " << b_thread->get_id() << " created and waiting for tasks."<<DEF<<endl);
 

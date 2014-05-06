@@ -16,7 +16,7 @@
 
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/MessageReceiver.h"
-#include "eprosimartps/threadtype/ThreadListen.h"
+#include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/dds/Subscriber.h"
@@ -401,23 +401,20 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
 						WP->received_change_set(change_to_add);
 					}
-					if((*it)->mp_listener!=NULL)
+					SequenceNumber_t maxSeqNumAvailable;
+					WP->available_changes_max(&maxSeqNumAvailable);
+					if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
 					{
-						SequenceNumber_t maxSeqNumAvailable;
-						WP->available_changes_max(&maxSeqNumAvailable);
-						if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
-						{
+						if((*it)->mp_listener!=NULL)
 							(*it)->mp_listener->onNewDataMessage();
-							(*it)->newMessageSemaphore->post();
-						}
+						(*it)->m_semaphore.post();
 					}
 				}
 				else
 				{
 					if((*it)->mp_listener!=NULL)
 						(*it)->mp_listener->onNewDataMessage();
-					///FIXME: put semaphore in listener class
-					(*it)->newMessageSemaphore->post();
+					(*it)->m_semaphore.post();
 				}
 			}
 			else

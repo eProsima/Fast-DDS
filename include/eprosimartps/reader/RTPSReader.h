@@ -34,6 +34,8 @@
 #include "eprosimartps/dds/SubscriberListener.h"
 #include "eprosimartps/dds/SampleInfo.h"
 
+#include "eprosimartps/utils/Semaphore.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -62,10 +64,7 @@ public:
 	//!Pointer to the associated subscriber
 	Subscriber* mp_Sub;
 
-	//!Semaphore used to stop threads based on the arrival of messages.
-	boost::interprocess::interprocess_semaphore* newMessageSemaphore;
-//	//!Function to call when a new message is received.
-//	void (*newMessageCallback)();
+	Semaphore m_semaphore;
 
 	//!Pointer to the object used by the user to implement the behaviour when messages are received.
 	SubscriberListener* mp_listener;

@@ -15,7 +15,7 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/threadtype/ThreadListen.h"
+#include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/reader/RTPSReader.h"
@@ -27,7 +27,7 @@ using boost::asio::ip::udp;
 namespace eprosima {
 namespace rtps {
 
-ThreadListen::ThreadListen() :
+ResourceListen::ResourceListen() :
 												m_participant_ptr(NULL),mp_thread(NULL),
 												m_listen_socket(m_io_service),
 												m_first(true)
@@ -36,7 +36,7 @@ ThreadListen::ThreadListen() :
 	m_isMulticast = false;
 }
 
-ThreadListen::~ThreadListen()
+ResourceListen::~ResourceListen()
 {
 	pWarning( "Removing listening thread " << mp_thread->get_id() << std::endl);
 
@@ -53,17 +53,17 @@ ThreadListen::~ThreadListen()
 
 }
 
-void ThreadListen::run_io_service()
+void ResourceListen::run_io_service()
 {
 
 	pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " <<m_listen_socket.local_endpoint() << DEF << endl) ;
-	m_participant_ptr->m_ThreadSemaphore->post();
+	m_participant_ptr->m_ResourceSemaphore->post();
 	m_first = false;
 
 	this->m_io_service.run();
 }
 
-bool ThreadListen::init_thread(){
+bool ResourceListen::init_thread(){
 	if(!m_locList.empty())
 	{
 		m_first = true;
@@ -97,17 +97,17 @@ bool ThreadListen::init_thread(){
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
 				m_sender_endpoint,
-				boost::bind(&ThreadListen::newCDRMessage, this,
+				boost::bind(&ResourceListen::newCDRMessage, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
-		mp_thread = new boost::thread(&ThreadListen::run_io_service,this);
+		mp_thread = new boost::thread(&ResourceListen::run_io_service,this);
 		return true;
 	}
 	return false;
 }
 
 
-void ThreadListen::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
+void ResourceListen::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
 	if(err == boost::system::errc::success)
 	{
@@ -142,7 +142,7 @@ void ThreadListen::newCDRMessage(const boost::system::error_code& err, std::size
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
 				m_sender_endpoint,
-				boost::bind(&ThreadListen::newCDRMessage, this,
+				boost::bind(&ResourceListen::newCDRMessage, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
 	}
@@ -159,7 +159,7 @@ void ThreadListen::newCDRMessage(const boost::system::error_code& err, std::size
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
 				m_sender_endpoint,
-				boost::bind(&ThreadListen::newCDRMessage, this,
+				boost::bind(&ResourceListen::newCDRMessage, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
 	}

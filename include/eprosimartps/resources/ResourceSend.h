@@ -7,8 +7,8 @@
  *************************************************************************/
 
 /**
- * @file ThreadSend.h
- *   ThreadSend class.
+ * @file ResourceSend.h
+ *   ResourceSend class.
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -27,24 +27,24 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#ifndef THREADSEND_H_
-#define THREADSEND_H_
+#ifndef RESOURCESEND_H_
+#define RESOURCESEND_H_
 
 namespace eprosima {
 namespace rtps {
 
 /**
- * Class ThreadSend, used to manage the send operation. In future version it will contain the grouping
+ * Class ResourceSend, used to manage the send operation. In future version it will contain the grouping
  *  logic for merge different CDRMessages into a single RTPSMessages (HB piggybacking, for example).
  * @ingroup MANAGEMENTMODULE
  */
-class ThreadSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
+class ResourceSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
 	friend class Participant;
 	friend class SimpleParticipantDiscoveryProtocol;
 public:
-	ThreadSend();
-	virtual ~ThreadSend();
+	ResourceSend();
+	virtual ~ResourceSend();
 	/**
 	 * Send a CDR message syncrhonously. No waiting is required.
 	 * @param msg Pointer to the message.
@@ -72,4 +72,4 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* THREADSEND_H_ */
+#endif /* RESOURCESEND_H_ */

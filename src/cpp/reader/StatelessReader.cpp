@@ -97,7 +97,6 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 bool StatelessReader::isUnreadCacheChange()
 {
 	m_reader_cache.sortCacheChangesBySeqNum();
-	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = m_reader_cache.m_changes.begin();
 			it!=m_reader_cache.m_changes.end();++it)

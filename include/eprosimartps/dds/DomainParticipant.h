@@ -85,7 +85,7 @@ public:
     static Participant* createParticipant(const ParticipantAttributes& PParam);
 
     /**
-     * Remove a participant and delete all its associated Writers, Readers, threads, etc.
+     * Remove a participant and delete all its associated Writers, Readers, resources, etc.
      * @param[in] p Pointer to the Participant;
      * @return True if correct.
      */

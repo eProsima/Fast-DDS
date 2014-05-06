@@ -27,7 +27,6 @@ RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
 		m_reader_cache(historysize,payload_size,READER,(Endpoint*)this),
 		expectsInlineQos(true),
 		mp_Sub(NULL),
-		newMessageSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 		mp_listener(NULL)
 
 {
@@ -37,7 +36,6 @@ RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
 RTPSReader::~RTPSReader() {
 
 	pDebugInfo("RTPSReader destructor"<<endl;);
-	delete(newMessageSemaphore);
 }
 
 

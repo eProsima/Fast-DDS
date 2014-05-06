@@ -31,9 +31,9 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/threadtype/ThreadEvent.h"
-#include "eprosimartps/threadtype/ThreadListen.h"
-#include "eprosimartps/threadtype/ThreadSend.h"
+#include "eprosimartps/resources/ResourceEvent.h"
+#include "eprosimartps/resources/ResourceListen.h"
+#include "eprosimartps/resources/ResourceSend.h"
 #include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/StaticEndpointDiscoveryProtocol.h"
 
@@ -69,8 +69,8 @@ class Endpoint;
  * @ingroup MANAGEMENTMODULE
  */
 class Participant{
-	friend class ThreadSend;
-	friend class ThreadListen;
+	friend class ResourceSend;
+	friend class ResourceListen;
 	friend class eprosima::dds::DomainParticipant;
 	friend class SimpleParticipantDiscoveryProtocol;
 	friend class StaticEndpointDiscoveryProtocol;
@@ -119,7 +119,7 @@ private:
 
 	/**
 	 * Remove Endpoint from the participant. It closes all entities related to them that are no longer in use.
-	 * For example, if a ThreadListen is not useful anymore the thread is closed and the instance removed.
+	 * For example, if a ResourceListen is not useful anymore the thread is closed and the instance removed.
 	 * @param[in] endpoint Pointer to the Endpoint that is going to be removed.
 	 * @return True if correct.
 	 */
@@ -138,13 +138,13 @@ public:
 	GUID_t m_guid;
 
 	//! Sending resources.
-	ThreadSend m_send_thr;
+	ResourceSend m_send_thr;
 
-	ThreadEvent m_event_thr;
+	ResourceEvent m_event_thr;
 
 private:
 	//!Semaphore to wait for the listen thread creation.
-	boost::interprocess::interprocess_semaphore* m_ThreadSemaphore;
+	boost::interprocess::interprocess_semaphore* m_ResourceSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
 	uint32_t IdCounter;
 	//!Writer List.
@@ -152,14 +152,14 @@ private:
 	//!Reader List
 	std::vector<RTPSReader*> m_readerList;
 	//!Listen thread list.
-	std::vector<ThreadListen*> m_threadListenList;
+	std::vector<ResourceListen*> m_threadListenList;
 	/*!
 	 * Assign a given Endpoint to one of the current listen thread or create a new one.
 	 * @param[in] endpoint Pointer to the Endpoint to add.
 	 * @param[in] type Type of the Endpoint (R or W)(Reader or Writer).
 	 * @return True if correct.
 	 */
-	bool assignEnpointToListenThreads(Endpoint* endpoint,char type);
+	bool assignEnpointToListenResources(Endpoint* endpoint,char type);
 	/*!
 	 * Create a new listen thread in the specified locator.
 	 * @param[in] loc Locator to use.
@@ -167,7 +167,7 @@ private:
 	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
 	 * @return True if correct.
 	 */
-	bool addNewListenThread(Locator_t& loc,ThreadListen** listenthread,bool isMulticast);
+	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast);
 
 	SimpleParticipantDiscoveryProtocol m_SPDP;
 	std::string m_participantName;

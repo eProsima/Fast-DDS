@@ -31,7 +31,7 @@ public:
 	void wait()
 	{
 		boost::mutex::scoped_lock lock(m_mutex);
-		if(m_count == 0)
+		while(m_count <= 0)
 			m_condition.wait(lock);
 		--m_count;
 	}
@@ -41,6 +41,12 @@ public:
 		boost::mutex::scoped_lock lock(m_mutex);
 		++m_count;
 		m_condition.notify_one();
+	}
+
+	void reset()
+	{
+		boost::mutex::scoped_lock lock(m_mutex);
+		m_count = 0;
 	}
 
 private:

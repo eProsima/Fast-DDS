@@ -7,16 +7,16 @@
  *************************************************************************/
 
 /**
- * @file ThreadListen.h
- *  ThreadListen class.
+ * @file ResourceListen.h
+ *  ResourceListen class.
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
  *      		grcanosa@gmail.com
  */
 
-#ifndef THREADLISTEN_H_
-#define THREADLISTEN_H_
+#ifndef RESOURCELISTEN_H_
+#define RESOURCELISTEN_H_
 
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
@@ -40,16 +40,16 @@ class RTPSWriter;
 class Participant;
 
 /**
- * Class ThreadListen, used to listen to a specific socket for RTPS messages. Each instance, when initialized, launches
+ * Class ResourceListen, used to listen to a specific socket for RTPS messages. Each instance, when initialized, launches
  * a new thread that listen to a specific port (all possible IP addresses in this machine.). Multiple writers and readers can be associated
- * with the same ThreadListen. The MessageReceiver instance interprets where the messages need to be forwarded (which Writer or Reader, or both).
+ * with the same ResourceListen. The MessageReceiver instance interprets where the messages need to be forwarded (which Writer or Reader, or both).
  * @ingroup MANAGEMENTMODULE
  */
-class ThreadListen
+class ResourceListen
 {
 public:
-	ThreadListen();
-	virtual ~ThreadListen();
+	ResourceListen();
+	virtual ~ResourceListen();
 	/**
 	 * Method to initialize the thread.
 	 */
@@ -90,4 +90,4 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* THREADLISTEN_H_ */
+#endif /* RESOURCELISTEN_H_ */

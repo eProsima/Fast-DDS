@@ -26,7 +26,7 @@
 namespace eprosima {
 namespace rtps {
 
-class ThreadListen;
+class ResourceListen;
 
 /**
  * Class MessageReceiver, process the received messages.
@@ -47,8 +47,8 @@ public:
 	void processCDRMsg(GuidPrefix_t& participantguidprefix,
 					Locator_t* loc, CDRMessage_t*msg);
 
-	//!Pointer to the Listen Thread that contains this MessageReceiver.
-	ThreadListen* mp_threadListen;
+	//!Pointer to the Listen Resource that contains this MessageReceiver.
+	ResourceListen* mp_threadListen;
 
 	CDRMessage_t m_rec_msg;
 	ParameterList_t m_ParamList;
