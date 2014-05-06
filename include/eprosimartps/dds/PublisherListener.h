@@ -17,7 +17,7 @@
 
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
-
+#include "eprosimartps/rtps_all.h"
 namespace eprosima {
 namespace dds {
 
@@ -25,7 +25,8 @@ namespace dds {
  * Class PublisherListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup DDSMODULE
  */
-class PublisherListener {
+class RTPS_DllAPI PublisherListener
+{
 public:
 	PublisherListener();
 	virtual ~PublisherListener();
