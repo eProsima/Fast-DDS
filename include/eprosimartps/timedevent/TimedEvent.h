@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file PeriodicEvent.h
+ * @file TimedEvent.h
  *
  *  Created on: Mar 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -31,7 +31,7 @@ namespace eprosima {
 namespace rtps{
 
 /**
- * Timed Event class to be used to define any timed events.
+ * Timed Event class used to define any timed events.
  * All timedEvents must be a specification of this class, implementing the event method.
  * @ingroup MANAGEMENTMODULE
  */

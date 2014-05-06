@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ReliabilityParameters.h
+ * @file ReliabilityAttributes.h
  *
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -29,7 +29,17 @@ typedef enum ReliabilityKind_t:octet{
 	RELIABLE=0x02    //!< RELIABLE
 }ReliabilityKind_t;
 
+}
 
+using namespace rtps;
+
+namespace dds{
+
+
+/**
+ * Class ReliabilityAttributes, generic class that is specialized for the Subscriber and the Publisher.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class ReliabilityAttributes {
 public:
 	ReliabilityAttributes():reliabilityKind(BEST_EFFORT){};
@@ -37,6 +47,11 @@ public:
 	ReliabilityKind_t reliabilityKind;
 };
 
+/**
+ * Class PublisherReliability that defines the reliability of a Publisher (BEST_EFFORT or RELIABLE), as well as the associated
+ * Duration_t for the different events.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class PublisherReliability:public ReliabilityAttributes
 {
 public:
@@ -56,7 +71,11 @@ public:
 	}
 	~PublisherReliability(){};
 };
-
+/**
+ * Class SubscriberReliability that defines the reliability of a Subscriber (BEST_EFFORT or RELIABLE), as well as the associated
+ * Duration_t for the different events.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class SubscriberReliability:public ReliabilityAttributes
 {
 public:

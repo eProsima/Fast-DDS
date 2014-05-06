@@ -17,10 +17,14 @@
 
 #ifndef DISCOVEREDTOPICDATA_H_
 #define DISCOVEREDTOPICDATA_H_
-
+using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
+
+/**
+ * Class DiscoveredTopicData used by the SEDP.
+ */
 class DiscoveredTopicData {
 public:
 	DiscoveredTopicData();

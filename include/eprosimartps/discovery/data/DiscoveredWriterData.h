@@ -18,9 +18,15 @@
 #ifndef DISCOVEREDWRITERDATA_H_
 #define DISCOVEREDWRITERDATA_H_
 
+using namespace eprosima::dds;
+
 namespace eprosima {
 namespace rtps {
 
+
+/**
+ * Class DiscoveredWriterData used by the SEDP.
+ */
 class DiscoveredWriterData {
 public:
 	DiscoveredWriterData();

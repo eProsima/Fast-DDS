@@ -30,7 +30,7 @@ class StatefulWriter;
 class ReaderProxy;
 
 /**
- * NackResponseDelay class use to delay the response to an ACKNACK message.
+ * NackResponseDelay class use to delay the response to an NACK message.
  * @ingroup WRITERMODULE
  */
 class NackResponseDelay:public TimedEvent {

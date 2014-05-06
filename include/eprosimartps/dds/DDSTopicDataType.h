@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file RTPSTopicDataType.h
+ * @file DDSTopicDataType.h
  *
  *  Created on: Apr 21, 2014
  *      Author: Gonzalo Rodriguez Canosa

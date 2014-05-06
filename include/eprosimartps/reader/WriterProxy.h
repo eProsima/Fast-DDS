@@ -30,7 +30,7 @@ namespace rtps {
 class StatefulReader;
 
 /**
- * WriterProxy_t structure that stores information for each WriterProxy.
+ * Structure WriterProxy_t that stores information for each WriterProxy.
  * @ingroup READERMODULE
  */
 typedef struct WriterProxy_t{
@@ -44,7 +44,7 @@ typedef struct WriterProxy_t{
 
 
 /**
- * WriterProxy class that contains the state of each matched writer for a specific reader.
+ * Class WriterProxy that contains the state of each matched writer for a specific reader.
  * @ingroup READERMODULE
  */
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {

@@ -264,30 +264,23 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	std::string topic_name = writer->getTopicName();
 	std::string remote_part_name = dpd->m_proxy.m_participantName;
-	cout << "Topic name: " << topic_name << endl;
-	cout << "Remote part name: " << remote_part_name<<endl;
 	//Look in the participants defined by the StaticEndpointDiscovery.
 	for(std::vector<ParticipantStaticInfo_t>::iterator remotepit = m_StaticParticipantInfo.begin();
 			remotepit != m_StaticParticipantInfo.end();++remotepit)
 	{
-		cout << "Participant: "<< remotepit->m_name << endl;
 		if(remote_part_name == remotepit->m_name) // Found a match for the participant, begin pairing
 		{
-			cout << "Matched participant "<<endl;
 			for(std::vector<EndpointStaticInfo_t>::iterator eit = remotepit->m_endpoints.begin();
 					eit!=remotepit->m_endpoints.end();++eit)
 			{
-				cout << "endpoint with id: " << eit->m_id << " of type: " << eit->m_kind << endl;
 				if(eit->m_kind == READER)
 				{
-					cout << "reader, trying to find realID" << endl;
 					//look for real entityId in dpd
 					bool found = false;
 					EntityId_t readerId;
 					for(std::vector<std::pair<uint16_t,EntityId_t>>::iterator entityit = dpd->m_staticedpEntityId.begin();
 							entityit != dpd->m_staticedpEntityId.end();++entityit )
 					{
-						cout << "ID of received: "<< entityit->first<<endl;
 						if(eit->m_id == entityit->first)
 						{
 							found = true;
@@ -315,6 +308,8 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 								RL.locator = *lit;
 								p_SLW->reader_locator_add(RL);
 							}
+							if(writer->mp_listener!=NULL)
+								writer->mp_listener->onPublicationMatched();
 						}
 						else if(writer->getStateType() == STATEFUL)
 						{
@@ -326,6 +321,8 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 							RP.remoteReaderGuid.guidPrefix = dpd->m_proxy.m_guidPrefix;
 							RP.remoteReaderGuid.entityId = readerId;
 							p_SFW->matched_reader_add(RP);
+							if(writer->mp_listener!=NULL)
+								writer->mp_listener->onPublicationMatched();
 						}
 					}
 
@@ -371,7 +368,8 @@ bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader,Dis
 					{
 						if(reader->getStateType() == STATELESS)
 						{
-
+							if(reader->mp_listener!=NULL)
+								reader->mp_listener->onSubscriptionMatched();
 						}
 						else if(reader->getStateType() == STATEFUL)
 						{
@@ -382,6 +380,8 @@ bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader,Dis
 							WP.remoteWriterGuid.guidPrefix = dpd->m_proxy.m_guidPrefix;
 							WP.remoteWriterGuid.entityId = writerId;
 							p_SFR->matched_writer_add(&WP);
+							if(reader->mp_listener!=NULL)
+								reader->mp_listener->onSubscriptionMatched();
 						}
 					}
 

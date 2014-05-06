@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ParamListt.h
+ * @file ParameterList.h
  *
  *  Created on: Apr 9, 2014
  *      Author: Gonzalo Rodriguez Canosa

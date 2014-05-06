@@ -208,8 +208,10 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const Subscriber
 
 Participant* DomainParticipant::createParticipant(const ParticipantAttributes& PParam)
 {
-	Participant* p = new Participant(PParam);
 	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
+	uint32_t id = dp->getNewId();
+	Participant* p = new Participant(PParam,id);
+
 	dp->m_participants.push_back(p);
 	return p;
 }

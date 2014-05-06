@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file SubscriberParams.h
+ * @file SubscriberAttributes.h
  *
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -19,8 +19,11 @@
 #define SUBSCRIBERPARAMS_H_
 
 namespace eprosima {
-namespace rtps {
-
+namespace dds {
+/**
+ * Class SubscriberAttributes, used by the user to define the attributes of a Subscriber.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class SubscriberAttributes {
 public:
 	SubscriberAttributes()
@@ -30,12 +33,19 @@ public:
 		userDefinedId = -1;
 };
 	virtual ~SubscriberAttributes();
+	//! Expects Inline Qos (true or false)
 	bool expectsInlineQos;
+	//!Maximum size of the History associated with this Subscriber.
 	uint16_t historyMaxSize;
+	//!Unicast Locator List that the Subscriber should be listening.
 	LocatorList_t unicastLocatorList;
+	//!Multicas LocatorList where the Subscriber should be listening.
 	LocatorList_t multicastLocatorList;
+	//!Realiability attributes of the Subscriber.
 	SubscriberReliability reliability;
+	//!Topic Attributes of the topic associated with this subscriber.
 	TopicAttributes topic;
+	//!User defined Id, only necessary if the participant uses StaticEndpointDiscoveryProtocol.
 	int16_t userDefinedId;
 };
 

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file TopicParameters.h
+ * @file TopicAttributes.h
  *
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -27,6 +27,16 @@ typedef enum TopicKind_t{
 	WITH_KEY=2
 }TopicKind_t;
 
+}
+
+using namespace rtps;
+
+namespace dds{
+
+/**
+ * Class TopicAttributes, used by the user to define the attributes of the topic associated with a Publisher or Subscriber.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class TopicAttributes {
 public:
 	TopicAttributes()
@@ -36,8 +46,11 @@ public:
 	topicDataType = "UNDEF";
 };
 	virtual ~TopicAttributes();
+	//! TopicKind_t (WITH_KEY or NO_KEY)
 	TopicKind_t topicKind;
+	//! Topic Name.
 	std::string topicName;
+	//!Topic Data Type.
 	std::string topicDataType;
 };
 

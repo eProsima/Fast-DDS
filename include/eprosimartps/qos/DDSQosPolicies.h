@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file dds_qos_policies.h
+ * @file DDSQosPolicies.h
  *
  *  Created on: Apr 30, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -26,22 +26,26 @@ namespace eprosima{
 
 namespace dds{
 
+/**
+ * @addtogroup PARAMETERMODULE
+ * @{
+ */
 
 
 
-typedef enum DurabilityQosPolicyKind_t: octet{
-	VOLATILE_DURABILITY_QOS = 0x01,
-			TRANSIENT_LOCAL_DURABILITY_QOS =0x02,
-			TRANSIENT_DURABILITY_QOS = 0x04,
-			PERSISTENT_DURABILITY_QOS = 0x08
-}DurabilityQosPolicyKind_t;
+typedef enum DurabilityQosPolicyKind: octet{
+	VOLATILE_DURABILITY_QOS = 0x01,        //!< VOLATILE_DURABILITY_QOS
+			TRANSIENT_LOCAL_DURABILITY_QOS =0x02,//!< TRANSIENT_LOCAL_DURABILITY_QOS
+			TRANSIENT_DURABILITY_QOS = 0x04,     //!< TRANSIENT_DURABILITY_QOS
+			PERSISTENT_DURABILITY_QOS = 0x08     //!< PERSISTENT_DURABILITY_QOS
+}DurabilityQosPolicyKind;
 
 #define PARAMETER_KIND_LENGTH 4
 
 class DurabilityQosPolicy : public Parameter_t
 {
 	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),kind(VOLATILE_DURABILITY_QOS){};
-	DurabilityQosPolicyKind_t kind;
+	DurabilityQosPolicyKind kind;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -215,7 +219,7 @@ class TransportPriorityQosPolicy : public Parameter_t {
 };
 
 
-
+///@}
 
 
 }

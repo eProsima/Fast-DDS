@@ -71,21 +71,4 @@ There are multiple events that are triggered wither directly by some action perf
 *
  */
 
- /*!
- * @defgroup EPROSIMARTPSAPIREFERENCE eProsima RTPS API Reference
- * @brief eProsima RTPS API grouped in modules.
- */
 
- /*!
- * @defgroup RTPSMODULE RTPS
- * @ingroup EPROSIMARTPSAPIREFERENCE
- * @brief RTPS API
- * Edit description in utils doxygen doxyfiles mainpage
- */
-
-/*!
- * @defgroup DDSMODULE DDS
- * @ingroup EPROSIMARTPSAPIREFERENCE
- * @brief DDS API
- * Edit description in utils doxygen doxyfiles mainpage
- */

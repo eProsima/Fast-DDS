@@ -17,7 +17,7 @@
 
 #include "eprosimartps/dds/SubscriberListener.h"
 namespace eprosima{
-namespace rtps{
+namespace dds{
 
 SubscriberListener::SubscriberListener()
 {
@@ -29,6 +29,17 @@ SubscriberListener::~SubscriberListener()
 }
 
 void SubscriberListener::onNewDataMessage()
+{
+
+}
+
+void SubscriberListener::onHistoryFull()
+{
+
+}
+
+
+void SubscriberListener::onSubscriptionMatched()
 {
 
 }

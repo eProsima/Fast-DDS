@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ParticipantParameters.h
+ * @file ParticipantAttributes.h
  *
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -22,7 +22,8 @@ namespace eprosima {
 namespace rtps {
 
 /**
- * Class DiscoveryParameters used to define the discovery behavior of the Participant.
+ * Class DiscoveryAttributes used to define the discovery behavior of the Participant.
+ * @ingroup ATTRIBUTESMODULE
  */
 class DiscoveryAttributes{
 public:
@@ -44,6 +45,7 @@ public:
 
 /**
  * Class ParticipantParameters used to define different aspects of a participant.
+ * @ingroup ATTRIBUTESMODULE
  */
 class ParticipantAttributes {
 public:

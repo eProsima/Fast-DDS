@@ -28,7 +28,7 @@ class StatefulWriter;
 class ReaderProxy;
 
 /**
- * NackSupressionDuration class, used to delay the response to a specific AckNack Message.
+ * NackSupressionDuration class, used to avoid too "recent" NACK messages.
  * @ingroup WRITERMODULE
  */
 class NackSupressionDuration:public TimedEvent {

@@ -19,8 +19,12 @@
 #define PUBLISHERLISTENER_H_
 
 namespace eprosima {
-namespace rtps {
+namespace dds {
 
+/**
+ * Class PublisherListener, it should be used by the end user to implement specific callbacks to certain actions.
+ * @ingroup DDSMODULE
+ */
 class PublisherListener {
 public:
 	PublisherListener();
