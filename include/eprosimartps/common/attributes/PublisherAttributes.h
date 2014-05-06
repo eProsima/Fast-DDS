@@ -34,7 +34,7 @@ public:
 		historyMaxSize = 10;
 		userDefinedId = -1;
 };
-	virtual ~PublisherAttributes();
+	virtual ~PublisherAttributes(){};
 	bool pushMode;
 	uint16_t historyMaxSize;
 	LocatorList_t unicastLocatorList;

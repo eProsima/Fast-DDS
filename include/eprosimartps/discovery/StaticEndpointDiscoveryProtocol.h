@@ -110,6 +110,7 @@ public:
 	bool localReaderMatching(RTPSReader* preader,DiscoveredParticipantData* dpd);
 //!StaticEndpoint filename, defined in ParticipantAttributes when the participant is created.
 	std::string m_staticEndpointFilename;
+	std::vector<int16_t> m_endpointIds;
 };
 
 } /* namespace rtps */

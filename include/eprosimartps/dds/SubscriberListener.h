@@ -17,7 +17,7 @@
 
 #ifndef RTPSLISTENER_H_
 #define RTPSLISTENER_H_
-
+#include "eprosimartps/rtps_all.h"
 namespace eprosima {
 namespace dds {
 
@@ -25,7 +25,7 @@ namespace dds {
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup DDSMODULE
  */
-class SubscriberListener {
+class RTPS_DllAPI SubscriberListener {
 public:
 	SubscriberListener() ;
 	virtual ~SubscriberListener();

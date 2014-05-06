@@ -76,7 +76,7 @@ class Participant{
 	friend class StaticEndpointDiscoveryProtocol;
 private:
 
-	RTPS_DllAPI Participant(const ParticipantAttributes &param,uint32_t id);
+	Participant(const ParticipantAttributes &param,uint32_t id);
 	virtual ~Participant();
 
 	/**

@@ -83,7 +83,17 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 					{
 						if(xml_endpoint_child.first == "id")
 						{
-							endpointInfo.m_id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
+							int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
+							if(!std::binary_search(m_endpointIds.begin(),m_endpointIds.end(),id))
+							{
+								endpointInfo.m_id = id;
+								m_endpointIds.push_back(id);
+							}
+							else
+							{
+								pError("Repeated ID in XML File"<<endl);
+								return false;
+							}
 						}
 						else if(xml_endpoint_child.first == "expectsInlineQos")
 						{
@@ -97,7 +107,7 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 								pError("Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid"<<endl);
 								break;
 							}
-													}
+						}
 						else if(xml_endpoint_child.first == "type")
 						{
 							std::string auxString = (std::string)xml_endpoint_child.second.data();
