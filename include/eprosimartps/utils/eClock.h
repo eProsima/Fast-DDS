@@ -33,34 +33,7 @@ struct timezone
   int  tz_dsttime;     /* type of dst correction */
 };
  
-int gettimeofday(struct timeval *tv, struct timezone *tz)
-{
-  FILETIME ft;
-  unsigned __int64 tmpres = 0;
-  static int tzflag;
- 
-  if (NULL != tv)
-  {
-    GetSystemTimeAsFileTime(&ft);
- 
-    tmpres |= ft.dwHighDateTime;
-    tmpres <<= 32;
-    tmpres |= ft.dwLowDateTime;
- 
-    /*converting file time to unix epoch*/
-    tmpres -= DELTA_EPOCH_IN_MICROSECS; 
-    tmpres /= 10;  /*convert into microseconds*/
-    tv->tv_sec = (long)(tmpres / 1000000UL);
-    tv->tv_usec = (long)(tmpres % 1000000UL);
-  }
- 
-  if (NULL != tz)
-  {
-   
-  }
- 
-  return 0;
-}
+
 #else
 #include <sys/time.h>
 #include <chrono>
@@ -69,7 +42,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 //#include <ctime>
 
-
+ 
 #include "eprosimartps/rtps_all.h"
 namespace eprosima {
 namespace rtps {
@@ -86,6 +59,7 @@ public:
 	int32_t m_utc_seconds_diff;
 	timeval m_now;
 	bool setTimeNow(Time_t* now);
+	int my_gettimeofday(struct timeval *tv, struct timezone *tz);
 
 };
 
