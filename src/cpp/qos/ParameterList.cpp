@@ -229,27 +229,29 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					valid&=CDRMessage::readUInt32(msg,&str_size);
 
 					str = std::string();str.resize(str_size);
-					octet oc1[str_size];
+					octet* oc1 = new octet[str_size];
 					valid &= CDRMessage::readData(msg,oc1,str_size);
 					for(uint32_t i =0;i<str_size;i++)
 						str.at(i) = oc1[i];
 					pair.first = str;
-					rest = (str_size-4*floor(str_size/4));
+					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
 					rest = rest==0 ? 0 : 4-rest;
 					msg->pos+=rest;
 					//STRING 2
 					valid&=CDRMessage::readUInt32(msg,&str_size);
 					str = std::string();str.resize(str_size);
 
-					octet oc2[str_size];
+					octet* oc2 = new octet[str_size];
 					valid &= CDRMessage::readData(msg,oc2,str_size);
 					for(uint32_t i =0;i<str_size;i++)
 						str.at(i) = oc2[i];
 					pair.second = str;
-					rest = (str_size-4*floor(str_size/4));
+					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
 										rest = rest==0 ? 0 : 4-rest;
 										msg->pos+=rest;
 					p->properties.push_back(pair);
+					delete(oc1);
+					delete(oc2);
 				}
 				if(valid)
 				{

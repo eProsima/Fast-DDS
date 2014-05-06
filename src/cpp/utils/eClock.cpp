@@ -37,7 +37,7 @@ bool eClock::setTimeNow(Time_t* tnow)
 
 	gettimeofday(&m_now,NULL);
 	tnow->seconds = m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff;
-	tnow->nanoseconds = m_now.tv_usec*pow(2.0,32)*pow(10.0,-6);
+	tnow->nanoseconds = (uint32_t)(m_now.tv_usec*pow(2.0,32)*pow(10.0,-6));
 	return true;
 }
 
