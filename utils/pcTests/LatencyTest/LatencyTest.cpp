@@ -27,7 +27,7 @@
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -87,15 +87,36 @@ void LatencyDeSer(SerializedPayload_t* payload,void*data)
 
 
 
-
-boost::posix_time::ptime t1,t2,t3;
-
-void newMsgCallback()
+class LatencyDataType: public DDSTopicDataType
 {
-//	t2 = boost::posix_time::microsec_clock::local_time();
-//	cout << MAGENTA"New Message Callback" <<DEF<< endl;
+public:
+	LatencyDataType()
+{
+		m_topicDataTypeName = "LatencyType";
+		m_typeSize = len_laten;
+		m_isGetKeyDefined = false;
+};
+	~LatencyDataType(){};
+	bool serialize(void*data,SerializedPayload_t* payload);
+	bool deserialize(SerializedPayload_t* payload,void * data);
+};
+
+//Funciones de serializacion y deserializacion para el ejemplo
+bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
+{
+	memcpy(payload->data,data,len_laten);
+		payload->length = len_laten;
+	return true;
 }
 
+bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
+{
+	memcpy(data,payload->data,payload->length);
+	return true;
+}
+
+
+boost::posix_time::ptime t1,t2,t3;
 
 
 int main(int argc, char** argv){
@@ -129,41 +150,37 @@ int main(int argc, char** argv){
 
 
 	//my_sleep(1);
-	ParticipantParams_t PParam;
+	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 	//Registrar tipo de dato.
-	DomainParticipant::registerType(std::string("LatencyType"),&LatencySer,&LatencyDeSer,NULL,len_laten);
+	LatencyDataType latency_t;
+	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
 	Locator_t loc;
 	loc.kind = 1;
 	loc.port = 10469;
 	loc.set_IP4_address(192,168,1,16);
 
-	ReaderParams_t Rparam;
-	WriterParams_t Wparam;
+	SubscriberAttributes Rparam;
+	PublisherAttributes Wparam;
 	if(type == 1)
 	{
-		Wparam.historySize = 10;
-		Rparam.historySize = 15;
+		Wparam.historyMaxSize = 10;
+		Rparam.historyMaxSize = 15;
 	}
 	else if(type == 2)
 	{
-		Wparam.historySize = 1000;
-		Rparam.historySize = 1000;
+		Wparam.historyMaxSize = 1000;
+		Rparam.historyMaxSize = 1000;
 	}
 
 	//Create both publisher and subscriber.
-
-
 	Wparam.pushMode = true;
-	Wparam.stateKind = STATELESS;
-	Wparam.topicKind = NO_KEY;
-	Wparam.topicDataType = std::string("LatencyType");
-	Wparam.topicName = std::string("This is a test topic");
+	Wparam.topic.topicKind = NO_KEY;
+	Wparam.topic.topicDataType = std::string("LatencyType");
+	Wparam.topic.topicName = std::string("This is a test topic");
 	Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-	//One of these two as locators.
-//	loc.set_IP4_address(192,168,1,18);
-	//	pub->addReaderLocator(loc,true);
+
 	if(type == 1)
 	{
 		loc.set_IP4_address(192,168,1,23);
@@ -176,12 +193,10 @@ int main(int argc, char** argv){
 	}
 
 
-	Rparam.stateKind = STATELESS;
-	Rparam.topicDataType = std::string("LatencyType");
-	Rparam.topicName = std::string("This is a test topic");
+	Rparam.topic.topicDataType = std::string("LatencyType");
+	Rparam.topic.topicName = std::string("This is a test topic");
 	Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 	Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-	sub->assignNewMessageCallback(newMsgCallback);
 
 
 	SequenceNumber_t seq;
@@ -191,7 +206,7 @@ int main(int argc, char** argv){
 	uint64_t us;
 	uint64_t min_us= 150000;
 	int samples = 0;
-
+	SampleInfo_t info;
 	for(int i=1;i<n_samples;i++)
 	{
 		if(type == 1)
@@ -203,8 +218,8 @@ int main(int argc, char** argv){
 			//t1 = boost::posix_time::microsec_clock::local_time();
 			gettimeofday(&t1,NULL);
 			pub->write((void*)&g_latency);
-			sub->blockUntilNewMessage();
-			sub->readLastAdded((void*)&g_latency);
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&g_latency,&info);
 			gettimeofday(&t2,NULL);
 			//t2 = boost::posix_time::microsec_clock::local_time();
 			if(seqnum == g_latency.seqnum)
@@ -229,14 +244,12 @@ int main(int argc, char** argv){
 				cout << endl;
 			}
 			pub->removeMinSeqChange();
-			sub->takeMinSeqCache((void*)&g_latency);
-			//boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			//sleep(1);
+			sub->takeNextData((void*)&g_latency,&info);
 		}
 		else if (type == 2)
 		{
-			sub->blockUntilNewMessage();
-			sub->readLastAdded((void*)&g_latency);
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&g_latency,&info);
 			pub->write((void*)&g_latency);
 		}
 	}
