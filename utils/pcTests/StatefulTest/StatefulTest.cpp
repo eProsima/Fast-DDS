@@ -27,7 +27,7 @@
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -131,11 +131,11 @@ bool TestTypeDataType::getKey(void*data,InstanceHandle_t* handle)
 	return true;
 }
 
-class TestTypeListener: public RTPSListener{
+class TestTypeListener: public SubscriberListener{
 public:
 	TestTypeListener(){};
 	~TestTypeListener(){};
-	void newMessageCallback()
+	void onNewDataMessage()
 	{
 		cout <<"New Message"<<endl;
 	}
@@ -166,9 +166,9 @@ int main(int argc, char** argv){
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
 
-	ParticipantParams_t PParam;
+	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.m_useSimpleParticipantDiscovery = false;
+	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 
 
@@ -176,15 +176,14 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		WriterParams_t Wparam;
-		Wparam.stateKind = STATEFUL;
-		Wparam.topicKind = WITH_KEY;
-		Wparam.topicDataType = std::string("TestType");
-		Wparam.topicName = std::string("Test_topic");
-		Wparam.historySize = 14;
-		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-		Wparam.reliablility.nackResponseDelay.seconds = 5;
-		Wparam.reliablility.kind = RELIABLE;
+		PublisherAttributes Wparam;
+		Wparam.topic.topicKind = WITH_KEY;
+		Wparam.topic.topicDataType = std::string("TestType");
+		Wparam.topic.topicName = std::string("Test_topic");
+		Wparam.historyMaxSize = 14;
+		Wparam.reliability.heartbeatPeriod.seconds = 2;
+		Wparam.reliability.nackResponseDelay.seconds = 5;
+		Wparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
@@ -226,11 +225,11 @@ int main(int argc, char** argv){
 	case 2:
 	case 3:
 	{
-		ReaderParams_t Rparam;
-		Rparam.historySize = 15;
-		Rparam.stateKind = STATEFUL;
-		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_Topic");
+		SubscriberAttributes Rparam;
+		Rparam.historyMaxSize = 15;
+		Rparam.topic.topicDataType = std::string("TestType");
+		Rparam.topic.topicName = std::string("Test_Topic");
+		Rparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
 		if(type == 2)
 			loc.port = 10046;
@@ -239,18 +238,19 @@ int main(int argc, char** argv){
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
-		sub->assignListener((RTPSListener*)&listener);
+		sub->assignListener((SubscriberListener*)&listener);
 		while(1)
 		{
 			cout << "Waiting for new message "<<endl;
-			sub->blockUntilNewMessage();
+			sub->waitForUnreadMessage();
 			TestType tp;
-			if(sub->takeNextData((void*)&tp))
+			SampleInfo_t info;
+			if(sub->takeNextData((void*)&tp,&info))
 				tp.print();
-			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
+			if(sub->getHistory_n() >= 0.5*Rparam.historyMaxSize)
 			{
 				cout << "Taking all" <<endl;
-				while(sub->takeNextData(&tp))
+				while(sub->takeNextData((void*)&tp,&info))
 					tp.print();
 			}
 		}

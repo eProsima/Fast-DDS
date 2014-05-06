@@ -30,6 +30,7 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
 
@@ -186,6 +187,7 @@ int main(int argc, char** argv){
 		p->announceParticipantState();
 		sleep(4);
 		TestType tp1,tp_in;
+		SampleInfo_t info_in;
 		COPYSTR(tp1.name,"Obje1");
 		tp1.value = 0;
 		tp1.price = 1.3;
@@ -198,8 +200,8 @@ int main(int argc, char** argv){
 			tp1.price *= (i+1);
 
 			pub->write((void*)&tp1);
-			sub->blockUntilNewMessage();
-			sub->readNextData((void*)&tp_in);
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&tp_in,&info_in);
 			if(tp_in.value == tp1.value &&
 					tp_in.price ==tp1.price)
 				cout << "Message RECEIVED = AS SEND: "<< i << endl;
@@ -247,10 +249,11 @@ int main(int argc, char** argv){
 
 		sleep(4);
 		TestType tp_in;
+		SampleInfo_t info_in;
 		for(uint i = 0;i<10;i++)
 		{
-			sub->blockUntilNewMessage();
-			sub->readNextData((void*)&tp_in);
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&tp_in,&info_in);
 
 			pub->write((void*)&tp_in);
 		}

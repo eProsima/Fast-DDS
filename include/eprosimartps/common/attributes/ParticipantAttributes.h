@@ -55,7 +55,7 @@ public:
 		name = "defaultParticipant";
 		domainId = 80;
 }
-	virtual ~ParticipantAttributes();
+	virtual ~ParticipantAttributes(){};
 	LocatorList_t defaultUnicastLocatorList;
 	LocatorList_t defaultMulticastLocatorList;
 	uint32_t defaultSendPort;
