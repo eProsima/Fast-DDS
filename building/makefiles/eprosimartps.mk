@@ -69,7 +69,6 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/qos/ParameterList.cpp \
 		  $(BASEDIR)/src/cpp/qos/ParameterTypes.cpp \
 		  $(BASEDIR)/src/cpp/qos/QosList.cpp \
-		  $(BASEDIR)/src/cpp/qos/DDSQosPolicies.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/timedevent/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/PeriodicHeartbeat.cpp \
