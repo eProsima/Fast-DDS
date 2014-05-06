@@ -21,7 +21,7 @@
 namespace eprosima {
 namespace dds {
 
-class SampleInfo_t {
+class RTPS_DllAPI SampleInfo_t {
 public:
 	SampleInfo_t():sampleKind(ALIVE){};
 	virtual ~SampleInfo_t(){};
