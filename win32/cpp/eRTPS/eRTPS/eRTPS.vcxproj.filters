@@ -55,6 +55,12 @@
     <Filter Include="Source Files\submessages">
       <UniqueIdentifier>{45dc8dc6-891f-4783-afa3-a9a225d1d524}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\discovery">
+      <UniqueIdentifier>{9933b662-29ed-449d-97f4-3fecbafd0320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\discovery">
+      <UniqueIdentifier>{9a22bcec-311c-4aa0-bdd3-3e0f0c67419a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\eprosimartps\common\CacheChange.h">
@@ -213,6 +219,51 @@
     <ClInclude Include="..\..\..\..\src\cpp\submessages\HeartbeatMsg.hpp">
       <Filter>Source Files\submessages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\ParticipantProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\rtps_parameter_types.h">
+      <Filter>Header Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\DDSTopicDataType.h">
+      <Filter>Header Files\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\QosList.h">
+      <Filter>Header Files\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\RTPSListener.h">
+      <Filter>Header Files\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\DiscoveredParticipantData.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\DiscoveredReaderData.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\DiscoveredTopicData.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\DiscoveredWriterData.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\ParticipantDiscoveryData.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleParticipantDiscoveryProtocol.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPListener.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\StaticEndpointDiscoveryProtocol.h">
+      <Filter>Header Files\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\ResendDiscoveryDataPeriod.h">
+      <Filter>Header Files\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\dds\DomainParticipant.cpp">
@@ -307,6 +358,48 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\RTPSMessageCreator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\ParameterList.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\ParameterTypes.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\QosList.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\DiscoveredParticipantData.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\DiscoveredReaderData.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\DiscoveredTopicData.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\DiscoveredWriterData.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleParticipantDiscoveryProtocol.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPListener.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\StaticEndpointDiscoveryProtocol.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\RTPSListener.cpp">
+      <Filter>Source Files\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\ResendDiscoveryDataPeriod.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\eClock.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

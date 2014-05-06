@@ -68,7 +68,7 @@ typedef struct SequenceNumber_t{
 	{
 		if(this->low+inc>pow(2.0,32))
 		{
-			int module = floor((inc+this->low)/pow(2.0,32));
+			int module = (int)floor((inc+this->low)/pow(2.0,32));
 			this->high+=module;
 			this->low +=inc-((uint32_t)pow(2.0,32)*module);
 		}
@@ -109,12 +109,12 @@ inline SequenceNumber_t operator+(SequenceNumber_t seq,uint64_t inc){
 
 	if(seq.low+inc>pow(2.0,32))
 	{
-		int module = floor((inc+seq.low)/pow(2.0,32));
+		int module = (int)floor((inc+seq.low)/pow(2.0,32));
 		seq.high+=module;
-		seq.low +=inc-(pow(2.0,32)*module);
+		seq.low +=(uint32_t)(inc-(pow(2.0,32)*module));
 	}
 	else
-		seq.low+=inc;
+		seq.low+=(uint32_t)inc;
 	return seq;
 }
 

@@ -43,7 +43,7 @@ CacheChange_t* CacheChangePool::reserve_Cache()
 {
 	if(freeCaches.empty())
 	{
-		allocateGroup((uint16_t)(ceil(pool_size/10)+10));
+		allocateGroup((uint16_t)(ceil((float)pool_size/10)+10));
 	}
 	CacheChange_t* ch = freeCaches.front();
 	freeCaches.erase(freeCaches.begin());
