@@ -31,7 +31,7 @@ namespace dds {
  * The user should created a class that inherits from this one, where Serialize and deserialize methods MUST be implemented.
  * @ingroup DDSMODULE
  */
-class DDSTopicDataType {
+class RTPS_DllAPI DDSTopicDataType {
 public:
 	DDSTopicDataType();
 	virtual ~DDSTopicDataType();

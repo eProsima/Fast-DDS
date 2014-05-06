@@ -43,7 +43,7 @@ namespace dds{
 class ReliabilityAttributes {
 public:
 	ReliabilityAttributes():reliabilityKind(BEST_EFFORT){};
-	virtual ~ReliabilityAttributes();
+	virtual ~ReliabilityAttributes(){};
 	ReliabilityKind_t reliabilityKind;
 };
 

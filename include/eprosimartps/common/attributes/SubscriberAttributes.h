@@ -32,7 +32,7 @@ public:
 		historyMaxSize = 50;
 		userDefinedId = -1;
 };
-	virtual ~SubscriberAttributes();
+	virtual ~SubscriberAttributes(){};
 	//! Expects Inline Qos (true or false)
 	bool expectsInlineQos;
 	//!Maximum size of the History associated with this Subscriber.

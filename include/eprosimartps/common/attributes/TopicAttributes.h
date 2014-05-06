@@ -45,7 +45,7 @@ public:
 	topicName = "UNDEF";
 	topicDataType = "UNDEF";
 };
-	virtual ~TopicAttributes();
+	virtual ~TopicAttributes(){};
 	//! TopicKind_t (WITH_KEY or NO_KEY)
 	TopicKind_t topicKind;
 	//! Topic Name.
