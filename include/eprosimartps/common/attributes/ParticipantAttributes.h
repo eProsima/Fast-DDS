@@ -40,7 +40,7 @@ public:
 		resendSPDPDataPeriod_sec = 30;
 		m_staticEndpointXMLFilename = "/home/grcanosa/workspace/eRTPS/utils/pcTests/StaticParticipantInfo.xml";
 	};
-	virtual ~DiscoveryAttributes();
+	virtual ~DiscoveryAttributes(){};
 };
 
 /**
