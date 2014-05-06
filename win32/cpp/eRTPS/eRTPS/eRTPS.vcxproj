@@ -105,7 +105,6 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SubscriberListener.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredParticipantData.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\ParticipantProxy.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleEndpointDiscoveryProtocol.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleParticipantDiscoveryProtocol.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPListener.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\StaticEndpointDiscoveryProtocol.h" />
@@ -152,7 +151,6 @@
     <ClInclude Include="..\..\..\..\src\cpp\submessages\HeartbeatMsg.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\include\eprosimartps\utils\Semaphore.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\CacheChangePool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\DomainParticipant.cpp" />
@@ -160,8 +158,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\dds\PublisherListener.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\Subscriber.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredParticipantData.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleEndpointDiscoveryProtocol.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleParticipantDiscoveryProtocol.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPListener.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\StaticEndpointDiscoveryProtocol.cpp" />

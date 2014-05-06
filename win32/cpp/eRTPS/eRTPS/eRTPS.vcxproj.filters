@@ -76,9 +76,6 @@
     <Filter Include="Source Files\writer">
       <UniqueIdentifier>{5ae918d0-8a5d-439d-b627-18ac1fae51ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\discovery\data">
-      <UniqueIdentifier>{fdb881f2-6405-4ac6-8b09-c9d0b5323b8e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\eprosimartps\CacheChangePool.h">
@@ -240,9 +237,6 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SubscriberListener.h">
       <Filter>Header Files\eprosimartps\dds</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleEndpointDiscoveryProtocol.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleParticipantDiscoveryProtocol.h">
       <Filter>Header Files\eprosimartps\discovery</Filter>
     </ClInclude>
@@ -299,9 +293,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\include\eprosimartps\utils\Semaphore.cpp">
-      <Filter>Header Files\eprosimartps\utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\CacheChangePool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -338,9 +329,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp">
       <Filter>Source Files\dds</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleEndpointDiscoveryProtocol.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleParticipantDiscoveryProtocol.cpp">
       <Filter>Source Files\discovery</Filter>
     </ClCompile>
@@ -349,9 +337,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\discovery\StaticEndpointDiscoveryProtocol.cpp">
       <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredParticipantData.cpp">
-      <Filter>Source Files\discovery\data</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
       <Filter>Source Files\writer</Filter>
