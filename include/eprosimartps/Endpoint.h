@@ -26,10 +26,10 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
-class ThreadListen;
+class ResourceListen;
 class Participant;
-class ThreadSend;
-class ThreadEvent;
+class ResourceSend;
+class ResourceEvent;
 
 
 /**
@@ -47,11 +47,11 @@ public:
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 	GUID_t m_guid;
-	//!Vector of pointer to the listening threads associated with this endpoint.
-	std::vector<ThreadListen*> m_listenThList;
+	//!Vector of pointer to the listening resources associated with this endpoint.
+	std::vector<ResourceListen*> m_listenThList;
 	//!Pointer to the participant this endpoint belongs to.
-	ThreadSend* mp_send_thr;
-	ThreadEvent* mp_event_thr;
+	ResourceSend* mp_send_thr;
+	ResourceEvent* mp_event_thr;
 
 	DDSTopicDataType* mp_type;
 	int16_t m_userDefinedId;

@@ -31,8 +31,8 @@ Subscriber::Subscriber(RTPSReader* Rin):
 }
 
 
-Subscriber::~Subscriber() {
-
+Subscriber::~Subscriber()
+{
 	pDebugInfo("Subscriber destructor"<<endl;);
 }
 
@@ -40,11 +40,13 @@ Subscriber::~Subscriber() {
 void Subscriber::waitForUnreadMessage()
 {
 	if(!mp_Reader->isUnreadCacheChange())
-		mp_Reader->newMessageSemaphore->wait();
+		mp_Reader->m_semaphore.wait();
+	mp_Reader->m_semaphore.reset();
 
 }
 
-void Subscriber::assignListener(SubscriberListener* p_listener) {
+void Subscriber::assignListener(SubscriberListener* p_listener)
+{
 	mp_Reader->mp_listener = p_listener;
 }
 

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ThreadEvent.h
+ * @file ResourceEvent.h
  *
  *  Created on: Mar 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -15,8 +15,8 @@
  *              grcanosa@gmail.com  	
  */
 
-#ifndef THREADEVENT_H_
-#define THREADEVENT_H_
+#ifndef RESOURCEEVENT_H_
+#define RESOURCEEVENT_H_
 
 
 #include <boost/asio.hpp>
@@ -31,13 +31,13 @@ namespace eprosima {
 namespace rtps {
 
 /**
- * Class ThreadEvent used to manage the temporal events.
+ * Class ResourceEvent used to manage the temporal events.
  * @ingroup MANAGEMENTMODULE
  */
-class ThreadEvent {
+class ResourceEvent {
 public:
-	ThreadEvent();
-	virtual ~ThreadEvent();
+	ResourceEvent();
+	virtual ~ResourceEvent();
 	boost::thread* b_thread;
 	boost::asio::io_service io_service;
 	boost::asio::io_service::work work;
@@ -58,4 +58,4 @@ public:
 } /* namespace dds */
 } /* namespace eprosima */
 
-#endif /* THREADEVENT_H_ */
+#endif /* RESOURCEEVENT_H_ */

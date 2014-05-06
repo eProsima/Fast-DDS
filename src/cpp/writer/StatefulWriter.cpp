@@ -182,7 +182,7 @@ bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
 void StatefulWriter::unsent_changes_not_empty()
 {
 	std::vector<ReaderProxy*>::iterator rit;
-	boost::lock_guard<ThreadSend> guard(*mp_send_thr);
+	boost::lock_guard<ResourceSend> guard(*mp_send_thr);
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
 		boost::lock_guard<ReaderProxy> guard(*(*rit));

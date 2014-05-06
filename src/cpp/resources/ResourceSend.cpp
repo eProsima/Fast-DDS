@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /*
- * ThreadSend.cpp
+ * ResourceSend.cpp
  *
  *  Created on: Feb 25, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -15,14 +15,14 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/threadtype/ThreadSend.h"
+#include "eprosimartps/resources/ResourceSend.h"
 
 using boost::asio::ip::udp;
 
 namespace eprosima {
 namespace rtps {
 
-ThreadSend::ThreadSend() :
+ResourceSend::ResourceSend() :
 	m_send_socket(m_send_service),
 	m_bytes_sent(0),
 	m_send_next(true)
@@ -30,7 +30,7 @@ ThreadSend::ThreadSend() :
 
 }
 
-bool ThreadSend::initSend(const Locator_t& loc)
+bool ResourceSend::initSend(const Locator_t& loc)
 {
 	boost::asio::ip::address addr;
 	m_sendLocator = loc;
@@ -78,23 +78,23 @@ bool ThreadSend::initSend(const Locator_t& loc)
 			m_sendLocator.port++;
 		}
 	}
-	pInfo (YELLOW<<"ThreadSend: initSend: through address " << m_send_socket.local_endpoint()<<"||Socket state: " << m_send_socket.is_open() << DEF<<endl);
+	pInfo (YELLOW<<"ResourceSend: initSend: through address " << m_send_socket.local_endpoint()<<"||Socket state: " << m_send_socket.is_open() << DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
 	return true;
 }
 
 
-ThreadSend::~ThreadSend()
+ResourceSend::~ResourceSend()
 {
-	pDebugInfo("ThreadSend: destructor"<<endl;);
+	pDebugInfo("ResourceSend: destructor"<<endl;);
 	m_send_socket.close();
 	m_send_service.stop();
 }
 
-void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
+void ResourceSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 {
-	boost::lock_guard<ThreadSend> guard(*this);
+	boost::lock_guard<ResourceSend> guard(*this);
 	if(loc->port == 0)
 		return;
 	if(loc->kind == LOCATOR_KIND_UDPv4)
@@ -111,7 +111,7 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 			addr[i] = loc->address[i];
 		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
 	}
-	pInfo(YELLOW<< "ThreadSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+	pInfo(YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
 	if(m_send_endpoint.port()>0)
 	{
 		m_bytes_sent = 0;
@@ -127,10 +127,10 @@ void ThreadSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 	}
 	else if(m_send_endpoint.port()<=0)
 	{
-		pWarning("ThreadSend: sendSync: port invalid"<<endl);
+		pWarning("ResourceSend: sendSync: port invalid"<<endl);
 	}
 	else
-		pError("ThreadSend: sendSync: port error"<<endl);
+		pError("ResourceSend: sendSync: port error"<<endl);
 }
 
 

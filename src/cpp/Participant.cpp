@@ -35,7 +35,7 @@ namespace rtps {
 Participant::Participant(const ParticipantAttributes& PParam):
 				m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 				m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-				m_ThreadSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+				m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 				IdCounter(0),
 				m_SPDP(this),
 				m_StaticEDP(this)
@@ -100,7 +100,7 @@ Participant::~Participant()
 {
 	pDebugInfo("Participant destructor"<<endl;);
 	//Destruct threads:
-	for(std::vector<ThreadListen*>::iterator it=m_threadListenList.begin();
+	for(std::vector<ResourceListen*>::iterator it=m_threadListenList.begin();
 			it!=m_threadListenList.end();++it)
 		delete(*it);
 
@@ -112,7 +112,7 @@ Participant::~Participant()
 			it!=m_writerList.end();++it)
 		delete(*it);
 
-	delete(this->m_ThreadSemaphore);
+	delete(this->m_ResourceSemaphore);
 }
 
 bool Participant::createStatelessWriter(StatelessWriter** SW_out,const PublisherAttributes& param,uint32_t payload_size)
@@ -174,7 +174,7 @@ bool Participant::initWriter(RTPSWriter*W)
 	W->m_guid.entityId.value[1] = c[1];
 	W->m_guid.entityId.value[0] = c[2];
 	//Look for receiving threads that are already listening to this writer receiving addresses.
-	if(assignEnpointToListenThreads((Endpoint*)W,'W'))
+	if(assignEnpointToListenResources((Endpoint*)W,'W'))
 	{
 		//Wait until the thread is correctly created
 		m_writerList.push_back(W);
@@ -259,7 +259,7 @@ bool Participant::initReader(RTPSReader* p_R)
 
 	//Look for receiving threads that are already listening to this writer receiving addresses.
 
-	if(this->assignEnpointToListenThreads((Endpoint*)p_R,'R'))
+	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R'))
 	{
 		m_readerList.push_back(p_R);
 		this->m_SPDP.setHasChangedDpd(true);
@@ -280,9 +280,9 @@ bool Participant::initReader(RTPSReader* p_R)
 
 
 
-inline void addEndpoint(ThreadListen* th,Endpoint* end,char type)
+inline void addEndpoint(ResourceListen* th,Endpoint* end,char type)
 {
-	pInfo("Endpoint of type " << type << " added to listen Thread"<<endl);
+	pInfo("Endpoint of type " << type << " added to listen Resource"<<endl);
 	if(type == 'W')
 		th->m_assoc_writers.push_back((RTPSWriter*)end);
 	else if(type =='R')
@@ -290,13 +290,13 @@ inline void addEndpoint(ThreadListen* th,Endpoint* end,char type)
 }
 
 
-bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
+bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) {
 	if(type !='R' && type!='W')
 	{
 		return false;
 	}
 
-	std::vector<ThreadListen*>::iterator thit;
+	std::vector<ResourceListen*>::iterator thit;
 	std::vector<Locator_t>::iterator locit_th;
 	std::vector<Locator_t>::iterator locit_e;
 	bool assigned = false;
@@ -319,10 +319,10 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		}
 		if(!assigned) //Create new listen thread
 		{
-			ThreadListen* thListen = NULL;
-			if(addNewListenThread(*locit_e,&thListen,false))
+			ResourceListen* thListen = NULL;
+			if(addNewListenResource(*locit_e,&thListen,false))
 			{//Add new listen thread to participant
-				m_ThreadSemaphore->wait();
+				m_ResourceSemaphore->wait();
 				addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
 				assigned = true;
 			}
@@ -349,10 +349,10 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 		}
 		if(!assigned) //Create new listen thread
 		{
-			ThreadListen* thListen = NULL;
-			if(addNewListenThread(*locit_e,&thListen,true))
+			ResourceListen* thListen = NULL;
+			if(addNewListenResource(*locit_e,&thListen,true))
 			{//Add new listen thread to participant
-				m_ThreadSemaphore->wait();
+				m_ResourceSemaphore->wait();
 				addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
 				assigned = true;
 			}
@@ -363,8 +363,8 @@ bool Participant::assignEnpointToListenThreads(Endpoint* endpoint, char type) {
 	return true;
 }
 
-bool Participant::addNewListenThread(Locator_t& loc,ThreadListen** thlisten_in,bool isMulticast) {
-	*thlisten_in = new ThreadListen();
+bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
+	*thlisten_in = new ResourceListen();
 	(*thlisten_in)->m_locList.push_back(loc);
 	(*thlisten_in)->m_isMulticast = isMulticast;
 	(*thlisten_in)->m_participant_ptr = this;
@@ -405,7 +405,7 @@ bool Participant::removeEndpoint(Endpoint* p_endpoint){
 	if(!found)
 		return false;
 	//Remove it from threadListenList
-	std::vector<ThreadListen*>::iterator thit;
+	std::vector<ResourceListen*>::iterator thit;
 	for(thit=m_threadListenList.begin();
 			thit!=m_threadListenList.end();thit++)
 	{
