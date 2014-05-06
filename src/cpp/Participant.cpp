@@ -32,7 +32,7 @@ namespace eprosima {
 namespace rtps {
 
 
-Participant::Participant(const ParticipantAttributes& PParam):
+Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 				m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 				m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 				m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
@@ -46,9 +46,7 @@ Participant::Participant(const ParticipantAttributes& PParam):
 
 	m_event_thr.init_thread();
 
-	// Create Unique GUID
-	dds::DomainParticipant *dp = dds::DomainParticipant::getInstance();
-	uint32_t ID = dp->getNewId();
+
 	int pid;
 #if defined(_WIN32)
 	pid = (int)_getpid();

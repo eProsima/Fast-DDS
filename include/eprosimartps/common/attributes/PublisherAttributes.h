@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file PublisherParameters.h
+ * @file PublisherAttributes.h
  *
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -19,10 +19,13 @@
 #define PUBLISHERPARAMETERS_H_
 
 namespace eprosima {
-namespace rtps {
+namespace dds {
 
 
-
+/**
+ * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class PublisherAttributes {
 public:
 	PublisherAttributes()

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file SimpleDiscoveryParticipantProtocol.h
+ * @file SimpleParticipantDiscoveryProtocol.h
  *
  *  Created on: Apr 8, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -38,7 +38,11 @@ class StatelessReader;
 
 
 
-
+/**
+ * Class SimpleParticipantDiscoveryProtocol, it announces the participant to predefined Locators
+ *  in the network as well as to all other Participants that have been matched.
+ *  @ingroup DISCOVERYMODULE
+ */
 class SimpleParticipantDiscoveryProtocol: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 	friend class ResendDiscoveryDataPeriod;
 	friend class StaticEndpointDiscoveryProtocol;
@@ -46,29 +50,43 @@ public:
 	SimpleParticipantDiscoveryProtocol(Participant* p);
 	virtual ~SimpleParticipantDiscoveryProtocol();
 
+	/**
+	 * Initialization method. Is called by the participant if the ParaticipantAttributes related parameter is set to YES, indicating that the SPDP will be used.
+	 * @param[in] domainId DomainId that will be used for this participant.
+	 * @param[in] participantId ParticipantId within the DomainParticipant.
+	 * @param[in] resendDataPeriod_sec The period for the ResendDiscoveryDataPeriod TimedEvent.
+	 * @return True if correct.
+	 */
 	bool initSPDP(uint16_t domainId,uint16_t participantId,uint16_t resendDataPeriod_sec);
 
-
+	/**
+	 * Method thata sends a DiscoveryParticipantData Message to all added locators.
+	 * @return
+	 */
 	bool sendDPDMsg();
-	bool updateDPDMsg();
-	bool updateParamList();
-
-	void new_change_added();
-
-	bool processParameterList(ParameterList_t& param, DiscoveredParticipantData* Pdata);
 
 
-	std::vector<std::string> getMatchedParticipantsNames();
-
+	/**
+	 * Check if the DPD data has been changed.
+	 * @return
+	 */
 	bool HasChangedDpd() const {
 		return m_hasChanged_DPD;
 	}
-
+	/**
+	 * Set the variable that indicates that the DPD data has changed.
+	 * @param[in] hasChangedDpd
+	 */
 	void setHasChangedDpd(bool hasChangedDpd) {
 		m_hasChanged_DPD = hasChangedDpd;
 	}
 
 	bool updateLocalParticipantEntityInfo();
+
+	/**
+	 *  This method is called when a new CacheChange is added to the SPDP Reader in order to analyze it.
+	 */
+	void new_change_added();
 
 private:
 	Participant* mp_Participant;
@@ -87,6 +105,19 @@ private:
 	QosList_t m_DPDAsParamList;
 	std::vector<DiscoveredParticipantData*> m_matched_participants;
 	SPDPListener m_listener;
+	/**
+	 * This method updated the DPD Msg in case something has change in our own participant.
+	 * @return True if correct.
+	 */
+	bool updateDPDMsg();
+	bool updateParamList();
+
+
+
+	bool processParameterList(ParameterList_t& param, DiscoveredParticipantData* Pdata);
+
+	std::vector<std::string> getMatchedParticipantsNames();
+
 public:
 	bool m_useStaticEDP;
 

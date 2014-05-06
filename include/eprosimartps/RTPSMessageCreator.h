@@ -7,8 +7,8 @@
  *************************************************************************/
 
 /**
- * @file CDRMessageCreator2.h
- *	CDR Message creator functions.
+ * @file RTPSMessageCreator.h
+ *	RTPS Message creator functions.
  *  Created on: Feb 19, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

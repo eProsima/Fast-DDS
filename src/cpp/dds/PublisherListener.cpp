@@ -18,7 +18,7 @@
 #include "eprosimartps/dds/PublisherListener.h"
 
 namespace eprosima {
-namespace rtps {
+namespace dds {
 
 PublisherListener::PublisherListener() {
 	// TODO Auto-generated constructor stub
@@ -28,6 +28,17 @@ PublisherListener::PublisherListener() {
 PublisherListener::~PublisherListener() {
 	// TODO Auto-generated destructor stub
 }
+
+void PublisherListener::onPublicationMatched()
+{
+
+}
+
+void PublisherListener::onHistoryFull()
+{
+
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

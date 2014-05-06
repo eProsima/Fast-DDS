@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ResendDataPeriod.h
+ * @file ResendDiscoveryDataPeriod.h
  *
  *  Created on: Apr 8, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -27,7 +27,7 @@ namespace rtps {
 class SimpleParticipantDiscoveryProtocol;
 
 /**
- * ResendDiscoveryDataPeriod class use to periodically send the ParticipantDiscovery Data.
+ * Class ResendDiscoveryDataPeriod, TimedEvent used to periodically send the ParticipantDiscovery Data.
  * @ingroup DISCOVERYMODULE
  */
 class ResendDiscoveryDataPeriod: public TimedEvent {

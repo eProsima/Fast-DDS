@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file DDSListener.h
+ * @file SubscriberListener.h
  *
  *  Created on: Apr 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -19,11 +19,11 @@
 #define RTPSLISTENER_H_
 
 namespace eprosima {
-namespace rtps {
+namespace dds {
 
 /**
- * Class RTPSListener, to be used as a base by the user to program the actions to be performed when a new message is received.
- * @ingroup READERMODULE
+ * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
+ * @ingroup DDSMODULE
  */
 class SubscriberListener {
 public:

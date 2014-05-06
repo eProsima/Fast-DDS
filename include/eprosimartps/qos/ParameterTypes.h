@@ -23,7 +23,14 @@
 using namespace eprosima::rtps;
 
 namespace eprosima {
+
 namespace dds {
+
+/**
+ * @addtogroup PARAMETERMODULE
+ * @{
+ */
+
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
 class Parameter_t {
@@ -46,11 +53,8 @@ public:
 	virtual bool addToCDRMessage(CDRMessage_t* msg) = 0;
 };
 
-/**
- * @name Parameter Types.
- * Each of the parameters represent a type of parameter based on the data it contains
- */
-///@{
+
+
 class ParameterLocator_t: public Parameter_t {
 public:
 	Locator_t locator;
@@ -177,6 +181,8 @@ public:
 	ParameterPropertyList_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+
 
 ///@}
 

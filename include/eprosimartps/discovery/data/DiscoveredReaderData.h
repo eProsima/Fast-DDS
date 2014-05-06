@@ -18,9 +18,14 @@
 #ifndef DISCOVEREDREADERDATA_H_
 #define DISCOVEREDREADERDATA_H_
 
+using namespace eprosima::dds;
+
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class DiscoveredReaderData used by the SEDP.
+ */
 class DiscoveredReaderData {
 public:
 	DiscoveredReaderData();

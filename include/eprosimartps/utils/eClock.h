@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file Clock.h
+ * @file eClock.h
  *
  *  Created on: Apr 4, 2014
  *      Author: Gonzalo Rodriguez Canosa

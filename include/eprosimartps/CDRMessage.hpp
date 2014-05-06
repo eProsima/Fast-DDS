@@ -6,8 +6,10 @@
  *
  *************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /**
- * @file CDRMessage.cpp
+ * @file CDRMessage.hpp
  *
  *  Created on: Feb 24, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -265,7 +267,7 @@ inline bool CDRMessage::addUInt16(CDRMessage_t*msg,uint16_t us)
 }
 
 
-inline bool CDRMessage::addParameterId(CDRMessage_t*msg,ParameterId_t pid)
+inline bool CDRMessage::addParameterId(CDRMessage_t* msg, ParameterId_t pid)
 {
 	return CDRMessage::addUInt16(msg,(uint16_t)pid);
 }
@@ -513,4 +515,4 @@ inline bool CDRMessage::addString(CDRMessage_t*msg,std::string& in_str)
 } /* namespace rtps */
 } /* namespace eprosima */
 
-
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

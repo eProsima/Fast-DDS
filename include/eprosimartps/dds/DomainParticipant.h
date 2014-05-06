@@ -56,10 +56,15 @@ private:
     DomainParticipant();
     std::vector<DDSTopicDataType*> m_registeredTypes;
     std::vector<Participant*> m_participants;
+    /**
+     * DomainParticipant destructor
+     */
+    ~DomainParticipant();
 public:
     /**
      * Method to shut down all participants, readers, writers, etc.
      * It must be called at the end of the process to avoid memory leaks.
+     * It also shut downs the DomainParticipant.
      */
     static void stopAll();
 	/**
@@ -121,12 +126,8 @@ public:
 	 * @return Pointer to the instance.
 	 */
     static DomainParticipant* getInstance();
-	/**
-	 * @brief Get Id to create a participant. 
-	 * @return Different ID for each call.
-	 */
-    uint32_t getNewId();
-    ~DomainParticipant();
+
+
 
     /**
      * Set the parameters used to calculate the default ports in the discovery.
@@ -141,7 +142,7 @@ public:
     	m_offsetd2 = d2;
     	m_offsetd3 = d3;
     }
-    /** @name Methods to get the Port parameters.
+    /** @name Methods to get the default Port numbers.
      */
 
     	///@{
@@ -196,6 +197,11 @@ private:
 
     uint16_t m_DomainId;
 
+    /**
+    	 * @brief Get Id to create a participant.
+    	 * @return Different ID for each call.
+    	 */
+        uint32_t getNewId();
 
 };
 

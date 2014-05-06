@@ -109,7 +109,9 @@ namespace CDRMessage{
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "CDRMessage.hpp"
 
-
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 #endif /* CDRMESSAGE_H_ */

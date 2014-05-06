@@ -30,7 +30,7 @@ class ReaderProxy;
 
 
 /**
- * PeriodicHeartbeat class.
+ * PeriodicHeartbeat class, controls the periodic send operation of HB.
  * @ingroup WRITERMODULE
  */
 class PeriodicHeartbeat: public TimedEvent {

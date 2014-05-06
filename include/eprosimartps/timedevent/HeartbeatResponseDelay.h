@@ -27,7 +27,7 @@ class StatefulReader;
 class WriterProxy;
 
 /**
- * HeartbeatResponseDelay class used to response to a specific HB.
+ * Class HeartbeatResponseDelay, TimedEvent used to delay the response to a specific HB.
  * @ingroup READERMODULE
  */
 class HeartbeatResponseDelay:public TimedEvent {

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file SPDPListener2.h
+ * @file SPDPListener.h
  *
  *  Created on: Apr 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -21,15 +21,25 @@
 #include "eprosimartps/dds/SubscriberListener.h"
 
 namespace eprosima {
+
+using namespace dds;
+
 namespace rtps {
 
 class SimpleParticipantDiscoveryProtocol;
 
+
+/**
+ * Class SPDPListener, specification of SubscriberListener used by the SPDP to perform the History check when a new message is received.
+ * This class is implemented in order to use the same structure than with any other RTPSReader.
+ */
 class SPDPListener: public SubscriberListener {
 public:
 	SPDPListener(SimpleParticipantDiscoveryProtocol* in_SPDP):mp_SPDP(in_SPDP){};
 	virtual ~SPDPListener(){};
+	//!Pointer to the associated mp_SPDP;
 	SimpleParticipantDiscoveryProtocol* mp_SPDP;
+	//!Method to be called when a new data message is received.
 	void onNewDataMessage();
 };
 

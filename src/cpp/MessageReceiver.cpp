@@ -406,14 +406,22 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
 					{
 						if((*it)->mp_listener!=NULL)
+						{
 							(*it)->mp_listener->onNewDataMessage();
+							if((*it)->m_reader_cache.isFull())
+								(*it)->mp_listener->onHistoryFull();
+						}
 						(*it)->m_semaphore.post();
 					}
 				}
 				else
 				{
 					if((*it)->mp_listener!=NULL)
+					{
 						(*it)->mp_listener->onNewDataMessage();
+						if((*it)->m_reader_cache.isFull())
+							(*it)->mp_listener->onHistoryFull();
+					}
 					(*it)->m_semaphore.post();
 				}
 			}

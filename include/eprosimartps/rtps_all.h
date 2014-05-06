@@ -113,33 +113,6 @@ typedef octet SubmessageFlag;
 }
 }
 
-/** @defgroup COMMONMODULE Common Module.
- * @ingroup RTPSMODULE
- * Common structures used by multiple elements.
- */
-
-/** @defgroup WRITERMODULE Writer Module
- * @ingroup RTPSMODULE
- *
- */
-
-/** @defgroup READERMODULE Reader Module
- * @ingroup RTPSMODULE
- *
- */
-
-/** @defgroup DISCOVERYMODULE Discovery Module
- * @ingroup RTPSMODULE
- *
- */
-
-/** @defgroup MANAGEMENTMODULE Management Module
- * @ingroup RTPSMODULE
- */
-
-/** @defgroup UTILITIESMODULE Shared Utilities
- * @ingroup EPROSIMARTPSAPIREFERENCE
- */
 
 using std::cout;
 using std::endl;
