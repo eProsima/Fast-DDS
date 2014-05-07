@@ -23,7 +23,6 @@
 #include <cstdint>
 //
 
-#include "eprosimartps/Participant.h"
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/dds/DomainParticipant.h"

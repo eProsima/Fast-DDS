@@ -143,7 +143,8 @@ public:
 
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
 	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)

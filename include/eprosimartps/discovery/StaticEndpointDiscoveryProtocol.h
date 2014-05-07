@@ -41,6 +41,18 @@ typedef struct EndpointStaticInfo_t{
 	std::string m_topicName;
 	TopicKind_t m_topicKind;
 	int16_t m_id;
+	std::string m_topicDataType;
+	EndpointStaticInfo_t()
+	{
+		m_state = STATELESS;
+		m_expectsInlineQos= false;
+		m_reliability = BEST_EFFORT;
+		m_kind = READER;
+		m_topicName = "UNDEFINED";
+		m_topicKind = NO_KEY;
+		m_topicDataType = "UNDEFINED";
+		m_id = -1;
+	}
 }EndpointStaticInfo_t;
 
 /**
@@ -111,6 +123,28 @@ public:
 //!StaticEndpoint filename, defined in ParticipantAttributes when the participant is created.
 	std::string m_staticEndpointFilename;
 	std::vector<int16_t> m_endpointIds;
+
+	/**
+	 * Check the PublisherAttributes to check if they match those defined in the
+	 * XML file.
+	 * If the current participant is defined in the XML file, then the Publisher should be defined
+	 * as in the XML file. A warning is issued if this is not the case.
+	 * If the participant is not included, then the function returns true since no information is available.
+	 * @param[in] wparam PublisherAttributes to check agains the xml file.
+	 * @return True if correct.
+	 */
+	bool checkLocalWriterCreation(PublisherAttributes& wparam);
+	/**
+	 * Check the SubscriberAttributes to check if they match those defined in the
+	 * XML file.
+	 * If the current participant is defined in the XML file, then the Publisher should be defined
+	 * as in the XML file. A warning is issued if this is not the case.
+	 * If the participant is not included, then the function returns true since no information is available.
+	 * @param[in] rparam SubscriberAttributes to check agains the xml file.
+	 * @return True if correct.
+	 */
+	bool checkLocalReaderCreation(SubscriberAttributes& rparam);
+
 };
 
 } /* namespace rtps */
