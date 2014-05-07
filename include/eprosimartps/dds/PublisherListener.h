@@ -24,6 +24,7 @@ namespace dds {
 /**
  * Class PublisherListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_PublisherListener
  */
 class RTPS_DllAPI PublisherListener
 {

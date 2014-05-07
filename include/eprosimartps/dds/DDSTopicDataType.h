@@ -30,6 +30,7 @@ namespace dds {
  * Class DDSTopicDataType used to provide the DomainParticipant with the methods to serialize, deserialize and get the key of a specific data type.
  * The user should created a class that inherits from this one, where Serialize and deserialize methods MUST be implemented.
  * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_DDSTopicDataType
  */
 class RTPS_DllAPI DDSTopicDataType {
 public:
@@ -58,7 +59,8 @@ public:
 	virtual bool getKey(void*data,InstanceHandle_t* ihandle);
 	//! Data Type Name.
 	std::string m_topicDataTypeName;
-	//! Type size in bytes.
+	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
+	//! size of the string respect the maximum defined size.).
 	uint32_t m_typeSize;
 	//! Indicates wheter the method to obtain the key has been implemented.
 	bool m_isGetKeyDefined;
