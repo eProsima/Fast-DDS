@@ -89,7 +89,6 @@ void DomainParticipant::stopAll()
 	delete(dp);
 }
 
-
 Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttributes& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
@@ -134,7 +133,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 		SF->mp_type = p_type;
 
 	}
-	if(Pub!=NULL)
+	if(Pub != NULL)
 	{
 		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
 		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
@@ -147,9 +146,8 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 	return Pub;
 }
 
-
-
-Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttributes& RParam) {
+Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttributes& RParam)
+{
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
 	DDSTopicDataType* p_type = NULL;
@@ -220,8 +218,6 @@ Participant* DomainParticipant::createParticipant(const ParticipantAttributes& P
 	return p;
 }
 
-
-
 bool DomainParticipant::getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
 {
 	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
@@ -236,7 +232,6 @@ bool DomainParticipant::getRegisteredType(std::string type_name,DDSTopicDataType
 	}
 	return false;
 }
-
 
 bool DomainParticipant::registerType(DDSTopicDataType* type)
 {
@@ -257,11 +252,9 @@ bool DomainParticipant::registerType(DDSTopicDataType* type)
 		return false;
 	}
 	dp->m_registeredTypes.push_back(type);
-	pInfo("Type "<<type->m_topicDataTypeName << " registered"<<endl);
+	pInfo("Type "<<type->m_topicDataTypeName << " registered."<<endl);
 	return true;
 }
-
-
 
 bool DomainParticipant::removeParticipant(Participant* p)
 {
@@ -359,7 +352,6 @@ void DomainParticipant::getIPAddress(std::vector<Locator_t>* locators)
 		loc.address[14] = (octet)c;
 		loc.address[15] = (octet)d;
 		locators->push_back(loc);
-
 	}
 }
 
