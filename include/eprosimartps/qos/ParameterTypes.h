@@ -26,6 +26,8 @@ namespace eprosima {
 
 namespace dds {
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /**
  * @addtogroup PARAMETERMODULE
  * @{
@@ -186,7 +188,7 @@ public:
 
 ///@}
 
-
+#endif
 
 } //end of namespace dds
 } //end of namespace eprosima
