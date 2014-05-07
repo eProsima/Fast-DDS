@@ -126,6 +126,10 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 						{
 							endpointInfo.m_topicName = (std::string)xml_endpoint_child.second.data();
 						}
+						else if(xml_endpoint_child.first == "topicDataType")
+						{
+							endpointInfo.m_topicDataType = (std::string)xml_endpoint_child.second.data();
+						}
 						else if(xml_endpoint_child.first == "topicKind")
 						{
 							std::string auxString = (std::string)xml_endpoint_child.second.data();
@@ -139,19 +143,19 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 								break;
 							}
 						}
-						else if(xml_endpoint_child.first == "stateKind")
-						{
-							std::string auxString = (std::string)xml_endpoint_child.second.data();
-							if(auxString == "STATELESS")
-								endpointInfo.m_state = STATELESS;
-							else if (auxString == "STATEFUL")
-								endpointInfo.m_state = STATEFUL;
-							else
-							{
-								pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
-								break;
-							}
-						}
+//						else if(xml_endpoint_child.first == "stateKind")
+//						{
+//							std::string auxString = (std::string)xml_endpoint_child.second.data();
+//							if(auxString == "STATELESS")
+//								endpointInfo.m_state = STATELESS;
+//							else if (auxString == "STATEFUL")
+//								endpointInfo.m_state = STATEFUL;
+//							else
+//							{
+//								pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
+//								break;
+//							}
+//						}
 						else if(xml_endpoint_child.first == "reliabilityKind")
 						{
 							std::string auxString = (std::string)xml_endpoint_child.second.data();
@@ -188,16 +192,18 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 							pWarning("Unkown Endpoint-XML tag, ignoring..."<<endl)
 						}
 					}
-					if((endpointInfo.m_reliability == RELIABLE && endpointInfo.m_state == STATELESS)
-						|| (endpointInfo.m_reliability == BEST_EFFORT && endpointInfo.m_state == STATEFUL))
+					if(endpointInfo.m_reliability == RELIABLE)
+						endpointInfo.m_state = STATEFUL;
+					if(endpointInfo.m_reliability == BEST_EFFORT)
+						endpointInfo.m_state = STATELESS;
+					if(endpointInfo.m_id <= 0)
 					{
-						pWarning("Slected combination of reliability and statekind is not yet supported"<<endl);
+						pWarning("Endpoint with ID <=0 not included"<<endl);
 					}
 					else
 					{
 						participantInfo.m_endpoints.push_back(endpointInfo);
 					}
-
 				}
 
 			}
@@ -401,6 +407,172 @@ bool StaticEndpointDiscoveryProtocol::localReaderMatching(RTPSReader* reader,Dis
 		break;
 	}
 	return true;
+}
+
+bool StaticEndpointDiscoveryProtocol::checkLocalWriterCreation(PublisherAttributes & wparam)
+{
+	for(std::vector<ParticipantStaticInfo_t>::iterator pit = this->m_StaticParticipantInfo.begin();
+			pit!=this->m_StaticParticipantInfo.end();++pit)
+	{
+		if(pit->m_name == this->mp_Participant->m_participantName)
+		{
+			for(std::vector<EndpointStaticInfo_t>::iterator eit = pit->m_endpoints.begin();
+					eit!=pit->m_endpoints.end();++eit)
+			{
+				if(wparam.userDefinedId == eit->m_id)
+				{
+					bool equal = true;
+					equal &= (WRITER == eit->m_kind);
+					if(!equal)
+					{
+						pWarning("Endpoint of id: "<<wparam.userDefinedId<< " is defined as READER in XML"<<endl);
+					}
+					equal &= (wparam.topic.topicKind == eit->m_topicKind);
+					if(!equal)
+					{
+						pWarning("Topic Kind different in XML" <<endl);
+					}
+					equal &= (wparam.topic.topicName == eit->m_topicName);
+					if(!equal)
+					{
+						pWarning("Topic Name different in XML: " << wparam.topic.topicName << " vs " <<eit->m_topicName <<endl);
+					}
+					equal &= (wparam.topic.topicDataType == eit->m_topicDataType);
+					if(!equal)
+					{
+						pWarning("Topic Data Type different in XML: " << wparam.topic.topicDataType << " vs " <<eit->m_topicDataType <<endl);
+					}
+					equal &= (wparam.reliability.reliabilityKind == eit->m_reliability);
+					bool found;
+					for(LocatorListIterator paramlit = wparam.unicastLocatorList.begin();
+							paramlit != wparam.unicastLocatorList.end();++paramlit)
+					{
+						found = false;
+						for(LocatorListIterator xmllit = eit->m_unicastLocatorList.begin();
+								xmllit!=eit->m_unicastLocatorList.end();++xmllit)
+						{
+							if(*paramlit == *xmllit)
+							{
+								found = true;
+								break;
+							}
+						}
+						if(!found)
+						{
+							pWarning("UnicastLocator: "<<paramlit->printIP4Port() << " not found in XML file"<<endl);
+							equal &=false;
+						}
+					}
+					for(LocatorListIterator paramlit = wparam.multicastLocatorList.begin();
+							paramlit != wparam.multicastLocatorList.end();++paramlit)
+					{
+						found = false;
+						for(LocatorListIterator xmllit = eit->m_multicastLocatorList.begin();
+								xmllit!=eit->m_multicastLocatorList.end();++xmllit)
+						{
+							if(*paramlit == *xmllit)
+							{
+								found = true;
+								break;
+							}
+						}
+						if(!found)
+						{
+							pWarning("MulticastLocator: "<<paramlit->printIP4Port() << " not found in XML file"<<endl);
+							equal &=false;
+						}
+					}
+					return equal;
+				}
+			}
+			pWarning("Endpoint with ID: " << wparam.userDefinedId << " not defined in XML file"<< endl);
+			return false; //If the participant is found but the ID is not found.
+		}
+	}
+	return true; //if the participant if NOT found.
+}
+
+bool StaticEndpointDiscoveryProtocol::checkLocalReaderCreation(SubscriberAttributes & rparam)
+{
+	for(std::vector<ParticipantStaticInfo_t>::iterator pit = this->m_StaticParticipantInfo.begin();
+			pit!=this->m_StaticParticipantInfo.end();++pit)
+	{
+		if(pit->m_name == this->mp_Participant->m_participantName)
+		{
+			for(std::vector<EndpointStaticInfo_t>::iterator eit = pit->m_endpoints.begin();
+					eit!=pit->m_endpoints.end();++eit)
+			{
+				if(rparam.userDefinedId == eit->m_id)
+				{
+					bool equal = true;
+					equal &= (READER == eit->m_kind);
+					if(!equal)
+					{
+						pWarning("Endpoint of id: "<<rparam.userDefinedId<< " is defined as WRITER in XML"<<endl);
+					}
+					equal &= (rparam.topic.topicKind == eit->m_topicKind);
+					if(!equal)
+					{
+						pWarning("Topic Kind different in XML" <<endl);
+					}
+					equal &= (rparam.topic.topicName == eit->m_topicName);
+					if(!equal)
+					{
+						pWarning("Topic Name different in XML: " << rparam.topic.topicName << " vs " <<eit->m_topicName <<endl);
+					}
+					equal &= (rparam.topic.topicDataType == eit->m_topicDataType);
+					if(!equal)
+					{
+						pWarning("Topic Data Type different in XML: " << rparam.topic.topicDataType << " vs " <<eit->m_topicDataType <<endl);
+					}
+					equal &= (rparam.reliability.reliabilityKind == eit->m_reliability);
+					bool found;
+					for(LocatorListIterator paramlit = rparam.unicastLocatorList.begin();
+							paramlit != rparam.unicastLocatorList.end();++paramlit)
+					{
+						found = false;
+						for(LocatorListIterator xmllit = eit->m_unicastLocatorList.begin();
+								xmllit!=eit->m_unicastLocatorList.end();++xmllit)
+						{
+							if(*paramlit == *xmllit)
+							{
+								found = true;
+								break;
+							}
+						}
+						if(!found)
+						{
+							pWarning("UnicastLocator: "<<paramlit->printIP4Port() << " not found in XML file"<<endl);
+							equal &=false;
+						}
+					}
+					for(LocatorListIterator paramlit = rparam.multicastLocatorList.begin();
+							paramlit != rparam.multicastLocatorList.end();++paramlit)
+					{
+						found = false;
+						for(LocatorListIterator xmllit = eit->m_multicastLocatorList.begin();
+								xmllit!=eit->m_multicastLocatorList.end();++xmllit)
+						{
+							if(*paramlit == *xmllit)
+							{
+								found = true;
+								break;
+							}
+						}
+						if(!found)
+						{
+							pWarning("MulticastLocator: "<<paramlit->printIP4Port() << " not found in XML file"<<endl);
+							equal &=false;
+						}
+					}
+					return equal;
+				}
+			}
+			pWarning("Endpoint with ID: " << rparam.userDefinedId << " not defined in XML file"<< endl);
+			return false; //If the participant is found but the ID is not found.
+		}
+	}
+	return true; //if the participant if NOT found.
 }
 
 

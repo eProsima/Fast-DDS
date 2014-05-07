@@ -14,6 +14,7 @@
 			<type>WRITER</type>
 			<topicName>Test_topic1</topicName>
 			<topicKind>WITH_KEY</topicKind>
+			<topicDataType>TestType</topicDataType>
 			<stateKind>STATELESS</stateKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
      	</endpoint>
@@ -24,6 +25,7 @@
 			<topicName>Test_topic2</topicName>
 			<stateKind>STATELESS</stateKind>
 			<topicKind>NO_KEY</topicKind>
+			<topicDataType>TestType</topicDataType>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
 			<unicastLocator address="192.168.1.23" port="10046"></unicastLocator>	
@@ -41,6 +43,7 @@
 			<stateKind>STATELESS</stateKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<topicKind>WITH_KEY</topicKind>
+			<topicDataType>TestType</topicDataType>
 			<expectsInlineQos>true</expectsInlineQos>
 			<unicastLocator address="192.168.1.25" port="10046"></unicastLocator>	
 		</endpoint>
@@ -50,6 +53,7 @@
 			<type>WRITER</type>
 			<topicName>Test_topic2</topicName>
 			<stateKind>STATELESS</stateKind>
+			<topicDataType>TestType</topicDataType>
 			<topicKind>NO_KEY</topicKind>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>

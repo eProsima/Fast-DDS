@@ -90,7 +90,7 @@ void DomainParticipant::stopAll()
 }
 
 
-Publisher* DomainParticipant::createPublisher(Participant* p,const PublisherAttributes& WParam)
+Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttributes& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
 									//Look for the correct type registration
@@ -111,6 +111,13 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const PublisherAttr
 		return NULL;
 	}
 	Publisher* Pub = NULL;
+	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	{
+		if(!p->m_StaticEDP.checkLocalWriterCreation(WParam))
+		{
+			pWarning("Publisher not defined as in the XML file."<<endl);
+		}
+	}
 	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
 		StatelessWriter* SW;
@@ -143,13 +150,15 @@ Publisher* DomainParticipant::createPublisher(Participant* p,const PublisherAttr
 		dp->m_publisherList.push_back(Pub);
 	}
 	else
-	{pError("Publisher not created"<<endl);}
+	{
+		pError("Publisher not created"<<endl);
+	}
 	return Pub;
 }
 
 
 
-Subscriber* DomainParticipant::createSubscriber(Participant* p,	const SubscriberAttributes& RParam) {
+Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttributes& RParam) {
 	//Look for the correct type registration
 	pInfo("Creating Subscriber"<<endl;);
 	DDSTopicDataType* p_type = NULL;
@@ -163,6 +172,13 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	const Subscriber
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
+	}
+	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	{
+		if(!p->m_StaticEDP.checkLocalReaderCreation(RParam))
+		{
+			pWarning("Publisher not defined as in the XML file."<<endl);
+		}
 	}
 	Subscriber* Sub = NULL;
 	if(RParam.reliability.reliabilityKind == BEST_EFFORT)

@@ -73,14 +73,14 @@ public:
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @return Pointer to the publisher. 
 	 */
-    static Publisher* createPublisher(Participant* p,const PublisherAttributes& WParam);
+    static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam);
 	/**
 	 * @brief Create a Subscriber in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @return Pointer to the subscriber. 
 	 */
-    static Subscriber* createSubscriber(Participant* p,const SubscriberAttributes& RParam);
+    static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam);
 
     /**
      * @brief Create a Participant.
