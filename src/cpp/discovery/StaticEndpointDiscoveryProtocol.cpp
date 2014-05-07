@@ -48,8 +48,6 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile()
 	return loadStaticEndpointFile(this->m_staticEndpointFilename);
 }
 
-
-
 bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& filename)
 {
 	this->m_StaticParticipantInfo.clear();
@@ -66,7 +64,7 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 		pError("Error reading xml file: " << e.what() << endl);
 		return false;
 	}
-
+	m_endpointIds.clear();
 	BOOST_FOREACH(ptree::value_type& xml_participant ,pt.get_child("staticdiscovery"))
 	{
 		if(xml_participant.first == "participant")
@@ -186,6 +184,21 @@ bool StaticEndpointDiscoveryProtocol::loadStaticEndpointFile(const std::string& 
 							loc.set_IP4_address(auxString);
 							loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
 							endpointInfo.m_multicastLocatorList.push_back(loc);
+						}
+						else if(xml_endpoint_child.first == "topic")
+						{
+							endpointInfo.m_topicName = xml_endpoint_child.second.get("<xmlattr>.name","");
+							endpointInfo.m_topicDataType = xml_endpoint_child.second.get("<xmlattr>.dataType","");
+							std::string auxString = xml_endpoint_child.second.get("<xmlattr>.kind","");
+							if(auxString == "NO_KEY")
+								endpointInfo.m_topicKind = NO_KEY;
+							else if (auxString == "WITH_KEY")
+								endpointInfo.m_topicKind = WITH_KEY;
+							else
+							{
+								pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
+								break;
+							}
 						}
 						else
 						{

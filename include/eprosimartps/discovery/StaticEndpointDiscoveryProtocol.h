@@ -120,8 +120,9 @@ public:
 	 * @return True if correct.
 	 */
 	bool localReaderMatching(RTPSReader* preader,DiscoveredParticipantData* dpd);
-//!StaticEndpoint filename, defined in ParticipantAttributes when the participant is created.
+    //!StaticEndpoint filename, defined in ParticipantAttributes when the participant is created.
 	std::string m_staticEndpointFilename;
+	//!Endpint Ids as being read from the XML. This is used to avoid duplicity of endpoint ID in the same XML file.
 	std::vector<int16_t> m_endpointIds;
 
 	/**
