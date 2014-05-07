@@ -46,6 +46,14 @@ Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 
 	m_event_thr.init_thread();
 
+	if(m_defaultUnicastLocatorList.empty())
+	{
+		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:10042"<<endl);
+		loc.port = 10042;
+		m_defaultUnicastLocatorList.push_back(loc);
+	}
+
+
 
 	int pid;
 #if defined(_WIN32)
@@ -151,9 +159,12 @@ bool Participant::initWriter(RTPSWriter*W)
 {
 	pDebugInfo("Finished Writer creation"<<endl);
 	//Check if locator lists are empty:
-	if(W->unicastLocatorList.empty())
+	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL)
+	{
+		pWarning("Reliable Writer defined with NO unicast locator, assigning default"<<endl);
 		W->unicastLocatorList = m_defaultUnicastLocatorList;
-	if(W->unicastLocatorList.empty())
+	}
+	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL)
 		W->multicastLocatorList = m_defaultMulticastLocatorList;
 	//Assign participant pointer
 	W->mp_send_thr = &this->m_send_thr;
@@ -236,7 +247,10 @@ bool Participant::initReader(RTPSReader* p_R)
 {
 	//If NO UNICAST
 	if(p_R->unicastLocatorList.empty())
+	{
+		pWarning("Publisher created with no unicastLocatorList, adding default List"<<endl);
 		p_R->unicastLocatorList = m_defaultUnicastLocatorList;
+	}
 	//IF NO MULTICAST
 	if(p_R->multicastLocatorList.empty())
 		p_R->multicastLocatorList = m_defaultMulticastLocatorList;
