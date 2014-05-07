@@ -100,11 +100,6 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
-//	if(typeR.serialize == NULL || typeR.deserialize==NULL)
-//	{
-//		pError("Serialization and deserialization functions cannot be NULL"<<endl);
-//		return NULL;
-//	}
 	if(WParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
@@ -113,10 +108,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 	Publisher* Pub = NULL;
 	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
-		if(!p->m_StaticEDP.checkLocalWriterCreation(WParam))
-		{
-			pWarning("Publisher not defined as in the XML file."<<endl);
-		}
+		p->m_StaticEDP.checkLocalWriterCreation(WParam);
 	}
 	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
@@ -133,7 +125,6 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 	}
 	else if(WParam.reliability.reliabilityKind == RELIABLE)
 	{
-		//FIXME: if unicast and multicast locator list is empty return false;
 		StatefulWriter* SF;
 		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize))
 			return NULL;
@@ -175,10 +166,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 	}
 	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
-		if(!p->m_StaticEDP.checkLocalReaderCreation(RParam))
-		{
-			pWarning("Publisher not defined as in the XML file."<<endl);
-		}
+		p->m_StaticEDP.checkLocalReaderCreation(RParam);
 	}
 	Subscriber* Sub = NULL;
 	if(RParam.reliability.reliabilityKind == BEST_EFFORT)
