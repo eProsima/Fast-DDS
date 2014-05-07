@@ -148,14 +148,14 @@ sub->assignListener((SubscriberListener*)&listener);
 
 //! [ex_PublisherListener]
 //Create a class that inherits from PublisherListener and implement the methods you need.
-class TestTypeListener: public PublisherListener{
+class TestTypeListener: public PublisherListener
+{
 public:
 	TestTypeListener()
 	{
 		//The participant should have been created and accessible to this method.
 		pub = DomainParticipant::createPublisher(p,param);
 		pub->assingListener((PublisherListener*)this);
-
 	};
 	~TestTypeListener(){};
 	void onHistoryFull()

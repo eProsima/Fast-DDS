@@ -35,7 +35,12 @@ public:
 		userDefinedId = -1;
 };
 	virtual ~PublisherAttributes(){};
+	//! If set to true the Publisher will send the data directly, if set to false it will send
+	//! a GAP message and wait for ACKNACK messages (option only available for RELIABLE Publishers.)
 	bool pushMode;
+	/**
+	 * Maximum size of the History.
+	 */
 	uint16_t historyMaxSize;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
