@@ -44,6 +44,7 @@ class ReliabilityAttributes {
 public:
 	ReliabilityAttributes():reliabilityKind(BEST_EFFORT){};
 	virtual ~ReliabilityAttributes(){};
+	//!ReliabilityKind (BEST_EFFORT or RELIABLE)
 	ReliabilityKind_t reliabilityKind;
 };
 
