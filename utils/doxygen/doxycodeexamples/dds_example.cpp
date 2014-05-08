@@ -15,7 +15,12 @@
  *              grcanosa@gmail.com
  */
 
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
+
 //! [ex_readAllUnreadCache]
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
 std::vector<(void*)(TypeStructure*)> vec; //TypeStructure is your own define structure for the topic
 readAllUnreadCache(&vec);
 for (elements in vec)
@@ -37,6 +42,8 @@ write((void*)&tp);
 
 
 //! [ex_DDSTopicDataType]
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
 typedef struct TestType{
 	char name[6]; //KEY
 	int32_t value;
@@ -100,6 +107,8 @@ DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 //! [ex_DDSTopicDataType]
 
 //! [ex_Publisher]
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
 PublisherAttributes PParam;
 PParam.historyMaxSize = 20;
 PParam.topic.topicKind = WITH_KEY;
@@ -117,6 +126,8 @@ pub1->write((void*)&tp1);
 //! [ex_Publisher]
 
 //! [ex_Subscriber]
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
 SubscriberAttributes Rparam;
 Rparam.historyMaxSize = 15;
 Rparam.topic.topicDataType = std::string("TestType");
@@ -129,6 +140,8 @@ Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 //! [ex_Subscriber]
 
 //! [ex_SubscriberListener]
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
 //Create a class that inherits from SubscriberListener and implement the methods you need.
 class TestTypeListener: public SubscriberListener{
 public:
@@ -147,22 +160,30 @@ sub->assignListener((SubscriberListener*)&listener);
 //! [ex_SubscriberListener]
 
 //! [ex_PublisherListener]
+using namespace eprosima::dds;
+using namespace eprosima::rtps;
 //Create a class that inherits from PublisherListener and implement the methods you need.
 class TestTypeListener: public PublisherListener
 {
 public:
+	Participant* p;
+	ParticipantAttributes Pparam;
+	eprosima::dds::Publisher* pub;
+	PublisherAttributes Pubparam;
 	TestTypeListener()
 	{
 		//The participant should have been created and accessible to this method.
-		pub = DomainParticipant::createPublisher(p,param);
-		pub->assingListener((PublisherListener*)this);
+		p = DomainParticipant::createParticipant(Pparam);
+		//PublisherAttributes must be set to the user preferences.
+		pub = DomainParticipant::createPublisher(p,Pubparam);
+		pub->assignListener((PublisherListener*)this);
 	};
 	~TestTypeListener(){};
 	void onHistoryFull()
 	{
 		pub->removeMinSeqCache();
 	}
-	Publisher* pub;
+
 };
 //! [ex_PublisherListener]
 

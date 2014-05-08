@@ -69,16 +69,18 @@
  * This module contains all classes and methods associated with RTPSReader and its specifications, as well as other necessary classes.
  */
 
-/** @defgroup DISCOVERYMODULE Discovery Module
- * @ingroup RTPSMODULE
- * This module contains the classes associated with the Discovery Protocols.
- */
-
 /** @defgroup MANAGEMENTMODULE Management Module
  * @ingroup RTPSMODULE
  * This module contains classes and methods associated with the management of all other objects. The most important ones
  * are the communication (ResourceSend and ResourceListen) and event (ResourceEvent) resources.
  */
+
+/** @defgroup DISCOVERYMODULE Discovery Module
+ * @ingroup MANAGEMENTMODULE
+ * This module contains the classes associated with the Discovery Protocols.
+ */
+
+
 
 #endif
 

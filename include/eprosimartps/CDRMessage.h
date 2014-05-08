@@ -28,7 +28,7 @@ namespace eprosima {
 namespace rtps {
 
 /**
- * Class CDRMessage, contains   inline methods to initialize CDRMessage_t and add or read different data types.
+ * Namespace CDRMessage, contains inline methods to initialize CDRMessage_t and add or read different data types.
  @ingroup COMMONMODULE
  */
 namespace CDRMessage{
