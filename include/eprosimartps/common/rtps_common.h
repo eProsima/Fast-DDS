@@ -39,6 +39,7 @@ namespace rtps{
 
 /**
  * @brief Structure CDRMessage_t, contains a serialized message.
+ * @ingroup COMMONMODULE
  */
 typedef struct CDRMessage_t{
 	CDRMessage_t(){

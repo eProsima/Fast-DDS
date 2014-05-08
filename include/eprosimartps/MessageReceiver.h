@@ -30,7 +30,7 @@ class ResourceListen;
 
 /**
  * Class MessageReceiver, process the received messages.
-  * @ingroup COMMONMODULE
+  * @ingroup MANAGEMENTMODULE
  */
 class MessageReceiver {
 public:
