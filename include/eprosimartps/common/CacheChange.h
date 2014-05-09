@@ -46,7 +46,7 @@ typedef enum ChangeForReaderStatus_t{
 typedef enum ChangeFromWriterStatus_t{
 	UNKNOWN,
 	MISSING,
-	REQUESTED_WITH_NACK,
+	//REQUESTED_WITH_NACK,
 	RECEIVED,
 	LOST
 }ChangeFromWriterStatus_t;
