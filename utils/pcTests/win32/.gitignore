@@ -2,10 +2,7 @@
 #############
 *.opensdf
 *.sdf
-*.obj
-*.dll
-*.lib
-*.log
 
 ipch
-eRTPS/Win32
+Debug
+Release

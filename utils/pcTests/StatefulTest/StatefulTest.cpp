@@ -55,9 +55,22 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
 #if defined(_WIN32)
-	#define COPYSTR strcpy_s
+#define COPYSTR strcpy_s
 #else
-	#define COPYSTR strcpy
+#define COPYSTR strcpy
+#endif
+
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+void my_sleep(int seconds)
+{
+	return Sleep(seconds*(long)1000);
+}​;
+#else
+void my_sleep(int seconds)
+{
+	sleep(second);
+}​;
 #endif
 
 typedef struct TestType{
@@ -68,7 +81,7 @@ typedef struct TestType{
 	{
 		value = -1;
 		price = 0;
-		strcpy(name,"UNDEF");
+		COPYSTR(name,"UNDEF");
 	}
 	void print()
 	{
@@ -212,14 +225,14 @@ int main(int argc, char** argv)
 				p->loose_next_change();
 			pub->write((void*)&tp);
 			cout << "Going to sleep "<< (int)i <<endl;
-			sleep(1);
+			my_sleep(1);
 			cout << "Wakes "<<endl;
 		}
 		pub->dispose((void*)&tp);
-		sleep(1);
+		my_sleep(1);
 		cout << "Wakes "<<endl;
 		pub->unregister((void*)&tp);
-		sleep(1);
+		my_sleep(1);
 		cout << "Wakes "<<endl;
 		break;
 	}
