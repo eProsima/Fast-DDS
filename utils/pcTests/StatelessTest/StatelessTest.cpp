@@ -21,7 +21,8 @@
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
-//
+
+
 
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
@@ -66,12 +67,12 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 void my_sleep(int seconds)
 {
 	return Sleep(seconds*(long)1000);
-}​;
+};
 #else
 void my_sleep(int seconds)
 {
-	sleep(second);
-}​;
+	sleep(seconds);
+};
 #endif
 
 
