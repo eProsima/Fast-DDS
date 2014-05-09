@@ -22,6 +22,9 @@
  *
  *<b>System architecture</b><br/>
  * A general view of the system architecture can be found below:
+ * @latexonly
+ * @image html general_architecture.png 
+ * @endlatexonly
  * <img src="general_architecture.png" width="500" align="left" style="padding:0px 20px 0px 0px">
  *This diagram schematically shows how the user will be able to create and manage a participant on the network, 
  *as well as send and receive message through the Publisher and Subscriber APIs. This process will be internally 
@@ -32,18 +35,27 @@
  *<b>Modules</b><br/>
 There are five different modules in the designed implementation:
 <ul>
-<li><b>Public (DDS) Module:</b> This module presents a public API to use this RTPS implementation. It allows the creation of Publisher and 
-Subscribers and sending and receiving data messages.</li>
-<li><b>Management Module:</b> This module allows the user to create a RTPS Participant for its application manages the creation of 
-Writers and Readers. Furthermore, this module will contain the Discovery methods when they are implemented in following versions.</li>
-<li><b>Writer Module:</b> This module allows the user to send messages to its matched subscribers. In order to tackle the absence of a 
-Discovery module in the current version, this module also allows to add subscribers to a certain publisher. 
-This module also keeps track of a history of the changes in the data and transmit them to all its subscribers.</li>
-<li><b>Reader Module:</b> This module manages the subscription end of the RTPS protocol. Its a mirrored module of the Writer Module, 
-since it provides the user with the tools to manage the changes received from the publisher. </li>
-<li><b>Common Module:</b> All common data structures and data types are included here. A structure type is considered common if 
-it is needed by two or more modules. The HistoryCache and the RTPS Messages definitions are one of the most important of this common structures.
-</ul>
+			<li>
+				<p align="JUSTIFY" >
+					<b>Management Module: </b>This module contains the classes regarding the management of communications and events (Resource classes), as well as the Discovery Module.</p>
+			</li>
+			<li>
+				<p align="JUSTIFY" >
+					<b>Writer Module: </b>This module manages all elements related to the writer part of the communication structure, including the definition of the different types of writer and the access to the History of transmitted data.</p>
+			</li>
+			<li>
+				<p align="JUSTIFY" >
+					<b>Reader Module: </b>This module manages the subscription end of the RTPS protocol. Its a mirrored module of the Writer Module, since it manages the information reception of the data received from the publisher.</p>
+			</li>
+			<li>
+				<p align="JUSTIFY" >
+					<b>Common Module: </b>All common data structures and data types are included here. A structure type is considered common if it is needed by two or more modules. The <i>HistoryCache</i> and the RTPS <i>Messages</i> definitions are one of the most important of this common structures. More detail on these structures and others will be provided in following sections.</p>
+			</li>
+			<li>
+				<p align="JUSTIFY" >
+					<b>DDS &ndash; Public API Module:</b> This module contains the Public API available to the users to control their applications, creating Participants, Publishers and Subscribers.</p>
+			</li>
+		</ul>
  <br/>
  <b>Interaction</b><br/>
 There are two different types on interaction defined in this architecture. On one side the interaction with the user of the protocol and on the other, the interaction between the modules of the library. These two types of interaction will now be detailed:
@@ -56,11 +68,19 @@ The correct behavior of the RTPS protocol will be achieved by using an event-bas
 <br/>
  <b>Thread Structure</b><br/>
 For each RTPS participant, there would be different threads that manage different aspects of the RTPS implementation. Each application using this implementation will have at least these threads: helo 
-<ul><li><b>Main thread:</b> This thread will be the thread managed by the dds application or the user. The user will interact with the objects through the defined public API's. The API will provide blocking mechanism to wait for new messages to arrive in case of a Subscriber. 
-<li><b>Send thread:</b> A single thread will be in charge of sending all RTPS messages to the different Writers and Readers need. This thread will be created when for each Participant. This version sends all messages synchronously, so no actual thread will be created. However, future versions will allow the delay of some messages in order to group them and this will be performed in a different thread.
-<li><b>Listen thread:</b> These threads will be in charge of listening to the different ports our application needs. These threads will be in charge of waiting until a new RTPS message is received. Each listen thread can be associated with one or more writers and readers. These thread process each new received message and transmit it to the corresponding entities.
-<li><b>Event thread(s):</b> This thread will be in charge of processing the different events triggered wither by some periodic condition or by actions performed by the user in the main thread. More than one thread can be consigned to this task depending on the work load in the application. These threads are indistinguishable from each other and no control to in which thread a specific action is performed will be provided. Thus, the tasks triggered by a specific event should be bundled into a single function to assure they are performed in the correct order. Examples of this events would be the periodic sending of heartbeats or the removal of Caches from the History. This type of threads is NOT implemented in the first version.
+<ul><li><b>Main thread:</b> This thread will be the thread managed by the dds application or the user. The user will interact with the objects through the defined public API's. 
+<li><b>Receive thread:</b> These threads will be in charge of listening to the different ports. Since these threads will be blocked until a RTPS message is received there would be a different thread for each different IP-port combination that the Participant is listening from. Multiple endpoints can be assigned to the same listen thread.
+<li><b>Event thread(s):</b> This thread will be in charge of processing the different events triggered wither by some periodic condition or by actions performed by the user in the main thread. In this version a single event thread will be created and used per Participant.
 </ul>
+
+ <b>Resource Structure</b><br/>
+There are three main types of resources in the implementation, that directly correspond with three classes. All resources are managed by the Participant.
+<ul><li><b>ResourceListen:</b> Each listen resource is assigned to a single IP:port combination. It receives and process messages directed to that socket and performs the necessary actions in one or more of the associated Writers or Readers. In this version each ResourceListen runs a single thread listening to a single socket. Future version may alter this behaviour assigning multiple sockets (multiple ResourceListen objects) to a single listen thread. 
+<li><b>ResourceEvent: </b> This resource manages the time-delayed event triggered periodically or by some message-based event. A single resource is implemented per participant, with a single thread performing all the actions. Future versions may include multiple ResourceEvents running in multiple threads to improve performance. 
+<li><b>Event thread(s):</b> This resource manages ALL send operations in the Participant. This means that all endpoints included in a Participant send their messages through the socket defined in this resource. All messages are send synchronously. Future versions will include multiple ResourceSend objects and the possibility to asynchronously send messages.
+</ul>
+
+
  <b> Main events</b><br/>
 There are multiple events that are triggered wither directly by some action performed by the user, the reception of messages or even periodically. A list of the main events and the actions that need to be performed after them is included below, whereas a detailed description of all the events associated with each class of the design will be included in the detailed implementation chapter.
 <ul><li><b>User-triggered events:</b> These events are triggered directly after the user performs some action, either directly to the RTPS Writer or its associated HistoryCache. 
