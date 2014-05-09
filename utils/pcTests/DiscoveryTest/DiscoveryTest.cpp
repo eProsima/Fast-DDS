@@ -50,11 +50,26 @@ const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
+
 #if defined(_WIN32)
 #define COPYSTR strcpy_s
 #else
 #define COPYSTR strcpy
 #endif
+
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+void my_sleep(int seconds)
+{
+	return Sleep(seconds*(long)1000);
+}​;
+#else
+void my_sleep(int seconds)
+{
+	sleep(second);
+}​;
+#endif
+
 
 typedef struct TestType{
 	char name[6]; //KEY
@@ -64,7 +79,7 @@ typedef struct TestType{
 	{
 		value = -1;
 		price = 0;
-		strcpy(name,"UNDEF");
+		COPYSTR(name,"UNDEF");
 	}
 	void print()
 	{
@@ -185,7 +200,7 @@ int main(int argc, char** argv){
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
 		p->announceParticipantState();
-		sleep(4);
+		my_sleep(4);
 		TestType tp1,tp_in;
 		SampleInfo_t info_in;
 		COPYSTR(tp1.name,"Obje1");
@@ -247,7 +262,7 @@ int main(int argc, char** argv){
 
 		p->announceParticipantState();
 
-		sleep(4);
+		my_sleep(4);
 		TestType tp_in;
 		SampleInfo_t info_in;
 		for(uint i = 0;i<10;i++)

@@ -47,6 +47,8 @@ using namespace std;
 
 #define WR 1 //Writer 1, Reader 2
 
+#pragma warning(disable: 4430)
+
 #if defined(__LITTLE_ENDIAN__)
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #elif defined (__BIG_ENDIAN__)
@@ -59,6 +61,21 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #define COPYSTR strcpy
 #endif
 
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+void my_sleep(int seconds)
+{
+	return Sleep(seconds*(long)1000);
+}​;
+#else
+void my_sleep(int seconds)
+{
+	sleep(second);
+}​;
+#endif
+
+
+
 
 typedef struct TestType{
 	char name[6]; //KEY
@@ -68,7 +85,7 @@ typedef struct TestType{
 	{
 		value = -1;
 		price = 0;
-		strcpy(name,"UNDEF");
+		COPYSTR(name,"UNDEF");
 	}
 	void print()
 	{
@@ -238,7 +255,7 @@ int main(int argc, char** argv)
 			}
 		}
 		cout << "Sleeping 3 seconds"<<endl;
-		sleep(3);
+		my_sleep(3);
 		cout << "Slept for 3 seconds"<< endl;
 		while(sub->takeNextData((void*)&tp_in,&info))
 		{
