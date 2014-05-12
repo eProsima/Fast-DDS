@@ -33,12 +33,13 @@ namespace rtps {
 
 
 Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
-				m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
-				m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-				m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-				IdCounter(0),
-				m_SPDP(this),
-				m_StaticEDP(this)
+						m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
+						m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
+						m_SPDP(this),
+						m_StaticEDP(this),
+						m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+						IdCounter(0)
+
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
