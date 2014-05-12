@@ -63,17 +63,22 @@ void ResourceListen::run_io_service()
 	this->m_io_service.run();
 }
 
-bool ResourceListen::init_thread(){
-	if(!m_locList.empty())
+bool ResourceListen::init_thread(Locator_t& loc){
+	if(m_locList.empty())
 	{
+		m_locList.push_back(loc);
 		m_first = true;
 		m_listen_socket.open(boost::asio::ip::udp::v4());
 		boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList.begin()->to_IP4_string());
-		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
+		udp::endpoint listen_endpoint;
 		if(m_isMulticast)
 		{
 			m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
 			m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( false ) );
+			listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
+		}
+		else
+		{
 			listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
 		}
 
@@ -82,14 +87,12 @@ bool ResourceListen::init_thread(){
 			m_listen_socket.bind(listen_endpoint);
 			if(m_isMulticast)
 			{
-
 				m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
-
 			}
 		}
 		catch (boost::system::system_error const& e)
 		{
-			pError(e.what() << endl);
+			pError(e.what() << " : " << listen_endpoint <<endl);
 			return false;
 		}
 		//CDRMessage_t msg;
@@ -103,6 +106,7 @@ bool ResourceListen::init_thread(){
 		mp_thread = new boost::thread(&ResourceListen::run_io_service,this);
 		return true;
 	}
+	pError("Listen resource can only listen to one Locator at this point" << endl;);
 	return false;
 }
 

@@ -342,7 +342,7 @@ void DomainParticipant::getIPAddress(LocatorList_t* locators)
 {
 	DomainParticipant* dp = DomainParticipant::getInstance();
 	std::vector<std::string> ip_names;
-	dp->m_IPFinder.getIP(&ip_names);
+	dp->m_IPFinder.getIP4s(&ip_names);
 
 	locators->clear();
 	for(std::vector<std::string>::iterator it=ip_names.begin();
@@ -352,7 +352,9 @@ void DomainParticipant::getIPAddress(LocatorList_t* locators)
 		int a,b,c,d;
 		char ch;
 		ss >> a >>ch >>b >> ch >> c >>ch >>d;
-		if(ip_names.size()>1 && a==127)
+		if(a== 127 && b== 0 && c== 0 && d == 1)
+			continue;
+		if(a==169 && b==254)
 			continue;
 		Locator_t loc;
 		loc.kind = 1;
