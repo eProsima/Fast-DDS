@@ -178,6 +178,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -235,6 +236,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol= true;
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
@@ -247,7 +249,8 @@ int main(int argc, char** argv){
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
-
+		loc.port = 10047;
+		Rparam.unicastLocatorList.push_back(loc);
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
 		PublisherAttributes Wparam;
@@ -279,6 +282,8 @@ int main(int argc, char** argv){
 		break;
 	}
 	}
+
+	sleep(2);
 
 	DomainParticipant::stopAll();
 

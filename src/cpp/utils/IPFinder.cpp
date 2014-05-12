@@ -58,12 +58,12 @@ bool IPFinder::getIP4s(std::vector<std::string>* vec_name)
 			int family = ua->Address.lpSockaddr->sa_family;
 			if(family == AF_INET) //IP4
 			{
-			printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
+			//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
 
 			memset(buf, 0, BUFSIZ);
 			getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
 			vec_name->push_back(std::string(buf));
-			printf("Buffer: %s\n", buf);
+		//	printf("Buffer: %s\n", buf);
 			}
 		}
 	}

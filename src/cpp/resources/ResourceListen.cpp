@@ -121,7 +121,7 @@ void ResourceListen::newCDRMessage(const boost::system::error_code& err, std::si
 		{
 			return;
 		}
-		pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
+		pInfo (BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << " to endpoint: " << m_locList.begin()->printIP4Port()<<  DEF << endl);
 
 		//Get address into Locator
 		m_send_locator.port = m_sender_endpoint.port();
