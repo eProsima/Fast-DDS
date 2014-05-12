@@ -303,10 +303,15 @@ bool WriterProxy::removeChangeFromWriter(SequenceNumber_t& seq)
 				{
 					m_lastRemovedSeqNum = it->change->sequenceNumber;
 					m_changesFromW.erase(it);
+					m_hasMinAvailableSeqNumChanged = true;
+					pDebugInfo("WriterProxy: removeChangeFromWriter: "<<m_lastRemovedSeqNum.to64long()<<endl);
 					return true;
 				}
 				else
+				{
+					pDebugInfo("WriterProxy: removeChangeFromWriter: "<<it->change->sequenceNumber.to64long()<< " FALSE " <<endl);
 					return false;
+				}
 			}
 		}
 	}

@@ -88,15 +88,17 @@ bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
-	pDebugInfo("StatefulReader looking for matched writerProxy"<<endl);
+
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == writerGUID)
 		{
 			*WP = *it;
+			pDebugInfo("StatefulReader looking for matched writerProxy, FOUND"<<endl);
 			return true;
 		}
 	}
+	pDebugInfo("StatefulReader looking for matched writerProxy, NOT FOUND"<<endl);
 	return false;
 }
 
@@ -118,18 +120,24 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 		}
 	}
 	if(seqmin.to64long() == 0)
+	{
+		pDebugInfo("StatefulReader: takeNextCacheChange: seqMin = 0"<<endl);
 		return false;
+	}
 	CacheChange_t* change;
+	pDebugInfo("StatefulReader: trying takeNextCacheChange: "<< seqmin.to64long()<<endl);
 	if(this->m_reader_cache.get_change(seqmin,wpmin->param.remoteWriterGuid,&change))
 	{
 		if(change->kind == ALIVE)
 			this->mp_type->deserialize(&change->serializedPayload,data);
 		if(wpmin->removeChangeFromWriter(seqmin))
 		{
+
 			info->sampleKind = change->kind;
 			return m_reader_cache.remove_change(seq,wpmin->param.remoteWriterGuid);
 		}
 	}
+	pDebugInfo("StatefulReader: takeNextCacheChange: FALSE"<<endl);
 	return false;
 }
 
@@ -176,9 +184,13 @@ bool StatefulReader::isUnreadCacheChange()
 			SequenceNumber_t seq;
 			wp->available_changes_max(&seq);
 			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
+			{
+				pDebugInfo("StatefulReader, isUnreadCacheChange: TRUE : "<< (*it)->sequenceNumber.to64long()<<endl);
 				return true;
+			}
 		}
 	}
+	pDebugInfo("StatefulReader, isUnreadCacheChange: FALSE"<<endl);
 	return false;
 }
 

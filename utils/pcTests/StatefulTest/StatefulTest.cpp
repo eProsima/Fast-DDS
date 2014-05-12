@@ -253,7 +253,8 @@ int main(int argc, char** argv)
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
 		sub->assignListener((SubscriberListener*)&listener);
-		while(1)
+		int i = 0;
+		while(i<20)
 		{
 			cout << "Waiting for new message "<<endl;
 			sub->waitForUnreadMessage();
@@ -267,6 +268,7 @@ int main(int argc, char** argv)
 				while(sub->takeNextData((void*)&tp,&info))
 					tp.print();
 			}
+			i++;
 		}
 		break;
 	}
