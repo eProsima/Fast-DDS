@@ -327,7 +327,7 @@ bool StaticEndpointDiscoveryProtocol::localWriterMatching(RTPSWriter* writer,Dis
 							for(std::vector<Locator_t>::iterator lit = eit->m_unicastLocatorList.begin();
 									lit != eit->m_unicastLocatorList.end();++lit)
 							{
-								cout << "added unicast RL to my STATELESSWRITER"<<endl;
+								//cout << "added unicast RL to my STATELESSWRITER"<<endl;
 								RL.locator = *lit;
 								p_SLW->reader_locator_add(RL);
 							}
