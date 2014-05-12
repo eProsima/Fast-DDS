@@ -74,7 +74,8 @@ bool ResourceListen::init_thread(Locator_t& loc){
 		if(m_isMulticast)
 		{
 			m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-			m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( false ) );
+			m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( true ) );
+			m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
 			listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
 		}
 		else
@@ -83,12 +84,11 @@ bool ResourceListen::init_thread(Locator_t& loc){
 		}
 
 		try{
-
 			m_listen_socket.bind(listen_endpoint);
-			if(m_isMulticast)
-			{
-				m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
-			}
+			//if(m_isMulticast)
+			//{
+			//	m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
+			//}
 		}
 		catch (boost::system::system_error const& e)
 		{

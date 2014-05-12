@@ -180,6 +180,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.m_staticEndpointXMLFilename ="D:\\Trabajo\\workspace\\eRTPS\\utils\\pcTests\\StaticParticipantInfo.xml";
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		PParam.domainId = 80;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -197,7 +198,7 @@ int main(int argc, char** argv){
 		Rparam.topic.topicName = std::string("Test_topic2");
 		Rparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
-		//loc = *myIP.begin();
+		loc = *myIP.begin();
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
@@ -238,6 +239,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol= true;
 		PParam.discovery.m_staticEndpointXMLFilename = "D:\\Trabajo\\workspace\\eRTPS\\utils\\pcTests\\StaticParticipantInfo.xml";
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		PParam.domainId = 80;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
@@ -247,6 +249,7 @@ int main(int argc, char** argv){
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.reliability.reliabilityKind = BEST_EFFORT;
 		Locator_t loc;
+		loc = *myIP.begin();
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
