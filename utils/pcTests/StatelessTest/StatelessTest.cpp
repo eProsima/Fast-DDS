@@ -41,6 +41,7 @@ using namespace dds;
 using namespace rtps;
 using namespace std;
 
+#define IPTEST0 16
 #define IPTEST1 23
 #define IPTEST2 25
 #define IPTEST3 27
@@ -285,7 +286,7 @@ int main(int argc, char** argv)
 		WParam.topic.topicDataType = "TestType";
 		WParam.topic.topicName = "Test_topic";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
-		loc.set_IP4_address(192,168,1,IPTEST1);
+		loc.set_IP4_address(192,168,1,IPTEST0);
 		pub1->addReaderLocator(loc,false);
 		while(1)
 		{
