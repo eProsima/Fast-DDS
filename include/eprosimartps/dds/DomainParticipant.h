@@ -26,7 +26,7 @@
 
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/Participant.h"
+//#include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
