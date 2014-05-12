@@ -35,8 +35,8 @@
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.25" port="10046"></unicastLocator>	
-			<unicastLocator address="192.168.1.25" port="10047"></unicastLocator>
+			<unicastLocator address="192.168.1.11" port="10046"></unicastLocator>	
+			<unicastLocator address="192.168.1.11" port="10047"></unicastLocator>
 			<multicastLocator address="239.255.0.1" port="2700"></multicastLocator>
 		</endpoint>
 		

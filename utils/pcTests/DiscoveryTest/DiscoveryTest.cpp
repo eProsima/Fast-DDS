@@ -164,9 +164,9 @@ int main(int argc, char** argv){
 
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
-	std::vector<Locator_t> myIP;
+	LocatorList_t myIP;
 	DomainParticipant::getIPAddress(&myIP);
-	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
+//	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
 	switch(type)
 	{
 	case 1:
