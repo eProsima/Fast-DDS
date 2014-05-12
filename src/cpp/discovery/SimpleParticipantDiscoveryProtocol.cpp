@@ -255,8 +255,11 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 	{
 		if(m_first)
 		{
-			m_SPDPbPWriter->removeMinSeqCacheChange();
 			m_first = false;
+		}
+		else
+		{
+			m_SPDPbPWriter->removeMinSeqCacheChange();
 		}
 
 		m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
