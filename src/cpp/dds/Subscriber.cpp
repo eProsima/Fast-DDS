@@ -40,7 +40,10 @@ Subscriber::~Subscriber()
 void Subscriber::waitForUnreadMessage()
 {
 	if(!mp_Reader->isUnreadCacheChange())
+	{
+		pDebugInfo("No Unread CacheChange"<<endl);
 		mp_Reader->m_semaphore.wait();
+	}
 	mp_Reader->m_semaphore.reset();
 
 }
