@@ -21,11 +21,10 @@
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
-//
+
+
 #include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
+
 #include "eprosimartps/common/colors.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -40,6 +39,7 @@ using namespace dds;
 using namespace rtps;
 using namespace std;
 
+#define IPTEST0 16
 #define IPTEST1 23
 #define IPTEST2 25
 #define IPTEST3 27

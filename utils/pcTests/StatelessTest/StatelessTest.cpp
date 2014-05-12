@@ -23,10 +23,9 @@
 #include <cstdint>
 
 
-
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/dds/DomainParticipant.h"
+
+
 #include "eprosimartps/common/colors.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -209,7 +208,7 @@ int main(int argc, char** argv)
 		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Sparam);
 
-		loc.set_IP4_address(192,168,1,IPTEST2);
+		loc.set_IP4_address(192,168,1,IPTESTWIN);
 		pub1->addReaderLocator(loc,true);
 		pub2->addReaderLocator(loc,true);
 		TestType tp1,tp2,tp_in;
@@ -261,8 +260,10 @@ int main(int argc, char** argv)
 		cout << "Slept for 3 seconds"<< endl;
 		while(sub->takeNextData((void*)&tp_in,&info))
 		{
-			tp_in.print();
-			tp_in.value = -111;
+			if(info.sampleKind == ALIVE)
+				tp_in.print();
+			else
+				cout << "NOT ALIVE SAMPLE"<< endl;
 		}
 		break;
 	}
