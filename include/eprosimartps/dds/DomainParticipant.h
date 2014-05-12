@@ -183,7 +183,7 @@ public:
 	 * @param[out] locators Pointer to vector of locators used to return the different IPs of the machine.
 	 *
 	 */
-	static void getIPAddress(std::vector<Locator_t>* locators);
+	static void getIPAddress(LocatorList_t* locators);
 
 private:
     uint16_t m_portBase;

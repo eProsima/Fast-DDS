@@ -338,7 +338,7 @@ bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
 		return false;
 }
 
-void DomainParticipant::getIPAddress(std::vector<Locator_t>* locators)
+void DomainParticipant::getIPAddress(LocatorList_t* locators)
 {
 	DomainParticipant* dp = DomainParticipant::getInstance();
 	std::vector<std::string> ip_names;
