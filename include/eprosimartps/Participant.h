@@ -133,6 +133,10 @@ private:
 	LocatorList_t m_defaultUnicastLocatorList;
 	//!Default listening addresses.
 	LocatorList_t m_defaultMulticastLocatorList;
+
+	SimpleParticipantDiscoveryProtocol m_SPDP;
+		std::string m_participantName;
+		StaticEndpointDiscoveryProtocol m_StaticEDP;
 public:
 	//!Guid of the participant.
 	GUID_t m_guid;
@@ -169,9 +173,7 @@ private:
 	 */
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast);
 
-	SimpleParticipantDiscoveryProtocol m_SPDP;
-	std::string m_participantName;
-	StaticEndpointDiscoveryProtocol m_StaticEDP;
+
 public:
 	//!Used for tests
 	void loose_next_change(){m_send_thr.m_send_next = false;};
