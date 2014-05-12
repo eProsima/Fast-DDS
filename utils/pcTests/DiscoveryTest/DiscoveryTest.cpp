@@ -164,7 +164,9 @@ int main(int argc, char** argv){
 
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
-
+	std::vector<Locator_t> myIP;
+	DomainParticipant::getIPAddress(&myIP);
+	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
 	switch(type)
 	{
 	case 1:
@@ -193,6 +195,7 @@ int main(int argc, char** argv){
 		Rparam.topic.topicName = std::string("Test_topic2");
 		Rparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
+		loc = *myIP.begin();
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
