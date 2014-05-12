@@ -180,7 +180,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.m_staticEndpointXMLFilename ="D:\\Trabajo\\workspace\\eRTPS\\utils\\pcTests\\StaticParticipantInfo.xml";
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
-		PParam.domainId = 80;
+		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -239,7 +239,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol= true;
 		PParam.discovery.m_staticEndpointXMLFilename = "D:\\Trabajo\\workspace\\eRTPS\\utils\\pcTests\\StaticParticipantInfo.xml";
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
-		PParam.domainId = 80;
+		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
@@ -253,6 +253,8 @@ int main(int argc, char** argv){
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
+		loc.port = 10047;
+		Rparam.unicastLocatorList.push_back(loc);
 
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
@@ -278,7 +280,7 @@ int main(int argc, char** argv){
 		{
 			sub->waitForUnreadMessage();
 			sub->readNextData((void*)&tp_in,&info_in);
-
+			tp_in.print();
 			pub->write((void*)&tp_in);
 		}
 
@@ -286,8 +288,11 @@ int main(int argc, char** argv){
 	}
 	}
 
+	my_sleep(3);
+
 	DomainParticipant::stopAll();
 
+	cout << "Finish" << endl;
 
 	return 0;
 
