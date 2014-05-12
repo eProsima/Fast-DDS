@@ -62,16 +62,19 @@ DomainParticipant::~DomainParticipant()
 	{
 		delete(*it);
 	}
+	pDebugInfo("Participants deleted correctly "<< endl);
 	for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
 			it!=m_publisherList.end();++it)
 	{
 		delete(*it);
 	}
+	pDebugInfo("Publishers deleted correctly "<< endl);
 	for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
 			it!=m_subscriberList.end();++it)
 	{
 		delete(*it);
 	}
+	pDebugInfo("Subscribers deleted correctly "<< endl);
 	DomainParticipant::instanceFlag = false;
 	delete(RTPSLog::getInstance());
 }
