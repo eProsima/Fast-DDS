@@ -2,6 +2,7 @@
 #############
 *.opensdf
 *.sdf
+*.suo
 *.obj
 *.dll
 *.lib
