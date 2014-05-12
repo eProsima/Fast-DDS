@@ -92,8 +92,8 @@ void DomainParticipant::stopAll()
 Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttributes& WParam)
 {
 	pInfo("Creating Publisher"<<endl)
-									//Look for the correct type registration
-										DDSTopicDataType* p_type = NULL;
+	//Look for the correct type registration
+	DDSTopicDataType* p_type = NULL;
 	if(!DomainParticipant::getRegisteredType(WParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
@@ -107,6 +107,11 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 	Publisher* Pub = NULL;
 	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
+		if(WParam.userDefinedId <= 0)
+		{
+			pError("Static EDP requires user defined Id"<<endl);
+			return NULL;
+		}
 		p->m_StaticEDP.checkLocalWriterCreation(WParam);
 	}
 	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
@@ -164,6 +169,11 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 	}
 	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
+		if(RParam.userDefinedId <= 0)
+		{
+			pError("Static EDP requires user defined Id"<<endl);
+			return NULL;
+		}
 		p->m_StaticEDP.checkLocalReaderCreation(RParam);
 	}
 	Subscriber* Sub = NULL;

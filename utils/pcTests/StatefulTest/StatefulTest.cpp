@@ -65,7 +65,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 void my_sleep(int seconds)
 {
 	return Sleep(seconds*(long)1000);
-}};
+};
 #else
 void my_sleep(int seconds)
 {

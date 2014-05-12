@@ -121,14 +121,9 @@ Participant::~Participant()
 	delete(this->m_ResourceSemaphore);
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out,const PublisherAttributes& param,uint32_t payload_size)
+bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
-	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
-	{
-		pError("Static EDP requires user defined Id"<<endl);
-		return false;
-	}
 	StatelessWriter* SLWriter = new StatelessWriter(&param,payload_size);
 	if(this->initWriter((RTPSWriter*)SLWriter))
 	{
@@ -139,13 +134,9 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out,const Publisher
 		return false;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out,const PublisherAttributes& param,uint32_t payload_size)
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size)
 {
-	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
-	{
-		pError("Static EDP requires user defined Id"<<endl);
-		return false;
-	}
+pDebugInfo("Creating StatefulWriter"<<endl);
 	StatefulWriter* SFWriter = new StatefulWriter(&param, payload_size);
 	if(this->initWriter((RTPSWriter*)SFWriter))
 	{
@@ -204,14 +195,9 @@ bool Participant::initWriter(RTPSWriter*W)
 
 
 bool Participant::createStatelessReader(StatelessReader** SR_out,
-		const SubscriberAttributes& param,uint32_t payload_size)
+		 SubscriberAttributes& param,uint32_t payload_size)
 {
 	pInfo("Creating StatelessReader"<<endl);
-	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
-	{
-		pError("Static EDP requires user defined Id"<<endl);
-		return false;
-	}
 	StatelessReader* SReader = new StatelessReader(&param, payload_size);
 	if(initReader((RTPSReader*)SReader))
 	{
@@ -223,14 +209,9 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 }
 
 bool Participant::createStatefulReader(StatefulReader** SR_out,
-		const SubscriberAttributes& param,uint32_t payload_size)
+		 SubscriberAttributes& param,uint32_t payload_size)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
-	if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol && param.userDefinedId <= 0)
-	{
-		pError("Static EDP requires user defined Id"<<endl);
-		return false;
-	}
 	StatefulReader* SReader = new StatefulReader(&param, payload_size);
 	if(initReader((RTPSReader*)SReader))
 	{
