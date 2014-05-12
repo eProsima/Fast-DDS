@@ -53,7 +53,7 @@ public:
 	/**
 	 * Method to initialize the thread.
 	 */
-	bool init_thread();
+	bool init_thread(Locator_t& loc);
 	//! Vector of pointers to the associated writers.
 	std::vector<RTPSWriter*> m_assoc_writers;
 	//! Vector of pointer to the associated readers.

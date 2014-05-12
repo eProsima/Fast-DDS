@@ -129,6 +129,9 @@ public:
 	LocatorListIterator end(){
 		return m_locators.end();
 	}
+	size_t size(){
+		return size();
+	}
 	void clear(){
 		m_locators.clear();
 		return;

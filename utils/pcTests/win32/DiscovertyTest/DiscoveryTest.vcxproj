@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\DiscoveryTest\DiscoveryTest.cpp" />
+    <ClCompile Include="..\..\DiscoveryTest\DiscoveryTest_win.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9A0765E1-297A-40AB-9E05-6D97A2A68F50}</ProjectGuid>

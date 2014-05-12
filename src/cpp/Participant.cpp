@@ -275,7 +275,7 @@ bool Participant::initReader(RTPSReader* p_R)
 
 inline void addEndpoint(ResourceListen* th,Endpoint* end,char type)
 {
-	pInfo("Endpoint of type " << type << " added to listen Resource"<<endl);
+	pInfo("Endpoint " << type << " added to listen Resource: "<< th->m_locList.begin()->printIP4Port() << endl);
 	if(type == 'W')
 		th->m_assoc_writers.push_back((RTPSWriter*)end);
 	else if(type =='R')
@@ -358,12 +358,14 @@ bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) 
 
 bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
 	*thlisten_in = new ResourceListen();
-	(*thlisten_in)->m_locList.push_back(loc);
 	(*thlisten_in)->m_isMulticast = isMulticast;
 	(*thlisten_in)->m_participant_ptr = this;
-	m_threadListenList.push_back(*thlisten_in);
-	if((*thlisten_in)->init_thread())
+	
+	if((*thlisten_in)->init_thread(loc))
+	{
+		m_threadListenList.push_back(*thlisten_in);
 		return true;
+	}
 	else
 		return false;
 }
