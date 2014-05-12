@@ -44,7 +44,7 @@ void Subscriber::waitForUnreadMessage()
 		pDebugInfo("No Unread CacheChange"<<endl);
 		mp_Reader->m_semaphore.wait();
 	}
-	mp_Reader->m_semaphore.reset();
+//mp_Reader->m_semaphore.reset();
 
 }
 
