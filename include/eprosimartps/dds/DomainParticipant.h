@@ -87,6 +87,7 @@ public:
 
     /**
      * @brief Create a Participant.
+     * @snippet dds_example.cpp ex_ParticipantCreation
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
