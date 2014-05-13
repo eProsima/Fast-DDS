@@ -111,6 +111,10 @@ private:
 	 * @return True if correct.
 	 */
 	bool updateDPDMsg();
+	/**
+	 * This method updates the ParameterList when a new SPDP message is going to be send.
+	 * @return True if correct.
+	 */
 	bool updateParamList();
 
 
