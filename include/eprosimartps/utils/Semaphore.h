@@ -24,6 +24,10 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class Semaphore implements an easy to use Semaphore.
+ * Based on Boost Mutex.
+ */
 class Semaphore {
 public:
 	Semaphore():m_count(0){};

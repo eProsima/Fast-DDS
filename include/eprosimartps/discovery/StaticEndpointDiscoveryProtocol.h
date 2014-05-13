@@ -8,7 +8,7 @@
 
 /**
  * @file StaticEndpointDiscoveryProtocol.h
- *
+ *	StaticEndpointDiscoveryProtocol
  *  Created on: Apr 23, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

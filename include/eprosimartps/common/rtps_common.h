@@ -135,7 +135,9 @@ typedef struct SerializedPayload_t{
 	}
 }SerializedPayload_t;
 
-
+/**
+ * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
+ */
 typedef struct InstanceHandle_t{
 	octet value[16];
 	InstanceHandle_t()
