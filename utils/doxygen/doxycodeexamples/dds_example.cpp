@@ -103,7 +103,6 @@ bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 //Thread safety would be considered for future releases.
 TestTypeDataType TestTypeData;
 DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
-
 //! [ex_DDSTopicDataType]
 
 //! [ex_Publisher]
@@ -186,5 +185,27 @@ public:
 
 };
 //! [ex_PublisherListener]
+
+//! [ex_ParticipantCreation]
+using namespace eprosima::rtps;
+using namespace eprosima::dds;
+ParticipantAttributes PParam;
+PParam.name = "participant1";
+PParam.defaultSendPort = 10042;
+PParam.domainId = 50;
+PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+PParam.discovery.resendSPDPDataPeriod_sec = 30;
+PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
+PParam.discovery.m_staticEndpointXMLFilename = "StaticEndpointDefinition.xml";
+Locator_t loc;
+loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
+PParam.defaultUnicastLocatorList.push_back(loc);
+Participant* p = DomainParticipant::createParticipant(PParam);
+if(p!=NULL)
+{
+	//Participant correctly created
+}
+//! [ex_ParticipantCreation]
+
 
 
