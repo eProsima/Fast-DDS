@@ -69,7 +69,6 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 			return false;
 		}
 	}
-
 	ch->kind = changeKind;
 
 	if(topicKind == WITH_KEY && mp_type !=NULL)
@@ -83,11 +82,8 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 			pWarning("Get key function not defined"<<endl);
 		}
 	}
-
-
 	//change->sequenceNumber = lastChangeSequenceNumber;
 	ch->writerGUID = m_guid;
-
 	*change_out = ch;
 	return true;
 }
@@ -103,19 +99,19 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 	CacheChange_t* change;
 	if(new_change(kind,Data,&change))
 	{
-	pDebugInfo("New change created"<<endl);
-	if(!m_writer_cache.add_change(change))
-	{
-		pWarning("Change not added"<<endl);
-		m_writer_cache.release_Cache(change);
-		return false;
-	}
+		pDebugInfo("New change created"<<endl);
+		if(!m_writer_cache.add_change(change))
+		{
+			pWarning("Change not added"<<endl);
+			m_writer_cache.release_Cache(change);
+			return false;
+		}
 
-	//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
-	unsent_change_add(change);
-	if(m_writer_cache.isFull() && mp_listener !=NULL)
-		mp_listener->onHistoryFull();
-	return true;
+		//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
+		unsent_change_add(change);
+		if(m_writer_cache.isFull() && mp_listener !=NULL)
+			mp_listener->onHistoryFull();
+		return true;
 	}
 	else
 		return false;
