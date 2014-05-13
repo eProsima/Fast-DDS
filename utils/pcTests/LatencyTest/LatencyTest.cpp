@@ -99,7 +99,7 @@ public:
 	LatencyDataType()
 {
 		m_topicDataTypeName = "LatencyType";
-		m_typeSize = len_laten;
+		m_typeSize = sizeof(LatencyType);
 		m_isGetKeyDefined = false;
 };
 	~LatencyDataType(){};
@@ -111,7 +111,7 @@ public:
 bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 {
 	memcpy(payload->data,data,len_laten);
-		payload->length = len_laten;
+	payload->length = len_laten;
 	return true;
 }
 
@@ -147,7 +147,7 @@ public:
 	~LatencyListener2(){};
 	Publisher* m_pub;
 	Subscriber* m_sub;
-	LatencyDataType m_latency;
+	LatencyType m_latency;
 	SampleInfo_t m_info;
 	void onNewDataMessage()
 	{
@@ -272,7 +272,6 @@ int main(int argc, char** argv){
 		cout << "Waiting for completion "<<endl;
 		int n;
 		cin >> n;
-
 		break;
 	}
 	}
