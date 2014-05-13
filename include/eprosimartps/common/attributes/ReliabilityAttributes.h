@@ -8,7 +8,7 @@
 
 /**
  * @file ReliabilityAttributes.h
- *
+ *	Reliability Attributes
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

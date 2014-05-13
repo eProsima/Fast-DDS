@@ -8,7 +8,7 @@
 
 /**
  * @file DDSTopicDataType.h
- *
+ *	DDSTopicDataType definition.
  *  Created on: Apr 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

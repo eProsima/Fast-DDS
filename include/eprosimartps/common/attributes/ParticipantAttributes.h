@@ -8,7 +8,7 @@
 
 /**
  * @file ParticipantAttributes.h
- *
+ *	Participant Attributes
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
