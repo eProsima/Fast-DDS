@@ -28,7 +28,7 @@ namespace rtps{
 
 /**
  * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
- * @ingroup COMMONMODULE
+ * @ingroup MANAGEMENTMODULE
  */
 class RTPSMessageCreator {
 public:

@@ -30,6 +30,7 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
 
@@ -49,11 +50,26 @@ const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
+
 #if defined(_WIN32)
 #define COPYSTR strcpy_s
 #else
 #define COPYSTR strcpy
 #endif
+
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+void my_sleep(int seconds)
+{
+	return Sleep(seconds*(long)1000);
+};
+#else
+void my_sleep(int seconds)
+{
+	sleep(seconds);
+};
+#endif
+
 
 typedef struct TestType{
 	char name[6]; //KEY
@@ -63,7 +79,7 @@ typedef struct TestType{
 	{
 		value = -1;
 		price = 0;
-		strcpy(name,"UNDEF");
+		COPYSTR(name,"UNDEF");
 	}
 	void print()
 	{
@@ -148,7 +164,9 @@ int main(int argc, char** argv){
 
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
-
+	LocatorList_t myIP;
+	DomainParticipant::getIPAddress(&myIP);
+//	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
 	switch(type)
 	{
 	case 1:
@@ -160,6 +178,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -177,6 +196,7 @@ int main(int argc, char** argv){
 		Rparam.topic.topicName = std::string("Test_topic2");
 		Rparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
+		loc = *myIP.begin();
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
@@ -184,8 +204,9 @@ int main(int argc, char** argv){
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
 		p->announceParticipantState();
-		sleep(4);
+		my_sleep(4);
 		TestType tp1,tp_in;
+		SampleInfo_t info_in;
 		COPYSTR(tp1.name,"Obje1");
 		tp1.value = 0;
 		tp1.price = 1.3;
@@ -198,8 +219,8 @@ int main(int argc, char** argv){
 			tp1.price *= (i+1);
 
 			pub->write((void*)&tp1);
-			sub->blockUntilNewMessage();
-			sub->readNextData((void*)&tp_in);
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&tp_in,&info_in);
 			if(tp_in.value == tp1.value &&
 					tp_in.price ==tp1.price)
 				cout << "Message RECEIVED = AS SEND: "<< i << endl;
@@ -215,6 +236,7 @@ int main(int argc, char** argv){
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol= true;
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
@@ -227,7 +249,8 @@ int main(int argc, char** argv){
 		loc.kind = 1;
 		loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
-
+		loc.port = 10047;
+		Rparam.unicastLocatorList.push_back(loc);
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
 		PublisherAttributes Wparam;
@@ -245,12 +268,13 @@ int main(int argc, char** argv){
 
 		p->announceParticipantState();
 
-		sleep(4);
+		my_sleep(4);
 		TestType tp_in;
+		SampleInfo_t info_in;
 		for(uint i = 0;i<10;i++)
 		{
-			sub->blockUntilNewMessage();
-			sub->readNextData((void*)&tp_in);
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&tp_in,&info_in);
 
 			pub->write((void*)&tp_in);
 		}
@@ -258,6 +282,8 @@ int main(int argc, char** argv){
 		break;
 	}
 	}
+
+	sleep(2);
 
 	DomainParticipant::stopAll();
 

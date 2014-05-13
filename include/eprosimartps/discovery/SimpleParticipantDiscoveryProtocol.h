@@ -8,7 +8,7 @@
 
 /**
  * @file SimpleParticipantDiscoveryProtocol.h
- *
+ *	SimpleParticipantDiscoveryProtocol
  *  Created on: Apr 8, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -105,6 +105,7 @@ private:
 	QosList_t m_DPDAsParamList;
 	std::vector<DiscoveredParticipantData*> m_matched_participants;
 	SPDPListener m_listener;
+	bool m_first;
 	/**
 	 * This method updated the DPD Msg in case something has change in our own participant.
 	 * @return True if correct.

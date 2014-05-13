@@ -39,6 +39,7 @@ namespace rtps{
 
 /**
  * @brief Structure CDRMessage_t, contains a serialized message.
+ * @ingroup COMMONMODULE
  */
 typedef struct CDRMessage_t{
 	CDRMessage_t(){
@@ -134,7 +135,9 @@ typedef struct SerializedPayload_t{
 	}
 }SerializedPayload_t;
 
-
+/**
+ * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
+ */
 typedef struct InstanceHandle_t{
 	octet value[16];
 	InstanceHandle_t()

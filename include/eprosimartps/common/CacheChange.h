@@ -46,7 +46,7 @@ typedef enum ChangeForReaderStatus_t{
 typedef enum ChangeFromWriterStatus_t{
 	UNKNOWN,
 	MISSING,
-	REQUESTED_WITH_NACK,
+	//REQUESTED_WITH_NACK,
 	RECEIVED,
 	LOST
 }ChangeFromWriterStatus_t;
@@ -54,6 +54,7 @@ typedef enum ChangeFromWriterStatus_t{
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
+ * @ingroup COMMONMODULE
  */
 typedef struct CacheChange_t{
 	//!Kind of change

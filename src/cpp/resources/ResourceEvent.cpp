@@ -30,6 +30,7 @@ ResourceEvent::ResourceEvent():
 
 ResourceEvent::~ResourceEvent() {
 	pWarning( "Removing event thread " << b_thread->get_id() << std::endl);
+	io_service.reset();
 	io_service.stop();
 	b_thread->join();
 	delete(b_thread);

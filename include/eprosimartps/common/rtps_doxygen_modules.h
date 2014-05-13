@@ -23,6 +23,8 @@
  * @brief eProsima RTPS API grouped in modules.
  */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
  /*!
  * @defgroup RTPSMODULE RTPS
  * @ingroup EPROSIMARTPSAPIREFERENCE
@@ -31,6 +33,7 @@
  * The DDS - Public API provided is provided to the users to create applications and to manage them.
  */
 
+#endif
 /*!
  * @defgroup DDSMODULE DDS - Public API
  * @ingroup EPROSIMARTPSAPIREFERENCE
@@ -42,6 +45,9 @@
  * @ingroup DDSMODULE
  * @brief Attributes class used to define the public entities that the user should use to control this library.
  */
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 
 /** @defgroup COMMONMODULE Common Module.
  * @ingroup RTPSMODULE
@@ -63,16 +69,20 @@
  * This module contains all classes and methods associated with RTPSReader and its specifications, as well as other necessary classes.
  */
 
-/** @defgroup DISCOVERYMODULE Discovery Module
- * @ingroup RTPSMODULE
- * This module contains the classes associated with the Discovery Protocols.
- */
-
 /** @defgroup MANAGEMENTMODULE Management Module
  * @ingroup RTPSMODULE
  * This module contains classes and methods associated with the management of all other objects. The most important ones
  * are the communication (ResourceSend and ResourceListen) and event (ResourceEvent) resources.
  */
+
+/** @defgroup DISCOVERYMODULE Discovery Module
+ * @ingroup MANAGEMENTMODULE
+ * This module contains the classes associated with the Discovery Protocols.
+ */
+
+
+
+#endif
 
 /** @defgroup UTILITIESMODULE Shared Utilities
  * @ingroup EPROSIMARTPSAPIREFERENCE

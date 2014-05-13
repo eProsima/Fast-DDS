@@ -30,7 +30,7 @@ IPFinder::~IPFinder() {
 
 #if defined(_WIN32)
 
-bool IPFinder::getIP(std::vector<std::string>* vec_name)
+bool IPFinder::getIP4s(std::vector<std::string>* vec_name)
 {
 	DWORD rv, size;
 	PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
@@ -51,17 +51,20 @@ bool IPFinder::getIP(std::vector<std::string>* vec_name)
 	}
 
 	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
-		//print_adapter(aa);
+		
 		for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
 			char buf[BUFSIZ];
 
 			int family = ua->Address.lpSockaddr->sa_family;
+			if(family == AF_INET) //IP4
+			{
 			//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
 
 			memset(buf, 0, BUFSIZ);
 			getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
 			vec_name->push_back(std::string(buf));
-			//printf("%s\n", buf);
+		//	printf("Buffer: %s\n", buf);
+			}
 		}
 	}
 
@@ -71,7 +74,7 @@ bool IPFinder::getIP(std::vector<std::string>* vec_name)
 
 #else
 
-bool IPFinder::getIP(std::vector<std::string>* vec_name )
+bool IPFinder::getIP4s(std::vector<std::string>* vec_name )
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, s;

@@ -8,7 +8,7 @@
 
 /**
  * @file rtps_parameter_types.h
- *
+ *	Parameter Types.
  *  Created on: Apr 8, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
