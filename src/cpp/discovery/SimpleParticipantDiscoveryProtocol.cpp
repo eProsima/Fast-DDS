@@ -25,7 +25,8 @@ namespace rtps {
 SimpleParticipantDiscoveryProtocol::SimpleParticipantDiscoveryProtocol(Participant* p):
 				mp_Participant(p),
 				m_DPDMsgHeader(RTPSMESSAGE_HEADER_SIZE),
-				m_listener(this)
+				m_listener(this),
+				m_first(true)
 {
 
 	m_resendData = NULL;
@@ -74,7 +75,7 @@ bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
 	multiLocator.set_IP4_address(239,255,0,1);
 	m_DPD.m_proxy.m_metatrafficMulticastLocatorList.push_back(multiLocator);
 
-	std::vector<Locator_t> locators;
+	LocatorList_t locators;
 	DomainParticipant::getIPAddress(&locators);
 	for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
 	{
@@ -252,7 +253,15 @@ bool SimpleParticipantDiscoveryProtocol::sendDPDMsg()
 	CacheChange_t* change=NULL;
 	if(m_DPDAsParamList.allQos.m_hasChanged || m_hasChanged_DPD)
 	{
-		m_SPDPbPWriter->removeMinSeqCacheChange();
+		if(m_first)
+		{
+			m_first = false;
+		}
+		else
+		{
+			m_SPDPbPWriter->removeMinSeqCacheChange();
+		}
+
 		m_SPDPbPWriter->new_change(ALIVE,NULL,&change);
 		for(uint8_t i = 0;i<12;++i)
 			change->instanceHandle.value[i] = this->mp_Participant->m_guid.guidPrefix.value[i];

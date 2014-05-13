@@ -29,6 +29,9 @@
 //#include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/PublisherListener.h"
 
 namespace eprosima{
 namespace rtps{
@@ -73,17 +76,18 @@ public:
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @return Pointer to the publisher. 
 	 */
-    static Publisher* createPublisher(Participant* p,const PublisherAttributes& WParam);
+    static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam);
 	/**
 	 * @brief Create a Subscriber in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @return Pointer to the subscriber. 
 	 */
-    static Subscriber* createSubscriber(Participant* p,const SubscriberAttributes& RParam);
+    static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam);
 
     /**
      * @brief Create a Participant.
+     * @snippet dds_example.cpp ex_ParticipantCreation
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
@@ -180,7 +184,7 @@ public:
 	 * @param[out] locators Pointer to vector of locators used to return the different IPs of the machine.
 	 *
 	 */
-	static void getIPAddress(std::vector<Locator_t>* locators);
+	static void getIPAddress(LocatorList_t* locators);
 
 private:
     uint16_t m_portBase;

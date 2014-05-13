@@ -8,7 +8,7 @@
 
 /**
  * @file QosList.h
- *
+ *	QosList
  *  Created on: Apr 9, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

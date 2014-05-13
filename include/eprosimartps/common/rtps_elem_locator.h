@@ -87,6 +87,12 @@ public:
 		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
 		return ss.str();
 	}
+	std::string printIP4Port()
+	{
+		std::stringstream ss;
+		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15]<<":"<<port;
+		return ss.str();
+	}
 	uint32_t to_IP4_long()
 	{
 		uint32_t addr;
@@ -122,6 +128,9 @@ public:
 	}
 	LocatorListIterator end(){
 		return m_locators.end();
+	}
+	size_t size(){
+		return size();
 	}
 	void clear(){
 		m_locators.clear();

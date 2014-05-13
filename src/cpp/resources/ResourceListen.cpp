@@ -63,46 +63,56 @@ void ResourceListen::run_io_service()
 	this->m_io_service.run();
 }
 
-bool ResourceListen::init_thread(){
-	if(!m_locList.empty())
+bool ResourceListen::init_thread(Locator_t& loc){
+	if(m_locList.empty())
 	{
+		m_locList.push_back(loc);
 		m_first = true;
-		m_listen_socket.open(boost::asio::ip::udp::v4());
-		boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList.begin()->to_IP4_string());
-		udp::endpoint listen_endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
-		if(m_isMulticast)
-		{
-			m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
-			m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( false ) );
-			listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
-		}
-
+		udp::endpoint listen_endpoint;
 		try{
-
+			boost::asio::ip::address address = boost::asio::ip::address::from_string(m_locList.begin()->to_IP4_string());
+			if(m_isMulticast)
+			{
+				listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
+				pInfo("Listen endpoint multicast: " << listen_endpoint<< endl);
+			}
+			else
+			{
+				listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
+			}
+			m_listen_socket.open(listen_endpoint.protocol());
+			if(m_isMulticast)
+			{
+				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+				m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( true ) );
+			}
 			m_listen_socket.bind(listen_endpoint);
 			if(m_isMulticast)
 			{
-
-				m_listen_socket.set_option( boost::asio::ip::multicast::join_group( address ) );
-
+				pInfo("Joining group: "<<address<<endl);
+				LocatorList_t loclist;
+				DomainParticipant::getIPAddress(&loclist);
+				for(LocatorListIterator it=loclist.begin();it!=loclist.end();++it)
+					m_listen_socket.set_option( boost::asio::ip::multicast::join_group(address.to_v4(),boost::asio::ip::address_v4::from_string(it->to_IP4_string())) );
 			}
 		}
 		catch (boost::system::system_error const& e)
 		{
-			pError(e.what() << endl);
+			pError(e.what() << " : " << listen_endpoint <<endl);
 			return false;
 		}
 		//CDRMessage_t msg;
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		m_listen_socket.async_receive_from(
-				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
-				m_sender_endpoint,
-				boost::bind(&ResourceListen::newCDRMessage, this,
-						boost::asio::placeholders::error,
-						boost::asio::placeholders::bytes_transferred));
+			boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
+			m_sender_endpoint,
+			boost::bind(&ResourceListen::newCDRMessage, this,
+			boost::asio::placeholders::error,
+			boost::asio::placeholders::bytes_transferred));
 		mp_thread = new boost::thread(&ResourceListen::run_io_service,this);
 		return true;
 	}
+	pError("Listen resource can only listen to one Locator at this point" << endl;);
 	return false;
 }
 
@@ -117,7 +127,7 @@ void ResourceListen::newCDRMessage(const boost::system::error_code& err, std::si
 		{
 			return;
 		}
-		pInfo (BLUE << "Message received of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << DEF << endl);
+		pInfo (BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << " to endpoint: " << m_locList.begin()->printIP4Port()<<  DEF << endl);
 
 		//Get address into Locator
 		m_send_locator.port = m_sender_endpoint.port();

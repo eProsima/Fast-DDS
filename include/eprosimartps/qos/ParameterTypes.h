@@ -8,7 +8,7 @@
 
 /**
  * @file ParameterTypes.h
- *
+ *	ParameterTypes
  *  Created on: Mar 20, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -25,6 +25,8 @@ using namespace eprosima::rtps;
 namespace eprosima {
 
 namespace dds {
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
  * @addtogroup PARAMETERMODULE
@@ -186,7 +188,7 @@ public:
 
 ///@}
 
-
+#endif
 
 } //end of namespace dds
 } //end of namespace eprosima

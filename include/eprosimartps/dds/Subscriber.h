@@ -50,6 +50,7 @@ namespace dds {
  * Class Subscriber, contains the public API to perform actions when messages are received. This class should not be instantiated directly.
  * DomainParticipant class should be used to correctly initialize this element.
  * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_Subscriber
  */
 class RTPS_DllAPI Subscriber {
 	friend class DomainParticipant;

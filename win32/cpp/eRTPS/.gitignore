@@ -2,5 +2,11 @@
 #############
 *.opensdf
 *.sdf
+*.suo
+*.obj
+*.dll
+*.lib
+*.log
 
 ipch
+eRTPS/Win32

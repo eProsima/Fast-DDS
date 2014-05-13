@@ -21,13 +21,12 @@
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
-//
+
+
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -40,6 +39,7 @@ using namespace dds;
 using namespace rtps;
 using namespace std;
 
+#define IPTEST0 16
 #define IPTEST1 23
 #define IPTEST2 25
 #define IPTEST3 27
@@ -55,9 +55,22 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
 #if defined(_WIN32)
-	#define COPYSTR strcpy_s
+#define COPYSTR strcpy_s
 #else
-	#define COPYSTR strcpy
+#define COPYSTR strcpy
+#endif
+
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+void my_sleep(int seconds)
+{
+	return Sleep(seconds*(long)1000);
+};
+#else
+void my_sleep(int seconds)
+{
+	sleep(seconds);
+};
 #endif
 
 typedef struct TestType{
@@ -68,7 +81,7 @@ typedef struct TestType{
 	{
 		value = -1;
 		price = 0;
-		strcpy(name,"UNDEF");
+		COPYSTR(name,"UNDEF");
 	}
 	void print()
 	{
@@ -131,11 +144,11 @@ bool TestTypeDataType::getKey(void*data,InstanceHandle_t* handle)
 	return true;
 }
 
-class TestTypeListener: public RTPSListener{
+class TestTypeListener: public SubscriberListener{
 public:
 	TestTypeListener(){};
 	~TestTypeListener(){};
-	void newMessageCallback()
+	void onNewDataMessage()
 	{
 		cout <<"New Message"<<endl;
 	}
@@ -143,7 +156,8 @@ public:
 
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
 	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
@@ -166,9 +180,9 @@ int main(int argc, char** argv){
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
 
-	ParticipantParams_t PParam;
+	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.m_useSimpleParticipantDiscovery = false;
+	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 
 
@@ -176,15 +190,14 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		WriterParams_t Wparam;
-		Wparam.stateKind = STATEFUL;
-		Wparam.topicKind = WITH_KEY;
-		Wparam.topicDataType = std::string("TestType");
-		Wparam.topicName = std::string("Test_topic");
-		Wparam.historySize = 14;
-		Wparam.reliablility.heartbeatPeriod.seconds = 2;
-		Wparam.reliablility.nackResponseDelay.seconds = 5;
-		Wparam.reliablility.kind = RELIABLE;
+		PublisherAttributes Wparam;
+		Wparam.topic.topicKind = WITH_KEY;
+		Wparam.topic.topicDataType = std::string("TestType");
+		Wparam.topic.topicName = std::string("Test_topic");
+		Wparam.historyMaxSize = 14;
+		Wparam.reliability.heartbeatPeriod.seconds = 2;
+		Wparam.reliability.nackResponseDelay.seconds = 5;
+		Wparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
@@ -212,25 +225,25 @@ int main(int argc, char** argv){
 				p->loose_next_change();
 			pub->write((void*)&tp);
 			cout << "Going to sleep "<< (int)i <<endl;
-			sleep(1);
+			my_sleep(1);
 			cout << "Wakes "<<endl;
 		}
 		pub->dispose((void*)&tp);
-		sleep(1);
+		my_sleep(1);
 		cout << "Wakes "<<endl;
 		pub->unregister((void*)&tp);
-		sleep(1);
+		my_sleep(1);
 		cout << "Wakes "<<endl;
 		break;
 	}
 	case 2:
 	case 3:
 	{
-		ReaderParams_t Rparam;
-		Rparam.historySize = 15;
-		Rparam.stateKind = STATEFUL;
-		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_Topic");
+		SubscriberAttributes Rparam;
+		Rparam.historyMaxSize = 15;
+		Rparam.topic.topicDataType = std::string("TestType");
+		Rparam.topic.topicName = std::string("Test_Topic");
+		Rparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
 		if(type == 2)
 			loc.port = 10046;
@@ -239,20 +252,23 @@ int main(int argc, char** argv){
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
-		sub->assignListener((RTPSListener*)&listener);
-		while(1)
+		sub->assignListener((SubscriberListener*)&listener);
+		int i = 0;
+		while(i<20)
 		{
 			cout << "Waiting for new message "<<endl;
-			sub->blockUntilNewMessage();
+			sub->waitForUnreadMessage();
 			TestType tp;
-			if(sub->takeNextData((void*)&tp))
+			SampleInfo_t info;
+			if(sub->takeNextData((void*)&tp,&info))
 				tp.print();
-			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
+			if(sub->getHistory_n() >= 0.5*Rparam.historyMaxSize)
 			{
 				cout << "Taking all" <<endl;
-				while(sub->takeNextData(&tp))
+				while(sub->takeNextData((void*)&tp,&info))
 					tp.print();
 			}
+			i++;
 		}
 		break;
 	}

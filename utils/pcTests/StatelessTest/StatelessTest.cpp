@@ -21,17 +21,17 @@
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
-//
 
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
+
 #include "eprosimartps/dds/DomainParticipant.h"
+
+
 #include "eprosimartps/common/colors.h"
-#include "eprosimartps/dds/ParameterList.h"
+#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/reader/RTPSListener.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/PublisherListener.h"
 
 
 
@@ -40,12 +40,15 @@ using namespace dds;
 using namespace rtps;
 using namespace std;
 
+#define IPTEST0 16
 #define IPTEST1 23
 #define IPTEST2 25
 #define IPTEST3 27
 #define IPTESTWIN 11
 
 #define WR 1 //Writer 1, Reader 2
+
+#pragma warning(disable: 4430)
 
 #if defined(__LITTLE_ENDIAN__)
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
@@ -59,6 +62,21 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #define COPYSTR strcpy
 #endif
 
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+void my_sleep(int seconds)
+{
+	return Sleep(seconds*(long)1000);
+};
+#else
+void my_sleep(int seconds)
+{
+	sleep(seconds);
+};
+#endif
+
+
+
 
 typedef struct TestType{
 	char name[6]; //KEY
@@ -68,7 +86,7 @@ typedef struct TestType{
 	{
 		value = -1;
 		price = 0;
-		strcpy(name,"UNDEF");
+		COPYSTR(name,"UNDEF");
 	}
 	void print()
 	{
@@ -131,11 +149,11 @@ bool TestTypeDataType::getKey(void*data,InstanceHandle_t* handle)
 	return true;
 }
 
-class TestTypeListener: public RTPSListener{
+class TestTypeListener: public SubscriberListener{
 public:
 	TestTypeListener(){};
 	~TestTypeListener(){};
-	void newMessageCallback()
+	void onNewDataMessage()
 	{
 		cout <<"New Message"<<endl;
 	}
@@ -163,37 +181,38 @@ int main(int argc, char** argv)
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
-	ParticipantParams_t PParam;
+	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.m_useSimpleParticipantDiscovery = false;
+	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
 	Participant* p = DomainParticipant::createParticipant(PParam);
 
 	switch(type)
 	{
 	case 1:
 	{
-		WriterParams_t WParam;
-		WParam.historySize = 20;
-		WParam.topicKind = WITH_KEY;
-		WParam.topicDataType = "TestType";
-		WParam.topicName = "Test_topic";
-		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
-		Publisher* pub2 = DomainParticipant::createPublisher(p,WParam);
-		ReaderParams_t Rparam;
-		Rparam.historySize = 50;
-		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_topic");
-		Rparam.topicKind = NO_KEY;
+		PublisherAttributes PParam;
+		PParam.historyMaxSize = 20;
+		PParam.topic.topicKind = WITH_KEY;
+		PParam.topic.topicDataType = "TestType";
+		PParam.topic.topicName = "Test_topic";
+		Publisher* pub1 = DomainParticipant::createPublisher(p,PParam);
+		Publisher* pub2 = DomainParticipant::createPublisher(p,PParam);
+		SubscriberAttributes Sparam;
+		Sparam.historyMaxSize = 50;
+		Sparam.topic.topicDataType = std::string("TestType");
+		Sparam.topic.topicName = std::string("Test_topic");
+		Sparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10469;
-		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Sparam);
 
-		loc.set_IP4_address(192,168,1,IPTEST2);
+		loc.set_IP4_address(192,168,1,IPTESTWIN);
 		pub1->addReaderLocator(loc,true);
 		pub2->addReaderLocator(loc,true);
 		TestType tp1,tp2,tp_in;
+		SampleInfo_t info;
 		COPYSTR(tp1.name,"Obje1");
 		COPYSTR(tp2.name,"Obje2");
 		tp1.value = 0;
@@ -211,9 +230,9 @@ int main(int argc, char** argv)
 			tp2.price *= (i+1);
 			pub1->write((void*)&tp1);
 			pub2->write((void*)&tp2);
-			if(pub1->getHistory_n() >= 0.8*WParam.historySize)
+			if(pub1->getHistory_n() >= 0.8*Sparam.historyMaxSize)
 				pub1->removeMinSeqChange();
-			if(pub2->getHistory_n() >= 0.8*WParam.historySize)
+			if(pub2->getHistory_n() >= 0.8*Sparam.historyMaxSize)
 				pub2->removeMinSeqChange();
 			if(i==8)
 			{
@@ -231,50 +250,53 @@ int main(int argc, char** argv)
 			if(sub->getHistory_n() >= 1)
 			{
 				cout << "Taking from subscriber" <<endl;
-				if(sub->readNextData(&tp_in))
+				if(sub->readNextData((void*)&tp_in,&info))
 					tp_in.print();
 				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
 			}
 		}
 		cout << "Sleeping 3 seconds"<<endl;
-		sleep(3);
+		my_sleep(3);
 		cout << "Slept for 3 seconds"<< endl;
-		while(sub->takeNextData((void*)&tp_in))
+		while(sub->takeNextData((void*)&tp_in,&info))
 		{
-			tp_in.print();
-			tp_in.value = -111;
+			if(info.sampleKind == ALIVE)
+				tp_in.print();
+			else
+				cout << "NOT ALIVE SAMPLE"<< endl;
 		}
 		break;
 	}
 	case 2:
 	{
-		ReaderParams_t Rparam;
-		Rparam.historySize = 50;
-		Rparam.topicDataType = std::string("TestType");
-		Rparam.topicName = std::string("Test_topic");
-		Rparam.topicKind = WITH_KEY;
+		SubscriberAttributes Rparam;
+		Rparam.historyMaxSize = 50;
+		Rparam.topic.topicDataType = std::string("TestType");
+		Rparam.topic.topicName = std::string("Test_topic");
+		Rparam.topic.topicKind = WITH_KEY;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10469;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in port 10469
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
-		sub->assignListener((RTPSListener*)&listener);
-		WriterParams_t WParam;
-		WParam.historySize = 50;
-		WParam.topicKind = NO_KEY;
-		WParam.topicDataType = "TestType";
-		WParam.topicName = "Test_topic";
+		sub->assignListener((SubscriberListener*)&listener);
+		PublisherAttributes WParam;
+		WParam.historyMaxSize = 50;
+		WParam.topic.topicKind = NO_KEY;
+		WParam.topic.topicDataType = "TestType";
+		WParam.topic.topicName = "Test_topic";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
-		loc.set_IP4_address(192,168,1,IPTEST1);
+		loc.set_IP4_address(192,168,1,IPTEST0);
 		pub1->addReaderLocator(loc,false);
 		while(1)
 		{
 			cout << "Blocking until new message arrives " << endl;
-			sub->blockUntilNewMessage();
+			sub->waitForUnreadMessage();
 			cout << "After new message block " << sub->getHistory_n() << endl;
 			TestType tp;
-			while(sub->readNextData((void*)&tp))
+			SampleInfo_t info;
+			while(sub->readNextData((void*)&tp,&info))
 			{
 				tp.print();
 				pub1->write((void*)&tp);
@@ -283,11 +305,10 @@ int main(int argc, char** argv)
 				tp.price = 0;
 				COPYSTR(tp.name,"UNDEF");
 			}
-			cout << "Read: " << sub->getReadElements_n() <<" from History: "<<sub->getHistory_n()<< endl;
-			if(sub->getHistory_n() >= 0.5*Rparam.historySize)
+			if(sub->getHistory_n() >= 0.5*Rparam.historyMaxSize)
 			{
 				cout << "Taking all" <<endl;
-				while(sub->takeNextData(&tp))
+				while(sub->takeNextData((void*)&tp,&info))
 					tp.print();
 			}
 		}

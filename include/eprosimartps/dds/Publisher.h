@@ -46,6 +46,7 @@ namespace dds {
  * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
  * DomainParticipant class should be used to correctly initialize this element.
  * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_Publisher
  */
 class RTPS_DllAPI Publisher {
 	friend class DomainParticipant;

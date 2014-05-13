@@ -8,7 +8,7 @@
 
 /**
  * @file SubscriberListener.h
- *
+ *	SubscriberListener
  *  Created on: Apr 21, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -24,6 +24,7 @@ namespace dds {
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_SubscriberListener
  */
 class RTPS_DllAPI SubscriberListener {
 public:

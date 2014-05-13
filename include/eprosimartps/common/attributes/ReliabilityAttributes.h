@@ -8,7 +8,7 @@
 
 /**
  * @file ReliabilityAttributes.h
- *
+ *	Reliability Attributes
  *  Created on: May 5, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com
@@ -44,6 +44,7 @@ class ReliabilityAttributes {
 public:
 	ReliabilityAttributes():reliabilityKind(BEST_EFFORT){};
 	virtual ~ReliabilityAttributes(){};
+	//!ReliabilityKind (BEST_EFFORT or RELIABLE)
 	ReliabilityKind_t reliabilityKind;
 };
 

@@ -8,7 +8,7 @@
 
 /**
  * @file ParticipantProxy.h
- *
+ *	ParticipantProxy
  *  Created on: Apr 8, 2014
  *      Author: Gonzalo Rodriguez Canosa
  *      email:  gonzalorodriguez@eprosima.com

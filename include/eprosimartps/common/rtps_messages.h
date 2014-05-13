@@ -33,6 +33,8 @@ using eprosima::dds::ParameterList_t;
 namespace eprosima{
 namespace rtps{
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /** @defgroup RTPSMESSAGES RTPS Messages structures
   * @ingroup COMMONMODULE
  * Structures to hold different RTPS Messages and submessages structures.
@@ -161,6 +163,8 @@ typedef struct SubmessageHeader_t{
 //
 /////@}
 //
+
+#endif
 
 }
 }

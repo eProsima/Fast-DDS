@@ -134,7 +134,6 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 		m_lastChangeSequenceNumber++;
 		a_change->sequenceNumber = m_lastChangeSequenceNumber;
 		m_changes.push_back(a_change);
-
 	}
 	else if(m_historyKind == READER)
 	{
