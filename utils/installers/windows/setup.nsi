@@ -104,6 +104,7 @@ Section -post SEC0006
     SetOverwrite on
     File "..\..\..\doc\RTPS - Manual.pdf" 
 	File "..\..\..\doc\index.html" 
+	File "..\..\..\doc\RTPS - Installation Manual.pdf" 
     ## File "..\..\..\..\doc\RPC - REST - User Manual.pdf"
    ## File "..\..\..\..\doc\RPC - DDS - User Manual.pdf"   # Correct File 
     # Copy doxygen documentation
