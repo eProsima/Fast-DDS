@@ -46,3 +46,6 @@ Release
 lib
 output
 
+doxygen
+*.pdf
+
