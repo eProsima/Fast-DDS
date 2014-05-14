@@ -117,8 +117,6 @@ private:
 	 */
 	bool updateParamList();
 
-
-
 	bool processParameterList(ParameterList_t& param, DiscoveredParticipantData* Pdata);
 
 	std::vector<std::string> getMatchedParticipantsNames();
