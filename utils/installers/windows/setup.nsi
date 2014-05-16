@@ -20,7 +20,7 @@ RequestExecutionLevel admin
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER "eProsima\RTPS"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "eProsima\eRTPS"
 
 # Included files
 !include Sections.nsh
@@ -80,12 +80,12 @@ var /GLOBAL RICHI_FINISH_MESSAGE
 
 # Installer attributes
 OutFile eProsima_RTPS_${VERSION}.exe
-InstallDir "$PROGRAMFILES\eProsima\RTPS"
+InstallDir "$PROGRAMFILES\eProsima\eRTPS"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
 VIProductVersion ${VERSION}.0
-VIAddVersionKey ProductName RTPS
+VIAddVersionKey ProductName eRTPS
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
 VIAddVersionKey CompanyWebsite "${URL}"
@@ -100,16 +100,16 @@ Section -post SEC0006
     SetShellVarContext all
     
     # Copy documentation.
-    SetOutPath $INSTDIR\doc\pdf
+    SetOutPath $INSTDIR\doc
     SetOverwrite on
-    File "..\..\..\doc\RTPS - Manual.pdf" 
+    File "..\..\..\doc\RTPS - User Manual.pdf" 
 	File "..\..\..\doc\index.html" 
 	File "..\..\..\doc\RTPS - Installation Manual.pdf" 
     ## File "..\..\..\..\doc\RPC - REST - User Manual.pdf"
    ## File "..\..\..\..\doc\RPC - DDS - User Manual.pdf"   # Correct File 
     # Copy doxygen documentation
     ##File "/oname=RPC - API C++ Manual.pdf" "..\..\..\..\output\doxygen\latex\refman.pdf"
-    SetOutPath $INSTDIR\doc\html
+    SetOutPath $INSTDIR\doc\doxygen\public_api\html
     SetOverwrite on
     File /r "..\..\..\doc\doxygen\public_api\html\*"
     
@@ -262,15 +262,15 @@ SectionEnd
 Function .onInit
 	# La variable PROGRAMFILES depende de si estamos en x64 o i86
     ${If} ${RunningX64}
-       StrCpy '$INSTDIR' '$PROGRAMFILES64\eProsima\RTPS'
+       StrCpy '$INSTDIR' '$PROGRAMFILES64\eProsima\eRTPS'
     ${else}
-       StrCpy '$INSTDIR' '$PROGRAMFILES\eProsima\RTPS'
+       StrCpy '$INSTDIR' '$PROGRAMFILES\eProsima\eRTPS'
     ${EndIf}
     ReadEnvStr $0 NDDSHOME
     StrCmp $0 "" 0 +3
     StrCpy $RICHI_FINISH_MESSAGE "eProsima RTPS has been installed on your computer.$\n$\nNote: NDDSHOME environment variable is not set in your system. eProsima RTPS uses this environment variable to find the RTI DDS middleware. See the User Manual document.$\n$\nClick Finish to close this wizard."
     goto +3
-    strcpy $INSTDIR $0\RTPS
+    strcpy $INSTDIR $0\eRTPS
     Strcpy $RICHI_FINISH_MESSAGE "eProsima RTPS has been installed on your computer.$\n$\nClick Finish to close this wizard."
     InitPluginsDir
 	Push $R1
