@@ -9,16 +9,14 @@
 <staticdiscovery>
 	<participant>
 		<name>participant1</name>
-		<endpoint>
+		<endpoint type="WRITER">
 			<id>1</id>
-			<type>WRITER</type>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
      	</endpoint>
 		
-		<endpoint>
+		<endpoint type="READER">
 			<id>2</id>
-			<type>READER</type>
 			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
@@ -29,9 +27,8 @@
 	<participant>
 		<name>participant2</name>
 		
-		<endpoint>
+		<endpoint type="READER">
 			<id>17</id>
-			<type>READER</type>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
 			<expectsInlineQos>true</expectsInlineQos>
@@ -40,9 +37,8 @@
 		<!--	<multicastLocator address="239.255.0.1" port="2700"></multicastLocator> -->
 		</endpoint>
 		
-		<endpoint>
+		<endpoint type="WRITER">
 			<id>18</id>
-			<type>WRITER</type>
 			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
 			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>

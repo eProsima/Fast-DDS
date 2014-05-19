@@ -47,16 +47,23 @@ public:
 	 * The period for the Participant to send its Discovery Message to all other discovered Participants
 	 * as well as to all Multicast ports.
 	 */
-	uint16_t resendSPDPDataPeriod_sec;
+	Duration_t resendDiscoveryParticipantDataPeriod;
 	//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
 	std::string m_staticEndpointXMLFilename;
+	/**
+		 * DomainId to be used by the Participant (80 by default).
+		 */
+		uint32_t domainId;
+		Duration_t leaseDuration;
 	DiscoveryAttributes()
 	{
 		use_SIMPLE_ParticipantDiscoveryProtocol = false;
 		use_SIMPLE_EndpointDiscoveryProtocol = false;
 		use_STATIC_EndpointDiscoveryProtocol = false;
-		resendSPDPDataPeriod_sec = 30;
+		resendDiscoveryParticipantDataPeriod.seconds = 30;
 		m_staticEndpointXMLFilename = "/home/grcanosa/workspace/eRTPS/utils/pcTests/StaticParticipantInfo.xml";
+		domainId = 80;
+		leaseDuration.seconds = 100;
 	};
 	virtual ~DiscoveryAttributes(){};
 };
@@ -71,7 +78,7 @@ public:
 {
 		defaultSendPort = 10040;
 		name = "defaultParticipant";
-		domainId = 80;
+
 }
 	virtual ~ParticipantAttributes(){};
 	/**
@@ -90,10 +97,7 @@ public:
 	 * THis will change in future releases.
 	 */
 	uint32_t defaultSendPort;
-	/**
-	 * DomainId to be used by the Participant (80 by default).
-	 */
-	uint32_t domainId;
+
 	/**
 	 * Participant name.
 	 */

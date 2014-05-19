@@ -237,7 +237,7 @@ typedef struct ProtocolVersion_t{
 
 
 #define VENDORID_UNKNOWN(vi) {vi[0]=0;vi[1]=0;}
-#define VENDORID_EPROSIMA(vi) {vi[0]=42;vi[1]=42;}
+#define VENDORID_EPROSIMA(vi) {vi[0]=0x01;vi[1]=0x0F;}
 //!@brief Structure VendorId_t.
 typedef octet VendorId_t[2];
 

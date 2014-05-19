@@ -36,6 +36,7 @@ public:
 	InstanceHandle_t m_participantKey;
 	std::string m_typeName;
 	std::string m_topicName;
+	uint16_t userDefinedId;
 
 	DurabilityQosPolicy m_durability;
 	DurabilityServiceQosPolicy m_durabilityService;
@@ -54,8 +55,8 @@ public:
 	TopicDataQosPolicy m_topicData;
 	GroupDataQosPolicy m_groupData;
 
-
-
+	bool isAlive;
+	TopicKind_t topicKind;
 };
 
 } /* namespace rtps */

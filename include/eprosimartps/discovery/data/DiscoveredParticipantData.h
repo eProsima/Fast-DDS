@@ -18,7 +18,6 @@
 #ifndef DISCOVEREDPARTICIPANTDATA_H_
 #define DISCOVEREDPARTICIPANTDATA_H_
 
-#include "eprosimartps/discovery/data/ParticipantProxy.h"
 #include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
@@ -26,26 +25,54 @@ namespace rtps {
 
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 500
 
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER 0x00000001 << 0;
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR 0x00000001 << 1;
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER 0x00000001 << 2;
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR 0x00000001 << 3;
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER 0x00000001 << 4;
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR 0x00000001 << 5;
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_PROXY_ANNOUNCER 0x00000001 << 6;
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_PROXY_DETECTOR 0x00000001 << 7;
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_ANNOUNCER 0x00000001 << 8;
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_DETECTOR 0x00000001 << 9;
+#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER 0x00000001 << 10;
+#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER 0x00000001 << 11;
 
 
-
-typedef struct ParticipantBuiltinTopicData{
-	InstanceHandle_t m_key;
-//	ParameterUserData_t m_user_data;
-}ParticipantBuiltinTopicData;
 
 /**
  * Class DiscoveredParticipantData used by the SPDP.
  */
 class DiscoveredParticipantData {
 public:
-	DiscoveredParticipantData(){};
-	virtual ~DiscoveredParticipantData(){};
-	ParticipantProxy m_proxy;
-	ParticipantBuiltinTopicData m_topicData;
-	Duration_t leaseDuration;
-	std::vector<std::pair<uint16_t,EntityId_t>> m_staticedpEntityId;
+	DiscoveredParticipantData():
+		m_expectsInlineQos(false),
+		m_availableBuiltinEndpoints(0),
+		m_manualLivelinessCount(0),
+		isAlive(false)
+{
 
+};
+	virtual ~DiscoveredParticipantData(){};
+	ProtocolVersion_t m_protocolVersion;
+	GuidPrefix_t m_guidPrefix;
+	VendorId_t m_VendorId;
+	bool m_expectsInlineQos;
+	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+	LocatorList_t m_metatrafficUnicastLocatorList;
+	LocatorList_t m_metatrafficMulticastLocatorList;
+	LocatorList_t m_defaultUnicastLocatorList;
+	LocatorList_t m_defaultMulticastLocatorList;
+	Count_t m_manualLivelinessCount;
+	std::string m_participantName;
+	InstanceHandle_t m_key;
+	Duration_t leaseDuration;
+
+	std::vector<DiscoveredWriterData> m_writers;
+	std::vector<DiscoveredReaderData> m_readers;
+	std::vector<DiscoveredTopicData> m_topics;
+
+	bool isAlive;
 };
 
 } /* namespace rtps */

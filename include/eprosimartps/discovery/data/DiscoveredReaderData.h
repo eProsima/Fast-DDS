@@ -35,6 +35,7 @@ public:
 	InstanceHandle_t m_participantKey;
 	std::string m_typeName;
 	std::string m_topicName;
+	uint16_t userDefinedId;
 
 	DurabilityQosPolicy m_durability;
 	DeadlineQosPolicy m_deadline;
@@ -51,6 +52,10 @@ public:
 	GroupDataQosPolicy m_groupData;
 	DurabilityServiceQosPolicy m_durabilityService;
 	LifespanQosPolicy m_lifespan;
+
+	bool isAlive;
+	bool expectsInlineQos;
+	TopicKind_t topicKind;
 };
 
 } /* namespace rtps */

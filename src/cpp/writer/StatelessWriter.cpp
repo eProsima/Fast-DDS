@@ -72,6 +72,15 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 	return true;
 }
 
+bool StatelessWriter::reader_locator_add(Locator_t& locator,bool expectsInlineQos)
+{
+	ReaderLocator a_locator;
+	a_locator.expectsInlineQos = expectsInlineQos;
+	a_locator.locator = locator;
+	return reader_locator_add(a_locator);
+}
+
+
 bool StatelessWriter::reader_locator_remove(Locator_t& locator) {
 	std::vector<ReaderLocator>::iterator it;
 	for(it=reader_locator.begin();it!=reader_locator.end();++it){

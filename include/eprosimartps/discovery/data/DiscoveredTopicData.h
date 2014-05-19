@@ -47,6 +47,8 @@ public:
 	OwnershipQosPolicy m_ownership;
 	TopicDataQosPolicy m_topicData;
 
+	bool isAlive;
+
 
 
 };

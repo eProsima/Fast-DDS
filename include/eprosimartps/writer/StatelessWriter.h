@@ -45,6 +45,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool reader_locator_add(ReaderLocator& locator);
+	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos);
 	/**
 	 * Remove a ReaderLocator from this writer.
 	 * @param locator Locator to remove.
