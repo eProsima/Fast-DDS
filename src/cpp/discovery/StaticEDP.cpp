@@ -319,43 +319,48 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched = false;
-	for(std::vector<DiscoveredReaderData>::iterator it = this->mp_DPDP->mp_localPDP->m_readers.begin();
-			it!=this->mp_DPDP->mp_localPDP->m_readers.end();++it)
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
+			pit!=this->mp_DPDP->m_discoveredParticipants.end();++pit)
 	{
-		if(writer->getTopicName() == it->m_topicName &&
-				writer->getTopicKind() == it->topicKind &&
-				writer->getTopicDataType() == it->m_typeName &&
-				it->isAlive && it->userDefinedId>0) //Matching
+		for(std::vector<DiscoveredReaderData>::iterator it = pit->m_readers.begin();
+				it!= pit->m_readers.end();++it)
 		{
-			if(writer->getStateType() == STATELESS)
+			if(writer->getTopicName() == it->m_topicName &&
+					writer->getTopicKind() == it->topicKind &&
+					writer->getTopicDataType() == it->m_typeName &&
+					it->isAlive && it->userDefinedId>0) //Matching
 			{
-				StatelessWriter* p_SLW = (StatelessWriter*)writer;
-				ReaderLocator RL;
-				RL.expectsInlineQos = it->expectsInlineQos;
-				for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.unicastLocatorList.begin();
-						lit != it->m_readerProxy.unicastLocatorList.end();++lit)
+				if(writer->getStateType() == STATELESS)
 				{
-					//cout << "added unicast RL to my STATELESSWRITER"<<endl;
-					RL.locator = *lit;
-					p_SLW->reader_locator_add(RL);
+					StatelessWriter* p_SLW = (StatelessWriter*)writer;
+					ReaderLocator RL;
+					RL.expectsInlineQos = it->expectsInlineQos;
+					for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.unicastLocatorList.begin();
+							lit != it->m_readerProxy.unicastLocatorList.end();++lit)
+					{
+						//cout << "added unicast RL to my STATELESSWRITER"<<endl;
+						RL.locator = *lit;
+						p_SLW->reader_locator_add(RL);
+					}
+					for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.multicastLocatorList.begin();
+							lit != it->m_readerProxy.multicastLocatorList.end();++lit)
+					{
+						RL.locator = *lit;
+						p_SLW->reader_locator_add(RL);
+					}
 				}
-				for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.multicastLocatorList.begin();
-						lit != it->m_readerProxy.multicastLocatorList.end();++lit)
+				else if(writer->getStateType() == STATEFUL)
 				{
-					RL.locator = *lit;
-					p_SLW->reader_locator_add(RL);
+					StatefulWriter* p_SFW = (StatefulWriter*)writer;
+					p_SFW->matched_reader_add(it->m_readerProxy);
 				}
+				if(writer->mp_listener!=NULL)
+					writer->mp_listener->onPublicationMatched();
+				matched = true;
 			}
-			else if(writer->getStateType() == STATEFUL)
-			{
-				StatefulWriter* p_SFW = (StatefulWriter*)writer;
-				p_SFW->matched_reader_add(it->m_readerProxy);
-			}
-			if(writer->mp_listener!=NULL)
-				writer->mp_listener->onPublicationMatched();
-			matched = true;
 		}
 	}
+
 	return matched;
 }
 
@@ -364,26 +369,30 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched = false;
-	for(std::vector<DiscoveredWriterData>::iterator it = this->mp_DPDP->mp_localPDP->m_writers.begin();
-			it!=this->mp_DPDP->mp_localPDP->m_writers.end();++it)
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
+			pit!=this->mp_DPDP->m_discoveredParticipants.end();++pit)
 	{
-		if(reader->getTopicName() == it->m_topicName &&
-				reader->getTopicKind() == it->topicKind &&
-				//reader->getTopicDataType() == it->m_typeName && FIXME: add topicdatatype to reader
-				it->isAlive && it->userDefinedId>0) //Matching
+		for(std::vector<DiscoveredWriterData>::iterator it = pit->m_writers.begin();
+				it!=pit->m_writers.end();++it)
 		{
-			if(reader->getStateType() == STATELESS)
+			if(reader->getTopicName() == it->m_topicName &&
+					reader->getTopicKind() == it->topicKind &&
+					//reader->getTopicDataType() == it->m_typeName && FIXME: add topicdatatype to reader
+					it->isAlive && it->userDefinedId>0) //Matching
 			{
+				if(reader->getStateType() == STATELESS)
+				{
 
+				}
+				else if(reader->getStateType() == STATEFUL)
+				{
+					StatefulReader* p_SFR = (StatefulReader*)reader;
+					p_SFR->matched_writer_add(&it->m_writerProxy);
+				}
+				if(reader->mp_listener!=NULL)
+					reader->mp_listener->onSubscriptionMatched();
+				matched = true;
 			}
-			else if(reader->getStateType() == STATEFUL)
-			{
-				StatefulReader* p_SFR = (StatefulReader*)reader;
-				p_SFR->matched_writer_add(&it->m_writerProxy);
-			}
-			if(reader->mp_listener!=NULL)
-				reader->mp_listener->onSubscriptionMatched();
-			matched = true;
 		}
 	}
 	return matched;
