@@ -20,9 +20,10 @@
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/Participant.h"
+#include "eprosimartps/dds/DomainParticipant.h"
 
 using boost::asio::ip::udp;
-
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {

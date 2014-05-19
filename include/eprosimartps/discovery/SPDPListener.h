@@ -19,6 +19,8 @@
 #define SPDPLISTENER2_H_
 
 #include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/qos/QosList.h"
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 
 namespace eprosima {
 
@@ -26,7 +28,7 @@ using namespace dds;
 
 namespace rtps {
 
-class SimpleParticipantDiscoveryProtocol;
+class SimplePDP;
 
 
 /**
@@ -35,16 +37,18 @@ class SimpleParticipantDiscoveryProtocol;
  */
 class SPDPListener: public SubscriberListener {
 public:
-	SPDPListener(SimpleDPD* in_SPDP):mp_SPDP(in_SPDP){};
+	SPDPListener(SimplePDP* in_SPDP):mp_SPDP(in_SPDP){};
 	virtual ~SPDPListener(){};
 	//!Pointer to the associated mp_SPDP;
-	SimpleDPD* mp_SPDP;
+	SimplePDP* mp_SPDP;
 	//!Method to be called when a new data message is received.
 	void onNewDataMessage();
 	//!Process a new added cache with this method.
 	bool newAddedCache();
 
 	bool processParameterList(ParameterList_t param,DiscoveredParticipantData* pdata);
+
+	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredParticipantData* pdata);
 };
 
 } /* namespace rtps */

@@ -67,20 +67,7 @@ public:
 	 */
 	void init_header();
 
-	/**
-	 * Get the topic Data Type Name
-	 * @return The name of the data type.
-	 */
-	const std::string& getTopicDataType() const {
-		return m_topicDataType;
-	}
-	/**
-	 * Get the topic name.
-	 * @return Topic name.
-	 */
-	const std::string& getTopicName() const {
-		return m_topicName;
-	}
+
 
 	/**
 	 * Increment the heartbeatCound.
@@ -158,8 +145,6 @@ protected:
 	Count_t m_heartbeatCount;
 
 
-	std::string m_topicName;
-	std::string m_topicDataType;
 
 	RTPSMessageGroup_t m_cdrmessages;
 public:

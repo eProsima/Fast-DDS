@@ -19,9 +19,19 @@
 #define ENDPOINTDISCOVERYPROTOCOL_H_
 
 #include "eprosimartps/rtps_all.h"
+//#include "eprosimartps/writer/RTPSWriter.h"
+//#include "eprosimartps/reader/RTPSReader.h"
+//#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 
 namespace eprosima {
 namespace rtps {
+
+class Endpoint;
+class RTPSReader;
+class RTPSWriter;
+class Participant;
+class ParticipantDiscoveryProtocol;
+
 
 class EndpointDiscoveryProtocol  {
 public:
@@ -30,7 +40,7 @@ public:
 
 
 	virtual bool initEDP(DiscoveryAttributes& attributes)=0;
-	virtual bool localEndpointMatching(Endpoint* endpoint)=0;
+
 	virtual bool localWriterMatching(RTPSWriter* writer)=0;
 	virtual bool localReaderMatching(RTPSReader* reader)=0;
 

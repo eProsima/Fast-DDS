@@ -68,8 +68,7 @@ public:
 
 	//!Pointer to the object used by the user to implement the behaviour when messages are received.
 	SubscriberListener* mp_listener;
-	//! Name of the topic associated with the reader.
-	std::string m_topicName;
+
 
 
 	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
@@ -78,9 +77,7 @@ public:
 	virtual bool isUnreadCacheChange()=0;
 
 
-	const std::string& getTopicName() const {
-		return m_topicName;
-	}
+
 
 	StateKind_t getStateType() const {
 		return m_stateType;

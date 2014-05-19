@@ -17,12 +17,13 @@
 
 #include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
 #include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/discovery/SimplePDP.h"
 
 namespace eprosima {
 namespace rtps {
 
-ResendDiscoveryDataPeriod::ResendDiscoveryDataPeriod(SimpleParticipantDiscoveryProtocol* pSLW,boost::posix_time::milliseconds interval):
-		TimedEvent(&pSLW->m_SPDPbPWriter->mp_event_thr->io_service,interval),
+ResendDiscoveryDataPeriod::ResendDiscoveryDataPeriod(SimplePDP* pSLW,boost::posix_time::milliseconds interval):
+		TimedEvent(&pSLW->mp_SPDPWriter->mp_event_thr->io_service,interval),
 		mp_SPDP(pSLW)
 {
 
@@ -40,7 +41,8 @@ void ResendDiscoveryDataPeriod::event(const boost::system::error_code& ec)
 	if(ec == boost::system::errc::success)
 	{
 		pDebugInfo("ResendDiscoveryData Period" << endl);
-		mp_SPDP->sendDPDMsg();
+		//FIXME: Change for liveliness protocol
+		mp_SPDP->announceParticipantState(false);
 		m_isWaiting = false;
 		this->restart_timer();
 	}

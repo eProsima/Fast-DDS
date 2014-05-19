@@ -17,6 +17,9 @@
 
 #ifndef DISCOVEREDTOPICDATA_H_
 #define DISCOVEREDTOPICDATA_H_
+
+#include "eprosimartps/qos/DDSQosPolicies.h"
+
 using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {

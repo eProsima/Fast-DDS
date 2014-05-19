@@ -34,8 +34,8 @@
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/resources/ResourceSend.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
-#include "eprosimartps/discovery/StaticEndpointDiscoveryProtocol.h"
+//#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+//#include "eprosimartps/discovery/StaticEndpointDiscoveryProtocol.h"
 
 
 
@@ -59,6 +59,7 @@ class StatefulReader;
 class RTPSReader;
 class RTPSWriter;
 class Endpoint;
+class ParticipantDiscoveryProtocol;
 
 
 
@@ -72,8 +73,11 @@ class Participant{
 	friend class ResourceSend;
 	friend class ResourceListen;
 	friend class eprosima::dds::DomainParticipant;
-	friend class SimpleParticipantDiscoveryProtocol;
-	friend class StaticEndpointDiscoveryProtocol;
+	friend class ParticipantDiscoveryProtocol;
+	friend class EndpointDiscoveeryProtocol;
+	friend class SimplePDP;
+	friend class StaticEDP;
+	friend class SimpleEDP;
 private:
 
 	Participant(const ParticipantAttributes &param,uint32_t id);
@@ -134,9 +138,9 @@ private:
 	//!Default listening addresses.
 	LocatorList_t m_defaultMulticastLocatorList;
 
-	SimpleParticipantDiscoveryProtocol m_SPDP;
-		std::string m_participantName;
-		StaticEndpointDiscoveryProtocol m_StaticEDP;
+	//SimpleParticipantDiscoveryProtocol m_SPDP;
+	std::string m_participantName;
+	//StaticEndpointDiscoveryProtocol m_StaticEDP;
 public:
 	//!Guid of the participant.
 	GUID_t m_guid;
@@ -173,6 +177,7 @@ private:
 	 */
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast);
 
+	ParticipantDiscoveryProtocol* mp_PDP;
 
 public:
 	//!Used for tests

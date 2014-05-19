@@ -115,7 +115,6 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 			pError("Static EDP requires user defined Id"<<endl);
 			return NULL;
 		}
-		p->m_StaticEDP.checkLocalWriterCreation(WParam);
 	}
 	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
@@ -177,7 +176,6 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 			pError("Static EDP requires user defined Id"<<endl);
 			return NULL;
 		}
-		p->m_StaticEDP.checkLocalReaderCreation(RParam);
 	}
 	Subscriber* Sub = NULL;
 	if(RParam.reliability.reliabilityKind == BEST_EFFORT)

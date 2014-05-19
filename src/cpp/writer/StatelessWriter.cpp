@@ -34,9 +34,7 @@ StatelessWriter::StatelessWriter(const PublisherAttributes* param,uint32_t paylo
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
-	topicKind = param->topic.topicKind;
-	m_topicName = param->topic.topicName;
-	m_topicDataType = param->topic.topicDataType;
+	m_topic = param->topic;
 	this->m_userDefinedId = param->userDefinedId;
 }
 

@@ -37,15 +37,14 @@ StatefulWriter::StatefulWriter(const PublisherAttributes* param,uint32_t payload
 {
 	m_pushMode = param->pushMode;
 	m_reliability = param->reliability;
-	topicKind=param->topic.topicKind;
+	m_topic = param->topic;
 
 	m_stateType = STATEFUL;
 
 	//locator lists:
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
-	m_topicName = param->topic.topicName;
-	m_topicDataType = param->topic.topicDataType;
+
 	this->m_userDefinedId = param->userDefinedId;
 }
 

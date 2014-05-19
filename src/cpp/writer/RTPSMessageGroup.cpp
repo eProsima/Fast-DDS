@@ -146,7 +146,7 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 	else
 		inlineQos = NULL;
 	CDRMessage::initCDRMsg(submsg);
-	RTPSMessageCreator::addSubmessageData(submsg,change,W->topicKind,ReaderId,inlineQos);
+	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopicKind(),ReaderId,inlineQos);
 }
 
 

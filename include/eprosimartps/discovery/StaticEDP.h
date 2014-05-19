@@ -22,6 +22,11 @@
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+
+
+
 using boost::property_tree::ptree;
 namespace eprosima {
 namespace rtps {
@@ -32,7 +37,7 @@ public:
 	virtual ~StaticEDP();
 
 	bool initEDP(DiscoveryAttributes& attributes);
-	bool localEndpointMatching(Endpoint* endpoint);
+
 	bool localWriterMatching(RTPSWriter* writer);
 	bool localReaderMatching(RTPSReader* reader);
 
@@ -41,8 +46,31 @@ public:
 	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
 	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
 
-	bool addRemoteEndpoint(uint16_t userId,EntityId_t entityId,DiscoveredParticipantData* pdata);
+
 	std::vector<uint16_t> m_endpointIds;
+
+
+	/**
+	 * Check the writer to check if it match the one defined in the XML file.
+	 * If the current participant is defined in the XML file, then the Publisher should be defined
+	 * as in the XML file. A warning is issued if this is not the case.
+	 * If the participant is not included, then the function returns true since no information is available.
+	 * @param[in] wparam PublisherAttributes to check agains the xml file.
+	 * @return True if correct.
+	 */
+	bool checkLocalWriterCreation(RTPSWriter* W);
+	/**
+	 * Check the writer to check if it match the one defined in the XML file.
+	 * If the current participant is defined in the XML file, then the Publisher should be defined
+	 * as in the XML file. A warning is issued if this is not the case.
+	 * If the participant is not included, then the function returns true since no information is available.
+	 * @param[in] rparam SubscriberAttributes to check agains the xml file.
+	 * @return True if correct.
+	 */
+	bool checkLocalReaderCreation(RTPSReader* R);
+
+	DiscoveryAttributes m_discovery;
+
 
 };
 
