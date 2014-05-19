@@ -84,10 +84,10 @@ public:
 	DiscoveredData(){};
 	virtual ~DiscoveredData(){};
 	bool processParameterList(ParameterList_t& param,DiscoveredData_t* data);
-	bool DiscoveredData2WriterData(DiscoveredData_t* ddata,DiscoveredWriterData* wdata);
-	bool DiscoveredData2ReaderData(DiscoveredData_t* ddata,DiscoveredReaderData* wdata);
-	bool DiscoveredData2TopicData(DiscoveredData_t* ddata,DiscoveredTopicData* wdata);
-	bool DiscoveredData2ParticipantData(DiscoveredData_t* ddata,DiscoveredParticipantData* wdata);
+	static bool ParameterList2DiscoveredWriterData(ParameterList_t& param,DiscoveredWriterData* wdata);
+	static bool ParameterList2DiscoveredReaderData(ParameterList_t& param,DiscoveredReaderData* wdata);
+	static bool ParameterList2DiscoveredTopicData(ParameterList_t& param,DiscoveredTopicData* wdata);
+	static bool ParameterList2DiscoveredParticipantData(ParameterList_t& param,DiscoveredParticipantData* wdata);
 };
 
 } /* namespace rtps */
