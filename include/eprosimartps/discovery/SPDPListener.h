@@ -35,12 +35,16 @@ class SimpleParticipantDiscoveryProtocol;
  */
 class SPDPListener: public SubscriberListener {
 public:
-	SPDPListener(SimpleParticipantDiscoveryProtocol* in_SPDP):mp_SPDP(in_SPDP){};
+	SPDPListener(SimpleDPD* in_SPDP):mp_SPDP(in_SPDP){};
 	virtual ~SPDPListener(){};
 	//!Pointer to the associated mp_SPDP;
-	SimpleParticipantDiscoveryProtocol* mp_SPDP;
+	SimpleDPD* mp_SPDP;
 	//!Method to be called when a new data message is received.
 	void onNewDataMessage();
+	//!Process a new added cache with this method.
+	bool newAddedCache();
+
+	bool processParameterList(ParameterList_t param,DiscoveredParticipantData* pdata);
 };
 
 } /* namespace rtps */

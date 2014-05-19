@@ -39,12 +39,7 @@ private:
 	StatefulReader* mp_SEDPbuiltinSubscriptionsReader;
 	StatefulReader* mp_SEDPbuiltinTopicsReader;
 
-	bool createSEDPbuiltinPublicationsWriter();
-	bool createSEDPbuiltinSubscriptionsWriter();
-	bool createSEDPbuiltinTopicsWriter();
-	bool createSEDPbuiltinPublicationsReader();
-	bool createSEDPbuiltinSubscriptionsReader();
-	bool createSEDPbuiltinTopicsReader();
+	bool create
 
 
 
