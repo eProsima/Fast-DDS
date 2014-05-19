@@ -21,6 +21,28 @@
 namespace eprosima {
 namespace rtps {
 
+class SimpleEDPAttributes{
+public:
+	bool use_Publication_Writer;
+	bool use_Publication_Reader;
+	bool use_Subscription_Writer;
+	bool use_Subscription_Reader;
+	bool use_Topic_Writer;
+	bool use_Topic_Reader;
+	SimpleEDPAttributes():
+		use_Publication_Writer(true),
+		use_Publication_Reader(true),
+		 use_Subscription_Writer(true),
+		 use_Subscription_Reader(true),
+		 use_Topic_Writer(false),
+		 use_Topic_Reader(false)
+	{
+
+	}
+};
+
+
+
 /**
  * Class DiscoveryAttributes used to define the discovery behavior of the Participant.
  * @ingroup ATTRIBUTESMODULE
@@ -55,6 +77,9 @@ public:
 		 */
 		uint32_t domainId;
 		Duration_t leaseDuration;
+
+		SimpleEDPAttributes m_simpleEDP;
+
 	DiscoveryAttributes()
 	{
 		use_SIMPLE_ParticipantDiscoveryProtocol = false;

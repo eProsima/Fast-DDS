@@ -47,6 +47,8 @@ public:
 	virtual bool localWriterMatching(RTPSWriter* W)=0;
 	virtual bool localReaderMatching(RTPSReader* R)=0;
 
+	virtual void assignRemoteEndpoints(DiscoveredParticipantData* pdata)=0;
+
 };
 
 } /* namespace rtps */

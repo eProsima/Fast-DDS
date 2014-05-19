@@ -18,7 +18,8 @@
 #ifndef SIMPLEEDP_H_
 #define SIMPLEEDP_H_
 
-#include "EndpointDiscoveryProtocol.h"
+#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 
 namespace eprosima {
 namespace rtps {
@@ -30,16 +31,22 @@ public:
 
 	bool initEDP(DiscoveryAttributes& attributes);
 
-	StatefulWriter* mp_SEDPbuiltinPublicationsWriter;
-		StatefulWriter* mp_SEDPbuiltinSubscriptionsWriter;
-		StatefulWriter* mp_SEDPbuiltinTopicsWriter;
-		StatefulReader* mp_SEDPbuiltinPublicationsReader;
-		StatefulReader* mp_SEDPbuiltinSubscriptionsReader;
-		StatefulReader* mp_SEDPbuiltinTopicsReader;
+	DiscoveryAttributes m_discovery;
 
-		bool localEndpointMatching(Endpoint* endpoint);
+	StatefulWriter* mp_PubWriter;
+	StatefulWriter* mp_SubWriter;
+	StatefulWriter* mp_TopWriter;
+	StatefulReader* mp_PubReader;
+	StatefulReader* mp_SubReader;
+	StatefulReader* mp_TopReader;
+
+
 			 bool localWriterMatching(RTPSWriter* writer);
 			 bool localReaderMatching(RTPSReader* reader);
+
+			 bool createSEDPEndpoints();
+
+			 void assignRemoteEndpoints(DiscoveredParticipantData* pdata);
 
 };
 

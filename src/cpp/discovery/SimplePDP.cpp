@@ -93,6 +93,20 @@ bool SimplePDP::addLocalParticipant(Participant* p)
 	pdata.leaseDuration = m_discovery.leaseDuration;
 	VENDORID_EPROSIMA(pdata.m_VendorId);
 	//FIXME: add correct builtIn Endpoints
+	pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
+	{
+		if(m_discovery.m_simpleEDP.use_Publication_Writer)
+			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+		if(m_discovery.m_simpleEDP.use_Publication_Reader)
+			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+		if(m_discovery.m_simpleEDP.use_Subscription_Reader)
+			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+		if(m_discovery.m_simpleEDP.use_Subscription_Writer)
+			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+	}
+
 	pdata.m_defaultUnicastLocatorList = p->m_defaultUnicastLocatorList;
 	pdata.m_defaultMulticastLocatorList = p->m_defaultMulticastLocatorList;
 	pdata.m_expectsInlineQos = false;
