@@ -46,12 +46,12 @@ public:
 	StatefulReader* mp_TopReader;
 
 
-			 bool localWriterMatching(RTPSWriter* writer,bool first_time);
-			 bool localReaderMatching(RTPSReader* reader,bool first_time);
+	bool localWriterMatching(RTPSWriter* writer,bool first_time);
+	bool localReaderMatching(RTPSReader* reader,bool first_time);
 
-			 bool createSEDPEndpoints();
+	bool createSEDPEndpoints();
 
-			 void assignRemoteEndpoints(DiscoveredParticipantData* pdata);
+	void assignRemoteEndpoints(DiscoveredParticipantData* pdata);
 
 };
 
