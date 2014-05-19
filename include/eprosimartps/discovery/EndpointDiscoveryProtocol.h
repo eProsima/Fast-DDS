@@ -31,6 +31,7 @@ class RTPSReader;
 class RTPSWriter;
 class Participant;
 class ParticipantDiscoveryProtocol;
+class DiscoveredParticipantData;
 
 
 class EndpointDiscoveryProtocol  {
@@ -41,10 +42,10 @@ public:
 
 	virtual bool initEDP(DiscoveryAttributes& attributes)=0;
 
-	virtual bool localWriterMatching(RTPSWriter* writer)=0;
-	virtual bool localReaderMatching(RTPSReader* reader)=0;
+	virtual bool localWriterMatching(RTPSWriter* writer,bool first_time)=0;
+	virtual bool localReaderMatching(RTPSReader* reader,bool first_time)=0;
 
-
+	virtual void assignRemoteEndpoints(DiscoveredParticipantData* pdata)=0;
 
 	Participant* mp_participant;
 	ParticipantDiscoveryProtocol* mp_DPDP;

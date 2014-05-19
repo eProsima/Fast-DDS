@@ -16,9 +16,14 @@
  */
 
 #include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/qos/DDSQosPolicies.h"
 
 namespace eprosima {
 namespace dds {
+
+#define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
+
+
 
 bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 {
@@ -289,6 +294,189 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				is_sentinel = true;
 				break;
+			}
+			case PID_DURABILITY:
+			{
+				DurabilityQosPolicy* p = new DurabilityQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
+				msg->pos+=3;
+				IF_VALID_ADD
+			}
+			case PID_DEADLINE:
+			{
+				DeadlineQosPolicy* p= new DeadlineQosPolicy();
+				valid &= CDRMessage::readInt32(msg,&p->period.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->period.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_LATENCY_BUDGET:
+			{
+				LatencyBudgetQosPolicy* p = new LatencyBudgetQosPolicy();
+				valid &= CDRMessage::readInt32(msg,&p->duration.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->duration.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_LIVELINESS:
+			{
+				LivelinessQosPolicy* p = new LivelinessQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
+				msg->pos+=3;
+				valid &= CDRMessage::readInt32(msg,&p->lease_duration.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->lease_duration.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_OWNERSHIP:
+			{
+				OwnershipQosPolicy* p = new OwnershipQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
+				msg->pos+=3;
+				IF_VALID_ADD
+			}
+			case PID_RELIABILITY:
+			{
+				ReliabilityQosPolicy* p = new ReliabilityQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
+				msg->pos+=3;
+				valid &= CDRMessage::readInt32(msg,&p->max_blocking_time.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->max_blocking_time.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_DESTINATION_ORDER:
+			{
+				DestinationOrderQosPolicy* p = new DestinationOrderQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
+				msg->pos+=3;
+				IF_VALID_ADD
+			}
+			case PID_USER_DATA:
+			{
+				UserDataQosPolicy* p = new UserDataQosPolicy();
+				p->length = plength;
+				uint32_t str_size = 1;
+				valid&=CDRMessage::readUInt32(msg,&str_size);
+				p->data.resize(str_size);
+				octet* oc=new octet[str_size];
+				valid &= CDRMessage::readData(msg,oc,str_size);
+				for(uint32_t i =0;i<str_size;i++)
+					p->data.at(i) = oc[i];
+				if(valid)
+				{
+					plist->m_parameters.push_back((Parameter_t*)p);
+					plist->m_hasChanged = true;
+					paramlist_byte_size += plength;
+					delete(oc);
+				}
+				else
+				{
+					delete(p);
+					delete(oc);
+					return -1;
+				}
+				break;
+			}
+			case PID_TIME_BASED_FILTER:
+			{
+				TimeBasedFilterQosPolicy* p = new TimeBasedFilterQosPolicy();
+				valid &= CDRMessage::readInt32(msg,&p->minimum_separation.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->minimum_separation.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_PRESENTATION:
+			{
+				PresentationQosPolicy* p = new PresentationQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->access_scope);
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->coherent_access);
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->ordered_access);
+				msg->pos++;
+				IF_VALID_ADD
+			}
+			case PID_PARTITION:
+			{
+				PartitionQosPolicy * p = new PartitionQosPolicy();
+				p->length = plength;
+				uint16_t pos_ini = msg->pos;
+				std::string in_string;
+				while(pos_ini+plength>msg->pos)
+				{
+					in_string ="";
+					valid &=CDRMessage::readString(msg,&in_string);
+					p->name.push_back(in_string);
+				}
+				IF_VALID_ADD
+			}
+			case PID_TOPIC_DATA:
+			{
+				TopicDataQosPolicy * p = new TopicDataQosPolicy();
+				p->length = plength;
+				uint16_t pos_ini = msg->pos;
+				std::string in_string;
+				while(pos_ini+plength>msg->pos)
+				{
+					in_string ="";
+					valid &=CDRMessage::readString(msg,&in_string);
+					p->value.push_back(in_string);
+				}
+				IF_VALID_ADD
+			}
+			case PID_GROUP_DATA:
+			{
+				GroupDataQosPolicy * p = new GroupDataQosPolicy();
+				p->length = plength;
+				uint16_t pos_ini = msg->pos;
+				std::string in_string;
+				while(pos_ini+plength>msg->pos)
+				{
+					in_string ="";
+					valid &=CDRMessage::readString(msg,&in_string);
+					p->value.push_back(in_string);
+				}
+				IF_VALID_ADD
+			}
+			case PID_HISTORY:
+			{
+				HistoryQosPolicy* p = new HistoryQosPolicy();
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);msg->pos+=3;
+				valid &= CDRMessage::readInt32(msg,&p->depth);
+				IF_VALID_ADD
+			}
+			case PID_DURABILITY_SERVICE:
+			{
+				DurabilityServiceQosPolicy * p = new DurabilityServiceQosPolicy();
+				valid &= CDRMessage::readInt32(msg,&p->service_cleanup_delay.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->service_cleanup_delay.nanoseconds);
+				valid&=CDRMessage::readOctet(msg,(octet*)&p->history_kind);msg->pos+=3;
+				valid &= CDRMessage::readUInt32(msg,&p->history_depth);
+				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
+				valid &= CDRMessage::readUInt32(msg,&p->max_instances);
+				valid &= CDRMessage::readUInt32(msg,&p->max_samples_per_instance);
+				IF_VALID_ADD
+			}
+			case PID_LIFESPAN:
+			{
+				LifespanQosPolicy * p = new LifespanQosPolicy();
+				valid &= CDRMessage::readInt32(msg,&p->duration.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->duration.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_OWNERSHIP_STRENGTH:
+			{
+				OwnershipStrengthQosPolicy * p = new OwnershipStrengthQosPolicy();
+				valid &= CDRMessage::readUInt32(msg,&p->value);
+				IF_VALID_ADD
+			}
+			case PID_RESOURCE_LIMITS:
+			{
+				ResourceLimitsQosPolicy* p = new ResourceLimitsQosPolicy();
+				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
+				valid &= CDRMessage::readUInt32(msg,&p->max_instances);
+				valid &= CDRMessage::readUInt32(msg,&p->max_samples_per_instance);
+				IF_VALID_ADD
+			}
+			case PID_TRANSPORT_PRIORITY:
+			{
+				TransportPriorityQosPolicy * p = new TransportPriorityQosPolicy();
+				valid &= CDRMessage::readUInt32(msg,&p->value);
+				IF_VALID_ADD
 			}
 			case PID_PAD:
 			default:

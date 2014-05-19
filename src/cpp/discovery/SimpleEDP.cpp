@@ -19,6 +19,9 @@
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/Participant.h"
 
+#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/reader/StatefulReader.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -46,6 +49,7 @@ bool SimpleEDP::initEDP(DiscoveryAttributes& attributes)
 		pError("Problem creation SimpleEDP endpoints"<<endl);
 		return false;
 	}
+	return true;
 }
 
 bool SimpleEDP::createSEDPEndpoints()
@@ -142,6 +146,67 @@ bool SimpleEDP::createSEDPEndpoints()
 
 void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 {
+	uint32_t endp = pdata->m_availableBuiltinEndpoints;
+	uint32_t auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+	if(auxendp!=0) //Exist Pub Announcer
+	{
+		WriterProxy_t wp;
+		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
+		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_PubReader->matched_writer_add(&wp);
+	}
+	auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+	if(auxendp!=0) //Exist Pub Announcer
+	{
+		ReaderProxy_t rp;
+		rp.expectsInlineQos = false;
+		rp.m_reliablility = RELIABLE;
+		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
+		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_PubWriter->matched_reader_add(rp);
+	}
+	auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+	if(auxendp!=0) //Exist Pub Announcer
+	{
+		WriterProxy_t wp;
+		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_SubReader->matched_writer_add(&wp);
+	}
+	auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+	if(auxendp!=0) //Exist Pub Announcer
+	{
+		ReaderProxy_t rp;
+		rp.expectsInlineQos = false;
+		rp.m_reliablility = RELIABLE;
+		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_SubWriter->matched_reader_add(rp);
+	}
+//	auxendp = endp;
+//	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+//	if(auxendp!=0) //Exist Pub Announcer
+//	{
+//		int uax =0;
+//	}
+//	auxendp = endp;
+//	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+//	if(auxendp!=0) //Exist Pub Announcer
+//	{
+//		int uax =0;
+//	}
 }
 
 } /* namespace rtps */

@@ -181,7 +181,7 @@ bool Participant::initWriter(RTPSWriter*W)
 	{
 		//Wait until the thread is correctly created
 		m_writerList.push_back(W);
-		mp_PDP->localWriterMatching(W);
+		mp_PDP->localWriterMatching(W,true);
 		return true;
 	}
 	else
@@ -253,7 +253,7 @@ bool Participant::initReader(RTPSReader* p_R)
 	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R'))
 	{
 		m_readerList.push_back(p_R);
-		mp_PDP->localReaderMatching(p_R);
+		mp_PDP->localReaderMatching(p_R,true);
 		return true;
 	}
 	else

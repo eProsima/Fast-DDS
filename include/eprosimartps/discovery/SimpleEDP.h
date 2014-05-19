@@ -24,6 +24,11 @@
 namespace eprosima {
 namespace rtps {
 
+class StatefulReader;
+class StatefulWriter;
+class RTPSWriter;
+class RTPSReader;
+
 class SimpleEDP: public eprosima::rtps::EndpointDiscoveryProtocol {
 public:
 	SimpleEDP();
@@ -41,8 +46,8 @@ public:
 	StatefulReader* mp_TopReader;
 
 
-			 bool localWriterMatching(RTPSWriter* writer);
-			 bool localReaderMatching(RTPSReader* reader);
+			 bool localWriterMatching(RTPSWriter* writer,bool first_time);
+			 bool localReaderMatching(RTPSReader* reader,bool first_time);
 
 			 bool createSEDPEndpoints();
 
