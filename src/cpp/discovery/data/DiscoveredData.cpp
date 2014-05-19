@@ -140,24 +140,20 @@ bool DiscoveredData::processParameterList(ParameterList_t& param,DiscoveredData_
 
 }
 
-bool eprosima::rtps::DiscoveredData::DiscoveredData2WriterData(
-		DiscoveredData_t* ddata, DiscoveredWriterData* wdata) {
+bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, DiscoveredWriterData* wdata) {
 	return true;
 }
 
-bool eprosima::rtps::DiscoveredData::DiscoveredData2ReaderData(
-		DiscoveredData_t* ddata, DiscoveredReaderData* wdata) {
+bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, DiscoveredReaderData* wdata) {
 	return true;
 }
 
 
-bool eprosima::rtps::DiscoveredData::DiscoveredData2TopicData(
-		DiscoveredData_t* ddata, DiscoveredTopicData* wdata) {
+bool DiscoveredData::ParameterList2DiscoveredTopicData(ParameterList_t& param, DiscoveredTopicData* wdata) {
 	return true;
 }
 
-bool eprosima::rtps::DiscoveredData::DiscoveredData2ParticipantData(
-		DiscoveredData_t* ddata, DiscoveredParticipantData* wdata) {
+bool DiscoveredData::ParameterList2DiscoveredParticipantData(ParameterList_t& param, DiscoveredParticipantData* wdata) {
 	return true;
 }
 
