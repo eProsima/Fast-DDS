@@ -38,8 +38,8 @@ public:
 
 	bool initEDP(DiscoveryAttributes& attributes);
 
-	bool localWriterMatching(RTPSWriter* writer);
-	bool localReaderMatching(RTPSReader* reader);
+	bool localWriterMatching(RTPSWriter* writer,bool first_time);
+	bool localReaderMatching(RTPSReader* reader,bool first_time);
 
 
 	bool loadXMLFile(const std::string& filename);

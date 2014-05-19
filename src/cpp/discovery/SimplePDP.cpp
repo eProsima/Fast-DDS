@@ -98,13 +98,13 @@ bool SimplePDP::addLocalParticipant(Participant* p)
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		if(m_discovery.m_simpleEDP.use_Publication_Writer)
-			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 		if(m_discovery.m_simpleEDP.use_Publication_Reader)
-			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 		if(m_discovery.m_simpleEDP.use_Subscription_Reader)
-			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 		if(m_discovery.m_simpleEDP.use_Subscription_Writer)
-			pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	}
 
 	pdata.m_defaultUnicastLocatorList = p->m_defaultUnicastLocatorList;
@@ -298,18 +298,18 @@ bool SimplePDP::addStaticEDPInfo()
 	return valid;
 }
 
-bool SimplePDP::localWriterMatching(RTPSWriter* W)
+bool SimplePDP::localWriterMatching(RTPSWriter* W,bool first_time)
 {
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 		this->m_hasChangedLocalPDP = true;
-	return this->mp_EDP->localWriterMatching(W);
+	return this->mp_EDP->localWriterMatching(W,first_time);
 }
 
-bool SimplePDP::localReaderMatching(RTPSReader* R)
+bool SimplePDP::localReaderMatching(RTPSReader* R,bool first_time)
 {
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 			this->m_hasChangedLocalPDP = true;
-	return this->mp_EDP->localReaderMatching(R);
+	return this->mp_EDP->localReaderMatching(R,first_time);
 }
 
 

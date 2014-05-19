@@ -315,7 +315,7 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 	return true;
 }
 
-bool StaticEDP::localWriterMatching(RTPSWriter* writer)
+bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched_global = false;
@@ -369,7 +369,7 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer)
 }
 
 
-bool StaticEDP::localReaderMatching(RTPSReader* reader)
+bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched_global = false;

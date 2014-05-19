@@ -199,6 +199,23 @@ inline bool CDRMessage::readOctet(CDRMessage_t* msg, octet* o) {
 	return true;
 }
 
+inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
+{
+	uint32_t str_size = 1;
+	bool valid = true;
+	valid&=CDRMessage::readUInt32(msg,&str_size);
+
+	*stri = std::string();stri->resize(str_size);
+	octet* oc1 = new octet[str_size];
+	valid &= CDRMessage::readData(msg,oc1,str_size);
+	for(uint32_t i =0;i<str_size;i++)
+		stri->at(i) = oc1[i];
+	uint32_t rest = (uint32_t)(str_size-4*floor((float)str_size/4));
+	rest = rest==0 ? 0 : 4-rest;
+	msg->pos+=rest;
+	return valid;
+}
+
 
 inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
 	if(msg->pos + length > msg->max_size)

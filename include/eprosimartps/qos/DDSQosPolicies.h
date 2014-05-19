@@ -27,12 +27,12 @@ namespace eprosima{
 namespace dds{
 
 
-enum DurabilityQosPolicyKind_t: octet{
+typedef enum DurabilityQosPolicyKind_t: octet{
 	VOLATILE_DURABILITY_QOS = 0x01,
 			TRANSIENT_LOCAL_DURABILITY_QOS =0x02,
 			TRANSIENT_DURABILITY_QOS = 0x04,
 			PERSISTENT_DURABILITY_QOS = 0x08
-};
+}DurabilityQosPolicyKind_t;
 
 #define PARAMETER_KIND_LENGTH 4
 

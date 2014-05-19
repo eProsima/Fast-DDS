@@ -46,7 +46,7 @@ public:
 	//!Process a new added cache with this method.
 	bool newAddedCache();
 
-	bool processParameterList(ParameterList_t param,DiscoveredParticipantData* pdata);
+	bool processParameterList(ParameterList_t& param,DiscoveredParticipantData* pdata);
 
 	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredParticipantData* pdata);
 };

@@ -76,6 +76,7 @@ bool SPDPListener::newAddedCache()
 				this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
 			}
 		}
+		param.deleteParams();
 		//Inform EDP of new participant data:
 		this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata);
 		if(!found)
@@ -83,13 +84,28 @@ bool SPDPListener::newAddedCache()
 			this->mp_SPDP->m_discoveredParticipants.push_back(*pdata);
 			delete(pdata);
 		}
-
+		//If staticEDP, perform matching:
+		if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+		{
+			for(std::vector<RTPSReader*>::iterator it = this->mp_SPDP->mp_participant->m_readerList.begin();
+					it!=this->mp_SPDP->mp_participant->m_readerList.end();++it)
+			{
+				if((*it)->m_userDefinedId > 0)
+					this->mp_SPDP->mp_EDP->localReaderMatching(*it,false);
+			}
+			for(std::vector<RTPSWriter*>::iterator it = this->mp_SPDP->mp_participant->m_writerList.begin();
+					it!=this->mp_SPDP->mp_participant->m_writerList.end();++it)
+			{
+				if((*it)->m_userDefinedId > 0)
+					this->mp_SPDP->mp_EDP->localWriterMatching(*it,false);
+			}
+		}
 	}
 	return true;
 }
 
 
-bool SPDPListener::processParameterList(ParameterList_t param,DiscoveredParticipantData* Pdata)
+bool SPDPListener::processParameterList(ParameterList_t& param,DiscoveredParticipantData* Pdata)
 {
 	for(std::vector<Parameter_t*>::iterator it = param.m_parameters.begin();
 			it!=param.m_parameters.end();++it)

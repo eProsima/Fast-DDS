@@ -60,8 +60,8 @@ public:
 
 	void localParticipantHasChanged();
 
-	bool localWriterMatching(RTPSWriter* W);
-	bool localReaderMatching(RTPSReader* R);
+	bool localWriterMatching(RTPSWriter* W,bool first_time);
+	bool localReaderMatching(RTPSReader* R,bool first_time);
 
 	ResendDiscoveryDataPeriod* m_resendDataTimer;
 
