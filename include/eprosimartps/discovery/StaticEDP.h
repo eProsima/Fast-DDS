@@ -46,6 +46,7 @@ public:
 	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
 	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
 
+	void assignRemoteEndpoints(DiscoveredParticipantData* pdata) {};
 
 	std::vector<uint16_t> m_endpointIds;
 

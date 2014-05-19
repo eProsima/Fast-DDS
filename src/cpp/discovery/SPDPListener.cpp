@@ -65,13 +65,25 @@ bool SPDPListener::newAddedCache()
 		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
 		if(processParameterList(param,pdata))
 		{
-
+			for(LocatorListIterator it = pdata->m_metatrafficUnicastLocatorList.begin();
+					it!=pdata->m_metatrafficUnicastLocatorList.end();++it)
+			{
+				this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
+			}
+			for(LocatorListIterator it = pdata->m_metatrafficMulticastLocatorList.begin();
+					it!=pdata->m_metatrafficMulticastLocatorList.end();++it)
+			{
+				this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
+			}
+		}
+		//Inform EDP of new participant data:
+		this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata);
+		if(!found)
+		{
+			this->mp_SPDP->m_discoveredParticipants.push_back(*pdata);
+			delete(pdata);
 		}
 
-
-
-		if(!found)
-			delete(pdata);
 	}
 	return true;
 }
