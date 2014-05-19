@@ -18,6 +18,9 @@
 #ifndef DISCOVEREDREADERDATA_H_
 #define DISCOVEREDREADERDATA_H_
 
+#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/writer/ReaderProxy.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -28,7 +31,8 @@ namespace rtps {
  */
 class DiscoveredReaderData {
 public:
-	DiscoveredReaderData();
+	DiscoveredReaderData():
+		userDefinedId(-1),isAlive(false), expectsInlineQos(false),topicKind(NO_KEY){};
 	virtual ~DiscoveredReaderData();
 	ReaderProxy_t m_readerProxy;
 	InstanceHandle_t m_key;

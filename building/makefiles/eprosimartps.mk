@@ -77,9 +77,14 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/timedevent/NackSupressionDuration.cpp \
 		  $(BASEDIR)/src/cpp/timedevent/ResendDiscoveryDataPeriod.cpp \
 		  \
-		   $(BASEDIR)/src/cpp/discovery/SimpleParticipantDiscoveryProtocol.cpp \
-		   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp \
-		   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp
+		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \
+		  $(BASEDIR)/src/cpp/discovery/EndpointDiscoveryProtocol.cpp \
+		  $(BASEDIR)/src/cpp/discovery/SimplePDP.cpp \
+		  $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp \
+		  $(BASEDIR)/src/cpp/discovery/StaticEDP.cpp
+		#  $(BASEDIR)/src/cpp/discovery/SimpleEPD.cpp \
+		#   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp 
+		#   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp
 		#  $(BASEDIR)/src/cpp/discovery/SimpleDiscoveryParticipantProtocol.cpp 
 #		  
 #		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \

@@ -20,6 +20,7 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+#include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 
 namespace eprosima {
 namespace rtps {
@@ -29,18 +30,23 @@ public:
 	ParticipantDiscoveryProtocol(Participant* p_part);
 	virtual ~ParticipantDiscoveryProtocol();
 
-	virtual bool initDPD(DiscoveryAttributes& attributes);
+	virtual bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)=0;
 
-	DiscoveredParticipantData* mp_localDPD;
+	DiscoveredParticipantData* mp_localPDP;
 	std::vector<DiscoveredParticipantData> m_discoveredParticipants;
 	uint16_t m_domainId;
 	DiscoveryAttributes m_discovery;
 	Participant* mp_participant;
 	EndpointDiscoveryProtocol* mp_EDP;
 
-	bool addLocalParticipant(Participant* p)=0;
 
-	void announceParticipantState()=0;
+	virtual void announceParticipantState(bool new_change)=0;
+
+	virtual void localParticipantHasChanged()=0;
+
+	virtual bool localWriterMatching(RTPSWriter* W)=0;
+	virtual bool localReaderMatching(RTPSReader* R)=0;
+
 };
 
 } /* namespace rtps */

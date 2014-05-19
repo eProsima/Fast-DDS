@@ -43,7 +43,6 @@ class Endpoint {
 public:
 	Endpoint();
 	virtual ~Endpoint();
-	TopicKind_t topicKind;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 	GUID_t m_guid;
@@ -55,6 +54,26 @@ public:
 
 	DDSTopicDataType* mp_type;
 	int16_t m_userDefinedId;
+	TopicAttributes m_topic;
+	/**
+	 * Get the topic Data Type Name
+	 * @return The name of the data type.
+	 */
+	const std::string& getTopicDataType() const {
+		return m_topic.topicDataType;
+	}
+	/**
+	 * Get the topic name.
+	 * @return Topic name.
+	 */
+	const std::string& getTopicName() const {
+		return m_topic.topicName;
+	}
+
+	TopicKind_t getTopicKind() const {
+		return m_topic.topicKind;
+	}
+
 };
 
 } /* namespace rtps */

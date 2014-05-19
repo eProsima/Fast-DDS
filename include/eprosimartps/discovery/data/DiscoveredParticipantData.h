@@ -19,6 +19,9 @@
 #define DISCOVEREDPARTICIPANTDATA_H_
 
 #include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/discovery/data/DiscoveredReaderData.h"
+#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
+#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 
 namespace eprosima {
 namespace rtps {

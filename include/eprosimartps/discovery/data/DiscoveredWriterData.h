@@ -18,6 +18,9 @@
 #ifndef DISCOVEREDWRITERDATA_H_
 #define DISCOVEREDWRITERDATA_H_
 
+#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/reader/WriterProxy.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -29,7 +32,9 @@ namespace rtps {
  */
 class DiscoveredWriterData {
 public:
-	DiscoveredWriterData();
+	DiscoveredWriterData():
+		userDefinedId(-1),isAlive(false),topicKind(NO_KEY)
+		{};
 	virtual ~DiscoveredWriterData();
 	WriterProxy_t m_writerProxy;
 	InstanceHandle_t m_key;

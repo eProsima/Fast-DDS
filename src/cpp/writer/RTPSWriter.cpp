@@ -71,7 +71,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	}
 	ch->kind = changeKind;
 
-	if(topicKind == WITH_KEY && mp_type !=NULL)
+	if(getTopicKind() == WITH_KEY && mp_type !=NULL)
 	{
 		if(mp_type->m_isGetKeyDefined)
 		{
@@ -90,7 +90,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 
 bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 {
-	if(kind != ALIVE && topicKind == NO_KEY)
+	if(kind != ALIVE && getTopicKind() == NO_KEY)
 	{
 		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
 		return false;

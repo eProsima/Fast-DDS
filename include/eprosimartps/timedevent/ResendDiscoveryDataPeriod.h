@@ -24,7 +24,7 @@
 namespace eprosima {
 namespace rtps {
 
-class SimpleParticipantDiscoveryProtocol;
+class SimplePDP;
 
 /**
  * Class ResendDiscoveryDataPeriod, TimedEvent used to periodically send the ParticipantDiscovery Data.
@@ -32,13 +32,13 @@ class SimpleParticipantDiscoveryProtocol;
  */
 class ResendDiscoveryDataPeriod: public TimedEvent {
 public:
-	ResendDiscoveryDataPeriod(SimpleParticipantDiscoveryProtocol* p_SPDP,boost::posix_time::milliseconds interval);
+	ResendDiscoveryDataPeriod(SimplePDP* p_SPDP,boost::posix_time::milliseconds interval);
 	virtual ~ResendDiscoveryDataPeriod();
 
 	void event(const boost::system::error_code& ec);
 
 	CDRMessage_t m_data_msg;
-	SimpleParticipantDiscoveryProtocol* mp_SPDP;
+	SimplePDP* mp_SPDP;
 };
 
 } /* namespace rtps */

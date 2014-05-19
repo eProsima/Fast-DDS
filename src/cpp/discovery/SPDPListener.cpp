@@ -16,7 +16,9 @@
  */
 
 #include "eprosimartps/discovery/SPDPListener.h"
-#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
+#include "eprosimartps/discovery/SimplePDP.h"
+#include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/writer/StatelessWriter.h"
 
 namespace eprosima {
 namespace rtps {
@@ -32,7 +34,7 @@ bool SPDPListener::newAddedCache()
 	CacheChange_t* change = NULL;
 	if(mp_SPDP->mp_SPDPReader->m_reader_cache.get_last_added_cache(&change))
 	{
-		if(change->instanceHandle == mp_SPDP->mp_localDPD->m_key)
+		if(change->instanceHandle == mp_SPDP->mp_localPDP->m_key)
 		{
 			pInfo("Message from own participant, removing"<<endl)
 							mp_SPDP->mp_SPDPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
@@ -71,6 +73,7 @@ bool SPDPListener::newAddedCache()
 		if(!found)
 			delete(pdata);
 	}
+	return true;
 }
 
 
@@ -168,6 +171,7 @@ bool SPDPListener::processParameterList(ParameterList_t param,DiscoveredParticip
 					std::string first_str = it->first.substr(0, it->first.find("_"));
 					if(first_str == "staticedp")
 					{
+						std::string type = it->first.substr(10, it->first.find("_"));
 						first_str = it->first.substr(17, it->first.find("_"));
 						ss.clear();	ss.str(std::string());
 						ss << first_str;ss >> userId;
@@ -178,17 +182,50 @@ bool SPDPListener::processParameterList(ParameterList_t param,DiscoveredParticip
 						ss >> a >> ch >> b >> ch >> c >>ch >> d;
 						entityId.value[0] = (octet)a;entityId.value[1] = (octet)b;
 						entityId.value[2] = (octet)c;entityId.value[3] = (octet)d;
-						((StaticEDP*)mp_SPDP->mp_EDP)->addRemoteEndpoint(userId,entityId,Pdata);
+						assignUserId(type,userId,entityId,Pdata);
 					}
 				}
 			}
-		}
-		break;
+			break;
 		}
 		default: break;
+		}
 	}
 
 	return true;
+}
+
+void SPDPListener::assignUserId(std::string& type,uint16_t userId, EntityId_t& entityId,DiscoveredParticipantData* pdata)
+{
+	if(type == "reader")
+	{
+		for(std::vector<DiscoveredReaderData>::iterator it = pdata->m_readers.begin();
+				it!=pdata->m_readers.end();++it)
+		{
+			if(it->userDefinedId == userId)
+			{
+				it->m_readerProxy.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+				it->m_readerProxy.remoteReaderGuid.entityId = entityId;
+				it->isAlive = true;
+				return;
+			}
+		}
+	}
+	else if(type=="writer")
+	{
+		for(std::vector<DiscoveredWriterData>::iterator it = pdata->m_writers.begin();
+				it!=pdata->m_writers.end();++it)
+		{
+			if(it->userDefinedId == userId)
+			{
+				it->m_writerProxy.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+				it->m_writerProxy.remoteWriterGuid.entityId = entityId;
+				return;
+			}
+		}
+	}
+	pWarning("SPDPListener:StaticEDP userId not match any of the loaded ones"<<endl);
+
 }
 
 } /* namespace rtps */

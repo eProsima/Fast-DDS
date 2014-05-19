@@ -26,6 +26,9 @@
 
 #include "eprosimartps/dds/DomainParticipant.h"
 
+#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
+#include "eprosimartps/discovery/SimplePDP.h"
+
 
 
 namespace eprosima {
@@ -35,10 +38,9 @@ namespace rtps {
 Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 						m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 						m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-						m_SPDP(this),
-						m_StaticEDP(this),
 						m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-						IdCounter(0)
+						IdCounter(0),
+						mp_PDP(NULL)
 
 {
 	Locator_t loc;
@@ -94,11 +96,8 @@ Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 
 	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
-		m_SPDP.m_useStaticEDP = m_discovery.use_STATIC_EndpointDiscoveryProtocol;
-		if(m_SPDP.m_useStaticEDP)
-			m_StaticEDP.m_staticEndpointFilename = m_discovery.m_staticEndpointXMLFilename;
-		m_SPDP.initSPDP(PParam.domainId,ID,m_discovery.resendSPDPDataPeriod_sec);
-
+		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
+		mp_PDP->initPDP(PParam.discovery, ID);
 	}
 }
 
@@ -120,6 +119,9 @@ Participant::~Participant()
 		delete(*it);
 
 	delete(this->m_ResourceSemaphore);
+
+	if(mp_PDP!=NULL)
+		delete(mp_PDP);
 }
 
 bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size)
@@ -165,9 +167,9 @@ bool Participant::initWriter(RTPSWriter*W)
 	W->m_guid.guidPrefix = m_guid.guidPrefix;
 	W->init_header();
 
-	if(W->topicKind == NO_KEY)
+	if(W->getTopicKind() == NO_KEY)
 		W->m_guid.entityId.value[3] = 0x03;
-	else if(W->topicKind == WITH_KEY)
+	else if(W->getTopicKind() == WITH_KEY)
 		W->m_guid.entityId.value[3] = 0x02;
 	IdCounter++;
 	octet* c = (octet*)&IdCounter;
@@ -179,12 +181,7 @@ bool Participant::initWriter(RTPSWriter*W)
 	{
 		//Wait until the thread is correctly created
 		m_writerList.push_back(W);
-		this->m_SPDP.setHasChangedDpd(true);
-		if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-		{
-			this->m_SPDP.updateLocalParticipantEntityInfo();
-			this->m_StaticEDP.localEndpointMatching((Endpoint*)W,'W');
-		}
+		mp_PDP->localWriterMatching(W);
 		return true;
 	}
 	else
@@ -241,9 +238,9 @@ bool Participant::initReader(RTPSReader* p_R)
 	p_R->mp_event_thr = &this->m_event_thr;
 	//Assign GUID
 	p_R->m_guid.guidPrefix = m_guid.guidPrefix;
-	if(p_R->topicKind == NO_KEY)
+	if(p_R->getTopicKind() == NO_KEY)
 		p_R->m_guid.entityId.value[3] = 0x04;
-	else if(p_R->topicKind == WITH_KEY)
+	else if(p_R->getTopicKind() == WITH_KEY)
 		p_R->m_guid.entityId.value[3] = 0x07;
 	IdCounter++;
 	octet* c = (octet*)&IdCounter;
@@ -256,12 +253,7 @@ bool Participant::initReader(RTPSReader* p_R)
 	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R'))
 	{
 		m_readerList.push_back(p_R);
-		this->m_SPDP.setHasChangedDpd(true);
-		if(this->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-		{
-			this->m_SPDP.updateLocalParticipantEntityInfo();
-			this->m_StaticEDP.localEndpointMatching((Endpoint*)p_R,'R');
-		}
+		mp_PDP->localReaderMatching(p_R);
 		return true;
 	}
 	else
@@ -437,7 +429,7 @@ bool Participant::removeEndpoint(Endpoint* p_endpoint){
 
 void Participant::announceParticipantState()
 {
-	this->m_SPDP.sendDPDMsg();
+	this->mp_PDP->announceParticipantState(false);
 }
 
 

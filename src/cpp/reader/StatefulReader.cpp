@@ -42,8 +42,7 @@ StatefulReader::StatefulReader(const SubscriberAttributes* param,uint32_t payloa
 	unicastLocatorList = param->unicastLocatorList;
 	multicastLocatorList = param->multicastLocatorList;
 	expectsInlineQos = param->expectsInlineQos;
-	topicKind = param->topic.topicKind;
-	m_topicName = param->topic.topicName;
+	m_topic = param->topic;
 	this->m_userDefinedId = param->userDefinedId;
 }
 
