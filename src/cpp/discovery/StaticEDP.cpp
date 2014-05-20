@@ -331,7 +331,7 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 					it->isAlive && it->userDefinedId>0) //Matching
 			{
 				bool matched = false;
-				if(writer->getStateType() == STATELESS)
+				if(writer->getStateType() == STATELESS && it->m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 				{
 					StatelessWriter* p_SLW = (StatelessWriter*)writer;
 					ReaderLocator RL;
@@ -381,7 +381,7 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 		{
 			if(reader->getTopicName() == it->m_topicName &&
 					reader->getTopicKind() == it->topicKind &&
-					//reader->getTopicDataType() == it->m_typeName && FIXME: add topicdatatype to reader
+					reader->getTopicDataType() == it->m_typeName &&
 					it->isAlive && it->userDefinedId>0) //Matching
 			{
 				bool matched = false;

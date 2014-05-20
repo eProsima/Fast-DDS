@@ -25,69 +25,78 @@
 namespace eprosima {
 namespace rtps {
 
-class DiscoveredData_t {
-public:
-	DiscoveredData_t();
-	virtual ~DiscoveredData_t();
+class DiscoveredWriterData;
+class DiscoveredReaderData;
+class DiscoveredTopicData;
+class DiscoveredParticipantData;
 
-	GUID_t remoteGuid;
-	LocatorList_t m_unicastLocatorList;
-	LocatorList_t m_multicastLocatorList;
-	LocatorList_t m_metatrafficUnicastLocatorList;
-	LocatorList_t m_metatrafficMulticastLocatorList;
-	LocatorList_t m_defaultUnicastLocatorList;
-	LocatorList_t m_defaultMulticastLocatorList;
-	InstanceHandle_t m_key;
-	InstanceHandle_t m_participantKey;
-	std::string m_typeName;
-	std::string m_topicName;
-	uint16_t userDefinedId;
-	GUID_t m_participantGuid;
-	bool m_expectsInlineQos;
-	TopicKind_t topicKind;
-
-	DurabilityQosPolicy m_durability;
-	DurabilityServiceQosPolicy m_durabilityService;
-	DeadlineQosPolicy m_deadline;
-	LatencyBudgetQosPolicy m_latencyBudget;
-	LivelinessQosPolicy m_liveliness;
-	ReliabilityQosPolicy m_reliability;
-	OwnershipQosPolicy m_ownership;
-	DestinationOrderQosPolicy m_destinationOrder;
-	UserDataQosPolicy m_userData;
-	TimeBasedFilterQosPolicy m_timeBasedFilter;
-	PresentationQosPolicy m_presentation;
-	PartitionQosPolicy m_partition;
-	TopicDataQosPolicy m_topicData;
-	GroupDataQosPolicy m_groupData;
-	Duration_t m_leaseDuration;
-	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
-	std::string m_participantName;
-
-	LifespanQosPolicy m_lifespan;
-	TransportPriorityQosPolicy m_transportPriority;
-
-
-	HistoryQosPolicy m_history;
-	ResourceLimitsQosPolicy m_resourceLimits;
-
-	OwnershipStrengthQosPolicy m_ownershipStrength;
-	ParameterPropertyList_t m_propertyList;
-	ProtocolVersion_t m_protocolVersion;
-	VendorId_t m_VendorId;
-
-};
+//
+//class DiscoveredData_t {
+//public:
+//	DiscoveredData_t();
+//	virtual ~DiscoveredData_t();
+//
+//	GUID_t remoteGuid;
+//	LocatorList_t m_unicastLocatorList;
+//	LocatorList_t m_multicastLocatorList;
+//	LocatorList_t m_metatrafficUnicastLocatorList;
+//	LocatorList_t m_metatrafficMulticastLocatorList;
+//	LocatorList_t m_defaultUnicastLocatorList;
+//	LocatorList_t m_defaultMulticastLocatorList;
+//	InstanceHandle_t m_key;
+//	InstanceHandle_t m_participantKey;
+//	std::string m_typeName;
+//	std::string m_topicName;
+//	uint16_t userDefinedId;
+//	GUID_t m_participantGuid;
+//	bool m_expectsInlineQos;
+//	TopicKind_t topicKind;
+//
+//	DurabilityQosPolicy m_durability;
+//	DurabilityServiceQosPolicy m_durabilityService;
+//	DeadlineQosPolicy m_deadline;
+//	LatencyBudgetQosPolicy m_latencyBudget;
+//	LivelinessQosPolicy m_liveliness;
+//	ReliabilityQosPolicy m_reliability;
+//	OwnershipQosPolicy m_ownership;
+//	DestinationOrderQosPolicy m_destinationOrder;
+//	UserDataQosPolicy m_userData;
+//	TimeBasedFilterQosPolicy m_timeBasedFilter;
+//	PresentationQosPolicy m_presentation;
+//	PartitionQosPolicy m_partition;
+//	TopicDataQosPolicy m_topicData;
+//	GroupDataQosPolicy m_groupData;
+//	Duration_t m_leaseDuration;
+//	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+//	std::string m_participantName;
+//
+//	LifespanQosPolicy m_lifespan;
+//	TransportPriorityQosPolicy m_transportPriority;
+//
+//
+//	HistoryQosPolicy m_history;
+//	ResourceLimitsQosPolicy m_resourceLimits;
+//
+//	OwnershipStrengthQosPolicy m_ownershipStrength;
+//	ParameterPropertyList_t m_propertyList;
+//	ProtocolVersion_t m_protocolVersion;
+//	VendorId_t m_VendorId;
+//
+//};
 
 class DiscoveredData
 {
 public:
 	DiscoveredData(){};
 	virtual ~DiscoveredData(){};
-	bool processParameterList(ParameterList_t& param,DiscoveredData_t* data);
 	static bool ParameterList2DiscoveredWriterData(ParameterList_t& param,DiscoveredWriterData* wdata);
 	static bool ParameterList2DiscoveredReaderData(ParameterList_t& param,DiscoveredReaderData* wdata);
 	static bool ParameterList2DiscoveredTopicData(ParameterList_t& param,DiscoveredTopicData* wdata);
-	static bool ParameterList2DiscoveredParticipantData(ParameterList_t& param,DiscoveredParticipantData* wdata);
+	static bool DiscoveredWriterData2ParameterList(DiscoveredWriterData& wdata,ParameterList_t* param);
+	static bool DiscoveredReaderData2ParameterList(DiscoveredReaderData& wdata,ParameterList_t* param);
+	static bool DiscoveredTopicData2ParameterList(DiscoveredTopicData& wdata,ParameterList_t* param);
+
+	//static bool ParameterList2DiscoveredParticipantData(ParameterList_t& param,DiscoveredParticipantData* wdata);
 };
 
 } /* namespace rtps */

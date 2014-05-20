@@ -199,6 +199,18 @@ inline bool CDRMessage::readOctet(CDRMessage_t* msg, octet* o) {
 	return true;
 }
 
+inline bool CDRMessage::readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec)
+{
+	if(msg->pos+4>msg->length)
+		return false;
+	uint32_t vecsize;
+	bool valid = CDRMessage::readUInt32(msg,&vecsize);
+	ocvec->resize(vecsize);
+	valid &= CDRMessage::readData(msg,ocvec->data(),vecsize);
+	return valid;
+}
+
+
 inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 {
 	uint32_t str_size = 1;
@@ -369,6 +381,24 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 	msg->pos+=8;
 	msg->length+=8;
 	return true;
+}
+
+inline bool addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec)
+{
+	if(msg->pos+4+ocvec->size()>=msg->max_size)
+	{
+		pError( "Message size not enough "<<endl);
+				return false;
+	}
+	bool valid = CDRMessage::addUInt32(msg,ocvec->size());
+	valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),ocvec->size());
+
+	int rest = ocvec->size()% 4;
+	if (rest != 0)
+		rest = 4 - rest; //how many you have to add
+	msg->pos+=rest;
+	msg->length+=rest;
+	return valid;
 }
 
 

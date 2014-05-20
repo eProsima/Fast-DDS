@@ -18,9 +18,9 @@
 #ifndef SEDPLISTENERS_H_
 #define SEDPLISTENERS_H_
 #include "eprosimartps/dds/SubscriberListener.h"
-#include "eprosimartps/discovery/SimpleEDP.h"
 
-#include "eprosimartps/discovery/data/DiscoveredData.h"
+#include "eprosimartps/qos/QosList.h"
+//#include "eprosimartps/discovery/data/DiscoveredData.h"
 
 using namespace eprosima::dds;
 
@@ -31,6 +31,7 @@ class SEDPListeners;
 class DiscoveredWriterData;
 class DiscoveredReaderData;
 class DiscoveredTopicData;
+class SimpleEDP;
 
 
 class SEDPPubListener: public SubscriberListener {
@@ -68,13 +69,13 @@ public:
 
 class SEDPListeners
 {
+public:
 	SEDPListeners(SimpleEDP* edp):m_PubListener(this,edp),m_SubListener(this,edp),m_TopListener(this,edp){};
 	~SEDPListeners(){};
 	SEDPPubListener m_PubListener;
 	SEDPSubListener m_SubListener;
 	SEDPTopListener m_TopListener;
-	bool findParticipant(GuidPrefix_t& guidP,DiscoveredParticipantData** pdata);
-	bool processParameterList(CacheChange_t* change,DiscoveredData* ddata);
+
 };
 
 

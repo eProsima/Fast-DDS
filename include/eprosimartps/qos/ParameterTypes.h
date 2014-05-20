@@ -62,6 +62,7 @@ public:
 	Locator_t locator;
 	ParameterLocator_t(){};
 	ParameterLocator_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
+	ParameterLocator_t(ParameterId_t pid,uint16_t in_length,Locator_t& loc):Parameter_t(pid,in_length),locator(loc){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 #define PARAMETER_LOCATOR_LENGTH 24
@@ -71,6 +72,7 @@ public:
 	std::string m_string;
 	ParameterString_t(){};
 	ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
+	ParameterString_t(ParameterId_t pid,uint16_t in_length,std::string& strin):Parameter_t(pid,in_length),m_string(strin){}
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -89,6 +91,17 @@ public:
 	GUID_t guid;
 	ParameterGuid_t(){GUID_UNKNOWN(guid);};
 	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){GUID_UNKNOWN(guid);};
+	ParameterGuid_t(ParameterId_t pid,uint16_t in_length,GUID_t guidin):Parameter_t(pid,in_length),guid(guidin){};
+	ParameterGuid_t(ParameterId_t pid,uint16_t in_length,InstanceHandle_t& iH):Parameter_t(pid,in_length)
+	{
+		for(uint8_t i =0;i<16;++i)
+		{
+			if(i<12)
+				guid.guidPrefix.value[i] = iH.value[i];
+			else
+				guid.entityId.value[i-12] = iH.value[i];
+		}
+	};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

@@ -57,6 +57,7 @@ namespace CDRMessage{
 	  inline bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* snset);
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 	  inline bool readString(CDRMessage_t*msg,std::string* p_str);
+	  inline bool readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
 
 	///@}
 
@@ -103,6 +104,7 @@ namespace CDRMessage{
 	  inline bool addParameterSentinel(CDRMessage_t*msg);
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
 	  inline bool addString(CDRMessage_t*msg,std::string& in_str);
+	  inline bool addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
 	///@}
 
 }

@@ -79,6 +79,9 @@ class Participant{
 	friend class StaticEDP;
 	friend class SimpleEDP;
 	friend class SPDPListener;
+	friend class SEDPListeners;
+	friend class SEDPPubListener;
+	friend class SEDPSubListener;
 private:
 
 	Participant(const ParticipantAttributes &param,uint32_t id);

@@ -104,29 +104,23 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	for(std::vector<std::string>::iterator it = name.begin();
-			it!=name.end();++it)
-		valid &= CDRMessage::addString(msg,*it);
+	valid &= CDRMessage::addOctetVector(msg,&name);
 	return valid;
 }
 
 bool TopicDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-		valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-		for(std::vector<std::string>::iterator it = value.begin();
-				it!=value.end();++it)
-			valid &= CDRMessage::addString(msg,*it);
-		return valid;
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addOctetVector(msg,&value);
+	return valid;
 }
 
 bool GroupDataQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-			valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-			for(std::vector<std::string>::iterator it = value.begin();
-					it!=value.end();++it)
-				valid &= CDRMessage::addString(msg,*it);
-			return valid;
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addOctetVector(msg,&value);
+	return valid;
 }
 
 bool HistoryQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
