@@ -34,7 +34,7 @@ class DiscoveredWriterData {
 public:
 	DiscoveredWriterData():
 		userDefinedId(-1),isAlive(false),topicKind(NO_KEY)
-		{};
+{};
 	virtual ~DiscoveredWriterData();
 	WriterProxy_t m_writerProxy;
 	InstanceHandle_t m_key;

@@ -24,6 +24,8 @@ using namespace eprosima::rtps;
 
 namespace eprosima {
 
+
+
 namespace dds {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -143,6 +145,7 @@ public:
 	bool value;
 	ParameterBool_t():value(false){};
 	ParameterBool_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),value(false){};
+	ParameterBool_t(ParameterId_t pid,uint16_t in_length,bool inbool):Parameter_t(pid,in_length),value(inbool){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

@@ -281,7 +281,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 		{
 			StatelessWriter* p_SLW = (StatelessWriter*)W;
 			ReaderLocator RL;
-			RL.expectsInlineQos = rdata->expectsInlineQos;
+			RL.expectsInlineQos = rdata->m_readerProxy.expectsInlineQos;
 			for(std::vector<Locator_t>::iterator lit = rdata->m_readerProxy.unicastLocatorList.begin();
 					lit != rdata->m_readerProxy.unicastLocatorList.end();++lit)
 			{

@@ -461,14 +461,248 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,wdata.m_topicName);
 		param->m_parameters.push_back(p);
 	}
+	if(!wdata.m_durability.isDefault)
+	{
+		DurabilityQosPolicy*p = new DurabilityQosPolicy();
+		*p = wdata.m_durability;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_durabilityService.isDefault)
+	{
+		DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
+		*p = wdata.m_durabilityService;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_deadline.isDefault)
+	{
+		DeadlineQosPolicy*p = new DeadlineQosPolicy();
+		*p = wdata.m_deadline;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_latencyBudget.isDefault)
+	{
+		LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
+		*p = wdata.m_latencyBudget;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_liveliness.isDefault)
+	{
+		LivelinessQosPolicy*p = new LivelinessQosPolicy();
+		*p = wdata.m_liveliness;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_reliability.isDefault)
+	{
+		ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
+		*p = wdata.m_reliability;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_lifespan.isDefault)
+	{
+		LifespanQosPolicy*p = new LifespanQosPolicy();
+		*p = wdata.m_lifespan;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_userData.isDefault)
+	{
+		UserDataQosPolicy*p = new UserDataQosPolicy();
+		*p = wdata.m_userData;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_timeBasedFilter.isDefault)
+	{
+		TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
+		*p = wdata.m_timeBasedFilter;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_ownership.isDefault)
+	{
+		OwnershipQosPolicy*p = new OwnershipQosPolicy();
+		*p = wdata.m_ownership;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_ownershipStrength.isDefault)
+	{
+		OwnershipStrengthQosPolicy*p = new OwnershipStrengthQosPolicy();
+		*p = wdata.m_ownershipStrength;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_destinationOrder.isDefault)
+	{
+		DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
+		*p = wdata.m_destinationOrder;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_presentation.isDefault)
+	{
+		PresentationQosPolicy*p = new PresentationQosPolicy();
+		*p = wdata.m_presentation;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_partition.isDefault)
+	{
+		PartitionQosPolicy*p = new PartitionQosPolicy();
+		*p = wdata.m_partition;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_topicData.isDefault)
+	{
+		TopicDataQosPolicy*p = new TopicDataQosPolicy();
+		*p = wdata.m_topicData;
+		param->m_parameters.push_back(p);
+	}
+	if(!wdata.m_groupData.isDefault)
+	{
+		GroupDataQosPolicy*p = new GroupDataQosPolicy();
+		*p = wdata.m_groupData;
+		param->m_parameters.push_back(p);
+	}
+	return true;
 }
 
-bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& wdata, ParameterList_t* param)
+bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rdata, ParameterList_t* param)
 {
+	for(LocatorListIterator lit = rdata.m_readerProxy.unicastLocatorList.begin();
+			lit!=rdata.m_readerProxy.unicastLocatorList.end();++lit)
+	{
+		ParameterLocator_t* p = new ParameterLocator_t(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+		param->m_parameters.push_back(p);
+	}
+	for(LocatorListIterator lit = rdata.m_readerProxy.multicastLocatorList.begin();
+			lit!=rdata.m_readerProxy.multicastLocatorList.end();++lit)
+	{
+		ParameterLocator_t* p = new ParameterLocator_t(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+		param->m_parameters.push_back(p);
+	}
+	{
+		ParameterBool_t * p = new ParameterBool_t(PID_EXPECTS_INLINE_QOS,PARAMETER_BOOL_LENGTH,rdata.m_readerProxy.expectsInlineQos);
+		param->m_parameters.push_back(p);
+	}
+	{
+		ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,rdata.m_participantKey);
+		param->m_parameters.push_back(p);
+	}
+	{
+		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,rdata.m_topicName);
+		param->m_parameters.push_back(p);
+	}
+	{
+		ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,rdata.m_typeName);
+		param->m_parameters.push_back(p);
+	}
+	{
+		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,rdata.m_topicName);
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_durability.isDefault)
+	{
+		DurabilityQosPolicy*p = new DurabilityQosPolicy();
+		*p = rdata.m_durability;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_durabilityService.isDefault)
+	{
+		DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
+		*p = rdata.m_durabilityService;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_deadline.isDefault)
+	{
+		DeadlineQosPolicy*p = new DeadlineQosPolicy();
+		*p = rdata.m_deadline;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_latencyBudget.isDefault)
+	{
+		LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
+		*p = rdata.m_latencyBudget;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_liveliness.isDefault)
+	{
+		LivelinessQosPolicy*p = new LivelinessQosPolicy();
+		*p = rdata.m_liveliness;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_reliability.isDefault)
+	{
+		ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
+		*p = rdata.m_reliability;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_lifespan.isDefault)
+	{
+		LifespanQosPolicy*p = new LifespanQosPolicy();
+		*p = rdata.m_lifespan;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_userData.isDefault)
+	{
+		UserDataQosPolicy*p = new UserDataQosPolicy();
+		*p = rdata.m_userData;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_timeBasedFilter.isDefault)
+	{
+		TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
+		*p = rdata.m_timeBasedFilter;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_ownership.isDefault)
+	{
+		OwnershipQosPolicy*p = new OwnershipQosPolicy();
+		*p = rdata.m_ownership;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_destinationOrder.isDefault)
+	{
+		DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
+		*p = rdata.m_destinationOrder;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_presentation.isDefault)
+	{
+		PresentationQosPolicy*p = new PresentationQosPolicy();
+		*p = rdata.m_presentation;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_partition.isDefault)
+	{
+		PartitionQosPolicy*p = new PartitionQosPolicy();
+		*p = rdata.m_partition;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_topicData.isDefault)
+	{
+		TopicDataQosPolicy*p = new TopicDataQosPolicy();
+		*p = rdata.m_topicData;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_groupData.isDefault)
+	{
+		GroupDataQosPolicy*p = new GroupDataQosPolicy();
+		*p = rdata.m_groupData;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_timeBasedFilter.isDefault)
+	{
+		TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
+		*p = rdata.m_timeBasedFilter;
+		param->m_parameters.push_back(p);
+	}
+	if(!rdata.m_durabilityService.isDefault)
+	{
+		DurabilityServiceQosPolicy * p = new DurabilityServiceQosPolicy();
+		*p = rdata.m_durabilityService;
+		param->m_parameters.push_back(p);
+	}
+	return true;
 }
 
-bool DiscoveredData::DiscoveredTopicData2ParameterList(DiscoveredTopicData& wdata, ParameterList_t* param)
+bool DiscoveredData::DiscoveredTopicData2ParameterList(DiscoveredTopicData& tdata, ParameterList_t* param)
 {
+	pError("DiscoveredTopicData2ParameterList NOT YET IMPLEMENTED"<<endl);
+	return true;
 }
 
 }

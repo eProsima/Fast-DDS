@@ -32,7 +32,7 @@ namespace rtps {
 class DiscoveredReaderData {
 public:
 	DiscoveredReaderData():
-		userDefinedId(-1),isAlive(false), expectsInlineQos(false),topicKind(NO_KEY){};
+		userDefinedId(-1),isAlive(false),topicKind(NO_KEY){};
 	virtual ~DiscoveredReaderData();
 	ReaderProxy_t m_readerProxy;
 	InstanceHandle_t m_key;
@@ -58,7 +58,6 @@ public:
 	LifespanQosPolicy m_lifespan;
 
 	bool isAlive;
-	bool expectsInlineQos;
 	TopicKind_t topicKind;
 };
 
