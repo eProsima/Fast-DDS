@@ -461,97 +461,97 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,wdata.m_topicName);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_durability.isDefault)
+	if(!wdata.m_qos.m_durability.isDefault || wdata.m_qos.m_durability.hasChanged)
 	{
 		DurabilityQosPolicy*p = new DurabilityQosPolicy();
 		*p = wdata.m_qos.m_durability;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_durabilityService.isDefault)
+	if(!wdata.m_qos.m_durabilityService.isDefault || wdata.m_qos.m_durabilityService.hasChanged)
 	{
 		DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
 		*p = wdata.m_qos.m_durabilityService;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_deadline.isDefault)
+	if(!wdata.m_qos.m_deadline.isDefault || wdata.m_qos.m_deadline.hasChanged)
 	{
 		DeadlineQosPolicy*p = new DeadlineQosPolicy();
 		*p = wdata.m_qos.m_deadline;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_latencyBudget.isDefault)
+	if(!wdata.m_qos.m_latencyBudget.isDefault || wdata.m_qos.m_latencyBudget.hasChanged)
 	{
 		LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
 		*p = wdata.m_qos.m_latencyBudget;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_liveliness.isDefault)
+	if(!wdata.m_qos.m_liveliness.isDefault || wdata.m_qos.m_liveliness.hasChanged)
 	{
 		LivelinessQosPolicy*p = new LivelinessQosPolicy();
 		*p = wdata.m_qos.m_liveliness;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_reliability.isDefault)
+	if(!wdata.m_qos.m_reliability.isDefault || wdata.m_qos.m_reliability.hasChanged)
 	{
 		ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
 		*p = wdata.m_qos.m_reliability;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_lifespan.isDefault)
+	if(!wdata.m_qos.m_lifespan.isDefault || wdata.m_qos.m_lifespan.hasChanged)
 	{
 		LifespanQosPolicy*p = new LifespanQosPolicy();
 		*p = wdata.m_qos.m_lifespan;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_userData.isDefault)
+	if(!wdata.m_qos.m_userData.isDefault || wdata.m_qos.m_userData.hasChanged)
 	{
 		UserDataQosPolicy*p = new UserDataQosPolicy();
 		*p = wdata.m_qos.m_userData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_timeBasedFilter.isDefault)
+	if(!wdata.m_qos.m_timeBasedFilter.isDefault || wdata.m_qos.m_timeBasedFilter.hasChanged)
 	{
 		TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
 		*p = wdata.m_qos.m_timeBasedFilter;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_ownership.isDefault)
+	if(!wdata.m_qos.m_ownership.isDefault || wdata.m_qos.m_ownership.hasChanged)
 	{
 		OwnershipQosPolicy*p = new OwnershipQosPolicy();
 		*p = wdata.m_qos.m_ownership;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_ownershipStrength.isDefault)
+	if(!wdata.m_qos.m_ownershipStrength.isDefault || wdata.m_qos.m_ownershipStrength.hasChanged)
 	{
 		OwnershipStrengthQosPolicy*p = new OwnershipStrengthQosPolicy();
 		*p = wdata.m_qos.m_ownershipStrength;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_destinationOrder.isDefault)
+	if(!wdata.m_qos.m_destinationOrder.isDefault || wdata.m_qos.m_destinationOrder.hasChanged)
 	{
 		DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
 		*p = wdata.m_qos.m_destinationOrder;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_presentation.isDefault)
+	if(!wdata.m_qos.m_presentation.isDefault || wdata.m_qos.m_presentation.hasChanged)
 	{
 		PresentationQosPolicy*p = new PresentationQosPolicy();
 		*p = wdata.m_qos.m_presentation;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_partition.isDefault)
+	if(!wdata.m_qos.m_partition.isDefault || wdata.m_qos.m_partition.hasChanged)
 	{
 		PartitionQosPolicy*p = new PartitionQosPolicy();
 		*p = wdata.m_qos.m_partition;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_topicData.isDefault)
+	if(!wdata.m_qos.m_topicData.isDefault || wdata.m_qos.m_topicData.hasChanged)
 	{
 		TopicDataQosPolicy*p = new TopicDataQosPolicy();
 		*p = wdata.m_qos.m_topicData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!wdata.m_qos.m_groupData.isDefault)
+	if(!wdata.m_qos.m_groupData.isDefault || wdata.m_qos.m_groupData.hasChanged)
 	{
 		GroupDataQosPolicy*p = new GroupDataQosPolicy();
 		*p = wdata.m_qos.m_groupData;
@@ -594,103 +594,103 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,rdata.m_topicName);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_durability.isDefault)
+	if(!rdata.m_qos.m_durability.isDefault || rdata.m_qos.m_durability.hasChanged)
 	{
 		DurabilityQosPolicy*p = new DurabilityQosPolicy();
 		*p = rdata.m_qos.m_durability;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_durabilityService.isDefault)
+	if(!rdata.m_qos.m_durabilityService.isDefault || rdata.m_qos.m_durabilityService.hasChanged)
 	{
 		DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
 		*p = rdata.m_qos.m_durabilityService;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_deadline.isDefault)
+	if(!rdata.m_qos.m_deadline.isDefault || rdata.m_qos.m_deadline.hasChanged)
 	{
 		DeadlineQosPolicy*p = new DeadlineQosPolicy();
 		*p = rdata.m_qos.m_deadline;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_latencyBudget.isDefault)
+	if(!rdata.m_qos.m_latencyBudget.isDefault || rdata.m_qos.m_latencyBudget.hasChanged)
 	{
 		LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
 		*p = rdata.m_qos.m_latencyBudget;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_liveliness.isDefault)
+	if(!rdata.m_qos.m_liveliness.isDefault || rdata.m_qos.m_liveliness.hasChanged)
 	{
 		LivelinessQosPolicy*p = new LivelinessQosPolicy();
 		*p = rdata.m_qos.m_liveliness;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_reliability.isDefault)
+	if(!rdata.m_qos.m_reliability.isDefault || rdata.m_qos.m_reliability.hasChanged)
 	{
 		ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
 		*p = rdata.m_qos.m_reliability;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_lifespan.isDefault)
+	if(!rdata.m_qos.m_lifespan.isDefault || rdata.m_qos.m_lifespan.hasChanged)
 	{
 		LifespanQosPolicy*p = new LifespanQosPolicy();
 		*p = rdata.m_qos.m_lifespan;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_userData.isDefault)
+	if(!rdata.m_qos.m_userData.isDefault || rdata.m_qos.m_userData.hasChanged)
 	{
 		UserDataQosPolicy*p = new UserDataQosPolicy();
 		*p = rdata.m_qos.m_userData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_timeBasedFilter.isDefault)
+	if(!rdata.m_qos.m_timeBasedFilter.isDefault || rdata.m_qos.m_timeBasedFilter.hasChanged)
 	{
 		TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
 		*p = rdata.m_qos.m_timeBasedFilter;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_ownership.isDefault)
+	if(!rdata.m_qos.m_ownership.isDefault || rdata.m_qos.m_ownership.hasChanged)
 	{
 		OwnershipQosPolicy*p = new OwnershipQosPolicy();
 		*p = rdata.m_qos.m_ownership;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_destinationOrder.isDefault)
+	if(!rdata.m_qos.m_destinationOrder.isDefault || rdata.m_qos.m_destinationOrder.hasChanged)
 	{
 		DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
 		*p = rdata.m_qos.m_destinationOrder;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_presentation.isDefault)
+	if(!rdata.m_qos.m_presentation.isDefault || rdata.m_qos.m_presentation.hasChanged)
 	{
 		PresentationQosPolicy*p = new PresentationQosPolicy();
 		*p = rdata.m_qos.m_presentation;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_partition.isDefault)
+	if(!rdata.m_qos.m_partition.isDefault || rdata.m_qos.m_partition.hasChanged)
 	{
 		PartitionQosPolicy*p = new PartitionQosPolicy();
 		*p = rdata.m_qos.m_partition;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_topicData.isDefault)
+	if(!rdata.m_qos.m_topicData.isDefault || rdata.m_qos.m_topicData.hasChanged)
 	{
 		TopicDataQosPolicy*p = new TopicDataQosPolicy();
 		*p = rdata.m_qos.m_topicData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_groupData.isDefault)
+	if(!rdata.m_qos.m_groupData.isDefault || rdata.m_qos.m_groupData.hasChanged)
 	{
 		GroupDataQosPolicy*p = new GroupDataQosPolicy();
 		*p = rdata.m_qos.m_groupData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_timeBasedFilter.isDefault)
+	if(!rdata.m_qos.m_timeBasedFilter.isDefault || rdata.m_qos.m_timeBasedFilter.hasChanged)
 	{
 		TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
 		*p = rdata.m_qos.m_timeBasedFilter;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(!rdata.m_qos.m_durabilityService.isDefault)
+	if(!rdata.m_qos.m_durabilityService.isDefault || rdata.m_qos.m_durabilityService.hasChanged)
 	{
 		DurabilityServiceQosPolicy * p = new DurabilityServiceQosPolicy();
 		*p = rdata.m_qos.m_durabilityService;

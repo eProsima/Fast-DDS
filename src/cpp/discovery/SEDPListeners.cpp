@@ -219,8 +219,5 @@ void SEDPTopListener::onNewDataMessage()
 }
 
 
-
-
-
 } /* namespace rtps */
 } /* namespace eprosima */
