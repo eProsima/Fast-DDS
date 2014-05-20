@@ -23,7 +23,11 @@
 #include <iostream>
 
 #include "eprosimartps/rtps_all.h"
-
+#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+#include "eprosimartps/common/attributes/PublisherAttributes.h"
+#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+#include "eprosimartps/common/attributes/ParticipantAttributes.h"
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
 //#include "eprosimartps/Participant.h"

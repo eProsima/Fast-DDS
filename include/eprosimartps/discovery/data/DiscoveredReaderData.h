@@ -20,11 +20,34 @@
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
 #include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/common/attributes/TopicAttributes.h"
 
 using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
+
+class ReaderQos{
+public:
+	ReaderQos();
+	virtual ~ReaderQos();
+	DurabilityQosPolicy m_durability;
+		DeadlineQosPolicy m_deadline;
+		LatencyBudgetQosPolicy m_latencyBudget;
+		LivelinessQosPolicy m_liveliness;
+		ReliabilityQosPolicy m_reliability;
+		OwnershipQosPolicy m_ownership;
+		DestinationOrderQosPolicy m_destinationOrder;
+		UserDataQosPolicy m_userData;
+		TimeBasedFilterQosPolicy m_timeBasedFilter;
+		PresentationQosPolicy m_presentation;
+		PartitionQosPolicy m_partition;
+		TopicDataQosPolicy m_topicData;
+		GroupDataQosPolicy m_groupData;
+		DurabilityServiceQosPolicy m_durabilityService;
+		LifespanQosPolicy m_lifespan;
+};
+
 
 /**
  * Class DiscoveredReaderData used by the SEDP.
@@ -40,22 +63,8 @@ public:
 	std::string m_typeName;
 	std::string m_topicName;
 	uint16_t userDefinedId;
+ReaderQos m_qos;
 
-	DurabilityQosPolicy m_durability;
-	DeadlineQosPolicy m_deadline;
-	LatencyBudgetQosPolicy m_latencyBudget;
-	LivelinessQosPolicy m_liveliness;
-	ReliabilityQosPolicy m_reliability;
-	OwnershipQosPolicy m_ownership;
-	DestinationOrderQosPolicy m_destinationOrder;
-	UserDataQosPolicy m_userData;
-	TimeBasedFilterQosPolicy m_timeBasedFilter;
-	PresentationQosPolicy m_presentation;
-	PartitionQosPolicy m_partition;
-	TopicDataQosPolicy m_topicData;
-	GroupDataQosPolicy m_groupData;
-	DurabilityServiceQosPolicy m_durabilityService;
-	LifespanQosPolicy m_lifespan;
 
 	bool isAlive;
 	TopicKind_t topicKind;

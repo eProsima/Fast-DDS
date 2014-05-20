@@ -43,7 +43,7 @@ typedef enum DurabilityQosPolicyKind_t: octet{
 
 #define PARAMETER_KIND_LENGTH 4
 
-class DurabilityQosPolicy : public Parameter_t, public QosPolicy
+class DurabilityQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
 	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),kind(VOLATILE_DURABILITY_QOS){};

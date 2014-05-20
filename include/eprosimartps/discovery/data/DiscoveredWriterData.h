@@ -20,12 +20,35 @@
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
 #include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/common/attributes/TopicAttributes.h"
 
 using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
 
+
+class WriterQos{
+public:
+	WriterQos();
+	virtual ~ WriterQos();
+	DurabilityQosPolicy m_durability;
+	DurabilityServiceQosPolicy m_durabilityService;
+	DeadlineQosPolicy m_deadline;
+	LatencyBudgetQosPolicy m_latencyBudget;
+	LivelinessQosPolicy m_liveliness;
+	ReliabilityQosPolicy m_reliability;
+	LifespanQosPolicy m_lifespan;
+	UserDataQosPolicy m_userData;
+	TimeBasedFilterQosPolicy m_timeBasedFilter;
+	OwnershipQosPolicy m_ownership;
+	OwnershipStrengthQosPolicy m_ownershipStrength;
+	DestinationOrderQosPolicy m_destinationOrder;
+	PresentationQosPolicy m_presentation;
+	PartitionQosPolicy m_partition;
+	TopicDataQosPolicy m_topicData;
+	GroupDataQosPolicy m_groupData;
+};
 
 /**
  * Class DiscoveredWriterData used by the SEDP.
@@ -43,22 +66,23 @@ public:
 	std::string m_topicName;
 	uint16_t userDefinedId;
 	//FIXME: Check Qos default values in page 96 of DDS implementation
-	DurabilityQosPolicy m_durability;
-	DurabilityServiceQosPolicy m_durabilityService;
-	DeadlineQosPolicy m_deadline;
-	LatencyBudgetQosPolicy m_latencyBudget;
-	LivelinessQosPolicy m_liveliness;
-	ReliabilityQosPolicy m_reliability;
-	LifespanQosPolicy m_lifespan;
-	UserDataQosPolicy m_userData;
-	TimeBasedFilterQosPolicy m_timeBasedFilter;
-	OwnershipQosPolicy m_ownership;
-	OwnershipStrengthQosPolicy m_ownershipStrength;
-	DestinationOrderQosPolicy m_destinationOrder;
-	PresentationQosPolicy m_presentation;
-	PartitionQosPolicy m_partition;
-	TopicDataQosPolicy m_topicData;
-	GroupDataQosPolicy m_groupData;
+	WriterQos m_qos;
+//	DurabilityQosPolicy m_durability;
+//	DurabilityServiceQosPolicy m_durabilityService;
+//	DeadlineQosPolicy m_deadline;
+//	LatencyBudgetQosPolicy m_latencyBudget;
+//	LivelinessQosPolicy m_liveliness;
+//	ReliabilityQosPolicy m_reliability;
+//	LifespanQosPolicy m_lifespan;
+//	UserDataQosPolicy m_userData;
+//	TimeBasedFilterQosPolicy m_timeBasedFilter;
+//	OwnershipQosPolicy m_ownership;
+//	OwnershipStrengthQosPolicy m_ownershipStrength;
+//	DestinationOrderQosPolicy m_destinationOrder;
+//	PresentationQosPolicy m_presentation;
+//	PartitionQosPolicy m_partition;
+//	TopicDataQosPolicy m_topicData;
+//	GroupDataQosPolicy m_groupData;
 
 	bool isAlive;
 	TopicKind_t topicKind;

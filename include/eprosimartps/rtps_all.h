@@ -127,11 +127,11 @@ using std::bitset;
 #include "eprosimartps/common/rtps_common.h"
 #include "eprosimartps/common/rtps_parameter_types.h"
 
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-#include "eprosimartps/common/attributes/PublisherAttributes.h"
-#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+//#include "eprosimartps/common/attributes/TopicAttributes.h"
+//#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+//#include "eprosimartps/common/attributes/PublisherAttributes.h"
+//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+//#include "eprosimartps/common/attributes/ParticipantAttributes.h"
 
 
 //#include "ParameterList.h"

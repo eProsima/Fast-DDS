@@ -19,6 +19,11 @@
 #define PARTICIPANTDISCOVERYPROTOCOL_H_
 
 #include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/attributes/TopicAttributes.h"
+//#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+//#include "eprosimartps/common/attributes/PublisherAttributes.h"
+//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+#include "eprosimartps/common/attributes/ParticipantAttributes.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 
@@ -32,7 +37,7 @@ public:
 
 	virtual bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)=0;
 
-	DiscoveredParticipantData* mp_localPDP;
+	DiscoveredParticipantData* mp_localDPData;
 	std::vector<DiscoveredParticipantData> m_discoveredParticipants;
 	uint16_t m_domainId;
 	DiscoveryAttributes m_discovery;

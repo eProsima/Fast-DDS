@@ -42,7 +42,6 @@ namespace CDRMessage{
 	 * @param[in] size Number of bytes (if necessary).
 	 * @return True if correct.
 	 */
-
 	/// @{
 	  inline bool readEntityId(CDRMessage_t* msg,const EntityId_t*id);
 	  inline bool readData(CDRMessage_t* msg,octet* o,uint16_t length);
@@ -58,7 +57,6 @@ namespace CDRMessage{
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 	  inline bool readString(CDRMessage_t*msg,std::string* p_str);
 	  inline bool readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
-
 	///@}
 
 

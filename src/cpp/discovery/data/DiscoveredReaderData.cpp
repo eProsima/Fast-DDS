@@ -22,7 +22,9 @@ namespace rtps {
 
 DiscoveredReaderData::DiscoveredReaderData() {
 	// TODO Auto-generated constructor stub
-
+topicKind = NO_KEY;
+userDefinedId = 0;
+isAlive = false;
 }
 
 DiscoveredReaderData::~DiscoveredReaderData() {

@@ -21,7 +21,8 @@ namespace eprosima {
 namespace rtps {
 
 EndpointDiscoveryProtocol::EndpointDiscoveryProtocol():
-	mp_participant(NULL){
+	mp_participant(NULL),
+	mp_PDP(NULL){
 	// TODO Auto-generated constructor stub
 
 }

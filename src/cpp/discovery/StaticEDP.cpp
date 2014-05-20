@@ -80,7 +80,7 @@ bool StaticEDP::loadXMLFile(const std::string& filename)
 					pdata.m_participantName = xml_participant_child.second.data();
 					if(pdata.m_participantName == this->mp_participant->m_participantName)
 					{
-						p_pdata = this->mp_DPDP->mp_localPDP;
+						p_pdata = this->mp_PDP->mp_localDPData;
 						different_participant = false;
 					}
 				}
@@ -102,7 +102,7 @@ bool StaticEDP::loadXMLFile(const std::string& filename)
 				}
 			}
 			if(different_participant)
-				mp_DPDP->m_discoveredParticipants.push_back(pdata);
+				mp_PDP->m_discoveredParticipants.push_back(pdata);
 		}
 	}
 	return true;
@@ -156,9 +156,9 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "RELIABLE")
-				wdata.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+				wdata.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 			else if (auxString == "BEST_EFFORT")
-				wdata.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+				wdata.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 			else
 			{
 				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
@@ -264,9 +264,9 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "RELIABLE")
-				rdata.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+				rdata.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 			else if (auxString == "BEST_EFFORT")
-				rdata.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+				rdata.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 			else
 			{
 				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
@@ -319,8 +319,8 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched_global = false;
-	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
-			pit!=this->mp_DPDP->m_discoveredParticipants.end();++pit)
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
 		for(std::vector<DiscoveredReaderData>::iterator it = pit->m_readers.begin();
 				it!= pit->m_readers.end();++it)
@@ -331,7 +331,7 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 					it->isAlive && it->userDefinedId>0) //Matching
 			{
 				bool matched = false;
-				if(writer->getStateType() == STATELESS && it->m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
+				if(writer->getStateType() == STATELESS && it->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 				{
 					StatelessWriter* p_SLW = (StatelessWriter*)writer;
 					ReaderLocator RL;
@@ -373,8 +373,8 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched_global = false;
-	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
-			pit!=this->mp_DPDP->m_discoveredParticipants.end();++pit)
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
 		for(std::vector<DiscoveredWriterData>::iterator it = pit->m_writers.begin();
 				it!=pit->m_writers.end();++it)
@@ -407,8 +407,8 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 
 bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 {
-	for(std::vector<DiscoveredWriterData>::iterator it = this->mp_DPDP->mp_localPDP->m_writers.begin();
-			it!=this->mp_DPDP->mp_localPDP->m_writers.begin();++it)
+	for(std::vector<DiscoveredWriterData>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
+			it!=this->mp_PDP->mp_localDPData->m_writers.begin();++it)
 	{
 		if(writer->m_userDefinedId == it->userDefinedId)
 		{
@@ -428,9 +428,9 @@ bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 			{
 				pWarning("Topic Data Type different in XML: " << writer->getTopicDataType() << " vs " <<it->m_typeName <<endl);
 			}
-			if(writer->getStateType() == STATELESS && it->m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
+			if(writer->getStateType() == STATELESS && it->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
 				equal &= false;
-			if(writer->getStateType() == STATEFUL && it->m_reliability.kind != RELIABLE_RELIABILITY_QOS)
+			if(writer->getStateType() == STATEFUL && it->m_qos.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
 				equal &= false;
 			bool found;
 			for(LocatorListIterator paramlit = writer->unicastLocatorList.begin();
@@ -480,8 +480,8 @@ bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 
 bool StaticEDP::checkLocalReaderCreation(RTPSReader* reader)
 {
-	for(std::vector<DiscoveredReaderData>::iterator it = this->mp_DPDP->mp_localPDP->m_readers.begin();
-			it!=this->mp_DPDP->mp_localPDP->m_readers.begin();++it)
+	for(std::vector<DiscoveredReaderData>::iterator it = this->mp_PDP->mp_localDPData->m_readers.begin();
+			it!=this->mp_PDP->mp_localDPData->m_readers.begin();++it)
 	{
 		if(reader->m_userDefinedId == it->userDefinedId)
 		{
@@ -501,9 +501,9 @@ bool StaticEDP::checkLocalReaderCreation(RTPSReader* reader)
 			{
 				pWarning("Topic Data Type different in XML: " << reader->getTopicDataType() << " vs " <<it->m_typeName <<endl);
 			}
-			if(reader->getStateType() == STATELESS && it->m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
+			if(reader->getStateType() == STATELESS && it->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
 				equal &= false;
-			if(reader->getStateType() == STATEFUL && it->m_reliability.kind != RELIABLE_RELIABILITY_QOS)
+			if(reader->getStateType() == STATEFUL && it->m_qos.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
 				equal &= false;
 			bool found;
 			for(LocatorListIterator paramlit = reader->unicastLocatorList.begin();

@@ -22,7 +22,7 @@
 
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/recursive_mutex.hpp>
-
+#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
 #include "eprosimartps/timedevent/HeartbeatResponseDelay.h"
 namespace eprosima {
 namespace rtps {

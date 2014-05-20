@@ -26,6 +26,12 @@
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+//#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+//#include "eprosimartps/common/attributes/PublisherAttributes.h"
+//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+//#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+
 #include "eprosimartps/timedevent/PeriodicHeartbeat.h"
 #include "eprosimartps/timedevent/NackResponseDelay.h"
 #include "eprosimartps/timedevent/NackSupressionDuration.h"

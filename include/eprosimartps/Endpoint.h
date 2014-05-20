@@ -21,6 +21,12 @@
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
 
+#include "eprosimartps/common/attributes/TopicAttributes.h"
+//#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+//#include "eprosimartps/common/attributes/PublisherAttributes.h"
+//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+//#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {

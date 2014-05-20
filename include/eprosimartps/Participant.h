@@ -31,6 +31,13 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "eprosimartps/rtps_all.h"
+
+#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+#include "eprosimartps/common/attributes/PublisherAttributes.h"
+#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/resources/ResourceSend.h"

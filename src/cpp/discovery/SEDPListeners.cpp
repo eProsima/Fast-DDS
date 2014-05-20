@@ -37,7 +37,7 @@ void SEDPPubListener::onNewDataMessage()
 		for(uint8_t i =0;i<12;++i)
 		{
 			guidPrefix.value[i] = change->instanceHandle.value[i];
-			if(change->instanceHandle.value[i] != this->mp_SEDP->mp_DPDP->mp_localPDP->m_guidPrefix.value[i])
+			if(change->instanceHandle.value[i] != this->mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix.value[i])
 			{
 				from_myself = false;
 			}
@@ -49,8 +49,8 @@ void SEDPPubListener::onNewDataMessage()
 			return;
 		}
 		DiscoveredParticipantData* pdata = NULL;
-		for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_DPDP->m_discoveredParticipants.begin();
-				pit!=this->mp_SEDP->mp_DPDP->m_discoveredParticipants.begin();++pit)
+		for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+				pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
 		{
 			if(pit->m_guidPrefix == guidPrefix)
 			{
@@ -103,8 +103,8 @@ void SEDPPubListener::onNewDataMessage()
 		{
 			pdata->m_writers.push_back(*wdata);
 		}
-		for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_DPDP->mp_participant->m_readerList.begin();
-				rit!=this->mp_SEDP->mp_DPDP->mp_participant->m_readerList.end();++rit)
+		for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->m_readerList.begin();
+				rit!=this->mp_SEDP->mp_PDP->mp_participant->m_readerList.end();++rit)
 		{
 			if(already_in_history)
 			{
@@ -130,7 +130,7 @@ void SEDPSubListener::onNewDataMessage()
 		for(uint8_t i =0;i<12;++i)
 		{
 			guidPrefix.value[i] = change->instanceHandle.value[i];
-			if(change->instanceHandle.value[i] != this->mp_SEDP->mp_DPDP->mp_localPDP->m_guidPrefix.value[i])
+			if(change->instanceHandle.value[i] != this->mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix.value[i])
 			{
 				from_myself = false;
 			}
@@ -142,8 +142,8 @@ void SEDPSubListener::onNewDataMessage()
 			return;
 		}
 		DiscoveredParticipantData* pdata = NULL;
-		for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_DPDP->m_discoveredParticipants.begin();
-				pit!=this->mp_SEDP->mp_DPDP->m_discoveredParticipants.begin();++pit)
+		for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+				pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
 		{
 			if(pit->m_guidPrefix == guidPrefix)
 			{
@@ -196,8 +196,8 @@ void SEDPSubListener::onNewDataMessage()
 		{
 			pdata->m_readers.push_back(*rdata);
 		}
-		for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_DPDP->mp_participant->m_writerList.begin();
-				wit!=this->mp_SEDP->mp_DPDP->mp_participant->m_writerList.end();++wit)
+		for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->m_writerList.begin();
+				wit!=this->mp_SEDP->mp_PDP->mp_participant->m_writerList.end();++wit)
 		{
 			if(already_in_history)
 			{
