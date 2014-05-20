@@ -204,7 +204,7 @@ public:
 	uint32_t max_samples_per_instance;
 	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),
 			history_kind(KEEP_LAST_HISTORY_QOS),
-						history_depth(0),max_samples(0),max_instances(0),max_samples_per_instance(0){};
+						history_depth(1),max_samples(0),max_instances(0),max_samples_per_instance(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

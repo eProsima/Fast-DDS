@@ -230,9 +230,9 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "true")
-				rdata.expectsInlineQos = true;
+				rdata.m_readerProxy.expectsInlineQos = true;
 			else if (auxString == "false")
-				rdata.expectsInlineQos = false;
+				rdata.m_readerProxy.expectsInlineQos = false;
 			else
 			{
 				pError("Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid"<<endl);
@@ -335,7 +335,7 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 				{
 					StatelessWriter* p_SLW = (StatelessWriter*)writer;
 					ReaderLocator RL;
-					RL.expectsInlineQos = it->expectsInlineQos;
+					RL.expectsInlineQos = it->m_readerProxy.expectsInlineQos;
 					for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.unicastLocatorList.begin();
 							lit != it->m_readerProxy.unicastLocatorList.end();++lit)
 					{
