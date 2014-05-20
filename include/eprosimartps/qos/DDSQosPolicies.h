@@ -28,9 +28,10 @@ namespace dds{
 
 class QosPolicy{
 public:
-	QosPolicy():isDefault(true){};
+	QosPolicy():isDefault(true),hasChanged(false){};
 	virtual ~ QosPolicy();
 	bool isDefault;
+	bool hasChanged;
 };
 
 
