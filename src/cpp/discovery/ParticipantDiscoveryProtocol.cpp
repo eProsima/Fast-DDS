@@ -21,7 +21,7 @@ namespace eprosima {
 namespace rtps {
 
 ParticipantDiscoveryProtocol::ParticipantDiscoveryProtocol(Participant* p_part):
-		mp_localPDP(NULL),m_domainId(0),
+		mp_localDPData(NULL),m_domainId(0),
 		mp_participant(p_part),
 		mp_EDP(NULL)
 {

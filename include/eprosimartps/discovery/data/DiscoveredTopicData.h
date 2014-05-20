@@ -19,6 +19,7 @@
 #define DISCOVEREDTOPICDATA_H_
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/common/attributes/TopicAttributes.h"
 
 using namespace eprosima::dds;
 namespace eprosima {

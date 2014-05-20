@@ -73,8 +73,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredWriterData";
 		Wparam.userDefinedId = -1;
-		Wparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
 		if(created)
 			mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
@@ -88,8 +88,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredWriterData";
 		Rparam.userDefinedId = -1;
-		Rparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
 		if(created)
 		{
@@ -106,8 +106,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredReaderData";
 		Wparam.userDefinedId = -1;
-		Wparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
 		if(created)
 			mp_SubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
@@ -121,8 +121,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredReaderData";
 		Rparam.userDefinedId = -1;
-		Rparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
 		if(created)
 		{
@@ -139,8 +139,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredTopicData";
 		Wparam.userDefinedId = -1;
-		Wparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulWriter(&mp_TopWriter,Wparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
 		if(created)
 			mp_TopWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_WRITER;
@@ -154,8 +154,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredTopicData";
 		Rparam.userDefinedId = -1;
-		Rparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulReader(&mp_TopReader,Rparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
 		if(created)
 		{
@@ -239,8 +239,8 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 
 	}
 	bool matched = false;
-	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
-			pit!=this->mp_DPDP->m_discoveredParticipants.begin();++pit)
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+			pit!=this->mp_PDP->m_discoveredParticipants.begin();++pit)
 	{
 		for(std::vector<DiscoveredReaderData>::iterator rit = pit->m_readers.begin();
 				rit!=pit->m_readers.end();++rit)
@@ -259,8 +259,8 @@ bool SimpleEDP::localReaderMatching(RTPSReader* W, bool first_time)
 
 	}
 	bool matched = false;
-	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
-			pit!=this->mp_DPDP->m_discoveredParticipants.begin();++pit)
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+			pit!=this->mp_PDP->m_discoveredParticipants.begin();++pit)
 	{
 		for(std::vector<DiscoveredWriterData>::iterator wit = pit->m_writers.begin();
 				wit!=pit->m_writers.end();++wit)
@@ -277,7 +277,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 	if(W->getTopicName() == rdata->m_topicName && W->getTopicDataType() == rdata->m_typeName &&
 			W->getTopicKind() == rdata->topicKind && rdata->isAlive)
 	{
-		if(W->getStateType() == STATELESS && rdata->m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
+		if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 		{
 			StatelessWriter* p_SLW = (StatelessWriter*)W;
 			ReaderLocator RL;
@@ -322,7 +322,7 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 		{
 
 		}
-		else if(R->getStateType() == STATEFUL && wdata->m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+		else if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 		{
 			StatefulReader* p_SFR = (StatefulReader*)R;
 			if(p_SFR->matched_writer_add(&wdata->m_writerProxy))

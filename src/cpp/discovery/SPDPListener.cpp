@@ -34,7 +34,7 @@ bool SPDPListener::newAddedCache()
 	CacheChange_t* change = NULL;
 	if(mp_SPDP->mp_SPDPReader->m_reader_cache.get_last_added_cache(&change))
 	{
-		if(change->instanceHandle == mp_SPDP->mp_localPDP->m_key)
+		if(change->instanceHandle == mp_SPDP->mp_localDPData->m_key)
 		{
 			pInfo("Message from own participant, removing"<<endl)
 							mp_SPDP->mp_SPDPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);

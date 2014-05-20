@@ -25,8 +25,18 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "eprosimartps/rtps_all.h"
+
+#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+#include "eprosimartps/common/attributes/PublisherAttributes.h"
+#include "eprosimartps/common/attributes/SubscriberAttributes.h"
+#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+
 #include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/Endpoint.h"
+
+
+
 #include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/Participant.h"
 
@@ -35,6 +45,9 @@
 #include "eprosimartps/dds/SampleInfo.h"
 
 #include "eprosimartps/utils/Semaphore.h"
+
+
+
 
 using namespace eprosima::dds;
 

@@ -18,34 +18,15 @@
 #ifndef PUBLISHERPARAMETERS_H_
 #define PUBLISHERPARAMETERS_H_
 
-//#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
+
+using namespace eprosima::rtps;
 
 namespace eprosima {
 namespace dds {
 
 
-//
-//class PublisherQos{
-//public:
-//	PublisherQos();
-//	virtual ~PublisherQos();
-//	DurabilityQosPolicy m_durability;
-//	DurabilityServiceQosPolicy m_durabilityService;
-//	DeadlineQosPolicy m_deadline;
-//	LatencyBudgetQosPolicy m_latencyBudget;
-//	LivelinessQosPolicy m_liveliness;
-//	ReliabilityQosPolicy m_reliability;
-//	LifespanQosPolicy m_lifespan;
-//	UserDataQosPolicy m_userData;
-//	TimeBasedFilterQosPolicy m_timeBasedFilter;
-//	OwnershipQosPolicy m_ownership;
-//	OwnershipStrengthQosPolicy m_ownershipStrength;
-//	DestinationOrderQosPolicy m_destinationOrder;
-//	PresentationQosPolicy m_presentation;
-//	PartitionQosPolicy m_partition;
-//	TopicDataQosPolicy m_topicData;
-//	GroupDataQosPolicy m_groupData;
-//};
+
 
 
 
@@ -80,6 +61,8 @@ public:
 	TopicAttributes topic;
 	//! User defined Id for this Publisher (only needed in STATICEDP)
 	int16_t userDefinedId;
+
+	WriterQos qos;
 };
 
 } /* namespace rtps */
