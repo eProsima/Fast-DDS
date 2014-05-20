@@ -42,7 +42,7 @@ public:
 	std::string m_typeName;
 	std::string m_topicName;
 	uint16_t userDefinedId;
-
+	//FIXME: Check Qos default values in page 96 of DDS implementation
 	DurabilityQosPolicy m_durability;
 	DurabilityServiceQosPolicy m_durabilityService;
 	DeadlineQosPolicy m_deadline;

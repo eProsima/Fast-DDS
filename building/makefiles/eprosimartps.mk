@@ -83,7 +83,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp \
 		  $(BASEDIR)/src/cpp/discovery/StaticEDP.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SimpleEDP.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp
+		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp \
+		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp
 		#  $(BASEDIR)/src/cpp/discovery/SimpleEPD.cpp \
 		#   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp 
 		#   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp

@@ -21,6 +21,12 @@
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
+
+#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
+#include "eprosimartps/discovery/data/DiscoveredReaderData.h"
+#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 
 using namespace eprosima::dds;
 
@@ -29,7 +35,8 @@ namespace rtps {
 
 SimpleEDP::SimpleEDP():
 				 mp_PubWriter(NULL),mp_SubWriter(NULL), mp_TopWriter(NULL),
-				 mp_PubReader(NULL),mp_SubReader(NULL), mp_TopReader(NULL)
+				 mp_PubReader(NULL),mp_SubReader(NULL), mp_TopReader(NULL),
+				 m_listeners(this)
 {
 
 
@@ -69,7 +76,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
-		mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
+		if(created)
+			mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
 	}
 	if(m_discovery.m_simpleEDP.use_Publication_Reader)
 	{
@@ -83,7 +91,11 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
-		mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
+		if(created)
+		{
+			mp_PubReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
+			mp_PubReader->mp_listener = (SubscriberListener*)&m_listeners.m_PubListener;
+		}
 	}
 	if(m_discovery.m_simpleEDP.use_Subscription_Writer)
 	{
@@ -97,7 +109,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
 		created &=mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
-		mp_SubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+		if(created)
+			mp_SubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
 	}
 	if(m_discovery.m_simpleEDP.use_Subscription_Reader)
 	{
@@ -110,8 +123,12 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
-		mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+		created &=mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
+		if(created)
+		{
+			mp_SubReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+			mp_SubReader->mp_listener = (SubscriberListener*)&m_listeners.m_SubListener;
+		}
 	}
 	if(m_discovery.m_simpleEDP.use_Topic_Writer)
 	{
@@ -124,8 +141,9 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
-		mp_SubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_WRITER;
+		created &=mp_participant->createStatefulWriter(&mp_TopWriter,Wparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
+		if(created)
+			mp_TopWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_WRITER;
 	}
 	if(m_discovery.m_simpleEDP.use_Topic_Reader)
 	{
@@ -138,8 +156,12 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_DPDP->mp_localPDP->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
-		mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_READER;
+		created &=mp_participant->createStatefulReader(&mp_TopReader,Rparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
+		if(created)
+		{
+			mp_TopReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_READER;
+			mp_TopReader->mp_listener = (SubscriberListener*)&m_listeners.m_TopListener;
+		}
 	}
 	return created;
 }
@@ -208,6 +230,112 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 //		int uax =0;
 //	}
 }
+
+bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
+{
+	if(first_time)
+	{
+		DiscoveredWriterData wdata;
+
+	}
+	bool matched = false;
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
+			pit!=this->mp_DPDP->m_discoveredParticipants.begin();++pit)
+	{
+		for(std::vector<DiscoveredReaderData>::iterator rit = pit->m_readers.begin();
+				rit!=pit->m_readers.end();++rit)
+		{
+			matched |= localWriterMatching(W,&(*rit));
+		}
+	}
+	return matched;
+}
+
+bool SimpleEDP::localReaderMatching(RTPSReader* W, bool first_time)
+{
+	if(first_time)
+	{
+		DiscoveredReaderData wdata;
+
+	}
+	bool matched = false;
+	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_DPDP->m_discoveredParticipants.begin();
+			pit!=this->mp_DPDP->m_discoveredParticipants.begin();++pit)
+	{
+		for(std::vector<DiscoveredWriterData>::iterator wit = pit->m_writers.begin();
+				wit!=pit->m_writers.end();++wit)
+		{
+			matched |= localReaderMatching(W,&(*wit));
+		}
+	}
+	return matched;
+}
+
+bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
+{
+	bool matched = false;
+	if(W->getTopicName() == rdata->m_topicName && W->getTopicDataType() == rdata->m_typeName &&
+			W->getTopicKind() == rdata->topicKind && rdata->isAlive)
+	{
+		if(W->getStateType() == STATELESS && rdata->m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
+		{
+			StatelessWriter* p_SLW = (StatelessWriter*)W;
+			ReaderLocator RL;
+			RL.expectsInlineQos = rdata->expectsInlineQos;
+			for(std::vector<Locator_t>::iterator lit = rdata->m_readerProxy.unicastLocatorList.begin();
+					lit != rdata->m_readerProxy.unicastLocatorList.end();++lit)
+			{
+				//cout << "added unicast RL to my STATELESSWRITER"<<endl;
+				RL.locator = *lit;
+				if(p_SLW->reader_locator_add(RL))
+					matched =true;
+			}
+			for(std::vector<Locator_t>::iterator lit = rdata->m_readerProxy.multicastLocatorList.begin();
+					lit != rdata->m_readerProxy.multicastLocatorList.end();++lit)
+			{
+				RL.locator = *lit;
+				if(p_SLW->reader_locator_add(RL))
+					matched = true;
+			}
+		}
+		else if(W->getStateType() == STATEFUL)
+		{
+			StatefulWriter* p_SFW = (StatefulWriter*)W;
+			if(p_SFW->matched_reader_add(rdata->m_readerProxy))
+				matched = true;
+		}
+		if(matched && W->mp_listener!=NULL)
+			W->mp_listener->onPublicationMatched();
+	}
+	return matched;
+}
+
+bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
+{
+	bool matched = false;
+	if(R->getTopicName() == wdata->m_topicName &&
+			R->getTopicKind() == wdata->topicKind &&
+			R->getTopicDataType() == wdata->m_typeName &&
+			wdata->isAlive) //Matching
+	{
+		if(R->getStateType() == STATELESS)
+		{
+
+		}
+		else if(R->getStateType() == STATEFUL && wdata->m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+		{
+			StatefulReader* p_SFR = (StatefulReader*)R;
+			if(p_SFR->matched_writer_add(&wdata->m_writerProxy))
+				matched = true;
+		}
+		if(matched && R->mp_listener!=NULL)
+			R->mp_listener->onSubscriptionMatched();
+	}
+
+return matched;
+}
+
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

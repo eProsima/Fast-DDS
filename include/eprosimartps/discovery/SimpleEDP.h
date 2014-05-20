@@ -20,7 +20,7 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
-
+#include "eprosimartps/discovery/SEDPListeners.h"
 namespace eprosima {
 namespace rtps {
 
@@ -28,6 +28,7 @@ class StatefulReader;
 class StatefulWriter;
 class RTPSWriter;
 class RTPSReader;
+
 
 class SimpleEDP: public eprosima::rtps::EndpointDiscoveryProtocol {
 public:
@@ -49,10 +50,17 @@ public:
 	bool localWriterMatching(RTPSWriter* writer,bool first_time);
 	bool localReaderMatching(RTPSReader* reader,bool first_time);
 
+	bool localWriterMatching(RTPSWriter* writer,DiscoveredReaderData* rdata);
+	bool localReaderMatching(RTPSReader* reader,DiscoveredWriterData* wdata);
+
+	bool updateWriterMatching(RTPSWriter* writer,DiscoveredReaderData* rdata);
+	bool updateReaderMatching(RTPSReader* reader,DiscoveredWriterData* wdata);
+
 	bool createSEDPEndpoints();
 
 	void assignRemoteEndpoints(DiscoveredParticipantData* pdata);
 
+	SEDPListeners m_listeners;
 };
 
 } /* namespace rtps */

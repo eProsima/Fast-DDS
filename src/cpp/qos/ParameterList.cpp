@@ -394,42 +394,21 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				PartitionQosPolicy * p = new PartitionQosPolicy();
 				p->length = plength;
-				uint16_t pos_ini = msg->pos;
-				std::string in_string;
-				while(pos_ini+plength>msg->pos)
-				{
-					in_string ="";
-					valid &=CDRMessage::readString(msg,&in_string);
-					p->name.push_back(in_string);
-				}
+				valid &= CDRMessage::readOctetVector(msg,&p->name);
 				IF_VALID_ADD
 			}
 			case PID_TOPIC_DATA:
 			{
 				TopicDataQosPolicy * p = new TopicDataQosPolicy();
 				p->length = plength;
-				uint16_t pos_ini = msg->pos;
-				std::string in_string;
-				while(pos_ini+plength>msg->pos)
-				{
-					in_string ="";
-					valid &=CDRMessage::readString(msg,&in_string);
-					p->value.push_back(in_string);
-				}
+				valid &= CDRMessage::readOctetVector(msg,&p->value);
 				IF_VALID_ADD
 			}
 			case PID_GROUP_DATA:
 			{
 				GroupDataQosPolicy * p = new GroupDataQosPolicy();
 				p->length = plength;
-				uint16_t pos_ini = msg->pos;
-				std::string in_string;
-				while(pos_ini+plength>msg->pos)
-				{
-					in_string ="";
-					valid &=CDRMessage::readString(msg,&in_string);
-					p->value.push_back(in_string);
-				}
+				valid &= CDRMessage::readOctetVector(msg,&p->value);
 				IF_VALID_ADD
 			}
 			case PID_HISTORY:
@@ -485,6 +464,52 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				paramlist_byte_size +=plength;
 				break;
 			}
+			case PID_EXPECTS_INLINE_QOS:
+			{
+				ParameterBool_t * p = new ParameterBool_t(PID_EXPECTS_INLINE_QOS,plength);
+				valid &= CDRMessage::readOctet(msg,(octet*)&p->value);
+				IF_VALID_ADD
+			}
+			case PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT:
+			{
+				ParameterCount_t*p = new ParameterCount_t(PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT,plength);
+				valid&=CDRMessage::readUInt32(msg,&p->count);
+				IF_VALID_ADD
+			}
+			case PID_PARTICIPANT_BUILTIN_ENDPOINTS:
+			case PID_BUILTIN_ENDPOINT_SET:
+			{
+				ParameterBuiltinEndpointSet_t * p = new ParameterBuiltinEndpointSet_t(pid,plength);
+				valid &= CDRMessage::readUInt32(msg,&p->endpointSet);
+				IF_VALID_ADD
+			}
+			case PID_PARTICIPANT_LEASE_DURATION:
+			{
+				ParameterTime_t* p = new ParameterTime_t(PID_PARTICIPANT_LEASE_DURATION,plength);
+				valid &= CDRMessage::readInt32(msg,&p->time.seconds);
+				valid &= CDRMessage::readUInt32(msg,&p->time.nanoseconds);
+				IF_VALID_ADD
+			}
+			case PID_CONTENT_FILTER_PROPERTY:
+			{
+				pWarning("ContentFilter not supported in current version"<<endl);
+				msg->pos +=plength;
+				paramlist_byte_size +=plength;
+				break;
+			}
+			case PID_PARTICIPANT_ENTITYID:
+			case PID_GROUP_ENTITYID:
+			{
+				ParameterEntityId_t * p = new ParameterEntityId_t(pid,plength);
+				valid &= CDRMessage::readEntityId(msg,&p->entityId);
+				IF_VALID_ADD
+			}
+			case PID_TYPE_MAX_SIZE_SERIALIZED:
+			{
+				ParameterCount_t * p = new ParameterCount_t(pid,plength);
+				valid &= CDRMessage::readUInt32(msg,&p->count);
+				IF_VALID_ADD
+			}
 			}
 		}
 		else
@@ -497,3 +522,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 
 } /* namespace dds */
 } /* namespace eprosima */
+
+
+
+
