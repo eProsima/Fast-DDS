@@ -257,6 +257,18 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 	return matched;
 }
 
+bool SimpleEDP::updateWriterMatching(RTPSWriter* writer,DiscoveredReaderData* rdata)
+{
+	pError("updateWriterMatching Not YET implemented "<<endl);
+	return true;
+}
+
+bool SimpleEDP::updateReaderMatching(RTPSReader* reader,DiscoveredWriterData* wdata)
+{
+	pError("updateReaderMatching Not YET implemented "<<endl);
+	return true;
+}
+
 bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 {
 	DiscoveredReaderData rdata;

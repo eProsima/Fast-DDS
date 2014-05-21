@@ -38,12 +38,11 @@ protected:
 
 };
 
-
 typedef enum DurabilityQosPolicyKind_t: octet{
 	VOLATILE_DURABILITY_QOS = 0x01,
-			TRANSIENT_LOCAL_DURABILITY_QOS =0x02,
-			TRANSIENT_DURABILITY_QOS = 0x04,
-			PERSISTENT_DURABILITY_QOS = 0x08
+	TRANSIENT_LOCAL_DURABILITY_QOS =0x02,
+	TRANSIENT_DURABILITY_QOS = 0x04,
+	PERSISTENT_DURABILITY_QOS = 0x08
 }DurabilityQosPolicyKind_t;
 
 #define PARAMETER_KIND_LENGTH 4
@@ -71,7 +70,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
- enum LivelinessQosPolicyKind:octet {
+enum LivelinessQosPolicyKind:octet {
 	AUTOMATIC_LIVELINESS_QOS = 0x01,
 			MANUAL_BY_PARTICIPANT_LIVELINESS_QOS=0x02,
 			MANUAL_BY_TOPIC_LIVELINESS_QOS=0x04
@@ -86,12 +85,12 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
- enum ReliabilityQosPolicyKind:octet {
+enum ReliabilityQosPolicyKind:octet {
 	BEST_EFFORT_RELIABILITY_QOS= 0x01,
 	RELIABLE_RELIABILITY_QOS=0x02
 };
 
- enum OwnershipQosPolicyKind:octet {
+enum OwnershipQosPolicyKind:octet {
 	SHARED_OWNERSHIP_QOS=0x01,
 			EXCLUSIVE_OWNERSHIP_QOS=0x02
 };
@@ -104,7 +103,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
- enum DestinationOrderQosPolicyKind :octet{
+enum DestinationOrderQosPolicyKind :octet{
 	BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS,
 	BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS
 };
@@ -143,7 +142,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
- enum PresentationQosPolicyAccessScopeKind:octet
+enum PresentationQosPolicyAccessScopeKind:octet
 {
 	INSTANCE_PRESENTATION_QOS=0x01,
 	TOPIC_PRESENTATION_QOS=0x02,
@@ -249,9 +248,6 @@ public:
 	TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),value(0){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
-
-
-
 
 
 }
