@@ -129,6 +129,7 @@ public:
 };
 
 class UserDataQosPolicy : private Parameter_t, public QosPolicy{
+	friend class ParameterList;
 public:
 	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0){};
 	std::string data;
@@ -165,6 +166,7 @@ public:
 
 class PartitionQosPolicy : private Parameter_t, public QosPolicy
 {
+	friend class ParameterList;
 public:
 	PartitionQosPolicy():Parameter_t(PID_PARTITION,0){};
 	std::vector<octet> name;
@@ -173,6 +175,7 @@ public:
 
 class TopicDataQosPolicy : private Parameter_t, public QosPolicy
 {
+	friend class ParameterList;
 public:
 	std::vector<octet> value;
 	TopicDataQosPolicy():Parameter_t(PID_TOPIC_DATA,0){};
@@ -180,6 +183,7 @@ public:
 };
 class GroupDataQosPolicy : private Parameter_t, public QosPolicy
 {
+	friend class ParameterList;
 public:
 	GroupDataQosPolicy():Parameter_t(PID_GROUP_DATA,0){}
 	std::vector<octet> value;
