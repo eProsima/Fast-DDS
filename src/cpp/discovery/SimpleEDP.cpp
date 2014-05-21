@@ -24,9 +24,11 @@
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 
+#include "eprosimartps/discovery/data/DiscoveredData.h"
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
 #include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+
 
 using namespace eprosima::dds;
 
@@ -194,7 +196,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		mp_PubWriter->matched_reader_add(rp);
 	}
 	auxendp = endp;
-	auxendp &=DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	if(auxendp!=0) //Exist Pub Announcer
 	{
 		WriterProxy_t wp;
@@ -205,7 +207,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		mp_SubReader->matched_writer_add(&wp);
 	}
 	auxendp = endp;
-	auxendp &=DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 	if(auxendp!=0) //Exist Pub Announcer
 	{
 		ReaderProxy_t rp;
@@ -217,26 +219,13 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
 		mp_SubWriter->matched_reader_add(rp);
 	}
-//	auxendp = endp;
-//	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-//	if(auxendp!=0) //Exist Pub Announcer
-//	{
-//		int uax =0;
-//	}
-//	auxendp = endp;
-//	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-//	if(auxendp!=0) //Exist Pub Announcer
-//	{
-//		int uax =0;
-//	}
 }
 
 bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 {
 	if(first_time)
 	{
-		DiscoveredWriterData wdata;
-
+		addNewLocalWriter(W);
 	}
 	bool matched = false;
 	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
@@ -251,12 +240,41 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 	return matched;
 }
 
-bool SimpleEDP::localReaderMatching(RTPSReader* W, bool first_time)
+bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
+{
+	DiscoveredWriterData wdata;
+	wdata.m_writerProxy.unicastLocatorList = W->unicastLocatorList;
+	wdata.m_writerProxy.multicastLocatorList = W->multicastLocatorList;
+	wdata.m_writerProxy.remoteWriterGuid = W->m_guid;
+	wdata.m_key = W->m_guid;
+	wdata.m_participantKey = this->mp_participant->m_guid;
+	wdata.m_topicName = W->getTopicName();
+	wdata.m_typeName = W->getTopicDataType();
+	wdata.topicKind = W->getTopicKind();
+	wdata.m_qos = W->m_qos;
+	this->mp_PDP->mp_localDPData->m_writers.push_back(wdata);
+	//Create a new change in History:
+	CacheChange_t* change = NULL;
+	if(mp_PubWriter->new_change(ALIVE,NULL,&change))
+	{
+		change->instanceHandle = wdata.m_key;
+		ParameterList_t param;
+		DiscoveredData::DiscoveredWriterData2ParameterList(wdata,&param);
+		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+		change->serializedPayload.length = param.m_cdrmsg.length;
+		memcpy(change->serializedPayload.data,param.m_cdrmsg.buffer,change->serializedPayload.length);
+		mp_PubWriter->add_change(change);
+		mp_PubWriter->unsent_change_add(change);
+	}
+	return true;
+}
+
+
+bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 {
 	if(first_time)
 	{
-		DiscoveredReaderData wdata;
-
+		addNewLocalReader(R);
 	}
 	bool matched = false;
 	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
@@ -265,10 +283,40 @@ bool SimpleEDP::localReaderMatching(RTPSReader* W, bool first_time)
 		for(std::vector<DiscoveredWriterData>::iterator wit = pit->m_writers.begin();
 				wit!=pit->m_writers.end();++wit)
 		{
-			matched |= localReaderMatching(W,&(*wit));
+			matched |= localReaderMatching(R,&(*wit));
 		}
 	}
 	return matched;
+}
+
+bool SimpleEDP::addNewLocalReader(RTPSReader* R)
+{
+	DiscoveredReaderData rdata;
+	rdata.m_readerProxy.unicastLocatorList = R->unicastLocatorList;
+	rdata.m_readerProxy.multicastLocatorList = R->multicastLocatorList;
+	rdata.m_readerProxy.remoteReaderGuid = R->m_guid;
+	rdata.m_readerProxy.expectsInlineQos = R->expectsInlineQos;
+	rdata.m_key = R->m_guid;
+	rdata.m_participantKey = this->mp_participant->m_guid;
+	rdata.m_topicName = R->getTopicName();
+	rdata.m_typeName = R->getTopicDataType();
+	rdata.topicKind = R->getTopicKind();
+	rdata.m_qos = R->m_qos;
+	this->mp_PDP->mp_localDPData->m_readers.push_back(rdata);
+	//Create a new change in History:
+	CacheChange_t* change = NULL;
+	if(mp_SubWriter->new_change(ALIVE,NULL,&change))
+	{
+		change->instanceHandle = rdata.m_key;
+		ParameterList_t param;
+		DiscoveredData::DiscoveredReaderData2ParameterList(rdata,&param);
+		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+		change->serializedPayload.length = param.m_cdrmsg.length;
+		memcpy(change->serializedPayload.data,param.m_cdrmsg.buffer,change->serializedPayload.length);
+		mp_SubWriter->add_change(change);
+		mp_SubWriter->unsent_change_add(change);
+	}
+	return true;
 }
 
 bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
