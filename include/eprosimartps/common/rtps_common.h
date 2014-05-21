@@ -153,6 +153,17 @@ typedef struct InstanceHandle_t{
 		}
 		return *this;
 	}
+	InstanceHandle_t& operator=(const GUID_t& guid)
+	{
+		for(uint8_t i =0;i<16;i++)
+		{
+			if(i<12)
+				value[i] = guid.guidPrefix.value[i];
+			else
+				value[i] = guid.entityId.value[i-12];
+		}
+		return *this;
+	}
 	bool operator==(const InstanceHandle_t& ihandle)
 	{
 		for(uint8_t i =0;i<16;++i)

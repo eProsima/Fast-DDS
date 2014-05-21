@@ -154,9 +154,11 @@ protected:
 
 
 	RTPSMessageGroup_t m_cdrmessages;
+
+
 public:
 
-
+	WriterQos m_qos;
 	Publisher* m_Pub;
 	PublisherListener* mp_listener;
 	QosList_t m_qosList;

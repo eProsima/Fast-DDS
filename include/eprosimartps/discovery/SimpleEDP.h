@@ -60,6 +60,9 @@ public:
 
 	void assignRemoteEndpoints(DiscoveredParticipantData* pdata);
 
+	bool addNewLocalWriter(RTPSWriter* W);
+	bool addNewLocalReader(RTPSReader* R);
+
 	SEDPListeners m_listeners;
 };
 

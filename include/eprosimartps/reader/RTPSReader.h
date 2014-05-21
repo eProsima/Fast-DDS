@@ -82,7 +82,7 @@ public:
 	//!Pointer to the object used by the user to implement the behaviour when messages are received.
 	SubscriberListener* mp_listener;
 
-
+	ReaderQos m_qos;
 
 	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
 	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
