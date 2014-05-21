@@ -36,8 +36,8 @@ namespace eprosima {
 namespace rtps {
 
 SimpleEDP::SimpleEDP():
-				 mp_PubWriter(NULL),mp_SubWriter(NULL), mp_TopWriter(NULL),
-				 mp_PubReader(NULL),mp_SubReader(NULL), mp_TopReader(NULL),
+				 mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
+				 mp_PubReader(NULL),mp_SubReader(NULL),// mp_TopReader(NULL),
 				 m_listeners(this)
 {
 
@@ -132,39 +132,7 @@ bool SimpleEDP::createSEDPEndpoints()
 			mp_SubReader->mp_listener = (SubscriberListener*)&m_listeners.m_SubListener;
 		}
 	}
-	if(m_discovery.m_simpleEDP.use_Topic_Writer)
-	{
-		Wparam.historyMaxSize = 100;
-		Wparam.pushMode = true;
-		Wparam.reliability.reliabilityKind = RELIABLE;
-		Wparam.topic.topicName = "DCPSTopic";
-		Wparam.topic.topicKind = WITH_KEY;
-		Wparam.topic.topicDataType = "DiscoveredTopicData";
-		Wparam.userDefinedId = -1;
-		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulWriter(&mp_TopWriter,Wparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
-		if(created)
-			mp_TopWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_WRITER;
-	}
-	if(m_discovery.m_simpleEDP.use_Topic_Reader)
-	{
-		Rparam.historyMaxSize = 100;
-		Rparam.expectsInlineQos = false;
-		Rparam.reliability.reliabilityKind = RELIABLE;
-		Rparam.topic.topicName = "DCPSTopic";
-		Rparam.topic.topicKind = WITH_KEY;
-		Rparam.topic.topicDataType = "DiscoveredTopicData";
-		Rparam.userDefinedId = -1;
-		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_TopReader,Rparam,DISCOVERY_TOPIC_DATA_MAX_SIZE);
-		if(created)
-		{
-			mp_TopReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_TOPIC_READER;
-			mp_TopReader->mp_listener = (SubscriberListener*)&m_listeners.m_TopListener;
-		}
-	}
+
 	return created;
 }
 
