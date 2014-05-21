@@ -115,8 +115,11 @@ void SEDPPubListener::onNewDataMessage()
 				this->mp_SEDP->localReaderMatching(*rit,wdata);
 			}
 		}
+		if(!already_in_history)
+		{
+			delete(wdata);
+		}
 		param.deleteParams();
-		delete(wdata);
 	}
 }
 
@@ -208,15 +211,15 @@ void SEDPSubListener::onNewDataMessage()
 				this->mp_SEDP->localWriterMatching(*wit,rdata);
 			}
 		}
+		if(!already_in_history)
+		{
+			delete(rdata);
+		}
 		param.deleteParams();
-		delete(rdata);
 	}
 }
 
-//void SEDPTopListener::onNewDataMessage()
-//{
-//
-//}
+
 
 
 } /* namespace rtps */

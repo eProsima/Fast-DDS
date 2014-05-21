@@ -44,10 +44,10 @@ bool DeadlineQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool LatencyBudgetQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-		valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-		valid &= CDRMessage::addInt32(msg,duration.seconds);
-		valid &= CDRMessage::addUInt32(msg,duration.nanoseconds);
-		return valid;
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addInt32(msg,duration.seconds);
+	valid &= CDRMessage::addUInt32(msg,duration.nanoseconds);
+	return valid;
 }
 
 bool LivelinessQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
