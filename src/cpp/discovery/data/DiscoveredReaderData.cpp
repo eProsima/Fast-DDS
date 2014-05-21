@@ -20,15 +20,19 @@
 namespace eprosima {
 namespace rtps {
 
-DiscoveredReaderData::DiscoveredReaderData() {
-	// TODO Auto-generated constructor stub
-topicKind = NO_KEY;
-userDefinedId = 0;
-isAlive = false;
-}
-
-DiscoveredReaderData::~DiscoveredReaderData() {
-	// TODO Auto-generated destructor stub
+void ReaderQos::setQos(ReaderQos& qos, bool first_time)
+{
+	if(m_durability.kind != qos.m_durability.kind)
+	{
+		m_durability.hasChanged = true;
+		m_durability.kind = qos.m_durability.kind;
+	}
+	if(m_deadline.period != qos.m_deadline.period)
+	{
+		m_deadline.hasChanged = true;
+		m_deadline.period = qos.m_deadline.period;
+	}
+	if(m_latencyBudget.duration)
 }
 
 } /* namespace rtps */

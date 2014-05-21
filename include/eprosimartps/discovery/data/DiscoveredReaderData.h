@@ -29,8 +29,8 @@ namespace rtps {
 
 class ReaderQos{
 public:
-	ReaderQos();
-	virtual ~ReaderQos();
+	ReaderQos(){};
+	virtual ~ReaderQos(){};
 	DurabilityQosPolicy m_durability;
 		DeadlineQosPolicy m_deadline;
 		LatencyBudgetQosPolicy m_latencyBudget;
@@ -46,6 +46,7 @@ public:
 		GroupDataQosPolicy m_groupData;
 		DurabilityServiceQosPolicy m_durabilityService;
 		LifespanQosPolicy m_lifespan;
+		void setQos(ReaderQos& readerqos, bool first_time);
 };
 
 

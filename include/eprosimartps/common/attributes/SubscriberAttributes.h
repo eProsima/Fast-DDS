@@ -17,7 +17,7 @@
 
 #ifndef SUBSCRIBERPARAMS_H_
 #define SUBSCRIBERPARAMS_H_
-
+#include "eprosimartps/discovery/data/DiscoveredReaderData.h"
 namespace eprosima {
 namespace dds {
 /**
@@ -47,6 +47,8 @@ public:
 	TopicAttributes topic;
 	//!User defined Id, only necessary if the participant uses StaticEndpointDiscoveryProtocol.
 	int16_t userDefinedId;
+	//! Reader qos
+	ReaderQos qos;
 };
 
 } /* namespace rtps */
