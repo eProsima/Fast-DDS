@@ -27,15 +27,15 @@ public:
 	bool use_Publication_Reader;
 	bool use_Subscription_Writer;
 	bool use_Subscription_Reader;
-	bool use_Topic_Writer;
-	bool use_Topic_Reader;
+//	bool use_Topic_Writer;
+	//bool use_Topic_Reader;
 	SimpleEDPAttributes():
 		use_Publication_Writer(true),
 		use_Publication_Reader(true),
 		 use_Subscription_Writer(true),
-		 use_Subscription_Reader(true),
-		 use_Topic_Writer(false),
-		 use_Topic_Reader(false)
+		 use_Subscription_Reader(true)//,
+	//	 use_Topic_Writer(false),
+	//	 use_Topic_Reader(false)
 	{
 
 	}

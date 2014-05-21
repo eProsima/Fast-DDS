@@ -213,10 +213,10 @@ void SEDPSubListener::onNewDataMessage()
 	}
 }
 
-void SEDPTopListener::onNewDataMessage()
-{
-
-}
+//void SEDPTopListener::onNewDataMessage()
+//{
+//
+//}
 
 
 } /* namespace rtps */

@@ -41,10 +41,10 @@ public:
 
 	StatefulWriter* mp_PubWriter;
 	StatefulWriter* mp_SubWriter;
-	StatefulWriter* mp_TopWriter;
+	//StatefulWriter* mp_TopWriter;
 	StatefulReader* mp_PubReader;
 	StatefulReader* mp_SubReader;
-	StatefulReader* mp_TopReader;
+	//StatefulReader* mp_TopReader;
 
 
 	bool localWriterMatching(RTPSWriter* writer,bool first_time);

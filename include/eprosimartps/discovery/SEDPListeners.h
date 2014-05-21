@@ -30,7 +30,7 @@ namespace rtps {
 class SEDPListeners;
 class DiscoveredWriterData;
 class DiscoveredReaderData;
-class DiscoveredTopicData;
+//class DiscoveredTopicData;
 class SimpleEDP;
 
 
@@ -56,25 +56,25 @@ public:
 
 };
 
-class SEDPTopListener: public SubscriberListener {
-public:
-	SEDPTopListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
-	virtual ~SEDPTopListener();
-	void onNewDataMessage();
-	bool processParameterList(ParameterList_t param,DiscoveredTopicData* tdata);
-	SEDPListeners* mp_listeners;
-		SimpleEDP* mp_SEDP;
-
-};
+//class SEDPTopListener: public SubscriberListener {
+//public:
+//	SEDPTopListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
+//	virtual ~SEDPTopListener();
+//	void onNewDataMessage();
+//	bool processParameterList(ParameterList_t param,DiscoveredTopicData* tdata);
+//	SEDPListeners* mp_listeners;
+//		SimpleEDP* mp_SEDP;
+//
+//};
 
 class SEDPListeners
 {
 public:
-	SEDPListeners(SimpleEDP* edp):m_PubListener(this,edp),m_SubListener(this,edp),m_TopListener(this,edp){};
-	~SEDPListeners(){};
+	SEDPListeners(SimpleEDP* edp):m_PubListener(this,edp),m_SubListener(this,edp){};//,m_TopListener(this,edp){};
+	virtual ~SEDPListeners(){};
 	SEDPPubListener m_PubListener;
 	SEDPSubListener m_SubListener;
-	SEDPTopListener m_TopListener;
+	//SEDPTopListener m_TopListener;
 
 };
 
