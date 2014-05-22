@@ -366,8 +366,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	{
 		if(reader == ENTITYID_UNKNOWN || (*it)->m_guid.entityId == reader) //add
 		{
-			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(int)(*it)->m_guid.entityId.value[0]<<"."<<(int)(*it)->m_guid.entityId.value[1]
-			    <<"."<<(int)(*it)->m_guid.entityId.value[2]<<"."<<(int)(*it)->m_guid.entityId.value[3]<<endl);
+			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->m_guid.entityId<<endl);
 			CacheChange_t* change_to_add;
 			if(firstReader->m_guid.entityId == (*it)->m_guid.entityId) //IS the same as the first one
 			{

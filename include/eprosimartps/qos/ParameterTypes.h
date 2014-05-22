@@ -57,7 +57,14 @@ public:
 	virtual bool addToCDRMessage(CDRMessage_t* msg) = 0;
 };
 
-
+class ParameterKey_t:public Parameter_t{
+public:
+	InstanceHandle_t key;
+	ParameterKey_t(){};
+	ParameterKey_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
+	ParameterKey_t(ParameterId_t pid,uint16_t in_length,InstanceHandle_t& ke):Parameter_t(pid,in_length),key(ke){};
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
 
 class ParameterLocator_t: public Parameter_t {
 public:

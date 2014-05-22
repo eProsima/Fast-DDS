@@ -59,9 +59,10 @@ typedef struct GuidPrefix_t{
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
 inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
+	output << std::hex;
 	for(uint8_t i =0;i<12;++i)
 		output<<(int)guiP.value[i]<<".";
-	return output;
+	return output<<std::dec;
 }
 
 #define ENTITYID_UNKNOWN 0x00000000
@@ -139,9 +140,10 @@ typedef struct EntityId_t{
 }EntityId_t;
 
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
+	output << std::hex;
 	for(uint8_t i =0;i<4;++i)
 		output<<(int)enI.value[i]<<".";
-	return output;
+	return output << std::dec;
 }
 
 

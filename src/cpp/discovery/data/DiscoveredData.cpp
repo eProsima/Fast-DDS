@@ -461,6 +461,10 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,wdata.m_topicName);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
+	{
+		ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,wdata.m_key);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
 	if( wdata.m_qos.m_durability.sendAlways() || wdata.m_qos.m_durability.hasChanged)
 	{
 		DurabilityQosPolicy*p = new DurabilityQosPolicy();
@@ -557,6 +561,7 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		*p = wdata.m_qos.m_groupData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
+	pDebugInfo(CYAN << "DiscoveredWriterData converted to ParameterList with " << param->m_parameters.size()<< " parameters"<<endl);
 	return true;
 }
 
@@ -592,6 +597,10 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 	}
 	{
 		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,rdata.m_topicName);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
+	{
+		ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,rdata.m_key);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
 	if(rdata.m_qos.m_durability.sendAlways() || rdata.m_qos.m_durability.hasChanged)

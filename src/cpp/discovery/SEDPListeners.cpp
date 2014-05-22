@@ -29,196 +29,196 @@ namespace rtps {
 
 void SEDPPubListener::onNewDataMessage()
 {
+	pInfo(CYAN<<"SEDP PUB Listener:onNewDataMessage"<<DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_PubReader->m_reader_cache.get_last_added_cache(&change))
 	{
-		bool from_myself = true;
-		GuidPrefix_t guidPrefix;
-		for(uint8_t i =0;i<12;++i)
-		{
-			guidPrefix.value[i] = change->instanceHandle.value[i];
-			if(change->instanceHandle.value[i] != this->mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix.value[i])
-			{
-				from_myself = false;
-			}
-		}
-		if(from_myself)
-		{
-			pInfo("Message from own participant, removing"<<endl);
-			this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
-			return;
-		}
-		DiscoveredParticipantData* pdata = NULL;
-		for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
-				pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
-		{
-			if(pit->m_guidPrefix == guidPrefix)
-			{
-				pdata = &(*pit);
-				break;
-			}
-		}
-		if(pdata == NULL)
-		{
-			pWarning("PubReader received message from unkown participant, ignoring"<<endl);
-			return;
-		}
-		bool already_in_history = false;
-		//Check if CacheChange_t with same Key is already in History:
-		for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();
-				it!=this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();++it)
-		{
-			if((*it)->instanceHandle == change->instanceHandle)
-			{
-				this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-				already_in_history = true;
-				break;
-			}
-		}
-		DiscoveredWriterData* wdata;
-		if(already_in_history)
-		{
-			for(std::vector<DiscoveredWriterData>::iterator it = pdata->m_writers.begin();
-					it!=pdata->m_writers.end();++it)
-			{
-				if(it->m_key == change->instanceHandle)
-				{
-					wdata = &(*it);
-					break;
-				}
-			}
-		}
-		else
-		{
-			wdata = new DiscoveredWriterData();
-		}
 		ParameterList_t param;
 		CDRMessage_t msg;
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
 		msg.length = change->serializedPayload.length;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
-		DiscoveredData::ParameterList2DiscoveredWriterData(param,wdata);
-		if(!already_in_history)
+		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
 		{
-			pdata->m_writers.push_back(*wdata);
-		}
-		for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.begin();
-				rit!=this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.end();++rit)
-		{
-			if(already_in_history)
+			DiscoveredWriterData wdata;
+			if(DiscoveredData::ParameterList2DiscoveredWriterData(param,&wdata))
 			{
-				this->mp_SEDP->updateReaderMatching(*rit,wdata);
+				change->instanceHandle = wdata.m_key;
+				if(wdata.m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
+				{
+					//cout << "SMAE"<<endl;
+					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
+							this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					return;
+				}
+				DiscoveredParticipantData* pdata = NULL;
+				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
+				{
+					if(pit->m_guidPrefix == wdata.m_writerProxy.remoteWriterGuid.guidPrefix)
+					{
+						pdata = &(*pit);
+						break;
+					}
+				}
+				if(pdata == NULL)
+				{
+					pWarning("PubReader received message from UNKNOWN participant, removing"<<endl);
+					this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					return;
+				}
+				bool already_in_history = false;
+				//Check if CacheChange_t with same Key is already in History:
+				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();
+						it!=this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();++it)
+				{
+					if((*it)->instanceHandle == change->instanceHandle)
+					{
+						this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+						already_in_history = true;
+						break;
+					}
+				}
+				DiscoveredWriterData* wdataptr = NULL;
+				if(already_in_history)
+				{
+					for(std::vector<DiscoveredWriterData>::iterator it = pdata->m_writers.begin();
+							it!=pdata->m_writers.end();++it)
+					{
+						if(it->m_key == change->instanceHandle)
+						{
+							wdataptr = &(*it);
+							*wdataptr = wdata;
+							break;
+						}
+					}
+				}
+				else
+				{
+					wdataptr = &wdata;
+					pdata->m_writers.push_back(*wdataptr);
+				}
+				for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.begin();
+						rit!=this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.end();++rit)
+				{
+					if(already_in_history)
+					{
+						this->mp_SEDP->updateReaderMatching(*rit,wdataptr);
+					}
+					else
+					{
+						this->mp_SEDP->localReaderMatching(*rit,wdataptr);
+					}
+				}
 			}
-			else
-			{
-				this->mp_SEDP->localReaderMatching(*rit,wdata);
-			}
+			param.deleteParams();
 		}
-		if(!already_in_history)
+		else
 		{
-			delete(wdata);
+			pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+			param.deleteParams();
+			return;
 		}
-		param.deleteParams();
 	}
+	return;
 }
+
 
 void SEDPSubListener::onNewDataMessage()
 {
+	pInfo(CYAN<<"SEDP SUB Listener:onNewDataMessage"<<DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_SubReader->m_reader_cache.get_last_added_cache(&change))
 	{
-		bool from_myself = true;
-		GuidPrefix_t guidPrefix;
-		for(uint8_t i =0;i<12;++i)
-		{
-			guidPrefix.value[i] = change->instanceHandle.value[i];
-			if(change->instanceHandle.value[i] != this->mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix.value[i])
-			{
-				from_myself = false;
-			}
-		}
-		if(from_myself)
-		{
-			pInfo("Message from own participant, removing"<<endl);
-			this->mp_SEDP->mp_SubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
-			return;
-		}
-		DiscoveredParticipantData* pdata = NULL;
-		for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
-				pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
-		{
-			if(pit->m_guidPrefix == guidPrefix)
-			{
-				pdata = &(*pit);
-				break;
-			}
-		}
-		if(pdata == NULL)
-		{
-			pWarning("SubReader received message from unkown participant, ignoring"<<endl);
-			return;
-		}
-		bool already_in_history = false;
-		//Check if CacheChange_t with same Key is already in History:
-		for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->m_reader_cache.m_changes.begin();
-				it!=this->mp_SEDP->mp_SubReader->m_reader_cache.m_changes.begin();++it)
-		{
-			if((*it)->instanceHandle == change->instanceHandle)
-			{
-				this->mp_SEDP->mp_SubReader->m_reader_cache.remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-				already_in_history = true;
-				break;
-			}
-		}
-		DiscoveredReaderData* rdata;
-		if(already_in_history)
-		{
-			for(std::vector<DiscoveredReaderData>::iterator it = pdata->m_readers.begin();
-					it!=pdata->m_readers.end();++it)
-			{
-				if(it->m_key == change->instanceHandle)
-				{
-					rdata = &(*it);
-					break;
-				}
-			}
-		}
-		else
-		{
-			rdata = new DiscoveredReaderData();
-		}
 		ParameterList_t param;
 		CDRMessage_t msg;
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
 		msg.length = change->serializedPayload.length;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
-		DiscoveredData::ParameterList2DiscoveredReaderData(param,rdata);
-		if(!already_in_history)
+		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
 		{
-			pdata->m_readers.push_back(*rdata);
-		}
-		for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.begin();
-				wit!=this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.end();++wit)
-		{
-			if(already_in_history)
+			DiscoveredReaderData rdata;
+			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,&rdata))
 			{
-				this->mp_SEDP->updateWriterMatching(*wit,rdata);
+				change->instanceHandle = rdata.m_key;
+				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
+				{
+					//cout << "SMAE"<<endl;
+					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
+							this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					return;
+				}
+				DiscoveredParticipantData* pdata = NULL;
+				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
+				{
+					if(pit->m_guidPrefix == rdata.m_readerProxy.remoteReaderGuid.guidPrefix)
+					{
+						pdata = &(*pit);
+						break;
+					}
+				}
+				if(pdata == NULL)
+				{
+					pWarning("PubReader received message from UNKNOWN participant, removing"<<endl);
+					this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					return;
+				}
+				bool already_in_history = false;
+				//Check if CacheChange_t with same Key is already in History:
+				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();
+						it!=this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();++it)
+				{
+					if((*it)->instanceHandle == change->instanceHandle)
+					{
+						this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+						already_in_history = true;
+						break;
+					}
+				}
+				DiscoveredReaderData* rdataptr = NULL;
+				if(already_in_history)
+				{
+					for(std::vector<DiscoveredReaderData>::iterator it = pdata->m_readers.begin();
+							it!=pdata->m_readers.end();++it)
+					{
+						if(it->m_key == change->instanceHandle)
+						{
+							rdataptr = &(*it);
+							*rdataptr = rdata;
+							break;
+						}
+					}
+				}
+				else
+				{
+					rdataptr = &rdata;
+					pdata->m_readers.push_back(*rdataptr);
+				}
+				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.begin();
+						wit!=this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.end();++wit)
+				{
+					if(already_in_history)
+					{
+						this->mp_SEDP->updateWriterMatching(*wit,rdataptr);
+					}
+					else
+					{
+						this->mp_SEDP->localWriterMatching(*wit,rdataptr);
+					}
+				}
 			}
-			else
-			{
-				this->mp_SEDP->localWriterMatching(*wit,rdata);
-			}
+			param.deleteParams();
 		}
-		if(!already_in_history)
+		else
 		{
-			delete(rdata);
+			pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+			param.deleteParams();
+			return;
 		}
-		param.deleteParams();
 	}
+	return;
 }
-
 
 
 
