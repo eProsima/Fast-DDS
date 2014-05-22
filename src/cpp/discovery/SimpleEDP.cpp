@@ -27,7 +27,7 @@
 #include "eprosimartps/discovery/data/DiscoveredData.h"
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
-#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 
 
 using namespace eprosima::dds;

@@ -21,7 +21,7 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
-#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 
 namespace eprosima {
 namespace rtps {
@@ -76,7 +76,7 @@ public:
 
 	std::vector<DiscoveredWriterData> m_writers;
 	std::vector<DiscoveredReaderData> m_readers;
-	std::vector<DiscoveredTopicData> m_topics;
+//	std::vector<DiscoveredTopicData> m_topics;
 
 	bool isAlive;
 };

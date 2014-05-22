@@ -57,7 +57,7 @@ class DiscoveredReaderData {
 public:
 	DiscoveredReaderData():
 		userDefinedId(-1),isAlive(false),topicKind(NO_KEY){};
-	virtual ~DiscoveredReaderData();
+	virtual ~DiscoveredReaderData(){};
 	ReaderProxy_t m_readerProxy;
 	InstanceHandle_t m_key;
 	InstanceHandle_t m_participantKey;

@@ -191,6 +191,8 @@ int main(int argc, char** argv){
 		Wparam.reliability.nackResponseDelay.seconds = 5;
 		Wparam.reliability.reliabilityKind = BEST_EFFORT;
 		Wparam.userDefinedId = 1;
+		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_DURABILITY_QOS;
+
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		SubscriberAttributes Rparam;
 		Rparam.historyMaxSize = 50;

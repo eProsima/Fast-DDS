@@ -19,7 +19,7 @@
 #include "eprosimartps/discovery/data/DiscoveredData.h"
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
-#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 
 namespace eprosima{
@@ -326,110 +326,110 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 }
 
 
-bool DiscoveredData::ParameterList2DiscoveredTopicData(ParameterList_t& param, DiscoveredTopicData* tdata)
-{
-	for(std::vector<Parameter_t*>::iterator it = param.m_parameters.begin();
-			it!=param.m_parameters.end();++it)
-	{
-		switch((*it)->Pid)
-		{
-		case PID_DURABILITY:
-		{
-			DurabilityQosPolicy * p = (DurabilityQosPolicy*)(*it);
-			tdata->m_durability = *p;
-			break;
-		}
-		case PID_DEADLINE:
-		{
-			DeadlineQosPolicy * p = (DeadlineQosPolicy*)(*it);
-			tdata->m_deadline = *p;
-			break;
-		}
-		case PID_LATENCY_BUDGET:
-		{
-			LatencyBudgetQosPolicy * p = (LatencyBudgetQosPolicy*)(*it);
-			tdata->m_latencyBudget = *p;
-			break;
-		}
-		case PID_LIVELINESS:
-		{
-			LivelinessQosPolicy * p = (LivelinessQosPolicy*)(*it);
-			tdata->m_liveliness = *p;
-			break;
-		}
-		case PID_RELIABILITY:
-		{
-			ReliabilityQosPolicy * p = (ReliabilityQosPolicy*)(*it);
-			tdata->m_reliability = *p;
-			break;
-		}
-		case PID_TRANSPORT_PRIORITY:
-		{
-			TransportPriorityQosPolicy * p = (TransportPriorityQosPolicy*)(*it);
-			tdata->m_transportPriority = *p;
-			break;
-		}
-		case PID_LIFESPAN:
-		{
-			LifespanQosPolicy * p = (LifespanQosPolicy*)(*it);
-			tdata->m_lifespan = *p;
-			break;
-		}
-		case PID_OWNERSHIP:
-		{
-			OwnershipQosPolicy * p = (OwnershipQosPolicy*)(*it);
-			tdata->m_ownership = *p;
-			break;
-		}
-		case PID_DESTINATION_ORDER:
-		{
-			DestinationOrderQosPolicy * p = (DestinationOrderQosPolicy*)(*it);
-			tdata->m_destinationOrder = *p;
-			break;
-		}
-		case PID_HISTORY:
-		{
-			HistoryQosPolicy* p = (HistoryQosPolicy*)(*it);
-			tdata->m_history = *p;
-			break;
-		}
-		case PID_RESOURCE_LIMITS:
-		{
-			ResourceLimitsQosPolicy* p = (ResourceLimitsQosPolicy*)(*it);
-			tdata->m_resourceLimits = *p;
-			break;
-		}
-		case PID_PRESENTATION:
-		{
-			PresentationQosPolicy * p = (PresentationQosPolicy*)(*it);
-			tdata->m_presentation = *p;
-			break;
-		}
-		case PID_TOPIC_DATA:
-		{
-			TopicDataQosPolicy * p = (TopicDataQosPolicy*)(*it);
-			tdata->m_topicData = *p;
-			break;
-		}
-		case PID_TOPIC_NAME:
-		{
-			ParameterString_t*p = (ParameterString_t*)(*it);
-			tdata->m_topicName = p->m_string;
-			break;
-		}
-		case PID_TYPE_NAME:
-		{
-			ParameterString_t*p = (ParameterString_t*)(*it);
-			tdata->m_typeName = p->m_string;
-			break;
-		}
-
-		default:
-			break;
-		}
-	}
-	return true;
-}
+//bool DiscoveredData::ParameterList2DiscoveredTopicData(ParameterList_t& param, DiscoveredTopicData* tdata)
+//{
+//	for(std::vector<Parameter_t*>::iterator it = param.m_parameters.begin();
+//			it!=param.m_parameters.end();++it)
+//	{
+//		switch((*it)->Pid)
+//		{
+//		case PID_DURABILITY:
+//		{
+//			DurabilityQosPolicy * p = (DurabilityQosPolicy*)(*it);
+//			tdata->m_durability = *p;
+//			break;
+//		}
+//		case PID_DEADLINE:
+//		{
+//			DeadlineQosPolicy * p = (DeadlineQosPolicy*)(*it);
+//			tdata->m_deadline = *p;
+//			break;
+//		}
+//		case PID_LATENCY_BUDGET:
+//		{
+//			LatencyBudgetQosPolicy * p = (LatencyBudgetQosPolicy*)(*it);
+//			tdata->m_latencyBudget = *p;
+//			break;
+//		}
+//		case PID_LIVELINESS:
+//		{
+//			LivelinessQosPolicy * p = (LivelinessQosPolicy*)(*it);
+//			tdata->m_liveliness = *p;
+//			break;
+//		}
+//		case PID_RELIABILITY:
+//		{
+//			ReliabilityQosPolicy * p = (ReliabilityQosPolicy*)(*it);
+//			tdata->m_reliability = *p;
+//			break;
+//		}
+//		case PID_TRANSPORT_PRIORITY:
+//		{
+//			TransportPriorityQosPolicy * p = (TransportPriorityQosPolicy*)(*it);
+//			tdata->m_transportPriority = *p;
+//			break;
+//		}
+//		case PID_LIFESPAN:
+//		{
+//			LifespanQosPolicy * p = (LifespanQosPolicy*)(*it);
+//			tdata->m_lifespan = *p;
+//			break;
+//		}
+//		case PID_OWNERSHIP:
+//		{
+//			OwnershipQosPolicy * p = (OwnershipQosPolicy*)(*it);
+//			tdata->m_ownership = *p;
+//			break;
+//		}
+//		case PID_DESTINATION_ORDER:
+//		{
+//			DestinationOrderQosPolicy * p = (DestinationOrderQosPolicy*)(*it);
+//			tdata->m_destinationOrder = *p;
+//			break;
+//		}
+//		case PID_HISTORY:
+//		{
+//			HistoryQosPolicy* p = (HistoryQosPolicy*)(*it);
+//			tdata->m_history = *p;
+//			break;
+//		}
+//		case PID_RESOURCE_LIMITS:
+//		{
+//			ResourceLimitsQosPolicy* p = (ResourceLimitsQosPolicy*)(*it);
+//			tdata->m_resourceLimits = *p;
+//			break;
+//		}
+//		case PID_PRESENTATION:
+//		{
+//			PresentationQosPolicy * p = (PresentationQosPolicy*)(*it);
+//			tdata->m_presentation = *p;
+//			break;
+//		}
+//		case PID_TOPIC_DATA:
+//		{
+//			TopicDataQosPolicy * p = (TopicDataQosPolicy*)(*it);
+//			tdata->m_topicData = *p;
+//			break;
+//		}
+//		case PID_TOPIC_NAME:
+//		{
+//			ParameterString_t*p = (ParameterString_t*)(*it);
+//			tdata->m_topicName = p->m_string;
+//			break;
+//		}
+//		case PID_TYPE_NAME:
+//		{
+//			ParameterString_t*p = (ParameterString_t*)(*it);
+//			tdata->m_typeName = p->m_string;
+//			break;
+//		}
+//
+//		default:
+//			break;
+//		}
+//	}
+//	return true;
+//}
 
 bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wdata, ParameterList_t* param)
 {
