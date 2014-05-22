@@ -68,9 +68,6 @@ class RTPSWriter;
 class Endpoint;
 class ParticipantDiscoveryProtocol;
 
-
-
-
 /**
  * @class Participant
  * @brief Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.

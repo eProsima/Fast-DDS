@@ -45,16 +45,17 @@ typedef struct GuidPrefix_t{
 		}
 		return *this;
 	}
-	bool operator==(GuidPrefix_t& guid2){
-		for(uint8_t i =0;i<12;i++)
-		{
-			if(value[i] != guid2.value[i])
-				return false;
-		}
-		return true;
-	}
 }GuidPrefix_t;
 
+inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
+{
+	for(uint8_t i =0;i<12;i++)
+	{
+		if(guid1.value[i] != guid2.value[i])
+			return false;
+	}
+	return true;
+}
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
@@ -107,27 +108,6 @@ typedef struct EntityId_t{
 		return *this;
 		//return id;
 	}
-	bool operator==(uint32_t id2)
-	{
-		if(DEFAULT_ENDIAN == LITTLEEND)
-			reverse();
-		uint32_t* aux1 = (uint32_t*)(value);
-		bool result = true;
-		if(*aux1 == id2)
-			result = true;
-		else
-			result = false;
-		if(DEFAULT_ENDIAN == LITTLEEND)
-			reverse();
-		return result;
-	}
-	bool operator==(const EntityId_t& id2){
-		uint32_t* aux1 = (uint32_t*)(value);
-		uint32_t* aux2 = (uint32_t*)(id2.value);
-		if(*aux1 == *aux2)
-			return true;
-		return false;
-	}
 	void reverse(){
 		octet oaux;
 		oaux = value[3];
@@ -138,6 +118,31 @@ typedef struct EntityId_t{
 		value[1] = oaux;
 	}
 }EntityId_t;
+
+inline bool operator==(EntityId_t& eid,const uint32_t id2)
+{
+	if(DEFAULT_ENDIAN == LITTLEEND)
+		eid.reverse();
+	uint32_t* aux1 = (uint32_t*)(eid.value);
+	bool result = true;
+	if(*aux1 == id2)
+		result = true;
+	else
+		result = false;
+	if(DEFAULT_ENDIAN == LITTLEEND)
+		eid.reverse();
+	return result;
+}
+inline bool operator==(const EntityId_t& id1,const EntityId_t& id2){
+	uint32_t* aux1 = (uint32_t*)(id1.value);
+	uint32_t* aux2 = (uint32_t*)(id2.value);
+	if(*aux1 == *aux2)
+		return true;
+	return false;
+}
+
+
+
 
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 	output << std::hex;
@@ -161,14 +166,14 @@ typedef struct GUID_t{
 		entityId = guid.entityId;
 		return *this;
 	}
-	bool operator==(GUID_t& g2){
-		if(guidPrefix == g2.guidPrefix && entityId==g2.entityId)
-			return true;
-		else
-			return false;
-	}
-
 }GUID_t;
+
+inline bool operator==(const GUID_t& g1,const GUID_t& g2){
+	if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
+		return true;
+	else
+		return false;
+}
 
 #define GUID_UNKNOWN(gui) {GUIDPREFIX_UNKNOWN(gui.guidPrefix); gui.entityId = ENTITYID_UNKNOWN;}
 

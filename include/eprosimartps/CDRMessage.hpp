@@ -121,7 +121,7 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 		{
 			if((bitmap & (1<<(31-bit%32)))==(1<<(31-bit%32)))
 			{
-				seqNum = sns->base+i*32+bit;
+				seqNum = sns->base+(i*32+bit);
 				if(!sns->add(seqNum))
 				{
 					pWarning("CDRMessage:readSequenceNumberSet:malformed seqNumSet"<<endl;);

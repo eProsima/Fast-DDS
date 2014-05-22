@@ -270,8 +270,8 @@ bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 
 	boost::lock_guard<WriterProxy> guard(*this);
 	uint32_t n_to_add;
-	SequenceNumber_t maxseqNum = max_seq_num();
-	if((maxseqNum+1) < (seq)) //if the maximum plus one is less than our seqNum we need to add
+	SequenceNumber_t maxseqNum(max_seq_num());
+	if((maxseqNum+1).to64long() < (seq).to64long()) //if the maximum plus one is less than our seqNum we need to add
 	{
 		n_to_add = (uint32_t)(seq.to64long() - maxseqNum.to64long() -1);
 		pDebugInfo("WriterProxy:add_unknown_changes: up to: "<<seq.to64long() << " || adding " << n_to_add << " changes."<<endl;);
