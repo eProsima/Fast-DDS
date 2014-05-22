@@ -95,6 +95,10 @@ public:
 	StateKind_t getStateType() const {
 		return m_stateType;
 	}
+
+	bool m_acceptMessagesToUnknownReaders;
+
+	bool acceptMsgDirectedTo(EntityId_t& entityId);
 };
 
 } /* namespace rtps */

@@ -148,9 +148,16 @@ void StatelessWriter::unsent_changes_not_empty()
 		{
 			if(m_pushMode)
 			{
-				//	std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
-				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-						&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
+				{
+					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
+							&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
+				}
+				else
+				{
+					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
+							&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+				}
 				rit->unsent_changes.clear();
 			}
 			else
