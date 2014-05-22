@@ -16,13 +16,14 @@
 
 #include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/CDRMessage.h"
-
-#include "eprosimartps/qos/ParameterList.h"
-
+//#include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/eClock.h"
+#include "eprosimartps/common/RTPS_messages.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 using namespace boost::posix_time;
 

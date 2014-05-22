@@ -18,10 +18,10 @@
 #ifndef RTPS_GUID_H_
 #define RTPS_GUID_H_
 
+#include "eprosimartps/common/types/common_types.h"
+
 namespace eprosima{
 namespace rtps{
-
-
 
 #define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<12;i++) g.value[i]=0x0;}
 

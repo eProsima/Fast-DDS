@@ -18,10 +18,13 @@
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Guid.h"
 
-#include "eprosimartps/common/attributes/TopicAttributes.h"
+//#include "eprosimartps/dds/DDSTopicDataType.h"
+
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
 //#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
 //#include "eprosimartps/common/attributes/PublisherAttributes.h"
 //#include "eprosimartps/common/attributes/SubscriberAttributes.h"
@@ -30,12 +33,20 @@
 using namespace eprosima::dds;
 
 namespace eprosima {
+
+namespace dds{class DDSTopicDataType;}
+
 namespace rtps {
 
 class ResourceListen;
 class Participant;
 class ResourceSend;
 class ResourceEvent;
+
+typedef enum StateKind_t{
+	STATELESS,//!< STATELESS
+	STATEFUL  //!< STATEFUL
+}StateKind_t;
 
 
 /**
@@ -61,6 +72,9 @@ public:
 	DDSTopicDataType* mp_type;
 	int16_t m_userDefinedId;
 	TopicAttributes m_topic;
+
+	//!State type of the endpoitn
+		StateKind_t m_stateType;
 	/**
 	 * Get the topic Data Type Name
 	 * @return The name of the data type.
@@ -68,6 +82,11 @@ public:
 	const std::string& getTopicDataType() const {
 		return m_topic.topicDataType;
 	}
+
+	StateKind_t getStateType() const {
+			return m_stateType;
+		}
+
 	/**
 	 * Get the topic name.
 	 * @return Topic name.

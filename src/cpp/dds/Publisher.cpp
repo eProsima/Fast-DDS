@@ -16,6 +16,8 @@
  */
 
 #include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/dds/PublisherListener.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/writer/ReaderLocator.h"
 #include "eprosimartps/writer/StatelessWriter.h"
