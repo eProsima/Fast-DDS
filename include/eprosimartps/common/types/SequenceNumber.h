@@ -17,6 +17,11 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
+
+#include "eprosimartps/common/types/common_types.h"
+
+#include <vector>
+#include <cmath>
 #include <algorithm>
 namespace eprosima{
 namespace rtps{

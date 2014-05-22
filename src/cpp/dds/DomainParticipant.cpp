@@ -16,10 +16,15 @@
  */
 
 #include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/PublisherListener.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/Participant.h"
 
 namespace eprosima {
@@ -116,7 +121,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 			return NULL;
 		}
 	}
-	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
+	if(WParam.qos.m_reliability == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false))
@@ -130,7 +135,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 		SW->mp_type = p_type;
 
 	}
-	else if(WParam.reliability.reliabilityKind == RELIABLE)
+	else if(WParam.qos.m_reliability == RELIABLE_RELIABILITY_QOS)
 	{
 		StatefulWriter* SF;
 		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize,false))
@@ -180,7 +185,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 		}
 	}
 	Subscriber* Sub = NULL;
-	if(RParam.reliability.reliabilityKind == BEST_EFFORT)
+	if(RParam.qos.m_reliability == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessReader* SR;
 		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize,false))
@@ -195,7 +200,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 		Sub->topicName = RParam.topic.topicName;
 		Sub->topicDataType = RParam.topic.topicDataType;
 	}
-	else if(RParam.reliability.reliabilityKind == RELIABLE)
+	else if(RParam.qos.m_reliability == RELIABLE_RELIABILITY_QOS)
 	{
 		pDebugInfo("Stateful"<<endl);
 		StatefulReader* SFR;

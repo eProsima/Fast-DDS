@@ -17,9 +17,28 @@
 
 #ifndef SUBSCRIBERPARAMS_H_
 #define SUBSCRIBERPARAMS_H_
-#include "eprosimartps/discovery/data/DiscoveredReaderData.h"
+
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/common/types/Locator.h"
+
+#include "eprosimartps/qos/ReaderQos.h"
+
 namespace eprosima {
 namespace dds {
+
+class SubscriberTimes{
+	//!Delay the response to a HB.
+		Duration_t heartbeatResponseDelay;
+		//!Ignore too son received HB.
+		Duration_t heartbeatSupressionDuration;
+		SubscriberTimes()
+		{
+			heartbeatResponseDelay.nanoseconds = 500*1000*1000;
+		}
+		~SubscriberTimes(){};
+};
+
 /**
  * Class SubscriberAttributes, used by the user to define the attributes of a Subscriber.
  * @ingroup ATTRIBUTESMODULE
@@ -41,8 +60,8 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicas LocatorList where the Subscriber should be listening.
 	LocatorList_t multicastLocatorList;
-	//!Realiability attributes of the Subscriber.
-	SubscriberReliability reliability;
+	//!Times attributes of the Subscriber.
+	SubscriberTimes times;
 	//!Topic Attributes of the topic associated with this subscriber.
 	TopicAttributes topic;
 	//!User defined Id, only necessary if the participant uses StaticEndpointDiscoveryProtocol.

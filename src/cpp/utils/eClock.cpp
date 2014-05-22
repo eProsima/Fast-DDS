@@ -16,7 +16,7 @@
  */
 
 #include "eprosimartps/utils/eClock.h"
-
+#include <cmath>
 namespace eprosima {
 namespace rtps {
 

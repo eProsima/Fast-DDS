@@ -21,16 +21,15 @@
 #define PUBLISHER_H_
 #include <iostream>
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/common/rtps_messages.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Guid.h"
 
 namespace eprosima {
 
 namespace rtps{
 class RTPSWriter;
+class DDSTopicDataType;
+class PublisherListener;
 }
 
 using namespace rtps;

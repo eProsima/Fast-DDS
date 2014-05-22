@@ -18,6 +18,8 @@
 #ifndef RTPS_ELEM_LOCATOR_H_
 #define RTPS_ELEM_LOCATOR_H_
 
+#include "eprosimartps/common/types/common_types.h"
+#include <sstream>
 namespace eprosima{
 namespace rtps{
 

@@ -14,17 +14,27 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/utils/ObjectPool.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+
+
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-using namespace eprosima::dds;
+//using namespace eprosima::dds;
 
 namespace eprosima {
+
+namespace dds{
+class ParameterList_t;
+
+}
+using namespace dds;
+
 namespace rtps{
 
 /**

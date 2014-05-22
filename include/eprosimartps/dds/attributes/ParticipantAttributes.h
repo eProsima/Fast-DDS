@@ -18,6 +18,8 @@
 #ifndef PARTICIPANTPARAMETERS_H_
 #define PARTICIPANTPARAMETERS_H_
 
+#include "eprosimartps/common/types/Time_t.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -27,15 +29,11 @@ public:
 	bool use_Publication_Reader;
 	bool use_Subscription_Writer;
 	bool use_Subscription_Reader;
-//	bool use_Topic_Writer;
-	//bool use_Topic_Reader;
 	SimpleEDPAttributes():
 		use_Publication_Writer(true),
 		use_Publication_Reader(true),
-		 use_Subscription_Writer(true),
-		 use_Subscription_Reader(true)//,
-	//	 use_Topic_Writer(false),
-	//	 use_Topic_Reader(false)
+		use_Subscription_Writer(true),
+		use_Subscription_Reader(true)
 	{
 
 	}
@@ -73,12 +71,12 @@ public:
 	//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
 	std::string m_staticEndpointXMLFilename;
 	/**
-		 * DomainId to be used by the Participant (80 by default).
-		 */
-		uint32_t domainId;
-		Duration_t leaseDuration;
+	 * DomainId to be used by the Participant (80 by default).
+	 */
+	uint32_t domainId;
+	Duration_t leaseDuration;
 
-		SimpleEDPAttributes m_simpleEDP;
+	SimpleEDPAttributes m_simpleEDP;
 
 	DiscoveryAttributes()
 	{
@@ -112,9 +110,9 @@ public:
 	 */
 	LocatorList_t defaultUnicastLocatorList;
 	/**
-		 * Default list of Multicast Locators to be used for any Endpoint defined inside this participant in the case
-		 * that it was defined with NO UnicastLocators. This is usually left empty.
-		 */
+	 * Default list of Multicast Locators to be used for any Endpoint defined inside this participant in the case
+	 * that it was defined with NO UnicastLocators. This is usually left empty.
+	 */
 	LocatorList_t defaultMulticastLocatorList;
 	/**
 	 * Default send port that all Endpoints in the Participant would use to send messages.

@@ -20,33 +20,28 @@
 #ifndef DOMAINPARTICIPANT_H_
 #define DOMAINPARTICIPANT_H_
 
-#include <iostream>
+#include "eprosimartps/common/types/common_types.h"
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-#include "eprosimartps/common/attributes/PublisherAttributes.h"
-#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+
+
 //#include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/IPFinder.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/SubscriberListener.h"
-#include "eprosimartps/dds/PublisherListener.h"
+
 
 namespace eprosima{
-namespace rtps{
-class Participant;
-}
-}
 
-using namespace eprosima::rtps;
+namespace rtps{   class Participant;   }
 
-namespace eprosima {
+
+using namespace rtps;
+
 namespace dds {
+
+
 
 
 /**
@@ -209,7 +204,7 @@ private:
     	 * @brief Get Id to create a participant.
     	 * @return Different ID for each call.
     	 */
-        uint32_t getNewId();
+    uint32_t getNewId();
 
 };
 

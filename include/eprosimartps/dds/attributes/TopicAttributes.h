@@ -18,6 +18,8 @@
 #ifndef TOPICPARAMETERS_H_
 #define TOPICPARAMETERS_H_
 
+#include <string>
+
 namespace eprosima {
 namespace rtps {
 

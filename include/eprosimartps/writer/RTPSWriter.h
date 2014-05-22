@@ -92,9 +92,7 @@ public:
 
 
 
-	StateKind_t getStateType() const {
-		return m_stateType;
-	}
+
 
 	size_t getHistoryCacheSize()
 	{
@@ -140,8 +138,7 @@ public:
 
 
 protected:
-	//!State type fo the writer
-	StateKind_t m_stateType;
+
 	//!Changes associated with this writer.
 	HistoryCache m_writer_cache;
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
