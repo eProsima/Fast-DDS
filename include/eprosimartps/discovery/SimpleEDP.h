@@ -30,9 +30,10 @@ class RTPSWriter;
 class RTPSReader;
 
 
+
 class SimpleEDP: public eprosima::rtps::EndpointDiscoveryProtocol {
 public:
-	SimpleEDP();
+	SimpleEDP(ParticipantDiscoveryProtocol* p);
 	virtual ~SimpleEDP();
 
 	bool initEDP(DiscoveryAttributes& attributes);

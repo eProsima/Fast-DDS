@@ -33,7 +33,7 @@ namespace rtps {
 
 class StaticEDP: public EndpointDiscoveryProtocol {
 public:
-	StaticEDP();
+	StaticEDP(ParticipantDiscoveryProtocol*p);
 	virtual ~StaticEDP();
 
 	bool initEDP(DiscoveryAttributes& attributes);

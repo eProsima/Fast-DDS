@@ -119,7 +119,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
 		StatelessWriter* SW;
-		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize))
+		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false))
 			return NULL;
 		SW->m_qos.setQos(WParam.qos,true);
 		Pub = new Publisher((RTPSWriter*)SW);
@@ -133,7 +133,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 	else if(WParam.reliability.reliabilityKind == RELIABLE)
 	{
 		StatefulWriter* SF;
-		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize))
+		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize,false))
 			return NULL;
 		SF->m_qos.setQos(WParam.qos,true);
 		Pub = new Publisher((RTPSWriter*)SF);
@@ -183,7 +183,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 	if(RParam.reliability.reliabilityKind == BEST_EFFORT)
 	{
 		StatelessReader* SR;
-		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize))
+		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize,false))
 		{
 			pError("Error creating subscriber"<<endl);
 			return NULL;
@@ -199,7 +199,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 	{
 		pDebugInfo("Stateful"<<endl);
 		StatefulReader* SFR;
-		if(!p->createStatefulReader(&SFR,RParam,p_type->m_typeSize))
+		if(!p->createStatefulReader(&SFR,RParam,p_type->m_typeSize,false))
 		{
 			pError("Error creating subscriber"<<endl);
 			return NULL;
@@ -301,7 +301,7 @@ bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)
 {
 	if(p==NULL || pub==NULL)
 		return false;
-	if(p->removeEndpoint((Endpoint*)(pub->mp_Writer)))
+	if(p->removeUserEndpoint((Endpoint*)(pub->mp_Writer),'W'))
 	{
 		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 		for(std::vector<Publisher*>::iterator it=dp->m_publisherList.begin();
@@ -324,7 +324,7 @@ bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
 {
 	if(p==NULL || sub==NULL)
 		return false;
-	if(p->removeEndpoint((Endpoint*)(sub->mp_Reader)))
+	if(p->removeUserEndpoint((Endpoint*)(sub->mp_Reader),'R'))
 	{
 		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
 		for(std::vector<Subscriber*>::iterator it=dp->m_subscriberList.begin();

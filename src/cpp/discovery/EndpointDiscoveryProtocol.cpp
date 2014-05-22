@@ -16,14 +16,16 @@
  */
 
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
+#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 
 namespace eprosima {
 namespace rtps {
 
-EndpointDiscoveryProtocol::EndpointDiscoveryProtocol():
-	mp_participant(NULL),
-	mp_PDP(NULL){
-	// TODO Auto-generated constructor stub
+EndpointDiscoveryProtocol::EndpointDiscoveryProtocol(ParticipantDiscoveryProtocol* p):
+	mp_PDP(p),
+	mp_participant(p->mp_participant)
+{
+
 
 }
 

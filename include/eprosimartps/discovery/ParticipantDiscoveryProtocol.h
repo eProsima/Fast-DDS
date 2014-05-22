@@ -39,7 +39,7 @@ public:
 
 	DiscoveredParticipantData* mp_localDPData;
 	std::vector<DiscoveredParticipantData> m_discoveredParticipants;
-	uint16_t m_domainId;
+
 	DiscoveryAttributes m_discovery;
 	Participant* mp_participant;
 	EndpointDiscoveryProtocol* mp_EDP;

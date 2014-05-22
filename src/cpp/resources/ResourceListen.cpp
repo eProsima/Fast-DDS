@@ -39,7 +39,7 @@ ResourceListen::ResourceListen() :
 
 ResourceListen::~ResourceListen()
 {
-	pWarning( "Removing listening thread " << mp_thread->get_id() << std::endl);
+	pWarning("Removing listening thread " << mp_thread->get_id() << std::endl);
 
 	//	cout << "shutdown" << endl;
 	//	m_listen_socket.shutdown(boost::asio::ip::udp::socket::shutdown_receive);
@@ -58,15 +58,16 @@ void ResourceListen::run_io_service()
 {
 
 	pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " <<m_listen_socket.local_endpoint() << DEF << endl) ;
-	m_participant_ptr->m_ResourceSemaphore->post();
-	m_first = false;
 
+	m_first = false;
+	m_participant_ptr->m_ResourceSemaphore->post();
 	this->m_io_service.run();
 }
 
 bool ResourceListen::init_thread(Locator_t& loc){
 	if(m_locList.empty())
 	{
+		pInfo(BLUE<<"ResourceListen initializing"<<DEF<<endl)
 		m_locList.push_back(loc);
 		m_first = true;
 		udp::endpoint listen_endpoint;
@@ -75,7 +76,7 @@ bool ResourceListen::init_thread(Locator_t& loc){
 			if(m_isMulticast)
 			{
 				listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_locList.begin()->port);
-				pInfo("Listen endpoint multicast: " << listen_endpoint<< endl);
+				pDebugInfo("Listen endpoint multicast: " << listen_endpoint<< endl);
 			}
 			else
 			{
@@ -90,7 +91,7 @@ bool ResourceListen::init_thread(Locator_t& loc){
 			m_listen_socket.bind(listen_endpoint);
 			if(m_isMulticast)
 			{
-				pInfo("Joining group: "<<address<<endl);
+				pDebugInfo("Joining group: "<<address<<endl);
 				LocatorList_t loclist;
 				DomainParticipant::getIPAddress(&loclist);
 				for(LocatorListIterator it=loclist.begin();it!=loclist.end();++it)
@@ -128,7 +129,7 @@ void ResourceListen::newCDRMessage(const boost::system::error_code& err, std::si
 		{
 			return;
 		}
-		pInfo (BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " from endpoint: " << m_sender_endpoint << " to endpoint: " << m_locList.begin()->printIP4Port()<<  DEF << endl);
+		pInfo (BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_locList.begin()->printIP4Port()<<  DEF << endl);
 
 		//Get address into Locator
 		m_send_locator.port = m_sender_endpoint.port();

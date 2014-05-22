@@ -65,7 +65,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 		paramlist_byte_size +=4;
 		if(valid)
 		{
-		//	cout << "readparameterlistfromcdrmsg Param with pid: " << pid << endl;
+			//cout << "readparameterlistfromcdrmsg Param with pid: " << pid << endl;
 			switch(pid)
 			{
 			case PID_UNICAST_LOCATOR:
@@ -127,6 +127,12 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					return -1;
 				}
 				break;
+			}
+			case PID_EXPECTS_INLINE_QOS:
+			{
+				ParameterBool_t * p = new ParameterBool_t(PID_EXPECTS_INLINE_QOS,plength);
+				valid &= CDRMessage::readOctet(msg,(octet*)&p->value);msg->pos+=3;
+				IF_VALID_ADD
 			}
 			case PID_VENDORID:
 			{
@@ -463,12 +469,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				msg->pos +=plength;
 				paramlist_byte_size +=plength;
 				break;
-			}
-			case PID_EXPECTS_INLINE_QOS:
-			{
-				ParameterBool_t * p = new ParameterBool_t(PID_EXPECTS_INLINE_QOS,plength);
-				valid &= CDRMessage::readOctet(msg,(octet*)&p->value);
-				IF_VALID_ADD
 			}
 			case PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT:
 			{

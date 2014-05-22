@@ -18,11 +18,13 @@
 #ifndef RESOURCELISTEN_H_
 #define RESOURCELISTEN_H_
 
+
 #include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
+
 
 
 #include "eprosimartps/rtps_all.h"
@@ -83,6 +85,8 @@ public:
 	void newCDRMessage(const boost::system::error_code& error, std::size_t size);
 	//! Method to run the io_service.
 	void run_io_service();
+
+
 
 
 };

@@ -112,6 +112,7 @@ void RTPSLog::setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level)
 {
 	RTPSLog* RL = getInstance();
 	RL->verbosityLevel = level;
+	pInfo("Verbosity set to level: "<<level<<endl);
 
 }
 
