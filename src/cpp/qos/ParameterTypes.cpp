@@ -37,6 +37,13 @@ bool ParameterLocator_t::addToCDRMessage(CDRMessage_t* msg)
 	return valid;
 }
 
+//PARAMTERKEY
+bool ParameterKey_t::addToCDRMessage(CDRMessage_t* msg)
+{
+	return CDRMessage::addParameterKey(msg,&this->key);
+
+}
+
 // PARAMETER_ STRING
 bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 {

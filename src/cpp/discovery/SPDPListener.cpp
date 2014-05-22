@@ -112,6 +112,7 @@ bool SPDPListener::newAddedCache()
 		else
 		{
 			pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+			param.deleteParams();
 			return false;
 		}
 	}

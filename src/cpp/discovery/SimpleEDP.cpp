@@ -149,11 +149,13 @@ bool SimpleEDP::createSEDPEndpoints()
 
 void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 {
+	pInfo(CYAN<<"SimpleEDP:assignRemoteEndpoints: new DPD received, adding remote endpoints to our SimpleEDP endpoints"<<DEF<<endl);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 	if(auxendp!=0) //Exist Pub Announcer
 	{
+		pDebugInfo(CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<DEF<<endl);
 		WriterProxy_t wp;
 		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
 		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
@@ -165,6 +167,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 	if(auxendp!=0) //Exist Pub Announcer
 	{
+		pDebugInfo(CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<DEF<<endl);
 		ReaderProxy_t rp;
 		rp.expectsInlineQos = false;
 		rp.m_reliablility = RELIABLE;
@@ -178,6 +181,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	if(auxendp!=0) //Exist Pub Announcer
 	{
+		pDebugInfo(CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<DEF<<endl);
 		WriterProxy_t wp;
 		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
 		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
@@ -189,6 +193,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 	if(auxendp!=0) //Exist Pub Announcer
 	{
+		pDebugInfo(CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<DEF<<endl);
 		ReaderProxy_t rp;
 		rp.expectsInlineQos = false;
 		rp.m_reliablility = RELIABLE;
@@ -239,6 +244,7 @@ bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 		change->instanceHandle = wdata.m_key;
 		ParameterList_t param;
 		DiscoveredData::DiscoveredWriterData2ParameterList(wdata,&param);
+		ParameterList::updateCDRMsg(&param,EPROSIMA_ENDIAN);
 		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 		change->serializedPayload.length = param.m_cdrmsg.length;
 		memcpy(change->serializedPayload.data,param.m_cdrmsg.buffer,change->serializedPayload.length);
@@ -301,6 +307,7 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 		change->instanceHandle = rdata.m_key;
 		ParameterList_t param;
 		DiscoveredData::DiscoveredReaderData2ParameterList(rdata,&param);
+		ParameterList::updateCDRMsg(&param,EPROSIMA_ENDIAN);
 		change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 		change->serializedPayload.length = param.m_cdrmsg.length;
 		memcpy(change->serializedPayload.data,param.m_cdrmsg.buffer,change->serializedPayload.length);
