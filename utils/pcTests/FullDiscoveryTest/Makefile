@@ -29,7 +29,7 @@ DISCOVERYTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)
 
 DISCOVERYTEST_SRC_CFILES=
 
-DISCOVERYTEST_SRC_CPPFILES= $(BASEDIR)/DiscoveryTest.cpp 
+DISCOVERYTEST_SRC_CPPFILES= $(BASEDIR)/FullDiscoveryTest.cpp 
 
 
 # Project sources are copied to the current directory

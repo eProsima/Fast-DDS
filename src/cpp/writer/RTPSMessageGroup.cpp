@@ -140,11 +140,9 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 
 void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId)
 {
-	ParameterList_t* inlineQos;
+	ParameterList_t* inlineQos = NULL;
 	if(expectsInlineQos)
-		inlineQos = &W->m_qosList.inlineQos;
-	else
-		inlineQos = NULL;
+		inlineQos = &W->m_ParameterQosList.inlineQos;
 	CDRMessage::initCDRMsg(submsg);
 	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopicKind(),ReaderId,inlineQos);
 }

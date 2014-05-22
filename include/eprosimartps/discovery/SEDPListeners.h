@@ -37,9 +37,9 @@ class SimpleEDP;
 class SEDPPubListener: public SubscriberListener {
 public:
 	SEDPPubListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
-	virtual ~SEDPPubListener();
+	virtual ~SEDPPubListener(){};
 	void onNewDataMessage();
-	bool processParameterList(ParameterList_t param,DiscoveredWriterData* wdata);
+//	bool processParameterList(ParameterList_t param,DiscoveredWriterData* wdata);
 	SEDPListeners* mp_listeners;
 		SimpleEDP* mp_SEDP;
 
@@ -48,9 +48,9 @@ public:
 class SEDPSubListener: public SubscriberListener {
 public:
 	SEDPSubListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
-	virtual ~SEDPSubListener();
+	virtual ~SEDPSubListener(){};
 	void onNewDataMessage();
-	bool processParameterList(ParameterList_t param,DiscoveredReaderData* rdata);
+	//bool processParameterList(ParameterList_t param,DiscoveredReaderData* rdata);
 	SEDPListeners* mp_listeners;
 	SimpleEDP* mp_SEDP;
 

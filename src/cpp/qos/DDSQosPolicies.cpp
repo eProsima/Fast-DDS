@@ -108,6 +108,14 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 	return valid;
 }
 
+bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+{
+	bool valid = CDRMessage::addUInt16(msg, this->Pid);
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addString(msg,this->data);
+	return valid;
+}
+
 bool TopicDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);

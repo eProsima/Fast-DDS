@@ -18,7 +18,7 @@
 #include "eprosimartps/discovery/SEDPListeners.h"
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
-#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SimpleEDP.h"

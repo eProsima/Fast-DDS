@@ -30,8 +30,8 @@ namespace rtps {
 
 class WriterQos{
 public:
-	WriterQos();
-	virtual ~ WriterQos();
+	WriterQos(){};
+	virtual ~ WriterQos(){};
 	DurabilityQosPolicy m_durability;
 	DurabilityServiceQosPolicy m_durabilityService;
 	DeadlineQosPolicy m_deadline;
@@ -57,9 +57,8 @@ public:
 class DiscoveredWriterData {
 public:
 	DiscoveredWriterData():
-		userDefinedId(-1),isAlive(false),topicKind(NO_KEY)
-{};
-	virtual ~DiscoveredWriterData();
+		userDefinedId(-1),isAlive(false),topicKind(NO_KEY){};
+	virtual ~DiscoveredWriterData(){};
 	WriterProxy_t m_writerProxy;
 	InstanceHandle_t m_key;
 	InstanceHandle_t m_participantKey;

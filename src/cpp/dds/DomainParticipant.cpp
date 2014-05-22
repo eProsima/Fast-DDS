@@ -121,6 +121,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize))
 			return NULL;
+		SW->m_qos.setQos(WParam.qos,true);
 		Pub = new Publisher((RTPSWriter*)SW);
 		pDebugInfo("Publisher in topic: "<<Pub->getTopicName()<<" created."<<endl);
 		SW->m_Pub = Pub;
@@ -134,6 +135,7 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 		StatefulWriter* SF;
 		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize))
 			return NULL;
+		SF->m_qos.setQos(WParam.qos,true);
 		Pub = new Publisher((RTPSWriter*)SF);
 		SF->m_Pub = Pub;
 		Pub->mp_type = p_type;
@@ -186,6 +188,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 			pError("Error creating subscriber"<<endl);
 			return NULL;
 		}
+		SR->m_qos.setQos(RParam.qos,true);
 		Sub = new Subscriber((RTPSReader*) SR);
 		SR->mp_Sub = Sub;
 		SR->mp_type = p_type;
@@ -201,6 +204,7 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 			pError("Error creating subscriber"<<endl);
 			return NULL;
 		}
+		SFR->m_qos.setQos(RParam.qos,true);
 		Sub = new Subscriber((RTPSReader*) SFR);
 		SFR->mp_Sub = Sub;
 		SFR->mp_type = p_type;

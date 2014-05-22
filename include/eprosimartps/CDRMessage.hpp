@@ -383,7 +383,7 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 	return true;
 }
 
-inline bool addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec)
+inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec)
 {
 	if(msg->pos+4+ocvec->size()>=msg->max_size)
 	{

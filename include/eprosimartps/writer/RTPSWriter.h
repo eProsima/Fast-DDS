@@ -161,7 +161,7 @@ public:
 	WriterQos m_qos;
 	Publisher* m_Pub;
 	PublisherListener* mp_listener;
-	QosList_t m_qosList;
+	QosList_t m_ParameterQosList;
 
 
 };
