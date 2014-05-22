@@ -164,16 +164,18 @@ typedef struct InstanceHandle_t{
 		}
 		return *this;
 	}
-	bool operator==(const InstanceHandle_t& ihandle)
-	{
-		for(uint8_t i =0;i<16;++i)
-		{
-			if(this->value[i] != ihandle.value[i])
-				return false;
-		}
-		return true;
-	}
 }InstanceHandle_t;
+
+inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
+			{
+	for(uint8_t i =0;i<16;++i)
+	{
+		if(ihandle1.value[i] != ihandle2.value[i])
+			return false;
+	}
+	return true;
+			}
+
 
 typedef uint32_t BuiltinEndpointSet_t;
 

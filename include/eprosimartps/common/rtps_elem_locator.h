@@ -50,17 +50,7 @@ public:
 			address[i] = loc.address[i];
 		return *this;
 	}
-	bool operator==(Locator_t& loc){
-		if(kind!=loc.kind)
-			return false;
-		if(port !=loc.port)
-			return false;
-		for(uint8_t i =0;i<16;i++){
-			if(address[i] !=loc.address[i])
-				return false;
-		}
-		return true;
-	}
+
 	bool set_IP4_address(octet o1,octet o2,octet o3,octet o4){
 		LOCATOR_ADDRESS_INVALID(address);
 		address[12] = o1;
@@ -109,9 +99,20 @@ public:
 		}
 		return addr;
 	}
-
-
 };
+
+inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
+	if(loc1.kind!=loc2.kind)
+		return false;
+	if(loc1.port !=loc2.port)
+		return false;
+	for(uint8_t i =0;i<16;i++){
+		if(loc1.address[i] !=loc2.address[i])
+			return false;
+	}
+	return true;
+}
+
 
 typedef std::vector<Locator_t>::iterator LocatorListIterator;
 
