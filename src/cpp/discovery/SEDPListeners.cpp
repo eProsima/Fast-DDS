@@ -103,8 +103,8 @@ void SEDPPubListener::onNewDataMessage()
 		{
 			pdata->m_writers.push_back(*wdata);
 		}
-		for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->m_readerList.begin();
-				rit!=this->mp_SEDP->mp_PDP->mp_participant->m_readerList.end();++rit)
+		for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.begin();
+				rit!=this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.end();++rit)
 		{
 			if(already_in_history)
 			{
@@ -199,8 +199,8 @@ void SEDPSubListener::onNewDataMessage()
 		{
 			pdata->m_readers.push_back(*rdata);
 		}
-		for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->m_writerList.begin();
-				wit!=this->mp_SEDP->mp_PDP->mp_participant->m_writerList.end();++wit)
+		for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.begin();
+				wit!=this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.end();++wit)
 		{
 			if(already_in_history)
 			{

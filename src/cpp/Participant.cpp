@@ -34,6 +34,9 @@
 namespace eprosima {
 namespace rtps {
 
+typedef std::vector<RTPSReader*>::iterator Riterator;
+typedef std::vector<RTPSWriter*>::iterator Witerator;
+
 
 Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 						m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
@@ -52,11 +55,14 @@ Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 	if(m_defaultUnicastLocatorList.empty())
 	{
 		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:10042"<<endl);
-		loc.port = 10042;
-		m_defaultUnicastLocatorList.push_back(loc);
+		LocatorList_t myIP;
+		DomainParticipant::getIPAddress(&myIP);
+		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
+		{
+			lit->port=10042;
+			m_defaultUnicastLocatorList.push_back(*lit);
+		}
 	}
-
-
 
 	int pid;
 #if defined(_WIN32)
@@ -110,12 +116,12 @@ Participant::~Participant()
 			it!=m_threadListenList.end();++it)
 		delete(*it);
 
-	for(std::vector<RTPSReader*>::iterator it=m_readerList.begin();
-			it!=m_readerList.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=m_userReaderList.begin();
+			it!=m_userReaderList.end();++it)
 		delete(*it);
 
-	for(std::vector<RTPSWriter*>::iterator it=m_writerList.begin();
-			it!=m_writerList.end();++it)
+	for(std::vector<RTPSWriter*>::iterator it=m_userWriterList.begin();
+			it!=m_userWriterList.end();++it)
 		delete(*it);
 
 	delete(this->m_ResourceSemaphore);
@@ -124,11 +130,11 @@ Participant::~Participant()
 		delete(mp_PDP);
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size)
+bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	StatelessWriter* SLWriter = new StatelessWriter(&param,payload_size);
-	if(this->initWriter((RTPSWriter*)SLWriter))
+	if(this->initWriter((RTPSWriter*)SLWriter,isBuiltin))
 	{
 		*SW_out = SLWriter;
 		return true;
@@ -137,11 +143,11 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttri
 		return false;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size)
+bool Participant::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 pDebugInfo("Creating StatefulWriter"<<endl);
 	StatefulWriter* SFWriter = new StatefulWriter(&param, payload_size);
-	if(this->initWriter((RTPSWriter*)SFWriter))
+	if(this->initWriter((RTPSWriter*)SFWriter,isBuiltin))
 	{
 		*SFW_out = SFWriter;
 		return true;
@@ -149,9 +155,9 @@ pDebugInfo("Creating StatefulWriter"<<endl);
 	else return false;
 }
 
-bool Participant::initWriter(RTPSWriter*W)
+bool Participant::initWriter(RTPSWriter*W,bool isBuiltin)
 {
-	pDebugInfo("Finished Writer creation"<<endl);
+	pDebugInfo("Writer created, initializing"<<endl);
 	//Check if locator lists are empty:
 	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL)
 	{
@@ -166,7 +172,6 @@ bool Participant::initWriter(RTPSWriter*W)
 	//Assign GUID
 	W->m_guid.guidPrefix = m_guid.guidPrefix;
 	W->init_header();
-
 	if(W->getTopicKind() == NO_KEY)
 		W->m_guid.entityId.value[3] = 0x03;
 	else if(W->getTopicKind() == WITH_KEY)
@@ -180,24 +185,29 @@ bool Participant::initWriter(RTPSWriter*W)
 	if(assignEnpointToListenResources((Endpoint*)W,'W'))
 	{
 		//Wait until the thread is correctly created
-		m_writerList.push_back(W);
-		mp_PDP->localWriterMatching(W,true);
+		if(!isBuiltin)
+		{
+			m_userWriterList.push_back(W);
+			mp_PDP->localWriterMatching(W,true);
+		}
+		m_allWriterList.push_back(W);
+		pDebugInfo("Finished Writer creation"<<endl);
 		return true;
 	}
 	else
+	{
+		pDebugInfo("Finished Writer creation (FAILED)"<<endl);
 		return false;
+	}
 
 }
 
-
-
-
 bool Participant::createStatelessReader(StatelessReader** SR_out,
-		 SubscriberAttributes& param,uint32_t payload_size)
+		 SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 	pInfo("Creating StatelessReader"<<endl);
 	StatelessReader* SReader = new StatelessReader(&param, payload_size);
-	if(initReader((RTPSReader*)SReader))
+	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
 		return true;
@@ -207,11 +217,11 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 }
 
 bool Participant::createStatefulReader(StatefulReader** SR_out,
-		 SubscriberAttributes& param,uint32_t payload_size)
+		 SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
 	StatefulReader* SReader = new StatefulReader(&param, payload_size);
-	if(initReader((RTPSReader*)SReader))
+	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
 		return true;
@@ -222,7 +232,7 @@ bool Participant::createStatefulReader(StatefulReader** SR_out,
 
 
 
-bool Participant::initReader(RTPSReader* p_R)
+bool Participant::initReader(RTPSReader* p_R,bool isBuiltin)
 {
 	//If NO UNICAST
 	if(p_R->unicastLocatorList.empty())
@@ -252,8 +262,13 @@ bool Participant::initReader(RTPSReader* p_R)
 
 	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R'))
 	{
-		m_readerList.push_back(p_R);
-		mp_PDP->localReaderMatching(p_R,true);
+		if(!isBuiltin)
+		{
+			m_userReaderList.push_back(p_R);
+			mp_PDP->localReaderMatching(p_R,true);
+		}
+		m_allReaderList.push_back(p_R);
+
 		return true;
 	}
 	else
@@ -268,7 +283,7 @@ bool Participant::initReader(RTPSReader* p_R)
 
 inline void addEndpoint(ResourceListen* th,Endpoint* end,char type)
 {
-	pInfo("Endpoint " << type << " added to listen Resource: "<< th->m_locList.begin()->printIP4Port() << endl);
+	pInfo("Participant: Endpoint (" << type << ") added to listen Resource: "<< th->m_locList.begin()->printIP4Port() << endl);
 	if(type == 'W')
 		th->m_assoc_writers.push_back((RTPSWriter*)end);
 	else if(type =='R')
@@ -363,29 +378,31 @@ bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_
 		return false;
 }
 
-bool Participant::removeEndpoint(Endpoint* p_endpoint){
+bool Participant::removeUserEndpoint(Endpoint* p_endpoint,char type)
+{
 	bool found = false;
-	char type = 'W';
-	for(std::vector<RTPSWriter*>::iterator wit=m_writerList.begin();
-			wit!=m_writerList.end();++wit)
+	if(type == 'W')
+	{
+	for(Witerator wit=m_userWriterList.begin();
+			wit!=m_userWriterList.end();++wit)
 	{
 		if((*wit)->m_guid == p_endpoint->m_guid) //Found it
 		{
-			m_writerList.erase(wit);
+			m_userWriterList.erase(wit);
 			found = true;
 			break;
 		}
 	}
-	if(!found)
+	}
+	if(type == 'R')
 	{
-		for(std::vector<RTPSReader*>::iterator rit=m_readerList.begin()
-				;rit!=m_readerList.end();++rit)
+		for(Riterator rit=m_userReaderList.begin()
+				;rit!=m_userReaderList.end();++rit)
 		{
 			if((*rit)->m_guid == p_endpoint->m_guid) //Found it
 			{
-				m_readerList.erase(rit);
+				m_userReaderList.erase(rit);
 				found = true;
-				type = 'R';
 				break;
 			}
 		}

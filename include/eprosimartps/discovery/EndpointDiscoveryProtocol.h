@@ -41,7 +41,7 @@ class DiscoveredParticipantData;
 
 class EndpointDiscoveryProtocol  {
 public:
-	EndpointDiscoveryProtocol();
+	EndpointDiscoveryProtocol(ParticipantDiscoveryProtocol* p);
 	virtual ~EndpointDiscoveryProtocol();
 
 
@@ -52,8 +52,9 @@ public:
 
 	virtual void assignRemoteEndpoints(DiscoveredParticipantData* pdata)=0;
 
-	Participant* mp_participant;
+
 	ParticipantDiscoveryProtocol* mp_PDP;
+	Participant* mp_participant;
 
 };
 

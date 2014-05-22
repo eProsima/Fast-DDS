@@ -30,75 +30,89 @@ void SPDPListener::onNewDataMessage()
 
 bool SPDPListener::newAddedCache()
 {
-	pInfo("New SPDP Message received"<<endl);
+	pInfo(CYAN<<"SPDPListener: SPDP Message received"<<DEF<<endl);
 	CacheChange_t* change = NULL;
 	if(mp_SPDP->mp_SPDPReader->m_reader_cache.get_last_added_cache(&change))
 	{
-		if(change->instanceHandle == mp_SPDP->mp_localDPData->m_key)
-		{
-			pInfo("Message from own participant, removing"<<endl)
-							mp_SPDP->mp_SPDPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
-			return true;
-		}
-		//Look for the participant in my own list:
-		DiscoveredParticipantData* pdata;
-		bool found = false;
-		for(std::vector<DiscoveredParticipantData>::iterator it = mp_SPDP->m_discoveredParticipants.begin();
-				it != mp_SPDP->m_discoveredParticipants.end();++it)
-		{
-			if(change->instanceHandle == it->m_key)
-			{
-				found = true;
-				pdata = &(*it);
-				break;
-			}
-		}
-		if(!found)
-		{
-			pdata = new DiscoveredParticipantData();
-		}
 		ParameterList_t param;
 		CDRMessage_t msg;
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
 		msg.length = change->serializedPayload.length;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL);
-		if(processParameterList(param,pdata))
+		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
 		{
-			for(LocatorListIterator it = pdata->m_metatrafficUnicastLocatorList.begin();
-					it!=pdata->m_metatrafficUnicastLocatorList.end();++it)
+			DiscoveredParticipantData pdata;
+
+			if(processParameterList(param,&pdata))
 			{
-				this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
+//				cout << pdata.m_guidPrefix << endl;
+//				cout << mp_SPDP->mp_localDPData->m_guidPrefix << endl;
+				if(pdata.m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
+				{
+					//cout << "SMAE"<<endl;
+					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
+					mp_SPDP->mp_SPDPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					return true;
+				}
+				//Look for the participant in my own list:
+				DiscoveredParticipantData* pdata_ptr;
+				bool found = false;
+				for(std::vector<DiscoveredParticipantData>::iterator it = mp_SPDP->m_discoveredParticipants.begin();
+						it != mp_SPDP->m_discoveredParticipants.end();++it)
+				{
+					if(change->instanceHandle == it->m_key)
+					{
+						found = true;
+						pdata_ptr = &(*it);
+						break;
+					}
+				}
+				if(!found)
+				{
+					pdata_ptr = &pdata;
+				}
+				for(LocatorListIterator it = pdata_ptr->m_metatrafficUnicastLocatorList.begin();
+						it!=pdata_ptr->m_metatrafficUnicastLocatorList.end();++it)
+				{
+					this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata_ptr->m_expectsInlineQos);
+				}
+				for(LocatorListIterator it = pdata_ptr->m_metatrafficMulticastLocatorList.begin();
+						it!=pdata_ptr->m_metatrafficMulticastLocatorList.end();++it)
+				{
+					this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata_ptr->m_expectsInlineQos);
+				}
+				//Inform EDP of new participant data:
+				this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata_ptr);
+				if(!found)
+				{
+					this->mp_SPDP->m_discoveredParticipants.push_back(*pdata_ptr);
+				}
+				//If staticEDP, perform matching:
+				if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+				{
+					for(std::vector<RTPSReader*>::iterator it = this->mp_SPDP->mp_participant->m_userReaderList.begin();
+							it!=this->mp_SPDP->mp_participant->m_userReaderList.end();++it)
+					{
+						if((*it)->m_userDefinedId > 0)
+							this->mp_SPDP->mp_EDP->localReaderMatching(*it,false);
+					}
+					for(std::vector<RTPSWriter*>::iterator it = this->mp_SPDP->mp_participant->m_userWriterList.begin();
+							it!=this->mp_SPDP->mp_participant->m_userWriterList.end();++it)
+					{
+						if((*it)->m_userDefinedId > 0)
+							this->mp_SPDP->mp_EDP->localWriterMatching(*it,false);
+					}
+				}
+
+
+
 			}
-			for(LocatorListIterator it = pdata->m_metatrafficMulticastLocatorList.begin();
-					it!=pdata->m_metatrafficMulticastLocatorList.end();++it)
-			{
-				this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
-			}
+			param.deleteParams();
 		}
-		param.deleteParams();
-		//Inform EDP of new participant data:
-		this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata);
-		if(!found)
+		else
 		{
-			this->mp_SPDP->m_discoveredParticipants.push_back(*pdata);
-			delete(pdata);
-		}
-		//If staticEDP, perform matching:
-		if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-		{
-			for(std::vector<RTPSReader*>::iterator it = this->mp_SPDP->mp_participant->m_readerList.begin();
-					it!=this->mp_SPDP->mp_participant->m_readerList.end();++it)
-			{
-				if((*it)->m_userDefinedId > 0)
-					this->mp_SPDP->mp_EDP->localReaderMatching(*it,false);
-			}
-			for(std::vector<RTPSWriter*>::iterator it = this->mp_SPDP->mp_participant->m_writerList.begin();
-					it!=this->mp_SPDP->mp_participant->m_writerList.end();++it)
-			{
-				if((*it)->m_userDefinedId > 0)
-					this->mp_SPDP->mp_EDP->localWriterMatching(*it,false);
-			}
+			pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+			return false;
 		}
 	}
 	return true;
@@ -110,6 +124,7 @@ bool SPDPListener::processParameterList(ParameterList_t& param,DiscoveredPartici
 	for(std::vector<Parameter_t*>::iterator it = param.m_parameters.begin();
 			it!=param.m_parameters.end();++it)
 	{
+	//	cout << "Parameter with Id: "<< (*it)->Pid << endl;
 		switch((*it)->Pid)
 		{
 		case PID_PROTOCOL_VERSION:

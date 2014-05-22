@@ -35,7 +35,8 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
-SimpleEDP::SimpleEDP():
+SimpleEDP::SimpleEDP(ParticipantDiscoveryProtocol* p):
+				EndpointDiscoveryProtocol(p),
 				 mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
 				 mp_PubReader(NULL),mp_SubReader(NULL),// mp_TopReader(NULL),
 				 m_listeners(this)
@@ -51,6 +52,7 @@ SimpleEDP::~SimpleEDP()
 
 bool SimpleEDP::initEDP(DiscoveryAttributes& attributes)
 {
+	pInfo(B_CYAN<<"Initializing EndpointDiscoveryProtocol"<<endl);
 	m_discovery = attributes;
 
 	if(!createSEDPEndpoints())
@@ -63,6 +65,7 @@ bool SimpleEDP::initEDP(DiscoveryAttributes& attributes)
 
 bool SimpleEDP::createSEDPEndpoints()
 {
+	pInfo(CYAN<<"Creating SEDP Endpoints"<<DEF<<endl);
 	PublisherAttributes Wparam;
 	SubscriberAttributes Rparam;
 	bool created = true;
@@ -77,9 +80,12 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
+		created &=mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true);
 		if(created)
+		{
 			mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
+			pDebugInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
+		}
 	}
 	if(m_discovery.m_simpleEDP.use_Publication_Reader)
 	{
@@ -92,11 +98,12 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE);
+		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true);
 		if(created)
 		{
 			mp_PubReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
 			mp_PubReader->mp_listener = (SubscriberListener*)&m_listeners.m_PubListener;
+			pDebugInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
 		}
 	}
 	if(m_discovery.m_simpleEDP.use_Subscription_Writer)
@@ -110,9 +117,12 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
+		created &=mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true);
 		if(created)
+		{
 			mp_SubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+			pDebugInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
+		}
 	}
 	if(m_discovery.m_simpleEDP.use_Subscription_Reader)
 	{
@@ -125,14 +135,15 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE);
+		created &=mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true);
 		if(created)
 		{
 			mp_SubReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
 			mp_SubReader->mp_listener = (SubscriberListener*)&m_listeners.m_SubListener;
+			pDebugInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
-
+	pInfo(CYAN<<"SimpleEDP Endpoints creation finished"<<DEF<<endl);
 	return created;
 }
 

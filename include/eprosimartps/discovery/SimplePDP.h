@@ -21,7 +21,7 @@
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SPDPListener.h"
 #include "eprosimartps/qos/QosList.h"
-//#include "eprosimartps/discovery/SimpleEDP.h";
+#include "eprosimartps/discovery/SimpleEDP.h"
 #include "eprosimartps/discovery/StaticEDP.h"
 
 namespace eprosima {

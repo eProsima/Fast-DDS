@@ -30,7 +30,8 @@ namespace eprosima {
 namespace rtps {
 using boost::property_tree::ptree;
 
-StaticEDP::StaticEDP() {
+StaticEDP::StaticEDP(ParticipantDiscoveryProtocol*p):
+	EndpointDiscoveryProtocol(p){
 	// TODO Auto-generated constructor stub
 
 }

@@ -37,8 +37,8 @@ typedef struct GuidPrefix_t{
 		for(uint8_t i =0;i<12;i++)
 			value[i] = guid[i];
 	}
-	GuidPrefix_t& operator=(const GuidPrefix_t& guidpre){
-
+	GuidPrefix_t& operator=(const GuidPrefix_t& guidpre)
+	{
 		for(uint8_t i =0;i<12;i++)
 		{
 			value[i] = guidpre.value[i];
@@ -58,8 +58,11 @@ typedef struct GuidPrefix_t{
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
-
-
+inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
+	for(uint8_t i =0;i<12;++i)
+		output<<(int)guiP.value[i]<<".";
+	return output;
+}
 
 #define ENTITYID_UNKNOWN 0x00000000
 #define ENTITYID_PARTICIPANT  0x000001c1
@@ -73,9 +76,6 @@ const GuidPrefix_t c_GuidPrefix_Unknown;
 #define ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER  0x000100c7
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_WRITER  0x000200C2
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER  0x000200C7
-
-
-
 
 
 
@@ -138,10 +138,15 @@ typedef struct EntityId_t{
 	}
 }EntityId_t;
 
-
+inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
+	for(uint8_t i =0;i<4;++i)
+		output<<(int)enI.value[i]<<".";
+	return output;
+}
 
 
 const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
+const EntityId_t c_EntityId_SPDPReader = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
@@ -166,7 +171,11 @@ typedef struct GUID_t{
 #define GUID_UNKNOWN(gui) {GUIDPREFIX_UNKNOWN(gui.guidPrefix); gui.entityId = ENTITYID_UNKNOWN;}
 
 
-
+inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
+{
+	output<<guid.guidPrefix<<"|"<<guid.entityId;
+	return output;
+}
 
 
 }

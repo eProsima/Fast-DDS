@@ -43,48 +43,50 @@ SimplePDP::SimplePDP(Participant* p_part):
 
 SimplePDP::~SimplePDP()
 {
-	// TODO Auto-generated destructor stub
-	delete(mp_EDP);
+	if(mp_EDP!=NULL)
+		delete(mp_EDP);
 }
 
 bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)
 {
+	pInfo(B_CYAN<<"Beginning ParticipantDiscoveryProtocol Initialization"<<DEF<<endl)
 	m_discovery = attributes;
 	DomainParticipant* dp = DomainParticipant::getInstance();
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getPortBase()
 														+ dp->getDomainIdGain() * m_discovery.domainId
 														+ dp->getOffsetd0();
 	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getPortBase()
-															+ dp->getDomainIdGain() * m_domainId
+															+ dp->getDomainIdGain() * m_discovery.domainId
 															+ dp->getOffsetd1()
 															+ dp->getParticipantIdGain() * participantID;
 
 	addLocalParticipant(mp_participant);
 
+	createSPDPEndpoints();
+
 	//INIT EDP
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
-		mp_EDP = (EndpointDiscoveryProtocol*)new StaticEDP();
+		mp_EDP = (EndpointDiscoveryProtocol*)new StaticEDP(this);
 	}
 	else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
-		//mp_EDP = (EndpointDiscoveryProtocol*)new SimpleEDP();
+		mp_EDP = (EndpointDiscoveryProtocol*)new SimpleEDP(this);
 	}
 	else
 	{
 		pWarning("No EndpointDiscoveryProtocol defined"<<endl);
+		return false;
 	}
-	createSPDPEndpoints();
+	if(mp_EDP->initEDP(m_discovery))
+	{
+		this->announceParticipantState(true);
+		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,boost::posix_time::milliseconds(m_discovery.resendDiscoveryParticipantDataPeriod.to64time()*1000));
+		m_resendDataTimer->restart_timer();
+		return true;
+	}
 
-	mp_EDP->initEDP(m_discovery);
-
-	this->announceParticipantState(true);
-
-	m_resendDataTimer = new ResendDiscoveryDataPeriod(this,boost::posix_time::milliseconds(m_discovery.resendDiscoveryParticipantDataPeriod.to64time()*1000));
-	m_resendDataTimer->restart_timer();
-
-
-	return true;
+	return false;
 }
 
 bool SimplePDP::addLocalParticipant(Participant* p)
@@ -93,8 +95,8 @@ bool SimplePDP::addLocalParticipant(Participant* p)
 	pdata.leaseDuration = m_discovery.leaseDuration;
 	VENDORID_EPROSIMA(pdata.m_VendorId);
 	//FIXME: add correct builtIn Endpoints
-	pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-	pdata.m_availableBuiltinEndpoints &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		if(m_discovery.m_simpleEDP.use_Publication_Writer)
@@ -133,7 +135,6 @@ bool SimplePDP::addLocalParticipant(Participant* p)
 	{
 		it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
 		pdata.m_metatrafficUnicastLocatorList.push_back(*it);
-		pdata.m_defaultUnicastLocatorList.push_back(*it);
 	}
 
 	pdata.m_participantName = p->m_participantName;
@@ -152,6 +153,7 @@ void SimplePDP::localParticipantHasChanged()
 
 bool SimplePDP::createSPDPEndpoints()
 {
+	pInfo(CYAN<<"Creating SPDP Endpoints"<<endl);
 	//SPDP BUILTIN PARTICIPANT WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
@@ -161,15 +163,26 @@ bool SimplePDP::createSPDPEndpoints()
 	Wparam.topic.topicDataType = "DiscoveredParticipantData";
 	Wparam.topic.topicKind = WITH_KEY;
 	Wparam.userDefinedId = -1;
-	mp_participant->createStatelessWriter(&mp_SPDPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
-	mp_SPDPWriter->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER;
-	for(LocatorListIterator lit = mp_localDPData->m_metatrafficMulticastLocatorList.begin();
-			lit!=mp_localDPData->m_metatrafficMulticastLocatorList.end();++lit)
-		mp_SPDPWriter->reader_locator_add(*lit,false);
-	for(LocatorListIterator lit = mp_localDPData->m_metatrafficUnicastLocatorList.begin();
-			lit!=mp_localDPData->m_metatrafficUnicastLocatorList.end();++lit)
-		mp_SPDPWriter->reader_locator_add(*lit,false);
 
+	if(mp_participant->createStatelessWriter(&mp_SPDPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true))
+	{
+
+		mp_SPDPWriter->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER;
+
+		for(LocatorListIterator lit = mp_localDPData->m_metatrafficMulticastLocatorList.begin();
+				lit!=mp_localDPData->m_metatrafficMulticastLocatorList.end();++lit)
+			mp_SPDPWriter->reader_locator_add(*lit,false);
+
+		for(LocatorListIterator lit = mp_localDPData->m_metatrafficUnicastLocatorList.begin();
+				lit!=mp_localDPData->m_metatrafficUnicastLocatorList.end();++lit)
+			mp_SPDPWriter->reader_locator_add(*lit,false);
+
+	}
+	else
+	{
+		pError("SimplePDP Writer creation failed"<<endl);
+		return false;
+	}
 	//SPDP BUILTIN PARTICIPANT READER
 	SubscriberAttributes Rparam;
 	Rparam.historyMaxSize = 100;
@@ -180,9 +193,17 @@ bool SimplePDP::createSPDPEndpoints()
 	Rparam.topic.topicName = "DCPSParticipant";
 	Rparam.topic.topicDataType = "DiscoveredParticipantData";
 	Rparam.userDefinedId = -1;
-	mp_participant->createStatelessReader(&mp_SPDPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE);
-	mp_SPDPReader->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
-	mp_SPDPReader->mp_listener = &this->m_listener;
+	if(mp_participant->createStatelessReader(&mp_SPDPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true))
+	{
+		mp_SPDPReader->m_guid.entityId = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
+		mp_SPDPReader->mp_listener = &this->m_listener;
+	}
+	else
+	{
+		pError("SimplePDP Reader creation failed"<<endl);
+			return false;
+	}
+	pInfo(CYAN<< "SPDP Endpoints creation finished"<<DEF<<endl)
 	return true;
 }
 
@@ -267,13 +288,13 @@ bool SimplePDP::addStaticEDPInfo()
 	std::stringstream ss;
 	std::string str1,str2;
 	bool valid = true;
-	for(std::vector<RTPSWriter*>::iterator it = this->mp_participant->m_writerList.begin();
-			it!=this->mp_participant->m_writerList.end();++it)
+	for(std::vector<RTPSReader*>::iterator it = this->mp_participant->m_userReaderList.begin();
+			it!=this->mp_participant->m_userReaderList.end();++it)
 	{
 		if((*it)->m_userDefinedId <= 0)
 			continue;
 		ss.clear();ss.str(std::string());
-		ss << "staticedp_writer_" << (*it)->m_userDefinedId;
+		ss << "staticedp_reader_" << (*it)->m_userDefinedId;
 		str1 = ss.str();
 		ss.clear();	ss.str(std::string());
 		ss << (int)(*it)->m_guid.entityId.value[0] <<".";ss << (int)(*it)->m_guid.entityId.value[1] <<".";
@@ -281,13 +302,13 @@ bool SimplePDP::addStaticEDPInfo()
 		str2 = ss.str();
 		valid &=QosList::addQos(&m_localDPDasQosList,PID_PROPERTY_LIST,str1,str2);
 	}
-	for(std::vector<RTPSReader*>::iterator it = this->mp_participant->m_readerList.begin();
-			it!=this->mp_participant->m_readerList.end();++it)
+	for(std::vector<RTPSWriter*>::iterator it = this->mp_participant->m_userWriterList.begin();
+			it!=this->mp_participant->m_userWriterList.end();++it)
 	{
 		if((*it)->m_userDefinedId <= 0)
 			continue;
 		ss.clear();	ss.str(std::string());
-		ss << "staticedp_reader_" << (*it)->m_userDefinedId;
+		ss << "staticedp_writer_" << (*it)->m_userDefinedId;
 		str1 = ss.str();ss.clear();
 		ss.str(std::string());
 		ss << (int)(*it)->m_guid.entityId.value[0] <<".";ss << (int)(*it)->m_guid.entityId.value[1] <<".";
@@ -300,16 +321,24 @@ bool SimplePDP::addStaticEDPInfo()
 
 bool SimplePDP::localWriterMatching(RTPSWriter* W,bool first_time)
 {
+	pInfo("SimplePDP localWriterMatching"<<endl);
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 		this->m_hasChangedLocalPDP = true;
-	return this->mp_EDP->localWriterMatching(W,first_time);
+	if(mp_EDP!=NULL)
+		return this->mp_EDP->localWriterMatching(W,first_time);
+	else
+		return false;
 }
 
 bool SimplePDP::localReaderMatching(RTPSReader* R,bool first_time)
 {
+	pInfo("SimplePDP localReaderMatching"<<endl);
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 			this->m_hasChangedLocalPDP = true;
-	return this->mp_EDP->localReaderMatching(R,first_time);
+	if(mp_EDP!=NULL)
+		return this->mp_EDP->localReaderMatching(R,first_time);
+	else
+		return false;
 }
 
 

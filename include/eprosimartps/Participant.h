@@ -101,7 +101,7 @@ private:
 	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
-	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,uint32_t payload_size);
+	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,uint32_t payload_size,bool isBuiltin);
 	/**
 	 * Create a StatefulWriter from a parameter structure.
 	 * @param[out] SWriter Pointer to the stateful writer.
@@ -109,9 +109,9 @@ private:
 	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
-	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,uint32_t payload_size);
+	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,uint32_t payload_size,bool isBuiltin);
 
-	bool initWriter(RTPSWriter* W);
+	bool initWriter(RTPSWriter* W,bool isBuiltin);
 
 	/**
 	 * Create a StatelessReader from a parameter structure and add it to the participant.
@@ -120,7 +120,7 @@ private:
 	 * @param[in] payload_size Size of the payload associated with this Reader.
 	 * @return True if correct.
 	 */
-	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,uint32_t payload_size);
+	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin);
 	/**
 		 * Create a StatefulReader from a parameter structure and add it to the participant.
 		 * @param[out] SReader Pointer to the stateful reader.
@@ -128,17 +128,19 @@ private:
 		 * @param[in] payload_size Size of the payload associated with this Reader.
 		 * @return True if correct.
 		 */
-	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,uint32_t payload_size);
-	bool initReader(RTPSReader* R);
+	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin);
+
+	bool initReader(RTPSReader* R,bool isBuiltin);
 
 
 	/**
 	 * Remove Endpoint from the participant. It closes all entities related to them that are no longer in use.
 	 * For example, if a ResourceListen is not useful anymore the thread is closed and the instance removed.
 	 * @param[in] endpoint Pointer to the Endpoint that is going to be removed.
+	 * @param[in] type Char indicating if it is Reader ('R') or Writer ('W')
 	 * @return True if correct.
 	 */
-	bool removeEndpoint(Endpoint* endpoint);
+	bool removeUserEndpoint(Endpoint* p_endpoint,char type);
 
 //	//!Protocol Version used by this participant.
 //	ProtocolVersion_t protocolVersion;
@@ -161,15 +163,25 @@ public:
 
 	ResourceEvent m_event_thr;
 
+	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
+	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
+	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
+	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
 private:
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* m_ResourceSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
 	uint32_t IdCounter;
 	//!Writer List.
-	std::vector<RTPSWriter*> m_writerList;
+	std::vector<RTPSWriter*> m_allWriterList;
 	//!Reader List
-	std::vector<RTPSReader*> m_readerList;
+	std::vector<RTPSReader*> m_allReaderList;
+	//!Listen thread list.
+	//!Writer List.
+	std::vector<RTPSWriter*> m_userWriterList;
+	//!Reader List
+	std::vector<RTPSReader*> m_userReaderList;
 	//!Listen thread list.
 	std::vector<ResourceListen*> m_threadListenList;
 	/*!

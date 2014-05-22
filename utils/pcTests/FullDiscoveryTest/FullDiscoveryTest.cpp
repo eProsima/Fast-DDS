@@ -168,14 +168,13 @@ int main(int argc, char** argv){
 	DomainParticipant::getIPAddress(&myIP);
 //	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
 	//***********  PARTICIPANT  ******************//
-			ParticipantAttributes PParam;
+	ParticipantAttributes PParam;
 
-			PParam.defaultSendPort = 10042;
-			PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-			PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-			PParam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 30;
-			PParam.discovery.domainId = 80;
-
+	PParam.defaultSendPort = 10042;
+	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 30;
+	PParam.discovery.domainId = 80;
 	switch(type)
 	{
 	case 1:

@@ -116,25 +116,18 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 		{
 			rit->unsent_changes.push_back(cptr);
 
-//			if(m_pushMode)
-//			{
-//				std::sort(rit->unsent_changes.begin(),rit->unsent_changes.end(),sort_cacheChanges);
+			if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
+			{
+				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
+						&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
+			}
+			else
+			{
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
 						&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
-				rit->unsent_changes.clear();
-//			}
-//			else
-//			{
-//					SequenceNumber_t first,last;
-//				m_writer_cache.get_seq_num_min(&first,NULL);
-//				m_writer_cache.get_seq_num_max(&last,NULL);
-//				m_heartbeatCount++;
-//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-//										ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-//				rit->unsent_changes.clear();
-//			}
+			}
+			rit->unsent_changes.clear();
+
 		}
 
 	}
