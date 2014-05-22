@@ -193,18 +193,18 @@ int main(int argc, char** argv){
 		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_DURABILITY_QOS;
 
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-		SubscriberAttributes Rparam;
-		Rparam.historyMaxSize = 50;
-		Rparam.topic.topicDataType = std::string("TestType");
-		Rparam.topic.topicName = std::string("Test_topic2");
-		Rparam.topic.topicKind = NO_KEY;
-		Locator_t loc;
-		loc = *myIP.begin();
-		loc.kind = 1;
-		loc.port = 10046;
-		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
-		Rparam.userDefinedId = 2;
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+//		SubscriberAttributes Rparam;
+//		Rparam.historyMaxSize = 50;
+//		Rparam.topic.topicDataType = std::string("TestType");
+//		Rparam.topic.topicName = std::string("Test_topic2");
+//		Rparam.topic.topicKind = NO_KEY;
+//		Locator_t loc;
+//		loc = *myIP.begin();
+//		loc.kind = 1;
+//		loc.port = 10046;
+//		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+//		Rparam.userDefinedId = 2;
+//		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
 		p->announceParticipantState();
 		my_sleep(4);
@@ -222,11 +222,11 @@ int main(int argc, char** argv){
 			tp1.price *= (i+1);
 
 			pub->write((void*)&tp1);
-			sub->waitForUnreadMessage();
-			sub->readNextData((void*)&tp_in,&info_in);
-			if(tp_in.value == tp1.value &&
-					tp_in.price ==tp1.price)
-				cout << "Message RECEIVED = AS SEND: "<< i << endl;
+//			sub->waitForUnreadMessage();
+//			sub->readNextData((void*)&tp_in,&info_in);
+//			if(tp_in.value == tp1.value &&
+//					tp_in.price ==tp1.price)
+//				cout << "Message RECEIVED = AS SEND: "<< i << endl;
 		}
 		break;
 	}
@@ -250,18 +250,18 @@ int main(int argc, char** argv){
 		Rparam.unicastLocatorList.push_back(loc);
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
-		PublisherAttributes Wparam;
-		Wparam.userDefinedId = 18;
-		Wparam.topic.topicKind = NO_KEY;
-		Wparam.reliability.reliabilityKind = BEST_EFFORT;
-		Wparam.topic.topicDataType = std::string("TestType");
-		Wparam.topic.topicName = std::string("Test_topic2");
-		Wparam.historyMaxSize = 14;
-		Wparam.reliability.heartbeatPeriod.seconds = 2;
-		Wparam.reliability.nackResponseDelay.seconds = 5;
-
-
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+//		PublisherAttributes Wparam;
+//		Wparam.userDefinedId = 18;
+//		Wparam.topic.topicKind = NO_KEY;
+//		Wparam.reliability.reliabilityKind = BEST_EFFORT;
+//		Wparam.topic.topicDataType = std::string("TestType");
+//		Wparam.topic.topicName = std::string("Test_topic2");
+//		Wparam.historyMaxSize = 14;
+//		Wparam.reliability.heartbeatPeriod.seconds = 2;
+//		Wparam.reliability.nackResponseDelay.seconds = 5;
+//
+//
+//		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 
 		p->announceParticipantState();
 
@@ -273,7 +273,7 @@ int main(int argc, char** argv){
 			sub->waitForUnreadMessage();
 			sub->readNextData((void*)&tp_in,&info_in);
 
-			pub->write((void*)&tp_in);
+		//	pub->write((void*)&tp_in);
 		}
 
 		break;
