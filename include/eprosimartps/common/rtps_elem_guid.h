@@ -121,7 +121,7 @@ typedef struct EntityId_t{
 			reverse();
 		return result;
 	}
-	bool operator==(EntityId_t& id2){
+	bool operator==(const EntityId_t& id2){
 		uint32_t* aux1 = (uint32_t*)(value);
 		uint32_t* aux2 = (uint32_t*)(id2.value);
 		if(*aux1 == *aux2)

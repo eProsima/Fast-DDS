@@ -27,7 +27,8 @@ RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
 		m_reader_cache(historysize,payload_size,READER,(Endpoint*)this),
 		expectsInlineQos(true),
 		mp_Sub(NULL),
-		mp_listener(NULL)
+		mp_listener(NULL),
+		m_acceptMessagesToUnknownReaders(true)
 
 {
 	pDebugInfo("RTPSReader created correctly"<<endl);
@@ -38,6 +39,15 @@ RTPSReader::~RTPSReader() {
 	pDebugInfo("RTPSReader destructor"<<endl;);
 }
 
+bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
+{
+	if(entityId == m_guid.entityId)
+		return true;
+	if(m_acceptMessagesToUnknownReaders && entityId == c_EntityId_Unknown)
+		return true;
+	else
+		return false;
+}
 
 
 } /* namespace rtps */

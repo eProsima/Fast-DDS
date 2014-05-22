@@ -364,7 +364,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if(reader == ENTITYID_UNKNOWN || (*it)->m_guid.entityId == reader) //add
+		if((*it)->acceptMsgDirectedTo(reader)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->m_guid.entityId<<endl);
 			CacheChange_t* change_to_add;
@@ -428,7 +428,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			else
 			{
-				pWarning("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+				pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
 			}
 		}
 	}
