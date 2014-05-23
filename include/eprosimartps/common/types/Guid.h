@@ -87,7 +87,8 @@ typedef struct EntityId_t{
 	EntityId_t(){
 		*this = ENTITYID_UNKNOWN;
 	}
-	EntityId_t(uint32_t id){
+	EntityId_t(uint32_t id)
+	{
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
 		reverse();
@@ -166,6 +167,11 @@ typedef struct GUID_t{
 		entityId = guid.entityId;
 		return *this;
 	}
+	GUID_t(){};
+	GUID_t(const GuidPrefix_t& guidP,uint32_t id):
+		guidPrefix(guidP),entityId(id) {}
+	GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
+		guidPrefix(guidP),entityId(entId) {}
 }GUID_t;
 
 inline bool operator==(const GUID_t& g1,const GUID_t& g2){

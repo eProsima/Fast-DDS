@@ -18,11 +18,10 @@
 #ifndef STATEFULWRITER_H_
 #define STATEFULWRITER_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/writer/ReaderProxy.h"
+
 #include "eprosimartps/writer/RTPSWriter.h"
 
-
+#include "eprosimartps/writer/ReaderProxy.h"
 
 
 namespace eprosima {

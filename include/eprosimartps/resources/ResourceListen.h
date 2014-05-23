@@ -25,10 +25,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
 
-
-
-#include "eprosimartps/rtps_all.h"
-
+#include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/MessageReceiver.h"
 
 

@@ -43,11 +43,24 @@ class TopicAttributes {
 public:
 	TopicAttributes()
 {
-	topicKind = NO_KEY;
-	topicName = "UNDEF";
-	topicDataType = "UNDEF";
-};
-	virtual ~TopicAttributes(){};
+		topicKind = NO_KEY;
+		topicName = "UNDEF";
+		topicDataType = "UNDEF";
+}
+	virtual ~TopicAttributes() {
+	}
+	const std::string& getTopicDataType() const {
+		return topicDataType;
+	}
+
+	TopicKind_t getTopicKind() const {
+		return topicKind;
+	}
+
+	const std::string& getTopicName() const {
+		return topicName;
+	}
+
 	//! TopicKind_t (WITH_KEY or NO_KEY)
 	TopicKind_t topicKind;
 	//! Topic Name.

@@ -15,7 +15,9 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/CacheChangePool.h"
+#include "eprosimartps/utils/CacheChangePool.h"
+#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {

@@ -28,9 +28,10 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 using namespace boost;
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/utils/CacheChangePool.h"
+#include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/types/Guid.h"
 
-#include "eprosimartps/CacheChangePool.h"
 
 namespace eprosima {
 namespace rtps {
@@ -39,14 +40,15 @@ namespace rtps {
 class RTPSWriter;
 class RTPSReader;
 class Endpoint;
+
 /**
  * Class HistoryCache, container of the different CacheChanges and the methods to access them.
  * @ingroup COMMONMODULE
  */
-class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex> {
+class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex>
+{
 public:
-//	HistoryCache();
-	HistoryCache(uint16_t historymaxsize,uint32_t payload_size,HistoryKind_t kind,Endpoint* endp);
+	HistoryCache(Endpoint* endp, uint16_t historymaxsize = 50, uint32_t payload_size = 500);
 
 	virtual ~HistoryCache();
 	/**
@@ -135,19 +137,11 @@ public:
 
 protected:
 
-	///@name Pointer to the associated entity. Only one of them is initialized.
-	//! @{
-	RTPSWriter* mp_rtpswriter;
-	RTPSReader* mp_rtpsreader;
-	//!@}
-	//!Type of History (WRITER or READER).
-	HistoryKind_t m_historyKind;
-
-
-
+	const Endpoint* mp_Endpoint;
 
 	//!Maximum history size.
 	uint16_t m_history_max_size;
+
 	//!Variable to know if the history is full without needing to block the History mutex.
 	bool isHistoryFull;
 	//!Minimum sequence number in the history

@@ -14,17 +14,22 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/MessageReceiver.h"
+#include "eprosimartps/common/RTPS_messages.h"
+#include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/resources/ResourceListen.h"
-#include "eprosimartps/reader/RTPSReader.h"
-#include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/writer/ReaderProxy.h"
 
+#include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
+
+//#include "eprosimartps/dds/Subscriber.h"
+//
+//#include "eprosimartps/writer/ReaderProxy.h"
+//
+//
+//#include "eprosimartps/reader/WriterProxy.h"
 
 
 

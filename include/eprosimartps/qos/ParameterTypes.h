@@ -18,10 +18,9 @@
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
 
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/common/types/Time_t.h"
-#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/all_common.h"
+
+
 #include <string>
 #include <vector>
 

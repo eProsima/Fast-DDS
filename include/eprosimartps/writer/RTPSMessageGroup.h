@@ -17,8 +17,8 @@
 
 #ifndef RTPSMESSAGEGROUP_H_
 #define RTPSMESSAGEGROUP_H_
-
-#include "eprosimartps/rtps_all.h"
+#include <vector>
+#include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
