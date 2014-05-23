@@ -22,26 +22,113 @@
 
 #include "eprosimartps/common/types/common_types.h"
 
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
-#include "eprosimartps/dds/attributes/PublisherAttributes.h"
-#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
-#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+#include "eprosimartps/dds/attributes/all_attributes.h"
 
-
-//#include "eprosimartps/Participant.h"
-#include "eprosimartps/utils/IPFinder.h"
 
 
 namespace eprosima{
 
-namespace rtps{   class Participant;   }
+namespace rtps{
+class Participant;
+class ParticipantImpl; }
 
 
 using namespace rtps;
 
 namespace dds {
 
+class DDSTOpicDataType;
+class Publisher;
+class Subscriber;
 
+
+class RTPS_DllAPI DomainParticipant
+{
+	/**
+	 * Method to shut down all participants, readers, writers, etc.
+	 * It must be called at the end of the process to avoid memory leaks.
+	 * It also shut downs the DomainParticipant.
+	 */
+	static void stopAll()
+	{
+		DomainParticipantImpl::getInstance()->stopAll();
+	}
+	/**
+	 * @brief Create a Publisher in the given Participant.
+	 * @param p Pointer to the Participant.
+	 * @param WParam Writer Parameters to create a Publisher.
+	 * @return Pointer to the publisher.
+	 */
+	static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam)
+	{
+		return (DomainParticipantImpl::getInstance()->createPublisher(p,WParam));
+	}
+	/**
+	 * @brief Create a Subscriber in the given Participant.
+	 * @param p Pointer to the Participant.
+	 * @param RParam Reader Parameters to create a Publisher.
+	 * @return Pointer to the subscriber.
+	 */
+	static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam)
+	{
+		return (DomainParticipantImpl::getInstance()->createSubscriber(p,RParam));
+	}
+	/**
+	 * @brief Create a Participant.
+	 * @snippet dds_example.cpp ex_ParticipantCreation
+	 * @param PParam Participant Parameters.
+	 * @return Pointer to the participant.
+	 */
+	static Participant* createParticipant(const ParticipantAttributes& PParam)
+	{
+		return (DomainParticipantImpl::getInstance()->createParticipant(PParam));
+	}
+	/**
+	 * Remove a participant and delete all its associated Writers, Readers, resources, etc.
+	 * @param[in] p Pointer to the Participant;
+	 * @return True if correct.
+	 */
+	static bool removeParticipant(Participant* p)
+	{
+		return (DomainParticipantImpl::getInstance()->removeParticipant( p));
+	}
+	/**
+	 * Remove a publisher from the Participant.
+	 */
+	static bool removePublisher(Participant* p,Publisher* pub)
+	{
+		return (DomainParticipantImpl::getInstance()->removePublisher( p, pub));
+	}
+	/**
+	 * Remove a subscriber from a participant.
+	 */
+	static bool removeSubscriber(Participant* p,Subscriber* sub)
+	{
+		return (DomainParticipantImpl::getInstance()->removeSubscriber( p, sub));
+	}
+
+	/**
+	 * Register a type in the domain.
+	 * The name must be unique, the size > 0.
+	 * @param[in] type Pointer to the Data Type Object.
+	 * @return True if correct.
+	 */
+	static bool registerType(DDSTopicDataType* type)
+	{
+		return (DomainParticipantImpl::getInstance()->registerType( type));
+	}
+
+	/**
+	 * Get a pointer to a registered type.
+	 * @param[in] type_name Name of the type to add.
+	 * @param[out] type_ptr Pointer to pointer of the type, is used to return the object.
+	 * @return True if the type is found.
+	 */
+	static bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
+	{
+		return (DomainParticipantImpl::getInstance()->getRegisteredType(type_name,type_ptr));
+	}
+};
 
 
 /**
@@ -49,40 +136,43 @@ namespace dds {
  * It can be directly accessed by the user. Is a singleton, so only one instance is ever created.
   * @ingroup DDSMODULE
  */
-class RTPS_DllAPI DomainParticipant {
+class RTPS_DllAPI DomainParticipantImpl {
 
 private:
 	uint32_t id;
     static bool instanceFlag;
     static DomainParticipant *single;
-    DomainParticipant();
+    DomainParticipantImpl();
     std::vector<DDSTopicDataType*> m_registeredTypes;
-    std::vector<Participant*> m_participants;
+    std::vector<ParticipantImpl*> m_participants;
     /**
      * DomainParticipant destructor
      */
-    ~DomainParticipant();
+    ~DomainParticipantImpl();
+
+    bool getParticipantImpl(Participant*,ParticipantImpl**);
+
 public:
     /**
      * Method to shut down all participants, readers, writers, etc.
      * It must be called at the end of the process to avoid memory leaks.
      * It also shut downs the DomainParticipant.
      */
-    static void stopAll();
+    void stopAll();
 	/**
 	 * @brief Create a Publisher in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @return Pointer to the publisher. 
 	 */
-    static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam);
+    Publisher* createPublisher(Participant* p, PublisherAttributes& WParam);
 	/**
 	 * @brief Create a Subscriber in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @return Pointer to the subscriber. 
 	 */
-    static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam);
+    Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam);
 
     /**
      * @brief Create a Participant.
@@ -90,22 +180,22 @@ public:
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
-    static Participant* createParticipant(const ParticipantAttributes& PParam);
+    Participant* createParticipant(const ParticipantAttributes& PParam);
 
     /**
      * Remove a participant and delete all its associated Writers, Readers, resources, etc.
      * @param[in] p Pointer to the Participant;
      * @return True if correct.
      */
-    static bool removeParticipant(Participant* p);
+    bool removeParticipant(Participant* p);
     /**
      * Remove a publisher from the Participant.
      */
-    static bool removePublisher(Participant* p,Publisher* pub);
+    bool removePublisher(Participant* p,Publisher* pub);
     /**
      * Remove a subscriber from a participant.
      */
-    static bool removeSubscriber(Participant* p,Subscriber* sub);
+    bool removeSubscriber(Participant* p,Subscriber* sub);
 
     /**
      * Register a type in the domain.
@@ -113,7 +203,7 @@ public:
      * @param[in] type Pointer to the Data Type Object.
      * @return True if correct.
      */
-    static bool registerType(DDSTopicDataType* type);
+    bool registerType(DDSTopicDataType* type);
 
     /**
      * Get a pointer to a registered type.
@@ -121,14 +211,14 @@ public:
      * @param[out] type_ptr Pointer to pointer of the type, is used to return the object.
      * @return True if the type is found.
      */
-    static bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr);
+    bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr);
 
 
 	/**
 	 * @brief Get pointer to the unique instance of this class.
 	 * @return Pointer to the instance.
 	 */
-    static DomainParticipant* getInstance();
+    static DomainParticipantImpl* getInstance();
 
 
 
@@ -178,12 +268,7 @@ public:
 	}
 	///@}
 
-	/**
-	 * Get IP addresses of the machine
-	 * @param[out] locators Pointer to vector of locators used to return the different IPs of the machine.
-	 *
-	 */
-	static void getIPAddress(LocatorList_t* locators);
+
 
 private:
     uint16_t m_portBase;

@@ -20,9 +20,11 @@
 #define SUBSCRIBER_H_
 #include <iostream>
 
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Guid.h"
+
 #include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/common/rtps_messages.h"
+
 
 #include <boost/signals2.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>

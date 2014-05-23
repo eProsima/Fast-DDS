@@ -64,15 +64,7 @@ class ParticipantDiscoveryProtocol;
 
 
 
-class Participant
-{
-public:
-	Participant():mp_impl(NULL){};
-	virtual ~ Participant(){};
 
-	private:
-ParticipantImpl* mp_impl;
-};
 
 
 
@@ -222,14 +214,20 @@ private:
 
 	ParticipantDiscoveryProtocol* mp_PDP;
 
-
-
-
 	DiscoveryAttributes m_discovery;
 
-
-
 };
+
+class RTPS_DllAPI Participant
+{
+public:
+	Participant():mp_impl(NULL){};
+	virtual ~ Participant(){};
+	const GUID_t& getGuid(){return mp_impl->getGuid();};
+	private:
+ParticipantImpl* mp_impl;
+};
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

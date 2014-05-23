@@ -24,12 +24,13 @@
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 
-#include "eprosimartps/dds/DomainParticipant.h"
+//#include "eprosimartps/dds/DomainParticipant.h"
 
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SimplePDP.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/IPFinder.h"
 
 namespace eprosima {
 namespace rtps {
@@ -59,7 +60,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 	{
 		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:10042"<<endl);
 		LocatorList_t myIP;
-		DomainParticipant::getIPAddress(&myIP);
+		IPFinder::getIPAddress(&myIP);
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
 			lit->port=10042;
