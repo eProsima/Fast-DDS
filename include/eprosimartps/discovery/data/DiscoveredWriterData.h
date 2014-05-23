@@ -22,6 +22,9 @@
 #include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/dds/attributes/TopicAttributes.h"
 
+
+#include "eprosimartps/qos/WriterQos.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {

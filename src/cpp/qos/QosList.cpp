@@ -16,7 +16,7 @@
  */
 
 #include "eprosimartps/qos/QosList.h"
-
+#include "eprosimartps/utils/RTPSLog.h"
 namespace eprosima {
 namespace dds {
 

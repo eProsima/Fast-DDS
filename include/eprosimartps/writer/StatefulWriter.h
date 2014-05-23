@@ -100,7 +100,12 @@ public:
 	p_ReaderProxyIterator matchedReadersEnd()
 		{
 			return matched_readers.end();
-		};
+	}
+	Count_t getHeartbeatCount() const {
+		return m_heartbeatCount;
+	}
+
+
 
 private:
 	//! Vector containin all the associated ReaderProxies.
