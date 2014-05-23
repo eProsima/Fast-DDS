@@ -19,6 +19,7 @@
 #define INSTANCEHANDLE_H_
 
 #include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Guid.h"
 
 namespace eprosima{
 namespace rtps{

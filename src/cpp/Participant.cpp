@@ -67,36 +67,9 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 			m_defaultUnicastLocatorList.push_back(*lit);
 		}
 	}
-	//
-	//	int pid;
-	//#if defined(_WIN32)
-	//	pid = (int)_getpid();
-	//#else
-	//	pid = (int)getpid();
-	//#endif
-	//	//cout << "PID: " << pid << " ID:"<< ID << endl;
-	//
-	//	m_guid.guidPrefix.value[0] = m_send_thr.m_sendLocator.address[12];
-	//	m_guid.guidPrefix.value[1] = m_send_thr.m_sendLocator.address[13];
-	//	m_guid.guidPrefix.value[2] = m_send_thr.m_sendLocator.address[14];
-	//	m_guid.guidPrefix.value[3] = m_send_thr.m_sendLocator.address[15];
-	//	m_guid.guidPrefix.value[4] = ((octet*)&pid)[0];
-	//	m_guid.guidPrefix.value[5] = ((octet*)&pid)[1];
-	//	m_guid.guidPrefix.value[6] = ((octet*)&pid)[2];
-	//	m_guid.guidPrefix.value[7] = ((octet*)&pid)[3];
-	//	m_guid.guidPrefix.value[8] = ((octet*)&ID)[0];
-	//	m_guid.guidPrefix.value[9] = ((octet*)&ID)[1];
-	//	m_guid.guidPrefix.value[10] = ((octet*)&ID)[2];
-	//	m_guid.guidPrefix.value[11] = ((octet*)&ID)[3];
-
-
-	//m_guid.entityId = ENTITYID_PARTICIPANT;
-
 
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
 
-	//	cout << "PParam name: "<< PParam.name << endl;
-	//	cout << "Participant name: " << m_participantName << endl;
 
 	m_discovery = PParam.discovery;
 
@@ -381,7 +354,7 @@ bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlis
 		return false;
 }
 
-bool ParticipantImpl::removeUserEndpoint(Endpoint* p_endpoint,char type)
+bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 {
 	bool found = false;
 	if(type == 'W')
@@ -421,6 +394,7 @@ bool ParticipantImpl::removeUserEndpoint(Endpoint* p_endpoint,char type)
 		if(!(*thit)->hasAssociatedEndpoints())
 			delete(*thit);
 	}
+	delete(p_endpoint);
 	return true;
 }
 

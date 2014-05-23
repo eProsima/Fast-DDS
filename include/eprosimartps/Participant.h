@@ -62,16 +62,6 @@ class RTPSWriter;
 class Endpoint;
 class ParticipantDiscoveryProtocol;
 
-
-
-
-
-
-
-
-
-
-
 /**
  * @class Participant
  * @brief Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -130,7 +120,7 @@ public:
 	 * @param[in] type Char indicating if it is Reader ('R') or Writer ('W')
 	 * @return True if correct.
 	 */
-	bool removeUserEndpoint(Endpoint* p_endpoint,char type);
+	bool deleteUserEndpoint(Endpoint* p_endpoint,char type);
 
 
 	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
@@ -166,7 +156,9 @@ public:
 			mp_ResourceSemaphore->post();
 	}
 
-
+	const DiscoveryAttributes& getDiscoveryAttributes() const {
+		return m_discovery;
+	}
 
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
@@ -221,7 +213,7 @@ private:
 class RTPS_DllAPI Participant
 {
 public:
-	Participant():mp_impl(NULL){};
+	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
 	virtual ~ Participant(){};
 	const GUID_t& getGuid(){return mp_impl->getGuid();};
 	private:

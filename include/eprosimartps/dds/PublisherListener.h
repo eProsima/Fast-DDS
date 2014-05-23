@@ -18,6 +18,8 @@
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
 
+#include "eprosimartps/common/types/common_types.h"
+
 namespace eprosima {
 namespace dds {
 

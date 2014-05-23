@@ -27,9 +27,9 @@
 namespace eprosima {
 
 namespace rtps{
+
 class RTPSWriter;
-class DDSTopicDataType;
-class PublisherListener;
+
 }
 
 using namespace rtps;
@@ -40,32 +40,25 @@ using namespace rtps;
  */
 namespace dds {
 
-
+class DDSTopicDataType;
+class PublisherListener;
 /**
  * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
  * DomainParticipant class should be used to correctly initialize this element.
  * @ingroup DDSMODULE
  * @snippet dds_example.cpp ex_Publisher
  */
-class RTPS_DllAPI Publisher {
-	friend class DomainParticipant;
-	friend class RTPSWriter;
+class PublisherImpl {
 public:
 
 	/**
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainParticipant static function.
 	 */
-	Publisher(RTPSWriter* Win);
-	virtual ~Publisher();
+	PublisherImpl(RTPSWriter* Win,DDSTopicDataType* ptype);
 
+	virtual ~PublisherImpl();
 
-	//! Get the topic name.
-	const std::string& getTopicName();
-
-
-	//!Get the data type.
-	const std::string& getTopicDataType();
 
 
 	/**
@@ -107,7 +100,7 @@ public:
 	 * Get the number of elements in the History.
 	 * @return Number of elements in the History.
 	 */
-	int getHistory_n();
+	int getHistoryElementsNumber();
 
 
 	//Since there is no discovery:
@@ -132,26 +125,125 @@ public:
 	///@}
 
 
-	/**
-	 * Get the type associated with the Publisher.
-	 * @return Pointer to the type object.
-	 */
-	DDSTopicDataType* getType(){return (mp_type);};
-
-	void assignListener(PublisherListener* listen);
+	bool assignListener(PublisherListener* listen);
 
 
+	const GUID_t& getGuid();
+
+	RTPSWriter* getWriterPtr() {
+			return mp_Writer;
+		}
 private:
 	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_Writer;
 	//! Pointer to the DDSTopicDataType object.
 	DDSTopicDataType* mp_type;
 
-
-
-
-
 };
+
+class RTPS_DllAPI Publisher{
+public:
+	Publisher(PublisherImpl* pin):mp_impl(pin){};
+	virtual ~Publisher(){};
+
+
+	bool assignListener(PublisherListener* listen_in)
+	{
+		return mp_impl->assignListener(listen_in);
+	}
+	/**
+	 * Write data to the topic.
+	 * @param Data Pointer to the data
+	 * @return True if correct
+	 * @par Calling example:
+	 * @snippet dds_example.cpp ex_PublisherWrite
+	 */
+	bool write(void*Data)
+	{
+		return mp_impl->write(Data);
+	}
+
+	/**
+	 * Dispose of a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
+	bool dispose(void*Data)
+	{
+		return mp_impl->dispose(Data);
+	}
+	/**
+	 * Unregister a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
+	bool unregister(void*Data)
+	{
+		return mp_impl->unregister(Data);
+	}
+
+
+	/**
+	 * Removes the cache change with the minimum sequence number
+	 * @return True if correct.
+	 */
+	bool removeMinSeqChange()
+	{
+		return mp_impl->removeMinSeqChange();
+	}
+	/**
+	 * Removes all changes from the History.
+	 * @param[out] removed Number of removed elements
+	 * @return True if correct.
+	 */
+	bool removeAllChange(int32_t* removed)
+	{
+		return mp_impl->removeAllChange(removed);
+	}
+
+	/**
+	 * Get the number of elements in the History.
+	 * @return Number of elements in the History.
+	 */
+	int getHistoryElementsNumber()
+	{
+		return mp_impl->getHistoryElementsNumber();
+	}
+
+
+	//Since there is no discovery:
+	/** @name Discovery substitution methods.
+	 * Since no discovery is implemented in this version, these methods are needed.
+	 */
+	/// @{
+	/**
+	 * Add a Reader Locator to the publisher.
+	 * @param Loc Locator to add.
+	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
+	 * @return True if correct.
+	 */
+	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
+	{
+		return mp_impl->addReaderLocator(Loc, expectsInlineQos);
+	}
+
+	/**
+	 * Add a reader proxy to the publisher.
+	 */
+	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
+	{
+		return mp_impl->addReaderProxy(loc,guid, expectsInline);
+	}
+
+	const GUID_t& getGuid()
+	{
+		return mp_impl->getGuid();
+	}
+
+private:
+	PublisherImpl* mp_impl;
+};
+
 
 } /* namespace dds */
 } /* namespace eprosima */
