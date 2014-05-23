@@ -36,25 +36,27 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/Endpoint.cpp \
+		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
+		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
-		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
-		  $(BASEDIR)/src/cpp/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/Participant.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
-		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
+		  		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/resources/ResourceListen.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceEvent.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp \

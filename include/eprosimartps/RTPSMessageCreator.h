@@ -56,9 +56,9 @@ public:
 	 * @param vendorId Vendor Id.
 	 * @return True if correct.
 	 */
-	static bool addHeader(CDRMessage_t*msg ,GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
+	static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
 
-	static bool addHeader(CDRMessage_t*msg ,GuidPrefix_t& Prefix);
+	static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix);
 
 	/**
 	 * Create SubmessageHeader.

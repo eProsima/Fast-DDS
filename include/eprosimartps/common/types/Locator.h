@@ -20,6 +20,7 @@
 
 #include "eprosimartps/common/types/common_types.h"
 #include <sstream>
+#include <vector>
 namespace eprosima{
 namespace rtps{
 

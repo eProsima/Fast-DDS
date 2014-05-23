@@ -17,7 +17,7 @@
 
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
-#include "eprosimartps/rtps_all.h"
+
 namespace eprosima {
 namespace dds {
 

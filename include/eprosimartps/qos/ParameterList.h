@@ -21,8 +21,12 @@
 #include "eprosimartps/qos/ParameterTypes.h"
 #include "eprosimartps/common/RTPS_messages.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
-
+#include "eprosimartps/CDRMessage.h"
+#include "eprosimartps/common/CacheChange.h"
 namespace eprosima {
+
+
+
 namespace dds {
 
 /**
