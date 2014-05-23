@@ -18,7 +18,6 @@
 #ifndef NACKRESPONSEDELAY_H_
 #define NACKRESPONSEDELAY_H_
 
-#include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 

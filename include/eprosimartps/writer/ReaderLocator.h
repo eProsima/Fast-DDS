@@ -15,15 +15,20 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/HistoryCache.h"
+
 
 #ifndef READERLOCATOR_H_
 #define READERLOCATOR_H_
+#include <vector>
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/common/types/SequenceNumber.h"
 
 namespace eprosima {
 namespace rtps {
 
+class HistoryCache;
+struct CacheChange_t;
 
 /**
  * Class ReaderLocator, contains information about a locator, without saving its state.

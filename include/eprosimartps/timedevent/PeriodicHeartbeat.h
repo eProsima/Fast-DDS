@@ -18,7 +18,6 @@
 #ifndef PERIODICHEARTBEAT_H_
 #define PERIODICHEARTBEAT_H_
 
-#include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
 
 

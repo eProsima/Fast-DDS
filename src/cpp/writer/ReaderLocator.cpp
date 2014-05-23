@@ -16,7 +16,8 @@
  */
 
 #include "eprosimartps/writer/ReaderLocator.h"
-
+#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/HistoryCache.h"
 
 namespace eprosima {
 namespace rtps {

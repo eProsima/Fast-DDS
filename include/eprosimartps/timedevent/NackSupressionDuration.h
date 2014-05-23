@@ -18,7 +18,6 @@
 #ifndef NACKSUPRESSIONDURATION_H_
 #define NACKSUPRESSIONDURATION_H_
 
-#include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
 
 namespace eprosima {

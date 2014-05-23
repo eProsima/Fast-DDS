@@ -44,6 +44,12 @@ enum Endianness_t{
 	LITTLEEND = 0x0
 };
 
+//!Reliability enum used for internal purposes
+enum ReliabilityKind_t{
+	RELIABLE,
+	BEST_EFFORT
+};
+
 #if defined(__LITTLE_ENDIAN__)
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #else

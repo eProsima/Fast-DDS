@@ -14,13 +14,16 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/writer/ReaderLocator.h"
+#include "eprosimartps/dds/attributes/PublisherAttributes.h"
 
 
 #ifndef STATELESSWRITER_H_
 #define STATELESSWRITER_H_
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -31,14 +34,13 @@ namespace rtps {
  */
 class StatelessWriter : public RTPSWriter
 {
-	friend class DomainParticipant;
 public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
-	StatelessWriter(const PublisherAttributes* wParam,uint32_t payload_size);
+	StatelessWriter(const PublisherAttributes& wParam,
+			const GuidPrefix_t&guidP, const EntityId_t& entId);
 
-	Duration_t resendDataPeriod; //FIXME: Not used yet.
-	std::vector<ReaderLocator> reader_locator;
+
 	/**
 	 * Add a ReaderLocator to the Writer.
 	 * @param locator ReaderLocator to add.
@@ -69,7 +71,10 @@ public:
 	void unsent_changes_not_empty();
 
 	 bool removeMinSeqCacheChange();
-		 bool removeAllCacheChange(int32_t* n_removed);
+	 bool removeAllCacheChange(int32_t* n_removed);
+private:
+	 Duration_t resendDataPeriod; //FIXME: Not used yet.
+	 std::vector<ReaderLocator> reader_locator;
 };
 
 } /* namespace rtps */

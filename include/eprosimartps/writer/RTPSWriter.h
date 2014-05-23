@@ -109,7 +109,7 @@ public:
 	}
 
 
-private:
+protected:
 
 	//!Changes associated with this writer.
 	HistoryCache m_writer_cache;

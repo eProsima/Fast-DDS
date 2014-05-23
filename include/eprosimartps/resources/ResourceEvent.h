@@ -24,7 +24,7 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
-#include "eprosimartps/rtps_all.h"
+
 
 
 namespace eprosima {
