@@ -19,7 +19,7 @@
 #define HEARTBEATRESPONSEDELAY_H_
 
 #include "eprosimartps/timedevent/TimedEvent.h"
-
+#include "eprosimartps/common/types/CDRMessage_t.h"
 namespace eprosima {
 namespace rtps {
 

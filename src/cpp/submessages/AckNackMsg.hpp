@@ -18,7 +18,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
 

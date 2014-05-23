@@ -18,7 +18,7 @@
 #include "eprosimartps/qos/DDSQosPolicies.h"
 
 #include "eprosimartps/CDRMessage.h"
-
+#include "eprosimartps/utils/RTPSLog.h"
 namespace eprosima {
 namespace dds {
 

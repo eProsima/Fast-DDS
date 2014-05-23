@@ -19,6 +19,15 @@
 
 #include "eprosimartps/writer/StatefulWriter.h"
 
+#include "eprosimartps/utils/RTPSLog.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+
+#include "eprosimartps/resources/ResourceSend.h"
+#include "eprosimartps/resources/ResourceEvent.h"
+
+#include "eprosimartps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/RTPSMessageCreator.h"
 
 namespace eprosima {
 namespace rtps {
@@ -33,7 +42,7 @@ NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::millis
 		mp_RP(p_RP)
 {
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
-	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->m_guid.guidPrefix);
+	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->getGuid().guidPrefix);
 }
 
 bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)
@@ -68,8 +77,8 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 			if(!relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
 						&relevant_changes,
-						&mp_RP->m_param.unicastLocatorList,
-						&mp_RP->m_param.multicastLocatorList,
+						mp_RP->m_param.unicastLocatorList,
+						mp_RP->m_param.multicastLocatorList,
 						mp_RP->m_param.expectsInlineQos,
 						mp_RP->m_param.remoteReaderGuid.entityId);
 			if(!not_relevant_changes.empty())
