@@ -43,8 +43,6 @@ struct CDRMessage_t;
  */
 class ResourceSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
-	friend class Participant;
-	friend class SimpleParticipantDiscoveryProtocol;
 public:
 	ResourceSend();
 	virtual ~ResourceSend();
@@ -61,15 +59,17 @@ public:
 	 * @return True if correct
 	 */
 	bool initSend(const Locator_t& loc);
+
+	//!FOR TESTING ONLY!!!!
+	void loose_next(){m_send_next = false;};
 private:
 	Locator_t m_sendLocator;
 	boost::asio::io_service m_send_service;
 	boost::asio::ip::udp::socket m_send_socket;
 	boost::asio::ip::udp::endpoint m_send_endpoint;
 	size_t m_bytes_sent;
-public:
-	//!Used in tests
 	bool m_send_next;
+
 };
 
 } /* namespace rtps */

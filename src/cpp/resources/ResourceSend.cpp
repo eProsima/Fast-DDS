@@ -16,6 +16,8 @@
  */
 
 #include "eprosimartps/resources/ResourceSend.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 using boost::asio::ip::udp;
 
@@ -92,24 +94,24 @@ ResourceSend::~ResourceSend()
 	m_send_service.stop();
 }
 
-void ResourceSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
+void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 {
 	boost::lock_guard<ResourceSend> guard(*this);
-	if(loc->port == 0)
+	if(loc.port == 0)
 		return;
-	if(loc->kind == LOCATOR_KIND_UDPv4)
+	if(loc.kind == LOCATOR_KIND_UDPv4)
 	{
 		boost::asio::ip::address_v4::bytes_type addr;
 		for(uint8_t i=0;i<4;i++)
-			addr[i] = loc->address[12+i];
-		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v4(addr),loc->port);
+			addr[i] = loc.address[12+i];
+		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
 	}
-	else if(loc->kind == LOCATOR_KIND_UDPv6)
+	else if(loc.kind == LOCATOR_KIND_UDPv6)
 	{
 		boost::asio::ip::address_v6::bytes_type addr;
 		for(uint8_t i=0;i<16;i++)
-			addr[i] = loc->address[i];
-		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc->port);
+			addr[i] = loc.address[i];
+		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
 	}
 	pInfo(YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
 	if(m_send_endpoint.port()>0)

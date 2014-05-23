@@ -18,7 +18,7 @@
 #ifndef SIMPLEEDP_H_
 #define SIMPLEEDP_H_
 
-#include "eprosimartps/rtps_all.h"
+
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SEDPListeners.h"
 namespace eprosima {

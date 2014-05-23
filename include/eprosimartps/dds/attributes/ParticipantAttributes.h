@@ -19,6 +19,7 @@
 #define PARTICIPANTPARAMETERS_H_
 
 #include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/common/types/Locator.h"
 
 namespace eprosima {
 namespace rtps {

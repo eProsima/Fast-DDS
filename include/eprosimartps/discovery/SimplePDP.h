@@ -29,16 +29,16 @@ namespace rtps {
 
 class StatelessWriter;
 class StatelessReader;
-class Participant;
+class ParticipantImpl;
 class ResendDiscoveryDataPeriod;
 
 class SimplePDP: public eprosima::rtps::ParticipantDiscoveryProtocol {
 public:
-	SimplePDP(Participant* p_part);
+	SimplePDP(ParticipantImpl* p_part);
 	virtual ~SimplePDP();
 
 	bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID);
-	bool addLocalParticipant(Participant* p);
+	bool addLocalParticipant(ParticipantImpl* p);
 
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;

@@ -18,12 +18,12 @@
 #ifndef ENDPOINTDISCOVERYPROTOCOL_H_
 #define ENDPOINTDISCOVERYPROTOCOL_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
+
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
 //#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
 //#include "eprosimartps/common/attributes/PublisherAttributes.h"
 //#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 //#include "eprosimartps/writer/RTPSWriter.h"
 //#include "eprosimartps/reader/RTPSReader.h"
 //#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"

@@ -39,7 +39,9 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 					m_Pub(NULL),
 					mp_listener(NULL)
 {
+	init_header();
 	pDebugInfo("RTPSWriter created"<<endl)
+
 }
 
 void RTPSWriter::init_header()
