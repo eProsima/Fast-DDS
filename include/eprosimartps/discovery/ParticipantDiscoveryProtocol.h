@@ -18,12 +18,12 @@
 #ifndef PARTICIPANTDISCOVERYPROTOCOL_H_
 #define PARTICIPANTDISCOVERYPROTOCOL_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
+
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
 //#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
 //#include "eprosimartps/common/attributes/PublisherAttributes.h"
 //#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 

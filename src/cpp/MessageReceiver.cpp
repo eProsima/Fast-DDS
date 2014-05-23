@@ -75,7 +75,7 @@ void MessageReceiver::reset(){
 	multicastReplyLocatorList.push_back(defUniLoc);
 }
 
-void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
+void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)

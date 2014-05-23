@@ -31,7 +31,7 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 
-#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+#include "eprosimartps/dds/attributes/all_attributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ResourceListen.h"
@@ -64,8 +64,14 @@ class ParticipantDiscoveryProtocol;
 
 
 
-class Participant{
+class Participant
+{
+public:
+	Participant():mp_impl(NULL){};
+	virtual ~ Participant(){};
 
+	private:
+ParticipantImpl* mp_impl;
 };
 
 
@@ -136,19 +142,39 @@ public:
 
 
 	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
+
 	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
+
 	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
+
 	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
 
+
 	//!Used for tests
-	void loose_next_change(){m_send_thr.m_send_next = false;};
+	void loose_next_change(){m_send_thr.loose_next();};
 	//! Announce ParticipantState
 	void announceParticipantState();
+
+	const GUID_t& getGuid() const {
+		return m_guid;
+	}
+
+	const std::string& getParticipantName() const {
+		return m_participantName;
+	}
 
 	//!Default listening addresses.
 	LocatorList_t m_defaultUnicastLocatorList;
 	//!Default listening addresses.
 	LocatorList_t m_defaultMulticastLocatorList;
+
+	void ResourceSemaphorePost()
+	{
+		if(mp_ResourceSemaphore!=NULL)
+			mp_ResourceSemaphore->post();
+	}
+
+
 
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
@@ -164,7 +190,7 @@ private:
 	ResourceEvent m_event_thr;
 
 	//!Semaphore to wait for the listen thread creation.
-	boost::interprocess::interprocess_semaphore* m_ResourceSemaphore;
+	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
 	uint32_t IdCounter;
 	//!Writer List.
