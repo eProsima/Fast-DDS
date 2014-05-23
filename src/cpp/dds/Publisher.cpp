@@ -24,60 +24,59 @@
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
 
+#include "eprosimartps/utils/RTPSLog.h"
+
 namespace eprosima {
 namespace dds {
 
-Publisher::Publisher(RTPSWriter* Win):
+PublisherImpl::PublisherImpl(RTPSWriter* Win,DDSTopicDataType*p):
 		mp_Writer(Win),
-		mp_type(NULL)
+		mp_type(p)
 {
 
 }
 
-Publisher::~Publisher() {
+PublisherImpl::~PublisherImpl() {
 
 	pDebugInfo("Publisher destructor"<<endl;);
 }
 
-bool Publisher::write(void* Data) {
+bool PublisherImpl::write(void* Data) {
 
 	pInfo("Writing new data"<<endl)
-
 	return mp_Writer->add_new_change(ALIVE,Data);
 }
 
-bool Publisher::dispose(void* Data) {
+bool PublisherImpl::dispose(void* Data) {
 
 	pInfo("Disposing of Data"<<endl)
-
 	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED,Data);
 }
 
 
-bool Publisher::unregister(void* Data) {
+bool PublisherImpl::unregister(void* Data) {
 	//Convert data to serialized Payload
 	pInfo("Unregistering of Data"<<endl)
-
 	return mp_Writer->add_new_change(NOT_ALIVE_UNREGISTERED,Data);
 }
 
 
-bool Publisher::removeMinSeqChange()
+bool PublisherImpl::removeMinSeqChange()
 {
 	return mp_Writer->removeMinSeqCacheChange();
 }
 
-bool Publisher::removeAllChange(int32_t* removed)
+bool PublisherImpl::removeAllChange(int32_t* removed)
 {
 	return mp_Writer->removeAllCacheChange(removed);
 }
 
-int Publisher::getHistory_n()
+int PublisherImpl::getHistoryElementsNumber()
 {
 	return mp_Writer->getHistoryCacheSize();
 }
 
-bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
+bool PublisherImpl::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 {
 	if(mp_Writer->getStateType()==STATELESS)
 	{
@@ -96,7 +95,7 @@ bool Publisher::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 }
 
 
-bool Publisher::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
+bool PublisherImpl::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
 {
 	if(mp_Writer->getStateType()==STATELESS)
 	{
@@ -116,19 +115,17 @@ bool Publisher::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
 	return false;
 }
 
-const std::string& Publisher::getTopicName()
+
+bool PublisherImpl::assignListener(PublisherListener* listen_in)
 {
-	return mp_Writer->getTopicName();
+	mp_Writer->mp_listener = listen_in;
+	return true;
 }
 
-const std::string& Publisher::getTopicDataType()
-{
-	return mp_Writer->getTopicDataType();
-}
-
-void Publisher::assignListener(PublisherListener* listen) {
-	mp_Writer->mp_listener = listen;
-}
+const GUID_t& PublisherImpl::getGuid()
+	{
+		return mp_Writer->getGuid();
+	}
 
 } /* namespace dds */
 } /* namespace eprosima */

@@ -30,7 +30,7 @@
 #include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 #include "eprosimartps/qos/ReaderQos.h"
-
+#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/utils/Semaphore.h"
 
 
@@ -40,7 +40,7 @@ using namespace eprosima::dds;
 namespace eprosima {
 
 namespace dds{
-class Subscriber;
+
 class SubscriberListener;
 class SampleInfo_t;
 }
@@ -78,6 +78,8 @@ public:
 		return m_reader_cache.release_Cache(ch);
 	}
 
+	size_t getHistoryCacheSize(){return m_reader_cache.m_changes.size();};
+
 	/**
 	 * Add a change to the HistoryCache.
 	 * @param[in] a_change Pointer to the change to add.
@@ -88,17 +90,32 @@ public:
 
 	bool acceptMsgDirectedTo(EntityId_t& entityId);
 
-	//!Pointer to the associated subscriber
-	Subscriber* mp_Sub;
+
 
 	Semaphore m_semaphore;
 
-	//!Pointer to the object used by the user to implement the behaviour when messages are received.
-	SubscriberListener* mp_listener;
 
-	bool isHistoryFull(){return m_reader_cache.isFull();};
+
+	bool isHistoryFull()
+	{
+		return m_reader_cache.isFull();
+	}
+	SubscriberListener* getListener()
+	{
+		return mp_listener;
+	}
+
+	void setQos(ReaderQos& qos,bool first)
+		{
+			return m_qos.setQos(qos,first);
+		}
 
 protected:
+	//!Pointer to the associated subscriber
+	//	Subscriber* mp_Sub;
+	//!Pointer to the object used by the user to implement the behaviour when messages are received.
+	SubscriberListener* mp_listener;
+	friend bool SubscriberImpl::assignListener(SubscriberListener* plistener);
 
 	//!History Cache of the Reader.
 	HistoryCache m_reader_cache;

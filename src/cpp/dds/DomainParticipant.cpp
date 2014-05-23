@@ -28,24 +28,22 @@
 #include "eprosimartps/Participant.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/IPFinder.h"
 
 namespace eprosima {
 namespace dds {
 
 bool DomainParticipantImpl::instanceFlag = false;
-DomainParticipant* DomainParticipantImpl::single = NULL;
+DomainParticipantImpl* DomainParticipantImpl::single = NULL;
 DomainParticipantImpl* DomainParticipantImpl::getInstance()
 {
 	if(! instanceFlag)
 	{
-		single = new DomainParticipant();
+		single = new DomainParticipantImpl();
 		instanceFlag = true;
-		return single;
 	}
-	else
-	{
-		return single;
-	}
+
+	return single;
 }
 
 DomainParticipantImpl::DomainParticipantImpl()
@@ -64,22 +62,25 @@ DomainParticipantImpl::DomainParticipantImpl()
 DomainParticipantImpl::~DomainParticipantImpl()
 {
 	pDebugInfo("DomainParticipant destructor"<<endl;);
-	for(std::vector<Participant*>::iterator it=m_participants.begin();
+	for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 			it!=m_participants.end();++it)
 	{
-		delete(*it);
+		delete(it->first);
+		delete(it->second);
 	}
 	pDebugInfo("Participants deleted correctly "<< endl);
-	for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
+	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
 			it!=m_publisherList.end();++it)
 	{
-		delete(*it);
+		delete(it->first);
+		delete(it->second);
 	}
 	pDebugInfo("Publishers deleted correctly "<< endl);
-	for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
+	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
 			it!=m_subscriberList.end();++it)
 	{
-		delete(*it);
+		delete(it->first);
+		delete(it->second);
 	}
 	pDebugInfo("Subscribers deleted correctly "<< endl);
 	DomainParticipantImpl::instanceFlag = false;
@@ -99,17 +100,61 @@ void DomainParticipantImpl::stopAll()
 
 bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pimpl)
 {
-	for(std::vector<ParticipantImpl*>::iterator it = m_participants.begin();
+	if(p == NULL)
+		return false;
+	for(std::vector<ParticipantPair>::iterator it = m_participants.begin();
 			it!=m_participants.end();++it)
 	{
-		if((*it)->getGuid() == p->getGuid())
+		if(it->second->getGuid() == p->getGuid())
 		{
-			*pimpl = *it;
+			*pimpl = (it->second);
 			return true;
 		}
 	}
 	return false;
 }
+
+Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
+{
+	uint32_t ID = getNewId();
+	int pid;
+#if defined(_WIN32)
+	pid = (int)_getpid();
+#else
+	pid = (int)getpid();
+#endif
+	GuidPrefix_t guidP;
+	LocatorList_t loc;
+	IPFinder::getIPAddress(&loc);
+	if(loc.size()>0)
+	{
+		guidP.value[0] = loc.begin()->address[12];
+		guidP.value[1] = loc.begin()->address[13];
+		guidP.value[2] = loc.begin()->address[14];
+		guidP.value[3] = loc.begin()->address[15];
+	}
+	else
+	{
+		guidP.value[0] = 127;
+		guidP.value[1] = 0;
+		guidP.value[2] = 0;
+		guidP.value[3] = 1;
+	}
+	guidP.value[4] = ((octet*)&pid)[0];
+	guidP.value[5] = ((octet*)&pid)[1];
+	guidP.value[6] = ((octet*)&pid)[2];
+	guidP.value[7] = ((octet*)&pid)[3];
+	guidP.value[8] = ((octet*)&ID)[0];
+	guidP.value[9] = ((octet*)&ID)[1];
+	guidP.value[10] = ((octet*)&ID)[2];
+	guidP.value[11] = ((octet*)&ID)[3];
+	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP);
+	Participant* p = new Participant(pimpl);
+
+	m_participants.push_back(ParticipantPair(p,pimpl));
+	return p;
+}
+
 
 
 Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAttributes& WParam)
@@ -133,8 +178,8 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
-	Publisher* Pub = NULL;
-	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	PublisherImpl* pubImpl = NULL;
+	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(WParam.userDefinedId <= 0)
 		{
@@ -142,42 +187,33 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 			return NULL;
 		}
 	}
-	if(WParam.qos.m_reliability == BEST_EFFORT_RELIABILITY_QOS)
+	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false))
 			return NULL;
-		SW->m_qos.setQos(WParam.qos,true);
-		Pub = new Publisher((RTPSWriter*)SW);
-		pDebugInfo("Publisher in topic: "<<Pub->getTopicName()<<" created."<<endl);
-		SW->m_Pub = Pub;
-
-		Pub->mp_type = p_type;
-		SW->mp_type = p_type;
-
+		SW->setQos(WParam.qos,true);
+		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
-	else if(WParam.qos.m_reliability == RELIABLE_RELIABILITY_QOS)
+	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		StatefulWriter* SF;
-		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize,false))
+		StatefulWriter* SW;
+		if(!p->createStatefulWriter(&SW,WParam,p_type->m_typeSize,false))
 			return NULL;
-		SF->m_qos.setQos(WParam.qos,true);
-		Pub = new Publisher((RTPSWriter*)SF);
-		SF->m_Pub = Pub;
-		Pub->mp_type = p_type;
-		SF->mp_type = p_type;
-
+		SW->setQos(WParam.qos,true);
+		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
-	if(Pub != NULL)
+	if(pubImpl != NULL)
 	{
 		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
-		m_publisherList.push_back(Pub);
+		Publisher* Pub = new Publisher(pubImpl);
+		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
+		return Pub;
 	}
-	else
-	{
-		pError("Publisher not created"<<endl);
-	}
-	return Pub;
+
+	pError("Publisher not created"<<endl);
+
+	return NULL;
 }
 
 Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam)
@@ -188,21 +224,21 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
+	pInfo("Creating Publisher"<<endl)
 	//Look for the correct type registration
-	pInfo("Creating Subscriber"<<endl;);
 	DDSTopicDataType* p_type = NULL;
-	if(!DomainParticipant::getRegisteredType(RParam.topic.topicDataType,&p_type))
+	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
-
 	if(RParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
-	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	SubscriberImpl* subImpl = NULL;
+	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(RParam.userDefinedId <= 0)
 		{
@@ -210,59 +246,36 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 			return NULL;
 		}
 	}
-	Subscriber* Sub = NULL;
-	if(RParam.qos.m_reliability == BEST_EFFORT_RELIABILITY_QOS)
+	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessReader* SR;
 		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize,false))
-		{
-			pError("Error creating subscriber"<<endl);
 			return NULL;
-		}
-		SR->m_qos.setQos(RParam.qos,true);
-		Sub = new Subscriber((RTPSReader*) SR);
-		SR->mp_Sub = Sub;
-		SR->mp_type = p_type;
-		Sub->topicName = RParam.topic.topicName;
-		Sub->topicDataType = RParam.topic.topicDataType;
+		SR->setQos(RParam.qos,true);
+		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
-	else if(RParam.qos.m_reliability == RELIABLE_RELIABILITY_QOS)
+	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		pDebugInfo("Stateful"<<endl);
-		StatefulReader* SFR;
-		if(!p->createStatefulReader(&SFR,RParam,p_type->m_typeSize,false))
-		{
-			pError("Error creating subscriber"<<endl);
+		StatefulReader* SR;
+		if(!p->createStatefulReader(&SR,RParam,p_type->m_typeSize,false))
 			return NULL;
-		}
-		SFR->m_qos.setQos(RParam.qos,true);
-		Sub = new Subscriber((RTPSReader*) SFR);
-		SFR->mp_Sub = Sub;
-		SFR->mp_type = p_type;
-		Sub->topicName = RParam.topic.topicName;
-		Sub->topicDataType = RParam.topic.topicDataType;
-
+		SR->setQos(RParam.qos,true);
+		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
-	if(Sub!=NULL)
+	if(subImpl != NULL)
 	{
-		pInfo(B_YELLOW<<"SUBSCRIBER CORRECTLY CREATED"<<DEF<<endl);
-
-		m_subscriberList.push_back(Sub);
+		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
+		Subscriber* Sub = new Subscriber(subImpl);
+		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
+		return Sub;
 	}
-	else
-	{pError("Subscriber not created"<<endl);}
-	return Sub;
+
+	pError("Publisher not created"<<endl);
+
+	return NULL;
 }
 
-Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
-{
 
-	uint32_t id = getNewId();
-	Participant* p = new Participant(PParam,id);
-
-	m_participants.push_back(p);
-	return p;
-}
 
 bool DomainParticipantImpl::getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
 {
@@ -306,22 +319,18 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 	if(p!=NULL)
 	{
 		bool found = false;
-		for(std::vector<Participant*>::iterator it=m_participants.begin();
+		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 				it!=m_participants.end();++it)
 		{
-			if((*it)->m_guid == p->m_guid)
+			if(it->second->getGuid() == p->getGuid())
 			{
 				found = true;
+				delete(it->first);
+				delete(it->second);
 				m_participants.erase(it);
-				break;
+				return true;
 			}
 		}
-		if(found)
-		{
-			delete(p);
-			return true;
-		}
-
 	}
 	return false;
 }
@@ -336,22 +345,22 @@ bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
 	}
 	if(p==NULL || pub==NULL)
 		return false;
-	if(p->removeUserEndpoint((Endpoint*)(pub->mp_Writer),'W'))
+
+	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
+			it!=m_publisherList.end();++it)
 	{
-		for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
-				it!=m_publisherList.end();++it)
-		{
-			if((*it)->mp_Writer->m_guid == pub->mp_Writer->m_guid)
+			if(it->second->getGuid() == pub->getGuid())
 			{
-				m_publisherList.erase(it);
+				if(p->deleteUserEndpoint((Endpoint*)(it->second->getWriterPtr()),'W'))
+				{
+					delete(it->first);
+					delete(it->second);
+					m_publisherList.erase(it);
+					return true;
+				}
 			}
-		}
-		delete(pub->mp_Writer);
-		delete(pub);
-		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
 bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
@@ -364,22 +373,22 @@ bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
 	}
 	if(p==NULL || sub==NULL)
 		return false;
-	if(p->removeUserEndpoint((Endpoint*)(sub->mp_Reader),'R'))
+
+	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
+			it!=m_subscriberList.end();++it)
 	{
-		for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
-				it!=m_subscriberList.end();++it)
+		if(it->second->getGuid() == sub->getGuid())
 		{
-			if((*it)->mp_Reader->m_guid == sub->mp_Reader->m_guid)
+			if(p->deleteUserEndpoint((Endpoint*)(it->second->getReaderPtr()),'R'))
 			{
+				delete(it->first);
+				delete(it->second);
 				m_subscriberList.erase(it);
+				return true;
 			}
 		}
-		delete(sub->mp_Reader);
-		delete(sub);
-		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
 

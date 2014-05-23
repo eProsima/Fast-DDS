@@ -22,6 +22,7 @@
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 
 #include "eprosimartps/qos/WriterQos.h"
+#include "eprosimartps/dds/Publisher.h"
 
 
 #ifndef RTPSWRITER_H_
@@ -35,7 +36,7 @@ using namespace eprosima::dds;
 namespace eprosima {
 
 namespace dds{
-class Publisher;
+
 class PublisherListener;
 }
 
@@ -108,8 +109,12 @@ public:
 		return m_writer_cache.get_last_added_cache(change);
 	}
 
+	void setQos(WriterQos& qos,bool first)
+	{
+		return m_qos.setQos(qos,first);
+	}
 
-protected:
+	protected:
 
 	//!Changes associated with this writer.
 	HistoryCache m_writer_cache;
@@ -127,8 +132,9 @@ protected:
 
 
 	WriterQos m_qos;
-	Publisher* m_Pub;
+	//Publisher* m_Pub;
 	PublisherListener* mp_listener;
+	friend bool PublisherImpl::assignListener(PublisherListener* pin);
 	//QosList_t m_ParameterQosList;
 
 

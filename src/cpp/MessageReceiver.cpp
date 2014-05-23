@@ -403,22 +403,22 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					WP->available_changes_max(&maxSeqNumAvailable);
 					if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
 					{
-						if((*it)->mp_listener!=NULL)
+						if((*it)->getListener()!=NULL)
 						{
-							(*it)->mp_listener->onNewDataMessage();
+							(*it)->getListener()->onNewDataMessage();
 							if((*it)->isHistoryFull())
-								(*it)->mp_listener->onHistoryFull();
+								(*it)->getListener()->onHistoryFull();
 						}
 						(*it)->m_semaphore.post();
 					}
 				}
 				else
 				{
-					if((*it)->mp_listener!=NULL)
+					if((*it)->getListener()!=NULL)
 					{
-						(*it)->mp_listener->onNewDataMessage();
+						(*it)->getListener()->onNewDataMessage();
 						if((*it)->isHistoryFull())
-							(*it)->mp_listener->onHistoryFull();
+							(*it)->getListener()->onHistoryFull();
 					}
 					(*it)->m_semaphore.post();
 				}
