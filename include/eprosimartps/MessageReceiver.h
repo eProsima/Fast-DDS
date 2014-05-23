@@ -22,6 +22,7 @@
 #include "eprosimartps/common/types/all_common.h"
 #include "eprosimartps/qos/ParameterList.h"
 
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {

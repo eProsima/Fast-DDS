@@ -18,10 +18,10 @@
 #ifndef STATEFULREADER_H_
 #define STATEFULREADER_H_
 
-#include "eprosimartps/rtps_all.h"
+
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/reader/WriterProxy.h"
-#include <boost/bind.hpp>
+
 
 namespace eprosima {
 namespace rtps {
@@ -34,13 +34,14 @@ class StatefulReader:public RTPSReader {
 public:
 	//StatefulReader();
 	virtual ~StatefulReader();
-	StatefulReader(const SubscriberAttributes* param,uint32_t payload_size);
+	StatefulReader(const SubscriberAttributes& wParam,
+			const GuidPrefix_t&guidP, const EntityId_t& entId);
 	/**
 	 * Add a matched writer.
 	 * @param[in] WP Pointer to the WriterProxy_t to add.
 	 * @return True if correct.
 	 */
-	bool matched_writer_add(WriterProxy_t* WP);
+	bool matched_writer_add(WriterProxy_t& WP);
 	/**
 	 * Remove a WriterProxy_t.
 	 * @param[in] WP WriterProxy to remove.
@@ -60,17 +61,16 @@ public:
 	 * @return True if correct.
 	 */
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
-	//!Reliability parameters of the StatefulReader, times mainly.
-	SubscriberReliability m_reliability;
+
 
 	bool readNextCacheChange(void*data,SampleInfo_t* info);
 	bool takeNextCacheChange(void*data,SampleInfo_t* info);
 	bool isUnreadCacheChange();
 
-//	bool readAllCacheChange(std::vector<void*>* data);
-//	bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
+
 
 private:
+	SubscriberTimes m_SubTimes;
 	//! Vector containing pointers to the matched writers.
 	std::vector<WriterProxy*> matched_writers;
 };

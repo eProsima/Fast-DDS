@@ -120,8 +120,15 @@ public:
 	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid);
 
 
-	CacheChange_t* reserve_Cache();
-	void release_Cache(CacheChange_t*);
+	CacheChange_t* reserve_Cache()
+	{
+		return changePool.reserve_Cache();
+	}
+
+	void release_Cache(CacheChange_t* ch)
+	{
+		return changePool.release_Cache(ch);
+	}
 
 	//!Returns true if the History is full.
 	bool isFull();

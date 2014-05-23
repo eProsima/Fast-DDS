@@ -211,8 +211,9 @@ void StatefulWriter::unsent_changes_not_empty()
 			{
 				if(!relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&relevant_changes,&(*rit)->m_param.unicastLocatorList,
-							&(*rit)->m_param.multicastLocatorList,
+							&relevant_changes,
+							(*rit)->m_param.unicastLocatorList,
+							(*rit)->m_param.multicastLocatorList,
 							(*rit)->m_param.expectsInlineQos,
 							(*rit)->m_param.remoteReaderGuid.entityId);
 				if(!not_relevant_changes.empty())

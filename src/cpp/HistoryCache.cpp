@@ -290,15 +290,7 @@ void HistoryCache::updateMaxMinSeqNum()
 	return;
 }
 
-CacheChange_t* HistoryCache::reserve_Cache()
-{
-	return changePool.reserve_Cache();
-}
 
-void HistoryCache::release_Cache(CacheChange_t* ch)
-{
-	return changePool.release_Cache(ch);
-}
 
 
 void HistoryCache::sortCacheChangesBySeqNum()

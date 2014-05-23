@@ -18,16 +18,19 @@
 #ifndef SUBSCRIBERPARAMS_H_
 #define SUBSCRIBERPARAMS_H_
 
+
+
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/common/types/Locator.h"
-
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
 #include "eprosimartps/qos/ReaderQos.h"
 
 namespace eprosima {
 namespace dds {
 
 class SubscriberTimes{
+public:
 	//!Delay the response to a HB.
 		Duration_t heartbeatResponseDelay;
 		//!Ignore too son received HB.
@@ -50,6 +53,7 @@ public:
 		expectsInlineQos = false;
 		historyMaxSize = 50;
 		userDefinedId = -1;
+		payloadMaxSize = 500;
 };
 	virtual ~SubscriberAttributes(){};
 	//! Expects Inline Qos (true or false)
@@ -68,6 +72,8 @@ public:
 	int16_t userDefinedId;
 	//! Reader qos
 	ReaderQos qos;
+
+	uint32_t payloadMaxSize;
 };
 
 } /* namespace rtps */

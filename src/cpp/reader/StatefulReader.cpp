@@ -16,6 +16,12 @@
  */
 
 #include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/utils/RTPSLog.h"
+
+#include "eprosimartps/dds/SampleInfo.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -33,31 +39,30 @@ StatefulReader::~StatefulReader()
 
 
 
-StatefulReader::StatefulReader(const SubscriberAttributes* param,uint32_t payload_size):
-				RTPSReader(param->historyMaxSize,payload_size)
+StatefulReader::StatefulReader(const SubscriberAttributes& param,
+		const GuidPrefix_t&guidP, const EntityId_t& entId):
+		RTPSReader(guidP,entId,param.topic,STATEFUL,
+						param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
+						m_SubTimes(param.times)
 {
-	m_stateType = STATEFUL;
-	m_reliability=param->reliability;
 	//locator lists:
-	unicastLocatorList = param->unicastLocatorList;
-	multicastLocatorList = param->multicastLocatorList;
-	expectsInlineQos = param->expectsInlineQos;
-	m_topic = param->topic;
-	this->m_userDefinedId = param->userDefinedId;
+	unicastLocatorList = param.unicastLocatorList;
+	multicastLocatorList = param.multicastLocatorList;
+	expectsInlineQos = param.expectsInlineQos;
 }
 
-bool StatefulReader::matched_writer_add(WriterProxy_t* WPparam)
+bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
 {
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == WPparam->remoteWriterGuid)
+		if((*it)->param.remoteWriterGuid == WPparam.remoteWriterGuid)
 		{
 			pWarning("Attempting to add existing writer" << endl);
 			return false;
 		}
 	}
-	WriterProxy* wp = new WriterProxy(WPparam,this);
+	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes,this);
 	matched_writers.push_back(wp);
 	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
 	return true;

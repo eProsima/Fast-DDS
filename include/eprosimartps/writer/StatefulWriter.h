@@ -20,9 +20,9 @@
 
 
 #include "eprosimartps/writer/RTPSWriter.h"
-
 #include "eprosimartps/writer/ReaderProxy.h"
 
+typedef std::vector<ReaderProxy*>::iterator p_ReaderProxyIterator;
 
 namespace eprosima {
 namespace rtps {
@@ -90,7 +90,17 @@ public:
 	bool removeMinSeqCacheChange();
 	bool removeAllCacheChange(int32_t* n_removed);
 
-	void incrementHBCount(){++m_heartbeatCount;}
+	void incrementHBCount(){++m_heartbeatCount;};
+
+
+	p_ReaderProxyIterator matchedReadersBegin()
+	{
+		return matched_readers.begin();
+	};
+	p_ReaderProxyIterator matchedReadersEnd()
+		{
+			return matched_readers.end();
+		};
 
 private:
 	//! Vector containin all the associated ReaderProxies.

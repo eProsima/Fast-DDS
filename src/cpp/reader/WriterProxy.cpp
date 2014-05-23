@@ -18,6 +18,8 @@
 #include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/reader/StatefulReader.h"
 
+#include "eprosimartps/utils/RTPSLog.h"
+
 
 namespace eprosima {
 namespace rtps {
@@ -28,13 +30,14 @@ WriterProxy::~WriterProxy()
 	pDebugInfo("WriterProxy destructor"<<endl;);
 }
 
-WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :
+WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
+		const SubscriberTimes& times,StatefulReader* SR) :
 		mp_SFR(SR),
-		param(*WPparam),
+		param(WPparam),
 		m_acknackCount(0),
 		m_lastHeartbeatCount(0),
 		m_isMissingChangesEmpty(true),
-		m_heartbeatResponse(this,boost::posix_time::milliseconds(SR->m_reliability.heartbeatResponseDelay.to64time()*1000)),
+		m_heartbeatResponse(this,boost::posix_time::milliseconds(Time2Seconds(times.heartbeatResponseDelay)*1000)),
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false)
@@ -43,11 +46,11 @@ WriterProxy::WriterProxy(WriterProxy_t* WPparam,StatefulReader* SR) :
 
 }
 
-bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
+bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
-	pDebugInfo("WriterProxy:MISSING_changes_update: up to seqNum: "<<seqNum->to64long()<<endl);
+	pDebugInfo("WriterProxy:MISSING_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
-	SequenceNumber_t seq = (*seqNum)+1;
+	SequenceNumber_t seq = (seqNum)+1;
 	add_unknown_changes(seq);
 
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
@@ -56,7 +59,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
 			m_isMissingChangesEmpty = false;
 		if(cit->status == UNKNOWN)
 		{
-			if(cit->change->sequenceNumber.to64long() <= seqNum->to64long())
+			if(cit->change->sequenceNumber.to64long() <= seqNum.to64long())
 			{
 				cit->status = MISSING;
 				m_isMissingChangesEmpty = false;
@@ -69,18 +72,18 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t* seqNum)
 	return true;
 }
 
-bool WriterProxy::lost_changes_update(SequenceNumber_t* seqNum)
+bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
-	pDebugInfo("WriterProxy:LOST_changes_update: up to seqNum: "<<seqNum->to64long()<<endl);
+	pDebugInfo("WriterProxy:LOST_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
-	SequenceNumber_t seq = (*seqNum)+1;
+	SequenceNumber_t seq = (seqNum)+1;
 	add_unknown_changes(seq);
 
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
 	{
 		if(cit->status == UNKNOWN || cit->status == MISSING)
 		{
-			if(cit->change->sequenceNumber.to64long() < seqNum->to64long())
+			if(cit->change->sequenceNumber.to64long() < seqNum.to64long())
 				cit->status = LOST;
 		}
 	}
@@ -99,7 +102,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	{
 		if(cit->change->sequenceNumber.to64long() == change->sequenceNumber.to64long())
 		{
-			mp_SFR->m_reader_cache.release_Cache(cit->change);
+			mp_SFR->release_Cache(cit->change);
 			cit->change = change;
 			cit->status = RECEIVED;
 
@@ -116,14 +119,14 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	return true;
 }
 
-bool WriterProxy::irrelevant_change_set(SequenceNumber_t* seqNum)
+bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 {
 	boost::lock_guard<WriterProxy> guard(*this);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
 	{
-		if(cit->change->sequenceNumber.to64long() == seqNum->to64long())
+		if(cit->change->sequenceNumber.to64long() == seqNum.to64long())
 		{
 			cit->status = RECEIVED;
 			cit->is_relevant = false;
@@ -133,10 +136,10 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t* seqNum)
 	ChangeFromWriter_t chfw;
 	chfw.is_relevant = false;
 	chfw.status = RECEIVED;
-	CacheChange_t* ch = mp_SFR->m_reader_cache.reserve_Cache();
-	ch->sequenceNumber = *seqNum;
+	CacheChange_t* ch = mp_SFR->reserve_Cache();
+	ch->sequenceNumber = seqNum;
 	chfw.change = ch;
-	add_unknown_changes(*seqNum);
+	add_unknown_changes(seqNum);
 	m_changesFromW.push_back(chfw);
 
 	return true;
@@ -277,7 +280,7 @@ bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 		pDebugInfo("WriterProxy:add_unknown_changes: up to: "<<seq.to64long() << " || adding " << n_to_add << " changes."<<endl;);
 		while(n_to_add>0)
 		{
-			CacheChange_t* ch = mp_SFR->m_reader_cache.reserve_Cache();
+			CacheChange_t* ch = mp_SFR->reserve_Cache();
 			ch->sequenceNumber = seq-n_to_add;
 			ChangeFromWriter_t chfw;
 			chfw.change = ch;

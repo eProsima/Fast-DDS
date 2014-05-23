@@ -17,7 +17,7 @@
 
 #ifndef READERQOS_H_
 #define READERQOS_H_
-
+#include "eprosimartps/qos/DDSQosPolicies.h"
 namespace eprosima {
 namespace dds {
 

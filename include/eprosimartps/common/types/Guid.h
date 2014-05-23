@@ -155,6 +155,7 @@ inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 
 const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
 const EntityId_t c_EntityId_SPDPReader = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
+const EntityId_t c_EntityId_Participant = ENTITYID_PARTICIPANT;
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.

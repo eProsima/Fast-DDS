@@ -16,7 +16,11 @@
  */
 
 #include "eprosimartps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/resources/ResourceSend.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
@@ -102,7 +106,7 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	//FIRST SUBMESSAGE
 	CDRMessage::initCDRMsg(cdrmsg_submessage);
 	RTPSMessageCreator::addSubmessageGap(cdrmsg_submessage,seqit->first,seqit->second,
-			readerId,W->m_guid.entityId);
+			readerId,W->getGuid().entityId);
 
 	gap_msg_size = cdrmsg_submessage->length;
 	if(gap_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
@@ -126,14 +130,14 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 			++seqit;
 			CDRMessage::initCDRMsg(cdrmsg_submessage);
 			RTPSMessageCreator::addSubmessageGap(cdrmsg_submessage,seqit->first,seqit->second,
-					readerId,W->m_guid.entityId);
+					readerId,W->getGuid().entityId);
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_fullmsg);
 		}
 		std::vector<Locator_t>::iterator lit;
 		for(lit = unicast->begin();lit!=unicast->end();++lit)
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
 		for(lit = multicast->begin();lit!=multicast->end();++lit)
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add
 }
@@ -142,16 +146,19 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 {
 	ParameterList_t* inlineQos = NULL;
 	if(expectsInlineQos)
-		inlineQos = &W->m_ParameterQosList.inlineQos;
+	{
+		pError("RTPSMEssageGRoup,Complete this"<<endl);
+		//inlineQos = &W->m_ParameterQosList.inlineQos;
+	}
 	CDRMessage::initCDRMsg(submsg);
-	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopicKind(),ReaderId,inlineQos);
+	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,inlineQos);
 }
 
 
 void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
-		LocatorList_t* unicast,LocatorList_t* multicast,
+		 LocatorList_t& unicast, LocatorList_t& multicast,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);
@@ -189,24 +196,20 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
 		}
-		if(unicast!=NULL)
-		{
-			for(std::vector<Locator_t>::iterator lit = unicast->begin();lit!=unicast->end();++lit)
-				W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
-		}
+		for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
 
-		if(multicast!=NULL)
-		{
-			for(std::vector<Locator_t>::iterator lit = multicast->begin();lit!=multicast->end();++lit)
-				W->mp_send_thr->sendSync(cdrmsg_fullmsg,&(*lit));
-		}
+
+		for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+
 
 	}while(change_n < changes->size()); //There is still a message to add
 }
 
 void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,Locator_t* loc,
+		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);

@@ -18,9 +18,9 @@
 
 #include "eprosimartps/Endpoint.h"
 #include "eprosimartps/HistoryCache.h"
-//#include "eprosimartps/RTPSMessageCreator.h"
+
 #include "eprosimartps/writer/RTPSMessageGroup.h"
-//#include "eprosimartps/qos/QosList.h"
+
 #include "eprosimartps/qos/WriterQos.h"
 
 
