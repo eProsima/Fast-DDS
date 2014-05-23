@@ -30,6 +30,7 @@ namespace dds {
 
 
 class PublisherTimes{
+public:
 	//!Period to send HB.
 	Duration_t heartbeatPeriod;
 	//!Delay response to a negative ack from a reader.
@@ -81,6 +82,7 @@ public:
 	//! User defined Id for this Publisher (only needed in STATICEDP)
 	int16_t userDefinedId;
 
+	uint32_t payloadMaxSize;
 	WriterQos qos;
 };
 

@@ -18,7 +18,7 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
+bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
 {
 	try

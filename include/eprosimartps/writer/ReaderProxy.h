@@ -20,26 +20,28 @@
 #ifndef READERPROXY_H_
 #define READERPROXY_H_
 
-#include "eprosimartps/rtps_all.h"
+
 
 #include <algorithm>
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-//#include "eprosimartps/common/attributes/TopicAttributes.h"
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-//#include "eprosimartps/common/attributes/PublisherAttributes.h"
-//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-//#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+
+#include "eprosimartps/common/CacheChange.h"
 
 #include "eprosimartps/timedevent/PeriodicHeartbeat.h"
 #include "eprosimartps/timedevent/NackResponseDelay.h"
 #include "eprosimartps/timedevent/NackSupressionDuration.h"
 
+
 namespace eprosima {
 namespace rtps {
 
 class StatefulWriter;
+
 
 /**
  * ReaderProxy_t structure that contains the information of a specific ReaderProxy.
@@ -50,11 +52,11 @@ typedef struct ReaderProxy_t{
 	bool expectsInlineQos;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
-	ReliabilityKind_t m_reliablility;
+	ReliabilityKind_t m_reliability;
 	ReaderProxy_t(){
 		GUID_UNKNOWN(remoteReaderGuid);
 		expectsInlineQos = false;
-		m_reliablility = RELIABLE;
+		m_reliability = RELIABLE;
 	}
 }ReaderProxy_t;
 
@@ -65,9 +67,7 @@ typedef struct ReaderProxy_t{
 class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~ReaderProxy();
-	ReaderProxy(ReaderProxy_t*RPparam,StatefulWriter* SW);
-
-
+	ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& times,StatefulWriter* SW);
 
 	/**
 	 * Get the ChangeForReader struct associated with a determined change
@@ -82,7 +82,7 @@ public:
 	 * @param[out] changeForReader Pointer to a changeforreader structure.
 	 * @return True if found.
 	 */
-	bool getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* changeForReader);
+	bool getChangeForReader( SequenceNumber_t& seq,ChangeForReader_t* changeForReader);
 
 	/**
 	 * Mark all changes up to the one indicated by the seqNum as Acknowledged.
@@ -90,7 +90,7 @@ public:
 	 * @param seqNum Pointer to the seqNum
 	 * @return True if correct.
 	 */
-	bool acked_changes_set(SequenceNumber_t* seqNum);
+	bool acked_changes_set( SequenceNumber_t& seqNum);
 
 	/**
 	 * Mark all changes in the vector as requested.
@@ -133,34 +133,38 @@ public:
 	 * @return True if correct.
 	 */
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
-	//!Pointer to the associated StatefulWriter.
-	StatefulWriter* mp_SFW;
-	//!Parameters of the ReaderProxy
-	ReaderProxy_t m_param;
-	//!Vector of the changes and its state.
-	std::vector<ChangeForReader_t> m_changesForReader;
-	bool m_isRequestedChangesEmpty;
 
-	//!Timed Event to manage the periodic HB to the Reader.
-	PeriodicHeartbeat m_periodicHB;
-	//!Timed Event to manage the Acknack response delay.
-	NackResponseDelay m_nackResponse;
-	//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
-	NackSupressionDuration m_nackSupression;
 
-	uint32_t m_lastAcknackCount;
+
 
 	bool max_acked_change(SequenceNumber_t* sn);
 
 
+	//!Parameters of the ReaderProxy
+		ReaderProxy_t m_param;
 
-private:
+
+	//!Pointer to the associated StatefulWriter.
+	StatefulWriter* mp_SFW;
+
+	//!Vector of the changes and its state.
+	std::vector<ChangeForReader_t> m_changesForReader;
+	bool m_isRequestedChangesEmpty;
 
 	bool changesList(std::vector<ChangeForReader_t*>* Changes,ChangeForReaderStatus_t status);
 
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
 
-public:
+	//!Timed Event to manage the periodic HB to the Reader.
+		PeriodicHeartbeat m_periodicHB;
+		//!Timed Event to manage the Acknack response delay.
+		NackResponseDelay m_nackResponse;
+		//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
+		NackSupressionDuration m_nackSupression;
+
+		uint32_t m_lastAcknackCount;
+
+
 	//TODOG DDSFILTER
 		bool dds_is_relevant(CacheChange_t* change);
 

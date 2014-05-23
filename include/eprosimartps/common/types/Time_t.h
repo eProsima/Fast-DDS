@@ -19,7 +19,7 @@
 #define TIME_T_H_
 
 #include <cmath>
-
+#include <cstdint>
 namespace eprosima{
 namespace rtps{
 //!Structure Time_t, used to describe times.
@@ -36,6 +36,10 @@ typedef struct Time_t{
 	}
 }Time_t;
 
+inline int64_t Time2Seconds(const Time_t& t)
+{
+	return (int64_t)t.seconds+((int64_t)(t.nanoseconds/pow(2.0,32)));
+}
 
 
 #define TIME_ZERO(t){t.seconds=0;t.nanoseconds=0;}
