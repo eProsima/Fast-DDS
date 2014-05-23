@@ -17,7 +17,7 @@
 
 #ifndef RTPSLISTENER_H_
 #define RTPSLISTENER_H_
-#include "eprosimartps/rtps_all.h"
+
 namespace eprosima {
 namespace dds {
 

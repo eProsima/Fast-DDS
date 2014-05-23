@@ -61,6 +61,7 @@ public:
 		pushMode = true;
 		historyMaxSize = 10;
 		userDefinedId = -1;
+		payloadMaxSize = 500;
 };
 	virtual ~PublisherAttributes(){};
 	//! If set to true the Publisher will send the data directly, if set to false it will send

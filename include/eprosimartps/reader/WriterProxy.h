@@ -18,12 +18,20 @@
 #ifndef WRITERPROXY_H_
 #define WRITERPROXY_H_
 
-#include "eprosimartps/rtps_all.h"
+
 
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/recursive_mutex.hpp>
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
+
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
+
+#include "eprosimartps/common/CacheChange.h"
 #include "eprosimartps/timedevent/HeartbeatResponseDelay.h"
+
+using namespace eprosima::dds;
+
 namespace eprosima {
 namespace rtps {
 
@@ -50,7 +58,7 @@ typedef struct WriterProxy_t{
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~WriterProxy();
-	WriterProxy(WriterProxy_t*RPparam,StatefulReader* SR);
+	WriterProxy(const WriterProxy_t& RPparam,const SubscriberTimes& times,StatefulReader* SR);
 
 	/**
 	 * Get the maximum sequenceNumber received from this Writer.
@@ -62,7 +70,7 @@ public:
 	 * Get the minimum sequenceNumber available from this Writer.
 	 * @param[out] seqNum Pointer to the sequenceNumber
 	 * @return True if correct.
-	 */
+ */
 	bool available_changes_min(SequenceNumber_t* seqNum);
 	/**
 	 * Update the missing changes up to the provided sequenceNumber.
@@ -70,14 +78,14 @@ public:
 	 * @param[in] seqNum Pointer to the SequenceNumber.
 	 * @return True if correct.
 	 */
-	bool missing_changes_update(SequenceNumber_t* seqNum);
+	bool missing_changes_update(SequenceNumber_t& seqNum);
 	/**
 	 * Update the lost changes up to the provided sequenceNumber.
 	 * All changes with status UNKNOWN or MISSING with seqNum < input seqNum are marked LOST.
 	 * @param[in] seqNum Pointer to the SequenceNumber.
 	 * @return True if correct.
 	 */
-	bool lost_changes_update(SequenceNumber_t* seqNum);
+	bool lost_changes_update(SequenceNumber_t& seqNum);
 	/**
 	 * The provided change is marked as RECEIVED.
 	 * @param[in] change Pointer to the change
@@ -89,7 +97,7 @@ public:
 	 * @param seqNum
 	 * @return
 	 */
-	bool irrelevant_change_set(SequenceNumber_t* seqNum);
+	bool irrelevant_change_set(SequenceNumber_t& seqNum);
 
 	/**
 	 * THe method returns a vector containing all missing changes.

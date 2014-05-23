@@ -15,19 +15,20 @@
  */
 
 #include "eprosimartps/reader/RTPSReader.h"
-#include "eprosimartps/HistoryCache.h"
 
-#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
 
-RTPSReader::RTPSReader(uint16_t historysize,uint32_t payload_size):
-		m_stateType(STATELESS),
-		m_reader_cache(historysize,payload_size,READER,(Endpoint*)this),
-		expectsInlineQos(true),
+RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,
+		StateKind_t state,
+		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
+		Endpoint(guidP,entId,topic,state,READER,userDefinedId),
 		mp_Sub(NULL),
 		mp_listener(NULL),
+		m_reader_cache((Endpoint*)this,historysize,payload_size),
+		expectsInlineQos(true),
 		m_acceptMessagesToUnknownReaders(true)
 
 {

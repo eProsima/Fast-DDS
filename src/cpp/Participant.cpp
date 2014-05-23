@@ -29,7 +29,7 @@
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SimplePDP.h"
 
-
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
@@ -38,7 +38,8 @@ typedef std::vector<RTPSReader*>::iterator Riterator;
 typedef std::vector<RTPSWriter*>::iterator Witerator;
 
 
-Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP):
+			m_guid(guidP,c_EntityId_Participant),
 						m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 						m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 						m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
@@ -108,7 +109,7 @@ Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 }
 
 
-Participant::~Participant()
+ParticipantImpl::~Participant()
 {
 	pDebugInfo("Participant destructor"<<endl;);
 	//Destruct threads:
@@ -130,7 +131,7 @@ Participant::~Participant()
 		delete(mp_PDP);
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	StatelessWriter* SLWriter = new StatelessWriter(&param,payload_size);
@@ -143,7 +144,7 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttri
 		return false;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 pDebugInfo("Creating StatefulWriter"<<endl);
 	StatefulWriter* SFWriter = new StatefulWriter(&param, payload_size);
@@ -155,7 +156,7 @@ pDebugInfo("Creating StatefulWriter"<<endl);
 	else return false;
 }
 
-bool Participant::initWriter(RTPSWriter*W,bool isBuiltin)
+bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 {
 	pDebugInfo("Writer created, initializing"<<endl);
 	//Check if locator lists are empty:
@@ -202,7 +203,7 @@ bool Participant::initWriter(RTPSWriter*W,bool isBuiltin)
 
 }
 
-bool Participant::createStatelessReader(StatelessReader** SR_out,
+bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
 		 SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 	pInfo("Creating StatelessReader"<<endl);
@@ -216,7 +217,7 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 		return false;
 }
 
-bool Participant::createStatefulReader(StatefulReader** SR_out,
+bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
 		 SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
@@ -232,7 +233,7 @@ bool Participant::createStatefulReader(StatefulReader** SR_out,
 
 
 
-bool Participant::initReader(RTPSReader* p_R,bool isBuiltin)
+bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 {
 	//If NO UNICAST
 	if(p_R->unicastLocatorList.empty())
@@ -291,7 +292,7 @@ inline void addEndpoint(ResourceListen* th,Endpoint* end,char type)
 }
 
 
-bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) {
+bool ParticipantImpl::assignEnpointToListenResources(Endpoint* endpoint, char type) {
 	if(type !='R' && type!='W')
 	{
 		return false;
@@ -364,7 +365,7 @@ bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) 
 	return true;
 }
 
-bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
+bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
 	*thlisten_in = new ResourceListen();
 	(*thlisten_in)->m_isMulticast = isMulticast;
 	(*thlisten_in)->m_participant_ptr = this;
@@ -378,7 +379,7 @@ bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_
 		return false;
 }
 
-bool Participant::removeUserEndpoint(Endpoint* p_endpoint,char type)
+bool ParticipantImpl::removeUserEndpoint(Endpoint* p_endpoint,char type)
 {
 	bool found = false;
 	if(type == 'W')
@@ -444,7 +445,7 @@ bool Participant::removeUserEndpoint(Endpoint* p_endpoint,char type)
 	return true;
 }
 
-void Participant::announceParticipantState()
+void ParticipantImpl::announceParticipantState()
 {
 	this->mp_PDP->announceParticipantState(false);
 }

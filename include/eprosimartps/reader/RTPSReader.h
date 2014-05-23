@@ -24,34 +24,26 @@
 #include <boost/thread.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-#include "eprosimartps/common/attributes/PublisherAttributes.h"
-#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
 
-#include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/Endpoint.h"
-
-
-
-#include "eprosimartps/RTPSMessageCreator.h"
-#include "eprosimartps/Participant.h"
-
-#include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/dds/SubscriberListener.h"
-#include "eprosimartps/dds/SampleInfo.h"
+#include "eprosimartps/HistoryCache.h"
+#include "eprosimartps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/qos/ReaderQos.h"
 
 #include "eprosimartps/utils/Semaphore.h"
-
 
 
 
 using namespace eprosima::dds;
 
 namespace eprosima {
+
+namespace dds{
+class Subscriber;
+class SubscriberListener;
+class SampleInfo_t;
+}
 
 namespace rtps {
 
@@ -62,17 +54,39 @@ namespace rtps {
 class RTPSReader : public Endpoint{
 
 public:
-	RTPSReader(uint16_t historysize,uint32_t payload_size);
+	RTPSReader(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,
+			StateKind_t state = STATELESS,
+			int16_t userDefinedId=-1,uint16_t historysize = 50,uint32_t payload_size = 500);
 	virtual ~RTPSReader();
-	//!Type of Reader, STATELESS or STATEFUL.
-	StateKind_t m_stateType;
-	//!History Cache of the Reader.
-	HistoryCache m_reader_cache;
-	//!Whether the Reader expects Inline QOS.
-	bool expectsInlineQos;
 
-	//!Structure used to create messages.
-	//RTPSMessageCreator MC;
+
+
+
+	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
+	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
+
+	virtual bool isUnreadCacheChange()=0;
+
+
+	CacheChange_t* reserve_Cache()
+	{
+		return m_reader_cache.reserve_Cache();
+	}
+
+	void release_Cache(CacheChange_t* ch)
+	{
+		return m_reader_cache.release_Cache(ch);
+	}
+
+	/**
+	 * Add a change to the HistoryCache.
+	 * @param[in] a_change Pointer to the change to add.
+	 * @return True if correct.
+	 */
+	bool add_change(CacheChange_t* a_change){return m_reader_cache.add_change(a_change);};
+
+
+	bool acceptMsgDirectedTo(EntityId_t& entityId);
 
 	//!Pointer to the associated subscriber
 	Subscriber* mp_Sub;
@@ -82,23 +96,19 @@ public:
 	//!Pointer to the object used by the user to implement the behaviour when messages are received.
 	SubscriberListener* mp_listener;
 
+	bool isHistoryFull(){return m_reader_cache.isFull();};
+
+protected:
+
+	//!History Cache of the Reader.
+	HistoryCache m_reader_cache;
+	//!Whether the Reader expects Inline QOS.
+	bool expectsInlineQos;
+
+
+
 	ReaderQos m_qos;
-
-	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
-	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
-
-	virtual bool isUnreadCacheChange()=0;
-
-
-
-
-	StateKind_t getStateType() const {
-		return m_stateType;
-	}
-
 	bool m_acceptMessagesToUnknownReaders;
-
-	bool acceptMsgDirectedTo(EntityId_t& entityId);
 };
 
 } /* namespace rtps */
