@@ -18,6 +18,8 @@
 #ifndef RTPS_DOXYGEN_MODULES_H_
 #define RTPS_DOXYGEN_MODULES_H_
 
+//Description of doxygen modules, not used in actual code.
+
  /*!
  * @defgroup EPROSIMARTPSAPIREFERENCE eProsima RTPS API Reference
  * @brief eProsima RTPS API grouped in modules.
