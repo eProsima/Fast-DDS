@@ -19,6 +19,8 @@
 #define SIMPLEDPD_H_
 
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+
 #include "eprosimartps/discovery/SPDPListener.h"
 #include "eprosimartps/qos/QosList.h"
 #include "eprosimartps/discovery/SimpleEDP.h"

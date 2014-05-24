@@ -55,14 +55,15 @@ public:
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& string_in);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,Locator_t& loc);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,uint32_t uintlong);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,GUID_t& guid);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,const GUID_t& guid);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,ProtocolVersion_t& protocol);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,VendorId_t& vendor);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,octet o1,octet o2,octet o3,octet o4);
-	static bool addQos(QosList_t* qos,ParameterId_t pid ,EntityId_t& entity);
+	static bool addQos(QosList_t* qos,ParameterId_t pid ,const EntityId_t& entity);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2);
+	//static bool addQos(QosList_t* qos,ParameterId_t pid,BuiltinEndpointSet_t endpointset);
 	///@}
 };
 

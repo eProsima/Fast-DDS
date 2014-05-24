@@ -79,8 +79,6 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_WRITER  0x000200C2
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER  0x000200C7
 
-
-
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 typedef struct EntityId_t{
 	octet value[4];
@@ -155,7 +153,15 @@ inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 
 const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
 const EntityId_t c_EntityId_SPDPReader = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
+const EntityId_t c_EntityId_SPDPWriter = ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER;
+
+const EntityId_t c_EntityId_SEDPPubWriter = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
+const EntityId_t c_EntityId_SEDPPubReader = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
+const EntityId_t c_EntityId_SEDPSubWriter = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+const EntityId_t c_EntityId_SEDPSubReader = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+
 const EntityId_t c_EntityId_Participant = ENTITYID_PARTICIPANT;
+
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.

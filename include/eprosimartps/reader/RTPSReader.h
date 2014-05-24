@@ -104,6 +104,10 @@ public:
 	{
 		return mp_listener;
 	}
+	 void setListener(SubscriberListener* plistener)
+		{
+			mp_listener = plistener;
+		}
 
 	void setQos(ReaderQos& qos,bool first)
 		{
