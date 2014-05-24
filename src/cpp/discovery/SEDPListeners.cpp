@@ -16,13 +16,20 @@
  */
 
 #include "eprosimartps/discovery/SEDPListeners.h"
+
+#include "eprosimartps/Participant.h"
+
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
-//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SimpleEDP.h"
 #include "eprosimartps/discovery/data/DiscoveredData.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+
+
 
 namespace eprosima {
 namespace rtps {
@@ -31,7 +38,7 @@ void SEDPPubListener::onNewDataMessage()
 {
 	pInfo(CYAN<<"SEDP PUB Listener:onNewDataMessage"<<DEF<<endl);
 	CacheChange_t* change;
-	if(this->mp_SEDP->mp_PubReader->m_reader_cache.get_last_added_cache(&change))
+	if(this->mp_SEDP->mp_PubReader->get_last_added_cache(&change))
 	{
 		ParameterList_t param;
 		CDRMessage_t msg;
@@ -48,7 +55,7 @@ void SEDPPubListener::onNewDataMessage()
 				{
 					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
-							this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+							this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
@@ -64,17 +71,17 @@ void SEDPPubListener::onNewDataMessage()
 				if(pdata == NULL)
 				{
 					pWarning("PubReader received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
 				bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();
-						it!=this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();++it)
+				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->readerHistoryCacheBegin();
+						it!=this->mp_SEDP->mp_PubReader->readerHistoryCacheEnd();++it)
 				{
 					if((*it)->instanceHandle == change->instanceHandle)
 					{
-						this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+						this->mp_SEDP->mp_PubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
 						already_in_history = true;
 						break;
 					}
@@ -98,8 +105,8 @@ void SEDPPubListener::onNewDataMessage()
 					wdataptr = &wdata;
 					pdata->m_writers.push_back(*wdataptr);
 				}
-				for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.begin();
-						rit!=this->mp_SEDP->mp_PDP->mp_participant->m_userReaderList.end();++rit)
+				for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->userReadersListBegin();
+						rit!=this->mp_SEDP->mp_PDP->mp_participant->userReadersListEnd();++rit)
 				{
 					if(already_in_history)
 					{
@@ -115,7 +122,7 @@ void SEDPPubListener::onNewDataMessage()
 		}
 		else
 		{
-			pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+			pError("SEDPPubListener: error reading Parameters from CDRMessage"<<endl);
 			param.deleteParams();
 			return;
 		}
@@ -128,7 +135,7 @@ void SEDPSubListener::onNewDataMessage()
 {
 	pInfo(CYAN<<"SEDP SUB Listener:onNewDataMessage"<<DEF<<endl);
 	CacheChange_t* change;
-	if(this->mp_SEDP->mp_SubReader->m_reader_cache.get_last_added_cache(&change))
+	if(this->mp_SEDP->mp_SubReader->get_last_added_cache(&change))
 	{
 		ParameterList_t param;
 		CDRMessage_t msg;
@@ -144,8 +151,8 @@ void SEDPSubListener::onNewDataMessage()
 				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
-					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
-							this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					pInfo(CYAN<<"SEDPListener: Message from own participant, removing"<<DEF<<endl)
+							this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
@@ -161,17 +168,17 @@ void SEDPSubListener::onNewDataMessage()
 				if(pdata == NULL)
 				{
 					pWarning("PubReader received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
 				bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();
-						it!=this->mp_SEDP->mp_PubReader->m_reader_cache.m_changes.begin();++it)
+				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
+						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
 				{
 					if((*it)->instanceHandle == change->instanceHandle)
 					{
-						this->mp_SEDP->mp_PubReader->m_reader_cache.remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
 						already_in_history = true;
 						break;
 					}
@@ -195,8 +202,8 @@ void SEDPSubListener::onNewDataMessage()
 					rdataptr = &rdata;
 					pdata->m_readers.push_back(*rdataptr);
 				}
-				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.begin();
-						wit!=this->mp_SEDP->mp_PDP->mp_participant->m_userWriterList.end();++wit)
+				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->userWritersListBegin();
+						wit!=this->mp_SEDP->mp_PDP->mp_participant->userWritersListEnd();++wit)
 				{
 					if(already_in_history)
 					{
@@ -212,7 +219,7 @@ void SEDPSubListener::onNewDataMessage()
 		}
 		else
 		{
-			pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+			pError("SEDPSubListener: error reading Parameters from CDRMessage"<<endl);
 			param.deleteParams();
 			return;
 		}

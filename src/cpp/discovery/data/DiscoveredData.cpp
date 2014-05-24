@@ -17,10 +17,11 @@
 
 
 #include "eprosimartps/discovery/data/DiscoveredData.h"
-#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
-#include "eprosimartps/discovery/data/DiscoveredReaderData.h"
-//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
-#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+
+#include "eprosimartps/qos/DDSQosPolicies.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+
 
 namespace eprosima{
 
@@ -708,11 +709,11 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 	return true;
 }
 
-bool DiscoveredData::DiscoveredTopicData2ParameterList(DiscoveredTopicData& tdata, ParameterList_t* param)
-{
-	pError("DiscoveredTopicData2ParameterList NOT YET IMPLEMENTED"<<endl);
-	return true;
-}
+//bool DiscoveredData::DiscoveredTopicData2ParameterList(DiscoveredTopicData& tdata, ParameterList_t* param)
+//{
+//	pError("DiscoveredTopicData2ParameterList NOT YET IMPLEMENTED"<<endl);
+//	return true;
+//}
 
 }
 }

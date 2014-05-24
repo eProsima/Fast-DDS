@@ -113,6 +113,7 @@ public:
 	{
 		return m_qos.setQos(qos,first);
 	}
+	const WriterQos& getQos(){return m_qos;}
 
 	PublisherListener* getListener(){return mp_listener;}
 

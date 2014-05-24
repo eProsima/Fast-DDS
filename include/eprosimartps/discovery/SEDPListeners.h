@@ -17,9 +17,10 @@
 
 #ifndef SEDPLISTENERS_H_
 #define SEDPLISTENERS_H_
+
 #include "eprosimartps/dds/SubscriberListener.h"
 
-#include "eprosimartps/qos/QosList.h"
+//#include "eprosimartps/qos/QosList.h"
 //#include "eprosimartps/discovery/data/DiscoveredData.h"
 
 using namespace eprosima::dds;

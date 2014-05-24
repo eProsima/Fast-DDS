@@ -21,6 +21,9 @@
 
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SEDPListeners.h"
+
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -28,10 +31,16 @@ class StatefulReader;
 class StatefulWriter;
 class RTPSWriter;
 class RTPSReader;
+class ParticipantDiscoveryProtocol;
+class DiscoveredReaderData;
+class DiscoveredWriterData;
+class DiscoveredParticipantData;
 
 
 
 class SimpleEDP: public eprosima::rtps::EndpointDiscoveryProtocol {
+	friend class SEDPPubListener;
+	friend class SEDPSubListener;
 public:
 	SimpleEDP(ParticipantDiscoveryProtocol* p);
 	virtual ~SimpleEDP();
