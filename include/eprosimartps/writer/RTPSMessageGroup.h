@@ -17,8 +17,8 @@
 
 #ifndef RTPSMESSAGEGROUP_H_
 #define RTPSMESSAGEGROUP_H_
-
-#include "eprosimartps/rtps_all.h"
+#include <vector>
+#include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
@@ -62,12 +62,12 @@ static void prepare_SequenceNumberSet(std::vector<CacheChange_t*>* changes,
 static void send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
-		LocatorList_t* unicast,LocatorList_t* multicast,
+		 LocatorList_t& unicast, LocatorList_t& multicast,
 		bool expectsInlineQos,const EntityId_t& ReaderId);
 
 static void send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,Locator_t* loc,
+		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
 		bool expectsInlineQos,const EntityId_t& ReaderId);
 
 static void prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId);

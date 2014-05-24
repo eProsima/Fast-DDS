@@ -30,19 +30,13 @@
 #include <boost/thread.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-#include "eprosimartps/common/attributes/PublisherAttributes.h"
-#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+#include "eprosimartps/dds/attributes/all_attributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/resources/ResourceSend.h"
-//#include "eprosimartps/discovery/SimpleParticipantDiscoveryProtocol.h"
-//#include "eprosimartps/discovery/StaticEndpointDiscoveryProtocol.h"
+
 
 
 
@@ -68,31 +62,17 @@ class RTPSWriter;
 class Endpoint;
 class ParticipantDiscoveryProtocol;
 
-
-
-
 /**
  * @class Participant
  * @brief Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup MANAGEMENTMODULE
  */
-class Participant{
-	friend class ResourceSend;
-	friend class ResourceListen;
-	friend class eprosima::dds::DomainParticipant;
-	friend class ParticipantDiscoveryProtocol;
-	friend class EndpointDiscoveeryProtocol;
-	friend class SimplePDP;
-	friend class StaticEDP;
-	friend class SimpleEDP;
-	friend class SPDPListener;
-	friend class SEDPListeners;
-	friend class SEDPPubListener;
-	friend class SEDPSubListener;
-private:
+class ParticipantImpl
+{
+public:
 
-	Participant(const ParticipantAttributes &param,uint32_t id);
-	virtual ~Participant();
+	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP);
+	virtual ~ParticipantImpl();
 
 	/**
 	 * Create a StatelessWriter from a parameter structure.
@@ -101,7 +81,8 @@ private:
 	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
-	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,uint32_t payload_size,bool isBuiltin);
+	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,
+			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Create a StatefulWriter from a parameter structure.
 	 * @param[out] SWriter Pointer to the stateful writer.
@@ -109,7 +90,8 @@ private:
 	 * @param[in] payload_size Size of the payload in this writer.
 	 * @return True if correct.
 	 */
-	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,uint32_t payload_size,bool isBuiltin);
+	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,
+			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initWriter(RTPSWriter* W,bool isBuiltin);
 
@@ -120,15 +102,17 @@ private:
 	 * @param[in] payload_size Size of the payload associated with this Reader.
 	 * @return True if correct.
 	 */
-	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin);
+	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,
+			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
-		 * Create a StatefulReader from a parameter structure and add it to the participant.
-		 * @param[out] SReader Pointer to the stateful reader.
-		 * @param[in] RParam Parameters to use in the creation.
-		 * @param[in] payload_size Size of the payload associated with this Reader.
-		 * @return True if correct.
-		 */
-	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin);
+	 * Create a StatefulReader from a parameter structure and add it to the participant.
+	 * @param[out] SReader Pointer to the stateful reader.
+	 * @param[in] RParam Parameters to use in the creation.
+	 * @param[in] payload_size Size of the payload associated with this Reader.
+	 * @return True if correct.
+	 */
+	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,
+			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initReader(RTPSReader* R,bool isBuiltin);
 
@@ -140,37 +124,66 @@ private:
 	 * @param[in] type Char indicating if it is Reader ('R') or Writer ('W')
 	 * @return True if correct.
 	 */
-	bool removeUserEndpoint(Endpoint* p_endpoint,char type);
+	bool deleteUserEndpoint(Endpoint* p_endpoint,char type);
 
-//	//!Protocol Version used by this participant.
-//	ProtocolVersion_t protocolVersion;
-//	//!VendodId of the participant.
-//	VendorId_t vendorId;
+
+	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
+
+	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
+
+	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
+
+	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
+
+	//!Used for tests
+	void loose_next_change(){m_send_thr.loose_next();};
+	//! Announce ParticipantState
+	void announceParticipantState();
+
+	const GUID_t& getGuid() const {
+		return m_guid;
+	}
+
+	const std::string& getParticipantName() const {
+		return m_participantName;
+	}
+
 	//!Default listening addresses.
 	LocatorList_t m_defaultUnicastLocatorList;
 	//!Default listening addresses.
 	LocatorList_t m_defaultMulticastLocatorList;
 
+	void ResourceSemaphorePost()
+	{
+		if(mp_ResourceSemaphore!=NULL)
+			mp_ResourceSemaphore->post();
+	}
+
+	const DiscoveryAttributes& getDiscoveryAttributes() const {
+		return m_discovery;
+	}
+
+	ResourceEvent* getEventResource()
+	{
+		return &m_event_thr;
+	}
+
+private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
-	std::string m_participantName;
+	const std::string m_participantName;
 	//StaticEndpointDiscoveryProtocol m_StaticEDP;
-public:
+
 	//!Guid of the participant.
-	GUID_t m_guid;
+	const GUID_t m_guid;
 
 	//! Sending resources.
 	ResourceSend m_send_thr;
 
 	ResourceEvent m_event_thr;
 
-	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
-	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
-	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
-	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
-
-private:
 	//!Semaphore to wait for the listen thread creation.
-	boost::interprocess::interprocess_semaphore* m_ResourceSemaphore;
+	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
 	uint32_t IdCounter;
 	//!Writer List.
@@ -202,16 +215,20 @@ private:
 
 	ParticipantDiscoveryProtocol* mp_PDP;
 
-public:
-	//!Used for tests
-	void loose_next_change(){m_send_thr.m_send_next = false;};
-
 	DiscoveryAttributes m_discovery;
 
-	//! Announce ParticipantState
-	void announceParticipantState();
-
 };
+
+class RTPS_DllAPI Participant
+{
+public:
+	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
+	virtual ~ Participant(){};
+	const GUID_t& getGuid(){return mp_impl->getGuid();};
+	private:
+ParticipantImpl* mp_impl;
+};
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

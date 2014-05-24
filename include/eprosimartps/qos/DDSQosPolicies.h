@@ -18,6 +18,9 @@
 #ifndef DDS_QOS_POLICIES_H_
 #define DDS_QOS_POLICIES_H_
 
+#include <vector>
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/qos/ParameterTypes.h"
 
 using namespace eprosima::rtps;

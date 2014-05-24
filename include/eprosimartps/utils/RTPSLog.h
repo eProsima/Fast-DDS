@@ -21,9 +21,9 @@
 
 #include <iostream>
 #include <ostream>
-#include "eprosimartps/common/colors.h"
 
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/types/common_types.h"
+
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread.hpp>

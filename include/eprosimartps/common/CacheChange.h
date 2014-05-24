@@ -18,6 +18,13 @@
 #ifndef CACHECHANGE_H_
 #define CACHECHANGE_H_
 
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/types/SerializedPayload.h"
+#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/common/types/InstanceHandle.h"
+
 namespace eprosima{
 namespace rtps{
 

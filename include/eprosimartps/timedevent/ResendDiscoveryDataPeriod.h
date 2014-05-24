@@ -18,27 +18,28 @@
 #ifndef RESENDDATAPERIOD_H_
 #define RESENDDATAPERIOD_H_
 
-#include "eprosimartps/rtps_all.h"
+
 #include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
 
 namespace eprosima {
 namespace rtps {
 
-class SimplePDP;
-
+class ParticipantDiscoveryProtocol;
+class ResourceEvent;
 /**
  * Class ResendDiscoveryDataPeriod, TimedEvent used to periodically send the ParticipantDiscovery Data.
  * @ingroup DISCOVERYMODULE
  */
 class ResendDiscoveryDataPeriod: public TimedEvent {
 public:
-	ResendDiscoveryDataPeriod(SimplePDP* p_SPDP,boost::posix_time::milliseconds interval);
+	ResendDiscoveryDataPeriod(ParticipantDiscoveryProtocol* p_SPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval);
 	virtual ~ResendDiscoveryDataPeriod();
 
 	void event(const boost::system::error_code& ec);
 
 	CDRMessage_t m_data_msg;
-	SimplePDP* mp_SPDP;
+	ParticipantDiscoveryProtocol* mp_PDP;
 };
 
 } /* namespace rtps */

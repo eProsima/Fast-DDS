@@ -15,6 +15,9 @@
  *              grcanosa@gmail.com  	
  */
 
+#ifndef IPFINDER_H_
+#define IPFINDER_H_
+
 #if defined(_WIN32)
 	#include <stdio.h>
 	#include <winsock2.h>
@@ -34,12 +37,11 @@
 #include <vector>
 #include <string>
 
-#ifndef IPFINDER_H_
-#define IPFINDER_H_
+#include "eprosimartps/common/types/Locator.h"
 
 namespace eprosima {
 
-
+using namespace rtps;
 /**
  * Find IPs of the computer.
  * @ingroup UTILITIESMODULE
@@ -53,6 +55,8 @@ public:
 #else
 	static bool getIP4s(std::vector<std::string>* vec_name);
 #endif
+
+	static bool getIPAddress(LocatorList_t* locators);
 };
 
 } /* namespace eprosima */

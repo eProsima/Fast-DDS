@@ -17,7 +17,8 @@
 
 
 #include "eprosimartps/resources/ResourceEvent.h"
-#include "eprosimartps/Participant.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {

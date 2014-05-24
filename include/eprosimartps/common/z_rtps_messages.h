@@ -41,59 +41,15 @@ namespace rtps{
  *  @{
  */
 
-//!@brief Structure Header_t, RTPS Message Header Structure.
-typedef struct Header_t{
-	ProtocolVersion_t version;
-	VendorId_t vendorId;;
-	GuidPrefix_t guidPrefix;
-	Header_t(){
-		PROTOCOLVERSION(version);
-		VENDORID_EPROSIMA(vendorId);
-	}
-	~Header_t(){
-	}
-	void print(){
-		pLongInfo ( "RTPS HEADER of Version: " << (int)version.m_major << "." << (int)version.m_minor);
-		pLongInfo ( "  || VendorId: " << (int)vendorId[0] << "." <<(int)vendorId[1] << endl);
-		pLongInfo ( "GuidPrefix: ");
-		for(int i =0;i<12;i++)
-			pLongInfo ((int)guidPrefix.value[i] << ".");
-		pLongInfo ( endl);
-		pLongInfoPrint;
-	}
-}Header_t;
 
 
 
 
-// //!@brief Enumeration of the different Submessages types
-#define	PAD 0x01
-#define	ACKNACK 0x06
-#define	HEARTBEAT 0x07
-#define	GAP 0x08
-#define	INFO_TS 0x09
-#define	INFO_SRC 0x0c
-#define	INFO_REPLY_IP4 0x0d
-#define	INFO_DST 0x0e
-#define	INFO_REPLY 0x0f
-#define	NACK_FRAG 0x12
-#define	HEARTBEAT_FRAG 0x13
-#define	DATA 0x15
-#define	DATA_FRAG 0x16
 
 
-//!@brief Structure SubmessageHeader_t, used to contain the header information of a submessage.
-typedef struct SubmessageHeader_t{
-	octet submessageId;
-	uint16_t submessageLength;
-	SubmessageFlag flags;
-	void print (){
-		pLongInfo( "Submessage Header, ID: " << (int)submessageId);
-		pLongInfo ( " length: " << (int)submessageLength << " flags " << (bitset<8>) flags << endl);
-		pLongInfoPrint;
-	}
 
-}SubmessageHeader_t;
+
+
 
 
 //

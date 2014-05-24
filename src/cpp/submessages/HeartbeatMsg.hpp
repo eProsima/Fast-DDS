@@ -18,8 +18,8 @@
 namespace eprosima{
 namespace rtps{
 
-bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
-		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
+bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
+		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag)
 {
 	try
 	{
@@ -36,7 +36,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& gui
 }
 
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
-		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag)
+		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag)
 {
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
@@ -63,7 +63,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 		//Add Sequence Number
 		CDRMessage::addSequenceNumber(&submsgElem,&firstSN);
 		CDRMessage::addSequenceNumber(&submsgElem,&lastSN);
-		CDRMessage::addInt32(&submsgElem,count);
+		CDRMessage::addInt32(&submsgElem,(int32_t)count);
 	}
 	catch(int e)
 	{

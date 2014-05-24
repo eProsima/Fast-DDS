@@ -18,24 +18,34 @@
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Guid.h"
 
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-//#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-//#include "eprosimartps/common/attributes/PublisherAttributes.h"
-//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-//#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
 
 using namespace eprosima::dds;
 
 namespace eprosima {
+
+namespace dds{class DDSTopicDataType;}
+
 namespace rtps {
 
 class ResourceListen;
 class Participant;
 class ResourceSend;
 class ResourceEvent;
+
+typedef enum StateKind_t{
+	STATELESS,//!< STATELESS
+	STATEFUL  //!< STATEFUL
+}StateKind_t;
+
+typedef enum EndpointKind_t{
+	READER,
+	WRITER
+}EndpointKind_t;
 
 
 /**
@@ -47,39 +57,56 @@ class ResourceEvent;
  */
 class Endpoint {
 public:
-	Endpoint();
+	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
 	virtual ~Endpoint();
+
+
+
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
-	GUID_t m_guid;
+
 	//!Vector of pointer to the listening resources associated with this endpoint.
 	std::vector<ResourceListen*> m_listenThList;
 	//!Pointer to the participant this endpoint belongs to.
 	ResourceSend* mp_send_thr;
 	ResourceEvent* mp_event_thr;
-
 	DDSTopicDataType* mp_type;
-	int16_t m_userDefinedId;
-	TopicAttributes m_topic;
-	/**
-	 * Get the topic Data Type Name
-	 * @return The name of the data type.
-	 */
-	const std::string& getTopicDataType() const {
-		return m_topic.topicDataType;
-	}
-	/**
-	 * Get the topic name.
-	 * @return Topic name.
-	 */
-	const std::string& getTopicName() const {
-		return m_topic.topicName;
+
+
+	const EndpointKind_t getEndpointKind() const {
+		return m_endpointKind;
 	}
 
-	TopicKind_t getTopicKind() const {
-		return m_topic.topicKind;
+	const GUID_t& getGuid() const {
+		return m_guid;
 	}
 
+	const StateKind_t getStateType() const {
+		return m_stateType;
+	}
+
+	const TopicAttributes& getTopic() const {
+		return m_topic;
+	}
+
+	const int16_t getUserDefinedId() const {
+		return m_userDefinedId;
+	}
+
+
+
+
+protected:
+	//! Guid of the Endpoint
+	const GUID_t m_guid;
+	//! TOpic Attributes
+	const TopicAttributes m_topic;
+	//!State type (STATELESS or STATEFUL)
+	const StateKind_t m_stateType;
+	//! Endpoitn Type (READER or WRITER)
+	const EndpointKind_t m_endpointKind;
+	//!User Defined Id
+	const int16_t m_userDefinedId;
 };
 
 } /* namespace rtps */

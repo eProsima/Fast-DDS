@@ -19,8 +19,8 @@
 #define SPDPLISTENER2_H_
 
 #include "eprosimartps/dds/SubscriberListener.h"
-#include "eprosimartps/qos/QosList.h"
-#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+#include "eprosimartps/qos/ParameterList.h"
+
 
 namespace eprosima {
 
@@ -29,6 +29,7 @@ using namespace dds;
 namespace rtps {
 
 class SimplePDP;
+class DiscoveredParticipantData;
 
 
 /**

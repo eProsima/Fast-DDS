@@ -18,15 +18,10 @@
 #ifndef ENDPOINTDISCOVERYPROTOCOL_H_
 #define ENDPOINTDISCOVERYPROTOCOL_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-//#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-//#include "eprosimartps/common/attributes/PublisherAttributes.h"
-//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
-//#include "eprosimartps/writer/RTPSWriter.h"
-//#include "eprosimartps/reader/RTPSReader.h"
-//#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
+
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+
 
 namespace eprosima {
 namespace rtps {
@@ -52,9 +47,9 @@ public:
 
 	virtual void assignRemoteEndpoints(DiscoveredParticipantData* pdata)=0;
 
-
+protected:
 	ParticipantDiscoveryProtocol* mp_PDP;
-	Participant* mp_participant;
+	//Participant* mp_participant;
 
 };
 

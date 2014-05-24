@@ -14,19 +14,19 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/MessageReceiver.h"
+#include "eprosimartps/common/RTPS_messages.h"
+#include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/resources/ResourceListen.h"
-#include "eprosimartps/reader/RTPSReader.h"
+
 #include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/writer/ReaderProxy.h"
-
 #include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
 
+#include "eprosimartps/dds/SubscriberListener.h"
 
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -75,13 +75,13 @@ void MessageReceiver::reset(){
 	multicastReplyLocatorList.push_back(defUniLoc);
 }
 
-void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
+void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
-		pWarning("Too short message")
-		throw ERR_MESSAGE_TOO_SHORT;
+		pWarning("Received message too short, ignoring"<<endl)
+		return;
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
@@ -119,14 +119,11 @@ void MessageReceiver::processCDRMsg(GuidPrefix_t& participantguidprefix,
 		//First 4 bytes must contain: ID | flags | octets to next header
 		if(!readSubmessageHeader(msg,&submsgh))
 			return;
-//		cout << "pos: " << msg->pos;
-//		cout << " submsg length: " << submsgh.submessageLength;
-//		cout << " total length: " << msg->length << endl;
-//		cout << "submsg endian: " << msg->msg_endian << endl;
+
 		if(msg->pos + submsgh.submessageLength > msg->length)
 		{
-			pWarning("SubMsg of invalid length"<<endl);
-			throw ERR_SUBMSG_LENGTH_INVALID;
+			pWarning("MessageReceiver:SubMsg of invalid length"<<endl);
+			return;
 		}
 		valid = true;
 		count++;
@@ -200,7 +197,7 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
 	else
 	{
 		pWarning("Major RTPS Version not supported"<<endl);
-		throw ERR_MESSAGE_VERSION_UNSUPPORTED;
+		return false;
 	}
 	//Set source vendor id
 	sourceVendorId[0] = msg->buffer[msg->pos];msg->pos++;
@@ -259,8 +256,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	CDRMessage::readInt16(msg,&octetsToInlineQos); //it should be 16 in this implementation
 
 	//reader and writer ID
-	EntityId_t reader;
-	CDRMessage::readEntityId(msg,&reader);
+	EntityId_t readerID;
+	CDRMessage::readEntityId(msg,&readerID);
 
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
@@ -273,7 +270,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if(reader == ENTITYID_UNKNOWN || (*it)->m_guid.entityId == reader) //add
+		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
 			firstReader = *it;
 			break;
@@ -286,7 +283,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	//FOUND THE READER.
 	//We ask the reader for a cachechange to store the information.
-	CacheChange_t* ch = firstReader->m_reader_cache.reserve_Cache();
+	CacheChange_t* ch = firstReader->reserve_Cache();
 	ch->writerGUID.guidPrefix = sourceGuidPrefix;
 	CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
 
@@ -311,7 +308,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		if(inlineQosSize <= 0)
 		{
 			pDebugInfo("SubMessage Data ERROR, Inline Qos ParameterList error"<<endl);
-			firstReader->m_reader_cache.release_Cache(ch);
+			firstReader->release_Cache(ch);
 			return false;
 		}
 
@@ -364,24 +361,24 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if((*it)->acceptMsgDirectedTo(reader)) //add
+		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
-			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->m_guid.entityId<<endl);
+			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);
 			CacheChange_t* change_to_add;
-			if(firstReader->m_guid.entityId == (*it)->m_guid.entityId) //IS the same as the first one
+			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
 			{
 				change_to_add = ch;
 			}
 			else
 			{
-				change_to_add = (*it)->m_reader_cache.reserve_Cache(); //Reserve a new cache from the corresponding cache pool
+				change_to_add = (*it)->reserve_Cache(); //Reserve a new cache from the corresponding cache pool
 				change_to_add->copy(ch);
 			}
 
 
-			if((*it)->m_reader_cache.add_change(change_to_add))
+			if((*it)->add_change(change_to_add))
 			{
-				if((*it)->m_stateType == STATEFUL)
+				if((*it)->getStateType() == STATEFUL)
 				{
 					StatefulReader* SFR = (StatefulReader*)(*it);
 					WriterProxy* WP;
@@ -398,7 +395,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						this->unicastReplyLocatorList.begin()->port = 10046; //default receiving port
 						newWriterProxy.unicastLocatorList   = this->unicastReplyLocatorList;
 						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
-						SFR->matched_writer_add(&newWriterProxy);
+						SFR->matched_writer_add(newWriterProxy);
 						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
 						WP->received_change_set(change_to_add);
 					}
@@ -406,22 +403,22 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					WP->available_changes_max(&maxSeqNumAvailable);
 					if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
 					{
-						if((*it)->mp_listener!=NULL)
+						if((*it)->getListener()!=NULL)
 						{
-							(*it)->mp_listener->onNewDataMessage();
-							if((*it)->m_reader_cache.isFull())
-								(*it)->mp_listener->onHistoryFull();
+							(*it)->getListener()->onNewDataMessage();
+							if((*it)->isHistoryFull())
+								(*it)->getListener()->onHistoryFull();
 						}
 						(*it)->m_semaphore.post();
 					}
 				}
 				else
 				{
-					if((*it)->mp_listener!=NULL)
+					if((*it)->getListener()!=NULL)
 					{
-						(*it)->mp_listener->onNewDataMessage();
-						if((*it)->m_reader_cache.isFull())
-							(*it)->mp_listener->onHistoryFull();
+						(*it)->getListener()->onNewDataMessage();
+						if((*it)->isHistoryFull())
+							(*it)->getListener()->onHistoryFull();
 					}
 					(*it)->m_semaphore.post();
 				}
@@ -464,9 +461,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if((*it)->m_guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
+		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
-			if((*it)->m_stateType == STATEFUL)
+			if((*it)->getStateType() == STATEFUL)
 			{
 				StatefulReader* SR = (StatefulReader*)(*it);
 				//Look for the associated writer
@@ -476,8 +473,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 					if(WP->m_lastHeartbeatCount < HBCount)
 					{
 						WP->m_lastHeartbeatCount = HBCount;
-						WP->missing_changes_update(&lastSN);
-						WP->lost_changes_update(&firstSN);
+						WP->missing_changes_update(lastSN);
+						WP->lost_changes_update(firstSN);
 						WP->m_heartbeatFinalFlag = finalFlag;
 						//Analyze wheter a acknack message is needed:
 
@@ -532,14 +529,13 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
 			it!=mp_threadListen->m_assoc_writers.end();++it)
 	{
-		if((*it)->m_guid == writerGUID)
+		if((*it)->getGuid() == writerGUID)
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
 				//Look for the readerProxy the acknack is from
-				for(std::vector<ReaderProxy*>::iterator rit = SF->matched_readers.begin();
-						rit!=SF->matched_readers.end();++rit)
+				for(p_ReaderProxyIterator rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
 					if((*rit)->m_param.remoteReaderGuid == readerGUID || (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
 					{
@@ -547,7 +543,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 						if((*rit)->m_lastAcknackCount < Ackcount)
 						{
 							(*rit)->m_lastAcknackCount = Ackcount;
-							(*rit)->acked_changes_set(&SNSet.base);
+							(*rit)->acked_changes_set(SNSet.base);
 							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
 							(*rit)->requested_changes_set(set_vec);
 							if(!(*rit)->m_isRequestedChangesEmpty)
@@ -597,9 +593,9 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
 			it!=mp_threadListen->m_assoc_readers.end();++it)
 	{
-		if((*it)->m_guid == readerGUID || readerGUID.entityId == ENTITYID_UNKNOWN)
+		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
-			if((*it)->m_stateType == STATEFUL)
+			if((*it)->getStateType() == STATEFUL)
 			{
 				StatefulReader* SR = (StatefulReader*)(*it);
 				//Look for the associated writer
@@ -609,10 +605,10 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 					SequenceNumber_t auxSN;
 					SequenceNumber_t finalSN = gapList.base -1;
 					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)
-						WP->irrelevant_change_set(&auxSN);
+						WP->irrelevant_change_set(auxSN);
 
 					for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
-						WP->irrelevant_change_set(&(*it));
+						WP->irrelevant_change_set((*it));
 				}
 				else
 					pWarning("GAP received from NOT associated writer"<<endl);

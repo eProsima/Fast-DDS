@@ -121,10 +121,9 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 		{
 			if((bitmap & (1<<(31-bit%32)))==(1<<(31-bit%32)))
 			{
-				seqNum = sns->base+i*32+bit;
+				seqNum = sns->base+(i*32+bit);
 				if(!sns->add(seqNum))
 				{
-					pWarning("CDRMessage:readSequenceNumberSet:malformed seqNumSet"<<endl;);
 					return false;
 				}
 			}
@@ -232,8 +231,6 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
 	if(msg->pos + length > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
-
 		return false;
 	}
 
@@ -246,7 +243,6 @@ inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
 inline bool CDRMessage::addDataReversed(CDRMessage_t*msg, octet* data, uint length) {
 	if(msg->pos + length > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	for(uint i = 0;i<length;i++)
@@ -262,7 +258,6 @@ inline bool CDRMessage::addOctet(CDRMessage_t*msg, octet O)
 {
 	if(msg->pos + 1 > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	//const void* d = (void*)&O;
@@ -276,7 +271,6 @@ inline bool CDRMessage::addUInt16(CDRMessage_t*msg,uint16_t us)
 {
 	if(msg->pos + 2 > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	octet* o= (octet*)&us;
@@ -307,7 +301,6 @@ inline bool CDRMessage::addInt32(CDRMessage_t* msg, int32_t lo) {
 	octet* o= (octet*)&lo;
 	if(msg->pos + 4 > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	if(msg->msg_endian == DEFAULT_ENDIAN)
@@ -335,7 +328,6 @@ inline bool CDRMessage::addUInt32(CDRMessage_t* msg, uint32_t ulo) {
 	octet* o= (octet*)&ulo;
 	if(msg->pos + 4 > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	if(msg->msg_endian == DEFAULT_ENDIAN)
@@ -361,7 +353,6 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 	octet* o= (octet*)&lolo;
 	if(msg->pos + 8 > msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	if(msg->msg_endian == DEFAULT_ENDIAN)
@@ -387,8 +378,7 @@ inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocve
 {
 	if(msg->pos+4+ocvec->size()>=msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
-				return false;
+		return false;
 	}
 	bool valid = CDRMessage::addUInt32(msg,ocvec->size());
 	valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),ocvec->size());
@@ -405,7 +395,6 @@ inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocve
 inline bool CDRMessage::addEntityId(CDRMessage_t* msg, const EntityId_t*ID) {
 	if(msg->pos+4>=msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	int* aux1;
@@ -450,7 +439,6 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 
 	if(numBits > 256)
 	{
-		pWarning("CDRMessage:addSequenceNumberSet:seqNum max - base >256"<<std::endl);
 		return false;
 	}
 
@@ -489,7 +477,6 @@ inline bool CDRMessage::addParameterStatus(CDRMessage_t* msg, octet status)
 {
 	if(msg->pos+8>=msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	CDRMessage::addUInt16(msg,PID_STATUS_INFO);
@@ -506,7 +493,6 @@ inline bool CDRMessage::addParameterKey(CDRMessage_t* msg, InstanceHandle_t* iHa
 {
 	if(msg->pos+20>=msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	CDRMessage::addUInt16(msg,PID_KEY_HASH);
@@ -522,7 +508,6 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 {
 	if(msg->pos+4>=msg->max_size)
 	{
-		pError( "Message size not enough "<<endl);
 		return false;
 	}
 	CDRMessage::addUInt16(msg,PID_SENTINEL);

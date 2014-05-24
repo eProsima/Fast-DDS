@@ -16,26 +16,22 @@
  */
 
 #include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/writer/ReaderLocator.h"
-#include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/utils/RTPSLog.h"
+
+//#include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
 namespace rtps {
 
 
 
-StatelessWriter::StatelessWriter(const PublisherAttributes* param,uint32_t payload_size):
-		RTPSWriter(param->historyMaxSize,payload_size)
+StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId):
+		RTPSWriter(guidP,entId,param.topic,STATELESS,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
 {
-	m_pushMode = param->pushMode;
-	//writer_cache.changes.reserve(param->historySize);
-
-	m_stateType = STATELESS;
+	m_pushMode = true;//TODOG, support pushmode false in best effort
 	//locator lists:
-	unicastLocatorList = param->unicastLocatorList;
-	multicastLocatorList = param->multicastLocatorList;
-	m_topic = param->topic;
-	this->m_userDefinedId = param->userDefinedId;
+	unicastLocatorList = param.unicastLocatorList;
+	multicastLocatorList = param.multicastLocatorList;
 }
 
 
@@ -43,7 +39,6 @@ StatelessWriter::StatelessWriter(const PublisherAttributes* param,uint32_t paylo
 
 StatelessWriter::~StatelessWriter()
 {
-
 	pDebugInfo("StatelessWriter destructor"<<endl;);
 }
 
@@ -119,12 +114,12 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 			if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
 			{
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-						&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
+						&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
 			}
 			else
 			{
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-						&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+						&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
 			}
 			rit->unsent_changes.clear();
 
@@ -151,27 +146,27 @@ void StatelessWriter::unsent_changes_not_empty()
 				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
 				{
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
+							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
 				}
 				else
 				{
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&rit->unsent_changes,&rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
 				}
 				rit->unsent_changes.clear();
 			}
-			else
-			{
-				SequenceNumber_t first,last;
-				m_writer_cache.get_seq_num_min(&first,NULL);
-				m_writer_cache.get_seq_num_max(&last,NULL);
-				m_heartbeatCount++;
-				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-				rit->unsent_changes.clear();
-			}
+//			else
+//			{
+//				SequenceNumber_t first,last;
+//				m_writer_cache.get_seq_num_min(&first,NULL);
+//				m_writer_cache.get_seq_num_max(&last,NULL);
+//				m_heartbeatCount++;
+//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+//				rit->unsent_changes.clear();
+//			}
 		}
 	}
 	pDebugInfo ( "Finish sending unsent changes" << endl);

@@ -40,10 +40,9 @@ struct timezone
 
 #endif
 
-//#include <ctime>
+#include "eprosimartps/common/types/Time_t.h"
 
- 
-#include "eprosimartps/rtps_all.h"
+
 namespace eprosima {
 namespace rtps {
 

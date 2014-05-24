@@ -16,6 +16,11 @@
  */
 
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/dds/SampleInfo.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -27,18 +32,15 @@ StatelessReader::~StatelessReader() {
 	pDebugInfo("StatelessReader destructor"<<endl;);
 }
 
-StatelessReader::StatelessReader(const SubscriberAttributes* param,uint32_t payload_size):
-		RTPSReader(param->historyMaxSize,payload_size)
+StatelessReader::StatelessReader(const SubscriberAttributes& param,
+		const GuidPrefix_t&guidP, const EntityId_t& entId):
+		RTPSReader(guidP,entId,param.topic,STATELESS,
+				param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
 {
-	//reader_cache.changes.reserve(param.historySize);
-	m_stateType = STATELESS;
 	//locator lists:
-	unicastLocatorList = param->unicastLocatorList;
-	multicastLocatorList = param->multicastLocatorList;
-	expectsInlineQos = param->expectsInlineQos;
-	m_topic = param->topic;
-
-	this->m_userDefinedId = param->userDefinedId;
+	unicastLocatorList = param.unicastLocatorList;
+	multicastLocatorList = param.multicastLocatorList;
+	m_expectsInlineQos = param.expectsInlineQos;
 }
 
 

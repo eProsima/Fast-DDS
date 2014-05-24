@@ -18,7 +18,11 @@
 #ifndef DDSTOPICDATATYPE_H_
 #define DDSTOPICDATATYPE_H_
 
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/SerializedPayload.h"
+#include "eprosimartps/common/types/InstanceHandle.h"
+
+#include <string>
 
 using namespace eprosima::rtps;
 

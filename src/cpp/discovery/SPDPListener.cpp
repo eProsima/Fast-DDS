@@ -16,9 +16,14 @@
  */
 
 #include "eprosimartps/discovery/SPDPListener.h"
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 #include "eprosimartps/discovery/SimplePDP.h"
+
+#include "eprosimartps/Participant.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/writer/StatelessWriter.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
@@ -32,7 +37,7 @@ bool SPDPListener::newAddedCache()
 {
 	pInfo(CYAN<<"SPDPListener: SPDP Message received"<<DEF<<endl);
 	CacheChange_t* change = NULL;
-	if(mp_SPDP->mp_SPDPReader->m_reader_cache.get_last_added_cache(&change))
+	if(mp_SPDP->mp_SPDPReader->get_last_added_cache(&change))
 	{
 		ParameterList_t param;
 		CDRMessage_t msg;
@@ -51,7 +56,7 @@ bool SPDPListener::newAddedCache()
 				{
 					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
-					mp_SPDP->mp_SPDPReader->m_reader_cache.remove_change(change->sequenceNumber,change->writerGUID);
+					mp_SPDP->mp_SPDPReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return true;
 				}
 				//Look for the participant in my own list:
@@ -90,16 +95,16 @@ bool SPDPListener::newAddedCache()
 				//If staticEDP, perform matching:
 				if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 				{
-					for(std::vector<RTPSReader*>::iterator it = this->mp_SPDP->mp_participant->m_userReaderList.begin();
-							it!=this->mp_SPDP->mp_participant->m_userReaderList.end();++it)
+					for(std::vector<RTPSReader*>::iterator it = this->mp_SPDP->mp_participant->userReadersListBegin();
+							it!=this->mp_SPDP->mp_participant->userReadersListEnd();++it)
 					{
-						if((*it)->m_userDefinedId > 0)
+						if((*it)->getUserDefinedId() > 0)
 							this->mp_SPDP->mp_EDP->localReaderMatching(*it,false);
 					}
-					for(std::vector<RTPSWriter*>::iterator it = this->mp_SPDP->mp_participant->m_userWriterList.begin();
-							it!=this->mp_SPDP->mp_participant->m_userWriterList.end();++it)
+					for(std::vector<RTPSWriter*>::iterator it = this->mp_SPDP->mp_participant->userWritersListBegin();
+							it!=this->mp_SPDP->mp_participant->userWritersListEnd();++it)
 					{
-						if((*it)->m_userDefinedId > 0)
+						if((*it)->getUserDefinedId() > 0)
 							this->mp_SPDP->mp_EDP->localWriterMatching(*it,false);
 					}
 				}

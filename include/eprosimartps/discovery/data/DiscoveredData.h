@@ -18,17 +18,14 @@
 #ifndef DISCOVEREDDATA_H_
 #define DISCOVEREDDATA_H_
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
-#include "eprosimartps/writer/ReaderProxy.h"
-#include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
+#include "eprosimartps/discovery/data/DiscoveredReaderData.h"
+
 
 namespace eprosima {
 namespace rtps {
 
-class DiscoveredWriterData;
-class DiscoveredReaderData;
-class DiscoveredTopicData;
-class DiscoveredParticipantData;
 
 class DiscoveredData
 {
@@ -37,10 +34,10 @@ public:
 	virtual ~DiscoveredData(){};
 	static bool ParameterList2DiscoveredWriterData(ParameterList_t& param,DiscoveredWriterData* wdata);
 	static bool ParameterList2DiscoveredReaderData(ParameterList_t& param,DiscoveredReaderData* wdata);
-	static bool ParameterList2DiscoveredTopicData(ParameterList_t& param,DiscoveredTopicData* wdata);
+	//static bool ParameterList2DiscoveredTopicData(ParameterList_t& param,DiscoveredTopicData* wdata);
 	static bool DiscoveredWriterData2ParameterList(DiscoveredWriterData& wdata,ParameterList_t* param);
 	static bool DiscoveredReaderData2ParameterList(DiscoveredReaderData& wdata,ParameterList_t* param);
-	static bool DiscoveredTopicData2ParameterList(DiscoveredTopicData& wdata,ParameterList_t* param);
+	//static bool DiscoveredTopicData2ParameterList(DiscoveredTopicData& wdata,ParameterList_t* param);
 
 	//static bool ParameterList2DiscoveredParticipantData(ParameterList_t& param,DiscoveredParticipantData* wdata);
 };

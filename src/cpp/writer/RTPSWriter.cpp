@@ -19,23 +19,29 @@
 #include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/dds/Publisher.h"
-
+#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
 #include "eprosimartps/qos/ParameterList.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/RTPSMessageCreator.h"
 
 namespace eprosima {
 namespace rtps {
 
 
-RTPSWriter::RTPSWriter(uint16_t historysize,uint32_t payload_size):
-		m_stateType(STATELESS),
-		m_writer_cache(historysize,payload_size,WRITER,(Endpoint*)this),
-		m_pushMode(true),
-		m_heartbeatCount(0),
-		m_Pub(NULL),
-		mp_listener(NULL)
-
+RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,
+		StateKind_t state,
+		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
+					Endpoint(guidP,entId,topic,state,WRITER,userDefinedId),
+					m_writer_cache((Endpoint*)this,historysize,payload_size),
+					m_pushMode(true),
+				//	m_Pub(NULL),
+					mp_listener(NULL)
 {
+	init_header();
 	pDebugInfo("RTPSWriter created"<<endl)
+
 }
 
 void RTPSWriter::init_header()
@@ -48,7 +54,6 @@ void RTPSWriter::init_header()
 
 RTPSWriter::~RTPSWriter()
 {
-
 	pDebugInfo("RTPSWriter destructor"<<endl;);
 }
 
@@ -71,7 +76,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	}
 	ch->kind = changeKind;
 
-	if(getTopicKind() == WITH_KEY && mp_type !=NULL)
+	if(getTopic().getTopicKind() == WITH_KEY && mp_type !=NULL)
 	{
 		if(mp_type->m_isGetKeyDefined)
 		{
@@ -90,7 +95,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 
 bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 {
-	if(kind != ALIVE && getTopicKind() == NO_KEY)
+	if(kind != ALIVE && getTopic().getTopicKind() == NO_KEY)
 	{
 		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
 		return false;

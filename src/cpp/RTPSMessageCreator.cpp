@@ -16,13 +16,15 @@
 
 #include "eprosimartps/RTPSMessageCreator.h"
 #include "eprosimartps/CDRMessage.h"
-
 #include "eprosimartps/qos/ParameterList.h"
-
 #include "eprosimartps/utils/eClock.h"
+#include "eprosimartps/utils/ObjectPool.h"
+#include "eprosimartps/common/RTPS_messages.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 using namespace boost::posix_time;
 
@@ -35,13 +37,10 @@ namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
 ObjectPool<CDRMessage_t> g_pool_submsg(100);
-//const boost::posix_time::ptime t_epoch(boost::gregorian::date(1900,1,1),boost::posix_time::time_duration(0,0,0));
 eClock clock;
 
 
 RTPSMessageCreator::RTPSMessageCreator() {
-
-
 
 }
 
@@ -50,7 +49,7 @@ RTPSMessageCreator::~RTPSMessageCreator() {
 }
 
 
-bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
+bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
 
@@ -80,7 +79,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix,
 	return true;
 }
 
-bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, GuidPrefix_t& guidPrefix)
+bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix)
 {
 	ProtocolVersion_t prot;
 	PROTOCOLVERSION(prot);

@@ -20,17 +20,9 @@
 #define SUBSCRIBER_H_
 #include <iostream>
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/common/rtps_messages.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Guid.h"
 
-#include <boost/signals2.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/SubscriberListener.h"
-
-#include "eprosimartps/dds/SampleInfo.h"
 
 namespace eprosima {
 
@@ -42,6 +34,9 @@ using namespace rtps;
 
 namespace dds {
 
+class DDSTopicDataType;
+class SubscriberListener;
+class SampleInfo_t;
 
 
 
@@ -52,25 +47,10 @@ namespace dds {
  * @ingroup DDSMODULE
  * @snippet dds_example.cpp ex_Subscriber
  */
-class RTPS_DllAPI Subscriber {
-	friend class DomainParticipant;
-	friend class RTPSReader;
+class RTPS_DllAPI SubscriberImpl {
 public:
-	Subscriber(RTPSReader* Rin);
-	virtual ~Subscriber();
-
-	/**
-	 * Get the topic data type.
-	 */
-	const std::string& getTopicDataType() const {
-		return topicDataType;
-	}
-	/**
-	 * Get the topic Name.
-	 */
-	const std::string& getTopicName() const {
-		return topicName;
-	}
+	SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype);
+	virtual ~SubscriberImpl();
 
 	/**
 	 * Method to block the current thread until an unread message is available
@@ -81,7 +61,7 @@ public:
 	 * Assign a RTPSListener to perform actions when certain events happen.
 	 * @param[in] p_listener Pointer to the RTPSListener.
 	 */
-	void assignListener(SubscriberListener* p_listener);
+	bool assignListener(SubscriberListener* p_listener);
 
 
 	/**
@@ -92,7 +72,7 @@ public:
 	/**
 	 * Get the number of elements currently stored in the HistoryCache.
 	 */
-	int getHistory_n();
+	int getHistoryElementsNumber();
 
 //	bool updateAttributes(const SubscriberAttributes& param);
 
@@ -110,22 +90,106 @@ public:
 
 	///@}
 
-	ParameterList_t ParamList;
 
 	/**
 	 * Add a writer proxy. Only until Discovery is good.
 	 */
 	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
 
+const GUID_t& getGuid();
+
+	RTPSReader* getReaderPtr() {
+		return mp_Reader;
+	}
 
 private:
-
+	//!Pointer to associated RTPSReader
 	RTPSReader* mp_Reader;
-	std::string topicName;
-	std::string topicDataType;
-
+	//! Pointer to the DDSTopicDataType object.
+	DDSTopicDataType* mp_type;
 
 };
+
+
+class Subscriber
+{
+public:
+	Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
+	virtual ~Subscriber(){};
+	const GUID_t& getGuid()
+	{
+		return mp_impl->getGuid();
+	}
+
+	/**
+	 * Method to block the current thread until an unread message is available
+	 */
+	void waitForUnreadMessage()
+	{
+		return mp_impl->waitForUnreadMessage();
+	}
+
+	/**
+	 * Assign a RTPSListener to perform actions when certain events happen.
+	 * @param[in] p_listener Pointer to the RTPSListener.
+	 */
+	bool assignListener(SubscriberListener* p_listener)
+	{
+			return mp_impl->assignListener(p_listener);
+		}
+
+
+	/**
+	 * Function to determine if the history is full
+	 */
+	bool isHistoryFull()
+	{
+			return mp_impl->isHistoryFull();
+		}
+
+	/**
+	 * Get the number of elements currently stored in the HistoryCache.
+	 */
+	int getHistoryElementsNumber()
+	{
+			return mp_impl->getHistoryElementsNumber();
+		}
+
+
+	//	bool updateAttributes(const SubscriberAttributes& param);
+
+
+	/////@}
+
+	/** @name Read or take data methods.
+	 * Methods to read or take data from the History.
+	 */
+
+	///@{
+
+	bool readNextData(void* data,SampleInfo_t* info)
+	{
+		return mp_impl->readNextData(data,info);
+	}
+	bool takeNextData(void* data,SampleInfo_t* info)
+	{
+		return mp_impl->takeNextData(data,info);
+	}
+	///@}
+
+
+	/**
+	 * Add a writer proxy. Only until Discovery is good.
+	 */
+	bool addWriterProxy(Locator_t& loc,GUID_t& guid)
+	{
+		return mp_impl->addWriterProxy(loc,guid);
+	}
+private:
+	SubscriberImpl* mp_impl;
+};
+
+
 
 } /* namespace dds */
 } /* namespace eprosima */

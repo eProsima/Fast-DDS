@@ -14,6 +14,11 @@
  *      email:  gonzalorodriguez@eprosima.com
  *      		grcanosa@gmail.com
  */
+
+
+
+#ifndef RESOURCESEND_H_
+#define RESOURCESEND_H_
 #include <boost/asio.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/address_v6.hpp>
@@ -24,14 +29,12 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-
-#include "eprosimartps/rtps_all.h"
-
-#ifndef RESOURCESEND_H_
-#define RESOURCESEND_H_
+#include "eprosimartps/common/types/Locator.h"
 
 namespace eprosima {
 namespace rtps {
+
+struct CDRMessage_t;
 
 /**
  * Class ResourceSend, used to manage the send operation. In future version it will contain the grouping
@@ -40,8 +43,6 @@ namespace rtps {
  */
 class ResourceSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
-	friend class Participant;
-	friend class SimpleParticipantDiscoveryProtocol;
 public:
 	ResourceSend();
 	virtual ~ResourceSend();
@@ -50,7 +51,7 @@ public:
 	 * @param msg Pointer to the message.
 	 * @param loc Locator where to send the message.
 	 */
-	void sendSync(CDRMessage_t* msg,Locator_t* loc);
+	void sendSync(CDRMessage_t* msg,const Locator_t& loc);
 
 	/**
 	 * Initialize the sending socket.
@@ -58,15 +59,17 @@ public:
 	 * @return True if correct
 	 */
 	bool initSend(const Locator_t& loc);
+
+	//!FOR TESTING ONLY!!!!
+	void loose_next(){m_send_next = false;};
 private:
 	Locator_t m_sendLocator;
 	boost::asio::io_service m_send_service;
 	boost::asio::ip::udp::socket m_send_socket;
 	boost::asio::ip::udp::endpoint m_send_endpoint;
 	size_t m_bytes_sent;
-public:
-	//!Used in tests
 	bool m_send_next;
+
 };
 
 } /* namespace rtps */

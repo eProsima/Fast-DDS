@@ -15,21 +15,14 @@
  *      		grcanosa@gmail.com
  */
 
-#include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-#include "eprosimartps/common/attributes/PublisherAttributes.h"
-#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
-
-#include "eprosimartps/HistoryCache.h"
 #include "eprosimartps/Endpoint.h"
-#include "eprosimartps/RTPSMessageCreator.h"
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/HistoryCache.h"
+
 #include "eprosimartps/writer/RTPSMessageGroup.h"
+
+#include "eprosimartps/qos/WriterQos.h"
 #include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/qos/QosList.h"
 
 
 #ifndef RTPSWRITER_H_
@@ -42,7 +35,10 @@ using namespace eprosima::dds;
 
 namespace eprosima {
 
+namespace dds{
 
+class PublisherListener;
+}
 
 namespace rtps {
 
@@ -52,10 +48,12 @@ namespace rtps {
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
   * @ingroup WRITERMODULE
  */
-class RTPSWriter: public Endpoint {
-	friend class HistoryCache;
+class RTPSWriter: public Endpoint
+{
 public:
-	RTPSWriter(uint16_t historysize,uint32_t payload_size);
+	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,
+			StateKind_t state = STATELESS,
+			int16_t userDefinedId=-1,uint16_t historysize = 50,uint32_t payload_size = 500);
 	virtual ~RTPSWriter();
 
 	/**
@@ -68,33 +66,6 @@ public:
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
-
-	/**
-	 * Initialize the header message that is used in all RTPS Messages.
-	 */
-	void init_header();
-
-
-
-	/**
-	 * Increment the heartbeatCound.
-	 */
-	void heartbeatCount_increment() {
-		++m_heartbeatCount;
-	}
-	/**
-	 * Get the heartbeatCount.
-	 * @return HeartbeatCount.
-	 */
-	Count_t getHeartbeatCount() const {
-		return m_heartbeatCount;
-	}
-
-
-
-	StateKind_t getStateType() const {
-		return m_stateType;
-	}
 
 	size_t getHistoryCacheSize()
 	{
@@ -138,30 +109,36 @@ public:
 		return m_writer_cache.get_last_added_cache(change);
 	}
 
+	void setQos(WriterQos& qos,bool first)
+	{
+		return m_qos.setQos(qos,first);
+	}
+	const WriterQos& getQos(){return m_qos;}
 
-protected:
-	//!State type fo the writer
-	StateKind_t m_stateType;
+	PublisherListener* getListener(){return mp_listener;}
+
+	protected:
+
 	//!Changes associated with this writer.
 	HistoryCache m_writer_cache;
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
 	bool m_pushMode;
-	//!Type of the writer, either STATELESS or STATEFUL
 
-	//SequenceNumber_t m_lastChangeSequenceNumber;
-	Count_t m_heartbeatCount;
-
-
+	//Count_t m_heartbeatCount;
 
 	RTPSMessageGroup_t m_cdrmessages;
 
+	/**
+	 * Initialize the header message that is used in all RTPS Messages.
+	 */
+	void init_header();
 
-public:
 
 	WriterQos m_qos;
-	Publisher* m_Pub;
+	//Publisher* m_Pub;
 	PublisherListener* mp_listener;
-	QosList_t m_ParameterQosList;
+	friend bool PublisherImpl::assignListener(PublisherListener* pin);
+	//QosList_t m_ParameterQosList;
 
 
 };
