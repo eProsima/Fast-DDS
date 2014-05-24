@@ -114,6 +114,8 @@ public:
 		return m_qos.setQos(qos,first);
 	}
 
+	PublisherListener* getListener(){return mp_listener;}
+
 	protected:
 
 	//!Changes associated with this writer.

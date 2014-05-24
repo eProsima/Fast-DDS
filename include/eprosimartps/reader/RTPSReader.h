@@ -123,6 +123,7 @@ public:
 		return m_reader_cache.get_last_added_cache(ch_ptr);
 	}
 
+
 protected:
 	//!Pointer to the associated subscriber
 	//	Subscriber* mp_Sub;

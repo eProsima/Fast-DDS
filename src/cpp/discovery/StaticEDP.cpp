@@ -16,6 +16,7 @@
  */
 
 #include "eprosimartps/discovery/StaticEDP.h"
+
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/reader/RTPSReader.h"
@@ -24,6 +25,14 @@
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+
+#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/PublisherListener.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+
+using namespace eprosima::dds;
 
 
 namespace eprosima {
@@ -79,7 +88,7 @@ bool StaticEDP::loadXMLFile(const std::string& filename)
 				if(xml_participant_child.first == "name")
 				{
 					pdata.m_participantName = xml_participant_child.second.data();
-					if(pdata.m_participantName == this->mp_participant->m_participantName)
+					if(pdata.m_participantName == this->mp_PDP->mp_participant->getParticipantName())
 					{
 						p_pdata = this->mp_PDP->mp_localDPData;
 						different_participant = false;
@@ -326,9 +335,9 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 		for(std::vector<DiscoveredReaderData>::iterator it = pit->m_readers.begin();
 				it!= pit->m_readers.end();++it)
 		{
-			if(writer->getTopicName() == it->m_topicName &&
-					writer->getTopicKind() == it->topicKind &&
-					writer->getTopicDataType() == it->m_typeName &&
+			if(writer->getTopic().getTopicName() == it->m_topicName &&
+					writer->getTopic().getTopicKind() == it->topicKind &&
+					writer->getTopic().getTopicDataType() == it->m_typeName &&
 					it->isAlive && it->userDefinedId>0) //Matching
 			{
 				bool matched = false;
@@ -359,8 +368,8 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 					if(p_SFW->matched_reader_add(it->m_readerProxy))
 						matched = true;
 				}
-				if(matched && writer->mp_listener!=NULL)
-					writer->mp_listener->onPublicationMatched();
+				if(matched && writer->getListener()!=NULL)
+					writer->getListener()->onPublicationMatched();
 				matched_global = true;
 			}
 		}
@@ -380,9 +389,9 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 		for(std::vector<DiscoveredWriterData>::iterator it = pit->m_writers.begin();
 				it!=pit->m_writers.end();++it)
 		{
-			if(reader->getTopicName() == it->m_topicName &&
-					reader->getTopicKind() == it->topicKind &&
-					reader->getTopicDataType() == it->m_typeName &&
+			if(reader->getTopic().getTopicName() == it->m_topicName &&
+					reader->getTopic().getTopicKind() == it->topicKind &&
+					reader->getTopic().getTopicDataType() == it->m_typeName &&
 					it->isAlive && it->userDefinedId>0) //Matching
 			{
 				bool matched = false;
@@ -393,11 +402,11 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 				else if(reader->getStateType() == STATEFUL)
 				{
 					StatefulReader* p_SFR = (StatefulReader*)reader;
-					if(p_SFR->matched_writer_add(&it->m_writerProxy))
+					if(p_SFR->matched_writer_add(it->m_writerProxy))
 						matched = true;
 				}
-				if(matched && reader->mp_listener!=NULL)
-					reader->mp_listener->onSubscriptionMatched();
+				if(matched && reader->getListener()!=NULL)
+					reader->getListener()->onSubscriptionMatched();
 				matched_global = true;
 			}
 		}
@@ -411,23 +420,23 @@ bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 	for(std::vector<DiscoveredWriterData>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
 			it!=this->mp_PDP->mp_localDPData->m_writers.begin();++it)
 	{
-		if(writer->m_userDefinedId == it->userDefinedId)
+		if(writer->getUserDefinedId() == it->userDefinedId)
 		{
 			bool equal = true;
-			equal &= (writer->getTopicKind() == it->topicKind);
+			equal &= (writer->getTopic().getTopicKind() == it->topicKind);
 			if(!equal)
 			{
 				pWarning("Topic Kind different in XML" <<endl);
 			}
-			equal &= (writer->getTopicName() == it->m_topicName);
+			equal &= (writer->getTopic().getTopicName() == it->m_topicName);
 			if(!equal)
 			{
-				pWarning("Topic Name different in XML: " << writer->getTopicName() << " vs " <<it->m_topicName <<endl);
+				pWarning("Topic Name different in XML: " << writer->getTopic().getTopicName() << " vs " <<it->m_topicName <<endl);
 			}
-			equal &= (writer->getTopicDataType() == it->m_typeName);
+			equal &= (writer->getTopic().getTopicDataType() == it->m_typeName);
 			if(!equal)
 			{
-				pWarning("Topic Data Type different in XML: " << writer->getTopicDataType() << " vs " <<it->m_typeName <<endl);
+				pWarning("Topic Data Type different in XML: " << writer->getTopic().getTopicDataType() << " vs " <<it->m_typeName <<endl);
 			}
 			if(writer->getStateType() == STATELESS && it->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
 				equal &= false;
@@ -475,7 +484,7 @@ bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 			return equal;
 		}
 	}
-	pWarning("Endpoint with ID: " << writer->m_userDefinedId << " not defined in XML file"<< endl);
+	pWarning("Endpoint with ID: " << writer->getUserDefinedId() << " not defined in XML file"<< endl);
 	return false; //If the participant is found but the ID is not found.
 }
 
@@ -484,23 +493,23 @@ bool StaticEDP::checkLocalReaderCreation(RTPSReader* reader)
 	for(std::vector<DiscoveredReaderData>::iterator it = this->mp_PDP->mp_localDPData->m_readers.begin();
 			it!=this->mp_PDP->mp_localDPData->m_readers.begin();++it)
 	{
-		if(reader->m_userDefinedId == it->userDefinedId)
+		if(reader->getUserDefinedId() == it->userDefinedId)
 		{
 			bool equal = true;
-			equal &= (reader->getTopicKind() == it->topicKind);
+			equal &= (reader->getTopic().getTopicKind() == it->topicKind);
 			if(!equal)
 			{
 				pWarning("Topic Kind different in XML" <<endl);
 			}
-			equal &= (reader->getTopicName() == it->m_topicName);
+			equal &= (reader->getTopic().getTopicName() == it->m_topicName);
 			if(!equal)
 			{
-				pWarning("Topic Name different in XML: " << reader->getTopicName() << " vs " <<it->m_topicName <<endl);
+				pWarning("Topic Name different in XML: " << reader->getTopic().getTopicName() << " vs " <<it->m_topicName <<endl);
 			}
-			equal &= (reader->getTopicDataType() == it->m_typeName);
+			equal &= (reader->getTopic().getTopicDataType() == it->m_typeName);
 			if(!equal)
 			{
-				pWarning("Topic Data Type different in XML: " << reader->getTopicDataType() << " vs " <<it->m_typeName <<endl);
+				pWarning("Topic Data Type different in XML: " << reader->getTopic().getTopicDataType() << " vs " <<it->m_typeName <<endl);
 			}
 			if(reader->getStateType() == STATELESS && it->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
 				equal &= false;
@@ -548,7 +557,7 @@ bool StaticEDP::checkLocalReaderCreation(RTPSReader* reader)
 			return equal;
 		}
 	}
-	pWarning("Endpoint with ID: " << reader->m_userDefinedId << " not defined in XML file"<< endl);
+	pWarning("Endpoint with ID: " << reader->getUserDefinedId() << " not defined in XML file"<< endl);
 	return false; //If the participant is found but the ID is not found.
 }
 
