@@ -41,13 +41,13 @@ typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
 ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP):
 
-					m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
-					m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-					m_participantName(PParam.name),
-					m_guid(guidP,c_EntityId_Participant),
-					mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-					IdCounter(0),
-					mp_PDP(NULL)
+							m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
+							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
+							m_participantName(PParam.name),
+							m_guid(guidP,c_EntityId_Participant),
+							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+							IdCounter(0),
+							mp_PDP(NULL)
 
 {
 	Locator_t loc;
@@ -104,19 +104,27 @@ ParticipantImpl::~ParticipantImpl()
 		delete(mp_PDP);
 }
 
-bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,
+		uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	EntityId_t entId;
-	if(param.topic.getTopicKind() == NO_KEY)
-		entId.value[3] = 0x03;
-	else if(param.topic.getTopicKind() == WITH_KEY)
-		entId.value[3] = 0x02;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	entId.value[2] = c[0];
-	entId.value[1] = c[1];
-	entId.value[0] = c[2];
+	if(entityId== c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x03;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x02;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+	{
+		entId = entityId;
+	}
 	StatelessWriter* SLWriter = new StatelessWriter(param,m_guid.guidPrefix,entId);
 	if(this->initWriter((RTPSWriter*)SLWriter,isBuiltin))
 	{
@@ -127,19 +135,27 @@ bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherA
 		return false;
 }
 
-bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,
+		uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulWriter"<<endl);
 	EntityId_t entId;
-	if(param.topic.getTopicKind() == NO_KEY)
-		entId.value[3] = 0x03;
-	else if(param.topic.getTopicKind() == WITH_KEY)
-		entId.value[3] = 0x02;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	entId.value[2] = c[0];
-	entId.value[1] = c[1];
-	entId.value[0] = c[2];
+	if(entityId== c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x03;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x02;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+	{
+		entId = entityId;
+	}
 	StatefulWriter* SFWriter = new StatefulWriter(param, m_guid.guidPrefix,entId);
 	if(this->initWriter((RTPSWriter*)SFWriter,isBuiltin))
 	{
@@ -187,19 +203,24 @@ bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 }
 
 bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
-		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin, const EntityId_t& entityId)
 {
 	pInfo("Creating StatelessReader"<<endl);
 	EntityId_t entId;
-	if(param.topic.getTopicKind() == NO_KEY)
-		entId.value[3] = 0x04;
-	else if(param.topic.getTopicKind() == WITH_KEY)
-		entId.value[3] = 0x07;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	entId.value[2] = c[0];
-	entId.value[1] = c[1];
-	entId.value[0] = c[2];
+	if(entityId == c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x04;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x07;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+		entId = entityId;
 	StatelessReader* SReader = new StatelessReader(param, m_guid.guidPrefix,entId);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
@@ -211,19 +232,24 @@ bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
 }
 
 bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
-		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
 	EntityId_t entId;
-	if(param.topic.getTopicKind() == NO_KEY)
-		entId.value[3] = 0x04;
-	else if(param.topic.getTopicKind() == WITH_KEY)
-		entId.value[3] = 0x07;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	entId.value[2] = c[0];
-	entId.value[1] = c[1];
-	entId.value[0] = c[2];
+	if(entityId == c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x04;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x07;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+		entId = entityId;
 	StatefulReader* SReader = new StatefulReader(param, m_guid.guidPrefix,entId);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{

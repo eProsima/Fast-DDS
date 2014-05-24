@@ -22,8 +22,8 @@ namespace eprosima {
 namespace rtps {
 
 EndpointDiscoveryProtocol::EndpointDiscoveryProtocol(ParticipantDiscoveryProtocol* p):
-	mp_PDP(p),
-	mp_participant(p->mp_participant)
+	mp_PDP(p)//,
+	//mp_participant(p->mp_participant)
 {
 
 

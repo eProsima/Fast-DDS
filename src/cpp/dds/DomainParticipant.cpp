@@ -318,13 +318,11 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
-		bool found = false;
 		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 				it!=m_participants.end();++it)
 		{
 			if(it->second->getGuid() == p->getGuid())
 			{
-				found = true;
 				delete(it->first);
 				delete(it->second);
 				m_participants.erase(it);
