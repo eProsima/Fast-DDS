@@ -40,7 +40,7 @@ StatelessReader::StatelessReader(const SubscriberAttributes& param,
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
 	multicastLocatorList = param.multicastLocatorList;
-	expectsInlineQos = param.expectsInlineQos;
+	m_expectsInlineQos = param.expectsInlineQos;
 }
 
 

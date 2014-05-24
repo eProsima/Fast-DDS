@@ -28,7 +28,7 @@ RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 		//mp_Sub(NULL),
 		mp_listener(NULL),
 		m_reader_cache((Endpoint*)this,historysize,payload_size),
-		expectsInlineQos(true),
+		m_expectsInlineQos(true),
 		m_acceptMessagesToUnknownReaders(true)
 
 {

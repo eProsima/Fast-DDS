@@ -48,7 +48,7 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
 	multicastLocatorList = param.multicastLocatorList;
-	expectsInlineQos = param.expectsInlineQos;
+	m_expectsInlineQos = param.expectsInlineQos;
 }
 
 bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)

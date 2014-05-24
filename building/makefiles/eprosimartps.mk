@@ -87,8 +87,11 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/SimpleEDP.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp \
 		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp \
-		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredWriterData.cpp \
-		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredReaderData.cpp 
+		  \
+		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
+		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp
+	#	  $(BASEDIR)/src/cpp/discovery/data/DiscoveredWriterData.cpp \
+	#	  $(BASEDIR)/src/cpp/discovery/data/DiscoveredReaderData.cpp 
 		#  $(BASEDIR)/src/cpp/discovery/SimpleEPD.cpp \
 		#   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp 
 		#   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp

@@ -113,6 +113,7 @@ public:
 		{
 			return m_qos.setQos(qos,first);
 		}
+	const ReaderQos& getQos(){return m_qos;}
 
 	bool remove_change(SequenceNumber_t& seqNum, GUID_t& writerGuid)
 	{
@@ -122,6 +123,11 @@ public:
 	{
 		return m_reader_cache.get_last_added_cache(ch_ptr);
 	}
+
+	bool expectsInlineQos(){return m_expectsInlineQos;}
+
+	std::vector<CacheChange_t*>::iterator readerHistoryCacheBegin(){return m_reader_cache.m_changes.begin();}
+	std::vector<CacheChange_t*>::iterator readerHistoryCacheEnd(){return m_reader_cache.m_changes.end();}
 
 
 protected:
@@ -134,7 +140,7 @@ protected:
 	//!History Cache of the Reader.
 	HistoryCache m_reader_cache;
 	//!Whether the Reader expects Inline QOS.
-	bool expectsInlineQos;
+	bool m_expectsInlineQos;
 
 
 
