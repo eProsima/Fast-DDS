@@ -114,6 +114,15 @@ public:
 			return m_qos.setQos(qos,first);
 		}
 
+	bool remove_change(SequenceNumber_t& seqNum, GUID_t& writerGuid)
+	{
+		return m_reader_cache.remove_change(seqNum,writerGuid);
+	}
+	bool get_last_added_cache(CacheChange_t** ch_ptr)
+	{
+		return m_reader_cache.get_last_added_cache(ch_ptr);
+	}
+
 protected:
 	//!Pointer to the associated subscriber
 	//	Subscriber* mp_Sub;
