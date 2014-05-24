@@ -18,10 +18,10 @@
 #ifndef RTPS_GUID_H_
 #define RTPS_GUID_H_
 
+#include "eprosimartps/common/types/common_types.h"
+
 namespace eprosima{
 namespace rtps{
-
-
 
 #define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<12;i++) g.value[i]=0x0;}
 
@@ -45,16 +45,17 @@ typedef struct GuidPrefix_t{
 		}
 		return *this;
 	}
-	bool operator==(GuidPrefix_t& guid2){
-		for(uint8_t i =0;i<12;i++)
-		{
-			if(value[i] != guid2.value[i])
-				return false;
-		}
-		return true;
-	}
 }GuidPrefix_t;
 
+inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
+{
+	for(uint8_t i =0;i<12;i++)
+	{
+		if(guid1.value[i] != guid2.value[i])
+			return false;
+	}
+	return true;
+}
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
@@ -78,15 +79,14 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_WRITER  0x000200C2
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER  0x000200C7
 
-
-
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 typedef struct EntityId_t{
 	octet value[4];
 	EntityId_t(){
 		*this = ENTITYID_UNKNOWN;
 	}
-	EntityId_t(uint32_t id){
+	EntityId_t(uint32_t id)
+	{
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
 		reverse();
@@ -107,27 +107,6 @@ typedef struct EntityId_t{
 		return *this;
 		//return id;
 	}
-	bool operator==(uint32_t id2)
-	{
-		if(DEFAULT_ENDIAN == LITTLEEND)
-			reverse();
-		uint32_t* aux1 = (uint32_t*)(value);
-		bool result = true;
-		if(*aux1 == id2)
-			result = true;
-		else
-			result = false;
-		if(DEFAULT_ENDIAN == LITTLEEND)
-			reverse();
-		return result;
-	}
-	bool operator==(const EntityId_t& id2){
-		uint32_t* aux1 = (uint32_t*)(value);
-		uint32_t* aux2 = (uint32_t*)(id2.value);
-		if(*aux1 == *aux2)
-			return true;
-		return false;
-	}
 	void reverse(){
 		octet oaux;
 		oaux = value[3];
@@ -139,6 +118,31 @@ typedef struct EntityId_t{
 	}
 }EntityId_t;
 
+inline bool operator==(EntityId_t& eid,const uint32_t id2)
+{
+	if(DEFAULT_ENDIAN == LITTLEEND)
+		eid.reverse();
+	uint32_t* aux1 = (uint32_t*)(eid.value);
+	bool result = true;
+	if(*aux1 == id2)
+		result = true;
+	else
+		result = false;
+	if(DEFAULT_ENDIAN == LITTLEEND)
+		eid.reverse();
+	return result;
+}
+inline bool operator==(const EntityId_t& id1,const EntityId_t& id2){
+	uint32_t* aux1 = (uint32_t*)(id1.value);
+	uint32_t* aux2 = (uint32_t*)(id2.value);
+	if(*aux1 == *aux2)
+		return true;
+	return false;
+}
+
+
+
+
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 	output << std::hex;
 	for(uint8_t i =0;i<4;++i)
@@ -149,6 +153,15 @@ inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 
 const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
 const EntityId_t c_EntityId_SPDPReader = ENTITYID_SPDP_BUILTIN_PARTICIPANT_READER;
+const EntityId_t c_EntityId_SPDPWriter = ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER;
+
+const EntityId_t c_EntityId_SEDPPubWriter = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
+const EntityId_t c_EntityId_SEDPPubReader = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
+const EntityId_t c_EntityId_SEDPSubWriter = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+const EntityId_t c_EntityId_SEDPSubReader = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+
+const EntityId_t c_EntityId_Participant = ENTITYID_PARTICIPANT;
+
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
@@ -161,14 +174,19 @@ typedef struct GUID_t{
 		entityId = guid.entityId;
 		return *this;
 	}
-	bool operator==(GUID_t& g2){
-		if(guidPrefix == g2.guidPrefix && entityId==g2.entityId)
-			return true;
-		else
-			return false;
-	}
-
+	GUID_t(){};
+	GUID_t(const GuidPrefix_t& guidP,uint32_t id):
+		guidPrefix(guidP),entityId(id) {}
+	GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
+		guidPrefix(guidP),entityId(entId) {}
 }GUID_t;
+
+inline bool operator==(const GUID_t& g1,const GUID_t& g2){
+	if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
+		return true;
+	else
+		return false;
+}
 
 #define GUID_UNKNOWN(gui) {GUIDPREFIX_UNKNOWN(gui.guidPrefix); gui.entityId = ENTITYID_UNKNOWN;}
 

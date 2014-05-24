@@ -14,17 +14,27 @@
  *      email:  gonzalorodriguez@eprosima.com
  */
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/utils/ObjectPool.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+
+
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-using namespace eprosima::dds;
+//using namespace eprosima::dds;
 
 namespace eprosima {
+
+namespace dds{
+class ParameterList_t;
+
+}
+using namespace dds;
+
 namespace rtps{
 
 /**
@@ -46,9 +56,9 @@ public:
 	 * @param vendorId Vendor Id.
 	 * @return True if correct.
 	 */
-	static bool addHeader(CDRMessage_t*msg ,GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
+	static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
 
-	static bool addHeader(CDRMessage_t*msg ,GuidPrefix_t& Prefix);
+	static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix);
 
 	/**
 	 * Create SubmessageHeader.
@@ -83,13 +93,13 @@ public:
 			SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
 	static bool addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
 
-	static bool addMessageHeartbeat(CDRMessage_t* msg,GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
-			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag);
+	static bool addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
+			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag);
 
 	static bool addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,const EntityId_t& writerId,
-			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,int32_t count,bool isFinal,bool livelinessFlag);
+			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag);
 
-	static bool addMessageAcknack(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+	static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
 			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
 	static bool addSubmessageAcknack(CDRMessage_t* msg,

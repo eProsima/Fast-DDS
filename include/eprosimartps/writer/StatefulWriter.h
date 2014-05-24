@@ -18,12 +18,11 @@
 #ifndef STATEFULWRITER_H_
 #define STATEFULWRITER_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/writer/ReaderProxy.h"
+
 #include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/writer/ReaderProxy.h"
 
-
-
+typedef std::vector<ReaderProxy*>::iterator p_ReaderProxyIterator;
 
 namespace eprosima {
 namespace rtps {
@@ -37,7 +36,8 @@ public:
 	//StatefulWriter();
 	virtual ~StatefulWriter();
 
-	StatefulWriter(const PublisherAttributes* param,uint32_t payload_size);
+	StatefulWriter(const PublisherAttributes& param,
+			const GuidPrefix_t&guidP, const EntityId_t& entId);
 
 	/**
 	 * Add a matched reader to the writer.
@@ -84,19 +84,36 @@ public:
 	 */
 	void unsent_changes_not_empty();
 
+
+
+
+	bool removeMinSeqCacheChange();
+	bool removeAllCacheChange(int32_t* n_removed);
+
+	void incrementHBCount(){++m_heartbeatCount;};
+
+
+	p_ReaderProxyIterator matchedReadersBegin()
+	{
+		return matched_readers.begin();
+	};
+	p_ReaderProxyIterator matchedReadersEnd()
+		{
+			return matched_readers.end();
+	}
+	Count_t getHeartbeatCount() const {
+		return m_heartbeatCount;
+	}
+
+
+
+private:
 	//! Vector containin all the associated ReaderProxies.
-	std::vector<ReaderProxy*> matched_readers;
+		std::vector<ReaderProxy*> matched_readers;
 
-//	void sendChangesListAsGap(std::vector<CacheChange_t*>* changes,
-//					const EntityId_t& readerId,std::vector<Locator_t>* unicast,
-//					std::vector<Locator_t>* multicast);
+		PublisherTimes m_PubTimes;
 
-	PublisherReliability m_reliability;
-
-	virtual bool removeMinSeqCacheChange();
-		virtual bool removeAllCacheChange(int32_t* n_removed);
-
-
+		Count_t m_heartbeatCount;
 
 
 };

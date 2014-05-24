@@ -17,10 +17,16 @@
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
-#include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/qos/ParameterList.h"
 
+#include "eprosimartps/RTPSMessageCreator.h"
 
+#include "eprosimartps/resources/ResourceSend.h"
+#include "eprosimartps/resources/ResourceEvent.h"
+
+//#include "eprosimartps/CDRMessage.h"
+//#include "eprosimartps/qos/ParameterList.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
@@ -31,21 +37,16 @@ StatefulWriter::~StatefulWriter() {
 	pDebugInfo("StatefulWriter destructor"<<endl;);
 }
 
-StatefulWriter::StatefulWriter(const PublisherAttributes* param,uint32_t payload_size):
-		RTPSWriter(param->historyMaxSize,payload_size)
+StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId):
+				RTPSWriter(guidP,entId,param.topic,STATEFUL,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
+				m_PubTimes(param.times)
 
 {
-	m_pushMode = param->pushMode;
-	m_reliability = param->reliability;
-	m_topic = param->topic;
+	m_pushMode = param.pushMode;
+	unicastLocatorList = param.unicastLocatorList;
+	multicastLocatorList = param.multicastLocatorList;
 
-	m_stateType = STATEFUL;
-
-	//locator lists:
-	unicastLocatorList = param->unicastLocatorList;
-	multicastLocatorList = param->multicastLocatorList;
-
-	this->m_userDefinedId = param->userDefinedId;
+	m_heartbeatCount = 0;
 }
 
 
@@ -60,7 +61,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 			return false;
 		}
 	}
-	ReaderProxy* rp = new ReaderProxy(&RPparam,this);
+	ReaderProxy* rp = new ReaderProxy(RPparam,m_PubTimes,this);
 
 
 	for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.m_changes.begin();cit!=m_writer_cache.m_changes.end();++cit)
@@ -210,8 +211,9 @@ void StatefulWriter::unsent_changes_not_empty()
 			{
 				if(!relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&relevant_changes,&(*rit)->m_param.unicastLocatorList,
-							&(*rit)->m_param.multicastLocatorList,
+							&relevant_changes,
+							(*rit)->m_param.unicastLocatorList,
+							(*rit)->m_param.multicastLocatorList,
 							(*rit)->m_param.expectsInlineQos,
 							(*rit)->m_param.remoteReaderGuid.entityId);
 				if(!not_relevant_changes.empty())
@@ -220,7 +222,7 @@ void StatefulWriter::unsent_changes_not_empty()
 							(*rit)->m_param.remoteReaderGuid.entityId,
 							&(*rit)->m_param.unicastLocatorList,
 							&(*rit)->m_param.multicastLocatorList);
-				if((*rit)->m_param.m_reliablility == RELIABLE)
+				if((*rit)->m_param.m_reliability == RELIABLE)
 					(*rit)->m_periodicHB.restart_timer();
 				(*rit)->m_nackSupression.restart_timer();
 			}
@@ -229,15 +231,15 @@ void StatefulWriter::unsent_changes_not_empty()
 				SequenceNumber_t first,last;
 				m_writer_cache.get_seq_num_min(&first,NULL);
 				m_writer_cache.get_seq_num_max(&last,NULL);
-				m_heartbeatCount++;
+				incrementHBCount();
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
 						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
 				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
-					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
+					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
-					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&(*lit));
+					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 			}
 		}
 	}

@@ -18,21 +18,23 @@
 #ifndef PARTICIPANTDISCOVERYPROTOCOL_H_
 #define PARTICIPANTDISCOVERYPROTOCOL_H_
 
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
-//#include "eprosimartps/common/attributes/ReliabilityAttributes.h"
-//#include "eprosimartps/common/attributes/PublisherAttributes.h"
-//#include "eprosimartps/common/attributes/SubscriberAttributes.h"
-#include "eprosimartps/common/attributes/ParticipantAttributes.h"
+
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
-#include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
+
 
 namespace eprosima {
 namespace rtps {
 
+class EndpointDiscoveryProtocol;
+class ParticipantImpl;
+class RTPSWriter;
+class RTPSReader;
+
 class ParticipantDiscoveryProtocol {
 public:
-	ParticipantDiscoveryProtocol(Participant* p_part);
+	ParticipantDiscoveryProtocol(ParticipantImpl* p_part);
 	virtual ~ParticipantDiscoveryProtocol();
 
 	virtual bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)=0;
@@ -41,7 +43,7 @@ public:
 	std::vector<DiscoveredParticipantData> m_discoveredParticipants;
 
 	DiscoveryAttributes m_discovery;
-	Participant* mp_participant;
+	ParticipantImpl* mp_participant;
 	EndpointDiscoveryProtocol* mp_EDP;
 
 

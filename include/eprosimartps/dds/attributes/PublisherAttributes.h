@@ -18,7 +18,10 @@
 #ifndef PUBLISHERPARAMETERS_H_
 #define PUBLISHERPARAMETERS_H_
 
-#include "eprosimartps/discovery/data/DiscoveredWriterData.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/qos/WriterQos.h"
 
 using namespace eprosima::rtps;
 
@@ -26,7 +29,24 @@ namespace eprosima {
 namespace dds {
 
 
+class PublisherTimes{
+public:
+	//!Period to send HB.
+	Duration_t heartbeatPeriod;
+	//!Delay response to a negative ack from a reader.
+	Duration_t nackResponseDelay;
+	//!Allows the reader to deny a response to a nack that arrives too soon after the change is sent.
+	Duration_t nackSupressionDuration;
+	//!The writer sends data periodically to all ReaderLocators (only in BEST_EFFORT - STATELESS combination).
+	Duration_t resendDataPeriod;
 
+	//uint8_t hb_per_max_samples;
+	PublisherTimes(){
+		heartbeatPeriod.seconds = 3;
+		nackResponseDelay.nanoseconds = 200*1000*1000;
+	}
+	~PublisherTimes(){};
+};
 
 
 
@@ -41,6 +61,7 @@ public:
 		pushMode = true;
 		historyMaxSize = 10;
 		userDefinedId = -1;
+		payloadMaxSize = 500;
 };
 	virtual ~PublisherAttributes(){};
 	//! If set to true the Publisher will send the data directly, if set to false it will send
@@ -56,12 +77,13 @@ public:
 	//!MulticastLocatorList where the writer should be listening for responses (RELIABLE only).
 	LocatorList_t multicastLocatorList;
 	//!Reliability parameters for the Publisher
-	PublisherReliability reliability;
+	PublisherTimes times;
 	//!Topic Attributes for the Publisher
 	TopicAttributes topic;
 	//! User defined Id for this Publisher (only needed in STATICEDP)
 	int16_t userDefinedId;
 
+	uint32_t payloadMaxSize;
 	WriterQos qos;
 };
 

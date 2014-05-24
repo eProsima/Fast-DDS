@@ -36,35 +36,36 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/Endpoint.cpp \
+		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
-		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
-		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
-		  $(BASEDIR)/src/cpp/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/Participant.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
-		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
-		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
+		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
+		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
-		  \
-		  $(BASEDIR)/src/cpp/resources/ResourceListen.cpp \
-		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
-		  $(BASEDIR)/src/cpp/resources/ResourceEvent.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
-		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
-		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
+		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
+		  $(BASEDIR)/src/cpp/Participant.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/resources/ResourceListen.cpp \
+		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
+		  $(BASEDIR)/src/cpp/resources/ResourceEvent.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/dds/DDSTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/dds/PublisherListener.cpp \
+		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
 		  $(BASEDIR)/src/cpp/dds/SubscriberListener.cpp \
+		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
 		  \
 		  $(BASEDIR)/src/cpp/qos/ParameterList.cpp \
 		  $(BASEDIR)/src/cpp/qos/ParameterTypes.cpp \
@@ -86,8 +87,11 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/SimpleEDP.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp \
 		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp \
-		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredWriterData.cpp \
-		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredReaderData.cpp 
+		  \
+		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
+		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp
+	#	  $(BASEDIR)/src/cpp/discovery/data/DiscoveredWriterData.cpp \
+	#	  $(BASEDIR)/src/cpp/discovery/data/DiscoveredReaderData.cpp 
 		#  $(BASEDIR)/src/cpp/discovery/SimpleEPD.cpp \
 		#   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp 
 		#   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp

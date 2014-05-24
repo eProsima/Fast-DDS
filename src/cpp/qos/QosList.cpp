@@ -16,7 +16,7 @@
  */
 
 #include "eprosimartps/qos/QosList.h"
-
+#include "eprosimartps/utils/RTPSLog.h"
 namespace eprosima {
 namespace dds {
 
@@ -129,7 +129,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 
 
 
-bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	GUID_t& guid)
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const GUID_t& guid)
 {
 	if(pid == PID_PARTICIPANT_GUID || pid == PID_GROUP_GUID)
 	{
@@ -243,7 +243,7 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 //	return false;
 //}
 
-bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	EntityId_t& entity) {
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const EntityId_t& entity) {
 	if(pid == PID_GROUP_ENTITYID)
 	{
 		ParameterEntityId_t* p = new ParameterEntityId_t();
@@ -271,7 +271,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 	return false;
 }
 
-//bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	BuiltinEndpointSet_t& endpointset)
+//bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	BuiltinEndpointSet_t endpointset)
 //{
 //	if(pid == PID_BUILTIN_ENDPOINT_SET)
 //	{
@@ -281,7 +281,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 //		p->length = PARAMETER_BUILTINENDPOINTSET_LENGTH;
 //		p->endpointSet = endpointset;
 //		qos->allQos.m_parameters.push_back((Parameter_t*)p);
-//		qos->allQos.m_hasChangedMsg = true;
+//		qos->allQos.m_hasChanged= true;
 //		return true;
 //	}
 //	return false;

@@ -17,6 +17,11 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
+
+#include "eprosimartps/common/types/common_types.h"
+
+#include <vector>
+#include <cmath>
 #include <algorithm>
 namespace eprosima{
 namespace rtps{
@@ -40,14 +45,7 @@ typedef struct SequenceNumber_t{
 		low = seq.low;
 		return *this;
 	}
-	//!Compares two SequenceNumber_t.
-	bool operator==(SequenceNumber_t& sn){
-		if(high != sn.high)
-			return false;
-		if(low != sn.low)
-			return false;
-		return true;
-	}
+
 
 	//!Increase SequenceNumber in 1.
 	SequenceNumber_t& operator++(){
@@ -79,21 +77,35 @@ typedef struct SequenceNumber_t{
 		return *this;
 	}
 
-	bool operator>(SequenceNumber_t& seq2){
-		return this->to64long() > seq2.to64long();
-	}
-	bool operator<(SequenceNumber_t& seq2){
-		return this->to64long() < seq2.to64long();
-	}
-	bool operator>=(SequenceNumber_t& seq2){
-		return this->to64long() >= seq2.to64long();
-	}
-	bool operator<=(SequenceNumber_t& seq2){
-		return this->to64long()<= seq2.to64long();
-	}
+
 } SequenceNumber_t;
 
-inline SequenceNumber_t operator-(SequenceNumber_t seq,uint32_t inc)
+
+//!Compares two SequenceNumber_t.
+inline bool operator==(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
+{
+	if(sn1.high != sn2.high)
+		return false;
+	if(sn1.low != sn2.low)
+		return false;
+	return true;
+}
+inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2){
+	return seq1.to64long() > seq2.to64long();
+}
+inline bool operator<( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
+	return seq1.to64long() < seq2.to64long();
+}
+inline bool operator>=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
+	return seq1.to64long() >= seq2.to64long();
+}
+inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
+	return (seq1.to64long() <= seq2.to64long());
+}
+
+
+
+inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 {
 	//FIXME: repare function for when inc is greater than pow 2, 32
 	if(seq.low-inc < 0)
@@ -105,8 +117,8 @@ inline SequenceNumber_t operator-(SequenceNumber_t seq,uint32_t inc)
 		seq.low-=(uint32_t)inc;
 	return seq;
 }
-inline SequenceNumber_t operator+(SequenceNumber_t seq,uint64_t inc){
-
+inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
+	SequenceNumber_t seq(seqin);
 	if(seq.low+inc>pow(2.0,32))
 	{
 		int module = (int)floor((inc+seq.low)/pow(2.0,32));
@@ -121,7 +133,7 @@ inline SequenceNumber_t operator+(SequenceNumber_t seq,uint64_t inc){
 
 #define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0;}
 
-inline bool sort_seqNum (SequenceNumber_t s1,SequenceNumber_t s2)
+inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
 {
 	return(s1.to64long() < s2.to64long());
 }

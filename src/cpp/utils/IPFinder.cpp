@@ -104,6 +104,37 @@ return true;
 }
 #endif
 
+bool IPFinder::getIPAddress(LocatorList_t* locators)
+{
+	std::vector<std::string> ip_names;
+	if(IPFinder::getIP4s(&ip_names))
+	{
 
+		locators->clear();
+		for(std::vector<std::string>::iterator it=ip_names.begin();
+				it!=ip_names.end();++it)
+		{
+			std::stringstream ss(*it);
+			int a,b,c,d;
+			char ch;
+			ss >> a >>ch >>b >> ch >> c >>ch >>d;
+			if(a== 127 && b== 0 && c== 0 && d == 1)
+				continue;
+			if(a==169 && b==254)
+				continue;
+			Locator_t loc;
+			loc.kind = 1;
+			loc.port = 0;
+			loc.address[12] = (octet)a;
+			loc.address[13] = (octet)b;
+			loc.address[14] = (octet)c;
+			loc.address[15] = (octet)d;
+			locators->push_back(loc);
+		}
+		return true;
+	}
+
+	return false;
+}
 
 } /* namespace eprosima */

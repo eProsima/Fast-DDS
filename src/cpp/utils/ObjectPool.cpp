@@ -16,7 +16,8 @@
  */
 
 #include "eprosimartps/utils/ObjectPool.h"
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
+
 
 namespace eprosima {
 namespace rtps {

@@ -19,6 +19,13 @@
 #include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/reader/StatefulReader.h"
 
+#include "eprosimartps/resources/ResourceSend.h"
+#include "eprosimartps/resources/ResourceEvent.h"
+
+#include "eprosimartps/RTPSMessageCreator.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -65,8 +72,8 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			mp_WP->m_acknackCount++;
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
-												mp_WP->mp_SFR->m_guid.guidPrefix,
-												mp_WP->mp_SFR->m_guid.entityId,
+												mp_WP->mp_SFR->getGuid().guidPrefix,
+												mp_WP->mp_SFR->getGuid().entityId,
 												mp_WP->param.remoteWriterGuid.entityId,
 												sns,
 												mp_WP->m_acknackCount,
@@ -75,10 +82,10 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			std::vector<Locator_t>::iterator lit;
 
 			for(lit = mp_WP->param.unicastLocatorList.begin();lit!=mp_WP->param.unicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(*lit));
+				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
 
 			for(lit = mp_WP->param.multicastLocatorList.begin();lit!=mp_WP->param.multicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,&(*lit));
+				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
 
 		}
 		m_isWaiting = false;

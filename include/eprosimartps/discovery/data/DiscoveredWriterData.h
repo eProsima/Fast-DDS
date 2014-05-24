@@ -20,7 +20,10 @@
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
 #include "eprosimartps/reader/WriterProxy.h"
-#include "eprosimartps/common/attributes/TopicAttributes.h"
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
+
+
+#include "eprosimartps/qos/WriterQos.h"
 
 using namespace eprosima::dds;
 
@@ -28,28 +31,7 @@ namespace eprosima {
 namespace rtps {
 
 
-class WriterQos{
-public:
-	WriterQos(){};
-	virtual ~ WriterQos(){};
-	DurabilityQosPolicy m_durability;
-	DurabilityServiceQosPolicy m_durabilityService;
-	DeadlineQosPolicy m_deadline;
-	LatencyBudgetQosPolicy m_latencyBudget;
-	LivelinessQosPolicy m_liveliness;
-	ReliabilityQosPolicy m_reliability;
-	LifespanQosPolicy m_lifespan;
-	UserDataQosPolicy m_userData;
-	TimeBasedFilterQosPolicy m_timeBasedFilter;
-	OwnershipQosPolicy m_ownership;
-	OwnershipStrengthQosPolicy m_ownershipStrength;
-	DestinationOrderQosPolicy m_destinationOrder;
-	PresentationQosPolicy m_presentation;
-	PartitionQosPolicy m_partition;
-	TopicDataQosPolicy m_topicData;
-	GroupDataQosPolicy m_groupData;
-	void setQos(WriterQos& qos, bool first_time);
-};
+
 
 /**
  * Class DiscoveredWriterData used by the SEDP.

@@ -27,7 +27,12 @@
 #include "eprosimartps/discovery/data/DiscoveredData.h"
 #include "eprosimartps/discovery/data/DiscoveredWriterData.h"
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
-//#include "eprosimartps/discovery/data/DiscoveredTopicData.h"
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+
+#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 
 using namespace eprosima::dds;
@@ -73,17 +78,16 @@ bool SimpleEDP::createSEDPEndpoints()
 	{
 		Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
-		Wparam.reliability.reliabilityKind = RELIABLE;
+		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Wparam.topic.topicName = "DCPSPublication";
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredWriterData";
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true);
+		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,c_EntityId_SEDPPubWriter);
 		if(created)
 		{
-			mp_PubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
 			pDebugInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
 		}
 	}
@@ -91,18 +95,17 @@ bool SimpleEDP::createSEDPEndpoints()
 	{
 		Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
-		Rparam.reliability.reliabilityKind = RELIABLE;
+		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Rparam.topic.topicName = "DCPSPublication";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredWriterData";
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true);
+		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,c_EntityId_SEDPPubReader);
 		if(created)
 		{
-			mp_PubReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
-			mp_PubReader->mp_listener = (SubscriberListener*)&m_listeners.m_PubListener;
+			mp_PubReader->setListener((SubscriberListener*)&m_listeners.m_PubListener);
 			pDebugInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
 		}
 	}
@@ -110,17 +113,16 @@ bool SimpleEDP::createSEDPEndpoints()
 	{
 		Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
-		Wparam.reliability.reliabilityKind = RELIABLE;
+		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Wparam.topic.topicName = "DCPSSubscription";
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredReaderData";
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true);
+		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,c_EntityId_SEDPSubWriter);
 		if(created)
 		{
-			mp_SubWriter->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
 			pDebugInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
 		}
 	}
@@ -128,18 +130,17 @@ bool SimpleEDP::createSEDPEndpoints()
 	{
 		Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
-		Rparam.reliability.reliabilityKind = RELIABLE;
+		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Rparam.topic.topicName = "DCPSSubscription";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredReaderData";
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true);
+		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,c_EntityId_SEDPSubReader);
 		if(created)
 		{
-			mp_SubReader->m_guid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
-			mp_SubReader->mp_listener = (SubscriberListener*)&m_listeners.m_SubListener;
+			mp_SubReader->setListener((SubscriberListener*)&m_listeners.m_SubListener);
 			pDebugInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
@@ -161,7 +162,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
 		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		mp_PubReader->matched_writer_add(&wp);
+		mp_PubReader->matched_writer_add(wp);
 	}
 	auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
@@ -170,7 +171,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		pDebugInfo(CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<DEF<<endl);
 		ReaderProxy_t rp;
 		rp.expectsInlineQos = false;
-		rp.m_reliablility = RELIABLE;
+		rp.m_reliability = RELIABLE;
 		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
 		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
 		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
@@ -187,7 +188,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
 		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		mp_SubReader->matched_writer_add(&wp);
+		mp_SubReader->matched_writer_add(wp);
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
@@ -196,7 +197,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		pDebugInfo(CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<DEF<<endl);
 		ReaderProxy_t rp;
 		rp.expectsInlineQos = false;
-		rp.m_reliablility = RELIABLE;
+		rp.m_reliability = RELIABLE;
 		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
 		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
 		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
@@ -229,13 +230,13 @@ bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 	DiscoveredWriterData wdata;
 	wdata.m_writerProxy.unicastLocatorList = W->unicastLocatorList;
 	wdata.m_writerProxy.multicastLocatorList = W->multicastLocatorList;
-	wdata.m_writerProxy.remoteWriterGuid = W->m_guid;
-	wdata.m_key = W->m_guid;
-	wdata.m_participantKey = this->mp_participant->m_guid;
-	wdata.m_topicName = W->getTopicName();
-	wdata.m_typeName = W->getTopicDataType();
-	wdata.topicKind = W->getTopicKind();
-	wdata.m_qos = W->m_qos;
+	wdata.m_writerProxy.remoteWriterGuid = W->getGuid();
+	wdata.m_key = W->getGuid();
+	wdata.m_participantKey = this->mp_PDP->mp_participant->getGuid();
+	wdata.m_topicName = W->getTopic().getTopicName();
+	wdata.m_typeName = W->getTopic().getTopicDataType();
+	wdata.topicKind = W->getTopic().getTopicKind();
+	wdata.m_qos = W->getQos();
 	this->mp_PDP->mp_localDPData->m_writers.push_back(wdata);
 	//Create a new change in History:
 	CacheChange_t* change = NULL;
@@ -291,14 +292,14 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 	DiscoveredReaderData rdata;
 	rdata.m_readerProxy.unicastLocatorList = R->unicastLocatorList;
 	rdata.m_readerProxy.multicastLocatorList = R->multicastLocatorList;
-	rdata.m_readerProxy.remoteReaderGuid = R->m_guid;
-	rdata.m_readerProxy.expectsInlineQos = R->expectsInlineQos;
-	rdata.m_key = R->m_guid;
-	rdata.m_participantKey = this->mp_participant->m_guid;
-	rdata.m_topicName = R->getTopicName();
-	rdata.m_typeName = R->getTopicDataType();
-	rdata.topicKind = R->getTopicKind();
-	rdata.m_qos = R->m_qos;
+	rdata.m_readerProxy.remoteReaderGuid = R->getGuid();
+	rdata.m_readerProxy.expectsInlineQos = R->expectsInlineQos();
+	rdata.m_key = R->getGuid();
+	rdata.m_participantKey = this->mp_PDP->mp_participant->getGuid();
+	rdata.m_topicName = R->getTopic().getTopicName();
+	rdata.m_typeName = R->getTopic().getTopicDataType();
+	rdata.topicKind = R->getTopic().getTopicKind();
+	rdata.m_qos = R->getQos();
 	this->mp_PDP->mp_localDPData->m_readers.push_back(rdata);
 	//Create a new change in History:
 	CacheChange_t* change = NULL;
@@ -320,8 +321,8 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 {
 	bool matched = false;
-	if(W->getTopicName() == rdata->m_topicName && W->getTopicDataType() == rdata->m_typeName &&
-			W->getTopicKind() == rdata->topicKind && rdata->isAlive)
+	if(W->getTopic().getTopicName() == rdata->m_topicName && W->getTopic().getTopicDataType() == rdata->m_typeName &&
+			W->getTopic().getTopicKind() == rdata->topicKind && rdata->isAlive)
 	{
 		if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 		{
@@ -350,8 +351,8 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 			if(p_SFW->matched_reader_add(rdata->m_readerProxy))
 				matched = true;
 		}
-		if(matched && W->mp_listener!=NULL)
-			W->mp_listener->onPublicationMatched();
+		if(matched && W->getListener()!=NULL)
+			W->getListener()->onPublicationMatched();
 	}
 	return matched;
 }
@@ -359,9 +360,9 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 {
 	bool matched = false;
-	if(R->getTopicName() == wdata->m_topicName &&
-			R->getTopicKind() == wdata->topicKind &&
-			R->getTopicDataType() == wdata->m_typeName &&
+	if(R->getTopic().getTopicName() == wdata->m_topicName &&
+			R->getTopic().getTopicKind() == wdata->topicKind &&
+			R->getTopic().getTopicDataType() == wdata->m_typeName &&
 			wdata->isAlive) //Matching
 	{
 		if(R->getStateType() == STATELESS)
@@ -371,11 +372,11 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 		else if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 		{
 			StatefulReader* p_SFR = (StatefulReader*)R;
-			if(p_SFR->matched_writer_add(&wdata->m_writerProxy))
+			if(p_SFR->matched_writer_add(wdata->m_writerProxy))
 				matched = true;
 		}
-		if(matched && R->mp_listener!=NULL)
-			R->mp_listener->onSubscriptionMatched();
+		if(matched && R->getListener()!=NULL)
+			R->getListener()->onSubscriptionMatched();
 	}
 
 return matched;

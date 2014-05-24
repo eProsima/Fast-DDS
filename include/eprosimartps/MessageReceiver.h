@@ -19,14 +19,16 @@
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 
-#include "eprosimartps/rtps_all.h"
+#include "eprosimartps/common/types/all_common.h"
 #include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/common/rtps_messages.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
 
 class ResourceListen;
+struct SubmessageHeader_t;
 
 /**
  * Class MessageReceiver, process the received messages.
@@ -44,8 +46,7 @@ public:
 	 * @param[in] loc Locator indicating the sending address.
 	 * @param[in] msg Pointer to the message
 	 */
-	void processCDRMsg(GuidPrefix_t& participantguidprefix,
-					Locator_t* loc, CDRMessage_t*msg);
+	void processCDRMsg(const GuidPrefix_t& participantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Resource that contains this MessageReceiver.
 	ResourceListen* mp_threadListen;

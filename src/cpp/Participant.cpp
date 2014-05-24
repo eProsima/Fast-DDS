@@ -24,26 +24,30 @@
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 
-#include "eprosimartps/dds/DomainParticipant.h"
+//#include "eprosimartps/dds/DomainParticipant.h"
 
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SimplePDP.h"
 
-
+#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/IPFinder.h"
 
 namespace eprosima {
 namespace rtps {
 
-typedef std::vector<RTPSReader*>::iterator Riterator;
-typedef std::vector<RTPSWriter*>::iterator Witerator;
+typedef std::vector<RTPSReader*>::iterator p_ReaderIterator;
+typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
 
-Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
-						m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
-						m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
-						m_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-						IdCounter(0),
-						mp_PDP(NULL)
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP):
+
+							m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
+							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
+							m_participantName(PParam.name),
+							m_guid(guidP,c_EntityId_Participant),
+							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+							IdCounter(0),
+							mp_PDP(NULL)
 
 {
 	Locator_t loc;
@@ -56,7 +60,7 @@ Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 	{
 		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:10042"<<endl);
 		LocatorList_t myIP;
-		DomainParticipant::getIPAddress(&myIP);
+		IPFinder::getIPAddress(&myIP);
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
 			lit->port=10042;
@@ -64,51 +68,21 @@ Participant::Participant(const ParticipantAttributes& PParam,uint32_t ID):
 		}
 	}
 
-	int pid;
-#if defined(_WIN32)
-	pid = (int)_getpid();
-#else
-	pid = (int)getpid();
-#endif
-	//cout << "PID: " << pid << " ID:"<< ID << endl;
+	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
 
-	m_guid.guidPrefix.value[0] = m_send_thr.m_sendLocator.address[12];
-	m_guid.guidPrefix.value[1] = m_send_thr.m_sendLocator.address[13];
-	m_guid.guidPrefix.value[2] = m_send_thr.m_sendLocator.address[14];
-	m_guid.guidPrefix.value[3] = m_send_thr.m_sendLocator.address[15];
-	m_guid.guidPrefix.value[4] = ((octet*)&pid)[0];
-	m_guid.guidPrefix.value[5] = ((octet*)&pid)[1];
-	m_guid.guidPrefix.value[6] = ((octet*)&pid)[2];
-	m_guid.guidPrefix.value[7] = ((octet*)&pid)[3];
-	m_guid.guidPrefix.value[8] = ((octet*)&ID)[0];
-	m_guid.guidPrefix.value[9] = ((octet*)&ID)[1];
-	m_guid.guidPrefix.value[10] = ((octet*)&ID)[2];
-	m_guid.guidPrefix.value[11] = ((octet*)&ID)[3];
-
-
-	m_guid.entityId = ENTITYID_PARTICIPANT;
-
-	std::stringstream ss;
-	for(int i =0;i<12;i++)
-		ss << (int)m_guid.guidPrefix.value[i] << ".";
-
-	m_participantName = PParam.name;
-	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<ss.str()<< endl);
-
-	//	cout << "PParam name: "<< PParam.name << endl;
-	//	cout << "Participant name: " << m_participantName << endl;
 
 	m_discovery = PParam.discovery;
 
 	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
 		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
+		uint32_t ID =1;
 		mp_PDP->initPDP(PParam.discovery, ID);
 	}
 }
 
 
-Participant::~Participant()
+ParticipantImpl::~ParticipantImpl()
 {
 	pDebugInfo("Participant destructor"<<endl;);
 	//Destruct threads:
@@ -124,16 +98,34 @@ Participant::~Participant()
 			it!=m_userWriterList.end();++it)
 		delete(*it);
 
-	delete(this->m_ResourceSemaphore);
+	delete(this->mp_ResourceSemaphore);
 
 	if(mp_PDP!=NULL)
 		delete(mp_PDP);
 }
 
-bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,
+		uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
-	StatelessWriter* SLWriter = new StatelessWriter(&param,payload_size);
+	EntityId_t entId;
+	if(entityId== c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x03;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x02;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+	{
+		entId = entityId;
+	}
+	StatelessWriter* SLWriter = new StatelessWriter(param,m_guid.guidPrefix,entId);
 	if(this->initWriter((RTPSWriter*)SLWriter,isBuiltin))
 	{
 		*SW_out = SLWriter;
@@ -143,10 +135,28 @@ bool Participant::createStatelessWriter(StatelessWriter** SW_out, PublisherAttri
 		return false;
 }
 
-bool Participant::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,
+		uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
 {
-pDebugInfo("Creating StatefulWriter"<<endl);
-	StatefulWriter* SFWriter = new StatefulWriter(&param, payload_size);
+	pDebugInfo("Creating StatefulWriter"<<endl);
+	EntityId_t entId;
+	if(entityId== c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x03;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x02;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+	{
+		entId = entityId;
+	}
+	StatefulWriter* SFWriter = new StatefulWriter(param, m_guid.guidPrefix,entId);
 	if(this->initWriter((RTPSWriter*)SFWriter,isBuiltin))
 	{
 		*SFW_out = SFWriter;
@@ -155,7 +165,7 @@ pDebugInfo("Creating StatefulWriter"<<endl);
 	else return false;
 }
 
-bool Participant::initWriter(RTPSWriter*W,bool isBuiltin)
+bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 {
 	pDebugInfo("Writer created, initializing"<<endl);
 	//Check if locator lists are empty:
@@ -169,18 +179,8 @@ bool Participant::initWriter(RTPSWriter*W,bool isBuiltin)
 	//Assign participant pointer
 	W->mp_send_thr = &this->m_send_thr;
 	W->mp_event_thr = &this->m_event_thr;
-	//Assign GUID
-	W->m_guid.guidPrefix = m_guid.guidPrefix;
-	W->init_header();
-	if(W->getTopicKind() == NO_KEY)
-		W->m_guid.entityId.value[3] = 0x03;
-	else if(W->getTopicKind() == WITH_KEY)
-		W->m_guid.entityId.value[3] = 0x02;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	W->m_guid.entityId.value[2] = c[0];
-	W->m_guid.entityId.value[1] = c[1];
-	W->m_guid.entityId.value[0] = c[2];
+
+
 	//Look for receiving threads that are already listening to this writer receiving addresses.
 	if(assignEnpointToListenResources((Endpoint*)W,'W'))
 	{
@@ -202,11 +202,26 @@ bool Participant::initWriter(RTPSWriter*W,bool isBuiltin)
 
 }
 
-bool Participant::createStatelessReader(StatelessReader** SR_out,
-		 SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin, const EntityId_t& entityId)
 {
 	pInfo("Creating StatelessReader"<<endl);
-	StatelessReader* SReader = new StatelessReader(&param, payload_size);
+	EntityId_t entId;
+	if(entityId == c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x04;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x07;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+		entId = entityId;
+	StatelessReader* SReader = new StatelessReader(param, m_guid.guidPrefix,entId);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
@@ -216,11 +231,26 @@ bool Participant::createStatelessReader(StatelessReader** SR_out,
 		return false;
 }
 
-bool Participant::createStatefulReader(StatefulReader** SR_out,
-		 SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin)
+bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
-	StatefulReader* SReader = new StatefulReader(&param, payload_size);
+	EntityId_t entId;
+	if(entityId == c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x04;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x07;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+		entId = entityId;
+	StatefulReader* SReader = new StatefulReader(param, m_guid.guidPrefix,entId);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
@@ -232,7 +262,7 @@ bool Participant::createStatefulReader(StatefulReader** SR_out,
 
 
 
-bool Participant::initReader(RTPSReader* p_R,bool isBuiltin)
+bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 {
 	//If NO UNICAST
 	if(p_R->unicastLocatorList.empty())
@@ -246,17 +276,6 @@ bool Participant::initReader(RTPSReader* p_R,bool isBuiltin)
 	//Assignthread pointers
 	p_R->mp_send_thr = &this->m_send_thr;
 	p_R->mp_event_thr = &this->m_event_thr;
-	//Assign GUID
-	p_R->m_guid.guidPrefix = m_guid.guidPrefix;
-	if(p_R->getTopicKind() == NO_KEY)
-		p_R->m_guid.entityId.value[3] = 0x04;
-	else if(p_R->getTopicKind() == WITH_KEY)
-		p_R->m_guid.entityId.value[3] = 0x07;
-	IdCounter++;
-	octet* c = (octet*)&IdCounter;
-	p_R->m_guid.entityId.value[2] = c[0];
-	p_R->m_guid.entityId.value[1] = c[1];
-	p_R->m_guid.entityId.value[0] = c[2];
 
 	//Look for receiving threads that are already listening to this writer receiving addresses.
 
@@ -281,17 +300,7 @@ bool Participant::initReader(RTPSReader* p_R,bool isBuiltin)
 
 
 
-inline void addEndpoint(ResourceListen* th,Endpoint* end,char type)
-{
-	pInfo("Participant: Endpoint (" << type << ") added to listen Resource: "<< th->m_locList.begin()->printIP4Port() << endl);
-	if(type == 'W')
-		th->m_assoc_writers.push_back((RTPSWriter*)end);
-	else if(type =='R')
-		th->m_assoc_readers.push_back((RTPSReader*)end);
-}
-
-
-bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) {
+bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char type) {
 	if(type !='R' && type!='W')
 	{
 		return false;
@@ -302,19 +311,17 @@ bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) 
 	std::vector<Locator_t>::iterator locit_e;
 	bool assigned = false;
 
-	for(locit_e = endpoint->unicastLocatorList.begin();locit_e!=endpoint->unicastLocatorList.end();++locit_e)
+	for(locit_e = p_endpoint->unicastLocatorList.begin();locit_e!=p_endpoint->unicastLocatorList.end();++locit_e)
 	{
 		assigned = false;
-		for(thit=m_threadListenList.begin();
-				thit!=m_threadListenList.end();++thit)
+		for(thit=m_threadListenList.begin();thit!=m_threadListenList.end();++thit)
 		{
-			for(locit_th = (*thit)->m_locList.begin();
-					locit_th != (*thit)->m_locList.end();++locit_th)
+			if((*thit)->isListeningTo(*locit_e))
 			{
-				if((*locit_th).port == (*locit_e).port) //Found a match, assign to this thread
+				if((*thit)->addAssociatedEndpoint(p_endpoint))
 				{
-					addEndpoint(*thit,endpoint,type);
 					assigned = true;
+					break;
 				}
 			}
 		}
@@ -323,38 +330,35 @@ bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) 
 			ResourceListen* thListen = NULL;
 			if(addNewListenResource(*locit_e,&thListen,false))
 			{//Add new listen thread to participant
-				m_ResourceSemaphore->wait();
-				addEndpoint(thListen,endpoint,type); //add endpoint to that listen thread
+				mp_ResourceSemaphore->wait();
+				thListen->addAssociatedEndpoint(p_endpoint);
 				assigned = true;
 			}
 			else
 				return false;
 		}
 	}
-	for(locit_e = endpoint->multicastLocatorList.begin();locit_e!=endpoint->multicastLocatorList.end();++locit_e)
+	for(locit_e = p_endpoint->multicastLocatorList.begin();locit_e!=p_endpoint->multicastLocatorList.end();++locit_e)
 	{
-		//FIXME: in multicast the IP is important, change this.
 		assigned = false;
-		for(thit=m_threadListenList.begin();
-				thit!=m_threadListenList.end();++thit)
+		for(thit=m_threadListenList.begin();thit!=m_threadListenList.end();++thit)
 		{
-			for(locit_th = (*thit)->m_locList.begin();
-					locit_th != (*thit)->m_locList.end();++locit_th)
+			if((*thit)->isListeningTo(*locit_e))
 			{
-				if((*locit_th).port == (*locit_e).port) //Found a match, assign to this thread
+				if((*thit)->addAssociatedEndpoint(p_endpoint))
 				{
-					addEndpoint((*thit),endpoint,type);
 					assigned = true;
+					break;
 				}
 			}
 		}
 		if(!assigned) //Create new listen thread
 		{
 			ResourceListen* thListen = NULL;
-			if(addNewListenResource(*locit_e,&thListen,true))
+			if(addNewListenResource(*locit_e,&thListen,false))
 			{//Add new listen thread to participant
-				m_ResourceSemaphore->wait();
-				addEndpoint(thListen,endpoint,type);   //add Endpoint to that listen thread
+				mp_ResourceSemaphore->wait();
+				thListen->addAssociatedEndpoint(p_endpoint);
 				assigned = true;
 			}
 			else
@@ -364,11 +368,9 @@ bool Participant::assignEnpointToListenResources(Endpoint* endpoint, char type) 
 	return true;
 }
 
-bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
-	*thlisten_in = new ResourceListen();
-	(*thlisten_in)->m_isMulticast = isMulticast;
-	(*thlisten_in)->m_participant_ptr = this;
-	
+bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
+	*thlisten_in = new ResourceListen(this,isMulticast);
+
 	if((*thlisten_in)->init_thread(loc))
 	{
 		m_threadListenList.push_back(*thlisten_in);
@@ -378,28 +380,28 @@ bool Participant::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_
 		return false;
 }
 
-bool Participant::removeUserEndpoint(Endpoint* p_endpoint,char type)
+bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 {
 	bool found = false;
 	if(type == 'W')
 	{
-	for(Witerator wit=m_userWriterList.begin();
-			wit!=m_userWriterList.end();++wit)
-	{
-		if((*wit)->m_guid == p_endpoint->m_guid) //Found it
+		for(p_WriterIterator wit=m_userWriterList.begin();
+				wit!=m_userWriterList.end();++wit)
 		{
-			m_userWriterList.erase(wit);
-			found = true;
-			break;
+			if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+			{
+				m_userWriterList.erase(wit);
+				found = true;
+				break;
+			}
 		}
-	}
 	}
 	if(type == 'R')
 	{
-		for(Riterator rit=m_userReaderList.begin()
+		for(p_ReaderIterator rit=m_userReaderList.begin()
 				;rit!=m_userReaderList.end();++rit)
 		{
-			if((*rit)->m_guid == p_endpoint->m_guid) //Found it
+			if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 			{
 				m_userReaderList.erase(rit);
 				found = true;
@@ -414,37 +416,15 @@ bool Participant::removeUserEndpoint(Endpoint* p_endpoint,char type)
 	for(thit=m_threadListenList.begin();
 			thit!=m_threadListenList.end();thit++)
 	{
-		if(type == 'W')
-		{
-			for(std::vector<RTPSWriter*>::iterator wit = (*thit)->m_assoc_writers.begin();
-					wit!=(*thit)->m_assoc_writers.end();++wit)
-			{
-				if((*wit)->m_guid == p_endpoint->m_guid)
-				{
-					(*thit)->m_assoc_writers.erase(wit);
-					if((*thit)->m_assoc_writers.empty() && (*thit)->m_assoc_readers.empty())
-						m_threadListenList.erase(thit);
-
-				}
-			}
-		}
-		else if(type == 'R')
-		{
-			for(std::vector<RTPSReader*>::iterator rit = (*thit)->m_assoc_readers.begin();rit!=(*thit)->m_assoc_readers.end();++rit)
-			{
-				if((*rit)->m_guid == p_endpoint->m_guid)
-				{
-					(*thit)->m_assoc_readers.erase(rit);
-					if((*thit)->m_assoc_readers.empty() && (*thit)->m_assoc_writers.empty())
-						m_threadListenList.erase(thit);
-				}
-			}
-		}
+		(*thit)->removeEndpointFromAssociated(p_endpoint);
+		if(!(*thit)->hasAssociatedEndpoints())
+			delete(*thit);
 	}
+	delete(p_endpoint);
 	return true;
 }
 
-void Participant::announceParticipantState()
+void ParticipantImpl::announceParticipantState()
 {
 	this->mp_PDP->announceParticipantState(false);
 }

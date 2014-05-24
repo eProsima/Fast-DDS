@@ -20,10 +20,9 @@
 #define STATELESSREADER_H_
 
 
-#include "eprosimartps/rtps_all.h"
 #include "eprosimartps/reader/RTPSReader.h"
 
-#include <boost/bind.hpp>
+#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
 
 namespace eprosima {
 namespace rtps {
@@ -34,9 +33,9 @@ namespace rtps {
  */
 class StatelessReader: public RTPSReader {
 public:
-	//StatelessReader();
 	virtual ~StatelessReader();
-	StatelessReader(const SubscriberAttributes* param,uint32_t payload_size);
+	StatelessReader(const SubscriberAttributes& wParam,
+			const GuidPrefix_t&guidP, const EntityId_t& entId);
 
 
 
@@ -44,9 +43,6 @@ public:
 	 bool takeNextCacheChange(void*data,SampleInfo_t* info);
 	 bool isUnreadCacheChange();
 
-
-//	 bool takeAllCacheChange(std::vector<void*>* data,int32_t* n_removed);
-//	 bool readAllCacheChange(std::vector<void*>* data);
 
 };
 

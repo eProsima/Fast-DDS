@@ -18,6 +18,8 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/DDSQosPolicies.h"
 
+#include "eprosimartps/utils/RTPSLog.h"
+
 namespace eprosima {
 namespace dds {
 

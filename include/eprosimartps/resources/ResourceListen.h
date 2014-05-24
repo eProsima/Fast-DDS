@@ -25,10 +25,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
 
-
-
-#include "eprosimartps/rtps_all.h"
-
+#include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/MessageReceiver.h"
 
 
@@ -39,7 +36,8 @@ namespace rtps {
 
 class RTPSReader;
 class RTPSWriter;
-class Participant;
+class Endpoint;
+class ParticipantImpl;
 
 /**
  * Class ResourceListen, used to listen to a specific socket for RTPS messages. Each instance, when initialized, launches
@@ -49,19 +47,32 @@ class Participant;
  */
 class ResourceListen
 {
+	friend class MessageReceiver; // Here is justifies since each ResourceListen has only one MessageReceiver and viceversa
 public:
-	ResourceListen();
+	ResourceListen(ParticipantImpl* p, bool isMulti);
 	virtual ~ResourceListen();
+
+	void removeEndpointFromAssociated(Endpoint* endp);
+
+	bool addAssociatedEndpoint(Endpoint* endp);
+
+	bool hasAssociatedEndpoints(){return !(m_assoc_writers.empty() && m_assoc_readers.empty());};
+
+
+	bool isListeningTo(const Locator_t& loc);
+
 	/**
 	 * Method to initialize the thread.
 	 */
 	bool init_thread(Locator_t& loc);
+private:
+
 	//! Vector of pointers to the associated writers.
 	std::vector<RTPSWriter*> m_assoc_writers;
 	//! Vector of pointer to the associated readers.
 	std::vector<RTPSReader*> m_assoc_readers;
 	//! Pointer to the participant.
-	Participant* m_participant_ptr;
+	ParticipantImpl* mp_participantImpl;
 	//!Vector containing the locators that are being listened with this thread. Currently the thread only listens to one Locator.
 	LocatorList_t m_locList;
 	//!Pointer to the thread.

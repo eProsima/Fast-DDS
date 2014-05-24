@@ -15,22 +15,25 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/rtps_all.h"
+
 #include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+
+
 
 namespace eprosima {
 namespace rtps {
 
 
 
-ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
+ReaderProxy::ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& times,StatefulWriter* SW):
+				m_param(RPparam),
 				mp_SFW(SW),
-				m_param(*RPparam),
 				m_isRequestedChangesEmpty(true),
-				m_periodicHB(this,boost::posix_time::milliseconds(SW->m_reliability.heartbeatPeriod.to64time()*1000)),
-				m_nackResponse(this,boost::posix_time::milliseconds(SW->m_reliability.nackResponseDelay.to64time()*1000)),
-				m_nackSupression(this,boost::posix_time::milliseconds(SW->m_reliability.nackSupressionDuration.to64time()*1000)),
+				m_periodicHB(this,boost::posix_time::milliseconds(Time2Seconds(times.heartbeatPeriod)*1000)),
+				m_nackResponse(this,boost::posix_time::milliseconds(Time2Seconds(times.nackResponseDelay)*1000)),
+				m_nackSupression(this,boost::posix_time::milliseconds(Time2Seconds(times.nackSupressionDuration)*1000)),
 				m_lastAcknackCount(0)
 {
 
@@ -38,7 +41,7 @@ ReaderProxy::ReaderProxy(ReaderProxy_t* RPparam,StatefulWriter* SW):
 
 
 ReaderProxy::~ReaderProxy() {
-	pDebugInfo("ReaderProxy destructor"<<endl;);
+
 }
 
 
@@ -82,13 +85,13 @@ bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* ch
 	return false;
 }
 
-bool ReaderProxy::acked_changes_set(SequenceNumber_t* seqNum)
+bool ReaderProxy::acked_changes_set(SequenceNumber_t& seqNum)
 {
 	boost::lock_guard<ReaderProxy> guard(*this);
 
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
-		if(it->change->sequenceNumber.to64long() < seqNum->to64long())
+		if(it->change->sequenceNumber.to64long() < seqNum.to64long())
 		{
 			it->status = ACKNOWLEDGED;
 		}

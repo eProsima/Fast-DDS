@@ -18,9 +18,8 @@
 #ifndef PERIODICHEARTBEAT_H_
 #define PERIODICHEARTBEAT_H_
 
-#include "eprosimartps/rtps_all.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
-
+#include "eprosimartps/common/types/CDRMessage_t.h"
 
 namespace eprosima {
 namespace rtps{

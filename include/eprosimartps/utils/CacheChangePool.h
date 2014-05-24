@@ -16,18 +16,21 @@
  */
 
 
-#include <vector>
-
 
 #ifndef CACHECHANGEPOOL_H_
 #define CACHECHANGEPOOL_H_
-#include "eprosimartps/rtps_all.h"
-#include "eprosimartps/utils/RTPSLog.h"
+
+
+#include <vector>
+#include <cstdint>
+#include <cstddef>
+
 
 
 namespace eprosima {
 namespace rtps {
 
+struct CacheChange_t;
 
 /**
  * Class CacheChangePool, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically reserving memory in the middle of execution loops.

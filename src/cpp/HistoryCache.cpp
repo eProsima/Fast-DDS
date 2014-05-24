@@ -15,13 +15,15 @@
  *      		grcanosa@gmail.com
  */
 #include "eprosimartps/HistoryCache.h"
-#include "eprosimartps/writer/ReaderLocator.h"
-#include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/reader/RTPSReader.h"
-#include "eprosimartps/reader/StatelessReader.h"
-#include "eprosimartps/common/rtps_elem_seqnum.h"
-#include "eprosimartps/common/rtps_elem_guid.h"
+#include "eprosimartps/Endpoint.h"
+#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/utils/RTPSLog.h"
+
+//#include "eprosimartps/writer/ReaderLocator.h"
+//#include "eprosimartps/writer/RTPSWriter.h"
+//#include "eprosimartps/writer/StatelessWriter.h"
+//#include "eprosimartps/reader/RTPSReader.h"
+//#include "eprosimartps/reader/StatelessReader.h"
 
 
 
@@ -33,20 +35,14 @@ bool sort_CacheChanges_History_SeqNum (CacheChange_t* c1,CacheChange_t* c2)
 	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
 }
 
-HistoryCache::HistoryCache(uint16_t historysize,uint32_t payload_size,
-						HistoryKind_t kind,Endpoint* endp):
-		mp_rtpswriter(NULL),mp_rtpsreader(NULL),
-		m_historyKind(kind),
-		m_history_max_size(historysize),
+HistoryCache::HistoryCache(Endpoint* endp, uint16_t historymaxsize, uint32_t payload_size):
+		mp_Endpoint(endp),
+		m_history_max_size(historymaxsize),
 		isHistoryFull(false),
-		changePool(historysize,payload_size),
+		changePool(historymaxsize,payload_size),
 		m_isMaxMinUpdated(false)
 
 {
-		if(m_historyKind == WRITER)
-			mp_rtpswriter = (RTPSWriter*)endp;
-		else if(m_historyKind == READER)
-			mp_rtpsreader = (RTPSReader*)endp;
 		SEQUENCENUMBER_UNKOWN(m_minSeqNum);
 		SEQUENCENUMBER_UNKOWN(m_maxSeqNum);
 		GUID_UNKNOWN(m_minSeqNumGuid);
@@ -72,8 +68,8 @@ bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheC
 	for(	std::vector<CacheChange_t*>::iterator it = m_changes.begin();
 			it!=m_changes.end();++it){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long() )
-			if(m_historyKind == WRITER ||
-					(m_historyKind == READER && (*it)->writerGUID == writerGuid))
+			if(mp_Endpoint->getEndpointKind() == WRITER ||
+					(mp_Endpoint->getEndpointKind() == READER && (*it)->writerGUID == writerGuid))
 
 			{
 				*ch_ptr = *it;
@@ -90,8 +86,8 @@ bool HistoryCache::get_change(SequenceNumber_t& seqNum,GUID_t& writerGuid,CacheC
 	for(it = m_changes.begin();it!=m_changes.end();++it){
 		if((*it)->sequenceNumber.to64long() == seqNum.to64long())
 		{
-			if(m_historyKind == WRITER ||
-					(m_historyKind == READER && (*it)->writerGUID == writerGuid))
+			if(mp_Endpoint->getEndpointKind() == WRITER ||
+					(mp_Endpoint->getEndpointKind() == READER && (*it)->writerGUID == writerGuid))
 
 			{
 				*ch_ptr = *it;
@@ -129,13 +125,13 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 
 	//make copy of change to save
 
-	if(m_historyKind == WRITER)
+	if(mp_Endpoint->getEndpointKind() == WRITER)
 	{
 		m_lastChangeSequenceNumber++;
 		a_change->sequenceNumber = m_lastChangeSequenceNumber;
 		m_changes.push_back(a_change);
 	}
-	else if(m_historyKind == READER)
+	else if(mp_Endpoint->getEndpointKind() == READER)
 	{
 		//Check that the same change has not been already introduced
 		std::vector<CacheChange_t*>::iterator it;
@@ -158,11 +154,8 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	if(m_changes.size()==m_history_max_size)
 		isHistoryFull = true;
 	m_isMaxMinUpdated = false;
-	pDebugInfo("Cache added to History (kind:"<<m_historyKind<<") with seqNum: " << a_change->sequenceNumber.to64long() << " from entityId: "<<
-			std::hex <<  (int)a_change->writerGUID.entityId.value[0] << "."
-			<< (int)a_change->writerGUID.entityId.value[1] << "."
-			<< (int)a_change->writerGUID.entityId.value[2] << "."
-			<< (int)a_change->writerGUID.entityId.value[3] <<std::dec<< endl);
+	pDebugInfo("Cache added to History (kind:"<<mp_Endpoint->getEndpointKind()<<") with seqNum: " << a_change->sequenceNumber.to64long()
+			<< " from entityId: "<< a_change->writerGUID.entityId << endl);
 
 	return true;
 }
@@ -175,8 +168,8 @@ bool HistoryCache::remove_change(SequenceNumber_t& seqnum, GUID_t& guid)
 	{
 		if((*it)->sequenceNumber.to64long() == seqnum.to64long())
 		{
-			if(m_historyKind == WRITER ||
-					(m_historyKind == READER && (*it)->writerGUID == guid))
+			if(mp_Endpoint->getEndpointKind() == WRITER ||
+					(mp_Endpoint->getEndpointKind() == READER && (*it)->writerGUID == guid))
 			{
 				changePool.release_Cache(*it);
 				m_changes.erase(it);
@@ -297,15 +290,7 @@ void HistoryCache::updateMaxMinSeqNum()
 	return;
 }
 
-CacheChange_t* HistoryCache::reserve_Cache()
-{
-	return changePool.reserve_Cache();
-}
 
-void HistoryCache::release_Cache(CacheChange_t* ch)
-{
-	return changePool.release_Cache(ch);
-}
 
 
 void HistoryCache::sortCacheChangesBySeqNum()

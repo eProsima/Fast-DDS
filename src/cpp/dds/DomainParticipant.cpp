@@ -16,32 +16,37 @@
  */
 
 #include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/PublisherListener.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/Participant.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/IPFinder.h"
 
 namespace eprosima {
 namespace dds {
 
-bool DomainParticipant::instanceFlag = false;
-DomainParticipant* DomainParticipant::single = NULL;
-DomainParticipant* DomainParticipant::getInstance()
+bool DomainParticipantImpl::instanceFlag = false;
+DomainParticipantImpl* DomainParticipantImpl::single = NULL;
+DomainParticipantImpl* DomainParticipantImpl::getInstance()
 {
 	if(! instanceFlag)
 	{
-		single = new DomainParticipant();
+		single = new DomainParticipantImpl();
 		instanceFlag = true;
-		return single;
 	}
-	else
-	{
-		return single;
-	}
+
+	return single;
 }
 
-DomainParticipant::DomainParticipant()
+DomainParticipantImpl::DomainParticipantImpl()
 {
 	id = 0;//private constructor
 	m_portBase = 7400;
@@ -54,50 +59,116 @@ DomainParticipant::DomainParticipant()
 	m_DomainId = 80;
 }
 
-DomainParticipant::~DomainParticipant()
+DomainParticipantImpl::~DomainParticipantImpl()
 {
 	pDebugInfo("DomainParticipant destructor"<<endl;);
-	for(std::vector<Participant*>::iterator it=m_participants.begin();
+	for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 			it!=m_participants.end();++it)
 	{
-		delete(*it);
+		delete(it->first);
+		delete(it->second);
 	}
 	pDebugInfo("Participants deleted correctly "<< endl);
-	for(std::vector<Publisher*>::iterator it=m_publisherList.begin();
+	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
 			it!=m_publisherList.end();++it)
 	{
-		delete(*it);
+		delete(it->first);
+		delete(it->second);
 	}
 	pDebugInfo("Publishers deleted correctly "<< endl);
-	for(std::vector<Subscriber*>::iterator it=m_subscriberList.begin();
+	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
 			it!=m_subscriberList.end();++it)
 	{
-		delete(*it);
+		delete(it->first);
+		delete(it->second);
 	}
 	pDebugInfo("Subscribers deleted correctly "<< endl);
-	DomainParticipant::instanceFlag = false;
+	DomainParticipantImpl::instanceFlag = false;
 	delete(RTPSLog::getInstance());
 }
 
 
-uint32_t DomainParticipant::getNewId()
+uint32_t DomainParticipantImpl::getNewId()
 {
 	return ++id;
 }
 
-void DomainParticipant::stopAll()
+void DomainParticipantImpl::stopAll()
 {
-
-	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-	delete(dp);
+	delete(this);
 }
 
-Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttributes& WParam)
+bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pimpl)
 {
+	if(p == NULL)
+		return false;
+	for(std::vector<ParticipantPair>::iterator it = m_participants.begin();
+			it!=m_participants.end();++it)
+	{
+		if(it->second->getGuid() == p->getGuid())
+		{
+			*pimpl = (it->second);
+			return true;
+		}
+	}
+	return false;
+}
+
+Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
+{
+	uint32_t ID = getNewId();
+	int pid;
+#if defined(_WIN32)
+	pid = (int)_getpid();
+#else
+	pid = (int)getpid();
+#endif
+	GuidPrefix_t guidP;
+	LocatorList_t loc;
+	IPFinder::getIPAddress(&loc);
+	if(loc.size()>0)
+	{
+		guidP.value[0] = loc.begin()->address[12];
+		guidP.value[1] = loc.begin()->address[13];
+		guidP.value[2] = loc.begin()->address[14];
+		guidP.value[3] = loc.begin()->address[15];
+	}
+	else
+	{
+		guidP.value[0] = 127;
+		guidP.value[1] = 0;
+		guidP.value[2] = 0;
+		guidP.value[3] = 1;
+	}
+	guidP.value[4] = ((octet*)&pid)[0];
+	guidP.value[5] = ((octet*)&pid)[1];
+	guidP.value[6] = ((octet*)&pid)[2];
+	guidP.value[7] = ((octet*)&pid)[3];
+	guidP.value[8] = ((octet*)&ID)[0];
+	guidP.value[9] = ((octet*)&ID)[1];
+	guidP.value[10] = ((octet*)&ID)[2];
+	guidP.value[11] = ((octet*)&ID)[3];
+	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP);
+	Participant* p = new Participant(pimpl);
+
+	m_participants.push_back(ParticipantPair(p,pimpl));
+	return p;
+}
+
+
+
+Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAttributes& WParam)
+{
+	ParticipantImpl* p = NULL;
+	if(!getParticipantImpl(pin,&p))
+	{
+		pError("Participant not registered"<<endl);
+		return NULL;
+	}
 	pInfo("Creating Publisher"<<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
-	if(!DomainParticipant::getRegisteredType(WParam.topic.topicDataType,&p_type))
+	if(!getRegisteredType(WParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
 		return NULL;
@@ -107,8 +178,8 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
-	Publisher* Pub = NULL;
-	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	PublisherImpl* pubImpl = NULL;
+	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(WParam.userDefinedId <= 0)
 		{
@@ -116,62 +187,58 @@ Publisher* DomainParticipant::createPublisher(Participant* p, PublisherAttribute
 			return NULL;
 		}
 	}
-	if(WParam.reliability.reliabilityKind == BEST_EFFORT)
+	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessWriter* SW;
 		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false))
 			return NULL;
-		SW->m_qos.setQos(WParam.qos,true);
-		Pub = new Publisher((RTPSWriter*)SW);
-		pDebugInfo("Publisher in topic: "<<Pub->getTopicName()<<" created."<<endl);
-		SW->m_Pub = Pub;
-
-		Pub->mp_type = p_type;
-		SW->mp_type = p_type;
-
+		SW->setQos(WParam.qos,true);
+		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
-	else if(WParam.reliability.reliabilityKind == RELIABLE)
+	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		StatefulWriter* SF;
-		if(!p->createStatefulWriter(&SF,WParam,p_type->m_typeSize,false))
+		StatefulWriter* SW;
+		if(!p->createStatefulWriter(&SW,WParam,p_type->m_typeSize,false))
 			return NULL;
-		SF->m_qos.setQos(WParam.qos,true);
-		Pub = new Publisher((RTPSWriter*)SF);
-		SF->m_Pub = Pub;
-		Pub->mp_type = p_type;
-		SF->mp_type = p_type;
-
+		SW->setQos(WParam.qos,true);
+		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
-	if(Pub != NULL)
+	if(pubImpl != NULL)
 	{
 		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
-		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-		dp->m_publisherList.push_back(Pub);
+		Publisher* Pub = new Publisher(pubImpl);
+		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
+		return Pub;
 	}
-	else
-	{
-		pError("Publisher not created"<<endl);
-	}
-	return Pub;
+
+	pError("Publisher not created"<<endl);
+
+	return NULL;
 }
 
-Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttributes& RParam)
+Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam)
 {
+	ParticipantImpl* p = NULL;
+	if(!getParticipantImpl(pin,&p))
+	{
+		pError("Participant not registered"<<endl);
+		return NULL;
+	}
+	pInfo("Creating Publisher"<<endl)
 	//Look for the correct type registration
-	pInfo("Creating Subscriber"<<endl;);
 	DDSTopicDataType* p_type = NULL;
-	if(!DomainParticipant::getRegisteredType(RParam.topic.topicDataType,&p_type))
+	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
 		return NULL;
 	}
-
 	if(RParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		pError("Keyed Topic needs getKey function"<<endl);
 		return NULL;
 	}
-	if(p->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	SubscriberImpl* subImpl = NULL;
+	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(RParam.userDefinedId <= 0)
 		{
@@ -179,65 +246,42 @@ Subscriber* DomainParticipant::createSubscriber(Participant* p,	SubscriberAttrib
 			return NULL;
 		}
 	}
-	Subscriber* Sub = NULL;
-	if(RParam.reliability.reliabilityKind == BEST_EFFORT)
+	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessReader* SR;
 		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize,false))
-		{
-			pError("Error creating subscriber"<<endl);
 			return NULL;
-		}
-		SR->m_qos.setQos(RParam.qos,true);
-		Sub = new Subscriber((RTPSReader*) SR);
-		SR->mp_Sub = Sub;
-		SR->mp_type = p_type;
-		Sub->topicName = RParam.topic.topicName;
-		Sub->topicDataType = RParam.topic.topicDataType;
+		SR->setQos(RParam.qos,true);
+		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
-	else if(RParam.reliability.reliabilityKind == RELIABLE)
+	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		pDebugInfo("Stateful"<<endl);
-		StatefulReader* SFR;
-		if(!p->createStatefulReader(&SFR,RParam,p_type->m_typeSize,false))
-		{
-			pError("Error creating subscriber"<<endl);
+		StatefulReader* SR;
+		if(!p->createStatefulReader(&SR,RParam,p_type->m_typeSize,false))
 			return NULL;
-		}
-		SFR->m_qos.setQos(RParam.qos,true);
-		Sub = new Subscriber((RTPSReader*) SFR);
-		SFR->mp_Sub = Sub;
-		SFR->mp_type = p_type;
-		Sub->topicName = RParam.topic.topicName;
-		Sub->topicDataType = RParam.topic.topicDataType;
+		SR->setQos(RParam.qos,true);
+		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
+	}
+	if(subImpl != NULL)
+	{
+		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
+		Subscriber* Sub = new Subscriber(subImpl);
+		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
+		return Sub;
+	}
 
-	}
-	if(Sub!=NULL)
-	{
-		pInfo(B_YELLOW<<"SUBSCRIBER CORRECTLY CREATED"<<DEF<<endl);
-		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-		dp->m_subscriberList.push_back(Sub);
-	}
-	else
-	{pError("Subscriber not created"<<endl);}
-	return Sub;
+	pError("Publisher not created"<<endl);
+
+	return NULL;
 }
 
-Participant* DomainParticipant::createParticipant(const ParticipantAttributes& PParam)
-{
-	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-	uint32_t id = dp->getNewId();
-	Participant* p = new Participant(PParam,id);
 
-	dp->m_participants.push_back(p);
-	return p;
-}
 
-bool DomainParticipant::getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
+bool DomainParticipantImpl::getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
 {
-	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-	for(std::vector<DDSTopicDataType*>::iterator it=dp->m_registeredTypes.begin();
-			it!=dp->m_registeredTypes.end();++it)
+
+	for(std::vector<DDSTopicDataType*>::iterator it=m_registeredTypes.begin();
+			it!=m_registeredTypes.end();++it)
 	{
 		if((*it)->m_topicDataTypeName == type_name)
 		{
@@ -248,10 +292,9 @@ bool DomainParticipant::getRegisteredType(std::string type_name,DDSTopicDataType
 	return false;
 }
 
-bool DomainParticipant::registerType(DDSTopicDataType* type)
+bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 {
-	dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-	for(std::vector<DDSTopicDataType*>::iterator it = dp->m_registeredTypes.begin();it!=dp->m_registeredTypes.end();++it)
+	for(std::vector<DDSTopicDataType*>::iterator it = m_registeredTypes.begin();it!=m_registeredTypes.end();++it)
 	{
 		if((*it)->m_topicDataTypeName == type->m_topicDataTypeName)
 			return false;
@@ -266,111 +309,87 @@ bool DomainParticipant::registerType(DDSTopicDataType* type)
 		pError("Registered Type must have a name"<<endl);
 		return false;
 	}
-	dp->m_registeredTypes.push_back(type);
+	m_registeredTypes.push_back(type);
 	pInfo("Type "<<type->m_topicDataTypeName << " registered."<<endl);
 	return true;
 }
 
-bool DomainParticipant::removeParticipant(Participant* p)
+bool DomainParticipantImpl::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
-		bool found = false;
-		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-		for(std::vector<Participant*>::iterator it=dp->m_participants.begin();
-				it!=dp->m_participants.end();++it)
+		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
+				it!=m_participants.end();++it)
 		{
-			if((*it)->m_guid == p->m_guid)
+			if(it->second->getGuid() == p->getGuid())
 			{
-				found = true;
-				dp->m_participants.erase(it);
-				break;
+				delete(it->first);
+				delete(it->second);
+				m_participants.erase(it);
+				return true;
 			}
 		}
-		if(found)
-		{
-			delete(p);
-					return true;
-		}
-
 	}
 	return false;
 }
 
-bool DomainParticipant::removePublisher(Participant* p,Publisher* pub)
+bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
 {
+	ParticipantImpl* p = NULL;
+	if(!getParticipantImpl(pin,&p))
+	{
+		pError("Participant not registered"<<endl);
+		return NULL;
+	}
 	if(p==NULL || pub==NULL)
 		return false;
-	if(p->removeUserEndpoint((Endpoint*)(pub->mp_Writer),'W'))
+
+	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
+			it!=m_publisherList.end();++it)
 	{
-		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-		for(std::vector<Publisher*>::iterator it=dp->m_publisherList.begin();
-				it!=dp->m_publisherList.end();++it)
-		{
-			if((*it)->mp_Writer->m_guid == pub->mp_Writer->m_guid)
+			if(it->second->getGuid() == pub->getGuid())
 			{
-				dp->m_publisherList.erase(it);
+				if(p->deleteUserEndpoint((Endpoint*)(it->second->getWriterPtr()),'W'))
+				{
+					delete(it->first);
+					delete(it->second);
+					m_publisherList.erase(it);
+					return true;
+				}
 			}
-		}
-		delete(pub->mp_Writer);
-		delete(pub);
-		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
-bool DomainParticipant::removeSubscriber(Participant* p,Subscriber* sub)
+bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
 {
+	ParticipantImpl* p = NULL;
+	if(!getParticipantImpl(pin,&p))
+	{
+		pError("Participant not registered"<<endl);
+		return NULL;
+	}
 	if(p==NULL || sub==NULL)
 		return false;
-	if(p->removeUserEndpoint((Endpoint*)(sub->mp_Reader),'R'))
+
+	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
+			it!=m_subscriberList.end();++it)
 	{
-		dds::DomainParticipant *dp= dds::DomainParticipant::getInstance();
-		for(std::vector<Subscriber*>::iterator it=dp->m_subscriberList.begin();
-				it!=dp->m_subscriberList.end();++it)
+		if(it->second->getGuid() == sub->getGuid())
 		{
-			if((*it)->mp_Reader->m_guid == sub->mp_Reader->m_guid)
+			if(p->deleteUserEndpoint((Endpoint*)(it->second->getReaderPtr()),'R'))
 			{
-				dp->m_subscriberList.erase(it);
+				delete(it->first);
+				delete(it->second);
+				m_subscriberList.erase(it);
+				return true;
 			}
 		}
-		delete(sub->mp_Reader);
-		delete(sub);
-		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
-void DomainParticipant::getIPAddress(LocatorList_t* locators)
-{
-	DomainParticipant* dp = DomainParticipant::getInstance();
-	std::vector<std::string> ip_names;
-	dp->m_IPFinder.getIP4s(&ip_names);
 
-	locators->clear();
-	for(std::vector<std::string>::iterator it=ip_names.begin();
-			it!=ip_names.end();++it)
-	{
-		std::stringstream ss(*it);
-		int a,b,c,d;
-		char ch;
-		ss >> a >>ch >>b >> ch >> c >>ch >>d;
-		if(a== 127 && b== 0 && c== 0 && d == 1)
-			continue;
-		if(a==169 && b==254)
-			continue;
-		Locator_t loc;
-		loc.kind = 1;
-		loc.port = 0;
-		loc.address[12] = (octet)a;
-		loc.address[13] = (octet)b;
-		loc.address[14] = (octet)c;
-		loc.address[15] = (octet)d;
-		locators->push_back(loc);
-	}
-}
 
 
 } /* namespace dds */

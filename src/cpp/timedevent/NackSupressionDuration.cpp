@@ -17,6 +17,13 @@
 
 #include "eprosimartps/timedevent/NackSupressionDuration.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/utils/RTPSLog.h"
+
+#include "eprosimartps/resources/ResourceSend.h"
+#include "eprosimartps/resources/ResourceEvent.h"
+
+//#include "eprosimartps/RTPSMessageCreator.h"
+
 namespace eprosima {
 namespace rtps {
 
