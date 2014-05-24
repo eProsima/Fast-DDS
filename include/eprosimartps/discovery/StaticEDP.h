@@ -19,17 +19,24 @@
 #define STATICEDP_H_
 
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
+
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 
 
 
 using boost::property_tree::ptree;
+
+
 namespace eprosima {
 namespace rtps {
+
+class RTPSWriter;
+class RTPSReader;
+class DiscoveredParticipantData;
 
 class StaticEDP: public EndpointDiscoveryProtocol {
 public:
