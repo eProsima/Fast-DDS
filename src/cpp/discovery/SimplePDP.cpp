@@ -174,9 +174,9 @@ bool SimplePDP::createSPDPEndpoints()
 				lit!=mp_localDPData->m_metatrafficMulticastLocatorList.end();++lit)
 			mp_SPDPWriter->reader_locator_add(*lit,false);
 
-		for(LocatorListIterator lit = mp_localDPData->m_metatrafficUnicastLocatorList.begin();
-				lit!=mp_localDPData->m_metatrafficUnicastLocatorList.end();++lit)
-			mp_SPDPWriter->reader_locator_add(*lit,false);
+//		for(LocatorListIterator lit = mp_localDPData->m_metatrafficUnicastLocatorList.begin();
+//				lit!=mp_localDPData->m_metatrafficUnicastLocatorList.end();++lit)
+//			mp_SPDPWriter->reader_locator_add(*lit,false);
 
 	}
 	else

@@ -355,7 +355,7 @@ bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char 
 		if(!assigned) //Create new listen thread
 		{
 			ResourceListen* thListen = NULL;
-			if(addNewListenResource(*locit_e,&thListen,false))
+			if(addNewListenResource(*locit_e,&thListen,true))
 			{//Add new listen thread to participant
 				mp_ResourceSemaphore->wait();
 				thListen->addAssociatedEndpoint(p_endpoint);

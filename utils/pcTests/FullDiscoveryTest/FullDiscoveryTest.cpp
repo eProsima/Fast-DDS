@@ -184,6 +184,9 @@ int main(int argc, char** argv){
 	{
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
+
+		my_sleep(10);
+
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = std::string("TestType");
