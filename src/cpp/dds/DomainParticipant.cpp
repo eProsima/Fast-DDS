@@ -225,7 +225,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo("Creating Publisher"<<endl)
+	pInfo("Creating Subscriber"<<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
@@ -265,7 +265,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	}
 	if(subImpl != NULL)
 	{
-		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
+		pInfo(B_YELLOW<<"SUBSCRIBER CREATED"<<DEF<<endl);
 		Subscriber* Sub = new Subscriber(subImpl);
 		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
 		return Sub;

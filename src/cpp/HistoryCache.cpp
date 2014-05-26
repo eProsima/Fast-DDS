@@ -47,7 +47,7 @@ HistoryCache::HistoryCache(Endpoint* endp, uint16_t historymaxsize, uint32_t pay
 		SEQUENCENUMBER_UNKOWN(m_maxSeqNum);
 		GUID_UNKNOWN(m_minSeqNumGuid);
 		GUID_UNKNOWN(m_maxSeqNumGuid);
-		pDebugInfo("History created"<<endl);
+		pDebugInfo("History created"<<std::endl;);
 }
 
 HistoryCache::~HistoryCache()
@@ -134,8 +134,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	else if(mp_Endpoint->getEndpointKind() == READER)
 	{
 		//Check that the same change has not been already introduced
-		std::vector<CacheChange_t*>::iterator it;
-		for(it=m_changes.begin();it!=m_changes.end();++it)
+		for(std::vector<CacheChange_t*>::reverse_iterator it=m_changes.rbegin();it!=m_changes.rend();++it)
 		{
 			if((*it)->sequenceNumber.to64long() == a_change->sequenceNumber.to64long() &&
 					(*it)->writerGUID == a_change->writerGUID)

@@ -138,7 +138,6 @@ void ResourceListen::newCDRMessage(const boost::system::error_code& err, std::si
 		try
 		{
 			m_MessageReceiver.processCDRMsg(mp_participantImpl->getGuid().guidPrefix,&m_send_locator,&m_MessageReceiver.m_rec_msg);
-			pInfo (BLUE<<"Message processed " <<DEF<< endl);
 		}
 		catch(int e)
 		{
@@ -163,7 +162,7 @@ void ResourceListen::newCDRMessage(const boost::system::error_code& err, std::si
 	else
 	{
 		//CDRMessage_t msg;
-		pInfo(BLUE<< "Socket async receive put again to listen "<<DEF<< endl);
+		pInfo(BLUE<< "Msg processed, Socket async receive put again to listen "<<DEF<< endl);
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
