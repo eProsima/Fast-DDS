@@ -33,7 +33,7 @@
 #include "eprosimartps/dds/SubscriberListener.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
-
+#include "eprosimartps/utils/IPFinder.h"
 
 using namespace eprosima::dds;
 
@@ -236,6 +236,7 @@ bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 
 		DiscoveredWriterData wdata;
 		wdata.m_writerProxy.unicastLocatorList = W->unicastLocatorList;
+		repareDiscoveredDataLocatorList(&wdata.m_writerProxy.unicastLocatorList);
 		wdata.m_writerProxy.multicastLocatorList = W->multicastLocatorList;
 		wdata.m_writerProxy.remoteWriterGuid = W->getGuid();
 		wdata.m_key = W->getGuid();
@@ -301,6 +302,7 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 	{
 		DiscoveredReaderData rdata;
 		rdata.m_readerProxy.unicastLocatorList = R->unicastLocatorList;
+		repareDiscoveredDataLocatorList(&rdata.m_readerProxy.unicastLocatorList);
 		rdata.m_readerProxy.multicastLocatorList = R->multicastLocatorList;
 		rdata.m_readerProxy.remoteReaderGuid = R->getGuid();
 		rdata.m_readerProxy.expectsInlineQos = R->expectsInlineQos();
@@ -327,6 +329,41 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 		}
 	}
 	return true;
+}
+
+void SimpleEDP::repareDiscoveredDataLocatorList(LocatorList_t* loclist)
+{
+	bool iszero = false;
+	LocatorList_t newLocList;
+	LocatorList_t myIPs;
+	IPFinder::getIPAddress(&myIPs);
+	Locator_t auxLoc;
+	for(LocatorListIterator lit = loclist->begin();lit!=loclist->end();++lit)
+	{
+		iszero = true;
+		for(uint8_t i = 0;i<16;++i)
+		{
+			if(lit->address[i]!=0)
+			{
+				iszero= false;
+				break;
+			}
+		}
+		if(iszero)
+		{
+			for(LocatorListIterator myit = myIPs.begin();myit!=myIPs.end();++myit)
+			{
+				auxLoc = *myit;
+				auxLoc.port = lit->port;
+				newLocList.push_back(auxLoc);
+			}
+		}
+		else
+		{
+			newLocList.push_back(*lit);
+		}
+	}
+	*loclist = newLocList;
 }
 
 bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)

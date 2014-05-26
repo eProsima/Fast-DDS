@@ -74,6 +74,8 @@ public:
 	bool addNewLocalReader(RTPSReader* R);
 
 	SEDPListeners m_listeners;
+
+	void repareDiscoveredDataLocatorList(LocatorList_t* loclist);
 };
 
 } /* namespace rtps */
