@@ -135,7 +135,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredReaderData";
 		Rparam.userDefinedId = -1;
-		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,c_EntityId_SEDPSubReader);
 		if(created)
@@ -320,6 +320,7 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 
 bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 {
+	pInfo("SimpleEDP:localWriterMatching"<<endl);
 	bool matched = false;
 	if(W->getTopic().getTopicName() == rdata->m_topicName && W->getTopic().getTopicDataType() == rdata->m_typeName &&
 			W->getTopic().getTopicKind() == rdata->topicKind && rdata->isAlive)
