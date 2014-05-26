@@ -51,7 +51,7 @@ namespace rtps {
 class RTPSWriter: public Endpoint
 {
 public:
-	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,
+	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 			StateKind_t state = STATELESS,
 			int16_t userDefinedId=-1,uint16_t historysize = 50,uint32_t payload_size = 500);
 	virtual ~RTPSWriter();

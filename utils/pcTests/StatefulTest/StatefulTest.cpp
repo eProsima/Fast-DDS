@@ -22,10 +22,11 @@
 #include <bitset>
 #include <cstdint>
 
+#include "eprosimartps/rtps_all.h"
 
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/Participant.h"
-#include "eprosimartps/common/colors.h"
+
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -39,8 +40,8 @@ using namespace dds;
 using namespace rtps;
 using namespace std;
 
-#define IPTEST0 16
-#define IPTEST1 23
+#define IPTEST0 133
+#define IPTEST1 146
 #define IPTEST2 25
 #define IPTEST3 27
 #define IPTESTWIN 11
@@ -111,6 +112,7 @@ public:
 //Funciones de serializacion y deserializacion para el ejemplo
 bool TestTypeDataType::serialize(void*data,SerializedPayload_t* payload)
 {
+	cout << "SERIALIZES: "<<sizeof(TestType)<<endl;
 	payload->length = sizeof(TestType);
 	payload->encapsulation = CDR_LE;
 	if(payload->data !=NULL)
@@ -158,14 +160,12 @@ public:
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
 	int type;
 	if(argc > 1)
 	{
-		RTPSLog::Info << "Parsing arguments: " << argv[1] << endl;
-		RTPSLog::printInfo();
 		if(strcmp(argv[1],"1")==0)
 			type = 1;
 		else if(strcmp(argv[1],"2")==0)
@@ -195,9 +195,9 @@ int main(int argc, char** argv)
 		Wparam.topic.topicDataType = std::string("TestType");
 		Wparam.topic.topicName = std::string("Test_topic");
 		Wparam.historyMaxSize = 14;
-		Wparam.reliability.heartbeatPeriod.seconds = 2;
-		Wparam.reliability.nackResponseDelay.seconds = 5;
-		Wparam.reliability.reliabilityKind = RELIABLE;
+		Wparam.times.heartbeatPeriod.seconds = 2;
+		Wparam.times.nackResponseDelay.seconds = 5;
+		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
@@ -206,10 +206,10 @@ int main(int argc, char** argv)
 		if(pub == NULL)
 			return 0;
 		//Reader Proxy
-		loc.set_IP4_address(192,168,1,IPTEST2);
+		loc.set_IP4_address(192,168,1,IPTEST1);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
-		pub->addReaderProxy(loc,readerGUID,true);
+		pub->addReaderProxy(loc,readerGUID,false);
 		TestType tp;
 		COPYSTR(tp.name,"Obje1");
 		tp.value = 0;
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 		Rparam.historyMaxSize = 15;
 		Rparam.topic.topicDataType = std::string("TestType");
 		Rparam.topic.topicName = std::string("Test_Topic");
-		Rparam.reliability.reliabilityKind = RELIABLE;
+		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Locator_t loc;
 		if(type == 2)
 			loc.port = 10046;
@@ -262,7 +262,7 @@ int main(int argc, char** argv)
 			SampleInfo_t info;
 			if(sub->takeNextData((void*)&tp,&info))
 				tp.print();
-			if(sub->getHistory_n() >= 0.5*Rparam.historyMaxSize)
+			if(sub->getHistoryElementsNumber() >= 0.5*Rparam.historyMaxSize)
 			{
 				cout << "Taking all" <<endl;
 				while(sub->takeNextData((void*)&tp,&info))

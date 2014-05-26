@@ -22,12 +22,13 @@ namespace rtps {
 Endpoint::Endpoint(GuidPrefix_t guid,
 					EntityId_t entityId,
 					TopicAttributes topic,
+					DDSTopicDataType* ptype,
 					StateKind_t state,
 					EndpointKind_t end,
 					int16_t userDefinedId):
 		m_guid(guid,entityId),m_topic(topic),m_stateType(state),m_endpointKind(end),m_userDefinedId(userDefinedId)
 {
-	mp_type = NULL;
+	mp_type = ptype;
 	mp_send_thr = NULL;
 	mp_event_thr = NULL;
 }

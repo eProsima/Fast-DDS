@@ -37,7 +37,7 @@ public:
 	virtual ~StatefulWriter();
 
 	StatefulWriter(const PublisherAttributes& param,
-			const GuidPrefix_t&guidP, const EntityId_t& entId);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
 	/**
 	 * Add a matched reader to the writer.

@@ -168,7 +168,7 @@ bool SimplePDP::createSPDPEndpoints()
 	Wparam.topic.topicKind = WITH_KEY;
 	Wparam.userDefinedId = -1;
 
-	if(mp_participant->createStatelessWriter(&mp_SPDPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,c_EntityId_SPDPWriter))
+	if(mp_participant->createStatelessWriter(&mp_SPDPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,NULL,c_EntityId_SPDPWriter))
 	{
 		for(LocatorListIterator lit = mp_localDPData->m_metatrafficMulticastLocatorList.begin();
 				lit!=mp_localDPData->m_metatrafficMulticastLocatorList.end();++lit)
@@ -194,7 +194,7 @@ bool SimplePDP::createSPDPEndpoints()
 	Rparam.topic.topicName = "DCPSParticipant";
 	Rparam.topic.topicDataType = "DiscoveredParticipantData";
 	Rparam.userDefinedId = -1;
-	if(mp_participant->createStatelessReader(&mp_SPDPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,c_EntityId_SPDPReader))
+	if(mp_participant->createStatelessReader(&mp_SPDPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,NULL,c_EntityId_SPDPReader))
 	{
 		mp_SPDPReader->setListener(&this->m_listener);
 	}

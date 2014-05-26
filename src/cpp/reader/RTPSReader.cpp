@@ -21,10 +21,10 @@
 namespace eprosima {
 namespace rtps {
 
-RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,
+RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 		StateKind_t state,
 		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
-		Endpoint(guidP,entId,topic,state,READER,userDefinedId),
+		Endpoint(guidP,entId,topic,ptype,state,READER,userDefinedId),
 		//mp_Sub(NULL),
 		mp_listener(NULL),
 		m_reader_cache((Endpoint*)this,historysize,payload_size),

@@ -30,10 +30,10 @@ namespace eprosima {
 namespace rtps {
 
 
-RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,
+RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 		StateKind_t state,
 		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
-					Endpoint(guidP,entId,topic,state,WRITER,userDefinedId),
+					Endpoint(guidP,entId,topic,ptype,state,WRITER,userDefinedId),
 					m_writer_cache((Endpoint*)this,historysize,payload_size),
 					m_pushMode(true),
 				//	m_Pub(NULL),
@@ -66,8 +66,11 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 		pWarning("Problem reserving Cache"<<endl);
 		return false;
 	}
+	cout << "Data null:  "<< (data!=NULL) << endl;
+	cout << "mptype null:  "<< (mp_type!=NULL) << endl;
 	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
 	{
+		cout << "Goint to serialize"<<endl;
 		if(!mp_type->serialize(data,&ch->serializedPayload))
 		{
 			pWarning("RTPSWriter:Serialization returns false"<<endl);

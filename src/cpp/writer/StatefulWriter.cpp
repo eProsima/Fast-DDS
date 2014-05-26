@@ -37,8 +37,8 @@ StatefulWriter::~StatefulWriter() {
 	pDebugInfo("StatefulWriter destructor"<<endl;);
 }
 
-StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId):
-				RTPSWriter(guidP,entId,param.topic,STATEFUL,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
+StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+				RTPSWriter(guidP,entId,param.topic,ptype,STATEFUL,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
 				m_PubTimes(param.times)
 
 {

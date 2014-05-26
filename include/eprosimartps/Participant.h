@@ -49,6 +49,7 @@ namespace eprosima {
 
 namespace dds{
 class DomainParticipant;
+class DDSTopicDataType;
 }
 
 namespace rtps {
@@ -82,7 +83,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,
-			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Create a StatefulWriter from a parameter structure.
 	 * @param[out] SWriter Pointer to the stateful writer.
@@ -91,7 +92,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,
-			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initWriter(RTPSWriter* W,bool isBuiltin);
 
@@ -103,7 +104,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,
-			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Create a StatefulReader from a parameter structure and add it to the participant.
 	 * @param[out] SReader Pointer to the stateful reader.
@@ -112,7 +113,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,
-			uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initReader(RTPSReader* R,bool isBuiltin);
 
@@ -226,6 +227,7 @@ public:
 	virtual ~ Participant(){};
 	const GUID_t& getGuid(){return mp_impl->getGuid();};
 	void announceParticipantState(){return mp_impl->announceParticipantState();};
+	void loose_next_change(){return mp_impl->loose_next_change();};
 	private:
 ParticipantImpl* mp_impl;
 };

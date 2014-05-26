@@ -25,8 +25,8 @@ namespace rtps {
 
 
 
-StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId):
-		RTPSWriter(guidP,entId,param.topic,STATELESS,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
+StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+		RTPSWriter(guidP,entId,param.topic,ptype,STATELESS,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
 {
 	m_pushMode = true;//TODOG, support pushmode false in best effort
 	//locator lists:

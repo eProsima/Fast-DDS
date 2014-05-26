@@ -40,8 +40,8 @@ StatefulReader::~StatefulReader()
 
 
 StatefulReader::StatefulReader(const SubscriberAttributes& param,
-		const GuidPrefix_t&guidP, const EntityId_t& entId):
-		RTPSReader(guidP,entId,param.topic,STATEFUL,
+		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+		RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
 						param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
 						m_SubTimes(param.times)
 {
