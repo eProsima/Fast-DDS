@@ -170,7 +170,10 @@ bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, 
 			break;
 		}
 		default:
+		{
+			cout << B_RED << "Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED" << endl;
 			break;
+		}
 		}
 	}
 	return true;
@@ -319,7 +322,10 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 			break;
 		}
 		default:
-			break;
+		{
+			cout << B_RED << "Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED" << endl;
+						break;
+		}
 		}
 	}
 	return true;
@@ -350,10 +356,6 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 	}
 	{
 		ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,wdata.m_typeName);
-		param->m_parameters.push_back((Parameter_t*)p);
-	}
-	{
-		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,wdata.m_topicName);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
 	{
@@ -488,10 +490,6 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 	}
 	{
 		ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,rdata.m_typeName);
-		param->m_parameters.push_back((Parameter_t*)p);
-	}
-	{
-		ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,rdata.m_topicName);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
 	{

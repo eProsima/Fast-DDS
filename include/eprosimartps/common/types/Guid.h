@@ -174,6 +174,7 @@ typedef struct GUID_t{
 		entityId = guid.entityId;
 		return *this;
 	}
+
 	GUID_t(){};
 	GUID_t(const GuidPrefix_t& guidP,uint32_t id):
 		guidPrefix(guidP),entityId(id) {}
