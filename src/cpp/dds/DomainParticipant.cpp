@@ -116,6 +116,7 @@ bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pi
 
 Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
 {
+	pInfo("Creating Participant "<<endl);
 	uint32_t ID = getNewId();
 	int pid;
 #if defined(_WIN32)

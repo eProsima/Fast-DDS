@@ -134,7 +134,7 @@ public:
 		return m_locators.end();
 	}
 	size_t size(){
-		return size();
+		return m_locators.size();
 	}
 	void clear(){
 		m_locators.clear();

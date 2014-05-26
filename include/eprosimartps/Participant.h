@@ -225,6 +225,7 @@ public:
 	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
 	virtual ~ Participant(){};
 	const GUID_t& getGuid(){return mp_impl->getGuid();};
+	void announceParticipantState(){return mp_impl->announceParticipantState();};
 	private:
 ParticipantImpl* mp_impl;
 };

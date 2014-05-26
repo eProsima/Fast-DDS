@@ -26,10 +26,13 @@
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/common/colors.h"
+#include "eprosimartps/dds/attributes/all_attributes.h"
 #include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/qos/DDSQosPolicies.h"
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/dds/DDSTopicDataType.h"
 
+#include "eprosimartps/dds/SampleInfo.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
@@ -164,17 +167,17 @@ int main(int argc, char** argv){
 
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
-	LocatorList_t myIP;
-	DomainParticipant::getIPAddress(&myIP);
+//	LocatorList_t myIP;
+//	DomainParticipant::getIPAddress(&myIP);
 //	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
 	//***********  PARTICIPANT  ******************//
 	ParticipantAttributes PParam;
-
 	PParam.defaultSendPort = 10042;
 	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 	PParam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 30;
 	PParam.discovery.domainId = 80;
+	cout << "a"<<endl;
 	switch(type)
 	{
 	case 1:
@@ -186,9 +189,9 @@ int main(int argc, char** argv){
 		Wparam.topic.topicDataType = std::string("TestType");
 		Wparam.topic.topicName = std::string("Test_topic1");
 		Wparam.historyMaxSize = 14;
-		Wparam.reliability.heartbeatPeriod.seconds = 2;
-		Wparam.reliability.nackResponseDelay.seconds = 5;
-		Wparam.reliability.reliabilityKind = BEST_EFFORT;
+		Wparam.times.heartbeatPeriod.seconds = 2;
+		Wparam.times.nackResponseDelay.seconds = 5;
+		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
 		Wparam.userDefinedId = 1;
 		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_DURABILITY_QOS;
 
@@ -241,7 +244,7 @@ int main(int argc, char** argv){
 		Rparam.topic.topicDataType = std::string("TestType");
 		Rparam.topic.topicName = std::string("Test_topic1");
 		Rparam.topic.topicKind = WITH_KEY;
-		Rparam.reliability.reliabilityKind = BEST_EFFORT;
+		Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;

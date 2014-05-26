@@ -217,6 +217,7 @@ private:
 
 class RTPS_DllAPI DomainParticipant
 {
+public:
 	/**
 	 * Method to shut down all participants, readers, writers, etc.
 	 * It must be called at the end of the process to avoid memory leaks.
