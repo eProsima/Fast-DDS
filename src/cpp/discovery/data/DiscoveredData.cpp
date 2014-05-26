@@ -169,9 +169,16 @@ bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, 
 			wdata->m_writerProxy.multicastLocatorList.push_back(p->locator);
 			break;
 		}
+		case PID_KEY_HASH:
+		{
+			ParameterKey_t*p=(ParameterKey_t*)(*it);
+			wdata->m_key = p->key;
+			iHandle2GUID(wdata->m_writerProxy.remoteWriterGuid,wdata->m_key);
+			break;
+		}
 		default:
 		{
-			cout << B_RED << "Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED" << endl;
+			pError("Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED"<< endl);
 			break;
 		}
 		}
@@ -321,10 +328,20 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 			rdata->m_readerProxy.expectsInlineQos = p->value;
 			break;
 		}
+		case PID_KEY_HASH:
+		{
+			ParameterKey_t*p=(ParameterKey_t*)(*it);
+			cout <<"DiscoveredData2ReaderData: " << p->key << endl;
+			rdata->m_key = p->key;
+			cout <<"DiscoveredData2ReaderData: " << rdata->m_key << endl;
+			iHandle2GUID(rdata->m_readerProxy.remoteReaderGuid,rdata->m_key);
+			cout <<"DiscoveredData2ReaderData: " << rdata->m_readerProxy.remoteReaderGuid << endl;
+			break;
+		}
 		default:
 		{
-			cout << B_RED << "Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED" << endl;
-						break;
+			pError("Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED"<< endl);
+			break;
 		}
 		}
 	}

@@ -169,7 +169,7 @@ bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 {
 	pDebugInfo("Writer created, initializing"<<endl);
 	//Check if locator lists are empty:
-	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL)
+	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL && !isBuiltin)
 	{
 		pWarning("Reliable Writer defined with NO unicast locator, assigning default"<<endl);
 		W->unicastLocatorList = m_defaultUnicastLocatorList;
@@ -265,9 +265,9 @@ bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
 bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 {
 	//If NO UNICAST
-	if(p_R->unicastLocatorList.empty())
+	if(p_R->unicastLocatorList.empty() && !isBuiltin)
 	{
-		pWarning("Publisher created with no unicastLocatorList, adding default List"<<endl);
+		pWarning("Subscriber created with no unicastLocatorList, adding default List"<<endl);
 		p_R->unicastLocatorList = m_defaultUnicastLocatorList;
 	}
 	//IF NO MULTICAST

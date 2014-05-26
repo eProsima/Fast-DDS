@@ -79,8 +79,9 @@ void SEDPPubListener::onNewDataMessage()
 				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->readerHistoryCacheBegin();
 						it!=this->mp_SEDP->mp_PubReader->readerHistoryCacheEnd();++it)
 				{
-					if((*it)->instanceHandle == change->instanceHandle)
-					{
+					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber < change->sequenceNumber)
+										{
+											pDebugInfo("SEDP Publisher Listener:Removing older change with the same iHandle"<<endl);
 						this->mp_SEDP->mp_PubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
 						already_in_history = true;
 						break;
@@ -147,8 +148,7 @@ void SEDPSubListener::onNewDataMessage()
 			DiscoveredReaderData rdata;
 			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,&rdata))
 			{
-				rdata.m_key = change->instanceHandle;
-				cout << B_RED << "IHANDLE: "<< rdata.m_key << DEF <<endl;
+				cout << B_RED << "SEDPSubListenerIHANDLE: "<< rdata.m_key << DEF <<endl;
 				iHandle2GUID(rdata.m_readerProxy.remoteReaderGuid,change->instanceHandle);
 				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
@@ -158,12 +158,12 @@ void SEDPSubListener::onNewDataMessage()
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
-				cout << "DISCOVEREDPARTICIPANTS SIZE: " << this->mp_SEDP->mp_PDP->m_discoveredParticipants.size() << endl;
+				cout << "SEDPSubListener:DISCOVEREDPARTICIPANTS SIZE: " << this->mp_SEDP->mp_PDP->m_discoveredParticipants.size() << endl;
 				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
 						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
 				{
-					cout << "loop:" << pit->m_guidPrefix << endl;
-					cout << "read:" << rdata.m_readerProxy.remoteReaderGuid.guidPrefix << endl;
+					cout << "SEDPSubListener:loop:" << pit->m_guidPrefix << endl;
+					cout << "SEDPSubListener:read:" << rdata.m_readerProxy.remoteReaderGuid.guidPrefix << endl;
 					if(pit->m_guidPrefix == rdata.m_readerProxy.remoteReaderGuid.guidPrefix)
 					{
 						pdata = &(*pit);
@@ -181,8 +181,9 @@ void SEDPSubListener::onNewDataMessage()
 				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
 						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
 				{
-					if((*it)->instanceHandle == change->instanceHandle)
+					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
 					{
+						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
 						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
 						already_in_history = true;
 						break;
@@ -204,6 +205,7 @@ void SEDPSubListener::onNewDataMessage()
 				}
 				else
 				{
+					pDebugInfo(CYAN << "New DiscoveredReaderData added to Participant"<<DEF<<endl);
 					rdataptr = &rdata;
 					pdata->m_readers.push_back(*rdataptr);
 				}

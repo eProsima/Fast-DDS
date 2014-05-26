@@ -73,8 +73,8 @@ inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 			guid.guidPrefix.value[i] = ihandle.value[i];
 		else
 			guid.entityId.value[i-12] = ihandle.value[i];
-		return;
 	}
+	return;
 }
 
 inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHandle)
