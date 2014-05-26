@@ -57,7 +57,7 @@ typedef enum EndpointKind_t{
  */
 class Endpoint {
 public:
-	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
+	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
 	virtual ~Endpoint();
 
 

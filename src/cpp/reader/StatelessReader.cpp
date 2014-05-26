@@ -33,8 +33,8 @@ StatelessReader::~StatelessReader() {
 }
 
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
-		const GuidPrefix_t&guidP, const EntityId_t& entId):
-		RTPSReader(guidP,entId,param.topic,STATELESS,
+		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+		RTPSReader(guidP,entId,param.topic,ptype,STATELESS,
 				param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
 {
 	//locator lists:

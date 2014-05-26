@@ -105,7 +105,7 @@ ParticipantImpl::~ParticipantImpl()
 }
 
 bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,
-		uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
+		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	EntityId_t entId;
@@ -125,7 +125,7 @@ bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherA
 	{
 		entId = entityId;
 	}
-	StatelessWriter* SLWriter = new StatelessWriter(param,m_guid.guidPrefix,entId);
+	StatelessWriter* SLWriter = new StatelessWriter(param,m_guid.guidPrefix,entId,ptype);
 	if(this->initWriter((RTPSWriter*)SLWriter,isBuiltin))
 	{
 		*SW_out = SLWriter;
@@ -136,7 +136,7 @@ bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherA
 }
 
 bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,
-		uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
+		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulWriter"<<endl);
 	EntityId_t entId;
@@ -156,7 +156,7 @@ bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAt
 	{
 		entId = entityId;
 	}
-	StatefulWriter* SFWriter = new StatefulWriter(param, m_guid.guidPrefix,entId);
+	StatefulWriter* SFWriter = new StatefulWriter(param, m_guid.guidPrefix,entId,ptype);
 	if(this->initWriter((RTPSWriter*)SFWriter,isBuiltin))
 	{
 		*SFW_out = SFWriter;
@@ -188,7 +188,8 @@ bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 		if(!isBuiltin)
 		{
 			m_userWriterList.push_back(W);
-			mp_PDP->localWriterMatching(W,true);
+			if(mp_PDP!=NULL)
+				mp_PDP->localWriterMatching(W,true);
 		}
 		m_allWriterList.push_back(W);
 		pDebugInfo("Finished Writer creation"<<endl);
@@ -203,7 +204,7 @@ bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 }
 
 bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
-		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin, const EntityId_t& entityId)
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype, const EntityId_t& entityId)
 {
 	pInfo("Creating StatelessReader"<<endl);
 	EntityId_t entId;
@@ -221,7 +222,7 @@ bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
 	}
 	else
 		entId = entityId;
-	StatelessReader* SReader = new StatelessReader(param, m_guid.guidPrefix,entId);
+	StatelessReader* SReader = new StatelessReader(param, m_guid.guidPrefix,entId,ptype);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
@@ -232,7 +233,7 @@ bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
 }
 
 bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
-		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,const EntityId_t& entityId)
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
 	EntityId_t entId;
@@ -250,7 +251,7 @@ bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
 	}
 	else
 		entId = entityId;
-	StatefulReader* SReader = new StatefulReader(param, m_guid.guidPrefix,entId);
+	StatefulReader* SReader = new StatefulReader(param, m_guid.guidPrefix,entId,ptype);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
@@ -284,7 +285,8 @@ bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 		if(!isBuiltin)
 		{
 			m_userReaderList.push_back(p_R);
-			mp_PDP->localReaderMatching(p_R,true);
+			if(mp_PDP!=NULL)
+				mp_PDP->localReaderMatching(p_R,true);
 		}
 		m_allReaderList.push_back(p_R);
 

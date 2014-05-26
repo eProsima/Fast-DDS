@@ -35,7 +35,7 @@ class StatelessReader: public RTPSReader {
 public:
 	virtual ~StatelessReader();
 	StatelessReader(const SubscriberAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
 
 

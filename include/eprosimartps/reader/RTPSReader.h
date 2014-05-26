@@ -54,7 +54,7 @@ namespace rtps {
 class RTPSReader : public Endpoint{
 
 public:
-	RTPSReader(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,
+	RTPSReader(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 			StateKind_t state = STATELESS,
 			int16_t userDefinedId=-1,uint16_t historysize = 50,uint32_t payload_size = 500);
 	virtual ~RTPSReader();

@@ -67,6 +67,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	}
 	//Find out flags
 	bool dataFlag,keyFlag,inlineQosFlag;
+	cout << "SERLIALIZED PAYLOAD LENGTH: " << change->serializedPayload.length << endl;
 	if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
 	{
 		dataFlag = true;
@@ -77,6 +78,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		dataFlag = false;
 		keyFlag = true;
 	}
+	cout << "KEY FLAG: "<< keyFlag<<endl;
 	 if(topicKind == NO_KEY)
 		 keyFlag = false;
 	 inlineQosFlag = false;

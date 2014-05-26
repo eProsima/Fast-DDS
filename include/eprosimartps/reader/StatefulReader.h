@@ -35,7 +35,7 @@ public:
 	//StatefulReader();
 	virtual ~StatefulReader();
 	StatefulReader(const SubscriberAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 	/**
 	 * Add a matched writer.
 	 * @param[in] WP Pointer to the WriterProxy_t to add.

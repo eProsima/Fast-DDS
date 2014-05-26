@@ -38,7 +38,7 @@ public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
 	StatelessWriter(const PublisherAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
 
 	/**
