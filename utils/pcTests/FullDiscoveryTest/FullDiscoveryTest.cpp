@@ -216,6 +216,8 @@ int main(int argc, char** argv){
 		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_DURABILITY_QOS;
 
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+		MyPubListener mylisten;
+		pub->assignListener((PublisherListener*)&mylisten);
 //		SubscriberAttributes Rparam;
 //		Rparam.historyMaxSize = 50;
 //		Rparam.topic.topicDataType = std::string("TestType");
