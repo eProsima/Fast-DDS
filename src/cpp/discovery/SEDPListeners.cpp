@@ -54,7 +54,7 @@ void SEDPPubListener::onNewDataMessage()
 				if(wdata.m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
-					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
+					pInfo(CYAN<<"SEDP Pub Listener: Message from own participant, removing"<<DEF<<endl)
 							this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
@@ -70,7 +70,7 @@ void SEDPPubListener::onNewDataMessage()
 				}
 				if(pdata == NULL)
 				{
-					pWarning("PubReader received message from UNKNOWN participant, removing"<<endl);
+					pWarning("Publications Listener: received message from UNKNOWN participant, removing"<<endl);
 					this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
@@ -122,7 +122,7 @@ void SEDPPubListener::onNewDataMessage()
 		}
 		else
 		{
-			pError("SEDPPubListener: error reading Parameters from CDRMessage"<<endl);
+			pError("SEDP Pub Listener: error reading Parameters from CDRMessage"<<endl);
 			param.deleteParams();
 			return;
 		}
@@ -151,7 +151,7 @@ void SEDPSubListener::onNewDataMessage()
 				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
-					pInfo(CYAN<<"SEDPListener: Message from own participant, removing"<<DEF<<endl)
+					pInfo(CYAN<<"SEDP Sub Listener: Message from own participant, removing"<<DEF<<endl)
 							this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
@@ -159,6 +159,8 @@ void SEDPSubListener::onNewDataMessage()
 				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
 						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
 				{
+					cout << "loop:" << pit->m_guidPrefix << endl;
+					cout << "read:" << rdata.m_readerProxy.remoteReaderGuid.guidPrefix << endl;
 					if(pit->m_guidPrefix == rdata.m_readerProxy.remoteReaderGuid.guidPrefix)
 					{
 						pdata = &(*pit);
@@ -167,7 +169,7 @@ void SEDPSubListener::onNewDataMessage()
 				}
 				if(pdata == NULL)
 				{
-					pWarning("PubReader received message from UNKNOWN participant, removing"<<endl);
+					pWarning("Subscriptions Listener: received message from UNKNOWN participant, removing"<<endl);
 					this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
