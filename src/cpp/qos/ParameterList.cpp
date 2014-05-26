@@ -67,7 +67,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 		paramlist_byte_size +=4;
 		if(valid)
 		{
-			//cout << "readparameterlistfromcdrmsg Param with pid: " << pid << endl;
+			cout << RED <<"readparameterlistfromcdrmsg Param with pid: " << std::hex << pid << std::dec <<DEF <<endl;
 			switch(pid)
 			{
 			case PID_UNICAST_LOCATOR:
@@ -294,6 +294,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			}
 			case PID_KEY_HASH:
 			{
+				cout << B_RED << "KAYHASH" << DEF << endl;
       			ParameterKey_t* p = new ParameterKey_t();
 				p->Pid = PID_KEY_HASH;
 				p->length = 16;
@@ -301,8 +302,8 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				paramlist_byte_size+=16;
 				if(handle!=NULL)
 					*handle = p->key;
+				cout << p->key << endl;
 				IF_VALID_ADD
-				break;
 			}
 			case PID_SENTINEL:
 			{

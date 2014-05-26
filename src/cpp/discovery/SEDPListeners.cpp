@@ -60,7 +60,7 @@ void SEDPPubListener::onNewDataMessage()
 				}
 				DiscoveredParticipantData* pdata = NULL;
 				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
-						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
+						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
 				{
 					if(pit->m_guidPrefix == wdata.m_writerProxy.remoteWriterGuid.guidPrefix)
 					{
@@ -142,12 +142,14 @@ void SEDPSubListener::onNewDataMessage()
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
 		msg.length = change->serializedPayload.length;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
+		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,&change->instanceHandle,NULL)>0)
 		{
 			DiscoveredReaderData rdata;
 			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,&rdata))
 			{
-				change->instanceHandle = rdata.m_key;
+				rdata.m_key = change->instanceHandle;
+				cout << B_RED << "IHANDLE: "<< rdata.m_key << DEF <<endl;
+				iHandle2GUID(rdata.m_readerProxy.remoteReaderGuid,change->instanceHandle);
 				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
@@ -156,8 +158,9 @@ void SEDPSubListener::onNewDataMessage()
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
+				cout << "DISCOVEREDPARTICIPANTS SIZE: " << this->mp_SEDP->mp_PDP->m_discoveredParticipants.size() << endl;
 				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
-						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();++pit)
+						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
 				{
 					cout << "loop:" << pit->m_guidPrefix << endl;
 					cout << "read:" << rdata.m_readerProxy.remoteReaderGuid.guidPrefix << endl;

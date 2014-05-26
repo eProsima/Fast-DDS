@@ -56,14 +56,35 @@ typedef struct InstanceHandle_t{
 }InstanceHandle_t;
 
 inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
-			{
+{
 	for(uint8_t i =0;i<16;++i)
 	{
 		if(ihandle1.value[i] != ihandle2.value[i])
 			return false;
 	}
 	return true;
-			}
+}
+
+inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
+{
+	for(uint8_t i = 0;i<16;++i)
+	{
+		if(i<12)
+			guid.guidPrefix.value[i] = ihandle.value[i];
+		else
+			guid.entityId.value[i-12] = ihandle.value[i];
+		return;
+	}
+}
+
+inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHandle)
+{
+	output << std::hex;
+	for(uint8_t i =0;i<16;++i)
+		output << (int)iHandle.value[i] << ".";
+	output<<std::dec;
+	return output;
+}
 
 }
 }
