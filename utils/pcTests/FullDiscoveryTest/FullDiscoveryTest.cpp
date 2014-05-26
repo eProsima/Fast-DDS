@@ -148,14 +148,12 @@ bool TestTypeDataType::getKey(void*data,InstanceHandle_t* handle)
 
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_LONGINFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
 	int type;
 	if(argc > 1)
 	{
-		RTPSLog::Info << "Parsing arguments: " << argv[1] << endl;
-		RTPSLog::printInfo();
 		if(strcmp(argv[1],"1")==0)
 			type = 1;
 		if(strcmp(argv[1],"2")==0)
@@ -164,6 +162,7 @@ int main(int argc, char** argv){
 	else
 		type = WR;
 
+	pDebugInfo("Stargin"<<endl);
 
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
@@ -190,7 +189,7 @@ int main(int argc, char** argv){
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
 
-		my_sleep(10);
+	//	my_sleep(10);
 
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -218,6 +217,7 @@ int main(int argc, char** argv){
 //		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
 		p->announceParticipantState();
+		cout << "Sleeping 4 seconds"<<endl;
 		my_sleep(4);
 		TestType tp1,tp_in;
 		SampleInfo_t info_in;
@@ -280,7 +280,7 @@ int main(int argc, char** argv){
 
 		p->announceParticipantState();
 
-		my_sleep(4);
+	//	my_sleep(4);
 		TestType tp_in;
 		SampleInfo_t info_in;
 		for(uint i = 0;i<10;i++)

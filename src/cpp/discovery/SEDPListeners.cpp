@@ -51,11 +51,24 @@ void SEDPPubListener::onNewDataMessage()
 			if(DiscoveredData::ParameterList2DiscoveredWriterData(param,&wdata))
 			{
 				change->instanceHandle = wdata.m_key;
+				bool already_in_history = false;
+				//Check if CacheChange_t with same Key is already in History:
+				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->readerHistoryCacheBegin();
+						it!=this->mp_SEDP->mp_PubReader->readerHistoryCacheEnd();++it)
+				{
+					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber < change->sequenceNumber)
+					{
+						pDebugInfo("SEDP Publisher Listener:Removing older change with the same iHandle"<<endl);
+						this->mp_SEDP->mp_PubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+						already_in_history = true;
+						break;
+					}
+				}
 				if(wdata.m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
-					pInfo(CYAN<<"SEDP Pub Listener: Message from own participant, removing"<<DEF<<endl)
-							this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
+					pInfo(CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<DEF<<endl)
+					//		this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
@@ -74,19 +87,7 @@ void SEDPPubListener::onNewDataMessage()
 					this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
-				bool already_in_history = false;
-				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->readerHistoryCacheBegin();
-						it!=this->mp_SEDP->mp_PubReader->readerHistoryCacheEnd();++it)
-				{
-					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber < change->sequenceNumber)
-										{
-											pDebugInfo("SEDP Publisher Listener:Removing older change with the same iHandle"<<endl);
-						this->mp_SEDP->mp_PubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-						already_in_history = true;
-						break;
-					}
-				}
+
 				DiscoveredWriterData* wdataptr = NULL;
 				if(already_in_history)
 				{
@@ -150,11 +151,24 @@ void SEDPSubListener::onNewDataMessage()
 			{
 				cout << B_RED << "SEDPSubListenerIHANDLE: "<< rdata.m_key << DEF <<endl;
 				iHandle2GUID(rdata.m_readerProxy.remoteReaderGuid,change->instanceHandle);
+				bool already_in_history = false;
+								//Check if CacheChange_t with same Key is already in History:
+								for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
+										it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
+								{
+									if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
+									{
+										pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
+										this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+										already_in_history = true;
+										break;
+									}
+								}
 				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
-					pInfo(CYAN<<"SEDP Sub Listener: Message from own participant, removing"<<DEF<<endl)
-							this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
+					pInfo(CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<DEF<<endl)
+					//		this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
@@ -176,19 +190,7 @@ void SEDPSubListener::onNewDataMessage()
 					this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return;
 				}
-				bool already_in_history = false;
-				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
-						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
-				{
-					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
-					{
-						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
-						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-						already_in_history = true;
-						break;
-					}
-				}
+
 				DiscoveredReaderData* rdataptr = NULL;
 				if(already_in_history)
 				{

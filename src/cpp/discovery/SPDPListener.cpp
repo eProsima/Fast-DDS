@@ -50,13 +50,24 @@ bool SPDPListener::newAddedCache()
 
 			if(processParameterList(param,&pdata))
 			{
-//				cout << pdata.m_guidPrefix << endl;
-//				cout << mp_SPDP->mp_localDPData->m_guidPrefix << endl;
+			//	bool already_in_history = false;
+				//Check if CacheChange_t with same Key is already in History:
+				for(std::vector<CacheChange_t*>::iterator it = mp_SPDP->mp_SPDPReader->readerHistoryCacheBegin();
+						it!=mp_SPDP->mp_SPDPReader->readerHistoryCacheEnd();++it)
+				{
+					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
+					{
+						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
+						mp_SPDP->mp_SPDPReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+					//	already_in_history = true;
+						break;
+					}
+				}
 				if(pdata.m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
-					pInfo(CYAN<<"SPDPListener: Message from own participant, removing"<<DEF<<endl)
-					mp_SPDP->mp_SPDPReader->remove_change(change->sequenceNumber,change->writerGUID);
+					pInfo(CYAN<<"SPDPListener: Message from own participant, ignoring"<<DEF<<endl)
+					//mp_SPDP->mp_SPDPReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return true;
 				}
 				//Look for the participant in my own list:

@@ -20,77 +20,72 @@
 namespace eprosima {
 
 
-std::ostringstream RTPSLog::Error;
-std::ostringstream RTPSLog::Warning;
-std::ostringstream RTPSLog::Info;
-std::ostringstream RTPSLog::DebugInfo;
-std::ostringstream RTPSLog::LongInfo;
-
-
+void RTPSThreadLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL type,std::string& s)
+{
+	if(type <= m_verbosity)
+	{
+		switch(type)
+		{
+		case(EPROSIMA_QUIET_VERB_LEVEL):
+		default:
+		{
+			break;
+		}
+		case(EPROSIMA_ERROR_VERB_LEVEL):
+		{
+			m_log << B_RED << "[eRTPS- Err] " << DEF << s << DEF;
+			break;
+		}
+		case(EPROSIMA_WARNING_VERB_LEVEL):
+		{
+			m_log << B_YELLOW << "[eRTPS-Warn] " << DEF << s << DEF;
+			break;
+		}
+		case(EPROSIMA_INFO_VERB_LEVEL):
+		{
+			m_log << B_GREEN << "[eRTPS-Info] " << DEF << s << DEF;
+			break;
+		}
+		case(EPROSIMA_DEBUGINFO_VERB_LEVEL):
+		{
+			m_log << GREEN << "[eRTPS-DebugInfo] " << DEF << s << DEF;
+			break;
+		}
+		}
+		if(RTPSLog::getInstance()->try_lock())
+		{
+			std::cout<< m_log.str();
+			m_log.str("");m_log.clear();
+			RTPSLog::getInstance()->unlock();
+		}
+	}
+}
 
 bool RTPSLog::instanceFlag = false;
 RTPSLog* RTPSLog::single = NULL;
 
-
-void RTPSLog::printError()
+void RTPSLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL type,std::string stri)
 {
-	std::stringstream ss;
-	ss << B_RED << "[eRTPS- Err] " << DEF <<  RTPSLog::Error.str() << DEF;
-	RTPSLog::printString(EPROSIMA_ERROR_VERBOSITY_LEVEL,ss.str());
-	RTPSLog::Error.str("");
-	RTPSLog::Error.clear();
-}
-
-void RTPSLog::printWarning()
-{
-	std::stringstream ss;
-		ss << B_YELLOW << "[eRTPS-Warn] " << DEF <<  RTPSLog::Warning.str() << DEF;
-	RTPSLog::printString(EPROSIMA_WARNING_VERBOSITY_LEVEL,ss.str());
-	RTPSLog::Warning.str("");
-	RTPSLog::Warning.clear();
-}
-
-void RTPSLog::printInfo()
-{
-	std::stringstream ss;
-		ss << B_GREEN << "[eRTPS-Info] " << DEF <<  RTPSLog::Info.str() << DEF;
-	RTPSLog::printString(EPROSIMA_INFO_VERBOSITY_LEVEL,ss.str());
-	RTPSLog::Info.str("");
-	RTPSLog::Info.clear();
-}
-
-void RTPSLog::printDebugInfo()
-{
-	std::stringstream ss;
-		ss << B_GREEN << "[eRTPS-DebugInfo] " << DEF <<  RTPSLog::DebugInfo.str() << DEF;
-	RTPSLog::printString(EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL,ss.str());
-	RTPSLog::DebugInfo.str("");
-	RTPSLog::DebugInfo.clear();
-}
-
-void RTPSLog::printLongInfo()
-{
-	std::stringstream ss;
-	ss << B_GREEN << "[eRTPS-Long Info] " << std::endl << DEF <<  RTPSLog::LongInfo.str() << DEF <<  B_GREEN << "[/eRTPS-Long Info] "<< DEF << std::endl ;
-	RTPSLog::printString(EPROSIMA_LONGINFO_VERBOSITY_LEVEL,ss.str());
-	RTPSLog::LongInfo.str("");
-	RTPSLog::LongInfo.clear();
-}
-
-
-
-void RTPSLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL lvl,std::string s)
-{
-	RTPSLog* RL = getInstance();
-	boost::lock_guard<RTPSLog> guard(*RL);
-	if(RL->verbosityLevel >= lvl)
+	RTPSLog* rl = RTPSLog::getInstance();
+	boost::thread::id id = boost::this_thread::get_id();
+	for(std::vector<RTPSThreadLog*>::iterator it = rl->m_logs.begin();
+			it!= rl->m_logs.end();++it)
 	{
-		std::cout << s;
+		if(id == (*it)->m_id)
+		{
+			(*it)->printString(type,stri);
+			return;
+		}
 	}
+	RTPSThreadLog* rtl = new RTPSThreadLog(id,rl->m_verbosityLevel);
+	rl->m_logs.push_back(rtl);
+	(*(rl->m_logs.end()-1))->printString(type,stri);
+	return;
 }
 
 RTPSLog* RTPSLog::getInstance()
 {
+	boost::this_thread::get_id();
 	if(! instanceFlag)
 	{
 		single = new RTPSLog();
@@ -111,9 +106,12 @@ RTPSLog::~RTPSLog()
 void RTPSLog::setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level)
 {
 	RTPSLog* RL = getInstance();
-	RL->verbosityLevel = level;
-	pInfo("Verbosity set to level: "<<level<<endl);
-
+	RL->m_verbosityLevel = level;
+	for(std::vector<RTPSThreadLog*>::iterator it = RL->m_logs.begin();
+			it!=RL->m_logs.end();++it)
+	{
+		(*it)->m_verbosity = level;
+	}
 }
 
 
