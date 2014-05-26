@@ -80,17 +80,18 @@ bool StaticEDP::loadXMLFile(const std::string& filename)
 	{
 		if(xml_participant.first == "participant")
 		{
-			DiscoveredParticipantData pdata;
-			DiscoveredParticipantData* p_pdata = &pdata;
+			DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
+			DiscoveredParticipantData* p_pdata = pdata;
 			bool different_participant = true;
 			BOOST_FOREACH(ptree::value_type& xml_participant_child,xml_participant.second)
 			{
 				if(xml_participant_child.first == "name")
 				{
-					pdata.m_participantName = xml_participant_child.second.data();
-					if(pdata.m_participantName == this->mp_PDP->mp_participant->getParticipantName())
+					pdata->m_participantName = xml_participant_child.second.data();
+					if(pdata->m_participantName == this->mp_PDP->mp_participant->getParticipantName())
 					{
 						p_pdata = this->mp_PDP->mp_localDPData;
+						delete(pdata);
 						different_participant = false;
 					}
 				}
@@ -120,7 +121,7 @@ bool StaticEDP::loadXMLFile(const std::string& filename)
 
 bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata)
 {
-	DiscoveredWriterData wdata;
+	DiscoveredWriterData* wdata = new DiscoveredWriterData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
 		if(xml_endpoint_child.first == "id")
@@ -128,7 +129,7 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 			int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
 			if(!std::binary_search(m_endpointIds.begin(),m_endpointIds.end(),id))
 			{
-				wdata.userDefinedId= id;
+				wdata->userDefinedId= id;
 				m_endpointIds.push_back(id);
 			}
 			else
@@ -143,19 +144,19 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 		}
 		else if(xml_endpoint_child.first == "topicName")
 		{
-			wdata.m_topicName = (std::string)xml_endpoint_child.second.data();
+			wdata->m_topicName = (std::string)xml_endpoint_child.second.data();
 		}
 		else if(xml_endpoint_child.first == "topicDataType")
 		{
-			wdata.m_typeName = (std::string)xml_endpoint_child.second.data();
+			wdata->m_typeName = (std::string)xml_endpoint_child.second.data();
 		}
 		else if(xml_endpoint_child.first == "topicKind")
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "NO_KEY")
-				wdata.topicKind = NO_KEY;
+				wdata->topicKind = NO_KEY;
 			else if (auxString == "WITH_KEY")
-				wdata.topicKind = WITH_KEY;
+				wdata->topicKind = WITH_KEY;
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -166,9 +167,9 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "RELIABLE")
-				wdata.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+				wdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 			else if (auxString == "BEST_EFFORT")
-				wdata.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+				wdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 			else
 			{
 				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
@@ -182,7 +183,7 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
 			loc.set_IP4_address(auxString);
 			loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
-			wdata.m_writerProxy.unicastLocatorList.push_back(loc);
+			wdata->m_writerProxy.unicastLocatorList.push_back(loc);
 		}
 		else if(xml_endpoint_child.first == "multicastLocator")
 		{
@@ -191,17 +192,17 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
 			loc.set_IP4_address(auxString);
 			loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
-			wdata.m_writerProxy.multicastLocatorList.push_back(loc);
+			wdata->m_writerProxy.multicastLocatorList.push_back(loc);
 		}
 		else if(xml_endpoint_child.first == "topic")
 		{
-			wdata.m_topicName = xml_endpoint_child.second.get("<xmlattr>.name","");
-			wdata.m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","");
+			wdata->m_topicName = xml_endpoint_child.second.get("<xmlattr>.name","");
+			wdata->m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","");
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.kind","");
 			if(auxString == "NO_KEY")
-				wdata.topicKind = NO_KEY;
+				wdata->topicKind = NO_KEY;
 			else if (auxString == "WITH_KEY")
-				wdata.topicKind = WITH_KEY;
+				wdata->topicKind = WITH_KEY;
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -219,7 +220,7 @@ bool StaticEDP::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,Discovered
 
 bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata)
 {
-	DiscoveredReaderData rdata;
+	DiscoveredReaderData* rdata = new DiscoveredReaderData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
 		if(xml_endpoint_child.first == "id")
@@ -227,7 +228,7 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 			int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
 			if(!std::binary_search(m_endpointIds.begin(),m_endpointIds.end(),id))
 			{
-				rdata.userDefinedId= id;
+				rdata->userDefinedId= id;
 				m_endpointIds.push_back(id);
 			}
 			else
@@ -240,9 +241,9 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "true")
-				rdata.m_readerProxy.expectsInlineQos = true;
+				rdata->m_readerProxy.expectsInlineQos = true;
 			else if (auxString == "false")
-				rdata.m_readerProxy.expectsInlineQos = false;
+				rdata->m_readerProxy.expectsInlineQos = false;
 			else
 			{
 				pError("Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid"<<endl);
@@ -251,19 +252,19 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 		}
 		else if(xml_endpoint_child.first == "topicName")
 		{
-			rdata.m_topicName = (std::string)xml_endpoint_child.second.data();
+			rdata->m_topicName = (std::string)xml_endpoint_child.second.data();
 		}
 		else if(xml_endpoint_child.first == "topicDataType")
 		{
-			rdata.m_typeName = (std::string)xml_endpoint_child.second.data();
+			rdata->m_typeName = (std::string)xml_endpoint_child.second.data();
 		}
 		else if(xml_endpoint_child.first == "topicKind")
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "NO_KEY")
-				rdata.topicKind = NO_KEY;
+				rdata->topicKind = NO_KEY;
 			else if (auxString == "WITH_KEY")
-				rdata.topicKind = WITH_KEY;
+				rdata->topicKind = WITH_KEY;
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -274,9 +275,9 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "RELIABLE")
-				rdata.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+				rdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 			else if (auxString == "BEST_EFFORT")
-				rdata.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+				rdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 			else
 			{
 				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
@@ -290,7 +291,7 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
 			loc.set_IP4_address(auxString);
 			loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
-			rdata.m_readerProxy.unicastLocatorList.push_back(loc);
+			rdata->m_readerProxy.unicastLocatorList.push_back(loc);
 		}
 		else if(xml_endpoint_child.first == "multicastLocator")
 		{
@@ -299,17 +300,17 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.address","");
 			loc.set_IP4_address(auxString);
 			loc.port = xml_endpoint_child.second.get("<xmlattr>.port",0);
-			rdata.m_readerProxy.multicastLocatorList.push_back(loc);
+			rdata->m_readerProxy.multicastLocatorList.push_back(loc);
 		}
 		else if(xml_endpoint_child.first == "topic")
 		{
-			rdata.m_topicName = xml_endpoint_child.second.get("<xmlattr>.name","");
-			rdata.m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","");
+			rdata->m_topicName = xml_endpoint_child.second.get("<xmlattr>.name","");
+			rdata->m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","");
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.kind","");
 			if(auxString == "NO_KEY")
-				rdata.topicKind = NO_KEY;
+				rdata->topicKind = NO_KEY;
 			else if (auxString == "WITH_KEY")
-				rdata.topicKind = WITH_KEY;
+				rdata->topicKind = WITH_KEY;
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -329,33 +330,33 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched_global = false;
-	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
-		for(std::vector<DiscoveredReaderData>::iterator it = pit->m_readers.begin();
-				it!= pit->m_readers.end();++it)
+		for(std::vector<DiscoveredReaderData*>::iterator it = (*pit)->m_readers.begin();
+				it!= (*pit)->m_readers.end();++it)
 		{
-			if(writer->getTopic().getTopicName() == it->m_topicName &&
-					writer->getTopic().getTopicKind() == it->topicKind &&
-					writer->getTopic().getTopicDataType() == it->m_typeName &&
-					it->isAlive && it->userDefinedId>0) //Matching
+			if(writer->getTopic().getTopicName() == (*it)->m_topicName &&
+					writer->getTopic().getTopicKind() == (*it)->topicKind &&
+					writer->getTopic().getTopicDataType() == (*it)->m_typeName &&
+					(*it)->isAlive && (*it)->userDefinedId>0) //Matching
 			{
 				bool matched = false;
-				if(writer->getStateType() == STATELESS && it->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
+				if(writer->getStateType() == STATELESS && (*it)->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 				{
 					StatelessWriter* p_SLW = (StatelessWriter*)writer;
 					ReaderLocator RL;
-					RL.expectsInlineQos = it->m_readerProxy.expectsInlineQos;
-					for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.unicastLocatorList.begin();
-							lit != it->m_readerProxy.unicastLocatorList.end();++lit)
+					RL.expectsInlineQos = (*it)->m_readerProxy.expectsInlineQos;
+					for(std::vector<Locator_t>::iterator lit = (*it)->m_readerProxy.unicastLocatorList.begin();
+							lit != (*it)->m_readerProxy.unicastLocatorList.end();++lit)
 					{
 						//cout << "added unicast RL to my STATELESSWRITER"<<endl;
 						RL.locator = *lit;
 						if(p_SLW->reader_locator_add(RL))
 							matched =true;
 					}
-					for(std::vector<Locator_t>::iterator lit = it->m_readerProxy.multicastLocatorList.begin();
-							lit != it->m_readerProxy.multicastLocatorList.end();++lit)
+					for(std::vector<Locator_t>::iterator lit = (*it)->m_readerProxy.multicastLocatorList.begin();
+							lit != (*it)->m_readerProxy.multicastLocatorList.end();++lit)
 					{
 						RL.locator = *lit;
 						if(p_SLW->reader_locator_add(RL))
@@ -365,7 +366,7 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 				else if(writer->getStateType() == STATEFUL)
 				{
 					StatefulWriter* p_SFW = (StatefulWriter*)writer;
-					if(p_SFW->matched_reader_add(it->m_readerProxy))
+					if(p_SFW->matched_reader_add((*it)->m_readerProxy))
 						matched = true;
 				}
 				if(matched && writer->getListener()!=NULL)
@@ -383,16 +384,16 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 {
 	pInfo(MAGENTA "Matching local WRITER"<<endl);
 	bool matched_global = false;
-	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
-		for(std::vector<DiscoveredWriterData>::iterator it = pit->m_writers.begin();
-				it!=pit->m_writers.end();++it)
+		for(std::vector<DiscoveredWriterData*>::iterator it = (*pit)->m_writers.begin();
+				it!=(*pit)->m_writers.end();++it)
 		{
-			if(reader->getTopic().getTopicName() == it->m_topicName &&
-					reader->getTopic().getTopicKind() == it->topicKind &&
-					reader->getTopic().getTopicDataType() == it->m_typeName &&
-					it->isAlive && it->userDefinedId>0) //Matching
+			if(reader->getTopic().getTopicName() == (*it)->m_topicName &&
+					reader->getTopic().getTopicKind() == (*it)->topicKind &&
+					reader->getTopic().getTopicDataType() == (*it)->m_typeName &&
+					(*it)->isAlive && (*it)->userDefinedId>0) //Matching
 			{
 				bool matched = false;
 				if(reader->getStateType() == STATELESS)
@@ -402,7 +403,7 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 				else if(reader->getStateType() == STATEFUL)
 				{
 					StatefulReader* p_SFR = (StatefulReader*)reader;
-					if(p_SFR->matched_writer_add(it->m_writerProxy))
+					if(p_SFR->matched_writer_add((*it)->m_writerProxy))
 						matched = true;
 				}
 				if(matched && reader->getListener()!=NULL)
@@ -417,38 +418,38 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 
 bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 {
-	for(std::vector<DiscoveredWriterData>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
+	for(std::vector<DiscoveredWriterData*>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
 			it!=this->mp_PDP->mp_localDPData->m_writers.begin();++it)
 	{
-		if(writer->getUserDefinedId() == it->userDefinedId)
+		if(writer->getUserDefinedId() == (*it)->userDefinedId)
 		{
 			bool equal = true;
-			equal &= (writer->getTopic().getTopicKind() == it->topicKind);
+			equal &= (writer->getTopic().getTopicKind() == (*it)->topicKind);
 			if(!equal)
 			{
 				pWarning("Topic Kind different in XML" <<endl);
 			}
-			equal &= (writer->getTopic().getTopicName() == it->m_topicName);
+			equal &= (writer->getTopic().getTopicName() == (*it)->m_topicName);
 			if(!equal)
 			{
-				pWarning("Topic Name different in XML: " << writer->getTopic().getTopicName() << " vs " <<it->m_topicName <<endl);
+				pWarning("Topic Name different in XML: " << writer->getTopic().getTopicName() << " vs " <<(*it)->m_topicName <<endl);
 			}
-			equal &= (writer->getTopic().getTopicDataType() == it->m_typeName);
+			equal &= (writer->getTopic().getTopicDataType() == (*it)->m_typeName);
 			if(!equal)
 			{
-				pWarning("Topic Data Type different in XML: " << writer->getTopic().getTopicDataType() << " vs " <<it->m_typeName <<endl);
+				pWarning("Topic Data Type different in XML: " << writer->getTopic().getTopicDataType() << " vs " <<(*it)->m_typeName <<endl);
 			}
-			if(writer->getStateType() == STATELESS && it->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
+			if(writer->getStateType() == STATELESS && (*it)->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
 				equal &= false;
-			if(writer->getStateType() == STATEFUL && it->m_qos.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
+			if(writer->getStateType() == STATEFUL && (*it)->m_qos.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
 				equal &= false;
 			bool found;
 			for(LocatorListIterator paramlit = writer->unicastLocatorList.begin();
 					paramlit != writer->unicastLocatorList.end();++paramlit)
 			{
 				found = false;
-				for(LocatorListIterator xmllit = it->m_writerProxy.unicastLocatorList.begin();
-						xmllit!=it->m_writerProxy.unicastLocatorList.begin();++xmllit)
+				for(LocatorListIterator xmllit = (*it)->m_writerProxy.unicastLocatorList.begin();
+						xmllit!=(*it)->m_writerProxy.unicastLocatorList.begin();++xmllit)
 				{
 					if(*paramlit == *xmllit)
 					{
@@ -466,8 +467,8 @@ bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 					paramlit != writer->multicastLocatorList.end();++paramlit)
 			{
 				found = false;
-				for(LocatorListIterator xmllit = it->m_writerProxy.multicastLocatorList.begin();
-						xmllit!=it->m_writerProxy.multicastLocatorList.begin();++xmllit)
+				for(LocatorListIterator xmllit = (*it)->m_writerProxy.multicastLocatorList.begin();
+						xmllit!=(*it)->m_writerProxy.multicastLocatorList.begin();++xmllit)
 				{
 					if(*paramlit == *xmllit)
 					{
@@ -490,38 +491,38 @@ bool StaticEDP::checkLocalWriterCreation(RTPSWriter* writer)
 
 bool StaticEDP::checkLocalReaderCreation(RTPSReader* reader)
 {
-	for(std::vector<DiscoveredReaderData>::iterator it = this->mp_PDP->mp_localDPData->m_readers.begin();
+	for(std::vector<DiscoveredReaderData*>::iterator it = this->mp_PDP->mp_localDPData->m_readers.begin();
 			it!=this->mp_PDP->mp_localDPData->m_readers.begin();++it)
 	{
-		if(reader->getUserDefinedId() == it->userDefinedId)
+		if(reader->getUserDefinedId() == (*it)->userDefinedId)
 		{
 			bool equal = true;
-			equal &= (reader->getTopic().getTopicKind() == it->topicKind);
+			equal &= (reader->getTopic().getTopicKind() == (*it)->topicKind);
 			if(!equal)
 			{
 				pWarning("Topic Kind different in XML" <<endl);
 			}
-			equal &= (reader->getTopic().getTopicName() == it->m_topicName);
+			equal &= (reader->getTopic().getTopicName() == (*it)->m_topicName);
 			if(!equal)
 			{
-				pWarning("Topic Name different in XML: " << reader->getTopic().getTopicName() << " vs " <<it->m_topicName <<endl);
+				pWarning("Topic Name different in XML: " << reader->getTopic().getTopicName() << " vs " <<(*it)->m_topicName <<endl);
 			}
-			equal &= (reader->getTopic().getTopicDataType() == it->m_typeName);
+			equal &= (reader->getTopic().getTopicDataType() == (*it)->m_typeName);
 			if(!equal)
 			{
-				pWarning("Topic Data Type different in XML: " << reader->getTopic().getTopicDataType() << " vs " <<it->m_typeName <<endl);
+				pWarning("Topic Data Type different in XML: " << reader->getTopic().getTopicDataType() << " vs " <<(*it)->m_typeName <<endl);
 			}
-			if(reader->getStateType() == STATELESS && it->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
+			if(reader->getStateType() == STATELESS && (*it)->m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS)
 				equal &= false;
-			if(reader->getStateType() == STATEFUL && it->m_qos.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
+			if(reader->getStateType() == STATEFUL && (*it)->m_qos.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
 				equal &= false;
 			bool found;
 			for(LocatorListIterator paramlit = reader->unicastLocatorList.begin();
 					paramlit != reader->unicastLocatorList.end();++paramlit)
 			{
 				found = false;
-				for(LocatorListIterator xmllit = it->m_readerProxy.unicastLocatorList.begin();
-						xmllit!=it->m_readerProxy.unicastLocatorList.begin();++xmllit)
+				for(LocatorListIterator xmllit = (*it)->m_readerProxy.unicastLocatorList.begin();
+						xmllit!=(*it)->m_readerProxy.unicastLocatorList.begin();++xmllit)
 				{
 					if(*paramlit == *xmllit)
 					{
@@ -539,8 +540,8 @@ bool StaticEDP::checkLocalReaderCreation(RTPSReader* reader)
 					paramlit != reader->multicastLocatorList.end();++paramlit)
 			{
 				found = false;
-				for(LocatorListIterator xmllit = it->m_readerProxy.multicastLocatorList.begin();
-						xmllit!=it->m_readerProxy.multicastLocatorList.begin();++xmllit)
+				for(LocatorListIterator xmllit = (*it)->m_readerProxy.multicastLocatorList.begin();
+						xmllit!=(*it)->m_readerProxy.multicastLocatorList.begin();++xmllit)
 				{
 					if(*paramlit == *xmllit)
 					{
