@@ -166,7 +166,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo("Creating Publisher"<<endl)
+	pInfo(B_YELLOW <<"Creating Publisher"<<DEF<<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(WParam.topic.topicDataType,&p_type))
@@ -225,7 +225,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo("Creating Subscriber"<<endl)
+	pInfo(B_YELLOW <<"Creating Subscriber"<<DEF <<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
