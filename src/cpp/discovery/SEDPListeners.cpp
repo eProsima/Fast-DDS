@@ -104,9 +104,11 @@ void SEDPPubListener::onNewDataMessage()
 				}
 				else
 				{
-					wdataptr = &wdata;
-					pdata->m_writers.push_back(*wdataptr);
+					pDebugInfo(CYAN << "New DiscoveredWriterData added to Participant"<<DEF<<endl);
+					pdata->m_writers.push_back(wdata);
+					wdataptr = &*(pdata->m_writers.end()-1);
 				}
+				wdataptr->isAlive = true;
 				for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->userReadersListBegin();
 						rit!=this->mp_SEDP->mp_PDP->mp_participant->userReadersListEnd();++rit)
 				{
@@ -208,9 +210,10 @@ void SEDPSubListener::onNewDataMessage()
 				else
 				{
 					pDebugInfo(CYAN << "New DiscoveredReaderData added to Participant"<<DEF<<endl);
-					rdataptr = &rdata;
-					pdata->m_readers.push_back(*rdataptr);
+					pdata->m_readers.push_back(rdata);
+					rdataptr = &*(pdata->m_readers.end()-1);
 				}
+				rdataptr->isAlive = true;
 				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->userWritersListBegin();
 						wit!=this->mp_SEDP->mp_PDP->mp_participant->userWritersListEnd();++wit)
 				{

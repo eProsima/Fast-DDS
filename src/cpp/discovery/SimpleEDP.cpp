@@ -214,12 +214,15 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 		addNewLocalWriter(W);
 	}
 	bool matched = false;
+	cout << "DPD size: " << this->mp_PDP->m_discoveredParticipants.size()<<endl;
 	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
-			pit!=this->mp_PDP->m_discoveredParticipants.begin();++pit)
+			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
+		cout << "DPD, DRD size: " << pit->m_readers.size() << endl;
 		for(std::vector<DiscoveredReaderData>::iterator rit = pit->m_readers.begin();
 				rit!=pit->m_readers.end();++rit)
 		{
+			cout << RED << "SimpleEDP iterating thorugh DiscoveredReaderData "<<endl;
 			matched |= localWriterMatching(W,&(*rit));
 		}
 	}
@@ -269,7 +272,7 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 	}
 	bool matched = false;
 	for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
-			pit!=this->mp_PDP->m_discoveredParticipants.begin();++pit)
+			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
 		for(std::vector<DiscoveredWriterData>::iterator wit = pit->m_writers.begin();
 				wit!=pit->m_writers.end();++wit)
@@ -333,6 +336,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 	if(W->getTopic().getTopicName() == rdata->m_topicName && W->getTopic().getTopicDataType() == rdata->m_typeName &&
 			W->getTopic().getTopicKind() == rdata->topicKind && rdata->isAlive)
 	{
+		cout << "Matching " << endl;
 		if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 		{
 			StatelessWriter* p_SLW = (StatelessWriter*)W;

@@ -22,17 +22,22 @@
 #include <bitset>
 #include <cstdint>
 //
-#include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/dds/attributes/all_attributes.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+//#include "eprosimartps/dds/DomainParticipant.h"
+//#include "eprosimartps/Participant.h"
+//#include "eprosimartps/dds/Publisher.h"
+//#include "eprosimartps/dds/Subscriber.h"
+//#include "eprosimartps/dds/attributes/all_attributes.h"
+//#include "eprosimartps/qos/ParameterList.h"
+//#include "eprosimartps/qos/DDSQosPolicies.h"
+//#include "eprosimartps/utils/RTPSLog.h"
+//#include "eprosimartps/dds/DDSTopicDataType.h"
+//
+//#include "eprosimartps/dds/PublisherListener.h"
+//#include "eprosimartps/dds/SubscriberListener.h"
+//
+//#include "eprosimartps/dds/SampleInfo.h"
 
-#include "eprosimartps/dds/SampleInfo.h"
+#include "eprosimartps/rtps_all.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
@@ -145,6 +150,14 @@ bool TestTypeDataType::getKey(void*data,InstanceHandle_t* handle)
 	return true;
 }
 
+class MyPubListener: public PublisherListener
+{
+	void onPublicationMatched()
+	{
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+	}
+};
+
 
 
 int main(int argc, char** argv){
@@ -189,7 +202,7 @@ int main(int argc, char** argv){
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
 
-	//	my_sleep(10);
+		my_sleep(10);
 
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -225,7 +238,7 @@ int main(int argc, char** argv){
 		tp1.value = 0;
 		tp1.price = 1.3;
 		int n;
-		cout << "Enter number to start: ";
+		cout << "Enter number to start: "<<endl;
 		cin >> n;
 		for(uint i = 0;i<10;i++)
 		{

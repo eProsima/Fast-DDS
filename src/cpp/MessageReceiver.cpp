@@ -278,7 +278,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	if(firstReader == NULL) //Reader not found
 	{
-		pWarning("Data Message received for unknown reader");
+		pWarning("Data Message received for unknown reader"<<endl);
 		return false;
 	}
 	//FOUND THE READER.
@@ -529,6 +529,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
 			it!=mp_threadListen->m_assoc_writers.end();++it)
 	{
+		cout << "MessageReceiver, assoc writers: " << (*it)->getGuid() << endl;
+		cout << "MessageReceiver, writerGuid   : " << writerGUID << endl;
 		if((*it)->getGuid() == writerGUID)
 		{
 			if((*it)->getStateType() == STATEFUL)
@@ -563,7 +565,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 			}
 		}
 	}
-	pDebugInfo("Acknack msg to unknown writer");
+	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assoc_writers.size() << " writers in this ResourceListen)"<<endl);
 	return false;
 }
 
