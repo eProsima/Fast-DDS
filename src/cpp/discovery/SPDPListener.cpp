@@ -46,9 +46,9 @@ bool SPDPListener::newAddedCache()
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
 		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
 		{
-			DiscoveredParticipantData pdata;
+			DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
 
-			if(processParameterList(param,&pdata))
+			if(processParameterList(param,pdata))
 			{
 			//	bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
@@ -63,7 +63,7 @@ bool SPDPListener::newAddedCache()
 						break;
 					}
 				}
-				if(pdata.m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
+				if(pdata->m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SPDPListener: Message from own participant, ignoring"<<DEF<<endl)
@@ -73,19 +73,20 @@ bool SPDPListener::newAddedCache()
 				//Look for the participant in my own list:
 				DiscoveredParticipantData* pdata_ptr;
 				bool found = false;
-				for(std::vector<DiscoveredParticipantData>::iterator it = mp_SPDP->m_discoveredParticipants.begin();
+				for(std::vector<DiscoveredParticipantData*>::iterator it = mp_SPDP->m_discoveredParticipants.begin();
 						it != mp_SPDP->m_discoveredParticipants.end();++it)
 				{
-					if(change->instanceHandle == it->m_key)
+					if(change->instanceHandle == (*it)->m_key)
 					{
 						found = true;
-						pdata_ptr = &(*it);
+						pdata_ptr = (*it);
+						delete(pdata);
 						break;
 					}
 				}
 				if(!found)
 				{
-					pdata_ptr = &pdata;
+					pdata_ptr = pdata;
 				}
 				for(LocatorListIterator it = pdata_ptr->m_metatrafficUnicastLocatorList.begin();
 						it!=pdata_ptr->m_metatrafficUnicastLocatorList.end();++it)
@@ -101,7 +102,7 @@ bool SPDPListener::newAddedCache()
 				this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata_ptr);
 				if(!found)
 				{
-					this->mp_SPDP->m_discoveredParticipants.push_back(*pdata_ptr);
+					this->mp_SPDP->m_discoveredParticipants.push_back(pdata_ptr);
 				}
 				//If staticEDP, perform matching:
 				if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
@@ -259,27 +260,27 @@ void SPDPListener::assignUserId(std::string& type,uint16_t userId, EntityId_t& e
 {
 	if(type == "reader")
 	{
-		for(std::vector<DiscoveredReaderData>::iterator it = pdata->m_readers.begin();
+		for(std::vector<DiscoveredReaderData*>::iterator it = pdata->m_readers.begin();
 				it!=pdata->m_readers.end();++it)
 		{
-			if(it->userDefinedId == userId)
+			if((*it)->userDefinedId == userId)
 			{
-				it->m_readerProxy.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
-				it->m_readerProxy.remoteReaderGuid.entityId = entityId;
-				it->isAlive = true;
+				(*it)->m_readerProxy.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+				(*it)->m_readerProxy.remoteReaderGuid.entityId = entityId;
+				(*it)->isAlive = true;
 				return;
 			}
 		}
 	}
 	else if(type=="writer")
 	{
-		for(std::vector<DiscoveredWriterData>::iterator it = pdata->m_writers.begin();
+		for(std::vector<DiscoveredWriterData*>::iterator it = pdata->m_writers.begin();
 				it!=pdata->m_writers.end();++it)
 		{
-			if(it->userDefinedId == userId)
+			if((*it)->userDefinedId == userId)
 			{
-				it->m_writerProxy.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
-				it->m_writerProxy.remoteWriterGuid.entityId = entityId;
+				(*it)->m_writerProxy.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+				(*it)->m_writerProxy.remoteWriterGuid.entityId = entityId;
 				return;
 			}
 		}

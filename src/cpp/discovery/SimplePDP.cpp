@@ -95,57 +95,57 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 
 bool SimplePDP::addLocalParticipant(ParticipantImpl* p)
 {
-	DiscoveredParticipantData pdata;
-	pdata.leaseDuration = m_discovery.leaseDuration;
-	VENDORID_EPROSIMA(pdata.m_VendorId);
+	DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
+	pdata->leaseDuration = m_discovery.leaseDuration;
+	VENDORID_EPROSIMA(pdata->m_VendorId);
 	//FIXME: add correct builtIn Endpoints
-	pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-	pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		if(m_discovery.m_simpleEDP.use_Publication_Writer)
-			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 		if(m_discovery.m_simpleEDP.use_Publication_Reader)
-			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 		if(m_discovery.m_simpleEDP.use_Subscription_Reader)
-			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 		if(m_discovery.m_simpleEDP.use_Subscription_Writer)
-			pdata.m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	}
 
-	pdata.m_defaultUnicastLocatorList = p->m_defaultUnicastLocatorList;
-	pdata.m_defaultMulticastLocatorList = p->m_defaultMulticastLocatorList;
-	pdata.m_expectsInlineQos = false;
-	pdata.m_guidPrefix = p->getGuid().guidPrefix;
+	pdata->m_defaultUnicastLocatorList = p->m_defaultUnicastLocatorList;
+	pdata->m_defaultMulticastLocatorList = p->m_defaultMulticastLocatorList;
+	pdata->m_expectsInlineQos = false;
+	pdata->m_guidPrefix = p->getGuid().guidPrefix;
 	for(uint8_t i =0;i<16;++i)
 	{
 		if(i<12)
-			pdata.m_key.value[i] = p->getGuid().guidPrefix.value[i];
+			pdata->m_key.value[i] = p->getGuid().guidPrefix.value[i];
 		if(i>=16)
-			pdata.m_key.value[i] = p->getGuid().entityId.value[i];
+			pdata->m_key.value[i] = p->getGuid().entityId.value[i];
 	}
 	//FIXME: Do something with livelinesscount
-	//pdata.m_manualLivelinessCount;
+	//pdata->m_manualLivelinessCount;
 
 	Locator_t multiLocator;
 	multiLocator.kind = LOCATOR_KIND_UDPv4;
 	multiLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	multiLocator.set_IP4_address(239,255,0,1);
-	pdata.m_metatrafficMulticastLocatorList.push_back(multiLocator);
+	pdata->m_metatrafficMulticastLocatorList.push_back(multiLocator);
 
 	LocatorList_t locators;
 	IPFinder::getIPAddress(&locators);
 	for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
 	{
 		it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
-		pdata.m_metatrafficUnicastLocatorList.push_back(*it);
+		pdata->m_metatrafficUnicastLocatorList.push_back(*it);
 	}
 
-	pdata.m_participantName = p->getParticipantName();
+	pdata->m_participantName = p->getParticipantName();
 
 
 	m_discoveredParticipants.push_back(pdata);
-	mp_localDPData = &(*m_discoveredParticipants.begin());
+	mp_localDPData = pdata;
 
 	return true;
 }

@@ -47,18 +47,18 @@ void SEDPPubListener::onNewDataMessage()
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
 		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
 		{
-			DiscoveredWriterData wdata;
-			if(DiscoveredData::ParameterList2DiscoveredWriterData(param,&wdata))
+			DiscoveredWriterData* wdata = new DiscoveredWriterData();
+			if(DiscoveredData::ParameterList2DiscoveredWriterData(param,wdata))
 			{
-				change->instanceHandle = wdata.m_key;
-				iHandle2GUID(wdata.m_writerProxy.remoteWriterGuid,change->instanceHandle);
-				if(wdata.m_writerProxy.remoteWriterGuid.entityId.value[3] == 0x03)
+				change->instanceHandle = wdata->m_key;
+				iHandle2GUID(wdata->m_writerProxy.remoteWriterGuid,change->instanceHandle);
+				if(wdata->m_writerProxy.remoteWriterGuid.entityId.value[3] == 0x03)
 				{
-					wdata.topicKind = NO_KEY;
+					wdata->topicKind = NO_KEY;
 				}
-				else if(wdata.m_writerProxy.remoteWriterGuid.entityId.value[3] == 0x02)
+				else if(wdata->m_writerProxy.remoteWriterGuid.entityId.value[3] == 0x02)
 				{
-					wdata.topicKind = WITH_KEY;
+					wdata->topicKind = WITH_KEY;
 				}
 				else
 				{
@@ -77,20 +77,21 @@ void SEDPPubListener::onNewDataMessage()
 						break;
 					}
 				}
-				if(wdata.m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
+				if(wdata->m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<DEF<<endl)
 					//		this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
+							delete(wdata);
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
-				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+				for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
 						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
 				{
-					if(pit->m_guidPrefix == wdata.m_writerProxy.remoteWriterGuid.guidPrefix)
+					if((*pit)->m_guidPrefix == wdata->m_writerProxy.remoteWriterGuid.guidPrefix)
 					{
-						pdata = &(*pit);
+						pdata = (*pit);
 						break;
 					}
 				}
@@ -98,19 +99,21 @@ void SEDPPubListener::onNewDataMessage()
 				{
 					pWarning("Publications Listener: received message from UNKNOWN participant, removing"<<endl);
 					this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
+					delete(wdata);
 					return;
 				}
 
 				DiscoveredWriterData* wdataptr = NULL;
 				if(already_in_history)
 				{
-					for(std::vector<DiscoveredWriterData>::iterator it = pdata->m_writers.begin();
+					for(std::vector<DiscoveredWriterData*>::iterator it = pdata->m_writers.begin();
 							it!=pdata->m_writers.end();++it)
 					{
-						if(it->m_key == change->instanceHandle)
+						if((*it)->m_key == change->instanceHandle)
 						{
-							wdataptr = &(*it);
-							*wdataptr = wdata;
+							wdataptr = (*it);
+							*wdataptr = *wdata;
+							delete(wdata);
 							break;
 						}
 					}
@@ -119,7 +122,7 @@ void SEDPPubListener::onNewDataMessage()
 				{
 					pDebugInfo(CYAN << "New DiscoveredWriterData added to Participant"<<DEF<<endl);
 					pdata->m_writers.push_back(wdata);
-					wdataptr = &*(pdata->m_writers.end()-1);
+					wdataptr = *(pdata->m_writers.end()-1);
 				}
 				wdataptr->isAlive = true;
 				for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->userReadersListBegin();
@@ -161,19 +164,19 @@ void SEDPSubListener::onNewDataMessage()
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
 		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,&change->instanceHandle,NULL)>0)
 		{
-			DiscoveredReaderData rdata;
-			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,&rdata))
+			DiscoveredReaderData* rdata = new DiscoveredReaderData();
+			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,rdata))
 			{
-				cout << B_RED << "SEDPSubListenerIHANDLE: "<< rdata.m_key << DEF <<endl;
-				change->instanceHandle = rdata.m_key;
-				iHandle2GUID(rdata.m_readerProxy.remoteReaderGuid,change->instanceHandle);
-				if(rdata.m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x04)
+				cout << B_RED << "SEDPSubListenerIHANDLE: "<< rdata->m_key << DEF <<endl;
+				change->instanceHandle = rdata->m_key;
+				iHandle2GUID(rdata->m_readerProxy.remoteReaderGuid,change->instanceHandle);
+				if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x04)
 				{
-					rdata.topicKind = NO_KEY;
+					rdata->topicKind = NO_KEY;
 				}
-				else if(rdata.m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x07)
+				else if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x07)
 				{
-					rdata.topicKind = WITH_KEY;
+					rdata->topicKind = WITH_KEY;
 				}
 				else
 				{
@@ -192,23 +195,22 @@ void SEDPSubListener::onNewDataMessage()
 						break;
 					}
 				}
-				if(rdata.m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
+				if(rdata->m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
-					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<DEF<<endl)
-							//		this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
-							return;
+					delete(rdata);
+					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
 				cout << "SEDPSubListener:DISCOVEREDPARTICIPANTS SIZE: " << this->mp_SEDP->mp_PDP->m_discoveredParticipants.size() << endl;
-				for(std::vector<DiscoveredParticipantData>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+				for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
 						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
 				{
-					cout << "SEDPSubListener:loop:" << pit->m_guidPrefix << endl;
-					cout << "SEDPSubListener:read:" << rdata.m_readerProxy.remoteReaderGuid.guidPrefix << endl;
-					if(pit->m_guidPrefix == rdata.m_readerProxy.remoteReaderGuid.guidPrefix)
+					cout << "SEDPSubListener:loop:" << (*pit)->m_guidPrefix << endl;
+					cout << "SEDPSubListener:read:" << rdata->m_readerProxy.remoteReaderGuid.guidPrefix << endl;
+					if((*pit)->m_guidPrefix == rdata->m_readerProxy.remoteReaderGuid.guidPrefix)
 					{
-						pdata = &(*pit);
+						pdata = (*pit);
 						break;
 					}
 				}
@@ -216,19 +218,21 @@ void SEDPSubListener::onNewDataMessage()
 				{
 					pWarning("Subscriptions Listener: received message from UNKNOWN participant, removing"<<endl);
 					this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
+					delete(rdata);
 					return;
 				}
 
 				DiscoveredReaderData* rdataptr = NULL;
 				if(already_in_history)
 				{
-					for(std::vector<DiscoveredReaderData>::iterator it = pdata->m_readers.begin();
+					for(std::vector<DiscoveredReaderData*>::iterator it = pdata->m_readers.begin();
 							it!=pdata->m_readers.end();++it)
 					{
-						if(it->m_key == change->instanceHandle)
+						if((*it)->m_key == change->instanceHandle)
 						{
-							rdataptr = &(*it);
-							*rdataptr = rdata;
+							rdataptr = (*it);
+							*rdataptr = *rdata;
+							delete(rdata);
 							break;
 						}
 					}
@@ -237,7 +241,7 @@ void SEDPSubListener::onNewDataMessage()
 				{
 					pDebugInfo(CYAN << "New DiscoveredReaderData added to Participant"<<DEF<<endl);
 					pdata->m_readers.push_back(rdata);
-					rdataptr = &*(pdata->m_readers.end()-1);
+					rdataptr = *(pdata->m_readers.end()-1);
 				}
 				rdataptr->isAlive = true;
 				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->userWritersListBegin();

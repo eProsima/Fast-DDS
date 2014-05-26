@@ -40,7 +40,7 @@ public:
 	virtual bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)=0;
 
 	DiscoveredParticipantData* mp_localDPData;
-	std::vector<DiscoveredParticipantData> m_discoveredParticipants;
+	std::vector<DiscoveredParticipantData*> m_discoveredParticipants;
 
 	DiscoveryAttributes m_discovery;
 	ParticipantImpl* mp_participant;

@@ -74,8 +74,8 @@ public:
 	InstanceHandle_t m_key;
 	Duration_t leaseDuration;
 
-	std::vector<DiscoveredWriterData> m_writers;
-	std::vector<DiscoveredReaderData> m_readers;
+	std::vector<DiscoveredWriterData*> m_writers;
+	std::vector<DiscoveredReaderData*> m_readers;
 //	std::vector<DiscoveredTopicData> m_topics;
 
 	bool isAlive;
