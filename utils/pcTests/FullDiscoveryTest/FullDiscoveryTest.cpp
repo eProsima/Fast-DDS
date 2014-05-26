@@ -176,12 +176,17 @@ int main(int argc, char** argv){
 	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 	PParam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 30;
+
 	PParam.discovery.domainId = 80;
 	cout << "a"<<endl;
 	switch(type)
 	{
 	case 1:
 	{
+		PParam.discovery.m_simpleEDP.use_Publication_Writer = false;
+			PParam.discovery.m_simpleEDP.use_Subscription_Reader = true;
+			PParam.discovery.m_simpleEDP.use_Publication_Reader = false;
+			PParam.discovery.m_simpleEDP.use_Subscription_Writer = false;
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
 
@@ -238,6 +243,10 @@ int main(int argc, char** argv){
 	}
 	case 2:
 	{
+		PParam.discovery.m_simpleEDP.use_Publication_Writer = false;
+			PParam.discovery.m_simpleEDP.use_Subscription_Reader = false;
+			PParam.discovery.m_simpleEDP.use_Publication_Reader = false;
+			PParam.discovery.m_simpleEDP.use_Subscription_Writer = true;
 		//***********  PARTICIPANT  ******************//
 		PParam.name = "participant2";
 		Participant* p = DomainParticipant::createParticipant(PParam);
