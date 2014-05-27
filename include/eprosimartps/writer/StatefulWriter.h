@@ -105,7 +105,7 @@ public:
 		return m_heartbeatCount;
 	}
 
-
+	size_t getMatchedSubscribers(){return matched_readers.size();}
 
 private:
 	//! Vector containin all the associated ReaderProxies.

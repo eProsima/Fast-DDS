@@ -155,6 +155,14 @@ class MyPubListener: public PublisherListener
 	void onPublicationMatched()
 	{
 		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
+		cout << B_RED << "PUBLICATION MATCHED"<<DEF<<endl;
 	}
 };
 
@@ -214,10 +222,10 @@ int main(int argc, char** argv){
 		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
 		Wparam.userDefinedId = 1;
 		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_DURABILITY_QOS;
-
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		MyPubListener mylisten;
-		pub->assignListener((PublisherListener*)&mylisten);
+		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mylisten);
+
+
 //		SubscriberAttributes Rparam;
 //		Rparam.historyMaxSize = 50;
 //		Rparam.topic.topicDataType = std::string("TestType");

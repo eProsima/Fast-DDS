@@ -78,6 +78,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 	}
 	matched_readers.push_back(rp);
 	pDebugInfo("Reader Proxy added" << endl);
+	unsent_changes_not_empty();
 	return true;
 }
 
@@ -234,7 +235,7 @@ void StatefulWriter::unsent_changes_not_empty()
 				incrementHBCount();
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+						c_EntityId_Unknown,m_guid.entityId,first,last,m_heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
 				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
 					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));

@@ -65,6 +65,8 @@ public:
 	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
 	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
 
+	virtual size_t getMatchedPublishers()=0;
+
 	virtual bool isUnreadCacheChange()=0;
 
 
@@ -104,6 +106,8 @@ public:
 	{
 		return mp_listener;
 	}
+
+
 	 void setListener(SubscriberListener* plistener)
 		{
 			mp_listener = plistener;

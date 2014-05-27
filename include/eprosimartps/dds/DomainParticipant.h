@@ -47,6 +47,8 @@ class Publisher;
 class PublisherImpl;
 class Subscriber;
 class SubscriberImpl;
+class PublisherListener;
+class SubscriberListener;
 
 typedef std::pair<Subscriber*,SubscriberImpl*> SubscriberPair;
 typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
@@ -80,14 +82,14 @@ public:
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @return Pointer to the publisher. 
 	 */
-    Publisher* createPublisher(Participant* p, PublisherAttributes& WParam);
+    Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL);
 	/**
 	 * @brief Create a Subscriber in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @return Pointer to the subscriber. 
 	 */
-    Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam);
+    Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL);
 
     /**
      * @brief Create a Participant.
@@ -233,9 +235,9 @@ public:
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @return Pointer to the publisher.
 	 */
-	static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam)
+	static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createPublisher(p,WParam));
+		return (DomainParticipantImpl::getInstance()->createPublisher(p,WParam,plisten));
 	}
 	/**
 	 * @brief Create a Subscriber in the given Participant.
@@ -243,9 +245,9 @@ public:
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @return Pointer to the subscriber.
 	 */
-	static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam)
+	static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createSubscriber(p,RParam));
+		return (DomainParticipantImpl::getInstance()->createSubscriber(p,RParam,slisten));
 	}
 	/**
 	 * @brief Create a Participant.

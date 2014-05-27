@@ -24,6 +24,8 @@
 
 #include "eprosimartps/dds/attributes/SubscriberAttributes.h"
 
+
+
 namespace eprosima {
 namespace rtps {
 
@@ -43,6 +45,7 @@ public:
 	 bool takeNextCacheChange(void*data,SampleInfo_t* info);
 	 bool isUnreadCacheChange();
 
+	 size_t getMatchedPublishers(){return 0;}
 
 };
 

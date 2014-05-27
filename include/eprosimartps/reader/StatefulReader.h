@@ -67,6 +67,7 @@ public:
 	bool takeNextCacheChange(void*data,SampleInfo_t* info);
 	bool isUnreadCacheChange();
 
+	size_t getMatchedPublishers(){return matched_writers.size();}
 
 
 private:

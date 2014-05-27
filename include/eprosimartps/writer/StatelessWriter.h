@@ -72,6 +72,8 @@ public:
 
 	 bool removeMinSeqCacheChange();
 	 bool removeAllCacheChange(int32_t* n_removed);
+
+	 size_t getMatchedSubscribers(){return reader_locator.size();}
 private:
 	 Duration_t resendDataPeriod; //FIXME: Not used yet.
 	 std::vector<ReaderLocator> reader_locator;

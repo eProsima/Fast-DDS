@@ -96,6 +96,8 @@ public:
 	 */
 	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
 
+	size_t getMatchedPublishers();
+
 const GUID_t& getGuid();
 
 	RTPSReader* getReaderPtr() {
@@ -185,6 +187,8 @@ public:
 	{
 		return mp_impl->addWriterProxy(loc,guid);
 	}
+
+	size_t getMatchedPublishers(){return mp_impl->getMatchedPublishers();}
 private:
 	SubscriberImpl* mp_impl;
 };

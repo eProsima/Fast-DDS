@@ -76,6 +76,12 @@ int PublisherImpl::getHistoryElementsNumber()
 	return mp_Writer->getHistoryCacheSize();
 }
 
+size_t PublisherImpl::getMatchedSubscribers()
+{
+	return mp_Writer->getMatchedSubscribers();
+}
+
+
 bool PublisherImpl::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
 {
 	if(mp_Writer->getStateType()==STATELESS)
@@ -118,7 +124,7 @@ bool PublisherImpl::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInlin
 
 bool PublisherImpl::assignListener(PublisherListener* listen_in)
 {
-	mp_Writer->mp_listener = listen_in;
+	mp_Writer->setListener(listen_in);
 	return true;
 }
 
