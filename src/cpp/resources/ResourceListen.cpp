@@ -81,6 +81,8 @@ bool ResourceListen::init_thread(Locator_t& loc){
 				listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
 			}
 			m_listen_socket.open(listen_endpoint.protocol());
+			m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+				m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( true ) );
 			if(m_isMulticast)
 			{
 				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
@@ -99,7 +101,6 @@ bool ResourceListen::init_thread(Locator_t& loc){
 		catch (boost::system::system_error const& e)
 		{
 			pError(e.what() << " : " << listen_endpoint <<endl);
-			return false;
 		}
 		//CDRMessage_t msg;
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);

@@ -1,10 +1,10 @@
-Copyright (c) 2012 Proyectos y sistemas de Mantenimiento SL (eProsima). 
+Copyright (c) 2014 Proyectos y sistemas de Mantenimiento SL (eProsima). 
 All rights reserved.
 
 
 
 This copy of eProsima RTPS library is free software; you can redistribute it 
-and/or modify it under the terms of the GNU Lesser General Public License version 3
+and/or modify it under the terms of the GNU Lesser General Public License version 3 
 as published by the Free Software Foundation.
 
 eProsima RTPS library is distributed in the hope that it will be useful, 

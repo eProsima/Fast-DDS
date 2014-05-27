@@ -50,7 +50,7 @@ Function VariablesEntornoPage
     ${EndIf}
     
     ${If} ${RunningX64}
-        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for platform x64"
+        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 platforms."
         Pop $CheckboxX64  
         ${If} ${SectionIsSelected} ${SEC_LIB_x64}
             ${If} $CheckboxX64_State == ${BST_CHECKED}
@@ -63,10 +63,10 @@ Function VariablesEntornoPage
         ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
     ${NSD_OnClick} $CheckboxX64 ClickX64  
     
-        ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for platform i86"
+        ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 platforms."
         Pop $CheckboxI86
     ${Else}
-        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for platform i86"
+        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 platforms."
         Pop $CheckboxI86
     ${EndIf}
 

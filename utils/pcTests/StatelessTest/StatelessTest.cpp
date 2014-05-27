@@ -127,7 +127,6 @@ bool TestTypeDataType::serialize(void*data,SerializedPayload_t* payload)
 
 bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
-	//cout << "Deserializando length: " << payload->length << endl;
 	memcpy(data,payload->data,payload->length);
 	return true;
 }
@@ -181,34 +180,42 @@ int main(int argc, char** argv)
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
-	ParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
-	Participant* p = DomainParticipant::createParticipant(PParam);
+	
 
 	switch(type)
 	{
 	case 1:
 	{
+		ParticipantAttributes PartParam;
+		PartParam.defaultSendPort = 10041;
+		PartParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
+		Participant* p = DomainParticipant::createParticipant(PartParam);
+
+		//TWO PUBLISHERS
 		PublisherAttributes PParam;
 		PParam.historyMaxSize = 20;
 		PParam.topic.topicKind = WITH_KEY;
+		//Topic parameters are not used here since no discovery is being used.
 		PParam.topic.topicDataType = "TestType";
-		PParam.topic.topicName = "Test_topic";
+		PParam.topic.topicName = "Test_topic1";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,PParam);
 		Publisher* pub2 = DomainParticipant::createPublisher(p,PParam);
+
+		//SUBSCRIBER
 		SubscriberAttributes Sparam;
 		Sparam.historyMaxSize = 50;
+		//Topic parameters are not used here since no discovery is being used.
 		Sparam.topic.topicDataType = std::string("TestType");
-		Sparam.topic.topicName = std::string("Test_topic");
+		Sparam.topic.topicName = std::string("Test_topic2");
 		Sparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
 		loc.kind = 1;
-		loc.port = 10469;
-		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+		loc.port = 10091;
+		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10091 port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Sparam);
 
 		loc.set_IP4_address(127,0,0,1);
+		loc.port = 10092; //Sending to port 10092
 		pub1->addReaderLocator(loc,true);
 		pub2->addReaderLocator(loc,true);
 		TestType tp1,tp2,tp_in;
@@ -269,25 +276,36 @@ int main(int argc, char** argv)
 	}
 	case 2:
 	{
+		ParticipantAttributes PartParam;
+		PartParam.defaultSendPort = 10042;
+		PartParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
+		Participant* p = DomainParticipant::createParticipant(PartParam);
+		//SUBSCRIBER
 		SubscriberAttributes Rparam;
 		Rparam.historyMaxSize = 50;
+		//Topic parameters are not used here since no discovery is being used.
 		Rparam.topic.topicDataType = std::string("TestType");
-		Rparam.topic.topicName = std::string("Test_topic");
+		Rparam.topic.topicName = std::string("Test_topic1");
 		Rparam.topic.topicKind = WITH_KEY;
 		Locator_t loc;
 		loc.kind = 1;
-		loc.port = 10469;
-		Rparam.unicastLocatorList.push_back(loc); //Listen in port 10469
+		loc.port = 10092;
+		Rparam.unicastLocatorList.push_back(loc); //Listen in port 10092
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+
+
 		TestTypeListener listener;
 		sub->assignListener((SubscriberListener*)&listener);
+
+		//PUBLISHER
 		PublisherAttributes WParam;
 		WParam.historyMaxSize = 50;
 		WParam.topic.topicKind = NO_KEY;
 		WParam.topic.topicDataType = "TestType";
-		WParam.topic.topicName = "Test_topic";
+		WParam.topic.topicName = "Test_topic2";
 		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
-		loc.set_IP4_address(192,168,1,IPTEST0);
+		loc.set_IP4_address(127,0,0,1);
+		loc.port = 10091;
 		pub1->addReaderLocator(loc,false);
 		while(1)
 		{

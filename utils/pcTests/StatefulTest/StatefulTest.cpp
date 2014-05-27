@@ -180,16 +180,18 @@ int main(int argc, char** argv)
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
 
-	ParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
-	Participant* p = DomainParticipant::createParticipant(PParam);
+	
 
 
 	switch(type)
 	{
 	case 1:
 	{
+		ParticipantAttributes PParam;
+	PParam.defaultSendPort = 10041;
+	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
+	Participant* p = DomainParticipant::createParticipant(PParam);
+
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = std::string("TestType");
@@ -200,13 +202,14 @@ int main(int argc, char** argv)
 		Wparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
 		loc.kind = 1;
-		loc.port = 10046;
+		loc.port = 10091;
 		Wparam.unicastLocatorList.push_back(loc);
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		if(pub == NULL)
 			return 0;
 		//Reader Proxy
-		loc.set_IP4_address(192,168,1,IPTEST2);
+		loc.set_IP4_address(127,0,0,1);
+		loc.port = 10092;
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
 		pub->addReaderProxy(loc,readerGUID,true);
@@ -239,17 +242,20 @@ int main(int argc, char** argv)
 	case 2:
 	case 3:
 	{
+		ParticipantAttributes PParam;
+	PParam.defaultSendPort = 10042;
+	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
+	Participant* p = DomainParticipant::createParticipant(PParam);
+
+
 		SubscriberAttributes Rparam;
 		Rparam.historyMaxSize = 15;
 		Rparam.topic.topicDataType = std::string("TestType");
 		Rparam.topic.topicName = std::string("Test_Topic");
 		Rparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
-		if(type == 2)
-			loc.port = 10046;
-		else if(type ==3)
-			loc.port = 10046;
-		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
+		loc.port = 10092;
+		Rparam.unicastLocatorList.push_back(loc); 
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
 		sub->assignListener((SubscriberListener*)&listener);

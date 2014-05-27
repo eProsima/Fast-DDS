@@ -161,9 +161,10 @@ int main(int argc, char** argv){
 	else
 		type = WR;
 
-
+	//Register type
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+	//Find my local IPs
 	LocatorList_t myIP;
 	DomainParticipant::getIPAddress(&myIP);
 
@@ -173,15 +174,21 @@ int main(int argc, char** argv){
 	case 1:
 	{
 		//***********  PARTICIPANT  ******************//
+		//Create a Participant
 		ParticipantAttributes PParam;
 		PParam.name = "participant1";
-		PParam.defaultSendPort = 10042;
+		//default send port used to send all messages.
+		PParam.defaultSendPort = 10041;
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-		PParam.discovery.m_staticEndpointXMLFilename ="D:\\Trabajo\\workspace\\eRTPS\\utils\\pcTests\\StaticParticipantInfo.xml";
+		//route to xml file. Modify according to your folder structure
+		PParam.discovery.m_staticEndpointXMLFilename ="..\\StaticParticipantInfo.xml";
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
+		//Domain ID: must be the same for all participants for the discovery to work.
 		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
+
+		//PUBLISHER:
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = std::string("TestType");
@@ -192,21 +199,24 @@ int main(int argc, char** argv){
 		Wparam.reliability.reliabilityKind = BEST_EFFORT;
 		Wparam.userDefinedId = 1;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+		//SUBSCRIBER
 		SubscriberAttributes Rparam;
 		Rparam.historyMaxSize = 50;
 		Rparam.topic.topicDataType = std::string("TestType");
 		Rparam.topic.topicName = std::string("Test_topic2");
 		Rparam.topic.topicKind = NO_KEY;
 		Locator_t loc;
-		loc = *myIP.begin();
+		loc.set_IP4_address(127,0,0,1);
 		loc.kind = 1;
-		loc.port = 10046;
-		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
+		loc.port = 10091;
+		Rparam.unicastLocatorList.push_back(loc); 
 		Rparam.userDefinedId = 2;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
-
 		p->announceParticipantState();
+		//Wait to allow the discovery to work.
+		//Future version will not need this wait.
 		my_sleep(4);
+		//Create instances of the object
 		TestType tp1,tp_in;
 		SampleInfo_t info_in;
 		COPYSTR(tp1.name,"Obje1");
@@ -237,10 +247,11 @@ int main(int argc, char** argv){
 		PParam.defaultSendPort = 10042;
 		PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		PParam.discovery.use_STATIC_EndpointDiscoveryProtocol= true;
-		PParam.discovery.m_staticEndpointXMLFilename = "D:\\Trabajo\\workspace\\eRTPS\\utils\\pcTests\\StaticParticipantInfo.xml";
+		PParam.discovery.m_staticEndpointXMLFilename = "..\\StaticParticipantInfo.xml";
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
 		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
+		//SUBSCRIBER
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
 		Rparam.historyMaxSize = 50;
@@ -249,11 +260,11 @@ int main(int argc, char** argv){
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.reliability.reliabilityKind = BEST_EFFORT;
 		Locator_t loc;
-		loc = *myIP.begin();
+		loc.set_IP4_address(127,0,0,1);
 		loc.kind = 1;
-		loc.port = 10046;
+		loc.port = 10092;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
-		loc.port = 10047;
+		loc.port = 10093;
 		Rparam.unicastLocatorList.push_back(loc);
 
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
@@ -267,10 +278,7 @@ int main(int argc, char** argv){
 		Wparam.historyMaxSize = 14;
 		Wparam.reliability.heartbeatPeriod.seconds = 2;
 		Wparam.reliability.nackResponseDelay.seconds = 5;
-
-
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
-
 		p->announceParticipantState();
 
 		my_sleep(4);

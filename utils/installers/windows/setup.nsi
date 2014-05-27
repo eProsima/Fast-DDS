@@ -10,7 +10,7 @@ RequestExecutionLevel admin
 !define REGKEY "SOFTWARE\$(^Name)"
 !define COMPANY eProsima
 !define URL www.eprosima.com
-!define VERSION 0.3.0
+!define VERSION 0.3.1
 
 # MUI Symbol Definitions
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install-colorful.ico"
@@ -117,7 +117,8 @@ Section -post SEC0006
     # Copy examples.
     SetOutPath $INSTDIR\examples\C++
     SetOverwrite on
-    File /r ..\..\..\utils\pcTests\*
+	File /r /x ..\..\..\utils\pcTests\.gitignore /x ..\..\..\utils\pcTests\pcTests.sln.bat ..\..\..\utils\pcTests\*
+    
     
     # # Copy fastrpcgen java classes.
     # SetOutPath $INSTDIR\classes
@@ -301,8 +302,8 @@ FunctionEnd
 # Section Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SECGRP0000} "eProsima RTPS libraries."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64} "Libraries for x64 platform."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86} "Libraries for i86 platform."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64} "Libraries for x64 platforms."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86} "Libraries for i86 platforms."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

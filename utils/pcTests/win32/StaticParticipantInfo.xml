@@ -1,0 +1,53 @@
+<!--  StaticParticipantInfo.xml -->
+<!--  Created on: Apr 23, 2014 -->
+<!--      Author: grcanosa -->
+
+
+
+     
+<?xml version="1.0" encoding="utf-8"?>
+<staticdiscovery>
+	<participant>
+		<name>participant1</name>
+		<endpoint>
+			<id>1</id>
+			<type>WRITER</type>
+			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+     	</endpoint>
+		
+		<endpoint>
+			<id>2</id>
+			<type>READER</type>
+			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<expectsInlineQos>true</expectsInlineQos>
+			<unicastLocator address="127.0.0.1" port="10091"></unicastLocator>	
+		</endpoint>
+	</participant>
+	
+	<participant>
+		<name>participant2</name>
+		
+		<endpoint>
+			<id>17</id>
+			<type>READER</type>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
+			<expectsInlineQos>true</expectsInlineQos>
+			<unicastLocator address="127.0.0.1" port="10092"></unicastLocator>	
+			<unicastLocator address="127.0.0.1" port="10093"></unicastLocator>
+		<!--	<multicastLocator address="239.255.0.1" port="2700"></multicastLocator> -->
+		</endpoint>
+		
+		<endpoint>
+			<id>18</id>
+			<type>WRITER</type>
+			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
+			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<expectsInlineQos>true</expectsInlineQos>
+		</endpoint>
+		
+	</participant>
+	
+</participants>

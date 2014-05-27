@@ -45,7 +45,7 @@ SimpleParticipantDiscoveryProtocol::~SimpleParticipantDiscoveryProtocol()
 	for(std::vector<DiscoveredParticipantData*>::iterator it = m_matched_participants.begin();
 			it!=m_matched_participants.end();++it)
 		delete(*it);
-	delete(m_resendData);
+	//delete(m_resendData);
 }
 
 bool SimpleParticipantDiscoveryProtocol::initSPDP(uint16_t domainId,
@@ -430,6 +430,7 @@ void SimpleParticipantDiscoveryProtocol::new_change_added()
 					mp_Participant->m_StaticEDP.localEndpointMatching((Endpoint*)(*it),pdata,'W');
 			}
 		}
+		sendDPDMsg();
 	}
 
 }
