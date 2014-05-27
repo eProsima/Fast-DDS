@@ -529,8 +529,6 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
 			it!=mp_threadListen->m_assoc_writers.end();++it)
 	{
-		cout << "MessageReceiver, assoc writers: " << (*it)->getGuid() << endl;
-		cout << "MessageReceiver, writerGuid   : " << writerGUID << endl;
 		if((*it)->getGuid() == writerGUID)
 		{
 			if((*it)->getStateType() == STATEFUL)
