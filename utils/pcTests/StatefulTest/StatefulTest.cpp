@@ -209,7 +209,7 @@ int main(int argc, char** argv)
 		loc.set_IP4_address(192,168,1,IPTEST1);
 		GUID_t readerGUID;
 		readerGUID.entityId = ENTITYID_UNKNOWN;
-		pub->addReaderProxy(loc,readerGUID,false);
+		pub->addReaderProxy(loc,readerGUID,true);
 		TestType tp;
 		COPYSTR(tp.name,"Obje1");
 		tp.value = 0;

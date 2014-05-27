@@ -117,7 +117,9 @@ public:
 
 	PublisherListener* getListener(){return mp_listener;}
 
-	protected:
+	ParameterList_t* getInlineQos(){return &m_inlineQos;}
+
+protected:
 
 	//!Changes associated with this writer.
 	HistoryCache m_writer_cache;
@@ -139,6 +141,8 @@ public:
 	PublisherListener* mp_listener;
 	friend bool PublisherImpl::assignListener(PublisherListener* pin);
 	//QosList_t m_ParameterQosList;
+
+	ParameterList_t m_inlineQos;
 
 
 };

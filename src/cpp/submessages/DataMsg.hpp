@@ -23,7 +23,7 @@ namespace rtps{
 
 
 bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
-		GuidPrefix_t& guidprefix,CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos){
+		GuidPrefix_t& guidprefix,CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos){
 
 
 	try{
@@ -32,7 +32,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 		RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
 
-		RTPSMessageCreator::addSubmessageData(msg,change,topicKind,readerId,inlineQos);
+		RTPSMessageCreator::addSubmessageData(msg,change,topicKind,readerId,expectsInlineQos,inlineQos);
 
 		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
@@ -49,7 +49,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 
 bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
-		TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos) {
+		TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos) {
 
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);
@@ -67,7 +67,6 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	}
 	//Find out flags
 	bool dataFlag,keyFlag,inlineQosFlag;
-	cout << "SERLIALIZED PAYLOAD LENGTH: " << change->serializedPayload.length << endl;
 	if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
 	{
 		dataFlag = true;
@@ -78,13 +77,12 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		dataFlag = false;
 		keyFlag = true;
 	}
-	cout << "KEY FLAG: "<< keyFlag<<endl;
 	 if(topicKind == NO_KEY)
 		 keyFlag = false;
 	 inlineQosFlag = false;
-	if(inlineQos != NULL) //expects inline qos
+	if(inlineQos != NULL || expectsInlineQos) //expects inline qos
 	{
-		if(inlineQos->m_parameters.size()>0 || topicKind == WITH_KEY)
+		if(topicKind == WITH_KEY)
 		{
 			flags = flags | BIT(1);
 			inlineQosFlag = true;
@@ -119,19 +117,24 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 
 		if(inlineQosFlag) //inlineQoS
 		{
-			if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
+			if(inlineQos!=NULL)
 			{
-			//	cout << "Updating endian message" << endl;
-				ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
+				if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
+				{
+					ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
+				}
 			}
+
 			if(topicKind == WITH_KEY)
 			{
 				CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
 			}
 			if(change->kind != ALIVE)
 				CDRMessage::addParameterStatus(&submsgElem,status);
-			//cout << "Adding message of length: " << inlineQos->inlineQosMsg.length <<" and endian: " << inlineQos->inlineQosMsg.msg_endian<< endl;
-			CDRMessage::appendMsg(&submsgElem,&inlineQos->m_cdrmsg);
+			if(inlineQos!=NULL)
+				CDRMessage::appendMsg(&submsgElem,&inlineQos->m_cdrmsg);
+			else
+				CDRMessage::addParameterSentinel(&submsgElem);
 		}
 		//Add Serialized Payload
 		if(dataFlag)

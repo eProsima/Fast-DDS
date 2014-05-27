@@ -147,11 +147,11 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 	ParameterList_t* inlineQos = NULL;
 	if(expectsInlineQos)
 	{
-		pError("RTPSMEssageGRoup,Complete this"<<endl);
-		//inlineQos = &W->m_ParameterQosList.inlineQos;
+		if(W->getInlineQos()->m_parameters.size()>0)
+			inlineQos = W->getInlineQos();
 	}
 	CDRMessage::initCDRMsg(submsg);
-	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,inlineQos);
+	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,expectsInlineQos,inlineQos);
 }
 
 
