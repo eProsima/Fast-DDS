@@ -166,10 +166,26 @@ class MyPubListener: public PublisherListener
 	}
 };
 
+class MySubListener: public SubscriberListener
+{
+	void onPublicationMatched()
+	{
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+	}
+};
+
 
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
+	RTPSLog::setVerbosity(EPROSIMA_INFO_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
 	int type;
@@ -267,9 +283,9 @@ int main(int argc, char** argv){
 	case 2:
 	{
 		PParam.discovery.m_simpleEDP.use_Publication_Writer = false;
-			PParam.discovery.m_simpleEDP.use_Subscription_Reader = false;
-			PParam.discovery.m_simpleEDP.use_Publication_Reader = false;
-			PParam.discovery.m_simpleEDP.use_Subscription_Writer = true;
+		PParam.discovery.m_simpleEDP.use_Subscription_Reader = false;
+		PParam.discovery.m_simpleEDP.use_Publication_Reader = true;
+		PParam.discovery.m_simpleEDP.use_Subscription_Writer = true;
 		//***********  PARTICIPANT  ******************//
 		PParam.name = "participant2";
 		Participant* p = DomainParticipant::createParticipant(PParam);
@@ -286,7 +302,8 @@ int main(int argc, char** argv){
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10046 port
 		loc.port = 10047;
 		Rparam.unicastLocatorList.push_back(loc);
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		MySubListener mylisten;
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,&mylisten);
 
 //		PublisherAttributes Wparam;
 //		Wparam.userDefinedId = 18;
