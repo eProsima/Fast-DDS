@@ -66,11 +66,8 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 		pWarning("Problem reserving Cache"<<endl);
 		return false;
 	}
-	cout << "Data null:  "<< (data!=NULL) << endl;
-	cout << "mptype null:  "<< (mp_type!=NULL) << endl;
 	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
 	{
-		cout << "Goint to serialize"<<endl;
 		if(!mp_type->serialize(data,&ch->serializedPayload))
 		{
 			pWarning("RTPSWriter:Serialization returns false"<<endl);

@@ -85,9 +85,9 @@ public:
 
 
 	static bool addMessageData(CDRMessage_t* msg,GuidPrefix_t& guidprefix,CacheChange_t* change,
-			TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos);
+			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
 	static bool addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
-			TopicKind_t topicKind,const EntityId_t& readerId,ParameterList_t* inlineQos);
+			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
 
 	static bool addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
 			SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
