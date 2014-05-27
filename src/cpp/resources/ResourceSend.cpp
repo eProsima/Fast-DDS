@@ -34,43 +34,43 @@ ResourceSend::ResourceSend() :
 
 bool ResourceSend::initSend(const Locator_t& loc)
 {
-	boost::asio::ip::address addr;
+//	boost::asio::ip::address addr;
 	m_sendLocator = loc;
-	try {
-		boost::asio::io_service netService;
-		udp::resolver   resolver(netService);
-		udp::resolver::query query(udp::v4(), "google.com", "");
-		udp::resolver::iterator endpoints = resolver.resolve(query);
-		udp::endpoint ep = *endpoints;
-		udp::socket socket(netService);
-		socket.connect(ep);
-		addr = socket.local_endpoint().address();
-
-		pInfo("My IP according to google is: " << addr.to_string() << endl);
-
-		m_sendLocator.address[12] = addr.to_v4().to_bytes()[0];
-		m_sendLocator.address[13] = addr.to_v4().to_bytes()[1];
-		m_sendLocator.address[14] = addr.to_v4().to_bytes()[2];
-		m_sendLocator.address[15] = addr.to_v4().to_bytes()[3];
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << "Could not deal with socket. Exception: " << e.what() << std::endl;
-		m_sendLocator = loc;
-		m_sendLocator.address[12] = 127;
-		m_sendLocator.address[13] = 0;
-		m_sendLocator.address[14] = 0;
-		m_sendLocator.address[15] = 1;
-	}
+//	try {
+//		boost::asio::io_service netService;
+//		udp::resolver   resolver(netService);
+//		udp::resolver::query query(udp::v4(), "google.com", "");
+//		udp::resolver::iterator endpoints = resolver.resolve(query);
+//		udp::endpoint ep = *endpoints;
+//		udp::socket socket(netService);
+//		socket.connect(ep);
+//		addr = socket.local_endpoint().address();
+//
+//		pInfo("My IP according to google is: " << addr.to_string() << endl);
+//
+//		m_sendLocator.address[12] = addr.to_v4().to_bytes()[0];
+//		m_sendLocator.address[13] = addr.to_v4().to_bytes()[1];
+//		m_sendLocator.address[14] = addr.to_v4().to_bytes()[2];
+//		m_sendLocator.address[15] = addr.to_v4().to_bytes()[3];
+//	}
+//	catch (std::exception& e)
+//	{
+//		std::cerr << "Could not deal with socket. Exception: " << e.what() << std::endl;
+//		m_sendLocator = loc;
+//		m_sendLocator.address[12] = 127;
+//		m_sendLocator.address[13] = 0;
+//		m_sendLocator.address[14] = 0;
+//		m_sendLocator.address[15] = 1;
+//	}
 	m_send_socket.open(boost::asio::ip::udp::v4());
+	//m_send_socket.set_option( boost::asio::ip::enable_loopback( true ) );
 	bool not_bind = true;
 	while(not_bind)
 	{
 		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-		udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),m_sendLocator.port);
+		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_sendLocator.port);
 		//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 		try{
-
 			m_send_socket.bind(send_endpoint);
 			not_bind = false;
 		}
@@ -119,7 +119,13 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		m_bytes_sent = 0;
 		if(m_send_next)
 		{
-			m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+			try {
+				m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+			} catch (const std::exception& error) {
+				// Should print the actual error message
+				std::cerr << error.what() << std::endl;
+			}
+
 		}
 		else
 		{

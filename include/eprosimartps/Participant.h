@@ -206,7 +206,7 @@ private:
 	 * @param[in] type Type of the Endpoint (R or W)(Reader or Writer).
 	 * @return True if correct.
 	 */
-	bool assignEnpointToListenResources(Endpoint* endpoint,char type);
+	bool assignEnpointToListenResources(Endpoint* endpoint,char type,bool isBuiltin);
 	/*!
 	 * Create a new listen thread in the specified locator.
 	 * @param[in] loc Locator to use.
@@ -214,7 +214,7 @@ private:
 	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
 	 * @return True if correct.
 	 */
-	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast);
+	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
 	ParticipantDiscoveryProtocol* mp_PDP;
 

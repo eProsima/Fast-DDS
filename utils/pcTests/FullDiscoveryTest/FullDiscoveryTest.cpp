@@ -168,7 +168,7 @@ class MyPubListener: public PublisherListener
 
 class MySubListener: public SubscriberListener
 {
-	void onPublicationMatched()
+	void onSubscriptionMatched()
 	{
 		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
 		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
@@ -184,7 +184,8 @@ class MySubListener: public SubscriberListener
 
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
 	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
@@ -295,7 +296,7 @@ int main(int argc, char** argv){
 		Rparam.topic.topicDataType = std::string("TestType");
 		Rparam.topic.topicName = std::string("Test_topic1");
 		Rparam.topic.topicKind = WITH_KEY;
-		Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;

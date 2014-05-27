@@ -49,7 +49,7 @@ class ResourceListen
 {
 	friend class MessageReceiver; // Here is justifies since each ResourceListen has only one MessageReceiver and viceversa
 public:
-	ResourceListen(ParticipantImpl* p, bool isMulti);
+	ResourceListen(ParticipantImpl* p, bool isMulti,bool isMetatraffic);
 	virtual ~ResourceListen();
 
 	void removeEndpointFromAssociated(Endpoint* endp);
@@ -88,6 +88,8 @@ private:
 	boost::asio::ip::udp::endpoint m_sender_endpoint;
 	//! Variable indicating whether the listen thread is Multicast.
 	bool m_isMulticast;
+
+	bool m_isMetatraffic;
 	/**
 	 * Callback to be executed when a new Message is received in the socket.
 	 * @param error Error code associated with the operation.
