@@ -33,7 +33,7 @@ SectionGroup "Libraries" SECGRP0000
      Section "x64 libraries" SEC_LIB_x64
          SetOutPath $INSTDIR\lib\x64Win64VS2010
          SetOverwrite on
-         File /r /x "..\..\..\lib\x64Win64VS2010\eprosimartpsd-0.3.1.pdb" "..\..\..\lib\x64Win64VS2010\*"
+         File /r /x ..\..\..\lib\x64Win64VS2010\eprosimartpsd-0.3.1.pdb "..\..\..\lib\x64Win64VS2010\*"
          WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
@@ -43,7 +43,7 @@ SectionGroup "Libraries" SECGRP0000
     Section "i86 libraries" SEC_LIB_i86
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
-        File /r /x "..\..\..\lib\i86Win32VS2010\eprosimartpsd-0.3.1.pdb" "..\..\..\lib\i86Win32VS2010\*"
+        File /r /x ..\..\..\lib\i86Win32VS2010\eprosimartpsd-0.3.1.pdb "..\..\..\lib\i86Win32VS2010\*"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP

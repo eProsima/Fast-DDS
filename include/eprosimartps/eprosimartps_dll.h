@@ -9,6 +9,12 @@
 #ifndef _EPROSIMARTPS_EPROSIMARTPS_DLL_H_
 #define _EPROSIMARTPS_EPROSIMARTPS_DLL_H_
 
+#define BOOST_LIB_NAME boost_eprosimartps
+#define BOOST_ALL_DYN_LINK
+#define BOOST_DYN_LINK
+
+#include <boost/config/auto_link.hpp>
+
 // normalize macros
 #if !defined(EPROSIMARTPS_DYN_LINK) && !defined(EPROSIMARTPS_STATIC_LINK) \
     && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
