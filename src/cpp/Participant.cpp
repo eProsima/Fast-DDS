@@ -24,6 +24,7 @@
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 
+
 //#include "eprosimartps/dds/DomainParticipant.h"
 
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
@@ -105,7 +106,7 @@ ParticipantImpl::~ParticipantImpl()
 }
 
 bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,
-		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId)
+		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating Stateless Writer"<<endl);
 	EntityId_t entId;
@@ -126,6 +127,7 @@ bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherA
 		entId = entityId;
 	}
 	StatelessWriter* SLWriter = new StatelessWriter(param,m_guid.guidPrefix,entId,ptype);
+	SLWriter->setListener(plisten);
 	if(this->initWriter((RTPSWriter*)SLWriter,isBuiltin))
 	{
 		*SW_out = SLWriter;
@@ -136,7 +138,7 @@ bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherA
 }
 
 bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,
-		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId)
+		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulWriter"<<endl);
 	EntityId_t entId;
@@ -157,6 +159,7 @@ bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAt
 		entId = entityId;
 	}
 	StatefulWriter* SFWriter = new StatefulWriter(param, m_guid.guidPrefix,entId,ptype);
+	SFWriter->setListener(plisten);
 	if(this->initWriter((RTPSWriter*)SFWriter,isBuiltin))
 	{
 		*SFW_out = SFWriter;
@@ -204,7 +207,7 @@ bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 }
 
 bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
-		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype, const EntityId_t& entityId)
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten, const EntityId_t& entityId)
 {
 	pInfo("Creating StatelessReader"<<endl);
 	EntityId_t entId;
@@ -223,6 +226,7 @@ bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
 	else
 		entId = entityId;
 	StatelessReader* SReader = new StatelessReader(param, m_guid.guidPrefix,entId,ptype);
+	SReader->setListener(slisten);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;
@@ -233,7 +237,7 @@ bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
 }
 
 bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
-		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId)
+		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten,const EntityId_t& entityId)
 {
 	pDebugInfo("Creating StatefulReader"<<endl);
 	EntityId_t entId;
@@ -252,6 +256,7 @@ bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
 	else
 		entId = entityId;
 	StatefulReader* SReader = new StatefulReader(param, m_guid.guidPrefix,entId,ptype);
+	SReader->setListener(slisten);
 	if(initReader((RTPSReader*)SReader,isBuiltin))
 	{
 		*SR_out = SReader;

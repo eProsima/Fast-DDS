@@ -133,6 +133,9 @@ public:
 	RTPSWriter* getWriterPtr() {
 			return mp_Writer;
 		}
+
+	size_t getMatchedSubscribers();
+
 private:
 	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_Writer;
@@ -239,6 +242,11 @@ public:
 	{
 		return mp_impl->getGuid();
 	}
+
+	size_t getMatchedSubscribers()
+		{
+			return mp_impl->getMatchedSubscribers();
+		}
 
 private:
 	PublisherImpl* mp_impl;

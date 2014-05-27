@@ -158,7 +158,7 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 
 
 
-Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAttributes& WParam)
+Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAttributes& WParam,PublisherListener* plisten)
 {
 	ParticipantImpl* p = NULL;
 	if(!getParticipantImpl(pin,&p))
@@ -191,7 +191,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		StatelessWriter* SW;
-		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false,p_type))
+		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false,p_type,plisten))
 			return NULL;
 		SW->setQos(WParam.qos,true);
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
@@ -199,7 +199,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		StatefulWriter* SW;
-		if(!p->createStatefulWriter(&SW,WParam,p_type->m_typeSize,false,p_type))
+		if(!p->createStatefulWriter(&SW,WParam,p_type->m_typeSize,false,p_type,plisten))
 			return NULL;
 		SW->setQos(WParam.qos,true);
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
@@ -217,7 +217,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	return NULL;
 }
 
-Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam)
+Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam,SubscriberListener* slisten)
 {
 	ParticipantImpl* p = NULL;
 	if(!getParticipantImpl(pin,&p))

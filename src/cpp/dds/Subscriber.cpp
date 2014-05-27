@@ -73,6 +73,9 @@ int SubscriberImpl::getHistoryElementsNumber()
 	return mp_Reader->getHistoryCacheSize();
 }
 
+size_t SubscriberImpl::getMatchedPublishers()
+{return mp_Reader->getMatchedPublishers();};
+
 
 bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
 {

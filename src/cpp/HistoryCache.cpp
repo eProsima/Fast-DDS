@@ -139,7 +139,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 			if((*it)->sequenceNumber.to64long() == a_change->sequenceNumber.to64long() &&
 					(*it)->writerGUID == a_change->writerGUID)
 			{
-				pWarning("Change with the same seqNum already in History" << endl);
+				pDebugInfo("Change with the same seqNum already in History" << endl);
 				return false;
 			}
 		}

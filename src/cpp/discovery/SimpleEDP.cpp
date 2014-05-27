@@ -85,7 +85,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,NULL,c_EntityId_SEDPPubWriter);
+		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SEDPPubWriter);
 		if(created)
 		{
 			pDebugInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
@@ -102,7 +102,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,NULL,c_EntityId_SEDPPubReader);
+		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_PubReader,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SEDPPubReader);
 		if(created)
 		{
 			mp_PubReader->setListener((SubscriberListener*)&m_listeners.m_PubListener);
@@ -120,7 +120,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.userDefinedId = -1;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,NULL,c_EntityId_SEDPSubWriter);
+		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SEDPSubWriter);
 		if(created)
 		{
 			pDebugInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
@@ -137,7 +137,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,NULL,c_EntityId_SEDPSubReader);
+		created &=this->mp_PDP->mp_participant->createStatefulReader(&mp_SubReader,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SEDPSubReader);
 		if(created)
 		{
 			mp_SubReader->setListener((SubscriberListener*)&m_listeners.m_SubListener);
@@ -400,6 +400,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 			if(p_SFW->matched_reader_add(rdata->m_readerProxy))
 				matched = true;
 		}
+		cout <<RED << "Matched: "<< matched << " Listener: " << (W->getListener()==NULL) << DEF<<endl;
 		if(matched && W->getListener()!=NULL)
 			W->getListener()->onPublicationMatched();
 	}

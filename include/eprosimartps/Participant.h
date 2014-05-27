@@ -50,6 +50,8 @@ namespace eprosima {
 namespace dds{
 class DomainParticipant;
 class DDSTopicDataType;
+class PublisherListener;
+class SubscriberListener;
 }
 
 namespace rtps {
@@ -83,7 +85,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Create a StatefulWriter from a parameter structure.
 	 * @param[out] SWriter Pointer to the stateful writer.
@@ -92,7 +94,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initWriter(RTPSWriter* W,bool isBuiltin);
 
@@ -104,7 +106,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Create a StatefulReader from a parameter structure and add it to the participant.
 	 * @param[out] SReader Pointer to the stateful reader.
@@ -113,7 +115,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,const EntityId_t& entityId = c_EntityId_Unknown);
+			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initReader(RTPSReader* R,bool isBuiltin);
 

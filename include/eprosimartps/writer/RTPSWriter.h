@@ -75,6 +75,7 @@ public:
 	virtual void unsent_change_add(CacheChange_t* change)=0;
 	virtual bool removeMinSeqCacheChange()=0;
 	virtual bool removeAllCacheChange(int32_t* n_removed)=0;
+	virtual size_t getMatchedSubscribers()=0;
 
 	bool add_new_change(ChangeKind_t kind,void*Data);
 
@@ -116,8 +117,10 @@ public:
 	const WriterQos& getQos(){return m_qos;}
 
 	PublisherListener* getListener(){return mp_listener;}
+	void setListener(PublisherListener* plisten){mp_listener = plisten;}
 
 	ParameterList_t* getInlineQos(){return &m_inlineQos;}
+
 
 protected:
 
@@ -139,7 +142,7 @@ protected:
 	WriterQos m_qos;
 	//Publisher* m_Pub;
 	PublisherListener* mp_listener;
-	friend bool PublisherImpl::assignListener(PublisherListener* pin);
+
 	//QosList_t m_ParameterQosList;
 
 	ParameterList_t m_inlineQos;
