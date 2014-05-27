@@ -282,7 +282,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				paramlist_byte_size+=16;
 				if(handle!=NULL)
 					*handle = p->key;
-				cout <<"Reading parameterListfromCDRMEssage:" << p->key << endl;
 				IF_VALID_ADD
 			}
 			case PID_SENTINEL:

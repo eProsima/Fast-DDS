@@ -331,11 +331,8 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 		case PID_KEY_HASH:
 		{
 			ParameterKey_t*p=(ParameterKey_t*)(*it);
-			cout <<"DiscoveredData2ReaderData: " << p->key << endl;
 			rdata->m_key = p->key;
-			cout <<"DiscoveredData2ReaderData: " << rdata->m_key << endl;
 			iHandle2GUID(rdata->m_readerProxy.remoteReaderGuid,rdata->m_key);
-			cout <<"DiscoveredData2ReaderData: " << rdata->m_readerProxy.remoteReaderGuid << endl;
 			break;
 		}
 		default:
