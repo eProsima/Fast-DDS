@@ -88,7 +88,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_PubWriter,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SEDPPubWriter);
 		if(created)
 		{
-			pDebugInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
+			pInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
 		}
 	}
 	if(m_discovery.m_simpleEDP.use_Publication_Reader)
@@ -106,7 +106,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubReader->setListener((SubscriberListener*)&m_listeners.m_PubListener);
-			pDebugInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
+			pInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
 		}
 	}
 	if(m_discovery.m_simpleEDP.use_Subscription_Writer)
@@ -123,7 +123,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		created &=this->mp_PDP->mp_participant->createStatefulWriter(&mp_SubWriter,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SEDPSubWriter);
 		if(created)
 		{
-			pDebugInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
+			pInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
 		}
 	}
 	if(m_discovery.m_simpleEDP.use_Subscription_Reader)
@@ -141,7 +141,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubReader->setListener((SubscriberListener*)&m_listeners.m_SubListener);
-			pDebugInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
+			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
 	pInfo(CYAN<<"SimpleEDP Endpoints creation finished"<<DEF<<endl);
