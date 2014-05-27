@@ -35,14 +35,14 @@ bool ResourceSend::initSend(const Locator_t& loc)
 	boost::asio::ip::address addr;
 	m_sendLocator = loc;
 	try {
-		boost::asio::io_service netService;
-		udp::resolver   resolver(netService);
-		udp::resolver::query query(udp::v4(), "google.com", "");
-		udp::resolver::iterator endpoints = resolver.resolve(query);
-		udp::endpoint ep = *endpoints;
-		udp::socket socket(netService);
-		socket.connect(ep);
-		addr = socket.local_endpoint().address();
+		//boost::asio::io_service netService;
+		//udp::resolver   resolver(netService);
+		//udp::resolver::query query(udp::v4(), "google.com", "");
+		////udp::resolver::iterator endpoints = resolver.resolve(query);
+		//udp::endpoint ep = *endpoints;
+		//udp::socket socket(netService);
+		//socket.connect(ep);
+		//addr = boost::asio::ip::udp::v4();//socket.local_endpoint().address();
 
 		pInfo("My IP according to google is: " << addr.to_string() << endl);
 
@@ -65,7 +65,7 @@ bool ResourceSend::initSend(const Locator_t& loc)
 	while(not_bind)
 	{
 		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-		udp::endpoint send_endpoint = udp::endpoint(addr.to_v4(),m_sendLocator.port);
+		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_sendLocator.port);
 		//boost::asio::ip::udp::socket s(sendService,send_endpoint);
 		try{
 
@@ -117,7 +117,12 @@ void ResourceSend::sendSync(CDRMessage_t* msg, Locator_t* loc)
 		m_bytes_sent = 0;
 		if(m_send_next)
 		{
-			m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+		try {
+				m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
+			} catch (const std::exception& error) 
+		{
+				std::cerr << error.what() << std::endl;
+			}
 		}
 		else
 		{

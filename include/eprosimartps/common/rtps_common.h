@@ -129,8 +129,8 @@ typedef struct SerializedPayload_t{
 		length= 0;
 		encapsulation = CDR_BE;
 		max_size = 0;
-		if(data!=NULL)
-			free(data);
+	//	if(data!=NULL)
+		//	free(data);
 		data = NULL;
 	}
 }SerializedPayload_t;

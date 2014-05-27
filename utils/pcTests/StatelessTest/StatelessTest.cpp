@@ -208,7 +208,7 @@ int main(int argc, char** argv)
 		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Sparam);
 
-		loc.set_IP4_address(192,168,1,IPTESTWIN);
+		loc.set_IP4_address(127,0,0,1);
 		pub1->addReaderLocator(loc,true);
 		pub2->addReaderLocator(loc,true);
 		TestType tp1,tp2,tp_in;
