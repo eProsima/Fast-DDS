@@ -185,7 +185,7 @@ bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
 
 
 	//Look for receiving threads that are already listening to this writer receiving addresses.
-	if(assignEnpointToListenResources((Endpoint*)W,'W'))
+	if(assignEnpointToListenResources((Endpoint*)W,'W',isBuiltin))
 	{
 		//Wait until the thread is correctly created
 		if(!isBuiltin)
@@ -285,7 +285,7 @@ bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 
 	//Look for receiving threads that are already listening to this writer receiving addresses.
 
-	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R'))
+	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R',isBuiltin))
 	{
 		if(!isBuiltin)
 		{
@@ -307,7 +307,7 @@ bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 
 
 
-bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char type) {
+bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char type,bool isBuiltin) {
 	if(type !='R' && type!='W')
 	{
 		return false;
@@ -335,7 +335,7 @@ bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char 
 		if(!assigned) //Create new listen thread
 		{
 			ResourceListen* thListen = NULL;
-			if(addNewListenResource(*locit_e,&thListen,false))
+			if(addNewListenResource(*locit_e,&thListen,false,isBuiltin))
 			{//Add new listen thread to participant
 				mp_ResourceSemaphore->wait();
 				thListen->addAssociatedEndpoint(p_endpoint);
@@ -362,7 +362,7 @@ bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char 
 		if(!assigned) //Create new listen thread
 		{
 			ResourceListen* thListen = NULL;
-			if(addNewListenResource(*locit_e,&thListen,true))
+			if(addNewListenResource(*locit_e,&thListen,true,isBuiltin))
 			{//Add new listen thread to participant
 				mp_ResourceSemaphore->wait();
 				thListen->addAssociatedEndpoint(p_endpoint);
@@ -375,8 +375,8 @@ bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char 
 	return true;
 }
 
-bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast) {
-	*thlisten_in = new ResourceListen(this,isMulticast);
+bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast,bool isBuiltin) {
+	*thlisten_in = new ResourceListen(this,isMulticast,isBuiltin);
 
 	if((*thlisten_in)->init_thread(loc))
 	{

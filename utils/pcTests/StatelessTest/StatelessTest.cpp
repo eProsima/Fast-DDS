@@ -22,11 +22,10 @@
 #include <bitset>
 #include <cstdint>
 
+#include "eprosimartps/rtps_all.h"
 
 #include "eprosimartps/dds/DomainParticipant.h"
 
-
-#include "eprosimartps/common/colors.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
@@ -162,12 +161,12 @@ public:
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(RTPSLog::EPROSIMA_DEBUGINFO_VERBOSITY_LEVEL);
+	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 	int type;
 	if(argc > 1)
 	{
-		RTPSLog::Info << "Parsing arguments: " << argv[1] << endl;
-		RTPSLog::printInfo();
+//		RTPSLog::Info << "Parsing arguments: " << argv[1] << endl;
+//		RTPSLog::printInfo();
 		if(strcmp(argv[1],"1")==0)
 			type = 1;
 		else if(strcmp(argv[1],"2")==0)
@@ -208,7 +207,7 @@ int main(int argc, char** argv)
 		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Sparam);
 
-		loc.set_IP4_address(192,168,1,IPTESTWIN);
+		loc.set_IP4_address(127,0,0,1);
 		pub1->addReaderLocator(loc,true);
 		pub2->addReaderLocator(loc,true);
 		TestType tp1,tp2,tp_in;
@@ -230,10 +229,10 @@ int main(int argc, char** argv)
 			tp2.price *= (i+1);
 			pub1->write((void*)&tp1);
 			pub2->write((void*)&tp2);
-			if(pub1->getHistory_n() >= 0.8*Sparam.historyMaxSize)
-				pub1->removeMinSeqChange();
-			if(pub2->getHistory_n() >= 0.8*Sparam.historyMaxSize)
-				pub2->removeMinSeqChange();
+//			if(pub1->getHistory_n() >= 0.8*Sparam.historyMaxSize)
+//				pub1->removeMinSeqChange();
+//			if(pub2->getHistory_n() >= 0.8*Sparam.historyMaxSize)
+//				pub2->removeMinSeqChange();
 			if(i==8)
 			{
 				pub1->dispose((void*)&tp1);
@@ -247,13 +246,13 @@ int main(int argc, char** argv)
 				tp2.value = 0;
 				tp2.price = 1.5;
 			}
-			if(sub->getHistory_n() >= 1)
-			{
-				cout << "Taking from subscriber" <<endl;
-				if(sub->readNextData((void*)&tp_in,&info))
-					tp_in.print();
-				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
-			}
+//			if(sub->getHistory_n() >= 1)
+//			{
+//				cout << "Taking from subscriber" <<endl;
+//				if(sub->readNextData((void*)&tp_in,&info))
+//					tp_in.print();
+//				cout << "Subscriber History has now: " << sub->getHistory_n() << " elements "<<endl;
+//			}
 		}
 		cout << "Sleeping 3 seconds"<<endl;
 		my_sleep(3);
@@ -293,7 +292,7 @@ int main(int argc, char** argv)
 		{
 			cout << "Blocking until new message arrives " << endl;
 			sub->waitForUnreadMessage();
-			cout << "After new message block " << sub->getHistory_n() << endl;
+			//cout << "After new message block " << sub->getHistory_n() << endl;
 			TestType tp;
 			SampleInfo_t info;
 			while(sub->readNextData((void*)&tp,&info))
@@ -305,12 +304,12 @@ int main(int argc, char** argv)
 				tp.price = 0;
 				COPYSTR(tp.name,"UNDEF");
 			}
-			if(sub->getHistory_n() >= 0.5*Rparam.historyMaxSize)
-			{
-				cout << "Taking all" <<endl;
-				while(sub->takeNextData((void*)&tp,&info))
-					tp.print();
-			}
+//			if(sub->getHistory_n() >= 0.5*Rparam.historyMaxSize)
+//			{
+//				cout << "Taking all" <<endl;
+//				while(sub->takeNextData((void*)&tp,&info))
+//					tp.print();
+//			}
 		}
 		break;
 	}

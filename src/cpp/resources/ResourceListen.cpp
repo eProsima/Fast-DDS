@@ -31,13 +31,14 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
-ResourceListen::ResourceListen(ParticipantImpl* pimpl,bool is_Multi) :
+ResourceListen::ResourceListen(ParticipantImpl* pimpl,bool is_Multi,bool isMetatraffic) :
 		mp_participantImpl(pimpl),mp_thread(NULL),
 		m_listen_socket(m_io_service),
 		m_first(true)
 {
 	m_MessageReceiver.mp_threadListen = this;
 	m_isMulticast = is_Multi;
+	m_isMetatraffic = isMetatraffic;
 }
 
 ResourceListen::~ResourceListen()
@@ -80,6 +81,8 @@ bool ResourceListen::init_thread(Locator_t& loc){
 				listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
 			}
 			m_listen_socket.open(listen_endpoint.protocol());
+			if(m_isMetatraffic)
+				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ));
 			if(m_isMulticast)
 			{
 				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
