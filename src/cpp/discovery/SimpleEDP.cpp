@@ -154,7 +154,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-	if(auxendp!=0) //Exist Pub Announcer
+	if(auxendp!=0 && mp_PubReader!=NULL) //Exist Pub Writer and i have pub reader
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<DEF<<endl);
 		WriterProxy_t wp;
@@ -166,7 +166,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	}
 	auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-	if(auxendp!=0) //Exist Pub Announcer
+	if(auxendp!=0 && mp_PubWriter!=NULL) //Exist Pub Detector
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<DEF<<endl);
 		ReaderProxy_t rp;
@@ -176,11 +176,12 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
 		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		cout << "SimpleEDP:1"<<endl;
 		mp_PubWriter->matched_reader_add(rp);
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
-	if(auxendp!=0) //Exist Pub Announcer
+	if(auxendp!=0 && mp_SubReader!=NULL) //Exist Pub Announcer
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<DEF<<endl);
 		WriterProxy_t wp;
@@ -192,7 +193,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
-	if(auxendp!=0) //Exist Pub Announcer
+	if(auxendp!=0 && mp_SubWriter!=NULL) //Exist Pub Announcer
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<DEF<<endl);
 		ReaderProxy_t rp;

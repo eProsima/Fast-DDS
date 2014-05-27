@@ -167,7 +167,6 @@ void SEDPSubListener::onNewDataMessage()
 			DiscoveredReaderData* rdata = new DiscoveredReaderData();
 			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,rdata))
 			{
-				cout << B_RED << "SEDPSubListenerIHANDLE: "<< rdata->m_key << DEF <<endl;
 				change->instanceHandle = rdata->m_key;
 				iHandle2GUID(rdata->m_readerProxy.remoteReaderGuid,change->instanceHandle);
 				if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x04)
@@ -202,12 +201,9 @@ void SEDPSubListener::onNewDataMessage()
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;
-				cout << "SEDPSubListener:DISCOVEREDPARTICIPANTS SIZE: " << this->mp_SEDP->mp_PDP->m_discoveredParticipants.size() << endl;
 				for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
 						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
 				{
-					cout << "SEDPSubListener:loop:" << (*pit)->m_guidPrefix << endl;
-					cout << "SEDPSubListener:read:" << rdata->m_readerProxy.remoteReaderGuid.guidPrefix << endl;
 					if((*pit)->m_guidPrefix == rdata->m_readerProxy.remoteReaderGuid.guidPrefix)
 					{
 						pdata = (*pit);
