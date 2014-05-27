@@ -122,7 +122,7 @@ bool SPDPListener::newAddedCache()
 				}
 
 
-
+				mp_SPDP->announceParticipantState(false);
 			}
 			param.deleteParams();
 		}
