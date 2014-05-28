@@ -54,7 +54,6 @@ public:
 	virtual ~ResourceListen();
 
 	void removeEndpointFromAssociated(Endpoint* endp);
-
 	bool addAssociatedEndpoint(Endpoint* endp);
 
 	bool hasAssociatedEndpoints(){return !(m_assoc_writers.empty() && m_assoc_readers.empty());};

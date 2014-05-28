@@ -348,6 +348,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 	{
 
 	}
+	return true;
 }
 
 bool ParticipantImpl::assignLocator2ResourceListen(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed)
