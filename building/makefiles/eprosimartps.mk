@@ -57,6 +57,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/Participant.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/resources/ResourceListen.cpp \
+		  $(BASEDIR)/src/cpp/resources/ListenResource.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceEvent.cpp \
 		  \

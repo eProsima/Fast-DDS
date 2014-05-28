@@ -21,7 +21,7 @@
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/Endpoint.h"
 #include "eprosimartps/Participant.h"
-//#include "eprosimartps/dds/DomainParticipant.h"
+
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
