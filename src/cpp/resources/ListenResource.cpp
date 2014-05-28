@@ -131,6 +131,8 @@ bool ListenResource::isListeningTo(const Locator_t& loc)
 		return false;
 }
 
+
+
 void ListenResource::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
 	if(err == boost::system::errc::success)
@@ -188,7 +190,92 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 	}
 }
 
+Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed)
+{
+	pInfo(BLUE<<"ResourceListen initializing"<<DEF<<endl);
+	m_listenLoc = loc;
+	boost::asio::ip::address address = boost::asio::ip::address::from_string(m_listenLoc.to_IP4_string());
+	if(isMulti)
+	{
+		m_listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_listenLoc.port);
+	}
+	else
+	{
+		m_listen_endpoint = udp::endpoint(address,m_listenLoc.port);
 
+	}
+	//OPEN THE SOCKET:
+	m_listen_socket.open(m_listen_endpoint.protocol());
+	if(isMulti)
+	{
+		m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
+		m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( true ) );
+	}
+	if(isFixed)
+	{
+		try
+		{
+			m_listen_socket.bind(m_listen_endpoint);
+		}
+		catch (boost::system::system_error const& e)
+		{
+			pError(e.what() << " : " << m_listen_endpoint <<endl);
+			m_listenLoc.kind = -1;
+			return m_listenLoc;
+		}
+	}
+	else
+	{
+		bool binded = false;
+		for(uint8_t i =0;i<100;++i)
+		{
+			m_listen_endpoint.port(m_listen_endpoint.port()+i);
+			try
+			{
+				m_listen_socket.bind(m_listen_endpoint);
+				binded = true;
+				m_listenLoc.port = m_listen_endpoint.port();
+				break;
+			}
+			catch(boost::system::system_error const& e)
+			{
+				pDebugInfo("Tried port "<< m_listen_endpoint.port() << " and was busy, trying next..."<<endl);
+			}
+		}
+		if(!binded)
+		{
+			pError("Tried 100 ports and none was working" <<endl);
+			m_listenLoc.kind = -1;
+			return m_listenLoc;
+		}
+	}
+	pDebugInfo("Listen endpoint: " << m_listen_endpoint<< endl);
+	if(isMulti)
+	{
+		pDebugInfo("Joining group: "<<m_listenLoc.to_IP4_string()<<endl);
+		LocatorList_t loclist;
+		IPFinder::getIPAddress(&loclist);
+		for(LocatorListIterator it=loclist.begin();it!=loclist.end();++it)
+			m_listen_socket.set_option( boost::asio::ip::multicast::join_group(address.to_v4(),boost::asio::ip::address_v4::from_string(it->to_IP4_string())) );
+	}
+	CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
+	m_listen_socket.async_receive_from(
+			boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
+			m_sender_endpoint,
+			boost::bind(&ListenResource::newCDRMessage, this,
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
+	mp_thread = new boost::thread(&ListenResource::run_io_service,this);
+	return m_listenLoc;
+
+}
+
+void ListenResource::run_io_service()
+{
+	pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint() << DEF << endl) ;
+	mp_participantImpl->ResourceSemaphorePost();
+	this->m_io_service.run();
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

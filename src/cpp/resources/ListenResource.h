@@ -40,7 +40,7 @@ public:
 	ListenResource(ParticipantImpl* p);
 	virtual ~ListenResource();
 
-	const Locator_t& init_thread(Locator_t& loc,bool isMulti,bool isFixed);
+	Locator_t init_thread(Locator_t& loc,bool isMulti,bool isFixed);
 
 	bool addAssociatedEndpoint(Endpoint* end);
 	bool removeAssociatedEndpoint(Endpoint* end);
@@ -52,6 +52,7 @@ private:
 	boost::asio::io_service m_io_service;
 	boost::asio::ip::udp::socket m_listen_socket;
 	boost::asio::ip::udp::endpoint m_sender_endpoint;
+	boost::asio::ip::udp::endpoint m_listen_endpoint;
 
 	Locator_t m_listenLoc;
 	Locator_t m_senderLocator;
@@ -62,11 +63,14 @@ private:
 	MessageReceiver m_MessageReceiver;
 
 	/**
-		 * Callback to be executed when a new Message is received in the socket.
-		 * @param error Error code associated with the operation.
-		 * @param size NUmber of bytes received
-		 */
-		void newCDRMessage(const boost::system::error_code& error, std::size_t size);
+	 * Callback to be executed when a new Message is received in the socket.
+	 * @param error Error code associated with the operation.
+	 * @param size NUmber of bytes received
+	 */
+	void newCDRMessage(const boost::system::error_code& error, std::size_t size);
+
+	//! Method to run the io_service.
+	void run_io_service();
 
 };
 
