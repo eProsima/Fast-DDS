@@ -417,7 +417,7 @@ bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuilti
 	bool valid = true;
 	if(endp->unicastLocatorList.empty() && !isBuiltin)
 	{
-		pWarning("Subscriber created with no unicastLocatorList, adding default List"<<endl);
+		pWarning("Endpoint created with no unicastLocatorList, adding default List"<<endl);
 		for(LocatorListIterator lit = m_defaultUnicastLocatorList.begin();lit!=m_defaultUnicastLocatorList.end();++lit)
 		{
 			assignLocator2ListenResources(endp,lit,false,false);
