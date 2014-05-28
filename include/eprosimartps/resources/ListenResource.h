@@ -45,7 +45,7 @@ public:
 	bool addAssociatedEndpoint(Endpoint* end);
 	bool removeAssociatedEndpoint(Endpoint* end);
 	bool isListeningTo(const Locator_t& loc);
-
+	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
 private:
 	ParticipantImpl* mp_participantImpl;
 	boost::thread* mp_thread;

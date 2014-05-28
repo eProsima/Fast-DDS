@@ -17,7 +17,7 @@
 #include "eprosimartps/MessageReceiver.h"
 #include "eprosimartps/common/RTPS_messages.h"
 #include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/resources/ResourceListen.h"
+#include "eprosimartps/resources/ListenResource.h"
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/StatefulReader.h"
@@ -262,13 +262,13 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = NULL;
-	if(mp_threadListen->m_assoc_readers.empty())
+	if(mp_threadListen->m_assocReaders.empty())
 	{
 		pWarning("Data received when NO readers are created"<<endl);
 		return false;
 	}
-	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
-			it!=mp_threadListen->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
+			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
@@ -358,8 +358,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 
 	//Look for the correct reader to add the change
-	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
-			it!=mp_threadListen->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
+			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
@@ -458,8 +458,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	//Look for the correct reader and writers:
 
 
-	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
-			it!=mp_threadListen->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
+			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
@@ -526,8 +526,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 	//Look for the correct writer to use the acknack
 
-	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assoc_writers.begin();
-			it!=mp_threadListen->m_assoc_writers.end();++it)
+	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
+			it!=mp_threadListen->m_assocWriters.end();++it)
 	{
 		if((*it)->getGuid() == writerGUID)
 		{
@@ -563,7 +563,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 			}
 		}
 	}
-	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assoc_writers.size() << " writers in this ResourceListen)"<<endl);
+	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assocWriters.size() << " writers in this ResourceListen)"<<endl);
 	return false;
 }
 
@@ -590,8 +590,8 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 		return false;
 
 
-	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assoc_readers.begin();
-			it!=mp_threadListen->m_assoc_readers.end();++it)
+	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
+			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{

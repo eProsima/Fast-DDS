@@ -15,7 +15,7 @@
  *              grcanosa@gmail.com  	
  */
 
-#include "ListenResource.h"
+#include "eprosimartps/resources/ListenResource.h"
 
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/reader/RTPSReader.h"
@@ -40,7 +40,7 @@ ListenResource::ListenResource(ParticipantImpl*p):
 		mp_thread(NULL),
 		m_listen_socket(m_io_service)
 {
-
+	m_MessageReceiver.mp_threadListen = this;
 }
 
 ListenResource::~ListenResource()

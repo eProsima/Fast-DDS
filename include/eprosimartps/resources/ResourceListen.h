@@ -50,7 +50,7 @@ class ResourceListen
 	friend class MessageReceiver; // Here is justifies since each ResourceListen has only one MessageReceiver and viceversa
 public:
 	ResourceListen(ParticipantImpl* p, bool isMulti,bool isMetatraffic);
-	ResourceListen(ParticipantImpl* p,bool isMulticast,bool isFixed,int aux);
+
 	virtual ~ResourceListen();
 
 	void removeEndpointFromAssociated(Endpoint* endp);
@@ -66,7 +66,6 @@ public:
 	 */
 	bool init_thread(Locator_t& loc);
 
-	bool init_thread(LocatorListIterator loc);
 private:
 
 	//! Vector of pointers to the associated writers.
