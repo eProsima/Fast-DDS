@@ -166,11 +166,9 @@ public:
 	//!Default listening addresses.
 	LocatorList_t m_defaultMulticastLocatorList;
 
-	void ResourceSemaphorePost()
-	{
-		if(mp_ResourceSemaphore!=NULL)
-			mp_ResourceSemaphore->post();
-	}
+	void ResourceSemaphorePost();
+
+	void ResourceSemaphoreWait();
 
 	const DiscoveryAttributes& getDiscoveryAttributes() const {
 		return m_discovery;

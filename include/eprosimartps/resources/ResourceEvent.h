@@ -30,13 +30,15 @@
 namespace eprosima {
 namespace rtps {
 
+class ParticipantImpl;
+
 /**
  * Class ResourceEvent used to manage the temporal events.
  * @ingroup MANAGEMENTMODULE
  */
 class ResourceEvent {
 public:
-	ResourceEvent();
+	ResourceEvent(ParticipantImpl*p);
 	virtual ~ResourceEvent();
 	boost::thread* b_thread;
 	boost::asio::io_service io_service;
@@ -53,6 +55,8 @@ public:
 
 	//!Method to run the tasks
 	void run_io_service();
+
+	ParticipantImpl* mp_participantImpl;
 };
 
 } /* namespace dds */

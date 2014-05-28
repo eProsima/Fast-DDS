@@ -46,11 +46,11 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 							m_participantName(PParam.name),
 							m_guid(guidP,c_EntityId_Participant),
+							m_event_thr(this),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
 							mp_PDP(NULL),
 							m_participantID(ID)
-
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -60,12 +60,12 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 
 	if(m_defaultUnicastLocatorList.empty())
 	{
-		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:10042"<<endl);
+		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:11111"<<endl);
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-			lit->port=10042;
+			lit->port=11111;
 			m_defaultUnicastLocatorList.push_back(*lit);
 		}
 	}
@@ -465,7 +465,6 @@ bool ParticipantImpl::assignLocator2ListenResources(Endpoint* endp,LocatorListIt
 	Locator_t loc = LR->init_thread(*lit,isMulti,isFixed);
 	if(loc.kind>0)
 	{
-		mp_ResourceSemaphore->wait();
 		LR->addAssociatedEndpoint(endp);
 		*lit = loc;
 		m_listenResourceList.push_back(LR);
@@ -529,6 +528,23 @@ void ParticipantImpl::announceParticipantState()
 {
 	this->mp_PDP->announceParticipantState(false);
 }
+
+void ParticipantImpl::ResourceSemaphorePost()
+{
+	if(mp_ResourceSemaphore!=NULL)
+	{
+		mp_ResourceSemaphore->post();
+	}
+}
+
+void ParticipantImpl::ResourceSemaphoreWait()
+{
+	if(mp_ResourceSemaphore!=NULL)
+	{
+		mp_ResourceSemaphore->wait();
+	}
+}
+
 
 
 } /* namespace rtps */
