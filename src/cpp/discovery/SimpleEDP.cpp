@@ -139,6 +139,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.topicName = "DCPSSubscription";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredReaderData";
+		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+				Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
 		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
