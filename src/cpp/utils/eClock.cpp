@@ -17,6 +17,7 @@
 
 #include "eprosimartps/utils/eClock.h"
 #include <cmath>
+#include <unistd.h>
 namespace eprosima {
 namespace rtps {
 
@@ -75,6 +76,19 @@ int eClock::my_gettimeofday(struct timeval *tv, struct timezone *tz)
 	return gettimeofday(tv,tz);
 #endif
 }
+
+void eClock::my_sleep(uint32_t milliseconds)
+{
+#if defined(_WIN32)
+#pragma warning(disable: 4430)
+	Sleep(milliseconds);
+#else
+	usleep(milliseconds*1000);
+#endif
+	return;
+}
+
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

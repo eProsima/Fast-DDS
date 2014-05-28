@@ -50,6 +50,7 @@ class ResourceListen
 	friend class MessageReceiver; // Here is justifies since each ResourceListen has only one MessageReceiver and viceversa
 public:
 	ResourceListen(ParticipantImpl* p, bool isMulti,bool isMetatraffic);
+	ResourceListen(ParticipantImpl* p,bool isMulticast,bool isFixed,int aux);
 	virtual ~ResourceListen();
 
 	void removeEndpointFromAssociated(Endpoint* endp);
@@ -65,6 +66,8 @@ public:
 	 * Method to initialize the thread.
 	 */
 	bool init_thread(Locator_t& loc);
+
+	bool init_thread(LocatorListIterator loc);
 private:
 
 	//! Vector of pointers to the associated writers.
@@ -98,6 +101,8 @@ private:
 	void newCDRMessage(const boost::system::error_code& error, std::size_t size);
 	//! Method to run the io_service.
 	void run_io_service();
+
+	bool m_isFixed;
 
 
 

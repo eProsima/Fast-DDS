@@ -48,7 +48,7 @@ DomainParticipantImpl* DomainParticipantImpl::getInstance()
 
 DomainParticipantImpl::DomainParticipantImpl()
 {
-	id = 0;//private constructor
+	m_maxParticipantID = 0;//private constructor
 	m_portBase = 7400;
 	m_participantIdGain = 2;
 	m_domainIdGain = 250;
@@ -90,7 +90,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
 uint32_t DomainParticipantImpl::getNewId()
 {
-	return ++id;
+	return ++m_maxParticipantID;
 }
 
 void DomainParticipantImpl::stopAll()
@@ -149,7 +149,8 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 	guidP.value[9] = ((octet*)&ID)[1];
 	guidP.value[10] = ((octet*)&ID)[2];
 	guidP.value[11] = ((octet*)&ID)[3];
-	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP);
+	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID);
+	this->setMaxParticipantId(pimpl->getParticipantId());
 	Participant* p = new Participant(pimpl);
 
 	m_participants.push_back(ParticipantPair(p,pimpl));

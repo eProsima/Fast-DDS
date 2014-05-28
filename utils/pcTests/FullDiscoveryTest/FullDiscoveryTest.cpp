@@ -214,7 +214,7 @@ int main(int argc, char** argv)
 	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 	PParam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 30;
 
-	PParam.discovery.domainId = 80;
+	PParam.discovery.domainId = 0;
 	cout << "a"<<endl;
 	switch(type)
 	{
@@ -227,7 +227,6 @@ int main(int argc, char** argv)
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
 
-		my_sleep(10);
 
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -256,7 +255,7 @@ int main(int argc, char** argv)
 //		Rparam.userDefinedId = 2;
 //		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 
-		p->announceParticipantState();
+	//	p->announceParticipantState();
 		cout << "Sleeping 4 seconds"<<endl;
 		my_sleep(4);
 		TestType tp1,tp_in;

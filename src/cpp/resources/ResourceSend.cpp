@@ -76,7 +76,7 @@ bool ResourceSend::initSend(const Locator_t& loc)
 		}
 		catch (boost::system::system_error const& e)
 		{
-			pWarning(e.what() << endl);
+			pWarning("ResourceSend: "<<e.what()<< " with socket: " << send_endpoint << endl);
 			m_sendLocator.port++;
 		}
 	}

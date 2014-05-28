@@ -40,7 +40,7 @@ typedef std::vector<RTPSReader*>::iterator p_ReaderIterator;
 typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
 
-ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP):
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP,uint32_t ID):
 
 							m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
@@ -48,7 +48,8 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_guid(guidP,c_EntityId_Participant),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
-							mp_PDP(NULL)
+							mp_PDP(NULL),
+							m_participantID(ID)
 
 {
 	Locator_t loc;
@@ -77,8 +78,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
 		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
-		uint32_t ID =1;
-		mp_PDP->initPDP(PParam.discovery, ID);
+		mp_PDP->initPDP(PParam.discovery, this->getParticipantId());
 	}
 }
 
@@ -263,7 +263,10 @@ bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
 		return true;
 	}
 	else
+	{
+		*SR_out = NULL;
 		return false;
+	}
 }
 
 
@@ -299,8 +302,83 @@ bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
 	}
 	else
 		return false;
+}
 
+bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
+		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
+		StateKind_t kind, DDSTopicDataType* ptype, SubscriberListener* slisten,
+		const EntityId_t& entityId)
+{
+	pDebugInfo("Creating StatefulReader"<<endl);
+	EntityId_t entId;
+	if(entityId == c_EntityId_Unknown)
+	{
+		if(param.topic.getTopicKind() == NO_KEY)
+			entId.value[3] = 0x04;
+		else if(param.topic.getTopicKind() == WITH_KEY)
+			entId.value[3] = 0x07;
+		IdCounter++;
+		octet* c = (octet*)&IdCounter;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+	}
+	else
+		entId = entityId;
+	RTPSReader* SReader = NULL;
+	if(kind == STATELESS)
+		SReader = (RTPSReader*)new StatelessReader(param, m_guid.guidPrefix,entId,ptype);
+	else if(kind == STATEFUL)
+		SReader = (RTPSReader*)new StatefulReader(param, m_guid.guidPrefix,entId,ptype);
+	if(SReader==NULL)
+		return false;
+	//If NO UNICAST
+	if(SReader->unicastLocatorList.empty() && !isBuiltin)
+	{
+		pWarning("Subscriber created with no unicastLocatorList, adding default List"<<endl);
+		SReader->unicastLocatorList = m_defaultUnicastLocatorList;
+	}
+	//IF NO MULTICAST
+	if(SReader->multicastLocatorList.empty())
+		SReader->multicastLocatorList = m_defaultMulticastLocatorList;
+	//Assignthread pointers
+	SReader->mp_send_thr = &this->m_send_thr;
+	SReader->mp_event_thr = &this->m_event_thr;
+	for(LocatorListIterator lit = SReader->unicastLocatorList.begin();lit!=SReader->unicastLocatorList.end();++lit)
+	{
 
+	}
+}
+
+bool ParticipantImpl::assignLocator2ResourceListen(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed)
+{
+	//First Check if the same locator is already being listened:
+	bool listening = false;
+	for(std::vector<ResourceListen*>::iterator thit=m_threadListenList.begin();thit!=m_threadListenList.end();++thit)
+	{
+		if((*thit)->isListeningTo(*lit))
+		{
+			if((*thit)->addAssociatedEndpoint(pend))
+			{
+				return true;
+			}
+		}
+	}
+	if(!listening)
+	{
+		int aux = 3;
+		ResourceListen* RL = new ResourceListen(this,isMulticast,isFixed,aux);
+		if(RL!=NULL)
+		{
+			if(RL->init_thread(lit))
+			{
+				mp_ResourceSemaphore->wait();
+				m_threadListenList.push_back(RL);
+				RL->addAssociatedEndpoint(pend);
+			}
+		}
+	}
+	return false;
 }
 
 
@@ -375,9 +453,9 @@ bool ParticipantImpl::assignEnpointToListenResources(Endpoint* p_endpoint, char 
 	return true;
 }
 
-bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast,bool isBuiltin) {
+bool ParticipantImpl::addNewListenResource(Locator_t& loc,ResourceListen** thlisten_in,bool isMulticast,bool isBuiltin)
+{
 	*thlisten_in = new ResourceListen(this,isMulticast,isBuiltin);
-
 	if((*thlisten_in)->init_thread(loc))
 	{
 		m_threadListenList.push_back(*thlisten_in);
@@ -439,7 +517,5 @@ void ParticipantImpl::announceParticipantState()
 
 } /* namespace rtps */
 } /* namespace eprosima */
-
-
 
 

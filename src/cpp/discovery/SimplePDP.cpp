@@ -26,6 +26,8 @@
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 
+#include "eprosimartps/utils/eClock.h"
+
 
 using namespace eprosima::dds;
 
@@ -55,14 +57,11 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	pInfo(B_CYAN<<"Beginning ParticipantDiscoveryProtocol Initialization"<<DEF<<endl)
 	m_discovery = attributes;
 	DomainParticipantImpl* dp = DomainParticipantImpl::getInstance();
-	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getPortBase()
-														+ dp->getDomainIdGain() * m_discovery.domainId
-														+ dp->getOffsetd0();
-	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getPortBase()
-															+ dp->getDomainIdGain() * m_discovery.domainId
-															+ dp->getOffsetd1()
-															+ dp->getParticipantIdGain() * participantID;
+	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getMulticastPort(m_discovery.domainId);
 
+	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getUnicastPort(m_discovery.domainId,participantID);
+
+	//FIXME: FIx creation of endpoints when port is already being used.
 	addLocalParticipant(mp_participant);
 
 	createSPDPEndpoints();
@@ -83,6 +82,10 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	}
 	if(mp_EDP->initEDP(m_discovery))
 	{
+		this->announceParticipantState(true);
+		eClock::my_sleep(50);
+		this->announceParticipantState(true);
+		eClock::my_sleep(50);
 		this->announceParticipantState(true);
 		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
 				boost::posix_time::milliseconds(m_discovery.resendDiscoveryParticipantDataPeriod.to64time()*1000));
