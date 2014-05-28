@@ -52,7 +52,7 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 
 bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 {
-cout << "StatefulWriter: 1"<<endl;
+
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_param.remoteReaderGuid == RPparam.remoteReaderGuid)
@@ -77,7 +77,7 @@ cout << "StatefulWriter: 1"<<endl;
 		rp->m_changesForReader.push_back(changeForReader);
 	}
 	matched_readers.push_back(rp);
-	pDebugInfo("Reader Proxy added" << endl);
+	pDebugInfo("Reader Proxy added to StatefulWriter." << endl);
 	unsent_changes_not_empty();
 	return true;
 }

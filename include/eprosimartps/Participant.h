@@ -38,7 +38,7 @@
 #include "eprosimartps/resources/ResourceSend.h"
 
 
-
+#include "eprosimartps/Endpoint.h"
 
 
 
@@ -62,7 +62,7 @@ class StatefulWriter;
 class StatefulReader;
 class RTPSReader;
 class RTPSWriter;
-class Endpoint;
+
 class ParticipantDiscoveryProtocol;
 
 /**
@@ -74,7 +74,7 @@ class ParticipantImpl
 {
 public:
 
-	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP);
+	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID);
 	virtual ~ParticipantImpl();
 
 	/**
@@ -118,6 +118,12 @@ public:
 			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool initReader(RTPSReader* R,bool isBuiltin);
+
+
+	bool createReader(RTPSReader** Reader,SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
+			DDSTopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+
+	bool assignLocator2ResourceListen(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
 
 
 	/**
@@ -172,6 +178,14 @@ public:
 		return &m_event_thr;
 	}
 
+	uint32_t getParticipantId() const {
+		return m_participantID;
+	}
+
+	void setParticipantId(uint32_t participantId) {
+		m_participantID = participantId;
+	}
+
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -219,6 +233,8 @@ private:
 	ParticipantDiscoveryProtocol* mp_PDP;
 
 	DiscoveryAttributes m_discovery;
+
+	uint32_t m_participantID;
 
 };
 

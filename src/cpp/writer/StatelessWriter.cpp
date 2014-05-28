@@ -44,7 +44,7 @@ StatelessWriter::~StatelessWriter()
 
 bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
 
-	pDebugInfo("Adding new Reader Locator to StatelessWriter"<<endl);
+	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 
 		if(rit->locator == a_locator.locator)

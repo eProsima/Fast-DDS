@@ -81,14 +81,42 @@ bool ResourceListen::init_thread(Locator_t& loc){
 				listen_endpoint = udp::endpoint(address,m_locList.begin()->port);
 			}
 			m_listen_socket.open(listen_endpoint.protocol());
-			if(m_isMetatraffic)
-				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ));
 			if(m_isMulticast)
 			{
 				m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
 				m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( true ) );
 			}
-			m_listen_socket.bind(listen_endpoint);
+			if(!m_isMetatraffic)
+			{
+				m_listen_socket.bind(listen_endpoint);
+			}
+			else
+			{
+				bool binded = false;
+				for(uint8_t portinc = 0;portinc<50;++portinc)
+				{
+					listen_endpoint.port(listen_endpoint.port()+portinc);
+					try
+					{
+						m_listen_socket.bind(listen_endpoint);
+						binded = true;
+						break;
+					}
+					catch(boost::system::system_error const& e)
+					{
+						pDebugInfo("Tried port "<< listen_endpoint.port() << " and was busy, trying next..."<<endl);
+					}
+				}
+				if(!binded)
+				{
+					pError("Tried binding 50 different ports, something is wrong"<<endl);
+					return false;
+				}
+				else
+				{
+					m_locList.begin()->port = listen_endpoint.port();
+				}
+			}
 			if(m_isMulticast)
 			{
 				pDebugInfo("Joining group: "<<address<<endl);
@@ -237,6 +265,7 @@ bool ResourceListen::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assoc_readers.push_back((RTPSReader*)endp);
+			pInfo("ResourceListen: Endpoint (" << endp->getEndpointKind() << ") added to listen Resource: "<< m_locList.begin()->printIP4Port() << endl);
 			return true;
 		}
 	}
@@ -254,6 +283,21 @@ bool ResourceListen::isListeningTo(const Locator_t& loc)
 	}
 	return false;
 }
+//NEW WAY
+ResourceListen::ResourceListen(ParticipantImpl* p, bool isMulticast,bool isFixed, int aux) :
+		mp_participantImpl(p),mp_thread(NULL),
+		m_listen_socket(m_io_service),
+		m_first(true)
+{
+	m_MessageReceiver.mp_threadListen = this;
+	m_isMulticast = isMulticast;
+	m_isFixed = isFixed;
+	m_isMetatraffic = false;
+}
+
+bool ResourceListen::init_thread(LocatorListIterator loc) {
+}
+
 
 
 } /* namespace rtps */

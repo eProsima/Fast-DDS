@@ -183,12 +183,25 @@ public:
 	uint16_t getPortBase() const {
 		return m_portBase;
 	}
+
+	void setMaxParticipantId(uint32_t maxParticipantId) {
+		m_maxParticipantID = maxParticipantId;
+	}
+
 	///@}
 
+	uint32_t getMulticastPort(uint32_t domainId)
+	{
+		return getPortBase()+ getDomainIdGain() * domainId+ getOffsetd0();
+	}
+	uint32_t getUnicastPort(uint32_t domainId,uint32_t participantID)
+	{
+		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getParticipantIdGain() * participantID;
+	}
 
 
 private:
-	uint32_t id;
+	uint32_t m_maxParticipantID;
 	static bool instanceFlag;
 	static DomainParticipantImpl *single;
 	std::vector<DDSTopicDataType*> m_registeredTypes;
