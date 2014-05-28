@@ -29,9 +29,6 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-#include "boost/date_time/gregorian/gregorian.hpp"
-
 
 
 using namespace eprosima;
@@ -198,11 +195,11 @@ int main(int argc, char** argv)
 		Wparam.topic.topicName = std::string("Test_topic");
 		Wparam.historyMaxSize = 14;
 		Wparam.reliability.heartbeatPeriod.seconds = 2;
-		Wparam.reliability.nackResponseDelay.seconds = 5;
+		Wparam.reliability.nackResponseDelay.seconds = 1;
 		Wparam.reliability.reliabilityKind = RELIABLE;
 		Locator_t loc;
 		loc.kind = 1;
-		loc.port = 10091;
+		loc.port = 10046; //TO WORK WITH NO DISCOVERY THIS PORT MUST BE 10046
 		Wparam.unicastLocatorList.push_back(loc);
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		if(pub == NULL)
@@ -240,7 +237,6 @@ int main(int argc, char** argv)
 		break;
 	}
 	case 2:
-	case 3:
 	{
 		ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;

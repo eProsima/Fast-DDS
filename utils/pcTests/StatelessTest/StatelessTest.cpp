@@ -25,7 +25,6 @@
 
 #include "eprosimartps/dds/DomainParticipant.h"
 
-
 #include "eprosimartps/common/colors.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"

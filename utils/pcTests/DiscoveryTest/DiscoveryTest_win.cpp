@@ -31,8 +31,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-#include "boost/date_time/gregorian/gregorian.hpp"
+
 
 
 
@@ -187,7 +186,7 @@ int main(int argc, char** argv){
 		//Domain ID: must be the same for all participants for the discovery to work.
 		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
-
+		my_sleep(1); 
 		//PUBLISHER:
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
@@ -215,7 +214,7 @@ int main(int argc, char** argv){
 		p->announceParticipantState();
 		//Wait to allow the discovery to work.
 		//Future version will not need this wait.
-		my_sleep(4);
+		my_sleep(1);
 		//Create instances of the object
 		TestType tp1,tp_in;
 		SampleInfo_t info_in;
@@ -235,7 +234,7 @@ int main(int argc, char** argv){
 			sub->readNextData((void*)&tp_in,&info_in);
 			if(tp_in.value == tp1.value &&
 					tp_in.price ==tp1.price)
-				cout << "Message RECEIVED = AS SEND: "<< i << endl;
+				cout << "Message RECEIVED = AS SEND: "<< (i+1) << endl;
 		}
 		break;
 	}
@@ -251,6 +250,7 @@ int main(int argc, char** argv){
 		PParam.discovery.resendSPDPDataPeriod_sec = 30;
 		PParam.domainId = 50;
 		Participant* p = DomainParticipant::createParticipant(PParam);
+		my_sleep(1); 
 		//SUBSCRIBER
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
@@ -281,11 +281,12 @@ int main(int argc, char** argv){
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
 		p->announceParticipantState();
 
-		my_sleep(4);
+		my_sleep(1);
 		TestType tp_in;
 		SampleInfo_t info_in;
 		for(uint i = 0;i<10;i++)
 		{
+			cout << "Waiting... " << endl;
 			sub->waitForUnreadMessage();
 			sub->readNextData((void*)&tp_in,&info_in);
 			tp_in.print();
