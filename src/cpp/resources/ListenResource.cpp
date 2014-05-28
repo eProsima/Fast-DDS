@@ -99,7 +99,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			pInfo("ResourceListen: Endpoint (" << endp->getEndpointKind() << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
+			pInfo("ResourceListen: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
 			return true;
 		}
 	}
@@ -116,7 +116,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			pInfo("ResourceListen: Endpoint (" << endp->getEndpointKind() << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
+			pInfo("ResourceListen: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
 			return true;
 		}
 	}
@@ -192,7 +192,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 
 Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed)
 {
-	pInfo(BLUE<<"ResourceListen initializing"<<DEF<<endl);
+	pInfo(BLUE<<"Listen Resource initializing in : "<<loc.printIP4Port()<<DEF<< endl);
 	m_listenLoc = loc;
 	boost::asio::ip::address address = boost::asio::ip::address::from_string(m_listenLoc.to_IP4_string());
 	if(isMulti)
@@ -266,6 +266,7 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred));
 	mp_thread = new boost::thread(&ListenResource::run_io_service,this);
+	mp_participantImpl->ResourceSemaphoreWait();
 	return m_listenLoc;
 
 }
@@ -273,7 +274,9 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 void ListenResource::run_io_service()
 {
 	pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint() << DEF << endl) ;
+
 	mp_participantImpl->ResourceSemaphorePost();
+
 	this->m_io_service.run();
 }
 

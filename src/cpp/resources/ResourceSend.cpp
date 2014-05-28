@@ -19,6 +19,8 @@
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+
+
 using boost::asio::ip::udp;
 
 namespace eprosima {
@@ -28,6 +30,7 @@ ResourceSend::ResourceSend() :
 	m_send_socket(m_send_service),
 	m_bytes_sent(0),
 	m_send_next(true)
+
 {
 
 }
