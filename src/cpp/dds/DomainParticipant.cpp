@@ -191,16 +191,16 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	}
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-		StatelessWriter* SW;
-		if(!p->createStatelessWriter(&SW,WParam,p_type->m_typeSize,false,p_type,plisten))
+		RTPSWriter* SW;
+		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten))
 			return NULL;
 		SW->setQos(WParam.qos,true);
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		StatefulWriter* SW;
-		if(!p->createStatefulWriter(&SW,WParam,p_type->m_typeSize,false,p_type,plisten))
+		RTPSWriter* SW;
+		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten))
 			return NULL;
 		SW->setQos(WParam.qos,true);
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
@@ -250,16 +250,16 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	}
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-		StatelessReader* SR;
-		if(!p->createStatelessReader(&SR,RParam,p_type->m_typeSize,false,p_type))
+		RTPSReader* SR;
+		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type))
 			return NULL;
 		SR->setQos(RParam.qos,true);
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		StatefulReader* SR;
-		if(!p->createStatefulReader(&SR,RParam,p_type->m_typeSize,false,p_type))
+		RTPSReader* SR;
+		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type))
 			return NULL;
 		SR->setQos(RParam.qos,true);
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);

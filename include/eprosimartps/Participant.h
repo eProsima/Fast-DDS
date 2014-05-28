@@ -35,6 +35,7 @@
 
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ResourceListen.h"
+#include "eprosimartps/resources/ListenResource.h"
 #include "eprosimartps/resources/ResourceSend.h"
 
 
@@ -77,53 +78,55 @@ public:
 	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID);
 	virtual ~ParticipantImpl();
 
-	/**
-	 * Create a StatelessWriter from a parameter structure.
-	 * @param[out] SWriter Pointer to the stateless writer.
-	 * @param[in] Wparam Parameters to use in the creation.
-	 * @param[in] payload_size Size of the payload in this writer.
-	 * @return True if correct.
-	 */
-	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-	/**
-	 * Create a StatefulWriter from a parameter structure.
-	 * @param[out] SWriter Pointer to the stateful writer.
-	 * @param[in] Wparam Parameters to use in the creation.
-	 * @param[in] payload_size Size of the payload in this writer.
-	 * @return True if correct.
-	 */
-	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-
-	bool initWriter(RTPSWriter* W,bool isBuiltin);
-
-	/**
-	 * Create a StatelessReader from a parameter structure and add it to the participant.
-	 * @param[out] SReader Pointer to the stateless reader.
-	 * @param[in] RParam Parameters to use in the creation.
-	 * @param[in] payload_size Size of the payload associated with this Reader.
-	 * @return True if correct.
-	 */
-	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-	/**
-	 * Create a StatefulReader from a parameter structure and add it to the participant.
-	 * @param[out] SReader Pointer to the stateful reader.
-	 * @param[in] RParam Parameters to use in the creation.
-	 * @param[in] payload_size Size of the payload associated with this Reader.
-	 * @return True if correct.
-	 */
-	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,
-			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-
-	bool initReader(RTPSReader* R,bool isBuiltin);
-
+//	/**
+//	 * Create a StatelessWriter from a parameter structure.
+//	 * @param[out] SWriter Pointer to the stateless writer.
+//	 * @param[in] Wparam Parameters to use in the creation.
+//	 * @param[in] payload_size Size of the payload in this writer.
+//	 * @return True if correct.
+//	 */
+//	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,
+//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+//	/**
+//	 * Create a StatefulWriter from a parameter structure.
+//	 * @param[out] SWriter Pointer to the stateful writer.
+//	 * @param[in] Wparam Parameters to use in the creation.
+//	 * @param[in] payload_size Size of the payload in this writer.
+//	 * @return True if correct.
+//	 */
+//	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,
+//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+//
+//	bool initWriter(RTPSWriter* W,bool isBuiltin);
+//
+//	/**
+//	 * Create a StatelessReader from a parameter structure and add it to the participant.
+//	 * @param[out] SReader Pointer to the stateless reader.
+//	 * @param[in] RParam Parameters to use in the creation.
+//	 * @param[in] payload_size Size of the payload associated with this Reader.
+//	 * @return True if correct.
+//	 */
+//	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,
+//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+//	/**
+//	 * Create a StatefulReader from a parameter structure and add it to the participant.
+//	 * @param[out] SReader Pointer to the stateful reader.
+//	 * @param[in] RParam Parameters to use in the creation.
+//	 * @param[in] payload_size Size of the payload associated with this Reader.
+//	 * @return True if correct.
+//	 */
+//	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,
+//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+//
+//	bool initReader(RTPSReader* R,bool isBuiltin);
 
 	bool createReader(RTPSReader** Reader,SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 			DDSTopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+	bool createWriter(RTPSWriter** Reader,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
+				DDSTopicDataType* ptype = NULL,PublisherListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
-	bool assignLocator2ResourceListen(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
+	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
+	bool assignLocator2ListenResources(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
 
 
 	/**
@@ -213,7 +216,9 @@ private:
 	//!Reader List
 	std::vector<RTPSReader*> m_userReaderList;
 	//!Listen thread list.
-	std::vector<ResourceListen*> m_threadListenList;
+	//std::vector<ResourceListen*> m_threadListenList;
+
+	std::vector<ListenResource*> m_listenResourceList;
 	/*!
 	 * Assign a given Endpoint to one of the current listen thread or create a new one.
 	 * @param[in] endpoint Pointer to the Endpoint to add.

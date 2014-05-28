@@ -36,7 +36,7 @@ ResourceListen::ResourceListen(ParticipantImpl* pimpl,bool is_Multi,bool isMetat
 		m_listen_socket(m_io_service),
 		m_first(true)
 {
-	m_MessageReceiver.mp_threadListen = this;
+//	m_MessageReceiver.mp_threadListen = this;
 	m_isMulticast = is_Multi;
 	m_isMetatraffic = isMetatraffic;
 }
@@ -283,20 +283,8 @@ bool ResourceListen::isListeningTo(const Locator_t& loc)
 	}
 	return false;
 }
-//NEW WAY
-ResourceListen::ResourceListen(ParticipantImpl* p, bool isMulticast,bool isFixed, int aux) :
-		mp_participantImpl(p),mp_thread(NULL),
-		m_listen_socket(m_io_service),
-		m_first(true)
-{
-	m_MessageReceiver.mp_threadListen = this;
-	m_isMulticast = isMulticast;
-	m_isFixed = isFixed;
-	m_isMetatraffic = false;
-}
 
-bool ResourceListen::init_thread(LocatorListIterator loc) {
-}
+
 
 
 

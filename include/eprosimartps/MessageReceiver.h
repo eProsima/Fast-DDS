@@ -27,7 +27,7 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
-class ResourceListen;
+class ListenResource;
 struct SubmessageHeader_t;
 
 /**
@@ -49,7 +49,7 @@ public:
 	void processCDRMsg(const GuidPrefix_t& participantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Resource that contains this MessageReceiver.
-	ResourceListen* mp_threadListen;
+	ListenResource* mp_threadListen;
 
 	CDRMessage_t m_rec_msg;
 	ParameterList_t m_ParamList;
