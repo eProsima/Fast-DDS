@@ -38,11 +38,16 @@ Thumbs.db
 
 #VisuaL Studio Files:
 #############
-.opensdf
-.sdf
+*.opensdf
+*.sdf
+*.suo
 
 Debug
 Release
 lib
 output
+
+utils/pcTests/win32/ipch
+utils/pcTests/win32/Debug
+utils/pcTests/win32/Release
 
