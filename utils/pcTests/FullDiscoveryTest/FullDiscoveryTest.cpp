@@ -220,10 +220,9 @@ int main(int argc, char** argv)
 	{
 	case 1:
 	{
-		PParam.discovery.m_simpleEDP.use_Publication_Writer = true;
-			PParam.discovery.m_simpleEDP.use_Subscription_Reader = true;
-			PParam.discovery.m_simpleEDP.use_Publication_Reader = false;
-			PParam.discovery.m_simpleEDP.use_Subscription_Writer = false;
+		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+			PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
+
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
 
@@ -289,10 +288,8 @@ int main(int argc, char** argv)
 	}
 	case 2:
 	{
-		PParam.discovery.m_simpleEDP.use_Publication_Writer = false;
-		PParam.discovery.m_simpleEDP.use_Subscription_Reader = false;
-		PParam.discovery.m_simpleEDP.use_Publication_Reader = true;
-		PParam.discovery.m_simpleEDP.use_Subscription_Writer = true;
+		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
 		//***********  PARTICIPANT  ******************//
 		PParam.name = "participant2";
 		Participant* p = DomainParticipant::createParticipant(PParam);

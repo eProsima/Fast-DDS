@@ -113,8 +113,32 @@ bool StatelessReader::isUnreadCacheChange()
 	return false;
 }
 
+bool StatelessReader::matched_writer_add(const GUID_t& guid)
+{
+	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+	{
+		if(*it == guid)
+			return false;
+	}
+	m_matched_writers.push_back(guid);
+	return true;
+}
 
+bool StatelessReader::matched_writer_remove(const GUID_t& guid)
+{
+	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+	{
+		if(*it == guid)
+		{
+			m_matched_writers.erase(it);
+			return true;
+		}
+	}
+	return false;
+}
 
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+

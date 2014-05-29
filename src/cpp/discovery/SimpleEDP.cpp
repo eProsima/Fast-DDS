@@ -373,6 +373,7 @@ void SimpleEDP::repareDiscoveredDataLocatorList(LocatorList_t* loclist)
 
 bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 {
+	boost::lock_guard<Endpoint> guard(*W);
 	pInfo("SimpleEDP:localWriterMatching W-DRD"<<endl);
 	bool matched = false;
 	if(W->getTopic().getTopicName() == rdata->m_topicName && W->getTopic().getTopicDataType() == rdata->m_typeName &&
@@ -413,6 +414,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 
 bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 {
+	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP: localReader with Discovered Writer Matching"<<endl);
 	bool matched = false;
 	//	cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
@@ -426,14 +428,13 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 	{
 		if(R->getStateType() == STATELESS)
 		{
-			pInfo("BEST_EFFORT Readers don't need matching"<<endl);
-			matched = true;
+			StatelessReader* p_SFR = (StatelessReader*)R;
+			matched = p_SFR->matched_writer_add(wdata->m_writerProxy.remoteWriterGuid);
 		}
 		else if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 		{
 			StatefulReader* p_SFR = (StatefulReader*)R;
-			if(p_SFR->matched_writer_add(wdata->m_writerProxy))
-				matched = true;
+			matched = p_SFR->matched_writer_add(wdata->m_writerProxy);
 		}
 		if(matched && R->getListener()!=NULL)
 		{

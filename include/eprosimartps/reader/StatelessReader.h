@@ -47,6 +47,14 @@ public:
 
 	 size_t getMatchedPublishers(){return 0;}
 
+	 bool matched_writer_add(const GUID_t& guid);
+	 bool matched_writer_remove(const GUID_t& guid);
+
+private:
+	 //!List of GUID_t os matched writers.
+	 //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
+	 std::vector<GUID_t> m_matched_writers;
+
 };
 
 } /* namespace rtps */
