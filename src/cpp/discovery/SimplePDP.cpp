@@ -110,14 +110,16 @@ bool SimplePDP::updateLocalParticipantData()
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
-		if(m_discovery.m_simpleEDP.use_Publication_Writer)
+		if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+		{
 			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-		if(m_discovery.m_simpleEDP.use_Publication_Reader)
-			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-		if(m_discovery.m_simpleEDP.use_Subscription_Reader)
 			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
-		if(m_discovery.m_simpleEDP.use_Subscription_Writer)
+		}
+		if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+		{
+			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+		}
 	}
 
 	mp_localDPData->m_defaultUnicastLocatorList = mp_participant->m_defaultUnicastLocatorList;

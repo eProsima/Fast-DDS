@@ -41,10 +41,10 @@ namespace eprosima {
 namespace rtps {
 
 SimpleEDP::SimpleEDP(ParticipantDiscoveryProtocol* p):
-				EndpointDiscoveryProtocol(p),
-				 mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
-				 mp_PubReader(NULL),mp_SubReader(NULL),// mp_TopReader(NULL),
-				 m_listeners(this)
+						EndpointDiscoveryProtocol(p),
+						mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
+						mp_PubReader(NULL),mp_SubReader(NULL),// mp_TopReader(NULL),
+						m_listeners(this)
 {
 
 
@@ -76,7 +76,7 @@ bool SimpleEDP::createSEDPEndpoints()
 	bool created = true;
 	RTPSReader* raux;
 	RTPSWriter* waux;
-	if(m_discovery.m_simpleEDP.use_Publication_Writer)
+	if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
 	{
 		Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
@@ -93,8 +93,26 @@ bool SimpleEDP::createSEDPEndpoints()
 			mp_PubWriter = dynamic_cast<StatefulWriter*>(waux);
 			pInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
 		}
+		Rparam.historyMaxSize = 100;
+		Rparam.expectsInlineQos = false;
+		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		Rparam.topic.topicName = "DCPSSubscription";
+		Rparam.topic.topicKind = WITH_KEY;
+		Rparam.topic.topicDataType = "DiscoveredReaderData";
+		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
+		Rparam.userDefinedId = -1;
+		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
+		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubReader);
+		if(created)
+		{
+			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
+			mp_SubReader->setListener((SubscriberListener*)&m_listeners.m_SubListener);
+			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
+		}
 	}
-	if(m_discovery.m_simpleEDP.use_Publication_Reader)
+	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
 	{
 		Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
@@ -112,9 +130,6 @@ bool SimpleEDP::createSEDPEndpoints()
 			mp_PubReader->setListener((SubscriberListener*)&m_listeners.m_PubListener);
 			pInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
 		}
-	}
-	if(m_discovery.m_simpleEDP.use_Subscription_Writer)
-	{
 		Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -131,27 +146,7 @@ bool SimpleEDP::createSEDPEndpoints()
 			pInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
 		}
 	}
-	if(m_discovery.m_simpleEDP.use_Subscription_Reader)
-	{
-		Rparam.historyMaxSize = 100;
-		Rparam.expectsInlineQos = false;
-		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-		Rparam.topic.topicName = "DCPSSubscription";
-		Rparam.topic.topicKind = WITH_KEY;
-		Rparam.topic.topicDataType = "DiscoveredReaderData";
-		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
-				Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		Rparam.userDefinedId = -1;
-		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubReader);
-		if(created)
-		{
-			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
-			mp_SubReader->setListener((SubscriberListener*)&m_listeners.m_SubListener);
-			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
-		}
-	}
+
 	pInfo(CYAN<<"SimpleEDP Endpoints creation finished"<<DEF<<endl);
 	return created;
 }
@@ -282,9 +277,9 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
-//		cout << "partname " << (*pit)->m_participantName << endl;
-//		cout << "partic Pref" << (*pit)->m_guidPrefix << endl;
-//		cout << "partic Key" << (*pit)->m_key << endl;
+		//		cout << "partname " << (*pit)->m_participantName << endl;
+		//		cout << "partic Pref" << (*pit)->m_guidPrefix << endl;
+		//		cout << "partic Key" << (*pit)->m_key << endl;
 		for(std::vector<DiscoveredWriterData*>::iterator wit = (*pit)->m_writers.begin();
 				wit!=(*pit)->m_writers.end();++wit)
 		{
@@ -420,10 +415,10 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 {
 	pInfo("SimpleEDP: localReader with Discovered Writer Matching"<<endl);
 	bool matched = false;
-//	cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
-//	cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
-//	cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
-//	cout << "wdata alive. "<<wdata->isAlive<<endl;
+	//	cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
+	//	cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
+	//	cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
+	//	cout << "wdata alive. "<<wdata->isAlive<<endl;
 	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
 			R->getTopic().getTopicKind() == wdata->topicKind &&
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&
