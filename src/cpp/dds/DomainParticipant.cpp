@@ -203,6 +203,8 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 			return NULL;
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
+	else
+		pWarning("Incorrect Reliability Kind"<<endl);
 	if(pubImpl != NULL)
 	{
 		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
