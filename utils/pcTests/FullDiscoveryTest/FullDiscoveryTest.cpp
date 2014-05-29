@@ -170,15 +170,15 @@ class MySubListener: public SubscriberListener
 {
 	void onSubscriptionMatched()
 	{
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
-		cout << B_RED << "SUBSCRIPTION MATCHED"<<DEF<<endl;
+		cout << B_MAGENTA << "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<endl;
+		cout <<  "SUBSCRIPTION MATCHED"<<DEF<<endl;
 	}
 };
 
@@ -221,7 +221,7 @@ int main(int argc, char** argv)
 	case 1:
 	{
 		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-			PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
+			PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 
 		PParam.name = "participant1";
 		Participant* p = DomainParticipant::createParticipant(PParam);
@@ -234,32 +234,27 @@ int main(int argc, char** argv)
 		Wparam.historyMaxSize = 14;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.nackResponseDelay.seconds = 5;
-		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
-
-		cout << "Reliable: "<< eprosima::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS << endl;
-		cout << "BE: "<< eprosima::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS << endl;
-		Wparam.userDefinedId = 1;
-		cout << "MY DURABILITY: "<< Wparam.qos.m_durability.kind << endl;
-		cout << "MY DURABILITY CHANGES: "<< eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS << endl;
+		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    	Wparam.userDefinedId = 1;
 		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::PERSISTENT_DURABILITY_QOS;
 		Wparam.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
-		cout << "MY DURABILITY: "<< Wparam.qos.m_durability.kind << endl;
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mylisten);
 
 
-//		SubscriberAttributes Rparam;
-//		Rparam.historyMaxSize = 50;
-//		Rparam.topic.topicDataType = std::string("TestType");
-//		Rparam.topic.topicName = std::string("Test_topic2");
-//		Rparam.topic.topicKind = NO_KEY;
+		SubscriberAttributes Rparam;
+		Rparam.historyMaxSize = 50;
+		Rparam.topic.topicDataType = std::string("TestType");
+		Rparam.topic.topicName = std::string("Test_topic2");
+		Rparam.topic.topicKind = NO_KEY;
 //		Locator_t loc;
-//		loc = *myIP.begin();
 //		loc.kind = 1;
 //		loc.port = 10046;
 //		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
-//		Rparam.userDefinedId = 2;
-//		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		Rparam.userDefinedId = 2;
+		MySubListener mysubl;
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,&mysubl);
+
 
 	//	p->announceParticipantState();
 		cout << "Sleeping 4 seconds"<<endl;
@@ -278,18 +273,18 @@ int main(int argc, char** argv)
 			tp1.price *= (i+1);
 
 			pub->write((void*)&tp1);
-//			sub->waitForUnreadMessage();
-//			sub->readNextData((void*)&tp_in,&info_in);
-//			if(tp_in.value == tp1.value &&
-//					tp_in.price ==tp1.price)
-//				cout << "Message RECEIVED = AS SEND: "<< i << endl;
+			sub->waitForUnreadMessage();
+			sub->readNextData((void*)&tp_in,&info_in);
+			if(tp_in.value == tp1.value &&
+					tp_in.price ==tp1.price)
+				cout << "Message RECEIVED = AS SEND: "<< i << endl;
 		}
 		break;
 	}
 	case 2:
 	{
 		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
+		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 		//***********  PARTICIPANT  ******************//
 		PParam.name = "participant2";
 		Participant* p = DomainParticipant::createParticipant(PParam);
@@ -309,18 +304,14 @@ int main(int argc, char** argv)
 		MySubListener mylisten;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,&mylisten);
 
-//		PublisherAttributes Wparam;
-//		Wparam.userDefinedId = 18;
-//		Wparam.topic.topicKind = NO_KEY;
-//		Wparam.reliability.reliabilityKind = BEST_EFFORT;
-//		Wparam.topic.topicDataType = std::string("TestType");
-//		Wparam.topic.topicName = std::string("Test_topic2");
-//		Wparam.historyMaxSize = 14;
-//		Wparam.reliability.heartbeatPeriod.seconds = 2;
-//		Wparam.reliability.nackResponseDelay.seconds = 5;
-//
-//
-//		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+		PublisherAttributes Wparam;
+		Wparam.userDefinedId = 18;
+		Wparam.topic.topicKind = NO_KEY;
+		Wparam.topic.topicDataType = std::string("TestType");
+		Wparam.topic.topicName = std::string("Test_topic2");
+		Wparam.historyMaxSize = 14;
+		MyPubListener mypublisten;
+		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mypublisten);
 
 		p->announceParticipantState();
 
@@ -332,7 +323,7 @@ int main(int argc, char** argv)
 			sub->waitForUnreadMessage();
 			sub->readNextData((void*)&tp_in,&info_in);
 			tp_in.print();
-		//	pub->write((void*)&tp_in);
+			pub->write((void*)&tp_in);
 		}
 
 		break;

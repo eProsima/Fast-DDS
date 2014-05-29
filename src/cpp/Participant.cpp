@@ -343,10 +343,13 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	SWriter->setQos(param.qos,true);
 	SWriter->mp_send_thr = &this->m_send_thr;
 	SWriter->mp_event_thr = &this->m_event_thr;
-	if(!assignEndpointListenResources((Endpoint*)SWriter,isBuiltin))
+	if(kind == STATEFUL)
 	{
-		delete(SWriter);
-		return false;
+		if(!assignEndpointListenResources((Endpoint*)SWriter,isBuiltin))
+		{
+			delete(SWriter);
+			return false;
+		}
 	}
 	if(!isBuiltin)
 	{
@@ -417,9 +420,10 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
 	bool valid = true;
-	if(endp->unicastLocatorList.empty() && !isBuiltin)
+	if(endp->unicastLocatorList.empty() && !isBuiltin )
 	{
-		pWarning("Endpoint created with no unicastLocatorList, adding default List"<<endl);
+		std::string auxstr = endp->getEndpointKind() == WRITER ? "WRITER" : "READER";
+		pWarning(auxstr << " created with no unicastLocatorList, adding default List"<<endl);
 		for(LocatorListIterator lit = m_defaultUnicastLocatorList.begin();lit!=m_defaultUnicastLocatorList.end();++lit)
 		{
 			assignLocator2ListenResources(endp,lit,false,false);

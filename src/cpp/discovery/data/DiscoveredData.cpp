@@ -17,7 +17,7 @@
 
 
 #include "eprosimartps/discovery/data/DiscoveredData.h"
-
+#include "eprosimartps/common/types/InstanceHandle.h"
 #include "eprosimartps/qos/DDSQosPolicies.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
