@@ -53,7 +53,6 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 
 bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
 {
-	cout << "NUMBER OF WRITERS: "<< matched_writers.size() << endl;
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
