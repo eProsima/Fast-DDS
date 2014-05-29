@@ -40,7 +40,7 @@ public:
 	virtual ~SimplePDP();
 
 	bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID);
-	bool addLocalParticipant(ParticipantImpl* p);
+	bool updateLocalParticipantData();
 
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;

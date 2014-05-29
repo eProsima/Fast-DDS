@@ -14,7 +14,7 @@
  *      email:  gonzalorodriguez@eprosima.com
  *              grcanosa@gmail.com  	
  */
-
+#include <iostream>
 #include "eprosimartps/discovery/SimplePDP.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
@@ -62,9 +62,9 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getUnicastPort(m_discovery.domainId,participantID);
 
 	//FIXME: FIx creation of endpoints when port is already being used.
-	addLocalParticipant(mp_participant);
-
+	updateLocalParticipantData();
 	createSPDPEndpoints();
+	updateLocalParticipantData();
 
 	//INIT EDP
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
@@ -84,9 +84,9 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	{
 		this->announceParticipantState(true);
 		eClock::my_sleep(50);
-		this->announceParticipantState(true);
+		this->announceParticipantState(false);
 		eClock::my_sleep(50);
-		this->announceParticipantState(true);
+		this->announceParticipantState(false);
 		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
 				boost::posix_time::milliseconds(m_discovery.resendDiscoveryParticipantDataPeriod.to64time()*1000));
 		m_resendDataTimer->restart_timer();
@@ -96,36 +96,40 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	return false;
 }
 
-bool SimplePDP::addLocalParticipant(ParticipantImpl* p)
+bool SimplePDP::updateLocalParticipantData()
 {
-	DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
-	pdata->leaseDuration = m_discovery.leaseDuration;
-	VENDORID_EPROSIMA(pdata->m_VendorId);
+	if(mp_localDPData == NULL)
+	{
+		mp_localDPData = new DiscoveredParticipantData();
+		m_discoveredParticipants.push_back(mp_localDPData);
+	}
+	mp_localDPData->leaseDuration = m_discovery.leaseDuration;
+	VENDORID_EPROSIMA(mp_localDPData->m_VendorId);
 	//FIXME: add correct builtIn Endpoints
-	pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-	pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		if(m_discovery.m_simpleEDP.use_Publication_Writer)
-			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 		if(m_discovery.m_simpleEDP.use_Publication_Reader)
-			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 		if(m_discovery.m_simpleEDP.use_Subscription_Reader)
-			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 		if(m_discovery.m_simpleEDP.use_Subscription_Writer)
-			pdata->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+			mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	}
 
-	pdata->m_defaultUnicastLocatorList = p->m_defaultUnicastLocatorList;
-	pdata->m_defaultMulticastLocatorList = p->m_defaultMulticastLocatorList;
-	pdata->m_expectsInlineQos = false;
-	pdata->m_guidPrefix = p->getGuid().guidPrefix;
+	mp_localDPData->m_defaultUnicastLocatorList = mp_participant->m_defaultUnicastLocatorList;
+	mp_localDPData->m_defaultMulticastLocatorList = mp_participant->m_defaultMulticastLocatorList;
+	mp_localDPData->m_expectsInlineQos = false;
+	mp_localDPData->m_guidPrefix = mp_participant->getGuid().guidPrefix;
 	for(uint8_t i =0;i<16;++i)
 	{
 		if(i<12)
-			pdata->m_key.value[i] = p->getGuid().guidPrefix.value[i];
+			mp_localDPData->m_key.value[i] = mp_participant->getGuid().guidPrefix.value[i];
 		if(i>=16)
-			pdata->m_key.value[i] = p->getGuid().entityId.value[i];
+			mp_localDPData->m_key.value[i] = mp_participant->getGuid().entityId.value[i];
 	}
 	//FIXME: Do something with livelinesscount
 	//pdata->m_manualLivelinessCount;
@@ -134,21 +138,25 @@ bool SimplePDP::addLocalParticipant(ParticipantImpl* p)
 	multiLocator.kind = LOCATOR_KIND_UDPv4;
 	multiLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	multiLocator.set_IP4_address(239,255,0,1);
-	pdata->m_metatrafficMulticastLocatorList.push_back(multiLocator);
+	mp_localDPData->m_metatrafficMulticastLocatorList.push_back(multiLocator);
 
-	LocatorList_t locators;
-	IPFinder::getIPAddress(&locators);
-	for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
+	if(mp_SPDPReader == NULL)
 	{
-		it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
-		pdata->m_metatrafficUnicastLocatorList.push_back(*it);
+		LocatorList_t locators;
+		IPFinder::getIPAddress(&locators);
+		for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
+		{
+			it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
+			mp_localDPData->m_metatrafficUnicastLocatorList.push_back(*it);
+		}
+	}
+	else
+	{
+		mp_localDPData->m_metatrafficUnicastLocatorList = mp_SPDPReader->unicastLocatorList;
 	}
 
-	pdata->m_participantName = p->getParticipantName();
 
-
-	m_discoveredParticipants.push_back(pdata);
-	mp_localDPData = pdata;
+	mp_localDPData->m_participantName = mp_participant->getParticipantName();
 
 	return true;
 }
@@ -170,17 +178,13 @@ bool SimplePDP::createSPDPEndpoints()
 	Wparam.topic.topicDataType = "DiscoveredParticipantData";
 	Wparam.topic.topicKind = WITH_KEY;
 	Wparam.userDefinedId = -1;
-
-	if(mp_participant->createStatelessWriter(&mp_SPDPWriter,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SPDPWriter))
+	RTPSWriter* wout;
+	if(mp_participant->createWriter(&wout,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPWriter))
 	{
+		mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
 		for(LocatorListIterator lit = mp_localDPData->m_metatrafficMulticastLocatorList.begin();
 				lit!=mp_localDPData->m_metatrafficMulticastLocatorList.end();++lit)
 			mp_SPDPWriter->reader_locator_add(*lit,false);
-
-//		for(LocatorListIterator lit = mp_localDPData->m_metatrafficUnicastLocatorList.begin();
-//				lit!=mp_localDPData->m_metatrafficUnicastLocatorList.end();++lit)
-//			mp_SPDPWriter->reader_locator_add(*lit,false);
-
 	}
 	else
 	{
@@ -197,8 +201,10 @@ bool SimplePDP::createSPDPEndpoints()
 	Rparam.topic.topicName = "DCPSParticipant";
 	Rparam.topic.topicDataType = "DiscoveredParticipantData";
 	Rparam.userDefinedId = -1;
-	if(mp_participant->createStatelessReader(&mp_SPDPReader,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,NULL,NULL,c_EntityId_SPDPReader))
+	RTPSReader* rout;
+	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPReader))
 	{
+		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
 		mp_SPDPReader->setListener(&this->m_listener);
 	}
 	else
@@ -206,6 +212,7 @@ bool SimplePDP::createSPDPEndpoints()
 		pError("SimplePDP Reader creation failed"<<endl);
 			return false;
 	}
+
 	pInfo(CYAN<< "SPDP Endpoints creation finished"<<DEF<<endl)
 	return true;
 }
@@ -216,6 +223,7 @@ void SimplePDP::announceParticipantState(bool new_change)
 	CacheChange_t* change = NULL;
 	if(new_change || m_hasChangedLocalPDP)
 	{
+		updateLocalParticipantData();
 		if(mp_SPDPWriter->getHistoryCacheSize() > 0)
 			mp_SPDPWriter->removeMinSeqCacheChange();
 		mp_SPDPWriter->new_change(ALIVE,NULL,&change);
