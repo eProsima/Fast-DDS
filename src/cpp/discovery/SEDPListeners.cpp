@@ -36,6 +36,7 @@ namespace rtps {
 
 void SEDPPubListener::onNewDataMessage()
 {
+	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_PubReader);
 	pInfo(CYAN<<"SEDP PUB Listener:onNewDataMessage"<<DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_PubReader->get_last_added_cache(&change))
@@ -153,6 +154,7 @@ void SEDPPubListener::onNewDataMessage()
 
 void SEDPSubListener::onNewDataMessage()
 {
+	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_SubReader);
 	pInfo(CYAN<<"SEDP SUB Listener:onNewDataMessage"<<DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_SubReader->get_last_added_cache(&change))

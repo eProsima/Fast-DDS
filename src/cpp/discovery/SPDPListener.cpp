@@ -35,6 +35,7 @@ void SPDPListener::onNewDataMessage()
 
 bool SPDPListener::newAddedCache()
 {
+	boost::lock_guard<Endpoint> guard(*mp_SPDP->mp_SPDPReader);
 	pInfo(CYAN<<"SPDPListener: SPDP Message received"<<DEF<<endl);
 	CacheChange_t* change = NULL;
 	if(mp_SPDP->mp_SPDPReader->get_last_added_cache(&change))
