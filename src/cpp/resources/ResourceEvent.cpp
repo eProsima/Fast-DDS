@@ -17,15 +17,16 @@
 
 
 #include "eprosimartps/resources/ResourceEvent.h"
-
+#include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
 
-ResourceEvent::ResourceEvent():
+ResourceEvent::ResourceEvent(ParticipantImpl* p):
 		b_thread(NULL),
-		work(io_service)
+		work(io_service),
+		mp_participantImpl(p)
 {
 
 }
@@ -47,13 +48,14 @@ void ResourceEvent::run_io_service()
 void ResourceEvent::init_thread()
 {
 	b_thread = new boost::thread(&ResourceEvent::run_io_service,this);
-
 	io_service.post(boost::bind(&ResourceEvent::announce_thread,this));
+	mp_participantImpl->ResourceSemaphoreWait();
 }
 
 void ResourceEvent::announce_thread()
 {
 	pInfo(BLUE<<"Thread: " << b_thread->get_id() << " created and waiting for tasks."<<DEF<<endl);
+	mp_participantImpl->ResourceSemaphorePost();
 
 }
 
