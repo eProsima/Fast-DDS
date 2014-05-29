@@ -92,8 +92,8 @@ public:
 };
 
 enum ReliabilityQosPolicyKind:octet {
-	BEST_EFFORT_RELIABILITY_QOS,
-	RELIABLE_RELIABILITY_QOS
+	BEST_EFFORT_RELIABILITY_QOS = 0x01,
+	RELIABLE_RELIABILITY_QOS = 0x02
 };
 
 enum OwnershipQosPolicyKind:octet {
