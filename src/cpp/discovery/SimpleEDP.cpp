@@ -282,9 +282,9 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
-		cout << "partname " << (*pit)->m_participantName << endl;
-		cout << "partic Pref" << (*pit)->m_guidPrefix << endl;
-		cout << "partic Key" << (*pit)->m_key << endl;
+//		cout << "partname " << (*pit)->m_participantName << endl;
+//		cout << "partic Pref" << (*pit)->m_guidPrefix << endl;
+//		cout << "partic Key" << (*pit)->m_key << endl;
 		for(std::vector<DiscoveredWriterData*>::iterator wit = (*pit)->m_writers.begin();
 				wit!=(*pit)->m_writers.end();++wit)
 		{
@@ -418,21 +418,20 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 
 bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 {
-	pInfo("SimpleEDP:localReaderrMatching R-DWD"<<endl);
+	pInfo("SimpleEDP: localReader with Discovered Writer Matching"<<endl);
 	bool matched = false;
-	cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
-	cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
-	cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
-	cout << "wdata alive. "<<wdata->isAlive<<endl;
+//	cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
+//	cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
+//	cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
+//	cout << "wdata alive. "<<wdata->isAlive<<endl;
 	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
 			R->getTopic().getTopicKind() == wdata->topicKind &&
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&
 			wdata->isAlive) //Matching
 	{
-		cout << "Reader type: "<<R->getStateType()<<endl;
 		if(R->getStateType() == STATELESS)
 		{
-			pWarning("BEST_EFFORT Readers don't need matching"<<endl);
+			pInfo("BEST_EFFORT Readers don't need matching"<<endl);
 			matched = true;
 		}
 		else if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
@@ -443,7 +442,6 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 		}
 		if(matched && R->getListener()!=NULL)
 		{
-			cout << B_RED << "Calling on submatched"<<DEF<<endl;
 			R->getListener()->onSubscriptionMatched();
 		}
 	}
