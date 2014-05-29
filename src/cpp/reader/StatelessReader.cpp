@@ -47,6 +47,7 @@ StatelessReader::StatelessReader(const SubscriberAttributes& param,
 
 bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	pDebugInfo("Taking Data from Reader"<<endl);
 	SequenceNumber_t seq;
 	GUID_t gui;
@@ -70,6 +71,7 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 
 bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;

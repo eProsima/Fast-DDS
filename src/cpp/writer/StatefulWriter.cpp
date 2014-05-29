@@ -52,7 +52,7 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 
 bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 {
-
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_param.remoteReaderGuid == RPparam.remoteReaderGuid)
@@ -89,6 +89,7 @@ bool StatefulWriter::matched_reader_remove(ReaderProxy_t& Rp)
 
 bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_param.remoteReaderGuid == readerGuid)
@@ -105,6 +106,7 @@ bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 
 bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
@@ -141,6 +143,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 
 void StatefulWriter::unsent_change_add(CacheChange_t* change)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	if(!matched_readers.empty())
 	{
 		std::vector<ReaderProxy*>::iterator it;
@@ -182,8 +185,9 @@ bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
 
 void StatefulWriter::unsent_changes_not_empty()
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<ReaderProxy*>::iterator rit;
-	boost::lock_guard<ResourceSend> guard(*mp_send_thr);
+	boost::lock_guard<ResourceSend> guard2(*mp_send_thr);
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
 		boost::lock_guard<ReaderProxy> guard(*(*rit));
@@ -274,6 +278,7 @@ bool StatefulWriter::removeMinSeqCacheChange()
 
 bool StatefulWriter::removeAllCacheChange(int32_t* removed)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	int32_t n_count = 0;
 	while(this->removeMinSeqCacheChange())
 	{

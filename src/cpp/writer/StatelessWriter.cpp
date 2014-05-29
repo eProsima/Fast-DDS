@@ -42,8 +42,9 @@ StatelessWriter::~StatelessWriter()
 	pDebugInfo("StatelessWriter destructor"<<endl;);
 }
 
-bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator) {
-
+bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
+{
+	boost::lock_guard<Endpoint> guard(*this);
 	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 
@@ -74,9 +75,10 @@ bool StatelessWriter::reader_locator_add(Locator_t& locator,bool expectsInlineQo
 }
 
 
-bool StatelessWriter::reader_locator_remove(Locator_t& locator) {
-	std::vector<ReaderLocator>::iterator it;
-	for(it=reader_locator.begin();it!=reader_locator.end();++it){
+bool StatelessWriter::reader_locator_remove(Locator_t& locator)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<ReaderLocator>::iterator it=reader_locator.begin();it!=reader_locator.end();++it){
 		if(it->locator == locator){
 			reader_locator.erase(it);
 			return true;
@@ -85,9 +87,10 @@ bool StatelessWriter::reader_locator_remove(Locator_t& locator) {
 	return false;
 }
 
-void StatelessWriter::unsent_changes_reset() {
+void StatelessWriter::unsent_changes_reset()
+{
 
-
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		rit->unsent_changes.clear();
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.m_changes.begin();
@@ -105,10 +108,12 @@ bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
 
 void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	if(!reader_locator.empty())
 	{
 		for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 		{
+
 			rit->unsent_changes.push_back(cptr);
 
 			if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
@@ -136,7 +141,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 
 void StatelessWriter::unsent_changes_not_empty()
 {
-
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 	{
 		if(!rit->unsent_changes.empty())
