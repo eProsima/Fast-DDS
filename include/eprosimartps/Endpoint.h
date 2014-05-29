@@ -22,6 +22,11 @@
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
 
+#include <boost/thread.hpp>
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+
 #include "eprosimartps/dds/attributes/TopicAttributes.h"
 
 using namespace eprosima::dds;
@@ -55,7 +60,7 @@ typedef enum EndpointKind_t{
  * Participant class. This way each instance of our class (Endpoint) has a pointer to the participant they belong to.
  * @ingroup COMMONMODULE
  */
-class Endpoint {
+class Endpoint: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
 	virtual ~Endpoint();

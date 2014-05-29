@@ -53,6 +53,7 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 
 bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
@@ -72,6 +73,7 @@ bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
 
 bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == writerGuid)
@@ -94,7 +96,7 @@ bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
-
+	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->param.remoteWriterGuid == writerGUID)
@@ -110,6 +112,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 
 bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<SequenceNumber_t> seq_vec;
 	SequenceNumber_t seq, seqmin;
 	WriterProxy* wpmin = NULL;
@@ -149,6 +152,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 
 bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
+	boost::lock_guard<Endpoint> guard(*this);
 	m_reader_cache.sortCacheChangesBySeqNum();
 	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
 			it!=m_reader_cache.m_changes.end();++it)

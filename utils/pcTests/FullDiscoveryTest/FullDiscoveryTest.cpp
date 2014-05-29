@@ -334,7 +334,7 @@ int main(int argc, char** argv)
 		{
 			sub->waitForUnreadMessage();
 			sub->readNextData((void*)&tp_in,&info_in);
-
+			tp_in.print();
 		//	pub->write((void*)&tp_in);
 		}
 
