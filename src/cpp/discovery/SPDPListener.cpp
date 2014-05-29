@@ -44,12 +44,13 @@ bool SPDPListener::newAddedCache()
 		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
 		msg.length = change->serializedPayload.length;
 		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,NULL,NULL)>0)
+		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,&change->instanceHandle,NULL)>0)
 		{
 			DiscoveredParticipantData* pdata = new DiscoveredParticipantData();
 
 			if(processParameterList(param,pdata))
 			{
+				change->instanceHandle = pdata->m_key;
 			//	bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
 				for(std::vector<CacheChange_t*>::iterator it = mp_SPDP->mp_SPDPReader->readerHistoryCacheBegin();
@@ -145,6 +146,15 @@ bool SPDPListener::processParameterList(ParameterList_t& param,DiscoveredPartici
 	//	cout << "Parameter with Id: "<< (*it)->Pid << endl;
 		switch((*it)->Pid)
 		{
+		case PID_KEY_HASH:
+		{
+			ParameterKey_t*p = (ParameterKey_t*)(*it);
+			GUID_t guid;
+			iHandle2GUID(guid,p->key);
+			Pdata->m_guidPrefix = guid.guidPrefix;
+			Pdata->m_key = p->key;
+			break;
+		}
 		case PID_PROTOCOL_VERSION:
 		{
 			ProtocolVersion_t pv;
@@ -174,6 +184,7 @@ bool SPDPListener::processParameterList(ParameterList_t& param,DiscoveredPartici
 		{
 			ParameterGuid_t * p = (ParameterGuid_t*)(*it);
 			Pdata->m_guidPrefix = p->guid.guidPrefix;
+			Pdata->m_key = p->guid;
 			break;
 		}
 		case PID_METATRAFFIC_MULTICAST_LOCATOR:

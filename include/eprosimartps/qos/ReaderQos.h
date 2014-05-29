@@ -40,8 +40,10 @@ public:
 		GroupDataQosPolicy m_groupData;
 		DurabilityServiceQosPolicy m_durabilityService;
 		LifespanQosPolicy m_lifespan;
-		void setQos(ReaderQos& readerqos, bool first_time);
+		void setQos( ReaderQos& readerqos, bool first_time);
 };
+
+
 
 } /* namespace dds */
 } /* namespace eprosima */

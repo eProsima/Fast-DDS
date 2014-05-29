@@ -53,9 +53,12 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 
 bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
 {
+	cout << "NUMBER OF WRITERS: "<< matched_writers.size() << endl;
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
+		cout << "Iteration: "<<(*it)->param.remoteWriterGuid<<endl;
+		cout << "Param: "<< WPparam.remoteWriterGuid << endl;
 		if((*it)->param.remoteWriterGuid == WPparam.remoteWriterGuid)
 		{
 			pWarning("Attempting to add existing writer" << endl);

@@ -235,9 +235,13 @@ int main(int argc, char** argv)
 		Wparam.historyMaxSize = 14;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.nackResponseDelay.seconds = 5;
-		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
 		Wparam.userDefinedId = 1;
-		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_DURABILITY_QOS;
+		cout << "MY DURABILITY: "<< Wparam.qos.m_durability.kind << endl;
+		cout << "MY DURABILITY CHANGES: "<< eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS << endl;
+		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS;
+		Wparam.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
+		cout << "MY DURABILITY: "<< Wparam.qos.m_durability.kind << endl;
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mylisten);
 
@@ -295,7 +299,7 @@ int main(int argc, char** argv)
 		Rparam.topic.topicDataType = std::string("TestType");
 		Rparam.topic.topicName = std::string("Test_topic1");
 		Rparam.topic.topicKind = WITH_KEY;
-		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 		Locator_t loc;
 		loc.kind = 1;
 		loc.port = 10046;
