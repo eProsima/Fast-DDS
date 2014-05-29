@@ -376,8 +376,11 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,wdata.m_key);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
+	cout << "Durability: SendAlways: "<< wdata.m_qos.m_durability.sendAlways()<<endl;
+	cout << "Durability: HAS CHANGED: "<< wdata.m_qos.m_durability.hasChanged<<endl;
 	if( wdata.m_qos.m_durability.sendAlways() || wdata.m_qos.m_durability.hasChanged)
 	{
+		cout << B_RED << "DISCOVEREDWRITERDATA ADDING NEW DURABILITY PARAMETER "<<DEF << endl;
 		DurabilityQosPolicy*p = new DurabilityQosPolicy();
 		*p = wdata.m_qos.m_durability;
 		param->m_parameters.push_back((Parameter_t*)p);

@@ -192,17 +192,15 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		RTPSWriter* SW;
-		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten))
+		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
-		SW->setQos(WParam.qos,true);
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		RTPSWriter* SW;
-		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten))
+		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
-		SW->setQos(WParam.qos,true);
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
 	if(pubImpl != NULL)
@@ -251,17 +249,15 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		RTPSReader* SR;
-		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type))
+		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
 			return NULL;
-		SR->setQos(RParam.qos,true);
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		RTPSReader* SR;
-		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type))
+		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type,slisten))
 			return NULL;
-		SR->setQos(RParam.qos,true);
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
 	if(subImpl != NULL)

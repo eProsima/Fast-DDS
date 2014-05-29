@@ -20,10 +20,13 @@
 namespace eprosima {
 namespace dds {
 
-void WriterQos::setQos(WriterQos& qos, bool first_time)
+void WriterQos::setQos( WriterQos& qos, bool first_time)
 {
+	cout << "DURABILITY "<<m_durability.kind<<endl;
+	cout << "DURABILITY "<<qos.m_durability.kind<<endl;
 	if(m_durability.kind != qos.m_durability.kind)
 	{
+		cout << "DIFFERENT DURABILITY"<<endl;
 		m_durability = qos.m_durability;
 		m_durability.hasChanged = true;
 	}
@@ -43,7 +46,7 @@ void WriterQos::setQos(WriterQos& qos, bool first_time)
 		m_liveliness = qos.m_liveliness;
 		m_liveliness.hasChanged = true;
 	}
-	if(m_reliability.kind != qos.m_reliability.kind && first_time)
+	if(m_reliability.kind != qos.m_reliability.kind || first_time)
 	{
 		m_reliability = qos.m_reliability;
 		m_reliability.hasChanged = true;

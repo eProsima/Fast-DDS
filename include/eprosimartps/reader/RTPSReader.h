@@ -113,7 +113,7 @@ public:
 			mp_listener = plistener;
 		}
 
-	void setQos(ReaderQos& qos,bool first)
+	void setQos( ReaderQos& qos,bool first)
 		{
 			return m_qos.setQos(qos,first);
 		}

@@ -38,6 +38,8 @@
 #include "eprosimartps/resources/ListenResource.h"
 #include "eprosimartps/resources/ResourceSend.h"
 
+#include "eprosimartps/qos/ReaderQos.h"
+#include "eprosimartps/qos/WriterQos.h"
 
 #include "eprosimartps/Endpoint.h"
 
@@ -48,12 +50,18 @@
 
 namespace eprosima {
 
-namespace dds{
+namespace dds
+{
 class DomainParticipant;
 class DDSTopicDataType;
 class PublisherListener;
 class SubscriberListener;
+
+
+
 }
+
+using namespace dds;
 
 namespace rtps {
 
@@ -65,6 +73,8 @@ class RTPSReader;
 class RTPSWriter;
 
 class ParticipantDiscoveryProtocol;
+
+
 
 /**
  * @class Participant
@@ -238,6 +248,8 @@ private:
 	DiscoveryAttributes m_discovery;
 
 	uint32_t m_participantID;
+
+
 
 };
 

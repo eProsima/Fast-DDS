@@ -43,8 +43,10 @@ public:
 	PartitionQosPolicy m_partition;
 	TopicDataQosPolicy m_topicData;
 	GroupDataQosPolicy m_groupData;
-	void setQos(WriterQos& qos, bool first_time);
+	void setQos( WriterQos& qos, bool first_time);
 };
+
+
 
 } /* namespace dds */
 } /* namespace eprosima */

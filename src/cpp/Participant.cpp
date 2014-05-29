@@ -340,6 +340,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		return false;
 	//If NO UNICAST
 	SWriter->setListener(inlisten);
+	SWriter->setQos(param.qos,true);
 	SWriter->mp_send_thr = &this->m_send_thr;
 	SWriter->mp_event_thr = &this->m_event_thr;
 	if(!assignEndpointListenResources((Endpoint*)SWriter,isBuiltin))
@@ -392,6 +393,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 	if(SReader==NULL)
 		return false;
 	SReader->setListener(inlisten);
+	SReader->setQos(param.qos,true);
 	SReader->mp_send_thr = &this->m_send_thr;
 	SReader->mp_event_thr = &this->m_event_thr;
 	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))

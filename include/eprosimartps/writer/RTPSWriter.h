@@ -110,7 +110,7 @@ public:
 		return m_writer_cache.get_last_added_cache(change);
 	}
 
-	void setQos(WriterQos& qos,bool first)
+	void setQos( WriterQos& qos,bool first)
 	{
 		return m_qos.setQos(qos,first);
 	}
