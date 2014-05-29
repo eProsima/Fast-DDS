@@ -26,15 +26,11 @@ namespace rtps {
 
 class SimpleEDPAttributes{
 public:
-	bool use_Publication_Writer;
-	bool use_Publication_Reader;
-	bool use_Subscription_Writer;
-	bool use_Subscription_Reader;
+	bool use_PublicationWriterANDSubscriptionReader;
+	bool use_PublicationReaderANDSubscriptionWriter;
 	SimpleEDPAttributes():
-		use_Publication_Writer(true),
-		use_Publication_Reader(true),
-		use_Subscription_Writer(true),
-		use_Subscription_Reader(true)
+		use_PublicationWriterANDSubscriptionReader(true),
+		use_PublicationReaderANDSubscriptionWriter(true)
 	{
 
 	}
