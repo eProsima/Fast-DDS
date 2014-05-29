@@ -236,10 +236,13 @@ int main(int argc, char** argv)
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.nackResponseDelay.seconds = 5;
 		Wparam.qos.m_reliability.kind = eprosima::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+
+		cout << "Reliable: "<< eprosima::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS << endl;
+		cout << "BE: "<< eprosima::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS << endl;
 		Wparam.userDefinedId = 1;
 		cout << "MY DURABILITY: "<< Wparam.qos.m_durability.kind << endl;
 		cout << "MY DURABILITY CHANGES: "<< eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS << endl;
-		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS;
+		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::PERSISTENT_DURABILITY_QOS;
 		Wparam.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 		cout << "MY DURABILITY: "<< Wparam.qos.m_durability.kind << endl;
 		MyPubListener mylisten;
