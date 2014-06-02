@@ -128,6 +128,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	m_latency_out = new LatencyType(datasize);
 	m_times.clear();
 
+	cout << " data size: "<< m_latency_out->data.size()<<endl;
 	for(uint32_t i =0;i<n_samples;++i)
 	{
 		m_latency_out->seqnum++;
