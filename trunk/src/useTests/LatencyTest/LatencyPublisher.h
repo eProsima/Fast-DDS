@@ -158,6 +158,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 void LatencyPublisher::analyzeTimes(uint32_t datasize)
 {
 	TimeStats TS;
+	TS.nbytes = datasize;
 	TS.min = *std::min_element(m_times.begin(),m_times.end());
 	TS.max = *std::max_element(m_times.begin(),m_times.end());
 	TS.mean = std::accumulate(m_times.begin(),m_times.end(),0)/m_times.size();

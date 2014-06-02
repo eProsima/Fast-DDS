@@ -84,6 +84,7 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
+		int aux;
 		LatencyPublisher latpub;
 		cout << "Waiting for discovery"<<endl;
 		latpub.sema.wait();
@@ -97,6 +98,10 @@ int main(int argc, char** argv){
 		{
 			if(!latpub.test(*ndata,n_samples))
 				break;
+			cout << "Finish Test, input to continue: ";
+			cin >> aux;
+			cout << endl;
+
 		}
 		break;
 	}
