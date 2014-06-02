@@ -45,12 +45,12 @@ StatelessWriter::~StatelessWriter()
 bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
+
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 
 		if(rit->locator == a_locator.locator)
 		{
-			pWarning("Reader Locator already in list"<<endl);
+			pWarning("Reader Locator: " << a_locator.locator.printIP4Port() <<" already in list"<<endl);
 			return false;
 		}
 	}
@@ -61,6 +61,7 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
 		a_locator.unsent_changes.push_back((*it));
 	}
 	reader_locator.push_back(a_locator);
+	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
 	if(!a_locator.unsent_changes.empty())
 		this->unsent_changes_not_empty();
 	return true;

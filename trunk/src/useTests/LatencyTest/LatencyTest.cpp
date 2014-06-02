@@ -87,8 +87,9 @@ int main(int argc, char** argv){
 		LatencyPublisher latpub;
 		cout << "Waiting for discovery"<<endl;
 		latpub.sema.wait();
+		latpub.sema.wait();
 		eClock::my_sleep(2000);
-		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
+		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		printf("Printing times in us\n");
 		printf(" Bytes,  Mean, stdev,   min,   max,   50%%,   90%%,   99%%, 99.99%%\n");
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
@@ -103,8 +104,9 @@ int main(int argc, char** argv){
 		LatencySubscriber latsub;
 		cout << "Waiting for discovery"<<endl;
 		latsub.sema.wait();
+		latsub.sema.wait();
 		eClock::my_sleep(2000);
-		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
+		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
 			if(!latsub.test(*ndata,n_samples))
