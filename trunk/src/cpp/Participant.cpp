@@ -65,7 +65,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 		IPFinder::getIPAddress(&myIP);
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-			lit->port=11111;
+			lit->port=27500;
 			m_defaultUnicastLocatorList.push_back(*lit);
 		}
 	}

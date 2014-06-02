@@ -88,10 +88,11 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latpub.sema.wait();
 		latpub.sema.wait();
-		eClock::my_sleep(2000);
+		eClock::my_sleep(5000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		printf("Printing times in us\n");
 		printf(" Bytes,  Mean, stdev,   min,   max,   50%%,   90%%,   99%%, 99.99%%\n");
+		printf("------,------,------,------,------,------,------,------,------,\n");
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
 			if(!latpub.test(*ndata,n_samples))
@@ -105,7 +106,7 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latsub.sema.wait();
 		latsub.sema.wait();
-		eClock::my_sleep(2000);
+		eClock::my_sleep(5000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
