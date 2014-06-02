@@ -231,7 +231,11 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	//READ and PROCESS
-
+	if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
+	{
+		pInfo("Too short message received"<<endl);
+		return false;
+	}
 	//Fill flags bool values
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	bool inlineQosFlag = smh->flags & BIT(1) ? true : false;

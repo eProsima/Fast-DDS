@@ -61,7 +61,7 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			mp_RP->mp_SFW->incrementHBCount();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
 			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_RP->mp_SFW->getGuid().guidPrefix,
-													ENTITYID_UNKNOWN,mp_RP->mp_SFW->getGuid().entityId,
+													c_EntityId_Unknown,mp_RP->mp_SFW->getGuid().entityId,
 													first,last,mp_RP->mp_SFW->getHeartbeatCount(),false,false);
 			std::vector<Locator_t>::iterator lit;
 			for(lit = mp_RP->m_param.unicastLocatorList.begin();lit!=mp_RP->m_param.unicastLocatorList.end();++lit)

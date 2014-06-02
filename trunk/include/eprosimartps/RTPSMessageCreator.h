@@ -94,10 +94,10 @@ public:
 	static bool addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
 
 	static bool addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
-			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag);
+			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag);
 
 	static bool addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,const EntityId_t& writerId,
-			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag);
+			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag);
 
 	static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
 			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
