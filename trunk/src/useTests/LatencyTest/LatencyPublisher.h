@@ -110,16 +110,15 @@ LatencyPublisher::LatencyPublisher():
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
-	m_pub = DomainParticipant::createPublisher(m_part,Wparam);
-	m_pub->assignListener((PublisherListener*)&this->m_PubListener);
+	m_pub = DomainParticipant::createPublisher(m_part,Wparam,(PublisherListener*)&this->m_PubListener);
 	//SUBSCRIBER
 	SubscriberAttributes Rparam;
 	Rparam.historyMaxSize = 1100;
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyDown";
-	m_sub = DomainParticipant::createSubscriber(m_part,Rparam);
-	m_sub->assignListener((SubscriberListener*)this);
+	m_sub = DomainParticipant::createSubscriber(m_part,Rparam,(SubscriberListener*)this);
+
 
 }
 

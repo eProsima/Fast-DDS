@@ -408,6 +408,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 			if(p_SFW->matched_reader_add(rdata->m_readerProxy))
 				matched = true;
 		}
+		cout << "PUB MATCHED: "<< matched << " pub listener pointer: "<< (W->getListener()!=NULL)<<endl;
 		if(matched && W->getListener()!=NULL)
 			W->getListener()->onPublicationMatched();
 	}
@@ -417,7 +418,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 {
 	boost::lock_guard<Endpoint> guard(*R);
-	pInfo("SimpleEDP: localReader with Discovered Writer Matching"<<endl);
+	pInfo("SimpleEDP:localReaderMatching R-DWD"<<endl);
 	bool matched = false;
 		cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
 		cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
@@ -428,6 +429,7 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&
 			wdata->isAlive) //Matching
 	{
+		cout << "LOCAL READER MATCHING" << endl;
 		if(R->getStateType() == STATELESS)
 		{
 			StatelessReader* p_SFR = (StatelessReader*)R;
@@ -438,6 +440,7 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 			StatefulReader* p_SFR = (StatefulReader*)R;
 			matched = p_SFR->matched_writer_add(wdata->m_writerProxy);
 		}
+		cout << "MATCHED: "<< matched << " Listener pointer: " << (R->getListener()!=NULL)<<endl;
 		if(matched && R->getListener()!=NULL)
 		{
 			R->getListener()->onSubscriptionMatched();
