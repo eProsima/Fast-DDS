@@ -25,7 +25,7 @@ namespace rtps{
 
 
 //!Max size of RTPS message in bytes.
-#define RTPSMESSAGE_MAX_SIZE 3000  //max size of rtps message in bytes
+#define RTPSMESSAGE_MAX_SIZE 5000  //max size of rtps message in bytes
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
 #define RTPSMESSAGE_SUBMESSAGEHEADER_SIZE 4
 #define RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE 4

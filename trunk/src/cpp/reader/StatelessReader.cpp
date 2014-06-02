@@ -115,6 +115,7 @@ bool StatelessReader::isUnreadCacheChange()
 
 bool StatelessReader::matched_writer_add(const GUID_t& guid)
 {
+	pDebugInfo("Trying to add "<< guid << " to the matched writer list"<<endl);
 	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
 		if(*it == guid)

@@ -112,6 +112,7 @@ bool SimpleEDP::createSEDPEndpoints()
 			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
+	boost::lock_guard<Endpoint> guard(*mp_SubReader);
 	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
 	{
 		Rparam.historyMaxSize = 100;
@@ -252,6 +253,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 		addNewLocalWriter(W);
 	}
 	bool matched = false;
+	boost::lock_guard<Endpoint> guard(*mp_SubReader);
 	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
@@ -274,12 +276,10 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 		addNewLocalReader(R);
 	}
 	bool matched = false;
+	boost::lock_guard<Endpoint> guard(*mp_PubReader);
 	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
 	{
-		//		cout << "partname " << (*pit)->m_participantName << endl;
-		//		cout << "partic Pref" << (*pit)->m_guidPrefix << endl;
-		//		cout << "partic Key" << (*pit)->m_key << endl;
 		for(std::vector<DiscoveredWriterData*>::iterator wit = (*pit)->m_writers.begin();
 				wit!=(*pit)->m_writers.end();++wit)
 		{
@@ -417,10 +417,10 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
 	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP: localReader with Discovered Writer Matching"<<endl);
 	bool matched = false;
-	//	cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
-	//	cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
-	//	cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
-	//	cout << "wdata alive. "<<wdata->isAlive<<endl;
+		cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
+		cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
+		cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
+		cout << "wdata alive. "<<wdata->isAlive<<endl;
 	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
 			R->getTopic().getTopicKind() == wdata->topicKind &&
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&

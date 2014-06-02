@@ -63,7 +63,9 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 
 	//FIXME: FIx creation of endpoints when port is already being used.
 	updateLocalParticipantData();
-	createSPDPEndpoints();
+	if(!createSPDPEndpoints())
+		return false;
+	mp_SPDPReader->lock();
 	updateLocalParticipantData();
 
 	//INIT EDP
@@ -82,14 +84,18 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	}
 	if(mp_EDP->initEDP(m_discovery))
 	{
+		mp_SPDPReader->unlock();
 		this->announceParticipantState(true);
-		eClock::my_sleep(50);
-		this->announceParticipantState(false);
-		eClock::my_sleep(50);
-		this->announceParticipantState(false);
+//		eClock::my_sleep(50);
+//		this->announceParticipantState(false);
+//		eClock::my_sleep(50);
+//		this->announceParticipantState(false);
 		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
 				boost::posix_time::milliseconds(m_discovery.resendDiscoveryParticipantDataPeriod.to64time()*1000));
 		m_resendDataTimer->restart_timer();
+
+		eClock::my_sleep(100);
+
 		return true;
 	}
 
