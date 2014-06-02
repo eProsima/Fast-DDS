@@ -112,7 +112,7 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latsub.sema.wait();
 		latsub.sema.wait();
-		eClock::my_sleep(5000);
+		eClock::my_sleep(1000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
