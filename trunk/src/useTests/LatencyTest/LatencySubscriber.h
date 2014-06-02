@@ -104,6 +104,10 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	n_received = 0;
 	cout << "Waiting ..."<<endl;
 	sema.wait();
+	int removed;
+	m_pub->removeAllChange(&removed);
+	for(uint8_t i =0;i<m_sub->getHistoryElementsNumber();++i)
+		m_sub->takeNextData((void*)m_latency,&m_info);
 
 	delete(m_latency);
 	return true;

@@ -37,7 +37,7 @@ public:
 		Duration_t heartbeatSupressionDuration;
 		SubscriberTimes()
 		{
-			heartbeatResponseDelay.nanoseconds = 500*1000*1000;
+			heartbeatResponseDelay.fraction = 500*1000*1000;
 		}
 		~SubscriberTimes(){};
 };

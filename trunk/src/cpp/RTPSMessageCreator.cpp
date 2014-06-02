@@ -132,7 +132,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 		if(!invalidateFlag)
 		{
 			CDRMessage::addInt32(msg,time.seconds);
-			CDRMessage::addUInt32(msg,time.nanoseconds);
+			CDRMessage::addUInt32(msg,time.fraction);
 		}
 	}
 	catch(int e)

@@ -29,9 +29,9 @@ struct TimeStats{
 	uint64_t min,max,mean,stdev,p50,p90,p99,p9999;
 };
 
-long toNanoSec(Time_t& t)
+long toMicroSec(Time_t& t)
 {
-	return t.nanoseconds + t.seconds*pow(2,32);
+	return (t.seconds*pow(10,6)+t.fraction*pow(10,6)/pow(2,32));
 }
 
 
@@ -61,7 +61,16 @@ public:
 	{
 		m_sub->readNextData((void*)m_latency_in,&m_info);
 		clock.setTimeNow(&m_t2);
-		m_times.push_back(toNanoSec(m_t2)-toNanoSec(m_t1)-overhead_value);
+//		cout << "mt2 sec "<< m_t2.seconds << endl;
+//		cout << "mt2 sec cast "<< (uint64_t) m_t2.seconds << endl;
+//		cout << "mt2 nsec "<<m_t2.fraction << endl;
+//		cout << toMicroSec(m_t2) << endl;
+//		cout << toMicroSec(m_t1) << endl;
+//		cout << overhead_value << endl;
+//		cout << "lantecy time "<< toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value << endl;
+//		int aux;
+//		std::cin >> aux;
+		m_times.push_back(toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value);
 	}
 	void onSubscriptionMatched()
 	{
@@ -100,9 +109,9 @@ LatencyPublisher::LatencyPublisher():
 	m_part = DomainParticipant::createParticipant(PParam);
 
 	clock.setTimeNow(&m_t1);
-	for(int i=0;i<400;i++)
+	for(int i=0;i<1000;i++)
 		clock.setTimeNow(&m_t2);
-	overhead_value = (toNanoSec(m_t2)-toNanoSec(m_t1))/400;
+	overhead_value = (toMicroSec(m_t2)-toMicroSec(m_t1))/1001;
 	cout << "Overhead " << overhead_value << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
@@ -147,7 +156,6 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
 
 	analyzeTimes(datasize);
-	printStat(*(m_stats.end()-1));
 	delete(m_latency_in);
 	delete(m_latency_out);
 	return true;
@@ -196,13 +204,15 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 	else
 		TS.p9999 = m_times.at(elem);
 
+
+	printStat(TS);
 	m_stats.push_back(TS);
 
 }
 
 void LatencyPublisher::printStat(TimeStats& TS)
 {
-	printf("%6u,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu\n",TS.nbytes,TS.mean,TS.stdev,TS.min,TS.max,
+	printf("%6u,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu \n",TS.nbytes,TS.mean,TS.stdev,TS.min,TS.max,
 			TS.p50,TS.p90,TS.p99,TS.p9999);
 }
 

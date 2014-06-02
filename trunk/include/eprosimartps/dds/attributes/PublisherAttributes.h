@@ -43,7 +43,7 @@ public:
 	//uint8_t hb_per_max_samples;
 	PublisherTimes(){
 		heartbeatPeriod.seconds = 3;
-		nackResponseDelay.nanoseconds = 200*1000*1000;
+		nackResponseDelay.fraction = 200*1000*1000;
 	}
 	~PublisherTimes(){};
 };
