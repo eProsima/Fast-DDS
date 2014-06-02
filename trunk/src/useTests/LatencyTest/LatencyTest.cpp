@@ -98,9 +98,10 @@ int main(int argc, char** argv){
 		{
 			if(!latpub.test(*ndata,n_samples))
 				break;
-			cout << "Finish Test, input to continue: ";
-			cin >> aux;
-			cout << endl;
+			eClock::my_sleep(500);
+//			cout << "Finish Test, input to continue: ";
+//			cin >> aux;
+//			cout << endl;
 
 		}
 		break;
