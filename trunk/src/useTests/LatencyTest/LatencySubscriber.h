@@ -35,19 +35,19 @@ public:
 	uint32_t n_samples;
 	boost::interprocess::interprocess_semaphore sema;
 
-		void onNewDataMessage()
-		{
-			m_sub->readNextData((void*)m_latency,&m_info);
-			m_pub->write((void*)m_latency);
-			n_received++;
-			if(n_received == n_samples)
-				sema.post();
-		}
-		void onSubscriptionMatched()
-		{
-			cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
+	void onNewDataMessage()
+	{
+		m_sub->readNextData((void*)m_latency,&m_info);
+		m_pub->write((void*)m_latency);
+		n_received++;
+		if(n_received == n_samples)
 			sema.post();
-		}
+	}
+	void onSubscriptionMatched()
+	{
+		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
+		sema.post();
+	}
 
 	class LatencySubscriber_PubListener:public PublisherListener
 	{
@@ -79,7 +79,7 @@ LatencySubscriber::LatencySubscriber():
 	m_part = DomainParticipant::createParticipant(PParam);
 
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 1100;
+	Wparam.historyMaxSize = 1050;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyDown";
@@ -87,7 +87,7 @@ LatencySubscriber::LatencySubscriber():
 
 
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 1100;
+	Rparam.historyMaxSize = 1050;
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyUp";

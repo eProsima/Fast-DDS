@@ -71,6 +71,7 @@ public:
 //		int aux;
 //		std::cin >> aux;
 		m_times.push_back(toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value);
+		m_sub->takeNextData((void*)m_latency_in,&m_info);
 	}
 	void onSubscriptionMatched()
 	{
