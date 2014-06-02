@@ -42,6 +42,7 @@ public:
 	virtual ~DDSTopicDataType();
 	/**
 	 * Serialize method, it should be implemented by the user, since it is abstract.
+	 * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
 	 * @param[in] data Pointer to the data
 	 * @param[out] payload Pointer to the payload
 	 * @return True if correct.
