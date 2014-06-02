@@ -18,6 +18,8 @@
 #ifndef LATENCYSUBSCRIBER_H_
 #define LATENCYSUBSCRIBER_H_
 
+#include "eprosimartps/rtps_all.h"
+
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 class LatencySubscriber : public SubscriberListener
@@ -38,6 +40,7 @@ public:
 	void onNewDataMessage()
 	{
 		m_sub->readNextData((void*)m_latency,&m_info);
+		cout << "Read element with SEQNUM: " << m_latency->seqnum << endl;
 		m_pub->write((void*)m_latency);
 		n_received++;
 		if(n_received == n_samples)
@@ -102,12 +105,14 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	m_latency = new LatencyType(datasize);
 	n_samples = n_samples_in;
 	n_received = 0;
-	cout << "Waiting ..."<<endl;
+	cout << "Waiting ... for latencytype of size "<< m_latency->data.size() <<endl;
 	sema.wait();
 	int removed;
 	cout << "Removing ";
 	m_pub->removeAllChange(&removed);
 	cout << removed << endl;
+	cout << m_sub->getHistoryElementsNumber() << endl;
+//	std::cin >> removed;
 	for(uint8_t i =0;i<m_sub->getHistoryElementsNumber();++i)
 		m_sub->takeNextData((void*)m_latency,&m_info);
 
