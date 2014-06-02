@@ -43,7 +43,7 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 		m_hasMinAvailableSeqNumChanged(false)
 
 {
-
+	m_changesFromW.clear();
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
