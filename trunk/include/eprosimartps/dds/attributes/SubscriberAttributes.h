@@ -47,6 +47,7 @@ public:
  * @ingroup ATTRIBUTESMODULE
  */
 class SubscriberAttributes {
+
 public:
 	SubscriberAttributes()
 {

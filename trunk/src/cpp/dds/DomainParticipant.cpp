@@ -189,6 +189,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 			return NULL;
 		}
 	}
+	WParam.payloadMaxSize = p_type->m_typeSize;
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		RTPSWriter* SW;
@@ -248,6 +249,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 			return NULL;
 		}
 	}
+	RParam.payloadMaxSize = p_type->m_typeSize;
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		RTPSReader* SR;

@@ -19,7 +19,7 @@ namespace eprosima{
 namespace rtps{
 
 bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
-		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag)
+		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
 	try
 	{
@@ -36,7 +36,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 }
 
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
-		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN,const Count_t& count,bool isFinal,bool livelinessFlag)
+		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
 	CDRMessage::initCDRMsg(&submsgElem);

@@ -32,6 +32,7 @@ namespace rtps{
 #define RTPSMESSAGE_INFOTS_SIZE 12
 
 #define RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG 16 //may change in future versions
+#define RTPSMESSAGE_DATA_MIN_LENGTH 24
 
 /**
  * @brief Structure CDRMessage_t, contains a serialized message.

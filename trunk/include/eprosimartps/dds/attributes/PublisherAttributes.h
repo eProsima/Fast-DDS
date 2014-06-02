@@ -55,6 +55,7 @@ public:
  * @ingroup ATTRIBUTESMODULE
  */
 class PublisherAttributes {
+
 public:
 	PublisherAttributes()
 {
@@ -82,9 +83,10 @@ public:
 	TopicAttributes topic;
 	//! User defined Id for this Publisher (only needed in STATICEDP)
 	int16_t userDefinedId;
+	WriterQos qos;
 
 	uint32_t payloadMaxSize;
-	WriterQos qos;
+
 };
 
 } /* namespace rtps */
