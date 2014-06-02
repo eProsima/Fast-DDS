@@ -34,24 +34,40 @@ public:
 	uint32_t n_received;
 	uint32_t n_samples;
 	boost::interprocess::interprocess_semaphore sema;
-	void onNewDataMessage()
-	{
-		m_sub->readNextData((void*)m_latency,&m_info);
-		m_pub->write((void*)m_latency);
-		n_received++;
-		if(n_received == n_samples)
+
+		void onNewDataMessage()
+		{
+			m_sub->readNextData((void*)m_latency,&m_info);
+			m_pub->write((void*)m_latency);
+			n_received++;
+			if(n_received == n_samples)
+				sema.post();
+		}
+		void onSubscriptionMatched()
+		{
+			cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
 			sema.post();
-	}
-	void onSubscriptionMatched()
+		}
+
+	class LatencySubscriber_PubListener:public PublisherListener
 	{
-		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
-		sema.post();
-	}
+	public:
+		LatencySubscriber_PubListener(boost::interprocess::interprocess_semaphore* sem):
+			mp_sema(sem){};
+		virtual ~LatencySubscriber_PubListener(){};
+		boost::interprocess::interprocess_semaphore* mp_sema;
+		void onPublicationMatched()
+		{
+			mp_sema->post();
+			cout <<B_MAGENTA<< "Publication Matched"<<DEF <<endl;
+		}
+	}m_PubListener;
 };
 
 
 LatencySubscriber::LatencySubscriber():
-		m_latency(NULL),n_received(0),n_samples(0),sema(0)
+		m_latency(NULL),n_received(0),n_samples(0),sema(0),
+		m_PubListener(&sema)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -68,6 +84,7 @@ LatencySubscriber::LatencySubscriber():
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyDown";
 	m_pub = DomainParticipant::createPublisher(m_part,Wparam);
+	m_pub->assignListener((PublisherListener*)&this->m_PubListener);
 
 	SubscriberAttributes Rparam;
 	Rparam.historyMaxSize = 1100;

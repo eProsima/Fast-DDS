@@ -34,7 +34,9 @@ long toNanoSec(Time_t& t)
 	return t.nanoseconds + t.seconds*pow(2,32);
 }
 
-class LatencyPublisher : public SubscriberListener
+
+
+class LatencyPublisher:public SubscriberListener
 {
 public:
 	LatencyPublisher();
@@ -55,7 +57,6 @@ public:
 	bool test(uint32_t datasize,uint32_t n_samples);
 	void analyzeTimes(uint32_t datasize);
 	void printStat(TimeStats& TS);
-
 	void onNewDataMessage()
 	{
 		m_sub->readNextData((void*)m_latency_in,&m_info);
@@ -67,12 +68,27 @@ public:
 		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
 		sema.post();
 	}
+
+	class LatencyPublisher_PubListener: public PublisherListener
+	{
+	public:
+		LatencyPublisher_PubListener(boost::interprocess::interprocess_semaphore* sem):
+			mp_sema(sem){};
+		virtual ~LatencyPublisher_PubListener(){};
+		boost::interprocess::interprocess_semaphore* mp_sema;
+		void onPublicationMatched()
+		{
+			mp_sema->post();
+			cout << B_MAGENTA <<"Publication Matched" <<DEF<< endl;
+		}
+	} m_PubListener;
 };
 
 
 
 LatencyPublisher::LatencyPublisher():
-		m_latency_out(NULL),m_latency_in(NULL),sema(0)
+				m_latency_out(NULL),m_latency_in(NULL),sema(0),
+				m_PubListener(&sema)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -95,6 +111,7 @@ LatencyPublisher::LatencyPublisher():
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
 	m_pub = DomainParticipant::createPublisher(m_part,Wparam);
+	m_pub->assignListener((PublisherListener*)&this->m_PubListener);
 	//SUBSCRIBER
 	SubscriberAttributes Rparam;
 	Rparam.historyMaxSize = 1100;
@@ -185,7 +202,7 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 void LatencyPublisher::printStat(TimeStats& TS)
 {
 	printf("%6u,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu\n",TS.nbytes,TS.mean,TS.stdev,TS.min,TS.max,
-													TS.p50,TS.p90,TS.p99,TS.p9999);
+			TS.p50,TS.p90,TS.p99,TS.p9999);
 }
 
 

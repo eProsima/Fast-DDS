@@ -162,7 +162,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 
 		}
 		//CDRMessage_t msg;
-		pInfo(BLUE<< "Socket async receive put again to listen "<<DEF<< endl);
+	//	pInfo(BLUE<< "Socket async receive put again to listen "<<DEF<< endl);
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),

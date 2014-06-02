@@ -215,6 +215,7 @@ bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 	if(mp_PubWriter!=NULL)
 	{
 		DiscoveredWriterData* wdata = new DiscoveredWriterData();
+		wdata->isAlive = true;
 		wdata->m_writerProxy.unicastLocatorList = W->unicastLocatorList;
 		repareDiscoveredDataLocatorList(&wdata->m_writerProxy.unicastLocatorList);
 		wdata->m_writerProxy.multicastLocatorList = W->multicastLocatorList;
@@ -306,6 +307,7 @@ bool SimpleEDP::addNewLocalReader(RTPSReader* R)
 	if(mp_SubWriter!=NULL)
 	{
 		DiscoveredReaderData* rdata = new DiscoveredReaderData();
+		rdata->isAlive = true;
 		rdata->m_readerProxy.unicastLocatorList = R->unicastLocatorList;
 		repareDiscoveredDataLocatorList(&rdata->m_readerProxy.unicastLocatorList);
 		rdata->m_readerProxy.multicastLocatorList = R->multicastLocatorList;

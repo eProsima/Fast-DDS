@@ -161,7 +161,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			break;
 		case INFO_TS:
 		{
-			pDebugInfo("InfoTS Submsg received, processing..."<<endl);
+			//pDebugInfo("InfoTS Submsg received, processing..."<<endl);
 			valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
 			break;
 		}
@@ -388,16 +388,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 					else
 					{
-						//FIXME: REMOVE THIS ONCE DISCOVERY WORKS.
-						WriterProxy_t newWriterProxy;
-						newWriterProxy.remoteWriterGuid.guidPrefix = sourceGuidPrefix;
-						newWriterProxy.remoteWriterGuid.entityId = change_to_add->writerGUID.entityId;
-						this->unicastReplyLocatorList.begin()->port = 10046; //default receiving port
-						newWriterProxy.unicastLocatorList   = this->unicastReplyLocatorList;
-						newWriterProxy.multicastLocatorList = this->multicastReplyLocatorList;
-						SFR->matched_writer_add(newWriterProxy);
-						SFR->matched_writer_lookup(change_to_add->writerGUID,&WP);
-						WP->received_change_set(change_to_add);
+						return false;
 					}
 					SequenceNumber_t maxSeqNumAvailable;
 					WP->available_changes_max(&maxSeqNumAvailable);
