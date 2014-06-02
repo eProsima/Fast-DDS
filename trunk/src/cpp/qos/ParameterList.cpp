@@ -300,14 +300,14 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				DeadlineQosPolicy* p= new DeadlineQosPolicy();
 				valid &= CDRMessage::readInt32(msg,&p->period.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->period.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->period.fraction);
 				IF_VALID_ADD
 			}
 			case PID_LATENCY_BUDGET:
 			{
 				LatencyBudgetQosPolicy* p = new LatencyBudgetQosPolicy();
 				valid &= CDRMessage::readInt32(msg,&p->duration.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->duration.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->duration.fraction);
 				IF_VALID_ADD
 			}
 			case PID_LIVELINESS:
@@ -316,7 +316,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
 				msg->pos+=3;
 				valid &= CDRMessage::readInt32(msg,&p->lease_duration.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->lease_duration.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->lease_duration.fraction);
 				IF_VALID_ADD
 			}
 			case PID_OWNERSHIP:
@@ -332,7 +332,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				valid&=CDRMessage::readOctet(msg,(octet*)&p->kind);
 				msg->pos+=3;
 				valid &= CDRMessage::readInt32(msg,&p->max_blocking_time.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->max_blocking_time.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->max_blocking_time.fraction);
 				IF_VALID_ADD
 			}
 			case PID_DESTINATION_ORDER:
@@ -372,7 +372,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				TimeBasedFilterQosPolicy* p = new TimeBasedFilterQosPolicy();
 				valid &= CDRMessage::readInt32(msg,&p->minimum_separation.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->minimum_separation.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->minimum_separation.fraction);
 				IF_VALID_ADD
 			}
 			case PID_PRESENTATION:
@@ -416,7 +416,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				DurabilityServiceQosPolicy * p = new DurabilityServiceQosPolicy();
 				valid &= CDRMessage::readInt32(msg,&p->service_cleanup_delay.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->service_cleanup_delay.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->service_cleanup_delay.fraction);
 				valid&=CDRMessage::readOctet(msg,(octet*)&p->history_kind);msg->pos+=3;
 				valid &= CDRMessage::readUInt32(msg,&p->history_depth);
 				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
@@ -428,7 +428,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				LifespanQosPolicy * p = new LifespanQosPolicy();
 				valid &= CDRMessage::readInt32(msg,&p->duration.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->duration.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->duration.fraction);
 				IF_VALID_ADD
 			}
 			case PID_OWNERSHIP_STRENGTH:
@@ -475,7 +475,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				ParameterTime_t* p = new ParameterTime_t(PID_PARTICIPANT_LEASE_DURATION,plength);
 				valid &= CDRMessage::readInt32(msg,&p->time.seconds);
-				valid &= CDRMessage::readUInt32(msg,&p->time.nanoseconds);
+				valid &= CDRMessage::readUInt32(msg,&p->time.fraction);
 				IF_VALID_ADD
 			}
 			case PID_CONTENT_FILTER_PROPERTY:

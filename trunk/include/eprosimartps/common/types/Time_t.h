@@ -25,26 +25,26 @@ namespace rtps{
 //!Structure Time_t, used to describe times.
 typedef struct Time_t{
 	int32_t seconds;
-	uint32_t nanoseconds;
+	uint32_t fraction;
 	int64_t to64time(){
-		return (int64_t)seconds+((int64_t)(nanoseconds/pow(2.0,32)));
+		return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
 	}
 	Time_t()
 	{
 		seconds = 0;
-		nanoseconds = 0;
+		fraction = 0;
 	}
 }Time_t;
 
 inline int64_t Time2Seconds(const Time_t& t)
 {
-	return (int64_t)t.seconds+((int64_t)(t.nanoseconds/pow(2.0,32)));
+	return (int64_t)t.seconds+((int64_t)(t.fraction/pow(2.0,32)));
 }
 
 
-#define TIME_ZERO(t){t.seconds=0;t.nanoseconds=0;}
-#define TIME_INVALID(t){t.seconds=-1;t.nanoseconds=0xffffffff;}
-#define TIME_INFINITE(t){t.seconds=0x7fffffff;t.nanoseconds=0xffffffff;}
+#define TIME_ZERO(t){t.seconds=0;t.fraction=0;}
+#define TIME_INVALID(t){t.seconds=-1;t.fraction=0xffffffff;}
+#define TIME_INFINITE(t){t.seconds=0x7fffffff;t.fraction=0xffffffff;}
 
 typedef Time_t Duration_t;
 }
