@@ -392,6 +392,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 					else
 					{
+						(*it)->remove_change(change_to_add->sequenceNumber,change_to_add->writerGUID);
 						return false;
 					}
 					SequenceNumber_t maxSeqNumAvailable;

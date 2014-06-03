@@ -104,11 +104,10 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubReader);
+		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,(SubscriberListener*)&m_listeners.m_SubListener,c_EntityId_SEDPSubReader);
 		if(created)
 		{
 			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
-			mp_SubReader->setListener((SubscriberListener*)&m_listeners.m_SubListener);
 			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
@@ -124,11 +123,10 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubReader);
+		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,(SubscriberListener*)&m_listeners.m_PubListener,c_EntityId_SEDPPubReader);
 		if(created)
 		{
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);
-			mp_PubReader->setListener((SubscriberListener*)&m_listeners.m_PubListener);
 			pInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
 		}
 		Wparam.historyMaxSize = 100;

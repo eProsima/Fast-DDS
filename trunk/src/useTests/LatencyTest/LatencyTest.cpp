@@ -76,7 +76,7 @@ int main(int argc, char** argv){
 	LatencyDataType latency_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
 
-	uint32_t n_samples = 250;
+	uint32_t n_samples = 1000;
 
 	uint32_t datas[] = {16,32,64,128,256,512,1024,2048,4096};
 	vector<uint32_t> datasize (datas, datas + sizeof(datas) / sizeof(uint32_t) );
