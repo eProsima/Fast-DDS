@@ -223,8 +223,11 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 
 void LatencyPublisher::printStat(TimeStats& TS)
 {
-	printf("%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu \n",TS.nbytes,TS.mean,TS.stdev,TS.min,TS.max,
-			TS.p50,TS.p90,TS.p99,TS.p9999);
+	printf("%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu \n",
+			TS.nbytes,TS.stdev,TS.mean,
+			TS.min,
+			TS.p50,TS.p90,TS.p99,TS.p9999,
+			TS.max);
 }
 
 
