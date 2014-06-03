@@ -24,6 +24,7 @@
 #include "eprosimartps/writer/StatelessWriter.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/eClock.h"
 
 namespace eprosima {
 namespace rtps {
@@ -100,6 +101,7 @@ bool SPDPListener::newAddedCache()
 				{
 					this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata_ptr->m_expectsInlineQos);
 				}
+				eClock::my_sleep(500);
 				//Inform EDP of new participant data:
 				this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata_ptr);
 				if(!found)
