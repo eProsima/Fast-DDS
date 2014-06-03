@@ -76,7 +76,7 @@ int main(int argc, char** argv){
 	LatencyDataType latency_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
 
-	uint32_t n_samples = 1000;
+	uint32_t n_samples = 250;
 
 	uint32_t datas[] = {16,32,64,128,256,512,1024,2048,4096};
 	vector<uint32_t> datasize (datas, datas + sizeof(datas) / sizeof(uint32_t) );
@@ -89,6 +89,7 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latpub.sema.wait();
 		latpub.sema.wait();
+		latpub.m_part->stopParticipantAnnouncement();
 		eClock::my_sleep(5000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		printf("Printing times in us\n");
@@ -112,6 +113,7 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latsub.sema.wait();
 		latsub.sema.wait();
+		latsub.m_part->stopParticipantAnnouncement();
 		eClock::my_sleep(1000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)

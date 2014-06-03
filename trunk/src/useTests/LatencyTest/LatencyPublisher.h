@@ -61,6 +61,7 @@ public:
 	{
 		m_sub->readNextData((void*)m_latency_in,&m_info);
 		clock.setTimeNow(&m_t2);
+		cout << "Readed data " << m_latency_in->seqnum << endl;
 //		cout << "mt2 sec "<< m_t2.seconds << endl;
 //		cout << "mt2 sec cast "<< (uint64_t) m_t2.seconds << endl;
 //		cout << "mt2 nsec "<<m_t2.fraction << endl;
@@ -70,8 +71,11 @@ public:
 //		cout << "lantecy time "<< toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value << endl;
 //		int aux;
 //		std::cin >> aux;
+		m_latency_in->seqnum = -1;
 		m_times.push_back(toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value);
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
+		cout << "Take data " << m_latency_in->seqnum << endl;
+		m_latency_in->seqnum = -1;
 	}
 	void onSubscriptionMatched()
 	{
@@ -129,8 +133,8 @@ LatencyPublisher::LatencyPublisher():
 	Rparam.topic.topicName = "LatencyDown";
 	m_sub = DomainParticipant::createSubscriber(m_part,Rparam,(SubscriberListener*)this);
 
-	m_part->announceParticipantState();
-	m_part->stopParticipantAnnouncement();
+//	m_part->announceParticipantState();
+
 
 }
 
