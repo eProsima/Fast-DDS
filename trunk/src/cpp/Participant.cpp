@@ -535,6 +535,16 @@ void ParticipantImpl::announceParticipantState()
 	this->mp_PDP->announceParticipantState(false);
 }
 
+void ParticipantImpl::stopParticipantAnnouncement()
+{
+	this->mp_PDP->stopParticipantAnnouncement();
+}
+
+void ParticipantImpl::resetParticipantAnnouncement()
+{
+	this->mp_PDP->resetParticipantAnnouncement();
+}
+
 void ParticipantImpl::ResourceSemaphorePost()
 {
 	if(mp_ResourceSemaphore!=NULL)

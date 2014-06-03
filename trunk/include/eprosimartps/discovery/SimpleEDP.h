@@ -60,8 +60,8 @@ public:
 	bool localWriterMatching(RTPSWriter* writer,bool first_time);
 	bool localReaderMatching(RTPSReader* reader,bool first_time);
 
-	bool localWriterMatching(RTPSWriter* writer,DiscoveredReaderData* rdata);
-	bool localReaderMatching(RTPSReader* reader,DiscoveredWriterData* wdata);
+	bool pairLocalWriterDiscoveredReader(RTPSWriter* writer,DiscoveredReaderData* rdata);
+	bool pairLocalReaderDiscoveredWriter(RTPSReader* reader,DiscoveredWriterData* wdata);
 
 	bool updateWriterMatching(RTPSWriter* writer,DiscoveredReaderData* rdata);
 	bool updateReaderMatching(RTPSReader* reader,DiscoveredWriterData* wdata);
