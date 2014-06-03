@@ -40,7 +40,6 @@ public:
 	void onNewDataMessage()
 	{
 		m_sub->readNextData((void*)m_latency,&m_info);
-		cout << "Read element with SEQNUM: " << m_latency->seqnum << endl;
 		m_pub->write((void*)m_latency);
 		n_received++;
 		if(n_received == n_samples)
