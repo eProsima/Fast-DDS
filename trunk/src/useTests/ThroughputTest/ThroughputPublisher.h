@@ -48,7 +48,7 @@ public:
 			cout << B_MAGENTA << "Subscription Matched"<<DEF<<endl;
 		}
 	}m_CommandSubListener;
-
+	void run();
 };
 
 ThroughputPublisher::ThroughputPublisher():
@@ -80,9 +80,19 @@ ThroughputPublisher::ThroughputPublisher():
 	Rparam.historyMaxSize = 1100;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicName = "LatencyDown";
+	Rparam.topic.topicName = "ThroughputCommand";
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 }
+
+void ThroughputPublisher::run()
+{
+
+}
+
+
+
+
+
 
 
 
