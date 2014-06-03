@@ -53,6 +53,8 @@ public:
 	void restart_timer();
 	//! TO update the interval, the timer is not restarted and the new interval will onyl be used the next time you call restart_timer().
 	bool update_interval_sec(uint32_t inter);
+	//!Stop the timer
+	void stop_timer();
 
 };
 

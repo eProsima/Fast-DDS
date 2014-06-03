@@ -74,7 +74,6 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	boost::lock_guard<Endpoint> guard(*this);
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
-	cout << "READING STATELESSREADER in HISTORY OF SIZE: "<< m_reader_cache.m_changes.size() << endl;
 	std::vector<CacheChange_t*>::iterator it;
 	for(it = m_reader_cache.m_changes.begin();
 			it!=m_reader_cache.m_changes.end();++it)

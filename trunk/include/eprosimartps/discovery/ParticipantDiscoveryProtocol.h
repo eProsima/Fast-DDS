@@ -48,6 +48,8 @@ public:
 
 
 	virtual void announceParticipantState(bool new_change)=0;
+	virtual void stopParticipantAnnouncement()=0;
+	virtual void resetParticipantAnnouncement()=0;
 
 	virtual void localParticipantHasChanged()=0;
 
