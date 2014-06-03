@@ -20,6 +20,8 @@
 
 #include "eprosimartps/rtps_all.h"
 
+#define TESTTIME 30
+
 
 typedef struct LatencyType{
 	uint32_t seqnum;
