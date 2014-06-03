@@ -261,7 +261,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 		for(std::vector<DiscoveredReaderData*>::iterator rit = (*pit)->m_readers.begin();
 				rit!=(*pit)->m_readers.end();++rit)
 		{
-			matched |= localWriterMatching(W,(*rit));
+			matched |= pairLocalWriterDiscoveredReader(W,(*rit));
 		}
 	}
 	return matched;
@@ -284,7 +284,7 @@ bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 		for(std::vector<DiscoveredWriterData*>::iterator wit = (*pit)->m_writers.begin();
 				wit!=(*pit)->m_writers.end();++wit)
 		{
-			matched |= localReaderMatching(R,*wit);
+			matched |= pairLocalReaderDiscoveredWriter(R,*wit);
 		}
 	}
 	return matched;
@@ -373,7 +373,7 @@ void SimpleEDP::repareDiscoveredDataLocatorList(LocatorList_t* loclist)
 	*loclist = newLocList;
 }
 
-bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
+bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*W);
 	pInfo("SimpleEDP:localWriterMatching W-DRD"<<endl);
@@ -414,7 +414,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 	return matched;
 }
 
-bool SimpleEDP::localReaderMatching(RTPSReader* R,DiscoveredWriterData* wdata)
+bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterData* wdata)
 {
 	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP:localReaderMatching R-DWD"<<endl);
