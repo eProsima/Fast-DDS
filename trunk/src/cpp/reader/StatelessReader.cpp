@@ -96,6 +96,7 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		(*it)->isRead = true;
 		return true;
 	}
+	cout << "NOT FOUND UNREAD ELEMENT "<< endl;
 	return false;
 }
 
