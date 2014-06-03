@@ -135,7 +135,7 @@ void SEDPPubListener::onNewDataMessage()
 					}
 					else
 					{
-						this->mp_SEDP->localReaderMatching(*rit,wdataptr);
+						this->mp_SEDP->pairLocalReaderDiscoveredWriter(*rit,wdataptr);
 					}
 				}
 			}
@@ -251,7 +251,7 @@ void SEDPSubListener::onNewDataMessage()
 					}
 					else
 					{
-						this->mp_SEDP->localWriterMatching(*wit,rdataptr);
+						this->mp_SEDP->pairLocalWriterDiscoveredReader(*wit,rdataptr);
 					}
 				}
 			}
