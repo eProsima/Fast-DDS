@@ -43,7 +43,7 @@ bool operator==(LatencyType& lt1,LatencyType&lt2)
 		return false;
 	if(lt1.data.size()!=lt2.data.size())
 		return false;
-	for(int i = 0;i<lt1.data.size();++i)
+	for(size_t i = 0;i<lt1.data.size();++i)
 	{
 		if(lt1.data.at(i) != lt2.data.at(i))
 			return false;
