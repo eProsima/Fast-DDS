@@ -61,6 +61,9 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 	ch->serializedPayload.length = 0;
 	for(uint8_t i=0;i<16;++i)
 		ch->instanceHandle.value[i] = 0;
+	ch->isRead = 0;
+	ch->sourceTimestamp.seconds = 0;
+	ch->sourceTimestamp.fraction = 0;
 	freeCaches.push_back(ch);
 }
 
