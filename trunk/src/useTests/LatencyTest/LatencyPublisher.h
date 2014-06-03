@@ -25,8 +25,9 @@
 #include "eprosimartps/utils/eClock.h"
 
 struct TimeStats{
-	uint32_t nbytes;
-	uint64_t min,max,mean,stdev,p50,p90,p99,p9999;
+	uint64_t nbytes;
+	uint64_t min,max,mean,p50,p90,p99,p9999;
+	uint64_t stdev;
 };
 
 long toMicroSec(Time_t& t)
@@ -178,12 +179,14 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 	TS.min = *std::min_element(m_times.begin(),m_times.end());
 	TS.max = *std::max_element(m_times.begin(),m_times.end());
 	TS.mean = std::accumulate(m_times.begin(),m_times.end(),0)/m_times.size();
-	TS.stdev = 0;
+	double auxstdev=0;
 	for(std::vector<uint64_t>::iterator tit=m_times.begin();tit!=m_times.end();++tit)
 	{
-		TS.stdev += pow(*tit-TS.mean,2);
+		//cout << *tit<< "/"<< TS.mean<< "///";
+		auxstdev += pow(((double)(*tit)-TS.mean),2);
 	}
-	TS.stdev = sqrt(TS.stdev/m_times.size());
+	auxstdev = sqrt(auxstdev/m_times.size());
+	TS.stdev = (uint64_t)round(auxstdev);
 	std::sort(m_times.begin(),m_times.end());
 	double x= 0;
 	double elem,dec;
@@ -220,7 +223,7 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 
 void LatencyPublisher::printStat(TimeStats& TS)
 {
-	printf("%6u,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu \n",TS.nbytes,TS.mean,TS.stdev,TS.min,TS.max,
+	printf("%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu,%6lu \n",TS.nbytes,TS.mean,TS.stdev,TS.min,TS.max,
 			TS.p50,TS.p90,TS.p99,TS.p9999);
 }
 
