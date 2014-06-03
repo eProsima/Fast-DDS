@@ -163,6 +163,10 @@ public:
 	//! Announce ParticipantState
 	void announceParticipantState();
 
+	void stopParticipantAnnouncement();
+
+	void resetParticipantAnnouncement();
+
 	const GUID_t& getGuid() const {
 		return m_guid;
 	}
@@ -261,6 +265,8 @@ public:
 	const GUID_t& getGuid(){return mp_impl->getGuid();};
 	void announceParticipantState(){return mp_impl->announceParticipantState();};
 	void loose_next_change(){return mp_impl->loose_next_change();};
+	void stopParticipantAnnouncement(){return mp_impl->stopParticipantAnnouncement();};
+	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
 	private:
 ParticipantImpl* mp_impl;
 };

@@ -42,6 +42,12 @@ void TimedEvent::restart_timer()
 	}
 }
 
+void TimedEvent::stop_timer()
+{
+	m_isWaiting = false;
+	timer->cancel();
+}
+
 bool TimedEvent::update_interval_sec(uint32_t inter)
 {
 	m_interval_msec = boost::posix_time::milliseconds(inter*1000);

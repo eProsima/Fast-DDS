@@ -54,6 +54,9 @@ public:
 
 	void announceParticipantState(bool new_change);
 
+	void stopParticipantAnnouncement();
+	void resetParticipantAnnouncement();
+
 	bool updateParameterList();
 
 	QosList_t m_localDPDasQosList;

@@ -360,7 +360,15 @@ bool SimplePDP::localReaderMatching(RTPSReader* R,bool first_time)
 		return false;
 }
 
+void SimplePDP::stopParticipantAnnouncement()
+{
+	m_resendDataTimer->stop_timer();
+}
 
+void SimplePDP::resetParticipantAnnouncement()
+{
+	m_resendDataTimer->restart_timer();
+}
 
 
 } /* namespace rtps */

@@ -129,6 +129,8 @@ LatencyPublisher::LatencyPublisher():
 	Rparam.topic.topicName = "LatencyDown";
 	m_sub = DomainParticipant::createSubscriber(m_part,Rparam,(SubscriberListener*)this);
 
+	m_part->announceParticipantState();
+	m_part->stopParticipantAnnouncement();
 
 }
 
