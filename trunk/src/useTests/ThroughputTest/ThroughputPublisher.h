@@ -27,6 +27,7 @@ public:
 	virtual ~ThroughputPublisher(){DomainParticipant::stopAll();}
 	Participant* mp_par;
 	Publisher* mp_datapub;
+	Publisher* mp_commandpub;
 	Subscriber* mp_commandsub;
 	eClock m_Clock;
 
@@ -70,18 +71,20 @@ ThroughputPublisher::ThroughputPublisher():
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 1100;
+	Wparam.historyMaxSize = 10000;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
 	mp_datapub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
-	//SUBSCRIBER
+	//COMMAND
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 1100;
+	Rparam.historyMaxSize = 20;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommand";
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
+
+
 }
 
 void ThroughputPublisher::run()
