@@ -39,14 +39,14 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 }
 
 
-bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
+bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* payload)
 {
 	ThroughputCommandType* t = (ThroughputCommandType*)data;
 	*(e_Command*)payload->data = t->m_command;
 	payload->length = 4;
 	return true;
 }
-bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool ThroughputCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
 	ThroughputCommandType* t = (ThroughputCommandType*)data;
 	 t->m_command = *(e_Command*)payload->data;

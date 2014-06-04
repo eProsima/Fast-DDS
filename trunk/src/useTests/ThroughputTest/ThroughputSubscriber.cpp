@@ -32,7 +32,7 @@ void ThroughputSubscriber::DataSubListener::reset(){
 
 void ThroughputSubscriber::DataSubListener::onSubscriptionMatched()
 {
-	cout << B_RED << "DATA    Sub Matched"<<DEF<<endl;
+	cout << RED << "DATA    Sub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
@@ -54,20 +54,19 @@ ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscribe
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
 void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched()
 {
-	cout << B_RED << "COMMAND Sub Matched"<<DEF<<endl;
+	cout << RED << "COMMAND Sub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 {
 	m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info);
-	cout << "Command received: "<< m_commandin << endl;
 }
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
 void ThroughputSubscriber::CommandPubListener::onPublicationMatched()
 {
-	cout << B_RED << "COMMAND Pub Matched"<<DEF<<endl;
+	cout << RED << "COMMAND Pub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 
@@ -105,6 +104,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.topicDataType = "LatencyType";
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
+	Sparam.unicastLocatorList.push_back(Locator_t(10110));
 	mp_datasub = DomainParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
@@ -112,6 +112,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
+	Rparam.unicastLocatorList.push_back(Locator_t(10111));
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
 	Wparam.historyMaxSize = 20;
@@ -133,7 +134,10 @@ void ThroughputSubscriber::run()
 	cout << "Waiting for discovery"<<endl;
 	sema.wait();
 	sema.wait();
+	sema.wait();
+	cout << "Discovery complete"<<endl;
 	bool stop = false;
+	int aux;
 	while(1)
 	{
 		mp_commandsub->waitForUnreadMessage();
@@ -149,6 +153,7 @@ void ThroughputSubscriber::run()
 		case (READY_TO_START):
 		{
 			ThroughputCommandType command(BEGIN);
+			std::cin >> aux;
 			mp_commandpub->write(&command);
 			break;
 		}
@@ -158,7 +163,7 @@ void ThroughputSubscriber::run()
 			break;
 		}
 		}
-		if(stop)
+	if(stop)
 			break;
 	}
 

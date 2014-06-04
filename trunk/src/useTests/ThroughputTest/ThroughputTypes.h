@@ -104,21 +104,22 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
 	case (READY_TO_START): return output << "READY_TO_START";
 	case (BEGIN): return output << "BEGIN";
 	case (STOP_TEST): return output << "STOP_TEST";
+	default: return output << B_RED<<"UNKNOWN COMMAND"<<DEF;
 	}
 	return output;
 }
 
 
-class ThroughputDataType:public DDSTopicDataType
+class ThroughputCommandDataType:public DDSTopicDataType
 {
 public:
-	ThroughputDataType()
+	ThroughputCommandDataType()
 {
 		m_topicDataTypeName = "ThroughputCommand";
 		m_typeSize = 4;
 		m_isGetKeyDefined = false;
 };
-	~ThroughputDataType(){};
+	~ThroughputCommandDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 };
