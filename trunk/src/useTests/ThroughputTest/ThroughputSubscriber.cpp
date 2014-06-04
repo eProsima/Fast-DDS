@@ -21,7 +21,7 @@
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-	m_up(up),lastseqnum(0),lostsamples(0),first(true){};
+	m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(SAMPLESIZE){};
 ThroughputSubscriber::DataSubListener::~DataSubListener(){};
 
 void ThroughputSubscriber::DataSubListener::reset(){
@@ -37,15 +37,16 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched()
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
 {
-	if(first)
-	{
-		first = false;
-		m_up.m_Clock.setTimeNow(&m_up.m_t1);
-	}
-	m_up.mp_datasub->takeNextData(&m_latency,&info);
-	if((lastseqnum+1)<m_latency.seqnum)
-		lostsamples+=m_latency.seqnum-lastseqnum-1;
-	lastseqnum = m_latency.seqnum;
+	m_up.mp_datasub->takeNextData((void*)&latencyin,&info);
+	if((lastseqnum+1)<latencyin.seqnum)
+		lostsamples+=latencyin.seqnum-lastseqnum-1;
+	lastseqnum = latencyin.seqnum;
+}
+
+void ThroughputSubscriber::DataSubListener::saveNumbers()
+{
+	saved_lastseqnum = lastseqnum;
+	saved_lostsamples = lostsamples;
 }
 
 
@@ -59,7 +60,24 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched()
 }
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 {
-	m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info);
+	//cout << "Command Received: ";
+	if(m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info))
+	{
+	//	cout << m_commandin <<endl;
+		switch(m_commandin.m_command)
+		{
+		default:
+		case (DEFAULT): break;
+		case (READY_TO_START): break;
+		case (BEGIN): break;
+		case (TEST_STARTS): m_up.m_Clock.setTimeNow(&m_up.m_t1);break;
+		case (TEST_ENDS): m_up.m_Clock.setTimeNow(&m_up.m_t2);m_up.m_DataSubListener.saveNumbers();m_up.sema.post();break;
+		}
+	}
+	else
+	{
+		cout << "Error reading command"<<endl;
+	}
 }
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
@@ -125,6 +143,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 		ready = false;
 
 	mp_par->stopParticipantAnnouncement();
+	eClock::my_sleep(5000);
 }
 
 void ThroughputSubscriber::run()
@@ -141,7 +160,7 @@ void ThroughputSubscriber::run()
 	while(1)
 	{
 		mp_commandsub->waitForUnreadMessage();
-		cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
+		//cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
 		switch(m_CommandSubListener.m_commandin.m_command)
 		{
 		case (DEFAULT):
@@ -152,16 +171,29 @@ void ThroughputSubscriber::run()
 		}
 		case (READY_TO_START):
 		{
+		//	cout << "Enter number to continue:"<<endl;
 			ThroughputCommandType command(BEGIN);
-			std::cin >> aux;
+			eClock::my_sleep(50);
+			m_DataSubListener.reset();
 			mp_commandpub->write(&command);
 			break;
 		}
-		case (STOP_TEST):
+		case (TEST_STARTS):
 		{
-			stop = true;
 			break;
 		}
+		case (TEST_ENDS):
+		{
+			TroughputTimeStats TS;
+			TS.samplesize = SAMPLESIZE+4;
+			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.lostsamples;
+			TS.totaltime_us = Time2MicroSec(m_t2)-Time2MicroSec(m_t1);
+			TS.compute();
+			cout << TS << endl;
+			break;
+		}
+		case (ALL_STOPS):
+				return;
 		}
 	if(stop)
 			break;

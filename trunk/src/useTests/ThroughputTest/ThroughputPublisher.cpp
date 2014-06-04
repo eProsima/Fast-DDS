@@ -98,6 +98,7 @@ ThroughputPublisher::ThroughputPublisher():
 		ready = false;
 
 	mp_par->stopParticipantAnnouncement();
+	eClock::my_sleep(5000);
 }
 
 void ThroughputPublisher::run()
@@ -115,7 +116,8 @@ void ThroughputPublisher::run()
 	SampleInfo_t info;
 	for(std::vector<uint32_t>::iterator it=demand.begin();it!=demand.end();++it)
 	{
-		cout << "Starting test with demand: " << *it << endl;
+		eClock::my_sleep(500);
+	//	cout << "Starting test with demand: " << *it << endl;
 		command.m_command = READY_TO_START;
 		mp_commandpub->write((void*)&command);
 		command.m_command = DEFAULT;
@@ -123,35 +125,49 @@ void ThroughputPublisher::run()
 		mp_commandsub->takeNextData((void*)&command,&info);
 		cout << "Received command of type: "<< command << endl;
 		if(command.m_command == BEGIN)
+		{
 			test(*it);
-	}
+		}
 
+	}
+	command.m_command = ALL_STOPS;
+
+	mp_commandpub->write((void*)&command);
 }
 
 void ThroughputPublisher::test(uint32_t demand)
 {
-	LatencyType latency(1024);
+	LatencyType latency(SAMPLESIZE);
 	m_Clock.setTimeNow(&m_t2);
 	uint64_t timewait_us=0;
 	uint32_t samples=0;
+	int aux;
+	ThroughputCommandType command;
+	command.m_command = TEST_STARTS;
+	mp_commandpub->write((void*)&command);
 	m_Clock.setTimeNow(&m_t1);
 	while(Time2MicroSec(m_t2)-Time2MicroSec(m_t1)<TESTTIME*1000000)
 	{
 		for(uint32_t sample=0;sample<demand;sample++)
 		{
-			latency.seqnum = sample+1;
+			latency.seqnum++;
 			mp_datapub->write((void*)&latency);
 		}
 		samples+=demand;
 		m_Clock.setTimeNow(&m_t2);
 		eClock::my_sleep(10);
-		timewait_us+=10000+m_overhead;
+		timewait_us+=m_overhead;
+		mp_datapub->removeAllChange(&aux);
 	}
+	command.m_command = TEST_ENDS;
+	mp_commandpub->write((void*)&command);
+	mp_commandpub->removeAllChange(&aux);
 	TroughputTimeStats TS;
 	TS.nsamples = samples;
 	TS.totaltime_us = Time2MicroSec(m_t2)-Time2MicroSec(m_t1)-timewait_us;
-	TS.samplesize = 1024+4;
+	TS.samplesize = SAMPLESIZE+4;
 	TS.compute();
+	cout << demand << "..." << TS << endl;
 	m_timeStats.push_back(TS);
 }
 

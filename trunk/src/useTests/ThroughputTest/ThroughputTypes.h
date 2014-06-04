@@ -20,7 +20,8 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#define TESTTIME 30
+#define TESTTIME 5
+#define SAMPLESIZE 1024
 
 typedef struct TroughputTimeStats{
 	uint32_t nsamples;
@@ -29,19 +30,25 @@ typedef struct TroughputTimeStats{
 	float Mbitsec;
 	void compute()
 	{
-		Mbitsec = samplesize*8*nsamples*1000000/(totaltime_us);
+		Mbitsec = (float)(samplesize*8*nsamples)/((float)totaltime_us);
 	}
 }TroughputTimeStats;
+
+inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
+{
+	return output << ts.nsamples << "||"<<ts.totaltime_us<< "||"<<ts.Mbitsec;
+}
+
 
 
 typedef struct LatencyType{
 	uint32_t seqnum;
 	std::vector<uint8_t> data;
-	LatencyType():
-		seqnum(0)
-	{
-		seqnum = 0;
-	}
+//	LatencyType():
+//		seqnum(0)
+//	{
+//		seqnum = 0;
+//	}
 	LatencyType(uint16_t number):
 		seqnum(0),
 		data(number,0)
@@ -83,7 +90,9 @@ enum e_Command:uint32_t{
 	DEFAULT,
 	READY_TO_START,
 	BEGIN,
-	STOP_TEST
+	TEST_STARTS,
+	TEST_ENDS,
+	ALL_STOPS
 };
 
 typedef struct ThroughputCommandType
@@ -103,7 +112,9 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
 	case (DEFAULT): return output << "DEFAULT";
 	case (READY_TO_START): return output << "READY_TO_START";
 	case (BEGIN): return output << "BEGIN";
-	case (STOP_TEST): return output << "STOP_TEST";
+	case (TEST_STARTS): return output << "TEST_STARTS";
+	case (TEST_ENDS): return output << "TEST_ENDS";
+	case (ALL_STOPS): return output << "ALL_STOPS";
 	default: return output << B_RED<<"UNKNOWN COMMAND"<<DEF;
 	}
 	return output;

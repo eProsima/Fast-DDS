@@ -107,7 +107,6 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 		pDebugInfo("New change created"<<endl);
 		if(!m_writer_cache.add_change(change))
 		{
-			pWarning("Change not added"<<endl);
 			m_writer_cache.release_Cache(change);
 			return false;
 		}
