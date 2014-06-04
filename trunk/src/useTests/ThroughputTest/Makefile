@@ -29,7 +29,11 @@ THROUGHPUTTEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGE
 
 THROUGHPUTTEST_SRC_CFILES=
 
-THROUGHPUTTEST_SRC_CPPFILES= $(BASEDIR)/ThroughputTest.cpp
+THROUGHPUTTEST_SRC_CPPFILES= $(BASEDIR)/ThroughputTypes.cpp \
+								$(BASEDIR)/ThroughputPublisher.cpp \
+								$(BASEDIR)/ThroughputSubscriber.cpp \
+								$(BASEDIR)/main_ThroughputTest.cpp 
+								
 
 # Project sources are copied to the current directory
 THROUGHPUTTEST_SRCS= $(THROUGHPUTTEST_SRC_CFILES) $(THROUGHPUTTEST_SRC_CPPFILES)

@@ -22,6 +22,17 @@
 
 #define TESTTIME 30
 
+typedef struct TroughputTimeStats{
+	uint32_t nsamples;
+	uint64_t totaltime_us;
+	uint32_t samplesize;
+	float Mbitsec;
+	void compute()
+	{
+		Mbitsec = samplesize*8*nsamples*1000000/(totaltime_us);
+	}
+}TroughputTimeStats;
+
 
 typedef struct LatencyType{
 	uint32_t seqnum;
@@ -39,7 +50,7 @@ typedef struct LatencyType{
 	}
 }LatencyType;
 
-bool operator==(LatencyType& lt1,LatencyType&lt2)
+inline bool operator==(LatencyType& lt1,LatencyType&lt2)
 {
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;
@@ -68,35 +79,20 @@ public:
 	bool deserialize(SerializedPayload_t* payload,void * data);
 };
 
-//Funciones de serializacion y deserializacion para el ejemplo
-bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
-{
-	LatencyType* lt = (LatencyType*)data;
-	*(uint32_t*)payload->data = lt->seqnum;
-	*(uint32_t*)(payload->data+4) = (uint32_t)lt->data.size();
-	std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
-	payload->length = 8+lt->data.size();
-	return true;
-}
-
-bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
-{
-	LatencyType* lt = (LatencyType*)data;
-	lt->seqnum = *(uint32_t*)payload->data;
-	uint32_t siz = *(uint32_t*)(payload->data+4);
-	std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
-	return true;
-}
+enum Command:uint32_t{
+	DEFAULT,
+	READY_TO_START,
+	BEGIN,
+	STOP_TEST
+};
 
 typedef struct ThroughputCommandType
 {
-	enum Command:uint32_t{
-		BEGIN,
-		STOP,
-		ALL_OK,
-	}m_command;
-
-};
+	Command m_command;
+	ThroughputCommandType(){
+		m_command = DEFAULT;
+	}
+}ThroughputCommandType;
 
 class ThroughputDataType:public DDSTopicDataType
 {
@@ -111,20 +107,6 @@ public:
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 };
-
-bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
-{
-	ThroughputCommandType* t = (ThroughputCommandType*)data;
-	*(uint32_t*)payload->data = t->m_command;
-	payload->length = 4;
-	return true;
-}
-bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
-{
-	ThroughputCommandType* t = (ThroughputCommandType*)data;
-	 t->m_command = *(uint32_t*)payload->data;
-	return true;
-}
 
 
 #endif /* THROUGHPUTTYPES_H_ */
