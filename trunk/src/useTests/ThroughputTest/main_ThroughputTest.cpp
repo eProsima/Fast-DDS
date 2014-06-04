@@ -69,7 +69,7 @@ int main(int argc, char** argv){
 	LatencyDataType latency_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
 
-	ThroughputDataType throuputcommand_t;
+	ThroughputCommandDataType throuputcommand_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
 
