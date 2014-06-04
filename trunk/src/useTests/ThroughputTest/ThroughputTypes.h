@@ -50,7 +50,7 @@ typedef struct LatencyType{
 	}
 }LatencyType;
 
-inline bool operator==(LatencyType& lt1,LatencyType&lt2)
+inline bool operator==(LatencyType& lt1,LatencyType& lt2)
 {
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;
@@ -79,7 +79,7 @@ public:
 	bool deserialize(SerializedPayload_t* payload,void * data);
 };
 
-enum Command:uint32_t{
+enum e_Command:uint32_t{
 	DEFAULT,
 	READY_TO_START,
 	BEGIN,
@@ -88,11 +88,26 @@ enum Command:uint32_t{
 
 typedef struct ThroughputCommandType
 {
-	Command m_command;
+	e_Command m_command;
 	ThroughputCommandType(){
 		m_command = DEFAULT;
 	}
+	ThroughputCommandType(e_Command com):m_command(com){}
 }ThroughputCommandType;
+
+
+inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType& com)
+{
+	switch(com.m_command)
+	{
+	case (DEFAULT): return output << "DEFAULT";
+	case (READY_TO_START): return output << "READY_TO_START";
+	case (BEGIN): return output << "BEGIN";
+	case (STOP_TEST): return output << "STOP_TEST";
+	}
+	return output;
+}
+
 
 class ThroughputDataType:public DDSTopicDataType
 {

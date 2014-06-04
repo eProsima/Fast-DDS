@@ -55,6 +55,15 @@ public:
 		ThroughputPublisher& m_up;
 		void onSubscriptionMatched();
 	}m_CommandSubListener;
+	class CommandPubListener:public PublisherListener
+	{
+	public:
+		CommandPubListener(ThroughputPublisher& up);
+		virtual ~CommandPubListener();
+		ThroughputPublisher& m_up;
+		void onPublicationMatched();
+	}m_CommandPubListener;
+
 
 	bool ready;
 
