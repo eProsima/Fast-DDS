@@ -48,5 +48,8 @@ output
 
 *~
 
-.png
-.jpg
+*.png
+*.jpg
+*/bin/
+*/output/
+bin/
