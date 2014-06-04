@@ -42,13 +42,14 @@ public:
 		virtual ~DataSubListener();
 		ThroughputSubscriber& m_up;
 		void reset();
-		uint32_t lastseqnum;
-		uint32_t lostsamples;
+		uint32_t lastseqnum,saved_lastseqnum;
+		uint32_t lostsamples,saved_lostsamples;
 		bool first;
-		LatencyType m_latency;
+		LatencyType latencyin;
 		SampleInfo_t info;
 		void onSubscriptionMatched();
 		void onNewDataMessage();
+		void saveNumbers();
 	}m_DataSubListener;
 
 	class CommandSubListener:public SubscriberListener
@@ -61,6 +62,7 @@ public:
 		SampleInfo_t info;
 		void onSubscriptionMatched();
 		void onNewDataMessage();
+		void saveNumbers();
 	}m_CommandSubListener;
 	class CommandPubListener:public PublisherListener
 	{

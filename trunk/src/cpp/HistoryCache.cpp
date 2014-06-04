@@ -119,7 +119,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	boost::lock_guard<HistoryCache> guard(*this);
 	if(m_changes.size() == (size_t)m_history_max_size) //History is full
 	{
-		pWarning("Attempting to add change with Full History" << endl);
+		pWarning("Change not added due to full History" << endl);
 		return false;
 	}
 
