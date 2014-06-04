@@ -26,16 +26,23 @@ ThroughputPublisher::DataPubListener::~DataPubListener(){};
 
 void ThroughputPublisher::DataPubListener::onPublicationMatched()
 {
-	cout << B_RED << "Publication Matched"<<DEF<<endl;
+	cout << B_RED << "DATA    Pub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){};
-
 void ThroughputPublisher::CommandSubListener::onSubscriptionMatched()
 {
-	cout << B_MAGENTA << "Subscription Matched"<<DEF<<endl;
+	cout << B_RED << "COMMAND Sub Matched"<<DEF<<endl;
+	m_up.sema.post();
+}
+
+ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){};
+ThroughputPublisher::CommandPubListener::~CommandPubListener(){};
+void ThroughputPublisher::CommandPubListener::onPublicationMatched()
+{
+	cout << B_RED << "COMMAND Pub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 
@@ -43,7 +50,9 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched()
 ThroughputPublisher::~ThroughputPublisher(){DomainParticipant::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
-		sema(0),m_DataPubListener(*this),m_CommandSubListener(*this),ready(true)
+		sema(0),
+		m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+		ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -83,7 +92,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandP2S";
-	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam,NULL);
+	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datapub == NULL || mp_commandsub == NULL || mp_commandpub == NULL)
 		ready = false;
@@ -98,6 +107,8 @@ void ThroughputPublisher::run()
 	cout << "Waiting for discovery"<<endl;
 	sema.wait();
 	sema.wait();
+	sema.wait();
+	cout << "Discovery complete"<<endl;
 	uint32_t demands[] = {100,200,300,400,500,600,700,800,900};
 	vector<uint32_t> demand (demands, demands + sizeof(demands) / sizeof(uint32_t) );
 	ThroughputCommandType command;
@@ -110,6 +121,7 @@ void ThroughputPublisher::run()
 		command.m_command = DEFAULT;
 		mp_commandsub->waitForUnreadMessage();
 		mp_commandsub->takeNextData((void*)&command,&info);
+		cout << "Received command of type: "<< command << endl;
 		if(command.m_command == BEGIN)
 			test(*it);
 	}

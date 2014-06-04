@@ -43,6 +43,10 @@ public:
 		ThroughputSubscriber& m_up;
 		void reset();
 		uint32_t lastseqnum;
+		uint32_t lostsamples;
+		bool first;
+		LatencyType m_latency;
+		SampleInfo_t info;
 		void onSubscriptionMatched();
 		void onNewDataMessage();
 	}m_DataSubListener;
@@ -58,6 +62,14 @@ public:
 		void onSubscriptionMatched();
 		void onNewDataMessage();
 	}m_CommandSubListener;
+	class CommandPubListener:public PublisherListener
+	{
+	public:
+		CommandPubListener(ThroughputSubscriber& up);
+		virtual ~CommandPubListener();
+		ThroughputSubscriber& m_up;
+		void onPublicationMatched();
+	}m_CommandPubListener;
 	bool ready;
 
 	void run();

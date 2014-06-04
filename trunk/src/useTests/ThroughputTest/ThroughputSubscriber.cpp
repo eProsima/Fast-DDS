@@ -20,36 +20,55 @@
 
 
 
-ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):m_up(up),lastseqnum(0){};
+ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
+	m_up(up),lastseqnum(0),lostsamples(0),first(true){};
 ThroughputSubscriber::DataSubListener::~DataSubListener(){};
 
 void ThroughputSubscriber::DataSubListener::reset(){
 	lastseqnum = 0;
+	first = true;
+	lostsamples=0;
 }
 
 void ThroughputSubscriber::DataSubListener::onSubscriptionMatched()
 {
-	cout << B_RED << "Data Subscription Matched"<<DEF<<endl;
+	cout << B_RED << "DATA    Sub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
 {
-
+	if(first)
+	{
+		first = false;
+		m_up.m_Clock.setTimeNow(&m_up.m_t1);
+	}
+	m_up.mp_datasub->takeNextData(&m_latency,&info);
+	if((lastseqnum+1)<m_latency.seqnum)
+		lostsamples+=m_latency.seqnum-lastseqnum-1;
+	lastseqnum = m_latency.seqnum;
 }
 
 
 
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
-
 void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched()
 {
-	cout << B_MAGENTA << "Subscription Matched"<<DEF<<endl;
+	cout << B_RED << "COMMAND Sub Matched"<<DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 {
 	m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info);
+	cout << "Command received: "<< m_commandin << endl;
+}
+
+ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
+ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched()
+{
+	cout << B_RED << "COMMAND Pub Matched"<<DEF<<endl;
+	m_up.sema.post();
 }
 
 
@@ -57,7 +76,9 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 ThroughputSubscriber::~ThroughputSubscriber(){DomainParticipant::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
-		sema(0),m_DataSubListener(*this),m_CommandSubListener(*this),ready(true)
+		sema(0),
+		m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+		ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -97,7 +118,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
-	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam,NULL);
+	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datasub == NULL || mp_commandsub == NULL || mp_commandpub == NULL)
 		ready = false;
@@ -116,6 +137,7 @@ void ThroughputSubscriber::run()
 	while(1)
 	{
 		mp_commandsub->waitForUnreadMessage();
+		cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
 		switch(m_CommandSubListener.m_commandin.m_command)
 		{
 		case (DEFAULT):
@@ -126,6 +148,8 @@ void ThroughputSubscriber::run()
 		}
 		case (READY_TO_START):
 		{
+			ThroughputCommandType command(BEGIN);
+			mp_commandpub->write(&command);
 			break;
 		}
 		case (STOP_TEST):

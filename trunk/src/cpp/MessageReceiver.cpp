@@ -487,7 +487,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 					}
 				}
 				else
-					pWarning("HB received from NOT associated writer"<<endl);
+				{
+					pInfo("HB received from NOT associated writer"<<endl);
+				}
 			}
 		}
 	}
