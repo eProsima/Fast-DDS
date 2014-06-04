@@ -1,4 +1,4 @@
-eProsima RTPS
+<img src="http://eprosima.github.io/RTPS/images/eProsimaLogo.png" alt="eProsima" width="200"> RTPS
 ====
 
 Implementation of RTPS (Real Time Publish-Subscribe) Wire Protocol defined by the OMG (Object Management Group - http://www.omg.org/) that forms part of the DDS (Data Distribution Service - http://portals.omg.org/dds/) Interoperability Wire Protocol.
