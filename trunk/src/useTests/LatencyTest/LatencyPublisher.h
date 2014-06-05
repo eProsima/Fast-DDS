@@ -20,9 +20,16 @@
 
 #include <numeric>
 #include <cmath>
+#include <cstdint>
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/utils/eClock.h"
+
+inline double round( double d )
+{
+    return floor( d + 0.5 );
+}
+
 
 struct TimeStats{
 	uint64_t nbytes;
@@ -32,7 +39,7 @@ struct TimeStats{
 
 long toMicroSec(Time_t& t)
 {
-	return (t.seconds*pow(10,6)+t.fraction*pow(10,6)/pow(2,32));
+	return (long)(t.seconds*pow(10.0,6)+t.fraction*pow(10.0,6)/pow(2.0,32));
 }
 
 
@@ -192,25 +199,25 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 	double elem,dec;
 	x = m_times.size()*0.5;
 	dec = modf(x,&elem);
-	if(dec == 0)
-		TS.p50 = (m_times.at(elem)+m_times.at(elem+1))/2;
+	if(dec == 0.0)
+		TS.p50 = (uint64_t)((m_times.at(elem)+m_times.at(elem+1))/2);
 	else
 		TS.p50 = m_times.at(elem+1);
 	x = m_times.size()*0.9;
 	dec = modf(x,&elem);
-	if(dec == 0)
+	if(dec == 0.0)
 		TS.p90 = (m_times.at(elem-1)+m_times.at(elem))/2;
 	else
 		TS.p90 = m_times.at(elem);
 	x = m_times.size()*0.99;
 	dec = modf(x,&elem);
-	if(dec == 0)
+	if(dec == 0.0)
 		TS.p99 = (m_times.at(elem-1)+m_times.at(elem))/2;
 	else
 		TS.p99 = m_times.at(elem);
 	x = m_times.size()*0.9999;
 	dec = modf(x,&elem);
-	if(dec == 0)
+	if(dec == 0.0)
 		TS.p9999 = (m_times.at(elem-1)+m_times.at(elem))/2;
 	else
 		TS.p9999 = m_times.at(elem);
