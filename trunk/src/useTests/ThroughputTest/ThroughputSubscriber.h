@@ -20,6 +20,8 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "ThroughputTypes.h"
+#include <fstream>
+#include <iostream>
 
 class ThroughputSubscriber
 {
@@ -50,6 +52,10 @@ public:
 		void onSubscriptionMatched();
 		void onNewDataMessage();
 		void saveNumbers();
+
+		 std::ofstream myfile;
+
+
 	}m_DataSubListener;
 
 	class CommandSubListener:public SubscriberListener
@@ -74,7 +80,7 @@ public:
 	}m_CommandPubListener;
 	bool ready;
 
-	void run();
+	void run(std::vector<uint32_t>& demand);
 };
 
 

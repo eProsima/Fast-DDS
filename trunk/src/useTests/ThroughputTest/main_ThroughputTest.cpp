@@ -72,59 +72,22 @@ int main(int argc, char** argv){
 	ThroughputCommandDataType throuputcommand_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
+	uint32_t demands[] = {200,400,600,700,800,900,1000,1100};
+		vector<uint32_t> demand (demands, demands + sizeof(demands) / sizeof(uint32_t) );
 
-
-	//uint32_t n_samples = 10000;
-
-//	uint32_t datas[] = {16,32,64,128,256,512,1024,2048,4096};
-//	vector<uint32_t> datasize (datas, datas + sizeof(datas) / sizeof(uint32_t) );
 	switch (type)
 	{
 	case 1:
 	{
 		ThroughputPublisher tpub;
-		tpub.run();
-//		int aux;
-//		LatencyPublisher latpub;
-//		cout << "Waiting for discovery"<<endl;
-//		latpub.sema.wait();
-//		latpub.sema.wait();
-//		latpub.m_part->stopParticipantAnnouncement();
-//		eClock::my_sleep(5000);
-//		cout << B_WHITE << "READY TO START" <<DEF << endl;
-//		printf("Printing times in us\n");
-//		printf(" Bytes,  Mean, stdev,   min,   max,   50%%,   90%%,   99%%, 99.99%%\n");
-//		printf("------,------,------,------,------,------,------,------,------,\n");
-//		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
-//		{
-//			if(!latpub.test(*ndata,n_samples))
-//				break;
-//			eClock::my_sleep(500);
-////			cout << "Finish Test, input to continue: ";
-////			cin >> aux;
-////			cout << endl;
-//
-//		}
+		tpub.run(demand);
 		break;
 	}
 	case 2:
 	{
 
 		ThroughputSubscriber tsub;
-		tsub.run();
-//		LatencySubscriber latsub;
-//		cout << "Waiting for discovery"<<endl;
-//		latsub.sema.wait();
-//		latsub.sema.wait();
-//		latsub.m_part->stopParticipantAnnouncement();
-//		eClock::my_sleep(1000);
-//		cout << B_WHITE << "READY TO START" <<DEF << endl;
-//		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
-//		{
-//			if(!latsub.test(*ndata,n_samples))
-//				break;
-//		}
-
+		tsub.run(demand);
 		break;
 	}
 	}

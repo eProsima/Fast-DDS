@@ -67,7 +67,7 @@ public:
 
 	bool ready;
 
-	void run();
+	void run(std::vector<uint32_t>& demand);
 	void test(uint32_t demand);
 	std::vector<TroughputTimeStats> m_timeStats;
 };

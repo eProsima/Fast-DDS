@@ -21,8 +21,15 @@
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-	m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(SAMPLESIZE){};
-ThroughputSubscriber::DataSubListener::~DataSubListener(){};
+	m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(SAMPLESIZE)
+{
+	// myfile.open("datareceived.txt");
+
+};
+ThroughputSubscriber::DataSubListener::~DataSubListener()
+{
+//	myfile.close();
+};
 
 void ThroughputSubscriber::DataSubListener::reset(){
 	lastseqnum = 0;
@@ -38,8 +45,12 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched()
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
 {
 	m_up.mp_datasub->takeNextData((void*)&latencyin,&info);
+	//myfile << latencyin.seqnum << ",";
 	if((lastseqnum+1)<latencyin.seqnum)
+	{
 		lostsamples+=latencyin.seqnum-lastseqnum-1;
+	//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+	}
 	lastseqnum = latencyin.seqnum;
 }
 
@@ -146,7 +157,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	eClock::my_sleep(5000);
 }
 
-void ThroughputSubscriber::run()
+void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 {
 	if(!ready)
 		return;
@@ -157,6 +168,8 @@ void ThroughputSubscriber::run()
 	cout << "Discovery complete"<<endl;
 	bool stop = false;
 	int aux;
+	printLabelsSubscriber();
+	int demindex=0;
 	while(1)
 	{
 		mp_commandsub->waitForUnreadMessage();
@@ -186,10 +199,14 @@ void ThroughputSubscriber::run()
 		{
 			TroughputTimeStats TS;
 			TS.samplesize = SAMPLESIZE+4;
-			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.lostsamples;
+			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.saved_lostsamples;
 			TS.totaltime_us = Time2MicroSec(m_t2)-Time2MicroSec(m_t1);
+			TS.lostsamples = m_DataSubListener.saved_lostsamples;
+			TS.demand = demand.at(demindex);
+		//	m_DataSubListener.myfile << endl;
+			demindex++;
 			TS.compute();
-			cout << TS << endl;
+			printTimeStatsSubscriber(TS);
 			break;
 		}
 		case (ALL_STOPS):
