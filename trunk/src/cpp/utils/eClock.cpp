@@ -17,7 +17,11 @@
 
 #include "eprosimartps/utils/eClock.h"
 #include <cmath>
+#if defined(_WIN32)
+#include <cstdint>
+#else
 #include <unistd.h>
+#endif
 #include <iostream>
 namespace eprosima {
 namespace rtps {

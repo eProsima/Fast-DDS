@@ -17,7 +17,7 @@
 
 #ifndef RTPS_GUID_H_
 #define RTPS_GUID_H_
-
+#include <cstdint>
 #include "eprosimartps/common/types/common_types.h"
 
 namespace eprosima{

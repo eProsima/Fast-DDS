@@ -178,7 +178,7 @@ bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, 
 		}
 		default:
 		{
-			pError("Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED"<< endl);
+			pError("Parameter with ID: " << std::hex <<(unsigned char)(*it)->Pid <<std::dec << "NOT CONSIDERED"<< endl);
 			break;
 		}
 		}
@@ -337,7 +337,7 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 		}
 		default:
 		{
-			pError("Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << "NOT CONSIDERED"<< endl);
+			pError("Parameter with ID: " << std::hex <<(unsigned char)(*it)->Pid <<std::dec << "NOT CONSIDERED"<< endl);
 			break;
 		}
 		}

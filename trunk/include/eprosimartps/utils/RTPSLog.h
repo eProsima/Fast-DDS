@@ -62,7 +62,7 @@ public:
  * Class RTPSLog designed to output information in 3 different levels.
  * @ingroup UTILITIESMODULE
  */
-class RTPS_DllAPI RTPSLog: public boost::lockable_adapter<boost::recursive_mutex>
+class RTPSLog: public boost::lockable_adapter<boost::recursive_mutex>
 {
 public:
 	//! Verbosity levels available
@@ -72,14 +72,14 @@ public:
 	 * Set verbosity for all outputs.
 	 * @param level Verbosity level
 	 */
-	static void setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level);
+	RTPS_DllAPI static void setVerbosity(EPROSIMA_LOG_VERBOSITY_LEVEL level);
 
 	/**
 	 * Print a string if the verbosity level allows it
 	 * @param lvl Verbosity level.
 	 * @param s String to print.
 	 */
-	static void printString(EPROSIMA_LOG_VERBOSITY_LEVEL lvl,std::string s);
+	RTPS_DllAPI static void printString(EPROSIMA_LOG_VERBOSITY_LEVEL lvl,std::string s);
 
 
 	static EPROSIMA_LOG_VERBOSITY_LEVEL getVerbosity()

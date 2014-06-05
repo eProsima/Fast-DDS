@@ -380,8 +380,8 @@ inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocve
 	{
 		return false;
 	}
-	bool valid = CDRMessage::addUInt32(msg,ocvec->size());
-	valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),ocvec->size());
+	bool valid = CDRMessage::addUInt32(msg,(uint32_t)ocvec->size());
+	valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),(uint)ocvec->size());
 
 	int rest = ocvec->size()% 4;
 	if (rest != 0)
@@ -518,7 +518,7 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 
 inline bool CDRMessage::addString(CDRMessage_t*msg,std::string& in_str)
 {
-	uint32_t str_siz = in_str.size();
+	uint32_t str_siz = (uint32_t)in_str.size();
 	int rest = str_siz % 4;
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
