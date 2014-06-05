@@ -27,7 +27,9 @@ typedef struct TroughputTimeStats{
 	uint32_t nsamples;
 	uint64_t totaltime_us;
 	uint32_t samplesize;
+	uint32_t demand;
 	float Mbitsec;
+	uint32_t lostsamples;
 	void compute()
 	{
 		Mbitsec = (float)(samplesize*8*nsamples)/((float)totaltime_us);
@@ -37,6 +39,28 @@ typedef struct TroughputTimeStats{
 inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
 {
 	return output << ts.nsamples << "||"<<ts.totaltime_us<< "||"<<ts.Mbitsec;
+}
+
+inline void printTimeStatsPublisher(const TroughputTimeStats& ts )
+{
+	printf("%6u,%12u, %7.2f,%12lu,%6u\n",ts.samplesize,ts.nsamples,ts.Mbitsec,ts.totaltime_us,ts.demand);
+}
+
+inline void printTimeStatsSubscriber(const TroughputTimeStats& ts )
+{
+	printf("%6u,%6u,%12u,%6u,%6u,%6u, %7.2f,%12lu\n",ts.samplesize,ts.demand,ts.nsamples,ts.lostsamples,0,0,ts.Mbitsec,ts.totaltime_us);
+}
+
+inline void printLabelsSubscriber()
+{
+	printf(" bytes,demand,     samples,  lost,   UNK,   UNK, Mbits/s,    time(us)\n");
+	printf("------ ------ ------------ ------ ------ ------  ------- ------------\n");
+}
+
+inline void printLabelsPublisher()
+{
+	printf(" bytes,     samples, Mbits/s,    time(us),demand\n");
+	printf("------ ------------  ------- ------------ ------\n");
 }
 
 

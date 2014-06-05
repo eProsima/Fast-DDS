@@ -101,7 +101,7 @@ ThroughputPublisher::ThroughputPublisher():
 	eClock::my_sleep(5000);
 }
 
-void ThroughputPublisher::run()
+void ThroughputPublisher::run(std::vector<uint32_t>& demand)
 {
 	if(!ready)
 		return;
@@ -110,10 +110,10 @@ void ThroughputPublisher::run()
 	sema.wait();
 	sema.wait();
 	cout << "Discovery complete"<<endl;
-	uint32_t demands[] = {100,200,300,400,500,600,700,800,900};
-	vector<uint32_t> demand (demands, demands + sizeof(demands) / sizeof(uint32_t) );
+
 	ThroughputCommandType command;
 	SampleInfo_t info;
+	printLabelsPublisher();
 	for(std::vector<uint32_t>::iterator it=demand.begin();it!=demand.end();++it)
 	{
 		eClock::my_sleep(500);
@@ -123,7 +123,7 @@ void ThroughputPublisher::run()
 		command.m_command = DEFAULT;
 		mp_commandsub->waitForUnreadMessage();
 		mp_commandsub->takeNextData((void*)&command,&info);
-		cout << "Received command of type: "<< command << endl;
+		//cout << "Received command of type: "<< command << endl;
 		if(command.m_command == BEGIN)
 		{
 			test(*it);
@@ -166,8 +166,9 @@ void ThroughputPublisher::test(uint32_t demand)
 	TS.nsamples = samples;
 	TS.totaltime_us = Time2MicroSec(m_t2)-Time2MicroSec(m_t1)-timewait_us;
 	TS.samplesize = SAMPLESIZE+4;
+	TS.demand = demand;
 	TS.compute();
-	cout << demand << "..." << TS << endl;
+	printTimeStatsPublisher(TS);
 	m_timeStats.push_back(TS);
 }
 
