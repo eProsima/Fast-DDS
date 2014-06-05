@@ -43,7 +43,7 @@ inline int64_t Time2Seconds(const Time_t& t)
 
 inline int64_t Time2MicroSec(Time_t& t)
 {
-	return (t.seconds*pow(10,6)+t.fraction*pow(10,6)/pow(2,32));
+	return (int64_t)(t.seconds*pow(10.0,6)+t.fraction*pow(10.0,6)/pow(2.0,32));
 }
 
 

@@ -20,6 +20,7 @@
 
 #include "eprosimartps/common/types/common_types.h"
 #include <cstring>
+#include <stdint.h>
 
 
 

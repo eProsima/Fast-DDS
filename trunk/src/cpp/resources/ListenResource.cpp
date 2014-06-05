@@ -237,9 +237,9 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 				m_listenLoc.port = m_listen_endpoint.port();
 				break;
 			}
-			catch(boost::system::system_error const& e)
+			catch(boost::system::system_error const& )
 			{
-				pDebugInfo("Tried port "<< m_listen_endpoint.port() << " and was busy, trying next..."<<endl);
+				pDebugInfo("Tried port "<< m_listen_endpoint.port() << ", trying next..."<<endl);
 			}
 		}
 		if(!binded)
