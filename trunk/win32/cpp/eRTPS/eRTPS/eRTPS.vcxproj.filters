@@ -470,12 +470,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredData.cpp">
       <Filter>Source Files\discovery\data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredReaderData.cpp">
-      <Filter>Source Files\discovery\data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredWriterData.cpp">
-      <Filter>Source Files\discovery\data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp">
       <Filter>Source Files\dds</Filter>
     </ClCompile>

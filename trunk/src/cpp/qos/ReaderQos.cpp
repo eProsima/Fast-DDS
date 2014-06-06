@@ -28,17 +28,17 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_durability = qos.m_durability;
 		m_durability.hasChanged = true;
 	}
-	if(m_deadline.period.to64time() != qos.m_deadline.period.to64time())
+	if(m_deadline.period != qos.m_deadline.period)
 	{
 		m_deadline = qos.m_deadline;
 		m_deadline.hasChanged = true;
 	}
-	if(m_latencyBudget.duration.to64time() != qos.m_latencyBudget.duration.to64time())
+	if(m_latencyBudget.duration != qos.m_latencyBudget.duration)
 	{
 		m_latencyBudget = qos.m_latencyBudget;
 		m_latencyBudget.hasChanged = true;
 	}
-	if(m_liveliness.lease_duration.to64time() != qos.m_liveliness.lease_duration.to64time() ||
+	if(m_liveliness.lease_duration != qos.m_liveliness.lease_duration ||
 			m_liveliness.kind != qos.m_liveliness.kind)
 	{
 		m_liveliness = qos.m_liveliness;
@@ -64,7 +64,7 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_userData = qos.m_userData;
 		m_userData.hasChanged = true;
 		}
-	if(m_timeBasedFilter.minimum_separation.to64time() != qos.m_timeBasedFilter.minimum_separation.to64time() )
+	if(m_timeBasedFilter.minimum_separation != qos.m_timeBasedFilter.minimum_separation )
 	{
 		m_timeBasedFilter = qos.m_timeBasedFilter;
 		m_timeBasedFilter.hasChanged = true;
@@ -96,13 +96,13 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 			m_durabilityService.max_instances != qos.m_durabilityService.max_instances ||
 			m_durabilityService.max_samples != qos.m_durabilityService.max_samples||
 			m_durabilityService.max_samples_per_instance != qos.m_durabilityService.max_samples_per_instance ||
-			m_durabilityService.service_cleanup_delay.to64time() != qos.m_durabilityService.service_cleanup_delay.to64time()
+			m_durabilityService.service_cleanup_delay != qos.m_durabilityService.service_cleanup_delay
 	)
 	{
 		m_durabilityService = qos.m_durabilityService;
 		m_durabilityService.hasChanged = true;
 	}
-	if(m_lifespan.duration.to64time() != qos.m_lifespan.duration.to64time() )
+	if(m_lifespan.duration != qos.m_lifespan.duration )
 	{
 		m_lifespan = qos.m_lifespan;
 		m_lifespan.hasChanged = true;

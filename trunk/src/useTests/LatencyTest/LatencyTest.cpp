@@ -22,7 +22,7 @@
 #include <bitset>
 #include <cstdint>
 
-#define NSAMPLES 5000
+#define NSAMPLES 500
 
 
 #include "eprosimartps/rtps_all.h"
@@ -80,7 +80,7 @@ int main(int argc, char** argv){
 	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
 
 
-	uint32_t datas[] = {12,28,60,124,252,508,1020,2044,4092};
+	uint32_t datas[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 	vector<uint32_t> datasize (datas, datas + sizeof(datas) / sizeof(uint32_t) );
 	switch (type)
 	{

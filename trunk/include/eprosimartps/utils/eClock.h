@@ -62,6 +62,7 @@ public:
 	timeval m_now;
 #endif
 	bool setTimeNow(Time_t* now);
+	bool setTimeRealNow(TimeReal_t* tnow);
 //	int my_gettimeofday(struct timeval *tv, struct timezone *tz);
 	static void my_sleep(uint32_t milliseconds);
 

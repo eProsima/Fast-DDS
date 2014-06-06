@@ -26,26 +26,53 @@ namespace rtps{
 typedef struct Time_t{
 	int32_t seconds;
 	uint32_t fraction;
-	int64_t to64time(){
-		return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
-	}
+	//int64_t to64time(){
+	//	return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
+	//}
 	Time_t()
 	{
 		seconds = 0;
 		fraction = 0;
 	}
+	
 }Time_t;
 
-inline int64_t Time2Seconds(const Time_t& t)
+typedef struct TimeReal_t{
+	int32_t seconds;
+	uint32_t nanoseconds;
+	TimeReal_t():seconds(0),nanoseconds(0)
+	{
+	}
+}TimeReal_t;
+
+
+static inline bool operator==(const Time_t& t1,const Time_t& t2)
 {
-	return (int64_t)t.seconds+((int64_t)(t.fraction/pow(2.0,32)));
+	if(t1.seconds!=t2.seconds)
+		return false;
+	if(t1.fraction!=t2.fraction)
+		return false;
+	return true;
 }
 
-inline int64_t Time2MicroSec(Time_t& t)
+static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 {
-	return (int64_t)(t.seconds*pow(10.0,6)+t.fraction*pow(10.0,6)/pow(2.0,32));
+	if(t1.seconds!=t2.seconds)
+		return true;
+	if(t1.fraction!=t2.fraction)
+		return true;
+	return false;
 }
 
+static inline double Time_t2Seconds(const Time_t& t)
+{
+	return (uint32_t)t.seconds + (double)t.fraction/pow(2.0,32);
+}
+
+static inline double Time_t2MicroSec(const Time_t& t)
+{
+	return (Time_t2Seconds(t)*pow(10.0,6));
+}
 
 #define TIME_ZERO(t){t.seconds=0;t.fraction=0;}
 #define TIME_INVALID(t){t.seconds=-1;t.fraction=0xffffffff;}

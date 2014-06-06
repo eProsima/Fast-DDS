@@ -37,10 +37,7 @@ struct TimeStats{
 	uint64_t stdev;
 };
 
-long toMicroSec(Time_t& t)
-{
-	return (long)(t.seconds*pow(10.0,6)+t.fraction*pow(10.0,6)/pow(2.0,32));
-}
+
 
 
 
@@ -57,8 +54,9 @@ public:
 	SampleInfo_t m_info;
 	Time_t m_t1;
 	Time_t m_t2;
+	TimeReal_t tr1,tr2;
 	eClock clock;
-	long overhead_value;
+	double overhead_value;
 	std::vector<uint64_t> m_times;
 	std::vector<TimeStats> m_stats;
 	boost::interprocess::interprocess_semaphore sema;
@@ -69,17 +67,21 @@ public:
 	{
 		m_sub->readNextData((void*)m_latency_in,&m_info);
 		clock.setTimeNow(&m_t2);
-//		cout << "mt2 sec "<< m_t2.seconds << endl;
-//		cout << "mt2 sec cast "<< (uint64_t) m_t2.seconds << endl;
-//		cout << "mt2 nsec "<<m_t2.fraction << endl;
-//		cout << toMicroSec(m_t2) << endl;
-//		cout << toMicroSec(m_t1) << endl;
-//		cout << overhead_value << endl;
-//		cout << "lantecy time "<< toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value << endl;
-//		int aux;
-//		std::cin >> aux;
+		clock.setTimeRealNow(&tr2);
+		cout.precision(30);
+		cout << std::fixed;
+		cout << "REAL"<< endl;
+		cout << m_t1.seconds << " sss 2 " << m_t2.seconds << endl;
+		cout << tr1.seconds << " real 2 " << tr2.seconds << endl;
+		cout << tr1.seconds << " ** "<<tr1.nanoseconds << endl;
+		cout << (double)(uint32_t)tr1.seconds+(double)tr1.nanoseconds*1e-9<<endl;
+		cout << (double)(uint32_t)tr2.seconds+(double)tr2.nanoseconds*1e-9<<endl;
+		cout <<"dif: " << (double)(uint32_t)tr2.seconds+(double)tr2.nanoseconds*1e-9-(double)(uint32_t)tr1.seconds-(double)tr1.nanoseconds*1e-9<<endl;
 
-		m_times.push_back(toMicroSec(m_t2)-toMicroSec(m_t1)-overhead_value);
+
+
+	
+		m_times.push_back(Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-overhead_value);
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
 		sema.post();
 	}
@@ -122,7 +124,7 @@ LatencyPublisher::LatencyPublisher():
 	clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		clock.setTimeNow(&m_t2);
-	overhead_value = (toMicroSec(m_t2)-toMicroSec(m_t1))/1001;
+	overhead_value = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
 	cout << "Overhead " << overhead_value << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
@@ -157,6 +159,8 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	{
 		m_latency_out->seqnum++;
 		clock.setTimeNow(&m_t1);
+		clock.setTimeRealNow(&tr1);
+	//	eClock::my_sleep(1);
 		m_pub->write((void*)m_latency_out);
 		sema.wait();
 		if(!(*m_latency_out == *m_latency_in))

@@ -91,7 +91,7 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 //		eClock::my_sleep(50);
 //		this->announceParticipantState(false);
 		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
-				boost::posix_time::milliseconds(m_discovery.resendDiscoveryParticipantDataPeriod.to64time()*1000));
+				boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(m_discovery.resendDiscoveryParticipantDataPeriod)*1e-3)));
 		m_resendDataTimer->restart_timer();
 
 		eClock::my_sleep(100);

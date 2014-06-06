@@ -40,6 +40,7 @@ public:
 	void onNewDataMessage()
 	{
 		m_sub->readNextData((void*)m_latency,&m_info);
+		cout << "R: "<<m_latency->seqnum<< "|";
 		m_pub->write((void*)m_latency);
 		n_received++;
 		if(n_received == n_samples)

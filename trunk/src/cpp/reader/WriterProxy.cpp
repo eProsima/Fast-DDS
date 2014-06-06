@@ -37,7 +37,7 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 		m_acknackCount(0),
 		m_lastHeartbeatCount(0),
 		m_isMissingChangesEmpty(true),
-		m_heartbeatResponse(this,boost::posix_time::milliseconds(Time2Seconds(times.heartbeatResponseDelay)*1000)),
+		m_heartbeatResponse(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatResponseDelay)*1e-3))),
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false)

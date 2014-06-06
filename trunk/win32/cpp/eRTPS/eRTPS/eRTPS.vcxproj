@@ -274,6 +274,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501</PreprocessorDefinitions>
+      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -375,8 +376,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\dds\Subscriber.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredData.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredReaderData.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredWriterData.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\EndpointDiscoveryProtocol.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\ParticipantDiscoveryProtocol.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\discovery\SEDPListeners.cpp" />
