@@ -152,7 +152,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 
 	//cout << " data size: "<< m_latency_out->data.size()<<endl;
 	//Sleep to allow subscriber to remove its elements
-	eClock::my_sleep(1000);
+	eClock::my_sleep(2000);
 	for(uint32_t i =0;i<n_samples;++i)
 	{
 		m_latency_out->seqnum++;
