@@ -78,7 +78,7 @@ int main(int argc, char** argv){
 
 	uint32_t n_samples = 10000;
 
-	uint32_t datas[] = {16,32,64,128,256,512,1024,2048,4096};
+	uint32_t datas[] = {12,28,60,124,252,508,1020,2044,4092};
 	vector<uint32_t> datasize (datas, datas + sizeof(datas) / sizeof(uint32_t) );
 	switch (type)
 	{
@@ -89,6 +89,7 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latpub.sema.wait();
 		latpub.sema.wait();
+		cout << "Discovery completed"<<endl;
 		latpub.m_part->stopParticipantAnnouncement();
 		eClock::my_sleep(5000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
@@ -113,6 +114,7 @@ int main(int argc, char** argv){
 		cout << "Waiting for discovery"<<endl;
 		latsub.sema.wait();
 		latsub.sema.wait();
+		cout << "Discovery Completed"<<endl;
 		latsub.m_part->stopParticipantAnnouncement();
 		eClock::my_sleep(1000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;

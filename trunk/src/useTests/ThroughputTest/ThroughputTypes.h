@@ -20,8 +20,8 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#define TESTTIME 5
-#define SAMPLESIZE 1024
+#define TESTTIME 10
+#define SAMPLESIZE 1020
 
 typedef struct TroughputTimeStats{
 	uint32_t nsamples;

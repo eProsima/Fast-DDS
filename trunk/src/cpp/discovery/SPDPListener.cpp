@@ -90,6 +90,7 @@ bool SPDPListener::newAddedCache()
 				if(!found)
 				{
 					pdata_ptr = pdata;
+					this->mp_SPDP->m_discoveredParticipants.push_back(pdata_ptr);
 				}
 				for(LocatorListIterator it = pdata_ptr->m_metatrafficUnicastLocatorList.begin();
 						it!=pdata_ptr->m_metatrafficUnicastLocatorList.end();++it)
@@ -101,13 +102,12 @@ bool SPDPListener::newAddedCache()
 				{
 					this->mp_SPDP->mp_SPDPWriter->reader_locator_add(*it,pdata_ptr->m_expectsInlineQos);
 				}
-				eClock::my_sleep(500);
+				eClock::my_sleep(250);
+				this->mp_SPDP->announceParticipantState(false);
+				eClock::my_sleep(250);
 				//Inform EDP of new participant data:
 				this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata_ptr);
-				if(!found)
-				{
-					this->mp_SPDP->m_discoveredParticipants.push_back(pdata_ptr);
-				}
+
 				//If staticEDP, perform matching:
 				if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 				{
