@@ -26,20 +26,44 @@
 namespace eprosima {
 namespace rtps {
 
-
+/**
+ * Class DiscoveredData, contains static methods to convert between ParameterLists and DiscoveredData classes.
+ */
 class DiscoveredData
 {
 public:
 	DiscoveredData(){};
 	virtual ~DiscoveredData(){};
+	/**
+	 * Convert ParameterList to an DiscoveredWriterData object.
+	 * @param param Reference to the ParameterList_t.
+	 * @param wdata Pointer to the DWD data object.
+	 * @return True if correct.
+	 */
 	static bool ParameterList2DiscoveredWriterData(ParameterList_t& param,DiscoveredWriterData* wdata);
-	static bool ParameterList2DiscoveredReaderData(ParameterList_t& param,DiscoveredReaderData* wdata);
-	//static bool ParameterList2DiscoveredTopicData(ParameterList_t& param,DiscoveredTopicData* wdata);
-	static bool DiscoveredWriterData2ParameterList(DiscoveredWriterData& wdata,ParameterList_t* param);
-	static bool DiscoveredReaderData2ParameterList(DiscoveredReaderData& wdata,ParameterList_t* param);
-	//static bool DiscoveredTopicData2ParameterList(DiscoveredTopicData& wdata,ParameterList_t* param);
+	/**
+	 * Convert ParameterList to an DiscoveredReaderData object.
+	 * @param param Reference to the ParameterList_t.
+	 * @param rdata Pointer to the DRD data object.
+	 * @return True if correct.
+	 */
+	static bool ParameterList2DiscoveredReaderData(ParameterList_t& param,DiscoveredReaderData* rdata);
 
-	//static bool ParameterList2DiscoveredParticipantData(ParameterList_t& param,DiscoveredParticipantData* wdata);
+	/**
+	 * Convert DWD object to a ParameterList.
+	 * @param wdata Reference to DWD object.
+	 * @param param Pointer to parameterList.
+	 * @return True if correct.
+	 */
+	static bool DiscoveredWriterData2ParameterList(DiscoveredWriterData& wdata,ParameterList_t* param);
+	/**
+	 * Convert DRD object to a ParameterList.
+	 * @param rdata Reference to DRD object.
+	 * @param param Pointer to parameterList.
+	 * @return True if correct.
+	 */
+	static bool DiscoveredReaderData2ParameterList(DiscoveredReaderData& rdata,ParameterList_t* param);
+
 };
 
 } /* namespace rtps */

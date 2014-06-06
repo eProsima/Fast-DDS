@@ -32,6 +32,9 @@ class ParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 
+/**
+ * Base class of the ParticipantDiscoveryProtocol. Currently only SimplePDP is implemented, please refer to this class for futrther documentation.
+ */
 class ParticipantDiscoveryProtocol {
 public:
 	ParticipantDiscoveryProtocol(ParticipantImpl* p_part);
@@ -46,18 +49,12 @@ public:
 	ParticipantImpl* mp_participant;
 	EndpointDiscoveryProtocol* mp_EDP;
 
-
 	virtual void announceParticipantState(bool new_change)=0;
 	virtual void stopParticipantAnnouncement()=0;
 	virtual void resetParticipantAnnouncement()=0;
-
 	virtual void localParticipantHasChanged()=0;
-
 	virtual bool localWriterMatching(RTPSWriter* W,bool first_time)=0;
 	virtual bool localReaderMatching(RTPSReader* R,bool first_time)=0;
-
-	//virtual void assignRemoteEndpoints(DiscoveredParticipantData* pdata)=0;
-
 };
 
 } /* namespace rtps */

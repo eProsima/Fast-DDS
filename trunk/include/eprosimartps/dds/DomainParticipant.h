@@ -229,7 +229,9 @@ private:
 };
 
 
-
+/**
+ * Public Interface of the DomainParticipant class. Contains static methods to create and remove Participants, Publishers and Subscribers.
+ */
 class RTPS_DllAPI DomainParticipant
 {
 public:

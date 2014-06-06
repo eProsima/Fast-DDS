@@ -81,7 +81,7 @@ LatencySubscriber::LatencySubscriber():
 	m_part = DomainParticipant::createParticipant(PParam);
 
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 1050;
+	Wparam.historyMaxSize = NSAMPLES+100;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyDown";
@@ -89,7 +89,7 @@ LatencySubscriber::LatencySubscriber():
 
 
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 1050;
+	Rparam.historyMaxSize = NSAMPLES+100;
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyUp";
@@ -104,7 +104,7 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	m_latency = new LatencyType(datasize);
 	n_samples = n_samples_in;
 	n_received = 0;
-	cout << "Waiting ... for latencytype of size "<< m_latency->data.size() <<endl;
+	cout << "Waiting ... for latencytype of size "<< (m_latency->data.size()+4) <<endl;
 	sema.wait();
 	int removed;
 	cout << "Removing ";
