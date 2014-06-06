@@ -34,17 +34,34 @@ class StatelessReader;
 class ParticipantImpl;
 class ResendDiscoveryDataPeriod;
 
+
+/**
+ * SimpleParticipantDiscoveryProtocol class (SimplePDP), used for the Participant Discovery.
+ */
 class SimplePDP: public eprosima::rtps::ParticipantDiscoveryProtocol {
 public:
 	SimplePDP(ParticipantImpl* p_part);
 	virtual ~SimplePDP();
-
+	/**
+	 * Initialization method.
+	 * @param attributes Discovery Attributes structure, indicates the type of discovery as well as some other parameters.
+	 * @param participantID The ID of the Participant, used to calculate the ports numbers.
+	 * @return True if correct.
+	 */
 	bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID);
+	/**
+	 * Update the local Participant DPD object when something has changed.
+	 * @return
+	 */
 	bool updateLocalParticipantData();
 
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
 
+	/**
+	 * Create the SPDP Writer and Reader
+	 * @return True if correct.
+	 */
 	bool createSPDPEndpoints();
 
 	StatelessWriter* mp_SPDPWriter;

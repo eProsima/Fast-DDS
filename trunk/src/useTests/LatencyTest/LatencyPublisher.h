@@ -126,14 +126,14 @@ LatencyPublisher::LatencyPublisher():
 	cout << "Overhead " << overhead_value << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 1100;
+	Wparam.historyMaxSize = NSAMPLES+100;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
 	m_pub = DomainParticipant::createPublisher(m_part,Wparam,(PublisherListener*)&this->m_PubListener);
 	//SUBSCRIBER
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 1100;
+	Rparam.historyMaxSize = NSAMPLES+100;
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyDown";
@@ -182,7 +182,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 void LatencyPublisher::analyzeTimes(uint32_t datasize)
 {
 	TimeStats TS;
-	TS.nbytes = datasize;
+	TS.nbytes = datasize+4;
 	TS.min = *std::min_element(m_times.begin(),m_times.end());
 	TS.max = *std::max_element(m_times.begin(),m_times.end());
 	TS.mean = std::accumulate(m_times.begin(),m_times.end(),0)/m_times.size();

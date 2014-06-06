@@ -22,6 +22,9 @@
 #include <bitset>
 #include <cstdint>
 
+#define NSAMPLES 5000
+
+
 #include "eprosimartps/rtps_all.h"
 #include "LatencyType.h"
 
@@ -76,7 +79,6 @@ int main(int argc, char** argv){
 	LatencyDataType latency_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
 
-	uint32_t n_samples = 10000;
 
 	uint32_t datas[] = {12,28,60,124,252,508,1020,2044,4092};
 	vector<uint32_t> datasize (datas, datas + sizeof(datas) / sizeof(uint32_t) );
@@ -84,7 +86,6 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		int aux;
 		LatencyPublisher latpub;
 		cout << "Waiting for discovery"<<endl;
 		latpub.sema.wait();
@@ -94,11 +95,11 @@ int main(int argc, char** argv){
 		eClock::my_sleep(5000);
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		printf("Printing times in us\n");
-		printf(" Bytes,  Mean, stdev,   min,   max,   50%%,   90%%,   99%%, 99.99%%\n");
+		printf(" Bytes, stdev,  mean,   min,   50%%,   90%%,   99%%, 99.99%%,   max\n");
 		printf("------,------,------,------,------,------,------,------,------,\n");
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
-			if(!latpub.test(*ndata,n_samples))
+			if(!latpub.test(*ndata,NSAMPLES))
 				break;
 			eClock::my_sleep(500);
 //			cout << "Finish Test, input to continue: ";
@@ -120,7 +121,7 @@ int main(int argc, char** argv){
 		cout << B_WHITE << "READY TO START" <<DEF << endl;
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
-			if(!latsub.test(*ndata,n_samples))
+			if(!latsub.test(*ndata,NSAMPLES))
 				break;
 		}
 
