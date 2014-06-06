@@ -56,10 +56,15 @@ public:
 	virtual ~eClock();
 	int32_t m_seconds_from_1900_to_1970;
 	int32_t m_utc_seconds_diff;
+#if defined(_WIN32)
+	FILETIME ft;
+#else
 	timeval m_now;
+#endif
 	bool setTimeNow(Time_t* now);
-	int my_gettimeofday(struct timeval *tv, struct timezone *tz);
+//	int my_gettimeofday(struct timeval *tv, struct timezone *tz);
 	static void my_sleep(uint32_t milliseconds);
+
 
 };
 
