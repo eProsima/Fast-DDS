@@ -54,7 +54,7 @@ public:
 	SampleInfo_t m_info;
 	Time_t m_t1;
 	Time_t m_t2;
-	TimeReal_t tr1,tr2;
+	
 	eClock clock;
 	double overhead_value;
 	std::vector<uint64_t> m_times;
@@ -65,24 +65,9 @@ public:
 	void printStat(TimeStats& TS);
 	void onNewDataMessage()
 	{
-		m_sub->readNextData((void*)m_latency_in,&m_info);
-		clock.setTimeNow(&m_t2);
-		clock.setTimeRealNow(&tr2);
-		cout.precision(30);
-		cout << std::fixed;
-		cout << "REAL"<< endl;
-		cout << m_t1.seconds << " sss 2 " << m_t2.seconds << endl;
-		cout << tr1.seconds << " real 2 " << tr2.seconds << endl;
-		cout << tr1.seconds << " ** "<<tr1.nanoseconds << endl;
-		cout << (double)(uint32_t)tr1.seconds+(double)tr1.nanoseconds*1e-9<<endl;
-		cout << (double)(uint32_t)tr2.seconds+(double)tr2.nanoseconds*1e-9<<endl;
-		cout <<"dif: " << (double)(uint32_t)tr2.seconds+(double)tr2.nanoseconds*1e-9-(double)(uint32_t)tr1.seconds-(double)tr1.nanoseconds*1e-9<<endl;
-
-
-
-	
-		m_times.push_back(Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-overhead_value);
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
+		//m_times.push_back(Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-overhead_value);
+		//m_sub->takeNextData((void*)m_latency_in,&m_info);
 		sema.post();
 	}
 	void onSubscriptionMatched()
@@ -151,15 +136,12 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	m_latency_in = new LatencyType(datasize);
 	m_latency_out = new LatencyType(datasize);
 	m_times.clear();
-
-	//cout << " data size: "<< m_latency_out->data.size()<<endl;
 	//Sleep to allow subscriber to remove its elements
 	eClock::my_sleep(2000);
+	clock.setTimeNow(&m_t1);
 	for(uint32_t i =0;i<n_samples;++i)
 	{
 		m_latency_out->seqnum++;
-		clock.setTimeNow(&m_t1);
-		clock.setTimeRealNow(&tr1);
 	//	eClock::my_sleep(1);
 		m_pub->write((void*)m_latency_out);
 		sema.wait();
@@ -170,12 +152,31 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 		}
 		m_latency_in->seqnum = -1;
 	}
+	clock.setTimeNow(&m_t2);
+	cout << "t2: " << (uint32_t)m_t2.seconds << " frac " << m_t2.fraction << endl;
+	cout << "t1: " << (uint32_t)m_t1.seconds << " frac " << m_t1.fraction << endl;
+	cout << "SECS: "<<  ((uint32_t)m_t2.seconds-(uint32_t)m_t1.seconds)*1000000 << endl;
+	cout << "frac " << (m_t2.fraction-m_t1.fraction)/pow(2.0,32)*1e6 << endl;
+	cout << "frac2: "<< m_t2.fraction/pow(2.0,32)*1e6 << endl;
+	cout << "frac1: "<< m_t1.fraction/pow(2.0,32)*1e6 << endl;
+	cout << "Mean Time: " << (((uint32_t)m_t2.seconds-(uint32_t)m_t1.seconds)*1000000+(m_t2.fraction-m_t1.fraction)/pow(2.0,32)*1e6)/n_samples<<endl;
+	cout << "MeanTime2: " << (Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1))/n_samples  << endl;
+	cout << std::fixed;
+	cout << "t2micro " << Time_t2MicroSec(m_t2) << endl;
+	cout << "t1micro " << Time_t2MicroSec(m_t1) << endl;
 	int32_t removed=0;
 	m_pub->removeAllChange(&removed);
-	for(uint8_t i =0;i<m_sub->getHistoryElementsNumber();++i)
-		m_sub->takeNextData((void*)m_latency_in,&m_info);
-
-	analyzeTimes(datasize);
+	cout << "Removed " << removed << endl;
+	cout << "Sub element number " << m_sub->getHistoryElementsNumber() << endl;
+	while(m_sub->getHistoryElementsNumber()>0)
+	{
+		if(!m_sub->takeNextData((void*)m_latency_in,&m_info))
+			cout << "ERR ";
+	}
+	cout << endl;
+	cout << "Number of elements in Reader History: "<< m_sub->getHistoryElementsNumber()<<endl;
+	cout << "Number of elements in Writer History: "<< m_pub->getHistoryElementsNumber()<<endl;
+//	analyzeTimes(datasize);
 	delete(m_latency_in);
 	delete(m_latency_out);
 	return true;

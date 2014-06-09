@@ -22,7 +22,7 @@
 #include <bitset>
 #include <cstdint>
 
-#define NSAMPLES 500
+#define NSAMPLES 11238
 
 
 #include "eprosimartps/rtps_all.h"

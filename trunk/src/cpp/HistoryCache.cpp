@@ -119,7 +119,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	boost::lock_guard<HistoryCache> guard(*this);
 	if(m_changes.size() == (size_t)m_history_max_size) //History is full
 	{
-		pWarning("Change not added due to full History" << endl);
+		pWarning("Change not added due to full History (kind:"<<mp_Endpoint->getEndpointKind()<<")" << endl);
 		return false;
 	}
 
@@ -139,7 +139,7 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 			if((*it)->sequenceNumber.to64long() == a_change->sequenceNumber.to64long() &&
 					(*it)->writerGUID == a_change->writerGUID)
 			{
-				pDebugInfo("Change with the same seqNum already in History" << endl);
+				pDebugInfo("Change with the same seqNum already in History (kind:"<<mp_Endpoint->getEndpointKind()<<")" << endl);
 				return false;
 			}
 		}
