@@ -32,7 +32,7 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 					Endpoint(guidP,entId,topic,ptype,state,WRITER,userDefinedId),
 					m_writer_cache((Endpoint*)this,historysize,payload_size),
 					m_pushMode(true),
-				//	m_Pub(NULL),
+					m_cdrmessages(payload_size),
 					mp_listener(NULL)
 {
 	init_header();

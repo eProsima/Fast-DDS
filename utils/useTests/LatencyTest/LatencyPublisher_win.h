@@ -68,6 +68,7 @@ public:
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
 		if(m_latency_in->seqnum == NSAMPLES)	
 		{
+			clock.setTimeNow(&m_t2);
 			sema.post();
 			return;
 		}
@@ -116,9 +117,9 @@ LatencyPublisher::LatencyPublisher():
 	m_part = DomainParticipant::createParticipant(PParam);
 
 	clock.setTimeNow(&m_t1);
-	for(int i=0;i<1000;i++)
+	for(int i=0;i<10000;i++)
 		clock.setTimeNow(&m_t2);
-	overhead_value = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
+	overhead_value = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/10001;
 	cout << "Overhead " << overhead_value << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
@@ -145,8 +146,12 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	m_latency_in = new LatencyType(datasize);
 	m_latency_out = new LatencyType(datasize);
 	m_times.clear();
+	int aux;
 	//Sleep to allow subscriber to remove its elements
-	eClock::my_sleep(2000);
+	//eClock::my_sleep(2000+datasize);
+	m_latency_out->seqnum++;
+	cout << "Begin test of size: " << datasize+4 << ", enter number to start: "; 
+	std::cin >> aux;
 	clock.setTimeNow(&m_t1);
 	//for(uint32_t i =0;i<n_samples;++i)
 	//{
@@ -161,11 +166,10 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	//	}
 	//	m_latency_in->seqnum = -1;
 	//}
-	m_latency_out->seqnum++;
 	m_pub->write((void*)m_latency_out);
 	sema.wait();
-	clock.setTimeNow(&m_t2);
-	cout << "MeanTime: " << (Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1))/n_samples  << endl;
+	cout << "Total time(us): "<< Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1) << endl;
+	cout << "Data size: " << datasize+4 <<  "  MeanTime(us): " << (Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1))/n_samples  << endl;
 	int32_t removed=0;
 	m_pub->removeAllChange(&removed);
 	cout << "Removed " << removed << endl;

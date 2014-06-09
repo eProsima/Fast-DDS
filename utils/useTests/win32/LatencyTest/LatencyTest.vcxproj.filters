@@ -29,5 +29,8 @@
     <ClInclude Include="..\..\LatencyTest\LatencyType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\LatencyTest\LatencyPublisher_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

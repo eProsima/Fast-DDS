@@ -112,14 +112,11 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	m_pub->removeAllChange(&removed);
 	cout << removed << endl;
 	cout << m_sub->getHistoryElementsNumber() << endl;
-//	std::cin >> removed;
-	removed = m_sub->getHistoryElementsNumber();
-	for(uint8_t i =0;i<removed;++i)
+//	std::cin >> removed
+	while(m_sub->getHistoryElementsNumber()>0)
 	{
-		if(m_sub->takeNextData((void*)m_latency,&m_info))
-			cout << "";
-		else
-			break;
+		if(!m_sub->takeNextData((void*)m_latency,&m_info))
+			cout << "ERROR ";
 	}
 	//std::cin >> removed;
 	delete(m_latency);

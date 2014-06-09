@@ -33,6 +33,10 @@ public:
 		m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
 				m_rtpsmsg_submessage(RTPSMESSAGE_MAX_SIZE),
 				m_rtpsmsg_fullmsg(RTPSMESSAGE_MAX_SIZE){};
+		RTPSMessageGroup_t(uint32_t payload):
+		m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
+				m_rtpsmsg_submessage(payload+200),
+				m_rtpsmsg_fullmsg(payload+200){};
 };
 
 class RTPSWriter;

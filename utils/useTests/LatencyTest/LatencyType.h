@@ -58,7 +58,7 @@ public:
 	LatencyDataType()
 {
 		m_topicDataTypeName = "LatencyType";
-		m_typeSize = 12288;
+		m_typeSize = 15000;
 		m_isGetKeyDefined = false;
 };
 	~LatencyDataType(){};
