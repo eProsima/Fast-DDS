@@ -65,22 +65,42 @@ public:
 	SPDPListener m_listener;
 	bool m_hasChangedLocalPDP;
 
+	//!Force the sending of our local DPD to all remote Participants and multicast Locators.
 	void announceParticipantState(bool new_change);
 
+	//!Stop the ParticipantAnnouncement (only used in tests).
 	void stopParticipantAnnouncement();
+	//!Reset the ParticipantAnnouncement (only used in tests).
 	void resetParticipantAnnouncement();
 
+	//!Update the ParameterList for our local DPD object.
 	bool updateParameterList();
+
 
 	QosList_t m_localDPDasQosList;
 
+	//!Only used for StaticEDP, to add the Endpoins EntityId as a PropertyList.
 	bool addStaticEDPInfo();
 
+	//! Set the variable indicated that something has changed in the Participant.
 	void localParticipantHasChanged();
 
+	/**
+	 * Call the same method in the EDP.
+	 * @param W Pointer to the Writer.
+	 * @param first_time Bool indicating if is the first time.
+	 * @return True if matched.
+	 */
 	bool localWriterMatching(RTPSWriter* W,bool first_time);
+	/**
+	 * Call the same method in the EDP.
+	 * @param W Pointer to the Reader.
+	 * @param first_time Bool indicating if is the first time.
+	 * @return True if matched.
+	 */
 	bool localReaderMatching(RTPSReader* R,bool first_time);
 
+	//!Pointer to the TimedEvent used to periodically send the ParticipantDiscoveredData
 	ResendDiscoveryDataPeriod* m_resendDataTimer;
 
 

@@ -34,23 +34,59 @@ class RTPSWriter;
 class RTPSReader;
 class DiscoveredParticipantData;
 
+/**
+ * Static EndpointDiscoveryProtocol that loads the characteristics of the Endpoitns from a XML file.
+ */
 class StaticEDP: public EndpointDiscoveryProtocol {
 public:
 	StaticEDP(ParticipantDiscoveryProtocol*p);
 	virtual ~StaticEDP();
-
+	/**
+	 * Initializa the EDP.
+	 * @param attributes DiscoveryAttributes reference.
+	 * @return True if correctly initialized.
+	 */
 	bool initEDP(DiscoveryAttributes& attributes);
 
+	/**
+		 * Match a local Writer against all possible remote and local Readers with the same topic.
+		 * @param writer Pointer to the Writer.
+		 * @param first_time Whether or not is the first time (to create the corresponding DWD object).
+		 * @return True if correct.
+		 */
 	bool localWriterMatching(RTPSWriter* writer,bool first_time);
+	/**
+		 * Match a local Reader against all possible remote and local Readers with the same topic.
+		 * @param writer Pointer to the Reader.
+		 * @param first_time Whether or not is the first time (to create the corresponding DRD object).
+		 * @return True if correct.
+		 */
 	bool localReaderMatching(RTPSReader* reader,bool first_time);
 
-
+	/**
+	 * Load an XML file and parse its contents.
+	 * @param filename Name of the file to load.
+	 * @return True if correctly loaded and parsed.
+	 */
 	bool loadXMLFile(const std::string& filename);
+	/**
+	 * Load a Writer Endpoint from the XML file and save the data to the DPD data object.
+	 * @param xml_endpoint Boost xml data.
+	 * @param pdata Pointer to the DPD object.
+	 * @return True if correct.
+	 */
 	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
+	/**
+	 * Load a Reader Endpoint from the XML file and save the data to the DPD data object.
+	 * @param xml_endpoint Boost xml data.
+	 * @param pdata Pointer to the DPD object.
+	 * @return True if correct.
+	 */
 	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
 
-	void assignRemoteEndpoints(DiscoveredParticipantData* pdata) {};
+//	void assignRemoteEndpoints(DiscoveredParticipantData* pdata) {};
 
+	//!Vector that stores the loaded Endpoints Ids in case one is repeated.
 	std::vector<uint16_t> m_endpointIds;
 
 
@@ -72,7 +108,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool checkLocalReaderCreation(RTPSReader* R);
-
+//! DiscoveryAttributes of the EDP.
 	DiscoveryAttributes m_discovery;
 
 
