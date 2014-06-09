@@ -125,7 +125,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (Time2MicroSec(m_t2)-Time2MicroSec(m_t1))/1001;
+	m_overhead = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	SubscriberAttributes Sparam;
@@ -200,7 +200,7 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 			TroughputTimeStats TS;
 			TS.samplesize = SAMPLESIZE+4;
 			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.saved_lostsamples;
-			TS.totaltime_us = Time2MicroSec(m_t2)-Time2MicroSec(m_t1);
+			TS.totaltime_us = Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1);
 			TS.lostsamples = m_DataSubListener.saved_lostsamples;
 			TS.demand = demand.at(demindex);
 		//	m_DataSubListener.myfile << endl;

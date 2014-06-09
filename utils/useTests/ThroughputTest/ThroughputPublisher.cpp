@@ -71,7 +71,7 @@ ThroughputPublisher::ThroughputPublisher():
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (Time2MicroSec(m_t2)-Time2MicroSec(m_t1))/1001;
+	m_overhead = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
@@ -146,7 +146,7 @@ void ThroughputPublisher::test(uint32_t demand)
 	command.m_command = TEST_STARTS;
 	mp_commandpub->write((void*)&command);
 	m_Clock.setTimeNow(&m_t1);
-	while(Time2MicroSec(m_t2)-Time2MicroSec(m_t1)<TESTTIME*1000000)
+	while(Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)<TESTTIME*1000000)
 	{
 		for(uint32_t sample=0;sample<demand;sample++)
 		{
@@ -164,7 +164,7 @@ void ThroughputPublisher::test(uint32_t demand)
 	mp_commandpub->removeAllChange(&aux);
 	TroughputTimeStats TS;
 	TS.nsamples = samples;
-	TS.totaltime_us = Time2MicroSec(m_t2)-Time2MicroSec(m_t1)-timewait_us;
+	TS.totaltime_us = Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-timewait_us;
 	TS.samplesize = SAMPLESIZE+4;
 	TS.demand = demand;
 	TS.compute();
