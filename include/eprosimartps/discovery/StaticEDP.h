@@ -83,8 +83,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,DiscoveredParticipantData* pdata);
-
-//	void assignRemoteEndpoints(DiscoveredParticipantData* pdata) {};
+	//!This method is not used in StaticEDP, is needed because is an abastract method of its base class.
+	void assignRemoteEndpoints(DiscoveredParticipantData* pdata) {};
 
 	//!Vector that stores the loaded Endpoints Ids in case one is repeated.
 	std::vector<uint16_t> m_endpointIds;
