@@ -57,7 +57,7 @@ public:
 	
 	eClock clock;
 	double overhead_value;
-	std::vector<uint64_t> m_times;
+	std::vector<double> m_times;
 	std::vector<TimeStats> m_stats;
 	boost::interprocess::interprocess_semaphore sema;
 	bool test(uint32_t datasize,uint32_t n_samples);
@@ -66,18 +66,10 @@ public:
 	void onNewDataMessage()
 	{
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
-		if(m_latency_in->seqnum == NSAMPLES)	
-		{
-			sema.post();
-			return;
-		}
-		if(m_latency_in->seqnum != m_latency_out->seqnum)
-		{
-			cout << "ERROR " << endl;
-			sema.post();
-		}
-		m_latency_out->seqnum++;
-		m_pub->write((void*)m_latency_out);
+		clock.setTimeNow(&m_t2);
+		m_times.push_back(Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-overhead_value);
+		m_sub->takeNextData((void*)m_latency_in,&m_info);
+		sema.post();
 	}
 	void onSubscriptionMatched()
 	{
@@ -146,30 +138,27 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	m_latency_out = new LatencyType(datasize);
 	m_times.clear();
 	//Sleep to allow subscriber to remove its elements
-	eClock::my_sleep(2000);
-	clock.setTimeNow(&m_t1);
-	//for(uint32_t i =0;i<n_samples;++i)
-	//{
-	//	m_latency_out->seqnum++;
-	////	eClock::my_sleep(1);
-	//	m_pub->write((void*)m_latency_out);
-	//	sema.wait();
-	//	if(!(*m_latency_out == *m_latency_in))
-	//	{
-	//		cout << "PROBLEM"<<endl;
-	//		return false;
-	//	}
-	//	m_latency_in->seqnum = -1;
-	//}
-	m_latency_out->seqnum++;
-	m_pub->write((void*)m_latency_out);
-	sema.wait();
-	clock.setTimeNow(&m_t2);
-	cout << "MeanTime: " << (Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1))/n_samples  << endl;
+	int aux;
+	eClock::my_sleep(1000);
+	cout << "Begin test of size: " << datasize+4 << ", enter number to start: ";
+	std::cin >> aux;
+	for(uint32_t i =0;i<n_samples;++i)
+	{
+		m_latency_out->seqnum++;
+		clock.setTimeNow(&m_t1);
+		m_pub->write((void*)m_latency_out);
+		sema.wait();
+		if(!(*m_latency_out == *m_latency_in))
+		{
+			cout << "PROBLEM"<<endl;
+			return false;
+		}
+		m_latency_in->seqnum = -1;
+	}
 	int32_t removed=0;
 	m_pub->removeAllChange(&removed);
-	cout << "Removed " << removed << endl;
-	cout << "Sub element number " << m_sub->getHistoryElementsNumber() << endl;
+//	cout << "Removed " << removed << endl;
+//	cout << "Sub element number " << m_sub->getHistoryElementsNumber() << endl;
 	while(m_sub->getHistoryElementsNumber()>0)
 	{
 		if(!m_sub->takeNextData((void*)m_latency_in,&m_info))
@@ -178,7 +167,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	cout << endl;
 	//cout << "Number of elements in Reader History: "<< m_sub->getHistoryElementsNumber()<<endl;
 	//cout << "Number of elements in Writer History: "<< m_pub->getHistoryElementsNumber()<<endl;
-//	analyzeTimes(datasize);
+	analyzeTimes(datasize);
 	delete(m_latency_in);
 	delete(m_latency_out);
 	return true;
@@ -194,10 +183,10 @@ void LatencyPublisher::analyzeTimes(uint32_t datasize)
 	TS.max = *std::max_element(m_times.begin(),m_times.end());
 	TS.mean = std::accumulate(m_times.begin(),m_times.end(),0)/m_times.size();
 	double auxstdev=0;
-	for(std::vector<uint64_t>::iterator tit=m_times.begin();tit!=m_times.end();++tit)
+	for(std::vector<double>::iterator tit=m_times.begin();tit!=m_times.end();++tit)
 	{
 		//cout << *tit<< "/"<< TS.mean<< "///";
-		auxstdev += pow(((double)(*tit)-TS.mean),2);
+		auxstdev += pow(((*tit)-TS.mean),2);
 	}
 	auxstdev = sqrt(auxstdev/m_times.size());
 	TS.stdev = (uint64_t)round(auxstdev);

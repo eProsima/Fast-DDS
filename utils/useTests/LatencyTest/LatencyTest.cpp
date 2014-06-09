@@ -30,7 +30,7 @@
 #if defined(_WIN32)
 #include "LatencyPublisher_win.h"
 #else
-#include "LatencyPublisher.h
+#include "LatencyPublisher.h"
 #endif
 #include "LatencySubscriber.h"
 
