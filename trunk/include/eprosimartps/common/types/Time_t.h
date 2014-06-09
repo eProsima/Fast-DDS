@@ -37,13 +37,6 @@ typedef struct Time_t{
 	
 }Time_t;
 
-typedef struct TimeReal_t{
-	int32_t seconds;
-	uint32_t nanoseconds;
-	TimeReal_t():seconds(0),nanoseconds(0)
-	{
-	}
-}TimeReal_t;
 
 
 static inline bool operator==(const Time_t& t1,const Time_t& t2)

@@ -56,17 +56,21 @@ public:
 	virtual ~eClock();
 	int32_t m_seconds_from_1900_to_1970;
 	int32_t m_utc_seconds_diff;
+	bool setTimeNow(Time_t* now);
+	//Methods to measure an interval in us
+	void intervalStart();
+	uint64_t intervalEnd();
+	static void my_sleep(uint32_t milliseconds);
 #if defined(_WIN32)
 	FILETIME ft;
+	unsigned long long ftlong;
+	FILETIME ft1,ft2;
+	LARGE_INTEGER freq;
+	LARGE_INTEGER li1,li2;
 #else
 	timeval m_now;
+	timeval m_interval1,m_interval2;
 #endif
-	bool setTimeNow(Time_t* now);
-	bool setTimeRealNow(TimeReal_t* tnow);
-//	int my_gettimeofday(struct timeval *tv, struct timezone *tz);
-	static void my_sleep(uint32_t milliseconds);
-
-
 };
 
 } /* namespace rtps */
