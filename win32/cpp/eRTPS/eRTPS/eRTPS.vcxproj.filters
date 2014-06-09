@@ -1,0 +1,483 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps">
+      <UniqueIdentifier>{789a2c91-9f6e-40f0-9d67-f8c2e15803c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dds">
+      <UniqueIdentifier>{b6d0b317-b894-4146-8740-5f4813f71f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\discovery">
+      <UniqueIdentifier>{06d8b985-0df9-4f59-be7c-172fe84d3e30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\qos">
+      <UniqueIdentifier>{962fedd8-39e5-47b9-8c36-c15b508ec474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\reader">
+      <UniqueIdentifier>{f681e21d-464e-4a05-86b7-2d976b9e57c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\resources">
+      <UniqueIdentifier>{79870366-91a3-4ec9-9034-190fdaa9822d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\submessages">
+      <UniqueIdentifier>{337afe7a-850a-4d9b-8381-7457d03bfffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\timedevent">
+      <UniqueIdentifier>{a99e7974-afe9-4557-9ea9-f853d6e87193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{23d9b5ee-47cd-4e78-89b2-f18c91534002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\writer">
+      <UniqueIdentifier>{5ae918d0-8a5d-439d-b627-18ac1fae51ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\common">
+      <UniqueIdentifier>{23f96963-03fc-42ad-b96f-721e8d739ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\dds">
+      <UniqueIdentifier>{95ab47af-4927-4d2d-9c2f-732397c3281f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\discovery">
+      <UniqueIdentifier>{8eb600c3-ea24-41fa-a3b6-6464ff54d35c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\qos">
+      <UniqueIdentifier>{6985c5ae-5e52-4dc4-bca7-911bda99cc4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\reader">
+      <UniqueIdentifier>{a903d1e7-5613-4567-ace8-5ec75171dd31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\resources">
+      <UniqueIdentifier>{ebf9dad4-2ca0-4eac-a687-eef1280b817d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\timedevent">
+      <UniqueIdentifier>{46b6c89f-49e9-47e6-8097-aaf8b1fa9f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\utils">
+      <UniqueIdentifier>{c8a8b59a-be6d-4a5d-8628-e6bc3f3d294c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\writer">
+      <UniqueIdentifier>{a2df7efb-bde0-4b77-b1e6-88bfb6389cc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\discovery\data">
+      <UniqueIdentifier>{0412c0bb-1952-44ff-82fe-a10802f69721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\dds\attributes">
+      <UniqueIdentifier>{cd65f9c9-cb9f-4027-9053-7a4801a32ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\common\types">
+      <UniqueIdentifier>{0c24004b-2705-4789-9c4f-afbaacd55627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\discovery\data">
+      <UniqueIdentifier>{5df22496-4898-4a25-99f7-4d7f5ac0706c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp">
+      <Filter>Source Files\submessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\cpp\submessages\DataMsg.hpp">
+      <Filter>Source Files\submessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\cpp\submessages\GapMsg.hpp">
+      <Filter>Source Files\submessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\cpp\submessages\HeartbeatMsg.hpp">
+      <Filter>Source Files\submessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.hpp">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\Endpoint.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\eProsima_auto_link.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_dll.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\HistoryCache.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\Participant.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSMessageCreator.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\DDSQosPolicies.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterList.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterTypes.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosList.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ReaderQos.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\WriterQos.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\RTPSReader.h">
+      <Filter>Header Files\eprosimartps\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatefulReader.h">
+      <Filter>Header Files\eprosimartps\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatelessReader.h">
+      <Filter>Header Files\eprosimartps\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxy.h">
+      <Filter>Header Files\eprosimartps\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ListenResource.h">
+      <Filter>Header Files\eprosimartps\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceEvent.h">
+      <Filter>Header Files\eprosimartps\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h">
+      <Filter>Header Files\eprosimartps\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\HeartbeatResponseDelay.h">
+      <Filter>Header Files\eprosimartps\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackResponseDelay.h">
+      <Filter>Header Files\eprosimartps\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackSupressionDuration.h">
+      <Filter>Header Files\eprosimartps\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\PeriodicHeartbeat.h">
+      <Filter>Header Files\eprosimartps\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\ResendDiscoveryDataPeriod.h">
+      <Filter>Header Files\eprosimartps\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\TimedEvent.h">
+      <Filter>Header Files\eprosimartps\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\IPFinder.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderLocator.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxy.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSMessageGroup.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSWriter.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatefulWriter.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatelessWriter.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\EndpointDiscoveryProtocol.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\ParticipantDiscoveryProtocol.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SEDPListeners.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleEDP.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimplePDP.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPListener.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\StaticEDP.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredData.h">
+      <Filter>Header Files\eprosimartps\discovery\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredParticipantData.h">
+      <Filter>Header Files\eprosimartps\discovery\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredReaderData.h">
+      <Filter>Header Files\eprosimartps\discovery\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredWriterData.h">
+      <Filter>Header Files\eprosimartps\discovery\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\DDSTopicDataType.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\DomainParticipant.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\Publisher.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\PublisherListener.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SampleInfo.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\Subscriber.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SubscriberListener.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\attributes\all_attributes.h">
+      <Filter>Header Files\eprosimartps\dds\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\attributes\ParticipantAttributes.h">
+      <Filter>Header Files\eprosimartps\dds\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\attributes\PublisherAttributes.h">
+      <Filter>Header Files\eprosimartps\dds\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\attributes\SubscriberAttributes.h">
+      <Filter>Header Files\eprosimartps\dds\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\attributes\TopicAttributes.h">
+      <Filter>Header Files\eprosimartps\dds\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\CacheChange.h">
+      <Filter>Header Files\eprosimartps\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\doxygen_modules.h">
+      <Filter>Header Files\eprosimartps\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\RTPS_messages.h">
+      <Filter>Header Files\eprosimartps\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\all_common.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\CDRMessage_t.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\colors.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\common_types.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Guid.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\InstanceHandle.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Locator.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\SequenceNumber.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\SerializedPayload.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Time_t.h">
+      <Filter>Header Files\eprosimartps\common\types</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\StatefulWriter.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\RTPSWriter.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\RTPSMessageGroup.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderProxy.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderLocator.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\eClock.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\IPFinder.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\ObjectPool.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\RTPSLog.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\HeartbeatResponseDelay.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackResponseDelay.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackSupressionDuration.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\PeriodicHeartbeat.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\ResendDiscoveryDataPeriod.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\timedevent\TimedEvent.cpp">
+      <Filter>Source Files\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceEvent.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceSend.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\RTPSReader.cpp">
+      <Filter>Source Files\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\StatefulReader.cpp">
+      <Filter>Source Files\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\StatelessReader.cpp">
+      <Filter>Source Files\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\WriterProxy.cpp">
+      <Filter>Source Files\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\ParameterList.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\ParameterTypes.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\QosList.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\Endpoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\HistoryCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\MessageReceiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\Participant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\RTPSMessageCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\CacheChangePool.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\resources\ListenResource.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\DDSQosPolicies.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\ReaderQos.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\WriterQos.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\EndpointDiscoveryProtocol.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\ParticipantDiscoveryProtocol.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SEDPListeners.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleEDP.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimplePDP.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPListener.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\StaticEDP.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredData.cpp">
+      <Filter>Source Files\discovery\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\DomainParticipant.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\Publisher.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\PublisherListener.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\Subscriber.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp">
+      <Filter>Source Files\dds</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
