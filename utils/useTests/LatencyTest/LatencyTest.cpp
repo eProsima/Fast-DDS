@@ -22,13 +22,16 @@
 #include <bitset>
 #include <cstdint>
 
-#define NSAMPLES 11238
+#define NSAMPLES 5000
 
 
 #include "eprosimartps/rtps_all.h"
 #include "LatencyType.h"
-
-#include "LatencyPublisher.h"
+#if defined(_WIN32)
+#include "LatencyPublisher_win.h"
+#else
+#include "LatencyPublisher.h
+#endif
 #include "LatencySubscriber.h"
 
 using namespace eprosima;
@@ -107,6 +110,7 @@ int main(int argc, char** argv){
 //			cout << endl;
 
 		}
+		cin >> type;
 		break;
 	}
 	case 2:
