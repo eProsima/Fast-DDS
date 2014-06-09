@@ -109,7 +109,7 @@ void eClock::intervalStart()
 uint64_t eClock::intervalEnd()
 {
 	gettimeofday(&m_interval2,NULL);
-	return (m_interval2.tv_sec-m_interval1.tv_sec)*1000000+m_interval2.tv_usec-m_interval1-tv_usec;
+	return (m_interval2.tv_sec-m_interval1.tv_sec)*1000000+m_interval2.tv_usec-m_interval1.tv_usec;
 }
 
 
