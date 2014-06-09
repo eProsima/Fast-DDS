@@ -29,20 +29,28 @@ class RTPSWriter;
 class RTPSReader;
 
 /**
- * Base class of the ParticipantDiscoveryProtocol. Currently only SimplePDP is implemented, please refer to this class for futrther documentation.
+ * Base class of the ParticipantDiscoveryProtocol. Currently only SimplePDP is implemented, please refer to this class for further documentation.
  */
 class ParticipantDiscoveryProtocol {
 public:
 	ParticipantDiscoveryProtocol(ParticipantImpl* p_part);
 	virtual ~ParticipantDiscoveryProtocol();
-
+	/**
+	 * Initialize the PDP.
+	 * @param attributes DiscoveryAttributes reference.
+	 * @param participantID Id of the participant to obtain the default port numbers.
+	 * @return True if correct.
+	 */
 	virtual bool initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)=0;
-
+	//! Pointer to the DPD data object of the local Participant.
 	DiscoveredParticipantData* mp_localDPData;
+	//! Vector containing pointers to all DPD objects for all discovered participants.
 	std::vector<DiscoveredParticipantData*> m_discoveredParticipants;
-
+	//! Discovery Attributes.
 	DiscoveryAttributes m_discovery;
+	//! Pointer to the local Participant Implementation
 	ParticipantImpl* mp_participant;
+	//! Pointer to the EndpointDiscoveryProtocol used.
 	EndpointDiscoveryProtocol* mp_EDP;
 
 	virtual void announceParticipantState(bool new_change)=0;

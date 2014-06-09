@@ -30,7 +30,7 @@ class ParticipantDiscoveryProtocol;
 class DiscoveredParticipantData;
 
 /**
- * Class EndpointDiscoveryProtocol, base class for the two differents EDP classes created for this RTPS implementation.
+ * Class EndpointDiscoveryProtocol, base class for the two different EDP classes created for this RTPS implementation.
  */
 class EndpointDiscoveryProtocol  {
 public:

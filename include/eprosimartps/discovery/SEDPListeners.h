@@ -27,51 +27,43 @@ namespace rtps {
 class SEDPListeners;
 class DiscoveredWriterData;
 class DiscoveredReaderData;
-//class DiscoveredTopicData;
 class SimpleEDP;
 
-
+/**
+ * SEDP Publications Listener, used to define the behavior when a new DWriterData is received.
+ */
 class SEDPPubListener: public SubscriberListener {
 public:
 	SEDPPubListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
 	virtual ~SEDPPubListener(){};
 	void onNewDataMessage();
-//	bool processParameterList(ParameterList_t param,DiscoveredWriterData* wdata);
 	SEDPListeners* mp_listeners;
-		SimpleEDP* mp_SEDP;
+	SimpleEDP* mp_SEDP;
 
 };
-
+/**
+ * SEDP Subscription Listener, used to define the behavior when a new DReaderData is received.
+ */
 class SEDPSubListener: public SubscriberListener {
 public:
 	SEDPSubListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
 	virtual ~SEDPSubListener(){};
 	void onNewDataMessage();
-	//bool processParameterList(ParameterList_t param,DiscoveredReaderData* rdata);
 	SEDPListeners* mp_listeners;
 	SimpleEDP* mp_SEDP;
 
 };
 
-//class SEDPTopListener: public SubscriberListener {
-//public:
-//	SEDPTopListener(SEDPListeners* listeners,SimpleEDP* sedp):mp_listeners(listeners),mp_SEDP(sedp){};
-//	virtual ~SEDPTopListener();
-//	void onNewDataMessage();
-//	bool processParameterList(ParameterList_t param,DiscoveredTopicData* tdata);
-//	SEDPListeners* mp_listeners;
-//		SimpleEDP* mp_SEDP;
-//
-//};
-
+/**
+ * Class SEDPListeners that contains two different Listeners for the Publications and Subscriptions Readers.
+ */
 class SEDPListeners
 {
 public:
-	SEDPListeners(SimpleEDP* edp):m_PubListener(this,edp),m_SubListener(this,edp){};//,m_TopListener(this,edp){};
+	SEDPListeners(SimpleEDP* edp):m_PubListener(this,edp),m_SubListener(this,edp){};
 	virtual ~SEDPListeners(){};
 	SEDPPubListener m_PubListener;
 	SEDPSubListener m_SubListener;
-	//SEDPTopListener m_TopListener;
 
 };
 
