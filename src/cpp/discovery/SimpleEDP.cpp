@@ -107,7 +107,6 @@ bool SimpleEDP::createSEDPEndpoints()
 			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
-	boost::lock_guard<Endpoint> guard(*mp_SubReader);
 	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
 	{
 		Rparam.historyMaxSize = 100;
