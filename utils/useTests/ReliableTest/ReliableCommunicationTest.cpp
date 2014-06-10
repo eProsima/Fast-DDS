@@ -162,8 +162,6 @@ int main(int argc, char** argv)
 			type = 1;
 		else if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
-		else
-			type = 3;
 	}
 	else
 		type = 1; //publisher
