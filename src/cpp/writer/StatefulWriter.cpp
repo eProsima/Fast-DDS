@@ -74,7 +74,8 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 	}
 	matched_readers.push_back(rp);
 	pDebugInfo("Reader Proxy added to StatefulWriter." << endl);
-	unsent_changes_not_empty();
+	if(rp->m_changesForReader.size()>0)
+		unsent_changes_not_empty();
 	return true;
 }
 
@@ -223,6 +224,8 @@ void StatefulWriter::unsent_changes_not_empty()
 							(*rit)->m_param.remoteReaderGuid.entityId,
 							&(*rit)->m_param.unicastLocatorList,
 							&(*rit)->m_param.multicastLocatorList);
+//				cout << "Reliability of Reader: "<< ((*rit)->m_param.m_reliability == RELIABLE ? "RELIABLE":"NOTRELIABLE")<<endl;
+//				cout << "PeriodicHB is waiting: "<< (*rit)->m_periodicHB.m_isWaiting << endl;
 				if((*rit)->m_param.m_reliability == RELIABLE)
 					(*rit)->m_periodicHB.restart_timer();
 				(*rit)->m_nackSupression.restart_timer();

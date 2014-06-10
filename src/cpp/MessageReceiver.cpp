@@ -461,6 +461,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				StatefulReader* SR = (StatefulReader*)(*it);
 				//Look for the associated writer
 				WriterProxy* WP;
+				//FIXME: Ignoring too close received HB.
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
 					if(WP->m_lastHeartbeatCount < HBCount)

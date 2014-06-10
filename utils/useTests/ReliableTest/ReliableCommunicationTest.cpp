@@ -194,7 +194,7 @@ int main(int argc, char** argv)
 		Wparam.topic.topicName = "Test_Topic";
 		Wparam.historyMaxSize = 14;
 		Wparam.times.heartbeatPeriod.seconds = 2;
-		Wparam.times.nackResponseDelay.seconds = 5;
+		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
@@ -202,6 +202,7 @@ int main(int argc, char** argv)
 			return 0;
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
+		p->stopParticipantAnnouncement();
 		TestType tp;
 		COPYSTR(tp.name,"Obje1");
 		tp.value = 0;
@@ -213,18 +214,22 @@ int main(int argc, char** argv)
 		{
 			tp.value++;
 			tp.price *= (i);
-			if(i == 3 || i==5)
+			if(i == 3 || i==5 ||i ==6)
+			{
+				//THIS METHOD SOULD BE USED WITH GREAT CARE. IT DOES NOT CHECK WHO IS SENDING THE NEXT PACKET
+				//DEPENDING IN THE TIMER PERIODS IT CAN PREVENT HB or ACKNACK packets from being sent
 				p->loose_next_change();
+			}
 			pub->write((void*)&tp);
 			cout << "Going to sleep "<< (int)i <<endl;
-			eClock::my_sleep(1);
+			eClock::my_sleep(1000);
 			cout << "Wakes "<<endl;
 		}
 		pub->dispose((void*)&tp);
-		eClock::my_sleep(1);
+		eClock::my_sleep(1000);
 		cout << "Wakes "<<endl;
 		pub->unregister((void*)&tp);
-		eClock::my_sleep(1);
+		eClock::my_sleep(1000);
 		cout << "Wakes "<<endl;
 		break;
 	}
@@ -240,11 +245,13 @@ int main(int argc, char** argv)
 		Rparam.topic.topicDataType = "TestType";
 		Rparam.topic.topicName = "Test_Topic";
 		Rparam.topic.topicKind = WITH_KEY;
+		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		MySubListener mylisten;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
+		p->stopParticipantAnnouncement(); //Only for tests to see more clearly the communication
 		int i = 0;
 		while(i<20)
 		{
