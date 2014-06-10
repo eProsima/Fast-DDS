@@ -28,8 +28,8 @@ class SubscriberTimes{
 public:
 	//!Delay the response to a HB.
 		Duration_t heartbeatResponseDelay;
-		//!Ignore too son received HB.
-		Duration_t heartbeatSupressionDuration;
+	//	//!Ignore too son received HB (after previously send acknack).
+	//	Duration_t heartbeatSupressionDuration;
 		SubscriberTimes()
 		{
 			heartbeatResponseDelay.fraction = 500*1000*1000;

@@ -32,6 +32,10 @@ ReaderProxy::ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& time
 				m_nackSupression(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.nackSupressionDuration)*1e-3))),
 				m_lastAcknackCount(0)
 {
+//	cout << "PeriodicHB: "<< m_periodicHB.getIntervalMsec()<<endl;
+//	cout << "m_nackResponse: "<< m_nackResponse.getIntervalMsec()<<endl;
+//	cout << "m_nackSupression: "<< m_nackSupression.getIntervalMsec()<<endl;
+//	cout << "PeriodicHB is waiting: "<< m_periodicHB.m_isWaiting << endl;
 
 }
 
