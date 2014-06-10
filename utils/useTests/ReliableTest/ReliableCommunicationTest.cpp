@@ -90,7 +90,7 @@ public:
 //Funciones de serializacion y deserializacion para el ejemplo
 bool TestTypeDataType::serialize(void*data,SerializedPayload_t* payload)
 {
-	cout << "SERIALIZES: "<<sizeof(TestType)<<endl;
+	//cout << "SERIALIZES: "<<sizeof(TestType)<<endl;
 	payload->length = sizeof(TestType);
 	payload->encapsulation = CDR_LE;
 	if(payload->data !=NULL)
@@ -190,14 +190,14 @@ int main(int argc, char** argv)
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
-		Wparam.topic.topicDataType = std::string("TestType");
-		Wparam.topic.topicName = std::string("Test_topic");
+		Wparam.topic.topicDataType = "TestType";
+		Wparam.topic.topicName = "Test_Topic";
 		Wparam.historyMaxSize = 14;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.nackResponseDelay.seconds = 5;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		MyPubListener mylisten;
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mylisten);
+		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
 			return 0;
 		cout << "Waiting for discovery"<<endl;
@@ -209,11 +209,11 @@ int main(int argc, char** argv)
 		int n;
 		cout << "Enter number to start: ";
 		cin >> n;
-		for(uint8_t i = 0;i<10;i++)
+		for(uint8_t i = 1;i<=10;i++)
 		{
 			tp.value++;
-			tp.price *= (i+1);
-			if(i == 2 || i==4||i==5)
+			tp.price *= (i);
+			if(i == 3 || i==5)
 				p->loose_next_change();
 			pub->write((void*)&tp);
 			cout << "Going to sleep "<< (int)i <<endl;
@@ -236,12 +236,13 @@ int main(int argc, char** argv)
 		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
-		Rparam.historyMaxSize = 15;
-		Rparam.topic.topicDataType = std::string("TestType");
-		Rparam.topic.topicName = std::string("Test_Topic");
+		Rparam.historyMaxSize = 30;
+		Rparam.topic.topicDataType = "TestType";
+		Rparam.topic.topicName = "Test_Topic";
+		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		MySubListener mylisten;
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,&mylisten);
+		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
 		int i = 0;
@@ -251,7 +252,7 @@ int main(int argc, char** argv)
 			sub->waitForUnreadMessage();
 			TestType tp;
 			SampleInfo_t info;
-			if(sub->takeNextData((void*)&tp,&info))
+			if(sub->readNextData((void*)&tp,&info))
 				tp.print();
 			if(sub->getHistoryElementsNumber() >= 0.5*Rparam.historyMaxSize)
 			{
