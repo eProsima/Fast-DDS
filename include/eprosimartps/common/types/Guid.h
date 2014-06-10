@@ -157,6 +157,9 @@ const EntityId_t c_EntityId_SEDPSubReader = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_
 
 const EntityId_t c_EntityId_Participant = ENTITYID_PARTICIPANT;
 
+const EntityId_t c_EntityId_WriterLiveliness = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_WRITER;
+const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER;
+
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
