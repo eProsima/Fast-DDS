@@ -31,7 +31,6 @@ EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 
 EPROSIMARTPS_SRC_CPPFILES= \
  	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
-		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
 		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
 		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
@@ -89,13 +88,12 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
-		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp
-	#	  $(BASEDIR)/src/cpp/discovery/data/DiscoveredWriterData.cpp \
-	#	  $(BASEDIR)/src/cpp/discovery/data/DiscoveredReaderData.cpp 
-		#  $(BASEDIR)/src/cpp/discovery/SimpleEPD.cpp \
-		#   $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp 
-		#   $(BASEDIR)/src/cpp/discovery/StaticEndpointDiscoveryProtocol.cpp
-		#  $(BASEDIR)/src/cpp/discovery/SimpleDiscoveryParticipantProtocol.cpp 
+		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/liveliness/WriterLiveliness.cpp \
+		  $(BASEDIR)/src/cpp/liveliness/LivelinessPeriodicAssertion.cpp \
+		  $(BASEDIR)/src/cpp/liveliness/WriterLivelinessListener.cpp 
+
 #		  
 #		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
 #		  $(BASEDIR)/src/cpp/CDRMessage.cpp \

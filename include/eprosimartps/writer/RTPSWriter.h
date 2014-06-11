@@ -11,6 +11,9 @@
  */
 
 
+#ifndef RTPSWRITER_H_
+#define RTPSWRITER_H_
+
 #include "eprosimartps/Endpoint.h"
 #include "eprosimartps/HistoryCache.h"
 
@@ -19,11 +22,7 @@
 #include "eprosimartps/qos/WriterQos.h"
 #include "eprosimartps/dds/Publisher.h"
 
-
-#ifndef RTPSWRITER_H_
-#define RTPSWRITER_H_
-
-
+#include "eprosimartps/qos/ParameterList.h"
 
 
 using namespace eprosima::dds;
@@ -36,8 +35,6 @@ class PublisherListener;
 }
 
 namespace rtps {
-
-
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.

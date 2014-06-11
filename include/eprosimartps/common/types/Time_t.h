@@ -19,7 +19,7 @@
 namespace eprosima{
 namespace rtps{
 //!Structure Time_t, used to describe times.
-typedef struct Time_t{
+struct Time_t{
 	int32_t seconds;
 	uint32_t fraction;
 	//int64_t to64time(){
@@ -31,7 +31,7 @@ typedef struct Time_t{
 		fraction = 0;
 	}
 	
-}Time_t;
+};
 
 
 
@@ -61,6 +61,11 @@ static inline double Time_t2Seconds(const Time_t& t)
 static inline double Time_t2MicroSec(const Time_t& t)
 {
 	return (Time_t2Seconds(t)*pow(10.0,6));
+}
+
+static inline double Time_t2MilliSec(const Time_t& t)
+{
+	return (Time_t2Seconds(t)*pow(10.0,3));
 }
 
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
