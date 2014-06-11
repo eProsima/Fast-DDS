@@ -150,12 +150,21 @@ public:
 	{
 		cout <<"New Message"<<endl;
 	}
+	void onSubscriptionMatched()
+	{
+		cout << "Discovery"<<endl;
+	}
 };
 
 //Somewhere in the code, create an object an register assign it to the subscriber.
-Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 TestTypeListener listener;
-sub->assignListener((SubscriberListener*)&listener);
+Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&listener);
+//...
+
+//You can also create it and assign it later, although this is not recommended since the onSubscriptionMatched may not be called
+// (if the discovery is performed before you assign the Listener.).
+TestTypeListener listener2;
+sub->assignListener((SubscriberListener*)&listener2);
 //! [ex_SubscriberListener]
 
 //! [ex_PublisherListener]
@@ -174,13 +183,16 @@ public:
 		//The participant should have been created and accessible to this method.
 		p = DomainParticipant::createParticipant(Pparam);
 		//PublisherAttributes must be set to the user preferences.
-		pub = DomainParticipant::createPublisher(p,Pubparam);
-		pub->assignListener((PublisherListener*)this);
+		pub = DomainParticipant::createPublisher(p,Pubparam,(PublisherListener*)this);
 	};
 	~TestTypeListener(){};
 	void onHistoryFull()
 	{
 		pub->removeMinSeqCache();
+	}
+	void onPublicationMatched()
+	{
+		cout << "Discovery!"<<endl;
 	}
 
 };

@@ -31,6 +31,7 @@ namespace rtps {
 
 /**
  * Class DiscoveredWriterData used by the SEDP.
+ * @ingroup DISCOVERYMODULE
  */
 class DiscoveredWriterData {
 public:

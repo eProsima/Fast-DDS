@@ -30,6 +30,7 @@ class DiscoveredParticipantData;
 /**
  * Class SPDPListener, specification of SubscriberListener used by the SPDP to perform the History check when a new message is received.
  * This class is implemented in order to use the same structure than with any other RTPSReader.
+ * @ingroup DISCOVERYMODULE
  */
 class SPDPListener: public SubscriberListener {
 public:

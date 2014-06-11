@@ -107,7 +107,6 @@ bool SimpleEDP::createSEDPEndpoints()
 			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
 		}
 	}
-	boost::lock_guard<Endpoint> guard(*mp_SubReader);
 	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
 	{
 		Rparam.historyMaxSize = 100;
@@ -370,11 +369,19 @@ void SimpleEDP::repareDiscoveredDataLocatorList(LocatorList_t* loclist)
 bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*W);
-	pInfo("SimpleEDP:localWriterMatching W-DRD"<<endl);
+	pInfo(CYAN<<"SimpleEDP:localWriterMatching W-DRD"<<DEF<<endl);
 	bool matched = false;
-	if(W->getTopic().getTopicName() == rdata->m_topicName && W->getTopic().getTopicDataType() == rdata->m_typeName &&
-			W->getTopic().getTopicKind() == rdata->topicKind && rdata->isAlive)
+//	cout << W->getTopic().getTopicName() << " "<<rdata->m_topicName<<endl;
+//	cout << W->getTopic().getTopicDataType() << " "<<rdata->m_typeName<<endl;
+//	cout << W->getTopic().getTopicKind() << " "<<rdata->topicKind<<endl;
+//	cout <<  " "<<rdata->isAlive<<endl;
+//	cout << (W->getTopic().getTopicName() == rdata->m_topicName) << endl;
+//	cout << (W->getTopic().getTopicDataType() == rdata->m_typeName) << endl;
+//	cout << (W->getTopic().getTopicKind() == rdata->topicKind) << endl;
+	if((W->getTopic().getTopicName() == rdata->m_topicName) && (W->getTopic().getTopicDataType() == rdata->m_typeName) &&
+			(W->getTopic().getTopicKind() == rdata->topicKind) && rdata->isAlive)
 	{
+		pDebugInfo(CYAN << "SimpleEDP: local Writer MATCHED"<<DEF<<endl);
 		if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 		{
 			StatelessWriter* p_SLW = (StatelessWriter*)W;
@@ -422,7 +429,7 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&
 			wdata->isAlive) //Matching
 	{
-
+		pDebugInfo(CYAN << "SimpleEDP: local Reader MATCHED"<<DEF<<endl);
 		if(R->getStateType() == STATELESS)
 		{
 			StatelessReader* p_SFR = (StatelessReader*)R;

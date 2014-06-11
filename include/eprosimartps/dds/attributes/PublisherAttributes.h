@@ -13,6 +13,8 @@
 #ifndef PUBLISHERPARAMETERS_H_
 #define PUBLISHERPARAMETERS_H_
 
+#include <iostream>
+
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/dds/attributes/TopicAttributes.h"

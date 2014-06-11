@@ -40,6 +40,7 @@ NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,boost::posix_ti
 
 void NackSupressionDuration::event(const boost::system::error_code& ec)
 {
+	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 		boost::lock_guard<ReaderProxy> guard(*mp_RP);
@@ -50,7 +51,7 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 			if(cit->status == UNDERWAY)
 				cit->status = UNACKNOWLEDGED;
 		}
-		m_isWaiting = false;
+
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 		{
