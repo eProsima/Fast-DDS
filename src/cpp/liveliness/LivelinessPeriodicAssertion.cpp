@@ -75,7 +75,7 @@ bool LivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 
 bool LivelinessPeriodicAssertion::ManualByParticipantLivelinessAssertion()
 {
-return false;
+	return false;
 }
 
 
