@@ -16,6 +16,7 @@
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
 #include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/qos/ParameterList.h"
 
 using namespace eprosima::dds;
 
@@ -33,6 +34,10 @@ public:
 	WriterLiveliness* mp_writerLiveliness;
 	bool AutomaticLivelinessAssertion();
 	bool ManualByParticipantLivelinessAssertion();
+	CDRMessage_t m_msg;
+	InstanceHandle_t m_iHandle;
+	bool first;
+	GuidPrefix_t m_guidP;
 };
 
 } /* namespace rtps */

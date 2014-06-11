@@ -33,7 +33,8 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 					m_writer_cache((Endpoint*)this,historysize,payload_size),
 					m_pushMode(true),
 					m_cdrmessages(payload_size),
-					mp_listener(NULL)
+					mp_listener(NULL),
+					m_livelinessAsserted(false)
 {
 	init_header();
 	pDebugInfo("RTPSWriter created"<<endl)
@@ -106,7 +107,7 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 			m_writer_cache.release_Cache(change);
 			return false;
 		}
-
+		m_livelinessAsserted = true;
 		//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
 		unsent_change_add(change);
 		if(m_writer_cache.isFull() && mp_listener !=NULL)
