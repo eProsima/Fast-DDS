@@ -30,8 +30,10 @@ TimedEvent::TimedEvent(boost::asio::io_service* serv,boost::posix_time::millisec
 
 void TimedEvent::restart_timer()
 {
+
 	if(!m_isWaiting)
 	{
+
 		m_isWaiting = true;
 		timer->expires_from_now(m_interval_msec);
 		timer->async_wait(boost::bind(&TimedEvent::event,this,boost::asio::placeholders::error));

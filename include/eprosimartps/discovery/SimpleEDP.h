@@ -35,6 +35,7 @@ class DiscoveredParticipantData;
 
 /**
  * Simple EndpointDiscoveryProtocol class, implementation of the SEDP defined in the RTPS document.
+ * @ingroup DISCOVERYMODULE
  */
 class SimpleEDP: public eprosima::rtps::EndpointDiscoveryProtocol {
 	friend class SEDPPubListener;

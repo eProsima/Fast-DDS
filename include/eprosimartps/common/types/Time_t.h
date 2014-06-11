@@ -15,6 +15,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <iostream>
 namespace eprosima{
 namespace rtps{
 //!Structure Time_t, used to describe times.
@@ -62,11 +63,19 @@ static inline double Time_t2MicroSec(const Time_t& t)
 	return (Time_t2Seconds(t)*pow(10.0,6));
 }
 
+inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
+{
+	return output << t.seconds<<"."<<t.fraction;
+}
+
 #define TIME_ZERO(t){t.seconds=0;t.fraction=0;}
 #define TIME_INVALID(t){t.seconds=-1;t.fraction=0xffffffff;}
 #define TIME_INFINITE(t){t.seconds=0x7fffffff;t.fraction=0xffffffff;}
 
 typedef Time_t Duration_t;
+
+
+
 }
 }
 

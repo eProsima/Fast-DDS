@@ -33,8 +33,7 @@ public:
 };
 
 /**
- * QosList class.
- * Contains static methods to add Qos to a QosList_t structure.
+ * QosList class, that contains static methods to add Qos to a QosList_t structure.
  */
 class QosList
 {

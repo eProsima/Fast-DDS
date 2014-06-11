@@ -40,12 +40,13 @@ ResendDiscoveryDataPeriod::~ResendDiscoveryDataPeriod()
 
 void ResendDiscoveryDataPeriod::event(const boost::system::error_code& ec)
 {
+	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 		pDebugInfo("ResendDiscoveryData Period" << endl);
 		//FIXME: Change for liveliness protocol
 		mp_PDP->announceParticipantState(false);
-		m_isWaiting = false;
+
 		this->restart_timer();
 	}
 	else if(ec==boost::asio::error::operation_aborted)

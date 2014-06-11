@@ -19,6 +19,11 @@
 namespace eprosima {
 namespace dds {
 
+
+/**
+ * WriterQos class contains all the possible Qos that can be set for a determined Publisher/Writer.
+ * Although this values can be set and are transmitted in the Discovery the behaviour associated with them is yet to be implemented.
+ */
 class WriterQos{
 public:
 	WriterQos(){};

@@ -30,6 +30,7 @@ namespace rtps {
 
 /**
  * Class DiscoveredReaderData used by the SEDP.
+ * @ingroup DISCOVERYMODULE
  */
 class DiscoveredReaderData {
 public:

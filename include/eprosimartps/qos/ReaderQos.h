@@ -17,6 +17,10 @@
 namespace eprosima {
 namespace dds {
 
+/**
+ * ReaderQos class contains all the possible Qos that can be set for a determined Subscriber/Reader.
+ * Although this values can be set and are transmitted in the Discovery the behaviour associated with them is yet to be implemented.
+ */
 class ReaderQos{
 public:
 	ReaderQos(){};
