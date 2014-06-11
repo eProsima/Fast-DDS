@@ -24,6 +24,7 @@ namespace rtps {
 
 /**
  * Class DiscoveredData, contains static methods to convert between ParameterLists and DiscoveredData classes.
+ * @ingroup DISCOVERYMODULE
  */
 class DiscoveredData
 {

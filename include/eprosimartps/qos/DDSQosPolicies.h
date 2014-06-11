@@ -24,6 +24,9 @@ using namespace eprosima::rtps;
 namespace eprosima{
 namespace dds{
 
+/**
+ * QosPolicy is a base class for all the different Qos defined to the Writers and Readers.
+ */
 class QosPolicy{
 public:
 	QosPolicy():hasChanged(false),m_sendAlways(false){};

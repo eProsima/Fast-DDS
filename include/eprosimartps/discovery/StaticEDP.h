@@ -36,6 +36,7 @@ class DiscoveredParticipantData;
 
 /**
  * Static EndpointDiscoveryProtocol that loads the characteristics of the Endpoitns from a XML file.
+ * @ingroup DISCOVERYMODULE
  */
 class StaticEDP: public EndpointDiscoveryProtocol {
 public:
