@@ -41,7 +41,7 @@ namespace dds {
  * @{
  */
 
-typedef enum ParameterId_t	:uint16_t
+enum ParameterId_t	:uint16_t
 {
 	PID_PAD = 0x0000,
 			PID_SENTINEL = 0x0001,
@@ -96,7 +96,7 @@ typedef enum ParameterId_t	:uint16_t
 			PID_ENTITY_NAME = 0x0062,
 			PID_KEY_HASH = 0x0070,
 			PID_STATUS_INFO = 0x0071
-}ParameterId_t;
+};
 
 
 

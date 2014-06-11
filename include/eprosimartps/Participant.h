@@ -206,7 +206,7 @@ private:
 
 	//! Sending resources.
 	ResourceSend m_send_thr;
-
+	//! Event Resource
 	ResourceEvent m_event_thr;
 
 	//!Semaphore to wait for the listen thread creation.
