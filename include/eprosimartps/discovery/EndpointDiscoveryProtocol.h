@@ -31,6 +31,7 @@ class DiscoveredParticipantData;
 
 /**
  * Class EndpointDiscoveryProtocol, base class for the two different EDP classes created for this RTPS implementation.
+ * @ingroup DISCOVERYMODULE
  */
 class EndpointDiscoveryProtocol  {
 public:

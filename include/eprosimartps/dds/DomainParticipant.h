@@ -49,9 +49,8 @@ typedef std::pair<Subscriber*,SubscriberImpl*> SubscriberPair;
 typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
 
 /**
- * Class DomainParticipant, contains the static functions to create Publishers and Subscribers, as well as to register types. 
- * It can be directly accessed by the user. Is a singleton, so only one instance is ever created.
-  * @ingroup DDSMODULE
+ * Class DomainParticipantImpl, singleton that performs all operations permitted by the DomainParticipant class. It also stores information
+ * regarding all Participants created in this Domain.
  */
 class DomainParticipantImpl
 {
@@ -224,8 +223,11 @@ private:
 };
 
 
+
 /**
- * Public Interface of the DomainParticipant class. Contains static methods to create and remove Participants, Publishers and Subscribers.
+ * Class DomainParticipant, contains the static functions to create Publishers and Subscribers, as well as to register types.
+ * It can be directly accessed by the user, though only by static methods.
+  * @ingroup DDSMODULE
  */
 class RTPS_DllAPI DomainParticipant
 {

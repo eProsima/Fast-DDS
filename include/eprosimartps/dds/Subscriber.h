@@ -36,13 +36,11 @@ class SampleInfo_t;
 
 
 
+
 /**
- * Class Subscriber, contains the public API to perform actions when messages are received. This class should not be instantiated directly.
- * DomainParticipant class should be used to correctly initialize this element.
- * @ingroup DDSMODULE
- * @snippet dds_example.cpp ex_Subscriber
+ * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
  */
-class RTPS_DllAPI SubscriberImpl {
+class SubscriberImpl {
 public:
 	SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype);
 	virtual ~SubscriberImpl();
@@ -107,8 +105,13 @@ private:
 
 };
 
-
-class Subscriber
+/**
+ * Class Subscriber, contains the public API that allows the user to control the reception of messages.
+ * This class should not be instantiated directly. DomainParticipant class should be used to correctly create this element.
+ * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_Subscriber
+ */
+class RTPS_DllAPI Subscriber
 {
 public:
 	Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
