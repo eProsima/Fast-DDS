@@ -68,6 +68,7 @@ class RTPSReader;
 class RTPSWriter;
 
 class ParticipantDiscoveryProtocol;
+class WriterLiveliness;
 
 
 
@@ -241,6 +242,7 @@ private:
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
 	ParticipantDiscoveryProtocol* mp_PDP;
+	WriterLiveliness* mp_WL;
 
 	DiscoveryAttributes m_discovery;
 

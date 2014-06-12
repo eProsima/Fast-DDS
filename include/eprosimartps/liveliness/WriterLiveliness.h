@@ -41,9 +41,13 @@ public:
 
 	bool createEndpoints();
 
-	bool addWriter(RTPSWriter* W);
-	bool removeWriter(RTPSWriter* W);
-	bool updateWriter(RTPSWriter* W);
+	bool addLocalWriter(RTPSWriter* W);
+	bool removeLocalWriter(RTPSWriter* W);
+	bool updateLocalWriter(RTPSWriter* W);
+
+
+
+
 
 	double m_minAutomaticLivelinessLeaseDuration_MilliSec;
 	double m_minManualByParticipantLivelinessLeaseDuration_MilliSec;

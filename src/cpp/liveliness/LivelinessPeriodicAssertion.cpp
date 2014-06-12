@@ -32,7 +32,8 @@ LivelinessPeriodicAssertion::LivelinessPeriodicAssertion(WriterLiveliness* wLive
 
 LivelinessPeriodicAssertion::~LivelinessPeriodicAssertion()
 {
-
+	timer->cancel();
+		delete(timer);
 }
 
 void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
