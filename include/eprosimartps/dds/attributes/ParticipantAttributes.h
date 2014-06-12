@@ -67,6 +67,9 @@ public:
 	 */
 	uint32_t domainId;
 	Duration_t leaseDuration;
+	//FIXME: add resendDiscoveryParticipant, change name
+
+
 
 	SimpleEDPAttributes m_simpleEDP;
 
@@ -93,6 +96,8 @@ public:
 {
 		defaultSendPort = 10040;
 		name = "defaultParticipant";
+		sendSocketBufferSize = 8712;
+		listenSocketBufferSize = 17424;
 
 }
 	virtual ~ParticipantAttributes(){};
@@ -112,6 +117,9 @@ public:
 	 * THis will change in future releases.
 	 */
 	uint32_t defaultSendPort;
+
+	uint32_t sendSocketBufferSize;
+	uint32_t listenSocketBufferSize;
 
 	/**
 	 * Participant name.

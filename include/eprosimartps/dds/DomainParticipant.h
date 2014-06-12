@@ -195,21 +195,6 @@ public:
 		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getParticipantIdGain() * participantID;
 	}
 
-	uint32_t getReceiveSocketBufferSize() const {
-		return m_receive_socket_buffer_size;
-	}
-
-	void setReceiveSocketBufferSize(uint32_t receiveSocketBufferSize) {
-		m_receive_socket_buffer_size = receiveSocketBufferSize;
-	}
-
-	uint32_t getSendSocketBufferSize() const {
-		return m_send_socket_buffer_size;
-	}
-
-	void setSendSocketBufferSize(uint32_t sendSocketBufferSize) {
-		m_send_socket_buffer_size = sendSocketBufferSize;
-	}
 
 private:
 	uint32_t m_maxParticipantID;
@@ -237,8 +222,7 @@ private:
 	 */
 	uint32_t getNewId();
 
-	uint32_t m_send_socket_buffer_size;
-	uint32_t m_receive_socket_buffer_size;
+
 
 };
 
