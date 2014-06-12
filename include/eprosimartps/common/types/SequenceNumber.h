@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @fileSequenceNumber.h 	
+ * @file SequenceNumber.h
  */
 
 #ifndef RPTS_ELEM_SEQNUM_H_

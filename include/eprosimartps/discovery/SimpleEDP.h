@@ -70,7 +70,7 @@ public:
 	bool localWriterMatching(RTPSWriter* writer,bool first_time);
 	/**
 	 * Match a local Reader against all possible remote and local Readers with the same topic.
-	 * @param writer Pointer to the Reader.
+	 * @param reader Pointer to the Reader.
 	 * @param first_time Whether or not is the first time (to create the corresponding DRD object).
 	 * @return True if correct.
 	 */
@@ -84,8 +84,8 @@ public:
 	bool pairLocalWriterDiscoveredReader(RTPSWriter* writer,DiscoveredReaderData* rdata);
 	/**
 	 * Try to pair a local Reader with a specific DWD object.
-	 * @param writer Pointer to the reader.
-	 * @param rdata Pointer to the DWD object.
+	 * @param reader Pointer to the reader.
+	 * @param wdata Pointer to the DWD object.
 	 * @return True if matched.
 	 */
 	bool pairLocalReaderDiscoveredWriter(RTPSReader* reader,DiscoveredWriterData* wdata);
@@ -99,8 +99,8 @@ public:
 	bool updateWriterMatching(RTPSWriter* writer,DiscoveredReaderData* rdata);
 	/**
 	 * Method to update a specific matching when something changes (Qos, for example) or when the discovered writer is removed (NOT YET IMPLEMENTED).
-	 * @param writer Pointer to the reader.
-	 * @param rdata Pointer to the DWD object.
+	 * @param reader Pointer to the reader.
+	 * @param wdata Pointer to the DWD object.
 	 * @return True if correct.
 	 */
 	bool updateReaderMatching(RTPSReader* reader,DiscoveredWriterData* wdata);
@@ -125,7 +125,7 @@ public:
 	bool addNewLocalWriter(RTPSWriter* W);
 	/**
 	 * Add a new local Reader (create a DRD object) to communicate its existence to remote participants.
-	 * @param W Pointer to the Writer.
+	 * @param R Pointer to the Reader.
 	 * @return True if correct.
 	 */
 	bool addNewLocalReader(RTPSReader* R);
