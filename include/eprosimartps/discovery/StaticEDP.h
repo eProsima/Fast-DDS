@@ -58,7 +58,7 @@ public:
 	bool localWriterMatching(RTPSWriter* writer,bool first_time);
 	/**
 		 * Match a local Reader against all possible remote and local Readers with the same topic.
-		 * @param writer Pointer to the Reader.
+		 * @param reader Pointer to the Reader.
 		 * @param first_time Whether or not is the first time (to create the corresponding DRD object).
 		 * @return True if correct.
 		 */
@@ -96,7 +96,7 @@ public:
 	 * If the current participant is defined in the XML file, then the Publisher should be defined
 	 * as in the XML file. A warning is issued if this is not the case.
 	 * If the participant is not included, then the function returns true since no information is available.
-	 * @param[in] wparam PublisherAttributes to check agains the xml file.
+	 * @param[in] W Pointer to the Writer.
 	 * @return True if correct.
 	 */
 	bool checkLocalWriterCreation(RTPSWriter* W);
@@ -105,7 +105,7 @@ public:
 	 * If the current participant is defined in the XML file, then the Publisher should be defined
 	 * as in the XML file. A warning is issued if this is not the case.
 	 * If the participant is not included, then the function returns true since no information is available.
-	 * @param[in] rparam SubscriberAttributes to check agains the xml file.
+	 * @param[in] R Pointer to the Reader.
 	 * @return True if correct.
 	 */
 	bool checkLocalReaderCreation(RTPSReader* R);
