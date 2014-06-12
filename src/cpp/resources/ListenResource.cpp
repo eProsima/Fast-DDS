@@ -21,6 +21,10 @@
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include "eprosimartps/dds/DomainParticipant.h"
+
+using namespace eprosima::dds;
+
 
 
 using boost::asio::ip::udp;
@@ -201,6 +205,7 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 
 	}
 	//OPEN THE SOCKET:
+	m_listen_socket.set_option(boost::asio::socket_base::receive_buffer_size(DomainParticipantImpl::getInstance()->getReceiveSocketBufferSize()));
 	m_listen_socket.open(m_listen_endpoint.protocol());
 	if(isMulti)
 	{
