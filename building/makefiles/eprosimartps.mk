@@ -74,9 +74,10 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/writer/timedevent/PeriodicHeartbeat.cpp \
 		  $(BASEDIR)/src/cpp/writer/timedevent/NackResponseDelay.cpp \
-		  $(BASEDIR)/src/cpp/reader/timedevent/HeartbeatResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/writer/timedevent/NackSupressionDuration.cpp \
-		  $(BASEDIR)/src/cpp/discovery/ResendDiscoveryDataPeriod.cpp \
+		  $(BASEDIR)/src/cpp/reader/timedevent/HeartbeatResponseDelay.cpp \
+		  $(BASEDIR)/src/cpp/reader/timedevent/WriterProxyLiveliness.cpp \
+		  $(BASEDIR)/src/cpp/discovery/timedevent/ResendDiscoveryDataPeriod.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \
 		  $(BASEDIR)/src/cpp/discovery/EndpointDiscoveryProtocol.cpp \
@@ -92,7 +93,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  \
 		  $(BASEDIR)/src/cpp/liveliness/WriterLiveliness.cpp \
 		  $(BASEDIR)/src/cpp/liveliness/LivelinessPeriodicAssertion.cpp \
-		  $(BASEDIR)/src/cpp/liveliness/WriterLivelinessListener.cpp 
+		  $(BASEDIR)/src/cpp/liveliness/WriterLivelinessListener.cpp \
+		  $(BASEDIR)/src/cpp/discovery/timedevent/ParticipantLeaseDuration.cpp 
 
 #		  
 #		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \

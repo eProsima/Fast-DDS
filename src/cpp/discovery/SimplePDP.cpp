@@ -16,7 +16,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/discovery/ResendDiscoveryDataPeriod.h"
+#include "eprosimartps/discovery/timedevent/ResendDiscoveryDataPeriod.h"
 
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
@@ -110,6 +110,11 @@ bool SimplePDP::updateLocalParticipantData()
 	//FIXME: add correct builtIn Endpoints
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	if(m_discovery.use_WriterLivelinessProtocol)
+	{
+		mp_localDPData->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+		mp_localDPData->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	}
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)

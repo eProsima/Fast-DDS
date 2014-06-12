@@ -23,6 +23,8 @@
 #include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/liveliness/LivelinessPeriodicAssertion.h"
 
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
@@ -213,7 +215,17 @@ bool WriterLiveliness::updateLocalWriter(RTPSWriter* W)
 	return false;
 }
 
+bool WriterLiveliness::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
+{
+	uint32_t endp = pdata->m_availableBuiltinEndpoints;
+	uint32_t auxendp = endp;
+	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
+
+	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+
+	return true;
+}
 
 
 

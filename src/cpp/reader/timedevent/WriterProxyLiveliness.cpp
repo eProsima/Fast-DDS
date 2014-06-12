@@ -16,7 +16,9 @@
  */
 
 #include "eprosimartps/reader/timedevent/WriterProxyLiveliness.h"
-
+#include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 
