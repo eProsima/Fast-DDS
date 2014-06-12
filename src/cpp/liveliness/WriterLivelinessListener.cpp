@@ -75,7 +75,12 @@ void WriterLivelinessListener::onNewDataMessage()
 		{
 
 		}
+		else if (livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+		{
+
+		}
 	}
+	return;
 }
 
 
