@@ -184,6 +184,14 @@ public:
 		m_participantID = participantId;
 	}
 
+	uint32_t getListenSocketBufferSize() const {
+		return m_listen_socket_buffer_size;
+	}
+
+	uint32_t getSendSocketBufferSize() const {
+		return m_send_socket_buffer_size;
+	}
+
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -237,6 +245,9 @@ private:
 	DiscoveryAttributes m_discovery;
 
 	uint32_t m_participantID;
+
+	uint32_t m_send_socket_buffer_size;
+	uint32_t m_listen_socket_buffer_size;
 
 
 

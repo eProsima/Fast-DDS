@@ -53,8 +53,7 @@ DomainParticipantImpl::DomainParticipantImpl()
 	m_offsetd2 = 1;
 	m_offsetd3 = 11;
 	m_DomainId = 80;
-	m_send_socket_buffer_size = 8712;
-	m_receive_socket_buffer_size = 17424;
+
 }
 
 DomainParticipantImpl::~DomainParticipantImpl()
