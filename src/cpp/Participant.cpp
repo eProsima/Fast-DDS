@@ -73,17 +73,19 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 
 
 	m_discovery = PParam.discovery;
-
+	//START WRITER LIVELINESS PROTOCOL
+	if(m_discovery.use_WriterLivelinessProtocol)
+	{
+		mp_WL = new WriterLiveliness(this);
+	}
+	//START LIVELINESS PROTOCOL
 	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
 		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
 		mp_PDP->initPDP(PParam.discovery, this->getParticipantId());
 	}
 
-	if(m_discovery.use_WriterLivelinessProtocol)
-	{
-		mp_WL = new WriterLiveliness(this);
-	}
+
 }
 
 

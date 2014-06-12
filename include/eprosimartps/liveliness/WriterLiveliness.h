@@ -29,6 +29,7 @@ class StatefulReader;
 class RTPSWriter;
 class LivelinessPeriodicAssertion;
 class WriterProxy;
+class DiscoveredParticipantData;
 
 class WriterLiveliness {
 	friend class LivelinessPeriodicAssertion;
@@ -46,6 +47,7 @@ public:
 	bool updateLocalWriter(RTPSWriter* W);
 
 
+	bool assignRemoteEndpoints(DiscoveredParticipantData* pdata);
 
 
 
