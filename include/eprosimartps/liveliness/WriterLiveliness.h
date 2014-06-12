@@ -28,6 +28,7 @@ class StatefulWriter;
 class StatefulReader;
 class RTPSWriter;
 class LivelinessPeriodicAssertion;
+class WriterProxy;
 
 class WriterLiveliness {
 	friend class LivelinessPeriodicAssertion;

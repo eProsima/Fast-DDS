@@ -20,7 +20,7 @@
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/StatefulReader.h"
-
+#include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/liveliness/LivelinessPeriodicAssertion.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
@@ -43,7 +43,7 @@ WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
 }
 
 WriterLiveliness::~WriterLiveliness()
-n{
+{
 	// TODO Auto-generated destructor stub
 }
 
