@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file SimpleDPD.h
+ * @file SimplePDP.h
  *
  */
 
@@ -95,7 +95,7 @@ public:
 	bool localWriterMatching(RTPSWriter* W,bool first_time);
 	/**
 	 * Call the same method in the EDP.
-	 * @param W Pointer to the Reader.
+	 * @param R Pointer to the Reader.
 	 * @param first_time Bool indicating if is the first time.
 	 * @return True if matched.
 	 */
