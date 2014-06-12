@@ -76,7 +76,7 @@ bool LivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 		if(this->mp_writerLiveliness->mp_builtinParticipantMessageWriter->new_change(ALIVE,NULL,&change))
 		{
 			change->instanceHandle = m_iHandle;
-			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = 0;
 			//FIXME: PREPARE HISTORYCACHE TO SUPPORT DIFFERENT HISTORYKIND.
 			mp_writerLiveliness->mp_builtinParticipantMessageWriter->removeMinSeqCacheChangeByKey(m_iHandle);
@@ -106,7 +106,7 @@ bool LivelinessPeriodicAssertion::ManualByParticipantLivelinessAssertion()
 		if(this->mp_writerLiveliness->mp_builtinParticipantMessageWriter->new_change(ALIVE,NULL,&change))
 		{
 			change->instanceHandle = m_iHandle;
-			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = 0;
 
 			//FIXME: PREPARE HISTORYCACHE TO SUPPORT DIFFERENT HISTORYKIND.
@@ -117,6 +117,8 @@ bool LivelinessPeriodicAssertion::ManualByParticipantLivelinessAssertion()
 	}
 	return false;
 }
+
+
 
 
 } /* namespace rtps */

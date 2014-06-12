@@ -23,7 +23,7 @@
 #include "eprosimartps/dds/attributes/SubscriberAttributes.h"
 
 #include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/timedevent/HeartbeatResponseDelay.h"
+#include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
 
 using namespace eprosima::dds;
 

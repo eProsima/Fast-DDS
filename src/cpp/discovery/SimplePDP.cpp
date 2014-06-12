@@ -16,7 +16,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
+#include "eprosimartps/discovery/ResendDiscoveryDataPeriod.h"
 
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/StatelessWriter.h"

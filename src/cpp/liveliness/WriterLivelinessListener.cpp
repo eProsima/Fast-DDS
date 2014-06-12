@@ -70,7 +70,11 @@ void WriterLivelinessListener::onNewDataMessage()
 			pDebugInfo(MAGENTA<<"Message from own participant, ignoring"<<DEF<<endl;);
 			return;
 		}
+		// Update liveliness depending on Key
+		if(livelinessKind == AUTOMATIC_LIVELINESS_QOS)
+		{
 
+		}
 	}
 }
 

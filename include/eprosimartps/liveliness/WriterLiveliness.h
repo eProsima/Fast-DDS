@@ -54,6 +54,9 @@ private:
 	LivelinessPeriodicAssertion* mp_ManualByParticipantLivelinessAssertion;
 	std::vector<RTPSWriter*> m_AutomaticLivelinessWriters;
 	std::vector<RTPSWriter*> m_ManualByParticipantLivelinessWriters;
+
+	std::vector<WriterProxy*> m_remoteAutomaticLivelinessWriters;
+	std::vector<WriterProxy*> m_remoteManualByParticipantLivelinessWriters;
 };
 
 } /* namespace rtps */
