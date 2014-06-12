@@ -42,7 +42,8 @@ WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
 
 }
 
-WriterLiveliness::~WriterLiveliness() {
+WriterLiveliness::~WriterLiveliness()
+n{
 	// TODO Auto-generated destructor stub
 }
 

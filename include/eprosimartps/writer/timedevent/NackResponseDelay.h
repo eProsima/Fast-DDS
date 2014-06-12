@@ -7,14 +7,16 @@
  *************************************************************************/
 
 /**
- * @file NackSupressionDuration.h
+ * @file NackResponseDelay.h
  *
  */
 
-#ifndef NACKSUPRESSIONDURATION_H_
-#define NACKSUPRESSIONDURATION_H_
+#ifndef NACKRESPONSEDELAY_H_
+#define NACKRESPONSEDELAY_H_
 
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/utils/TimedEvent.h"
+#include "eprosimartps/writer/RTPSMessageGroup.h"
+
 
 namespace eprosima {
 namespace rtps {
@@ -23,20 +25,21 @@ class StatefulWriter;
 class ReaderProxy;
 
 /**
- * NackSupressionDuration class, used to avoid too "recent" NACK messages.
+ * NackResponseDelay class use to delay the response to an NACK message.
  * @ingroup WRITERMODULE
  */
-class NackSupressionDuration:public TimedEvent {
+class NackResponseDelay:public TimedEvent {
 public:
-	virtual ~NackSupressionDuration();
-	NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
+	NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
+	virtual ~NackResponseDelay();
 
 	void event(const boost::system::error_code& ec);
 
 	ReaderProxy* mp_RP;
+	RTPSMessageGroup_t m_cdrmessages;
 };
 
 } /* namespace dds */
 } /* namespace eprosima */
 
-#endif /* NACKSUPRESSIONDURATION_H_ */
+#endif /* NACKRESPONSEDELAY_H_ */

@@ -12,7 +12,7 @@
  */
 
 
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/utils/TimedEvent.h"
 #include <boost/asio/placeholders.hpp>
 
 

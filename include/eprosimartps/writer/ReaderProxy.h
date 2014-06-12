@@ -28,9 +28,9 @@
 
 #include "eprosimartps/common/CacheChange.h"
 
-#include "eprosimartps/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/timedevent/NackResponseDelay.h"
-#include "eprosimartps/timedevent/NackSupressionDuration.h"
+#include "eprosimartps/writer/timedevent/PeriodicHeartbeat.h"
+#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
+#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 
 
 namespace eprosima {

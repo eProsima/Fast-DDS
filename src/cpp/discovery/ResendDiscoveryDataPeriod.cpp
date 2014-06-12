@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
+#include "eprosimartps/discovery/ResendDiscoveryDataPeriod.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
 #include "eprosimartps/utils/RTPSLog.h"

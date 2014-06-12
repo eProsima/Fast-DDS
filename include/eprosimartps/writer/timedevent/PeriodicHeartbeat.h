@@ -14,7 +14,7 @@
 #ifndef PERIODICHEARTBEAT_H_
 #define PERIODICHEARTBEAT_H_
 
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/utils/TimedEvent.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 
 namespace eprosima {

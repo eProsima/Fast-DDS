@@ -15,7 +15,7 @@
 #define LIVELINESSPERIODICASSERTION_H_
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/utils/TimedEvent.h"
 #include "eprosimartps/qos/ParameterList.h"
 
 using namespace eprosima::dds;
