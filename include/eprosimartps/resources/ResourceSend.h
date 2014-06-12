@@ -30,6 +30,7 @@ namespace eprosima {
 namespace rtps {
 
 struct CDRMessage_t;
+class ParticipantImpl;
 
 /**
  * Class ResourceSend, used to manage the send operation. In future version it will contain the grouping
@@ -39,7 +40,7 @@ struct CDRMessage_t;
 class ResourceSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
 public:
-	ResourceSend();
+	ResourceSend(ParticipantImpl* par);
 	virtual ~ResourceSend();
 	/**
 	 * Send a CDR message syncrhonously. No waiting is required.
@@ -64,6 +65,7 @@ private:
 	boost::asio::ip::udp::endpoint m_send_endpoint;
 	size_t m_bytes_sent;
 	bool m_send_next;
+	ParticipantImpl* mp_participant;
 
 };
 

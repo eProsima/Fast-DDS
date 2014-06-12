@@ -74,6 +74,7 @@ public:
 	 * @brief Create a Publisher in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param WParam Writer Parameters to create a Publisher.
+	 * @param plisten Pointer to the PublisherListener (optional).
 	 * @return Pointer to the publisher. 
 	 */
     Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL);
@@ -81,6 +82,7 @@ public:
 	 * @brief Create a Subscriber in the given Participant. 
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
+	 * @param slisten Pointer to the SubscriberListener (optional).
 	 * @return Pointer to the subscriber. 
 	 */
     Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL);
@@ -220,6 +222,8 @@ private:
 	 */
 	uint32_t getNewId();
 
+
+
 };
 
 
@@ -245,6 +249,7 @@ public:
 	 * @brief Create a Publisher in the given Participant.
 	 * @param p Pointer to the Participant.
 	 * @param WParam Writer Parameters to create a Publisher.
+	 * @param plisten Pointer to the PublisherListener (optional).
 	 * @return Pointer to the publisher.
 	 */
 	static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL)
@@ -255,6 +260,7 @@ public:
 	 * @brief Create a Subscriber in the given Participant.
 	 * @param p Pointer to the Participant.
 	 * @param RParam Reader Parameters to create a Publisher.
+	 * @param slisten Pointer to the SubscriberListener (optional).
 	 * @return Pointer to the subscriber.
 	 */
 	static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL)

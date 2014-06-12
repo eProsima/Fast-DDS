@@ -42,16 +42,18 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 							m_participantName(PParam.name),
 							m_guid(guidP,c_EntityId_Participant),
+							m_send_thr(this),
 							m_event_thr(this),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
 							mp_PDP(NULL),
-							m_participantID(ID)
+							m_participantID(ID),
+							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
+							m_listen_socket_buffer_size(PParam.listenSocketBufferSize)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	m_send_thr.initSend(loc);
-
 	m_event_thr.init_thread();
 
 	if(m_defaultUnicastLocatorList.empty())
