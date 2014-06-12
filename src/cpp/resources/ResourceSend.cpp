@@ -15,7 +15,9 @@
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include "eprosimartps/dds/DomainParticipant.h"
 
+using namespace eprosima::dds;
 
 using boost::asio::ip::udp;
 
@@ -61,6 +63,7 @@ bool ResourceSend::initSend(const Locator_t& loc)
 //		m_sendLocator.address[14] = 0;
 //		m_sendLocator.address[15] = 1;
 //	}
+	m_send_socket.set_option(boost::asio::socket_base::send_buffer_size(DomainParticipantImpl::getInstance()->getSendSocketBufferSize()));
 	m_send_socket.open(boost::asio::ip::udp::v4());
 	//m_send_socket.set_option( boost::asio::ip::enable_loopback( true ) );
 	bool not_bind = true;
