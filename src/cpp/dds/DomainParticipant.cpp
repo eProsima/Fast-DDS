@@ -53,6 +53,7 @@ DomainParticipantImpl::DomainParticipantImpl()
 	m_offsetd2 = 1;
 	m_offsetd3 = 11;
 	m_DomainId = 80;
+
 }
 
 DomainParticipantImpl::~DomainParticipantImpl()
