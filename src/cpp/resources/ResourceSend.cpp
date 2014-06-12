@@ -61,8 +61,9 @@ bool ResourceSend::initSend(const Locator_t& loc)
 //		m_sendLocator.address[14] = 0;
 //		m_sendLocator.address[15] = 1;
 //	}
-	m_send_socket.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));
+
 	m_send_socket.open(boost::asio::ip::udp::v4());
+	m_send_socket.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));
 	//m_send_socket.set_option( boost::asio::ip::enable_loopback( true ) );
 	bool not_bind = true;
 	while(not_bind)
