@@ -9,7 +9,7 @@ eProsima develops new features and plug-ins for DDS, interoperability tools, and
 ## Release 0.4
 * New and improved API.
 * Simple Endpoint Discovery Protocol.
-* Latency and Throughput Tests included.
+* Latency, Throughput and Reliable Communication Tests included.
 
 ## Release 0.3.1
 
