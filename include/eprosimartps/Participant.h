@@ -72,8 +72,7 @@ class ParticipantDiscoveryProtocol;
 
 
 /**
- * @class Participant
- * @brief Class Participant, it contains all the entities and allows the creation and removal of writers and readers. It manages the send and receive threads.
+ * @brief Class ParticipantImpl, it contains the private implementation of the Participant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup MANAGEMENTMODULE
  */
 class ParticipantImpl
@@ -83,52 +82,35 @@ public:
 	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID);
 	virtual ~ParticipantImpl();
 
-//	/**
-//	 * Create a StatelessWriter from a parameter structure.
-//	 * @param[out] SWriter Pointer to the stateless writer.
-//	 * @param[in] Wparam Parameters to use in the creation.
-//	 * @param[in] payload_size Size of the payload in this writer.
-//	 * @return True if correct.
-//	 */
-//	bool createStatelessWriter(StatelessWriter** SWriter, PublisherAttributes& Wparam,
-//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-//	/**
-//	 * Create a StatefulWriter from a parameter structure.
-//	 * @param[out] SWriter Pointer to the stateful writer.
-//	 * @param[in] Wparam Parameters to use in the creation.
-//	 * @param[in] payload_size Size of the payload in this writer.
-//	 * @return True if correct.
-//	 */
-//	bool createStatefulWriter(StatefulWriter** SWriter,  PublisherAttributes& Wparam,
-//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-//
-//	bool initWriter(RTPSWriter* W,bool isBuiltin);
-//
-//	/**
-//	 * Create a StatelessReader from a parameter structure and add it to the participant.
-//	 * @param[out] SReader Pointer to the stateless reader.
-//	 * @param[in] RParam Parameters to use in the creation.
-//	 * @param[in] payload_size Size of the payload associated with this Reader.
-//	 * @return True if correct.
-//	 */
-//	bool createStatelessReader(StatelessReader** SReader, SubscriberAttributes& RParam,
-//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-//	/**
-//	 * Create a StatefulReader from a parameter structure and add it to the participant.
-//	 * @param[out] SReader Pointer to the stateful reader.
-//	 * @param[in] RParam Parameters to use in the creation.
-//	 * @param[in] payload_size Size of the payload associated with this Reader.
-//	 * @return True if correct.
-//	 */
-//	bool createStatefulReader(StatefulReader** SReader, SubscriberAttributes& RParam,
-//			uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-//
-//	bool initReader(RTPSReader* R,bool isBuiltin);
 
+	/**
+	 * Create a Reader in this Participant.
+	 * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
+	 * @param RParam SubscriberAttributes to define the Reader.
+	 * @param payload_size Maximum payload size.
+	 * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+	 * @param kind STATEFUL or STATELESS.
+	 * @param ptype Pointer to the DDSTOpicDataType object (optional).
+	 * @param slisten Pointer to the SubscriberListener object (optional).
+	 * @param entityId EntityId assigned to the Reader.
+	 * @return True if the Reader was correctly created.
+	 */
 	bool createReader(RTPSReader** Reader,SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 			DDSTopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-	bool createWriter(RTPSWriter** Reader,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
-				DDSTopicDataType* ptype = NULL,PublisherListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+	/**
+	 * Create a Writer in this Participant.
+	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
+	 * @param param PublisherAttributes to define the Writer.
+	 * @param payload_size Maximum payload size.
+	 * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+	 * @param kind STATELESS or STATEFUL
+	 * @param ptype Pointer to the DDSTOpicDataType object (optional).
+	 * @param plisten Pointer to the PublisherListener object (optional).
+	 * @param entityId EntityId assigned to the Writer.
+	 * @return True if the Writer was correctly created.
+	 */
+	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
+				DDSTopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
 	bool assignLocator2ListenResources(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
@@ -137,7 +119,7 @@ public:
 	/**
 	 * Remove Endpoint from the participant. It closes all entities related to them that are no longer in use.
 	 * For example, if a ResourceListen is not useful anymore the thread is closed and the instance removed.
-	 * @param[in] endpoint Pointer to the Endpoint that is going to be removed.
+	 * @param[in] p_endpoint Pointer to the Endpoint that is going to be removed.
 	 * @param[in] type Char indicating if it is Reader ('R') or Writer ('W')
 	 * @return True if correct.
 	 */
@@ -155,17 +137,23 @@ public:
 
 	//!Used for tests
 	void loose_next_change(){m_send_thr.loose_next();};
-	//! Announce ParticipantState
+	//! Announce ParticipantState (force the sending of a DPD message.)
 	void announceParticipantState();
-
+	//!Stop the Participant Announcement (used in tests to avoid multiple packets being send)
 	void stopParticipantAnnouncement();
-
+	//!Reset to timer to make periodic Participant Announcements.
 	void resetParticipantAnnouncement();
-
+	/**
+	 * Get the GUID_t of the Participant.
+	 * @return GUID_t of the Participant.
+	 */
 	const GUID_t& getGuid() const {
 		return m_guid;
 	}
-
+	/**
+	 * Get the Participant Name.
+	 * @return String with the participant Name.
+	 */
 	const std::string& getParticipantName() const {
 		return m_participantName;
 	}
@@ -230,6 +218,7 @@ private:
 	 * Assign a given Endpoint to one of the current listen thread or create a new one.
 	 * @param[in] endpoint Pointer to the Endpoint to add.
 	 * @param[in] type Type of the Endpoint (R or W)(Reader or Writer).
+	 * @param[in] isBuiltin Indicates if the endpoint is Builtin or not.
 	 * @return True if correct.
 	 */
 	bool assignEnpointToListenResources(Endpoint* endpoint,char type,bool isBuiltin);
@@ -238,6 +227,7 @@ private:
 	 * @param[in] loc Locator to use.
 	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
 	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
+	 * @param[in] isBuiltin Indicates that the endpoint is builtin.
 	 * @return True if correct.
 	 */
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
@@ -251,7 +241,10 @@ private:
 
 
 };
-
+/**
+ * @brief Class Participant, contains the public API for a Participant.
+ * @ingroup MANAGEMENTMODULE
+ */
 class RTPS_DllAPI Participant
 {
 public:
