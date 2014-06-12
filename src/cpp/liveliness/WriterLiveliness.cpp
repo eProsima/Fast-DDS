@@ -96,7 +96,7 @@ bool WriterLiveliness::createEndpoints()
 	return true;
 }
 
-bool WriterLiveliness::addWriter(RTPSWriter* W)
+bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 {
 	double wLeaseDurationMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.lease_duration));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
@@ -146,27 +146,21 @@ bool WriterLiveliness::addWriter(RTPSWriter* W)
 
 typedef std::vector<RTPSWriter*>::iterator t_WIT;
 
-bool WriterLiveliness::removeWriter(RTPSWriter* W)
+bool WriterLiveliness::removeLocalWriter(RTPSWriter* W)
 {
 	t_WIT wToEraseIt;
 	bool found = false;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
 	{
+		m_minAutomaticLivelinessLeaseDuration_MilliSec = std::numeric_limits<double>::max();
 		for(t_WIT it= m_AutomaticLivelinessWriters.begin();it!=m_AutomaticLivelinessWriters.end();++it)
 		{
 			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.lease_duration));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;
-				if(m_minAutomaticLivelinessLeaseDuration_MilliSec < mintimeWIT)
-				{
-					m_AutomaticLivelinessWriters.erase(it);
-					return true;
-				}
-				else
-				{
-					wToEraseIt = it;
-				}
+				wToEraseIt = it;
+				continue;
 			}
 			if(m_minAutomaticLivelinessLeaseDuration_MilliSec > mintimeWIT)
 			{
@@ -176,26 +170,23 @@ bool WriterLiveliness::removeWriter(RTPSWriter* W)
 		if(found)
 		{
 			m_AutomaticLivelinessWriters.erase(wToEraseIt);
-			mp_AutomaticLivelinessAssertion->update_interval_millisec(m_minAutomaticLivelinessLeaseDuration_MilliSec);
+			if(m_AutomaticLivelinessWriters.size()>0)
+				mp_AutomaticLivelinessAssertion->update_interval_millisec(m_minAutomaticLivelinessLeaseDuration_MilliSec);
+			else
+				delete(mp_AutomaticLivelinessAssertion);
 		}
 	}
 	else if(W->getQos().m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 	{
+		m_minManualByParticipantLivelinessLeaseDuration_MilliSec = std::numeric_limits<double>::max();
 		for(t_WIT it= m_ManualByParticipantLivelinessWriters.begin();it!=m_ManualByParticipantLivelinessWriters.end();++it)
 		{
 			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.lease_duration));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;
-				if(m_minManualByParticipantLivelinessLeaseDuration_MilliSec < mintimeWIT)
-				{
-					m_ManualByParticipantLivelinessWriters.erase(it);
-					return true;
-				}
-				else
-				{
-					wToEraseIt = it;
-				}
+				wToEraseIt = it;
+				continue;
 			}
 			if(m_minManualByParticipantLivelinessLeaseDuration_MilliSec > mintimeWIT)
 			{
@@ -216,11 +207,15 @@ bool WriterLiveliness::removeWriter(RTPSWriter* W)
 		return false;
 }
 
-bool WriterLiveliness::updateWriter(RTPSWriter* W)
+bool WriterLiveliness::updateLocalWriter(RTPSWriter* W)
 {
 	pError("NOT IMPLEMENTED, WriterLiveliness CANNOT BE UPDATE YET"<<endl);
 	return false;
 }
+
+
+
+
 
 
 } /* namespace rtps */

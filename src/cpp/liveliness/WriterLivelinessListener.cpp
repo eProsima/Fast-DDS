@@ -36,6 +36,8 @@ WriterLivelinessListener::~WriterLivelinessListener()
 
 }
 
+typedef std::vector<WriterProxy*>::iterator WPIT;
+
 void WriterLivelinessListener::onNewDataMessage()
 {
 	boost::lock_guard<Endpoint> guard(*(Endpoint*)this->mp_WriterLiveliness->mp_builtinParticipantMessageReader);
@@ -73,11 +75,21 @@ void WriterLivelinessListener::onNewDataMessage()
 		// Update liveliness depending on Key
 		if(livelinessKind == AUTOMATIC_LIVELINESS_QOS)
 		{
-
+			for(WPIT it = this->mp_WriterLiveliness->m_remoteAutomaticLivelinessWriters.begin();
+					it!=this->mp_WriterLiveliness->m_remoteAutomaticLivelinessWriters.end();++it)
+			{
+				if((*it)->param.remoteWriterGuid.guidPrefix == guidP)
+					(*it)->assertLiveliness();
+			}
 		}
 		else if (livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 		{
-
+			for(WPIT it = this->mp_WriterLiveliness->m_remoteManualByParticipantLivelinessWriters.begin();
+					it!=this->mp_WriterLiveliness->m_remoteManualByParticipantLivelinessWriters.end();++it)
+			{
+				if((*it)->param.remoteWriterGuid.guidPrefix == guidP)
+					(*it)->assertLiveliness();
+			}
 		}
 	}
 	return;

@@ -45,6 +45,8 @@ public:
 	 * manually through the addReaderLocator, addReaderProxy, addWriterProxy methods.
 	 */
 	bool use_SIMPLE_ParticipantDiscoveryProtocol;
+
+	bool use_WriterLivelinessProtocol;
 	/**
 	 * If set to true, SimpleEDP would be used.
 	 * This is NOT included in release 0.3.
@@ -68,20 +70,18 @@ public:
 	uint32_t domainId;
 	Duration_t leaseDuration;
 	//FIXME: add resendDiscoveryParticipant, change name
-
-
-
 	SimpleEDPAttributes m_simpleEDP;
 
 	DiscoveryAttributes()
 	{
-		use_SIMPLE_ParticipantDiscoveryProtocol = false;
-		use_SIMPLE_EndpointDiscoveryProtocol = false;
+		use_SIMPLE_ParticipantDiscoveryProtocol = true;
+		use_SIMPLE_EndpointDiscoveryProtocol = true;
 		use_STATIC_EndpointDiscoveryProtocol = false;
 		resendDiscoveryParticipantDataPeriod.seconds = 30;
 		m_staticEndpointXMLFilename = "/home/grcanosa/workspace/eRTPS/utils/pcTests/StaticParticipantInfo.xml";
 		domainId = 80;
 		leaseDuration.seconds = 100;
+		use_WriterLivelinessProtocol = true;
 	};
 	virtual ~DiscoveryAttributes(){};
 };

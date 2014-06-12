@@ -27,16 +27,19 @@ WriterProxy::~WriterProxy()
 }
 
 WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
-		const SubscriberTimes& times,StatefulReader* SR) :
+		Duration_t heartbeatResponse,
+		StatefulReader* SR) :
 		mp_SFR(SR),
 		param(WPparam),
 		m_acknackCount(0),
 		m_lastHeartbeatCount(0),
 		m_isMissingChangesEmpty(true),
-		m_heartbeatResponse(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatResponseDelay)*1e-3))),
+		m_heartbeatResponse(this,boost::posix_time::milliseconds(Time_t2MilliSec(heartbeatResponse))),
+		m_writerProxyLiveliness(this,boost::posix_time::milliseconds(Time_t2MilliSec(WPparam.leaseDuration))),
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
-		m_hasMinAvailableSeqNumChanged(false)
+		m_hasMinAvailableSeqNumChanged(false),
+		m_livelinessAsserted(true)
 
 {
 	m_changesFromW.clear();
