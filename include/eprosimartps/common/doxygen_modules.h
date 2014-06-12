@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file rtps_doxygen_modules.h	
+ * @file doxygen_modules.h
  */
 
 #ifndef RTPS_DOXYGEN_MODULES_H_
