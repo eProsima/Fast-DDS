@@ -37,11 +37,10 @@ namespace dds {
 
 class DDSTopicDataType;
 class PublisherListener;
+
+
 /**
- * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
- * DomainParticipant class should be used to correctly initialize this element.
- * @ingroup DDSMODULE
- * @snippet dds_example.cpp ex_Publisher
+ * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
  */
 class PublisherImpl {
 public:
@@ -139,6 +138,13 @@ private:
 
 };
 
+
+/**
+ * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
+ * DomainParticipant class should be used to correctly initialize this element.
+ * @ingroup DDSMODULE
+ * @snippet dds_example.cpp ex_Publisher
+ */
 class RTPS_DllAPI Publisher{
 public:
 	Publisher(PublisherImpl* pin):mp_impl(pin){};

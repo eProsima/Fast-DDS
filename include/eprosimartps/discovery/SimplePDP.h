@@ -33,6 +33,7 @@ class ResendDiscoveryDataPeriod;
 
 /**
  * SimpleParticipantDiscoveryProtocol class (SimplePDP), used for the Participant Discovery.
+ * @ingroup DISCOVERYMODULE
  */
 class SimplePDP: public eprosima::rtps::ParticipantDiscoveryProtocol {
 public:

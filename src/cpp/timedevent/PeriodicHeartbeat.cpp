@@ -44,11 +44,14 @@ PeriodicHeartbeat::PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::millis
 
 void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 {
+	pDebugInfo("TimedEvent: PeriodicHeartbeat"<<endl;);
+	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 		pDebugInfo("Sending Heartbeat"<<endl);
 		std::vector<ChangeForReader_t*> unack;
 		mp_RP->unacked_changes(&unack);
+		//cout << "Unacked changes: "<< unack.size()<<endl;
 		if(!unack.empty())
 		{
 			SequenceNumber_t first,last;
@@ -65,10 +68,12 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			for(lit = mp_RP->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
 				mp_RP->mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
 
-			this->m_isWaiting = false;
+
+
 			//Reset TIMER
 			this->restart_timer();
 		}
+
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{

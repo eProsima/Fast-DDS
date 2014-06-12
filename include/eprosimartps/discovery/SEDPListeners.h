@@ -31,6 +31,7 @@ class SimpleEDP;
 
 /**
  * SEDP Publications Listener, used to define the behavior when a new DWriterData is received.
+ * @ingroup DISCOVERYMODULE
  */
 class SEDPPubListener: public SubscriberListener {
 public:
@@ -43,6 +44,7 @@ public:
 };
 /**
  * SEDP Subscription Listener, used to define the behavior when a new DReaderData is received.
+ * @ingroup DISCOVERYMODULE
  */
 class SEDPSubListener: public SubscriberListener {
 public:
@@ -56,6 +58,7 @@ public:
 
 /**
  * Class SEDPListeners that contains two different Listeners for the Publications and Subscriptions Readers.
+ * @ingroup DISCOVERYMODULE
  */
 class SEDPListeners
 {

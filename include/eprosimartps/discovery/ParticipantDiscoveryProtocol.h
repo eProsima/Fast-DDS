@@ -30,6 +30,7 @@ class RTPSReader;
 
 /**
  * Base class of the ParticipantDiscoveryProtocol. Currently only SimplePDP is implemented, please refer to this class for further documentation.
+ * @ingroup DISCOVERYMODULE
  */
 class ParticipantDiscoveryProtocol {
 public:
