@@ -31,7 +31,6 @@ EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 
 EPROSIMARTPS_SRC_CPPFILES= \
  	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
-		  $(BASEDIR)/src/cpp/utils/Exception.cpp \
 		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
 		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
