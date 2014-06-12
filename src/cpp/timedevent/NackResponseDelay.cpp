@@ -48,6 +48,7 @@ bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)
 
 void NackResponseDelay::event(const boost::system::error_code& ec)
 {
+	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 		pDebugInfo("NackResponse:event:"<<endl;);
@@ -84,7 +85,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 						&mp_RP->m_param.unicastLocatorList,
 						&mp_RP->m_param.multicastLocatorList);
 		}
-		m_isWaiting = false;
+
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 			{

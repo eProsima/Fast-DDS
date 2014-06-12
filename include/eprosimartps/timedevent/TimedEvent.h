@@ -38,6 +38,8 @@ public:
 	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
 	//! Pure abstract virtual method used to perform the event.
 	virtual void event(const boost::system::error_code& ec)=0;
+
+
 protected:
 	//!Pointer to the timer.
 	boost::asio::deadline_timer* timer;
@@ -52,6 +54,9 @@ public:
 	//!Stop the timer
 	void stop_timer();
 
+	const boost::posix_time::milliseconds& getIntervalMsec() const {
+		return m_interval_msec;
+	}
 };
 
 

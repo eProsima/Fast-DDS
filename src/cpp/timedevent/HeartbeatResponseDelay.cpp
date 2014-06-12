@@ -40,6 +40,7 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_ti
 
 void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 {
+	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 		pDebugInfo("HeartbeatResponse:event: Sending ACKNACK"<<endl);
@@ -84,7 +85,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
 
 		}
-		m_isWaiting = false;
+
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{

@@ -109,7 +109,9 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	chfw.change = change;
 	chfw.is_relevant = true;
 	chfw.status = RECEIVED;
+
 	add_unknown_changes(change->sequenceNumber);
+
 	m_changesFromW.push_back(chfw);
 
 	return true;
@@ -253,6 +255,10 @@ SequenceNumber_t WriterProxy::max_seq_num()
 	{
 		boost::lock_guard<WriterProxy> guard(*this);
 		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
+	//	cout << "Calculating max of: ";
+//		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+//			cout << it->change->sequenceNumber.low << " ";
+//		cout << endl;
 		std::vector<ChangeFromWriter_t>::iterator it = m_changesFromW.end()-1;
 		seq = it->change->sequenceNumber;
 	}
@@ -264,16 +270,16 @@ SequenceNumber_t WriterProxy::max_seq_num()
 }
 
 
-bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
+bool WriterProxy::add_unknown_changes(SequenceNumber_t& seqin)
 {
-
+	SequenceNumber_t seq(seqin);
 	boost::lock_guard<WriterProxy> guard(*this);
 	uint32_t n_to_add;
 	SequenceNumber_t maxseqNum(max_seq_num());
+
 	if((maxseqNum+1).to64long() < (seq).to64long()) //if the maximum plus one is less than our seqNum we need to add
 	{
 		n_to_add = (uint32_t)(seq.to64long() - maxseqNum.to64long() -1);
-		pDebugInfo("WriterProxy:add_unknown_changes: up to: "<<seq.to64long() << " || adding " << n_to_add << " changes."<<endl;);
 		while(n_to_add>0)
 		{
 			CacheChange_t* ch = mp_SFR->reserve_Cache();
@@ -282,6 +288,7 @@ bool WriterProxy::add_unknown_changes(SequenceNumber_t& seq)
 			chfw.change = ch;
 			chfw.status = UNKNOWN;
 			chfw.is_relevant = false;
+			pDebugInfo("WriterProxy:add_unknown_changes: "<<chfw.change->sequenceNumber.to64long()<<endl);
 			m_changesFromW.push_back(chfw);
 			n_to_add--;
 		}

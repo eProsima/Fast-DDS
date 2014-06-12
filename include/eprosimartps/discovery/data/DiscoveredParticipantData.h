@@ -43,6 +43,7 @@ namespace rtps {
 
 /**
  * Class DiscoveredParticipantData used by the SPDP.
+ * @ingroup DISCOVERYMODULE
  */
 class DiscoveredParticipantData {
 public:
