@@ -481,6 +481,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 							if(!WP->m_isMissingChangesEmpty)
 								WP->m_heartbeatResponse.restart_timer();
 						}
+						//FIXME: livelinessFlag
+//						if(livelinessFlag && WP->param.livelinessKind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+//							WP->assertLiveliness();
 						//TODOG: Livelinessflag behaviour
 					}
 				}

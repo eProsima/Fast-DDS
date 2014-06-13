@@ -21,6 +21,8 @@
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/writer/StatefulWriter.h"
 
 #include "eprosimartps/utils/eClock.h"
 
@@ -369,6 +371,71 @@ void SimplePDP::stopParticipantAnnouncement()
 void SimplePDP::resetParticipantAnnouncement()
 {
 	m_resendDataTimer->restart_timer();
+}
+
+typedef std::vector<DiscoveredParticipantData*>::iterator TDPDit;
+
+bool SimplePDP::removeRemoteParticipant(const GUID_t& guid)
+{
+	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
+	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
+	TDPDit dpdit;
+	bool found = false;
+	for(dpdit= this->m_discoveredParticipants.begin();
+			dpdit!=this->m_discoveredParticipants.end();++dpdit)
+	{
+		if((*dpdit)->m_guidPrefix == guid.guidPrefix)
+		{
+			found = true;
+			break;
+		}
+	}
+	if(!found)
+		return false;
+	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
+	{
+		dynamic_cast<SimpleEDP*>(this->mp_EDP)->removeRemoteEndpoints(guid);
+	}
+	//Now We Remove the remote Readers and Writers from our local Endpoints:
+	for(std::vector<DiscoveredWriterData*>::iterator wit = (*dpdit)->m_writers.begin();
+			wit!=(*dpdit)->m_writers.end();++wit)
+	{
+		for(std::vector<RTPSReader*>::iterator rit = this->mp_participant->userReadersListBegin();
+				rit!=this->mp_participant->userReadersListEnd();++rit)
+		{
+			if((*rit)->getStateType() == STATELESS)
+			{
+				(dynamic_cast<StatelessReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+			}
+			else if((*rit)->getStateType() == STATEFUL)
+			{
+				(dynamic_cast<StatefulReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+			}
+		}
+	}
+	for(std::vector<DiscoveredReaderData*>::iterator rit = (*dpdit)->m_readers.begin();
+			rit!=(*dpdit)->m_readers.end();++rit)
+	{
+		for(std::vector<RTPSWriter*>::iterator wit = this->mp_participant->userWritersListBegin();
+				wit!=this->mp_participant->userWritersListEnd();++wit)
+		{
+			if((*wit)->getStateType() == STATELESS)
+			{
+				for(std::vector<Locator_t>::iterator lit = (*rit)->m_readerProxy.unicastLocatorList.begin();
+						lit!=(*rit)->m_readerProxy.unicastLocatorList.end();++lit)
+				{
+					(dynamic_cast<StatelessWriter*>(*wit))->reader_locator_remove(*lit);
+				}
+			}
+			else if((*wit)->getStateType() == STATEFUL)
+			{
+				(dynamic_cast<StatefulWriter*>(*wit))->matched_reader_remove((*rit)->m_readerProxy.remoteReaderGuid);
+			}
+		}
+	}
+	m_discoveredParticipants.erase(dpdit);
+	delete(*dpdit);
+	return true;
 }
 
 

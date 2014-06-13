@@ -29,7 +29,9 @@ class ResourceEvent;
  */
 class ResendDiscoveryDataPeriod: public TimedEvent {
 public:
-	ResendDiscoveryDataPeriod(ParticipantDiscoveryProtocol* p_SPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval);
+	ResendDiscoveryDataPeriod(ParticipantDiscoveryProtocol* p_SPDP,
+			ResourceEvent* pEvent,
+			boost::posix_time::milliseconds interval);
 	virtual ~ResendDiscoveryDataPeriod();
 
 	void event(const boost::system::error_code& ec);

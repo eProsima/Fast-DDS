@@ -14,7 +14,7 @@
 #ifndef SIMPLEEDP_H_
 #define SIMPLEEDP_H_
 
-
+#include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/discovery/EndpointDiscoveryProtocol.h"
 #include "eprosimartps/discovery/SEDPListeners.h"
 
@@ -135,6 +135,8 @@ public:
 
 	//! Method to repare the LocatorList when something changes (the previously defined port couldn't be used because it was already in use.)
 	void repareDiscoveredDataLocatorList(LocatorList_t* loclist);
+
+	bool removeRemoteEndpoints(const GUID_t& guid);
 };
 
 } /* namespace rtps */
