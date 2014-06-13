@@ -23,10 +23,25 @@
 namespace eprosima {
 namespace rtps {
 
+class ParticipantDiscoveryProtocol;
+class ResourceEvent;
+
+/**
+ * Class ParticipantLeaseDuration, TimedEvent designed to remove a
+ * remote Participant and all its Readers and Writers from the local Participant.
+ */
 class ParticipantLeaseDuration:public TimedEvent {
 public:
-	ParticipantLeaseDuration();
+	ParticipantLeaseDuration(ParticipantDiscoveryProtocol* p_SPDP,
+			const GUID_t& pguid,
+			ResourceEvent* pEvent,
+			boost::posix_time::milliseconds interval);
 	virtual ~ParticipantLeaseDuration();
+
+	void event(const boost::system::error_code& ec);
+	ParticipantDiscoveryProtocol* mp_PDP;
+	const GUID_t& m_remoteParticipantGuid;
+
 };
 
 } /* namespace rtps */

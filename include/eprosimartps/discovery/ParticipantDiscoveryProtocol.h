@@ -58,6 +58,7 @@ public:
 	virtual void stopParticipantAnnouncement()=0;
 	virtual void resetParticipantAnnouncement()=0;
 	virtual void localParticipantHasChanged()=0;
+	virtual bool removeRemoteParticipant(const GUID_t& guid)=0;
 	virtual bool localWriterMatching(RTPSWriter* W,bool first_time)=0;
 	virtual bool localReaderMatching(RTPSReader* R,bool first_time)=0;
 };

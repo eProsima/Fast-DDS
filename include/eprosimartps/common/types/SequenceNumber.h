@@ -102,7 +102,6 @@ inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
 
 inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 {
-	//FIXME: repare function for when inc is greater than pow 2, 32
 	if(seq.low-inc < 0)
 	{
 		seq.high--;
