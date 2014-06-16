@@ -48,8 +48,28 @@ void ParticipantLeaseDuration::event(const boost::system::error_code& ec)
 	{
 		pDebugInfo("ParticipantLeaseDuration Period" << endl);
 		//FIXME: Change for liveliness protocol
-		mp_PDP-
-
+		std::vector<DiscoveredParticipantData*>::iterator pit;
+		bool found = false;
+		for( pit = mp_PDP->m_discoveredParticipants.begin();
+				pit!= mp_PDP->m_discoveredParticipants.end();++pit)
+		{
+			if((*pit)->m_guidPrefix == m_remoteParticipantGuid.guidPrefix)
+			{
+				found = true;
+				break;
+			}
+		}
+		if(found)
+		{
+			if((*pit)->isAlive)
+			{
+				(*pit)->isAlive = false;
+			}
+			else
+			{
+				mp_PDP->removeRemoteParticipant(m_remoteParticipantGuid);
+			}
+		}
 		this->restart_timer();
 	}
 	else if(ec==boost::asio::error::operation_aborted)

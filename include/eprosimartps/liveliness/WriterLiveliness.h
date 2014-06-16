@@ -33,6 +33,7 @@ class DiscoveredParticipantData;
 
 class WriterLiveliness {
 	friend class LivelinessPeriodicAssertion;
+	friend class WriterLivelinessListener;
 public:
 	WriterLiveliness(ParticipantImpl* p);
 	virtual ~WriterLiveliness();

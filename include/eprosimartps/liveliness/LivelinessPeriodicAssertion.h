@@ -38,6 +38,8 @@ public:
 	InstanceHandle_t m_iHandle;
 	bool first;
 	GuidPrefix_t m_guidP;
+
+	bool removeMinSeqNumByKey();
 };
 
 } /* namespace rtps */
