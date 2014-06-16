@@ -42,6 +42,7 @@ namespace rtps {
  */
 class RTPSWriter: public Endpoint
 {
+	friend class LivelinessPeriodicAssertion;
 public:
 	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 			StateKind_t state = STATELESS,

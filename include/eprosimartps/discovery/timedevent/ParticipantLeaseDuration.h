@@ -17,8 +17,9 @@
 
 #ifndef PARTICIPANTLEASEDURATION_H_
 #define PARTICIPANTLEASEDURATION_H_
-
+#include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/utils/TimedEvent.h"
+
 
 namespace eprosima {
 namespace rtps {

@@ -86,6 +86,7 @@ bool SPDPListener::newAddedCache()
 				if(!found)
 				{
 					pdata_ptr = pdata;
+					pdata_ptr->isAlive = true;
 					this->mp_SPDP->m_discoveredParticipants.push_back(pdata_ptr);
 				}
 				for(LocatorListIterator it = pdata_ptr->m_metatrafficUnicastLocatorList.begin();
