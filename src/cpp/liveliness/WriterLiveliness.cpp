@@ -42,6 +42,8 @@ WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
 {
 	// TODO Auto-generated constructor stub
 
+	createEndpoints();
+	pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
 }
 
 WriterLiveliness::~WriterLiveliness()
@@ -100,7 +102,11 @@ bool WriterLiveliness::createEndpoints()
 
 bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 {
+	pDebugInfo(MAGENTA<<"Adding local Writer to Liveliness Protocol"<<DEF << endl;)
 	double wLeaseDurationMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.lease_duration));
+	cout << W->getQos().m_liveliness.lease_duration.seconds << endl;
+	cout << W->getQos().m_liveliness.lease_duration.fraction << endl;
+	cout << "Time in Millisec: "<< Time_t2MilliSec(W->getQos().m_liveliness.lease_duration)<<endl;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
 		if(mp_AutomaticLivelinessAssertion == NULL)
