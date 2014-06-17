@@ -105,6 +105,7 @@ bool SPDPListener::newAddedCache()
 				//Inform EDP of new participant data:
 				this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata_ptr);
 				if(this->mp_SPDP->getWriterLivelinessPtr() !=NULL)
+					this->mp_SPDP->getWriterLivelinessPtr()->assignRemoteEndpoints(pdata_ptr);
 
 				//If staticEDP, perform matching:
 				if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
