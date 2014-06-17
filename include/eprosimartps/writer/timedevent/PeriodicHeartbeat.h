@@ -30,13 +30,13 @@ class ReaderProxy;
  */
 class PeriodicHeartbeat: public TimedEvent {
 public:
-	PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
+	PeriodicHeartbeat(StatefulWriter* p_RP,boost::posix_time::milliseconds interval);
 	virtual ~PeriodicHeartbeat();
 
 	void event(const boost::system::error_code& ec);
 
 	CDRMessage_t m_periodic_hb_msg;
-	ReaderProxy* mp_RP;
+	StatefulWriter* mp_SFW;
 };
 
 
