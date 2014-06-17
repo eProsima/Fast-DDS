@@ -83,10 +83,11 @@ enum LivelinessQosPolicyKind:octet {
 class LivelinessQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
-						kind(AUTOMATIC_LIVELINESS_QOS){TIME_INFINITE(lease_duration)};
+						kind(AUTOMATIC_LIVELINESS_QOS){TIME_INFINITE(lease_duration); TIME_INFINITE(announcement_period);};
 	virtual ~LivelinessQosPolicy(){};
 	LivelinessQosPolicyKind kind;
 	Duration_t lease_duration;
+	Duration_t announcement_period;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

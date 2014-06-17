@@ -43,9 +43,10 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
+		pDebugInfo(MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->param.remoteWriterGuid<<DEF<<endl;);
 		if(!mp_WP->checkLiveliness())
 		{
-			pInfo("Removing WriterProxy with GUID: "<< mp_WP->param.remoteWriterGuid << endl;);
+			//pInfo("Removing WriterProxy with GUID: "<< mp_WP->param.remoteWriterGuid << endl;);
 			mp_WP->mp_SFR->matched_writer_remove(mp_WP->param.remoteWriterGuid);
 			return;
 		}

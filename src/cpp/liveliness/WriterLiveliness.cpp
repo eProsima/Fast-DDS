@@ -33,8 +33,8 @@ namespace rtps {
 WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
 		mp_builtinParticipantMessageWriter(NULL),
 		mp_builtinParticipantMessageReader(NULL),
-		m_minAutomaticLivelinessLeaseDuration_MilliSec(std::numeric_limits<double>::max()),
-		m_minManualByParticipantLivelinessLeaseDuration_MilliSec(std::numeric_limits<double>::max()),
+		m_minAutomaticLivelinessPeriod_MilliSec(std::numeric_limits<double>::max()),
+		m_minManualByParticipantLivelinessPeriod_MilliSec(std::numeric_limits<double>::max()),
 		mp_participant(p),
 		m_listener(this),
 		mp_AutomaticLivelinessAssertion(NULL),
@@ -105,24 +105,24 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 {
 	pDebugInfo(MAGENTA<<"Adding local Writer to Liveliness Protocol"<<DEF << endl;)
-	double wLeaseDurationMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.lease_duration));
-	cout << W->getQos().m_liveliness.lease_duration.seconds << endl;
-	cout << W->getQos().m_liveliness.lease_duration.fraction << endl;
-	cout << "Time in Millisec: "<< Time_t2MilliSec(W->getQos().m_liveliness.lease_duration)<<endl;
+	double wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
+	cout << W->getQos().m_liveliness.announcement_period.seconds << endl;
+	cout << W->getQos().m_liveliness.announcement_period.fraction << endl;
+	cout << "Time in Millisec: "<< Time_t2MilliSec(W->getQos().m_liveliness.announcement_period)<<endl;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
 		if(mp_AutomaticLivelinessAssertion == NULL)
 		{
 			mp_AutomaticLivelinessAssertion = new LivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
-			mp_AutomaticLivelinessAssertion->update_interval_millisec(wLeaseDurationMilliSec);
+     		mp_AutomaticLivelinessAssertion->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			mp_AutomaticLivelinessAssertion->restart_timer();
 		}
-		else if(m_minAutomaticLivelinessLeaseDuration_MilliSec > wLeaseDurationMilliSec)
+		else if(m_minAutomaticLivelinessPeriod_MilliSec > wAnnouncementPeriodMilliSec)
 		{
-			m_minAutomaticLivelinessLeaseDuration_MilliSec = wLeaseDurationMilliSec;
-			mp_AutomaticLivelinessAssertion->update_interval_millisec(wLeaseDurationMilliSec);
+			m_minAutomaticLivelinessPeriod_MilliSec = wAnnouncementPeriodMilliSec;
+			mp_AutomaticLivelinessAssertion->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_AutomaticLivelinessAssertion->m_isWaiting && mp_AutomaticLivelinessAssertion->getRemainingTimeMilliSec() > m_minAutomaticLivelinessLeaseDuration_MilliSec)
+			if(mp_AutomaticLivelinessAssertion->m_isWaiting && mp_AutomaticLivelinessAssertion->getRemainingTimeMilliSec() > m_minAutomaticLivelinessPeriod_MilliSec)
 			{
 				mp_AutomaticLivelinessAssertion->stop_timer();
 			}
@@ -135,15 +135,15 @@ bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 		if(mp_ManualByParticipantLivelinessAssertion == NULL)
 		{
 			mp_ManualByParticipantLivelinessAssertion = new LivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(wLeaseDurationMilliSec);
+			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			mp_ManualByParticipantLivelinessAssertion->restart_timer();
 		}
-		else if(m_minManualByParticipantLivelinessLeaseDuration_MilliSec > wLeaseDurationMilliSec)
+		else if(m_minManualByParticipantLivelinessPeriod_MilliSec > wAnnouncementPeriodMilliSec)
 		{
-			m_minManualByParticipantLivelinessLeaseDuration_MilliSec = wLeaseDurationMilliSec;
-			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(m_minManualByParticipantLivelinessLeaseDuration_MilliSec);
+			m_minManualByParticipantLivelinessPeriod_MilliSec = wAnnouncementPeriodMilliSec;
+			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(m_minManualByParticipantLivelinessPeriod_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_ManualByParticipantLivelinessAssertion->m_isWaiting && mp_ManualByParticipantLivelinessAssertion->getRemainingTimeMilliSec() > m_minManualByParticipantLivelinessLeaseDuration_MilliSec)
+			if(mp_ManualByParticipantLivelinessAssertion->m_isWaiting && mp_ManualByParticipantLivelinessAssertion->getRemainingTimeMilliSec() > m_minManualByParticipantLivelinessPeriod_MilliSec)
 			{
 				mp_ManualByParticipantLivelinessAssertion->stop_timer();
 			}
@@ -162,51 +162,51 @@ bool WriterLiveliness::removeLocalWriter(RTPSWriter* W)
 	bool found = false;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
 	{
-		m_minAutomaticLivelinessLeaseDuration_MilliSec = std::numeric_limits<double>::max();
+		m_minAutomaticLivelinessPeriod_MilliSec = std::numeric_limits<double>::max();
 		for(t_WIT it= m_AutomaticLivelinessWriters.begin();it!=m_AutomaticLivelinessWriters.end();++it)
 		{
-			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.lease_duration));
+			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;
 				wToEraseIt = it;
 				continue;
 			}
-			if(m_minAutomaticLivelinessLeaseDuration_MilliSec > mintimeWIT)
+			if(m_minAutomaticLivelinessPeriod_MilliSec > mintimeWIT)
 			{
-				m_minAutomaticLivelinessLeaseDuration_MilliSec = mintimeWIT;
+				m_minAutomaticLivelinessPeriod_MilliSec = mintimeWIT;
 			}
 		}
 		if(found)
 		{
 			m_AutomaticLivelinessWriters.erase(wToEraseIt);
 			if(m_AutomaticLivelinessWriters.size()>0)
-				mp_AutomaticLivelinessAssertion->update_interval_millisec(m_minAutomaticLivelinessLeaseDuration_MilliSec);
+				mp_AutomaticLivelinessAssertion->update_interval_millisec(m_minAutomaticLivelinessPeriod_MilliSec);
 			else
 				delete(mp_AutomaticLivelinessAssertion);
 		}
 	}
 	else if(W->getQos().m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 	{
-		m_minManualByParticipantLivelinessLeaseDuration_MilliSec = std::numeric_limits<double>::max();
+		m_minManualByParticipantLivelinessPeriod_MilliSec = std::numeric_limits<double>::max();
 		for(t_WIT it= m_ManualByParticipantLivelinessWriters.begin();it!=m_ManualByParticipantLivelinessWriters.end();++it)
 		{
-			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.lease_duration));
+			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;
 				wToEraseIt = it;
 				continue;
 			}
-			if(m_minManualByParticipantLivelinessLeaseDuration_MilliSec > mintimeWIT)
+			if(m_minManualByParticipantLivelinessPeriod_MilliSec > mintimeWIT)
 			{
-				m_minManualByParticipantLivelinessLeaseDuration_MilliSec = mintimeWIT;
+				m_minManualByParticipantLivelinessPeriod_MilliSec = mintimeWIT;
 			}
 		}
 		if(found)
 		{
 			m_ManualByParticipantLivelinessWriters.erase(wToEraseIt);
-			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(m_minManualByParticipantLivelinessLeaseDuration_MilliSec);
+			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(m_minManualByParticipantLivelinessPeriod_MilliSec);
 		}
 	}
 	else // OTHER VALUE OF LIVELINESS (BY TOPIC)

@@ -53,6 +53,21 @@ static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 	return false;
 }
 
+static inline bool operator<(const Time_t& t1,const Time_t& t2)
+{
+	if(t1.seconds < t2.seconds)
+		return true;
+	else if(t1.seconds > t2.seconds)
+		return false;
+	else
+	{
+		if(t1.fraction < t2.fraction)
+			return true;
+		else
+			return false;
+	}
+}
+
 static inline double Time_t2Seconds(const Time_t& t)
 {
 	return (uint32_t)t.seconds + (double)t.fraction/pow(2.0,32);

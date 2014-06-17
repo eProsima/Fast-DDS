@@ -43,6 +43,7 @@ void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
+		pDebugInfo(MAGENTA<<"LivelinessPeriodic Assertion (period: "<< this->m_interval_msec<< ")"<<DEF<<endl;)
 		if(first) //FIRST TIME, WE CREATE IT
 		{
 			first = false;
