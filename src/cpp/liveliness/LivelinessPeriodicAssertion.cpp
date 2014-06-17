@@ -14,6 +14,7 @@
 #include "eprosimartps/liveliness/WriterLiveliness.h"
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/eClock.h"
 
 #include "eprosimartps/writer/StatefulWriter.h"
 
@@ -54,7 +55,7 @@ void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 			AutomaticLivelinessAssertion();
 		else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 			ManualByParticipantLivelinessAssertion();
-
+		eClock::my_sleep(1000);
 		//RESTART TIMER
 		this->restart_timer();
 	}
