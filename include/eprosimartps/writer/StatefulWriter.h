@@ -103,6 +103,11 @@ public:
 
 	size_t getMatchedSubscribers(){return matched_readers.size();}
 
+	EntityId_t& getHBReaderEntityId()
+	{
+		return m_HBReaderEntityId;
+	}
+
 private:
 	//! Vector containin all the associated ReaderProxies.
 		std::vector<ReaderProxy*> matched_readers;
@@ -110,6 +115,10 @@ private:
 		PublisherTimes m_PubTimes;
 
 		Count_t m_heartbeatCount;
+		//!Timed Event to manage the periodic HB to the Reader.
+		PeriodicHeartbeat* mp_periodicHB;
+
+		EntityId_t m_HBReaderEntityId;
 
 
 };

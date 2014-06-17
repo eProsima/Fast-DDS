@@ -32,9 +32,9 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 	delete(timer);
 }
 
-PeriodicHeartbeat::PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):
-		TimedEvent(&p_RP->mp_SFW->mp_event_thr->io_service,interval),
-		mp_RP(p_RP)
+PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW,boost::posix_time::milliseconds interval):
+		TimedEvent(&p_SFW->mp_event_thr->io_service,interval),
+		mp_SFW(p_SFW)
 {
 
 }
@@ -47,24 +47,39 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 	{
 		pDebugInfo("Sending Heartbeat"<<endl);
 		std::vector<ChangeForReader_t*> unack;
-		mp_RP->unacked_changes(&unack);
-		//cout << "Unacked changes: "<< unack.size()<<endl;
-		if(!unack.empty())
+		bool unacked_changes = false;
+		for(std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
+				it!=mp_SFW->matchedReadersEnd();++it)
+		{
+			unack.clear();
+			(*it)->unacked_changes(&unack);
+			if(!unack.empty())
+			{
+				unacked_changes= true;
+				break;
+			}
+		}
+		if(unacked_changes)
 		{
 			SequenceNumber_t first,last;
-			mp_RP->mp_SFW->get_seq_num_min(&first,NULL);
-			mp_RP->mp_SFW->get_seq_num_max(&last,NULL);
-			mp_RP->mp_SFW->incrementHBCount();
+			mp_SFW->get_seq_num_min(&first,NULL);
+			mp_SFW->get_seq_num_max(&last,NULL);
+			mp_SFW->incrementHBCount();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
 
-			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_RP->mp_SFW->getGuid().guidPrefix,
-													c_EntityId_Unknown,mp_RP->mp_SFW->getGuid().entityId,
-													first,last,mp_RP->mp_SFW->getHeartbeatCount(),false,false);
+			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_SFW->getGuid().guidPrefix,
+													mp_SFW->getHBReaderEntityId(),mp_SFW->getGuid().entityId,
+													first,last,mp_SFW->getHeartbeatCount(),false,false);
 			std::vector<Locator_t>::iterator lit;
-			for(lit = mp_RP->m_param.unicastLocatorList.begin();lit!=mp_RP->m_param.unicastLocatorList.end();++lit)
-				mp_RP->mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
-			for(lit = mp_RP->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
-				mp_RP->mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
+			for(std::vector<ReaderProxy*>::iterator rit = mp_SFW->matchedReadersBegin();
+					rit!=mp_SFW->matchedReadersEnd();++rit)
+			{
+				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
+					mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
+				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
+					mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
+			}
+
 
 
 
