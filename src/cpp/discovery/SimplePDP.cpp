@@ -50,6 +50,8 @@ SimplePDP::~SimplePDP()
 {
 	if(mp_EDP!=NULL)
 		delete(mp_EDP);
+	if(mp_WL!=NULL)
+		delete(mp_WL);
 }
 
 bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)
@@ -95,7 +97,7 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 	{
 		mp_WL = new WriterLiveliness(mp_participant);
 		mp_WL->createEndpoints(mp_localDPData->m_metatrafficUnicastLocatorList,mp_localDPData->m_metatrafficMulticastLocatorList);
-		mp_WL->assignRemoteEndpoints(mp_localDPData);
+//		mp_WL->assignRemoteEndpoints(mp_localDPData);
 		pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
 	}
 	this->announceParticipantState(true);
