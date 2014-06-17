@@ -28,6 +28,7 @@ LivelinessPeriodicAssertion::LivelinessPeriodicAssertion(WriterLiveliness* wLive
 		first(false)
 {
 	m_guidP = this->mp_writerLiveliness->mp_participant->getGuid().guidPrefix;
+	cout << "mGUID:" <<m_guidP<<endl;
 
 }
 
@@ -79,7 +80,12 @@ bool LivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 		{
 			change->instanceHandle = m_iHandle;
 			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
-			change->serializedPayload.length = 0;
+			memcpy(change->serializedPayload.data,m_guidP.value,12);
+
+			for(uint8_t i =12;i<24;++i)
+				change->serializedPayload.data[i] = 0;
+			change->serializedPayload.data[15] = m_livelinessKind+1;
+			change->serializedPayload.length = 12+4+4+4;
 			//FIXME: PREPARE HISTORYCACHE TO SUPPORT DIFFERENT HISTORYKIND.
 			removeMinSeqNumByKey();
 			mp_writerLiveliness->mp_builtinParticipantMessageWriter->add_change(change);

@@ -56,6 +56,7 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			mp_RP->mp_SFW->get_seq_num_max(&last,NULL);
 			mp_RP->mp_SFW->incrementHBCount();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
+
 			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_RP->mp_SFW->getGuid().guidPrefix,
 													c_EntityId_Unknown,mp_RP->mp_SFW->getGuid().entityId,
 													first,last,mp_RP->mp_SFW->getHeartbeatCount(),false,false);

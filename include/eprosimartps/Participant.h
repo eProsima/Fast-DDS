@@ -193,6 +193,10 @@ public:
 		return m_send_socket_buffer_size;
 	}
 
+	WriterLiveliness* getWriterLivelinessPtr() {
+		return mp_WL;
+	}
+
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;

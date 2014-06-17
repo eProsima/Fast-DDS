@@ -223,12 +223,36 @@ bool WriterLiveliness::updateLocalWriter(RTPSWriter* W)
 
 bool WriterLiveliness::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 {
+	pInfo(MAGENTA<<"WriterLiveliness:assign remote Endpoints"<<DEF<<endl;);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-
-
+	if(auxendp!=0 && this->mp_builtinParticipantMessageReader!=NULL)
+	{
+		pDebugInfo(MAGENTA<<"Adding remote writer to my local Builtin Reader"<<DEF<<endl;);
+		WriterProxy_t wp;
+		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+		wp.remoteWriterGuid.entityId = c_EntityId_WriterLiveliness;
+		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_builtinParticipantMessageReader->matched_writer_add(wp);
+	}
+	auxendp = endp;
 	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	if(auxendp!=0 && this->mp_builtinParticipantMessageWriter!=NULL)
+	{
+		pDebugInfo(MAGENTA<<"Adding remote reader to my local Builtin Writer"<<DEF<<endl;);
+		ReaderProxy_t rp;
+		rp.expectsInlineQos = false;
+		rp.m_reliability = RELIABLE;
+		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+		rp.remoteReaderGuid.entityId = c_EntityId_ReaderLiveliness;
+		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_builtinParticipantMessageWriter->matched_reader_add(rp);
+	}
+
+
 
 	return true;
 }

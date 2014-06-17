@@ -18,7 +18,7 @@
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/writer/StatelessWriter.h"
-
+#include "eprosimartps/liveliness/WriterLiveliness.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
 
@@ -104,6 +104,8 @@ bool SPDPListener::newAddedCache()
 				eClock::my_sleep(250);
 				//Inform EDP of new participant data:
 				this->mp_SPDP->mp_EDP->assignRemoteEndpoints(pdata_ptr);
+				if(this->mp_SPDP->mp_participant->getWriterLivelinessPtr() !=NULL)
+					this->mp_SPDP->mp_participant->getWriterLivelinessPtr()->assignRemoteEndpoints(pdata_ptr);
 
 				//If staticEDP, perform matching:
 				if(this->mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
