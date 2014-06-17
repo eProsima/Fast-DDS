@@ -24,6 +24,7 @@ namespace rtps {
 WriterProxy::~WriterProxy()
 {
 	pDebugInfo("WriterProxy destructor"<<endl;);
+	m_writerProxyLiveliness.stop_timer();
 }
 
 WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
@@ -43,6 +44,11 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 
 {
 	m_changesFromW.clear();
+	cout << "WriterProxy CREATED with lease Duration: "<< Time_t2MilliSec(WPparam.leaseDuration)<<endl;
+	Time_t aux;
+	TIME_INFINITE(aux);
+	if(WPparam.leaseDuration < aux)
+		m_writerProxyLiveliness.restart_timer();
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)

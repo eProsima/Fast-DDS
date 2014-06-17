@@ -59,6 +59,7 @@ bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, 
 			LivelinessQosPolicy * p = (LivelinessQosPolicy*)(*it);
 			wdata->m_qos.m_liveliness = *p;
 			wdata->m_writerProxy.leaseDuration = p->lease_duration;
+			wdata->m_writerProxy.livelinessKind = p->kind;
 			break;
 		}
 		case PID_RELIABILITY:

@@ -195,9 +195,10 @@ int main(int argc, char** argv)
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	//	TIME_INFINITE(Wparam.qos.m_liveliness.lease_duration);
-		Wparam.qos.m_liveliness.lease_duration.seconds = 3;
+		Wparam.qos.m_liveliness.lease_duration.seconds = 10;
 		Wparam.qos.m_liveliness.lease_duration.fraction = 3;
-
+		Wparam.qos.m_liveliness.announcement_period.seconds = 3;
+		Wparam.qos.m_liveliness.announcement_period.fraction = 0;
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)

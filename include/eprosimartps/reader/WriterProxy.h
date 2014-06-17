@@ -42,9 +42,11 @@ typedef struct WriterProxy_t{
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 	Duration_t leaseDuration;
+	LivelinessQosPolicyKind livelinessKind;
 	WriterProxy_t(){
 		GUID_UNKNOWN(remoteWriterGuid);
 		TIME_INFINITE(leaseDuration);
+		livelinessKind = AUTOMATIC_LIVELINESS_QOS;
 	}
 }WriterProxy_t;
 

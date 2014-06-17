@@ -53,8 +53,8 @@ public:
 
 
 
-	double m_minAutomaticLivelinessLeaseDuration_MilliSec;
-	double m_minManualByParticipantLivelinessLeaseDuration_MilliSec;
+	double m_minAutomaticLivelinessPeriod_MilliSec;
+	double m_minManualByParticipantLivelinessPeriod_MilliSec;
 	ParticipantImpl* mp_participant;
 private:
 
@@ -64,8 +64,8 @@ private:
 	std::vector<RTPSWriter*> m_AutomaticLivelinessWriters;
 	std::vector<RTPSWriter*> m_ManualByParticipantLivelinessWriters;
 
-	std::vector<WriterProxy*> m_remoteAutomaticLivelinessWriters;
-	std::vector<WriterProxy*> m_remoteManualByParticipantLivelinessWriters;
+//	std::vector<WriterProxy*> m_remoteAutomaticLivelinessWriters;
+//	std::vector<WriterProxy*> m_remoteManualByParticipantLivelinessWriters;
 };
 
 } /* namespace rtps */

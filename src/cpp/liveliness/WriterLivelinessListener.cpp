@@ -50,17 +50,24 @@ void WriterLivelinessListener::onNewDataMessage()
 		//Check the serializedPayload:
 		if(change->serializedPayload.length>0)
 		{
-			ParameterList_t param;
-			param.m_cdrmsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-			param.m_cdrmsg.length = change->serializedPayload.length;
-			memcpy(param.m_cdrmsg.buffer,change->serializedPayload.data,param.m_cdrmsg.length);
-			if(ParameterList::readParameterListfromCDRMsg(&param.m_cdrmsg,&param,NULL,NULL)>0)
+//			ParameterList_t param;
+//			param.m_cdrmsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
+//			param.m_cdrmsg.length = change->serializedPayload.length;
+//			memcpy(param.m_cdrmsg.buffer,change->serializedPayload.data,param.m_cdrmsg.length);
+//			if(ParameterList::readParameterListfromCDRMsg(&param.m_cdrmsg,&param,NULL,NULL)>0)
+//			{
+//				if(!processParameterList(&param,&guidP,&livelinessKind))
+//					return;
+//			}
+//			else
+//				return;
+
+			for(uint8_t i =0;i<12;++i)
 			{
-				if(!processParameterList(&param,&guidP,&livelinessKind))
-					return;
+				guidP.value[i] = change->serializedPayload.data[i];
 			}
-			else
-				return;
+			livelinessKind = (LivelinessQosPolicyKind)change->serializedPayload.data[15];
+
 		}
 		else
 		{
@@ -72,23 +79,25 @@ void WriterLivelinessListener::onNewDataMessage()
 			pDebugInfo(MAGENTA<<"Message from own participant, ignoring"<<DEF<<endl;);
 			return;
 		}
-		// Update liveliness depending on Key
-		if(livelinessKind == AUTOMATIC_LIVELINESS_QOS)
+
+		for(std::vector<RTPSReader*>::iterator rit = this->mp_WriterLiveliness->mp_participant->userReadersListBegin();
+				rit!=this->mp_WriterLiveliness->mp_participant->userReadersListEnd();++rit)
 		{
-			for(WPIT it = this->mp_WriterLiveliness->m_remoteAutomaticLivelinessWriters.begin();
-					it!=this->mp_WriterLiveliness->m_remoteAutomaticLivelinessWriters.end();++it)
+			if((*rit)->getStateType() == STATEFUL)
 			{
-				if((*it)->param.remoteWriterGuid.guidPrefix == guidP)
-					(*it)->assertLiveliness();
-			}
-		}
-		else if (livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-		{
-			for(WPIT it = this->mp_WriterLiveliness->m_remoteManualByParticipantLivelinessWriters.begin();
-					it!=this->mp_WriterLiveliness->m_remoteManualByParticipantLivelinessWriters.end();++it)
-			{
-				if((*it)->param.remoteWriterGuid.guidPrefix == guidP)
-					(*it)->assertLiveliness();
+				StatefulReader* SFR = (StatefulReader*)(*rit);
+				for(std::vector<WriterProxy*>::iterator wit = SFR->MatchedWritersBegin();
+						wit!=SFR->MatchedWritersEnd();++wit)
+				{
+					if((*wit)->param.livelinessKind == (livelinessKind-0x01))
+					{
+						if((*wit)->param.remoteWriterGuid.guidPrefix == guidP)
+						{
+							pDebugInfo(MAGENTA<<"Asserting liveliness of Writer: "<< (*wit)->param.remoteWriterGuid<<DEF<<endl;);
+							(*wit)->assertLiveliness();
+						}
+					}
+				}
 			}
 		}
 	}

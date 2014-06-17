@@ -64,6 +64,8 @@ public:
 
 	size_t getMatchedPublishers(){return matched_writers.size();}
 
+	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
+	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
 
 private:
 	SubscriberTimes m_SubTimes;
