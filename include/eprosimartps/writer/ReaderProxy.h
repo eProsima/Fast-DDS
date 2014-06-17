@@ -151,8 +151,7 @@ public:
 
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
 
-	//!Timed Event to manage the periodic HB to the Reader.
-		PeriodicHeartbeat m_periodicHB;
+
 		//!Timed Event to manage the Acknack response delay.
 		NackResponseDelay m_nackResponse;
 		//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
