@@ -29,6 +29,7 @@ class StatelessWriter;
 class StatelessReader;
 class ParticipantImpl;
 class ResendDiscoveryDataPeriod;
+class WriterLiveliness;
 
 
 /**
