@@ -15,13 +15,6 @@
 #include "eprosimartps/common/CacheChange.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-//#include "eprosimartps/writer/ReaderLocator.h"
-//#include "eprosimartps/writer/RTPSWriter.h"
-//#include "eprosimartps/writer/StatelessWriter.h"
-//#include "eprosimartps/reader/RTPSReader.h"
-//#include "eprosimartps/reader/StatelessReader.h"
-
-
 
 namespace eprosima {
 namespace rtps {
@@ -31,12 +24,18 @@ bool sort_CacheChanges_History_SeqNum (CacheChange_t* c1,CacheChange_t* c2)
 	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
 }
 
-HistoryCache::HistoryCache(Endpoint* endp, uint16_t historymaxsize, uint32_t payload_size):
+HistoryCache::HistoryCache(Endpoint* endp,
+		uint16_t historymaxsize,
+		uint32_t payload_size,
+		HistoryQosPolicyKind kind,
+		int32_t depth):
 		mp_Endpoint(endp),
 		m_history_max_size(historymaxsize),
 		isHistoryFull(false),
 		changePool(historymaxsize,payload_size),
-		m_isMaxMinUpdated(false)
+		m_isMaxMinUpdated(false),
+		m_HistoryQosKind(kind),
+		m_HistoryQosDepth(depth)
 
 {
 		SEQUENCENUMBER_UNKOWN(m_minSeqNum);
@@ -125,7 +124,8 @@ bool HistoryCache::add_change(CacheChange_t* a_change)
 	{
 		m_lastChangeSequenceNumber++;
 		a_change->sequenceNumber = m_lastChangeSequenceNumber;
-		m_changes.push_back(a_change);
+		if(this->m_HistoryQosKind==KEEP_ALL_HISTORY_QOS)
+			m_changes.push_back(a_change);
 	}
 	else if(mp_Endpoint->getEndpointKind() == READER)
 	{
@@ -255,23 +255,6 @@ void HistoryCache::updateMaxMinSeqNum()
 
 			m_minSeqNum = (*m_changes.begin())->sequenceNumber;
 			m_minSeqNumGuid = (*m_changes.begin())->writerGUID;
-
-//			m_maxSeqNum = m_minSeqNum = m_changes[0]->sequenceNumber;
-//			m_maxSeqNumGuid = m_minSeqNumGuid = m_changes[0]->writerGUID;
-//
-//			for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
-//					it!=m_changes.end();++it){
-//				if((*it)->sequenceNumber.to64long() > m_maxSeqNum.to64long())
-//				{
-//					m_maxSeqNum = (*it)->sequenceNumber;
-//					m_maxSeqNumGuid = (*it)->writerGUID;
-//				}
-//				if((*it)->sequenceNumber.to64long() < m_minSeqNum.to64long())
-//				{
-//					m_minSeqNum = (*it)->sequenceNumber;
-//					m_minSeqNumGuid = (*it)->writerGUID;
-//				}
-//			}
 			m_isMaxMinUpdated = true;
 		}
 	}

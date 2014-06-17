@@ -23,7 +23,8 @@
 #include "eprosimartps/dds/attributes/SubscriberAttributes.h"
 
 #include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/timedevent/HeartbeatResponseDelay.h"
+#include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
+#include "eprosimartps/reader/timedevent/WriterProxyLiveliness.h"
 
 using namespace eprosima::dds;
 
@@ -40,8 +41,12 @@ typedef struct WriterProxy_t{
 	GUID_t remoteWriterGuid;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
+	Duration_t leaseDuration;
+	LivelinessQosPolicyKind livelinessKind;
 	WriterProxy_t(){
 		GUID_UNKNOWN(remoteWriterGuid);
+		TIME_INFINITE(leaseDuration);
+		livelinessKind = AUTOMATIC_LIVELINESS_QOS;
 	}
 }WriterProxy_t;
 
@@ -53,7 +58,7 @@ typedef struct WriterProxy_t{
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~WriterProxy();
-	WriterProxy(const WriterProxy_t& RPparam,const SubscriberTimes& times,StatefulReader* SR);
+	WriterProxy(const WriterProxy_t& RPparam,Duration_t heartbeatResponse,StatefulReader* SR);
 
 	/**
 	 * Get the maximum sequenceNumber received from this Writer.
@@ -114,6 +119,10 @@ public:
 	bool m_isMissingChangesEmpty;
 	//!Timed event to postpone the heartbeatResponse.
 	HeartbeatResponseDelay m_heartbeatResponse;
+	//!TO check the liveliness Status periodically.
+	WriterProxyLiveliness m_writerProxyLiveliness;
+
+
 	bool m_heartbeatFinalFlag;
 
 
@@ -125,7 +134,19 @@ public:
 	 * @return True if correct.
 	 */
 	bool removeChangeFromWriter(SequenceNumber_t& seq);
-
+	/**
+	 * Assert the liveliness of the Writer represented by this WriterProxy.
+	 */
+	void assertLiveliness()
+	{
+		m_livelinessAsserted = true;
+	}
+	bool checkLiveliness()
+	{
+		bool aux=m_livelinessAsserted;
+		m_livelinessAsserted = false;
+		return aux;
+	}
 
 private:
 	//!Get the maximum sequenceNumber in the list.
@@ -134,7 +155,7 @@ private:
 	/**
 	 * Add changesFromWriter up to the sequenceNumber passed, but not including.
 	 * Ex: If you hace seqNums 1,2,3 and you receive seqNum 6, you need 4 and 5 as unknown.
-	 * You then marked them as Missing or lost or whathever.
+	 * You then marked them as Missing or lost.
 	 * @param seqNum SequenceNumber to use.
 	 * @return True if correct
 	 */
@@ -144,6 +165,7 @@ private:
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
 	bool m_hasMinAvailableSeqNumChanged;
+	bool m_livelinessAsserted;
 
 };
 

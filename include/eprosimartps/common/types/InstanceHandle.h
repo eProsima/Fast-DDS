@@ -22,7 +22,7 @@ namespace rtps{
 /**
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
  */
-typedef struct InstanceHandle_t{
+struct InstanceHandle_t{
 	octet value[16];
 	InstanceHandle_t()
 	{
@@ -48,7 +48,7 @@ typedef struct InstanceHandle_t{
 		}
 		return *this;
 	}
-}InstanceHandle_t;
+};
 
 inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
 {

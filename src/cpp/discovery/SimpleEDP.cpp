@@ -98,7 +98,6 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
-		//FIXME:Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,(SubscriberListener*)&m_listeners.m_SubListener,c_EntityId_SEDPSubReader);
 		if(created)
@@ -202,6 +201,37 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		mp_SubWriter->matched_reader_add(rp);
 	}
 }
+
+bool SimpleEDP::removeRemoteEndpoints(const GUID_t& partguid)
+{
+	GUID_t remoteGuid = partguid;
+	if(mp_PubReader!=NULL)
+	{
+		boost::lock_guard<Endpoint> guard(*this->mp_PubReader);
+		remoteGuid.entityId = c_EntityId_SEDPPubWriter;
+		mp_PubReader->matched_writer_remove(remoteGuid);
+	}
+	if(mp_PubWriter!=NULL)
+	{
+		boost::lock_guard<Endpoint> guard(*this->mp_PubWriter);
+		remoteGuid.entityId = c_EntityId_SEDPPubReader;
+		mp_PubWriter->matched_reader_remove(remoteGuid);
+	}
+	if(mp_SubReader!=NULL)
+	{
+		boost::lock_guard<Endpoint> guard(*this->mp_SubReader);
+		remoteGuid.entityId = c_EntityId_SEDPSubWriter;
+		mp_SubReader->matched_writer_remove(remoteGuid);
+	}
+	if(mp_SubWriter!=NULL)
+	{
+		boost::lock_guard<Endpoint> guard(*this->mp_SubWriter);
+		remoteGuid.entityId = c_EntityId_SEDPSubReader;
+		mp_SubWriter->matched_reader_remove(remoteGuid);
+	}
+	return true;
+}
+
 
 bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 {

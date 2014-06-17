@@ -28,14 +28,22 @@ namespace eprosima {
 namespace rtps {
 
 
-StatefulWriter::~StatefulWriter() {
-
+StatefulWriter::~StatefulWriter()
+{
 	pDebugInfo("StatefulWriter destructor"<<endl;);
+	if(mp_periodicHB !=NULL)
+		delete(mp_periodicHB);
+	for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
+			it!=matched_readers.end();++it)
+	{
+		delete(*it);
+	}
 }
 
 StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
 				RTPSWriter(guidP,entId,param.topic,ptype,STATEFUL,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
-				m_PubTimes(param.times)
+				m_PubTimes(param.times),
+				mp_periodicHB(NULL)
 
 {
 	m_pushMode = param.pushMode;
@@ -43,6 +51,14 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 	multicastLocatorList = param.multicastLocatorList;
 
 	m_heartbeatCount = 0;
+	if(entId == c_EntityId_SEDPPubWriter)
+		m_HBReaderEntityId = c_EntityId_SEDPPubReader;
+	else if(entId == c_EntityId_SEDPSubWriter)
+		m_HBReaderEntityId = c_EntityId_SEDPSubReader;
+	else if(entId == c_EntityId_WriterLiveliness)
+		m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
+	else
+		m_HBReaderEntityId = c_EntityId_Unknown;
 }
 
 
@@ -58,7 +74,8 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 		}
 	}
 	ReaderProxy* rp = new ReaderProxy(RPparam,m_PubTimes,this);
-
+	if(mp_periodicHB==NULL)
+		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
 
 	for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.m_changes.begin();cit!=m_writer_cache.m_changes.end();++cit)
 	{
@@ -94,6 +111,8 @@ bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 			delete(*it);
 			matched_readers.erase(it);
 			pDebugInfo("Reader Proxy removed" << endl);
+			if(matched_readers.size()==0)
+				this->mp_periodicHB->stop_timer();
 			return true;
 		}
 	}
@@ -227,7 +246,7 @@ void StatefulWriter::unsent_changes_not_empty()
 //				cout << "Reliability of Reader: "<< ((*rit)->m_param.m_reliability == RELIABLE ? "RELIABLE":"NOTRELIABLE")<<endl;
 //				cout << "PeriodicHB is waiting: "<< (*rit)->m_periodicHB.m_isWaiting << endl;
 				if((*rit)->m_param.m_reliability == RELIABLE)
-					(*rit)->m_periodicHB.restart_timer();
+					this->mp_periodicHB->restart_timer();
 				(*rit)->m_nackSupression.restart_timer();
 			}
 			else

@@ -15,7 +15,7 @@
 #define RESENDDATAPERIOD_H_
 
 
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/utils/TimedEvent.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 
 namespace eprosima {
@@ -29,7 +29,9 @@ class ResourceEvent;
  */
 class ResendDiscoveryDataPeriod: public TimedEvent {
 public:
-	ResendDiscoveryDataPeriod(ParticipantDiscoveryProtocol* p_SPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval);
+	ResendDiscoveryDataPeriod(ParticipantDiscoveryProtocol* p_SPDP,
+			ResourceEvent* pEvent,
+			boost::posix_time::milliseconds interval);
 	virtual ~ResendDiscoveryDataPeriod();
 
 	void event(const boost::system::error_code& ec);

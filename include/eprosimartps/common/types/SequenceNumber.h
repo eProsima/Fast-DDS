@@ -23,7 +23,7 @@ namespace rtps{
 
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
-typedef struct SequenceNumber_t{
+struct SequenceNumber_t{
 	int32_t high;
 	uint32_t low;
 	SequenceNumber_t(){
@@ -73,7 +73,7 @@ typedef struct SequenceNumber_t{
 	}
 
 
-} SequenceNumber_t;
+};
 
 
 //!Compares two SequenceNumber_t.
@@ -102,7 +102,6 @@ inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
 
 inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 {
-	//FIXME: repare function for when inc is greater than pow 2, 32
 	if(seq.low-inc < 0)
 	{
 		seq.high--;
@@ -134,7 +133,7 @@ inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
 }
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
-typedef class SequenceNumberSet_t{
+class SequenceNumberSet_t{
 public:
 	SequenceNumber_t base;
 	SequenceNumberSet_t& operator=(const SequenceNumberSet_t& set2)
@@ -179,7 +178,7 @@ public:
 		}
 private:
 	std::vector<SequenceNumber_t> set;
-}SequenceNumberSet_t;
+};
 
 }
 }

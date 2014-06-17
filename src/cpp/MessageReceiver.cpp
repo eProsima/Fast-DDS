@@ -362,6 +362,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
 		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);
@@ -481,7 +482,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 							if(!WP->m_isMissingChangesEmpty)
 								WP->m_heartbeatResponse.restart_timer();
 						}
-						//TODOG: Livelinessflag behaviour
+						//FIXME: livelinessFlag
+						if(livelinessFlag )//&& WP->param.livelinessKind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+							WP->assertLiveliness();
 					}
 				}
 				else

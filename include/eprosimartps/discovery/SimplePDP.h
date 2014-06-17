@@ -29,6 +29,7 @@ class StatelessWriter;
 class StatelessReader;
 class ParticipantImpl;
 class ResendDiscoveryDataPeriod;
+class WriterLiveliness;
 
 
 /**
@@ -100,6 +101,8 @@ public:
 	 * @return True if matched.
 	 */
 	bool localReaderMatching(RTPSReader* R,bool first_time);
+
+	bool removeRemoteParticipant(const GUID_t& guid);
 
 	//!Pointer to the TimedEvent used to periodically send the ParticipantDiscoveredData
 	ResendDiscoveryDataPeriod* m_resendDataTimer;

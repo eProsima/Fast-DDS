@@ -11,11 +11,6 @@
  */
 
 
-
-
-
-
-
 #ifndef HISTORYCACHE_H_
 #define HISTORYCACHE_H_
 
@@ -23,11 +18,15 @@
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+
 using namespace boost;
+
 #include "eprosimartps/utils/CacheChangePool.h"
 #include "eprosimartps/common/types/SequenceNumber.h"
 #include "eprosimartps/common/types/Guid.h"
 
+#include "eprosimartps/qos/DDSQosPolicies.h"
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -37,6 +36,8 @@ class RTPSWriter;
 class RTPSReader;
 class Endpoint;
 
+
+
 /**
  * Class HistoryCache, container of the different CacheChanges and the methods to access them.
  * @ingroup COMMONMODULE
@@ -44,7 +45,11 @@ class Endpoint;
 class HistoryCache: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
 public:
-	HistoryCache(Endpoint* endp, uint16_t historymaxsize = 50, uint32_t payload_size = 500);
+	HistoryCache(Endpoint* endp,
+			uint16_t historymaxsize = 50,
+			uint32_t payload_size = 500,
+			HistoryQosPolicyKind kind=KEEP_ALL_HISTORY_QOS,
+			int32_t depth=1);
 
 	virtual ~HistoryCache();
 	/**
@@ -147,6 +152,8 @@ protected:
 
 	//!Variable to know if the history is full without needing to block the History mutex.
 	bool isHistoryFull;
+
+
 	//!Minimum sequence number in the history
 	SequenceNumber_t m_minSeqNum;
 	//!Writer Guid of the minimum seqNum in the History.
@@ -157,14 +164,14 @@ protected:
 	GUID_t m_maxSeqNumGuid;
 	//! Pool of changes created in the beginning
 	CacheChangePool changePool;
-//!lastchangeseqNum
+	//!lastchangeseqNum
 	SequenceNumber_t m_lastChangeSequenceNumber;
 	//!Update the max and min sequence number and Guid after a change in the cache changes.
 	void updateMaxMinSeqNum();
 	bool m_isMaxMinUpdated;
 
-
-
+	HistoryQosPolicyKind m_HistoryQosKind;
+	int32_t m_HistoryQosDepth;
 
 };
 

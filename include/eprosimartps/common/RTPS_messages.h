@@ -37,7 +37,7 @@ namespace rtps{
 #define	DATA_FRAG 0x16
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
-typedef struct Header_t{
+ struct Header_t{
 	ProtocolVersion_t version;
 	VendorId_t vendorId;;
 	GuidPrefix_t guidPrefix;
@@ -47,7 +47,7 @@ typedef struct Header_t{
 	}
 	~Header_t(){
 	}
-}Header_t;
+};
 
 inline std::ostream& operator<<(std::ostream& output,const Header_t& h){
 	output << "RTPS HEADER of Version: " << (int)h.version.m_major << "." << (int)h.version.m_minor;
@@ -57,11 +57,11 @@ inline std::ostream& operator<<(std::ostream& output,const Header_t& h){
 }
 
 //!@brief Structure SubmessageHeader_t, used to contain the header information of a submessage.
-typedef struct SubmessageHeader_t{
+ struct SubmessageHeader_t{
 	octet submessageId;
 	uint16_t submessageLength;
 	SubmessageFlag flags;
-}SubmessageHeader_t;
+};
 
 using std::cout;
 using std::endl;

@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/timedevent/NackSupressionDuration.h"
+#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
