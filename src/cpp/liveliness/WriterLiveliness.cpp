@@ -41,9 +41,8 @@ WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
 		mp_ManualByParticipantLivelinessAssertion(NULL)
 {
 	// TODO Auto-generated constructor stub
+	pInfo(B_MAGENTA<<"Beginning Liveliness Protocol initialization"<<DEF<<endl;);
 
-	createEndpoints();
-	pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
 }
 
 WriterLiveliness::~WriterLiveliness()
@@ -51,15 +50,15 @@ WriterLiveliness::~WriterLiveliness()
 	// TODO Auto-generated destructor stub
 }
 
-bool WriterLiveliness::createEndpoints()
+bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t& multicastList)
 {
 	//CREATE WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
 	Wparam.historyMaxSize = 2;
-	Wparam.payloadMaxSize = 20;
-	Wparam.unicastLocatorList = mp_participant->m_defaultUnicastLocatorList;
-	Wparam.multicastLocatorList = mp_participant->m_defaultMulticastLocatorList;
+	Wparam.payloadMaxSize = 50;
+	Wparam.unicastLocatorList = unicastList;
+	Wparam.multicastLocatorList = multicastList;
 	Wparam.topic.topicName = "DCPSParticipantMessage";
 	Wparam.topic.topicDataType = "ParticipantMessageData";
 	Wparam.topic.topicKind = WITH_KEY;
@@ -70,33 +69,36 @@ bool WriterLiveliness::createEndpoints()
 	if(mp_participant->createWriter(&wout,Wparam,Wparam.payloadMaxSize,true,STATEFUL,NULL,NULL,c_EntityId_WriterLiveliness))
 	{
 		mp_builtinParticipantMessageWriter = dynamic_cast<StatefulWriter*>(wout);
-		pInfo(MAGENTA<<"Writer Liveliness created"<<DEF<<endl);
+		pInfo(MAGENTA<<"Builtin Liveliness Writer created"<<DEF<<endl);
 	}
 	else
 	{
 		pError("Liveliness Writer Creation failed "<<endl;)
-				return false;
+		return false;
 	}
 	SubscriberAttributes Rparam;
 	Rparam.expectsInlineQos = true;
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	Rparam.unicastLocatorList = unicastList;
+	Rparam.multicastLocatorList = multicastList;
 	Rparam.userDefinedId = -1;
-	Rparam.historyMaxSize = 10;
+	Rparam.historyMaxSize = 100;
 	Rparam.topic.topicName = "DCPSParticipantMessage";
 	Rparam.topic.topicDataType = "ParticipantMessageData";
 	Rparam.topic.topicKind = WITH_KEY;
 	RTPSReader* rout;
-	if(mp_participant->createReader(&rout,Rparam,Rparam.payloadMaxSize,true,STATEFUL,NULL,NULL,c_EntityId_ReaderLiveliness))
+	if(mp_participant->createReader(&rout,Rparam,Rparam.payloadMaxSize,true,STATEFUL,NULL,(SubscriberListener*)&m_listener,c_EntityId_ReaderLiveliness))
 	{
 		mp_builtinParticipantMessageReader = dynamic_cast<StatefulReader*>(rout);
-		pInfo(MAGENTA<<"Reader Liveliness created"<<DEF<<endl);
+		pInfo(MAGENTA<<"Builtin Liveliness Reader created"<<DEF<<endl);
 	}
 	else
 	{
 		pError("Liveliness Reader Creation failed "<<endl;)
 		return false;
 	}
+
 	return true;
 }
 

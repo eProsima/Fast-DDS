@@ -26,13 +26,17 @@ namespace rtps {
  */
 class Semaphore {
 public:
-	Semaphore():m_count(0){};
+	Semaphore():m_count(0),is_waiting(false){};
 	virtual ~Semaphore(){};
 	void wait()
 	{
 		boost::mutex::scoped_lock lock(m_mutex);
 		while(m_count <= 0)
+		{
+			is_waiting = true;
 			m_condition.wait(lock);
+		}
+		is_waiting = false;
 		--m_count;
 	}
 
@@ -40,7 +44,8 @@ public:
 	{
 		boost::mutex::scoped_lock lock(m_mutex);
 		++m_count;
-		m_condition.notify_one();
+		if(is_waiting)
+			m_condition.notify_one();
 	}
 
 	void reset()
@@ -51,6 +56,7 @@ public:
 
 private:
 	uint32_t m_count;
+	bool is_waiting;
 	boost::mutex m_mutex;
 	boost::condition_variable m_condition;
 
