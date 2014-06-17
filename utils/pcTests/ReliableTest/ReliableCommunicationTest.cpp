@@ -195,8 +195,9 @@ int main(int argc, char** argv)
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	//	TIME_INFINITE(Wparam.qos.m_liveliness.lease_duration);
-//		Wparam.qos.m_liveliness.lease_duration.seconds = 3;
-//		Wparam.qos.m_liveliness.lease_duration.fraction = 3;
+		Wparam.qos.m_liveliness.lease_duration.seconds = 3;
+		Wparam.qos.m_liveliness.lease_duration.fraction = 3;
+
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
@@ -248,7 +249,7 @@ int main(int argc, char** argv)
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
+		Rparam.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 		MySubListener mylisten;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
