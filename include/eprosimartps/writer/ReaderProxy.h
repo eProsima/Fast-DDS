@@ -28,9 +28,9 @@
 
 #include "eprosimartps/common/CacheChange.h"
 
-#include "eprosimartps/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/timedevent/NackResponseDelay.h"
-#include "eprosimartps/timedevent/NackSupressionDuration.h"
+#include "eprosimartps/writer/timedevent/PeriodicHeartbeat.h"
+#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
+#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 
 
 namespace eprosima {
@@ -151,8 +151,7 @@ public:
 
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
 
-	//!Timed Event to manage the periodic HB to the Reader.
-		PeriodicHeartbeat m_periodicHB;
+
 		//!Timed Event to manage the Acknack response delay.
 		NackResponseDelay m_nackResponse;
 		//!Timed Event to manage the delay to mark a change as UNACKED after sending it.

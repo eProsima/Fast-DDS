@@ -16,11 +16,15 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/timedevent/ResendDiscoveryDataPeriod.h"
+#include "eprosimartps/discovery/timedevent/ResendDiscoveryDataPeriod.h"
 
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/writer/StatefulWriter.h"
+
+#include "eprosimartps/liveliness/WriterLiveliness.h"
 
 #include "eprosimartps/utils/eClock.h"
 
@@ -46,6 +50,8 @@ SimplePDP::~SimplePDP()
 {
 	if(mp_EDP!=NULL)
 		delete(mp_EDP);
+	if(mp_WL!=NULL)
+		delete(mp_WL);
 }
 
 bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)
@@ -78,24 +84,35 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 		pWarning("No EndpointDiscoveryProtocol defined"<<endl);
 		return false;
 	}
+
+
 	if(mp_EDP->initEDP(m_discovery))
 	{
 		mp_SPDPReader->unlock();
-		this->announceParticipantState(true);
-//		eClock::my_sleep(50);
-//		this->announceParticipantState(false);
-//		eClock::my_sleep(50);
-//		this->announceParticipantState(false);
-		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
-				boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(m_discovery.resendDiscoveryParticipantDataPeriod)*1e-3)));
-		m_resendDataTimer->restart_timer();
-
-		eClock::my_sleep(100);
-
-		return true;
 	}
+	else
+		return false;
+	//START WRITER LIVELINESS PROTOCOL
+	if(m_discovery.use_WriterLivelinessProtocol)
+	{
+		mp_WL = new WriterLiveliness(mp_participant);
+		mp_WL->createEndpoints(mp_localDPData->m_metatrafficUnicastLocatorList,mp_localDPData->m_metatrafficMulticastLocatorList);
+//		mp_WL->assignRemoteEndpoints(mp_localDPData);
+		pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
+	}
+	this->announceParticipantState(true);
+	//		eClock::my_sleep(50);
+	//		this->announceParticipantState(false);
+	//		eClock::my_sleep(50);
+	//		this->announceParticipantState(false);
+	m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
+						boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.resendDiscoveryParticipantDataPeriod)));
+	m_resendDataTimer->restart_timer();
 
-	return false;
+	eClock::my_sleep(100);
+
+	return true;
+
 }
 
 bool SimplePDP::updateLocalParticipantData()
@@ -110,6 +127,11 @@ bool SimplePDP::updateLocalParticipantData()
 	//FIXME: add correct builtIn Endpoints
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	if(m_discovery.use_WriterLivelinessProtocol)
+	{
+		mp_localDPData->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+		mp_localDPData->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	}
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
@@ -364,6 +386,71 @@ void SimplePDP::stopParticipantAnnouncement()
 void SimplePDP::resetParticipantAnnouncement()
 {
 	m_resendDataTimer->restart_timer();
+}
+
+typedef std::vector<DiscoveredParticipantData*>::iterator TDPDit;
+
+bool SimplePDP::removeRemoteParticipant(const GUID_t& guid)
+{
+	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
+	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
+	TDPDit dpdit;
+	bool found = false;
+	for(dpdit= this->m_discoveredParticipants.begin();
+			dpdit!=this->m_discoveredParticipants.end();++dpdit)
+	{
+		if((*dpdit)->m_guidPrefix == guid.guidPrefix)
+		{
+			found = true;
+			break;
+		}
+	}
+	if(!found)
+		return false;
+	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
+	{
+		dynamic_cast<SimpleEDP*>(this->mp_EDP)->removeRemoteEndpoints(guid);
+	}
+	//Now We Remove the remote Readers and Writers from our local Endpoints:
+	for(std::vector<DiscoveredWriterData*>::iterator wit = (*dpdit)->m_writers.begin();
+			wit!=(*dpdit)->m_writers.end();++wit)
+	{
+		for(std::vector<RTPSReader*>::iterator rit = this->mp_participant->userReadersListBegin();
+				rit!=this->mp_participant->userReadersListEnd();++rit)
+		{
+			if((*rit)->getStateType() == STATELESS)
+			{
+				(dynamic_cast<StatelessReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+			}
+			else if((*rit)->getStateType() == STATEFUL)
+			{
+				(dynamic_cast<StatefulReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+			}
+		}
+	}
+	for(std::vector<DiscoveredReaderData*>::iterator rit = (*dpdit)->m_readers.begin();
+			rit!=(*dpdit)->m_readers.end();++rit)
+	{
+		for(std::vector<RTPSWriter*>::iterator wit = this->mp_participant->userWritersListBegin();
+				wit!=this->mp_participant->userWritersListEnd();++wit)
+		{
+			if((*wit)->getStateType() == STATELESS)
+			{
+				for(std::vector<Locator_t>::iterator lit = (*rit)->m_readerProxy.unicastLocatorList.begin();
+						lit!=(*rit)->m_readerProxy.unicastLocatorList.end();++lit)
+				{
+					(dynamic_cast<StatelessWriter*>(*wit))->reader_locator_remove(*lit);
+				}
+			}
+			else if((*wit)->getStateType() == STATEFUL)
+			{
+				(dynamic_cast<StatefulWriter*>(*wit))->matched_reader_remove((*rit)->m_readerProxy.remoteReaderGuid);
+			}
+		}
+	}
+	m_discoveredParticipants.erase(dpdit);
+	delete(*dpdit);
+	return true;
 }
 
 

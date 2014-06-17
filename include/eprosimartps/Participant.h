@@ -68,6 +68,7 @@ class RTPSReader;
 class RTPSWriter;
 
 class ParticipantDiscoveryProtocol;
+class WriterLiveliness;
 
 
 
@@ -192,6 +193,8 @@ public:
 		return m_send_socket_buffer_size;
 	}
 
+
+
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -202,7 +205,7 @@ private:
 
 	//! Sending resources.
 	ResourceSend m_send_thr;
-
+	//! Event Resource
 	ResourceEvent m_event_thr;
 
 	//!Semaphore to wait for the listen thread creation.

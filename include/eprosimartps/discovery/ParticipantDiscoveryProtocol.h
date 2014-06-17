@@ -27,6 +27,7 @@ class EndpointDiscoveryProtocol;
 class ParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
+class WriterLiveliness;
 
 /**
  * Base class of the ParticipantDiscoveryProtocol. Currently only SimplePDP is implemented, please refer to this class for further documentation.
@@ -53,11 +54,18 @@ public:
 	ParticipantImpl* mp_participant;
 	//! Pointer to the EndpointDiscoveryProtocol used.
 	EndpointDiscoveryProtocol* mp_EDP;
+	WriterLiveliness* getWriterLivelinessPtr()
+		{
+			return mp_WL;
+		}
+	//!WriterLiveliness PRotocol
+	WriterLiveliness* mp_WL;
 
 	virtual void announceParticipantState(bool new_change)=0;
 	virtual void stopParticipantAnnouncement()=0;
 	virtual void resetParticipantAnnouncement()=0;
 	virtual void localParticipantHasChanged()=0;
+	virtual bool removeRemoteParticipant(const GUID_t& guid)=0;
 	virtual bool localWriterMatching(RTPSWriter* W,bool first_time)=0;
 	virtual bool localReaderMatching(RTPSReader* R,bool first_time)=0;
 };

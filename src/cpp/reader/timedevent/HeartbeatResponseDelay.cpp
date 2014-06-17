@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/timedevent/HeartbeatResponseDelay.h"
+#include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
 #include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/reader/StatefulReader.h"
 

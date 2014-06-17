@@ -11,6 +11,9 @@
  */
 
 
+#ifndef RTPSWRITER_H_
+#define RTPSWRITER_H_
+
 #include "eprosimartps/Endpoint.h"
 #include "eprosimartps/HistoryCache.h"
 
@@ -19,11 +22,7 @@
 #include "eprosimartps/qos/WriterQos.h"
 #include "eprosimartps/dds/Publisher.h"
 
-
-#ifndef RTPSWRITER_H_
-#define RTPSWRITER_H_
-
-
+#include "eprosimartps/qos/ParameterList.h"
 
 
 using namespace eprosima::dds;
@@ -37,14 +36,13 @@ class PublisherListener;
 
 namespace rtps {
 
-
-
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
   * @ingroup WRITERMODULE
  */
 class RTPSWriter: public Endpoint
 {
+	friend class LivelinessPeriodicAssertion;
 public:
 	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 			StateKind_t state = STATELESS,
@@ -97,7 +95,12 @@ public:
 
 	bool add_change(CacheChange_t*change)
 	{
-		return m_writer_cache.add_change(change);
+		if(m_writer_cache.add_change(change))
+		{
+			m_livelinessAsserted = true;
+			return true;
+		}
+		return false;
 	}
 
 	bool get_last_added_cache(CacheChange_t**change)
@@ -115,6 +118,16 @@ public:
 	void setListener(PublisherListener* plisten){mp_listener = plisten;}
 
 	ParameterList_t* getInlineQos(){return &m_inlineQos;}
+
+	bool getLivelinessAsserted()
+	{
+		return m_livelinessAsserted;
+	}
+
+	void setLivelinessAsserted(bool live)
+	{
+		m_livelinessAsserted = live;
+	}
 
 
 protected:
@@ -141,6 +154,8 @@ protected:
 	//QosList_t m_ParameterQosList;
 
 	ParameterList_t m_inlineQos;
+
+	bool m_livelinessAsserted;
 
 
 };

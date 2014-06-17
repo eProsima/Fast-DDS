@@ -14,7 +14,7 @@
 #ifndef PERIODICHEARTBEAT_H_
 #define PERIODICHEARTBEAT_H_
 
-#include "eprosimartps/timedevent/TimedEvent.h"
+#include "eprosimartps/utils/TimedEvent.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 
 namespace eprosima {
@@ -30,13 +30,13 @@ class ReaderProxy;
  */
 class PeriodicHeartbeat: public TimedEvent {
 public:
-	PeriodicHeartbeat(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
+	PeriodicHeartbeat(StatefulWriter* p_RP,boost::posix_time::milliseconds interval);
 	virtual ~PeriodicHeartbeat();
 
 	void event(const boost::system::error_code& ec);
 
 	CDRMessage_t m_periodic_hb_msg;
-	ReaderProxy* mp_RP;
+	StatefulWriter* mp_SFW;
 };
 
 

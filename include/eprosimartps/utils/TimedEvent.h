@@ -16,12 +16,17 @@
 #ifndef PERIODICEVENT_H_
 #define PERIODICEVENT_H_
 
+
+
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/bind.hpp>
 
 #include <boost/system/error_code.hpp>
+
+
+#include "eprosimartps/common/types/Time_t.h"
 
 namespace eprosima {
 namespace rtps{
@@ -50,12 +55,18 @@ public:
 	//!Method to restart the timer.
 	void restart_timer();
 	//! TO update the interval, the timer is not restarted and the new interval will onyl be used the next time you call restart_timer().
-	bool update_interval_sec(uint32_t inter);
+	bool update_interval(const Duration_t& time);
+	bool update_interval_millisec(double time_millisec);
 	//!Stop the timer
 	void stop_timer();
 
 	const boost::posix_time::milliseconds& getIntervalMsec() const {
 		return m_interval_msec;
+	}
+
+	double getRemainingTimeMilliSec()
+	{
+		return (double)timer->expires_from_now().total_milliseconds();
 	}
 };
 

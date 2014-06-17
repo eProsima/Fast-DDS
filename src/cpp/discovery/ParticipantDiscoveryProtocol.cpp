@@ -19,7 +19,8 @@ namespace rtps {
 ParticipantDiscoveryProtocol::ParticipantDiscoveryProtocol(ParticipantImpl* p_part):
 		mp_localDPData(NULL),
 		mp_participant(p_part),
-		mp_EDP(NULL)
+		mp_EDP(NULL),
+		mp_WL(NULL)
 {
 
 	// TODO Auto-generated constructor stub

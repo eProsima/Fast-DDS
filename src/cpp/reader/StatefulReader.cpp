@@ -59,7 +59,7 @@ bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
 			return false;
 		}
 	}
-	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes,this);
+	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes.heartbeatResponseDelay,this);
 	matched_writers.push_back(wp);
 	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
 	return true;
