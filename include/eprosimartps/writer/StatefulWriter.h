@@ -116,7 +116,7 @@ private:
 
 		Count_t m_heartbeatCount;
 		//!Timed Event to manage the periodic HB to the Reader.
-		PeriodicHeartbeat m_periodicHB;
+		PeriodicHeartbeat* mp_periodicHB;
 
 		EntityId_t m_HBReaderEntityId;
 
