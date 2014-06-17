@@ -35,7 +35,8 @@ StatefulWriter::~StatefulWriter() {
 
 StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
 				RTPSWriter(guidP,entId,param.topic,ptype,STATEFUL,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
-				m_PubTimes(param.times)
+				m_PubTimes(param.times),
+				m_periodicHB(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)))
 
 {
 	m_pushMode = param.pushMode;
@@ -43,6 +44,14 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 	multicastLocatorList = param.multicastLocatorList;
 
 	m_heartbeatCount = 0;
+	if(entId == c_EntityId_SEDPPubWriter)
+		m_HBReaderEntityId = c_EntityId_SEDPPubReader;
+	else if(entId == c_EntityId_SEDPSubWriter)
+		m_HBReaderEntityId = c_EntityId_SEDPSubReader;
+	else if(entId == c_EntityId_WriterLiveliness)
+		m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
+	else
+		m_HBReaderEntityId = c_EntityId_Unknown;
 }
 
 
@@ -94,6 +103,8 @@ bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 			delete(*it);
 			matched_readers.erase(it);
 			pDebugInfo("Reader Proxy removed" << endl);
+			if(matched_readers.size()==0)
+				this->m_periodicHB.stop_timer();
 			return true;
 		}
 	}
@@ -227,7 +238,7 @@ void StatefulWriter::unsent_changes_not_empty()
 //				cout << "Reliability of Reader: "<< ((*rit)->m_param.m_reliability == RELIABLE ? "RELIABLE":"NOTRELIABLE")<<endl;
 //				cout << "PeriodicHB is waiting: "<< (*rit)->m_periodicHB.m_isWaiting << endl;
 				if((*rit)->m_param.m_reliability == RELIABLE)
-					(*rit)->m_periodicHB.restart_timer();
+					this->m_periodicHB.restart_timer();
 				(*rit)->m_nackSupression.restart_timer();
 			}
 			else
