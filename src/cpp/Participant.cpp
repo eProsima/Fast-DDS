@@ -47,7 +47,6 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
 							mp_PDP(NULL),
-							mp_WL(NULL),
 							m_participantID(ID),
 							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
 							m_listen_socket_buffer_size(PParam.listenSocketBufferSize)
@@ -79,14 +78,6 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 	{
 		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
 		mp_PDP->initPDP(PParam.discovery, this->getParticipantId());
-		//START WRITER LIVELINESS PROTOCOL
-		if(m_discovery.use_WriterLivelinessProtocol)
-		{
-			mp_WL = new WriterLiveliness(this);
-			mp_WL->createEndpoints(mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList,mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList);
-			mp_WL->assignRemoteEndpoints(mp_PDP->mp_localDPData);
-			pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
-		}
 	}
 }
 
@@ -166,9 +157,11 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	{
 		m_userWriterList.push_back(SWriter);
 		if(mp_PDP!=NULL)
+		{
 			mp_PDP->localWriterMatching(SWriter,true);
-		if(mp_WL!=NULL)
-			mp_WL->addLocalWriter(SWriter);
+			if(mp_PDP->mp_WL !=NULL)
+				mp_PDP->mp_WL->addLocalWriter(SWriter);
+		}
 	}
 	m_allWriterList.push_back(SWriter);
 
@@ -342,8 +335,8 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 	//FIXME REMOVE ENDPOINT FROM DISCOVERY PROTOCOL
 //	if(mp_PDP!=NULL)
 //		mp_PDP->
-	if(mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
-		mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
+	if(mp_PDP->mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
+		mp_PDP->mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
 	delete(p_endpoint);
 	return true;
 }

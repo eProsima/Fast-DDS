@@ -24,6 +24,8 @@
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 
+#include "eprosimartps/liveliness/WriterLiveliness.h"
+
 #include "eprosimartps/utils/eClock.h"
 
 
@@ -80,24 +82,35 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 		pWarning("No EndpointDiscoveryProtocol defined"<<endl);
 		return false;
 	}
+
+
 	if(mp_EDP->initEDP(m_discovery))
 	{
 		mp_SPDPReader->unlock();
-		this->announceParticipantState(true);
-//		eClock::my_sleep(50);
-//		this->announceParticipantState(false);
-//		eClock::my_sleep(50);
-//		this->announceParticipantState(false);
-		m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
-				boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(m_discovery.resendDiscoveryParticipantDataPeriod)*1e-3)));
-		m_resendDataTimer->restart_timer();
-
-		eClock::my_sleep(100);
-
-		return true;
 	}
+	else
+		return false;
+	//START WRITER LIVELINESS PROTOCOL
+	if(m_discovery.use_WriterLivelinessProtocol)
+	{
+		mp_WL = new WriterLiveliness(mp_participant);
+		mp_WL->createEndpoints(mp_localDPData->m_metatrafficUnicastLocatorList,mp_localDPData->m_metatrafficMulticastLocatorList);
+		mp_WL->assignRemoteEndpoints(mp_localDPData);
+		pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
+	}
+	this->announceParticipantState(true);
+	//		eClock::my_sleep(50);
+	//		this->announceParticipantState(false);
+	//		eClock::my_sleep(50);
+	//		this->announceParticipantState(false);
+	m_resendDataTimer = new ResendDiscoveryDataPeriod(this,mp_participant->getEventResource(),
+			boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(m_discovery.resendDiscoveryParticipantDataPeriod)*1e-3)));
+	m_resendDataTimer->restart_timer();
 
-	return false;
+	eClock::my_sleep(100);
+
+	return true;
+
 }
 
 bool SimplePDP::updateLocalParticipantData()

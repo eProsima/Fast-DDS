@@ -362,9 +362,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		cout << (*it)->getGuid() << endl;
 		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
-		cout << "MessageReceiver Reader ID: "<< readerID << endl;
 		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);

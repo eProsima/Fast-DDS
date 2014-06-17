@@ -193,9 +193,7 @@ public:
 		return m_send_socket_buffer_size;
 	}
 
-	WriterLiveliness* getWriterLivelinessPtr() {
-		return mp_WL;
-	}
+
 
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
@@ -246,7 +244,6 @@ private:
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
 	ParticipantDiscoveryProtocol* mp_PDP;
-	WriterLiveliness* mp_WL;
 
 	DiscoveryAttributes m_discovery;
 
