@@ -16,6 +16,7 @@
 
 #include <vector>
 #include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/common/types/Locator.h"
 
 #include "eprosimartps/liveliness/WriterLivelinessListener.h"
 
@@ -41,7 +42,7 @@ public:
 	StatefulWriter* mp_builtinParticipantMessageWriter;
 	StatefulReader* mp_builtinParticipantMessageReader;
 
-	bool createEndpoints();
+	bool createEndpoints(LocatorList_t& unicastList,LocatorList_t& multicastList);
 
 	bool addLocalWriter(RTPSWriter* W);
 	bool removeLocalWriter(RTPSWriter* W);

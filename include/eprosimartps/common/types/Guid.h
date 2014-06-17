@@ -127,12 +127,19 @@ inline bool operator==(EntityId_t& eid,const uint32_t id2)
 		eid.reverse();
 	return result;
 }
-inline bool operator==(const EntityId_t& id1,const EntityId_t& id2){
-	uint32_t* aux1 = (uint32_t*)(id1.value);
-	uint32_t* aux2 = (uint32_t*)(id2.value);
-	if(*aux1 == *aux2)
-		return true;
-	return false;
+inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
+	{
+	for(uint8_t i =0;i<4;++i)
+	{
+		if(id1.value[i] != id2.value[i])
+			return false;
+	}
+	return true;
+//	uint32_t* aux1 = (uint32_t*)(id1.value);
+//	uint32_t* aux2 = (uint32_t*)(id2.value);
+//	if(*aux1 == *aux2)
+//		return true;
+//	return false;
 }
 
 
