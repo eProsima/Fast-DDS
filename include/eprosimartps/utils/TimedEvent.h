@@ -68,6 +68,7 @@ public:
 	{
 		return (double)timer->expires_from_now().total_milliseconds();
 	}
+	//Duration_t m_timeInfinite;
 };
 
 

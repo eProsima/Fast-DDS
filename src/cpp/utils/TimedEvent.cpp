@@ -25,12 +25,11 @@ TimedEvent::TimedEvent(boost::asio::io_service* serv,boost::posix_time::millisec
 		m_interval_msec(interval),
 		m_isWaiting(false)
 {
-
+	//TIME_INFINITE(m_timeInfinite);
 }
 
 void TimedEvent::restart_timer()
 {
-
 	if(!m_isWaiting)
 	{
 
