@@ -141,7 +141,7 @@ void ThroughputPublisher::test(uint32_t demand)
 	m_Clock.setTimeNow(&m_t2);
 	uint64_t timewait_us=0;
 	uint32_t samples=0;
-	int aux;
+	size_t aux;
 	ThroughputCommandType command;
 	command.m_command = TEST_STARTS;
 	mp_commandpub->write((void*)&command);

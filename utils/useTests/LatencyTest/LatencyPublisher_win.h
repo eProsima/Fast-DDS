@@ -170,7 +170,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	sema.wait();
 	cout << "Total time(us): "<< Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1) << endl;
 	cout << "Data size: " << datasize+4 <<  "  MeanTime(us): " << (Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1))/n_samples  << endl;
-	int32_t removed=0;
+	size_t removed=0;
 	m_pub->removeAllChange(&removed);
 	cout << "Removed " << removed << endl;
 	cout << "Sub element number " << m_sub->getHistoryElementsNumber() << endl;
