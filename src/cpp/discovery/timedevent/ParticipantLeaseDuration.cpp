@@ -25,7 +25,7 @@ namespace eprosima {
 namespace rtps {
 
 ParticipantLeaseDuration::ParticipantLeaseDuration(ParticipantDiscoveryProtocol* pPDP,
-		const GUID_t& pguid,
+		const GuidPrefix_t& pguid,
 		ResourceEvent* pEvent,
 		boost::posix_time::milliseconds interval):
 				TimedEvent(&pEvent->io_service,interval),
@@ -53,7 +53,7 @@ void ParticipantLeaseDuration::event(const boost::system::error_code& ec)
 		for( pit = mp_PDP->m_discoveredParticipants.begin();
 				pit!= mp_PDP->m_discoveredParticipants.end();++pit)
 		{
-			if((*pit)->m_guidPrefix == m_remoteParticipantGuid.guidPrefix)
+			if((*pit)->m_guidPrefix == m_remoteParticipantGuid)
 			{
 				found = true;
 				break;
@@ -68,6 +68,7 @@ void ParticipantLeaseDuration::event(const boost::system::error_code& ec)
 			else
 			{
 				mp_PDP->removeRemoteParticipant(m_remoteParticipantGuid);
+				return;
 			}
 		}
 		this->restart_timer();

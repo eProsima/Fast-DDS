@@ -102,7 +102,7 @@ public:
 	 */
 	bool localReaderMatching(RTPSReader* R,bool first_time);
 
-	bool removeRemoteParticipant(const GUID_t& guid);
+	bool removeRemoteParticipant(const GuidPrefix_t& partguidP);
 
 	//!Pointer to the TimedEvent used to periodically send the ParticipantDiscoveredData
 	ResendDiscoveryDataPeriod* m_resendDataTimer;

@@ -14,7 +14,7 @@
 #include "eprosimartps/discovery/SPDPListener.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 #include "eprosimartps/discovery/SimplePDP.h"
-
+#include "eprosimartps/discovery/timedevent/ParticipantLeaseDuration.h"
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/writer/StatelessWriter.h"
@@ -88,6 +88,11 @@ bool SPDPListener::newAddedCache()
 					pdata_ptr = pdata;
 					pdata_ptr->isAlive = true;
 					this->mp_SPDP->m_discoveredParticipants.push_back(pdata_ptr);
+					ParticipantLeaseDuration* pld = new ParticipantLeaseDuration((ParticipantDiscoveryProtocol*)mp_SPDP,
+																				pdata_ptr->m_guidPrefix,
+																				mp_SPDP->mp_participant->getEventResource(),
+																				boost::posix_time::milliseconds(Time_t2MilliSec(pdata_ptr->leaseDuration)));
+					this->mp_SPDP->m_discoveredParticipantsLeaseDurations.push_back(pld);
 				}
 				for(LocatorListIterator it = pdata_ptr->m_metatrafficUnicastLocatorList.begin();
 						it!=pdata_ptr->m_metatrafficUnicastLocatorList.end();++it)

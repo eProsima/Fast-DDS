@@ -34,14 +34,14 @@ class ResourceEvent;
 class ParticipantLeaseDuration:public TimedEvent {
 public:
 	ParticipantLeaseDuration(ParticipantDiscoveryProtocol* p_SPDP,
-			const GUID_t& pguid,
+			const GuidPrefix_t& pguid,
 			ResourceEvent* pEvent,
 			boost::posix_time::milliseconds interval);
 	virtual ~ParticipantLeaseDuration();
 
 	void event(const boost::system::error_code& ec);
 	ParticipantDiscoveryProtocol* mp_PDP;
-	const GUID_t& m_remoteParticipantGuid;
+	const GuidPrefix_t& m_remoteParticipantGuid;
 
 };
 

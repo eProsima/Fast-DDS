@@ -202,9 +202,10 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	}
 }
 
-bool SimpleEDP::removeRemoteEndpoints(const GUID_t& partguid)
+bool SimpleEDP::removeRemoteEndpoints(const GuidPrefix_t& partguidP)
 {
-	GUID_t remoteGuid = partguid;
+	GUID_t remoteGuid;
+	remoteGuid.guidPrefix= partguidP;
 	if(mp_PubReader!=NULL)
 	{
 		boost::lock_guard<Endpoint> guard(*this->mp_PubReader);

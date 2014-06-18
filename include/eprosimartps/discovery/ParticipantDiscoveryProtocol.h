@@ -28,6 +28,7 @@ class ParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 class WriterLiveliness;
+class ParticipantLeaseDuration;
 
 /**
  * Base class of the ParticipantDiscoveryProtocol. Currently only SimplePDP is implemented, please refer to this class for further documentation.
@@ -48,6 +49,8 @@ public:
 	DiscoveredParticipantData* mp_localDPData;
 	//! Vector containing pointers to all DPD objects for all discovered participants.
 	std::vector<DiscoveredParticipantData*> m_discoveredParticipants;
+	//!Vector containing the leaseParticipantDuration TimedEvents.
+	std::vector<ParticipantLeaseDuration*> m_discoveredParticipantsLeaseDurations;
 	//! Discovery Attributes.
 	DiscoveryAttributes m_discovery;
 	//! Pointer to the local Participant Implementation
@@ -65,7 +68,7 @@ public:
 	virtual void stopParticipantAnnouncement()=0;
 	virtual void resetParticipantAnnouncement()=0;
 	virtual void localParticipantHasChanged()=0;
-	virtual bool removeRemoteParticipant(const GUID_t& guid)=0;
+	virtual bool removeRemoteParticipant(const GuidPrefix_t& guidP)=0;
 	virtual bool localWriterMatching(RTPSWriter* W,bool first_time)=0;
 	virtual bool localReaderMatching(RTPSReader* R,bool first_time)=0;
 };
