@@ -107,7 +107,7 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	n_received = 0;
 	cout << "Waiting ... for latencytype of size "<< (m_latency->data.size()+4) <<endl;
 	sema.wait();
-	int removed;
+	size_t removed;
 	cout << "Removing ";
 	m_pub->removeAllChange(&removed);
 	cout << removed << endl;
