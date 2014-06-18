@@ -390,8 +390,9 @@ void SimplePDP::resetParticipantAnnouncement()
 
 typedef std::vector<DiscoveredParticipantData*>::iterator TDPDit;
 
-bool SimplePDP::removeRemoteParticipant(const GUID_t& guid)
+bool SimplePDP::removeRemoteParticipant(const GuidPrefix_t& guidP)
 {
+	pWarning("Removing remote participant: "<<guidP<<endl;)
 	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
 	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
 	TDPDit dpdit;
@@ -399,7 +400,7 @@ bool SimplePDP::removeRemoteParticipant(const GUID_t& guid)
 	for(dpdit= this->m_discoveredParticipants.begin();
 			dpdit!=this->m_discoveredParticipants.end();++dpdit)
 	{
-		if((*dpdit)->m_guidPrefix == guid.guidPrefix)
+		if((*dpdit)->m_guidPrefix == guidP)
 		{
 			found = true;
 			break;
@@ -409,7 +410,7 @@ bool SimplePDP::removeRemoteParticipant(const GUID_t& guid)
 		return false;
 	if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
-		dynamic_cast<SimpleEDP*>(this->mp_EDP)->removeRemoteEndpoints(guid);
+		dynamic_cast<SimpleEDP*>(this->mp_EDP)->removeRemoteEndpoints(guidP);
 	}
 	//Now We Remove the remote Readers and Writers from our local Endpoints:
 	for(std::vector<DiscoveredWriterData*>::iterator wit = (*dpdit)->m_writers.begin();

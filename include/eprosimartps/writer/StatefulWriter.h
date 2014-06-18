@@ -97,6 +97,10 @@ public:
 		{
 			return matched_readers.end();
 	}
+	size_t matchedReadersSize()
+	{
+		return matched_readers.size();
+	}
 	Count_t getHeartbeatCount() const {
 		return m_heartbeatCount;
 	}

@@ -74,7 +74,7 @@ bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
 		{
 			delete(*it);
 			matched_writers.erase(it);
-			pDebugInfo("Writer Proxy removed" << endl);
+			pWarning("Writer Proxy removed" << endl);
 			return true;
 		}
 	}

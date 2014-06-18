@@ -53,11 +53,14 @@ void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 			}
 			m_iHandle.value[15] = m_livelinessKind;
 		}
-		if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
-			AutomaticLivelinessAssertion();
-		else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-			ManualByParticipantLivelinessAssertion();
-		eClock::my_sleep(1000);
+		if(this->mp_writerLiveliness->mp_builtinParticipantMessageWriter->matchedReadersSize()>0)
+		{
+			if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
+				AutomaticLivelinessAssertion();
+			else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+				ManualByParticipantLivelinessAssertion();
+		}
+		//eClock::my_sleep(1000);
 		//RESTART TIMER
 		this->restart_timer();
 	}

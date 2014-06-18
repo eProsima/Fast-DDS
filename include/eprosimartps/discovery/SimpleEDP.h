@@ -136,7 +136,7 @@ public:
 	//! Method to repare the LocatorList when something changes (the previously defined port couldn't be used because it was already in use.)
 	void repareDiscoveredDataLocatorList(LocatorList_t* loclist);
 
-	bool removeRemoteEndpoints(const GUID_t& guid);
+	bool removeRemoteEndpoints(const GuidPrefix_t& partguidP);
 };
 
 } /* namespace rtps */

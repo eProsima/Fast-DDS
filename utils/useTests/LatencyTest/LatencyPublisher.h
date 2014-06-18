@@ -155,7 +155,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 		}
 		m_latency_in->seqnum = -1;
 	}
-	int32_t removed=0;
+	size_t removed=0;
 	m_pub->removeAllChange(&removed);
 //	cout << "Removed " << removed << endl;
 //	cout << "Sub element number " << m_sub->getHistoryElementsNumber() << endl;
