@@ -84,7 +84,7 @@ public:
 
 
 	bool removeMinSeqCacheChange();
-	bool removeAllCacheChange(int32_t* n_removed);
+	bool removeAllCacheChange(size_t* n_removed);
 
 	void incrementHBCount(){++m_heartbeatCount;};
 

@@ -88,13 +88,13 @@ public:
 	 * @param[out] removed Number of removed elements
 	 * @return True if correct.
 	 */
-	bool removeAllChange(int32_t* removed);
+	bool removeAllChange(size_t* removed);
 
 	/**
 	 * Get the number of elements in the History.
 	 * @return Number of elements in the History.
 	 */
-	int getHistoryElementsNumber();
+	size_t getHistoryElementsNumber();
 
 
 	//Since there is no discovery:
@@ -200,7 +200,7 @@ public:
 	 * @param[out] removed Number of removed elements
 	 * @return True if correct.
 	 */
-	bool removeAllChange(int32_t* removed)
+	bool removeAllChange(size_t* removed)
 	{
 		return mp_impl->removeAllChange(removed);
 	}
@@ -209,7 +209,7 @@ public:
 	 * Get the number of elements in the History.
 	 * @return Number of elements in the History.
 	 */
-	int getHistoryElementsNumber()
+	size_t getHistoryElementsNumber()
 	{
 		return mp_impl->getHistoryElementsNumber();
 	}

@@ -34,9 +34,6 @@
     <Filter Include="Source Files\submessages">
       <UniqueIdentifier>{337afe7a-850a-4d9b-8381-7457d03bfffb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\timedevent">
-      <UniqueIdentifier>{a99e7974-afe9-4557-9ea9-f853d6e87193}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{23d9b5ee-47cd-4e78-89b2-f18c91534002}</UniqueIdentifier>
     </Filter>
@@ -61,9 +58,6 @@
     <Filter Include="Header Files\eprosimartps\resources">
       <UniqueIdentifier>{ebf9dad4-2ca0-4eac-a687-eef1280b817d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\timedevent">
-      <UniqueIdentifier>{46b6c89f-49e9-47e6-8097-aaf8b1fa9f6a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\eprosimartps\utils">
       <UniqueIdentifier>{c8a8b59a-be6d-4a5d-8628-e6bc3f3d294c}</UniqueIdentifier>
     </Filter>
@@ -81,6 +75,30 @@
     </Filter>
     <Filter Include="Source Files\discovery\data">
       <UniqueIdentifier>{5df22496-4898-4a25-99f7-4d7f5ac0706c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\liveliness">
+      <UniqueIdentifier>{d5bf2a43-484d-4e99-8d78-5e14d745dceb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\reader\timedevent">
+      <UniqueIdentifier>{f9487150-1a0b-4d44-9e8c-245c092ffd30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\liveliness">
+      <UniqueIdentifier>{09f43c46-5582-41aa-97a9-e650aad5c87e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\reader\timedevent">
+      <UniqueIdentifier>{e83ec349-8b64-4c62-b5d9-dd7b752d03e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\writer\timedevent">
+      <UniqueIdentifier>{979fdd8c-45ca-4765-9d53-854d8d92b33f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\discovery\timedevent">
+      <UniqueIdentifier>{0b3607a3-49e8-454f-83aa-2c86b507d89b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\writer\timedevent">
+      <UniqueIdentifier>{7d389060-9274-40f2-9fde-008ddad09484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\discovery\timedevent">
+      <UniqueIdentifier>{a8563088-23d7-4dcf-9201-2c3f7acd1cfb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -167,24 +185,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h">
       <Filter>Header Files\eprosimartps\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\HeartbeatResponseDelay.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackResponseDelay.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackSupressionDuration.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\PeriodicHeartbeat.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\ResendDiscoveryDataPeriod.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\TimedEvent.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h">
       <Filter>Header Files\eprosimartps\utils</Filter>
@@ -330,6 +330,39 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Time_t.h">
       <Filter>Header Files\eprosimartps\common\types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackResponseDelay.h">
+      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackSupressionDuration.h">
+      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\PeriodicHeartbeat.h">
+      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\HeartbeatResponseDelay.h">
+      <Filter>Header Files\eprosimartps\reader\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\WriterProxyLiveliness.h">
+      <Filter>Header Files\eprosimartps\reader\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\liveliness\LivelinessPeriodicAssertion.h">
+      <Filter>Header Files\eprosimartps\liveliness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\liveliness\WriterLiveliness.h">
+      <Filter>Header Files\eprosimartps\liveliness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\liveliness\WriterLivelinessListener.h">
+      <Filter>Header Files\eprosimartps\liveliness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\timedevent\ParticipantLeaseDuration.h">
+      <Filter>Header Files\eprosimartps\discovery\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\timedevent\ResendDiscoveryDataPeriod.h">
+      <Filter>Header Files\eprosimartps\discovery\timedevent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -361,24 +394,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\utils\RTPSLog.cpp">
       <Filter>Source Files\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\HeartbeatResponseDelay.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackResponseDelay.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackSupressionDuration.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\PeriodicHeartbeat.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\ResendDiscoveryDataPeriod.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\TimedEvent.cpp">
-      <Filter>Source Files\timedevent</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceEvent.cpp">
       <Filter>Source Files\resources</Filter>
@@ -478,6 +493,39 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp">
       <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\liveliness\LivelinessPeriodicAssertion.cpp">
+      <Filter>Source Files\liveliness</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\liveliness\WriterLiveliness.cpp">
+      <Filter>Source Files\liveliness</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\liveliness\WriterLivelinessListener.cpp">
+      <Filter>Source Files\liveliness</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\timedevent\HeartbeatResponseDelay.cpp">
+      <Filter>Source Files\reader\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\timedevent\WriterProxyLiveliness.cpp">
+      <Filter>Source Files\reader\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackResponseDelay.cpp">
+      <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackSupressionDuration.cpp">
+      <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\PeriodicHeartbeat.cpp">
+      <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\timedevent\ParticipantLeaseDuration.cpp">
+      <Filter>Source Files\discovery\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\timedevent\ResendDiscoveryDataPeriod.cpp">
+      <Filter>Source Files\discovery\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\TimedEvent.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
