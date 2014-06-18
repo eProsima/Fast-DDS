@@ -94,6 +94,7 @@ bool SPDPListener::newAddedCache()
 																				boost::posix_time::milliseconds(Time_t2MilliSec(pdata_ptr->leaseDuration)));
 					this->mp_SPDP->m_discoveredParticipantsLeaseDurations.push_back(pld);
 				}
+				pdata_ptr->isAlive = true;
 				for(LocatorListIterator it = pdata_ptr->m_metatrafficUnicastLocatorList.begin();
 						it!=pdata_ptr->m_metatrafficUnicastLocatorList.end();++it)
 				{
