@@ -62,12 +62,12 @@ bool PublisherImpl::removeMinSeqChange()
 	return mp_Writer->removeMinSeqCacheChange();
 }
 
-bool PublisherImpl::removeAllChange(int32_t* removed)
+bool PublisherImpl::removeAllChange(size_t* removed)
 {
 	return mp_Writer->removeAllCacheChange(removed);
 }
 
-int PublisherImpl::getHistoryElementsNumber()
+size_t PublisherImpl::getHistoryElementsNumber()
 {
 	return mp_Writer->getHistoryCacheSize();
 }

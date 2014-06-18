@@ -67,7 +67,7 @@ public:
 
 	virtual void unsent_change_add(CacheChange_t* change)=0;
 	virtual bool removeMinSeqCacheChange()=0;
-	virtual bool removeAllCacheChange(int32_t* n_removed)=0;
+	virtual bool removeAllCacheChange(size_t* n_removed)=0;
 	virtual size_t getMatchedSubscribers()=0;
 
 	bool add_new_change(ChangeKind_t kind,void*Data);

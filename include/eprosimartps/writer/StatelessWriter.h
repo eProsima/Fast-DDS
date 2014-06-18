@@ -67,7 +67,7 @@ public:
 	void unsent_changes_not_empty();
 
 	 bool removeMinSeqCacheChange();
-	 bool removeAllCacheChange(int32_t* n_removed);
+	 bool removeAllCacheChange(size_t* n_removed);
 
 	 size_t getMatchedSubscribers(){return reader_locator.size();}
 private:

@@ -294,7 +294,7 @@ bool StatefulWriter::removeMinSeqCacheChange()
 	return false;
 }
 
-bool StatefulWriter::removeAllCacheChange(int32_t* removed)
+bool StatefulWriter::removeAllCacheChange(size_t* removed)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	int32_t n_count = 0;

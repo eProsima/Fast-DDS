@@ -185,9 +185,9 @@ bool StatelessWriter::removeMinSeqCacheChange()
 		return false;
 }
 
-bool StatelessWriter::removeAllCacheChange(int32_t* n_removed)
+bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
 {
-	int32_t n_r=this->m_writer_cache.getHistorySize();
+	size_t n_r=this->m_writer_cache.getHistorySize();
 	if(this->m_writer_cache.remove_all_changes())
 	{
 		*n_removed = n_r;
