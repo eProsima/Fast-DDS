@@ -67,6 +67,7 @@ void ParticipantLeaseDuration::event(const boost::system::error_code& ec)
 			}
 			else
 			{
+				pWarning("Removing remote participant "<< m_remoteParticipantGuid << endl);
 				mp_PDP->removeRemoteParticipant(m_remoteParticipantGuid);
 				return;
 			}

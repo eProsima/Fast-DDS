@@ -21,6 +21,18 @@ namespace eprosima {
 namespace rtps {
 
 
+WriterProxy_t::WriterProxy_t():
+			remoteWriterGuid(c_Guid_Unknown),
+			leaseDuration(c_TimeInfinite),
+			livelinessKind(AUTOMATIC_LIVELINESS_QOS)
+	{
+	
+	}
+
+			WriterProxy_t::~WriterProxy_t()
+			{
+			}
+
 WriterProxy::~WriterProxy()
 {
 	pDebugInfo("WriterProxy destructor"<<endl;);
@@ -44,7 +56,7 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 
 {
 	m_changesFromW.clear();
-	//cout << "WriterProxy CREATED with lease Duration: "<< Time_t2MilliSec(WPparam.leaseDuration)<<endl;
+	cout << "WriterProxy CREATED with lease Duration: "<< Time_t2MilliSec(WPparam.leaseDuration)<<endl;
 	Time_t aux;
 	TIME_INFINITE(aux);
 	if(WPparam.leaseDuration < aux)

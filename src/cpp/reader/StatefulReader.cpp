@@ -72,9 +72,10 @@ bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
 	{
 		if((*it)->param.remoteWriterGuid == writerGuid)
 		{
+			pWarning("Writer Proxy " << (*it)->param.remoteWriterGuid << " removed" << endl);
 			delete(*it);
 			matched_writers.erase(it);
-			pWarning("Writer Proxy removed" << endl);
+			
 			return true;
 		}
 	}
