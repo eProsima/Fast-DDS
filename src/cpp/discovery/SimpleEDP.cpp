@@ -153,52 +153,60 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	if(auxendp!=0 && mp_PubReader!=NULL) //Exist Pub Writer and i have pub reader
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<DEF<<endl);
-		WriterProxy_t wp;
-		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
-		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
-		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		mp_PubReader->matched_writer_add(wp);
+		WriterProxy_t wp1;
+		wp1.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+		wp1.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
+		wp1.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp1.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		cout << "MPUBREADER: ADDING W WITH: " <<  Time_t2MilliSec(wp1.leaseDuration) << endl;
+		mp_PubReader->matched_writer_add(wp1);
 	}
 	auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 	if(auxendp!=0 && mp_PubWriter!=NULL) //Exist Pub Detector
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<DEF<<endl);
-		ReaderProxy_t rp;
-		rp.expectsInlineQos = false;
-		rp.m_reliability = RELIABLE;
-		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
-		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
-		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		mp_PubWriter->matched_reader_add(rp);
+		ReaderProxy_t rp1;
+		rp1.expectsInlineQos = false;
+		rp1.m_reliability = RELIABLE;
+		rp1.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+		rp1.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
+		rp1.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp1.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_PubWriter->matched_reader_add(rp1);
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	if(auxendp!=0 && mp_SubReader!=NULL) //Exist Pub Announcer
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<DEF<<endl);
-		WriterProxy_t wp;
-		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
-		wp.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
-		wp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-		wp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		mp_SubReader->matched_writer_add(wp);
+		WriterProxy_t wp2;
+		WriterProxy_t wp3 = WriterProxy_t();
+		cout << "LEASE DURATION: " << wp2.leaseDuration.seconds << " " << wp2.leaseDuration.fraction<<endl;
+		cout << "LEASE DURATION: " << wp3.leaseDuration.seconds << " " << wp3.leaseDuration.fraction<<endl;
+		WriterProxy_t* wp4 = new WriterProxy_t();
+		cout << "LEASE DURATION: " << wp4->leaseDuration.seconds << " " << wp4->leaseDuration.fraction<<endl;
+		cout << "MSUBREADER: ADDING W WITH: " <<  Time_t2MilliSec(wp2.leaseDuration) << endl;
+		wp2.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
+		wp2.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+		wp2.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp2.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		cout << "MSUBREADER: ADDING W WITH: " <<  Time_t2MilliSec(wp2.leaseDuration) << endl;
+		mp_SubReader->matched_writer_add(wp2);
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 	if(auxendp!=0 && mp_SubWriter!=NULL) //Exist Pub Announcer
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<DEF<<endl);
-		ReaderProxy_t rp;
-		rp.expectsInlineQos = false;
-		rp.m_reliability = RELIABLE;
-		rp.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
-		rp.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
-		rp.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-		rp.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		mp_SubWriter->matched_reader_add(rp);
+		ReaderProxy_t rp2;
+		rp2.expectsInlineQos = false;
+		rp2.m_reliability = RELIABLE;
+		rp2.remoteReaderGuid.guidPrefix = pdata->m_guidPrefix;
+		rp2.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+		rp2.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp2.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		mp_SubWriter->matched_reader_add(rp2);
 	}
 }
 

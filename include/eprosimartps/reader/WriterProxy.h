@@ -37,18 +37,17 @@ class StatefulReader;
  * Structure WriterProxy_t that stores information for each WriterProxy.
  * @ingroup READERMODULE
  */
-typedef struct WriterProxy_t{
+class WriterProxy_t
+{
+public:
 	GUID_t remoteWriterGuid;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 	Duration_t leaseDuration;
 	LivelinessQosPolicyKind livelinessKind;
-	WriterProxy_t(){
-		GUID_UNKNOWN(remoteWriterGuid);
-		TIME_INFINITE(leaseDuration);
-		livelinessKind = AUTOMATIC_LIVELINESS_QOS;
-	}
-}WriterProxy_t;
+	WriterProxy_t();
+	virtual ~WriterProxy_t();
+};
 
 
 /**
