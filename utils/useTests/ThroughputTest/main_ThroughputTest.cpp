@@ -72,7 +72,7 @@ int main(int argc, char** argv){
 	ThroughputCommandDataType throuputcommand_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
-	uint32_t demands[] = {200,400,600,700,800,900,1000,1100};
+	uint32_t demands[] = {2000,4000,6000,8000,10000};
 		vector<uint32_t> demand (demands, demands + sizeof(demands) / sizeof(uint32_t) );
 
 	switch (type)

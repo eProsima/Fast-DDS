@@ -114,6 +114,8 @@ ThroughputSubscriber::ThroughputSubscriber():
 	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 	PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+PParam.sendSocketBufferSize = 65536;
+	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant2";
 	mp_par = DomainParticipant::createParticipant(PParam);
 	if(mp_par == NULL)
