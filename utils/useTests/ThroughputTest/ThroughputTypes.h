@@ -28,11 +28,11 @@ typedef struct TroughputTimeStats{
 	uint64_t totaltime_us;
 	uint32_t samplesize;
 	uint32_t demand;
-	float Mbitsec;
+	double Mbitsec;
 	uint32_t lostsamples;
 	void compute()
 	{
-		Mbitsec = (float)(samplesize*8*nsamples)/((float)totaltime_us);
+		Mbitsec = (((double)samplesize*8*nsamples))/(totaltime_us);
 	}
 }TroughputTimeStats;
 
