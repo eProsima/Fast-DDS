@@ -133,31 +133,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 	return false;
 }
 
-bool WriterHistory::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator* vit_out)
-{
-	t_vectorPairKeyChanges::iterator vit;
-	bool found = false;
-	for(vit= m_keyedChanges.begin();vit!=m_keyedChanges.end();++vit)
-	{
-		if(a_change->instanceHandle == vit->first)
-		{
-			*vit_out = vit;
-			return true;
-		}
-	}
-	if(!found)
-	{
-		if(m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
-		{
-			t_pairKeyChanges newpair;
-			newpair.first = a_change->instanceHandle;
-			m_keyedChanges.push_back(newpair);
-			*vit_out = m_keyedChanges.end()-1;
-			return true;
-		}
-	}
-	return false;
-}
+
 
 
 
@@ -178,9 +154,13 @@ void WriterHistory::updateMaxMinSeqNum()
 
 bool WriterHistory::remove_min_change()
 {
-
-	updateMaxMinSeqNum();
-	return true;
+	if(remove_change(mp_minSeqCacheChange))
+	{
+		updateMaxMinSeqNum();
+		return true;
+	}
+	else
+		return false;
 }
 
 

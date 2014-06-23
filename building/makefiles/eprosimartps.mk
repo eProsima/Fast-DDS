@@ -42,6 +42,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  \
 		  $(BASEDIR)/src/cpp/history/History.cpp \
 		  $(BASEDIR)/src/cpp/history/WriterHistory.cpp \
+		  $(BASEDIR)/src/cpp/history/ReaderHistory.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
