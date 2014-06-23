@@ -74,13 +74,18 @@ bool SimpleEDP::createSEDPEndpoints()
 	RTPSWriter* waux;
 	if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
 	{
-		Wparam.historyMaxSize = 100;
+	//	Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Wparam.topic.topicName = "DCPSPublication";
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredWriterData";
 		Wparam.userDefinedId = -1;
+		Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+		Wparam.topic.historyQos.depth = 1;
+		Wparam.topic.resourceLimitsQos.max_instances = 1000;
+		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
@@ -123,13 +128,18 @@ bool SimpleEDP::createSEDPEndpoints()
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);
 			pInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
 		}
-		Wparam.historyMaxSize = 100;
+		//Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Wparam.topic.topicName = "DCPSSubscription";
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredReaderData";
 		Wparam.userDefinedId = -1;
+		Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+		Wparam.topic.historyQos.depth = 1;
+		Wparam.topic.resourceLimitsQos.max_instances = 1000;
+		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);

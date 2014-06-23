@@ -55,7 +55,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	//CREATE WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
-	Wparam.historyMaxSize = 2;
+//	Wparam.historyMaxSize = 2;
 	Wparam.payloadMaxSize = 50;
 	Wparam.unicastLocatorList = unicastList;
 	Wparam.multicastLocatorList = multicastList;
@@ -65,6 +65,11 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	Wparam.userDefinedId = -1;
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 1;
+	Wparam.topic.resourceLimitsQos.max_instances = 100;
+	Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+	Wparam.topic.resourceLimitsQos.max_samples = 100;
 	RTPSWriter* wout;
 	if(mp_participant->createWriter(&wout,Wparam,Wparam.payloadMaxSize,true,STATEFUL,NULL,NULL,c_EntityId_WriterLiveliness))
 	{

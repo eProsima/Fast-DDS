@@ -198,11 +198,16 @@ bool SimplePDP::createSPDPEndpoints()
 	//SPDP BUILTIN PARTICIPANT WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
-	Wparam.historyMaxSize = 1;
+	//Wparam.historyMaxSize = 1;
 	//Locators where it is going to listen
 	Wparam.topic.topicName = "DCPSParticipant";
 	Wparam.topic.topicDataType = "DiscoveredParticipantData";
 	Wparam.topic.topicKind = WITH_KEY;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 1;
+	Wparam.topic.resourceLimitsQos.max_instances = 1;
+	Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+	Wparam.topic.resourceLimitsQos.max_samples = 2;
 	Wparam.userDefinedId = -1;
 	RTPSWriter* wout;
 	if(mp_participant->createWriter(&wout,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPWriter))

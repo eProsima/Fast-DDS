@@ -25,8 +25,6 @@ class WriterHistory : public History
 {
 public:
 	WriterHistory(Endpoint* endp,
-			HistoryQosPolicy historypolicy=HistoryQosPolicy(),
-			ResourceLimitsQosPolicy resourcelimits=ResourceLimitsQosPolicy(),
 			uint32_t payload_max_size=5000);
 	virtual ~WriterHistory();
 
@@ -44,11 +42,19 @@ public:
 		*max_change = mp_maxSeqCacheChange;
 	}
 
+	bool remove_min_change();
+
+	std::vector<CacheChange_t*>::iterator changesBegin(){return m_changes.begin();}
+	std::vector<CacheChange_t*>::iterator changesEnd(){return m_changes.end();}
+
+	bool find_Key(CacheChange_t* a_change,
+			std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>>::iterator* vecPairIterrator);
+
 protected:
-	uint64_t m_lastCacheChangeSeqNum;
+	SequenceNumber_t m_lastCacheChangeSeqNum;
 	CacheChange_t* mp_minSeqCacheChange;
 	CacheChange_t* mp_maxSeqCacheChange;
-	std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>> m_keyedChanges;
+
 
 	RTPSWriter* mp_writer;
 };

@@ -43,7 +43,7 @@ NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::millis
 
 bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)
 {
-	return(c1->change->sequenceNumber.to64long() < c2->change->sequenceNumber.to64long());
+	return(c1->seqNum < c2->seqNum);
 }
 
 void NackResponseDelay::event(const boost::system::error_code& ec)
@@ -55,20 +55,20 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 		std::vector<ChangeForReader_t*> ch_vec;
 		if(mp_RP->requested_changes(&ch_vec))
 		{
-			std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
+		//	std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
-			std::vector<CacheChange_t*> not_relevant_changes;
+			std::vector<SequenceNumber_t> not_relevant_changes;
 			for(std::vector<ChangeForReader_t*>::iterator cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
 				(*cit)->status = UNDERWAY;
-				if((*cit)->is_relevant)
+				if((*cit)->is_relevant && (*cit)->isValid())
 				{
-					relevant_changes.push_back((*cit)->change);
+					relevant_changes.push_back((*cit)->getChange());
 				}
 				else
 				{
-					not_relevant_changes.push_back((*cit)->change);
+					not_relevant_changes.push_back((*cit)->seqNum);
 				}
 			}
 			if(!relevant_changes.empty())

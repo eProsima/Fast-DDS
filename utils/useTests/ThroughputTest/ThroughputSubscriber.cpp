@@ -143,7 +143,9 @@ PParam.sendSocketBufferSize = 65536;
 	Rparam.unicastLocatorList.push_back(Locator_t(10111));
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 20;
+	//Wparam.historyMaxSize = 20;
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Wparam.topic.resourceLimitsQos.max_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
@@ -166,7 +168,7 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 	sema.wait();
 	cout << "Discovery complete"<<endl;
 	bool stop = false;
-	int aux;
+	//int aux;
 	printLabelsSubscriber();
 	int demindex=0;
 	while(1)
