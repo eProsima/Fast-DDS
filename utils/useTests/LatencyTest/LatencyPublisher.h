@@ -9,10 +9,6 @@
 /**
  * @file LatencyPublisher.h
  *
- *  Created on: Jun 2, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef LATENCYPUBLISHER_H_

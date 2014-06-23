@@ -112,6 +112,7 @@ public:
 		return m_HBReaderEntityId;
 	}
 
+	bool change_removed_by_history(CacheChange_t* a_change);
 private:
 	//! Vector containin all the associated ReaderProxies.
 		std::vector<ReaderProxy*> matched_readers;

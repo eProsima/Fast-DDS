@@ -16,6 +16,7 @@
 
 #include "eprosimartps/Endpoint.h"
 #include "eprosimartps/HistoryCache.h"
+#include "eprosimartps/history/History.h"
 
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 
@@ -129,6 +130,7 @@ public:
 		m_livelinessAsserted = live;
 	}
 
+	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
 
 protected:
 

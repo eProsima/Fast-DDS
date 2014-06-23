@@ -30,6 +30,11 @@ struct SequenceNumber_t{
 		high = 0;
 		low = 0;
 	}
+	SequenceNumber_t(int32_t hi,uint32_t lo):
+		high(hi),low(lo)
+	{
+
+	}
 	//!Convert the number to 64 bit.
 	uint64_t to64long(){
 		return ((uint64_t)high *(uint64_t)pow(2.0,32) + (uint64_t)low);
@@ -126,6 +131,8 @@ inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
 
 
 #define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0;}
+
+const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
 
 inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
 {

@@ -70,6 +70,10 @@ public:
 	 bool removeAllCacheChange(size_t* n_removed);
 
 	 size_t getMatchedSubscribers(){return reader_locator.size();}
+
+
+	 bool change_removed_by_history(CacheChange_t* a_change);
+
 private:
 	 Duration_t resendDataPeriod; //FIXME: Not used yet.
 	 std::vector<ReaderLocator> reader_locator;

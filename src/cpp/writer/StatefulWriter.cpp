@@ -309,7 +309,16 @@ bool StatefulWriter::removeAllCacheChange(size_t* removed)
 		return false;
 }
 
-
+bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+						it!=this->matched_readers.end();++it)
+	{
+		CacheChange_t* min_change;
+		m_writer_cache
+	}
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

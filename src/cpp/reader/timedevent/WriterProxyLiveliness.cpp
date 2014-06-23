@@ -9,10 +9,6 @@
 /**
  * @file WriterProxyLiveliness.cpp
  *
- *  Created on: Jun 12, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #include "eprosimartps/reader/timedevent/WriterProxyLiveliness.h"

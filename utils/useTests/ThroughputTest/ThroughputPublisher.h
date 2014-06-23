@@ -9,10 +9,6 @@
 /**
  * @file ThroughputPublisher.h
  *
- *  Created on: Jun 3, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef THROUGHPUTPUBLISHER_H_

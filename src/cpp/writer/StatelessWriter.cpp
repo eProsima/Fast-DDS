@@ -197,6 +197,11 @@ bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
 		return false;
 }
 
+bool StatelessWriter::change_removed_by_history(CacheChange_t* a_change)
+{
+	return true;
+}
+
 } /* namespace rtps */
 } /* namespace eprosima */
 
