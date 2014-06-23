@@ -23,7 +23,8 @@
 
 
 #include "eprosimartps/Endpoint.h"
-#include "eprosimartps/HistoryCache.h"
+//#include "eprosimartps/HistoryCache.h"
+#include "eprosimartps/history/ReaderHistory.h"
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 #include "eprosimartps/qos/ReaderQos.h"
 #include "eprosimartps/dds/Subscriber.h"
@@ -76,7 +77,7 @@ public:
 		return m_reader_cache.release_Cache(ch);
 	}
 
-	size_t getHistoryCacheSize(){return m_reader_cache.m_changes.size();};
+	size_t getHistoryCacheSize(){return m_reader_cache.getHistorySize();};
 
 	/**
 	 * Add a change to the HistoryCache.
@@ -119,16 +120,17 @@ public:
 	{
 		return m_reader_cache.remove_change(seqNum,writerGuid);
 	}
-	bool get_last_added_cache(CacheChange_t** ch_ptr)
-	{
-		return m_reader_cache.get_last_added_cache(ch_ptr);
-	}
+//	bool get_last_added_cache(CacheChange_t** ch_ptr)
+//	{
+//		return m_reader_cache.get_last_added_cache(ch_ptr);
+//	}
 
 	bool expectsInlineQos(){return m_expectsInlineQos;}
 
 	std::vector<CacheChange_t*>::iterator readerHistoryCacheBegin(){return m_reader_cache.m_changes.begin();}
 	std::vector<CacheChange_t*>::iterator readerHistoryCacheEnd(){return m_reader_cache.m_changes.end();}
 
+	virtual bool change_removed_by_history(CacheChange_t*)=0;
 
 protected:
 	//!Pointer to the associated subscriber
@@ -138,7 +140,7 @@ protected:
 	friend bool SubscriberImpl::assignListener(SubscriberListener* plistener);
 
 	//!History Cache of the Reader.
-	HistoryCache m_reader_cache;
+	ReaderHistory m_reader_cache;
 	//!Whether the Reader expects Inline QOS.
 	bool m_expectsInlineQos;
 

@@ -96,17 +96,7 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 
 bool StatelessReader::isUnreadCacheChange()
 {
-	m_reader_cache.sortCacheChangesBySeqNum();
-	std::vector<CacheChange_t*>::iterator it;
-	for(it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
-	{
-		if(!(*it)->isRead)
-		{
-			return true;
-		}
-	}
-	return false;
+	return m_reader_cache.isUnreadCache();
 }
 
 bool StatelessReader::matched_writer_add(const GUID_t& guid)
@@ -132,6 +122,12 @@ bool StatelessReader::matched_writer_remove(const GUID_t& guid)
 		}
 	}
 	return false;
+}
+
+
+bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
+{
+	return m_reader_cache.remove_change(ch);
 }
 
 

@@ -70,7 +70,7 @@ public:
 		return m_changes.size();
 	}
 
-	void sortCacheChangesBySeqNum();
+
 
 	bool remove_all_changes();
 
@@ -82,6 +82,9 @@ public:
 
 	bool find_Key(CacheChange_t* a_change,
 				std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>>::iterator* vecPairIterrator);
+
+	std::vector<CacheChange_t*>::iterator changesBegin(){return m_changes.begin();}
+	std::vector<CacheChange_t*>::iterator changesEnd(){return m_changes.end();}
 
 protected:
 	//!Vector of pointers to the CacheChange_t.

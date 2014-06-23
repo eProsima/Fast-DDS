@@ -177,27 +177,34 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 
 bool StatefulReader::isUnreadCacheChange()
 {
-	m_reader_cache.sortCacheChangesBySeqNum();
-	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
-	{
-		if((*it)->isRead)
-			continue;
-		WriterProxy* wp;
-		if(this->matched_writer_lookup((*it)->writerGUID,&wp))
-		{
-			SequenceNumber_t seq;
-			wp->available_changes_max(&seq);
-			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
-			{
-				pDebugInfo("StatefulReader, isUnreadCacheChange: TRUE : "<< (*it)->sequenceNumber.to64long()<<endl);
-				return true;
-			}
-		}
-	}
-	pDebugInfo("StatefulReader, isUnreadCacheChange: FALSE"<<endl);
-	return false;
+	return m_reader_cache.isUnreadCache();
+//	m_reader_cache.sortCacheChangesBySeqNum();
+//	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
+//			it!=m_reader_cache.m_changes.end();++it)
+//	{
+//		if((*it)->isRead)
+//			continue;
+//		WriterProxy* wp;
+//		if(this->matched_writer_lookup((*it)->writerGUID,&wp))
+//		{
+//			SequenceNumber_t seq;
+//			wp->available_changes_max(&seq);
+//			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
+//			{
+//				pDebugInfo("StatefulReader, isUnreadCacheChange: TRUE : "<< (*it)->sequenceNumber.to64long()<<endl);
+//				return true;
+//			}
+//		}
+//	}
+//	pDebugInfo("StatefulReader, isUnreadCacheChange: FALSE"<<endl);
+//	return false;
 }
+
+bool StatefulReader::change_removed_by_history(CacheChange_t*)
+{
+
+}
+
 
 
 } /* namespace rtps */

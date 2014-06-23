@@ -43,17 +43,14 @@ public:
 
 	bool remove_min_change();
 
-	std::vector<CacheChange_t*>::iterator changesBegin(){return m_changes.begin();}
-	std::vector<CacheChange_t*>::iterator changesEnd(){return m_changes.end();}
 
-	bool find_Key(CacheChange_t* a_change,
-			std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>>::iterator* vecPairIterrator);
+	void updateMaxMinSeqNum();
+
 
 protected:
 	SequenceNumber_t m_lastCacheChangeSeqNum;
 	CacheChange_t* mp_minSeqCacheChange;
 	CacheChange_t* mp_maxSeqCacheChange;
-
 
 	RTPSWriter* mp_writer;
 };
