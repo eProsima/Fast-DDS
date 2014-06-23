@@ -66,7 +66,7 @@ public:
 		return m_isHistoryFull;
 	}
 
-	size_t getHistoryCacheNumber(){
+	size_t getHistorySize(){
 		return m_changes.size();
 	}
 
@@ -78,9 +78,13 @@ public:
 
 	virtual bool add_change(CacheChange_t* a_change)=0;
 
+	bool remove_change(CacheChange_t* ch);
+
 protected:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;
+
+	std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>> m_keyedChanges;
 
 	const Endpoint* mp_Endpoint;
 

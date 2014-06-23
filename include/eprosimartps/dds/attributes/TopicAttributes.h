@@ -14,6 +14,7 @@
 #define TOPICPARAMETERS_H_
 
 #include <string>
+#include "eprosimartps/qos/DDSQosPolicies.h"
 
 namespace eprosima {
 namespace rtps {
@@ -62,6 +63,10 @@ public:
 	std::string topicName;
 	//!Topic Data Type.
 	std::string topicDataType;
+
+	HistoryQosPolicy historyQos;
+
+	ResourceLimitsQosPolicy resourceLimitsQos;
 };
 
 } /* namespace rtps */

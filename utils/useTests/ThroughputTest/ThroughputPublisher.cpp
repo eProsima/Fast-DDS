@@ -74,10 +74,12 @@ ThroughputPublisher::ThroughputPublisher():
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 10000;
+	//Wparam.historyMaxSize = 10000;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Wparam.topic.resourceLimitsQos.max_samples = 10000;
 	mp_datapub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
@@ -87,7 +89,8 @@ ThroughputPublisher::ThroughputPublisher():
 	Rparam.topic.topicName = "ThroughputCommandS2P";
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 
-	Wparam.historyMaxSize = 20;
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Wparam.topic.resourceLimitsQos.max_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandP2S";

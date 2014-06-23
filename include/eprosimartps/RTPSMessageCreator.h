@@ -13,6 +13,7 @@
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/CacheChange.h"
 #include "eprosimartps/dds/attributes/TopicAttributes.h"
 

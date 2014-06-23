@@ -59,6 +59,7 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 				break;
 			}
 		}
+		cout << 3 << endl;
 		if(unacked_changes)
 		{
 			SequenceNumber_t first,last;
@@ -66,7 +67,6 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			mp_SFW->get_seq_num_max(&last,NULL);
 			mp_SFW->incrementHBCount();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
-
 			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_SFW->getGuid().guidPrefix,
 													mp_SFW->getHBReaderEntityId(),mp_SFW->getGuid().entityId,
 													first,last,mp_SFW->getHeartbeatCount(),false,false);
