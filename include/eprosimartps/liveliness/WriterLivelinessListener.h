@@ -9,10 +9,6 @@
 /**
  * @file WriterLivelinessListener.h
  *
- *  Created on: Jun 11, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef WRITERLIVELINESSLISTENER_H_

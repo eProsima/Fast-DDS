@@ -9,11 +9,7 @@
 /**
  * @file ParticipantLeaseDuration.h
  *
- *  Created on: Jun 12, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
- */
+*/
 
 #ifndef PARTICIPANTLEASEDURATION_H_
 #define PARTICIPANTLEASEDURATION_H_

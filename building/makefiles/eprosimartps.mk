@@ -40,6 +40,9 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/history/History.cpp \
+		  $(BASEDIR)/src/cpp/history/WriterHistory.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \

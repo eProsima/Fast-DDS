@@ -9,10 +9,6 @@
 /**
  * @file ThroughputTypes.h
  *
- *  Created on: Jun 3, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef THROUGHPUTTYPES_H_

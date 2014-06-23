@@ -9,10 +9,6 @@
 /**
  * @file ThroughputSubscriber.cxx
  *
- *  Created on: Jun 4, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #include "ThroughputSubscriber.h"
