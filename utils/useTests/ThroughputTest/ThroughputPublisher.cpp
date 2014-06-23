@@ -170,8 +170,11 @@ void ThroughputPublisher::test(uint32_t demand)
 	TS.totaltime_us = Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-timewait_us;
 	TS.samplesize = SAMPLESIZE+4;
 	TS.demand = demand;
+	//cout << TS.demand << endl;
 	TS.compute();
+	//cout << TS.demand << endl;
 	printTimeStatsPublisher(TS);
+	//cout << TS.demand << endl;
 	m_timeStats.push_back(TS);
 }
 
