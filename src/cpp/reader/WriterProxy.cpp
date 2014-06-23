@@ -56,7 +56,7 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 
 {
 	m_changesFromW.clear();
-	cout << "WriterProxy CREATED with lease Duration: "<< Time_t2MilliSec(WPparam.leaseDuration)<<endl;
+	//cout << "WriterProxy CREATED with lease Duration: "<< Time_t2MilliSec(WPparam.leaseDuration)<<endl;
 	Time_t aux;
 	TIME_INFINITE(aux);
 	if(WPparam.leaseDuration < aux)

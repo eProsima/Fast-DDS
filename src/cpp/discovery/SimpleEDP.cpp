@@ -158,7 +158,6 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		wp1.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
 		wp1.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		wp1.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		cout << "MPUBREADER: ADDING W WITH: " <<  Time_t2MilliSec(wp1.leaseDuration) << endl;
 		mp_PubReader->matched_writer_add(wp1);
 	}
 	auxendp = endp;
@@ -181,17 +180,10 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	{
 		pDebugInfo(CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<DEF<<endl);
 		WriterProxy_t wp2;
-		WriterProxy_t wp3 = WriterProxy_t();
-		cout << "LEASE DURATION: " << wp2.leaseDuration.seconds << " " << wp2.leaseDuration.fraction<<endl;
-		cout << "LEASE DURATION: " << wp3.leaseDuration.seconds << " " << wp3.leaseDuration.fraction<<endl;
-		WriterProxy_t* wp4 = new WriterProxy_t();
-		cout << "LEASE DURATION: " << wp4->leaseDuration.seconds << " " << wp4->leaseDuration.fraction<<endl;
-		cout << "MSUBREADER: ADDING W WITH: " <<  Time_t2MilliSec(wp2.leaseDuration) << endl;
 		wp2.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
 		wp2.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
 		wp2.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		wp2.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		cout << "MSUBREADER: ADDING W WITH: " <<  Time_t2MilliSec(wp2.leaseDuration) << endl;
 		mp_SubReader->matched_writer_add(wp2);
 	}
 	auxendp = endp;
