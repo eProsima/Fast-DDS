@@ -89,7 +89,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			{
 				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange))
 				{
-					add =true;
+					add = true;
 				}
 			}
 		}
