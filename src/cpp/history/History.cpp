@@ -25,6 +25,8 @@ namespace rtps {
 //	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
 //}
 
+typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
+typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
 History::History(Endpoint* endp,
 					HistoryQosPolicy historypolicy,
@@ -106,6 +108,32 @@ bool History::remove_change(CacheChange_t* ch)
 		}
 	}
 	updateMaxMinSeqNum();
+	return false;
+}
+
+bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator* vit_out)
+{
+	t_vectorPairKeyChanges::iterator vit;
+	bool found = false;
+	for(vit= m_keyedChanges.begin();vit!=m_keyedChanges.end();++vit)
+	{
+		if(a_change->instanceHandle == vit->first)
+		{
+			*vit_out = vit;
+			return true;
+		}
+	}
+	if(!found)
+	{
+		if(m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
+		{
+			t_pairKeyChanges newpair;
+			newpair.first = a_change->instanceHandle;
+			m_keyedChanges.push_back(newpair);
+			*vit_out = m_keyedChanges.end()-1;
+			return true;
+		}
+	}
 	return false;
 }
 

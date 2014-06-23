@@ -19,13 +19,12 @@
 namespace eprosima {
 namespace rtps {
 
-typedef std::pair<InstanceHandle_t,uint32_t> t_KeyNumber;
+//typedef std::pair<InstanceHandle_t,uint32_t> t_KeyNumber;
 
 class WriterHistory : public History
 {
 public:
-	WriterHistory(Endpoint* endp,
-			uint32_t payload_max_size=5000);
+	WriterHistory(Endpoint* endp,uint32_t payload_max_size=5000);
 	virtual ~WriterHistory();
 
 

@@ -80,6 +80,9 @@ public:
 
 	bool remove_change(CacheChange_t* ch);
 
+	bool find_Key(CacheChange_t* a_change,
+				std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>>::iterator* vecPairIterrator);
+
 protected:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;
