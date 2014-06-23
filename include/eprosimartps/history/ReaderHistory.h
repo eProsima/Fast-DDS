@@ -49,6 +49,15 @@ public:
 			--m_unreadCacheCount;
 	}
 
+	void get_min_change(CacheChange_t** min_change)
+	{
+		*min_change = mp_minSeqCacheChange;
+	}
+	void get_max_change(CacheChange_t** max_change)
+	{
+		*max_change = mp_maxSeqCacheChange;
+	}
+
 protected:
 	CacheChange_t* mp_minSeqCacheChange;
 	CacheChange_t* mp_maxSeqCacheChange;
