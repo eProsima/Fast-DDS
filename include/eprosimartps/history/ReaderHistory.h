@@ -19,10 +19,42 @@
 namespace eprosima {
 namespace rtps {
 
+struct FirstLastSeqNum
+{
+	GUID_t wGuid;
+	SequenceNumber_t first;
+	SequenceNumber_t last;
+};
+
 class ReaderHistory: public History {
 public:
 	ReaderHistory(Endpoint* endp,uint32_t payload_max_size=5000);
 	virtual ~ReaderHistory();
+
+	bool add_change(CacheChange_t* a_change);
+
+	void sortCacheChanges();
+
+	void updateMaxMinSeqNum();
+
+	bool isUnreadCache();
+
+	void increaseUnreadCount()
+	{
+		++m_unreadCacheCount;
+	}
+	void decreaseUnreadCount()
+	{
+		if(m_unreadCacheCount>0)
+			--m_unreadCacheCount;
+	}
+
+protected:
+	CacheChange_t* mp_minSeqCacheChange;
+	CacheChange_t* mp_maxSeqCacheChange;
+	std::vector<FirstLastSeqNum> m_firstlastSeqNum;
+	RTPSReader* mp_reader;
+	uint64_t m_unreadCacheCount;
 };
 
 } /* namespace rtps */

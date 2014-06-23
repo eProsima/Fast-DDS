@@ -19,11 +19,7 @@
 
 namespace eprosima {
 namespace rtps {
-//
-//bool sort_CacheChanges_History_SeqNum (CacheChange_t* c1,CacheChange_t* c2)
-//{
-//	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
-//}
+
 
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
@@ -49,11 +45,6 @@ History::~History()
 {
 	pDebugInfo("HistoryCache destructor"<<endl;);
 }
-
-//void History::sortCacheChangesBySeqNum()
-//{
-//	std::sort(m_changes.begin(),m_changes.end(),sort_CacheChanges_History_SeqNum);
-//}
 
 
 bool History::remove_all_changes()
@@ -133,6 +124,8 @@ bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator*
 			*vit_out = m_keyedChanges.end()-1;
 			return true;
 		}
+		else
+			pWarning("History has reached the maximum number of instances"<<endl;)
 	}
 	return false;
 }
