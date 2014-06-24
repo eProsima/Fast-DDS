@@ -154,7 +154,7 @@ class ChangeFromWriter_t
 	 {
 
 	 }
-	 virtual ~ChangeFromWriter_t();
+	 virtual ~ChangeFromWriter_t(){};
 	 ChangeFromWriterStatus_t status;
 	 bool is_relevant;
 	 SequenceNumber_t seqNum;
