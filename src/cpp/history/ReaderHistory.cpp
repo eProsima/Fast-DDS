@@ -118,9 +118,22 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	{
 		if(!a_change->instanceHandle.isDefined() && mp_reader->mp_type !=NULL)
 		{
-			void* data = malloc(mp_reader->mp_type->m_typeSize);
-			mp_reader->mp_type->deserialize(&a_change->serializedPayload,data);
-			mp_reader->mp_type->getKey(data,&a_change->instanceHandle);
+			if(this->mp_Endpoint->getUserDefinedId() > 0)
+			{
+				void* data = malloc(mp_reader->mp_type->m_typeSize);
+				void* data_save = data;
+				mp_reader->mp_type->deserialize(&a_change->serializedPayload,data);
+				if(mp_reader->mp_type->getKey(data,&a_change->instanceHandle))
+					free(data_save);
+				else
+					return false;
+			}
+			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
+			{
+				cout << "Builtin"<<endl;
+				if(!mp_reader->mp_type->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
+					return false;
+			}
 		}
 		else
 		{
@@ -131,6 +144,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
+			pDebugInfo("Trying to add change with KEY: "<< vit->first << endl;);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -168,7 +182,11 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 				if(m_changes.size()==m_resourceLimitsQos.max_samples)
 					m_isHistoryFull = true;
 				//ADD TO KEY VECTOR
-				if(vit->second.back()->sequenceNumber < a_change->sequenceNumber)
+				if(vit->second.size() == 0)
+				{
+					vit->second.push_back(a_change);
+				}
+				else if(vit->second.back()->sequenceNumber < a_change->sequenceNumber)
 				{
 					vit->second.push_back(a_change);
 				}

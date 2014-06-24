@@ -341,7 +341,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				msg->msg_endian = LITTLEEND;
 			else
 			{
-				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
+				pError( "Message received with bad encapsulation for KeyHash and status parameter list"<< endl);
 			}
 			//uint32_t param_size;
 			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)

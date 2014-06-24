@@ -84,7 +84,10 @@ public:
 	 * @param[in] a_change Pointer to the change to add.
 	 * @return True if correct.
 	 */
-	bool add_change(CacheChange_t* a_change){return m_reader_cache.add_change(a_change);};
+	bool add_change(CacheChange_t* a_change)
+	{
+		return m_reader_cache.add_change(a_change);
+	};
 
 
 	bool acceptMsgDirectedTo(EntityId_t& entityId);

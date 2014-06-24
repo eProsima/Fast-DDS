@@ -18,6 +18,8 @@
 #include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/discovery/timedevent/ResendDiscoveryDataPeriod.h"
 
+
+
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
@@ -226,8 +228,8 @@ bool SimplePDP::createSPDPEndpoints()
 	}
 	//SPDP BUILTIN PARTICIPANT READER
 	SubscriberAttributes Rparam;
-//	Rparam.historyMaxSize = 100;
-	//Locators where it is going to listen
+	//	Rparam.historyMaxSize = 100;
+	//  Locators where it is going to listen
 	Rparam.multicastLocatorList = mp_localDPData->m_metatrafficMulticastLocatorList;
 	Rparam.unicastLocatorList = mp_localDPData->m_metatrafficUnicastLocatorList;
 	Rparam.topic.topicKind = WITH_KEY;
@@ -242,10 +244,11 @@ bool SimplePDP::createSPDPEndpoints()
 	Rparam.payloadMaxSize = 1000;
 	Rparam.userDefinedId = -1;
 	RTPSReader* rout;
-	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPReader))
+	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
+						true,STATELESS,&m_topicDataType,&this->m_listener,c_EntityId_SPDPReader))
 	{
 		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
-		mp_SPDPReader->setListener(&this->m_listener);
+		//mp_SPDPReader->setListener();
 	}
 	else
 	{
