@@ -22,6 +22,8 @@
 #include "eprosimartps/discovery/SimpleEDP.h"
 #include "eprosimartps/discovery/StaticEDP.h"
 
+#include "eprosimartps/discovery/SPDPTopicDataType.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -107,6 +109,7 @@ public:
 	//!Pointer to the TimedEvent used to periodically send the ParticipantDiscoveredData
 	ResendDiscoveryDataPeriod* m_resendDataTimer;
 
+	SPDPTopicDataType m_topicDataType;
 
 };
 
