@@ -148,6 +148,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 				}
 				(*it)->isRead = true;
 				info->sampleKind = (*it)->kind;
+				m_reader_cache.decreaseUnreadCount();
 				return true;
 			}
 		}

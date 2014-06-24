@@ -83,6 +83,7 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		}
 		info->sampleKind = (*it)->kind;
 		(*it)->isRead = true;
+		m_reader_cache.decreaseUnreadCount();
 		return true;
 	}
 	pInfo("No Unread elements left"<<endl);

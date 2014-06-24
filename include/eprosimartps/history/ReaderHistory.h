@@ -57,6 +57,7 @@ protected:
 	CacheChange_t* mp_lastAddedCacheChange;
 	RTPSReader* mp_reader;
 	uint64_t m_unreadCacheCount;
+	CacheChange_t* mp_getKeyCache;
 };
 
 } /* namespace rtps */

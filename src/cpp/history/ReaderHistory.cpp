@@ -39,9 +39,11 @@ ReaderHistory::ReaderHistory(Endpoint* endp,
 				History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
 				mp_lastAddedCacheChange(mp_invalidCache),
 				mp_reader((RTPSReader*) endp),
-				m_unreadCacheCount(0)
+				m_unreadCacheCount(0),
+				mp_getKeyCache(NULL)
 
 {
+	mp_getKeyCache = m_changePool.reserve_Cache();
 	// TODO Auto-generated constructor stub
 }
 
@@ -118,16 +120,13 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	//HISTORY WITH KEY
 	else if(mp_Endpoint->getTopic().topicKind == WITH_KEY)
 	{
+		cout << "Adding key: "<< a_change->instanceHandle << endl;
 		if(!a_change->instanceHandle.isDefined() && mp_reader->mp_type !=NULL)
 		{
 			if(this->mp_Endpoint->getUserDefinedId() > 0)
 			{
-				void* data = malloc(mp_reader->mp_type->m_typeSize);
-				void* data_save = data;
-				mp_reader->mp_type->deserialize(&a_change->serializedPayload,data);
-				if(mp_reader->mp_type->getKey(data,&a_change->instanceHandle))
-					free(data_save);
-				else
+				mp_reader->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
+				if(!mp_reader->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
 			}
 			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
@@ -136,9 +135,9 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					return false;
 			}
 		}
-		else
+		else if(!a_change->instanceHandle.isDefined())
 		{
-			pWarning("ReaderHistory: Data received with No key and no method to obtain it"<<endl);
+			pWarning("ReaderHistory: NO KEY in topic: "<< this->mp_Endpoint->getTopic().topicName << " and no method to obtain it"<<endl);
 			return false;
 		}
 		//FIXME: Finish WITH KEY HISTORY
