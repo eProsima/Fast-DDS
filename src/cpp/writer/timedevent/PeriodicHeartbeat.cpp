@@ -59,7 +59,6 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 				break;
 			}
 		}
-		cout << 3 << endl;
 		if(unacked_changes)
 		{
 			SequenceNumber_t first,last;
@@ -79,9 +78,6 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
 					mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
 			}
-
-
-
 
 			//Reset TIMER
 			this->restart_timer();

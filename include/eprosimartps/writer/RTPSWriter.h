@@ -82,7 +82,6 @@ public:
 	 */
 	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
 	{
-		cout << "Getting minimum" <<endl;
 		CacheChange_t* change;
 		m_writer_cache.get_min_change(&change);
 

@@ -245,7 +245,7 @@ bool SimplePDP::createSPDPEndpoints()
 	Rparam.userDefinedId = -1;
 	RTPSReader* rout;
 	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
-						true,STATELESS,&m_topicDataType,&this->m_listener,c_EntityId_SPDPReader))
+						true,STATELESS,(DDSTopicDataType*)&m_topicDataType,(SubscriberListener*)&this->m_listener,c_EntityId_SPDPReader))
 	{
 		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
 		//mp_SPDPReader->setListener();

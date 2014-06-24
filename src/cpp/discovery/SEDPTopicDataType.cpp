@@ -67,11 +67,11 @@ bool SEDPTopicDataType::getKey(void*data,InstanceHandle_t* ihandle)
 //			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
 //			return true;
 //		}
-//		if(pid == PID_KEY_HASH)
-//		{
-//			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
-//			return true;
-//		}
+		if(pid == PID_KEY_HASH)
+		{
+			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
+			return true;
+		}
 		aux_msg.pos+=plength;
 	}
 	return false;
