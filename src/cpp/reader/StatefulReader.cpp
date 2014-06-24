@@ -108,49 +108,30 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	std::vector<SequenceNumber_t> seq_vec;
-	SequenceNumber_t seq, seqmin;
-	WriterProxy* wpmin = NULL;
-	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-			it!=this->matched_writers.end();++it)
+	CacheChange_t* min_change;
+	if(m_reader_cache.get_min_change(&min_change))
 	{
-		if((*it)->available_changes_min(&seq))
+		pDebugInfo("StatefulReader: trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long()<<endl);
+		WriterProxy* wp;
+		if(matched_writer_lookup(min_change->writerGUID,&wp))
 		{
-			if(seqmin.to64long() == 0 || seqmin > seq)
+			if(min_change->kind == ALIVE)
+				this->mp_type->deserialize(&min_change->serializedPayload,data);
+			if(wp->removeChangeFromWriter(min_change->sequenceNumber))
 			{
-				wpmin = *it;
-				seqmin = seq;
+				info->sampleKind = min_change->kind;
+				return m_reader_cache.remove_change(min_change);
 			}
 		}
 	}
-	if(seqmin.to64long() == 0)
-	{
-		pDebugInfo("StatefulReader: takeNextCacheChange: seqMin = 0"<<endl);
-		return false;
-	}
-	CacheChange_t* change;
-	pDebugInfo("StatefulReader: trying takeNextCacheChange: "<< seqmin.to64long()<<endl);
-	if(this->m_reader_cache.get_change(seqmin,wpmin->param.remoteWriterGuid,&change))
-	{
-		if(change->kind == ALIVE)
-			this->mp_type->deserialize(&change->serializedPayload,data);
-		if(wpmin->removeChangeFromWriter(seqmin))
-		{
-
-			info->sampleKind = change->kind;
-			return m_reader_cache.remove_change(seq,wpmin->param.remoteWriterGuid);
-		}
-	}
-	pDebugInfo("StatefulReader: takeNextCacheChange: FALSE"<<endl);
 	return false;
 }
 
 bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	m_reader_cache.sortCacheChangesBySeqNum();
-	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
+	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.changesBegin();
+			it!=m_reader_cache.changesEnd();++it)
 	{
 		if((*it)->isRead)
 			continue;
@@ -159,7 +140,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		{
 			SequenceNumber_t seq;
 			wp->available_changes_max(&seq);
-			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
+			if(seq >= (*it)->sequenceNumber)
 			{
 				if((*it)->kind == ALIVE)
 				{
@@ -178,26 +159,6 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 bool StatefulReader::isUnreadCacheChange()
 {
 	return m_reader_cache.isUnreadCache();
-//	m_reader_cache.sortCacheChangesBySeqNum();
-//	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
-//			it!=m_reader_cache.m_changes.end();++it)
-//	{
-//		if((*it)->isRead)
-//			continue;
-//		WriterProxy* wp;
-//		if(this->matched_writer_lookup((*it)->writerGUID,&wp))
-//		{
-//			SequenceNumber_t seq;
-//			wp->available_changes_max(&seq);
-//			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
-//			{
-//				pDebugInfo("StatefulReader, isUnreadCacheChange: TRUE : "<< (*it)->sequenceNumber.to64long()<<endl);
-//				return true;
-//			}
-//		}
-//	}
-//	pDebugInfo("StatefulReader, isUnreadCacheChange: FALSE"<<endl);
-//	return false;
 }
 
 bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
@@ -218,6 +179,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 		chit->notValid();
 		return true;
 	}
+	return false;
 }
 
 

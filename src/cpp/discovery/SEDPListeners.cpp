@@ -62,18 +62,18 @@ void SEDPPubListener::onNewDataMessage()
 					pWarning("SEDP PubListener:Received information from BAD writer"<<endl);
 				}
 				bool already_in_history = false;
-				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->readerHistoryCacheBegin();
-						it!=this->mp_SEDP->mp_PubReader->readerHistoryCacheEnd();++it)
-				{
-					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber < change->sequenceNumber)
-					{
-						pDebugInfo("SEDP Publisher Listener:Removing older change with the same iHandle"<<endl);
-						this->mp_SEDP->mp_PubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-						already_in_history = true;
-						break;
-					}
-				}
+//				//Check if CacheChange_t with same Key is already in History:
+//				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_PubReader->readerHistoryCacheBegin();
+//						it!=this->mp_SEDP->mp_PubReader->readerHistoryCacheEnd();++it)
+//				{
+//					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber < change->sequenceNumber)
+//					{
+//						pDebugInfo("SEDP Publisher Listener:Removing older change with the same iHandle"<<endl);
+//						this->mp_SEDP->mp_PubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+//						already_in_history = true;
+//						break;
+//					}
+//				}
 				if(wdata->m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
@@ -95,7 +95,7 @@ void SEDPPubListener::onNewDataMessage()
 				if(pdata == NULL)
 				{
 					pWarning("Publications Listener: received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
+					this->mp_SEDP->mp_PubReader->remove_change(change);
 					delete(wdata);
 					return;
 				}
@@ -181,17 +181,17 @@ void SEDPSubListener::onNewDataMessage()
 				}
 				bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
-						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
-				{
-					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
-					{
-						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
-						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-						already_in_history = true;
-						break;
-					}
-				}
+//				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
+//						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
+//				{
+//					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
+//					{
+//						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
+//						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+//						already_in_history = true;
+//						break;
+//					}
+//				}
 				if(rdata->m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
 					pInfo(CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<DEF<<endl)
@@ -211,7 +211,7 @@ void SEDPSubListener::onNewDataMessage()
 				if(pdata == NULL)
 				{
 					pWarning("Subscriptions Listener: received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_SubReader->remove_change(change->sequenceNumber,change->writerGUID);
+					this->mp_SEDP->mp_SubReader->remove_change(change);
 					delete(rdata);
 					return;
 				}

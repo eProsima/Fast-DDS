@@ -26,6 +26,9 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
+typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
+typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
+
 bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 {
 	return c1->sequenceNumber < c2->sequenceNumber;
@@ -33,9 +36,10 @@ bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 
 ReaderHistory::ReaderHistory(Endpoint* endp,
 		uint32_t payload_max_size):
-		History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
-		mp_reader((RTPSReader*) endp),
-		m_unreadCacheCount(0)
+				History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
+				mp_lastAddedCacheChange(mp_invalidCache),
+				mp_reader((RTPSReader*) endp),
+				m_unreadCacheCount(0)
 
 {
 	// TODO Auto-generated constructor stub
@@ -51,7 +55,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	if(m_isHistoryFull)
 	{
 		pWarning("Attempting to add Data to Full WriterCache"<<endl;)
-		return false;
+				return false;
 	}
 	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
 	if(a_change->sequenceNumber <= mp_maxSeqCacheChange->sequenceNumber)
@@ -118,8 +122,62 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			mp_reader->mp_type->deserialize(&a_change->serializedPayload,data);
 			mp_reader->mp_type->getKey(data,&a_change->instanceHandle);
 		}
+		//FIXME: Finish WITH KEY HISTORY
+		t_vectorPairKeyChanges::iterator vit;
+		if(find_Key(a_change,&vit))
+		{
+			bool add = false;
+			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+			{
+				if(vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
+				{
+					add = true;
+				}
+				else
+				{
+					pWarning("WriterHistory: Change not added due to maximum number of samples per instance"<<endl;);
+					return false;
+				}
+			}
+			else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+			{
+				if(vit->second.size()< (size_t)m_historyQos.depth)
+				{
+					add = true;
+				}
+				else
+				{
+					if(mp_reader->change_removed_by_history(vit->second.front()))
+					{
+						add = true;
+					}
+				}
+			}
+			if(add)
+			{
+				m_changes.push_back(a_change);
+				increaseUnreadCount();
+				if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
+					sortCacheChanges();
+				updateMaxMinSeqNum();
+				if(m_changes.size()==m_resourceLimitsQos.max_samples)
+					m_isHistoryFull = true;
+				//ADD TO KEY VECTOR
+				if(vit->second.back()->sequenceNumber < a_change->sequenceNumber)
+				{
+					vit->second.push_back(a_change);
+				}
+				else
+				{
+					vit->second.push_back(a_change);
+					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
+				}
+				return true;
+			}
+			else
+				return false;
+		}
 	}
-
 	return false;
 }
 
@@ -149,6 +207,16 @@ bool ReaderHistory::isUnreadCache()
 		return true;
 	else
 		return false;
+}
+
+bool ReaderHistory::get_last_added_cache(CacheChange_t** change)
+{
+	if(mp_lastAddedCacheChange->sequenceNumber != mp_invalidCache->sequenceNumber)
+	{
+		*change = mp_lastAddedCacheChange;
+		return true;
+	}
+	return false;
 }
 
 
