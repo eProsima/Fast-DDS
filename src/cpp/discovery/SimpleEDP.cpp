@@ -25,6 +25,8 @@
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"
 #include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 
+
+
 #include "eprosimartps/dds/PublisherListener.h"
 #include "eprosimartps/dds/SubscriberListener.h"
 
@@ -113,7 +115,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,(SubscriberListener*)&m_listeners.m_SubListener,c_EntityId_SEDPSubReader);
+		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
+				true,STATEFUL,(DDSTopicDataType*)&m_SubReaderDataType,(SubscriberListener*)&m_listeners.m_SubListener,c_EntityId_SEDPSubReader);
 		if(created)
 		{
 			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
@@ -138,7 +141,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.payloadMaxSize = 1000;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,(SubscriberListener*)&m_listeners.m_PubListener,c_EntityId_SEDPPubReader);
+		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
+				true,STATEFUL,(DDSTopicDataType*)&m_PubReaderDataType,(SubscriberListener*)&m_listeners.m_PubListener,c_EntityId_SEDPPubReader);
 		if(created)
 		{
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);

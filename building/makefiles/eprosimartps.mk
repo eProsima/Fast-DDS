@@ -92,6 +92,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp \
 		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SPDPTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/discovery/SEDPTopicDataType.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
 		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
