@@ -102,12 +102,14 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 		if(add)
 		{
 			m_changes.push_back(a_change);
+			this->mp_lastAddedCacheChange = a_change;
 			increaseUnreadCount();
 			if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
 				sortCacheChanges();
 			updateMaxMinSeqNum();
 			if(m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
+			pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<<endl;);
 			return true;
 		}
 		else
@@ -130,21 +132,20 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			}
 			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
 			{
-				cout << "Builtin"<<endl;
 				if(!mp_reader->mp_type->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
 					return false;
 			}
 		}
 		else
 		{
-			pWarning("ReaderHistory:Data received with No key and no method to obtain it"<<endl);
+			pWarning("ReaderHistory: Data received with No key and no method to obtain it"<<endl);
 			return false;
 		}
 		//FIXME: Finish WITH KEY HISTORY
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
-			pDebugInfo("Trying to add change with KEY: "<< vit->first << endl;);
+			//pDebugInfo("Trying to add change with KEY: "<< vit->first << endl;);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -175,6 +176,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			if(add)
 			{
 				m_changes.push_back(a_change);
+				this->mp_lastAddedCacheChange = a_change;
 				increaseUnreadCount();
 				if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
 					sortCacheChanges();
@@ -195,6 +197,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					vit->second.push_back(a_change);
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
+				pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<< "with KEY: "<< vit->first << endl;);
 				return true;
 			}
 			else

@@ -78,7 +78,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		pWarning("Received message too short, ignoring"<<endl)
-								return;
+										return;
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
@@ -241,7 +241,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(keyFlag && dataFlag)
 	{
 		pWarning( "Message received with Data and Key Flag set."<<endl)
-								return false;
+										return false;
 	}
 
 	//Assign message endianness
@@ -295,7 +295,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		pWarning("Invalid message received, bad sequence Number"<<endl)
-								return false;
+										return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -400,6 +400,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 							(*it)->m_semaphore.post();
 						}
 					}
+					else
+					{
+						pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
+					}
 				}
 			}
 			else
@@ -414,14 +418,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 					(*it)->m_semaphore.post();
 				}
+				else
+				{
+					pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
+				}
 			}
-
-
-
-		}
-		else
-		{
-			pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
 		}
 	}
 	if(firstReaderNeedsToRelease)
