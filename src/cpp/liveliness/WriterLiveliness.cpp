@@ -67,9 +67,10 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Wparam.topic.historyQos.depth = 1;
-	Wparam.topic.resourceLimitsQos.max_instances = 100;
+	Wparam.topic.resourceLimitsQos.max_instances = 50;
 	Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
-	Wparam.topic.resourceLimitsQos.max_samples = 100;
+	Wparam.topic.resourceLimitsQos.max_samples = 50;
+	Wparam.topic.resourceLimitsQos.allocated_samples = 50;
 	RTPSWriter* wout;
 	if(mp_participant->createWriter(&wout,Wparam,Wparam.payloadMaxSize,true,STATEFUL,NULL,NULL,c_EntityId_WriterLiveliness))
 	{
@@ -88,7 +89,12 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	Rparam.unicastLocatorList = unicastList;
 	Rparam.multicastLocatorList = multicastList;
 	Rparam.userDefinedId = -1;
-	Rparam.historyMaxSize = 100;
+	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Rparam.topic.historyQos.depth = 1;
+	Rparam.topic.resourceLimitsQos.max_instances = 2000;
+	Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+	Rparam.topic.resourceLimitsQos.max_samples = 2000;
+	Rparam.topic.resourceLimitsQos.allocated_samples = 200;
 	Rparam.topic.topicName = "DCPSParticipantMessage";
 	Rparam.topic.topicDataType = "ParticipantMessageData";
 	Rparam.topic.topicKind = WITH_KEY;

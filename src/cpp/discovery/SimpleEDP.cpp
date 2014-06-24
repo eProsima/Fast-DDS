@@ -86,6 +86,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_instances = 1000;
 		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
+		Wparam.payloadMaxSize = 1000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
@@ -94,12 +96,19 @@ bool SimpleEDP::createSEDPEndpoints()
 			mp_PubWriter = dynamic_cast<StatefulWriter*>(waux);
 			pInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
 		}
-		Rparam.historyMaxSize = 100;
+		//Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Rparam.topic.topicName = "DCPSSubscription";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredReaderData";
+		Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+		Rparam.topic.historyQos.depth = 1;
+		Rparam.topic.resourceLimitsQos.max_instances = 1000000;
+		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
+		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
+		Rparam.payloadMaxSize = 1000;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
@@ -113,13 +122,20 @@ bool SimpleEDP::createSEDPEndpoints()
 	}
 	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
 	{
-		Rparam.historyMaxSize = 100;
+		//Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Rparam.topic.topicName = "DCPSPublication";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredWriterData";
 		Rparam.userDefinedId = -1;
+		Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+		Rparam.topic.historyQos.depth = 1;
+		Rparam.topic.resourceLimitsQos.max_instances = 1000000;
+		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
+		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
+		Rparam.payloadMaxSize = 1000;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,(SubscriberListener*)&m_listeners.m_PubListener,c_EntityId_SEDPPubReader);
@@ -140,6 +156,8 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_instances = 1000;
 		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
+		Wparam.payloadMaxSize = 1000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);

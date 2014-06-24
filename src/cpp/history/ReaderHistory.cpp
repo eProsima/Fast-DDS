@@ -116,11 +116,16 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	//HISTORY WITH KEY
 	else if(mp_Endpoint->getTopic().topicKind == WITH_KEY)
 	{
-		if(!a_change->instanceHandle.isDefined())
+		if(!a_change->instanceHandle.isDefined() && mp_reader->mp_type !=NULL)
 		{
 			void* data = malloc(mp_reader->mp_type->m_typeSize);
 			mp_reader->mp_type->deserialize(&a_change->serializedPayload,data);
 			mp_reader->mp_type->getKey(data,&a_change->instanceHandle);
+		}
+		else
+		{
+			pWarning("ReaderHistory:Data received with No key and no method to obtain it"<<endl);
+			return false;
 		}
 		//FIXME: Finish WITH KEY HISTORY
 		t_vectorPairKeyChanges::iterator vit;
