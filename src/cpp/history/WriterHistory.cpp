@@ -93,7 +93,9 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
 				if(vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
+				{
 					add = true;
+				}
 				else
 				{
 					pWarning("WriterHistory: Change not added due to maximum number of samples per instance"<<endl;);

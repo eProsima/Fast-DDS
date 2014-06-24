@@ -78,7 +78,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		pWarning("Received message too short, ignoring"<<endl)
-		return;
+								return;
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
@@ -241,7 +241,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(keyFlag && dataFlag)
 	{
 		pWarning( "Message received with Data and Key Flag set."<<endl)
-		return false;
+								return false;
 	}
 
 	//Assign message endianness
@@ -263,6 +263,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = NULL;
+	bool firstReaderNeedsToRelease = true;
 	if(mp_threadListen->m_assocReaders.empty())
 	{
 		pWarning("Data received when NO readers are created"<<endl);
@@ -294,7 +295,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		pWarning("Invalid message received, bad sequence Number"<<endl)
-		return false;
+								return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -370,43 +371,40 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
 			{
 				change_to_add = ch;
+				firstReaderNeedsToRelease = false;
 			}
 			else
 			{
 				change_to_add = (*it)->reserve_Cache(); //Reserve a new cache from the corresponding cache pool
 				change_to_add->copy(ch);
 			}
-
-
-			if((*it)->add_change(change_to_add))
+			if((*it)->getStateType() == STATEFUL)
 			{
-				if((*it)->getStateType() == STATEFUL)
+				StatefulReader* SFR = (StatefulReader*)(*it);
+				WriterProxy* WP;
+				if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
 				{
-					StatefulReader* SFR = (StatefulReader*)(*it);
-					WriterProxy* WP;
-					if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
+					if((*it)->add_change(change_to_add))
 					{
 						WP->received_change_set(change_to_add);
-					}
-					else
-					{
-						(*it)->remove_change(change_to_add->sequenceNumber,change_to_add->writerGUID);
-						return false;
-					}
-					SequenceNumber_t maxSeqNumAvailable;
-					WP->available_changes_max(&maxSeqNumAvailable);
-					if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
-					{
-						if((*it)->getListener()!=NULL)
+						SequenceNumber_t maxSeqNumAvailable;
+						WP->available_changes_max(&maxSeqNumAvailable);
+						if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
 						{
-							(*it)->getListener()->onNewDataMessage();
-							if((*it)->isHistoryFull())
-								(*it)->getListener()->onHistoryFull();
+							if((*it)->getListener()!=NULL)
+							{
+								(*it)->getListener()->onNewDataMessage();
+								if((*it)->isHistoryFull())
+									(*it)->getListener()->onHistoryFull();
+							}
+							(*it)->m_semaphore.post();
 						}
-						(*it)->m_semaphore.post();
 					}
 				}
-				else
+			}
+			else
+			{
+				if((*it)->add_change(change_to_add))
 				{
 					if((*it)->getListener()!=NULL)
 					{
@@ -417,12 +415,17 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					(*it)->m_semaphore.post();
 				}
 			}
-			else
-			{
-				pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
-			}
+
+
+
+		}
+		else
+		{
+			pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
 		}
 	}
+	if(firstReaderNeedsToRelease)
+		firstReader->release_Cache(ch);
 	pDebugInfo("Sub Message DATA processed"<<endl);
 	return true;
 }
@@ -433,10 +436,10 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	bool finalFlag = smh->flags & BIT(1) ? true : false;
 	bool livelinessFlag = smh->flags & BIT(2) ? true : false;
 	//Assign message endianness
-		if(endiannessFlag)
-			msg->msg_endian = LITTLEEND;
-		else
-			msg->msg_endian = BIGEND;
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
 
 	GUID_t readerGUID,writerGUID;
 	readerGUID.guidPrefix = destGuidPrefix;

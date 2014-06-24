@@ -138,6 +138,18 @@ public:
 
 	virtual bool change_removed_by_history(CacheChange_t*)=0;
 
+	bool get_last_added_cache(CacheChange_t** change)
+	{
+		return m_reader_cache.get_last_added_cache(change);
+	}
+	bool remove_change(CacheChange_t* change)
+	{
+		if(change_removed_by_history(change))
+			return m_reader_cache.remove_change(change);
+		else
+			return false;
+	}
+
 protected:
 	//!Pointer to the associated subscriber
 	//	Subscriber* mp_Sub;

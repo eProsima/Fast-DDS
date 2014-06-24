@@ -49,9 +49,12 @@ public:
 			--m_unreadCacheCount;
 	}
 
+	bool get_last_added_cache(CacheChange_t** change);
+
 
 protected:
 	std::vector<FirstLastSeqNum> m_firstlastSeqNum;
+	CacheChange_t* mp_lastAddedCacheChange;
 	RTPSReader* mp_reader;
 	uint64_t m_unreadCacheCount;
 };

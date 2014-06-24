@@ -51,17 +51,17 @@ bool SPDPListener::newAddedCache()
 				change->instanceHandle = pdata->m_key;
 			//	bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
-				for(std::vector<CacheChange_t*>::iterator it = mp_SPDP->mp_SPDPReader->readerHistoryCacheBegin();
-						it!=mp_SPDP->mp_SPDPReader->readerHistoryCacheEnd();++it)
-				{
-					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
-					{
-						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
-						mp_SPDP->mp_SPDPReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-					//	already_in_history = true;
-						break;
-					}
-				}
+//				for(std::vector<CacheChange_t*>::iterator it = mp_SPDP->mp_SPDPReader->readerHistoryCacheBegin();
+//						it!=mp_SPDP->mp_SPDPReader->readerHistoryCacheEnd();++it)
+//				{
+//					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
+//					{
+//						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
+//						mp_SPDP->mp_SPDPReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+//					//	already_in_history = true;
+//						break;
+//					}
+//				}
 				if(pdata->m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
 				{
 					//cout << "SMAE"<<endl;
