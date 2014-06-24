@@ -13,10 +13,12 @@
 
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
+
 #include <vector>
+
 using namespace std;
 
-#include "eprosimartps/rtps_all.h"
+
 #include "ThroughputTypes.h"
 
 
