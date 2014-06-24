@@ -120,7 +120,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	//HISTORY WITH KEY
 	else if(mp_Endpoint->getTopic().topicKind == WITH_KEY)
 	{
-		cout << "Adding key: "<< a_change->instanceHandle << endl;
 		if(!a_change->instanceHandle.isDefined() && mp_reader->mp_type !=NULL)
 		{
 			if(this->mp_Endpoint->getUserDefinedId() > 0)
