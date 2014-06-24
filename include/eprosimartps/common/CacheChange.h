@@ -131,6 +131,7 @@ enum ChangeFromWriterStatus_t{
 	}
 	void notValid()
 	{
+		is_relevant = false;
 		m_isValid = false;
 		change = NULL;
 	}
@@ -170,6 +171,7 @@ class ChangeFromWriter_t
 	 }
 	 void notValid()
 	 {
+		 is_relevant = false;
 		 m_isValid = false;
 		 change = NULL;
 	 }

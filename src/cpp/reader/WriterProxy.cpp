@@ -76,7 +76,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 			m_isMissingChangesEmpty = false;
 		if(cit->status == UNKNOWN)
 		{
-			if(cit->change->sequenceNumber.to64long() <= seqNum.to64long())
+			if(cit->seqNum <= seqNum)
 			{
 				cit->status = MISSING;
 				m_isMissingChangesEmpty = false;
@@ -85,7 +85,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 
 	}
 	m_hasMaxAvailableSeqNumChanged = true;
-		m_hasMinAvailableSeqNumChanged = true;
+	m_hasMinAvailableSeqNumChanged = true;
 	return true;
 }
 
@@ -100,12 +100,12 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 	{
 		if(cit->status == UNKNOWN || cit->status == MISSING)
 		{
-			if(cit->change->sequenceNumber.to64long() < seqNum.to64long())
+			if(cit->seqNum < seqNum)
 				cit->status = LOST;
 		}
 	}
 	m_hasMaxAvailableSeqNumChanged = true;
-		m_hasMinAvailableSeqNumChanged = true;
+	m_hasMinAvailableSeqNumChanged = true;
 	return true;
 }
 
@@ -117,17 +117,18 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 		m_hasMinAvailableSeqNumChanged = true;
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
 	{
-		if(cit->change->sequenceNumber.to64long() == change->sequenceNumber.to64long())
+		if(cit->seqNum == change->sequenceNumber)
 		{
-			mp_SFR->release_Cache(cit->change);
-			cit->change = change;
+			if(cit->isValid())
+				mp_SFR->release_Cache(cit->getChange());
+			cit->setChange(change);
 			cit->status = RECEIVED;
 
 			return true;
 		}
 	}
 	ChangeFromWriter_t chfw;
-	chfw.change = change;
+	chfw.setChange(change);
 	chfw.is_relevant = true;
 	chfw.status = RECEIVED;
 
@@ -145,7 +146,7 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 	m_hasMinAvailableSeqNumChanged = true;
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
 	{
-		if(cit->change->sequenceNumber.to64long() == seqNum.to64long())
+		if(cit->seqNum == seqNum)
 		{
 			cit->status = RECEIVED;
 			cit->is_relevant = false;
@@ -155,9 +156,9 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 	ChangeFromWriter_t chfw;
 	chfw.is_relevant = false;
 	chfw.status = RECEIVED;
-	CacheChange_t* ch = mp_SFR->reserve_Cache();
-	ch->sequenceNumber = seqNum;
-	chfw.change = ch;
+//	CacheChange_t* ch = mp_SFR->reserve_Cache();
+	//ch->sequenceNumber = seqNum;
+	chfw.seqNum = seqNum;
 	add_unknown_changes(seqNum);
 	m_changesFromW.push_back(chfw);
 

@@ -32,12 +32,15 @@ History::History(Endpoint* endp,
 		m_historyQos(historypolicy),
 		m_resourceLimitsQos(resourcelimits),
 		m_isHistoryFull(false),
-		m_changePool(resourcelimits.max_samples+1,payload_max_size)
+		m_changePool(resourcelimits.max_samples+1,payload_max_size),
+		mp_minSeqCacheChange(NULL),
+		mp_maxSeqCacheChange(NULL)
 {
 	mp_invalidCache = m_changePool.reserve_Cache();
 	mp_invalidCache->writerGUID = c_Guid_Unknown;
 	mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
-
+	mp_minSeqCacheChange = mp_invalidCache;
+	mp_maxSeqCacheChange = mp_invalidCache;
 	pDebugInfo("History created"<<std::endl;);
 }
 
@@ -129,6 +132,27 @@ bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator*
 	}
 	return false;
 }
+
+bool History::get_min_change(CacheChange_t** min_change)
+{
+	if(mp_minSeqCacheChange->sequenceNumber != mp_invalidCache->sequenceNumber)
+	{
+		*min_change = mp_minSeqCacheChange;
+		return true;
+	}
+	return false;
+
+}
+bool History::get_max_change(CacheChange_t** max_change)
+{
+	if(mp_maxSeqCacheChange->sequenceNumber != mp_invalidCache->sequenceNumber)
+	{
+		*max_change = mp_maxSeqCacheChange;
+		return true;
+	}
+	return false;
+}
+
 
 
 } /* namespace rtps */

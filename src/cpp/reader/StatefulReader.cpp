@@ -206,7 +206,6 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 	WriterProxy* wp;
 	if(matched_writer_lookup(a_change->writerGUID,&wp))
 	{
-		bool is_first = true;
 		std::vector<ChangeFromWriter_t>::iterator chit;
 		for(chit = wp->m_changesFromW.begin();
 				chit!=wp->m_changesFromW.end();++chit)
@@ -215,18 +214,9 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 			{
 				break;
 			}
-			is_first = false;
 		}
-	}
-	return false;
-
-	CacheChange_t* min_change;
-
-
-	m_reader_cache.get_min_change(&min_change);
-	if(a_change->sequenceNumber == min_change->sequenceNumber)
-	{
-		removeMinSeqCacheChange();
+		chit->notValid();
+		return true;
 	}
 }
 
