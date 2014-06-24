@@ -178,7 +178,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 			}
 		}
 		chit->notValid();
-		return true;
+		return m_reader_cache.remove_change(a_change);
 	}
 	return false;
 }

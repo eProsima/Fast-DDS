@@ -67,7 +67,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			if((*it)->sequenceNumber == a_change->sequenceNumber &&
 					(*it)->writerGUID == a_change->writerGUID)
 			{
-				pDebugInfo("Change (seqNum: "<< a_change->sequenceNumber.to64long()<< ") already in History (kind:"<<mp_Endpoint->getEndpointKind()<<")" << endl);
+				pDebugInfo("Change (seqNum: "<< a_change->sequenceNumber.to64long()<< ") already in ReaderHistory"<< endl);
 				return false;
 			}
 			if((*it)->writerGUID == a_change->writerGUID &&

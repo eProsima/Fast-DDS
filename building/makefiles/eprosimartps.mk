@@ -36,7 +36,6 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
 		  \
