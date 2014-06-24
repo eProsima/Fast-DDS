@@ -208,6 +208,8 @@ bool SimplePDP::createSPDPEndpoints()
 	Wparam.topic.resourceLimitsQos.max_instances = 1;
 	Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 	Wparam.topic.resourceLimitsQos.max_samples = 2;
+	Wparam.topic.resourceLimitsQos.allocated_samples = 2;
+	Wparam.payloadMaxSize = 1000;
 	Wparam.userDefinedId = -1;
 	RTPSWriter* wout;
 	if(mp_participant->createWriter(&wout,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPWriter))
@@ -224,13 +226,20 @@ bool SimplePDP::createSPDPEndpoints()
 	}
 	//SPDP BUILTIN PARTICIPANT READER
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 100;
+//	Rparam.historyMaxSize = 100;
 	//Locators where it is going to listen
 	Rparam.multicastLocatorList = mp_localDPData->m_metatrafficMulticastLocatorList;
 	Rparam.unicastLocatorList = mp_localDPData->m_metatrafficUnicastLocatorList;
 	Rparam.topic.topicKind = WITH_KEY;
 	Rparam.topic.topicName = "DCPSParticipant";
 	Rparam.topic.topicDataType = "DiscoveredParticipantData";
+	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Rparam.topic.historyQos.depth = 1;
+	Rparam.topic.resourceLimitsQos.max_instances = 1000;
+	Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
+	Rparam.topic.resourceLimitsQos.max_samples = 1000;
+	Rparam.topic.resourceLimitsQos.allocated_samples = 500;
+	Rparam.payloadMaxSize = 1000;
 	Rparam.userDefinedId = -1;
 	RTPSReader* rout;
 	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPReader))

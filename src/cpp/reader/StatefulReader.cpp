@@ -38,7 +38,7 @@ StatefulReader::~StatefulReader()
 StatefulReader::StatefulReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
 		RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
-						param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
+						param.userDefinedId,param.payloadMaxSize),
 						m_SubTimes(param.times)
 {
 	//locator lists:

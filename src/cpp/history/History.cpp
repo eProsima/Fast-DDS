@@ -32,7 +32,7 @@ History::History(Endpoint* endp,
 		m_historyQos(historypolicy),
 		m_resourceLimitsQos(resourcelimits),
 		m_isHistoryFull(false),
-		m_changePool(resourcelimits.max_samples+1,payload_max_size),
+		m_changePool(resourcelimits.allocated_samples+1,payload_max_size),
 		mp_minSeqCacheChange(NULL),
 		mp_maxSeqCacheChange(NULL)
 {
