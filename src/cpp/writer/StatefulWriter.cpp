@@ -210,8 +210,7 @@ void StatefulWriter::unsent_changes_not_empty()
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
-			std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader_ptr);
-
+			//std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader_ptr);
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<SequenceNumber_t> not_relevant_changes;
