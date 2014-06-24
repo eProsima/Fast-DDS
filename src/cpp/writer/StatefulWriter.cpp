@@ -178,7 +178,7 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 	}
 	else
 	{
-		pWarning("No reader proxy to add change." << endl);
+		pInfo("No reader proxy to add change." << endl);
 	}
 }
 

@@ -7,42 +7,42 @@
  *************************************************************************/
 
 /**
- * @file SPDPTopicDataType.cpp
+ * @file SEDPTopicDataType.cpp
  *
  */
 
-#include "eprosimartps/discovery/SPDPTopicDataType.h"
+
+
+#include "eprosimartps/discovery/SEDPTopicDataType.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/qos/ParameterList.h"
-
-
 
 namespace eprosima {
 namespace rtps {
 
-SPDPTopicDataType::SPDPTopicDataType()
+SEDPTopicDataType::SEDPTopicDataType()
 {
 	initial_data = (void*)aux_msg.buffer;
 }
 
-SPDPTopicDataType::~SPDPTopicDataType()
+SEDPTopicDataType::~SEDPTopicDataType()
 {
 	aux_msg.buffer = (octet*)initial_data;
 }
 
-bool SPDPTopicDataType::serialize(void* data,SerializedPayload_t* payload)
+bool SEDPTopicDataType::serialize(void* data,SerializedPayload_t* payload)
 {
-	pError("SPDPTopicDatType serialize method should not have been called"<<endl);
+	pError("SEDPTopicDatType serialize method should not have been called"<<endl);
 	return false;
 }
 
-bool SPDPTopicDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool SEDPTopicDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
-	pError("SPDPTopicDatType de-serialize method should not have been called"<<endl);
+	pError("SEDPTopicDatType de-serialize method should not have been called"<<endl);
 	return false;
 }
 
-bool SPDPTopicDataType::getKey(void*data,InstanceHandle_t* ihandle)
+bool SEDPTopicDataType::getKey(void*data,InstanceHandle_t* ihandle)
 {
 	SerializedPayload_t* pl = (SerializedPayload_t*) data;
 	CDRMessage::initCDRMsg(&aux_msg);
@@ -62,16 +62,16 @@ bool SPDPTopicDataType::getKey(void*data,InstanceHandle_t* ihandle)
 		{
 			break;
 		}
-		if(pid == PID_PARTICIPANT_GUID)
-		{
-			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
-			return true;
-		}
-		if(pid == PID_KEY_HASH)
-		{
-			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
-			return true;
-		}
+//		if(pid == PID_PARTICIPANT_GUID)
+//		{
+//			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
+//			return true;
+//		}
+//		if(pid == PID_KEY_HASH)
+//		{
+//			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
+//			return true;
+//		}
 		aux_msg.pos+=plength;
 	}
 	return false;
