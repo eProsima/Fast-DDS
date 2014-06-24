@@ -90,6 +90,14 @@ inline bool operator==(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
 		return false;
 	return true;
 }
+inline bool operator!=(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
+{
+	if(sn1.high != sn2.high)
+		return true;
+	if(sn1.low != sn2.low)
+		return true;
+	return false;
+}
 inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2){
 	return seq1.to64long() > seq2.to64long();
 }

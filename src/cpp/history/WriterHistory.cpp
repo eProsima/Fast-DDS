@@ -31,8 +31,6 @@ WriterHistory::WriterHistory(Endpoint* endp,
 							uint32_t payload_max_size):
 	History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
 	m_lastCacheChangeSeqNum(0,0),
-	mp_minSeqCacheChange(mp_invalidCache),
-	mp_maxSeqCacheChange(mp_invalidCache),
 	mp_writer((RTPSWriter*)endp)
 {
 

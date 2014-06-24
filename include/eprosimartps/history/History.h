@@ -86,6 +86,9 @@ public:
 	std::vector<CacheChange_t*>::iterator changesBegin(){return m_changes.begin();}
 	std::vector<CacheChange_t*>::iterator changesEnd(){return m_changes.end();}
 
+	bool get_min_change(CacheChange_t** min_change);
+	bool get_max_change(CacheChange_t** max_change);
+
 protected:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;
@@ -103,6 +106,9 @@ protected:
 	CacheChange_t* mp_invalidCache;
 
 	CacheChangePool m_changePool;
+
+	CacheChange_t* mp_minSeqCacheChange;
+	CacheChange_t* mp_maxSeqCacheChange;
 };
 
 } /* namespace rtps */

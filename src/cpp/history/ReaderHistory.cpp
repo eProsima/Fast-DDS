@@ -19,6 +19,10 @@
 
 #include "eprosimartps/reader/RTPSReader.h"
 
+#include "eprosimartps/dds/DDSTopicDataType.h"
+
+using namespace eprosima::dds;
+
 namespace eprosima {
 namespace rtps {
 
@@ -30,8 +34,6 @@ bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 ReaderHistory::ReaderHistory(Endpoint* endp,
 		uint32_t payload_max_size):
 		History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
-		mp_minSeqCacheChange(mp_invalidCache),
-		mp_maxSeqCacheChange(mp_invalidCache),
 		mp_reader((RTPSReader*) endp),
 		m_unreadCacheCount(0)
 
@@ -52,14 +54,14 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 		return false;
 	}
 	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
-	if(a_change->sequenceNumber <= mp_maxSeqCacheChange)
+	if(a_change->sequenceNumber <= mp_maxSeqCacheChange->sequenceNumber)
 	{
 		for(std::vector<CacheChange_t*>::reverse_iterator it=m_changes.rbegin();it!=m_changes.rend();++it)
 		{
 			if((*it)->sequenceNumber == a_change->sequenceNumber &&
 					(*it)->writerGUID == a_change->writerGUID)
 			{
-				pDebugInfo("Change (seqNum: "<< change->sequenceNumber.to64long()<< ") already in History (kind:"<<mp_Endpoint->getEndpointKind()<<")" << endl);
+				pDebugInfo("Change (seqNum: "<< a_change->sequenceNumber.to64long()<< ") already in History (kind:"<<mp_Endpoint->getEndpointKind()<<")" << endl);
 				return false;
 			}
 			if((*it)->writerGUID == a_change->writerGUID &&

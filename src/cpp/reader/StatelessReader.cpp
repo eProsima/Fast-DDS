@@ -45,20 +45,15 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	pDebugInfo("Taking Data from Reader"<<endl);
-	SequenceNumber_t seq;
-	GUID_t gui;
-	if(this->m_reader_cache.get_seq_num_min(&seq,&gui))
+	CacheChange_t* change;
+	if(this->m_reader_cache.get_min_change(&change))
 	{
-		CacheChange_t* change;
-		if(this->m_reader_cache.get_change(seq,gui,&change))
+		if(change->kind == ALIVE)
 		{
-			if(change->kind == ALIVE)
-			{
-				this->mp_type->deserialize(&change->serializedPayload,data);
-			}
-			info->sampleKind = change->kind;
-			return this->m_reader_cache.remove_change(seq,gui);
+			this->mp_type->deserialize(&change->serializedPayload,data);
 		}
+		info->sampleKind = change->kind;
+		return this->m_reader_cache.remove_change(change);
 	}
 	return false;
 }
@@ -70,8 +65,8 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
+	for(it = m_reader_cache.changesBegin();
+			it!=m_reader_cache.changesEnd();++it)
 	{
 		if(!(*it)->isRead)
 		{
@@ -90,7 +85,7 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		(*it)->isRead = true;
 		return true;
 	}
-	cout << "NOT FOUND UNREAD ELEMENT "<< endl;
+	pInfo("No Unread elements left"<<endl);
 	return false;
 }
 

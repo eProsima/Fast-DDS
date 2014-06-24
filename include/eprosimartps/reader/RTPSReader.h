@@ -116,19 +116,25 @@ public:
 		}
 	const ReaderQos& getQos(){return m_qos;}
 
-	bool remove_change(SequenceNumber_t& seqNum, GUID_t& writerGuid)
-	{
-		return m_reader_cache.remove_change(seqNum,writerGuid);
-	}
-//	bool get_last_added_cache(CacheChange_t** ch_ptr)
+//	bool remove_change(SequenceNumber_t& seqNum, GUID_t& writerGuid)
 //	{
-//		return m_reader_cache.get_last_added_cache(ch_ptr);
+//		return m_reader_cache.remove_change(seqNum,writerGuid);
 //	}
+////	bool get_last_added_cache(CacheChange_t** ch_ptr)
+////	{
+////		return m_reader_cache.get_last_added_cache(ch_ptr);
+////	}
 
 	bool expectsInlineQos(){return m_expectsInlineQos;}
 
-	std::vector<CacheChange_t*>::iterator readerHistoryCacheBegin(){return m_reader_cache.m_changes.begin();}
-	std::vector<CacheChange_t*>::iterator readerHistoryCacheEnd(){return m_reader_cache.m_changes.end();}
+	std::vector<CacheChange_t*>::iterator readerHistoryCacheBegin()
+	{
+		return m_reader_cache.changesBegin();
+	}
+	std::vector<CacheChange_t*>::iterator readerHistoryCacheEnd()
+	{
+		return m_reader_cache.changesEnd();
+	}
 
 	virtual bool change_removed_by_history(CacheChange_t*)=0;
 

@@ -32,26 +32,10 @@ public:
 
 	bool add_change(CacheChange_t* a_change);
 
-	void get_min_change(CacheChange_t** min_change)
-	{
-		*min_change = mp_minSeqCacheChange;
-	}
-	void get_max_change(CacheChange_t** max_change)
-	{
-		*max_change = mp_maxSeqCacheChange;
-	}
-
 	bool remove_min_change();
-
-
-	void updateMaxMinSeqNum();
-
 
 protected:
 	SequenceNumber_t m_lastCacheChangeSeqNum;
-	CacheChange_t* mp_minSeqCacheChange;
-	CacheChange_t* mp_maxSeqCacheChange;
-
 	RTPSWriter* mp_writer;
 };
 
