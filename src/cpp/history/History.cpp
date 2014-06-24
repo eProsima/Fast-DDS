@@ -98,10 +98,10 @@ bool History::remove_change(CacheChange_t* ch)
 		{
 			m_changePool.release_Cache(ch);
 			m_changes.erase(chit);
+			updateMaxMinSeqNum();
 			return true;
 		}
 	}
-	updateMaxMinSeqNum();
 	return false;
 }
 
