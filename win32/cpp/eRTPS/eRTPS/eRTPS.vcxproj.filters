@@ -100,6 +100,12 @@
     <Filter Include="Header Files\eprosimartps\discovery\timedevent">
       <UniqueIdentifier>{a8563088-23d7-4dcf-9201-2c3f7acd1cfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\eprosimartps\history">
+      <UniqueIdentifier>{0ac9dbc0-69f4-41b7-8d5c-8a592a1b4584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\history">
+      <UniqueIdentifier>{bd823d71-838c-4fa9-89bd-c001a4e332c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp">
@@ -130,9 +136,6 @@
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h">
-      <Filter>Header Files\eprosimartps</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\HistoryCache.h">
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h">
@@ -363,6 +366,21 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\timedevent\ResendDiscoveryDataPeriod.h">
       <Filter>Header Files\eprosimartps\discovery\timedevent</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\History.h">
+      <Filter>Header Files\eprosimartps\history</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\ReaderHistory.h">
+      <Filter>Header Files\eprosimartps\history</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\WriterHistory.h">
+      <Filter>Header Files\eprosimartps\history</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SEDPTopicDataType.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPTopicDataType.h">
+      <Filter>Header Files\eprosimartps\discovery</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -423,9 +441,6 @@
       <Filter>Source Files\qos</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\Endpoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\HistoryCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\MessageReceiver.cpp">
@@ -526,6 +541,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\utils\TimedEvent.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\history\History.cpp">
+      <Filter>Source Files\history</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\history\ReaderHistory.cpp">
+      <Filter>Source Files\history</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\history\WriterHistory.cpp">
+      <Filter>Source Files\history</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SEDPTopicDataType.cpp">
+      <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPTopicDataType.cpp">
+      <Filter>Source Files\discovery</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
