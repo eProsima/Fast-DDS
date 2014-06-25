@@ -56,7 +56,6 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 
 {
 	m_changesFromW.clear();
-	//cout << "WriterProxy CREATED with lease Duration: "<< Time_t2MilliSec(WPparam.leaseDuration)<<endl;
 	Time_t aux;
 	TIME_INFINITE(aux);
 	if(WPparam.leaseDuration < aux)
@@ -226,7 +225,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	if(!m_changesFromW.empty())
 	{
 		boost::lock_guard<WriterProxy> guard(*this);
-		print_changes_fromWriter_test();
+		//print_changes_fromWriter_test();
 		if(m_hasMaxAvailableSeqNumChanged)
 		{
 			//Order changesFromWriter
@@ -307,7 +306,7 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 }
 
 
-void WriterProxy::print_changes_fromWriter_test()
+void WriterProxy::print_changes_fromWriter_test2()
 {
 	cout << "WP: ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)

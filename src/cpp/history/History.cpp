@@ -153,14 +153,24 @@ bool History::get_max_change(CacheChange_t** max_change)
 	return false;
 }
 
-void History::print_changes_seqNum()
+}
+}
+
+#include <sstream>
+
+namespace eprosima{
+namespace rtps{
+
+void History::print_changes_seqNum2()
 {
+	std::stringstream ss;
 	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
 			it!=m_changes.end();++it)
 	{
-		cout << (*it)->sequenceNumber.to64long() << "-";
+		ss << (*it)->sequenceNumber.to64long() << "-";
 	}
-	cout << endl;
+	ss << endl;
+	cout << ss.str();
 }
 
 

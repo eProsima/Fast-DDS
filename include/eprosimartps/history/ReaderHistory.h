@@ -42,13 +42,11 @@ public:
 	void increaseUnreadCount()
 	{
 		++m_unreadCacheCount;
-		cout << "UNREAD COUNT INCREMENTED: "<< m_unreadCacheCount << endl;
 	}
 	void decreaseUnreadCount()
 	{
 		if(m_unreadCacheCount>0)
 			--m_unreadCacheCount;
-		cout << "UNREAD COUNT DECREMENTED: "<< m_unreadCacheCount << endl;
 	}
 
 	uint64_t getUnreadCount()

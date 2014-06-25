@@ -110,7 +110,7 @@ protected:
 	CacheChange_t* mp_minSeqCacheChange;
 	CacheChange_t* mp_maxSeqCacheChange;
 
-	void print_changes_seqNum();
+	void print_changes_seqNum2();
 };
 
 } /* namespace rtps */

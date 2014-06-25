@@ -434,13 +434,6 @@ bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderDa
 	boost::lock_guard<Endpoint> guard(*W);
 	pInfo(CYAN<<"SimpleEDP:localWriterMatching W-DRD"<<DEF<<endl);
 	bool matched = false;
-//	cout << W->getTopic().getTopicName() << " "<<rdata->m_topicName<<endl;
-//	cout << W->getTopic().getTopicDataType() << " "<<rdata->m_typeName<<endl;
-//	cout << W->getTopic().getTopicKind() << " "<<rdata->topicKind<<endl;
-//	cout <<  " "<<rdata->isAlive<<endl;
-//	cout << (W->getTopic().getTopicName() == rdata->m_topicName) << endl;
-//	cout << (W->getTopic().getTopicDataType() == rdata->m_typeName) << endl;
-//	cout << (W->getTopic().getTopicKind() == rdata->topicKind) << endl;
 	if((W->getTopic().getTopicName() == rdata->m_topicName) && (W->getTopic().getTopicDataType() == rdata->m_typeName) &&
 			(W->getTopic().getTopicKind() == rdata->topicKind) && rdata->isAlive)
 	{
@@ -453,7 +446,6 @@ bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderDa
 			for(std::vector<Locator_t>::iterator lit = rdata->m_readerProxy.unicastLocatorList.begin();
 					lit != rdata->m_readerProxy.unicastLocatorList.end();++lit)
 			{
-				//cout << "added unicast RL to my STATELESSWRITER"<<endl;
 				RL.locator = *lit;
 				if(p_SLW->reader_locator_add(RL))
 					matched =true;
@@ -483,10 +475,6 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP:localReaderMatching R-DWD"<<endl);
 	bool matched = false;
-//		cout << R->getTopic().getTopicName() << " " <<wdata->m_topicName<<endl;
-//		cout << R->getTopic().getTopicKind() << " " <<wdata->topicKind<<endl;
-//		cout << R->getTopic().getTopicDataType() << " " <<wdata->m_typeName<<endl;
-//		cout << "wdata alive. "<<wdata->isAlive<<endl;
 	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
 			R->getTopic().getTopicKind() == wdata->topicKind &&
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&

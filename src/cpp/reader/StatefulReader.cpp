@@ -135,7 +135,6 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.changesBegin();
 			it!=m_reader_cache.changesEnd();++it)
 	{
-		cout << "Change: "<< (*it)->sequenceNumber.to64long() << "/"<<m_reader_cache.getHistorySize()<< " is read: "<< (*it)->isRead<< " total unread: "<< m_reader_cache.getUnreadCount()<<endl;
 		if((*it)->isRead)
 			continue;
 		WriterProxy* wp;
@@ -143,7 +142,6 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		{
 			SequenceNumber_t seq;
 			wp->available_changes_max(&seq);
-			cout << "Available changes max: "<< seq.to64long()<<endl;
 			if(seq >= (*it)->sequenceNumber)
 			{
 				if((*it)->kind == ALIVE)

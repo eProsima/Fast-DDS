@@ -119,7 +119,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			if(m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
 			pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<<endl;);
-			print_changes_seqNum();
+			//print_changes_seqNum();
 			return true;
 		}
 		else
@@ -212,7 +212,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
 				pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<< "with KEY: "<< vit->first << endl;);
-				print_changes_seqNum();
+			//	print_changes_seqNum();
 				return true;
 			}
 			else
@@ -244,7 +244,6 @@ void ReaderHistory::updateMaxMinSeqNum()
 
 bool ReaderHistory::isUnreadCache()
 {
-	cout << "CHECKING UNREAD STATUS: "<< m_unreadCacheCount << endl;
 	if(m_unreadCacheCount>0)
 		return true;
 	else

@@ -31,7 +31,6 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 		RTPSMessageCreator::addSubmessageData(msg,change,topicKind,readerId,expectsInlineQos,inlineQos);
 
-		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
 	}
 	catch(int e)

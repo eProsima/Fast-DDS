@@ -64,9 +64,7 @@ bool SPDPListener::newAddedCache()
 //				}
 				if(pdata->m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
 				{
-					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SPDPListener: Message from own participant, ignoring"<<DEF<<endl)
-					//mp_SPDP->mp_SPDPReader->remove_change(change->sequenceNumber,change->writerGUID);
 					return true;
 				}
 				//Look for the participant in my own list:
@@ -151,7 +149,6 @@ bool SPDPListener::processParameterList(ParameterList_t& param,DiscoveredPartici
 	for(std::vector<Parameter_t*>::iterator it = param.m_parameters.begin();
 			it!=param.m_parameters.end();++it)
 	{
-	//	cout << "Parameter with Id: "<< (*it)->Pid << endl;
 		switch((*it)->Pid)
 		{
 		case PID_KEY_HASH:

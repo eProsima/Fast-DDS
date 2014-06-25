@@ -76,10 +76,8 @@ void SEDPPubListener::onNewDataMessage()
 //				}
 				if(wdata->m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
-					//cout << "SMAE"<<endl;
 					pInfo(CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<DEF<<endl)
-					//		this->mp_SEDP->mp_PubReader->remove_change(change->sequenceNumber,change->writerGUID);
-							delete(wdata);
+					delete(wdata);
 					return;
 				}
 				DiscoveredParticipantData* pdata = NULL;

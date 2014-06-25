@@ -26,8 +26,7 @@ WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* wp,boost::posix_time::
 				TimedEvent(&wp->mp_SFR->mp_event_thr->io_service,interval),
 				mp_WP(wp)
 {
-	// TODO Auto-generated constructor stub
-	//cout <<" WriterProxy Liveliness created " << mp_WP->param.remoteWriterGuid <<" "<< interval<<endl;
+
 }
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
