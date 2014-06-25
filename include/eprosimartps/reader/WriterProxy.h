@@ -132,7 +132,11 @@ public:
 	 * @param seq SequenceNumber
 	 * @return True if correct.
 	 */
-	bool removeChangeFromWriter(SequenceNumber_t& seq);
+	//bool removeChangeFromWriter(SequenceNumber_t& seq);
+
+	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
+
+
 	/**
 	 * Assert the liveliness of the Writer represented by this WriterProxy.
 	 */

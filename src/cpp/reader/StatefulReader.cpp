@@ -117,9 +117,11 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 		{
 			if(min_change->kind == ALIVE)
 				this->mp_type->deserialize(&min_change->serializedPayload,data);
-			if(wp->removeChangeFromWriter(min_change->sequenceNumber))
+			if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
 			{
 				info->sampleKind = min_change->kind;
+				if(!min_change->isRead)
+					m_reader_cache.decreaseUnreadCount();
 				return m_reader_cache.remove_change(min_change);
 			}
 		}
