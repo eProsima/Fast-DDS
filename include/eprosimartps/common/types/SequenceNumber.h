@@ -18,6 +18,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <sstream>
 namespace eprosima{
 namespace rtps{
 
@@ -147,6 +148,12 @@ inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
 	return(s1.to64long() < s2.to64long());
 }
 
+inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seqNum){
+	return output << ((uint64_t)seqNum.high *(uint64_t)pow(2.0,32) + (uint64_t)seqNum.low);
+}
+
+
+
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 class SequenceNumberSet_t{
 public:
@@ -191,9 +198,23 @@ public:
 		{
 		return set;
 		}
+	std::string print()
+	{
+		std::stringstream ss;
+		ss<<base.to64long()<<":";
+		for(std::vector<SequenceNumber_t>::iterator it=set.begin();it!=set.end();++it)
+			ss<<it->to64long()<<"-";
+		return ss.str();
+	}
 private:
 	std::vector<SequenceNumber_t> set;
 };
+
+inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns){
+	return output<< sns.print();
+}
+
+
 
 }
 }

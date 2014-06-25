@@ -172,16 +172,25 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 	WriterProxy* wp;
 	if(matched_writer_lookup(a_change->writerGUID,&wp))
 	{
-		std::vector<ChangeFromWriter_t>::iterator chit;
-		for(chit = wp->m_changesFromW.begin();
-				chit!=wp->m_changesFromW.end();++chit)
+		std::vector<int> to_remove;
+		for(size_t i = 0;i<wp->m_changesFromW.size();++i)
 		{
-			if(a_change->sequenceNumber == chit->seqNum)
+			if(!wp->m_changesFromW.at(i).isValid() && (wp->m_changesFromW.at(i).status == RECEIVED || wp->m_changesFromW.at(i).status == LOST))
 			{
+				wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
+				to_remove.push_back(i);
+			}
+			if(a_change->sequenceNumber == wp->m_changesFromW.at(i).seqNum)
+			{
+				wp->m_changesFromW.at(i).notValid();
 				break;
 			}
 		}
-		chit->notValid();
+		for(std::vector<int>::reverse_iterator it = to_remove.rbegin();
+				it!=to_remove.rend();++it)
+		{
+			wp->m_changesFromW.erase(wp->m_changesFromW.begin()+*it);
+		}
 		return m_reader_cache.remove_change(a_change);
 	}
 	return false;

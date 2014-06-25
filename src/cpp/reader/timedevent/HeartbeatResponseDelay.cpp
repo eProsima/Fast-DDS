@@ -43,13 +43,12 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("HeartbeatResponse:event: Sending ACKNACK"<<endl);
+		pDebugInfo("HeartbeatResponse:event:"<<endl;);
 		std::vector<ChangeFromWriter_t*> ch_vec;
 		{
 			boost::lock_guard<WriterProxy> guard(*mp_WP);
 			mp_WP->missing_changes(&ch_vec);
 		}
-//		cout << "Missing changes: " << ch_vec.size() << " changesformW " << mp_WP->m_changesFromW.size() << endl;
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
@@ -61,13 +60,13 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			std::vector<ChangeFromWriter_t*>::iterator cit;
 			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
-				cout << "HBRESPONSE: "<< sns.base.to64long()<< " adding: "<< (*cit)->seqNum.to64long()<<endl;
 				if(!sns.add((*cit)->seqNum))
 				{
-					pWarning("HBResponse:event:error adding seqNum"<<endl;);
+					pWarning("HBResponse:event:error adding seqNum "<<(*cit)->seqNum.to64long()<< " with SeqNumSet Base: "<< sns.base.to64long()<< endl;);
 				}
 			}
 			mp_WP->m_acknackCount++;
+			pDebugInfo("Sending ACKNACK: "<< sns <<endl;)
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
 												mp_WP->mp_SFR->getGuid().guidPrefix,
