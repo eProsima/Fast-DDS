@@ -61,6 +61,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			std::vector<ChangeFromWriter_t*>::iterator cit;
 			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
 			{
+				cout << "HBRESPONSE: "<< sns.base.to64long()<< " adding: "<< (*cit)->seqNum.to64long()<<endl;
 				if(!sns.add((*cit)->seqNum))
 				{
 					pWarning("HBResponse:event:error adding seqNum"<<endl;);

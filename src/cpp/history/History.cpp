@@ -153,6 +153,16 @@ bool History::get_max_change(CacheChange_t** max_change)
 	return false;
 }
 
+void History::print_changes_seqNum()
+{
+	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+			it!=m_changes.end();++it)
+	{
+		cout << (*it)->sequenceNumber.to64long() << "-";
+	}
+	cout << endl;
+}
+
 
 
 } /* namespace rtps */

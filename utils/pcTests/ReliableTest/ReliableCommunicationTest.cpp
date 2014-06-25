@@ -141,7 +141,7 @@ class MySubListener:public SubscriberListener
 	}
 	void onNewDataMessage()
 		{
-			cout <<"New Message"<<endl;
+			cout << B_RED<<"New Message"<<DEF<<endl;
 		}
 };
 

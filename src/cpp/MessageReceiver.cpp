@@ -389,7 +389,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						WP->received_change_set(change_to_add);
 						SequenceNumber_t maxSeqNumAvailable;
 						WP->available_changes_max(&maxSeqNumAvailable);
-						if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
+						cout << "Checking added change: "<< change_to_add->sequenceNumber.to64long() << " against max available: "<< maxSeqNumAvailable.to64long()<<endl;
+						if(change_to_add->sequenceNumber <= maxSeqNumAvailable)
 						{
 							if((*it)->getListener()!=NULL)
 							{
