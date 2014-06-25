@@ -107,7 +107,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 		ChangeFromWriter_t chw;
 		chw.seqNum = firstSN;
 		chw.status = UNKNOWN;
-		chw.is_relevant = false;
+		chw.is_relevant = true;
 		pDebugInfo("WriterProxy:add_unknown_changes: "<<chw.seqNum.to64long()<<endl);
 		m_changesFromW.push_back(chw);
 	}
@@ -235,16 +235,16 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 			seqNum->low = 0;
 			//We check the rest for the largest one with Status Received or lost
 			//ignoring the first one that are not valid.
-			bool first_ones = true;
+	//		bool first_ones = true;
 			for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 			{
-				if(!it->isValid() && first_ones)
+//				if(!it->isValid() && first_ones)
+//				{
+//					continue;
+//				}
+				if((it->status == RECEIVED || it->status == LOST))
 				{
-					continue;
-				}
-				if((it->status == RECEIVED || it->status == LOST) && it->isValid())
-				{
-					first_ones = false;
+				//	first_ones = false;
 					*seqNum = it->seqNum;
 					m_max_available_seqNum = it->seqNum;
 					m_hasMaxAvailableSeqNumChanged = false;
@@ -312,7 +312,7 @@ void WriterProxy::print_changes_fromWriter_test()
 	cout << "WP: ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
-		cout << it->seqNum.to64long()<<"("<<it->isValid()<<")-";
+		cout << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";
 	}
 	cout << endl;
 }
