@@ -15,7 +15,9 @@
 #define RTPSWRITER_H_
 
 #include "eprosimartps/Endpoint.h"
-#include "eprosimartps/HistoryCache.h"
+
+#include "eprosimartps/history/WriterHistory.h"
+
 
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 
@@ -23,7 +25,7 @@
 #include "eprosimartps/dds/Publisher.h"
 
 #include "eprosimartps/qos/ParameterList.h"
-
+#include "eprosimartps/dds/attributes/PublisherAttributes.h"
 
 using namespace eprosima::dds;
 
@@ -44,9 +46,9 @@ class RTPSWriter: public Endpoint
 {
 	friend class LivelinessPeriodicAssertion;
 public:
-	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
+	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
 			StateKind_t state = STATELESS,
-			int16_t userDefinedId=-1,uint16_t historysize = 50,uint32_t payload_size = 500);
+			int16_t userDefinedId=-1,uint32_t payload_size = 500);
 	virtual ~RTPSWriter();
 
 	/**
@@ -80,7 +82,13 @@ public:
 	 */
 	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
 	{
-		return m_writer_cache.get_seq_num_min(seqNum,writerGuid);
+		CacheChange_t* change;
+		m_writer_cache.get_min_change(&change);
+
+		*seqNum = change->sequenceNumber;
+		if(writerGuid!=NULL)
+			*writerGuid = change->writerGUID;
+		return true;
 	}
 	/**
 	 * Get the maximum sequence number in the HistoryCache.
@@ -90,7 +98,12 @@ public:
 	 */
 	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid)
 	{
-		return m_writer_cache.get_seq_num_max(seqNum,writerGuid);
+		CacheChange_t* change;
+		m_writer_cache.get_max_change(&change);
+		*seqNum = change->sequenceNumber;
+		if(writerGuid!=NULL)
+					*writerGuid = change->writerGUID;
+		return true;
 	}
 
 	bool add_change(CacheChange_t*change)
@@ -105,7 +118,8 @@ public:
 
 	bool get_last_added_cache(CacheChange_t**change)
 	{
-		return m_writer_cache.get_last_added_cache(change);
+		m_writer_cache.get_max_change(change);
+		return true;
 	}
 
 	void setQos( WriterQos& qos,bool first)
@@ -129,11 +143,12 @@ public:
 		m_livelinessAsserted = live;
 	}
 
+	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
 
 protected:
 
 	//!Changes associated with this writer.
-	HistoryCache m_writer_cache;
+	WriterHistory m_writer_cache;
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
 	bool m_pushMode;
 

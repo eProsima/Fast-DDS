@@ -9,10 +9,6 @@
 /**
  * @file ThroughputPublisher.cxx
  *
- *  Created on: Jun 4, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 
@@ -78,20 +74,27 @@ ThroughputPublisher::ThroughputPublisher():
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 10000;
+	//Wparam.historyMaxSize = 10000;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Wparam.topic.resourceLimitsQos.max_samples = 10000;
+	Wparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	mp_datapub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 20;
+	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Rparam.topic.resourceLimitsQos.max_samples = 20;
+	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandS2P";
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 
-	Wparam.historyMaxSize = 20;
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Wparam.topic.resourceLimitsQos.max_samples = 50;
+	Wparam.topic.resourceLimitsQos.allocated_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandP2S";

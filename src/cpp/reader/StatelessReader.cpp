@@ -31,7 +31,7 @@ StatelessReader::~StatelessReader() {
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
 		RTPSReader(guidP,entId,param.topic,ptype,STATELESS,
-				param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
+				param.userDefinedId,param.payloadMaxSize)
 {
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
@@ -45,20 +45,17 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	pDebugInfo("Taking Data from Reader"<<endl);
-	SequenceNumber_t seq;
-	GUID_t gui;
-	if(this->m_reader_cache.get_seq_num_min(&seq,&gui))
+	CacheChange_t* change;
+	if(this->m_reader_cache.get_min_change(&change))
 	{
-		CacheChange_t* change;
-		if(this->m_reader_cache.get_change(seq,gui,&change))
+		if(change->kind == ALIVE)
 		{
-			if(change->kind == ALIVE)
-			{
-				this->mp_type->deserialize(&change->serializedPayload,data);
-			}
-			info->sampleKind = change->kind;
-			return this->m_reader_cache.remove_change(seq,gui);
+			this->mp_type->deserialize(&change->serializedPayload,data);
 		}
+		info->sampleKind = change->kind;
+		if(!change->isRead)
+			m_reader_cache.decreaseUnreadCount();
+		return this->m_reader_cache.remove_change(change);
 	}
 	return false;
 }
@@ -70,8 +67,8 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
+	for(it = m_reader_cache.changesBegin();
+			it!=m_reader_cache.changesEnd();++it)
 	{
 		if(!(*it)->isRead)
 		{
@@ -88,25 +85,16 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		}
 		info->sampleKind = (*it)->kind;
 		(*it)->isRead = true;
+		m_reader_cache.decreaseUnreadCount();
 		return true;
 	}
-	cout << "NOT FOUND UNREAD ELEMENT "<< endl;
+	pInfo("No Unread elements left"<<endl);
 	return false;
 }
 
 bool StatelessReader::isUnreadCacheChange()
 {
-	m_reader_cache.sortCacheChangesBySeqNum();
-	std::vector<CacheChange_t*>::iterator it;
-	for(it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
-	{
-		if(!(*it)->isRead)
-		{
-			return true;
-		}
-	}
-	return false;
+	return m_reader_cache.isUnreadCache();
 }
 
 bool StatelessReader::matched_writer_add(const GUID_t& guid)
@@ -132,6 +120,12 @@ bool StatelessReader::matched_writer_remove(const GUID_t& guid)
 		}
 	}
 	return false;
+}
+
+
+bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
+{
+	return m_reader_cache.remove_change(ch);
 }
 
 

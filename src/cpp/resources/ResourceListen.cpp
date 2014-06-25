@@ -6,13 +6,9 @@
  *
  *************************************************************************/
 
-/*
- * ThreadListen.cpp
+/**
+ * @file ThreadListen.cpp
  *
- *  Created on: Feb 25, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *      		grcanosa@gmail.com
  */
 
 #include "eprosimartps/resources/ResourceListen.h"

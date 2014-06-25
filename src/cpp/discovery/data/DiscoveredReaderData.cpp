@@ -9,10 +9,6 @@
 /**
  * @file DiscoveredReaderData.cpp
  *
- *  Created on: Apr 8, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #include "eprosimartps/discovery/data/DiscoveredReaderData.h"

@@ -8,12 +8,7 @@
 
 /**
  * @file ResourceListen.h
- *  ResourceListen class.
- *  Created on: Feb 25, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *      		grcanosa@gmail.com
- */
+*/
 
 #ifndef RESOURCELISTEN_H_
 #define RESOURCELISTEN_H_

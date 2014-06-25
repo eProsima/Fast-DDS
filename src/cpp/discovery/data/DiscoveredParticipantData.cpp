@@ -9,13 +9,9 @@
 /**
  * @file DiscoveredParticipantData.cpp
  *
- *  Created on: Apr 8, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
-#include "eprosimartps/discovery/DiscoveredParticipantData.h"
+#include "eprosimartps/discovery/data/DiscoveredParticipantData.h"
 
 namespace eprosima {
 namespace rtps {

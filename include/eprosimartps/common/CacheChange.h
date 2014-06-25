@@ -111,19 +111,78 @@ enum ChangeFromWriterStatus_t{
 /**
  * Struct ChangeForReader_t used to indicate the state of a specific change with respect to a specific reader, as well as its relevance.
  */
- struct ChangeForReader_t{
-	CacheChange_t* change;
-	ChangeForReaderStatus_t status;
+ class ChangeForReader_t{
+ public:
+	 ChangeForReader_t():status(UNSENT),is_relevant(true),m_isValid(false),change(NULL){};
+	 virtual ~ChangeForReader_t(){};
+	 ChangeForReaderStatus_t status;
 	bool is_relevant;
+	SequenceNumber_t seqNum;
+	CacheChange_t* getChange()
+	{
+		return change;
+	}
+	bool setChange(CacheChange_t* a_change)
+	{
+		m_isValid = true;
+		seqNum = a_change->sequenceNumber;
+		change = a_change;
+		return true;
+	}
+	void notValid()
+	{
+		is_relevant = false;
+		m_isValid = false;
+		change = NULL;
+	}
+	bool isValid()
+	{
+		return m_isValid;
+	}
+ private:
+	bool m_isValid;
+	CacheChange_t* change;
 };
 
 /**
  * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
  */
- struct ChangeFromWriter_t{
+class ChangeFromWriter_t
+{
+ public:
+	 ChangeFromWriter_t():status(UNKNOWN),is_relevant(true),m_isValid(false),change(NULL)
+	 {
+
+	 }
+	 virtual ~ChangeFromWriter_t(){};
+	 ChangeFromWriterStatus_t status;
+	 bool is_relevant;
+	 SequenceNumber_t seqNum;
+	 CacheChange_t* getChange()
+	 {
+		 return change;
+	 }
+	 bool setChange(CacheChange_t* a_change)
+	 {
+		 m_isValid = true;
+		 seqNum = a_change->sequenceNumber;
+		 change = a_change;
+		 return true;
+	 }
+	 void notValid()
+	 {
+		 is_relevant = false;
+		 m_isValid = false;
+		 change = NULL;
+	 }
+	 bool isValid()
+	 {
+		 return m_isValid;
+	 }
+ private:
+	 	bool m_isValid;
 	CacheChange_t* change;
-	ChangeFromWriterStatus_t status;
-	bool is_relevant;
+
 };
 
 

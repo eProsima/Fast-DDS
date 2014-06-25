@@ -48,6 +48,16 @@ struct InstanceHandle_t{
 		}
 		return *this;
 	}
+
+	bool isDefined()
+	{
+		for(uint8_t i=0;i<16;++i)
+		{
+			if(value[i]!=0)
+				return true;
+		}
+		return false;
+	}
 };
 
 inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
