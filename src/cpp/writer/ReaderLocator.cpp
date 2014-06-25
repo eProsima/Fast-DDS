@@ -13,7 +13,7 @@
 
 #include "eprosimartps/writer/ReaderLocator.h"
 #include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/HistoryCache.h"
+
 
 namespace eprosima {
 namespace rtps {
@@ -70,17 +70,17 @@ bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin) {
 	return false;
 }
 
-void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& myGUID,HistoryCache* history) {
-	std::vector<SequenceNumber_t>::iterator it;
-	requested_changes.clear();
-	for(it = seqs.begin();it!=seqs.end();++it)
-	{
-		CacheChange_t** cpoin = NULL;
-
-		if(history->get_change(*it,myGUID,cpoin))
-			requested_changes.push_back(*cpoin);
-	}
-}
+//void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& myGUID,HistoryCache* history) {
+//	std::vector<SequenceNumber_t>::iterator it;
+//	requested_changes.clear();
+//	for(it = seqs.begin();it!=seqs.end();++it)
+//	{
+//		CacheChange_t** cpoin = NULL;
+//
+//		if(history->get_change(*it,myGUID,cpoin))
+//			requested_changes.push_back(*cpoin);
+//	}
+//}
 
 bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
 	std::vector<CacheChange_t*>::iterator it;

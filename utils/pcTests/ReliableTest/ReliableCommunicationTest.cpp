@@ -1,19 +1,12 @@
 ﻿/*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
-/*
- * StatelessTest.cpp
- *
- *  Created on: Feb 26, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *      		grcanosa@gmail.com
- */
+
 
 #include <stdio.h>
 #include <string>
@@ -155,7 +148,7 @@ int main(int argc, char** argv)
 	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
-	int type;
+	int type = 1;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
@@ -163,8 +156,7 @@ int main(int argc, char** argv)
 		else if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
 	}
-	else
-		type = 1; //publisher
+
 
 	TestTypeDataType TestTypeData;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
@@ -190,15 +182,13 @@ int main(int argc, char** argv)
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "TestType";
 		Wparam.topic.topicName = "Test_Topic";
-		Wparam.historyMaxSize = 14;
+		Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Wparam.topic.resourceLimitsQos.max_samples = 20;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	//	TIME_INFINITE(Wparam.qos.m_liveliness.lease_duration);
-		Wparam.qos.m_liveliness.lease_duration.seconds = 10;
-		Wparam.qos.m_liveliness.lease_duration.fraction = 3;
-		Wparam.qos.m_liveliness.announcement_period.seconds = 3;
-		Wparam.qos.m_liveliness.announcement_period.fraction = 0;
+
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
@@ -244,13 +234,14 @@ int main(int argc, char** argv)
 		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
-		Rparam.historyMaxSize = 30;
 		Rparam.topic.topicDataType = "TestType";
 		Rparam.topic.topicName = "Test_Topic";
 		Rparam.topic.topicKind = WITH_KEY;
+		Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Rparam.topic.resourceLimitsQos.max_samples = 30;
+		Rparam.topic.resourceLimitsQos.allocated_samples = 30;
 		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-		Rparam.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 		MySubListener mylisten;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
@@ -265,7 +256,7 @@ int main(int argc, char** argv)
 			SampleInfo_t info;
 			if(sub->readNextData((void*)&tp,&info))
 				tp.print();
-			if(sub->getHistoryElementsNumber() >= 0.5*Rparam.historyMaxSize)
+			if(sub->getHistoryElementsNumber() >= 0.5*Rparam.topic.resourceLimitsQos.max_samples)
 			{
 				cout << "Taking all" <<endl;
 				while(sub->takeNextData((void*)&tp,&info))

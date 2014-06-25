@@ -72,7 +72,7 @@ public:
 	 * @param readerGUI
 	 * @param history
 	 */
-	void requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& readerGUI,HistoryCache* history);
+//	void requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& readerGUI,HistoryCache* history);
 };
 
 } /* namespace rtps */

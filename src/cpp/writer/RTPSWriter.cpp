@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/HistoryCache.h"
+
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/PublisherListener.h"
