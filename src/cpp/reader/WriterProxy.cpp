@@ -298,79 +298,65 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 	return false;
 }
 
-
-//SequenceNumber_t WriterProxy::max_seq_num()
+//bool WriterProxy::removeChangeFromWriter(SequenceNumber_t& seq)
 //{
-//	SequenceNumber_t seq;
-//	if(!m_changesFromW.empty())
+//	//FIXME: CORRECT THIS METHOD.
+//	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 //	{
-//		boost::lock_guard<WriterProxy> guard(*this);
-//		std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-//	//	cout << "Calculating max of: ";
-////		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-////			cout << it->change->sequenceNumber.low << " ";
-////		cout << endl;
-//		std::vector<ChangeFromWriter_t>::iterator it = m_changesFromW.end()-1;
-//		seq = it->change->sequenceNumber;
-//	}
-//	else
-//	{
-//		seq = this->m_lastRemovedSeqNum;
-//	}
-//	return seq;
-//}
-
-
-//bool WriterProxy::add_unknown_changes(SequenceNumber_t& seqin)
-//{
-//	SequenceNumber_t seq(seqin);
-//	boost::lock_guard<WriterProxy> guard(*this);
-//	uint32_t n_to_add;
-//	SequenceNumber_t maxseqNum(max_seq_num());
-//
-//	if((maxseqNum+1).to64long() < (seq).to64long()) //if the maximum plus one is less than our seqNum we need to add
-//	{
-//		n_to_add = (uint32_t)(seq.to64long() - maxseqNum.to64long() -1);
-//		while(n_to_add>0)
+//		if(it->isValid())
 //		{
-//			CacheChange_t* ch = mp_SFR->reserve_Cache();
-//			ch->sequenceNumber = seq-n_to_add;
-//			ChangeFromWriter_t chfw;
-//			chfw.change = ch;
-//			chfw.status = UNKNOWN;
-//			chfw.is_relevant = false;
-//			pDebugInfo("WriterProxy:add_unknown_changes: "<<chfw.change->sequenceNumber.to64long()<<endl);
-//			m_changesFromW.push_back(chfw);
-//			n_to_add--;
+//			if(it->seqNum == seq)
+//			{
+//				if(it->status == RECEIVED || it->status == LOST)
+//				{
+//					m_lastRemovedSeqNum = it->seqNum;
+//					m_changesFromW.erase(it);
+//					m_hasMinAvailableSeqNumChanged = true;
+//					pDebugInfo("WriterProxy: removeChangeFromWriter: "<<m_lastRemovedSeqNum.to64long()<<endl);
+//					return true;
+//				}
+//				else
+//				{
+//					pDebugInfo("WriterProxy: removeChangeFromWriter: "<<it->seqNum.to64long()<< " FALSE " <<endl);
+//					return false;
+//				}
+//			}
 //		}
 //	}
-//	return true;
-//
+//	return false;
 //}
 
-bool WriterProxy::removeChangeFromWriter(SequenceNumber_t& seq)
+bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
 {
 	//FIXME: CORRECT THIS METHOD.
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
-		if(it->isValid())
+		if(it->seqNum < seq)
 		{
-			if(it->seqNum == seq)
+			if(it->status == RECEIVED || it->status == LOST)
 			{
-				if(it->status == RECEIVED || it->status == LOST)
-				{
-					m_lastRemovedSeqNum = it->seqNum;
-					m_changesFromW.erase(it);
-					m_hasMinAvailableSeqNumChanged = true;
-					pDebugInfo("WriterProxy: removeChangeFromWriter: "<<m_lastRemovedSeqNum.to64long()<<endl);
-					return true;
-				}
-				else
-				{
-					pDebugInfo("WriterProxy: removeChangeFromWriter: "<<it->seqNum.to64long()<< " FALSE " <<endl);
-					return false;
-				}
+				m_lastRemovedSeqNum = it->seqNum;
+				m_changesFromW.erase(it);
+				m_hasMinAvailableSeqNumChanged = true;
 			}
+		}
+		else if(it->seqNum == seq)
+		{
+
+			if(it->status == RECEIVED || it->status == LOST)
+			{
+				m_lastRemovedSeqNum = it->seqNum;
+				m_changesFromW.erase(it);
+				m_hasMinAvailableSeqNumChanged = true;
+				pDebugInfo("WriterProxy: removeChangeFromWriter: "<<m_lastRemovedSeqNum.to64long()<<endl);
+				return true;
+			}
+			else
+			{
+				pDebugInfo("WriterProxy: removeChangeFromWriterUpTo: "<<it->seqNum.to64long()<< " FALSE " <<endl);
+				return false;
+			}
+
 		}
 	}
 	return false;

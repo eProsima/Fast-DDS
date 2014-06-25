@@ -53,6 +53,8 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 			this->mp_type->deserialize(&change->serializedPayload,data);
 		}
 		info->sampleKind = change->kind;
+		if(!change->isRead)
+			m_reader_cache.decreaseUnreadCount();
 		return this->m_reader_cache.remove_change(change);
 	}
 	return false;
