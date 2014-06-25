@@ -57,7 +57,7 @@ public:
 	PublisherAttributes()
 {
 		pushMode = true;
-		historyMaxSize = 10;
+	//	historyMaxSize = 10;
 		userDefinedId = -1;
 		payloadMaxSize = 500;
 };
@@ -69,7 +69,7 @@ public:
 	/**
 	 * Maximum size of the History.
 	 */
-	uint16_t historyMaxSize;
+	//uint16_t historyMaxSize;
 	//! Unicast LocatorList where the writer should be listening for responses (RELIABLE only).
 	LocatorList_t unicastLocatorList;
 	//!MulticastLocatorList where the writer should be listening for responses (RELIABLE only).

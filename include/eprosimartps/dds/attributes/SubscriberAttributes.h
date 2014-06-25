@@ -47,15 +47,12 @@ public:
 	SubscriberAttributes()
 {
 		expectsInlineQos = false;
-		historyMaxSize = 50;
 		userDefinedId = -1;
 		payloadMaxSize = 500;
 };
 	virtual ~SubscriberAttributes(){};
 	//! Expects Inline Qos (true or false)
 	bool expectsInlineQos;
-	//!Maximum size of the History associated with this Subscriber.
-	uint16_t historyMaxSize;
 	//!Unicast Locator List that the Subscriber should be listening.
 	LocatorList_t unicastLocatorList;
 	//!Multicas LocatorList where the Subscriber should be listening.

@@ -22,7 +22,7 @@ namespace rtps {
 
 
 StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-		RTPSWriter(guidP,entId,param.topic,ptype,STATELESS,param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
+		RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
 {
 	m_pushMode = true;//TODOG, support pushmode false in best effort
 	//locator lists:
@@ -52,8 +52,8 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
 	}
 	a_locator.requested_changes.clear();
 	a_locator.unsent_changes.clear();
-	for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.m_changes.begin();
-			it!=m_writer_cache.m_changes.end();++it){
+	for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.changesBegin();
+			it!=m_writer_cache.changesEnd();++it){
 		a_locator.unsent_changes.push_back((*it));
 	}
 	reader_locator.push_back(a_locator);
@@ -90,8 +90,8 @@ void StatelessWriter::unsent_changes_reset()
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		rit->unsent_changes.clear();
-		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.m_changes.begin();
-				cit!=m_writer_cache.m_changes.end();++cit){
+		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();
+				cit!=m_writer_cache.changesEnd();++cit){
 			rit->unsent_changes.push_back((*cit));
 		}
 	}
@@ -177,12 +177,7 @@ void StatelessWriter::unsent_changes_not_empty()
 
 bool StatelessWriter::removeMinSeqCacheChange()
 {
-	SequenceNumber_t seq;
-	GUID_t gui;
-	if(this->m_writer_cache.get_seq_num_min(&seq,&gui))
-		return this->m_writer_cache.remove_change(seq,gui);
-	else
-		return false;
+	return m_writer_cache.remove_min_change();
 }
 
 bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
@@ -195,6 +190,12 @@ bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
 	}
 	else
 		return false;
+}
+
+bool StatelessWriter::change_removed_by_history(CacheChange_t* a_change)
+{
+	m_writer_cache.remove_change(a_change);
+	return true;
 }
 
 } /* namespace rtps */

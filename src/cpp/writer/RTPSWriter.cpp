@@ -26,11 +26,11 @@ namespace eprosima {
 namespace rtps {
 
 
-RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
+RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
 		StateKind_t state,
-		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
-					Endpoint(guidP,entId,topic,ptype,state,WRITER,userDefinedId),
-					m_writer_cache((Endpoint*)this,historysize,payload_size),
+		int16_t userDefinedId, uint32_t payload_size):
+					Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
+					m_writer_cache((Endpoint*)this,payload_size),
 					m_pushMode(true),
 					m_cdrmessages(payload_size),
 					mp_listener(NULL),
@@ -105,6 +105,7 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 		if(!m_writer_cache.add_change(change))
 		{
 			m_writer_cache.release_Cache(change);
+			pDebugInfo("Change not added"<<endl);
 			return false;
 		}
 		m_livelinessAsserted = true;

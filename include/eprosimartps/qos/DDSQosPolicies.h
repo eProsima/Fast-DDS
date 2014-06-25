@@ -214,7 +214,7 @@ public:
 	HistoryQosPolicyKind kind;
 	int32_t depth;
 	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),
-						kind(KEEP_LAST_HISTORY_QOS),depth(0){};
+						kind(KEEP_ALL_HISTORY_QOS),depth(0){};
 	virtual ~HistoryQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -256,8 +256,9 @@ public:
 	uint32_t max_samples;
 	uint32_t max_instances;
 	uint32_t max_samples_per_instance;
+	uint32_t allocated_samples;
 	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),
-			max_samples(0),max_instances(0),max_samples_per_instance(0){};
+			max_samples(1000),max_instances(5),max_samples_per_instance(200),allocated_samples(1000){};
 	virtual ~ResourceLimitsQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };

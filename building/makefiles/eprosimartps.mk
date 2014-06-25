@@ -36,9 +36,12 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/HistoryCache.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/history/History.cpp \
+		  $(BASEDIR)/src/cpp/history/WriterHistory.cpp \
+		  $(BASEDIR)/src/cpp/history/ReaderHistory.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
@@ -87,6 +90,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/SimpleEDP.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp \
 		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp \
+		  $(BASEDIR)/src/cpp/discovery/SPDPTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/discovery/SEDPTopicDataType.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
 		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \

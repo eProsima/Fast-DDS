@@ -20,6 +20,8 @@
 
 #include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 
+#include "eprosimartps/discovery/SEDPTopicDataType.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -137,6 +139,9 @@ public:
 	void repareDiscoveredDataLocatorList(LocatorList_t* loclist);
 
 	bool removeRemoteEndpoints(const GuidPrefix_t& partguidP);
+
+	SEDPTopicDataType m_PubReaderDataType;
+	SEDPTopicDataType m_SubReaderDataType;
 };
 
 } /* namespace rtps */

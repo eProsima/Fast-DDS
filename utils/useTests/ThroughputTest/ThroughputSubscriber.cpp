@@ -9,10 +9,6 @@
 /**
  * @file ThroughputSubscriber.cxx
  *
- *  Created on: Jun 4, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #include "ThroughputSubscriber.h"
@@ -132,22 +128,28 @@ PParam.sendSocketBufferSize = 65536;
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	SubscriberAttributes Sparam;
-	Sparam.historyMaxSize = 10000;
 	Sparam.topic.topicDataType = "LatencyType";
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
+	Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Sparam.topic.resourceLimitsQos.max_samples = 10000;
+	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Sparam.unicastLocatorList.push_back(Locator_t(10110));
 	mp_datasub = DomainParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 20;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
+	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Rparam.topic.resourceLimitsQos.max_samples = 20;
+	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.unicastLocatorList.push_back(Locator_t(10111));
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 20;
+	//Wparam.historyMaxSize = 20;
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Wparam.topic.resourceLimitsQos.max_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
@@ -170,7 +172,7 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 	sema.wait();
 	cout << "Discovery complete"<<endl;
 	bool stop = false;
-	int aux;
+	//int aux;
 	printLabelsSubscriber();
 	int demindex=0;
 	while(1)

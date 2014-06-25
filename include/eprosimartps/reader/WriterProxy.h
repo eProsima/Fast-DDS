@@ -132,7 +132,11 @@ public:
 	 * @param seq SequenceNumber
 	 * @return True if correct.
 	 */
-	bool removeChangeFromWriter(SequenceNumber_t& seq);
+	//bool removeChangeFromWriter(SequenceNumber_t& seq);
+
+	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
+
+
 	/**
 	 * Assert the liveliness of the Writer represented by this WriterProxy.
 	 */
@@ -148,17 +152,16 @@ public:
 	}
 
 private:
-	//!Get the maximum sequenceNumber in the list.
-	SequenceNumber_t max_seq_num();
-
 	/**
 	 * Add changesFromWriter up to the sequenceNumber passed, but not including.
-	 * Ex: If you hace seqNums 1,2,3 and you receive seqNum 6, you need 4 and 5 as unknown.
+	 * Ex: If you have seqNums 1,2,3 and you receive seqNum 6, you need to add 4,5 and 6
+	 * as unknown to then later mark 6 as received.
 	 * You then marked them as Missing or lost.
 	 * @param seqNum SequenceNumber to use.
 	 * @return True if correct
-	 */
-	bool add_unknown_changes(SequenceNumber_t& seqNum);
+		 */
+	bool add_changes_from_writer_up_to(SequenceNumber_t seq);
+
 
 	SequenceNumber_t m_max_available_seqNum;
 	SequenceNumber_t m_min_available_seqNum;

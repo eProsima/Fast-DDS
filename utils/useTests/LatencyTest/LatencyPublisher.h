@@ -9,10 +9,6 @@
 /**
  * @file LatencyPublisher.h
  *
- *  Created on: Jun 2, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef LATENCYPUBLISHER_H_
@@ -114,17 +110,21 @@ LatencyPublisher::LatencyPublisher():
 	cout << "Overhead " << overhead_value << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = NSAMPLES+100;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Wparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
+	Wparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
 	m_pub = DomainParticipant::createPublisher(m_part,Wparam,(PublisherListener*)&this->m_PubListener);
 	//SUBSCRIBER
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = NSAMPLES+100;
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyDown";
+	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Rparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
+	Rparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
 	m_sub = DomainParticipant::createSubscriber(m_part,Rparam,(SubscriberListener*)this);
 
 //	m_part->announceParticipantState();

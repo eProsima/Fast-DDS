@@ -67,6 +67,8 @@ public:
 	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
 	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
 
+	bool change_removed_by_history(CacheChange_t*);
+
 private:
 	SubscriberTimes m_SubTimes;
 	//! Vector containing pointers to the matched writers.
