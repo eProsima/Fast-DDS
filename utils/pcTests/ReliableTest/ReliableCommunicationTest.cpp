@@ -1,5 +1,5 @@
 ﻿/*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
+  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
@@ -97,6 +97,9 @@ bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
 	//cout << "Deserializando length: " << payload->length << endl;
 	memcpy(data,payload->data,payload->length);
+//	TestType* tp = (TestType*)data;
+//	cout << "Deserialize method printing: "<<endl;
+//	tp->print();
 	return true;
 }
 
@@ -124,7 +127,7 @@ class MyPubListener:public PublisherListener
 {
 	void onPublicationMatched()
 	{
-		cout << "PUBLICATION MATCHED"<<endl;
+		cout << B_RED<<"PUBLICATION MATCHED"<<DEF<<endl;
 		sema.post();
 	}
 };
@@ -133,7 +136,7 @@ class MySubListener:public SubscriberListener
 {
 	void onSubscriptionMatched()
 	{
-		cout << "SUBSCRIPTION MATCHED "<<endl;
+		cout <<B_RED<< "SUBSCRIPTION MATCHED "<<DEF<<endl;
 		sema.post();
 	}
 	void onNewDataMessage()
@@ -183,8 +186,8 @@ int main(int argc, char** argv)
 		Wparam.topic.topicDataType = "TestType";
 		Wparam.topic.topicName = "Test_Topic";
 		Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-		Wparam.topic.resourceLimitsQos.max_samples = 20;
-		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
+		Wparam.topic.resourceLimitsQos.max_samples = 50;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 50;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -196,32 +199,41 @@ int main(int argc, char** argv)
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
 		p->stopParticipantAnnouncement();
-		TestType tp;
-		COPYSTR(tp.name,"Obje1");
-		tp.value = 0;
-		tp.price = 1.3;
+
+		//PREPARE DATA FOR TESTS
+		TestType tp1,tp2;
+		COPYSTR(tp1.name,"Obje1");
+		tp1.value = 0;
+		tp1.price = 1.3;
+		COPYSTR(tp2.name,"Obje2");
+		tp2.value = 0;
+		tp2.price = 1.3;
+
 		int n;
 		cout << "Enter number to start: ";
 		cin >> n;
 		for(uint8_t i = 1;i<=10;i++)
 		{
-			tp.value++;
-			tp.price *= (i);
+			tp1.value++;
+			tp1.price *= (i);
+			tp2.value++;
+			tp2.price *= (i);
 			if(i == 3 || i==5 ||i ==6)
 			{
 				//THIS METHOD SOULD BE USED WITH GREAT CARE. IT DOES NOT CHECK WHO IS SENDING THE NEXT PACKET
-				//DEPENDING IN THE TIMER PERIODS IT CAN PREVENT HB or ACKNACK packets from being sent
+				//DEPENDING ON THE TIMER PERIODS IT CAN PREVENT HB or ACKNACK packets from being sent
 				p->loose_next_change();
 			}
-			pub->write((void*)&tp);
+			pub->write((void*)&tp1);
+			pub->write((void*)&tp2);
 			cout << "Going to sleep "<< (int)i <<endl;
 			eClock::my_sleep(1000);
 			cout << "Wakes "<<endl;
 		}
-		pub->dispose((void*)&tp);
+		pub->dispose((void*)&tp1);
 		eClock::my_sleep(1000);
 		cout << "Wakes "<<endl;
-		pub->unregister((void*)&tp);
+		pub->unregister((void*)&tp1);
 		eClock::my_sleep(1000);
 		cout << "Wakes "<<endl;
 		break;
@@ -237,8 +249,11 @@ int main(int argc, char** argv)
 		Rparam.topic.topicDataType = "TestType";
 		Rparam.topic.topicName = "Test_Topic";
 		Rparam.topic.topicKind = WITH_KEY;
-		Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+		Rparam.topic.historyQos.depth = 1;
 		Rparam.topic.resourceLimitsQos.max_samples = 30;
+		Rparam.topic.resourceLimitsQos.max_instances = 3;
+		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 3; //NOT USED IN KEEP_LAST
 		Rparam.topic.resourceLimitsQos.allocated_samples = 30;
 		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

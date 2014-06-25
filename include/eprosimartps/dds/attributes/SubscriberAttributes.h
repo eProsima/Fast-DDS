@@ -47,7 +47,7 @@ public:
 	SubscriberAttributes()
 {
 		expectsInlineQos = false;
-		userDefinedId = -1;
+		userDefinedId = 0;
 		payloadMaxSize = 500;
 };
 	virtual ~SubscriberAttributes(){};
