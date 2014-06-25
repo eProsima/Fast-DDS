@@ -346,7 +346,6 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 					for(std::vector<Locator_t>::iterator lit = (*it)->m_readerProxy.unicastLocatorList.begin();
 							lit != (*it)->m_readerProxy.unicastLocatorList.end();++lit)
 					{
-						//cout << "added unicast RL to my STATELESSWRITER"<<endl;
 						RL.locator = *lit;
 						if(p_SLW->reader_locator_add(RL))
 							matched =true;

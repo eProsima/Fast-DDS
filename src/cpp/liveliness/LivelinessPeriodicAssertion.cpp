@@ -28,8 +28,6 @@ LivelinessPeriodicAssertion::LivelinessPeriodicAssertion(WriterLiveliness* wLive
 		first(false)
 {
 	m_guidP = this->mp_writerLiveliness->mp_participant->getGuid().guidPrefix;
-	//cout << "mGUID:" <<m_guidP<<endl;
-
 }
 
 LivelinessPeriodicAssertion::~LivelinessPeriodicAssertion()

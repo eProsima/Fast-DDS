@@ -231,9 +231,11 @@ int main(int argc, char** argv)
 			cout << "Wakes "<<endl;
 		}
 		pub->dispose((void*)&tp1);
+		pub->dispose((void*)&tp2);
 		eClock::my_sleep(1000);
 		cout << "Wakes "<<endl;
 		pub->unregister((void*)&tp1);
+		pub->unregister((void*)&tp2);
 		eClock::my_sleep(1000);
 		cout << "Wakes "<<endl;
 		break;
@@ -250,7 +252,7 @@ int main(int argc, char** argv)
 		Rparam.topic.topicName = "Test_Topic";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-		Rparam.topic.historyQos.depth = 1;
+		Rparam.topic.historyQos.depth = 2;
 		Rparam.topic.resourceLimitsQos.max_samples = 30;
 		Rparam.topic.resourceLimitsQos.max_instances = 3;
 		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 3; //NOT USED IN KEEP_LAST
@@ -263,7 +265,7 @@ int main(int argc, char** argv)
 		sema.wait();
 		p->stopParticipantAnnouncement(); //Only for tests to see more clearly the communication
 		int i = 0;
-		while(i<20)
+		while(i<30)
 		{
 			cout << "Waiting for new message "<<endl;
 			sub->waitForUnreadMessage();

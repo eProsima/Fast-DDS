@@ -117,9 +117,6 @@ bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 {
 	pDebugInfo(MAGENTA<<"Adding local Writer to Liveliness Protocol"<<DEF << endl;)
 	double wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
-//	cout << W->getQos().m_liveliness.announcement_period.seconds << endl;
-//	cout << W->getQos().m_liveliness.announcement_period.fraction << endl;
-//	cout << "Time in Millisec: "<< Time_t2MilliSec(W->getQos().m_liveliness.announcement_period)<<endl;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
 		if(mp_AutomaticLivelinessAssertion == NULL)

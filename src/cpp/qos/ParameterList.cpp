@@ -63,7 +63,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 		paramlist_byte_size +=4;
 		if(valid)
 		{
-			//cout << RED <<"readparameterlistfromcdrmsg Param with pid: " << std::hex << pid << std::dec <<DEF <<endl;
 			switch(pid)
 			{
 			case PID_UNICAST_LOCATOR:

@@ -242,8 +242,6 @@ void StatefulWriter::unsent_changes_not_empty()
 							(*rit)->m_param.remoteReaderGuid.entityId,
 							&(*rit)->m_param.unicastLocatorList,
 							&(*rit)->m_param.multicastLocatorList);
-//				cout << "Reliability of Reader: "<< ((*rit)->m_param.m_reliability == RELIABLE ? "RELIABLE":"NOTRELIABLE")<<endl;
-//				cout << "PeriodicHB is waiting: "<< (*rit)->m_periodicHB.m_isWaiting << endl;
 				if((*rit)->m_param.m_reliability == RELIABLE)
 					this->mp_periodicHB->restart_timer();
 				(*rit)->m_nackSupression.restart_timer();
