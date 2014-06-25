@@ -82,7 +82,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.topicName = "DCPSPublication";
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "DiscoveredWriterData";
-		Wparam.userDefinedId = -1;
+		Wparam.userDefinedId = -99;
 		Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 		Wparam.topic.historyQos.depth = 1;
 		Wparam.topic.resourceLimitsQos.max_instances = 1000;
@@ -131,7 +131,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.topicName = "DCPSPublication";
 		Rparam.topic.topicKind = WITH_KEY;
 		Rparam.topic.topicDataType = "DiscoveredWriterData";
-		Rparam.userDefinedId = -1;
+		Rparam.userDefinedId = -99;
 		Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 		Rparam.topic.historyQos.depth = 1;
 		Rparam.topic.resourceLimitsQos.max_instances = 1000000;

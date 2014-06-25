@@ -212,7 +212,7 @@ bool SimplePDP::createSPDPEndpoints()
 	Wparam.topic.resourceLimitsQos.max_samples = 2;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 2;
 	Wparam.payloadMaxSize = 1000;
-	Wparam.userDefinedId = -1;
+	Wparam.userDefinedId = -99;
 	RTPSWriter* wout;
 	if(mp_participant->createWriter(&wout,Wparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,true,STATELESS,NULL,NULL,c_EntityId_SPDPWriter))
 	{
@@ -242,7 +242,7 @@ bool SimplePDP::createSPDPEndpoints()
 	Rparam.topic.resourceLimitsQos.max_samples = 1000;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 500;
 	Rparam.payloadMaxSize = 1000;
-	Rparam.userDefinedId = -1;
+	Rparam.userDefinedId = -99;
 	RTPSReader* rout;
 	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
 						true,STATELESS,(DDSTopicDataType*)&m_topicDataType,(SubscriberListener*)&this->m_listener,c_EntityId_SPDPReader))

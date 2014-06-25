@@ -58,7 +58,7 @@ public:
 {
 		pushMode = true;
 	//	historyMaxSize = 10;
-		userDefinedId = -1;
+		userDefinedId = 0;
 		payloadMaxSize = 500;
 };
 	virtual ~PublisherAttributes(){};

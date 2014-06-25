@@ -122,8 +122,9 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	{
 		if(!a_change->instanceHandle.isDefined() && mp_reader->mp_type !=NULL)
 		{
-			if(this->mp_Endpoint->getUserDefinedId() > 0)
+			if(this->mp_Endpoint->getUserDefinedId() >= 0)
 			{
+				pDebugInfo("ReaderHistory getting Key of change with no Key transmitted"<<endl;)
 				mp_reader->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
 				if(!mp_reader->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
