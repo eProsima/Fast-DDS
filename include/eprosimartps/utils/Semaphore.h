@@ -54,6 +54,7 @@ public:
 		m_count = 0;
 	}
 
+
 private:
 	uint32_t m_count;
 	bool is_waiting;

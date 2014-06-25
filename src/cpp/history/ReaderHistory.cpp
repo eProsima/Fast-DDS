@@ -36,11 +36,11 @@ bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 
 ReaderHistory::ReaderHistory(Endpoint* endp,
 		uint32_t payload_max_size):
-				History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
-				mp_lastAddedCacheChange(mp_invalidCache),
-				mp_reader((RTPSReader*) endp),
-				m_unreadCacheCount(0),
-				mp_getKeyCache(NULL)
+						History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
+						mp_lastAddedCacheChange(mp_invalidCache),
+						mp_reader((RTPSReader*) endp),
+						m_unreadCacheCount(0),
+						mp_getKeyCache(NULL)
 
 {
 	mp_getKeyCache = m_changePool.reserve_Cache();
@@ -57,7 +57,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	if(m_isHistoryFull)
 	{
 		pWarning("Attempting to add Data to Full WriterCache"<<endl;)
-				return false;
+						return false;
 	}
 	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
 	if(a_change->sequenceNumber <= mp_maxSeqCacheChange->sequenceNumber)
@@ -95,8 +95,15 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			}
 			else
 			{
+				bool read = false;
+				if(mp_minSeqCacheChange->isRead)
+					read = true;
 				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange))
 				{
+					if(!read)
+					{
+						this->decreaseUnreadCount();
+					}
 					add = true;
 				}
 			}
@@ -112,6 +119,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			if(m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
 			pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<<endl;);
+			print_changes_seqNum();
 			return true;
 		}
 		else
@@ -125,7 +133,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			if(this->mp_Endpoint->getUserDefinedId() >= 0)
 			{
 				pDebugInfo("ReaderHistory getting Key of change with no Key transmitted"<<endl;)
-				mp_reader->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
+						mp_reader->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
 				if(!mp_reader->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
 			}
@@ -166,8 +174,15 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 				}
 				else
 				{
+					bool read = false;
+					if(vit->second.front()->isRead)
+						read = true;
 					if(mp_reader->change_removed_by_history(vit->second.front()))
 					{
+						if(!read)
+						{
+							this->decreaseUnreadCount();
+						}
 						add = true;
 					}
 				}
@@ -197,6 +212,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
 				pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<< "with KEY: "<< vit->first << endl;);
+				print_changes_seqNum();
 				return true;
 			}
 			else
@@ -228,6 +244,7 @@ void ReaderHistory::updateMaxMinSeqNum()
 
 bool ReaderHistory::isUnreadCache()
 {
+	cout << "CHECKING UNREAD STATUS: "<< m_unreadCacheCount << endl;
 	if(m_unreadCacheCount>0)
 		return true;
 	else

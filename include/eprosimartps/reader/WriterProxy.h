@@ -169,6 +169,8 @@ private:
 	bool m_hasMinAvailableSeqNumChanged;
 	bool m_livelinessAsserted;
 
+	void print_changes_fromWriter_test();
+
 };
 
 } /* namespace rtps */
