@@ -22,7 +22,7 @@ ThroughputPublisher::DataPubListener::~DataPubListener(){};
 
 void ThroughputPublisher::DataPubListener::onPublicationMatched()
 {
-	cout << RED << "DATA    Pub Matched"<<DEF<<endl;
+	cout << RTPS_RED << "DATA    Pub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 
@@ -30,7 +30,7 @@ ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher&
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){};
 void ThroughputPublisher::CommandSubListener::onSubscriptionMatched()
 {
-	cout << RED << "COMMAND Sub Matched"<<DEF<<endl;
+	cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 
@@ -38,7 +38,7 @@ ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher&
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){};
 void ThroughputPublisher::CommandPubListener::onPublicationMatched()
 {
-	cout << RED << "COMMAND Pub Matched"<<DEF<<endl;
+	cout << RTPS_RED << "COMMAND Pub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 
