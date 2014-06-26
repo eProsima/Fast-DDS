@@ -33,7 +33,7 @@ void SPDPListener::onNewDataMessage()
 bool SPDPListener::newAddedCache()
 {
 	boost::lock_guard<Endpoint> guard(*mp_SPDP->mp_SPDPReader);
-	pInfo(CYAN<<"SPDPListener: SPDP Message received"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"SPDPListener: SPDP Message received"<<RTPS_DEF<<endl);
 	CacheChange_t* change = NULL;
 	if(mp_SPDP->mp_SPDPReader->get_last_added_cache(&change))
 	{
@@ -64,7 +64,7 @@ bool SPDPListener::newAddedCache()
 //				}
 				if(pdata->m_guidPrefix == mp_SPDP->mp_localDPData->m_guidPrefix)
 				{
-					pInfo(CYAN<<"SPDPListener: Message from own participant, ignoring"<<DEF<<endl)
+					pInfo(RTPS_CYAN<<"SPDPListener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
 					return true;
 				}
 				//Look for the participant in my own list:

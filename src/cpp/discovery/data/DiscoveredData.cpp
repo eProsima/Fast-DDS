@@ -470,7 +470,7 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		*p = wdata.m_qos.m_groupData;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	pDebugInfo(CYAN << "DiscoveredWriterData converted to ParameterList with " << param->m_parameters.size()<< " parameters"<<endl);
+	pDebugInfo(RTPS_CYAN << "DiscoveredWriterData converted to ParameterList with " << param->m_parameters.size()<< " parameters"<<endl);
 	return true;
 }
 
@@ -610,7 +610,7 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 		*p = rdata.m_qos.m_durabilityService;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	pDebugInfo(CYAN << "DiscoveredReaderData converted to ParameterList with " << param->m_parameters.size()<< " parameters"<<endl);
+	pDebugInfo(RTPS_CYAN << "DiscoveredReaderData converted to ParameterList with " << param->m_parameters.size()<< " parameters"<<endl);
 	return true;
 }
 

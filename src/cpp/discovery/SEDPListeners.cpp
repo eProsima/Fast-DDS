@@ -33,7 +33,7 @@ namespace rtps {
 void SEDPPubListener::onNewDataMessage()
 {
 	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_PubReader);
-	pInfo(CYAN<<"SEDP PUB Listener:onNewDataMessage"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"SEDP PUB Listener:onNewDataMessage"<<RTPS_DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_PubReader->get_last_added_cache(&change))
 	{
@@ -76,7 +76,7 @@ void SEDPPubListener::onNewDataMessage()
 //				}
 				if(wdata->m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
-					pInfo(CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<DEF<<endl)
+					pInfo(RTPS_CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
 					delete(wdata);
 					return;
 				}
@@ -115,7 +115,7 @@ void SEDPPubListener::onNewDataMessage()
 				}
 				else
 				{
-					pDebugInfo(CYAN << "New DiscoveredWriterData added to Participant"<<DEF<<endl);
+					pDebugInfo(RTPS_CYAN << "New DiscoveredWriterData added to Participant"<<RTPS_DEF<<endl);
 					pdata->m_writers.push_back(wdata);
 					wdataptr = *(pdata->m_writers.end()-1);
 				}
@@ -149,7 +149,7 @@ void SEDPPubListener::onNewDataMessage()
 void SEDPSubListener::onNewDataMessage()
 {
 	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_SubReader);
-	pInfo(CYAN<<"SEDP SUB Listener:onNewDataMessage"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"SEDP SUB Listener:onNewDataMessage"<<RTPS_DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_SubReader->get_last_added_cache(&change))
 	{
@@ -192,7 +192,7 @@ void SEDPSubListener::onNewDataMessage()
 //				}
 				if(rdata->m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 				{
-					pInfo(CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<DEF<<endl)
+					pInfo(RTPS_CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
 					delete(rdata);
 					return;
 				}
@@ -231,7 +231,7 @@ void SEDPSubListener::onNewDataMessage()
 				}
 				else
 				{
-					pDebugInfo(CYAN << "New DiscoveredReaderData added to Participant"<<DEF<<endl);
+					pDebugInfo(RTPS_CYAN << "New DiscoveredReaderData added to Participant"<<RTPS_DEF<<endl);
 					pdata->m_readers.push_back(rdata);
 					rdataptr = *(pdata->m_readers.end()-1);
 				}

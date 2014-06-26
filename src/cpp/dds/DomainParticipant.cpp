@@ -164,7 +164,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo(B_YELLOW <<"Creating Publisher"<<DEF<<endl)
+	pInfo(RTPS_B_YELLOW <<"Creating Publisher"<<RTPS_DEF<<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(WParam.topic.topicDataType,&p_type))
@@ -205,7 +205,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pWarning("Incorrect Reliability Kind"<<endl);
 	if(pubImpl != NULL)
 	{
-		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
+		pInfo(RTPS_B_YELLOW<<"PUBLISHER CREATED"<<RTPS_DEF<<endl);
 		Publisher* Pub = new Publisher(pubImpl);
 		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
 		return Pub;
@@ -224,7 +224,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo(B_YELLOW <<"Creating Subscriber"<<DEF <<endl)
+	pInfo(RTPS_B_YELLOW <<"Creating Subscriber"<<RTPS_DEF <<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
@@ -263,7 +263,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	}
 	if(subImpl != NULL)
 	{
-		pInfo(B_YELLOW<<"SUBSCRIBER CREATED"<<DEF<<endl);
+		pInfo(RTPS_B_YELLOW<<"SUBSCRIBER CREATED"<<RTPS_DEF<<endl);
 		Subscriber* Sub = new Subscriber(subImpl);
 		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
 		return Sub;

@@ -55,7 +55,7 @@ SimpleEDP::~SimpleEDP()
 
 bool SimpleEDP::initEDP(DiscoveryAttributes& attributes)
 {
-	pInfo(B_CYAN<<"Initializing EndpointDiscoveryProtocol"<<endl);
+	pInfo(RTPS_B_CYAN<<"Initializing EndpointDiscoveryProtocol"<<endl);
 	m_discovery = attributes;
 
 	if(!createSEDPEndpoints())
@@ -68,7 +68,7 @@ bool SimpleEDP::initEDP(DiscoveryAttributes& attributes)
 
 bool SimpleEDP::createSEDPEndpoints()
 {
-	pInfo(CYAN<<"Creating SEDP Endpoints"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"Creating SEDP Endpoints"<<RTPS_DEF<<endl);
 	PublisherAttributes Wparam;
 	SubscriberAttributes Rparam;
 	bool created = true;
@@ -96,7 +96,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubWriter = dynamic_cast<StatefulWriter*>(waux);
-			pInfo(CYAN<<"SEDP Publication Writer created"<<DEF<<endl);
+			pInfo(RTPS_CYAN<<"SEDP Publication Writer created"<<RTPS_DEF<<endl);
 		}
 		//Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
@@ -120,7 +120,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
-			pInfo(CYAN<<"SEDP Subscription Reader created"<<DEF<<endl);
+			pInfo(RTPS_CYAN<<"SEDP Subscription Reader created"<<RTPS_DEF<<endl);
 		}
 	}
 	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
@@ -146,7 +146,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);
-			pInfo(CYAN<<"SEDP Publication Reader created"<<DEF<<endl);
+			pInfo(RTPS_CYAN<<"SEDP Publication Reader created"<<RTPS_DEF<<endl);
 		}
 		//Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
@@ -168,23 +168,23 @@ bool SimpleEDP::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubWriter = dynamic_cast<StatefulWriter*>(waux);
-			pInfo(CYAN<<"SEDP Subscription Writer created"<<DEF<<endl);
+			pInfo(RTPS_CYAN<<"SEDP Subscription Writer created"<<RTPS_DEF<<endl);
 		}
 	}
 
-	pInfo(CYAN<<"SimpleEDP Endpoints creation finished"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"SimpleEDP Endpoints creation finished"<<RTPS_DEF<<endl);
 	return created;
 }
 
 void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 {
-	pInfo(CYAN<<"SimpleEDP:assignRemoteEndpoints: new DPD received, adding remote endpoints to our SimpleEDP endpoints"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"SimpleEDP:assignRemoteEndpoints: new DPD received, adding remote endpoints to our SimpleEDP endpoints"<<RTPS_DEF<<endl);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 	if(auxendp!=0 && mp_PubReader!=NULL) //Exist Pub Writer and i have pub reader
 	{
-		pDebugInfo(CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<RTPS_DEF<<endl);
 		WriterProxy_t wp1;
 		wp1.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
 		wp1.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER;
@@ -196,7 +196,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 	if(auxendp!=0 && mp_PubWriter!=NULL) //Exist Pub Detector
 	{
-		pDebugInfo(CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<RTPS_DEF<<endl);
 		ReaderProxy_t rp1;
 		rp1.expectsInlineQos = false;
 		rp1.m_reliability = RELIABLE;
@@ -210,7 +210,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 	if(auxendp!=0 && mp_SubReader!=NULL) //Exist Pub Announcer
 	{
-		pDebugInfo(CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<RTPS_DEF<<endl);
 		WriterProxy_t wp2;
 		wp2.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
 		wp2.remoteWriterGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
@@ -222,7 +222,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 	if(auxendp!=0 && mp_SubWriter!=NULL) //Exist Pub Announcer
 	{
-		pDebugInfo(CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<RTPS_DEF<<endl);
 		ReaderProxy_t rp2;
 		rp2.expectsInlineQos = false;
 		rp2.m_reliability = RELIABLE;
@@ -303,10 +303,10 @@ bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 
 bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 {
-	pDebugInfo(CYAN<<"SimpleEDP: localWriterMatching "<<DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"SimpleEDP: localWriterMatching "<<RTPS_DEF<<endl);
 	if(first_time)
 	{
-		pDebugInfo(CYAN << "SimpleEDP: adding New Local Writer Info"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN << "SimpleEDP: adding New Local Writer Info"<<RTPS_DEF<<endl);
 		addNewLocalWriter(W);
 	}
 	bool matched = false;
@@ -327,7 +327,7 @@ bool SimpleEDP::localWriterMatching(RTPSWriter* W, bool first_time)
 
 bool SimpleEDP::localReaderMatching(RTPSReader* R, bool first_time)
 {
-	pDebugInfo(CYAN<<"SimpleEDP: localReaderMatching "<<DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"SimpleEDP: localReaderMatching "<<RTPS_DEF<<endl);
 	if(first_time)
 	{
 		addNewLocalReader(R);
@@ -432,12 +432,12 @@ void SimpleEDP::repareDiscoveredDataLocatorList(LocatorList_t* loclist)
 bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*W);
-	pInfo(CYAN<<"SimpleEDP:localWriterMatching W-DRD"<<DEF<<endl);
+	pInfo(RTPS_CYAN<<"SimpleEDP:localWriterMatching W-DRD"<<RTPS_DEF<<endl);
 	bool matched = false;
 	if((W->getTopic().getTopicName() == rdata->m_topicName) && (W->getTopic().getTopicDataType() == rdata->m_typeName) &&
 			(W->getTopic().getTopicKind() == rdata->topicKind) && rdata->isAlive)
 	{
-		pDebugInfo(CYAN << "SimpleEDP: local Writer MATCHED"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN << "SimpleEDP: local Writer MATCHED"<<RTPS_DEF<<endl);
 		if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 		{
 			StatelessWriter* p_SLW = (StatelessWriter*)W;
@@ -480,7 +480,7 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&
 			wdata->isAlive) //Matching
 	{
-		pDebugInfo(CYAN << "SimpleEDP: local Reader MATCHED"<<DEF<<endl);
+		pDebugInfo(RTPS_CYAN << "SimpleEDP: local Reader MATCHED"<<RTPS_DEF<<endl);
 		if(R->getStateType() == STATELESS)
 		{
 			StatelessReader* p_SFR = (StatelessReader*)R;

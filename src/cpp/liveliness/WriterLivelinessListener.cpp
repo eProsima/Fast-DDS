@@ -41,7 +41,7 @@ typedef std::vector<WriterProxy*>::iterator WPIT;
 void WriterLivelinessListener::onNewDataMessage()
 {
 	boost::lock_guard<Endpoint> guard(*(Endpoint*)this->mp_WriterLiveliness->mp_builtinParticipantMessageReader);
-	pInfo(MAGENTA<< "Liveliness Reader:  onNewDataMessage"<<endl);
+	pInfo(RTPS_MAGENTA<< "Liveliness Reader:  onNewDataMessage"<<endl);
 	CacheChange_t* change;
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
@@ -76,7 +76,7 @@ void WriterLivelinessListener::onNewDataMessage()
 		}
 		if(guidP == this->mp_WriterLiveliness->mp_participant->getGuid().guidPrefix)
 		{
-			pDebugInfo(MAGENTA<<"Message from own participant, ignoring"<<DEF<<endl;);
+			pDebugInfo(RTPS_MAGENTA<<"Message from own participant, ignoring"<<RTPS_DEF<<endl;);
 			return;
 		}
 
@@ -93,7 +93,7 @@ void WriterLivelinessListener::onNewDataMessage()
 					{
 						if((*wit)->param.remoteWriterGuid.guidPrefix == guidP)
 						{
-							pDebugInfo(MAGENTA<<"Asserting liveliness of Writer: "<< (*wit)->param.remoteWriterGuid<<DEF<<endl;);
+							pDebugInfo(RTPS_MAGENTA<<"Asserting liveliness of Writer: "<< (*wit)->param.remoteWriterGuid<<RTPS_DEF<<endl;);
 							(*wit)->assertLiveliness();
 						}
 					}

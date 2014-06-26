@@ -138,7 +138,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 		{
 			return;
 		}
-		pInfo (BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc.printIP4Port()<<  DEF << endl);
+		pInfo (RTPS_BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc.printIP4Port()<<  RTPS_DEF << endl);
 
 		//Get address into Locator
 		m_senderLocator.port = m_sender_endpoint.port();
@@ -174,7 +174,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 	else
 	{
 		//CDRMessage_t msg;
-		pInfo(BLUE<< "Msg processed, Socket async receive put again to listen "<<DEF<< endl);
+		pInfo(RTPS_BLUE<< "Msg processed, Socket async receive put again to listen "<<RTPS_DEF<< endl);
 		CDRMessage::initCDRMsg(&m_MessageReceiver.m_rec_msg);
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
@@ -187,7 +187,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 
 Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed)
 {
-	pInfo(BLUE<<"Listen Resource initializing in : "<<loc.printIP4Port()<<DEF<< endl);
+	pInfo(RTPS_BLUE<<"Listen Resource initializing in : "<<loc.printIP4Port()<<RTPS_DEF<< endl);
 	m_listenLoc = loc;
 	boost::asio::ip::address address = boost::asio::ip::address::from_string(m_listenLoc.to_IP4_string());
 	if(isMulti)
@@ -271,7 +271,7 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 
 void ListenResource::run_io_service()
 {
-	pInfo ( BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint() << DEF << endl) ;
+	pInfo (RTPS_BLUE << "Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint() << RTPS_DEF << endl) ;
 
 	mp_participantImpl->ResourceSemaphorePost();
 

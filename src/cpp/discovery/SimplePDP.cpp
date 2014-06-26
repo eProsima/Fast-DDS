@@ -58,7 +58,7 @@ SimplePDP::~SimplePDP()
 
 bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)
 {
-	pInfo(B_CYAN<<"Beginning ParticipantDiscoveryProtocol Initialization"<<DEF<<endl)
+	pInfo(RTPS_B_CYAN<<"Beginning ParticipantDiscoveryProtocol Initialization"<<RTPS_DEF<<endl)
 	m_discovery = attributes;
 	DomainParticipantImpl* dp = DomainParticipantImpl::getInstance();
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getMulticastPort(m_discovery.domainId);
@@ -100,7 +100,7 @@ bool SimplePDP::initPDP(const DiscoveryAttributes& attributes,uint32_t participa
 		mp_WL = new WriterLiveliness(mp_participant);
 		mp_WL->createEndpoints(mp_localDPData->m_metatrafficUnicastLocatorList,mp_localDPData->m_metatrafficMulticastLocatorList);
 //		mp_WL->assignRemoteEndpoints(mp_localDPData);
-		pInfo(MAGENTA<<"Liveliness Protocol initialized"<<DEF << endl;);
+		pInfo(RTPS_MAGENTA<<"Liveliness Protocol initialized"<<RTPS_DEF << endl;);
 	}
 	this->announceParticipantState(true);
 	//		eClock::my_sleep(50);
@@ -196,7 +196,7 @@ void SimplePDP::localParticipantHasChanged()
 
 bool SimplePDP::createSPDPEndpoints()
 {
-	pInfo(CYAN<<"Creating SPDP Endpoints"<<endl);
+	pInfo(RTPS_CYAN<<"Creating SPDP Endpoints"<<endl);
 	//SPDP BUILTIN PARTICIPANT WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
@@ -256,7 +256,7 @@ bool SimplePDP::createSPDPEndpoints()
 			return false;
 	}
 
-	pInfo(CYAN<< "SPDP Endpoints creation finished"<<DEF<<endl)
+	pInfo(RTPS_CYAN<< "SPDP Endpoints creation finished"<<RTPS_DEF<<endl)
 	return true;
 }
 
