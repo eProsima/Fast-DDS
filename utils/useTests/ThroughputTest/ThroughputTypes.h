@@ -137,7 +137,7 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
 	case (TEST_STARTS): return output << "TEST_STARTS";
 	case (TEST_ENDS): return output << "TEST_ENDS";
 	case (ALL_STOPS): return output << "ALL_STOPS";
-	default: return output << B_RED<<"UNKNOWN COMMAND"<<DEF;
+	default: return output << RTPS_B_RED<<"UNKNOWN COMMAND"<<RTPS_DEF;
 	}
 	return output;
 }

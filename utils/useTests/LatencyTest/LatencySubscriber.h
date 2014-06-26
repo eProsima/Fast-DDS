@@ -44,7 +44,7 @@ public:
 	}
 	void onSubscriptionMatched()
 	{
-		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
+		cout << RTPS_B_RED << "SUBSCRIPTION MATCHED" <<RTPS_DEF << endl;
 		sema.post();
 	}
 
@@ -58,7 +58,7 @@ public:
 		void onPublicationMatched()
 		{
 			mp_sema->post();
-			cout <<B_MAGENTA<< "Publication Matched"<<DEF <<endl;
+			cout <<RTPS_B_MAGENTA<< "Publication Matched"<<RTPS_DEF <<endl;
 		}
 	}m_PubListener;
 };
