@@ -83,8 +83,8 @@ bool ResourceSend::initSend(const Locator_t& loc)
 	}
 	boost::asio::socket_base::send_buffer_size option;
 	m_send_socket.get_option(option);
-	pInfo (YELLOW<<"ResourceSend: initSend: " << m_send_socket.local_endpoint()<<"|| State: " << m_send_socket.is_open() <<
-			" || buffer size: " <<option.value()<< DEF<<endl);
+	pInfo (RTPS_YELLOW<<"ResourceSend: initSend: " << m_send_socket.local_endpoint()<<"|| State: " << m_send_socket.is_open() <<
+			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
 	return true;
@@ -117,7 +117,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 			addr[i] = loc.address[i];
 		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
 	}
-	pInfo(YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+	pInfo(RTPS_YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
 	if(m_send_endpoint.port()>0)
 	{
 		m_bytes_sent = 0;
@@ -135,7 +135,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		{
 			m_send_next = true;
 		}
-		pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
+		pInfo (RTPS_YELLOW <<  "SENT " << m_bytes_sent << RTPS_DEF << endl);
 	}
 	else if(m_send_endpoint.port()<=0)
 	{

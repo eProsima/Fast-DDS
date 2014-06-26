@@ -50,7 +50,7 @@ void ResourceEvent::init_thread()
 
 void ResourceEvent::announce_thread()
 {
-	pInfo(BLUE<<"Thread: " << b_thread->get_id() << " created and waiting for tasks."<<DEF<<endl);
+	pInfo(RTPS_BLUE<<"Thread: " << b_thread->get_id() << " created and waiting for tasks."<<RTPS_DEF<<endl);
 	mp_participantImpl->ResourceSemaphorePost();
 
 }

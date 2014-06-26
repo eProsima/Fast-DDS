@@ -41,7 +41,7 @@ WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
 		mp_ManualByParticipantLivelinessAssertion(NULL)
 {
 	// TODO Auto-generated constructor stub
-	pInfo(B_MAGENTA<<"Beginning Liveliness Protocol initialization"<<DEF<<endl;);
+	pInfo(RTPS_B_MAGENTA<<"Beginning Liveliness Protocol initialization"<<RTPS_DEF<<endl;);
 
 }
 
@@ -75,7 +75,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	if(mp_participant->createWriter(&wout,Wparam,Wparam.payloadMaxSize,true,STATEFUL,NULL,NULL,c_EntityId_WriterLiveliness))
 	{
 		mp_builtinParticipantMessageWriter = dynamic_cast<StatefulWriter*>(wout);
-		pInfo(MAGENTA<<"Builtin Liveliness Writer created"<<DEF<<endl);
+		pInfo(RTPS_MAGENTA<<"Builtin Liveliness Writer created"<<RTPS_DEF<<endl);
 	}
 	else
 	{
@@ -102,7 +102,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	if(mp_participant->createReader(&rout,Rparam,Rparam.payloadMaxSize,true,STATEFUL,NULL,(SubscriberListener*)&m_listener,c_EntityId_ReaderLiveliness))
 	{
 		mp_builtinParticipantMessageReader = dynamic_cast<StatefulReader*>(rout);
-		pInfo(MAGENTA<<"Builtin Liveliness Reader created"<<DEF<<endl);
+		pInfo(RTPS_MAGENTA<<"Builtin Liveliness Reader created"<<RTPS_DEF<<endl);
 	}
 	else
 	{
@@ -115,7 +115,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 
 bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 {
-	pDebugInfo(MAGENTA<<"Adding local Writer to Liveliness Protocol"<<DEF << endl;)
+	pDebugInfo(RTPS_MAGENTA<<"Adding local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
 	double wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
@@ -233,13 +233,13 @@ bool WriterLiveliness::updateLocalWriter(RTPSWriter* W)
 
 bool WriterLiveliness::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 {
-	pInfo(MAGENTA<<"WriterLiveliness:assign remote Endpoints"<<DEF<<endl;);
+	pInfo(RTPS_MAGENTA<<"WriterLiveliness:assign remote Endpoints"<<RTPS_DEF<<endl;);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 	if(auxendp!=0 && this->mp_builtinParticipantMessageReader!=NULL)
 	{
-		pDebugInfo(MAGENTA<<"Adding remote writer to my local Builtin Reader"<<DEF<<endl;);
+		pDebugInfo(RTPS_MAGENTA<<"Adding remote writer to my local Builtin Reader"<<RTPS_DEF<<endl;);
 		WriterProxy_t wp;
 		wp.remoteWriterGuid.guidPrefix = pdata->m_guidPrefix;
 		wp.remoteWriterGuid.entityId = c_EntityId_WriterLiveliness;
@@ -251,7 +251,7 @@ bool WriterLiveliness::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
 	if(auxendp!=0 && this->mp_builtinParticipantMessageWriter!=NULL)
 	{
-		pDebugInfo(MAGENTA<<"Adding remote reader to my local Builtin Writer"<<DEF<<endl;);
+		pDebugInfo(RTPS_MAGENTA<<"Adding remote reader to my local Builtin Writer"<<RTPS_DEF<<endl;);
 		ReaderProxy_t rp;
 		rp.expectsInlineQos = false;
 		rp.m_reliability = RELIABLE;

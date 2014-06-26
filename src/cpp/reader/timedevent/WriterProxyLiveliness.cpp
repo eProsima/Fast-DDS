@@ -41,7 +41,7 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 	if(ec == boost::system::errc::success)
 	{
 	
-		pDebugInfo(MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->param.remoteWriterGuid<<DEF<<endl;);
+		pDebugInfo(RTPS_MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->param.remoteWriterGuid<<RTPS_DEF<<endl;);
 		if(!mp_WP->checkLiveliness())
 		{
 			pWarning("WriterProxyLiveliness failed, leaseDuration was "<< this->getIntervalMsec()<< " ms"<< endl;);

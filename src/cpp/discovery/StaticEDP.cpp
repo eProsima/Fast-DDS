@@ -324,7 +324,7 @@ bool StaticEDP::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,Discovered
 
 bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 {
-	pInfo(MAGENTA "Matching local WRITER"<<endl);
+	pInfo(RTPS_MAGENTA <<"Matching local WRITER"<<endl);
 	bool matched_global = false;
 	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
@@ -377,7 +377,7 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 
 bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 {
-	pInfo(MAGENTA "Matching local WRITER"<<endl);
+	pInfo(RTPS_MAGENTA <<"Matching local WRITER"<<endl);
 	bool matched_global = false;
 	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
 			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)

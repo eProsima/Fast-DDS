@@ -75,7 +75,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 		{
 		default:
 		case (DEFAULT): break;
-		case (READY_TO_START): break;
+		case (READY_TO_START): m_up.sema.post();break;
 		case (BEGIN): break;
 		case (TEST_STARTS): m_up.m_Clock.setTimeNow(&m_up.m_t1);break;
 		case (TEST_ENDS): m_up.m_Clock.setTimeNow(&m_up.m_t2);m_up.m_DataSubListener.saveNumbers();m_up.sema.post();break;
@@ -172,13 +172,12 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 	sema.wait();
 	cout << "Discovery complete"<<endl;
 	bool stop = false;
-	//int aux;
 	printLabelsSubscriber();
 	int demindex=0;
 	while(1)
 	{
-		mp_commandsub->waitForUnreadMessage();
-		//cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
+		sema.wait();
+	//	cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
 		switch(m_CommandSubListener.m_commandin.m_command)
 		{
 		case (DEFAULT):
@@ -189,7 +188,9 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 		}
 		case (READY_TO_START):
 		{
-		//	cout << "Enter number to continue:"<<endl;
+//			cout << "Enter number to continue:"<<endl;
+//			int aux;
+//			std::cin >> aux;
 			ThroughputCommandType command(BEGIN);
 			eClock::my_sleep(50);
 			m_DataSubListener.reset();
