@@ -28,8 +28,8 @@ void ShapesDemo::init(uint32_t domainId)
         ParticipantAttributes pparam;
         pparam.name = "eProsimaParticipant";
         pparam.discovery.domainId = domainId;
-        pparam.discovery.leaseDuration.seconds = 30;
-        pparam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 20;
+        pparam.discovery.leaseDuration.seconds = 100;
+        pparam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 50;
         pparam.defaultSendPort = 10042;
         mp_participant = DomainParticipant::createParticipant(pparam);
         if(mp_participant!=NULL)
