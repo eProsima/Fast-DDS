@@ -2,7 +2,6 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include <QApplication>
 
-#include "eprosimashapesdemo/qt/QDebugStream.h"
 
 int main(int argc, char *argv[])
 {
