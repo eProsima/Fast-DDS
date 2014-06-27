@@ -7,9 +7,11 @@
  *************************************************************************/
 
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
-
+#include <iostream>
+#include <sstream>
 ShapesDemo::ShapesDemo():
-	mp_participant(NULL)
+    mp_participant(NULL),
+    m_isInitialized(false)
 {
 
 }
@@ -19,9 +21,22 @@ ShapesDemo::~ShapesDemo()
 	stop();
 }
 
-void ShapesDemo::init()
+void ShapesDemo::init(uint32_t domainId)
 {
-
+    if(!m_isInitialized)
+    {
+        ParticipantAttributes pparam;
+        pparam.name = "eProsimaParticipant";
+        pparam.discovery.domainId = domainId;
+        pparam.discovery.leaseDuration.seconds = 30;
+        pparam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 20;
+        pparam.defaultSendPort = 10042;
+        mp_participant = DomainParticipant::createParticipant(pparam);
+        if(mp_participant!=NULL)
+        {
+            m_isInitialized = true;
+        }
+    }
 }
 
 void ShapesDemo::stop()

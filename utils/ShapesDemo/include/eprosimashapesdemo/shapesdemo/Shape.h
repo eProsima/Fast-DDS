@@ -13,7 +13,7 @@
 
 #ifndef SHAPE_H_
 #define SHAPE_H_
-
+#include <vector>
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
 namespace eprosima {

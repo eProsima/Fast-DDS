@@ -8,10 +8,11 @@
 #include "eprosimashapesdemo/qt/publishdialog.h"
 #include "ui_publishdialog.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
-
-PublishDialog::PublishDialog(QWidget *parent) :
+#include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
+PublishDialog::PublishDialog(ShapesDemo* psd,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PublishDialog)
+    ui(new Ui::PublishDialog),
+    mp_sd(psd)
 {
     ui->setupUi(this);
 }
@@ -54,5 +55,8 @@ void PublishDialog::on_button_OkCancel_accepted()
     //SIZE:
     sh.m_size = this->ui->spin_Size->value();
     //PARTITIONS:
+
+
+
 
 }

@@ -21,10 +21,28 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_push_Start_clicked()
+{
+    QSpinBox* qs = ui->group_Options->findChild<QSpinBox*>("spin_domainId");
+
+    this->m_shapesDemo.init(qs->value());
+}
+
+void MainWindow::on_push_Stop_clicked()
+{
+this->m_shapesDemo.stop();
+}
 
 
 void MainWindow::on_bt_publish_clicked()
 {
-    PublishDialog* pd = new PublishDialog(this);
+    PublishDialog* pd = new PublishDialog(this->getShapesDemo(),this);
     pd->show();
+}
+
+
+
+void MainWindow::on_bt_subscribe_clicked()
+{
+
 }

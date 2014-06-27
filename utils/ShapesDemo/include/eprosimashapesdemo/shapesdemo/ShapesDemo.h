@@ -13,15 +13,7 @@
 
 #ifndef SHAPESDEMO_H_
 #define SHAPESDEMO_H_
-
-
-
 #include "eprosimartps/rtps_all.h"
-
-
-using namespace eprosima;
-using namespace dds;
-using namespace rtps;
 
 
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
@@ -31,7 +23,7 @@ class ShapesDemo
 public:
 	ShapesDemo();
 	~ShapesDemo();
-	void init();
+	void init(uint32_t domainId);
 	void stop();
 
 private:
@@ -39,7 +31,8 @@ private:
 	std::vector<Subscriber*> m_subscribers;
 	Participant* mp_participant;
 
-	std::vector<ShapeType*>
+	std::vector<ShapeType*> m_shapes;
+    bool m_isInitialized;
 };
 
 
