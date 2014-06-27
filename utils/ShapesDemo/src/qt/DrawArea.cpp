@@ -1,7 +1,7 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
+ * This copy of eProsima RTPS ShapesDemo is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
@@ -76,10 +76,10 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
     {
     case SQUARE:
     {
-        QRect rect(shape.m_x-shape.m_shapesize/2,
-                   shape.m_y-shape.m_shapesize/2,
-                   shape.m_shapesize,
-                   shape.m_shapesize);
+        QRect rect(shape.m_x-shape.m_size/2,
+                   shape.m_y-shape.m_size/2,
+                   shape.m_size,
+                   shape.m_size);
         painter->drawRect(rect);
      break;
     }
@@ -88,7 +88,7 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
         uint32_t x,y,s;
         x = shape.m_x;
         y = shape.m_y;
-        s = shape.m_shapesize;
+        s = shape.m_size;
         double h = 0.5*sqrt(3*pow(s,2));
         QPoint points[3] = {
                QPoint(x-s/2, y+h/2),
@@ -100,10 +100,10 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
     }
     case CIRCLE:
     {
-        QRect rect(shape.m_x-shape.m_shapesize/2,
-                   shape.m_y-shape.m_shapesize/2,
-                   shape.m_shapesize,
-                   shape.m_shapesize);
+        QRect rect(shape.m_x-shape.m_size/2,
+                   shape.m_y-shape.m_size/2,
+                   shape.m_size,
+                   shape.m_size);
         painter->drawEllipse(rect);
         break;
     }
