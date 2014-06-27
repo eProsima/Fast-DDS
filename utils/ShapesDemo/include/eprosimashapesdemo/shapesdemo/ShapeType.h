@@ -6,6 +6,10 @@
  *
  *************************************************************************/
 
+#ifndef SHAPETYPE_H
+#define SHAPETYPE_H
+
+
 #include <cstdint>
 #include <sstream>
 
@@ -51,3 +55,5 @@ private:
     std::string m_str_color; //KEY
     SD_COLOR m_color;
 };
+
+#endif

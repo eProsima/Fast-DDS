@@ -11,7 +11,7 @@
  *
  */
 
-#include "Shape.h"
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
 
 namespace eprosima {
 namespace rtps {

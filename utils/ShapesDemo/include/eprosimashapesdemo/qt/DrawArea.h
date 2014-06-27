@@ -15,6 +15,7 @@
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
 #define SD_QT_COLOR_TRANS 255
+
 const QColor SD_QT_PURPLE = QColor(255,0,255,SD_QT_COLOR_TRANS);
 const QColor SD_QT_BLUE = QColor(0,0,255,SD_QT_COLOR_TRANS);
 const QColor SD_QT_RED = QColor(255,0,0,SD_QT_COLOR_TRANS);

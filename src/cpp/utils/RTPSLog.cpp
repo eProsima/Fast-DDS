@@ -50,7 +50,7 @@ void RTPSThreadLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL type,std::string& s
 		}
 		if(RTPSLog::getInstance()->try_lock())
 		{
-			std::cout<< m_log.str();
+			std::cout<< m_log.str()<< std::flush;
 			m_log.str("");m_log.clear();
 			RTPSLog::getInstance()->unlock();
 		}

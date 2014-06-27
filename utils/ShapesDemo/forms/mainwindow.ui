@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1224</width>
+    <width>937</width>
     <height>573</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <widget class="DrawArea" name="areaDraw" native="true">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>330</x>
       <y>10</y>
       <width>591</width>
       <height>481</height>
@@ -27,8 +27,8 @@
    <widget class="QPushButton" name="bt_publish">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>20</y>
+      <x>30</x>
+      <y>160</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -40,8 +40,8 @@
    <widget class="QPushButton" name="bt_subscribe">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>60</y>
+      <x>150</x>
+      <y>160</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -49,6 +49,74 @@
     <property name="text">
      <string>Subscribe</string>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="group_Options">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>231</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>17</x>
+       <y>25</y>
+       <width>75</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Domain ID:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="push_Stop">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>80</y>
+       <width>101</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stop</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="push_Start">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>101</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_domainId">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>20</y>
+       <width>48</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="specialValueText">
+      <string/>
+     </property>
+     <property name="suffix">
+      <string/>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -65,7 +133,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1224</width>
+     <width>937</width>
      <height>25</height>
     </rect>
    </property>
