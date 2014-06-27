@@ -5,3 +5,29 @@
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
+
+#include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
+
+ShapesDemo::ShapesDemo():
+	mp_participant(NULL)
+{
+
+}
+
+ShapesDemo::~ShapesDemo()
+{
+	stop();
+}
+
+void ShapesDemo::init()
+{
+
+}
+
+void ShapesDemo::stop()
+{
+	DomainParticipant::stopAll();
+	mp_participant = NULL;
+	m_publishers.clear();
+	m_subscribers.clear();
+}

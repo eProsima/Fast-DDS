@@ -53,14 +53,24 @@ HEADERS += \
     include/eprosimashapesdemo/qt/publishdialog.h \
     include/eprosimashapesdemo/qt/subscribedialog.h \
     include/eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h \
-    include/eprosimashapesdemo/shapesdemo/ShapeType.h
+    include/eprosimashapesdemo/shapesdemo/ShapeType.h \
+    include/eprosimashapesdemo/shapesdemo/ShapesDemo.h
 
 SOURCES += \
     src/qt/mainwindow.cpp \
     src/qt/DrawArea.cpp \
+    src/qt/publishdialog.cpp \
+    src/qt/subscribedialog.cpp \
+    src/shapesdemo/ShapesDemo.cpp \
+    src/shapesdemo/ShapeTopicDataType.cpp \
+    src/shapesdemo/ShapeType.cpp \
+    src/utils/md5.cpp \
+    src/main.cpp
+
     src/utils/md5.cpp \
     src/main.cpp \
     src/qt/publishdialog.cpp \
     src/qt/subscribedialog.cpp \
     src/shapesdemo/ShapeTopicDataType.cpp \
-    src/shapesdemo/ShapeType.cpp
+    src/shapesdemo/ShapeType.cpp \
+    src/shapesdemo/ShapesDemo.cpp
