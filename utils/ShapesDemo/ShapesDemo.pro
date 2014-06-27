@@ -14,7 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QMAKE_CXXFLAGS_DEBUG += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -g -std=c++0x -D__DEBUG
 QMAKE_CXXFLAGS += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
-QMAKE_
+
 
 CONFIG += console
 
@@ -51,7 +51,7 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../.
 else:unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
 else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
 
-unix:!macx|win32: LIBS += -lboost_thread
+unix:!macx|win32: LIBS += -lboost_thread -lboost_system
 
 HEADERS += \
     include/eprosimashapesdemo/qt/DrawArea.h \
