@@ -1,7 +1,7 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
+ * This copy of eProsima RTPS ShapesDemo is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
@@ -12,7 +12,7 @@
 #include <QBrush>
 #include <QPen>
 #include <QWidget>
-#include "eprosimashapesdemo/shapesdemo/figure.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
 #define SD_QT_COLOR_TRANS 255
 const QColor SD_QT_PURPLE = QColor(255,0,255,SD_QT_COLOR_TRANS);
