@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-
+RTPSVERSION = 0.4.0
 
 QT  += core
 QT  -= gui
@@ -12,8 +12,8 @@ QT  -= gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
-QMAKE_CXXFLAGS_DEBUG += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -g -std=c++0x -D__DEBUG
-QMAKE_CXXFLAGS += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
+unix:QMAKE_CXXFLAGS_DEBUG += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -g -std=c++0x -D__DEBUG
+unix:QMAKE_CXXFLAGS += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
 
 
 CONFIG += console
@@ -32,11 +32,12 @@ INCLUDEPATH += include/
 FORMS    +=   forms/mainwindow.ui \
                 forms/publishdialog.ui \
     forms/subscribedialog.ui
+
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartps
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartpsd
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -leprosimartps-0.4.0
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -leprosimartpsd-0.4.0
 else:unix: CONFIG(release, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartps
 else:unix: CONFIG(debug, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartpsd
 
@@ -44,12 +45,11 @@ else:unix: CONFIG(debug, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc
 INCLUDEPATH += $$PWD/../../include
 DEPENDPATH += $$PWD/../../include
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/eprosimartps.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/eprosimartpsd.lib
+win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/eprosimartps-0.4.0.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/eprosimartpsd-0.4.0.lib
 else:unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
 else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
+
 
 unix:!macx|win32: LIBS += -lboost_thread -lboost_system
 
