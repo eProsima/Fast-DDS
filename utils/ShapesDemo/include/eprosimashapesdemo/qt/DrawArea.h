@@ -55,7 +55,7 @@ private:
     QBrush m_brush;
     ShapeType m_shape;
     QColor getColorFromShapeType(ShapeType& st);
-    void paintShape(QPainter*painter,ShapeType& sh);
+    void paintShape(QPainter*painter,TYPESHAPE type,ShapeType& sh);
 
     ShapesDemo* mp_SD;
     bool m_isInitialized;

@@ -25,7 +25,7 @@ enum SD_COLOR
     SD_ORANGE
 };
 
-enum TYPE{
+enum TYPESHAPE{
     SQUARE,
     CIRCLE,
     TRIANGLE
@@ -35,7 +35,7 @@ class ShapeType{
 public:
     ShapeType();
     ~ShapeType();
-    void define(TYPE type=SQUARE,SD_COLOR color=SD_BLUE,
+    void define(SD_COLOR color=SD_BLUE,
                 uint32_t x=30,uint32_t y =30,uint32_t size=30);
     void setColor(SD_COLOR c);
     void setColor(std::string str);
@@ -50,7 +50,6 @@ public:
     uint32_t m_x;
     uint32_t m_y;
     uint32_t m_size;
-    TYPE m_type;
 private:
     std::string m_str_color; //KEY
     SD_COLOR m_color;

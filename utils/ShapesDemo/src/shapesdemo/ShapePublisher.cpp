@@ -32,6 +32,7 @@ bool ShapePublisher::initPublisher()
     mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes);
     if(mp_pub !=NULL)
         return true;
+    return false;
 }
 
 void ShapePublisher::write()

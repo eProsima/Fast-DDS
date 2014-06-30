@@ -14,10 +14,26 @@
 #ifndef SHAPESUBSCRIBER_H_
 #define SHAPESUBSCRIBER_H_
 
-class ShapeSubscriber {
+#include "eprosimartps/rtps_all.h"
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
+
+
+
+class ShapeSubscriber: public SubscriberListener {
 public:
-	ShapeSubscriber();
+    ShapeSubscriber(Participant* par);
 	virtual ~ShapeSubscriber();
+	SubscriberAttributes m_attributes;
+    Subscriber* mp_sub;
+	Participant* mp_participant;
+	Shape m_shape;
+
+	bool initSubscriber();
+
+	void onNewDataMessage();
+	void onSubscriptionMatched();
+	bool hasReceived;
+
 };
 
 #endif /* SHAPESUBSCRIBER_H_ */
