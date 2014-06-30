@@ -7,25 +7,18 @@
  *************************************************************************/
 
 /**
- * @file Shape.cpp
+ * @file ShapeSubscriber.cpp
  *
  */
 
-#include "eprosimashapesdemo/shapesdemo/Shape.h"
+#include "ShapeSubscriber.h"
 
-
-
-Shape::Shape():
-    m_dirX(0),
-    m_dirY(0),
-    m_changeDir(true)
-{
+ShapeSubscriber::ShapeSubscriber() {
+	// TODO Auto-generated constructor stub
 
 }
 
-Shape::~Shape()
-{
-
+ShapeSubscriber::~ShapeSubscriber() {
+	// TODO Auto-generated destructor stub
 }
-
 

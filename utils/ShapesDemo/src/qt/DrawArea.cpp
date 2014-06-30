@@ -8,10 +8,14 @@
 
 #include "eprosimashapesdemo/qt/DrawArea.h"
 
+#include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
+
 #include <QPainter>
 
 DrawArea::DrawArea(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      m_isInitialized(false)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
@@ -19,8 +23,6 @@ DrawArea::DrawArea(QWidget *parent)
 
 
 
-    update();
-  //  drawShape();
 }
 
 DrawArea::~DrawArea()
@@ -30,40 +32,46 @@ DrawArea::~DrawArea()
 
 QSize DrawArea::sizeHint() const
 {
-    return QSize(400, 200);
+    return QSize(500, 500);
 }
 
 QSize DrawArea::minimumSizeHint() const
 {
-    return QSize(100, 100);
+    return QSize(300, 300);
 }
 
-void DrawArea::setPen(const QPen &pen)
-{
-    this->m_pen = pen;
-    update();
-}
-
-void DrawArea::setBrush(const QBrush &brush)
-{
-    this->m_brush = brush;
-    update();
-}
 
 void DrawArea::paintEvent(QPaintEvent * /* event */)
 {
+
     QPainter painter(this);
-    m_shape.define(SQUARE,SD_BLUE,100,100,100);
-    paintShape(&painter,m_shape);
-    m_shape.define(SQUARE,SD_BLUE,110,110,100);
-    paintShape(&painter,m_shape);
-    m_shape.define(CIRCLE,SD_YELLOW);
-    paintShape(&painter,m_shape);
-    m_shape.define(TRIANGLE,SD_ORANGE,100,200,70);
-    paintShape(&painter,m_shape);
+    drawShapes(&painter);
 }
 
-void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
+
+void DrawArea::drawShapes(QPainter* painter)
+{
+    if(m_isInitialized)
+    {
+        QMutexLocker locker(mp_SD->getMutex());
+        m_shapes.clear();
+        if(mp_SD->getShapes(&m_shapes))
+        {
+            for(std::vector<Shape*>::iterator it = m_shapes.begin();
+                it!=m_shapes.end();++it)
+            {
+                paintShape(painter,(*it)->m_mainShape);
+            }
+        }
+
+        else
+            cout << "GETSHAPESFALSE"<<endl;
+    }
+}
+
+
+
+void DrawArea::paintShape(QPainter* painter,ShapeType& shape)
 {
     painter->save();
     m_pen.setColor(SD_QT_BLACK);
@@ -81,7 +89,7 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
                    shape.m_size,
                    shape.m_size);
         painter->drawRect(rect);
-     break;
+        break;
     }
     case TRIANGLE:
     {
@@ -91,10 +99,10 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
         s = shape.m_size;
         double h = 0.5*sqrt(3*pow((double)s,2));
         QPoint points[3] = {
-               QPoint(x-s/2, y+h/2),
-               QPoint(x+s/2, y+h/2),
-               QPoint(x, y-h/2)
-           };
+            QPoint(x-s/2, y+h/2),
+            QPoint(x+s/2, y+h/2),
+            QPoint(x, y-h/2)
+        };
         painter->drawPolygon(points,3);
         break;
     }
@@ -113,18 +121,28 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
 }
 
 
- QColor DrawArea::getColorFromShapeType(ShapeType& st)
- {
-     switch(st.getColor())
-     {
-     case SD_PURPLE: return SD_QT_PURPLE;
-     case SD_BLUE: return SD_QT_BLUE;
-     case SD_RED: return SD_QT_RED;
-     case SD_GREEN: return SD_QT_GREEN;
-     case SD_YELLOW: return SD_QT_YELLOW;
-     case SD_CYAN: return SD_QT_CYAN;
-     case SD_MAGENTA: return SD_QT_MAGENTA;
-     case SD_ORANGE: return SD_QT_ORANGE;
-     }
-     return SD_QT_BLUE;
- }
+QColor DrawArea::getColorFromShapeType(ShapeType& st)
+{
+    switch(st.getColor())
+    {
+    case SD_PURPLE: return SD_QT_PURPLE;
+    case SD_BLUE: return SD_QT_BLUE;
+    case SD_RED: return SD_QT_RED;
+    case SD_GREEN: return SD_QT_GREEN;
+    case SD_YELLOW: return SD_QT_YELLOW;
+    case SD_CYAN: return SD_QT_CYAN;
+    case SD_MAGENTA: return SD_QT_MAGENTA;
+    case SD_ORANGE: return SD_QT_ORANGE;
+    }
+    return SD_QT_BLUE;
+}
+
+
+void DrawArea::setShapesDemo(ShapesDemo*SD)
+{
+    if(SD!=NULL)
+    {
+        mp_SD = SD;
+        m_isInitialized = true;
+    }
+}

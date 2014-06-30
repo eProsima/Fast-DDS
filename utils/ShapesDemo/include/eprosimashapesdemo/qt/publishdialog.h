@@ -16,6 +16,7 @@ class PublishDialog;
 }
 
 class ShapesDemo;
+class ShapePublisher;
 
 class PublishDialog : public QDialog
 {
@@ -32,6 +33,8 @@ private slots:
 private:
     Ui::PublishDialog *ui;
     ShapesDemo* mp_sd;
+
+    void setShapeAttributes(ShapePublisher* SP);
 };
 
 #endif // PUBLISHDIALOG_H

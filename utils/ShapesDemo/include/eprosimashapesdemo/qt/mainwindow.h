@@ -10,9 +10,13 @@
 
 #include <QMainWindow>
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
+
+
 namespace Ui {
 class MainWindow;
 }
+
+class UpdateThread;
 
 class MainWindow : public QMainWindow
 {
@@ -26,6 +30,8 @@ public:
         return &m_shapesDemo;
     }
 
+    void updateDrawArea();
+
 private slots:
     void on_bt_publish_clicked();
 
@@ -35,9 +41,12 @@ private slots:
 
     void on_bt_subscribe_clicked();
 
+    void on_spin_domainId_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
+    UpdateThread* mp_updateThread;
 };
 
 #endif // MAINWINDOW_H

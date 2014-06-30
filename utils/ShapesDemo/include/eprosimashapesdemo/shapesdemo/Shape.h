@@ -13,23 +13,26 @@
 
 #ifndef SHAPE_H_
 #define SHAPE_H_
-#include <vector>
+#include <queue>
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
-namespace eprosima {
-namespace rtps {
+
 
 class Shape {
 public:
-	Shape();
+    Shape();
 	virtual ~Shape();
 
-private:
 	ShapeType m_mainShape;
-	std::vector<ShapeType> m_history;
+    std::queue<ShapeType> m_history;
+
+    float m_dirX;
+    float m_dirY;
+    bool m_changeDir;
+
+
 };
 
-} /* namespace rtps */
-} /* namespace eprosima */
+
 
 #endif /* SHAPE_H_ */
