@@ -60,12 +60,13 @@ void DrawArea::drawShapes(QPainter* painter)
             for(std::vector<Shape*>::iterator it = m_shapes.begin();
                 it!=m_shapes.end();++it)
             {
-                paintShape(painter,(*it)->m_type,(*it)->m_mainShape);
-                for(std::list<ShapeType>::iterator sit = (*it)->m_history.begin();
-                    sit!=(*it)->m_history.end();++sit)
+                for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_history.rbegin();
+                    sit!=(*it)->m_history.rend();++sit)
                 {
-                    paintShape(painter,(*it)->m_type,*sit);
+                    paintShape(painter,(*it)->m_type,*sit,128);
                 }
+                paintShape(painter,(*it)->m_type,(*it)->m_mainShape,255);
+
             }
         }
 
@@ -76,13 +77,13 @@ void DrawArea::drawShapes(QPainter* painter)
 
 
 
-void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape)
+void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint8_t alpha)
 {
     painter->save();
     m_pen.setColor(SD_QT_BLACK);
     painter->setPen(m_pen);
     QColor auxc = getColorFromShapeType(shape);
-    auxc.setAlpha(100);
+    auxc.setAlpha(alpha);
     m_brush.setColor(auxc);
     painter->setBrush(m_brush);
     switch(type)

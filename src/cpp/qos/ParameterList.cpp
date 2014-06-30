@@ -274,7 +274,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				p->Pid = PID_KEY_HASH;
 				p->length = 16;
 				valid&=CDRMessage::readData(msg,p->key.value,16);
-				paramlist_byte_size+=16;
 				if(handle!=NULL)
 					*handle = p->key;
 				IF_VALID_ADD

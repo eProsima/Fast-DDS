@@ -42,16 +42,18 @@ void ShapeSubscriber::onNewDataMessage()
     mp_sub->readNextData((void*)&shape,&info);
     if(info.sampleKind == ALIVE)
     {
-    	hasReceived = true;
-    	if(m_shape.m_history.size() < m_attributes.topic.historyQos.depth -1)
+        if(m_shape.m_history.size() < m_attributes.topic.historyQos.depth -1)
     	{
-            m_shape.m_history.push_front(m_shape.m_mainShape);
+
     	}
     	else
     	{
             m_shape.m_history.pop_back();
+        }
+        if(!hasReceived)
+            hasReceived = true;
+        else
             m_shape.m_history.push_front(m_shape.m_mainShape);
-    	}
     	m_shape.m_mainShape = shape;
     }
 
@@ -59,5 +61,5 @@ void ShapeSubscriber::onNewDataMessage()
 
 void ShapeSubscriber::onSubscriptionMatched()
 {
-	cout << "SUBSCRIBED:...........*****************************"<<endl;
+    cout << "SUBSCRIBED:*****************************"<<endl;
 }
