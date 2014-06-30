@@ -57,7 +57,7 @@ inline bool CDRMessage::readData(CDRMessage_t* msg,octet* o,uint16_t length) {
 }
 
 inline bool CDRMessage::readDataReversed(CDRMessage_t* msg,octet* o,uint16_t length) {
-	for(uint i=0;i<length;i++)
+    for(uint16_t i=0;i<length;i++)
 	{
 		*(o+i)=*(msg->buffer+msg->pos+length-1-i);
 	}
@@ -225,7 +225,7 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 }
 
 
-inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
+inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint32_t length) {
 	if(msg->pos + length > msg->max_size)
 	{
 		return false;
@@ -237,12 +237,12 @@ inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint length) {
 	return true;
 }
 
-inline bool CDRMessage::addDataReversed(CDRMessage_t*msg, octet* data, uint length) {
+inline bool CDRMessage::addDataReversed(CDRMessage_t*msg, octet* data, uint32_t length) {
 	if(msg->pos + length > msg->max_size)
 	{
 		return false;
 	}
-	for(uint i = 0;i<length;i++)
+    for(uint32_t i = 0;i<length;i++)
 	{
 		msg->buffer[msg->pos+i] = *(data+length-1-i);
 	}
@@ -378,7 +378,7 @@ inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocve
 		return false;
 	}
 	bool valid = CDRMessage::addUInt32(msg,(uint32_t)ocvec->size());
-	valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),(uint)ocvec->size());
+    valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),(uint32_t)ocvec->size());
 
 	int rest = ocvec->size()% 4;
 	if (rest != 0)

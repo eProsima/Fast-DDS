@@ -89,7 +89,7 @@ void DrawArea::paintShape(QPainter *painter,ShapeType& shape)
         x = shape.m_x;
         y = shape.m_y;
         s = shape.m_size;
-        double h = 0.5*sqrt(3*pow(s,2));
+        double h = 0.5*sqrt(3*pow((double)s,2));
         QPoint points[3] = {
                QPoint(x-s/2, y+h/2),
                QPoint(x+s/2, y+h/2),

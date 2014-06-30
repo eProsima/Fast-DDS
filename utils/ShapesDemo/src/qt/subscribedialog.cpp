@@ -5,7 +5,7 @@
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
-#include "include/eprosimashapesdemo/qt/subscribedialog.h"
+#include "eprosimashapesdemo/qt/subscribedialog.h"
 #include "ui_subscribedialog.h"
 
 SubscribeDialog::SubscribeDialog(QWidget *parent) :

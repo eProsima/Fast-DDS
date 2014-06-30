@@ -18,11 +18,9 @@ unix:QMAKE_CXXFLAGS += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
 
 CONFIG += console
 
-CONFIG(debug, debug|release) {
-    TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemod
-} else {
-    TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemo
-}
+unix:CONFIG(debug, debug|release): TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemod
+unix:CONFIG(release, debug|release):TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemo
+
 
 TEMPLATE = app
 
@@ -51,7 +49,9 @@ else:unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Li
 else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
 
 
-unix:!macx|win32: LIBS += -lboost_thread -lboost_system
+unix: LIBS += -lboost_thread -lboost_system
+win32:INCLUDEPATH += C:/local/boost_1_53_0/
+win32:LIBS += -LC:/local/boost_1_53_0/stage/lib/x86/
 
 HEADERS += \
     include/eprosimashapesdemo/qt/DrawArea.h \
