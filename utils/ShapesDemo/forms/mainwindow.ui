@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>937</width>
+    <width>837</width>
     <height>573</height>
    </rect>
   </property>
@@ -17,10 +17,10 @@
    <widget class="DrawArea" name="areaDraw" native="true">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>10</y>
-      <width>591</width>
-      <height>481</height>
+      <x>320</x>
+      <y>0</y>
+      <width>500</width>
+      <height>500</height>
      </rect>
     </property>
    </widget>
@@ -133,7 +133,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>937</width>
+     <width>837</width>
      <height>25</height>
     </rect>
    </property>

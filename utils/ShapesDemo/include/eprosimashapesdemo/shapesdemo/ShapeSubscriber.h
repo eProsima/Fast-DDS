@@ -7,25 +7,17 @@
  *************************************************************************/
 
 /**
- * @file Shape.cpp
+ * @file ShapeSubscriber.h
  *
  */
 
-#include "eprosimashapesdemo/shapesdemo/Shape.h"
+#ifndef SHAPESUBSCRIBER_H_
+#define SHAPESUBSCRIBER_H_
 
+class ShapeSubscriber {
+public:
+	ShapeSubscriber();
+	virtual ~ShapeSubscriber();
+};
 
-
-Shape::Shape():
-    m_dirX(0),
-    m_dirY(0),
-    m_changeDir(true)
-{
-
-}
-
-Shape::~Shape()
-{
-
-}
-
-
+#endif /* SHAPESUBSCRIBER_H_ */

@@ -29,7 +29,7 @@ INCLUDEPATH += include/
 
 FORMS    +=   forms/mainwindow.ui \
                 forms/publishdialog.ui \
-    forms/subscribedialog.ui
+              forms/subscribedialog.ui
 
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
@@ -63,7 +63,10 @@ HEADERS += \
     include/eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h \
     include/eprosimashapesdemo/shapesdemo/ShapeType.h \
     include/eprosimashapesdemo/utils/md5.h \
-    include/eprosimashapesdemo/qt/QDebugStream.h
+    include/eprosimashapesdemo/shapesdemo/ShapePublisher.h \
+    include/eprosimashapesdemo/qt/UpdateThread.h \
+    include/eprosimashapesdemo/shapesdemo/ShapeSubscriber.h
+
 
 SOURCES += \
     src/qt/DrawArea.cpp \
@@ -75,7 +78,10 @@ SOURCES += \
     src/shapesdemo/ShapeTopicDataType.cpp \
     src/shapesdemo/ShapeType.cpp \
     src/utils/md5.cpp \
-    src/main.cpp
+    src/main.cpp \
+    src/shapesdemo/ShapePublisher.cpp \
+    src/qt/UpdateThread.cpp \
+    src/shapesdemo/ShapeSubscriber.cpp
 
 
 
