@@ -17,9 +17,7 @@
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
-using namespace eprosima;
-using namespace dds;
-using namespace rtps;
+
 
 class dds::Publisher;
 

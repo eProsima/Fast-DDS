@@ -18,10 +18,9 @@ ShapeType::~ShapeType()
 
 }
 
-void ShapeType::define(TYPE type,SD_COLOR color,
+void ShapeType::define(SD_COLOR color,
                        uint32_t x,uint32_t y ,uint32_t size)
 {
-    m_type = type;
     setColor(color);
     m_x = x;
     m_y =y;

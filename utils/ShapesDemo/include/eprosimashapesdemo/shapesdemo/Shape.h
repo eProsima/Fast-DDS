@@ -13,7 +13,7 @@
 
 #ifndef SHAPE_H_
 #define SHAPE_H_
-#include <queue>
+#include <list>
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
 
@@ -22,9 +22,9 @@ class Shape {
 public:
     Shape();
 	virtual ~Shape();
-
+    TYPESHAPE m_type;
 	ShapeType m_mainShape;
-    std::queue<ShapeType> m_history;
+    std::list<ShapeType> m_history;
 
     float m_dirX;
     float m_dirY;

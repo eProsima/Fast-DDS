@@ -12,6 +12,7 @@
 
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
 ShapesDemo::ShapesDemo():
@@ -90,6 +91,12 @@ void ShapesDemo::addPublisher(ShapePublisher* SP)
     m_publishers.push_back(SP);
 }
 
+void ShapesDemo::addSubscriber(ShapeSubscriber* SSub)
+{
+    QMutexLocker locker(&m_mutex);
+    m_subscribers.push_back(SSub);
+}
+
 bool ShapesDemo::getShapes(std::vector<Shape*> *shvec)
 {
     QMutexLocker locker(&m_mutex);
@@ -97,6 +104,12 @@ bool ShapesDemo::getShapes(std::vector<Shape*> *shvec)
         it!=m_publishers.end();++it)
     {
         shvec->push_back(&(*it)->m_shape);
+    }
+    for(std::vector<ShapeSubscriber*>::iterator it = m_subscribers.begin();
+        it!=m_subscribers.end();++it)
+    {
+        if((*it)->hasReceived)
+            shvec->push_back(&(*it)->m_shape);
     }
     return true;
 }

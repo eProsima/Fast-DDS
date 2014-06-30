@@ -19,6 +19,7 @@
 
 
 class ShapePublisher;
+class ShapeSubscriber;
 class Shape;
 
 class ShapesDemo
@@ -35,7 +36,7 @@ public:
 	}
 
 	void addPublisher(ShapePublisher* SP);
-	//void addSubscriber(ShapeSubscriber* SS);
+    void addSubscriber(ShapeSubscriber* SS);
 
     uint32_t getRandomX(uint32_t size=10);
     uint32_t getRandomY(uint32_t size=10);
@@ -51,7 +52,7 @@ public:
      void writeAll();
 private:
 	std::vector<ShapePublisher*> m_publishers;
-	//std::vector<ShapeSubscriber*> m_subscribers;
+    std::vector<ShapeSubscriber*> m_subscribers;
 	Participant* mp_participant;
 
     //std::vector<ShapeType*> m_shapes;

@@ -7,6 +7,7 @@
  *************************************************************************/
 #include "eprosimashapesdemo/qt/mainwindow.h"
 #include "eprosimashapesdemo/qt/publishdialog.h"
+#include "eprosimashapesdemo/qt/subscribedialog.h"
 #include "ui_mainwindow.h"
 #include "eprosimashapesdemo/qt/UpdateThread.h"
 
@@ -55,7 +56,8 @@ void MainWindow::on_bt_publish_clicked()
 
 void MainWindow::on_bt_subscribe_clicked()
 {
-
+    SubscribeDialog* pd = new SubscribeDialog(this->getShapesDemo(),this);
+    pd->show();
 }
 
 void MainWindow::on_spin_domainId_valueChanged(int arg1)

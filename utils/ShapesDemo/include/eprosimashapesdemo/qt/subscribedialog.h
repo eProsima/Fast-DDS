@@ -14,16 +14,24 @@ namespace Ui {
 class SubscribeDialog;
 }
 
+class ShapesDemo;
+class ShapeSubscriber;
+
 class SubscribeDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SubscribeDialog(QWidget *parent = 0);
+    explicit SubscribeDialog(ShapesDemo* psd,QWidget *parent = 0);
     ~SubscribeDialog();
+
+    private slots:
+
+        void on_buttonBox_accepted();
 
 private:
     Ui::SubscribeDialog *ui;
+    ShapesDemo* mp_sd;
 };
 
 #endif // SUBSCRIBEDIALOG_H

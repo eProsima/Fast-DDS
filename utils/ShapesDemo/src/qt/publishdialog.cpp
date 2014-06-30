@@ -37,17 +37,17 @@ void PublishDialog::on_button_OkCancel_accepted()
     //SHAPE/TOPIC:
     if(this->ui->combo_Shape->currentText() == QString("Square"))
     {
-        SP->m_shape.m_mainShape.m_type = SQUARE;
+        SP->m_shape.m_type = SQUARE;
         SP->m_attributes.topic.topicName = "Square";
     }
     else if(this->ui->combo_Shape->currentText() == QString("Triangle"))
     {
-        SP->m_shape.m_mainShape.m_type = TRIANGLE;
+        SP->m_shape.m_type = TRIANGLE;
         SP->m_attributes.topic.topicName = "Triangle";
     }
     else if(this->ui->combo_Shape->currentText() == QString("Circle"))
     {
-        SP->m_shape.m_mainShape.m_type = CIRCLE;
+        SP->m_shape.m_type = CIRCLE;
         SP->m_attributes.topic.topicName = "Circle";
     }
     SP->m_attributes.topic.topicDataType = "ShapeType";
