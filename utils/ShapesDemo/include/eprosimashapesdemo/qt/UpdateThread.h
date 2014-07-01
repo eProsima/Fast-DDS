@@ -16,6 +16,7 @@
 
 #include <QThread>
 #include <QTimer>
+#include <cstdint>
 
 class MainWindow;
 

@@ -1,6 +1,7 @@
 #include "eprosimashapesdemo/qt/mainwindow.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include <QApplication>
+//#include <stdafx.h>
 
 
 int main(int argc, char *argv[])
