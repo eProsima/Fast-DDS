@@ -54,6 +54,16 @@ inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 	return true;
 }
 
+inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
+{
+	for(uint8_t i =0;i<12;i++)
+	{
+		if(guid1.value[i] != guid2.value[i])
+			return true;
+	}
+	return false;
+}
+
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
 inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){

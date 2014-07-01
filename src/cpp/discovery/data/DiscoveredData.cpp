@@ -155,6 +155,19 @@ bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, 
 			}
 			break;
 		}
+		case PID_ENDPOINT_GUID:
+		{
+			ParameterGuid_t * p = (ParameterGuid_t*)(*it);
+			wdata->m_writerProxy.remoteWriterGuid = p->guid;
+			for(uint8_t i=0;i<16;++i)
+			{
+				if(i<12)
+					wdata->m_key.value[i] = p->guid.guidPrefix.value[i];
+				else
+					wdata->m_key.value[i] = p->guid.entityId.value[i-12];
+			}
+			break;
+		}
 		case PID_UNICAST_LOCATOR:
 		{
 			ParameterLocator_t* p = (ParameterLocator_t*)(*it);
@@ -305,6 +318,19 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 					rdata->m_participantKey.value[i] = p->guid.guidPrefix.value[i];
 				else
 					rdata->m_participantKey.value[i] = p->guid.entityId.value[i];
+			}
+			break;
+		}
+		case PID_ENDPOINT_GUID:
+		{
+			ParameterGuid_t * p = (ParameterGuid_t*)(*it);
+			rdata->m_readerProxy.remoteReaderGuid = p->guid;
+			for(uint8_t i=0;i<16;++i)
+			{
+				if(i<12)
+					rdata->m_key.value[i] = p->guid.guidPrefix.value[i];
+				else
+					rdata->m_key.value[i] = p->guid.entityId.value[i-12];
 			}
 			break;
 		}
