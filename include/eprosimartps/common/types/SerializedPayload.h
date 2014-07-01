@@ -58,8 +58,9 @@ struct SerializedPayload_t{
 	 * @return True if correct
 	 */
 	bool copy(SerializedPayload_t* serData){
+		if(serData->length>max_size)
+			return false;
 		length = serData->length;
-		max_size = length;
 		encapsulation = serData->encapsulation;
 		if(data == NULL)
 			data = (octet*)malloc(length);

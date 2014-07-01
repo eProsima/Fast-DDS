@@ -176,6 +176,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			}
 			case PID_PARTICIPANT_GUID:
 			case PID_GROUP_GUID:
+			case PID_ENDPOINT_GUID:
 			{
 				ParameterGuid_t* p = new ParameterGuid_t(pid,plength);
 				valid &= CDRMessage::readData(msg,p->guid.guidPrefix.value,12);
