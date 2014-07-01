@@ -187,16 +187,15 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		}
 	}
 	WParam.payloadMaxSize = p_type->m_typeSize;
+	RTPSWriter* SW;
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-		RTPSWriter* SW;
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		RTPSWriter* SW;
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
@@ -208,6 +207,10 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pInfo(RTPS_B_YELLOW<<"PUBLISHER CREATED"<<RTPS_DEF<<endl);
 		Publisher* Pub = new Publisher(pubImpl);
 		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
+		//Now we do discovery (in our event thread):
+		p->getEventResource()->io_service.post(
+				boost::bind(&ParticipantImpl::WriterDiscovery,p,SW));
+		//p->WriterDiscovery(SW);
 		return Pub;
 	}
 
@@ -247,16 +250,15 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		}
 	}
 	RParam.payloadMaxSize = p_type->m_typeSize;
+	RTPSReader* SR;
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-		RTPSReader* SR;
-		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
+	    if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
 			return NULL;
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		RTPSReader* SR;
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type,slisten))
 			return NULL;
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
@@ -266,6 +268,10 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pInfo(RTPS_B_YELLOW<<"SUBSCRIBER CREATED"<<RTPS_DEF<<endl);
 		Subscriber* Sub = new Subscriber(subImpl);
 		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
+		p->getEventResource()->io_service.post(
+						boost::bind(&ParticipantImpl::ReaderDiscovery,p,SR));
+
+		//p->ReaderDiscovery(SR);
 		return Sub;
 	}
 
@@ -317,6 +323,37 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
+		std::vector<PublisherPair> auxListPub;
+		for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
+				it!=m_publisherList.end();++it)
+		{
+			if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+			{
+				delete(it->first);
+				delete(it->second);
+			}
+			else
+			{
+				auxListPub.push_back(*it);
+			}
+		}
+		m_publisherList = auxListPub;
+		pDebugInfo("Publishers deleted correctly "<< endl);
+		std::vector<SubscriberPair> auxListSub;
+		for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
+				it!=m_subscriberList.end();++it)
+		{
+			if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+			{
+				delete(it->first);
+				delete(it->second);
+			}
+			else
+			{
+				auxListSub.push_back(*it);
+			}
+		}
+		m_subscriberList = auxListSub;
 		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 				it!=m_participants.end();++it)
 		{

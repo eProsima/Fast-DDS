@@ -9,6 +9,8 @@ RTPSVERSION = 0.4.0
 QT  += core
 QT  -= gui
 
+RC_ICONS = /images/ShapesDemo.ico
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
@@ -28,8 +30,9 @@ INCLUDEPATH += include/
                forms/ui/
 
 FORMS    +=   forms/mainwindow.ui \
-                forms/publishdialog.ui \
-              forms/subscribedialog.ui
+              forms/publishdialog.ui \
+              forms/subscribedialog.ui \
+              forms/optionsdialog.ui
 
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
@@ -65,7 +68,8 @@ HEADERS += \
     include/eprosimashapesdemo/utils/md5.h \
     include/eprosimashapesdemo/shapesdemo/ShapePublisher.h \
     include/eprosimashapesdemo/qt/UpdateThread.h \
-    include/eprosimashapesdemo/shapesdemo/ShapeSubscriber.h
+    include/eprosimashapesdemo/shapesdemo/ShapeSubscriber.h \
+    include/eprosimashapesdemo/qt/optionsdialog.h
 
 
 SOURCES += \
@@ -81,7 +85,8 @@ SOURCES += \
     src/main.cpp \
     src/shapesdemo/ShapePublisher.cpp \
     src/qt/UpdateThread.cpp \
-    src/shapesdemo/ShapeSubscriber.cpp
+    src/shapesdemo/ShapeSubscriber.cpp \
+    src/qt/optionsdialog.cpp
 
 
 

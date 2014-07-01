@@ -24,99 +24,45 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="bt_publish">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>160</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Publish</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="bt_subscribe">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>160</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Subscribe</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="group_Options">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>231</width>
-      <height>121</height>
+      <width>261</width>
+      <height>111</height>
      </rect>
     </property>
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>17</x>
-       <y>25</y>
-       <width>75</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Domain ID:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="push_Stop">
-     <property name="geometry">
-      <rect>
-       <x>130</x>
-       <y>80</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Stop</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="push_Start">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>101</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Start</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="spin_domainId">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>20</y>
-       <width>48</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="specialValueText">
-      <string/>
-     </property>
-     <property name="suffix">
-      <string/>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="push_Start">
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="push_Stop">
+       <property name="text">
+        <string>Stop</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="bt_publish">
+       <property name="text">
+        <string>Publish</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="bt_subscribe">
+       <property name="text">
+        <string>Subscribe</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -141,9 +87,15 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="actionPreferences"/>
    </widget>
    <addaction name="menuOptions"/>
   </widget>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

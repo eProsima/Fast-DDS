@@ -55,11 +55,13 @@ private:
     QBrush m_brush;
     ShapeType m_shape;
     QColor getColorFromShapeType(ShapeType& st);
-    void paintShape(QPainter*painter, TYPESHAPE type, ShapeType& sh, uint8_t alpha);
+    void paintShape(QPainter*painter, TYPESHAPE type, ShapeType& sh, uint8_t alpha=255,bool isHistory=false);
 
     ShapesDemo* mp_SD;
     bool m_isInitialized;
     std::vector<Shape*> m_shapes;
+    float firstA,lastA;
+    uint8_t getAlpha(int pos,size_t total);
 
 };
 

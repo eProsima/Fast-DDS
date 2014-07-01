@@ -60,9 +60,7 @@ bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
     for(uint32_t i=0;i<strsize;++i)
         auxstr.at(i) = payload->data[4+i];
     sh->setColor(auxstr);
-    cout <<"length:"<< payload->length<<endl;
     int rest = payload->length-4-4-4-4-strsize;
-    cout << "rest: "<<rest << endl;
     sh->m_x = *(uint32_t*)&payload->data[4+strsize+rest];
     sh->m_y = *(uint32_t*)&payload->data[4+strsize+rest+4];
     sh->m_size = *(uint32_t*)&payload->data[4+strsize+rest+4+4];

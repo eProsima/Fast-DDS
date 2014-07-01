@@ -14,14 +14,14 @@
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
+#include "eprosimashapesdemo/qt/mainwindow.h"
 
-ShapesDemo::ShapesDemo():
+ShapesDemo::ShapesDemo(MainWindow *mw):
     mp_participant(NULL),
     m_isInitialized(false),
-    m_domainId(0),
     minX(0),minY(0),maxX(0),maxY(0),
-    m_movementDistance(5),
-    m_mutex(QMutex::Recursive)
+    m_mutex(QMutex::Recursive),
+    m_mainWindow(mw)
 {
     srand (time(NULL));
     minX = 0;
@@ -49,19 +49,21 @@ Participant* ShapesDemo::getParticipant()
 
 bool ShapesDemo::init()
 {
-    cout << "Initializing ShapesDemo"<<endl;
+    cout << "Initializing ShapesDemo "<< m_isInitialized <<endl;
     QMutexLocker locker(&m_mutex);
     if(!m_isInitialized)
     {
+        cout <<"Creating new participant"<<endl;
         ParticipantAttributes pparam;
         pparam.name = "eProsimaParticipant";
-        pparam.discovery.domainId = m_domainId;
+        pparam.discovery.domainId = m_options.m_domainId;
         pparam.discovery.leaseDuration.seconds = 100;
         pparam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 50;
         pparam.defaultSendPort = 10042;
         mp_participant = DomainParticipant::createParticipant(pparam);
         if(mp_participant!=NULL)
         {
+           // cout << "Participant Created "<< mp_participant->getGuid() << endl;
             m_isInitialized = true;
             DomainParticipant::registerType(&m_shapeTopicDataType);
             return true;
@@ -74,15 +76,25 @@ bool ShapesDemo::init()
 void ShapesDemo::stop()
 {
     QMutexLocker locker(&m_mutex);
-    DomainParticipant::stopAll();
-    mp_participant = NULL;
-    for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
-        it!=m_publishers.end();++it)
+    if(m_isInitialized)
     {
-        delete(*it);
+        DomainParticipant::removeParticipant(mp_participant);
+        cout << "All Stoped, removing"<<endl;
+        mp_participant = NULL;
+        for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
+            it!=m_publishers.end();++it)
+        {
+            delete(*it);
+        }
+        m_publishers.clear();
+        for(std::vector<ShapeSubscriber*>::iterator it = m_subscribers.begin();
+            it!=m_subscribers.end();++it)
+        {
+            delete(*it);
+        }
+        m_subscribers.clear();
+        m_isInitialized = false;
     }
-    m_publishers.clear();
-    //	m_subscribers.clear();
 }
 
 void ShapesDemo::addPublisher(ShapePublisher* SP)
@@ -141,8 +153,8 @@ void ShapesDemo::moveShape(Shape* sh)
         getNewDirection(sh);
     }
     //Apply movement
-    int nx = sh->m_mainShape.m_x + m_movementDistance*sh->m_dirX;
-    int ny = sh->m_mainShape.m_y + m_movementDistance*sh->m_dirY;
+    int nx = sh->m_mainShape.m_x + m_options.m_movementSpeed*sh->m_dirX;
+    int ny = sh->m_mainShape.m_y + m_options.m_movementSpeed*sh->m_dirY;
     //Check if the movement is correct
     bool cond1 = nx+(int)sh->m_mainShape.m_size > (int)maxX;
     bool cond2 = nx-(int)sh->m_mainShape.m_size < (int)minX;
@@ -180,4 +192,11 @@ void ShapesDemo::writeAll()
      {
          (*it)->write();
      }
+}
+
+void ShapesDemo::setOptions(ShapesDemoOptions& opt)
+{
+    m_options = opt;
+    m_mainWindow->updateInterval(m_options.m_updateIntervalMs);
+
 }

@@ -17,23 +17,39 @@
 #include "eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h"
 #include <QMutex>
 
+class ShapesDemoOptions
+{
+public:
+    uint32_t m_updateIntervalMs;
+    uint32_t m_movementSpeed;
+    uint32_t m_domainId;
+    ShapesDemoOptions()
+    {
+        m_updateIntervalMs = 200;
+        m_movementSpeed = 5;
+        m_domainId = 80;
+    }
+    ~ShapesDemoOptions()
+    {
+
+    }
+};
+
 
 class ShapePublisher;
 class ShapeSubscriber;
 class Shape;
+class MainWindow;
 
 class ShapesDemo
 {
 public:
-	ShapesDemo();
+    ShapesDemo(MainWindow* mw);
 	~ShapesDemo();
 	bool init();
 	void stop();
 	Participant* getParticipant();
-	void setDomainId(uint32_t domain)
-	{
-		m_domainId = domain;
-	}
+
 
 	void addPublisher(ShapePublisher* SP);
     void addSubscriber(ShapeSubscriber* SS);
@@ -50,6 +66,10 @@ public:
 
      void moveAllShapes();
      void writeAll();
+
+     void setOptions(ShapesDemoOptions& opt);
+
+
 private:
 	std::vector<ShapePublisher*> m_publishers;
     std::vector<ShapeSubscriber*> m_subscribers;
@@ -58,16 +78,16 @@ private:
     //std::vector<ShapeType*> m_shapes;
     bool m_isInitialized;
 
-    uint32_t m_domainId;
     uint32_t minX,minY,maxX,maxY;
 
 
     void moveShape(Shape* sh);
     void getNewDirection(Shape* sh);
 
-    uint32_t m_movementDistance;
     QMutex m_mutex;
     ShapeTopicDataType m_shapeTopicDataType;
+    ShapesDemoOptions m_options;
+    MainWindow* m_mainWindow;
 };
 
 

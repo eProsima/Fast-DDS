@@ -25,6 +25,7 @@ WriterProxy_t::WriterProxy_t():
 			remoteWriterGuid(c_Guid_Unknown),
 			leaseDuration(c_TimeInfinite),
 			livelinessKind(AUTOMATIC_LIVELINESS_QOS)
+
 	{
 	
 	}
@@ -52,7 +53,8 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false),
-		m_livelinessAsserted(true)
+		m_livelinessAsserted(true),
+		m_firstReceived(true)
 
 {
 	m_changesFromW.clear();
@@ -140,7 +142,18 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	boost::lock_guard<WriterProxy> guard(*this);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
-	add_changes_from_writer_up_to(change->sequenceNumber);
+	if(!this->m_firstReceived)
+		add_changes_from_writer_up_to(change->sequenceNumber);
+	else
+	{
+		ChangeFromWriter_t chfw;
+		chfw.setChange(change);
+		chfw.status = RECEIVED;
+		chfw.is_relevant = true;
+		m_changesFromW.push_back(chfw);
+		m_firstReceived = false;
+		return true;
+	}
 	for(std::vector<ChangeFromWriter_t>::reverse_iterator cit=m_changesFromW.rbegin();cit!=m_changesFromW.rend();++cit)
 	{
 		if(cit->seqNum == change->sequenceNumber)

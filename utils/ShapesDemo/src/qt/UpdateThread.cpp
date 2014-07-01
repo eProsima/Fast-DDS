@@ -18,7 +18,8 @@
 UpdateThread::UpdateThread(QObject *parent):
     QThread(parent),
     m_mainW(NULL),
-    m_timer(NULL)
+    m_timer(NULL),
+    m_interval(200)
 {
 
 }
@@ -37,7 +38,7 @@ void UpdateThread::run(void)
         m_timer = new QTimer(this);
         connect(m_timer,SIGNAL(timeout()),this,SLOT(updateAll()));
     }
-    m_timer->start(100);
+    m_timer->start(m_interval);
     exec();
 }
 
