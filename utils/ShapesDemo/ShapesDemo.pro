@@ -9,7 +9,7 @@ RTPSVERSION = 0.4.0
 QT  += core
 QT  -= gui
 
-RC_ICONS = /images/ShapesDemo.ico
+#RC_ICONS = /images/ShapesDemo.ico
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,11 +17,20 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 unix:QMAKE_CXXFLAGS_DEBUG += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -g -std=c++0x -D__DEBUG
 unix:QMAKE_CXXFLAGS += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
 
+win32:QMAKE_CXXFLAGS_DEBUG += -D_MBCS -D__DEBUG -DBOOST_ALL_DYN_LINK -D__LITTLE_ENDIAN__ -D_WIN32
+win32:QMAKE_CXXFLAGS += -D_MBCS -DBOOST_ALL_DYN_LINK -D__LITTLE_ENDIAN__ -D_WIN32
+
+win32:QMAKE_LFLAGS_WINDOWS +=/FORCE:MULTIPLE
+win32:QMAKE_LFLAGS_WINDOWS_DLL +=/FORCE:MULTIPLE
+
 
 CONFIG += console
 
 unix:CONFIG(debug, debug|release): TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemod
 unix:CONFIG(release, debug|release):TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemo
+
+win32:CONFIG(debug, debug|release): TARGET = ShapesDemod
+win32:CONFIG(release, debug|release):TARGET = ShapesDemo
 
 
 TEMPLATE = app
@@ -37,18 +46,13 @@ FORMS    +=   forms/mainwindow.ui \
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -leprosimartps-0.4.0
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -leprosimartpsd-0.4.0
-else:unix: CONFIG(release, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartps
+unix: CONFIG(release, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartps
 else:unix: CONFIG(debug, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartpsd
-
 
 INCLUDEPATH += $$PWD/../../include
 DEPENDPATH += $$PWD/../../include
 
-win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/eprosimartps-0.4.0.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/eprosimartpsd-0.4.0.lib
-else:unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
+unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
 else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
 
 
@@ -89,4 +93,16 @@ SOURCES += \
     src/qt/optionsdialog.cpp
 
 
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.4.0 -lIphlpapi
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.4.0 -lIphlpapi
+
+
+win32:INCLUDEPATH += $$PWD/../../include
+win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010
+
+
+else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.4.0.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.4.0.lib
 

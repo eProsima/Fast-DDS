@@ -1,4 +1,4 @@
-#include "include/eprosimashapesdemo/qt/optionsdialog.h"
+#include "eprosimashapesdemo/qt/optionsdialog.h"
 #include "ui_optionsdialog.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 

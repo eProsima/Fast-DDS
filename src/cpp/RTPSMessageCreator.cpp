@@ -62,7 +62,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 		CDRMessage::addOctet(msg,vendorId[0]);
 		CDRMessage::addOctet(msg,vendorId[1]);
 
-		for (uint i = 0;i<12;i++){
+		for (uint8_t i = 0;i<12;i++){
 			CDRMessage::addOctet(msg,guidPrefix.value[i]);
 		}
 		msg->length = msg->pos;
