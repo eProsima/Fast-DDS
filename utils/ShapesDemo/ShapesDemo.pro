@@ -15,10 +15,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
 unix:QMAKE_CXXFLAGS_DEBUG += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -g -std=c++0x -D__DEBUG
-unix:QMAKE_CXXFLAGS += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
+unix:QMAKE_CXXFLAGS_RELEASE += -c -Wall -D__LITTLE_ENDIAN__ -m64 -fpic -O2 -std=c++0x
 
 win32:QMAKE_CXXFLAGS_DEBUG += -D_MBCS -D__DEBUG -DBOOST_ALL_DYN_LINK -D__LITTLE_ENDIAN__ -D_WIN32
-win32:QMAKE_CXXFLAGS += -D_MBCS -DBOOST_ALL_DYN_LINK -D__LITTLE_ENDIAN__ -D_WIN32
+win32:QMAKE_CXXFLAGS_RELEASE += -D_MBCS -DBOOST_ALL_DYN_LINK -D__LITTLE_ENDIAN__ -D_WIN32
 
 win32:QMAKE_LFLAGS_WINDOWS +=/FORCE:MULTIPLE
 win32:QMAKE_LFLAGS_WINDOWS_DLL +=/FORCE:MULTIPLE
@@ -96,13 +96,13 @@ SOURCES += \
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.4.0 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.4.0 -lIphlpapi
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.4.0 -lIphlpapi
 
 
 win32:INCLUDEPATH += $$PWD/../../include
 win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010
 
 
-else:win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.4.0.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.4.0.lib
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.4.0.lib
+win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.4.0.lib
 
