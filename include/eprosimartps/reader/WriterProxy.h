@@ -171,6 +171,8 @@ private:
 
 	void print_changes_fromWriter_test2();
 
+	bool m_firstReceived;
+
 };
 
 } /* namespace rtps */

@@ -28,7 +28,11 @@ public:
     ~UpdateThread();
 
     void setMainW(MainWindow* mw);
-
+    void updateInterval(uint32_t interval)
+    {
+        m_interval = interval;
+        m_timer->setInterval(m_interval);
+    }
 
 private slots:
     void updateAll(void);
@@ -37,6 +41,7 @@ protected:
 private:
     QTimer* m_timer;
     MainWindow* m_mainW;
+    uint32_t m_interval;
 };
 
 

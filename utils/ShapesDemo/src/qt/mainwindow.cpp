@@ -8,24 +8,21 @@
 #include "eprosimashapesdemo/qt/mainwindow.h"
 #include "eprosimashapesdemo/qt/publishdialog.h"
 #include "eprosimashapesdemo/qt/subscribedialog.h"
+#include "eprosimashapesdemo/qt/optionsdialog.h"
 #include "ui_mainwindow.h"
 #include "eprosimashapesdemo/qt/UpdateThread.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    m_shapesDemo(this),
     mp_updateThread(NULL)
 {
     ui->setupUi(this);
     ui->areaDraw->setShapesDemo(this->getShapesDemo());
-    QSpinBox* qs = ui->group_Options->findChild<QSpinBox*>("spin_domainId");
-    on_spin_domainId_valueChanged(qs->value());
-    cout << "1"<<endl;
+
     mp_updateThread = new UpdateThread(this);
-//    cout << "1"<<endl;
     mp_updateThread->setMainW(this);
-//    cout << "1"<<endl;
-    //mp_updateThread->start();
     mp_updateThread->start();
 }
 
@@ -43,6 +40,7 @@ void MainWindow::on_push_Start_clicked()
 void MainWindow::on_push_Stop_clicked()
 {
     this->m_shapesDemo.stop();
+    update();
 }
 
 
@@ -60,10 +58,6 @@ void MainWindow::on_bt_subscribe_clicked()
     pd->show();
 }
 
-void MainWindow::on_spin_domainId_valueChanged(int arg1)
-{
-    m_shapesDemo.setDomainId(arg1);
-}
 
 void MainWindow::updateDrawArea()
 {
@@ -71,3 +65,14 @@ void MainWindow::updateDrawArea()
     this->m_shapesDemo.writeAll();
     ui->areaDraw->update();
 }
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    OptionsDialog* od = new OptionsDialog(this->getShapesDemo(),this);
+    od->show();
+}
+
+ void MainWindow::updateInterval(uint32_t ms)
+ {
+     this->mp_updateThread->updateInterval(ms);
+ }

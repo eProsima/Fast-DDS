@@ -39,24 +39,30 @@ void ShapeSubscriber::onNewDataMessage()
 
     ShapeType shape;
     SampleInfo_t info;
-    mp_sub->readNextData((void*)&shape,&info);
-    if(info.sampleKind == ALIVE)
+    while(mp_sub->readNextData((void*)&shape,&info))
     {
-        if(m_shape.m_history.size() < m_attributes.topic.historyQos.depth -1)
-    	{
+       // shape.m_x += 5;
+        if(info.sampleKind == ALIVE)
+        {
+            if(m_shape.m_history.size() < m_attributes.topic.historyQos.depth -1)
+            {
 
-    	}
-    	else
-    	{
-            m_shape.m_history.pop_back();
+            }
+            else
+            {
+                m_shape.m_history.pop_back();
+            }
+            if(!hasReceived)
+            {
+                hasReceived = true;
+            }
+            else
+            {
+                m_shape.m_history.push_front(m_shape.m_mainShape);
+            }
+            m_shape.m_mainShape = shape;
         }
-        if(!hasReceived)
-            hasReceived = true;
-        else
-            m_shape.m_history.push_front(m_shape.m_mainShape);
-    	m_shape.m_mainShape = shape;
     }
-
 }
 
 void ShapeSubscriber::onSubscriptionMatched()

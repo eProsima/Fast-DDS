@@ -32,6 +32,8 @@ public:
 
     void updateDrawArea();
 
+    void updateInterval(uint32_t ms);
+
 private slots:
     void on_bt_publish_clicked();
 
@@ -41,7 +43,7 @@ private slots:
 
     void on_bt_subscribe_clicked();
 
-    void on_spin_domainId_valueChanged(int arg1);
+    void on_actionPreferences_triggered();
 
 private:
     Ui::MainWindow *ui;

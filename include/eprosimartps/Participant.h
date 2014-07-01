@@ -113,6 +113,9 @@ public:
 	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 				DDSTopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
+	void WriterDiscovery(RTPSWriter* Writer);
+	void ReaderDiscovery(RTPSReader* Reader);
+
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
 	bool assignLocator2ListenResources(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
 

@@ -45,7 +45,7 @@ public:
 	std::ostringstream m_log;
 	boost::thread::id m_id;
 	EPROSIMA_LOG_VERBOSITY_LEVEL m_verbosity;
-	RTPSThreadLog(){};
+	RTPSThreadLog():m_verbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL){};
 	RTPSThreadLog(boost::thread::id id,EPROSIMA_LOG_VERBOSITY_LEVEL lvl):
 		m_id(id),m_verbosity(lvl){};
 

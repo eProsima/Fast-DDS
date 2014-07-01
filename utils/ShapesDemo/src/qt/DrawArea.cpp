@@ -15,7 +15,9 @@
 
 DrawArea::DrawArea(QWidget *parent)
     : QWidget(parent),
-      m_isInitialized(false)
+      m_isInitialized(false),
+      firstA(10),
+      lastA(240)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
@@ -48,6 +50,11 @@ void DrawArea::paintEvent(QPaintEvent * /* event */)
     drawShapes(&painter);
 }
 
+uint8_t DrawArea::getAlpha(int pos,size_t total)
+{
+    float inc = (lastA-firstA)/total;
+    return (uint8_t)(firstA+inc*(pos+1));
+}
 
 void DrawArea::drawShapes(QPainter* painter)
 {
@@ -60,10 +67,13 @@ void DrawArea::drawShapes(QPainter* painter)
             for(std::vector<Shape*>::iterator it = m_shapes.begin();
                 it!=m_shapes.end();++it)
             {
+                size_t total = (*it)->m_history.size();
+                int index = 0;
                 for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_history.rbegin();
                     sit!=(*it)->m_history.rend();++sit)
                 {
-                    paintShape(painter,(*it)->m_type,*sit,128);
+                    paintShape(painter,(*it)->m_type,*sit,getAlpha(index,total),true);
+                    ++index;
                 }
                 paintShape(painter,(*it)->m_type,(*it)->m_mainShape,255);
 
@@ -77,10 +87,14 @@ void DrawArea::drawShapes(QPainter* painter)
 
 
 
-void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint8_t alpha)
+void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint8_t alpha,bool isHistory)
 {
     painter->save();
     m_pen.setColor(SD_QT_BLACK);
+    if(isHistory)
+        m_pen.setStyle(Qt::DotLine);
+    else
+        m_pen.setStyle(Qt::SolidLine);
     painter->setPen(m_pen);
     QColor auxc = getColorFromShapeType(shape);
     auxc.setAlpha(alpha);
