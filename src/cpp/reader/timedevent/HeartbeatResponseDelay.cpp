@@ -66,10 +66,11 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 				}
 			}
 			mp_WP->m_acknackCount++;
-			pDebugInfo("Sending ACKNACK: "<< sns <<endl;)
+			pDebugInfo("Sending ACKNACK: "<< sns <<endl;);
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
-			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
-												mp_WP->mp_SFR->getGuid().guidPrefix,
+			RTPSMessageCreator::addHeader(&m_heartbeat_response_msg,mp_WP->mp_SFR->getGuid().guidPrefix);
+			RTPSMessageCreator::addSubmessageInfoDST(&m_heartbeat_response_msg,mp_WP->param.remoteWriterGuid.guidPrefix);
+			RTPSMessageCreator::addSubmessageAcknack(&m_heartbeat_response_msg,
 												mp_WP->mp_SFR->getGuid().entityId,
 												mp_WP->param.remoteWriterGuid.entityId,
 												sns,

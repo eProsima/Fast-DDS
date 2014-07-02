@@ -50,7 +50,7 @@ void RTPSThreadLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL type,std::string& s
 		}
 		if(RTPSLog::getInstance()->try_lock())
 		{
-			std::cout<< m_log.str();
+			std::cout<< m_log.str()<< std::flush;
 			m_log.str("");m_log.clear();
 			RTPSLog::getInstance()->unlock();
 		}
@@ -81,7 +81,7 @@ void RTPSLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL type,std::string stri)
 
 RTPSLog* RTPSLog::getInstance()
 {
-	boost::this_thread::get_id();
+	//boost::this_thread::get_id();
 	if(! instanceFlag)
 	{
 		single = new RTPSLog();
@@ -95,6 +95,12 @@ RTPSLog* RTPSLog::getInstance()
 }
 RTPSLog::~RTPSLog()
 {
+	for(std::vector<RTPSThreadLog*>::iterator it=m_logs.begin();
+			it!=m_logs.end();++it)
+	{
+		delete(*it);
+	}
+	m_logs.clear();
 	RTPSLog::instanceFlag = false;
 
 }

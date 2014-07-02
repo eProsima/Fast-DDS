@@ -36,21 +36,21 @@ enum ChangeKind_t{
  * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
  */
 enum ChangeForReaderStatus_t{
-	UNSENT,        //!< UNSENT
-	UNACKNOWLEDGED,//!< UNACKNOWLEDGED
-	REQUESTED,     //!< REQUESTED
-	ACKNOWLEDGED,  //!< ACKNOWLEDGED
-	UNDERWAY       //!< UNDERWAY
+	UNSENT = 0,        //!< UNSENT
+	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
+	REQUESTED = 2,     //!< REQUESTED
+	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
+	UNDERWAY = 4       //!< UNDERWAY
 };
 /**
  * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
  */
 enum ChangeFromWriterStatus_t{
-	UNKNOWN,
-	MISSING,
+	UNKNOWN = 0,
+	MISSING = 1,
 	//REQUESTED_WITH_NACK,
-	RECEIVED,
-	LOST
+	RECEIVED = 2,
+	LOST = 3
 };
 
 

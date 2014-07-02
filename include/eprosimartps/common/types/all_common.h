@@ -13,14 +13,14 @@
 #ifndef ALL_COMMON_H_
 #define ALL_COMMON_H_
 
-#include "common_types.h"
-#include "CDRMessage_t.h"
-#include "Guid.h"
-#include "InstanceHandle.h"
-#include "Locator.h"
-#include "SequenceNumber.h"
-#include "SerializedPayload.h"
-#include "Time_t.h"
+#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/common/types/InstanceHandle.h"
+#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/types/SerializedPayload.h"
+#include "eprosimartps/common/types/Time_t.h"
 
 
 

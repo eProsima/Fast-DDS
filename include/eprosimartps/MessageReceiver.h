@@ -97,6 +97,7 @@ private:
 	bool proc_Submsg_Heartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_Gap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_InfoTS(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_InfoDST(CDRMessage_t*msg,SubmessageHeader_t* smh,bool*last);
 
 	///@}
 

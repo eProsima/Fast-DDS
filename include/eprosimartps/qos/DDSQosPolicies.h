@@ -51,7 +51,7 @@ typedef enum DurabilityQosPolicyKind_t: octet{
 class DurabilityQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
-	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),kind(VOLATILE_DURABILITY_QOS){};
+	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),QosPolicy(true),kind(VOLATILE_DURABILITY_QOS){};
 	virtual ~DurabilityQosPolicy(){};
 	DurabilityQosPolicyKind_t kind;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -60,7 +60,7 @@ public:
 
 class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH){};
+	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true){};
 	virtual ~DeadlineQosPolicy(){};
 	Duration_t period;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -68,7 +68,7 @@ public:
 
 class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH){};
+	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true){};
 	virtual ~LatencyBudgetQosPolicy(){};
 	Duration_t duration;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -82,7 +82,7 @@ enum LivelinessQosPolicyKind:octet {
 
 class LivelinessQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
+	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
 						kind(AUTOMATIC_LIVELINESS_QOS){TIME_INFINITE(lease_duration); TIME_INFINITE(announcement_period);};
 	virtual ~LivelinessQosPolicy(){};
 	LivelinessQosPolicyKind kind;
@@ -103,7 +103,7 @@ enum OwnershipQosPolicyKind:octet {
 
 class OwnershipQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),
+	OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),QosPolicy(true),
 						kind(SHARED_OWNERSHIP_QOS){};
 	virtual ~OwnershipQosPolicy(){};
 	OwnershipQosPolicyKind kind;
@@ -130,7 +130,7 @@ public:
 class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	DestinationOrderQosPolicyKind kind;
-	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),
+	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
 									kind(BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS){};
 	virtual ~DestinationOrderQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -139,7 +139,7 @@ public:
 class UserDataQosPolicy : private Parameter_t, public QosPolicy{
 	friend class ParameterList;
 public:
-	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0){};
+	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0),QosPolicy(false){};
 	virtual ~UserDataQosPolicy(){};
 	std::string data;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -148,7 +148,7 @@ public:
 class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	Duration_t minimum_separation;
-	TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH){};
+	TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false){};
 	virtual ~TimeBasedFilterQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -168,7 +168,7 @@ public:
 	PresentationQosPolicyAccessScopeKind access_scope;
 	bool coherent_access;
 	bool ordered_access;
-	PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),
+	PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),QosPolicy(true),
 			access_scope(INSTANCE_PRESENTATION_QOS),
 						coherent_access(false),ordered_access(false){};
 	virtual ~PresentationQosPolicy(){};
@@ -179,7 +179,7 @@ class PartitionQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
 public:
-	PartitionQosPolicy():Parameter_t(PID_PARTITION,0){};
+	PartitionQosPolicy():Parameter_t(PID_PARTITION,0),QosPolicy(false){};
 	virtual ~PartitionQosPolicy(){};
 	std::vector<octet> name;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -190,7 +190,7 @@ class TopicDataQosPolicy : private Parameter_t, public QosPolicy
 	friend class ParameterList;
 public:
 	std::vector<octet> value;
-	TopicDataQosPolicy():Parameter_t(PID_TOPIC_DATA,0){};
+	TopicDataQosPolicy():Parameter_t(PID_TOPIC_DATA,0),QosPolicy(false){};
 	virtual ~TopicDataQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -198,7 +198,7 @@ class GroupDataQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
 public:
-	GroupDataQosPolicy():Parameter_t(PID_GROUP_DATA,0){}
+	GroupDataQosPolicy():Parameter_t(PID_GROUP_DATA,0),QosPolicy(false){}
 	virtual ~GroupDataQosPolicy(){};
 	std::vector<octet> value;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -213,7 +213,7 @@ class HistoryQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	HistoryQosPolicyKind kind;
 	int32_t depth;
-	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),
+	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),QosPolicy(true),
 						kind(KEEP_ALL_HISTORY_QOS),depth(0){};
 	virtual ~HistoryQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -227,7 +227,7 @@ public:
 	uint32_t max_samples;
 	uint32_t max_instances;
 	uint32_t max_samples_per_instance;
-	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),
+	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(false),
 			history_kind(KEEP_LAST_HISTORY_QOS),
 						history_depth(1),max_samples(0),max_instances(0),max_samples_per_instance(0){};
 	virtual ~DurabilityServiceQosPolicy(){};
@@ -237,7 +237,7 @@ public:
 class LifespanQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	Duration_t duration;
-	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH){};
+	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true){};
 	virtual ~LifespanQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -246,7 +246,7 @@ public:
 class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	uint32_t value;
-	OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),value(0){};
+	OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),QosPolicy(false),value(0){};
 	virtual ~OwnershipStrengthQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -257,7 +257,7 @@ public:
 	uint32_t max_instances;
 	uint32_t max_samples_per_instance;
 	uint32_t allocated_samples;
-	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),
+	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),QosPolicy(false),
 			max_samples(1000),max_instances(5),max_samples_per_instance(200),allocated_samples(1000){};
 	virtual ~ResourceLimitsQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -266,7 +266,7 @@ public:
 class TransportPriorityQosPolicy : private Parameter_t , public QosPolicy{
 public:
 	uint32_t value;
-	TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),value(0){};
+	TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
 	virtual ~TransportPriorityQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
