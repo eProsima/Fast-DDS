@@ -26,7 +26,8 @@ RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 		mp_listener(NULL),
 		m_reader_cache((Endpoint*)this,payload_size),
 		m_expectsInlineQos(true),
-		m_acceptMessagesToUnknownReaders(true)
+		m_acceptMessagesToUnknownReaders(true),
+		m_acceptMessagesFromUnkownWriters(true)
 
 {
 	pDebugInfo("RTPSReader created correctly"<<endl);
@@ -45,6 +46,15 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 		return true;
 	else
 		return false;
+}
+
+bool RTPSReader::acceptMsgFrom(EntityId_t& writerId)
+{
+	if(m_acceptMessagesFromUnkownWriters)
+		return true;
+	if(writerId == this->m_trustedWriterEntityId)
+		return true;
+	return false;
 }
 
 

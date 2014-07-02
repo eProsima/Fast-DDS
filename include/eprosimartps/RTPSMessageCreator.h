@@ -106,6 +106,8 @@ public:
 	static bool addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
 	static bool addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
 
+	static bool addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP);
+
 	///@}
 
 

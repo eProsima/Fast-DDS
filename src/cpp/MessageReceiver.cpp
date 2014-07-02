@@ -116,7 +116,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		//First 4 bytes must contain: ID | flags | octets to next header
 		if(!readSubmessageHeader(msg,&submsgh))
 			return;
-		cout << msg->pos << "||"<<submsgh.submessageLength << "||"<<msg->length<<endl;
+		//cout << msg->pos << "||"<<submsgh.submessageLength << "||"<<msg->length<<endl;
 		if(msg->pos + submsgh.submessageLength > msg->length)
 		{
 			pWarning("MessageReceiver:SubMsg of invalid length"<<endl);
@@ -131,6 +131,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			if(this->destGuidPrefix != participantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
+				pDebugInfo("Data Submsg ignored, DST is another participant..."<<endl);
 			}
 			else
 			{
@@ -144,6 +145,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			if(this->destGuidPrefix != participantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
+				pDebugInfo("Gap Submsg ignored, DST is another participant..."<<endl);
 			}
 			else
 			{
@@ -157,6 +159,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			if(this->destGuidPrefix != participantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
+				pDebugInfo("Acknack Submsg ignored, DST is another participant..."<<endl);
 			}
 			else
 			{
@@ -170,6 +173,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			if(this->destGuidPrefix != participantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
+				pDebugInfo("HB Submsg ignored, DST is another participant..."<<endl);
 			}
 			else
 			{
@@ -183,6 +187,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_DST:
+			pDebugInfo("InfoDST message received, processing..."<<endl;);
 			valid = proc_Submsg_InfoDST(msg,&submsgh,&last_submsg);
 			//				pWarning("Info DST messages not yet implemented"<<endl);
 			//				msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
@@ -193,7 +198,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			break;
 		case INFO_TS:
 		{
-			//pDebugInfo("InfoTS Submsg received, processing..."<<endl);
+			pDebugInfo("InfoTS Submsg received, processing..."<<endl);
 			valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
 			break;
 		}
@@ -400,8 +405,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
-		cout << "Endpoint: "<< (*it)->getGuid()<<endl;
-		if((*it)->acceptMsgDirectedTo(readerID)) //add
+		if((*it)->acceptMsgFrom(ch->writerGUID.entityId))//(*it)->acceptMsgDirectedTo(readerID)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);
 			CacheChange_t* change_to_add;
@@ -462,7 +466,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 		}
 	}
-	cout << "CHECKED ALL READERS "<<endl;
+	//cout << "CHECKED ALL READERS "<<endl;
 	if(firstReaderNeedsToRelease)
 		firstReader->release_Cache(ch);
 	pDebugInfo("Sub Message DATA processed"<<endl);
@@ -488,6 +492,11 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	SequenceNumber_t firstSN, lastSN;
 	CDRMessage::readSequenceNumber(msg,&firstSN);
 	CDRMessage::readSequenceNumber(msg,&lastSN);
+	if(lastSN<firstSN)
+	{
+		pDebugInfo("HB Received with lastSN < firstSN, ignoring"<<endl;);
+		return false;
+	}
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
@@ -497,7 +506,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		if((*it)->acceptMsgFrom(writerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{
@@ -641,7 +650,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		if((*it)->acceptMsgFrom(writerGUID.entityId))//(*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{
