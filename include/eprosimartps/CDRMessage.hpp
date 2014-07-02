@@ -212,15 +212,22 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 	uint32_t str_size = 1;
 	bool valid = true;
 	valid&=CDRMessage::readUInt32(msg,&str_size);
-
-	*stri = std::string();stri->resize(str_size);
+	if(str_size>1)
+	{
+	*stri = std::string();stri->resize(str_size-1);
 	octet* oc1 = new octet[str_size];
 	valid &= CDRMessage::readData(msg,oc1,str_size);
-	for(uint32_t i =0;i<str_size;i++)
+	for(uint32_t i =0;i<str_size-1;i++)
 		stri->at(i) = oc1[i];
+	}
+	else
+	{
+		msg->pos+=str_size;
+	}
 	uint32_t rest = (uint32_t)(str_size-4*floor((float)str_size/4));
 	rest = rest==0 ? 0 : 4-rest;
 	msg->pos+=rest;
+
 	return valid;
 }
 
@@ -516,13 +523,13 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 inline bool CDRMessage::addString(CDRMessage_t*msg,std::string& in_str)
 {
 	uint32_t str_siz = (uint32_t)in_str.size();
-	int rest = str_siz % 4;
+	int rest = (str_siz+1) % 4;
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
 
-	bool valid = CDRMessage::addUInt32(msg, str_siz);
+	bool valid = CDRMessage::addUInt32(msg, str_siz+1);
 	valid &= CDRMessage::addData(msg,
-			(unsigned char*) in_str.c_str(), str_siz);
+			(unsigned char*) in_str.c_str(), str_siz+1);
 	if (rest != 0) {
 		octet oc = '\0';
 		for (int i = 0; i < rest; i++) {

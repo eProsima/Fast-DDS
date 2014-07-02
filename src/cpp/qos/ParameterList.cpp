@@ -198,8 +198,11 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			case PID_TYPE_NAME:
 			case PID_ENTITY_NAME:
 			{
+//				cout << msg->pos << endl;
 				ParameterString_t* p = new ParameterString_t(pid,plength);
 				valid &= CDRMessage::readString(msg,&p->m_string);
+//				cout << "READ: "<< p->m_string<<endl;
+//				cout << msg->pos << endl;
 				IF_VALID_ADD
 			}
 			case PID_PROPERTY_LIST:
@@ -210,38 +213,41 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 								//uint16_t msg_pos_first = msg->pos;
 				std::string str;
 				std::pair<std::string,std::string> pair;
-				uint32_t rest=0;
+				//uint32_t rest=0;
 				for(uint32_t n_prop =0;n_prop<num_properties;++n_prop)
 				{
-
-					//STRING 1
-					uint32_t str_size = 1;
-					valid&=CDRMessage::readUInt32(msg,&str_size);
-
-					str = std::string();str.resize(str_size);
-					octet* oc1 = new octet[str_size];
-					valid &= CDRMessage::readData(msg,oc1,str_size);
-					for(uint32_t i =0;i<str_size;i++)
-						str.at(i) = oc1[i];
-					pair.first = str;
-					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
-					rest = rest==0 ? 0 : 4-rest;
-					msg->pos+=rest;
-					//STRING 2
-					valid&=CDRMessage::readUInt32(msg,&str_size);
-					str = std::string();str.resize(str_size);
-
-					octet* oc2 = new octet[str_size];
-					valid &= CDRMessage::readData(msg,oc2,str_size);
-					for(uint32_t i =0;i<str_size;i++)
-						str.at(i) = oc2[i];
-					pair.second = str;
-					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
-										rest = rest==0 ? 0 : 4-rest;
-										msg->pos+=rest;
+					pair.first.clear();
+					valid &= CDRMessage::readString(msg,&pair.first);
+					pair.second.clear();
+					valid &= CDRMessage::readString(msg,&pair.second);
+//					//STRING 1
+//					uint32_t str_size = 1;
+//					valid&=CDRMessage::readUInt32(msg,&str_size);
+//
+//					str = std::string();str.resize(str_size);
+//					octet* oc1 = new octet[str_size];
+//					valid &= CDRMessage::readData(msg,oc1,str_size);
+//					for(uint32_t i =0;i<str_size;i++)
+//						str.at(i) = oc1[i];
+//					pair.first = str;
+//					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
+//					rest = rest==0 ? 0 : 4-rest;
+//					msg->pos+=rest;
+//					//STRING 2
+//					valid&=CDRMessage::readUInt32(msg,&str_size);
+//					str = std::string();str.resize(str_size);
+//
+//					octet* oc2 = new octet[str_size];
+//					valid &= CDRMessage::readData(msg,oc2,str_size);
+//					for(uint32_t i =0;i<str_size;i++)
+//						str.at(i) = oc2[i];
+//					pair.second = str;
+//					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
+//										rest = rest==0 ? 0 : 4-rest;
+//										msg->pos+=rest;
 					p->properties.push_back(pair);
-					delete(oc1);
-					delete(oc2);
+//					delete(oc1);
+//					delete(oc2);
 				}
 				if(valid)
 				{

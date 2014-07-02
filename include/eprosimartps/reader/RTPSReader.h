@@ -92,6 +92,8 @@ public:
 
 	bool acceptMsgDirectedTo(EntityId_t& entityId);
 
+	bool acceptMsgFrom(EntityId_t& entityId);
+
 
 
 	Semaphore m_semaphore;
@@ -153,6 +155,12 @@ public:
 			return false;
 	}
 
+	void setTrustedWriter(EntityId_t writer)
+	{
+		m_acceptMessagesFromUnkownWriters=false;
+		m_trustedWriterEntityId = writer;
+	}
+
 protected:
 	//!Pointer to the associated subscriber
 	//	Subscriber* mp_Sub;
@@ -169,6 +177,8 @@ protected:
 
 	ReaderQos m_qos;
 	bool m_acceptMessagesToUnknownReaders;
+	bool m_acceptMessagesFromUnkownWriters;
+	EntityId_t m_trustedWriterEntityId;
 };
 
 } /* namespace rtps */

@@ -177,7 +177,15 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	return true;
 }
 
+static EntityId_t TrustedWriter(const EntityId_t& reader)
+{
+	if(reader == c_EntityId_SPDPReader) return c_EntityId_SPDPWriter;
+	if(reader == c_EntityId_SEDPPubReader) return c_EntityId_SEDPPubWriter;
+	if(reader == c_EntityId_SEDPSubReader) return c_EntityId_SEDPSubWriter;
+	if(reader == c_EntityId_ReaderLiveliness) return c_EntityId_WriterLiveliness;
 
+	return c_EntityId_Unknown;
+}
 
 bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
@@ -212,6 +220,10 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 	SReader->setQos(param.qos,true);
 	SReader->mp_send_thr = &this->m_send_thr;
 	SReader->mp_event_thr = &this->m_event_thr;
+	if(isBuiltin)
+	{
+		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
+	}
 	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
 	{
 		delete(SReader);

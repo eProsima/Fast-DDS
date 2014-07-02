@@ -475,6 +475,11 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP:localReaderMatching R-DWD"<<endl);
 	bool matched = false;
+//	cout << R->getTopic().getTopicName() << "|"<< wdata->m_topicName<< "|"<<(R->getTopic().getTopicName(), wdata->m_topicName)<<endl;
+//	cout << R->getTopic().getTopicName().size()<< "|"<<wdata->m_topicName.size()<<endl;
+//	cout << R->getTopic().getTopicKind() << "|"<< wdata->topicKind<<"|"<<(R->getTopic().getTopicKind() == wdata->topicKind)<<endl;
+//	cout << R->getTopic().getTopicDataType() << "|"<< wdata->m_typeName<<"|"<<(R->getTopic().getTopicDataType() == wdata->m_typeName)<<endl;
+//	cout << wdata->isAlive<<endl;
 	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
 			R->getTopic().getTopicKind() == wdata->topicKind &&
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&
