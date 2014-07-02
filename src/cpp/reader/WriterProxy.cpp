@@ -25,6 +25,7 @@ WriterProxy_t::WriterProxy_t():
 			remoteWriterGuid(c_Guid_Unknown),
 			leaseDuration(c_TimeInfinite),
 			livelinessKind(AUTOMATIC_LIVELINESS_QOS)
+
 	{
 	
 	}
@@ -52,7 +53,8 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false),
-		m_livelinessAsserted(true)
+		m_livelinessAsserted(true),
+		m_firstReceived(true)
 
 {
 	m_changesFromW.clear();
@@ -64,7 +66,7 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
-	pDebugInfo("WriterProxy:MISSING_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
+	pDebugInfo("WriterProxy "<<param.remoteWriterGuid.entityId<<": MISSING_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
 //	SequenceNumber_t seq = (seqNum)+1;
 //	add_unknown_changes(seq);
@@ -86,6 +88,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 	}
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
+	print_changes_fromWriter_test2();
 	return true;
 }
 
@@ -109,13 +112,14 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 		chw.is_relevant = true;
 		pDebugInfo("WriterProxy:add_unknown_changes: "<<chw.seqNum.to64long()<<endl);
 		m_changesFromW.push_back(chw);
+
 	}
 	return true;
 }
 
 bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
-	pDebugInfo("WriterProxy:LOST_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
+	pDebugInfo("WriterProxy "<<param.remoteWriterGuid.entityId<<": LOST_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
 //	SequenceNumber_t seq = (seqNum)+1;
 //	add_unknown_changes(seq);
@@ -131,22 +135,39 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 	}
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
+	print_changes_fromWriter_test2();
 	return true;
 }
 
 bool WriterProxy::received_change_set(CacheChange_t* change)
 {
-	pDebugInfo("WriterProxy:RECEIVED_changes_set: change with seqNum: "<<change->sequenceNumber.to64long()<<endl);
+	pDebugInfo("WriterProxy "<<param.remoteWriterGuid.entityId<<": RECEIVED_changes_set: change with seqNum: "<<change->sequenceNumber.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
-	add_changes_from_writer_up_to(change->sequenceNumber);
+	if(!this->m_firstReceived || m_changesFromW.size()>0)
+	{
+		add_changes_from_writer_up_to(change->sequenceNumber);
+		m_firstReceived = false;
+	}
+	else
+	{
+		ChangeFromWriter_t chfw;
+		chfw.setChange(change);
+		chfw.status = RECEIVED;
+		chfw.is_relevant = true;
+		m_changesFromW.push_back(chfw);
+		m_firstReceived = false;
+		print_changes_fromWriter_test2();
+		return true;
+	}
 	for(std::vector<ChangeFromWriter_t>::reverse_iterator cit=m_changesFromW.rbegin();cit!=m_changesFromW.rend();++cit)
 	{
 		if(cit->seqNum == change->sequenceNumber)
 		{
 			cit->setChange(change);
 			cit->status = RECEIVED;
+			print_changes_fromWriter_test2();
 			return true;
 		}
 	}
@@ -176,6 +197,7 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 		{
 			cit->status = RECEIVED;
 			cit->is_relevant = false;
+			print_changes_fromWriter_test2();
 			return true;
 		}
 	}
@@ -212,6 +234,7 @@ bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
 		}
 		if(missing->empty())
 			m_isMissingChangesEmpty = true;
+		print_changes_fromWriter_test2();
 		return true;
 	}
 	else
@@ -308,7 +331,7 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
-	cout << "WP: ";
+	cout << "WP "<<this->param.remoteWriterGuid.entityId<<": ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
 		cout << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";

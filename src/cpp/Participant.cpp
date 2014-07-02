@@ -28,6 +28,7 @@
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
+#include "eprosimartps/utils/eClock.h"
 
 namespace eprosima {
 namespace rtps {
@@ -153,16 +154,22 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
-	if(!isBuiltin)
-	{
-		m_userWriterList.push_back(SWriter);
-		if(mp_PDP!=NULL)
-		{
-			mp_PDP->localWriterMatching(SWriter,true);
-			if(mp_PDP->mp_WL !=NULL)
-				mp_PDP->mp_WL->addLocalWriter(SWriter);
-		}
-	}
+//	if(!isBuiltin)
+//	{
+//		m_userWriterList.push_back(SWriter);
+//		if(mp_PDP!=NULL)
+//		{
+//			mp_PDP->localWriterMatching(SWriter,true);
+//			if(mp_PDP->mp_WL !=NULL)
+//				mp_PDP->mp_WL->addLocalWriter(SWriter);
+//			//Match the readers in the same participant
+//			for(std::vector<RTPSReader*>::iterator rit = this->m_userReaderList.begin();
+//					rit!=this->m_userReaderList.end();++rit)
+//			{
+//				mp_PDP->localReaderMatching(*rit,false);
+//			}
+//		}
+//	}
 	m_allWriterList.push_back(SWriter);
 
 
@@ -170,7 +177,15 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	return true;
 }
 
+static EntityId_t TrustedWriter(const EntityId_t& reader)
+{
+	if(reader == c_EntityId_SPDPReader) return c_EntityId_SPDPWriter;
+	if(reader == c_EntityId_SEDPPubReader) return c_EntityId_SEDPPubWriter;
+	if(reader == c_EntityId_SEDPSubReader) return c_EntityId_SEDPSubWriter;
+	if(reader == c_EntityId_ReaderLiveliness) return c_EntityId_WriterLiveliness;
 
+	return c_EntityId_Unknown;
+}
 
 bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
@@ -205,23 +220,67 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 	SReader->setQos(param.qos,true);
 	SReader->mp_send_thr = &this->m_send_thr;
 	SReader->mp_event_thr = &this->m_event_thr;
+	if(isBuiltin)
+	{
+		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
+	}
 	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
 	{
 		delete(SReader);
 		return false;
 	}
-	if(!isBuiltin)
-	{
-		m_userReaderList.push_back(SReader);
-		if(mp_PDP!=NULL)
-			mp_PDP->localReaderMatching(SReader,true);
-	}
+//	if(!isBuiltin)
+//	{
+//		m_userReaderList.push_back(SReader);
+//		if(mp_PDP!=NULL)
+//			mp_PDP->localReaderMatching(SReader,true);
+//		//Match the readers in the same participant
+//		for(std::vector<RTPSWriter*>::iterator wit = this->m_userWriterList.begin();
+//				wit!=this->m_userWriterList.end();++wit)
+//		{
+//			mp_PDP->localWriterMatching(*wit,false);
+//		}
+//	}
 	m_allReaderList.push_back(SReader);
 
 
 	*ReaderOut = SReader;
 	return true;
 }
+
+void ParticipantImpl::ReaderDiscovery(RTPSReader* SReader)
+{
+	eClock::my_sleep(30);
+	m_userReaderList.push_back(SReader);
+	if(mp_PDP!=NULL)
+		mp_PDP->localReaderMatching(SReader,true);
+	//Match the readers in the same participant
+	for(std::vector<RTPSWriter*>::iterator wit = this->m_userWriterList.begin();
+			wit!=this->m_userWriterList.end();++wit)
+	{
+		mp_PDP->localWriterMatching(*wit,false);
+	}
+
+}
+
+void ParticipantImpl::WriterDiscovery(RTPSWriter* SWriter)
+{
+	eClock::my_sleep(30);
+	m_userWriterList.push_back(SWriter);
+	if(mp_PDP!=NULL)
+	{
+		mp_PDP->localWriterMatching(SWriter,true);
+		if(mp_PDP->mp_WL !=NULL)
+			mp_PDP->mp_WL->addLocalWriter(SWriter);
+		//Match the readers in the same participant
+		for(std::vector<RTPSReader*>::iterator rit = this->m_userReaderList.begin();
+				rit!=this->m_userReaderList.end();++rit)
+		{
+			mp_PDP->localReaderMatching(*rit,false);
+		}
+	}
+}
+
 
 bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {

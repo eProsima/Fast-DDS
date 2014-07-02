@@ -89,7 +89,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
-		Wparam.payloadMaxSize = 1000;
+		Wparam.payloadMaxSize = 2000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
@@ -110,7 +110,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
 		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
-		Rparam.payloadMaxSize = 1000;
+		Rparam.payloadMaxSize = 2000;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
@@ -138,7 +138,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
 		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
-		Rparam.payloadMaxSize = 1000;
+		Rparam.payloadMaxSize = 2000;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
@@ -161,7 +161,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
-		Wparam.payloadMaxSize = 1000;
+		Wparam.payloadMaxSize = 2000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);
@@ -475,6 +475,11 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP:localReaderMatching R-DWD"<<endl);
 	bool matched = false;
+//	cout << R->getTopic().getTopicName() << "|"<< wdata->m_topicName<< "|"<<(R->getTopic().getTopicName(), wdata->m_topicName)<<endl;
+//	cout << R->getTopic().getTopicName().size()<< "|"<<wdata->m_topicName.size()<<endl;
+//	cout << R->getTopic().getTopicKind() << "|"<< wdata->topicKind<<"|"<<(R->getTopic().getTopicKind() == wdata->topicKind)<<endl;
+//	cout << R->getTopic().getTopicDataType() << "|"<< wdata->m_typeName<<"|"<<(R->getTopic().getTopicDataType() == wdata->m_typeName)<<endl;
+//	cout << wdata->isAlive<<endl;
 	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
 			R->getTopic().getTopicKind() == wdata->topicKind &&
 			R->getTopic().getTopicDataType() == wdata->m_typeName &&

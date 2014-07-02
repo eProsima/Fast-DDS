@@ -48,14 +48,14 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	//Str size
 	uint32_t str_siz = this->m_string.size();
-	int rest = str_siz % 4;
+	int rest = (str_siz+1) % 4;
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
-	this->length = str_siz + 4 + rest;
+	this->length = str_siz+1 + 4 + rest;
 	valid &= CDRMessage::addUInt16(msg, this->length);
-	valid &= CDRMessage::addUInt32(msg, str_siz);
+	valid &= CDRMessage::addUInt32(msg, str_siz+1);
 	valid &= CDRMessage::addData(msg,
-			(unsigned char*) this->m_string.c_str(), str_siz);
+			(unsigned char*) this->m_string.c_str(), str_siz+1);
 	if (rest != 0) {
 		octet oc = '\0';
 		for (int i = 0; i < rest; i++) {

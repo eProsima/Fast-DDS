@@ -56,8 +56,8 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 typedef unsigned char octet;
-typedef unsigned int uint;
-typedef unsigned short ushort;
+//typedef unsigned int uint;
+//typedef unsigned short ushort;
 typedef unsigned char SubmessageFlag;
 typedef uint32_t BuiltinEndpointSet_t;
 typedef uint32_t Count_t;

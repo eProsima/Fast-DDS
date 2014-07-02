@@ -59,7 +59,7 @@ void SEDPPubListener::onNewDataMessage()
 				}
 				else
 				{
-					pWarning("SEDP PubListener:Received information from BAD writer"<<endl);
+					pWarning("SEDP PubListener:Received information from BAD ENTITYID writer"<<endl);
 				}
 				bool already_in_history = false;
 //				//Check if CacheChange_t with same Key is already in History:
@@ -119,6 +119,11 @@ void SEDPPubListener::onNewDataMessage()
 					pdata->m_writers.push_back(wdata);
 					wdataptr = *(pdata->m_writers.end()-1);
 				}
+				//CHECK the locators:
+				if(wdataptr->m_writerProxy.unicastLocatorList.empty())
+					wdataptr->m_writerProxy.unicastLocatorList = pdata->m_defaultUnicastLocatorList;
+				if(wdataptr->m_writerProxy.multicastLocatorList.empty())
+					wdataptr->m_writerProxy.multicastLocatorList = pdata->m_defaultMulticastLocatorList;
 				wdataptr->isAlive = true;
 				for(std::vector<RTPSReader*>::iterator rit = this->mp_SEDP->mp_PDP->mp_participant->userReadersListBegin();
 						rit!=this->mp_SEDP->mp_PDP->mp_participant->userReadersListEnd();++rit)
@@ -175,7 +180,7 @@ void SEDPSubListener::onNewDataMessage()
 				}
 				else
 				{
-					pWarning("SEDP SubListener:Received information from BAD entityId reader"<<endl);
+					pWarning("SEDP SubListener:Received information from BAD ENTITYID reader"<<endl);
 				}
 				bool already_in_history = false;
 				//Check if CacheChange_t with same Key is already in History:
