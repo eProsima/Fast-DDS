@@ -556,6 +556,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 {
 
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	bool finalFlag = smh->flags & BIT(1) ? true: false;
 	//Assign message endianness
 	if(endiannessFlag)
 		msg->msg_endian = LITTLEEND;
@@ -598,7 +599,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							(*rit)->acked_changes_set(SNSet.base);
 							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
 							(*rit)->requested_changes_set(set_vec);
-							if(!(*rit)->m_isRequestedChangesEmpty)
+							if(!(*rit)->m_isRequestedChangesEmpty || !finalFlag)
 							{
 								(*rit)->m_nackResponse.restart_timer();
 							}

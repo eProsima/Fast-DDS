@@ -88,11 +88,12 @@ bool TimeBasedFilterQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 
 bool PresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addUInt16(msg, PARAMETER_PRESENTATION_LENGTH);//this->length);
 	valid &= CDRMessage::addOctet(msg,access_scope);
+	msg->pos+=3;msg->length+=3;
 	valid &= CDRMessage::addOctet(msg,(octet)coherent_access);
 	valid &= CDRMessage::addOctet(msg,(octet)ordered_access);
-	msg->pos++;msg->length++;
+	msg->pos+=2;msg->length+=2;
 	return valid;
 }
 

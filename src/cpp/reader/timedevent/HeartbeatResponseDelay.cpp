@@ -70,12 +70,15 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addHeader(&m_heartbeat_response_msg,mp_WP->mp_SFR->getGuid().guidPrefix);
 			RTPSMessageCreator::addSubmessageInfoDST(&m_heartbeat_response_msg,mp_WP->param.remoteWriterGuid.guidPrefix);
+			bool final = false;
+			if(sns.isSetEmpty())
+				final = true;
 			RTPSMessageCreator::addSubmessageAcknack(&m_heartbeat_response_msg,
 												mp_WP->mp_SFR->getGuid().entityId,
 												mp_WP->param.remoteWriterGuid.entityId,
 												sns,
 												mp_WP->m_acknackCount,
-												false);
+												final);
 
 			std::vector<Locator_t>::iterator lit;
 
