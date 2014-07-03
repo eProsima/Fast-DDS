@@ -400,6 +400,10 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,wdata.m_key);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
+	{
+		ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,wdata.m_writerProxy.remoteWriterGuid);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
 	if( wdata.m_qos.m_durability.sendAlways() || wdata.m_qos.m_durability.hasChanged)
 	{
 		DurabilityQosPolicy*p = new DurabilityQosPolicy();
@@ -532,6 +536,10 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 	}
 	{
 		ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,rdata.m_key);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
+	{
+		ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,rdata.m_readerProxy.remoteReaderGuid);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
 	if(rdata.m_qos.m_durability.sendAlways() || rdata.m_qos.m_durability.hasChanged)

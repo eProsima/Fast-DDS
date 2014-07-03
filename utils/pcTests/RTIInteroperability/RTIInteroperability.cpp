@@ -46,7 +46,7 @@ class SampleTypeDataType:public DDSTopicDataType
 public:
 	SampleTypeDataType()
 {
-		m_topicDataTypeName = "HelloWorld";
+		m_topicDataTypeName = "SampleType";
 		m_typeSize = sizeof(long);
 		m_isGetKeyDefined = false;
 };
@@ -142,8 +142,8 @@ int main(int argc, char** argv)
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = NO_KEY;
-		Wparam.topic.topicDataType = "HelloWorld";
-		Wparam.topic.topicName = "HelloWorld";
+		Wparam.topic.topicDataType = "SampleType";
+		Wparam.topic.topicName = "Example SampleType";
 		Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 		Wparam.topic.resourceLimitsQos.max_samples = 50;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 50;
@@ -192,8 +192,8 @@ int main(int argc, char** argv)
 		PParam.name = "participant2";
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
-		Rparam.topic.topicDataType = "HelloWorld";
-		Rparam.topic.topicName = "HelloWorld";
+		Rparam.topic.topicDataType = "SampleType";
+		Rparam.topic.topicName = "Example SampleType";
 		Rparam.topic.topicKind = NO_KEY;
 		Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 		Rparam.topic.historyQos.depth = 2;
@@ -202,8 +202,10 @@ int main(int argc, char** argv)
 		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 3; //NOT USED IN KEEP_LAST
 		Rparam.topic.resourceLimitsQos.allocated_samples = 30;
 		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
-		Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
 		MySubListener mylisten;
+		//cout << "length: "<<Rparam.qos.m_presentation.length << endl;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();

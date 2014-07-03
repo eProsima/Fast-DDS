@@ -60,7 +60,10 @@ public:
 
 class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true){};
+	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true)
+	{
+		period=c_TimeInfinite;
+	};
 	virtual ~DeadlineQosPolicy(){};
 	Duration_t period;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -131,7 +134,7 @@ class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	DestinationOrderQosPolicyKind kind;
 	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
-									kind(BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS){};
+									kind(BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS){};
 	virtual ~DestinationOrderQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -160,7 +163,7 @@ enum PresentationQosPolicyAccessScopeKind:octet
 	GROUP_PRESENTATION_QOS
 };
 
-#define PARAMETER_PRESENTATION_LENGTH 12
+#define PARAMETER_PRESENTATION_LENGTH 8
 
 class PresentationQosPolicy : private Parameter_t, public QosPolicy
 {
