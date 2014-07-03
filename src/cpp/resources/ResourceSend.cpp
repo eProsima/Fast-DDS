@@ -127,7 +127,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 				m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
 			} catch (const std::exception& error) {
 				// Should print the actual error message
-				std::cerr << error.what() << std::endl;
+				pWarning(error.what() << std::endl);
 			}
 
 		}
