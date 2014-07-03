@@ -342,7 +342,6 @@ void WriterProxy::print_changes_fromWriter_test2()
 
 bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
 {
-	//FIXME: CORRECT THIS METHOD.
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
 		if(it->seqNum < seq)
