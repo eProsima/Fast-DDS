@@ -337,7 +337,8 @@ void WriterProxy::print_changes_fromWriter_test2()
 	{
 		ss << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";
 	}
-	pDebugInfo(ss.str()<<endl;);
+	std::string auxstr = ss.str();
+	pDebugInfo(auxstr<<endl;);
 }
 
 bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)

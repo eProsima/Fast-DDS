@@ -419,10 +419,10 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				valid &= CDRMessage::readInt32(msg,&p->service_cleanup_delay.seconds);
 				valid &= CDRMessage::readUInt32(msg,&p->service_cleanup_delay.fraction);
 				valid&=CDRMessage::readOctet(msg,(octet*)&p->history_kind);msg->pos+=3;
-				valid &= CDRMessage::readUInt32(msg,&p->history_depth);
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
-				valid &= CDRMessage::readUInt32(msg,&p->max_instances);
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples_per_instance);
+				valid &= CDRMessage::readInt32(msg,&p->history_depth);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples);
+				valid &= CDRMessage::readInt32(msg,&p->max_instances);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples_per_instance);
 				IF_VALID_ADD
 			}
 			case PID_LIFESPAN:
@@ -441,9 +441,9 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			case PID_RESOURCE_LIMITS:
 			{
 				ResourceLimitsQosPolicy* p = new ResourceLimitsQosPolicy();
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
-				valid &= CDRMessage::readUInt32(msg,&p->max_instances);
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples_per_instance);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples);
+				valid &= CDRMessage::readInt32(msg,&p->max_instances);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples_per_instance);
 				IF_VALID_ADD
 			}
 			case PID_TRANSPORT_PRIORITY:

@@ -240,6 +240,11 @@ void SEDPSubListener::onNewDataMessage()
 					pdata->m_readers.push_back(rdata);
 					rdataptr = *(pdata->m_readers.end()-1);
 				}
+				//CHECK the locators:
+				if(rdataptr->m_readerProxy.unicastLocatorList.empty())
+					rdataptr->m_readerProxy.unicastLocatorList = pdata->m_defaultUnicastLocatorList;
+				if(rdataptr->m_readerProxy.multicastLocatorList.empty())
+					rdataptr->m_readerProxy.multicastLocatorList = pdata->m_defaultMulticastLocatorList;
 				rdataptr->isAlive = true;
 				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->userWritersListBegin();
 						wit!=this->mp_SEDP->mp_PDP->mp_participant->userWritersListEnd();++wit)

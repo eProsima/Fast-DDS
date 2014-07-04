@@ -404,6 +404,18 @@ bool DiscoveredData::DiscoveredWriterData2ParameterList(DiscoveredWriterData& wd
 		ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,wdata.m_writerProxy.remoteWriterGuid);
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
+	{
+		ParameterPort_t* p = new ParameterPort_t(PID_TYPE_MAX_SIZE_SERIALIZED,4,wdata.m_typeMaxSerialized);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
+	{
+		ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(PID_PROTOCOL_VERSION,4);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
+	{
+		ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
+		param->m_parameters.push_back((Parameter_t*)p);
+	}
 	if( wdata.m_qos.m_durability.sendAlways() || wdata.m_qos.m_durability.hasChanged)
 	{
 		DurabilityQosPolicy*p = new DurabilityQosPolicy();

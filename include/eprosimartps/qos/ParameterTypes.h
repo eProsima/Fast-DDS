@@ -161,6 +161,7 @@ public:
 	uint32_t port;
 	ParameterPort_t():port(0){};
 	ParameterPort_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),port(0){};
+	ParameterPort_t(ParameterId_t pid,uint16_t in_length,uint32_t po):Parameter_t(pid,in_length),port(po){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

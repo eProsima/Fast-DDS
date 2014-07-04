@@ -369,9 +369,17 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 		if(dataFlag)
 		{
-			ch->serializedPayload.length = payload_size-2-2;
-			CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
-			ch->kind = ALIVE;
+			if(ch->serializedPayload.max_size >= payload_size-2-2)
+			{
+				ch->serializedPayload.length = payload_size-2-2;
+				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
+				ch->kind = ALIVE;
+			}
+			else
+			{
+				firstReader->release_Cache(ch);
+				return false;
+			}
 		}
 		else if(keyFlag)
 		{

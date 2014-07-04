@@ -38,10 +38,10 @@ public:
     void define(SD_COLOR color=SD_BLUE,
                 uint32_t x=30,uint32_t y =30,uint32_t size=30);
     void setColor(SD_COLOR c);
-    void setColor(std::string str);
+    void setColor(const char* strin);
     std::string getColorStr()
     {
-        return m_str_color;
+        return std::string(m_char_color);
     }
     SD_COLOR getColor()
     {
@@ -51,7 +51,8 @@ public:
     uint32_t m_y;
     uint32_t m_size;
 private:
-    std::string m_str_color; //KEY
+    char m_char_color[8]; //KEY
+   // std::string m_str_color; //KEY
     SD_COLOR m_color;
 };
 

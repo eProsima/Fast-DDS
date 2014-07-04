@@ -90,7 +90,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 		rp->m_changesForReader.push_back(changeForReader);
 	}
 	matched_readers.push_back(rp);
-	pDebugInfo("Reader Proxy added to StatefulWriter." << endl);
+	pDebugInfo("Reader Proxy added to StatefulWriter with " <<this->unicastLocatorList.size()<<"(u)-"<<this->multicastLocatorList.size()<<"(m) locators"<< endl);
 	if(rp->m_changesForReader.size()>0)
 		unsent_changes_not_empty();
 	return true;

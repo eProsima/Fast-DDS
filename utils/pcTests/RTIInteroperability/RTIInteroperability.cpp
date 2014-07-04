@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 		Wparam.topic.resourceLimitsQos.allocated_samples = 50;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
-		Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);

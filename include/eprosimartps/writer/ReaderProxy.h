@@ -51,7 +51,7 @@ typedef struct ReaderProxy_t{
 	ReliabilityKind_t m_reliability;
 	ReaderProxy_t(){
 		GUID_UNKNOWN(remoteReaderGuid);
-		expectsInlineQos = false;
+		expectsInlineQos = true;
 		m_reliability = RELIABLE;
 	}
 }ReaderProxy_t;

@@ -29,7 +29,7 @@ ShapePublisher::~ShapePublisher()
 
 bool ShapePublisher::initPublisher()
 {
-    mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes);
+    mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes,(PublisherListener*)this);
     if(mp_pub !=NULL)
         return true;
     return false;
@@ -41,4 +41,9 @@ void ShapePublisher::write()
     {
         mp_pub->write((void*)&this->m_shape.m_mainShape);
     }
+}
+
+void ShapePublisher::onPublicationMatched()
+{
+    cout << "PUBLICATION MATCHED:*****************************"<<endl;
 }
