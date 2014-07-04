@@ -62,7 +62,9 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		 submsgElem.msg_endian = BIGEND;
 	}
 	//Find out flags
-	bool dataFlag,keyFlag,inlineQosFlag;
+	bool dataFlag = false;
+	bool keyFlag = false;
+	bool inlineQosFlag = false;
 	if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
 	{
 		dataFlag = true;

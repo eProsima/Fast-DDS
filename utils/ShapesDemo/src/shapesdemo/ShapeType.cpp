@@ -7,6 +7,16 @@
  *************************************************************************/
 
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
+#include <stdio.h>
+#include <string>
+#include <iostream>
+#include <string.h>
+
+#if defined(_WIN32)
+#define MYCOPYSTR strcpy_s
+#else
+#define MYCOPYSTR strcpy
+#endif
 
 
 ShapeType::ShapeType()
@@ -32,24 +42,48 @@ void ShapeType::setColor(SD_COLOR c)
     m_color = c;
     switch(c)
     {
-    case SD_PURPLE: m_str_color = "PURPLE";break;
-    case SD_BLUE: m_str_color = "BLUE";break;
-    case SD_RED: m_str_color = "RED";break;
-    case SD_GREEN: m_str_color = "GREEN";break;
-    case SD_YELLOW: m_str_color = "YELLOW";break;
-    case SD_CYAN: m_str_color = "CYAN";break;
-    case SD_MAGENTA: m_str_color = "MAGENTA";break;
-    case SD_ORANGE: m_str_color = "ORANGE";break;
+    case SD_PURPLE:     MYCOPYSTR(m_char_color,"PURPLE");break;
+    case SD_BLUE:       MYCOPYSTR(m_char_color,"BLUE");break;
+    case SD_RED:        MYCOPYSTR(m_char_color,"RED");break;
+    case SD_GREEN:      MYCOPYSTR(m_char_color,"GREEN");break;
+    case SD_YELLOW:     MYCOPYSTR(m_char_color,"YELLOW");break;
+    case SD_CYAN:       MYCOPYSTR(m_char_color,"CYAN");break;
+    case SD_MAGENTA:    MYCOPYSTR(m_char_color,"MAGENTA");break;
+    case SD_ORANGE:     MYCOPYSTR(m_char_color,"ORANGE");break;
     }
 }
-void ShapeType::setColor(std::string str)
+void ShapeType::setColor(const char* strin)
 {
-    if(str == "PURPLE") m_color = SD_PURPLE;
-    if(str == "BLUE") m_color = SD_BLUE;
-    if(str == "RED") m_color = SD_RED;
-    if(str == "GREEN") m_color = SD_GREEN;
-    if(str == "YELLOW") m_color = SD_YELLOW;
-    if(str == "CYAN") m_color = SD_CYAN;
-    if(str == "MAGENTA") m_color = SD_MAGENTA;
-    if(str == "ORANGE") m_color = SD_ORANGE;
+    if(strcmp(strin,"PURPLE")==0)
+    {
+        setColor(SD_PURPLE);
+    }
+    if(strcmp(strin,"BLUE")==0)
+    {
+        setColor(SD_BLUE);
+    }
+    if(strcmp(strin,"RED")==0)
+    {
+        setColor(SD_RED);
+    }
+    if(strcmp(strin,"GREEN")==0)
+    {
+        setColor(SD_GREEN);
+    }
+    if(strcmp(strin,"YELLOW")==0)
+    {
+        setColor(SD_YELLOW);
+    }
+    if(strcmp(strin,"CYAN")==0)
+    {
+        setColor(SD_CYAN);
+    }
+    if(strcmp(strin,"MAGENTA")==0)
+    {
+        setColor(SD_MAGENTA);
+    }
+    if(strcmp(strin,"ORANGE")==0)
+    {
+        setColor(SD_ORANGE);
+    }
 }

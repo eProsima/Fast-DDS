@@ -77,7 +77,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 			 m_changes.push_back(a_change);
 			 pDebugInfo("WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added."<< endl);
 			 updateMaxMinSeqNum();
-			 if(m_changes.size()==m_resourceLimitsQos.max_samples)
+			 if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 				 m_isHistoryFull = true;
 			 return true;
 		 }
@@ -93,7 +93,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
-				if(vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
+				if((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
 				{
 					add = true;
 				}
@@ -125,7 +125,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 				m_changes.push_back(a_change);
 				updateMaxMinSeqNum();
 				vit->second.push_back(a_change);
-				if(m_changes.size()==m_resourceLimitsQos.max_samples)
+				if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 					m_isHistoryFull = true;
 				return true;
 			}
