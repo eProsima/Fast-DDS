@@ -88,6 +88,17 @@ static inline double Time_t2MilliSec(const Time_t& t)
 	return (Time_t2Seconds(t)*pow(10.0,3));
 }
 
+static inline Time_t MilliSec2Time_t(uint32_t millisec)
+{
+    Time_t time;
+    time.seconds = (int32_t)millisec/1000;
+    if(millisec>1000)
+        time.fraction = (uint32_t)((millisec%1000)*pow(10.0,-3)*pow(2.0,32));
+    else
+        time.fraction = (uint32_t)(millisec*pow(10.0,-3)*pow(2.0,32));
+}
+
+
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 {
 	return output << t.seconds<<"."<<t.fraction;

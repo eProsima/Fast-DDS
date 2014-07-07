@@ -21,7 +21,7 @@
 
 class dds::Publisher;
 
-class ShapePublisher {
+class ShapePublisher: public PublisherListener {
 public:
 	ShapePublisher(Participant* par);
 	virtual ~ShapePublisher();
@@ -32,6 +32,7 @@ public:
 
 	bool initPublisher();
     void write();
+    void onPublicationMatched();
 };
 
 

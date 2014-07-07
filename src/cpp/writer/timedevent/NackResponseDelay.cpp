@@ -9,7 +9,7 @@
 /**
  * @file NackResponseDelay.cpp
  *
-*/
+ */
 
 #include "eprosimartps/writer/timedevent/NackResponseDelay.h"
 
@@ -34,8 +34,8 @@ NackResponseDelay::~NackResponseDelay() {
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval):
-		TimedEvent(&p_RP->mp_SFW->mp_event_thr->io_service,interval),
-		mp_RP(p_RP)
+				TimedEvent(&p_RP->mp_SFW->mp_event_thr->io_service,interval),
+				mp_RP(p_RP)
 {
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
 	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->getGuid().guidPrefix);
@@ -55,7 +55,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 		std::vector<ChangeForReader_t*> ch_vec;
 		if(mp_RP->requested_changes(&ch_vec))
 		{
-		//	std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
+			//	std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<SequenceNumber_t> not_relevant_changes;
@@ -84,17 +84,34 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 						mp_RP->m_param.remoteReaderGuid.entityId,
 						&mp_RP->m_param.unicastLocatorList,
 						&mp_RP->m_param.multicastLocatorList);
+			if(relevant_changes.empty() && not_relevant_changes.empty())
+			{
+				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+				SequenceNumber_t first,last;
+				mp_RP->mp_SFW->get_seq_num_min(&first,NULL);
+				mp_RP->mp_SFW->get_seq_num_max(&last,NULL);
+				mp_RP->mp_SFW->incrementHBCount();
+				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,mp_RP->mp_SFW->getGuid().guidPrefix,
+						mp_RP->m_param.remoteReaderGuid.entityId,mp_RP->mp_SFW->getGuid().entityId,
+						first,last,mp_RP->mp_SFW->getHeartbeatCount(),true,false);
+				std::vector<Locator_t>::iterator lit;
+				for(lit = mp_RP->m_param.unicastLocatorList.begin();lit!=mp_RP->m_param.unicastLocatorList.end();++lit)
+					mp_RP->mp_SFW->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+
+				//					for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
+				//						mp_RP->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+			}
 		}
 
 	}
 	else if(ec==boost::asio::error::operation_aborted)
-			{
-				pInfo("Nack response aborted");
-			}
-			else
-			{
-				pInfo("Nack response boost message: " <<ec.message()<<endl);
-			}
+	{
+		pInfo("Nack response aborted");
+	}
+	else
+	{
+		pInfo("Nack response boost message: " <<ec.message()<<endl);
+	}
 }
 
 

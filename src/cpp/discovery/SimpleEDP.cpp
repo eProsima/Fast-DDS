@@ -282,6 +282,7 @@ bool SimpleEDP::addNewLocalWriter(RTPSWriter* W)
 		wdata->m_typeName = W->getTopic().getTopicDataType();
 		wdata->topicKind = W->getTopic().getTopicKind();
 		wdata->m_qos = W->getQos();
+		wdata->m_typeMaxSerialized = W->mp_type->m_typeSize;
 		this->mp_PDP->mp_localDPData->m_writers.push_back(wdata);
 		//Create a new change in History:
 		CacheChange_t* change = NULL;

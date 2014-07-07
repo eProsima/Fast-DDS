@@ -86,7 +86,7 @@ inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHa
 {
 	output << std::hex;
 	for(uint8_t i =0;i<16;++i)
-		output << (int)iHandle.value[i] << ".";
+		output << std::hex << (int)iHandle.value[i] <<std::dec<< ".";
 	output<<std::dec;
 	return output;
 }

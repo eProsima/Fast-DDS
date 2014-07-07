@@ -25,14 +25,15 @@ class UpdateThread: public QThread
 {
      Q_OBJECT
 public:
-    explicit UpdateThread(QObject* parent = 0);
+    explicit UpdateThread(QObject* parent = 0,uint32_t threadN=200);
     ~UpdateThread();
 
     void setMainW(MainWindow* mw);
     void updateInterval(uint32_t interval)
     {
         m_interval = interval;
-        m_timer->setInterval(m_interval);
+        if(m_timer !=NULL)
+            m_timer->setInterval(m_interval);
     }
 
 private slots:
@@ -43,6 +44,7 @@ private:
     QTimer* m_timer;
     MainWindow* m_mainW;
     uint32_t m_interval;
+    uint32_t m_threadNumber;
 };
 
 

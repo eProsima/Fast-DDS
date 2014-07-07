@@ -36,7 +36,7 @@ namespace rtps {
 class DiscoveredWriterData {
 public:
 	DiscoveredWriterData():
-		userDefinedId(-1),isAlive(false),topicKind(NO_KEY){};
+		userDefinedId(-1),m_typeMaxSerialized(0),isAlive(false),topicKind(NO_KEY){};
 	virtual ~DiscoveredWriterData(){};
 	WriterProxy_t m_writerProxy;
 	InstanceHandle_t m_key;
@@ -46,6 +46,7 @@ public:
 	uint16_t userDefinedId;
 	//FIXME: Check Qos default values in page 96 of DDS implementation
 	WriterQos m_qos;
+	uint32_t m_typeMaxSerialized;
 //	DurabilityQosPolicy m_durability;
 //	DurabilityServiceQosPolicy m_durabilityService;
 //	DeadlineQosPolicy m_deadline;

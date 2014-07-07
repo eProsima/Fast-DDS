@@ -29,7 +29,7 @@ void SubscribeDialog::on_buttonBox_accepted()
 {
     ShapeSubscriber* SSub = new ShapeSubscriber(this->mp_sd->getParticipant());
 
-    SSub->m_attributes.expectsInlineQos = true;
+    SSub->m_attributes.expectsInlineQos = false;
 
     //SHAPE/TOPIC:
     if(this->ui->combo_Shape->currentText() == QString("Square"))

@@ -88,11 +88,12 @@ bool TimeBasedFilterQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 
 bool PresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+	valid &= CDRMessage::addUInt16(msg, PARAMETER_PRESENTATION_LENGTH);//this->length);
 	valid &= CDRMessage::addOctet(msg,access_scope);
+	msg->pos+=3;msg->length+=3;
 	valid &= CDRMessage::addOctet(msg,(octet)coherent_access);
 	valid &= CDRMessage::addOctet(msg,(octet)ordered_access);
-	msg->pos++;msg->length++;
+	msg->pos+=2;msg->length+=2;
 	return valid;
 }
 
@@ -141,10 +142,10 @@ bool DurabilityServiceQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	valid &= CDRMessage::addInt32(msg,service_cleanup_delay.seconds);
 	valid &= CDRMessage::addUInt32(msg,service_cleanup_delay.fraction);
 	valid &= CDRMessage::addOctet(msg,history_kind);msg->pos+=3;msg->length+=3;
-	valid &= CDRMessage::addUInt32(msg,history_depth);
-	valid &= CDRMessage::addUInt32(msg,max_samples);
-	valid &= CDRMessage::addUInt32(msg,max_instances);
-	valid &= CDRMessage::addUInt32(msg,max_samples_per_instance);
+	valid &= CDRMessage::addInt32(msg,history_depth);
+	valid &= CDRMessage::addInt32(msg,max_samples);
+	valid &= CDRMessage::addInt32(msg,max_instances);
+	valid &= CDRMessage::addInt32(msg,max_samples_per_instance);
 	return valid;
 }
 
@@ -168,9 +169,9 @@ bool ResourceLimitsQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 
-	valid &= CDRMessage::addUInt32(msg,max_samples);
-	valid &= CDRMessage::addUInt32(msg,max_instances);
-	valid &= CDRMessage::addUInt32(msg,max_samples_per_instance);
+	valid &= CDRMessage::addInt32(msg,max_samples);
+	valid &= CDRMessage::addInt32(msg,max_instances);
+	valid &= CDRMessage::addInt32(msg,max_samples_per_instance);
 	return valid;
 }
 
