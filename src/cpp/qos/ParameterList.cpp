@@ -389,7 +389,14 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				PartitionQosPolicy * p = new PartitionQosPolicy();
 				p->length = plength;
-				valid &= CDRMessage::readOctetVector(msg,&p->name);
+				uint32_t namessize;
+				valid &= CDRMessage::readUInt32(msg,&namessize);
+				for(uint32_t i = 1;i<=namessize;++i)
+				{
+					std::string auxstr;
+					valid &= CDRMessage::readString(msg,&auxstr);
+					p->names.push_back(auxstr);
+				}
 				IF_VALID_ADD
 			}
 			case PID_TOPIC_DATA:

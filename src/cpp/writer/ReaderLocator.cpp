@@ -18,22 +18,25 @@
 namespace eprosima {
 namespace rtps {
 
-ReaderLocator::ReaderLocator() {
+ReaderLocator::ReaderLocator(DurabilityQosPolicyKind_t dur ) {
 	this->expectsInlineQos = false;
+	m_durabilityKind = dur;
 
 }
 
-ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos){
+ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos,DurabilityQosPolicyKind_t dur ){
 	locator = a_locator;
 	expectsInlineQos = expectsQos;
+	m_durabilityKind = dur;
 }
 
-ReaderLocator::~ReaderLocator() {
-
+ReaderLocator::~ReaderLocator()
+{
 	//pDebugInfo("ReaderLocator destructor"<<endl;);
 }
 
-bool ReaderLocator::next_requested_change(CacheChange_t** cpoin) {
+bool ReaderLocator::next_requested_change(CacheChange_t** cpoin)
+{
 	if(!requested_changes.empty()){
 		std::vector<CacheChange_t*>::iterator it;
 		SequenceNumber_t minseqnum = requested_changes[0]->sequenceNumber;
@@ -49,7 +52,8 @@ bool ReaderLocator::next_requested_change(CacheChange_t** cpoin) {
 	return false;
 }
 
-bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin) {
+bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin)
+{
 	if(!unsent_changes.empty()){
 		std::vector<CacheChange_t*>::iterator it;
 		std::vector<CacheChange_t*>::iterator it2;

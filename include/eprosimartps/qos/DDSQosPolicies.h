@@ -181,7 +181,8 @@ class PartitionQosPolicy : private Parameter_t, public QosPolicy
 public:
 	PartitionQosPolicy():Parameter_t(PID_PARTITION,0),QosPolicy(false){};
 	virtual ~PartitionQosPolicy(){};
-	std::vector<octet> name;
+	//std::vector<octet> name;
+	std::vector<std::string> names;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

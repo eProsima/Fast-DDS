@@ -119,7 +119,7 @@ bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator*
 	}
 	if(!found)
 	{
-		if(m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
+		if((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
 		{
 			t_pairKeyChanges newpair;
 			newpair.first = a_change->instanceHandle;

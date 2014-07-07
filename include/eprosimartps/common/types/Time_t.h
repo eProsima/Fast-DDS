@@ -96,6 +96,7 @@ static inline Time_t MilliSec2Time_t(uint32_t millisec)
         time.fraction = (uint32_t)((millisec%1000)*pow(10.0,-3)*pow(2.0,32));
     else
         time.fraction = (uint32_t)(millisec*pow(10.0,-3)*pow(2.0,32));
+    return time;
 }
 
 
