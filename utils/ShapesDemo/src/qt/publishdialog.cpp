@@ -56,6 +56,7 @@ void PublishDialog::on_button_OkCancel_accepted()
     //History:
     SP->m_attributes.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     SP->m_attributes.topic.historyQos.depth = this->ui->spin_HistoryQos->value();
+
     //Reliability
     if(this->ui->checkBox_reliable->isChecked())
         SP->m_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -68,7 +69,6 @@ void PublishDialog::on_button_OkCancel_accepted()
        SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
    if(this->ui->comboBox_liveliness->currentIndex() == 2)
        SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
-
    if(this->ui->lineEdit_leaseDuration->text()=="INF")
        SP->m_attributes.qos.m_liveliness.lease_duration = c_TimeInfinite;
    else
@@ -77,6 +77,20 @@ void PublishDialog::on_button_OkCancel_accepted()
         if(value.toInt()>0)
             SP->m_attributes.qos.m_liveliness.lease_duration = MilliSec2Time_t(value.toInt());
    }
+   //DURABILITY
+   switch(this->ui->comboBox_durability->currentIndex())
+   {
+   case 0: SP->m_attributes.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+   case 1: SP->m_attributes.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+   }
+   //Ownership:
+   switch(this->ui->comboBox_ownership->currentIndex())
+   {
+   case 0: SP->m_attributes.qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
+   case 1: SP->m_attributes.qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+   }
+   if(SP->m_attributes.qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+       SP->m_attributes.qos.m_ownershipStrength.value = this->ui->spin_ownershipStrength->value();
     //PARTITIONS:
 
 
