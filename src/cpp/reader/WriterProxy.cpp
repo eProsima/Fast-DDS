@@ -331,17 +331,18 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
-	cout << "WP "<<this->param.remoteWriterGuid.entityId<<": ";
+	std::stringstream ss;
+	ss << "WP "<<this->param.remoteWriterGuid.entityId<<": ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
-		cout << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";
+		ss << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";
 	}
-	cout << endl;
+	std::string auxstr = ss.str();
+	pDebugInfo(auxstr<<endl;);
 }
 
 bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
 {
-	//FIXME: CORRECT THIS METHOD.
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
 		if(it->seqNum < seq)

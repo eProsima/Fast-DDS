@@ -83,12 +83,19 @@ public:
 	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
 	{
 		CacheChange_t* change;
-		m_writer_cache.get_min_change(&change);
+		if(m_writer_cache.get_min_change(&change))
+		{
 
 		*seqNum = change->sequenceNumber;
 		if(writerGuid!=NULL)
 			*writerGuid = change->writerGUID;
 		return true;
+		}
+		else
+		{
+			*seqNum = SequenceNumber_t(0,0);
+			return false;
+		}
 	}
 	/**
 	 * Get the maximum sequence number in the HistoryCache.
@@ -99,11 +106,18 @@ public:
 	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid)
 	{
 		CacheChange_t* change;
-		m_writer_cache.get_max_change(&change);
-		*seqNum = change->sequenceNumber;
-		if(writerGuid!=NULL)
-					*writerGuid = change->writerGUID;
-		return true;
+		if(m_writer_cache.get_max_change(&change))
+		{
+			*seqNum = change->sequenceNumber;
+			if(writerGuid!=NULL)
+				*writerGuid = change->writerGUID;
+			return true;
+		}
+		else
+		{
+			*seqNum = SequenceNumber_t(0,0);
+			return false;
+		}
 	}
 
 	bool add_change(CacheChange_t*change)

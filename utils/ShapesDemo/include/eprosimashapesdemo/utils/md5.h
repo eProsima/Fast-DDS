@@ -50,6 +50,7 @@ documentation and/or software.
 class MD5
 {
 public:
+    typedef unsigned char uint1; //  8bit
   typedef unsigned int size_type; // must be 32bit
 
   MD5();
@@ -59,10 +60,10 @@ public:
   MD5& finalize();
   std::string hexdigest() const;
   friend std::ostream& operator<<(std::ostream&, MD5 md5);
-
+    uint1 digest[16]; // the result
 private:
   void init();
-  typedef unsigned char uint1; //  8bit
+
   typedef unsigned int uint4;  // 32bit
   enum {blocksize = 64}; // VC6 won't eat a const static int here
 
@@ -74,7 +75,7 @@ private:
   uint1 buffer[blocksize]; // bytes that didn't fit in last 64 byte chunk
   uint4 count[2];   // 64bit counter for number of bits (lo, hi)
   uint4 state[4];   // digest so far
-  uint1 digest[16]; // the result
+
 
   // low level logic operations
   static inline uint4 F(uint4 x, uint4 y, uint4 z);

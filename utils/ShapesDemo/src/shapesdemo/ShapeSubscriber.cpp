@@ -36,7 +36,7 @@ bool ShapeSubscriber::initSubscriber()
 
 void ShapeSubscriber::onNewDataMessage()
 {
-
+    cout << "New DATA Message "<<endl;
     ShapeType shape;
     SampleInfo_t info;
     while(mp_sub->readNextData((void*)&shape,&info))

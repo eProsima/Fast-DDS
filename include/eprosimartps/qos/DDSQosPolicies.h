@@ -60,7 +60,7 @@ public:
 
 class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true){};
+	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite){	};
 	virtual ~DeadlineQosPolicy(){};
 	Duration_t period;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -131,7 +131,7 @@ class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	DestinationOrderQosPolicyKind kind;
 	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
-									kind(BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS){};
+									kind(BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS){};
 	virtual ~DestinationOrderQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -160,7 +160,7 @@ enum PresentationQosPolicyAccessScopeKind:octet
 	GROUP_PRESENTATION_QOS
 };
 
-#define PARAMETER_PRESENTATION_LENGTH 12
+#define PARAMETER_PRESENTATION_LENGTH 8
 
 class PresentationQosPolicy : private Parameter_t, public QosPolicy
 {
@@ -223,13 +223,13 @@ class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	Duration_t service_cleanup_delay;
 	HistoryQosPolicyKind history_kind;
-	uint32_t history_depth;
-	uint32_t max_samples;
-	uint32_t max_instances;
-	uint32_t max_samples_per_instance;
-	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(false),
+	int32_t history_depth;
+	int32_t max_samples;
+	int32_t max_instances;
+	int32_t max_samples_per_instance;
+	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(true),
 			history_kind(KEEP_LAST_HISTORY_QOS),
-						history_depth(1),max_samples(0),max_instances(0),max_samples_per_instance(0){};
+						history_depth(1),max_samples(-1),max_instances(-1),max_samples_per_instance(-1){};
 	virtual ~DurabilityServiceQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -237,7 +237,7 @@ public:
 class LifespanQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	Duration_t duration;
-	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true){};
+	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeInfinite){};
 	virtual ~LifespanQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -253,10 +253,10 @@ public:
 
 class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	uint32_t max_samples;
-	uint32_t max_instances;
-	uint32_t max_samples_per_instance;
-	uint32_t allocated_samples;
+	int32_t max_samples;
+	int32_t max_instances;
+	int32_t max_samples_per_instance;
+	int32_t allocated_samples;
 	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),QosPolicy(false),
 			max_samples(1000),max_instances(5),max_samples_per_instance(200),allocated_samples(1000){};
 	virtual ~ResourceLimitsQosPolicy(){};

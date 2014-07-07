@@ -116,7 +116,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
 				sortCacheChanges();
 			updateMaxMinSeqNum();
-			if(m_changes.size()==m_resourceLimitsQos.max_samples)
+			if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
 			pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<<endl;);
 			//print_changes_seqNum();
@@ -156,7 +156,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
-				if(vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
+				if((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
 				{
 					add = true;
 				}
@@ -195,7 +195,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 				if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
 					sortCacheChanges();
 				updateMaxMinSeqNum();
-				if(m_changes.size()==m_resourceLimitsQos.max_samples)
+				if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 					m_isHistoryFull = true;
 				//ADD TO KEY VECTOR
 				if(vit->second.size() == 0)

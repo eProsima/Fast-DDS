@@ -17,6 +17,9 @@
 #include "eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h"
 #include <QMutex>
 
+#define MAX_DRAW_AREA 275
+
+
 class ShapesDemoOptions
 {
 public:
