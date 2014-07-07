@@ -50,7 +50,7 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
     *auxptr = sh->m_size;
 
     payload->length = 4+strsize+1+rest+4+4+4;
-    payload->encapsulation = EPROSIMA_ENDIAN == BIG_ENDIAN ? CDR_BE:CDR_LE;
+    payload->encapsulation = EPROSIMA_ENDIAN == LITTLEEND ? CDR_LE:CDR_BE;
    // cout << "Serialize length: " << payload->length<<endl;
     return true;
  }
