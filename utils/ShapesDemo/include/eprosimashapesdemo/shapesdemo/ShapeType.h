@@ -39,6 +39,7 @@ public:
                 uint32_t x=30,uint32_t y =30,uint32_t size=30);
     void setColor(SD_COLOR c);
     void setColor(const char* strin);
+    void setColor(const char c);
     std::string getColorStr()
     {
         return std::string(m_char_color);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>844</width>
-    <height>590</height>
+    <width>607</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="DrawArea" name="areaDraw" native="true">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>20</y>
-      <width>500</width>
-      <height>500</height>
+      <x>310</x>
+      <y>10</y>
+      <width>275</width>
+      <height>275</height>
      </rect>
     </property>
    </widget>
@@ -79,8 +79,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>844</width>
-     <height>21</height>
+     <width>607</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOptions">

@@ -31,6 +31,7 @@ public:
     }
 
     void updateDrawArea();
+    void writeNewSamples();
 
     void updateInterval(uint32_t ms);
 
@@ -48,7 +49,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
-    UpdateThread* mp_updateThread;
+    UpdateThread* mp_drawThread;
+    UpdateThread* mp_writeThread;
 };
 
 #endif // MAINWINDOW_H
