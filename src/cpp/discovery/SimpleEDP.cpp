@@ -435,8 +435,7 @@ bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderDa
 	boost::lock_guard<Endpoint> guard(*W);
 	pInfo(RTPS_CYAN<<"SimpleEDP:localWriterMatching W-DRD"<<RTPS_DEF<<endl);
 	bool matched = false;
-	if((W->getTopic().getTopicName() == rdata->m_topicName) && (W->getTopic().getTopicDataType() == rdata->m_typeName) &&
-			(W->getTopic().getTopicKind() == rdata->topicKind) && rdata->isAlive)
+	if(validMatching(W,rdata))
 	{
 		pDebugInfo(RTPS_CYAN << "SimpleEDP: local Writer MATCHED"<<RTPS_DEF<<endl);
 		if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
@@ -444,6 +443,7 @@ bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderDa
 			StatelessWriter* p_SLW = (StatelessWriter*)W;
 			ReaderLocator RL;
 			RL.expectsInlineQos = rdata->m_readerProxy.expectsInlineQos;
+			RL.m_durabilityKind = rdata->m_qos.m_durability.kind;
 			for(std::vector<Locator_t>::iterator lit = rdata->m_readerProxy.unicastLocatorList.begin();
 					lit != rdata->m_readerProxy.unicastLocatorList.end();++lit)
 			{
@@ -462,6 +462,7 @@ bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderDa
 		else if(W->getStateType() == STATEFUL)
 		{
 			StatefulWriter* p_SFW = (StatefulWriter*)W;
+			rdata->m_readerProxy.m_durabilityKind = rdata->m_qos.m_durability.kind;
 			if(p_SFW->matched_reader_add(rdata->m_readerProxy))
 				matched = true;
 		}
@@ -481,10 +482,7 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 //	cout << R->getTopic().getTopicKind() << "|"<< wdata->topicKind<<"|"<<(R->getTopic().getTopicKind() == wdata->topicKind)<<endl;
 //	cout << R->getTopic().getTopicDataType() << "|"<< wdata->m_typeName<<"|"<<(R->getTopic().getTopicDataType() == wdata->m_typeName)<<endl;
 //	cout << wdata->isAlive<<endl;
-	if(		R->getTopic().getTopicName() == wdata->m_topicName &&
-			R->getTopic().getTopicKind() == wdata->topicKind &&
-			R->getTopic().getTopicDataType() == wdata->m_typeName &&
-			wdata->isAlive) //Matching
+	if(validMatching(R,wdata)) //Matching
 	{
 		pDebugInfo(RTPS_CYAN << "SimpleEDP: local Reader MATCHED"<<RTPS_DEF<<endl);
 		if(R->getStateType() == STATELESS)
@@ -505,6 +503,62 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 	}
 	return matched;
 }
+
+bool SimpleEDP::validMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
+{
+
+	if(W->getTopic().getTopicName() != rdata->m_topicName)
+		return false;
+	if(W->getTopic().getTopicDataType() != rdata->m_typeName)
+		return false;
+	if(W->getTopic().getTopicKind() != rdata->topicKind)
+	{
+		pWarning("INCOMPATIBLE QOS:Remote Reader "<<rdata->m_readerProxy.remoteReaderGuid << " is publishing in topic " << rdata->m_topicName << "(keyed:"<<rdata->topicKind<<
+				"), local writer publishes as keyed: "<<W->getTopic().getTopicKind()<<endl;)
+		return false;
+	}
+	if(!rdata->isAlive) //Matching
+		return false;
+	if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS) //Means our writer is BE but the reader wants RE
+	{
+		pWarning("INCOMPATIBLE QOS:Remote Reader is Reliable and local writer is BE "<<endl;);
+		return false;
+	}
+	if(W->getQos().m_durability.kind == VOLATILE_DURABILITY_QOS && rdata->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS)
+	{
+		pWarning("INCOMPATIBLE QOS:RemoteReader has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE"<<endl;);
+		return false;
+	}
+	return true;
+}
+
+bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
+{
+	if(R->getTopic().getTopicName() != wdata->m_topicName)
+		return false;
+	if(R->getTopic().getTopicDataType() != wdata->m_typeName)
+		return false;
+	if(R->getTopic().getTopicKind() != wdata->topicKind)
+	{
+		pWarning("INCOMPATIBLE QOS:Remote Writer "<<wdata->m_writerProxy.remoteWriterGuid << " is publishing in topic " << wdata->m_topicName << "(keyed:"<<wdata->topicKind<<
+				"), local reader subscribes as keyed: "<<R->getTopic().getTopicKind()<<endl;)
+		return false;
+	}
+	if(!wdata->isAlive) //Matching
+		return false;
+	if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) //Means our reader is reliable but hte writer is not
+	{
+		pWarning("INCOMPATIBLE QOS:Remote Writer is Best Effort and local reader is RELIABLE "<<endl;);
+		return false;
+	}
+	if(R->getQos().m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS && wdata->m_qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+	{
+		pWarning("INCOMPATIBLE QOS:RemoteWriter has VOLATILE DURABILITY and we want TRANSIENT_LOCAL"<<endl;);
+		return false;
+	}
+	return true;
+}
+
 
 
 

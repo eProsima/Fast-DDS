@@ -18,6 +18,9 @@
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/qos/DDSQosPolicies.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -31,8 +34,8 @@ struct CacheChange_t;
  */
 class ReaderLocator {
 public:
-	ReaderLocator();
-	ReaderLocator(Locator_t& locator, bool expectsInlineQos);
+	ReaderLocator(DurabilityQosPolicyKind_t dur = VOLATILE_DURABILITY_QOS);
+	ReaderLocator(Locator_t& locator, bool expectsInlineQos,DurabilityQosPolicyKind_t dur = VOLATILE_DURABILITY_QOS);
 	virtual ~ReaderLocator();
 	//!Address of this ReaderLocator.
 	Locator_t locator;
@@ -42,6 +45,9 @@ public:
 	std::vector<CacheChange_t*> requested_changes;
 	//!Vector containing pointers to the unsent changes to this reader.
 	std::vector<CacheChange_t*> unsent_changes;
+	//!Durability service:
+	DurabilityQosPolicyKind_t m_durabilityKind;
+
 	/**
 	 * Retrieve next requested change from the HistoryCache.
 	 * @param cpoin Pointer to pointer.

@@ -12,6 +12,7 @@
  */
 
 #include "eprosimartps/qos/WriterQos.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace dds {
@@ -107,6 +108,22 @@ void WriterQos::setQos( WriterQos& qos, bool first_time)
 		m_ownershipStrength = qos.m_ownershipStrength;
 		m_ownershipStrength.hasChanged = true;
 	}
+}
+
+bool WriterQos::checkQos()
+{
+	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
+	{
+		pError("TRANSIENT Durability not supported"<<endl);
+		return false;
+	}
+	if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
+	{
+		pError("PERSISTENT Durability not supported"<<endl);
+		return false;
+	}
+
+	return true;
 }
 
 } /* namespace dds */
