@@ -32,6 +32,9 @@
 #include "eprosimartps/writer/timedevent/NackResponseDelay.h"
 #include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 
+#include "eprosimartps/qos/DDSQosPolicies.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
@@ -49,10 +52,13 @@ typedef struct ReaderProxy_t{
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 	ReliabilityKind_t m_reliability;
+	//!Durability service:
+	DurabilityQosPolicyKind_t m_durabilityKind;
 	ReaderProxy_t(){
 		GUID_UNKNOWN(remoteReaderGuid);
 		expectsInlineQos = true;
 		m_reliability = RELIABLE;
+		m_durabilityKind = VOLATILE_DURABILITY_QOS;
 	}
 }ReaderProxy_t;
 
