@@ -87,3 +87,17 @@ void ShapeType::setColor(const char* strin)
         setColor(SD_ORANGE);
     }
 }
+
+void ShapeType::setColor(const char c)
+{
+    switch (c) {
+    case 'P': setColor(SD_PURPLE);   break;
+    case 'B': setColor(SD_BLUE);   break;
+    case 'R': setColor(SD_RED);   break;
+    case 'G': setColor(SD_GREEN);   break;
+    case 'Y': setColor(SD_YELLOW);   break;
+    case 'C': setColor(SD_CYAN);   break;
+    case 'M': setColor(SD_MAGENTA);   break;
+    case 'O': setColor(SD_ORANGE);   break;
+    }
+}

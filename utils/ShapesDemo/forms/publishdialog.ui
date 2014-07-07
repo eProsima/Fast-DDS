@@ -32,10 +32,10 @@
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>110</y>
-     <width>421</width>
-     <height>231</height>
+     <x>10</x>
+     <y>90</y>
+     <width>399</width>
+     <height>139</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -49,7 +49,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>111</width>
+      <width>106</width>
       <height>20</height>
      </rect>
     </property>
@@ -71,9 +71,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>36</y>
       <width>60</width>
-      <height>21</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -91,7 +91,7 @@
    <widget class="QSpinBox" name="spin_HistoryQos">
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>92</x>
       <y>36</y>
       <width>48</width>
       <height>27</height>
@@ -110,10 +110,10 @@
    <widget class="QCheckBox" name="checkBox_reliable">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>70</y>
-      <width>98</width>
-      <height>22</height>
+      <x>180</x>
+      <y>40</y>
+      <width>93</width>
+      <height>25</height>
      </rect>
     </property>
     <property name="font">
@@ -128,12 +128,12 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="comboBox_liveliness">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>60</y>
-      <width>151</width>
+      <x>174</x>
+      <y>69</y>
+      <width>215</width>
       <height>27</height>
      </rect>
     </property>
@@ -156,9 +156,9 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>30</y>
-      <width>99</width>
+      <x>10</x>
+      <y>69</y>
+      <width>75</width>
       <height>20</height>
      </rect>
     </property>
@@ -169,6 +169,40 @@
     </property>
     <property name="text">
      <string>Liveliness</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::AutoText</enum>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_leaseDuration">
+    <property name="geometry">
+     <rect>
+      <x>174</x>
+      <y>102</y>
+      <width>146</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>INF</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>102</y>
+      <width>158</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Lease Duration (ms):</string>
     </property>
     <property name="textFormat">
      <enum>Qt::AutoText</enum>

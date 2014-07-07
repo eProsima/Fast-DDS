@@ -60,10 +60,26 @@ void PublishDialog::on_button_OkCancel_accepted()
     if(this->ui->checkBox_reliable->isChecked())
         SP->m_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
+    //LIVELINESS:
+   // cout << "LIVELINESS "<<this->ui->comboBox_liveliness->currentIndex()<<endl;
+   if(this->ui->comboBox_liveliness->currentIndex() == 0)
+       SP->m_attributes.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
+   if(this->ui->comboBox_liveliness->currentIndex() == 1)
+       SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+   if(this->ui->comboBox_liveliness->currentIndex() == 2)
+       SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 
+   if(this->ui->lineEdit_leaseDuration->text()=="INF")
+       SP->m_attributes.qos.m_liveliness.lease_duration = c_TimeInfinite;
+   else
+   {
+        QString value = this->ui->lineEdit_leaseDuration->text();
+        if(value.toInt()>0)
+            SP->m_attributes.qos.m_liveliness.lease_duration = MilliSec2Time_t(value.toInt());
+   }
     //PARTITIONS:
 
-    //LIVELINESS:
+
 
 
     if(SP->initPublisher())

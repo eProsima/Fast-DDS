@@ -34,12 +34,12 @@ DrawArea::~DrawArea()
 
 QSize DrawArea::sizeHint() const
 {
-    return QSize(500, 500);
+    return QSize(MAX_DRAW_AREA, MAX_DRAW_AREA);
 }
 
 QSize DrawArea::minimumSizeHint() const
 {
-    return QSize(300, 300);
+    return QSize(MAX_DRAW_AREA, MAX_DRAW_AREA);
 }
 
 
@@ -76,6 +76,7 @@ void DrawArea::drawShapes(QPainter* painter)
                     ++index;
                 }
                 paintShape(painter,(*it)->m_type,(*it)->m_mainShape,255);
+                //cout << "Drawing: " << (*it)->m_mainShape.m_x << " "<<(*it)->m_mainShape.m_y << " "<<(*it)->m_mainShape.m_size << endl;
 
             }
         }

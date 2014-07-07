@@ -15,11 +15,12 @@
 #include "eprosimashapesdemo/qt/mainwindow.h"
 
 
-UpdateThread::UpdateThread(QObject *parent):
+UpdateThread::UpdateThread(QObject *parent, uint32_t threadN):
     QThread(parent),
     m_mainW(NULL),
     m_timer(NULL),
-    m_interval(200)
+    m_interval(200),
+    m_threadNumber(threadN)
 {
 
 }
@@ -45,7 +46,10 @@ void UpdateThread::run(void)
 
 void UpdateThread::updateAll(void)
 {
-    m_mainW->updateDrawArea();
+    if(this->m_threadNumber == 0)
+        m_mainW->updateDrawArea();
+    else if(this->m_threadNumber == 1)
+        m_mainW->writeNewSamples();
 }
 
  void UpdateThread::setMainW(MainWindow* mw)

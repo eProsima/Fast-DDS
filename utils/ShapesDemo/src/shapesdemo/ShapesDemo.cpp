@@ -26,8 +26,8 @@ ShapesDemo::ShapesDemo(MainWindow *mw):
     srand (time(NULL));
     minX = 0;
     minY = 0;
-    maxX = 500;
-    maxY = 500;
+    maxX = MAX_DRAW_AREA;
+    maxY = MAX_DRAW_AREA;
 }
 
 ShapesDemo::~ShapesDemo()

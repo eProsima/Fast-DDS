@@ -13,7 +13,7 @@ ShapeTopicDataType::ShapeTopicDataType()
 {
     this->m_isGetKeyDefined = true;
     this->m_topicDataTypeName = "ShapeType";
-    this->m_typeSize = 4+4+4+128;
+    this->m_typeSize = 152;//4+4+4+128+4; 152 is to equal RTI.
 }
 
 ShapeTopicDataType::~ShapeTopicDataType()
@@ -57,19 +57,19 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
 
 bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
 {
-    //cout << "Deserializing"<<endl;
+  //  cout << "Deserializing"<<endl;
     ShapeType* sh = (ShapeType*)data;
     uint32_t strsize = *(uint32_t*)payload->data;
-//    std::string auxstr;
-//    auxstr.resize(strsize-1);
-    char aux[8];
-    for(uint32_t i=0;i<strsize;++i)
-        aux[i] = payload->data[4+i];
-    sh->setColor(aux);
-    int rest = payload->length-4-4-4-4-strsize;
+    //cout << strsize<<endl;
+    sh->setColor(payload->data[4]);
+    int rest = strsize%4;
+    if(rest>0)
+        rest = 4-rest;
+   // cout << "rest "<< rest << endl;
     sh->m_x = *(uint32_t*)&payload->data[4+strsize+rest];
     sh->m_y = *(uint32_t*)&payload->data[4+strsize+rest+4];
     sh->m_size = *(uint32_t*)&payload->data[4+strsize+rest+4+4];
+    cout <<  sh->m_x << " "<<  sh->m_y << " "<<  sh->m_size << endl;
     return false;
 }
 
