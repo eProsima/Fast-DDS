@@ -52,9 +52,13 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
 	}
 	a_locator.requested_changes.clear();
 	a_locator.unsent_changes.clear();
-	for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.changesBegin();
-			it!=m_writer_cache.changesEnd();++it){
-		a_locator.unsent_changes.push_back((*it));
+	if(a_locator.m_durabilityKind == TRANSIENT_LOCAL_DURABILITY_QOS)
+	{
+		for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.changesBegin();
+				it!=m_writer_cache.changesEnd();++it)
+		{
+			a_locator.unsent_changes.push_back((*it));
+		}
 	}
 	reader_locator.push_back(a_locator);
 	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
@@ -63,11 +67,12 @@ bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
 	return true;
 }
 
-bool StatelessWriter::reader_locator_add(Locator_t& locator,bool expectsInlineQos)
+bool StatelessWriter::reader_locator_add(Locator_t& locator,bool expectsInlineQos,DurabilityQosPolicyKind_t dur)
 {
 	ReaderLocator a_locator;
 	a_locator.expectsInlineQos = expectsInlineQos;
 	a_locator.locator = locator;
+	a_locator.m_durabilityKind = dur;
 	return reader_locator_add(a_locator);
 }
 

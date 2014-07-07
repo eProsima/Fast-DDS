@@ -41,6 +41,7 @@ public:
 		DurabilityServiceQosPolicy m_durabilityService;
 		LifespanQosPolicy m_lifespan;
 		void setQos( ReaderQos& readerqos, bool first_time);
+		bool checkQos();
 };
 
 

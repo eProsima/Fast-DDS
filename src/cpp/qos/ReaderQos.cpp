@@ -12,6 +12,7 @@
  */
 
 #include "eprosimartps/qos/ReaderQos.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace dds {
@@ -103,6 +104,27 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_lifespan = qos.m_lifespan;
 		m_lifespan.hasChanged = true;
 	}
+}
+
+
+bool ReaderQos::checkQos()
+{
+	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
+	{
+		pError("TRANSIENT Durability not supported"<<endl);
+		return false;
+	}
+	if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
+	{
+		pError("PERSISTENT Durability not supported"<<endl);
+		return false;
+	}
+
+
+
+
+
+	return true;
 }
 
 } /* namespace dds */

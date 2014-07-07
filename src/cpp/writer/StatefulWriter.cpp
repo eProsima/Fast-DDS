@@ -76,18 +76,20 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 	ReaderProxy* rp = new ReaderProxy(RPparam,m_PubTimes,this);
 	if(mp_periodicHB==NULL)
 		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
-
-	for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
+	if(rp->m_param.m_durabilityKind == TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
-		ChangeForReader_t changeForReader;
-		changeForReader.setChange(*cit);
-		changeForReader.is_relevant = rp->dds_is_relevant(*cit);
+		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
+		{
+			ChangeForReader_t changeForReader;
+			changeForReader.setChange(*cit);
+			changeForReader.is_relevant = rp->dds_is_relevant(*cit);
 
-		if(m_pushMode)
-			changeForReader.status = UNSENT;
-		else
-			changeForReader.status = UNACKNOWLEDGED;
-		rp->m_changesForReader.push_back(changeForReader);
+			if(m_pushMode)
+				changeForReader.status = UNSENT;
+			else
+				changeForReader.status = UNACKNOWLEDGED;
+			rp->m_changesForReader.push_back(changeForReader);
+		}
 	}
 	matched_readers.push_back(rp);
 	pDebugInfo("Reader Proxy added to StatefulWriter with " <<this->unicastLocatorList.size()<<"(u)-"<<this->multicastLocatorList.size()<<"(m) locators"<< endl);

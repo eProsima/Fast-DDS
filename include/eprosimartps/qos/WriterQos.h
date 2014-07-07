@@ -45,6 +45,7 @@ public:
 	TopicDataQosPolicy m_topicData;
 	GroupDataQosPolicy m_groupData;
 	void setQos( WriterQos& qos, bool first_time);
+	bool checkQos();
 };
 
 

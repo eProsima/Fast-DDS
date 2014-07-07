@@ -142,6 +142,9 @@ public:
 
 	SEDPTopicDataType m_PubReaderDataType;
 	SEDPTopicDataType m_SubReaderDataType;
+
+	bool validMatching(RTPSReader*reader,DiscoveredWriterData* wdata);
+	bool validMatching(RTPSWriter*writer,DiscoveredReaderData* rdata);
 };
 
 } /* namespace rtps */
