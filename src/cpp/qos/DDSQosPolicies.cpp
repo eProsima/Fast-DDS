@@ -101,7 +101,10 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addOctetVector(msg,&name);
+	valid &= CDRMessage::addUInt32(msg,this->names.size());
+	for(std::vector<std::string>::iterator it = names.begin();it!=names.end();++it)
+		valid &= CDRMessage::addString(msg,*it);
+	//valid &= CDRMessage::addOctetVector(msg,&name);
 	return valid;
 }
 

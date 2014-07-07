@@ -73,7 +73,7 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_presentation = qos.m_presentation;
 		m_presentation.hasChanged = true;
 	}
-	if(m_partition.name != qos.m_partition.name )
+	if(m_partition.names.size() != qos.m_partition.names.size() )
 	{
 		m_partition = qos.m_partition;
 		m_partition.hasChanged = true;
