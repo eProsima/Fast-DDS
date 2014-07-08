@@ -76,6 +76,12 @@ public:
 	 * @return True if correct.
 	 */
 	bool unregister(void*Data);
+	/**
+		 * Dispose and unregister a previously written data.
+		 * @param Data Pointer to the data.
+		 * @return True if correct.
+		 */
+	bool dispose_and_unregister(void*Data);
 
 
 	/**
@@ -184,6 +190,15 @@ public:
 	bool unregister(void*Data)
 	{
 		return mp_impl->unregister(Data);
+	}
+	/**
+	 * Dispose and unregister a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
+	bool dispose_and_unregister(void*Data)
+	{
+		return mp_impl->dispose_and_unregister(Data);
 	}
 
 
