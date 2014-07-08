@@ -119,7 +119,11 @@ bool ReaderQos::checkQos()
 		pError("PERSISTENT Durability not supported"<<endl);
 		return false;
 	}
-
+	if(m_destinationOrder.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+	{
+		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
+		return false;
+	}
 
 
 
