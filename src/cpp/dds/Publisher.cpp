@@ -56,6 +56,12 @@ bool PublisherImpl::unregister(void* Data) {
 	return mp_Writer->add_new_change(NOT_ALIVE_UNREGISTERED,Data);
 }
 
+bool PublisherImpl::dispose_and_unregister(void* Data) {
+	//Convert data to serialized Payload
+	pInfo("Disposing and Unregistering Data"<<endl)
+	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
+}
+
 
 bool PublisherImpl::removeMinSeqChange()
 {

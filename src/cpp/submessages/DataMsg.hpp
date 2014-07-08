@@ -97,6 +97,11 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		status = status | BIT(0);
 	if(change->kind == NOT_ALIVE_UNREGISTERED)
 		status = status | BIT(1);
+	if(change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+	{
+		status = status | BIT(0);
+		status = status | BIT(1);
+	}
 
 	CDRMessage::initCDRMsg(&submsgElem);
 	try{

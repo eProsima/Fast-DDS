@@ -32,6 +32,7 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttrib
 					Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
 					m_writer_cache((Endpoint*)this,payload_size),
 					m_pushMode(true),
+					//FIXME: Select a better size, not the payload but maybe more?
 					m_cdrmessages(payload_size),
 					mp_listener(NULL),
 					m_livelinessAsserted(false)

@@ -29,8 +29,8 @@ ShapePublisher::~ShapePublisher()
 	// TODO Auto-generated destructor stub
     if(isInitialized)
     {
-        mp_pub->unregister((void*)&this->m_shape.m_mainShape);
         mp_pub->dispose((void*)&this->m_shape.m_mainShape);
+        mp_pub->unregister((void*)&this->m_shape.m_mainShape);
     }
 }
 
