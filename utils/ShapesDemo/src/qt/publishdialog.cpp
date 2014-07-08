@@ -78,21 +78,29 @@ void PublishDialog::on_button_OkCancel_accepted()
             SP->m_attributes.qos.m_liveliness.lease_duration = MilliSec2Time_t(value.toInt());
    }
    //DURABILITY
+   //cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;
    switch(this->ui->comboBox_durability->currentIndex())
    {
-   case 0: SP->m_attributes.qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-   case 1: SP->m_attributes.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+   case 0: SP->m_attributes.qos.m_durability.kind = VOLATILE_DURABILITY_QOS; break;
+   case 1: SP->m_attributes.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
    }
    //Ownership:
    switch(this->ui->comboBox_ownership->currentIndex())
    {
-   case 0: SP->m_attributes.qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
-   case 1: SP->m_attributes.qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+   case 0: SP->m_attributes.qos.m_ownership.kind = SHARED_OWNERSHIP_QOS; break;
+   case 1: SP->m_attributes.qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS; break;
    }
    if(SP->m_attributes.qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
        SP->m_attributes.qos.m_ownershipStrength.value = this->ui->spin_ownershipStrength->value();
     //PARTITIONS:
-
+    if(this->ui->checkBox_A->isChecked())
+        SP->m_attributes.qos.m_partition.names.push_back("A");
+    if(this->ui->checkBox_B->isChecked())
+        SP->m_attributes.qos.m_partition.names.push_back("B");
+    if(this->ui->checkBox_C->isChecked())
+        SP->m_attributes.qos.m_partition.names.push_back("C");
+    if(this->ui->checkBox_D->isChecked())
+        SP->m_attributes.qos.m_partition.names.push_back("D");
 
 
 

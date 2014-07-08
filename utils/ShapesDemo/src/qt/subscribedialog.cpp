@@ -31,6 +31,7 @@ void SubscribeDialog::on_buttonBox_accepted()
 
     SSub->m_attributes.expectsInlineQos = false;
 
+
     //SHAPE/TOPIC:
     if(this->ui->combo_Shape->currentText() == QString("Square"))
     {
@@ -58,10 +59,28 @@ void SubscribeDialog::on_buttonBox_accepted()
     if(this->ui->checkBox_reliable->isChecked())
         SSub->m_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
+    //DURABILITY
+    cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;
+    switch(this->ui->comboBox_durability->currentIndex())
+    {
+    case 0: SSub->m_attributes.qos.m_durability.kind = VOLATILE_DURABILITY_QOS; break;
+    case 1: SSub->m_attributes.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
+    }
+    //Ownership:
+    switch(this->ui->comboBox_ownership->currentIndex())
+    {
+    case 0: SSub->m_attributes.qos.m_ownership.kind = SHARED_OWNERSHIP_QOS; break;
+    case 1: SSub->m_attributes.qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS; break;
+    }
     //PARTITIONS:
-
-    //LIVELINESS:
-
+    if(this->ui->checkBox_A->isChecked())
+        SSub->m_attributes.qos.m_partition.names.push_back("A");
+    if(this->ui->checkBox_B->isChecked())
+        SSub->m_attributes.qos.m_partition.names.push_back("B");
+    if(this->ui->checkBox_C->isChecked())
+        SSub->m_attributes.qos.m_partition.names.push_back("C");
+    if(this->ui->checkBox_D->isChecked())
+        SSub->m_attributes.qos.m_partition.names.push_back("D");
 
     if(SSub->initSubscriber())
      this->mp_sd->addSubscriber(SSub);

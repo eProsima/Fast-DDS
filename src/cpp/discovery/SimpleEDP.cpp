@@ -92,6 +92,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.payloadMaxSize = 2000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
+		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
 		if(created)
 		{
@@ -115,6 +116,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
+		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
 				true,STATEFUL,(DDSTopicDataType*)&m_SubReaderDataType,(SubscriberListener*)&m_listeners.m_SubListener,c_EntityId_SEDPSubReader);
 		if(created)
@@ -141,6 +143,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Rparam.payloadMaxSize = 2000;
 		Rparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
+		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
 				true,STATEFUL,(DDSTopicDataType*)&m_PubReaderDataType,(SubscriberListener*)&m_listeners.m_PubListener,c_EntityId_SEDPPubReader);
 		if(created)
@@ -164,6 +167,7 @@ bool SimpleEDP::createSEDPEndpoints()
 		Wparam.payloadMaxSize = 2000;
 		Wparam.unicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->mp_localDPData->m_metatrafficMulticastLocatorList;
+		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);
 		if(created)
 		{
@@ -204,6 +208,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		rp1.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER;
 		rp1.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		rp1.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		rp1.m_durabilityKind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		mp_PubWriter->matched_reader_add(rp1);
 	}
 	auxendp = endp;
@@ -230,6 +235,7 @@ void SimpleEDP::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 		rp2.remoteReaderGuid.entityId = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
 		rp2.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		rp2.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		rp2.m_durabilityKind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		mp_SubWriter->matched_reader_add(rp2);
 	}
 }

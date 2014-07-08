@@ -128,6 +128,25 @@ bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
 	return m_reader_cache.remove_change(ch);
 }
 
+bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
+{
+	if(this->m_acceptMessagesFromUnkownWriters)
+	{
+		for(std::vector<GUID_t>::iterator it = this->m_matched_writers.begin();
+				it!=m_matched_writers.end();++it)
+		{
+			if(*it == writerId)
+				return true;
+		}
+	}
+	else
+	{
+		if(writerId.entityId == this->m_trustedWriterEntityId)
+			return true;
+	}
+	return false;
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

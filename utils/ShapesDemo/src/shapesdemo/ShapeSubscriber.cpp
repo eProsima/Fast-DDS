@@ -16,7 +16,8 @@
 ShapeSubscriber::ShapeSubscriber(Participant* par):
     mp_sub(NULL),
     mp_participant(par),
-    hasReceived(false)
+    hasReceived(false),
+    m_mutex(QMutex::Recursive)
 {
 	// TODO Auto-generated constructor stub
 
@@ -61,6 +62,12 @@ void ShapeSubscriber::onNewDataMessage()
                 m_shape.m_history.push_front(m_shape.m_mainShape);
             }
             m_shape.m_mainShape = shape;
+            cout << "Trying to lock ShapeSub: "<<std::flush;
+            m_mutex.lock();
+            cout << "OK "<<std::flush;
+            m_drawShape = m_shape;
+            m_mutex.unlock();
+            cout << " UNLOCKED SHAPESub"<<endl;
         }
     }
 }
@@ -69,3 +76,4 @@ void ShapeSubscriber::onSubscriptionMatched()
 {
     cout << "SUBSCRIBED:*****************************"<<endl;
 }
+

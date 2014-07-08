@@ -92,7 +92,7 @@ public:
 
 	bool acceptMsgDirectedTo(EntityId_t& entityId);
 
-	bool acceptMsgFrom(EntityId_t& entityId);
+	virtual bool acceptMsgFrom(GUID_t& entityId)=0;
 
 
 

@@ -69,6 +69,8 @@ public:
 
 	bool change_removed_by_history(CacheChange_t*);
 
+	bool acceptMsgFrom(GUID_t& entityId);
+
 private:
 	SubscriberTimes m_SubTimes;
 	//! Vector containing pointers to the matched writers.

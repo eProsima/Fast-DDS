@@ -20,8 +20,8 @@ ShapesDemo::ShapesDemo(MainWindow *mw):
     mp_participant(NULL),
     m_isInitialized(false),
     minX(0),minY(0),maxX(0),maxY(0),
-    m_mutex(QMutex::Recursive),
-    m_mainWindow(mw)
+    m_mainWindow(mw),
+    m_mutex(QMutex::Recursive)
 {
     srand (time(NULL));
     minX = 0;
@@ -50,7 +50,6 @@ Participant* ShapesDemo::getParticipant()
 bool ShapesDemo::init()
 {
     cout << "Initializing ShapesDemo "<< m_isInitialized <<endl;
-    QMutexLocker locker(&m_mutex);
     if(!m_isInitialized)
     {
         cout <<"Creating new participant"<<endl;
@@ -60,6 +59,8 @@ bool ShapesDemo::init()
         pparam.discovery.leaseDuration.seconds = 100;
         pparam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 50;
         pparam.defaultSendPort = 10042;
+        pparam.sendSocketBufferSize = 65536;
+        pparam.listenSocketBufferSize = 2*65536;
         mp_participant = DomainParticipant::createParticipant(pparam);
         if(mp_participant!=NULL)
         {
@@ -75,12 +76,10 @@ bool ShapesDemo::init()
 
 void ShapesDemo::stop()
 {
-    QMutexLocker locker(&m_mutex);
     if(m_isInitialized)
     {
-        DomainParticipant::removeParticipant(mp_participant);
-        cout << "All Stoped, removing"<<endl;
-        mp_participant = NULL;
+        QMutexLocker lock(&m_mutex);
+        this->m_mainWindow->quitThreads();
         for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
             it!=m_publishers.end();++it)
         {
@@ -93,35 +92,36 @@ void ShapesDemo::stop()
             delete(*it);
         }
         m_subscribers.clear();
+        DomainParticipant::removeParticipant(mp_participant);
+        cout << "All Stoped, removing"<<endl;
+        mp_participant = NULL;
         m_isInitialized = false;
     }
 }
 
 void ShapesDemo::addPublisher(ShapePublisher* SP)
 {
-    QMutexLocker locker(&m_mutex);
     m_publishers.push_back(SP);
 }
 
 void ShapesDemo::addSubscriber(ShapeSubscriber* SSub)
 {
-    QMutexLocker locker(&m_mutex);
     m_subscribers.push_back(SSub);
 }
 
 bool ShapesDemo::getShapes(std::vector<Shape*> *shvec)
 {
-    QMutexLocker locker(&m_mutex);
+    //QMutexLocker locker(&m_mutex);
     for(std::vector<ShapePublisher*>::iterator it =m_publishers.begin();
         it!=m_publishers.end();++it)
     {
-        shvec->push_back(&(*it)->m_shape);
+        shvec->push_back(&(*it)->m_drawShape);
     }
     for(std::vector<ShapeSubscriber*>::iterator it = m_subscribers.begin();
         it!=m_subscribers.end();++it)
     {
         if((*it)->hasReceived)
-            shvec->push_back(&(*it)->m_shape);
+            shvec->push_back(&(*it)->m_drawShape);
     }
     return true;
 }
@@ -138,7 +138,6 @@ uint32_t ShapesDemo::getRandomY(uint32_t size)
 
 void ShapesDemo::moveAllShapes()
 {
-    QMutexLocker locker(&m_mutex);
     for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
         it!=m_publishers.end();++it)
     {
@@ -186,7 +185,6 @@ void ShapesDemo::getNewDirection(Shape* sh)
 
 void ShapesDemo::writeAll()
 {
-     QMutexLocker locker(&m_mutex);
      for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
          it!=m_publishers.end();++it)
      {

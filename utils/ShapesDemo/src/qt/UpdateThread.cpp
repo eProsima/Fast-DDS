@@ -46,9 +46,7 @@ void UpdateThread::run(void)
 
 void UpdateThread::updateAll(void)
 {
-    if(this->m_threadNumber == 0)
-        m_mainW->updateDrawArea();
-    else if(this->m_threadNumber == 1)
+    if(this->m_threadNumber == 1)
         m_mainW->writeNewSamples();
 }
 

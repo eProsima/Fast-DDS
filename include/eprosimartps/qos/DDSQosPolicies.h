@@ -228,7 +228,7 @@ public:
 	int32_t max_samples;
 	int32_t max_instances;
 	int32_t max_samples_per_instance;
-	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(true),
+	DurabilityServiceQosPolicy():Parameter_t(PID_DURABILITY_SERVICE,PARAMETER_TIME_LENGTH+PARAMETER_KIND_LENGTH+4+4+4+4),QosPolicy(false),
 			history_kind(KEEP_LAST_HISTORY_QOS),
 						history_depth(1),max_samples(-1),max_instances(-1),max_samples_per_instance(-1){};
 	virtual ~DurabilityServiceQosPolicy(){};

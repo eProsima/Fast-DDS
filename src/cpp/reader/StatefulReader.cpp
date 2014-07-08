@@ -194,6 +194,25 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 	return false;
 }
 
+bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
+{
+	if(this->m_acceptMessagesFromUnkownWriters)
+	{
+		for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
+				it!=matched_writers.end();++it)
+		{
+			if((*it)->param.remoteWriterGuid == writerId)
+				return true;
+		}
+	}
+	else
+	{
+		if(writerId.entityId == this->m_trustedWriterEntityId)
+			return true;
+	}
+	return false;
+}
+
 
 
 } /* namespace rtps */

@@ -263,6 +263,7 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 			boost::bind(&ListenResource::newCDRMessage, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred));
+
 	mp_thread = new boost::thread(&ListenResource::run_io_service,this);
 	mp_participantImpl->ResourceSemaphoreWait();
 	return m_listenLoc;
