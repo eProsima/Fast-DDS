@@ -650,12 +650,6 @@ bool DiscoveredData::DiscoveredReaderData2ParameterList(DiscoveredReaderData& rd
 		*p = rdata.m_qos.m_timeBasedFilter;
 		param->m_parameters.push_back((Parameter_t*)p);
 	}
-	if(rdata.m_qos.m_durabilityService.sendAlways() || rdata.m_qos.m_durabilityService.hasChanged)
-	{
-		DurabilityServiceQosPolicy * p = new DurabilityServiceQosPolicy();
-		*p = rdata.m_qos.m_durabilityService;
-		param->m_parameters.push_back((Parameter_t*)p);
-	}
 	pDebugInfo(RTPS_CYAN << "DiscoveredReaderData converted to ParameterList with " << param->m_parameters.size()<< " parameters"<<endl);
 	return true;
 }

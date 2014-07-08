@@ -17,7 +17,7 @@
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
-
+#include <QMutex>
 
 class ShapeSubscriber: public SubscriberListener {
 public:
@@ -26,13 +26,17 @@ public:
 	SubscriberAttributes m_attributes;
     Subscriber* mp_sub;
 	Participant* mp_participant;
-	Shape m_shape;
+
 
 	bool initSubscriber();
 
 	void onNewDataMessage();
 	void onSubscriptionMatched();
 	bool hasReceived;
+    Shape m_shape;
+    Shape m_drawShape;
+    QMutex m_mutex;
+
 
 };
 

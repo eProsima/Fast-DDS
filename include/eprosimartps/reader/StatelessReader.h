@@ -47,6 +47,8 @@ public:
 
 	 bool change_removed_by_history(CacheChange_t*);
 
+	 bool acceptMsgFrom(GUID_t& entityId);
+
 private:
 	 //!List of GUID_t os matched writers.
 	 //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();

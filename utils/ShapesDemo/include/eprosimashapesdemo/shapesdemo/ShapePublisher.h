@@ -16,7 +16,7 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
-
+#include <QMutex>
 
 
 class dds::Publisher;
@@ -28,11 +28,17 @@ public:
 	PublisherAttributes m_attributes;
 	Publisher* mp_pub;
 	Participant* mp_participant;
-	Shape m_shape;
 
 	bool initPublisher();
     void write();
     void onPublicationMatched();
+
+    Shape m_shape;
+    Shape m_drawShape;
+    QMutex m_mutex;
+    bool isInitialized;
+
+
 };
 
 

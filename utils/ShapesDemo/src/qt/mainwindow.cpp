@@ -16,19 +16,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_shapesDemo(this),
-    mp_drawThread(NULL),
     mp_writeThread(NULL)
 {
     ui->setupUi(this);
     ui->areaDraw->setShapesDemo(this->getShapesDemo());
 
-    mp_drawThread = new UpdateThread(this,0);
-    mp_drawThread->setMainW(this);
-    mp_drawThread->updateInterval(150);
-    mp_drawThread->start();
     mp_writeThread = new UpdateThread(this,1);
     mp_writeThread->setMainW(this);
-    mp_writeThread->start();
+
     this->m_shapesDemo.init();
 }
 
@@ -40,7 +35,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_push_Start_clicked()
 {
     this->m_shapesDemo.init();
-    //mp_updateThread->start();
 }
 
 void MainWindow::on_push_Stop_clicked()
@@ -54,6 +48,14 @@ void MainWindow::on_bt_publish_clicked()
 {
     PublishDialog* pd = new PublishDialog(this->getShapesDemo(),this);
     pd->show();
+    mp_writeThread->start();
+
+}
+
+void MainWindow::quitThreads()
+{
+    //this->ui->areaDraw->stopTimer();
+    mp_writeThread->quit();
 }
 
 
@@ -62,22 +64,15 @@ void MainWindow::on_bt_subscribe_clicked()
 {
     SubscribeDialog* pd = new SubscribeDialog(this->getShapesDemo(),this);
     pd->show();
+
 }
 
-
-void MainWindow::updateDrawArea()
-{
-     //   cout << "Updating All "<<endl;
-//    this->m_shapesDemo.moveAllShapes();
-//    this->m_shapesDemo.writeAll();
-    ui->areaDraw->update();
-}
 
 void MainWindow::writeNewSamples()
 {
+    cout << "MOVING TIMER "<<endl;
     this->m_shapesDemo.moveAllShapes();
     this->m_shapesDemo.writeAll();
-    //ui->areaDraw->update();
 }
 
 void MainWindow::on_actionPreferences_triggered()

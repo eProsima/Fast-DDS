@@ -76,7 +76,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 	ReaderProxy* rp = new ReaderProxy(RPparam,m_PubTimes,this);
 	if(mp_periodicHB==NULL)
 		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
-	if(rp->m_param.m_durabilityKind == TRANSIENT_LOCAL_DURABILITY_QOS)
+	if(rp->m_param.m_durabilityKind >= TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
 		{
@@ -92,7 +92,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 		}
 	}
 	matched_readers.push_back(rp);
-	pDebugInfo("Reader Proxy added to StatefulWriter with " <<this->unicastLocatorList.size()<<"(u)-"<<this->multicastLocatorList.size()<<"(m) locators"<< endl);
+	pDebugInfo("Reader Proxy added to StatefulWriter with " <<rp->m_param.unicastLocatorList.size()<<"(u)-"<<rp->m_param.multicastLocatorList.size()<<"(m) locators"<< endl);
 	if(rp->m_changesForReader.size()>0)
 		unsent_changes_not_empty();
 	return true;
@@ -276,12 +276,11 @@ bool StatefulWriter::removeMinSeqCacheChange()
 
 	if(is_acked_by_all(change))
 	{
-		ReaderProxy* rp;
 		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 				it!=this->matched_readers.end();++it)
 		{
-			rp = *it;
-			rp->m_changesForReader.erase(rp->m_changesForReader.begin());
+			if(!(*it)->m_changesForReader.empty())
+				(*it)->m_changesForReader.erase((*it)->m_changesForReader.begin());
 		}
 		m_writer_cache.remove_min_change();
 		return true;

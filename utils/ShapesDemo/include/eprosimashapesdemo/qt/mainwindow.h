@@ -30,10 +30,11 @@ public:
         return &m_shapesDemo;
     }
 
-    void updateDrawArea();
     void writeNewSamples();
 
     void updateInterval(uint32_t ms);
+
+   void quitThreads();
 
 private slots:
     void on_bt_publish_clicked();
@@ -49,7 +50,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
-    UpdateThread* mp_drawThread;
     UpdateThread* mp_writeThread;
 };
 

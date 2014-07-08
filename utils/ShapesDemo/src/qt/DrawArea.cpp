@@ -11,6 +11,9 @@
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
+#include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
+
 #include <QPainter>
 
 DrawArea::DrawArea(QWidget *parent)
@@ -23,8 +26,7 @@ DrawArea::DrawArea(QWidget *parent)
     setAutoFillBackground(true);
     m_brush.setStyle(Qt::SolidPattern);
 
-
-
+    m_timerId = startTimer(50);
 }
 
 DrawArea::~DrawArea()
@@ -50,6 +52,12 @@ void DrawArea::paintEvent(QPaintEvent * /* event */)
     drawShapes(&painter);
 }
 
+void DrawArea::timerEvent(QTimerEvent* e)
+{
+    Q_UNUSED(e);
+    repaint();
+}
+
 uint8_t DrawArea::getAlpha(int pos,size_t total)
 {
     float inc = (lastA-firstA)/total;
@@ -60,29 +68,39 @@ void DrawArea::drawShapes(QPainter* painter)
 {
     if(m_isInitialized)
     {
-        QMutexLocker locker(mp_SD->getMutex());
-        m_shapes.clear();
-        if(mp_SD->getShapes(&m_shapes))
+        QMutexLocker lock(&mp_SD->m_mutex);
+        for(std::vector<ShapeSubscriber*>::iterator it = mp_SD->m_subscribers.begin();
+            it!=mp_SD->m_subscribers.end();++it)
         {
-            for(std::vector<Shape*>::iterator it = m_shapes.begin();
-                it!=m_shapes.end();++it)
+            if((*it)->hasReceived)
             {
-                size_t total = (*it)->m_history.size();
+                cout << "DrawArea locking sub: "<<std::flush;
+                QMutexLocker(&(*it)->m_mutex);
+                cout << "OK"<<std::flush;
+                size_t total = (*it)->m_drawShape.m_history.size();
                 int index = 0;
-                for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_history.rbegin();
-                    sit!=(*it)->m_history.rend();++sit)
+                for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_drawShape.m_history.rbegin();
+                    sit!=(*it)->m_drawShape.m_history.rend();++sit)
                 {
-                    paintShape(painter,(*it)->m_type,*sit,getAlpha(index,total),true);
+                    paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
                     ++index;
                 }
-                paintShape(painter,(*it)->m_type,(*it)->m_mainShape,255);
-                //cout << "Drawing: " << (*it)->m_mainShape.m_x << " "<<(*it)->m_mainShape.m_y << " "<<(*it)->m_mainShape.m_size << endl;
-
+                paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
+                cout << "UNLOCKING"<<endl;
             }
         }
-
-        else
-            cout << "GETSHAPESFALSE"<<endl;
+        for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
+            it!=mp_SD->m_publishers.end();++it)
+        {
+            if((*it)->isInitialized)
+            {
+            cout << "DrawArea locking PUB: "<<std::flush;
+            QMutexLocker(&(*it)->m_mutex);
+            cout << "OK"<<std::flush;
+             paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
+             cout << "UNLOCKING PUB"<<endl;
+            }
+        }
     }
 }
 

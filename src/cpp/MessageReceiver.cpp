@@ -413,7 +413,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
-		if((*it)->acceptMsgFrom(ch->writerGUID.entityId))//(*it)->acceptMsgDirectedTo(readerID)) //add
+		if((*it)->acceptMsgFrom(ch->writerGUID) && (*it)->acceptMsgDirectedTo(readerID)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);
 			CacheChange_t* change_to_add;
@@ -514,7 +514,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgFrom(writerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
+		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{
@@ -659,7 +659,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgFrom(writerGUID.entityId))//(*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{

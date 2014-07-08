@@ -368,6 +368,11 @@
       </item>
       <item>
        <property name="text">
+        <string>CYAN</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>RED</string>
        </property>
       </item>
@@ -409,28 +414,28 @@
      </widget>
     </item>
     <item row="1" column="3">
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="checkBox_A">
       <property name="text">
        <string>A</string>
       </property>
      </widget>
     </item>
     <item row="1" column="4">
-     <widget class="QCheckBox" name="checkBox_2">
+     <widget class="QCheckBox" name="checkBox_B">
       <property name="text">
        <string>B</string>
       </property>
      </widget>
     </item>
     <item row="1" column="5">
-     <widget class="QCheckBox" name="checkBox_3">
+     <widget class="QCheckBox" name="checkBox_C">
       <property name="text">
        <string>C</string>
       </property>
      </widget>
     </item>
     <item row="1" column="6">
-     <widget class="QCheckBox" name="checkBox_4">
+     <widget class="QCheckBox" name="checkBox_D">
       <property name="text">
        <string>D</string>
       </property>
@@ -514,7 +519,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Ownsership Strength:</string>
+       <string>Ownership Strength:</string>
       </property>
       <property name="textFormat">
        <enum>Qt::AutoText</enum>

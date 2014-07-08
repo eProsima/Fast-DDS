@@ -46,6 +46,7 @@ class MainWindow;
 
 class ShapesDemo
 {
+    friend class DrawArea;
 public:
     ShapesDemo(MainWindow* mw);
 	~ShapesDemo();
@@ -62,10 +63,10 @@ public:
 
      bool getShapes(std::vector<Shape*>* shvec);
 
-     QMutex* getMutex()
-     {
-         return &m_mutex;
-     }
+//     QMutex* getMutex()
+//     {
+//         return &m_mutex;
+//     }
 
      void moveAllShapes();
      void writeAll();
@@ -87,10 +88,10 @@ private:
     void moveShape(Shape* sh);
     void getNewDirection(Shape* sh);
 
-    QMutex m_mutex;
     ShapeTopicDataType m_shapeTopicDataType;
     ShapesDemoOptions m_options;
     MainWindow* m_mainWindow;
+    QMutex m_mutex;
 };
 
 

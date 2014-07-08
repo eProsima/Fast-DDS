@@ -124,10 +124,6 @@ bool ReaderQos::checkQos()
 		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
 		return false;
 	}
-
-
-
-
 	return true;
 }
 

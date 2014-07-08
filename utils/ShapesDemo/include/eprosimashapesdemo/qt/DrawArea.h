@@ -12,20 +12,21 @@
 #include <QBrush>
 #include <QPen>
 #include <QWidget>
+#include <QTimer>
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
 class ShapesDemo;
 
 #define SD_QT_COLOR_TRANS 255
 
-const QColor SD_QT_PURPLE = QColor(255,0,255,SD_QT_COLOR_TRANS);
+const QColor SD_QT_PURPLE = QColor(125,38,205,SD_QT_COLOR_TRANS);
 const QColor SD_QT_BLUE = QColor(0,0,255,SD_QT_COLOR_TRANS);
 const QColor SD_QT_RED = QColor(255,0,0,SD_QT_COLOR_TRANS);
 const QColor SD_QT_GREEN = QColor(0,255,0,SD_QT_COLOR_TRANS);
 const QColor SD_QT_YELLOW = QColor(255,255,0,SD_QT_COLOR_TRANS);
-const QColor SD_QT_CYAN = QColor(0,176,246,SD_QT_COLOR_TRANS);
-const QColor SD_QT_MAGENTA = QColor(245,0,135,SD_QT_COLOR_TRANS);
-const QColor SD_QT_ORANGE = QColor(255,130,0,SD_QT_COLOR_TRANS);
+const QColor SD_QT_CYAN = QColor(0,255,255,SD_QT_COLOR_TRANS);
+const QColor SD_QT_MAGENTA = QColor(255,20,147,SD_QT_COLOR_TRANS);
+const QColor SD_QT_ORANGE = QColor(255,140,0,SD_QT_COLOR_TRANS);
 
 const QColor SD_QT_BLACK = QColor(0,0,0,255);
 
@@ -46,9 +47,12 @@ public:
     void setShapesDemo(ShapesDemo* SD);
     void drawShapes(QPainter*);
 
+    void stopTimer(){this->killTimer(m_timerId);}
+
 
 protected:
     void paintEvent(QPaintEvent *event);
+    void timerEvent(QTimerEvent *event);
 
 private:
     QPen m_pen;
@@ -59,10 +63,11 @@ private:
 
     ShapesDemo* mp_SD;
     bool m_isInitialized;
-    std::vector<Shape*> m_shapes;
+  //  std::vector<Shape*> m_shapes;
     float firstA,lastA;
     uint8_t getAlpha(int pos,size_t total);
-
+    QTimer* m_timer;
+    int m_timerId;
 };
 
 
