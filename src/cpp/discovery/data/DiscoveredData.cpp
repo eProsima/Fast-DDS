@@ -18,6 +18,7 @@
 
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include <sstream>
 
 namespace eprosima{
 
@@ -189,7 +190,7 @@ bool DiscoveredData::ParameterList2DiscoveredWriterData(ParameterList_t& param, 
 		}
 		default:
 		{
-			pWarning("Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << " NOT CONSIDERED"<< endl);
+			pInfo("Parameter with ID: " << (uint16_t)(*it)->Pid << " NOT CONSIDERED"<< endl);
 			break;
 		}
 		}
@@ -361,7 +362,7 @@ bool DiscoveredData::ParameterList2DiscoveredReaderData(ParameterList_t& param, 
 		}
 		default:
 		{
-			pWarning("Parameter with ID: " << std::hex <<(*it)->Pid <<std::dec << " NOT CONSIDERED"<< endl);
+			pInfo("Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED"<< endl);
 			break;
 		}
 		}

@@ -73,7 +73,7 @@ bool SubscriberImpl::isHistoryFull()
 }
 
 
-int SubscriberImpl::getHistoryElementsNumber()
+size_t SubscriberImpl::getHistoryElementsNumber()
 {
 	return mp_Reader->getHistoryCacheSize();
 }
