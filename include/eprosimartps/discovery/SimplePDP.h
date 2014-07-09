@@ -111,6 +111,8 @@ public:
 
 	SPDPTopicDataType m_topicDataType;
 
+	bool removeLocalParticipant();
+
 };
 
 } /* namespace rtps */

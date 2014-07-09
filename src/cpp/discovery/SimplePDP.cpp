@@ -473,6 +473,29 @@ bool SimplePDP::removeRemoteParticipant(const GuidPrefix_t& guidP)
 	return true;
 }
 
+bool SimplePDP::removeLocalParticipant()
+{
+	for(std::vector<DiscoveredWriterData*>::iterator it = this->mp_localDPData->m_writers.begin();
+			it!=this->mp_localDPData->m_writers.end();++it)
+	{
+		this->mp_EDP->removeLocalWriter((*it)->m_writerProxy.remoteWriterGuid);
+	}
+	for(std::vector<DiscoveredReaderData*>::iterator it = this->mp_localDPData->m_readers.begin();
+			it!=this->mp_localDPData->m_readers.end();++it)
+	{
+		this->mp_EDP->removeLocalReader((*it)->m_readerProxy.remoteReaderGuid);
+	}
+	CacheChange_t* change = NULL;
+	if(mp_SPDPWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
+	{
+		change->instanceHandle = mp_localDPData->m_key;
+		mp_SPDPWriter->add_change(change);
+		mp_SPDPWriter->unsent_change_add(change);
+		return true;
+	}
+	return false;
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */
