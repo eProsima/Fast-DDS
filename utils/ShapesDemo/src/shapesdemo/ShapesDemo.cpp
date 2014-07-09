@@ -26,8 +26,8 @@ ShapesDemo::ShapesDemo(MainWindow *mw):
     srand (time(NULL));
     minX = 0;
     minY = 0;
-    maxX = MAX_DRAW_AREA;
-    maxY = MAX_DRAW_AREA;
+    maxX = MAX_DRAW_AREA_X;
+    maxY = MAX_DRAW_AREA_Y;
 }
 
 ShapesDemo::~ShapesDemo()
@@ -155,10 +155,10 @@ void ShapesDemo::moveShape(Shape* sh)
     int nx = sh->m_mainShape.m_x + m_options.m_movementSpeed*sh->m_dirX;
     int ny = sh->m_mainShape.m_y + m_options.m_movementSpeed*sh->m_dirY;
     //Check if the movement is correct
-    bool cond1 = nx+(int)sh->m_mainShape.m_size > (int)maxX;
-    bool cond2 = nx-(int)sh->m_mainShape.m_size < (int)minX;
-    bool cond3 = ny+(int)sh->m_mainShape.m_size > (int)maxY;
-    bool cond4 = ny-(int)sh->m_mainShape.m_size < (int)minY;
+    bool cond1 = nx+(int)sh->m_mainShape.m_size/2 > (int)maxX;
+    bool cond2 = nx-(int)sh->m_mainShape.m_size/2 < (int)minX;
+    bool cond3 = ny+(int)sh->m_mainShape.m_size/2 > (int)maxY;
+    bool cond4 = ny-(int)sh->m_mainShape.m_size/2 < (int)minY;
     if( cond1 || cond2 || cond3 || cond4)
     {
         sh->m_changeDir = true;

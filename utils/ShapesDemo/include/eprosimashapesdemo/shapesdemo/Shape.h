@@ -14,6 +14,7 @@
 #ifndef SHAPE_H_
 #define SHAPE_H_
 #include <list>
+#include <vector>
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
 
@@ -24,7 +25,8 @@ public:
 	virtual ~Shape();
     TYPESHAPE m_type;
 	ShapeType m_mainShape;
-    std::list<ShapeType> m_history;
+    std::vector<std::list<ShapeType> > m_shapeHistory;
+    //std::list<ShapeType> m_history;
 
     float m_dirX;
     float m_dirY;

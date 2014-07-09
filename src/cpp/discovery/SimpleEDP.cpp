@@ -483,11 +483,6 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 	boost::lock_guard<Endpoint> guard(*R);
 	pInfo("SimpleEDP:localReaderMatching R-DWD"<<endl);
 	bool matched = false;
-//	cout << R->getTopic().getTopicName() << "|"<< wdata->m_topicName<< "|"<<(R->getTopic().getTopicName(), wdata->m_topicName)<<endl;
-//	cout << R->getTopic().getTopicName().size()<< "|"<<wdata->m_topicName.size()<<endl;
-//	cout << R->getTopic().getTopicKind() << "|"<< wdata->topicKind<<"|"<<(R->getTopic().getTopicKind() == wdata->topicKind)<<endl;
-//	cout << R->getTopic().getTopicDataType() << "|"<< wdata->m_typeName<<"|"<<(R->getTopic().getTopicDataType() == wdata->m_typeName)<<endl;
-//	cout << wdata->isAlive<<endl;
 	if(validMatching(R,wdata)) //Matching
 	{
 		pDebugInfo(RTPS_CYAN << "SimpleEDP: local Reader MATCHED"<<RTPS_DEF<<endl);
@@ -563,6 +558,55 @@ bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
 		return false;
 	}
 	return true;
+}
+
+
+bool SimpleEDP::removeLocalReader(GUID_t guid)
+{
+	if(mp_SubWriter!=NULL)
+	{
+		CacheChange_t* change = NULL;
+		if(mp_SubWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
+		{
+			change->instanceHandle = guid;
+			mp_SubWriter->add_change(change);
+			mp_SubWriter->unsent_change_add(change);
+		}
+		for(std::vector<DiscoveredReaderData*>::iterator it = this->mp_PDP->mp_localDPData->m_readers.begin();
+				it!=this->mp_PDP->mp_localDPData->m_readers.end();++it)
+		{
+			if((*it)->m_readerProxy.remoteReaderGuid == guid)
+			{
+				this->mp_PDP->mp_localDPData->m_readers.erase(it);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool SimpleEDP::removeLocalWriter(GUID_t guid)
+{
+	if(mp_SubWriter!=NULL)
+	{
+		CacheChange_t* change = NULL;
+		if(mp_SubWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
+		{
+			change->instanceHandle = guid;
+			mp_SubWriter->add_change(change);
+			mp_SubWriter->unsent_change_add(change);
+		}
+		for(std::vector<DiscoveredWriterData*>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
+				it!=this->mp_PDP->mp_localDPData->m_writers.end();++it)
+		{
+			if((*it)->m_writerProxy.remoteWriterGuid == guid)
+			{
+				this->mp_PDP->mp_localDPData->m_writers.erase(it);
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 

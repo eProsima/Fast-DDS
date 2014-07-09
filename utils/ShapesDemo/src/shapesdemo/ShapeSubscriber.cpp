@@ -45,29 +45,31 @@ void ShapeSubscriber::onNewDataMessage()
        // shape.m_x += 5;
         if(info.sampleKind == ALIVE)
         {
-            if(m_shape.m_history.size() < m_attributes.topic.historyQos.depth -1)
+            hasReceived = true;
+            bool found = false;
+            for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
+                it!=m_shape.m_shapeHistory.end();++it)
             {
+                if(it->begin()->getColor() == shape.getColor())
+                {
+                    it->push_front(shape);
+                    if(it->size() > m_attributes.topic.historyQos.depth)
+                    {
+                        it->pop_back();
+                    }
+                    found = true;
+                }
 
             }
-            else
+            if(!found)
             {
-                m_shape.m_history.pop_back();
+                m_shape.m_shapeHistory.push_back(std::list<ShapeType>(1,shape));
             }
-            if(!hasReceived)
-            {
-                hasReceived = true;
-            }
-            else
-            {
-                m_shape.m_history.push_front(m_shape.m_mainShape);
-            }
-            m_shape.m_mainShape = shape;
-            cout << "Trying to lock ShapeSub: "<<std::flush;
             m_mutex.lock();
-            cout << "OK "<<std::flush;
+            //cout << "OK "<<std::flush;
             m_drawShape = m_shape;
             m_mutex.unlock();
-            cout << " UNLOCKED SHAPESub"<<endl;
+            //cout << " UNLOCKED SHAPESub"<<endl;
         }
     }
 }
