@@ -65,7 +65,7 @@ public:
 	/**
 	 * Get the number of elements currently stored in the HistoryCache.
 	 */
-	int getHistoryElementsNumber();
+	size_t getHistoryElementsNumber();
 
 //	bool updateAttributes(const SubscriberAttributes& param);
 
@@ -150,7 +150,7 @@ public:
 	/**
 	 * Get the number of elements currently stored in the HistoryCache.
 	 */
-	int getHistoryElementsNumber()
+	size_t getHistoryElementsNumber()
 	{
 			return mp_impl->getHistoryElementsNumber();
 		}
