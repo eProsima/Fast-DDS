@@ -145,6 +145,9 @@ public:
 
 	bool validMatching(RTPSReader*reader,DiscoveredWriterData* wdata);
 	bool validMatching(RTPSWriter*writer,DiscoveredReaderData* rdata);
+
+	bool removeLocalWriter(GUID_t guid);
+	bool removeLocalReader(GUID_t guid);
 };
 
 } /* namespace rtps */

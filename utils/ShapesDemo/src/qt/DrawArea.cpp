@@ -36,12 +36,12 @@ DrawArea::~DrawArea()
 
 QSize DrawArea::sizeHint() const
 {
-    return QSize(MAX_DRAW_AREA, MAX_DRAW_AREA);
+    return QSize(MAX_DRAW_AREA_X, MAX_DRAW_AREA_Y);
 }
 
 QSize DrawArea::minimumSizeHint() const
 {
-    return QSize(MAX_DRAW_AREA, MAX_DRAW_AREA);
+    return QSize(MAX_DRAW_AREA_X, MAX_DRAW_AREA_Y);
 }
 
 
@@ -77,16 +77,28 @@ void DrawArea::drawShapes(QPainter* painter)
                 cout << "DrawArea locking sub: "<<std::flush;
                 QMutexLocker(&(*it)->m_mutex);
                 cout << "OK"<<std::flush;
-                size_t total = (*it)->m_drawShape.m_history.size();
-                int index = 0;
-                for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_drawShape.m_history.rbegin();
-                    sit!=(*it)->m_drawShape.m_history.rend();++sit)
+                for(std::vector<std::list<ShapeType>>::iterator vit = (*it)->m_drawShape.m_shapeHistory.begin();
+                    vit!=(*it)->m_drawShape.m_shapeHistory.end();++vit)
                 {
-                    paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
-                    ++index;
+                      size_t total = vit->size();
+                      int index = 0;
+                      for(std::list<ShapeType>::reverse_iterator sit = vit->rbegin();
+                          sit!=vit->rend();++sit)
+                      {
+                          paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
+                          ++index;
+                      }
                 }
-                paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
-                cout << "UNLOCKING"<<endl;
+//                size_t total = (*it)->m_drawShape.m_history.size();
+//                int index = 0;
+//                for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_drawShape.m_history.rbegin();
+//                    sit!=(*it)->m_drawShape.m_history.rend();++sit)
+//                {
+//                    paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
+//                    ++index;
+//                }
+//                paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
+//                cout << "UNLOCKING"<<endl;
             }
         }
         for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
@@ -136,11 +148,11 @@ void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint
         x = shape.m_x;
         y = shape.m_y;
         s = shape.m_size;
-        double h = 0.5*sqrt(3*pow((double)s,2));
+        //double h = 0.5*sqrt(3*pow((double)s,2));
         QPoint points[3] = {
-            QPoint(x-s/2, y+h/2),
-            QPoint(x+s/2, y+h/2),
-            QPoint(x, y-h/2)
+            QPoint(x-s/2, y+s/2),
+            QPoint(x+s/2, y+s/2),
+            QPoint(x, y-s/2)
         };
         painter->drawPolygon(points,3);
         break;

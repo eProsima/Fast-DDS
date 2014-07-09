@@ -54,6 +54,9 @@ void SubscribeDialog::on_buttonBox_accepted()
     //History:
     SSub->m_attributes.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     SSub->m_attributes.topic.historyQos.depth = this->ui->spin_HistoryQos->value();
+    SSub->m_attributes.topic.resourceLimitsQos.max_instances = 20;
+    SSub->m_attributes.topic.resourceLimitsQos.max_samples_per_instance = this->ui->spin_HistoryQos->value();
+    SSub->m_attributes.topic.resourceLimitsQos.max_samples = this->ui->spin_HistoryQos->value()*20;
 
     //Reliability
     if(this->ui->checkBox_reliable->isChecked())
