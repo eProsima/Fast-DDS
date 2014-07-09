@@ -67,8 +67,8 @@ public:
 	 */
 	virtual void assignRemoteEndpoints(DiscoveredParticipantData* pdata)=0;
 
-	virtual bool removeLocalWriter(GUID_t guid);
-		virtual bool removeLocalReader(GUID_t guid);
+	virtual bool removeLocalWriter(GUID_t guid){return true;};
+	virtual bool removeLocalReader(GUID_t guid){return false;};
 
 protected:
 	ParticipantDiscoveryProtocol* mp_PDP;

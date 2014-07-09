@@ -141,12 +141,15 @@ public:
 	bool removeRemoteEndpoints(const GuidPrefix_t& partguidP);
 
 	SEDPTopicDataType m_PubReaderDataType;
+
 	SEDPTopicDataType m_SubReaderDataType;
 
 	bool validMatching(RTPSReader*reader,DiscoveredWriterData* wdata);
+
 	bool validMatching(RTPSWriter*writer,DiscoveredReaderData* rdata);
 
 	bool removeLocalWriter(GUID_t guid);
+
 	bool removeLocalReader(GUID_t guid);
 };
 
