@@ -71,6 +71,8 @@ public:
 	virtual bool removeRemoteParticipant(const GuidPrefix_t& guidP)=0;
 	virtual bool localWriterMatching(RTPSWriter* W,bool first_time)=0;
 	virtual bool localReaderMatching(RTPSReader* R,bool first_time)=0;
+
+
 };
 
 } /* namespace rtps */
