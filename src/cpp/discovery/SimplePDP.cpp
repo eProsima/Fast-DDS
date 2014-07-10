@@ -469,7 +469,17 @@ bool SimplePDP::removeRemoteParticipant(const GuidPrefix_t& guidP)
 		}
 	}
 	m_discoveredParticipants.erase(dpdit);
+	for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReader->readerHistoryCacheBegin();
+			it!=this->mp_SPDPReader->readerHistoryCacheEnd();++it)
+	{
+		if((*it)->instanceHandle == (*dpdit)->m_key)
+		{
+			this->mp_SPDPReader->change_removed_by_history(*it);
+			break;
+		}
+	}
 	delete(*dpdit);
+
 	return true;
 }
 
