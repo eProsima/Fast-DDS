@@ -93,7 +93,7 @@ void SEDPPubListener::onNewDataMessage()
 				if(pdata == NULL)
 				{
 					pWarning("Publications Listener: received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_PubReader->remove_change(change);
+					this->mp_SEDP->mp_PubReader->change_removed_by_history(change);
 					delete(wdata);
 					return;
 				}
@@ -214,7 +214,7 @@ void SEDPSubListener::onNewDataMessage()
 				if(pdata == NULL)
 				{
 					pWarning("Subscriptions Listener: received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_SubReader->remove_change(change);
+					this->mp_SEDP->mp_SubReader->change_removed_by_history(change);
 					delete(rdata);
 					return;
 				}

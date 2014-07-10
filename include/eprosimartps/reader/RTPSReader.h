@@ -147,13 +147,13 @@ public:
 	{
 		return m_reader_cache.get_last_added_cache(change);
 	}
-	bool remove_change(CacheChange_t* change)
-	{
-		if(change_removed_by_history(change))
-			return m_reader_cache.remove_change(change);
-		else
-			return false;
-	}
+//	bool remove_change(CacheChange_t* change)
+//	{
+//		if(change_removed_by_history(change))
+//			return m_reader_cache.remove_change(change);
+//		else
+//			return false;
+//	}
 
 	void setTrustedWriter(EntityId_t writer)
 	{
