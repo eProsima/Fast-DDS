@@ -196,8 +196,8 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 	}
 	else
 	{
-		m_listen_endpoint = udp::endpoint(address,m_listenLoc.port);
-
+		//m_listen_endpoint = udp::endpoint(address,m_listenLoc.port);
+		m_listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_listenLoc.port);
 	}
 	//OPEN THE SOCKET:
 	m_listen_socket.open(m_listen_endpoint.protocol());
