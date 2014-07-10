@@ -8,8 +8,9 @@ RTPSVERSION = 0.4.0
 
 QT  += core
 QT  -= gui
+#QT += gui
 
-#RC_ICONS = /images/ShapesDemo.ico
+
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,6 +26,7 @@ win32:QMAKE_LFLAGS_WINDOWS_DLL +=/FORCE:MULTIPLE
 
 
 CONFIG += console
+
 
 unix:CONFIG(debug, debug|release): TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemod
 unix:CONFIG(release, debug|release):TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemo

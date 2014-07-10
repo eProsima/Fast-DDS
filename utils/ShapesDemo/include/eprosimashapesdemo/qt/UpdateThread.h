@@ -18,6 +18,9 @@
 #include <QTimer>
 #include <cstdint>
 
+#include <iostream>
+using namespace std;
+
 class MainWindow;
 
 
@@ -31,9 +34,9 @@ public:
     void setMainW(MainWindow* mw);
     void updateInterval(uint32_t interval)
     {
+      //  cout << "UPDATE: Thread ID: "<< this->thread()->currentThreadId()<<endl;
         m_interval = interval;
-        if(m_timer !=NULL)
-            m_timer->setInterval(m_interval);
+        m_hasIntervalChanged = true;
     }
 
 private slots:
@@ -45,6 +48,7 @@ private:
     MainWindow* m_mainW;
     uint32_t m_interval;
     uint32_t m_threadNumber;
+    bool m_hasIntervalChanged;
 };
 
 

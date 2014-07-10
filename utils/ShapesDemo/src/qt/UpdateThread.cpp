@@ -15,12 +15,14 @@
 #include "eprosimashapesdemo/qt/mainwindow.h"
 
 
+
 UpdateThread::UpdateThread(QObject *parent, uint32_t threadN):
     QThread(parent),
     m_mainW(NULL),
     m_timer(NULL),
-    m_interval(200),
-    m_threadNumber(threadN)
+    m_interval(500),
+    m_threadNumber(threadN),
+    m_hasIntervalChanged(false)
 {
 
 }
@@ -36,18 +38,38 @@ void UpdateThread::run(void)
 {
     if(m_timer==NULL)
     {
-        m_timer = new QTimer(this);
-        connect(m_timer,SIGNAL(timeout()),this,SLOT(updateAll()));
+        QTimer::singleShot(0,this,SLOT(updateAll()));
+//        m_timer = new QTimer(this);
+//        connect(m_timer,SIGNAL(timeout()),this,SLOT(updateAll()));
+//        cout << "START: Thread ID: "<< this->thread()->currentThreadId()<<endl;
+//        m_timer->start(m_interval);
     }
-    m_timer->start(m_interval);
+    //cout << "RUN: Thread ID: "<< this->thread()->currentThreadId()<<endl;
     exec();
 }
 
 
 void UpdateThread::updateAll(void)
 {
+    if(m_timer == NULL)
+    {
+        m_timer = new QTimer(this);
+        connect(m_timer,SIGNAL(timeout()),this,SLOT(updateAll()));
+   // cout << "START: Thread ID: "<< this->thread()->currentThreadId()<<endl;
+        m_timer->start(m_interval);
+    }
+
+   // cout << "WRITE TIMER: "<< this->m_timer->interval();
+    //cout << "WRITE: Thread ID: "<< this->thread()->currentThreadId()<<endl;
     if(this->m_threadNumber == 1)
         m_mainW->writeNewSamples();
+    if(m_timer !=NULL && m_hasIntervalChanged)
+    {
+        cout << "Changing interval timer"<<endl;
+        m_timer->setInterval(m_interval);
+        m_hasIntervalChanged = false;
+    }
+
 }
 
  void UpdateThread::setMainW(MainWindow* mw)
