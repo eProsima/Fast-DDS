@@ -36,8 +36,18 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pubsub->setHorizontalHeaderItem(3, new QStandardItem(QString("Type")));
     m_pubsub->setHorizontalHeaderItem(4, new QStandardItem(QString("Reliable")));
     m_pubsub->setHorizontalHeaderItem(5, new QStandardItem(QString("History")));
+    m_pubsub->setHorizontalHeaderItem(6, new QStandardItem(QString("Durability")));
+    m_pubsub->setHorizontalHeaderItem(7, new QStandardItem(QString("Liveliness")));
 
     ui->tableEndpoint->setModel(m_pubsub);
+    ui->tableEndpoint->setColumnWidth(0,70);
+    ui->tableEndpoint->setColumnWidth(1,80);
+    ui->tableEndpoint->setColumnWidth(2,50);
+    ui->tableEndpoint->setColumnWidth(3,50);
+    ui->tableEndpoint->setColumnWidth(4,65);
+    ui->tableEndpoint->setColumnWidth(5,70);
+    ui->tableEndpoint->setColumnWidth(6,110);
+    ui->tableEndpoint->setColumnWidth(7,110);
 
 
     this->m_shapesDemo.init();
@@ -73,7 +83,7 @@ void MainWindow::on_bt_subscribe_clicked()
 
 void MainWindow::writeNewSamples()
 {
-    cout << "MOVING TIMER "<<endl;
+   // cout << "MOVING TIMER "<<endl;
     this->m_shapesDemo.moveAllShapes();
     this->m_shapesDemo.writeAll();
 }
@@ -118,6 +128,17 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
     else
          items.append(new QStandardItem("False"));
     items.append(new QStandardItem(QString("%1").arg(spub->m_attributes.topic.historyQos.depth)));
+    if(spub->m_attributes.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+        items.append(new QStandardItem("VOLATILE"));
+    else
+        items.append(new QStandardItem("TRANSIENT_LOCAL"));
+
+    if(spub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+        items.append(new QStandardItem("AUTOMATIC"));
+    else if(spub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        items.append(new QStandardItem("MANUAL_PARTICIPANT"));
+    else
+        items.append(new QStandardItem("MANUAL_TOPIC"));
     m_pubsub->appendRow(items);
 
 }
@@ -129,10 +150,24 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
     items.append(new QStandardItem("---"));
     items.append(new QStandardItem("---"));
     items.append(new QStandardItem("Sub"));
+
     if(ssub->m_attributes.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         items.append(new QStandardItem("True"));
     else
          items.append(new QStandardItem("False"));
-    items.append(new QStandardItem(ssub->m_attributes.topic.historyQos.depth));
+
+    items.append(new QStandardItem(QString("%1").arg(ssub->m_attributes.topic.historyQos.depth)));
+
+    if(ssub->m_attributes.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+        items.append(new QStandardItem("VOLATILE"));
+    else
+        items.append(new QStandardItem("TRANSIENT_LOCAL"));
+
+    if(ssub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+        items.append(new QStandardItem("AUTOMATIC"));
+    else if(ssub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        items.append(new QStandardItem("MANUAL_PARTICIPANT"));
+    else
+        items.append(new QStandardItem("MANUAL_TOPIC"));
     m_pubsub->appendRow(items);
 }
