@@ -391,11 +391,17 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 		if(!(*thit)->hasAssociatedEndpoints())
 			delete(*thit);
 	}
-	//FIXME REMOVE ENDPOINT FROM DISCOVERY PROTOCOL
-//	if(mp_PDP!=NULL)
-//		mp_PDP->
-	if(mp_PDP->mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
-		mp_PDP->mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
+
+	if(mp_PDP!=NULL)
+	{
+		if(p_endpoint->getEndpointKind()==WRITER)
+			mp_PDP->mp_EDP->removeLocalWriter(p_endpoint->getGuid());
+		else if(p_endpoint->getEndpointKind()==READER)
+			mp_PDP->mp_EDP->removeLocalReader(p_endpoint->getGuid());
+
+		if(mp_PDP->mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
+			mp_PDP->mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
+	}
 	delete(p_endpoint);
 	return true;
 }

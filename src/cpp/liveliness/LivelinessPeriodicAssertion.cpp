@@ -88,8 +88,6 @@ bool LivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 				change->serializedPayload.data[i] = 0;
 			change->serializedPayload.data[15] = m_livelinessKind+1;
 			change->serializedPayload.length = 12+4+4+4;
-//			//FIXME: PREPARE HISTORYCACHE TO SUPPORT DIFFERENT HISTORYKIND.
-//			removeMinSeqNumByKey();
 			mp_writerLiveliness->mp_builtinParticipantMessageWriter->add_change(change);
 			mp_writerLiveliness->mp_builtinParticipantMessageWriter->unsent_change_add(change);
 		}
@@ -152,8 +150,6 @@ bool LivelinessPeriodicAssertion::ManualByParticipantLivelinessAssertion()
 			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = 0;
 
-//			//FIXME: PREPARE HISTORYCACHE TO SUPPORT DIFFERENT HISTORYKIND.
-//			removeMinSeqNumByKey();
 			mp_writerLiveliness->mp_builtinParticipantMessageWriter->add_change(change);
 			mp_writerLiveliness->mp_builtinParticipantMessageWriter->unsent_change_add(change);
 		}

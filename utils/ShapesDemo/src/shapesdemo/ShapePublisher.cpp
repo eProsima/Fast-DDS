@@ -8,7 +8,6 @@
 
 /**
  * @file ShapePublisher.cpp
- *
  */
 
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"

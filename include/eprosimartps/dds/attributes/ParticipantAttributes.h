@@ -69,7 +69,6 @@ public:
 	 */
 	uint32_t domainId;
 	Duration_t leaseDuration;
-	//FIXME: add resendDiscoveryParticipant, change name
 	SimpleEDPAttributes m_simpleEDP;
 
 	DiscoveryAttributes()

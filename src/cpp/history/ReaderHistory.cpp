@@ -148,7 +148,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			pWarning("ReaderHistory: NO KEY in topic: "<< this->mp_Endpoint->getTopic().topicName << " and no method to obtain it"<<endl);
 			return false;
 		}
-		//FIXME: Finish WITH KEY HISTORY
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
