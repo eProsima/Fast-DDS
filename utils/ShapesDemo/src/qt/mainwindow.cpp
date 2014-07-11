@@ -12,6 +12,11 @@
 #include "ui_mainwindow.h"
 #include "eprosimashapesdemo/qt/UpdateThread.h"
 
+#include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
+
+#include <QStandardItemModel>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -24,6 +29,17 @@ MainWindow::MainWindow(QWidget *parent) :
     mp_writeThread = new UpdateThread(this,1);
     mp_writeThread->setMainW(this);
 
+    m_pubsub = new QStandardItemModel(0,6,this); //2 Rows and 3 Columns
+    m_pubsub->setHorizontalHeaderItem(0, new QStandardItem(QString("Topic")));
+    m_pubsub->setHorizontalHeaderItem(1, new QStandardItem(QString("Color")));
+    m_pubsub->setHorizontalHeaderItem(2, new QStandardItem(QString("Size")));
+    m_pubsub->setHorizontalHeaderItem(3, new QStandardItem(QString("Type")));
+    m_pubsub->setHorizontalHeaderItem(4, new QStandardItem(QString("Reliable")));
+    m_pubsub->setHorizontalHeaderItem(5, new QStandardItem(QString("History")));
+
+    ui->tableEndpoint->setModel(m_pubsub);
+
+
     this->m_shapesDemo.init();
 }
 
@@ -31,18 +47,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-void MainWindow::on_push_Start_clicked()
-{
-    this->m_shapesDemo.init();
-}
-
-void MainWindow::on_push_Stop_clicked()
-{
-    this->m_shapesDemo.stop();
-    update();
-}
-
 
 void MainWindow::on_bt_publish_clicked()
 {
@@ -54,8 +58,7 @@ void MainWindow::on_bt_publish_clicked()
 
 void MainWindow::quitThreads()
 {
-    //this->ui->areaDraw->stopTimer();
-    mp_writeThread->quit();
+  mp_writeThread->quit();
 }
 
 
@@ -85,3 +88,51 @@ void MainWindow::on_actionPreferences_triggered()
  {
      this->mp_writeThread->updateInterval(ms);
  }
+
+void MainWindow::on_actionStart_triggered()
+{
+    this->m_shapesDemo.init();
+}
+
+void MainWindow::on_actionStop_triggered()
+{
+    this->m_shapesDemo.stop();
+    m_pubsub->removeRows(0,m_pubsub->rowCount());
+    update();
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    this->close();
+}
+
+void MainWindow::addPublisherToTable(ShapePublisher* spub)
+{
+    QList<QStandardItem*> items;
+    items.append(new QStandardItem(spub->m_shape.getShapeQStr()));
+    items.append(new QStandardItem(QString(spub->m_shape.m_mainShape.getColorStr().c_str())));
+    items.append(new QStandardItem(QString("%1").arg(spub->m_shape.m_mainShape.m_size)));
+    items.append(new QStandardItem("Pub"));
+    if(spub->m_attributes.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+        items.append(new QStandardItem("True"));
+    else
+         items.append(new QStandardItem("False"));
+    items.append(new QStandardItem(QString("%1").arg(spub->m_attributes.topic.historyQos.depth)));
+    m_pubsub->appendRow(items);
+
+}
+
+void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
+{
+    QList<QStandardItem*> items;
+    items.append(new QStandardItem(ssub->m_shape.getShapeQStr()));
+    items.append(new QStandardItem("---"));
+    items.append(new QStandardItem("---"));
+    items.append(new QStandardItem("Sub"));
+    if(ssub->m_attributes.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+        items.append(new QStandardItem("True"));
+    else
+         items.append(new QStandardItem("False"));
+    items.append(new QStandardItem(ssub->m_attributes.topic.historyQos.depth));
+    m_pubsub->appendRow(items);
+}

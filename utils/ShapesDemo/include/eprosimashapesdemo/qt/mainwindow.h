@@ -17,6 +17,7 @@ class MainWindow;
 }
 
 class UpdateThread;
+class QStandardItemModel;
 
 class MainWindow : public QMainWindow
 {
@@ -36,21 +37,27 @@ public:
 
    void quitThreads();
 
+   void addPublisherToTable(ShapePublisher* spub);
+   void addSubscriberToTable(ShapeSubscriber* ssub);
+
 private slots:
     void on_bt_publish_clicked();
-
-    void on_push_Start_clicked();
-
-    void on_push_Stop_clicked();
 
     void on_bt_subscribe_clicked();
 
     void on_actionPreferences_triggered();
 
+    void on_actionStart_triggered();
+
+    void on_actionStop_triggered();
+
+    void on_actionExit_triggered();
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
     UpdateThread* mp_writeThread;
+    QStandardItemModel* m_pubsub;
 };
 
 #endif // MAINWINDOW_H

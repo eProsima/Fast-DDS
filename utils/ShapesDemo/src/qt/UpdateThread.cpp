@@ -20,7 +20,7 @@ UpdateThread::UpdateThread(QObject *parent, uint32_t threadN):
     QThread(parent),
     m_mainW(NULL),
     m_timer(NULL),
-    m_interval(500),
+    m_interval(150),
     m_threadNumber(threadN),
     m_hasIntervalChanged(false)
 {
