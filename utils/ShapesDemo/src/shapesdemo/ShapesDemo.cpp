@@ -102,11 +102,13 @@ void ShapesDemo::stop()
 void ShapesDemo::addPublisher(ShapePublisher* SP)
 {
     m_publishers.push_back(SP);
+    this->m_mainWindow->addPublisherToTable(SP);
 }
 
 void ShapesDemo::addSubscriber(ShapeSubscriber* SSub)
 {
     m_subscribers.push_back(SSub);
+    this->m_mainWindow->addSubscriberToTable(SSub);
 }
 
 bool ShapesDemo::getShapes(std::vector<Shape*> *shvec)

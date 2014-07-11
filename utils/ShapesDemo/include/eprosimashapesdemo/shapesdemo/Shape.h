@@ -17,12 +17,23 @@
 #include <vector>
 #include "eprosimashapesdemo/shapesdemo/ShapeType.h"
 
+#include <QString>
 
 
 class Shape {
 public:
     Shape();
 	virtual ~Shape();
+    QString getShapeQStr()
+    {
+        if(m_type == SQUARE)
+            return "Square";
+        if(m_type == CIRCLE)
+            return "Circle";
+        if(m_type == TRIANGLE)
+            return "Triangle";
+    }
+
     TYPESHAPE m_type;
 	ShapeType m_mainShape;
     std::vector<std::list<ShapeType> > m_shapeHistory;
