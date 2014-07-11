@@ -126,7 +126,7 @@ bool SimplePDP::updateLocalParticipantData()
 	}
 	mp_localDPData->leaseDuration = m_discovery.leaseDuration;
 	VENDORID_EPROSIMA(mp_localDPData->m_VendorId);
-	//FIXME: add correct builtIn Endpoints
+
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 	mp_localDPData->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 	if(m_discovery.use_WriterLivelinessProtocol)
@@ -159,8 +159,7 @@ bool SimplePDP::updateLocalParticipantData()
 		if(i>=16)
 			mp_localDPData->m_key.value[i] = mp_participant->getGuid().entityId.value[i];
 	}
-	//FIXME: Do something with livelinesscount
-	//pdata->m_manualLivelinessCount;
+
 
 	Locator_t multiLocator;
 	multiLocator.kind = LOCATOR_KIND_UDPv4;
