@@ -87,5 +87,4 @@ void SubscribeDialog::on_buttonBox_accepted()
 
     if(SSub->initSubscriber())
      this->mp_sd->addSubscriber(SSub);
-
 }

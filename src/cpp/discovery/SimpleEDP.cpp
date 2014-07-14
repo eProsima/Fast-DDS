@@ -32,6 +32,9 @@
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
+#include "eprosimartps/utils/StringMatching.h"
+
+
 
 using namespace eprosima::dds;
 
@@ -530,7 +533,32 @@ bool SimpleEDP::validMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 		pWarning("INCOMPATIBLE QOS:RemoteReader has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE"<<endl;);
 		return false;
 	}
-	return true;
+	//Partition check:
+	bool matched = false;
+	if(W->getQos().m_partition.names.empty() && rdata->m_qos.m_partition.names.empty())
+	{
+		matched = true;
+	}
+	else
+	{
+		for(std::vector<std::string>::const_iterator wnameit = W->getQos().m_partition.names.begin();
+				wnameit !=  W->getQos().m_partition.names.end();++wnameit)
+		{
+			for(std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names.begin();
+					rnameit!=rdata->m_qos.m_partition.names.end();++rnameit)
+			{
+				if(StringMatching::matchString(wnameit->c_str(),rnameit->c_str()))
+				{
+					matched = true;
+					break;
+				}
+			}
+			if(matched)
+				break;
+		}
+	}
+
+	return matched;
 }
 
 bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
@@ -557,7 +585,31 @@ bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
 		pWarning("INCOMPATIBLE QOS:RemoteWriter has VOLATILE DURABILITY and we want TRANSIENT_LOCAL"<<endl;);
 		return false;
 	}
-	return true;
+	//Partition check:
+	bool matched = false;
+	if(R->getQos().m_partition.names.empty() && wdata->m_qos.m_partition.names.empty())
+	{
+		matched = true;
+	}
+	else
+	{
+		for(std::vector<std::string>::const_iterator wnameit = R->getQos().m_partition.names.begin();
+				wnameit !=  R->getQos().m_partition.names.end();++wnameit)
+		{
+			for(std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names.begin();
+					rnameit!=wdata->m_qos.m_partition.names.end();++rnameit)
+			{
+				if(StringMatching::matchString(wnameit->c_str(),rnameit->c_str()))
+				{
+					matched = true;
+					break;
+				}
+			}
+			if(matched)
+				break;
+		}
+	}
+	return matched;
 }
 
 
