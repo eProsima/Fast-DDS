@@ -30,6 +30,8 @@ private slots:
 
     void on_button_OkCancel_accepted();
 
+    void on_comboBox_ownership_currentIndexChanged(int index);
+
 private:
     Ui::PublishDialog *ui;
     ShapesDemo* mp_sd;

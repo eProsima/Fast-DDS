@@ -45,6 +45,7 @@ public:
 	LocatorList_t multicastLocatorList;
 	Duration_t leaseDuration;
 	LivelinessQosPolicyKind livelinessKind;
+	uint32_t ownershipStrength;
 	WriterProxy_t();
 	virtual ~WriterProxy_t();
 };

@@ -139,3 +139,11 @@ void PublishDialog::setShapeAttributes(ShapePublisher* SP)
     SP->m_shape.m_mainShape.m_y = this->mp_sd->getRandomY(SP->m_shape.m_mainShape.m_size);
 
 }
+
+void PublishDialog::on_comboBox_ownership_currentIndexChanged(int index)
+{
+    if(index == 1)
+    {
+        this->ui->checkBox_reliable->setChecked(true);
+    }
+}
