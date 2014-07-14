@@ -117,6 +117,17 @@ bool PresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
+	//Obtain Length:
+	this->length = 0;
+	this->length += 4;
+	uint16_t rest;
+	for(std::vector<std::string>::iterator it = names.begin();it!=names.end();++it)
+	{
+		this->length +=4;
+		this->length += it->size()+1;
+		rest = (it->size()+1)%4;
+		this->length += rest!=0?rest:4-rest;
+	}
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addUInt32(msg,this->names.size());
 	for(std::vector<std::string>::iterator it = names.begin();it!=names.end();++it)

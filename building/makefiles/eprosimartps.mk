@@ -34,6 +34,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
 		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
+		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
