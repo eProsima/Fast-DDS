@@ -43,6 +43,7 @@ void ShapeSubscriber::onNewDataMessage()
     while(mp_sub->readNextData((void*)&shape,&info))
     {
        // shape.m_x += 5;
+        shape.m_time = info.sourceTimestamp;
         if(info.sampleKind == ALIVE)
         {
             hasReceived = true;
@@ -52,14 +53,17 @@ void ShapeSubscriber::onNewDataMessage()
             {
                 if(it->begin()->getColor() == shape.getColor())
                 {
-                    it->push_front(shape);
-                    if(it->size() > m_attributes.topic.historyQos.depth)
+                    if(Time_tAbsDiff2Millisec(it->front().m_time,info.sourceTimestamp)>Time_t2MilliSec(m_attributes.qos.m_timeBasedFilter.minimum_separation) &&
+                            passFilter(&shape))
                     {
-                        it->pop_back();
+                        it->push_front(shape);
+                        if(it->size() > m_attributes.topic.historyQos.depth)
+                        {
+                            it->pop_back();
+                        }
+                        found = true;
                     }
-                    found = true;
                 }
-
             }
             if(!found)
             {
@@ -72,6 +76,24 @@ void ShapeSubscriber::onNewDataMessage()
             //cout << " UNLOCKED SHAPESub"<<endl;
         }
     }
+}
+
+
+bool ShapeSubscriber::passFilter(ShapeType* shape)
+{
+    if(!m_filter.m_useFilter)
+        return true;
+    else
+    {
+        if(shape->m_x < m_filter.m_maxX &&
+                shape->m_x > m_filter.m_minX &&
+                shape->m_y < m_filter.m_maxY &&
+                shape->m_y > m_filter.m_minY)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void ShapeSubscriber::onSubscriptionMatched()

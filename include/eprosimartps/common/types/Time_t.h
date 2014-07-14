@@ -99,6 +99,14 @@ static inline Time_t MilliSec2Time_t(uint32_t millisec)
     return time;
 }
 
+static inline uint32_t Time_tAbsDiff2Millisec(const Time_t& t1,const Time_t& t2)
+{
+	uint32_t result = 0;
+	result +=abs((t2.seconds-t1.seconds)*1000);
+	result +=abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
+	return result;
+}
+
 
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 {

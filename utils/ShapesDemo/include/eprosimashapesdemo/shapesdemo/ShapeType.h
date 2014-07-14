@@ -12,6 +12,9 @@
 
 #include <cstdint>
 #include <sstream>
+#include "eprosimartps/common/types/Time_t.h"
+
+using namespace eprosima::rtps;
 
 enum SD_COLOR
 {
@@ -51,6 +54,7 @@ public:
     uint32_t m_x;
     uint32_t m_y;
     uint32_t m_size;
+    Time_t m_time;
 private:
     char m_char_color[8]; //KEY
    // std::string m_str_color; //KEY

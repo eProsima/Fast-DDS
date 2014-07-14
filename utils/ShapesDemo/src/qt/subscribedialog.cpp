@@ -11,6 +11,8 @@
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 
+#include <QIntValidator>
+
 
 SubscribeDialog::SubscribeDialog(ShapesDemo* psd,QWidget *parent) :
     QDialog(parent),
@@ -18,6 +20,12 @@ SubscribeDialog::SubscribeDialog(ShapesDemo* psd,QWidget *parent) :
     mp_sd(psd)
 {
     ui->setupUi(this);
+
+    ui->lineEdit_maxX->setValidator(new QIntValidator(this));
+    ui->lineEdit_maxY->setValidator(new QIntValidator(this));
+    ui->lineEdit_minX->setValidator(new QIntValidator(this));
+    ui->lineEdit_minY->setValidator(new QIntValidator(this));
+    ui->lineEdit_TimeBasedFilter->setValidator(new QIntValidator(this));
 }
 
 SubscribeDialog::~SubscribeDialog()
@@ -86,7 +94,30 @@ void SubscribeDialog::on_buttonBox_accepted()
         SSub->m_attributes.qos.m_partition.names.push_back("C");
     if(this->ui->checkBox_D->isChecked())
         SSub->m_attributes.qos.m_partition.names.push_back("D");
+    //Time Filter
+    if(this->ui->lineEdit_TimeBasedFilter->text()=="INF")
+    {
+        pWarning("Setting TimeBasedFilter as Infinite should be avoided"<<endl);
+        SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation.seconds = 0;
+    }
+    else
+    {
+         QString value = this->ui->lineEdit_leaseDuration->text();
+         if(value.toInt()>0)
+         {
+             SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation = MilliSec2Time_t(value.toInt());
+         }
 
+    }
+    //COntent Filter:
+    if(this->ui->checkBox_contentBasedFilter->isChecked())
+    {
+        SSub->m_filter.m_useFilter = true;
+        SSub->m_filter.m_maxX = this->ui->lineEdit_maxX->text().toInt();
+        SSub->m_filter.m_maxY = this->ui->lineEdit_maxY->text().toInt();
+        SSub->m_filter.m_minX = this->ui->lineEdit_minX->text().toInt();
+        SSub->m_filter.m_minY = this->ui->lineEdit_minY->text().toInt();
+    }
     if(SSub->initSubscriber())
      this->mp_sd->addSubscriber(SSub);
 }
@@ -97,4 +128,41 @@ void SubscribeDialog::on_comboBox_ownership_currentIndexChanged(int index)
     {
         this->ui->checkBox_reliable->setChecked(true);
     }
+}
+
+void SubscribeDialog::on_checkBox_contentBasedFilter_toggled(bool checked)
+{
+    this->ui->lineEdit_minY->setEnabled(checked);
+    this->ui->lineEdit_minY->setText(QString("0"));
+    this->ui->lineEdit_minX->setEnabled(checked);
+    this->ui->lineEdit_minX->setText(QString("0"));
+    this->ui->lineEdit_maxX->setEnabled(checked);
+    this->ui->lineEdit_maxX->setText(QString("%1").arg(MAX_DRAW_AREA_X));
+    this->ui->lineEdit_maxY->setEnabled(checked);
+    this->ui->lineEdit_maxY->setText(QString("%1").arg(MAX_DRAW_AREA_Y));
+}
+
+
+void SubscribeDialog::on_lineEdit_minX_editingFinished()
+{
+    if(this->ui->lineEdit_minX->text().toInt()<0 || this->ui->lineEdit_minX->text().toInt()>=this->ui->lineEdit_maxX->text().toInt())
+        this->ui->lineEdit_minX->setText(QString("0"));
+}
+
+void SubscribeDialog::on_lineEdit_maxX_editingFinished()
+{
+    if(this->ui->lineEdit_maxX->text().toInt()>MAX_DRAW_AREA_X || this->ui->lineEdit_maxX->text().toInt()<=this->ui->lineEdit_minX->text().toInt())
+        this->ui->lineEdit_maxX->setText(QString("%1").arg(MAX_DRAW_AREA_X));
+}
+
+void SubscribeDialog::on_lineEdit_minY_editingFinished()
+{
+    if(this->ui->lineEdit_minY->text().toInt()<0 || this->ui->lineEdit_minY->text().toInt()>=this->ui->lineEdit_maxY->text().toInt())
+        this->ui->lineEdit_minY->setText(QString("0"));
+}
+
+void SubscribeDialog::on_lineEdit_maxY_editingFinished()
+{
+    if(this->ui->lineEdit_maxY->text().toInt()>MAX_DRAW_AREA_Y || this->ui->lineEdit_maxY->text().toInt()<=this->ui->lineEdit_minY->text().toInt())
+        this->ui->lineEdit_maxY->setText(QString("%1").arg(MAX_DRAW_AREA_Y));
 }
