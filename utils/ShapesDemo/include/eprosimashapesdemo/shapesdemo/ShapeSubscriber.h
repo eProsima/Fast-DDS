@@ -16,8 +16,23 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
-
+#include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include <QMutex>
+
+class ShapeContentFilter
+{
+public:
+    ShapeContentFilter(): m_maxX(MAX_DRAW_AREA_X),m_minX(0),m_maxY(MAX_DRAW_AREA_Y),m_minY(0),m_useFilter(false)
+    {
+
+    }
+   ~ShapeContentFilter(){}
+    uint32_t m_maxX;
+    uint32_t m_minX;
+    uint32_t m_maxY;
+    uint32_t m_minY;
+    bool m_useFilter;
+};
 
 class ShapeSubscriber: public SubscriberListener {
 public:
@@ -36,6 +51,8 @@ public:
     Shape m_shape;
     Shape m_drawShape;
     QMutex m_mutex;
+    ShapeContentFilter m_filter;
+    bool passFilter(ShapeType* shape);
 
 
 };

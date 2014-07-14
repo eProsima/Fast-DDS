@@ -31,6 +31,16 @@ public:
 
         void on_comboBox_ownership_currentIndexChanged(int index);
 
+        void on_checkBox_contentBasedFilter_toggled(bool checked);
+
+        void on_lineEdit_minX_editingFinished();
+
+        void on_lineEdit_maxX_editingFinished();
+
+        void on_lineEdit_minY_editingFinished();
+
+        void on_lineEdit_maxY_editingFinished();
+
 private:
     Ui::SubscribeDialog *ui;
     ShapesDemo* mp_sd;
