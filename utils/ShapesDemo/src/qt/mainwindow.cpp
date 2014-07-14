@@ -29,25 +29,27 @@ MainWindow::MainWindow(QWidget *parent) :
     mp_writeThread = new UpdateThread(this,1);
     mp_writeThread->setMainW(this);
 
-    m_pubsub = new QStandardItemModel(0,6,this); //2 Rows and 3 Columns
+    m_pubsub = new QStandardItemModel(0,9,this); //2 Rows and 3 Columns
     m_pubsub->setHorizontalHeaderItem(0, new QStandardItem(QString("Topic")));
     m_pubsub->setHorizontalHeaderItem(1, new QStandardItem(QString("Color")));
     m_pubsub->setHorizontalHeaderItem(2, new QStandardItem(QString("Size")));
     m_pubsub->setHorizontalHeaderItem(3, new QStandardItem(QString("Type")));
     m_pubsub->setHorizontalHeaderItem(4, new QStandardItem(QString("Reliable")));
     m_pubsub->setHorizontalHeaderItem(5, new QStandardItem(QString("History")));
-    m_pubsub->setHorizontalHeaderItem(6, new QStandardItem(QString("Durability")));
-    m_pubsub->setHorizontalHeaderItem(7, new QStandardItem(QString("Liveliness")));
+    m_pubsub->setHorizontalHeaderItem(6, new QStandardItem(QString("Partitions")));
+    m_pubsub->setHorizontalHeaderItem(7, new QStandardItem(QString("Durability")));
+    m_pubsub->setHorizontalHeaderItem(8, new QStandardItem(QString("Liveliness")));
 
     ui->tableEndpoint->setModel(m_pubsub);
-    ui->tableEndpoint->setColumnWidth(0,70);
-    ui->tableEndpoint->setColumnWidth(1,80);
-    ui->tableEndpoint->setColumnWidth(2,50);
-    ui->tableEndpoint->setColumnWidth(3,50);
-    ui->tableEndpoint->setColumnWidth(4,65);
-    ui->tableEndpoint->setColumnWidth(5,70);
-    ui->tableEndpoint->setColumnWidth(6,110);
-    ui->tableEndpoint->setColumnWidth(7,110);
+    ui->tableEndpoint->setColumnWidth(0,60); //Topic
+    ui->tableEndpoint->setColumnWidth(1,65); //Color
+    ui->tableEndpoint->setColumnWidth(2,45); //Size
+    ui->tableEndpoint->setColumnWidth(3,45); //Type
+    ui->tableEndpoint->setColumnWidth(4,55); //Reliable
+    ui->tableEndpoint->setColumnWidth(5,55); //History
+    ui->tableEndpoint->setColumnWidth(6,65); //Partitions
+    ui->tableEndpoint->setColumnWidth(7,110); //Durability
+    ui->tableEndpoint->setColumnWidth(8,110); //Livleiness
 
 
     this->m_shapesDemo.init();
@@ -128,6 +130,17 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
     else
          items.append(new QStandardItem("False"));
     items.append(new QStandardItem(QString("%1").arg(spub->m_attributes.topic.historyQos.depth)));
+    //PARTITIONS:
+    QString partitions;
+    for(std::vector<std::string>::iterator it = spub->m_attributes.qos.m_partition.names.begin();
+        it!=spub->m_attributes.qos.m_partition.names.end();it++)
+    {
+        partitions.append(it->c_str());
+        partitions.append(" ");
+    }
+    if(partitions.size()==0)
+        partitions.append("-");
+    items.append(new QStandardItem(partitions));
     if(spub->m_attributes.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
         items.append(new QStandardItem("VOLATILE"));
     else
@@ -139,6 +152,8 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
         items.append(new QStandardItem("MANUAL_PARTICIPANT"));
     else
         items.append(new QStandardItem("MANUAL_TOPIC"));
+
+
     m_pubsub->appendRow(items);
 
 }
@@ -157,7 +172,17 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
          items.append(new QStandardItem("False"));
 
     items.append(new QStandardItem(QString("%1").arg(ssub->m_attributes.topic.historyQos.depth)));
-
+    //PARTITIONS:
+    QString partitions;
+    for(std::vector<std::string>::iterator it = ssub->m_attributes.qos.m_partition.names.begin();
+        it!=ssub->m_attributes.qos.m_partition.names.end();it++)
+    {
+        partitions.append(it->c_str());
+        partitions.append(" ");
+    }
+    if(partitions.size()==0)
+        partitions.append("-");
+    items.append(new QStandardItem(partitions));
     if(ssub->m_attributes.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
         items.append(new QStandardItem("VOLATILE"));
     else
@@ -169,5 +194,6 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
         items.append(new QStandardItem("MANUAL_PARTICIPANT"));
     else
         items.append(new QStandardItem("MANUAL_TOPIC"));
+
     m_pubsub->appendRow(items);
 }

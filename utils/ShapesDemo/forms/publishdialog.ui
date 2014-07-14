@@ -276,7 +276,7 @@
      <x>12</x>
      <y>20</y>
      <width>431</width>
-     <height>55</height>
+     <height>57</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -438,6 +438,13 @@
      <widget class="QCheckBox" name="checkBox_D">
       <property name="text">
        <string>D</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QCheckBox" name="checkBox_Asterisk">
+      <property name="text">
+       <string>*</string>
       </property>
      </widget>
     </item>

@@ -76,6 +76,8 @@ void SubscribeDialog::on_buttonBox_accepted()
     case 1: SSub->m_attributes.qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS; break;
     }
     //PARTITIONS:
+    if(this->ui->checkBox_Asterisk->isChecked())
+        SSub->m_attributes.qos.m_partition.names.push_back("*");
     if(this->ui->checkBox_A->isChecked())
         SSub->m_attributes.qos.m_partition.names.push_back("A");
     if(this->ui->checkBox_B->isChecked())
