@@ -427,6 +427,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				change_to_add = (*it)->reserve_Cache(); //Reserve a new cache from the corresponding cache pool
 				change_to_add->copy(ch);
 			}
+			if(haveTimestamp)
+				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getStateType() == STATEFUL)
 			{
 				StatefulReader* SFR = (StatefulReader*)(*it);
@@ -451,6 +453,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 					else
 					{
+						(*it)->release_Cache(change_to_add);
 						pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
 					}
 				}
@@ -469,6 +472,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				}
 				else
 				{
+					(*it)->release_Cache(change_to_add);
 					pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
 				}
 			}

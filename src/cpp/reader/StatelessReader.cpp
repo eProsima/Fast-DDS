@@ -53,6 +53,8 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 			this->mp_type->deserialize(&change->serializedPayload,data);
 		}
 		info->sampleKind = change->kind;
+		info->writerGUID = change->writerGUID;
+		info->sourceTimestamp = change->sourceTimestamp;
 		if(!change->isRead)
 			m_reader_cache.decreaseUnreadCount();
 		return this->m_reader_cache.remove_change(change);
@@ -84,6 +86,8 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 			info->sampleKind = ALIVE;
 		}
 		info->sampleKind = (*it)->kind;
+		info->writerGUID = (*it)->writerGUID;
+		info->sourceTimestamp = (*it)->sourceTimestamp;
 		(*it)->isRead = true;
 		m_reader_cache.decreaseUnreadCount();
 		return true;
@@ -121,7 +125,6 @@ bool StatelessReader::matched_writer_remove(const GUID_t& guid)
 	}
 	return false;
 }
-
 
 bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
 {

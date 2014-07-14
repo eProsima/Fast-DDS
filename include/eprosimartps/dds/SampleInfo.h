@@ -23,10 +23,13 @@ namespace dds {
  */
 class RTPS_DllAPI SampleInfo_t {
 public:
-	SampleInfo_t():sampleKind(ALIVE){};
+	SampleInfo_t():sampleKind(ALIVE),writerGUID(c_Guid_Unknown),ownershipStrength(0){};
 	virtual ~SampleInfo_t(){};
 	//!Sample kind.
 	ChangeKind_t sampleKind;
+	GUID_t writerGUID;
+	uint16_t ownershipStrength;
+	Time_t sourceTimestamp;
 };
 
 } /* namespace dds */

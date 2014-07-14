@@ -29,6 +29,8 @@ public:
 
         void on_buttonBox_accepted();
 
+        void on_comboBox_ownership_currentIndexChanged(int index);
+
 private:
     Ui::SubscribeDialog *ui;
     ShapesDemo* mp_sd;

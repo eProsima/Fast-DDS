@@ -90,3 +90,11 @@ void SubscribeDialog::on_buttonBox_accepted()
     if(SSub->initSubscriber())
      this->mp_sd->addSubscriber(SSub);
 }
+
+void SubscribeDialog::on_comboBox_ownership_currentIndexChanged(int index)
+{
+    if(index == 1)
+    {
+        this->ui->checkBox_reliable->setChecked(true);
+    }
+}

@@ -22,17 +22,18 @@ namespace rtps {
 
 
 WriterProxy_t::WriterProxy_t():
-			remoteWriterGuid(c_Guid_Unknown),
-			leaseDuration(c_TimeInfinite),
-			livelinessKind(AUTOMATIC_LIVELINESS_QOS)
+					remoteWriterGuid(c_Guid_Unknown),
+					leaseDuration(c_TimeInfinite),
+					livelinessKind(AUTOMATIC_LIVELINESS_QOS),
+					ownershipStrength(0)
 
-	{
-	
-	}
+{
 
-			WriterProxy_t::~WriterProxy_t()
-			{
-			}
+}
+
+WriterProxy_t::~WriterProxy_t()
+{
+}
 
 WriterProxy::~WriterProxy()
 {

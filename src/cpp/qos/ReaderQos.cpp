@@ -124,6 +124,11 @@ bool ReaderQos::checkQos()
 		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
 		return false;
 	}
+	if(m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS && m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+	{
+		pError("BEST_EFFORT incompatible with EXCLUSIVE ownership"<<endl);
+		return false;
+	}
 	return true;
 }
 

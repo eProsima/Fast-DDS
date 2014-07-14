@@ -497,6 +497,7 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 		else if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 		{
 			StatefulReader* p_SFR = (StatefulReader*)R;
+			wdata->m_writerProxy.ownershipStrength = wdata->m_qos.m_ownershipStrength.value;
 			matched = p_SFR->matched_writer_add(wdata->m_writerProxy);
 		}
 
@@ -531,6 +532,11 @@ bool SimpleEDP::validMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 	if(W->getQos().m_durability.kind == VOLATILE_DURABILITY_QOS && rdata->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		pWarning("INCOMPATIBLE QOS:RemoteReader has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE"<<endl;);
+		return false;
+	}
+	if(W->getQos().m_ownership.kind != rdata->m_qos.m_ownership.kind)
+	{
+		pWarning("INCOMPATIBLE QOS:Different Ownership Kind"<<endl;);
 		return false;
 	}
 	//Partition check:
@@ -583,6 +589,11 @@ bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
 	if(R->getQos().m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS && wdata->m_qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
 	{
 		pWarning("INCOMPATIBLE QOS:RemoteWriter has VOLATILE DURABILITY and we want TRANSIENT_LOCAL"<<endl;);
+		return false;
+	}
+	if(R->getQos().m_ownership.kind != wdata->m_qos.m_ownership.kind)
+	{
+		pWarning("INCOMPATIBLE QOS:Different Ownership Kind"<<endl;);
 		return false;
 	}
 	//Partition check:

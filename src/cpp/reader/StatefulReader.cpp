@@ -120,6 +120,10 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 			if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
 			{
 				info->sampleKind = min_change->kind;
+				info->writerGUID = min_change->writerGUID;
+				info->sourceTimestamp = min_change->sourceTimestamp;
+				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+					info->ownershipStrength = wp->param.ownershipStrength;
 				if(!min_change->isRead)
 					m_reader_cache.decreaseUnreadCount();
 				return m_reader_cache.remove_change(min_change);
@@ -150,6 +154,10 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 				}
 				(*it)->isRead = true;
 				info->sampleKind = (*it)->kind;
+				info->writerGUID = (*it)->writerGUID;
+				info->sourceTimestamp = (*it)->sourceTimestamp;
+				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+					info->ownershipStrength = wp->param.ownershipStrength;
 				m_reader_cache.decreaseUnreadCount();
 				return true;
 			}
