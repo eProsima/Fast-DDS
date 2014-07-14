@@ -202,7 +202,7 @@
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">
@@ -218,7 +218,7 @@
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
@@ -232,7 +232,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -247,7 +247,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -360,6 +360,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderLocator.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxy.h" />
@@ -424,6 +425,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\utils\IPFinder.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\ObjectPool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\RTPSLog.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\utils\StringMatching.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\TimedEvent.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderLocator.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderProxy.cpp" />

@@ -381,6 +381,9 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPTopicDataType.h">
       <Filter>Header Files\eprosimartps\discovery</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -556,6 +559,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPTopicDataType.cpp">
       <Filter>Source Files\discovery</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\StringMatching.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
