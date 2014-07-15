@@ -30,6 +30,9 @@ const QColor SD_QT_ORANGE = QColor(255,140,0,SD_QT_COLOR_TRANS);
 
 const QColor SD_QT_BLACK = QColor(0,0,0,255);
 
+const QColor SD_QT_GRAY = QColor(190,190,190,255);
+const QColor SD_QT_WHITE = QColor(255,255,255,255);
+
 class QPainter;
 class Shape;
 

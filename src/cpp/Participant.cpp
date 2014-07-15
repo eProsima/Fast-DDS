@@ -354,6 +354,18 @@ bool ParticipantImpl::assignLocator2ListenResources(Endpoint* endp,LocatorListIt
 bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 {
 	bool found = false;
+	{
+	boost::lock_guard<Endpoint> guard(*p_endpoint);
+	if(mp_PDP!=NULL)
+	{
+		if(p_endpoint->getEndpointKind()==WRITER)
+			mp_PDP->mp_EDP->removeLocalWriter(p_endpoint->getGuid());
+		else if(p_endpoint->getEndpointKind()==READER)
+			mp_PDP->mp_EDP->removeLocalReader(p_endpoint->getGuid());
+
+		if(mp_PDP->mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
+			mp_PDP->mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
+	}
 	if(type == 'W')
 	{
 		for(p_WriterIterator wit=m_userWriterList.begin();
@@ -388,19 +400,18 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 			thit!=m_listenResourceList.end();thit++)
 	{
 		(*thit)->removeAssociatedEndpoint(p_endpoint);
+    }
+	for(thit=m_listenResourceList.begin();
+			thit!=m_listenResourceList.end();thit++)
+	{
 		if(!(*thit)->hasAssociatedEndpoints())
+		{
+			m_listenResourceList.erase(thit);
 			delete(*thit);
+			break;
+		}
 	}
 
-	if(mp_PDP!=NULL)
-	{
-		if(p_endpoint->getEndpointKind()==WRITER)
-			mp_PDP->mp_EDP->removeLocalWriter(p_endpoint->getGuid());
-		else if(p_endpoint->getEndpointKind()==READER)
-			mp_PDP->mp_EDP->removeLocalReader(p_endpoint->getGuid());
-
-		if(mp_PDP->mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
-			mp_PDP->mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
 	}
 	delete(p_endpoint);
 	return true;

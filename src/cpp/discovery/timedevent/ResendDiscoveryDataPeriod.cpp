@@ -34,7 +34,7 @@ ResendDiscoveryDataPeriod::ResendDiscoveryDataPeriod(ParticipantDiscoveryProtoco
 
 ResendDiscoveryDataPeriod::~ResendDiscoveryDataPeriod()
 {
-	timer->cancel();
+	stop_timer();
 	delete(timer);
 }
 
@@ -53,6 +53,7 @@ void ResendDiscoveryDataPeriod::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 	{
 		pInfo("Response Data Period aborted"<<endl);
+		this->mp_stopSemaphore->post();
 	}
 	else
 	{

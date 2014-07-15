@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_shapesDemo(this),
-    mp_writeThread(NULL)
+    mp_writeThread(NULL),
+    m_tableRow(-1)
 {
     ui->setupUi(this);
     ui->areaDraw->setShapesDemo(this->getShapesDemo());
@@ -70,7 +71,7 @@ void MainWindow::on_bt_publish_clicked()
 
 void MainWindow::quitThreads()
 {
-  mp_writeThread->quit();
+    mp_writeThread->quit();
 }
 
 
@@ -85,7 +86,7 @@ void MainWindow::on_bt_subscribe_clicked()
 
 void MainWindow::writeNewSamples()
 {
-   // cout << "MOVING TIMER "<<endl;
+    // cout << "MOVING TIMER "<<endl;
     this->m_shapesDemo.moveAllShapes();
     this->m_shapesDemo.writeAll();
 }
@@ -96,10 +97,10 @@ void MainWindow::on_actionPreferences_triggered()
     od->show();
 }
 
- void MainWindow::updateInterval(uint32_t ms)
- {
-     this->mp_writeThread->updateInterval(ms);
- }
+void MainWindow::updateInterval(uint32_t ms)
+{
+    this->mp_writeThread->updateInterval(ms);
+}
 
 void MainWindow::on_actionStart_triggered()
 {
@@ -128,7 +129,7 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
     if(spub->m_attributes.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         items.append(new QStandardItem("True"));
     else
-         items.append(new QStandardItem("False"));
+        items.append(new QStandardItem("False"));
     items.append(new QStandardItem(QString("%1").arg(spub->m_attributes.topic.historyQos.depth)));
     //PARTITIONS:
     QString partitions;
@@ -155,6 +156,11 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
 
 
     m_pubsub->appendRow(items);
+    SD_Endpoint sdend;
+    sdend.type = PUB;
+    sdend.pub = spub;
+    sdend.pos = m_pubsub->rowCount()-1;
+    this->m_pubsub_pointers.push_back(sdend);
 
 }
 
@@ -169,7 +175,7 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
     if(ssub->m_attributes.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         items.append(new QStandardItem("True"));
     else
-         items.append(new QStandardItem("False"));
+        items.append(new QStandardItem("False"));
 
     items.append(new QStandardItem(QString("%1").arg(ssub->m_attributes.topic.historyQos.depth)));
     //PARTITIONS:
@@ -196,4 +202,51 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
         items.append(new QStandardItem("MANUAL_TOPIC"));
 
     m_pubsub->appendRow(items);
+    SD_Endpoint sdend;
+    sdend.type = SUB;
+    sdend.sub = ssub;
+    sdend.pos = m_pubsub->rowCount()-1;
+    this->m_pubsub_pointers.push_back(sdend);
+}
+
+void MainWindow::on_tableEndpoint_customContextMenuRequested(const QPoint &pos)
+{
+    // cout <<"CONTEXT MENU REQUESTED"<<endl;
+    QModelIndex index=this->ui->tableEndpoint->indexAt(pos);
+    // cout << index.column()<< " "<< index.row()<<endl;
+    this->m_tableRow = index.row();
+    if(index.row()>=0)
+    {
+        QMenu *menu = new QMenu(this);
+        menu->addAction(this->ui->actionDelete_Enpoint);
+        menu->popup(this->ui->tableEndpoint->viewport()->mapToGlobal(pos));
+    }
+}
+
+void MainWindow::on_actionDelete_Enpoint_triggered()
+{
+    cout << "DELETE ENDPOINT" <<endl;
+    m_pubsub->removeRow(m_tableRow);
+    for(std::vector<SD_Endpoint>::iterator it = this->m_pubsub_pointers.begin();
+        it!=this->m_pubsub_pointers.end();++it)
+    {
+        if(m_tableRow == it->pos)
+        {
+            if(it->type == PUB)
+                this->m_shapesDemo.removePublisher(it->pub);
+            else
+                this->m_shapesDemo.removeSubscriber(it->sub);
+
+            for(std::vector<SD_Endpoint>::iterator it2 = it;it2!=this->m_pubsub_pointers.end();++it2)
+            {
+                it2->pos--;
+            }
+            m_pubsub_pointers.erase(it);
+            break;
+        }
+    }
+//    for(std::vector<SD_Endpoint>::iterator it = this->m_pubsub_pointers.begin();
+//        it!=this->m_pubsub_pointers.end();++it)
+//        cout << it->pos << " ";
+//    cout << endl;
 }

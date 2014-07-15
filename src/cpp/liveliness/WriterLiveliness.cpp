@@ -31,14 +31,14 @@ namespace eprosima {
 namespace rtps {
 
 WriterLiveliness::WriterLiveliness(ParticipantImpl* p):
-		mp_builtinParticipantMessageWriter(NULL),
-		mp_builtinParticipantMessageReader(NULL),
-		m_minAutomaticLivelinessPeriod_MilliSec(std::numeric_limits<double>::max()),
-		m_minManualByParticipantLivelinessPeriod_MilliSec(std::numeric_limits<double>::max()),
-		mp_participant(p),
-		m_listener(this),
-		mp_AutomaticLivelinessAssertion(NULL),
-		mp_ManualByParticipantLivelinessAssertion(NULL)
+						mp_builtinParticipantMessageWriter(NULL),
+						mp_builtinParticipantMessageReader(NULL),
+						m_minAutomaticLivelinessPeriod_MilliSec(std::numeric_limits<double>::max()),
+						m_minManualByParticipantLivelinessPeriod_MilliSec(std::numeric_limits<double>::max()),
+						mp_participant(p),
+						m_listener(this),
+						mp_AutomaticLivelinessAssertion(NULL),
+						mp_ManualByParticipantLivelinessAssertion(NULL)
 {
 	// TODO Auto-generated constructor stub
 	pInfo(RTPS_B_MAGENTA<<"Beginning Liveliness Protocol initialization"<<RTPS_DEF<<endl;);
@@ -55,7 +55,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	//CREATE WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
-//	Wparam.historyMaxSize = 2;
+	//	Wparam.historyMaxSize = 2;
 	Wparam.payloadMaxSize = 50;
 	Wparam.unicastLocatorList = unicastList;
 	Wparam.multicastLocatorList = multicastList;
@@ -80,7 +80,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	else
 	{
 		pError("Liveliness Writer Creation failed "<<endl;)
-		return false;
+						return false;
 	}
 	SubscriberAttributes Rparam;
 	Rparam.expectsInlineQos = true;
@@ -107,7 +107,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 	else
 	{
 		pError("Liveliness Reader Creation failed "<<endl;)
-		return false;
+						return false;
 	}
 
 	return true;
@@ -115,6 +115,7 @@ bool WriterLiveliness::createEndpoints(LocatorList_t& unicastList,LocatorList_t&
 
 bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 {
+	boost::lock_guard<WriterLiveliness> guard(*this);
 	pDebugInfo(RTPS_MAGENTA<<"Adding local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
 	double wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
@@ -122,8 +123,9 @@ bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 		if(mp_AutomaticLivelinessAssertion == NULL)
 		{
 			mp_AutomaticLivelinessAssertion = new LivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
-     		mp_AutomaticLivelinessAssertion->update_interval_millisec(wAnnouncementPeriodMilliSec);
+			mp_AutomaticLivelinessAssertion->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			mp_AutomaticLivelinessAssertion->restart_timer();
+			m_minAutomaticLivelinessPeriod_MilliSec = wAnnouncementPeriodMilliSec;
 		}
 		else if(m_minAutomaticLivelinessPeriod_MilliSec > wAnnouncementPeriodMilliSec)
 		{
@@ -145,6 +147,7 @@ bool WriterLiveliness::addLocalWriter(RTPSWriter* W)
 			mp_ManualByParticipantLivelinessAssertion = new LivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
 			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			mp_ManualByParticipantLivelinessAssertion->restart_timer();
+			m_minManualByParticipantLivelinessPeriod_MilliSec = wAnnouncementPeriodMilliSec;
 		}
 		else if(m_minManualByParticipantLivelinessPeriod_MilliSec > wAnnouncementPeriodMilliSec)
 		{
@@ -166,6 +169,8 @@ typedef std::vector<RTPSWriter*>::iterator t_WIT;
 
 bool WriterLiveliness::removeLocalWriter(RTPSWriter* W)
 {
+	boost::lock_guard<WriterLiveliness> guard(*this);
+	pInfo(RTPS_MAGENTA<<"Removing Local Writer from Liveliness Protocol"<<RTPS_DEF<<endl;);
 	t_WIT wToEraseIt;
 	bool found = false;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
@@ -188,10 +193,18 @@ bool WriterLiveliness::removeLocalWriter(RTPSWriter* W)
 		if(found)
 		{
 			m_AutomaticLivelinessWriters.erase(wToEraseIt);
-			if(m_AutomaticLivelinessWriters.size()>0)
-				mp_AutomaticLivelinessAssertion->update_interval_millisec(m_minAutomaticLivelinessPeriod_MilliSec);
-			else
-				delete(mp_AutomaticLivelinessAssertion);
+			if(mp_AutomaticLivelinessAssertion!=NULL)
+			{
+				if(m_AutomaticLivelinessWriters.size()>0)
+					mp_AutomaticLivelinessAssertion->update_interval_millisec(m_minAutomaticLivelinessPeriod_MilliSec);
+				else
+				{
+					mp_AutomaticLivelinessAssertion->stop_timer();
+					delete(mp_AutomaticLivelinessAssertion);
+					mp_AutomaticLivelinessAssertion = NULL;
+
+				}
+			}
 		}
 	}
 	else if(W->getQos().m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -214,7 +227,18 @@ bool WriterLiveliness::removeLocalWriter(RTPSWriter* W)
 		if(found)
 		{
 			m_ManualByParticipantLivelinessWriters.erase(wToEraseIt);
-			mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(m_minManualByParticipantLivelinessPeriod_MilliSec);
+			if(mp_ManualByParticipantLivelinessAssertion!=NULL)
+			{
+				if(m_ManualByParticipantLivelinessWriters.size()>0)
+					mp_ManualByParticipantLivelinessAssertion->update_interval_millisec(m_minManualByParticipantLivelinessPeriod_MilliSec);
+				else
+				{
+
+					mp_ManualByParticipantLivelinessAssertion->stop_timer();
+					delete(mp_ManualByParticipantLivelinessAssertion);
+					mp_ManualByParticipantLivelinessAssertion = NULL;
+				}
+			}
 		}
 	}
 	else // OTHER VALUE OF LIVELINESS (BY TOPIC)
@@ -233,6 +257,7 @@ bool WriterLiveliness::updateLocalWriter(RTPSWriter* W)
 
 bool WriterLiveliness::assignRemoteEndpoints(DiscoveredParticipantData* pdata)
 {
+	boost::lock_guard<WriterLiveliness> guard(*this);
 	pInfo(RTPS_MAGENTA<<"WriterLiveliness:assign remote Endpoints"<<RTPS_DEF<<endl;);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;

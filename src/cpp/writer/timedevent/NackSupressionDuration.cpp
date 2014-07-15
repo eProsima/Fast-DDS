@@ -27,7 +27,7 @@ namespace rtps {
 
 NackSupressionDuration::~NackSupressionDuration()
 {
-	timer->cancel();
+	stop_timer();
 	delete(timer);
 }
 
@@ -56,6 +56,7 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 		{
 			pInfo("Nack Supression aborted"<<endl);
+			this->mp_stopSemaphore->post();
 		}
 		else
 		{
