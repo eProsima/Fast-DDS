@@ -82,6 +82,19 @@ inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 	return;
 }
 
+inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
+{
+	GUID_t guid;
+	for(uint8_t i = 0;i<16;++i)
+	{
+		if(i<12)
+			guid.guidPrefix.value[i] = ihandle.value[i];
+		else
+			guid.entityId.value[i-12] = ihandle.value[i];
+	}
+	return guid;
+}
+
 inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHandle)
 {
 	output << std::hex;
