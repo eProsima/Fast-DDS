@@ -96,8 +96,16 @@ bool ShapeSubscriber::passFilter(ShapeType* shape)
     return false;
 }
 
-void ShapeSubscriber::onSubscriptionMatched()
+void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
 {
-    cout << "SUBSCRIBED:*****************************"<<endl;
+    if(info.status = MATCHED_MATCHING)
+    {
+         cout << "SUBSCRIBED:*****************************"<<endl;
+        m_remoteWriters.insert(info.remoteEndpointGuid);
+    }
+    else if(info.status = REMOVED_MATCHING)
+    {
+        cout << "UNSUBSCRIBED*************************"<<endl;
+    }
 }
 

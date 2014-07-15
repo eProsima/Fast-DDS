@@ -151,6 +151,10 @@ public:
 	bool removeLocalWriter(GUID_t guid);
 
 	bool removeLocalReader(GUID_t guid);
+
+	bool unpairRemoteWriter(GUID_t guid);
+
+	bool unpairRemoteReader(GUID_t guid);
 };
 
 } /* namespace rtps */

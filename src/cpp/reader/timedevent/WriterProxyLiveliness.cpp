@@ -17,6 +17,8 @@
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include "eprosimartps/dds/SubscriberListener.h"
+
 
 
 namespace eprosima {
@@ -45,6 +47,11 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 		if(!mp_WP->checkLiveliness())
 		{
 			pWarning("WriterProxyLiveliness failed, leaseDuration was "<< this->getIntervalMsec()<< " ms"<< endl;);
+			if(mp_WP->mp_SFR->getListener()!=NULL)
+			{
+				MatchingInfo info(REMOVED_MATCHING,mp_WP->param.remoteWriterGuid);
+				mp_WP->mp_SFR->getListener()->onSubscriptionMatched(info);
+			}
 			mp_WP->mp_SFR->matched_writer_remove(mp_WP->param.remoteWriterGuid);
 			return;
 		}

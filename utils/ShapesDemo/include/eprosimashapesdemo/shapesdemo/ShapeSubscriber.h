@@ -46,13 +46,15 @@ public:
 	bool initSubscriber();
 
 	void onNewDataMessage();
-	void onSubscriptionMatched();
+    void onSubscriptionMatched(MatchingInfo info);
 	bool hasReceived;
     Shape m_shape;
     Shape m_drawShape;
     QMutex m_mutex;
     ShapeContentFilter m_filter;
     bool passFilter(ShapeType* shape);
+    std::set<GUID_t> m_remoteWriters;
+
 
 
 };
