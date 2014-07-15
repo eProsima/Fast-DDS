@@ -53,7 +53,7 @@ public:
     QMutex m_mutex;
     ShapeContentFilter m_filter;
     bool passFilter(ShapeType* shape);
-    std::set<GUID_t> m_remoteWriters;
+    std::vector<GUID_t> m_remoteWriters;
 
 
 

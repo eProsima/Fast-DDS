@@ -25,6 +25,8 @@
 
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include "eprosimartps/common/types/InstanceHandle.h"
+
 
 
 namespace eprosima {
@@ -79,7 +81,7 @@ void SEDPPubListener::onNewDataMessage()
 					if(wdata->m_writerProxy.remoteWriterGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
 					{
 						pInfo(RTPS_CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
-							delete(wdata);
+											delete(wdata);
 						return;
 					}
 					DiscoveredParticipantData* pdata = NULL;
@@ -152,7 +154,8 @@ void SEDPPubListener::onNewDataMessage()
 		else
 		{
 			//REMOVE WRITER FROM OUR READERS:
-
+			pInfo(RTPS_CYAN<<"Disposed Remote Writer, removing..."<<RTPS_DEF<<endl);
+			this->mp_SEDP->unpairRemoteWriter(iHandle2GUID(change->instanceHandle));
 		}
 	}
 	return;
@@ -166,114 +169,123 @@ void SEDPSubListener::onNewDataMessage()
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_SubReader->get_last_added_cache(&change))
 	{
-		ParameterList_t param;
-		CDRMessage_t msg;
-		msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-		msg.length = change->serializedPayload.length;
-		memcpy(msg.buffer,change->serializedPayload.data,msg.length);
-		if(ParameterList::readParameterListfromCDRMsg(&msg,&param,&change->instanceHandle,NULL)>0)
+		if(change->kind == ALIVE)
 		{
-			DiscoveredReaderData* rdata = new DiscoveredReaderData();
-			if(DiscoveredData::ParameterList2DiscoveredReaderData(param,rdata))
+			ParameterList_t param;
+			CDRMessage_t msg;
+			msg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
+			msg.length = change->serializedPayload.length;
+			memcpy(msg.buffer,change->serializedPayload.data,msg.length);
+			if(ParameterList::readParameterListfromCDRMsg(&msg,&param,&change->instanceHandle,NULL)>0)
 			{
-				change->instanceHandle = rdata->m_key;
-				iHandle2GUID(rdata->m_readerProxy.remoteReaderGuid,change->instanceHandle);
-				if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x04)
+				DiscoveredReaderData* rdata = new DiscoveredReaderData();
+				if(DiscoveredData::ParameterList2DiscoveredReaderData(param,rdata))
 				{
-					rdata->topicKind = NO_KEY;
-				}
-				else if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x07)
-				{
-					rdata->topicKind = WITH_KEY;
-				}
-				else
-				{
-					pWarning("SEDP SubListener:Received information from BAD ENTITYID reader"<<endl);
-				}
-				bool already_in_history = false;
-				//Check if CacheChange_t with same Key is already in History:
-				//				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
-				//						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
-				//				{
-				//					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
-				//					{
-				//						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
-				//						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
-				//						already_in_history = true;
-				//						break;
-				//					}
-				//				}
-				if(rdata->m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
-				{
-					pInfo(RTPS_CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
-							delete(rdata);
-					return;
-				}
-				DiscoveredParticipantData* pdata = NULL;
-				for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
-						pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
-				{
-					if((*pit)->m_guidPrefix == rdata->m_readerProxy.remoteReaderGuid.guidPrefix)
+					change->instanceHandle = rdata->m_key;
+					iHandle2GUID(rdata->m_readerProxy.remoteReaderGuid,change->instanceHandle);
+					if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x04)
 					{
-						pdata = (*pit);
-						break;
+						rdata->topicKind = NO_KEY;
 					}
-				}
-				if(pdata == NULL)
-				{
-					pWarning("Subscriptions Listener: received message from UNKNOWN participant, removing"<<endl);
-					this->mp_SEDP->mp_SubReader->change_removed_by_history(change);
-					delete(rdata);
-					return;
-				}
-
-				DiscoveredReaderData* rdataptr = NULL;
-				if(already_in_history)
-				{
-					for(std::vector<DiscoveredReaderData*>::iterator it = pdata->m_readers.begin();
-							it!=pdata->m_readers.end();++it)
+					else if(rdata->m_readerProxy.remoteReaderGuid.entityId.value[3] == 0x07)
 					{
-						if((*it)->m_key == change->instanceHandle)
-						{
-							rdataptr = (*it);
-							*rdataptr = *rdata;
-							delete(rdata);
-							break;
-						}
-					}
-				}
-				else
-				{
-					pDebugInfo(RTPS_CYAN << "New DiscoveredReaderData added to Participant"<<RTPS_DEF<<endl);
-					pdata->m_readers.push_back(rdata);
-					rdataptr = *(pdata->m_readers.end()-1);
-				}
-				//CHECK the locators:
-				if(rdataptr->m_readerProxy.unicastLocatorList.empty())
-					rdataptr->m_readerProxy.unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-				if(rdataptr->m_readerProxy.multicastLocatorList.empty())
-					rdataptr->m_readerProxy.multicastLocatorList = pdata->m_defaultMulticastLocatorList;
-				rdataptr->isAlive = true;
-				for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->userWritersListBegin();
-						wit!=this->mp_SEDP->mp_PDP->mp_participant->userWritersListEnd();++wit)
-				{
-					if(already_in_history)
-					{
-						this->mp_SEDP->updateWriterMatching(*wit,rdataptr);
+						rdata->topicKind = WITH_KEY;
 					}
 					else
 					{
-						this->mp_SEDP->pairLocalWriterDiscoveredReader(*wit,rdataptr);
+						pWarning("SEDP SubListener:Received information from BAD ENTITYID reader"<<endl);
+					}
+					bool already_in_history = false;
+					//Check if CacheChange_t with same Key is already in History:
+					//				for(std::vector<CacheChange_t*>::iterator it = this->mp_SEDP->mp_SubReader->readerHistoryCacheBegin();
+					//						it!=this->mp_SEDP->mp_SubReader->readerHistoryCacheEnd();++it)
+					//				{
+					//					if((*it)->instanceHandle == change->instanceHandle && (*it)->sequenceNumber.to64long() < change->sequenceNumber.to64long())
+					//					{
+					//						pDebugInfo("SEDP Subscription Listener:Removing older change with the same iHandle"<<endl);
+					//						this->mp_SEDP->mp_SubReader->remove_change((*it)->sequenceNumber,(*it)->writerGUID);
+					//						already_in_history = true;
+					//						break;
+					//					}
+					//				}
+					if(rdata->m_readerProxy.remoteReaderGuid.guidPrefix == mp_SEDP->mp_PDP->mp_localDPData->m_guidPrefix)
+					{
+						pInfo(RTPS_CYAN<<"SEDP Sub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
+											delete(rdata);
+						return;
+					}
+					DiscoveredParticipantData* pdata = NULL;
+					for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_SEDP->mp_PDP->m_discoveredParticipants.begin();
+							pit!=this->mp_SEDP->mp_PDP->m_discoveredParticipants.end();++pit)
+					{
+						if((*pit)->m_guidPrefix == rdata->m_readerProxy.remoteReaderGuid.guidPrefix)
+						{
+							pdata = (*pit);
+							break;
+						}
+					}
+					if(pdata == NULL)
+					{
+						pWarning("Subscriptions Listener: received message from UNKNOWN participant, removing"<<endl);
+						this->mp_SEDP->mp_SubReader->change_removed_by_history(change);
+						delete(rdata);
+						return;
+					}
+
+					DiscoveredReaderData* rdataptr = NULL;
+					if(already_in_history)
+					{
+						for(std::vector<DiscoveredReaderData*>::iterator it = pdata->m_readers.begin();
+								it!=pdata->m_readers.end();++it)
+						{
+							if((*it)->m_key == change->instanceHandle)
+							{
+								rdataptr = (*it);
+								*rdataptr = *rdata;
+								delete(rdata);
+								break;
+							}
+						}
+					}
+					else
+					{
+						pDebugInfo(RTPS_CYAN << "New DiscoveredReaderData added to Participant"<<RTPS_DEF<<endl);
+						pdata->m_readers.push_back(rdata);
+						rdataptr = *(pdata->m_readers.end()-1);
+					}
+					//CHECK the locators:
+					if(rdataptr->m_readerProxy.unicastLocatorList.empty())
+						rdataptr->m_readerProxy.unicastLocatorList = pdata->m_defaultUnicastLocatorList;
+					if(rdataptr->m_readerProxy.multicastLocatorList.empty())
+						rdataptr->m_readerProxy.multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+					rdataptr->isAlive = true;
+					for(std::vector<RTPSWriter*>::iterator wit = this->mp_SEDP->mp_PDP->mp_participant->userWritersListBegin();
+							wit!=this->mp_SEDP->mp_PDP->mp_participant->userWritersListEnd();++wit)
+					{
+						if(already_in_history)
+						{
+							this->mp_SEDP->updateWriterMatching(*wit,rdataptr);
+						}
+						else
+						{
+							this->mp_SEDP->pairLocalWriterDiscoveredReader(*wit,rdataptr);
+						}
 					}
 				}
+				param.deleteParams();
 			}
-			param.deleteParams();
+			else
+			{
+				pError("SEDPSubListener: error reading Parameters from CDRMessage"<<endl);
+				param.deleteParams();
+				return;
+			}
 		}
 		else
 		{
-			pError("SEDPSubListener: error reading Parameters from CDRMessage"<<endl);
-			param.deleteParams();
-			return;
+			//REMOVE WRITER FROM OUR READERS:
+			pInfo(RTPS_CYAN<<"Disposed Remote Reader, removing..."<<RTPS_DEF<<endl);
+			this->mp_SEDP->unpairRemoteReader(iHandle2GUID(change->instanceHandle));
 		}
 	}
 	return;

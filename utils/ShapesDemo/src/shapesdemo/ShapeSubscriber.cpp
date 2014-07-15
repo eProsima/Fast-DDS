@@ -44,6 +44,8 @@ void ShapeSubscriber::onNewDataMessage()
     {
        // shape.m_x += 5;
         shape.m_time = info.sourceTimestamp;
+        shape.m_writerGuid = info.writerGUID;
+        shape.m_strength = info.ownershipStrength;
         if(info.sampleKind == ALIVE)
         {
             hasReceived = true;
@@ -98,12 +100,26 @@ bool ShapeSubscriber::passFilter(ShapeType* shape)
 
 void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
 {
-    if(info.status = MATCHED_MATCHING)
+    if(info.status ==MATCHED_MATCHING)
     {
          cout << "SUBSCRIBED:*****************************"<<endl;
-        m_remoteWriters.insert(info.remoteEndpointGuid);
+         bool found = false;
+         for(std::vector<GUID_t>::iterator it = m_remoteWriters.begin();
+             it!=m_remoteWriters.end();++it)
+         {
+             if(*it==info.remoteEndpointGuid)
+             {
+                 found = true;
+                 break;
+             }
+         }
+         if(!found)
+         {
+            m_remoteWriters.push_back(info.remoteEndpointGuid);
+         }
+
     }
-    else if(info.status = REMOVED_MATCHING)
+    else if(info.status == REMOVED_MATCHING)
     {
         cout << "UNSUBSCRIBED*************************"<<endl;
     }

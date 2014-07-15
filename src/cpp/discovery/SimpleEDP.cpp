@@ -710,6 +710,7 @@ bool SimpleEDP::unpairRemoteWriter(GUID_t guid)
 						(*rit)->getListener()->onSubscriptionMatched(info);
 					}
 				}
+				(*pit)->m_writers.erase(wit);
 				break;
 			}
 		}
@@ -752,6 +753,7 @@ bool SimpleEDP::unpairRemoteReader(GUID_t guid)
 						(*wit)->getListener()->onPublicationMatched(info);
 					}
 				}
+				(*pit)->m_readers.erase(rit);
 				break;
 			}
 		}
