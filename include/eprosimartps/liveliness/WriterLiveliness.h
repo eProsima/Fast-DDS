@@ -15,6 +15,11 @@
 #define WRITERLIVELINESS_H_
 
 #include <vector>
+
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/common/types/Locator.h"
 
@@ -32,7 +37,7 @@ class LivelinessPeriodicAssertion;
 class WriterProxy;
 class DiscoveredParticipantData;
 
-class WriterLiveliness {
+class WriterLiveliness : public boost::basic_lockable_adapter<boost::recursive_mutex> {
 	friend class LivelinessPeriodicAssertion;
 	friend class WriterLivelinessListener;
 public:

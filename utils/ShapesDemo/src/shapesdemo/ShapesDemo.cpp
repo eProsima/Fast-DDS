@@ -200,3 +200,34 @@ void ShapesDemo::setOptions(ShapesDemoOptions& opt)
     m_mainWindow->updateInterval(m_options.m_updateIntervalMs);
 
 }
+
+void ShapesDemo::removePublisher(ShapePublisher* SP)
+{
+    cout << "REMOVING PUBLISHER"<<endl;
+    for(std::vector<ShapePublisher*>::iterator it = this->m_publishers.begin();
+        it!=this->m_publishers.end();++it)
+    {
+        if(SP->mp_pub->getGuid() == (*it)->mp_pub->getGuid())
+        {
+            m_publishers.erase(it);
+            delete(SP);
+            break;
+        }
+    }
+
+}
+
+void ShapesDemo::removeSubscriber(ShapeSubscriber* SS)
+{
+    cout << "REMOVING SUBSCRIBER"<<endl;
+    for(std::vector<ShapeSubscriber*>::iterator it = this->m_subscribers.begin();
+        it!=this->m_subscribers.end();++it)
+    {
+        if(SS->mp_sub->getGuid() == (*it)->mp_sub->getGuid())
+        {
+            m_subscribers.erase(it);
+            delete(SS);
+            break;
+        }
+    }
+}

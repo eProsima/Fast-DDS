@@ -33,7 +33,7 @@ ParticipantLeaseDuration::ParticipantLeaseDuration(ParticipantDiscoveryProtocol*
 
 ParticipantLeaseDuration::~ParticipantLeaseDuration()
 {
-	timer->cancel();
+	stop_timer();
 	delete(timer);
 }
 
@@ -73,6 +73,7 @@ void ParticipantLeaseDuration::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 	{
 		pInfo("Response Data Period aborted"<<endl);
+		this->mp_stopSemaphore->post();
 	}
 	else
 	{

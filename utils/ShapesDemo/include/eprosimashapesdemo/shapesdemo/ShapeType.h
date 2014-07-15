@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <sstream>
 #include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/common/types/Guid.h"
 
 using namespace eprosima::rtps;
 

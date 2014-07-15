@@ -26,8 +26,8 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
     ShapeType* sh = (ShapeType*)data;
     uint32_t strsize = sh->getColorStr().size();
     std::string auxstr = sh->getColorStr();
-    cout << "sTRING:"  << auxstr << endl;
-    cout << "Strsize: "<< strsize<<endl;
+   // cout << "sTRING:"  << auxstr << endl;
+    //cout << "Strsize: "<< strsize<<endl;
     uint32_t* auxptr;
     auxptr = (uint32_t*)payload->data;
     *auxptr = strsize+1; //COPY STR SIZE:
@@ -35,7 +35,7 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
         payload->data[4+i] = auxstr.at(i);
     payload->data[4+strsize] = 0;
     int rest = (strsize+1)%4;
-    cout << "Rest mod: "<<rest;
+    //cout << "Rest mod: "<<rest;
     if(rest > 0)
     {
         rest = 4-rest;
@@ -69,7 +69,7 @@ bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
     sh->m_x = *(uint32_t*)&payload->data[4+strsize+rest];
     sh->m_y = *(uint32_t*)&payload->data[4+strsize+rest+4];
     sh->m_size = *(uint32_t*)&payload->data[4+strsize+rest+4+4];
-    cout <<  sh->m_x << " "<<  sh->m_y << " "<<  sh->m_size << endl;
+  //  cout <<  sh->m_x << " "<<  sh->m_y << " "<<  sh->m_size << endl;
     return false;
 }
 

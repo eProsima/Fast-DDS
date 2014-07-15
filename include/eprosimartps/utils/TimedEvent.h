@@ -22,6 +22,7 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/bind.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include <boost/system/error_code.hpp>
 
@@ -69,6 +70,8 @@ public:
 		return (double)timer->expires_from_now().total_milliseconds();
 	}
 	//Duration_t m_timeInfinite;
+	//!Semaphore to wait for the listen thread creation.
+	boost::interprocess::interprocess_semaphore* mp_stopSemaphore;
 };
 
 

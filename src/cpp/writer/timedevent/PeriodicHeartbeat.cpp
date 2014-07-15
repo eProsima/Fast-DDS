@@ -28,7 +28,7 @@ namespace rtps{
 
 PeriodicHeartbeat::~PeriodicHeartbeat()
 {
-	timer->cancel();
+	stop_timer();
 	delete(timer);
 }
 
@@ -87,6 +87,7 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 	{
 		pWarning("Periodic Heartbeat aborted"<<endl);
+		this->mp_stopSemaphore->post();
 	}
 	else
 	{

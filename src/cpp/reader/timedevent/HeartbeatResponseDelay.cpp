@@ -27,7 +27,7 @@ namespace rtps {
 
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
-	timer->cancel();
+	stop_timer();
 	delete(timer);
 }
 
@@ -94,6 +94,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 	{
 		pInfo("HB response aborted"<<endl);
+		this->mp_stopSemaphore->post();
 	}
 	else
 	{

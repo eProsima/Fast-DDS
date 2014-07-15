@@ -634,6 +634,7 @@ bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
 
 bool SimpleEDP::removeLocalReader(GUID_t guid)
 {
+	pInfo(RTPS_CYAN<<"Removing Local Reader from Discovery protocol " <<RTPS_DEF<<endl;);
 	if(mp_SubWriter!=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -658,14 +659,15 @@ bool SimpleEDP::removeLocalReader(GUID_t guid)
 
 bool SimpleEDP::removeLocalWriter(GUID_t guid)
 {
-	if(mp_SubWriter!=NULL)
+	pInfo(RTPS_CYAN<<"Removing Local Writer from Discovery protocol " <<RTPS_DEF<<endl;);
+	if(mp_PubWriter!=NULL)
 	{
 		CacheChange_t* change = NULL;
-		if(mp_SubWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
+		if(mp_PubWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
 		{
 			change->instanceHandle = guid;
-			mp_SubWriter->add_change(change);
-			mp_SubWriter->unsent_change_add(change);
+			mp_PubWriter->add_change(change);
+			mp_PubWriter->unsent_change_add(change);
 		}
 		for(std::vector<DiscoveredWriterData*>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
 				it!=this->mp_PDP->mp_localDPData->m_writers.end();++it)

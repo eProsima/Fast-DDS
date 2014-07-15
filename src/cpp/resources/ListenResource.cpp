@@ -40,13 +40,13 @@ ListenResource::ListenResource(ParticipantImpl*p):
 
 ListenResource::~ListenResource()
 {
-	pWarning("Removing listening thread " << mp_thread->get_id() << std::endl);
+	pWarning("Removing listening thread " << mp_thread->get_id() << " locator: " << m_listenLoc.printIP4Port()<< std::endl);
 	m_listen_socket.close();
 	m_io_service.stop();
 	pInfo("Joining with thread"<<endl);
 	mp_thread->join();
 	delete(mp_thread);
-
+	pDebugInfo("Listening thread closed OK"<<endl;);
 }
 
 bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)

@@ -140,18 +140,23 @@ inline bool operator==(EntityId_t& eid,const uint32_t id2)
 	return result;
 }
 inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
-	{
+{
 	for(uint8_t i =0;i<4;++i)
 	{
 		if(id1.value[i] != id2.value[i])
 			return false;
 	}
 	return true;
-//	uint32_t* aux1 = (uint32_t*)(id1.value);
-//	uint32_t* aux2 = (uint32_t*)(id2.value);
-//	if(*aux1 == *aux2)
-//		return true;
-//	return false;
+}
+
+inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
+{
+	for(uint8_t i =0;i<4;++i)
+	{
+		if(id1.value[i] != id2.value[i])
+			return true;
+	}
+	return false;
 }
 
 
@@ -201,6 +206,13 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_PARTICIPANT_
 
 inline bool operator==(const GUID_t& g1,const GUID_t& g2){
 	if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
+		return true;
+	else
+		return false;
+}
+
+inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
+	if(g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
 		return true;
 	else
 		return false;

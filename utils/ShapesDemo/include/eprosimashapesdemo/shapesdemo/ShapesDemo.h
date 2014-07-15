@@ -58,6 +58,8 @@ public:
 
 	void addPublisher(ShapePublisher* SP);
     void addSubscriber(ShapeSubscriber* SS);
+    void removePublisher(ShapePublisher* SP);
+    void removeSubscriber(ShapeSubscriber* SS);
 
     uint32_t getRandomX(uint32_t size=10);
     uint32_t getRandomY(uint32_t size=10);

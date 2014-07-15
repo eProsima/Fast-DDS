@@ -33,7 +33,7 @@ WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* wp,boost::posix_time::
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
 {
-	timer->cancel();
+	stop_timer();
 	delete(timer);
 }
 
@@ -60,6 +60,7 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 	{
 		pInfo("WriterProxyLiveliness aborted"<<endl);
+		this->mp_stopSemaphore->post();
 	}
 	else
 	{

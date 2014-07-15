@@ -32,8 +32,9 @@ LivelinessPeriodicAssertion::LivelinessPeriodicAssertion(WriterLiveliness* wLive
 
 LivelinessPeriodicAssertion::~LivelinessPeriodicAssertion()
 {
-	timer->cancel();
-		delete(timer);
+	pDebugInfo(RTPS_MAGENTA<<"LivelinessPeriodicAssertion TimedEvent destructor " <<RTPS_DEF<<endl;);
+	stop_timer();
+	delete(timer);
 }
 
 void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
@@ -41,6 +42,7 @@ void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
+
 		pDebugInfo(RTPS_MAGENTA<<"LivelinessPeriodic Assertion (period: "<< this->m_interval_msec<< ")"<<RTPS_DEF<<endl;)
 		if(first) //FIRST TIME, WE CREATE IT
 		{
@@ -65,6 +67,7 @@ void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 	else if(ec==boost::asio::error::operation_aborted)
 	{
 		pWarning("Liveliness Periodic Assertion aborted"<<endl);
+		this->mp_stopSemaphore->post();
 	}
 	else
 	{
@@ -74,6 +77,7 @@ void LivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 
 bool LivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 {
+	boost::lock_guard<WriterLiveliness> guard(*this->mp_writerLiveliness);
 	if(this->mp_writerLiveliness->m_AutomaticLivelinessWriters.size()>0)
 	{
 		CacheChange_t* change=NULL;
@@ -130,6 +134,7 @@ bool LivelinessPeriodicAssertion::removeMinSeqNumByKey()
 
 bool LivelinessPeriodicAssertion::ManualByParticipantLivelinessAssertion()
 {
+	boost::lock_guard<WriterLiveliness> guard(*this->mp_writerLiveliness);
 	bool livelinessAsserted = false;
 	for(std::vector<RTPSWriter*>::iterator wit=this->mp_writerLiveliness->m_ManualByParticipantLivelinessWriters.begin();
 			wit!=this->mp_writerLiveliness->m_ManualByParticipantLivelinessWriters.end();++wit)

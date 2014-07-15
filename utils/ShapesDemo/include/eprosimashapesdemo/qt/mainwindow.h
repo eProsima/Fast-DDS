@@ -19,6 +19,20 @@ class MainWindow;
 class UpdateThread;
 class QStandardItemModel;
 
+enum SD_ENDP_TYPE
+{
+    PUB,
+    SUB
+};
+
+struct SD_Endpoint
+{
+    SD_ENDP_TYPE type;
+    ShapePublisher* pub;
+    ShapeSubscriber* sub;
+    int pos;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -53,11 +67,17 @@ private slots:
 
     void on_actionExit_triggered();
 
+    void on_tableEndpoint_customContextMenuRequested(const QPoint &pos);
+
+    void on_actionDelete_Enpoint_triggered();
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
     UpdateThread* mp_writeThread;
     QStandardItemModel* m_pubsub;
+    std::vector<SD_Endpoint> m_pubsub_pointers;
+    int m_tableRow;
 };
 
 #endif // MAINWINDOW_H

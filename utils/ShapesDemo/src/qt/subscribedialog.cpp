@@ -102,7 +102,8 @@ void SubscribeDialog::on_buttonBox_accepted()
     }
     else
     {
-         QString value = this->ui->lineEdit_leaseDuration->text();
+         QString value = this->ui->lineEdit_TimeBasedFilter->text();
+         cout << "TIME VALUE: "<< value.toStdString() << endl;
          if(value.toInt()>0)
          {
              SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation = MilliSec2Time_t(value.toInt());
