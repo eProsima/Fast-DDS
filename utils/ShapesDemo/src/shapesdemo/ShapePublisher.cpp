@@ -59,7 +59,7 @@ void ShapePublisher::write()
     }
 }
 
-void ShapePublisher::onPublicationMatched()
+void ShapePublisher::onPublicationMatched(MatchingInfo info)
 {
     cout << "PUBLICATION MATCHED:*****************************"<<endl;
 }

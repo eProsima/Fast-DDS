@@ -13,6 +13,7 @@
 
 #include "eprosimartps/dds/PublisherListener.h"
 
+
 namespace eprosima {
 namespace dds {
 
@@ -25,7 +26,7 @@ PublisherListener::~PublisherListener() {
 	// TODO Auto-generated destructor stub
 }
 
-void PublisherListener::onPublicationMatched()
+void PublisherListener::onPublicationMatched(MatchingInfo info)
 {
 
 }

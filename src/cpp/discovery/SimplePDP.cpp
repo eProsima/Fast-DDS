@@ -16,6 +16,10 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/dds/DomainParticipant.h"
+
+#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+
 #include "eprosimartps/discovery/timedevent/ResendDiscoveryDataPeriod.h"
 
 
@@ -434,16 +438,22 @@ bool SimplePDP::removeRemoteParticipant(const GuidPrefix_t& guidP)
 	for(std::vector<DiscoveredWriterData*>::iterator wit = (*dpdit)->m_writers.begin();
 			wit!=(*dpdit)->m_writers.end();++wit)
 	{
+		bool removed = false;
 		for(std::vector<RTPSReader*>::iterator rit = this->mp_participant->userReadersListBegin();
 				rit!=this->mp_participant->userReadersListEnd();++rit)
 		{
 			if((*rit)->getStateType() == STATELESS)
 			{
-				(dynamic_cast<StatelessReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+				removed =  (dynamic_cast<StatelessReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
 			}
 			else if((*rit)->getStateType() == STATEFUL)
 			{
-				(dynamic_cast<StatefulReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+				removed = (dynamic_cast<StatefulReader*>(*rit))->matched_writer_remove((*wit)->m_writerProxy.remoteWriterGuid);
+			}
+			if(removed && (*rit)->getListener()!=NULL)
+			{
+				MatchingInfo info(REMOVED_MATCHING,(*wit)->m_writerProxy.remoteWriterGuid);
+				(*rit)->getListener()->onSubscriptionMatched(info);
 			}
 		}
 	}
@@ -453,17 +463,23 @@ bool SimplePDP::removeRemoteParticipant(const GuidPrefix_t& guidP)
 		for(std::vector<RTPSWriter*>::iterator wit = this->mp_participant->userWritersListBegin();
 				wit!=this->mp_participant->userWritersListEnd();++wit)
 		{
+			bool removed = false;
 			if((*wit)->getStateType() == STATELESS)
 			{
 				for(std::vector<Locator_t>::iterator lit = (*rit)->m_readerProxy.unicastLocatorList.begin();
 						lit!=(*rit)->m_readerProxy.unicastLocatorList.end();++lit)
 				{
-					(dynamic_cast<StatelessWriter*>(*wit))->reader_locator_remove(*lit);
+					removed |= (dynamic_cast<StatelessWriter*>(*wit))->reader_locator_remove(*lit);
 				}
 			}
 			else if((*wit)->getStateType() == STATEFUL)
 			{
-				(dynamic_cast<StatefulWriter*>(*wit))->matched_reader_remove((*rit)->m_readerProxy.remoteReaderGuid);
+				removed = (dynamic_cast<StatefulWriter*>(*wit))->matched_reader_remove((*rit)->m_readerProxy.remoteReaderGuid);
+			}
+			if(removed && (*wit)->getListener()!=NULL)
+			{
+				MatchingInfo info(REMOVED_MATCHING,(*rit)->m_readerProxy.remoteReaderGuid);
+				(*wit)->getListener()->onPublicationMatched(info);
 			}
 		}
 	}

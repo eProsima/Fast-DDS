@@ -42,10 +42,10 @@ namespace eprosima {
 namespace rtps {
 
 SimpleEDP::SimpleEDP(ParticipantDiscoveryProtocol* p):
-						EndpointDiscoveryProtocol(p),
-						mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
-						mp_PubReader(NULL),mp_SubReader(NULL),// mp_TopReader(NULL),
-						m_listeners(this)
+								EndpointDiscoveryProtocol(p),
+								mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
+								mp_PubReader(NULL),mp_SubReader(NULL),// mp_TopReader(NULL),
+								m_listeners(this)
 {
 
 
@@ -79,7 +79,7 @@ bool SimpleEDP::createSEDPEndpoints()
 	RTPSWriter* waux;
 	if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
 	{
-	//	Wparam.historyMaxSize = 100;
+		//	Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		Wparam.topic.topicName = "DCPSPublication";
@@ -476,7 +476,12 @@ bool SimpleEDP::pairLocalWriterDiscoveredReader(RTPSWriter* W,DiscoveredReaderDa
 				matched = true;
 		}
 		if(matched && W->getListener()!=NULL)
-			W->getListener()->onPublicationMatched();
+		{
+			MatchingInfo info;
+			info.status = MATCHED_MATCHING;
+			info.remoteEndpointGuid = rdata->m_readerProxy.remoteReaderGuid;
+			W->getListener()->onPublicationMatched(info);
+		}
 	}
 	return matched;
 }
@@ -503,7 +508,10 @@ bool SimpleEDP::pairLocalReaderDiscoveredWriter(RTPSReader* R,DiscoveredWriterDa
 
 		if(matched && R->getListener()!=NULL)
 		{
-			R->getListener()->onSubscriptionMatched();
+			MatchingInfo info;
+			info.status = MATCHED_MATCHING;
+			info.remoteEndpointGuid = wdata->m_writerProxy.remoteWriterGuid;
+			R->getListener()->onSubscriptionMatched(info);
 		}
 	}
 	return matched;
@@ -520,7 +528,7 @@ bool SimpleEDP::validMatching(RTPSWriter* W,DiscoveredReaderData* rdata)
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Reader "<<rdata->m_readerProxy.remoteReaderGuid << " is publishing in topic " << rdata->m_topicName << "(keyed:"<<rdata->topicKind<<
 				"), local writer publishes as keyed: "<<W->getTopic().getTopicKind()<<endl;)
-		return false;
+				return false;
 	}
 	if(!rdata->isAlive) //Matching
 		return false;
@@ -577,7 +585,7 @@ bool SimpleEDP::validMatching(RTPSReader*R,DiscoveredWriterData* wdata)
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Writer "<<wdata->m_writerProxy.remoteWriterGuid << " is publishing in topic " << wdata->m_topicName << "(keyed:"<<wdata->topicKind<<
 				"), local reader subscribes as keyed: "<<R->getTopic().getTopicKind()<<endl;)
-		return false;
+				return false;
 	}
 	if(!wdata->isAlive) //Matching
 		return false;
@@ -670,6 +678,51 @@ bool SimpleEDP::removeLocalWriter(GUID_t guid)
 		}
 	}
 	return false;
+}
+
+bool SimpleEDP::unpairRemoteWriter(GUID_t guid)
+{
+	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
+	{
+		if((*pit)->m_guidPrefix != guid.guidPrefix)
+			continue;
+		for(std::vector<DiscoveredWriterData*>::iterator wit = (*pit)->m_writers.begin();
+				wit!=(*pit)->m_writers.end();++wit)
+		{
+			if((*wit)->m_writerProxy.remoteWriterGuid.entityId == guid.entityId)
+			{
+				for(std::vector<RTPSReader*>::iterator rit = this->mp_PDP->mp_participant->userReadersListBegin();
+						rit != this->mp_PDP->mp_participant->userReadersListEnd();++rit)
+				{
+					bool removed = false;
+					if((*rit)->getStateType() == STATELESS)
+					{
+						removed = dynamic_cast<StatelessReader*>(*rit)->matched_writer_remove(guid);
+					}
+					else
+					{
+						removed = dynamic_cast<StatefulReader*>(*rit)->matched_writer_remove(guid);
+					}
+					if(removed && (*rit)->getListener()!=NULL)
+					{
+						MatchingInfo info(REMOVED_MATCHING,guid);
+						(*rit)->getListener()->onSubscriptionMatched(info);
+					}
+				}
+				break;
+			}
+		}
+		break;
+	}
+	return true;
+}
+
+bool SimpleEDP::unpairRemoteReader(GUID_t guid)
+{
+
+
+	return true;
 }
 
 

@@ -14,6 +14,7 @@
 #define PUBLISHERLISTENER_H_
 
 #include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/dds/MatchingInfo.h"
 
 namespace eprosima {
 namespace dds {
@@ -29,7 +30,7 @@ public:
 	PublisherListener();
 	virtual ~PublisherListener();
 
-	virtual void onPublicationMatched();
+	virtual void onPublicationMatched(MatchingInfo info);
 
 	virtual void onHistoryFull();
 };

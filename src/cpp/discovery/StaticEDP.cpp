@@ -9,7 +9,7 @@
 /**
  * @file StaticEDP.cpp
  *
-*/
+ */
 
 #include "eprosimartps/discovery/StaticEDP.h"
 
@@ -36,7 +36,7 @@ namespace rtps {
 using boost::property_tree::ptree;
 
 StaticEDP::StaticEDP(ParticipantDiscoveryProtocol*p):
-	EndpointDiscoveryProtocol(p){
+			EndpointDiscoveryProtocol(p){
 	// TODO Auto-generated constructor stub
 
 }
@@ -365,7 +365,12 @@ bool StaticEDP::localWriterMatching(RTPSWriter* writer,bool first_time)
 						matched = true;
 				}
 				if(matched && writer->getListener()!=NULL)
-					writer->getListener()->onPublicationMatched();
+				{
+					MatchingInfo info;
+					info.status = MATCHED_MATCHING;
+					info.remoteEndpointGuid = (*it)->m_readerProxy.remoteReaderGuid;
+					writer->getListener()->onPublicationMatched(info);
+				}
 				matched_global = true;
 			}
 		}
@@ -402,7 +407,12 @@ bool StaticEDP::localReaderMatching(RTPSReader* reader,bool first_time)
 						matched = true;
 				}
 				if(matched && reader->getListener()!=NULL)
-					reader->getListener()->onSubscriptionMatched();
+				{
+					MatchingInfo info;
+					info.status = MATCHED_MATCHING;
+					info.remoteEndpointGuid = (*it)->m_writerProxy.remoteWriterGuid;
+					reader->getListener()->onSubscriptionMatched(info);
+				}
 				matched_global = true;
 			}
 		}

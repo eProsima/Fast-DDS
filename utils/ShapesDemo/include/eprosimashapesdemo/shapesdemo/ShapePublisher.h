@@ -31,7 +31,7 @@ public:
 
 	bool initPublisher();
     void write();
-    void onPublicationMatched();
+    void onPublicationMatched(MatchingInfo info);
 
     Shape m_shape;
     Shape m_drawShape;
