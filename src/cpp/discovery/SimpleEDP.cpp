@@ -720,8 +720,43 @@ bool SimpleEDP::unpairRemoteWriter(GUID_t guid)
 
 bool SimpleEDP::unpairRemoteReader(GUID_t guid)
 {
-
-
+	for(std::vector<DiscoveredParticipantData*>::iterator pit = this->mp_PDP->m_discoveredParticipants.begin();
+			pit!=this->mp_PDP->m_discoveredParticipants.end();++pit)
+	{
+		if((*pit)->m_guidPrefix != guid.guidPrefix)
+			continue;
+		for(std::vector<DiscoveredReaderData*>::iterator rit = (*pit)->m_readers.begin();
+				rit!=(*pit)->m_readers.end();++rit)
+		{
+			if((*rit)->m_readerProxy.remoteReaderGuid.entityId == guid.entityId)
+			{
+				for(std::vector<RTPSWriter*>::iterator wit = this->mp_PDP->mp_participant->userWritersListBegin();
+						wit != this->mp_PDP->mp_participant->userWritersListEnd();++wit)
+				{
+					bool removed = false;
+					if((*wit)->getStateType() == STATELESS)
+					{
+						for(std::vector<Locator_t>::iterator lit = (*rit)->m_readerProxy.unicastLocatorList.begin();
+								lit!=(*rit)->m_readerProxy.unicastLocatorList.end();++lit)
+						{
+							removed |= (dynamic_cast<StatelessWriter*>(*wit))->reader_locator_remove(*lit);
+						}
+					}
+					else
+					{
+						removed = dynamic_cast<StatefulWriter*>(*rit)->matched_reader_remove(guid);
+					}
+					if(removed && (*wit)->getListener()!=NULL)
+					{
+						MatchingInfo info(REMOVED_MATCHING,guid);
+						(*wit)->getListener()->onPublicationMatched(info);
+					}
+				}
+				break;
+			}
+		}
+		break;
+	}
 	return true;
 }
 
