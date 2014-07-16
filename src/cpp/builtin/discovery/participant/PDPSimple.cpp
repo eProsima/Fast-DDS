@@ -44,10 +44,11 @@ PDPSimple::~PDPSimple() {
 	// TODO Auto-generated destructor stub
 }
 
-bool PDPSimple::initPDP(const DiscoveryAttributes& attributes,uint32_t participantID)
+bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 {
 	pInfo(RTPS_B_CYAN<<"Beginning ParticipantDiscoveryProtocol Initialization"<<RTPS_DEF<<endl);
-	m_discovery = attributes;
+	mp_participant = part;
+	m_discovery = mp_participant->getDiscoveryAttributes();
 
 	if(!createSPDPEndpoints())
 		return false;

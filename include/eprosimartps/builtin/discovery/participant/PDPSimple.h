@@ -26,8 +26,11 @@ class ParticipantImpl;
 class BuiltinProtocols;
 class EDP;
 class ResendParticipantProxyDataPeriod;
+class RemoteParticipantLeaseDuration;
 
 class PDPSimple {
+	friend class ResendParticipantProxyDataPeriod;
+	friend class RemoteParticipantLeaseDuration;
 public:
 	PDPSimple(BuiltinProtocols* builtin);
 	virtual ~PDPSimple();

@@ -37,7 +37,7 @@ ParticipantProxyData::~ParticipantProxyData() {
 
 bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 {
-	this->leaseDuration = part->getDiscoveryAttributes().leaseDuration;
+	this->m_leaseDuration = part->getDiscoveryAttributes().leaseDuration;
 	VENDORID_EPROSIMA(this->m_VendorId);
 
 	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
@@ -120,7 +120,7 @@ bool ParticipantProxyData::toParameterList()
 		{
 			valid &=QosList::addQos(&m_QosList,PID_DEFAULT_MULTICAST_LOCATOR,*it);
 		}
-		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_LEASE_DURATION,this->leaseDuration);
+		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_LEASE_DURATION,this->m_leaseDuration);
 		valid &=QosList::addQos(&m_QosList,PID_BUILTIN_ENDPOINT_SET,(uint32_t)this->m_availableBuiltinEndpoints);
 		valid &=QosList::addQos(&m_QosList,PID_ENTITY_NAME,this->m_participantName);
 
