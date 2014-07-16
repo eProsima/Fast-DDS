@@ -203,8 +203,11 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
         for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
             it!=m_shape.m_shapeHistory.end();++it)
         {
+            cout << it->front().m_writerGuid << endl;
+            cout << info.remoteEndpointGuid << endl;
             if(it->front().m_writerGuid == info.remoteEndpointGuid)
             {
+                cout << "FOUND, DELETING"<<endl;
                 m_shape.m_shapeHistory.erase(it);
                 break;
             }

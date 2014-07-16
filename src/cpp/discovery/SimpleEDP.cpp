@@ -671,8 +671,6 @@ bool SimpleEDP::removeLocalReader(GUID_t guid)
 						(*wit)->getListener()->onPublicationMatched(info);
 					}
 				}
-
-
 				this->mp_PDP->mp_localDPData->m_readers.erase(it);
 				return true;
 			}
