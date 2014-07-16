@@ -649,6 +649,30 @@ bool SimpleEDP::removeLocalReader(GUID_t guid)
 		{
 			if((*it)->m_readerProxy.remoteReaderGuid == guid)
 			{
+				for(std::vector<RTPSWriter*>::iterator wit = this->mp_PDP->mp_participant->userWritersListBegin();
+						wit != this->mp_PDP->mp_participant->userWritersListEnd();++wit)
+				{
+					bool removed = false;
+					if((*wit)->getStateType() == STATELESS)
+					{
+						for(std::vector<Locator_t>::iterator lit = (*it)->m_readerProxy.unicastLocatorList.begin();
+								lit!=(*it)->m_readerProxy.unicastLocatorList.end();++lit)
+						{
+							removed |= (dynamic_cast<StatelessWriter*>(*wit))->reader_locator_remove(*lit);
+						}
+					}
+					else
+					{
+						removed = dynamic_cast<StatefulWriter*>(*wit)->matched_reader_remove(guid);
+					}
+					if(removed && (*wit)->getListener()!=NULL)
+					{
+						MatchingInfo info(REMOVED_MATCHING,guid);
+						(*wit)->getListener()->onPublicationMatched(info);
+					}
+				}
+
+
 				this->mp_PDP->mp_localDPData->m_readers.erase(it);
 				return true;
 			}
@@ -668,6 +692,24 @@ bool SimpleEDP::removeLocalWriter(GUID_t guid)
 			change->instanceHandle = guid;
 			mp_PubWriter->add_change(change);
 			mp_PubWriter->unsent_change_add(change);
+		}
+		for(std::vector<RTPSReader*>::iterator rit = this->mp_PDP->mp_participant->userReadersListBegin();
+				rit != this->mp_PDP->mp_participant->userReadersListEnd();++rit)
+		{
+			bool removed = false;
+			if((*rit)->getStateType() == STATELESS)
+			{
+				removed = dynamic_cast<StatelessReader*>(*rit)->matched_writer_remove(guid);
+			}
+			else
+			{
+				removed = dynamic_cast<StatefulReader*>(*rit)->matched_writer_remove(guid);
+			}
+			if(removed && (*rit)->getListener()!=NULL)
+			{
+				MatchingInfo info(REMOVED_MATCHING,guid);
+				(*rit)->getListener()->onSubscriptionMatched(info);
+			}
 		}
 		for(std::vector<DiscoveredWriterData*>::iterator it = this->mp_PDP->mp_localDPData->m_writers.begin();
 				it!=this->mp_PDP->mp_localDPData->m_writers.end();++it)
@@ -747,7 +789,7 @@ bool SimpleEDP::unpairRemoteReader(GUID_t guid)
 					}
 					else
 					{
-						removed = dynamic_cast<StatefulWriter*>(*rit)->matched_reader_remove(guid);
+						removed = dynamic_cast<StatefulWriter*>(*wit)->matched_reader_remove(guid);
 					}
 					if(removed && (*wit)->getListener()!=NULL)
 					{

@@ -35,6 +35,7 @@ void ShapeType::define(SD_COLOR color,
     m_x = x;
     m_y =y;
     m_size = size;
+    m_strength = 0;
 }
 
 void ShapeType::setColor(SD_COLOR c)

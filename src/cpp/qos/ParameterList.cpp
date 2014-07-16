@@ -271,6 +271,8 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					*chkind = NOT_ALIVE_DISPOSED;
 				else if (status == 2)
 					*chkind = NOT_ALIVE_UNREGISTERED;
+				else if (status == 3)
+					*chkind = NOT_ALIVE_DISPOSED_UNREGISTERED;
 				msg->pos+=4;
 				paramlist_byte_size+=4;
 				break;
