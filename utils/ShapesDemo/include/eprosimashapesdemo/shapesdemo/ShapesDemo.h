@@ -19,6 +19,7 @@
 
 #define MAX_DRAW_AREA_X 235
 #define MAX_DRAW_AREA_Y 265
+#define INITIAL_INTERVAL_MS 200
 
 
 class ShapesDemoOptions
@@ -29,7 +30,7 @@ public:
     uint32_t m_domainId;
     ShapesDemoOptions()
     {
-        m_updateIntervalMs = 200;
+        m_updateIntervalMs = INITIAL_INTERVAL_MS;
         m_movementSpeed = 5;
         m_domainId = 80;
     }
@@ -75,6 +76,9 @@ public:
      void writeAll();
 
      void setOptions(ShapesDemoOptions& opt);
+     ShapesDemoOptions getOptions();
+
+     bool isInitialized(){return this->m_isInitialized;}
 
 
 private:

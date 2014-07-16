@@ -8,6 +8,12 @@ OptionsDialog::OptionsDialog(ShapesDemo* psd,QWidget *parent) :
      mp_sd(psd)
 {
     ui->setupUi(this);
+    ShapesDemoOptions opt = this->mp_sd->getOptions();
+    this->ui->spin_domainId->setValue(opt.m_domainId);
+    if(mp_sd->isInitialized())
+        this->ui->spin_domainId->setEnabled(false);
+    this->ui->spin_updateInterval->setValue(opt.m_updateIntervalMs);
+    this->ui->horizontalSlider_speed->setValue(opt.m_movementSpeed);
 }
 
 OptionsDialog::~OptionsDialog()

@@ -64,7 +64,7 @@ bool ShapesDemo::init()
         mp_participant = DomainParticipant::createParticipant(pparam);
         if(mp_participant!=NULL)
         {
-           // cout << "Participant Created "<< mp_participant->getGuid() << endl;
+            // cout << "Participant Created "<< mp_participant->getGuid() << endl;
             m_isInitialized = true;
             DomainParticipant::registerType(&m_shapeTopicDataType);
             return true;
@@ -150,9 +150,7 @@ void ShapesDemo::moveAllShapes()
 void ShapesDemo::moveShape(Shape* sh)
 {
     if(sh->m_changeDir)
-    {
         getNewDirection(sh);
-    }
     //Apply movement
     int nx = sh->m_mainShape.m_x + m_options.m_movementSpeed*sh->m_dirX;
     int ny = sh->m_mainShape.m_y + m_options.m_movementSpeed*sh->m_dirY;
@@ -161,16 +159,18 @@ void ShapesDemo::moveShape(Shape* sh)
     bool cond2 = nx-(int)sh->m_mainShape.m_size/2 < (int)minX;
     bool cond3 = ny+(int)sh->m_mainShape.m_size/2 > (int)maxY;
     bool cond4 = ny-(int)sh->m_mainShape.m_size/2 < (int)minY;
-    if( cond1 || cond2 || cond3 || cond4)
+    while(cond1 || cond2 || cond3 || cond4)
     {
-        sh->m_changeDir = true;
+        getNewDirection(sh);
+        nx = sh->m_mainShape.m_x + m_options.m_movementSpeed*sh->m_dirX;
+        ny = sh->m_mainShape.m_y + m_options.m_movementSpeed*sh->m_dirY;
+        cond1 = nx+(int)sh->m_mainShape.m_size/2 > (int)maxX;
+        cond2 = nx-(int)sh->m_mainShape.m_size/2 < (int)minX;
+        cond3 = ny+(int)sh->m_mainShape.m_size/2 > (int)maxY;
+        cond4 = ny-(int)sh->m_mainShape.m_size/2 < (int)minY;
     }
-    else
-    {
-        sh->m_mainShape.m_x = nx;
-        sh->m_mainShape.m_y = ny;
-    }
-
+    sh->m_mainShape.m_x = nx;
+    sh->m_mainShape.m_y = ny;
 }
 
 void ShapesDemo::getNewDirection(Shape* sh)
@@ -187,11 +187,11 @@ void ShapesDemo::getNewDirection(Shape* sh)
 
 void ShapesDemo::writeAll()
 {
-     for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
-         it!=m_publishers.end();++it)
-     {
-         (*it)->write();
-     }
+    for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
+        it!=m_publishers.end();++it)
+    {
+        (*it)->write();
+    }
 }
 
 void ShapesDemo::setOptions(ShapesDemoOptions& opt)
@@ -199,6 +199,12 @@ void ShapesDemo::setOptions(ShapesDemoOptions& opt)
     m_options = opt;
     m_mainWindow->updateInterval(m_options.m_updateIntervalMs);
 
+}
+
+ShapesDemoOptions ShapesDemo::getOptions()
+{
+
+    return m_options;
 }
 
 void ShapesDemo::removePublisher(ShapePublisher* SP)
