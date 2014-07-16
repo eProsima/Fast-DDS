@@ -26,7 +26,7 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
     ShapeType* sh = (ShapeType*)data;
     uint32_t strsize = sh->getColorStr().size();
     std::string auxstr = sh->getColorStr();
-   // cout << "sTRING:"  << auxstr << endl;
+    // cout << "sTRING:"  << auxstr << endl;
     //cout << "Strsize: "<< strsize<<endl;
     uint32_t* auxptr;
     auxptr = (uint32_t*)payload->data;
@@ -40,7 +40,7 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
     {
         rest = 4-rest;
         for(int i = 0;i<rest;++i)
-           payload->data[4+strsize+1+i] = 0;
+            payload->data[4+strsize+1+i] = 0;
     }
     auxptr = (uint32_t*)&payload->data[4+strsize+1+rest];
     *auxptr = sh->m_x;
@@ -51,25 +51,29 @@ bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
 
     payload->length = 4+strsize+1+rest+4+4+4;
     payload->encapsulation = EPROSIMA_ENDIAN == LITTLEEND ? CDR_LE:CDR_BE;
-   // cout << "Serialize length: " << payload->length<<endl;
+    // cout << "Serialize length: " << payload->length<<endl;
     return true;
- }
+}
 
 bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
 {
-  //  cout << "Deserializing"<<endl;
-    ShapeType* sh = (ShapeType*)data;
-    uint32_t strsize = *(uint32_t*)payload->data;
-    //cout << strsize<<endl;
-    sh->setColor(payload->data[4]);
-    int rest = strsize%4;
-    if(rest>0)
-        rest = 4-rest;
-   // cout << "rest "<< rest << endl;
-    sh->m_x = *(uint32_t*)&payload->data[4+strsize+rest];
-    sh->m_y = *(uint32_t*)&payload->data[4+strsize+rest+4];
-    sh->m_size = *(uint32_t*)&payload->data[4+strsize+rest+4+4];
-  //  cout <<  sh->m_x << " "<<  sh->m_y << " "<<  sh->m_size << endl;
+    if(payload->length>0)
+    {
+        //  cout << "Deserializing"<<endl;
+        ShapeType* sh = (ShapeType*)data;
+        uint32_t strsize = *(uint32_t*)payload->data;
+        //cout << strsize<<endl;
+        sh->setColor(payload->data[4]);
+        int rest = strsize%4;
+        if(rest>0)
+            rest = 4-rest;
+        // cout << "rest "<< rest << endl;
+        sh->m_x = *(uint32_t*)&payload->data[4+strsize+rest];
+        sh->m_y = *(uint32_t*)&payload->data[4+strsize+rest+4];
+        sh->m_size = *(uint32_t*)&payload->data[4+strsize+rest+4+4];
+        //  cout <<  sh->m_x << " "<<  sh->m_y << " "<<  sh->m_size << endl;
+        return true;
+    }
     return false;
 }
 
@@ -89,7 +93,7 @@ bool ShapeTopicDataType::getKey(void *data, InstanceHandle_t *ihandle)
     m.finalize();
     for(uint8_t i = 0;i<16;++i)
     {
-     ihandle->value[i] = m.digest[i];
+        ihandle->value[i] = m.digest[i];
     }
 
 
