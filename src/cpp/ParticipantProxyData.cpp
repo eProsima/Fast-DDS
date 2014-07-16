@@ -22,14 +22,17 @@ ParticipantProxyData::ParticipantProxyData():
 										m_availableBuiltinEndpoints(0),
 										m_manualLivelinessCount(0),
 										isAlive(false),
-										m_hasChanged(true)
+										m_hasChanged(true),
+										mp_leaseDurationTimer(NULL)
 {
 	// TODO Auto-generated constructor stub
-
+	if(mp_leaseDurationTimer!=NULL)
+		delete(mp_leaseDurationTimer);
 }
 
 ParticipantProxyData::~ParticipantProxyData() {
 	// TODO Auto-generated destructor stub
+
 }
 
 bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
@@ -264,6 +267,68 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 	}
 
 	return false;
+}
+
+
+void ParticipantProxyData::clear()
+{
+	m_protocolVersion = ProtocolVersion_t();
+	 m_guid = GUID_t();
+	 m_VendorId = VendorId_t();
+	m_expectsInlineQos = false;
+	m_availableBuiltinEndpoints = 0;
+	m_metatrafficUnicastLocatorList.clear();
+	m_metatrafficMulticastLocatorList.clear();
+	m_defaultUnicastLocatorList.clear();
+	m_defaultMulticastLocatorList.clear();
+	m_manualLivelinessCount = 0;
+	m_participantName = "";
+	 m_key = InstanceHandle_t();
+	 leaseDuration = Duration_t();
+	 isAlive = true;
+
+	m_QosList.allQos.deleteParams();
+	m_QosList.allQos.resetList();
+	m_QosList.inlineQos.resetList();
+	m_properties.properties.clear();
+	m_properties.length = 0;
+}
+
+void ParticipantProxyData::copy(ParticipantProxyData& pdata)
+{
+	m_protocolVersion = pdata.m_protocolVersion;
+	m_guid = pdata.m_guid;
+	m_VendorId = pdata.m_VendorId;
+	m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
+	m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+	m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+	m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
+	m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
+	m_manualLivelinessCount = pdata.m_manualLivelinessCount;
+	m_participantName = pdata.m_participantName;
+	m_leaseDuration = pdata.m_leaseDuration;
+	m_key = pdata.m_key;
+	isAlive = pdata.isAlive;
+	m_properties = pdata.m_properties;
+
+}
+
+bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
+{
+	m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+	m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+	m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
+	m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
+	m_manualLivelinessCount = pdata.m_manualLivelinessCount;
+	m_properties = pdata.m_properties;
+	m_leaseDuration = pdata.m_leaseDuration;
+	if(this->mp_leaseDurationTimer!=NULL)
+	{
+		mp_leaseDurationTimer->stop_timer();
+		mp_leaseDurationTimer->update_interval(m_leaseDuration);
+		mp_leaseDurationTimer->restart_timer();
+	}
+	return true;
 }
 
 

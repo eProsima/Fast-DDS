@@ -39,6 +39,7 @@ namespace rtps {
 
 class CDRMessage_t;
 class PDPSimple;
+class RemoteParticipantLeaseDuration;
 
 class ParticipantProxyData {
 public:
@@ -48,8 +49,13 @@ public:
 	bool initializeData(ParticipantImpl* part, PDPSimple* pdp);
 	bool updateData(ParticipantImpl* part, PDPSimple* pdp);
 
+	bool updateData(ParticipantProxyData& pdata);
+
 	bool toParameterList();
 	bool readFromCDRMessage(CDRMessage_t* msg);
+
+	void clear();
+	void copy(ParticipantProxyData& pdata);
 
 
 
@@ -65,7 +71,7 @@ public:
 	Count_t m_manualLivelinessCount;
 	std::string m_participantName;
 	InstanceHandle_t m_key;
-	Duration_t leaseDuration;
+	Duration_t m_leaseDuration;
 	bool isAlive;
 
 	QosList_t m_QosList;
@@ -73,6 +79,8 @@ public:
 	ParameterPropertyList_t m_properties;
 
 	bool m_hasChanged;
+
+	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
 };
 
 } /* namespace rtps */
