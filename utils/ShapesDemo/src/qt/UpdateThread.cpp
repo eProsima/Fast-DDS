@@ -14,13 +14,14 @@
 #include "eprosimashapesdemo/qt/UpdateThread.h"
 #include "eprosimashapesdemo/qt/mainwindow.h"
 
+#include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 
 
 UpdateThread::UpdateThread(QObject *parent, uint32_t threadN):
     QThread(parent),
     m_mainW(NULL),
     m_timer(NULL),
-    m_interval(150),
+    m_interval(INITIAL_INTERVAL_MS),
     m_threadNumber(threadN),
     m_hasIntervalChanged(false)
 {
