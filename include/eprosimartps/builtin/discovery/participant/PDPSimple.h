@@ -14,6 +14,9 @@
 #ifndef PDPSIMPLE_H_
 #define PDPSIMPLE_H_
 
+#include "eprosimartps/builtin/discovery/participant/PDPSimpleListener.h"
+#include "eprosimartps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -47,7 +50,12 @@ private:
 	StatelessReader* mp_SPDPReader;
 
 	EDP* mp_EDP;
+	std::vector<ParticipantProxyData*> m_participantProxies;
+	bool m_hasChangedLocalPDP;
 
+	ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
+	PDPSimpleListener m_listener;
+	PDPSimpleTopicDataType m_topicDataType;
 
 	/**
 	 * Create the SPDP Writer and Reader
@@ -55,10 +63,7 @@ private:
 	 */
 	bool createSPDPEndpoints();
 
-	std::vector<ParticipantProxyData*> m_participantProxies;
-	bool m_hasChangedLocalPDP;
 
-	ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
 
 };
 

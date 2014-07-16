@@ -33,7 +33,9 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
 						mp_SPDPWriter(NULL),
 						mp_SPDPReader(NULL),
 						mp_EDP(NULL),
-						m_hasChangedLocalPDP(true)
+						m_hasChangedLocalPDP(true),
+						mp_resendParticipantTimer(NULL),
+						m_listener(this)
 {
 
 }
