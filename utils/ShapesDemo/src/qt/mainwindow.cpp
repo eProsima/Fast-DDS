@@ -38,8 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pubsub->setHorizontalHeaderItem(4, new QStandardItem(QString("Reliable")));
     m_pubsub->setHorizontalHeaderItem(5, new QStandardItem(QString("History")));
     m_pubsub->setHorizontalHeaderItem(6, new QStandardItem(QString("Partitions")));
-    m_pubsub->setHorizontalHeaderItem(7, new QStandardItem(QString("Durability")));
-    m_pubsub->setHorizontalHeaderItem(8, new QStandardItem(QString("Liveliness")));
+    m_pubsub->setHorizontalHeaderItem(7, new QStandardItem(QString("Ownership")));
+    m_pubsub->setHorizontalHeaderItem(8, new QStandardItem(QString("Durability")));
+    m_pubsub->setHorizontalHeaderItem(9, new QStandardItem(QString("Liveliness")));
 
     ui->tableEndpoint->setModel(m_pubsub);
     ui->tableEndpoint->setColumnWidth(0,60); //Topic
@@ -49,8 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableEndpoint->setColumnWidth(4,55); //Reliable
     ui->tableEndpoint->setColumnWidth(5,55); //History
     ui->tableEndpoint->setColumnWidth(6,65); //Partitions
-    ui->tableEndpoint->setColumnWidth(7,110); //Durability
-    ui->tableEndpoint->setColumnWidth(8,110); //Livleiness
+    ui->tableEndpoint->setColumnWidth(7,75); //Ownership
+    ui->tableEndpoint->setColumnWidth(8,75); //Durability
+    ui->tableEndpoint->setColumnWidth(9,75); //Livleiness
 
 
     this->m_shapesDemo.init();
@@ -142,17 +144,28 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
     if(partitions.size()==0)
         partitions.append("-");
     items.append(new QStandardItem(partitions));
+    //OWNERSHIP:
+    if(spub->m_attributes.qos.m_ownership.kind == SHARED_OWNERSHIP_QOS)
+        items.append(new QStandardItem("SHARED"));
+    else
+    {
+        QString value = QString("EXCL - %1").arg(spub->m_attributes.qos.m_ownershipStrength.value);
+        items.append(new QStandardItem(value));
+    }
+
+
+
     if(spub->m_attributes.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
         items.append(new QStandardItem("VOLATILE"));
     else
-        items.append(new QStandardItem("TRANSIENT_LOCAL"));
+        items.append(new QStandardItem("TRANSIENT"));
 
     if(spub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         items.append(new QStandardItem("AUTOMATIC"));
     else if(spub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-        items.append(new QStandardItem("MANUAL_PARTICIPANT"));
+        items.append(new QStandardItem("MAN_PARTICIPANT"));
     else
-        items.append(new QStandardItem("MANUAL_TOPIC"));
+        items.append(new QStandardItem("MAN_TOPIC"));
 
 
     m_pubsub->appendRow(items);
@@ -189,17 +202,24 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
     if(partitions.size()==0)
         partitions.append("-");
     items.append(new QStandardItem(partitions));
+    //OWNERSHIP:
+    if(ssub->m_attributes.qos.m_ownership.kind == SHARED_OWNERSHIP_QOS)
+        items.append(new QStandardItem("SHARED"));
+    else
+        items.append(new QStandardItem("EXCLUSIVE"));
+
+
     if(ssub->m_attributes.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
         items.append(new QStandardItem("VOLATILE"));
     else
-        items.append(new QStandardItem("TRANSIENT_LOCAL"));
+        items.append(new QStandardItem("TRANSIENT"));
 
     if(ssub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         items.append(new QStandardItem("AUTOMATIC"));
     else if(ssub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-        items.append(new QStandardItem("MANUAL_PARTICIPANT"));
+        items.append(new QStandardItem("MAN_PARTICIPANT"));
     else
-        items.append(new QStandardItem("MANUAL_TOPIC"));
+        items.append(new QStandardItem("MAN_TOPIC"));
 
     m_pubsub->appendRow(items);
     SD_Endpoint sdend;

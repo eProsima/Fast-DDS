@@ -97,11 +97,11 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 		if((*it)->param.remoteWriterGuid == writerGUID)
 		{
 			*WP = *it;
-			pDebugInfo("StatefulReader looking for matched writerProxy, FOUND"<<endl);
+			pDebugInfo("StatefulReader looking for writerProxy "<< writerGUID.entityId<<" from "<< matched_writers.size()<<", FOUND"<<endl);
 			return true;
 		}
 	}
-	pDebugInfo("StatefulReader looking for matched writerProxy, NOT FOUND"<<endl);
+	pDebugInfo("StatefulReader looking for writerProxy "<< writerGUID.entityId<<" from "<< matched_writers.size()<<", NOT FOUND"<<endl);
 	return false;
 }
 
@@ -197,6 +197,10 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 		{
 			wp->m_changesFromW.erase(wp->m_changesFromW.begin()+*it);
 		}
+		return m_reader_cache.remove_change(a_change);
+	}
+	else
+	{
 		return m_reader_cache.remove_change(a_change);
 	}
 	return false;
