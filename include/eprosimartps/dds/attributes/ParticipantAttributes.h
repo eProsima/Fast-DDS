@@ -85,6 +85,14 @@ public:
 	virtual ~DiscoveryAttributes(){};
 };
 
+
+class BuiltinAttributes{
+	BuiltinAttributes();
+	~BuiltinAttributes();
+	DiscoveryAttributes discovery;
+};
+
+
 /**
  * Class ParticipantParameters used to define different aspects of a participant.
  * @ingroup ATTRIBUTESMODULE
