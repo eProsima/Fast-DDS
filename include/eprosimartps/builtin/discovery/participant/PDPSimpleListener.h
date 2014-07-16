@@ -36,7 +36,7 @@ public:
 	virtual ~PDPSimpleListener(){};
 	//!Pointer to the associated mp_SPDP;
 	PDPSimple* mp_SPDP;
-	//!Method to be called when a new data message is received.
+	//!Method to be called when a new data message is received.l
 	void onNewDataMessage();
 	//!Process a new added cache with this method.
 	bool newAddedCache();
