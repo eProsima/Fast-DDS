@@ -12,19 +12,31 @@
  */
 
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
-#include "eprosimartps/utils/RTPSLog.h"
+
+
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
 
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/ParticipantProxyData.h"
 
+#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
+
+#include "eprosimartps/reader/WriterProxyData.h"
+#include "eprosimartps/writer/ReaderProxyData.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
 
-EDPSimple::EDPSimple(PDPSimple* p):
-																		EDP(p),
-																		mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
-																		mp_PubReader(NULL),mp_SubReader(NULL)// mp_TopReader(NULL),
+EDPSimple::EDPSimple(PDPSimple* p,ParticipantImpl* part):
+		EDP(p,part),
+		mp_PubWriter(NULL),mp_SubWriter(NULL),
+		mp_PubReader(NULL),mp_SubReader(NULL),
+		m_listeners(this)
 
 {
 	// TODO Auto-generated constructor stub
@@ -74,10 +86,10 @@ bool EDPSimple::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
 		Wparam.payloadMaxSize = 2000;
-		Wparam.unicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
+		created &=this->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
 		if(created)
 		{
 			mp_PubWriter = dynamic_cast<StatefulWriter*>(waux);
@@ -96,12 +108,12 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
 		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
 		Rparam.payloadMaxSize = 2000;
-		Rparam.unicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
-				true,STATEFUL,(DDSTopicDataType*)&m_SubReaderDataType,(SubscriberListener*)&m_listeners.m_SubListener,c_EntityId_SEDPSubReader);
+		created &=this->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
+				true,STATEFUL,(DDSTopicDataType*)&m_subReaderTopicDataType,(SubscriberListener*)&m_listeners.m_subReaderListener,c_EntityId_SEDPSubReader);
 		if(created)
 		{
 			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
@@ -124,11 +136,11 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
 		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
 		Rparam.payloadMaxSize = 2000;
-		Rparam.unicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_PDP->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
-				true,STATEFUL,(DDSTopicDataType*)&m_PubReaderDataType,(SubscriberListener*)&m_listeners.m_PubListener,c_EntityId_SEDPPubReader);
+		created &=this->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
+				true,STATEFUL,(DDSTopicDataType*)&m_pubReaderTopicDataType,(SubscriberListener*)&m_listeners.m_pubReaderListener,c_EntityId_SEDPPubReader);
 		if(created)
 		{
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);
@@ -148,10 +160,10 @@ bool EDPSimple::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
 		Wparam.payloadMaxSize = 2000;
-		Wparam.unicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_PDP->m_participantProxies.front()->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_PDP->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);
+		created &=this->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);
 		if(created)
 		{
 			mp_SubWriter = dynamic_cast<StatefulWriter*>(waux);
@@ -220,8 +232,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		wp->m_guid.entityId = c_EntityId_SEDPPubWriter;
 		wp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		wp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		wp->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
-		wp->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS;
+		wp->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		wp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		pdata->m_builtinWriters.push_back(wp);
 		mp_PubReader->matched_writer_add(wp);
 	}
@@ -251,8 +263,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		wp->m_guid.entityId = c_EntityId_SEDPSubWriter;
 		wp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		wp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		wp->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
-		wp->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS;
+		wp->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		wp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		pdata->m_builtinWriters.push_back(wp);
 		mp_SubReader->matched_writer_add(wp);
 	}

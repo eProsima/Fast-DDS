@@ -47,8 +47,12 @@ public:
 	bool m_isAlive;
 	TopicKind_t m_topicKind;
 
-private:
+
 	ParameterList_t m_parameterList;
+
+	void clear();
+	void update(WriterProxyData* rdata);
+	void copy(WriterProxyData* rdata);
 };
 
 } /* namespace rtps */

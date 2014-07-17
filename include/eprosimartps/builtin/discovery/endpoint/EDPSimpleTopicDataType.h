@@ -14,13 +14,25 @@
 #ifndef EDPSIMPLETOPICDATATYPE_H_
 #define EDPSIMPLETOPICDATATYPE_H_
 
+#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/common/types/CDRMessage_t.h"
+
+using namespace eprosima::dds;
+
 namespace eprosima {
 namespace rtps {
 
-class EDPSimpleTopicDataType {
+class EDPSimpleTopicDataType: public DDSTopicDataType {
 public:
 	EDPSimpleTopicDataType();
 	virtual ~EDPSimpleTopicDataType();
+
+	bool serialize(void* data,SerializedPayload_t* payload);
+	bool deserialize(SerializedPayload_t* payload,void * data);
+	bool getKey(void*data,InstanceHandle_t* ihandle);
+	CDRMessage_t aux_msg;
+	void* initial_data;
+
 };
 
 } /* namespace rtps */

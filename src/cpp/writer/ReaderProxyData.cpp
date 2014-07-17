@@ -21,10 +21,10 @@ namespace eprosima {
 namespace rtps {
 
 ReaderProxyData::ReaderProxyData():
-					m_expectsInlineQos(false),
-					m_userDefinedId(0),
-					m_isAlive(false),
-					m_topicKind(NO_KEY)
+											m_expectsInlineQos(false),
+											m_userDefinedId(0),
+											m_isAlive(false),
+											m_topicKind(NO_KEY)
 
 {
 
@@ -355,7 +355,52 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 	return false;
 }
 
+void ReaderProxyData::clear()
+{
+	m_expectsInlineQos = false;
+	m_guid = c_Guid_Unknown;
+	m_unicastLocatorList.clear();
+	m_multicastLocatorList.clear();
+	m_key = InstanceHandle_t();
+	m_participantKey = InstanceHandle_t();
+	m_typeName = "";
+	m_topicName = "";
+	m_userDefinedId = 0;
+	m_qos = ReaderQos();
+	m_isAlive = false;
+	m_topicKind = NO_KEY;
+
+
+	m_parameterList.deleteParams();
+	m_parameterList.resetList();
+}
+
+void ReaderProxyData::update(ReaderProxyData* rdata)
+{
+	m_unicastLocatorList = rdata->m_unicastLocatorList;
+	m_multicastLocatorList = rdata->m_multicastLocatorList;
+	m_qos.setQos(rdata->m_qos,false);
+	m_isAlive = rdata->m_isAlive;
+}
+
+void ReaderProxyData::copy(ReaderProxyData* rdata)
+{
+	m_guid = rdata->m_guid;
+	m_unicastLocatorList = rdata->m_unicastLocatorList;
+	m_multicastLocatorList = rdata->m_multicastLocatorList;
+	m_key = rdata->m_key;
+	m_participantKey = rdata->m_participantKey;
+	m_typeName = rdata->m_typeName;
+	m_topicName = rdata->m_topicName;
+	m_userDefinedId = rdata->m_userDefinedId;
+	m_qos = rdata->m_qos;
+	m_expectsInlineQos = rdata->m_expectsInlineQos;
+	m_isAlive = rdata->m_isAlive;
+	m_topicKind = rdata->m_topicKind;
+}
 
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+

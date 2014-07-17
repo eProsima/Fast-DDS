@@ -13,15 +13,35 @@
 
 #include "eprosimartps/builtin/discovery/endpoint/EDP.h"
 
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
+#include "eprosimartps/Participant.h"
+#include "eprosimartps/ParticipantProxyData.h"
+
+#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/reader/StatefulReader.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/reader/StatelessReader.h"
+
+#include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/writer/ReaderProxyData.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/IPFinder.h"
+#include "eprosimartps/utils/StringMatching.h"
+
+
+#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/dds/SubscriberListener.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
 
 EDP::EDP(PDPSimple* p,ParticipantImpl* part):
-									mp_PDP(p),
-									mp_participant(part)
+																			mp_PDP(p),
+																			mp_participant(part)
 {
 	// TODO Auto-generated constructor stub
 
@@ -41,7 +61,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader)
 	rpd->m_key = rpd->m_guid;
 	rpd->m_multicastLocatorList = reader->multicastLocatorList;
 	rpd->m_unicastLocatorList = reader->unicastLocatorList;
-	rpd->m_participantKey = mp_PDP->mp_participant->getGuid();
+	rpd->m_participantKey = mp_participant->getGuid();
 	rpd->m_topicName = reader->getTopic().getTopicName();
 	rpd->m_typeName = reader->getTopic().getTopicDataType();
 	rpd->m_topicKind = reader->getTopic().getTopicKind();
@@ -68,7 +88,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer)
 	wpd->m_key = wpd->m_guid;
 	wpd->m_multicastLocatorList = writer->multicastLocatorList;
 	wpd->m_unicastLocatorList = writer->unicastLocatorList;
-	wpd->m_participantKey = mp_PDP->mp_participant->getGuid();
+	wpd->m_participantKey = mp_participant->getGuid();
 	wpd->m_topicName = writer->getTopic().getTopicName();
 	wpd->m_typeName = writer->getTopic().getTopicDataType();
 	wpd->m_topicKind = writer->getTopic().getTopicKind();
@@ -133,50 +153,62 @@ void EDP::pairWriterProxy(WriterProxyData* wdata)
 	}
 }
 
-bool EDP::unpairWriterProxy(WriterProxyData* wdata)
+bool EDP::unpairWriterProxy(GUID_t& writer)
 {
-	for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
-			rit!=mp_participant->userReadersListEnd();++rit)
+	WriterProxyData* wdata = NULL;
+	if(this->mp_PDP->lookupWriterProxyData(writer,&wdata))
 	{
-		if((*rit)->matched_writer_remove(wdata))
+		for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
+				rit!=mp_participant->userReadersListEnd();++rit)
 		{
-			//MATCHED AND ADDED CORRECTLY:
-			if((*rit)->getListener()!=NULL)
+			if((*rit)->matched_writer_remove(wdata))
 			{
-				MatchingInfo info;
-				info.status = REMOVED_MATCHING;
-				info.remoteEndpointGuid = wdata->m_guid;
-				(*rit)->getListener()->onSubscriptionMatched(info);
+				//MATCHED AND ADDED CORRECTLY:
+				if((*rit)->getListener()!=NULL)
+				{
+					MatchingInfo info;
+					info.status = REMOVED_MATCHING;
+					info.remoteEndpointGuid = wdata->m_guid;
+					(*rit)->getListener()->onSubscriptionMatched(info);
+				}
 			}
 		}
+		this->mp_PDP->removeWriterProxyData(wdata);
+		return true;
 	}
-	return true;
+	return false;
 }
 
-bool EDP::unpairReaderProxy(ReaderProxyData* rdata)
+bool EDP::unpairReaderProxy(GUID_t& reader)
 {
-	for(std::vector<RTPSWriter*>::iterator rit = mp_participant->userReadersListBegin();
-			rit!=mp_participant->userReadersListEnd();++rit)
+	ReaderProxyData* rdata = NULL;
+	if(this->mp_PDP->lookupReaderProxyData(reader,&rdata))
 	{
-		if((*rit)->matched_writer_remove(rdata))
+		for(std::vector<RTPSWriter*>::iterator rit = mp_participant->userWritersListBegin();
+				rit!=mp_participant->userWritersListEnd();++rit)
 		{
-			//MATCHED AND ADDED CORRECTLY:
-			if((*rit)->getListener()!=NULL)
+			if((*rit)->matched_reader_remove(rdata))
 			{
-				MatchingInfo info;
-				info.status = REMOVED_MATCHING;
-				info.remoteEndpointGuid = rdata->m_guid;
-				(*rit)->getListener()->onPublicationMatched(info);
+				//MATCHED AND ADDED CORRECTLY:
+				if((*rit)->getListener()!=NULL)
+				{
+					MatchingInfo info;
+					info.status = REMOVED_MATCHING;
+					info.remoteEndpointGuid = rdata->m_guid;
+					(*rit)->getListener()->onPublicationMatched(info);
+				}
 			}
 		}
+		this->mp_PDP->removeReaderProxyData(rdata);
+		return true;
 	}
-	return true;
+	return false;
 }
 
 
 
 
-bool validMatching(RTPSWriter* W,ReaderProxyData* rdata)
+bool EDP::validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 {
 	if(W->getTopic().getTopicName() != rdata->m_topicName)
 		return false;
@@ -186,7 +218,7 @@ bool validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Reader "<<rdata->m_guid << " is publishing in topic " << rdata->m_topicName << "(keyed:"<<rdata->m_topicKind<<
 				"), local writer publishes as keyed: "<<W->getTopic().getTopicKind()<<endl;)
-								return false;
+																		return false;
 	}
 	if(!rdata->m_isAlive) //Matching
 		return false;
@@ -232,7 +264,7 @@ bool validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 
 	return matched;
 }
-bool validMatching(RTPSReader* R,WriterProxyData* wdata)
+bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 {
 	if(R->getTopic().getTopicName() != wdata->m_topicName)
 		return false;
@@ -242,7 +274,7 @@ bool validMatching(RTPSReader* R,WriterProxyData* wdata)
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Writer "<<wdata->m_guid << " is publishing in topic " << wdata->m_topicName << "(keyed:"<<wdata->m_topicKind<<
 				"), local reader subscribes as keyed: "<<R->getTopic().getTopicKind()<<endl;)
-											return false;
+																					return false;
 	}
 	if(!wdata->m_isAlive) //Matching
 		return false;
@@ -289,10 +321,22 @@ bool validMatching(RTPSReader* R,WriterProxyData* wdata)
 }
 
 
+bool EDP::updatedReaderProxy(ReaderProxyData* rdata)
+{
+	pError("Updated parameters not yet implemented"<<endl);
+	return true;
+}
 
+bool EDP::updatedWriterProxy(WriterProxyData* wdata)
+{
+	pError("Updated parameters not yet implemented"<<endl);
+	return true;
+}
 
 
 
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+

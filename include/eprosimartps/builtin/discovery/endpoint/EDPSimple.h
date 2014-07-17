@@ -16,6 +16,9 @@
 
 #include "eprosimartps/builtin/discovery/endpoint/EDP.h"
 
+#include "eprosimartps/builtin/discovery/endpoint/EDPSimpleListeners.h"
+#include "eprosimartps/builtin/discovery/endpoint/EDPSimpleTopicDataType.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -26,7 +29,7 @@ class RTPSReader;
 
 class EDPSimple : public EDP {
 public:
-	EDPSimple(PDPSimple* p);
+	EDPSimple(PDPSimple* p,ParticipantImpl* part);
 	virtual ~EDPSimple();
 
 	DiscoveryAttributes m_discovery;
@@ -39,6 +42,10 @@ public:
 	StatefulReader* mp_PubReader;
 	//!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
 	StatefulReader* mp_SubReader;
+
+	EDPSimpleListeners m_listeners;
+	EDPSimpleTopicDataType m_pubReaderTopicDataType;
+	EDPSimpleTopicDataType m_subReaderTopicDataType;
 
 
 	/**

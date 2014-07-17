@@ -21,7 +21,7 @@ namespace eprosima {
 namespace rtps {
 
 WriterProxyData::WriterProxyData():
-								m_userDefinedId(0),m_typeMaxSerialized(0),m_isAlive(false),m_topicKind(NO_KEY)
+										m_userDefinedId(0),m_typeMaxSerialized(0),m_isAlive(false),m_topicKind(NO_KEY)
 {
 	// TODO Auto-generated constructor stub
 
@@ -359,5 +359,53 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 	return false;
 }
 
+void WriterProxyData::clear()
+{
+	m_guid = c_Guid_Unknown;
+	m_unicastLocatorList.clear();
+	m_multicastLocatorList.clear();
+	m_key = InstanceHandle_t();
+	m_participantKey = InstanceHandle_t();
+	m_typeName = "";
+	m_topicName = "";
+	m_userDefinedId = 0;
+	m_qos = WriterQos();
+	m_typeMaxSerialized = 0;
+	m_isAlive = false;
+	m_topicKind = NO_KEY;
+
+
+	m_parameterList.deleteParams();
+	m_parameterList.resetList();
+}
+
+void WriterProxyData::copy(WriterProxyData* wdata)
+{
+	m_guid = wdata->m_guid;
+	m_unicastLocatorList = wdata->m_unicastLocatorList;
+	m_multicastLocatorList = wdata->m_multicastLocatorList;
+	m_key = wdata->m_key;
+	m_participantKey = wdata->m_participantKey;
+	m_typeName = wdata->m_typeName;
+	m_topicName = wdata->m_topicName;
+	m_userDefinedId = wdata->m_userDefinedId;
+	m_qos = wdata->m_qos;
+	m_typeMaxSerialized = wdata->m_typeMaxSerialized;
+	m_isAlive = wdata->m_isAlive;
+	m_topicKind = wdata->m_topicKind;
+}
+
+
+void WriterProxyData::update(WriterProxyData* wdata)
+{
+	m_unicastLocatorList = wdata->m_unicastLocatorList;
+	m_multicastLocatorList = wdata->m_multicastLocatorList;
+	m_qos.setQos(wdata->m_qos,false);
+	m_isAlive = wdata->m_isAlive;
+
+}
+
 } /* namespace rtps */
 } /* namespace eprosima */
+
+

@@ -42,8 +42,9 @@ public:
 
 	 size_t getMatchedPublishers(){return 0;}
 
-	 bool matched_writer_add(const GUID_t& guid);
-	 bool matched_writer_remove(const GUID_t& guid);
+	 bool matched_writer_add(WriterProxyData* wdata);
+	 bool matched_writer_remove(WriterProxyData* wdata);
+
 
 	 bool change_removed_by_history(CacheChange_t*);
 
@@ -52,7 +53,7 @@ public:
 private:
 	 //!List of GUID_t os matched writers.
 	 //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
-	 std::vector<GUID_t> m_matched_writers;
+	 std::vector<WriterProxyData*> m_matched_writers;
 
 };
 

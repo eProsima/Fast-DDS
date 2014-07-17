@@ -23,6 +23,7 @@ namespace rtps {
 
 class PDPSimple;
 class ResourceEvent;
+class ParticipantProxyData;
 
 /**
  * Class ParticipantLeaseDuration, TimedEvent designed to remove a
@@ -31,14 +32,14 @@ class ResourceEvent;
 class RemoteParticipantLeaseDuration:public TimedEvent {
 public:
 	RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
-			const GUID_t& pguid,
+			ParticipantProxyData* pdata,
 			ResourceEvent* pEvent,
 			boost::posix_time::milliseconds interval);
 	virtual ~RemoteParticipantLeaseDuration();
 
 	void event(const boost::system::error_code& ec);
 	PDPSimple* mp_PDP;
-	const GUID_t& m_remoteParticipantGuid;
+	ParticipantProxyData* mp_participantProxyData;
 
 };
 

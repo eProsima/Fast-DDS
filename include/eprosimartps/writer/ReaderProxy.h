@@ -40,27 +40,8 @@ namespace eprosima {
 namespace rtps {
 
 class StatefulWriter;
+class ReaderProxyData;
 
-
-/**
- * ReaderProxy_t structure that contains the information of a specific ReaderProxy.
- * @ingroup WRITERMODULE
- */
-typedef struct ReaderProxy_t{
-	GUID_t remoteReaderGuid;
-	bool expectsInlineQos;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	ReliabilityKind_t m_reliability;
-	//!Durability service:
-	DurabilityQosPolicyKind_t m_durabilityKind;
-	ReaderProxy_t(){
-		GUID_UNKNOWN(remoteReaderGuid);
-		expectsInlineQos = true;
-		m_reliability = RELIABLE;
-		m_durabilityKind = VOLATILE_DURABILITY_QOS;
-	}
-}ReaderProxy_t;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWRITER.
@@ -69,7 +50,7 @@ typedef struct ReaderProxy_t{
 class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~ReaderProxy();
-	ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& times,StatefulWriter* SW);
+	ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW);
 
 	/**
 	 * Get the ChangeForReader struct associated with a determined change
@@ -143,7 +124,7 @@ public:
 
 
 	//!Parameters of the ReaderProxy
-		ReaderProxy_t m_param;
+		ReaderProxyData* m_data;
 
 
 	//!Pointer to the associated StatefulWriter.

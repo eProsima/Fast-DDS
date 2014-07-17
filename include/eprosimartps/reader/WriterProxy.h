@@ -32,25 +32,7 @@ namespace eprosima {
 namespace rtps {
 
 class StatefulReader;
-
-/**
- * Structure WriterProxy_t that stores information for each WriterProxy.
- * @ingroup READERMODULE
- */
-class WriterProxy_t
-{
-public:
-	GUID_t remoteWriterGuid;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	Duration_t leaseDuration;
-	LivelinessQosPolicyKind livelinessKind;
-	uint32_t ownershipStrength;
-	WriterProxy_t();
-	virtual ~WriterProxy_t();
-};
-
-
+class WriterProxyData;
 /**
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
  * @ingroup READERMODULE
@@ -58,7 +40,7 @@ public:
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~WriterProxy();
-	WriterProxy(const WriterProxy_t& RPparam,Duration_t heartbeatResponse,StatefulReader* SR);
+	WriterProxy(WriterProxyData* wdata,Duration_t heartbeatResponse,StatefulReader* SR);
 
 	/**
 	 * Get the maximum sequenceNumber received from this Writer.
@@ -108,7 +90,7 @@ public:
 	//! Pointer to associated StatefulReader.
 	StatefulReader* mp_SFR;
 	//! Parameters of the WriterProxy
-	WriterProxy_t param;
+	WriterProxyData* m_data;
 	//!Vector containing the ChangeFromWriter_t objects.
 	std::vector<ChangeFromWriter_t> m_changesFromW;
 	//! Acknack Count

@@ -31,30 +31,37 @@ public:
 	virtual ~StatefulReader();
 	StatefulReader(const SubscriberAttributes& wParam,
 			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
-	/**
-	 * Add a matched writer.
-	 * @param[in] WP Pointer to the WriterProxy_t to add.
-	 * @return True if correct.
-	 */
-	bool matched_writer_add(WriterProxy_t& WP);
-	/**
-	 * Remove a WriterProxy_t.
-	 * @param[in] WP WriterProxy to remove.
-	 * @return True if correct.
-	 */
-	bool matched_writer_remove(WriterProxy_t& WP);
-	/**
-	 * Remove a WriterProxy_t based on its GUID_t
-	 * @param[in] writerGUID GUID_t of the writer to remove.
-	 * @return True if correct.
-	 */
-	bool matched_writer_remove(GUID_t& writerGUID);
-	/**
-	 * Get a pointer to a WriterProxy_t.
-	 * @param[in] writerGUID GUID_t of the writer to get.
-	 * @param[out] WP Pointer to pointer of the WriterProxy.
-	 * @return True if correct.
-	 */
+
+
+
+	bool matched_writer_add(WriterProxyData* wdata);
+	bool matched_writer_remove(WriterProxyData* wdata);
+
+
+//	/**
+//	 * Add a matched writer.
+//	 * @param[in] WP Pointer to the WriterProxy_t to add.
+//	 * @return True if correct.
+//	 */
+//	bool matched_writer_add(WriterProxy_t& WP);
+//	/**
+//	 * Remove a WriterProxy_t.
+//	 * @param[in] WP WriterProxy to remove.
+//	 * @return True if correct.
+//	 */
+//	bool matched_writer_remove(WriterProxy_t& WP);
+//	/**
+//	 * Remove a WriterProxy_t based on its GUID_t
+//	 * @param[in] writerGUID GUID_t of the writer to remove.
+//	 * @return True if correct.
+//	 */
+//	bool matched_writer_remove(GUID_t& writerGUID);
+//	/**
+//	 * Get a pointer to a WriterProxy_t.
+//	 * @param[in] writerGUID GUID_t of the writer to get.
+//	 * @param[out] WP Pointer to pointer of the WriterProxy.
+//	 * @return True if correct.
+//	 */
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 
 

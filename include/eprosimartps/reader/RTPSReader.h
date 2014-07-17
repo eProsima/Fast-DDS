@@ -44,6 +44,9 @@ class SampleInfo_t;
 
 namespace rtps {
 
+class WriterProxyData;
+
+
 /**
  * Class RTPSReader, manages the reception of data from the writers.
   * @ingroup READERMODULE
@@ -160,6 +163,9 @@ public:
 		m_acceptMessagesFromUnkownWriters=false;
 		m_trustedWriterEntityId = writer;
 	}
+
+	virtual bool matched_writer_add(WriterProxyData* wdata)=0;
+	virtual bool matched_writer_remove(WriterProxyData* wdata)=0;
 
 protected:
 	//!Pointer to the associated subscriber

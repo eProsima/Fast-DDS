@@ -108,18 +108,18 @@ public:
 	 * Since no discovery is implemented in this version, these methods are needed.
 	 */
 	/// @{
-	/**
-	 * Add a Reader Locator to the publisher.
-	 * @param Loc Locator to add.
-	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
-	 * @return True if correct.
-	 */
-	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos);
-
-	/**
-	 * Add a reader proxy to the publisher.
-	 */
-	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline);
+//	/**
+//	 * Add a Reader Locator to the publisher.
+//	 * @param Loc Locator to add.
+//	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
+//	 * @return True if correct.
+//	 */
+//	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos);
+//
+//	/**
+//	 * Add a reader proxy to the publisher.
+//	 */
+//	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline);
 
 
 	///@}
@@ -235,24 +235,24 @@ public:
 	 * Since no discovery is implemented in this version, these methods are needed.
 	 */
 	/// @{
-	/**
-	 * Add a Reader Locator to the publisher.
-	 * @param Loc Locator to add.
-	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
-	 * @return True if correct.
-	 */
-	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
-	{
-		return mp_impl->addReaderLocator(Loc, expectsInlineQos);
-	}
-
-	/**
-	 * Add a reader proxy to the publisher.
-	 */
-	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
-	{
-		return mp_impl->addReaderProxy(loc,guid, expectsInline);
-	}
+//	/**
+//	 * Add a Reader Locator to the publisher.
+//	 * @param Loc Locator to add.
+//	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
+//	 * @return True if correct.
+//	 */
+//	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
+//	{
+//		return mp_impl->addReaderLocator(Loc, expectsInlineQos);
+//	}
+//
+//	/**
+//	 * Add a reader proxy to the publisher.
+//	 */
+//	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
+//	{
+//		return mp_impl->addReaderProxy(loc,guid, expectsInline);
+//	}
 
 	const GUID_t& getGuid()
 	{

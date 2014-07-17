@@ -38,6 +38,7 @@
 
 #include "eprosimartps/Endpoint.h"
 
+#include "eprosimartps/builtin/BuiltinProtocols.h"
 
 
 #ifndef PARTICIPANT_H_
@@ -67,8 +68,8 @@ class StatefulReader;
 class RTPSReader;
 class RTPSWriter;
 
-class ParticipantDiscoveryProtocol;
-class WriterLiveliness;
+
+
 
 
 
@@ -113,8 +114,8 @@ public:
 	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 				DDSTopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 
-	void WriterDiscovery(RTPSWriter* Writer);
-	void ReaderDiscovery(RTPSReader* Reader);
+	void registerWriter(RTPSWriter* Writer);
+	void registerReader(RTPSReader* Reader);
 
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
 	bool assignLocator2ListenResources(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
@@ -246,7 +247,9 @@ private:
 	 */
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
-	ParticipantDiscoveryProtocol* mp_PDP;
+	//ParticipantDiscoveryProtocol* mp_PDP;
+
+	BuiltinProtocols m_builtinProtocols;
 
 	DiscoveryAttributes m_discovery;
 
