@@ -12,15 +12,22 @@
  */
 
 #include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
+#include "eprosimartps/builtin/BuiltinProtocols.h"
+
 #include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/utils/RTPSLog.h"
+
 
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/ParticipantProxyData.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 
+#include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
+#include "eprosimartps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
 
+#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/eClock.h"
 
 using namespace eprosima::dds;
 
@@ -28,14 +35,14 @@ namespace eprosima {
 namespace rtps {
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-						mp_builtin(built),
-						mp_participant(NULL),
-						mp_SPDPWriter(NULL),
-						mp_SPDPReader(NULL),
-						mp_EDP(NULL),
-						m_hasChangedLocalPDP(true),
-						mp_resendParticipantTimer(NULL),
-						m_listener(this)
+								mp_builtin(built),
+								mp_participant(NULL),
+								mp_SPDPWriter(NULL),
+								mp_SPDPReader(NULL),
+								mp_EDP(NULL),
+								m_hasChangedLocalPDP(true),
+								mp_resendParticipantTimer(NULL),
+								m_listener(this)
 {
 
 }
@@ -62,11 +69,11 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	//INIT EDP
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
-		mp_EDP = (EndpointDiscoveryProtocol*)new EDPStatic(this);
+	//	mp_EDP = (EDP*)new EDPStatic(this);
 	}
 	else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
-		mp_EDP = (EndpointDiscoveryProtocol*)new EDPSimple(this);
+		mp_EDP = (EDP*)(new EDPSimple(this));
 	}
 	else
 	{
@@ -76,7 +83,7 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 
 	this->announceParticipantState(true);
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,mp_participant->getEventResource(),
-								boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.resendDiscoveryParticipantDataPeriod)));
+			boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.resendDiscoveryParticipantDataPeriod)));
 	mp_resendParticipantTimer->restart_timer();
 
 	eClock::my_sleep(100);
@@ -196,6 +203,115 @@ bool PDPSimple::createSPDPEndpoints()
 	pInfo(RTPS_CYAN<< "SPDP Endpoints creation finished"<<RTPS_DEF<<endl)
 	return true;
 }
+
+bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata)
+{
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
+	{
+		if((*pit)->m_guid.guidPrefix == rdata->m_guid.guidPrefix)
+		{
+			//CHECK THAT IT IS NOT ALREADY THERE:
+			for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
+					rit!=(*pit)->m_readers.end();++rit)
+			{
+				if((*rit)->m_guid.entityId == rdata->m_guid.entityId)
+				{
+					return false;
+				}
+			}
+			(*pit)->m_readers.push_back(rdata);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool PDPSimple::addWriterProxyData(WriterProxyData* wdata)
+{
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
+	{
+		if((*pit)->m_guid.guidPrefix == wdata->m_guid.guidPrefix)
+		{
+			//CHECK THAT IT IS NOT ALREADY THERE:
+			for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
+					wit!=(*pit)->m_writers.end();++wit)
+			{
+				if((*wit)->m_guid.entityId == wdata->m_guid.entityId)
+				{
+					return false;
+				}
+			}
+			(*pit)->m_writers.push_back(wdata);
+			return true;
+		}
+	}
+	return false;
+}
+
+void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
+{
+	WriterProxyData* wp = new WriterProxyData();
+	wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+	wp->m_guid.entityId = c_EntityId_SPDPWriter;
+	wp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+	wp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+	wp->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	wp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	pdata->m_builtinWriters.push_back(wp);
+	mp_SPDPReader->matched_writer_add(wp);
+
+	ReaderProxyData* rp = new ReaderProxyData();
+	rp->m_expectsInlineQos = false;
+	rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+	rp->m_guid.entityId = c_EntityId_SPDPReader;
+	rp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+	rp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+	rp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	rp->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	pdata->m_builtinReaders.push_back(rp);
+	mp_SPDPWriter->matched_reader_add(rp);
+
+//	//FIXME: PUT THIS INSIDE ASSIGN REMOTE ENDPOINTS
+//	for(LocatorListIterator it = pdata->m_metatrafficUnicastLocatorList.begin();
+//			it!=pdata->m_metatrafficUnicastLocatorList.end();++it)
+//	{
+//		mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
+//	}
+//	for(LocatorListIterator it = pdata->m_metatrafficMulticastLocatorList.begin();
+//			it!=pdata->m_metatrafficMulticastLocatorList.end();++it)
+//	{
+//		mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
+//	}
+
+	//Inform EDP of new participant data:
+	if(mp_EDP!=NULL)
+		mp_EDP->assignRemoteEndpoints(pdata);
+
+	if(getWriterLivelinessPtr() !=NULL)
+		getWriterLivelinessPtr()->assignRemoteEndpoints(pdata);
+
+	//If staticEDP, perform matching:
+	//FIXME: PUT HIS INSISE REMOTE ENDPOINTS FOR STATIC DISCOVERY
+	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+	{
+		for(std::vector<RTPSReader*>::iterator it = mp_participant->userReadersListBegin();
+				it!=mp_participant->userReadersListEnd();++it)
+		{
+			if((*it)->getUserDefinedId() > 0)
+				mp_EDP->localReaderMatching(*it,false);
+		}
+		for(std::vector<RTPSWriter*>::iterator it = mp_participant->userWritersListBegin();
+				it!=mp_participant->userWritersListEnd();++it)
+		{
+			if((*it)->getUserDefinedId() > 0)
+				mp_EDP->localWriterMatching(*it,false);
+		}
+	}
+
+}
+
 
 
 

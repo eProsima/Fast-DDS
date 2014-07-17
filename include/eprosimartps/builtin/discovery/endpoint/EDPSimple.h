@@ -29,7 +29,6 @@ public:
 	EDPSimple(PDPSimple* p);
 	virtual ~EDPSimple();
 
-
 	DiscoveryAttributes m_discovery;
 
 	//!Pointer to the Publications Writer (only created if indicated in the DiscoveryAtributes).
@@ -48,11 +47,18 @@ public:
 	 * @return True if correct.
 	 */
 	bool initEDP(DiscoveryAttributes& attributes);
+
+	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+
 	/**
 	 * Create local SEDP Endpoints based on the DiscoveryAttributes.
 	 * @return True if correct.
 	 */
 	bool createSEDPEndpoints();
+
+	bool processLocalReaderProxyData(ReaderProxyData* rdata);
+
+	bool processLocalWriterProxyData(WriterProxyData* rdata);
 
 };
 

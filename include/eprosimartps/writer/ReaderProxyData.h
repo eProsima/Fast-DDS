@@ -13,7 +13,7 @@
 
 #ifndef READERPROXYDATA_H_
 #define READERPROXYDATA_H_
-
+#include "eprosimartps/dds/attributes/TopicAttributes.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/ReaderQos.h"
 

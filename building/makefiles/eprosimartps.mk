@@ -48,16 +48,19 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
+		  $(BASEDIR)/src/cpp/writer/ReaderProxyData.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
+		  $(BASEDIR)/src/cpp/reader/WriterProxyData.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
 		  $(BASEDIR)/src/cpp/Participant.cpp \
+		  $(BASEDIR)/src/cpp/ParticipantProxyData.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/resources/ListenResource.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
@@ -74,6 +77,15 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/qos/ParameterTypes.cpp \
 		  $(BASEDIR)/src/cpp/qos/QosList.cpp \
 		  $(BASEDIR)/src/cpp/qos/DDSQosPolicies.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimple.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleListener.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDP.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimple.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/utils/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/writer/timedevent/PeriodicHeartbeat.cpp \

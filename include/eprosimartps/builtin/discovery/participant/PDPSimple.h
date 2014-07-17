@@ -16,6 +16,7 @@
 
 #include "eprosimartps/builtin/discovery/participant/PDPSimpleListener.h"
 #include "eprosimartps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 
 namespace eprosima {
 namespace rtps {
@@ -44,8 +45,13 @@ public:
 	//!Reset the ParticipantAnnouncement (only used in tests).
 	void resetParticipantAnnouncement();
 
-private:
+	bool addReaderProxyData(ReaderProxyData* rdata);
+	bool addWriterProxyData(WriterProxyData* wdata);
+
+	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 	BuiltinProtocols* mp_builtin;
+private:
+
 	ParticipantImpl* mp_participant;
 	DiscoveryAttributes m_discovery;
 
