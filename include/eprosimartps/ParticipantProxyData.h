@@ -14,7 +14,13 @@
 #ifndef PARTICIPANTPROXYDATA_H_
 #define PARTICIPANTPROXYDATA_H_
 
+#include "eprosimartps/qos/QosList.h"
 #include "eprosimartps/qos/ParameterList.h"
+
+#include "eprosimartps/reader/WriterProxyData.h"
+#include "eprosimartps/writer/ReaderProxyData.h"
+
+
 
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 500
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 400
@@ -40,6 +46,8 @@ namespace rtps {
 class CDRMessage_t;
 class PDPSimple;
 class RemoteParticipantLeaseDuration;
+class ParticipantImpl;
+
 
 class ParticipantProxyData {
 public:
@@ -81,6 +89,11 @@ public:
 	bool m_hasChanged;
 
 	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
+
+	std::vector<ReaderProxyData*> m_readers;
+	std::vector<WriterProxyData*> m_writers;
+	std::vector<ReaderProxyData*> m_builtinReaders;
+	std::vector<WriterProxyData*> m_builtinWriters;
 };
 
 } /* namespace rtps */

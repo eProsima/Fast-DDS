@@ -29,7 +29,7 @@ class ResourceEvent;
  */
 class ResendParticipantProxyDataPeriod: public TimedEvent {
 public:
-	ResendParticipantProxyDataPeriod(ParticipantDiscoveryProtocol* p_SPDP,
+	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 			ResourceEvent* pEvent,
 			boost::posix_time::milliseconds interval);
 	virtual ~ResendParticipantProxyDataPeriod();

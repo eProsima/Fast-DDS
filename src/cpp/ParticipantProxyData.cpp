@@ -13,17 +13,20 @@
 
 #include "eprosimartps/ParticipantProxyData.h"
 #include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/Participant.h"
+#include "eprosimartps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
+#include "eprosimartps/builtin/BuiltinProtocols.h"
 
 namespace eprosima {
 namespace rtps {
 
 ParticipantProxyData::ParticipantProxyData():
-										m_expectsInlineQos(false),
-										m_availableBuiltinEndpoints(0),
-										m_manualLivelinessCount(0),
-										isAlive(false),
-										m_hasChanged(true),
-										mp_leaseDurationTimer(NULL)
+														m_expectsInlineQos(false),
+														m_availableBuiltinEndpoints(0),
+														m_manualLivelinessCount(0),
+														isAlive(false),
+														m_hasChanged(true),
+														mp_leaseDurationTimer(NULL)
 {
 	// TODO Auto-generated constructor stub
 	if(mp_leaseDurationTimer!=NULL)
@@ -74,8 +77,8 @@ bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 	}
 
 
-	this->m_metatrafficMulticastLocatorList = pdp->m_metatrafficMulticasLocatorList;
-	this->m_metatrafficUnicastLocatorList = pdp->m_metatrafficUnicastLocatorList;
+	this->m_metatrafficMulticastLocatorList = pdp->mp_builtin->m_metatrafficMulticastLocatorList;
+	this->m_metatrafficUnicastLocatorList = pdp->mp_builtin->m_metatrafficUnicastLocatorList;
 
 	this->m_participantName = part->getParticipantName();
 
@@ -141,8 +144,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 
 	if(ParameterList::readParameterListfromCDRMsg(msg,&m_QosList.allQos,NULL,NULL)>0)
 	{
-		for(std::vector<Parameter_t*>::iterator it = &m_QosList.allQos.m_parameters.begin();
-				it!=&m_QosList.allQos.m_parameters.end();++it)
+		for(std::vector<Parameter_t*>::iterator it = m_QosList.allQos.m_parameters.begin();
+				it!=m_QosList.allQos.m_parameters.end();++it)
 		{
 			switch((*it)->Pid)
 			{
@@ -214,7 +217,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			case PID_PARTICIPANT_LEASE_DURATION:
 			{
 				ParameterTime_t* p = (ParameterTime_t*)(*it);
-				this->leaseDuration = p->time;
+				this->m_leaseDuration = p->time;
 				break;
 			}
 			case PID_BUILTIN_ENDPOINT_SET:
@@ -231,7 +234,10 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			case PID_PROPERTY_LIST:
 			{
-				//FIXME: STATIC EDP.
+				ParameterPropertyList_t*p = (ParameterPropertyList_t*)(*it);
+				this->m_properties = *p;
+				break;
+				//FIXME: STATIC EDP. IN ASSIGN REMOTE ENDPOINTS
 				//				if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 				//				{
 				//					ParameterPropertyList_t* p = (ParameterPropertyList_t*)(*it);
@@ -259,9 +265,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				//						}
 				//					}
 			}
-			break;
-			}
 			default: break;
+			}
 		}
 		return true;
 	}
@@ -273,8 +278,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 void ParticipantProxyData::clear()
 {
 	m_protocolVersion = ProtocolVersion_t();
-	 m_guid = GUID_t();
-	 m_VendorId = VendorId_t();
+	m_guid = GUID_t();
+	VENDORID_UNKNOWN(m_VendorId);
 	m_expectsInlineQos = false;
 	m_availableBuiltinEndpoints = 0;
 	m_metatrafficUnicastLocatorList.clear();
@@ -283,10 +288,9 @@ void ParticipantProxyData::clear()
 	m_defaultMulticastLocatorList.clear();
 	m_manualLivelinessCount = 0;
 	m_participantName = "";
-	 m_key = InstanceHandle_t();
-	 leaseDuration = Duration_t();
-	 isAlive = true;
-
+	m_key = InstanceHandle_t();
+	m_leaseDuration = Duration_t();
+	isAlive = true;
 	m_QosList.allQos.deleteParams();
 	m_QosList.allQos.resetList();
 	m_QosList.inlineQos.resetList();
@@ -298,7 +302,8 @@ void ParticipantProxyData::copy(ParticipantProxyData& pdata)
 {
 	m_protocolVersion = pdata.m_protocolVersion;
 	m_guid = pdata.m_guid;
-	m_VendorId = pdata.m_VendorId;
+	m_VendorId[0] = pdata.m_VendorId[0];
+	m_VendorId[1] = pdata.m_VendorId[1];
 	m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
 	m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
 	m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;

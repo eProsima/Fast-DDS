@@ -12,6 +12,8 @@
  */
 
 #include "eprosimartps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 
 //#include "eprosimartps/resources/ResourceSend.h"
@@ -22,7 +24,7 @@
 namespace eprosima {
 namespace rtps {
 
-ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(ParticipantDiscoveryProtocol* pPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval):
+ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* pPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval):
 		TimedEvent(&pEvent->io_service,interval),
 		mp_PDP(pPDP)
 {

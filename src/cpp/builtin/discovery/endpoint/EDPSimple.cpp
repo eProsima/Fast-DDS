@@ -22,9 +22,9 @@ namespace eprosima {
 namespace rtps {
 
 EDPSimple::EDPSimple(PDPSimple* p):
-								EDP(p),
-								mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
-								mp_PubReader(NULL),mp_SubReader(NULL)// mp_TopReader(NULL),
+																		EDP(p),
+																		mp_PubWriter(NULL),mp_SubWriter(NULL),// mp_TopWriter(NULL),
+																		mp_PubReader(NULL),mp_SubReader(NULL)// mp_TopReader(NULL),
 
 {
 	// TODO Auto-generated constructor stub
@@ -161,6 +161,123 @@ bool EDPSimple::createSEDPEndpoints()
 	pInfo(RTPS_CYAN<<"SimpleEDP Endpoints creation finished"<<RTPS_DEF<<endl);
 	return created;
 }
+
+
+bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
+{
+	if(mp_SubWriter !=NULL)
+	{
+		CacheChange_t* change = NULL;
+		if(mp_SubWriter->new_change(ALIVE,NULL,&change))
+		{
+			change->instanceHandle = rdata->m_key;
+			rdata->toParameterList();
+			ParameterList::updateCDRMsg(&rdata->m_parameterList,EPROSIMA_ENDIAN);
+			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+			change->serializedPayload.length = rdata->m_parameterList.m_cdrmsg.length;
+			memcpy(change->serializedPayload.data,rdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
+			mp_SubWriter->add_change(change);
+			mp_SubWriter->unsent_change_add(change);
+			return true;
+		}
+		return false;
+	}
+	return true;
+}
+bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
+{
+	if(mp_PubWriter !=NULL)
+	{
+		CacheChange_t* change = NULL;
+		if(mp_PubWriter->new_change(ALIVE,NULL,&change))
+		{
+			change->instanceHandle = wdata->m_key;
+			wdata->toParameterList();
+			ParameterList::updateCDRMsg(&wdata->m_parameterList,EPROSIMA_ENDIAN);
+			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
+			change->serializedPayload.length = wdata->m_parameterList.m_cdrmsg.length;
+			memcpy(change->serializedPayload.data,wdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
+			mp_SubWriter->add_change(change);
+			mp_SubWriter->unsent_change_add(change);
+			return true;
+		}
+		return false;
+	}
+	return true;
+}
+
+void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
+{
+	pInfo(RTPS_CYAN<<"SimpleEDP:assignRemoteEndpoints: new DPD received, adding remote endpoints to our SimpleEDP endpoints"<<RTPS_DEF<<endl);
+	uint32_t endp = pdata->m_availableBuiltinEndpoints;
+	uint32_t auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+	if(auxendp!=0 && mp_PubReader!=NULL) //Exist Pub Writer and i have pub reader
+	{
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<RTPS_DEF<<endl);
+		WriterProxyData* wp = new WriterProxyData();
+		wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+		wp->m_guid.entityId = c_EntityId_SEDPPubWriter;
+		wp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		wp->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
+		wp->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS;
+		pdata->m_builtinWriters.push_back(wp);
+		mp_PubReader->matched_writer_add(wp);
+	}
+	auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+	if(auxendp!=0 && mp_PubWriter!=NULL) //Exist Pub Detector
+	{
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<RTPS_DEF<<endl);
+		ReaderProxyData* rp = new ReaderProxyData();
+		rp->m_expectsInlineQos = false;
+		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+		rp->m_guid.entityId = c_EntityId_SEDPPubReader;
+		rp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		rp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+		rp->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		pdata->m_builtinReaders.push_back(rp);
+		mp_PubWriter->matched_reader_add(rp);
+	}
+	auxendp = endp;
+	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+	if(auxendp!=0 && mp_SubReader!=NULL) //Exist Pub Announcer
+	{
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<RTPS_DEF<<endl);
+		WriterProxyData* wp = new WriterProxyData();
+		wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+		wp->m_guid.entityId = c_EntityId_SEDPSubWriter;
+		wp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		wp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		wp->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
+		wp->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS;
+		pdata->m_builtinWriters.push_back(wp);
+		mp_SubReader->matched_writer_add(wp);
+	}
+	auxendp = endp;
+	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+	if(auxendp!=0 && mp_SubWriter!=NULL) //Exist Pub Announcer
+	{
+		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<RTPS_DEF<<endl);
+		ReaderProxyData* rp = new ReaderProxyData();
+		rp->m_expectsInlineQos = false;
+		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
+		rp->m_guid.entityId = c_EntityId_SEDPSubReader;
+		rp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		rp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		rp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+		rp->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		pdata->m_builtinReaders.push_back(rp);
+		mp_SubWriter->matched_reader_add(rp);
+	}
+}
+
+
+
+
+
 
 } /* namespace rtps */
 } /* namespace eprosima */
