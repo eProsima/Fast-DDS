@@ -86,6 +86,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
 		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/builtin/BuiltinProtocols.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimple.cpp \
 		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleListener.cpp \
 		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \

@@ -54,8 +54,8 @@ public:
 							WriterProxyData** returnWriterProxyData=NULL,
 							ParticipantProxyData** pdata = NULL);
 
-	bool lookupReaderProxyData(GUID_t& reader,ReaderProxyData** rdata);
-	bool lookupWriterProxyData(GUID_t& writer,WriterProxyData** rdata);
+	bool lookupReaderProxyData(const GUID_t& reader,ReaderProxyData** rdata);
+	bool lookupWriterProxyData(const GUID_t& writer,WriterProxyData** rdata);
 
 	bool removeReaderProxyData(ReaderProxyData* rdata);
 	bool removeWriterProxyData(WriterProxyData* rdata);
@@ -70,6 +70,8 @@ public:
 	{
 		return m_participantProxies.front();
 	}
+
+	EDP* getEDP(){return mp_EDP;}
 
 private:
 

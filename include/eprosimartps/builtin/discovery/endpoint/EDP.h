@@ -45,14 +45,17 @@ public:
 	bool newLocalReaderProxyData(RTPSReader*);
 	bool newLocalWriterProxyData(RTPSWriter*);
 
+	virtual bool removeLocalReader(RTPSReader*)=0;
+	virtual bool removeLocalWriter(RTPSWriter*)=0;
+
 	void pairWriterProxy(WriterProxyData* wdata);
 	void pairReaderProxy(ReaderProxyData* rdata);
 
 	bool validMatching(RTPSWriter* W,ReaderProxyData* rdata);
 	bool validMatching(RTPSReader* R,WriterProxyData* wdata);
 
-	bool unpairWriterProxy(GUID_t& writer);
-	bool unpairReaderProxy(GUID_t& reader);
+	bool unpairWriterProxy(const GUID_t& writer);
+	bool unpairReaderProxy(const GUID_t& reader);
 
 	bool updatedReaderProxy(ReaderProxyData* rdata);
 	bool updatedWriterProxy(WriterProxyData* wdata);
