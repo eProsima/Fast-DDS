@@ -21,10 +21,13 @@
 #include "eprosimartps/writer/RTPSWriter.h"
 
 
-#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
-#include "eprosimartps/discovery/SimplePDP.h"
+//#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
+//#include "eprosimartps/discovery/SimplePDP.h"
+//
+//#include "eprosimartps/liveliness/WriterLiveliness.h"
 
-#include "eprosimartps/liveliness/WriterLiveliness.h"
+#include "eprosimartps/builtin/BuiltinProtocols.h"
+
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
@@ -47,7 +50,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_event_thr(this),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
-							mp_PDP(NULL),
+							m_builtinProtocols(this),
 							m_participantID(ID),
 							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
 							m_listen_socket_buffer_size(PParam.listenSocketBufferSize)
@@ -74,12 +77,9 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 
 	m_discovery = PParam.discovery;
 
-	//START DISCOVERY PROTOCOL
-	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
-	{
-		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
-		mp_PDP->initPDP(PParam.discovery, this->getParticipantId());
-	}
+	//START BUILTIN PROTOCOLS
+	m_builtinProtocols.initBuiltinProtocols(PParam.m_builtinProtocolsAttributes,m_participantID);
+
 }
 
 
@@ -104,8 +104,6 @@ ParticipantImpl::~ParticipantImpl()
 
 	delete(this->mp_ResourceSemaphore);
 
-	if(mp_PDP!=NULL)
-		delete(mp_PDP);
 }
 
 
@@ -248,37 +246,18 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 	return true;
 }
 
-void ParticipantImpl::ReaderDiscovery(RTPSReader* SReader)
+void ParticipantImpl::registerReader(RTPSReader* SReader)
 {
 	eClock::my_sleep(30);
 	m_userReaderList.push_back(SReader);
-	if(mp_PDP!=NULL)
-		mp_PDP->localReaderMatching(SReader,true);
-	//Match the readers in the same participant
-	for(std::vector<RTPSWriter*>::iterator wit = this->m_userWriterList.begin();
-			wit!=this->m_userWriterList.end();++wit)
-	{
-		mp_PDP->localWriterMatching(*wit,false);
-	}
-
+	m_builtinProtocols.addLocalReader(SReader);
 }
 
-void ParticipantImpl::WriterDiscovery(RTPSWriter* SWriter)
+void ParticipantImpl::registerWriter(RTPSWriter* SWriter)
 {
 	eClock::my_sleep(30);
 	m_userWriterList.push_back(SWriter);
-	if(mp_PDP!=NULL)
-	{
-		mp_PDP->localWriterMatching(SWriter,true);
-		if(mp_PDP->mp_WL !=NULL)
-			mp_PDP->mp_WL->addLocalWriter(SWriter);
-		//Match the readers in the same participant
-		for(std::vector<RTPSReader*>::iterator rit = this->m_userReaderList.begin();
-				rit!=this->m_userReaderList.end();++rit)
-		{
-			mp_PDP->localReaderMatching(*rit,false);
-		}
-	}
+	m_builtinProtocols.addLocalWriter(SWriter);
 }
 
 
@@ -384,16 +363,10 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 	}
 	if(!found)
 		return false;
-	if(mp_PDP!=NULL)
-	{
-		if(p_endpoint->getEndpointKind()==WRITER)
-			mp_PDP->mp_EDP->removeLocalWriter(p_endpoint->getGuid());
-		else if(p_endpoint->getEndpointKind()==READER)
-			mp_PDP->mp_EDP->removeLocalReader(p_endpoint->getGuid());
-
-		if(mp_PDP->mp_WL!=NULL && p_endpoint->getEndpointKind()==WRITER)
-			mp_PDP->mp_WL->removeLocalWriter((RTPSWriter*)p_endpoint);
-	}
+	if(p_endpoint->getEndpointKind()==WRITER)
+		m_builtinProtocols.removeLocalWriter((RTPSWriter*)p_endpoint);
+	else
+		m_builtinProtocols.removeLocalReader((RTPSReader*)p_endpoint);
 	//Remove it from threadListenList
 	std::vector<ListenResource*>::iterator thit;
 	for(thit=m_listenResourceList.begin();
@@ -419,17 +392,17 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 
 void ParticipantImpl::announceParticipantState()
 {
-	this->mp_PDP->announceParticipantState(false);
+	this->m_builtinProtocols.announceParticipantState();
 }
 
 void ParticipantImpl::stopParticipantAnnouncement()
 {
-	this->mp_PDP->stopParticipantAnnouncement();
+	this->m_builtinProtocols.stopParticipantAnnouncement();
 }
 
 void ParticipantImpl::resetParticipantAnnouncement()
 {
-	this->mp_PDP->resetParticipantAnnouncement();
+	this->m_builtinProtocols.resetParticipantAnnouncement();
 }
 
 void ParticipantImpl::ResourceSemaphorePost()

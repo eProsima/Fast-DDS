@@ -13,6 +13,7 @@
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/writer/ReaderProxyData.h"
 
 #include "eprosimartps/RTPSMessageCreator.h"
 
@@ -61,22 +62,21 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 		m_HBReaderEntityId = c_EntityId_Unknown;
 }
 
-
-bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
+bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
-		if((*it)->m_param.remoteReaderGuid == RPparam.remoteReaderGuid)
+		if((*it)->m_data->m_guid == rdata->m_guid)
 		{
 			pWarning("Attempting to add existing reader" << endl);
 			return false;
 		}
 	}
-	ReaderProxy* rp = new ReaderProxy(RPparam,m_PubTimes,this);
+	ReaderProxy* rp = new ReaderProxy(rdata,m_PubTimes,this);
 	if(mp_periodicHB==NULL)
-		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
-	if(rp->m_param.m_durabilityKind >= TRANSIENT_LOCAL_DURABILITY_QOS)
+			mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
+	if(rp->m_data->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
 		{
@@ -92,23 +92,18 @@ bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 		}
 	}
 	matched_readers.push_back(rp);
-	pDebugInfo("Reader Proxy added to StatefulWriter with " <<rp->m_param.unicastLocatorList.size()<<"(u)-"<<rp->m_param.multicastLocatorList.size()<<"(m) locators"<< endl);
+	pDebugInfo("Reader Proxy added to StatefulWriter with " <<rp->m_data->m_unicastLocatorList.size()<<"(u)-"<<rp->m_data->m_multicastLocatorList.size()<<"(m) locators"<< endl);
 	if(rp->m_changesForReader.size()>0)
 		unsent_changes_not_empty();
 	return true;
 }
 
-bool StatefulWriter::matched_reader_remove(ReaderProxy_t& Rp)
-{
-	return matched_reader_remove(Rp.remoteReaderGuid);
-}
-
-bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
+bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
-		if((*it)->m_param.remoteReaderGuid == readerGuid)
+		if((*it)->m_data->m_guid == rdata->m_guid)
 		{
 			delete(*it);
 			matched_readers.erase(it);
@@ -122,13 +117,74 @@ bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
 	return false;
 }
 
+
+//bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+//	{
+//		if((*it)->m_param.remoteReaderGuid == RPparam.remoteReaderGuid)
+//		{
+//			pWarning("Attempting to add existing reader" << endl);
+//			return false;
+//		}
+//	}
+//	ReaderProxy* rp = new ReaderProxy(RPparam,m_PubTimes,this);
+//	if(mp_periodicHB==NULL)
+//		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
+//	if(rp->m_param.m_durabilityKind >= TRANSIENT_LOCAL_DURABILITY_QOS)
+//	{
+//		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
+//		{
+//			ChangeForReader_t changeForReader;
+//			changeForReader.setChange(*cit);
+//			changeForReader.is_relevant = rp->dds_is_relevant(*cit);
+//
+//			if(m_pushMode)
+//				changeForReader.status = UNSENT;
+//			else
+//				changeForReader.status = UNACKNOWLEDGED;
+//			rp->m_changesForReader.push_back(changeForReader);
+//		}
+//	}
+//	matched_readers.push_back(rp);
+//	pDebugInfo("Reader Proxy added to StatefulWriter with " <<rp->m_param.unicastLocatorList.size()<<"(u)-"<<rp->m_param.multicastLocatorList.size()<<"(m) locators"<< endl);
+//	if(rp->m_changesForReader.size()>0)
+//		unsent_changes_not_empty();
+//	return true;
+//}
+
+//bool StatefulWriter::matched_reader_remove(ReaderProxy_t& Rp)
+//{
+//	return matched_reader_remove(Rp.remoteReaderGuid);
+//}
+
+//bool StatefulWriter::matched_reader_remove(GUID_t& readerGuid)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+//	{
+//		if((*it)->m_param.remoteReaderGuid == readerGuid)
+//		{
+//			delete(*it);
+//			matched_readers.erase(it);
+//			pDebugInfo("Reader Proxy removed" << endl);
+//			if(matched_readers.size()==0)
+//				this->mp_periodicHB->stop_timer();
+//			return true;
+//		}
+//	}
+//	pInfo("Reader Proxy doesn't exist in this writer" << endl)
+//	return false;
+//}
+
 bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
-		if((*it)->m_param.remoteReaderGuid == readerGuid)
+		if((*it)->m_data->m_guid == readerGuid)
 		{
 			*RP = *it;
 			return true;
@@ -234,18 +290,20 @@ void StatefulWriter::unsent_changes_not_empty()
 				if(!relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
 							&relevant_changes,
-							(*rit)->m_param.unicastLocatorList,
-							(*rit)->m_param.multicastLocatorList,
-							(*rit)->m_param.expectsInlineQos,
-							(*rit)->m_param.remoteReaderGuid.entityId);
+							(*rit)->m_data->m_unicastLocatorList,
+							(*rit)->m_data->m_multicastLocatorList,
+							(*rit)->m_data->m_expectsInlineQos,
+							(*rit)->m_data->m_guid.entityId);
 				if(!not_relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,
 							&not_relevant_changes,
-							(*rit)->m_param.remoteReaderGuid.entityId,
-							&(*rit)->m_param.unicastLocatorList,
-							&(*rit)->m_param.multicastLocatorList);
-				if((*rit)->m_param.m_reliability == RELIABLE)
+							(*rit)->m_data->m_guid.entityId,
+							&(*rit)->m_data->m_unicastLocatorList,
+							&(*rit)->m_data->m_multicastLocatorList);
+				if((*rit)->m_data->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+				{
 					this->mp_periodicHB->restart_timer();
+				}
 				(*rit)->m_nackSupression.restart_timer();
 			}
 			else
@@ -259,9 +317,9 @@ void StatefulWriter::unsent_changes_not_empty()
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
 						c_EntityId_Unknown,m_guid.entityId,first->sequenceNumber,last->sequenceNumber,m_heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
-				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
+				for(lit = (*rit)->m_data->m_unicastLocatorList.begin();lit!=(*rit)->m_data->m_unicastLocatorList.end();++lit)
 					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
-				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
+				for(lit = (*rit)->m_data->m_multicastLocatorList.begin();lit!=(*rit)->m_data->m_multicastLocatorList.end();++lit)
 					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 			}
 		}

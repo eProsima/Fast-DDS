@@ -15,6 +15,11 @@
 
 #include "eprosimartps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
 
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/Participant.h"
+#include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/writer/StatelessWriter.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
 namespace eprosima {
@@ -72,7 +77,7 @@ bool PDPSimpleListener::newAddedCache()
 					pdata_ptr->isAlive = true;
 					this->mp_SPDP->m_participantProxies.push_back(pdata_ptr);
 					pdata_ptr->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
-							pdata_ptr->m_guid,
+							pdata_ptr,
 							mp_SPDP->mp_participant->getEventResource(),
 							boost::posix_time::milliseconds(Time_t2MilliSec(pdata_ptr->m_leaseDuration)));
 					pdata_ptr->mp_leaseDurationTimer->restart_timer();

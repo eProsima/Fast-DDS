@@ -18,16 +18,16 @@
 namespace eprosima {
 namespace rtps {
 
-ReaderLocator::ReaderLocator(DurabilityQosPolicyKind_t dur ) {
+ReaderLocator::ReaderLocator() {
 	this->expectsInlineQos = false;
-	m_durabilityKind = dur;
+	n_used = 1;
 
 }
 
-ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos,DurabilityQosPolicyKind_t dur ){
+ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos ){
 	locator = a_locator;
 	expectsInlineQos = expectsQos;
-	m_durabilityKind = dur;
+	n_used = 1;
 }
 
 ReaderLocator::~ReaderLocator()

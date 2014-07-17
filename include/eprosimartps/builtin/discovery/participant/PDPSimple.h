@@ -32,6 +32,7 @@ class RemoteParticipantLeaseDuration;
 class PDPSimple {
 	friend class ResendParticipantProxyDataPeriod;
 	friend class RemoteParticipantLeaseDuration;
+	friend class PDPSimpleListener;
 public:
 	PDPSimple(BuiltinProtocols* builtin);
 	virtual ~PDPSimple();
@@ -45,11 +46,31 @@ public:
 	//!Reset the ParticipantAnnouncement (only used in tests).
 	void resetParticipantAnnouncement();
 
-	bool addReaderProxyData(ReaderProxyData* rdata);
-	bool addWriterProxyData(WriterProxyData* wdata);
+	bool addReaderProxyData(ReaderProxyData* rdata,bool copydata=false,
+							ReaderProxyData** returnReaderProxyData=NULL,
+							ParticipantProxyData** pdata = NULL);
+
+	bool addWriterProxyData(WriterProxyData* wdata,bool copydata=false,
+							WriterProxyData** returnWriterProxyData=NULL,
+							ParticipantProxyData** pdata = NULL);
+
+	bool lookupReaderProxyData(GUID_t& reader,ReaderProxyData** rdata);
+	bool lookupWriterProxyData(GUID_t& writer,WriterProxyData** rdata);
+
+	bool removeReaderProxyData(ReaderProxyData* rdata);
+	bool removeWriterProxyData(WriterProxyData* rdata);
 
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+
+	bool removeRemoteParticipant(ParticipantProxyData* pdata);
+
 	BuiltinProtocols* mp_builtin;
+
+	ParticipantProxyData* getLocalParticipantProxyData()
+	{
+		return m_participantProxies.front();
+	}
+
 private:
 
 	ParticipantImpl* mp_participant;

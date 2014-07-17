@@ -13,27 +13,14 @@
 
 #include "eprosimartps/reader/WriterProxy.h"
 #include "eprosimartps/reader/StatefulReader.h"
-
+#include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
+
 
 
 namespace eprosima {
 namespace rtps {
 
-
-WriterProxy_t::WriterProxy_t():
-					remoteWriterGuid(c_Guid_Unknown),
-					leaseDuration(c_TimeInfinite),
-					livelinessKind(AUTOMATIC_LIVELINESS_QOS),
-					ownershipStrength(0)
-
-{
-
-}
-
-WriterProxy_t::~WriterProxy_t()
-{
-}
 
 WriterProxy::~WriterProxy()
 {
@@ -41,16 +28,16 @@ WriterProxy::~WriterProxy()
 	m_writerProxyLiveliness.stop_timer();
 }
 
-WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
+WriterProxy::WriterProxy(WriterProxyData* wdata,
 		Duration_t heartbeatResponse,
 		StatefulReader* SR) :
 		mp_SFR(SR),
-		param(WPparam),
+		m_data(wdata),
 		m_acknackCount(0),
 		m_lastHeartbeatCount(0),
 		m_isMissingChangesEmpty(true),
 		m_heartbeatResponse(this,boost::posix_time::milliseconds(Time_t2MilliSec(heartbeatResponse))),
-		m_writerProxyLiveliness(this,boost::posix_time::milliseconds(Time_t2MilliSec(WPparam.leaseDuration))),
+		m_writerProxyLiveliness(this,boost::posix_time::milliseconds(Time_t2MilliSec(wdata->m_qos.m_liveliness.lease_duration))),
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false),
@@ -61,13 +48,13 @@ WriterProxy::WriterProxy(const WriterProxy_t& WPparam,
 	m_changesFromW.clear();
 	Time_t aux;
 	TIME_INFINITE(aux);
-	if(WPparam.leaseDuration < aux)
+	if(m_data->m_qos.m_liveliness.lease_duration < aux)
 		m_writerProxyLiveliness.restart_timer();
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
-	pDebugInfo("WriterProxy "<<param.remoteWriterGuid.entityId<<": MISSING_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
+	pDebugInfo("WriterProxy "<<m_data->m_guid.entityId<<": MISSING_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
 //	SequenceNumber_t seq = (seqNum)+1;
 //	add_unknown_changes(seq);
@@ -120,7 +107,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 
 bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
-	pDebugInfo("WriterProxy "<<param.remoteWriterGuid.entityId<<": LOST_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
+	pDebugInfo("WriterProxy "<<m_data->m_guid.entityId<<": LOST_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
 //	SequenceNumber_t seq = (seqNum)+1;
 //	add_unknown_changes(seq);
@@ -142,7 +129,7 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 
 bool WriterProxy::received_change_set(CacheChange_t* change)
 {
-	pDebugInfo("WriterProxy "<<param.remoteWriterGuid.entityId<<": RECEIVED_changes_set: change with seqNum: "<<change->sequenceNumber.to64long()<<endl);
+	pDebugInfo("WriterProxy "<<m_data->m_guid.entityId<<": RECEIVED_changes_set: change with seqNum: "<<change->sequenceNumber.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
@@ -204,14 +191,6 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 	}
 	pError("WriterProxy irrelevant change set: something has gone wrong"<<endl;);
 	return false;
-//	ChangeFromWriter_t chfw;
-//	chfw.is_relevant = false;
-//	chfw.status = RECEIVED;
-////	CacheChange_t* ch = mp_SFR->reserve_Cache();
-//	//ch->sequenceNumber = seqNum;
-//	chfw.seqNum = seqNum;
-//	add_unknown_changes(seqNum);
-//	m_changesFromW.push_back(chfw);
 
 	return true;
 }
@@ -333,7 +312,7 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 void WriterProxy::print_changes_fromWriter_test2()
 {
 	std::stringstream ss;
-	ss << "WP "<<this->param.remoteWriterGuid.entityId<<": ";
+	ss << "WP "<<this->m_data->m_guid.entityId<<": ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
 		ss << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";

@@ -84,10 +84,10 @@ public:
 	///@}
 
 
-	/**
-	 * Add a writer proxy. Only until Discovery is good.
-	 */
-	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
+//	/**
+//	 * Add a writer proxy. Only until Discovery is good.
+//	 */
+//	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
 
 	size_t getMatchedPublishers();
 
@@ -178,13 +178,13 @@ public:
 	///@}
 
 
-	/**
-	 * Add a writer proxy. Only until Discovery is good.
-	 */
-	bool addWriterProxy(Locator_t& loc,GUID_t& guid)
-	{
-		return mp_impl->addWriterProxy(loc,guid);
-	}
+//	/**
+//	 * Add a writer proxy. Only until Discovery is good.
+//	 */
+//	bool addWriterProxy(Locator_t& loc,GUID_t& guid)
+//	{
+//		return mp_impl->addWriterProxy(loc,guid);
+//	}
 
 	size_t getMatchedPublishers(){return mp_impl->getMatchedPublishers();}
 private:

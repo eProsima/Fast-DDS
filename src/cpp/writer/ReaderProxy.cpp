@@ -13,6 +13,7 @@
 
 
 #include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 
@@ -23,8 +24,8 @@ namespace rtps {
 
 
 
-ReaderProxy::ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& times,StatefulWriter* SW):
-				m_param(RPparam),
+ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW):
+				m_data(rdata),
 				mp_SFW(SW),
 				m_isRequestedChangesEmpty(true),
 				//m_periodicHB(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatPeriod)*1e-3))),

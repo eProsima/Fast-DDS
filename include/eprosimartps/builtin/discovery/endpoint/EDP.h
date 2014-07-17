@@ -14,6 +14,9 @@
 #ifndef EDP_H_
 #define EDP_H_
 
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+#include "eprosimartps/common/types/Guid.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -48,16 +51,14 @@ public:
 	bool validMatching(RTPSWriter* W,ReaderProxyData* rdata);
 	bool validMatching(RTPSReader* R,WriterProxyData* wdata);
 
-	bool unpairWriterProxy(WriterProxyData* wdata);
-	bool unpairReaderProxy(ReaderProxyData* rdata);
+	bool unpairWriterProxy(GUID_t& writer);
+	bool unpairReaderProxy(GUID_t& reader);
+
+	bool updatedReaderProxy(ReaderProxyData* rdata);
+	bool updatedWriterProxy(WriterProxyData* wdata);
 
 	virtual bool processLocalReaderProxyData(ReaderProxyData* rdata)= 0;
 	virtual bool processLocalWriterProxyData(WriterProxyData* rdata)= 0;
-
-
-
-private:
-
 
 	PDPSimple* mp_PDP;
 	ParticipantImpl* mp_participant;

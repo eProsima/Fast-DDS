@@ -38,6 +38,8 @@ class PublisherListener;
 
 namespace rtps {
 
+class ReaderProxyData;
+
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
   * @ingroup WRITERMODULE
@@ -158,6 +160,9 @@ public:
 	}
 
 	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
+
+	virtual bool matched_reader_add(ReaderProxyData* rdata)=0;
+	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
 
 protected:
 

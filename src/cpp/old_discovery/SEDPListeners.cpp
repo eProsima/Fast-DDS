@@ -27,8 +27,6 @@
 
 #include "eprosimartps/common/types/InstanceHandle.h"
 
-
-
 namespace eprosima {
 namespace rtps {
 

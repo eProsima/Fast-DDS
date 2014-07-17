@@ -35,24 +35,27 @@ public:
 	StatefulWriter(const PublisherAttributes& param,
 			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
-	/**
-	 * Add a matched reader to the writer.
-	 * @param Rp Structure containing the parameters for the reader.
-	 * @return True if correct.
-	 */
-	bool matched_reader_add(ReaderProxy_t& Rp);
-	/**
-	 * Remove a reader from the writer list.
-	 * @param Rp Structure containing the parameters.
-	 * @return True if correct
-	 */
-	bool matched_reader_remove(ReaderProxy_t& Rp);
-	/**
-	 * Remove a reder based on its guid.
-	 * @param readerGuid GUID_t of the reader.
-	 * @return True if correct.
-	 */
-	bool matched_reader_remove(GUID_t& readerGuid);
+//	/**
+//	 * Add a matched reader to the writer.
+//	 * @param Rp Structure containing the parameters for the reader.
+//	 * @return True if correct.
+//	 */
+//	bool matched_reader_add(ReaderProxy_t& Rp);
+//	/**
+//	 * Remove a reader from the writer list.
+//	 * @param Rp Structure containing the parameters.
+//	 * @return True if correct
+//	 */
+//	bool matched_reader_remove(ReaderProxy_t& Rp);
+//	/**
+//	 * Remove a reder based on its guid.
+//	 * @param readerGuid GUID_t of the reader.
+//	 * @return True if correct.
+//	 */
+//	bool matched_reader_remove(GUID_t& readerGuid);
+
+	bool matched_reader_add(ReaderProxyData* rdata);
+	bool matched_reader_remove(ReaderProxyData* rdata);
 
 	/**
 	 * Find a Reader Proxy in this writer.

@@ -87,6 +87,7 @@ public:
 
 
 class BuiltinAttributes{
+public:
 	BuiltinAttributes();
 	~BuiltinAttributes();
 	DiscoveryAttributes discovery;
@@ -134,6 +135,8 @@ public:
 	std::string name;
 	//! Discovery parameters.
 	DiscoveryAttributes discovery;
+
+	BuiltinAttributes m_builtinProtocolsAttributes;
 };
 
 } /* namespace rtps */
