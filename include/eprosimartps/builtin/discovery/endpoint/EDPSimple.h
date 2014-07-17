@@ -67,6 +67,9 @@ public:
 
 	bool processLocalWriterProxyData(WriterProxyData* rdata);
 
+	bool removeLocalReader(RTPSReader*);
+	bool removeLocalWriter(RTPSWriter*);
+
 };
 
 } /* namespace rtps */

@@ -14,15 +14,25 @@
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 #include "eprosimartps/common/types/Locator.h"
 
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/endpoint/EDP.h"
+
+#include "eprosimartps/builtin/liveliness/WLP.h"
+
+#include "eprosimartps/reader/StatelessReader.h"
+
+#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/IPFinder.h"
+
 namespace eprosima {
 namespace rtps {
 
 BuiltinProtocols::BuiltinProtocols(ParticipantImpl* part):
-		mp_participant(part),
-		mp_PDP(NULL),
-		mp_WL(NULL),
-		m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
-		m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
+								mp_participant(part),
+								mp_PDP(NULL),
+								mp_WLP(NULL),
+								m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
+								m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
 {
 	// TODO Auto-generated constructor stub
 
@@ -33,7 +43,7 @@ BuiltinProtocols::~BuiltinProtocols() {
 }
 
 
-bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,uint32_t participantID)
+bool BuiltinProtocols::initBuiltinProtocols(const DiscoveryAttributes& attributes,uint32_t participantID)
 {
 	m_attributes = attributes;
 	Locator_t multiLocator;
@@ -49,23 +59,106 @@ bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,
 		m_metatrafficUnicastLocatorList.push_back(*it);
 	}
 
-	if(m_attributes.discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
+	if(m_attributes.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
 		mp_PDP = new PDPSimple(this);
 		mp_PDP->initPDP(mp_participant,participantID);
 	}
-
+	if(m_attributes.use_WriterLivelinessProtocol)
+	{
+		mp_WLP = new WLP(this->mp_participant);
+		mp_WLP->initWL(this);
+	}
+	if(m_attributes.use_SIMPLE_ParticipantDiscoveryProtocol)
+	{
+		mp_PDP->announceParticipantState(true);
+		mp_PDP->resetParticipantAnnouncement();
+	}
 
 
 	return false;
 }
 
-bool BuiltinProtocols::updateMetatrafficLocators()
+bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
 {
-	m_metatrafficUnicastLocatorList = mp_PDP->mp_SPDPReader->unicastLocatorList;
+	m_metatrafficUnicastLocatorList = loclist;
 	return true;
 }
 
+bool BuiltinProtocols::addLocalWriter(RTPSWriter* W)
+{
+	bool ok = false;
+	if(mp_PDP!=NULL)
+	{
+		ok |= mp_PDP->getEDP()->newLocalWriterProxyData(W);
+	}
+	if(mp_WLP !=NULL)
+	{
+		ok|= mp_WLP->addLocalWriter(W);
+	}
+	return ok;
+}
+
+bool BuiltinProtocols::addLocalReader(RTPSReader* R)
+{
+	bool ok = false;
+	if(mp_PDP!=NULL)
+	{
+		ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R);
+	}
+	return ok;
+}
+
+bool BuiltinProtocols::updateLocalWriter(RTPSWriter* W)
+{
+	pError("UPDATE METHOD NOT IMPLEMENTED YET"<<endl);
+	return true;
+}
+
+bool BuiltinProtocols::updateLocalReader(RTPSReader* R)
+{
+	pError("UPDATE METHOD NOT IMPLEMENTED YET"<<endl);
+	return true;
+}
+
+bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
+{
+	bool ok = false;
+	if(mp_PDP!=NULL)
+	{
+		ok|= mp_PDP->getEDP()->removeLocalWriter(W);
+	}
+	if(mp_WLP !=NULL)
+	{
+		ok|= mp_WLP->removeLocalWriter(W);
+	}
+	return ok;
+}
+
+bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
+{
+	bool ok = false;
+	if(mp_PDP!=NULL)
+	{
+		ok|= mp_PDP->getEDP()->removeLocalReader(R);
+	}
+	return ok;
+}
+
+void BuiltinProtocols::announceParticipantState()
+{
+	mp_PDP->announceParticipantState(false);
+}
+
+void BuiltinProtocols::stopParticipantAnnouncement()
+{
+	mp_PDP->stopParticipantAnnouncement();
+}
+
+void BuiltinProtocols::resetParticipantAnnouncement()
+{
+	mp_PDP->resetParticipantAnnouncement();
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

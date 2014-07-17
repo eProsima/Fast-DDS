@@ -14,11 +14,14 @@
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
 
+#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+
+
 namespace eprosima {
 namespace rtps {
 
 class PDPSimple;
-class WriterLiveliness;
+class WLP;
 class ParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
@@ -30,12 +33,12 @@ public:
 	virtual ~BuiltinProtocols();
 
 	bool initBuiltinProtocols(const DiscoveryAttributes& attributes, uint32_t participantID);
-	bool updateMetatrafficLocators();
+	bool updateMetatrafficLocators(LocatorList_t& loclist);
 
 	DiscoveryAttributes m_attributes;
 	ParticipantImpl* mp_participant;
 	PDPSimple* mp_PDP;
-	WriterLiveliness* mp_WL;
+	WLP* mp_WLP;
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
 	LocatorList_t m_metatrafficMulticastLocatorList;

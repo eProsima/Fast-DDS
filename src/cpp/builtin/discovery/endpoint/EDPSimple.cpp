@@ -218,6 +218,38 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 	return true;
 }
 
+bool EDPSimple::removeLocalWriter(RTPSWriter* W)
+{
+	if(mp_PubWriter!=NULL)
+	{
+		CacheChange_t* change = NULL;
+		if(mp_PubWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
+		{
+			change->instanceHandle = W->getGuid();
+			mp_PubWriter->add_change(change);
+			mp_PubWriter->unsent_change_add(change);
+		}
+	}
+	return unpairWriterProxy(W->getGuid());
+}
+
+bool EDPSimple::removeLocalReader(RTPSReader* R)
+{
+	if(mp_SubWriter!=NULL)
+	{
+		CacheChange_t* change = NULL;
+		if(mp_SubWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,NULL,&change))
+		{
+			change->instanceHandle = R->getGuid();
+			mp_SubWriter->add_change(change);
+			mp_SubWriter->unsent_change_add(change);
+		}
+	}
+	return unpairReaderProxy(R->getGuid());
+}
+
+
+
 void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	pInfo(RTPS_CYAN<<"SimpleEDP:assignRemoteEndpoints: new DPD received, adding remote endpoints to our SimpleEDP endpoints"<<RTPS_DEF<<endl);

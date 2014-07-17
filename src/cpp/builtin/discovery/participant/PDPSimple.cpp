@@ -59,7 +59,7 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 
 	if(!createSPDPEndpoints())
 		return false;
-	mp_builtin->updateMetatrafficLocators();
+	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->unicastLocatorList);
 	this->mp_SPDPReader->lock();
 	this->mp_SPDPWriter->lock();
 
@@ -81,13 +81,8 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 		return false;
 	}
 
-	this->announceParticipantState(true);
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,mp_participant->getEventResource(),
 			boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.resendDiscoveryParticipantDataPeriod)));
-	mp_resendParticipantTimer->restart_timer();
-
-	eClock::my_sleep(100);
-
 
 	this->mp_SPDPReader->unlock();
 	this->mp_SPDPWriter->unlock();
@@ -134,7 +129,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 	mp_SPDPWriter->unsent_change_add(change);
 }
 
-bool PDPSimple::lookupReaderProxyData(GUID_t& reader, ReaderProxyData** rdata)
+bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata)
 {
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
@@ -152,7 +147,7 @@ bool PDPSimple::lookupReaderProxyData(GUID_t& reader, ReaderProxyData** rdata)
 	return false;
 }
 
-bool PDPSimple::lookupWriterProxyData(GUID_t& writer, WriterProxyData** wdata)
+bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata)
 {
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)

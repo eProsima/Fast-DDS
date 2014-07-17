@@ -108,6 +108,9 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer)
 }
 
 
+
+
+
 void EDP::pairReaderProxy(ReaderProxyData* rdata)
 {
 	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
@@ -153,7 +156,7 @@ void EDP::pairWriterProxy(WriterProxyData* wdata)
 	}
 }
 
-bool EDP::unpairWriterProxy(GUID_t& writer)
+bool EDP::unpairWriterProxy(const GUID_t& writer)
 {
 	WriterProxyData* wdata = NULL;
 	if(this->mp_PDP->lookupWriterProxyData(writer,&wdata))
@@ -179,7 +182,7 @@ bool EDP::unpairWriterProxy(GUID_t& writer)
 	return false;
 }
 
-bool EDP::unpairReaderProxy(GUID_t& reader)
+bool EDP::unpairReaderProxy(const GUID_t& reader)
 {
 	ReaderProxyData* rdata = NULL;
 	if(this->mp_PDP->lookupReaderProxyData(reader,&rdata))
