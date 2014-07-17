@@ -22,15 +22,17 @@ class WriterLiveliness;
 class ParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
+
+
 class BuiltinProtocols {
 public:
 	BuiltinProtocols(ParticipantImpl* p_part);
 	virtual ~BuiltinProtocols();
 
-	bool initBuiltinProtocols(const BuiltinAttributes& attributes, uint32_t participantID);
+	bool initBuiltinProtocols(const DiscoveryAttributes& attributes, uint32_t participantID);
 	bool updateMetatrafficLocators();
 
-	BuiltinAttributes m_attributes;
+	DiscoveryAttributes m_attributes;
 	ParticipantImpl* mp_participant;
 	PDPSimple* mp_PDP;
 	WriterLiveliness* mp_WL;

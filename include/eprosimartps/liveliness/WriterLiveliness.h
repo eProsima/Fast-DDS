@@ -25,7 +25,6 @@
 
 #include "eprosimartps/liveliness/WriterLivelinessListener.h"
 
-
 namespace eprosima {
 namespace rtps {
 
