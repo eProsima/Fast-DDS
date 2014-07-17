@@ -96,7 +96,11 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimple.cpp \
 		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimpleListeners.cpp \
 		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimpleTopicDataType.cpp \
-		 
+		  \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/WLP.cpp \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
+		  
 #		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \
 		  $(BASEDIR)/src/cpp/discovery/EndpointDiscoveryProtocol.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SimplePDP.cpp \

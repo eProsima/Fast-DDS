@@ -86,12 +86,6 @@ public:
 };
 
 
-class BuiltinAttributes{
-public:
-	BuiltinAttributes();
-	~BuiltinAttributes();
-	DiscoveryAttributes discovery;
-};
 
 
 /**
@@ -136,7 +130,7 @@ public:
 	//! Discovery parameters.
 	DiscoveryAttributes discovery;
 
-	BuiltinAttributes m_builtinProtocolsAttributes;
+
 };
 
 } /* namespace rtps */

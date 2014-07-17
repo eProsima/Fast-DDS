@@ -78,7 +78,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 	m_discovery = PParam.discovery;
 
 	//START BUILTIN PROTOCOLS
-	m_builtinProtocols.initBuiltinProtocols(PParam.m_builtinProtocolsAttributes,m_participantID);
+	m_builtinProtocols.initBuiltinProtocols(PParam.discovery,m_participantID);
 
 }
 
