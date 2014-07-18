@@ -22,7 +22,7 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
-class CDRMessage_t;
+struct CDRMessage_t;
 
 class ReaderProxyData {
 public:
