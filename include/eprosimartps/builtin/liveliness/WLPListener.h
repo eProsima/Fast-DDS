@@ -28,6 +28,10 @@ namespace rtps {
 
 class WLP;
 
+/**
+ * Class WLPListener that receives the liveliness messages asserting the liveliness of remote endpoints.
+ * @ingroup LIVELINESSMODULE
+ */
 class WLPListener: public SubscriberListener {
 public:
 	WLPListener(WLP* pwlp);
