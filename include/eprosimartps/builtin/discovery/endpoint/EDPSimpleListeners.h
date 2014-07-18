@@ -26,7 +26,7 @@ namespace rtps {
 
 class EDPSimple;
 /**
- * SEDP Publications Listener, used to define the behavior when a new DWriterData is received.
+ * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERYMODULE
  */
 class EDPSimplePUBReaderListener:public SubscriberListener{
@@ -39,7 +39,7 @@ public:
 	CDRMessage_t m_tempMsg;
 };
 /**
- * SEDP Subscription Listener, used to define the behavior when a new DReaderData is received.
+ * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERYMODULE
  */
 class EDPSimpleSUBReaderListener:public SubscriberListener{
@@ -53,7 +53,7 @@ public:
 };
 
 /**
- * Class SEDPListeners that contains two different Listeners for the Publications and Subscriptions Readers.
+ * Class EDPSimpleListeners that contains two different Listeners for the Publications and Subscriptions Readers.
  * @ingroup DISCOVERYMODULE
  */
 class EDPSimpleListeners {

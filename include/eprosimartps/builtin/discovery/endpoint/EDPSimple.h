@@ -15,7 +15,6 @@
 #define EDPSIMPLE_H_
 
 #include "eprosimartps/builtin/discovery/endpoint/EDP.h"
-
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimpleListeners.h"
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimpleTopicDataType.h"
 
@@ -27,13 +26,16 @@ class StatefulWriter;
 class RTPSWriter;
 class RTPSReader;
 
+/**
+ * Class EDPSimple, implements the SimpleEndpointDiscoveryProtocol defined in the RTPS specification. Inherits from EDP class.
+ * @ingroup DISCOVERYMODULE
+ */
 class EDPSimple : public EDP {
 public:
 	EDPSimple(PDPSimple* p,ParticipantImpl* part);
 	virtual ~EDPSimple();
-
+	//!Discovery attributes.
 	DiscoveryAttributes m_discovery;
-
 	//!Pointer to the Publications Writer (only created if indicated in the DiscoveryAtributes).
 	StatefulWriter* mp_PubWriter;
 	//!Pointer to the Subscriptions Writer (only created if indicated in the DiscoveryAtributes).
@@ -42,9 +44,11 @@ public:
 	StatefulReader* mp_PubReader;
 	//!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
 	StatefulReader* mp_SubReader;
-
+	//!EDPSimpleListeners object, contains two listeners for the Publication and Subscription readers.
 	EDPSimpleListeners m_listeners;
+	//!EDPSimpleTopicDatType to extract the key from unregistering and disposing messages.
 	EDPSimpleTopicDataType m_pubReaderTopicDataType;
+	//!EDPSimpleTopicDatType to extract the key from unregistering and disposing messages.
 	EDPSimpleTopicDataType m_subReaderTopicDataType;
 
 
@@ -54,20 +58,39 @@ public:
 	 * @return True if correct.
 	 */
 	bool initEDP(DiscoveryAttributes& attributes);
-
+	/**
+	 * This method assigns the remote builtin endpoints that the remote participant indicates is using to our local builtin endpoints.
+	 * @param pdata Pointer to the ParticipantProxyData object.
+	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
-
 	/**
 	 * Create local SEDP Endpoints based on the DiscoveryAttributes.
 	 * @return True if correct.
 	 */
 	bool createSEDPEndpoints();
-
+	/**
+	 * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
+	 * @param rdata Pointer to the ReaderProxyData object.
+	 * @return true if correct.
+	 */
 	bool processLocalReaderProxyData(ReaderProxyData* rdata);
-
-	bool processLocalWriterProxyData(WriterProxyData* rdata);
-
+	/**
+	 * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
+	 * @param wdata Pointer to the WriterProxyData object.
+	 * @return true if correct.
+	 */
+	bool processLocalWriterProxyData(WriterProxyData* wdata);
+	/**
+	 * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
+	 * @param Pointer to the RTPSReader object.
+	 * @return True if correct.
+	 */
 	bool removeLocalReader(RTPSReader*);
+	/**
+	 * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
+	 * @param Pointer to the RTPSWriter object.
+	 * @return True if correct.
+	 */
 	bool removeLocalWriter(RTPSWriter*);
 
 };
