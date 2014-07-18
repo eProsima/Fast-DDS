@@ -24,7 +24,7 @@ namespace rtps {
 class PDPSimple;
 class ResourceEvent;
 /**
- * Class ResendDiscoveryDataPeriod, TimedEvent used to periodically send the ParticipantDiscovery Data.
+ * Class ResendParticipantProxyDataPeriod, TimedEvent used to periodically send the ParticipantDiscovery Data.
  * @ingroup DISCOVERYMODULE
  */
 class ResendParticipantProxyDataPeriod: public TimedEvent {
@@ -33,10 +33,11 @@ public:
 			ResourceEvent* pEvent,
 			boost::posix_time::milliseconds interval);
 	virtual ~ResendParticipantProxyDataPeriod();
-
+	//!Temporal event that resends the participantProxyData to all remote participants.
 	void event(const boost::system::error_code& ec);
-
+	//!Auxiliar data message.
 	CDRMessage_t m_data_msg;
+	//!Pointer to the PDPSimple object.
 	PDPSimple* mp_PDP;
 };
 

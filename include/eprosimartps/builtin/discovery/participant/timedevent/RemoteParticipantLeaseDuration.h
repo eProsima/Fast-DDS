@@ -26,8 +26,9 @@ class ResourceEvent;
 class ParticipantProxyData;
 
 /**
- * Class ParticipantLeaseDuration, TimedEvent designed to remove a
- * remote Participant and all its Readers and Writers from the local Participant.
+ * Class RemoteParticipantLeaseDuration, TimedEvent designed to remove a
+ * remote Participant and all its Readers and Writers from the local Participant if it fails to
+ * announce its liveliness each leaseDuration period.
  */
 class RemoteParticipantLeaseDuration:public TimedEvent {
 public:
@@ -36,9 +37,14 @@ public:
 			ResourceEvent* pEvent,
 			boost::posix_time::milliseconds interval);
 	virtual ~RemoteParticipantLeaseDuration();
-
+	/**
+	 * temporal event that check if the participant is alive, and removes it if not.
+	 * @param ec
+	 */
 	void event(const boost::system::error_code& ec);
+	//!Pointer to the PDPSimple object.
 	PDPSimple* mp_PDP;
+	//!Pointer to the ParticipantProxyData object that contains this temporal event.
 	ParticipantProxyData* mp_participantProxyData;
 
 };

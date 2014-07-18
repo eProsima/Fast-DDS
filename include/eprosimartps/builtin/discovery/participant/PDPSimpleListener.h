@@ -40,9 +40,10 @@ public:
 	void onNewDataMessage();
 	//!Process a new added cache with this method.
 	bool newAddedCache();
-
+	//FIXME: TO IMPLEMENT WHEN A StaticEDP is created.
 	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredParticipantData* pdata);
 
+	//!Temporal ParticipantProxyData object used to read the messages.
 	ParticipantProxyData m_participantProxyData;
 };
 
