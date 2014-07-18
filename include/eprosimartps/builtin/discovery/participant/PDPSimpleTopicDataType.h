@@ -22,7 +22,9 @@ using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
-
+/**
+ * Class PDPSimpleTopicDataType used to deserialize the key from unregistering or disposing messages received in this topic.
+ */
 class PDPSimpleTopicDataType : public DDSTopicDataType {
 public:
 	PDPSimpleTopicDataType();
