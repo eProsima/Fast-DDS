@@ -62,7 +62,7 @@ public:
 
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
-	bool removeRemoteParticipant(ParticipantProxyData* pdata);
+	bool removeRemoteParticipant(GUID_t& partGUID);
 
 	BuiltinProtocols* mp_builtin;
 
@@ -72,6 +72,9 @@ public:
 	}
 
 	EDP* getEDP(){return mp_EDP;}
+
+	std::vector<ParticipantProxyData*>::const_iterator participantProxiesBegin(){return m_participantProxies.begin();};
+	std::vector<ParticipantProxyData*>::const_iterator participantProxiesEnd(){return m_participantProxies.end();};
 
 private:
 

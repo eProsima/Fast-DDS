@@ -50,7 +50,7 @@ EDPSimple::~EDPSimple() {
 
 bool EDPSimple::initEDP(DiscoveryAttributes& attributes)
 {
-	pInfo(RTPS_B_CYAN<<"Initializing EndpointDiscoveryProtocol"<<endl);
+	pInfo(RTPS_B_CYAN<<"Initializing  SIMPLE EndpointDiscoveryProtocol"<<endl);
 	m_discovery = attributes;
 
 	if(!createSEDPEndpoints())
@@ -177,6 +177,7 @@ bool EDPSimple::createSEDPEndpoints()
 
 bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
+	pDebugInfo(RTPS_CYAN<<"EDPSimple processing ReaderProxyData: "<<rdata->m_guid.entityId<<RTPS_DEF<<endl);
 	if(mp_SubWriter !=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -198,6 +199,7 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 }
 bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 {
+	pDebugInfo(RTPS_CYAN<<"EDPSimple processing WriterProxyData: "<<wdata->m_guid.entityId<<RTPS_DEF<<endl);
 	if(mp_PubWriter !=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -220,6 +222,7 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 
 bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 {
+	pDebugInfo(RTPS_CYAN<<"EDPSimple removing local Writer: "<<W->getGuid().entityId<<RTPS_DEF<<endl);
 	if(mp_PubWriter!=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -230,11 +233,12 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 			mp_PubWriter->unsent_change_add(change);
 		}
 	}
-	return unpairWriterProxy(W->getGuid());
+	return removeWriterProxy(W->getGuid());
 }
 
 bool EDPSimple::removeLocalReader(RTPSReader* R)
 {
+	pDebugInfo(RTPS_CYAN<<"EDPSimple removing local Reader: "<<R->getGuid().entityId<<RTPS_DEF<<endl);
 	if(mp_SubWriter!=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -245,7 +249,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 			mp_SubWriter->unsent_change_add(change);
 		}
 	}
-	return unpairReaderProxy(R->getGuid());
+	return removeReaderProxy(R->getGuid());
 }
 
 

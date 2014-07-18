@@ -56,6 +56,8 @@ public:
 
 	bool get_last_added_cache(CacheChange_t** change);
 
+	bool removeCacheChangesByKey(InstanceHandle_t& key);
+
 
 protected:
 	std::vector<FirstLastSeqNum> m_firstlastSeqNum;

@@ -55,7 +55,6 @@ public:
 	virtual ~ParticipantProxyData();
 
 	bool initializeData(ParticipantImpl* part, PDPSimple* pdp);
-	bool updateData(ParticipantImpl* part, PDPSimple* pdp);
 
 	bool updateData(ParticipantProxyData& pdata);
 

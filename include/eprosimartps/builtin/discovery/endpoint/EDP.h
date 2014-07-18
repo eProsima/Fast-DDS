@@ -50,12 +50,17 @@ public:
 
 	void pairWriterProxy(WriterProxyData* wdata);
 	void pairReaderProxy(ReaderProxyData* rdata);
+	void pairReader(RTPSReader* R);
+	void pairWriter(RTPSWriter* W);
 
 	bool validMatching(RTPSWriter* W,ReaderProxyData* rdata);
 	bool validMatching(RTPSReader* R,WriterProxyData* wdata);
 
-	bool unpairWriterProxy(const GUID_t& writer);
-	bool unpairReaderProxy(const GUID_t& reader);
+	bool removeWriterProxy(const GUID_t& writer);
+	bool removeReaderProxy(const GUID_t& reader);
+
+	bool unpairWriterProxy(WriterProxyData* wdata);
+	bool unpairReaderProxy(ReaderProxyData* rdata);
 
 	bool updatedReaderProxy(ReaderProxyData* rdata);
 	bool updatedWriterProxy(WriterProxyData* wdata);

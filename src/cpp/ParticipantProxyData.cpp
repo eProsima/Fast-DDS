@@ -85,12 +85,6 @@ bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 	return true;
 }
 
-bool ParticipantProxyData::updateData(ParticipantImpl* part, PDPSimple* pdp)
-{
-	cout << "NOT IMPLEMENTED YET"<<endl;
-	return false;
-}
-
 
 bool ParticipantProxyData::toParameterList()
 {

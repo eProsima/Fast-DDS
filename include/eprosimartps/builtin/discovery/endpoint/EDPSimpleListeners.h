@@ -61,7 +61,7 @@ public:
 	EDPSimpleListeners(EDPSimple* p):
 		m_pubReaderListener(p),
 		m_subReaderListener(p){};
-	virtual ~EDPSimpleListeners();
+	virtual ~EDPSimpleListeners(){};
 	EDPSimplePUBReaderListener m_pubReaderListener;
 	EDPSimpleSUBReaderListener m_subReaderListener;
 };

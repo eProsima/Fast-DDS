@@ -48,6 +48,12 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 		return false;
 }
 
+bool RTPSReader::removeCacheChangesByKey(InstanceHandle_t& key)
+{
+	return m_reader_cache.removeCacheChangesByKey(key);
+}
+
+
 //bool RTPSReader::acceptMsgFrom(EntityId_t& writerId)
 //{
 //	if(m_acceptMessagesFromUnkownWriters)
