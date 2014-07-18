@@ -24,12 +24,24 @@ namespace rtps {
 
 struct CDRMessage_t;
 
+/**
+ * Class ReaderProxyData, used to represent all the information on a Reader (both local and remote) with the purpose of
+ * implementing the discovery.
+ */
 class ReaderProxyData {
 public:
 	ReaderProxyData();
 	virtual ~ReaderProxyData();
+	/**
+	 * Convert the data to a parameter list to send this information as a RTPS message.
+	 * @return true if correct.
+	 */
 	bool toParameterList();
-
+	/**
+	 *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
+	 * @param msg Pointer to the message.
+	 * @return
+	 */
 	bool readFromCDRMessage(CDRMessage_t* msg);
 
 	GUID_t m_guid;
@@ -46,9 +58,19 @@ public:
 	TopicKind_t m_topicKind;
 
 	ParameterList_t m_parameterList;
-
+	/**
+	 * Clear (put to default) the information.
+	 */
 	void clear();
+	/**
+	 * Update the information (only certain fields can be updated).
+	 * @param rdata Poitner to the object from which we are going to update.
+	 */
 	void update(ReaderProxyData* rdata);
+	/**
+	 * Copy ALL the information from another object.
+	 * @param rdata Pointer to the object from where the information must be copied.
+	 */
 	void copy(ReaderProxyData* rdata);
 };
 
