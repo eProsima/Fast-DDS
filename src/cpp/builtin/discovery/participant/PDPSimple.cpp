@@ -293,6 +293,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 					if(copydata)
 					{
 						*returnReaderProxyData = *rit;
+						*pdata = *pit;
 					}
 					return false;
 				}
@@ -303,6 +304,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 				newRPD->copy(rdata);
 				(*pit)->m_readers.push_back(newRPD);
 				*returnReaderProxyData = newRPD;
+				*pdata = *pit;
 			}
 			else
 			{
