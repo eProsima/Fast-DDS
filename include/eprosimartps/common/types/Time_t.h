@@ -102,8 +102,8 @@ static inline Time_t MilliSec2Time_t(uint32_t millisec)
 static inline uint32_t Time_tAbsDiff2Millisec(const Time_t& t1,const Time_t& t2)
 {
 	uint32_t result = 0;
-	result +=abs((t2.seconds-t1.seconds)*1000);
-	result +=abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
+	result +=(uint32_t)abs((t2.seconds-t1.seconds)*1000);
+	result +=(uint32_t)abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
 	return result;
 }
 

@@ -43,7 +43,7 @@
 namespace eprosima {
 namespace rtps {
 
-class CDRMessage_t;
+struct CDRMessage_t;
 class PDPSimple;
 class RemoteParticipantLeaseDuration;
 class ParticipantImpl;
