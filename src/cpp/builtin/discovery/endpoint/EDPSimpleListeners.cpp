@@ -78,7 +78,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 			//REMOVE WRITER FROM OUR READERS:
 			pInfo(RTPS_CYAN<<"Disposed Remote Writer, removing..."<<RTPS_DEF<<endl);
 			GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-			this->mp_SEDP->unpairWriterProxy(auxGUID);
+			this->mp_SEDP->removeWriterProxy(auxGUID);
 		}
 	}
 	return;
@@ -139,7 +139,7 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 			//REMOVE WRITER FROM OUR READERS:
 			pInfo(RTPS_CYAN<<"Disposed Remote Writer, removing..."<<RTPS_DEF<<endl);
 			GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-			this->mp_SEDP->unpairReaderProxy(auxGUID);
+			this->mp_SEDP->removeReaderProxy(auxGUID);
 		}
 	}
 	return;

@@ -14,6 +14,7 @@
 #include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
 
 #include "eprosimartps/builtin/BuiltinProtocols.h"
+#include "eprosimartps/builtin/liveliness/WLP.h"
 
 #include "eprosimartps/dds/DomainParticipant.h"
 
@@ -35,14 +36,14 @@ namespace eprosima {
 namespace rtps {
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-												mp_builtin(built),
-												mp_participant(NULL),
-												mp_SPDPWriter(NULL),
-												mp_SPDPReader(NULL),
-												mp_EDP(NULL),
-												m_hasChangedLocalPDP(true),
-												mp_resendParticipantTimer(NULL),
-												m_listener(this)
+																		mp_builtin(built),
+																		mp_participant(NULL),
+																		mp_SPDPWriter(NULL),
+																		mp_SPDPReader(NULL),
+																		mp_EDP(NULL),
+																		m_hasChangedLocalPDP(true),
+																		mp_resendParticipantTimer(NULL),
+																		m_listener(this)
 {
 
 }
@@ -74,6 +75,7 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
 		mp_EDP = (EDP*)(new EDPSimple(this,mp_participant));
+		mp_EDP->initEDP(m_discovery);
 	}
 	else
 	{
@@ -105,7 +107,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 	CacheChange_t* change = NULL;
 	if(new_change || m_hasChangedLocalPDP)
 	{
-		m_participantProxies.front()->updateData(mp_participant,this);
+		m_participantProxies.front()->m_manualLivelinessCount++;
 		if(mp_SPDPWriter->getHistoryCacheSize() > 0)
 			mp_SPDPWriter->removeMinSeqCacheChange();
 		mp_SPDPWriter->new_change(ALIVE,NULL,&change);
@@ -167,6 +169,7 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wd
 
 bool PDPSimple::removeReaderProxyData(ReaderProxyData* rdata)
 {
+	pInfo(RTPS_CYAN<<"SimplePDP removing ReaderProxyData: "<<rdata->m_guid<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -186,6 +189,7 @@ bool PDPSimple::removeReaderProxyData(ReaderProxyData* rdata)
 
 bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 {
+	pInfo(RTPS_CYAN<<"SimplePDP removing WriterProxyData: "<<wdata->m_guid<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -205,7 +209,7 @@ bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 
 bool PDPSimple::createSPDPEndpoints()
 {
-	pInfo(RTPS_CYAN<<"Creating SPDP Endpoints"<<endl);
+	pInfo(RTPS_CYAN<<"Creating SPDP Endpoints"<<RTPS_DEF<<endl);
 	//SPDP BUILTIN PARTICIPANT WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
@@ -274,6 +278,7 @@ bool PDPSimple::createSPDPEndpoints()
 bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 		ReaderProxyData** returnReaderProxyData,ParticipantProxyData** pdata)
 {
+	pInfo(RTPS_CYAN<<"SimplePDP adding ReaderProxyData: "<<rdata->m_guid<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -312,6 +317,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 		WriterProxyData** returnWriterProxyData,ParticipantProxyData** pdata)
 {
+	pInfo(RTPS_CYAN<<"SimplePDP adding WriterProxyData: "<<wdata->m_guid<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -352,6 +358,7 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 
 void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
+	pInfo(RTPS_CYAN<<"SimplePDP assign remote endpoints for participant: "<<pdata->m_guid.guidPrefix<<RTPS_DEF<<endl);
 	WriterProxyData* wp = new WriterProxyData();
 	wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
 	wp->m_guid.entityId = c_EntityId_SPDPWriter;
@@ -373,26 +380,12 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	pdata->m_builtinReaders.push_back(rp);
 	mp_SPDPWriter->matched_reader_add(rp);
 
-	//	//FIXME: PUT THIS INSIDE ASSIGN REMOTE ENDPOINTS
-	//	for(LocatorListIterator it = pdata->m_metatrafficUnicastLocatorList.begin();
-	//			it!=pdata->m_metatrafficUnicastLocatorList.end();++it)
-	//	{
-	//		mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
-	//	}
-	//	for(LocatorListIterator it = pdata->m_metatrafficMulticastLocatorList.begin();
-	//			it!=pdata->m_metatrafficMulticastLocatorList.end();++it)
-	//	{
-	//		mp_SPDPWriter->reader_locator_add(*it,pdata->m_expectsInlineQos);
-	//	}
-
 	//Inform EDP of new participant data:
 	if(mp_EDP!=NULL)
 		mp_EDP->assignRemoteEndpoints(pdata);
-	//FIXME: CORREGIR ESTO****************************************************************************************************************
-	//*****************************************************************************************************************************
-	//	if(getWriterLivelinessPtr() !=NULL)
-	//		getWriterLivelinessPtr()->assignRemoteEndpoints(pdata);
-	//
+	if(mp_builtin->mp_WLP !=NULL)
+		mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+
 	//	//If staticEDP, perform matching:
 	//	//FIXME: PUT HIS INSISE REMOTE ENDPOINTS FOR STATIC DISCOVERY
 	//	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
@@ -413,8 +406,58 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 }
 
+bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
+{
+	pWarning("Removing remote participant: "<<partGUID<<endl;);
+	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
+	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
+	ParticipantProxyData* pdata=NULL;
+	//Remove it from our vector or participantProxies:
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
+	{
+		if((*pit)->m_guid == partGUID)
+		{
+			pdata = *pit;
+			m_participantProxies.erase(pit);
+			break;
+		}
+	}
+	if(pdata !=NULL)
+	{
+		for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
+				rit!= pdata->m_readers.end();++rit)
+		{
+			mp_EDP->unpairReaderProxy(*rit);
+			delete(*rit);
 
+		}
+		for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
+				wit!=pdata->m_writers.end();++wit)
+		{
+			mp_EDP->unpairWriterProxy(*wit);
+			delete(*wit);
+
+		}
+		for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReader->readerHistoryCacheBegin();
+				it!=this->mp_SPDPReader->readerHistoryCacheEnd();++it)
+		{
+			if((*it)->instanceHandle == pdata->m_key)
+			{
+				this->mp_SPDPReader->change_removed_by_history(*it);
+				break;
+			}
+		}
+		delete(pdata);
+		return true;
+	}
+
+	return false;
+
+}
 
 
 } /* namespace rtps */
 } /* namespace eprosima */
+
+

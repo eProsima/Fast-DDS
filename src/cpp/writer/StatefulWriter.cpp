@@ -205,8 +205,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 			{
 				if(changeForReader.status != ACKNOWLEDGED)
 				{
-					pDebugInfo("Change not acked. Relevant: " << changeForReader.is_relevant);
-					pDebugInfo(" status: " << changeForReader.status << endl);
+					pDebugInfo("Change not acked. Relevant: " << changeForReader.is_relevant<<" status: " << changeForReader.status << endl);
 					return false;
 				}
 			}
