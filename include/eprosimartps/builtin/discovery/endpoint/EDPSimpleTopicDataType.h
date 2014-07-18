@@ -22,6 +22,9 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class EDPSimpleTopicDataType, used by the history to extract the key in case the data comes serialized and not as inlineQos.
+ */
 class EDPSimpleTopicDataType: public DDSTopicDataType {
 public:
 	EDPSimpleTopicDataType();
