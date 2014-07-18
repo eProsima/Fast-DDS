@@ -21,6 +21,8 @@
 
 #include "eprosimartps/reader/StatelessReader.h"
 
+#include "eprosimartps/dds/DomainParticipant.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 
@@ -28,11 +30,11 @@ namespace eprosima {
 namespace rtps {
 
 BuiltinProtocols::BuiltinProtocols(ParticipantImpl* part):
-								mp_participant(part),
-								mp_PDP(NULL),
-								mp_WLP(NULL),
-								m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
-								m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
+										mp_participant(part),
+										mp_PDP(NULL),
+										mp_WLP(NULL),
+										m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
+										m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
 {
 	// TODO Auto-generated constructor stub
 
@@ -46,6 +48,14 @@ BuiltinProtocols::~BuiltinProtocols() {
 bool BuiltinProtocols::initBuiltinProtocols(const DiscoveryAttributes& attributes,uint32_t participantID)
 {
 	m_attributes = attributes;
+
+	DomainParticipantImpl* dp = DomainParticipantImpl::getInstance();
+	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getMulticastPort(m_attributes.domainId);
+
+	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getUnicastPort(m_attributes.domainId,participantID);
+
+	//cout << "PORTS: " << m_SPDP_WELL_KNOWN_MULTICAST_PORT << " "<< m_SPDP_WELL_KNOWN_UNICAST_PORT << endl;
+
 	Locator_t multiLocator;
 	multiLocator.kind = LOCATOR_KIND_UDPv4;
 	multiLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;

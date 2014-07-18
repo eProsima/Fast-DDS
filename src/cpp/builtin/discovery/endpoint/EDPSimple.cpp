@@ -211,8 +211,8 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = wdata->m_parameterList.m_cdrmsg.length;
 			memcpy(change->serializedPayload.data,wdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
-			mp_SubWriter->add_change(change);
-			mp_SubWriter->unsent_change_add(change);
+			mp_PubWriter->add_change(change);
+			mp_PubWriter->unsent_change_add(change);
 			return true;
 		}
 		return false;

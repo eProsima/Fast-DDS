@@ -29,7 +29,7 @@ class EDPSimple;
  * SEDP Publications Listener, used to define the behavior when a new DWriterData is received.
  * @ingroup DISCOVERYMODULE
  */
-class EDPSimplePUBReaderListener{
+class EDPSimplePUBReaderListener:public SubscriberListener{
 public:
 	EDPSimplePUBReaderListener(EDPSimple* p):mp_SEDP(p){};
 	virtual ~EDPSimplePUBReaderListener(){};
@@ -42,7 +42,7 @@ public:
  * SEDP Subscription Listener, used to define the behavior when a new DReaderData is received.
  * @ingroup DISCOVERYMODULE
  */
-class EDPSimpleSUBReaderListener{
+class EDPSimpleSUBReaderListener:public SubscriberListener{
 public:
 	EDPSimpleSUBReaderListener(EDPSimple* p):mp_SEDP(p){};
 	virtual ~EDPSimpleSUBReaderListener(){};

@@ -62,7 +62,10 @@ void ShapePublisher::write()
 
 void ShapePublisher::onPublicationMatched(MatchingInfo info)
 {
-    cout << "PUBLICATION MATCHED:*****************************"<<endl;
+    if(info.status == MATCHED_MATCHING)
+        cout << "Publisher MATCHES Sub: "<< info.remoteEndpointGuid << "*****************************"<<endl;
+    else if(info.status == REMOVED_MATCHING)
+        cout << "Publisher REMOVED Sub " << info.remoteEndpointGuid << "*****************************"<<endl;
 }
 
 

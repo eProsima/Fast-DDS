@@ -446,7 +446,9 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						{
 							if((*it)->getListener()!=NULL)
 							{
+								//cout << "CALLING NEWDATAMESSAGE "<<endl;
 								(*it)->getListener()->onNewDataMessage();
+								//cout << "FINISH CALLING " <<endl;
 								if((*it)->isHistoryFull())
 									(*it)->getListener()->onHistoryFull();
 							}
