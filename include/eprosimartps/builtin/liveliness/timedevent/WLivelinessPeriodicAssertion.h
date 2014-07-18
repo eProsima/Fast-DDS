@@ -25,12 +25,18 @@ namespace rtps {
 
 class WLP;
 
+/**
+ * Class WLivelinessPeriodicAssertion, used to assert the liveliness of the writers in a participant.
+ * @ingroup LIVELINESSMODULE
+ */
 class WLivelinessPeriodicAssertion: public TimedEvent {
 public:
 	WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind);
 	virtual ~WLivelinessPeriodicAssertion();
 	void event(const boost::system::error_code& ec);
+	//!Liveliness Kind that is being asserted by this object.
 	LivelinessQosPolicyKind m_livelinessKind;
+	//!Pointer to the WLP object.
 	WLP* mp_WLP;
 
 	bool AutomaticLivelinessAssertion();

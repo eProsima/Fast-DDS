@@ -32,6 +32,7 @@ class RemoteParticipantLeaseDuration;
 
 /**
  * Class PDPSimple that implements the SimpleParticipantDiscoveryProtocol as defined in the RTPS specification.
+ * @ingroup DISCOVERYMODULE
  */
 class PDPSimple {
 	friend class ResendParticipantProxyDataPeriod;

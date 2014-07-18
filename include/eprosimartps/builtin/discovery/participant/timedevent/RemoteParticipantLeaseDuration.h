@@ -29,6 +29,7 @@ class ParticipantProxyData;
  * Class RemoteParticipantLeaseDuration, TimedEvent designed to remove a
  * remote Participant and all its Readers and Writers from the local Participant if it fails to
  * announce its liveliness each leaseDuration period.
+ * @ingroup DISCOVERYMODULE
  */
 class RemoteParticipantLeaseDuration:public TimedEvent {
 public:
