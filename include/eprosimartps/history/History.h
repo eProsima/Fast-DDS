@@ -37,7 +37,7 @@ class RTPSReader;
 class Endpoint;
 
 /**
- * Class HistoryCache, container of the different CacheChanges and the methods to access them.
+ * Class History, container of the different CacheChanges and the methods to access them.
  * @ingroup COMMONMODULE
  */
 class History: public boost::basic_lockable_adapter<boost::recursive_mutex>
@@ -125,7 +125,7 @@ public:
 	bool get_min_change(CacheChange_t** min_change);
 	/**
 	 * Get the maximum CacheChange_t.
-	 * @param min_change Pointer to pointer to the maximum change.
+	 * @param max_change Pointer to pointer to the maximum change.
 	 * @return True if correct.
 	 */
 	bool get_max_change(CacheChange_t** max_change);

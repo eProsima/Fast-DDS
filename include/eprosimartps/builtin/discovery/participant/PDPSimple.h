@@ -86,7 +86,7 @@ public:
 	/**
 	 * This method returns a pointer to a WriterProxyData object if it is found among the registered participants (including the local participant).
 	 * @param[in] writer GUID_t of the writer we are looking for.
-	 * @param[out] wdata Pointer to pointer of the WriterProxyData object.
+	 * @param[out] rdata Pointer to pointer of the WriterProxyData object.
 	 * @return True if found.
 	 */
 	bool lookupWriterProxyData(const GUID_t& writer,WriterProxyData** rdata);

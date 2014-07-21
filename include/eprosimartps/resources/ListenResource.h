@@ -29,7 +29,10 @@ class ParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 class Endpoint;
-
+/**
+ * Class ListenResource, used to control the listen sockets and the received messages.
+ * @ingroup MANAGEMENTMODULE
+ */
 class ListenResource {
 	friend class MessageReceiver;
 public:

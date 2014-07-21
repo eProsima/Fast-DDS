@@ -52,16 +52,16 @@ public:
 	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
-	 * @param Pointer to the Reader to remove.
+	 * @param R Pointer to the Reader to remove.
 	 * @return True if correctly removed.
 	 */
-	virtual bool removeLocalReader(RTPSReader*)=0;
+	virtual bool removeLocalReader(RTPSReader* R)=0;
 	/**
 	 * Abstract method that removes a local Writer from the discovery method
-	 * @param Pointer to the Writer to remove.
+	 * @param W Pointer to the Writer to remove.
 	 * @return True if correctly removed.
 	 */
-	virtual bool removeLocalWriter(RTPSWriter*)=0;
+	virtual bool removeLocalWriter(RTPSWriter*W)=0;
 
 	/**
 	 * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
@@ -78,16 +78,16 @@ public:
 
 	/**
 	 * Create a new ReaderPD for a local Reader.
-	 * @param Pointer to the RTPSReader.
+	 * @param R Pointer to the RTPSReader.
 	 * @return True if correct.
 	 */
-	bool newLocalReaderProxyData(RTPSReader*);
+	bool newLocalReaderProxyData(RTPSReader* R);
 	/**
 	 * Create a new ReaderPD for a local Writer.
-	 * @param Pointer to the RTPSWriter.
+	 * @param W Pointer to the RTPSWriter.
 	 * @return True if correct.
 	 */
-	bool newLocalWriterProxyData(RTPSWriter*);
+	bool newLocalWriterProxyData(RTPSWriter* W);
 	/**
 	 * Pair a WriterProxyData against all local Readers.
 	 * @param wdata Pointer to the WPD object.
