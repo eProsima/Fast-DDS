@@ -52,7 +52,7 @@ public:
 	 * Get the minimum sequenceNumber available from this Writer.
 	 * @param[out] seqNum Pointer to the sequenceNumber
 	 * @return True if correct.
- */
+	 */
 	bool available_changes_min(SequenceNumber_t* seqNum);
 	/**
 	 * Update the missing changes up to the provided sequenceNumber.
@@ -140,8 +140,8 @@ private:
 	 * You then marked them as Missing or lost.
 	 * @param seqNum SequenceNumber to use.
 	 * @return True if correct
-		 */
-	bool add_changes_from_writer_up_to(SequenceNumber_t seq);
+	 */
+	bool add_changes_from_writer_up_to(SequenceNumber_t seqNum);
 
 
 	SequenceNumber_t m_max_available_seqNum;

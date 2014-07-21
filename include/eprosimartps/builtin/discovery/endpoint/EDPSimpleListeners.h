@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file EDPSimpleListener.h
+ * @file EDPSimpleListeners.h
  *
  */
 

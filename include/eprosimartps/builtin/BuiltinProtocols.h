@@ -61,7 +61,7 @@ public:
 	bool addLocalWriter(RTPSWriter* w);
 	/**
 	 * Add a local Reader to the BuiltinProtocols.
-	 * @param w Pointer to the RTPSReader.
+	 * @param R Pointer to the RTPSReader.
 	 * @return True if correct.
 	 */
 	bool addLocalReader(RTPSReader* R);

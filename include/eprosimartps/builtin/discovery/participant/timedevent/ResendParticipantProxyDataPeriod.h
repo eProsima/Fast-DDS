@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ResendParticipantProxyDataPeriod
+ * @file ResendParticipantProxyDataPeriod.h
  *
  */
 

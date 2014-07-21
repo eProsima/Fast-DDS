@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ParticipantLeaseDuration.h
+ * @file RemoteParticipantLeaseDuration.h
  *
 */
 

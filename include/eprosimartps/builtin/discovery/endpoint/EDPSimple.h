@@ -82,16 +82,16 @@ public:
 	bool processLocalWriterProxyData(WriterProxyData* wdata);
 	/**
 	 * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
-	 * @param Pointer to the RTPSReader object.
+	 * @param R Pointer to the RTPSReader object.
 	 * @return True if correct.
 	 */
-	bool removeLocalReader(RTPSReader*);
+	bool removeLocalReader(RTPSReader*R);
 	/**
 	 * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
-	 * @param Pointer to the RTPSWriter object.
+	 * @param W Pointer to the RTPSWriter object.
 	 * @return True if correct.
 	 */
-	bool removeLocalWriter(RTPSWriter*);
+	bool removeLocalWriter(RTPSWriter*W);
 
 };
 
