@@ -39,7 +39,6 @@ public:
 		is_waiting = false;
 		--m_count;
 	}
-
 	void post()
 	{
 		boost::mutex::scoped_lock lock(m_mutex);
@@ -47,22 +46,16 @@ public:
 		if(is_waiting)
 			m_condition.notify_one();
 	}
-
 	void reset()
 	{
 		boost::mutex::scoped_lock lock(m_mutex);
 		m_count = 0;
 	}
-
-
 private:
 	uint32_t m_count;
 	bool is_waiting;
 	boost::mutex m_mutex;
 	boost::condition_variable m_condition;
-
-
-
 };
 
 } /* namespace dds */

@@ -29,13 +29,9 @@ public:
 	WriterProxyData();
 	virtual ~WriterProxyData();
 
-	bool toParameterList();
-
-	bool readFromCDRMessage(CDRMessage_t* msg);
 	GUID_t m_guid;
 	LocatorList_t m_unicastLocatorList;
 	LocatorList_t m_multicastLocatorList;
-
 	InstanceHandle_t m_key;
 	InstanceHandle_t m_participantKey;
 	std::string m_typeName;
@@ -43,16 +39,19 @@ public:
 	uint16_t m_userDefinedId;
 	WriterQos m_qos;
 	uint32_t m_typeMaxSerialized;
-
 	bool m_isAlive;
 	TopicKind_t m_topicKind;
-
-
 	ParameterList_t m_parameterList;
-
+	//!Clear the information and return the object to the default state.
 	void clear();
+	//!Update certain parameters from another object.
 	void update(WriterProxyData* rdata);
+	//!Copy all information from another object.
 	void copy(WriterProxyData* rdata);
+	//!Convert the information to a parameter list to be send in a CDRMessage.
+	bool toParameterList();
+	//!Read a parameter list from a CDRMessage_t.
+	bool readFromCDRMessage(CDRMessage_t* msg);
 };
 
 } /* namespace rtps */

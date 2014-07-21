@@ -124,7 +124,7 @@ public:
 
 
 	//!Parameters of the ReaderProxy
-		ReaderProxyData* m_data;
+	ReaderProxyData* m_data;
 
 
 	//!Pointer to the associated StatefulWriter.
@@ -139,16 +139,16 @@ public:
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
 
 
-		//!Timed Event to manage the Acknack response delay.
-		NackResponseDelay m_nackResponse;
-		//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
-		NackSupressionDuration m_nackSupression;
+	//!Timed Event to manage the Acknack response delay.
+	NackResponseDelay m_nackResponse;
+	//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
+	NackSupressionDuration m_nackSupression;
 
-		uint32_t m_lastAcknackCount;
+	uint32_t m_lastAcknackCount;
 
 
 	//TODOG DDSFILTER
-		bool dds_is_relevant(CacheChange_t* change);
+	bool dds_is_relevant(CacheChange_t* change);
 
 
 

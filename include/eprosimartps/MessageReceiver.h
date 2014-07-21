@@ -51,9 +51,7 @@ public:
 	ParameterList_t m_ParamList;
 
 private:
-//	//!CDRMEssage_t being processed.
-//	CDRMessage_t msg;
-	//!Protocolverison of the message
+	//!Protocol version of the message
 	ProtocolVersion_t sourceVersion;
 	//!VendorID that created the message
 	VendorId_t sourceVendorId;

@@ -20,14 +20,7 @@
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 
-
-//#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
-//#include "eprosimartps/discovery/SimplePDP.h"
-//
-//#include "eprosimartps/liveliness/WriterLiveliness.h"
-
 #include "eprosimartps/builtin/BuiltinProtocols.h"
-
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"

@@ -20,7 +20,9 @@ namespace eprosima {
 namespace rtps {
 
 class WriterProxy;
-
+/**
+ * Class WriterProxyLiveliness, timed event to check the liveliness of a writer each leaseDuration.
+ */
 class WriterProxyLiveliness: public TimedEvent {
 public:
 	WriterProxyLiveliness(WriterProxy* wp,boost::posix_time::milliseconds interval);

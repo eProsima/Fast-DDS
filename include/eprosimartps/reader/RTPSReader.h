@@ -8,7 +8,7 @@
 
 /**
  * @file RTPSReader.h
-*/
+ */
 
 
 
@@ -49,7 +49,7 @@ class WriterProxyData;
 
 /**
  * Class RTPSReader, manages the reception of data from the writers.
-  * @ingroup READERMODULE
+ * @ingroup READERMODULE
  */
 class RTPSReader : public Endpoint{
 
@@ -58,14 +58,44 @@ public:
 			StateKind_t state = STATELESS,
 			int16_t userDefinedId=-1,uint32_t payload_size = 500);
 	virtual ~RTPSReader();
-
+	/**
+	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+	 * pointed by the StatusInfo_t structure.
+	 * @param data Pointer to memory that can hold a sample.
+	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+	 * @return True if correct.
+	 */
 	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
+	/**
+	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+	 * pointed by the StatusInfo_t structure.
+	 * @param data Pointer to memory that can hold a sample.
+	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+	 * @return True if correct.
+	 */
 	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
+	/**
+	 * Add a matched writer represented by a WriterProxyData object.
+	 * @param wdata Pointer to the WPD object to add.
+	 * @return True if correctly added.
+	 */
 	virtual bool matched_writer_add(WriterProxyData* wdata)=0;
+	/**
+	 * Remove a WriterProxyData from the matached writers.
+	 * @param wdata Pointer to the WPD object.
+	 * @return True if correct.
+	 */
 	virtual bool matched_writer_remove(WriterProxyData* wdata)=0;
+	/**
+	 * Get the number of matched publishers.
+	 * @return True if correct.
+	 */
 	virtual size_t getMatchedPublishers()=0;
+	//!Returns true if there are unread cacheChanges.
 	virtual bool isUnreadCacheChange()=0;
-	virtual bool acceptMsgFrom(GUID_t& entityId)=0;
+	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
+	virtual bool acceptMsgFrom(GUID_t& entityGUID)=0;
+	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
 	virtual bool change_removed_by_history(CacheChange_t*)=0;
 
 
@@ -86,9 +116,14 @@ public:
 	bool get_last_added_cache(CacheChange_t** change){	return m_reader_cache.get_last_added_cache(change);}
 	void setTrustedWriter(EntityId_t writer){m_acceptMessagesFromUnkownWriters=false;m_trustedWriterEntityId = writer;	}
 
+
 	Semaphore m_semaphore;
 
-
+	/**
+	 * Remove the CacheChange_t's that match the InstanceHandle_t passed.
+	 * @param key The instance handle to remove.
+	 * @return True if correct.
+	 */
 	bool removeCacheChangesByKey(InstanceHandle_t& key);
 
 protected:

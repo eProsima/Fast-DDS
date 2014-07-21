@@ -29,7 +29,6 @@
 #include "eprosimartps/dds/attributes/all_attributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
-#include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/resources/ListenResource.h"
 #include "eprosimartps/resources/ResourceSend.h"
 

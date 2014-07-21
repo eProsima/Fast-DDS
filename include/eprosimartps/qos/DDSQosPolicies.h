@@ -25,7 +25,7 @@ namespace eprosima{
 namespace dds{
 
 /**
- * QosPolicy is a base class for all the different Qos defined to the Writers and Readers.
+ * QosPolicy is a base class for all the different QoS defined to the Writers and Readers.
  */
 class QosPolicy{
 public:
