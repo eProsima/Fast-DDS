@@ -145,7 +145,7 @@ private:
 	//!Pointer to the local participant.
 	ParticipantImpl* mp_participant;
 	//!Discovery attributes.
-	DiscoveryAttributes m_discovery;
+	BuiltinAttributes m_discovery;
 	//!Pointer to the SPDPWriter.
 	StatelessWriter* mp_SPDPWriter;
 	//!Pointer to the SPDPReader.

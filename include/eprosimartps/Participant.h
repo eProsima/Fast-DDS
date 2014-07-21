@@ -172,8 +172,8 @@ public:
 
 	void ResourceSemaphoreWait();
 
-	const DiscoveryAttributes& getDiscoveryAttributes() const {
-		return m_discovery;
+	const BuiltinAttributes& getBuiltinAttributes() const {
+		return m_builtin;
 	}
 
 	ResourceEvent* getEventResource()
@@ -251,7 +251,7 @@ private:
 
 	BuiltinProtocols m_builtinProtocols;
 
-	DiscoveryAttributes m_discovery;
+	BuiltinAttributes m_builtin;
 
 	uint32_t m_participantID;
 

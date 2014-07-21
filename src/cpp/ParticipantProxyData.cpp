@@ -40,24 +40,24 @@ ParticipantProxyData::~ParticipantProxyData() {
 
 bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 {
-	this->m_leaseDuration = part->getDiscoveryAttributes().leaseDuration;
+	this->m_leaseDuration = part->getBuiltinAttributes().leaseDuration;
 	VENDORID_EPROSIMA(this->m_VendorId);
 
 	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
-	if(part->getDiscoveryAttributes().use_WriterLivelinessProtocol)
+	if(part->getBuiltinAttributes().use_WriterLivelinessProtocol)
 	{
 		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
 	}
-	if(part->getDiscoveryAttributes().use_SIMPLE_EndpointDiscoveryProtocol)
+	if(part->getBuiltinAttributes().use_SIMPLE_EndpointDiscoveryProtocol)
 	{
-		if(part->getDiscoveryAttributes().m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+		if(part->getBuiltinAttributes().m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
 		{
 			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
 		}
-		if(part->getDiscoveryAttributes().m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+		if(part->getBuiltinAttributes().m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
 		{
 			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
 			this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;

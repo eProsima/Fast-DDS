@@ -40,11 +40,11 @@ public:
 	 * @param participantID ID of the local participant.
 	 * @return True if correct.
 	 */
-	bool initBuiltinProtocols(const DiscoveryAttributes& attributes, uint32_t participantID);
+	bool initBuiltinProtocols(const BuiltinAttributes& attributes, uint32_t participantID);
 	//!Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
 	bool updateMetatrafficLocators(LocatorList_t& loclist);
 
-	DiscoveryAttributes m_attributes;
+	BuiltinAttributes m_attributes;
 	ParticipantImpl* mp_participant;
 	PDPSimple* mp_PDP;
 	WLP* mp_WLP;

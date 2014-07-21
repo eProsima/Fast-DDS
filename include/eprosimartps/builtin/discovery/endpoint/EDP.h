@@ -44,7 +44,7 @@ public:
 	 * @param attributes DiscoveryAttributes structure.
 	 * @return True if correct.
 	 */
-	virtual bool initEDP(DiscoveryAttributes& attributes)=0;
+	virtual bool initEDP(BuiltinAttributes& attributes)=0;
 	/**
 	 * Abstract method that assigns remote endpoints when a new participantProxyData is discovered.
 	 * @param pdata

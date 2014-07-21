@@ -45,7 +45,7 @@ BuiltinProtocols::~BuiltinProtocols() {
 }
 
 
-bool BuiltinProtocols::initBuiltinProtocols(const DiscoveryAttributes& attributes,uint32_t participantID)
+bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,uint32_t participantID)
 {
 	m_attributes = attributes;
 

@@ -29,9 +29,13 @@ class RTPS_DllAPI PublisherListener
 public:
 	PublisherListener();
 	virtual ~PublisherListener();
-
+	/**
+	 * This method is called when the Publisher is matched (or unatched) against an endpoint.
+	 */
 	virtual void onPublicationMatched(MatchingInfo info);
-
+	/**
+	 * This method is called when the History is full.
+	 */
 	virtual void onHistoryFull();
 };
 
