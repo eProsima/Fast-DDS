@@ -220,20 +220,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		delete(SReader);
 		return false;
 	}
-//	if(!isBuiltin)
-//	{
-//		m_userReaderList.push_back(SReader);
-//		if(mp_PDP!=NULL)
-//			mp_PDP->localReaderMatching(SReader,true);
-//		//Match the readers in the same participant
-//		for(std::vector<RTPSWriter*>::iterator wit = this->m_userWriterList.begin();
-//				wit!=this->m_userWriterList.end();++wit)
-//		{
-//			mp_PDP->localWriterMatching(*wit,false);
-//		}
-//	}
 	m_allReaderList.push_back(SReader);
-
 
 	*ReaderOut = SReader;
 	return true;

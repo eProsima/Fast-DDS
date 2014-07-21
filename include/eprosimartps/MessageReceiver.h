@@ -8,7 +8,7 @@
 
 /**
  * @file MessageReceiver.h
-*/
+ */
 
 
 
@@ -28,7 +28,7 @@ struct SubmessageHeader_t;
 
 /**
  * Class MessageReceiver, process the received messages.
-  * @ingroup MANAGEMENTMODULE
+ * @ingroup MANAGEMENTMODULE
  */
 class MessageReceiver {
 public:
@@ -85,10 +85,26 @@ private:
 	 */
 
 	///@{
-
+	/**
+	 * Check the RTPSHeader of a received message.
+	 * @param msg Pointer to the message.
+	 * @return True if correct.
+	 */
 	bool checkRTPSHeader(CDRMessage_t*msg);
+	/**
+	 * Read the submessage header of a message.
+	 * @param msg Pointer to the CDRMessage_t to read.
+	 * @param smh Pointer to the submessageheader structure.
+	 * @return True if correctly read.
+	 */
 	bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
-
+	/**
+	 *
+	 * @param msg
+	 * @param smh
+	 * @param last
+	 * @return
+	 */
 	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 
 	bool proc_Submsg_Acknack(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
