@@ -63,17 +63,30 @@ public:
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
-
+	//!Get the number of changes in the History.
 	size_t getHistoryCacheSize()
 	{
 		return this->m_writer_cache.getHistorySize();
 	}
-
+	/**
+	 * Add a change to the unsent list.
+	 * @param change Pointer to the change to add.
+	 */
 	virtual void unsent_change_add(CacheChange_t* change)=0;
+	/**
+	 * Remove the change with the minimum SequenceNumber
+	 * @return True if removed.
+	 */
 	virtual bool removeMinSeqCacheChange()=0;
+	/**
+	 * Remove all changes from history
+	 * @param n_removed Pointer to return the number of elements removed.
+	 * @return True if correct.
+	 */
 	virtual bool removeAllCacheChange(size_t* n_removed)=0;
+	//!Get the number of matched subscribers.
 	virtual size_t getMatchedSubscribers()=0;
-
+	//!Add a new change to the history.
 	bool add_new_change(ChangeKind_t kind,void*Data);
 
 	/**
@@ -158,10 +171,23 @@ public:
 	{
 		m_livelinessAsserted = live;
 	}
-
+	/**
+	 * Inidicate the writer that a change has been removed by the history due to some HistoryQos requirement.
+	 * @param a_change Pointer to the change that is going to be removed.
+	 * @return True if removed correctly.
+	 */
 	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
-
+	/**
+	 * Add a matched reader.
+	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @return True if added.
+	 */
 	virtual bool matched_reader_add(ReaderProxyData* rdata)=0;
+	/**
+	 * Remove a matched reader.
+	 * @param rdata Pointer to the object to remove.
+	 * @return True if removed.
+	 */
 	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
 
 protected:
@@ -184,8 +210,6 @@ protected:
 	WriterQos m_qos;
 	//Publisher* m_Pub;
 	PublisherListener* mp_listener;
-
-	//QosList_t m_ParameterQosList;
 
 	ParameterList_t m_inlineQos;
 

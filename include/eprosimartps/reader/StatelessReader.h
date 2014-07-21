@@ -35,25 +35,51 @@ public:
 			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
 
+	/**
+	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+	 * pointed by the StatusInfo_t structure.
+	 * @param data Pointer to memory that can hold a sample.
+	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+	 * @return True if correct.
+	 */
+	bool readNextCacheChange(void*data,SampleInfo_t* info);
+	/**
+	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+	 * pointed by the StatusInfo_t structure.
+	 * @param data Pointer to memory that can hold a sample.
+	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+	 * @return True if correct.
+	 */
+	bool takeNextCacheChange(void*data,SampleInfo_t* info);
+	//!Returns true if there are unread cacheChanges.
+	bool isUnreadCacheChange();
+	/**
+	 * Get the number of matched publishers.
+	 * @return True if correct.
+	 */
+	size_t getMatchedPublishers(){return 0;}
+	/**
+	 * Add a matched writer represented by a WriterProxyData object.
+	 * @param wdata Pointer to the WPD object to add.
+	 * @return True if correctly added.
+	 */
+	bool matched_writer_add(WriterProxyData* wdata);
+	/**
+	 * Remove a WriterProxyData from the matached writers.
+	 * @param wdata Pointer to the WPD object.
+	 * @return True if correct.
+	 */
+	bool matched_writer_remove(WriterProxyData* wdata);
 
-	 bool readNextCacheChange(void*data,SampleInfo_t* info);
-	 bool takeNextCacheChange(void*data,SampleInfo_t* info);
-	 bool isUnreadCacheChange();
-
-	 size_t getMatchedPublishers(){return 0;}
-
-	 bool matched_writer_add(WriterProxyData* wdata);
-	 bool matched_writer_remove(WriterProxyData* wdata);
-
-
-	 bool change_removed_by_history(CacheChange_t*);
-
-	 bool acceptMsgFrom(GUID_t& entityId);
+	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	bool change_removed_by_history(CacheChange_t*);
+	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
+	bool acceptMsgFrom(GUID_t& entityId);
 
 private:
-	 //!List of GUID_t os matched writers.
-	 //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
-	 std::vector<WriterProxyData*> m_matched_writers;
+	//!List of GUID_t os matched writers.
+	//!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
+	std::vector<WriterProxyData*> m_matched_writers;
 
 };
 

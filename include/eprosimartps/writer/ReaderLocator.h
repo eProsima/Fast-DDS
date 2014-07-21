@@ -44,7 +44,7 @@ public:
 	std::vector<CacheChange_t*> requested_changes;
 	//!Vector containing pointers to the unsent changes to this reader.
 	std::vector<CacheChange_t*> unsent_changes;
-
+	//!Number of times this locator has been used (in case different readers use the same locator).
 	uint32_t n_used;
 
 	/**

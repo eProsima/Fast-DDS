@@ -35,12 +35,29 @@ class ListenResource {
 public:
 	ListenResource(ParticipantImpl* p);
 	virtual ~ListenResource();
-
+	/**
+	 * Initialize the listening thread.
+	 * @param loc Locator to open the socket.
+	 * @param isMulti Boolean for when is multicast.
+	 * @param isFixed Boolean to indicate whether another locator can be use in case the default is already being used.
+	 * @return The locator that has been opennend.
+	 */
 	Locator_t init_thread(Locator_t& loc,bool isMulti,bool isFixed);
-
+	/**
+	 * Add an associated enpoint to the list.
+	 * @param end Pointer to the endpoint.
+	 * @return True if correct.
+	 */
 	bool addAssociatedEndpoint(Endpoint* end);
+	/**
+	 * Remove an endpoint from the associated endpoint list.
+	 * @param end Pointer to the endpoint.
+	 * @return True if correct.
+	 */
 	bool removeAssociatedEndpoint(Endpoint* end);
+	//!Returns true if the ListenResource is listenning to a specific locator.
 	bool isListeningTo(const Locator_t& loc);
+	//!Returns trus if the ListenResource has any associated endpoints.
 	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
 private:
 	ParticipantImpl* mp_participantImpl;
