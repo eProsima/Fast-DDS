@@ -35,7 +35,7 @@ public:
 	EDPSimple(PDPSimple* p,ParticipantImpl* part);
 	virtual ~EDPSimple();
 	//!Discovery attributes.
-	DiscoveryAttributes m_discovery;
+	BuiltinAttributes m_discovery;
 	//!Pointer to the Publications Writer (only created if indicated in the DiscoveryAtributes).
 	StatefulWriter* mp_PubWriter;
 	//!Pointer to the Subscriptions Writer (only created if indicated in the DiscoveryAtributes).
@@ -57,7 +57,7 @@ public:
 	 * @param attributes Reference to the DiscoveryAttributes.
 	 * @return True if correct.
 	 */
-	bool initEDP(DiscoveryAttributes& attributes);
+	bool initEDP(BuiltinAttributes& attributes);
 	/**
 	 * This method assigns the remote builtin endpoints that the remote participant indicates is using to our local builtin endpoints.
 	 * @param pdata Pointer to the ParticipantProxyData object.

@@ -178,7 +178,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		return NULL;
 	}
 	PublisherImpl* pubImpl = NULL;
-	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
+	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(WParam.userDefinedId <= 0)
 		{
@@ -242,7 +242,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		return NULL;
 	}
 	SubscriberImpl* subImpl = NULL;
-	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
+	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(RParam.userDefinedId <= 0)
 		{

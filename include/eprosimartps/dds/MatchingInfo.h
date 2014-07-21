@@ -23,14 +23,19 @@ using namespace rtps;
 namespace dds{
 
 
-
+/**
+ * Enumeration MatchingStatus, indicates whether the matched publication/subscription method of the PublisherListener or SubscriberListener has
+ * been called for a matching or a removal of a remote endpoint.
+ */
 enum MatchingStatus{
-	MATCHED_MATCHING,
-	REMOVED_MATCHING
+	MATCHED_MATCHING,//!< MATCHED_MATCHING
+	REMOVED_MATCHING //!< REMOVED_MATCHING
 
 };
 
-
+/**
+ * Class MatchingInfo contains information about the matching between two endpoints.
+ */
 class MatchingInfo
 {
 public:

@@ -30,32 +30,44 @@ class ReaderHistory: public History {
 public:
 	ReaderHistory(Endpoint* endp,uint32_t payload_max_size=5000);
 	virtual ~ReaderHistory();
-
+	/**
+	 * Add a CacheChange_t to the ReaderHistory.
+	 * @param a_change Pointer to the CacheChange to add.
+	 * @return True if added.
+	 */
 	bool add_change(CacheChange_t* a_change);
-
+	/**
+	 * Sort the CacheChange_t from the History.
+	 */
 	void sortCacheChanges();
-
+	/**
+	 * Update the maximum and minimum sequenceNumber cacheChanges.
+	 */
 	void updateMaxMinSeqNum();
-
+	/**
+	 * Method to know whether there are unread CacheChange_t.
+	 * @return True if there are unread.
+	 */
 	bool isUnreadCache();
-
+	//!Increase the unread count.
 	void increaseUnreadCount()
 	{
 		++m_unreadCacheCount;
 	}
+	//!Decrease the unread count.
 	void decreaseUnreadCount()
 	{
 		if(m_unreadCacheCount>0)
 			--m_unreadCacheCount;
 	}
-
+	//!Get the unread count.
 	uint64_t getUnreadCount()
 	{
 		return m_unreadCacheCount;
 	}
-
+	//!Get the last added cacheChange.
 	bool get_last_added_cache(CacheChange_t** change);
-
+	//!Remove all the changes of a specific InstanceHandle_t.
 	bool removeCacheChangesByKey(InstanceHandle_t& key);
 
 

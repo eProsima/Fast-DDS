@@ -48,7 +48,7 @@ EDPSimple::~EDPSimple() {
 }
 
 
-bool EDPSimple::initEDP(DiscoveryAttributes& attributes)
+bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 {
 	pInfo(RTPS_B_CYAN<<"Initializing  SIMPLE EndpointDiscoveryProtocol"<<endl);
 	m_discovery = attributes;

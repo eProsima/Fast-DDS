@@ -56,7 +56,7 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 {
 	pInfo(RTPS_B_CYAN<<"Beginning ParticipantDiscoveryProtocol Initialization"<<RTPS_DEF<<endl);
 	mp_participant = part;
-	m_discovery = mp_participant->getDiscoveryAttributes();
+	m_discovery = mp_participant->getBuiltinAttributes();
 
 	if(!createSPDPEndpoints())
 		return false;
@@ -84,7 +84,7 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	}
 
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,mp_participant->getEventResource(),
-			boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.resendDiscoveryParticipantDataPeriod)));
+			boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.leaseDuration_announcementperiod)));
 
 	this->mp_SPDPReader->unlock();
 	this->mp_SPDPWriter->unlock();

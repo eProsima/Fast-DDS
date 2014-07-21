@@ -36,7 +36,7 @@ public:
 	 */
 	virtual void onHistoryFull();
 	/**
-	 * Virtual method to be called when the subscriber is matched with a new Writer; i.e., when a writer publishing in the same topic is discovered.
+	 * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
 	 */
 	virtual void onSubscriptionMatched(MatchingInfo info);
 };

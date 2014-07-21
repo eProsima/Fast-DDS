@@ -75,10 +75,10 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
 
 
-	m_discovery = PParam.discovery;
+	m_builtin = PParam.builtin;
 
 	//START BUILTIN PROTOCOLS
-	m_builtinProtocols.initBuiltinProtocols(PParam.discovery,m_participantID);
+	m_builtinProtocols.initBuiltinProtocols(PParam.builtin,m_participantID);
 
 }
 
