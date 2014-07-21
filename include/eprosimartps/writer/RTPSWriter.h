@@ -42,7 +42,7 @@ class ReaderProxyData;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
-  * @ingroup WRITERMODULE
+ * @ingroup WRITERMODULE
  */
 class RTPSWriter: public Endpoint
 {
@@ -63,16 +63,30 @@ public:
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
-	//!Get the number of changes in the History.
-	size_t getHistoryCacheSize()
-	{
-		return this->m_writer_cache.getHistorySize();
-	}
+
 	/**
 	 * Add a change to the unsent list.
 	 * @param change Pointer to the change to add.
 	 */
 	virtual void unsent_change_add(CacheChange_t* change)=0;
+	/**
+	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
+	 * @param a_change Pointer to the change that is going to be removed.
+	 * @return True if removed correctly.
+	 */
+	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
+	/**
+	 * Add a matched reader.
+	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @return True if added.
+	 */
+	virtual bool matched_reader_add(ReaderProxyData* rdata)=0;
+	/**
+	 * Remove a matched reader.
+	 * @param rdata Pointer to the object to remove.
+	 * @return True if removed.
+	 */
+	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
 	/**
 	 * Remove the change with the minimum SequenceNumber
 	 * @return True if removed.
@@ -95,55 +109,16 @@ public:
 	 * @param[out] writerGuid Pointer to store the writerGuid.
 	 * @return True if correct.
 	 */
-	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
-	{
-		CacheChange_t* change;
-		if(m_writer_cache.get_min_change(&change))
-		{
-
-		*seqNum = change->sequenceNumber;
-		if(writerGuid!=NULL)
-			*writerGuid = change->writerGUID;
-		return true;
-		}
-		else
-		{
-			*seqNum = SequenceNumber_t(0,0);
-			return false;
-		}
-	}
+	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid);
 	/**
 	 * Get the maximum sequence number in the HistoryCache.
 	 * @param[out] seqNum Pointer to store the sequence number
 	 * @param[out] writerGuid Pointer to store the writerGuid.
 	 * @return True if correct.
 	 */
-	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid)
-	{
-		CacheChange_t* change;
-		if(m_writer_cache.get_max_change(&change))
-		{
-			*seqNum = change->sequenceNumber;
-			if(writerGuid!=NULL)
-				*writerGuid = change->writerGUID;
-			return true;
-		}
-		else
-		{
-			*seqNum = SequenceNumber_t(0,0);
-			return false;
-		}
-	}
-
-	bool add_change(CacheChange_t*change)
-	{
-		if(m_writer_cache.add_change(change))
-		{
-			m_livelinessAsserted = true;
-			return true;
-		}
-		return false;
-	}
+	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid);
+	//!Add a change to the History.
+	bool add_change(CacheChange_t*change);
 
 	bool get_last_added_cache(CacheChange_t**change)
 	{
@@ -171,25 +146,12 @@ public:
 	{
 		m_livelinessAsserted = live;
 	}
-	/**
-	 * Inidicate the writer that a change has been removed by the history due to some HistoryQos requirement.
-	 * @param a_change Pointer to the change that is going to be removed.
-	 * @return True if removed correctly.
-	 */
-	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
-	/**
-	 * Add a matched reader.
-	 * @param rdata Pointer to the ReaderProxyData object added.
-	 * @return True if added.
-	 */
-	virtual bool matched_reader_add(ReaderProxyData* rdata)=0;
-	/**
-	 * Remove a matched reader.
-	 * @param rdata Pointer to the object to remove.
-	 * @return True if removed.
-	 */
-	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
 
+	//!Get the number of changes in the History.
+	size_t getHistoryCacheSize()
+	{
+		return this->m_writer_cache.getHistorySize();
+	}
 protected:
 
 	//!Changes associated with this writer.

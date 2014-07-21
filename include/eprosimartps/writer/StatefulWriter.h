@@ -9,7 +9,7 @@
 /**
  * @file StatefulWriter.h
  *
-*/
+ */
 
 #ifndef STATEFULWRITER_H_
 #define STATEFULWRITER_H_
@@ -35,26 +35,17 @@ public:
 	StatefulWriter(const PublisherAttributes& param,
 			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
-//	/**
-//	 * Add a matched reader to the writer.
-//	 * @param Rp Structure containing the parameters for the reader.
-//	 * @return True if correct.
-//	 */
-//	bool matched_reader_add(ReaderProxy_t& Rp);
-//	/**
-//	 * Remove a reader from the writer list.
-//	 * @param Rp Structure containing the parameters.
-//	 * @return True if correct
-//	 */
-//	bool matched_reader_remove(ReaderProxy_t& Rp);
-//	/**
-//	 * Remove a reder based on its guid.
-//	 * @param readerGuid GUID_t of the reader.
-//	 * @return True if correct.
-//	 */
-//	bool matched_reader_remove(GUID_t& readerGuid);
-
+	/**
+	 * Add a matched reader.
+	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @return True if added.
+	 */
 	bool matched_reader_add(ReaderProxyData* rdata);
+	/**
+	 * Remove a matched reader.
+	 * @param rdata Pointer to the object to remove.
+	 * @return True if removed.
+	 */
 	bool matched_reader_remove(ReaderProxyData* rdata);
 
 	/**
@@ -82,13 +73,18 @@ public:
 	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
 	 */
 	void unsent_changes_not_empty();
-
-
-
-
+	/**
+		 * Remove the change with the minimum SequenceNumber
+		 * @return True if removed.
+		 */
 	bool removeMinSeqCacheChange();
+	/**
+		 * Remove all changes from history
+		 * @param n_removed Pointer to return the number of elements removed.
+		 * @return True if correct.
+		 */
 	bool removeAllCacheChange(size_t* n_removed);
-
+	//!Increment the HB count.
 	void incrementHBCount(){++m_heartbeatCount;};
 
 
@@ -97,8 +93,8 @@ public:
 		return matched_readers.begin();
 	};
 	p_ReaderProxyIterator matchedReadersEnd()
-		{
-			return matched_readers.end();
+	{
+		return matched_readers.end();
 	}
 	size_t matchedReadersSize()
 	{
@@ -118,15 +114,15 @@ public:
 	bool change_removed_by_history(CacheChange_t* a_change);
 private:
 	//! Vector containin all the associated ReaderProxies.
-		std::vector<ReaderProxy*> matched_readers;
+	std::vector<ReaderProxy*> matched_readers;
 
-		PublisherTimes m_PubTimes;
+	PublisherTimes m_PubTimes;
 
-		Count_t m_heartbeatCount;
-		//!Timed Event to manage the periodic HB to the Reader.
-		PeriodicHeartbeat* mp_periodicHB;
+	Count_t m_heartbeatCount;
+	//!Timed Event to manage the periodic HB to the Reader.
+	PeriodicHeartbeat* mp_periodicHB;
 
-		EntityId_t m_HBReaderEntityId;
+	EntityId_t m_HBReaderEntityId;
 
 
 };

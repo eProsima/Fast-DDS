@@ -54,18 +54,6 @@ public:
 	ParticipantProxyData();
 	virtual ~ParticipantProxyData();
 
-	bool initializeData(ParticipantImpl* part, PDPSimple* pdp);
-
-	bool updateData(ParticipantProxyData& pdata);
-
-	bool toParameterList();
-	bool readFromCDRMessage(CDRMessage_t* msg);
-
-	void clear();
-	void copy(ParticipantProxyData& pdata);
-
-
-
 	ProtocolVersion_t m_protocolVersion;
 	GUID_t m_guid;
 	VendorId_t m_VendorId;
@@ -80,19 +68,37 @@ public:
 	InstanceHandle_t m_key;
 	Duration_t m_leaseDuration;
 	bool isAlive;
-
 	QosList_t m_QosList;
-
 	ParameterPropertyList_t m_properties;
-
 	bool m_hasChanged;
-
 	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
-
 	std::vector<ReaderProxyData*> m_readers;
 	std::vector<WriterProxyData*> m_writers;
 	std::vector<ReaderProxyData*> m_builtinReaders;
 	std::vector<WriterProxyData*> m_builtinWriters;
+	/**
+	 * Initialize the object with the data of the lcoal participant.
+	 * @param part Pointer to the participant.
+	 * @param pdp Pointer to the PDPSimple object.
+	 * @return True if correctly initialized.
+	 */
+	bool initializeData(ParticipantImpl* part, PDPSimple* pdp);
+	/**
+	 * Update the data.
+	 * @param pdata
+	 * @return
+	 */
+	bool updateData(ParticipantProxyData& pdata);
+	//!Convert information to parameter list.
+	bool toParameterList();
+	//!Read the parameter list from a recevied CDRMessage_t
+	bool readFromCDRMessage(CDRMessage_t* msg);
+	//!Clear the data (restore to default state.)
+	void clear();
+	//!Copy the data from another object.
+	void copy(ParticipantProxyData& pdata);
+
+
 };
 
 } /* namespace rtps */

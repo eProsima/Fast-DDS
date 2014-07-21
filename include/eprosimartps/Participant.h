@@ -112,11 +112,31 @@ public:
 	 */
 	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 				DDSTopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-
+	/**
+	 * Register a writer in the builtin protocols.
+	 * @param Writer Pointer to the RTPSWriter to register.
+	 */
 	void registerWriter(RTPSWriter* Writer);
+	/**
+	 * Register a reader in the builtin protocols.
+	 * @param Reader Pointer to the RTPSReader to register.
+	 */
 	void registerReader(RTPSReader* Reader);
-
+	/**
+	 * Assign an endpoint to the listenResources.
+	 * @param endp Pointer to the endpoint.
+	 * @param isBuiltin Boolean indicating if it is builtin.
+	 * @return True if correct.
+	 */
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
+	/**
+	 * Assign a locator to a listen resources.
+	 * @param pend Pointer to the endpoint.
+	 * @param lit Locator list iterator.
+	 * @param isMulticast Boolean indicating that is multicast.
+	 * @param isFixed Boolean indicating that is a fixed listenresource.
+	 * @return True if assigned.
+	 */
 	bool assignLocator2ListenResources(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
 
 
@@ -269,13 +289,18 @@ class RTPS_DllAPI Participant
 public:
 	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
 	virtual ~ Participant(){};
+	//!Get the GUID_t of the participant.
 	const GUID_t& getGuid(){return mp_impl->getGuid();};
+	//!Force the announcement of the participant state.
 	void announceParticipantState(){return mp_impl->announceParticipantState();};
+	//!Method to loose the next change (ONLY FOR TEST).
 	void loose_next_change(){return mp_impl->loose_next_change();};
+	//!Stop the participant announcement period.
 	void stopParticipantAnnouncement(){return mp_impl->stopParticipantAnnouncement();};
+	//!Reset the participant announcement period.
 	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
 	private:
-ParticipantImpl* mp_impl;
+	ParticipantImpl* mp_impl;
 };
 
 
