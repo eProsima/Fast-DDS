@@ -399,6 +399,9 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxyData.h">
       <Filter>Header Files\eprosimartps\reader</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -580,6 +583,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\ParticipantProxyData.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStatic.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStaticXML.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

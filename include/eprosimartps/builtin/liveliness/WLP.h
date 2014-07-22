@@ -80,9 +80,9 @@ public:
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 
-	double m_minAutomatic_MilliSec;
+	int64_t m_minAutomatic_MilliSec;
 
-	double m_minManParticipant_MilliSec;
+	int64_t m_minManParticipant_MilliSec;
 
 
 private:

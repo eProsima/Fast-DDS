@@ -16,6 +16,7 @@
 
 #include <set>
 #include <vector>
+#include <cstdint>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>

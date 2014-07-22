@@ -225,7 +225,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
 			if(!wp->m_changesFromW.at(i).isValid() && (wp->m_changesFromW.at(i).status == RECEIVED || wp->m_changesFromW.at(i).status == LOST))
 			{
 				wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
-				to_remove.push_back(i);
+				to_remove.push_back((int)i);
 			}
 			if(a_change->sequenceNumber == wp->m_changesFromW.at(i).seqNum)
 			{

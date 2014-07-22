@@ -57,7 +57,7 @@ public:
 	void restart_timer();
 	//! TO update the interval, the timer is not restarted and the new interval will onyl be used the next time you call restart_timer().
 	bool update_interval(const Duration_t& time);
-	bool update_interval_millisec(double time_millisec);
+	bool update_interval_millisec(int64_t time_millisec);
 	//!Stop the timer
 	void stop_timer();
 

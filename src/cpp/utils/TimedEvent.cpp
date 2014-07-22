@@ -54,7 +54,7 @@ bool TimedEvent::update_interval(const Duration_t& inter)
 	return true;
 }
 
-bool TimedEvent::update_interval_millisec(double time_millisec)
+bool TimedEvent::update_interval_millisec(int64_t time_millisec)
 {
 	m_interval_msec = boost::posix_time::milliseconds(time_millisec);
 	return true;
