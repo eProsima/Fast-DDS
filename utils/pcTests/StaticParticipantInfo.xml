@@ -12,7 +12,7 @@
 		<endpoint type="WRITER">
 			<id>1</id>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
-			<reliabilityKind>BEST_EFFORT_RELIABILITY_QOS</reliabilityKind>
+			<reliabilityQos>BEST_EFFORT_RELIABILITY_QOS</reliabilityQos>
 			<livelinessQos kind="AUTOMATIC_LIVELINESS_QOS" leaseDuration_ms="100"></livelinessQos>
      	</endpoint>
 		
@@ -25,7 +25,7 @@
 			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>	
 			<ownershipQos kind="SHARED_OWNERSHIP_QOS" strength="0"></ownershipQos>
 			<partitionQos>A</partitionQos>
-			<livelinessQos kind="AUTOMATIC_LIVELINESS_QOS" leaseDuration_ms="100"></livelinessQos>
+			<livelinessQos kind="AUTOMATIC_LIVELINESS_QOS" leaseDuration_ms="INF"></livelinessQos>
 		</endpoint>
 	</participant>
 	
@@ -45,7 +45,7 @@
 		<endpoint type="WRITER">
 			<id>18</id>
 			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
-			<reliabilityKind>BEST_EFFORT_RELIABILITY_QOS</reliabilityKind>
+			<reliabilityQos>BEST_EFFORT_RELIABILITY_QOS</reliabilityQos>
 			<expectsInlineQos>true</expectsInlineQos>
 		</endpoint>
 		
