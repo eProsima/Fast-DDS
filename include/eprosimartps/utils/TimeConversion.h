@@ -27,11 +27,11 @@ inline double Time_t2SecondsDouble(const Time_t& t)
 }
 inline int64_t Time_t2MicroSecondsInt64(const Time_t& t)
 {
-	return (int64_t)(t.fraction/pow(2.0,32))+t.seconds*(int64_t)pow(10.0,6);
+	return (int64_t)(t.fraction/pow(2.0,32)*pow(10.0,6))+t.seconds*(int64_t)pow(10.0,6);
 }
 inline double Time_t2MicroSecondsDouble(const Time_t& t)
 {
-	return ((double)t.fraction/pow(2.0,32))+(double)t.seconds*pow(10.0,6);
+	return ((double)t.fraction/pow(2.0,32)*pow(10.0,6))+(double)t.seconds*pow(10.0,6);
 }
 inline int64_t Time_t2MilliSecondsInt64(const Time_t& t)
 {

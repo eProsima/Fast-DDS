@@ -87,7 +87,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 
 void EDPSimpleSUBReaderListener::onNewDataMessage()
 {
-	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_PubReader);
+	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_SubReader);
 	pInfo(RTPS_CYAN<<"SEDP SUB Listener:onNewDataMessage"<<RTPS_DEF<<endl);
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_SubReader->get_last_added_cache(&change))

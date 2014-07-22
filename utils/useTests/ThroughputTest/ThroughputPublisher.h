@@ -15,9 +15,10 @@
 #define THROUGHPUTPUBLISHER_H_
 
 #include <vector>
+#include <string>
+
 
 using namespace std;
-
 
 #include "ThroughputTypes.h"
 
@@ -42,7 +43,7 @@ public:
 		DataPubListener(ThroughputPublisher& up);
 		virtual ~DataPubListener();
 		ThroughputPublisher& m_up;
-		void onPublicationMatched();
+		void onPublicationMatched(MatchingInfo info);
 	}m_DataPubListener;
 
 	class CommandSubListener:public SubscriberListener
@@ -51,7 +52,7 @@ public:
 		CommandSubListener(ThroughputPublisher& up);
 		virtual ~CommandSubListener();
 		ThroughputPublisher& m_up;
-		void onSubscriptionMatched();
+		void onSubscriptionMatched(MatchingInfo info);
 	}m_CommandSubListener;
 	class CommandPubListener:public PublisherListener
 	{
@@ -59,7 +60,7 @@ public:
 		CommandPubListener(ThroughputPublisher& up);
 		virtual ~CommandPubListener();
 		ThroughputPublisher& m_up;
-		void onPublicationMatched();
+		void onPublicationMatched(MatchingInfo info);
 	}m_CommandPubListener;
 
 

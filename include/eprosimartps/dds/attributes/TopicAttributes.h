@@ -70,12 +70,12 @@ public:
 	ResourceLimitsQosPolicy resourceLimitsQos;
 	bool checkQos()
 	{
-		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples)
+		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
 		{
 			pError("INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples"<<endl);
 			return false;
 		}
-		if(resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples)
+		if(resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
 			pWarning("TOPIC QOS: max_samples < max_samples_per_instance*max_instances"<<endl);
 		if(historyQos.kind == KEEP_LAST_HISTORY_QOS)
 		{
@@ -84,7 +84,7 @@ public:
 				pError("INCORRECT TOPIC QOS: depth must be <= max_samples"<<endl;)
 				return false;
 			}
-			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance)
+			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == WITH_KEY)
 			{
 				pError("INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
 				return false;

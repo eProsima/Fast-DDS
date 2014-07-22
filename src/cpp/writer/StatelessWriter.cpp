@@ -63,7 +63,7 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 
 bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 {
-	pDebugInfo("Adding Locator: "<< loc.to_IP4_string()<< " to StatelessWriter"<<endl;);
+	pDebugInfo("Adding Locator: "<< loc.printIP4Port()<< " to StatelessWriter"<<endl;);
 	std::vector<ReaderLocator>::iterator rit;
 	bool found = false;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)

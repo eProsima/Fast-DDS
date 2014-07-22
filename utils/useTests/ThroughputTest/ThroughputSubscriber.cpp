@@ -12,6 +12,7 @@
  */
 
 #include "ThroughputSubscriber.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 
 
@@ -33,7 +34,7 @@ void ThroughputSubscriber::DataSubListener::reset(){
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched()
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo info)
 {
 	cout << RTPS_RED << "DATA    Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
@@ -60,7 +61,7 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
 
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched()
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
 {
 	cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
@@ -89,7 +90,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched()
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo info)
 {
 	cout << RTPS_RED << "COMMAND Pub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
@@ -106,11 +107,11 @@ ThroughputSubscriber::ThroughputSubscriber():
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.discovery.leaseDuration);
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	TIME_INFINITE(PParam.builtin.leaseDuration);
 PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant2";
@@ -124,14 +125,15 @@ PParam.sendSocketBufferSize = 65536;
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
+	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	SubscriberAttributes Sparam;
 	Sparam.topic.topicDataType = "LatencyType";
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
-	Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Sparam.topic.historyQos.depth = 1;
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Sparam.unicastLocatorList.push_back(Locator_t(10110));
@@ -206,7 +208,7 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 			TroughputTimeStats TS;
 			TS.samplesize = SAMPLESIZE+4;
 			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.saved_lostsamples;
-			TS.totaltime_us = Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1);
+			TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1);
 			TS.lostsamples = m_DataSubListener.saved_lostsamples;
 			TS.demand = demand.at(demindex);
 		//	m_DataSubListener.myfile << endl;

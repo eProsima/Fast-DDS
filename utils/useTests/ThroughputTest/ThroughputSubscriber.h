@@ -45,7 +45,7 @@ public:
 		bool first;
 		LatencyType latencyin;
 		SampleInfo_t info;
-		void onSubscriptionMatched();
+		void onSubscriptionMatched(MatchingInfo info);
 		void onNewDataMessage();
 		void saveNumbers();
 
@@ -62,7 +62,7 @@ public:
 		ThroughputSubscriber& m_up;
 		ThroughputCommandType m_commandin;
 		SampleInfo_t info;
-		void onSubscriptionMatched();
+		void onSubscriptionMatched(MatchingInfo info);
 		void onNewDataMessage();
 		void saveNumbers();
 	}m_CommandSubListener;
@@ -72,7 +72,7 @@ public:
 		CommandPubListener(ThroughputSubscriber& up);
 		virtual ~CommandPubListener();
 		ThroughputSubscriber& m_up;
-		void onPublicationMatched();
+		void onPublicationMatched(MatchingInfo info);
 	}m_CommandPubListener;
 	bool ready;
 

@@ -63,10 +63,10 @@ public:
 	void onNewDataMessage()
 	{
 		m_sub->takeNextData((void*)m_latency_in,&m_info);
-		cout << m_latency_in->seqnum << " ## ";
+		//cout << m_latency_in->seqnum << " ## ";
 		clock.setTimeNow(&m_t2);
-		cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-overhead_value) << " # ";
-		cout << TimeConv::Time_t2MicroSecondsDouble(m_t2) << " # "<<TimeConv::Time_t2MicroSecondsDouble(m_t1)<<endl;
+		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-overhead_value) << " # ";
+		//cout << TimeConv::Time_t2MicroSecondsDouble(m_t2) << " # "<<TimeConv::Time_t2MicroSecondsDouble(m_t1)<<endl;
 		m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-overhead_value);
 		//m_sub->takeNextData((void*)m_latency_in,&m_info);
 		sema.post();
@@ -146,7 +146,7 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	m_times.clear();
 	//Sleep to allow subscriber to remove its elements
 	int aux;
-	eClock::my_sleep(1000);
+	eClock::my_sleep(100);
 	cout << "Begin test of size: " << datasize+4 << ", enter number to start: ";
 	std::cin >> aux;
 	for(uint32_t i =0;i<n_samples;++i)

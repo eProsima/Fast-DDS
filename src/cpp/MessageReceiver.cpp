@@ -379,6 +379,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			else
 			{
+				pWarning("Serlialized Payload larger than maximum allowed size ("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")"<<endl);
 				firstReader->release_Cache(ch);
 				return false;
 			}
@@ -393,6 +394,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			else
 			{
 				pError( "Message received with bad encapsulation for KeyHash and status parameter list"<< endl);
+				return false;
 			}
 			//uint32_t param_size;
 			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
@@ -409,7 +411,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-
+	pDebugInfo("Looking through all RTPSReaders associated with this ListenResources"<<endl);
 	//Look for the correct reader to add the change
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
