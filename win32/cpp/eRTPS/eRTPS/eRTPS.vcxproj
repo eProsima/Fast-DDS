@@ -381,6 +381,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderLocator.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxy.h" />

@@ -35,24 +35,24 @@ inline double Time_t2MicroSecondsDouble(const Time_t& t)
 }
 inline int64_t Time_t2MilliSecondsInt64(const Time_t& t)
 {
-	return (int64_t)(t.fraction/pow(2.0,32)*pow(10,3))+t.seconds*(int64_t)pow(10.0,3);
+	return (int64_t)(t.fraction/pow(2.0,32)*pow(10.0,3))+t.seconds*(int64_t)pow(10.0,3);
 }
 inline double Time_t2MilliSecondsDouble(const Time_t& t)
 {
-	return ((double)t.fraction/pow(2.0,32)*pow(10,3))+(double)t.seconds*pow(10.0,3);
+	return ((double)t.fraction/pow(2.0,32)*pow(10.0,3))+(double)t.seconds*pow(10.0,3);
 }
 inline Time_t MilliSeconds2Time_t(double millisec)
 {
 	Time_t t;
 	t.seconds = (int32_t)(millisec/pow(10.0,3));
-	t.fraction = (uint32_t)((millisec-(double)t.seconds*pow(10,3))/pow(10.0,3)*pow(2.0,32));
+	t.fraction = (uint32_t)((millisec-(double)t.seconds*pow(10.0,3))/pow(10.0,3)*pow(2.0,32));
 	return t;
 }
 inline Time_t MicroSeconds2Time_t(double microsec)
 {
 	Time_t t;
 	t.seconds = (int32_t)(microsec/pow(10.0,6));
-	t.fraction = (uint32_t)((microsec-(double)t.seconds*pow(10,6))/pow(10.0,6)*pow(2.0,32));
+	t.fraction = (uint32_t)((microsec-(double)t.seconds*pow(10.0,6))/pow(10.0,6)*pow(2.0,32));
 	return t;
 }
 inline Time_t Seconds2Time_t(double seconds)

@@ -402,6 +402,9 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h">
       <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
