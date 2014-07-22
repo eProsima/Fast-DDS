@@ -73,19 +73,19 @@ static inline bool operator<(const Time_t& t1,const Time_t& t2)
 	}
 }
 
-static inline double Time_t2Seconds(const Time_t& t)
+static inline int64_t Time_t2Seconds(const Time_t& t)
 {
-	return (uint32_t)t.seconds + (double)t.fraction/pow(2.0,32);
+	return (uint32_t)t.seconds + (int64_t)(t.fraction/(int64_t)pow(2.0,32));
 }
 
-static inline double Time_t2MicroSec(const Time_t& t)
+static inline int64_t Time_t2MicroSec(const Time_t& t)
 {
-	return (Time_t2Seconds(t)*pow(10.0,6));
+	return (Time_t2Seconds(t)*(int64_t)pow(10.0,6));
 }
 
-static inline double Time_t2MilliSec(const Time_t& t)
+static inline int64_t Time_t2MilliSec(const Time_t& t)
 {
-	return (Time_t2Seconds(t)*pow(10.0,3));
+	return (Time_t2Seconds(t)*(int64_t)pow(10.0,3));
 }
 
 static inline Time_t MilliSec2Time_t(uint32_t millisec)

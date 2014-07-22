@@ -310,6 +310,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleListeners.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStatic.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimple.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimpleListener.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimpleTopicDataType.h" />
@@ -402,6 +403,8 @@
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimple.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimpleListeners.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimpleTopicDataType.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStatic.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStaticXML.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimple.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimpleListener.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimpleTopicDataType.cpp" />

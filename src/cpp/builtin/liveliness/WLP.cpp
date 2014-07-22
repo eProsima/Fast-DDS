@@ -29,8 +29,8 @@ namespace eprosima {
 namespace rtps {
 
 WLP::WLP(ParticipantImpl* p):
-						m_minAutomatic_MilliSec(std::numeric_limits<double>::max()),
-						m_minManParticipant_MilliSec(std::numeric_limits<double>::max()),
+						m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
+						m_minManParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
 						mp_participant(p),
 						mp_builtinProtocols(NULL),
 						mp_builtinParticipantMessageWriter(NULL),
@@ -160,7 +160,7 @@ bool WLP::addLocalWriter(RTPSWriter* W)
 {
 	boost::lock_guard<WLP> guard(*this);
 	pDebugInfo(RTPS_MAGENTA<<"Adding local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
-	double wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
+	int64_t wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
 		if(mp_livelinessAutomatic == NULL)
@@ -218,10 +218,10 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 	bool found = false;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
 	{
-		m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
+		m_minAutomatic_MilliSec = std::numeric_limits<int64_t>::max();
 		for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
 		{
-			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
+			int64_t mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;
@@ -252,10 +252,10 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 	}
 	else if(W->getQos().m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 	{
-		m_minManParticipant_MilliSec = std::numeric_limits<double>::max();
+		m_minManParticipant_MilliSec = std::numeric_limits<int64_t>::max();
 		for(t_WIT it= m_livManParticipantWriters.begin();it!=m_livManParticipantWriters.end();++it)
 		{
-			double mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
+			int64_t mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;

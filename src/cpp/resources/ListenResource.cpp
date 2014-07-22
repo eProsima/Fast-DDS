@@ -132,7 +132,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 {
 	if(err == boost::system::errc::success)
 	{
-		m_MessageReceiver.m_rec_msg.length = msg_size;
+		m_MessageReceiver.m_rec_msg.length = (uint16_t)msg_size;
 
 		if(m_MessageReceiver.m_rec_msg.length == 0)
 		{

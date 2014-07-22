@@ -64,10 +64,10 @@ std::pair<std::string,std::string> EDPStaticProperty::toProperty(std::string typ
 
 bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> property)
 {
-	int pos1 = property.first.find("_");
+	size_t pos1 = property.first.find("_");
 	str1 = property.first.substr(0,pos1);
 
-	int pos2 = property.first.find("_",pos1+1);
+	size_t pos2 = property.first.find("_",pos1+1);
 	type = property.first.substr(pos1+1,pos2);
 
 	pos1 = property.first.find("_",pos2+1);

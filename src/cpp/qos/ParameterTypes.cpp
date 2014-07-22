@@ -47,7 +47,7 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 		return false;
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	//Str size
-	uint32_t str_siz = this->m_string.size();
+	uint32_t str_siz = (uint32_t)this->m_string.size();
 	int rest = (str_siz+1) % 4;
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
@@ -172,7 +172,7 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	uint16_t pos_str = msg->pos;
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addUInt32(msg,this->properties.size());
+	valid &= CDRMessage::addUInt32(msg,(uint32_t)this->properties.size());
 	for(std::vector<std::pair<std::string,std::string>>::iterator it = this->properties.begin();
 			it!=this->properties.end();++it)
 	{
