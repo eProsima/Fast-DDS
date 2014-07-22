@@ -7,8 +7,8 @@ eProsima (www.eprosima.com) is a SME company focused on networking middleware wi
 eProsima develops new features and plug-ins for DDS, interoperability tools, and personalized networking middleware solutions for its customers.
 
 ## Release 0.5.0
-* Writer Liveliness Protocol added
-* 
+* Writer Liveliness Protocol added.
+* Static Endpoint Discovery Protocol adepted to support the definition of Qos. 
 
 
 ## Release 0.4.0
@@ -19,6 +19,6 @@ eProsima develops new features and plug-ins for DDS, interoperability tools, and
 ## Release 0.3.1
 
 * Reliable and Best-Effort communication.
-* Simple Participant Discovery Protocol
-* Static Endpoint Discovery Protocol
+* Simple Participant Discovery Protocol.
+* Static Endpoint Discovery Protocol.
 
