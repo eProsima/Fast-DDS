@@ -78,7 +78,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	 if(topicKind == NO_KEY)
 		 keyFlag = false;
 	 inlineQosFlag = false;
-	if(inlineQos != NULL || expectsInlineQos) //expects inline qos
+	if(inlineQos != NULL || expectsInlineQos || change->kind != ALIVE) //expects inline qos
 	{
 		if(topicKind == WITH_KEY)
 		{

@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/writer/timedevent/NackResponseDelay.h"
-
+#include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
@@ -74,16 +74,16 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 			if(!relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
 						&relevant_changes,
-						mp_RP->m_param.unicastLocatorList,
-						mp_RP->m_param.multicastLocatorList,
-						mp_RP->m_param.expectsInlineQos,
-						mp_RP->m_param.remoteReaderGuid.entityId);
+						mp_RP->m_data->m_unicastLocatorList,
+						mp_RP->m_data->m_multicastLocatorList,
+						mp_RP->m_data->m_expectsInlineQos,
+						mp_RP->m_data->m_guid.entityId);
 			if(!not_relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
 						&not_relevant_changes,
-						mp_RP->m_param.remoteReaderGuid.entityId,
-						&mp_RP->m_param.unicastLocatorList,
-						&mp_RP->m_param.multicastLocatorList);
+						mp_RP->m_data->m_guid.entityId,
+						&mp_RP->m_data->m_unicastLocatorList,
+						&mp_RP->m_data->m_multicastLocatorList);
 			if(relevant_changes.empty() && not_relevant_changes.empty())
 			{
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
@@ -92,10 +92,10 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 				mp_RP->mp_SFW->get_seq_num_max(&last,NULL);
 				mp_RP->mp_SFW->incrementHBCount();
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,mp_RP->mp_SFW->getGuid().guidPrefix,
-						mp_RP->m_param.remoteReaderGuid.entityId,mp_RP->mp_SFW->getGuid().entityId,
+						mp_RP->m_data->m_guid.entityId,mp_RP->mp_SFW->getGuid().entityId,
 						first,last,mp_RP->mp_SFW->getHeartbeatCount(),true,false);
 				std::vector<Locator_t>::iterator lit;
-				for(lit = mp_RP->m_param.unicastLocatorList.begin();lit!=mp_RP->m_param.unicastLocatorList.end();++lit)
+				for(lit = mp_RP->m_data->m_unicastLocatorList.begin();lit!=mp_RP->m_data->m_unicastLocatorList.end();++lit)
 					mp_RP->mp_SFW->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 
 				//					for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)

@@ -101,7 +101,7 @@ const ProtocolVersion_t c_ProtocolVersion(2,1);
 
 #define VENDORID_UNKNOWN(vi) {vi[0]=0;vi[1]=0;}
 #define VENDORID_EPROSIMA(vi) {vi[0]=0x01;vi[1]=0x0F;}
-//!@brief Structure VendorId_t.
+//!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
 typedef octet VendorId_t[2];
 
 const VendorId_t c_eProsimaVendorId={0x01,0x0F};

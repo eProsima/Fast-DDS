@@ -14,6 +14,7 @@
 #include "eprosimartps/reader/timedevent/WriterProxyLiveliness.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -43,16 +44,18 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 	if(ec == boost::system::errc::success)
 	{
 	
-		pDebugInfo(RTPS_MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->param.remoteWriterGuid<<RTPS_DEF<<endl;);
+		pDebugInfo(RTPS_MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->m_data->m_guid<<RTPS_DEF<<endl;);
 		if(!mp_WP->checkLiveliness())
 		{
 			pWarning("WriterProxyLiveliness failed, leaseDuration was "<< this->getIntervalMsec()<< " ms"<< endl;);
-			if(mp_WP->mp_SFR->getListener()!=NULL)
+			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_data))
 			{
-				MatchingInfo info(REMOVED_MATCHING,mp_WP->param.remoteWriterGuid);
-				mp_WP->mp_SFR->getListener()->onSubscriptionMatched(info);
+				if(mp_WP->mp_SFR->getListener()!=NULL)
+				{
+					MatchingInfo info(REMOVED_MATCHING,mp_WP->m_data->m_guid);
+					mp_WP->mp_SFR->getListener()->onSubscriptionMatched(info);
+				}
 			}
-			mp_WP->mp_SFR->matched_writer_remove(mp_WP->param.remoteWriterGuid);
 			return;
 		}
 		this->restart_timer();

@@ -179,7 +179,7 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
 {
     if(info.status ==MATCHED_MATCHING)
     {
-        cout << "SUBSCRIBED:*****************************"<<endl;
+        cout << "Subscriber MATCHES Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         bool found = false;
         for(std::vector<GUID_t>::iterator it = m_remoteWriters.begin();
             it!=m_remoteWriters.end();++it)
@@ -198,7 +198,7 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
     }
     else if(info.status == REMOVED_MATCHING)
     {
-        cout << "UNSUBSCRIBED*************************"<<endl;
+       cout << "Subscriber REMOVED Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         m_mutex.lock();
         for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
             it!=m_shape.m_shapeHistory.end();++it)

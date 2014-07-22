@@ -10,19 +10,21 @@
  * @file StatelessWriter.h
  */
 
+
+#ifndef STATELESSWRITER_H_
+#define STATELESSWRITER_H_
+
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/writer/ReaderLocator.h"
 #include "eprosimartps/dds/attributes/PublisherAttributes.h"
 
-
-#ifndef STATELESSWRITER_H_
-#define STATELESSWRITER_H_
-
 using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
+
+class ReaderProxyData;
 
 /**
  * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
@@ -36,26 +38,27 @@ public:
 	StatelessWriter(const PublisherAttributes& wParam,
 			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
 
-
 	/**
-	 * Add a ReaderLocator to the Writer.
-	 * @param locator ReaderLocator to add.
-	 * @return True if correct.
+	 * Add a matched reader.
+	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @return True if added.
 	 */
-	bool reader_locator_add(ReaderLocator& locator);
-	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos,DurabilityQosPolicyKind_t dur = VOLATILE_DURABILITY_QOS);
+	bool matched_reader_add(ReaderProxyData* rdata);
 	/**
-	 * Remove a ReaderLocator from this writer.
-	 * @param locator Locator to remove.
-	 * @return True if correct.
+	 * Remove a matched reader.
+	 * @param rdata Pointer to the object to remove.
+	 * @return True if removed.
 	 */
-	bool reader_locator_remove(Locator_t& locator);
+	bool matched_reader_remove(ReaderProxyData* rdata);
 	/**
-	 * Reset the unsent changes. All the changes currently in the HistoryCache are added to all teh ReaderLocator associated
-	 * with this StatelessWriter, discarding the previous ones.
+	 * Add a ReaderLocator to the StatelessWriter.
+	 * @param locator Locator to add
+	 * @param expectsInlineQos Boolean variable indicating that the locator expects inline Qos.
+	 * @return
 	 */
+	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos);
+	//!Reset the unsent changes.
 	void unsent_changes_reset();
-
 	/**
 	 * Add a specific change to all ReaderLocators.
 	 * @param p Pointer to the change.
@@ -65,18 +68,27 @@ public:
 	 * Method to indicate that there are changes not sent in some of all ReaderLocator.
 	 */
 	void unsent_changes_not_empty();
-
-	 bool removeMinSeqCacheChange();
-	 bool removeAllCacheChange(size_t* n_removed);
-
-	 size_t getMatchedSubscribers(){return reader_locator.size();}
-
-
-	 bool change_removed_by_history(CacheChange_t* a_change);
+	/**
+	 * Remove the change with the minimum SequenceNumber
+	 * @return True if removed.
+	 */
+	bool removeMinSeqCacheChange();
+	/**
+	 * Remove all changes from history
+	 * @param n_removed Pointer to return the number of elements removed.
+	 * @return True if correct.
+	 */
+	bool removeAllCacheChange(size_t* n_removed);
+	//!Get the number of matched subscribers.
+	size_t getMatchedSubscribers(){return reader_locator.size();}
+	bool change_removed_by_history(CacheChange_t* a_change);
 
 private:
-	 Duration_t resendDataPeriod; //FIXME: Not used yet.
-	 std::vector<ReaderLocator> reader_locator;
+	Duration_t resendDataPeriod; //FIXME: Not used yet.
+	std::vector<ReaderLocator> reader_locator;
+	std::vector<ReaderProxyData*> m_matched_readers;
+	bool add_locator(ReaderProxyData* rdata,Locator_t& loc);
+	bool remove_locator(Locator_t& loc);
 };
 
 } /* namespace rtps */

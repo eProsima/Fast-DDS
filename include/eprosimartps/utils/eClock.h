@@ -53,7 +53,7 @@ public:
 	int32_t m_seconds_from_1900_to_1970;
 	int32_t m_utc_seconds_diff;
 	bool setTimeNow(Time_t* now);
-	//Methods to measure an interval in us
+	//!Method to measure an interval in us
 	void intervalStart();
 	uint64_t intervalEnd();
 	static void my_sleep(uint32_t milliseconds);

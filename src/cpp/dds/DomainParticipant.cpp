@@ -178,7 +178,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		return NULL;
 	}
 	PublisherImpl* pubImpl = NULL;
-	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
+	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(WParam.userDefinedId <= 0)
 		{
@@ -210,8 +210,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		Publisher* Pub = new Publisher(pubImpl);
 		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
 		//Now we do discovery (in our event thread):
-		p->getEventResource()->io_service.post(
-				boost::bind(&ParticipantImpl::WriterDiscovery,p,SW));
+		p->getEventResource()->io_service.post(boost::bind(&ParticipantImpl::registerWriter,p,SW));
 		//p->WriterDiscovery(SW);
 		return Pub;
 	}
@@ -243,7 +242,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		return NULL;
 	}
 	SubscriberImpl* subImpl = NULL;
-	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
+	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(RParam.userDefinedId <= 0)
 		{
@@ -272,8 +271,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pInfo(RTPS_B_YELLOW<<"SUBSCRIBER CREATED"<<RTPS_DEF<<endl);
 		Subscriber* Sub = new Subscriber(subImpl);
 		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
-		p->getEventResource()->io_service.post(
-						boost::bind(&ParticipantImpl::ReaderDiscovery,p,SR));
+		p->getEventResource()->io_service.post(boost::bind(&ParticipantImpl::registerReader,p,SR));
 
 		//p->ReaderDiscovery(SR);
 		return Sub;

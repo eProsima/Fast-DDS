@@ -12,6 +12,7 @@
  */
 
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/dds/SampleInfo.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
@@ -101,30 +102,34 @@ bool StatelessReader::isUnreadCacheChange()
 	return m_reader_cache.isUnreadCache();
 }
 
-bool StatelessReader::matched_writer_add(const GUID_t& guid)
+bool StatelessReader::matched_writer_add(WriterProxyData* wdata)
 {
-	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-	{
-		if(*it == guid)
-			return false;
-	}
-	pInfo("Added "<< guid << " to the matched writer list"<<endl);
-	m_matched_writers.push_back(guid);
-	return true;
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+		{
+			if((*it)->m_guid == wdata->m_guid)
+				return false;
+		}
+		pInfo("Added "<< wdata->m_guid << " to the matched writer list"<<endl);
+		m_matched_writers.push_back(wdata);
+		return true;
+}
+bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+		{
+			if((*it)->m_guid == wdata->m_guid)
+			{
+				m_matched_writers.erase(it);
+				return true;
+			}
+		}
+		return false;
 }
 
-bool StatelessReader::matched_writer_remove(const GUID_t& guid)
-{
-	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-	{
-		if(*it == guid)
-		{
-			m_matched_writers.erase(it);
-			return true;
-		}
-	}
-	return false;
-}
+
+
 
 bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
 {
@@ -135,10 +140,10 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
 {
 	if(this->m_acceptMessagesFromUnkownWriters)
 	{
-		for(std::vector<GUID_t>::iterator it = this->m_matched_writers.begin();
+		for(std::vector<WriterProxyData*>::iterator it = this->m_matched_writers.begin();
 				it!=m_matched_writers.end();++it)
 		{
-			if(*it == writerId)
+			if((*it)->m_guid == writerId)
 				return true;
 		}
 	}

@@ -16,11 +16,15 @@
 
 namespace eprosima {
 namespace rtps {
-
+/**
+ * Class StringMatching used to match different strings against each other as defined by the POSIX fnmatch API (1003.2-1992
+section B.6).
+ */
 class StringMatching {
 public:
 	StringMatching();
 	virtual ~StringMatching();
+	//!Static method to match two strings.
 	static bool matchString(const char* pattern,const char* input);
 };
 

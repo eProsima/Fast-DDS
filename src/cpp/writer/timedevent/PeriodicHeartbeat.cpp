@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/writer/timedevent/PeriodicHeartbeat.h"
-
+#include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -20,6 +20,7 @@
 #include "eprosimartps/resources/ResourceEvent.h"
 
 #include "eprosimartps/RTPSMessageCreator.h"
+
 
 namespace eprosima {
 namespace rtps{
@@ -73,9 +74,9 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			for(std::vector<ReaderProxy*>::iterator rit = mp_SFW->matchedReadersBegin();
 					rit!=mp_SFW->matchedReadersEnd();++rit)
 			{
-				for(lit = (*rit)->m_param.unicastLocatorList.begin();lit!=(*rit)->m_param.unicastLocatorList.end();++lit)
+				for(lit = (*rit)->m_data->m_unicastLocatorList.begin();lit!=(*rit)->m_data->m_unicastLocatorList.end();++lit)
 					mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
-				for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=(*rit)->m_param.multicastLocatorList.end();++lit)
+				for(lit = (*rit)->m_data->m_multicastLocatorList.begin();lit!=(*rit)->m_data->m_multicastLocatorList.end();++lit)
 					mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
 			}
 

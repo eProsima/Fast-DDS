@@ -12,15 +12,20 @@
 		<endpoint type="WRITER">
 			<id>1</id>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
-			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<reliabilityKind>BEST_EFFORT_RELIABILITY_QOS</reliabilityKind>
+			<livelinessQos kind="AUTOMATIC_LIVELINESS_QOS" leaseDuration_ms="100"></livelinessQos>
      	</endpoint>
 		
 		<endpoint type="READER">
 			<id>2</id>
 			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
-			<reliabilityKind>BEST_EFFORT</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
-			<unicastLocator address="192.168.1.16" port="10046"></unicastLocator>	
+			<unicastLocator address="192.168.1.16" port="10046"></unicastLocator>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>	
+			<ownershipQos kind="SHARED_OWNERSHIP_QOS" strength="0"></ownershipQos>
+			<partitionQos>A</partitionQos>
+			<livelinessQos kind="AUTOMATIC_LIVELINESS_QOS" leaseDuration_ms="100"></livelinessQos>
 		</endpoint>
 	</participant>
 	
@@ -29,7 +34,7 @@
 		
 		<endpoint type="READER">
 			<id>17</id>
-			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<reliabilityKind>BEST_EFFORT_RELIABILITY_QOS</reliabilityKind>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
 			<expectsInlineQos>true</expectsInlineQos>
 			<unicastLocator address="192.168.1.11" port="10046"></unicastLocator>	
@@ -40,7 +45,7 @@
 		<endpoint type="WRITER">
 			<id>18</id>
 			<topic name="Test_topic2" dataType="TestType" kind="NO_KEY"></topic>
-			<reliabilityKind>BEST_EFFORT</reliabilityKind>
+			<reliabilityKind>BEST_EFFORT_RELIABILITY_QOS</reliabilityKind>
 			<expectsInlineQos>true</expectsInlineQos>
 		</endpoint>
 		

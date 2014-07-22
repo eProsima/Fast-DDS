@@ -51,7 +51,7 @@ public:
 #else
 	static bool getIP4s(std::vector<std::string>* vec_name);
 #endif
-
+	//!Get the IPAdresses in all interfaces.
 	static bool getIPAddress(LocatorList_t* locators);
 };
 

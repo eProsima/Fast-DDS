@@ -6,7 +6,7 @@
  *
  *************************************************************************/
 
-/*
+/**
  * @file MessageReceiver.cpp
  *
  */
@@ -20,6 +20,8 @@
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
+
+#include "eprosimartps/writer/ReaderProxyData.h"
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
@@ -444,7 +446,9 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 						{
 							if((*it)->getListener()!=NULL)
 							{
+								//cout << "CALLING NEWDATAMESSAGE "<<endl;
 								(*it)->getListener()->onNewDataMessage();
+								//cout << "FINISH CALLING " <<endl;
 								if((*it)->isHistoryFull())
 									(*it)->getListener()->onHistoryFull();
 							}
@@ -602,7 +606,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 				//Look for the readerProxy the acknack is from
 				for(p_ReaderProxyIterator rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
-					if((*rit)->m_param.remoteReaderGuid == readerGUID )//|| (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
+					if((*rit)->m_data->m_guid == readerGUID )//|| (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
 					{
 
 						if((*rit)->m_lastAcknackCount < Ackcount)

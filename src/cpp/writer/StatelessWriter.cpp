@@ -12,6 +12,7 @@
  */
 
 #include "eprosimartps/writer/StatelessWriter.h"
+#include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 //#include "eprosimartps/qos/ParameterList.h"
@@ -38,56 +39,175 @@ StatelessWriter::~StatelessWriter()
 	pDebugInfo("StatelessWriter destructor"<<endl;);
 }
 
-bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
+bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
+	bool unsent_changes_not_empty = false;
+	for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
+			lit!=rdata->m_unicastLocatorList.end();++lit)
+	{
+		unsent_changes_not_empty |= add_locator(rdata,*lit);
+	}
+	for(std::vector<Locator_t>::iterator lit = rdata->m_multicastLocatorList.begin();
+			lit!=rdata->m_multicastLocatorList.end();++lit)
+	{
+		unsent_changes_not_empty |= add_locator(rdata,*lit);
+	}
+	if(unsent_changes_not_empty)
+		this->unsent_changes_not_empty();
 
-	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
+	this->m_matched_readers.push_back(rdata);
+	return true;
+}
 
-		if(rit->locator == a_locator.locator)
+
+bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
+{
+	std::vector<ReaderLocator>::iterator rit;
+	bool found = false;
+	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+	{
+		if(rit->locator == loc)
 		{
-			pWarning("Reader Locator: " << a_locator.locator.printIP4Port() <<" already in list"<<endl);
-			return false;
+			rit->n_used++;
+			found = true;
+			break;
 		}
 	}
-	a_locator.requested_changes.clear();
-	a_locator.unsent_changes.clear();
-	if(a_locator.m_durabilityKind == TRANSIENT_LOCAL_DURABILITY_QOS)
+	if(!found)
+	{
+		ReaderLocator rl;
+		rl.expectsInlineQos = rdata->m_expectsInlineQos;
+		rl.locator = loc;
+		reader_locator.push_back(rl);
+		rit = reader_locator.end()-1;
+	}
+	if(rdata->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.changesBegin();
 				it!=m_writer_cache.changesEnd();++it)
 		{
-			a_locator.unsent_changes.push_back((*it));
+			rit->unsent_changes.push_back((*it));
 		}
 	}
-	reader_locator.push_back(a_locator);
-	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
-	if(!a_locator.unsent_changes.empty())
-		this->unsent_changes_not_empty();
-	return true;
+	if(!rit->unsent_changes.empty())
+		return true;
+	return false;
 }
 
-bool StatelessWriter::reader_locator_add(Locator_t& locator,bool expectsInlineQos,DurabilityQosPolicyKind_t dur)
-{
-	ReaderLocator a_locator;
-	a_locator.expectsInlineQos = expectsInlineQos;
-	a_locator.locator = locator;
-	a_locator.m_durabilityKind = dur;
-	return reader_locator_add(a_locator);
-}
-
-
-bool StatelessWriter::reader_locator_remove(Locator_t& locator)
+bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	for(std::vector<ReaderLocator>::iterator it=reader_locator.begin();it!=reader_locator.end();++it){
-		if(it->locator == locator){
-			reader_locator.erase(it);
-			return true;
+	bool found = false;
+	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
+			rit!=m_matched_readers.end();++rit)
+	{
+		if((*rit)->m_guid == rdata->m_guid)
+		{
+			found = true;
+			m_matched_readers.erase(rit);
+			break;
 		}
+	}
+	if(found)
+	{
+
+		for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
+				lit!=rdata->m_unicastLocatorList.end();++lit)
+		{
+			remove_locator(*lit);
+		}
+		for(std::vector<Locator_t>::iterator lit = rdata->m_multicastLocatorList.begin();
+				lit!=rdata->m_multicastLocatorList.end();++lit)
+		{
+			remove_locator(*lit);
+		}
+		return true;
 	}
 	return false;
 }
+
+bool StatelessWriter::remove_locator(Locator_t& loc)
+{
+	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+	{
+		if(rit->locator == loc)
+		{
+			rit->n_used--;
+			if(rit->n_used == 0)
+			{
+				reader_locator.erase(rit);
+			}
+			break;
+		}
+	}
+	return true;
+}
+
+
+//bool StatelessWriter::reader_locator_add(ReaderLocator& a_locator)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//
+//	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
+//
+//		if(rit->locator == a_locator.locator)
+//		{
+//			pWarning("Reader Locator: " << a_locator.locator.printIP4Port() <<" already in list"<<endl);
+//			return false;
+//		}
+//	}
+//	a_locator.requested_changes.clear();
+//	a_locator.unsent_changes.clear();
+//	if(a_locator.m_durabilityKind == TRANSIENT_LOCAL_DURABILITY_QOS)
+//	{
+//		for(std::vector<CacheChange_t*>::iterator it = m_writer_cache.changesBegin();
+//				it!=m_writer_cache.changesEnd();++it)
+//		{
+//			a_locator.unsent_changes.push_back((*it));
+//		}
+//	}
+//	reader_locator.push_back(a_locator);
+//	pDebugInfo("Adding new Reader Locator to StatelessWriter: "<< a_locator.locator.printIP4Port()<<endl);
+//	if(!a_locator.unsent_changes.empty())
+//		this->unsent_changes_not_empty();
+//	return true;
+//}
+//
+bool StatelessWriter::reader_locator_add(Locator_t& loc,bool expectsInlineQos)
+{
+	bool found = false;
+	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+	{
+		if(rit->locator == loc)
+		{
+			rit->n_used++;
+			found = true;
+			break;
+		}
+	}
+	if(!found)
+	{
+		ReaderLocator rl;
+		rl.expectsInlineQos = expectsInlineQos;
+		rl.locator = loc;
+		reader_locator.push_back(rl);
+	}
+	return true;
+}
+//
+//
+//bool StatelessWriter::reader_locator_remove(Locator_t& locator)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<ReaderLocator>::iterator it=reader_locator.begin();it!=reader_locator.end();++it){
+//		if(it->locator == locator){
+//			reader_locator.erase(it);
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 
 void StatelessWriter::unsent_changes_reset()
 {

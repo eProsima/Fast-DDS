@@ -35,6 +35,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/ObjectPool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
+		  $(BASEDIR)/src/cpp/utils/TimedEvent.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
@@ -48,16 +49,24 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
+		  $(BASEDIR)/src/cpp/writer/ReaderProxyData.cpp \
 		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
 		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
+		  $(BASEDIR)/src/cpp/writer/timedevent/PeriodicHeartbeat.cpp \
+		  $(BASEDIR)/src/cpp/writer/timedevent/NackResponseDelay.cpp \
+		  $(BASEDIR)/src/cpp/writer/timedevent/NackSupressionDuration.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/WriterProxy.cpp \
+		  $(BASEDIR)/src/cpp/reader/WriterProxyData.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatefulReader.cpp \
+		  $(BASEDIR)/src/cpp/reader/timedevent/HeartbeatResponseDelay.cpp \
+		  $(BASEDIR)/src/cpp/reader/timedevent/WriterProxyLiveliness.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
 		  $(BASEDIR)/src/cpp/Participant.cpp \
+		  $(BASEDIR)/src/cpp/ParticipantProxyData.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/resources/ListenResource.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
@@ -74,16 +83,30 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/qos/ParameterTypes.cpp \
 		  $(BASEDIR)/src/cpp/qos/QosList.cpp \
 		  $(BASEDIR)/src/cpp/qos/DDSQosPolicies.cpp \
+		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
+		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/utils/TimedEvent.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/PeriodicHeartbeat.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/NackResponseDelay.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/NackSupressionDuration.cpp \
-		  $(BASEDIR)/src/cpp/reader/timedevent/HeartbeatResponseDelay.cpp \
-		  $(BASEDIR)/src/cpp/reader/timedevent/WriterProxyLiveliness.cpp \
-		  $(BASEDIR)/src/cpp/discovery/timedevent/ResendDiscoveryDataPeriod.cpp \
+		  $(BASEDIR)/src/cpp/builtin/BuiltinProtocols.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimple.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleListener.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDP.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimple.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimpleListeners.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimpleTopicDataType.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPStaticXML.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPStatic.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/WLP.cpp \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
+		  
+#		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \
 		  $(BASEDIR)/src/cpp/discovery/EndpointDiscoveryProtocol.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SimplePDP.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp \
@@ -94,14 +117,11 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/discovery/SPDPTopicDataType.cpp \
 		  $(BASEDIR)/src/cpp/discovery/SEDPTopicDataType.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
-		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
-		  \
 		  $(BASEDIR)/src/cpp/liveliness/WriterLiveliness.cpp \
 		  $(BASEDIR)/src/cpp/liveliness/LivelinessPeriodicAssertion.cpp \
 		  $(BASEDIR)/src/cpp/liveliness/WriterLivelinessListener.cpp \
 		  $(BASEDIR)/src/cpp/discovery/timedevent/ParticipantLeaseDuration.cpp 
-
+# $(BASEDIR)/src/cpp/discovery/timedevent/ResendDiscoveryDataPeriod.cpp 
 #		  
 #		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
 #		  $(BASEDIR)/src/cpp/CDRMessage.cpp \

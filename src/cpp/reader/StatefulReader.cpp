@@ -17,6 +17,8 @@
 #include "eprosimartps/dds/SampleInfo.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
 
+#include "eprosimartps/reader/WriterProxyData.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -47,35 +49,76 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 	m_expectsInlineQos = param.expectsInlineQos;
 }
 
-bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
+//bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
+//			it!=matched_writers.end();++it)
+//	{
+//		if((*it)->param.remoteWriterGuid == WPparam.remoteWriterGuid)
+//		{
+//			pWarning("Attempting to add existing writer" << endl);
+//			return false;
+//		}
+//	}
+//	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes.heartbeatResponseDelay,this);
+//	matched_writers.push_back(wp);
+//	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
+//	return true;
+//}
+//
+//bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+//	{
+//		if((*it)->param.remoteWriterGuid == writerGuid)
+//		{
+//			pWarning("Writer Proxy " << (*it)->param.remoteWriterGuid << " removed" << endl);
+//			delete(*it);
+//			matched_writers.erase(it);
+//
+//			return true;
+//		}
+//	}
+//	pInfo("Writer Proxy doesn't exist in this reader" << endl)
+//	return false;
+//}
+//
+//
+//bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
+//{
+//	return matched_writer_remove(Wp.remoteWriterGuid);
+//}
+
+
+bool StatefulReader::matched_writer_add(WriterProxyData* wdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == WPparam.remoteWriterGuid)
+		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
 			pWarning("Attempting to add existing writer" << endl);
 			return false;
 		}
 	}
-	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes.heartbeatResponseDelay,this);
+	WriterProxy* wp = new WriterProxy(wdata,m_SubTimes.heartbeatResponseDelay,this);
 	matched_writers.push_back(wp);
 	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
 	return true;
 }
-
-bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
+bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == writerGuid)
+		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
-			pWarning("Writer Proxy " << (*it)->param.remoteWriterGuid << " removed" << endl);
+			pWarning("Writer Proxy " << (*it)->m_data->m_guid << " removed" << endl);
 			delete(*it);
 			matched_writers.erase(it);
-			
 			return true;
 		}
 	}
@@ -84,17 +127,15 @@ bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
 }
 
 
-bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
-{
-	return matched_writer_remove(Wp.remoteWriterGuid);
-}
+
+
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == writerGUID)
+		if((*it)->m_data->m_guid == writerGUID)
 		{
 			*WP = *it;
 			pDebugInfo("StatefulReader looking for writerProxy "<< writerGUID.entityId<<" from "<< matched_writers.size()<<", FOUND"<<endl);
@@ -123,7 +164,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 				info->writerGUID = min_change->writerGUID;
 				info->sourceTimestamp = min_change->sourceTimestamp;
 				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-					info->ownershipStrength = wp->param.ownershipStrength;
+					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
 				if(!min_change->isRead)
 					m_reader_cache.decreaseUnreadCount();
 				return m_reader_cache.remove_change(min_change);
@@ -157,7 +198,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 				info->writerGUID = (*it)->writerGUID;
 				info->sourceTimestamp = (*it)->sourceTimestamp;
 				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-					info->ownershipStrength = wp->param.ownershipStrength;
+					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
 				m_reader_cache.decreaseUnreadCount();
 				return true;
 			}
@@ -213,7 +254,7 @@ bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
 		for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
 				it!=matched_writers.end();++it)
 		{
-			if((*it)->param.remoteWriterGuid == writerId)
+			if((*it)->m_data->m_guid == writerId)
 				return true;
 		}
 	}
