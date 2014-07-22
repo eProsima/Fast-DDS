@@ -19,6 +19,7 @@
 
 #include "eprosimartps/resources/ResourceSend.h"
 #include "eprosimartps/resources/ResourceEvent.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 //#include "eprosimartps/CDRMessage.h"
 //#include "eprosimartps/qos/ParameterList.h"
@@ -75,7 +76,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 	}
 	ReaderProxy* rp = new ReaderProxy(rdata,m_PubTimes,this);
 	if(mp_periodicHB==NULL)
-			mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(Time_t2MilliSec(m_PubTimes.heartbeatPeriod)));
+			mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_PubTimes.heartbeatPeriod)));
 	if(rp->m_data->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)

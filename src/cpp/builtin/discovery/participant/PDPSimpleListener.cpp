@@ -16,12 +16,15 @@
 #include "eprosimartps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
 
 #include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
+#include "eprosimartps/builtin/discovery/endpoint/EDP.h"
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
+#include "eprosimartps/utils/TimeConversion.h"
 namespace eprosima {
 namespace rtps {
 
@@ -79,18 +82,18 @@ bool PDPSimpleListener::newAddedCache()
 					pdata_ptr->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
 							pdata_ptr,
 							mp_SPDP->mp_participant->getEventResource(),
-							boost::posix_time::milliseconds(Time_t2MilliSec(pdata_ptr->m_leaseDuration)));
+							boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(pdata_ptr->m_leaseDuration)));
 					pdata_ptr->mp_leaseDurationTimer->restart_timer();
+					mp_SPDP->assignRemoteEndpoints(pdata_ptr);
+					mp_SPDP->announceParticipantState(false);
 				}
 				else
 				{
 					pdata_ptr->updateData(m_participantProxyData);
+					if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
+						mp_SPDP->mp_EDP->assignRemoteEndpoints(&m_participantProxyData);
 				}
 				pdata_ptr->isAlive = true;
-
-				mp_SPDP->assignRemoteEndpoints(pdata_ptr);
-
-				mp_SPDP->announceParticipantState(false);
 			}
 		}
 		else

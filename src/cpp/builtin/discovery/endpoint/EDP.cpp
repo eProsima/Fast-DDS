@@ -40,8 +40,8 @@ namespace eprosima {
 namespace rtps {
 
 EDP::EDP(PDPSimple* p,ParticipantImpl* part):
-																									mp_PDP(p),
-																									mp_participant(part)
+	mp_PDP(p),
+	mp_participant(part)
 {
 	// TODO Auto-generated constructor stub
 
@@ -117,12 +117,13 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer)
 
 void EDP::pairReaderProxy(ReaderProxyData* rdata)
 {
-	pDebugInfo(RTPS_CYAN<<"EDP pairing readerProxy: "<<rdata->m_guid<<RTPS_DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP pairing readerProxy: "<<rdata->m_guid<< " in topic: " << rdata->m_topicName<<RTPS_DEF<<endl);
 	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
 			wit!=mp_participant->userWritersListEnd();++wit)
 	{
 		if(validMatching(*wit,rdata))
 		{
+			pDebugInfo("Valid Matching"<<endl);
 			if((*wit)->matched_reader_add(rdata))
 			{
 				//MATCHED AND ADDED CORRECTLY:
@@ -140,7 +141,7 @@ void EDP::pairReaderProxy(ReaderProxyData* rdata)
 
 void EDP::pairReader(RTPSReader* R)
 {
-	pDebugInfo(RTPS_CYAN<<"EDP pairing Reader: "<<R->getGuid()<<RTPS_DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP pairing Reader: "<<R->getGuid()<<" in topic: " << R->getTopic().getTopicName()<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
 			pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
@@ -149,6 +150,7 @@ void EDP::pairReader(RTPSReader* R)
 		{
 			if(validMatching(R,*wdatait))
 			{
+				pDebugInfo("Valid Matching"<<endl);
 				if(R->matched_writer_add(*wdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -168,12 +170,13 @@ void EDP::pairReader(RTPSReader* R)
 
 void EDP::pairWriterProxy(WriterProxyData* wdata)
 {
-	pDebugInfo(RTPS_CYAN<<"EDP pairing writerPoxy: "<<wdata->m_guid<<RTPS_DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP pairing writerPoxy: "<<wdata->m_guid<<" in topic: " << wdata->m_topicName<<RTPS_DEF<<endl);
 	for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
 			rit!=mp_participant->userReadersListEnd();++rit)
 	{
 		if(validMatching(*rit,wdata))
 		{
+			pDebugInfo("Valid Matching"<<endl);
 			if((*rit)->matched_writer_add(wdata))
 			{
 				//MATCHED AND ADDED CORRECTLY:
@@ -192,7 +195,7 @@ void EDP::pairWriterProxy(WriterProxyData* wdata)
 
 void EDP::pairWriter(RTPSWriter* W)
 {
-	pDebugInfo(RTPS_CYAN<<"EDP pairing Writer: "<<W->getGuid()<<RTPS_DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP pairing Writer: "<<W->getGuid()<< " in topic: " << W->getTopic().getTopicName()<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
 				pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
@@ -201,6 +204,7 @@ void EDP::pairWriter(RTPSWriter* W)
 		{
 			if(validMatching(W,*rdatait))
 			{
+				pDebugInfo("Valid Matching"<<endl);
 				if(W->matched_reader_add(*rdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -300,7 +304,10 @@ bool EDP::validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 																								return false;
 	}
 	if(!rdata->m_isAlive) //Matching
+	{
+		pWarning("ReaderProxyData object is NOT alive"<<endl);
 		return false;
+	}
 	if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS) //Means our writer is BE but the reader wants RE
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Reader is Reliable and local writer is BE "<<endl;);
@@ -356,7 +363,11 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 																											return false;
 	}
 	if(!wdata->m_isAlive) //Matching
+	{
+		pWarning("WriterProxyData object is NOT alive"<<endl);
+				return false;
 		return false;
+	}
 	if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) //Means our reader is reliable but hte writer is not
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Writer is Best Effort and local reader is RELIABLE "<<endl;);

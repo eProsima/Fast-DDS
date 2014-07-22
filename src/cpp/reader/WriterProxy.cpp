@@ -15,6 +15,7 @@
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 
 
@@ -36,8 +37,8 @@ WriterProxy::WriterProxy(WriterProxyData* wdata,
 		m_acknackCount(0),
 		m_lastHeartbeatCount(0),
 		m_isMissingChangesEmpty(true),
-		m_heartbeatResponse(this,boost::posix_time::milliseconds(Time_t2MilliSec(heartbeatResponse))),
-		m_writerProxyLiveliness(this,boost::posix_time::milliseconds(Time_t2MilliSec(wdata->m_qos.m_liveliness.lease_duration))),
+		m_heartbeatResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(heartbeatResponse))),
+		m_writerProxyLiveliness(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(wdata->m_qos.m_liveliness.lease_duration))),
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false),

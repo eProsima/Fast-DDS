@@ -14,6 +14,7 @@
 #include "eprosimartps/builtin/discovery/endpoint/EDPStaticXML.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/TimeConversion.h"
 #include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/writer/ReaderProxyData.h"
 
@@ -253,7 +254,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			try
 			{
 				uint32_t milliseclease = boost::lexical_cast<uint32_t>(auxstring);
-				rdata->m_qos.m_liveliness.lease_duration = MilliSec2Time_t(milliseclease);
+				rdata->m_qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t((double)milliseclease);
 			}
 			catch(std::exception &e)
 			{
@@ -421,7 +422,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			try
 			{
 				uint32_t milliseclease = boost::lexical_cast<uint32_t>(auxstring);
-				wdata->m_qos.m_liveliness.lease_duration = MilliSec2Time_t(milliseclease);
+				wdata->m_qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t((double)milliseclease);
 			}
 			catch(std::exception &e)
 			{

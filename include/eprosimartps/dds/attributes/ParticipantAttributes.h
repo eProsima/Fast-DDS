@@ -81,7 +81,8 @@ public:
 		leaseDuration_announcementperiod.seconds = 30;
 		m_staticEndpointXMLFilename = "";
 		domainId = 80;
-		leaseDuration.seconds = 100;
+		leaseDuration.seconds = 500;
+		leaseDuration_announcementperiod.seconds = 250;
 		use_WriterLivelinessProtocol = true;
 	};
 	virtual ~BuiltinAttributes(){};
