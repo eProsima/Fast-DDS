@@ -103,6 +103,7 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE",rdata->m_userDefinedId,rdata->m_guid.entityId));
+	this->mp_PDP->announceParticipantState(true);
 	return true;
 }
 
@@ -111,6 +112,7 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",wdata->m_userDefinedId,wdata->m_guid.entityId));
+	this->mp_PDP->announceParticipantState(true);
 	return true;
 }
 
