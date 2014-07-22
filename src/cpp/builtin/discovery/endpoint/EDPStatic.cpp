@@ -28,7 +28,7 @@ namespace eprosima {
 namespace rtps {
 
 EDPStatic::EDPStatic(PDPSimple* p,ParticipantImpl* part):
-																																																EDP(p,part)
+																																																		EDP(p,part)
 {
 
 
@@ -178,21 +178,13 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 			}
 			else if(staticproperty.type == "Reader" && staticproperty.status == "DEAD")
 			{
-				ReaderProxyData* rdata=NULL;
 				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.entityId);
-				if(this->mp_PDP->lookupReaderProxyData(guid,&rdata))//IF FOUND, we UNPAIR and remove IT
-				{
-					this->removeReaderProxy(guid);
-				}
+				this->removeReaderProxy(guid);
 			}
 			else if(staticproperty.type == "Writer" && staticproperty.status == "DEAD")
 			{
-				WriterProxyData* wdata=NULL;
 				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.entityId);
-				if(this->mp_PDP->lookupWriterProxyData(guid,&wdata)) //IF FOUND, we UNPAIR and remove IT
-				{
-					this->removeWriterProxy(guid);
-				}
+				this->removeWriterProxy(guid);
 			}
 			else
 			{
