@@ -14,13 +14,14 @@
 
 
 #include "ThroughputPublisher.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::DataPubListener::~DataPubListener(){};
 
-void ThroughputPublisher::DataPubListener::onPublicationMatched()
+void ThroughputPublisher::DataPubListener::onPublicationMatched(MatchingInfo info)
 {
 	cout << RTPS_RED << "DATA    Pub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
@@ -28,7 +29,7 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched()
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){};
-void ThroughputPublisher::CommandSubListener::onSubscriptionMatched()
+void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
 {
 	cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
@@ -36,7 +37,7 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched()
 
 ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){};
-void ThroughputPublisher::CommandPubListener::onPublicationMatched()
+void ThroughputPublisher::CommandPubListener::onPublicationMatched(MatchingInfo info)
 {
 	cout << RTPS_RED << "COMMAND Pub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
@@ -52,11 +53,11 @@ ThroughputPublisher::ThroughputPublisher():
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.discovery.leaseDuration);
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant1";
@@ -70,7 +71,7 @@ ThroughputPublisher::ThroughputPublisher():
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
+	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
@@ -78,7 +79,8 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
-	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 1;
 	Wparam.topic.resourceLimitsQos.max_samples = 10000;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	mp_datapub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
@@ -152,7 +154,7 @@ void ThroughputPublisher::test(uint32_t demand)
 	command.m_command = TEST_STARTS;
 	mp_commandpub->write((void*)&command);
 	m_Clock.setTimeNow(&m_t1);
-	while(Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)<TESTTIME*1000000)
+	while(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)<TESTTIME*1000000)
 	{
 		for(uint32_t sample=0;sample<demand;sample++)
 		{
@@ -170,7 +172,7 @@ void ThroughputPublisher::test(uint32_t demand)
 	mp_commandpub->removeAllChange(&aux);
 	TroughputTimeStats TS;
 	TS.nsamples = samples;
-	TS.totaltime_us = Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1)-timewait_us;
+	TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us;
 	TS.samplesize = SAMPLESIZE+4;
 	TS.demand = demand;
 	//cout << TS.demand << endl;
