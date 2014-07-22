@@ -30,7 +30,10 @@ class ReaderProxyData;
 class WriterProxyData;
 
 
-
+/**
+ * Class StaticParticipantInfo, contains the ifnormation of writers and readers loaded from the XML file.
+ * @ingroup DISCOVERYMODULE
+ */
 class StaticParticipantInfo{
 public:
 	StaticParticipantInfo(){};
@@ -40,16 +43,49 @@ public:
 	std::vector<WriterProxyData*> m_writers;
 };
 
-
+/**
+ * Class EDPStaticXML used to parse the XML file that contains information about remote endpoints.
+ * @ingroup DISCVOERYMODULE
+ */
 class EDPStaticXML {
 public:
 	EDPStaticXML();
 	virtual ~EDPStaticXML();
+	/**
+	 * Load the XML file
+	 * @param filename Name of the file to load and parse.
+	 * @return True if correct.
+	 */
 	bool loadXMLFile(std::string& filename);
+	/**
+	 * Load a Reader endpoint.
+	 * @param xml_endpoint Reference of a tree child for a reader.
+	 * @param pdata Pointer to the participantInfo where the reader must be added.
+	 * @return True if correctly added.
+	 */
 	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata);
+	/**
+	 * Load a Writer endpoint.
+	 * @param xml_endpoint Reference of a tree child for a writer.
+	 * @param pdata Pointer to the participantInfo where the reader must be added.
+	 * @return True if correctly added.
+	 */
 	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata);
-
+	/**
+	 * Look for a reader in the previously loaded endpoints.
+	 * @param[in] partname Participant name
+	 * @param[in] id Id of the reader
+	 * @param[out] rdataptr Pointer to pointer to return the information.
+	 * @return True if found.
+	 */
 	bool lookforReader(std::string partname,uint16_t id,ReaderProxyData** rdataptr);
+	/**
+	 * Look for a writer in the previously loaded endpoints.
+	 * @param[in] partname Participant name
+	 * @param[in] id Id of the writer
+	 * @param[out] wdataptr Pointer to pointer to return the information.
+	 * @return
+	 */
 	bool lookforWriter(std::string partname,uint16_t id,WriterProxyData** wdataptr);
 
 private:

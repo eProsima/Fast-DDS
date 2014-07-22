@@ -21,6 +21,10 @@
 namespace eprosima {
 namespace rtps {
 
+/**
+ * Class EDPStaticProperty, used to read and write the strings from the properties used to transmit the EntityId_t.
+ * @ingroup DISCOVERYMODULE
+ */
 class EDPStaticProperty
 {
 public:
@@ -37,7 +41,10 @@ public:
 	bool fromProperty(std::pair<std::string,std::string> property);
 };
 
-
+/**
+ * Class EDPStatic, implements a static endpoint discovery module.
+ * @ingroup DISCOVERYMODULE
+ */
 class EDPStatic : public EDP {
 public:
 	EDPStatic(PDPSimple* p,ParticipantImpl* part);
@@ -79,8 +86,21 @@ public:
 	 */
 	bool processLocalWriterProxyData(WriterProxyData* wdata);
 
-
+	/**
+	 * New Remote Writer has been found and this method process it and calls the pairing methods.
+	 * @param pdata Pointer to the ParticipantProxyData object.
+	 * @param userId UserId.
+	 * @param entId EntityId.
+	 * @return True if correct.
+	 */
 	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId,EntityId_t& entId);
+	/**
+	 * New Remote Reader has been found and this method process it and calls the pairing methods.
+	 * @param pdata Pointer to the ParticipantProxyData object.
+	 * @param userId UserId.
+	 * @param entId EntityId.
+	 * @return true if correct.
+	 */
 	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId,EntityId_t& entId);
 
 private:
