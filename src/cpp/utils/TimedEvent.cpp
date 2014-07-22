@@ -13,6 +13,7 @@
 
 
 #include "eprosimartps/utils/TimedEvent.h"
+#include "eprosimartps/utils/TimeConversion.h"
 #include <boost/asio/placeholders.hpp>
 
 
@@ -50,7 +51,7 @@ void TimedEvent::stop_timer()
 
 bool TimedEvent::update_interval(const Duration_t& inter)
 {
-	m_interval_msec = boost::posix_time::milliseconds(Time_t2MilliSec(inter));
+	m_interval_msec = boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(inter));
 	return true;
 }
 

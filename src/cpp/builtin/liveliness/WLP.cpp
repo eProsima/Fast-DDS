@@ -24,6 +24,7 @@
 #include "eprosimartps/ParticipantProxyData.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 namespace eprosima {
 namespace rtps {
@@ -160,7 +161,7 @@ bool WLP::addLocalWriter(RTPSWriter* W)
 {
 	boost::lock_guard<WLP> guard(*this);
 	pDebugInfo(RTPS_MAGENTA<<"Adding local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
-	int64_t wAnnouncementPeriodMilliSec(Time_t2MilliSec(W->getQos().m_liveliness.announcement_period));
+	int64_t wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsInt64(W->getQos().m_liveliness.announcement_period));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
 		if(mp_livelinessAutomatic == NULL)
@@ -221,7 +222,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 		m_minAutomatic_MilliSec = std::numeric_limits<int64_t>::max();
 		for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
 		{
-			int64_t mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
+			int64_t mintimeWIT(TimeConv::Time_t2MilliSecondsInt64((*it)->getQos().m_liveliness.announcement_period));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;
@@ -255,7 +256,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 		m_minManParticipant_MilliSec = std::numeric_limits<int64_t>::max();
 		for(t_WIT it= m_livManParticipantWriters.begin();it!=m_livManParticipantWriters.end();++it)
 		{
-			int64_t mintimeWIT(Time_t2MilliSec((*it)->getQos().m_liveliness.announcement_period));
+			int64_t mintimeWIT(TimeConv::Time_t2MilliSecondsInt64((*it)->getQos().m_liveliness.announcement_period));
 			if(W->getGuid().entityId == (*it)->getGuid().entityId)
 			{
 				found = true;

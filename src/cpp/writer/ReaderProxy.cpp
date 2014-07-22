@@ -16,6 +16,7 @@
 #include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 
 
@@ -29,8 +30,8 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 				mp_SFW(SW),
 				m_isRequestedChangesEmpty(true),
 				//m_periodicHB(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatPeriod)*1e-3))),
-				m_nackResponse(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.nackResponseDelay)*1e-3))),
-				m_nackSupression(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.nackSupressionDuration)*1e-3))),
+				m_nackResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay))),
+				m_nackSupression(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration))),
 				m_lastAcknackCount(0)
 {
 

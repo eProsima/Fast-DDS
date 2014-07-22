@@ -30,6 +30,7 @@
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 using namespace eprosima::dds;
 
@@ -86,7 +87,7 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	}
 
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,mp_participant->getEventResource(),
-			boost::posix_time::milliseconds(Time_t2MilliSec(m_discovery.leaseDuration_announcementperiod)));
+			boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_discovery.leaseDuration_announcementperiod)));
 
 	this->mp_SPDPReader->unlock();
 	this->mp_SPDPWriter->unlock();
