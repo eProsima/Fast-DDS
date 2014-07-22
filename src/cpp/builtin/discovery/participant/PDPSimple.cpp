@@ -25,6 +25,7 @@
 #include "eprosimartps/reader/StatelessReader.h"
 
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
+#include "eprosimartps/builtin/discovery/endpoint/EDPStatic.h"
 #include "eprosimartps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
@@ -70,7 +71,8 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	//INIT EDP
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 	{
-		//	mp_EDP = (EDP*)new EDPStatic(this);
+		mp_EDP = (EDP*)(new EDPStatic(this,mp_participant));
+		mp_EDP->initEDP(m_discovery);
 	}
 	else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
 	{
