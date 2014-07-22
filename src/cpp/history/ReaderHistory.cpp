@@ -261,5 +261,12 @@ bool ReaderHistory::get_last_added_cache(CacheChange_t** change)
 }
 
 
+bool ReaderHistory::removeCacheChangesByKey(InstanceHandle_t& key)
+{
+	pError("Not Implemented yet"<<endl);
+	return false;
+}
+
+
 } /* namespace rtps */
 } /* namespace eprosima */

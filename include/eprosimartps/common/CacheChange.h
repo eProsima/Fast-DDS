@@ -110,7 +110,7 @@ enum ChangeFromWriterStatus_t{
 };
 
 /**
- * Struct ChangeForReader_t used to indicate the state of a specific change with respect to a specific reader, as well as its relevance.
+ * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
  */
  class ChangeForReader_t{
  public:

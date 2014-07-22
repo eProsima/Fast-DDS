@@ -55,9 +55,9 @@ bool ShapesDemo::init()
         cout <<"Creating new participant"<<endl;
         ParticipantAttributes pparam;
         pparam.name = "eProsimaParticipant";
-        pparam.discovery.domainId = m_options.m_domainId;
-        pparam.discovery.leaseDuration.seconds = 100;
-        pparam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 50;
+        pparam.builtin.domainId = m_options.m_domainId;
+        pparam.builtin.leaseDuration.seconds = 100;
+        pparam.builtin.leaseDuration_announcementperiod.seconds = 50;
         pparam.defaultSendPort = 10042;
         pparam.sendSocketBufferSize = 65536;
         pparam.listenSocketBufferSize = 2*65536;

@@ -13,6 +13,7 @@
 
 #include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
 #include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/reader/StatefulReader.h"
 
 #include "eprosimartps/resources/ResourceSend.h"
@@ -69,23 +70,23 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			pDebugInfo("Sending ACKNACK: "<< sns <<endl;);
 			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
 			RTPSMessageCreator::addHeader(&m_heartbeat_response_msg,mp_WP->mp_SFR->getGuid().guidPrefix);
-			RTPSMessageCreator::addSubmessageInfoDST(&m_heartbeat_response_msg,mp_WP->param.remoteWriterGuid.guidPrefix);
+			RTPSMessageCreator::addSubmessageInfoDST(&m_heartbeat_response_msg,mp_WP->m_data->m_guid.guidPrefix);
 			bool final = false;
 			if(sns.isSetEmpty())
 				final = true;
 			RTPSMessageCreator::addSubmessageAcknack(&m_heartbeat_response_msg,
 												mp_WP->mp_SFR->getGuid().entityId,
-												mp_WP->param.remoteWriterGuid.entityId,
+												mp_WP->m_data->m_guid.entityId,
 												sns,
 												mp_WP->m_acknackCount,
 												final);
 
 			std::vector<Locator_t>::iterator lit;
 
-			for(lit = mp_WP->param.unicastLocatorList.begin();lit!=mp_WP->param.unicastLocatorList.end();++lit)
+			for(lit = mp_WP->m_data->m_unicastLocatorList.begin();lit!=mp_WP->m_data->m_unicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
 
-			for(lit = mp_WP->param.multicastLocatorList.begin();lit!=mp_WP->param.multicastLocatorList.end();++lit)
+			for(lit = mp_WP->m_data->m_multicastLocatorList.begin();lit!=mp_WP->m_data->m_multicastLocatorList.end();++lit)
 				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
 
 		}

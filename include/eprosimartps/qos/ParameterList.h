@@ -40,6 +40,7 @@ public:
 		for(std::vector<Parameter_t*>::iterator it = m_parameters.begin();
 				it!=m_parameters.end();++it)
 			delete(*it);
+		resetList();
 	}
 	/**
 	 * Reset the list of parameters (without deleting them, since they can be in use in another list).

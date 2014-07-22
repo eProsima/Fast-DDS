@@ -71,7 +71,7 @@ void SubscribeDialog::on_buttonBox_accepted()
         SSub->m_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     //DURABILITY
-    cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;
+   // cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;
     switch(this->ui->comboBox_durability->currentIndex())
     {
     case 0: SSub->m_attributes.qos.m_durability.kind = VOLATILE_DURABILITY_QOS; break;
@@ -103,7 +103,7 @@ void SubscribeDialog::on_buttonBox_accepted()
     else
     {
          QString value = this->ui->lineEdit_TimeBasedFilter->text();
-         cout << "TIME VALUE: "<< value.toStdString() << endl;
+         //cout << "TIME VALUE: "<< value.toStdString() << endl;
          if(value.toInt()>0)
          {
              SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation = MilliSec2Time_t(value.toInt());

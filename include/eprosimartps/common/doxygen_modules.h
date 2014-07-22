@@ -77,6 +77,11 @@
  * This module contains the classes associated with the Discovery Protocols.
  */
 
+/** @defgroup LIVELINESSMODULE Liveliness Module
+ * @ingroup MANAGEMENTMODULE
+ * This module contains the classes associated with the Writer Liveliness Protocols.
+ */
+
 
 
 #endif
