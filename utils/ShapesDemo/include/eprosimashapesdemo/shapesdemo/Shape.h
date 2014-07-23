@@ -19,11 +19,17 @@
 
 #include <QString>
 
-
+/**
+ * @brief The Shape class, defines a shape and its History (in case is a Subscriber.).
+ */
 class Shape {
 public:
     Shape();
 	virtual ~Shape();
+    /**
+     * @brief getShapeQStr, get the type fo shape as a string.
+     * @return QString.
+     */
     QString getShapeQStr()
     {
         if(m_type == SQUARE)

@@ -19,12 +19,17 @@ class MainWindow;
 class UpdateThread;
 class QStandardItemModel;
 
+/**
+ * @brief The SD_ENDP_TYPE enum, defined if the endpoint is a publisher or a subscriber.
+ */
 enum SD_ENDP_TYPE
 {
     PUB,
     SUB
 };
-
+/**
+ * @brief The SD_Endpoint struct, stores information about a specific endpoint and its position in the table.
+ */
 struct SD_Endpoint
 {
     SD_ENDP_TYPE type;
@@ -32,7 +37,9 @@ struct SD_Endpoint
     ShapeSubscriber* sub;
     int pos;
 };
-
+/**
+ * @brief The MainWindow class, implements the main window.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -40,18 +47,35 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    /**
+     * @brief getShapesDemo, gets a pointer to the shapesDemo object.
+     * @return Pointer to the shapesDemo.
+     */
     ShapesDemo* getShapesDemo(){
         return &m_shapesDemo;
     }
-
+    /**
+     * @brief writeNewSamples, move and write the samples for all subscribers.
+     */
     void writeNewSamples();
-
+    /**
+     * @brief updateInterval, update the write event timer period.
+     * @param ms Period in ms.
+     */
     void updateInterval(uint32_t ms);
-
+    /**
+    * @brief quitThreads, stops all threads.
+    */
    void quitThreads();
-
+   /**
+    * @brief addPublisherToTable, add a Publisher to the table.
+    * @param spub Pointer to the ShapePublisher.
+    */
    void addPublisherToTable(ShapePublisher* spub);
+   /**
+    * @brief addSubscriberToTable, add a Subscriber to the table.
+    * @param ssub Pointer to the ShapeSubscriber.
+    */
    void addSubscriberToTable(ShapeSubscriber* ssub);
 
 private slots:

@@ -16,7 +16,9 @@
 #include "eprosimartps/common/types/Guid.h"
 
 using namespace eprosima::rtps;
-
+/**
+ * @brief The SD_COLOR enum, the different colors.
+ */
 enum SD_COLOR
 {
     SD_PURPLE,
@@ -28,17 +30,29 @@ enum SD_COLOR
     SD_MAGENTA,
     SD_ORANGE
 };
-
+/**
+ * @brief The TYPESHAPE enum, the different shapes.
+ */
 enum TYPESHAPE{
     SQUARE,
     CIRCLE,
     TRIANGLE
 };
 
+/**
+ * @brief The ShapeType class, defined a shape.
+ */
 class ShapeType{
 public:
     ShapeType();
     ~ShapeType();
+    /**
+     * @brief Define the shape.
+     * @param color color
+     * @param x x position.
+     * @param y y position.
+     * @param size size.
+     */
     void define(SD_COLOR color=SD_BLUE,
                 uint32_t x=30,uint32_t y =30,uint32_t size=30);
     void setColor(SD_COLOR c);

@@ -19,6 +19,10 @@
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include <QMutex>
 
+
+/**
+ * @brief The ShapeContentFilter class, represents a content filter.
+ */
 class ShapeContentFilter
 {
 public:
@@ -34,6 +38,10 @@ public:
     bool m_useFilter;
 };
 
+
+/**
+ * @brief The ShapeSubscriber class, implements a Subscriber to receive shapes.
+ */
 class ShapeSubscriber: public SubscriberListener {
 public:
     ShapeSubscriber(Participant* par);
@@ -41,8 +49,10 @@ public:
 	SubscriberAttributes m_attributes;
     Subscriber* mp_sub;
 	Participant* mp_participant;
-
-
+    /**
+     * @brief Initialize the subscriber
+     * @return True if correct.
+     */
 	bool initSubscriber();
 
 	void onNewDataMessage();
@@ -54,8 +64,6 @@ public:
     ShapeContentFilter m_filter;
     bool passFilter(ShapeType* shape);
     std::vector<GUID_t> m_remoteWriters;
-
-
 
 };
 

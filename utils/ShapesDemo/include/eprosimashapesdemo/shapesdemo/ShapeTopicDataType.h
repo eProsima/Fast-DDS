@@ -10,6 +10,9 @@
 using namespace eprosima;
 using namespace dds;
 
+/**
+ * @brief The ShapeTopicDataType class, implements the serializing and deserializing methods.
+ */
 class ShapeTopicDataType : public DDSTopicDataType
 {
 public:
