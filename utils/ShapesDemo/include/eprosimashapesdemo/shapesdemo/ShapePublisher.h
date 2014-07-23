@@ -21,6 +21,9 @@
 
 class dds::Publisher;
 
+/**
+ * @brief The ShapePublisher class, implements a Publisher to transmit shapes.
+ */
 class ShapePublisher: public PublisherListener {
 public:
 	ShapePublisher(Participant* par);
@@ -28,9 +31,19 @@ public:
 	PublisherAttributes m_attributes;
 	Publisher* mp_pub;
 	Participant* mp_participant;
-
+    /**
+     * @brief Initialize the publisher.
+     * @return  True if correct.
+     */
 	bool initPublisher();
+    /**
+     * @brief Write the shape.
+     */
     void write();
+    /**
+     * @brief onPublicationMatched
+     * @param info
+     */
     void onPublicationMatched(MatchingInfo info);
 
     Shape m_shape;
