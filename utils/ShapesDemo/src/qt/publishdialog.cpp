@@ -11,6 +11,8 @@
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 
+#include "eprosimartps/utils/TimeConversion.h"
+
 
 PublishDialog::PublishDialog(ShapesDemo* psd,QWidget *parent) :
     QDialog(parent),
@@ -75,7 +77,7 @@ void PublishDialog::on_button_OkCancel_accepted()
    {
         QString value = this->ui->lineEdit_leaseDuration->text();
         if(value.toInt()>0)
-            SP->m_attributes.qos.m_liveliness.lease_duration = MilliSec2Time_t(value.toInt());
+            SP->m_attributes.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(value.toInt());
    }
    //DURABILITY
    //cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;

@@ -13,6 +13,8 @@
 
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 
+#include "eprosimartps/utils/TimeConversion.h"
+
 ShapeSubscriber::ShapeSubscriber(Participant* par):
     mp_sub(NULL),
     mp_participant(par),
@@ -88,7 +90,7 @@ void ShapeSubscriber::onNewDataMessage()
                     //                    cout << "Time DIFF: "<<Time_tAbsDiff2Millisec(it->front().m_time,info.sourceTimestamp)<<endl;
                     //                    cout << "Minimum separation: "<< Time_t2MilliSec(m_attributes.qos.m_timeBasedFilter.minimum_separation)<<endl;
                     //                    cout << "Pass filter: "<<  passFilter(&shape) << endl;
-                    if(Time_tAbsDiff2Millisec(it->front().m_time,info.sourceTimestamp)>=Time_t2MilliSec(m_attributes.qos.m_timeBasedFilter.minimum_separation) &&
+                    if(TimeConv::Time_tAbsDiff2DoubleMillisec(it->front().m_time,info.sourceTimestamp)>=TimeConv::Time_t2MilliSecondsDouble(m_attributes.qos.m_timeBasedFilter.minimum_separation) &&
                             passFilter(&shape))
                     {
                         if(this->m_attributes.qos.m_ownership.kind == SHARED_OWNERSHIP_QOS)

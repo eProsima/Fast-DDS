@@ -62,6 +62,16 @@ inline Time_t Seconds2Time_t(double seconds)
 	t.fraction = (uint32_t)((seconds-(double)t.seconds)*pow(2.0,32));
 	return t;
 }
+
+inline double Time_tAbsDiff2DoubleMillisec(const Time_t& t1,const Time_t& t2)
+{
+	double result = 0;
+	result +=(double)abs((t2.seconds-t1.seconds)*1000);
+	result +=(double)abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
+	return result;
+}
+
+
 };
 
 } /* namespace rtps */
