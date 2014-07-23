@@ -99,13 +99,13 @@ static inline bool operator<(const Time_t& t1,const Time_t& t2)
 //    return time;
 //}
 
-static inline uint32_t Time_tAbsDiff2Millisec(const Time_t& t1,const Time_t& t2)
-{
-	uint32_t result = 0;
-	result +=(uint32_t)abs((t2.seconds-t1.seconds)*1000);
-	result +=(uint32_t)abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
-	return result;
-}
+//static inline uint32_t Time_tAbsDiff2Millisec(const Time_t& t1,const Time_t& t2)
+//{
+//	uint32_t result = 0;
+//	result +=(uint32_t)abs((t2.seconds-t1.seconds)*1000);
+//	result +=(uint32_t)abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
+//	return result;
+//}
 
 
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)

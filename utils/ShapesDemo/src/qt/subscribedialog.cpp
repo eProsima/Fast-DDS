@@ -11,6 +11,9 @@
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 
+#include "eprosimartps/utils/TimeConversion.h"
+
+
 #include <QIntValidator>
 
 
@@ -106,7 +109,7 @@ void SubscribeDialog::on_buttonBox_accepted()
          //cout << "TIME VALUE: "<< value.toStdString() << endl;
          if(value.toInt()>0)
          {
-             SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation = MilliSec2Time_t(value.toInt());
+             SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation = TimeConv::MilliSeconds2Time_t(value.toInt());
          }
 
     }
