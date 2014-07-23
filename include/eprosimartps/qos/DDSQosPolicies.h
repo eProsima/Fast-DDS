@@ -38,12 +38,14 @@ protected:
 	bool m_sendAlways;
 
 };
-
+/**
+ * Enum DurabilityQosPolicyKind_t, different types of durability.
+ */
 typedef enum DurabilityQosPolicyKind_t: octet{
-	VOLATILE_DURABILITY_QOS  ,
-	TRANSIENT_LOCAL_DURABILITY_QOS ,
-	TRANSIENT_DURABILITY_QOS ,
-	PERSISTENT_DURABILITY_QOS
+	VOLATILE_DURABILITY_QOS  ,      //!< VOLATILE_DURABILITY_QOS
+	TRANSIENT_LOCAL_DURABILITY_QOS ,//!< TRANSIENT_LOCAL_DURABILITY_QOS
+	TRANSIENT_DURABILITY_QOS ,      //!< TRANSIENT_DURABILITY_QOS, NOT IMPLEMENTED
+	PERSISTENT_DURABILITY_QOS       //!< PERSISTENT_DURABILITY_QOS, NOT IMPLEMENTED
 }DurabilityQosPolicyKind_t;
 
 #define PARAMETER_KIND_LENGTH 4
@@ -74,10 +76,13 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ * Different types of Liveliness
+ */
 enum LivelinessQosPolicyKind:octet {
-	AUTOMATIC_LIVELINESS_QOS ,
-			MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
-			MANUAL_BY_TOPIC_LIVELINESS_QOS
+	AUTOMATIC_LIVELINESS_QOS ,             //!< AUTOMATIC_LIVELINESS_QOS
+			MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,//!< MANUAL_BY_PARTICIPANT_LIVELINESS_QOS
+			MANUAL_BY_TOPIC_LIVELINESS_QOS       //!< MANUAL_BY_TOPIC_LIVELINESS_QOS
 };
 
 class LivelinessQosPolicy : private Parameter_t, public QosPolicy {
