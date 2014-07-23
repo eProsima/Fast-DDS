@@ -20,6 +20,7 @@
 
 #include "eprosimartps/rtps_all.h"
 #include "eprosimartps/utils/eClock.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 inline double round( double d )
 {
@@ -34,7 +35,6 @@ struct TimeStats{
 };
 
 
-#define NSAMPLES 10000
 
 
 class LatencyPublisher:public SubscriberListener
@@ -76,7 +76,7 @@ public:
 		m_latency_out->seqnum++;
 		m_pub->write((void*)m_latency_out);
 	}
-	void onSubscriptionMatched()
+	void onSubscriptionMatched(MatchingInfo info)
 	{
 		cout << RTPS_B_RED << "SUBSCRIPTION MATCHED" <<RTPS_DEF << endl;
 		sema.post();
@@ -89,7 +89,7 @@ public:
 			mp_sema(sem){};
 		virtual ~LatencyPublisher_PubListener(){};
 		boost::interprocess::interprocess_semaphore* mp_sema;
-		void onPublicationMatched()
+		void onPublicationMatched(MatchingInfo info)
 		{
 			mp_sema->post();
 			cout << RTPS_B_MAGENTA <<"Publication Matched" <<RTPS_DEF<< endl;
@@ -105,28 +105,30 @@ LatencyPublisher::LatencyPublisher():
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.name = "participant1";
 	m_part = DomainParticipant::createParticipant(PParam);
 
 	clock.setTimeNow(&m_t1);
 	for(int i=0;i<10000;i++)
 		clock.setTimeNow(&m_t2);
-	overhead_value = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/10001;
+	overhead_value = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/10001;
 	cout << "Overhead " << overhead_value << endl;
 	//PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = NSAMPLES+100;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 1;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
 	m_pub = DomainParticipant::createPublisher(m_part,Wparam,(PublisherListener*)&this->m_PubListener);
 	//SUBSCRIBER
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = NSAMPLES+100;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 100;
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyDown";
@@ -149,23 +151,11 @@ bool LatencyPublisher::test(uint32_t datasize,uint32_t n_samples)
 	cout << "Begin test of size: " << datasize+4 << ", enter number to start: "; 
 	std::cin >> aux;
 	clock.setTimeNow(&m_t1);
-	//for(uint32_t i =0;i<n_samples;++i)
-	//{
-	//	m_latency_out->seqnum++;
-	////	eClock::my_sleep(1);
-	//	m_pub->write((void*)m_latency_out);
-	//	sema.wait();
-	//	if(!(*m_latency_out == *m_latency_in))
-	//	{
-	//		cout << "PROBLEM"<<endl;
-	//		return false;
-	//	}
-	//	m_latency_in->seqnum = -1;
-	//}
+
 	m_pub->write((void*)m_latency_out);
 	sema.wait();
-	cout << "Total time(us): "<< Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1) << endl;
-	cout << "Data size: " << datasize+4 <<  "  MeanTime(us): " << (Time_t2MicroSec(m_t2) - Time_t2MicroSec(m_t1))/n_samples  << endl;
+	cout << "Total time(us): "<< TimeConv::Time_t2MicroSecondsDouble(m_t2) - TimeConv::Time_t2MicroSecondsDouble(m_t1) << endl;
+	cout << "Data size: " << datasize+4 <<  "  MeanTime(us): " << (TimeConv::Time_t2MicroSecondsDouble(m_t2) - TimeConv::Time_t2MicroSecondsDouble(m_t1))/n_samples  << endl;
 	size_t removed=0;
 	m_pub->removeAllChange(&removed);
 	cout << "Removed " << removed << endl;

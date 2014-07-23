@@ -15,7 +15,7 @@
 #include <bitset>
 #include <cstdint>
 
-#define NSAMPLES 5000
+#define NSAMPLES 10000
 
 
 #include "eprosimartps/rtps_all.h"
