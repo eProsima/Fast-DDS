@@ -46,7 +46,7 @@ public:
 	 * @return The locator that has been opennend.
 	 */
 	Locator_t init_thread(Locator_t& loc,bool isMulti,bool isFixed);
-	/**
+	/**l
 	 * Add an associated enpoint to the list.
 	 * @param end Pointer to the endpoint.
 	 * @return True if correct.
