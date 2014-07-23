@@ -55,14 +55,20 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 
 	if(m_defaultUnicastLocatorList.empty())
 	{
-		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:11111"<<endl);
+		
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);
+		std::stringstream ss;
+		cout << "LOCATORLIST: " << myIP.size() << endl;
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
+			cout << "LOCATOR:  "<<lit->printIP4Port()<< endl;
 			lit->port=7555;
 			m_defaultUnicastLocatorList.push_back(*lit);
+			ss << lit->printIP4Port() << ";";
 		}
+		cout << "STRINGSTREAM: " << ss.str() << endl;
+		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<ss.str().c_str()<<endl);
 	}
 
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
@@ -107,7 +113,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		const EntityId_t& entityId)
 {
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-	pDebugInfo("Creating " << type << " Writer"<<endl);
+	pDebugInfo("Creating " << type << " Writer on topic: "<<param.topic.getTopicName()<<endl);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -184,7 +190,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		const EntityId_t& entityId)
 {
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-		pDebugInfo("Creating " << type << " Reader"<<endl);
+	pDebugInfo("Creating " << type << " Reader on topic: "<<param.topic.getTopicName()<<endl);
 	EntityId_t entId;
 	if(entityId == c_EntityId_Unknown)
 	{

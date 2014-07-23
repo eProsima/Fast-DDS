@@ -128,8 +128,4 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 }
 
 
-
-
-
-
 #endif /* LATENCYSUBSCRIBER_H_ */

@@ -187,9 +187,17 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 
 Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed)
 {
-	pInfo(RTPS_BLUE<<"Listen Resource initializing in : "<<loc.printIP4Port()<<RTPS_DEF<< endl);
 	m_listenLoc = loc;
 	boost::asio::ip::address address = boost::asio::ip::address::from_string(m_listenLoc.to_IP4_string());
+	if(m_listenLoc.address[12]==0 && m_listenLoc.address[13]==0 && m_listenLoc.address[14]==0 && m_listenLoc.address[15]==0) //LISTEN IN ALL INTERFACES
+	{
+		pDebugInfo("Defined Locator IP with 0s (listen to all interfaces), setting first interface as value"<<endl);
+		LocatorList_t myIP;
+		IPFinder::getIPAddress(&myIP);
+		m_listenLoc= *myIP.begin();
+		m_listenLoc.port = loc.port;
+	}
+	pInfo(RTPS_BLUE<<"Listen Resource initializing in : "<<m_listenLoc.printIP4Port()<<RTPS_DEF<< endl);
 	if(isMulti)
 	{
 		m_listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_listenLoc.port);
