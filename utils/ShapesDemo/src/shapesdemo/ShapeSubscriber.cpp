@@ -87,9 +87,9 @@ void ShapeSubscriber::onNewDataMessage()
                 {
                     //  cout << " found with the same color"<<endl;
                     found = true;
-                    //                    cout << "Time DIFF: "<<Time_tAbsDiff2Millisec(it->front().m_time,info.sourceTimestamp)<<endl;
-                    //                    cout << "Minimum separation: "<< Time_t2MilliSec(m_attributes.qos.m_timeBasedFilter.minimum_separation)<<endl;
-                    //                    cout << "Pass filter: "<<  passFilter(&shape) << endl;
+                    // cout << "Time DIFF: "<<Time_tAbsDiff2Millisec(it->front().m_time,info.sourceTimestamp)<<endl;
+                    // cout << "Minimum separation: "<< Time_t2MilliSec(m_attributes.qos.m_timeBasedFilter.minimum_separation)<<endl;
+                    // cout << "Pass filter: "<<  passFilter(&shape) << endl;
                     if(TimeConv::Time_tAbsDiff2DoubleMillisec(it->front().m_time,info.sourceTimestamp)>=TimeConv::Time_t2MilliSecondsDouble(m_attributes.qos.m_timeBasedFilter.minimum_separation) &&
                             passFilter(&shape))
                     {
