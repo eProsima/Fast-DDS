@@ -46,9 +46,9 @@ public:
 	StatefulReader* mp_SubReader;
 	//!EDPSimpleListeners object, contains two listeners for the Publication and Subscription readers.
 	EDPSimpleListeners m_listeners;
-	//!EDPSimpleTopicDatType to extract the key from unregistering and disposing messages.
+	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
 	EDPSimpleTopicDataType m_pubReaderTopicDataType;
-	//!EDPSimpleTopicDatType to extract the key from unregistering and disposing messages.
+	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
 	EDPSimpleTopicDataType m_subReaderTopicDataType;
 
 

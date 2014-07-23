@@ -28,8 +28,8 @@ namespace dds{
  * been called for a matching or a removal of a remote endpoint.
  */
 enum MatchingStatus{
-	MATCHED_MATCHING,//!< MATCHED_MATCHING
-	REMOVED_MATCHING //!< REMOVED_MATCHING
+	MATCHED_MATCHING,//!< MATCHED_MATCHING, new publisher/subscriber found
+	REMOVED_MATCHING //!< REMOVED_MATCHING, publisher/subscriber removed
 
 };
 
