@@ -150,9 +150,12 @@ public:
 	{
 		cout <<"New Message"<<endl;
 	}
-	void onSubscriptionMatched()
+	void onSubscriptionMatched(MatchingInfo info)
 	{
-		cout << "Discovery"<<endl;
+		if(info.status == MATCHED_MATCHING)
+			cout << "Discovery"<<endl;
+		else if(info.status == REMOVED_MATCHING)
+			cout << "Publisher removed"<<endl;
 	}
 };
 
@@ -190,9 +193,16 @@ public:
 	{
 		pub->removeMinSeqCache();
 	}
-	void onPublicationMatched()
+	void onPublicationMatched(MatchingInfo info)
 	{
-		cout << "Discovery!"<<endl;
+		if(info.status == MATCHED_MATCHING)
+		{
+			cout << "Discovery!"<<endl;
+		}
+		else if(info.status == REMOVED_MATCHING)
+		{
+			cout << "Subscription removed"<<endl;
+		}
 	}
 
 };
