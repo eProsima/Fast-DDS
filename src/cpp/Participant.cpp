@@ -59,16 +59,17 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);
 		std::stringstream ss;
-		cout << "LOCATORLIST: " << myIP.size() << endl;
+
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-			cout << "LOCATOR:  "<<lit->printIP4Port()<< endl;
+		
 			lit->port=7555;
 			m_defaultUnicastLocatorList.push_back(*lit);
 			ss << lit->printIP4Port() << ";";
 		}
-		cout << "STRINGSTREAM: " << ss.str() << endl;
-		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<ss.str().c_str()<<endl);
+		
+		std::string auxstr = ss.str();
+		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr<<endl);
 	}
 
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
