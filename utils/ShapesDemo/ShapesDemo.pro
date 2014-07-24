@@ -43,7 +43,8 @@ INCLUDEPATH += include/
 FORMS    +=   forms/mainwindow.ui \
               forms/publishdialog.ui \
               forms/subscribedialog.ui \
-              forms/optionsdialog.ui
+              forms/optionsdialog.ui \
+    forms/dialog.ui
 
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
@@ -107,4 +108,6 @@ win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010
 
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.4.0.lib
 win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.4.0.lib
+
+RESOURCES +=
 
