@@ -14,6 +14,8 @@
 #define TOPICPARAMETERS_H_
 
 #include <string>
+#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
@@ -62,6 +64,34 @@ public:
 	std::string topicName;
 	//!Topic Data Type.
 	std::string topicDataType;
+
+	HistoryQosPolicy historyQos;
+
+	ResourceLimitsQosPolicy resourceLimitsQos;
+	bool checkQos()
+	{
+		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
+		{
+			pError("INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples"<<endl);
+			return false;
+		}
+		if(resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
+			pWarning("TOPIC QOS: max_samples < max_samples_per_instance*max_instances"<<endl);
+		if(historyQos.kind == KEEP_LAST_HISTORY_QOS)
+		{
+			if(historyQos.depth > resourceLimitsQos.max_samples)
+			{
+				pError("INCORRECT TOPIC QOS: depth must be <= max_samples"<<endl;)
+				return false;
+			}
+			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == WITH_KEY)
+			{
+				pError("INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
+				return false;
+			}
+		}
+		return true;
+	}
 };
 
 } /* namespace rtps */

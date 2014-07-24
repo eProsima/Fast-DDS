@@ -65,12 +65,8 @@ public:
 	/**
 	 * Get the number of elements currently stored in the HistoryCache.
 	 */
-	int getHistoryElementsNumber();
+	size_t getHistoryElementsNumber();
 
-//	bool updateAttributes(const SubscriberAttributes& param);
-
-
-/////@}
 
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.
@@ -83,11 +79,6 @@ public:
 
 	///@}
 
-
-	/**
-	 * Add a writer proxy. Only until Discovery is good.
-	 */
-	bool addWriterProxy(Locator_t& loc,GUID_t& guid);
 
 	size_t getMatchedPublishers();
 
@@ -150,16 +141,12 @@ public:
 	/**
 	 * Get the number of elements currently stored in the HistoryCache.
 	 */
-	int getHistoryElementsNumber()
+	size_t getHistoryElementsNumber()
 	{
 			return mp_impl->getHistoryElementsNumber();
 		}
 
 
-	//	bool updateAttributes(const SubscriberAttributes& param);
-
-
-	/////@}
 
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.
@@ -177,14 +164,6 @@ public:
 	}
 	///@}
 
-
-	/**
-	 * Add a writer proxy. Only until Discovery is good.
-	 */
-	bool addWriterProxy(Locator_t& loc,GUID_t& guid)
-	{
-		return mp_impl->addWriterProxy(loc,guid);
-	}
 
 	size_t getMatchedPublishers(){return mp_impl->getMatchedPublishers();}
 private:

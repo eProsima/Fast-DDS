@@ -9,7 +9,7 @@
 /**
  * @file ReaderQos.h
  *
-*/
+ */
 
 #ifndef READERQOS_H_
 #define READERQOS_H_
@@ -18,29 +18,55 @@ namespace eprosima {
 namespace dds {
 
 /**
- * ReaderQos class contains all the possible Qos that can be set for a determined Subscriber/Reader.
- * Although this values can be set and are transmitted in the Discovery the behaviour associated with them is yet to be implemented.
+ * ReaderQos class contains all the possible Qos that can be set for a determined Subscriber. Although these values can be set and are transmitted
+ * during the EDP, not all of the behaviour associated with them has been implemented in the library.
+ * The supported Qos in this version are: Durability, Liveliness, Reliability and Partition.
  */
 class ReaderQos{
 public:
 	ReaderQos(){};
 	virtual ~ReaderQos(){};
+	//!Durability Qos, implemented in the library.
 	DurabilityQosPolicy m_durability;
-		DeadlineQosPolicy m_deadline;
-		LatencyBudgetQosPolicy m_latencyBudget;
-		LivelinessQosPolicy m_liveliness;
-		ReliabilityQosPolicy m_reliability;
-		OwnershipQosPolicy m_ownership;
-		DestinationOrderQosPolicy m_destinationOrder;
-		UserDataQosPolicy m_userData;
-		TimeBasedFilterQosPolicy m_timeBasedFilter;
-		PresentationQosPolicy m_presentation;
-		PartitionQosPolicy m_partition;
-		TopicDataQosPolicy m_topicData;
-		GroupDataQosPolicy m_groupData;
-		DurabilityServiceQosPolicy m_durabilityService;
-		LifespanQosPolicy m_lifespan;
-		void setQos( ReaderQos& readerqos, bool first_time);
+	//!Deadline Qos, NOT implemented in the library.
+	DeadlineQosPolicy m_deadline;
+	//!Latency Budget Qos, NOT implemented in the library.
+	LatencyBudgetQosPolicy m_latencyBudget;
+	//!Liveliness Qos, implemented in the library.
+	LivelinessQosPolicy m_liveliness;
+	//!ReliabilityQos, implemented in the library.
+	ReliabilityQosPolicy m_reliability;
+	//!Ownership Qos, NOT implemented in the library.
+	OwnershipQosPolicy m_ownership;
+	//!Destinatio Order Qos, NOT implemented in the library.
+	DestinationOrderQosPolicy m_destinationOrder;
+	//!UserData Qos, NOT implemented in the library.
+	UserDataQosPolicy m_userData;
+	//!Time Based Filter Qos, NOT implemented in the library.
+	TimeBasedFilterQosPolicy m_timeBasedFilter;
+	//!Presentation Qos, NOT implemented in the library.
+	PresentationQosPolicy m_presentation;
+	//!Partition Qos, implemented in the library.
+	PartitionQosPolicy m_partition;
+	//!Topic Data Qos, NOT implemented in the library.
+	TopicDataQosPolicy m_topicData;
+	//!GroupData Qos, NOT implemented in the library.
+	GroupDataQosPolicy m_groupData;
+	//!Durability Service Qos, NOT implemented in the library.
+	DurabilityServiceQosPolicy m_durabilityService;
+	//!Lifespan Qos, NOT implemented in the library.
+	LifespanQosPolicy m_lifespan;
+	/**
+	 * Set Qos from another class
+	 * @param readerqos Reference from a ReaderQos object.
+	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+	 */
+	void setQos( ReaderQos& readerqos, bool first_time);
+	/**
+	 * Check if the Qos values are compatible between each other.
+	 * @return True if correct.
+	 */
+	bool checkQos();
 };
 
 

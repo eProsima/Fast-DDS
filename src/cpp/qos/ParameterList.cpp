@@ -63,7 +63,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 		paramlist_byte_size +=4;
 		if(valid)
 		{
-			//cout << RED <<"readparameterlistfromcdrmsg Param with pid: " << std::hex << pid << std::dec <<DEF <<endl;
 			switch(pid)
 			{
 			case PID_UNICAST_LOCATOR:
@@ -177,6 +176,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			}
 			case PID_PARTICIPANT_GUID:
 			case PID_GROUP_GUID:
+			case PID_ENDPOINT_GUID:
 			{
 				ParameterGuid_t* p = new ParameterGuid_t(pid,plength);
 				valid &= CDRMessage::readData(msg,p->guid.guidPrefix.value,12);
@@ -198,8 +198,11 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			case PID_TYPE_NAME:
 			case PID_ENTITY_NAME:
 			{
+//				cout << msg->pos << endl;
 				ParameterString_t* p = new ParameterString_t(pid,plength);
 				valid &= CDRMessage::readString(msg,&p->m_string);
+//				cout << "READ: "<< p->m_string<<endl;
+//				cout << msg->pos << endl;
 				IF_VALID_ADD
 			}
 			case PID_PROPERTY_LIST:
@@ -210,38 +213,41 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 								//uint16_t msg_pos_first = msg->pos;
 				std::string str;
 				std::pair<std::string,std::string> pair;
-				uint32_t rest=0;
+				//uint32_t rest=0;
 				for(uint32_t n_prop =0;n_prop<num_properties;++n_prop)
 				{
-
-					//STRING 1
-					uint32_t str_size = 1;
-					valid&=CDRMessage::readUInt32(msg,&str_size);
-
-					str = std::string();str.resize(str_size);
-					octet* oc1 = new octet[str_size];
-					valid &= CDRMessage::readData(msg,oc1,str_size);
-					for(uint32_t i =0;i<str_size;i++)
-						str.at(i) = oc1[i];
-					pair.first = str;
-					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
-					rest = rest==0 ? 0 : 4-rest;
-					msg->pos+=rest;
-					//STRING 2
-					valid&=CDRMessage::readUInt32(msg,&str_size);
-					str = std::string();str.resize(str_size);
-
-					octet* oc2 = new octet[str_size];
-					valid &= CDRMessage::readData(msg,oc2,str_size);
-					for(uint32_t i =0;i<str_size;i++)
-						str.at(i) = oc2[i];
-					pair.second = str;
-					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
-										rest = rest==0 ? 0 : 4-rest;
-										msg->pos+=rest;
+					pair.first.clear();
+					valid &= CDRMessage::readString(msg,&pair.first);
+					pair.second.clear();
+					valid &= CDRMessage::readString(msg,&pair.second);
+//					//STRING 1
+//					uint32_t str_size = 1;
+//					valid&=CDRMessage::readUInt32(msg,&str_size);
+//
+//					str = std::string();str.resize(str_size);
+//					octet* oc1 = new octet[str_size];
+//					valid &= CDRMessage::readData(msg,oc1,str_size);
+//					for(uint32_t i =0;i<str_size;i++)
+//						str.at(i) = oc1[i];
+//					pair.first = str;
+//					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
+//					rest = rest==0 ? 0 : 4-rest;
+//					msg->pos+=rest;
+//					//STRING 2
+//					valid&=CDRMessage::readUInt32(msg,&str_size);
+//					str = std::string();str.resize(str_size);
+//
+//					octet* oc2 = new octet[str_size];
+//					valid &= CDRMessage::readData(msg,oc2,str_size);
+//					for(uint32_t i =0;i<str_size;i++)
+//						str.at(i) = oc2[i];
+//					pair.second = str;
+//					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
+//										rest = rest==0 ? 0 : 4-rest;
+//										msg->pos+=rest;
 					p->properties.push_back(pair);
-					delete(oc1);
-					delete(oc2);
+//					delete(oc1);
+//					delete(oc2);
 				}
 				if(valid)
 				{
@@ -265,6 +271,8 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					*chkind = NOT_ALIVE_DISPOSED;
 				else if (status == 2)
 					*chkind = NOT_ALIVE_UNREGISTERED;
+				else if (status == 3)
+					*chkind = NOT_ALIVE_DISPOSED_UNREGISTERED;
 				msg->pos+=4;
 				paramlist_byte_size+=4;
 				break;
@@ -275,7 +283,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				p->Pid = PID_KEY_HASH;
 				p->length = 16;
 				valid&=CDRMessage::readData(msg,p->key.value,16);
-				paramlist_byte_size+=16;
 				if(handle!=NULL)
 					*handle = p->key;
 				IF_VALID_ADD
@@ -384,7 +391,14 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				PartitionQosPolicy * p = new PartitionQosPolicy();
 				p->length = plength;
-				valid &= CDRMessage::readOctetVector(msg,&p->name);
+				uint32_t namessize;
+				valid &= CDRMessage::readUInt32(msg,&namessize);
+				for(uint32_t i = 1;i<=namessize;++i)
+				{
+					std::string auxstr;
+					valid &= CDRMessage::readString(msg,&auxstr);
+					p->names.push_back(auxstr);
+				}
 				IF_VALID_ADD
 			}
 			case PID_TOPIC_DATA:
@@ -414,10 +428,10 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				valid &= CDRMessage::readInt32(msg,&p->service_cleanup_delay.seconds);
 				valid &= CDRMessage::readUInt32(msg,&p->service_cleanup_delay.fraction);
 				valid&=CDRMessage::readOctet(msg,(octet*)&p->history_kind);msg->pos+=3;
-				valid &= CDRMessage::readUInt32(msg,&p->history_depth);
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
-				valid &= CDRMessage::readUInt32(msg,&p->max_instances);
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples_per_instance);
+				valid &= CDRMessage::readInt32(msg,&p->history_depth);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples);
+				valid &= CDRMessage::readInt32(msg,&p->max_instances);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples_per_instance);
 				IF_VALID_ADD
 			}
 			case PID_LIFESPAN:
@@ -436,9 +450,9 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			case PID_RESOURCE_LIMITS:
 			{
 				ResourceLimitsQosPolicy* p = new ResourceLimitsQosPolicy();
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples);
-				valid &= CDRMessage::readUInt32(msg,&p->max_instances);
-				valid &= CDRMessage::readUInt32(msg,&p->max_samples_per_instance);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples);
+				valid &= CDRMessage::readInt32(msg,&p->max_instances);
+				valid &= CDRMessage::readInt32(msg,&p->max_samples_per_instance);
 				IF_VALID_ADD
 			}
 			case PID_TRANSPORT_PRIORITY:

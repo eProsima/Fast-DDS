@@ -26,39 +26,40 @@ namespace rtps{
 /**
  * Enum ChangeKind_t, different types of changes.
  */
-typedef enum ChangeKind_t{
+enum ChangeKind_t{
 	ALIVE,                //!< ALIVE
 	NOT_ALIVE_DISPOSED,   //!< NOT_ALIVE_DISPOSED
-	NOT_ALIVE_UNREGISTERED//!< NOT_ALIVE_UNREGISTERED
-}ChangeKind_t;
+	NOT_ALIVE_UNREGISTERED,//!< NOT_ALIVE_UNREGISTERED
+	NOT_ALIVE_DISPOSED_UNREGISTERED
+};
 
 /**
  * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
  */
-typedef enum ChangeForReaderStatus_t{
-	UNSENT,        //!< UNSENT
-	UNACKNOWLEDGED,//!< UNACKNOWLEDGED
-	REQUESTED,     //!< REQUESTED
-	ACKNOWLEDGED,  //!< ACKNOWLEDGED
-	UNDERWAY       //!< UNDERWAY
-}ChangeForReaderStatus_t;
+enum ChangeForReaderStatus_t{
+	UNSENT = 0,        //!< UNSENT
+	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
+	REQUESTED = 2,     //!< REQUESTED
+	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
+	UNDERWAY = 4       //!< UNDERWAY
+};
 /**
  * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
  */
-typedef enum ChangeFromWriterStatus_t{
-	UNKNOWN,
-	MISSING,
+enum ChangeFromWriterStatus_t{
+	UNKNOWN = 0,
+	MISSING = 1,
 	//REQUESTED_WITH_NACK,
-	RECEIVED,
-	LOST
-}ChangeFromWriterStatus_t;
+	RECEIVED = 2,
+	LOST = 3
+};
 
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
  * @ingroup COMMONMODULE
  */
-typedef struct CacheChange_t{
+ struct CacheChange_t{
 	//!Kind of change
 	ChangeKind_t kind;
 	//!GUID_t of the writer that generated this change.
@@ -106,25 +107,84 @@ typedef struct CacheChange_t{
 	~CacheChange_t(){
 
 	}
-}CacheChange_t;
+};
 
 /**
- * Struct ChangeForReader_t used to indicate the state of a specific change with respect to a specific reader, as well as its relevance.
+ * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
  */
-typedef struct ChangeForReader_t{
-	CacheChange_t* change;
-	ChangeForReaderStatus_t status;
+ class ChangeForReader_t{
+ public:
+	 ChangeForReader_t():status(UNSENT),is_relevant(true),m_isValid(false),change(NULL){};
+	 virtual ~ChangeForReader_t(){};
+	 ChangeForReaderStatus_t status;
 	bool is_relevant;
-}ChangeForReader_t;
+	SequenceNumber_t seqNum;
+	CacheChange_t* getChange()
+	{
+		return change;
+	}
+	bool setChange(CacheChange_t* a_change)
+	{
+		m_isValid = true;
+		seqNum = a_change->sequenceNumber;
+		change = a_change;
+		return true;
+	}
+	void notValid()
+	{
+		is_relevant = false;
+		m_isValid = false;
+		change = NULL;
+	}
+	bool isValid()
+	{
+		return m_isValid;
+	}
+ private:
+	bool m_isValid;
+	CacheChange_t* change;
+};
 
 /**
  * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
  */
-typedef struct ChangeFromWriter_t{
+class ChangeFromWriter_t
+{
+ public:
+	 ChangeFromWriter_t():status(UNKNOWN),is_relevant(true),m_isValid(false),change(NULL)
+	 {
+
+	 }
+	 virtual ~ChangeFromWriter_t(){};
+	 ChangeFromWriterStatus_t status;
+	 bool is_relevant;
+	 SequenceNumber_t seqNum;
+	 CacheChange_t* getChange()
+	 {
+		 return change;
+	 }
+	 bool setChange(CacheChange_t* a_change)
+	 {
+		 m_isValid = true;
+		 seqNum = a_change->sequenceNumber;
+		 change = a_change;
+		 return true;
+	 }
+	 void notValid()
+	 {
+		 is_relevant = false;
+		 m_isValid = false;
+		 change = NULL;
+	 }
+	 bool isValid()
+	 {
+		 return m_isValid;
+	 }
+ private:
+	 	bool m_isValid;
 	CacheChange_t* change;
-	ChangeFromWriterStatus_t status;
-	bool is_relevant;
-}ChangeFromWriter_t;
+
+};
 
 
 

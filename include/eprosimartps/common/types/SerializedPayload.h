@@ -29,7 +29,7 @@ namespace rtps{
 
 
 //!@brief Structure SerializedPayload_t.
-typedef struct SerializedPayload_t{
+struct SerializedPayload_t{
 	//!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
 	uint16_t encapsulation;
 	//!Actual length of the data
@@ -58,8 +58,9 @@ typedef struct SerializedPayload_t{
 	 * @return True if correct
 	 */
 	bool copy(SerializedPayload_t* serData){
+		if(serData->length>max_size)
+			return false;
 		length = serData->length;
-		max_size = length;
 		encapsulation = serData->encapsulation;
 		if(data == NULL)
 			data = (octet*)malloc(length);
@@ -75,7 +76,7 @@ typedef struct SerializedPayload_t{
 			free(data);
 		data = NULL;
 	}
-}SerializedPayload_t;
+};
 
 }
 };

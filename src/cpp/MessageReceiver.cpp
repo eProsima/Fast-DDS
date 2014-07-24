@@ -6,7 +6,7 @@
  *
  *************************************************************************/
 
-/*
+/**
  * @file MessageReceiver.cpp
  *
  */
@@ -20,6 +20,8 @@
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
+
+#include "eprosimartps/writer/ReaderProxyData.h"
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
@@ -116,7 +118,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		//First 4 bytes must contain: ID | flags | octets to next header
 		if(!readSubmessageHeader(msg,&submsgh))
 			return;
-
+		//cout << msg->pos << "||"<<submsgh.submessageLength << "||"<<msg->length<<endl;
 		if(msg->pos + submsgh.submessageLength > msg->length)
 		{
 			pWarning("MessageReceiver:SubMsg of invalid length"<<endl);
@@ -128,37 +130,77 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		{
 		case DATA:
 		{
-			pDebugInfo("Data Submsg received, processing..."<<endl);
-			valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
+			if(this->destGuidPrefix != participantguidprefix)
+			{
+				msg->pos += submsgh.submessageLength;
+				pDebugInfo("Data Submsg ignored, DST is another participant..."<<endl);
+			}
+			else
+			{
+				pDebugInfo("Data Submsg received, processing..."<<endl);
+				valid = proc_Submsg_Data(msg,&submsgh,&last_submsg);
+			}
 			break;
 		}
 		case GAP:
 		{
-			pDebugInfo("Gap Submsg received, processing..."<<endl);
-			valid = proc_Submsg_Gap(msg,&submsgh,&last_submsg);
+			if(this->destGuidPrefix != participantguidprefix)
+			{
+				msg->pos += submsgh.submessageLength;
+				pDebugInfo("Gap Submsg ignored, DST is another participant..."<<endl);
+			}
+			else
+			{
+				pDebugInfo("Gap Submsg received, processing..."<<endl);
+				valid = proc_Submsg_Gap(msg,&submsgh,&last_submsg);
+			}
 			break;
 		}
 		case ACKNACK:
 		{
-			pDebugInfo("Acknack Submsg received, processing..."<<endl);
-			valid = proc_Submsg_Acknack(msg,&submsgh,&last_submsg);
+			if(this->destGuidPrefix != participantguidprefix)
+			{
+				msg->pos += submsgh.submessageLength;
+				pDebugInfo("Acknack Submsg ignored, DST is another participant..."<<endl);
+			}
+			else
+			{
+				pDebugInfo("Acknack Submsg received, processing..."<<endl);
+				valid = proc_Submsg_Acknack(msg,&submsgh,&last_submsg);
+			}
 			break;
 		}
 		case HEARTBEAT:
 		{
-			pDebugInfo("Heartbeat Submsg received, processing..."<<endl);
-			valid = proc_Submsg_Heartbeat(msg,&submsgh,&last_submsg);
+			if(this->destGuidPrefix != participantguidprefix)
+			{
+				msg->pos += submsgh.submessageLength;
+				pDebugInfo("HB Submsg ignored, DST is another participant..."<<endl);
+			}
+			else
+			{
+				pDebugInfo("Heartbeat Submsg received, processing..."<<endl);
+				valid = proc_Submsg_Heartbeat(msg,&submsgh,&last_submsg);
+			}
 			break;
 		}
 		case PAD:
+			pWarning("PAD messages not yet implemented"<<endl);
+			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_DST:
+			pDebugInfo("InfoDST message received, processing..."<<endl;);
+			valid = proc_Submsg_InfoDST(msg,&submsgh,&last_submsg);
+			//				pWarning("Info DST messages not yet implemented"<<endl);
+			//				msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_SRC:
+			pWarning("Info SRC messages not yet implemented"<<endl);
+			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_TS:
 		{
-			//pDebugInfo("InfoTS Submsg received, processing..."<<endl);
+			pDebugInfo("InfoTS Submsg received, processing..."<<endl);
 			valid = proc_Submsg_InfoTS(msg,&submsgh,&last_submsg);
 			break;
 		}
@@ -170,6 +212,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			msg->pos += submsgh.submessageLength; //ID NOT KNOWN. IGNORE AND CONTINUE
 			break;
 		}
+
 		if(!valid || last_submsg)
 			break;
 	}
@@ -241,7 +284,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(keyFlag && dataFlag)
 	{
 		pWarning( "Message received with Data and Key Flag set."<<endl)
-		return false;
+																				return false;
 	}
 
 	//Assign message endianness
@@ -263,6 +306,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = NULL;
+	bool firstReaderNeedsToRelease = true;
 	if(mp_threadListen->m_assocReaders.empty())
 	{
 		pWarning("Data received when NO readers are created"<<endl);
@@ -279,7 +323,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	if(firstReader == NULL) //Reader not found
 	{
-		pWarning("Data Message received for unknown reader"<<endl);
+		pWarning("No Reader in this Locator ("<<mp_threadListen->m_listenLoc.printIP4Port()<< ") accepts this message (directed to: " <<readerID << ")" <<endl);
 		return false;
 	}
 	//FOUND THE READER.
@@ -294,7 +338,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		pWarning("Invalid message received, bad sequence Number"<<endl)
-		return false;
+																				return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -327,9 +371,18 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 		if(dataFlag)
 		{
-			ch->serializedPayload.length = payload_size-2-2;
-			CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
-			ch->kind = ALIVE;
+			if(ch->serializedPayload.max_size >= payload_size-2-2)
+			{
+				ch->serializedPayload.length = payload_size-2-2;
+				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
+				ch->kind = ALIVE;
+			}
+			else
+			{
+				pWarning("Serlialized Payload larger than maximum allowed size ("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")"<<endl);
+				firstReader->release_Cache(ch);
+				return false;
+			}
 		}
 		else if(keyFlag)
 		{
@@ -340,7 +393,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				msg->msg_endian = LITTLEEND;
 			else
 			{
-				pError( "MEssage received with bat encapsulation for KeyHash and status parameter list"<< endl);
+				pError( "Message received with bad encapsulation for KeyHash and status parameter list"<< endl);
+				return false;
 			}
 			//uint32_t param_size;
 			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
@@ -357,55 +411,62 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-
+	pDebugInfo("Looking through all RTPSReaders associated with this ListenResources"<<endl);
 	//Look for the correct reader to add the change
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgDirectedTo(readerID)) //add
+		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
+		if((*it)->acceptMsgFrom(ch->writerGUID) && (*it)->acceptMsgDirectedTo(readerID)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);
 			CacheChange_t* change_to_add;
 			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
 			{
 				change_to_add = ch;
+				firstReaderNeedsToRelease = false;
 			}
 			else
 			{
 				change_to_add = (*it)->reserve_Cache(); //Reserve a new cache from the corresponding cache pool
 				change_to_add->copy(ch);
 			}
-
-
-			if((*it)->add_change(change_to_add))
+			if(haveTimestamp)
+				change_to_add->sourceTimestamp = this->timestamp;
+			if((*it)->getStateType() == STATEFUL)
 			{
-				if((*it)->getStateType() == STATEFUL)
+				StatefulReader* SFR = (StatefulReader*)(*it);
+				WriterProxy* WP;
+				if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
 				{
-					StatefulReader* SFR = (StatefulReader*)(*it);
-					WriterProxy* WP;
-					if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
+					if((*it)->add_change(change_to_add))
 					{
 						WP->received_change_set(change_to_add);
+						SequenceNumber_t maxSeqNumAvailable;
+						WP->available_changes_max(&maxSeqNumAvailable);
+						if(change_to_add->sequenceNumber <= maxSeqNumAvailable)
+						{
+							if((*it)->getListener()!=NULL)
+							{
+								//cout << "CALLING NEWDATAMESSAGE "<<endl;
+								(*it)->getListener()->onNewDataMessage();
+								//cout << "FINISH CALLING " <<endl;
+								if((*it)->isHistoryFull())
+									(*it)->getListener()->onHistoryFull();
+							}
+							(*it)->m_semaphore.post();
+						}
 					}
 					else
 					{
-						(*it)->remove_change(change_to_add->sequenceNumber,change_to_add->writerGUID);
-						return false;
-					}
-					SequenceNumber_t maxSeqNumAvailable;
-					WP->available_changes_max(&maxSeqNumAvailable);
-					if(maxSeqNumAvailable.to64long() == change_to_add->sequenceNumber.to64long())
-					{
-						if((*it)->getListener()!=NULL)
-						{
-							(*it)->getListener()->onNewDataMessage();
-							if((*it)->isHistoryFull())
-								(*it)->getListener()->onHistoryFull();
-						}
-						(*it)->m_semaphore.post();
+						(*it)->release_Cache(change_to_add);
+						pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
 					}
 				}
-				else
+			}
+			else
+			{
+				if((*it)->add_change(change_to_add))
 				{
 					if((*it)->getListener()!=NULL)
 					{
@@ -415,13 +476,17 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					}
 					(*it)->m_semaphore.post();
 				}
-			}
-			else
-			{
-				pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+				else
+				{
+					(*it)->release_Cache(change_to_add);
+					pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
+				}
 			}
 		}
 	}
+	//cout << "CHECKED ALL READERS "<<endl;
+	if(firstReaderNeedsToRelease)
+		firstReader->release_Cache(ch);
 	pDebugInfo("Sub Message DATA processed"<<endl);
 	return true;
 }
@@ -432,10 +497,10 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	bool finalFlag = smh->flags & BIT(1) ? true : false;
 	bool livelinessFlag = smh->flags & BIT(2) ? true : false;
 	//Assign message endianness
-		if(endiannessFlag)
-			msg->msg_endian = LITTLEEND;
-		else
-			msg->msg_endian = BIGEND;
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
 
 	GUID_t readerGUID,writerGUID;
 	readerGUID.guidPrefix = destGuidPrefix;
@@ -445,6 +510,11 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	SequenceNumber_t firstSN, lastSN;
 	CDRMessage::readSequenceNumber(msg,&firstSN);
 	CDRMessage::readSequenceNumber(msg,&lastSN);
+	if(lastSN<firstSN)
+	{
+		pDebugInfo("HB Received with lastSN < firstSN, ignoring"<<endl;);
+		return false;
+	}
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
@@ -454,7 +524,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{
@@ -481,7 +551,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 							if(!WP->m_isMissingChangesEmpty)
 								WP->m_heartbeatResponse.restart_timer();
 						}
-						//TODOG: Livelinessflag behaviour
+						//FIXME: livelinessFlag
+						if(livelinessFlag )//&& WP->param.livelinessKind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+							WP->assertLiveliness();
 					}
 				}
 				else
@@ -491,7 +563,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 			}
 		}
 	}
-
+	//Is the final message?
+	if(smh->submessageLength == 0)
+		*last = true;
 	return true;
 }
 
@@ -500,6 +574,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 {
 
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	bool finalFlag = smh->flags & BIT(1) ? true: false;
 	//Assign message endianness
 	if(endiannessFlag)
 		msg->msg_endian = LITTLEEND;
@@ -533,7 +608,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 				//Look for the readerProxy the acknack is from
 				for(p_ReaderProxyIterator rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
-					if((*rit)->m_param.remoteReaderGuid == readerGUID || (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
+					if((*rit)->m_data->m_guid == readerGUID )//|| (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
 					{
 
 						if((*rit)->m_lastAcknackCount < Ackcount)
@@ -542,7 +617,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							(*rit)->acked_changes_set(SNSet.base);
 							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
 							(*rit)->requested_changes_set(set_vec);
-							if(!(*rit)->m_isRequestedChangesEmpty)
+							if(!(*rit)->m_isRequestedChangesEmpty || !finalFlag)
 							{
 								(*rit)->m_nackResponse.restart_timer();
 							}
@@ -573,6 +648,11 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 		msg->msg_endian = LITTLEEND;
 	else
 		msg->msg_endian = BIGEND;
+
+	//Is the final message?
+	if(smh->submessageLength == 0)
+		*last = true;
+
 	GUID_t writerGUID,readerGUID;
 	readerGUID.guidPrefix = destGuidPrefix;
 	CDRMessage::readEntityId(msg,&readerGUID.entityId);
@@ -589,7 +669,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
 			if((*it)->getStateType() == STATEFUL)
 			{
@@ -623,7 +703,9 @@ bool MessageReceiver::proc_Submsg_InfoTS(CDRMessage_t* msg,SubmessageHeader_t* s
 		msg->msg_endian = LITTLEEND;
 	else
 		msg->msg_endian = BIGEND;
-
+	//Is the final message?
+	if(smh->submessageLength == 0)
+		*last = true;
 	if(!timeFlag)
 	{
 		haveTimestamp = true;
@@ -634,6 +716,31 @@ bool MessageReceiver::proc_Submsg_InfoTS(CDRMessage_t* msg,SubmessageHeader_t* s
 
 	return true;
 }
+
+bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
+{
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	//bool timeFlag = smh->flags & BIT(1) ? true : false;
+	//Assign message endianness
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
+	GuidPrefix_t guidP;
+	CDRMessage::readData(msg,guidP.value,12);
+	if(guidP != c_GuidPrefix_Unknown)
+	{
+		this->destGuidPrefix = guidP;
+	}
+	//Is the final message?
+	if(smh->submessageLength == 0)
+		*last = true;
+	return true;
+}
+
+
+
+
 
 } /* namespace rtps */
 } /* namespace eprosima */

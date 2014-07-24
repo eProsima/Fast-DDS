@@ -53,6 +53,7 @@ DomainParticipantImpl::DomainParticipantImpl()
 	m_offsetd2 = 1;
 	m_offsetd3 = 11;
 	m_DomainId = 80;
+
 }
 
 DomainParticipantImpl::~DomainParticipantImpl()
@@ -163,7 +164,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo(B_YELLOW <<"Creating Publisher"<<DEF<<endl)
+	pInfo(RTPS_B_YELLOW <<"Creating Publisher"<<RTPS_DEF<<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(WParam.topic.topicDataType,&p_type))
@@ -177,7 +178,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		return NULL;
 	}
 	PublisherImpl* pubImpl = NULL;
-	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
+	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(WParam.userDefinedId <= 0)
 		{
@@ -186,16 +187,17 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		}
 	}
 	WParam.payloadMaxSize = p_type->m_typeSize;
+	if(!WParam.qos.checkQos() || !WParam.topic.checkQos())
+		return NULL;
+	RTPSWriter* SW;
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-		RTPSWriter* SW;
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		RTPSWriter* SW;
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
 		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
@@ -204,9 +206,12 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		pWarning("Incorrect Reliability Kind"<<endl);
 	if(pubImpl != NULL)
 	{
-		pInfo(B_YELLOW<<"PUBLISHER CREATED"<<DEF<<endl);
+		pInfo(RTPS_B_YELLOW<<"PUBLISHER CREATED"<<RTPS_DEF<<endl);
 		Publisher* Pub = new Publisher(pubImpl);
 		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
+		//Now we do discovery (in our event thread):
+		p->getEventResource()->io_service.post(boost::bind(&ParticipantImpl::registerWriter,p,SW));
+		//p->WriterDiscovery(SW);
 		return Pub;
 	}
 
@@ -223,7 +228,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		pError("Participant not registered"<<endl);
 		return NULL;
 	}
-	pInfo(B_YELLOW <<"Creating Subscriber"<<DEF <<endl)
+	pInfo(RTPS_B_YELLOW <<"Creating Subscriber"<<RTPS_DEF <<endl)
 	//Look for the correct type registration
 	DDSTopicDataType* p_type = NULL;
 	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
@@ -237,7 +242,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		return NULL;
 	}
 	SubscriberImpl* subImpl = NULL;
-	if(p->getDiscoveryAttributes().use_STATIC_EndpointDiscoveryProtocol)
+	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(RParam.userDefinedId <= 0)
 		{
@@ -246,25 +251,29 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		}
 	}
 	RParam.payloadMaxSize = p_type->m_typeSize;
+	if(!RParam.qos.checkQos() || !RParam.topic.checkQos())
+		return NULL;
+	RTPSReader* SR;
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-		RTPSReader* SR;
-		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
+	    if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
 			return NULL;
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
-		RTPSReader* SR;
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type,slisten))
 			return NULL;
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
 	if(subImpl != NULL)
 	{
-		pInfo(B_YELLOW<<"SUBSCRIBER CREATED"<<DEF<<endl);
+		pInfo(RTPS_B_YELLOW<<"SUBSCRIBER CREATED"<<RTPS_DEF<<endl);
 		Subscriber* Sub = new Subscriber(subImpl);
 		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
+		p->getEventResource()->io_service.post(boost::bind(&ParticipantImpl::registerReader,p,SR));
+
+		//p->ReaderDiscovery(SR);
 		return Sub;
 	}
 
@@ -316,6 +325,37 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
+		std::vector<PublisherPair> auxListPub;
+		for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
+				it!=m_publisherList.end();++it)
+		{
+			if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+			{
+				delete(it->first);
+				delete(it->second);
+			}
+			else
+			{
+				auxListPub.push_back(*it);
+			}
+		}
+		m_publisherList = auxListPub;
+		pDebugInfo("Publishers deleted correctly "<< endl);
+		std::vector<SubscriberPair> auxListSub;
+		for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
+				it!=m_subscriberList.end();++it)
+		{
+			if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+			{
+				delete(it->first);
+				delete(it->second);
+			}
+			else
+			{
+				auxListSub.push_back(*it);
+			}
+		}
+		m_subscriberList = auxListSub;
 		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 				it!=m_participants.end();++it)
 		{

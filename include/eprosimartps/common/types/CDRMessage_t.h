@@ -33,7 +33,7 @@ namespace rtps{
  * @brief Structure CDRMessage_t, contains a serialized message.
  * @ingroup COMMONMODULE
  */
-typedef struct CDRMessage_t{
+struct CDRMessage_t{
 	CDRMessage_t(){
 		pos = 0;
 		length = 0;
@@ -65,7 +65,7 @@ typedef struct CDRMessage_t{
 	uint16_t length;
 	//!Endianness of the message.
 	Endianness_t msg_endian;
-}CDRMessage_t;
+};
 
 }
 }

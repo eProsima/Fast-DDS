@@ -56,18 +56,24 @@ bool PublisherImpl::unregister(void* Data) {
 	return mp_Writer->add_new_change(NOT_ALIVE_UNREGISTERED,Data);
 }
 
+bool PublisherImpl::dispose_and_unregister(void* Data) {
+	//Convert data to serialized Payload
+	pInfo("Disposing and Unregistering Data"<<endl)
+	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
+}
+
 
 bool PublisherImpl::removeMinSeqChange()
 {
 	return mp_Writer->removeMinSeqCacheChange();
 }
 
-bool PublisherImpl::removeAllChange(int32_t* removed)
+bool PublisherImpl::removeAllChange(size_t* removed)
 {
 	return mp_Writer->removeAllCacheChange(removed);
 }
 
-int PublisherImpl::getHistoryElementsNumber()
+size_t PublisherImpl::getHistoryElementsNumber()
 {
 	return mp_Writer->getHistoryCacheSize();
 }
@@ -78,44 +84,44 @@ size_t PublisherImpl::getMatchedSubscribers()
 }
 
 
-bool PublisherImpl::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
-{
-	if(mp_Writer->getStateType()==STATELESS)
-	{
-		ReaderLocator RL;
-		RL.expectsInlineQos = expectsInlineQos;
-		RL.locator = Loc;
-		pDebugInfo("Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl);
-		((StatelessWriter*)mp_Writer)->reader_locator_add(RL);
-	}
-	else if(mp_Writer->getStateType()==STATEFUL)
-	{
-		pError("StatefulWriter expects Reader Proxies"<<endl);
-		return false;
-	}
-	return true;
-}
-
-
-bool PublisherImpl::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
-{
-	if(mp_Writer->getStateType()==STATELESS)
-	{
-		pError("StatelessWriter expects reader locator"<<endl);
-		return false;
-	}
-	else if(mp_Writer->getStateType()==STATEFUL)
-	{
-		ReaderProxy_t RL;
-		RL.expectsInlineQos = expectsInline;
-		RL.remoteReaderGuid = guid;
-		RL.unicastLocatorList.push_back(loc);
-		pDebugInfo("Adding ReaderProxy at: "<< loc.to_IP4_string()<<":"<<loc.port<< endl);
-		((StatefulWriter*)mp_Writer)->matched_reader_add(RL);
-		return true;
-	}
-	return false;
-}
+//bool PublisherImpl::addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
+//{
+//	if(mp_Writer->getStateType()==STATELESS)
+//	{
+//		ReaderLocator RL;
+//		RL.expectsInlineQos = expectsInlineQos;
+//		RL.locator = Loc;
+//		pDebugInfo("Adding ReaderLocator at: "<< RL.locator.to_IP4_string()<<":"<<RL.locator.port<< endl);
+//		((StatelessWriter*)mp_Writer)->reader_locator_add(RL);
+//	}
+//	else if(mp_Writer->getStateType()==STATEFUL)
+//	{
+//		pError("StatefulWriter expects Reader Proxies"<<endl);
+//		return false;
+//	}
+//	return true;
+//}
+//
+//
+//bool PublisherImpl::addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
+//{
+//	if(mp_Writer->getStateType()==STATELESS)
+//	{
+//		pError("StatelessWriter expects reader locator"<<endl);
+//		return false;
+//	}
+//	else if(mp_Writer->getStateType()==STATEFUL)
+//	{
+//		ReaderProxy_t RL;
+//		RL.expectsInlineQos = expectsInline;
+//		RL.remoteReaderGuid = guid;
+//		RL.unicastLocatorList.push_back(loc);
+//		pDebugInfo("Adding ReaderProxy at: "<< loc.to_IP4_string()<<":"<<loc.port<< endl);
+//		((StatefulWriter*)mp_Writer)->matched_reader_add(RL);
+//		return true;
+//	}
+//	return false;
+//}
 
 
 bool PublisherImpl::assignListener(PublisherListener* listen_in)

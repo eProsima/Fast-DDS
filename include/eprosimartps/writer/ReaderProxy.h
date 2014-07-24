@@ -28,33 +28,20 @@
 
 #include "eprosimartps/common/CacheChange.h"
 
-#include "eprosimartps/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/timedevent/NackResponseDelay.h"
-#include "eprosimartps/timedevent/NackSupressionDuration.h"
+#include "eprosimartps/writer/timedevent/PeriodicHeartbeat.h"
+#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
+#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 
+#include "eprosimartps/qos/DDSQosPolicies.h"
+
+using namespace eprosima::dds;
 
 namespace eprosima {
 namespace rtps {
 
 class StatefulWriter;
+class ReaderProxyData;
 
-
-/**
- * ReaderProxy_t structure that contains the information of a specific ReaderProxy.
- * @ingroup WRITERMODULE
- */
-typedef struct ReaderProxy_t{
-	GUID_t remoteReaderGuid;
-	bool expectsInlineQos;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	ReliabilityKind_t m_reliability;
-	ReaderProxy_t(){
-		GUID_UNKNOWN(remoteReaderGuid);
-		expectsInlineQos = false;
-		m_reliability = RELIABLE;
-	}
-}ReaderProxy_t;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWRITER.
@@ -63,7 +50,7 @@ typedef struct ReaderProxy_t{
 class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~ReaderProxy();
-	ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& times,StatefulWriter* SW);
+	ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW);
 
 	/**
 	 * Get the ChangeForReader struct associated with a determined change
@@ -137,7 +124,7 @@ public:
 
 
 	//!Parameters of the ReaderProxy
-		ReaderProxy_t m_param;
+	ReaderProxyData* m_data;
 
 
 	//!Pointer to the associated StatefulWriter.
@@ -151,18 +138,17 @@ public:
 
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
 
-	//!Timed Event to manage the periodic HB to the Reader.
-		PeriodicHeartbeat m_periodicHB;
-		//!Timed Event to manage the Acknack response delay.
-		NackResponseDelay m_nackResponse;
-		//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
-		NackSupressionDuration m_nackSupression;
 
-		uint32_t m_lastAcknackCount;
+	//!Timed Event to manage the Acknack response delay.
+	NackResponseDelay m_nackResponse;
+	//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
+	NackSupressionDuration m_nackSupression;
+
+	uint32_t m_lastAcknackCount;
 
 
 	//TODOG DDSFILTER
-		bool dds_is_relevant(CacheChange_t* change);
+	bool dds_is_relevant(CacheChange_t* change);
 
 
 

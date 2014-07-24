@@ -11,20 +11,21 @@
  */
 
 
+#ifndef RTPSWRITER_H_
+#define RTPSWRITER_H_
+
 #include "eprosimartps/Endpoint.h"
-#include "eprosimartps/HistoryCache.h"
+
+#include "eprosimartps/history/WriterHistory.h"
+
 
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 
 #include "eprosimartps/qos/WriterQos.h"
 #include "eprosimartps/dds/Publisher.h"
 
-
-#ifndef RTPSWRITER_H_
-#define RTPSWRITER_H_
-
-
-
+#include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/dds/attributes/PublisherAttributes.h"
 
 using namespace eprosima::dds;
 
@@ -37,18 +38,19 @@ class PublisherListener;
 
 namespace rtps {
 
-
+class ReaderProxyData;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
-  * @ingroup WRITERMODULE
+ * @ingroup WRITERMODULE
  */
 class RTPSWriter: public Endpoint
 {
+	friend class LivelinessPeriodicAssertion;
 public:
-	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
+	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
 			StateKind_t state = STATELESS,
-			int16_t userDefinedId=-1,uint16_t historysize = 50,uint32_t payload_size = 500);
+			int16_t userDefinedId=-1,uint32_t payload_size = 500);
 	virtual ~RTPSWriter();
 
 	/**
@@ -62,16 +64,43 @@ public:
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
 
-	size_t getHistoryCacheSize()
-	{
-		return this->m_writer_cache.getHistorySize();
-	}
-
+	/**
+	 * Add a change to the unsent list.
+	 * @param change Pointer to the change to add.
+	 */
 	virtual void unsent_change_add(CacheChange_t* change)=0;
+	/**
+	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
+	 * @param a_change Pointer to the change that is going to be removed.
+	 * @return True if removed correctly.
+	 */
+	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
+	/**
+	 * Add a matched reader.
+	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @return True if added.
+	 */
+	virtual bool matched_reader_add(ReaderProxyData* rdata)=0;
+	/**
+	 * Remove a matched reader.
+	 * @param rdata Pointer to the object to remove.
+	 * @return True if removed.
+	 */
+	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
+	/**
+	 * Remove the change with the minimum SequenceNumber
+	 * @return True if removed.
+	 */
 	virtual bool removeMinSeqCacheChange()=0;
-	virtual bool removeAllCacheChange(int32_t* n_removed)=0;
+	/**
+	 * Remove all changes from history
+	 * @param n_removed Pointer to return the number of elements removed.
+	 * @return True if correct.
+	 */
+	virtual bool removeAllCacheChange(size_t* n_removed)=0;
+	//!Get the number of matched subscribers.
 	virtual size_t getMatchedSubscribers()=0;
-
+	//!Add a new change to the history.
 	bool add_new_change(ChangeKind_t kind,void*Data);
 
 	/**
@@ -80,29 +109,21 @@ public:
 	 * @param[out] writerGuid Pointer to store the writerGuid.
 	 * @return True if correct.
 	 */
-	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
-	{
-		return m_writer_cache.get_seq_num_min(seqNum,writerGuid);
-	}
+	bool get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid);
 	/**
 	 * Get the maximum sequence number in the HistoryCache.
 	 * @param[out] seqNum Pointer to store the sequence number
 	 * @param[out] writerGuid Pointer to store the writerGuid.
 	 * @return True if correct.
 	 */
-	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid)
-	{
-		return m_writer_cache.get_seq_num_max(seqNum,writerGuid);
-	}
-
-	bool add_change(CacheChange_t*change)
-	{
-		return m_writer_cache.add_change(change);
-	}
+	bool get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid);
+	//!Add a change to the History.
+	bool add_change(CacheChange_t*change);
 
 	bool get_last_added_cache(CacheChange_t**change)
 	{
-		return m_writer_cache.get_last_added_cache(change);
+		m_writer_cache.get_max_change(change);
+		return true;
 	}
 
 	void setQos( WriterQos& qos,bool first)
@@ -116,11 +137,25 @@ public:
 
 	ParameterList_t* getInlineQos(){return &m_inlineQos;}
 
+	bool getLivelinessAsserted()
+	{
+		return m_livelinessAsserted;
+	}
 
+	void setLivelinessAsserted(bool live)
+	{
+		m_livelinessAsserted = live;
+	}
+
+	//!Get the number of changes in the History.
+	size_t getHistoryCacheSize()
+	{
+		return this->m_writer_cache.getHistorySize();
+	}
 protected:
 
 	//!Changes associated with this writer.
-	HistoryCache m_writer_cache;
+	WriterHistory m_writer_cache;
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
 	bool m_pushMode;
 
@@ -138,9 +173,9 @@ protected:
 	//Publisher* m_Pub;
 	PublisherListener* mp_listener;
 
-	//QosList_t m_ParameterQosList;
-
 	ParameterList_t m_inlineQos;
+
+	bool m_livelinessAsserted;
 
 
 };

@@ -56,8 +56,8 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 typedef unsigned char octet;
-typedef unsigned int uint;
-typedef unsigned short ushort;
+//typedef unsigned int uint;
+//typedef unsigned short ushort;
 typedef unsigned char SubmessageFlag;
 typedef uint32_t BuiltinEndpointSet_t;
 typedef uint32_t Count_t;
@@ -74,7 +74,7 @@ typedef uint32_t Count_t;
 #define BIT(i) ((i==0) ? BIT0 : (i==1) ? BIT1 :(i==2)?BIT2:(i==3)?BIT3:(i==4)?BIT4:(i==5)?BIT5:(i==6)?BIT6:(i==7)?BIT7:0x0)
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
-typedef struct ProtocolVersion_t{
+struct ProtocolVersion_t{
 	octet m_major;
 	octet m_minor;
 	ProtocolVersion_t():
@@ -89,7 +89,7 @@ typedef struct ProtocolVersion_t{
 	{
 
 	}
-} ProtocolVersion_t;
+};
 
 #define PROTOCOLVERSION_1_0(pv) {pv.m_major=1;pv.m_minor=0;}
 #define PROTOCOLVERSION_1_1(pv) {pv.m_major=1;pv.m_minor=1;}
@@ -97,11 +97,14 @@ typedef struct ProtocolVersion_t{
 #define PROTOCOLVERSION_2_1(pv) {pv.m_major=2;pv.m_minor=1;}
 #define PROTOCOLVERSION PROTOCOLVERSION_2_1
 
+const ProtocolVersion_t c_ProtocolVersion(2,1);
+
 #define VENDORID_UNKNOWN(vi) {vi[0]=0;vi[1]=0;}
 #define VENDORID_EPROSIMA(vi) {vi[0]=0x01;vi[1]=0x0F;}
-//!@brief Structure VendorId_t.
+//!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
 typedef octet VendorId_t[2];
 
+const VendorId_t c_eProsimaVendorId={0x01,0x0F};
 
 }
 }

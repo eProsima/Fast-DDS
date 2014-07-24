@@ -47,17 +47,15 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 		return false;
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	//Str size
-	uint32_t str_siz = this->m_string.size();
-	int rest = str_siz % 4;
+	uint32_t str_siz = (uint32_t)this->m_string.size();
+	int rest = (str_siz+1) % 4;
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
-	this->length = str_siz + 4 + rest;
-//	cout << "string: "<<this->m_string << endl;
-//	cout << "param length: " << this->length << " str size: "<< str_siz << " rest: " << rest << endl;
+	this->length = str_siz+1 + 4 + rest;
 	valid &= CDRMessage::addUInt16(msg, this->length);
-	valid &= CDRMessage::addUInt32(msg, str_siz);
+	valid &= CDRMessage::addUInt32(msg, str_siz+1);
 	valid &= CDRMessage::addData(msg,
-			(unsigned char*) this->m_string.c_str(), str_siz);
+			(unsigned char*) this->m_string.c_str(), str_siz+1);
 	if (rest != 0) {
 		octet oc = '\0';
 		for (int i = 0; i < rest; i++) {
@@ -174,7 +172,7 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	uint16_t pos_str = msg->pos;
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addUInt32(msg,this->properties.size());
+	valid &= CDRMessage::addUInt32(msg,(uint32_t)this->properties.size());
 	for(std::vector<std::pair<std::string,std::string>>::iterator it = this->properties.begin();
 			it!=this->properties.end();++it)
 	{

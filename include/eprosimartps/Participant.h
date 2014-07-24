@@ -29,7 +29,6 @@
 #include "eprosimartps/dds/attributes/all_attributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
-#include "eprosimartps/resources/ResourceListen.h"
 #include "eprosimartps/resources/ListenResource.h"
 #include "eprosimartps/resources/ResourceSend.h"
 
@@ -38,6 +37,7 @@
 
 #include "eprosimartps/Endpoint.h"
 
+#include "eprosimartps/builtin/BuiltinProtocols.h"
 
 
 #ifndef PARTICIPANT_H_
@@ -67,7 +67,8 @@ class StatefulReader;
 class RTPSReader;
 class RTPSWriter;
 
-class ParticipantDiscoveryProtocol;
+
+
 
 
 
@@ -111,8 +112,31 @@ public:
 	 */
 	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 				DDSTopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-
+	/**
+	 * Register a writer in the builtin protocols.
+	 * @param Writer Pointer to the RTPSWriter to register.
+	 */
+	void registerWriter(RTPSWriter* Writer);
+	/**
+	 * Register a reader in the builtin protocols.
+	 * @param Reader Pointer to the RTPSReader to register.
+	 */
+	void registerReader(RTPSReader* Reader);
+	/**
+	 * Assign an endpoint to the listenResources.
+	 * @param endp Pointer to the endpoint.
+	 * @param isBuiltin Boolean indicating if it is builtin.
+	 * @return True if correct.
+	 */
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
+	/**
+	 * Assign a locator to a listen resources.
+	 * @param pend Pointer to the endpoint.
+	 * @param lit Locator list iterator.
+	 * @param isMulticast Boolean indicating that is multicast.
+	 * @param isFixed Boolean indicating that is a fixed listenresource.
+	 * @return True if assigned.
+	 */
 	bool assignLocator2ListenResources(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
 
 
@@ -167,8 +191,8 @@ public:
 
 	void ResourceSemaphoreWait();
 
-	const DiscoveryAttributes& getDiscoveryAttributes() const {
-		return m_discovery;
+	const BuiltinAttributes& getBuiltinAttributes() const {
+		return m_builtin;
 	}
 
 	ResourceEvent* getEventResource()
@@ -184,6 +208,16 @@ public:
 		m_participantID = participantId;
 	}
 
+	uint32_t getListenSocketBufferSize() const {
+		return m_listen_socket_buffer_size;
+	}
+
+	uint32_t getSendSocketBufferSize() const {
+		return m_send_socket_buffer_size;
+	}
+
+
+
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -194,7 +228,7 @@ private:
 
 	//! Sending resources.
 	ResourceSend m_send_thr;
-
+	//! Event Resource
 	ResourceEvent m_event_thr;
 
 	//!Semaphore to wait for the listen thread creation.
@@ -232,11 +266,16 @@ private:
 	 */
 	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
-	ParticipantDiscoveryProtocol* mp_PDP;
+	//ParticipantDiscoveryProtocol* mp_PDP;
 
-	DiscoveryAttributes m_discovery;
+	BuiltinProtocols m_builtinProtocols;
+
+	BuiltinAttributes m_builtin;
 
 	uint32_t m_participantID;
+
+	uint32_t m_send_socket_buffer_size;
+	uint32_t m_listen_socket_buffer_size;
 
 
 
@@ -250,13 +289,18 @@ class RTPS_DllAPI Participant
 public:
 	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
 	virtual ~ Participant(){};
+	//!Get the GUID_t of the participant.
 	const GUID_t& getGuid(){return mp_impl->getGuid();};
+	//!Force the announcement of the participant state.
 	void announceParticipantState(){return mp_impl->announceParticipantState();};
+	//!Method to loose the next change (ONLY FOR TEST).
 	void loose_next_change(){return mp_impl->loose_next_change();};
+	//!Stop the participant announcement period.
 	void stopParticipantAnnouncement(){return mp_impl->stopParticipantAnnouncement();};
+	//!Reset the participant announcement period.
 	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
 	private:
-ParticipantImpl* mp_impl;
+	ParticipantImpl* mp_impl;
 };
 
 

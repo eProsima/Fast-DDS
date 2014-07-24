@@ -13,6 +13,7 @@
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/CacheChange.h"
 #include "eprosimartps/dds/attributes/TopicAttributes.h"
 
@@ -104,6 +105,8 @@ public:
 
 	static bool addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
 	static bool addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
+
+	static bool addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP);
 
 	///@}
 

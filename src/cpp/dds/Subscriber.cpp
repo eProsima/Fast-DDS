@@ -45,9 +45,18 @@ void SubscriberImpl::waitForUnreadMessage()
 {
 	if(!mp_Reader->isUnreadCacheChange())
 	{
-		pDebugInfo("No Unread CacheChange, waiting..."<<endl);
-		mp_Reader->m_semaphore.wait();
+		while(1)
+		{
+			mp_Reader->m_semaphore.wait();
+			if(mp_Reader->isUnreadCacheChange())
+				break;
+		}
 	}
+//	if(!mp_Reader->isUnreadCacheChange())
+//	{
+//		pDebugInfo("No Unread CacheChange, waiting..."<<endl);
+//		mp_Reader->m_semaphore.wait();
+//	}
 //mp_Reader->m_semaphore.reset();
 
 }
@@ -64,7 +73,7 @@ bool SubscriberImpl::isHistoryFull()
 }
 
 
-int SubscriberImpl::getHistoryElementsNumber()
+size_t SubscriberImpl::getHistoryElementsNumber()
 {
 	return mp_Reader->getHistoryCacheSize();
 }
@@ -83,24 +92,24 @@ bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
 }
 
 
-bool SubscriberImpl::addWriterProxy(Locator_t& loc, GUID_t& guid)
-{
-	if(mp_Reader->getStateType()==STATELESS)
-	{
-		pError("StatelessReader cannot have writerProxy"<<endl);
-		return false;
-	}
-	else if(mp_Reader->getStateType()==STATEFUL)
-	{
-		WriterProxy_t WL;
-		WL.unicastLocatorList.push_back(loc);
-		WL.remoteWriterGuid = guid;
-		pDebugInfo("Adding WriterProxy at: "<< loc.to_IP4_string()<<":"<< loc.port<< endl);
-		((StatefulReader*)mp_Reader)->matched_writer_add(WL);
-		return true;
-	}
-	return false;
-}
+//bool SubscriberImpl::addWriterProxy(Locator_t& loc, GUID_t& guid)
+//{
+//	if(mp_Reader->getStateType()==STATELESS)
+//	{
+//		pError("StatelessReader cannot have writerProxy"<<endl);
+//		return false;
+//	}
+//	else if(mp_Reader->getStateType()==STATEFUL)
+//	{
+//		WriterProxy_t WL;
+//		WL.unicastLocatorList.push_back(loc);
+//		WL.remoteWriterGuid = guid;
+//		pDebugInfo("Adding WriterProxy at: "<< loc.to_IP4_string()<<":"<< loc.port<< endl);
+//		((StatefulReader*)mp_Reader)->matched_writer_add(WL);
+//		return true;
+//	}
+//	return false;
+//}
 
 const GUID_t& SubscriberImpl::getGuid(){
 	return mp_Reader->getGuid();

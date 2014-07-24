@@ -18,17 +18,23 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <sstream>
 namespace eprosima{
 namespace rtps{
 
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
-typedef struct SequenceNumber_t{
+struct SequenceNumber_t{
 	int32_t high;
 	uint32_t low;
 	SequenceNumber_t(){
 		high = 0;
 		low = 0;
+	}
+	SequenceNumber_t(int32_t hi,uint32_t lo):
+		high(hi),low(lo)
+	{
+
 	}
 	//!Convert the number to 64 bit.
 	uint64_t to64long(){
@@ -73,7 +79,7 @@ typedef struct SequenceNumber_t{
 	}
 
 
-} SequenceNumber_t;
+};
 
 
 //!Compares two SequenceNumber_t.
@@ -84,6 +90,14 @@ inline bool operator==(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
 	if(sn1.low != sn2.low)
 		return false;
 	return true;
+}
+inline bool operator!=(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
+{
+	if(sn1.high != sn2.high)
+		return true;
+	if(sn1.low != sn2.low)
+		return true;
+	return false;
 }
 inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2){
 	return seq1.to64long() > seq2.to64long();
@@ -102,7 +116,6 @@ inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
 
 inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 {
-	//FIXME: repare function for when inc is greater than pow 2, 32
 	if(seq.low-inc < 0)
 	{
 		seq.high--;
@@ -128,13 +141,21 @@ inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
 
 #define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0;}
 
+const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
+
 inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
 {
 	return(s1.to64long() < s2.to64long());
 }
 
+inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seqNum){
+	return output << ((uint64_t)seqNum.high *(uint64_t)pow(2.0,32) + (uint64_t)seqNum.low);
+}
+
+
+
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
-typedef class SequenceNumberSet_t{
+class SequenceNumberSet_t{
 public:
 	SequenceNumber_t base;
 	SequenceNumberSet_t& operator=(const SequenceNumberSet_t& set2)
@@ -177,9 +198,23 @@ public:
 		{
 		return set;
 		}
+	std::string print()
+	{
+		std::stringstream ss;
+		ss<<base.to64long()<<":";
+		for(std::vector<SequenceNumber_t>::iterator it=set.begin();it!=set.end();++it)
+			ss<<it->to64long()<<"-";
+		return ss.str();
+	}
 private:
 	std::vector<SequenceNumber_t> set;
-}SequenceNumberSet_t;
+};
+
+inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns){
+	return output<< sns.print();
+}
+
+
 
 }
 }

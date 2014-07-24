@@ -12,6 +12,7 @@
  */
 
 #include "eprosimartps/qos/ReaderQos.h"
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace dds {
@@ -19,7 +20,7 @@ namespace dds {
 
 void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 {
-	if(m_durability.kind != qos.m_durability.kind)
+	if(first_time)
 	{
 		m_durability = qos.m_durability;
 		m_durability.hasChanged = true;
@@ -34,18 +35,22 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_latencyBudget = qos.m_latencyBudget;
 		m_latencyBudget.hasChanged = true;
 	}
-	if(m_liveliness.lease_duration != qos.m_liveliness.lease_duration ||
-			m_liveliness.kind != qos.m_liveliness.kind)
+	if(m_liveliness.lease_duration != qos.m_liveliness.lease_duration)
+	{
+		m_liveliness.lease_duration = qos.m_liveliness.lease_duration;
+		m_liveliness.hasChanged = true;
+	}
+	if(first_time)
 	{
 		m_liveliness = qos.m_liveliness;
 		m_liveliness.hasChanged = true;
 	}
-	if(m_reliability.kind != qos.m_reliability.kind && first_time)
+	if(first_time)
 	{
 		m_reliability = qos.m_reliability;
 		m_reliability.hasChanged = true;
 	}
-	if(m_ownership.kind != qos.m_ownership.kind)
+	if(first_time)
 	{
 		m_ownership = qos.m_ownership;
 		m_ownership.hasChanged = true;
@@ -72,7 +77,7 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_presentation = qos.m_presentation;
 		m_presentation.hasChanged = true;
 	}
-	if(m_partition.name != qos.m_partition.name )
+	if(first_time)
 	{
 		m_partition = qos.m_partition;
 		m_partition.hasChanged = true;
@@ -103,6 +108,32 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_lifespan = qos.m_lifespan;
 		m_lifespan.hasChanged = true;
 	}
+}
+
+
+bool ReaderQos::checkQos()
+{
+	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
+	{
+		pError("TRANSIENT Durability not supported"<<endl);
+		return false;
+	}
+	if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
+	{
+		pError("PERSISTENT Durability not supported"<<endl);
+		return false;
+	}
+	if(m_destinationOrder.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+	{
+		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
+		return false;
+	}
+	if(m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS && m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+	{
+		pError("BEST_EFFORT incompatible with EXCLUSIVE ownership"<<endl);
+		return false;
+	}
+	return true;
 }
 
 } /* namespace dds */

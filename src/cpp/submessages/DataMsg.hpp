@@ -31,7 +31,6 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 		RTPSMessageCreator::addSubmessageData(msg,change,topicKind,readerId,expectsInlineQos,inlineQos);
 
-		//cout << "SubMEssage created and added to message" << endl;
 		msg->length = msg->pos;
 	}
 	catch(int e)
@@ -63,7 +62,9 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		 submsgElem.msg_endian = BIGEND;
 	}
 	//Find out flags
-	bool dataFlag,keyFlag,inlineQosFlag;
+	bool dataFlag = false;
+	bool keyFlag = false;
+	bool inlineQosFlag = false;
 	if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
 	{
 		dataFlag = true;
@@ -77,7 +78,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	 if(topicKind == NO_KEY)
 		 keyFlag = false;
 	 inlineQosFlag = false;
-	if(inlineQos != NULL || expectsInlineQos) //expects inline qos
+	if(inlineQos != NULL || expectsInlineQos || change->kind != ALIVE) //expects inline qos
 	{
 		if(topicKind == WITH_KEY)
 		{
@@ -96,6 +97,11 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		status = status | BIT(0);
 	if(change->kind == NOT_ALIVE_UNREGISTERED)
 		status = status | BIT(1);
+	if(change->kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+	{
+		status = status | BIT(0);
+		status = status | BIT(1);
+	}
 
 	CDRMessage::initCDRMsg(&submsgElem);
 	try{

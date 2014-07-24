@@ -14,6 +14,7 @@
 #define PUBLISHERLISTENER_H_
 
 #include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/dds/MatchingInfo.h"
 
 namespace eprosima {
 namespace dds {
@@ -28,9 +29,13 @@ class RTPS_DllAPI PublisherListener
 public:
 	PublisherListener();
 	virtual ~PublisherListener();
-
-	virtual void onPublicationMatched();
-
+	/**
+	 * This method is called when the Publisher is matched (or unatched) against an endpoint.
+	 */
+	virtual void onPublicationMatched(MatchingInfo info);
+	/**
+	 * This method is called when the History is full.
+	 */
 	virtual void onHistoryFull();
 };
 

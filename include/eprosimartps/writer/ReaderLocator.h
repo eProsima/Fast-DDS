@@ -19,6 +19,8 @@
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/common/types/SequenceNumber.h"
 
+
+
 namespace eprosima {
 namespace rtps {
 
@@ -42,6 +44,9 @@ public:
 	std::vector<CacheChange_t*> requested_changes;
 	//!Vector containing pointers to the unsent changes to this reader.
 	std::vector<CacheChange_t*> unsent_changes;
+	//!Number of times this locator has been used (in case different readers use the same locator).
+	uint32_t n_used;
+
 	/**
 	 * Retrieve next requested change from the HistoryCache.
 	 * @param cpoin Pointer to pointer.
@@ -72,7 +77,7 @@ public:
 	 * @param readerGUI
 	 * @param history
 	 */
-	void requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& readerGUI,HistoryCache* history);
+//	void requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& readerGUI,HistoryCache* history);
 };
 
 } /* namespace rtps */

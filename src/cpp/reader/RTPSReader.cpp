@@ -20,13 +20,14 @@ namespace rtps {
 
 RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 		StateKind_t state,
-		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
+		int16_t userDefinedId,uint32_t payload_size):
 		Endpoint(guidP,entId,topic,ptype,state,READER,userDefinedId),
 		//mp_Sub(NULL),
 		mp_listener(NULL),
-		m_reader_cache((Endpoint*)this,historysize,payload_size),
+		m_reader_cache((Endpoint*)this,payload_size),
 		m_expectsInlineQos(true),
-		m_acceptMessagesToUnknownReaders(true)
+		m_acceptMessagesToUnknownReaders(true),
+		m_acceptMessagesFromUnkownWriters(true)
 
 {
 	pDebugInfo("RTPSReader created correctly"<<endl);
@@ -46,6 +47,21 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 	else
 		return false;
 }
+
+bool RTPSReader::removeCacheChangesByKey(InstanceHandle_t& key)
+{
+	return m_reader_cache.removeCacheChangesByKey(key);
+}
+
+
+//bool RTPSReader::acceptMsgFrom(EntityId_t& writerId)
+//{
+//	if(m_acceptMessagesFromUnkownWriters)
+//		return true;
+//	if(writerId == this->m_trustedWriterEntityId)
+//		return true;
+//	return false;
+//}
 
 
 } /* namespace rtps */

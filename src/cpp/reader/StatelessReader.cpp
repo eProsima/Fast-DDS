@@ -12,6 +12,7 @@
  */
 
 #include "eprosimartps/reader/StatelessReader.h"
+#include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/dds/SampleInfo.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
@@ -31,7 +32,7 @@ StatelessReader::~StatelessReader() {
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
 		RTPSReader(guidP,entId,param.topic,ptype,STATELESS,
-				param.userDefinedId,param.historyMaxSize,param.payloadMaxSize)
+				param.userDefinedId,param.payloadMaxSize)
 {
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
@@ -45,20 +46,19 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	pDebugInfo("Taking Data from Reader"<<endl);
-	SequenceNumber_t seq;
-	GUID_t gui;
-	if(this->m_reader_cache.get_seq_num_min(&seq,&gui))
+	CacheChange_t* change;
+	if(this->m_reader_cache.get_min_change(&change))
 	{
-		CacheChange_t* change;
-		if(this->m_reader_cache.get_change(seq,gui,&change))
+		if(change->kind == ALIVE)
 		{
-			if(change->kind == ALIVE)
-			{
-				this->mp_type->deserialize(&change->serializedPayload,data);
-			}
-			info->sampleKind = change->kind;
-			return this->m_reader_cache.remove_change(seq,gui);
+			this->mp_type->deserialize(&change->serializedPayload,data);
 		}
+		info->sampleKind = change->kind;
+		info->writerGUID = change->writerGUID;
+		info->sourceTimestamp = change->sourceTimestamp;
+		if(!change->isRead)
+			m_reader_cache.decreaseUnreadCount();
+		return this->m_reader_cache.remove_change(change);
 	}
 	return false;
 }
@@ -70,8 +70,8 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;
-	for(it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
+	for(it = m_reader_cache.changesBegin();
+			it!=m_reader_cache.changesEnd();++it)
 	{
 		if(!(*it)->isRead)
 		{
@@ -87,49 +87,70 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 			info->sampleKind = ALIVE;
 		}
 		info->sampleKind = (*it)->kind;
+		info->writerGUID = (*it)->writerGUID;
+		info->sourceTimestamp = (*it)->sourceTimestamp;
 		(*it)->isRead = true;
+		m_reader_cache.decreaseUnreadCount();
 		return true;
 	}
-	cout << "NOT FOUND UNREAD ELEMENT "<< endl;
+	pInfo("No Unread elements left"<<endl);
 	return false;
 }
 
 bool StatelessReader::isUnreadCacheChange()
 {
-	m_reader_cache.sortCacheChangesBySeqNum();
-	std::vector<CacheChange_t*>::iterator it;
-	for(it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
-	{
-		if(!(*it)->isRead)
-		{
-			return true;
-		}
-	}
-	return false;
+	return m_reader_cache.isUnreadCache();
 }
 
-bool StatelessReader::matched_writer_add(const GUID_t& guid)
+bool StatelessReader::matched_writer_add(WriterProxyData* wdata)
 {
-	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
-	{
-		if(*it == guid)
-			return false;
-	}
-	pInfo("Added "<< guid << " to the matched writer list"<<endl);
-	m_matched_writers.push_back(guid);
-	return true;
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+		{
+			if((*it)->m_guid == wdata->m_guid)
+				return false;
+		}
+		pInfo("Added "<< wdata->m_guid << " to the matched writer list"<<endl);
+		m_matched_writers.push_back(wdata);
+		return true;
+}
+bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+		{
+			if((*it)->m_guid == wdata->m_guid)
+			{
+				m_matched_writers.erase(it);
+				return true;
+			}
+		}
+		return false;
 }
 
-bool StatelessReader::matched_writer_remove(const GUID_t& guid)
+
+
+
+bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
 {
-	for(std::vector<GUID_t>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+	return m_reader_cache.remove_change(ch);
+}
+
+bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
+{
+	if(this->m_acceptMessagesFromUnkownWriters)
 	{
-		if(*it == guid)
+		for(std::vector<WriterProxyData*>::iterator it = this->m_matched_writers.begin();
+				it!=m_matched_writers.end();++it)
 		{
-			m_matched_writers.erase(it);
-			return true;
+			if((*it)->m_guid == writerId)
+				return true;
 		}
+	}
+	else
+	{
+		if(writerId.entityId == this->m_trustedWriterEntityId)
+			return true;
 	}
 	return false;
 }

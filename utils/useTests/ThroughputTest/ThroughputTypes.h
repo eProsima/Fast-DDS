@@ -9,10 +9,6 @@
 /**
  * @file ThroughputTypes.h
  *
- *  Created on: Jun 3, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef THROUGHPUTTYPES_H_
@@ -28,11 +24,11 @@ typedef struct TroughputTimeStats{
 	uint64_t totaltime_us;
 	uint32_t samplesize;
 	uint32_t demand;
-	float Mbitsec;
+	double Mbitsec;
 	uint32_t lostsamples;
 	void compute()
 	{
-		Mbitsec = (float)(samplesize*8*nsamples)/((float)totaltime_us);
+		Mbitsec = (((double)samplesize*8*nsamples))/(totaltime_us);
 	}
 }TroughputTimeStats;
 
@@ -43,12 +39,14 @@ inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& t
 
 inline void printTimeStatsPublisher(const TroughputTimeStats& ts )
 {
-	printf("%6u,%12u, %7.2f,%12lu,%6u\n",ts.samplesize,ts.nsamples,ts.Mbitsec,ts.totaltime_us,ts.demand);
+	//cout << "demand here; " << ts.demand << endl;
+	//printf("%6u",ts.demand);
+	printf("%6u,%12u, %7.2f,%6u,%12lu \n",ts.samplesize,ts.nsamples,ts.Mbitsec,ts.demand,ts.totaltime_us);
 }
 
 inline void printTimeStatsSubscriber(const TroughputTimeStats& ts )
 {
-	printf("%6u,%6u,%12u,%6u,%6u,%6u, %7.2f,%12lu\n",ts.samplesize,ts.demand,ts.nsamples,ts.lostsamples,0,0,ts.Mbitsec,ts.totaltime_us);
+	printf("%6u,%6u,%12u,%6u,%6u,%6u, %7.2f,%12lu \n",ts.samplesize,ts.demand,ts.nsamples,ts.lostsamples,0,0,ts.Mbitsec,ts.totaltime_us);
 }
 
 inline void printLabelsSubscriber()
@@ -59,8 +57,8 @@ inline void printLabelsSubscriber()
 
 inline void printLabelsPublisher()
 {
-	printf(" bytes,     samples, Mbits/s,    time(us),demand\n");
-	printf("------ ------------  ------- ------------ ------\n");
+	printf(" bytes,     samples, Mbits/s,demand,    time(us)\n");
+	printf("------ ------------  ------- ------ ------------\n");
 }
 
 
@@ -139,7 +137,7 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
 	case (TEST_STARTS): return output << "TEST_STARTS";
 	case (TEST_ENDS): return output << "TEST_ENDS";
 	case (ALL_STOPS): return output << "ALL_STOPS";
-	default: return output << B_RED<<"UNKNOWN COMMAND"<<DEF;
+	default: return output << RTPS_B_RED<<"UNKNOWN COMMAND"<<RTPS_DEF;
 	}
 	return output;
 }

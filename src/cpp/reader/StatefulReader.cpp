@@ -17,6 +17,8 @@
 #include "eprosimartps/dds/SampleInfo.h"
 #include "eprosimartps/dds/DDSTopicDataType.h"
 
+#include "eprosimartps/reader/WriterProxyData.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -38,7 +40,7 @@ StatefulReader::~StatefulReader()
 StatefulReader::StatefulReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
 		RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
-						param.userDefinedId,param.historyMaxSize,param.payloadMaxSize),
+						param.userDefinedId,param.payloadMaxSize),
 						m_SubTimes(param.times)
 {
 	//locator lists:
@@ -47,34 +49,76 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 	m_expectsInlineQos = param.expectsInlineQos;
 }
 
-bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
+//bool StatefulReader::matched_writer_add(WriterProxy_t& WPparam)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
+//			it!=matched_writers.end();++it)
+//	{
+//		if((*it)->param.remoteWriterGuid == WPparam.remoteWriterGuid)
+//		{
+//			pWarning("Attempting to add existing writer" << endl);
+//			return false;
+//		}
+//	}
+//	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes.heartbeatResponseDelay,this);
+//	matched_writers.push_back(wp);
+//	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
+//	return true;
+//}
+//
+//bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
+//{
+//	boost::lock_guard<Endpoint> guard(*this);
+//	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+//	{
+//		if((*it)->param.remoteWriterGuid == writerGuid)
+//		{
+//			pWarning("Writer Proxy " << (*it)->param.remoteWriterGuid << " removed" << endl);
+//			delete(*it);
+//			matched_writers.erase(it);
+//
+//			return true;
+//		}
+//	}
+//	pInfo("Writer Proxy doesn't exist in this reader" << endl)
+//	return false;
+//}
+//
+//
+//bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
+//{
+//	return matched_writer_remove(Wp.remoteWriterGuid);
+//}
+
+
+bool StatefulReader::matched_writer_add(WriterProxyData* wdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == WPparam.remoteWriterGuid)
+		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
 			pWarning("Attempting to add existing writer" << endl);
 			return false;
 		}
 	}
-	WriterProxy* wp = new WriterProxy(WPparam,m_SubTimes,this);
+	WriterProxy* wp = new WriterProxy(wdata,m_SubTimes.heartbeatResponseDelay,this);
 	matched_writers.push_back(wp);
 	pDebugInfo("new Writer Proxy added to StatefulReader" << endl);
 	return true;
 }
-
-bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
+bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == writerGuid)
+		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
+			pWarning("Writer Proxy " << (*it)->m_data->m_guid << " removed" << endl);
 			delete(*it);
 			matched_writers.erase(it);
-			pDebugInfo("Writer Proxy removed" << endl);
 			return true;
 		}
 	}
@@ -83,73 +127,58 @@ bool StatefulReader::matched_writer_remove(GUID_t& writerGuid)
 }
 
 
-bool StatefulReader::matched_writer_remove(WriterProxy_t& Wp)
-{
-	return matched_writer_remove(Wp.remoteWriterGuid);
-}
+
+
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		if((*it)->param.remoteWriterGuid == writerGUID)
+		if((*it)->m_data->m_guid == writerGUID)
 		{
 			*WP = *it;
-			pDebugInfo("StatefulReader looking for matched writerProxy, FOUND"<<endl);
+			pDebugInfo("StatefulReader looking for writerProxy "<< writerGUID.entityId<<" from "<< matched_writers.size()<<", FOUND"<<endl);
 			return true;
 		}
 	}
-	pDebugInfo("StatefulReader looking for matched writerProxy, NOT FOUND"<<endl);
+	pDebugInfo("StatefulReader looking for writerProxy "<< writerGUID.entityId<<" from "<< matched_writers.size()<<", NOT FOUND"<<endl);
 	return false;
 }
 
 bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	std::vector<SequenceNumber_t> seq_vec;
-	SequenceNumber_t seq, seqmin;
-	WriterProxy* wpmin = NULL;
-	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-			it!=this->matched_writers.end();++it)
+	CacheChange_t* min_change;
+	if(m_reader_cache.get_min_change(&min_change))
 	{
-		if((*it)->available_changes_min(&seq))
+		pDebugInfo("StatefulReader: trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long()<<endl);
+		WriterProxy* wp;
+		if(matched_writer_lookup(min_change->writerGUID,&wp))
 		{
-			if(seqmin.to64long() == 0 || seqmin > seq)
+			if(min_change->kind == ALIVE)
+				this->mp_type->deserialize(&min_change->serializedPayload,data);
+			if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
 			{
-				wpmin = *it;
-				seqmin = seq;
+				info->sampleKind = min_change->kind;
+				info->writerGUID = min_change->writerGUID;
+				info->sourceTimestamp = min_change->sourceTimestamp;
+				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+				if(!min_change->isRead)
+					m_reader_cache.decreaseUnreadCount();
+				return m_reader_cache.remove_change(min_change);
 			}
 		}
 	}
-	if(seqmin.to64long() == 0)
-	{
-		pDebugInfo("StatefulReader: takeNextCacheChange: seqMin = 0"<<endl);
-		return false;
-	}
-	CacheChange_t* change;
-	pDebugInfo("StatefulReader: trying takeNextCacheChange: "<< seqmin.to64long()<<endl);
-	if(this->m_reader_cache.get_change(seqmin,wpmin->param.remoteWriterGuid,&change))
-	{
-		if(change->kind == ALIVE)
-			this->mp_type->deserialize(&change->serializedPayload,data);
-		if(wpmin->removeChangeFromWriter(seqmin))
-		{
-
-			info->sampleKind = change->kind;
-			return m_reader_cache.remove_change(seq,wpmin->param.remoteWriterGuid);
-		}
-	}
-	pDebugInfo("StatefulReader: takeNextCacheChange: FALSE"<<endl);
 	return false;
 }
 
 bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	m_reader_cache.sortCacheChangesBySeqNum();
-	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
+	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.changesBegin();
+			it!=m_reader_cache.changesEnd();++it)
 	{
 		if((*it)->isRead)
 			continue;
@@ -158,7 +187,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		{
 			SequenceNumber_t seq;
 			wp->available_changes_max(&seq);
-			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
+			if(seq >= (*it)->sequenceNumber)
 			{
 				if((*it)->kind == ALIVE)
 				{
@@ -166,6 +195,11 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 				}
 				(*it)->isRead = true;
 				info->sampleKind = (*it)->kind;
+				info->writerGUID = (*it)->writerGUID;
+				info->sourceTimestamp = (*it)->sourceTimestamp;
+				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+				m_reader_cache.decreaseUnreadCount();
 				return true;
 			}
 		}
@@ -176,27 +210,62 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 
 bool StatefulReader::isUnreadCacheChange()
 {
-	m_reader_cache.sortCacheChangesBySeqNum();
-	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.m_changes.begin();
-			it!=m_reader_cache.m_changes.end();++it)
+	return m_reader_cache.isUnreadCache();
+}
+
+bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	WriterProxy* wp;
+	if(matched_writer_lookup(a_change->writerGUID,&wp))
 	{
-		if((*it)->isRead)
-			continue;
-		WriterProxy* wp;
-		if(this->matched_writer_lookup((*it)->writerGUID,&wp))
+		std::vector<int> to_remove;
+		for(size_t i = 0;i<wp->m_changesFromW.size();++i)
 		{
-			SequenceNumber_t seq;
-			wp->available_changes_max(&seq);
-			if(seq.to64long()>=(*it)->sequenceNumber.to64long())
+			if(!wp->m_changesFromW.at(i).isValid() && (wp->m_changesFromW.at(i).status == RECEIVED || wp->m_changesFromW.at(i).status == LOST))
 			{
-				pDebugInfo("StatefulReader, isUnreadCacheChange: TRUE : "<< (*it)->sequenceNumber.to64long()<<endl);
-				return true;
+				wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
+				to_remove.push_back((int)i);
+			}
+			if(a_change->sequenceNumber == wp->m_changesFromW.at(i).seqNum)
+			{
+				wp->m_changesFromW.at(i).notValid();
+				break;
 			}
 		}
+		for(std::vector<int>::reverse_iterator it = to_remove.rbegin();
+				it!=to_remove.rend();++it)
+		{
+			wp->m_changesFromW.erase(wp->m_changesFromW.begin()+*it);
+		}
+		return m_reader_cache.remove_change(a_change);
 	}
-	pDebugInfo("StatefulReader, isUnreadCacheChange: FALSE"<<endl);
+	else
+	{
+		return m_reader_cache.remove_change(a_change);
+	}
 	return false;
 }
+
+bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
+{
+	if(this->m_acceptMessagesFromUnkownWriters)
+	{
+		for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
+				it!=matched_writers.end();++it)
+		{
+			if((*it)->m_data->m_guid == writerId)
+				return true;
+		}
+	}
+	else
+	{
+		if(writerId.entityId == this->m_trustedWriterEntityId)
+			return true;
+	}
+	return false;
+}
+
 
 
 } /* namespace rtps */

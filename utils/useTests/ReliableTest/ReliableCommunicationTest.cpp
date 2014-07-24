@@ -1,19 +1,12 @@
 ﻿/*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
-/*
- * StatelessTest.cpp
- *
- *  Created on: Feb 26, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *      		grcanosa@gmail.com
- */
+
 
 #include <stdio.h>
 #include <string>
@@ -78,7 +71,7 @@ public:
 	TestTypeDataType()
 {
 		m_topicDataTypeName = "TestType";
-		m_typeSize = 6+4+sizeof(double);
+		m_typeSize = sizeof(TestType);
 		m_isGetKeyDefined = true;
 };
 	~TestTypeDataType(){};
@@ -129,7 +122,7 @@ boost::interprocess::interprocess_semaphore sema(0);
 
 class MyPubListener:public PublisherListener
 {
-	void onPublicationMatched()
+	void onPublicationMatched(MatchingInfo info)
 	{
 		cout << "PUBLICATION MATCHED"<<endl;
 		sema.post();
@@ -138,15 +131,15 @@ class MyPubListener:public PublisherListener
 
 class MySubListener:public SubscriberListener
 {
-	void onSubscriptionMatched()
+	void onSubscriptionMatched(MatchingInfo info)
 	{
 		cout << "SUBSCRIPTION MATCHED "<<endl;
 		sema.post();
 	}
 	void onNewDataMessage()
-		{
-			cout <<"New Message"<<endl;
-		}
+	{
+		cout <<"New Message"<<endl;
+	}
 };
 
 
@@ -155,7 +148,7 @@ int main(int argc, char** argv)
 	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
-	int type;
+	int type = 1;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
@@ -163,18 +156,18 @@ int main(int argc, char** argv)
 		else if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
 	}
-	else
-		type = 1; //publisher
+
 
 	TestTypeDataType TestTypeData;
+	cout << "TYPE MAX SIZE: "<< TestTypeData.m_typeSize<<endl;
 	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
 
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.domainId = 80;
 
 
 	switch(type)
@@ -183,17 +176,21 @@ int main(int argc, char** argv)
 	{
 		PParam.name = "participant1";
 		//In this side we only have a Publisher so we don't need all discovery endpoints
-		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
+		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "TestType";
 		Wparam.topic.topicName = "Test_Topic";
-		Wparam.historyMaxSize = 14;
+		Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Wparam.topic.resourceLimitsQos.max_samples = 50;
+		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 30;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
@@ -235,14 +232,17 @@ int main(int argc, char** argv)
 	{
 		PParam.name = "participant2";
 		//In this side we only have a subscriber so we dont need all discovery endpoints
-		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
-		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
+		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 		Participant* p = DomainParticipant::createParticipant(PParam);
 		SubscriberAttributes Rparam;
-		Rparam.historyMaxSize = 30;
 		Rparam.topic.topicDataType = "TestType";
 		Rparam.topic.topicName = "Test_Topic";
 		Rparam.topic.topicKind = WITH_KEY;
+		Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Rparam.topic.resourceLimitsQos.max_samples = 50;
+		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 30;
+		Rparam.topic.resourceLimitsQos.allocated_samples = 30;
 		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		MySubListener mylisten;
@@ -259,7 +259,7 @@ int main(int argc, char** argv)
 			SampleInfo_t info;
 			if(sub->readNextData((void*)&tp,&info))
 				tp.print();
-			if(sub->getHistoryElementsNumber() >= 0.5*Rparam.historyMaxSize)
+			if(sub->getHistoryElementsNumber() >= 0.5*Rparam.topic.resourceLimitsQos.max_samples)
 			{
 				cout << "Taking all" <<endl;
 				while(sub->takeNextData((void*)&tp,&info))

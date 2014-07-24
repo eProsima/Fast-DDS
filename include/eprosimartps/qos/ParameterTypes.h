@@ -41,7 +41,7 @@ namespace dds {
  * @{
  */
 
-typedef enum ParameterId_t	:uint16_t
+enum ParameterId_t	:uint16_t
 {
 	PID_PAD = 0x0000,
 			PID_SENTINEL = 0x0001,
@@ -95,8 +95,9 @@ typedef enum ParameterId_t	:uint16_t
 			PID_TYPE_MAX_SIZE_SERIALIZED =0x0060,
 			PID_ENTITY_NAME = 0x0062,
 			PID_KEY_HASH = 0x0070,
-			PID_STATUS_INFO = 0x0071
-}ParameterId_t;
+			PID_STATUS_INFO = 0x0071,
+			PID_ENDPOINT_GUID = 0x005a
+};
 
 
 
@@ -160,6 +161,7 @@ public:
 	uint32_t port;
 	ParameterPort_t():port(0){};
 	ParameterPort_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),port(0){};
+	ParameterPort_t(ParameterId_t pid,uint16_t in_length,uint32_t po):Parameter_t(pid,in_length),port(po){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
