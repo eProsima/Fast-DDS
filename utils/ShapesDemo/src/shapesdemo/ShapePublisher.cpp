@@ -19,17 +19,14 @@ ShapePublisher::ShapePublisher(Participant* par):
     m_mutex(QMutex::Recursive),
     isInitialized(false)
 {
-	// TODO Auto-generated constructor stub
+
 
 }
 
 ShapePublisher::~ShapePublisher()
 {
-	// TODO Auto-generated destructor stub
     if(isInitialized)
     {
-//        mp_pub->dispose((void*)&this->m_shape.m_mainShape);
-//        mp_pub->unregister((void*)&this->m_shape.m_mainShape);
         mp_pub->dispose_and_unregister((void*)&this->m_shape.m_mainShape);
         DomainParticipant::removePublisher(this->mp_participant,mp_pub);
     }
