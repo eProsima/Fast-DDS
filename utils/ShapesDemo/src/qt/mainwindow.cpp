@@ -43,16 +43,22 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pubsub->setHorizontalHeaderItem(9, new QStandardItem(QString("Liveliness")));
 
     ui->tableEndpoint->setModel(m_pubsub);
-    ui->tableEndpoint->setColumnWidth(0,60); //Topic
-    ui->tableEndpoint->setColumnWidth(1,65); //Color
-    ui->tableEndpoint->setColumnWidth(2,45); //Size
-    ui->tableEndpoint->setColumnWidth(3,45); //Type
-    ui->tableEndpoint->setColumnWidth(4,55); //Reliable
-    ui->tableEndpoint->setColumnWidth(5,55); //History
-    ui->tableEndpoint->setColumnWidth(6,65); //Partitions
-    ui->tableEndpoint->setColumnWidth(7,75); //Ownership
-    ui->tableEndpoint->setColumnWidth(8,75); //Durability
-    ui->tableEndpoint->setColumnWidth(9,75); //Livleiness
+
+
+    QHeaderView* header = ui->tableEndpoint->horizontalHeader();
+    header->setSectionResizeMode(QHeaderView::Stretch);
+    header->setMinimumSectionSize(70);
+
+//    ui->tableEndpoint->setColumnWidth(0,60); //Topic
+//    ui->tableEndpoint->setColumnWidth(1,65); //Color
+//    ui->tableEndpoint->setColumnWidth(2,45); //Size
+//    ui->tableEndpoint->setColumnWidth(3,45); //Type
+//    ui->tableEndpoint->setColumnWidth(4,55); //Reliable
+//    ui->tableEndpoint->setColumnWidth(5,55); //History
+//    ui->tableEndpoint->setColumnWidth(6,65); //Partitions
+//    ui->tableEndpoint->setColumnWidth(7,75); //Ownership
+//    ui->tableEndpoint->setColumnWidth(8,75); //Durability
+//    ui->tableEndpoint->setColumnWidth(9,75); //Livleiness
 
 
     this->m_shapesDemo.init();
@@ -233,6 +239,7 @@ void MainWindow::on_tableEndpoint_customContextMenuRequested(const QPoint &pos)
 {
     // cout <<"CONTEXT MENU REQUESTED"<<endl;
     QModelIndex index=this->ui->tableEndpoint->indexAt(pos);
+    this->ui->tableEndpoint->selectRow(index.row());
     // cout << index.column()<< " "<< index.row()<<endl;
     this->m_tableRow = index.row();
     if(index.row()>=0)
@@ -265,8 +272,9 @@ void MainWindow::on_actionDelete_Enpoint_triggered()
             break;
         }
     }
-//    for(std::vector<SD_Endpoint>::iterator it = this->m_pubsub_pointers.begin();
-//        it!=this->m_pubsub_pointers.end();++it)
-//        cout << it->pos << " ";
-//    cout << endl;
+}
+
+void MainWindow::on_tableEndpoint_clicked(const QModelIndex &index)
+{
+    this->ui->tableEndpoint->selectRow(index.row());
 }

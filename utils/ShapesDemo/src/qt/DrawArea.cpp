@@ -23,7 +23,11 @@ DrawArea::DrawArea(QWidget *parent)
       lastA(240)
 {
     setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
+
+    QPalette pal = this->palette();
+    pal.setColor(QPalette::Background,Qt::white);
+     setAutoFillBackground(true);
+    this->setPalette(pal);
     m_brush.setStyle(Qt::SolidPattern);
 
     m_timerId = startTimer(50);
@@ -47,7 +51,10 @@ QSize DrawArea::minimumSizeHint() const
 
 void DrawArea::paintEvent(QPaintEvent * /* event */)
 {
-
+    QPalette pal = this->palette();
+    pal.setColor(QPalette::Background,Qt::white);
+     setAutoFillBackground(true);
+    this->setPalette(pal);
     QPainter painter(this);
     drawShapes(&painter);
 }

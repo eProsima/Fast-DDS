@@ -95,6 +95,8 @@ private slots:
 
     void on_actionDelete_Enpoint_triggered();
 
+    void on_tableEndpoint_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
