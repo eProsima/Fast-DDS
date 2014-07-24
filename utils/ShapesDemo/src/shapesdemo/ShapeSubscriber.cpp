@@ -179,7 +179,7 @@ bool ShapeSubscriber::passFilter(ShapeType* shape)
 
 void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
 {
-    if(info.status ==MATCHED_MATCHING)
+    if(info.status == MATCHED_MATCHING)
     {
         cout << "Subscriber MATCHES Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         bool found = false;
