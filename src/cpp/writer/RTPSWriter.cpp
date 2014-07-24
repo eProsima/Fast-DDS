@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/HistoryCache.h"
+
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/dds/Publisher.h"
 #include "eprosimartps/dds/PublisherListener.h"
@@ -26,14 +26,16 @@ namespace eprosima {
 namespace rtps {
 
 
-RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
+RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
 		StateKind_t state,
-		int16_t userDefinedId, uint16_t historysize ,uint32_t payload_size):
-					Endpoint(guidP,entId,topic,ptype,state,WRITER,userDefinedId),
-					m_writer_cache((Endpoint*)this,historysize,payload_size),
-					m_pushMode(true),
-					m_cdrmessages(payload_size),
-					mp_listener(NULL)
+		int16_t userDefinedId, uint32_t payload_size):
+							Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
+							m_writer_cache((Endpoint*)this,payload_size),
+							m_pushMode(true),
+							//FIXME: Select a better size, not the payload but maybe more?
+							m_cdrmessages(payload_size),
+							mp_listener(NULL),
+							m_livelinessAsserted(false)
 {
 	init_header();
 	pDebugInfo("RTPSWriter created"<<endl)
@@ -94,7 +96,7 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 	if(kind != ALIVE && getTopic().getTopicKind() == NO_KEY)
 	{
 		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
-		return false;
+				return false;
 	}
 
 	CacheChange_t* change;
@@ -104,9 +106,10 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 		if(!m_writer_cache.add_change(change))
 		{
 			m_writer_cache.release_Cache(change);
+			pDebugInfo("Change not added"<<endl);
 			return false;
 		}
-
+		m_livelinessAsserted = true;
 		//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
 		unsent_change_add(change);
 		if(m_writer_cache.isFull() && mp_listener !=NULL)
@@ -117,6 +120,50 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 		return false;
 }
 
+bool RTPSWriter::get_seq_num_min(SequenceNumber_t* seqNum,GUID_t* writerGuid)
+{
+	CacheChange_t* change;
+	if(m_writer_cache.get_min_change(&change))
+	{
+
+		*seqNum = change->sequenceNumber;
+		if(writerGuid!=NULL)
+			*writerGuid = change->writerGUID;
+		return true;
+	}
+	else
+	{
+		*seqNum = SequenceNumber_t(0,0);
+		return false;
+	}
+}
+
+bool RTPSWriter::get_seq_num_max(SequenceNumber_t* seqNum,GUID_t* writerGuid)
+{
+	CacheChange_t* change;
+	if(m_writer_cache.get_max_change(&change))
+	{
+		*seqNum = change->sequenceNumber;
+		if(writerGuid!=NULL)
+			*writerGuid = change->writerGUID;
+		return true;
+	}
+	else
+	{
+		*seqNum = SequenceNumber_t(0,0);
+		return false;
+	}
+}
+
+bool RTPSWriter::add_change(CacheChange_t*change)
+{
+	if(m_writer_cache.add_change(change))
+	{
+		m_livelinessAsserted = true;
+		return true;
+	}
+	return false;
+}
 
 
 

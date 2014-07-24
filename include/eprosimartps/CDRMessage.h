@@ -82,8 +82,8 @@ namespace CDRMessage{
 	 */
 	/// @{
 
-	  inline bool addData(CDRMessage_t*,octet*,uint number_bytes);
-	  inline bool addDataReversed(CDRMessage_t*,octet*,uint byte_number);
+      inline bool addData(CDRMessage_t*,octet*,uint32_t number_bytes);
+      inline bool addDataReversed(CDRMessage_t*,octet*,uint32_t byte_number);
 	  inline bool addOctet(CDRMessage_t*msg,octet o);
 	  inline bool addUInt16(CDRMessage_t*msg,uint16_t us);
 	  inline bool addInt32(CDRMessage_t*msg,int32_t lo);

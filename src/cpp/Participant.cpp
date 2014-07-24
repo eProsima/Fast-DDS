@@ -20,14 +20,11 @@
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 
-
-//#include "eprosimartps/dds/DomainParticipant.h"
-
-#include "eprosimartps/discovery/ParticipantDiscoveryProtocol.h"
-#include "eprosimartps/discovery/SimplePDP.h"
+#include "eprosimartps/builtin/BuiltinProtocols.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
+#include "eprosimartps/utils/eClock.h"
 
 namespace eprosima {
 namespace rtps {
@@ -42,40 +39,47 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 							m_participantName(PParam.name),
 							m_guid(guidP,c_EntityId_Participant),
+							m_send_thr(this),
 							m_event_thr(this),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
-							mp_PDP(NULL),
-							m_participantID(ID)
+							m_builtinProtocols(this),
+							m_participantID(ID),
+							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
+							m_listen_socket_buffer_size(PParam.listenSocketBufferSize)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	m_send_thr.initSend(loc);
-
 	m_event_thr.init_thread();
 
 	if(m_defaultUnicastLocatorList.empty())
 	{
-		pWarning("Participant created with NO default Unicast Locator List, adding Locator 0.0.0.0:11111"<<endl);
+		
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);
+		std::stringstream ss;
+
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
+		
 			lit->port=7555;
 			m_defaultUnicastLocatorList.push_back(*lit);
+			ss << lit->printIP4Port() << ";";
 		}
+		
+		std::string auxstr = ss.str();
+		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr<<endl);
 	}
 
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
 
 
-	m_discovery = PParam.discovery;
+	m_builtin = PParam.builtin;
 
-	if(m_discovery.use_SIMPLE_ParticipantDiscoveryProtocol)
-	{
-		mp_PDP = (ParticipantDiscoveryProtocol*) new SimplePDP(this);
-		mp_PDP->initPDP(PParam.discovery, this->getParticipantId());
-	}
+	//START BUILTIN PROTOCOLS
+	m_builtinProtocols.initBuiltinProtocols(PParam.builtin,m_participantID);
+
 }
 
 
@@ -100,208 +104,9 @@ ParticipantImpl::~ParticipantImpl()
 
 	delete(this->mp_ResourceSemaphore);
 
-	if(mp_PDP!=NULL)
-		delete(mp_PDP);
 }
 
-//bool ParticipantImpl::createStatelessWriter(StatelessWriter** SW_out, PublisherAttributes& param,
-//		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten,const EntityId_t& entityId)
-//{
-//	pDebugInfo("Creating Stateless Writer"<<endl);
-//	EntityId_t entId;
-//	if(entityId== c_EntityId_Unknown)
-//	{
-//		if(param.topic.getTopicKind() == NO_KEY)
-//			entId.value[3] = 0x03;
-//		else if(param.topic.getTopicKind() == WITH_KEY)
-//			entId.value[3] = 0x02;
-//		IdCounter++;
-//		octet* c = (octet*)&IdCounter;
-//		entId.value[2] = c[0];
-//		entId.value[1] = c[1];
-//		entId.value[0] = c[2];
-//	}
-//	else
-//	{
-//		entId = entityId;
-//	}
-//	StatelessWriter* SLWriter = new StatelessWriter(param,m_guid.guidPrefix,entId,ptype);
-//	SLWriter->setListener(plisten);
-//	if(this->initWriter((RTPSWriter*)SLWriter,isBuiltin))
-//	{
-//		*SW_out = SLWriter;
-//		return true;
-//	}
-//	else
-//		return false;
-//}
-//
-//bool ParticipantImpl::createStatefulWriter(StatefulWriter** SFW_out, PublisherAttributes& param,
-//		uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,PublisherListener* plisten,const EntityId_t& entityId)
-//{
-//	pDebugInfo("Creating StatefulWriter"<<endl);
-//	EntityId_t entId;
-//	if(entityId== c_EntityId_Unknown)
-//	{
-//		if(param.topic.getTopicKind() == NO_KEY)
-//			entId.value[3] = 0x03;
-//		else if(param.topic.getTopicKind() == WITH_KEY)
-//			entId.value[3] = 0x02;
-//		IdCounter++;
-//		octet* c = (octet*)&IdCounter;
-//		entId.value[2] = c[0];
-//		entId.value[1] = c[1];
-//		entId.value[0] = c[2];
-//	}
-//	else
-//	{
-//		entId = entityId;
-//	}
-//	StatefulWriter* SFWriter = new StatefulWriter(param, m_guid.guidPrefix,entId,ptype);
-//	SFWriter->setListener(plisten);
-//	if(this->initWriter((RTPSWriter*)SFWriter,isBuiltin))
-//	{
-//		*SFW_out = SFWriter;
-//		return true;
-//	}
-//	else return false;
-//}
-//
-//bool ParticipantImpl::initWriter(RTPSWriter*W,bool isBuiltin)
-//{
-//	pDebugInfo("Writer created, initializing"<<endl);
-//	//Check if locator lists are empty:
-//	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL && !isBuiltin)
-//	{
-//		pWarning("Reliable Writer defined with NO unicast locator, assigning default"<<endl);
-//		W->unicastLocatorList = m_defaultUnicastLocatorList;
-//	}
-//	if(W->unicastLocatorList.empty() && W->getStateType() == STATEFUL)
-//		W->multicastLocatorList = m_defaultMulticastLocatorList;
-//	//Assign participant pointer
-//	W->mp_send_thr = &this->m_send_thr;
-//	W->mp_event_thr = &this->m_event_thr;
-//
-//
-//	//Look for receiving threads that are already listening to this writer receiving addresses.
-//	if(assignEnpointToListenResources((Endpoint*)W,'W',isBuiltin))
-//	{
-//		//Wait until the thread is correctly created
-//		if(!isBuiltin)
-//		{
-//			m_userWriterList.push_back(W);
-//			if(mp_PDP!=NULL)
-//				mp_PDP->localWriterMatching(W,true);
-//		}
-//		m_allWriterList.push_back(W);
-//		pDebugInfo("Finished Writer creation"<<endl);
-//		return true;
-//	}
-//	else
-//	{
-//		pDebugInfo("Finished Writer creation (FAILED)"<<endl);
-//		return false;
-//	}
-//
-//}
-//
-//bool ParticipantImpl::createStatelessReader(StatelessReader** SR_out,
-//		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten, const EntityId_t& entityId)
-//{
-//	pInfo("Creating StatelessReader"<<endl);
-//	EntityId_t entId;
-//	if(entityId == c_EntityId_Unknown)
-//	{
-//		if(param.topic.getTopicKind() == NO_KEY)
-//			entId.value[3] = 0x04;
-//		else if(param.topic.getTopicKind() == WITH_KEY)
-//			entId.value[3] = 0x07;
-//		IdCounter++;
-//		octet* c = (octet*)&IdCounter;
-//		entId.value[2] = c[0];
-//		entId.value[1] = c[1];
-//		entId.value[0] = c[2];
-//	}
-//	else
-//		entId = entityId;
-//	StatelessReader* SReader = new StatelessReader(param, m_guid.guidPrefix,entId,ptype);
-//	SReader->setListener(slisten);
-//	if(initReader((RTPSReader*)SReader,isBuiltin))
-//	{
-//		*SR_out = SReader;
-//		return true;
-//	}
-//	else
-//		return false;
-//}
-//
-//bool ParticipantImpl::createStatefulReader(StatefulReader** SR_out,
-//		SubscriberAttributes& param,uint32_t payload_size,bool isBuiltin,DDSTopicDataType* ptype,SubscriberListener* slisten,const EntityId_t& entityId)
-//{
-//	pDebugInfo("Creating StatefulReader"<<endl);
-//	EntityId_t entId;
-//	if(entityId == c_EntityId_Unknown)
-//	{
-//		if(param.topic.getTopicKind() == NO_KEY)
-//			entId.value[3] = 0x04;
-//		else if(param.topic.getTopicKind() == WITH_KEY)
-//			entId.value[3] = 0x07;
-//		IdCounter++;
-//		octet* c = (octet*)&IdCounter;
-//		entId.value[2] = c[0];
-//		entId.value[1] = c[1];
-//		entId.value[0] = c[2];
-//	}
-//	else
-//		entId = entityId;
-//	StatefulReader* SReader = new StatefulReader(param, m_guid.guidPrefix,entId,ptype);
-//	SReader->setListener(slisten);
-//	if(initReader((RTPSReader*)SReader,isBuiltin))
-//	{
-//		*SR_out = SReader;
-//		return true;
-//	}
-//	else
-//	{
-//		*SR_out = NULL;
-//		return false;
-//	}
-//}
-//
-//
-//
-//bool ParticipantImpl::initReader(RTPSReader* p_R,bool isBuiltin)
-//{
-//	//If NO UNICAST
-//	if(p_R->unicastLocatorList.empty() && !isBuiltin)
-//	{
-//		pWarning("Subscriber created with no unicastLocatorList, adding default List"<<endl);
-//		p_R->unicastLocatorList = m_defaultUnicastLocatorList;
-//	}
-//	//IF NO MULTICAST
-//	if(p_R->multicastLocatorList.empty())
-//		p_R->multicastLocatorList = m_defaultMulticastLocatorList;
-//	//Assignthread pointers
-//	p_R->mp_send_thr = &this->m_send_thr;
-//	p_R->mp_event_thr = &this->m_event_thr;
-//
-//	//Look for receiving threads that are already listening to this writer receiving addresses.
-//
-//	if(this->assignEnpointToListenResources((Endpoint*)p_R,'R',isBuiltin))
-//	{
-//		if(!isBuiltin)
-//		{
-//			m_userReaderList.push_back(p_R);
-//			if(mp_PDP!=NULL)
-//				mp_PDP->localReaderMatching(p_R,true);
-//		}
-//		m_allReaderList.push_back(p_R);
-//
-//		return true;
-//	}
-//	else
-//		return false;
-//}
+
 
 bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		PublisherAttributes& param, uint32_t payload_size, bool isBuiltin,
@@ -309,7 +114,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		const EntityId_t& entityId)
 {
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-	pDebugInfo("Creating " << type << " Writer"<<endl);
+	pDebugInfo("Creating " << type << " Writer on topic: "<<param.topic.getTopicName()<<endl);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -347,12 +152,22 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
-	if(!isBuiltin)
-	{
-		m_userWriterList.push_back(SWriter);
-		if(mp_PDP!=NULL)
-			mp_PDP->localWriterMatching(SWriter,true);
-	}
+//	if(!isBuiltin)
+//	{
+//		m_userWriterList.push_back(SWriter);
+//		if(mp_PDP!=NULL)
+//		{
+//			mp_PDP->localWriterMatching(SWriter,true);
+//			if(mp_PDP->mp_WL !=NULL)
+//				mp_PDP->mp_WL->addLocalWriter(SWriter);
+//			//Match the readers in the same participant
+//			for(std::vector<RTPSReader*>::iterator rit = this->m_userReaderList.begin();
+//					rit!=this->m_userReaderList.end();++rit)
+//			{
+//				mp_PDP->localReaderMatching(*rit,false);
+//			}
+//		}
+//	}
 	m_allWriterList.push_back(SWriter);
 
 
@@ -360,7 +175,15 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	return true;
 }
 
+static EntityId_t TrustedWriter(const EntityId_t& reader)
+{
+	if(reader == c_EntityId_SPDPReader) return c_EntityId_SPDPWriter;
+	if(reader == c_EntityId_SEDPPubReader) return c_EntityId_SEDPPubWriter;
+	if(reader == c_EntityId_SEDPSubReader) return c_EntityId_SEDPSubWriter;
+	if(reader == c_EntityId_ReaderLiveliness) return c_EntityId_WriterLiveliness;
 
+	return c_EntityId_Unknown;
+}
 
 bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
@@ -368,7 +191,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		const EntityId_t& entityId)
 {
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-		pDebugInfo("Creating " << type << " Reader"<<endl);
+	pDebugInfo("Creating " << type << " Reader on topic: "<<param.topic.getTopicName()<<endl);
 	EntityId_t entId;
 	if(entityId == c_EntityId_Unknown)
 	{
@@ -395,23 +218,35 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 	SReader->setQos(param.qos,true);
 	SReader->mp_send_thr = &this->m_send_thr;
 	SReader->mp_event_thr = &this->m_event_thr;
+	if(isBuiltin)
+	{
+		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
+	}
 	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
 	{
 		delete(SReader);
 		return false;
 	}
-	if(!isBuiltin)
-	{
-		m_userReaderList.push_back(SReader);
-		if(mp_PDP!=NULL)
-			mp_PDP->localReaderMatching(SReader,true);
-	}
 	m_allReaderList.push_back(SReader);
-
 
 	*ReaderOut = SReader;
 	return true;
 }
+
+void ParticipantImpl::registerReader(RTPSReader* SReader)
+{
+	eClock::my_sleep(30);
+	m_userReaderList.push_back(SReader);
+	m_builtinProtocols.addLocalReader(SReader);
+}
+
+void ParticipantImpl::registerWriter(RTPSWriter* SWriter)
+{
+	eClock::my_sleep(30);
+	m_userWriterList.push_back(SWriter);
+	m_builtinProtocols.addLocalWriter(SWriter);
+}
+
 
 bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
@@ -485,6 +320,8 @@ bool ParticipantImpl::assignLocator2ListenResources(Endpoint* endp,LocatorListIt
 bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 {
 	bool found = false;
+	{
+	boost::lock_guard<Endpoint> guard(*p_endpoint);
 	if(type == 'W')
 	{
 		for(p_WriterIterator wit=m_userWriterList.begin();
@@ -513,14 +350,28 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 	}
 	if(!found)
 		return false;
+	if(p_endpoint->getEndpointKind()==WRITER)
+		m_builtinProtocols.removeLocalWriter((RTPSWriter*)p_endpoint);
+	else
+		m_builtinProtocols.removeLocalReader((RTPSReader*)p_endpoint);
 	//Remove it from threadListenList
 	std::vector<ListenResource*>::iterator thit;
 	for(thit=m_listenResourceList.begin();
 			thit!=m_listenResourceList.end();thit++)
 	{
 		(*thit)->removeAssociatedEndpoint(p_endpoint);
+    }
+	for(thit=m_listenResourceList.begin();
+			thit!=m_listenResourceList.end();thit++)
+	{
 		if(!(*thit)->hasAssociatedEndpoints())
+		{
+			m_listenResourceList.erase(thit);
 			delete(*thit);
+			break;
+		}
+	}
+
 	}
 	delete(p_endpoint);
 	return true;
@@ -528,17 +379,17 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 
 void ParticipantImpl::announceParticipantState()
 {
-	this->mp_PDP->announceParticipantState(false);
+	this->m_builtinProtocols.announceParticipantState();
 }
 
 void ParticipantImpl::stopParticipantAnnouncement()
 {
-	this->mp_PDP->stopParticipantAnnouncement();
+	this->m_builtinProtocols.stopParticipantAnnouncement();
 }
 
 void ParticipantImpl::resetParticipantAnnouncement()
 {
-	this->mp_PDP->resetParticipantAnnouncement();
+	this->m_builtinProtocols.resetParticipantAnnouncement();
 }
 
 void ParticipantImpl::ResourceSemaphorePost()

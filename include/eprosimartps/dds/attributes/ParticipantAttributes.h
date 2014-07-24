@@ -34,10 +34,10 @@ public:
 
 
 /**
- * Class DiscoveryAttributes used to define the discovery behavior of the Participant.
+ * Class BuiltinAttributes used to define the behavior of the Participant builtin protocols.
  * @ingroup ATTRIBUTESMODULE
  */
-class DiscoveryAttributes{
+class BuiltinAttributes{
 public:
 	/**
 	 * If set to false, NO discovery whatsoever would be used.
@@ -45,6 +45,8 @@ public:
 	 * manually through the addReaderLocator, addReaderProxy, addWriterProxy methods.
 	 */
 	bool use_SIMPLE_ParticipantDiscoveryProtocol;
+
+	bool use_WriterLivelinessProtocol;
 	/**
 	 * If set to true, SimpleEDP would be used.
 	 * This is NOT included in release 0.3.
@@ -55,33 +57,38 @@ public:
 	 * The XML filename must be provided.
 	 */
 	bool use_STATIC_EndpointDiscoveryProtocol;
-	/**
-	 * The period for the Participant to send its Discovery Message to all other discovered Participants
-	 * as well as to all Multicast ports.
-	 */
-	Duration_t resendDiscoveryParticipantDataPeriod;
+
 	//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
 	std::string m_staticEndpointXMLFilename;
 	/**
 	 * DomainId to be used by the Participant (80 by default).
 	 */
 	uint32_t domainId;
+	//!Lease Duration of the participant, indicating how much time remote participants should consider this participant alive.
 	Duration_t leaseDuration;
-
+	/**
+	 * The period for the Participant to send its Discovery Message to all other discovered Participants
+	 * as well as to all Multicast ports.
+	 */
+	Duration_t leaseDuration_announcementperiod;
 	SimpleEDPAttributes m_simpleEDP;
 
-	DiscoveryAttributes()
+	BuiltinAttributes()
 	{
-		use_SIMPLE_ParticipantDiscoveryProtocol = false;
-		use_SIMPLE_EndpointDiscoveryProtocol = false;
+		use_SIMPLE_ParticipantDiscoveryProtocol = true;
+		use_SIMPLE_EndpointDiscoveryProtocol = true;
 		use_STATIC_EndpointDiscoveryProtocol = false;
-		resendDiscoveryParticipantDataPeriod.seconds = 30;
-		m_staticEndpointXMLFilename = "/home/grcanosa/workspace/eRTPS/utils/pcTests/StaticParticipantInfo.xml";
+		leaseDuration_announcementperiod.seconds = 30;
+		m_staticEndpointXMLFilename = "";
 		domainId = 80;
-		leaseDuration.seconds = 100;
+		leaseDuration.seconds = 500;
+		leaseDuration_announcementperiod.seconds = 250;
+		use_WriterLivelinessProtocol = true;
 	};
-	virtual ~DiscoveryAttributes(){};
+	virtual ~BuiltinAttributes(){};
 };
+
+
 
 /**
  * Class ParticipantParameters used to define different aspects of a participant.
@@ -93,6 +100,8 @@ public:
 {
 		defaultSendPort = 10040;
 		name = "defaultParticipant";
+		sendSocketBufferSize = 8712;
+		listenSocketBufferSize = 17424;
 
 }
 	virtual ~ParticipantAttributes(){};
@@ -112,13 +121,18 @@ public:
 	 * THis will change in future releases.
 	 */
 	uint32_t defaultSendPort;
-
+	//!Send socket buffer for the send resource.
+	uint32_t sendSocketBufferSize;
+	//!Listen socket buffer for all listen resources.
+	uint32_t listenSocketBufferSize;
 	/**
 	 * Participant name.
 	 */
 	std::string name;
-	//! Discovery parameters.
-	DiscoveryAttributes discovery;
+	//! Builtin parameters.
+	BuiltinAttributes builtin;
+
+
 };
 
 } /* namespace rtps */

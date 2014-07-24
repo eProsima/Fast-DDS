@@ -10,18 +10,16 @@
  * @file ParameterList.h
  */
 
-#ifndef PARAMLISTT_H_
-#define PARAMLISTT_H_
+#ifndef PARAM_LIST_T_H_
+#define PARAM_LIST_T_H_
 
 #include "eprosimartps/qos/ParameterTypes.h"
 #include "eprosimartps/common/RTPS_messages.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/common/CacheChange.h"
+
 namespace eprosima {
-
-
-
 namespace dds {
 
 /**
@@ -42,6 +40,7 @@ public:
 		for(std::vector<Parameter_t*>::iterator it = m_parameters.begin();
 				it!=m_parameters.end();++it)
 			delete(*it);
+		resetList();
 	}
 	/**
 	 * Reset the list of parameters (without deleting them, since they can be in use in another list).
@@ -55,7 +54,7 @@ public:
 	std::vector<Parameter_t*> m_parameters;
 	//! Associated CDRMessage_t message.
 	CDRMessage_t m_cdrmsg;
-	//! Bool variable to indicate wheter a new parameter has been added.
+	//! Bool variable to indicate whether a new parameter has been added.
 	bool m_hasChanged;
 };
 

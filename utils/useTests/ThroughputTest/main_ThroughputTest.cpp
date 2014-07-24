@@ -1,19 +1,12 @@
 ﻿/*************************************************************************
- * Copyright (c) 2013 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of FastCdr is licensed to you under the terms described in the
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
-/*
- * StatelessTest.cpp
- *
- *  Created on: Feb 26, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *      		grcanosa@gmail.com
- */
+
 
 #include <stdio.h>
 #include <string>
@@ -72,7 +65,7 @@ int main(int argc, char** argv){
 	ThroughputCommandDataType throuputcommand_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
-	uint32_t demands[] = {200,400,600,700,800,900,1000,1100};
+	uint32_t demands[] = {2000,4000,6000,8000,10000};
 		vector<uint32_t> demand (demands, demands + sizeof(demands) / sizeof(uint32_t) );
 
 	switch (type)

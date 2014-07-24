@@ -76,6 +76,12 @@ public:
 	 * @return True if correct.
 	 */
 	bool unregister(void*Data);
+	/**
+		 * Dispose and unregister a previously written data.
+		 * @param Data Pointer to the data.
+		 * @return True if correct.
+		 */
+	bool dispose_and_unregister(void*Data);
 
 
 	/**
@@ -88,35 +94,13 @@ public:
 	 * @param[out] removed Number of removed elements
 	 * @return True if correct.
 	 */
-	bool removeAllChange(int32_t* removed);
+	bool removeAllChange(size_t* removed);
 
 	/**
 	 * Get the number of elements in the History.
 	 * @return Number of elements in the History.
 	 */
-	int getHistoryElementsNumber();
-
-
-	//Since there is no discovery:
-	/** @name Discovery substitution methods.
-	 * Since no discovery is implemented in this version, these methods are needed.
-	 */
-	/// @{
-	/**
-	 * Add a Reader Locator to the publisher.
-	 * @param Loc Locator to add.
-	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
-	 * @return True if correct.
-	 */
-	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos);
-
-	/**
-	 * Add a reader proxy to the publisher.
-	 */
-	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline);
-
-
-	///@}
+	size_t getHistoryElementsNumber();
 
 
 	bool assignListener(PublisherListener* listen);
@@ -185,6 +169,15 @@ public:
 	{
 		return mp_impl->unregister(Data);
 	}
+	/**
+	 * Dispose and unregister a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
+	bool dispose_and_unregister(void*Data)
+	{
+		return mp_impl->dispose_and_unregister(Data);
+	}
 
 
 	/**
@@ -200,7 +193,7 @@ public:
 	 * @param[out] removed Number of removed elements
 	 * @return True if correct.
 	 */
-	bool removeAllChange(int32_t* removed)
+	bool removeAllChange(size_t* removed)
 	{
 		return mp_impl->removeAllChange(removed);
 	}
@@ -209,35 +202,11 @@ public:
 	 * Get the number of elements in the History.
 	 * @return Number of elements in the History.
 	 */
-	int getHistoryElementsNumber()
+	size_t getHistoryElementsNumber()
 	{
 		return mp_impl->getHistoryElementsNumber();
 	}
 
-
-	//Since there is no discovery:
-	/** @name Discovery substitution methods.
-	 * Since no discovery is implemented in this version, these methods are needed.
-	 */
-	/// @{
-	/**
-	 * Add a Reader Locator to the publisher.
-	 * @param Loc Locator to add.
-	 * @param expectsInlineQos Parameter to indicate whether or not the locator expects inlineQos with its Data messages.
-	 * @return True if correct.
-	 */
-	bool addReaderLocator(Locator_t& Loc,bool expectsInlineQos)
-	{
-		return mp_impl->addReaderLocator(Loc, expectsInlineQos);
-	}
-
-	/**
-	 * Add a reader proxy to the publisher.
-	 */
-	bool addReaderProxy(Locator_t& loc,GUID_t& guid,bool expectsInline)
-	{
-		return mp_impl->addReaderProxy(loc,guid, expectsInline);
-	}
 
 	const GUID_t& getGuid()
 	{

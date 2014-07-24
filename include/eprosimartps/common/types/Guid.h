@@ -18,10 +18,10 @@
 namespace eprosima{
 namespace rtps{
 
-#define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<12;i++) g.value[i]=0x0;}
+
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
-typedef struct GuidPrefix_t{
+struct GuidPrefix_t{
 	octet value[12];
 	GuidPrefix_t()
 	{
@@ -40,7 +40,9 @@ typedef struct GuidPrefix_t{
 		}
 		return *this;
 	}
-}GuidPrefix_t;
+};
+
+#define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<12;i++) g.value[i]=0x0;}
 
 inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 {
@@ -50,6 +52,16 @@ inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 			return false;
 	}
 	return true;
+}
+
+inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
+{
+	for(uint8_t i =0;i<12;i++)
+	{
+		if(guid1.value[i] != guid2.value[i])
+			return true;
+	}
+	return false;
 }
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
@@ -75,7 +87,7 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER  0x000200C7
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
-typedef struct EntityId_t{
+ struct EntityId_t{
 	octet value[4];
 	EntityId_t(){
 		*this = ENTITYID_UNKNOWN;
@@ -111,7 +123,7 @@ typedef struct EntityId_t{
 		value[2] = value[1];
 		value[1] = oaux;
 	}
-}EntityId_t;
+};
 
 inline bool operator==(EntityId_t& eid,const uint32_t id2)
 {
@@ -127,11 +139,23 @@ inline bool operator==(EntityId_t& eid,const uint32_t id2)
 		eid.reverse();
 	return result;
 }
-inline bool operator==(const EntityId_t& id1,const EntityId_t& id2){
-	uint32_t* aux1 = (uint32_t*)(id1.value);
-	uint32_t* aux2 = (uint32_t*)(id2.value);
-	if(*aux1 == *aux2)
-		return true;
+inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
+{
+	for(uint8_t i =0;i<4;++i)
+	{
+		if(id1.value[i] != id2.value[i])
+			return false;
+	}
+	return true;
+}
+
+inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
+{
+	for(uint8_t i =0;i<4;++i)
+	{
+		if(id1.value[i] != id2.value[i])
+			return true;
+	}
 	return false;
 }
 
@@ -163,7 +187,7 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_PARTICIPANT_
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
-typedef struct GUID_t{
+ struct GUID_t{
 	GuidPrefix_t guidPrefix;
 	EntityId_t entityId;
 	GUID_t& operator=(const GUID_t& guid)
@@ -178,7 +202,7 @@ typedef struct GUID_t{
 		guidPrefix(guidP),entityId(id) {}
 	GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
 		guidPrefix(guidP),entityId(entId) {}
-}GUID_t;
+};
 
 inline bool operator==(const GUID_t& g1,const GUID_t& g2){
 	if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
@@ -187,8 +211,16 @@ inline bool operator==(const GUID_t& g1,const GUID_t& g2){
 		return false;
 }
 
+inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
+	if(g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
+		return true;
+	else
+		return false;
+}
+
 #define GUID_UNKNOWN(gui) {GUIDPREFIX_UNKNOWN(gui.guidPrefix); gui.entityId = ENTITYID_UNKNOWN;}
 
+const GUID_t c_Guid_Unknown;
 
 inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 {

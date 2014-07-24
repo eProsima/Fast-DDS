@@ -35,8 +35,8 @@ public:
 				m_rtpsmsg_fullmsg(RTPSMESSAGE_MAX_SIZE){};
 		RTPSMessageGroup_t(uint32_t payload):
 		m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-				m_rtpsmsg_submessage(payload+200),
-				m_rtpsmsg_fullmsg(payload+200){};
+				m_rtpsmsg_submessage(payload<RTPSMESSAGE_MAX_SIZE?RTPSMESSAGE_MAX_SIZE:payload+200),
+				m_rtpsmsg_fullmsg(payload<RTPSMESSAGE_MAX_SIZE?RTPSMESSAGE_MAX_SIZE:payload+200){};
 };
 
 class RTPSWriter;
@@ -49,14 +49,14 @@ class RTPSMessageGroup {
 public:
 static void send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 						RTPSWriter* W,
-						std::vector<CacheChange_t*>* changes,
+						std::vector<SequenceNumber_t>* changesSeqNum,
 						const EntityId_t& readerId,
 						LocatorList_t* unicast,
 						LocatorList_t* multicast);
 
 
 
-static void prepare_SequenceNumberSet(std::vector<CacheChange_t*>* changes,
+static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
 		std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences);
 
 static void send_Changes_AsData(RTPSMessageGroup_t* msg_group,

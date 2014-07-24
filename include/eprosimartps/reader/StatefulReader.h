@@ -8,7 +8,7 @@
 
 /**
  * @file StatefulReader.h
-*/
+ */
 
 #ifndef STATEFULREADER_H_
 #define STATEFULREADER_H_
@@ -31,39 +31,58 @@ public:
 	virtual ~StatefulReader();
 	StatefulReader(const SubscriberAttributes& wParam,
 			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
+
+
 	/**
-	 * Add a matched writer.
-	 * @param[in] WP Pointer to the WriterProxy_t to add.
+	 * Add a matched writer represented by a WriterProxyData object.
+	 * @param wdata Pointer to the WPD object to add.
+	 * @return True if correctly added.
+	 */
+	bool matched_writer_add(WriterProxyData* wdata);
+	/**
+	 * Remove a WriterProxyData from the matached writers.
+	 * @param wdata Pointer to the WPD object.
 	 * @return True if correct.
 	 */
-	bool matched_writer_add(WriterProxy_t& WP);
+	bool matched_writer_remove(WriterProxyData* wdata);
 	/**
-	 * Remove a WriterProxy_t.
-	 * @param[in] WP WriterProxy to remove.
-	 * @return True if correct.
-	 */
-	bool matched_writer_remove(WriterProxy_t& WP);
-	/**
-	 * Remove a WriterProxy_t based on its GUID_t
-	 * @param[in] writerGUID GUID_t of the writer to remove.
-	 * @return True if correct.
-	 */
-	bool matched_writer_remove(GUID_t& writerGUID);
-	/**
-	 * Get a pointer to a WriterProxy_t.
-	 * @param[in] writerGUID GUID_t of the writer to get.
-	 * @param[out] WP Pointer to pointer of the WriterProxy.
-	 * @return True if correct.
+	 * Look for a specific WriterProxy.
+	 * @param writerGUID GUID_t of the writer we are looking for.
+	 * @param WP Pointer to pointer to a WriterProxy.
+	 * @return True if found.
 	 */
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 
-
+	/**
+	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+	 * pointed by the StatusInfo_t structure.
+	 * @param data Pointer to memory that can hold a sample.
+	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+	 * @return True if correct.
+	 */
 	bool readNextCacheChange(void*data,SampleInfo_t* info);
+	/**
+	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+	 * pointed by the StatusInfo_t structure.
+	 * @param data Pointer to memory that can hold a sample.
+	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+	 * @return True if correct.
+	 */
 	bool takeNextCacheChange(void*data,SampleInfo_t* info);
+	//!Returns true if there are unread cacheChanges.
 	bool isUnreadCacheChange();
-
+	/**
+	 * Get the number of matched publishers.
+	 * @return True if correct.
+	 */
 	size_t getMatchedPublishers(){return matched_writers.size();}
 
+	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
+	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
+	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	bool change_removed_by_history(CacheChange_t*);
+	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
+	bool acceptMsgFrom(GUID_t& entityId);
 
 private:
 	SubscriberTimes m_SubTimes;

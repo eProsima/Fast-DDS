@@ -23,10 +23,16 @@ namespace dds {
  */
 class RTPS_DllAPI SampleInfo_t {
 public:
-	SampleInfo_t():sampleKind(ALIVE){};
+	SampleInfo_t():sampleKind(ALIVE),writerGUID(c_Guid_Unknown),ownershipStrength(0){};
 	virtual ~SampleInfo_t(){};
 	//!Sample kind.
 	ChangeKind_t sampleKind;
+	//!GUID_t of the writer of the sample.
+	GUID_t writerGUID;
+	//!Ownership Strength of the writer of the sample (0 if the ownership kind is set to SHARED_OWNERSHIP_QOS).
+	uint16_t ownershipStrength;
+	//!Source timestamp of the sample.
+	Time_t sourceTimestamp;
 };
 
 } /* namespace dds */

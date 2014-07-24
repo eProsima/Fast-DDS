@@ -13,8 +13,10 @@
 
 
 #include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 
 
@@ -23,19 +25,15 @@ namespace rtps {
 
 
 
-ReaderProxy::ReaderProxy(const ReaderProxy_t& RPparam,const PublisherTimes& times,StatefulWriter* SW):
-				m_param(RPparam),
+ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW):
+				m_data(rdata),
 				mp_SFW(SW),
 				m_isRequestedChangesEmpty(true),
-				m_periodicHB(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatPeriod)*1e-3))),
-				m_nackResponse(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.nackResponseDelay)*1e-3))),
-				m_nackSupression(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.nackSupressionDuration)*1e-3))),
+				//m_periodicHB(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatPeriod)*1e-3))),
+				m_nackResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay))),
+				m_nackSupression(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration))),
 				m_lastAcknackCount(0)
 {
-//	cout << "PeriodicHB: "<< m_periodicHB.getIntervalMsec()<<endl;
-//	cout << "m_nackResponse: "<< m_nackResponse.getIntervalMsec()<<endl;
-//	cout << "m_nackSupression: "<< m_nackSupression.getIntervalMsec()<<endl;
-//	cout << "PeriodicHB is waiting: "<< m_periodicHB.m_isWaiting << endl;
 
 }
 
@@ -52,12 +50,9 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 	boost::lock_guard<ReaderProxy> guard(*this);
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
-		if(it->change->sequenceNumber.to64long() == change->sequenceNumber.to64long()
-				&& it->change->writerGUID == change->writerGUID)
+		if(it->seqNum == change->sequenceNumber)
 		{
-			changeForReader->is_relevant = it->is_relevant;
-			changeForReader->status = it->status;
-			changeForReader->change = it->change;
+			*changeForReader = *it;
 			pDebugInfo("Change found in Reader Proxy " << endl);
 			return true;
 		}
@@ -72,11 +67,9 @@ bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* ch
 	boost::lock_guard<ReaderProxy> guard(*this);
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
-		if(it->change->sequenceNumber.to64long() == seq.to64long())
+		if(it->seqNum == seq)
 		{
-			changeForReader->is_relevant = it->is_relevant;
-			changeForReader->status = it->status;
-			changeForReader->change = it->change;
+			*changeForReader = *it;
 			pDebugInfo("Change found in Reader Proxy " << endl);
 			return true;
 		}
@@ -91,7 +84,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t& seqNum)
 
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
-		if(it->change->sequenceNumber.to64long() < seqNum.to64long())
+		if(it->seqNum < seqNum)
 		{
 			it->status = ACKNOWLEDGED;
 		}
@@ -107,7 +100,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 	{
 		for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 		{
-			if(it->change->sequenceNumber.to64long() == sit->to64long())
+			if(it->seqNum == *sit)
 			{
 				it->status = REQUESTED;
 				m_isRequestedChangesEmpty = false;
@@ -176,29 +169,28 @@ bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
 
 bool change_min(ChangeForReader_t* ch1,ChangeForReader_t* ch2)
 {
-	return ch1->change->sequenceNumber.to64long() < ch2->change->sequenceNumber.to64long();
+	return ch1->seqNum < ch2->seqNum;
 }
 
 bool change_min2(ChangeForReader_t ch1,ChangeForReader_t ch2)
 {
-	return ch1.change->sequenceNumber.to64long() < ch2.change->sequenceNumber.to64long();
+	return ch1.seqNum < ch2.seqNum;
 }
 
 bool ReaderProxy::max_acked_change(SequenceNumber_t* sn)
 {
 	if(!m_changesForReader.empty())
 	{
-		std::sort(m_changesForReader.begin(),m_changesForReader.end(),change_min2);
 		for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();
 				it!=m_changesForReader.end();++it)
 		{
 			if(it->status != ACKNOWLEDGED)
 			{
-				*sn = ((*it).change->sequenceNumber-1);
+				*sn = ((*it).seqNum-1);
 				return true;
 			}
 		}
-		*sn = (m_changesForReader.end()-1)->change->sequenceNumber;
+		*sn = (m_changesForReader.end()-1)->seqNum;
 	}
 	return false;
 }

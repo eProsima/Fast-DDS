@@ -26,32 +26,37 @@ bool sort_changes_group (CacheChange_t* c1,CacheChange_t* c2)
 	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
 }
 
+bool sort_SeqNum(SequenceNumber_t s1,SequenceNumber_t s2)
+{
+	return(s1.to64long() < s2.to64long());
+}
 
 
-void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<CacheChange_t*>* changes,
+
+void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
 		std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences)
 {
 	//First compute the number of GAP messages we need:
-	std::vector<CacheChange_t*>::iterator it;
-	std::sort(changes->begin(),changes->end(),sort_changes_group);
+	std::vector<SequenceNumber_t>::iterator it;
+	std::sort(changesSeqNum->begin(),changesSeqNum->end(),sort_SeqNum);
 	std::pair<SequenceNumber_t,SequenceNumberSet_t> pair;
 
 	SequenceNumber_t start;
 	SequenceNumberSet_t set;
-	start = (*changes->begin())->sequenceNumber;
+	start = changesSeqNum->front();
 	uint32_t count = 1;
 	bool set_first = true;
 	bool new_pair = false;
-	for(it=changes->begin()+1;it!=changes->end();++it)
+	for(it=changesSeqNum->begin()+1;it!=changesSeqNum->end();++it)
 	{
 		if(new_pair)
 		{
-			start = (*it)->sequenceNumber;
+			start = (*it);
 			count = 1;
 			new_pair = false;
 			continue;
 		}
-		if(((*it)->sequenceNumber.to64long() - start.to64long()) == count) //continuous seqNum from start to base
+		if(((*it).to64long() - start.to64long()) == count) //continuous seqNum from start to base
 		{
 			count++;
 			continue;
@@ -60,11 +65,11 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<CacheChange_t*>* ch
 		{
 			if(set_first)
 			{
-				set.base = (*it-1)->sequenceNumber; //add the last one as the base
-				set.add((*it-1)->sequenceNumber); //also add it to the set
+				set.base = *(it-1); //add the last one as the base
+				set.add(*(it-1)); //also add it to the set
 				set_first = false;
 			}
-			if(set.add((*it)->sequenceNumber)) //try to add the current one to the base
+			if(set.add(*(it))) //try to add the current one to the base
 				continue;
 			else //if we fail to add the element to the set is because they are to far away.
 			{
@@ -86,11 +91,11 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<CacheChange_t*>* ch
 
 void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes, const EntityId_t& readerId,
+		std::vector<SequenceNumber_t>* changesSeqNum, const EntityId_t& readerId,
 		LocatorList_t* unicast, LocatorList_t* multicast)
 {
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
-	RTPSMessageGroup::prepare_SequenceNumberSet(changes,&Sequences);
+	RTPSMessageGroup::prepare_SequenceNumberSet(changesSeqNum,&Sequences);
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit = Sequences.begin();
 
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;

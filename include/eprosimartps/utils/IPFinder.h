@@ -47,11 +47,11 @@ public:
 	IPFinder();
 	virtual ~IPFinder();
 #if defined(_WIN32)
-	static bool getIP4s(std::vector<std::string>* vec_name);
+	RTPS_DllAPI static bool getIP4s(std::vector<std::string>* vec_name);
 #else
 	static bool getIP4s(std::vector<std::string>* vec_name);
 #endif
-
+	//!Get the IPAdresses in all interfaces.
 	static bool getIPAddress(LocatorList_t* locators);
 };
 

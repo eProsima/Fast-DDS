@@ -15,18 +15,18 @@
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-
+#include "eprosimartps/Participant.h"
 
 using boost::asio::ip::udp;
 
 namespace eprosima {
 namespace rtps {
 
-ResourceSend::ResourceSend() :
+ResourceSend::ResourceSend(ParticipantImpl* par) :
 	m_send_socket(m_send_service),
 	m_bytes_sent(0),
-	m_send_next(true)
-
+	m_send_next(true),
+	mp_participant(par)
 {
 
 }
@@ -61,7 +61,9 @@ bool ResourceSend::initSend(const Locator_t& loc)
 //		m_sendLocator.address[14] = 0;
 //		m_sendLocator.address[15] = 1;
 //	}
+
 	m_send_socket.open(boost::asio::ip::udp::v4());
+	m_send_socket.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));
 	//m_send_socket.set_option( boost::asio::ip::enable_loopback( true ) );
 	bool not_bind = true;
 	while(not_bind)
@@ -79,7 +81,10 @@ bool ResourceSend::initSend(const Locator_t& loc)
 			m_sendLocator.port++;
 		}
 	}
-	pInfo (YELLOW<<"ResourceSend: initSend: through address " << m_send_socket.local_endpoint()<<"||Socket state: " << m_send_socket.is_open() << DEF<<endl);
+	boost::asio::socket_base::send_buffer_size option;
+	m_send_socket.get_option(option);
+	pInfo (RTPS_YELLOW<<"ResourceSend: initSend: " << m_send_socket.local_endpoint()<<"|| State: " << m_send_socket.is_open() <<
+			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
 	return true;
@@ -112,7 +117,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 			addr[i] = loc.address[i];
 		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
 	}
-	pInfo(YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
+	pInfo(RTPS_YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
 	if(m_send_endpoint.port()>0)
 	{
 		m_bytes_sent = 0;
@@ -122,7 +127,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 				m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
 			} catch (const std::exception& error) {
 				// Should print the actual error message
-				std::cerr << error.what() << std::endl;
+				pWarning(error.what() << std::endl);
 			}
 
 		}
@@ -130,7 +135,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		{
 			m_send_next = true;
 		}
-		pInfo (YELLOW <<  "SENT " << m_bytes_sent << DEF << endl);
+		pInfo (RTPS_YELLOW <<  "SENT " << m_bytes_sent << RTPS_DEF << endl);
 	}
 	else if(m_send_endpoint.port()<=0)
 	{

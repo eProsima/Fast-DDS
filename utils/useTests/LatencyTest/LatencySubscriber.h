@@ -9,10 +9,6 @@
 /**
  * @file LatencySubscriber.h
  *
- *  Created on: Jun 2, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #ifndef LATENCYSUBSCRIBER_H_
@@ -46,9 +42,9 @@ public:
 		if(n_received == n_samples)
 			sema.post();
 	}
-	void onSubscriptionMatched()
+	void onSubscriptionMatched(MatchingInfo info)
 	{
-		cout << B_RED << "SUBSCRIPTION MATCHED" <<DEF << endl;
+		cout << RTPS_B_RED << "SUBSCRIPTION MATCHED" <<RTPS_DEF << endl;
 		sema.post();
 	}
 
@@ -59,10 +55,10 @@ public:
 			mp_sema(sem){};
 		virtual ~LatencySubscriber_PubListener(){};
 		boost::interprocess::interprocess_semaphore* mp_sema;
-		void onPublicationMatched()
+		void onPublicationMatched(MatchingInfo info)
 		{
 			mp_sema->post();
-			cout <<B_MAGENTA<< "Publication Matched"<<DEF <<endl;
+			cout <<RTPS_B_MAGENTA<< "Publication Matched"<<RTPS_DEF <<endl;
 		}
 	}m_PubListener;
 };
@@ -74,26 +70,34 @@ LatencySubscriber::LatencySubscriber():
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.builtin.domainId = 80;
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.name = "participant2";
 	m_part = DomainParticipant::createParticipant(PParam);
 
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = NSAMPLES+100;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyDown";
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 1;
+		Wparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
+		Wparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
 	m_pub = DomainParticipant::createPublisher(m_part,Wparam,(PublisherListener*)&this->m_PubListener);
 
 
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = NSAMPLES+100;
+
 	Rparam.topic.topicDataType = std::string("LatencyType");
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "LatencyUp";
+	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Rparam.topic.historyQos.depth = 100;
+	Rparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
+	Rparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
 	m_sub = DomainParticipant::createSubscriber(m_part,Rparam,(SubscriberListener*)this);
 
 
@@ -107,7 +111,7 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	n_received = 0;
 	cout << "Waiting ... for latencytype of size "<< (m_latency->data.size()+4) <<endl;
 	sema.wait();
-	int removed;
+	size_t removed;
 	cout << "Removing ";
 	m_pub->removeAllChange(&removed);
 	cout << removed << endl;
@@ -122,10 +126,6 @@ bool LatencySubscriber::test(uint32_t datasize,uint32_t n_samples_in)
 	delete(m_latency);
 	return true;
 }
-
-
-
-
 
 
 #endif /* LATENCYSUBSCRIBER_H_ */

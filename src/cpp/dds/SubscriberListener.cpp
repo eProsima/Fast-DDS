@@ -35,7 +35,7 @@ void SubscriberListener::onHistoryFull()
 }
 
 
-void SubscriberListener::onSubscriptionMatched()
+void SubscriberListener::onSubscriptionMatched(MatchingInfo info)
 {
 
 }

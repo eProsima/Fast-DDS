@@ -23,7 +23,8 @@
 #include "eprosimartps/dds/attributes/SubscriberAttributes.h"
 
 #include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/timedevent/HeartbeatResponseDelay.h"
+#include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
+#include "eprosimartps/reader/timedevent/WriterProxyLiveliness.h"
 
 using namespace eprosima::dds;
 
@@ -31,21 +32,7 @@ namespace eprosima {
 namespace rtps {
 
 class StatefulReader;
-
-/**
- * Structure WriterProxy_t that stores information for each WriterProxy.
- * @ingroup READERMODULE
- */
-typedef struct WriterProxy_t{
-	GUID_t remoteWriterGuid;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	WriterProxy_t(){
-		GUID_UNKNOWN(remoteWriterGuid);
-	}
-}WriterProxy_t;
-
-
+class WriterProxyData;
 /**
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
  * @ingroup READERMODULE
@@ -53,7 +40,7 @@ typedef struct WriterProxy_t{
 class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
 	virtual ~WriterProxy();
-	WriterProxy(const WriterProxy_t& RPparam,const SubscriberTimes& times,StatefulReader* SR);
+	WriterProxy(WriterProxyData* wdata,Duration_t heartbeatResponse,StatefulReader* SR);
 
 	/**
 	 * Get the maximum sequenceNumber received from this Writer.
@@ -65,7 +52,7 @@ public:
 	 * Get the minimum sequenceNumber available from this Writer.
 	 * @param[out] seqNum Pointer to the sequenceNumber
 	 * @return True if correct.
- */
+	 */
 	bool available_changes_min(SequenceNumber_t* seqNum);
 	/**
 	 * Update the missing changes up to the provided sequenceNumber.
@@ -103,7 +90,7 @@ public:
 	//! Pointer to associated StatefulReader.
 	StatefulReader* mp_SFR;
 	//! Parameters of the WriterProxy
-	WriterProxy_t param;
+	WriterProxyData* m_data;
 	//!Vector containing the ChangeFromWriter_t objects.
 	std::vector<ChangeFromWriter_t> m_changesFromW;
 	//! Acknack Count
@@ -114,6 +101,10 @@ public:
 	bool m_isMissingChangesEmpty;
 	//!Timed event to postpone the heartbeatResponse.
 	HeartbeatResponseDelay m_heartbeatResponse;
+	//!TO check the liveliness Status periodically.
+	WriterProxyLiveliness m_writerProxyLiveliness;
+
+
 	bool m_heartbeatFinalFlag;
 
 
@@ -124,26 +115,44 @@ public:
 	 * @param seq SequenceNumber
 	 * @return True if correct.
 	 */
-	bool removeChangeFromWriter(SequenceNumber_t& seq);
+	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
-
-private:
-	//!Get the maximum sequenceNumber in the list.
-	SequenceNumber_t max_seq_num();
 
 	/**
+	 * Assert the liveliness of the Writer represented by this WriterProxy.
+	 */
+	void assertLiveliness()
+	{
+		m_livelinessAsserted = true;
+	}
+	bool checkLiveliness()
+	{
+		bool aux=m_livelinessAsserted;
+		m_livelinessAsserted = false;
+		return aux;
+	}
+
+private:
+	/**
 	 * Add changesFromWriter up to the sequenceNumber passed, but not including.
-	 * Ex: If you hace seqNums 1,2,3 and you receive seqNum 6, you need 4 and 5 as unknown.
-	 * You then marked them as Missing or lost or whathever.
+	 * Ex: If you have seqNums 1,2,3 and you receive seqNum 6, you need to add 4,5 and 6
+	 * as unknown to then later mark 6 as received.
+	 * You then marked them as Missing or lost.
 	 * @param seqNum SequenceNumber to use.
 	 * @return True if correct
 	 */
-	bool add_unknown_changes(SequenceNumber_t& seqNum);
+	bool add_changes_from_writer_up_to(SequenceNumber_t seqNum);
+
 
 	SequenceNumber_t m_max_available_seqNum;
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
 	bool m_hasMinAvailableSeqNumChanged;
+	bool m_livelinessAsserted;
+
+	void print_changes_fromWriter_test2();
+
+	bool m_firstReceived;
 
 };
 

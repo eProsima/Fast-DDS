@@ -19,9 +19,6 @@
     <Filter Include="Source Files\dds">
       <UniqueIdentifier>{b6d0b317-b894-4146-8740-5f4813f71f56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\discovery">
-      <UniqueIdentifier>{06d8b985-0df9-4f59-be7c-172fe84d3e30}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\qos">
       <UniqueIdentifier>{962fedd8-39e5-47b9-8c36-c15b508ec474}</UniqueIdentifier>
     </Filter>
@@ -33,9 +30,6 @@
     </Filter>
     <Filter Include="Source Files\submessages">
       <UniqueIdentifier>{337afe7a-850a-4d9b-8381-7457d03bfffb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\timedevent">
-      <UniqueIdentifier>{a99e7974-afe9-4557-9ea9-f853d6e87193}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{23d9b5ee-47cd-4e78-89b2-f18c91534002}</UniqueIdentifier>
@@ -49,9 +43,6 @@
     <Filter Include="Header Files\eprosimartps\dds">
       <UniqueIdentifier>{95ab47af-4927-4d2d-9c2f-732397c3281f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\discovery">
-      <UniqueIdentifier>{8eb600c3-ea24-41fa-a3b6-6464ff54d35c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\eprosimartps\qos">
       <UniqueIdentifier>{6985c5ae-5e52-4dc4-bca7-911bda99cc4b}</UniqueIdentifier>
     </Filter>
@@ -61,17 +52,11 @@
     <Filter Include="Header Files\eprosimartps\resources">
       <UniqueIdentifier>{ebf9dad4-2ca0-4eac-a687-eef1280b817d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\timedevent">
-      <UniqueIdentifier>{46b6c89f-49e9-47e6-8097-aaf8b1fa9f6a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\eprosimartps\utils">
       <UniqueIdentifier>{c8a8b59a-be6d-4a5d-8628-e6bc3f3d294c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\eprosimartps\writer">
       <UniqueIdentifier>{a2df7efb-bde0-4b77-b1e6-88bfb6389cc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\eprosimartps\discovery\data">
-      <UniqueIdentifier>{0412c0bb-1952-44ff-82fe-a10802f69721}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\eprosimartps\dds\attributes">
       <UniqueIdentifier>{cd65f9c9-cb9f-4027-9053-7a4801a32ea9}</UniqueIdentifier>
@@ -79,8 +64,65 @@
     <Filter Include="Header Files\eprosimartps\common\types">
       <UniqueIdentifier>{0c24004b-2705-4789-9c4f-afbaacd55627}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\discovery\data">
-      <UniqueIdentifier>{5df22496-4898-4a25-99f7-4d7f5ac0706c}</UniqueIdentifier>
+    <Filter Include="Header Files\eprosimartps\reader\timedevent">
+      <UniqueIdentifier>{f9487150-1a0b-4d44-9e8c-245c092ffd30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\reader\timedevent">
+      <UniqueIdentifier>{e83ec349-8b64-4c62-b5d9-dd7b752d03e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\writer\timedevent">
+      <UniqueIdentifier>{979fdd8c-45ca-4765-9d53-854d8d92b33f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\writer\timedevent">
+      <UniqueIdentifier>{7d389060-9274-40f2-9fde-008ddad09484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\history">
+      <UniqueIdentifier>{0ac9dbc0-69f4-41b7-8d5c-8a592a1b4584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\history">
+      <UniqueIdentifier>{bd823d71-838c-4fa9-89bd-c001a4e332c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin">
+      <UniqueIdentifier>{f7230019-b5d5-4b82-a26e-a55645e29f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin\liveliness">
+      <UniqueIdentifier>{1a36c720-5acf-4183-94ba-668caf5b3535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin\discovery">
+      <UniqueIdentifier>{bf182005-aca2-407b-b17e-9fc1f2347ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin\discovery\participant">
+      <UniqueIdentifier>{27e37cbd-d49c-4bca-9422-0c76d7a0a35c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin\discovery\endpoint">
+      <UniqueIdentifier>{47c8b1c6-f5d7-44ca-a68c-3b8507227a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin\liveliness\timedevent">
+      <UniqueIdentifier>{c15b6b9e-15f4-400e-88b9-839dd243983e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eprosimartps\builtin\discovery\participant\timedevent">
+      <UniqueIdentifier>{ba3c58f9-9a83-45ef-9a17-f99457869884}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin">
+      <UniqueIdentifier>{e72b0360-846c-4b4d-a254-339ed0a08054}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin\discovery">
+      <UniqueIdentifier>{2445c3d8-5365-4412-b1d1-3217157de42f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin\discovery\endpoint">
+      <UniqueIdentifier>{8aaf5496-dad4-4e9e-97a1-d31f16cf22f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin\discovery\participant">
+      <UniqueIdentifier>{4fa09a01-2e40-47f0-bba9-1f1eb1bbc4e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin\discovery\participant\timedevent">
+      <UniqueIdentifier>{93d2632b-0726-415a-b3e1-989b142bc9d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin\liveliness">
+      <UniqueIdentifier>{3ac69981-1ddf-4a93-8591-2090251b23de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\builtin\liveliness\timedevent">
+      <UniqueIdentifier>{590ced6a-6830-4015-8be9-c31eb895353e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,9 +154,6 @@
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h">
-      <Filter>Header Files\eprosimartps</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\HistoryCache.h">
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h">
@@ -168,24 +207,6 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h">
       <Filter>Header Files\eprosimartps\resources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\HeartbeatResponseDelay.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackResponseDelay.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackSupressionDuration.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\PeriodicHeartbeat.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\ResendDiscoveryDataPeriod.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\TimedEvent.h">
-      <Filter>Header Files\eprosimartps\timedevent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h">
       <Filter>Header Files\eprosimartps\utils</Filter>
     </ClInclude>
@@ -221,39 +242,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatelessWriter.h">
       <Filter>Header Files\eprosimartps\writer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\EndpointDiscoveryProtocol.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\ParticipantDiscoveryProtocol.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SEDPListeners.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleEDP.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimplePDP.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPListener.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\StaticEDP.h">
-      <Filter>Header Files\eprosimartps\discovery</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredData.h">
-      <Filter>Header Files\eprosimartps\discovery\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredParticipantData.h">
-      <Filter>Header Files\eprosimartps\discovery\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredReaderData.h">
-      <Filter>Header Files\eprosimartps\discovery\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredWriterData.h">
-      <Filter>Header Files\eprosimartps\discovery\data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\DDSTopicDataType.h">
       <Filter>Header Files\eprosimartps\dds</Filter>
@@ -330,6 +318,93 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Time_t.h">
       <Filter>Header Files\eprosimartps\common\types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackResponseDelay.h">
+      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackSupressionDuration.h">
+      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\PeriodicHeartbeat.h">
+      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\HeartbeatResponseDelay.h">
+      <Filter>Header Files\eprosimartps\reader\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\WriterProxyLiveliness.h">
+      <Filter>Header Files\eprosimartps\reader\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\History.h">
+      <Filter>Header Files\eprosimartps\history</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\ReaderHistory.h">
+      <Filter>Header Files\eprosimartps\history</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\WriterHistory.h">
+      <Filter>Header Files\eprosimartps\history</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\BuiltinProtocols.h">
+      <Filter>Header Files\eprosimartps\builtin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDP.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimple.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleListeners.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStatic.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimple.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\participant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimpleListener.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\participant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimpleTopicDataType.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\participant</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLP.h">
+      <Filter>Header Files\eprosimartps\builtin\liveliness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPListener.h">
+      <Filter>Header Files\eprosimartps\builtin\liveliness</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h">
+      <Filter>Header Files\eprosimartps\builtin\liveliness\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\timedevent\RemoteParticipantLeaseDuration.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\participant\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\participant\timedevent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\ParticipantProxyData.h">
+      <Filter>Header Files\eprosimartps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxyData.h">
+      <Filter>Header Files\eprosimartps\writer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxyData.h">
+      <Filter>Header Files\eprosimartps\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h">
+      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -362,24 +437,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\utils\RTPSLog.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\HeartbeatResponseDelay.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackResponseDelay.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackSupressionDuration.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\PeriodicHeartbeat.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\ResendDiscoveryDataPeriod.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\TimedEvent.cpp">
-      <Filter>Source Files\timedevent</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceEvent.cpp">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
@@ -410,9 +467,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\Endpoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\HistoryCache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\MessageReceiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -437,30 +491,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\qos\WriterQos.cpp">
       <Filter>Source Files\qos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\EndpointDiscoveryProtocol.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\ParticipantDiscoveryProtocol.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SEDPListeners.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleEDP.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimplePDP.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPListener.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\StaticEDP.cpp">
-      <Filter>Source Files\discovery</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredData.cpp">
-      <Filter>Source Files\discovery\data</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp">
       <Filter>Source Files\dds</Filter>
     </ClCompile>
@@ -478,6 +508,90 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp">
       <Filter>Source Files\dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\timedevent\HeartbeatResponseDelay.cpp">
+      <Filter>Source Files\reader\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\timedevent\WriterProxyLiveliness.cpp">
+      <Filter>Source Files\reader\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackResponseDelay.cpp">
+      <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackSupressionDuration.cpp">
+      <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\PeriodicHeartbeat.cpp">
+      <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\TimedEvent.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\history\History.cpp">
+      <Filter>Source Files\history</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\history\ReaderHistory.cpp">
+      <Filter>Source Files\history</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\history\WriterHistory.cpp">
+      <Filter>Source Files\history</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\StringMatching.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\BuiltinProtocols.cpp">
+      <Filter>Source Files\builtin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDP.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimple.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimpleListeners.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimpleTopicDataType.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimple.cpp">
+      <Filter>Source Files\builtin\discovery\participant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimpleListener.cpp">
+      <Filter>Source Files\builtin\discovery\participant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimpleTopicDataType.cpp">
+      <Filter>Source Files\builtin\discovery\participant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\timedevent\RemoteParticipantLeaseDuration.cpp">
+      <Filter>Source Files\builtin\discovery\participant\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.cpp">
+      <Filter>Source Files\builtin\discovery\participant\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLP.cpp">
+      <Filter>Source Files\builtin\liveliness</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLPListener.cpp">
+      <Filter>Source Files\builtin\liveliness</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.cpp">
+      <Filter>Source Files\builtin\liveliness\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderProxyData.cpp">
+      <Filter>Source Files\writer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\reader\WriterProxyData.cpp">
+      <Filter>Source Files\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\ParticipantProxyData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStatic.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStaticXML.cpp">
+      <Filter>Source Files\builtin\discovery\endpoint</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

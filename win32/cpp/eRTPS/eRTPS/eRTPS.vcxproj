@@ -176,6 +176,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib</AdditionalLibraryDirectories>
     </Link>
+    <Lib>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -188,6 +194,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib</AdditionalLibraryDirectories>
     </Link>
+    <Lib>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">
     <ClCompile>
@@ -202,7 +214,7 @@
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">
@@ -218,7 +230,7 @@
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
@@ -232,7 +244,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -247,7 +259,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -265,6 +277,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <Lib>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -281,8 +299,26 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\BuiltinProtocols.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDP.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimple.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleListeners.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStatic.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimple.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimpleListener.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\PDPSimpleTopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\timedevent\RemoteParticipantLeaseDuration.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLP.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPListener.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.hpp" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\common\CacheChange.h" />
@@ -310,24 +346,16 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SampleInfo.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\Subscriber.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SubscriberListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredParticipantData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredReaderData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\data\DiscoveredWriterData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\EndpointDiscoveryProtocol.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\ParticipantDiscoveryProtocol.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SEDPListeners.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimpleEDP.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SimplePDP.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\SPDPListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\discovery\StaticEDP.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\Endpoint.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_dll.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\eProsima_auto_link.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\HistoryCache.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\History.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\ReaderHistory.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\history\WriterHistory.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\Participant.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\ParticipantProxyData.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\qos\DDSQosPolicies.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterList.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterTypes.h" />
@@ -337,54 +365,68 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\reader\RTPSReader.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatefulReader.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatelessReader.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\HeartbeatResponseDelay.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\WriterProxyLiveliness.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxy.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxyData.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ListenResource.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceEvent.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSMessageCreator.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\HeartbeatResponseDelay.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackResponseDelay.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\NackSupressionDuration.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\PeriodicHeartbeat.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\ResendDiscoveryDataPeriod.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\timedevent\TimedEvent.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\IPFinder.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderLocator.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxy.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxyData.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSMessageGroup.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSWriter.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatefulWriter.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatelessWriter.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackResponseDelay.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackSupressionDuration.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\PeriodicHeartbeat.h" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\DataMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\GapMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\HeartbeatMsg.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\BuiltinProtocols.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDP.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimple.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimpleListeners.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPSimpleTopicDataType.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStatic.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStaticXML.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimple.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimpleListener.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\PDPSimpleTopicDataType.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\timedevent\RemoteParticipantLeaseDuration.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLP.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLPListener.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\DomainParticipant.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\Publisher.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\PublisherListener.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\Subscriber.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\SubscriberListener.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\data\DiscoveredData.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\EndpointDiscoveryProtocol.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\ParticipantDiscoveryProtocol.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SEDPListeners.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimpleEDP.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SimplePDP.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\SPDPListener.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\discovery\StaticEDP.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\Endpoint.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\HistoryCache.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\history\History.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\history\ReaderHistory.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\history\WriterHistory.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\MessageReceiver.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\Participant.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\ParticipantProxyData.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\qos\DDSQosPolicies.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\qos\ParameterList.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\qos\ParameterTypes.cpp" />
@@ -394,28 +436,31 @@
     <ClCompile Include="..\..\..\..\src\cpp\reader\RTPSReader.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\reader\StatefulReader.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\reader\StatelessReader.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\reader\timedevent\HeartbeatResponseDelay.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\reader\timedevent\WriterProxyLiveliness.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\reader\WriterProxy.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\reader\WriterProxyData.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\resources\ListenResource.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceEvent.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceSend.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\RTPSMessageCreator.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\HeartbeatResponseDelay.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackResponseDelay.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\NackSupressionDuration.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\PeriodicHeartbeat.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\ResendDiscoveryDataPeriod.cpp" />
-    <ClCompile Include="..\..\..\..\src\cpp\timedevent\TimedEvent.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\CacheChangePool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\eClock.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\IPFinder.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\ObjectPool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\RTPSLog.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\utils\StringMatching.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\utils\TimedEvent.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderLocator.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderProxy.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\writer\ReaderProxyData.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\RTPSMessageGroup.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\RTPSWriter.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatefulWriter.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackResponseDelay.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackSupressionDuration.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\PeriodicHeartbeat.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

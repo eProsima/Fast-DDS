@@ -6,14 +6,7 @@
  *
  *************************************************************************/
 
-/*
- * StatelessTest.cpp
- *
- *  Created on: Feb 26, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *      		grcanosa@gmail.com
- */
+
 
 #include <stdio.h>
 #include <string>
@@ -22,7 +15,7 @@
 #include <bitset>
 #include <cstdint>
 
-#define NSAMPLES 5000
+#define NSAMPLES 10000
 
 
 #include "eprosimartps/rtps_all.h"
@@ -96,7 +89,7 @@ int main(int argc, char** argv){
 		cout << "Discovery completed"<<endl;
 		latpub.m_part->stopParticipantAnnouncement();
 		eClock::my_sleep(5000);
-		cout << B_WHITE << "READY TO START" <<DEF << endl;
+		cout << RTPS_B_WHITE << "READY TO START" <<RTPS_DEF << endl;
 		printf("Printing times in us\n");
 		printf(" Bytes, stdev,  mean,   min,   50%%,   90%%,   99%%, 99.99%%,   max\n");
 		printf("------,------,------,------,------,------,------,------,------,\n");
@@ -122,7 +115,7 @@ int main(int argc, char** argv){
 		cout << "Discovery Completed"<<endl;
 		latsub.m_part->stopParticipantAnnouncement();
 		eClock::my_sleep(1000);
-		cout << B_WHITE << "READY TO START" <<DEF << endl;
+		cout << RTPS_B_WHITE << "READY TO START" <<RTPS_DEF << endl;
 		for(std::vector<uint32_t>::iterator ndata = datasize.begin();ndata!=datasize.end();++ndata)
 		{
 			if(!latsub.test(*ndata,NSAMPLES))

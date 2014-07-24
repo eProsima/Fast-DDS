@@ -37,5 +37,8 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/DDSQosPolicies.h"
 
+using namespace eprosima;
+using namespace dds;
+using namespace rtps;
 
 #endif /* RTPS_ALL_H_ */

@@ -9,13 +9,10 @@
 /**
  * @file ThroughputSubscriber.cxx
  *
- *  Created on: Jun 4, 2014
- *      Author: Gonzalo Rodriguez Canosa
- *      email:  gonzalorodriguez@eprosima.com
- *              grcanosa@gmail.com  	
  */
 
 #include "ThroughputSubscriber.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 
 
@@ -37,9 +34,9 @@ void ThroughputSubscriber::DataSubListener::reset(){
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched()
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo info)
 {
-	cout << RED << "DATA    Sub Matched"<<DEF<<endl;
+	cout << RTPS_RED << "DATA    Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
@@ -64,9 +61,9 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
 
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched()
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
 {
-	cout << RED << "COMMAND Sub Matched"<<DEF<<endl;
+	cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
@@ -79,7 +76,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 		{
 		default:
 		case (DEFAULT): break;
-		case (READY_TO_START): break;
+		case (READY_TO_START): m_up.sema.post();break;
 		case (BEGIN): break;
 		case (TEST_STARTS): m_up.m_Clock.setTimeNow(&m_up.m_t1);break;
 		case (TEST_ENDS): m_up.m_Clock.setTimeNow(&m_up.m_t2);m_up.m_DataSubListener.saveNumbers();m_up.sema.post();break;
@@ -93,9 +90,9 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched()
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo info)
 {
-	cout << RED << "COMMAND Pub Matched"<<DEF<<endl;
+	cout << RTPS_RED << "COMMAND Pub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 
@@ -110,10 +107,13 @@ ThroughputSubscriber::ThroughputSubscriber():
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	TIME_INFINITE(PParam.builtin.leaseDuration);
+PParam.sendSocketBufferSize = 65536;
+	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant2";
 	mp_par = DomainParticipant::createParticipant(PParam);
 	if(mp_par == NULL)
@@ -125,26 +125,33 @@ ThroughputSubscriber::ThroughputSubscriber():
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1))/1001;
+	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
 	//PUBLISHER
 	SubscriberAttributes Sparam;
-	Sparam.historyMaxSize = 10000;
 	Sparam.topic.topicDataType = "LatencyType";
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
+	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Sparam.topic.historyQos.depth = 1;
+	Sparam.topic.resourceLimitsQos.max_samples = 10000;
+	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Sparam.unicastLocatorList.push_back(Locator_t(10110));
 	mp_datasub = DomainParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
-	Rparam.historyMaxSize = 20;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
+	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Rparam.topic.resourceLimitsQos.max_samples = 20;
+	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.unicastLocatorList.push_back(Locator_t(10111));
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
-	Wparam.historyMaxSize = 20;
+	//Wparam.historyMaxSize = 20;
+	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+		Wparam.topic.resourceLimitsQos.max_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
@@ -167,13 +174,12 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 	sema.wait();
 	cout << "Discovery complete"<<endl;
 	bool stop = false;
-	int aux;
 	printLabelsSubscriber();
 	int demindex=0;
 	while(1)
 	{
-		mp_commandsub->waitForUnreadMessage();
-		//cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
+		sema.wait();
+	//	cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
 		switch(m_CommandSubListener.m_commandin.m_command)
 		{
 		case (DEFAULT):
@@ -184,7 +190,9 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 		}
 		case (READY_TO_START):
 		{
-		//	cout << "Enter number to continue:"<<endl;
+//			cout << "Enter number to continue:"<<endl;
+//			int aux;
+//			std::cin >> aux;
 			ThroughputCommandType command(BEGIN);
 			eClock::my_sleep(50);
 			m_DataSubListener.reset();
@@ -200,7 +208,7 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 			TroughputTimeStats TS;
 			TS.samplesize = SAMPLESIZE+4;
 			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.saved_lostsamples;
-			TS.totaltime_us = Time_t2MicroSec(m_t2)-Time_t2MicroSec(m_t1);
+			TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1);
 			TS.lostsamples = m_DataSubListener.saved_lostsamples;
 			TS.demand = demand.at(demindex);
 		//	m_DataSubListener.myfile << endl;
