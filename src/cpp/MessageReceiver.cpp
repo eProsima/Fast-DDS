@@ -80,7 +80,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		pWarning("Received message too short, ignoring"<<endl)
-		return;
+				return;
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
@@ -195,8 +195,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 			//				msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_SRC:
-			pWarning("Info SRC messages not yet implemented"<<endl);
-			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
+			pDebugInfo("InfoSRC message received, processing..."<<endl;);
+			valid = proc_Submsg_InfoSRC(msg,&submsgh,&last_submsg);
+//			pWarning("Info SRC messages not yet implemented"<<endl);
+//			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_TS:
 		{
@@ -284,7 +286,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(keyFlag && dataFlag)
 	{
 		pWarning( "Message received with Data and Key Flag set."<<endl)
-																				return false;
+																						return false;
 	}
 
 	//Assign message endianness
@@ -338,7 +340,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		pWarning("Invalid message received, bad sequence Number"<<endl)
-																				return false;
+																						return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -736,6 +738,31 @@ bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 	return true;
+}
+
+bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
+{
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	//bool timeFlag = smh->flags & BIT(1) ? true : false;
+	//Assign message endianness
+	if(endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
+	if(smh->submessageLength == 20 || smh->submessageLength==0)
+	{
+		//AVOID FIRST 4 BYTES:
+		msg->pos+=4;
+		CDRMessage::readOctet(msg,&this->sourceVersion.m_major);
+		CDRMessage::readOctet(msg,&this->sourceVersion.m_minor);
+		CDRMessage::readData(msg,this->sourceVendorId,2);
+		CDRMessage::readData(msg,this->sourceGuidPrefix.value,12);
+		//Is the final message?
+		if(smh->submessageLength == 0)
+			*last = true;
+		return true;
+	}
+	return false;
 }
 
 

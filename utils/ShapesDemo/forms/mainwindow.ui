@@ -346,7 +346,7 @@
   </action>
   <action name="actionStop">
    <property name="text">
-    <string>Delete All</string>
+    <string>Stop (delete all)</string>
    </property>
   </action>
   <action name="actionExit">
