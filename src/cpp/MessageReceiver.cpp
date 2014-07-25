@@ -22,6 +22,7 @@
 #include "eprosimartps/reader/StatelessReader.h"
 
 #include "eprosimartps/writer/ReaderProxyData.h"
+#include "eprosimartps/reader/WriterProxyData.h"
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
@@ -554,7 +555,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 								WP->m_heartbeatResponse.restart_timer();
 						}
 						//FIXME: livelinessFlag
-						if(livelinessFlag )//&& WP->param.livelinessKind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+						if(livelinessFlag && WP->m_data->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
 							WP->assertLiveliness();
 					}
 				}
