@@ -227,7 +227,7 @@ bool PDPSimple::createSPDPEndpoints()
 	Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 	Wparam.topic.resourceLimitsQos.max_samples = 2;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 2;
-	Wparam.payloadMaxSize = 1000;
+	Wparam.payloadMaxSize = 10000;
 	Wparam.userDefinedId = -99;
 	Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	RTPSWriter* wout;
@@ -258,7 +258,7 @@ bool PDPSimple::createSPDPEndpoints()
 	Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 	Rparam.topic.resourceLimitsQos.max_samples = 1000;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 500;
-	Rparam.payloadMaxSize = 1000;
+	Rparam.payloadMaxSize = 10000;
 	Rparam.userDefinedId = -99;
 	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	RTPSReader* rout;

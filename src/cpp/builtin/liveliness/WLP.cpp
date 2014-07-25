@@ -124,7 +124,9 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	pInfo(RTPS_MAGENTA<<"WriterLiveliness:assign remote Endpoints"<<RTPS_DEF<<endl;);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
-	auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+	//auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+	auxendp = 1;
+	//FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 	if(auxendp!=0 && this->mp_builtinParticipantMessageReader!=NULL)
 	{
 		pDebugInfo(RTPS_MAGENTA<<"Adding remote writer to my local Builtin Reader"<<RTPS_DEF<<endl;);
@@ -139,7 +141,9 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		mp_builtinParticipantMessageReader->matched_writer_add(wp);
 	}
 	auxendp = endp;
-	auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	//auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+	auxendp = 1;
+	//FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 	if(auxendp!=0 && this->mp_builtinParticipantMessageWriter!=NULL)
 	{
 		pDebugInfo(RTPS_MAGENTA<<"Adding remote reader to my local Builtin Writer"<<RTPS_DEF<<endl;);
