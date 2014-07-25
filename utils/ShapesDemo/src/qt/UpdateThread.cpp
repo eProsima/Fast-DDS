@@ -40,10 +40,6 @@ void UpdateThread::run(void)
     if(m_timer==NULL)
     {
         QTimer::singleShot(0,this,SLOT(updateAll()));
-//        m_timer = new QTimer(this);
-//        connect(m_timer,SIGNAL(timeout()),this,SLOT(updateAll()));
-//        cout << "START: Thread ID: "<< this->thread()->currentThreadId()<<endl;
-//        m_timer->start(m_interval);
     }
     //cout << "RUN: Thread ID: "<< this->thread()->currentThreadId()<<endl;
     exec();
