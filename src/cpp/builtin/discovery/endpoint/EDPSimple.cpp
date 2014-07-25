@@ -84,8 +84,8 @@ bool EDPSimple::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_instances = 1000;
 		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
-		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
-		Wparam.payloadMaxSize = 2000;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
+		Wparam.payloadMaxSize = 10000;
 		Wparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
@@ -106,8 +106,8 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_instances = 1000000;
 		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
-		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
-		Rparam.payloadMaxSize = 2000;
+		Rparam.topic.resourceLimitsQos.allocated_samples = 20;
+		Rparam.payloadMaxSize = 10000;
 		Rparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
@@ -134,8 +134,8 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_instances = 1000000;
 		Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
-		Rparam.topic.resourceLimitsQos.allocated_samples = 1000;
-		Rparam.payloadMaxSize = 2000;
+		Rparam.topic.resourceLimitsQos.allocated_samples = 20;
+		Rparam.payloadMaxSize = 10000;
 		Rparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
 		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
@@ -158,8 +158,8 @@ bool EDPSimple::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_instances = 1000;
 		Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
-		Wparam.topic.resourceLimitsQos.allocated_samples = 500;
-		Wparam.payloadMaxSize = 2000;
+		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
+		Wparam.payloadMaxSize = 10000;
 		Wparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
 		Wparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;

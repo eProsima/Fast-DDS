@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>eProsimaLogo.png</file>
+    </qresource>
+</RCC>
