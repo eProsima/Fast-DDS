@@ -33,6 +33,8 @@ public:
 	uint16_t ownershipStrength;
 	//!Source timestamp of the sample.
 	Time_t sourceTimestamp;
+	//!InstanceHandle of the data
+	InstanceHandle_t iHandle;
 };
 
 } /* namespace dds */
