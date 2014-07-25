@@ -23,14 +23,6 @@ DrawArea::DrawArea(QWidget *parent)
       firstA(10),
       lastA(240)
 {
-//    setBackgroundRole(QPalette::Base);
-
-////    QPalette pal = this->palette();
-////    pal.setColor(QPalette::Window,Qt::black);
-////    this->setPalette(pal);
-////setBackgroundRole(QPalette::Window);
-//  //  this->setStyleSheet("background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;background-color: rgb(255, 255, 255);");
-//    this->setStyleSheet("background-color: rgb(255, 255, 255);");
     this->setStyleSheet("background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;");
     setVisible(true);
     m_brush.setStyle(Qt::SolidPattern);
@@ -68,18 +60,7 @@ void DrawArea::paintEvent(QPaintEvent * e/* event */)
 void DrawArea::timerEvent(QTimerEvent* e)
 {
     Q_UNUSED(e);
-    QPalette pal2 = this->palette();
-    pal2.setColor(QPalette::All,QPalette::Base,Qt::white);
-//    pal2.setColor(QPalette::Inactive,QPalette::Base,Qt::blue);
-//    pal2.setColor(QPalette::Disabled,QPalette::Base,Qt::blue);
-  //  this->setStyleSheet("background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;background-color: rgb(255, 255, 255);");
-    //setAutoFillBackground(true);
-//    setBackgroundRole(QPalette::Base);
-//    setForegroundRole(QPalette::Base);
- //   this->setPalette(pal2);
-this->setStyleSheet("QWidget#areaDraw{background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;}");
-   // this->setStyleSheet("background-color: rgb(255, 255, 255);");
-    //setAutoFillBackground(false);
+    this->setStyleSheet("QWidget#areaDraw{background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;}");
     repaint();
 }
 
@@ -97,8 +78,6 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapeSubscriber*>::iterator it = mp_SD->m_subscribers.begin();
             it!=mp_SD->m_subscribers.end();++it)
         {
-
-            //  cout << "DrawArea locking sub: "<<std::flush;
             QMutexLocker(&(*it)->m_mutex);
             //DRAW CONTENT FILTER IF EXISTS:
             if((*it)->m_filter.m_useFilter)
@@ -132,17 +111,6 @@ void DrawArea::drawShapes(QPainter* painter)
                         ++index;
                     }
                 }
-
-                //                size_t total = (*it)->m_drawShape.m_history.size();
-                //                int index = 0;
-                //                for(std::list<ShapeType>::reverse_iterator sit = (*it)->m_drawShape.m_history.rbegin();
-                //                    sit!=(*it)->m_drawShape.m_history.rend();++sit)
-                //                {
-                //                    paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
-                //                    ++index;
-                //                }
-                //                paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
-                //                cout << "UNLOCKING"<<endl;
             }
         }
         for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
