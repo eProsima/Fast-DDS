@@ -56,8 +56,8 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
 	if(m_isHistoryFull)
 	{
-		pWarning("Attempting to add Data to Full WriterCache"<<endl;)
-						return false;
+		pWarning("Attempting to add Data to Full ReaderCache: "<<this->mp_Endpoint->getGuid().entityId<<endl;)
+		return false;
 	}
 	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
 	if(a_change->sequenceNumber <= mp_maxSeqCacheChange->sequenceNumber)

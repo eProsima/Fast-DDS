@@ -28,10 +28,10 @@ typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
 
 WriterHistory::WriterHistory(Endpoint* endp,
-							uint32_t payload_max_size):
-	History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
-	m_lastCacheChangeSeqNum(0,0),
-	mp_writer((RTPSWriter*)endp)
+		uint32_t payload_max_size):
+			History(endp,endp->getTopic().historyQos,endp->getTopic().resourceLimitsQos,payload_max_size),
+			m_lastCacheChangeSeqNum(0,0),
+			mp_writer((RTPSWriter*)endp)
 {
 
 }
@@ -45,44 +45,52 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 {
 	if(m_isHistoryFull)
 	{
-		pWarning("Attempting to add Data to Full WriterCache"<<endl;)
-		return false;
+		pWarning("Attempting to add Data to Full WriterCache: "<<this->mp_Endpoint->getGuid().entityId<<endl;)
+				return false;
 	}
 	//NO KEY HISTORY
 	if(mp_Endpoint->getTopic().topicKind == NO_KEY)
 	{
 		bool add = false;
-		 if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
-		 {
-			 add = true;
-		 }
-		 else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
-		 {
-			 if(m_changes.size()<(size_t)m_historyQos.depth)
-			 {
-				 add = true;
-			 }
-			 else
-			 {
-				 if(mp_writer->change_removed_by_history(mp_minSeqCacheChange))
-				 {
-					 add =true;
-				 }
-			 }
-		 }
-		 if(add)
-		 {
-			 ++m_lastCacheChangeSeqNum;
-			 a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-			 m_changes.push_back(a_change);
-			 pDebugInfo("WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added."<< endl);
-			 updateMaxMinSeqNum();
-			 if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
-				 m_isHistoryFull = true;
-			 return true;
-		 }
-		 else
-			 return false;
+		if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+		{
+			add = true;
+		}
+		else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+		{
+			if(m_changes.size()<(size_t)m_historyQos.depth)
+			{
+				add = true;
+			}
+			else
+			{
+				if(mp_writer->change_removed_by_history(mp_minSeqCacheChange))
+				{
+					add =true;
+				}
+			}
+		}
+		if(add)
+		{
+			++m_lastCacheChangeSeqNum;
+			a_change->sequenceNumber = m_lastCacheChangeSeqNum;
+			m_changes.push_back(a_change);
+			pDebugInfo("WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added."<< endl);
+			updateMaxMinSeqNum();
+			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+			{
+				if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
+					m_isHistoryFull = true;
+			}
+			else
+			{
+				if((int32_t)m_changes.size()==m_historyQos.depth)
+					m_isHistoryFull = true;
+			}
+			return true;
+		}
+		else
+			return false;
 	}
 	//HISTORY WITH KEY
 	else if(mp_Endpoint->getTopic().topicKind == WITH_KEY)
@@ -111,10 +119,10 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 				}
 				else
 				{
-					 if(mp_writer->change_removed_by_history(vit->second.front()))
-					 {
+					if(mp_writer->change_removed_by_history(vit->second.front()))
+					{
 						add =true;
-					 }
+					}
 				}
 			}
 			if(add)
@@ -125,8 +133,16 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 				m_changes.push_back(a_change);
 				updateMaxMinSeqNum();
 				vit->second.push_back(a_change);
-				if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
-					m_isHistoryFull = true;
+				if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+				{
+					if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
+						m_isHistoryFull = true;
+				}
+				else
+				{
+					if((int32_t)m_changes.size()==m_historyQos.depth*m_resourceLimitsQos.max_instances)
+						m_isHistoryFull = true;
+				}
 				return true;
 			}
 			else
