@@ -78,6 +78,10 @@ public:
     */
    void addSubscriberToTable(ShapeSubscriber* ssub);
 
+   void keyPressEvent(QKeyEvent *event);
+
+   void addMessageToOutput(QString str, bool addtostatus=false);
+
 private slots:
     void on_bt_publish_clicked();
 
@@ -95,6 +99,10 @@ private slots:
 
     void on_actionDelete_Enpoint_triggered();
 
+    void on_tableEndpoint_clicked(const QModelIndex &index);
+
+
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
@@ -102,6 +110,7 @@ private:
     QStandardItemModel* m_pubsub;
     std::vector<SD_Endpoint> m_pubsub_pointers;
     int m_tableRow;
+    void removeRow(int row);
 };
 
 #endif // MAINWINDOW_H
