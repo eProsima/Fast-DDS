@@ -15,6 +15,7 @@
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 
 #include <QPainter>
+#include <QStyleOption>
 
 DrawArea::DrawArea(QWidget *parent)
     : QWidget(parent),
@@ -22,12 +23,16 @@ DrawArea::DrawArea(QWidget *parent)
       firstA(10),
       lastA(240)
 {
-    setBackgroundRole(QPalette::Base);
+//    setBackgroundRole(QPalette::Base);
 
-    QPalette pal = this->palette();
-    pal.setColor(QPalette::Background,Qt::white);
-     setAutoFillBackground(true);
-    this->setPalette(pal);
+////    QPalette pal = this->palette();
+////    pal.setColor(QPalette::Window,Qt::black);
+////    this->setPalette(pal);
+////setBackgroundRole(QPalette::Window);
+//  //  this->setStyleSheet("background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;background-color: rgb(255, 255, 255);");
+//    this->setStyleSheet("background-color: rgb(255, 255, 255);");
+    this->setStyleSheet("background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;");
+    setVisible(true);
     m_brush.setStyle(Qt::SolidPattern);
 
     m_timerId = startTimer(50);
@@ -49,19 +54,32 @@ QSize DrawArea::minimumSizeHint() const
 }
 
 
-void DrawArea::paintEvent(QPaintEvent * /* event */)
+void DrawArea::paintEvent(QPaintEvent * e/* event */)
 {
-    QPalette pal = this->palette();
-    pal.setColor(QPalette::Background,Qt::white);
-     setAutoFillBackground(true);
-    this->setPalette(pal);
+   QStyleOption opt;
+       opt.init(this);
+
     QPainter painter(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
     drawShapes(&painter);
+
 }
 
 void DrawArea::timerEvent(QTimerEvent* e)
 {
     Q_UNUSED(e);
+    QPalette pal2 = this->palette();
+    pal2.setColor(QPalette::All,QPalette::Base,Qt::white);
+//    pal2.setColor(QPalette::Inactive,QPalette::Base,Qt::blue);
+//    pal2.setColor(QPalette::Disabled,QPalette::Base,Qt::blue);
+  //  this->setStyleSheet("background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;background-color: rgb(255, 255, 255);");
+    //setAutoFillBackground(true);
+//    setBackgroundRole(QPalette::Base);
+//    setForegroundRole(QPalette::Base);
+ //   this->setPalette(pal2);
+this->setStyleSheet("QWidget#areaDraw{background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;}");
+   // this->setStyleSheet("background-color: rgb(255, 255, 255);");
+    //setAutoFillBackground(false);
     repaint();
 }
 
