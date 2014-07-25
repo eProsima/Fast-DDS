@@ -288,9 +288,15 @@ void MainWindow::removeRow(int row)
         if(row == it->pos)
         {
             if(it->type == PUB)
+            {
                 this->m_shapesDemo.removePublisher(it->pub);
+                addMessageToOutput(QString("Removed Publisher"),false);
+            }
             else
+            {
                 this->m_shapesDemo.removeSubscriber(it->sub);
+                addMessageToOutput(QString("Removed Subscriber"),false);
+            }
 
             for(std::vector<SD_Endpoint>::iterator it2 = it;it2!=this->m_pubsub_pointers.end();++it2)
             {
@@ -300,6 +306,7 @@ void MainWindow::removeRow(int row)
             break;
         }
     }
+
 }
 
 void MainWindow::on_tableEndpoint_clicked(const QModelIndex &index)
