@@ -48,8 +48,8 @@ QSize DrawArea::minimumSizeHint() const
 
 void DrawArea::paintEvent(QPaintEvent * e/* event */)
 {
-   QStyleOption opt;
-       opt.init(this);
+    QStyleOption opt;
+    opt.init(this);
 
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
@@ -104,11 +104,14 @@ void DrawArea::drawShapes(QPainter* painter)
                 {
                     size_t total = vit->size();
                     int index = 0;
-                    for(std::list<ShapeType>::reverse_iterator sit = vit->rbegin();
-                        sit!=vit->rend();++sit)
+                    if(vit->begin()->m_writerGuid != c_Guid_Unknown)
                     {
-                        paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
-                        ++index;
+                        for(std::list<ShapeType>::reverse_iterator sit = vit->rbegin();
+                            sit!=vit->rend();++sit)
+                        {
+                            paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
+                            ++index;
+                        }
                     }
                 }
             }
@@ -116,10 +119,10 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
             it!=mp_SD->m_publishers.end();++it)
         {
+            QMutexLocker(&(*it)->m_mutex);
             if((*it)->isInitialized)
             {
-               // cout << "DrawArea locking PUB: "<<std::flush;
-                QMutexLocker(&(*it)->m_mutex);
+                // cout << "DrawArea locking PUB: "<<std::flush;
                 //cout << "OK"<<std::flush;
                 paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
                 //cout << "UNLOCKING PUB"<<endl;

@@ -21,6 +21,10 @@
 #define MAX_DRAW_AREA_Y 265
 #define INITIAL_INTERVAL_MS 200
 
+
+
+
+
 /**
  * @brief The ShapesDemoOptions class, used to transmit the options between the options menu and the ShapesDemo class.
  */
@@ -148,6 +152,7 @@ private:
     ShapesDemoOptions m_options;
     MainWindow* m_mainWindow;
     QMutex m_mutex;
+
 };
 
 

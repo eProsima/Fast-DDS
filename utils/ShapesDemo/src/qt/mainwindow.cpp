@@ -200,7 +200,7 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
     sdend.pub = spub;
     sdend.pos = m_pubsub->rowCount()-1;
     this->m_pubsub_pointers.push_back(sdend);
-    addMessageToOutput(QString("Publisher created in topic: %1").arg(spub->m_attributes.topic.topicName.c_str()),false);
+    addMessageToOutput(QString("Publisher created in topic: %2 %1").arg(spub->m_attributes.topic.topicName.c_str()).arg(spub->m_shape.m_mainShape.getColorStr().c_str()),false);
 
 }
 

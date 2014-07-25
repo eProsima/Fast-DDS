@@ -149,12 +149,66 @@ void ShapeSubscriber::onNewDataMessage()
             for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
                 it!=m_shape.m_shapeHistory.end();++it)
             {
-                if(it->begin()->getColor() == shape.getColor())
+                bool remove = false;
+//                cout << "COLOR: "<<it->begin()->getColorStr() << endl;
+//                cout << "COLOR NUM: "<< it->begin()->getColor() << endl;
+//                cout << "Ihandle: "<<info.iHandle << endl;
+                if(it->begin()->getColor() == this->m_instances.BlueIH.first &&
+                        info.iHandle == this->m_instances.BlueIH.second)
                 {
+                  //  cout << "Blue iH"<<this->m_instances.BlueIH.second<<endl;
+                    remove = true;
+                }
+                if(it->begin()->getColor() == this->m_instances.PurpleIH.first &&
+                        info.iHandle == this->m_instances.PurpleIH.second)
+                {
+                    remove = true;
+                  //  cout << "Purple iH"<<this->m_instances.PurpleIH.second<<endl;
+                }
+                if(it->begin()->getColor() == this->m_instances.RedIH.first &&
+                        info.iHandle == this->m_instances.RedIH.second)
+                {
+                    remove = true;
+                  //  cout << "Red iH"<<this->m_instances.RedIH.second<<endl;
+                }
+                if(it->begin()->getColor() == this->m_instances.GreenIH.first &&
+                        info.iHandle == this->m_instances.GreenIH.second)
+                {
+                    remove = true;
+                  //  cout << "GreenIH"<<this->m_instances.GreenIH.second<<endl;
+                }
+                if(it->begin()->getColor() == this->m_instances.YellowIH.first &&
+                        info.iHandle == this->m_instances.YellowIH.second)
+                {
+                    remove = true;
+                 //   cout << "Yellow iH"<<this->m_instances.YellowIH.second<<endl;
+                }
+                if(it->begin()->getColor() == this->m_instances.CyanIH.first &&
+                        info.iHandle == this->m_instances.CyanIH.second)
+                {
+                    remove = true;
+                  //  cout << "Cyan iH"<<this->m_instances.CyanIH.second<<endl;
+                }
+                if(it->begin()->getColor() == this->m_instances.MagentaIH.first &&
+                        info.iHandle == this->m_instances.MagentaIH.second)
+                {
+                    remove = true;
+                  //  cout << "Magenta iH"<<this->m_instances.MagentaIH.second<<endl;
+                }
+                if(it->begin()->getColor() == this->m_instances.OrangeIH.first &&
+                        info.iHandle == this->m_instances.OrangeIH.second)
+                {
+                    remove = true;
+                   // cout << "Orange iH"<<this->m_instances.OrangeIH.second<<endl;
+                }
+                if(remove)
+                {
+                   // cout << "Disposing SHAPE of color: "<< it->begin()->getColorStr()<<endl;
                     m_shape.m_shapeHistory.erase(it);
                     break;
                 }
             }
+           cout << "HISTORY OF SIZE: "<< m_shape.m_shapeHistory.size() << endl;
         }
     }
 }
@@ -201,13 +255,13 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
     }
     else if(info.status == REMOVED_MATCHING)
     {
-       cout << "Subscriber REMOVED Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
+        cout << "Subscriber REMOVED Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         m_mutex.lock();
         for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
             it!=m_shape.m_shapeHistory.end();++it)
         {
-            cout << it->front().m_writerGuid << endl;
-            cout << info.remoteEndpointGuid << endl;
+          //  cout << it->front().m_writerGuid << endl;
+           // cout << info.remoteEndpointGuid << endl;
             if(it->front().m_writerGuid == info.remoteEndpointGuid)
             {
                 cout << "FOUND, DELETING"<<endl;

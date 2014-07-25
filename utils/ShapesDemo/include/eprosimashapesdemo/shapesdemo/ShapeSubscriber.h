@@ -64,6 +64,7 @@ public:
     ShapeContentFilter m_filter;
     bool passFilter(ShapeType* shape);
     std::vector<GUID_t> m_remoteWriters;
+    ColorInstanceHandle m_instances;
 
 };
 
