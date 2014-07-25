@@ -145,6 +145,7 @@ void ShapeSubscriber::onNewDataMessage()
         }
         else
         {
+            cout << "NOT ALIVE DATA"<<endl;
             for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
                 it!=m_shape.m_shapeHistory.end();++it)
             {

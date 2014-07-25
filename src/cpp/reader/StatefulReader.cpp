@@ -160,6 +160,8 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 				this->mp_type->deserialize(&min_change->serializedPayload,data);
 			if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
 			{
+				if(info!=NULL)
+				{
 				info->sampleKind = min_change->kind;
 				info->writerGUID = min_change->writerGUID;
 				info->sourceTimestamp = min_change->sourceTimestamp;
@@ -167,6 +169,8 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
 				if(!min_change->isRead)
 					m_reader_cache.decreaseUnreadCount();
+				info->iHandle = min_change->instanceHandle;
+				}
 				return m_reader_cache.remove_change(min_change);
 			}
 		}
@@ -194,11 +198,15 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 					this->mp_type->deserialize(&(*it)->serializedPayload,data);
 				}
 				(*it)->isRead = true;
+				if(info!=NULL)
+				{
 				info->sampleKind = (*it)->kind;
 				info->writerGUID = (*it)->writerGUID;
 				info->sourceTimestamp = (*it)->sourceTimestamp;
+				info->iHandle = (*it)->instanceHandle;
 				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
 					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+				}
 				m_reader_cache.decreaseUnreadCount();
 				return true;
 			}
