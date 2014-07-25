@@ -43,10 +43,10 @@ WriterHistory::~WriterHistory()
 
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
-	if(m_isHistoryFull)
+	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
-		pWarning("Attempting to add Data to Full WriterCache: "<<this->mp_Endpoint->getGuid().entityId<<endl;)
-				return false;
+		pWarning("Attempting to add Data to Full WriterCache: "<<this->mp_Endpoint->getGuid().entityId<< " with KEEP ALL History "<<endl;)
+		return false;
 	}
 	//NO KEY HISTORY
 	if(mp_Endpoint->getTopic().topicKind == NO_KEY)
