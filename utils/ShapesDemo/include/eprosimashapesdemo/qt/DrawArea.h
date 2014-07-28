@@ -61,6 +61,7 @@ public:
      */
     void stopTimer(){this->killTimer(m_timerId);}
 
+    void add_ContentFilter();
 
 protected:
     /**

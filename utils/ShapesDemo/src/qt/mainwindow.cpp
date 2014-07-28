@@ -62,6 +62,22 @@ MainWindow::MainWindow(QWidget *parent) :
     //    ui->tableEndpoint->setColumnWidth(8,75); //Durability
     //    ui->tableEndpoint->setColumnWidth(9,75); //Livleiness
 
+//    QWidget* w = new QWidget(this);
+//    w->setObjectName("cfilter");
+//    QRect rect(10,10,100,100);
+//    w->setGeometry(rect);
+//    QPalette pal = w->palette();
+//    QBrush brush(Qt::gray,Qt::BDiagPattern);
+//    pal.setBrush(QPalette::All,QPalette::Window,brush);
+//    pal.setBrush(QPalette::All,QPalette::Base,brush);
+
+//    w->setStyleSheet("");
+//    w->setAutoFillBackground(true);
+//    w->setPalette(pal);
+
+//    w->show();
+
+
 
     this->m_shapesDemo.init();
     if(m_shapesDemo.isInitialized())
@@ -330,3 +346,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
     }
 }
+
+void MainWindow::on_push_content_clicked()
+{
+    this->ui->areaDraw->add_ContentFilter();
+}
+
+
+

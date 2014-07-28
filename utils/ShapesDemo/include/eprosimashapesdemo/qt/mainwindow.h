@@ -103,6 +103,10 @@ private slots:
 
 
 
+    void on_push_content_clicked();
+
+
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
