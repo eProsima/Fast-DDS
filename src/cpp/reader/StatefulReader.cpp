@@ -287,6 +287,17 @@ bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
 	return false;
 }
 
+bool StatefulReader::updateTimes(SubscriberTimes ti)
+{
+	m_SubTimes = ti;
+	for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
+			wit!=this->matched_writers.end();++wit)
+	{
+
+	}
+
+}
+
 
 
 } /* namespace rtps */

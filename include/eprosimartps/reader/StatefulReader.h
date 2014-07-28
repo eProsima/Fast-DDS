@@ -90,6 +90,8 @@ public:
 	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
 	bool acceptMsgFrom(GUID_t& entityId);
 
+	bool updateTimes(SubscriberTimes time);
+
 private:
 	SubscriberTimes m_SubTimes;
 	//! Vector containing pointers to the matched writers.

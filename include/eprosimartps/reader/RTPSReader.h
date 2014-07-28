@@ -116,6 +116,7 @@ public:
 	void setQos( ReaderQos& qos,bool first)	{return m_qos.setQos(qos,first);}
 	const ReaderQos& getQos(){return m_qos;}
 	bool expectsInlineQos(){return m_expectsInlineQos;}
+	void setExpectsInlineQos(bool exp){m_expectsInlineQos = exp;}
 	std::vector<CacheChange_t*>::iterator readerHistoryCacheBegin(){return m_reader_cache.changesBegin();}
 	std::vector<CacheChange_t*>::iterator readerHistoryCacheEnd(){return m_reader_cache.changesEnd();}
 	bool acceptMsgDirectedTo(EntityId_t& entityId);
