@@ -23,7 +23,7 @@ namespace rtps {
 
 
 StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-		RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
+				RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
 {
 	m_pushMode = true;//TODOG, support pushmode false in best effort
 	//locator lists:
@@ -124,6 +124,20 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 			remove_locator(*lit);
 		}
 		return true;
+	}
+	return false;
+}
+
+bool StatelessWriter::matched_reader_is_matched(ReaderProxyData* rdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
+			rit!=m_matched_readers.end();++rit)
+	{
+		if((*rit)->m_guid == rdata->m_guid)
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -283,18 +297,18 @@ void StatelessWriter::unsent_changes_not_empty()
 				}
 				rit->unsent_changes.clear();
 			}
-//			else
-//			{
-//				SequenceNumber_t first,last;
-//				m_writer_cache.get_seq_num_min(&first,NULL);
-//				m_writer_cache.get_seq_num_max(&last,NULL);
-//				m_heartbeatCount++;
-//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-//				rit->unsent_changes.clear();
-//			}
+			//			else
+			//			{
+			//				SequenceNumber_t first,last;
+			//				m_writer_cache.get_seq_num_min(&first,NULL);
+			//				m_writer_cache.get_seq_num_max(&last,NULL);
+			//				m_heartbeatCount++;
+			//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+			//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+			//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+			//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+			//				rit->unsent_changes.clear();
+			//			}
 		}
 	}
 	pDebugInfo ( "Finish sending unsent changes" << endl);

@@ -70,6 +70,12 @@ public:
 	 * @return True if correct.
 	 */
 	bool matched_writer_remove(WriterProxyData* wdata);
+	/**
+	 * Tells us if a specific Writer is matched against this reader
+	 * @param wdata Pointer to the WriterProxyData object
+	 * @return True if it is matched.
+	 */
+	bool matched_writer_is_matched(WriterProxyData* wdata);
 
 	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
 	bool change_removed_by_history(CacheChange_t*);

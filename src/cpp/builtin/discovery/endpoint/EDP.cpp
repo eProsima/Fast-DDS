@@ -40,8 +40,8 @@ namespace eprosima {
 namespace rtps {
 
 EDP::EDP(PDPSimple* p,ParticipantImpl* part):
-	mp_PDP(p),
-	mp_participant(part)
+													mp_PDP(p),
+													mp_participant(part)
 {
 	// TODO Auto-generated constructor stub
 
@@ -197,7 +197,7 @@ void EDP::pairWriter(RTPSWriter* W)
 {
 	pDebugInfo(RTPS_CYAN<<"EDP pairing Writer: "<<W->getGuid()<< " in topic: " << W->getTopic().getTopicName()<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
-				pit!=mp_PDP->participantProxiesEnd();++pit)
+			pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
 		for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
 				rdatait!=(*pit)->m_readers.end();++rdatait)
@@ -272,18 +272,18 @@ bool EDP::unpairWriterProxy(WriterProxyData* wdata)
 bool EDP::unpairReaderProxy(ReaderProxyData* rdata)
 {
 	pDebugInfo(RTPS_CYAN<<"EDP unpairing reader: "<<rdata->m_guid<<RTPS_DEF<<endl);
-	for(std::vector<RTPSWriter*>::iterator rit = mp_participant->userWritersListBegin();
-			rit!=mp_participant->userWritersListEnd();++rit)
+	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
+			wit!=mp_participant->userWritersListEnd();++wit)
 	{
-		if((*rit)->matched_reader_remove(rdata))
+		if((*wit)->matched_reader_remove(rdata))
 		{
 			//MATCHED AND ADDED CORRECTLY:
-			if((*rit)->getListener()!=NULL)
+			if((*wit)->getListener()!=NULL)
 			{
 				MatchingInfo info;
 				info.status = REMOVED_MATCHING;
 				info.remoteEndpointGuid = rdata->m_guid;
-				(*rit)->getListener()->onPublicationMatched(info);
+				(*wit)->getListener()->onPublicationMatched(info);
 			}
 		}
 	}
@@ -301,7 +301,7 @@ bool EDP::validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Reader "<<rdata->m_guid << " is publishing in topic " << rdata->m_topicName << "(keyed:"<<rdata->m_topicKind<<
 				"), local writer publishes as keyed: "<<W->getTopic().getTopicKind()<<endl;)
-																								return false;
+																																				return false;
 	}
 	if(!rdata->m_isAlive) //Matching
 	{
@@ -360,12 +360,12 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 	{
 		pWarning("INCOMPATIBLE QOS:Remote Writer "<<wdata->m_guid << " is publishing in topic " << wdata->m_topicName << "(keyed:"<<wdata->m_topicKind<<
 				"), local reader subscribes as keyed: "<<R->getTopic().getTopicKind()<<endl;)
-																											return false;
+																																							return false;
 	}
 	if(!wdata->m_isAlive) //Matching
 	{
 		pWarning("WriterProxyData object is NOT alive"<<endl);
-				return false;
+		return false;
 		return false;
 	}
 	if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) //Means our reader is reliable but hte writer is not
@@ -413,13 +413,79 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 
 bool EDP::updatedReaderProxy(ReaderProxyData* rdata)
 {
-	pError("Updated parameters not yet implemented"<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP updated readerProxy: "<<rdata->m_guid<< " in topic: " << rdata->m_topicName<<RTPS_DEF<<endl);
+	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
+			wit!=mp_participant->userWritersListEnd();++wit)
+	{
+		if(validMatching(*wit,rdata))
+		{
+			pDebugInfo("Valid Matching"<<endl);
+			if((*wit)->matched_reader_add(rdata))
+			{
+				//MATCHED AND ADDED CORRECTLY:
+				if((*wit)->getListener()!=NULL)
+				{
+					MatchingInfo info;
+					info.status = MATCHED_MATCHING;
+					info.remoteEndpointGuid = rdata->m_guid;
+					(*wit)->getListener()->onPublicationMatched(info);
+				}
+			}
+		}
+		else
+		{
+			if((*wit)->matched_reader_remove(rdata))
+			{
+				//MATCHED AND ADDED CORRECTLY:
+				if((*wit)->getListener()!=NULL)
+				{
+					MatchingInfo info;
+					info.status = REMOVED_MATCHING;
+					info.remoteEndpointGuid = rdata->m_guid;
+					(*wit)->getListener()->onPublicationMatched(info);
+				}
+			}
+		}
+	}
 	return true;
 }
 
 bool EDP::updatedWriterProxy(WriterProxyData* wdata)
 {
-	pError("Updated parameters not yet implemented"<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP updated readerProxy: "<<wdata->m_guid<< " in topic: " << wdata->m_topicName<<RTPS_DEF<<endl);
+	for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
+			rit!=mp_participant->userReadersListEnd();++rit)
+	{
+		if(validMatching(*rit,wdata))
+		{
+			pDebugInfo("Valid Matching"<<endl);
+			if((*rit)->matched_writer_add(wdata))
+			{
+				//MATCHED AND ADDED CORRECTLY:
+				if((*rit)->getListener()!=NULL)
+				{
+					MatchingInfo info;
+					info.status = MATCHED_MATCHING;
+					info.remoteEndpointGuid = wdata->m_guid;
+					(*rit)->getListener()->onSubscriptionMatched(info);
+				}
+			}
+		}
+		else
+		{
+			if((*rit)->matched_writer_remove(wdata))
+			{
+				//MATCHED AND ADDED CORRECTLY:
+				if((*rit)->getListener()!=NULL)
+				{
+					MatchingInfo info;
+					info.status = REMOVED_MATCHING;
+					info.remoteEndpointGuid = wdata->m_guid;
+					(*rit)->getListener()->onSubscriptionMatched(info);
+				}
+			}
+		}
+	}
 	return true;
 }
 

@@ -87,6 +87,12 @@ public:
 	 */
 	virtual bool matched_writer_remove(WriterProxyData* wdata)=0;
 	/**
+	 * Tells us if a specific Writer is matched against this reader
+	 * @param wdata Pointer to the WriterProxyData object
+	 * @return True if it is matched.
+	 */
+	virtual bool matched_writer_is_matched(WriterProxyData* wdata)=0;
+	/**
 	 * Get the number of matched publishers.
 	 * @return True if correct.
 	 */
