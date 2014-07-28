@@ -57,6 +57,7 @@ public:
 
 	void onNewDataMessage();
     void onSubscriptionMatched(MatchingInfo info);
+    void adjustContentFilter(ShapeContentFilter& m_filter);
 	bool hasReceived;
     Shape m_shape;
     Shape m_drawShape;

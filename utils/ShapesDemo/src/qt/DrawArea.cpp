@@ -60,37 +60,10 @@ void DrawArea::paintEvent(QPaintEvent * e/* event */)
     drawShapes(&painter);
 }
 
-void DrawArea::add_ContentFilter()
+void DrawArea::addContentFilter(ShapeSubscriber *ssub)
 {
     ContentFilterSelector* a = new ContentFilterSelector(this);
-//    QWidget* w = new QWidget(this);
-//    w->setObjectName("cfilter");
-//    QRect rect(10,10,100,100);
-//    w->setGeometry(rect);
-//    QPalette pal = w->palette();
-//    QBrush brush(Qt::gray,Qt::BDiagPattern);
-//    pal.setBrush(QPalette::All,QPalette::Window,brush);
-//    pal.setBrush(QPalette::All,QPalette::Base,brush);
-//    w->setAutoFillBackground(true);
-//    w->setPalette(pal);
-//    //LAYOUT
-//    QVBoxLayout* layout = new QVBoxLayout(w);
-//    layout->setContentsMargins(QMargins());
-//    layout->setSpacing(0);
-//    QFrame* fr = new QFrame(w);
-//    fr->setObjectName("cfilter_frame");
-//    QRect rect2(0,0,100,100);
-//    fr->setGeometry(rect2);
-//    fr->setStyleSheet("border: 1px inset gray;");
-//    fr->setVisible(true);
-//   // layout->addWidget(fr);
-//    layout->addWidget(new QSizeGrip(w), 0, Qt::AlignBottom | Qt::AlignRight);
-
-
-//    //w->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-
-
-//    w->show();
+    a->assignShapeSubscriber(ssub);
 }
 
 void DrawArea::timerEvent(QTimerEvent* e)
@@ -115,23 +88,6 @@ void DrawArea::drawShapes(QPainter* painter)
             it!=mp_SD->m_subscribers.end();++it)
         {
             QMutexLocker(&(*it)->m_mutex);
-            //DRAW CONTENT FILTER IF EXISTS:
-            if((*it)->m_filter.m_useFilter)
-            {
-                painter->save();
-                m_pen.setColor(SD_QT_GRAY);
-                m_pen.setStyle(Qt::SolidLine);
-                m_brush.setStyle(Qt::BDiagPattern);
-                m_brush.setColor(SD_QT_GRAY);
-                painter->setBrush(m_brush);
-                painter->setPen(m_pen);
-                QRect rect((*it)->m_filter.m_minX,
-                           (*it)->m_filter.m_minY,
-                           ((*it)->m_filter.m_maxX-(*it)->m_filter.m_minX),
-                           ((*it)->m_filter.m_maxY-(*it)->m_filter.m_minY));
-                painter->drawRect(rect);
-                painter->restore();
-            }
             if((*it)->hasReceived)
             {
                 // cout << "OK"<<std::flush;
@@ -156,12 +112,9 @@ void DrawArea::drawShapes(QPainter* painter)
             it!=mp_SD->m_publishers.end();++it)
         {
             QMutexLocker(&(*it)->m_mutex);
-            if((*it)->isInitialized)
+            if((*it)->hasWritten)
             {
-                // cout << "DrawArea locking PUB: "<<std::flush;
-                //cout << "OK"<<std::flush;
                 paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
-                //cout << "UNLOCKING PUB"<<endl;
             }
         }
     }

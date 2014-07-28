@@ -103,7 +103,7 @@ private slots:
 
 
 
-    void on_push_content_clicked();
+
 
 
 
