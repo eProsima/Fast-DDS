@@ -50,6 +50,7 @@ public:
     Shape m_drawShape;
     QMutex m_mutex;
     bool isInitialized;
+    bool hasWritten;
 
 
 };
