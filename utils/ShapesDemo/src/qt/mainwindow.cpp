@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //    ui->tableEndpoint->setColumnWidth(9,75); //Livleiness
 
 
+    ui->widget_contentFilter->setVisible(false);
+
     this->m_shapesDemo.init();
     if(m_shapesDemo.isInitialized())
     {
@@ -93,7 +95,7 @@ void MainWindow::addMessageToOutput(QString str,bool addtostatus)
 {
     if(addtostatus)
     {
-     this->ui->statusBar->showMessage(str);
+        this->ui->statusBar->showMessage(str);
     }
     QDateTime current = QDateTime::currentDateTime();
     QString time = current.toString("hh:mm:ss.zzz");
@@ -129,11 +131,11 @@ void MainWindow::updateInterval(uint32_t ms)
 
 void MainWindow::on_actionStart_triggered()
 {
-   if(this->m_shapesDemo.init())
-   {
-    if(m_shapesDemo.isInitialized())
-       addMessageToOutput(QString("Participant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
-   }
+    if(this->m_shapesDemo.init())
+    {
+        if(m_shapesDemo.isInitialized())
+            addMessageToOutput(QString("Participant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
+    }
 }
 
 void MainWindow::on_actionStop_triggered()
@@ -206,6 +208,10 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
 
 void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
 {
+    if(ssub->m_filter.m_useFilter)
+    {
+        this->ui->areaDraw->addContentFilter(ssub);
+    }
     QList<QStandardItem*> items;
     items.append(new QStandardItem(ssub->m_shape.getShapeQStr()));
     items.append(new QStandardItem("---"));
@@ -330,3 +336,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
     }
 }
+
+
+
+
+

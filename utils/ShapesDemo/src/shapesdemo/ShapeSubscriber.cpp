@@ -273,5 +273,10 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
     }
 }
 
+void ShapeSubscriber::adjustContentFilter(ShapeContentFilter& filter)
+{
+    m_filter = filter;
+}
+
 //void ShapeSubscriber::removeSamplesFromWriter(GUID_t)
 

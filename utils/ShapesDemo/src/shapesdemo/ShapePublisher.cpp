@@ -17,7 +17,8 @@ ShapePublisher::ShapePublisher(Participant* par):
     mp_pub(NULL),
     mp_participant(par),
     m_mutex(QMutex::Recursive),
-    isInitialized(false)
+    isInitialized(false),
+    hasWritten(false)
 {
 	// TODO Auto-generated constructor stub
 
@@ -40,8 +41,8 @@ bool ShapePublisher::initPublisher()
     mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes,(PublisherListener*)this);
     if(mp_pub !=NULL)
     {
-        isInitialized = true;
-        return true;
+         isInitialized = true;
+         return true;
     }
     return false;
 }
@@ -55,7 +56,9 @@ void ShapePublisher::write()
         m_mutex.lock();
      //   cout << " OK "<<std::flush;
         m_drawShape = m_shape;
+        hasWritten = true;
         m_mutex.unlock();
+
        // cout << " UNLOCKED ShapePub"<<endl;
     }
 }

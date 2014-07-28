@@ -34,6 +34,7 @@ const QColor SD_QT_WHITE = QColor(255,255,255,255);
 
 class QPainter;
 class Shape;
+class ShapeSubscriber;
 /**
  * @brief Class DrawArea, implements the methods to draw the shapes in the draw widget area.
  */
@@ -61,6 +62,7 @@ public:
      */
     void stopTimer(){this->killTimer(m_timerId);}
 
+    void addContentFilter(ShapeSubscriber* ssub);
 
 protected:
     /**

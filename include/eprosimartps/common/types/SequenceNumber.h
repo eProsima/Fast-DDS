@@ -116,7 +116,7 @@ inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
 
 inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 {
-	if(seq.low-inc < 0)
+    if((int64_t)seq.low-(int64_t)inc < 0)
 	{
 		seq.high--;
 		seq.low = (uint32_t)(pow(2.0,32)-(inc-seq.low));
