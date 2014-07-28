@@ -88,6 +88,12 @@ public:
 	 */
 	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
 	/**
+	 * Tells us if a specific Reader is matched against this writer
+	 * @param rdata Pointer to the ReaderProxyData object
+	 * @return True if it was matched.
+	 */
+	virtual bool matched_reader_is_matched(ReaderProxyData* rdata)=0;
+	/**
 	 * Remove the change with the minimum SequenceNumber
 	 * @return True if removed.
 	 */

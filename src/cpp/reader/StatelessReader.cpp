@@ -31,8 +31,8 @@ StatelessReader::~StatelessReader() {
 
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-				RTPSReader(guidP,entId,param.topic,ptype,STATELESS,
-						param.userDefinedId,param.payloadMaxSize)
+						RTPSReader(guidP,entId,param.topic,ptype,STATELESS,
+								param.userDefinedId,param.payloadMaxSize)
 {
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
@@ -130,6 +130,19 @@ bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
 		if((*it)->m_guid == wdata->m_guid)
 		{
 			m_matched_writers.erase(it);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool StatelessReader::matched_writer_is_matched(WriterProxyData* wdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+	{
+		if((*it)->m_guid == wdata->m_guid)
+		{
 			return true;
 		}
 	}

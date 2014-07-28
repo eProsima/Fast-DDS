@@ -9,7 +9,7 @@
 /**
  * @file StatefulWriter.cpp
  *
-*/
+ */
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
@@ -43,9 +43,9 @@ StatefulWriter::~StatefulWriter()
 }
 
 StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-				RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
-				m_PubTimes(param.times),
-				mp_periodicHB(NULL)
+						RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
+						m_PubTimes(param.times),
+						mp_periodicHB(NULL)
 
 {
 	m_pushMode = param.pushMode;
@@ -70,13 +70,13 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
 		{
-			pWarning("Attempting to add existing reader" << endl);
+			pInfo("Attempting to add existing reader" << endl);
 			return false;
 		}
 	}
 	ReaderProxy* rp = new ReaderProxy(rdata,m_PubTimes,this);
 	if(mp_periodicHB==NULL)
-			mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_PubTimes.heartbeatPeriod)));
+		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_PubTimes.heartbeatPeriod)));
 	if(rp->m_data->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
@@ -118,6 +118,18 @@ bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 	return false;
 }
 
+bool StatefulWriter::matched_reader_is_matched(ReaderProxyData* rdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+	{
+		if((*it)->m_data->m_guid == rdata->m_guid)
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
 //bool StatefulWriter::matched_reader_add(ReaderProxy_t& RPparam)
 //{

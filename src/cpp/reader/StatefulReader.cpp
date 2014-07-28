@@ -126,6 +126,19 @@ bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 	return false;
 }
 
+bool StatefulReader::matched_writer_is_matched(WriterProxyData* wdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+	{
+		if((*it)->m_data->m_guid == wdata->m_guid)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 
 
