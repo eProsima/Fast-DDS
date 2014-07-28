@@ -66,6 +66,7 @@ public:
 	//! Reader qos
 	ReaderQos qos;
 
+
 	uint32_t payloadMaxSize;
 };
 

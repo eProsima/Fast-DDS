@@ -9,7 +9,7 @@
 /*
  * Subscriber.cpp
  *
-*/
+ */
 
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/reader/RTPSReader.h"
@@ -28,8 +28,8 @@ namespace dds {
 
 
 SubscriberImpl::SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype):
-		mp_Reader(Rin),
-		mp_type(ptype)
+												mp_Reader(Rin),
+												mp_type(ptype)
 {
 
 }
@@ -52,13 +52,6 @@ void SubscriberImpl::waitForUnreadMessage()
 				break;
 		}
 	}
-//	if(!mp_Reader->isUnreadCacheChange())
-//	{
-//		pDebugInfo("No Unread CacheChange, waiting..."<<endl);
-//		mp_Reader->m_semaphore.wait();
-//	}
-//mp_Reader->m_semaphore.reset();
-
 }
 
 bool SubscriberImpl::assignListener(SubscriberListener* p_listener)
@@ -92,34 +85,87 @@ bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
 }
 
 
-//bool SubscriberImpl::addWriterProxy(Locator_t& loc, GUID_t& guid)
-//{
-//	if(mp_Reader->getStateType()==STATELESS)
-//	{
-//		pError("StatelessReader cannot have writerProxy"<<endl);
-//		return false;
-//	}
-//	else if(mp_Reader->getStateType()==STATEFUL)
-//	{
-//		WriterProxy_t WL;
-//		WL.unicastLocatorList.push_back(loc);
-//		WL.remoteWriterGuid = guid;
-//		pDebugInfo("Adding WriterProxy at: "<< loc.to_IP4_string()<<":"<< loc.port<< endl);
-//		((StatefulReader*)mp_Reader)->matched_writer_add(WL);
-//		return true;
-//	}
-//	return false;
-//}
+
 
 const GUID_t& SubscriberImpl::getGuid(){
 	return mp_Reader->getGuid();
 }
 
-//bool Subscriber::updateParameters(const SubscriberAttributes& param)
-//{
-//
-//	return true;
-//}
+
+
+bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
+{
+	bool updated = true;
+	bool missing = false;
+	if(att.unicastLocatorList.size() != this->m_attributes.unicastLocatorList.size() ||
+			att.multicastLocatorList.size() != this->m_attributes.multicastLocatorList.size())
+	{
+		pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+		updated &= false;
+	}
+	else
+	{
+		for(LocatorListIterator lit1 = this->m_attributes.unicastLocatorList.begin();
+				lit1!=this->m_attributes.unicastLocatorList.end();++lit1)
+		{
+			missing = true;
+			for(LocatorListIterator lit2 = att.unicastLocatorList.begin();
+					lit2!= att.unicastLocatorList.end();++lit2)
+			{
+				if(*lit1 == *lit2)
+				{
+					missing = false;
+					break;
+				}
+			}
+			if(missing)
+			{
+				pWarning("Locator: "<< lit1->printIP4Port()<< " not present in new list"<<endl);
+			}
+		}
+		for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
+				lit1!=this->m_attributes.multicastLocatorList.end();++lit1)
+		{
+			missing = true;
+			for(LocatorListIterator lit2 = att.multicastLocatorList.begin();
+					lit2!= att.multicastLocatorList.end();++lit2)
+			{
+				if(*lit1 == *lit2)
+				{
+					missing = false;
+					break;
+				}
+			}
+			if(missing)
+			{
+				pWarning("Locator: "<< lit1->printIP4Port()<< " not present in new list"<<endl);
+			}
+		}
+	}
+
+	//TOPIC ATTRIBUTES
+	if(this->m_attributes.topic != att.topic)
+	{
+		pWarning("Topic Attributes cannot be updated"<<endl;);
+		updated &= false;
+	}
+	//QOS:
+
+
+	if(updated)
+	{
+		this->mp_Reader->setExpectsInlineQos(att.expectsInlineQos);
+		if(this->mp_Reader->getStateType() == STATEFUL)
+		{
+			//UPDATE TIMES:
+			StatefulReader* sfr = (StatefulReader*)mp_Reader;
+			att.
+		}
+	}
+
+
+	return updated;
+}
 
 
 } /* namespace dds */
