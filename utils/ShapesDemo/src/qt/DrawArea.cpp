@@ -8,6 +8,7 @@
 
 #include "eprosimashapesdemo/qt/DrawArea.h"
 
+#include "eprosimashapesdemo/qt/ContentFilterSelector.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
@@ -16,6 +17,8 @@
 
 #include <QPainter>
 #include <QStyleOption>
+#include <QVBoxLayout>
+#include <QSizeGrip>
 
 DrawArea::DrawArea(QWidget *parent)
     : QWidget(parent),
@@ -23,7 +26,7 @@ DrawArea::DrawArea(QWidget *parent)
       firstA(10),
       lastA(240)
 {
-    this->setStyleSheet("background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;");
+    this->setStyleSheet("QWidget#areaDraw{background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;}");
     setVisible(true);
     m_brush.setStyle(Qt::SolidPattern);
 
@@ -51,10 +54,43 @@ void DrawArea::paintEvent(QPaintEvent * e/* event */)
     QStyleOption opt;
     opt.init(this);
 
+
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
     drawShapes(&painter);
+}
 
+void DrawArea::add_ContentFilter()
+{
+    ContentFilterSelector* a = new ContentFilterSelector(this);
+//    QWidget* w = new QWidget(this);
+//    w->setObjectName("cfilter");
+//    QRect rect(10,10,100,100);
+//    w->setGeometry(rect);
+//    QPalette pal = w->palette();
+//    QBrush brush(Qt::gray,Qt::BDiagPattern);
+//    pal.setBrush(QPalette::All,QPalette::Window,brush);
+//    pal.setBrush(QPalette::All,QPalette::Base,brush);
+//    w->setAutoFillBackground(true);
+//    w->setPalette(pal);
+//    //LAYOUT
+//    QVBoxLayout* layout = new QVBoxLayout(w);
+//    layout->setContentsMargins(QMargins());
+//    layout->setSpacing(0);
+//    QFrame* fr = new QFrame(w);
+//    fr->setObjectName("cfilter_frame");
+//    QRect rect2(0,0,100,100);
+//    fr->setGeometry(rect2);
+//    fr->setStyleSheet("border: 1px inset gray;");
+//    fr->setVisible(true);
+//   // layout->addWidget(fr);
+//    layout->addWidget(new QSizeGrip(w), 0, Qt::AlignBottom | Qt::AlignRight);
+
+
+//    //w->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+
+
+//    w->show();
 }
 
 void DrawArea::timerEvent(QTimerEvent* e)
