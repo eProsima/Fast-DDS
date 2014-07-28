@@ -14,8 +14,8 @@
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 
-#include <QPainter>
-#include <QStyleOption>
+#include <QtGui/QPainter>
+#include <QtWidgets/QStyleOption>
 
 DrawArea::DrawArea(QWidget *parent)
     : QWidget(parent),

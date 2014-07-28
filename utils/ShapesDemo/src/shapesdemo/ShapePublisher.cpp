@@ -37,7 +37,6 @@ bool ShapePublisher::initPublisher()
     mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes,(PublisherListener*)this);
     if(mp_pub !=NULL)
     {
-        isInitialized = true;
         return true;
     }
     return false;
@@ -54,6 +53,7 @@ void ShapePublisher::write()
         m_drawShape = m_shape;
         m_mutex.unlock();
        // cout << " UNLOCKED ShapePub"<<endl;
+       isInitialized = true;
     }
 }
 
