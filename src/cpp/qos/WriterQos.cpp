@@ -17,6 +17,17 @@
 namespace eprosima {
 namespace dds {
 
+WriterQos::WriterQos()
+{
+	this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+}
+
+WriterQos::~WriterQos()
+{
+
+}
+
+
 void WriterQos::setQos( WriterQos& qos, bool first_time)
 {
 	if(first_time)

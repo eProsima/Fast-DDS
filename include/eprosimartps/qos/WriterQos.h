@@ -27,8 +27,8 @@ namespace dds {
  */
 class WriterQos{
 public:
-	WriterQos(){};
-	virtual ~ WriterQos(){};
+	WriterQos();
+	virtual ~ WriterQos();
 	//!Durability Qos, implemented in the library.
 	DurabilityQosPolicy m_durability;
 	//!Durability Service Qos, NOT implemented in the library.

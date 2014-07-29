@@ -264,7 +264,7 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
            // cout << info.remoteEndpointGuid << endl;
             if(it->front().m_writerGuid == info.remoteEndpointGuid)
             {
-                cout << "FOUND, DELETING"<<endl;
+                cout << "FOUND, DELETING entire instance"<<endl;
                 m_shape.m_shapeHistory.erase(it);
                 break;
             }
