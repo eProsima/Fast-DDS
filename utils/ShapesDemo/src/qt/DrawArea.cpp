@@ -8,14 +8,18 @@
 
 #include "eprosimashapesdemo/qt/DrawArea.h"
 
+#include "eprosimashapesdemo/qt/ContentFilterSelector.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 
+
 #include <QtGui/QPainter>
 #include <QtWidgets/QStyleOption>
+
+
 
 DrawArea::DrawArea(QWidget *parent)
     : QWidget(parent),
@@ -23,7 +27,9 @@ DrawArea::DrawArea(QWidget *parent)
       firstA(10),
       lastA(240)
 {
-    this->setStyleSheet("background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;");
+
+    this->setStyleSheet("QWidget#areaDraw{background-color: rgb(255, 255, 255);background-repeat:none;background-image: url(:/eProsimaLogo.png);background-position:center;}");
+
     setVisible(true);
     m_brush.setStyle(Qt::SolidPattern);
 
@@ -48,13 +54,19 @@ QSize DrawArea::minimumSizeHint() const
 
 void DrawArea::paintEvent(QPaintEvent * e/* event */)
 {
-   QStyleOption opt;
-       opt.init(this);
+    QStyleOption opt;
+    opt.init(this);
+
 
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
     drawShapes(&painter);
+}
 
+void DrawArea::addContentFilter(ShapeSubscriber *ssub)
+{
+    ContentFilterSelector* a = new ContentFilterSelector(this);
+    a->assignShapeSubscriber(ssub);
 }
 
 void DrawArea::timerEvent(QTimerEvent* e)
@@ -79,23 +91,6 @@ void DrawArea::drawShapes(QPainter* painter)
             it!=mp_SD->m_subscribers.end();++it)
         {
             QMutexLocker(&(*it)->m_mutex);
-            //DRAW CONTENT FILTER IF EXISTS:
-            if((*it)->m_filter.m_useFilter)
-            {
-                painter->save();
-                m_pen.setColor(SD_QT_GRAY);
-                m_pen.setStyle(Qt::SolidLine);
-                m_brush.setStyle(Qt::BDiagPattern);
-                m_brush.setColor(SD_QT_GRAY);
-                painter->setBrush(m_brush);
-                painter->setPen(m_pen);
-                QRect rect((*it)->m_filter.m_minX,
-                           (*it)->m_filter.m_minY,
-                           ((*it)->m_filter.m_maxX-(*it)->m_filter.m_minX),
-                           ((*it)->m_filter.m_maxY-(*it)->m_filter.m_minY));
-                painter->drawRect(rect);
-                painter->restore();
-            }
             if((*it)->hasReceived)
             {
                 // cout << "OK"<<std::flush;
@@ -104,11 +99,14 @@ void DrawArea::drawShapes(QPainter* painter)
                 {
                     size_t total = vit->size();
                     int index = 0;
-                    for(std::list<ShapeType>::reverse_iterator sit = vit->rbegin();
-                        sit!=vit->rend();++sit)
+                    if(vit->begin()->m_writerGuid != c_Guid_Unknown)
                     {
-                        paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
-                        ++index;
+                        for(std::list<ShapeType>::reverse_iterator sit = vit->rbegin();
+                            sit!=vit->rend();++sit)
+                        {
+                            paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
+                            ++index;
+                        }
                     }
                 }
             }
@@ -116,13 +114,10 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
             it!=mp_SD->m_publishers.end();++it)
         {
-            if((*it)->isInitialized)
+            QMutexLocker(&(*it)->m_mutex);
+            if((*it)->hasWritten)
             {
-               // cout << "DrawArea locking PUB: "<<std::flush;
-                QMutexLocker(&(*it)->m_mutex);
-                //cout << "OK"<<std::flush;
                 paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
-                //cout << "UNLOCKING PUB"<<endl;
             }
         }
     }

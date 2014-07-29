@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-RTPSVERSION = 0.4.0
+RTPSVERSION = 0.5.0
 
 QT  += core
 QT  -= gui
@@ -43,8 +43,8 @@ INCLUDEPATH += include/
 FORMS    +=   forms/mainwindow.ui \
               forms/publishdialog.ui \
               forms/subscribedialog.ui \
-              forms/optionsdialog.ui \
-    forms/dialog.ui
+              forms/optionsdialog.ui
+
 
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
@@ -76,7 +76,8 @@ HEADERS += \
     include/eprosimashapesdemo/shapesdemo/ShapePublisher.h \
     include/eprosimashapesdemo/qt/UpdateThread.h \
     include/eprosimashapesdemo/shapesdemo/ShapeSubscriber.h \
-    include/eprosimashapesdemo/qt/optionsdialog.h
+    include/eprosimashapesdemo/qt/optionsdialog.h \
+    include/eprosimashapesdemo/qt/ContentFilterSelector.h
 
 
 SOURCES += \
@@ -93,21 +94,22 @@ SOURCES += \
     src/shapesdemo/ShapePublisher.cpp \
     src/qt/UpdateThread.cpp \
     src/shapesdemo/ShapeSubscriber.cpp \
-    src/qt/optionsdialog.cpp
+    src/qt/optionsdialog.cpp \
+    src/qt/ContentFilterSelector.cpp
 
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.4.0 #-lIphlpapi
-win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.4.0 #-lIphlpapi
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.5.0 #-lIphlpapi
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.5.0 #-lIphlpapi
 
 
 win32:INCLUDEPATH += $$PWD/../../include
 win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010
 
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.4.0.lib
-win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.4.0.lib
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.0.lib
+win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.0.lib
 
 RESOURCES += \
     images/eprosimalogo.qrc

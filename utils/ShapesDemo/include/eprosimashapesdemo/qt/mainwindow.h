@@ -103,6 +103,10 @@ private slots:
 
 
 
+
+
+
+
 private:
     Ui::MainWindow *ui;
     ShapesDemo m_shapesDemo;
