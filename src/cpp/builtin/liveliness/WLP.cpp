@@ -152,7 +152,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		ReaderProxyData* rp = new ReaderProxyData();
 		rp->m_expectsInlineQos = false;
 		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
-		rp->m_guid.entityId = c_EntityId_SEDPPubReader;
+		rp->m_guid.entityId = c_EntityId_ReaderLiveliness;
 		rp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
 		rp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
 		rp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
