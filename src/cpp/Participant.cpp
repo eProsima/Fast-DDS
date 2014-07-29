@@ -363,8 +363,8 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 	{
 		if(!(*thit)->hasAssociatedEndpoints())
 		{
+						delete(*thit);
 			m_listenResourceList.erase(thit);
-			delete(*thit);
 			break;
 		}
 	}

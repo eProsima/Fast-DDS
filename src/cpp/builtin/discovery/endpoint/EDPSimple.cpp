@@ -260,6 +260,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+	//FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+	//auxendp = 1;
 	if(auxendp!=0 && mp_PubReader!=NULL) //Exist Pub Writer and i have pub reader
 	{
 		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<RTPS_DEF<<endl);
@@ -275,6 +277,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	}
 	auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+	//FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+	//auxendp = 1;
 	if(auxendp!=0 && mp_PubWriter!=NULL) //Exist Pub Detector
 	{
 		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<RTPS_DEF<<endl);
@@ -291,6 +295,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+	//FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+	//auxendp = 1;
 	if(auxendp!=0 && mp_SubReader!=NULL) //Exist Pub Announcer
 	{
 		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<RTPS_DEF<<endl);
@@ -306,6 +312,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	}
 	auxendp = endp;
 	auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+	//FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
+	//auxendp = 1;
 	if(auxendp!=0 && mp_SubWriter!=NULL) //Exist Pub Announcer
 	{
 		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<RTPS_DEF<<endl);
