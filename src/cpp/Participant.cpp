@@ -87,9 +87,6 @@ ParticipantImpl::~ParticipantImpl()
 {
 	pDebugInfo("Participant destructor"<<endl;);
 	//Destruct threads:
-//	for(std::vector<ResourceListen*>::iterator it=m_threadListenList.begin();
-//			it!=m_threadListenList.end();++it)
-//		delete(*it);
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
 				it!=m_listenResourceList.end();++it)
 			delete(*it);
