@@ -76,8 +76,11 @@ void PublishDialog::on_button_OkCancel_accepted()
    else
    {
         QString value = this->ui->lineEdit_leaseDuration->text();
-        if(value.toInt()>0)
-            SP->m_attributes.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(value.toInt());
+        if(value.toDouble()>0)
+        {
+            SP->m_attributes.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(value.toDouble());
+            SP->m_attributes.qos.m_liveliness.announcement_period = TimeConv::MilliSeconds2Time_t(value.toDouble()/2);
+        }
    }
    //DURABILITY
    //cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;
