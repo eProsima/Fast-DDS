@@ -15,6 +15,7 @@
 
 
 #include <QIntValidator>
+#include <QMessageBox>
 
 
 SubscribeDialog::SubscribeDialog(ShapesDemo* psd,QWidget *parent) :
@@ -136,3 +137,17 @@ void SubscribeDialog::on_comboBox_ownership_currentIndexChanged(int index)
 
 
 
+
+void SubscribeDialog::on_checkBox_reliable_toggled(bool checked)
+{
+    if(!checked)
+    {
+        if(this->ui->comboBox_ownership->currentIndex()==1)
+        {
+            QMessageBox msgBox;
+            msgBox.setText("EXCLUSIVE OWNERSHIP only available with Reliable subscribers");
+            msgBox.exec();
+        }
+        this->ui->comboBox_ownership->setCurrentIndex(0);
+    }
+}

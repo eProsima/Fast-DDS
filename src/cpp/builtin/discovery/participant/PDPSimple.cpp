@@ -426,7 +426,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
-	pWarning("Removing remote participant: "<<partGUID<<endl;);
+	pDebugInfo(" Trying to remove remote participant: "<<partGUID<<endl;);
 	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
 	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
 	ParticipantProxyData* pdata=NULL;
@@ -443,6 +443,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 	}
 	if(pdata !=NULL)
 	{
+		pWarning("Removing remote participant: "<<partGUID<<endl);
 		for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
 				rit!= pdata->m_readers.end();++rit)
 		{

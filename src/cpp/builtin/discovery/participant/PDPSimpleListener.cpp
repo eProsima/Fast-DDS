@@ -98,7 +98,10 @@ bool PDPSimpleListener::newAddedCache()
 		}
 		else
 		{
-			pWarning("Implement CHANGE KIND NOT ALIVE IN SPDPLISTENER"<<endl);
+			//pWarning("Implement CHANGE KIND NOT ALIVE IN SPDPLISTENER"<<endl);
+			GUID_t guid;
+			iHandle2GUID(guid,change->instanceHandle);
+			this->mp_SPDP->removeRemoteParticipant(guid);
 		}
 	}
 	else
