@@ -364,6 +364,11 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	pInfo(RTPS_CYAN<<"SimplePDP assign remote endpoints for participant: "<<pdata->m_guid.guidPrefix<<RTPS_DEF<<endl);
+	uint32_t endp = pdata->m_availableBuiltinEndpoints;
+	uint32_t auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+	if(auxendp!=0)
+	{
 	WriterProxyData* wp = new WriterProxyData();
 	wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
 	wp->m_guid.entityId = c_EntityId_SPDPWriter;
@@ -373,7 +378,11 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	wp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	pdata->m_builtinWriters.push_back(wp);
 	mp_SPDPReader->matched_writer_add(wp);
-
+	}
+	auxendp = endp;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	if(auxendp!=0)
+	{
 	ReaderProxyData* rp = new ReaderProxyData();
 	rp->m_expectsInlineQos = false;
 	rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -384,6 +393,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	rp->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	pdata->m_builtinReaders.push_back(rp);
 	mp_SPDPWriter->matched_reader_add(rp);
+	}
 
 	//Inform EDP of new participant data:
 	if(mp_EDP!=NULL)
