@@ -637,7 +637,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 			}
 		}
 	}
-	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assocWriters.size() << " writers in this ResourceListen)"<<endl);
+	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assocWriters.size() << " writers in this ListenResource)"<<endl);
 	return false;
 }
 

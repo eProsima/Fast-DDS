@@ -94,7 +94,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			pInfo("ResourceListen: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
+			pInfo("ListenResource: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
 			return true;
 		}
 	}
@@ -111,7 +111,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			pInfo("ResourceListen: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
+			pInfo("ListenResource: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
 			return true;
 		}
 	}
@@ -138,7 +138,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 		{
 			return;
 		}
-		pInfo (RTPS_BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc.printIP4Port()<<  RTPS_DEF << endl);
+		pInfo (RTPS_BLUE << "ListenResource, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc.printIP4Port()<<  RTPS_DEF << endl);
 
 		//Get address into Locator
 		m_senderLocator.port = m_sender_endpoint.port();
