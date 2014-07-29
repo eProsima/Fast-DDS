@@ -216,6 +216,8 @@ public:
 		return m_send_socket_buffer_size;
 	}
 
+	BuiltinProtocols* getBuiltinProtocols(){return &m_builtinProtocols;}
+
 
 
 private:

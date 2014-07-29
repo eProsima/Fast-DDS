@@ -141,6 +141,8 @@ public:
 	 */
 	std::vector<ParticipantProxyData*>::const_iterator participantProxiesEnd(){return m_participantProxies.end();};
 
+	void assertRemoteParticipantLiveliness(GuidPrefix_t& guidP);
+
 private:
 	//!Pointer to the local participant.
 	ParticipantImpl* mp_participant;

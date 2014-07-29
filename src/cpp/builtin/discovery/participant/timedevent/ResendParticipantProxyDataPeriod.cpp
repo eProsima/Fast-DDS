@@ -46,7 +46,7 @@ void ResendParticipantProxyDataPeriod::event(const boost::system::error_code& ec
 		pDebugInfo("ResendDiscoveryData Period" << endl);
 		//FIXME: Change for liveliness protocol
 		mp_PDP->m_participantProxies.front()->m_manualLivelinessCount++;
-		mp_PDP->announceParticipantState(true);
+		mp_PDP->announceParticipantState(false);
 
 		this->restart_timer();
 	}

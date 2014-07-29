@@ -26,6 +26,9 @@
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
+#include "eprosimartps/Participant.h"
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -483,6 +486,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				{
 					(*it)->release_Cache(change_to_add);
 					pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
+					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
+					{
+						this->mp_threadListen->getParticipantImpl()->getBuiltinProtocols()->mp_PDP->assertRemoteParticipantLiveliness(this->sourceGuidPrefix);
+					}
 				}
 			}
 		}
@@ -734,6 +741,7 @@ bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(guidP != c_GuidPrefix_Unknown)
 	{
 		this->destGuidPrefix = guidP;
+		pDebugInfo("DST Participant is now: "<< this->destGuidPrefix << endl;);
 	}
 	//Is the final message?
 	if(smh->submessageLength == 0)
@@ -761,6 +769,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 		//Is the final message?
 		if(smh->submessageLength == 0)
 			*last = true;
+		pDebugInfo("SRC Participant is now: "<<this->sourceGuidPrefix << endl;);
 		return true;
 	}
 	return false;

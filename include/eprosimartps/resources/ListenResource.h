@@ -62,6 +62,9 @@ public:
 	bool isListeningTo(const Locator_t& loc);
 	//!Returns trus if the ListenResource has any associated endpoints.
 	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
+	//!Get the pointer to the participant
+	ParticipantImpl* getParticipantImpl(){return mp_participantImpl;};
+
 private:
 	ParticipantImpl* mp_participantImpl;
 	boost::thread* mp_thread;
