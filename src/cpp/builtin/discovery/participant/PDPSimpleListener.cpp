@@ -56,7 +56,7 @@ bool PDPSimpleListener::newAddedCache()
 				if(m_participantProxyData.m_guid == mp_SPDP->mp_participant->getGuid())
 				{
 					pInfo(RTPS_CYAN<<"SPDPListener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
-													return true;
+					return true;
 				}
 				//LOOK IF IS AN UPDATED INFORMATION
 				ParticipantProxyData* pdata_ptr;
