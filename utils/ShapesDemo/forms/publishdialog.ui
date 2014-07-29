@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
-    <height>491</height>
+    <width>452</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -467,7 +467,6 @@
      <zorder>label_10</zorder>
      <zorder>comboBox_durability</zorder>
      <zorder>label_13</zorder>
-     <zorder>label_5</zorder>
      <zorder>frame_3</zorder>
     </widget>
    </item>
