@@ -120,7 +120,7 @@ void MainWindow::writeNewSamples()
 
 void MainWindow::on_actionPreferences_triggered()
 {
-    OptionsDialog* od = new OptionsDialog(this->getShapesDemo(),this);
+    OptionsDialog* od = new OptionsDialog(this,this->getShapesDemo(),this);
     od->show();
 }
 
