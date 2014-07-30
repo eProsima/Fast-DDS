@@ -106,9 +106,10 @@ bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
 		{
+			pDebugInfo("Reader Proxy removed: " <<(*it)->m_data->m_guid<< endl);
 			delete(*it);
 			matched_readers.erase(it);
-			pDebugInfo("Reader Proxy removed" << endl);
+
 			if(matched_readers.size()==0)
 				this->mp_periodicHB->stop_timer();
 			return true;

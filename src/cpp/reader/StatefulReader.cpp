@@ -74,7 +74,7 @@ bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 	{
 		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
-			pWarning("Writer Proxy " << (*it)->m_data->m_guid << " removed" << endl);
+			pInfo("Writer Proxy " << (*it)->m_data->m_guid << " removed" << endl);
 			delete(*it);
 			matched_writers.erase(it);
 			return true;

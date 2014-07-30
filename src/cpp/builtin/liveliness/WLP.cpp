@@ -165,6 +165,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
+	pInfo(RTPS_MAGENTA<< "WriterLivelinessProtocol: removing remote endpoints for Participant: "<<pdata->m_guid << endl;);
 	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{
