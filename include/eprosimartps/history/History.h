@@ -35,6 +35,7 @@ namespace rtps {
 class RTPSWriter;
 class RTPSReader;
 class Endpoint;
+class WriterProxy;
 
 /**
  * Class History, container of the different CacheChanges and the methods to access them.
@@ -92,7 +93,7 @@ public:
 	 * @param a_change Pointer to the CacheChange_t to add to the History.
 	 * @return True if correct.
 	 */
-	virtual bool add_change(CacheChange_t* a_change)=0;
+	virtual bool add_change(CacheChange_t* a_change,WriterProxy*prox = NULL)=0;
 	/**
 	 * Remove a specific change from the history.
 	 * @param ch Pointer to the CacheChange_t.
