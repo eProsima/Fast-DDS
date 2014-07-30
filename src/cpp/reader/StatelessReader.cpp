@@ -139,7 +139,7 @@ bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
 
 
 
-bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
+bool StatelessReader::change_removed_by_history(CacheChange_t*ch,WriterProxy*prox)
 {
 	return m_reader_cache.remove_change(ch);
 }

@@ -52,7 +52,7 @@ ReaderHistory::~ReaderHistory()
 	// TODO Auto-generated destructor stub
 }
 
-bool ReaderHistory::add_change(CacheChange_t* a_change)
+bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 {
 	if(m_isHistoryFull)
 	{
@@ -98,7 +98,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 				bool read = false;
 				if(mp_minSeqCacheChange->isRead)
 					read = true;
-				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange))
+				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange,WP))
 				{
 					if(!read)
 					{
@@ -176,7 +176,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					bool read = false;
 					if(vit->second.front()->isRead)
 						read = true;
-					if(mp_reader->change_removed_by_history(vit->second.front()))
+					if(mp_reader->change_removed_by_history(vit->second.front(),WP))
 					{
 						if(!read)
 						{

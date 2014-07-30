@@ -235,11 +235,10 @@ bool StatefulReader::isUnreadCacheChange()
 	return m_reader_cache.isUnreadCache();
 }
 
-bool StatefulReader::change_removed_by_history(CacheChange_t* a_change)
+bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterProxy* wp)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	WriterProxy* wp;
-	if(matched_writer_lookup(a_change->writerGUID,&wp))
+	if(wp!=NULL || matched_writer_lookup(a_change->writerGUID,&wp))
 	{
 		std::vector<int> to_remove;
 		for(size_t i = 0;i<wp->m_changesFromW.size();++i)

@@ -82,7 +82,7 @@ public:
 	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
 	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
 	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-	bool change_removed_by_history(CacheChange_t*);
+	bool change_removed_by_history(CacheChange_t*,WriterProxy*prox = NULL);
 	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
 	bool acceptMsgFrom(GUID_t& entityId);
 
