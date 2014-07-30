@@ -50,6 +50,9 @@ public:
 	 * @param pdata
 	 */
 	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
+
+	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
+
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
 	 * @param R Pointer to the Reader to remove.

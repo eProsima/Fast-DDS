@@ -109,6 +109,8 @@ public:
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
+
 	/**
 	 * This method removes a remote participant and all its writers and readers.
 	 * @param partGUID GUID_t of the remote participant.
@@ -142,6 +144,10 @@ public:
 	std::vector<ParticipantProxyData*>::const_iterator participantProxiesEnd(){return m_participantProxies.end();};
 
 	void assertRemoteParticipantLiveliness(GuidPrefix_t& guidP);
+
+	void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
+
+	void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
 
 private:
 	//!Pointer to the local participant.

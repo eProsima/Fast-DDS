@@ -563,7 +563,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 						}
 						//FIXME: livelinessFlag
 						if(livelinessFlag && WP->m_data->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-							WP->assertLiveliness();
+							WP->m_data->m_isAlive = true;
 					}
 				}
 				else

@@ -69,6 +69,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool takeNextCacheChange(void*data,SampleInfo_t* info);
+
+	bool readNextCacheChange(CacheChange_t** change);
 	//!Returns true if there are unread cacheChanges.
 	bool isUnreadCacheChange();
 	/**

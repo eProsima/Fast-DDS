@@ -163,6 +163,30 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	return true;
 }
 
+void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
+{
+	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
+			it!=pdata->m_builtinReaders.end();++it)
+	{
+		if((*it)->m_guid.entityId == c_EntityId_ReaderLiveliness && this->mp_builtinParticipantMessageWriter !=NULL)
+		{
+			mp_builtinParticipantMessageWriter->matched_reader_remove(*it);
+			break;
+		}
+	}
+	for(std::vector<WriterProxyData*>::iterator it = pdata->m_builtinWriters.begin();
+			it!=pdata->m_builtinWriters.end();++it)
+	{
+		if((*it)->m_guid.entityId == c_EntityId_WriterLiveliness && this->mp_builtinParticipantMessageReader !=NULL)
+		{
+			mp_builtinParticipantMessageReader->matched_writer_remove(*it);
+			break;
+		}
+	}
+}
+
+
+
 bool WLP::addLocalWriter(RTPSWriter* W)
 {
 	boost::lock_guard<WLP> guard(*this);

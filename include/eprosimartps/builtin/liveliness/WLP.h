@@ -67,6 +67,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool assignRemoteEndpoints(ParticipantProxyData* pdata);
+
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 	/**
 	 * Add a local writer to the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
@@ -83,6 +85,8 @@ public:
 	int64_t m_minAutomatic_MilliSec;
 
 	int64_t m_minManParticipant_MilliSec;
+
+	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 
 
 private:

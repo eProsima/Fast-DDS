@@ -42,7 +42,7 @@ WriterProxy::WriterProxy(WriterProxyData* wdata,
 		m_heartbeatFinalFlag(false),
 		m_hasMaxAvailableSeqNumChanged(false),
 		m_hasMinAvailableSeqNumChanged(false),
-		m_livelinessAsserted(true),
+		//m_livelinessAsserted(true),
 		m_firstReceived(true)
 
 {

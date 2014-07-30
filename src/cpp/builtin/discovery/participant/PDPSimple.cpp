@@ -38,14 +38,14 @@ namespace eprosima {
 namespace rtps {
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-																				mp_builtin(built),
-																				mp_participant(NULL),
-																				mp_SPDPWriter(NULL),
-																				mp_SPDPReader(NULL),
-																				mp_EDP(NULL),
-																				m_hasChangedLocalPDP(true),
-																				mp_resendParticipantTimer(NULL),
-																				m_listener(this)
+																												mp_builtin(built),
+																												mp_participant(NULL),
+																												mp_SPDPWriter(NULL),
+																												mp_SPDPReader(NULL),
+																												mp_EDP(NULL),
+																												m_hasChangedLocalPDP(true),
+																												mp_resendParticipantTimer(NULL),
+																												m_listener(this)
 {
 
 }
@@ -128,11 +128,11 @@ void PDPSimple::announceParticipantState(bool new_change)
 	else
 	{
 		mp_SPDPWriter->unsent_changes_reset();
-//		if(!mp_SPDPWriter->get_last_added_cache(&change))
-//		{
-//			pWarning("Error getting last added change"<<endl);
-//			return;
-//		}
+		//		if(!mp_SPDPWriter->get_last_added_cache(&change))
+		//		{
+		//			pWarning("Error getting last added change"<<endl);
+		//			return;
+		//		}
 	}
 
 }
@@ -403,25 +403,23 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		mp_EDP->assignRemoteEndpoints(pdata);
 	if(mp_builtin->mp_WLP !=NULL)
 		mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+}
 
-	//	//If staticEDP, perform matching:
-	//	//FIXME: PUT HIS INSISE REMOTE ENDPOINTS FOR STATIC DISCOVERY
-	//	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-	//	{
-	//		for(std::vector<RTPSReader*>::iterator it = mp_participant->userReadersListBegin();
-	//				it!=mp_participant->userReadersListEnd();++it)
-	//		{
-	//			if((*it)->getUserDefinedId() > 0)
-	//				mp_EDP->localReaderMatching(*it,false);
-	//		}
-	//		for(std::vector<RTPSWriter*>::iterator it = mp_participant->userWritersListBegin();
-	//				it!=mp_participant->userWritersListEnd();++it)
-	//		{
-	//			if((*it)->getUserDefinedId() > 0)
-	//				mp_EDP->localWriterMatching(*it,false);
-	//		}
-	//	}
 
+void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
+{
+	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
+			it!=pdata->m_builtinReaders.end();++it)
+	{
+		if((*it)->m_guid.entityId == c_EntityId_SPDPReader && this->mp_SPDPWriter !=NULL)
+			mp_SPDPWriter->matched_reader_remove(*it);
+	}
+	for(std::vector<WriterProxyData*>::iterator it = pdata->m_builtinWriters.begin();
+			it!=pdata->m_builtinWriters.end();++it)
+	{
+		if((*it)->m_guid.entityId == c_EntityId_SPDPWriter && this->mp_SPDPReader !=NULL)
+			mp_SPDPReader->matched_writer_remove(*it);
+	}
 }
 
 bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
@@ -458,6 +456,9 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 			delete(*wit);
 
 		}
+		this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
+		this->mp_EDP->removeRemoteEndpoints(pdata);
+		this->removeRemoteEndpoints(pdata);
 		for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReader->readerHistoryCacheBegin();
 				it!=this->mp_SPDPReader->readerHistoryCacheEnd();++it)
 		{
@@ -485,6 +486,38 @@ void PDPSimple::assertRemoteParticipantLiveliness(GuidPrefix_t& guidP)
 		{
 			pInfo("Participant "<< (*it)->m_guid << " is Alive"<<endl);
 			(*it)->isAlive = true;
+			break;
+		}
+	}
+}
+
+void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
+{
+	pDebugInfo(RTPS_MAGENTA<<"Asserting liveliness of local Writers of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":"")<<RTPS_DEF<<endl;);
+	for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
+			wit!=this->m_participantProxies.front()->m_writers.end();++wit)
+	{
+		if((*wit)->m_qos.m_liveliness.kind == kind)
+		{
+			pDebugInfo(RTPS_MAGENTA<<"Local Writer "<< (*wit)->m_guid.entityId << " marked as ALIVE"<<RTPS_DEF<<endl);
+			(*wit)->m_isAlive = true;
+		}
+	}
+}
+
+void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
+{
+	for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
+			pit!=this->m_participantProxies.end();++pit)
+	{
+		if((*pit)->m_guid.guidPrefix == guidP)
+		{
+			for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
+					wit != (*pit)->m_writers.end();++wit)
+			{
+				if((*wit)->m_qos.m_liveliness.kind == kind)
+					(*wit)->m_isAlive;
+			}
 			break;
 		}
 	}

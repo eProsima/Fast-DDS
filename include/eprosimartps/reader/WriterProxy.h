@@ -118,19 +118,19 @@ public:
 	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
 
-	/**
-	 * Assert the liveliness of the Writer represented by this WriterProxy.
-	 */
-	void assertLiveliness()
-	{
-		m_livelinessAsserted = true;
-	}
-	bool checkLiveliness()
-	{
-		bool aux=m_livelinessAsserted;
-		m_livelinessAsserted = false;
-		return aux;
-	}
+//	/**
+//	 * Assert the liveliness of the Writer represented by this WriterProxy.
+//	 */
+//	void assertLiveliness()
+//	{
+//		m_livelinessAsserted = true;
+//	}
+//	bool checkLiveliness()
+//	{
+//		bool aux=m_livelinessAsserted;
+//		m_livelinessAsserted = false;
+//		return aux;
+//	}
 
 private:
 	/**
@@ -148,7 +148,7 @@ private:
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
 	bool m_hasMinAvailableSeqNumChanged;
-	bool m_livelinessAsserted;
+	//bool m_livelinessAsserted;
 
 	void print_changes_fromWriter_test2();
 

@@ -118,7 +118,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			updateMaxMinSeqNum();
 			if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
-			pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<<endl;);
+			pDebugInfo("ReaderHistory " <<this->mp_Endpoint->getGuid().entityId<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "<< a_change->writerGUID<<endl;);
 			//print_changes_seqNum();
 			return true;
 		}
@@ -210,8 +210,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					vit->second.push_back(a_change);
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
-
-				pDebugInfo("ReaderHistory: "<<this->mp_Endpoint->getGuid().entityId<< " Change "<< a_change->sequenceNumber.to64long()<< " added "<< "with KEY: "<< vit->first << endl;);
+				pDebugInfo("ReaderHistory " <<this->mp_Endpoint->getGuid().entityId<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle << endl;);
 			//	print_changes_seqNum();
 				return true;
 			}
