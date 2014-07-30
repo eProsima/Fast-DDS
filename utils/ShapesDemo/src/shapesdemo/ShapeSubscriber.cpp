@@ -67,7 +67,7 @@ void ShapeSubscriber::onNewDataMessage()
     // cout << "New DATA Message "<<endl;
     ShapeType shape;
     SampleInfo_t info;
-    while(mp_sub->readNextData((void*)&shape,&info))
+    while(mp_sub->takeNextData((void*)&shape,&info))
     {
         // shape.m_x += 5;
         shape.m_time = info.sourceTimestamp;
