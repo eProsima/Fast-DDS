@@ -109,7 +109,7 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 			pDebugInfo("Change not added"<<endl);
 			return false;
 		}
-		m_livelinessAsserted = true;
+		this->setLivelinessAsserted(true);
 		//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
 		unsent_change_add(change);
 		if(m_writer_cache.isFull() && mp_listener !=NULL)

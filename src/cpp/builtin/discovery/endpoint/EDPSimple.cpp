@@ -33,10 +33,10 @@ namespace eprosima {
 namespace rtps {
 
 EDPSimple::EDPSimple(PDPSimple* p,ParticipantImpl* part):
-		EDP(p,part),
-		mp_PubWriter(NULL),mp_SubWriter(NULL),
-		mp_PubReader(NULL),mp_SubReader(NULL),
-		m_listeners(this)
+				EDP(p,part),
+				mp_PubWriter(NULL),mp_SubWriter(NULL),
+				mp_PubReader(NULL),mp_SubReader(NULL),
+				m_listeners(this)
 
 {
 	// TODO Auto-generated constructor stub
@@ -327,6 +327,39 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		rp->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 		pdata->m_builtinReaders.push_back(rp);
 		mp_SubWriter->matched_reader_add(rp);
+	}
+}
+
+
+void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
+{
+	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
+			it!=pdata->m_builtinReaders.end();++it)
+	{
+		if((*it)->m_guid.entityId == c_EntityId_SEDPPubReader && this->mp_PubWriter !=NULL)
+		{
+			mp_PubWriter->matched_reader_remove(*it);
+			continue;
+		}
+		if((*it)->m_guid.entityId == c_EntityId_SEDPSubReader && this->mp_SubWriter !=NULL)
+		{
+			mp_SubWriter->matched_reader_remove(*it);
+			continue;
+		}
+	}
+	for(std::vector<WriterProxyData*>::iterator it = pdata->m_builtinWriters.begin();
+			it!=pdata->m_builtinWriters.end();++it)
+	{
+		if((*it)->m_guid.entityId == c_EntityId_SEDPPubWriter && this->mp_PubReader !=NULL)
+		{
+			mp_PubReader->matched_writer_remove(*it);
+			continue;
+		}
+		if((*it)->m_guid.entityId == c_EntityId_SEDPSubWriter && this->mp_SubReader !=NULL)
+		{
+			mp_SubReader->matched_writer_remove(*it);
+			continue;
+		}
 	}
 }
 
