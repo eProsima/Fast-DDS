@@ -35,6 +35,7 @@ ParticipantProxyData::ParticipantProxyData():
 
 ParticipantProxyData::~ParticipantProxyData()
 {
+	pDebugInfo("ParticipantProxyData destructor: "<<this->m_guid<<endl);
 	for(std::vector<ReaderProxyData*>::iterator it = this->m_readers.begin();
 			it!=this->m_readers.end();++it)
 	{

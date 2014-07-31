@@ -408,6 +408,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
+	pInfo(RTPS_CYAN<<"PDPSimple: Removing remote endpoints for participant: "<<pdata->m_guid<<endl;);
 	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{
@@ -424,7 +425,7 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
-	pDebugInfo(" Trying to remove remote participant: "<<partGUID<<endl;);
+	pInfo(RTPS_CYAN<<"Removing remote participant: "<<partGUID<<endl;);
 	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
 	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
 	ParticipantProxyData* pdata=NULL;
@@ -441,20 +442,15 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 	}
 	if(pdata !=NULL)
 	{
-		pWarning("Removing remote participant: "<<partGUID<<endl);
 		for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
 				rit!= pdata->m_readers.end();++rit)
 		{
 			mp_EDP->unpairReaderProxy(*rit);
-			delete(*rit);
-
 		}
 		for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
 				wit!=pdata->m_writers.end();++wit)
 		{
 			mp_EDP->unpairWriterProxy(*wit);
-			delete(*wit);
-
 		}
 		this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
 		this->mp_EDP->removeRemoteEndpoints(pdata);

@@ -38,8 +38,9 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 }
 
 
-ReaderProxy::~ReaderProxy() {
-
+ReaderProxy::~ReaderProxy()
+{
+pDebugInfo("ReaderProxy destructor"<<endl);
 }
 
 
