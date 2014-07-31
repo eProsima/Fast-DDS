@@ -9,7 +9,7 @@
 /**
  * @file StatefulWriter.cpp
  *
-*/
+ */
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
@@ -43,9 +43,9 @@ StatefulWriter::~StatefulWriter()
 }
 
 StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-				RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
-				m_PubTimes(param.times),
-				mp_periodicHB(NULL)
+								RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
+								m_PubTimes(param.times),
+								mp_periodicHB(NULL)
 
 {
 	m_pushMode = param.pushMode;
@@ -76,7 +76,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 	}
 	ReaderProxy* rp = new ReaderProxy(rdata,m_PubTimes,this);
 	if(mp_periodicHB==NULL)
-			mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_PubTimes.heartbeatPeriod)));
+		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_PubTimes.heartbeatPeriod)));
 	if(rp->m_data->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
@@ -270,6 +270,7 @@ void StatefulWriter::unsent_changes_not_empty()
 
 bool StatefulWriter::removeMinSeqCacheChange()
 {
+	pDebugInfo("Removing min seq from StatefulWriter"<<endl);
 	CacheChange_t* change;
 	m_writer_cache.get_min_change(&change);
 
@@ -306,28 +307,22 @@ bool StatefulWriter::removeAllCacheChange(size_t* removed)
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
 	boost::lock_guard<Endpoint> guard(*this);
-	CacheChange_t* min_change;
-	m_writer_cache.get_min_change(&min_change);
-	if(a_change->sequenceNumber == min_change->sequenceNumber)
+	pDebugInfo("WriterHistory commands change "<<a_change->sequenceNumber.to64long()<< " to be removed from StatefulWriter"<<endl;);
+
+	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+			it!=this->matched_readers.end();++it)
 	{
-		removeMinSeqCacheChange();
-	}
-	else
-	{
-		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
-				it!=this->matched_readers.end();++it)
+		for(std::vector<ChangeForReader_t>::iterator chit = (*it)->m_changesForReader.begin();
+				chit!=(*it)->m_changesForReader.end();++chit)
 		{
-			for(std::vector<ChangeForReader_t>::iterator chit = (*it)->m_changesForReader.begin();
-					chit!=(*it)->m_changesForReader.end();++chit)
+			if(chit->seqNum == a_change->sequenceNumber)
 			{
-				if(chit->seqNum == a_change->sequenceNumber)
-				{
-					chit->notValid();
-				}
+				chit->notValid();
 			}
 		}
-		m_writer_cache.remove_change(a_change);
 	}
+	m_writer_cache.remove_change(a_change);
+
 	return true;
 }
 

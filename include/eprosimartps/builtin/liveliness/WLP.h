@@ -27,6 +27,7 @@
 #include "eprosimartps/common/types/Locator.h"
 
 #include "eprosimartps/builtin/liveliness/WLPListener.h"
+#include "eprosimartps/builtin/liveliness/WLPTopicDataType.h"
 
 namespace eprosima {
 namespace rtps {
@@ -108,6 +109,8 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by participant liveliness.
 	std::vector<RTPSWriter*> m_livManParticipantWriters;
+	//!TopicDataType to extract the key.
+	WLPTopicDataType m_wlpTopicDataType;
 
 };
 

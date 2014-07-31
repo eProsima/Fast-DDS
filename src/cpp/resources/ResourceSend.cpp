@@ -35,32 +35,6 @@ bool ResourceSend::initSend(const Locator_t& loc)
 {
 //	boost::asio::ip::address addr;
 	m_sendLocator = loc;
-//	try {
-//		boost::asio::io_service netService;
-//		udp::resolver   resolver(netService);
-//		udp::resolver::query query(udp::v4(), "google.com", "");
-//		udp::resolver::iterator endpoints = resolver.resolve(query);
-//		udp::endpoint ep = *endpoints;
-//		udp::socket socket(netService);
-//		socket.connect(ep);
-//		addr = socket.local_endpoint().address();
-//
-//		pInfo("My IP according to google is: " << addr.to_string() << endl);
-//
-//		m_sendLocator.address[12] = addr.to_v4().to_bytes()[0];
-//		m_sendLocator.address[13] = addr.to_v4().to_bytes()[1];
-//		m_sendLocator.address[14] = addr.to_v4().to_bytes()[2];
-//		m_sendLocator.address[15] = addr.to_v4().to_bytes()[3];
-//	}
-//	catch (std::exception& e)
-//	{
-//		std::cerr << "Could not deal with socket. Exception: " << e.what() << std::endl;
-//		m_sendLocator = loc;
-//		m_sendLocator.address[12] = 127;
-//		m_sendLocator.address[13] = 0;
-//		m_sendLocator.address[14] = 0;
-//		m_sendLocator.address[15] = 1;
-//	}
 
 	m_send_socket.open(boost::asio::ip::udp::v4());
 	m_send_socket.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));

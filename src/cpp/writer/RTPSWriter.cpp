@@ -74,7 +74,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	}
 	ch->kind = changeKind;
 
-	if(getTopic().getTopicKind() == WITH_KEY && mp_type !=NULL)
+	if(getTopic().getTopicKind() == WITH_KEY && mp_type !=NULL && data!=NULL)
 	{
 		if(mp_type->m_isGetKeyDefined)
 		{
