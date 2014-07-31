@@ -230,7 +230,7 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
 			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
 	{
-		pWarning("Message NOT RTPS"<<endl);
+		pInfo("MessageReceiver: msg received with no RTPS in header, ignoring..."<<endl);
 		return false;
 	}
 	msg->pos+=4;
@@ -329,7 +329,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	if(firstReader == NULL) //Reader not found
 	{
-		pWarning("No Reader in this Locator ("<<mp_threadListen->m_listenLoc.printIP4Port()<< ") accepts this message (directed to: " <<readerID << ")" <<endl);
+		pWarning("No Reader in this Locator ("<<mp_threadListen->m_listenLoc<< ") accepts this message (directed to: " <<readerID << ")" <<endl);
 		return false;
 	}
 	//FOUND THE READER.
