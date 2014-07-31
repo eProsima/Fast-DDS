@@ -126,7 +126,6 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 					// Should print the actual error message
 					pWarning(error.what() << std::endl);
 				}
-
 			}
 			else
 			{

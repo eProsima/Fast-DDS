@@ -39,9 +39,9 @@ StatefulReader::~StatefulReader()
 
 StatefulReader::StatefulReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-										RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
-												param.userDefinedId,param.payloadMaxSize),
-												m_SubTimes(param.times)
+												RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
+														param.userDefinedId,param.payloadMaxSize),
+														m_SubTimes(param.times)
 {
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
@@ -197,7 +197,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 			it!=toremove.end();++it)
 	{
 		pWarning("StatefulReader has change with no paired WP, removing "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID<<endl;)
-								m_reader_cache.remove_change(*it);
+										m_reader_cache.remove_change(*it);
 	}
 	return readok;
 }
@@ -237,7 +237,7 @@ bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 			it!=toremove.end();++it)
 	{
 		pWarning("StatefulReader has change with no paired WP, removing "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID<<endl;)
-									m_reader_cache.remove_change(*it);
+											m_reader_cache.remove_change(*it);
 	}
 	return readok;
 }
@@ -302,13 +302,16 @@ bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
 
 bool StatefulReader::updateTimes(SubscriberTimes ti)
 {
-	m_SubTimes = ti;
-	for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
-			wit!=this->matched_writers.end();++wit)
+	if(m_SubTimes.heartbeatResponseDelay != ti.heartbeatResponseDelay)
 	{
-
+		m_SubTimes = ti;
+		for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
+				wit!=this->matched_writers.end();++wit)
+		{
+			(*wit)->m_heartbeatResponse.update_interval(m_SubTimes.heartbeatResponseDelay);
+		}
 	}
-
+	return true;
 }
 
 
