@@ -59,10 +59,13 @@ public:
 	//!FOR TESTING ONLY!!!!
 	void loose_next(){m_send_next = false;};
 private:
-	Locator_t m_sendLocator;
+	Locator_t m_sendLocator_v4;
+	Locator_t m_sendLocator_v6;
 	boost::asio::io_service m_send_service;
-	boost::asio::ip::udp::socket m_send_socket;
-	boost::asio::ip::udp::endpoint m_send_endpoint;
+	boost::asio::ip::udp::socket m_send_socket_v4;
+	boost::asio::ip::udp::socket m_send_socket_v6;
+	boost::asio::ip::udp::endpoint m_send_endpoint_v4;
+	boost::asio::ip::udp::endpoint m_send_endpoint_v6;
 	size_t m_bytes_sent;
 	bool m_send_next;
 	ParticipantImpl* mp_participant;
