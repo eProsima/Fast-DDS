@@ -333,7 +333,6 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 		}
 	}
 	m_writer_cache.remove_change(a_change);
-
 	return true;
 }
 

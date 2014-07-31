@@ -120,7 +120,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			}
 			if(missing)
 			{
-				pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
+				pWarning("Locator: "<< *lit1 << " not present in new list"<<endl);
 			}
 		}
 		for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
@@ -150,7 +150,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 		updated &= false;
 	}
 	//QOS:
-
+	//CHECK IF THE QOS CAN BE SET
 
 	if(updated)
 	{
@@ -159,7 +159,8 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 		{
 			//UPDATE TIMES:
 			StatefulReader* sfr = (StatefulReader*)mp_Reader;
-			att.
+			sfr->updateTimes(att.times);
+
 		}
 	}
 
