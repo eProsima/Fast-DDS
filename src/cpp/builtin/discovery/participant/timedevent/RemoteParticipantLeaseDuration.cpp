@@ -47,7 +47,7 @@ void RemoteParticipantLeaseDuration::event(const boost::system::error_code& ec)
 			mp_participantProxyData->isAlive = false;
 		else
 		{
-			pWarning("Removing remote participant "<< mp_participantProxyData->m_guid << endl);
+			pInfo("Participant no longer ALIVE, trying to remove: "<< mp_participantProxyData->m_guid << endl);
 			mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 			return;
 		}
@@ -55,12 +55,12 @@ void RemoteParticipantLeaseDuration::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("Response Data Period aborted"<<endl);
+		pInfo("Remote Participant Lease Duration aborted"<<endl);
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("Response Data Period boost message: " <<ec.message()<<endl);
+		pInfo("Remote Participant Lease Duration boost message: " <<ec.message()<<endl);
 	}
 }
 

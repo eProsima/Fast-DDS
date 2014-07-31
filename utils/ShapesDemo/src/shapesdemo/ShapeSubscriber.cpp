@@ -67,7 +67,7 @@ void ShapeSubscriber::onNewDataMessage()
     // cout << "New DATA Message "<<endl;
     ShapeType shape;
     SampleInfo_t info;
-    while(mp_sub->readNextData((void*)&shape,&info))
+    while(mp_sub->takeNextData((void*)&shape,&info))
     {
         // shape.m_x += 5;
         shape.m_time = info.sourceTimestamp;
@@ -264,7 +264,7 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
            // cout << info.remoteEndpointGuid << endl;
             if(it->front().m_writerGuid == info.remoteEndpointGuid)
             {
-                cout << "FOUND, DELETING"<<endl;
+                cout << "FOUND, DELETING entire instance"<<endl;
                 m_shape.m_shapeHistory.erase(it);
                 break;
             }

@@ -120,7 +120,7 @@ void MainWindow::writeNewSamples()
 
 void MainWindow::on_actionPreferences_triggered()
 {
-    OptionsDialog* od = new OptionsDialog(this->getShapesDemo(),this);
+    OptionsDialog* od = new OptionsDialog(this,this->getShapesDemo(),this);
     od->show();
 }
 
@@ -287,6 +287,7 @@ void MainWindow::on_actionDelete_Enpoint_triggered()
 
 void MainWindow::removeRow(int row)
 {
+  //  cout << "REMOVING ROW **************************"<<endl;
     m_pubsub->removeRow(row);
     for(std::vector<SD_Endpoint>::iterator it = this->m_pubsub_pointers.begin();
         it!=this->m_pubsub_pointers.end();++it)
@@ -295,11 +296,13 @@ void MainWindow::removeRow(int row)
         {
             if(it->type == PUB)
             {
+               // cout << "REMOVING PUBLISHER "<<endl;
                 this->m_shapesDemo.removePublisher(it->pub);
                 addMessageToOutput(QString("Removed Publisher"),false);
             }
             else
             {
+             //   cout << "REMOVING SUBSCRIBER "<<endl;
                 this->m_shapesDemo.removeSubscriber(it->sub);
                 addMessageToOutput(QString("Removed Subscriber"),false);
             }
@@ -307,12 +310,13 @@ void MainWindow::removeRow(int row)
             for(std::vector<SD_Endpoint>::iterator it2 = it;it2!=this->m_pubsub_pointers.end();++it2)
             {
                 it2->pos--;
+              //  cout << "POSITION -1"<<endl;
             }
             m_pubsub_pointers.erase(it);
             break;
         }
     }
-
+    cout << "FINISH REMOVE ROW"<<endl;
 }
 
 void MainWindow::on_tableEndpoint_clicked(const QModelIndex &index)

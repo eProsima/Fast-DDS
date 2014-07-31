@@ -77,12 +77,12 @@ public:
 		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
 		return ss.str();
 	}
-	std::string printIP4Port()
-	{
-		std::stringstream ss;
-		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15]<<":"<<port;
-		return ss.str();
-	}
+//	std::string printIPANDPort()
+//	{
+//		std::stringstream ss;
+//		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15]<<":"<<port;
+//		return ss.str();
+//	}
 	uint32_t to_IP4_long()
 	{
 		uint32_t addr;
@@ -112,6 +112,26 @@ inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
 	}
 	return true;
 }
+
+inline std::ostream& operator<<(std::ostream& output,const Locator_t& loc)
+{
+	if(loc.kind == LOCATOR_KIND_UDPv4)
+	{
+		output<<(int)loc.address[12] << "." << (int)loc.address[13] << "." << (int)loc.address[14]<< "." << (int)loc.address[15]<<":"<<loc.port;
+	}
+	else if(loc.kind == LOCATOR_KIND_UDPv6)
+	{
+		for(uint8_t i =0;i<16;++i)
+		{
+			output<<(int)loc.address[i];
+			if(i<15)
+				output<<".";
+		}
+		output<<":"<<loc.port;
+	}
+	return output;
+}
+
 
 
 typedef std::vector<Locator_t>::iterator LocatorListIterator;

@@ -26,6 +26,9 @@
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
+#include "eprosimartps/Participant.h"
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
 using namespace eprosima::dds;
 
 namespace eprosima {
@@ -227,7 +230,7 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
 			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
 	{
-		pWarning("Message NOT RTPS"<<endl);
+		pInfo("MessageReceiver: msg received with no RTPS in header, ignoring..."<<endl);
 		return false;
 	}
 	msg->pos+=4;
@@ -326,7 +329,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	if(firstReader == NULL) //Reader not found
 	{
-		pWarning("No Reader in this Locator ("<<mp_threadListen->m_listenLoc.printIP4Port()<< ") accepts this message (directed to: " <<readerID << ")" <<endl);
+		pWarning("No Reader in this Locator ("<<mp_threadListen->m_listenLoc<< ") accepts this message (directed to: " <<readerID << ")" <<endl);
 		return false;
 	}
 	//FOUND THE READER.
@@ -442,7 +445,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				WriterProxy* WP;
 				if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
 				{
-					if((*it)->add_change(change_to_add))
+					if((*it)->add_change(change_to_add,WP))
 					{
 						WP->received_change_set(change_to_add);
 						SequenceNumber_t maxSeqNumAvailable;
@@ -483,6 +486,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				{
 					(*it)->release_Cache(change_to_add);
 					pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
+					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
+					{
+						this->mp_threadListen->getParticipantImpl()->getBuiltinProtocols()->mp_PDP->assertRemoteParticipantLiveliness(this->sourceGuidPrefix);
+					}
 				}
 			}
 		}
@@ -540,8 +547,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 					if(WP->m_lastHeartbeatCount < HBCount)
 					{
 						WP->m_lastHeartbeatCount = HBCount;
-						WP->missing_changes_update(lastSN);
 						WP->lost_changes_update(firstSN);
+						WP->missing_changes_update(lastSN);
 						WP->m_heartbeatFinalFlag = finalFlag;
 						//Analyze wheter a acknack message is needed:
 
@@ -556,7 +563,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 						}
 						//FIXME: livelinessFlag
 						if(livelinessFlag && WP->m_data->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-							WP->assertLiveliness();
+							WP->m_data->m_isAlive = true;
 					}
 				}
 				else
@@ -637,7 +644,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 			}
 		}
 	}
-	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assocWriters.size() << " writers in this ResourceListen)"<<endl);
+	pDebugInfo("Acknack msg to UNKNOWN writer (I loooked through " << mp_threadListen->m_assocWriters.size() << " writers in this ListenResource)"<<endl);
 	return false;
 }
 
@@ -734,6 +741,7 @@ bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(guidP != c_GuidPrefix_Unknown)
 	{
 		this->destGuidPrefix = guidP;
+		pDebugInfo("DST Participant is now: "<< this->destGuidPrefix << endl;);
 	}
 	//Is the final message?
 	if(smh->submessageLength == 0)
@@ -761,6 +769,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 		//Is the final message?
 		if(smh->submessageLength == 0)
 			*last = true;
+		pDebugInfo("SRC Participant is now: "<<this->sourceGuidPrefix << endl;);
 		return true;
 	}
 	return false;

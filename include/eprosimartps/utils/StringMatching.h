@@ -26,6 +26,7 @@ public:
 	virtual ~StringMatching();
 	//!Static method to match two strings.
 	static bool matchString(const char* pattern,const char* input);
+	//FIXME: 	CONVERTIR EN INLINE
 };
 
 } /* namespace rtps */

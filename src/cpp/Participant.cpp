@@ -65,7 +65,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 		
 			lit->port=7555;
 			m_defaultUnicastLocatorList.push_back(*lit);
-			ss << lit->printIP4Port() << ";";
+			ss << *lit << ";";
 		}
 		
 		std::string auxstr = ss.str();
@@ -87,9 +87,6 @@ ParticipantImpl::~ParticipantImpl()
 {
 	pDebugInfo("Participant destructor"<<endl;);
 	//Destruct threads:
-//	for(std::vector<ResourceListen*>::iterator it=m_threadListenList.begin();
-//			it!=m_threadListenList.end();++it)
-//		delete(*it);
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
 				it!=m_listenResourceList.end();++it)
 			delete(*it);
@@ -366,8 +363,8 @@ bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 	{
 		if(!(*thit)->hasAssociatedEndpoints())
 		{
+						delete(*thit);
 			m_listenResourceList.erase(thit);
-			delete(*thit);
 			break;
 		}
 	}

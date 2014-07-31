@@ -73,39 +73,21 @@ static inline bool operator<(const Time_t& t1,const Time_t& t2)
 	}
 }
 
-//static inline double Time_t2Seconds(const Time_t& t)
-//{
-//	return (double)t.seconds + (double)(t.fraction/(double)pow(2.0,32));
-//}
-//
-//static inline double Time_t2MicroSec(const Time_t& t)
-//{
-//	return (Time_t2Seconds(t)*(double)pow(10.0,6));
-//}
-//
-//static inline double Time_t2MilliSec(const Time_t& t)
-//{
-//	return (Time_t2Seconds(t)*(double)pow(10.0,3));
-//}
-//
-//static inline Time_t MilliSec2Time_t(uint32_t millisec)
-//{
-//    Time_t time;
-//    time.seconds = (int32_t)millisec/1000;
-//    if(millisec>1000)
-//        time.fraction = (uint32_t)((millisec%1000)*pow(10.0,-3)*pow(2.0,32));
-//    else
-//        time.fraction = (uint32_t)(millisec*pow(10.0,-3)*pow(2.0,32));
-//    return time;
-//}
+static inline bool operator<=(const Time_t& t1,const Time_t& t2)
+{
+	if(t1.seconds < t2.seconds)
+		return true;
+	else if(t1.seconds > t2.seconds)
+		return false;
+	else
+	{
+		if(t1.fraction <= t2.fraction)
+			return true;
+		else
+			return false;
+	}
+}
 
-//static inline uint32_t Time_tAbsDiff2Millisec(const Time_t& t1,const Time_t& t2)
-//{
-//	uint32_t result = 0;
-//	result +=(uint32_t)abs((t2.seconds-t1.seconds)*1000);
-//	result +=(uint32_t)abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
-//	return result;
-//}
 
 
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)

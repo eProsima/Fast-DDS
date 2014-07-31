@@ -30,6 +30,7 @@ WriterProxyData::WriterProxyData():
 WriterProxyData::~WriterProxyData() {
 	// TODO Auto-generated destructor stub
 	m_parameterList.deleteParams();
+	pDebugInfo("WriterProxyData destructor: "<< this->m_guid<<endl);
 }
 
 bool WriterProxyData::toParameterList()

@@ -89,9 +89,7 @@ private slots:
 
     void on_actionPreferences_triggered();
 
-    void on_actionStart_triggered();
 
-    void on_actionStop_triggered();
 
     void on_actionExit_triggered();
 
@@ -101,9 +99,11 @@ private slots:
 
     void on_tableEndpoint_clicked(const QModelIndex &index);
 
+public slots:
 
+    void on_actionStart_triggered();
 
-
+    void on_actionStop_triggered();
 
 
 

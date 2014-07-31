@@ -52,7 +52,7 @@ ReaderHistory::~ReaderHistory()
 	// TODO Auto-generated destructor stub
 }
 
-bool ReaderHistory::add_change(CacheChange_t* a_change)
+bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 {
 	if(m_isHistoryFull)
 	{
@@ -98,7 +98,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 				bool read = false;
 				if(mp_minSeqCacheChange->isRead)
 					read = true;
-				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange))
+				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange,WP))
 				{
 					if(!read)
 					{
@@ -118,7 +118,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 			updateMaxMinSeqNum();
 			if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
-			pDebugInfo("Change "<< a_change->sequenceNumber.to64long()<< " added "<<endl;);
+			pDebugInfo("ReaderHistory " <<this->mp_Endpoint->getGuid().entityId<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "<< a_change->writerGUID<<endl;);
 			//print_changes_seqNum();
 			return true;
 		}
@@ -176,7 +176,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					bool read = false;
 					if(vit->second.front()->isRead)
 						read = true;
-					if(mp_reader->change_removed_by_history(vit->second.front()))
+					if(mp_reader->change_removed_by_history(vit->second.front(),WP))
 					{
 						if(!read)
 						{
@@ -210,8 +210,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 					vit->second.push_back(a_change);
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
-
-				pDebugInfo("ReaderHistory: "<<this->mp_Endpoint->getGuid().entityId<< " Change "<< a_change->sequenceNumber.to64long()<< " added "<< "with KEY: "<< vit->first << endl;);
+				pDebugInfo("ReaderHistory " <<this->mp_Endpoint->getGuid().entityId<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle << endl;);
 			//	print_changes_seqNum();
 				return true;
 			}

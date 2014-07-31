@@ -216,6 +216,8 @@ public:
 		return m_send_socket_buffer_size;
 	}
 
+	BuiltinProtocols* getBuiltinProtocols(){return &m_builtinProtocols;}
+
 
 
 private:
@@ -256,15 +258,15 @@ private:
 	 * @return True if correct.
 	 */
 	bool assignEnpointToListenResources(Endpoint* endpoint,char type,bool isBuiltin);
-	/*!
-	 * Create a new listen thread in the specified locator.
-	 * @param[in] loc Locator to use.
-	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
-	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
-	 * @param[in] isBuiltin Indicates that the endpoint is builtin.
-	 * @return True if correct.
-	 */
-	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
+//	/*!
+//	 * Create a new listen thread in the specified locator.
+//	 * @param[in] loc Locator to use.
+//	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
+//	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
+//	 * @param[in] isBuiltin Indicates that the endpoint is builtin.
+//	 * @return True if correct.
+//	 */
+//	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
 	//ParticipantDiscoveryProtocol* mp_PDP;
 

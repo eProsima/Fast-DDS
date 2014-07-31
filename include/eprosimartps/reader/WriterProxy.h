@@ -118,26 +118,13 @@ public:
 	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
 
-	/**
-	 * Assert the liveliness of the Writer represented by this WriterProxy.
-	 */
-	void assertLiveliness()
-	{
-		m_livelinessAsserted = true;
-	}
-	bool checkLiveliness()
-	{
-		bool aux=m_livelinessAsserted;
-		m_livelinessAsserted = false;
-		return aux;
-	}
-
 private:
 	/**
 	 * Add changesFromWriter up to the sequenceNumber passed, but not including.
 	 * Ex: If you have seqNums 1,2,3 and you receive seqNum 6, you need to add 4,5 and 6
 	 * as unknown to then later mark 6 as received.
-	 * You then marked them as Missing or lost.
+	 * You then mark them as Missing or lost.
+	 * The only exception is when you have received no messages, then you only add the seqNum you provide the method.
 	 * @param seqNum SequenceNumber to use.
 	 * @return True if correct
 	 */
@@ -148,7 +135,7 @@ private:
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
 	bool m_hasMinAvailableSeqNumChanged;
-	bool m_livelinessAsserted;
+	//bool m_livelinessAsserted;
 
 	void print_changes_fromWriter_test2();
 

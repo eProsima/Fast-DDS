@@ -31,60 +31,57 @@ bool sort_SeqNum(SequenceNumber_t s1,SequenceNumber_t s2)
 	return(s1.to64long() < s2.to64long());
 }
 
-
+typedef std::pair<SequenceNumber_t,SequenceNumberSet_t> pair_T;
 
 void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
-		std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences)
+		std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* sequences)
 {
 	//First compute the number of GAP messages we need:
-	std::vector<SequenceNumber_t>::iterator it;
-	std::sort(changesSeqNum->begin(),changesSeqNum->end(),sort_SeqNum);
-	std::pair<SequenceNumber_t,SequenceNumberSet_t> pair;
 
-	SequenceNumber_t start;
-	SequenceNumberSet_t set;
-	start = changesSeqNum->front();
-	uint32_t count = 1;
-	bool set_first = true;
-	bool new_pair = false;
-	for(it=changesSeqNum->begin()+1;it!=changesSeqNum->end();++it)
+	std::sort(changesSeqNum->begin(),changesSeqNum->end(),sort_SeqNum);
+	bool new_pair = true;
+	bool seqnumset_init = false;
+	uint32_t count = 0;
+	for(std::vector<SequenceNumber_t>::iterator it = changesSeqNum->begin();
+			it!=changesSeqNum->end();++it)
 	{
 		if(new_pair)
 		{
-			start = (*it);
-			count = 1;
+			SequenceNumberSet_t seqset;
+			seqset.base = (*it)+1; // IN CASE IN THIS SEQNUMSET there is only 1 number.
+			pair_T pair(*it,seqset);
+			sequences->push_back(pair);
 			new_pair = false;
+			seqnumset_init = false;
+			count = 1;
 			continue;
 		}
-		if(((*it).to64long() - start.to64long()) == count) //continuous seqNum from start to base
+		if((*it).to64long() - sequences->back().first.to64long() == count) //CONTINUOUS FROM THE START
 		{
-			count++;
+			++count;
+			sequences->back().second.base = (*it)+1;
 			continue;
 		}
 		else
 		{
-			if(set_first)
+			if(!seqnumset_init) //FIRST TIME SINCE it was continuous
 			{
-				set.base = *(it-1); //add the last one as the base
-				set.add(*(it-1)); //also add it to the set
-				set_first = false;
+				sequences->back().second.base = *(it-1);
+				seqnumset_init = false;
 			}
-			if(set.add(*(it))) //try to add the current one to the base
+			if(sequences->back().second.add((*it)))
 				continue;
-			else //if we fail to add the element to the set is because they are to far away.
+			else
 			{
+				--it;
 				new_pair = true;
-				set_first = true;
-				it--;
-				pair.first = start;
-				pair.second = set;
-				Sequences->push_back(pair);
-				continue;
 			}
 		}
 	}
-	//Prepare the send operation
 }
+
+
+
 
 
 
@@ -94,6 +91,7 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		std::vector<SequenceNumber_t>* changesSeqNum, const EntityId_t& readerId,
 		LocatorList_t* unicast, LocatorList_t* multicast)
 {
+	//cout << "CHANGES SEQ NUM: "<<changesSeqNum->size()<<endl;
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
 	RTPSMessageGroup::prepare_SequenceNumberSet(changesSeqNum,&Sequences);
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit = Sequences.begin();
@@ -159,13 +157,13 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
-		 LocatorList_t& unicast, LocatorList_t& multicast,
+		LocatorList_t& unicast, LocatorList_t& multicast,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
-		CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
-		CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
+	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
+	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
 
 	std::vector<CacheChange_t*>::iterator cit =changes->begin();
 
@@ -215,8 +213,8 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 {
 	pDebugInfo("Sending relevant changes as data messages" << endl);
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
-		CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
-		CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
+	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
+	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
 	uint16_t data_msg_size = 0;
 	uint16_t change_n = 1;
 	//FIRST SUBMESSAGE
