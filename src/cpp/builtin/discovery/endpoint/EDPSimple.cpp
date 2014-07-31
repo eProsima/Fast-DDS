@@ -333,6 +333,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
+	pInfo(RTPS_CYAN<< "EDPSimple: removing remote endpoints for Participant: "<<pdata->m_guid << endl;);
 	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{

@@ -120,7 +120,7 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 	}
 	if(found)
 	{
-
+		pDebugInfo("Reader Proxy removed: " <<rdata->m_guid<< endl);
 		for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
 				lit!=rdata->m_unicastLocatorList.end();++lit)
 		{
