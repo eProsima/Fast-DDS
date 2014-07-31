@@ -36,7 +36,7 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 	{
 		m_iHandle.value[i] = m_guidP.value[i];
 	}
-	m_iHandle.value[15] = m_livelinessKind;
+	m_iHandle.value[15] = m_livelinessKind+0x01;
 }
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
