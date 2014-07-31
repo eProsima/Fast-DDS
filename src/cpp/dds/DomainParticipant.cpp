@@ -114,6 +114,12 @@ bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pi
 Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
 {
 	pInfo("Creating Participant "<<endl);
+
+	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod)
+	{
+		pError("Participant Attributes: LeaseDuration should be >= leaseDuration announcement period"<<endl;);
+		return NULL;
+	}
 	uint32_t ID = getNewId();
 	int pid;
 #if defined(_WIN32)
@@ -256,7 +262,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	RTPSReader* SR;
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
-	    if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
+		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
 			return NULL;
 		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
 	}
@@ -385,16 +391,16 @@ bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
 	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
 			it!=m_publisherList.end();++it)
 	{
-			if(it->second->getGuid() == pub->getGuid())
+		if(it->second->getGuid() == pub->getGuid())
+		{
+			if(p->deleteUserEndpoint((Endpoint*)(it->second->getWriterPtr()),'W'))
 			{
-				if(p->deleteUserEndpoint((Endpoint*)(it->second->getWriterPtr()),'W'))
-				{
-					delete(it->first);
-					delete(it->second);
-					m_publisherList.erase(it);
-					return true;
-				}
+				delete(it->first);
+				delete(it->second);
+				m_publisherList.erase(it);
+				return true;
 			}
+		}
 	}
 	return false;
 }

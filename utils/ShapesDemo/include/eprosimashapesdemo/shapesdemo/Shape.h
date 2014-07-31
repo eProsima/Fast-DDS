@@ -38,6 +38,7 @@ public:
             return "Circle";
         if(m_type == TRIANGLE)
             return "Triangle";
+        return "ERROR";
     }
 
     TYPESHAPE m_type;

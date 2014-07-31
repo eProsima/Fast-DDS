@@ -123,7 +123,7 @@ void EDP::pairReaderProxy(ReaderProxyData* rdata)
 	{
 		if(validMatching(*wit,rdata))
 		{
-			pDebugInfo("Valid Matching"<<endl);
+			pDebugInfo("Valid Matching to local writer: "<<(*wit)->getGuid().entityId<<endl);
 			if((*wit)->matched_reader_add(rdata))
 			{
 				//MATCHED AND ADDED CORRECTLY:
@@ -141,7 +141,7 @@ void EDP::pairReaderProxy(ReaderProxyData* rdata)
 
 void EDP::pairReader(RTPSReader* R)
 {
-	pDebugInfo(RTPS_CYAN<<"EDP pairing Reader: "<<R->getGuid()<<" in topic: " << R->getTopic().getTopicName()<<RTPS_DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP pairing Local Reader: "<<R->getGuid()<<" in topic: " << R->getTopic().getTopicName()<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
 			pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
@@ -150,7 +150,7 @@ void EDP::pairReader(RTPSReader* R)
 		{
 			if(validMatching(R,*wdatait))
 			{
-				pDebugInfo("Valid Matching"<<endl);
+				pDebugInfo("Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<endl);
 				if(R->matched_writer_add(*wdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -176,7 +176,7 @@ void EDP::pairWriterProxy(WriterProxyData* wdata)
 	{
 		if(validMatching(*rit,wdata))
 		{
-			pDebugInfo("Valid Matching"<<endl);
+			pDebugInfo("Valid Matching to local Reader "<<(*rit)->getGuid().entityId<<endl);
 			if((*rit)->matched_writer_add(wdata))
 			{
 				//MATCHED AND ADDED CORRECTLY:
@@ -195,7 +195,7 @@ void EDP::pairWriterProxy(WriterProxyData* wdata)
 
 void EDP::pairWriter(RTPSWriter* W)
 {
-	pDebugInfo(RTPS_CYAN<<"EDP pairing Writer: "<<W->getGuid()<< " in topic: " << W->getTopic().getTopicName()<<RTPS_DEF<<endl);
+	pDebugInfo(RTPS_CYAN<<"EDP pairing local Writer: "<<W->getGuid()<< " in topic: " << W->getTopic().getTopicName()<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
 			pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
@@ -204,7 +204,7 @@ void EDP::pairWriter(RTPSWriter* W)
 		{
 			if(validMatching(W,*rdatait))
 			{
-				pDebugInfo("Valid Matching"<<endl);
+				pDebugInfo("Valid Matching to ReaderProxy "<<(*rdatait)->m_guid<<endl);
 				if(W->matched_reader_add(*rdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:

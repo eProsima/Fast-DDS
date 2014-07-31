@@ -17,6 +17,17 @@
 namespace eprosima {
 namespace dds {
 
+WriterQos::WriterQos()
+{
+	this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+}
+
+WriterQos::~WriterQos()
+{
+
+}
+
+
 void WriterQos::setQos( WriterQos& qos, bool first_time)
 {
 	if(first_time)
@@ -135,6 +146,14 @@ bool WriterQos::checkQos()
 	{
 		pError("BEST_EFFORT incompatible with EXCLUSIVE ownership"<<endl);
 		return false;
+	}
+	if(m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS || m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+	{
+		if(m_liveliness.lease_duration < c_TimeInfinite && m_liveliness.lease_duration <= m_liveliness.announcement_period)
+		{
+			pError("WRITERQOS: LeaseDuration <= announcement period " << endl;);
+			return false;
+		}
 	}
 	return true;
 }

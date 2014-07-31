@@ -38,8 +38,9 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 }
 
 
-ReaderProxy::~ReaderProxy() {
-
+ReaderProxy::~ReaderProxy()
+{
+pDebugInfo("ReaderProxy destructor"<<endl);
 }
 
 
@@ -53,7 +54,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		if(it->seqNum == change->sequenceNumber)
 		{
 			*changeForReader = *it;
-			pDebugInfo("Change found in Reader Proxy " << endl);
+			pDebugInfo("Change " << change->sequenceNumber.to64long()<< " found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -70,7 +71,7 @@ bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* ch
 		if(it->seqNum == seq)
 		{
 			*changeForReader = *it;
-			pDebugInfo("Change found in Reader Proxy " << endl);
+			pDebugInfo("Change " << seq.to64long()<<" found in Reader Proxy " << endl);
 			return true;
 		}
 	}

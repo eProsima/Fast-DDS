@@ -63,6 +63,9 @@ public:
 	 * @param pdata Pointer to the ParticipantProxyData object.
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
+
 	/**
 	 * Create local SEDP Endpoints based on the DiscoveryAttributes.
 	 * @return True if correct.

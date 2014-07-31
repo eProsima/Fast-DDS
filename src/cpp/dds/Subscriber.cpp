@@ -120,7 +120,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			}
 			if(missing)
 			{
-				pWarning("Locator: "<< lit1->printIP4Port()<< " not present in new list"<<endl);
+				pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
 			}
 		}
 		for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
@@ -138,7 +138,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			}
 			if(missing)
 			{
-				pWarning("Locator: "<< lit1->printIP4Port()<< " not present in new list"<<endl);
+				pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
 			}
 		}
 	}

@@ -129,6 +129,7 @@ bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
 	{
 		if((*it)->m_guid == wdata->m_guid)
 		{
+			pDebugInfo("Writer Proxy removed: " <<wdata->m_guid<< endl);
 			m_matched_writers.erase(it);
 			return true;
 		}
@@ -152,7 +153,7 @@ bool StatelessReader::matched_writer_is_matched(WriterProxyData* wdata)
 
 
 
-bool StatelessReader::change_removed_by_history(CacheChange_t*ch)
+bool StatelessReader::change_removed_by_history(CacheChange_t*ch,WriterProxy*prox)
 {
 	return m_reader_cache.remove_change(ch);
 }

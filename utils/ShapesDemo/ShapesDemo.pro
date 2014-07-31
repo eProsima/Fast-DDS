@@ -100,16 +100,16 @@ SOURCES += \
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.5.0 #-lIphlpapi
-win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.5.0 #-lIphlpapi
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.5.0 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.5.0 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
 
 
 win32:INCLUDEPATH += $$PWD/../../include
-win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010
+win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010 C:\Windows\System32
 
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.0.lib
-win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.0.lib
+#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.0.lib Shlwapi.lib Iphlpapi.lib
+#win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.0.lib Shlwapi.lib Iphlpapi.lib
 
 RESOURCES += \
     images/eprosimalogo.qrc

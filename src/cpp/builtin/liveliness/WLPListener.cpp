@@ -13,6 +13,9 @@
 
 #include "eprosimartps/builtin/liveliness/WLPListener.h"
 #include "eprosimartps/builtin/liveliness/WLP.h"
+
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -41,11 +44,11 @@ typedef std::vector<WriterProxy*>::iterator WPIT;
 void WLPListener::onNewDataMessage()
 {
 	boost::lock_guard<Endpoint> guard(*(Endpoint*)this->mp_WLP->mp_builtinParticipantMessageReader);
-	pInfo(RTPS_MAGENTA<< "Liveliness Reader:  onNewDataMessage"<<endl);
+	pInfo(RTPS_MAGENTA<< "Liveliness Listener:  onNewDataMessage"<<endl);
 	CacheChange_t* change;
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
-	if(this->mp_WLP->mp_builtinParticipantMessageReader->get_last_added_cache(&change))
+	while(this->mp_WLP->mp_builtinParticipantMessageReader->readNextCacheChange(&change))
 	{
 		//Check the serializedPayload:
 		if(change->serializedPayload.length>0)
@@ -54,8 +57,8 @@ void WLPListener::onNewDataMessage()
 			{
 				guidP.value[i] = change->serializedPayload.data[i];
 			}
-			livelinessKind = (LivelinessQosPolicyKind)change->serializedPayload.data[15];
-
+			livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
+			pDebugInfo(RTPS_MAGENTA<<"Participant "<<guidP<< " assert liveliness of "<<((livelinessKind == 0x00)?"AUTOMATIC":"")<<((livelinessKind==0x01)?"MANUAL_BY_PARTICIPANT":"")<< " writers"<<endl);
 		}
 		else
 		{
@@ -67,27 +70,7 @@ void WLPListener::onNewDataMessage()
 			pDebugInfo(RTPS_MAGENTA<<"Message from own participant, ignoring"<<RTPS_DEF<<endl;);
 			return;
 		}
-
-		for(std::vector<RTPSReader*>::iterator rit = this->mp_WLP->mp_participant->userReadersListBegin();
-				rit!=this->mp_WLP->mp_participant->userReadersListEnd();++rit)
-		{
-			if((*rit)->getStateType() == STATEFUL)
-			{
-				StatefulReader* SFR = (StatefulReader*)(*rit);
-				for(std::vector<WriterProxy*>::iterator wit = SFR->MatchedWritersBegin();
-						wit!=SFR->MatchedWritersEnd();++wit)
-				{
-					if((*wit)->m_data->m_qos.m_liveliness.kind == (livelinessKind-0x01))
-					{
-						if((*wit)->m_data->m_guid.guidPrefix == guidP)
-						{
-							pDebugInfo(RTPS_MAGENTA<<"Asserting liveliness of Writer: "<< (*wit)->m_data->m_guid<<RTPS_DEF<<endl;);
-							(*wit)->assertLiveliness();
-						}
-					}
-				}
-			}
-		}
+		this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
 	}
 	return;
 }

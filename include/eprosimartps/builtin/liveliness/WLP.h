@@ -27,6 +27,7 @@
 #include "eprosimartps/common/types/Locator.h"
 
 #include "eprosimartps/builtin/liveliness/WLPListener.h"
+#include "eprosimartps/builtin/liveliness/WLPTopicDataType.h"
 
 namespace eprosima {
 namespace rtps {
@@ -67,6 +68,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool assignRemoteEndpoints(ParticipantProxyData* pdata);
+
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 	/**
 	 * Add a local writer to the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
@@ -83,6 +86,8 @@ public:
 	int64_t m_minAutomatic_MilliSec;
 
 	int64_t m_minManParticipant_MilliSec;
+
+	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 
 
 private:
@@ -104,6 +109,8 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by participant liveliness.
 	std::vector<RTPSWriter*> m_livManParticipantWriters;
+	//!TopicDataType to extract the key.
+	WLPTopicDataType m_wlpTopicDataType;
 
 };
 

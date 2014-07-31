@@ -33,6 +33,8 @@ public:
 
 
 
+        void on_checkBox_reliable_toggled(bool checked);
+
 private:
     Ui::SubscribeDialog *ui;
     ShapesDemo* mp_sd;

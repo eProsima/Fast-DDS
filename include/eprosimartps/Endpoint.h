@@ -66,8 +66,8 @@ public:
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 
-	//!Vector of pointer to the listening resources associated with this endpoint.
-	std::vector<ResourceListen*> m_listenThList;
+//	//!Vector of pointer to the listening resources associated with this endpoint.
+//	std::vector<ResourceListen*> m_listenThList;
 	//!Pointer to the participant this endpoint belongs to.
 	ResourceSend* mp_send_thr;
 	ResourceEvent* mp_event_thr;

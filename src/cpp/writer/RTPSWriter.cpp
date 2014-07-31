@@ -74,7 +74,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 	}
 	ch->kind = changeKind;
 
-	if(getTopic().getTopicKind() == WITH_KEY && mp_type !=NULL)
+	if(getTopic().getTopicKind() == WITH_KEY && mp_type !=NULL && data!=NULL)
 	{
 		if(mp_type->m_isGetKeyDefined)
 		{
@@ -109,7 +109,7 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 			pDebugInfo("Change not added"<<endl);
 			return false;
 		}
-		m_livelinessAsserted = true;
+		this->setLivelinessAsserted(true);
 		//DO SOMETHING ONCE THE NEW CHANGE HAS BEEN ADDED.
 		unsent_change_add(change);
 		if(m_writer_cache.isFull() && mp_listener !=NULL)

@@ -63,7 +63,7 @@ bool ShapesDemo::init()
         mp_participant = DomainParticipant::createParticipant(pparam);
         if(mp_participant!=NULL)
         {
-            // cout << "Participant Created "<< mp_participant->getGuid() << endl;
+            // cout << "Participant Created "<< mp_participant->getGuid() << endl;l
             m_isInitialized = true;
             DomainParticipant::registerType(&m_shapeTopicDataType);
             return true;
