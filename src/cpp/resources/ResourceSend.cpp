@@ -23,41 +23,71 @@ namespace eprosima {
 namespace rtps {
 
 ResourceSend::ResourceSend(ParticipantImpl* par) :
-	m_send_socket(m_send_service),
-	m_bytes_sent(0),
-	m_send_next(true),
-	mp_participant(par)
+											m_send_socket_v4(m_send_service),
+											m_send_socket_v6(m_send_service),
+											m_bytes_sent(0),
+											m_send_next(true),
+											mp_participant(par)
 {
 
 }
 
 bool ResourceSend::initSend(const Locator_t& loc)
 {
-//	boost::asio::ip::address addr;
-	m_sendLocator = loc;
+	//	boost::asio::ip::address addr;
+	if(loc.kind == LOCATOR_KIND_UDPv4)
+	{
+		m_sendLocator_v4 = loc;
+		m_sendLocator_v6.port = loc.port;
+	}
+	else if(loc.kind == LOCATOR_KIND_UDPv6)
+	{
+		m_sendLocator_v6 = loc;
+		m_sendLocator_v4.port = loc.port;
+	}
 
-	m_send_socket.open(boost::asio::ip::udp::v4());
-	m_send_socket.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));
+	//OPEN SOCKETS:
+	m_send_socket_v4.open(boost::asio::ip::udp::v4());
+	m_send_socket_v4.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));
+	m_send_socket_v6.open(boost::asio::ip::udp::v6());
+	m_send_socket_v6.set_option(boost::asio::socket_base::send_buffer_size(this->mp_participant->getSendSocketBufferSize()));
 	//m_send_socket.set_option( boost::asio::ip::enable_loopback( true ) );
+	//BINDING
 	bool not_bind = true;
 	while(not_bind)
 	{
-		//udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(),sendLocator.port);
-		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_sendLocator.port);
-		//boost::asio::ip::udp::socket s(sendService,send_endpoint);
+		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_sendLocator_v4.port);
 		try{
-			m_send_socket.bind(send_endpoint);
+			m_send_socket_v4.bind(send_endpoint);
 			not_bind = false;
 		}
 		catch (boost::system::system_error const& e)
 		{
 			pWarning("ResourceSend: "<<e.what()<< " with socket: " << send_endpoint << endl);
-			m_sendLocator.port++;
+			m_sendLocator_v4.port++;
+		}
+	}
+	not_bind = true;
+	while(not_bind)
+	{
+		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v6(),m_sendLocator_v6.port);
+		try{
+			m_send_socket_v6.bind(send_endpoint);
+			not_bind = false;
+		}
+		catch (boost::system::system_error const& e)
+		{
+			pWarning("ResourceSend: "<<e.what()<< " with socket: " << send_endpoint << endl);
+			m_sendLocator_v6.port++;
 		}
 	}
 	boost::asio::socket_base::send_buffer_size option;
-	m_send_socket.get_option(option);
-	pInfo (RTPS_YELLOW<<"ResourceSend: initSend: " << m_send_socket.local_endpoint()<<"|| State: " << m_send_socket.is_open() <<
+	m_send_socket_v4.get_option(option);
+
+	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
+			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
+	m_send_socket_v6.get_option(option);
+	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv6: " << m_send_socket_v6.local_endpoint()<<"|| State: " << m_send_socket_v6.is_open() <<
 			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
 
 	//boost::asio::io_service::work work(sendService);
@@ -68,7 +98,8 @@ bool ResourceSend::initSend(const Locator_t& loc)
 ResourceSend::~ResourceSend()
 {
 	pDebugInfo("ResourceSend: destructor"<<endl;);
-	m_send_socket.close();
+	m_send_socket_v4.close();
+	m_send_socket_v6.close();
 	m_send_service.stop();
 }
 
@@ -82,41 +113,68 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		boost::asio::ip::address_v4::bytes_type addr;
 		for(uint8_t i=0;i<4;i++)
 			addr[i] = loc.address[12+i];
-		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
+		m_send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
+		pInfo(RTPS_YELLOW<< "ResourceSend: sendSync UDPv4: " << msg->length << " bytes TO endpoint: " << m_send_endpoint_v4 << " FROM " << m_send_socket_v4.local_endpoint()  << endl);
+		if(m_send_endpoint_v4.port()>0)
+		{
+			m_bytes_sent = 0;
+			if(m_send_next)
+			{
+				try {
+					m_bytes_sent = m_send_socket_v4.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint_v4);
+				} catch (const std::exception& error) {
+					// Should print the actual error message
+					pWarning(error.what() << std::endl);
+				}
+
+			}
+			else
+			{
+				m_send_next = true;
+			}
+			pInfo (RTPS_YELLOW <<  "SENT " << m_bytes_sent << RTPS_DEF << endl);
+		}
+		else if(m_send_endpoint_v4.port()<=0)
+		{
+			pWarning("ResourceSend: sendSync: port invalid"<<endl);
+		}
+		else
+			pError("ResourceSend: sendSync: port error"<<endl);
 	}
 	else if(loc.kind == LOCATOR_KIND_UDPv6)
 	{
 		boost::asio::ip::address_v6::bytes_type addr;
 		for(uint8_t i=0;i<16;i++)
 			addr[i] = loc.address[i];
-		m_send_endpoint = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
-	}
-	pInfo(RTPS_YELLOW<< "ResourceSend: sendSync: " << msg->length << " bytes TO endpoint: " << m_send_endpoint << " FROM " << m_send_socket.local_endpoint()  << endl);
-	if(m_send_endpoint.port()>0)
-	{
-		m_bytes_sent = 0;
-		if(m_send_next)
+		m_send_endpoint_v6 = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
+		pInfo(RTPS_YELLOW<< "ResourceSend: sendSync UDPv6: " << msg->length << " bytes TO endpoint: " << m_send_endpoint_v6 << " FROM " << m_send_socket_v6.local_endpoint()  << endl);
+		if(m_send_endpoint_v6.port()>0)
 		{
-			try {
-				m_bytes_sent = m_send_socket.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint);
-			} catch (const std::exception& error) {
-				// Should print the actual error message
-				pWarning(error.what() << std::endl);
-			}
+			m_bytes_sent = 0;
+			if(m_send_next)
+			{
+				try {
+					m_bytes_sent = m_send_socket_v6.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint_v6);
+				} catch (const std::exception& error) {
+					// Should print the actual error message
+					pWarning(error.what() << std::endl);
+				}
 
+			}
+			else
+			{
+				m_send_next = true;
+			}
+			pInfo (RTPS_YELLOW <<  "SENT " << m_bytes_sent << RTPS_DEF << endl);
+		}
+		else if(m_send_endpoint_v6.port()<=0)
+		{
+			pWarning("ResourceSend: sendSync: port invalid"<<endl);
 		}
 		else
-		{
-			m_send_next = true;
-		}
-		pInfo (RTPS_YELLOW <<  "SENT " << m_bytes_sent << RTPS_DEF << endl);
+			pError("ResourceSend: sendSync: port error"<<endl);
 	}
-	else if(m_send_endpoint.port()<=0)
-	{
-		pWarning("ResourceSend: sendSync: port invalid"<<endl);
-	}
-	else
-		pError("ResourceSend: sendSync: port error"<<endl);
+
 }
 
 

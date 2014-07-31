@@ -65,7 +65,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 		
 			lit->port=7555;
 			m_defaultUnicastLocatorList.push_back(*lit);
-			ss << lit->printIP4Port() << ";";
+			ss << *lit << ";";
 		}
 		
 		std::string auxstr = ss.str();
