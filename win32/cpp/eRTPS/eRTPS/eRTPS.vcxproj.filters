@@ -405,6 +405,9 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h">
       <Filter>Header Files\eprosimartps\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPTopicDataType.h">
+      <Filter>Header Files\eprosimartps\builtin\liveliness</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -592,6 +595,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\builtin\discovery\endpoint\EDPStaticXML.cpp">
       <Filter>Source Files\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLPTopicDataType.cpp">
+      <Filter>Source Files\builtin\liveliness</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

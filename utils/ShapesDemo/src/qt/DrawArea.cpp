@@ -87,7 +87,7 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapeSubscriber*>::iterator it = mp_SD->m_subscribers.begin();
             it!=mp_SD->m_subscribers.end();++it)
         {
-            QMutexLocker(&(*it)->m_mutex);
+            QMutexLocker lock2(&(*it)->m_mutex);
             if((*it)->hasReceived)
             {
                 // cout << "OK"<<std::flush;
@@ -111,7 +111,7 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
             it!=mp_SD->m_publishers.end();++it)
         {
-            QMutexLocker(&(*it)->m_mutex);
+            QMutexLocker lock2(&(*it)->m_mutex);
             if((*it)->hasWritten)
             {
                 paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
