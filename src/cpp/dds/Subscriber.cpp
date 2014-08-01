@@ -91,7 +91,7 @@ bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
 //{
 //	if(mp_Reader->getStateType()==STATELESS)
 //	{
-//		pError("StatelessReader cannot have writerProxy"<<endl);
+//		pError("StatelessReader cannot have writerProxy"<<lendl);
 //		return false;
 //	}
 //	else if(mp_Reader->getStateType()==STATEFUL)
