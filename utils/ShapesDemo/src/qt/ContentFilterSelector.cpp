@@ -76,8 +76,7 @@ void ContentFilterSelector::assignShapeSubscriber(ShapeSubscriber* ssub)
 
 void ContentFilterSelector::contentFilterChanged()
 {
-    ShapeContentFilter filt;
-    filt.m_useFilter = true;
+    ShapeFilter filt;
     filt.m_minX = this->x();
     filt.m_minY = this->y();
     filt.m_maxX = this->x()+this->width();
@@ -149,7 +148,6 @@ void ContentFilterSelector::mouseMoveEvent(QMouseEvent* event)
         {
             int dimx = event->pos().x()+FRAME_WIDTH*2+CORNER_MARK_DIM;
             int dimy = event->pos().y()+FRAME_WIDTH*2+CORNER_MARK_DIM;
-            cout << "NEW DIM: "<< dimx << " "<< dimy << endl;
             if(dimx > 10 && dimy > 10)
             {
                 QPoint pos = mapToParent(event->pos());

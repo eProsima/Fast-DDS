@@ -31,7 +31,7 @@ ShapePublisher::~ShapePublisher()
     {
 //        mp_pub->dispose((void*)&this->m_shape.m_mainShape);
 //        mp_pub->unregister((void*)&this->m_shape.m_mainShape);
-        mp_pub->dispose_and_unregister((void*)&this->m_shape.m_mainShape);
+        mp_pub->dispose_and_unregister((void*)&this->m_shape);
         DomainParticipant::removePublisher(this->mp_participant,mp_pub);
     }
 }
@@ -51,11 +51,10 @@ void ShapePublisher::write()
 {
     if(mp_pub !=NULL)
     {
-        mp_pub->write((void*)&this->m_shape.m_mainShape);
+        mp_pub->write((void*)&this->m_shape);
         //cout << "Trying to lock ShapePub: "<<std::flush;
         m_mutex.lock();
      //   cout << " OK "<<std::flush;
-        m_drawShape = m_shape;
         hasWritten = true;
         m_mutex.unlock();
 
