@@ -325,6 +325,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLP.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPListener.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPTopicDataType.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.hpp" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\common\CacheChange.h" />
@@ -420,6 +421,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLP.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLPListener.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\builtin\liveliness\WLPTopicDataType.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\DDSTopicDataType.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\DomainParticipant.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\dds\Publisher.cpp" />
