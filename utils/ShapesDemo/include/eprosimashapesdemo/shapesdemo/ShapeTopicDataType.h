@@ -58,9 +58,9 @@ public:
         m_topic.getKey((void*)&shape,&MagentaIH.second);
         shape.define(SD_ORANGE);
         m_topic.getKey((void*)&shape,&OrangeIH.second);
-        cout << PurpleIH.second << endl;
-        cout << BlueIH.second << endl;
-        cout << RedIH.second<<endl;
+//        cout << PurpleIH.second << endl;
+//        cout << BlueIH.second << endl;
+//        cout << RedIH.second<<endl;
     }
     ~ColorInstanceHandle()
     {
