@@ -110,23 +110,6 @@ void ShapesDemo::addSubscriber(ShapeSubscriber* SSub)
     this->m_mainWindow->addSubscriberToTable(SSub);
 }
 
-//bool ShapesDemo::getShapes(std::vector<Shape*> *shvec)
-//{
-//    //QMutexLocker locker(&m_mutex);
-//    for(std::vector<ShapePublisher*>::iterator it =m_publishers.begin();
-//        it!=m_publishers.end();++it)
-//    {
-//        shvec->push_back(&(*it)->m_drawShape);
-//    }
-//    for(std::vector<ShapeSubscriber*>::iterator it = m_subscribers.begin();
-//        it!=m_subscribers.end();++it)
-//    {
-//        if((*it)->hasReceived)
-//            shvec->push_back(&(*it)->m_drawShape);
-//    }
-//    return true;
-//}
-
 uint32_t ShapesDemo::getRandomX(uint32_t size)
 {
     return minX+size+(uint32_t)(((maxX-size)-(minX+size))*((double) rand() / (RAND_MAX)));
@@ -142,7 +125,9 @@ void ShapesDemo::moveAllShapes()
     for(std::vector<ShapePublisher*>::iterator it = m_publishers.begin();
         it!=m_publishers.end();++it)
     {
+        (*it)->m_mutex.lock();
         moveShape(&(*it)->m_shape);
+        (*it)->m_mutex.unlock();
     }
 }
 
@@ -154,10 +139,10 @@ void ShapesDemo::moveShape(Shape* sh)
     int nx = sh->m_x + m_options.m_movementSpeed*sh->m_dirX;
     int ny = sh->m_y + m_options.m_movementSpeed*sh->m_dirY;
     //Check if the movement is correct
-    bool cond1 = nx+(int)sh->m_mainShape.m_size/2 > (int)maxX;
-    bool cond2 = nx-(int)sh->m_mainShape.m_size/2 < (int)minX;
-    bool cond3 = ny+(int)sh->m_mainShape.m_size/2 > (int)maxY;
-    bool cond4 = ny-(int)sh->m_mainShape.m_size/2 < (int)minY;
+    bool cond1 = nx+(int)sh->m_size/2 > (int)maxX;
+    bool cond2 = nx-(int)sh->m_size/2 < (int)minX;
+    bool cond3 = ny+(int)sh->m_size/2 > (int)maxY;
+    bool cond4 = ny-(int)sh->m_size/2 < (int)minY;
     while(cond1 || cond2 || cond3 || cond4)
     {
         getNewDirection(sh);

@@ -71,8 +71,8 @@ void ShapeHistory::addShapeExclusive(Shape &sh, std::list<Shape> &list)
     {
         addShape(sh,list);
     }
-    else if(sh.m_strength == list.front() &&
-            compareGUID(shape.m_writerGuid,it->front().m_writerGuid))
+    else if(sh.m_strength == list.front().m_strength &&
+            compareGUID(sh.m_writerGuid,list.front().m_writerGuid))
     {
         addShape(sh,list);
     }
@@ -81,7 +81,7 @@ void ShapeHistory::addShapeExclusive(Shape &sh, std::list<Shape> &list)
 void ShapeHistory::addShape(Shape&sh,std::list<Shape>& list)
 {
     list.push_front(sh);
-    if(list.size>this->m_history_depth)
+    if(list.size()>this->m_history_depth)
         list.pop_back();
 }
 
@@ -118,7 +118,7 @@ bool ShapeHistory::findInstance(Shape& sh,std::vector<std::list<Shape>>::iterato
 
 void ShapeHistory::addNewInstance(Shape& sh)
 {
-    m_history.push_back(std::list<ShapeType>(1,sh));
+    m_history.push_back(std::list<Shape>(1,sh));
 }
 
 bool ShapeHistory::passContentFilter(Shape& sh)
@@ -127,10 +127,10 @@ bool ShapeHistory::passContentFilter(Shape& sh)
         return true;
     else
     {
-        if(sh->m_x < m_filter.m_maxX &&
-                sh->m_x > m_filter.m_minX &&
-                sh->m_y < m_filter.m_maxY &&
-                sh->m_y > m_filter.m_minY)
+        if(sh.m_x < m_filter.m_maxX &&
+                sh.m_x > m_filter.m_minX &&
+                sh.m_y < m_filter.m_maxY &&
+                sh.m_y > m_filter.m_minY)
         {
             // cout << "FILTER PASSED"<<endl;
             return true;
@@ -161,6 +161,31 @@ void ShapeHistory::unregister(SD_COLOR & color)
         if(it->front().m_color == color)
         {
             m_history.erase(it);
+            return;
+        }
+    }
+    return;
+}
+
+void ShapeHistory::adjustContentFilter(ShapeFilter& filter)
+{
+    if(m_filter.m_useContentFilter)
+    {
+        m_filter.m_maxX = filter.m_maxX;
+        m_filter.m_maxY = filter.m_maxY;
+        m_filter.m_minX = filter.m_minX;
+        m_filter.m_minY = filter.m_minY;
+    }
+}
+
+void ShapeHistory::removedOwner(GUID_t& guid)
+{
+    for(std::vector<std::list<Shape>>::iterator it = m_history.begin();
+        it!= m_history.end();++it)
+    {
+        if(it->front().m_writerGuid == guid)
+        {
+            it->front().m_hasOwner = false;
             return;
         }
     }

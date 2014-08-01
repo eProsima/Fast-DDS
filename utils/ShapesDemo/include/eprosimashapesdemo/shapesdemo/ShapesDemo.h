@@ -15,11 +15,10 @@
 #define SHAPESDEMO_H_
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeDefinitions.h"
 #include <QMutex>
 
-#define MAX_DRAW_AREA_X 235
-#define MAX_DRAW_AREA_Y 265
-#define INITIAL_INTERVAL_MS 200
+
 
 
 

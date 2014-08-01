@@ -23,7 +23,7 @@ ShapeTopicDataType::~ShapeTopicDataType()
 bool ShapeTopicDataType::serialize(void *data, SerializedPayload_t *payload)
 {
     Shape* sh = (Shape*)data;
-    std::string auxstr = getColorStr(sh->m_color);
+    std::string auxstr(getColorStr(sh->m_color));
     uint32_t strsize = auxstr.size();
 
     uint32_t* auxptr;
@@ -76,8 +76,8 @@ bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
 
 bool ShapeTopicDataType::getKey(void *data, InstanceHandle_t *ihandle)
 {
-    ShapeType* sh = (ShapeType*)data;
-    std::string colorstr(getcolorStr(sh->m_color));
+    Shape* sh = (Shape*)data;
+    std::string colorstr(getColorStr(sh->m_color));
     char cdrcolor[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
     cdrcolor[0] = 0x00;
     cdrcolor[1] = 0x0;
