@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>382</width>
-    <height>371</height>
+    <width>449</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -404,21 +404,6 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="label_19">
-       <property name="font">
-        <font>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Time Based (ms):</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label_10">
        <property name="font">
@@ -436,6 +421,9 @@
      </item>
      <item row="6" column="2">
       <widget class="QLineEdit" name="lineEdit_TimeBasedFilter">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>0</string>
        </property>
@@ -453,6 +441,18 @@
          <string>EXCLUSIVE_OWNERSHIP</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QCheckBox" name="checkBox_timeBasedFilter">
+       <property name="font">
+        <font>
+         <pointsize>13</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Time Based (ms):</string>
+       </property>
       </widget>
      </item>
     </layout>

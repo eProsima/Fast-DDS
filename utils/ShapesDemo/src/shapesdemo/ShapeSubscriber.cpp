@@ -44,7 +44,8 @@ bool ShapeSubscriber::initSubscriber()
 void ShapeSubscriber::onNewDataMessage()
 {
     // cout << "New DATA Message "<<endl;
-    ShapeType shape;
+    Shape shape;
+    shape.m_type = this->m_shapeType;
     SampleInfo_t info;
     while(mp_sub->takeNextData((void*)&shape,&info))
     {
@@ -52,164 +53,30 @@ void ShapeSubscriber::onNewDataMessage()
         shape.m_time = info.sourceTimestamp;
         shape.m_writerGuid = info.writerGUID;
         shape.m_strength = info.ownershipStrength;
-        // cout << "DATA size: " << shape.m_size << " Strength: "<< shape.m_strength << endl;
+        QMutexLocker locck(&this->m_mutex);
         if(info.sampleKind == ALIVE)
         {
-            //  cout << "ALive sample, ";
             hasReceived = true;
-            bool found = false;
-            m_mutex.lock();
-            for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
-                it!=m_shape.m_shapeHistory.end();++it)
-            {
-                if(it->begin()->getColor() == shape.getColor())
-                {
-                    //  cout << " found with the same color"<<endl;
-                    found = true;
-                    // cout << "Time DIFF: "<<Time_tAbsDiff2Millisec(it->front().m_time,info.sourceTimestamp)<<endl;
-                    // cout << "Minimum separation: "<< Time_t2MilliSec(m_attributes.qos.m_timeBasedFilter.minimum_separation)<<endl;
-                    // cout << "Pass filter: "<<  passFilter(&shape) << endl;
-                    if(TimeConv::Time_tAbsDiff2DoubleMillisec(it->front().m_time,info.sourceTimestamp)>=TimeConv::Time_t2MilliSecondsDouble(m_attributes.qos.m_timeBasedFilter.minimum_separation) &&
-                            passFilter(&shape))
-                    {
-                        if(this->m_attributes.qos.m_ownership.kind == SHARED_OWNERSHIP_QOS)
-                        {
-                            it->push_front(shape);
-                            if(it->size() > m_attributes.topic.historyQos.depth)
-                            {
-                                it->pop_back();
-                            }
-                        }
-                        else
-                        {
-                            // cout << "SHARED OWNERSHIP "<<endl;
-                            // cout << "IT STRENGTH: "<< it->front().m_strength << endl;
-                            if( shape.m_strength > it->front().m_strength &&
-                                    shape.m_writerGuid != it->front().m_writerGuid)
-                            {
-                                // cout << "MORE STRENGTH; DIFFERENT WRITER "<<endl;
-                                it->clear();
-                                it->push_front(shape);
-                            }
-                            else if(shape.m_strength == it->front().m_strength &&
-                                    shape.m_writerGuid == it->front().m_writerGuid)
-                            {
-                                //  cout << "SAME STRENGTH; SAME WRITER "<<endl;
-                                it->push_front(shape);
-                                if(it->size() > m_attributes.topic.historyQos.depth)
-                                {
-                                    it->pop_back();
-                                }
-                            }
-                            else if(shape.m_strength == it->front().m_strength &&
-                                    compareGUID(shape.m_writerGuid,it->front().m_writerGuid))
-                            {
-                                //  cout << "SAME STRENGTH; DIFFERENT WRITER (<) "<<endl;l
-                                it->clear();
-                                it->push_front(shape);
-                            }
-                        }
-                    }
-                }
-            }
-            if(!found && passFilter(&shape))
-            {
-                m_shape.m_shapeHistory.push_back(std::list<ShapeType>(1,shape));
-            }
-
-            //cout << "OK "<<std::flush;
-            m_drawShape = m_shape;
-            m_mutex.unlock();
-            //cout << " UNLOCKED SHAPESub"<<endl;
+            m_shapeHistory.addToHistory(shape);
         }
         else
         {
             cout << "NOT ALIVE DATA"<<endl;
-            for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
-                it!=m_shape.m_shapeHistory.end();++it)
+            //GET THE COLOR:
+            SD_COLOR color = getColorFromInstanceHandle(info.iHandle);
+            if(info.sampleKind == NOT_ALIVE_DISPOSED)
             {
-                bool remove = false;
-//                cout << "COLOR: "<<it->begin()->getColorStr() << endl;
-//                cout << "COLOR NUM: "<< it->begin()->getColor() << endl;
-//                cout << "Ihandle: "<<info.iHandle << endl;
-                if(it->begin()->getColor() == this->m_instances.BlueIH.first &&
-                        info.iHandle == this->m_instances.BlueIH.second)
-                {
-                  //  cout << "Blue iH"<<this->m_instances.BlueIH.second<<endl;
-                    remove = true;
-                }
-                if(it->begin()->getColor() == this->m_instances.PurpleIH.first &&
-                        info.iHandle == this->m_instances.PurpleIH.second)
-                {
-                    remove = true;
-                  //  cout << "Purple iH"<<this->m_instances.PurpleIH.second<<endl;
-                }
-                if(it->begin()->getColor() == this->m_instances.RedIH.first &&
-                        info.iHandle == this->m_instances.RedIH.second)
-                {
-                    remove = true;
-                  //  cout << "Red iH"<<this->m_instances.RedIH.second<<endl;
-                }
-                if(it->begin()->getColor() == this->m_instances.GreenIH.first &&
-                        info.iHandle == this->m_instances.GreenIH.second)
-                {
-                    remove = true;
-                  //  cout << "GreenIH"<<this->m_instances.GreenIH.second<<endl;
-                }
-                if(it->begin()->getColor() == this->m_instances.YellowIH.first &&
-                        info.iHandle == this->m_instances.YellowIH.second)
-                {
-                    remove = true;
-                 //   cout << "Yellow iH"<<this->m_instances.YellowIH.second<<endl;
-                }
-                if(it->begin()->getColor() == this->m_instances.CyanIH.first &&
-                        info.iHandle == this->m_instances.CyanIH.second)
-                {
-                    remove = true;
-                  //  cout << "Cyan iH"<<this->m_instances.CyanIH.second<<endl;
-                }
-                if(it->begin()->getColor() == this->m_instances.MagentaIH.first &&
-                        info.iHandle == this->m_instances.MagentaIH.second)
-                {
-                    remove = true;
-                  //  cout << "Magenta iH"<<this->m_instances.MagentaIH.second<<endl;
-                }
-                if(it->begin()->getColor() == this->m_instances.OrangeIH.first &&
-                        info.iHandle == this->m_instances.OrangeIH.second)
-                {
-                    remove = true;
-                   // cout << "Orange iH"<<this->m_instances.OrangeIH.second<<endl;
-                }
-                if(remove)
-                {
-                   // cout << "Disposing SHAPE of color: "<< it->begin()->getColorStr()<<endl;
-                    m_shape.m_shapeHistory.erase(it);
-                    break;
-                }
+                m_shapeHistory.dispose(color);
             }
-           cout << "HISTORY OF SIZE: "<< m_shape.m_shapeHistory.size() << endl;
+            else
+            {
+                m_shapeHistory.unregister(color);
+            }
         }
     }
 }
 
 
-bool ShapeSubscriber::passFilter(ShapeType* shape)
-{
-    if(!m_filter.m_useFilter)
-        return true;
-    else
-    {
-        if(shape->m_x < m_filter.m_maxX &&
-                shape->m_x > m_filter.m_minX &&
-                shape->m_y < m_filter.m_maxY &&
-                shape->m_y > m_filter.m_minY)
-        {
-            // cout << "FILTER PASSED"<<endl;
-            return true;
-        }
-    }
-    return false;
-}
 
 void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
 {
@@ -236,25 +103,16 @@ void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
     {
         cout << "Subscriber REMOVED Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         m_mutex.lock();
-        for(std::vector<std::list<ShapeType>>::iterator it = m_shape.m_shapeHistory.begin();
-            it!=m_shape.m_shapeHistory.end();++it)
-        {
-          //  cout << it->front().m_writerGuid << endl;
-           // cout << info.remoteEndpointGuid << endl;
-            if(it->front().m_writerGuid == info.remoteEndpointGuid)
-            {
-                cout << "FOUND, DELETING entire instance"<<endl;
-                m_shape.m_shapeHistory.erase(it);
-                break;
-            }
-        }
+        m_shapeHistory.removedOwner(info.remoteEndpointGuid);
         m_mutex.unlock();
     }
 }
 
-void ShapeSubscriber::adjustContentFilter(ShapeContentFilter& filter)
+void ShapeSubscriber::adjustContentFilter(ShapeFilter &filter)
 {
-    m_filter = filter;
+    m_mutex.lock();
+    m_shapeHistory.adjustContentFilter(filter);
+    m_mutex.unlock();
 }
 
 //void ShapeSubscriber::removeSamplesFromWriter(GUID_t)

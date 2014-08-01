@@ -17,6 +17,7 @@
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeHistory.h"
 #include <QMutex>
 
 
@@ -40,14 +41,14 @@ public:
 
 	void onNewDataMessage();
     void onSubscriptionMatched(MatchingInfo info);
-    void adjustContentFilter(ShapeContentFilter& m_filter);
+    void adjustContentFilter(ShapeFilter& m_filter);
 	bool hasReceived;
-    Shape m_shape;
+
     QMutex m_mutex;
-    ShapeContentFilter m_filter;
-    bool passFilter(ShapeType* shape);
+
     std::vector<GUID_t> m_remoteWriters;
-    ColorInstanceHandle m_instances;
+    ShapeHistory m_shapeHistory;
+    TYPESHAPE m_shapeType;
 
 };
 

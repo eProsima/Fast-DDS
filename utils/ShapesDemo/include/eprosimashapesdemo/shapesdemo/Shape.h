@@ -30,7 +30,7 @@ using namespace eprosima::rtps;
 class Shape {
 public:
     Shape():m_x(0),m_y(0),m_size(0),m_strength(0),
-        m_hasOwner(true),m_dirX(0),m_dirY(0),m_changeDir(0){}
+        m_hasOwner(true),m_dirX(0),m_dirY(0),m_changeDir(true){}
     virtual ~Shape(){}
     void define(SD_COLOR color=SD_BLUE,
                 uint32_t x=30,uint32_t y =30,uint32_t size=30)

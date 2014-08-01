@@ -1,6 +1,10 @@
 #ifndef SHAPEDEFINITIONS_H
 #define SHAPEDEFINITIONS_H
 
+#define MAX_DRAW_AREA_X 235
+#define MAX_DRAW_AREA_Y 265
+#define INITIAL_INTERVAL_MS 200
+
 /**
  * @brief The SD_COLOR enum, the different colors.
  */
