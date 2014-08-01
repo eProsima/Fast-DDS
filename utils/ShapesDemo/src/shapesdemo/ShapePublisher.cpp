@@ -55,7 +55,6 @@ void ShapePublisher::write()
         //cout << "Trying to lock ShapePub: "<<std::flush;
         m_mutex.lock();
      //   cout << " OK "<<std::flush;
-        m_drawShape = m_shape;
         hasWritten = true;
         m_mutex.unlock();
 
