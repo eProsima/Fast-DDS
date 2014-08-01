@@ -98,12 +98,12 @@ public:
     uint32_t getRandomX(uint32_t size=10);
     uint32_t getRandomY(uint32_t size=10);
 
-    /**
-     * @brief Get the shapes to draw.
-     * @param shvec Pointer to a shapevector.
-     * @return True if found.
-     */
-    bool getShapes(std::vector<Shape*>* shvec);
+//    /**
+//     * @brief Get the shapes to draw.
+//     * @param shvec Pointer to a shapevector.
+//     * @return True if found.
+//     */
+//    bool getShapes(std::vector<Shape*>* shvec);
 
     //     QMutex* getMutex()
     //     {

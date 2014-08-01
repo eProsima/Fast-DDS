@@ -7,7 +7,7 @@
  *************************************************************************/
 #include "eprosimartps/dds/DDSTopicDataType.h"
 
-#include "eprosimashapesdemo/shapesdemo/ShapeType.h"
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
 
 using namespace eprosima;
 using namespace dds;

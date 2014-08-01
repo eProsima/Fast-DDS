@@ -16,28 +16,7 @@
 #include "eprosimartps/common/types/Guid.h"
 
 using namespace eprosima::rtps;
-/**
- * @brief The SD_COLOR enum, the different colors.
- */
-enum SD_COLOR
-{
-    SD_PURPLE,
-    SD_BLUE,
-    SD_RED,
-    SD_GREEN,
-    SD_YELLOW,
-    SD_CYAN,
-    SD_MAGENTA,
-    SD_ORANGE
-};
-/**
- * @brief The TYPESHAPE enum, the different shapes.
- */
-enum TYPESHAPE{
-    SQUARE,
-    CIRCLE,
-    TRIANGLE
-};
+
 
 /**
  * @brief The ShapeType class, defined a shape.
@@ -66,16 +45,12 @@ public:
     {
         return m_color;
     }
-    uint32_t m_x;
-    uint32_t m_y;
-    uint32_t m_size;
-    Time_t m_time;
-    GUID_t m_writerGuid;
-    uint32_t m_strength;
+
 private:
     char m_char_color[8]; //KEY
    // std::string m_str_color; //KEY
-    SD_COLOR m_color;
-};
 
+};
+#include <list>
+#include <vector>
 #endif

@@ -39,27 +39,6 @@ bool ShapeSubscriber::initSubscriber()
 }
 
 
-inline bool compareGUID(GUID_t& g1, GUID_t& g2)
-{
-    for(uint8_t i =0;i<16;++i)
-    {
-        if(i<12)
-        {
-            if(g1.guidPrefix.value[i]<g2.guidPrefix.value[i])
-                return true;
-            else if(g1.guidPrefix.value[i]>g2.guidPrefix.value[i])
-                return false;
-        }
-        else
-        {
-            if(g1.entityId.value[i-12]<g2.entityId.value[i-12])
-                return true;
-            else if(g1.entityId.value[i-12]>g2.entityId.value[i-12])
-                return false;
-        }
-    }
-    return false;
-}
 
 
 void ShapeSubscriber::onNewDataMessage()
