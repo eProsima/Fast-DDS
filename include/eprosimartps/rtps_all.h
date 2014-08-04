@@ -33,6 +33,7 @@
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
+#include "eprosimartps/utils/TimeConversion.h"
 
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/DDSQosPolicies.h"

@@ -47,7 +47,6 @@ public:
     void onPublicationMatched(MatchingInfo info);
 
     Shape m_shape;
-    Shape m_drawShape;
     QMutex m_mutex;
     bool isInitialized;
     bool hasWritten;
