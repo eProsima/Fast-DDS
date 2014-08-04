@@ -18,28 +18,31 @@ std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / siz
 
 
 LatencyTestPublisher::LatencyTestPublisher():
-		mp_participant(NULL),
-		mp_datapub(NULL),
-		mp_commandpub(NULL),
-		mp_datasub(NULL),
-		mp_commandsub(NULL),
-		m_overhead(0.0),
-		n_subscribers(0),
-		sema(0),
-		m_status(0),
-		n_received(0),
-		m_datapublistener(this),
-		m_datasublistener(this),
-		m_commandpublistener(this),
-		m_commandsublistener(this)
+								mp_participant(NULL),
+								mp_datapub(NULL),
+								mp_commandpub(NULL),
+								mp_datasub(NULL),
+								mp_commandsub(NULL),
+								mp_latency_in(NULL),
+								mp_latency_out(NULL),
+								m_overhead(0.0),
+								n_subscribers(0),
+								m_disc_sema(0),
+								m_comm_sema(0),
+								m_data_sema(0),
+								m_status(0),
+								n_received(0),
+								m_datapublistener(this),
+								m_datasublistener(this),
+								m_commandpublistener(this),
+								m_commandsublistener(this)
 {
 
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
 {
-	if(mp_participant!=NULL)
-		DomainParticipant::removeParticipant(mp_participant);
+
 }
 
 
@@ -81,6 +84,9 @@ bool LatencyTestPublisher::init(int n_sub)
 		return false;
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
+	Locator_t loc;
+	loc.port = 7555;
+	PubDataparam.unicastLocatorList.push_back(loc);
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencySUB2PUB";
@@ -122,14 +128,17 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(MatchingInfo in
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		mp_up->sema.post();
+		cout << RTPS_MAGENTA << "Data Pub Matched "<<RTPS_DEF<<endl;
+
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
 			pError("More matched subscribers than expected"<<endl);
 			mp_up->m_status = -1;
-			mp_up->sema.post();
+			mp_up->m_disc_sema.post();
 		}
+		else
+			mp_up->m_disc_sema.post();
 	}
 }
 
@@ -137,14 +146,17 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(MatchingInfo i
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		mp_up->sema.post();
+		cout << RTPS_MAGENTA << "Data Sub Matched "<<RTPS_DEF<<endl;
+
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
 			pError("More matched subscribers than expected"<<endl);
 			mp_up->m_status = -1;
-			mp_up->sema.post();
+			mp_up->m_disc_sema.post();
 		}
+		else
+			mp_up->m_disc_sema.post();
 	}
 }
 
@@ -152,14 +164,17 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(MatchingInfo
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		mp_up->sema.post();
+		cout << RTPS_MAGENTA << "Command Pub Matched "<<RTPS_DEF<<endl;
+
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
 			pError("More matched subscribers than expected"<<endl);
 			mp_up->m_status = -1;
-			mp_up->sema.post();
+			mp_up->m_disc_sema.post();
 		}
+		else
+			mp_up->m_disc_sema.post();
 	}
 }
 
@@ -167,14 +182,17 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(MatchingInf
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		mp_up->sema.post();
+		cout << RTPS_MAGENTA << "Command Sub Matched "<<RTPS_DEF<<endl;
+
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
 			pError("More matched subscribers than expected"<<endl);
 			mp_up->m_status = -1;
-			mp_up->sema.post();
+			mp_up->m_disc_sema.post();
 		}
+		else
+			mp_up->m_disc_sema.post();
 	}
 }
 
@@ -186,7 +204,7 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage()
 	if(info.sampleKind == ALIVE)
 	{
 		if(command.m_command == BEGIN)
-			mp_up->sema.post();
+			mp_up->m_comm_sema.post();
 	}
 }
 #if defined(_WIN32)
@@ -228,9 +246,13 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
+
+//	eClock::my_sleep(50);
 	mp_up->n_received++;
+//	cout << "R: "<< mp_up->mp_latency_in->seqnum << "|"<<mp_up->n_received<<"||"<<std::flush;
 	if(mp_up->n_received == mp_up->n_subscribers)
 	{
+		//cout <<"T|"<<std::flush;
 		mp_up->m_clock.setTimeNow(&mp_up->m_t2);
 		mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
 	}
@@ -241,25 +263,25 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 		command.m_command = STOP_ERROR;
 		mp_up->mp_commandpub->write(&command);
 		mp_up->m_status = -1;
-		mp_up->sema.post();
+		mp_up->m_data_sema.post();
 	}
-	else if(mp_up->mp_latency_in->seqnum == NSAMPLES)
+	else if(mp_up->mp_latency_in->seqnum == NSAMPLES) //TEST FINISHED
 	{
 		if(mp_up->n_received == mp_up->n_subscribers)
 		{
-			mp_up->sema.post();
+			mp_up->m_data_sema.post();
 		}
 	}
 	else
 	{
-		if(mp_up->n_received == mp_up->n_subscribers)
+		if(mp_up->n_received == mp_up->n_subscribers) //SEND NEXT SAMPLE
 		{
 			mp_up->mp_latency_out->seqnum++;
 			mp_up->m_clock.setTimeNow(&mp_up->m_t1);
 			mp_up->mp_datapub->write(mp_up->mp_latency_out);
 			mp_up->n_received = 0;
-			mp_up->mp_latency_in->seqnum = 0;
 		}
+		mp_up->mp_latency_in->seqnum = 0;
 	}
 }
 #endif
@@ -271,21 +293,28 @@ void LatencyTestPublisher::run()
 	//EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
 	for(uint8_t i = 0;i<n_subscribers*4;++i)
 	{
-		sema.wait();
+		m_disc_sema.wait();
+		if(m_status == -1)
+			return;
 	}
+	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
 	printf("Printing times in us\n");
-	printf("   Bytes,   stdev,    mean,     min,    50%%,    90%%,    99%%, 99.99%%,     max\n");
+	printf("   Bytes,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
 	printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
+	int aux;
 	for(std::vector<uint32_t>::iterator ndata = data_size_pub.begin();ndata!=data_size_pub.end();++ndata)
 	{
 		if(!this->test(*ndata))
 			break;
+		eClock::my_sleep(100);
+		cout << "Enter number to start next text: ";
+		std::cin >> aux;
 	}
 }
 
 bool LatencyTestPublisher::test(uint32_t datasize)
 {
-	cout << "Beginning test of size: "<<datasize+4 <<endl;
+	//cout << "Beginning test of size: "<<datasize+4 <<endl;
 	m_status = 0;
 	n_received = 0;
 	mp_latency_in = new LatencyType(datasize);
@@ -294,14 +323,17 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	TestCommandType command;
 	command.m_command = READY;
 	mp_commandpub->write(&command);
+	cout << "WATIGIN FOR COMMAND RESPONSES ";
 	for(uint8_t i = 0;i<n_subscribers;++i)
 	{
-		sema.wait();
+		m_comm_sema.wait();
+		cout << (int)i << " ";
 	}
+	cout << endl;
 	//BEGIN THE TEST:
 	m_clock.setTimeNow(&m_t1);
 	mp_datapub->write((void*)mp_latency_out);
-	sema.wait();
+	m_data_sema.wait();
 	if(m_status !=0)
 	{
 		cout << "Error in test "<<endl;
@@ -310,11 +342,11 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	//TEST FINISHED:
 	size_t removed=0;
 	mp_datapub->removeAllChange(&removed);
-	cout << "REMOVED: "<< removed<<endl;
+//	cout << "REMOVED: "<< removed<<endl;
 	analizeTimes(datasize);
 	printStat(m_stats.back());
-//	delete(mp_latency_in);
-//	delete(mp_latency_out);
+	//	delete(mp_latency_in);
+	//	delete(mp_latency_out);
 	return true;
 }
 
@@ -323,7 +355,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.mean = (TimeConv::Time_t2MicroSecondsDouble(m_t2) - TimeConv::Time_t2MicroSecondsDouble(m_t1))/NSAMPLES;
+	TS.mean = m_times.front()/(NSAMPLES+1);
 	m_stats.push_back(TS);
 }
 #else
@@ -378,7 +410,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
-	printf("%6lu,%6.2f,%6.2f,%6.2f,%6.2f,%6.2f,%6.2f,%6.2f,%6.2f \n",
+	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
 			TS.min,
 			TS.p50,TS.p90,TS.p99,TS.p9999,

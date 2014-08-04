@@ -73,7 +73,9 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			bool final = false;
 			if(sns.isSetEmpty())
 				final = true;
-			RTPSMessageCreator::addSubmessageAcknack(&m_heartbeat_response_msg,
+			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
+			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
+												mp_WP->mp_SFR->getGuid().guidPrefix,
 												mp_WP->mp_SFR->getGuid().entityId,
 												mp_WP->m_data->m_guid.entityId,
 												sns,

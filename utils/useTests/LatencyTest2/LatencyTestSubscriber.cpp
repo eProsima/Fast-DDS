@@ -17,19 +17,21 @@ uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
 LatencyTestSubscriber::LatencyTestSubscriber():
-mp_participant(NULL),
-mp_datapub(NULL),
-mp_commandpub(NULL),
-mp_datasub(NULL),
-mp_commandsub(NULL),
-mp_latency(NULL),
-sema(0),
-m_status(0),
-n_received(0),
-m_datapublistener(this),
-m_datasublistener(this),
-m_commandpublistener(this),
-m_commandsublistener(this)
+		mp_participant(NULL),
+		mp_datapub(NULL),
+		mp_commandpub(NULL),
+		mp_datasub(NULL),
+		mp_commandsub(NULL),
+		mp_latency(NULL),
+		m_disc_sema(0),
+		m_comm_sema(0),
+		m_data_sema(0),
+		m_status(0),
+		n_received(0),
+		m_datapublistener(this),
+		m_datasublistener(this),
+		m_commandpublistener(this),
+		m_commandsublistener(this)
 {
 
 
@@ -37,8 +39,7 @@ m_commandsublistener(this)
 
 LatencyTestSubscriber::~LatencyTestSubscriber()
 {
-	if(mp_participant!=NULL)
-		DomainParticipant::removeParticipant(mp_participant);
+
 }
 
 bool LatencyTestSubscriber::init()
@@ -71,6 +72,9 @@ bool LatencyTestSubscriber::init()
 		return false;
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
+	Locator_t loc;
+	loc.port = 7555;
+	PubDataparam.unicastLocatorList.push_back(loc);
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencyPUB2SUB";
@@ -114,13 +118,19 @@ bool LatencyTestSubscriber::init()
 void LatencyTestSubscriber::DataPubListener::onPublicationMatched(MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
-		mp_up->sema.post();
+	{
+		cout << RTPS_MAGENTA << "Data Pub Matched "<<RTPS_DEF<<endl;
+		mp_up->m_disc_sema.post();
+	}
 }
 
 void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
-		mp_up->sema.post();
+	{
+		cout << RTPS_MAGENTA << "Data Sub Matched "<<RTPS_DEF<<endl;
+		mp_up->m_disc_sema.post();
+	}
 }
 
 
@@ -128,40 +138,47 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo 
 void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
-		mp_up->sema.post();
+	{
+		cout << RTPS_MAGENTA << "Command Pub Matched "<<RTPS_DEF<<endl;
+		mp_up->m_disc_sema.post();
+	}
 }
 
 void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
-		mp_up->sema.post();
+	{
+		cout << RTPS_MAGENTA << "Command Sub Matched "<<RTPS_DEF<<endl;
+		mp_up->m_disc_sema.post();
+	}
 }
 
 void LatencyTestSubscriber::CommandSubListener::onNewDataMessage()
 {
 	TestCommandType command;
 	mp_up->mp_commandsub->takeNextData(&command,&mp_up->m_sampleinfo);
+	cout << "RCOMMAND: "<< command.m_command << endl;
 	if(command.m_command == READY)
 	{
-		command.m_command = BEGIN;
-		mp_up->mp_commandpub->write(&command);
-		mp_up->sema.post();
+		cout << "Publisher has new test ready..."<<endl;
+		mp_up->m_comm_sema.post();
 	}
 	else if(command.m_command == STOP_ERROR)
 	{
 		mp_up->m_status = -1;
-		mp_up->sema.post();
+		mp_up->m_comm_sema.post();
 	}
 }
 
 void LatencyTestSubscriber::DataSubListener::onNewDataMessage()
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
-	//cout << "R: "<<m_latency->seqnum<< "|";
+//	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<std::flush;
+//	eClock::my_sleep(50);
 	mp_up->mp_datapub->write((void*)mp_up->mp_latency);
-	mp_up->n_received++;
 	if(mp_up->n_received == NSAMPLES)
-		mp_up->sema.post();
+		mp_up->m_data_sema.post();
+	mp_up->n_received++;
 }
 
 
@@ -171,9 +188,9 @@ void LatencyTestSubscriber::run()
 	//EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
 	for(uint8_t i = 0;i<4;++i)
 	{
-		sema.wait();
+		m_disc_sema.wait();
 	}
-	printf("------,------,------,------,------,------,------,------,------,\n");
+	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
 	for(std::vector<uint32_t>::iterator ndata = data_size_sub.begin();ndata!=data_size_sub.end();++ndata)
 	{
 		if(!this->test(*ndata))
@@ -183,11 +200,21 @@ void LatencyTestSubscriber::run()
 
 bool LatencyTestSubscriber::test(uint32_t datasize)
 {
+	cout << "Preparing test with data size: " << datasize+4<<endl;
 	mp_latency = new LatencyType(datasize);
-	sema.wait();
+	m_comm_sema.wait();
 	m_status = 0;
-	cout << "Test with data size: " << datasize+4<<endl;
-	sema.wait();
+	n_received = 0;
+	TestCommandType command;
+	command.m_command = BEGIN;
+	mp_commandpub->write(&command);
+
+	cout << "Testing with data size: " << datasize+4<<endl;
+	m_data_sema.wait();
+	cout << "TEST OF SiZE: "<< datasize +4 << " ENDS"<<endl;
+	size_t removed;
+	this->mp_datapub->removeAllChange(&removed);
+	cout << "REMOVED: "<< removed<<endl;
 	delete(mp_latency);
 	if(m_status == -1)
 		return false;
