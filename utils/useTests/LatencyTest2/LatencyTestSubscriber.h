@@ -28,7 +28,9 @@ public:
 	Subscriber* mp_commandsub;
 	LatencyType* mp_latency;
 	SampleInfo_t m_sampleinfo;
-	boost::interprocess::interprocess_semaphore sema;
+	boost::interprocess::interprocess_semaphore m_disc_sema;
+	boost::interprocess::interprocess_semaphore m_comm_sema;
+	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	int n_received;
 	bool init();

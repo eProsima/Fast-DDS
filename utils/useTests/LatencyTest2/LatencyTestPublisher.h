@@ -41,7 +41,9 @@ public:
 	SampleInfo_t m_sampleinfo;
 	std::vector<double> m_times;
 	std::vector<TimeStats> m_stats;
-	boost::interprocess::interprocess_semaphore sema;
+	boost::interprocess::interprocess_semaphore m_disc_sema;
+	boost::interprocess::interprocess_semaphore m_comm_sema;
+	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	int n_received;
 	bool init(int n_sub);

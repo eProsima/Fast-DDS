@@ -100,7 +100,7 @@ int main(int argc, char** argv){
 	}
 
 	DomainParticipant::stopAll();
-
+	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;
 }
