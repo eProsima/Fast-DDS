@@ -21,15 +21,19 @@
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
+#include "eprosimartps/Participant.h"
+
+
 
 namespace eprosima {
 namespace dds {
 
 
 
-SubscriberImpl::SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype):
+SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype):
 												mp_Reader(Rin),
-												mp_type(ptype)
+												mp_type(ptype),
+												mp_participant(p)
 {
 
 }
@@ -150,7 +154,10 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 	}
 	//QOS:
 	//CHECK IF THE QOS CAN BE SET
-
+	if(!this->mp_Reader->canQosBeUpdated(att.qos))
+	{
+		updated &=false;
+	}
 	if(updated)
 	{
 		this->mp_Reader->setExpectsInlineQos(att.expectsInlineQos);
@@ -161,6 +168,9 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			sfr->updateTimes(att.times);
 
 		}
+		this->mp_Reader->setQos(att.qos,false);
+		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+		mp_participant->getBuiltinProtocols()->updateLocalReader(this->mp_Reader);
 	}
 
 

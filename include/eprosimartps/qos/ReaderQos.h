@@ -67,6 +67,12 @@ public:
 	 * @return True if correct.
 	 */
 	bool checkQos();
+	/**
+	 * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+	 * @param qos Reference to the new qos.
+	 * @return True if they can be updated.
+	 */
+	bool canQosBeUpdated(ReaderQos& qos);
 };
 
 

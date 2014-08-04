@@ -264,13 +264,13 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	{
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
 			return NULL;
-		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
+		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type,slisten))
 			return NULL;
-		subImpl = new SubscriberImpl((RTPSReader*)SR,p_type);
+		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type);
 	}
 	if(subImpl != NULL)
 	{
