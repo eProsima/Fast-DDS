@@ -92,6 +92,19 @@ public:
 	 */
 	bool newLocalWriterProxyData(RTPSWriter* W);
 	/**
+	 * A previously created Reader has been updated
+	 * @param R Pointer to the reader;
+	 * @return True if correctly updated
+	 */
+	bool updatedLocalReader(RTPSReader* R);
+	/**
+	 * A previously created Writer has been updated
+	 * @param W Pointer to the Writer
+	 * @return True if correctly updated
+	 */
+	bool updatedLocalWriter(RTPSWriter* W);
+
+	/**
 	 * Pair a WriterProxyData against all local Readers.
 	 * @param wdata Pointer to the WPD object.
 	 */

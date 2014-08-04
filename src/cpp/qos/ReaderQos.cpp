@@ -18,7 +18,7 @@ namespace eprosima {
 namespace dds {
 
 
-void ReaderQos::setQos( ReaderQos& qos, bool first_time)
+void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
 {
 	if(first_time)
 	{

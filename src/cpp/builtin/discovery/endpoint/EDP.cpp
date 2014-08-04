@@ -82,6 +82,35 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader)
 	return true;
 }
 
+bool EDP::updatedLocalReader(RTPSReader* R)
+{
+	ReaderProxyData* rdata = NULL;
+	if(this->mp_PDP->lookupReaderProxyData(R->getGuid(),&rdata))
+	{
+		rdata->m_qos.setQos(R->getQos(),false);
+		rdata->m_expectsInlineQos = R->expectsInlineQos();
+		processLocalReaderProxyData(rdata);
+		this->updatedReaderProxy(rdata);
+		return true;
+	}
+	return false;
+}
+
+bool EDP::updatedLocalWriter(RTPSWriter* W)
+{
+	WriterProxyData* wdata = NULL;
+	if(this->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata))
+	{
+		wdata->m_qos.setQos(W->getQos(),false);
+		processLocalWriterProxyData(wdata);
+		this->updatedWriterProxy(wdata);
+		return true;
+	}
+	return false;
+}
+
+
+
 bool EDP::newLocalWriterProxyData(RTPSWriter* writer)
 {
 	pDebugInfo(RTPS_CYAN<<"EDP new LocalWriterProxyData: "<<writer->getGuid().entityId<<RTPS_DEF<<endl);

@@ -66,7 +66,7 @@ public:
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	void setQos( WriterQos& qos, bool first_time);
+	void setQos(const WriterQos& qos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
