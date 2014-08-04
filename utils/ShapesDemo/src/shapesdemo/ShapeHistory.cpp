@@ -5,7 +5,7 @@
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
-#include "include/eprosimashapesdemo/shapesdemo/ShapeHistory.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeHistory.h"
 #include "eprosimartps/utils/TimeConversion.h"
 inline bool compareGUID(GUID_t& g1, GUID_t& g2)
 {
@@ -43,7 +43,9 @@ bool ShapeHistory::addToHistory(Shape& sh)
         {
             addNewInstance(sh);
         }
+        return true;
     }
+    return false;
 }
 
 void ShapeHistory::addShapeToList(Shape&sh,std::list<Shape>& list)
