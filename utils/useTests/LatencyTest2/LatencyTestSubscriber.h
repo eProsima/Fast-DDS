@@ -1,0 +1,74 @@
+/*************************************************************************
+ * Copyright (c) 2014 eProsima. All rights reserved.
+ *
+ * This copy of eProsima RTPS is licensed to you under the terms described in the
+ * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ *
+ *************************************************************************/
+
+/**
+ * @file LatencyTestSubscriber.h
+ *
+ */
+
+#ifndef LATENCYTESTSUBSCRIBER_H_
+#define LATENCYTESTSUBSCRIBER_H_
+
+#include "LatencyTestTypes.h"
+
+class LatencyTestSubscriber {
+public:
+	LatencyTestSubscriber();
+	virtual ~LatencyTestSubscriber();
+
+	Participant* mp_participant;
+	Publisher* mp_datapub;
+	Publisher* mp_commandpub;
+	Subscriber* mp_datasub;
+	Subscriber* mp_commandsub;
+	LatencyType* mp_latency;
+	SampleInfo_t m_sampleinfo;
+	boost::interprocess::interprocess_semaphore sema;
+	int m_status;
+	int n_received;
+	bool init();
+	void run();
+	bool test(uint32_t datasize);
+	class DataPubListener : public PublisherListener
+	{
+	public:
+		DataPubListener(LatencyTestSubscriber* up):mp_up(up){}
+		~DataPubListener(){}
+		void onPublicationMatched(MatchingInfo info);
+		LatencyTestSubscriber* mp_up;
+	}m_datapublistener;
+	class DataSubListener : public SubscriberListener
+	{
+	public:
+		DataSubListener(LatencyTestSubscriber* up):mp_up(up){}
+		~DataSubListener(){}
+		void onSubscriptionMatched(MatchingInfo into);
+		void onNewDataMessage();
+		LatencyTestSubscriber* mp_up;
+	}m_datasublistener;
+	class CommandPubListener : public PublisherListener
+	{
+	public:
+		CommandPubListener(LatencyTestSubscriber* up):mp_up(up){}
+		~CommandPubListener(){}
+		void onPublicationMatched(MatchingInfo info);
+		LatencyTestSubscriber* mp_up;
+	}m_commandpublistener;
+	class CommandSubListener : public SubscriberListener
+	{
+	public:
+		CommandSubListener(LatencyTestSubscriber* up):mp_up(up){}
+		~CommandSubListener(){}
+		void onSubscriptionMatched(MatchingInfo into);
+		void onNewDataMessage();
+		LatencyTestSubscriber* mp_up;
+	}m_commandsublistener;
+
+};
+
+#endif /* LATENCYTESTSUBSCRIBER_H_ */
