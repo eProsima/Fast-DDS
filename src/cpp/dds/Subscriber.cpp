@@ -166,9 +166,9 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			//UPDATE TIMES:
 			StatefulReader* sfr = (StatefulReader*)mp_Reader;
 			sfr->updateTimes(att.times);
-
 		}
 		this->mp_Reader->setQos(att.qos,false);
+		this->m_attributes = att;
 		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
 		mp_participant->getBuiltinProtocols()->updateLocalReader(this->mp_Reader);
 	}

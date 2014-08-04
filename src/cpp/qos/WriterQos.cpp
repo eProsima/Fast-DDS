@@ -28,7 +28,7 @@ WriterQos::~WriterQos()
 }
 
 
-void WriterQos::setQos( WriterQos& qos, bool first_time)
+void WriterQos::setQos(const  WriterQos& qos, bool first_time)
 {
 	if(first_time)
 	{
