@@ -23,6 +23,7 @@ namespace eprosima {
 
 namespace rtps{
 class RTPSReader;
+class ParticipantImpl;
 }
 
 using namespace rtps;
@@ -37,12 +38,13 @@ class SampleInfo_t;
 
 
 
+
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
  */
 class SubscriberImpl {
 public:
-	SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype);
+	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype);
 	virtual ~SubscriberImpl();
 
 	/**
@@ -105,6 +107,8 @@ private:
 	DDSTopicDataType* mp_type;
 	//!Attributes of the Subscriber
 	SubscriberAttributes m_attributes;
+	//!Pointer to the participant
+	ParticipantImpl* mp_participant;
 
 };
 

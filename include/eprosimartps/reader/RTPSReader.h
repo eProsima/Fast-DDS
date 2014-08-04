@@ -114,6 +114,7 @@ public:
 	SubscriberListener* getListener(){return mp_listener;}
 	void setListener(SubscriberListener* plistener){mp_listener = plistener;}
 	void setQos( ReaderQos& qos,bool first)	{return m_qos.setQos(qos,first);}
+	bool canQosBeUpdated(ReaderQos& qos){return m_qos.canQosBeUpdated(qos);}
 	const ReaderQos& getQos(){return m_qos;}
 	bool expectsInlineQos(){return m_expectsInlineQos;}
 	void setExpectsInlineQos(bool exp){m_expectsInlineQos = exp;}

@@ -107,7 +107,7 @@ bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 		return false;
 	if(t1.historyQos.kind == KEEP_LAST_HISTORY_QOS && t1.historyQos.depth != t2.historyQos.depth)
 		return false;
-
+	return true;
 }
 
 

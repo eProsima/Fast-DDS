@@ -61,10 +61,10 @@ void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 		m_destinationOrder.hasChanged = true;
 	}
 	if(m_userData.data != qos.m_userData.data )
-		{
+	{
 		m_userData = qos.m_userData;
 		m_userData.hasChanged = true;
-		}
+	}
 	if(m_timeBasedFilter.minimum_separation != qos.m_timeBasedFilter.minimum_separation )
 	{
 		m_timeBasedFilter = qos.m_timeBasedFilter;
@@ -134,6 +134,39 @@ bool ReaderQos::checkQos()
 		return false;
 	}
 	return true;
+}
+
+bool ReaderQos::canQosBeUpdated(ReaderQos& qos)
+{
+	bool updatable = true;
+	if(	m_durability.kind != qos.m_durability.kind)
+	{
+		updatable = false;
+		pWarning("ReaderQos:Durability kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+
+	if(m_liveliness.kind !=  qos.m_liveliness.kind)
+	{
+		updatable = false;
+		pWarning("ReaderQos:Liveliness Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+
+	if(m_reliability.kind != qos.m_reliability.kind)
+	{
+		updatable = false;
+		pWarning("ReaderQos:Reliability Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+	if(m_ownership.kind != qos.m_ownership.kind)
+	{
+		updatable = false;
+		pWarning("ReaderQos:Ownership Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+	if(m_destinationOrder.kind != qos.m_destinationOrder.kind)
+	{
+		updatable = false;
+		pWarning("ReaderQos:Destination order Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+	return updatable;
 }
 
 } /* namespace dds */
