@@ -71,13 +71,14 @@ HEADERS += \
     include/eprosimashapesdemo/shapesdemo/Shape.h \
     include/eprosimashapesdemo/shapesdemo/ShapesDemo.h \
     include/eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h \
-    include/eprosimashapesdemo/shapesdemo/ShapeType.h \
     include/eprosimashapesdemo/utils/md5.h \
     include/eprosimashapesdemo/shapesdemo/ShapePublisher.h \
     include/eprosimashapesdemo/qt/UpdateThread.h \
     include/eprosimashapesdemo/shapesdemo/ShapeSubscriber.h \
     include/eprosimashapesdemo/qt/optionsdialog.h \
-    include/eprosimashapesdemo/qt/ContentFilterSelector.h
+    include/eprosimashapesdemo/qt/ContentFilterSelector.h \
+    include/eprosimashapesdemo/shapesdemo/ShapeDefinitions.h \
+    include/eprosimashapesdemo/shapesdemo/ShapeHistory.h
 
 
 SOURCES += \
@@ -85,17 +86,16 @@ SOURCES += \
     src/qt/mainwindow.cpp \
     src/qt/publishdialog.cpp \
     src/qt/subscribedialog.cpp \
-    src/shapesdemo/Shape.cpp \
     src/shapesdemo/ShapesDemo.cpp \
     src/shapesdemo/ShapeTopicDataType.cpp \
-    src/shapesdemo/ShapeType.cpp \
     src/utils/md5.cpp \
     src/main.cpp \
     src/shapesdemo/ShapePublisher.cpp \
     src/qt/UpdateThread.cpp \
     src/shapesdemo/ShapeSubscriber.cpp \
     src/qt/optionsdialog.cpp \
-    src/qt/ContentFilterSelector.cpp
+    src/qt/ContentFilterSelector.cpp \
+    src/shapesdemo/ShapeHistory.cpp
 
 
 

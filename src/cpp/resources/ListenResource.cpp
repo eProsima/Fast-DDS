@@ -51,6 +51,7 @@ ListenResource::~ListenResource()
 
 bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 {
+	boost::lock_guard<ListenResource> guard(*this);
 	if(endp->getEndpointKind() == WRITER)
 	{
 		for(Wit wit = m_assocWriters.begin();
@@ -79,6 +80,7 @@ bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 
 bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 {
+	boost::lock_guard<ListenResource> guard(*this);
 	bool found = false;
 	if(endp->getEndpointKind() == WRITER)
 	{
@@ -132,6 +134,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 {
 	if(err == boost::system::errc::success)
 	{
+		boost::lock_guard<ListenResource> guard(*this);
 		m_MessageReceiver.m_rec_msg.length = (uint16_t)msg_size;
 
 		if(m_MessageReceiver.m_rec_msg.length == 0)

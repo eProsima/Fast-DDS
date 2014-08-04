@@ -86,7 +86,6 @@ bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
 
 
 
-
 const GUID_t& SubscriberImpl::getGuid(){
 	return mp_Reader->getGuid();
 }

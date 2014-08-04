@@ -13,39 +13,43 @@
 
 #ifndef SHAPE_H_
 #define SHAPE_H_
-#include <list>
-#include <vector>
-#include "eprosimashapesdemo/shapesdemo/ShapeType.h"
+#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/common/types/Guid.h"
 
+using namespace eprosima::rtps;
+
+#include <cstdint>
+#include <sstream>
 #include <QString>
 
+#include "eprosimashapesdemo/shapesdemo/ShapeDefinitions.h"
+
 /**
- * @brief The Shape class, defines a shape and its History (in case is a Subscriber.).
+ * @brief The Shape class, defines a shape
  */
 class Shape {
 public:
-    Shape();
-	virtual ~Shape();
-    /**
-     * @brief getShapeQStr, get the type fo shape as a string.
-     * @return QString.
-     */
-    QString getShapeQStr()
+    Shape():m_x(0),m_y(0),m_size(0),m_strength(0),
+        m_hasOwner(true),m_dirX(0),m_dirY(0),m_changeDir(true){}
+    virtual ~Shape(){}
+    void define(SD_COLOR color=SD_BLUE,
+                uint32_t x=30,uint32_t y =30,uint32_t size=30)
     {
-        if(m_type == SQUARE)
-            return "Square";
-        if(m_type == CIRCLE)
-            return "Circle";
-        if(m_type == TRIANGLE)
-            return "Triangle";
-        return "ERROR";
+        m_color = color;
+        m_x = x;
+        m_y =y;
+        m_size = size;
+        m_strength = 0;
     }
-
     TYPESHAPE m_type;
-	ShapeType m_mainShape;
-    std::vector<std::list<ShapeType> > m_shapeHistory;
-    //std::list<ShapeType> m_history;
-
+    SD_COLOR m_color;
+    uint32_t m_x;
+    uint32_t m_y;
+    uint32_t m_size;
+    Time_t m_time;
+    GUID_t m_writerGuid;
+    uint32_t m_strength;
+    bool m_hasOwner;
     float m_dirX;
     float m_dirY;
     bool m_changeDir;

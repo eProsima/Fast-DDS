@@ -7,18 +7,20 @@
  *************************************************************************/
 
 /**
- * @file LatencyType.h
+ * @file LatencyTestTypes.h
  *
-
  */
 
-#ifndef LATENCYTYPE_H_
-#define LATENCYTYPE_H_
+#ifndef LATENCYTESTTYPES_H_
+#define LATENCYTESTTYPES_H_
 
 #include "eprosimartps/rtps_all.h"
 
+#define NSAMPLES 5
 
-typedef struct LatencyType{
+
+class LatencyType{
+public:
 	uint32_t seqnum;
 	std::vector<uint8_t> data;
 	LatencyType():
@@ -32,9 +34,14 @@ typedef struct LatencyType{
 	{
 
 	}
-}LatencyType;
+	~LatencyType()
+	{
 
-bool operator==(LatencyType& lt1,LatencyType&lt2)
+	}
+};
+
+
+inline bool operator==(LatencyType& lt1, LatencyType& lt2)
 {
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;
@@ -47,7 +54,6 @@ bool operator==(LatencyType& lt1,LatencyType&lt2)
 	}
 	return true;
 }
-
 
 class LatencyDataType: public DDSTopicDataType
 {
@@ -63,27 +69,36 @@ public:
 	bool deserialize(SerializedPayload_t* payload,void * data);
 };
 
-//Funciones de serializacion y deserializacion para el ejemplo
-bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
+enum TESTCOMMAND:uint32_t{
+	DEFAULT,
+	READY,
+	BEGIN,
+	STOP,
+	STOP_ERROR
+};
+
+typedef struct TestCommandType
 {
-	LatencyType* lt = (LatencyType*)data;
-	*(uint32_t*)payload->data = lt->seqnum;
-	*(uint32_t*)(payload->data+4) = (uint32_t)lt->data.size();
-	std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
-	payload->length = 8+lt->data.size();
-	return true;
-}
+	TESTCOMMAND m_command;
+	TestCommandType(){
+		m_command = DEFAULT;
+	}
+	TestCommandType(TESTCOMMAND com):m_command(com){}
+}TestCommandType;
 
-bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
+class TestCommandDataType:public DDSTopicDataType
 {
-	LatencyType* lt = (LatencyType*)data;
-	lt->seqnum = *(uint32_t*)payload->data;
-	uint32_t siz = *(uint32_t*)(payload->data+4);
-	std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
-	return true;
-}
+public:
+	TestCommandDataType()
+{
+		m_topicDataTypeName = "TestCommandType";
+		m_typeSize = 4;
+		m_isGetKeyDefined = false;
+};
+	~TestCommandDataType(){};
+	bool serialize(void*data,SerializedPayload_t* payload);
+	bool deserialize(SerializedPayload_t* payload,void * data);
+};
 
 
-
-
-#endif /* LATENCYTYPE_H_ */
+#endif /* LATENCYTESTTYPES_H_ */

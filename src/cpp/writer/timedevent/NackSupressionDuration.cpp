@@ -51,7 +51,12 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 				cit!=mp_RP->m_changesForReader.end();++cit)
 		{
 			if(cit->status == UNDERWAY)
-				cit->status = UNACKNOWLEDGED;
+			{
+				if(mp_RP->m_data->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+					cit->status = UNACKNOWLEDGED;
+				else
+					cit->status = ACKNOWLEDGED;
+			}
 		}
 
 	}
