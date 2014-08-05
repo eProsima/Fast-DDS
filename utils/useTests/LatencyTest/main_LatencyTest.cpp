@@ -48,22 +48,42 @@ int main(int argc, char** argv){
 	pInfo("Starting"<<endl)
 	int type;
 	int sub_number = 1;
+	bool echo = true;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
 			type = 1;
-		if(strcmp(argv[1],"subscriber")==0)
+		else if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
+		else
+		{
+			cout << "NEEDS publisher OR subscriber as first argument"<<endl;
+			return 0;
+		}
 		if(argc > 2 && type == 1)
 		{
 			std::istringstream iss( argv[2] );
-			if (iss >> sub_number)
+			if (!(iss >> sub_number))
 			{
-
+				cout << "Problem reading subscriber number "<< endl;
+			}
+		}
+		else if(argc > 2 && type == 2)
+		{
+			if(strcmp(argv[2],"echo")==0)
+			{
+				cout << "Subscriber will ECHO"<<endl;
+				echo = true;
+			}
+			else if(strcmp(argv[2],"noecho")==0)
+			{
+				cout << "Subscriber will NOT ECHO"<<endl;
+				echo = false;
 			}
 			else
 			{
-				cout << "Problem reading subscriber number "<< endl;
+				cout << "Second argument of subscribers needs to be echo or noecho"<<endl;
+				return 0;
 			}
 		}
 
@@ -93,7 +113,7 @@ int main(int argc, char** argv){
 	case 2:
 	{
 		LatencyTestSubscriber latencySub;
-		latencySub.init();
+		latencySub.init(echo);
 		latencySub.run();
 		break;
 	}
