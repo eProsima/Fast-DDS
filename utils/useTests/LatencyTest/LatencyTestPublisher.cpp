@@ -60,8 +60,8 @@ bool LatencyTestPublisher::init(int n_sub)
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 65536;
-	PParam.listenSocketBufferSize = 2*65536;
+	PParam.sendSocketBufferSize = 8712;
+	PParam.listenSocketBufferSize = 17424;
 	PParam.name = "participant_pub";
 	mp_participant = DomainParticipant::createParticipant(PParam);
 	if(mp_participant == NULL)
@@ -345,7 +345,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.mean = m_times.front()/(NSAMPLES+1);
+	TS.mean = (double)( *m_times.begin()/(NSAMPLES+1));
 	m_stats.push_back(TS);
 }
 #else
@@ -400,7 +400,8 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
-	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+	//cout << "MEAN PRINTING: " << TS.mean << endl;
+	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
 			TS.min,
 			TS.p50,TS.p90,TS.p99,TS.p9999,
