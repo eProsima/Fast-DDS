@@ -17,21 +17,22 @@ uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
 LatencyTestSubscriber::LatencyTestSubscriber():
-		mp_participant(NULL),
-		mp_datapub(NULL),
-		mp_commandpub(NULL),
-		mp_datasub(NULL),
-		mp_commandsub(NULL),
-		mp_latency(NULL),
-		m_disc_sema(0),
-		m_comm_sema(0),
-		m_data_sema(0),
-		m_status(0),
-		n_received(0),
-		m_datapublistener(this),
-		m_datasublistener(this),
-		m_commandpublistener(this),
-		m_commandsublistener(this)
+				mp_participant(NULL),
+				mp_datapub(NULL),
+				mp_commandpub(NULL),
+				mp_datasub(NULL),
+				mp_commandsub(NULL),
+				mp_latency(NULL),
+				m_disc_sema(0),
+				m_comm_sema(0),
+				m_data_sema(0),
+				m_status(0),
+				n_received(0),
+				m_datapublistener(this),
+				m_datasublistener(this),
+				m_commandpublistener(this),
+				m_commandsublistener(this),
+				m_echo(true)
 {
 
 
@@ -42,9 +43,9 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 
 }
 
-bool LatencyTestSubscriber::init()
+bool LatencyTestSubscriber::init(bool echo)
 {
-
+	m_echo = echo;
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.domainId = 80;
@@ -52,7 +53,10 @@ bool LatencyTestSubscriber::init()
 	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	PParam.name = "participant_pub";
+	TIME_INFINITE(PParam.builtin.leaseDuration);
+	PParam.sendSocketBufferSize = 65536;
+	PParam.listenSocketBufferSize = 2*65536;
+	PParam.name = "participant_sub";
 	mp_participant = DomainParticipant::createParticipant(PParam);
 	if(mp_participant == NULL)
 		return false;
@@ -173,12 +177,12 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage()
 void LatencyTestSubscriber::DataSubListener::onNewDataMessage()
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
-//	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<std::flush;
-//	eClock::my_sleep(50);
-	mp_up->mp_datapub->write((void*)mp_up->mp_latency);
-	if(mp_up->n_received == NSAMPLES)
+	//	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
+	//	eClock::my_sleep(50);
+	if(mp_up->m_echo)
+		mp_up->mp_datapub->write((void*)mp_up->mp_latency);
+	if(mp_up->mp_latency->seqnum == NSAMPLES)
 		mp_up->m_data_sema.post();
-	mp_up->n_received++;
 }
 
 

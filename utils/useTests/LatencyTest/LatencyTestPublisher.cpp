@@ -18,24 +18,24 @@ std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / siz
 
 
 LatencyTestPublisher::LatencyTestPublisher():
-								mp_participant(NULL),
-								mp_datapub(NULL),
-								mp_commandpub(NULL),
-								mp_datasub(NULL),
-								mp_commandsub(NULL),
-								mp_latency_in(NULL),
-								mp_latency_out(NULL),
-								m_overhead(0.0),
-								n_subscribers(0),
-								m_disc_sema(0),
-								m_comm_sema(0),
-								m_data_sema(0),
-								m_status(0),
-								n_received(0),
-								m_datapublistener(this),
-								m_datasublistener(this),
-								m_commandpublistener(this),
-								m_commandsublistener(this)
+										mp_participant(NULL),
+										mp_datapub(NULL),
+										mp_commandpub(NULL),
+										mp_datasub(NULL),
+										mp_commandsub(NULL),
+										mp_latency_in(NULL),
+										mp_latency_out(NULL),
+										m_overhead(0.0),
+										n_subscribers(0),
+										m_disc_sema(0),
+										m_comm_sema(0),
+										m_data_sema(0),
+										m_status(0),
+										n_received(0),
+										m_datapublistener(this),
+										m_datasublistener(this),
+										m_commandpublistener(this),
+										m_commandsublistener(this)
 {
 
 }
@@ -59,6 +59,9 @@ bool LatencyTestPublisher::init(int n_sub)
 	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	TIME_INFINITE(PParam.builtin.leaseDuration);
+	PParam.sendSocketBufferSize = 65536;
+	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant_pub";
 	mp_participant = DomainParticipant::createParticipant(PParam);
 	if(mp_participant == NULL)
@@ -211,7 +214,7 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage()
 void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
-	mp_up->n_received++;
+
 	if(mp_up->mp_latency_in->seqnum != mp_up->mp_latency_out->seqnum)
 	{
 		cout << "ERROR IN TEST"<<endl;
@@ -224,38 +227,31 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 	}
 	else if(mp_up->mp_latency_in->seqnum == NSAMPLES)
 	{
-		if(mp_up->n_received == mp_up->n_subscribers)
-		{
-			mp_up->m_clock.setTimeNow(&mp_up->m_t2);
-			mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
-			mp_up->m_data_sema.post();
-		}
+
+		mp_up->m_clock.setTimeNow(&mp_up->m_t2);
+		mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
+		mp_up->m_data_sema.post();
+
 	}
 	else
 	{
-		if(mp_up->n_received == mp_up->n_subscribers)
-		{
-			mp_up->mp_latency_out->seqnum++;
-			mp_up->mp_datapub->write(mp_up->mp_latency_out);
-			mp_up->mp_latency_in->seqnum = 0;
-			mp_up->n_received = 0;
-		}
+
+		mp_up->mp_latency_out->seqnum++;
+		mp_up->mp_datapub->write(mp_up->mp_latency_out);
+		mp_up->mp_latency_in->seqnum = 0;
+		mp_up->n_received = 0;
+
 	}
 }
 #else
 void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
-
-//	eClock::my_sleep(50);
-	mp_up->n_received++;
-//	cout << "R: "<< mp_up->mp_latency_in->seqnum << "|"<<mp_up->n_received<<"||"<<std::flush;
-	if(mp_up->n_received == mp_up->n_subscribers)
-	{
-		//cout <<"T|"<<std::flush;
-		mp_up->m_clock.setTimeNow(&mp_up->m_t2);
-		mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
-	}
+	//eClock::my_sleep(50);
+	//cout << "R: "<< mp_up->mp_latency_in->seqnum <<std::flush;
+	//cout <<"T|"<<std::flush;
+	mp_up->m_clock.setTimeNow(&mp_up->m_t2);
+	mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
 	if(mp_up->mp_latency_in->seqnum != mp_up->mp_latency_out->seqnum)
 	{
 		cout << "ERROR IN TEST"<<endl;
@@ -267,20 +263,14 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 	}
 	else if(mp_up->mp_latency_in->seqnum == NSAMPLES) //TEST FINISHED
 	{
-		if(mp_up->n_received == mp_up->n_subscribers)
-		{
-			mp_up->m_data_sema.post();
-		}
+		mp_up->m_data_sema.post();
 	}
 	else
 	{
-		if(mp_up->n_received == mp_up->n_subscribers) //SEND NEXT SAMPLE
-		{
-			mp_up->mp_latency_out->seqnum++;
-			mp_up->m_clock.setTimeNow(&mp_up->m_t1);
-			mp_up->mp_datapub->write(mp_up->mp_latency_out);
-			mp_up->n_received = 0;
-		}
+		mp_up->mp_latency_out->seqnum++;
+		mp_up->m_clock.setTimeNow(&mp_up->m_t1);
+		mp_up->mp_datapub->write(mp_up->mp_latency_out);
+		mp_up->n_received = 0;
 		mp_up->mp_latency_in->seqnum = 0;
 	}
 }
@@ -298,17 +288,17 @@ void LatencyTestPublisher::run()
 			return;
 	}
 	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
-	printf("Printing times in us\n");
+	printf("Printing round-trip times in us, statistics for %d samples\n",NSAMPLES);
 	printf("   Bytes,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
 	printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
-	int aux;
+	//int aux;
 	for(std::vector<uint32_t>::iterator ndata = data_size_pub.begin();ndata!=data_size_pub.end();++ndata)
 	{
 		if(!this->test(*ndata))
 			break;
 		eClock::my_sleep(100);
-		cout << "Enter number to start next text: ";
-		std::cin >> aux;
+		//		cout << "Enter number to start next text: ";
+		//		std::cin >> aux;
 	}
 }
 
@@ -323,13 +313,13 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	TestCommandType command;
 	command.m_command = READY;
 	mp_commandpub->write(&command);
-	cout << "WATIGIN FOR COMMAND RESPONSES ";
+	//	cout << "WATIGIN FOR COMMAND RESPONSES ";
 	for(uint8_t i = 0;i<n_subscribers;++i)
 	{
 		m_comm_sema.wait();
-		cout << (int)i << " ";
+		//cout << (int)i << " ";
 	}
-	cout << endl;
+	//cout << endl;
 	//BEGIN THE TEST:
 	m_clock.setTimeNow(&m_t1);
 	mp_datapub->write((void*)mp_latency_out);
@@ -342,7 +332,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	//TEST FINISHED:
 	size_t removed=0;
 	mp_datapub->removeAllChange(&removed);
-//	cout << "REMOVED: "<< removed<<endl;
+	//	cout << "REMOVED: "<< removed<<endl;
 	analizeTimes(datasize);
 	printStat(m_stats.back());
 	//	delete(mp_latency_in);

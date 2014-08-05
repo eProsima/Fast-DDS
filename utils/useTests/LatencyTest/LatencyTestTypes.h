@@ -16,7 +16,7 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#define NSAMPLES 5
+#define NSAMPLES 10000
 
 
 class LatencyType{
