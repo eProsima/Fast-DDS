@@ -210,34 +210,34 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage()
 #if defined(_WIN32)
 void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 {
-	mp_up->mp_datasub->takeNextData((void*)m_latency_in,&m_sampleinfo);
+	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
 	mp_up->n_received++;
-	if(mp_up->m_latency_in.seqnum != mp_up->m_latency_out.seqnum)
+	if(mp_up->mp_latency_in->seqnum != mp_up->mp_latency_out->seqnum)
 	{
 		cout << "ERROR IN TEST"<<endl;
-		mp_up->sema.post();
+		mp_up->m_data_sema.post();
 		TestCommandType command;
 		command.m_command = STOP_ERROR;
 		mp_up->mp_commandpub->write(&command);
 		mp_up->m_status = -1;
-		sema.post();
+		mp_up->m_data_sema.post();
 	}
-	else if(mp_up->m_latency_in == NSAMPLES)
+	else if(mp_up->mp_latency_in->seqnum == NSAMPLES)
 	{
 		if(mp_up->n_received == mp_up->n_subscribers)
 		{
-			mp_up->m_clock.setTimeNow(&m_t2);
-			mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead);
-			mp_up->sema.post();
+			mp_up->m_clock.setTimeNow(&mp_up->m_t2);
+			mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
+			mp_up->m_data_sema.post();
 		}
 	}
 	else
 	{
 		if(mp_up->n_received == mp_up->n_subscribers)
 		{
-			mp_up->m_latency_out.seqnum++;
-			mp_up->mp_datapub->write(&m_latency_out);
-			mp_up->m_latency_in.seqnum = 0;
+			mp_up->mp_latency_out->seqnum++;
+			mp_up->mp_datapub->write(mp_up->mp_latency_out);
+			mp_up->mp_latency_in->seqnum = 0;
 			mp_up->n_received = 0;
 		}
 	}

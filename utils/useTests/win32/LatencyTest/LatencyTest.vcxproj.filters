@@ -15,21 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\LatencyTest\LatencyTest.cpp">
+    <ClCompile Include="..\..\LatencyTest\LatencyTestPublisher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LatencyTest\LatencyTestSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LatencyTest\LatencyTestTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\LatencyTest\main_LatencyTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\LatencyTest\LatencyPublisher.h">
+    <ClInclude Include="..\..\LatencyTest\LatencyTestPublisher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\LatencyTest\LatencySubscriber.h">
+    <ClInclude Include="..\..\LatencyTest\LatencyTestSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\LatencyTest\LatencyType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\LatencyTest\LatencyPublisher_win.h">
+    <ClInclude Include="..\..\LatencyTest\LatencyTestTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
