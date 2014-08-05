@@ -364,8 +364,7 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 	}
 	if(!wdata->m_isAlive) //Matching
 	{
-		pWarning("WriterProxyData object is NOT alive"<<endl);
-				return false;
+		pWarning("WriterProxyData " << wdata->m_guid << " is NOT alive"<<endl);
 		return false;
 	}
 	if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) //Means our reader is reliable but hte writer is not

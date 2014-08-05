@@ -33,7 +33,7 @@ public:
 	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	int n_received;
-	bool init();
+	bool init(bool echo);
 	void run();
 	bool test(uint32_t datasize);
 	class DataPubListener : public PublisherListener
@@ -70,6 +70,7 @@ public:
 		void onNewDataMessage();
 		LatencyTestSubscriber* mp_up;
 	}m_commandsublistener;
+	bool m_echo;
 
 };
 
