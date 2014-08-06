@@ -81,7 +81,7 @@ bool EprosimaServer::init()
 	PubDataparam.topic.resourceLimitsQos.max_samples = 1000;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = 1000;
 	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_result_pub = DomainParticipant::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_operationsListener);
+	mp_result_pub = DomainParticipant::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_resultsListener);
 	if(mp_result_pub == NULL)
 		return false;
 	//DATA SUBSCRIBER
@@ -96,7 +96,7 @@ bool EprosimaServer::init()
 	SubDataparam.topic.historyQos.depth = 1000;
 	SubDataparam.topic.resourceLimitsQos.max_samples = 1000;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = 1000;
-	mp_operation_sub = DomainParticipant::createSubscriber(mp_participant,SubDataparam,(SubscriberListener*)&this->m_resultsListener);
+	mp_operation_sub = DomainParticipant::createSubscriber(mp_participant,SubDataparam,(SubscriberListener*)&this->m_operationsListener);
 	if(mp_operation_sub == NULL)
 		return false;
 
@@ -152,10 +152,12 @@ void EprosimaServer::OperationListener::onNewDataMessage()
 
 void EprosimaServer::OperationListener::onSubscriptionMatched(MatchingInfo info)
 {
+
 }
 
 
 
 void EprosimaServer::ResultListener::onPublicationMatched(MatchingInfo info)
 {
+
 }
