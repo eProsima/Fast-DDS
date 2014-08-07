@@ -33,7 +33,8 @@ public:
 	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	int n_received;
-	bool init(bool echo);
+	int n_samples;
+	bool init(bool echo,int nsam);
 	void run();
 	bool test(uint32_t datasize);
 	class DataPubListener : public PublisherListener

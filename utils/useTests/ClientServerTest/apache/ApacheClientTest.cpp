@@ -26,7 +26,7 @@ double ApacheClientTest::run(int samples)
 		m_clock.setTimeNow(&m_t2);
 	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	//START APACHE CLIENT:
-	boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
+	boost::shared_ptr<TTransport> socket(new TSocket("192.168.1.24", 9090));
 	boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
 	boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
 	CalculatorClient client(protocol);
