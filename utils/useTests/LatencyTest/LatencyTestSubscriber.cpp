@@ -28,6 +28,7 @@ LatencyTestSubscriber::LatencyTestSubscriber():
 				m_data_sema(0),
 				m_status(0),
 				n_received(0),
+				n_samples(0),
 				m_datapublistener(this),
 				m_datasublistener(this),
 				m_commandpublistener(this),
@@ -43,9 +44,10 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 
 }
 
-bool LatencyTestSubscriber::init(bool echo)
+bool LatencyTestSubscriber::init(bool echo,int nsam)
 {
 	m_echo = echo;
+	n_samples = nsam;
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.domainId = 80;
@@ -67,9 +69,9 @@ bool LatencyTestSubscriber::init(bool echo)
 	PubDataparam.topic.topicKind = NO_KEY;
 	PubDataparam.topic.topicName = "LatencySUB2PUB";
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	PubDataparam.topic.historyQos.depth = NSAMPLES+100;
-	PubDataparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
-	PubDataparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
+	PubDataparam.topic.historyQos.depth = n_samples+100;
+	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
+	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_datapub = DomainParticipant::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == NULL)
@@ -84,8 +86,8 @@ bool LatencyTestSubscriber::init(bool echo)
 	SubDataparam.topic.topicName = "LatencyPUB2SUB";
 	SubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubDataparam.topic.historyQos.depth = 100;
-	SubDataparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
-	SubDataparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
+	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
+	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_datasub = DomainParticipant::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == NULL)
@@ -181,7 +183,7 @@ void LatencyTestSubscriber::DataSubListener::onNewDataMessage()
 	//	eClock::my_sleep(50);
 	if(mp_up->m_echo)
 		mp_up->mp_datapub->write((void*)mp_up->mp_latency);
-	if(mp_up->mp_latency->seqnum == NSAMPLES)
+	if(mp_up->mp_latency->seqnum == (uint32_t)mp_up->n_samples)
 		mp_up->m_data_sema.post();
 }
 
