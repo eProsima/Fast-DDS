@@ -14,15 +14,11 @@
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
 
-#include <vector>
-#include <string>
-
-
-using namespace std;
-
 #include "ThroughputTypes.h"
 
-
+#include <vector>
+#include <string>
+using namespace std;
 
 class ThroughputPublisher
 {

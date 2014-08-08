@@ -54,7 +54,6 @@ private:
 		EprosimaServer* mp_up;
 		void onPublicationMatched(MatchingInfo info);
 	}m_resultsListener;
-
 };
 
 #endif /* EPROSIMASERVER_H_ */
