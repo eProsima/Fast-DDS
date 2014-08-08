@@ -101,8 +101,6 @@ bool EprosimaServer::init()
 		return false;
 
 	return true;
-
-
 }
 
 Result::RESULTTYPE EprosimaServer::calculate(Operation::OPERATIONTYPE type,
