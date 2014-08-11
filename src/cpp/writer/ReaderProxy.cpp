@@ -34,13 +34,13 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 				m_nackSupression(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration))),
 				m_lastAcknackCount(0)
 {
-
+pDebugInfo("Reader Proxy created"<<endl);
 }
 
 
 ReaderProxy::~ReaderProxy()
 {
-pDebugInfo("ReaderProxy destructor"<<endl);
+//pDebugInfo("ReaderProxy destructor"<<endl);
 }
 
 

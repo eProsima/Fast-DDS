@@ -58,7 +58,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 					if(wdata->m_multicastLocatorList.empty())
 						wdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
 					wdata->m_isAlive = true;
-					mp_SEDP->pairWriterProxy(wdata);
+					mp_SEDP->pairingWriterProxy(wdata);
 				}
 				else if(pdata == NULL) //PARTICIPANT NOT FOUND
 				{
@@ -69,7 +69,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 				else //NOT ADDED BECAUSE IT WAS ALREADY THERE
 				{
 					wdata->update(&m_writerProxyData);
-					mp_SEDP->updatedWriterProxy(wdata);
+					mp_SEDP->pairingWriterProxy(wdata);
 				}
 			}
 		}
@@ -119,7 +119,7 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 					if(rdata->m_multicastLocatorList.empty())
 						rdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
 					rdata->m_isAlive = true;
-					mp_SEDP->pairReaderProxy(rdata);
+					mp_SEDP->pairingReaderProxy(rdata);
 				}
 				else if(pdata == NULL) //PARTICIPANT NOT FOUND
 				{
@@ -130,7 +130,7 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 				else //NOT ADDED BECAUSE IT WAS ALREADY THERE
 				{
 					rdata->update(&m_readerProxyData);
-					mp_SEDP->updatedReaderProxy(rdata);
+					mp_SEDP->pairingReaderProxy(rdata);
 				}
 			}
 		}
