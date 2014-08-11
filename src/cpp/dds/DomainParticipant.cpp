@@ -200,13 +200,13 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	{
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
-		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type);
+		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type,WParam);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
-		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type);
+		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type,WParam);
 	}
 	else
 		pWarning("Incorrect Reliability Kind"<<endl);
@@ -264,13 +264,13 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	{
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
 			return NULL;
-		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type);
+		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type,RParam);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type,slisten))
 			return NULL;
-		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type);
+		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type,RParam);
 	}
 	if(subImpl != NULL)
 	{

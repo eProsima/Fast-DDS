@@ -28,9 +28,10 @@
 namespace eprosima {
 namespace dds {
 
-PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType*pdatatype):
+PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType*pdatatype,PublisherAttributes& att):
 								mp_Writer(Win),
 								mp_type(pdatatype),
+								m_attributes(att),
 								mp_participant(p)
 {
 

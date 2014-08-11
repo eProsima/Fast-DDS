@@ -104,26 +104,26 @@ public:
 	 */
 	bool updatedLocalWriter(RTPSWriter* W);
 
-	/**
-	 * Pair a WriterProxyData against all local Readers.
-	 * @param wdata Pointer to the WPD object.
-	 */
-	void pairWriterProxy(WriterProxyData* wdata);
-	/**
-	 * Pair a ReaderProxyData against all local Writer.
-	 * @param rdata Pointer to the RPD object.
-	 */
-	void pairReaderProxy(ReaderProxyData* rdata);
-	/**
-	 * Pair a local Reader against all possible WriterProxyData objects.
-	 * @param R Pointer to the reader.
-	 */
-	void pairReader(RTPSReader* R);
-	/**
-	 * Pair a local writer against all possible ReaderProxyData objects.
-	 * @param W Pointer to the writer.
-	 */
-	void pairWriter(RTPSWriter* W);
+//	/**
+//	 * Pair a WriterProxyData against all local Readers.
+//	 * @param wdata Pointer to the WPD object.
+//	 */
+//	void pairWriterProxy(WriterProxyData* wdata);
+//	/**
+//	 * Pair a ReaderProxyData against all local Writer.
+//	 * @param rdata Pointer to the RPD object.
+//	 */
+//	void pairReaderProxy(ReaderProxyData* rdata);
+//	/**
+//	 * Pair a local Reader against all possible WriterProxyData objects.
+//	 * @param R Pointer to the reader.
+//	 */
+//	void pairReader(RTPSReader* R);
+//	/**
+//	 * Pair a local writer against all possible ReaderProxyData objects.
+//	 * @param W Pointer to the writer.
+//	 */
+//	void pairWriter(RTPSWriter* W);
 	/**
 	 * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
 	 * @param W Pointer to the writer.
@@ -150,31 +150,38 @@ public:
 	 * @return True if correct.
 	 */
 	bool removeReaderProxy(const GUID_t& reader);
-	/**
-	 * Unpair a WriterProxyData object from all local readers.
-	 * @param wdata Pointer to the WriterProxyData object.
-	 * @return True if correct.
-	 */
-	bool unpairWriterProxy(WriterProxyData* wdata);
-	/**
-	 * Unpair a ReaderProxyData object from all local writers.
-	 * @param rdata Pointer to the ReaderProxyData object.
-	 * @return True if correct.
-	 */
-	bool unpairReaderProxy(ReaderProxyData* rdata);
+//	/**
+//	 * Unpair a WriterProxyData object from all local readers.
+//	 * @param wdata Pointer to the WriterProxyData object.
+//	 * @return True if correct.
+//	 */
+//	bool unpairWriterProxy(WriterProxyData* wdata);
+//	/**
+//	 * Unpair a ReaderProxyData object from all local writers.
+//	 * @param rdata Pointer to the ReaderProxyData object.
+//	 * @return True if correct.
+//	 */
+//	bool unpairReaderProxy(ReaderProxyData* rdata);
 
-	/**
-	 * Method design to manage an updated ReaderProxyData object. (NOT YET IMPLEMENTED).
-	 * @param rdata Pointer to the ReaderProxyData object.
-	 * @return True if correct.
-	 */
-	bool updatedReaderProxy(ReaderProxyData* rdata);
-	/**
-	 * Method design to manage an updated WriterProxyData object. (NOT YET IMPLEMENTED).
-	 * @param wdata Pointer to the WriterProxyData object.
-	 * @return True if correct.
-	 */
-	bool updatedWriterProxy(WriterProxyData* wdata);
+//	/**
+//	 * Method design to manage an updated ReaderProxyData object. (NOT YET IMPLEMENTED).
+//	 * @param rdata Pointer to the ReaderProxyData object.
+//	 * @return True if correct.
+//	 */
+//	bool updatedReaderProxy(ReaderProxyData* rdata);
+//	/**
+//	 * Method design to manage an updated WriterProxyData object. (NOT YET IMPLEMENTED).
+//	 * @param wdata Pointer to the WriterProxyData object.
+//	 * @return True if correct.
+//	 */
+//	bool updatedWriterProxy(WriterProxyData* wdata);
+
+
+	bool pairingReader(RTPSReader* R);
+	bool pairingWriter(RTPSWriter* W);
+	bool pairingReaderProxy(ReaderProxyData* rdata);
+	bool pairingWriterProxy(WriterProxyData* wdata);
+
 
 
 	//! Pointer to the PDPSimple object that contains the endpoint discovery protocol.

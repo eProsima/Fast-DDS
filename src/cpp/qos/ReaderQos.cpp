@@ -77,11 +77,10 @@ void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
 		m_presentation = qos.m_presentation;
 		m_presentation.hasChanged = true;
 	}
-	if(first_time)
-	{
-		m_partition = qos.m_partition;
-		m_partition.hasChanged = true;
-	}
+
+	m_partition = qos.m_partition;
+	m_partition.hasChanged = true;
+
 	if(m_topicData.value != qos.m_topicData.value )
 	{
 		m_topicData = qos.m_topicData;
