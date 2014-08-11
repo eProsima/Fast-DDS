@@ -41,6 +41,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #define COPYSTR strcpy
 #endif
 
+const int c_n_samples = 10000;
 
 int main(int argc, char** argv){
 	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
@@ -48,6 +49,7 @@ int main(int argc, char** argv){
 	pInfo("Starting"<<endl)
 	int type;
 	int sub_number = 1;
+	int n_samples = c_n_samples;
 	bool echo = true;
 	if(argc > 1)
 	{
@@ -67,6 +69,15 @@ int main(int argc, char** argv){
 			{
 				cout << "Problem reading subscriber number "<< endl;
 			}
+			if(argc > 3) //READ SAMPLES NUMBER
+			{
+				std::istringstream iss( argv[2] );
+				if (!(iss >> n_samples))
+				{
+					cout << "Problem reading subscriber number "<< endl;
+					n_samples = c_n_samples;
+				}
+			}
 		}
 		else if(argc > 2 && type == 2)
 		{
@@ -84,6 +95,15 @@ int main(int argc, char** argv){
 			{
 				cout << "Second argument of subscribers needs to be echo or noecho"<<endl;
 				return 0;
+			}
+			if(argc > 3) //READ SAMPLES NUMBER
+			{
+				std::istringstream iss( argv[2] );
+				if (!(iss >> n_samples))
+				{
+					cout << "Problem reading subscriber number "<< endl;
+					n_samples = c_n_samples;
+				}
 			}
 		}
 
@@ -106,14 +126,14 @@ int main(int argc, char** argv){
 	{
 		cout << "Performing test with "<< sub_number << " subscribers"<<endl;
 		LatencyTestPublisher latencyPub;
-		latencyPub.init(sub_number);
+		latencyPub.init(sub_number,n_samples);
 		latencyPub.run();
 		break;
 	}
 	case 2:
 	{
 		LatencyTestSubscriber latencySub;
-		latencySub.init(echo);
+		latencySub.init(echo,n_samples);
 		latencySub.run();
 		break;
 	}

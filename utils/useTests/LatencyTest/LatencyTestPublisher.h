@@ -16,7 +16,10 @@
 
 #include "LatencyTestTypes.h"
 
-struct TimeStats{
+class TimeStats{
+public:
+	TimeStats():nbytes(0),min(0),max(0),mean(0),p50(0),p90(0),p99(0),p9999(0),stdev(0){}
+	~TimeStats(){}
 	uint64_t nbytes;
 	double min,max,mean,p50,p90,p99,p9999;
 	double stdev;
@@ -38,6 +41,7 @@ public:
 	Time_t m_t1,m_t2;
 	double m_overhead;
 	int n_subscribers;
+	int n_samples;
 	SampleInfo_t m_sampleinfo;
 	std::vector<double> m_times;
 	std::vector<TimeStats> m_stats;
@@ -46,7 +50,7 @@ public:
 	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	int n_received;
-	bool init(int n_sub);
+	bool init(int n_sub,int n_sam);
 	void run();
 	void analizeTimes(uint32_t datasize);
 	bool test(uint32_t datasize);
