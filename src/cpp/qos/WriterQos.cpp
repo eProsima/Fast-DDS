@@ -158,5 +158,43 @@ bool WriterQos::checkQos()
 	return true;
 }
 
+
+bool WriterQos::canQosBeUpdated(WriterQos& qos)
+{
+	bool updatable = true;
+	if(	m_durability.kind != qos.m_durability.kind)
+	{
+		updatable = false;
+		pWarning("WriterQos:Durability kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+
+	if(m_liveliness.kind !=  qos.m_liveliness.kind)
+	{
+		updatable = false;
+		pWarning("WriterQos:Liveliness Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+
+	if(m_reliability.kind != qos.m_reliability.kind)
+	{
+		updatable = false;
+		pWarning("WriterQos:Reliability Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+	if(m_ownership.kind != qos.m_ownership.kind)
+	{
+		updatable = false;
+		pWarning("WriterQos:Ownership Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+	if(m_destinationOrder.kind != qos.m_destinationOrder.kind)
+	{
+		updatable = false;
+		pWarning("WriterQos:Destination order Kind cannot be changed after the creation of a subscriber."<<endl);
+	}
+	return updatable;
+
+}
+
+
 } /* namespace dds */
 } /* namespace eprosima */
+
+

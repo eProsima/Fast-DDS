@@ -72,6 +72,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool checkQos();
+
+	bool canQosBeUpdated(WriterQos& qos);
 };
 
 

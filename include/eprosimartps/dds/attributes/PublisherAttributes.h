@@ -34,8 +34,8 @@ public:
 	Duration_t nackResponseDelay;
 	//!Allows the reader to deny a response to a nack that arrives too soon after the change is sent.
 	Duration_t nackSupressionDuration;
-	//!The writer sends data periodically to all ReaderLocators (only in BEST_EFFORT - STATELESS combination).
-	Duration_t resendDataPeriod;
+//	//!The writer sends data periodically to all ReaderLocators (only in BEST_EFFORT - STATELESS combination).
+//	Duration_t resendDataPeriod;
 
 	//uint8_t hb_per_max_samples;
 	PublisherTimes(){

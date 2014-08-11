@@ -89,6 +89,8 @@ public:
 
 	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 
+	bool updateLocalWriter(RTPSWriter* W);
+
 
 private:
 	//!Pointer to the local participant.

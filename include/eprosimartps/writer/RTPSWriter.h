@@ -137,6 +137,7 @@ public:
 		return m_qos.setQos(qos,first);
 	}
 	const WriterQos& getQos(){return m_qos;}
+	bool canQosBeUpdated(WriterQos& qos){return m_qos.canQosBeUpdated(qos);}
 
 	PublisherListener* getListener(){return mp_listener;}
 	void setListener(PublisherListener* plisten){mp_listener = plisten;}

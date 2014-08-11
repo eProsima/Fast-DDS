@@ -30,15 +30,15 @@ namespace eprosima {
 namespace rtps {
 
 WLP::WLP(ParticipantImpl* p):
-						m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
-						m_minManParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
-						mp_participant(p),
-						mp_builtinProtocols(NULL),
-						mp_builtinParticipantMessageWriter(NULL),
-						mp_builtinParticipantMessageReader(NULL),
-						m_listener(this),
-						mp_livelinessAutomatic(NULL),
-						mp_livelinessManParticipant(NULL)
+										m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
+										m_minManParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
+										mp_participant(p),
+										mp_builtinProtocols(NULL),
+										mp_builtinParticipantMessageWriter(NULL),
+										mp_builtinParticipantMessageReader(NULL),
+										m_listener(this),
+										mp_livelinessAutomatic(NULL),
+										mp_livelinessManParticipant(NULL)
 {
 
 	pInfo(RTPS_B_MAGENTA<<"Beginning Liveliness Protocol initialization"<<RTPS_DEF<<endl;);
@@ -85,7 +85,7 @@ bool WLP::createEndpoints()
 	else
 	{
 		pError("Liveliness Writer Creation failed "<<endl;)
-						return false;
+										return false;
 	}
 	SubscriberAttributes Rparam;
 	Rparam.expectsInlineQos = true;
@@ -113,7 +113,7 @@ bool WLP::createEndpoints()
 	else
 	{
 		pError("Liveliness Reader Creation failed "<<endl;)
-						return false;
+										return false;
 	}
 
 	return true;
@@ -127,7 +127,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	uint32_t partdet = endp;
 	uint32_t auxendp = endp;
 	partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+	auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 	//auxendp = 1;
 	//FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 	if((auxendp!=0 || partdet!=0) && this->mp_builtinParticipantMessageReader!=NULL)
@@ -318,13 +318,62 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 		}
 	}
 	else // OTHER VALUE OF LIVELINESS (BY TOPIC)
-	return true;
+		return true;
 	if(found)
 		return true;
 	else
 		return false;
 }
 
+bool WLP::updateLocalWriter(RTPSWriter* W)
+{
+	boost::lock_guard<WLP> guard(*this);
+	pDebugInfo(RTPS_MAGENTA<<"Updating local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
+	int64_t wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsInt64(W->getQos().m_liveliness.announcement_period));
+	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
+	{
+		if(mp_livelinessAutomatic == NULL)
+		{
+			mp_livelinessAutomatic = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
+			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
+			mp_livelinessAutomatic->restart_timer();
+			m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
+		}
+		else if(m_minAutomatic_MilliSec > wAnnouncementPeriodMilliSec)
+		{
+			m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
+			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
+			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
+			if(mp_livelinessAutomatic->m_isWaiting && mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+			{
+				mp_livelinessAutomatic->stop_timer();
+			}
+			mp_livelinessAutomatic->restart_timer();
+		}
+	}
+	else if(W->getQos().m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+	{
+		if(mp_livelinessManParticipant == NULL)
+		{
+			mp_livelinessManParticipant = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+			mp_livelinessManParticipant->update_interval_millisec(wAnnouncementPeriodMilliSec);
+			mp_livelinessManParticipant->restart_timer();
+			m_minManParticipant_MilliSec = wAnnouncementPeriodMilliSec;
+		}
+		else if(m_minManParticipant_MilliSec > wAnnouncementPeriodMilliSec)
+		{
+			m_minManParticipant_MilliSec = wAnnouncementPeriodMilliSec;
+			mp_livelinessManParticipant->update_interval_millisec(m_minManParticipant_MilliSec);
+			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
+			if(mp_livelinessManParticipant->m_isWaiting && mp_livelinessManParticipant->getRemainingTimeMilliSec() > m_minManParticipant_MilliSec)
+			{
+				mp_livelinessManParticipant->stop_timer();
+			}
+			mp_livelinessManParticipant->restart_timer();
+		}
+	}
+	return true;
+}
 
 
 } /* namespace rtps */
