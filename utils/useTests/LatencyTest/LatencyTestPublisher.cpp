@@ -27,6 +27,7 @@ LatencyTestPublisher::LatencyTestPublisher():
 										mp_latency_out(NULL),
 										m_overhead(0.0),
 										n_subscribers(0),
+										n_samples(0),
 										m_disc_sema(0),
 										m_comm_sema(0),
 										m_data_sema(0),
@@ -46,11 +47,9 @@ LatencyTestPublisher::~LatencyTestPublisher()
 }
 
 
-bool LatencyTestPublisher::init(int n_sub)
+bool LatencyTestPublisher::init(int n_sub,int n_sam)
 {
-
-
-
+	n_samples = n_sam;
 	n_subscribers = n_sub;
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -60,8 +59,8 @@ bool LatencyTestPublisher::init(int n_sub)
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 65536;
-	PParam.listenSocketBufferSize = 2*65536;
+	PParam.sendSocketBufferSize = 8712;
+	PParam.listenSocketBufferSize = 17424;
 	PParam.name = "participant_pub";
 	mp_participant = DomainParticipant::createParticipant(PParam);
 	if(mp_participant == NULL)
@@ -78,9 +77,9 @@ bool LatencyTestPublisher::init(int n_sub)
 	PubDataparam.topic.topicKind = NO_KEY;
 	PubDataparam.topic.topicName = "LatencyPUB2SUB";
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	PubDataparam.topic.historyQos.depth = NSAMPLES+100;
-	PubDataparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
-	PubDataparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
+	PubDataparam.topic.historyQos.depth = n_samples+100;
+	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
+	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_datapub = DomainParticipant::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == NULL)
@@ -95,8 +94,8 @@ bool LatencyTestPublisher::init(int n_sub)
 	SubDataparam.topic.topicName = "LatencySUB2PUB";
 	SubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubDataparam.topic.historyQos.depth = 100;
-	SubDataparam.topic.resourceLimitsQos.max_samples = NSAMPLES+100;
-	SubDataparam.topic.resourceLimitsQos.allocated_samples = NSAMPLES+100;
+	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
+	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	mp_datasub = DomainParticipant::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == NULL)
 		return false;
@@ -261,7 +260,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 		mp_up->m_status = -1;
 		mp_up->m_data_sema.post();
 	}
-	else if(mp_up->mp_latency_in->seqnum == NSAMPLES) //TEST FINISHED
+	else if(mp_up->mp_latency_in->seqnum == (uint32_t)mp_up->n_samples) //TEST FINISHED
 	{
 		mp_up->m_data_sema.post();
 	}
@@ -288,7 +287,7 @@ void LatencyTestPublisher::run()
 			return;
 	}
 	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
-	printf("Printing round-trip times in us, statistics for %d samples\n",NSAMPLES);
+	printf("Printing round-trip times in us, statistics for %d samples\n",n_samples);
 	printf("   Bytes,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
 	printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
 	//int aux;
@@ -345,8 +344,17 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.mean = m_times.front()/(NSAMPLES+1);
+	TS.mean = (double)( *m_times.begin()/(NSAMPLES+1));
 	m_stats.push_back(TS);
+}
+void LatencyTestPublisher::printStat(TimeStats& TS)
+{
+	//cout << "MEAN PRINTING: " << TS.mean << endl;
+	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+			TS.nbytes,TS.stdev,TS.mean,
+			TS.min,
+			TS.p50,TS.p90,TS.p99,TS.p9999,
+			TS.max);
 }
 #else
 void LatencyTestPublisher::analizeTimes(uint32_t datasize)
@@ -396,13 +404,15 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 	//printStat(TS);
 	m_stats.push_back(TS);
 }
-#endif
+
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
+	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
 			TS.min,
 			TS.p50,TS.p90,TS.p99,TS.p9999,
 			TS.max);
 }
+#endif

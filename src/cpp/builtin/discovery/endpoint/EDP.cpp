@@ -214,7 +214,8 @@ void EDP::pairWriterProxy(WriterProxyData* wdata)
 					MatchingInfo info;
 					info.status = MATCHED_MATCHING;
 					info.remoteEndpointGuid = wdata->m_guid;
-					(*rit)->getListener()->onSubscriptionMatched(info);
+					if((*rit)->getListener()!=NULL)
+						(*rit)->getListener()->onSubscriptionMatched(info);
 				}
 			}
 		}
