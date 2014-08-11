@@ -150,18 +150,18 @@ public:
 	 * @return True if correct.
 	 */
 	bool removeReaderProxy(const GUID_t& reader);
-//	/**
-//	 * Unpair a WriterProxyData object from all local readers.
-//	 * @param wdata Pointer to the WriterProxyData object.
-//	 * @return True if correct.
-//	 */
-//	bool unpairWriterProxy(WriterProxyData* wdata);
-//	/**
-//	 * Unpair a ReaderProxyData object from all local writers.
-//	 * @param rdata Pointer to the ReaderProxyData object.
-//	 * @return True if correct.
-//	 */
-//	bool unpairReaderProxy(ReaderProxyData* rdata);
+	/**
+	 * Unpair a WriterProxyData object from all local readers.
+	 * @param wdata Pointer to the WriterProxyData object.
+	 * @return True if correct.
+	 */
+	bool unpairWriterProxy(WriterProxyData* wdata);
+	/**
+	 * Unpair a ReaderProxyData object from all local writers.
+	 * @param rdata Pointer to the ReaderProxyData object.
+	 * @return True if correct.
+	 */
+	bool unpairReaderProxy(ReaderProxyData* rdata);
 
 //	/**
 //	 * Method design to manage an updated ReaderProxyData object. (NOT YET IMPLEMENTED).

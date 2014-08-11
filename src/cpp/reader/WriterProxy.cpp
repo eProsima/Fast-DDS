@@ -25,7 +25,7 @@ namespace rtps {
 
 WriterProxy::~WriterProxy()
 {
-	pDebugInfo("WriterProxy destructor"<<endl;);
+	//pDebugInfo("WriterProxy destructor"<<endl;);
 	m_writerProxyLiveliness.stop_timer();
 }
 
@@ -51,6 +51,7 @@ WriterProxy::WriterProxy(WriterProxyData* wdata,
 	TIME_INFINITE(aux);
 	if(m_data->m_qos.m_liveliness.lease_duration < aux)
 		m_writerProxyLiveliness.restart_timer();
+	pDebugInfo("Writer Proxy created"<<endl);
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
