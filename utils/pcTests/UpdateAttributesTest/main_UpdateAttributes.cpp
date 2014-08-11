@@ -107,20 +107,20 @@ int main(int argc, char** argv){
 	SubListener sublistener;
 	Subscriber* sub = DomainParticipant::createSubscriber(part,SubDataparam,&sublistener);
 
-	eClock::my_sleep(500);
-	cout << "Getting Publisher Attributes "<<endl;
+	//eClock::my_sleep(500);
+	//cout << "Getting Publisher Attributes "<<endl;
 
 	PublisherAttributes patt = pub->getAttributes();
 	//cout << "topic: "<< patt.topic.topicName << " "<< patt.topic.topicDataType << endl;
 
-	cout << "Getting Subscriber Attributes "<<endl;
+	//cout << "Getting Subscriber Attributes "<<endl;
 	SubscriberAttributes satt = sub->getAttributes();
 	//cout << "topic: "<< satt.topic.topicName << " "<< satt.topic.topicDataType << endl;
 
-	cout << "Changing Pub Attributes: "<<endl;
+	//cout << "Changing Pub Attributes: "<<endl;
 	patt.qos.m_partition.names.push_back("A");
 	pub->updateAttributes(patt);
-	eClock::my_sleep(1000);
+	//eClock::my_sleep(1000);
 
 	satt.qos.m_partition.names.push_back("A");
 	sub->updateAttributes(satt);
