@@ -144,15 +144,30 @@ public:
 	 */
 	bool unpairReaderProxy(ReaderProxyData* rdata);
 
-
-
-
+	/**
+	 * Try to pair/unpair a local Reader against all possible writerProxy Data.
+	 * @param R Pointer to the Reader
+	 * @return True
+	 */
 	bool pairingReader(RTPSReader* R);
+	/**
+	 * Try to pair/unpair a local Writer against all possible readerProxy Data.
+	 * @param W Pointer to the Writer
+	 * @return True
+	 */
 	bool pairingWriter(RTPSWriter* W);
+	/**
+	 * Try to pair/unpair ReaderProxyData.
+	 * @param rdata Pointer to the ReaderProxyData object.
+	 * @return True.
+	 */
 	bool pairingReaderProxy(ReaderProxyData* rdata);
+	/**
+	 * Try to pair/unpair WriterProxyData.
+	 * @param wdata Pointer to the WriterProxyData.
+	 * @return True.
+	 */
 	bool pairingWriterProxy(WriterProxyData* wdata);
-
-
 
 	//! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
 	PDPSimple* mp_PDP;

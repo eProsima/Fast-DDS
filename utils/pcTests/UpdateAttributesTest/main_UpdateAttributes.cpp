@@ -111,11 +111,11 @@ int main(int argc, char** argv){
 	cout << "Getting Publisher Attributes "<<endl;
 
 	PublisherAttributes patt = pub->getAttributes();
-	cout << "topic: "<< patt.topic.topicName << " "<< patt.topic.topicDataType << endl;
+	//cout << "topic: "<< patt.topic.topicName << " "<< patt.topic.topicDataType << endl;
 
 	cout << "Getting Subscriber Attributes "<<endl;
 	SubscriberAttributes satt = sub->getAttributes();
-	cout << "topic: "<< satt.topic.topicName << " "<< satt.topic.topicDataType << endl;
+	//cout << "topic: "<< satt.topic.topicName << " "<< satt.topic.topicDataType << endl;
 
 	cout << "Changing Pub Attributes: "<<endl;
 	patt.qos.m_partition.names.push_back("A");
