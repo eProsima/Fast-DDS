@@ -149,22 +149,6 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
-//	if(!isBuiltin)
-//	{
-//		m_userWriterList.push_back(SWriter);
-//		if(mp_PDP!=NULL)
-//		{
-//			mp_PDP->localWriterMatching(SWriter,true);
-//			if(mp_PDP->mp_WL !=NULL)
-//				mp_PDP->mp_WL->addLocalWriter(SWriter);
-//			//Match the readers in the same participant
-//			for(std::vector<RTPSReader*>::iterator rit = this->m_userReaderList.begin();
-//					rit!=this->m_userReaderList.end();++rit)
-//			{
-//				mp_PDP->localReaderMatching(*rit,false);
-//			}
-//		}
-//	}
 	m_allWriterList.push_back(SWriter);
 
 

@@ -200,13 +200,13 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	{
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
-		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
+		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten,c_EntityId_Unknown))
 			return NULL;
-		pubImpl = new PublisherImpl((RTPSWriter*)SW,p_type);
+		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type);
 	}
 	else
 		pWarning("Incorrect Reliability Kind"<<endl);

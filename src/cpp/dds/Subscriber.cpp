@@ -124,6 +124,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			if(missing)
 			{
 				pWarning("Locator: "<< *lit1 << " not present in new list"<<endl);
+				pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
 			}
 		}
 		for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
@@ -142,6 +143,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			if(missing)
 			{
 				pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
+				pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
 			}
 		}
 	}

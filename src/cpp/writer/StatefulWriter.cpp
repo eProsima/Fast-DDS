@@ -43,9 +43,9 @@ StatefulWriter::~StatefulWriter()
 }
 
 StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-								RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
-								m_PubTimes(param.times),
-								mp_periodicHB(NULL)
+										RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
+										m_PubTimes(param.times),
+										mp_periodicHB(NULL)
 {
 	m_pushMode = param.pushMode;
 	unicastLocatorList = param.unicastLocatorList;
@@ -334,6 +334,32 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 	}
 	m_writer_cache.remove_change(a_change);
 	return true;
+}
+
+
+void StatefulWriter::updateTimes(PublisherTimes& times)
+{
+	if(m_PubTimes.heartbeatPeriod != times.heartbeatPeriod)
+	{
+		this->mp_periodicHB->update_interval(times.heartbeatPeriod);
+	}
+	if(m_PubTimes.nackResponseDelay != times.nackResponseDelay)
+	{
+		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+				it!=this->matched_readers.end();++it)
+		{
+			(*it)->m_nackResponse.update_interval(times.nackResponseDelay);
+		}
+	}
+	if(m_PubTimes.nackSupressionDuration != times.nackSupressionDuration)
+	{
+		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+				it!=this->matched_readers.end();++it)
+		{
+			(*it)->m_nackSupression.update_interval(times.nackSupressionDuration);
+		}
+	}
+	m_PubTimes = times;
 }
 
 } /* namespace rtps */
