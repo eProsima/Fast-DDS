@@ -51,7 +51,7 @@ public:
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainParticipant static function.
 	 */
-	PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType* ptype);
+	PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType* ptype,PublisherAttributes& att);
 
 	virtual ~PublisherImpl();
 

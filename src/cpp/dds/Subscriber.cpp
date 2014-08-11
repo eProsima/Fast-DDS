@@ -30,9 +30,11 @@ namespace dds {
 
 
 
-SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype):
+SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,
+		DDSTopicDataType* ptype,SubscriberAttributes& att):
 												mp_Reader(Rin),
 												mp_type(ptype),
+												m_attributes(att),
 												mp_participant(p)
 {
 

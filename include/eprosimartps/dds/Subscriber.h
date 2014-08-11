@@ -41,7 +41,7 @@ class SampleInfo_t;
  */
 class SubscriberImpl {
 public:
-	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype);
+	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype,SubscriberAttributes& attr);
 	virtual ~SubscriberImpl();
 
 	/**
