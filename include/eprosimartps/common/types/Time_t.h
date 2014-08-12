@@ -100,6 +100,7 @@ inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 #define TIME_INFINITE(t){t.seconds=0x7fffffff;t.fraction=0xffffffff;}
 
 const Time_t c_TimeInfinite(0x7fffffff,0xffffffff);
+const Time_t c_TimeZero(0,0);
 
 typedef Time_t Duration_t;
 

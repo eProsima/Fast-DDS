@@ -95,6 +95,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer)
 	wpd->m_topicName = writer->getTopic().getTopicName();
 	wpd->m_typeName = writer->getTopic().getTopicDataType();
 	wpd->m_topicKind = writer->getTopic().getTopicKind();
+	wpd->m_typeMaxSerialized = writer->mp_type->m_typeSize;
 	wpd->m_qos = writer->getQos();
 	wpd->m_userDefinedId = writer->getUserDefinedId();
 	//ADD IT TO THE LIST OF READERPROXYDATA

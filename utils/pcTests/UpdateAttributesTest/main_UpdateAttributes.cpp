@@ -124,6 +124,10 @@ int main(int argc, char** argv){
 
 	satt.qos.m_partition.names.push_back("A");
 	sub->updateAttributes(satt);
+	satt.unicastLocatorList.push_back(Locator_t(6000));
+	satt.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	satt.qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+	sub->updateAttributes(satt);
 
 	eClock::my_sleep(2000);
 	DomainParticipant::stopAll();
