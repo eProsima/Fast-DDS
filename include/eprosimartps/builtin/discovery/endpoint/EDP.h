@@ -150,7 +150,7 @@ public:
 	 * @return True
 	 */
 	bool pairingReader(RTPSReader* R);
-	/**
+	/**l
 	 * Try to pair/unpair a local Writer against all possible readerProxy Data.
 	 * @param W Pointer to the Writer
 	 * @return True
