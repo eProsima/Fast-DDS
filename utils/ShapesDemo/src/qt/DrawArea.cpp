@@ -64,6 +64,7 @@ void DrawArea::addContentFilter(ShapeSubscriber *ssub)
 {
     ContentFilterSelector* a = new ContentFilterSelector(this);
     a->assignShapeSubscriber(ssub);
+    ssub->assignContentFilterPointer(a);
 }
 
 void DrawArea::timerEvent(QTimerEvent* e)

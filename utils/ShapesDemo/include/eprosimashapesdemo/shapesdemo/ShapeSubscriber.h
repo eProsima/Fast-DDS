@@ -21,7 +21,7 @@
 #include <QMutex>
 
 
-
+class ContentFilterSelector;
 
 /**
  * @brief The ShapeSubscriber class, implements a Subscriber to receive shapes.
@@ -42,6 +42,7 @@ public:
 	void onNewDataMessage();
     void onSubscriptionMatched(MatchingInfo info);
     void adjustContentFilter(ShapeFilter& m_filter);
+    void assignContentFilterPointer(ContentFilterSelector* p){mp_contentFilter = p;}
 	bool hasReceived;
 
     QMutex m_mutex;
@@ -49,6 +50,7 @@ public:
     std::vector<GUID_t> m_remoteWriters;
     ShapeHistory m_shapeHistory;
     TYPESHAPE m_shapeType;
+    ContentFilterSelector* mp_contentFilter;
 
 };
 

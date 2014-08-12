@@ -12,14 +12,15 @@
  */
 
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
-
+#include "eprosimashapesdemo/qt/ContentFilterSelector.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
 ShapeSubscriber::ShapeSubscriber(Participant* par):
     mp_sub(NULL),
     mp_participant(par),
     hasReceived(false),
-    m_mutex(QMutex::Recursive)
+    m_mutex(QMutex::Recursive),
+    mp_contentFilter(NULL)
 {
     // TODO Auto-generated constructor stub
 
@@ -28,6 +29,8 @@ ShapeSubscriber::ShapeSubscriber(Participant* par):
 ShapeSubscriber::~ShapeSubscriber() {
     // TODO Auto-generated destructor stub
     DomainParticipant::removeSubscriber(this->mp_participant,mp_sub);
+    if(mp_contentFilter!=NULL)
+        delete(mp_contentFilter);
 }
 
 bool ShapeSubscriber::initSubscriber()
