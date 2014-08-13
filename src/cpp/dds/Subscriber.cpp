@@ -9,7 +9,7 @@
 /*
  * Subscriber.cpp
  *
-*/
+ */
 
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/reader/RTPSReader.h"
@@ -21,15 +21,21 @@
 
 #include "eprosimartps/dds/SubscriberListener.h"
 
+#include "eprosimartps/Participant.h"
+
+
 
 namespace eprosima {
 namespace dds {
 
 
 
-SubscriberImpl::SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype):
-		mp_Reader(Rin),
-		mp_type(ptype)
+SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,
+		DDSTopicDataType* ptype,SubscriberAttributes& att):
+												mp_Reader(Rin),
+												mp_type(ptype),
+												m_attributes(att),
+												mp_participant(p)
 {
 
 }
@@ -52,13 +58,6 @@ void SubscriberImpl::waitForUnreadMessage()
 				break;
 		}
 	}
-//	if(!mp_Reader->isUnreadCacheChange())
-//	{
-//		pDebugInfo("No Unread CacheChange, waiting..."<<endl);
-//		mp_Reader->m_semaphore.wait();
-//	}
-//mp_Reader->m_semaphore.reset();
-
 }
 
 bool SubscriberImpl::assignListener(SubscriberListener* p_listener)
@@ -92,34 +91,95 @@ bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
 }
 
 
-//bool SubscriberImpl::addWriterProxy(Locator_t& loc, GUID_t& guid)
-//{
-//	if(mp_Reader->getStateType()==STATELESS)
-//	{
-//		pError("StatelessReader cannot have writerProxy"<<endl);
-//		return false;
-//	}
-//	else if(mp_Reader->getStateType()==STATEFUL)
-//	{
-//		WriterProxy_t WL;
-//		WL.unicastLocatorList.push_back(loc);
-//		WL.remoteWriterGuid = guid;
-//		pDebugInfo("Adding WriterProxy at: "<< loc.to_IP4_string()<<":"<< loc.port<< endl);
-//		((StatefulReader*)mp_Reader)->matched_writer_add(WL);
-//		return true;
-//	}
-//	return false;
-//}
 
 const GUID_t& SubscriberImpl::getGuid(){
 	return mp_Reader->getGuid();
 }
 
-//bool Subscriber::updateParameters(const SubscriberAttributes& param)
-//{
-//
-//	return true;
-//}
+
+
+bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
+{
+	bool updated = true;
+	bool missing = false;
+	if(att.unicastLocatorList.size() != this->m_attributes.unicastLocatorList.size() ||
+			att.multicastLocatorList.size() != this->m_attributes.multicastLocatorList.size())
+	{
+		pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+		updated &= false;
+	}
+	else
+	{
+		for(LocatorListIterator lit1 = this->m_attributes.unicastLocatorList.begin();
+				lit1!=this->m_attributes.unicastLocatorList.end();++lit1)
+		{
+			missing = true;
+			for(LocatorListIterator lit2 = att.unicastLocatorList.begin();
+					lit2!= att.unicastLocatorList.end();++lit2)
+			{
+				if(*lit1 == *lit2)
+				{
+					missing = false;
+					break;
+				}
+			}
+			if(missing)
+			{
+				pWarning("Locator: "<< *lit1 << " not present in new list"<<endl);
+				pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+			}
+		}
+		for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
+				lit1!=this->m_attributes.multicastLocatorList.end();++lit1)
+		{
+			missing = true;
+			for(LocatorListIterator lit2 = att.multicastLocatorList.begin();
+					lit2!= att.multicastLocatorList.end();++lit2)
+			{
+				if(*lit1 == *lit2)
+				{
+					missing = false;
+					break;
+				}
+			}
+			if(missing)
+			{
+				pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
+				pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+			}
+		}
+	}
+
+	//TOPIC ATTRIBUTES
+	if(this->m_attributes.topic != att.topic)
+	{
+		pWarning("Topic Attributes cannot be updated"<<endl;);
+		updated &= false;
+	}
+	//QOS:
+	//CHECK IF THE QOS CAN BE SET
+	if(!this->mp_Reader->canQosBeUpdated(att.qos))
+	{
+		updated &=false;
+	}
+	if(updated)
+	{
+		this->mp_Reader->setExpectsInlineQos(att.expectsInlineQos);
+		if(this->mp_Reader->getStateType() == STATEFUL)
+		{
+			//UPDATE TIMES:
+			StatefulReader* sfr = (StatefulReader*)mp_Reader;
+			sfr->updateTimes(att.times);
+		}
+		this->mp_Reader->setQos(att.qos,false);
+		this->m_attributes = att;
+		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+		mp_participant->getBuiltinProtocols()->updateLocalReader(this->mp_Reader);
+	}
+
+
+	return updated;
+}
 
 
 } /* namespace dds */

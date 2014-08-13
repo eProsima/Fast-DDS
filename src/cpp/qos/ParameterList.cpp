@@ -490,7 +490,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			}
 			case PID_CONTENT_FILTER_PROPERTY:
 			{
-				pWarning("ContentFilter not supported in current version"<<endl);
+				//pWarning("ContentFilter not supported in current version"<<endl);
 				msg->pos +=plength;
 				paramlist_byte_size +=plength;
 				break;

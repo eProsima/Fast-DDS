@@ -13,8 +13,7 @@
 #include <QPen>
 #include <QWidget>
 #include <QTimer>
-#include "eprosimashapesdemo/shapesdemo/ShapeType.h"
-
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
 class ShapesDemo;
 
 #define SD_QT_COLOR_TRANS 255
@@ -31,6 +30,26 @@ const QColor SD_QT_ORANGE = QColor(255,140,0,SD_QT_COLOR_TRANS);
 const QColor SD_QT_BLACK = QColor(0,0,0,255);
 const QColor SD_QT_GRAY = QColor(190,190,190,255);
 const QColor SD_QT_WHITE = QColor(255,255,255,255);
+
+inline QColor SD_COLOR2QColor(SD_COLOR& color)
+{
+    switch(color)
+    {
+    case SD_PURPLE: return SD_QT_PURPLE;
+    case SD_BLUE: return SD_QT_BLUE;
+    case SD_RED: return SD_QT_RED;
+    case SD_GREEN: return SD_QT_GREEN;
+    case SD_YELLOW: return SD_QT_YELLOW;
+    case SD_CYAN: return SD_QT_CYAN;
+    case SD_MAGENTA: return SD_QT_MAGENTA;
+    case SD_ORANGE: return SD_QT_ORANGE;
+    }
+    return SD_QT_GRAY;
+}
+
+
+
+
 
 class QPainter;
 class Shape;
@@ -79,8 +98,7 @@ protected:
 private:
     QPen m_pen;
     QBrush m_brush;
-    ShapeType m_shape;
-    QColor getColorFromShapeType(ShapeType& st);
+    Shape m_shape;
     /**
      * @brief paintShape method to pain a specific shape.
      * @param painter Pointer to the painter.
@@ -89,7 +107,7 @@ private:
      * @param alpha Transparency level.
      * @param isHistory Whether is part of history or not.
      */
-    void paintShape(QPainter*painter, TYPESHAPE type, ShapeType& sh, uint8_t alpha=255,bool isHistory=false);
+    void paintShape(QPainter*painter, Shape& sh, uint8_t alpha=255,bool isHistory=false);
 
     ShapesDemo* mp_SD;
     bool m_isInitialized;

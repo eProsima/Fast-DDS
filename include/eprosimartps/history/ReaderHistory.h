@@ -26,6 +26,8 @@ struct FirstLastSeqNum
 	SequenceNumber_t last;
 };
 
+class WriterProxy;
+
 class ReaderHistory: public History {
 public:
 	ReaderHistory(Endpoint* endp,uint32_t payload_max_size=5000);
@@ -35,7 +37,7 @@ public:
 	 * @param a_change Pointer to the CacheChange to add.
 	 * @return True if added.
 	 */
-	bool add_change(CacheChange_t* a_change);
+	bool add_change(CacheChange_t* a_change,WriterProxy*prox= NULL);
 	/**
 	 * Sort the CacheChange_t from the History.
 	 */

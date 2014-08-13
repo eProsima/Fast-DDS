@@ -7,7 +7,7 @@
  *************************************************************************/
 #include "eprosimashapesdemo/qt/publishdialog.h"
 #include "ui_publishdialog.h"
-#include "eprosimashapesdemo/shapesdemo/ShapeType.h"
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 
@@ -76,8 +76,11 @@ void PublishDialog::on_button_OkCancel_accepted()
    else
    {
         QString value = this->ui->lineEdit_leaseDuration->text();
-        if(value.toInt()>0)
-            SP->m_attributes.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(value.toInt());
+        if(value.toDouble()>0)
+        {
+            SP->m_attributes.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(value.toDouble());
+            SP->m_attributes.qos.m_liveliness.announcement_period = TimeConv::MilliSeconds2Time_t(value.toDouble()/2);
+        }
    }
    //DURABILITY
    //cout << "Durability INDEX: "<< this->ui->comboBox_durability->currentIndex() << endl;
@@ -119,26 +122,26 @@ void PublishDialog::setShapeAttributes(ShapePublisher* SP)
 {
     //COLOR:
     if(this->ui->combo_Color->currentText() == QString("PURPLE"))
-        SP->m_shape.m_mainShape.setColor(SD_PURPLE);
+        SP->m_shape.define(SD_PURPLE);
     else if(this->ui->combo_Color->currentText() == QString("BLUE"))
-        SP->m_shape.m_mainShape.setColor(SD_BLUE);
+        SP->m_shape.define(SD_BLUE);
     else if(this->ui->combo_Color->currentText() == QString("RED"))
-        SP->m_shape.m_mainShape.setColor(SD_RED);
+        SP->m_shape.define(SD_RED);
     else if(this->ui->combo_Color->currentText() == QString("GREEN"))
-        SP->m_shape.m_mainShape.setColor(SD_GREEN);
+        SP->m_shape.define(SD_GREEN);
     else if(this->ui->combo_Color->currentText() == QString("YELLOW"))
-        SP->m_shape.m_mainShape.setColor(SD_YELLOW);
+        SP->m_shape.define(SD_YELLOW);
     else if(this->ui->combo_Color->currentText() == QString("CYAN"))
-        SP->m_shape.m_mainShape.setColor(SD_CYAN);
+        SP->m_shape.define(SD_CYAN);
     else if(this->ui->combo_Color->currentText() == QString("MAGENTA"))
-        SP->m_shape.m_mainShape.setColor(SD_MAGENTA);
+        SP->m_shape.define(SD_MAGENTA);
     else if(this->ui->combo_Color->currentText() == QString("ORANGE"))
-        SP->m_shape.m_mainShape.setColor(SD_ORANGE);
+        SP->m_shape.define(SD_ORANGE);
     //SIZE:
-    SP->m_shape.m_mainShape.m_size = this->ui->spin_Size->value();
+    SP->m_shape.m_size = this->ui->spin_Size->value();
     //POSITION IS RANDOM:
-    SP->m_shape.m_mainShape.m_x = this->mp_sd->getRandomX(SP->m_shape.m_mainShape.m_size);
-    SP->m_shape.m_mainShape.m_y = this->mp_sd->getRandomY(SP->m_shape.m_mainShape.m_size);
+    SP->m_shape.m_x = this->mp_sd->getRandomX(SP->m_shape.m_size);
+    SP->m_shape.m_y = this->mp_sd->getRandomY(SP->m_shape.m_size);
 
 }
 

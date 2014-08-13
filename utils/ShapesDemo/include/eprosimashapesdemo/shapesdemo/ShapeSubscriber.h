@@ -17,27 +17,11 @@
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeHistory.h"
 #include <QMutex>
 
 
-/**
- * @brief The ShapeContentFilter class, represents a content filter.
- */
-class ShapeContentFilter
-{
-public:
-    ShapeContentFilter(): m_maxX(MAX_DRAW_AREA_X),m_minX(0),m_maxY(MAX_DRAW_AREA_Y),m_minY(0),m_useFilter(false)
-    {
-
-    }
-   ~ShapeContentFilter(){}
-    uint32_t m_maxX;
-    uint32_t m_minX;
-    uint32_t m_maxY;
-    uint32_t m_minY;
-    bool m_useFilter;
-};
-
+class ContentFilterSelector;
 
 /**
  * @brief The ShapeSubscriber class, implements a Subscriber to receive shapes.
@@ -57,15 +41,16 @@ public:
 
 	void onNewDataMessage();
     void onSubscriptionMatched(MatchingInfo info);
-    void adjustContentFilter(ShapeContentFilter& m_filter);
+    void adjustContentFilter(ShapeFilter& m_filter);
+    void assignContentFilterPointer(ContentFilterSelector* p){mp_contentFilter = p;}
 	bool hasReceived;
-    Shape m_shape;
-    Shape m_drawShape;
+
     QMutex m_mutex;
-    ShapeContentFilter m_filter;
-    bool passFilter(ShapeType* shape);
+
     std::vector<GUID_t> m_remoteWriters;
-    ColorInstanceHandle m_instances;
+    ShapeHistory m_shapeHistory;
+    TYPESHAPE m_shapeType;
+    ContentFilterSelector* mp_contentFilter;
 
 };
 

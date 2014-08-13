@@ -32,6 +32,7 @@ ReaderProxyData::ReaderProxyData():
 
 ReaderProxyData::~ReaderProxyData()
 {
+	pDebugInfo("ReaderProxyData destructor: "<< this->m_guid<<endl);
 	m_parameterList.deleteParams();
 }
 

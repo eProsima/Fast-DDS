@@ -71,13 +71,14 @@ HEADERS += \
     include/eprosimashapesdemo/shapesdemo/Shape.h \
     include/eprosimashapesdemo/shapesdemo/ShapesDemo.h \
     include/eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h \
-    include/eprosimashapesdemo/shapesdemo/ShapeType.h \
     include/eprosimashapesdemo/utils/md5.h \
     include/eprosimashapesdemo/shapesdemo/ShapePublisher.h \
     include/eprosimashapesdemo/qt/UpdateThread.h \
     include/eprosimashapesdemo/shapesdemo/ShapeSubscriber.h \
     include/eprosimashapesdemo/qt/optionsdialog.h \
-    include/eprosimashapesdemo/qt/ContentFilterSelector.h
+    include/eprosimashapesdemo/qt/ContentFilterSelector.h \
+    include/eprosimashapesdemo/shapesdemo/ShapeDefinitions.h \
+    include/eprosimashapesdemo/shapesdemo/ShapeHistory.h
 
 
 SOURCES += \
@@ -85,31 +86,30 @@ SOURCES += \
     src/qt/mainwindow.cpp \
     src/qt/publishdialog.cpp \
     src/qt/subscribedialog.cpp \
-    src/shapesdemo/Shape.cpp \
     src/shapesdemo/ShapesDemo.cpp \
     src/shapesdemo/ShapeTopicDataType.cpp \
-    src/shapesdemo/ShapeType.cpp \
     src/utils/md5.cpp \
     src/main.cpp \
     src/shapesdemo/ShapePublisher.cpp \
     src/qt/UpdateThread.cpp \
     src/shapesdemo/ShapeSubscriber.cpp \
     src/qt/optionsdialog.cpp \
-    src/qt/ContentFilterSelector.cpp
+    src/qt/ContentFilterSelector.cpp \
+    src/shapesdemo/ShapeHistory.cpp
 
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.5.0 #-lIphlpapi
-win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.5.0 #-lIphlpapi
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0.5.0 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartpsd-0.5.0 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
 
 
 win32:INCLUDEPATH += $$PWD/../../include
-win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010
+win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010 C:\Windows\System32
 
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.0.lib
-win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.0.lib
+#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.0.lib Shlwapi.lib Iphlpapi.lib
+#win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.0.lib Shlwapi.lib Iphlpapi.lib
 
 RESOURCES += \
     images/eprosimalogo.qrc

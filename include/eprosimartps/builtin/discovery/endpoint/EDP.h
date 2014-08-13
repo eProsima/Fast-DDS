@@ -50,6 +50,9 @@ public:
 	 * @param pdata
 	 */
 	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
+
+	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
+
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
 	 * @param R Pointer to the Reader to remove.
@@ -89,25 +92,19 @@ public:
 	 */
 	bool newLocalWriterProxyData(RTPSWriter* W);
 	/**
-	 * Pair a WriterProxyData against all local Readers.
-	 * @param wdata Pointer to the WPD object.
+	 * A previously created Reader has been updated
+	 * @param R Pointer to the reader;
+	 * @return True if correctly updated
 	 */
-	void pairWriterProxy(WriterProxyData* wdata);
+	bool updatedLocalReader(RTPSReader* R);
 	/**
-	 * Pair a ReaderProxyData against all local Writer.
-	 * @param rdata Pointer to the RPD object.
+	 * A previously created Writer has been updated
+	 * @param W Pointer to the Writer
+	 * @return True if correctly updated
 	 */
-	void pairReaderProxy(ReaderProxyData* rdata);
-	/**
-	 * Pair a local Reader against all possible WriterProxyData objects.
-	 * @param R Pointer to the reader.
-	 */
-	void pairReader(RTPSReader* R);
-	/**
-	 * Pair a local writer against all possible ReaderProxyData objects.
-	 * @param W Pointer to the writer.
-	 */
-	void pairWriter(RTPSWriter* W);
+	bool updatedLocalWriter(RTPSWriter* W);
+
+
 	/**
 	 * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
 	 * @param W Pointer to the writer.
@@ -148,18 +145,29 @@ public:
 	bool unpairReaderProxy(ReaderProxyData* rdata);
 
 	/**
-	 * Method design to manage an updated ReaderProxyData object. (NOT YET IMPLEMENTED).
-	 * @param rdata Pointer to the ReaderProxyData object.
-	 * @return True if correct.
+	 * Try to pair/unpair a local Reader against all possible writerProxy Data.
+	 * @param R Pointer to the Reader
+	 * @return True
 	 */
-	bool updatedReaderProxy(ReaderProxyData* rdata);
+	bool pairingReader(RTPSReader* R);
+	/**l
+	 * Try to pair/unpair a local Writer against all possible readerProxy Data.
+	 * @param W Pointer to the Writer
+	 * @return True
+	 */
+	bool pairingWriter(RTPSWriter* W);
 	/**
-	 * Method design to manage an updated WriterProxyData object. (NOT YET IMPLEMENTED).
-	 * @param wdata Pointer to the WriterProxyData object.
-	 * @return True if correct.
+	 * Try to pair/unpair ReaderProxyData.
+	 * @param rdata Pointer to the ReaderProxyData object.
+	 * @return True.
 	 */
-	bool updatedWriterProxy(WriterProxyData* wdata);
-
+	bool pairingReaderProxy(ReaderProxyData* rdata);
+	/**
+	 * Try to pair/unpair WriterProxyData.
+	 * @param wdata Pointer to the WriterProxyData.
+	 * @return True.
+	 */
+	bool pairingWriterProxy(WriterProxyData* wdata);
 
 	//! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
 	PDPSimple* mp_PDP;

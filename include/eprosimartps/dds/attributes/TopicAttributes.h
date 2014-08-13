@@ -94,6 +94,38 @@ public:
 	}
 };
 
+
+bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
+{
+	if(t1.topicKind != t2.topicKind)
+	{
+		cout << "a"<<endl;
+		return true;
+	}
+	if(t1.topicName != t2.topicName)
+	{
+		cout << "b"<<endl;
+		return true;
+	}
+	if(t1.topicDataType != t2.topicDataType)
+	{
+		cout << "c"<<endl;
+		return true;
+	}
+	if(t1.historyQos.kind != t2.historyQos.kind)
+	{
+		cout << "d"<<endl;
+		return true;
+	}
+	if(t1.historyQos.kind == KEEP_LAST_HISTORY_QOS && t1.historyQos.depth != t2.historyQos.depth)
+	{
+		cout << "e"<<endl;
+		return true;
+	}
+	return false;
+}
+
+
 } /* namespace rtps */
 } /* namespace eprosima */
 

@@ -104,6 +104,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLP.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPTopicDataType.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
 		  
 #		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \

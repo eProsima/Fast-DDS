@@ -51,6 +51,12 @@ public:
 	 */
 	bool matched_reader_remove(ReaderProxyData* rdata);
 	/**
+	 * Tells us if a specific Reader is matched against this writer
+	 * @param rdata Pointer to the ReaderProxyData object
+	 * @return True if it was matched.
+	 */
+	bool matched_reader_is_matched(ReaderProxyData* rdata);
+	/**
 	 * Add a ReaderLocator to the StatelessWriter.
 	 * @param locator Locator to add
 	 * @param expectsInlineQos Boolean variable indicating that the locator expects inline Qos.

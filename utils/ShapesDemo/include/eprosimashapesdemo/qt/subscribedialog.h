@@ -33,6 +33,10 @@ public:
 
 
 
+        void on_checkBox_reliable_toggled(bool checked);
+
+        void on_checkBox_timeBasedFilter_clicked(bool checked);
+
 private:
     Ui::SubscribeDialog *ui;
     ShapesDemo* mp_sd;

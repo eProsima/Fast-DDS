@@ -7,7 +7,7 @@
  *************************************************************************/
 #include "eprosimartps/dds/DDSTopicDataType.h"
 
-#include "eprosimashapesdemo/shapesdemo/ShapeType.h"
+#include "eprosimashapesdemo/shapesdemo/Shape.h"
 
 using namespace eprosima;
 using namespace dds;
@@ -41,7 +41,7 @@ public:
     ShapeTopicDataType m_topic;
     ColorInstanceHandle()
     {
-        ShapeType shape;
+        Shape shape;
         shape.define(SD_PURPLE);
         m_topic.getKey((void*)&shape,&PurpleIH.second);
         shape.define(SD_BLUE);
@@ -58,12 +58,53 @@ public:
         m_topic.getKey((void*)&shape,&MagentaIH.second);
         shape.define(SD_ORANGE);
         m_topic.getKey((void*)&shape,&OrangeIH.second);
-        cout << PurpleIH.second << endl;
-        cout << BlueIH.second << endl;
-        cout << RedIH.second<<endl;
+        //        cout << PurpleIH.second << endl;
+        //        cout << BlueIH.second << endl;
+        //        cout << RedIH.second<<endl;
     }
     ~ColorInstanceHandle()
     {
 
     }
 };
+
+
+const ColorInstanceHandle c_ShapesHandles;
+
+
+inline SD_COLOR getColorFromInstanceHandle(InstanceHandle_t& iHandle)
+{
+    if(iHandle == c_ShapesHandles.BlueIH.second)
+    {
+        return SD_BLUE;
+    }
+    if(iHandle == c_ShapesHandles.PurpleIH.second)
+    {
+        return SD_PURPLE;
+    }
+    if(iHandle == c_ShapesHandles.RedIH.second)
+    {
+        return SD_RED;
+    }
+    if(iHandle == c_ShapesHandles.MagentaIH.second)
+    {
+        return SD_MAGENTA;
+    }
+    if(iHandle == c_ShapesHandles.OrangeIH.second)
+    {
+        return SD_ORANGE;
+    }
+    if(iHandle == c_ShapesHandles.YellowIH.second)
+    {
+        return SD_YELLOW;
+    }
+    if(iHandle == c_ShapesHandles.GreenIH.second)
+    {
+        return SD_GREEN;
+    }
+    if(iHandle == c_ShapesHandles.CyanIH.second)
+    {
+        return SD_CYAN;
+    }
+    return SD_GRAY;
+}

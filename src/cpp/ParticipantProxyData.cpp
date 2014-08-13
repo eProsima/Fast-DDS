@@ -21,21 +21,41 @@ namespace eprosima {
 namespace rtps {
 
 ParticipantProxyData::ParticipantProxyData():
-														m_expectsInlineQos(false),
-														m_availableBuiltinEndpoints(0),
-														m_manualLivelinessCount(0),
-														isAlive(false),
-														m_hasChanged(true),
-														mp_leaseDurationTimer(NULL)
+																		m_expectsInlineQos(false),
+																		m_availableBuiltinEndpoints(0),
+																		m_manualLivelinessCount(0),
+																		isAlive(false),
+																		m_hasChanged(true),
+																		mp_leaseDurationTimer(NULL)
 {
 	// TODO Auto-generated constructor stub
 	if(mp_leaseDurationTimer!=NULL)
 		delete(mp_leaseDurationTimer);
 }
 
-ParticipantProxyData::~ParticipantProxyData() {
-	// TODO Auto-generated destructor stub
-
+ParticipantProxyData::~ParticipantProxyData()
+{
+	pDebugInfo("ParticipantProxyData destructor: "<<this->m_guid<<endl);
+	for(std::vector<ReaderProxyData*>::iterator it = this->m_readers.begin();
+			it!=this->m_readers.end();++it)
+	{
+		delete(*it);
+	}
+	for(std::vector<WriterProxyData*>::iterator it = this->m_writers.begin();
+			it!=this->m_writers.end();++it)
+	{
+		delete(*it);
+	}
+	for(std::vector<ReaderProxyData*>::iterator it = this->m_builtinReaders.begin();
+			it!=this->m_builtinReaders.end();++it)
+	{
+		delete(*it);
+	}
+	for(std::vector<WriterProxyData*>::iterator it = this->m_builtinWriters.begin();
+			it!=this->m_builtinWriters.end();++it)
+	{
+		delete(*it);
+	}
 }
 
 bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)

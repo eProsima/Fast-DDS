@@ -23,7 +23,7 @@ namespace rtps {
 
 
 StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-		RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
+				RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
 {
 	m_pushMode = true;//TODOG, support pushmode false in best effort
 	//locator lists:
@@ -42,6 +42,14 @@ StatelessWriter::~StatelessWriter()
 bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 {
 	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<ReaderProxyData*>::iterator it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
+	{
+		if((*it)->m_guid == rdata->m_guid)
+		{
+			pWarning("Attempting to add existing reader" << endl);
+			return false;
+		}
+	}
 	bool unsent_changes_not_empty = false;
 	for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
 			lit!=rdata->m_unicastLocatorList.end();++lit)
@@ -63,7 +71,7 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 
 bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 {
-	pDebugInfo("Adding Locator: "<< loc.printIP4Port()<< " to StatelessWriter"<<endl;);
+	pDebugInfo("Adding Locator: "<< loc<< " to StatelessWriter"<<endl;);
 	std::vector<ReaderLocator>::iterator rit;
 	bool found = false;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
@@ -112,7 +120,7 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 	}
 	if(found)
 	{
-
+		pDebugInfo("Reader Proxy removed: " <<rdata->m_guid<< endl);
 		for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
 				lit!=rdata->m_unicastLocatorList.end();++lit)
 		{
@@ -124,6 +132,20 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 			remove_locator(*lit);
 		}
 		return true;
+	}
+	return false;
+}
+
+bool StatelessWriter::matched_reader_is_matched(ReaderProxyData* rdata)
+{
+	boost::lock_guard<Endpoint> guard(*this);
+	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
+			rit!=m_matched_readers.end();++rit)
+	{
+		if((*rit)->m_guid == rdata->m_guid)
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -196,19 +218,7 @@ bool StatelessWriter::reader_locator_add(Locator_t& loc,bool expectsInlineQos)
 	}
 	return true;
 }
-//
-//
-//bool StatelessWriter::reader_locator_remove(Locator_t& locator)
-//{
-//	boost::lock_guard<Endpoint> guard(*this);
-//	for(std::vector<ReaderLocator>::iterator it=reader_locator.begin();it!=reader_locator.end();++it){
-//		if(it->locator == locator){
-//			reader_locator.erase(it);
-//			return true;
-//		}
-//	}
-//	return false;
-//}
+
 
 void StatelessWriter::unsent_changes_reset()
 {
@@ -283,18 +293,18 @@ void StatelessWriter::unsent_changes_not_empty()
 				}
 				rit->unsent_changes.clear();
 			}
-//			else
-//			{
-//				SequenceNumber_t first,last;
-//				m_writer_cache.get_seq_num_min(&first,NULL);
-//				m_writer_cache.get_seq_num_max(&last,NULL);
-//				m_heartbeatCount++;
-//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-//				rit->unsent_changes.clear();
-//			}
+			//			else
+			//			{
+			//				SequenceNumber_t first,last;
+			//				m_writer_cache.get_seq_num_min(&first,NULL);
+			//				m_writer_cache.get_seq_num_max(&last,NULL);
+			//				m_heartbeatCount++;
+			//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+			//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+			//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+			//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+			//				rit->unsent_changes.clear();
+			//			}
 		}
 	}
 	pDebugInfo ( "Finish sending unsent changes" << endl);

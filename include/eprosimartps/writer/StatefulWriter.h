@@ -47,7 +47,12 @@ public:
 	 * @return True if removed.
 	 */
 	bool matched_reader_remove(ReaderProxyData* rdata);
-
+	/**
+	 * Tells us if a specific Reader is matched against this writer
+	 * @param rdata Pointer to the ReaderProxyData object
+	 * @return True if it was matched.
+	 */
+	bool matched_reader_is_matched(ReaderProxyData* rdata);
 	/**
 	 * Find a Reader Proxy in this writer.
 	 * @param[in] readerGuid The GUID_t of the reader.
@@ -74,15 +79,15 @@ public:
 	 */
 	void unsent_changes_not_empty();
 	/**
-		 * Remove the change with the minimum SequenceNumber
-		 * @return True if removed.
-		 */
+	 * Remove the change with the minimum SequenceNumber
+	 * @return True if removed.
+	 */
 	bool removeMinSeqCacheChange();
 	/**
-		 * Remove all changes from history
-		 * @param n_removed Pointer to return the number of elements removed.
-		 * @return True if correct.
-		 */
+	 * Remove all changes from history
+	 * @param n_removed Pointer to return the number of elements removed.
+	 * @return True if correct.
+	 */
 	bool removeAllCacheChange(size_t* n_removed);
 	//!Increment the HB count.
 	void incrementHBCount(){++m_heartbeatCount;};
@@ -112,6 +117,9 @@ public:
 	}
 
 	bool change_removed_by_history(CacheChange_t* a_change);
+
+	void updateTimes(PublisherTimes& times);
+
 private:
 	//! Vector containin all the associated ReaderProxies.
 	std::vector<ReaderProxy*> matched_readers;

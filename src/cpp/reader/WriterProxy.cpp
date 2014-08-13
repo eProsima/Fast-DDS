@@ -25,25 +25,25 @@ namespace rtps {
 
 WriterProxy::~WriterProxy()
 {
-	pDebugInfo("WriterProxy destructor"<<endl;);
+	//pDebugInfo("WriterProxy destructor"<<endl;);
 	m_writerProxyLiveliness.stop_timer();
 }
 
 WriterProxy::WriterProxy(WriterProxyData* wdata,
 		Duration_t heartbeatResponse,
 		StatefulReader* SR) :
-		mp_SFR(SR),
-		m_data(wdata),
-		m_acknackCount(0),
-		m_lastHeartbeatCount(0),
-		m_isMissingChangesEmpty(true),
-		m_heartbeatResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(heartbeatResponse))),
-		m_writerProxyLiveliness(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(wdata->m_qos.m_liveliness.lease_duration))),
-		m_heartbeatFinalFlag(false),
-		m_hasMaxAvailableSeqNumChanged(false),
-		m_hasMinAvailableSeqNumChanged(false),
-		m_livelinessAsserted(true),
-		m_firstReceived(true)
+				mp_SFR(SR),
+				m_data(wdata),
+				m_acknackCount(0),
+				m_lastHeartbeatCount(0),
+				m_isMissingChangesEmpty(true),
+				m_heartbeatResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(heartbeatResponse))),
+				m_writerProxyLiveliness(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(wdata->m_qos.m_liveliness.lease_duration))),
+				m_heartbeatFinalFlag(false),
+				m_hasMaxAvailableSeqNumChanged(false),
+				m_hasMinAvailableSeqNumChanged(false),
+				//m_livelinessAsserted(true),
+				m_firstReceived(true)
 
 {
 	m_changesFromW.clear();
@@ -51,14 +51,15 @@ WriterProxy::WriterProxy(WriterProxyData* wdata,
 	TIME_INFINITE(aux);
 	if(m_data->m_qos.m_liveliness.lease_duration < aux)
 		m_writerProxyLiveliness.restart_timer();
+	pDebugInfo("Writer Proxy created"<<endl);
 }
 
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
 	pDebugInfo("WriterProxy "<<m_data->m_guid.entityId<<": MISSING_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
-//	SequenceNumber_t seq = (seqNum)+1;
-//	add_unknown_changes(seq);
+	//	SequenceNumber_t seq = (seqNum)+1;
+	//	add_unknown_changes(seq);
 	add_changes_from_writer_up_to(seqNum);
 
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
@@ -85,11 +86,17 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 {
 	SequenceNumber_t firstSN;
 	if(m_changesFromW.size()==0)
-		firstSN = this->m_lastRemovedSeqNum;
+	{
+		if(this->m_lastRemovedSeqNum.to64long()>0)
+			firstSN = this->m_lastRemovedSeqNum;
+		else
+			firstSN = seq-1;
+	}
 	else
 		firstSN = m_changesFromW.back().seqNum;
 	while(1)
 	{
+
 		++firstSN;
 		if(firstSN>seq)
 		{
@@ -110,8 +117,8 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
 	pDebugInfo("WriterProxy "<<m_data->m_guid.entityId<<": LOST_changes_update: up to seqNum: "<<seqNum.to64long()<<endl);
 	boost::lock_guard<WriterProxy> guard(*this);
-//	SequenceNumber_t seq = (seqNum)+1;
-//	add_unknown_changes(seq);
+	//	SequenceNumber_t seq = (seqNum)+1;
+	//	add_unknown_changes(seq);
 	add_changes_from_writer_up_to(seqNum);
 
 	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
@@ -162,16 +169,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 	}
 	pError("WriterProxy received change set: something has gone wrong"<<endl;);
 	return false;
-//	ChangeFromWriter_t chfw;
-//	chfw.setChange(change);
-//	chfw.is_relevant = true;
-//	chfw.status = RECEIVED;
-//
-//	add_unknown_changes(change->sequenceNumber);
-//
-//	m_changesFromW.push_back(chfw);
-//
-//	return true;
+
 }
 
 bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
@@ -195,11 +193,6 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 
 	return true;
 }
-
-//bool sort_chFW (ChangeFromWriter_t c1,ChangeFromWriter_t c2)
-//{
-//	return(c1.change->sequenceNumber.to64long() < c2.change->sequenceNumber.to64long());
-//}
 
 
 bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
@@ -238,16 +231,16 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 			seqNum->low = 0;
 			//We check the rest for the largest one with Status Received or lost
 			//ignoring the first one that are not valid.
-	//		bool first_ones = true;
+			//		bool first_ones = true;
 			for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 			{
-//				if(!it->isValid() && first_ones)
-//				{
-//					continue;
-//				}
+				//				if(!it->isValid() && first_ones)
+				//				{
+				//					continue;
+				//				}
 				if((it->status == RECEIVED || it->status == LOST))
 				{
-				//	first_ones = false;
+					//	first_ones = false;
 					*seqNum = it->seqNum;
 					m_max_available_seqNum = it->seqNum;
 					m_hasMaxAvailableSeqNumChanged = false;
@@ -277,7 +270,7 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 		if(m_hasMinAvailableSeqNumChanged)
 		{
 			//Order changesFromWriter
-		//	std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
+			//	std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
 			seqNum->high = 0;
 			seqNum->low = 0;
 			for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)

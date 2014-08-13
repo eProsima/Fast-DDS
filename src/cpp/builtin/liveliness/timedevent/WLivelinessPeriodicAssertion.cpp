@@ -21,11 +21,13 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
 
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+
 namespace eprosima {
 namespace rtps {
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
-		TimedEvent(&pwlp->mp_participant->getEventResource()->io_service, boost::posix_time::milliseconds(0)),
+								TimedEvent(&pwlp->mp_participant->getEventResource()->io_service, boost::posix_time::milliseconds(0)),
 								m_livelinessKind(kind),
 								mp_WLP(pwlp)
 {
@@ -34,7 +36,7 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 	{
 		m_iHandle.value[i] = m_guidP.value[i];
 	}
-	m_iHandle.value[15] = m_livelinessKind;
+	m_iHandle.value[15] = m_livelinessKind+0x01;
 }
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
@@ -49,7 +51,7 @@ void WLivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo(RTPS_MAGENTA<<"LivelinessPeriodic Assertion (period: "<< this->m_interval_msec<< ")"<<RTPS_DEF<<endl;)
+		pDebugInfo(RTPS_MAGENTA<<"Writer LivelinessPeriodic Assertion (period: "<< this->m_interval_msec<< ")"<<RTPS_DEF<<endl;);
 		if(this->mp_WLP->mp_builtinParticipantMessageWriter->matchedReadersSize()>0)
 		{
 			if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
@@ -57,6 +59,7 @@ void WLivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 			else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 				ManualByParticipantLivelinessAssertion();
 		}
+		this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertLocalWritersLiveliness(m_livelinessKind);
 		this->restart_timer();
 	}
 	else if(ec==boost::asio::error::operation_aborted)
@@ -90,6 +93,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 			mp_WLP->mp_builtinParticipantMessageWriter->add_change(change);
 			mp_WLP->mp_builtinParticipantMessageWriter->unsent_change_add(change);
 		}
+
 	}
 	return true;
 }
@@ -115,7 +119,12 @@ bool WLivelinessPeriodicAssertion::ManualByParticipantLivelinessAssertion()
 		{
 			change->instanceHandle = m_iHandle;
 			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
-			change->serializedPayload.length = 0;
+			memcpy(change->serializedPayload.data,m_guidP.value,12);
+
+			for(uint8_t i =12;i<24;++i)
+				change->serializedPayload.data[i] = 0;
+			change->serializedPayload.data[15] = m_livelinessKind+1;
+			change->serializedPayload.length = 12+4+4+4;
 
 			mp_WLP->mp_builtinParticipantMessageWriter->add_change(change);
 			mp_WLP->mp_builtinParticipantMessageWriter->unsent_change_add(change);

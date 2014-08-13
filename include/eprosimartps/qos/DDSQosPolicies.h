@@ -70,7 +70,7 @@ public:
 
 class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true){};
+	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero){};
 	virtual ~LatencyBudgetQosPolicy(){};
 	Duration_t duration;
 	bool addToCDRMessage(CDRMessage_t* msg);
@@ -152,9 +152,10 @@ public:
 
 class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	Duration_t minimum_separation;
-	TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false){};
+
+	TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false),minimum_separation(c_TimeZero){};
 	virtual ~TimeBasedFilterQosPolicy(){};
+	Duration_t minimum_separation;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -173,7 +174,7 @@ public:
 	PresentationQosPolicyAccessScopeKind access_scope;
 	bool coherent_access;
 	bool ordered_access;
-	PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),QosPolicy(true),
+	PresentationQosPolicy():Parameter_t(PID_PRESENTATION,PARAMETER_PRESENTATION_LENGTH),QosPolicy(false),
 			access_scope(INSTANCE_PRESENTATION_QOS),
 						coherent_access(false),ordered_access(false){};
 	virtual ~PresentationQosPolicy(){};
@@ -242,9 +243,9 @@ public:
 
 class LifespanQosPolicy : private Parameter_t, public QosPolicy {
 public:
-	Duration_t duration;
 	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeInfinite){};
 	virtual ~LifespanQosPolicy(){};
+	Duration_t duration;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

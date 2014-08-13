@@ -64,7 +64,7 @@ struct SequenceNumber_t{
 		return *this;
 	}
 	SequenceNumber_t& operator+=(int inc)
-	{
+									{
 		if(this->low+inc>pow(2.0,32))
 		{
 			int module = (int)floor((inc+this->low)/pow(2.0,32));
@@ -76,7 +76,7 @@ struct SequenceNumber_t{
 		}
 
 		return *this;
-	}
+									}
 
 
 };
@@ -84,46 +84,89 @@ struct SequenceNumber_t{
 
 //!Compares two SequenceNumber_t.
 inline bool operator==(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
-{
+								{
 	if(sn1.high != sn2.high)
 		return false;
 	if(sn1.low != sn2.low)
 		return false;
 	return true;
-}
+								}
 inline bool operator!=(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
-{
+								{
 	if(sn1.high != sn2.high)
 		return true;
 	if(sn1.low != sn2.low)
 		return true;
 	return false;
+								}
+inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+{
+	if(seq1.high>seq2.high)
+		return true;
+	else if(seq1.high < seq2.high)
+		return false;
+	else
+	{
+		if(seq1.low>seq2.low)
+			return true;
+	}
+	return false;
 }
-inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2){
-	return seq1.to64long() > seq2.to64long();
+inline bool operator<(SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+{
+	if(seq1.high>seq2.high)
+		return false;
+	else if(seq1.high < seq2.high)
+		return true;
+	else
+	{
+		if(seq1.low < seq2.low)
+			return true;
+	}
+	return false;
 }
-inline bool operator<( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
-	return seq1.to64long() < seq2.to64long();
+
+inline bool operator>=( SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+{
+	if(seq1.high>seq2.high)
+		return true;
+	else if(seq1.high < seq2.high)
+		return false;
+	else
+	{
+		if(seq1.low>=seq2.low)
+			return true;
+	}
+	return false;
 }
-inline bool operator>=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
-	return seq1.to64long() >= seq2.to64long();
-}
-inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2){
-	return (seq1.to64long() <= seq2.to64long());
+
+inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+{
+	if(seq1.high>seq2.high)
+			return false;
+		else if(seq1.high < seq2.high)
+			return true;
+		else
+		{
+			if(seq1.low <= seq2.low)
+				return true;
+		}
+		return false;
 }
 
 
 
 inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 {
-    if((int64_t)seq.low-(int64_t)inc < 0)
+	SequenceNumber_t res(seq);
+	if((int64_t)res.low-(int64_t)inc < 0)
 	{
-		seq.high--;
-		seq.low = (uint32_t)(pow(2.0,32)-(inc-seq.low));
+		res.high--;
+		res.low = (uint32_t)(pow(2.0,32)-(inc-seq.low));
 	}
 	else
-		seq.low-=(uint32_t)inc;
-	return seq;
+		res.low-=(uint32_t)inc;
+	return res;
 }
 inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
 	SequenceNumber_t seq(seqin);
@@ -179,9 +222,9 @@ public:
 		return *std::max_element(set.begin(),set.end(),sort_seqNum);
 	}
 	bool isSetEmpty()
-		{
-			return set.empty();
-		}
+	{
+		return set.empty();
+	}
 	std::vector<SequenceNumber_t>::iterator get_begin()
 	{
 		return set.begin();
@@ -195,9 +238,9 @@ public:
 		return set.size();
 	}
 	std::vector<SequenceNumber_t> get_set()
-		{
+										{
 		return set;
-		}
+										}
 	std::string print()
 	{
 		std::stringstream ss;

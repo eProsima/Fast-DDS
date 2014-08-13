@@ -15,11 +15,10 @@
 #define SHAPESDEMO_H_
 #include "eprosimartps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h"
+#include "eprosimashapesdemo/shapesdemo/ShapeDefinitions.h"
 #include <QMutex>
 
-#define MAX_DRAW_AREA_X 235
-#define MAX_DRAW_AREA_Y 265
-#define INITIAL_INTERVAL_MS 200
+
 
 
 
@@ -98,12 +97,12 @@ public:
     uint32_t getRandomX(uint32_t size=10);
     uint32_t getRandomY(uint32_t size=10);
 
-    /**
-     * @brief Get the shapes to draw.
-     * @param shvec Pointer to a shapevector.
-     * @return True if found.
-     */
-    bool getShapes(std::vector<Shape*>* shvec);
+//    /**
+//     * @brief Get the shapes to draw.
+//     * @param shvec Pointer to a shapevector.
+//     * @return True if found.
+//     */
+//    bool getShapes(std::vector<Shape*>* shvec);
 
     //     QMutex* getMutex()
     //     {

@@ -215,7 +215,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 			if(newRPD->m_multicastLocatorList.empty())
 				newRPD->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
 			newRPD->m_isAlive = true;
-			this->pairReaderProxy(newRPD);
+			this->pairingReaderProxy(newRPD);
 			return true;
 		}
 	}
@@ -241,7 +241,7 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 			if(newWPD->m_multicastLocatorList.empty())
 				newWPD->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
 			newWPD->m_isAlive = true;
-			this->pairWriterProxy(newWPD);
+			this->pairingWriterProxy(newWPD);
 			return true;
 		}
 	}
