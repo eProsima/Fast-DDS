@@ -63,7 +63,7 @@ public:
 	GroupDataQosPolicy m_groupData;
 	/**
 	 * Set Qos from another class
-	 * @param readerqos Reference from a ReaderQos object.
+	 * @param qos Reference from a WriterQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
 	void setQos(const WriterQos& qos, bool first_time);

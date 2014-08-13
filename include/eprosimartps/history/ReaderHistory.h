@@ -35,6 +35,7 @@ public:
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.
 	 * @param a_change Pointer to the CacheChange to add.
+	 * @param prox Pointer to the writerProxy associated with the change that is going to be added.
 	 * @return True if added.
 	 */
 	bool add_change(CacheChange_t* a_change,WriterProxy*prox= NULL);

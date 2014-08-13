@@ -179,7 +179,7 @@ public:
 
 	/**
 	 * Update the Attributes of the subscriber;
-	 * @param rqos Reference to a ReaderQos object to update the parameters;
+	 * @param att Reference to a SubscriberAttributes object to update the parameters;
 	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
 	 */
 	bool updateAttributes(SubscriberAttributes& att)

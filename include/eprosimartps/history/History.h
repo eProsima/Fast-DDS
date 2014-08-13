@@ -91,6 +91,7 @@ public:
 	/**
 	 * Add a change to the History.
 	 * @param a_change Pointer to the CacheChange_t to add to the History.
+	 * @param prox Pointer to the writerProxy associated with the change that is going to be added.
 	 * @return True if correct.
 	 */
 	virtual bool add_change(CacheChange_t* a_change,WriterProxy*prox = NULL)=0;
