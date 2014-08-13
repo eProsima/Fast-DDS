@@ -50,6 +50,8 @@ public:
 	CDRMessage_t m_rec_msg;
 	ParameterList_t m_ParamList;
 
+
+
 private:
 	//!Protocol version of the message
 	ProtocolVersion_t sourceVersion;

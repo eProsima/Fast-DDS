@@ -54,14 +54,6 @@ bool RTPSReader::removeCacheChangesByKey(InstanceHandle_t& key)
 }
 
 
-//bool RTPSReader::acceptMsgFrom(EntityId_t& writerId)
-//{
-//	if(m_acceptMessagesFromUnkownWriters)
-//		return true;
-//	if(writerId == this->m_trustedWriterEntityId)
-//		return true;
-//	return false;
-//}
 
 
 } /* namespace rtps */

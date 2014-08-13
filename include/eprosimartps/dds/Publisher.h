@@ -19,12 +19,14 @@
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
 
+#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+
 namespace eprosima {
 
 namespace rtps{
 
 class RTPSWriter;
-
+class ParticipantImpl;
 }
 
 using namespace rtps;
@@ -49,7 +51,7 @@ public:
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainParticipant static function.
 	 */
-	PublisherImpl(RTPSWriter* Win,DDSTopicDataType* ptype);
+	PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType* ptype,PublisherAttributes& att);
 
 	virtual ~PublisherImpl();
 
@@ -77,10 +79,10 @@ public:
 	 */
 	bool unregister(void*Data);
 	/**
-		 * Dispose and unregister a previously written data.
-		 * @param Data Pointer to the data.
-		 * @return True if correct.
-		 */
+	 * Dispose and unregister a previously written data.
+	 * @param Data Pointer to the data.
+	 * @return True if correct.
+	 */
 	bool dispose_and_unregister(void*Data);
 
 
@@ -109,16 +111,33 @@ public:
 	const GUID_t& getGuid();
 
 	RTPSWriter* getWriterPtr() {
-			return mp_Writer;
-		}
+		return mp_Writer;
+	}
 
 	size_t getMatchedSubscribers();
+
+	/**
+	 * Update the Attributes of the publisher;
+	 * @param att Reference to a PublisherAttributes object to update the parameters;
+	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+	 */
+	bool updateAttributes(PublisherAttributes& att);
+
+	/**
+	 * Get the Attributes of the Subscriber.
+	 */
+	PublisherAttributes getAttributes(){return m_attributes;}
 
 private:
 	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_Writer;
 	//! Pointer to the DDSTopicDataType object.
 	DDSTopicDataType* mp_type;
+
+	//!Attributes of the Publisher
+	PublisherAttributes m_attributes;
+	//!Pointer to the participant
+		ParticipantImpl* mp_participant;
 
 };
 
@@ -214,9 +233,23 @@ public:
 	}
 
 	size_t getMatchedSubscribers()
-		{
-			return mp_impl->getMatchedSubscribers();
-		}
+	{
+		return mp_impl->getMatchedSubscribers();
+	}
+
+	/**
+	 * Update the Attributes of the Publisher;
+	 * @param att Reference to a PublisherAttributes object to update the parameters;
+	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+	 */
+	bool updateAttributes(PublisherAttributes& att)
+	{
+		return mp_impl->updateAttributes(att);
+	}
+	/**
+	 * Get the Attributes of the Publisher.
+	 */
+	PublisherAttributes getAttributes(){return mp_impl->getAttributes();}
 
 private:
 	PublisherImpl* mp_impl;

@@ -27,8 +27,8 @@ namespace dds {
  */
 class WriterQos{
 public:
-	WriterQos(){};
-	virtual ~ WriterQos(){};
+	WriterQos();
+	virtual ~ WriterQos();
 	//!Durability Qos, implemented in the library.
 	DurabilityQosPolicy m_durability;
 	//!Durability Service Qos, NOT implemented in the library.
@@ -66,12 +66,14 @@ public:
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	void setQos( WriterQos& qos, bool first_time);
+	void setQos(const WriterQos& qos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
 	 */
 	bool checkQos();
+
+	bool canQosBeUpdated(WriterQos& qos);
 };
 
 

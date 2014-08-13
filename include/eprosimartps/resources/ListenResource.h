@@ -22,6 +22,11 @@
 #include <boost/thread.hpp>
 #include <boost/asio/ip/udp.hpp>
 
+#include <boost/thread.hpp>
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+
 namespace eprosima {
 namespace rtps {
 
@@ -33,7 +38,7 @@ class Endpoint;
  * Class ListenResource, used to control the listen sockets and the received messages.
  * @ingroup MANAGEMENTMODULE
  */
-class ListenResource {
+class ListenResource: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 	friend class MessageReceiver;
 public:
 	ListenResource(ParticipantImpl* p);
@@ -62,6 +67,9 @@ public:
 	bool isListeningTo(const Locator_t& loc);
 	//!Returns trus if the ListenResource has any associated endpoints.
 	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
+	//!Get the pointer to the participant
+	ParticipantImpl* getParticipantImpl(){return mp_participantImpl;};
+
 private:
 	ParticipantImpl* mp_participantImpl;
 	boost::thread* mp_thread;

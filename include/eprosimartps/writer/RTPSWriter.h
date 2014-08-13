@@ -88,6 +88,12 @@ public:
 	 */
 	virtual bool matched_reader_remove(ReaderProxyData* rdata)=0;
 	/**
+	 * Tells us if a specific Reader is matched against this writer
+	 * @param rdata Pointer to the ReaderProxyData object
+	 * @return True if it was matched.
+	 */
+	virtual bool matched_reader_is_matched(ReaderProxyData* rdata)=0;
+	/**
 	 * Remove the change with the minimum SequenceNumber
 	 * @return True if removed.
 	 */
@@ -131,6 +137,7 @@ public:
 		return m_qos.setQos(qos,first);
 	}
 	const WriterQos& getQos(){return m_qos;}
+	bool canQosBeUpdated(WriterQos& qos){return m_qos.canQosBeUpdated(qos);}
 
 	PublisherListener* getListener(){return mp_listener;}
 	void setListener(PublisherListener* plisten){mp_listener = plisten;}

@@ -36,7 +36,7 @@ public:
 	 * @param a_change Pointer to the CacheChange to add.
 	 * @return True if added.
 	 */
-	bool add_change(CacheChange_t* a_change);
+	bool add_change(CacheChange_t* a_change,WriterProxy* wp=NULL);
 	/**
 	 * Remove the CacheChange_t with the minimum sequenceNumber.
 	 * @return True if correctly removed.

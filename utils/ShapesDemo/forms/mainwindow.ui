@@ -84,15 +84,15 @@
       <item row="0" column="2" rowspan="6">
        <widget class="QFrame" name="frameDraw">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>250</width>
-          <height>275</height>
+          <width>265</width>
+          <height>287</height>
          </size>
         </property>
         <property name="layoutDirection">

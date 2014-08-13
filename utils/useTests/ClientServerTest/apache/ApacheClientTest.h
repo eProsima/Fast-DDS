@@ -7,25 +7,26 @@
  *************************************************************************/
 
 /**
- * @file Shape.cpp
+ * @file ApacheClientTest.h
  *
  */
 
-#include "eprosimashapesdemo/shapesdemo/Shape.h"
+#ifndef APACHECLIENTTEST_H_
+#define APACHECLIENTTEST_H_
 
+#include "eprosimartps/rtps_all.h"
 
-
-Shape::Shape():
-    m_dirX(0),
-    m_dirY(0),
-    m_changeDir(true)
+class ApacheClientTest
 {
+public:
+	ApacheClientTest():m_overhead(0){};
+	~ApacheClientTest(){};
+	double run(int samples);
+	eClock m_clock;
+	Time_t m_t1,m_t2;
+	double m_overhead;
+};
 
-}
-
-Shape::~Shape()
-{
-
-}
 
 
+#endif /* APACHECLIENTTEST_H_ */

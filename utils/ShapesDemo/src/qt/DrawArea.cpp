@@ -67,6 +67,7 @@ void DrawArea::addContentFilter(ShapeSubscriber *ssub)
 {
     ContentFilterSelector* a = new ContentFilterSelector(this);
     a->assignShapeSubscriber(ssub);
+    ssub->assignContentFilterPointer(a);
 }
 
 void DrawArea::timerEvent(QTimerEvent* e)
@@ -90,21 +91,21 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapeSubscriber*>::iterator it = mp_SD->m_subscribers.begin();
             it!=mp_SD->m_subscribers.end();++it)
         {
-            QMutexLocker(&(*it)->m_mutex);
+            QMutexLocker lock2(&(*it)->m_mutex);
             if((*it)->hasReceived)
             {
                 // cout << "OK"<<std::flush;
-                for(std::vector<std::list<ShapeType>>::iterator vit = (*it)->m_drawShape.m_shapeHistory.begin();
-                    vit!=(*it)->m_drawShape.m_shapeHistory.end();++vit)
+                for(std::vector<std::list<Shape>>::iterator vit = (*it)->m_shapeHistory.m_history.begin();
+                    vit!=(*it)->m_shapeHistory.m_history.end();++vit)
                 {
                     size_t total = vit->size();
                     int index = 0;
                     if(vit->begin()->m_writerGuid != c_Guid_Unknown)
                     {
-                        for(std::list<ShapeType>::reverse_iterator sit = vit->rbegin();
+                        for(std::list<Shape>::reverse_iterator sit = vit->rbegin();
                             sit!=vit->rend();++sit)
                         {
-                            paintShape(painter,(*it)->m_drawShape.m_type,*sit,getAlpha(index,total),true);
+                            paintShape(painter,*sit,getAlpha(index,total),true);
                             ++index;
                         }
                     }
@@ -114,10 +115,10 @@ void DrawArea::drawShapes(QPainter* painter)
         for(std::vector<ShapePublisher*>::iterator it = mp_SD->m_publishers.begin();
             it!=mp_SD->m_publishers.end();++it)
         {
-            QMutexLocker(&(*it)->m_mutex);
+            QMutexLocker lock2(&(*it)->m_mutex);
             if((*it)->hasWritten)
             {
-                paintShape(painter,(*it)->m_drawShape.m_type,(*it)->m_drawShape.m_mainShape,255);
+                paintShape(painter,(*it)->m_shape,255);
             }
         }
     }
@@ -125,7 +126,7 @@ void DrawArea::drawShapes(QPainter* painter)
 
 
 
-void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint8_t alpha,bool isHistory)
+void DrawArea::paintShape(QPainter* painter, Shape &shape, uint8_t alpha, bool isHistory)
 {
     painter->save();
     m_pen.setColor(SD_QT_BLACK);
@@ -134,12 +135,12 @@ void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint
     else
         m_pen.setStyle(Qt::SolidLine);
     painter->setPen(m_pen);
-    QColor auxc = getColorFromShapeType(shape);
+    QColor auxc = SD_COLOR2QColor(shape.m_color);
     auxc.setAlpha(alpha);
     m_brush.setColor(auxc);
     m_brush.setStyle(Qt::SolidPattern);
     painter->setBrush(m_brush);
-    switch(type)
+    switch(shape.m_type)
     {
     case SQUARE:
     {
@@ -180,21 +181,6 @@ void DrawArea::paintShape(QPainter* painter,TYPESHAPE type,ShapeType& shape,uint
 }
 
 
-QColor DrawArea::getColorFromShapeType(ShapeType& st)
-{
-    switch(st.getColor())
-    {
-    case SD_PURPLE: return SD_QT_PURPLE;
-    case SD_BLUE: return SD_QT_BLUE;
-    case SD_RED: return SD_QT_RED;
-    case SD_GREEN: return SD_QT_GREEN;
-    case SD_YELLOW: return SD_QT_YELLOW;
-    case SD_CYAN: return SD_QT_CYAN;
-    case SD_MAGENTA: return SD_QT_MAGENTA;
-    case SD_ORANGE: return SD_QT_ORANGE;
-    }
-    return SD_QT_BLUE;
-}
 
 
 void DrawArea::setShapesDemo(ShapesDemo*SD)

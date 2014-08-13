@@ -45,9 +45,9 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 	{
 	
 		pDebugInfo(RTPS_MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->m_data->m_guid<<RTPS_DEF<<endl;);
-		if(!mp_WP->checkLiveliness())
+		if(!mp_WP->m_data->m_isAlive)
 		{
-			pWarning("WriterProxyLiveliness failed, leaseDuration was "<< this->getIntervalMsec()<< " ms"<< endl;);
+			pWarning("WriterProxyLiveliness failed, leaseDuration was "<< this->getIntervalMsec().total_milliseconds()<< " ms"<< endl;);
 			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_data))
 			{
 				if(mp_WP->mp_SFR->getListener()!=NULL)

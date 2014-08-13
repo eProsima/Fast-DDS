@@ -61,12 +61,18 @@ public:
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	void setQos( ReaderQos& readerqos, bool first_time);
+	void setQos(const ReaderQos& readerqos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
 	 */
 	bool checkQos();
+	/**
+	 * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+	 * @param qos Reference to the new qos.
+	 * @return True if they can be updated.
+	 */
+	bool canQosBeUpdated(ReaderQos& qos);
 };
 
 

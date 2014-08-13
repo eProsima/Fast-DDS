@@ -64,17 +64,18 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 				if(!sns.add((*cit)->seqNum))
 				{
 					pWarning("HBResponse:event:error adding seqNum "<<(*cit)->seqNum.to64long()<< " with SeqNumSet Base: "<< sns.base.to64long()<< endl;);
+					break;
 				}
 			}
 			mp_WP->m_acknackCount++;
 			pDebugInfo("Sending ACKNACK: "<< sns <<endl;);
-			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
-			RTPSMessageCreator::addHeader(&m_heartbeat_response_msg,mp_WP->mp_SFR->getGuid().guidPrefix);
-			RTPSMessageCreator::addSubmessageInfoDST(&m_heartbeat_response_msg,mp_WP->m_data->m_guid.guidPrefix);
+
 			bool final = false;
 			if(sns.isSetEmpty())
 				final = true;
-			RTPSMessageCreator::addSubmessageAcknack(&m_heartbeat_response_msg,
+			CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
+			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
+												mp_WP->mp_SFR->getGuid().guidPrefix,
 												mp_WP->mp_SFR->getGuid().entityId,
 												mp_WP->m_data->m_guid.entityId,
 												sns,

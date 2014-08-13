@@ -7,63 +7,13 @@
  *************************************************************************/
 
 /**
- * @file LatencyType.h
+ * @file LatencyTestTypes.cpp
  *
-
  */
 
-#ifndef LATENCYTYPE_H_
-#define LATENCYTYPE_H_
-
-#include "eprosimartps/rtps_all.h"
+#include "LatencyTestTypes.h"
 
 
-typedef struct LatencyType{
-	uint32_t seqnum;
-	std::vector<uint8_t> data;
-	LatencyType():
-		seqnum(0)
-	{
-		seqnum = 0;
-	}
-	LatencyType(uint16_t number):
-		seqnum(0),
-		data(number,0)
-	{
-
-	}
-}LatencyType;
-
-bool operator==(LatencyType& lt1,LatencyType&lt2)
-{
-	if(lt1.seqnum!=lt2.seqnum)
-		return false;
-	if(lt1.data.size()!=lt2.data.size())
-		return false;
-	for(size_t i = 0;i<lt1.data.size();++i)
-	{
-		if(lt1.data.at(i) != lt2.data.at(i))
-			return false;
-	}
-	return true;
-}
-
-
-class LatencyDataType: public DDSTopicDataType
-{
-public:
-	LatencyDataType()
-{
-		m_topicDataTypeName = "LatencyType";
-		m_typeSize = 15000;
-		m_isGetKeyDefined = false;
-};
-	~LatencyDataType(){};
-	bool serialize(void*data,SerializedPayload_t* payload);
-	bool deserialize(SerializedPayload_t* payload,void * data);
-};
-
-//Funciones de serializacion y deserializacion para el ejemplo
 bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 {
 	LatencyType* lt = (LatencyType*)data;
@@ -84,6 +34,16 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 }
 
 
-
-
-#endif /* LATENCYTYPE_H_ */
+bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
+{
+	TestCommandType* t = (TestCommandType*)data;
+	*(TESTCOMMAND*)payload->data = t->m_command;
+	payload->length = 4;
+	return true;
+}
+bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
+{
+	TestCommandType* t = (TestCommandType*)data;
+	 t->m_command = *(TESTCOMMAND*)payload->data;
+	return true;
+}

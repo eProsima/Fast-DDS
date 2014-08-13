@@ -40,7 +40,7 @@ ListenResource::ListenResource(ParticipantImpl*p):
 
 ListenResource::~ListenResource()
 {
-	pWarning("Removing listening thread " << mp_thread->get_id() << " locator: " << m_listenLoc.printIP4Port()<< std::endl);
+	pWarning("Removing listening thread " << mp_thread->get_id() << " locator: " << m_listenLoc<< std::endl);
 	m_listen_socket.close();
 	m_io_service.stop();
 	pInfo("Joining with thread"<<endl);
@@ -51,6 +51,7 @@ ListenResource::~ListenResource()
 
 bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 {
+	boost::lock_guard<ListenResource> guard(*this);
 	if(endp->getEndpointKind() == WRITER)
 	{
 		for(Wit wit = m_assocWriters.begin();
@@ -79,6 +80,7 @@ bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 
 bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 {
+	boost::lock_guard<ListenResource> guard(*this);
 	bool found = false;
 	if(endp->getEndpointKind() == WRITER)
 	{
@@ -94,7 +96,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			pInfo("ResourceListen: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
+			pInfo("ListenResource: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc << endl);
 			return true;
 		}
 	}
@@ -111,7 +113,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			pInfo("ResourceListen: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc.printIP4Port() << endl);
+			pInfo("ListenResource: Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc << endl);
 			return true;
 		}
 	}
@@ -132,13 +134,14 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 {
 	if(err == boost::system::errc::success)
 	{
+		boost::lock_guard<ListenResource> guard(*this);
 		m_MessageReceiver.m_rec_msg.length = (uint16_t)msg_size;
 
 		if(m_MessageReceiver.m_rec_msg.length == 0)
 		{
 			return;
 		}
-		pInfo (RTPS_BLUE << "ResourceListen, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc.printIP4Port()<<  RTPS_DEF << endl);
+		pInfo (RTPS_BLUE << "ListenResource, msg of length: " << m_MessageReceiver.m_rec_msg.length << " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc<<  RTPS_DEF << endl);
 
 		//Get address into Locator
 		m_senderLocator.port = m_sender_endpoint.port();
@@ -197,7 +200,7 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 		m_listenLoc= *myIP.begin();
 		m_listenLoc.port = loc.port;
 	}
-	pInfo(RTPS_BLUE<<"Listen Resource initializing in : "<<m_listenLoc.printIP4Port()<<RTPS_DEF<< endl);
+	pInfo(RTPS_BLUE<<"Listen Resource initializing in : "<<m_listenLoc<<RTPS_DEF<< endl);
 	if(isMulti)
 	{
 		m_listen_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_listenLoc.port);

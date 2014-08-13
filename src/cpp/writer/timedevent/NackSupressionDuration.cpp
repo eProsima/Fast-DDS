@@ -18,6 +18,8 @@
 #include "eprosimartps/resources/ResourceSend.h"
 #include "eprosimartps/resources/ResourceEvent.h"
 
+#include "eprosimartps/writer/ReaderProxyData.h"
+
 //#include "eprosimartps/RTPSMessageCreator.h"
 
 namespace eprosima {
@@ -44,12 +46,17 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 	if(ec == boost::system::errc::success)
 	{
 		boost::lock_guard<ReaderProxy> guard(*mp_RP);
-		pDebugInfo("NackSupression: changing underway to unacked"<<endl);
+		pDebugInfo("NackSupression: changing underway to unacked for Reader: "<<mp_RP->m_data->m_guid<<endl);
 		for(std::vector<ChangeForReader_t>::iterator cit=mp_RP->m_changesForReader.begin();
 				cit!=mp_RP->m_changesForReader.end();++cit)
 		{
 			if(cit->status == UNDERWAY)
-				cit->status = UNACKNOWLEDGED;
+			{
+				if(mp_RP->m_data->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+					cit->status = UNACKNOWLEDGED;
+				else
+					cit->status = ACKNOWLEDGED;
+			}
 		}
 
 	}

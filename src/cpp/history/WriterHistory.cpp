@@ -41,7 +41,7 @@ WriterHistory::~WriterHistory()
 	// TODO Auto-generated destructor stub
 }
 
-bool WriterHistory::add_change(CacheChange_t* a_change)
+bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 {
 	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
@@ -98,6 +98,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
+			pDebugInfo("WriterHistory: found key: "<< vit->first<<endl);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{

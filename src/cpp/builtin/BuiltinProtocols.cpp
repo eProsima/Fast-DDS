@@ -30,11 +30,11 @@ namespace eprosima {
 namespace rtps {
 
 BuiltinProtocols::BuiltinProtocols(ParticipantImpl* part):
-										mp_participant(part),
-										mp_PDP(NULL),
-										mp_WLP(NULL),
-										m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
-										m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
+														mp_participant(part),
+														mp_PDP(NULL),
+														mp_WLP(NULL),
+														m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
+														m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
 {
 	// TODO Auto-generated constructor stub
 
@@ -121,14 +121,28 @@ bool BuiltinProtocols::addLocalReader(RTPSReader* R)
 
 bool BuiltinProtocols::updateLocalWriter(RTPSWriter* W)
 {
-	pError("UPDATE METHOD NOT IMPLEMENTED YET"<<endl);
+	bool ok = false;
+	if(mp_PDP!=NULL)
+	{
+		ok |= mp_PDP->getEDP()->updatedLocalWriter(W);
+	}
+	if(mp_WLP!=NULL)
+	{
+		ok |= mp_WLP->updateLocalWriter(W);
+	}
+	return ok;
+
 	return true;
 }
 
 bool BuiltinProtocols::updateLocalReader(RTPSReader* R)
 {
-	pError("UPDATE METHOD NOT IMPLEMENTED YET"<<endl);
-	return true;
+	bool ok = false;
+	if(mp_PDP!=NULL)
+	{
+		ok |= mp_PDP->getEDP()->updatedLocalReader(R);
+	}
+	return ok;
 }
 
 bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)

@@ -51,10 +51,12 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("NackResponse:event:"<<endl;);
+		pDebugInfo("NackResponse:event: "<<endl;);
+		boost::lock_guard<ReaderProxy> guard(*mp_RP);
 		std::vector<ChangeForReader_t*> ch_vec;
 		if(mp_RP->requested_changes(&ch_vec))
 		{
+			//cout << "REQUESTED CHANGES SIZE: "<< ch_vec.size() << endl;
 			//	std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
 			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
@@ -68,6 +70,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 				}
 				else
 				{
+				//	cout << "ADDED "<<(*cit)->seqNum.to64long()<< " TO NOT RELEVANT CHANGES"<<endl;
 					not_relevant_changes.push_back((*cit)->seqNum);
 				}
 			}

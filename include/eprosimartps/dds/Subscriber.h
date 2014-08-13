@@ -17,12 +17,13 @@
 
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
-
+#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
 
 namespace eprosima {
 
 namespace rtps{
 class RTPSReader;
+class ParticipantImpl;
 }
 
 using namespace rtps;
@@ -35,14 +36,12 @@ class SampleInfo_t;
 
 
 
-
-
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
  */
 class SubscriberImpl {
 public:
-	SubscriberImpl(RTPSReader* Rin,DDSTopicDataType* ptype);
+	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype,SubscriberAttributes& attr);
 	virtual ~SubscriberImpl();
 
 	/**
@@ -78,21 +77,35 @@ public:
 	bool takeNextData(void* data,SampleInfo_t* info);
 
 	///@}
+	/**
+	 * Update the Attributes of the subscriber;
+	 * @param att Reference to a SubscriberAttributes object to update the parameters;
+	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+	 */
+	bool updateAttributes(SubscriberAttributes& att);
 
 
 	size_t getMatchedPublishers();
 
-const GUID_t& getGuid();
+	const GUID_t& getGuid();
 
 	RTPSReader* getReaderPtr() {
 		return mp_Reader;
 	}
+	/**
+	 * Get the Attributes of the Subscriber.
+	 */
+	SubscriberAttributes getAttributes(){return m_attributes;}
 
 private:
 	//!Pointer to associated RTPSReader
 	RTPSReader* mp_Reader;
 	//! Pointer to the DDSTopicDataType object.
 	DDSTopicDataType* mp_type;
+	//!Attributes of the Subscriber
+	SubscriberAttributes m_attributes;
+	//!Pointer to the participant
+	ParticipantImpl* mp_participant;
 
 };
 
@@ -126,8 +139,8 @@ public:
 	 */
 	bool assignListener(SubscriberListener* p_listener)
 	{
-			return mp_impl->assignListener(p_listener);
-		}
+		return mp_impl->assignListener(p_listener);
+	}
 
 
 	/**
@@ -135,16 +148,16 @@ public:
 	 */
 	bool isHistoryFull()
 	{
-			return mp_impl->isHistoryFull();
-		}
+		return mp_impl->isHistoryFull();
+	}
 
 	/**
 	 * Get the number of elements currently stored in the HistoryCache.
 	 */
 	size_t getHistoryElementsNumber()
 	{
-			return mp_impl->getHistoryElementsNumber();
-		}
+		return mp_impl->getHistoryElementsNumber();
+	}
 
 
 
@@ -163,6 +176,20 @@ public:
 		return mp_impl->takeNextData(data,info);
 	}
 	///@}
+
+	/**
+	 * Update the Attributes of the subscriber;
+	 * @param rqos Reference to a ReaderQos object to update the parameters;
+	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+	 */
+	bool updateAttributes(SubscriberAttributes& att)
+	{
+		return mp_impl->updateAttributes(att);
+	}
+	/**
+	 * Get the Attributes of the Subscriber.
+	 */
+	SubscriberAttributes getAttributes(){return mp_impl->getAttributes();}
 
 
 	size_t getMatchedPublishers(){return mp_impl->getMatchedPublishers();}
