@@ -29,13 +29,13 @@ namespace rtps {
 RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
 		StateKind_t state,
 		int16_t userDefinedId, uint32_t payload_size):
-							Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
-							m_writer_cache((Endpoint*)this,payload_size),
-							m_pushMode(true),
-							//FIXME: Select a better size, not the payload but maybe more?
-							m_cdrmessages(payload_size),
-							mp_listener(NULL),
-							m_livelinessAsserted(false)
+									Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
+									m_writer_cache((Endpoint*)this,payload_size),
+									m_pushMode(true),
+									//FIXME: Select a better size, not the payload but maybe more?
+									m_cdrmessages(payload_size),
+									mp_listener(NULL),
+									m_livelinessAsserted(false)
 {
 	init_header();
 	pDebugInfo("RTPSWriter created"<<endl)
@@ -69,12 +69,20 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 		if(!mp_type->serialize(data,&ch->serializedPayload))
 		{
 			pWarning("RTPSWriter:Serialization returns false"<<endl);
+			m_writer_cache.release_Cache(ch);
 			return false;
 		}
 		else if(ch->serializedPayload.length > mp_type->m_typeSize)
 		{
 			pWarning("Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")"<<endl);
-			return flase;
+			m_writer_cache.release_Cache(ch);
+			return false;
+		}
+		else if(ch->serializedPayload.length == 0)
+		{
+			pWarning("Serialized Payload length must be set to >0 "<<endl);
+			m_writer_cache.release_Cache(ch);
+			return false;
 		}
 	}
 	ch->kind = changeKind;
@@ -101,7 +109,7 @@ bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 	if(kind != ALIVE && getTopic().getTopicKind() == NO_KEY)
 	{
 		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
-				return false;
+						return false;
 	}
 
 	CacheChange_t* change;
