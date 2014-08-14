@@ -16,8 +16,6 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#define TESTTIME 10
-#define SAMPLESIZE 1020
 
 typedef struct TroughputTimeStats{
 	uint32_t nsamples;
@@ -100,7 +98,7 @@ public:
 	LatencyDataType()
 {
 		m_topicDataTypeName = "LatencyType";
-		m_typeSize = 4+4+4096;
+		m_typeSize = 4+4+8192;
 		m_isGetKeyDefined = false;
 };
 	~LatencyDataType(){};
@@ -120,10 +118,14 @@ enum e_Command:uint32_t{
 typedef struct ThroughputCommandType
 {
 	e_Command m_command;
+	uint32_t m_size;
+	uint32_t m_demand;
 	ThroughputCommandType(){
 		m_command = DEFAULT;
+		m_size = 0;
+		m_demand = 0;
 	}
-	ThroughputCommandType(e_Command com):m_command(com){}
+	ThroughputCommandType(e_Command com):m_command(com),m_size(0),m_demand(0){}
 }ThroughputCommandType;
 
 
@@ -149,7 +151,7 @@ public:
 	ThroughputCommandDataType()
 {
 		m_topicDataTypeName = "ThroughputCommand";
-		m_typeSize = 4;
+		m_typeSize = 4+4+4;
 		m_isGetKeyDefined = false;
 };
 	~ThroughputCommandDataType(){};

@@ -43,15 +43,12 @@ public:
 		uint32_t lastseqnum,saved_lastseqnum;
 		uint32_t lostsamples,saved_lostsamples;
 		bool first;
-		LatencyType latencyin;
+		LatencyType* latencyin;
 		SampleInfo_t info;
 		void onSubscriptionMatched(MatchingInfo info);
 		void onNewDataMessage();
 		void saveNumbers();
-
-		 std::ofstream myfile;
-
-
+		std::ofstream myfile;
 	}m_DataSubListener;
 
 	class CommandSubListener:public SubscriberListener
@@ -75,8 +72,9 @@ public:
 		void onPublicationMatched(MatchingInfo info);
 	}m_CommandPubListener;
 	bool ready;
-
-	void run(std::vector<uint32_t>& demand);
+	uint32_t m_datasize;
+	uint32_t m_demand;
+	void run();
 };
 
 

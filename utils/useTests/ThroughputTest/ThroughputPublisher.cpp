@@ -16,6 +16,12 @@
 #include "ThroughputPublisher.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
+//uint32_t dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
+uint32_t dataspub[] = {504,1016,2040,4088,8184};
+std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
+
+uint32_t demandspub[] = {1000,1250,1500,2000,3000,4000,5000};
+vector<uint32_t> demand_pub (demandspub, demandspub + sizeof(demandspub) / sizeof(uint32_t) );
 
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
@@ -47,9 +53,9 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(MatchingInfo 
 ThroughputPublisher::~ThroughputPublisher(){DomainParticipant::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
-		sema(0),
-		m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-		ready(true)
+										sema(0),
+										m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+										ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -83,6 +89,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.historyQos.depth = 1;
 	Wparam.topic.resourceLimitsQos.max_samples = 10000;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 10000;
+	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_datapub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
@@ -109,7 +116,7 @@ ThroughputPublisher::ThroughputPublisher():
 	eClock::my_sleep(5000);
 }
 
-void ThroughputPublisher::run(std::vector<uint32_t>& demand)
+void ThroughputPublisher::run(uint32_t test_time)
 {
 	if(!ready)
 		return;
@@ -122,30 +129,33 @@ void ThroughputPublisher::run(std::vector<uint32_t>& demand)
 	ThroughputCommandType command;
 	SampleInfo_t info;
 	printLabelsPublisher();
-	for(std::vector<uint32_t>::iterator it=demand.begin();it!=demand.end();++it)
+	for(std::vector<uint32_t>::iterator sit=data_size_pub.begin();sit!=data_size_pub.end();++sit)
 	{
-		eClock::my_sleep(500);
-	//	cout << "Starting test with demand: " << *it << endl;
-		command.m_command = READY_TO_START;
-		mp_commandpub->write((void*)&command);
-		command.m_command = DEFAULT;
-		mp_commandsub->waitForUnreadMessage();
-		mp_commandsub->takeNextData((void*)&command,&info);
-		//cout << "Received command of type: "<< command << endl;
-		if(command.m_command == BEGIN)
+		for(std::vector<uint32_t>::iterator dit=demand_pub.begin();dit!=demand_pub.end();++dit)
 		{
-			test(*it);
+			eClock::my_sleep(100);
+			//cout << "Starting test with demand: " << *dit << endl;
+			command.m_command = READY_TO_START;
+			command.m_size = *sit;
+			command.m_demand = *dit;
+			mp_commandpub->write((void*)&command);
+			command.m_command = DEFAULT;
+			mp_commandsub->waitForUnreadMessage();
+			mp_commandsub->takeNextData((void*)&command,&info);
+			//cout << "Received command of type: "<< command << endl;
+			if(command.m_command == BEGIN)
+			{
+				test(test_time,*dit,*sit);
+			}
 		}
-
 	}
 	command.m_command = ALL_STOPS;
-
 	mp_commandpub->write((void*)&command);
 }
 
-void ThroughputPublisher::test(uint32_t demand)
+void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 {
-	LatencyType latency(SAMPLESIZE);
+	LatencyType latency(size);
 	m_Clock.setTimeNow(&m_t2);
 	uint64_t timewait_us=0;
 	uint32_t samples=0;
@@ -154,18 +164,22 @@ void ThroughputPublisher::test(uint32_t demand)
 	command.m_command = TEST_STARTS;
 	mp_commandpub->write((void*)&command);
 	m_Clock.setTimeNow(&m_t1);
-	while(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)<TESTTIME*1000000)
+	while(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)<test_time*1000000)
 	{
 		for(uint32_t sample=0;sample<demand;sample++)
 		{
 			latency.seqnum++;
 			mp_datapub->write((void*)&latency);
+			//cout << sample << "*"<<std::flush;
 		}
-		samples+=demand;
 		m_Clock.setTimeNow(&m_t2);
+		samples+=demand;
+		//cout << "samples sent: "<<samples<< endl;
 		eClock::my_sleep(10);
-		timewait_us+=m_overhead;
+		timewait_us+=m_overhead+10;
+		//cout << "Removing all..."<<endl;
 		mp_datapub->removeAllChange(&aux);
+		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;
 	mp_commandpub->write((void*)&command);
@@ -173,7 +187,7 @@ void ThroughputPublisher::test(uint32_t demand)
 	TroughputTimeStats TS;
 	TS.nsamples = samples;
 	TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us;
-	TS.samplesize = SAMPLESIZE+4;
+	TS.samplesize = size+4+4;
 	TS.demand = demand;
 	//cout << TS.demand << endl;
 	TS.compute();

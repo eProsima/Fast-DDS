@@ -65,22 +65,21 @@ int main(int argc, char** argv){
 	ThroughputCommandDataType throuputcommand_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
-	uint32_t demands[] = {2000,4000,6000,8000,10000};
-		vector<uint32_t> demand (demands, demands + sizeof(demands) / sizeof(uint32_t) );
+	uint32_t test_time_sec = 30;
 
 	switch (type)
 	{
 	case 1:
 	{
 		ThroughputPublisher tpub;
-		tpub.run(demand);
+		tpub.run(test_time_sec);
 		break;
 	}
 	case 2:
 	{
 
 		ThroughputSubscriber tsub;
-		tsub.run(demand);
+		tsub.run();
 		break;
 	}
 	}
