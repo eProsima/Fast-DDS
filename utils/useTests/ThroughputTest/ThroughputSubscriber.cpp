@@ -180,7 +180,7 @@ void ThroughputSubscriber::run()
 	sema.wait();
 	cout << "Discovery complete"<<endl;
 	bool stop = false;
-	printLabelsSubscriber();
+	//printLabelsSubscriber();
 	int demindex=0;
 	while(1)
 	{
@@ -212,20 +212,25 @@ void ThroughputSubscriber::run()
 		}
 		case (TEST_ENDS):
 		{
-			TroughputTimeStats TS;
-			TS.samplesize = m_datasize+4+4;
-			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.saved_lostsamples;
-			TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1);
-			TS.lostsamples = m_DataSubListener.saved_lostsamples;
-			TS.demand = m_demand;
-		//	m_DataSubListener.myfile << endl;
+			cout << "TEST ends, sending results"<<endl;
+			ThroughputCommandType comm;
+			comm.m_command = TEST_RESULTS;
+			comm.m_demand = m_demand;
+			comm.m_size = m_datasize+4+4;
+			comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
+			comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
+			comm.m_totaltime = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1);
+			mp_commandpub->write(&comm);
 			demindex++;
-			TS.compute();
-			printTimeStatsSubscriber(TS);
+			size_t remvoed;
+			mp_commandpub->removeAllChange(&remvoed);
+			cout << "Removed changes: "<<remvoed<<endl;
 			break;
 		}
 		case (ALL_STOPS):
 				return;
+		case(TEST_RESULTS):
+				break;
 		}
 	if(stop)
 			break;

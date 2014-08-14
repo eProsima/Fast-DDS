@@ -17,18 +17,18 @@
 #include "eprosimartps/rtps_all.h"
 
 
-typedef struct TroughputTimeStats{
-	uint32_t nsamples;
-	uint64_t totaltime_us;
-	uint32_t samplesize;
-	uint32_t demand;
-	double Mbitsec;
-	uint32_t lostsamples;
-	void compute()
-	{
-		Mbitsec = (((double)samplesize*8*nsamples))/(totaltime_us);
-	}
-}TroughputTimeStats;
+//typedef struct TroughputTimeStats{
+//	uint32_t nsamples;
+//	uint64_t totaltime_us;
+//	uint32_t samplesize;
+//	uint32_t demand;
+//	double Mbitsec;
+//	uint32_t lostsamples;
+//	void compute()
+//	{
+//		Mbitsec = (((double)samplesize*8*nsamples))/(totaltime_us);
+//	}
+//}TroughputTimeStats;
 
 struct TroughputResults
 {
@@ -43,53 +43,74 @@ struct TroughputResults
 	struct SubscriberResults
 	{
 		uint64_t totaltime_us;
-				uint64_t recv_samples;
-				uint32_t lost_samples;
-				double MBitssec;
+		uint64_t recv_samples;
+		uint32_t lost_samples;
+		double MBitssec;
 	}subscriber;
+	void compute()
+	{
+		publisher.MBitssec = (double)publisher.send_samples*payload_size*8/(double)publisher.totaltime_us;//bits/us==Mbits/s)
+		subscriber.MBitssec = (double)subscriber.recv_samples*payload_size*8/(double)subscriber.totaltime_us;
+	}
 };
 
 
-
-inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
+inline void printResultTitle()
 {
-	return output << ts.nsamples << "||"<<ts.totaltime_us<< "||"<<ts.Mbitsec;
+	printf("[     TEST     ][              PUBLISHER              ][                     SUBSCRIBER                 ]\n");
+	printf("[ Bytes, Demand][Sent Samples,Send Time(us), MBits/sec][Rec Samples,Lost Samples,Rec Time(us), MBits/sec]\n");
+	printf("[------,-------][------------,-------------,----------][-----------,------------,------------,----------]\n");
 }
 
-inline void printTimeStatsPublisher(const TroughputTimeStats& ts )
+inline void printResults(TroughputResults& res)
 {
-	//cout << "demand here; " << ts.demand << endl;
-	//printf("%6u",ts.demand);
-	printf("%6u,%12u, %7.2f,%6u,%12lu \n",ts.samplesize,ts.nsamples,ts.Mbitsec,ts.demand,ts.totaltime_us);
+	printf("%7u,%7u,%12lu,%13lu,%10.3f,%12lu,%12u,%13lu,%10.3f\n",res.payload_size,res.demand,res.publisher.send_samples,
+																res.publisher.totaltime_us,res.publisher.MBitssec,
+																res.subscriber.recv_samples,res.subscriber.lost_samples,res.subscriber.totaltime_us,
+																res.subscriber.MBitssec);
 }
 
-inline void printTimeStatsSubscriber(const TroughputTimeStats& ts )
-{
-	printf("%6u,%6u,%12u,%6u,%6u,%6u, %7.2f,%12lu \n",ts.samplesize,ts.demand,ts.nsamples,ts.lostsamples,0,0,ts.Mbitsec,ts.totaltime_us);
-}
 
-inline void printLabelsSubscriber()
-{
-	printf(" bytes,demand,     samples,  lost,   UNK,   UNK, Mbits/s,    time(us)\n");
-	printf("------ ------ ------------ ------ ------ ------  ------- ------------\n");
-}
-
-inline void printLabelsPublisher()
-{
-	printf(" bytes,     samples, Mbits/s,demand,    time(us)\n");
-	printf("------ ------------  ------- ------ ------------\n");
-}
+//
+//inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
+//{
+//	return output << ts.nsamples << "||"<<ts.totaltime_us<< "||"<<ts.Mbitsec;
+//}
+//
+//inline void printTimeStatsPublisher(const TroughputTimeStats& ts )
+//{
+//	//cout << "demand here; " << ts.demand << endl;
+//	//printf("%6u",ts.demand);
+//	printf("%6u,%12u, %7.2f,%6u,%12lu \n",ts.samplesize,ts.nsamples,ts.Mbitsec,ts.demand,ts.totaltime_us);
+//}
+//
+//inline void printTimeStatsSubscriber(const TroughputTimeStats& ts )
+//{
+//	printf("%6u,%6u,%12u,%6u,%6u,%6u, %7.2f,%12lu \n",ts.samplesize,ts.demand,ts.nsamples,ts.lostsamples,0,0,ts.Mbitsec,ts.totaltime_us);
+//}
+//
+//inline void printLabelsSubscriber()
+//{
+//	printf(" bytes,demand,     samples,  lost,   UNK,   UNK, Mbits/s,    time(us)\n");
+//	printf("------ ------ ------------ ------ ------ ------  ------- ------------\n");
+//}
+//
+//inline void printLabelsPublisher()
+//{
+//	printf(" bytes,     samples, Mbits/s,demand,    time(us)\n");
+//	printf("------ ------------  ------- ------ ------------\n");
+//}
 
 
 
 typedef struct LatencyType{
 	uint32_t seqnum;
 	std::vector<uint8_t> data;
-//	LatencyType():
-//		seqnum(0)
-//	{
-//		seqnum = 0;
-//	}
+	//	LatencyType():
+	//		seqnum(0)
+	//	{
+	//		seqnum = 0;
+	//	}
 	LatencyType(uint16_t number):
 		seqnum(0),
 		data(number,0)
@@ -99,7 +120,7 @@ typedef struct LatencyType{
 }LatencyType;
 
 inline bool operator==(LatencyType& lt1,LatencyType& lt2)
-{
+				{
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;
 	if(lt1.data.size()!=lt2.data.size())
@@ -110,7 +131,7 @@ inline bool operator==(LatencyType& lt1,LatencyType& lt2)
 			return false;
 	}
 	return true;
-}
+				}
 
 
 class LatencyDataType: public DDSTopicDataType
@@ -142,21 +163,19 @@ typedef struct ThroughputCommandType
 	e_Command m_command;
 	uint32_t m_size;
 	uint32_t m_demand;
-	double m_mbits;
 	uint32_t m_lostsamples;
-	uint64_t m_recsamples;
+	uint64_t m_lastrecsample;
 	uint64_t m_totaltime;
 	ThroughputCommandType(){
 		m_command = DEFAULT;
 		m_size = 0;
 		m_demand = 0;
-		m_mbits = 0;
 		m_lostsamples = 0;
-		m_recsamples = 0;
+		m_lastrecsample = 0;
 		m_totaltime = 0;
 	}
-	ThroughputCommandType(e_Command com):m_command(com),m_size(0),m_demand(0),m_mbits(0),
-			m_lostsamples(0),m_recsamples(0),m_totaltime(0){}
+	ThroughputCommandType(e_Command com):m_command(com),m_size(0),m_demand(0),
+			m_lostsamples(0),m_lastrecsample(0),m_totaltime(0){}
 }ThroughputCommandType;
 
 

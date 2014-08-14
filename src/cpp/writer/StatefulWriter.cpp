@@ -285,7 +285,6 @@ bool StatefulWriter::removeMinSeqCacheChange()
 	CacheChange_t* change;
 	if(m_writer_cache.get_min_change(&change))
 	{
-
 		if(is_acked_by_all(change))
 		{
 			for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
