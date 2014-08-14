@@ -43,9 +43,9 @@ StatefulWriter::~StatefulWriter()
 }
 
 StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-										RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
-										m_PubTimes(param.times),
-										mp_periodicHB(NULL)
+												RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
+												m_PubTimes(param.times),
+												mp_periodicHB(NULL)
 {
 	m_pushMode = param.pushMode;
 	unicastLocatorList = param.unicastLocatorList;
@@ -283,20 +283,21 @@ bool StatefulWriter::removeMinSeqCacheChange()
 {
 	pDebugInfo("Removing min seq from StatefulWriter"<<endl);
 	CacheChange_t* change;
-	m_writer_cache.get_min_change(&change);
-
-	if(is_acked_by_all(change))
+	if(m_writer_cache.get_min_change(&change))
 	{
-		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
-				it!=this->matched_readers.end();++it)
-		{
-			if(!(*it)->m_changesForReader.empty())
-				(*it)->m_changesForReader.erase((*it)->m_changesForReader.begin());
-		}
-		m_writer_cache.remove_min_change();
-		return true;
-	}
 
+		if(is_acked_by_all(change))
+		{
+			for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+					it!=this->matched_readers.end();++it)
+			{
+				if(!(*it)->m_changesForReader.empty())
+					(*it)->m_changesForReader.erase((*it)->m_changesForReader.begin());
+			}
+			m_writer_cache.remove_min_change();
+			return true;
+		}
+	}
 	return false;
 }
 

@@ -71,6 +71,11 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 			pWarning("RTPSWriter:Serialization returns false"<<endl);
 			return false;
 		}
+		else if(ch->serializedPayload.length > mp_type->m_typeSize)
+		{
+			pWarning("Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")"<<endl);
+			return flase;
+		}
 	}
 	ch->kind = changeKind;
 

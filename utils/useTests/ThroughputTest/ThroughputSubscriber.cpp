@@ -13,19 +13,23 @@
 
 #include "ThroughputSubscriber.h"
 #include "eprosimartps/utils/TimeConversion.h"
+#include <vector>
 
+uint32_t datassub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
+std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
+uint32_t demandssub[] = {2000,4000,6000,8000,10000};
+std::vector<uint32_t> demand_sub (demandssub, demandssub + sizeof(demandssub) / sizeof(uint32_t) );
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-	m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(SAMPLESIZE)
+	m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(NULL)
 {
-	// myfile.open("datareceived.txt");
 
 };
 ThroughputSubscriber::DataSubListener::~DataSubListener()
 {
-//	myfile.close();
+
 };
 
 void ThroughputSubscriber::DataSubListener::reset(){
@@ -41,14 +45,15 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo i
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
 {
-	m_up.mp_datasub->takeNextData((void*)&latencyin,&info);
+	//cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
+	m_up.mp_datasub->takeNextData((void*)latencyin,&info);
 	//myfile << latencyin.seqnum << ",";
-	if((lastseqnum+1)<latencyin.seqnum)
+	if((lastseqnum+1)<latencyin->seqnum)
 	{
-		lostsamples+=latencyin.seqnum-lastseqnum-1;
+		lostsamples+=latencyin->seqnum-lastseqnum-1;
 	//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
 	}
-	lastseqnum = latencyin.seqnum;
+	lastseqnum = latencyin->seqnum;
 }
 
 void ThroughputSubscriber::DataSubListener::saveNumbers()
@@ -80,6 +85,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 		case (BEGIN): break;
 		case (TEST_STARTS): m_up.m_Clock.setTimeNow(&m_up.m_t1);break;
 		case (TEST_ENDS): m_up.m_Clock.setTimeNow(&m_up.m_t2);m_up.m_DataSubListener.saveNumbers();m_up.sema.post();break;
+		case (ALL_STOPS): m_up.sema.post();break;
 		}
 	}
 	else
@@ -103,7 +109,7 @@ ThroughputSubscriber::~ThroughputSubscriber(){DomainParticipant::stopAll();}
 ThroughputSubscriber::ThroughputSubscriber():
 		sema(0),
 		m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-		ready(true)
+		ready(true),m_datasize(0),m_demand(0)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -112,7 +118,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-PParam.sendSocketBufferSize = 65536;
+	PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant2";
 	mp_par = DomainParticipant::createParticipant(PParam);
@@ -164,7 +170,7 @@ PParam.sendSocketBufferSize = 65536;
 	eClock::my_sleep(5000);
 }
 
-void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
+void ThroughputSubscriber::run()
 {
 	if(!ready)
 		return;
@@ -185,14 +191,15 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 		case (DEFAULT):
 		case (BEGIN):
 		{
-			eClock::my_sleep(500);
+			eClock::my_sleep(100);
 			break;
 		}
 		case (READY_TO_START):
 		{
-//			cout << "Enter number to continue:"<<endl;
-//			int aux;
-//			std::cin >> aux;
+			m_datasize = m_CommandSubListener.m_commandin.m_size;
+			m_demand = m_CommandSubListener.m_commandin.m_demand;
+			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
+			m_DataSubListener.latencyin = new LatencyType(m_datasize);
 			ThroughputCommandType command(BEGIN);
 			eClock::my_sleep(50);
 			m_DataSubListener.reset();
@@ -206,11 +213,11 @@ void ThroughputSubscriber::run(std::vector<uint32_t>& demand)
 		case (TEST_ENDS):
 		{
 			TroughputTimeStats TS;
-			TS.samplesize = SAMPLESIZE+4;
+			TS.samplesize = m_datasize+4+4;
 			TS.nsamples = m_DataSubListener.saved_lastseqnum - m_DataSubListener.saved_lostsamples;
 			TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1);
 			TS.lostsamples = m_DataSubListener.saved_lostsamples;
-			TS.demand = demand.at(demindex);
+			TS.demand = m_demand;
 		//	m_DataSubListener.myfile << endl;
 			demindex++;
 			TS.compute();
