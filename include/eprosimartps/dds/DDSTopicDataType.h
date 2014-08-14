@@ -16,7 +16,7 @@
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/SerializedPayload.h"
 #include "eprosimartps/common/types/InstanceHandle.h"
-
+#include "eprosimartps/SerializedPayload.hpp"
 #include <string>
 
 using namespace eprosima::rtps;

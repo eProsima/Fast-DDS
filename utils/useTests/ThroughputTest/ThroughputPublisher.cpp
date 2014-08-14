@@ -161,6 +161,7 @@ void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 	uint32_t samples=0;
 	size_t aux;
 	ThroughputCommandType command;
+	SampleInfo_t info;
 	command.m_command = TEST_STARTS;
 	mp_commandpub->write((void*)&command);
 	m_Clock.setTimeNow(&m_t1);
@@ -184,6 +185,12 @@ void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 	command.m_command = TEST_ENDS;
 	mp_commandpub->write((void*)&command);
 	mp_commandpub->removeAllChange(&aux);
+//	mp_commandsub->waitForUnreadMessage();
+//	mp_commandsub->takeNextData((void*)&command,&info);
+//	if(command.m_command == TEST_RESULTS)
+//	{
+//		//cout << "Received results from subscriber"<<endl;
+//	}
 	TroughputTimeStats TS;
 	TS.nsamples = samples;
 	TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us;

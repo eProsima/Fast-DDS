@@ -27,20 +27,14 @@ bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 
 bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
-	//cout << "1"<<endl;
 	if(payload->length > 0)
 	{
-	//	cout << "2"<<endl;
 		LatencyType* lt = (LatencyType*)data;
-		//cout << "3"<<endl;
 		lt->seqnum = *(uint32_t*)payload->data;
-		//cout << "4"<<endl;
 		uint32_t siz = *(uint32_t*)(payload->data+4);
-		//cout << "5"<<endl;
-		//cout << siz << " length: "<<payload->length << endl;
 		std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
-//		lt->data.clear();
-//		lt->data.insert(lt->data.end(),payload->data+8,payload->data+8+siz);
+		//		lt->data.clear();
+		//		lt->data.insert(lt->data.end(),payload->data+8,payload->data+8+siz);
 	}
 	return true;
 }
@@ -49,18 +43,26 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* payload)
 {
 	ThroughputCommandType* t = (ThroughputCommandType*)data;
-	*(e_Command*)payload->data = t->m_command;
-	*(uint32_t*)(payload->data+4) = t->m_size;
-	*(uint32_t*)(payload->data+4+4) = t->m_demand;
-	payload->length = 12;
+	uint32_t n = (uint32_t)t->m_command;
+	Payload::addUInt32(payload,n);
+	Payload::addUInt32(payload,t->m_size);
+	Payload::addUInt32(payload,t->m_demand);
+	Payload::addDouble(payload,t->m_mbits);
+	Payload::addUInt32(payload,t->m_lostsamples);
+	Payload::addUInt64(payload,t->m_recsamples);
+	Payload::addUInt64(payload,t->m_totaltime);
 	return true;
 }
 bool ThroughputCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
 	ThroughputCommandType* t = (ThroughputCommandType*)data;
-	t->m_command = *(e_Command*)payload->data;
-	t->m_size = *(uint32_t*)(payload->data+4);
-	t->m_demand = *(uint32_t*)(payload->data+4+4);
+	Payload::readUInt32(payload,(uint32_t*)&t->m_command);
+	Payload::readUInt32(payload,&t->m_size);
+	Payload::readUInt32(payload,&t->m_demand);
+	Payload::readDouble(payload,&t->m_mbits);
+	Payload::readUInt32(payload,&t->m_lostsamples);
+	Payload::readUInt64(payload,&t->m_recsamples);
+	Payload::readUInt64(payload,&t->m_totaltime);
 	return true;
 }
 

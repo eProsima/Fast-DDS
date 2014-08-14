@@ -37,17 +37,21 @@ struct SerializedPayload_t{
 	//!Pointer to the data.
 	octet* data;
 	uint16_t max_size;
+	//!Position when reading
+	uint16_t pos;
 	SerializedPayload_t(){
 		length = 0;
 		data = NULL;
 		encapsulation = CDR_BE;
 		max_size = 0;
+		pos = 0;
 	}
 	SerializedPayload_t(short len){
 		encapsulation = CDR_BE;
 		length = 0;
 		data = (octet*)malloc(len);
 		max_size = len;
+		pos = 0;
 	}
 	~SerializedPayload_t(){
 		this->empty();
