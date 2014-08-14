@@ -30,6 +30,27 @@ typedef struct TroughputTimeStats{
 	}
 }TroughputTimeStats;
 
+struct TroughputResults
+{
+	uint32_t payload_size;
+	uint32_t demand;
+	struct PublisherResults
+	{
+		uint64_t totaltime_us;
+		uint64_t send_samples;
+		double MBitssec;
+	}publisher;
+	struct SubscriberResults
+	{
+		uint64_t totaltime_us;
+				uint64_t recv_samples;
+				uint32_t lost_samples;
+				double MBitssec;
+	}subscriber;
+};
+
+
+
 inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
 {
 	return output << ts.nsamples << "||"<<ts.totaltime_us<< "||"<<ts.Mbitsec;
@@ -112,7 +133,8 @@ enum e_Command:uint32_t{
 	BEGIN,
 	TEST_STARTS,
 	TEST_ENDS,
-	ALL_STOPS
+	ALL_STOPS,
+	TEST_RESULTS
 };
 
 typedef struct ThroughputCommandType
@@ -120,12 +142,21 @@ typedef struct ThroughputCommandType
 	e_Command m_command;
 	uint32_t m_size;
 	uint32_t m_demand;
+	double m_mbits;
+	uint32_t m_lostsamples;
+	uint64_t m_recsamples;
+	uint64_t m_totaltime;
 	ThroughputCommandType(){
 		m_command = DEFAULT;
 		m_size = 0;
 		m_demand = 0;
+		m_mbits = 0;
+		m_lostsamples = 0;
+		m_recsamples = 0;
+		m_totaltime = 0;
 	}
-	ThroughputCommandType(e_Command com):m_command(com),m_size(0),m_demand(0){}
+	ThroughputCommandType(e_Command com):m_command(com),m_size(0),m_demand(0),m_mbits(0),
+			m_lostsamples(0),m_recsamples(0),m_totaltime(0){}
 }ThroughputCommandType;
 
 
@@ -139,6 +170,7 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
 	case (TEST_STARTS): return output << "TEST_STARTS";
 	case (TEST_ENDS): return output << "TEST_ENDS";
 	case (ALL_STOPS): return output << "ALL_STOPS";
+	case (TEST_RESULTS): return output << "TEST RESULTS";
 	default: return output << RTPS_B_RED<<"UNKNOWN COMMAND"<<RTPS_DEF;
 	}
 	return output;
@@ -151,7 +183,7 @@ public:
 	ThroughputCommandDataType()
 {
 		m_topicDataTypeName = "ThroughputCommand";
-		m_typeSize = 4+4+4;
+		m_typeSize = 4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double);
 		m_isGetKeyDefined = false;
 };
 	~ThroughputCommandDataType(){};
