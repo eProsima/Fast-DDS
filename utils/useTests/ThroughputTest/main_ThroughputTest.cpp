@@ -35,9 +35,9 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
 #if defined(_WIN32)
-	#define COPYSTR strcpy_s
+#define COPYSTR strcpy_s
 #else
-	#define COPYSTR strcpy
+#define COPYSTR strcpy
 #endif
 
 
@@ -46,12 +46,22 @@ int main(int argc, char** argv){
 	cout << "Starting "<< endl;
 	pInfo("Starting"<<endl)
 	int type;
+	uint32_t test_time_sec = 30;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
 			type = 1;
 		if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
+		if(argc > 2 && type == 1)
+		{
+			std::istringstream iss( argv[2] );
+			if (!(iss >> test_time_sec))
+			{
+				cout << "Problem reading test time,using 30s as default value "<< endl;
+				test_time_sec = 30;
+			}
+		}
 	}
 	else
 	{
@@ -65,7 +75,7 @@ int main(int argc, char** argv){
 	ThroughputCommandDataType throuputcommand_t;
 	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
-	uint32_t test_time_sec = 30;
+
 
 	switch (type)
 	{

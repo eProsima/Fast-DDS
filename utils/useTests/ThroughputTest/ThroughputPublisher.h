@@ -64,7 +64,7 @@ public:
 
 	void run(uint32_t test_time);
 	void test(uint32_t test_time,uint32_t demand,uint32_t size);
-	std::vector<TroughputTimeStats> m_timeStats;
+	std::vector<TroughputResults> m_timeStats;
 };
 
 

@@ -16,11 +16,11 @@
 #include "ThroughputPublisher.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
-//uint32_t dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
-uint32_t dataspub[] = {504,1016,2040,4088,8184};
+uint32_t dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
+//uint32_t dataspub[] = {504,1016,2040,4088,8184};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
-uint32_t demandspub[] = {1000,1250,1500,2000,3000,4000,5000};
+uint32_t demandspub[] = {1,1000,1250,1500,2000,3000,4000,5000};
 vector<uint32_t> demand_pub (demandspub, demandspub + sizeof(demandspub) / sizeof(uint32_t) );
 
 
@@ -53,9 +53,9 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(MatchingInfo 
 ThroughputPublisher::~ThroughputPublisher(){DomainParticipant::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
-										sema(0),
-										m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-										ready(true)
+																sema(0),
+																m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+																ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -128,7 +128,7 @@ void ThroughputPublisher::run(uint32_t test_time)
 
 	ThroughputCommandType command;
 	SampleInfo_t info;
-	printLabelsPublisher();
+	printResultTitle();
 	for(std::vector<uint32_t>::iterator sit=data_size_pub.begin();sit!=data_size_pub.end();++sit)
 	{
 		for(std::vector<uint32_t>::iterator dit=demand_pub.begin();dit!=demand_pub.end();++dit)
@@ -185,23 +185,27 @@ void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 	command.m_command = TEST_ENDS;
 	mp_commandpub->write((void*)&command);
 	mp_commandpub->removeAllChange(&aux);
-//	mp_commandsub->waitForUnreadMessage();
-//	mp_commandsub->takeNextData((void*)&command,&info);
-//	if(command.m_command == TEST_RESULTS)
-//	{
-//		//cout << "Received results from subscriber"<<endl;
-//	}
-	TroughputTimeStats TS;
-	TS.nsamples = samples;
-	TS.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us;
-	TS.samplesize = size+4+4;
-	TS.demand = demand;
-	//cout << TS.demand << endl;
-	TS.compute();
-	//cout << TS.demand << endl;
-	printTimeStatsPublisher(TS);
-	//cout << TS.demand << endl;
-	m_timeStats.push_back(TS);
+	mp_commandsub->waitForUnreadMessage();
+	while(mp_commandsub->takeNextData((void*)&command,&info))
+	{
+		if(command.m_command == TEST_RESULTS)
+		{
+			//cout << "Received results from subscriber"<<endl;
+			TroughputResults result;
+			result.demand = demand;
+			result.payload_size = size+4+4;
+			result.publisher.send_samples = samples;
+			result.publisher.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us;
+			result.subscriber.recv_samples = command.m_lastrecsample-command.m_lostsamples;
+			result.subscriber.totaltime_us = command.m_totaltime;
+			result.subscriber.lost_samples = command.m_lostsamples;
+			result.compute();
+			m_timeStats.push_back(result);
+			printResults(result);
+		}
+	}
+
+
 }
 
 

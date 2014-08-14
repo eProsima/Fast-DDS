@@ -47,9 +47,8 @@ bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* payload
 	Payload::addUInt32(payload,n);
 	Payload::addUInt32(payload,t->m_size);
 	Payload::addUInt32(payload,t->m_demand);
-	Payload::addDouble(payload,t->m_mbits);
 	Payload::addUInt32(payload,t->m_lostsamples);
-	Payload::addUInt64(payload,t->m_recsamples);
+	Payload::addUInt64(payload,t->m_lastrecsample);
 	Payload::addUInt64(payload,t->m_totaltime);
 	return true;
 }
@@ -59,9 +58,8 @@ bool ThroughputCommandDataType::deserialize(SerializedPayload_t* payload,void * 
 	Payload::readUInt32(payload,(uint32_t*)&t->m_command);
 	Payload::readUInt32(payload,&t->m_size);
 	Payload::readUInt32(payload,&t->m_demand);
-	Payload::readDouble(payload,&t->m_mbits);
 	Payload::readUInt32(payload,&t->m_lostsamples);
-	Payload::readUInt64(payload,&t->m_recsamples);
+	Payload::readUInt64(payload,&t->m_lastrecsample);
 	Payload::readUInt64(payload,&t->m_totaltime);
 	return true;
 }
