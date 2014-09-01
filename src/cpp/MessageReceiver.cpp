@@ -426,7 +426,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
 		if((*it)->acceptMsgFrom(ch->writerGUID) && (*it)->acceptMsgDirectedTo(readerID)) //add
 		{
-			pDebugInfo("MessageReceiver: Trying to add change TO reader: "<<(*it)->getGuid().entityId<<endl);
+			pDebugInfo("MessageReceiver: Trying to add change "<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId<<endl);
 			CacheChange_t* change_to_add;
 			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
 			{
@@ -467,7 +467,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					else
 					{
 						(*it)->release_Cache(change_to_add);
-						pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
+						pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
 					}
 				}
 			}
@@ -485,8 +485,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				}
 				else
 				{
+					pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
 					(*it)->release_Cache(change_to_add);
-					pDebugInfo("MessageReceiver not add change "<<ch->sequenceNumber.to64long()<<endl);
 					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
 					{
 						this->mp_threadListen->getParticipantImpl()->getBuiltinProtocols()->mp_PDP->assertRemoteParticipantLiveliness(this->sourceGuidPrefix);
