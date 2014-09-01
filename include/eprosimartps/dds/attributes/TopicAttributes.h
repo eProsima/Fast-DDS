@@ -82,12 +82,17 @@ public:
 			if(historyQos.depth > resourceLimitsQos.max_samples)
 			{
 				pError("INCORRECT TOPIC QOS: depth must be <= max_samples"<<endl;)
-				return false;
+						return false;
 			}
 			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == WITH_KEY)
 			{
 				pError("INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
-				return false;
+						return false;
+			}
+			if(historyQos.depth <=0 )
+			{
+				pError("INCORRECT TOPIC QOS: depth must be > 0"<<endl;)
+										return false;
 			}
 		}
 		return true;
@@ -96,7 +101,7 @@ public:
 
 
 bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
-{
+		{
 	if(t1.topicKind != t2.topicKind)
 	{
 		cout << "a"<<endl;
@@ -123,7 +128,7 @@ bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 		return true;
 	}
 	return false;
-}
+		}
 
 
 } /* namespace rtps */
