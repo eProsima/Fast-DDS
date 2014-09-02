@@ -26,7 +26,7 @@ public:
 	virtual ~ThroughputSubscriber();
 	Participant* mp_par;
 	Subscriber* mp_datasub;
-	Publisher* mp_commandpub;
+	Publisher* mp_commandpubli;
 	Subscriber* mp_commandsub;
 	eClock m_Clock;
 
