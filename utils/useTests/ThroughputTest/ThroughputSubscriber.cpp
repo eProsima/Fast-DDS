@@ -15,15 +15,16 @@
 #include "eprosimartps/utils/TimeConversion.h"
 #include <vector>
 
-uint32_t datassub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
-std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
-
-uint32_t demandssub[] = {2000,4000,6000,8000,10000};
-std::vector<uint32_t> demand_sub (demandssub, demandssub + sizeof(demandssub) / sizeof(uint32_t) );
+int writecalls= 0;
+//uint32_t datassub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
+//std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
+//
+//uint32_t demandssub[] = {1,10,20,30,50,60,70,80};
+//std::vector<uint32_t> demand_sub (demandssub, demandssub + sizeof(demandssub) / sizeof(uint32_t) );
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-	m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(NULL)
+m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(NULL)
 {
 
 };
@@ -51,7 +52,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage()
 	if((lastseqnum+1)<latencyin->seqnum)
 	{
 		lostsamples+=latencyin->seqnum-lastseqnum-1;
-	//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+		//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
 	}
 	lastseqnum = latencyin->seqnum;
 }
@@ -68,7 +69,7 @@ ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscribe
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
 void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
 {
-	cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
+	//cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
 	m_up.sema.post();
 }
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
@@ -76,15 +77,52 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 	//cout << "Command Received: ";
 	if(m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info))
 	{
-	//	cout << m_commandin <<endl;
+		//cout << "RECEIVED COMMAND: "<< m_commandin.m_command << endl;
 		switch(m_commandin.m_command)
 		{
-		default:
+		default: break;
 		case (DEFAULT): break;
-		case (READY_TO_START): m_up.sema.post();break;
-		case (BEGIN): break;
-		case (TEST_STARTS): m_up.m_Clock.setTimeNow(&m_up.m_t1);break;
-		case (TEST_ENDS): m_up.m_Clock.setTimeNow(&m_up.m_t2);m_up.m_DataSubListener.saveNumbers();m_up.sema.post();break;
+		case (BEGIN):
+		{
+			break;
+		}
+		case (READY_TO_START):
+			{
+			m_up.m_datasize = m_commandin.m_size;
+			m_up.m_demand = m_commandin.m_demand;
+			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
+			m_up.m_DataSubListener.latencyin = new LatencyType(m_up.m_datasize);
+			ThroughputCommandType command(BEGIN);
+			eClock::my_sleep(50);
+			m_up.m_DataSubListener.reset();
+			//cout << "SEND COMMAND: "<< command.m_command << endl;
+			//cout << "writecall "<< ++writecalls << endl;
+			m_up.mp_commandpubli->write(&command);
+			break;
+			}
+		case (TEST_STARTS):
+		{
+			m_up.m_Clock.setTimeNow(&m_up.m_t1);
+			break;
+		}
+		case (TEST_ENDS):
+		{
+			m_up.m_Clock.setTimeNow(&m_up.m_t2);
+			m_up.m_DataSubListener.saveNumbers();
+			//cout << "TEST ends, sending results"<<endl;
+			ThroughputCommandType comm;
+			comm.m_command = TEST_RESULTS;
+			comm.m_demand = m_up.m_demand;
+			comm.m_size = m_up.m_datasize+4+4;
+			comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
+			comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
+			comm.m_totaltime = TimeConv::Time_t2MicroSecondsDouble(m_up.m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_up.m_t1);
+			//cout << "SEND COMMAND: "<< comm.m_command << endl;
+			//cout << "writecall "<< ++writecalls << endl;
+			m_up.mp_commandpubli->write(&comm);
+
+			break;
+		}
 		case (ALL_STOPS): m_up.sema.post();break;
 		}
 	}
@@ -107,9 +145,9 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo
 ThroughputSubscriber::~ThroughputSubscriber(){DomainParticipant::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
-		sema(0),
-		m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-		ready(true),m_datasize(0),m_demand(0)
+						sema(0),
+						m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+						ready(true),m_datasize(0),m_demand(0)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
@@ -152,22 +190,23 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-	Rparam.unicastLocatorList.push_back(Locator_t(10111));
+	Rparam.unicastLocatorList.push_back(Locator_t(7556));
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
 	//Wparam.historyMaxSize = 20;
-	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-		Wparam.topic.resourceLimitsQos.max_samples = 50;
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 50;
+	Wparam.topic.resourceLimitsQos.max_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
-	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
+	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	mp_commandpubli = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
-	if(mp_datasub == NULL || mp_commandsub == NULL || mp_commandpub == NULL)
+	if(mp_datasub == NULL || mp_commandsub == NULL || mp_commandpubli == NULL)
 		ready = false;
 
-	mp_par->stopParticipantAnnouncement();
-	eClock::my_sleep(5000);
+	eClock::my_sleep(1000);
 }
 
 void ThroughputSubscriber::run()
@@ -179,62 +218,9 @@ void ThroughputSubscriber::run()
 	sema.wait();
 	sema.wait();
 	cout << "Discovery complete"<<endl;
-	bool stop = false;
 	//printLabelsSubscriber();
-	int demindex=0;
-	while(1)
-	{
-		sema.wait();
-	//	cout << "Received command of type: "<< m_CommandSubListener.m_commandin << endl;
-		switch(m_CommandSubListener.m_commandin.m_command)
-		{
-		case (DEFAULT):
-		case (BEGIN):
-		{
-			eClock::my_sleep(100);
-			break;
-		}
-		case (READY_TO_START):
-		{
-			m_datasize = m_CommandSubListener.m_commandin.m_size;
-			m_demand = m_CommandSubListener.m_commandin.m_demand;
-			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-			m_DataSubListener.latencyin = new LatencyType(m_datasize);
-			ThroughputCommandType command(BEGIN);
-			eClock::my_sleep(50);
-			m_DataSubListener.reset();
-			mp_commandpub->write(&command);
-			break;
-		}
-		case (TEST_STARTS):
-		{
-			break;
-		}
-		case (TEST_ENDS):
-		{
-			cout << "TEST ends, sending results"<<endl;
-			ThroughputCommandType comm;
-			comm.m_command = TEST_RESULTS;
-			comm.m_demand = m_demand;
-			comm.m_size = m_datasize+4+4;
-			comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
-			comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
-			comm.m_totaltime = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1);
-			mp_commandpub->write(&comm);
-			demindex++;
-			size_t remvoed;
-			mp_commandpub->removeAllChange(&remvoed);
-			cout << "Removed changes: "<<remvoed<<endl;
-			break;
-		}
-		case (ALL_STOPS):
-				return;
-		case(TEST_RESULTS):
-				break;
-		}
-	if(stop)
-			break;
-	}
+	sema.wait();
+	return;
 
 }
 

@@ -55,6 +55,7 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 	ch->sequenceNumber.low = 0;
 	GUID_UNKNOWN(ch->writerGUID);
 	ch->serializedPayload.length = 0;
+	ch->serializedPayload.pos = 0;
 	for(uint8_t i=0;i<16;++i)
 		ch->instanceHandle.value[i] = 0;
 	ch->isRead = 0;

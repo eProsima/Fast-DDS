@@ -20,7 +20,7 @@ uint32_t dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
 //uint32_t dataspub[] = {504,1016,2040,4088,8184};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
-uint32_t demandspub[] = {1,1000,1250,1500,2000,3000,4000,5000};
+uint32_t demandspub[] = {10,20,30,40,50,60,70,80};
 vector<uint32_t> demand_pub (demandspub, demandspub + sizeof(demandspub) / sizeof(uint32_t) );
 
 
@@ -100,14 +100,16 @@ ThroughputPublisher::ThroughputPublisher():
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandS2P";
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
-
-	Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	Wparam.topic.resourceLimitsQos.max_samples = 50;
-	Wparam.topic.resourceLimitsQos.allocated_samples = 50;
-	Wparam.topic.topicDataType = "ThroughputCommand";
-	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicName = "ThroughputCommandP2S";
-	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
+	PublisherAttributes Wparam2;
+	Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam2.topic.historyQos.depth = 50;
+	Wparam2.topic.resourceLimitsQos.max_samples = 50;
+	Wparam2.topic.resourceLimitsQos.allocated_samples = 50;
+	Wparam2.topic.topicDataType = "ThroughputCommand";
+	Wparam2.topic.topicKind = NO_KEY;
+	Wparam2.topic.topicName = "ThroughputCommandP2S";
+	Wparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datapub == NULL || mp_commandsub == NULL || mp_commandpub == NULL)
 		ready = false;
@@ -138,22 +140,31 @@ void ThroughputPublisher::run(uint32_t test_time)
 			command.m_command = READY_TO_START;
 			command.m_size = *sit;
 			command.m_demand = *dit;
+			//cout << "SEND COMMAND "<< command.m_command << endl;
 			mp_commandpub->write((void*)&command);
 			command.m_command = DEFAULT;
 			mp_commandsub->waitForUnreadMessage();
 			mp_commandsub->takeNextData((void*)&command,&info);
+			//cout << "RECI COMMAND "<< command.m_command << endl;
 			//cout << "Received command of type: "<< command << endl;
 			if(command.m_command == BEGIN)
 			{
-				test(test_time,*dit,*sit);
+				if(!test(test_time,*dit,*sit))
+				{
+					command.m_command = ALL_STOPS;
+				//	cout << "SEND COMMAND "<< command.m_command << endl;
+					mp_commandpub->write((void*)&command);
+					return;
+				}
 			}
 		}
 	}
 	command.m_command = ALL_STOPS;
+//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
 }
 
-void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
+bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 {
 	LatencyType latency(size);
 	m_Clock.setTimeNow(&m_t2);
@@ -163,6 +174,7 @@ void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 	ThroughputCommandType command;
 	SampleInfo_t info;
 	command.m_command = TEST_STARTS;
+	//cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
 	m_Clock.setTimeNow(&m_t1);
 	while(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)<test_time*1000000)
@@ -183,11 +195,13 @@ void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;
+	//cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
 	mp_commandpub->removeAllChange(&aux);
 	mp_commandsub->waitForUnreadMessage();
-	while(mp_commandsub->takeNextData((void*)&command,&info))
+	if(mp_commandsub->takeNextData((void*)&command,&info))
 	{
+		//cout << "RECI COMMAND "<< command.m_command << endl;
 		if(command.m_command == TEST_RESULTS)
 		{
 			//cout << "Received results from subscriber"<<endl;
@@ -202,9 +216,17 @@ void ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			result.compute();
 			m_timeStats.push_back(result);
 			printResults(result);
+			return true;
+		}
+		else
+		{
+			cout << "The test expected results, stopping"<<endl;
 		}
 	}
+	else
+		cout << "PROBLEM READING RESULTS;"<<endl;
 
+	return false;
 
 }
 
