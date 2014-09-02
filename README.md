@@ -7,7 +7,7 @@ eProsima (www.eprosima.com) is a SME company focused on networking middleware wi
 eProsima develops new features and plug-ins for DDS, interoperability tools, and personalized networking middleware solutions for its customers.
 
 ## Feature list
-* Simple Participant Discovery Protocol.
+* Simple Participant Discovery Protocol..
 * Simple Endpoint Discovery Protocol.
 * Static Endpoint Discovery Protocol.
 * Included Qos (included in the basic behaviour of the library):
