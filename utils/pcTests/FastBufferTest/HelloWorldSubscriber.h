@@ -23,7 +23,7 @@ public:
 	virtual ~HelloWorldSubscriber();
 private:
 	Participant* mp_participant;
-	Subscriber* mp_subscriber;
+	Subscriber* mp_subscriber;l
 	class SubListener:public SubscriberListener
 	{
 	public:
