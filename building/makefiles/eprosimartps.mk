@@ -77,7 +77,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/dds/PublisherListener.cpp \
 		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
 		  $(BASEDIR)/src/cpp/dds/SubscriberListener.cpp \
-		  $(BASEDIR)/src/cpp/dds/DomainParticipant \
+		  $(BASEDIR)/src/cpp/dds/DomainParticipant.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/qos/ParameterList.cpp \
 		  $(BASEDIR)/src/cpp/qos/ParameterTypes.cpp \
@@ -106,29 +106,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPTopicDataType.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
-		  
-#		  $(BASEDIR)/src/cpp/discovery/ParticipantDiscoveryProtocol.cpp \
-		  $(BASEDIR)/src/cpp/discovery/EndpointDiscoveryProtocol.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SimplePDP.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SPDPListener.cpp \
-		  $(BASEDIR)/src/cpp/discovery/StaticEDP.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SimpleEDP.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SEDPListeners.cpp \
-		  $(BASEDIR)/src/cpp/discovery/data/DiscoveredData.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SPDPTopicDataType.cpp \
-		  $(BASEDIR)/src/cpp/discovery/SEDPTopicDataType.cpp \
-		  \
-		  $(BASEDIR)/src/cpp/liveliness/WriterLiveliness.cpp \
-		  $(BASEDIR)/src/cpp/liveliness/LivelinessPeriodicAssertion.cpp \
-		  $(BASEDIR)/src/cpp/liveliness/WriterLivelinessListener.cpp \
-		  $(BASEDIR)/src/cpp/discovery/timedevent/ParticipantLeaseDuration.cpp 
-# $(BASEDIR)/src/cpp/discovery/timedevent/ResendDiscoveryDataPeriod.cpp 
-#		  
-#		  $(BASEDIR)/src/cpp/dds/ParameterList.cpp \
-#		  $(BASEDIR)/src/cpp/CDRMessage.cpp \
-#		  $(BASEDIR)/src/cpp/exceptions/Exception.cpp \
-#		  $(BASEDIR)/src/cpp/exceptions/NotEnoughMemoryException.cpp \
-#		  $(BASEDIR)/src/cpp/exceptions/BadParamException.cpp
+
 
 # Project sources are copied to the current directory
 EPROSIMARTPS_SRCS= $(EPROSIMARTPS_SRC_CFILES) $(EPROSIMARTPS_SRC_CPPFILES)
