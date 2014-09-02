@@ -43,9 +43,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 	Wparam.times.heartbeatPeriod.seconds = 2;
 	Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
 	mp_publisher = DomainParticipant::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
