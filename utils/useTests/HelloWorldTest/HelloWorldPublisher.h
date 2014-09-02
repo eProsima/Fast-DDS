@@ -7,36 +7,36 @@
  *************************************************************************/
 
 /**
- * @file HelloWorldSubscriber.h
+ * @file HelloWorldPublisher.h
  *
  */
 
-#ifndef HELLOWORLDSUBSCRIBER_H_
-#define HELLOWORLDSUBSCRIBER_H_
+#ifndef HELLOWORLDPUBLISHER_H_
+#define HELLOWORLDPUBLISHER_H_
 
 #include "eprosimartps/rtps_all.h"
 #include "HelloWorld.h"
 
-class HelloWorldSubscriber {
+class HelloWorldPublisher {
 public:
-	HelloWorldSubscriber();
-	virtual ~HelloWorldSubscriber();
+	HelloWorldPublisher();
+	virtual ~HelloWorldPublisher();
+	bool publish();
 private:
+	HelloWorld m_Hello;
 	Participant* mp_participant;
-	Subscriber* mp_subscriber;
-	class SubListener:public SubscriberListener
+	Publisher* mp_publisher;
+	class PubListener:public PublisherListener
 	{
 	public:
-		SubListener():mp_sub(NULL),n_matched(0){};
-		~SubListener(){};
-		void onSubscriptionMatched(MatchingInfo info);
-		void onNewDataMessage();
-		HelloWorld m_Hello;
-		SampleInfo_t m_info;
-		Subscriber* mp_sub;
+		PubListener():n_matched(0){};
+		~PubListener(){};
+		void onPublicationMatched(MatchingInfo info);
 		int n_matched;
 	}m_listener;
 
 };
 
-#endif /* HELLOWORLDSUBSCRIBER_H_ */
+
+
+#endif /* HELLOWORLDPUBLISHER_H_ */
