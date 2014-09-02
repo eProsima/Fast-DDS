@@ -20,7 +20,7 @@ uint32_t dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
 //uint32_t dataspub[] = {504,1016,2040,4088,8184};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
-uint32_t demandspub[] = {10,20,30,40,50,60,70,80};
+uint32_t demandspub[] = {400,600,700,800,900,1000,1100,1200,1300};
 vector<uint32_t> demand_pub (demandspub, demandspub + sizeof(demandspub) / sizeof(uint32_t) );
 
 
