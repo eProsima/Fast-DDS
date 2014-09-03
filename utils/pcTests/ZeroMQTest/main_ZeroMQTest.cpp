@@ -12,28 +12,60 @@
  */
 
 
-#include <zmq.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <assert.h>
+//#include <stdio.h>
+//#include <unistd.h>
+//#include <string.h>
+//#include <assert.h>
+#include <iostream>
 
-int main (void)
+#include "ZeroMQPublisher.h"
+#include "ZeroMQSubscriber.h"
+
+using namespace std;
+
+int main (int argc, char** argv)
 {
-    //  Socket to talk to clients
-    void *context = zmq_ctx_new ();
-    void *responder = zmq_socket (context, ZMQ_REP);
-    int rc = zmq_bind (responder, "tcp://*:5555");
-    assert (rc == 0);
+	int type = 0;
+	std::string ipstr;
+	int nsamples;
+	if(argc > 3)
+	{
+		if(strcmp(argv[1],"publisher")==0)
+			type = 1;
+		else if(strcmp(argv[1],"subscriber")==0)
+			type = 2;
+		else
+		{
+			cout << "NEEDS publisher OR subscriber as first argument"<<endl;
+			return 0;
+		}
+		std::istringstream ip(argv[2]);
+		ipstr = ip.str();
+		std::istringstream nsampl( argv[3] );
+		if(!(nsampl>>nsamples))
+		{
+			cout << "Problem reading samples number"<<endl;
+		}
+	}
+	else
+	{
+		cout << "Application needs at least 3 arguments: publisher/subscriber SUB_IP/PUB_IP N_SAMPLES"<<endl;
+		return 0;
+	}
+	if(type == 1)
+	{
+		ZeroMQPublisher zmqpub;
+		zmqpub.init(ipstr,nsamples);
+		zmqpub.run();
+	}
+	else if(type ==2)
+	{
+		ZeroMQSubscriber zmqsub;
+		zmqsub.init(ipstr,nsamples);
+		zmqsub.run();
+	}
+	else
+		return 0;
 
-    while (1) {
-        char buffer [10];
-        zmq_recv (responder, buffer, 10, 0);
-        printf ("Received Hello\n");
-        sleep (1);          //  Do some 'work'
-        zmq_send (responder, "World", 5, 0);
-    }
-    return 0;
 }
-
 

@@ -71,11 +71,20 @@ int main(int argc, char** argv){
 			}
 			if(argc > 3) //READ SAMPLES NUMBER
 			{
-				std::istringstream iss( argv[2] );
-				if (!(iss >> n_samples))
+				std::istringstream iss2( argv[3] );
+				if (!(iss2 >> n_samples))
 				{
 					cout << "Problem reading subscriber number "<< endl;
 					n_samples = c_n_samples;
+				}
+				else if (n_samples < 10)
+				{
+					cout << "Samples number must be >= 10"<<endl;
+					n_samples = 10;
+				}
+				else
+				{
+					cout << "Reading number of samples: "<< n_samples << endl;
 				}
 			}
 		}
@@ -98,11 +107,20 @@ int main(int argc, char** argv){
 			}
 			if(argc > 3) //READ SAMPLES NUMBER
 			{
-				std::istringstream iss( argv[2] );
+				std::istringstream iss( argv[3] );
 				if (!(iss >> n_samples))
 				{
 					cout << "Problem reading subscriber number "<< endl;
 					n_samples = c_n_samples;
+				}
+				else if (n_samples < 10)
+				{
+					cout << "Samples number must be >= 10"<<endl;
+					n_samples = 10;
+				}
+				else
+				{
+					cout << "Reading number of samples: "<< n_samples << endl;
 				}
 			}
 		}
@@ -124,7 +142,7 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		cout << "Performing test with "<< sub_number << " subscribers"<<endl;
+		cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
 		LatencyTestPublisher latencyPub;
 		latencyPub.init(sub_number,n_samples);
 		latencyPub.run();
