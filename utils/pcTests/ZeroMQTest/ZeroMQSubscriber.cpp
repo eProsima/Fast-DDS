@@ -59,7 +59,7 @@ bool ZeroMQSubscriber::init(string pubip,int samples)
 	mp_commandpub = new zmq::socket_t(*mp_context,ZMQ_PUB);
 	mp_commandpub->bind("tcp://*:7554");
 	mp_commandpub->bind("ipc://command2sub.ipc");
-	eClock::my_sleep(100);
+	eClock::my_sleep(500);
 
 
 
@@ -80,14 +80,13 @@ bool ZeroMQSubscriber::test(uint32_t datasize)
 {
 	cout << "Preparing test with data size: " << datasize+4<<endl;
 	zmq::message_t command(1);
-	zmq::message_t latency_out(datasize+4);
-	zmq::message_t latency_in(datasize+4);
-	memset(latency_out.data(),'S',datasize+4);
-	memset(latency_in.data(),'S',datasize+4);
-	cout << "WAITING FOR COMMAND"<<endl;
+
+
+
+	//cout << "WAITING FOR COMMAND"<<endl;
 	mp_commandsub->recv(&command);
-	cout << "COMMAND RECEIVED"<<endl;
-	if(*(char*)command.data()!=1)
+	//cout << "COMMAND RECEIVED"<<endl;
+	if(*(char*)command.data()!='S')
 	{
 		return false;
 	}
@@ -95,12 +94,17 @@ bool ZeroMQSubscriber::test(uint32_t datasize)
 	mp_commandpub->send(command);
 	for(uint32_t i = 0;i<(uint32_t)n_samples;++i)
 	{
-		cout << "waiting for data "<<endl;
+		//cout << "waiting for data "<<endl;
+		zmq::message_t latency_in;
+		zmq::message_t latency_out(datasize+4);
 		mp_datasub->recv(&latency_in);
-		std::istringstream iss(static_cast<char*>(latency_in.data()));
-		cout << "RECEIVED DATA: "<< iss.str().c_str()<< endl;
-		memcpy(latency_out.data(),latency_in.data(),sizeof(uint32_t));
-		cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<"/"<<*(uint32_t*)latency_in.data()<<endl;
+		//cout << "received of size:"<<latency_in.size()<<endl;
+//		std::istringstream iss(static_cast<char*>(latency_in.data()));
+//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
+//
+//		memset(latency_out.data(),'S',datasize+4);
+		memcpy(latency_out.data(),latency_in.data(),latency_in.size());
+	//	cout << "REC/SENT: "<< *(uint32_t*)latency_in.data() <<" / "<<*(uint32_t*)latency_out.data()<<endl;
 		mp_datapub->send(latency_out);
 	}
 	cout << "TEST OF SiZE: "<< datasize +4 << " ENDS"<<endl;

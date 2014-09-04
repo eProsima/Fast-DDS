@@ -20,13 +20,13 @@ uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
 ZeroMQPublisher::ZeroMQPublisher():
-				m_overhead(0),
-				mp_context(NULL),
-				mp_datapub(NULL),
-				mp_commandpub(NULL),
-				mp_datasub(NULL),
-				mp_commandsub(NULL),
-				n_samples(1000)
+						m_overhead(0),
+						mp_context(NULL),
+						mp_datapub(NULL),
+						mp_commandpub(NULL),
+						mp_datasub(NULL),
+						mp_commandsub(NULL),
+						n_samples(1000)
 
 {
 	// TODO Auto-generated constructor stub
@@ -63,7 +63,7 @@ bool ZeroMQPublisher::init(string subip,int samples)
 	mp_commandpub = new zmq::socket_t(*mp_context,ZMQ_PUB);
 	mp_commandpub->bind("tcp://*:7552");
 	mp_commandpub->bind("ipc://command2sub.ipc");
-	eClock::my_sleep(100);
+	eClock::my_sleep(500);
 
 
 	return true;
@@ -73,7 +73,7 @@ void ZeroMQPublisher::run()
 {
 	//WAIT FOR THE DISCOVERY PROCESS FO FINISH:
 
-	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
+
 	printf("Printing round-trip times in us, statistics for %d samples\n",n_samples);
 	printf("   Bytes,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
 	printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
@@ -93,31 +93,30 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 {
 	m_times.clear();
 	zmq::message_t command(1);
-	*(char*)(command.data())=1; //READY
-	cout << "COMMAND SENT"<<endl;
+	*(char*)(command.data())='S'; //READY
 	mp_commandpub->send(command);
-	cout << "WAITIGN:"<<endl;
 	mp_commandsub->recv(&command);
-	cout << "COMMAND RECEIVED"<<endl;
 	if(*(char*)command.data()!=2)
 		return false;
 	//cout << endl;
 	//BEGIN THE TEST:
-	zmq::message_t latency_out(datasize+4);
-	zmq::message_t latency_in(datasize+4);
-	memset(latency_out.data(),'P',datasize+4);
-	memset(latency_in.data(),'P',datasize+4);
+	uint32_t result;
 	for(uint32_t i = 0;i<(uint32_t)n_samples;++i)
 	{
-		memcpy(latency_out.data(),(void*)&i,sizeof(uint32_t));
+		zmq::message_t latency_out(datasize+4);
+		zmq::message_t latency_in;
+		memset(latency_out.data(),65,datasize+4);
+		sprintf((char*)(latency_out.data()),"%d",i);
 		m_clock.setTimeNow(&m_t1);
 		mp_datapub->send(latency_out);
 		mp_datasub->recv(&latency_in);
-		std::istringstream iss(static_cast<char*>(latency_in.data()));
-				cout << "RECEIVED DATA: "<< iss.str().c_str()<< endl;
+//		std::istringstream iss(static_cast<char*>(latency_in.data()));
+//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
 		m_clock.setTimeNow(&m_t2);
-		cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<"/"<<*(uint32_t*)latency_in.data()<<endl;
-		if(*(uint32_t*)latency_in.data() != *(uint32_t*)latency_out.data())
+		sscanf((char*)latency_in.data(),"%d",&result);
+	//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
+		//cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<" / "<<*(uint32_t*)latency_in.data()<<endl;
+		if(result != i)
 		{
 			cout << "RECEIVED BAD MESSAGE, STOPPING TEST"<<endl;
 			*(char*)(command.data()) = 10;
