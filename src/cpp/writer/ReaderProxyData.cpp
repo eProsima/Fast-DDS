@@ -23,7 +23,7 @@ namespace rtps {
 ReaderProxyData::ReaderProxyData():
 											m_expectsInlineQos(false),
 											m_userDefinedId(0),
-											m_isAlive(false),
+											m_isAlive(true),
 											m_topicKind(NO_KEY)
 
 {
@@ -368,7 +368,7 @@ void ReaderProxyData::clear()
 	m_topicName = "";
 	m_userDefinedId = 0;
 	m_qos = ReaderQos();
-	m_isAlive = false;
+	m_isAlive = true;
 	m_topicKind = NO_KEY;
 
 

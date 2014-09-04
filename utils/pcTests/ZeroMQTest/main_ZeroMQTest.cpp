@@ -52,6 +52,8 @@ int main (int argc, char** argv)
 		cout << "Application needs at least 3 arguments: publisher/subscriber SUB_IP/PUB_IP N_SAMPLES"<<endl;
 		return 0;
 	}
+
+
 	if(type == 1)
 	{
 		ZeroMQPublisher zmqpub;
@@ -66,6 +68,55 @@ int main (int argc, char** argv)
 	}
 	else
 		return 0;
+	//TEST WITHOUT LATENCY STUFF:
+
+	//	if(type == 1)
+	//	{
+	//		zmq::context_t context (1);
+	//		zmq::socket_t publisher (context, ZMQ_PUB);
+	//		publisher.bind("tcp://*:5556");
+	//		publisher.bind("ipc://weather.ipc");
+	//		eClock::my_sleep(300);
+	//		zmq::message_t latency_out(12+4);
+	//		memset(latency_out.data(),65,12+4);
+	//		std::istringstream iss2(static_cast<char*>(latency_out.data()));
+	//		cout << "SENDING DATA: "<< iss2.str()<< endl;
+	//		uint32_t i =2;
+	//		memcpy(latency_out.data(),(void*)&i,sizeof(uint32_t));
+	//		std::istringstream iss3(static_cast<char*>(latency_out.data()));
+	//				cout << "SENDING DATA: "<< iss3.str()<< endl;
+	//				cout << "UN BYTE: "<< *(char*)(latency_out.data()+6) << endl;
+	//		for(int i =0;i<20;++i)
+	//		{
+	//			cout << "sends"<<endl;
+	//			publisher.send(latency_out);
+	//		}
+	//
+	//	}
+	//	else if(type ==2)
+	//	{
+	//		zmq::context_t context (1);
+	//		//  Socket to talk to server
+	//		std::cout << "Collecting updates from weather server…\n" << std::endl;
+	//		zmq::socket_t subscriber (context, ZMQ_SUB);
+	//		subscriber.connect("tcp://localhost:5556");
+	//		//  Subscribe to zipcode, default is NYC, 10001
+	//		subscriber.setsockopt(ZMQ_SUBSCRIBE, 0, 0);
+	//		eClock::my_sleep(300);
+	//		zmq::message_t update;
+	//		while(1)
+	//		{
+	//			cout << "waiting"<<endl;
+	//			subscriber.recv(&update);
+	//			cout << "rec"<<endl;
+	//			std::istringstream iss(static_cast<char*>(update.data()));
+	//			cout << "RECEIVED: "<<iss.str() << endl;
+	//			cout << "UN BYTE: "<< *(char*)(update.data()+6) << endl;
+	//		}
+	//	}
+	//	else
+	//		return 0;
+
 
 }
 

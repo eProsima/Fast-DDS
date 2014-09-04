@@ -21,7 +21,10 @@ namespace eprosima {
 namespace rtps {
 
 WriterProxyData::WriterProxyData():
-										m_userDefinedId(0),m_typeMaxSerialized(0),m_isAlive(false),m_topicKind(NO_KEY)
+										m_userDefinedId(0),
+										m_typeMaxSerialized(0),
+										m_isAlive(true),
+										m_topicKind(NO_KEY)
 {
 	// TODO Auto-generated constructor stub
 
@@ -372,7 +375,7 @@ void WriterProxyData::clear()
 	m_userDefinedId = 0;
 	m_qos = WriterQos();
 	m_typeMaxSerialized = 0;
-	m_isAlive = false;
+	m_isAlive = true;
 	m_topicKind = NO_KEY;
 
 
