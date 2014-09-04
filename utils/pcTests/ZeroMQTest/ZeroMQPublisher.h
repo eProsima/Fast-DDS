@@ -21,10 +21,10 @@ using namespace std;
 
 class TimeStats{
 public:
-	TimeStats():nbytes(0),min(0),max(0),mean(0),p50(0),p90(0),p99(0),p9999(0),stdev(0){}
+	TimeStats():nbytes(0),tmin(0),tmax(0),mean(0),p50(0),p90(0),p99(0),p9999(0),stdev(0){}
 	~TimeStats(){}
 	uint64_t nbytes;
-	double min,max,mean,p50,p90,p99,p9999;
+	double tmin,tmax,mean,p50,p90,p99,p9999;
 	double stdev;
 };
 
