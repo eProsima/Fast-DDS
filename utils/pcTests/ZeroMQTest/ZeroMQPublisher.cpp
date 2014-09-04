@@ -88,7 +88,72 @@ void ZeroMQPublisher::run()
 		//		std::cin >> aux;
 	}
 }
+#if defined(_WIN32)
+bool ZeroMQPublisher::test(uint32_t datasize)
+{
+	m_times.clear();
+	zmq::message_t command(1);
+	*(char*)(command.data())='S'; //READY
+	mp_commandpub->send(command);
+	mp_commandsub->recv(&command);
+	if(*(char*)command.data()!=2)
+		return false;
+	//cout << endl;
+	//BEGIN THE TEST:
+	uint32_t result;
+	m_clock.setTimeNow(&m_t1);
+	for(uint32_t i = 0;i<(uint32_t)n_samples;++i)
+	{
+		zmq::message_t latency_out(datasize+4);
+		zmq::message_t latency_in;
+		memset(latency_out.data(),65,datasize+4);
+		sprintf((char*)(latency_out.data()),"%d",i);
+		
+		mp_datapub->send(latency_out);
+		mp_datasub->recv(&latency_in);
+//		std::istringstream iss(static_cast<char*>(latency_in.data()));
+//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
+		
+		sscanf((char*)latency_in.data(),"%d",&result);
+	//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
+		//cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<" / "<<*(uint32_t*)latency_in.data()<<endl;
+		if(result != i)
+		{
+			cout << "RECEIVED BAD MESSAGE, STOPPING TEST"<<endl;
+			*(char*)(command.data()) = 10;
+			mp_commandpub->send(command);
+			return false;
+		}
+		
 
+	}
+	m_clock.setTimeNow(&m_t2);
+	m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(m_t2)
+		-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead);
+	analizeTimes(datasize);
+	printStat(m_stats.back());
+
+	return true;
+}
+
+
+void ZeroMQPublisher::analizeTimes(uint32_t datasize)
+{
+	TimeStats TS;
+	TS.nbytes = datasize+4;
+	TS.mean = (double)( *m_times.begin()/(n_samples+1));
+	m_stats.push_back(TS);
+}
+void ZeroMQPublisher::printStat(TimeStats& TS)
+{
+	//cout << "MEAN PRINTING: " << TS.mean << endl;
+	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+			TS.nbytes,TS.stdev,TS.mean,
+			TS.tmin,
+			TS.p50,TS.p90,TS.p99,TS.p9999,
+			TS.tmax);
+}
+#else
 bool ZeroMQPublisher::test(uint32_t datasize)
 {
 	m_times.clear();
@@ -132,25 +197,6 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 
 	return true;
 }
-
-#if defined(_WIN32)
-void ZeroMQPublisher::analizeTimes(uint32_t datasize)
-{
-	TimeStats TS;
-	TS.nbytes = datasize+4;
-	TS.mean = (double)( *m_times.begin()/(NSAMPLES+1));
-	m_stats.push_back(TS);
-}
-void ZeroMQPublisher::printStat(TimeStats& TS)
-{
-	//cout << "MEAN PRINTING: " << TS.mean << endl;
-	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
-			TS.nbytes,TS.stdev,TS.mean,
-			TS.min,
-			TS.p50,TS.p90,TS.p99,TS.p9999,
-			TS.max);
-}
-#else
 void ZeroMQPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
