@@ -6,7 +6,23 @@ LN=g++
 AR=ar
 CP=cp
 
--include $(EPROSIMADIR)/building/makefiles/eProsima.mk
+COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__
+
+## CHOOSE HERE BETWEEN 32 and 64 bit architecture
+
+##32 BIT ARCH:
+#COMMON_CFLAGS+= -m32 -fpic
+#LDFLAGS=-m32
+#EPROSIMA_TARGET=i86Linux2.6gcc
+
+#64BIT ARCH:
+COMMON_CFLAGS+= -m64 -fpic
+LDFLAGS=-m64
+EPROSIMA_TARGET=x64Linux2.6gcc
+
+CFLAGS = $(COMMON_CFLAGS) -O2
+CFLAGS_DEBUG= $(COMMON_CFLAGS) -g -D__DEBUG
+
 
 THROUGHPUTTEST_OUTDIR= $(OUTDIR)/ThroughputTest
 THROUGHPUTTEST_OUTDIR_DEBUG = $(THROUGHPUTTEST_OUTDIR)/debug
@@ -24,8 +40,8 @@ THROUGHPUTTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/ThroughputTest
 THROUGHPUTTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(EPROSIMADIR)/code
 
-THROUGHPUTTEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartpsd -lboost_system -lboost_thread
-THROUGHPUTTEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartps -lboost_system -lboost_thread
+THROUGHPUTTEST_LIBS_DEBUG=   -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartpsd -lboost_system -lboost_thread
+THROUGHPUTTEST_LIBS_RELEASE=  -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartps -lboost_system -lboost_thread
 
 THROUGHPUTTEST_SRC_CFILES=
 
