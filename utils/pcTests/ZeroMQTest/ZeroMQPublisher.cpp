@@ -59,10 +59,10 @@ bool ZeroMQPublisher::init(string subip,int samples)
 
 	mp_datapub = new zmq::socket_t(*mp_context,ZMQ_PUB);
 	mp_datapub->bind("tcp://*:7551");
-	mp_datapub->bind("ipc://latency.ipc");
+	//mp_datapub->bind("ipc://latency.ipc");
 	mp_commandpub = new zmq::socket_t(*mp_context,ZMQ_PUB);
 	mp_commandpub->bind("tcp://*:7552");
-	mp_commandpub->bind("ipc://command2sub.ipc");
+	//mp_commandpub->bind("ipc://command2sub.ipc");
 	eClock::my_sleep(500);
 
 
