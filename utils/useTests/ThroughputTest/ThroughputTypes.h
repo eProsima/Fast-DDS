@@ -61,7 +61,19 @@ inline void printResultTitle()
 	printf("[ Bytes, Demand][Sent Samples,Send Time(us), MBits/sec][Rec Samples,Lost Samples,Rec Time(us), MBits/sec]\n");
 	printf("[------,-------][------------,-------------,----------][-----------,------------,------------,----------]\n");
 }
-
+#if defined(_WIN32)
+inline void printResults(TroughputResults& res)
+{
+	printf("%7u,%7u,%12.0f,%13.0f,%10.3f,%12.0f,%12.0f,%13.0f,%10.3f\n",res.payload_size,res.demand,(double)res.publisher.send_samples,
+																(double)res.publisher.totaltime_us,res.publisher.MBitssec,
+																(double)res.subscriber.recv_samples,(double)res.subscriber.lost_samples,(double)res.subscriber.totaltime_us,
+																(double)res.subscriber.MBitssec);
+	//cout << "res: " <<res.payload_size << " "<<res.demand<< " "<<res.publisher.send_samples<< " "<<
+	//															res.publisher.totaltime_us<< " "<<res.publisher.MBitssec<< " "<<
+	//															res.subscriber.recv_samples<< " "<<res.subscriber.lost_samples<< " "<<res.subscriber.totaltime_us<< " "<<
+	//															res.subscriber.MBitssec<< " "<<endl;
+}
+#else
 inline void printResults(TroughputResults& res)
 {
 	printf("%7u,%7u,%12lu,%13lu,%10.3f,%12lu,%12u,%13lu,%10.3f\n",res.payload_size,res.demand,res.publisher.send_samples,
@@ -70,6 +82,7 @@ inline void printResults(TroughputResults& res)
 																res.subscriber.MBitssec);
 }
 
+#endif
 
 //
 //inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
