@@ -31,7 +31,7 @@ public:
 	Subscriber* mp_commandsub;
 	eClock m_Clock;
 	Time_t m_t1,m_t2;
-	uint64_t m_overhead;
+	double m_overhead;
 	boost::interprocess::interprocess_semaphore sema;
 	class DataPubListener:public PublisherListener
 	{

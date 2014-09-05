@@ -6,9 +6,28 @@ LN=g++
 AR=ar
 CP=cp
 
+
+
+COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__
+
+## CHOOSE HERE BETWEEN 32 and 64 bit architecture
+
+##32 BIT ARCH:
+#COMMON_CFLAGS+= -m32 -fpic
+#LDFLAGS=-m32
+#EPROSIMA_TARGET=i86Linux2.6gcc
+
+#64BIT ARCH:
+COMMON_CFLAGS+= -m64 -fpic
+LDFLAGS=-m64
+EPROSIMA_TARGET=x64Linux2.6gcc
+
+CFLAGS = $(COMMON_CFLAGS) -O2
+CFLAGS_DEBUG= $(COMMON_CFLAGS) -g -D__DEBUG
+
+
 FASTCDR_DIR = /home/grcanosa/workspace/fastcdr
 
--include $(EPROSIMADIR)/building/makefiles/eProsima.mk
 
 HELLOWORLDTEST_OUTDIR= $(OUTDIR)/HelloWorldTest
 HELLOWORLDTEST_OUTDIR_DEBUG = $(HELLOWORLDTEST_OUTDIR)/debug
