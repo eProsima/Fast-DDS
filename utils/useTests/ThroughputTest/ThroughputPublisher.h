@@ -62,7 +62,7 @@ public:
 
 	bool ready;
 
-	void run(uint32_t test_time);
+	void run(uint32_t test_time,int demand = 0,int msg_size = 0);
 	bool test(uint32_t test_time,uint32_t demand,uint32_t size);
 	std::vector<TroughputResults> m_timeStats;
 };

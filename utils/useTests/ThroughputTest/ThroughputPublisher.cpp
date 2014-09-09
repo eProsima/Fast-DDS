@@ -16,12 +16,12 @@
 #include "ThroughputPublisher.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
-uint32_t dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
+uint32_t g_dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
 //uint32_t dataspub[] = {504,1016,2040,4088,8184};
-std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
+std::vector<uint32_t> g_data_size_pub (g_dataspub, g_dataspub + sizeof(g_dataspub) / sizeof(uint32_t) );
 
-uint32_t demandspub[] = {500,750,850,1000,1250,1400,1500,1600,1750,2000};
-vector<uint32_t> demand_pub (demandspub, demandspub + sizeof(demandspub) / sizeof(uint32_t) );
+uint32_t g_demandspub[] = {500,750,850,1000,1250,1400,1500,1600,1750,2000};
+vector<uint32_t> g_demand_pub (g_demandspub, g_demandspub + sizeof(g_demandspub) / sizeof(uint32_t) );
 
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
@@ -118,7 +118,7 @@ ThroughputPublisher::ThroughputPublisher():
 	eClock::my_sleep(5000);
 }
 
-void ThroughputPublisher::run(uint32_t test_time)
+void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 {
 	if(!ready)
 		return;
@@ -127,6 +127,24 @@ void ThroughputPublisher::run(uint32_t test_time)
 	sema.wait();
 	sema.wait();
 	cout << "Discovery complete"<<endl;
+	std::vector<uint32_t> data_size_pub;
+	std::vector<uint32_t> demand_pub;
+	if(demand == 0)
+	{
+		demand_pub = g_demand_pub;
+	}
+	else
+	{
+		demand_pub.push_back(demand);
+	}
+	if(msg_size == 0)
+	{
+		data_size_pub = g_data_size_pub;
+	}
+	else
+	{
+		data_size_pub.push_back(msg_size);
+	}
 
 	ThroughputCommandType command;
 	SampleInfo_t info;

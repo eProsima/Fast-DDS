@@ -47,6 +47,8 @@ int main(int argc, char** argv){
 	pInfo("Starting"<<endl)
 	int type;
 	uint32_t test_time_sec = 30;
+	int demand = 0;
+	int msg_size = 0;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
@@ -62,10 +64,31 @@ int main(int argc, char** argv){
 				test_time_sec = 30;
 			}
 		}
+		if (argc > 3 && type == 1)
+		{
+			std::istringstream iss_demand( argv[3] );
+			if (!(iss_demand >> demand))
+			{
+				cout << "Problem reading demand,using default demand vector "<< endl;
+				demand = 0;
+			}
+		}
+		if (argc > 4 && type == 1)
+		{
+			std::istringstream iss_size( argv[4] );
+			if (!(iss_size >> msg_size))
+			{
+				cout << "Problem reading msg size,using default size vector "<< endl;
+				msg_size = 0;
+			}
+		}
 	}
 	else
 	{
 		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
+		cout << "Usage: "<<endl;
+		cout << "ThroughputTest \"publisher\" seconds demand msg_size"<<endl;
+		cout << "ThroughputTest \"subscriber\""<<endl;
 		return 0;
 	}
 
@@ -82,7 +105,7 @@ int main(int argc, char** argv){
 	case 1:
 	{
 		ThroughputPublisher tpub;
-		tpub.run(test_time_sec);
+		tpub.run(test_time_sec,demand,msg_size);
 		break;
 	}
 	case 2:
