@@ -37,7 +37,7 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefi
 bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId)
 {
 
-	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 		CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == BIGEND)
@@ -68,7 +68,7 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& se
 	RTPSMessageCreator::addSubmessageHeader(msg, GAP,flags,submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
-	g_pool_submsg.release_Object(submsgElem);
+	g_pool_submsg.release_CDRMsg(submsgElem);
 
 	return true;
 }

@@ -35,7 +35,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
 		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
-	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 
 	octet flags = 0x0;
@@ -75,7 +75,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 	//Append Submessage elements to msg
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
-	g_pool_submsg.release_Object(submsgElem);
+	g_pool_submsg.release_CDRMsg(submsgElem);
 	return true;
 }
 

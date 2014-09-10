@@ -75,7 +75,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 			++m_lastCacheChangeSeqNum;
 			a_change->sequenceNumber = m_lastCacheChangeSeqNum;
 			m_changes.push_back(a_change);
-			pDebugInfo("WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added."<< endl);
+			pDebugInfo("WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes"<< endl);
 			updateMaxMinSeqNum();
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -130,7 +130,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 			{
 				++m_lastCacheChangeSeqNum;
 				a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-				pDebugInfo("WriterHistory: " << this->mp_Endpoint->getGuid().entityId <<" Change "<< a_change->sequenceNumber.to64long() << " added with key: "<<a_change->instanceHandle<< endl);
+				pDebugInfo("WriterHistory: " << this->mp_Endpoint->getGuid().entityId <<" Change "<< a_change->sequenceNumber.to64long()<< " added with key: "<<a_change->instanceHandle << " and "<<a_change->serializedPayload.length<< " bytes"<< endl);
 				m_changes.push_back(a_change);
 				updateMaxMinSeqNum();
 				vit->second.push_back(a_change);

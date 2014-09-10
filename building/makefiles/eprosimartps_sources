@@ -1,6 +1,6 @@
 src/cpp/utils/IPFinder.cpp
 src/cpp/utils/RTPSLog.cpp
-src/cpp/utils/ObjectPool.cpp
+src/cpp/utils/CDRMessagePool.cpp
 src/cpp/utils/eClock.cpp
 src/cpp/utils/StringMatching.cpp
 src/cpp/utils/TimedEvent.cpp

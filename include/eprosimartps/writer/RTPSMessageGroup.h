@@ -31,12 +31,12 @@ public:
 	CDRMessage_t m_rtpsmsg_fullmsg;
 	RTPSMessageGroup_t():
 		m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-				m_rtpsmsg_submessage(RTPSMESSAGE_MAX_SIZE),
-				m_rtpsmsg_fullmsg(RTPSMESSAGE_MAX_SIZE){};
+				m_rtpsmsg_submessage(RTPSMESSAGE_DEFAULT_SIZE),
+				m_rtpsmsg_fullmsg(RTPSMESSAGE_DEFAULT_SIZE){};
 		RTPSMessageGroup_t(uint32_t payload):
 		m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-				m_rtpsmsg_submessage(payload<RTPSMESSAGE_MAX_SIZE?RTPSMESSAGE_MAX_SIZE:payload+200),
-				m_rtpsmsg_fullmsg(payload<RTPSMESSAGE_MAX_SIZE?RTPSMESSAGE_MAX_SIZE:payload+200){};
+				m_rtpsmsg_submessage(payload+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE),
+				m_rtpsmsg_fullmsg(payload+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE){};
 };
 
 class RTPSWriter;
@@ -47,7 +47,7 @@ class RTPSWriter;
  */
 class RTPSMessageGroup {
 public:
-static void send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
+static bool send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 						RTPSWriter* W,
 						std::vector<SequenceNumber_t>* changesSeqNum,
 						const EntityId_t& readerId,
@@ -59,13 +59,13 @@ static void send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
 		std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences);
 
-static void send_Changes_AsData(RTPSMessageGroup_t* msg_group,
+static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
 		 LocatorList_t& unicast, LocatorList_t& multicast,
 		bool expectsInlineQos,const EntityId_t& ReaderId);
 
-static void send_Changes_AsData(RTPSMessageGroup_t* msg_group,
+static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
 		bool expectsInlineQos,const EntityId_t& ReaderId);

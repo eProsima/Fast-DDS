@@ -22,12 +22,12 @@ namespace rtps {
 
 
 
-inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg)
+inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 {
 	if(msg->buffer==NULL)
 	{
-		msg->buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
-		msg->max_size = RTPSMESSAGE_MAX_SIZE;
+		msg->buffer = (octet*)malloc(payload_size+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
+		msg->max_size = payload_size+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE;
 	}
 	msg->pos = 0;
 	msg->length = 0;

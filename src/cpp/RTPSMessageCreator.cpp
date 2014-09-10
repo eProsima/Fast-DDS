@@ -15,7 +15,8 @@
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/eClock.h"
-#include "eprosimartps/utils/ObjectPool.h"
+//#include "eprosimartps/utils/ObjectPool.h"
+#include "eprosimartps/utils/CDRMessagePool.h"
 #include "eprosimartps/common/RTPS_messages.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -33,8 +34,8 @@ namespace eprosima {
 namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
-ObjectPool<CDRMessage_t> g_pool_submsg(100);
-eClock clock;
+CDRMessagePool g_pool_submsg(100);
+eClock g_clock;
 
 
 RTPSMessageCreator::RTPSMessageCreator() {
@@ -172,7 +173,7 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t gu
 bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag)
 {
 	Time_t time_now;
-	clock.setTimeNow(&time_now);
+	g_clock.setTimeNow(&time_now);
 	return RTPSMessageCreator::addSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
 

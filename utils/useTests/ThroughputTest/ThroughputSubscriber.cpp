@@ -24,7 +24,7 @@ int writecalls= 0;
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(NULL)
+		m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(NULL)
 {
 
 };
@@ -46,15 +46,22 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo i
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage()
 {
-	//cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
+//	cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
 	m_up.mp_datasub->takeNextData((void*)latencyin,&info);
 	//myfile << latencyin.seqnum << ",";
-	if((lastseqnum+1)<latencyin->seqnum)
+	if(info.sampleKind == ALIVE)
 	{
-		lostsamples+=latencyin->seqnum-lastseqnum-1;
-		//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+		if((lastseqnum+1)<latencyin->seqnum)
+		{
+			lostsamples+=latencyin->seqnum-lastseqnum-1;
+			//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+		}
+		lastseqnum = latencyin->seqnum;
 	}
-	lastseqnum = latencyin->seqnum;
+	else
+	{
+		cout << "NOT ALIVE DATA RECEIVED"<<endl;
+	}
 }
 
 void ThroughputSubscriber::DataSubListener::saveNumbers()
@@ -83,11 +90,11 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 		default: break;
 		case (DEFAULT): break;
 		case (BEGIN):
-		{
-			break;
-		}
-		case (READY_TO_START):
 			{
+			break;
+			}
+		case (READY_TO_START):
+				{
 			m_up.m_datasize = m_commandin.m_size;
 			m_up.m_demand = m_commandin.m_demand;
 			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -99,14 +106,14 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&command);
 			break;
-			}
+				}
 		case (TEST_STARTS):
-		{
+			{
 			m_up.m_Clock.setTimeNow(&m_up.m_t1);
 			break;
-		}
+			}
 		case (TEST_ENDS):
-		{
+			{
 			m_up.m_Clock.setTimeNow(&m_up.m_t2);
 			m_up.m_DataSubListener.saveNumbers();
 			//cout << "TEST ends, sending results"<<endl;
@@ -122,7 +129,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 			m_up.mp_commandpubli->write(&comm);
 
 			break;
-		}
+			}
 		case (ALL_STOPS): m_up.sema.post();break;
 		}
 	}
@@ -145,9 +152,9 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo
 ThroughputSubscriber::~ThroughputSubscriber(){DomainParticipant::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
-						sema(0),
-						m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-						ready(true),m_datasize(0),m_demand(0)
+								sema(0),
+								m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+								ready(true),m_datasize(0),m_demand(0)
 {
 	ParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;

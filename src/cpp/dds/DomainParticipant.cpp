@@ -318,6 +318,11 @@ bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 		pError("Registered Type must have size > 0"<<endl);
 		return false;
 	}
+	if(type->m_typeSize > PAYLOAD_MAX_SIZE)
+	{
+		pError("eRTPS currently supports types of sizes < "<<PAYLOAD_MAX_SIZE<<endl);
+		return false;
+	}
 	if(type->m_topicDataTypeName.size() <=0)
 	{
 		pError("Registered Type must have a name"<<endl);

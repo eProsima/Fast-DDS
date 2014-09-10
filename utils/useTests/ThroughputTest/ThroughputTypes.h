@@ -128,7 +128,7 @@ typedef struct LatencyType{
 		seqnum(0),
 		data(number,0)
 	{
-
+		//cout << "Created vector of "<< number << "/"<<data.size() << endl;
 	}
 }LatencyType;
 
@@ -153,7 +153,7 @@ public:
 	LatencyDataType()
 {
 		m_topicDataTypeName = "LatencyType";
-		m_typeSize = 4+4+8192;
+		m_typeSize = 25000;
 		m_isGetKeyDefined = false;
 };
 	~LatencyDataType(){};
