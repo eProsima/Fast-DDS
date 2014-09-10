@@ -37,7 +37,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
-	CDRMessage_t& submsgElem = g_pool_submsg.reserve_Object();
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
@@ -72,7 +72,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 
 	CDRMessage::appendMsg(msg, &submsgElem);
 
-	g_pool_submsg.release_Object(submsgElem);
+	g_pool_submsg.release_CDRMsg(submsgElem);
 	msg->length = msg->pos;
 	return true;
 }

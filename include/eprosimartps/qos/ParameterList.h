@@ -27,7 +27,7 @@ namespace dds {
  */
 class ParameterList_t {
 public:
-	ParameterList_t():m_cdrmsg(RTPSMESSAGE_MAX_SIZE),m_hasChanged(true){};
+	ParameterList_t():m_cdrmsg(RTPSMESSAGE_DEFAULT_SIZE),m_hasChanged(true){};
 	virtual ~ParameterList_t()
 	{
 

@@ -37,7 +37,8 @@ namespace rtps {
 
 
 
-MessageReceiver::MessageReceiver()
+MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
+		m_rec_msg(rec_buffer_size)
 {
 	PROTOCOLVERSION(destVersion);
 	PROTOCOLVERSION(sourceVersion);
@@ -51,6 +52,7 @@ MessageReceiver::MessageReceiver()
 	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
 	defUniLoc.port = LOCATOR_PORT_INVALID;
 	mp_threadListen = NULL;
+	pDebugInfo("MessageReceiver created with CDRMessage of size: "<<m_rec_msg.max_size<<endl);
 
 }
 

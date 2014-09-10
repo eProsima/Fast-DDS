@@ -59,9 +59,10 @@ namespace CDRMessage{
 	/**
 	 * Initialize given CDR message with default size. It frees the memory already allocated and reserves new one.
 	 * @param[in,out] msg Pointer to the message to initialize.
+	 * @param data_size Size of the data the message is suppose to carry
 	 * @return True if correct.
 	 */
-	  inline bool initCDRMsg(CDRMessage_t* msg);
+	  inline bool initCDRMsg(CDRMessage_t* msg,uint32_t data_size=RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	/**
 	 * Append given CDRMessage to existing CDR Message. Joins two messages into the first one if it has space.
 	 * @param[out] first Pointer to first message.

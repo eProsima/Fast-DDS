@@ -20,7 +20,9 @@ namespace rtps{
 
 
 //!Max size of RTPS message in bytes.
-#define RTPSMESSAGE_MAX_SIZE 15000  //max size of rtps message in bytes
+#define RTPSMESSAGE_DEFAULT_SIZE 10500  //max size of rtps message in bytes
+#define RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE 500 //common payload a rtps message has
+#define RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE 10000 //common data size
 #define RTPSMESSAGE_HEADER_SIZE 20  //header size in bytes
 #define RTPSMESSAGE_SUBMESSAGEHEADER_SIZE 4
 #define RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE 4
@@ -37,8 +39,8 @@ struct CDRMessage_t{
 	CDRMessage_t(){
 		pos = 0;
 		length = 0;
-		buffer = (octet*)malloc(RTPSMESSAGE_MAX_SIZE);
-		max_size = RTPSMESSAGE_MAX_SIZE;
+		buffer = (octet*)malloc(RTPSMESSAGE_DEFAULT_SIZE);
+		max_size = RTPSMESSAGE_DEFAULT_SIZE;
 
 		msg_endian = EPROSIMA_ENDIAN;
 	}
@@ -47,7 +49,7 @@ struct CDRMessage_t{
 		if(buffer != NULL)
 			free(buffer);
 	}
-	CDRMessage_t(uint16_t size)
+	CDRMessage_t(uint32_t size)
 	{
 		pos = 0;
 		length = 0;
@@ -58,11 +60,11 @@ struct CDRMessage_t{
 	//!Pointer to the buffer where the data is stored.
 	octet* buffer;
 	//!Read or write position.
-	uint16_t pos;
+	uint32_t pos;
 	//!Max size of the message.
-	uint16_t max_size;
+	uint32_t max_size;
 	//!Current length of the message.
-	uint16_t length;
+	uint32_t length;
 	//!Endianness of the message.
 	Endianness_t msg_endian;
 };

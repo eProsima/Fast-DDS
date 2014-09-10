@@ -17,6 +17,7 @@
 #include <cstring>
 #include <stdint.h>
 
+#define PAYLOAD_MAX_SIZE 64000
 
 
 namespace eprosima{

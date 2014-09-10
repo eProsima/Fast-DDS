@@ -32,7 +32,7 @@ struct SubmessageHeader_t;
  */
 class MessageReceiver {
 public:
-	MessageReceiver();
+	MessageReceiver(uint32_t rec_buffer_size);
 	virtual ~MessageReceiver();
 	//!Reset the MessageReceiver to process a new message.
 	void reset();

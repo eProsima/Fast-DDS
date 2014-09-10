@@ -33,7 +33,8 @@ typedef std::vector<RTPSReader*>::iterator Rit;
 ListenResource::ListenResource(ParticipantImpl*p):
 		mp_participantImpl(p),
 		mp_thread(NULL),
-		m_listen_socket(m_io_service)
+		m_listen_socket(m_io_service),
+		m_MessageReceiver(p->getListenSocketBufferSize())
 {
 	m_MessageReceiver.mp_threadListen = this;
 }

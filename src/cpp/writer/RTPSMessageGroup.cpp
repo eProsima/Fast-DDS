@@ -86,7 +86,7 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* 
 
 
 
-void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
+bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<SequenceNumber_t>* changesSeqNum, const EntityId_t& readerId,
 		LocatorList_t* unicast, LocatorList_t* multicast)
@@ -108,9 +108,10 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 			readerId,W->getGuid().entityId);
 
 	gap_msg_size = cdrmsg_submessage->length;
-	if(gap_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
+	if(gap_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
-		pError("The Gap messages are larger than max size, fragmentation needed" << endl);
+		pError("The Gap messages are larger than max size, something is wrong" << endl);
+		return false;
 	}
 	bool first = true;
 	do
@@ -139,6 +140,7 @@ void RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add
+	return true;
 }
 
 void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId)
@@ -150,11 +152,13 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 			inlineQos = W->getInlineQos();
 	}
 	CDRMessage::initCDRMsg(submsg);
-	RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,expectsInlineQos,inlineQos);
+	bool added= RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,expectsInlineQos,inlineQos);
+	if(!added)
+		pError("Problem adding DATA submsg to the CDRMessage, buffer too small"<<endl;);
 }
 
 
-void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
+bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
 		LocatorList_t& unicast, LocatorList_t& multicast,
@@ -164,7 +168,9 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
 	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
 	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
-
+//	cout << "Msg group with sizes: "<<cdrmsg_submessage->max_size << " ";
+//	cout << cdrmsg_header->max_size << " ";
+//	cout << cdrmsg_fullmsg->max_size << " "<<endl;
 	std::vector<CacheChange_t*>::iterator cit =changes->begin();
 
 	uint16_t data_msg_size = 0;
@@ -172,13 +178,15 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	//FIRST SUBMESSAGE
 	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
 	data_msg_size = cdrmsg_submessage->length;
-	if(data_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
+	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
-		pError("The Data messages are larger than max size, fragmentation needed" << endl);
+		pError("The Data messages are larger than max size, something is wrong" << endl);
+		return false;
 	}
 	bool first = true;
 	do
 	{
+		bool added = false;
 		CDRMessage::initCDRMsg(cdrmsg_fullmsg);
 		CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
 		RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg,false);
@@ -186,7 +194,9 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		{
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
 			first = false;
+			added = true;
 		}
+	//	cout << "msg lengtH:" <<cdrmsg_fullmsg->length<< "data size: "<<data_msg_size<< " max size: "<<cdrmsg_fullmsg->max_size<<endl;
 		while(cdrmsg_fullmsg->length + data_msg_size < cdrmsg_fullmsg->max_size
 				&& (change_n + 1) <= (uint16_t)changes->size()) //another one fits in the full message
 		{
@@ -194,19 +204,27 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			++cit;
 			RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
+			added = true;
 		}
-		for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+		if(added)
+		{
+			for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
+				W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
 
-
-		for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+			for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
+				W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+		}
+		else
+		{
+			pError("A problem occurred when adding a message"<<endl);
+		}
 
 
 	}while(change_n < changes->size()); //There is still a message to add
+	return true;
 }
 
-void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
+bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
@@ -215,19 +233,24 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
 	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
 	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
+//	cout << "Msg group with sizes: "<<cdrmsg_submessage->max_size << " ";
+//	cout << cdrmsg_header->max_size << " ";
+//	cout << cdrmsg_fullmsg->max_size << " "<<endl;
 	uint16_t data_msg_size = 0;
 	uint16_t change_n = 1;
 	//FIRST SUBMESSAGE
 	std::vector<CacheChange_t*>::iterator cit = changes->begin();
 	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
 	data_msg_size = cdrmsg_submessage->length;
-	if(data_msg_size+RTPSMESSAGE_HEADER_SIZE > RTPSMESSAGE_MAX_SIZE)
+	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
-		pError("The Data messages are larger than max size, fragmentation needed" << endl);
+		pError("The Data messages are larger than max size, something is wrong" << endl);
+		return false;
 	}
 	bool first = true;
 	do
 	{
+		bool added = false;
 		CDRMessage::initCDRMsg(cdrmsg_fullmsg);
 		CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
 		RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg,false);
@@ -235,7 +258,9 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		{
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
 			first = false;
+			added = true;
 		}
+		//cout << "msg lengtH:" <<cdrmsg_fullmsg->length<< "data size: "<<data_msg_size<< " max size: "<<cdrmsg_fullmsg->max_size<<endl;
 		while(cdrmsg_fullmsg->length + data_msg_size < cdrmsg_fullmsg->max_size
 				&& (change_n + 1) <= (uint16_t)changes->size()) //another one fits in the full message
 		{
@@ -243,9 +268,18 @@ void RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			++cit;
 			RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
+			added = true;
 		}
-		W->mp_send_thr->sendSync(cdrmsg_fullmsg,loc);
+		if(added)
+		{
+			W->mp_send_thr->sendSync(cdrmsg_fullmsg,loc);
+		}
+		else
+		{
+			pError("A problem occurred when adding a message"<<endl);
+		}
 	}while(change_n < changes->size()); //There is still a message to add
+	return true;
 }
 
 
