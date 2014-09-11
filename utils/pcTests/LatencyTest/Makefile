@@ -6,7 +6,22 @@ LN=g++
 AR=ar
 CP=cp
 
--include $(EPROSIMADIR)/building/makefiles/eProsima.mk
+COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__
+
+## CHOOSE HERE BETWEEN 32 and 64 bit architecture
+
+##32 BIT ARCH:
+#COMMON_CFLAGS+= -m32 -fpic
+#LDFLAGS=-m32
+#EPROSIMA_TARGET=i86Linux2.6gcc
+
+#64BIT ARCH:
+COMMON_CFLAGS+= -m64 -fpic
+LDFLAGS=-m64
+EPROSIMA_TARGET=x64Linux2.6gcc
+
+CFLAGS = $(COMMON_CFLAGS) -O2
+CFLAGS_DEBUG= $(COMMON_CFLAGS) -g -D__DEBUG
 
 STATETEST_OUTDIR= $(OUTDIR)/LatencyTest
 STATETEST_OUTDIR_DEBUG = $(STATETEST_OUTDIR)/debug
@@ -29,7 +44,10 @@ STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -
 
 STATETEST_SRC_CFILES=
 
-STATETEST_SRC_CPPFILES= $(BASEDIR)/LatencyTest.cpp
+STATETEST_SRC_CPPFILES= $(BASEDIR)/LatencyTestPublisher.cpp \
+					$(BASEDIR)/LatencyTestSubscriber.cpp \
+					$(BASEDIR)/LatencyTestTypes.cpp \
+					$(BASEDIR)/main_LatencyTest.cpp
 
 # Project sources are copied to the current directory
 STATETEST_SRCS= $(STATETEST_SRC_CFILES) $(STATETEST_SRC_CPPFILES)
