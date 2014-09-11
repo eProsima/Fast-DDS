@@ -1,2 +1,0 @@
-library_includedir = $(includedir)
-nobase_library_include_HEADERS = INCLUDE_FILES
