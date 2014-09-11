@@ -28,14 +28,17 @@ installer()
 
     # Copy documentation.
     mkdir -p tmp/$project/doc
-    mkdir -p tmp/$project/doc/pdf
-    cp "../../../../doc/RTPS - Installation Manual.pdf" tmp/$project/doc/pdf
+    mkdir -p tmp/$project/doc/doxygen/public_api
+    cp "../../../../doc/RTPS - Installation Manual.pdf" tmp/$project/doc/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/RTPS - User Manual.pdf" tmp/$project/doc/pdf
+    cp "../../../../doc/RTPS - User Manual.pdf" tmp/$project/doc/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp -r "../../../../output/doxygen/public_api/html" tmp/$project/doc
+    cp "../../../../doc/index.html" tmp/$project/doc/
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+    cp -r "../../../../output/doxygen/public_api/html" tmp/$project/doc/doxygen/public_api
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     #cp "../../../../output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/eProsimaRTPS - API C++ Manual.pdf"
@@ -43,7 +46,7 @@ installer()
     #if [ $errorstatus != 0 ]; then return; fi
 
     # Copy README
-    cp ../../../../doc/README.html tmp/$project/doc
+    cp ../../../../doc/README.html tmp/$project/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
