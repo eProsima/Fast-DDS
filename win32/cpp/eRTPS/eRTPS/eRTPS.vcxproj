@@ -382,6 +382,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSMessageCreator.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CDRMessagePool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\IPFinder.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h" />
@@ -453,6 +454,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\resources\ResourceSend.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\RTPSMessageCreator.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\CacheChangePool.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\utils\CDRMessagePool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\eClock.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\IPFinder.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\ObjectPool.cpp" />
