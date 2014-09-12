@@ -224,7 +224,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 		mp_up->m_status = -1;
 		mp_up->m_data_sema.post();
 	}
-	else if(mp_up->mp_latency_in->seqnum == NSAMPLES)
+	else if(mp_up->mp_latency_in->seqnum == mp_up->n_samples)
 	{
 
 		mp_up->m_clock.setTimeNow(&mp_up->m_t2);
@@ -345,7 +345,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.mean = (double)( *m_times.begin()/(NSAMPLES+1));
+	TS.mean = (double)( *m_times.begin()/(n_samples+1));
 	m_stats.push_back(TS);
 }
 void LatencyTestPublisher::printStat(TimeStats& TS)
