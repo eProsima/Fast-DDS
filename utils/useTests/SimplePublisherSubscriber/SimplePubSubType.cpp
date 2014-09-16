@@ -14,25 +14,26 @@
 #include "fastcdr/FastBuffer.h"
 #include "fastcdr/Cdr.h"
 
-#include "HelloWorldType.h"
+#include "SimplePubSubType.h"
+#include "MyType.h"
 
 
 SimplePubSubType::SimplePubSubType() {
 	m_topicDataTypeName = "SimplePubSubType";
-
-	m_typeSize = 0; //HERE GOES THE MAXIMUM SIZE OF THE TYPE IN BYTES
+	MyType example;
+	m_typeSize = example.getMaxCdrSerializedSize(0); //HERE GOES THE MAXIMUM SIZE OF THE TYPE IN BYTES
 	m_isGetKeyDefined = false;
 
 }
 
-HelloWorldType::~HelloWorldType() {
+SimplePubSubType::~SimplePubSubType() {
 
 }
 
-bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
+bool SimplePubSubType::serialize(void* data, SerializedPayload_t* payload)
 {
 	//CONVERT DATA to pointer of your type
-	YourType* p_type = (YourType*) data;
+	MyType* p_type = (MyType*) data;
 
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
@@ -44,10 +45,10 @@ bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
 	return true;
 }
 
-bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
+bool SimplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
 {
 	//CONVERT DATA to pointer of your type
-	YourType* p_type = (YourType*) data;
+	MyType* p_type = (MyType*) data;
 
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
@@ -58,7 +59,7 @@ bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
 	return true;
 }
 
-bool HelloWorldType::getKey(void* data, InstanceHandle_t* ihandle)
+bool SimplePubSubType::getKey(void* data, InstanceHandle_t* ihandle)
 {
 	return false;
 }

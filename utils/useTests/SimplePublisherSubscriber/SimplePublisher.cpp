@@ -12,6 +12,7 @@
  */
 
 #include "SimplePublisher.h"
+#include "SimplePubSubType.h"
 
 
 SimplePublisher::SimplePublisher():
@@ -84,6 +85,16 @@ void SimplePublisher::run()
 	}
 
 	//YOUR CODE GOES HERE, PUBLISH WHAT YOU WANT
+	MyType mtype;
+	mytype.index(0);
+	mytype.message("My own message");
+	mytype.price(3.14);
+	for(int i =0;i<10;++i)
+	{
+		mytype.index(i);
+		mytype.price(3.14*i);
+		mp_publisher->write(&mytype)
+	}
 
 }
 
