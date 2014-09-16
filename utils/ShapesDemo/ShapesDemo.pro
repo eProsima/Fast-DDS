@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-RTPSVERSION = 0.5.0
+RTPSVERSION = 0.5.1
 
 QT  += core
 QT  -= gui
@@ -103,6 +103,14 @@ SOURCES += \
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibeprosimartps-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
 win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibeprosimartpsd-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
 
+unix:!macx|win32: LIBS += -L$$PWD/../../lib/i86Win32VS2010/ -llibeprosimartps-0
+
+INCLUDEPATH += $$PWD/../../include2
+DEPENDPATH += $$PWD/../../include2
+
+win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.1.lib
+
+
 
 win32:INCLUDEPATH += $$PWD/../../include
 win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010 C:\Windows\System32
@@ -113,4 +121,6 @@ win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010 C:\Windows\System32
 
 RESOURCES += \
     images/eprosimalogo.qrc
+
+RC_FILE = images/eprosima_icon.rc
 
