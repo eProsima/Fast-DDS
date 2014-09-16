@@ -260,16 +260,12 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 						&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
 			}
 			rit->unsent_changes.clear();
-
 		}
-
 	}
 	else
 	{
 		pWarning( "No reader locator to add change" << std::endl);
-
 	}
-
 }
 
 void StatelessWriter::unsent_changes_not_empty()
