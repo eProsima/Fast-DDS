@@ -7,23 +7,23 @@
  *************************************************************************/
 
 /**
- * @file HelloWorldPublisher.h
+ * @file SimplePublisher.h
  *
  */
 
-#ifndef HELLOWORLDPUBLISHER_H_
-#define HELLOWORLDPUBLISHER_H_
+#ifndef SIMPLEPUBLISHER_H
+#define SIMPLEPUBLISHER_H
 
 #include "eprosimartps/rtps_all.h"
-#include "HelloWorld.h"
 
-class HelloWorldPublisher {
+
+class SimplePublisher {
 public:
-	HelloWorldPublisher();
-	virtual ~HelloWorldPublisher();
-	bool publish();
+	SimplePublisher();
+	virtual ~SimplePublisher();
+	bool init();
+	void run();
 private:
-	HelloWorld m_Hello;
 	Participant* mp_participant;
 	Publisher* mp_publisher;
 	class PubListener:public PublisherListener
@@ -39,4 +39,4 @@ private:
 
 
 
-#endif /* HELLOWORLDPUBLISHER_H_ */
+#endif /* SIMPLEPUBLISHER_H */

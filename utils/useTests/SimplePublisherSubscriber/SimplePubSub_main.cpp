@@ -12,14 +12,14 @@
  */
 
 #include "eprosimartps/rtps_all.h"
-#include "HelloWorldPublisher.h"
-#include "HelloWorldSubscriber.h"
-#include "HelloWorldType.h"
+#include "SimplePublisher.h"
+#include "SimpleSubscriber.h"
+#include "SimplePubSubType.h"
 
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
+	RTPSLog::setVerbosity(EPROSIMA_WARNING_VERB_LEVEL);
 	cout << "Starting "<< endl;
 	int type = 1;
 	if(argc > 1)
@@ -35,37 +35,25 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-	HelloWorldType myType;
+	//REGISTER THE TYPE BEING USED
+	SimplePubSubType myType;
 	DomainParticipant::registerType((DDSTopicDataType*)&myType);
 
 	switch(type)
 	{
 	case 1:
 	{
-		HelloWorldPublisher mypub;
-		for(int i = 0;i<10;++i)
-		{
-			if(mypub.publish())
-			{
-//				int aux;
-//				std::cin>>aux;
-				eClock::my_sleep(500);
-			}
-			else
-			{
-				//cout << "Sleeping till discovery"<<endl;
-				eClock::my_sleep(100);
-				--i;
-			}
-		}
+		SimplePublisher mypub;
+		if(mypub.init())
+			mypub.run();
+
 		break;
 	}
 	case 2:
 	{
-		HelloWorldSubscriber mysub;
-		cout << "Enter number to stop: ";
-		int aux;
-		std::cin>>aux;
+		SimpleSubscriber mysub;
+		if(mysub.init())
+			mysub.run();
 		break;
 	}
 	}
