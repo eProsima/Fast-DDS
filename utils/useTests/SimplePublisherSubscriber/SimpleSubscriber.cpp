@@ -12,7 +12,7 @@
  */
 
 #include "SimpleSubscriber.h"
-
+#include "SimplePubSubType.h"
 
 
 SimpleSubscriber::SimpleSubscriber():
@@ -80,6 +80,12 @@ void SimpleSubscriber::SubListener::onNewDataMessage()
 	{
 		//YOUR CODE HERE:
 		//READ OR TAKE DATA
+		MyType mytype;
+		mp_sub->take(&mytype,&m_info);
+		if(m_info.sampleKind == ALIVE)
+		{
+			cout << "Received message: " << mytype.message() << " with index " << mytype.index() << " and price " << mytype.price() << endl;
+		}
 	}
 }
 

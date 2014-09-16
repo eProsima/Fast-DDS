@@ -18,6 +18,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\SimplePublisherSubscriber\SimplePublisher.h" />
+    <ClInclude Include="..\..\SimplePublisherSubscriber\SimplePubSubType.h" />
+    <ClInclude Include="..\..\SimplePublisherSubscriber\SimpleSubscriber.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\SimplePublisherSubscriber\SimplePublisher.cpp" />
+    <ClCompile Include="..\..\SimplePublisherSubscriber\SimplePubSubType.cpp" />
+    <ClCompile Include="..\..\SimplePublisherSubscriber\SimplePubSub_main.cpp" />
+    <ClCompile Include="..\..\SimplePublisherSubscriber\SimpleSubscriber.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{856FA866-8E5D-4D98-95F8-01AD0BBD6BE1}</ProjectGuid>
     <RootNamespace>ThroughputTest</RootNamespace>
