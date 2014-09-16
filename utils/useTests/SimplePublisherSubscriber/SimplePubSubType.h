@@ -17,10 +17,10 @@
 #include "eprosimartps/rtps_all.h"
 
 
-class HelloWorldType:public DDSTopicDataType {
+class SimplePubSubType:public DDSTopicDataType {
 public:
-	HelloWorldType();
-	virtual ~HelloWorldType();
+	SimplePubSubType();
+	virtual ~SimplePubSubType();
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 	bool getKey(void*data,InstanceHandle_t* ihandle);

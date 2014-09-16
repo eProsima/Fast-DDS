@@ -7,23 +7,26 @@
  *************************************************************************/
 
 /**
- * @file HelloWorldSubscriber.h
+ * @file SimpleSubscriber.h
  *
  */
 
-#ifndef HELLOWORLDSUBSCRIBER_H_
-#define HELLOWORLDSUBSCRIBER_H_
+#ifndef SIMPLESUBSCRIBER_H_
+#define SIMPLESUBSCRIBER_H_
 
 #include "eprosimartps/rtps_all.h"
-#include "HelloWorld.h"
 
-class HelloWorldSubscriber {
+
+class SimpleSubscriber {
 public:
-	HelloWorldSubscriber();
-	virtual ~HelloWorldSubscriber();
+	SimpleSubscriber();
+	virtual ~SimpleSubscriber();
+	bool init();
+	void run();
 private:
 	Participant* mp_participant;
 	Subscriber* mp_subscriber;
+	//LISTENER
 	class SubListener:public SubscriberListener
 	{
 	public:
@@ -31,12 +34,10 @@ private:
 		~SubListener(){};
 		void onSubscriptionMatched(MatchingInfo info);
 		void onNewDataMessage();
-		HelloWorld m_Hello;
 		SampleInfo_t m_info;
 		Subscriber* mp_sub;
 		int n_matched;
 	}m_listener;
-
 };
 
-#endif /* HELLOWORLDSUBSCRIBER_H_ */
+#endif /* SIMPLESUBSCRIBER_H_ */
