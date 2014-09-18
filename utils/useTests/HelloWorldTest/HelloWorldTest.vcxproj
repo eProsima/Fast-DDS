@@ -19,10 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ReliableTest\ReliableCommunicationTest.cpp" />
+    <ClInclude Include="HelloWorld.h" />
+    <ClInclude Include="HelloWorldPublisher.h" />
+    <ClInclude Include="HelloWorldSubscriber.h" />
+    <ClInclude Include="HelloWorldType.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="HelloWorldPublisher.cpp" />
+    <ClCompile Include="HelloWorldSubscriber.cpp" />
+    <ClCompile Include="HelloWorldType.cpp" />
+    <ClCompile Include="HelloWorld_main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{04DFE745-B75C-4B3B-90E4-5C4DA2039FEF}</ProjectGuid>
+    <ProjectGuid>{2F5C133D-D402-4DF0-9DAF-F78E9C6F9635}</ProjectGuid>
     <RootNamespace>ThroughputTest</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -74,7 +84,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86;$(LIB_BOOST_PATH)\lib\x86;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(ProjectDir)..\..\..\..\lib\i86Win32VS2010;$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86;$(LIB_BOOST_PATH)\lib\x86;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(ProjectDir)..\..\..\..\lib\i86Win32VS2010;$(FAST_BUFFERS)\lib\i86Win32VS2010;$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -88,7 +98,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\lib\x64;$(LIB_BOOST_PATH)\stage\lib\x64;$(ProjectDir)..\..\..\..\lib\x64Win64VS2010;$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\lib\x64;$(LIB_BOOST_PATH)\stage\lib\x64;$(FAST_BUFFERS)\lib\x64Win64VS2010;$(ProjectDir)..\..\..\..\lib\x64Win64VS2010;$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -106,7 +116,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86;$(LIB_BOOST_PATH)\lib\x86;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(ProjectDir)..\..\..\..\lib\i86Win32VS2010;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86;$(LIB_BOOST_PATH)\lib\x86;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(ProjectDir)..\..\..\..\lib\i86Win32VS2010;$(FAST_BUFFERS)\lib\i86Win32VS2010;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -124,7 +134,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\lib\x64;$(LIB_BOOST_PATH)\stage\lib\x64;$(ProjectDir)..\..\..\..\lib\x64Win64VS2010;$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\lib\x64;$(LIB_BOOST_PATH)\stage\lib\x64;$(FAST_BUFFERS)\lib\x64Win64VS2010;$(ProjectDir)..\..\..\..\lib\x64Win64VS2010;$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
