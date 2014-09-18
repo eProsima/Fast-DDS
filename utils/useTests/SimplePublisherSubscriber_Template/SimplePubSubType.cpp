@@ -19,8 +19,8 @@
 
 SimplePubSubType::SimplePubSubType() {
 	m_topicDataTypeName = "SimplePubSubType";
-
-	m_typeSize = 0; //HERE GOES THE MAXIMUM SIZE OF THE TYPE IN BYTES
+	YOURTYPE example;
+	m_typeSize = YOURTYPE.getMaxCdrSerializedSize(0); //HERE GOES THE MAXIMUM SIZE OF THE TYPE IN BYTES
 	m_isGetKeyDefined = false;
 
 }
@@ -32,7 +32,7 @@ SimplePubSubType::~SimplePubSubType() {
 bool SimplePubSubType::serialize(void* data, SerializedPayload_t* payload)
 {
 	//CONVERT DATA to pointer of your type
-	YourType* p_type = (YourType*) data;
+	YOURTYPE* p_type = (YOURTYPE*) data;
 
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
@@ -47,7 +47,7 @@ bool SimplePubSubType::serialize(void* data, SerializedPayload_t* payload)
 bool SimplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
 {
 	//CONVERT DATA to pointer of your type
-	YourType* p_type = (YourType*) data;
+	YOURTYPE* p_type = (YOURTYPE*) data;
 
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
