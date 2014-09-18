@@ -187,7 +187,6 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.historyQos.depth = 1;
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
-	Sparam.unicastLocatorList.push_back(Locator_t(10110));
 	mp_datasub = DomainParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
@@ -197,7 +196,6 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-	Rparam.unicastLocatorList.push_back(Locator_t(7556));
 	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
 	//Wparam.historyMaxSize = 20;

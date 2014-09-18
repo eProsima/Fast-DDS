@@ -87,7 +87,7 @@ int main(int argc, char** argv){
 	{
 		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
 		cout << "Usage: "<<endl;
-		cout << "ThroughputTest \"publisher\" seconds demand msg_size"<<endl;
+		cout << "ThroughputTest \"publisher\" SECONDS DEMAND MSG_SIZE"<<endl;
 		cout << "ThroughputTest \"subscriber\""<<endl;
 		return 0;
 	}
