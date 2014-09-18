@@ -32,6 +32,7 @@ int main(int argc, char** argv)
 	else
 	{
 		cout << "publisher OR subscriber argument needed"<<endl;
+		
 		return 0;
 	}
 

@@ -156,6 +156,13 @@ int main(int argc, char** argv)
 		else if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
 	}
+	else
+	{
+		cout << "Arguments required " << endl;
+		cout << "ReliableTest publisher"<<endl;
+		cout << "ReliableTest subscriber" <<endl;
+	}
+	
 
 
 	TestTypeDataType TestTypeData;

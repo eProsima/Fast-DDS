@@ -129,6 +129,8 @@ int main(int argc, char** argv){
 	else
 	{
 		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
+		cout << "LatencyTest publisher NUM_SUBSCRIBERS NUM_SAMPLES"<<endl;
+		cout << "LatencyTest subscriber echo/noecho NUM_SAMPLES" <<endl;
 		return 0;
 	}
 

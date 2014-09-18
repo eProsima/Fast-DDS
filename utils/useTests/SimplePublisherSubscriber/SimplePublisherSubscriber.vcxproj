@@ -79,7 +79,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_MBCS;_DEBUG;%(PreprocessorDefinitions);__LITTLE_ENDIAN__;_WIN32;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_MBCS;__DEBUG;%(PreprocessorDefinitions);__LITTLE_ENDIAN__;_WIN32;</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;$(ProjectDir)..\..\..\include\;$(ProjectDir)..\..\..\..\include\eprosimartps;$(LIB_BOOST_PATH);$(EPROSIMARTPSHOME)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -93,7 +93,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_MBCS;_DEBUG;%(PreprocessorDefinitions);__LITTLE_ENDIAN__;_WIN32;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_MBCS;__DEBUG;%(PreprocessorDefinitions);__LITTLE_ENDIAN__;_WIN32;</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;$(ProjectDir)..\..\..\include\;$(ProjectDir)..\..\..\..\include\eprosimartps;$(LIB_BOOST_PATH);$(EPROSIMARTPSHOME)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
