@@ -15,33 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\HelloWorldTest\HelloWorld.h">
+    <ClInclude Include="ThroughputPublisher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\HelloWorldTest\HelloWorldPublisher.h">
+    <ClInclude Include="ThroughputSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\HelloWorldTest\HelloWorldSubscriber.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\HelloWorldTest\HelloWorldType.h">
+    <ClInclude Include="ThroughputTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\HelloWorldTest\HelloWorld.cpp">
+    <ClCompile Include="main_ThroughputTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\HelloWorldTest\HelloWorld_main.cpp">
+    <ClCompile Include="ThroughputPublisher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\HelloWorldTest\HelloWorldPublisher.cpp">
+    <ClCompile Include="ThroughputSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\HelloWorldTest\HelloWorldSubscriber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\HelloWorldTest\HelloWorldType.cpp">
+    <ClCompile Include="ThroughputTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

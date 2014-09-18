@@ -19,19 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\LatencyTest\LatencyTestPublisher.cpp" />
-    <ClCompile Include="..\..\LatencyTest\LatencyTestSubscriber.cpp" />
-    <ClCompile Include="..\..\LatencyTest\LatencyTestTypes.cpp" />
-    <ClCompile Include="..\..\LatencyTest\main_LatencyTest.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\LatencyTest\LatencyTestPublisher.h" />
-    <ClInclude Include="..\..\LatencyTest\LatencyTestSubscriber.h" />
-    <ClInclude Include="..\..\LatencyTest\LatencyTestTypes.h" />
+    <ClCompile Include="ReliableCommunicationTest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3E10F311-B4E0-47A5-9629-9483E6F9514C}</ProjectGuid>
-    <RootNamespace>LatencyTest</RootNamespace>
+    <ProjectGuid>{04DFE745-B75C-4B3B-90E4-5C4DA2039FEF}</ProjectGuid>
+    <RootNamespace>ThroughputTest</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,22 +71,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_MBCS;_DEBUG;%(PreprocessorDefinitions);__LITTLE_ENDIAN__;_WIN32;</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;$(FAST_BUFFERS)\include;$(EPROSIMARTPSHOME)\include\eprosimartps;$(EPROSIMARTPSHOME)\include;$(ProjectDir)..\..\..\..\include\;$(ProjectDir)..\..\..\..\include\eprosimartps;$(LIB_BOOST_PATH)</AdditionalIncludeDirectories>
-      <FunctionLevelLinking>
-      </FunctionLevelLinking>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86;$(LIB_BOOST_PATH)\lib\x86;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(ProjectDir)..\..\..\..\lib\i86Win32VS2010;$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
       <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <OptimizeReferences>
-      </OptimizeReferences>
-      <EnableCOMDATFolding>
-      </EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>
-      </LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -103,22 +85,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;_MBCS;_DEBUG;%(PreprocessorDefinitions);__LITTLE_ENDIAN__;_WIN32;</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;$(FAST_BUFFERS)\include;$(EPROSIMARTPSHOME)\include\eprosimartps;$(EPROSIMARTPSHOME)\include;$(ProjectDir)..\..\..\..\include\;$(ProjectDir)..\..\..\..\include\eprosimartps;$(LIB_BOOST_PATH)</AdditionalIncludeDirectories>
-      <FunctionLevelLinking>
-      </FunctionLevelLinking>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\lib\x64;$(LIB_BOOST_PATH)\stage\lib\x64;$(ProjectDir)..\..\..\..\lib\x64Win64VS2010;$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <OptimizeReferences>
-      </OptimizeReferences>
-      <EnableCOMDATFolding>
-      </EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>
-      </LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,16 +99,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_MBCS;__LITTLE_ENDIAN__;_WIN32;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;$(FAST_BUFFERS)\include;$(EPROSIMARTPSHOME)\include\eprosimartps;$(EPROSIMARTPSHOME)\include;$(ProjectDir)..\..\..\..\include\;$(ProjectDir)..\..\..\..\include\eprosimartps;$(LIB_BOOST_PATH)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;__LITTLE_ENDIAN__;_WIN32;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86;$(LIB_BOOST_PATH)\lib\x86;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(ProjectDir)..\..\..\..\lib\i86Win32VS2010;$(EPROSIMARTPSHOME)\lib\i86Win32VS2010;$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,16 +117,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_MBCS;__LITTLE_ENDIAN__;_WIN32;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FAST_BUFFERS)\include;$(FAST_BUFFERS)\include;$(EPROSIMARTPSHOME)\include\eprosimartps;$(EPROSIMARTPSHOME)\include;$(ProjectDir)..\..\..\..\include\;$(ProjectDir)..\..\..\..\include\eprosimartps;$(LIB_BOOST_PATH)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;__LITTLE_ENDIAN__;_WIN32;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\lib\x64;$(LIB_BOOST_PATH)\stage\lib\x64;$(ProjectDir)..\..\..\..\lib\x64Win64VS2010;$(EPROSIMARTPSHOME)\lib\x64Win64VS2010;$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

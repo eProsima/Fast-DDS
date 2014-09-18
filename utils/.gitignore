@@ -1,12 +1,13 @@
 bin
 output
-Debug 
-Release
+
 #VisuaL Studio Files:
 #############
 *.opensdf
 *.sdf
-debug_reader
+*.suo
+
 ipch
-
-
+Debug
+Release
+x64
