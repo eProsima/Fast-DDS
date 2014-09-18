@@ -28,11 +28,12 @@ installer()
 
     # Copy documentation.
     mkdir -p tmp/$project/doc
+    mkdir -p tmp/$project/doc/pdf
     mkdir -p tmp/$project/doc/doxygen/public_api
-    cp "../../../../doc/RTPS - Installation Manual.pdf" tmp/$project/doc/
+    cp "../../../../doc/pdf/RTPS - Installation Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/RTPS - User Manual.pdf" tmp/$project/doc/
+    cp "../../../../doc/pdf/RTPS - User Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cp "../../../../doc/index.html" tmp/$project/doc/
@@ -53,6 +54,12 @@ installer()
     # Copy example.
     mkdir -p tmp/$project/examples/C++
     cp -r ../../../../utils/useTests/* tmp/$project/examples/C++
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+
+    # Copy ShapesDemo
+    mkdir -p tmp/$project/examples/ShapesDemo
+    cp -r ../../../../utils/ShapesDemo/release/linux/* tmp/$project/examples/ShapesDemo
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
