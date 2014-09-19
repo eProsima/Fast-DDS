@@ -47,7 +47,7 @@ HELLOWORLDTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
 
 
 HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -leprosimartps -lboost_system -lboost_thread \
-										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdrd
+										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdr
 
 HELLOWORLDTEST_SRC_CFILES=
 
