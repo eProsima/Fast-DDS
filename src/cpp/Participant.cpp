@@ -232,7 +232,9 @@ void ParticipantImpl::registerWriter(RTPSWriter* SWriter)
 bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
 	bool valid = true;
-	if(endp->unicastLocatorList.empty() && !isBuiltin )
+	bool unicastempty = endp->unicastLocatorList.empty();
+	bool multicastempty = endp->multicastLocatorList.empty();
+	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getEndpointKind() == WRITER ? "WRITER" : "READER";
 		pWarning(auxstr << " created with no unicastLocatorList, adding default List"<<endl);
@@ -250,7 +252,7 @@ bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuilti
 		}
 	}
 	//MULTICAST
-	if(endp->multicastLocatorList.empty() && !isBuiltin)
+	if(multicastempty && !isBuiltin && unicastempty)
 	{
 		for(LocatorListIterator lit =m_defaultMulticastLocatorList.begin();lit!=m_defaultMulticastLocatorList.end();++lit)
 		{

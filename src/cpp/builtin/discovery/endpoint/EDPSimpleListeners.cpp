@@ -53,10 +53,11 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 				if(this->mp_SEDP->mp_PDP->addWriterProxyData(&m_writerProxyData,true,&wdata,&pdata)) //ADDED NEW DATA
 				{
 					//CHECK the locators:
-					if(wdata->m_unicastLocatorList.empty())
+					if(wdata->m_unicastLocatorList.empty() && wdata->m_multicastLocatorList.empty())
+					{
 						wdata->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-					if(wdata->m_multicastLocatorList.empty())
 						wdata->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+					}
 					wdata->m_isAlive = true;
 					mp_SEDP->pairingWriterProxy(wdata);
 				}
