@@ -51,7 +51,7 @@ SIMPLEPUBSUB_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) 
 
 SIMPLEPUBSUB_SRC_CFILES=
 
-SIMPLEPUBSUB_SRC_CPPFILES= \
+SIMPLEPUBSUB_SRC_CPPFILES= $(BASEDIR)/MyType.cpp\
 				$(BASEDIR)/SimplePubSubType.cpp \
 				$(BASEDIR)/SimplePublisher.cpp \
 				$(BASEDIR)/SimpleSubscriber.cpp \

@@ -197,7 +197,14 @@ int main(int argc, char** argv)
 		Wparam.times.heartbeatPeriod.seconds = 2;
 		Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
+		Locator_t loc;
+		loc.kind = LOCATOR_KIND_UDPv4;
+		loc.port = 7400;
+		loc.address[12] = 239;
+				loc.address[13] = 255;
+						loc.address[14] = 0;
+								loc.address[15] = 4;
+		Wparam.multicastLocatorList.push_back(loc);
 		MyPubListener mylisten;
 		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
@@ -252,6 +259,14 @@ int main(int argc, char** argv)
 		Rparam.topic.resourceLimitsQos.allocated_samples = 30;
 		Rparam.times.heartbeatResponseDelay.fraction = 200*1000*1000;
 		Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+		Locator_t loc;
+		loc.kind = 1;
+		loc.port = 7400;
+				loc.address[12] = 239;
+						loc.address[13] = 255;
+								loc.address[14] = 0;
+										loc.address[15] = 5;
+										Rparam.multicastLocatorList.push_back(loc);
 		MySubListener mylisten;
 		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
