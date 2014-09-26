@@ -44,7 +44,7 @@ bool SimpleSubscriber::init()
 			return false;
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = "SimplePubSubType"; //Must be registered before the creation of the subscriber
+	Rparam.topic.topicDataType = "MyType"; //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "SimplePubSubTopic";
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.historyQos.depth = 20;

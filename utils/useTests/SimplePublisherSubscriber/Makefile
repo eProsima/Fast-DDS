@@ -47,7 +47,7 @@ SIMPLEPUBSUB_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
 
 
 SIMPLEPUBSUB_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -leprosimartps -lboost_system -lboost_thread \
-										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdrd
+										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdr
 
 SIMPLEPUBSUB_SRC_CFILES=
 

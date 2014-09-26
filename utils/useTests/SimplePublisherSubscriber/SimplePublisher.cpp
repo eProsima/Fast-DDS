@@ -47,7 +47,7 @@ bool SimplePublisher::init()
 	//CREATE PUBLISHER
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicDataType = "SimplePubSubType";  //This type MUST be registered
+	Wparam.topic.topicDataType = "MyType";  //This type MUST be registered
 	Wparam.topic.topicName = "SimplePubSubTopic";
 	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Wparam.topic.historyQos.depth = 20;

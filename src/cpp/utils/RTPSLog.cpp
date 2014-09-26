@@ -11,6 +11,9 @@
  *
  */
 
+
+
+
 #include <eprosimartps/utils/RTPSLog.h>
 
 namespace eprosima {
@@ -20,6 +23,7 @@ void RTPSThreadLog::printString(EPROSIMA_LOG_VERBOSITY_LEVEL type,std::string& s
 {
 	if(type <= m_verbosity)
 	{
+
 		switch(type)
 		{
 		case(EPROSIMA_QUIET_VERB_LEVEL):
