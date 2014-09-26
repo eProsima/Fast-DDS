@@ -17,6 +17,7 @@
 #include "SimplePubSubType.h"
 #include "MyType.h"
 
+using namespace eprosima::fastcdr;
 
 SimplePubSubType::SimplePubSubType() {
 	m_topicDataTypeName = "MyType";
@@ -38,10 +39,12 @@ bool SimplePubSubType::serialize(void* data, SerializedPayload_t* payload)
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr ser(fastbuffer);
+	eprosima::fastcdr::Cdr ser(fastbuffer,Cdr::LITTLE_ENDIANNESS);
+
 	//serialize the object:
 	p_type->serialize(ser);
 	payload->length = ser.getSerializedDataLength();
+	payload->encapsulation = CDR_LE; //Litlle endian encapsulation
 	return true;
 }
 
@@ -52,8 +55,9 @@ bool SimplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
 
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
+
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr deser(fastbuffer);
+	eprosima::fastcdr::Cdr deser(fastbuffer,Cdr::LITTLE_ENDIANNESS);
 	//serialize the object:
 	p_type->deserialize(deser);
 	return true;
