@@ -18,7 +18,8 @@ enum SD_COLOR
     SD_CYAN,
     SD_MAGENTA,
     SD_ORANGE,
-    SD_GRAY
+    SD_GRAY,
+    SD_BLACK
 };
 /**
  * @brief The TYPESHAPE enum, the different shapes.
@@ -56,23 +57,30 @@ inline std::string getColorStr(const SD_COLOR& color)
     case SD_CYAN: return "CYAN";break;
     case SD_MAGENTA: return "MAGNETA";break;
     case SD_ORANGE: return "ORANGE";break;
+    case SD_GRAY: return "GRAY"; break;
+    case SD_BLACK: return "BLACK"; break;
     }
+    return "BLACK";
 }
 
-inline SD_COLOR getColor(const unsigned char ch)
+inline SD_COLOR getColor(const unsigned char ch1,const unsigned char ch3)
 {
-    switch(ch)
+    switch(ch1)
     {
     case 'P': return SD_PURPLE; break;
     case 'B': return SD_BLUE; break;
     case 'R': return SD_RED; break;
-    case 'G': return SD_GREEN; break;
+    case 'G':
+    {
+        if(ch3 == 'E') {return SD_GREEN; break;}
+        if(ch3 == 'A') {return SD_GRAY; break;}
+    }
     case 'Y': return SD_YELLOW; break;
     case 'C': return SD_CYAN; break;
     case 'M': return SD_MAGENTA; break;
     case 'O': return SD_ORANGE; break;
     }
-    return SD_GRAY;
+    return SD_BLACK;
 }
 
 

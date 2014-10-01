@@ -60,7 +60,7 @@ bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
         //  cout << "Deserializing"<<endl;
         Shape* sh = (Shape*)data;
         uint32_t strsize = *(uint32_t*)payload->data;
-        sh->m_color = getColor(payload->data[4]);
+        sh->m_color = getColor(payload->data[4],payload->data[6]);
         int rest = strsize%4;
         if(rest>0)
             rest = 4-rest;

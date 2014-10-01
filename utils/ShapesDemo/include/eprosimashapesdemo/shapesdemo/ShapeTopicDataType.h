@@ -38,6 +38,7 @@ public:
     colorPair CyanIH;
     colorPair MagentaIH;
     colorPair OrangeIH;
+    colorPair GrayIH;
     ShapeTopicDataType m_topic;
     ColorInstanceHandle()
     {
@@ -58,6 +59,8 @@ public:
         m_topic.getKey((void*)&shape,&MagentaIH.second);
         shape.define(SD_ORANGE);
         m_topic.getKey((void*)&shape,&OrangeIH.second);
+        shape.define(SD_GRAY);
+        m_topic.getKey((void*)&shape,&GrayIH.second);
         //        cout << PurpleIH.second << endl;
         //        cout << BlueIH.second << endl;
         //        cout << RedIH.second<<endl;
@@ -106,5 +109,9 @@ inline SD_COLOR getColorFromInstanceHandle(InstanceHandle_t& iHandle)
     {
         return SD_CYAN;
     }
-    return SD_GRAY;
+    if(iHandle == c_ShapesHandles.GrayIH.second)
+    {
+        return SD_GRAY;
+    }
+    return SD_BLACK;
 }
