@@ -65,6 +65,8 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			SequenceNumber_t first,last;
 			mp_SFW->get_seq_num_min(&first,NULL);
 			mp_SFW->get_seq_num_max(&last,NULL);
+			if(first.to64long()>0 && last.to64long() > first.to64long())
+			{
 			mp_SFW->incrementHBCount();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
 			RTPSMessageCreator::addMessageHeartbeat(&m_periodic_hb_msg,mp_SFW->getGuid().guidPrefix,
@@ -79,7 +81,7 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 				for(lit = (*rit)->m_data->m_multicastLocatorList.begin();lit!=(*rit)->m_data->m_multicastLocatorList.end();++lit)
 					mp_SFW->mp_send_thr->sendSync(&m_periodic_hb_msg,(*lit));
 			}
-
+			}
 			//Reset TIMER
 			this->restart_timer();
 		}
