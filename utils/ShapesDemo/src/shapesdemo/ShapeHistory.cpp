@@ -82,9 +82,9 @@ void ShapeHistory::addShapeExclusive(Shape &sh, std::list<Shape> &list)
 
 void ShapeHistory::addShape(Shape&sh,std::list<Shape>& list)
 {
-    list.push_front(sh);
-    if(list.size()>this->m_history_depth)
+    if(list.size()+1>this->m_history_depth)
         list.pop_back();
+    list.push_front(sh);
 }
 
 
