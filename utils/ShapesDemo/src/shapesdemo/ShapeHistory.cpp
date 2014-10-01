@@ -120,7 +120,9 @@ bool ShapeHistory::findInstance(Shape& sh,std::vector<std::list<Shape>>::iterato
 
 void ShapeHistory::addNewInstance(Shape& sh)
 {
-    m_history.push_back(std::list<Shape>(1,sh));
+    std::list<Shape> shapelist;
+    shapelist.push_back(sh);
+    m_history.push_back(shapelist);
 }
 
 bool ShapeHistory::passContentFilter(Shape& sh)

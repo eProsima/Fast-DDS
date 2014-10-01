@@ -90,3 +90,4 @@ writer/StatelessWriter.h
 writer/timedevent/NackResponseDelay.h
 writer/timedevent/NackSupressionDuration.h
 writer/timedevent/PeriodicHeartbeat.h
+writer/timedevent/UnsentChangesNotEmptyEvent.h

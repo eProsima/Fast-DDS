@@ -20,6 +20,7 @@ src/cpp/writer/RTPSMessageGroup.cpp
 src/cpp/writer/timedevent/PeriodicHeartbeat.cpp
 src/cpp/writer/timedevent/NackResponseDelay.cpp
 src/cpp/writer/timedevent/NackSupressionDuration.cpp
+src/cpp/writer/timedevent/UnsentChangesNotEmptyEvent.cpp
 src/cpp/reader/RTPSReader.cpp
 src/cpp/reader/StatelessReader.cpp
 src/cpp/reader/WriterProxy.cpp
