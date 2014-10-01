@@ -93,6 +93,8 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 				SequenceNumber_t first,last;
 				mp_RP->mp_SFW->get_seq_num_min(&first,NULL);
 				mp_RP->mp_SFW->get_seq_num_max(&last,NULL);
+				if(first.to64long() > 0 && last.to64long()>=first.to64long())
+				{
 				mp_RP->mp_SFW->incrementHBCount();
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,mp_RP->mp_SFW->getGuid().guidPrefix,
 						mp_RP->m_data->m_guid.entityId,mp_RP->mp_SFW->getGuid().entityId,
@@ -100,7 +102,7 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 				std::vector<Locator_t>::iterator lit;
 				for(lit = mp_RP->m_data->m_unicastLocatorList.begin();lit!=mp_RP->m_data->m_unicastLocatorList.end();++lit)
 					mp_RP->mp_SFW->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
-
+				}
 				//					for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
 				//						mp_RP->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 			}
