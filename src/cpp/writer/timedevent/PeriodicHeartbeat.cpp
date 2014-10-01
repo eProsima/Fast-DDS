@@ -65,7 +65,7 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 			SequenceNumber_t first,last;
 			mp_SFW->get_seq_num_min(&first,NULL);
 			mp_SFW->get_seq_num_max(&last,NULL);
-			if(first.to64long()>0 && last.to64long() > first.to64long())
+			if(first.to64long()>0 && last.to64long() >= first.to64long())
 			{
 			mp_SFW->incrementHBCount();
 			CDRMessage::initCDRMsg(&m_periodic_hb_msg);
