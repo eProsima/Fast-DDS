@@ -401,6 +401,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackResponseDelay.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackSupressionDuration.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\PeriodicHeartbeat.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\UnsentChangesNotEmptyEvent.h" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\DataMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\GapMsg.hpp" />
@@ -471,6 +472,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackResponseDelay.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackSupressionDuration.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\PeriodicHeartbeat.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\UnsentChangesNotEmptyEvent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
