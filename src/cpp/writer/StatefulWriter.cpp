@@ -264,6 +264,8 @@ void StatefulWriter::unsent_changes_not_empty()
 				CacheChange_t* last;
 				m_writer_cache.get_min_change(&first);
 				m_writer_cache.get_max_change(&last);
+				if(first->sequenceNumber.to64long()>0 && last->sequenceNumber.to64long() >= first->sequenceNumber.to64long()  )
+				{
 				incrementHBCount();
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
 				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
@@ -273,6 +275,7 @@ void StatefulWriter::unsent_changes_not_empty()
 					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 				for(lit = (*rit)->m_data->m_multicastLocatorList.begin();lit!=(*rit)->m_data->m_multicastLocatorList.end();++lit)
 					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+				}
 			}
 		}
 	}
