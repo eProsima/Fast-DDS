@@ -39,6 +39,7 @@ class PublisherListener;
 namespace rtps {
 
 class ReaderProxyData;
+class UnsentChangesNotEmptyEvent;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
@@ -108,6 +109,8 @@ public:
 	virtual size_t getMatchedSubscribers()=0;
 	//!Add a new change to the history.
 	bool add_new_change(ChangeKind_t kind,void*Data);
+
+	virtual void unsent_changes_not_empty()=0;
 
 	/**
 	 * Get the minimum sequence number in the HistoryCache.
@@ -184,6 +187,7 @@ protected:
 
 	bool m_livelinessAsserted;
 
+	UnsentChangesNotEmptyEvent* mp_unsetChangesNotEmpty;
 
 };
 

@@ -15,6 +15,8 @@
 #include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+
 //#include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
@@ -62,8 +64,12 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 		unsent_changes_not_empty |= add_locator(rdata,*lit);
 	}
 	if(unsent_changes_not_empty)
-		this->unsent_changes_not_empty();
-
+	{
+		//unsent_changes_not_empty();
+		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,boost::posix_time::milliseconds(1));
+		this->mp_unsetChangesNotEmpty->restart_timer();
+		this->mp_unsetChangesNotEmpty = NULL;
+	}
 	this->m_matched_readers.push_back(rdata);
 	return true;
 }

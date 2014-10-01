@@ -35,7 +35,8 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttrib
 									//FIXME: Select a better size, not the payload but maybe more?
 									m_cdrmessages(payload_size),
 									mp_listener(NULL),
-									m_livelinessAsserted(false)
+									m_livelinessAsserted(false),
+									mp_unsetChangesNotEmpty(NULL)
 {
 	init_header();
 	pDebugInfo("RTPSWriter created"<<endl)

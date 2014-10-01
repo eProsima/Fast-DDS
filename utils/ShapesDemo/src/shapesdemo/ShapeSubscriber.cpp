@@ -46,12 +46,13 @@ bool ShapeSubscriber::initSubscriber()
 
 void ShapeSubscriber::onNewDataMessage()
 {
-    // cout << "New DATA Message "<<endl;
+     cout << "New DATA Message "<<endl;
     Shape shape;
     shape.m_type = this->m_shapeType;
     SampleInfo_t info;
     while(mp_sub->takeNextData((void*)&shape,&info))
     {
+        cout << "Inside of the loop"<<endl;
         // shape.m_x += 5;
         shape.m_time = info.sourceTimestamp;
         shape.m_writerGuid = info.writerGUID;

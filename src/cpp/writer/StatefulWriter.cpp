@@ -21,6 +21,8 @@
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
+#include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+
 //#include "eprosimartps/CDRMessage.h"
 //#include "eprosimartps/qos/ParameterList.h"
 
@@ -94,7 +96,12 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 	matched_readers.push_back(rp);
 	pDebugInfo("Reader Proxy added to StatefulWriter with " <<rp->m_data->m_unicastLocatorList.size()<<"(u)-"<<rp->m_data->m_multicastLocatorList.size()<<"(m) locators: "<<rp->m_data->m_guid<< endl);
 	if(rp->m_changesForReader.size()>0)
-		unsent_changes_not_empty();
+	{
+		//unsent_changes_not_empty();
+		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,boost::posix_time::milliseconds(1));
+		this->mp_unsetChangesNotEmpty->restart_timer();
+		this->mp_unsetChangesNotEmpty = NULL;
+	}
 	return true;
 }
 
