@@ -15,7 +15,7 @@
 #define HELLOWORLDTYPE_H_
 
 #include "eprosimartps/rtps_all.h"
-
+#include "YOURTYPE.h"
 
 class SimplePubSubType:public DDSTopicDataType {
 public:
