@@ -39,6 +39,7 @@ public:
     colorPair MagentaIH;
     colorPair OrangeIH;
     colorPair GrayIH;
+    colorPair BlackIH;
     ShapeTopicDataType m_topic;
     ColorInstanceHandle()
     {
@@ -61,6 +62,8 @@ public:
         m_topic.getKey((void*)&shape,&OrangeIH.second);
         shape.define(SD_GRAY);
         m_topic.getKey((void*)&shape,&GrayIH.second);
+        shape.define(SD_BLACK);
+        m_topic.getKey((void*)&shape,&BlackIH.second);
         //        cout << PurpleIH.second << endl;
         //        cout << BlueIH.second << endl;
         //        cout << RedIH.second<<endl;

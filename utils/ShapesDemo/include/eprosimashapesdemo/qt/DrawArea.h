@@ -28,7 +28,7 @@ const QColor SD_QT_MAGENTA = QColor(255,20,147,SD_QT_COLOR_TRANS);
 const QColor SD_QT_ORANGE = QColor(255,140,0,SD_QT_COLOR_TRANS);
 const QColor SD_QT_GRAY = QColor(190,190,190,SD_QT_COLOR_TRANS);
 
-const QColor SD_QT_BLACK = QColor(0,0,0,255);
+const QColor SD_QT_BLACK = QColor(0,0,0,SD_QT_COLOR_TRANS);
 const QColor SD_QT_WHITE = QColor(255,255,255,255);
 
 inline QColor SD_COLOR2QColor(SD_COLOR& color)
@@ -44,6 +44,7 @@ inline QColor SD_COLOR2QColor(SD_COLOR& color)
     case SD_MAGENTA: return SD_QT_MAGENTA;
     case SD_ORANGE: return SD_QT_ORANGE;
     case SD_GRAY: return SD_QT_GRAY;
+    case SD_BLACK: return SD_QT_BLACK;
     }
     return SD_QT_BLACK;
 }

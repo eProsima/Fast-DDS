@@ -3,7 +3,7 @@
 
 #define MAX_DRAW_AREA_X 235
 #define MAX_DRAW_AREA_Y 265
-#define INITIAL_INTERVAL_MS 200
+#define INITIAL_INTERVAL_MS 75
 
 /**
  * @brief The SD_COLOR enum, the different colors.
@@ -68,7 +68,11 @@ inline SD_COLOR getColor(const unsigned char ch1,const unsigned char ch3)
     switch(ch1)
     {
     case 'P': return SD_PURPLE; break;
-    case 'B': return SD_BLUE; break;
+    case 'B':
+    {
+        if(ch3 == 'U'){  return SD_BLUE; break;}
+        if(ch3 == 'A'){  return SD_BLACK; break;}
+    }
     case 'R': return SD_RED; break;
     case 'G':
     {
