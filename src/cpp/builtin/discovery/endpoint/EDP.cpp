@@ -237,17 +237,17 @@ bool EDP::validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 	}
 	if(W->getStateType() == STATELESS && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS) //Means our writer is BE but the reader wants RE
 	{
-		pWarning("INCOMPATIBLE QOS:Remote Reader is Reliable and local writer is BE "<<endl;);
+		pWarning("INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"):Remote Reader "<<rdata->m_guid << " is Reliable and local writer is BE "<<endl;);
 		return false;
 	}
 	if(W->getQos().m_durability.kind == VOLATILE_DURABILITY_QOS && rdata->m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS)
 	{
-		pWarning("INCOMPATIBLE QOS:RemoteReader has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE"<<endl;);
+		pWarning("INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"):RemoteReader "<<rdata->m_guid << " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE"<<endl;);
 		return false;
 	}
 	if(W->getQos().m_ownership.kind != rdata->m_qos.m_ownership.kind)
 	{
-		pWarning("INCOMPATIBLE QOS:Different Ownership Kind"<<endl;);
+		pWarning("INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"):Remote reader "<<rdata->m_guid << " has different Ownership Kind"<<endl;);
 		return false;
 	}
 	//Partition check:
@@ -274,7 +274,8 @@ bool EDP::validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 				break;
 		}
 	}
-
+	if(!matched) //Different partitions
+		pWarning("INCOMPATIBLE QOS (topic: "<< rdata->m_topicName<<"): Different Partitions"<<endl;);
 	return matched;
 }
 bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
@@ -296,17 +297,17 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 	}
 	if(R->getStateType() == STATEFUL && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) //Means our reader is reliable but hte writer is not
 	{
-		pWarning("INCOMPATIBLE QOS:Remote Writer is Best Effort and local reader is RELIABLE "<<endl;);
+		pWarning("INCOMPATIBLE QOS (topic: "<< wdata->m_topicName<<"): Remote Writer "<<wdata->m_guid << " is Best Effort and local reader is RELIABLE "<<endl;);
 		return false;
 	}
 	if(R->getQos().m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS && wdata->m_qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
 	{
-		pWarning("INCOMPATIBLE QOS:RemoteWriter has VOLATILE DURABILITY and we want TRANSIENT_LOCAL"<<endl;);
+		pWarning("INCOMPATIBLE QOS (topic: "<< wdata->m_topicName<<"):RemoteWriter "<<wdata->m_guid << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL"<<endl;);
 		return false;
 	}
 	if(R->getQos().m_ownership.kind != wdata->m_qos.m_ownership.kind)
 	{
-		pWarning("INCOMPATIBLE QOS:Different Ownership Kind"<<endl;);
+		pWarning("INCOMPATIBLE QOS (topic: "<< wdata->m_topicName<<"):Remote Writer "<<wdata->m_guid << " has different Ownership Kind"<<endl;);
 		return false;
 	}
 	//Partition check:
@@ -392,7 +393,8 @@ bool EDP::pairingWriter(RTPSWriter* W)
 		{
 			if(validMatching(W,*rdatait))
 			{
-				pDebugInfo(RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*rdatait)->m_guid<<RTPS_DEF<<endl);
+				//std::cout << "VALID MATCHING to " <<(*rdatait)->m_guid<< std::endl;
+				pDebugInfo(RTPS_CYAN<<"Valid Matching to readerProxy: "<<(*rdatait)->m_guid<<RTPS_DEF<<endl);
 				if(W->matched_reader_add(*rdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:
