@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
+    RTPSLog::setVerbosity(EPROSIMA_INFO_VERB_LEVEL);
 
     QApplication a(argc, argv);
     MainWindow w;
