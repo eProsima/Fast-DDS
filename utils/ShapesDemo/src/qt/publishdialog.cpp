@@ -139,6 +139,8 @@ void PublishDialog::setShapeAttributes(ShapePublisher* SP)
         SP->m_shape.define(SD_ORANGE);
     else if(this->ui->combo_Color->currentText() == QString("GRAY"))
         SP->m_shape.define(SD_GRAY);
+    else if(this->ui->combo_Color->currentText() == QString("BLACK"))
+        SP->m_shape.define(SD_BLACK);
     //SIZE:
     SP->m_shape.m_size = this->ui->spin_Size->value();
     //POSITION IS RANDOM:

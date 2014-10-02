@@ -36,7 +36,7 @@ public:
     ShapesDemoOptions()
     {
         m_updateIntervalMs = INITIAL_INTERVAL_MS;
-        m_movementSpeed = 5;
+        m_movementSpeed = 7;
         m_domainId = 0;
     }
     ~ShapesDemoOptions()

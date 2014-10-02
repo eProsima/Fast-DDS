@@ -334,13 +334,15 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 				break;
 		}
 	}
+	if(!matched) //Different partitions
+			pWarning("INCOMPATIBLE QOS (topic: "<< wdata->m_topicName<<"): Different Partitions"<<endl;);
 	return matched;
 }
 
 
 bool EDP::pairingReader(RTPSReader* R)
 {
-	pInfo(RTPS_CYAN<<"EDP trying pairing of Local Reader: "<<R->getGuid()<<" in topic: " << R->getTopic().getTopicName()<<RTPS_DEF<<endl);
+	pInfo(RTPS_CYAN<<"EDP trying pairing of Local Reader: "<<R->getGuid()<<" in topic: \"" << R->getTopic().getTopicName()<<"\""<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
 			pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
@@ -384,7 +386,7 @@ bool EDP::pairingReader(RTPSReader* R)
 
 bool EDP::pairingWriter(RTPSWriter* W)
 {
-	pInfo(RTPS_CYAN<<"EDP trying pairing of Local Writer: "<<W->getGuid()<<" in topic: " << W->getTopic().getTopicName()<<RTPS_DEF<<endl);
+	pInfo(RTPS_CYAN<<"EDP trying pairing of Local Writer: "<<W->getGuid()<<" in topic: \"" << W->getTopic().getTopicName()<<"\""<<RTPS_DEF<<endl);
 	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
 			pit!=mp_PDP->participantProxiesEnd();++pit)
 	{
@@ -429,7 +431,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 
 bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 {
-	pInfo(RTPS_CYAN<<"EDP trying pairing of ReaderProxyData: "<<rdata->m_guid<<" in topic: " << rdata->m_topicName <<RTPS_DEF<<endl);
+	pInfo(RTPS_CYAN<<"EDP trying pairing of ReaderProxyData: "<<rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\""<<RTPS_DEF<<endl);
 	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
 			wit!=mp_participant->userWritersListEnd();++wit)
 	{
@@ -468,7 +470,7 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 
 bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 {
-	pInfo(RTPS_CYAN<<"EDP trying pairing of WriterProxyData: "<<wdata->m_guid<<" in topic: " << wdata->m_topicName <<RTPS_DEF<<endl);
+	pInfo(RTPS_CYAN<<"EDP trying pairing of WriterProxyData: "<<wdata->m_guid<<" in topic: \"" << wdata->m_topicName <<"\""<<RTPS_DEF<<endl);
 	for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
 			rit!=mp_participant->userReadersListEnd();++rit)
 	{
