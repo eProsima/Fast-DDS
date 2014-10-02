@@ -78,8 +78,13 @@ void SimpleSubscriber::SubListener::onNewDataMessage()
 {
 	if(mp_sub!=NULL)
 	{
-		//YOUR CODE HERE:
-		//READ OR TAKE DATA
+		YOURTYPE datatype;
+		SampleInfo_t info;
+		mp_sub->takeNextData(&datatype,&info);
+		if(info.sampleKind == ALIVE)
+		{
+			//DO SOMETHING WITH THE DATA
+		}
 	}
 }
 

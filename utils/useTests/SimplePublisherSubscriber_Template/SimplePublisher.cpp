@@ -83,7 +83,14 @@ void SimplePublisher::run()
 		eClock::my_sleep(250); //Sleep 250 ms
 	}
 
-	//YOUR CODE GOES HERE, PUBLISH WHAT YOU WANT
+	YOURTYPE datatype;
+	for(int i =0;i<10;++i)
+	{
+
+		//CHANGE DATA HERE.
+
+		mp_publisher->write(&datatype);
+	}
 
 }
 

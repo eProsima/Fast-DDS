@@ -18,9 +18,9 @@
 
 
 SimplePubSubType::SimplePubSubType() {
-	m_topicDataTypeName = "SimplePubSubType";
+	m_topicDataTypeName = "YOURTYPE";
 	YOURTYPE example;
-	m_typeSize = YOURTYPE.getMaxCdrSerializedSize(0); //HERE GOES THE MAXIMUM SIZE OF THE TYPE IN BYTES
+	m_typeSize = example.getMaxCdrSerializedSize(0); //Maximum number of bytes in CDR serialization
 	m_isGetKeyDefined = false;
 
 }
