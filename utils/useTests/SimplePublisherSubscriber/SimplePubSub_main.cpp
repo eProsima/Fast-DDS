@@ -36,8 +36,8 @@ int main(int argc, char** argv)
 	}
 
 	//REGISTER THE TYPE BEING USED
-	SimplePubSubType myType;
-	DomainParticipant::registerType((DDSTopicDataType*)&myType);
+	SimplePubSubType* myType = new SimplePubSubType();
+	DomainParticipant::registerType((DDSTopicDataType*)myType);
 
 	switch(type)
 	{
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 		break;
 	}
 	}
-
+	delete(myType);
 	DomainParticipant::stopAll();
 
 	return 0;

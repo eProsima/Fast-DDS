@@ -12,14 +12,14 @@
 
 #ifndef TIME_T_H_
 #define TIME_T_H_
-
+#include "eprosimartps/eprosimartps_dll.h"
 #include <cmath>
 #include <cstdint>
 #include <iostream>
 namespace eprosima{
 namespace rtps{
 //!Structure Time_t, used to describe times.
-struct Time_t{
+struct RTPS_DllAPI Time_t{
 	int32_t seconds;
 	uint32_t fraction;
 	//int64_t to64time(){

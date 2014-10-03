@@ -16,7 +16,7 @@
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/SerializedPayload.h"
 #include "eprosimartps/common/types/InstanceHandle.h"
-#include "eprosimartps/SerializedPayload.hpp"
+//#include "eprosimartps/SerializedPayload.hpp"
 #include <string>
 
 using namespace eprosima::rtps;
@@ -58,12 +58,15 @@ public:
 	 */
 	virtual bool getKey(void*data,InstanceHandle_t* ihandle);
 	//! Data Type Name.
+    #pragma warning(disable: 4251)
 	std::string m_topicDataTypeName;
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
 	//! size of the string respect the maximum defined size.).
 	uint32_t m_typeSize;
 	//! Indicates wheter the method to obtain the key has been implemented.
 	bool m_isGetKeyDefined;
+
+
 };
 
 } /* namespace dds */

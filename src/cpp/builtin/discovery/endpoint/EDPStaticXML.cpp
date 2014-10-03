@@ -256,6 +256,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 				uint32_t milliseclease = boost::lexical_cast<uint32_t>(auxstring);
 				rdata->m_qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t((double)milliseclease);
 			}
+			#pragma warning(disable: 4101)
 			catch(std::exception &e)
 			{
 				pWarning("BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF"<<endl);
@@ -424,6 +425,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 				uint32_t milliseclease = boost::lexical_cast<uint32_t>(auxstring);
 				wdata->m_qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t((double)milliseclease);
 			}
+			#pragma warning(disable: 4101)
 			catch(std::exception &e)
 			{
 				pWarning("BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF"<<endl);

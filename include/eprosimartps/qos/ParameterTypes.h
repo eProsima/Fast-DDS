@@ -108,7 +108,7 @@ enum ParameterId_t	:uint16_t
 
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
-class Parameter_t {
+class RTPS_DllAPI Parameter_t {
 public:
 	ParameterId_t Pid;
 	uint16_t length;
@@ -128,7 +128,7 @@ public:
 	virtual bool addToCDRMessage(CDRMessage_t* msg) = 0;
 };
 
-class ParameterKey_t:public Parameter_t{
+class RTPS_DllAPI ParameterKey_t:public Parameter_t{
 public:
 	InstanceHandle_t key;
 	ParameterKey_t(){};
@@ -137,7 +137,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class ParameterLocator_t: public Parameter_t {
+class RTPS_DllAPI ParameterLocator_t: public Parameter_t {
 public:
 	Locator_t locator;
 	ParameterLocator_t(){};
@@ -147,8 +147,9 @@ public:
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
-class ParameterString_t: public Parameter_t {
+class RTPS_DllAPI ParameterString_t: public Parameter_t {
 public:
+	#pragma warning(disable: 4251)
 	std::string m_string;
 	ParameterString_t(){};
 	ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
@@ -156,7 +157,7 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class ParameterPort_t: public Parameter_t {
+class RTPS_DllAPI ParameterPort_t: public Parameter_t {
 public:
 	uint32_t port;
 	ParameterPort_t():port(0){};
@@ -167,7 +168,7 @@ public:
 
 #define PARAMETER_PORT_LENGTH 4
 
-class ParameterGuid_t: public Parameter_t {
+class RTPS_DllAPI ParameterGuid_t: public Parameter_t {
 public:
 	GUID_t guid;
 	ParameterGuid_t(){GUID_UNKNOWN(guid);};
@@ -188,7 +189,7 @@ public:
 
 #define PARAMETER_GUID_LENGTH 16
 
-class ParameterProtocolVersion_t: public Parameter_t {
+class RTPS_DllAPI ParameterProtocolVersion_t: public Parameter_t {
 public:
 	ProtocolVersion_t protocolVersion;
 	ParameterProtocolVersion_t(){PROTOCOLVERSION(protocolVersion);};
@@ -198,7 +199,7 @@ public:
 
 #define PARAMETER_PROTOCOL_LENGTH 4
 
-class ParameterVendorId_t:public Parameter_t{
+class RTPS_DllAPI ParameterVendorId_t:public Parameter_t{
 public:
 	VendorId_t vendorId;
 	ParameterVendorId_t(){VENDORID_EPROSIMA(vendorId);};
@@ -208,7 +209,7 @@ public:
 
 #define PARAMETER_VENDOR_LENGTH 4
 
-class ParameterIP4Address_t :public Parameter_t{
+class RTPS_DllAPI ParameterIP4Address_t :public Parameter_t{
 public:
 	octet address[4];
 	ParameterIP4Address_t(){this->setIP4Address(0,0,0,0);};
@@ -219,7 +220,7 @@ public:
 
 #define PARAMETER_IP4_LENGTH 4
 
-class ParameterBool_t:public Parameter_t{
+class RTPS_DllAPI ParameterBool_t:public Parameter_t{
 public:
 	bool value;
 	ParameterBool_t():value(false){};
@@ -230,7 +231,7 @@ public:
 
 #define PARAMETER_BOOL_LENGTH 4
 
-class ParameterCount_t:public Parameter_t{
+class RTPS_DllAPI ParameterCount_t:public Parameter_t{
 public:
 	Count_t count;
 	ParameterCount_t():count(0){};
@@ -240,7 +241,7 @@ public:
 
 #define PARAMETER_COUNT_LENGTH 4
 
-class ParameterEntityId_t:public Parameter_t{
+class RTPS_DllAPI ParameterEntityId_t:public Parameter_t{
 public:
 	EntityId_t entityId;
 	ParameterEntityId_t():entityId(ENTITYID_UNKNOWN){};
@@ -250,7 +251,7 @@ public:
 
 #define PARAMETER_ENTITYID_LENGTH 4
 
-class ParameterTime_t:public Parameter_t{
+class RTPS_DllAPI ParameterTime_t:public Parameter_t{
 public:
 	Time_t time;
 	ParameterTime_t(){};
@@ -261,7 +262,7 @@ public:
 #define PARAMETER_TIME_LENGTH 8
 
 
-class ParameterBuiltinEndpointSet_t:public Parameter_t{
+class RTPS_DllAPI ParameterBuiltinEndpointSet_t:public Parameter_t{
 public:
 	BuiltinEndpointSet_t endpointSet;
 	ParameterBuiltinEndpointSet_t():endpointSet(0){};
@@ -271,8 +272,9 @@ public:
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
-class ParameterPropertyList_t:public Parameter_t{
+class RTPS_DllAPI ParameterPropertyList_t:public Parameter_t{
 public:
+	#pragma warning(disable: 4251)
 	std::vector<std::pair<std::string,std::string>> properties;
 	ParameterPropertyList_t(){};
 	ParameterPropertyList_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};

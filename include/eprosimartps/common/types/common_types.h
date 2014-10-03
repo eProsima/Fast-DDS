@@ -13,6 +13,8 @@
 #ifndef COMMON_TYPES_H_
 #define COMMON_TYPES_H_
 
+#include "eprosimartps\eprosimartps_dll.h"
+
 #include <stddef.h>
 #include <iostream>
 #include <cstdint>
@@ -74,7 +76,7 @@ typedef uint32_t Count_t;
 #define BIT(i) ((i==0) ? BIT0 : (i==1) ? BIT1 :(i==2)?BIT2:(i==3)?BIT3:(i==4)?BIT4:(i==5)?BIT5:(i==6)?BIT6:(i==7)?BIT7:0x0)
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
-struct ProtocolVersion_t{
+struct RTPS_DllAPI ProtocolVersion_t{
 	octet m_major;
 	octet m_minor;
 	ProtocolVersion_t():

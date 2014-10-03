@@ -88,11 +88,10 @@ void SimplePublisher::run()
 	MyType mytype;
 	mytype.index(0);
 	mytype.message("My own message");
-	mytype.price(3.14);
 	for(int i =0;i<10;++i)
 	{
 		mytype.index(i);
-		mytype.price(3.14*i);
+		mytype.price(10.0f*i);
 		mp_publisher->write(&mytype);
 	}
 

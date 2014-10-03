@@ -19,10 +19,14 @@
 
 using namespace eprosima::fastcdr;
 
-SimplePubSubType::SimplePubSubType() {
-	m_topicDataTypeName = "MyType";
-	MyType example;
-	m_typeSize = example.getMaxCdrSerializedSize(0); //HERE GOES THE MAXIMUM SIZE OF THE TYPE IN BYTES
+SimplePubSubType::SimplePubSubType():
+	DDSTopicDataType()
+{
+	m_topicDataTypeName = std::string("MyType");
+
+	cout << "Current type size: " << MyType::getMaxCdrSerializedSize()<<endl;
+	m_typeSize = MyType::getMaxCdrSerializedSize(); 
+	cout << "MyTypeSize: " << m_typeSize << endl;
 	m_isGetKeyDefined = false;
 
 }

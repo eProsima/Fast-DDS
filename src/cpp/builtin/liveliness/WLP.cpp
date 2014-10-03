@@ -36,6 +36,7 @@ WLP::WLP(ParticipantImpl* p):
 										mp_builtinProtocols(NULL),
 										mp_builtinParticipantMessageWriter(NULL),
 										mp_builtinParticipantMessageReader(NULL),
+										#pragma warning(disable: 4355)
 										m_listener(this),
 										mp_livelinessAutomatic(NULL),
 										mp_livelinessManParticipant(NULL)

@@ -39,10 +39,13 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 							m_participantName(PParam.name),
 							m_guid(guidP,c_EntityId_Participant),
+							#pragma warning(disable: 4355)
 							m_send_thr(this),
+							#pragma warning(disable: 4355)
 							m_event_thr(this),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
+							#pragma warning(disable: 4355)
 							m_builtinProtocols(this),
 							m_participantID(ID),
 							m_send_socket_buffer_size(PParam.sendSocketBufferSize),

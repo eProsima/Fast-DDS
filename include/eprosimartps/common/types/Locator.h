@@ -30,7 +30,7 @@ namespace rtps{
 
 
 //!@brief Class Locator_t, uniquely identifies a address+port combination.
-class Locator_t{
+class RTPS_DllAPI Locator_t{
 public:
 	int32_t kind;
 	uint32_t port;

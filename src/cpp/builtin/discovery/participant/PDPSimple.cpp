@@ -45,6 +45,7 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
 																												mp_EDP(NULL),
 																												m_hasChangedLocalPDP(true),
 																												mp_resendParticipantTimer(NULL),
+																												#pragma warning(disable: 4355)
 																												m_listener(this)
 {
 
