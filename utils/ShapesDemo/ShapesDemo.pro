@@ -7,8 +7,8 @@
 RTPSVERSION = 0.5.1
 
 QT  += core
-QT  -= gui
-#QT += gui
+#QT  -= gui
+QT += gui
 
 
 
@@ -25,7 +25,7 @@ win32:QMAKE_LFLAGS_WINDOWS +=/FORCE:MULTIPLE
 win32:QMAKE_LFLAGS_WINDOWS_DLL +=/FORCE:MULTIPLE
 
 
-CONFIG += console
+#CONFIG += console
 
 
 unix:CONFIG(debug, debug|release): TARGET = $$_PRO_FILE_PWD_/bin/ShapesDemod

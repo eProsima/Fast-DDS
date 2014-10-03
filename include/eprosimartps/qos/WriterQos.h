@@ -25,7 +25,7 @@ namespace dds {
  * during the EDP, not all of the behaviour associated with them has been implemented in the library.
  * The supported Qos in this version are: Durability, Liveliness, Reliability and Partition.
  */
-class WriterQos{
+class RTPS_DllAPI WriterQos{
 public:
 	WriterQos();
 	virtual ~ WriterQos();

@@ -30,6 +30,7 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttrib
 		StateKind_t state,
 		int16_t userDefinedId, uint32_t payload_size):
 									Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
+									#pragma warning(disable: 4355)
 									m_writer_cache((Endpoint*)this,payload_size),
 									m_pushMode(true),
 									//FIXME: Select a better size, not the payload but maybe more?

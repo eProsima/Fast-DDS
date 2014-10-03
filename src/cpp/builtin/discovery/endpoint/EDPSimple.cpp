@@ -36,6 +36,7 @@ EDPSimple::EDPSimple(PDPSimple* p,ParticipantImpl* part):
 				EDP(p,part),
 				mp_PubWriter(NULL),mp_SubWriter(NULL),
 				mp_PubReader(NULL),mp_SubReader(NULL),
+				#pragma warning(disable: 4355)
 				m_listeners(this)
 
 {

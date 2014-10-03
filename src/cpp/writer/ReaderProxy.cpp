@@ -30,7 +30,9 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 				mp_SFW(SW),
 				m_isRequestedChangesEmpty(true),
 				//m_periodicHB(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatPeriod)*1e-3))),
+				#pragma warning(disable: 4355)
 				m_nackResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay))),
+				#pragma warning(disable: 4355)
 				m_nackSupression(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration))),
 				m_lastAcknackCount(0)
 {

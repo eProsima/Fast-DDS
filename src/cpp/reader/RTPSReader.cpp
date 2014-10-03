@@ -24,6 +24,7 @@ RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 		Endpoint(guidP,entId,topic,ptype,state,READER,userDefinedId),
 		//mp_Sub(NULL),
 		mp_listener(NULL),
+		#pragma warning(disable: 4355)
 		m_reader_cache((Endpoint*)this,payload_size),
 		m_expectsInlineQos(true),
 		m_acceptMessagesToUnknownReaders(true),

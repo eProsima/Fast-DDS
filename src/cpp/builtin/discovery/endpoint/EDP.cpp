@@ -256,6 +256,30 @@ bool EDP::validMatching(RTPSWriter* W,ReaderProxyData* rdata)
 	{
 		matched = true;
 	}
+	else if(W->getQos().m_partition.names.empty() && rdata->m_qos.m_partition.names.size()>0)
+	{
+		for(std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names.begin();
+					rnameit!=rdata->m_qos.m_partition.names.end();++rnameit)
+		{
+			if(rnameit->size()==0)
+			{
+				matched = true;
+				break;
+			}
+		}
+	}
+	else if(W->getQos().m_partition.names.size()>0 && rdata->m_qos.m_partition.names.empty() )
+	{
+		for(std::vector<std::string>::const_iterator wnameit = W->getQos().m_partition.names.begin();
+				wnameit !=  W->getQos().m_partition.names.end();++wnameit)
+		{
+			if(wnameit->size()==0)
+			{
+				matched = true;
+				break;
+			}
+		}
+	}
 	else
 	{
 		for(std::vector<std::string>::const_iterator wnameit = W->getQos().m_partition.names.begin();
@@ -315,6 +339,30 @@ bool EDP::validMatching(RTPSReader* R,WriterProxyData* wdata)
 	if(R->getQos().m_partition.names.empty() && wdata->m_qos.m_partition.names.empty())
 	{
 		matched = true;
+	}
+	else if(R->getQos().m_partition.names.empty() && wdata->m_qos.m_partition.names.size()>0)
+	{
+		for(std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names.begin();
+					rnameit!=wdata->m_qos.m_partition.names.end();++rnameit)
+		{
+			if(rnameit->size()==0)
+			{
+				matched = true;
+				break;
+			}
+		}
+	}
+	else if(R->getQos().m_partition.names.size()>0 && wdata->m_qos.m_partition.names.empty() )
+	{
+		for(std::vector<std::string>::const_iterator wnameit = R->getQos().m_partition.names.begin();
+				wnameit !=  R->getQos().m_partition.names.end();++wnameit)
+		{
+			if(wnameit->size()==0)
+			{
+				matched = true;
+				break;
+			}
+		}
 	}
 	else
 	{

@@ -21,7 +21,7 @@ namespace rtps{
 
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
-struct GuidPrefix_t{
+struct RTPS_DllAPI GuidPrefix_t{
 	octet value[12];
 	GuidPrefix_t()
 	{
@@ -87,7 +87,7 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_READER  0x000200C7
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
- struct EntityId_t{
+ struct RTPS_DllAPI EntityId_t{
 	octet value[4];
 	EntityId_t(){
 		*this = ENTITYID_UNKNOWN;
@@ -187,7 +187,7 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_PARTICIPANT_
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
- struct GUID_t{
+ struct RTPS_DllAPI GUID_t{
 	GuidPrefix_t guidPrefix;
 	EntityId_t entityId;
 	GUID_t& operator=(const GUID_t& guid)

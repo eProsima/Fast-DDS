@@ -315,7 +315,7 @@ bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 	}
 	if(type->m_typeSize <=0)
 	{
-		pError("Registered Type must have size > 0"<<endl);
+		pError("Registered Type must have maximum byte size > 0"<<endl);
 		return false;
 	}
 	if(type->m_typeSize > PAYLOAD_MAX_SIZE)
