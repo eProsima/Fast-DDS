@@ -115,7 +115,10 @@ public class Context extends com.eprosima.idl.context.Context
     {
         return true;
     }
-    
+    public boolean isKey()
+    {
+    	return true;
+    }
     public boolean isFastrpcProduct()
     {
         return false;
