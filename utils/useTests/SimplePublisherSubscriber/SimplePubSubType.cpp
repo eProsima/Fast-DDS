@@ -26,6 +26,7 @@ SimplePubSubType::SimplePubSubType():
 	m_typeSize = (uint32_t)MyType::getMaxCdrSerializedSize(); 
 	m_isGetKeyDefined = false;
 
+	m_keyBuffer = malloc(MyType::getMaxCdrSerializedSize());
 }
 
 SimplePubSubType::~SimplePubSubType() {
@@ -67,5 +68,22 @@ bool SimplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
 
 bool SimplePubSubType::getKey(void* data, InstanceHandle_t* ihandle)
 {
+	MyType* p_type = (MyType*) data;
+
+	// Object that manages the raw buffer.
+	eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,MyType::getMaxCdrSerializedSize());
+	// Object that serializes the data.
+	eprosima::fastcdr::Cdr ser(fastbuffer,Cdr::BIG_ENDIANNESS);
+
+	p_type->serializeKeyMembers(ser);
+	md5.init();
+	md5.update(m_keyBuffer,ser.getSerializedDataLength());
+	md5.finalize();
+	for(uint8_t i = 0;i<16;++i)
+    {
+        ihandle->value[i] = md5.digest[i];
+    }
+
+
 	return false;
 }
