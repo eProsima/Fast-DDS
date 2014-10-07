@@ -9,6 +9,7 @@ CPP=g++
 AR=ar
 LDFLAGS=-m$arch$
 CP=cp
+LN=g++
 
 COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -m$arch$ -fpic
 EPROSIMA_TARGET= $example$
@@ -30,7 +31,7 @@ $it.name$PUBSUB_INCLUDE_DIRS= \$(INCLUDE_DIRS)
 												
 $it.name$PUBSUB_LIBS_RELEASE= $solution.libraries : {library |-l$library$};separator=" "$ 
 
-$it.name$PUBSUB_SRC_CPPFILES= \$(BASEDIR)/$it.name$PubSubMain.cxx \$(BASEDIR)/$it.name$PubSubType.cxx $(BASEDIR)/$it.name$Publisher.cxx \$(BASEDIR)/$it.name$Subscriber.cxx \$(BASEDIR)/$it.name$.cxx
+$it.name$PUBSUB_SRC_CPPFILES= \$(BASEDIR)/$it.name$PubSubMain.cxx \$(BASEDIR)/$it.name$PubSubType.cxx \$(BASEDIR)/$it.name$Publisher.cxx \$(BASEDIR)/$it.name$Subscriber.cxx \$(BASEDIR)/$it.name$.cxx
 								
 # Project sources are copied to the current directory
 $it.name$PUBSUB_SRCS= \$($it.name$PUBSUB_SRC_CPPFILES)
