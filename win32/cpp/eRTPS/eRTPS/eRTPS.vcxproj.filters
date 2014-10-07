@@ -414,6 +414,9 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\UnsentChangesNotEmptyEvent.h">
       <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\md5.h">
+      <Filter>Header Files\eprosimartps\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -610,6 +613,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\UnsentChangesNotEmptyEvent.cpp">
       <Filter>Source Files\writer\timedevent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\utils\md5.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

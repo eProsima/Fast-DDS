@@ -25,6 +25,8 @@ public:
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 	bool getKey(void*data,InstanceHandle_t* ihandle);
+	MD5 md5;
+	unsigned char* m_keyBuffer;
 };
 
 
