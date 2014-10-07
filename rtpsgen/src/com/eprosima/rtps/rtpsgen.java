@@ -297,7 +297,7 @@ public class rtpsgen {
         {
             //InputStream input = this.getClass().getResourceAsStream("/rtps_version.h");
         	
-        	InputStream input = this.getClass().getClassLoader().getResourceAsStream("rtps_version.h");
+        	InputStream input = this.getClass().getClassLoader().getResourceAsStream("eprosimartps_version.h");
             byte[] b = new byte[input.available()];
             input.read(b);
             String text = new String(b);
