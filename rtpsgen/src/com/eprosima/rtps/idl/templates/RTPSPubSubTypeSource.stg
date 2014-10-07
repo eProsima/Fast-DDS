@@ -1,0 +1,116 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.cpp"], description=["This header file contains the implementation of the serialization functions."])$
+
+
+#include "fastcdr/FastBuffer.h"
+#include "fastcdr/Cdr.h"
+
+#include "$ctx.filename$PubSubType.h"
+
+$ctx.filename$PubSubType::$ctx.filename$PubSubType() 
+{
+	m_topicDataTypeName = "$ctx.m_firstStructure$PubSubType";
+	$ctx.m_firstStructure$ example;
+	m_typeSize = $ctx.m_firstStructure$::getMaxCdrSerializedSize();
+	m_isGetKeyDefined = false;
+}
+
+$ctx.filename$PubSubType::~$ctx.filename$PubSubType() 
+{
+
+}
+
+bool $ctx.filename$PubSubType::serialize(void *data, SerializedPayload_t *payload) 
+{
+	$ctx.m_firstStructure$ *p_type = ($ctx.m_firstStructure$*) data;
+	
+	// Object that manages the raw buffer.
+	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
+	// Object that serializes the data.
+	eprosima::fastcdr::Cdr ser(fastbuffer);
+	// Serialize the object:
+	p_type->serialize(ser);
+    payload->length = ser.getSerializedDataLength();
+    payload->encapsulation = CDR_LE; //Little endian encapsulation
+	
+	return true;
+}
+
+bool $ctx.filename$PubSubType::deserialize(SerializedPayload_t* payload, void* data)
+{
+	//CONVERT DATA to pointer of your type
+	$ctx.m_firstStructure$* p_type = ($ctx.m_firstStructure$*) data;
+
+	// Object that manages the raw buffer.
+	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
+	// Object that serializes the data.
+	eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
+	//serialize the object:
+	p_type->deserialize(deser);
+	return true;
+}
+
+bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle) 
+{
+	return false;
+}
+
+>>
+
+module(ctx, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+$if(ctx.client)$
+/*!
+ * @brief This method implements the proxy part of the protocol for the operation $operation.name$.
+ *        It has to be implemented by the child classes.
+ */
+virtual $paramRetType(operation.rettype)$ $operation.parent.formatedScopedname$_$operation.name$($paramDeclsOnlyOutByRef(params=operation.parameters)$) = 0;
+$endif$
+
+$if(ctx.dds)$
+$if(!operation.oneway)$
+/*!
+ * @brief This asynchronous method implements the proxy part of the protocol for the operation $operation.name$.
+ *        It has to be implemented by the child classes.
+ */
+virtual void $operation.parent.formatedScopedname$_$operation.name$_async($operation.parent.scopedname$_$operation.name$CallbackHandler &obj$paramDeclsByValue(params=operation.inputparam, separatorInicial=", ")$) = 0;
+
+$endif$
+$endif$
+
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>

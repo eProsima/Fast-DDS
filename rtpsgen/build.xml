@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<!--
+ * $Id$   *
+ * (c) Copyright, eProsima, 2014.                                          *
+ * All rights reserved.                                                    *    
+ *                                                                         *
+ * No duplications, whole or partial, manual or electronic, may be made    *
+ * without express written permission.  Any such copies, or                *
+ * revisions thereof, must display this notice unaltered.                  *
+ * This code contains trade secrets of                                     *
+ * eProsima (Proyectos y Sistemas de Mantenimiento S.L.)                   *
+ *                                                                         *
+ * modification history                                                    *
+ * ====================                                                    *
+ * 1.0,29sep09,RodM Created                                                *
+ * =====================================================================   *
+-->
+
+<project name="rtpsgen" default="jar" basedir=".">
+
+	<macrodef name="antlr">
+		<attribute name="base" />
+		<attribute name="grammar" />
+		<sequential>
+            <java classname="antlr.Tool" classpath="../classes/antlr-2.7.7.jar">
+				<arg value="-o" />
+				<arg value="@{base}" />
+				<arg value="@{grammar}" />
+			</java>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="antxr">
+		<attribute name="base" />
+		<attribute name="grammar" />
+		<sequential>
+            <java classname="com.javadude.antxr.Tool" classpath="../classes/antxr.jar">
+				<arg value="-o" />
+				<arg value="@{base}" />
+				<arg value="@{grammar}" />
+			</java>
+		</sequential>
+	</macrodef>
+
+	<target name="init">
+		<tstamp>
+			<format property="src.timestamp" pattern="dd/MM/yyyy" />
+			<format property="year" pattern="2014-yyyy" />
+		</tstamp>
+
+		<!-- Allow any user specific values to override the defaults -->
+		<property file="./build.properties" />
+		<property environment="env" />
+
+		<property name="Name" value="${ant.project.name}" />
+		<property name="name" value="${ant.project.name}" />
+		<property name="copyright" value="${year} Proyectos y Sistema de Mantenimiento S.L" />
+
+		<!-- Filters -->
+		<filter token="date" value="${src.timestamp}" />
+		<filter token="version" value="${version}" />
+		<filter token="copyright" value="${copyright}" />
+
+		<!-- Source related properties -->
+		<property name="rtps.dir" value="${basedir}" />
+		<property name="rtps.src.dir" value="${rtps.dir}${file.separator}src" />
+		<property name="rtps.src.java" value="${rtps.src.dir}" />
+		<property name="idl.dir" value="${basedir}${file.separator}..${file.separator}..${file.separator}idl" />
+        <property name="idl.src.dir" value="${idl.dir}${file.separator}src" />
+		<property name="idl.src.java" value="${idl.src.dir}" />
+		<property name="idl.grammar.dir" value="${idl.dir}${file.separator}grammars" />
+        <property name="lib.dir" value="${basedir}${file.separator}..${file.separator}classes${file.separator}" />
+		<property name="tmp.dir" value="./tmp" />
+		<property name="src.excludes" value="" />
+
+		<!-- Build related properties -->
+		<property name="build.dir" value="${basedir}${file.separator}build" />
+		<property name="build.src" value="${build.dir}${file.separator}src" />
+		<property name="build.classes" value="${build.dir}" />
+		<property name="build.javadocs" value="${basedir}${file.separator}docs${file.separator}api" />
+		<property name="build.rtpsgen.jar" value="${lib.dir}${file.separator}${name}.jar" />
+		
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="antlr-2.7.7.jar" />
+				<include name="stringtemplate-3.2.1.jar" />
+				<include name="antxr.jar" />
+			</fileset>
+		</path>
+
+		<path id="run.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<property name="dist.basedir" value="${build.dir}" />
+		<property name="dist.includes" value="${name}${file.separator}**" />
+		<property name="dist.excludes" value="**/prj/**,
+            **/dist/**,
+             **/test/**,
+             **/model/**,
+             **/build/**,
+             **/.DS_Store" />
+		<property name="packages" value="${build.packages}" />
+		<property name="library.includes" value="${bundle.includes}" />
+
+	</target>
+
+
+	<!-- =================================================================== -->
+	<!-- Basic build targets                                                 -->
+	<!-- =================================================================== -->
+	<target name="prepare-sources" depends="init">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Compiles the source code                                            -->
+	<!-- =================================================================== -->
+	<target name="compile" depends="init, prepare-sources" description="Compiles the sources. (Default)">
+		<!-- Echo compilation properties -->
+		<echo>Building IDL ANTLR grammars... Some warnings are expected...</echo>
+        <antlr base="${idl.src.java}${file.separator}com/eprosima/idl/parser/grammar" grammar="${idl.grammar.dir}${file.separator}idl.g" />
+		<echo>Compiling java code...</echo>
+		<mkdir dir="${build.classes}" />
+        <javac source="1.6" target="1.6" srcdir="${idl.src.java}:${rtps.src.java}" destdir="${build.classes}">
+			<classpath refid="build.classpath"/>
+		</javac>
+        <!--> Copy stringtemplates of rtps.<-->
+		<copy todir="${build.classes}">
+			<fileset dir="${rtps.src.dir}" includes="**/*.stg" />
+		</copy>
+        <!--> Copy common stringtemplates with Fast Buffers.<-->
+        <!--> TODO Quitar el overwrite<-->
+        <copy todir="${build.classes}${file.separator}com${file.separator}eprosima${file.separator}rtps${file.separator}idl${file.separator}templates"
+            overwrite="yes">
+            <fileset dir="${basedir}${file.separator}..${file.separator}..${file.separator}fastbuffers${file.separator}thirdparty${file.separator}fastcdr${file.separator}src${file.separator}java${file.separator}com${file.separator}eprosima${file.separator}fastcdr${file.separator}templates">
+				<include name="Types.stg" />
+				<include name="TypesHeader.stg" />
+				<include name="TypesSource.stg" />
+			</fileset>
+		</copy>
+        <!--> Copy platform file.<-->
+		<copy todir="${build.classes}">
+			<fileset dir="${basedir}${file.separator}..${file.separator}src">
+				<include name="platforms" />
+			</fileset>
+		</copy>
+        <!--> Copy version file.<-->
+		<copy todir="${build.classes}">
+			<fileset dir="${basedir}${file.separator}..${file.separator}include${file.separator}eprosimartps">
+				<include name="eprosimartps_version.h" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Creates the jar archive                                             -->
+	<!-- =================================================================== -->
+	<target name="rtpsgen_jar" depends="init,compile" description="Builds the rtpsgen library (.jar).">
+		<jar jarfile="${build.rtpsgen.jar}" basedir="${build.classes}" manifest="manifest">
+		</jar>
+	</target>
+
+	<target name="jars" depends="rtpsgen_jar" description="Builds all libraries (.jar)"/>
+
+	<!-- =================================================================== -->
+	<!-- Cleans up generated classes                                         -->
+	<!-- =================================================================== -->
+	<target name="clean-classes" depends="init">
+		<delete dir="${build.classes}" />
+	</target>
+</project>
+

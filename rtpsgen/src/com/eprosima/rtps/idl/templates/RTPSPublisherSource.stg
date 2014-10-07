@@ -1,0 +1,138 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.cpp"], description=["This file contains the implementation of the publisher functions."])$
+
+
+#include "$ctx.filename$Publisher.h"
+#include "$ctx.filename$PubSubType.h"
+
+$ctx.filename$Publisher::$ctx.filename$Publisher() : mp_participant(NULL), mp_publisher(NULL) {}
+
+$ctx.filename$Publisher::~$ctx.filename$Publisher() {}
+
+bool $ctx.filename$Publisher::init()
+{
+	// Create Participant
+	
+	ParticipantAttributes PParam;
+	PParam.defaultSendPort = 10042;
+	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true; //This is the default value. It can be modified.
+	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true; //This is the default value. It can be modified.
+	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true; //This is the default value. It can be modified.
+	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true; //This is the default value. It can be modified.
+	PParam.builtin.domainId = 80;
+	TIME_INFINITE(PParam.builtin.leaseDuration);
+	PParam.sendSocketBufferSize = 8712;
+	PParam.listenSocketBufferSize = 17424;
+	PParam.name = "participant_publisher";  //You can put here the name you want
+	mp_participant = DomainParticipant::createParticipant(PParam);
+	if(mp_participant == NULL)
+		return false;
+	
+	// Create Publisher
+	
+	PublisherAttributes Wparam;
+	Wparam.topic.topicKind = NO_KEY;
+	Wparam.topic.topicDataType = "$ctx.m_firstStructure$PubSubType";  //This type MUST be registered
+	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 20;
+	Wparam.topic.resourceLimitsQos.max_samples = 50;
+	Wparam.topic.resourceLimitsQos.allocated_samples = 20;
+	Wparam.times.heartbeatPeriod.seconds = 2;
+	Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
+	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	mp_publisher = DomainParticipant::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	if(mp_publisher == NULL)
+		return false;
+	return true;
+}
+
+void $ctx.filename$Publisher::PubListener::onPublicationMatched(MatchingInfo info)
+{
+	if (info.status == MATCHED_MATCHING)
+	{
+		n_matched++;
+		cout << "Publisher matched" << endl;
+	}
+	else
+	{
+		n_matched--;
+		cout << "Publisher unmatched" << endl;
+	}
+}
+
+void $ctx.filename$Publisher::run()
+{
+	while(m_listener.n_matched == 0)
+	{
+		eClock::my_sleep(250); // Sleep 250 ms
+	}
+	
+	// Publication code
+	
+	$ctx.m_firstStructure$ st;
+	
+	/* Initialize your structure here */
+	
+	mp_publisher->write(&st);
+}
+
+>>
+
+module(ctx, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+$if(ctx.client)$
+/*!
+ * @brief This method implements the proxy part of the protocol for the operation $operation.name$.
+ *        It has to be implemented by the child classes.
+ */
+virtual $paramRetType(operation.rettype)$ $operation.parent.formatedScopedname$_$operation.name$($paramDeclsOnlyOutByRef(params=operation.parameters)$) = 0;
+$endif$
+
+$if(ctx.dds)$
+$if(!operation.oneway)$
+/*!
+ * @brief This asynchronous method implements the proxy part of the protocol for the operation $operation.name$.
+ *        It has to be implemented by the child classes.
+ */
+virtual void $operation.parent.formatedScopedname$_$operation.name$_async($operation.parent.scopedname$_$operation.name$CallbackHandler &obj$paramDeclsByValue(params=operation.inputparam, separatorInicial=", ")$) = 0;
+
+$endif$
+$endif$
+
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>

@@ -1,0 +1,45 @@
+group Types;
+
+type_5() ::= <<float>>
+
+type_6() ::= <<double>>
+
+type_13() ::= <<long double>>
+
+type_1() ::= <<short>>
+
+type_2() ::= <<long>>
+
+type_11() ::= <<long long>>
+
+type_3() ::= <<unsigned short>>
+
+type_4() ::= <<unsigned long>>
+
+type_12() ::= <<unsigned long long>>
+
+type_8() ::= <<char>>
+
+type_14() ::= <<wchar>>
+
+type_7() ::= <<boolean>>
+
+type_9() ::= <<octet>>
+
+type_d() ::= <<string>>
+
+type_15() ::= <<wstring>>
+
+type_f_first(prev) ::= <<std::array<$prev$>>
+type_f_second(prev, size) ::= <<, $size$>$prev$>>
+type_f(firs, secon, type) ::= <<$firs$$type$$secon$>>
+
+type_a(name) ::= <<$name$>>
+
+type_b(name) ::= <<$name$>>
+
+type_c(name) ::= <<$name$>>
+
+type_10(name) ::= <<$name$>>
+
+type_e(type, maxsize, empty) ::= <<sequence<$type$$if(maxsize)$, $maxsize$$endif$>$empty$>>
