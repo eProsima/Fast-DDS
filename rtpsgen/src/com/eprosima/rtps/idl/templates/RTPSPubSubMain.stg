@@ -1,0 +1,122 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubMain.cpp"], description=["This file acts as a main entry point to the application."])$
+
+
+#include "eprosimartps/rtps_all.h"
+#include "$ctx.filename$Publisher.h"
+#include "$ctx.filename$Subscriber.h"
+#include "$ctx.filename$PubSubType.h"
+
+int main(int argc, char** argv)
+{
+	RTPSLog::setVerbosity(EPROSIMA_WARNING_VERB_LEVEL);
+	cout << "Starting " << endl;
+	int type = 1;
+	if (argc > 1)
+	{
+		if (strcmp(argv[1], "publisher") == 0)
+		{
+			type = 1;
+		}
+		else if (strcmp(argv[1], "subscriber") == 0)
+		{
+			type = 2;
+		}
+	}
+	else
+	{
+		cout << "publisher OR subscriber argument needed" << endl;
+		return 0;
+	}
+	
+	// Register the type being used
+	
+	$ctx.filename$PubSubType myType;
+	DomainParticipant::registerType((DDSTopicDataType*) &myType);
+	
+	switch(type)
+	{
+		case 1:
+		{
+			$ctx.filename$Publisher mypub;
+			if (mypub.init())
+			{
+				mypub.run();
+			}
+			break;
+		}
+		case 2:
+		{
+			$ctx.filename$Subscriber mysub;
+			if (mysub.init())
+			{
+				mysub.run();
+			}
+			break;
+		}
+	}
+	
+	DomainParticipant::stopAll();
+	
+	return 0;
+}
+
+>>
+
+module(ctx, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+$if(ctx.client)$
+/*!
+ * @brief This method implements the proxy part of the protocol for the operation $operation.name$.
+ *        It has to be implemented by the child classes.
+ */
+virtual $paramRetType(operation.rettype)$ $operation.parent.formatedScopedname$_$operation.name$($paramDeclsOnlyOutByRef(params=operation.parameters)$) = 0;
+$endif$
+
+$if(ctx.dds)$
+$if(!operation.oneway)$
+/*!
+ * @brief This asynchronous method implements the proxy part of the protocol for the operation $operation.name$.
+ *        It has to be implemented by the child classes.
+ */
+virtual void $operation.parent.formatedScopedname$_$operation.name$_async($operation.parent.scopedname$_$operation.name$CallbackHandler &obj$paramDeclsByValue(params=operation.inputparam, separatorInicial=", ")$) = 0;
+
+$endif$
+$endif$
+
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>

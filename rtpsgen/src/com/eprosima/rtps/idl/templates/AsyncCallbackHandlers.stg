@@ -1,0 +1,94 @@
+group AsyncCallbackHandlers;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "AsyncCallbackHandlers.h"], description=["This header file contains the declaration of callback handlers used in asynchronous calls."])$
+
+#ifndef _$ctx.filename;format="toUpper"$_ASYNC_CALLBACK_HANDLERS_H_
+#define _$ctx.filename;format="toUpper"$_ASYNC_CALLBACK_HANDLERS_H_
+
+#include "$ctx.product$/exceptions/SystemException.h"
+#include "$ctx.product$/exceptions/UserException.h"
+#include "$ctx.filename$.h"
+
+$definitions; separator="\n"$
+
+#endif // _$ctx.filename;format="toUpper"$_ASYNC_CALLBACK_HANDLERS_H_
+>>
+
+module(ctx, module, definition_list) ::= <<
+namespace $module.name$
+{
+    $definition_list$
+};
+
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+/*!
+ * The export_list will be the definition of synchronize functions.
+ */
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+$if(!operation.oneway)$
+/*!
+ * @brief This abstract class defines the callbacks that eProsima RPC will call in an asynchronous call.
+ *        These callback has to be implemented in a derived class.
+ * @ingroup $ctx.trimfilename$
+ */
+class $operation.parent.name$_$operation.name$CallbackHandler
+{
+    public:
+        /*!
+         * This function is called when is received the reply from the server.
+         */
+        virtual void $operation.name$($paramDeclsByValue(params=[operation.outputparam, operation.rettypeparam])$) = 0;
+        
+        /*!
+         * @brief This function is called when an exception occurs.
+         *        This exception can be launched in the server's side or in the client's side.
+         *
+         * @param ex The exception that will be launched.
+         */
+        virtual void on_exception(const eprosima::rpc::exception::SystemException &ex) = 0;
+        $if(operation.exceptions)$
+        /*!
+         * @brief This function is called when a user exception occurs.
+         *        This user exception is launched in the server's side.
+         *
+         * @param ex The exception that will be launched.
+         */
+        virtual void on_exception(const eprosima::rpc::exception::UserException &ex) = 0;
+        $endif$
+};
+
+$endif$
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>
+

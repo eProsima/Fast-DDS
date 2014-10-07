@@ -1,0 +1,158 @@
+group TopicsIDLByInterface;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "RequestReply.idl"], description=["This IDL file contains the definition of the DDS messages for all defined interfaces by the user."])$
+
+#include "MessageHeader.idl"
+#include "$ctx.filename$.idl"
+
+$definitions; separator="\n"$
+>>
+
+module(ctx, module, definition_list) ::= <<
+$if(module.thereAreValidDefinitions)$
+module $module.name$
+{
+    $definition_list$
+};
+
+$endif$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+
+/*!
+ * @brief This union is used in the DDS topic to encapsulate the operations in request samples.
+ * @ingroup $ctx.trimfilename$
+ */
+union $interface.name$Request_union switch (long)
+{
+    $interface.operations : { operation |
+    case $i$:
+        $operation.parent.name$_$operation.name$Request $operation.name$;
+    }; separator="\n"$
+}; $nolevelIDLdefine()$
+
+
+/*!
+ * @brief This structure is used to send/receive requests
+ * for the interface $interface.name$.
+ * @ingroup $ctx.trimfilename$
+ */
+struct $interface.name$Request
+{
+    RequestHeader _header;
+    $interface.name$Request_union unio;
+}; $levelIDLdefine()$
+
+
+/*!
+ * @brief This union is used in the DDS topic to encapsulate the operations in reply samples.
+ * @ingroup $ctx.trimfilename$
+ */
+union $interface.name$Reply_union switch (long)
+{
+    $interface.operations : { operation |
+    case $i$:
+        $operation.parent.name$_$operation.name$Reply $operation.name$;
+    }; separator="\n"$
+}; $nolevelIDLdefine()$
+
+
+/*!
+ * @brief This is can be used to send/receive replies
+ * for the interface $interface.name$.
+ * @ingroup $ctx.trimfilename$
+ */
+struct $interface.name$Reply
+{
+    ReplyHeader _header;
+    $interface.name$Reply_union unio;
+}; $levelIDLdefine()$
+
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+
+$preRepIDLDefines(name=[operation.parent.name, "_", operation.name])$
+/*!
+ * @brief Structure used to receive/send requests for the procedure $operation.name$.
+ * @ingroup $ctx.trimfilename$
+ */
+struct $operation.parent.name$_$operation.name$Request{
+    $if(operation.inputparam)$
+    $operation.inputparam : {$it.typecode.idlTypename$ $it.name$;};separator="\n"$
+    $else$
+    char dummy;
+    $endif$
+}; $nolevelIDLdefine()$
+
+$if(operation.exceptions)$
+$if([operation.outputparam, operation.rettype])$
+/*!
+ * @brief This structure encapsulates the output parameters.
+ * @ingroup $ctx.trimfilename$
+ */
+struct  $operation.parent.name$_$operation.name$Reply_st
+{
+    $operation.outputparam : {$it.typecode.idlTypename$ $it.name$;};separator="\n"$
+    $if(operation.rettype)$$operation.rettype.idlTypename$ $operation.name$_ret;$endif$
+}; $nolevelIDLdefine()$
+$endif$
+$endif$
+
+$preRepIDLDefines(name=[operation.parent.name, "_", operation.name])$
+/*!
+ * @brief Structure used to receive/send replies for the procedure $operation.name$.
+ * @ingroup $ctx.trimfilename$
+ */
+$if(operation.exceptions)$
+union $operation.parent.name$_$operation.name$Reply switch (long)
+{
+   $if([operation.outputparam, operation.rettype])$
+   case  0:
+      $operation.parent.name$_$operation.name$Reply_st st;
+   $endif$
+   $operation.exceptions : { exception |
+   case $i$:
+      $exception.scopedname$_t $exception.formatedScopedname$_ex;
+   }; separator="\n"$
+}; $nolevelIDLdefine()$
+$else$
+struct $operation.parent.name$_$operation.name$Reply
+{
+    $if([operation.outputparam, operation.rettype])$
+    $operation.outputparam : {$it.typecode.idlTypename$ $it.name$;};separator="\n"$
+    $if(operation.rettype)$$operation.rettype.idlTypename$ $operation.name$_ret;$endif$
+    $else$
+    char dummy;
+    $endif$
+}; $nolevelIDLdefine()$
+$endif$
+
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>

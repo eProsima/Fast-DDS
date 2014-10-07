@@ -1,0 +1,304 @@
+group eprosima;
+
+paramTypeByValue(typecode) ::= <<
+$if(typecode.primitive)$
+$if(typecode.isType_d)$
+const $typecode.cppTypename$&
+$else$
+$typecode.cppTypename$
+$endif$
+$else$
+const $typecode.cppTypename$&
+$endif$
+>>
+
+varDecl(variable, create) ::= <<
+$if(variable)$
+$if(variable.typecode.primitive)$
+$variable.typecode.cppTypename$  $variable.name$ = $variable.typecode.initialValue$;
+$else$
+$variable.typecode.cppTypename$  $variable.name$;
+$endif$
+$endif$
+>>
+
+varDel(variable) ::= <<>>
+
+member_default_init(member) ::= <<
+$if(member.typecode.primitive)$
+m_$member.name$ = $member.typecode.initialValue$;
+$endif$
+>>
+
+getTypenameOperation(operation, suffix, varname) ::= <<
+$varname$ = $operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::get_typename();
+>>
+
+getTypenameInterface(interface, suffix, varname) ::= <<
+$varname$ = $interface.scopedname$$suffix$Plugin::get_typename();
+>>
+
+registerTypenameOperationAndCheck(operation, suffix, varname) ::= <<
+!$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::register_type(m_ddsTransport->getParticipant(), $varname$)
+>>
+
+registerTypenameInterfaceAndCheck(interface, suffix, varname) ::= <<
+!$interface.scopedname$$suffix$Plugin::register_type(m_ddsTransport->getParticipant(), $varname$)
+>>
+
+createDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Create_data)$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::create_data
+>>
+
+createDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Create_data)$interface.scopedname$$suffix$Plugin::create_data
+>>
+
+copyDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Copy_data)$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::copy_data
+>>
+
+copyDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Copy_data)$interface.scopedname$$suffix$Plugin::copy_data
+>>
+
+destroyDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Destroy_data)$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::destroy_data
+>>
+
+destroyDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Destroy_data)$interface.scopedname$$suffix$Plugin::destroy_data
+>>
+
+addParamToTopic(param, varname, isRequest) ::= <<
+$if(param)$
+$if(isRequest)$
+$varname$.$param.name$($param.name$);
+$else$
+$if(param.typecode.primitive)$
+$varname$.$param.name$($param.name$);
+$else$
+$varname$.$param.name$(std::move($param.name$));
+$endif$
+$endif$
+$endif$
+>>
+
+addExceptionMemberToTopic(exception, member, varname) ::= <<
+$if(member.typecode.primitive)$
+$varname$.unio().$exception.formatedScopedname$_ex().$member.name$(ex.$member.name$());
+$else$
+$varname$.unio().$exception.formatedScopedname$_ex().$member.name$(std::move(ex.$member.name$()));
+$endif$
+>>
+
+extractParamFromTopic(param, varname, isReply) ::= <<
+$if(param.typecode.primitive)$
+$param.name$ = $varname$.$param.name$();
+$else$ 
+$param.name$ = std::move($varname$.$param.name$()); //TODO Probar que esto funciona.
+$endif$ 
+>>
+
+extractExceptionMemberFromTopic(exception, member, varname) ::= <<
+$if(member.typecode.primitive)$
+ex.$member.name$($varname$.unio().$exception.formatedScopedname$_ex().$member.name$());
+$else$
+ex.$member.name$(std::move($varname$.unio().$exception.formatedScopedname$_ex().$member.name$()));
+$endif$
+>>
+
+extractExceptionMemberFromTopicByInterface(exception, member, varname) ::= <<
+$if(member.typecode.primitive)$
+ex.$member.name$($varname$.$exception.formatedScopedname$_ex().$member.name$());
+$else$
+ex.$member.name$(std::move($varname$.$exception.formatedScopedname$_ex().$member.name$()));
+$endif$
+>>
+
+copyHeaderInfo(reqvarname, repvarname) ::= <<
+$repvarname$._header().clientId().value_1() = $reqvarname$._header().clientId().value_1();
+$repvarname$._header().clientId().value_2() = $reqvarname$._header().clientId().value_2();
+$repvarname$._header().clientId().value_3() = $reqvarname$._header().clientId().value_3();
+$repvarname$._header().clientId().value_4() = $reqvarname$._header().clientId().value_4();
+$repvarname$._header().requestSequenceNumber() = $reqvarname$._header().requestSequenceNumber();
+>>
+
+setHeaderSuccess(varname) ::= <<
+$varname$._header().retCode(OPERATION_SUCCESSFUL);
+>>
+
+setHeaderServerInternalException(varname) ::= <<
+$varname$._header().retCode(SERVER_INTERNAL_ERROR);
+$varname$._header().retMsg(std::move(ex.what()));
+>>
+
+getHeaderRetCode(varname) ::= <<
+$varname$._header().retCode()
+>>
+
+getHeaderRetMsg(varname) ::= <<
+$varname$._header().retMsg()
+>>
+
+interfaceUnionDiscriminator(varname) ::= <<
+$varname$.unio()._d()
+>>
+
+interfaceUnionOperation(operation, varname) ::= <<
+$varname$.unio().$operation.name$()
+>>
+
+replyUnionDiscriminator(varname) ::= <<
+$varname$.unio()._d()
+>>
+
+replyUnionDiscriminatorByInterface(operation, varname) ::= <<
+$varname$.unio().$operation.name$()._d()
+>>
+
+replyUnionData(varname, dataname) ::= <<
+$varname$.unio().$dataname$()
+>>
+
+replyUnionDataByInterface(operation, varname, dataname) ::= <<
+$varname$.unio().$operation.name$().$dataname$()
+>>
+
+// TODO Todos los tipos. MEJORAR. size of 1 no deberia generar alignment.
+max_serialized_size(ctx, typecode, var) ::= <<
+$if(typecode.primitive)$
+$if(typecode.isType_d)$
+$var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$ + $typecode.maxsize$ + 1;
+$else$
+$var$ += $typecode.size$$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, $typecode.size$)$endif$;
+$endif$
+$else$
+$if(typecode.isType_e)$
+$var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$;
+$sequence_max_serialized_size(ctx=ctx, typecodeSeq=typecode, var=var, loopvar=ctx.newLoopVarName)$
+$elseif(typecode.isType_f)$
+$array_max_serialized_size(ctx=ctx, typecodeArr=typecode, var=var, loopvar=ctx.newLoopVarName)$
+$else$
+$var$ = $typecode.scopedname$::getMaxCdrSerializedSize($var$);
+$endif$
+$endif$
+>>
+
+sequence_max_serialized_size(ctx, typecodeSeq, var, loopvar) ::= <<
+$if(typecodeSeq.contentTypeCode.primitive)$
+$if(typecodeSeq.contentTypeCode.isType_d)$
+for(size_t $loopvar$ = 0; $loopvar$ < $typecodeSeq.maxsize$; ++$loopvar$)
+{
+    $var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$ + $typecodeSeq.contentTypeCode.maxsize$ + 1;
+}
+$else$
+$var$ += ($typecodeSeq.maxsize$ * $typecodeSeq.contentTypeCode.size$)$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, $typecodeSeq.contentTypeCode.size$)$endif$;
+$endif$
+$else$
+for(size_t $loopvar$ = 0; $loopvar$ < $typecodeSeq.maxsize$; ++$loopvar$)
+{
+$if(typecodeSeq.contentTypeCode.isType_e)$
+    $var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$;
+    $sequence_max_serialized_size(ctx=ctx, typecodeSeq=typecodeSeq.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$elseif(typecodeSeq.contentTypeCode.isType_f)$
+$array_max_serialized_size(ctx=ctx, typecodeArr=typecodeSeq.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$else$
+    $var$ = $typecodeSeq.contentTypeCode.scopedname$::getMaxCdrSerializedSize($var$);
+$endif$
+}
+$endif$
+>>
+
+array_max_serialized_size(ctx, typecodeArr, var, loopvar) ::= <<
+$if(typecodeArr.contentTypeCode.primitive)$
+$if(typecodeArr.contentTypeCode.isType_d)$
+for(size_t $loopvar$ = 0; $loopvar$ < $typecodeArr.size$; ++$loopvar$)
+{
+    $var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$ + $typecodeArr.contentTypeCode.maxsize$ + 1;
+}
+$else$
+$var$ += ($typecodeArr.size$ * $typecodeArr.contentTypeCode.size$)$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, $typecodeArr.contentTypeCode.size$)$endif$;
+$endif$
+$else$
+for(size_t $loopvar$ = 0; $loopvar$ < $typecodeArr.size$; ++$loopvar$)
+{
+$if(typecodeArr.contentTypeCode.isType_e)$
+    $var$ += 4$if(ctx.cdr)$ + eprosima::fastcdr::Cdr::alignment($var$, 4)$endif$;
+    $sequence_max_serialized_size(ctx=ctx, typecodeArr=typecodeArr.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$elseif(typecodeArr.contentTypeCode.isType_f)$
+$array_max_serialized_size(ctx=ctx, typecodeArr=typecodeArr.contentTypeCode, var=var, loopvar=ctx.nextLoopVarName)$
+$else$
+    $var$ = $typecodeArr.contentTypeCode.scopedname$::getMaxCdrSerializedSize($var$);
+$endif$
+}
+$endif$
+>>
+
+object_serialization(ctx, object, preffix) ::= <<
+$if(object.typecode.maxsize)$
+if($preffix$$object.name$.$sizeFunction.(object.typecode.stType)$ <= $object.typecode.maxsize$)
+
+$endif$scdr << $serializeCasting(typecode=object.typecode)$$preffix$$object.name$;
+$if(object.typecode.maxsize)$
+else
+$if(ctx.fastrpcProduct)$
+    throw eprosima::rpc::exception::BadParamException(std::string("$object.name$ field exceeds the maximum length"));
+$else$
+    throw eprosima::fastcdr::exception::BadParamException(std::string("$object.name$ field exceeds the maximum length"));
+$endif$
+$endif$
+>>
+
+object_deserialization(ctx, object, preffix) ::= <<
+dcdr \>> $deserializeCasting(typecode=object.typecode)$$preffix$$object.name$;
+>>
+
+// TODO Todos los tipos. MEJORAR. size of 1 no deberia generar alignment.
+serialized_size(param, var) ::= <<
+$if(param.typecode.primitive)$
+$if(param.typecode.isType_d)$
+// TODO $var$ += $param.name$.length();
+$else$
+$var$ += $param.typecode.size$ + eprosima::fastcdr::Cdr::alignment($var$, $param.typecode.size$);
+$endif$
+$else$
+// TODO
+$endif$
+>>
+
+serializeCasting(typecode) ::= <<
+$if(typecode.isType_c)$
+(uint32_t)
+$endif$
+>>
+
+deserializeCasting(typecode) ::= <<
+$if(typecode.isType_c)$
+(uint32_t&)
+$endif$
+>>
+
+eprosimaTypesBool() ::= <<true>>
+
+sizeFunction ::= [
+        "type_e":"size()",
+        "type_d":"length()",
+        "type_15":"length()",
+        default: // not basic type.
+]
+
+/** NEEDED BY RTI TYPES **/
+charCasting() ::= <<>>
+
+unsetReply() ::= <<>>
+
+reqrepDestruction(type, reqrep, name, void) ::= <<>>
+
+varComplexInitializeT(typeName, name) ::= <<>>
+
+varComplexInitialize(variable) ::= <<>>
+
+varComplexDelT(typeName, name) ::= <<>>
+
+reqrepRefFinalize(type, reqrep, name) ::= <<>>

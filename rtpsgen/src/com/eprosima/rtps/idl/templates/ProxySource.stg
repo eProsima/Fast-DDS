@@ -1,0 +1,86 @@
+group ProxySource;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Proxy.cxx"], description=["This source file contains the definition of the proxy for all interfaces."])$
+
+#include "$ctx.filename$Proxy.h"
+#include "$ctx.product$/transports/ProxyTransport.h"
+#include "$ctx.filename$Protocol.h"
+
+$definitions; separator="\n"$
+>>
+
+module(ctx, module, definition_list) ::= <<
+namespace $module.name$
+{
+    $definition_list$
+};
+
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+/*!
+ * The export_list will be the definition of synchronize functions.
+ */
+interface(ctx, interface, export_list) ::= <<
+$interface.name$Proxy::$interface.name$Proxy(eprosima::rpc::transport::ProxyTransport &transport,
+    eprosima::rpc::protocol::$ctx.filename$Protocol &protocol) : Proxy(transport, protocol)
+{
+    protocol.activateInterface("$interface.scopedname$");
+}
+
+$interface.name$Proxy::~$interface.name$Proxy()
+{
+}
+
+$export_list$
+
+>>
+//$interface.exports : {export | $if(export.operation)$$functionAsyncImpl(operation=export)$$endif$}$
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+$paramRetType(operation.rettype)$ $operation.parent.name$Proxy::$operation.name$($paramDeclsOnlyOutByRef(params=operation.parameters)$)
+{
+    $if(operation.rettypeparam)$
+    $paramRetType(operation.rettype)$ $operation.rettypeparam.name$ =
+    $endif$
+    dynamic_cast<eprosima::rpc::protocol::$ctx.filename$Protocol&>(getProtocol()).$operation.parent.formatedScopedname$_$operation.name$($extractParams(params=operation.parameters)$);
+    $if(operation.rettypeparam)$
+    return $operation.rettypeparam.name$;
+    $endif$
+}
+
+$if(ctx.dds)$
+$if(!operation.oneway)$
+void $operation.parent.name$Proxy::$operation.name$_async($operation.parent.name$_$operation.name$CallbackHandler &obj$paramDeclsByValue(params=operation.inputparam, separatorInicial=", ")$)
+{
+    dynamic_cast<eprosima::rpc::protocol::$ctx.filename$Protocol&>(getProtocol()).$operation.parent.formatedScopedname$_$operation.name$_async(obj$extractParams(params=operation.inputparam, separatorInicial=", ")$);
+}
+
+$endif$
+$endif$
+
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>
