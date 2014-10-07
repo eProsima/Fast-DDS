@@ -12,9 +12,9 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.cpp"], description=["T
 $ctx.filename$PubSubType::$ctx.filename$PubSubType() 
 {
 	m_topicDataTypeName = "$ctx.m_firstStructure$PubSubType";
-	$ctx.m_firstStructure$ example;
 	m_typeSize = $ctx.m_firstStructure$::getMaxCdrSerializedSize();
-	m_isGetKeyDefined = false;
+	m_isGetKeyDefined = $ctx.m_firstStructure$::isKeyDefined();
+	m_keyBuffer = malloc($ctx.m_firstStructure$::getKeyMaxCdrSerializedSize()>16?$ctx.m_firstStructure$::getKeyMaxCdrSerializedSize()>16:16);
 }
 
 $ctx.filename$PubSubType::~$ctx.filename$PubSubType() 
@@ -29,12 +29,14 @@ bool $ctx.filename$PubSubType::serialize(void *data, SerializedPayload_t *payloa
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr ser(fastbuffer);
+	eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
+	//Select the correct endianess
+	payload->encapsulation = CDR_LE; 
 	// Serialize the object:
 	p_type->serialize(ser);
+	//Get the serialized length
     payload->length = ser.getSerializedDataLength();
-    payload->encapsulation = CDR_LE; //Little endian encapsulation
-	
+    	
 	return true;
 }
 
@@ -45,16 +47,47 @@ bool $ctx.filename$PubSubType::deserialize(SerializedPayload_t* payload, void* d
 
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
-	// Object that serializes the data.
-	eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
-	//serialize the object:
+	//select the correct endianess
+	eprosima::fastcdr::Cdr::Endianness endian = payload->encapsulation == CDR_LE ? Cdr::LITTLE_ENDIANNESS : Cdr::BIG_ENDIANNESS;
+	// Object that deserializes the data.
+	eprosima::fastcdr::Cdr deser(fastbuffer,endian);
+	//deserialize the object:
 	p_type->deserialize(deser);
 	return true;
 }
 
 bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle) 
 {
-	return false;
+	if(!m_isGetKeyDefined)
+		return false;
+
+	$ctx.m_firstStructure$* p_type = ($ctx.m_firstStructure$*) data;
+
+	// Object that manages the raw buffer.
+	eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,$ctx.m_firstStructure$::getKeyMaxCdrSerializedSize());
+	// Object that serializes the data.
+	eprosima::fastcdr::Cdr ser(fastbuffer,Cdr::BIG_ENDIANNESS);
+
+	p_type->serializeKey(ser);
+	if($ctx.m_firstStructure$::getKeyMaxCdrSerializedSize()>16)
+	{
+	m_md5.init();
+	m_md5.update(m_keyBuffer,ser.getSerializedDataLength());
+	m_md5.finalize();
+	for(uint8_t i = 0;i<16;++i)
+    {
+        ihandle->value[i] = md5.digest[i];
+    }
+    }
+    else
+    {
+    for(uint8_t i = 0;i<16;++i)
+    {
+        ihandle->value[i] = m_keyBuffer[i];
+    }
+    }
+	
+	
 }
 
 >>
