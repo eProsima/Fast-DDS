@@ -19,9 +19,8 @@
 
 SimplePubSubType::SimplePubSubType() {
 	m_topicDataTypeName = "YOURTYPE";
-	YOURTYPE example;
-	m_typeSize = example.getMaxCdrSerializedSize(0); //Maximum number of bytes in CDR serialization
-	m_isGetKeyDefined = false;
+	m_typeSize = YOURTYPE::getMaxCdrSerializedSize(); //Maximum number of bytes in CDR serialization
+	m_isGetKeyDefined = YOURTYPE::isKeyDefined();
 
 }
 
@@ -37,7 +36,7 @@ bool SimplePubSubType::serialize(void* data, SerializedPayload_t* payload)
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr ser(fastbuffer);
+	eprosima::fastcdr::Cdr ser(fastbuffer,Cdr::LITTLE_ENDIANNESS);
 	//serialize the object:
 	p_type->serialize(ser);
 	payload->length = ser.getSerializedDataLength();

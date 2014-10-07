@@ -391,6 +391,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CDRMessagePool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\IPFinder.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\md5.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h" />
@@ -464,6 +465,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\utils\CDRMessagePool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\eClock.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\IPFinder.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\utils\md5.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\ObjectPool.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\RTPSLog.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\utils\StringMatching.cpp" />
