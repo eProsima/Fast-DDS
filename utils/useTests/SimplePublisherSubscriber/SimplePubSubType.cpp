@@ -23,10 +23,7 @@ SimplePubSubType::SimplePubSubType():
 	DDSTopicDataType()
 {
 	m_topicDataTypeName = std::string("MyType");
-
-	cout << "Current type size: " << MyType::getMaxCdrSerializedSize()<<endl;
-	m_typeSize = MyType::getMaxCdrSerializedSize(); 
-	cout << "MyTypeSize: " << m_typeSize << endl;
+	m_typeSize = (uint32_t)MyType::getMaxCdrSerializedSize(); 
 	m_isGetKeyDefined = false;
 
 }
@@ -44,11 +41,12 @@ bool SimplePubSubType::serialize(void* data, SerializedPayload_t* payload)
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
 	// Object that serializes the data.
 	eprosima::fastcdr::Cdr ser(fastbuffer,Cdr::LITTLE_ENDIANNESS);
-
+	//Select the correct endianess
+	payload->encapsulation = CDR_LE; 
 	//serialize the object:
 	p_type->serialize(ser);
-	payload->length = ser.getSerializedDataLength();
-	payload->encapsulation = CDR_LE; //Litlle endian encapsulation
+	payload->length = (uint16_t)ser.getSerializedDataLength();
+	
 	return true;
 }
 
@@ -56,12 +54,12 @@ bool SimplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
 {
 	//CONVERT DATA to pointer of your type
 	MyType* p_type = (MyType*) data;
-
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
-
+	//select the correct endianess
+	Cdr::Endianness endian = payload->encapsulation == CDR_LE ? Cdr::LITTLE_ENDIANNESS : Cdr::BIG_ENDIANNESS;
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr deser(fastbuffer,Cdr::LITTLE_ENDIANNESS);
+	eprosima::fastcdr::Cdr deser(fastbuffer,endian);
 	//serialize the object:
 	p_type->deserialize(deser);
 	return true;
