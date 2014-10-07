@@ -69,7 +69,8 @@
         <property name="idl.src.dir" value="${idl.dir}${file.separator}src" />
 		<property name="idl.src.java" value="${idl.src.dir}" />
 		<property name="idl.grammar.dir" value="${idl.dir}${file.separator}grammars" />
-        <property name="lib.dir" value="${basedir}${file.separator}..${file.separator}classes${file.separator}" />
+        <property name="lib.dir" value="${basedir}${file.separator}lib${file.separator}" />
+		<property name="output.dir" value="${basedir}${file.separator}..${file.separator}classes" />
 		<property name="tmp.dir" value="./tmp" />
 		<property name="src.excludes" value="" />
 
