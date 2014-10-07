@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>com</name>
+			<type>2</type>
+			<location>C:/Rafa/Proyectos/idl/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

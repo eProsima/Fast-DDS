@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,6 +122,14 @@ public class rtpsgen {
 				} else {
 					throw new BadArgumentException("No language specified after -language argument");
 				}
+			} else if(arg.equals("-ppPath")) {
+				if (count < args.length) {
+					m_ppPath = args[count++];
+				} else {
+					throw new BadArgumentException("No URL specified after -ppPath argument");
+				}
+			} else if (arg.equals("-ppDisable")) {
+				m_ppDisable = true;
 			} else if (arg.equals("-replace")) {
 				m_replace = true;
 			} else if (arg.equals("-d")) {
@@ -325,7 +334,7 @@ public class rtpsgen {
         System.out.println("\t" + m_appName + " [options] <file> [<file> ...]");
         System.out.println("\twhere the options are:");
         System.out.println("\t\t-help: shows this help");
-        System.out.print("\t\t-version: shows the current version of eProsima RTPS.");
+        System.out.println("\t\t-version: shows the current version of eProsima RTPS.");
 		System.out.println("\t\t-example <platform>: Generates a solution for a specific platform (example: x64Win64VS2010)");
         System.out.println("\t\t\tSupported platforms:");
         for(int count = 0; count < m_platforms.size(); ++count)
@@ -391,6 +400,10 @@ public class rtpsgen {
 		Project project = null;
 		
 		String onlyFileName = Util.getIDLFileNameOnly(idlFilename);
+		
+		if (!m_ppDisable) {
+			idlParseFileName = callPreprocessor(idlFilename);
+		}
 		
 		if (idlParseFileName != null) {
 			Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
@@ -605,6 +618,99 @@ public class rtpsgen {
 		return returnedValue;
 	}
 	
+	String callPreprocessor(String idlFilename) {
+		final String METHOD_NAME = "callPreprocessor";
+		
+		// Set line command.
+		ArrayList lineCommand = new ArrayList();
+		String [] lineCommandArray = null;
+		String outputfile = Util.getIDLFileOnly(idlFilename) + ".cc";
+		int exitVal = -1;
+		OutputStream of = null;
+		
+		// Use temp directory.
+		if (m_tempDir != null) {
+			outputfile = m_tempDir + outputfile;
+		}
+		
+		if (m_os.contains("Windows")) {
+			try {
+				of = new FileOutputStream(outputfile);
+			} catch (FileNotFoundException ex) {
+				System.out.println(ColorMessage.error(METHOD_NAME) + "Cannot open file " + outputfile);
+				return null;
+			}
+		}
+		
+		// Set the preprocessor path
+		String ppPath = m_ppPath;
+		
+		if (ppPath == null) {
+			if (m_os.contains("Windows")) {
+				ppPath = "cl.exe";
+			} else if (m_os.contains("Linux")) {
+				ppPath = "cpp";
+			}
+		}
+		
+		// Add command
+		lineCommand.add(ppPath);
+		
+		// Add the include paths given as parameters.
+		for (int i=0; i < m_includePaths.size(); ++i) {
+			if (m_os.contains("Windows")) {
+				lineCommand.add(((String) m_includePaths.get(i)).replaceFirst("^-I", "/I"));
+			} else if (m_os.contains("Linux")) {
+				lineCommand.add(m_includePaths.get(i));
+			}
+		}
+		
+		if (m_os.contains("Windows")) {
+			lineCommand.add("/E");
+			lineCommand.add("/C");
+		}
+		
+		// Add input file.
+		lineCommand.add(idlFilename);
+		
+		if(m_os.contains("Linux")) {
+			lineCommand.add(outputfile);
+		}
+		
+		lineCommandArray = new String[lineCommand.size()];
+		lineCommandArray = (String[])lineCommand.toArray(lineCommandArray);
+		
+		try {
+			Process preprocessor = Runtime.getRuntime().exec(lineCommandArray);
+			ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null);
+			ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, of);
+			errorOutput.start();
+			normalOutput.start();
+			exitVal = preprocessor.waitFor();
+			errorOutput.join();
+			normalOutput.join();
+		} catch (Exception e) {
+			System.out.println(ColorMessage.error(METHOD_NAME) + "Cannot execute the preprocessor. Reason: " + e.getMessage());
+			return null;
+		}
+		
+		if (of != null) {
+			try {
+				of.close();
+			} catch (IOException e) {
+				System.out.println(ColorMessage.error(METHOD_NAME) + "Cannot close file " + outputfile);
+			}
+			
+		}
+		
+		if (exitVal != 0) {
+			System.out.println(ColorMessage.error(METHOD_NAME) + "Preprocessor return an error " + exitVal);
+			return null;
+		}
+		
+		return outputfile;
+	}
+	
 	/*
 	 * ----------------------------------------------------------------------------------------
 	 * 
@@ -625,7 +731,8 @@ public class rtpsgen {
 				
 			} catch (BadArgumentException e) {
 				
-				
+				System.out.println(ColorMessage.error("BadArgumentException") + e.getMessage());
+                printHelp();
 				
 			}
 			
@@ -634,4 +741,70 @@ public class rtpsgen {
 		System.exit(-1);
 	}
 	
+}
+
+class ProcessOutput extends Thread
+{
+    InputStream is = null;
+    OutputStream of = null;
+    String type;
+    boolean m_check_failures;
+    boolean m_found_error = false;
+    final String clLine = "#line";
+
+    ProcessOutput(InputStream is, String type, boolean check_failures, OutputStream of)
+    {
+        this.is = is;
+        this.type = type;
+        m_check_failures = check_failures;
+        this.of = of;
+    }
+
+    public void run()
+    {
+        try
+        {
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line=null;
+            while ( (line = br.readLine()) != null)
+            {
+                if(of == null)
+                    System.out.println(line);
+                else
+                {
+                    // Sustituir los \\ que pone cl.exe por \
+                    if(line.startsWith(clLine))
+                    {
+                        line = "#" + line.substring(clLine.length());
+                        int count = 0;
+                        while((count = line.indexOf("\\\\")) != -1)
+                        {
+                            line = line.substring(0, count) + "\\" + line.substring(count + 2);
+                        }
+                    }
+
+                    of.write(line.getBytes());
+                    of.write('\n');
+                }
+
+                if(m_check_failures)
+                {
+                    if(line.startsWith("Done (failures)"))
+                    {
+                        m_found_error = true;
+                    }
+                }
+            }
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();  
+        }
+    }
+
+    boolean getFoundError()
+    {
+        return m_found_error;
+    }
 }
