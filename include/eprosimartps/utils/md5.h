@@ -61,8 +61,10 @@ public:
   std::string hexdigest() const;
   friend std::ostream& operator<<(std::ostream&, MD5& md5);
     uint1 digest[16]; // the result
+
+	void init();
 private:
-  void init();
+  
 
   typedef unsigned int uint4;  // 32bit
   enum {blocksize = 64}; // VC6 won't eat a const static int here
