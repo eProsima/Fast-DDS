@@ -19,7 +19,8 @@ $ctx.filename$PubSubType::$ctx.filename$PubSubType()
 
 $ctx.filename$PubSubType::~$ctx.filename$PubSubType() 
 {
-
+	if(m_keyBuffer!=NULL)
+		delete(m_keyBuffer);
 }
 
 bool $ctx.filename$PubSubType::serialize(void *data, SerializedPayload_t *payload) 
