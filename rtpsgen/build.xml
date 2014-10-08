@@ -65,7 +65,7 @@
 		<property name="rtps.dir" value="${basedir}" />
 		<property name="rtps.src.dir" value="${rtps.dir}${file.separator}src" />
 		<property name="rtps.src.java" value="${rtps.src.dir}" />
-		<property name="idl.dir" value="${basedir}${file.separator}..${file.separator}..${file.separator}idl" />
+		<property name="idl.dir" value="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}idl" />
         <property name="idl.src.dir" value="${idl.dir}${file.separator}src" />
 		<property name="idl.src.java" value="${idl.src.dir}" />
 		<property name="idl.grammar.dir" value="${idl.dir}${file.separator}grammars" />
