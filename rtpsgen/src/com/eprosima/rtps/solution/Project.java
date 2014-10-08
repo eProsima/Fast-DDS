@@ -16,6 +16,8 @@ public class Project extends com.eprosima.solution.Project
 		m_subscriberincludefiles = new ArrayList();
 		m_publishersrcfiles = new ArrayList();
 		m_publisherincludefiles = new ArrayList();
+		m_projectincludefiles = new ArrayList();
+		m_projectsrcfiles = new ArrayList();
 	}
 	
 	public void addSubscriberSrcFile(String file)
@@ -56,6 +58,26 @@ public class Project extends com.eprosima.solution.Project
 	public ArrayList getPublisherIncludeFiles()
 	{
 		return m_publisherincludefiles;
+	}
+	
+	public void addProjectIncludeFile(String file)
+	{
+		m_projectincludefiles.add(file);
+	}
+	
+	public ArrayList getProjectIncludeFiles()
+	{
+		return m_projectincludefiles;
+	}
+	
+	public void addProjectSrcFile(String file)
+	{
+		m_projectsrcfiles.add(file);
+	}
+	
+	public ArrayList getProjectSrcFiles()
+	{
+		return m_projectsrcfiles;
 	}
 	
 	public boolean getContainsInterfaces()
@@ -100,10 +122,21 @@ public class Project extends com.eprosima.solution.Project
 		return GUIDGenerator.genGUID(getFile() + "PublisherExample");
 	}
 	
+	/*!
+	 * @brief Used in string templates.
+	 */
+	public String getExampleGuid()
+	{
+		return GUIDGenerator.genGUID(getFile() + "PubSubExample");
+	}
+	
 	private boolean m_containsInterfaces = false;
 	private ArrayList m_subscribersrcfiles = null;
 	private ArrayList m_subscriberincludefiles = null;
 	private ArrayList m_publishersrcfiles = null;
 	private ArrayList m_publisherincludefiles = null;
+	
+	private ArrayList m_projectsrcfiles = null;
+	private ArrayList m_projectincludefiles = null;
 	String m_guid = null;
 }

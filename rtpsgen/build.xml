@@ -22,7 +22,7 @@
 		<attribute name="base" />
 		<attribute name="grammar" />
 		<sequential>
-            <java classname="antlr.Tool" classpath="../classes/antlr-2.7.7.jar">
+            <java classname="antlr.Tool" classpath="./lib/antlr-2.7.7.jar">
 				<arg value="-o" />
 				<arg value="@{base}" />
 				<arg value="@{grammar}" />
@@ -34,7 +34,7 @@
 		<attribute name="base" />
 		<attribute name="grammar" />
 		<sequential>
-            <java classname="com.javadude.antxr.Tool" classpath="../classes/antxr.jar">
+            <java classname="com.javadude.antxr.Tool" classpath="./lib/antxr.jar">
 				<arg value="-o" />
 				<arg value="@{base}" />
 				<arg value="@{grammar}" />

@@ -67,7 +67,7 @@ bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle)
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,$ctx.m_firstStructure$::getKeyMaxCdrSerializedSize());
 	// Object that serializes the data.
-	eprosima::fastcdr::Cdr ser(fastbuffer,Cdr::BIG_ENDIANNESS);
+	eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
 
 	p_type->serializeKey(ser);
 	if($ctx.m_firstStructure$::getKeyMaxCdrSerializedSize()>16)
@@ -77,7 +77,7 @@ bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle)
 		m_md5.finalize();
 		for(uint8_t i = 0;i<16;++i)
     	{
-        	handle->value[i] = md5.digest[i];
+        	handle->value[i] = m_md5.digest[i];
     	}
     	}
     else

@@ -55,7 +55,7 @@ public class rtpsgen {
 	protected static String m_appEnv = "EPROSIMARTPSHOME";
 	private String m_exampleOption = null;
 	private String m_languageOption = "C++";
-    private boolean m_ppDisable = true; //TODO
+    private boolean m_ppDisable = false; //TODO
     private boolean m_replace = false;
     private String m_ppPath = null;
     private final String m_defaultOutputDir = "." + File.separator;
@@ -230,8 +230,8 @@ public class rtpsgen {
             }
 			
 			// m_local = true
-			solution.addInclude("$(FAST_BUFFERS)/include");
-			solution.addLibraryPath("$(FAST_BUFFERS)/lib/" + m_exampleOption);
+			//solution.addInclude("$(FAST_BUFFERS)/include");
+			//solution.addLibraryPath("$(FAST_BUFFERS)/lib/" + m_exampleOption);
 			
 			
 			if (m_exampleOption != null && !m_exampleOption.contains("Win")) {
@@ -469,32 +469,34 @@ public class rtpsgen {
 				// TODO: Uncomment following lines and create templates
 				
 				System.out.println("Generating generic type files...");
-				if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubType.h", maintemplates.getTemplate("RTPSPubSubTypeHeader"), m_replace)) {
-					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubType.cxx", maintemplates.getTemplate("RTPSPubSubTypeSource"), m_replace)) {
-						project.addCommonIncludeFile(onlyFileName + "PubSubType.h");
-						project.addCommonSrcFile(onlyFileName + "PubSubType.cxx");
+				if (m_exampleOption != null) {
+					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubType.h", maintemplates.getTemplate("RTPSPubSubTypeHeader"), m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubType.cxx", maintemplates.getTemplate("RTPSPubSubTypeSource"), m_replace)) {
+							project.addProjectIncludeFile(onlyFileName + "PubSubType.h");
+							project.addProjectSrcFile(onlyFileName + "PubSubType.cxx");
+						}
 					}
-				}
-				
-				System.out.println("Generating Publisher files...");
-				if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Publisher.h", maintemplates.getTemplate("RTPSPublisherHeader"), m_replace)) {
-					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Publisher.cxx", maintemplates.getTemplate("RTPSPublisherSource"), m_replace)) {
-						project.addCommonIncludeFile(onlyFileName + "Publisher.h");
-						project.addCommonSrcFile(onlyFileName + "Publisher.cxx");
+					
+					System.out.println("Generating Publisher files...");
+					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Publisher.h", maintemplates.getTemplate("RTPSPublisherHeader"), m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Publisher.cxx", maintemplates.getTemplate("RTPSPublisherSource"), m_replace)) {
+							project.addProjectIncludeFile(onlyFileName + "Publisher.h");
+							project.addProjectSrcFile(onlyFileName + "Publisher.cxx");
+						}
 					}
-				}
-				
-				System.out.println("Generating Subscriber files...");
-				if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Subscriber.h", maintemplates.getTemplate("RTPSSubscriberHeader"), m_replace)) {
-					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Subscriber.cxx", maintemplates.getTemplate("RTPSSubscriberSource"), m_replace)) {
-						project.addCommonIncludeFile(onlyFileName + "Subscriber.h");
-						project.addCommonSrcFile(onlyFileName + "Subscriber.cxx");
+					
+					System.out.println("Generating Subscriber files...");
+					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Subscriber.h", maintemplates.getTemplate("RTPSSubscriberHeader"), m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Subscriber.cxx", maintemplates.getTemplate("RTPSSubscriberSource"), m_replace)) {
+							project.addProjectIncludeFile(onlyFileName + "Subscriber.h");
+							project.addProjectSrcFile(onlyFileName + "Subscriber.cxx");
+						}
 					}
-				}
-				
-				System.out.println("Generating main file...");
-				if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubMain.cxx", maintemplates.getTemplate("RTPSPubSubMain"), m_replace)) {
-					project.addCommonSrcFile(onlyFileName + "PubSubMain.cxx");
+					
+					System.out.println("Generating main file...");
+					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubMain.cxx", maintemplates.getTemplate("RTPSPubSubMain"), m_replace)) {
+						project.addProjectSrcFile(onlyFileName + "PubSubMain.cxx");
+					}
 				}
 			}
 			
@@ -552,9 +554,12 @@ public class rtpsgen {
 			StringTemplate tsolution = vsTemplates.getInstanceOf("solution");
 			StringTemplate tproject = vsTemplates.getInstanceOf("project");
 			StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
+			StringTemplate tprojectPubSub = vsTemplates.getInstanceOf("projectPubSub");
+			StringTemplate tprojectFilesPubSub = vsTemplates.getInstanceOf("projectFilesPubSub");
 			
 			returnedValue = true;
 			
+			System.out.println("Proyectos: "+solution.getProjects().size());
 			for (int count = 0; returnedValue && (count < solution.getProjects().size()); ++count) {
 				Project project = (Project) solution.getProjects().get(count);
 				
@@ -565,16 +570,29 @@ public class rtpsgen {
 				
 				tprojectFiles.setAttribute("project", project);
 				
+				tprojectPubSub.setAttribute("solution", solution);
+				tprojectPubSub.setAttribute("project", project);
+				tprojectPubSub.setAttribute("example", m_exampleOption);
+				
+				tprojectFilesPubSub.setAttribute("project", project);
+				
 				for (int index = 0; index < m_vsconfigurations.length; index++) {
 					tproject.setAttribute("configurations", m_vsconfigurations[index]);
+					tprojectPubSub.setAttribute("configurations", m_vsconfigurations[index]);
 				}
 				
 				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
-					returnedValue = Utils.writeFile(m_outputDir + project.getName() + "-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace);
+					if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSub-" + m_exampleOption + ".vcxproj", tprojectPubSub, m_replace)) {
+							returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSub-" + m_exampleOption + ".vcxproj.filters", tprojectFilesPubSub, m_replace);
+						}
+					}
 				}
 				
 				tproject.reset();
 				tprojectFiles.reset();
+				tprojectPubSub.reset();
+				tprojectFilesPubSub.reset();
 				
 			}
 			

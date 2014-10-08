@@ -43,9 +43,7 @@ public class Context extends com.eprosima.idl.context.Context
         super.addTypeCode(name, typecode);
         
         // TODO: Exception.
-        if(m_firstStructure != null) {
-        	System.out.println("Warning: Redefined type " + name);
-        } else if (m_firstStructure == null && typecode.getKind() == TypeCode.KIND_STRUCT) {
+        if (m_firstStructure == null && typecode.getKind() == TypeCode.KIND_STRUCT && isInScopedFile()) {
         	m_firstStructure = name;
         }
     }
