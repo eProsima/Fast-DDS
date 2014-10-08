@@ -7,7 +7,7 @@ AR=ar
 CP=cp
 LNK=ln
 
--include $(EPROSIMADIR)/building/makefiles/eProsima.mk
+-include $(BASEDIR)/thirdparty/dev-env/building/makefiles/eProsima.mk
 -include $(BASEDIR)/building/makefiles/eprosimartps.mk
 
 .PHONY: all
