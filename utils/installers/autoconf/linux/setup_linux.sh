@@ -36,6 +36,9 @@ installer()
     cp "../../../../doc/pdf/RTPS - User Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
+    cp "../../../../doc/pdf/RTPSGEN - User Manual.pdf" tmp/$project/doc/pdf/
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
     cp "../../../../doc/index.html" tmp/$project/doc/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
