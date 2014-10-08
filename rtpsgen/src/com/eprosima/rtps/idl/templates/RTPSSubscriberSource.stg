@@ -16,16 +16,9 @@ bool $ctx.filename$Subscriber::init()
 	// Create Participant
 	
 	ParticipantAttributes PParam;
-	PParam.defaultSendPort = 10043;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true; //This is the default value but you can change this if you want
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true; //This is the default value but you can change this if you want
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true; //This is the default value but you can change this if you want
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true; //This is the default value but you can change this if you want
 	PParam.builtin.domainId = 80; //MUST BE THE SAME AS IN THE PUBLISHER
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 8712;
-	PParam.listenSocketBufferSize = 17424;
-	PParam.name = "participant2";
+	PParam.name = "participant_subscriber"; //You can put the name you want
 	mp_participant = DomainParticipant::createParticipant(PParam);
 	if(mp_participant == NULL)
 			return false;
@@ -36,12 +29,6 @@ bool $ctx.filename$Subscriber::init()
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicDataType = "$ctx.m_firstStructure$PubSubType"; //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
-	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Rparam.topic.historyQos.depth = 20;
-	Rparam.topic.resourceLimitsQos.max_samples = 50;
-	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
 	mp_subscriber = DomainParticipant::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 	if(mp_subscriber == NULL)
 		return false;
@@ -82,7 +69,7 @@ void $ctx.filename$Subscriber::SubListener::onNewDataMessage()
 
 void $ctx.filename$Subscriber::run()
 {
-	cout << "Type something and press enter to stop the subscriber: ";
+	cout << "Type something and press enter to stop the subscriber: "<<endl;
 	int aux;
 	std::cin \>\> aux;
 }
