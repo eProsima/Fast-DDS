@@ -78,7 +78,6 @@ public:
 		use_SIMPLE_ParticipantDiscoveryProtocol = true;
 		use_SIMPLE_EndpointDiscoveryProtocol = true;
 		use_STATIC_EndpointDiscoveryProtocol = false;
-		leaseDuration_announcementperiod.seconds = 30;
 		m_staticEndpointXMLFilename = "";
 		domainId = 80;
 		leaseDuration.seconds = 500;

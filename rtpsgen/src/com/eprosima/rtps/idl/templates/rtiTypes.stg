@@ -1,0 +1,53 @@
+group rtiTypes;
+
+type_5() ::= <<DDS_Float>>
+
+type_6() ::= <<DDS_Double>>
+
+type_13() ::= <<DDS_LongDouble>>
+
+type_1() ::= <<DDS_Short>>
+
+type_2() ::= <<DDS_Long>>
+
+type_11() ::= <<DDS_LongLong>>
+
+type_3() ::= <<DDS_UnsignedShort>>
+
+type_4() ::= <<DDS_UnsignedLong>>
+
+type_12() ::= <<DDS_UnsignedLongLong>>
+
+type_8() ::= <<DDS_Char>>
+
+type_14() ::= <<DDS_Wchar>>
+
+type_7() ::= <<DDS_Boolean>>
+
+type_9() ::= <<DDS_Octet>>
+
+type_d() ::= <<char*>>
+
+type_15() ::= <<wchar_t*>>
+
+// TODO Mirar esto. No rti type.
+type_f_first(prev) ::= <<>>
+type_f_second(prev, size) ::= <<>>
+type_f(firs, secon, type) ::= <<$type$>>
+
+type_a(name) ::= <<$name$>>
+
+type_b(name) ::= <<$name$>>
+
+type_c(name) ::= <<$name$>>
+
+type_10(name) ::= <<$name$>>
+
+// TODO Mirar esto. No rti type.
+type_e(type, maxsize, empty) ::= <<std::vector<$type$>$empty$>>
+
+initialValues ::= [
+        "type_d":"NULL",
+        "type_15":"NULL",
+        default: // not basic type.
+]
