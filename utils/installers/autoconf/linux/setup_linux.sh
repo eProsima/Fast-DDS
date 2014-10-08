@@ -63,6 +63,13 @@ installer()
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
+    # Copy RTPSGEN scripts and jar
+    mkdir -p tmp/$project/rtpsgen
+    cp -r ../../../../rtpsgen/scripts/* tmp/$project/rtpsgen
+    cp    ../../../../rtpsgen/lib/* tmp/$project/rtpsgen    
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+
     # M4 files
     mkdir -p tmp/$project/m4
     cp -r m4/* tmp/$project/m4
