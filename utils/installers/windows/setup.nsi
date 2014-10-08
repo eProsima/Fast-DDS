@@ -34,6 +34,7 @@ SectionGroup "Libraries" SECGRP0000
          SetOutPath $INSTDIR\lib\x64Win64VS2010
          SetOverwrite on
          File /r "..\..\..\lib\x64Win64VS2010\*"
+		 File /r "..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
          WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
@@ -44,6 +45,7 @@ SectionGroup "Libraries" SECGRP0000
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
         File /r "..\..\..\lib\i86Win32VS2010\*"
+		File /r "..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
@@ -106,7 +108,8 @@ Section -post SEC0006
 	SetOutPath $INSTDIR\doc\pdf
     SetOverwrite on
     File "..\..\..\doc\pdf\RTPS - User Manual.pdf" 
-	File "..\..\..\doc\pdf\RTPS - Installation Manual.pdf" 
+	File "..\..\..\doc\pdf\RTPS - Installation Manual.pdf"
+	File "..\..\..\doc\pdf\RTPSGEN - User Manual.pdf"	
     # Copy doxygen documentation
     SetOutPath $INSTDIR\doc\doxygen\public_api\html
     SetOverwrite on
@@ -125,6 +128,18 @@ Section -post SEC0006
 	SetOutPath $INSTDIR\examples\ShapesDemo
     SetOverwrite on
 	File /r "..\..\..\utils\ShapesDemo\release\windows\*"
+	
+	SetOutPath $INSTDIR\rtpsgen
+    SetOverwrite on
+	File /r "..\..\..\rtpsgen\scripts\*"
+	File /r "..\..\..\rtpsgen\lib\*"
+	
+	#Copy fastcdr include files
+	SetOutPath $INSTDIR\include
+    SetOverwrite on
+    File /r ..\..\..\thirdparty\fastcdr\include\*
+	
+	#Copy fastcdr libraries
     
     
     # # Copy fastrpcgen java classes.
