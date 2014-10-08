@@ -13,7 +13,7 @@
 #ifndef COMMON_TYPES_H_
 #define COMMON_TYPES_H_
 
-#include "eprosimartps\eprosimartps_dll.h"
+#include "eprosimartps/eprosimartps_dll.h"
 
 #include <stddef.h>
 #include <iostream>

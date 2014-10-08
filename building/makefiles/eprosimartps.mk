@@ -23,8 +23,8 @@ EPROSIMARTPS_TARGET_DEBUG_Z= $(BASEDIR)/lib/$(EPROSIMA_TARGET)/$(EPROSIMARTPS_TA
 EPROSIMARTPS_TARGET= $(BASEDIR)/lib/$(EPROSIMA_TARGET)/$(EPROSIMARTPS_TARGET_FILE)
 EPROSIMARTPS_TARGET_Z= $(BASEDIR)/lib/$(EPROSIMA_TARGET)/$(EPROSIMARTPS_TARGET_Z_FILE)
 
-EPROSIMARTPS_CFLAGS += $(CFLAGS) -std=c++0x -O2
-EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x  
+EPROSIMARTPS_CFLAGS += $(CFLAGS) -std=c++0x -O2 -Wno-unknown-pragmas
+EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x  -Wno-unknown-pragmas
 
 EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
 		  -I$(EPROSIMADIR)/code
@@ -36,6 +36,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
 		  $(BASEDIR)/src/cpp/utils/TimedEvent.cpp \
+		  $(BASEDIR)/src/cpp/utils/md5.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \

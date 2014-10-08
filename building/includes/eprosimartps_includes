@@ -80,6 +80,7 @@ utils/Semaphore.h
 utils/StringMatching.h
 utils/TimeConversion.h
 utils/TimedEvent.h
+utils/md5.h
 writer/ReaderLocator.h
 writer/ReaderProxyData.h
 writer/ReaderProxy.h

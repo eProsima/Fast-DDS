@@ -4,6 +4,7 @@ src/cpp/utils/CDRMessagePool.cpp
 src/cpp/utils/eClock.cpp
 src/cpp/utils/StringMatching.cpp
 src/cpp/utils/TimedEvent.cpp
+src/cpp/utils/md5.cpp
 src/cpp/Endpoint.cpp
 src/cpp/RTPSMessageCreator.cpp
 src/cpp/utils/CacheChangePool.cpp
