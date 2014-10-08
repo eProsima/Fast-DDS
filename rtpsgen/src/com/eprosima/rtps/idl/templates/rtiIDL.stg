@@ -1,0 +1,87 @@
+group rtiIDL;
+
+main(ctx, definitions) ::= <<
+$ctx.directIncludeDependencies : {include | #include "$include$.idl"}; separator="\n"$
+
+$definitions; separator="\n"$
+
+>>
+
+module(ctx, module, definition_list) ::= <<
+$if(module.thereAreDeclarations)$
+module $module.name$
+{
+    $definition_list$
+};
+
+$endif$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+interface(ctx, interface, export_list) ::= <<
+$if(interface.thereAreDeclarations)$
+module $interface.name$
+{
+    $export_list$
+};
+
+$endif$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, exception) ::= <<
+/*!
+ * @brief Structure that encapsulates the exception $exception.scopedname$.
+ * @ingroup $ctx.trimfilename$
+ */
+struct $exception.name$_t{
+   $exception.members:{member | $member.typecode.idlTypename$ $member.name$$if(member.typecode.isType_f)$$member.typecode.arrayExtension$$endif$;}; separator="\n"$
+}; $nolevelIDLdefine()$
+>>
+
+operation(ctx, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<
+const $const.typeCode.idlTypename$ $const.name$ = $const.value$;
+>>
+
+typedef_decl(ctx, typedefs) ::= <<
+$typedefs : { typedef |typedef $typedef.typedefContentTypeCode.idlTypename$ $typedef.idlTypename$$if(typedef.typedefContentTypeCode.isType_f)$$typedef.typedefContentTypeCode.arrayExtension$$endif$;}; separator="\n"$
+
+>>
+
+struct_type(ctx, struct) ::= <<
+struct $struct.name$
+{
+$struct.members : { member |    $member.typecode.idlTypename$ $member.name$$if(member.typecode.isType_f)$$member.typecode.arrayExtension$$endif$;}; separator="\n"$
+}; //@top-level false
+
+>>
+
+union_type(ctx, union) ::= <<
+union $union.name$ switch ($union.discriminator.idlTypename$)
+{
+$union.members : { member | $if(member.default)$    default:$else$$member.labels : { label |    case $label$:}; separator="\n"$$endif$$\n$        $member.typecode.idlTypename$ $member.name$$if(member.typecode.isType_f)$$member.typecode.arrayExtension$$endif$;}; separator="\n"$
+};  //@top-level false
+
+>>
+
+enum_type(ctx, enum) ::= <<
+enum $enum.name$
+{
+$enum.members : {member |    $member.name$}; separator=",\n"$
+}; //@top-level false
+
+>>

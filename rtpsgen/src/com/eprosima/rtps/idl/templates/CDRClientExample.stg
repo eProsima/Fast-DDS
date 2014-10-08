@@ -1,0 +1,119 @@
+group ClientExample;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "ClientExample.cxx"], description=["This source file shows a simple example of how to create a proxy for an interface."])$
+
+#include "$ctx.filename$Proxy.h"
+#include "$ctx.filename$.h"
+#include "$ctx.filename$CDRProtocol.h"
+#include "$ctx.product$/transports/TCPProxyTransport.h"
+#include "$ctx.product$/exceptions/Exceptions.h"
+
+#include <iostream>
+
+using namespace eprosima::rpc;
+using namespace ::exception;
+using namespace ::transport;
+using namespace ::protocol::fastcdr;
+
+int main(int argc, char **argv)
+{
+    $ctx.filename$Protocol *protocol = NULL;
+    TCPProxyTransport *transport = NULL;
+    $ctx.firstInterface.scopedname$Proxy *proxy = NULL;
+    
+    // Creation of the proxy for interface "$ctx.firstInterface.scopedname$".
+    try
+    {
+        protocol = new $ctx.filename$Protocol();
+        transport = new TCPProxyTransport("127.0.0.1:8080");
+        proxy = new $ctx.firstInterface.scopedname$Proxy(*transport, *protocol);
+    }
+    catch(InitializeException &ex)
+    {
+        std::cout << ex.what() << std::endl;
+        return -1;
+    }
+    
+    $if(ctx.firstInterface.firstOperation.parameters)$
+    // Create and initialize parameters.
+    $ctx.firstInterface.firstOperation.parameters : {param | $varDecl(variable=param)$};separator="\n"$
+    $ctx.firstInterface.firstOperation.parameters : {param | $if(!param.typecode.primitive)$$varComplexInitialize(variable=param)$$\n$$endif$}$
+    $endif$
+    $if(ctx.firstInterface.firstOperation.rettypeparam)$
+    // Create and initialize return value.
+    $varDecl(variable=ctx.firstInterface.firstOperation.rettypeparam)$
+    $if(!ctx.firstInterface.firstOperation.rettypeparam.typecode.primitive)$
+    $varComplexInitialize(variable=ctx.firstInterface.firstOperation.rettypeparam)$
+    $endif$
+    $endif$
+
+    // Call to remote procedure "$ctx.firstInterface.firstOperation.name$".
+    try
+    {
+        $if(ctx.firstInterface.firstOperation.rettypeparam)$        $ctx.firstInterface.firstOperation.rettypeparam.name$ = $else$        $endif$proxy->$ctx.firstInterface.firstOperation.name$($extractParams(params=ctx.firstInterface.firstOperation.parameters)$);
+    }
+    $if(ctx.firstInterface.firstOperation.exceptions)$
+    catch(UserException &ex)
+    {
+        std::cout << "User exception" << std::endl;
+    }
+    $endif$
+    catch(SystemException &ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+    $if(ctx.firstInterface.firstOperation.parameters)$
+    
+    $ctx.firstInterface.firstOperation.parameters : {param | $varDel(variable=param)$}; separator="\n"$
+    $endif$
+    $if(ctx.firstInterface.firstOperation.rettypeparam)$
+
+    $varDel(variable=ctx.firstInterface.firstOperation.rettypeparam)$
+    $endif$
+    
+    delete proxy;
+    delete transport;
+    delete protocol;
+   
+    return 0;
+}
+
+$definitions; separator="\n"$
+>>
+
+module(ctx, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+interface(ctx, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, exception) ::= <<>>
+
+operation(ctx, operation, param_list) ::= <<
+$param_list$
+>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<>>
+
+typedef_decl(ctx, typedefs) ::= <<>>
+
+struct_type(ctx, struct) ::= <<>>
+
+union_type(ctx, union) ::= <<>>
+
+enum_type(ctx, enum) ::= <<>>

@@ -1,0 +1,99 @@
+group Makefile;
+
+makecxx(solution, example, arch) ::= <<
+
+BASEDIR=.
+OUTDIR=\$(BASEDIR)/output
+CC=gcc
+CPP=g++
+AR=ar
+LDFLAGS=-m$arch$
+CP=cp
+LN=g++
+
+COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -m$arch$ -fpic
+EPROSIMA_TARGET= $example$
+
+CFLAGS= \$(COMMON_CFLAGS) -O2
+CFLAGS_DEBUG= \$(COMMON_CFLAGS) -g -D__DEBUG
+
+$solution.projects:{
+$it.name$PUBSUB_OUTDIR= \$(OUTDIR)/$it.name$PubSub
+$it.name$PUBSUB_OUTDIR_RELEASE = \$($it.name$PUBSUB_OUTDIR)/release
+
+$it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE= \$(subst /, \\/, \$($it.name$PUBSUB_OUTDIR_RELEASE))
+
+$it.name$PUBSUB_CFLAGS= \$(CFLAGS) -std=c++0x
+
+$it.name$PUBSUB_TARGET= \$(BASEDIR)/bin/\$(EPROSIMA_TARGET)/$it.name$PubSub
+
+$it.name$PUBSUB_INCLUDE_DIRS= \$(INCLUDE_DIRS)
+												
+$it.name$PUBSUB_LIBS_RELEASE= $solution.libraries : {library |-l$library$};separator=" "$ 
+
+$it.name$PUBSUB_SRC_CPPFILES= \$(BASEDIR)/$it.name$PubSubMain.cxx \$(BASEDIR)/$it.name$PubSubType.cxx \$(BASEDIR)/$it.name$Publisher.cxx \$(BASEDIR)/$it.name$Subscriber.cxx \$(BASEDIR)/$it.name$.cxx
+								
+# Project sources are copied to the current directory
+$it.name$PUBSUB_SRCS= \$($it.name$PUBSUB_SRC_CPPFILES)
+
+# Source directories
+$it.name$PUBSUB_SOURCES_DIRS_AUX= \$(foreach srcdir, \$(dir \$($it.name$PUBSUB_SRCS)), \$(srcdir))
+$it.name$PUBSUB_SOURCES_DIRS= \$(shell echo \$($it.name$PUBSUB_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq |tr "\n" " ")
+
+$it.name$PUBSUB_OBJS_RELEASE= \$(foreach obj, \$(notdir \$(addsuffix .o, \$($it.name$PUBSUB_SRCS))), \$($it.name$PUBSUB_OUTDIR_RELEASE)/\$(obj))
+$it.name$PUBSUB_DEPS_RELEASE= \$(foreach obj, \$(notdir \$(addsuffix .d, \$($it.name$PUBSUB_SRCS))), \$($it.name$PUBSUB_OUTDIR_RELEASE)/\$(dep))
+
+OBJS+= \$($it.name$PUBSUB_OBJS_RELEASE)
+DEPS+= \$($it.name$PUBSUB_DEPS_RELEASE)
+
+.PHONY: $it.name$PUBSUB check$it.name$PUBSUBDirectories
+
+$it.name$PUBSUB: check$it.name$PUBSUBDirectories \$($it.name$PUBSUB_TARGET)
+
+check$it.name$PUBSUBDirectories:
+	@mkdir -p \$(OUTDIR)
+	@mkdir -p \$($it.name$PUBSUB_OUTDIR)
+	@mkdir -p \$($it.name$PUBSUB_OUTDIR_RELEASE)
+	@mkdir -p \$(BASEDIR)/bin
+	@mkdir -p \$(BASEDIR)/bin/\$(EPROSIMA_TARGET)
+	
+\$($it.name$PUBSUB_TARGET): \$($it.name$PUBSUB_OBJS_RELEASE)
+	\$(LN) \$(LDFLAGS) -o \$($it.name$PUBSUB_TARGET) \$($it.name$PUBSUB_OBJS_RELEASE) \$(LIBRARY_PATH) \$($it.name$PUBSUB_LIBS_RELEASE) \$($it.name$PUBSUB_STATIC_LIBS)
+	
+vpath %.c \$($it.name$PUSUB_SOURCES_DIRS)
+vpath %.cpp \$($it.name$PUBSUB_SOURCES_DIRS)
+
+\$($it.name$PUBSUB_OUTDIR_RELEASE)/%.o:%.c
+	@echo Calculating dependencies \(RELEASE mode\) \$<
+	@\$(CC) \$($it.name$PUBSUB_CFLAGS) -MM \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< | sed "s/^.*:/\$($it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%d)
+	@echo Compiling \(RELEASE mode\) \$<
+	@\$(CC) \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< -o \$@
+	
+\$($it.name$PUBSUB_OUTDIR_RELEASE)/%.c.o:%.c
+	@echo Calculating dependencies \(RELEASE mode\) \$<
+	@\$(CC) \$($it.name$PUBSUB_CFLAGS) -MM \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< | sed "s/^.*:/\$($it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%d)
+	@echo Compiling \(RELEASE mode\) \$<
+	@\$(CC) \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< -o \$@
+	
+\$($it.name$PUBSUB_OUTDIR_RELEASE)/%.cxx.o:%.cxx
+	@echo Calculating dependencies \(RELEASE mode\) \$<
+	@\$(CC) \$($it.name$PUBSUB_CFLAGS) -MM \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< | sed "s/^.*:/\$($it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%d)
+	@echo Compiling \(RELEASE mode\) \$<
+	@\$(CC) \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< -o \$@
+	
+.PHONY: all
+
+all: State
+
+clean:
+	@rm -f \$(OBJS)
+	@rm -f \$(DEPS)
+
+ifneq (\$(MAKECMDGOALS), clean)
+-include \$(DEPS)
+endif
+
+}; separator="\n"$
+
+
+>>

@@ -1,0 +1,387 @@
+/* $Id$   *
+ * (c) Copyright, eProsima, 2009.                                          *
+ * All rights reserved.                                                    *    
+ *                                                                         *
+ * No duplications, whole or partial, manual or electronic, may be made    *
+ * without express written permission.  Any such copies, or                *
+ * revisions thereof, must display this notice unaltered.                  *
+ * This code contains trade secrets of                                     *
+ * eProsima (Proyectos y Sistemas de Mantenimiento S.L.)                   *
+ *                                                                         *
+ * modification history                                                    *
+ * --------------------                                                    *
+ * 1.0,29sep09,RodM Created                                                *
+ * =====================================================================   *
+ */
+
+group main;
+
+memberComplexInit(member) ::= <<
+$if(member)$
+memset(&$member.name$, 0, sizeof($member.typecode.cppTypename$));
+$endif$
+>>
+
+memberComplexInitCopy(member, dataname) ::= <<
+$if(member)$
+$member.typecode.cppTypename$_initialize(&$member.name$);
+$member.typecode.cppTypename$_copy(&$member.name$, &$dataname$.$member.name$);
+$endif$
+>>
+
+memberComplexCopy(member, dataname) ::= <<
+$if(member)$
+$member.typecode.cppTypename$_copy(&$member.name$, &$dataname$.$member.name$);
+$endif$
+>>
+
+// TODO Es necesario?
+memberComplexExtract(member, dataname) ::= <<
+$if(member)$
+$member.typecode.cppTypename$_copy(&$dataname$.$member.name$, &$member.name$);
+$endif$
+>>
+
+varComplexDecl(variable, create) ::= <<
+$if(variable)$
+$variable.typecode.cppTypename$ $variable.name$;$if(create)$$\n$memset(&$variable.name$, 0, sizeof($variable.typecode.cppTypename$));$endif$
+$endif$
+>>
+
+// TODO ¿Se necesita?
+varComplexInitializeT(typeName, name) ::= <<
+$typeName$_initialize(&$name$);
+>>
+
+varComplexInitialize(variable) ::= <<
+$if(variable)$
+$variable.typecode.cppTypename$_initialize(&$variable.name$);
+$endif$
+>>
+
+varComplexDelT(typeName, name) ::= <<$typeName$_finalize(&$name$);>>
+
+varComplexDel(variable) ::= <<$variable.typecode.cppTypename$_finalize(&$variable.name$);>>
+
+varStringDel(name) ::=<<
+if($name$ != NULL) free($name$);
+>>
+
+ReqRepIncludes(filename) ::= <<
+#include "$filename$RequestReplyPlugin.h"
+>>
+
+ReqRepRIncludes(filename) ::= <<
+#include "$filename$RequestReplySupport.h"
+>>
+
+ReqRepSIncludes(filename) ::= <<
+#include "$filename$RequestReplyPlugin.h"
+#include "$filename$RequestReplySupport.h"
+>>
+
+ddsIncludes() ::= <<
+#include "ndds_namespace_cpp.h"
+>>
+
+reqrepCreation(type, reqrep, name, void, create) ::= <<
+$if(create)$$type$$reqrep$* $endif$$name$ = $if(void)$(void*)$endif$$type$$reqrep$PluginSupport_create_data();
+>>
+
+reqrepDestruction(type, reqrep, name, void) ::= <<
+$type$$reqrep$PluginSupport_destroy_data($if(void)$($type$$reqrep$*)$endif$$name$);
+>>
+
+reqrepRefFinalize(type, reqrep, name) ::= <<
+$type$$reqrep$_finalize(&$name$);
+>>
+
+getTypenameOperation(operation, suffix, varname) ::= <<
+$varname$ = $operation.parent.scopedname$_$operation.name$$suffix$TypeSupport::get_type_name();
+>>
+
+getTypenameInterface(interface, suffix, varname) ::= <<
+$varname$ = $interface.scopedname$$suffix$TypeSupport::get_type_name();
+>>
+
+registerTypenameOperationAndCheck(operation, suffix, varname) ::= <<
+$operation.parent.scopedname$_$operation.name$$suffix$TypeSupport::register_type(m_ddsTransport->getParticipant(), $varname$) != DDS::RETCODE_OK
+>>
+
+registerTypenameInterfaceAndCheck(interface, suffix, varname) ::= <<
+$interface.scopedname$$suffix$TypeSupport::register_type(m_ddsTransport->getParticipant(), $varname$) != DDS::RETCODE_OK
+>>
+
+createDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Create_data)$operation.parent.scopedname$_$operation.name$$suffix$PluginSupport_create_data
+>>
+
+createDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Create_data)$interface.scopedname$$suffix$PluginSupport_create_data
+>>
+
+copyDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Copy_data)$operation.parent.scopedname$_$operation.name$$suffix$PluginSupport_copy_data
+>>
+
+copyDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Copy_data)$interface.scopedname$$suffix$PluginSupport_copy_data
+>>
+
+destroyDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Destroy_data)$operation.parent.scopedname$_$operation.name$$suffix$PluginSupport_destroy_data
+>>
+
+destroyDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Destroy_data)$interface.scopedname$$suffix$PluginSupport_destroy_data
+>>
+
+addParamToTopic(param, varname, isRequest) ::= <<
+$if(param)$
+$if(param.typecode.isType_f)$
+memcpy(&$varname$.$param.name$, &$param.name$, sizeof($param.typecode.cppTypename$));
+$else$
+$varname$.$param.name$ = $if(isRequest)$$if(param.typecode.isType_d)$$charCasting()$$endif$$endif$$param.name$;
+$endif$
+$endif$
+>>
+
+addExceptionMemberToTopic(exception, member, varname) ::= <<
+$if(member.typecode.isType_f)$
+memcpy($varname$.unio._u.$exception.formatedScopedname$_ex.$member.name$, ex.$member.name$, sizeof($member.typecode.stTypename$));
+$else$
+$varname$.unio._u.$exception.formatedScopedname$_ex.$member.name$ = ex.$member.name$;
+$endif$
+$endif$
+>>
+
+addExceptionMemberToTopicByInterface(operation, exception, member, varname) ::= <<
+$if(member.typecode.isType_f)$
+memcpy($varname$.unio._u.$operation.name$._u.$exception.formatedScopedname$_ex.$member.name$, ex.$member.name$, sizeof($member.typecode.stTypename$));
+$else$
+$varname$.unio._u.$operation.name$._u.$exception.formatedScopedname$_ex.$member.name$ = ex.$member.name$;
+$endif$
+$endif$
+>>
+
+extractParamFromTopic(param, varname, isReply) ::= <<
+$if(isReply)$
+$if(param.input)$
+$if(param.typecode.primitive)$
+$if(param.typecode.isType_d)$
+if($param.name$ != NULL)
+    free($param.name$);
+$endif$
+$else$
+$varComplexDel(variable=param)$
+$endif$
+$endif$
+$if(param.typecode.isType_f)$
+memcpy(&$param.name$, &$varname$.$param.name$, sizeof($param.typecode.cppTypename$));
+$else$
+$param.name$ = $varname$.$param.name$$if(param.typecode.isType_d)$$stringPointer()$$endif$;
+$endif$
+$else$
+$if(param.output)$
+$if(param.typecode.primitive)$
+$if(param.typecode.isType_d)$
+$param.name$ = strdup($varname$.$param.name$);
+$else$
+$param.name$ = $varname$.$param.name$;
+$endif$
+$else$
+$param.typecode.cppTypename$_copy(&$param.name$, &$varname$.$param.name$);
+$endif$
+$else$
+$if(param.typecode.isType_f)$
+memcpy(&$param.name$, &$varname$.$param.name$, sizeof($param.typecode.cppTypename$));
+$else$
+$param.name$ = $varname$.$param.name$$if(param.typecode.isType_d)$$stringPointer()$$endif$;
+$endif$
+$endif$
+$endif$
+>>
+
+extractExceptionMemberFromTopic(exception, member, varname) ::= <<
+$if(member.typecode.isType_f)$
+memcpy(ex.$member.name$, $varname$.unio._u.$exception.formatedScopedname$_ex.$member.name$, sizeof($member.typecode.stTypename$));
+$else$
+ex.$member.name$ = $varname$.unio._u.$exception.formatedScopedname$_ex.$member.name$$if(member.typecode.isType_d)$$stringPointer()$$endif$;
+$endif$
+>>
+
+extractExceptionMemberFromTopicByInterface(exception, member, varname) ::= <<
+$if(member.typecode.isType_f)$
+memcpy(ex.$member.name$, $varname$._u.$exception.formatedScopedname$_ex.$member.name$, sizeof($member.typecode.stTypename$));
+$else$
+ex.$member.name$ = $varname$._u.$exception.formatedScopedname$_ex.$member.name$$if(member.typecode.isType_d)$$stringPointer()$$endif$;
+$endif$
+>>
+
+preReqIDLDefines(name) ::= <<
+>>
+
+preRepIDLDefines(name) ::= <<>>
+
+keyIDLdefine() ::= <<
+ //@key
+>>
+
+levelIDLdefine() ::= <<//@top-level true>>
+
+nolevelIDLdefine() ::= <<//@top-level false>>
+
+archMakeDefines() ::= <<
+ -DRTI_LINUX -DRTI_UNIX
+>>
+
+rtiInclMake() ::= <<
+ -I\$(NDDSHOME)/include -I\$(NDDSHOME)/include/ndds
+>>
+
+rtiInclVS() ::= <<
+\$(NDDSHOME)\include;\$(NDDSHOME)\include\ndds;
+>>
+
+rtiLibsMake(example) ::= <<
+ -L\$(NDDSHOME)/lib/$example$ \
+       -lnddsc -lnddscore -lnddscpp
+>>
+
+rtiLibsVS(example) ::= <<
+\$(NDDSHOME)\lib\\$example$;
+>>
+ 
+preprocessorDefs(conf) ::= <<
+WIN32;_CONSOLE;_CRT_SECURE_NO_WARNINGS;$if(conf.dll)$NDDS_DLL_VARIABLE;WIN32_LEAN_AND_MEAN;$endif$$if(conf.debug)$_DEBUG$else$NDEBUG$endif$
+>>
+
+preprocessorTypesLibDefs(conf) ::= <<
+$if(conf.dll)$NDDS_USER_DLL_EXPORT;$endif$
+>>
+
+dependencies(conf) ::= <<
+nddscpp$if(conf.dll)$$else$z$endif$$if(conf.debug)$d$endif$.lib; nddsc$if(conf.dll)$$else$z$endif$$if(conf.debug)$d$endif$.lib; nddscore$if(conf.dll)$$else$z$endif$$if(conf.debug)$d$endif$.lib
+>>
+
+/*** Inherate from OpenDDS ***/
+
+stringPointer() ::= <<>>
+
+stringPointerConst() ::= <<>>
+
+charCasting() ::= <<
+(char*)
+>>
+
+charConstCasting() ::= <<
+>>
+
+bigObjOption() ::= <<
+>>
+
+/*** END Inherate from OpenDDS ***/
+
+unsetReply() ::= <<
+memset((char*)&replyData + sizeof(replyData._header), 0, sizeof(replyData) - sizeof(replyData._header));
+>>
+
+/***** NEW OUR_TYPES *****/
+
+paramTypeByValue(typecode) ::= <<
+$if(typecode.primitive)$
+$if(typecode.isType_d)$
+const $typecode.cppTypename$
+$else$
+$typecode.cppTypename$
+$endif$
+$else$
+const $typecode.cppTypename$&
+$endif$
+>>
+
+varDecl(variable, create) ::= <<
+$if(variable)$
+$if(variable.typecode.primitive)$
+$variable.typecode.cppTypename$  $variable.name$ = $variable.typecode.initialValue$;
+$else$
+$varComplexDecl(...)$
+$endif$
+$endif$
+>>
+
+varDel(variable) ::= <<
+$if(variable)$
+$if(variable.typecode.primitive)$
+$if(variable.typecode.isType_d)$
+$varStringDel(name=variable.name)$
+$endif$
+$else$
+$if(!variable.typecode.isType_f)$
+$varComplexDel(...)$
+$endif$
+$endif$
+$endif$
+>>
+
+member_default_init(member) ::= <<
+$if(member)$
+$if(member.typecode.primitive)$
+$member.name$ = $member.typecode.initialValue$;
+$else$
+$memberComplexInit(...)$
+$endif$
+$endif$
+>>
+
+copyHeaderInfo(reqvarname, repvarname) ::= <<
+$repvarname$._header.clientId.value_1 = $reqvarname$._header.clientId.value_1;
+$repvarname$._header.clientId.value_2 = $reqvarname$._header.clientId.value_2;
+$repvarname$._header.clientId.value_3 = $reqvarname$._header.clientId.value_3;
+$repvarname$._header.clientId.value_4 = $reqvarname$._header.clientId.value_4;
+$repvarname$._header.requestSequenceNumber = $reqvarname$._header.requestSequenceNumber;
+>>
+
+setHeaderSuccess(varname) ::= <<
+$varname$._header.retCode = OPERATION_SUCCESSFUL;
+$varname$._header.retMsg = $charCasting()$"";
+>>
+
+setHeaderServerInternalException(varname) ::= <<
+$varname$._header.retCode = SERVER_INTERNAL_ERROR;
+$varname$._header.retMsg = $charCasting()$ex.what();
+>>
+
+getHeaderRetCode(varname) ::= <<
+$varname$._header.retCode
+>>
+
+getHeaderRetMsg(varname) ::= <<
+$varname$._header.retMsg
+>>
+
+interfaceUnionDiscriminator(varname) ::= <<
+$varname$.unio._d
+>>
+
+interfaceUnionOperation(operation, varname) ::= <<
+$varname$.unio._u.$operation.name$
+>>
+
+replyUnionDiscriminator(varname) ::= <<
+$varname$.unio._d
+>>
+
+replyUnionDiscriminatorByInterface(operation, varname) ::= <<
+$varname$.unio._u.$operation.name$._d
+>>
+
+replyUnionData(varname, dataname) ::= <<
+$varname$.unio._u.$dataname$
+>>
+
+replyUnionDataByInterface(operation, varname, dataname) ::= <<
+$varname$.unio._u.$operation.name$._u.$dataname$
+>>
+
+eprosimaTypesBool() ::= <<false>>
