@@ -43,7 +43,7 @@ Function VariablesEntornoPage
         ${NSD_Check} $CheckboxEPROSIMARTPSHOME
     ${EndIf}
         
-    ${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH environment variable the location of eProsima RTPS scripts"
+    ${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH environment variable the location of eProsima RTPSGEN scripts"
     Pop $CheckboxScripts
     ${If} $CheckboxScripts_State == ${BST_CHECKED}
         ${NSD_Check} $CheckboxScripts

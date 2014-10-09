@@ -204,7 +204,7 @@ Section -post SEC0006
        WriteRegStr HKLM "${REGKEY}\Components" "FASTRPCHOME" 1
     ${EndIf}
     ${If} $CheckboxScripts_State == ${BST_CHECKED}
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\scripts"
+       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\rtpsgen"
        WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
     ${EndIf}
     ${If} ${SectionIsSelected} ${SEC_LIB_x64}
@@ -263,7 +263,7 @@ Section -un.post UNSEC0006
     RmDir /REBOOTOK $INSTDIR\lib
     RmDir /r /REBOOTOK $INSTDIR\include
     RmDir /r /REBOOTOK $INSTDIR\idl
-    RmDir /r /REBOOTOK $INSTDIR\scripts
+    RmDir /r /REBOOTOK $INSTDIR\rtpsgen
     RmDir /r /REBOOTOK $INSTDIR\classes
     RmDir /r /REBOOTOK $INSTDIR\examples
     RmDir /r /REBOOTOK $INSTDIR\doc
@@ -276,7 +276,7 @@ Section -un.post UNSEC0006
     DeleteRegValue HKLM "${REGKEY}\Components" "EPROSIMARTPSHOME"
     
     ${un.EnvVarUpdate} $0 "EPROSIMARTPSHOME" "R" "HKLM" "$INSTDIR"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\scripts"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\rtpsgen"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
 SectionEnd

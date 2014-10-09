@@ -4,6 +4,7 @@ setlocal
 set dir=%~dp0
 set args=%1
 
+
 :getarg
 shift
 if "%~1"=="" goto continue
@@ -26,5 +27,4 @@ if not %ERRORLEVEL%==0 (
    )
 )
 
-%java_exec% -Djava.ext.dirs="%dir%" com.eprosima.rtps.rtpsgen %args%
-
+%java_exec% -jar %dir%\rtpsgen.jar %args%
