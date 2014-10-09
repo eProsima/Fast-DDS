@@ -175,7 +175,7 @@ rm -rf tmp
 if [ $errorstatus != 0 ]; then
     echo "INSTALLER FAILED"
 else
-    echo "INSTALLER SUCCESSFULLY" 
+    echo "INSTALLER FILE CREATED SUCCESSFULLY" 
 fi
 
 exit $errorstatus
