@@ -136,7 +136,7 @@
         <!--> TODO Quitar el overwrite<-->
         <copy todir="${build.classes}${file.separator}com${file.separator}eprosima${file.separator}rtps${file.separator}idl${file.separator}templates"
             overwrite="yes">
-            <fileset dir="${basedir}${file.separator}..${file.separator}..${file.separator}fastbuffers${file.separator}thirdparty${file.separator}fastcdr${file.separator}src${file.separator}java${file.separator}com${file.separator}eprosima${file.separator}fastcdr${file.separator}templates">
+            <fileset dir="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}fastcdr${file.separator}src${file.separator}java${file.separator}com${file.separator}eprosima${file.separator}fastcdr${file.separator}templates">
 				<include name="Types.stg" />
 				<include name="TypesHeader.stg" />
 				<include name="TypesSource.stg" />
