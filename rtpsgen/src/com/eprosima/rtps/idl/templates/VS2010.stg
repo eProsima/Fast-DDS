@@ -28,9 +28,9 @@ project(solution, project, example, configurations, local) ::= <<
     </ProjectConfiguration>};separator="\n"$
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>$project.name$</ProjectName>
+    <ProjectName>$project.name$Types</ProjectName>
     <ProjectGuid>{$project.guid$}</ProjectGuid>
-    <RootNamespace>$project.name$</RootNamespace>
+    <RootNamespace>$project.name$Types</RootNamespace>
   </PropertyGroup>
   <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'" Label="Configuration">
@@ -64,7 +64,7 @@ project(solution, project, example, configurations, local) ::= <<
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Shlwapi.lib;Iphlpapi.lib;$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$$if(it.debug)$d$endif$.lib}; separator=";"$;$if(!it.dll)$WS2_32.lib;$endif$%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Shlwapi.lib;Iphlpapi.lib;$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;$if(!it.dll)$WS2_32.lib;$endif$%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -91,9 +91,9 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
     </ProjectConfiguration>};separator="\n"$
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>$project.name$PubSub</ProjectName>
+    <ProjectName>$project.name$PublisherSubscriber</ProjectName>
     <ProjectGuid>{$project.guid$}</ProjectGuid>
-    <RootNamespace>$project.name$PubSub</RootNamespace>
+    <RootNamespace>$project.name$PublisherSubscriber</RootNamespace>
   </PropertyGroup>
   <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'" Label="Configuration">
@@ -126,7 +126,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>$if(!it.dll)$lib$endif$$project.name$$if(it.debug)$d$endif$.lib;$if(!it.dll)$Shlwapi.lib;Iphlpapi.lib;$endif$$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$$if(it.debug)$d$endif$.lib}; separator=";"$;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$if(!it.dll)$lib$endif$$project.name$Types$if(it.debug)$d$endif$.lib;$if(!it.dll)$Shlwapi.lib;Iphlpapi.lib;$endif$$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -232,12 +232,12 @@ bigObjOption() ::= <<
  * Uses:
  */ 
 projectReferences(solution, project, example) ::= <<
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$", "$project.name$-$example$.vcxproj", "{$project.guid$}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$Types", "$project.name$Types-$example$.vcxproj", "{$project.guid$}"
 $\t$ProjectSection(ProjectDependencies) = postProject
 $project.dependenciesGuids : {$\t$$\t${$it$} = {$it$}}; separator="\n"$
 $\t$EndProjectSection$\n$
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$PubSub", "$project.name$PubSub-$example$.vcxproj", "{$project.exampleGuid$}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$PublisherSubscriber", "$project.name$PublisherSubscriber-$example$.vcxproj", "{$project.exampleGuid$}"
 $\t$ProjectSection(ProjectDependencies) = postProject
 $\t$$\t${$project.guid$} = {$project.guid$}
 $project.dependenciesGuids : {$\t$$\t${$it$} = {$it$}}; separator="\n"$
