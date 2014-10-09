@@ -581,10 +581,10 @@ public class rtpsgen {
 					tprojectPubSub.setAttribute("configurations", m_vsconfigurations[index]);
 				}
 				
-				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
-					if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace)) {
-						if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSub-" + m_exampleOption + ".vcxproj", tprojectPubSub, m_replace)) {
-							returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSub-" + m_exampleOption + ".vcxproj.filters", tprojectFilesPubSub, m_replace);
+				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
+					if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PublisherSubscriber-" + m_exampleOption + ".vcxproj", tprojectPubSub, m_replace)) {
+							returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PublisherSubscriber-" + m_exampleOption + ".vcxproj.filters", tprojectFilesPubSub, m_replace);
 						}
 					}
 				}
