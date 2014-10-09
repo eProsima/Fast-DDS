@@ -139,6 +139,11 @@ Section -post SEC0006
     SetOverwrite on
     File /r ..\..\..\thirdparty\fastcdr\include\*
 	
+	#Copy eProsima_cpp include files
+	SetOutPath $INSTDIR\include\eProsima_cpp
+    SetOverwrite on
+    File /r ..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\*
+	
 	#Copy fastcdr libraries
     
     
