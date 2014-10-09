@@ -1,99 +1,70 @@
 group Makefile;
 
 makecxx(solution, example, arch) ::= <<
-
-BASEDIR=.
-OUTDIR=\$(BASEDIR)/output
-CC=gcc
-CPP=g++
+CPP= g++
+CPPFLAGS = -c -Wall -fpic -m$arch$ -std=c++0x
+LN= g++
 AR=ar
-LDFLAGS=-m$arch$
-CP=cp
-LN=g++
+LDFLAGS= -m$arch$
+SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
+DEFINES= $solution.defines : {define | -D$define$};separator=" "$
 
-COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -m$arch$ -fpic
-EPROSIMA_TARGET= $example$
+INCLUDES= -I. $solution.includes : {include | -I$include$};separator=" "$
 
-CFLAGS= \$(COMMON_CFLAGS) -O2
-CFLAGS_DEBUG= \$(COMMON_CFLAGS) -g -D__DEBUG
+LIBS = $solution.libraryPaths : {path |-L$path$};separator=" "$ $solution.libraries : {library |-l$library$};separator=" "$ \$(SYSLIBS)
+
+DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
+
+all: \$(DIRECTORIES) $solution.projects:{$it.name$ $it.name$PublisherSubscriber}; separator=" \\\n\t"$
 
 $solution.projects:{
-$it.name$PUBSUB_OUTDIR= \$(OUTDIR)/$it.name$PubSub
-$it.name$PUBSUB_OUTDIR_RELEASE = \$($it.name$PUBSUB_OUTDIR)/release
+$it.name$_TARGET= lib/$example$/lib$it.name$.so
+$it.name$_TARGET_Z= lib/$example$/lib$it.name$.a
 
-$it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE= \$(subst /, \\/, \$($it.name$PUBSUB_OUTDIR_RELEASE))
+$it.name$_CLIENT_EXAMPLE_TARGET= bin/$example$/$it.name$PublisherSubscriber
 
-$it.name$PUBSUB_CFLAGS= \$(CFLAGS) -std=c++0x
+$it.name$_COMMON_SRC_CXXFILES = $it.commonSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$
 
-$it.name$PUBSUB_TARGET= \$(BASEDIR)/bin/\$(EPROSIMA_TARGET)/$it.name$PubSub
+$it.name$_COMMON_SRC_CPPFILES=
 
-$it.name$PUBSUB_INCLUDE_DIRS= \$(INCLUDE_DIRS)
-												
-$it.name$PUBSUB_LIBS_RELEASE= $solution.libraries : {library |-l$library$};separator=" "$ 
+$it.name$_CLIENTSOURCES = $it.projectSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$
 
-$it.name$PUBSUB_SRC_CPPFILES= \$(BASEDIR)/$it.name$PubSubMain.cxx \$(BASEDIR)/$it.name$PubSubType.cxx \$(BASEDIR)/$it.name$Publisher.cxx \$(BASEDIR)/$it.name$Subscriber.cxx \$(BASEDIR)/$it.name$.cxx
-								
-# Project sources are copied to the current directory
-$it.name$PUBSUB_SRCS= \$($it.name$PUBSUB_SRC_CPPFILES)
+$it.name$_COMMONOBJS    = \$($it.name$_COMMON_SRC_CXXFILES:%.cxx=output/$example$/%.o) \$($it.name$_COMMON_SRC_CPPFILES:%.cpp=output/$example$/%.o)
 
-# Source directories
-$it.name$PUBSUB_SOURCES_DIRS_AUX= \$(foreach srcdir, \$(dir \$($it.name$PUBSUB_SRCS)), \$(srcdir))
-$it.name$PUBSUB_SOURCES_DIRS= \$(shell echo \$($it.name$PUBSUB_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq |tr "\n" " ")
+$it.name$_CLIENTOBJS    = \$($it.name$_CLIENTSOURCES:%.cxx=output/$example$/%.o)
 
-$it.name$PUBSUB_OBJS_RELEASE= \$(foreach obj, \$(notdir \$(addsuffix .o, \$($it.name$PUBSUB_SRCS))), \$($it.name$PUBSUB_OUTDIR_RELEASE)/\$(obj))
-$it.name$PUBSUB_DEPS_RELEASE= \$(foreach obj, \$(notdir \$(addsuffix .d, \$($it.name$PUBSUB_SRCS))), \$($it.name$PUBSUB_OUTDIR_RELEASE)/\$(dep))
+$it.name$OBJS+= \$($it.name$_COMMONOBJS) \$($it.name$_CLIENTOBJS)
+OBJS+= \$($it.name$OBJS)
 
-OBJS+= \$($it.name$PUBSUB_OBJS_RELEASE)
-DEPS+= \$($it.name$PUBSUB_DEPS_RELEASE)
+\$($it.name$_TARGET): \$($it.name$_COMMONOBJS)
+	\$(LN) \$(LDFLAGS) -shared -o \$($it.name$_TARGET) \$($it.name$_COMMONOBJS) \$(LIBS) -Llib/$example$ $it.dependencies : {dep | -l$dep$}; separator=" "$
 
-.PHONY: $it.name$PUBSUB check$it.name$PUBSUBDirectories
+\$($it.name$_TARGET_Z): \$($it.name$_COMMONOBJS)
+	\$(AR) -cru \$($it.name$_TARGET_Z) \$($it.name$_COMMONOBJS)
 
-$it.name$PUBSUB: check$it.name$PUBSUBDirectories \$($it.name$PUBSUB_TARGET)
+\$($it.name$_CLIENT_EXAMPLE_TARGET): \$($it.name$OBJS) lib/$example$/lib$it.name$.a $it.dependencies : {dep | lib/$example$/lib$dep$.a}; separator=" "$
+	\$(LN) \$(LDFLAGS) -o \$@ \$($it.name$OBJS) -Wl,-Bstatic -Llib/$example$ -l$it.name$ $it.dependencies : {dep | -l$dep$}; separator=" "$ -Wl,-Bdynamic \$(LIBS)
 
-check$it.name$PUBSUBDirectories:
-	@mkdir -p \$(OUTDIR)
-	@mkdir -p \$($it.name$PUBSUB_OUTDIR)
-	@mkdir -p \$($it.name$PUBSUB_OUTDIR_RELEASE)
-	@mkdir -p \$(BASEDIR)/bin
-	@mkdir -p \$(BASEDIR)/bin/\$(EPROSIMA_TARGET)
-	
-\$($it.name$PUBSUB_TARGET): \$($it.name$PUBSUB_OBJS_RELEASE)
-	\$(LN) \$(LDFLAGS) -o \$($it.name$PUBSUB_TARGET) \$($it.name$PUBSUB_OBJS_RELEASE) \$(LIBRARY_PATH) \$($it.name$PUBSUB_LIBS_RELEASE) \$($it.name$PUBSUB_STATIC_LIBS)
-	
-vpath %.c \$($it.name$PUSUB_SOURCES_DIRS)
-vpath %.cpp \$($it.name$PUBSUB_SOURCES_DIRS)
+$it.name$PublisherSubscriber : \$($it.name$_CLIENT_EXAMPLE_TARGET)
 
-\$($it.name$PUBSUB_OUTDIR_RELEASE)/%.o:%.c
-	@echo Calculating dependencies \(RELEASE mode\) \$<
-	@\$(CC) \$($it.name$PUBSUB_CFLAGS) -MM \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< | sed "s/^.*:/\$($it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%d)
-	@echo Compiling \(RELEASE mode\) \$<
-	@\$(CC) \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< -o \$@
-	
-\$($it.name$PUBSUB_OUTDIR_RELEASE)/%.c.o:%.c
-	@echo Calculating dependencies \(RELEASE mode\) \$<
-	@\$(CC) \$($it.name$PUBSUB_CFLAGS) -MM \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< | sed "s/^.*:/\$($it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%d)
-	@echo Compiling \(RELEASE mode\) \$<
-	@\$(CC) \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< -o \$@
-	
-\$($it.name$PUBSUB_OUTDIR_RELEASE)/%.cxx.o:%.cxx
-	@echo Calculating dependencies \(RELEASE mode\) \$<
-	@\$(CC) \$($it.name$PUBSUB_CFLAGS) -MM \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< | sed "s/^.*:/\$($it.name$PUBSUB_SED_OUTPUT_DIR_RELEASE)\/&/g" > \$(@:%.o=%d)
-	@echo Compiling \(RELEASE mode\) \$<
-	@\$(CC) \$($it.name$PUBSUB_CFLAGS) \$($it.name$PUBSUB_INCLUDE_DIRS) \$< -o \$@
-	
-.PHONY: all
+$it.name$: \$($it.name$_TARGET) \$($it.name$_TARGET_Z) $it.name$PublisherSubscriber}; separator="\n"$
 
-all: State
+output/$example$/%.o:%.cxx
+	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$(DEFINES) -c \$< -o \$@
+
+output/$example$/%.o:%.cpp
+	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$(DEFINES) -c \$< -o \$@
+
+.PHONY: $solution.projects:{$it.name$ $it.name$PublisherSubscriber}; separator=" \\\n\t"$
 
 clean:
 	@rm -f \$(OBJS)
-	@rm -f \$(DEPS)
 
-ifneq (\$(MAKECMDGOALS), clean)
--include \$(DEPS)
-endif
-
-}; separator="\n"$
-
+%.dir : 
+	@echo "Checking directory \$*"
+	@if [ ! -d \$* ]; then \
+		echo "Making directory \$*"; \
+		mkdir -p \$* ; \
+	fi;
 
 >>
