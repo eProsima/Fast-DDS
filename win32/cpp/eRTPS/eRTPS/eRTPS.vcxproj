@@ -68,6 +68,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -169,7 +170,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -190,7 +191,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -209,7 +210,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -225,7 +226,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -241,7 +242,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -257,7 +258,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -276,7 +277,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>
       </DebugInformationFormat>
@@ -301,7 +302,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
@@ -413,6 +414,8 @@
     <ClInclude Include="..\..\..\..\src\cpp\submessages\DataMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\GapMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\HeartbeatMsg.hpp" />
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\eProsima_Colors.h" />
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\builtin\BuiltinProtocols.cpp" />
@@ -481,6 +484,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\NackSupressionDuration.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\PeriodicHeartbeat.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\writer\timedevent\UnsentChangesNotEmptyEvent.cpp" />
+    <ClCompile Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
