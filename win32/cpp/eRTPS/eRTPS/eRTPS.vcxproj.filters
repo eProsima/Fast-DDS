@@ -124,6 +124,18 @@
     <Filter Include="Source Files\builtin\liveliness\timedevent">
       <UniqueIdentifier>{590ced6a-6830-4015-8be9-c31eb895353e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\thirdparty">
+      <UniqueIdentifier>{63262122-46b8-482e-8977-e17336426da5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdparty\log">
+      <UniqueIdentifier>{f4e7df22-d589-416e-ab93-0f05abd41ae8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdparty">
+      <UniqueIdentifier>{b9a6244c-65fc-4f55-a143-3b9ee589b355}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdparty\log">
+      <UniqueIdentifier>{8cd245b0-84a7-4182-ba58-1e8d3b32598c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp">
@@ -417,6 +429,12 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\md5.h">
       <Filter>Header Files\eprosimartps\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\eProsima_Colors.h">
+      <Filter>Header Files\thirdparty\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.h">
+      <Filter>Header Files\thirdparty\log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -616,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\utils\md5.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.cpp">
+      <Filter>Source Files\thirdparty\log</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
