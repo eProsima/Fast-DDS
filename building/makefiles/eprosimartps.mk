@@ -108,6 +108,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPTopicDataType.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
+		  \
+		  $(BASEDIR)/thirdparty/eprosima-common-code/eProsima_cpp/log/eProLog.cppS
 
 
 # Project sources are copied to the current directory
