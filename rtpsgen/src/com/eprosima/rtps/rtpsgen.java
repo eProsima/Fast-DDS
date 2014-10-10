@@ -341,6 +341,8 @@ public class rtpsgen {
             System.out.println("\t\t\t * " + m_platforms.get(count));
         System.out.println("\t\t-language <C++>: Programming language (default: C++).");
         System.out.println("\t\t-replace: replaces existing generated files.");
+        System.out.println("\t\t-ppDisable: disables the preprocessor.");
+        System.out.println("\t\t-ppPath: specifies the preprocessor path.");
         System.out.println("\t\t-d <path>: sets an output directory for generated files.");
 		System.out.println("\t\t-t <temp dir>: sets a specific directory as a temporary directory.");
         System.out.println("\tand the supported input files are:");
