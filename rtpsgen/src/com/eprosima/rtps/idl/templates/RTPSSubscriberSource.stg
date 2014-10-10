@@ -57,11 +57,12 @@ void $ctx.filename$Subscriber::SubListener::onNewDataMessage()
 		// Take data
 		$ctx.m_firstStructure$ st;
 		
-		mp_sub->takeNextData(&st, &m_info);
-		
-		if(m_info.sampleKind == ALIVE)
+		if(mp_sub->takeNextData(&st, &m_info))
 		{
-			// Print your structure data here.
+			if(m_info.sampleKind == ALIVE)
+			{
+				// Print your structure data here.
+			}
 		}
 
 	}
