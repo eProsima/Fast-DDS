@@ -31,10 +31,12 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "StatefulWriter";
 
 StatefulWriter::~StatefulWriter()
 {
-	pDebugInfo("StatefulWriter destructor"<<endl;);
+	const char* const METHOD_NAME = "~StatefulWriter";
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"StatefulWriter destructor"<<endl;);
 	if(mp_periodicHB !=NULL)
 		delete(mp_periodicHB);
 	for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
@@ -66,12 +68,13 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 
 bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 {
+	const char* const METHOD_NAME = "matched_reader_add";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
 		{
-			pInfo("Attempting to add existing reader" << endl);
+			logInfo(LOG_CATEGORY::RTPS_HISTORY,"Attempting to add existing reader" << endl);
 			return false;
 		}
 	}
@@ -94,7 +97,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 		}
 	}
 	matched_readers.push_back(rp);
-	pDebugInfo("Reader Proxy added to StatefulWriter with " <<rp->m_data->m_unicastLocatorList.size()<<"(u)-"<<rp->m_data->m_multicastLocatorList.size()<<"(m) locators: "<<rp->m_data->m_guid<< endl);
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Reader Proxy added to StatefulWriter with " <<rp->m_data->m_unicastLocatorList.size()<<"(u)-"<<rp->m_data->m_multicastLocatorList.size()<<"(m) locators: "<<rp->m_data->m_guid<< endl);
 	if(rp->m_changesForReader.size()>0)
 	{
 		//unsent_changes_not_empty();
@@ -107,12 +110,13 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 
 bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 {
+	const char* const METHOD_NAME = "matched_reader_remove";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
 		{
-			pDebugInfo("Reader Proxy removed: " <<(*it)->m_data->m_guid<< endl);
+			logInfo(LOG_CATEGORY::RTPS_HISTORY,"Reader Proxy removed: " <<(*it)->m_data->m_guid<< endl);
 			delete(*it);
 			matched_readers.erase(it);
 
@@ -121,7 +125,7 @@ bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 			return true;
 		}
 	}
-	pInfo("Reader Proxy doesn't exist in this writer" << endl)
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Reader Proxy doesn't exist in this writer" << endl)
 	return false;
 }
 
@@ -155,6 +159,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 
 bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 {
+	const char* const METHOD_NAME = "is_acked_by_all";
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
@@ -165,7 +170,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 			{
 				if(changeForReader.status != ACKNOWLEDGED)
 				{
-					pDebugInfo("Change not acked. Relevant: " << changeForReader.is_relevant<<" status: " << changeForReader.status << endl);
+					logInfo(LOG_CATEGORY::RTPS_HISTORY,"Change not acked. Relevant: " << changeForReader.is_relevant<<" status: " << changeForReader.status << endl);
 					return false;
 				}
 			}
@@ -176,6 +181,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 
 void StatefulWriter::unsent_change_add(CacheChange_t* change)
 {
+	const char* const METHOD_NAME = "unsent_change_add";
 	boost::lock_guard<Endpoint> guard(*this);
 	if(!matched_readers.empty())
 	{
@@ -195,7 +201,7 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 	}
 	else
 	{
-		pInfo("No reader proxy to add change." << endl);
+		logInfo(LOG_CATEGORY::RTPS_HISTORY,"No reader proxy to add change." << endl);
 	}
 }
 
@@ -218,6 +224,7 @@ bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
 
 void StatefulWriter::unsent_changes_not_empty()
 {
+	const char* const METHOD_NAME = "unsent_changes_not_empty";
 	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<ReaderProxy*>::iterator rit;
 	boost::lock_guard<ResourceSend> guard2(*mp_send_thr);
@@ -286,12 +293,13 @@ void StatefulWriter::unsent_changes_not_empty()
 			}
 		}
 	}
-	pDebugInfo("Finish sending unsent changes" << endl);
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Finish sending unsent changes" << endl);
 }
 
 bool StatefulWriter::removeMinSeqCacheChange()
 {
-	pDebugInfo("Removing min seq from StatefulWriter"<<endl);
+	const char* const METHOD_NAME = "removeMinSeqCacheChange";
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Removing min seq from StatefulWriter"<<endl);
 	CacheChange_t* change;
 	if(m_writer_cache.get_min_change(&change))
 	{
@@ -327,8 +335,9 @@ bool StatefulWriter::removeAllCacheChange(size_t* removed)
 
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
+	const char* const METHOD_NAME = "change_removed_by_history";
 	boost::lock_guard<Endpoint> guard(*this);
-	pDebugInfo("WriterHistory commands change "<<a_change->sequenceNumber.to64long()<< " to be removed from StatefulWriter"<<endl;);
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"WriterHistory commands change "<<a_change->sequenceNumber.to64long()<< " to be removed from StatefulWriter"<<endl;);
 
 	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 			it!=this->matched_readers.end();++it)

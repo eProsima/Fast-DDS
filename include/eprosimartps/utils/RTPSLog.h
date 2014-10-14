@@ -16,6 +16,32 @@
 
 #include "eProsima_cpp/log/Log.h"
 
+namespace eprosima{
+
+
+#if defined(_WIN32)
+
+#else
+enum class LOG_CATEGORY : uint32_t
+#endif
+{
+	RTPS_DISCOVERY = 1,
+	RTPS_LIVELINESS,
+
+	RTPS_QOS_CHECK,
+	RTPS_CDR_MSG,
+	RTPS_UTILS,
+	RTPS_HISTORY,
+	RTPS_WRITER,
+	RTPS_PROXY_DATA,
+
+};
+
+}
+
+using namespace eprosima;
+
+
 
 
 #endif /* RTPSLOG_H_ */

@@ -25,6 +25,7 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "RTPSWriter";
 
 RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
 		StateKind_t state,
@@ -39,8 +40,9 @@ RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttrib
 									m_livelinessAsserted(false),
 									mp_unsetChangesNotEmpty(NULL)
 {
+	const char* const METHOD_NAME = "RTPSWriter";
 	init_header();
-	pDebugInfo("RTPSWriter created"<<endl)
+	logInfo(LOG_CATEGORY::RTPS_WRITER,"RTPSWriter created";);
 
 }
 
@@ -54,35 +56,37 @@ void RTPSWriter::init_header()
 
 RTPSWriter::~RTPSWriter()
 {
-	pDebugInfo("RTPSWriter destructor"<<endl;);
+	const char* const METHOD_NAME = "~RTPSWriter";
+	logInfo(LOG_CATEGORY::RTPS_WRITER,"RTPSWriter destructor";;);
 }
 
 bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out)
 {
-	pDebugInfo("Creating new change"<<endl);
+	const char* const METHOD_NAME = "new_change";
+	logInfo(LOG_CATEGORY::RTPS_WRITER,"Creating new change";);
 	CacheChange_t* ch = m_writer_cache.reserve_Cache();
 	if(ch == NULL)
 	{
-		pWarning("Problem reserving Cache"<<endl);
+		logWarning(LOG_CATEGORY::RTPS_WRITER,"Problem reserving Cache";);
 		return false;
 	}
 	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
 	{
 		if(!mp_type->serialize(data,&ch->serializedPayload))
 		{
-			pWarning("RTPSWriter:Serialization returns false"<<endl);
+			logWarning(LOG_CATEGORY::RTPS_WRITER,"RTPSWriter:Serialization returns false";);
 			m_writer_cache.release_Cache(ch);
 			return false;
 		}
 		else if(ch->serializedPayload.length > mp_type->m_typeSize)
 		{
-			pWarning("Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")"<<endl);
+			logWarning(LOG_CATEGORY::RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
 			m_writer_cache.release_Cache(ch);
 			return false;
 		}
 		else if(ch->serializedPayload.length == 0)
 		{
-			pWarning("Serialized Payload length must be set to >0 "<<endl);
+			logWarning(LOG_CATEGORY::RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
 			m_writer_cache.release_Cache(ch);
 			return false;
 		}
@@ -97,7 +101,7 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 		}
 		else
 		{
-			pWarning("Get key function not defined"<<endl);
+			logWarning(LOG_CATEGORY::RTPS_WRITER,"Get key function not defined";);
 		}
 	}
 	//change->sequenceNumber = lastChangeSequenceNumber;
@@ -108,20 +112,21 @@ bool RTPSWriter::new_change(ChangeKind_t changeKind,void* data,CacheChange_t** c
 
 bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 {
+	const char* const METHOD_NAME = "add_new_change";
 	if(kind != ALIVE && getTopic().getTopicKind() == NO_KEY)
 	{
-		pWarning("NOT ALIVE change in NO KEY Topic "<<endl)
-						return false;
+		logWarning(LOG_CATEGORY::RTPS_WRITER,"NOT ALIVE change in NO KEY Topic ";)
+		return false;
 	}
 
 	CacheChange_t* change;
 	if(new_change(kind,Data,&change))
 	{
-		pDebugInfo("New change created"<<endl);
+		logInfo(LOG_CATEGORY::RTPS_WRITER,"New change created";);
 		if(!m_writer_cache.add_change(change))
 		{
 			m_writer_cache.release_Cache(change);
-			pDebugInfo("Change not added"<<endl);
+			logInfo(LOG_CATEGORY::RTPS_WRITER,"Change not added";);
 			return false;
 		}
 		this->setLivelinessAsserted(true);

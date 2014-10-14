@@ -20,6 +20,7 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "History";
 
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
@@ -36,17 +37,19 @@ History::History(Endpoint* endp,
 		mp_minSeqCacheChange(NULL),
 		mp_maxSeqCacheChange(NULL)
 {
+	const char* const METHOD_NAME = "History";
 	mp_invalidCache = m_changePool.reserve_Cache();
 	mp_invalidCache->writerGUID = c_Guid_Unknown;
 	mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
 	mp_minSeqCacheChange = mp_invalidCache;
 	mp_maxSeqCacheChange = mp_invalidCache;
-	pDebugInfo("History created"<<std::endl;);
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"History created");
 }
 
 History::~History()
 {
-	pDebugInfo("HistoryCache destructor"<<endl;);
+	const char* const METHOD_NAME = "~History";
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"HistoryCache destructor");
 }
 
 
@@ -107,6 +110,7 @@ bool History::remove_change(CacheChange_t* ch)
 
 bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator* vit_out)
 {
+	const char* const METHOD_NAME = "find_Key";
 	t_vectorPairKeyChanges::iterator vit;
 	bool found = false;
 	for(vit= m_keyedChanges.begin();vit!=m_keyedChanges.end();++vit)
@@ -128,7 +132,7 @@ bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator*
 			return true;
 		}
 		else
-			pWarning("History has reached the maximum number of instances"<<endl;)
+			logWarning(LOG_CATEGORY::RTPS_HISTORY,"History has reached the maximum number of instances"<<endl;)
 	}
 	return false;
 }
