@@ -30,11 +30,10 @@ EPROSIMARTPS_CFLAGS += $(CFLAGS) -std=c++0x -O2 -Wno-unknown-pragmas
 EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x  -Wno-unknown-pragmas
 
 EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/include \
-		  -I$(EPROSIMADIR)/code
+		  		-I$(EPROSIMADIR)/../eprosima-common-code
 
 EPROSIMARTPS_SRC_CPPFILES= \
  	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
-		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
