@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.endl
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
@@ -23,7 +23,7 @@
 namespace eprosima {
 namespace rtps {
 
-
+static const char* const CLASS_NAME = "ReaderProxy";
 
 ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW):
 				m_data(rdata),
@@ -36,13 +36,14 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 				m_nackSupression(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration))),
 				m_lastAcknackCount(0)
 {
-pDebugInfo("Reader Proxy created"<<endl);
+	const char* const METHOD_NAME = "ReaderProxy";
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Reader Proxy created"<<endl);
 }
 
 
 ReaderProxy::~ReaderProxy()
 {
-//pDebugInfo("ReaderProxy destructor"<<endl);
+
 }
 
 
@@ -50,13 +51,14 @@ ReaderProxy::~ReaderProxy()
 bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		ChangeForReader_t* changeForReader)
 {
+	const char* const METHOD_NAME = "getChangeForReader";
 	boost::lock_guard<ReaderProxy> guard(*this);
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->seqNum == change->sequenceNumber)
 		{
 			*changeForReader = *it;
-			pDebugInfo("Change " << change->sequenceNumber.to64long()<< " found in Reader Proxy " << endl);
+			logInfo(LOG_CATEGORY::RTPS_HISTORY,"Change " << change->sequenceNumber.to64long()<< " found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -67,13 +69,14 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 
 bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* changeForReader)
 {
+	const char* const METHOD_NAME = "getChangeForReader";
 	boost::lock_guard<ReaderProxy> guard(*this);
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->seqNum == seq)
 		{
 			*changeForReader = *it;
-			pDebugInfo("Change " << seq.to64long()<<" found in Reader Proxy " << endl);
+			logInfo(LOG_CATEGORY::RTPS_HISTORY,"Change " << seq.to64long()<<" found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -97,6 +100,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t& seqNum)
 
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
+	const char* const METHOD_NAME = "requested_changes_set";
 	boost::lock_guard<ReaderProxy> guard(*this);
 
 	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
@@ -111,7 +115,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 			}
 		}
 	}
-	pDebugInfo("Requested Changes Set" << endl);
+	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Requested Changes Set" << endl);
 	return true;
 }
 
