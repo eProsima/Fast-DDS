@@ -21,6 +21,7 @@
 #include "eprosimartps/writer/RTPSWriter.h"
 
 #include "eprosimartps/builtin/BuiltinProtocols.h"
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
@@ -449,7 +450,7 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t u
 		pWarning("Remote Endpoints can only be activated with static discovery protocol");
 		return false;
 	}
-	return this->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
+	return m_builtinProtocols.mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
 }
 
 } /* namespace rtps */

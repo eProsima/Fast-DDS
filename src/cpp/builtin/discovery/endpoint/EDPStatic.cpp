@@ -264,18 +264,18 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 
 bool EDPStatic::checkEntityId(ReaderProxyData* rdata)
 {
-	if(rdata->m_topicKind == WITH_KEY && rdata->m_guid.entityId[3] == 0x07)
+	if(rdata->m_topicKind == WITH_KEY && rdata->m_guid.entityId.value[3] == 0x07)
 		return true;
-	if(rdata->m_topicKind == NO_KEY && rdata->m_guid.entityId[3] == 0x04)
+	if(rdata->m_topicKind == NO_KEY && rdata->m_guid.entityId.value[3] == 0x04)
 		return true;
 	return false;
 }
 
 bool EDPStatic::checkEntityId(WriterProxyData* wdata)
 {
-	if(wdata->m_topicKind == WITH_KEY && wdata->m_guid.entityId[3] == 0x02)
+	if(wdata->m_topicKind == WITH_KEY && wdata->m_guid.entityId.value[3] == 0x02)
 		return true;
-	if(wdata->m_topicKind == NO_KEY && wdata->m_guid.entityId[3] == 0x03)
+	if(wdata->m_topicKind == NO_KEY && wdata->m_guid.entityId.value[3] == 0x03)
 		return true;
 	return false;
 }
