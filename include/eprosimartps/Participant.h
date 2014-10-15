@@ -220,6 +220,8 @@ public:
 
 	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
 
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId);
+
 
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
@@ -302,6 +304,11 @@ public:
 	void stopParticipantAnnouncement(){return mp_impl->stopParticipantAnnouncement();};
 	//!Reset the participant announcement period.
 	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
+
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId)
+	{
+		return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId);
+	}
 	private:
 	ParticipantImpl* mp_impl;
 };

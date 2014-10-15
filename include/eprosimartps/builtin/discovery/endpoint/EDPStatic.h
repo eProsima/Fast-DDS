@@ -93,7 +93,7 @@ public:
 	 * @param entId EntityId.
 	 * @return True if correct.
 	 */
-	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId,EntityId_t& entId);
+	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	 * New Remote Reader has been found and this method process it and calls the pairing methods.
 	 * @param pdata Pointer to the ParticipantProxyData object.
@@ -101,8 +101,19 @@ public:
 	 * @param entId EntityId.
 	 * @return true if correct.
 	 */
-	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId,EntityId_t& entId);
-
+	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	/**
+	* This method checks the provided entityId against the topic type to see if it matches
+	* @param rdata Pointer to the readerProxyData
+	* @return True if its correct. 
+	**/
+	bool checkEntityId(ReaderProxyData* rdata);
+	/**
+	* This method checks the provided entityId against the topic type to see if it matches
+	* @param rdata Pointer to the writerProxyData
+	* @return True if its correct. 
+	**/
+	bool checkEntityId(WriterProxyData* wdata);
 private:
 	EDPStaticXML m_edpXML;
 	BuiltinAttributes m_attributes;

@@ -18,6 +18,8 @@
 #include "eprosimartps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
 #include "eprosimartps/dds/attributes/ParticipantAttributes.h"
 
+#include "eprosimartps/Endpoint.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -91,6 +93,13 @@ public:
 	 */
 	bool lookupWriterProxyData(const GUID_t& writer,WriterProxyData** rdata);
 	/**
+	 * This method returns a pointer to a ParticipantProxyData object if it is found among the registered participants.
+	 * @param[in] pguid GUID_t of the participant we are looking for.
+	 * @param[out] pdata Pointer to pointer of the ParticipantProxyData object.
+	 * @return True if found.
+	 */
+	bool lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata);
+	/**
 	 * This method removes and deletes a ReaderProxyData object from its corresponding participant.
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return true if found and deleted.
@@ -148,6 +157,8 @@ public:
 	void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
 
 	void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
+
+	bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
 private:
 	//!Pointer to the local participant.

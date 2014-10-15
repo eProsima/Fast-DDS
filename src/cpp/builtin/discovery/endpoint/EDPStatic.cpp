@@ -196,7 +196,7 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	}
 }
 
-bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,EntityId_t& entId)
+bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
 	ReaderProxyData* rpd = NULL;
 	if(m_edpXML.lookforReader(pdata->m_participantName,userId,&rpd))
@@ -204,7 +204,14 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 		ReaderProxyData* newRPD = new ReaderProxyData();
 		newRPD->copy(rpd);
 		newRPD->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
-		newRPD->m_guid.entityId = entId;
+		if(entId != c_EntityId_Unknown)
+			newRPD->m_guid.entityId = entId;
+		if(!checkEntityId(newRPD))
+		{
+			pError("The provided entityId for Reader with ID: " << newRPD->m_userDefinedId << " does not match the topic type" << endl;)
+				delete(newRPD);
+			return false;
+		}
 		newRPD->m_key = newRPD->m_guid;
 		newRPD->m_participantKey = pdata->m_guid;
 		if(this->mp_PDP->addReaderProxyData(newRPD,false))
@@ -222,7 +229,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 	return false;
 }
 
-bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t& entId)
+bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
 	WriterProxyData* wpd = NULL;
 	if(m_edpXML.lookforWriter(pdata->m_participantName,userId,&wpd))
@@ -230,7 +237,14 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 		WriterProxyData* newWPD = new WriterProxyData();
 		newWPD->copy(wpd);
 		newWPD->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
-		newWPD->m_guid.entityId = entId;
+		if(entId != c_EntityId_Unknown)
+			newWPD->m_guid.entityId = entId;
+		if(!checkEntityId(newWPD))
+		{
+			pError("The provided entityId for Writer with User ID: " << newWPD->m_userDefinedId << " does not match the topic type" << endl;)
+			delete(newWPD);
+			return false;
+		}
 		newWPD->m_key = newWPD->m_guid;
 		newWPD->m_participantKey = pdata->m_guid;
 		if(this->mp_PDP->addWriterProxyData(newWPD,false))
@@ -248,7 +262,23 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 	return false;
 }
 
+bool EDPStatic::checkEntityId(ReaderProxyData* rdata)
+{
+	if(rdata->m_topicKind == WITH_KEY && rdata->m_guid.entityId[3] == 0x07)
+		return true;
+	if(rdata->m_topicKind == NO_KEY && rdata->m_guid.entityId[3] == 0x04)
+		return true;
+	return false;
+}
 
+bool EDPStatic::checkEntityId(WriterProxyData* wdata)
+{
+	if(wdata->m_topicKind == WITH_KEY && wdata->m_guid.entityId[3] == 0x02)
+		return true;
+	if(wdata->m_topicKind == NO_KEY && wdata->m_guid.entityId[3] == 0x03)
+		return true;
+	return false;
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

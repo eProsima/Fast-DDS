@@ -214,6 +214,22 @@ bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 	return false;
 }
 
+
+bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata)
+{
+	pInfo(RTPS_CYAN<<"SimplePDP looking for ParticipantProxyData: "<<pguid<<RTPS_DEF<<endl);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
+	{
+		if((*pit)->m_guid == pguid)
+		{
+			*pdata = *pit;
+				return true;
+		}
+	}
+	return false;
+}
+
 bool PDPSimple::createSPDPEndpoints()
 {
 	pInfo(RTPS_CYAN<<"Creating SPDP Endpoints"<<RTPS_DEF<<endl);
@@ -518,6 +534,19 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 			break;
 		}
 	}
+}
+
+bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+{
+	ParticipantProxyData* pdata;
+	if(lookupParticipantProxyData(pguid, &pdata))
+	{
+		if(kind == WRITER)
+			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
+		else
+			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+	}
+	return false;
 }
 
 

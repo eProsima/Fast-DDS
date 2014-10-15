@@ -439,9 +439,18 @@ void ParticipantImpl::ResourceSemaphoreWait()
 	{
 		mp_ResourceSemaphore->wait();
 	}
+	
 }
 
-
+bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+{
+	if(m_builtin.use_STATIC_EndpointDiscoveryProtocol == false)
+	{
+		pWarning("Remote Endpoints can only be activated with static discovery protocol");
+		return false;
+	}
+	return this->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

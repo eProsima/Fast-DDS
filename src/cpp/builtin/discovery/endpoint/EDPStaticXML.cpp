@@ -118,6 +118,20 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			rdata->m_userDefinedId = id;
 		}
+		if(xml_endpoint_child.first == "entityId")
+		{
+			int32_t id = boost::lexical_cast<int32_t>(xml_endpoint_child.second.data());
+			if(id<=0 || m_entityIds.insert(id).second == false)
+			{
+				pError("Repeated or negative entityId in XML file"<<endl);
+				delete(rdata);
+				return false;
+			}
+			octet* c = (octet*)&id;
+		    rdata->m_guid.entityId.value[2] = c[0];
+		    rdata->m_guid.entityId.value[1] = c[1];
+            rdata->m_guid.entityId.value[0] = c[2]; 
+		}
 		else if(xml_endpoint_child.first == "expectsInlineQos")
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
@@ -294,6 +308,20 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 				return false;
 			}
 			wdata->m_userDefinedId = id;
+		}
+		if(xml_endpoint_child.first == "entityId")
+		{
+			int32_t id = boost::lexical_cast<int32_t>(xml_endpoint_child.second.data());
+			if(id<=0 || m_entityIds.insert(id).second == false)
+			{
+				pError("Repeated or negative entityId in XML file"<<endl);
+				delete(wdata);
+				return false;
+			}
+			octet* c = (octet*)&id;
+		    wdata->m_guid.entityId.value[2] = c[0];
+		    wdata->m_guid.entityId.value[1] = c[1];
+            wdata->m_guid.entityId.value[0] = c[2]; 
 		}
 		else if(xml_endpoint_child.first == "expectsInlineQos")
 		{
