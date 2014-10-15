@@ -220,7 +220,7 @@ public:
 
 	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
 
-	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId);
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
 
 private:
@@ -305,9 +305,9 @@ public:
 	//!Reset the participant announcement period.
 	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
 
-	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId)
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 	{
-		return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId);
+		return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, kind);
 	}
 	private:
 	ParticipantImpl* mp_impl;
