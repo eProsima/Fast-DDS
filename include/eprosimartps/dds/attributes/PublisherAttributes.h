@@ -60,6 +60,7 @@ public:
 	//	historyMaxSize = 10;
 		userDefinedId = 0;
 		payloadMaxSize = 500;
+		entityId = -1;
 };
 	virtual ~PublisherAttributes(){};
 	//! If set to true the Publisher will send the data directly, if set to false it will send
@@ -81,8 +82,24 @@ public:
 	//! User defined Id for this Publisher (only needed in STATICEDP)
 	int16_t userDefinedId;
 	WriterQos qos;
-
+	//!Max Payload size, deprecated
 	uint32_t payloadMaxSize;
+	bool setEntityId(uint32_t id) {
+		if (id>0 && id <= 16777215 )
+		{
+			entityId = id;
+			return true;
+		}
+		return false;
+	}
+	const uint32_t getEntityId() const 
+	{
+		return (entityId>0)?((uint32_t)entityId):0; 
+	}
+
+private:
+	//! The user can define the entityId first three bytes as long as its unique.
+	int32_t entityId;
 
 };
 
