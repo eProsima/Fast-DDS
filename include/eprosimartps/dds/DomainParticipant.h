@@ -322,6 +322,47 @@ public:
 	{
 		return (DomainParticipantImpl::getInstance()->getRegisteredType(type_name,type_ptr));
 	}
+
+	  /**
+     * Set the parameters used to calculate the default ports in the discovery.
+     */
+    static void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
+    {
+    	return (DomainParticipantImpl::getInstance()->setPortParameters( PB, DG, PG, d0, d1, d2, d3);
+    }
+    /** @name Methods to get the default Port numbers.
+     */
+
+    	///@{
+	static uint16_t getDomainIdGain()  {
+		return (DomainParticipantImpl::getInstance()->getDomainIdGain();
+	}
+
+	static uint16_t getOffsetd0()  {
+		return (DomainParticipantImpl::getInstance()-> getOffsetd0();
+	}
+
+	static uint16_t getOffsetd1()  {
+		return (DomainParticipantImpl::getInstance()->getOffsetd1();
+	}
+
+	static uint16_t getOffsetd2()  {
+		return (DomainParticipantImpl::getInstance()->getOffsetd2();
+	}
+
+	static uint16_t getOffsetd3()  {
+		return (DomainParticipantImpl::getInstance()->getOffsetd3();
+	}
+
+	static uint16_t getParticipantIdGain()  {
+		return (DomainParticipantImpl::getInstance()->getParticipantIdGain();
+	}
+
+	static uint16_t getPortBase()  {
+		return (DomainParticipantImpl::getInstance()->getPortBase();
+	}
+
+
 };
 
 
