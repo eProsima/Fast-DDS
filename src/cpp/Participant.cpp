@@ -106,6 +106,28 @@ ParticipantImpl::~ParticipantImpl()
 
 }
 
+bool ParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const 
+{
+	if(kind == WRITER)
+	{
+		for(std::vector<RTPSWriter*>::const_iterator it = m_userWriterList.begin();
+			it!=m_userWriterList.end();++it)
+		{
+			if(ent == (*it)->getGuid().entityId)
+				return true;
+		}
+	}
+	else
+	{
+		for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
+			it!=m_userReaderList.end();++it)
+		{
+			if(ent == (*it)->getGuid().entityId)
+				return true;
+		}
+	}
+	return false;
+}
 
 
 bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
@@ -122,11 +144,24 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			entId.value[3] = 0x03;
 		else if(param.topic.getTopicKind() == WITH_KEY)
 			entId.value[3] = 0x02;
-		IdCounter++;
+		uint32_t idnum;
+		if(param.getEntityId()>0)
+			idnum = param.getEntityId();
+		else
+		{
+			IdCounter++;
+			idnum = IdCounter;
+		}
+		
 		octet* c = (octet*)&IdCounter;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
 		entId.value[0] = c[2];
+		if(this->existsEntityId(entId,WRITER))
+		{
+			pError("A writer with the same entityId already exists in this participant"<<endl;);
+			return false;
+		}
 	}
 	else
 	{
@@ -183,11 +218,23 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 			entId.value[3] = 0x04;
 		else if(param.topic.getTopicKind() == WITH_KEY)
 			entId.value[3] = 0x07;
-		IdCounter++;
+		uint32_t idnum;
+		if(param.getEntityId()>0)
+			idnum = param.getEntityId();
+		else
+		{
+			IdCounter++;
+			idnum = IdCounter;
+		}
 		octet* c = (octet*)&IdCounter;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
 		entId.value[0] = c[2];
+		if(this->existsEntityId(entId,READER))
+		{
+			pError("A reader with the same entityId already exists in this participant"<<endl;);
+			return false;
+		}
 	}
 	else
 		entId = entityId;

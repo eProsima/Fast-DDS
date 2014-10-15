@@ -49,6 +49,7 @@ public:
 		expectsInlineQos = false;
 		userDefinedId = 0;
 		payloadMaxSize = 500;
+		entityId = -1;
 };
 	virtual ~SubscriberAttributes(){};
 	//! Expects Inline Qos (true or false)
@@ -68,6 +69,19 @@ public:
 
 
 	uint32_t payloadMaxSize;
+	bool setEntityId(uint32_t id) {
+		if (id>0 && id <= 16777215 )
+		{
+			entityId = id;
+			return true;
+		}
+		return false;
+	}
+		const uint32_t getEntityId() const {return entityId>0?(uint32_t)entityId:0; }
+
+private:
+	//! The user can define the entityId first three bytes as long as its unique.
+	int32_t entityId;
 };
 
 } /* namespace rtps */

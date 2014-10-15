@@ -218,6 +218,7 @@ public:
 
 	BuiltinProtocols* getBuiltinProtocols(){return &m_builtinProtocols;}
 
+	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
 
 
 private:
