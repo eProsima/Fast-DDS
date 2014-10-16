@@ -111,7 +111,8 @@ bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pi
 	return false;
 }
 
-Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
+Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam,
+														ParticipantListener* listen)
 {
 	pInfo("Creating Participant "<<endl);
 
@@ -152,7 +153,7 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 	guidP.value[9] = ((octet*)&ID)[1];
 	guidP.value[10] = ((octet*)&ID)[2];
 	guidP.value[11] = ((octet*)&ID)[3];
-	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID);
+	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID,listen);
 	this->setMaxParticipantId(pimpl->getParticipantId());
 	Participant* p = new Participant(pimpl);
 

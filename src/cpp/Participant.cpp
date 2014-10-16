@@ -34,7 +34,7 @@ typedef std::vector<RTPSReader*>::iterator p_ReaderIterator;
 typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
 
-ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP,uint32_t ID):
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP,uint32_t ID,ParticipantListener* plisten):
 
 							m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
@@ -50,7 +50,8 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_builtinProtocols(this),
 							m_participantID(ID),
 							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
-							m_listen_socket_buffer_size(PParam.listenSocketBufferSize)
+							m_listen_socket_buffer_size(PParam.listenSocketBufferSize),
+							mp_participantListener(plisten)
 {
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -154,7 +155,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			idnum = IdCounter;
 		}
 		
-		octet* c = (octet*)&IdCounter;
+		octet* c = (octet*)&idnum;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
 		entId.value[0] = c[2];
@@ -227,7 +228,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 			IdCounter++;
 			idnum = IdCounter;
 		}
-		octet* c = (octet*)&IdCounter;
+		octet* c = (octet*)&idnum;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
 		entId.value[0] = c[2];
