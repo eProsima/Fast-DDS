@@ -369,6 +369,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					delete(oc);
 					return -1;
 				}
+				IF_VALID_ADD
 				break;
 			}
 			case PID_TIME_BASED_FILTER:
