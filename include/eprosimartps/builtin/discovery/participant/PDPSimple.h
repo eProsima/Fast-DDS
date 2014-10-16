@@ -160,6 +160,8 @@ public:
 
 	bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
+	ParticipantImpl* getParticipant() const {return mp_participant;};
+
 private:
 	//!Pointer to the local participant.
 	ParticipantImpl* mp_participant;

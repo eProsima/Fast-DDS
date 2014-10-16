@@ -102,6 +102,8 @@ bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 
 	this->m_participantName = part->getParticipantName();
 
+	this->m_userData = part->getUserData();
+
 	return true;
 }
 
@@ -140,6 +142,9 @@ bool ParticipantProxyData::toParameterList()
 		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_LEASE_DURATION,this->m_leaseDuration);
 		valid &=QosList::addQos(&m_QosList,PID_BUILTIN_ENDPOINT_SET,(uint32_t)this->m_availableBuiltinEndpoints);
 		valid &=QosList::addQos(&m_QosList,PID_ENTITY_NAME,this->m_participantName);
+
+		if(this->m_userData.size()>0)
+			valid &=QosList::addQos(&m_QosList,PID_USER_DATA,this->m_userData);
 
 		//FIXME: ADD STATIC INFO.
 		//		if(this.use_STATIC_EndpointDiscoveryProtocol)
@@ -279,6 +284,12 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				//						}
 				//					}
 			}
+			case PID_USER_DATA:
+			{
+				UserDataQosPolicy*p = (UserDataQosPolicy*)(*it);
+				this->m_userData = p->dataVec;
+				break;
+			}
 			default: break;
 			}
 		}
@@ -310,6 +321,7 @@ void ParticipantProxyData::clear()
 	m_QosList.inlineQos.resetList();
 	m_properties.properties.clear();
 	m_properties.length = 0;
+	m_userData.clear();
 }
 
 void ParticipantProxyData::copy(ParticipantProxyData& pdata)
@@ -329,6 +341,7 @@ void ParticipantProxyData::copy(ParticipantProxyData& pdata)
 	m_key = pdata.m_key;
 	isAlive = pdata.isAlive;
 	m_properties = pdata.m_properties;
+	m_userData = pdata.m_userData;
 
 }
 
@@ -341,6 +354,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 	m_manualLivelinessCount = pdata.m_manualLivelinessCount;
 	m_properties = pdata.m_properties;
 	m_leaseDuration = pdata.m_leaseDuration;
+	m_userData = pdata.m_userData;
 	if(this->mp_leaseDurationTimer!=NULL)
 	{
 		mp_leaseDurationTimer->stop_timer();

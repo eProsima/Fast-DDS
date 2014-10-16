@@ -34,8 +34,10 @@ typedef std::vector<RTPSReader*>::iterator p_ReaderIterator;
 typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
 
-ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP,uint32_t ID,ParticipantListener* plisten):
-
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
+		const GuidPrefix_t& guidP,uint32_t ID,
+		Participant* userP,
+		ParticipantListener* plisten):
 							m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 							m_participantName(PParam.name),
@@ -51,8 +53,12 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_participantID(ID),
 							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
 							m_listen_socket_buffer_size(PParam.listenSocketBufferSize),
-							mp_participantListener(plisten)
+							mp_participantListener(plisten),
+							mp_userParticipant(userP)
 {
+	userP->mp_impl = this;
+	m_userData = PParam.userData;
+
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	m_send_thr.initSend(loc);
