@@ -139,10 +139,10 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-	this->length = 4+this->dataVec.size();
+	this->length = (uint16_t)(4+this->dataVec.size());
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addUInt32(msg, this->dataVec.size());
-	valid &= CDRMessage::addData(msg,this->dataVec.data(),this->dataVec.size());
+	valid &= CDRMessage::addUInt32(msg, (uint32_t)this->dataVec.size());
+	valid &= CDRMessage::addData(msg,this->dataVec.data(),(uint32_t)this->dataVec.size());
 	return valid;
 }
 
