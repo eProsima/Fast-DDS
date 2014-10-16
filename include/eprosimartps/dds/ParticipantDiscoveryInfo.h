@@ -32,8 +32,8 @@ typedef std::vector<octet> UserData;
 
 class ParticipantDiscoveryInfo {
 public:
-	ParticipantDiscoveryInfo();
-	virtual ~ParticipantDiscoveryInfo();
+	ParticipantDiscoveryInfo(){};
+	virtual ~ParticipantDiscoveryInfo(){};
 	DISCOVERY_STATUS m_status;
 	GUID_t m_guid;
 	PropertyList m_propertyList;
