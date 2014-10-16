@@ -25,6 +25,10 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/eClock.h"
 #include "eprosimartps/utils/TimeConversion.h"
+
+#include "eprosimartps/dds/ParticipantDiscoveryInfo.h"
+#include "eprosimartps/dds/ParticipantListener.h"
+
 namespace eprosima {
 namespace rtps {
 
@@ -71,8 +75,14 @@ bool PDPSimpleListener::newAddedCache()
 						break;
 					}
 				}
+				ParticipantDiscoveryInfo info;
+				info.m_guid = m_participantProxyData.m_guid;
+				info.m_participantName = m_participantProxyData.m_participantName;
+				info.m_propertyList = m_participantProxyData.m_properties.properties;
+				info.m_userData = m_participantProxyData.m_userData;
 				if(!found)
 				{
+					info.m_status = DISCOVERED_PARTICIPANT;
 					//IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
 					ParticipantProxyData* pdata = new ParticipantProxyData();
 					pdata->copy(m_participantProxyData);
@@ -89,10 +99,15 @@ bool PDPSimpleListener::newAddedCache()
 				}
 				else
 				{
+					info.m_status = CHANGED_QOS_PARTICIPANT;
 					pdata_ptr->updateData(m_participantProxyData);
 					if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 						mp_SPDP->mp_EDP->assignRemoteEndpoints(&m_participantProxyData);
 				}
+				if(this->mp_SPDP->getParticipant()->getListener()!=NULL)
+					this->mp_SPDP->getParticipant()->getListener()->onParticipantDiscovery(
+						this->mp_SPDP->getParticipant()->getUserParticipant(),
+						info);
 				pdata_ptr->isAlive = true;
 			}
 		}
@@ -102,6 +117,13 @@ bool PDPSimpleListener::newAddedCache()
 			GUID_t guid;
 			iHandle2GUID(guid,change->instanceHandle);
 			this->mp_SPDP->removeRemoteParticipant(guid);
+			ParticipantDiscoveryInfo info;
+			info.m_status = REMOVED_PARTICIPANT;
+			info.m_guid = guid;
+			if(this->mp_SPDP->getParticipant()->getListener()!=NULL)
+				this->mp_SPDP->getParticipant()->getListener()->onParticipantDiscovery(
+									this->mp_SPDP->getParticipant()->getUserParticipant(),
+									info);
 		}
 	}
 	else

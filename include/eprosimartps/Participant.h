@@ -80,7 +80,7 @@ class ParticipantImpl
 {
 public:
 
-	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID,ParticipantListener* plisten);
+	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID,Participant* userP,ParticipantListener* plisten);
 	virtual ~ParticipantImpl();
 
 
@@ -226,6 +226,10 @@ public:
 
 	ParticipantListener* getListener() const {return mp_participantListener;}
 
+	Participant* getUserParticipant() const {return mp_userParticipant;}
+
+	std::vector<octet> getUserData() const {return m_userData;}
+
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -287,6 +291,10 @@ private:
 
 	ParticipantListener* mp_participantListener;
 
+	Participant* mp_userParticipant;
+
+	std::vector<octet> m_userData;
+
 };
 /**
  * @brief Class Participant, contains the public API for a Participant.
@@ -294,6 +302,7 @@ private:
  */
 class RTPS_DllAPI Participant
 {
+	friend class ParticipantImpl;
 public:
 	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
 	virtual ~ Participant(){};

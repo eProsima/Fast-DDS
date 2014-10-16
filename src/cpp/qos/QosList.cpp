@@ -13,6 +13,9 @@
 
 #include "eprosimartps/qos/QosList.h"
 #include "eprosimartps/utils/RTPSLog.h"
+
+#include "eprosimartps/qos/DDSQosPolicies.h"
+
 namespace eprosima {
 namespace dds {
 
@@ -260,6 +263,18 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 		p->Pid = pid;
 		p->length = PARAMETER_TIME_LENGTH;
 		p->time = time_in;
+		qos->allQos.m_parameters.push_back((Parameter_t*)p);
+		qos->allQos.m_hasChanged = true;
+		return true;
+	}
+	return false;
+}
+
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVec) {
+	if(pid == PID_USER_DATA)
+	{
+		UserDataQosPolicy* p = new UserDataQosPolicy();
+		p->dataVec = ocVec;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		qos->allQos.m_hasChanged = true;
 		return true;

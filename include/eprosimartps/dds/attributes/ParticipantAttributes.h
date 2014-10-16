@@ -131,6 +131,8 @@ public:
 	//! Builtin parameters.
 	BuiltinAttributes builtin;
 
+	std::vector<octet> userData;
+
 
 
 

@@ -70,6 +70,7 @@ public:
 	bool isAlive;
 	QosList_t m_QosList;
 	ParameterPropertyList_t m_properties;
+	std::vector<octet> m_userData;
 	bool m_hasChanged;
 	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
 	std::vector<ReaderProxyData*> m_readers;

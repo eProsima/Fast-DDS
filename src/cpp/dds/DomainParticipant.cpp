@@ -153,9 +153,11 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 	guidP.value[9] = ((octet*)&ID)[1];
 	guidP.value[10] = ((octet*)&ID)[2];
 	guidP.value[11] = ((octet*)&ID)[3];
-	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID,listen);
+
+	Participant* p = new Participant(NULL);
+
+	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID,p,listen);
 	this->setMaxParticipantId(pimpl->getParticipantId());
-	Participant* p = new Participant(pimpl);
 
 	m_participants.push_back(ParticipantPair(p,pimpl));
 	return p;
