@@ -51,7 +51,7 @@ class DomainParticipant;
 class DDSTopicDataType;
 class PublisherListener;
 class SubscriberListener;
-
+class ParticipantListener;
 
 
 }
@@ -80,7 +80,7 @@ class ParticipantImpl
 {
 public:
 
-	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID);
+	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID,ParticipantListener* plisten);
 	virtual ~ParticipantImpl();
 
 
@@ -222,6 +222,9 @@ public:
 
 	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
+	void setListener(ParticipantListener* lis) {mp_participantListener = lis;}
+
+	ParticipantListener* getListener() const {return mp_participantListener;}
 
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
@@ -282,7 +285,7 @@ private:
 	uint32_t m_send_socket_buffer_size;
 	uint32_t m_listen_socket_buffer_size;
 
-
+	ParticipantListener* mp_participantListener;
 
 };
 /**

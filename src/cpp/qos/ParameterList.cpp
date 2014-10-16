@@ -349,13 +349,13 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				UserDataQosPolicy* p = new UserDataQosPolicy();
 				p->length = plength;
-				uint32_t str_size = 1;
-				valid&=CDRMessage::readUInt32(msg,&str_size);
-				p->data.resize(str_size);
-				octet* oc=new octet[str_size];
-				valid &= CDRMessage::readData(msg,oc,str_size);
-				for(uint32_t i =0;i<str_size;i++)
-					p->data.at(i) = oc[i];
+				uint32_t vec_size = 1;
+				valid&=CDRMessage::readUInt32(msg,&vec_size);
+				p->dataVec.resize(vec_size);
+				octet* oc=new octet[vec_size];
+				valid &= CDRMessage::readData(msg,oc,vec_size);
+				for(uint32_t i =0;i<vec_size;i++)
+					p->dataVec.at(i) = oc[i];
 				if(valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);

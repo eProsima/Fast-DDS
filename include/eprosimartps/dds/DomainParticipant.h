@@ -44,6 +44,7 @@ class Subscriber;
 class SubscriberImpl;
 class PublisherListener;
 class SubscriberListener;
+class ParticipantListener;
 
 typedef std::pair<Subscriber*,SubscriberImpl*> SubscriberPair;
 typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
@@ -93,7 +94,7 @@ public:
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
-    Participant* createParticipant(const ParticipantAttributes& PParam);
+    Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL);
 
     /**
      * Remove a participant and delete all its associated Writers, Readers, resources, etc.

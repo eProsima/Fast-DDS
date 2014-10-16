@@ -140,7 +140,8 @@ bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addString(msg,this->data);
+	valid &= CDRMessage::addUInt32(msg, this->dataVec.size());
+	valid &= CDRMessage::addData(msg,this->dataVec.data(),this->dataVec.size());
 	return valid;
 }
 
