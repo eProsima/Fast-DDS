@@ -14,6 +14,7 @@
 #define CDRMESSAGE_T_H_
 
 #include "eprosimartps/common/types/common_types.h"
+#include <stdlib.h>
 
 namespace eprosima{
 namespace rtps{
@@ -39,7 +40,7 @@ struct CDRMessage_t{
 	CDRMessage_t(){
 		pos = 0;
 		length = 0;
-		buffer = (octet*)malloc(RTPSMESSAGE_DEFAULT_SIZE);
+		buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
 		max_size = RTPSMESSAGE_DEFAULT_SIZE;
 
 		msg_endian = EPROSIMA_ENDIAN;
@@ -53,7 +54,7 @@ struct CDRMessage_t{
 	{
 		pos = 0;
 		length = 0;
-		buffer = (octet*)malloc(size);
+		buffer = (octet*) malloc(size);
 		max_size = size;
 		msg_endian = EPROSIMA_ENDIAN;
 	}
