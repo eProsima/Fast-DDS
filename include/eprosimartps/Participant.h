@@ -230,6 +230,7 @@ public:
 
 	std::vector<octet> getUserData() const {return m_userData;}
 
+	uint32_t getParticipantID() const{return m_participantID;}
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -321,6 +322,7 @@ public:
 	{
 		return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, kind);
 	}
+	uint32_t getParticipantID() const{return mp_impl->getParticipantID();}
 	private:
 	ParticipantImpl* mp_impl;
 };

@@ -247,7 +247,9 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			case PID_ENTITY_NAME:
 			{
+				
 				ParameterString_t* p = (ParameterString_t*)(*it);
+				//cout << "ENTITY NAME " << p->m_string<<endl;
 				this->m_participantName = p->m_string;
 				break;
 			}

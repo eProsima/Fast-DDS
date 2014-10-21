@@ -274,9 +274,9 @@ public:
 	 * @param PParam Participant Parameters.
 	 * @return Pointer to the participant.
 	 */
-	static Participant* createParticipant(const ParticipantAttributes& PParam)
+	static Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createParticipant(PParam));
+		return (DomainParticipantImpl::getInstance()->createParticipant(PParam,plisten));
 	}
 	/**
 	 * Remove a participant and delete all its associated Writers, Readers, resources, etc.

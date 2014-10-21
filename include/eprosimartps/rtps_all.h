@@ -27,6 +27,7 @@
 #include "eprosimartps/dds/Subscriber.h"
 #include "eprosimartps/dds/PublisherListener.h"
 #include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/dds/ParticipantListener.h"
 
 #include "eprosimartps/dds/SampleInfo.h"
 

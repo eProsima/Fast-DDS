@@ -73,6 +73,9 @@ public:
 	Duration_t leaseDuration_announcementperiod;
 	SimpleEDPAttributes m_simpleEDP;
 
+	LocatorList_t initialUnicastLocatorList;
+	LocatorList_t initialMulticastLocatorList;
+
 	BuiltinAttributes()
 	{
 		use_SIMPLE_ParticipantDiscoveryProtocol = true;
@@ -83,6 +86,7 @@ public:
 		leaseDuration.seconds = 500;
 		leaseDuration_announcementperiod.seconds = 250;
 		use_WriterLivelinessProtocol = true;
+		
 	};
 	virtual ~BuiltinAttributes(){};
 };

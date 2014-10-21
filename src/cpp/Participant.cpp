@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/Participant.h"
-
+#include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
@@ -66,15 +66,16 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 
 	if(m_defaultUnicastLocatorList.empty())
 	{
-		
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);
 		std::stringstream ss;
 
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-		
-			lit->port=7555;
+			lit->port=DomainParticipant::getPortBase()+
+				DomainParticipant::getDomainIdGain()*PParam.builtin.domainId+
+				DomainParticipant::getOffsetd3()+
+				DomainParticipant::getParticipantIdGain()*ID;
 			m_defaultUnicastLocatorList.push_back(*lit);
 			ss << *lit << ";";
 		}
@@ -87,6 +88,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 
 
 	m_builtin = PParam.builtin;
+	
 
 	//START BUILTIN PROTOCOLS
 	m_builtinProtocols.initBuiltinProtocols(PParam.builtin,m_participantID);
