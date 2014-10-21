@@ -68,7 +68,16 @@ bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,
 		it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
 		m_metatrafficUnicastLocatorList.push_back(*it);
 	}
-
+	for(std::vector<Locator_t>::iterator it = m_attributes.initialUnicastLocatorList.begin();
+		it!=m_attributes.initialUnicastLocatorList.end();++it)
+	{
+		m_metatrafficUnicastLocatorList.push_back(*it);
+	}
+	for(std::vector<Locator_t>::iterator it = m_attributes.initialMulticastLocatorList.begin();
+		it!=m_attributes.initialMulticastLocatorList.end();++it)
+	{
+		m_metatrafficMulticastLocatorList.push_back(*it);
+	}
 	if(m_attributes.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
 		mp_PDP = new PDPSimple(this);

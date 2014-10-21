@@ -73,27 +73,25 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 				{
 					pdata->m_participantName = xml_participant_child.second.data();
 				}
-				else if(xml_participant_child.first == "endpoint")
+				else if(xml_participant_child.first == "reader")
 				{
-					std::string auxString = xml_participant_child.second.get("<xmlattr>.type","");
-					if(auxString == "READER")
-					{
+					
 						if(!loadXMLReaderEndpoint(xml_participant_child,pdata))
 						{
 							pError("Reader Endpoint has error, ignoring"<<endl);
 						}
-					}
-					else if(auxString == "WRITER")
-					{
+				}
+				else if(xml_participant_child.first == "writer")
+				{
+					
 						if(!loadXMLWriterEndpoint(xml_participant_child,pdata))
 						{
 							pError("Writer Endpoint has error, ignoring"<<endl);
 						}
-					}
-					else
-					{
-						pError("Endpoint must be defined as READER or WRITER"<<endl);
-					}
+				}
+				else
+				{
+					pError("Unknown XMK tag: " << xml_participant_child.first);
 				}
 			}
 			m_participants.push_back(pdata);
@@ -107,8 +105,10 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 	ReaderProxyData* rdata = new ReaderProxyData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
-		if(xml_endpoint_child.first == "id")
+		//cout << "READER ENDPOINT: " << xml_endpoint_child.first << endl;
+		if(xml_endpoint_child.first == "userId")
 		{
+			//cout << "USER ID FOUND"<<endl;
 			int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_endpointIds.insert(id).second == false)
 			{
@@ -118,7 +118,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			rdata->m_userDefinedId = id;
 		}
-		if(xml_endpoint_child.first == "entityId")
+		else if(xml_endpoint_child.first == "entityId")
 		{
 			int32_t id = boost::lexical_cast<int32_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_entityIds.insert(id).second == false)
@@ -136,7 +136,10 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "true")
+			{
 				rdata->m_expectsInlineQos = true;
+				//cout << "READER WITH EXPECTS INLINE QOS " << endl;
+			}
 			else if (auxString == "false")
 				rdata->m_expectsInlineQos = false;
 			else
@@ -157,9 +160,15 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "NO_KEY")
+			{
 				rdata->m_topicKind = NO_KEY;
+				rdata->m_guid.entityId.value[3] = 0x04;
+			}
 			else if (auxString == "WITH_KEY")
+			{
 				rdata->m_topicKind = WITH_KEY;
+				rdata->m_guid.entityId.value[3] = 0x07;
+			}
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -203,9 +212,15 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			rdata->m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","");
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.kind","");
 			if(auxString == "NO_KEY")
+			{
 				rdata->m_topicKind = NO_KEY;
+				rdata->m_guid.entityId.value[3] = 0x04;
+			}
 			else if (auxString == "WITH_KEY")
+			{
 				rdata->m_topicKind = WITH_KEY;
+				rdata->m_guid.entityId.value[3] = 0x07;
+			}
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -298,7 +313,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 	WriterProxyData* wdata = new WriterProxyData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
-		if(xml_endpoint_child.first == "id")
+		if(xml_endpoint_child.first == "userId")
 		{
 			int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_endpointIds.insert(id).second == false)
@@ -309,7 +324,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			wdata->m_userDefinedId = id;
 		}
-		if(xml_endpoint_child.first == "entityId")
+		else if(xml_endpoint_child.first == "entityId")
 		{
 			int32_t id = boost::lexical_cast<int32_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_entityIds.insert(id).second == false)
@@ -339,9 +354,15 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 		{
 			std::string auxString = (std::string)xml_endpoint_child.second.data();
 			if(auxString == "NO_KEY")
+			{
 				wdata->m_topicKind = NO_KEY;
+				wdata->m_guid.entityId.value[3] = 0x03;
+			}
 			else if (auxString == "WITH_KEY")
+			{
 				wdata->m_topicKind = WITH_KEY;
+				wdata->m_guid.entityId.value[3] = 0x02;
+			}
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -385,9 +406,15 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			wdata->m_typeName = xml_endpoint_child.second.get("<xmlattr>.dataType","EPROSIMA_UNKNOWN_STRING");
 			std::string auxString = xml_endpoint_child.second.get("<xmlattr>.kind","EPROSIMA_UNKNOWN_STRING");
 			if(auxString == "NO_KEY")
+			{
 				wdata->m_topicKind = NO_KEY;
+				wdata->m_guid.entityId.value[3] = 0x03;
+			}
 			else if (auxString == "WITH_KEY")
+			{
 				wdata->m_topicKind = WITH_KEY;
+				wdata->m_guid.entityId.value[3] = 0x02;
+			}
 			else
 			{
 				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
@@ -467,7 +494,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 	}
 	if(wdata->m_userDefinedId == 0)
 	{
-		pError("Reader XML endpoint with NO ID defined"<<endl);
+		pError("Writer XML endpoint with NO ID defined"<<endl);
 		delete(wdata);
 		return false;
 	}
@@ -481,7 +508,7 @@ bool EDPStaticXML::lookforReader(std::string partname, uint16_t id,
 	for(std::vector<StaticParticipantInfo*>::iterator pit = m_participants.begin();
 			pit!=m_participants.end();++pit)
 	{
-		if((*pit)->m_participantName == partname)
+		if((*pit)->m_participantName == partname || true) //it doenst matter the name fo the participant, only for organizational purposes
 		{
 			for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
 					rit!=(*pit)->m_readers.end();++rit)
@@ -503,7 +530,7 @@ bool EDPStaticXML::lookforWriter(std::string partname, uint16_t id,
 	for(std::vector<StaticParticipantInfo*>::iterator pit = m_participants.begin();
 			pit!=m_participants.end();++pit)
 	{
-		if((*pit)->m_participantName == partname)
+		if((*pit)->m_participantName == partname || true) //it doenst matter the name fo the participant, only for organizational purposes
 		{
 			for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
 					wit!=(*pit)->m_writers.end();++wit)
