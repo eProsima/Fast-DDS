@@ -224,6 +224,18 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 	return false;
 }
 
+ bool QosList::addQos(QosList_t* qos,ParameterId_t pid, const ParameterPropertyList_t& list)
+ {
+	 ParameterPropertyList_t* p = new ParameterPropertyList_t();
+	 for(std::vector<std::pair<std::string,std::string>>::const_iterator it = list.properties.begin();
+		 it!= list.properties.end();++it)
+	 {
+		 p->properties.push_back(*it);
+	 }
+	 qos->allQos.m_parameters.push_back((Parameter_t*)p);
+	 qos->allQos.m_hasChanged = true;
+	 return true;
+ }
 
 
 

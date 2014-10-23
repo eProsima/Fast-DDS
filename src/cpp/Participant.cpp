@@ -64,7 +64,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 	m_send_thr.initSend(loc);
 	m_event_thr.init_thread();
 
-	if(m_defaultUnicastLocatorList.empty())
+	if(m_defaultUnicastLocatorList.empty() && m_defaultMulticastLocatorList.empty())
 	{
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);

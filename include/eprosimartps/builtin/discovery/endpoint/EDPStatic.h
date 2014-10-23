@@ -28,15 +28,13 @@ namespace rtps {
 class EDPStaticProperty
 {
 public:
-	EDPStaticProperty():userId(0){};
+	EDPStaticProperty():m_userId(0){};
 	~EDPStaticProperty(){};
-	std::string str1;
-	std::string type;
-	std::string status;
-	std::string idstr;
-	std::string userIDstr;
-	uint16_t userId;
-	EntityId_t entityId;
+	std::string m_endpointType;
+	std::string m_status;
+	std::string m_userIdStr;
+	uint16_t m_userId;
+	EntityId_t m_entityId;
 	static std::pair<std::string,std::string> toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent);
 	bool fromProperty(std::pair<std::string,std::string> property);
 };

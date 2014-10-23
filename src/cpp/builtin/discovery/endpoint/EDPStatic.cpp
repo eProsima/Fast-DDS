@@ -48,49 +48,38 @@ bool EDPStatic::initEDP(BuiltinAttributes& attributes)
 
 std::pair<std::string,std::string> EDPStaticProperty::toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent)
 {
-	std::pair<std::string,std::string> property;
+	std::pair<std::string,std::string> prop;
 	std::stringstream ss;
 	ss << "eProsimaEDPStatic_"<<type<<"_"<<status<<"_ID_"<<id;
-	property.first = ss.str();
+	prop.first = ss.str();
 	ss.clear();
 	ss.str(std::string());
-	ss << ent.value[0]<<".";
-	ss << ent.value[1]<<".";
-	ss << ent.value[2]<<".";
-	ss << ent.value[3];
-	property.second = ss.str();
-	return property;
+	ss << (int)ent.value[0]<<".";
+	ss << (int)ent.value[1]<<".";
+	ss << (int)ent.value[2]<<".";
+	ss << (int)ent.value[3];
+	prop.second = ss.str();
+	return prop;
 }
 
-bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> property)
+bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
 {
-	size_t pos1 = property.first.find("_");
-	str1 = property.first.substr(0,pos1);
-
-	size_t pos2 = property.first.find("_",pos1+1);
-	type = property.first.substr(pos1+1,pos2);
-
-	pos1 = property.first.find("_",pos2+1);
-	status = property.first.substr(pos2+1,pos1);
-
-	pos2 = property.first.find("_",pos1+1);
-	idstr = property.first.substr(pos1+1,pos2);
-
-	userIDstr = property.first.substr(pos2+1);
-
-	if(str1 == "eProsimaEDPStatic" && idstr == "ID")
+	if(prop.first.substr(0,17) == "eProsimaEDPStatic" && prop.first.substr(31,2) == "ID")
 	{
+		this->m_endpointType = prop.first.substr(18,6);
+		this->m_status = prop.first.substr(25,5);
+		this->m_userIdStr = prop.first.substr(34,100);
 		std::stringstream ss;
-		ss << userIDstr;
-		ss >> userId;
+		ss << m_userIdStr;
+		ss >> m_userId;
 		ss.clear();
 		ss.str(std::string());
-		ss << property.second;
+		ss << prop.second;
 		int a,b,c,d;
 		char ch;
 		ss >> a >> ch >> b >> ch >> c >>ch >> d;
-		entityId.value[0] = (octet)a;entityId.value[1] = (octet)b;
-		entityId.value[2] = (octet)c;entityId.value[3] = (octet)d;
+		m_entityId.value[0] = (octet)a;m_entityId.value[1] = (octet)b;
+		m_entityId.value[2] = (octet)c;m_entityId.value[3] = (octet)d;
 		return true;
 	}
 	return false;
@@ -100,18 +89,22 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> property
 
 bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
+	pDebugInfo("EDPStatic: processing local ReaderPD"<<endl;);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE",rdata->m_userDefinedId,rdata->m_guid.entityId));
+	localpdata->m_hasChanged = true;
 	this->mp_PDP->announceParticipantState(true);
 	return true;
 }
 
 bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 {
+	pDebugInfo("EDPStatic: processing local WriterPD"<<endl;);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",wdata->m_userDefinedId,wdata->m_guid.entityId));
+	localpdata->m_hasChanged = true;
 	this->mp_PDP->announceParticipantState(true);
 	return true;
 }
@@ -125,9 +118,9 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
 		EDPStaticProperty staticproperty;
 		if(staticproperty.fromProperty(*pit))
 		{
-			if(staticproperty.entityId == R->getGuid().entityId)
+			if(staticproperty.m_entityId == R->getGuid().entityId)
 			{
-				*pit = EDPStaticProperty::toProperty("Reader","DEAD",R->getUserDefinedId(),R->getGuid().entityId);
+				*pit = EDPStaticProperty::toProperty("Reader","ENDED",R->getUserDefinedId(),R->getGuid().entityId);
 			}
 		}
 	}
@@ -143,9 +136,9 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 		EDPStaticProperty staticproperty;
 		if(staticproperty.fromProperty(*pit))
 		{
-			if(staticproperty.entityId == W->getGuid().entityId)
+			if(staticproperty.m_entityId == W->getGuid().entityId)
 			{
-				*pit = EDPStaticProperty::toProperty("Writer","DEAD",W->getUserDefinedId(),W->getGuid().entityId);
+				*pit = EDPStaticProperty::toProperty("Writer","ENDED",W->getUserDefinedId(),W->getGuid().entityId);
 			}
 		}
 	}
@@ -157,47 +150,53 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = pdata->m_properties.properties.begin();
 			pit!=pdata->m_properties.properties.end();++pit)
 	{
+		//cout << "STATIC EDP READING PROPERTY " << pit->first << "// " << pit->second << endl;
 		EDPStaticProperty staticproperty;
 		if(staticproperty.fromProperty(*pit))
 		{
-			if(staticproperty.type == "Reader" && staticproperty.status=="ALIVE")
+			if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status=="ALIVE")
 			{
 				ReaderProxyData* rdata=NULL;
-				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.entityId);
+				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
 				if(!this->mp_PDP->lookupReaderProxyData(guid,&rdata))//IF NOT FOUND, we CREATE AND PAIR IT
 				{
-					newRemoteReader(pdata,staticproperty.userId,staticproperty.entityId);
+					newRemoteReader(pdata,staticproperty.m_userId,staticproperty.m_entityId);
 				}
 			}
-			else if(staticproperty.type == "Writer" && staticproperty.status == "ALIVE")
+			else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
 			{
 				WriterProxyData* wdata=NULL;
-				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.entityId);
+				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
 				if(!this->mp_PDP->lookupWriterProxyData(guid,&wdata))//IF NOT FOUND, we CREATE AND PAIR IT
 				{
-					newRemoteWriter(pdata,staticproperty.userId,staticproperty.entityId);
+					newRemoteWriter(pdata,staticproperty.m_userId,staticproperty.m_entityId);
 				}
 			}
-			else if(staticproperty.type == "Reader" && staticproperty.status == "DEAD")
+			else if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
 			{
-				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.entityId);
+				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
 				this->removeReaderProxy(guid);
 			}
-			else if(staticproperty.type == "Writer" && staticproperty.status == "DEAD")
+			else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
 			{
-				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.entityId);
+				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
 				this->removeWriterProxy(guid);
 			}
 			else
 			{
-				pWarning("eProsimaEDPStatic property with type: "<<staticproperty.type << " and status "<<staticproperty.status << " not recognized"<<endl);
+				pWarning("eProsimaEDPStatic property with type: "<<staticproperty.m_endpointType << " and status "<<staticproperty.m_status << " not recognized"<<endl);
 			}
+		}
+		else
+		{
+
 		}
 	}
 }
 
 bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
+	pDebugInfo("Activating new Remote Reader " << entId << endl;)
 	ReaderProxyData* rpd = NULL;
 	if(m_edpXML.lookforReader(pdata->m_participantName,userId,&rpd))
 	{
@@ -232,6 +231,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 
 bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
+	pDebugInfo("Activating new Remote Writer " << entId << endl;)
 	WriterProxyData* wpd = NULL;
 	if(m_edpXML.lookforWriter(pdata->m_participantName,userId,&wpd))
 	{

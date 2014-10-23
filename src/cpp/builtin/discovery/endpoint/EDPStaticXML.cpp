@@ -280,6 +280,8 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			auxstring = xml_endpoint_child.second.get("<xmlattr>.leaseDuration_ms","INF");
 			if(auxstring == "INF")
 				rdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
+			else
+			{
 			try
 			{
 				uint32_t milliseclease = boost::lexical_cast<uint32_t>(auxstring);
@@ -290,6 +292,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			{
 				pWarning("BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF"<<endl);
 				rdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
+			}
 			}
 		}
 		else
@@ -475,6 +478,8 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			auxstring = xml_endpoint_child.second.get("<xmlattr>.leaseDuration_ms","INF");
 			if(auxstring == "INF")
 				wdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
+			else
+			{
 			try
 			{
 				uint32_t milliseclease = boost::lexical_cast<uint32_t>(auxstring);
@@ -485,6 +490,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			{
 				pWarning("BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF"<<endl);
 				wdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
+			}
 			}
 		}
 		else
