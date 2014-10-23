@@ -71,6 +71,29 @@ inline double Time_tAbsDiff2DoubleMillisec(const Time_t& t1,const Time_t& t2)
 	return result;
 }
 
+//! Create a random Time_t that is millisec + [-randoff,randoff]
+inline Time_t MilliSecondsWithRandOffset2Time_t(double millisec, double randoff)
+{
+	randoff = abs(randoff);
+	millisec = millisec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
+	return MilliSeconds2Time_t(millisec);
+}
+//! Create a random Time_t that is microsec + [-randoff,randoff]
+inline Time_t MicroSecondsWithRandOffset2Time_t(double microsec, double randoff)
+{
+	randoff = abs(randoff);
+	microsec = microsec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
+	return MicroSeconds2Time_t(microsec);
+}
+//! Create a random Time_t that is sec + [-randoff,randoff]
+inline Time_t SecondsWithRandOffset2Time_t(double sec, double randoff)
+{
+	randoff = abs(randoff);
+	sec = sec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
+	return Seconds2Time_t(sec);
+}
+
+
 
 };
 

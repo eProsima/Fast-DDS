@@ -26,6 +26,10 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 
+#include <cstdlib>
+#include <ctime>
+
+
 namespace eprosima {
 namespace dds {
 
@@ -53,6 +57,7 @@ DomainParticipantImpl::DomainParticipantImpl()
 	m_offsetd2 = 1;
 	m_offsetd3 = 11;
 	m_DomainId = 80;
+	srand (static_cast <unsigned> (time(0)));
 
 }
 

@@ -117,7 +117,8 @@ bool ParticipantProxyData::toParameterList()
 		m_QosList.inlineQos.resetList();
 		bool valid = QosList::addQos(&m_QosList,PID_PROTOCOL_VERSION,this->m_protocolVersion);
 		valid &=QosList::addQos(&m_QosList,PID_VENDORID,this->m_VendorId);
-		valid &=QosList::addQos(&m_QosList,PID_EXPECTS_INLINE_QOS,this->m_expectsInlineQos);
+		if(this->m_expectsInlineQos)
+			valid &=QosList::addQos(&m_QosList,PID_EXPECTS_INLINE_QOS,this->m_expectsInlineQos);
 		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_GUID,this->m_guid);
 		for(std::vector<Locator_t>::iterator it=this->m_metatrafficMulticastLocatorList.begin();
 				it!=this->m_metatrafficMulticastLocatorList.end();++it)
@@ -145,6 +146,9 @@ bool ParticipantProxyData::toParameterList()
 
 		if(this->m_userData.size()>0)
 			valid &=QosList::addQos(&m_QosList,PID_USER_DATA,this->m_userData);
+		cout << "PROPERTY SIZE: " << this->m_properties.properties.size() << endl;
+		if(this->m_properties.properties.size()>0)
+			valid &= QosList::addQos(&m_QosList,PID_PROPERTY_LIST,this->m_properties);
 
 		//FIXME: ADD STATIC INFO.
 		//		if(this.use_STATIC_EndpointDiscoveryProtocol)

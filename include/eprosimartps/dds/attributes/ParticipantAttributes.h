@@ -58,6 +58,7 @@ public:
 	 */
 	bool use_STATIC_EndpointDiscoveryProtocol;
 
+
 	//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
 	std::string m_staticEndpointXMLFilename;
 	/**
