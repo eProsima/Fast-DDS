@@ -276,12 +276,12 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 	}
 	else
 	{
-		return m_reader_cache.remove_change(a_change);
+		pError("StatefulReader should always find the WP associated with a change, something is very wrong"<<endl);
 	}
 	return false;
 }
 
-bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
+bool StatefulReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
 	if(this->m_acceptMessagesFromUnkownWriters)
 	{
@@ -289,7 +289,11 @@ bool StatefulReader::acceptMsgFrom(GUID_t& writerId)
 				it!=matched_writers.end();++it)
 		{
 			if((*it)->m_data->m_guid == writerId)
+			{
+				if(wp!=NULL)
+					*wp = *it;
 				return true;
+			}
 		}
 	}
 	else
@@ -312,6 +316,32 @@ bool StatefulReader::updateTimes(SubscriberTimes ti)
 		}
 	}
 	return true;
+}
+
+bool StatefulReader::add_change(CacheChange_t* a_change,WriterProxy* prox)
+{
+	//First look for WriterProxy in case is not provided
+	if(prox == NULL)
+	{
+		if(!this->matched_writer_lookup(a_change->writerGUID,&prox))
+		{
+			return false;
+		}
+	}
+	//WITH THE WRITERPROXY FOUND:
+	//Check if we can add it
+	if(a_change->sequenceNumber <= prox->m_lastRemovedSeqNum)
+		return false;
+	SequenceNumber_t maxSeq;
+	prox->available_changes_max(&maxSeq);
+	if(a_change->sequenceNumber <= maxSeq)
+		return false;
+	if(this->m_reader_cache.add_change(a_change,prox))
+	{
+		if(prox->received_change_set(a_change))
+			return true;
+	}
+	return false;
 }
 
 

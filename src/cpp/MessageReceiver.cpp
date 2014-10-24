@@ -38,7 +38,7 @@ namespace rtps {
 
 
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
-		m_rec_msg(rec_buffer_size)
+				m_rec_msg(rec_buffer_size)
 {
 	PROTOCOLVERSION(destVersion);
 	PROTOCOLVERSION(sourceVersion);
@@ -83,11 +83,11 @@ void MessageReceiver::reset(){
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		Locator_t* loc,CDRMessage_t*msg)
 {
-	
+
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		pWarning("Received message too short, ignoring"<<endl)
-				return;
+						return;
 	}
 	reset();
 	destGuidPrefix = participantguidprefix;
@@ -204,8 +204,8 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		case INFO_SRC:
 			pDebugInfo("InfoSRC message received, processing..."<<endl;);
 			valid = proc_Submsg_InfoSRC(msg,&submsgh,&last_submsg);
-//			pWarning("Info SRC messages not yet implemented"<<endl);
-//			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
+			//			pWarning("Info SRC messages not yet implemented"<<endl);
+			//			msg->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
 			break;
 		case INFO_TS:
 		{
@@ -293,7 +293,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(keyFlag && dataFlag)
 	{
 		pWarning( "Message received with Data and Key Flag set."<<endl)
-																						return false;
+																								return false;
 	}
 
 	//Assign message endianness
@@ -347,7 +347,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		pWarning("Invalid message received, bad sequence Number"<<endl)
-																						return false;
+																								return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -426,7 +426,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		boost::lock_guard<Endpoint> guard(*(Endpoint*)(*it));
-		if((*it)->acceptMsgFrom(ch->writerGUID) && (*it)->acceptMsgDirectedTo(readerID)) //add
+		WriterProxy* pWP = NULL;
+		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
 			pDebugInfo("MessageReceiver: Trying to add change "<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId<<endl);
 			CacheChange_t* change_to_add;
@@ -444,34 +445,29 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getStateType() == STATEFUL)
 			{
-				StatefulReader* SFR = (StatefulReader*)(*it);
-				WriterProxy* WP;
-				if(SFR->matched_writer_lookup(change_to_add->writerGUID,&WP))
+				if((*it)->add_change(change_to_add,pWP))
 				{
-					if((*it)->add_change(change_to_add,WP))
+					SequenceNumber_t maxSeqNumAvailable;
+					pWP->available_changes_max(&maxSeqNumAvailable);
+					if(change_to_add->sequenceNumber <= maxSeqNumAvailable)
 					{
-						WP->received_change_set(change_to_add);
-						SequenceNumber_t maxSeqNumAvailable;
-						WP->available_changes_max(&maxSeqNumAvailable);
-						if(change_to_add->sequenceNumber <= maxSeqNumAvailable)
+						if((*it)->getListener()!=NULL)
 						{
-							if((*it)->getListener()!=NULL)
-							{
-								//cout << "CALLING NEWDATAMESSAGE "<<endl;
-								(*it)->getListener()->onNewDataMessage();
-								//cout << "FINISH CALLING " <<endl;
-								if((*it)->isHistoryFull())
-									(*it)->getListener()->onHistoryFull();
-							}
-							(*it)->m_semaphore.post();
+							//cout << "CALLING NEWDATAMESSAGE "<<endl;
+							(*it)->getListener()->onNewDataMessage();
+							//cout << "FINISH CALLING " <<endl;
+							if((*it)->isHistoryFull())
+								(*it)->getListener()->onHistoryFull();
 						}
-					}
-					else
-					{
-						(*it)->release_Cache(change_to_add);
-						pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+						(*it)->m_semaphore.post();
 					}
 				}
+				else
+				{
+					(*it)->release_Cache(change_to_add);
+					pDebugInfo("MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+				}
+
 			}
 			else
 			{
