@@ -39,9 +39,9 @@ StatefulReader::~StatefulReader()
 
 StatefulReader::StatefulReader(const SubscriberAttributes& param,
 		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
-												RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
-														param.userDefinedId,param.payloadMaxSize),
-														m_SubTimes(param.times)
+																RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
+																		param.userDefinedId,param.payloadMaxSize),
+																		m_SubTimes(param.times)
 {
 	//locator lists:
 	unicastLocatorList = param.unicastLocatorList;
@@ -121,29 +121,41 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	boost::lock_guard<Endpoint> guard(*this);
 	CacheChange_t* min_change;
-	if(m_reader_cache.get_min_change(&min_change))
+	SequenceNumber_t minSeqNum = c_SequenceNumber_Unknown;
+	SequenceNumber_t auxSeqNum;
+	WriterProxy* wp;
+	bool available = false;
+	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();it!=matched_writers.end();++it)
+	{
+		(*it)->available_changes_min(&auxSeqNum);
+		if(auxSeqNum > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
+		{
+			available = true;
+			minSeqNum = auxSeqNum;
+			wp = *it;
+		}
+	}
+	if(available && wp->get_change(minSeqNum,&min_change))
 	{
 		pDebugInfo("StatefulReader "<<this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long()<<endl);
-		WriterProxy* wp;
-		if(matched_writer_lookup(min_change->writerGUID,&wp))
+		if(min_change->kind == ALIVE)
+			this->mp_type->deserialize(&min_change->serializedPayload,data);
+		if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
 		{
-			if(min_change->kind == ALIVE)
-				this->mp_type->deserialize(&min_change->serializedPayload,data);
-			if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
+			if(info!=NULL)
 			{
-				if(info!=NULL)
-				{
-					info->sampleKind = min_change->kind;
-					info->writerGUID = min_change->writerGUID;
-					info->sourceTimestamp = min_change->sourceTimestamp;
-					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-					if(!min_change->isRead)
-						m_reader_cache.decreaseUnreadCount();
-					info->iHandle = min_change->instanceHandle;
-				}
-				return m_reader_cache.remove_change(min_change);
+				info->sampleKind = min_change->kind;
+				info->writerGUID = min_change->writerGUID;
+				info->sourceTimestamp = min_change->sourceTimestamp;
+				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+				if(!min_change->isRead)
+					m_reader_cache.decreaseUnreadCount();
+				info->iHandle = min_change->instanceHandle;
 			}
+			if(!m_reader_cache.remove_change(min_change))
+				pWarning("Problem removing change from ReaderHistory");
+			return true;
 		}
 	}
 	return false;
@@ -189,7 +201,6 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		else
 		{
 			toremove.push_back((*it));
-
 		}
 	}
 
@@ -197,7 +208,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 			it!=toremove.end();++it)
 	{
 		pWarning("StatefulReader has change with no paired WP, removing "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID<<endl;)
-										m_reader_cache.remove_change(*it);
+		m_reader_cache.remove_change(*it);
 	}
 	return readok;
 }
@@ -237,7 +248,7 @@ bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 			it!=toremove.end();++it)
 	{
 		pWarning("StatefulReader has change with no paired WP, removing "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID<<endl;)
-											m_reader_cache.remove_change(*it);
+															m_reader_cache.remove_change(*it);
 	}
 	return readok;
 }
