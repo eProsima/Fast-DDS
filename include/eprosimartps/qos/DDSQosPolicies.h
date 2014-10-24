@@ -147,7 +147,8 @@ public:
 	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0),QosPolicy(false){};
 	virtual ~UserDataQosPolicy(){};
 	#pragma warning(disable: 4251)
-	std::string data;
+	//std::string data;
+	std::vector<octet> dataVec;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

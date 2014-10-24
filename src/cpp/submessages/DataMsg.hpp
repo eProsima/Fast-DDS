@@ -78,12 +78,14 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	 if(topicKind == NO_KEY)
 		 keyFlag = false;
 	 inlineQosFlag = false;
+	 //cout << "expects inline qos: " << expectsInlineQos << endl;
 	if(inlineQos != NULL || expectsInlineQos || change->kind != ALIVE) //expects inline qos
 	{
 		if(topicKind == WITH_KEY)
 		{
 			flags = flags | BIT(1);
 			inlineQosFlag = true;
+			//cout << "INLINE QOS FLAG TO 1 " << endl;
 			keyFlag = false;
 		}
 	}
@@ -128,9 +130,9 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 					ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
 				}
 			}
-
 			if(topicKind == WITH_KEY)
 			{
+				//cout << "ADDDING PARAMETER KEY " << endl;
 				CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
 			}
 			if(change->kind != ALIVE)

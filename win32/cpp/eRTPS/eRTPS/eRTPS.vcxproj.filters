@@ -417,6 +417,12 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\md5.h">
       <Filter>Header Files\eprosimartps\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\ParticipantDiscoveryInfo.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\ParticipantListener.h">
+      <Filter>Header Files\eprosimartps\dds</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">

@@ -28,15 +28,13 @@ namespace rtps {
 class EDPStaticProperty
 {
 public:
-	EDPStaticProperty():userId(0){};
+	EDPStaticProperty():m_userId(0){};
 	~EDPStaticProperty(){};
-	std::string str1;
-	std::string type;
-	std::string status;
-	std::string idstr;
-	std::string userIDstr;
-	uint16_t userId;
-	EntityId_t entityId;
+	std::string m_endpointType;
+	std::string m_status;
+	std::string m_userIdStr;
+	uint16_t m_userId;
+	EntityId_t m_entityId;
 	static std::pair<std::string,std::string> toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent);
 	bool fromProperty(std::pair<std::string,std::string> property);
 };
@@ -93,7 +91,7 @@ public:
 	 * @param entId EntityId.
 	 * @return True if correct.
 	 */
-	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId,EntityId_t& entId);
+	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	 * New Remote Reader has been found and this method process it and calls the pairing methods.
 	 * @param pdata Pointer to the ParticipantProxyData object.
@@ -101,8 +99,19 @@ public:
 	 * @param entId EntityId.
 	 * @return true if correct.
 	 */
-	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId,EntityId_t& entId);
-
+	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	/**
+	* This method checks the provided entityId against the topic type to see if it matches
+	* @param rdata Pointer to the readerProxyData
+	* @return True if its correct. 
+	**/
+	bool checkEntityId(ReaderProxyData* rdata);
+	/**
+	* This method checks the provided entityId against the topic type to see if it matches
+	* @param rdata Pointer to the writerProxyData
+	* @return True if its correct. 
+	**/
+	bool checkEntityId(WriterProxyData* wdata);
 private:
 	EDPStaticXML m_edpXML;
 	BuiltinAttributes m_attributes;

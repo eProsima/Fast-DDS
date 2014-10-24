@@ -318,7 +318,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	bool firstReaderNeedsToRelease = true;
 	if(mp_threadListen->m_assocReaders.empty())
 	{
-		pWarning("Data received when NO readers are created"<<endl);
+		pWarning("Data received in locator: "<<mp_threadListen->m_listenLoc<< ", when NO readers are listening"<<endl);
 		return false;
 	}
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
