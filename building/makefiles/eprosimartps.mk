@@ -2,6 +2,9 @@ EPROSIMARTPS_OUTDIR= $(OUTDIR)/eprosimartps
 EPROSIMARTPS_OUTDIR_DEBUG = $(EPROSIMARTPS_OUTDIR)/debug
 EPROSIMARTPS_OUTDIR_RELEASE = $(EPROSIMARTPS_OUTDIR)/release
 
+EPROSIMADIR= $(BASEDIR)/thirdparty/dev-env
+EPROSIMA_LIBRARY_PATH = $(EPROSIMARTPS_OUTDIR)/libraries
+
 # Get product version.
 EPROSIMARTPSVERSION=-$(shell $(EPROSIMADIR)/scripts/common_pack_functions.sh printVersionFromCPP include/eprosimartps/eprosimartps_version.h)
 
