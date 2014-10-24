@@ -58,6 +58,7 @@ public:
 	 */
 	bool use_STATIC_EndpointDiscoveryProtocol;
 
+
 	//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
 	std::string m_staticEndpointXMLFilename;
 	/**
@@ -73,6 +74,9 @@ public:
 	Duration_t leaseDuration_announcementperiod;
 	SimpleEDPAttributes m_simpleEDP;
 
+	LocatorList_t initialUnicastLocatorList;
+	LocatorList_t initialMulticastLocatorList;
+
 	BuiltinAttributes()
 	{
 		use_SIMPLE_ParticipantDiscoveryProtocol = true;
@@ -83,6 +87,7 @@ public:
 		leaseDuration.seconds = 500;
 		leaseDuration_announcementperiod.seconds = 250;
 		use_WriterLivelinessProtocol = true;
+		
 	};
 	virtual ~BuiltinAttributes(){};
 };
@@ -130,6 +135,8 @@ public:
 	std::string name;
 	//! Builtin parameters.
 	BuiltinAttributes builtin;
+
+	std::vector<octet> userData;
 
 
 

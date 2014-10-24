@@ -44,6 +44,7 @@ class Subscriber;
 class SubscriberImpl;
 class PublisherListener;
 class SubscriberListener;
+class ParticipantListener;
 
 typedef std::pair<Subscriber*,SubscriberImpl*> SubscriberPair;
 typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
@@ -93,7 +94,7 @@ public:
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
-    Participant* createParticipant(const ParticipantAttributes& PParam);
+    Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL);
 
     /**
      * Remove a participant and delete all its associated Writers, Readers, resources, etc.
@@ -273,9 +274,9 @@ public:
 	 * @param PParam Participant Parameters.
 	 * @return Pointer to the participant.
 	 */
-	static Participant* createParticipant(const ParticipantAttributes& PParam)
+	static Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createParticipant(PParam));
+		return (DomainParticipantImpl::getInstance()->createParticipant(PParam,plisten));
 	}
 	/**
 	 * Remove a participant and delete all its associated Writers, Readers, resources, etc.
@@ -328,38 +329,38 @@ public:
      */
     static void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
     {
-    	return (DomainParticipantImpl::getInstance()->setPortParameters( PB, DG, PG, d0, d1, d2, d3);
+    	return (DomainParticipantImpl::getInstance()->setPortParameters( PB, DG, PG, d0, d1, d2, d3));
     }
     /** @name Methods to get the default Port numbers.
      */
 
     	///@{
 	static uint16_t getDomainIdGain()  {
-		return (DomainParticipantImpl::getInstance()->getDomainIdGain();
+		return (DomainParticipantImpl::getInstance()->getDomainIdGain());
 	}
 
 	static uint16_t getOffsetd0()  {
-		return (DomainParticipantImpl::getInstance()-> getOffsetd0();
+		return (DomainParticipantImpl::getInstance()-> getOffsetd0());
 	}
 
 	static uint16_t getOffsetd1()  {
-		return (DomainParticipantImpl::getInstance()->getOffsetd1();
+		return (DomainParticipantImpl::getInstance()->getOffsetd1());
 	}
 
 	static uint16_t getOffsetd2()  {
-		return (DomainParticipantImpl::getInstance()->getOffsetd2();
+		return (DomainParticipantImpl::getInstance()->getOffsetd2());
 	}
 
 	static uint16_t getOffsetd3()  {
-		return (DomainParticipantImpl::getInstance()->getOffsetd3();
+		return (DomainParticipantImpl::getInstance()->getOffsetd3());
 	}
 
 	static uint16_t getParticipantIdGain()  {
-		return (DomainParticipantImpl::getInstance()->getParticipantIdGain();
+		return (DomainParticipantImpl::getInstance()->getParticipantIdGain());
 	}
 
 	static uint16_t getPortBase()  {
-		return (DomainParticipantImpl::getInstance()->getPortBase();
+		return (DomainParticipantImpl::getInstance()->getPortBase());
 	}
 
 

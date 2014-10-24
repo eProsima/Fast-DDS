@@ -354,6 +354,8 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\attributes\TopicAttributes.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\DDSTopicDataType.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\DomainParticipant.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\ParticipantDiscoveryInfo.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\ParticipantListener.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\Publisher.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\PublisherListener.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\SampleInfo.h" />

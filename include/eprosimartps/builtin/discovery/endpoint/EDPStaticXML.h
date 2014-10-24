@@ -91,6 +91,7 @@ public:
 
 private:
 	std::set<int16_t> m_endpointIds;
+	std::set<uint32_t> m_entityIds;
 
 	std::vector<StaticParticipantInfo*> m_participants;
 };
