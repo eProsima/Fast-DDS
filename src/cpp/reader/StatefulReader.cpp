@@ -128,7 +128,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		(*it)->available_changes_min(&auxSeqNum);
-		if(auxSeqNum > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
+		if(auxSeqNum.to64long() > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
 		{
 			available = true;
 			minSeqNum = auxSeqNum;

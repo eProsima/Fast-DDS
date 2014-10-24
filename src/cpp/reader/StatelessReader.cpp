@@ -62,7 +62,9 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 		}
 		if(!change->isRead)
 			m_reader_cache.decreaseUnreadCount();
-		return this->m_reader_cache.remove_change(change);
+		if(!m_reader_cache.remove_change(change))
+			pWarning("Problem removing change from ReaderHistory");
+		return true;
 	}
 	return false;
 }
