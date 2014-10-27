@@ -17,7 +17,7 @@
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/dds/attributes/all_attributes.h"
-
+#include <set>
 
 
 namespace eprosima{
@@ -223,7 +223,7 @@ private:
 	 */
 	uint32_t getNewId();
 
-
+	std::set<uint32_t> m_participantIDs;
 
 };
 

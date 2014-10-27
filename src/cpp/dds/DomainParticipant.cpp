@@ -126,7 +126,22 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 		pError("Participant Attributes: LeaseDuration should be >= leaseDuration announcement period"<<endl;);
 		return NULL;
 	}
-	uint32_t ID = getNewId();
+	uint32_t ID;
+	if(PParam.participantId < 0)
+	{
+		ID = getNewId();
+		while(this->m_participantIDs.insert(ID).second == false)
+			ID = getNewId();
+	}
+	else
+	{
+		ID = PParam.participantId;
+		if(this->m_participantIDs.insert(ID).second == false)
+		{
+			pError("Participant not created, participant with the same ID already exists" << endl;)
+			return NULL;
+		}
+	}
 	int pid;
 #if defined(_WIN32)
 	pid = (int)_getpid();
@@ -381,6 +396,9 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 		{
 			if(it->second->getGuid() == p->getGuid())
 			{
+				int32_t pID = it->second->getParticipantID();
+				m_participantIDs.erase(pID);
+				
 				delete(it->first);
 				delete(it->second);
 				m_participants.erase(it);
