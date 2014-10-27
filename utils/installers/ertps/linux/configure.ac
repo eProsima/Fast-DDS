@@ -21,8 +21,8 @@ AC_C_BIGENDIAN(
 AX_BOOST_BASE([1.53],
 	AC_MSG_NOTICE([Found Boost]),
 	AC_MSG_ERROR([Could not find Boost]))
-AX_BOOST_THREAD
 AX_BOOST_SYSTEM
+AX_BOOST_THREAD
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 
