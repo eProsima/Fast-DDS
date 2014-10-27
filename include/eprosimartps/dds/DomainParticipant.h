@@ -153,33 +153,19 @@ public:
      */
 
     	///@{
-	uint16_t getDomainIdGain() const {
-		return m_domainIdGain;
-	}
+	uint16_t getDomainIdGain() const {		return m_domainIdGain;	}
 
-	uint16_t getOffsetd0() const {
-		return m_offsetd0;
-	}
+	uint16_t getOffsetd0() const {		return m_offsetd0;	}
 
-	uint16_t getOffsetd1() const {
-		return m_offsetd1;
-	}
+	uint16_t getOffsetd1() const {		return m_offsetd1;	}
 
-	uint16_t getOffsetd2() const {
-		return m_offsetd2;
-	}
+	uint16_t getOffsetd2() const {		return m_offsetd2;	}
 
-	uint16_t getOffsetd3() const {
-		return m_offsetd3;
-	}
+	uint16_t getOffsetd3() const {		return m_offsetd3;	}
 
-	uint16_t getParticipantIdGain() const {
-		return m_participantIdGain;
-	}
+	uint16_t getParticipantIdGain() const {		return m_participantIdGain;	}
 
-	uint16_t getPortBase() const {
-		return m_portBase;
-	}
+	uint16_t getPortBase() const {		return m_portBase;	}
 
 	void setMaxParticipantId(uint32_t maxParticipantId) {
 		m_maxParticipantID = maxParticipantId;
@@ -335,34 +321,21 @@ public:
      */
 
     	///@{
-	static uint16_t getDomainIdGain()  {
-		return (DomainParticipantImpl::getInstance()->getDomainIdGain());
-	}
+	static uint16_t getDomainIdGain()  {		return (DomainParticipantImpl::getInstance()->getDomainIdGain());	}
 
-	static uint16_t getOffsetd0()  {
-		return (DomainParticipantImpl::getInstance()-> getOffsetd0());
-	}
+	static uint16_t getOffsetd0()  {		return (DomainParticipantImpl::getInstance()-> getOffsetd0());	}
 
-	static uint16_t getOffsetd1()  {
-		return (DomainParticipantImpl::getInstance()->getOffsetd1());
-	}
+	static uint16_t getOffsetd1()  {		return (DomainParticipantImpl::getInstance()->getOffsetd1());	}
 
-	static uint16_t getOffsetd2()  {
-		return (DomainParticipantImpl::getInstance()->getOffsetd2());
-	}
+	static uint16_t getOffsetd2() {		return (DomainParticipantImpl::getInstance()->getOffsetd2());	}
 
-	static uint16_t getOffsetd3()  {
-		return (DomainParticipantImpl::getInstance()->getOffsetd3());
-	}
+	static uint16_t getOffsetd3()  {		return (DomainParticipantImpl::getInstance()->getOffsetd3());	}
 
-	static uint16_t getParticipantIdGain()  {
-		return (DomainParticipantImpl::getInstance()->getParticipantIdGain());
-	}
+	static uint16_t getParticipantIdGain()  {		return (DomainParticipantImpl::getInstance()->getParticipantIdGain());	}
 
-	static uint16_t getPortBase()  {
-		return (DomainParticipantImpl::getInstance()->getPortBase());
-	}
+	static uint16_t getPortBase()  {		return (DomainParticipantImpl::getInstance()->getPortBase());	}
 
+	
 
 };
 
