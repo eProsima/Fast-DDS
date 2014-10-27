@@ -258,6 +258,8 @@ bool PDPSimple::createSPDPEndpoints()
 		for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
 				lit!=mp_builtin->m_metatrafficMulticastLocatorList.end();++lit)
 			mp_SPDPWriter->reader_locator_add(*lit,false);
+		if(this->mp_builtin->m_useMandatory)
+			mp_SPDPWriter->reader_locator_add(mp_builtin->m_mandatoryMulticastLocator,false);
 	}
 	else
 	{

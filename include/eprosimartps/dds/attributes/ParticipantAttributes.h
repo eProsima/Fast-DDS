@@ -74,8 +74,8 @@ public:
 	Duration_t leaseDuration_announcementperiod;
 	SimpleEDPAttributes m_simpleEDP;
 
-	LocatorList_t initialUnicastLocatorList;
-	LocatorList_t initialMulticastLocatorList;
+	LocatorList_t metatrafficUnicastLocatorList;
+	LocatorList_t metatrafficMulticastLocatorList;
 
 	BuiltinAttributes()
 	{
@@ -106,7 +106,7 @@ public:
 		name = "defaultParticipant";
 		sendSocketBufferSize = 8712;
 		listenSocketBufferSize = 17424;
-
+		participantId = -1;
 }
 	virtual ~ParticipantAttributes(){};
 	/**
@@ -138,6 +138,7 @@ public:
 
 	std::vector<octet> userData;
 
+	int32_t participantId;
 
 
 
