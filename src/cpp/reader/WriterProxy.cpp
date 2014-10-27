@@ -352,6 +352,20 @@ bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
 	return false;
 }
 
+bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
+{
+	for(std::vector<ChangeFromWriter_t>::iterator it = this->m_changesFromW.begin();
+			it!= this->m_changesFromW.end();++it)
+	{
+		if(it->seqNum == seq && it->isValid())
+		{
+			*change = it->getChange();
+			return true;
+		}
+	}
+	return false;
+}
+
 
 } /* namespace rtps */
 } /* namespace eprosima */
