@@ -83,6 +83,25 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 		std::string auxstr = ss.str();
 		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr<<endl);
 	}
+	LocatorList_t defcopy = m_defaultUnicastLocatorList;
+	m_defaultUnicastLocatorList.clear();
+	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
+	{
+		ListenResource* LR = new ListenResource(this);
+		Locator_t loc = LR->init_thread(*lit,false,false);
+		m_defaultUnicastLocatorList.push_back(loc);
+		this->m_listenResourceList.push_back(LR);
+	}
+	defcopy = m_defaultMulticastLocatorList;
+	m_defaultMulticastLocatorList.clear();
+	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
+	{
+		ListenResource* LR = new ListenResource(this);
+		Locator_t loc = LR->init_thread(*lit,true,false);
+		m_defaultMulticastLocatorList.push_back(loc);
+		this->m_listenResourceList.push_back(LR);
+	}
+
 
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
 
