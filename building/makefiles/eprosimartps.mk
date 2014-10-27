@@ -6,7 +6,7 @@ EPROSIMADIR= $(BASEDIR)/thirdparty/dev-env
 EPROSIMA_LIBRARY_PATH = $(EPROSIMARTPS_OUTDIR)/libraries
 
 # Get product version.
-EPROSIMARTPSVERSION=-$(shell $(EPROSIMADIR)/scripts/common_pack_functions.sh printVersionFromCPP include/eprosimartps/eprosimartps_version.h)
+EPROSIMARTPSVERSION=-$(shell $(BASEDIR)/thirdparty/dev-env/scripts/common_pack_functions.sh printVersionFromCPP include/eprosimartps/eprosimartps_version.h)
 
 EPROSIMARTPS_SED_OUTPUT_DIR_DEBUG= $(subst /,\\/,$(EPROSIMARTPS_OUTDIR_DEBUG))
 EPROSIMARTPS_SED_OUTPUT_DIR_RELEASE= $(subst /,\\/,$(EPROSIMARTPS_OUTDIR_RELEASE))
@@ -29,8 +29,8 @@ EPROSIMARTPS_TARGET_Z= $(BASEDIR)/lib/$(EPROSIMA_TARGET)/$(EPROSIMARTPS_TARGET_Z
 EPROSIMARTPS_CFLAGS += $(CFLAGS) -std=c++0x -O2 -Wno-unknown-pragmas
 EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x  -Wno-unknown-pragmas
 
-EPROSIMARTPS_INCLUDE_DIRS= -I/home/eprosima/x-tools/arm-unknown-linux-gnueabi/arm-unknown-linux-gnueabi/sysroot/usr/include -I$(BASEDIR)../../../../x-tools/arm-unknown-linux-gnueabi/arm-unknown-linux-gnueabi/include/c++/4.7.3 -I$(BASEDIR)/include \
-		  -I$(EPROSIMADIR)/code
+EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS)  -I$(BASEDIR)/include \
+		  -I$(BASEDIR)/thirdparty/eprosima-common-code
 
 EPROSIMARTPS_SRC_CPPFILES= \
  	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \

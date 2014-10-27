@@ -22,9 +22,7 @@
  *
  *<h1>System architecture</h1>
  * A general view of the system architecture can be found below:
- * @latexonly
  * @image html general_architecture.png 
- * @endlatexonly
  * <img src="general_architecture.png" width="400" align="left" style="padding:0px 20px 0px 0px">
  *This diagram schematically shows how the user will be able to create and manage a participant on the network, 
  *as well as send and receive message through the Publisher and Subscriber APIs. This process will be internally 

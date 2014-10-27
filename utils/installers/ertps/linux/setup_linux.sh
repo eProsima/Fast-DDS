@@ -29,7 +29,6 @@ installer()
     # Copy documentation.
     mkdir -p tmp/$project/doc
     mkdir -p tmp/$project/doc/pdf
-    mkdir -p tmp/$project/doc/doxygen/public_api
     cp "../../../../doc/pdf/RTPS - Installation Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
@@ -39,30 +38,30 @@ installer()
     cp "../../../../doc/pdf/RTPSGEN - User Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/index.html" tmp/$project/doc/
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-    cp -r "../../../../output/doxygen/public_api/html" tmp/$project/doc/doxygen/public_api
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-    #cp "../../../../output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/eProsimaRTPS - API C++ Manual.pdf"
+    ##cp "../../../../doc/index.html" tmp/$project/doc/
     #errorstatus=$?
     #if [ $errorstatus != 0 ]; then return; fi
+    cp -r "../../../doxygen/output/doxygen/html" tmp/$project/doc/
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+    cp "../../../doxygen/output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/RTPS - API C++ Manual.pdf"
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
 
     # Copy README
-    cp ../../../../doc/README.html tmp/$project/
+    cp ../../../../README.html tmp/$project/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy example.
     mkdir -p tmp/$project/examples/C++
-    cp -r ../../../../utils/useTests/* tmp/$project/examples/C++
+    ##cp -r ../../../../utils/useTests/* tmp/$project/examples/C++
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy ShapesDemo
     mkdir -p tmp/$project/examples/ShapesDemo
-    cp -r ../../../../utils/ShapesDemo/release/linux/* tmp/$project/examples/ShapesDemo
+    ##cp -r ../../../../utils/ShapesDemo/release/linux/* tmp/$project/examples/ShapesDemo
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
@@ -87,23 +86,23 @@ installer()
 
     # Copy eProsima header files
     mkdir -p tmp/$project/include/eprosimartps/eProsima_cpp
-    cp $EPROSIMADIR/code/eProsima_cpp/eProsima_auto_link.h tmp/$project/include/eprosimartps/eProsima_cpp
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/include/eprosimartps/eProsima_cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp $EPROSIMADIR/code/eProsima_cpp/eProsimaMacros.h tmp/$project/include/eprosimartps/eProsima_cpp
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h tmp/$project/include/eprosimartps/eProsima_cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy eProsimaRTPS sources
     cd ../../../..
-    cp --parents `cat building/makefiles/eprosimartps_sources` utils/installers/autoconf/linux/tmp/$project
+    cp --parents `cat building/makefiles/eprosimartps_sources` utils/installers/ertps/linux/tmp/$project
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    mkdir -p utils/installers/autoconf/linux/tmp/$project/src/cpp/submessages/
-    cp --parents src/cpp/submessages/* utils/installers/autoconf/linux/tmp/$project/
+    mkdir -p utils/installers/ertps/linux/tmp/$project/src/cpp/submessages/
+    cp --parents src/cpp/submessages/* utils/installers/ertps/linux/tmp/$project/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cd utils/installers/autoconf/linux
+    cd utils/installers/ertps/linux
 
     # Copy autoconf configuration files.
     cp configure.ac tmp/$project/configure.ac

@@ -1,13 +1,13 @@
 BASEDIR=.
 OUTDIR= $(BASEDIR)/output
-CC=arm-unknown-linux-gnueabi-g++
-CPP=arm-unknown-linux-gnueabi-g++
-LN=arm-unknown-linux-gnueabi-g++
+CC= $(COMP)
+CPP= $(COMP)
+LN= $(COMP)
 AR=ar
 CP=cp
 LNK=ln
 
-EPROSIMA_TARGET=armelf_linux_eabi
+
 
 -include $(BASEDIR)/thirdparty/dev-env/building/makefiles/eProsima.mk
 -include $(BASEDIR)/building/makefiles/eprosimartps.mk
