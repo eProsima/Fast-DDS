@@ -84,7 +84,7 @@ installer()
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
-    # Copy eProsima header files
+	# Copy eProsima header files
     mkdir -p tmp/$project/include/eprosimartps/eProsima_cpp
     cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/include/eprosimartps/eProsima_cpp
     errorstatus=$?
@@ -148,7 +148,7 @@ installer()
     find tmp/ -iname "*~" -exec rm -f {} \;
 
     cd tmp
-    tar cvzf "../eProsima_RTPS_${version}-Linux.tar.gz" $project
+    tar cvzf "../eprosimartps_${version}-Linux.tar.gz" $project
     errorstatus=$?
     cd ..
     if [ $errorstatus != 0 ]; then return; fi
