@@ -9,6 +9,10 @@ AC_PROG_CXX
 AC_CONFIG_MACRO_DIR([m4])
 LT_INIT
 
+AC_CHECK_HEADER([fastcdr/FastCdr_version.h],
+	[AC_MSG_NOTICE([Found eProsima fastcdr])],
+	[AC_MSG_ERROR([Could not find eProsima fastcdr])],
+	[])
 
 # Check endianess
 AC_C_BIGENDIAN(
