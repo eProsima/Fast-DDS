@@ -22,7 +22,7 @@ namespace eprosima{
 #if defined(_WIN32)
 
 #else
-enum class LOG_CATEGORY : uint32_t
+enum LOG_CATEGORY : uint32_t
 #endif
 {
 	RTPS_DISCOVERY = 1,
