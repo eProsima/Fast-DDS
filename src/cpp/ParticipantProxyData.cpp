@@ -146,7 +146,7 @@ bool ParticipantProxyData::toParameterList()
 
 		if(this->m_userData.size()>0)
 			valid &=QosList::addQos(&m_QosList,PID_USER_DATA,this->m_userData);
-		cout << "PROPERTY SIZE: " << this->m_properties.properties.size() << endl;
+		//cout << "PROPERTY SIZE: " << this->m_properties.properties.size() << endl;
 		if(this->m_properties.properties.size()>0)
 			valid &= QosList::addQos(&m_QosList,PID_PROPERTY_LIST,this->m_properties);
 
