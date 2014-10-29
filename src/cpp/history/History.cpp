@@ -132,7 +132,7 @@ bool History::find_Key(CacheChange_t* a_change,t_vectorPairKeyChanges::iterator*
 			return true;
 		}
 		else
-			logWarning(LOG_CATEGORY::RTPS_HISTORY,"History has reached the maximum number of instances"<<endl;)
+			logWarning(RTPS_HISTORY,"History has reached the maximum number of instances"<<endl;)
 	}
 	return false;
 }
