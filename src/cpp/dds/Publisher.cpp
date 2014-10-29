@@ -28,6 +28,8 @@
 namespace eprosima {
 namespace dds {
 
+static const char* const CLASS_NAME = "PublisherImpl";
+
 PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType*pdatatype,PublisherAttributes& att):
 								mp_Writer(Win),
 								mp_type(pdatatype),
@@ -38,27 +40,29 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType
 }
 
 PublisherImpl::~PublisherImpl() {
-
-	pDebugInfo("Publisher destructor"<<endl;);
+	const char* const METHOD_NAME = "~PublisherImpl";
+	logInfo(RTPS_WRITER,"OK");
 }
 
 bool PublisherImpl::write(void* Data) {
-
-	pInfo("Writing new data"<<endl)
-							return mp_Writer->add_new_change(ALIVE,Data);
+	const char* const METHOD_NAME = "write";
+	logInfo(RTPS_WRITER,"Writing new data");
+	return mp_Writer->add_new_change(ALIVE,Data);
 }
 
-bool PublisherImpl::dispose(void* Data) {
-
-	pInfo("Disposing of Data"<<endl)
-							return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED,Data);
+bool PublisherImpl::dispose(void* Data)
+{
+	const char* const METHOD_NAME = "dispose";
+	logInfo(RTPS_WRITER,"Disposing of Data");
+	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED,Data);
 }
 
 
 bool PublisherImpl::unregister(void* Data) {
+	const char* const METHOD_NAME = "unregister";
 	//Convert data to serialized Payload
-	pInfo("Unregistering of Data"<<endl)
-							return mp_Writer->add_new_change(NOT_ALIVE_UNREGISTERED,Data);
+	logInfo(RTPS_WRITER,"Unregistering of Data");
+	return mp_Writer->add_new_change(NOT_ALIVE_UNREGISTERED,Data);
 }
 
 bool PublisherImpl::dispose_and_unregister(void* Data) {

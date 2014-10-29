@@ -46,7 +46,7 @@ ReaderHistory::ReaderHistory(Endpoint* endp,
 
 {
 	mp_getKeyCache = m_changePool.reserve_Cache();
-	// TODO Auto-generated constructor stub
+	//TODO Auto-generated constructor stub
 }
 
 ReaderHistory::~ReaderHistory()
