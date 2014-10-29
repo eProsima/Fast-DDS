@@ -20,6 +20,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "WriterProxyData";
+
 WriterProxyData::WriterProxyData():
 										m_userDefinedId(0),
 										m_typeMaxSerialized(0),
@@ -32,12 +34,14 @@ WriterProxyData::WriterProxyData():
 
 WriterProxyData::~WriterProxyData() {
 	// TODO Auto-generated destructor stub
+	const char* const METHOD_NAME = "~WriterProxyData";
 	m_parameterList.deleteParams();
-	pDebugInfo("WriterProxyData destructor: "<< this->m_guid<<endl);
+	logInfo(RTPS_PROXY_DATA,this->m_guid);
 }
 
 bool WriterProxyData::toParameterList()
 {
+	const char* const METHOD_NAME = "toParameterList";
 	m_parameterList.deleteParams();
 	for(LocatorListIterator lit = m_unicastLocatorList.begin();
 			lit!=m_unicastLocatorList.end();++lit)
@@ -179,12 +183,13 @@ bool WriterProxyData::toParameterList()
 		*p = m_qos.m_groupData;
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
-	pDebugInfo(RTPS_CYAN << "DiscoveredWriterData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters"<<endl);
+	logInfo(RTPS_PROXY_DATA," with " << m_parameterList.m_parameters.size()<< " parameters",RTPS_CYAN);
 	return true;
 }
 
 bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
+	const char* const METHOD_NAME = "readFromCDRMessage";
 	if(ParameterList::readParameterListfromCDRMsg(msg,&m_parameterList,NULL,NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();
@@ -349,7 +354,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			default:
 			{
-				pInfo("Parameter with ID: " << (uint16_t)(*it)->Pid << " NOT CONSIDERED"<< endl);
+				logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(*it)->Pid << " NOT CONSIDERED",RTPS_CYAN);
 				break;
 			}
 			}

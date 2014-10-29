@@ -20,6 +20,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
+
 UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,boost::posix_time::milliseconds interval)
 : TimedEvent(&writer->mp_event_thr->io_service,interval),
   mp_writer(writer)
@@ -36,7 +38,8 @@ UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 
 void UnsentChangesNotEmptyEvent::event(const boost::system::error_code& ec)
 {
-	pDebugInfo("TimedEvent: UnsentChangesNotEmpty"<<endl;);
+	const char* const METHOD_NAME = "event";
+	logInfo(RTPS_WRITER,"TimedEvent: UnsentChangesNotEmpty"<<endl);
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
@@ -44,12 +47,12 @@ void UnsentChangesNotEmptyEvent::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pWarning("UnsentChangesNotEmpty aborted"<<endl);
+		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty aborted");
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("UnsentChangesNotEmpty boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty boost message: " <<ec.message());
 	}
 	delete(this);
 }

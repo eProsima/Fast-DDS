@@ -25,7 +25,7 @@
 namespace eprosima {
 namespace rtps {
 
-
+static const char* const CLASS_NAME = "NackSupressionDuration";
 
 NackSupressionDuration::~NackSupressionDuration()
 {
@@ -42,11 +42,12 @@ NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,boost::posix_ti
 
 void NackSupressionDuration::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 		boost::lock_guard<ReaderProxy> guard(*mp_RP);
-		pDebugInfo("NackSupression: changing underway to unacked for Reader: "<<mp_RP->m_data->m_guid<<endl);
+		logInfo(RTPS_WRITER,"NackSupression: changing underway to unacked for Reader: "<<mp_RP->m_data->m_guid);
 		for(std::vector<ChangeForReader_t>::iterator cit=mp_RP->m_changesForReader.begin();
 				cit!=mp_RP->m_changesForReader.end();++cit)
 		{
@@ -62,12 +63,12 @@ void NackSupressionDuration::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 		{
-			pInfo("Nack Supression aborted"<<endl);
+			logInfo(RTPS_WRITER,"Nack Supression aborted");
 			this->mp_stopSemaphore->post();
 		}
 		else
 		{
-			pInfo("Nack SUpression boost message: " <<ec.message()<<endl);
+			logInfo(RTPS_WRITER,"Nack SUpression boost message: " <<ec.message());
 		}
 }
 

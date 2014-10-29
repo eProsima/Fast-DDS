@@ -99,7 +99,7 @@ inline bool operator!=(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
 		return true;
 	return false;
 								}
-inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
 {
 	if(seq1.high>seq2.high)
 		return true;
@@ -112,7 +112,7 @@ inline bool operator>(SequenceNumber_t& seq1, SequenceNumber_t& seq2)
 	}
 	return false;
 }
-inline bool operator<(SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
 {
 	if(seq1.high>seq2.high)
 		return false;
@@ -126,7 +126,7 @@ inline bool operator<(SequenceNumber_t& seq1, SequenceNumber_t& seq2)
 	return false;
 }
 
-inline bool operator>=( SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
 {
 	if(seq1.high>seq2.high)
 		return true;
@@ -140,7 +140,7 @@ inline bool operator>=( SequenceNumber_t& seq1, SequenceNumber_t& seq2)
 	return false;
 }
 
-inline bool operator<=( SequenceNumber_t& seq1, SequenceNumber_t& seq2)
+inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& seq2)
 {
 	if(seq1.high>seq2.high)
 			return false;

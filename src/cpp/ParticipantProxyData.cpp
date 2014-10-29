@@ -20,6 +20,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "ParticipantProxyData";
+
 ParticipantProxyData::ParticipantProxyData():
 																		m_expectsInlineQos(false),
 																		m_availableBuiltinEndpoints(0),
@@ -35,7 +37,8 @@ ParticipantProxyData::ParticipantProxyData():
 
 ParticipantProxyData::~ParticipantProxyData()
 {
-	pDebugInfo("ParticipantProxyData destructor: "<<this->m_guid<<endl);
+	const char* const METHOD_NAME = "~ParticipantProxyData";
+	logInfo(RTPS_PARTICIPANT,this->m_guid);
 	for(std::vector<ReaderProxyData*>::iterator it = this->m_readers.begin();
 			it!=this->m_readers.end();++it)
 	{
