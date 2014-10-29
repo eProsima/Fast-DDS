@@ -400,6 +400,7 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
 	m_topicName = rdata->m_topicName;
 	m_userDefinedId = rdata->m_userDefinedId;
 	m_qos = rdata->m_qos;
+	cout << "COPYING DATA: expects inlineQOS : " << rdata->m_expectsInlineQos << endl;
 	m_expectsInlineQos = rdata->m_expectsInlineQos;
 	m_isAlive = rdata->m_isAlive;
 	m_topicKind = rdata->m_topicKind;

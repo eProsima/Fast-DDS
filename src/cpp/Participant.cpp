@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/Participant.h"
-
+#include "eprosimartps/dds/DomainParticipant.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
@@ -21,6 +21,7 @@
 #include "eprosimartps/writer/RTPSWriter.h"
 
 #include "eprosimartps/builtin/BuiltinProtocols.h"
+#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
@@ -33,8 +34,10 @@ typedef std::vector<RTPSReader*>::iterator p_ReaderIterator;
 typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
 
-ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidPrefix_t& guidP,uint32_t ID):
-
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
+		const GuidPrefix_t& guidP,uint32_t ID,
+		Participant* userP,
+		ParticipantListener* plisten):
 							m_defaultUnicastLocatorList(PParam.defaultUnicastLocatorList),
 							m_defaultMulticastLocatorList(PParam.defaultMulticastLocatorList),
 							m_participantName(PParam.name),
@@ -49,24 +52,30 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 							m_builtinProtocols(this),
 							m_participantID(ID),
 							m_send_socket_buffer_size(PParam.sendSocketBufferSize),
-							m_listen_socket_buffer_size(PParam.listenSocketBufferSize)
+							m_listen_socket_buffer_size(PParam.listenSocketBufferSize),
+							mp_participantListener(plisten),
+							mp_userParticipant(userP)
 {
+	userP->mp_impl = this;
+	m_userData = PParam.userData;
+
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	m_send_thr.initSend(loc);
 	m_event_thr.init_thread();
 
-	if(m_defaultUnicastLocatorList.empty())
+	if(m_defaultUnicastLocatorList.empty() && m_defaultMulticastLocatorList.empty())
 	{
-		
 		LocatorList_t myIP;
 		IPFinder::getIPAddress(&myIP);
 		std::stringstream ss;
 
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-		
-			lit->port=7555;
+			lit->port=DomainParticipant::getPortBase()+
+				DomainParticipant::getDomainIdGain()*PParam.builtin.domainId+
+				DomainParticipant::getOffsetd3()+
+				DomainParticipant::getParticipantIdGain()*ID;
 			m_defaultUnicastLocatorList.push_back(*lit);
 			ss << *lit << ";";
 		}
@@ -74,11 +83,31 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,const GuidP
 		std::string auxstr = ss.str();
 		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr<<endl);
 	}
+	LocatorList_t defcopy = m_defaultUnicastLocatorList;
+	m_defaultUnicastLocatorList.clear();
+	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
+	{
+		ListenResource* LR = new ListenResource(this);
+		Locator_t loc = LR->init_thread(*lit,false,false);
+		m_defaultUnicastLocatorList.push_back(loc);
+		this->m_listenResourceList.push_back(LR);
+	}
+	defcopy = m_defaultMulticastLocatorList;
+	m_defaultMulticastLocatorList.clear();
+	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
+	{
+		ListenResource* LR = new ListenResource(this);
+		Locator_t loc = LR->init_thread(*lit,true,false);
+		m_defaultMulticastLocatorList.push_back(loc);
+		this->m_listenResourceList.push_back(LR);
+	}
+
 
 	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
 
 
 	m_builtin = PParam.builtin;
+	
 
 	//START BUILTIN PROTOCOLS
 	m_builtinProtocols.initBuiltinProtocols(PParam.builtin,m_participantID);
@@ -106,6 +135,28 @@ ParticipantImpl::~ParticipantImpl()
 
 }
 
+bool ParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const 
+{
+	if(kind == WRITER)
+	{
+		for(std::vector<RTPSWriter*>::const_iterator it = m_userWriterList.begin();
+			it!=m_userWriterList.end();++it)
+		{
+			if(ent == (*it)->getGuid().entityId)
+				return true;
+		}
+	}
+	else
+	{
+		for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
+			it!=m_userReaderList.end();++it)
+		{
+			if(ent == (*it)->getGuid().entityId)
+				return true;
+		}
+	}
+	return false;
+}
 
 
 bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
@@ -122,11 +173,24 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			entId.value[3] = 0x03;
 		else if(param.topic.getTopicKind() == WITH_KEY)
 			entId.value[3] = 0x02;
-		IdCounter++;
-		octet* c = (octet*)&IdCounter;
+		uint32_t idnum;
+		if(param.getEntityId()>0)
+			idnum = param.getEntityId();
+		else
+		{
+			IdCounter++;
+			idnum = IdCounter;
+		}
+		
+		octet* c = (octet*)&idnum;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
 		entId.value[0] = c[2];
+		if(this->existsEntityId(entId,WRITER))
+		{
+			pError("A writer with the same entityId already exists in this participant"<<endl;);
+			return false;
+		}
 	}
 	else
 	{
@@ -183,11 +247,23 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 			entId.value[3] = 0x04;
 		else if(param.topic.getTopicKind() == WITH_KEY)
 			entId.value[3] = 0x07;
-		IdCounter++;
-		octet* c = (octet*)&IdCounter;
+		uint32_t idnum;
+		if(param.getEntityId()>0)
+			idnum = param.getEntityId();
+		else
+		{
+			IdCounter++;
+			idnum = IdCounter;
+		}
+		octet* c = (octet*)&idnum;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
 		entId.value[0] = c[2];
+		if(this->existsEntityId(entId,READER))
+		{
+			pError("A reader with the same entityId already exists in this participant"<<endl;);
+			return false;
+		}
 	}
 	else
 		entId = entityId;
@@ -392,9 +468,18 @@ void ParticipantImpl::ResourceSemaphoreWait()
 	{
 		mp_ResourceSemaphore->wait();
 	}
+	
 }
 
-
+bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+{
+	if(m_builtin.use_STATIC_EndpointDiscoveryProtocol == false)
+	{
+		pWarning("Remote Endpoints can only be activated with static discovery protocol");
+		return false;
+	}
+	return m_builtinProtocols.mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */

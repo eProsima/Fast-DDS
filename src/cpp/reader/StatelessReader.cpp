@@ -62,7 +62,9 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 		}
 		if(!change->isRead)
 			m_reader_cache.decreaseUnreadCount();
-		return this->m_reader_cache.remove_change(change);
+		if(!m_reader_cache.remove_change(change))
+			pWarning("Problem removing change from ReaderHistory");
+		return true;
 	}
 	return false;
 }
@@ -158,7 +160,7 @@ bool StatelessReader::change_removed_by_history(CacheChange_t*ch,WriterProxy*pro
 	return m_reader_cache.remove_change(ch);
 }
 
-bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
+bool StatelessReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
 	if(this->m_acceptMessagesFromUnkownWriters)
 	{

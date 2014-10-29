@@ -109,6 +109,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 {
 	pInfo("Announcing Participant State (new change: "<< new_change <<")"<<endl);
 	CacheChange_t* change = NULL;
+	//cout << "NEW CHANGE: " << new_change << " HAS CHANGED gg: " << m_hasChangedLocalPDP << endl;
 	if(new_change || m_hasChangedLocalPDP)
 	{
 		m_participantProxies.front()->m_manualLivelinessCount++;
@@ -214,6 +215,22 @@ bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 	return false;
 }
 
+
+bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata)
+{
+	pInfo(RTPS_CYAN<<"SimplePDP looking for ParticipantProxyData: "<<pguid<<RTPS_DEF<<endl);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
+	{
+		if((*pit)->m_guid == pguid)
+		{
+			*pdata = *pit;
+				return true;
+		}
+	}
+	return false;
+}
+
 bool PDPSimple::createSPDPEndpoints()
 {
 	pInfo(RTPS_CYAN<<"Creating SPDP Endpoints"<<RTPS_DEF<<endl);
@@ -241,6 +258,8 @@ bool PDPSimple::createSPDPEndpoints()
 		for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
 				lit!=mp_builtin->m_metatrafficMulticastLocatorList.end();++lit)
 			mp_SPDPWriter->reader_locator_add(*lit,false);
+		if(this->mp_builtin->m_useMandatory)
+			mp_SPDPWriter->reader_locator_add(mp_builtin->m_mandatoryMulticastLocator,false);
 	}
 	else
 	{
@@ -518,6 +537,19 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 			break;
 		}
 	}
+}
+
+bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+{
+	ParticipantProxyData* pdata;
+	if(lookupParticipantProxyData(pguid, &pdata))
+	{
+		if(kind == WRITER)
+			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
+		else
+			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+	}
+	return false;
 }
 
 

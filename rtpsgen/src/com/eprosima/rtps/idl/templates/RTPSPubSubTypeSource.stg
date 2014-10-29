@@ -11,7 +11,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.cpp"], description=["T
 
 $ctx.filename$PubSubType::$ctx.filename$PubSubType() 
 {
-	m_topicDataTypeName = "$ctx.m_firstStructure$PubSubType";
+	m_topicDataTypeName = "$ctx.m_firstStructure$";
 	m_typeSize = (uint32_t)$ctx.m_firstStructure$::getMaxCdrSerializedSize();
 	m_isGetKeyDefined = $ctx.m_firstStructure$::isKeyDefined();
 	m_keyBuffer = (unsigned char*)malloc($ctx.m_firstStructure$::getKeyMaxCdrSerializedSize()>16?$ctx.m_firstStructure$::getKeyMaxCdrSerializedSize()>16:16);

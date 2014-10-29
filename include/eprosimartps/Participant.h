@@ -51,7 +51,7 @@ class DomainParticipant;
 class DDSTopicDataType;
 class PublisherListener;
 class SubscriberListener;
-
+class ParticipantListener;
 
 
 }
@@ -80,7 +80,7 @@ class ParticipantImpl
 {
 public:
 
-	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID);
+	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID,Participant* userP,ParticipantListener* plisten);
 	virtual ~ParticipantImpl();
 
 
@@ -218,8 +218,19 @@ public:
 
 	BuiltinProtocols* getBuiltinProtocols(){return &m_builtinProtocols;}
 
+	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
 
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
+	void setListener(ParticipantListener* lis) {mp_participantListener = lis;}
+
+	ParticipantListener* getListener() const {return mp_participantListener;}
+
+	Participant* getUserParticipant() const {return mp_userParticipant;}
+
+	std::vector<octet> getUserData() const {return m_userData;}
+
+	uint32_t getParticipantID() const{return m_participantID;}
 private:
 	//SimpleParticipantDiscoveryProtocol m_SPDP;
 	const std::string m_participantName;
@@ -279,7 +290,11 @@ private:
 	uint32_t m_send_socket_buffer_size;
 	uint32_t m_listen_socket_buffer_size;
 
+	ParticipantListener* mp_participantListener;
 
+	Participant* mp_userParticipant;
+
+	std::vector<octet> m_userData;
 
 };
 /**
@@ -288,6 +303,7 @@ private:
  */
 class RTPS_DllAPI Participant
 {
+	friend class ParticipantImpl;
 public:
 	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
 	virtual ~ Participant(){};
@@ -301,6 +317,12 @@ public:
 	void stopParticipantAnnouncement(){return mp_impl->stopParticipantAnnouncement();};
 	//!Reset the participant announcement period.
 	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
+
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+	{
+		return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, kind);
+	}
+	uint32_t getParticipantID() const{return mp_impl->getParticipantID();}
 	private:
 	ParticipantImpl* mp_impl;
 };

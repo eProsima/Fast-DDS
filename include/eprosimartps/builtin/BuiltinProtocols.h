@@ -52,6 +52,8 @@ public:
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
 	LocatorList_t m_metatrafficMulticastLocatorList;
 	LocatorList_t m_metatrafficUnicastLocatorList;
+	Locator_t m_mandatoryMulticastLocator;
+	bool m_useMandatory;
 
 	/**
 	 * Add a local Writer to the BuiltinProtocols.
