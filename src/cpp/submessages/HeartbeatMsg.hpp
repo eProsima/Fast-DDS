@@ -27,7 +27,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"HB message not created"<<e<<endl)
+		logError(RTPS_CDR_MSG,"HB message not created"<<e<<endl)
 		return false;
 	}
 	return true;
@@ -66,7 +66,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"MessageCreator fails"<<e<<endl)
+		logError(RTPS_CDR_MSG,"MessageCreator fails"<<e<<endl)
 		return false;
 	}
 

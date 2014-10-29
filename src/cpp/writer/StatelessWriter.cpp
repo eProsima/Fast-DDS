@@ -39,7 +39,7 @@ StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPref
 StatelessWriter::~StatelessWriter()
 {
 	const char* const METHOD_NAME = "~StatelessWriter";
-	logInfo(LOG_CATEGORY::RTPS_HISTORY,"StatelessWriter destructor";);
+	logInfo(RTPS_HISTORY,"StatelessWriter destructor";);
 }
 
 bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
@@ -50,7 +50,7 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 	{
 		if((*it)->m_guid == rdata->m_guid)
 		{
-			logWarning(LOG_CATEGORY::RTPS_HISTORY,"Attempting to add existing reader" );
+			logWarning(RTPS_HISTORY,"Attempting to add existing reader" );
 			return false;
 		}
 	}
@@ -80,7 +80,7 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 {
 	const char* const METHOD_NAME = "add_locator";
-	logInfo(LOG_CATEGORY::RTPS_HISTORY,"Adding Locator: "<< loc<< " to StatelessWriter";);
+	logInfo(RTPS_HISTORY,"Adding Locator: "<< loc<< " to StatelessWriter";);
 	std::vector<ReaderLocator>::iterator rit;
 	bool found = false;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
@@ -130,7 +130,7 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 	}
 	if(found)
 	{
-		logInfo(LOG_CATEGORY::RTPS_HISTORY,"Reader Proxy removed: " <<rdata->m_guid;);
+		logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<rdata->m_guid;);
 		for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
 				lit!=rdata->m_unicastLocatorList.end();++lit)
 		{
@@ -275,7 +275,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 	}
 	else
 	{
-		logWarning(LOG_CATEGORY::RTPS_HISTORY, "No reader locator to add change";);
+		logWarning(RTPS_HISTORY, "No reader locator to add change";);
 	}
 }
 
@@ -315,7 +315,7 @@ void StatelessWriter::unsent_changes_not_empty()
 			//			}
 		}
 	}
-	logInfo (LOG_CATEGORY::RTPS_HISTORY, "Finish sending unsent changes" ;);
+	logInfo (RTPS_HISTORY, "Finish sending unsent changes" ;);
 }
 
 

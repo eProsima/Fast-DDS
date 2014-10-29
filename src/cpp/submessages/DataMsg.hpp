@@ -35,7 +35,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Data message error"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Data message error"<<e<<endl)
 
 		return false;
 	}
@@ -174,7 +174,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		g_pool_submsg.release_CDRMsg(submsgElem);
 	}
 	catch(int t){
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Data SUBmessage not created"<<t<<endl)
+		logError(RTPS_CDR_MSG,"Data SUBmessage not created"<<t<<endl)
 
 		return false;
 	}

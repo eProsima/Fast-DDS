@@ -27,7 +27,7 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t&
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Data message not created"<<e<<endl);
+		logError(RTPS_CDR_MSG,"Data message not created"<<e<<endl);
 		return false;
 	}
 	return true;
@@ -63,7 +63,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Message creator fails"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Message creator fails"<<e<<endl)
 		return false;
 	}
 

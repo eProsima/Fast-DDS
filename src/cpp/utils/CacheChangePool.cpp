@@ -23,7 +23,7 @@ static const char* const CLASS_NAME = "CacheChangePool";
 CacheChangePool::~CacheChangePool()
 {
 	const char* const METHOD_NAME = "~CacheChangePool";
-	logInfo(LOG_CATEGORY::RTPS_UTILS,"ChangePool destructor"<<endl);
+	logInfo(RTPS_UTILS,"ChangePool destructor"<<endl);
 	for(std::vector<CacheChange_t*>::iterator it = allCaches.begin();
 			it!=allCaches.end();++it)
 	{
@@ -34,7 +34,7 @@ CacheChangePool::~CacheChangePool()
 CacheChangePool::CacheChangePool(uint16_t pool_size_in, uint32_t payload_size_in)
 {
 	const char* const METHOD_NAME = "CacheChangePool";
-	logInfo(LOG_CATEGORY::RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size_in << " with payload of size: " << payload_size_in << endl);
+	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size_in << " with payload of size: " << payload_size_in << endl);
 	payload_size = payload_size_in;
 	pool_size = pool_size_in;
 	allocateGroup(pool_size_in);
@@ -70,14 +70,14 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 void CacheChangePool::allocateGroup(uint16_t group_size)
 {
 	const char* const METHOD_NAME = "allocateGroup";
-	logInfo(LOG_CATEGORY::RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size << endl);
+	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size << endl);
 	for(uint16_t i = 0;i<group_size;i++)
 	{
 		CacheChange_t* ch = new CacheChange_t(payload_size);
 		allCaches.push_back(ch);
 		freeCaches.push_back(ch);
 	}
-	logInfo(LOG_CATEGORY::RTPS_UTILS,"Finish allocating CacheChange_t"<<endl);
+	logInfo(RTPS_UTILS,"Finish allocating CacheChange_t"<<endl);
 }
 
 } /* namespace rtps */

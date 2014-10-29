@@ -45,7 +45,7 @@ RTPSMessageCreator::RTPSMessageCreator() {
 
 RTPSMessageCreator::~RTPSMessageCreator() {
 	const char* const METHOD_NAME = "~RTPSMessageCreator";
-	logInfo(LOG_CATEGORY::RTPS_CDR_MSG,"RTPSMessageCreator destructor"<<endl;);
+	logInfo(RTPS_CDR_MSG,"RTPSMessageCreator destructor"<<endl;);
 }
 
 
@@ -72,7 +72,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Header creation fails. "<< e <<endl);
+		logError(RTPS_CDR_MSG,"Header creation fails. "<< e <<endl);
 		return false;
 	}
 
@@ -100,7 +100,7 @@ bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 	}
 	catch(int e){
 
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Submessage Header creation fails. "<< e <<endl);
+		logError(RTPS_CDR_MSG,"Submessage Header creation fails. "<< e <<endl);
 		return false;
 	}
 
@@ -138,7 +138,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
+		logError(RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
 		return false;
 	}
 	return true;
@@ -166,7 +166,7 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t gu
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
+		logError(RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
 		return false;
 	}
 	return true;

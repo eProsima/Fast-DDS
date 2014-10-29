@@ -29,7 +29,7 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefi
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Gap message error"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Gap message error"<<e<<endl)
 		return false;
 	}
 	return true;
@@ -60,7 +60,7 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& se
 	}
 	catch(int e)
 	{
-		logError(LOG_CATEGORY::RTPS_CDR_MSG,"Gap submessage error"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Gap submessage error"<<e<<endl)
 		return false;
 	}
 

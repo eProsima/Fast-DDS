@@ -59,7 +59,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 	const char* const METHOD_NAME = "add_change";
 	if(m_isHistoryFull)
 	{
-		logWarning(LOG_CATEGORY::RTPS_HISTORY,"Attempting to add Data to Full ReaderCache: "
+		logWarning(RTPS_HISTORY,"Attempting to add Data to Full ReaderCache: "
 				<<this->mp_Endpoint->getGuid().entityId;)
 		return false;
 	}
@@ -71,7 +71,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 			if((*it)->sequenceNumber == a_change->sequenceNumber &&
 					(*it)->writerGUID == a_change->writerGUID)
 			{
-				logInfo(LOG_CATEGORY::RTPS_HISTORY,"Change (seqNum: "
+				logInfo(RTPS_HISTORY,"Change (seqNum: "
 						<< a_change->sequenceNumber.to64long()<< ") already in ReaderHistory";);
 				return false;
 			}
@@ -123,7 +123,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 			updateMaxMinSeqNum();
 			if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
-			logInfo(LOG_CATEGORY::RTPS_HISTORY,"ReaderHistory " <<this->mp_Endpoint->getGuid().entityId
+			logInfo(RTPS_HISTORY,"ReaderHistory " <<this->mp_Endpoint->getGuid().entityId
 					<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
 					<< a_change->writerGUID;);
 			//print_changes_seqNum();
@@ -139,7 +139,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 		{
 			if(this->mp_Endpoint->getUserDefinedId() >= 0)
 			{
-				logInfo(LOG_CATEGORY::RTPS_HISTORY,"ReaderHistory getting Key of change with no Key transmitted"<<endl;)
+				logInfo(RTPS_HISTORY,"ReaderHistory getting Key of change with no Key transmitted"<<endl;)
 						mp_reader->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
 				if(!mp_reader->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
@@ -152,7 +152,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 		}
 		else if(!a_change->instanceHandle.isDefined())
 		{
-			logWarning(LOG_CATEGORY::RTPS_HISTORY,"ReaderHistory: NO KEY in topic: "<< this->mp_Endpoint->getTopic().topicName
+			logWarning(RTPS_HISTORY,"ReaderHistory: NO KEY in topic: "<< this->mp_Endpoint->getTopic().topicName
 					<< " and no method to obtain it";);
 			return false;
 		}
@@ -169,7 +169,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 				}
 				else
 				{
-					logWarning(LOG_CATEGORY::RTPS_HISTORY,"WriterHistory: Change not added due to maximum number of samples per instance";);
+					logWarning(RTPS_HISTORY,"WriterHistory: Change not added due to maximum number of samples per instance";);
 					return false;
 				}
 			}
@@ -218,7 +218,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 					vit->second.push_back(a_change);
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
-				logInfo(LOG_CATEGORY::RTPS_HISTORY,"ReaderHistory " <<this->mp_Endpoint->getGuid().entityId
+				logInfo(RTPS_HISTORY,"ReaderHistory " <<this->mp_Endpoint->getGuid().entityId
 						<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
 						<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle;);
 			//	print_changes_seqNum();
@@ -273,7 +273,7 @@ bool ReaderHistory::get_last_added_cache(CacheChange_t** change)
 bool ReaderHistory::removeCacheChangesByKey(InstanceHandle_t& key)
 {
 	const char* const METHOD_NAME = "removeCacheChangesByKey";
-	logError(LOG_CATEGORY::RTPS_HISTORY,"Not Implemented yet";);
+	logError(RTPS_HISTORY,"Not Implemented yet";);
 	return false;
 }
 
