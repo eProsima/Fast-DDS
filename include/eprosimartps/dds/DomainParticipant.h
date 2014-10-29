@@ -17,7 +17,7 @@
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/dds/attributes/all_attributes.h"
-
+#include <set>
 
 
 namespace eprosima{
@@ -44,6 +44,7 @@ class Subscriber;
 class SubscriberImpl;
 class PublisherListener;
 class SubscriberListener;
+class ParticipantListener;
 
 typedef std::pair<Subscriber*,SubscriberImpl*> SubscriberPair;
 typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
@@ -93,7 +94,7 @@ public:
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
-    Participant* createParticipant(const ParticipantAttributes& PParam);
+    Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL);
 
     /**
      * Remove a participant and delete all its associated Writers, Readers, resources, etc.
@@ -152,33 +153,19 @@ public:
      */
 
     	///@{
-	uint16_t getDomainIdGain() const {
-		return m_domainIdGain;
-	}
+	uint16_t getDomainIdGain() const {		return m_domainIdGain;	}
 
-	uint16_t getOffsetd0() const {
-		return m_offsetd0;
-	}
+	uint16_t getOffsetd0() const {		return m_offsetd0;	}
 
-	uint16_t getOffsetd1() const {
-		return m_offsetd1;
-	}
+	uint16_t getOffsetd1() const {		return m_offsetd1;	}
 
-	uint16_t getOffsetd2() const {
-		return m_offsetd2;
-	}
+	uint16_t getOffsetd2() const {		return m_offsetd2;	}
 
-	uint16_t getOffsetd3() const {
-		return m_offsetd3;
-	}
+	uint16_t getOffsetd3() const {		return m_offsetd3;	}
 
-	uint16_t getParticipantIdGain() const {
-		return m_participantIdGain;
-	}
+	uint16_t getParticipantIdGain() const {		return m_participantIdGain;	}
 
-	uint16_t getPortBase() const {
-		return m_portBase;
-	}
+	uint16_t getPortBase() const {		return m_portBase;	}
 
 	void setMaxParticipantId(uint32_t maxParticipantId) {
 		m_maxParticipantID = maxParticipantId;
@@ -222,7 +209,7 @@ private:
 	 */
 	uint32_t getNewId();
 
-
+	std::set<uint32_t> m_participantIDs;
 
 };
 
@@ -273,9 +260,9 @@ public:
 	 * @param PParam Participant Parameters.
 	 * @return Pointer to the participant.
 	 */
-	static Participant* createParticipant(const ParticipantAttributes& PParam)
+	static Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createParticipant(PParam));
+		return (DomainParticipantImpl::getInstance()->createParticipant(PParam,plisten));
 	}
 	/**
 	 * Remove a participant and delete all its associated Writers, Readers, resources, etc.
@@ -322,6 +309,36 @@ public:
 	{
 		return (DomainParticipantImpl::getInstance()->getRegisteredType(type_name,type_ptr));
 	}
+
+	  /**
+     * Set the parameters used to calculate the default ports in the discovery.
+     */
+    static void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
+    {
+    	return (DomainParticipantImpl::getInstance()->setPortParameters( PB, DG, PG, d0, d1, d2, d3));
+    }
+    /** @name Methods to get the default Port numbers.
+     */
+
+    	///@{
+	static uint16_t getDomainIdGain()  {		return (DomainParticipantImpl::getInstance()->getDomainIdGain());	}
+
+	static uint16_t getOffsetd0()  {		return (DomainParticipantImpl::getInstance()-> getOffsetd0());	}
+
+	static uint16_t getOffsetd1()  {		return (DomainParticipantImpl::getInstance()->getOffsetd1());	}
+
+	static uint16_t getOffsetd2() {		return (DomainParticipantImpl::getInstance()->getOffsetd2());	}
+
+	static uint16_t getOffsetd3()  {		return (DomainParticipantImpl::getInstance()->getOffsetd3());	}
+
+	static uint16_t getParticipantIdGain()  {		return (DomainParticipantImpl::getInstance()->getParticipantIdGain());	}
+
+	static uint16_t getPortBase()  {		return (DomainParticipantImpl::getInstance()->getPortBase());	}
+
+//	static void setPortBase(uint16_t pb)  {return Doma}
+
+private:
+	DomainParticipantImpl* mp_impl;
 };
 
 

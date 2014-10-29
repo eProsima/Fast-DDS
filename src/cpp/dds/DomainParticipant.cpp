@@ -26,6 +26,10 @@
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
 
+#include <cstdlib>
+#include <ctime>
+
+
 namespace eprosima {
 namespace dds {
 
@@ -53,6 +57,7 @@ DomainParticipantImpl::DomainParticipantImpl()
 	m_offsetd2 = 1;
 	m_offsetd3 = 11;
 	m_DomainId = 80;
+	srand (static_cast <unsigned> (time(0)));
 
 }
 
@@ -111,7 +116,8 @@ bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pi
 	return false;
 }
 
-Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam)
+Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam,
+														ParticipantListener* listen)
 {
 	pInfo("Creating Participant "<<endl);
 
@@ -120,7 +126,22 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 		pError("Participant Attributes: LeaseDuration should be >= leaseDuration announcement period"<<endl;);
 		return NULL;
 	}
-	uint32_t ID = getNewId();
+	uint32_t ID;
+	if(PParam.participantId < 0)
+	{
+		ID = getNewId();
+		while(this->m_participantIDs.insert(ID).second == false)
+			ID = getNewId();
+	}
+	else
+	{
+		ID = PParam.participantId;
+		if(this->m_participantIDs.insert(ID).second == false)
+		{
+			pError("Participant not created, participant with the same ID already exists" << endl;)
+			return NULL;
+		}
+	}
 	int pid;
 #if defined(_WIN32)
 	pid = (int)_getpid();
@@ -152,9 +173,11 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 	guidP.value[9] = ((octet*)&ID)[1];
 	guidP.value[10] = ((octet*)&ID)[2];
 	guidP.value[11] = ((octet*)&ID)[3];
-	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID);
+
+	Participant* p = new Participant(NULL);
+
+	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID,p,listen);
 	this->setMaxParticipantId(pimpl->getParticipantId());
-	Participant* p = new Participant(pimpl);
 
 	m_participants.push_back(ParticipantPair(p,pimpl));
 	return p;
@@ -373,6 +396,9 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 		{
 			if(it->second->getGuid() == p->getGuid())
 			{
+				int32_t pID = it->second->getParticipantID();
+				m_participantIDs.erase(pID);
+				
 				delete(it->first);
 				delete(it->second);
 				m_participants.erase(it);

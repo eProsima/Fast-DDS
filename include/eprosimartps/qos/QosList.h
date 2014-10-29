@@ -16,6 +16,7 @@
 #include "eprosimartps/common/types/all_common.h"
 #include "eprosimartps/qos/ParameterList.h"
 
+
 namespace eprosima {
 namespace dds {
 
@@ -57,6 +58,8 @@ public:
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,Time_t& entity);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,bool in_bool);
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2);
+	static bool addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVec);
+	static bool addQos(QosList_t* qos,ParameterId_t pid, const ParameterPropertyList_t& list);
 	//static bool addQos(QosList_t* qos,ParameterId_t pid,BuiltinEndpointSet_t endpointset);
 	///@}
 };

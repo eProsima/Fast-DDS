@@ -64,7 +64,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 		return false;
 	}
 	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
-	if(a_change->sequenceNumber <= mp_maxSeqCacheChange->sequenceNumber)
+	if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
 	{
 		for(std::vector<CacheChange_t*>::reverse_iterator it=m_changes.rbegin();it!=m_changes.rend();++it)
 		{

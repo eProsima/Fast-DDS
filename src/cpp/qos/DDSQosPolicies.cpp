@@ -139,8 +139,13 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
+	uint8_t padding = this->dataVec.size()%4;
+	padding = padding==0?0:4-padding; // position adjustements
+	this->length = (uint16_t)(4+this->dataVec.size()+padding);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addString(msg,this->data);
+	valid &= CDRMessage::addUInt32(msg, (uint32_t)this->dataVec.size());
+	valid &= CDRMessage::addData(msg,this->dataVec.data(),(uint32_t)this->dataVec.size());
+	msg->pos+=padding;
 	return valid;
 }
 

@@ -37,7 +37,7 @@ BuiltinProtocols::BuiltinProtocols(ParticipantImpl* part):
 														m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
 {
 	// TODO Auto-generated constructor stub
-
+	m_useMandatory = false;
 }
 
 BuiltinProtocols::~BuiltinProtocols() {
@@ -56,19 +56,40 @@ bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,
 
 	//cout << "PORTS: " << m_SPDP_WELL_KNOWN_MULTICAST_PORT << " "<< m_SPDP_WELL_KNOWN_UNICAST_PORT << endl;
 
-	Locator_t multiLocator;
-	multiLocator.kind = LOCATOR_KIND_UDPv4;
-	multiLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
-	multiLocator.set_IP4_address(239,255,0,1);
-	m_metatrafficMulticastLocatorList.push_back(multiLocator);
-	LocatorList_t locators;
-	IPFinder::getIPAddress(&locators);
-	for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
+	this->m_mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
+	m_mandatoryMulticastLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
+	m_mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+	if(m_attributes.metatrafficMulticastLocatorList.empty())
 	{
-		it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
-		m_metatrafficUnicastLocatorList.push_back(*it);
+		m_metatrafficMulticastLocatorList.push_back(m_mandatoryMulticastLocator);
 	}
-
+	else
+	{
+		m_useMandatory = true;
+		for(std::vector<Locator_t>::iterator it = m_attributes.metatrafficMulticastLocatorList.begin();
+			it!=m_attributes.metatrafficMulticastLocatorList.end();++it)
+		{
+			m_metatrafficMulticastLocatorList.push_back(*it);
+		}
+	}
+	if(m_attributes.metatrafficUnicastLocatorList.empty())
+	{
+		LocatorList_t locators;
+		IPFinder::getIPAddress(&locators);
+		for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
+		{
+			it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
+			m_metatrafficUnicastLocatorList.push_back(*it);
+		}
+	}
+	else
+	{
+		for(std::vector<Locator_t>::iterator it = m_attributes.metatrafficUnicastLocatorList.begin();
+		it!=m_attributes.metatrafficUnicastLocatorList.end();++it)
+		{
+			m_metatrafficUnicastLocatorList.push_back(*it);
+		}
+	}
 	if(m_attributes.use_SIMPLE_ParticipantDiscoveryProtocol)
 	{
 		mp_PDP = new PDPSimple(this);
