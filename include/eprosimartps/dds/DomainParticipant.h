@@ -335,8 +335,10 @@ public:
 
 	static uint16_t getPortBase()  {		return (DomainParticipantImpl::getInstance()->getPortBase());	}
 
-	
+//	static void setPortBase(uint16_t pb)  {return Doma}
 
+private:
+	DomainParticipantImpl* mp_impl;
 };
 
 

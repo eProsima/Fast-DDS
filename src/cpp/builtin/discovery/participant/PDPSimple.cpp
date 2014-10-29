@@ -109,7 +109,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 {
 	pInfo("Announcing Participant State (new change: "<< new_change <<")"<<endl);
 	CacheChange_t* change = NULL;
-	cout << "NEW CHANGE: " << new_change << " HAS CHANGED gg: " << m_hasChangedLocalPDP << endl;
+	//cout << "NEW CHANGE: " << new_change << " HAS CHANGED gg: " << m_hasChangedLocalPDP << endl;
 	if(new_change || m_hasChangedLocalPDP)
 	{
 		m_participantProxies.front()->m_manualLivelinessCount++;
