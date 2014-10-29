@@ -43,13 +43,13 @@ History::History(Endpoint* endp,
 	mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
 	mp_minSeqCacheChange = mp_invalidCache;
 	mp_maxSeqCacheChange = mp_invalidCache;
-	logInfo(LOG_CATEGORY::RTPS_HISTORY,"History created");
+	logInfo(RTPS_HISTORY,"History created");
 }
 
 History::~History()
 {
 	const char* const METHOD_NAME = "~History";
-	logInfo(LOG_CATEGORY::RTPS_HISTORY,"HistoryCache destructor");
+	logInfo(RTPS_HISTORY,"HistoryCache destructor");
 }
 
 

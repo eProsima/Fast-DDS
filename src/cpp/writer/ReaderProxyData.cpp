@@ -34,7 +34,7 @@ ReaderProxyData::ReaderProxyData():
 ReaderProxyData::~ReaderProxyData()
 {
 	const char* const METHOD_NAME = "~ReaderProxyData";
-	logInfo(LOG_CATEGORY::RTPS_PROXY_DATA,"ReaderProxyData destructor: "<< this->m_guid;);
+	logInfo(RTPS_PROXY_DATA,"ReaderProxyData destructor: "<< this->m_guid;);
 	m_parameterList.deleteParams();
 }
 
@@ -175,7 +175,7 @@ bool ReaderProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 
-	logInfo(LOG_CATEGORY::RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters",RTPS_CYAN);
+	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters",RTPS_CYAN);
 	return true;
 }
 
@@ -346,7 +346,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			default:
 			{
-				logInfo(LOG_CATEGORY::RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED";,RTPS_CYAN);
+				logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED";,RTPS_CYAN);
 				break;
 			}
 			}
