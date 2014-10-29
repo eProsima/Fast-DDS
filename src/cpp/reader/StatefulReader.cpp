@@ -24,10 +24,12 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "StatefulReader";
 
 StatefulReader::~StatefulReader()
 {
-	pDebugInfo("StatefulReader destructor"<<endl;);
+	const char* const METHOD_NAME = "~StatefulReader";
+	logInfo(RTPS_READER,"StatefulReader destructor.";);
 	for(std::vector<WriterProxy*>::iterator it = matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
@@ -52,35 +54,37 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 
 bool StatefulReader::matched_writer_add(WriterProxyData* wdata)
 {
+	const char* const METHOD_NAME = "matched_writer_add";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
 		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
-			pWarning("Attempting to add existing writer" << endl);
+			logWarning(RTPS_READER,"Attempting to add existing writer");
 			return false;
 		}
 	}
 	WriterProxy* wp = new WriterProxy(wdata,m_SubTimes.heartbeatResponseDelay,this);
 	matched_writers.push_back(wp);
-	pDebugInfo("Writer Proxy added to StatefulReader: " <<wp->m_data->m_guid<< endl);
+	logInfo(RTPS_READER,"Writer Proxy " <<wp->m_data->m_guid <<" added to :" <<wp->m_data->m_guid);
 	return true;
 }
 bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 {
+	const char* const METHOD_NAME = "matched_writer_remove";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->m_data->m_guid == wdata->m_guid)
 		{
-			pDebugInfo("Writer Proxy removed: " <<(*it)->m_data->m_guid<< endl);
+			logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_data->m_guid);
 			delete(*it);
 			matched_writers.erase(it);
 			return true;
 		}
 	}
-	pInfo("StatefulReader "<<this->getGuid().entityId<<": Writer Proxy doesn't exist in this reader" << endl)
+	logInfo(RTPS_READER,"Writer Proxy " << wdata->m_guid << " doesn't exist in reader "<<this->getGuid().entityId);
 	return false;
 }
 
@@ -103,22 +107,24 @@ bool StatefulReader::matched_writer_is_matched(WriterProxyData* wdata)
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
+	const char* const METHOD_NAME = "matched_writer_lookup";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->m_data->m_guid == writerGUID)
 		{
 			*WP = *it;
-			pDebugInfo("StatefulReader "<<this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size()<<endl);
+			logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
 			return true;
 		}
 	}
-	pDebugInfo("StatefulReader "<<this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size()<<endl);
+	logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
 	return false;
 }
 
 bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
+	const char* const METHOD_NAME = "takeNextCacheChange";
 	boost::lock_guard<Endpoint> guard(*this);
 	CacheChange_t* min_change;
 	SequenceNumber_t minSeqNum = c_SequenceNumber_Unknown;
@@ -137,7 +143,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 	}
 	if(available && wp->get_change(minSeqNum,&min_change))
 	{
-		pDebugInfo("StatefulReader "<<this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long()<<endl);
+		logInfo(RTPS_READER,this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long());
 		if(min_change->kind == ALIVE)
 			this->mp_type->deserialize(&min_change->serializedPayload,data);
 		if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
@@ -154,7 +160,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 				info->iHandle = min_change->instanceHandle;
 			}
 			if(!m_reader_cache.remove_change(min_change))
-				pWarning("Problem removing change from ReaderHistory");
+				logWarning(RTPS_READER,"Problem removing change " << min_change->sequenceNumber <<" from ReaderHistory");
 			return true;
 		}
 	}
@@ -163,6 +169,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 
 bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
+	const char* const METHOD_NAME = "readNextCacheChange";
 	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<CacheChange_t*> toremove;
 	bool readok = false;
@@ -193,7 +200,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
 				}
 				m_reader_cache.decreaseUnreadCount();
-				pDebugInfo("StatefulReader "<<this->getGuid().entityId<<": readNextCacheChange reads: "<< (*it)->sequenceNumber.to64long()<<endl);
+				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
 				readok = true;
 				break;
 			}
@@ -207,7 +214,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	for(std::vector<CacheChange_t*>::iterator it = toremove.begin();
 			it!=toremove.end();++it)
 	{
-		pWarning("StatefulReader has change with no paired WP, removing "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID<<endl;)
+		logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired";)
 		m_reader_cache.remove_change(*it);
 	}
 	return readok;
@@ -216,6 +223,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 
 bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 {
+	const char* const METHOD_NAME = "readNextCacheChange";
 	boost::lock_guard<Endpoint> guard(*this);
 	std::vector<CacheChange_t*> toremove;
 	bool readok = false;
@@ -234,7 +242,7 @@ bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 				*change = (*it);
 				(*it)->isRead = true;
 				m_reader_cache.decreaseUnreadCount();
-				pDebugInfo("StatefulReader "<<this->getGuid().entityId<<": readNextCacheChange reads: "<< (*it)->sequenceNumber.to64long()<<endl);
+				logInfo(RTPS_READER,this->getGuid().entityId<<": reads change "<< (*it)->sequenceNumber.to64long());
 				readok = true;
 			}
 		}
@@ -247,8 +255,8 @@ bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 	for(std::vector<CacheChange_t*>::iterator it = toremove.begin();
 			it!=toremove.end();++it)
 	{
-		pWarning("StatefulReader has change with no paired WP, removing "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID<<endl;)
-															m_reader_cache.remove_change(*it);
+		logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired";)
+		m_reader_cache.remove_change(*it);
 	}
 	return readok;
 }
@@ -261,6 +269,7 @@ bool StatefulReader::isUnreadCacheChange()
 
 bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterProxy* wp)
 {
+	const char* const METHOD_NAME = "change_removed_by_history";
 	boost::lock_guard<Endpoint> guard(*this);
 	if(wp!=NULL || matched_writer_lookup(a_change->writerGUID,&wp))
 	{
@@ -287,7 +296,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 	}
 	else
 	{
-		pError("StatefulReader should always find the WP associated with a change, something is very wrong"<<endl);
+		logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
 	}
 	return false;
 }

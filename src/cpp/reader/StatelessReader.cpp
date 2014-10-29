@@ -22,11 +22,12 @@ using namespace eprosima::dds;
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "StatelessReader";
 
-
-StatelessReader::~StatelessReader() {
-
-	pDebugInfo("StatelessReader destructor"<<endl;);
+StatelessReader::~StatelessReader()
+{
+	const char* const METHOD_NAME = "~StatelessReader";
+	logInfo(RTPS_READER,"Removing reader "<<this->getGuid()<<endl;);
 }
 
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
@@ -44,8 +45,9 @@ StatelessReader::StatelessReader(const SubscriberAttributes& param,
 
 bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
+	const char* const METHOD_NAME = "takeNextCacheChange";
 	boost::lock_guard<Endpoint> guard(*this);
-	pDebugInfo("Taking Data from Reader"<<endl);
+	logInfo(RTPS_READER,this->getGuid().entityId<<" taking data";);
 	CacheChange_t* change;
 	if(this->m_reader_cache.get_min_change(&change))
 	{
@@ -63,7 +65,7 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 		if(!change->isRead)
 			m_reader_cache.decreaseUnreadCount();
 		if(!m_reader_cache.remove_change(change))
-			pWarning("Problem removing change from ReaderHistory");
+			logWarning(RTPS_READER,"Problem removing change from ReaderHistory");
 		return true;
 	}
 	return false;
@@ -72,6 +74,7 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 
 bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
+	const char* const METHOD_NAME = "readNextCacheChange";
 	boost::lock_guard<Endpoint> guard(*this);
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
@@ -101,9 +104,10 @@ bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 		}
 		(*it)->isRead = true;
 		m_reader_cache.decreaseUnreadCount();
+		logInfo(RTPS_READER,this->getGuid().entityId<<" reads "<<(*it)->sequenceNumber);
 		return true;
 	}
-	pInfo("No Unread elements left"<<endl);
+	logInfo(RTPS_READER,"No Unread elements left");
 	return false;
 }
 
@@ -114,24 +118,26 @@ bool StatelessReader::isUnreadCacheChange()
 
 bool StatelessReader::matched_writer_add(WriterProxyData* wdata)
 {
+	const char* const METHOD_NAME = "matched_writer_add";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
 		if((*it)->m_guid == wdata->m_guid)
 			return false;
 	}
-	pInfo("Added "<< wdata->m_guid << " to the matched writer list"<<endl);
+	logInfo(RTPS_READER,wdata->m_guid << " added to the matched writer list");
 	m_matched_writers.push_back(wdata);
 	return true;
 }
 bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
 {
+	const char* const METHOD_NAME = "matched_writer_remove";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
 		if((*it)->m_guid == wdata->m_guid)
 		{
-			pDebugInfo("Writer Proxy removed: " <<wdata->m_guid<< endl);
+			logInfo(RTPS_READER,"Writer Proxy removed: " <<wdata->m_guid);
 			m_matched_writers.erase(it);
 			return true;
 		}

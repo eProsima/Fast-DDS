@@ -26,6 +26,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "HeartbeatResponseDelay";
+
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
 	stop_timer();
@@ -41,10 +43,11 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_ti
 
 void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("HeartbeatResponse:event:"<<endl;);
+		logInfo(RTPS_READER,"");
 		std::vector<ChangeFromWriter_t*> ch_vec;
 		{
 			boost::lock_guard<WriterProxy> guard(*mp_WP);
@@ -55,7 +58,7 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			SequenceNumberSet_t sns;
 			if(!mp_WP->available_changes_max(&sns.base)) //if no changes are available
 			{
-				pError("HeartbeatResponse: event: no available changes max"<<endl;);
+				logError(RTPS_READER,"No available changes max"<<endl;);
 			}
 			sns.base++;
 			std::vector<ChangeFromWriter_t*>::iterator cit;
@@ -63,12 +66,13 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			{
 				if(!sns.add((*cit)->seqNum))
 				{
-					pWarning("HBResponse:event:error adding seqNum "<<(*cit)->seqNum.to64long()<< " with SeqNumSet Base: "<< sns.base.to64long()<< endl;);
+					logWarning(RTPS_READER,"Error adding seqNum "<<(*cit)->seqNum.to64long()
+							<< " with SeqNumSet Base: "<< sns.base.to64long());
 					break;
 				}
 			}
 			mp_WP->m_acknackCount++;
-			pDebugInfo("Sending ACKNACK: "<< sns <<endl;);
+			logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
 			bool final = false;
 			if(sns.isSetEmpty())
@@ -95,12 +99,12 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("HB response aborted"<<endl);
+		logInfo(RTPS_READER,"Response aborted");
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("HB response boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_READER,"Response boost message: " <<ec.message());
 	}
 }
 

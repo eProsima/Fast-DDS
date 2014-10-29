@@ -28,6 +28,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "NackResponseDelay";
+
 NackResponseDelay::~NackResponseDelay() {
 	stop_timer();
 	delete(timer);
@@ -48,14 +50,16 @@ bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)
 
 void NackResponseDelay::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("NackResponse:event: "<<endl;);
+		logInfo(RTPS_WRITER,"Responding to Acknack msg";);
 		boost::lock_guard<ReaderProxy> guard(*mp_RP);
 		std::vector<ChangeForReader_t*> ch_vec;
 		if(mp_RP->requested_changes(&ch_vec))
 		{
+			logInfo(RTPS_WRITER,"Requested "<<ch_vec.size() << " changes";);
 			//cout << "REQUESTED CHANGES SIZE: "<< ch_vec.size() << endl;
 			//	std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
 			//Get relevant data cache changes
@@ -111,12 +115,12 @@ void NackResponseDelay::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("Nack response aborted");
+		logInfo(RTPS_WRITER,"Nack response aborted");
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("Nack response boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_WRITER,"Nack response boost message: " <<ec.message());
 	}
 }
 

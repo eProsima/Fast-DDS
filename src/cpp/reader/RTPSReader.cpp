@@ -18,6 +18,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "RTPSReader";
+
 RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
 		StateKind_t state,
 		int16_t userDefinedId,uint32_t payload_size):
@@ -31,12 +33,14 @@ RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic
 		m_acceptMessagesFromUnkownWriters(true)
 
 {
-	pDebugInfo("RTPSReader created correctly"<<endl);
+	const char* const METHOD_NAME = "RTPSReader";
+	logInfo(RTPS_READER,"RTPSReader created correctly in topic: "<<this->getTopic().topicName;);
 }
 
-RTPSReader::~RTPSReader() {
-
-	pDebugInfo("RTPSReader destructor"<<endl;);
+RTPSReader::~RTPSReader()
+{
+	const char* const METHOD_NAME = "~RTPSReader";
+	logInfo(RTPS_READER,"Removing reader "<<this->getGuid().entityId;);
 }
 
 bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
