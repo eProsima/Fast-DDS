@@ -108,6 +108,10 @@ call nmake
 call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
 cd ..\..
 
+cd rtpsgen
+call ant jars
+cd ..
+
 :: Create installers.
 cd "utils\installers\ertps\windows"
 :: Win32 installer.
