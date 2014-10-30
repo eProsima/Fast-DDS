@@ -366,6 +366,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_dll.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\eProsima_auto_link.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosima_stl_exports.hpp" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\history\History.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\history\ReaderHistory.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\history\WriterHistory.h" />
@@ -390,6 +391,7 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSMessageCreator.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h" />
+    <ClInclude Include="..\..\..\..\include\eprosimartps\stl_string_export.hpp" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CDRMessagePool.h" />
     <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h" />

@@ -441,6 +441,12 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\dds\ParticipantListener.h">
       <Filter>Header Files\eprosimartps\dds</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\stl_string_export.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosima_stl_exports.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
