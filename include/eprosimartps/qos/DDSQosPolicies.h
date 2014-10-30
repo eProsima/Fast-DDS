@@ -18,8 +18,9 @@
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/qos/ParameterTypes.h"
-
+#include "eprosimartps/eprosima_stl_exports.hpp"
 using namespace eprosima::rtps;
+
 
 namespace eprosima{
 namespace dds{
@@ -146,8 +147,6 @@ class RTPS_DllAPI UserDataQosPolicy : private Parameter_t, public QosPolicy{
 public:
 	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0),QosPolicy(false){};
 	virtual ~UserDataQosPolicy(){};
-	#pragma warning(disable: 4251)
-	//std::string data;
 	std::vector<octet> dataVec;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
@@ -190,7 +189,6 @@ public:
 	PartitionQosPolicy():Parameter_t(PID_PARTITION,0),QosPolicy(false){};
 	virtual ~PartitionQosPolicy(){};
 	//std::vector<octet> name;
-	#pragma warning(disable: 4251)
 	std::vector<std::string> names;
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
