@@ -37,19 +37,19 @@ History::History(Endpoint* endp,
 		mp_minSeqCacheChange(NULL),
 		mp_maxSeqCacheChange(NULL)
 {
-	const char* const METHOD_NAME = "History";
+	//const char* const METHOD_NAME = "History";
 	mp_invalidCache = m_changePool.reserve_Cache();
 	mp_invalidCache->writerGUID = c_Guid_Unknown;
 	mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
 	mp_minSeqCacheChange = mp_invalidCache;
 	mp_maxSeqCacheChange = mp_invalidCache;
-	logInfo(RTPS_HISTORY,"History created");
+	//logInfo(RTPS_HISTORY,"History created");
 }
 
 History::~History()
 {
 	const char* const METHOD_NAME = "~History";
-	logInfo(RTPS_HISTORY,"HistoryCache destructor");
+	logInfo(RTPS_HISTORY,"");
 }
 
 

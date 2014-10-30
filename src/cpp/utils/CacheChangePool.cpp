@@ -77,7 +77,7 @@ void CacheChangePool::allocateGroup(uint16_t group_size)
 		allCaches.push_back(ch);
 		freeCaches.push_back(ch);
 	}
-	logInfo(RTPS_UTILS,"Finish allocating CacheChange_t");
+	//logInfo(RTPS_UTILS,"Finish allocating CacheChange_t");
 }
 
 } /* namespace rtps */
