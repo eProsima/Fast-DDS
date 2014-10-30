@@ -36,8 +36,11 @@ SectionGroup "Libraries" SECGRP0000
          SetOverwrite on
          File /r "..\..\..\..\lib\x64Win64VS2010\*"
 		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_thread*dll"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_system*dll"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_regex*"
 		 WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
@@ -49,8 +52,11 @@ SectionGroup "Libraries" SECGRP0000
         SetOverwrite on
         File /r "..\..\..\..\lib\i86Win32VS2010\*"
 		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
-		File /r "${LIB_BOOST_PATH}\lib\i86\boost_thread*dll"
-		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_system*dll"
+		File /r "${LIB_BOOST_PATH}\lib\i86\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_regex*"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
