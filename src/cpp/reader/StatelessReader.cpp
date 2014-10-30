@@ -27,7 +27,7 @@ static const char* const CLASS_NAME = "StatelessReader";
 StatelessReader::~StatelessReader()
 {
 	const char* const METHOD_NAME = "~StatelessReader";
-	logInfo(RTPS_READER,"Removing reader "<<this->getGuid()<<endl;);
+	logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
 }
 
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
@@ -47,10 +47,10 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "takeNextCacheChange";
 	boost::lock_guard<Endpoint> guard(*this);
-	logInfo(RTPS_READER,this->getGuid().entityId<<" taking data";);
 	CacheChange_t* change;
 	if(this->m_reader_cache.get_min_change(&change))
 	{
+		logInfo(RTPS_READER,this->getGuid().entityId<<" taking next data.");
 		if(change->kind == ALIVE)
 		{
 			this->mp_type->deserialize(&change->serializedPayload,data);

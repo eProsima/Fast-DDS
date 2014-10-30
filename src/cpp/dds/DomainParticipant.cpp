@@ -24,6 +24,7 @@
 #include "eprosimartps/Participant.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/utils/eClock.h"
 #include "eprosimartps/utils/IPFinder.h"
 
 #include <cstdlib>
@@ -66,7 +67,7 @@ DomainParticipantImpl::DomainParticipantImpl()
 DomainParticipantImpl::~DomainParticipantImpl()
 {
 	const char* const METHOD_NAME = "~DomainParticipantImpl";
-	logInfo(RTPS_PARTICIPANT,"Deleting everything");
+	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",EPRO_WHITE);
 	for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 			it!=m_participants.end();++it)
 	{
@@ -74,21 +75,23 @@ DomainParticipantImpl::~DomainParticipantImpl()
 		delete(it->second);
 	}
 	logInfo(RTPS_PARTICIPANT,"Participants deleted correctly ");
-	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
-			it!=m_publisherList.end();++it)
-	{
-		delete(it->first);
-		delete(it->second);
-	}
-	logInfo(RTPS_PARTICIPANT,"Publishers deleted correctly.");
-	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
-			it!=m_subscriberList.end();++it)
-	{
-		delete(it->first);
-		delete(it->second);
-	}
-	logInfo(RTPS_PARTICIPANT,"Subscribers deleted correctly.");
+//	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
+//			it!=m_publisherList.end();++it)
+//	{
+//		delete(it->first);
+//		delete(it->second);
+//	}
+//	logInfo(RTPS_PARTICIPANT,"Publishers deleted correctly.");
+//	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
+//			it!=m_subscriberList.end();++it)
+//	{
+//		delete(it->first);
+//		delete(it->second);
+//	}
+//	logInfo(RTPS_PARTICIPANT,"Subscribers deleted correctly.");
 	DomainParticipantImpl::instanceFlag = false;
+	eClock::my_sleep(100);
+	Log::removeLog();
 }
 
 
@@ -365,7 +368,8 @@ bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 bool DomainParticipantImpl::removeParticipant(Participant* p)
 {
 	const char* const METHOD_NAME = "removeParticipant";
-	if(p!=nullptr)
+	ParticipantImpl* pimpl = nullptr;
+	if(p!=nullptr && getParticipantImpl(p,&pimpl))
 	{
 		std::vector<PublisherPair> auxListPub;
 		for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
@@ -382,7 +386,7 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 			}
 		}
 		m_publisherList = auxListPub;
-		logInfo(RTPS_PARTICIPANT,"Publishers deleted correctly.");
+		logInfo(RTPS_PARTICIPANT,"Publishers in "<<p->getGuid().guidPrefix << " deleted correctly.");
 		std::vector<SubscriberPair> auxListSub;
 		for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
 				it!=m_subscriberList.end();++it)
@@ -398,7 +402,7 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 			}
 		}
 		m_subscriberList = auxListSub;
-		logInfo(RTPS_PARTICIPANT,"Subscribers deleted correctly.");
+		logInfo(RTPS_PARTICIPANT,"Subscribers in "<<p->getGuid().guidPrefix << " deleted correctly.");
 		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 				it!=m_participants.end();++it)
 		{
@@ -414,6 +418,7 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 			}
 		}
 	}
+	logError(RTPS_PARTICIPANT,"Participant not valid or not recognized");
 	return false;
 }
 

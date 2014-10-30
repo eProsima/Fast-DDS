@@ -61,7 +61,7 @@ MessageReceiver::~MessageReceiver()
 {
 	const char* const METHOD_NAME = "~MessageReceiver";
 	this->m_ParamList.deleteParams();
-	logInfo(RTPS_MSG_IN,"";);
+	logInfo(RTPS_MSG_IN,"",EPRO_BLUE);
 }
 
 void MessageReceiver::reset(){
@@ -368,7 +368,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind);
 		if(inlineQosSize <= 0)
 		{
-			logInfo(RTPS_MSG_IN,"SubMessage Data ERROR, Inline Qos ParameterList error"<<endl);
+			logInfo(RTPS_MSG_IN,"SubMessage Data ERROR, Inline Qos ParameterList error");
 			firstReader->release_Cache(ch);
 			return false;
 		}
@@ -416,7 +416,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			//uint32_t param_size;
 			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
 			{
-				logInfo(RTPS_MSG_IN,"SubMessage Data ERROR, keyFlag ParameterList"<<endl);
+				logInfo(RTPS_MSG_IN,"SubMessage Data ERROR, keyFlag ParameterList",EPRO_BLUE);
 				return false;
 			}
 			msg->msg_endian = previous_endian;
@@ -428,7 +428,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-	logInfo(RTPS_MSG_IN,"Looking through all RTPSReaders associated with this ListenResources"<<endl);
+	logInfo(RTPS_MSG_IN,"Looking through all RTPSReaders associated with this ListenResource",EPRO_BLUE);
 	//Look for the correct reader to add the change
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
@@ -437,7 +437,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		WriterProxy* pWP = NULL;
 		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
-			logInfo(RTPS_MSG_IN,"MessageReceiver: Trying to add change "<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId<<endl);
+			logInfo(RTPS_MSG_IN,"MessageReceiver: Trying to add change "
+					<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId,EPRO_BLUE);
 			CacheChange_t* change_to_add;
 			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
 			{
@@ -473,7 +474,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				else
 				{
 					(*it)->release_Cache(change_to_add);
-					logInfo(RTPS_MSG_IN,"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+					logInfo(RTPS_MSG_IN,"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long(),EPRO_BLUE);
 				}
 
 			}
@@ -491,7 +492,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				}
 				else
 				{
-					logInfo(RTPS_MSG_IN,"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long()<<endl);
+					logInfo(RTPS_MSG_IN,"MessageReceiver not add change "
+							<<change_to_add->sequenceNumber.to64long(),EPRO_BLUE);
 					(*it)->release_Cache(change_to_add);
 					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
 					{
@@ -504,7 +506,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//cout << "CHECKED ALL READERS "<<endl;
 	if(firstReaderNeedsToRelease)
 		firstReader->release_Cache(ch);
-	logInfo(RTPS_MSG_IN,"Sub Message DATA processed"<<endl);
+	logInfo(RTPS_MSG_IN,"Sub Message DATA processed",EPRO_BLUE);
 	return true;
 }
 

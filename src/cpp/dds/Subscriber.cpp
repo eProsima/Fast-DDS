@@ -17,6 +17,7 @@
 #include "eprosimartps/reader/WriterProxy.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
+
 #include "eprosimartps/dds/DDSTopicDataType.h"
 
 #include "eprosimartps/dds/SubscriberListener.h"
