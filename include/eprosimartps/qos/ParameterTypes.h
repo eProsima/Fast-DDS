@@ -14,14 +14,13 @@
 #define PARAMETERTYPES_H_
 
 #include "eprosimartps/common/types/all_common.h"
-#include "eprosimartps/stl_string_export.hpp"
+#include "eprosimartps/eprosima_stl_exports.hpp"
 
 #include <string>
 #include <vector>
 
 using namespace eprosima::rtps;
 
-STL_STRING_EXPORT(RTPS_DllAPI)
 
 namespace eprosima {
 

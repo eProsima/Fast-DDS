@@ -17,12 +17,12 @@
 #include "eprosimartps/common/types/SerializedPayload.h"
 #include "eprosimartps/common/types/InstanceHandle.h"
 #include "eprosimartps/utils/md5.h"
-#include "eprosimartps/stl_string_export.hpp"
+#include "eprosimartps/eprosima_stl_exports.hpp"
 #include <string>
 
 using namespace eprosima::rtps;
 
-STL_STRING_EXPORT(RTPS_DllAPI)
+
 
 namespace eprosima {
 namespace dds {
