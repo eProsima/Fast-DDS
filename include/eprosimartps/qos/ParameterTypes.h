@@ -274,7 +274,6 @@ public:
 
 class RTPS_DllAPI ParameterPropertyList_t:public Parameter_t{
 public:
-	#pragma warning(disable: 4251)
 	std::vector<std::pair<std::string,std::string>> properties;
 	ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST,0){};
 	ParameterPropertyList_t(ParameterId_t pid,uint16_t in_length):Parameter_t(PID_PROPERTY_LIST,in_length){};
