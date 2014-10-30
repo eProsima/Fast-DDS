@@ -1,5 +1,5 @@
 #include "eprosimartps_dll.h"
-
+#include "eprosimartps/common/types/common_types.h"
 
 #if defined(_WIN32) && !defined(STL_STRING_EXPORT_APPLY)
 
@@ -27,8 +27,8 @@ STL_STRING_EXPORT(RTPS_DllAPI)
 #if !defined(_EPRO_STLVECTOR_OCTET_EXPORT_ ) && defined(_WIN32)
 #define _EPRO_STLVECTOR_OCTET_EXPORT_
 
-template class RTPS_DllAPI std::allocator<octet>;
-template class RTPS_DllAPI std::vector<octet>;
+template class RTPS_DllAPI std::allocator<eprosima::rtps::octet>;
+template class RTPS_DllAPI std::vector<eprosima::rtps::octet>;
 
 #endif //_EPRO_STLVECTOR_OCTET_EXPORT_
 
