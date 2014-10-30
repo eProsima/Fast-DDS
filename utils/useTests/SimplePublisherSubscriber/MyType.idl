@@ -1,6 +1,0 @@
-struct MyType
-{
-	short index;
-	string message;
-	float price;
-};
