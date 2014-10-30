@@ -17,6 +17,7 @@
 namespace eprosima {
 namespace dds {
 
+static const char* const CLASS_NAME = "ReaderQos";
 
 void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
 {
@@ -113,24 +114,25 @@ void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
 
 bool ReaderQos::checkQos()
 {
+	const char* const METHOD_NAME = "checkQos";
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
 	{
-		pError("TRANSIENT Durability not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"TRANSIENT Durability not supported");
 		return false;
 	}
 	if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
 	{
-		pError("PERSISTENT Durability not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"PERSISTENT Durability not supported");
 		return false;
 	}
 	if(m_destinationOrder.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
 	{
-		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"BY SOURCE TIMESTAMP DestinationOrder not supported");
 		return false;
 	}
 	if(m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS && m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
 	{
-		pError("BEST_EFFORT incompatible with EXCLUSIVE ownership"<<endl);
+		logError(RTPS_QOS_CHECK,"BEST_EFFORT incompatible with EXCLUSIVE ownership");
 		return false;
 	}
 	return true;
@@ -138,33 +140,34 @@ bool ReaderQos::checkQos()
 
 bool ReaderQos::canQosBeUpdated(ReaderQos& qos)
 {
+	const char* const METHOD_NAME = "canQosBeUpdated";
 	bool updatable = true;
 	if(	m_durability.kind != qos.m_durability.kind)
 	{
 		updatable = false;
-		pWarning("ReaderQos:Durability kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Durability kind cannot be changed after the creation of a subscriber.");
 	}
 
 	if(m_liveliness.kind !=  qos.m_liveliness.kind)
 	{
 		updatable = false;
-		pWarning("ReaderQos:Liveliness Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Liveliness Kind cannot be changed after the creation of a subscriber.");
 	}
 
 	if(m_reliability.kind != qos.m_reliability.kind)
 	{
 		updatable = false;
-		pWarning("ReaderQos:Reliability Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Reliability Kind cannot be changed after the creation of a subscriber.");
 	}
 	if(m_ownership.kind != qos.m_ownership.kind)
 	{
 		updatable = false;
-		pWarning("ReaderQos:Ownership Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Ownership Kind cannot be changed after the creation of a subscriber.");
 	}
 	if(m_destinationOrder.kind != qos.m_destinationOrder.kind)
 	{
 		updatable = false;
-		pWarning("ReaderQos:Destination order Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Destination order Kind cannot be changed after the creation of a subscriber.");
 	}
 	return updatable;
 }

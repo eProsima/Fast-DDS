@@ -27,6 +27,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "WLPListener";
+
 WLPListener::WLPListener(WLP* plwp):
 				mp_WLP(plwp)
 {
@@ -43,8 +45,9 @@ typedef std::vector<WriterProxy*>::iterator WPIT;
 
 void WLPListener::onNewDataMessage()
 {
+	const char* const METHOD_NAME = "onNewDataMessage";
 	boost::lock_guard<Endpoint> guard(*(Endpoint*)this->mp_WLP->mp_builtinParticipantMessageReader);
-	pInfo(RTPS_MAGENTA<< "Liveliness Listener:  onNewDataMessage"<<endl);
+	logInfo(RTPS_LIVELINESS,"",EPRO_MAGENTA);
 	CacheChange_t* change;
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
@@ -58,7 +61,9 @@ void WLPListener::onNewDataMessage()
 				guidP.value[i] = change->serializedPayload.data[i];
 			}
 			livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
-			pDebugInfo(RTPS_MAGENTA<<"Participant "<<guidP<< " assert liveliness of "<<((livelinessKind == 0x00)?"AUTOMATIC":"")<<((livelinessKind==0x01)?"MANUAL_BY_PARTICIPANT":"")<< " writers"<<endl);
+			logInfo(RTPS_LIVELINESS,"Participant "<<guidP<< " assert liveliness of "
+					<<((livelinessKind == 0x00)?"AUTOMATIC":"")
+					<<((livelinessKind==0x01)?"MANUAL_BY_PARTICIPANT":"")<< " writers",EPRO_MAGENTA);
 		}
 		else
 		{
@@ -67,7 +72,7 @@ void WLPListener::onNewDataMessage()
 		}
 		if(guidP == this->mp_WLP->mp_participant->getGuid().guidPrefix)
 		{
-			pDebugInfo(RTPS_MAGENTA<<"Message from own participant, ignoring"<<RTPS_DEF<<endl;);
+			logInfo(RTPS_LIVELINESS,"Message from own participant, ignoring",EPRO_MAGENTA);
 			return;
 		}
 		this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
@@ -78,6 +83,7 @@ void WLPListener::onNewDataMessage()
 
 bool WLPListener::processParameterList(ParameterList_t* param,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
 {
+	const char* const METHOD_NAME = "processParameterList";
 	for(std::vector<Parameter_t*>::iterator it=param->m_parameters.begin();
 			it!=param->m_parameters.end();++it)
 	{
@@ -90,7 +96,7 @@ bool WLPListener::processParameterList(ParameterList_t* param,GuidPrefix_t* guid
 			}
 		default:
 		{
-			pWarning("WriterLivelinessListener: in this ParameterList should not be anything but the Key"<<endl;);
+			logWarning(RTPS_LIVELINESS,"In this ParameterList should not be anything but the Key",EPRO_MAGENTA);
 			break;
 		}
 		}

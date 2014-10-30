@@ -159,7 +159,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
-			//pDebugInfo("Trying to add change with KEY: "<< vit->first << endl;);
+			//logInfo(RTPS_EDP,"Trying to add change with KEY: "<< vit->first << endl;);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{

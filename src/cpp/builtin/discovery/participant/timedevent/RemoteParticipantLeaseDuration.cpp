@@ -20,6 +20,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "RemoteParticipantLeaseDuration";
+
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* pPDP,
 		ParticipantProxyData* pdata,
 		ResourceEvent* pEvent,
@@ -39,15 +41,19 @@ RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 
 void RemoteParticipantLeaseDuration::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("ParticipantLeaseDuration Period" << endl);
+		logInfo(RTPS_LIVELINESS,"Checking participant: "
+				<< mp_participantProxyData->m_participantName << " with GUID: "
+				<< mp_participantProxyData->m_guid,EPRO_MAGENTA);
 		if(mp_participantProxyData->isAlive)
 			mp_participantProxyData->isAlive = false;
 		else
 		{
-			pInfo("Participant no longer ALIVE, trying to remove: "<< mp_participantProxyData->m_guid << endl);
+			logInfo(RTPS_LIVELINESS,"Participant no longer ALIVE, trying to remove: "
+					<< mp_participantProxyData->m_guid,EPRO_MAGENTA);
 			mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 			return;
 		}
@@ -55,12 +61,12 @@ void RemoteParticipantLeaseDuration::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("Remote Participant Lease Duration aborted"<<endl);
+		logInfo(RTPS_LIVELINESS,"Remote Participant Lease Duration aborted",EPRO_MAGENTA);
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("Remote Participant Lease Duration boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_LIVELINESS,"boost message: " <<ec.message(),EPRO_MAGENTA);
 	}
 }
 

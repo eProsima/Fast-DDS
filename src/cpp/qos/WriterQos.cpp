@@ -17,6 +17,8 @@
 namespace eprosima {
 namespace dds {
 
+static const char* const CLASS_NAME = "WriterQos";
+
 WriterQos::WriterQos()
 {
 	this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -128,31 +130,32 @@ void WriterQos::setQos(const  WriterQos& qos, bool first_time)
 
 bool WriterQos::checkQos()
 {
+	const char* const METHOD_NAME = "checkQos";
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
 	{
-		pError("TRANSIENT Durability not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"TRANSIENT Durability not supported");
 		return false;
 	}
 	if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
 	{
-		pError("PERSISTENT Durability not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"PERSISTENT Durability not supported");
 		return false;
 	}
 	if(m_destinationOrder.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
 	{
-		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"BY SOURCE TIMESTAMP DestinationOrder not supported");
 		return false;
 	}
 	if(m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS && m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
 	{
-		pError("BEST_EFFORT incompatible with EXCLUSIVE ownership"<<endl);
+		logError(RTPS_QOS_CHECK,"BEST_EFFORT incompatible with EXCLUSIVE ownership");
 		return false;
 	}
 	if(m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS || m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 	{
 		if(m_liveliness.lease_duration < c_TimeInfinite && m_liveliness.lease_duration <= m_liveliness.announcement_period)
 		{
-			pError("WRITERQOS: LeaseDuration <= announcement period " << endl;);
+			logError(RTPS_QOS_CHECK,"WRITERQOS: LeaseDuration <= announcement period.");
 			return false;
 		}
 	}
@@ -162,33 +165,34 @@ bool WriterQos::checkQos()
 
 bool WriterQos::canQosBeUpdated(WriterQos& qos)
 {
+	const char* const METHOD_NAME = "canQosBeUpdated";
 	bool updatable = true;
 	if(	m_durability.kind != qos.m_durability.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Durability kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Durability kind cannot be changed after the creation of a subscriber.");
 	}
 
 	if(m_liveliness.kind !=  qos.m_liveliness.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Liveliness Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Liveliness Kind cannot be changed after the creation of a subscriber.");
 	}
 
 	if(m_reliability.kind != qos.m_reliability.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Reliability Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Reliability Kind cannot be changed after the creation of a subscriber.");
 	}
 	if(m_ownership.kind != qos.m_ownership.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Ownership Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Ownership Kind cannot be changed after the creation of a subscriber.");
 	}
 	if(m_destinationOrder.kind != qos.m_destinationOrder.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Destination order Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Destination order Kind cannot be changed after the creation of a subscriber.");
 	}
 	return updatable;
 

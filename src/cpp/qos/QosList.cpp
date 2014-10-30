@@ -12,7 +12,6 @@
  */
 
 #include "eprosimartps/qos/QosList.h"
-#include "eprosimartps/utils/RTPSLog.h"
 
 #include "eprosimartps/qos/DDSQosPolicies.h"
 
@@ -48,7 +47,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)
 		}
 		return true;
 	}
-	pWarning("PID not correspond with String Parameter."<<endl)
+
 	return false;
 }
 
@@ -66,7 +65,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Locator_t& loc)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with Locator Parameter."<<endl)
+
 	return false;
 }
 
@@ -105,7 +104,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with UInt32_t Parameter "<< (int)pid << endl)
+
 	return false;
 }
 
@@ -122,7 +121,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with ExpectsInlineQos" << endl);
+
 	return false;
 }
 

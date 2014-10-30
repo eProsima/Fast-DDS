@@ -26,6 +26,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "WLivelinessPeriodicAssertion";
+
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
 								TimedEvent(&pwlp->mp_participant->getEventResource()->io_service, boost::posix_time::milliseconds(0)),
 								m_livelinessKind(kind),
@@ -41,17 +43,19 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
-	pDebugInfo(RTPS_MAGENTA<<"LivelinessPeriodicAssertion TimedEvent destructor " <<RTPS_DEF<<endl;);
+	const char* const METHOD_NAME = "WLivelinessPeriodicAssertion";
+	logInfo(RTPS_LIVELINESS,"TimedEvent destructor.",EPRO_MAGENTA);
 	stop_timer();
 	delete(timer);
 }
 
 void WLivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo(RTPS_MAGENTA<<"Writer LivelinessPeriodic Assertion (period: "<< this->m_interval_msec<< ")"<<RTPS_DEF<<endl;);
+		logInfo(RTPS_LIVELINESS,"Period: "<< this->m_interval_msec,EPRO_MAGENTA);
 		if(this->mp_WLP->mp_builtinParticipantMessageWriter->matchedReadersSize()>0)
 		{
 			if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
@@ -64,12 +68,12 @@ void WLivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pWarning("Liveliness Periodic Assertion aborted"<<endl);
+		logWarning(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",EPRO_MAGENTA);
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("Liveliness Periodic Assertion boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_LIVELINESS,"Boost message: " <<ec.message(),EPRO_MAGENTA);
 	}
 }
 

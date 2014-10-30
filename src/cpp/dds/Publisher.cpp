@@ -67,8 +67,9 @@ bool PublisherImpl::unregister(void* Data) {
 
 bool PublisherImpl::dispose_and_unregister(void* Data) {
 	//Convert data to serialized Payload
-	pInfo("Disposing and Unregistering Data"<<endl)
-							return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
+	const char* const METHOD_NAME = "dispose_and_unregister";
+	logInfo(RTPS_WRITER,"Disposing and Unregistering Data");
+	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
 }
 
 
@@ -105,6 +106,7 @@ const GUID_t& PublisherImpl::getGuid()
 
 bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 {
+	const char* const METHOD_NAME = "updateAttributes";
 	bool updated = true;
 	bool missing = false;
 	if(this->mp_Writer->getStateType() == STATEFUL)
@@ -112,7 +114,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 		if(att.unicastLocatorList.size() != this->m_attributes.unicastLocatorList.size() ||
 				att.multicastLocatorList.size() != this->m_attributes.multicastLocatorList.size())
 		{
-			pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+			logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
 			updated &= false;
 		}
 		else
@@ -132,8 +134,8 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 				}
 				if(missing)
 				{
-					pWarning("Locator: "<< *lit1 << " not present in new list"<<endl);
-					pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+					logWarning(RTPS_WRITER,"Locator: "<< *lit1 << " not present in new list");
+					logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
 				}
 			}
 			for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
@@ -151,8 +153,8 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 				}
 				if(missing)
 				{
-					pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
-					pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+					logWarning(RTPS_WRITER,"Locator: "<< *lit1<< " not present in new list");
+					logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
 				}
 			}
 		}
@@ -161,7 +163,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 	//TOPIC ATTRIBUTES
 	if(this->m_attributes.topic != att.topic)
 	{
-		pWarning("Topic Attributes cannot be updated"<<endl;);
+		logWarning(RTPS_WRITER,"Topic Attributes cannot be updated");
 		updated &= false;
 	}
 	//QOS:

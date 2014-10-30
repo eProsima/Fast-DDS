@@ -33,8 +33,10 @@
 namespace eprosima {
 namespace dds {
 
+static const char* const CLASS_NAME = "DomainParticipantImpl";
+
 bool DomainParticipantImpl::instanceFlag = false;
-DomainParticipantImpl* DomainParticipantImpl::single = NULL;
+DomainParticipantImpl* DomainParticipantImpl::single = nullptr;
 DomainParticipantImpl* DomainParticipantImpl::getInstance()
 {
 	if(! instanceFlag)
@@ -63,30 +65,30 @@ DomainParticipantImpl::DomainParticipantImpl()
 
 DomainParticipantImpl::~DomainParticipantImpl()
 {
-	pDebugInfo("DomainParticipant destructor"<<endl;);
+	const char* const METHOD_NAME = "~DomainParticipantImpl";
+	logInfo(RTPS_PARTICIPANT,"Deleting everything");
 	for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 			it!=m_participants.end();++it)
 	{
 		delete(it->first);
 		delete(it->second);
 	}
-	pDebugInfo("Participants deleted correctly "<< endl);
+	logInfo(RTPS_PARTICIPANT,"Participants deleted correctly ");
 	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
 			it!=m_publisherList.end();++it)
 	{
 		delete(it->first);
 		delete(it->second);
 	}
-	pDebugInfo("Publishers deleted correctly "<< endl);
+	logInfo(RTPS_PARTICIPANT,"Publishers deleted correctly.");
 	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
 			it!=m_subscriberList.end();++it)
 	{
 		delete(it->first);
 		delete(it->second);
 	}
-	pDebugInfo("Subscribers deleted correctly "<< endl);
+	logInfo(RTPS_PARTICIPANT,"Subscribers deleted correctly.");
 	DomainParticipantImpl::instanceFlag = false;
-	delete(RTPSLog::getInstance());
 }
 
 
@@ -102,7 +104,7 @@ void DomainParticipantImpl::stopAll()
 
 bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pimpl)
 {
-	if(p == NULL)
+	if(p == nullptr)
 		return false;
 	for(std::vector<ParticipantPair>::iterator it = m_participants.begin();
 			it!=m_participants.end();++it)
@@ -119,12 +121,13 @@ bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pi
 Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam,
 														ParticipantListener* listen)
 {
-	pInfo("Creating Participant "<<endl);
+	const char* const METHOD_NAME = "createParticipant";
+	logInfo(RTPS_PARTICIPANT,"");
 
 	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod)
 	{
-		pError("Participant Attributes: LeaseDuration should be >= leaseDuration announcement period"<<endl;);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Participant Attributes: LeaseDuration should be >= leaseDuration announcement period");
+		return nullptr;
 	}
 	uint32_t ID;
 	if(PParam.participantId < 0)
@@ -138,8 +141,8 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 		ID = PParam.participantId;
 		if(this->m_participantIDs.insert(ID).second == false)
 		{
-			pError("Participant not created, participant with the same ID already exists" << endl;)
-			return NULL;
+			logError(RTPS_PARTICIPANT,"Participant with the same ID already exists" << endl;)
+			return nullptr;
 		}
 	}
 	int pid;
@@ -174,7 +177,7 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 	guidP.value[10] = ((octet*)&ID)[2];
 	guidP.value[11] = ((octet*)&ID)[3];
 
-	Participant* p = new Participant(NULL);
+	Participant* p = new Participant(nullptr);
 
 	ParticipantImpl* pimpl = new ParticipantImpl(PParam,guidP,ID,p,listen);
 	this->setMaxParticipantId(pimpl->getParticipantId());
@@ -187,55 +190,56 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 
 Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAttributes& WParam,PublisherListener* plisten)
 {
-	ParticipantImpl* p = NULL;
-	if(!getParticipantImpl(pin,&p))
+	const char* const METHOD_NAME = "createPublisher";
+	ParticipantImpl* p = nullptr;
+	if(pin == nullptr || !getParticipantImpl(pin,&p))
 	{
-		pError("Participant not registered"<<endl);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Participant not registered");
+		return nullptr;
 	}
-	pInfo(RTPS_B_YELLOW <<"Creating Publisher"<<RTPS_DEF<<endl)
+	logInfo(RTPS_PARTICIPANT,"CREATING PUBLISHER",EPRO_B_YELLOW)
 	//Look for the correct type registration
-	DDSTopicDataType* p_type = NULL;
+	DDSTopicDataType* p_type = nullptr;
 	if(!getRegisteredType(WParam.topic.topicDataType,&p_type))
 	{
-		pError("Type Not Registered"<<endl;);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Type : "<< WParam.topic.topicDataType << " Not Registered");
+		return nullptr;
 	}
 	if(WParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
-		pError("Keyed Topic needs getKey function"<<endl);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Keyed Topic needs getKey function");
+		return nullptr;
 	}
-	PublisherImpl* pubImpl = NULL;
+	PublisherImpl* pubImpl = nullptr;
 	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(WParam.userDefinedId <= 0)
 		{
-			pError("Static EDP requires user defined Id"<<endl);
-			return NULL;
+			logError(RTPS_PARTICIPANT,"Static EDP requires user defined Id");
+			return nullptr;
 		}
 	}
 	WParam.payloadMaxSize = p_type->m_typeSize;
 	if(!WParam.qos.checkQos() || !WParam.topic.checkQos())
-		return NULL;
+		return nullptr;
 	RTPSWriter* SW;
 	if(WParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATELESS,p_type,plisten,c_EntityId_Unknown))
-			return NULL;
+			return nullptr;
 		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type,WParam);
 	}
 	else if(WParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		if(!p->createWriter(&SW,WParam,p_type->m_typeSize,false,STATEFUL,p_type,plisten,c_EntityId_Unknown))
-			return NULL;
+			return nullptr;
 		pubImpl = new PublisherImpl(p,(RTPSWriter*)SW,p_type,WParam);
 	}
 	else
-		pWarning("Incorrect Reliability Kind"<<endl);
-	if(pubImpl != NULL)
+		logWarning(RTPS_PARTICIPANT,"Incorrect Reliability Kind");
+	if(pubImpl != nullptr)
 	{
-		pInfo(RTPS_B_YELLOW<<"PUBLISHER CREATED"<<RTPS_DEF<<endl);
+		logInfo(RTPS_PARTICIPANT,"PUBLISHER CREATED",EPRO_B_YELLOW);
 		Publisher* Pub = new Publisher(pubImpl);
 		m_publisherList.push_back(PublisherPair(Pub,pubImpl));
 		//Now we do discovery (in our event thread):
@@ -245,60 +249,61 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 		return Pub;
 	}
 
-	pError("Publisher not created"<<endl);
+	logError(RTPS_PARTICIPANT,"Publisher not created");
 
-	return NULL;
+	return nullptr;
 }
 
 Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam,SubscriberListener* slisten)
 {
-	ParticipantImpl* p = NULL;
-	if(!getParticipantImpl(pin,&p))
+	const char* const METHOD_NAME = "createSubscriber";
+	ParticipantImpl* p = nullptr;
+	if(pin == nullptr || !getParticipantImpl(pin,&p))
 	{
-		pError("Participant not registered"<<endl);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Participant not registered");
+		return nullptr;
 	}
-	pInfo(RTPS_B_YELLOW <<"Creating Subscriber"<<RTPS_DEF <<endl)
+	logInfo(RTPS_PARTICIPANT,"CREATING SUBSCRIBER",EPRO_B_YELLOW)
 	//Look for the correct type registration
-	DDSTopicDataType* p_type = NULL;
+	DDSTopicDataType* p_type = nullptr;
 	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
 	{
-		pError("Type Not Registered"<<endl;);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Type: " <<RParam.topic.topicDataType << " Not Registered");
+		return nullptr;
 	}
 	if(RParam.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
-		pError("Keyed Topic needs getKey function"<<endl);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Keyed Topic needs getKey function");
+		return nullptr;
 	}
-	SubscriberImpl* subImpl = NULL;
+	SubscriberImpl* subImpl = nullptr;
 	if(p->getBuiltinAttributes().use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(RParam.userDefinedId <= 0)
 		{
-			pError("Static EDP requires user defined Id"<<endl);
-			return NULL;
+			logError(RTPS_PARTICIPANT,"Static EDP requires user defined Id");
+			return nullptr;
 		}
 	}
 	RParam.payloadMaxSize = p_type->m_typeSize;
 	if(!RParam.qos.checkQos() || !RParam.topic.checkQos())
-		return NULL;
+		return nullptr;
 	RTPSReader* SR;
 	if(RParam.qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
 	{
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATELESS,p_type,slisten))
-			return NULL;
+			return nullptr;
 		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type,RParam);
 	}
 	else if(RParam.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 	{
 		if(!p->createReader(&SR,RParam,p_type->m_typeSize,false,STATEFUL,p_type,slisten))
-			return NULL;
+			return nullptr;
 		subImpl = new SubscriberImpl(p,(RTPSReader*)SR,p_type,RParam);
 	}
-	if(subImpl != NULL)
+	if(subImpl != nullptr)
 	{
-		pInfo(RTPS_B_YELLOW<<"SUBSCRIBER CREATED"<<RTPS_DEF<<endl);
+		logInfo(RTPS_PARTICIPANT,"SUBSCRIBER CREATED",EPRO_B_YELLOW);
 		Subscriber* Sub = new Subscriber(subImpl);
 		m_subscriberList.push_back(SubscriberPair(Sub,subImpl));
 		//p->getEventResource()->io_service.post(boost::bind(&ParticipantImpl::registerReader,p,SR));
@@ -307,9 +312,9 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 		return Sub;
 	}
 
-	pError("Publisher not created"<<endl);
+	logError(RTPS_PARTICIPANT,"Subscriber not created");
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -331,6 +336,7 @@ bool DomainParticipantImpl::getRegisteredType(std::string type_name,DDSTopicData
 
 bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 {
+	const char* const METHOD_NAME = "registerType";
 	for(std::vector<DDSTopicDataType*>::iterator it = m_registeredTypes.begin();it!=m_registeredTypes.end();++it)
 	{
 		if((*it)->m_topicDataTypeName == type->m_topicDataTypeName)
@@ -338,27 +344,28 @@ bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 	}
 	if(type->m_typeSize <=0)
 	{
-		pError("Registered Type must have maximum byte size > 0"<<endl);
+		logError(RTPS_PARTICIPANT,"Registered Type must have maximum byte size > 0");
 		return false;
 	}
 	if(type->m_typeSize > PAYLOAD_MAX_SIZE)
 	{
-		pError("eRTPS currently supports types of sizes < "<<PAYLOAD_MAX_SIZE<<endl);
+		logError(RTPS_PARTICIPANT,"Current version only supports types of sizes < "<<PAYLOAD_MAX_SIZE);
 		return false;
 	}
 	if(type->m_topicDataTypeName.size() <=0)
 	{
-		pError("Registered Type must have a name"<<endl);
+		logError(RTPS_PARTICIPANT,"Registered Type must have a name");
 		return false;
 	}
 	m_registeredTypes.push_back(type);
-	pInfo("Type "<<type->m_topicDataTypeName << " registered."<<endl);
+	logInfo(RTPS_PARTICIPANT,"Type "<<type->m_topicDataTypeName << " registered.");
 	return true;
 }
 
 bool DomainParticipantImpl::removeParticipant(Participant* p)
 {
-	if(p!=NULL)
+	const char* const METHOD_NAME = "removeParticipant";
+	if(p!=nullptr)
 	{
 		std::vector<PublisherPair> auxListPub;
 		for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
@@ -375,7 +382,7 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 			}
 		}
 		m_publisherList = auxListPub;
-		pDebugInfo("Publishers deleted correctly "<< endl);
+		logInfo(RTPS_PARTICIPANT,"Publishers deleted correctly.");
 		std::vector<SubscriberPair> auxListSub;
 		for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
 				it!=m_subscriberList.end();++it)
@@ -391,6 +398,7 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 			}
 		}
 		m_subscriberList = auxListSub;
+		logInfo(RTPS_PARTICIPANT,"Subscribers deleted correctly.");
 		for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 				it!=m_participants.end();++it)
 		{
@@ -411,13 +419,14 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 
 bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
 {
-	ParticipantImpl* p = NULL;
+	const char* const METHOD_NAME = "removePublisher";
+	ParticipantImpl* p = nullptr;
 	if(!getParticipantImpl(pin,&p))
 	{
-		pError("Participant not registered"<<endl);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Participant not registered");
+		return nullptr;
 	}
-	if(p==NULL || pub==NULL)
+	if(p==nullptr || pub==nullptr)
 		return false;
 
 	for(std::vector<PublisherPair>::iterator it=m_publisherList.begin();
@@ -430,22 +439,25 @@ bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
 				delete(it->first);
 				delete(it->second);
 				m_publisherList.erase(it);
+				logInfo(RTPS_PARTICIPANT, " OK");
 				return true;
 			}
 		}
 	}
+	logInfo(RTPS_PARTICIPANT, " Not found.");
 	return false;
 }
 
 bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
 {
-	ParticipantImpl* p = NULL;
+	const char* const METHOD_NAME = "removeSubscriber";
+	ParticipantImpl* p = nullptr;
 	if(!getParticipantImpl(pin,&p))
 	{
-		pError("Participant not registered"<<endl);
-		return NULL;
+		logError(RTPS_PARTICIPANT,"Participant not registered");
+		return nullptr;
 	}
-	if(p==NULL || sub==NULL)
+	if(p==nullptr || sub==nullptr)
 		return false;
 
 	for(std::vector<SubscriberPair>::iterator it=m_subscriberList.begin();
@@ -458,10 +470,12 @@ bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
 				delete(it->first);
 				delete(it->second);
 				m_subscriberList.erase(it);
+				logInfo(RTPS_PARTICIPANT, " OK");
 				return true;
 			}
 		}
 	}
+	logInfo(RTPS_PARTICIPANT, " Not found.");
 	return false;
 }
 

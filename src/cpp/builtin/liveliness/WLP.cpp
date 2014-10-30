@@ -29,20 +29,22 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "WLP";
+
 WLP::WLP(ParticipantImpl* p):
-										m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
-										m_minManParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
-										mp_participant(p),
-										mp_builtinProtocols(NULL),
-										mp_builtinParticipantMessageWriter(NULL),
-										mp_builtinParticipantMessageReader(NULL),
-										#pragma warning(disable: 4355)
-										m_listener(this),
-										mp_livelinessAutomatic(NULL),
-										mp_livelinessManParticipant(NULL)
+												m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
+												m_minManParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
+												mp_participant(p),
+												mp_builtinProtocols(NULL),
+												mp_builtinParticipantMessageWriter(NULL),
+												mp_builtinParticipantMessageReader(NULL),
+#pragma warning(disable: 4355)
+												m_listener(this),
+												mp_livelinessAutomatic(NULL),
+												mp_livelinessManParticipant(NULL)
 {
 
-	pInfo(RTPS_B_MAGENTA<<"Beginning Liveliness Protocol initialization"<<RTPS_DEF<<endl;);
+
 }
 
 WLP::~WLP()
@@ -52,12 +54,15 @@ WLP::~WLP()
 
 bool WLP::initWL(BuiltinProtocols* prot)
 {
+	const char* const METHOD_NAME = "initWL";
+	logInfo(RTPS_LIVELINESS,"Beginning Liveliness Protocol",EPRO_MAGENTA);
 	mp_builtinProtocols = prot;
 	return createEndpoints();
 }
 
 bool WLP::createEndpoints()
 {
+	const char* const METHOD_NAME = "createEndpoints";
 	//CREATE WRITER
 	PublisherAttributes Wparam;
 	Wparam.pushMode = true;
@@ -81,12 +86,12 @@ bool WLP::createEndpoints()
 	if(mp_participant->createWriter(&wout,Wparam,Wparam.payloadMaxSize,true,STATEFUL,NULL,NULL,c_EntityId_WriterLiveliness))
 	{
 		mp_builtinParticipantMessageWriter = dynamic_cast<StatefulWriter*>(wout);
-		pInfo(RTPS_MAGENTA<<"Builtin Liveliness Writer created"<<RTPS_DEF<<endl);
+		logInfo(RTPS_LIVELINESS,"Builtin Liveliness Writer created",EPRO_MAGENTA);
 	}
 	else
 	{
-		pError("Liveliness Writer Creation failed "<<endl;)
-										return false;
+		logError(RTPS_LIVELINESS,"Liveliness Writer Creation failed ",EPRO_MAGENTA);
+		return false;
 	}
 	SubscriberAttributes Rparam;
 	Rparam.expectsInlineQos = true;
@@ -109,12 +114,12 @@ bool WLP::createEndpoints()
 			(DDSTopicDataType*)&this->m_wlpTopicDataType,(SubscriberListener*)&m_listener,c_EntityId_ReaderLiveliness))
 	{
 		mp_builtinParticipantMessageReader = dynamic_cast<StatefulReader*>(rout);
-		pInfo(RTPS_MAGENTA<<"Builtin Liveliness Reader created"<<RTPS_DEF<<endl);
+		logInfo(RTPS_LIVELINESS,"Builtin Liveliness Reader created",EPRO_MAGENTA);
 	}
 	else
 	{
-		pError("Liveliness Reader Creation failed "<<endl;)
-										return false;
+		logError(RTPS_LIVELINESS,"Liveliness Reader Creation failed ",EPRO_MAGENTA);
+		return false;
 	}
 
 	return true;
@@ -122,8 +127,9 @@ bool WLP::createEndpoints()
 
 bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
+	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	boost::lock_guard<WLP> guard(*this);
-	pInfo(RTPS_MAGENTA<<"WriterLiveliness:assign remote Endpoints"<<RTPS_DEF<<endl;);
+	logInfo(RTPS_LIVELINESS,"For remote participant "<<pdata->m_guid,EPRO_MAGENTA);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t partdet = endp;
 	uint32_t auxendp = endp;
@@ -133,7 +139,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 	if((auxendp!=0 || partdet!=0) && this->mp_builtinParticipantMessageReader!=NULL)
 	{
-		pDebugInfo(RTPS_MAGENTA<<"Adding remote writer to my local Builtin Reader"<<RTPS_DEF<<endl;);
+		logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader",EPRO_MAGENTA);
 		WriterProxyData* wp = new WriterProxyData();
 		wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
 		wp->m_guid.entityId = c_EntityId_WriterLiveliness;
@@ -150,7 +156,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 	if((auxendp!=0 || partdet!=0) && this->mp_builtinParticipantMessageWriter!=NULL)
 	{
-		pDebugInfo(RTPS_MAGENTA<<"Adding remote reader to my local Builtin Writer"<<RTPS_DEF<<endl;);
+		logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer",EPRO_MAGENTA);
 		ReaderProxyData* rp = new ReaderProxyData();
 		rp->m_expectsInlineQos = false;
 		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -167,7 +173,8 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	pInfo(RTPS_MAGENTA<< "WriterLivelinessProtocol: removing remote endpoints for Participant: "<<pdata->m_guid << endl;);
+	const char* const METHOD_NAME = "removeRemoteEndpoints";
+	logInfo(RTPS_LIVELINESS,"for Participant: "<<pdata->m_guid,EPRO_MAGENTA);
 	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{
@@ -192,8 +199,10 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool WLP::addLocalWriter(RTPSWriter* W)
 {
+	const char* const METHOD_NAME = "addLocalWriter";
 	boost::lock_guard<WLP> guard(*this);
-	pDebugInfo(RTPS_MAGENTA<<"Adding local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
+	logInfo(RTPS_LIVELINESS,W->getGuid().entityId << " in topic "<<W->getTopic().topicName
+			<<" to Liveliness Protocol",EPRO_MAGENTA)
 	int64_t wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsInt64(W->getQos().m_liveliness.announcement_period));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
@@ -246,8 +255,10 @@ typedef std::vector<RTPSWriter*>::iterator t_WIT;
 
 bool WLP::removeLocalWriter(RTPSWriter* W)
 {
+	const char* const METHOD_NAME = "removeLocalWriter";
 	boost::lock_guard<WLP> guard(*this);
-	pInfo(RTPS_MAGENTA<<"Removing Local Writer from Liveliness Protocol"<<RTPS_DEF<<endl;);
+	logInfo(RTPS_LIVELINESS,W->getGuid().entityId << " in topic "<<W->getTopic().topicName
+			<<" from Liveliness Protocol",EPRO_MAGENTA);
 	t_WIT wToEraseIt;
 	bool found = false;
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
@@ -328,8 +339,9 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 
 bool WLP::updateLocalWriter(RTPSWriter* W)
 {
+	const char* const METHOD_NAME = "updateLocalWriter";
 	boost::lock_guard<WLP> guard(*this);
-	pDebugInfo(RTPS_MAGENTA<<"Updating local Writer to Liveliness Protocol"<<RTPS_DEF << endl;)
+	logInfo(RTPS_LIVELINESS,W->getGuid().entityId,EPRO_MAGENTA);
 	int64_t wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsInt64(W->getQos().m_liveliness.announcement_period));
 	if(W->getQos().m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{

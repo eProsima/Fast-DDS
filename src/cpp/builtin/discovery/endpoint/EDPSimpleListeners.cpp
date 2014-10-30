@@ -26,8 +26,10 @@ namespace rtps {
 
 void EDPSimplePUBReaderListener::onNewDataMessage()
 {
+	const char* const CLASS_NAME = "EDPSimplePUBReaderListener";
+	const char* const METHOD_NAME = "onNewDataMessage";
 	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_PubReader);
-	pInfo(RTPS_CYAN<<"SEDP PUB Listener:onNewDataMessage"<<RTPS_DEF<<endl);
+	logInfo(RTPS_EDP,"");
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_PubReader->get_last_added_cache(&change))
 	{
@@ -44,7 +46,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 				change->instanceHandle = m_writerProxyData.m_key;
 				if(m_writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_participant->getGuid().guidPrefix)
 				{
-					pInfo(RTPS_CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
+					logInfo(RTPS_EDP,"Message from own participant, ignoring",EPRO_CYAN)
 							return;
 				}
 				//LOOK IF IS AN UPDATED INFORMATION
@@ -63,7 +65,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 				}
 				else if(pdata == NULL) //PARTICIPANT NOT FOUND
 				{
-					pWarning("Publications Listener: received message from UNKNOWN participant, removing"<<endl);
+					logWarning(RTPS_EDP,"Received message from UNKNOWN participant, removing");
 					this->mp_SEDP->mp_PubReader->change_removed_by_history(change);
 					return;
 				}
@@ -77,7 +79,7 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 		else
 		{
 			//REMOVE WRITER FROM OUR READERS:
-			pInfo(RTPS_CYAN<<"Disposed Remote Writer, removing..."<<RTPS_DEF<<endl);
+			logInfo(RTPS_EDP,"Disposed Remote Writer, removing...",EPRO_CYAN);
 			GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 			this->mp_SEDP->removeWriterProxy(auxGUID);
 		}
@@ -88,8 +90,10 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 
 void EDPSimpleSUBReaderListener::onNewDataMessage()
 {
+	const char* const CLASS_NAME = "EDPSimpleSUBReaderListener";
+	const char* const METHOD_NAME = "onNewDataMessage";
 	boost::lock_guard<Endpoint> guard(*this->mp_SEDP->mp_SubReader);
-	pInfo(RTPS_CYAN<<"SEDP SUB Listener:onNewDataMessage"<<RTPS_DEF<<endl);
+	logInfo(RTPS_EDP,"");
 	CacheChange_t* change;
 	if(this->mp_SEDP->mp_SubReader->get_last_added_cache(&change))
 	{
@@ -106,8 +110,8 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 				change->instanceHandle = m_readerProxyData.m_key;
 				if(m_readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_participant->getGuid().guidPrefix)
 				{
-					pInfo(RTPS_CYAN<<"SEDP Pub Listener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
-								return;
+					logInfo(RTPS_EDP,"From own participant, ignoring",EPRO_CYAN);
+					return;
 				}
 				//LOOK IF IS AN UPDATED INFORMATION
 				ReaderProxyData* rdata = NULL;
@@ -124,7 +128,7 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 				}
 				else if(pdata == NULL) //PARTICIPANT NOT FOUND
 				{
-					pWarning("Publications Listener: received message from UNKNOWN participant, removing"<<endl);
+					logWarning(RTPS_EDP,"From UNKNOWN participant, removing");
 					this->mp_SEDP->mp_PubReader->change_removed_by_history(change);
 					return;
 				}
@@ -138,7 +142,7 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 		else
 		{
 			//REMOVE WRITER FROM OUR READERS:
-			pInfo(RTPS_CYAN<<"Disposed Remote Writer, removing..."<<RTPS_DEF<<endl);
+			logInfo(RTPS_EDP,"Disposed Remote Reader, removing...",EPRO_CYAN);
 			GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 			this->mp_SEDP->removeReaderProxy(auxGUID);
 		}
