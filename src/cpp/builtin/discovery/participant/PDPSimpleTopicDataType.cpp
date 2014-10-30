@@ -17,6 +17,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "PDPSimpleTopicDataType";
+
 PDPSimpleTopicDataType::PDPSimpleTopicDataType()
 {
 	initial_data = (void*)aux_msg.buffer;
@@ -29,13 +31,15 @@ PDPSimpleTopicDataType::~PDPSimpleTopicDataType()
 
 bool PDPSimpleTopicDataType::serialize(void* data,SerializedPayload_t* payload)
 {
-	pError("SPDPTopicDatType serialize method should not have been called"<<endl);
+	const char* const METHOD_NAME = "serialize";
+	logError(RTPS_PDP,"This method should not have been called");
 	return false;
 }
 
 bool PDPSimpleTopicDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
-	pError("SPDPTopicDatType de-serialize method should not have been called"<<endl);
+	const char* const METHOD_NAME = "deserialize";
+		logError(RTPS_PDP,"This method should not have been called");
 	return false;
 }
 

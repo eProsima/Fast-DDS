@@ -25,7 +25,8 @@ enum LOG_CATEGORY: uint32_t
 enum LOG_CATEGORY : uint32_t
 #endif
 {
-	RTPS_DISCOVERY = 1,
+	RTPS_PDP = 1,
+	RTPS_EDP,
 	RTPS_LIVELINESS,
 
 	RTPS_QOS_CHECK,

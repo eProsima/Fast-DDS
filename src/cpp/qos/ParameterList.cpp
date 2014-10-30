@@ -14,13 +14,11 @@
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/DDSQosPolicies.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace dds {
 
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
-
 
 
 bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
@@ -42,7 +40,6 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 	else
 	{
 		plist->m_hasChanged = false;
-		pDebugInfo("Param msg created correctly"<<endl);
 		return true;
 	}
 }

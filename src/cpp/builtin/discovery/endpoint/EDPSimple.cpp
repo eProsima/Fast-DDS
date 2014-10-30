@@ -32,6 +32,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "EDPSimple";
+
 EDPSimple::EDPSimple(PDPSimple* p,ParticipantImpl* part):
 				EDP(p,part),
 				mp_PubWriter(NULL),mp_SubWriter(NULL),
@@ -51,12 +53,13 @@ EDPSimple::~EDPSimple() {
 
 bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 {
-	pInfo(RTPS_B_CYAN<<"Initializing  SIMPLE EndpointDiscoveryProtocol"<<endl);
+	const char* const METHOD_NAME = "initEDP";
+	logInfo(RTPS_EDP,"Beginning Simple Endpoint Discovery Protocol",EPRO_B_CYAN);
 	m_discovery = attributes;
 
 	if(!createSEDPEndpoints())
 	{
-		pError("Problem creation SimpleEDP endpoints"<<endl);
+		logError(RTPS_EDP,"Problem creation SimpleEDP endpoints");
 		return false;
 	}
 	return true;
@@ -65,7 +68,8 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 
 bool EDPSimple::createSEDPEndpoints()
 {
-	pInfo(RTPS_CYAN<<"Creating SEDP Endpoints"<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "createSEDPEndpoints";
+	logInfo(RTPS_EDP,"Beginning");
 	PublisherAttributes Wparam;
 	SubscriberAttributes Rparam;
 	bool created = true;
@@ -94,7 +98,7 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubWriter = dynamic_cast<StatefulWriter*>(waux);
-			pInfo(RTPS_CYAN<<"SEDP Publication Writer created"<<RTPS_DEF<<endl);
+			logInfo(RTPS_EDP,"SEDP Publication Writer created",EPRO_CYAN);
 		}
 		//Rparam.historyMaxSize = 100;
 		Rparam.expectsInlineQos = false;
@@ -118,7 +122,8 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
-			pInfo(RTPS_CYAN<<"SEDP Subscription Reader created"<<RTPS_DEF<<endl);
+
+			logInfo(RTPS_EDP,"SEDP Subscription Reader created",EPRO_CYAN);
 		}
 	}
 	if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
@@ -145,7 +150,8 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);
-			pInfo(RTPS_CYAN<<"SEDP Publication Reader created"<<RTPS_DEF<<endl);
+			logInfo(RTPS_EDP,"SEDP Publication Reader created",EPRO_CYAN);
+
 		}
 		//Wparam.historyMaxSize = 100;
 		Wparam.pushMode = true;
@@ -168,17 +174,19 @@ bool EDPSimple::createSEDPEndpoints()
 		if(created)
 		{
 			mp_SubWriter = dynamic_cast<StatefulWriter*>(waux);
-			pInfo(RTPS_CYAN<<"SEDP Subscription Writer created"<<RTPS_DEF<<endl);
+			logInfo(RTPS_EDP,"SEDP Subscription Writer created",EPRO_CYAN);
+
 		}
 	}
-	pInfo(RTPS_CYAN<<"SimpleEDP Endpoints creation finished"<<RTPS_DEF<<endl);
+	logInfo(RTPS_EDP,"Creation finished",EPRO_CYAN);
 	return created;
 }
 
 
 bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 {
-	pDebugInfo(RTPS_CYAN<<"EDPSimple processing ReaderProxyData: "<<rdata->m_guid.entityId<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "processLocalReaderProxyData";
+	logInfo(RTPS_EDP,rdata->m_guid.entityId,EPRO_CYAN);
 	if(mp_SubWriter !=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -200,7 +208,8 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 }
 bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 {
-	pDebugInfo(RTPS_CYAN<<"EDPSimple processing WriterProxyData: "<<wdata->m_guid.entityId<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "processLocalWriterProxyData";
+	logInfo(RTPS_EDP,wdata->m_guid.entityId,EPRO_CYAN);
 	if(mp_PubWriter !=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -223,7 +232,8 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 
 bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 {
-	pDebugInfo(RTPS_CYAN<<"EDPSimple removing local Writer: "<<W->getGuid().entityId<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "removeLocalWriter";
+	logInfo(RTPS_EDP,W->getGuid().entityId << " in topic: "<<W->getTopic().topicName,EPRO_CYAN);
 	if(mp_PubWriter!=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -239,7 +249,8 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 
 bool EDPSimple::removeLocalReader(RTPSReader* R)
 {
-	pDebugInfo(RTPS_CYAN<<"EDPSimple removing local Reader: "<<R->getGuid().entityId<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "removeLocalReader";
+		logInfo(RTPS_EDP,R->getGuid().entityId << " in topic: "<<R->getTopic().topicName,EPRO_CYAN);
 	if(mp_SubWriter!=NULL)
 	{
 		CacheChange_t* change = NULL;
@@ -257,7 +268,8 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 
 void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	pInfo(RTPS_CYAN<<"SimpleEDP:assignRemoteEndpoints: new DPD received, adding remote endpoints to our SimpleEDP endpoints"<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "assignRemoteEndpoints";
+	logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints",EPRO_CYAN);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
@@ -265,7 +277,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_PubReader!=NULL) //Exist Pub Writer and i have pub reader
 	{
-		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Writer to my Pub Reader"<<RTPS_DEF<<endl);
+		logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader",EPRO_CYAN);
 		WriterProxyData* wp = new WriterProxyData();
 		wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
 		wp->m_guid.entityId = c_EntityId_SEDPPubWriter;
@@ -282,7 +294,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_PubWriter!=NULL) //Exist Pub Detector
 	{
-		pDebugInfo(RTPS_CYAN<<"Adding SEDP Pub Reader to my Pub Writer"<<RTPS_DEF<<endl);
+		logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer",EPRO_CYAN);
 		ReaderProxyData* rp = new ReaderProxyData();
 		rp->m_expectsInlineQos = false;
 		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -300,7 +312,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_SubReader!=NULL) //Exist Pub Announcer
 	{
-		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Writer to my Sub Reader"<<RTPS_DEF<<endl);
+		logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader",EPRO_CYAN);
 		WriterProxyData* wp = new WriterProxyData();
 		wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
 		wp->m_guid.entityId = c_EntityId_SEDPSubWriter;
@@ -317,7 +329,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	//auxendp = 1;
 	if(auxendp!=0 && mp_SubWriter!=NULL) //Exist Pub Announcer
 	{
-		pDebugInfo(RTPS_CYAN<<"Adding SEDP Sub Reader to my Sub Writer"<<RTPS_DEF<<endl);
+		logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer",EPRO_CYAN);
 		ReaderProxyData* rp = new ReaderProxyData();
 		rp->m_expectsInlineQos = false;
 		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -334,7 +346,8 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
 void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-	pInfo(RTPS_CYAN<< "EDPSimple: removing remote endpoints for Participant: "<<pdata->m_guid << endl;);
+	const char* const METHOD_NAME = "removeRemoteEndpoints";
+	logInfo(RTPS_EDP,"For Participant: "<<pdata->m_guid,EPRO_CYAN);
 	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{

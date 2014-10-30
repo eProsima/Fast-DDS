@@ -28,7 +28,7 @@
 namespace eprosima {
 namespace dds {
 
-
+static const char* const CLASS_NAME = "SubscriberImpl";
 
 SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,
 		DDSTopicDataType* ptype,SubscriberAttributes& att):
@@ -43,7 +43,8 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,
 
 SubscriberImpl::~SubscriberImpl()
 {
-	pDebugInfo("Subscriber destructor"<<endl;);
+	const char* const METHOD_NAME = "~SubscriberImpl";
+	logInfo(RTPS_READER,this->getGuid().entityId << " in topic: "<<this->m_attributes.topic.topicName);
 }
 
 
@@ -100,12 +101,13 @@ const GUID_t& SubscriberImpl::getGuid(){
 
 bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 {
+	const char* const METHOD_NAME = "updateAttributes";
 	bool updated = true;
 	bool missing = false;
 	if(att.unicastLocatorList.size() != this->m_attributes.unicastLocatorList.size() ||
 			att.multicastLocatorList.size() != this->m_attributes.multicastLocatorList.size())
 	{
-		pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+		logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
 		updated &= false;
 	}
 	else
@@ -125,8 +127,8 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			}
 			if(missing)
 			{
-				pWarning("Locator: "<< *lit1 << " not present in new list"<<endl);
-				pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+				logWarning(RTPS_READER,"Locator: "<< *lit1 << " not present in new list");
+				logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
 			}
 		}
 		for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
@@ -144,8 +146,8 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 			}
 			if(missing)
 			{
-				pWarning("Locator: "<< *lit1<< " not present in new list"<<endl);
-				pWarning("Locator Lists cannot be changed or updated in this version"<<endl);
+				logWarning(RTPS_READER,"Locator: "<< *lit1<< " not present in new list");
+				logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
 			}
 		}
 	}
@@ -153,7 +155,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 	//TOPIC ATTRIBUTES
 	if(this->m_attributes.topic != att.topic)
 	{
-		pWarning("Topic Attributes cannot be updated"<<endl;);
+		logWarning(RTPS_READER,"Topic Attributes cannot be updated");
 		updated &= false;
 	}
 	//QOS:
