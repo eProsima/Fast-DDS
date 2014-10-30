@@ -69,7 +69,7 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 bool EDPSimple::createSEDPEndpoints()
 {
 	const char* const METHOD_NAME = "createSEDPEndpoints";
-	logInfo(RTPS_EDP,"Beginning");
+	logInfo(RTPS_EDP,"Beginning",EPRO_CYAN);
 	PublisherAttributes Wparam;
 	SubscriberAttributes Rparam;
 	bool created = true;

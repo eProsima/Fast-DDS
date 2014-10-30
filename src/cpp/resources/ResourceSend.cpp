@@ -66,11 +66,16 @@ bool ResourceSend::initSend(const Locator_t& loc)
 		}
 		catch (boost::system::system_error const& e)
 		{
-			logWarning(RTPS_MSG_OUT,"Error binding: "<<e.what()<< " with socket: " << send_endpoint,EPRO_YELLOW);
+			logWarning(RTPS_MSG_OUT,"UDPv4 Error binding: ("<<e.what()<< ") with socket: " << send_endpoint,EPRO_YELLOW);
 			m_sendLocator_v4.port++;
 		}
 	}
+	boost::asio::socket_base::send_buffer_size option;
+	m_send_socket_v4.get_option(option);
+	logInfo (RTPS_MSG_OUT,"UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
+				" || buffer size: " <<option.value(),EPRO_YELLOW);
 	not_bind = true;
+	m_sendLocator_v6.port = m_sendLocator_v4.port+1;
 	while(not_bind)
 	{
 		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v6(),m_sendLocator_v6.port);
@@ -80,15 +85,11 @@ bool ResourceSend::initSend(const Locator_t& loc)
 		}
 		catch (boost::system::system_error const& e)
 		{
-			logWarning(RTPS_MSG_OUT,"Error binding: "<<e.what()<< " with socket: " << send_endpoint,EPRO_YELLOW);
+			logWarning(RTPS_MSG_OUT,"UDPv6 Error binding: ("<<e.what()<< ") in socket: " << send_endpoint,EPRO_YELLOW);
 			m_sendLocator_v6.port++;
 		}
 	}
-	boost::asio::socket_base::send_buffer_size option;
-	m_send_socket_v4.get_option(option);
 
-	logInfo (RTPS_MSG_OUT,"UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
-			" || buffer size: " <<option.value(),EPRO_YELLOW);
 	m_send_socket_v6.get_option(option);
 	logInfo (RTPS_MSG_OUT,"UDPv6: " << m_send_socket_v6.local_endpoint()<<"|| State: " << m_send_socket_v6.is_open() <<
 			" || buffer size: " <<option.value(),EPRO_YELLOW);

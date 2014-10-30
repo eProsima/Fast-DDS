@@ -101,7 +101,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			logInfo(RTPS_MSG_IN,"Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc,EPRO_BLUE);
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< m_listenLoc,EPRO_BLUE);
 			return true;
 		}
 	}
@@ -118,7 +118,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			logInfo(RTPS_MSG_IN,"Endpoint (" << endp->getGuid().entityId << ") added to listen Resource: "<< m_listenLoc,EPRO_BLUE);
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< m_listenLoc,EPRO_BLUE);
 			return true;
 		}
 	}
@@ -147,8 +147,8 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 		{
 			return;
 		}
-		logInfo(RTPS_MSG_IN,"Msg of length: " << m_MessageReceiver.m_rec_msg.length
-				<< " FROM: " << m_sender_endpoint << " TO: " << m_listenLoc,EPRO_BLUE);
+		logInfo(RTPS_MSG_IN,m_MessageReceiver.m_rec_msg.length
+				<< " bytes FROM: " << m_sender_endpoint << " TO: " << m_listenLoc,EPRO_BLUE);
 
 		//Get address into Locator
 		m_senderLocator.port = m_sender_endpoint.port();
