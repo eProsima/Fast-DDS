@@ -17,10 +17,12 @@
 #include "eprosimartps/common/types/SerializedPayload.h"
 #include "eprosimartps/common/types/InstanceHandle.h"
 #include "eprosimartps/utils/md5.h"
-
+#include "eprosimartps/eprosima_stl_exports.hpp"
 #include <string>
 
 using namespace eprosima::rtps;
+
+
 
 namespace eprosima {
 namespace dds {
@@ -59,7 +61,6 @@ public:
 	 */
 	virtual bool getKey(void*data,InstanceHandle_t* ihandle);
 	//! Data Type Name.
-    #pragma warning(disable: 4251)
 	std::string m_topicDataTypeName;
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
 	//! size of the string respect the maximum defined size.).

@@ -14,12 +14,13 @@
 #define PARAMETERTYPES_H_
 
 #include "eprosimartps/common/types/all_common.h"
-
+#include "eprosimartps/eprosima_stl_exports.hpp"
 
 #include <string>
 #include <vector>
 
 using namespace eprosima::rtps;
+
 
 namespace eprosima {
 
@@ -149,7 +150,6 @@ public:
 
 class RTPS_DllAPI ParameterString_t: public Parameter_t {
 public:
-	#pragma warning(disable: 4251)
 	std::string m_string;
 	ParameterString_t(){};
 	ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
