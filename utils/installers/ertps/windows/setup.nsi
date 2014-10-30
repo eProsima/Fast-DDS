@@ -10,7 +10,7 @@ RequestExecutionLevel admin
 !define REGKEY "SOFTWARE\$(^Name)"
 !define COMPANY eProsima
 !define URL www.eprosima.com
-!define VERSION 0.5.1
+#!define VERSION ${VERSION}
 
 # MUI Symbol Definitions
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install-colorful.ico"
@@ -21,6 +21,7 @@ RequestExecutionLevel admin
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "eProsima\eRTPS"
+!define LIB_BOOST_PATH $%LIB_BOOST_PATH%
 
 # Included files
 !include Sections.nsh
@@ -33,9 +34,11 @@ SectionGroup "Libraries" SECGRP0000
      Section "x64 libraries" SEC_LIB_x64
          SetOutPath $INSTDIR\lib\x64Win64VS2010
          SetOverwrite on
-         File /r "..\..\..\lib\x64Win64VS2010\*"
-		 File /r "..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
-         WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
+         File /r "..\..\..\..\lib\x64Win64VS2010\*"
+		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_thread*dll"
+		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_system*dll"
+		 WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
          File "redistributables\vcredist_x64.exe"
@@ -44,8 +47,10 @@ SectionGroup "Libraries" SECGRP0000
     Section "i86 libraries" SEC_LIB_i86
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
-        File /r "..\..\..\lib\i86Win32VS2010\*"
-		File /r "..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
+        File /r "..\..\..\..\lib\i86Win32VS2010\*"
+		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
+		File /r "${LIB_BOOST_PATH}\lib\i86\boost_thread*dll"
+		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_system*dll"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
@@ -63,7 +68,7 @@ Var StartMenuGroup
 ReserveFile "${NSISDIR}\Plugins\newadvsplash.dll"
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ..\..\..\doc\licenses\EPROSIMARTPS_LIBRARY_LICENSE.txt 
+!insertmacro MUI_PAGE_LICENSE ..\..\..\..\doc\licenses\EPROSIMARTPS_LIBRARY_LICENSE.txt 
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE ComponentsPageLeave
 !insertmacro MUI_PAGE_COMPONENTS
@@ -102,47 +107,49 @@ Section -post SEC0006
     SetShellVarContext all
     
     # Copy documentation.
-    SetOutPath $INSTDIR\doc
-    SetOverwrite on
-	File "..\..\..\doc\index.html" 
+    #SetOutPath $INSTDIR\doc
+    #SetOverwrite on
+	#File "..\..\..\..\doc\index.html" 
 	SetOutPath $INSTDIR\doc\pdf
     SetOverwrite on
-    File "..\..\..\doc\pdf\RTPS - User Manual.pdf" 
-	File "..\..\..\doc\pdf\RTPS - Installation Manual.pdf"
-	File "..\..\..\doc\pdf\RTPSGEN - User Manual.pdf"	
-    # Copy doxygen documentation
-    SetOutPath $INSTDIR\doc\doxygen\public_api\html
+    File /r "..\..\..\..\doc\pdf\*" 
+	# Copy doxygen documentation
+    SetOutPath $INSTDIR\doc\html
     SetOverwrite on
 	#Copy latex documentation
-    File /r "..\..\..\doc\doxygen\public_api\html\*"
-	SetOutPath $INSTDIR\doc\doxygen\latex
-    SetOverwrite on
-    File /r "..\..\..\doc\doxygen\latex\*"
+    File /r "..\..\..\..\utils\doxygen\output\doxygen\html\*"
+	#SetOutPath $INSTDIR\doc\doxygen\latex
+    #SetOverwrite on
+    #File /r "..\..\..\..\doc\doxygen\latex\*"
     
     # TODO All examples
     # Copy examples.
     SetOutPath $INSTDIR\examples\C++
     SetOverwrite on
-	File /r "..\..\..\utils\useTests\*"
+	File /r "..\..\..\..\utils\useTests\*"
 	
 	SetOutPath $INSTDIR\examples\ShapesDemo
     SetOverwrite on
-	File /r "..\..\..\utils\ShapesDemo\release\windows\*"
+	File /r "..\..\..\..\utils\ShapesDemo\files\*"
+	SetOutPath $INSTDIR\examples\ShapesDemo\bin
+    SetOverwrite on
+	File /r "..\..\..\..\utils\ShapesDemo\release\*.exe"
+	
 	
 	SetOutPath $INSTDIR\rtpsgen
     SetOverwrite on
-	File /r "..\..\..\rtpsgen\scripts\*"
-	File /r "..\..\..\rtpsgen\lib\*"
+	File /r "..\..\..\..\rtpsgen\scripts\*"
+	File /r "..\..\..\..\rtpsgen\lib\*"
 	
 	#Copy fastcdr include files
 	SetOutPath $INSTDIR\include
     SetOverwrite on
-    File /r ..\..\..\thirdparty\fastcdr\include\*
+    File /r ..\..\..\..\thirdparty\fastcdr\include\*
 	
 	#Copy eProsima_cpp include files
 	SetOutPath $INSTDIR\include\eProsima_cpp
     SetOverwrite on
-    File /r ..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\*
+    File /r ..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\*
 	
 	#Copy fastcdr libraries
     
@@ -165,7 +172,7 @@ Section -post SEC0006
     # Copy header files.
     SetOutPath $INSTDIR\include
     SetOverwrite on
-    File /r ..\..\..\include\*
+    File /r ..\..\..\..\include\*
 
     # # Copy eProsima header files.
     # SetOutPath $INSTDIR\include\fastrpc\eProsima_cpp
@@ -183,8 +190,8 @@ Section -post SEC0006
     # Copy licensies
     SetOutPath $INSTDIR
     SetOverwrite on
-    File /r ..\..\..\doc\licenses\*
-    File ..\..\..\doc\README.html
+    File /r ..\..\..\..\doc\licenses\*
+    File ..\..\..\..\README.html
     
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR

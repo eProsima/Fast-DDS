@@ -60,8 +60,8 @@ else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64
 
 
 unix: LIBS += -lboost_thread -lboost_system
-win32:INCLUDEPATH += C:/local/boost_1_53_0/
-win32:LIBS += -LC:/local/boost_1_53_0/stage/lib/x86/
+win32:INCLUDEPATH += $(LIB_BOOST_PATH)/
+win32:LIBS += -L$(LIB_BOOST_PATH)/lib/i86/
 
 HEADERS += \
     include/eprosimashapesdemo/qt/DrawArea.h \
@@ -115,11 +115,10 @@ win32:INCLUDEPATH += $$PWD/../../include
 win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010 C:\Windows\System32
 
 
-#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.0.lib Shlwapi.lib Iphlpapi.lib
-#win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.0.lib Shlwapi.lib Iphlpapi.lib
+#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.1.lib Shlwapi.lib Iphlpapi.lib
+#win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.1.lib Shlwapi.lib Iphlpapi.lib
 
 RESOURCES += \
     images/eprosimalogo.qrc
 
 RC_FILE = images/eprosima_icon.rc
-
