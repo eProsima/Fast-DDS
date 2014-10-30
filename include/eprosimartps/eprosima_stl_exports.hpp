@@ -1,6 +1,9 @@
 #include "eprosimartps_dll.h"
 #include "eprosimartps/common/types/common_types.h"
 
+#include <string>
+#include <vector>
+
 #if defined(_WIN32) && !defined(STL_STRING_EXPORT_APPLY)
 
 #define STL_STRING_EXPORT(dllexport) \
@@ -39,6 +42,15 @@ template class RTPS_DllAPI std::allocator<std::string>;
 template class RTPS_DllAPI std::vector<std::string>;
 
 #endif //_EPRO_STLVECTOR_STRING_EXPORT_
+
+#if !defined(_EPRO_STLVECTOR_PROPERTIES_EXPORT_ ) && defined(_WIN32)
+#define _EPRO_STLVECTOR_PROPERTIES_EXPORT_
+
+template class RTPS_DllAPI std::allocator<std::pair<std::string,std::string>>;
+template class RTPS_DllAPI std::vector<std::pair<std::string,std::string>>;
+
+#endif //_EPRO_STLVECTOR_STRING_EXPORT_
+
 
 
 
