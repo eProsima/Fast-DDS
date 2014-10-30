@@ -409,7 +409,7 @@ bool EDP::pairingReader(RTPSReader* R)
 		{
 			if(validMatching(R,*wdatait))
 			{
-				logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
+				logInfo(RTPS_EDP,"Valid Matching to writerProxy: "<<(*wdatait)->m_guid,EPRO_CYAN);
 				if(R->matched_writer_add(*wdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -455,7 +455,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 			if(validMatching(W,*rdatait))
 			{
 				//std::cout << "VALID MATCHING to " <<(*rdatait)->m_guid<< std::endl;
-				logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to readerProxy: "<<(*rdatait)->m_guid<<RTPS_DEF<<endl);
+				logInfo(RTPS_EDP,"Valid Matching to readerProxy: "<<(*rdatait)->m_guid,EPRO_CYAN);
 				if(W->matched_reader_add(*rdatait))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -497,7 +497,7 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 	{
 		if(validMatching(*wit,rdata))
 		{
-			logInfo(RTPS_EDP,"Valid Matching to local writer: "<<(*wit)->getGuid().entityId<<endl);
+			logInfo(RTPS_EDP,"Valid Matching to local writer: "<<(*wit)->getGuid().entityId,EPRO_CYAN);
 			if((*wit)->matched_reader_add(rdata))
 			{
 				//MATCHED AND ADDED CORRECTLY:
@@ -537,7 +537,7 @@ bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 	{
 		if(validMatching(*rit,wdata))
 		{
-			logInfo(RTPS_EDP,"Valid Matching to local reader: "<<(*rit)->getGuid().entityId<<endl);
+			logInfo(RTPS_EDP,"Valid Matching to local reader: "<<(*rit)->getGuid().entityId,EPRO_CYAN);
 			if((*rit)->matched_writer_add(wdata))
 			{
 				//MATCHED AND ADDED CORRECTLY:

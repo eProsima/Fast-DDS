@@ -39,7 +39,7 @@ UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 void UnsentChangesNotEmptyEvent::event(const boost::system::error_code& ec)
 {
 	const char* const METHOD_NAME = "event";
-	logInfo(RTPS_WRITER,"TimedEvent: UnsentChangesNotEmpty"<<endl);
+	logInfo(RTPS_WRITER,"");
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{

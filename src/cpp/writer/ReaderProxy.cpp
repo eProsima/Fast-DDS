@@ -37,7 +37,7 @@ ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,Stat
 				m_lastAcknackCount(0)
 {
 	const char* const METHOD_NAME = "ReaderProxy";
-	logInfo(RTPS_HISTORY,"Reader Proxy created"<<endl);
+	logInfo(RTPS_HISTORY,"Reader Proxy created");
 }
 
 

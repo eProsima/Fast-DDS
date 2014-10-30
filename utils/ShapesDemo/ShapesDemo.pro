@@ -53,13 +53,15 @@ unix: CONFIG(release, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -
 else:unix: CONFIG(debug, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartpsd
 
 INCLUDEPATH += $$PWD/../../include
+INCLUDEPATH += $$PWD/../../thirdparty/eprosima-common-code
 DEPENDPATH += $$PWD/../../include
+DEPENDPATH += $$PWD/../../thirdparty/eprosima-common-code
 
 unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
 else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
 
 
-unix: LIBS += -lboost_thread -lboost_system
+unix: LIBS += -lboost_thread -lboost_system -lboost_date_time
 win32:INCLUDEPATH += C:/local/boost_1_53_0/
 win32:LIBS += -LC:/local/boost_1_53_0/stage/lib/x86/
 

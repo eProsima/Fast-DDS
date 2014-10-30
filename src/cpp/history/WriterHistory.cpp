@@ -76,7 +76,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 			++m_lastCacheChangeSeqNum;
 			a_change->sequenceNumber = m_lastCacheChangeSeqNum;
 			m_changes.push_back(a_change);
-			logInfo(RTPS_HISTORY,"WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
+			logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
 			updateMaxMinSeqNum();
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -99,7 +99,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
-			logInfo(RTPS_HISTORY,"WriterHistory: found key: "<< vit->first);
+			logInfo(RTPS_HISTORY,"Found key: "<< vit->first);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -109,7 +109,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 				}
 				else
 				{
-					logWarning(RTPS_HISTORY,"WriterHistory: Change not added due to maximum number of samples per instance"<<endl;);
+					logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
 					return false;
 				}
 			}
@@ -131,7 +131,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 			{
 				++m_lastCacheChangeSeqNum;
 				a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-				logInfo(RTPS_HISTORY,"WriterHistory: " << this->mp_Endpoint->getGuid().entityId <<" Change "
+				logInfo(RTPS_HISTORY,this->mp_Endpoint->getGuid().entityId <<" Change "
 						<< a_change->sequenceNumber.to64long()<< " added with key: "<<a_change->instanceHandle
 						<< " and "<<a_change->serializedPayload.length<< " bytes");
 				m_changes.push_back(a_change);
