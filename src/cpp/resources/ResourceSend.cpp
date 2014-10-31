@@ -67,7 +67,13 @@ bool ResourceSend::initSend(const Locator_t& loc)
 			m_sendLocator_v4.port++;
 		}
 	}
+	boost::asio::socket_base::send_buffer_size option;
+	m_send_socket_v4.get_option(option);
+
+	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
+			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
 	not_bind = true;
+	m_sendLocator_v6.port = m_sendLocator_v4.port +1;
 	while(not_bind)
 	{
 		udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v6(),m_sendLocator_v6.port);
@@ -81,11 +87,7 @@ bool ResourceSend::initSend(const Locator_t& loc)
 			m_sendLocator_v6.port++;
 		}
 	}
-	boost::asio::socket_base::send_buffer_size option;
-	m_send_socket_v4.get_option(option);
-
-	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
-			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
+	
 	m_send_socket_v6.get_option(option);
 	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv6: " << m_send_socket_v6.local_endpoint()<<"|| State: " << m_send_socket_v6.is_open() <<
 			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
