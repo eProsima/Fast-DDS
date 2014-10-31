@@ -123,7 +123,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 	CacheChange_t* min_change;
 	SequenceNumber_t minSeqNum = c_SequenceNumber_Unknown;
 	SequenceNumber_t auxSeqNum;
-	WriterProxy* wp;
+	WriterProxy* wp = nullptr;
 	bool available = false;
 	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();it!=matched_writers.end();++it)
 	{
