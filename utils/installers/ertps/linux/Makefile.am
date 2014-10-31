@@ -15,9 +15,14 @@ install-data-hook:
 	mkdir -p $(DESTDIR)$(datadir)/doc/eprosimartps; \
 	cp -r doc/* $(DESTDIR)$(datadir)/doc/eprosimartps; \
 	cp -r README.html $(DESTDIR)$(datadir)/doc/eprosimartps; \
+	cp -r EPROSIMARTPS_LIBRARY_LICENSE.txt $(DESTDIR)$(datadir)/doc/eprosimartps; \
+	cp -r LGPLv3_LICENSE.txt $(DESTDIR)$(datadir)/doc/eprosimartps; \
 	mkdir -p $(DESTDIR)$(datadir)/eprosimartps; \
 	cp -r examples $(DESTDIR)$(datadir)/eprosimartps/;
+	mkdir -p $(DESTDIR)$(datadir)/rtpsgen; \
+	cp -r rtpsgen $(DESTDIR)$(datadir)/eprosimartps/;
 
 uninstall-hook:
 	rm -r $(DESTDIR)$(datadir)/doc/eprosimartps; \
-	rm -r $(DESTDIR)$(datadir)/eprosimartps
+	rm -r $(DESTDIR)$(datadir)/eprosimartps; \
+	rm -r $(DESTDIR)$(datadir)/include/eprosimartps

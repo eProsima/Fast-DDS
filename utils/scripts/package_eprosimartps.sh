@@ -26,7 +26,7 @@ function package
 	rm -rf output
 	EPROSIMA_TARGET="i86Linux2.6gcc"
 	COMP="g++"
-	rm -rf lib/$EPROSIMA_TARGET
+	#rm -rf lib/$EPROSIMA_TARGET
 	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
@@ -35,7 +35,7 @@ function package
 	rm -rf output
 	EPROSIMA_TARGET="x64Linux2.6gcc"
 	COMP="g++"
-	rm -rf lib/$EPROSIMA_TARGET
+	#rm -rf lib/$EPROSIMA_TARGET
 	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
@@ -44,9 +44,8 @@ function package
 	rm -rf output
 	EPROSIMA_TARGET="armelf_linux_eabi"
 	COMP="arm-unknown-linux-gnueabi-g++"
-	rm -rf lib/$EPROSIMA_TARGET
-	EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
-	#unset ARM_INCLUDE_DIRS
+	#rm -rf lib/$EPROSIMA_TARGET
+	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
@@ -104,6 +103,15 @@ function package
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	cd ../../../../../
+
+	# Build utilities
+	#cd utils/ShapesDemo
+	#qmake ShapesDemo.pro -r -spec linux-g++-64
+
+	cd rtpsgen
+	ant jars
+	cd ..
+	
 
 	# Create installers
 	cd utils/installers/ertps/linux
