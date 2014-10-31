@@ -18,6 +18,7 @@
 #include <stddef.h>
 #include <iostream>
 #include <cstdint>
+#include <stdint.h>
 
 /**
  * @namespace eprosima

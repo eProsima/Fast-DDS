@@ -55,12 +55,12 @@ installer()
 
     # Copy example.
     mkdir -p tmp/$project/examples/C++
-    ##cp -r ../../../../utils/useTests/* tmp/$project/examples/C++
+    cp -r ../../../../utils/useTests/* tmp/$project/examples/C++
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy ShapesDemo
-    mkdir -p tmp/$project/examples/ShapesDemo
+    #mkdir -p tmp/$project/examples/ShapesDemo
     ##cp -r ../../../../utils/ShapesDemo/release/linux/* tmp/$project/examples/ShapesDemo
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
@@ -68,7 +68,8 @@ installer()
     # Copy RTPSGEN scripts and jar
     mkdir -p tmp/$project/rtpsgen
     cp -r ../../../../rtpsgen/scripts/* tmp/$project/rtpsgen
-    cp    ../../../../rtpsgen/lib/* tmp/$project/rtpsgen    
+    cp    ../../../../rtpsgen/lib/* tmp/$project/rtpsgen  
+    chmod 755 tmp/$project/rtpsgen/rtpsgen.sh  
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
