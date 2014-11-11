@@ -181,6 +181,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
+      <TargetMachine>MachineX86</TargetMachine>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -214,7 +215,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86</AdditionalLibraryDirectories>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
@@ -230,7 +231,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64</AdditionalLibraryDirectories>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
@@ -243,11 +244,12 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
@@ -264,7 +266,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\stage\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
@@ -293,6 +295,7 @@
     <Lib>
       <AdditionalDependencies>
       </AdditionalDependencies>
+      <TargetMachine>MachineX86</TargetMachine>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
