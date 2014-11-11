@@ -153,16 +153,16 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 	IPFinder::getIPAddress(&loc);
 	if(loc.size()>0)
 	{
-		guidP.value[0] = loc.begin()->address[12];
-		guidP.value[1] = loc.begin()->address[13];
+		guidP.value[0] = c_eProsimaVendorId[0];
+		guidP.value[1] = c_eProsimaVendorId[1];
 		guidP.value[2] = loc.begin()->address[14];
 		guidP.value[3] = loc.begin()->address[15];
 	}
 	else
 	{
-		guidP.value[0] = 127;
-		guidP.value[1] = 0;
-		guidP.value[2] = 0;
+		guidP.value[0] = c_eProsimaVendorId[0];
+		guidP.value[1] = c_eProsimaVendorId[1];
+		guidP.value[2] = 127;
 		guidP.value[3] = 1;
 	}
 	guidP.value[4] = ((octet*)&pid)[0];
