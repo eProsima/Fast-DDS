@@ -106,11 +106,11 @@ bool ResourceSend::initSend(const Locator_t& loc)
 //			m_sendLocator_v6.port++;
 //		}
 //	}
-	boost::asio::socket_base::send_buffer_size option;
-	m_send_socket_v4.get_option(option);
+	boost::asio::socket_base::send_buffer_size option2;
+	m_send_socket_v4.get_option(option2);
 
 	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
-			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
+			" || buffer size: " <<option2.value()<< RTPS_DEF<<endl);
 //	m_send_socket_v6.get_option(option);
 //	pInfo (RTPS_YELLOW<<"ResourceSend: initSend UDPv6: " << m_send_socket_v6.local_endpoint()<<"|| State: " << m_send_socket_v6.is_open() <<
 //			" || buffer size: " <<option.value()<< RTPS_DEF<<endl);
@@ -198,7 +198,7 @@ void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 //		}
 //		else
 //			pError("ResourceSend: sendSync: port error"<<endl);
-	}
+	//}
 
 }
 
