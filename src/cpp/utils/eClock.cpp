@@ -17,11 +17,7 @@ namespace eprosima {
 namespace rtps {
 	//FIXME: UTC SECONDS AUTOMATICALLY
 eClock::eClock():
-#if defined(_ERTPS_COMPATIBILITY)
 		m_seconds_from_1900_to_1970(0),
-#else
-		m_seconds_from_1900_to_1970(2208988800),
-#endif
 		m_utc_seconds_diff(2*60*60)
 {
 #if defined(_WIN32)
