@@ -16,6 +16,7 @@
 #include "eprosimartps/common/types/common_types.h"
 #include <cstring>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define PAYLOAD_MAX_SIZE 64000
 
