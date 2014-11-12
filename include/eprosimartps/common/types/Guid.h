@@ -186,7 +186,7 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_PARTICIPANT_
 
 
 
-//!@brief Structure GUID_t, entity identifier, unique in DDS Domain.
+//!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
  struct RTPS_DllAPI GUID_t{
 	GuidPrefix_t guidPrefix;
 	EntityId_t entityId;

@@ -55,7 +55,7 @@ public:
 	ParticipantImpl* mp_participantImpl;
 };
 
-} /* namespace dds */
+}
 } /* namespace eprosima */
 
 #endif /* RESOURCEEVENT_H_ */

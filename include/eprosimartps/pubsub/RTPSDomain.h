@@ -12,11 +12,11 @@
 
 
 
-#ifndef DOMAINPARTICIPANT_H_
-#define DOMAINPARTICIPANT_H_
+#ifndef RTPSPARTICIPANT_H_
+#define RTPSPARTICIPANT_H_
 
 #include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/dds/attributes/all_attributes.h"
+#include "eprosimartps/pubsub/attributes/all_attributes.h"
 #include <set>
 
 
@@ -33,9 +33,10 @@ typedef std::pair<Participant*,ParticipantImpl*> ParticipantPair;
 
 using namespace rtps;
 
-namespace dds {
+namespace pubsub
+{
 
-class DDSTopicDataType;
+class TopicDataType;
 class Publisher;
 class Subscriber;
 class Publisher;
@@ -53,14 +54,14 @@ typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
  * Class DomainParticipantImpl, singleton that performs all operations permitted by the DomainParticipant class. It also stores information
  * regarding all Participants created in this Domain.
  */
-class DomainParticipantImpl
+class RTPSDomainImpl
 {
 private:
-	  DomainParticipantImpl();
+	RTPSDomainImpl();
     /**
      * DomainParticipant destructor
      */
-    ~DomainParticipantImpl();
+    ~RTPSDomainImpl();
 
     bool getParticipantImpl(Participant*,ParticipantImpl**);
 
@@ -90,7 +91,7 @@ public:
 
     /**
      * @brief Create a Participant.
-     * @snippet dds_example.cpp ex_ParticipantCreation
+     * @snippet pubsub_example.cpp ex_ParticipantCreation
      * @param PParam Participant Parameters.
      * @return Pointer to the participant.
      */
@@ -117,7 +118,7 @@ public:
      * @param[in] type Pointer to the Data Type Object.
      * @return True if correct.
      */
-    bool registerType(DDSTopicDataType* type);
+    bool registerType(TopicDataType* type);
 
     /**
      * Get a pointer to a registered type.
@@ -125,14 +126,14 @@ public:
      * @param[out] type_ptr Pointer to pointer of the type, is used to return the object.
      * @return True if the type is found.
      */
-    bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr);
+    bool getRegisteredType(std::string type_name,TopicDataType** type_ptr);
 
 
 	/**
 	 * @brief Get pointer to the unique instance of this class.
 	 * @return Pointer to the instance.
 	 */
-    static DomainParticipantImpl* getInstance();
+    static RTPSDomainImpl* getInstance();
 
 
 
@@ -186,8 +187,8 @@ public:
 private:
 	uint32_t m_maxParticipantID;
 	static bool instanceFlag;
-	static DomainParticipantImpl *single;
-	std::vector<DDSTopicDataType*> m_registeredTypes;
+	static RTPSDomainImpl *single;
+	std::vector<TopicDataType*> m_registeredTypes;
 
 	uint16_t m_portBase;
 	uint16_t m_domainIdGain;
@@ -218,9 +219,9 @@ private:
 /**
  * Class DomainParticipant, contains the static functions to create Publishers and Subscribers, as well as to register types.
  * It can be directly accessed by the user, though only by static methods.
-  * @ingroup DDSMODULE
+  * @ingroup PUBSUBMODULE
  */
-class RTPS_DllAPI DomainParticipant
+class RTPS_DllAPI RTPSDomain
 {
 public:
 	/**
@@ -230,7 +231,7 @@ public:
 	 */
 	static void stopAll()
 	{
-		DomainParticipantImpl::getInstance()->stopAll();
+		RTPSDomainImpl::getInstance()->stopAll();
 	}
 	/**
 	 * @brief Create a Publisher in the given Participant.
@@ -241,7 +242,7 @@ public:
 	 */
 	static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createPublisher(p,WParam,plisten));
+		return (RTPSDomainImpl::getInstance()->createPublisher(p,WParam,plisten));
 	}
 	/**
 	 * @brief Create a Subscriber in the given Participant.
@@ -252,17 +253,17 @@ public:
 	 */
 	static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createSubscriber(p,RParam,slisten));
+		return (RTPSDomainImpl::getInstance()->createSubscriber(p,RParam,slisten));
 	}
 	/**
 	 * @brief Create a Participant.
-	 * @snippet dds_example.cpp ex_ParticipantCreation
+	 * @snippet pubsub_example.cpp ex_ParticipantCreation
 	 * @param PParam Participant Parameters.
 	 * @return Pointer to the participant.
 	 */
 	static Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL)
 	{
-		return (DomainParticipantImpl::getInstance()->createParticipant(PParam,plisten));
+		return (RTPSDomainImpl::getInstance()->createParticipant(PParam,plisten));
 	}
 	/**
 	 * Remove a participant and delete all its associated Writers, Readers, resources, etc.
@@ -271,21 +272,21 @@ public:
 	 */
 	static bool removeParticipant(Participant* p)
 	{
-		return (DomainParticipantImpl::getInstance()->removeParticipant( p));
+		return (RTPSDomainImpl::getInstance()->removeParticipant( p));
 	}
 	/**
 	 * Remove a publisher from the Participant.
 	 */
 	static bool removePublisher(Participant* p,Publisher* pub)
 	{
-		return (DomainParticipantImpl::getInstance()->removePublisher( p, pub));
+		return (RTPSDomainImpl::getInstance()->removePublisher( p, pub));
 	}
 	/**
 	 * Remove a subscriber from a participant.
 	 */
 	static bool removeSubscriber(Participant* p,Subscriber* sub)
 	{
-		return (DomainParticipantImpl::getInstance()->removeSubscriber( p, sub));
+		return (RTPSDomainImpl::getInstance()->removeSubscriber( p, sub));
 	}
 
 	/**
@@ -294,9 +295,9 @@ public:
 	 * @param[in] type Pointer to the Data Type Object.
 	 * @return True if correct.
 	 */
-	static bool registerType(DDSTopicDataType* type)
+	static bool registerType(TopicDataType* type)
 	{
-		return (DomainParticipantImpl::getInstance()->registerType( type));
+		return (RTPSDomainImpl::getInstance()->registerType( type));
 	}
 
 	/**
@@ -305,9 +306,9 @@ public:
 	 * @param[out] type_ptr Pointer to pointer of the type, is used to return the object.
 	 * @return True if the type is found.
 	 */
-	static bool getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
+	static bool getRegisteredType(std::string type_name,TopicDataType** type_ptr)
 	{
-		return (DomainParticipantImpl::getInstance()->getRegisteredType(type_name,type_ptr));
+		return (RTPSDomainImpl::getInstance()->getRegisteredType(type_name,type_ptr));
 	}
 
 	  /**
@@ -315,36 +316,36 @@ public:
      */
     static void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
     {
-    	return (DomainParticipantImpl::getInstance()->setPortParameters( PB, DG, PG, d0, d1, d2, d3));
+    	return (RTPSDomainImpl::getInstance()->setPortParameters( PB, DG, PG, d0, d1, d2, d3));
     }
     /** @name Methods to get the default Port numbers.
      */
 
     	///@{
-	static uint16_t getDomainIdGain()  {		return (DomainParticipantImpl::getInstance()->getDomainIdGain());	}
+	static uint16_t getDomainIdGain()  {		return (RTPSDomainImpl::getInstance()->getDomainIdGain());	}
 
-	static uint16_t getOffsetd0()  {		return (DomainParticipantImpl::getInstance()-> getOffsetd0());	}
+	static uint16_t getOffsetd0()  {		return (RTPSDomainImpl::getInstance()-> getOffsetd0());	}
 
-	static uint16_t getOffsetd1()  {		return (DomainParticipantImpl::getInstance()->getOffsetd1());	}
+	static uint16_t getOffsetd1()  {		return (RTPSDomainImpl::getInstance()->getOffsetd1());	}
 
-	static uint16_t getOffsetd2() {		return (DomainParticipantImpl::getInstance()->getOffsetd2());	}
+	static uint16_t getOffsetd2() {		return (RTPSDomainImpl::getInstance()->getOffsetd2());	}
 
-	static uint16_t getOffsetd3()  {		return (DomainParticipantImpl::getInstance()->getOffsetd3());	}
+	static uint16_t getOffsetd3()  {		return (RTPSDomainImpl::getInstance()->getOffsetd3());	}
 
-	static uint16_t getParticipantIdGain()  {		return (DomainParticipantImpl::getInstance()->getParticipantIdGain());	}
+	static uint16_t getParticipantIdGain()  {		return (RTPSDomainImpl::getInstance()->getParticipantIdGain());	}
 
-	static uint16_t getPortBase()  {		return (DomainParticipantImpl::getInstance()->getPortBase());	}
+	static uint16_t getPortBase()  {		return (RTPSDomainImpl::getInstance()->getPortBase());	}
 
 //	static void setPortBase(uint16_t pb)  {return Doma}
 
 private:
-	DomainParticipantImpl* mp_impl;
+	RTPSDomainImpl* mp_impl;
 };
 
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* DOMAINPARTICIPANT_H_ */

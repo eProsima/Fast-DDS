@@ -13,11 +13,11 @@
 
 #ifndef READERPROXYDATA_H_
 #define READERPROXYDATA_H_
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/ReaderQos.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

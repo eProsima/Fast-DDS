@@ -14,7 +14,7 @@
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
 
-#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+#include "eprosimartps/pubsub/attributes/ParticipantAttributes.h"
 
 
 namespace eprosima {

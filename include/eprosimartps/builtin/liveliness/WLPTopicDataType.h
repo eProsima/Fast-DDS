@@ -14,16 +14,16 @@
 #ifndef WLPTOPICDATATYPE_H_
 #define WLPTOPICDATATYPE_H_
 
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
 
-class WLPTopicDataType : public DDSTopicDataType {
+class WLPTopicDataType : public TopicDataType {
 public:
 	WLPTopicDataType();
 	virtual ~WLPTopicDataType();

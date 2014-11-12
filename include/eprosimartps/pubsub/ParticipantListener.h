@@ -14,7 +14,7 @@
 #ifndef PARTICIPANTLISTENER_H_
 #define PARTICIPANTLISTENER_H_
 
-#include "eprosimartps/dds/ParticipantDiscoveryInfo.h"
+#include "eprosimartps/pubsub/ParticipantDiscoveryInfo.h"
 
 
 namespace eprosima {
@@ -24,7 +24,7 @@ namespace rtps
 class Participant;
 }
 
-namespace dds {
+namespace pubsub {
 
 class ParticipantListener {
 public:
@@ -33,7 +33,7 @@ public:
 	virtual void onParticipantDiscovery(Participant* part,ParticipantDiscoveryInfo info) {};
 };
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* PARTICIPANTLISTENER_H_ */

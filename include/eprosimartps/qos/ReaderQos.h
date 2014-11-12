@@ -13,9 +13,9 @@
 
 #ifndef READERQOS_H_
 #define READERQOS_H_
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 /**
  * ReaderQos class contains all the possible Qos that can be set for a determined Subscriber. Although these values can be set and are transmitted
@@ -77,7 +77,7 @@ public:
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* READERQOS_H_ */

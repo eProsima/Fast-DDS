@@ -15,7 +15,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
@@ -169,5 +169,5 @@ bool ReaderQos::canQosBeUpdated(ReaderQos& qos)
 	return updatable;
 }
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */

@@ -18,7 +18,7 @@
 
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 /**
  * QosList_t class contains two ParameterList_t for the Qos.

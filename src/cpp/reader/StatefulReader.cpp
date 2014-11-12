@@ -14,12 +14,12 @@
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-#include "eprosimartps/dds/SampleInfo.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/SampleInfo.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 
 #include "eprosimartps/reader/WriterProxyData.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -38,7 +38,7 @@ StatefulReader::~StatefulReader()
 
 
 StatefulReader::StatefulReader(const SubscriberAttributes& param,
-		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+		const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
 																RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
 																		param.userDefinedId,param.payloadMaxSize),
 																		m_SubTimes(param.times)

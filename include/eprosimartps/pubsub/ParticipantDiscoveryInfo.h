@@ -15,10 +15,10 @@
 #define PARTICIPANTDISCOVERYINFO_H_
 
 #include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 enum DISCOVERY_STATUS
 {
@@ -41,7 +41,7 @@ public:
 	std::string m_participantName;
 };
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* PARTICIPANTDISCOVERYINFO_H_ */

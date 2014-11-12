@@ -22,16 +22,16 @@
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 
 #include "eprosimartps/qos/WriterQos.h"
-#include "eprosimartps/dds/Publisher.h"
+#include "eprosimartps/pubsub/Publisher.h"
 
 #include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 
-namespace dds{
+namespace pubsub{
 
 class PublisherListener;
 }
@@ -42,14 +42,14 @@ class ReaderProxyData;
 class UnsentChangesNotEmptyEvent;
 
 /**
- * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a DDS Writer (not in this version) and a HistoryCache.
+ * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITERMODULE
  */
 class RTPSWriter: public Endpoint
 {
 	friend class LivelinessPeriodicAssertion;
 public:
-	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
+	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,const PublisherAttributes& param,TopicDataType* ptype,
 			StateKind_t state = STATELESS,
 			int16_t userDefinedId=-1,uint32_t payload_size = 500);
 	virtual ~RTPSWriter();

@@ -36,7 +36,7 @@ public:
 	ReaderProxy* mp_RP;
 };
 
-} /* namespace dds */
+}
 } /* namespace eprosima */
 
 #endif /* NACKSUPRESSIONDURATION_H_ */

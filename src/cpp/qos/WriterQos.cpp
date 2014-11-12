@@ -15,7 +15,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 WriterQos::WriterQos()
 {
@@ -195,7 +195,7 @@ bool WriterQos::canQosBeUpdated(WriterQos& qos)
 }
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

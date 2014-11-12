@@ -21,7 +21,7 @@
 
 #include "eprosimartps/reader/StatelessReader.h"
 
-#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/pubsub/RTPSDomain.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/utils/IPFinder.h"
@@ -49,7 +49,7 @@ bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,
 {
 	m_attributes = attributes;
 
-	DomainParticipantImpl* dp = DomainParticipantImpl::getInstance();
+	RTPSDomainImpl* dp = RTPSDomainImpl::getInstance();
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getMulticastPort(m_attributes.domainId);
 
 	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getUnicastPort(m_attributes.domainId,participantID);

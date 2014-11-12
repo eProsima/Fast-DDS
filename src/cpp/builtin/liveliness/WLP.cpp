@@ -106,7 +106,7 @@ bool WLP::createEndpoints()
 	Rparam.topic.topicKind = WITH_KEY;
 	RTPSReader* rout;
 	if(mp_participant->createReader(&rout,Rparam,Rparam.payloadMaxSize,true,STATEFUL,
-			(DDSTopicDataType*)&this->m_wlpTopicDataType,(SubscriberListener*)&m_listener,c_EntityId_ReaderLiveliness))
+			(TopicDataType*)&this->m_wlpTopicDataType,(SubscriberListener*)&m_listener,c_EntityId_ReaderLiveliness))
 	{
 		mp_builtinParticipantMessageReader = dynamic_cast<StatefulReader*>(rout);
 		pInfo(RTPS_MAGENTA<<"Builtin Liveliness Reader created"<<RTPS_DEF<<endl);

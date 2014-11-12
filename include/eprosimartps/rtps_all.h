@@ -19,17 +19,17 @@
 
 #include "eprosimartps/common/types/all_common.h"
 
-#include "eprosimartps/dds/attributes/all_attributes.h"
+#include "eprosimartps/pubsub/attributes/all_attributes.h"
 #include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
-#include "eprosimartps/dds/PublisherListener.h"
-#include "eprosimartps/dds/SubscriberListener.h"
-#include "eprosimartps/dds/ParticipantListener.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
+#include "eprosimartps/pubsub/RTPSDomain.h"
+#include "eprosimartps/pubsub/Publisher.h"
+#include "eprosimartps/pubsub/Subscriber.h"
+#include "eprosimartps/pubsub/PublisherListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
+#include "eprosimartps/pubsub/ParticipantListener.h"
 
-#include "eprosimartps/dds/SampleInfo.h"
+#include "eprosimartps/pubsub/SampleInfo.h"
 
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -37,10 +37,10 @@
 #include "eprosimartps/utils/TimeConversion.h"
 
 #include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
 using namespace eprosima;
-using namespace dds;
+using namespace pubsub;
 using namespace rtps;
 
 #endif /* RTPS_ALL_H_ */

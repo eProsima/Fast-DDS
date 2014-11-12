@@ -14,10 +14,10 @@
 #include "eprosimartps/qos/QosList.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 QosList_t::QosList_t()
 {
@@ -312,5 +312,5 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVe
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */

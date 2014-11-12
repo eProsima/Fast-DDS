@@ -18,7 +18,7 @@
 namespace eprosima {
 namespace rtps {
 
-RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
+RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,TopicDataType* ptype,
 		StateKind_t state,
 		int16_t userDefinedId,uint32_t payload_size):
 		Endpoint(guidP,entId,topic,ptype,state,READER,userDefinedId),

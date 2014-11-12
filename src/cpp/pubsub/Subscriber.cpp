@@ -11,27 +11,27 @@
  *
  */
 
-#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/pubsub/Subscriber.h"
 #include "eprosimartps/reader/RTPSReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/reader/WriterProxy.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 
 #include "eprosimartps/Participant.h"
 
 
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 
 SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,
-		DDSTopicDataType* ptype,SubscriberAttributes& att):
+		TopicDataType* ptype,SubscriberAttributes& att):
 												mp_Reader(Rin),
 												mp_type(ptype),
 												m_attributes(att),
@@ -182,7 +182,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 }
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

@@ -7,20 +7,20 @@
  *************************************************************************/
 
 /*
- * DomainParticipant.cpp
+ * RTPSDomain.cpp
  *
  */
 
-#include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/SubscriberListener.h"
-#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/pubsub/RTPSDomain.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
+#include "eprosimartps/pubsub/PublisherListener.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/pubsub/Publisher.h"
+#include "eprosimartps/pubsub/Subscriber.h"
 #include "eprosimartps/Participant.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
@@ -31,22 +31,22 @@
 
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
-bool DomainParticipantImpl::instanceFlag = false;
-DomainParticipantImpl* DomainParticipantImpl::single = NULL;
-DomainParticipantImpl* DomainParticipantImpl::getInstance()
+bool RTPSDomainImpl::instanceFlag = false;
+RTPSDomainImpl* RTPSDomainImpl::single = NULL;
+RTPSDomainImpl* RTPSDomainImpl::getInstance()
 {
 	if(! instanceFlag)
 	{
-		single = new DomainParticipantImpl();
+		single = new RTPSDomainImpl();
 		instanceFlag = true;
 	}
 
 	return single;
 }
 
-DomainParticipantImpl::DomainParticipantImpl()
+RTPSDomainImpl::RTPSDomainImpl()
 {
 	m_maxParticipantID = 0;//private constructor
 	m_portBase = 7400;
@@ -61,9 +61,9 @@ DomainParticipantImpl::DomainParticipantImpl()
 
 }
 
-DomainParticipantImpl::~DomainParticipantImpl()
+RTPSDomainImpl::~RTPSDomainImpl()
 {
-	pDebugInfo("DomainParticipant destructor"<<endl;);
+	pDebugInfo("RTPSDomain destructor"<<endl;);
 	for(std::vector<ParticipantPair>::iterator it=m_participants.begin();
 			it!=m_participants.end();++it)
 	{
@@ -85,22 +85,22 @@ DomainParticipantImpl::~DomainParticipantImpl()
 		delete(it->second);
 	}
 	pDebugInfo("Subscribers deleted correctly "<< endl);
-	DomainParticipantImpl::instanceFlag = false;
+	RTPSDomainImpl::instanceFlag = false;
 	delete(RTPSLog::getInstance());
 }
 
 
-uint32_t DomainParticipantImpl::getNewId()
+uint32_t RTPSDomainImpl::getNewId()
 {
 	return ++m_maxParticipantID;
 }
 
-void DomainParticipantImpl::stopAll()
+void RTPSDomainImpl::stopAll()
 {
 	delete(this);
 }
 
-bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pimpl)
+bool RTPSDomainImpl::getParticipantImpl(Participant*p,ParticipantImpl**pimpl)
 {
 	if(p == NULL)
 		return false;
@@ -116,7 +116,7 @@ bool DomainParticipantImpl::getParticipantImpl(Participant*p,ParticipantImpl**pi
 	return false;
 }
 
-Participant* DomainParticipantImpl::createParticipant(const ParticipantAttributes& PParam,
+Participant* RTPSDomainImpl::createParticipant(const ParticipantAttributes& PParam,
 														ParticipantListener* listen)
 {
 	pInfo("Creating Participant "<<endl);
@@ -185,7 +185,7 @@ Participant* DomainParticipantImpl::createParticipant(const ParticipantAttribute
 
 
 
-Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAttributes& WParam,PublisherListener* plisten)
+Publisher* RTPSDomainImpl::createPublisher(Participant* pin, PublisherAttributes& WParam,PublisherListener* plisten)
 {
 	ParticipantImpl* p = NULL;
 	if(!getParticipantImpl(pin,&p))
@@ -195,7 +195,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	}
 	pInfo(RTPS_B_YELLOW <<"Creating Publisher"<<RTPS_DEF<<endl)
 	//Look for the correct type registration
-	DDSTopicDataType* p_type = NULL;
+	TopicDataType* p_type = NULL;
 	if(!getRegisteredType(WParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
@@ -250,7 +250,7 @@ Publisher* DomainParticipantImpl::createPublisher(Participant* pin, PublisherAtt
 	return NULL;
 }
 
-Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam,SubscriberListener* slisten)
+Subscriber* RTPSDomainImpl::createSubscriber(Participant* pin,	SubscriberAttributes& RParam,SubscriberListener* slisten)
 {
 	ParticipantImpl* p = NULL;
 	if(!getParticipantImpl(pin,&p))
@@ -260,7 +260,7 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 	}
 	pInfo(RTPS_B_YELLOW <<"Creating Subscriber"<<RTPS_DEF <<endl)
 	//Look for the correct type registration
-	DDSTopicDataType* p_type = NULL;
+	TopicDataType* p_type = NULL;
 	if(!getRegisteredType(RParam.topic.topicDataType,&p_type))
 	{
 		pError("Type Not Registered"<<endl;);
@@ -314,10 +314,10 @@ Subscriber* DomainParticipantImpl::createSubscriber(Participant* pin,	Subscriber
 
 
 
-bool DomainParticipantImpl::getRegisteredType(std::string type_name,DDSTopicDataType** type_ptr)
+bool RTPSDomainImpl::getRegisteredType(std::string type_name,TopicDataType** type_ptr)
 {
 
-	for(std::vector<DDSTopicDataType*>::iterator it=m_registeredTypes.begin();
+	for(std::vector<TopicDataType*>::iterator it=m_registeredTypes.begin();
 			it!=m_registeredTypes.end();++it)
 	{
 		if((*it)->m_topicDataTypeName == type_name)
@@ -329,9 +329,9 @@ bool DomainParticipantImpl::getRegisteredType(std::string type_name,DDSTopicData
 	return false;
 }
 
-bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
+bool RTPSDomainImpl::registerType(TopicDataType* type)
 {
-	for(std::vector<DDSTopicDataType*>::iterator it = m_registeredTypes.begin();it!=m_registeredTypes.end();++it)
+	for(std::vector<TopicDataType*>::iterator it = m_registeredTypes.begin();it!=m_registeredTypes.end();++it)
 	{
 		if((*it)->m_topicDataTypeName == type->m_topicDataTypeName)
 			return false;
@@ -356,7 +356,7 @@ bool DomainParticipantImpl::registerType(DDSTopicDataType* type)
 	return true;
 }
 
-bool DomainParticipantImpl::removeParticipant(Participant* p)
+bool RTPSDomainImpl::removeParticipant(Participant* p)
 {
 	if(p!=NULL)
 	{
@@ -409,7 +409,7 @@ bool DomainParticipantImpl::removeParticipant(Participant* p)
 	return false;
 }
 
-bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
+bool RTPSDomainImpl::removePublisher(Participant* pin,Publisher* pub)
 {
 	ParticipantImpl* p = NULL;
 	if(!getParticipantImpl(pin,&p))
@@ -437,7 +437,7 @@ bool DomainParticipantImpl::removePublisher(Participant* pin,Publisher* pub)
 	return false;
 }
 
-bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
+bool RTPSDomainImpl::removeSubscriber(Participant* pin,Subscriber* sub)
 {
 	ParticipantImpl* p = NULL;
 	if(!getParticipantImpl(pin,&p))
@@ -468,7 +468,7 @@ bool DomainParticipantImpl::removeSubscriber(Participant* pin,Subscriber* sub)
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 
