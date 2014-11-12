@@ -28,7 +28,7 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	PParam.sendSocketBufferSize = 8712;
 	PParam.listenSocketBufferSize = 17424;
 	PParam.name = "participant2";
-	mp_participant = DomainParticipant::createParticipant(PParam);
+	mp_participant = RTPSDomain::createParticipant(PParam);
 
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
@@ -40,7 +40,7 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-	mp_subscriber = DomainParticipant::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+	mp_subscriber = RTPSDomain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 	m_listener.mp_sub = mp_subscriber;
 
 }

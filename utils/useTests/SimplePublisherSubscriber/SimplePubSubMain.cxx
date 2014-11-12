@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	// Register the type being used
 	
 	SimplePubSubType myType;
-	DomainParticipant::registerType((DDSTopicDataType*) &myType);
+	RTPSDomain::registerType((TopicDataType*) &myType);
 	
 	switch(type)
 	{
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	DomainParticipant::stopAll();
+	RTPSDomain::stopAll();
 	
 	return 0;
 }

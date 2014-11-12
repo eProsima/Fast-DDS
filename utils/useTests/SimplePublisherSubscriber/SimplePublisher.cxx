@@ -27,7 +27,7 @@ bool SimplePublisher::init()
 	ParticipantAttributes PParam;
 	PParam.builtin.domainId = 80;
 	PParam.name = "participant_publisher";  //You can put here the name you want
-	mp_participant = DomainParticipant::createParticipant(PParam);
+	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant == NULL)
 		return false;
 	
@@ -37,7 +37,7 @@ bool SimplePublisher::init()
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicDataType = "SimpleStructPubSubType";  //This type MUST be registered
 	Wparam.topic.topicName = "SimplePubSubTopic";
-	mp_publisher = DomainParticipant::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	mp_publisher = RTPSDomain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == NULL)
 		return false;
 	return true;

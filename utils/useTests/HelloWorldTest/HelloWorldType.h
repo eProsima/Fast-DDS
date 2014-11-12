@@ -17,7 +17,7 @@
 #include "eprosimartps/rtps_all.h"
 
 
-class HelloWorldType:public DDSTopicDataType {
+class HelloWorldType:public TopicDataType {
 public:
 	HelloWorldType();
 	virtual ~HelloWorldType();

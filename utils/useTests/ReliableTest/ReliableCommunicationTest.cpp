@@ -27,8 +27,6 @@
 
 
 using namespace eprosima;
-using namespace dds;
-using namespace rtps;
 using namespace std;
 
 #define WR 1 //Writer 1, Reader 2
@@ -65,7 +63,7 @@ typedef struct TestType{
 	}
 }TestType;
 
-class TestTypeDataType:public DDSTopicDataType
+class TestTypeDataType:public TopicDataType
 {
 public:
 	TestTypeDataType()
@@ -167,7 +165,7 @@ int main(int argc, char** argv)
 
 	TestTypeDataType TestTypeData;
 	cout << "TYPE MAX SIZE: "<< TestTypeData.m_typeSize<<endl;
-	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+	RTPSDomain::registerType((TopicDataType*)&TestTypeData);
 
 
 	ParticipantAttributes PParam;
@@ -185,7 +183,7 @@ int main(int argc, char** argv)
 		//In this side we only have a Publisher so we don't need all discovery endpoints
 		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
-		Participant* p = DomainParticipant::createParticipant(PParam);
+		Participant* p = RTPSDomain::createParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "TestType";
@@ -206,7 +204,7 @@ int main(int argc, char** argv)
 								loc.address[15] = 4;
 		Wparam.multicastLocatorList.push_back(loc);
 		MyPubListener mylisten;
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
+		Publisher* pub = RTPSDomain::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
 			return 0;
 		cout << "Waiting for discovery"<<endl;
@@ -248,7 +246,7 @@ int main(int argc, char** argv)
 		//In this side we only have a subscriber so we dont need all discovery endpoints
 		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
 		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-		Participant* p = DomainParticipant::createParticipant(PParam);
+		Participant* p = RTPSDomain::createParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.topic.topicDataType = "TestType";
 		Rparam.topic.topicName = "Test_Topic";
@@ -268,7 +266,7 @@ int main(int argc, char** argv)
 										loc.address[15] = 5;
 										Rparam.multicastLocatorList.push_back(loc);
 		MySubListener mylisten;
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
+		Subscriber* sub = RTPSDomain::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
 		p->stopParticipantAnnouncement(); //Only for tests to see more clearly the communication
@@ -297,7 +295,7 @@ int main(int argc, char** argv)
 	cout << "Enter numer to stop "<< endl;
 	int n;
 	cin >> n;
-	DomainParticipant::stopAll();
+	RTPSDomain::stopAll();
 
 
 	return 0;

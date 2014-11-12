@@ -20,7 +20,7 @@
 HelloWorldType::HelloWorldType() {
 	m_topicDataTypeName = "HelloWorldType";
 	HelloWorld example;
-	m_typeSize = example.getMaxCdrSerializedSize(0);
+	m_typeSize = (uint32_t)example.getMaxCdrSerializedSize(0);
 	m_isGetKeyDefined = false;
 
 }
@@ -38,7 +38,7 @@ bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
 	eprosima::fastcdr::Cdr ser(fastbuffer);
 	//serialize the object:
 	hw->serialize(ser);
-	payload->length = ser.getSerializedDataLength();
+	payload->length = (uint16_t)ser.getSerializedDataLength();
 	return true;
 }
 
