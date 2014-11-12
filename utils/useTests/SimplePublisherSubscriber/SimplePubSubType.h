@@ -20,7 +20,7 @@
 
 #include "Simple.h"
 
-class SimplePubSubType : public DDSTopicDataType {
+class SimplePubSubType : public TopicDataType {
 public:
 	SimplePubSubType();
 	virtual ~SimplePubSubType();

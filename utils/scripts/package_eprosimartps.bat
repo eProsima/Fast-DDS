@@ -24,7 +24,7 @@ cd "..\.."
 :: Compile CDR library.
 cd "thirdparty\fastcdr"
 cd "utils\scripts"
-call build_cdr.bat
+::call build_cdr.bat
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\..\..\"
@@ -35,7 +35,7 @@ if not %errorstatus%==0 goto :exit
 
 :: Compile RTPS for target.
 cd "utils\scripts"
-call build_ertps.bat
+::call build_ertps.bat
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\.."

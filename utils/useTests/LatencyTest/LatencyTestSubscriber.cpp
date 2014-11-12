@@ -59,7 +59,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;
 	PParam.name = "participant_sub";
-	mp_participant = DomainParticipant::createParticipant(PParam);
+	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant == NULL)
 		return false;
 
@@ -73,7 +73,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datapub = DomainParticipant::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
+	mp_datapub = RTPSDomain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == NULL)
 		return false;
 	//DATA SUBSCRIBER
@@ -89,7 +89,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datasub = DomainParticipant::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
+	mp_datasub = RTPSDomain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == NULL)
 		return false;
 	//COMMAND PUBLISHER
@@ -101,7 +101,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubCommandParam.topic.historyQos.depth = 100;
 	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
-	mp_commandpub = DomainParticipant::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
+	mp_commandpub = RTPSDomain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == NULL)
 		return false;
 	SubscriberAttributes SubCommandParam;
@@ -113,7 +113,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_commandsub = DomainParticipant::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
+	mp_commandsub = RTPSDomain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
 	if(mp_commandsub == NULL)
 		return false;
 	return true;

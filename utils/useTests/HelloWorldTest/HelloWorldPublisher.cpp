@@ -30,7 +30,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 		PParam.sendSocketBufferSize = 8712;
 		PParam.listenSocketBufferSize = 17424;
 	PParam.name = "participant1";
-	mp_participant = DomainParticipant::createParticipant(PParam);
+	mp_participant = RTPSDomain::createParticipant(PParam);
 
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
@@ -43,7 +43,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 	Wparam.times.heartbeatPeriod.seconds = 2;
 	Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_publisher = DomainParticipant::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	mp_publisher = RTPSDomain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
