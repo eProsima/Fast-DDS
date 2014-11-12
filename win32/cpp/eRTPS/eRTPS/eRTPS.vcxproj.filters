@@ -16,9 +16,6 @@
     <Filter Include="Header Files\eprosimartps">
       <UniqueIdentifier>{789a2c91-9f6e-40f0-9d67-f8c2e15803c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\pubsub">
-      <UniqueIdentifier>{b6d0b317-b894-4146-8740-5f4813f71f56}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\qos">
       <UniqueIdentifier>{962fedd8-39e5-47b9-8c36-c15b508ec474}</UniqueIdentifier>
     </Filter>
@@ -118,11 +115,14 @@
     <Filter Include="Source Files\builtin\liveliness\timedevent">
       <UniqueIdentifier>{590ced6a-6830-4015-8be9-c31eb895353e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\pubsub">
+      <UniqueIdentifier>{edceaed4-0018-4c0f-904c-48a7cb3d0fe3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\eprosimartps\pubsub">
-      <UniqueIdentifier>{95ab47af-4927-4d2d-9c2f-732397c3281f}</UniqueIdentifier>
+      <UniqueIdentifier>{51fc8fce-070d-48fa-a579-933e4c337924}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\eprosimartps\pubsub\attributes">
-      <UniqueIdentifier>{cd65f9c9-cb9f-4027-9053-7a4801a32ea9}</UniqueIdentifier>
+      <UniqueIdentifier>{4604a70b-119f-4b80-864f-c52965a43429}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -384,6 +384,9 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\eprosima_stl_exports.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosPolicies.h">
+      <Filter>Header Files\eprosimartps\qos</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\MatchingInfo.h">
       <Filter>Header Files\eprosimartps\pubsub</Filter>
     </ClInclude>
@@ -428,9 +431,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\TopicAttributes.h">
       <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosPolicies.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -611,6 +611,9 @@
     <ClCompile Include="..\..\..\..\src\cpp\utils\md5.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\QosPolicies.cpp">
+      <Filter>Source Files\qos</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\pubsub\Publisher.cpp">
       <Filter>Source Files\pubsub</Filter>
     </ClCompile>
@@ -628,9 +631,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\pubsub\TopicDataType.cpp">
       <Filter>Source Files\pubsub</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\qos\QosPolicies.cpp">
-      <Filter>Source Files\qos</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
