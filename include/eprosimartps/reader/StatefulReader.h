@@ -30,7 +30,7 @@ public:
 	//StatefulReader();
 	virtual ~StatefulReader();
 	StatefulReader(const SubscriberAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype);
 
 
 	/**

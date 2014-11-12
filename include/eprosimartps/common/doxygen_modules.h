@@ -27,19 +27,19 @@
  * @ingroup EPROSIMARTPSAPIREFERENCE
  * @brief RTPS API
  * This is an implementation of the RTPS communication standard defined by the OMG.
- * The DDS - Public API provided is provided to the users to create applications and to manage them.
+ * The PUBLISHER_SUBSCRIBER - Public API provided is provided to the users to create applications and to manage them.
  */
 
 #endif
 /*!
- * @defgroup DDSMODULE DDS - Public API
+ * @defgroup PUBSUBMODULE Public API
  * @ingroup EPROSIMARTPSAPIREFERENCE
- * @brief DDS Public API
+ * @brief PUBLISHER_SUBSCRIBER Public API
  * This Module contains the Public API for this library.
  */
 
 /** @defgroup ATTRIBUTESMODULE Attributes Module.
- * @ingroup DDSMODULE
+ * @ingroup PUBSUBMODULE
  * @brief Attributes class used to define the public entities that the user should use to control this library.
  */
 

@@ -14,12 +14,12 @@
 #ifndef EDPSIMPLELISTENER_H_
 #define EDPSIMPLELISTENER_H_
 
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 
 #include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/reader/WriterProxyData.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

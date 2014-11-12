@@ -44,7 +44,7 @@ StatefulWriter::~StatefulWriter()
 	}
 }
 
-StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
 												RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
 												m_PubTimes(param.times),
 												mp_periodicHB(NULL)
@@ -84,7 +84,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 		{
 			ChangeForReader_t changeForReader;
 			changeForReader.setChange(*cit);
-			changeForReader.is_relevant = rp->dds_is_relevant(*cit);
+			changeForReader.is_relevant = rp->pubsub_is_relevant(*cit);
 
 			if(m_pushMode)
 				changeForReader.status = UNSENT;
@@ -188,7 +188,7 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 				changeForReader.status = UNSENT;
 			else
 				changeForReader.status = UNACKNOWLEDGED;
-			changeForReader.is_relevant = (*it)->dds_is_relevant(change);
+			changeForReader.is_relevant = (*it)->pubsub_is_relevant(change);
 			(*it)->m_changesForReader.push_back(changeForReader);
 		}
 		unsent_changes_not_empty();

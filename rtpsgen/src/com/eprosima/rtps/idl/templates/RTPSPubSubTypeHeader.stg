@@ -11,7 +11,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.h"], description=["Thi
 
 #include "$ctx.filename$.h"
 
-class $ctx.filename$PubSubType : public DDSTopicDataType {
+class $ctx.filename$PubSubType : public TopicDataType {
 public:
 	$ctx.filename$PubSubType();
 	virtual ~$ctx.filename$PubSubType();

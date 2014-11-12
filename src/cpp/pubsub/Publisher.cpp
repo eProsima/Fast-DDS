@@ -11,9 +11,9 @@
  *
  */
 
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
-#include "eprosimartps/dds/PublisherListener.h"
+#include "eprosimartps/pubsub/Publisher.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
+#include "eprosimartps/pubsub/PublisherListener.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/writer/ReaderLocator.h"
 #include "eprosimartps/writer/StatelessWriter.h"
@@ -26,9 +26,9 @@
 #include "eprosimartps/Participant.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
-PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType*pdatatype,PublisherAttributes& att):
+PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
 								mp_Writer(Win),
 								mp_type(pdatatype),
 								m_attributes(att),
@@ -185,7 +185,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 }
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

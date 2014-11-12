@@ -20,13 +20,13 @@
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
+#include "eprosimartps/pubsub/attributes/SubscriberAttributes.h"
 
 #include "eprosimartps/common/CacheChange.h"
 #include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
 #include "eprosimartps/reader/timedevent/WriterProxyLiveliness.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

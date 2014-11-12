@@ -11,12 +11,12 @@
  *
  */
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
 #include "eprosimartps/CDRMessage.h"
 #include "eprosimartps/utils/RTPSLog.h"
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 
@@ -227,7 +227,7 @@ bool TransportPriorityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

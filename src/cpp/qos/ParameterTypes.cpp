@@ -16,7 +16,7 @@
 #include "eprosimartps/CDRMessage.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 // PARAMETER
@@ -189,7 +189,7 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 }
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

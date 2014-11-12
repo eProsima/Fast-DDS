@@ -14,11 +14,11 @@
 #ifndef PDPSIMPLETOPICDATATYPE_H_
 #define PDPSIMPLETOPICDATATYPE_H_
 
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -26,7 +26,7 @@ namespace rtps {
  * Class PDPSimpleTopicDataType used to deserialize the key from unregistering or disposing messages received in this topic.
  * @ingroup DISCOVERYMODULE
  */
-class PDPSimpleTopicDataType : public DDSTopicDataType {
+class PDPSimpleTopicDataType : public TopicDataType {
 public:
 	PDPSimpleTopicDataType();
 	virtual ~PDPSimpleTopicDataType();

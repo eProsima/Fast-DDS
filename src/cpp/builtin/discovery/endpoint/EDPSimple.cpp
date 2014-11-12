@@ -114,7 +114,7 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.userDefinedId = -1;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		created &=this->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
-				true,STATEFUL,(DDSTopicDataType*)&m_subReaderTopicDataType,(SubscriberListener*)&m_listeners.m_subReaderListener,c_EntityId_SEDPSubReader);
+				true,STATEFUL,(TopicDataType*)&m_subReaderTopicDataType,(SubscriberListener*)&m_listeners.m_subReaderListener,c_EntityId_SEDPSubReader);
 		if(created)
 		{
 			mp_SubReader = dynamic_cast<StatefulReader*>(raux);
@@ -141,7 +141,7 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 		created &=this->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
-				true,STATEFUL,(DDSTopicDataType*)&m_pubReaderTopicDataType,(SubscriberListener*)&m_listeners.m_pubReaderListener,c_EntityId_SEDPPubReader);
+				true,STATEFUL,(TopicDataType*)&m_pubReaderTopicDataType,(SubscriberListener*)&m_listeners.m_pubReaderListener,c_EntityId_SEDPPubReader);
 		if(created)
 		{
 			mp_PubReader = dynamic_cast<StatefulReader*>(raux);

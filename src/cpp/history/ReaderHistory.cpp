@@ -19,9 +19,9 @@
 
 #include "eprosimartps/reader/RTPSReader.h"
 
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

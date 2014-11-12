@@ -14,7 +14,7 @@
 #define TOPICPARAMETERS_H_
 
 #include <string>
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
@@ -30,7 +30,7 @@ typedef enum TopicKind_t{
 
 using namespace rtps;
 
-namespace dds{
+namespace pubsub{
 
 /**
  * Class TopicAttributes, used by the user to define the attributes of the topic associated with a Publisher or Subscriber.
