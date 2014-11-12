@@ -17,7 +17,7 @@
 
 #include "eprosimartps/reader/RTPSReader.h"
 
-#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
+#include "eprosimartps/pubsub/attributes/SubscriberAttributes.h"
 
 
 
@@ -32,7 +32,7 @@ class StatelessReader: public RTPSReader {
 public:
 	virtual ~StatelessReader();
 	StatelessReader(const SubscriberAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype);
 
 
 	/**

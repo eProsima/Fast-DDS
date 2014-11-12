@@ -13,10 +13,10 @@
 
 #ifndef PDPSIMPLELISTENER_H_
 #define PDPSIMPLELISTENER_H_
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/ParticipantProxyData.h"
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

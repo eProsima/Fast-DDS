@@ -77,17 +77,17 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceEvent.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/dds/DDSTopicDataType.cpp \
-		  $(BASEDIR)/src/cpp/dds/Publisher.cpp \
-		  $(BASEDIR)/src/cpp/dds/PublisherListener.cpp \
-		  $(BASEDIR)/src/cpp/dds/Subscriber.cpp \
-		  $(BASEDIR)/src/cpp/dds/SubscriberListener.cpp \
-		  $(BASEDIR)/src/cpp/dds/DomainParticipant.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/TopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/Publisher.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/PublisherListener.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/Subscriber.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/SubscriberListener.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/RTPSDomain.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/qos/ParameterList.cpp \
 		  $(BASEDIR)/src/cpp/qos/ParameterTypes.cpp \
 		  $(BASEDIR)/src/cpp/qos/QosList.cpp \
-		  $(BASEDIR)/src/cpp/qos/DDSQosPolicies.cpp \
+		  $(BASEDIR)/src/cpp/qos/QosPolicies.cpp \
 		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
 		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
 		  \

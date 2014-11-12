@@ -29,7 +29,7 @@ struct CDRMessage_t;
 }
 
 
-namespace dds {
+namespace pubsub {
 
 
 
@@ -286,7 +286,7 @@ public:
 
 #endif
 
-} //end of namespace dds
+} //end of namespace pubsub
 } //end of namespace eprosima
 
 

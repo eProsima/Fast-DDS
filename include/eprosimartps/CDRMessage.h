@@ -18,7 +18,7 @@
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/qos/ParameterTypes.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

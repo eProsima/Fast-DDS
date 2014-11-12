@@ -13,11 +13,11 @@
 
 #ifndef WRITERPROXYDATA_H_
 #define WRITERPROXYDATA_H_
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/qos/WriterQos.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

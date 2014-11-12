@@ -18,11 +18,11 @@
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
 #include "eprosimartps/qos/ReaderQos.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 class SubscriberTimes{
 public:

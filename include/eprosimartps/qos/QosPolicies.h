@@ -7,12 +7,12 @@
  *************************************************************************/
 
 /**
- * @file DDSQosPolicies.h
+ * @file QosPolicies.h
  *
 */
 
-#ifndef DDS_QOS_POLICIES_H_
-#define DDS_QOS_POLICIES_H_
+#ifndef QOS_POLICIES_H_
+#define QOS_POLICIES_H_
 
 #include <vector>
 #include "eprosimartps/common/types/common_types.h"
@@ -23,7 +23,7 @@ using namespace eprosima::rtps;
 
 
 namespace eprosima{
-namespace dds{
+namespace pubsub{
 
 /**
  * QosPolicy is a base class for all the different QoS defined to the Writers and Readers.
@@ -285,4 +285,4 @@ public:
 
 
 
-#endif /* DDS_QOS_POLICIES_H_ */
+#endif /* QOS_POLICIES_H_ */

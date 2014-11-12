@@ -7,35 +7,28 @@
  *************************************************************************/
 
 /**
- * @file PublisherListener.cpp
+ * @file RTPSTopicDataType.cpp
  *
-*/
+ */
 
-#include "eprosimartps/dds/PublisherListener.h"
-
+#include "eprosimartps/pubsub/TopicDataType.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
-PublisherListener::PublisherListener() {
-	// TODO Auto-generated constructor stub
+TopicDataType::TopicDataType() {
+	this->m_typeSize = 0;
+	this->m_isGetKeyDefined = false;
+}
+
+TopicDataType::~TopicDataType() {
 
 }
 
-PublisherListener::~PublisherListener() {
-	// TODO Auto-generated destructor stub
+
+bool TopicDataType::getKey(void* data, InstanceHandle_t* ihandle) {
+	return false;
 }
-
-void PublisherListener::onPublicationMatched(MatchingInfo info)
-{
-
-}
-
-void PublisherListener::onHistoryFull()
-{
-
-}
-
 
 } /* namespace rtps */
 } /* namespace eprosima */

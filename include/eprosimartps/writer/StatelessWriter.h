@@ -17,9 +17,9 @@
 #include "eprosimartps/common/types/Time_t.h"
 #include "eprosimartps/writer/RTPSWriter.h"
 #include "eprosimartps/writer/ReaderLocator.h"
-#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -36,7 +36,7 @@ public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
 	StatelessWriter(const PublisherAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype);
+			const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype);
 
 	/**
 	 * Add a matched reader.

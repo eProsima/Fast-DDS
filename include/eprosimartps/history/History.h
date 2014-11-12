@@ -25,8 +25,8 @@ using namespace boost;
 #include "eprosimartps/common/types/SequenceNumber.h"
 #include "eprosimartps/common/types/Guid.h"
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
-using namespace eprosima::dds;
+#include "eprosimartps/qos/QosPolicies.h"
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

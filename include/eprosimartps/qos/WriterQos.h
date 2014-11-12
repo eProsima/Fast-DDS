@@ -14,10 +14,10 @@
 #ifndef WRITERQOS_H_
 #define WRITERQOS_H_
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 /**
@@ -78,7 +78,7 @@ public:
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* WRITERQOS_H_ */

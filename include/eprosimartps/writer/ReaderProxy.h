@@ -24,7 +24,7 @@
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
 #include "eprosimartps/common/CacheChange.h"
 
@@ -32,9 +32,9 @@
 #include "eprosimartps/writer/timedevent/NackResponseDelay.h"
 #include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -147,8 +147,8 @@ public:
 	uint32_t m_lastAcknackCount;
 
 
-	//TODOG DDSFILTER
-	bool dds_is_relevant(CacheChange_t* change);
+	//TODOG FILTER
+	bool pubsub_is_relevant(CacheChange_t* change);
 
 
 

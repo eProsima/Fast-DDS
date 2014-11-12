@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/pubsub/RTPSDomain.h"
 #include "eprosimartps/writer/StatelessWriter.h"
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/StatefulReader.h"
@@ -72,10 +72,10 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-			lit->port=DomainParticipant::getPortBase()+
-				DomainParticipant::getDomainIdGain()*PParam.builtin.domainId+
-				DomainParticipant::getOffsetd3()+
-				DomainParticipant::getParticipantIdGain()*ID;
+			lit->port=RTPSDomain::getPortBase()+
+					RTPSDomain::getDomainIdGain()*PParam.builtin.domainId+
+					RTPSDomain::getOffsetd3()+
+					RTPSDomain::getParticipantIdGain()*ID;
 			m_defaultUnicastLocatorList.push_back(*lit);
 			ss << *lit << ";";
 		}
@@ -161,7 +161,7 @@ bool ParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) 
 
 bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		PublisherAttributes& param, uint32_t payload_size, bool isBuiltin,
-		StateKind_t kind, DDSTopicDataType* ptype, PublisherListener* inlisten,
+		StateKind_t kind, TopicDataType* ptype, PublisherListener* inlisten,
 		const EntityId_t& entityId)
 {
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
@@ -235,7 +235,7 @@ static EntityId_t TrustedWriter(const EntityId_t& reader)
 
 bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
-		StateKind_t kind, DDSTopicDataType* ptype, SubscriberListener* inlisten,
+		StateKind_t kind, TopicDataType* ptype, SubscriberListener* inlisten,
 		const EntityId_t& entityId)
 {
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";

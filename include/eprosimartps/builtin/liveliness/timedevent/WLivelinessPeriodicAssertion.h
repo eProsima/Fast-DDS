@@ -14,11 +14,11 @@
 #ifndef WLIVELINESSPERIODICASSERTION_H_
 #define WLIVELINESSPERIODICASSERTION_H_
 
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 #include "eprosimartps/utils/TimedEvent.h"
 #include "eprosimartps/qos/ParameterList.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

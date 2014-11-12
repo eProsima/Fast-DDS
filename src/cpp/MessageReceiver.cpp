@@ -24,12 +24,12 @@
 #include "eprosimartps/writer/ReaderProxyData.h"
 #include "eprosimartps/reader/WriterProxyData.h"
 
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 
 #include "eprosimartps/Participant.h"
 #include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

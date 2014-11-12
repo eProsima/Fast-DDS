@@ -19,7 +19,7 @@
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
 
-#include "eprosimartps/dds/attributes/PublisherAttributes.h"
+#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
 namespace eprosima {
 
@@ -32,12 +32,12 @@ class ParticipantImpl;
 using namespace rtps;
 
 /**
- * DDS namespace. Contains the public API to interact with the DDS-RTPS protocol.
- * @ingroup DDSMODULE
+ * PUBSUB namespace. Contains the public API to interact with the RTPS protocol.
+ * @ingroup PUBSUBMODULE
  */
-namespace dds {
+namespace pubsub {
 
-class DDSTopicDataType;
+class TopicDataType;
 class PublisherListener;
 
 
@@ -51,7 +51,7 @@ public:
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainParticipant static function.
 	 */
-	PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,DDSTopicDataType* ptype,PublisherAttributes& att);
+	PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,TopicDataType* ptype,PublisherAttributes& att);
 
 	virtual ~PublisherImpl();
 
@@ -62,7 +62,7 @@ public:
 	 * @param Data Pointer to the data
 	 * @return True if correct
 	 * @par Calling example:
-	 * @snippet dds_example.cpp ex_PublisherWrite
+	 * @snippet pubsub_example.cpp ex_PublisherWrite
 	 */
 	bool write(void*Data);
 
@@ -131,8 +131,8 @@ public:
 private:
 	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_Writer;
-	//! Pointer to the DDSTopicDataType object.
-	DDSTopicDataType* mp_type;
+	//! Pointer to the TopicDataType object.
+	TopicDataType* mp_type;
 
 	//!Attributes of the Publisher
 	PublisherAttributes m_attributes;
@@ -145,8 +145,8 @@ private:
 /**
  * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
  * DomainParticipant class should be used to correctly initialize this element.
- * @ingroup DDSMODULE
- * @snippet dds_example.cpp ex_Publisher
+ * @ingroup PUBSUBMODULE
+ * @snippet pubsub_example.cpp ex_Publisher
  */
 class RTPS_DllAPI Publisher{
 public:
@@ -163,7 +163,7 @@ public:
 	 * @param Data Pointer to the data
 	 * @return True if correct
 	 * @par Calling example:
-	 * @snippet dds_example.cpp ex_PublisherWrite
+	 * @snippet pubsub_example.cpp ex_PublisherWrite
 	 */
 	bool write(void*Data)
 	{
@@ -256,7 +256,7 @@ private:
 };
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* PUBLISHER_H_ */

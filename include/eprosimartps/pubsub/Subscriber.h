@@ -17,7 +17,7 @@
 
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/dds/attributes/SubscriberAttributes.h"
+#include "eprosimartps/pubsub/attributes/SubscriberAttributes.h"
 
 namespace eprosima {
 
@@ -28,9 +28,9 @@ class ParticipantImpl;
 
 using namespace rtps;
 
-namespace dds {
+namespace pubsub {
 
-class DDSTopicDataType;
+class TopicDataType;
 class SubscriberListener;
 class SampleInfo_t;
 
@@ -41,7 +41,7 @@ class SampleInfo_t;
  */
 class SubscriberImpl {
 public:
-	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,DDSTopicDataType* ptype,SubscriberAttributes& attr);
+	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,TopicDataType* ptype,SubscriberAttributes& attr);
 	virtual ~SubscriberImpl();
 
 	/**
@@ -100,8 +100,8 @@ public:
 private:
 	//!Pointer to associated RTPSReader
 	RTPSReader* mp_Reader;
-	//! Pointer to the DDSTopicDataType object.
-	DDSTopicDataType* mp_type;
+	//! Pointer to the TopicDataType object.
+	TopicDataType* mp_type;
 	//!Attributes of the Subscriber
 	SubscriberAttributes m_attributes;
 	//!Pointer to the participant
@@ -112,8 +112,8 @@ private:
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
  * This class should not be instantiated directly. DomainParticipant class should be used to correctly create this element.
- * @ingroup DDSMODULE
- * @snippet dds_example.cpp ex_Subscriber
+ * @ingroup PUBSUBMODULE
+ * @snippet pubsub_example.cpp ex_Subscriber
  */
 class RTPS_DllAPI Subscriber
 {
@@ -199,7 +199,7 @@ private:
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* SUBSCRIBER_H_ */

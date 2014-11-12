@@ -14,10 +14,10 @@
 #ifndef EDPSIMPLETOPICDATATYPE_H_
 #define EDPSIMPLETOPICDATATYPE_H_
 
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -26,7 +26,7 @@ namespace rtps {
  * Class EDPSimpleTopicDataType, used by the history to extract the key in case the data comes serialized and not as inlineQos.
  * @ingroup DISCOVERYMODULE
  */
-class EDPSimpleTopicDataType: public DDSTopicDataType {
+class EDPSimpleTopicDataType: public TopicDataType {
 public:
 	EDPSimpleTopicDataType();
 	virtual ~EDPSimpleTopicDataType();

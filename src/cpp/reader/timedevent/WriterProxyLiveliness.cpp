@@ -18,7 +18,7 @@
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 
 
 

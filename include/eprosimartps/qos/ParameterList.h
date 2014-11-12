@@ -20,7 +20,7 @@
 #include "eprosimartps/common/CacheChange.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 /**
  * ParameterList_t class, used to store multiple parameters as a vector of pointers to the base class.
@@ -85,7 +85,7 @@ public:
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* PARAMLISTT_H_ */

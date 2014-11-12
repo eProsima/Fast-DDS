@@ -27,16 +27,16 @@
 #include "eprosimartps/history/ReaderHistory.h"
 #include "eprosimartps/writer/RTPSMessageGroup.h"
 #include "eprosimartps/qos/ReaderQos.h"
-#include "eprosimartps/dds/Subscriber.h"
+#include "eprosimartps/pubsub/Subscriber.h"
 #include "eprosimartps/utils/Semaphore.h"
 
 
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 
-namespace dds{
+namespace pubsub{
 
 class SubscriberListener;
 class SampleInfo_t;
@@ -54,7 +54,7 @@ class WriterProxyData;
 class RTPSReader : public Endpoint{
 
 public:
-	RTPSReader(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,
+	RTPSReader(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,TopicDataType* ptype,
 			StateKind_t state = STATELESS,
 			int16_t userDefinedId=-1,uint32_t payload_size = 500);
 	virtual ~RTPSReader();

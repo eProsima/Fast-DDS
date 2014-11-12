@@ -11,9 +11,9 @@
  *
  */
 
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 namespace eprosima{
-namespace dds{
+namespace pubsub{
 
 SubscriberListener::SubscriberListener()
 {

@@ -17,13 +17,13 @@
 
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Time_t.h"
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
 #include "eprosimartps/qos/WriterQos.h"
 
 using namespace eprosima::rtps;
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 class PublisherTimes{

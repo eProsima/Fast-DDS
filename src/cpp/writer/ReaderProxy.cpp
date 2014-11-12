@@ -207,7 +207,7 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 	return true;
 }
 
-bool ReaderProxy::dds_is_relevant(CacheChange_t* change)
+bool ReaderProxy::pubsub_is_relevant(CacheChange_t* change)
 {
 	return true;
 }
