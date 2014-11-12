@@ -12,12 +12,12 @@
  */
 
 #include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
 
@@ -498,7 +498,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 	return paramlist_byte_size;
 }
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

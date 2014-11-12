@@ -24,7 +24,7 @@ namespace rtps {
 
 
 
-StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
 				RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
 {
 	m_pushMode = true;//TODOG, support pushmode false in best effort

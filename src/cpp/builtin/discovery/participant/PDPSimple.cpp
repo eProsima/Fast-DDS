@@ -16,7 +16,7 @@
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 #include "eprosimartps/builtin/liveliness/WLP.h"
 
-#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/pubsub/RTPSDomain.h"
 
 
 #include "eprosimartps/Participant.h"
@@ -32,7 +32,7 @@
 #include "eprosimartps/utils/eClock.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -286,7 +286,7 @@ bool PDPSimple::createSPDPEndpoints()
 	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	RTPSReader* rout;
 	if(mp_participant->createReader(&rout,Rparam,DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
-			true,STATELESS,(DDSTopicDataType*)&m_topicDataType,(SubscriberListener*)&this->m_listener,c_EntityId_SPDPReader))
+			true,STATELESS,(TopicDataType*)&m_topicDataType,(SubscriberListener*)&this->m_listener,c_EntityId_SPDPReader))
 	{
 		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
 		//mp_SPDPReader->setListener();

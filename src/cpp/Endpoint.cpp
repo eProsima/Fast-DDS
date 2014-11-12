@@ -19,7 +19,7 @@ namespace rtps {
 Endpoint::Endpoint(GuidPrefix_t guid,
 					EntityId_t entityId,
 					TopicAttributes topic,
-					DDSTopicDataType* ptype,
+					TopicDataType* ptype,
 					StateKind_t state,
 					EndpointKind_t end,
 					int16_t userDefinedId):

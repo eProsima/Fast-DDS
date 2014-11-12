@@ -15,22 +15,21 @@
 #include "eprosimartps/common/types/SequenceNumber.h"
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
 
 
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-//using namespace eprosima::dds;
 
 namespace eprosima {
 
-namespace dds{
+namespace pubsub{
 class ParameterList_t;
 
 }
-using namespace dds;
+using namespace pubsub;
 
 namespace rtps{
 

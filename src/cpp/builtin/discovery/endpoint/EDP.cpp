@@ -31,10 +31,10 @@
 #include "eprosimartps/utils/StringMatching.h"
 
 
-#include "eprosimartps/dds/PublisherListener.h"
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/PublisherListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {

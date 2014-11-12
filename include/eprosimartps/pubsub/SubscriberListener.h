@@ -10,18 +10,18 @@
  * @file SubscriberListener.h
  */
 
-#ifndef RTPSLISTENER_H_
-#define RTPSLISTENER_H_
+#ifndef SUBLISTENER_H_
+#define SUBLISTENER_H_
 
 #include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/dds/MatchingInfo.h"
+#include "eprosimartps/pubsub/MatchingInfo.h"
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
- * @ingroup DDSMODULE
- * @snippet dds_example.cpp ex_SubscriberListener
+ * @ingroup PUBSUBMODULE
+ * @snippet pubsub_example.cpp ex_SubscriberListener
  */
 class RTPS_DllAPI SubscriberListener {
 public:
@@ -41,7 +41,7 @@ public:
 	virtual void onSubscriptionMatched(MatchingInfo info);
 };
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
-#endif /* DDSLISTENER_H_ */
+#endif /* LISTENER_H_ */

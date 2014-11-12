@@ -14,7 +14,7 @@
 #define SAMPLEINFO_H_
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 /**
  * Information provided along with a sample when reading data from a Subscriber.
@@ -37,7 +37,7 @@ public:
 	InstanceHandle_t iHandle;
 };
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* SAMPLEINFO_H_ */

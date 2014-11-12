@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file DDSTopicDataType.h	
+ * @file TopicDataType.h
  */
 
-#ifndef DDSTOPICDATATYPE_H_
-#define DDSTOPICDATATYPE_H_
+#ifndef TOPICDATATYPE_H_
+#define TOPICDATATYPE_H_
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/SerializedPayload.h"
@@ -25,19 +25,19 @@ using namespace eprosima::rtps;
 
 
 namespace eprosima {
-namespace dds {
+namespace pubsub {
 
 
 /**
- * Class DDSTopicDataType used to provide the DomainParticipant with the methods to serialize, deserialize and get the key of a specific data type.
+ * Class TopicDataType used to provide the DomainParticipant with the methods to serialize, deserialize and get the key of a specific data type.
  * The user should created a class that inherits from this one, where Serialize and deserialize methods MUST be implemented.
- * @ingroup DDSMODULE
- * @snippet dds_example.cpp ex_DDSTopicDataType
+ * @ingroup MODULE
+ * @snippet pubsub_example.cpp ex_TopicDataType
  */
-class RTPS_DllAPI DDSTopicDataType {
+class RTPS_DllAPI TopicDataType {
 public:
-	DDSTopicDataType();
-	virtual ~DDSTopicDataType();
+	TopicDataType();
+	virtual ~TopicDataType();
 	/**
 	 * Serialize method, it should be implemented by the user, since it is abstract.
 	 * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
@@ -71,7 +71,7 @@ public:
 
 };
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 #endif /* RTPSTOPICDATATYPE_H_ */

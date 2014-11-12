@@ -26,7 +26,7 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 
-#include "eprosimartps/dds/attributes/all_attributes.h"
+#include "eprosimartps/pubsub/attributes/all_attributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ListenResource.h"
@@ -45,10 +45,10 @@
 
 namespace eprosima {
 
-namespace dds
+namespace pubsub
 {
-class DomainParticipant;
-class DDSTopicDataType;
+class RTPSDomain;
+class TopicDataType;
 class PublisherListener;
 class SubscriberListener;
 class ParticipantListener;
@@ -56,7 +56,7 @@ class ParticipantListener;
 
 }
 
-using namespace dds;
+using namespace pubsub;
 
 namespace rtps {
 
@@ -91,13 +91,13 @@ public:
 	 * @param payload_size Maximum payload size.
 	 * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
 	 * @param kind STATEFUL or STATELESS.
-	 * @param ptype Pointer to the DDSTOpicDataType object (optional).
+	 * @param ptype Pointer to the TOpicDataType object (optional).
 	 * @param slisten Pointer to the SubscriberListener object (optional).
 	 * @param entityId EntityId assigned to the Reader.
 	 * @return True if the Reader was correctly created.
 	 */
 	bool createReader(RTPSReader** Reader,SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
-			DDSTopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+			TopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Create a Writer in this Participant.
 	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
@@ -105,13 +105,13 @@ public:
 	 * @param payload_size Maximum payload size.
 	 * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
 	 * @param kind STATELESS or STATEFUL
-	 * @param ptype Pointer to the DDSTOpicDataType object (optional).
+	 * @param ptype Pointer to the TOpicDataType object (optional).
 	 * @param plisten Pointer to the PublisherListener object (optional).
 	 * @param entityId EntityId assigned to the Writer.
 	 * @return True if the Writer was correctly created.
 	 */
 	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
-				DDSTopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+				TopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 	/**
 	 * Register a writer in the builtin protocols.
 	 * @param Writer Pointer to the RTPSWriter to register.

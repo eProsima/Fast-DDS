@@ -14,10 +14,10 @@
 #include "eprosimartps/reader/StatelessReader.h"
 #include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/dds/SampleInfo.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/SampleInfo.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -30,7 +30,7 @@ StatelessReader::~StatelessReader() {
 }
 
 StatelessReader::StatelessReader(const SubscriberAttributes& param,
-		const GuidPrefix_t&guidP, const EntityId_t& entId,DDSTopicDataType* ptype):
+		const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
 						RTPSReader(guidP,entId,param.topic,ptype,STATELESS,
 								param.userDefinedId,param.payloadMaxSize)
 {

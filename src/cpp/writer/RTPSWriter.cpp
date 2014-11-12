@@ -14,9 +14,9 @@
 #include "eprosimartps/writer/RTPSWriter.h"
 
 #include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/dds/Publisher.h"
-#include "eprosimartps/dds/PublisherListener.h"
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/pubsub/Publisher.h"
+#include "eprosimartps/pubsub/PublisherListener.h"
+#include "eprosimartps/pubsub/TopicDataType.h"
 #include "eprosimartps/qos/ParameterList.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
@@ -26,7 +26,7 @@ namespace eprosima {
 namespace rtps {
 
 
-RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,DDSTopicDataType* ptype,
+RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,TopicDataType* ptype,
 		StateKind_t state,
 		int16_t userDefinedId, uint32_t payload_size):
 									Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),

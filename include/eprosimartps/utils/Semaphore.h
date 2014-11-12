@@ -58,7 +58,7 @@ private:
 	boost::condition_variable m_condition;
 };
 
-} /* namespace dds */
+}
 } /* namespace eprosima */
 
 #endif /* SEMAPHORE_H_ */

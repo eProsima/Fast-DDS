@@ -28,7 +28,7 @@ using namespace boost::posix_time;
 
 
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps{

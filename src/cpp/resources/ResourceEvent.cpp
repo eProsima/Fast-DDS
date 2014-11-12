@@ -55,5 +55,5 @@ void ResourceEvent::announce_thread()
 
 }
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */

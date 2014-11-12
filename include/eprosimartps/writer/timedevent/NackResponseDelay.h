@@ -39,7 +39,7 @@ public:
 	RTPSMessageGroup_t m_cdrmessages;
 };
 
-} /* namespace dds */
+}
 } /* namespace eprosima */
 
 #endif /* NACKRESPONSEDELAY_H_ */

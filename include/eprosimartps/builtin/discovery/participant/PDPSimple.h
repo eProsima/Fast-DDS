@@ -16,7 +16,7 @@
 
 #include "eprosimartps/builtin/discovery/participant/PDPSimpleListener.h"
 #include "eprosimartps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
-#include "eprosimartps/dds/attributes/ParticipantAttributes.h"
+#include "eprosimartps/pubsub/attributes/ParticipantAttributes.h"
 
 #include "eprosimartps/Endpoint.h"
 

@@ -26,8 +26,8 @@
 #include "eprosimartps/utils/eClock.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
-#include "eprosimartps/dds/ParticipantDiscoveryInfo.h"
-#include "eprosimartps/dds/ParticipantListener.h"
+#include "eprosimartps/pubsub/ParticipantDiscoveryInfo.h"
+#include "eprosimartps/pubsub/ParticipantListener.h"
 
 namespace eprosima {
 namespace rtps {

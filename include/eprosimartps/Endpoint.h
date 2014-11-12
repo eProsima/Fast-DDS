@@ -23,13 +23,13 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "eprosimartps/dds/attributes/TopicAttributes.h"
+#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 
-namespace dds{class DDSTopicDataType;}
+namespace pubsub{class TopicDataType;}
 
 namespace rtps {
 
@@ -58,7 +58,7 @@ typedef enum EndpointKind_t{
  */
 class Endpoint: public boost::basic_lockable_adapter<boost::recursive_mutex> {
 public:
-	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,DDSTopicDataType* ptype,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
+	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,TopicDataType* ptype,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
 	virtual ~Endpoint();
 
 
@@ -71,7 +71,7 @@ public:
 	//!Pointer to the participant this endpoint belongs to.
 	ResourceSend* mp_send_thr;
 	ResourceEvent* mp_event_thr;
-	DDSTopicDataType* mp_type;
+	TopicDataType* mp_type;
 
 
 	const EndpointKind_t getEndpointKind() const {

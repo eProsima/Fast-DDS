@@ -14,7 +14,7 @@
 
 errorstatus=0
 
-package()
+function package
 {
     
 	# Get the current version of eRTPS
@@ -26,8 +26,8 @@ package()
 	rm -rf output
 	EPROSIMA_TARGET="i86Linux2.6gcc"
 	COMP="g++"
-	#rm -rf lib/$EPROSIMA_TARGET
-	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
+	rm -rf lib/$EPROSIMA_TARGET
+	EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

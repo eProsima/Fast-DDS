@@ -14,14 +14,14 @@
 #ifndef WLPLISTENER_H_
 #define WLPLISTENER_H_
 
-#include "eprosimartps/dds/SubscriberListener.h"
+#include "eprosimartps/pubsub/SubscriberListener.h"
 #include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include "eprosimartps/qos/QosPolicies.h"
 #include "eprosimartps/common/types/InstanceHandle.h"
 #include "eprosimartps/qos/ParameterList.h"
 
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
