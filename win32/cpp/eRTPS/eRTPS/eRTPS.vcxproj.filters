@@ -429,50 +429,8 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\TopicAttributes.h">
       <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\all_attributes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\ParticipantAttributes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\PublisherAttributes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\SubscriberAttributes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\TopicAttributes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\ParticipantDiscoveryInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\ParticipantListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\Publisher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\PublisherListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSDomain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\SampleInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\Subscriber.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\SubscriberListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\TopicDataType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosPolicies.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\eprosimartps\qos</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -670,6 +628,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\pubsub\TopicDataType.cpp">
       <Filter>Source Files\pubsub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\qos\QosPolicies.cpp">
+      <Filter>Source Files\qos</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
