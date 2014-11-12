@@ -47,7 +47,7 @@ namespace eprosima {
 
 namespace pubsub
 {
-class DomainParticipant;
+class RTPSDomain;
 class TopicDataType;
 class PublisherListener;
 class SubscriberListener;
