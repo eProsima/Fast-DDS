@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export EPROSIMA_TARGET="x64Linux2.6gcc"
+export COMP="g++"
+make $1
