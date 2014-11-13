@@ -99,6 +99,10 @@ private slots:
 
     void on_tableEndpoint_clicked(const QModelIndex &index);
 
+    void on_MainWindow_destroyed();
+
+    void closeEvent(QCloseEvent* event);
+
 public slots:
 
     void on_actionStart_triggered();

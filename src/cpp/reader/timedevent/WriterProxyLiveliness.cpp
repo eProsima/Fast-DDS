@@ -25,6 +25,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "WriterProxyLiveliness";
+
 WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* wp,boost::posix_time::milliseconds interval):
 				TimedEvent(&wp->mp_SFR->mp_event_thr->io_service,interval),
 				mp_WP(wp)
@@ -40,14 +42,15 @@ WriterProxyLiveliness::~WriterProxyLiveliness()
 
 void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
 	
-		pDebugInfo(RTPS_MAGENTA<<"WriterProxyLiveliness: checking Writer: "<<mp_WP->m_data->m_guid<<RTPS_DEF<<endl;);
+		logInfo(RTPS_LIVELINESS,"Checking Writer: "<<mp_WP->m_data->m_guid,RTPS_MAGENTA);
 		if(!mp_WP->m_data->m_isAlive)
 		{
-			pWarning("WriterProxyLiveliness failed, leaseDuration was "<< this->getIntervalMsec().total_milliseconds()<< " ms"<< endl;);
+			logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMsec().total_milliseconds()<< " ms",RTPS_MAGENTA);
 			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_data))
 			{
 				if(mp_WP->mp_SFR->getListener()!=NULL)
@@ -62,12 +65,12 @@ void WriterProxyLiveliness::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("WriterProxyLiveliness aborted"<<endl);
+		logInfo(RTPS_LIVELINESS,"Aborted");
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pDebugInfo("WriterProxyLiveliness boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_LIVELINESS,"boost message: " <<ec.message());
 	}
 }
 

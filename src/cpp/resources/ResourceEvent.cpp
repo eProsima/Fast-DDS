@@ -19,6 +19,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "ResourceEvent";
+
 ResourceEvent::ResourceEvent(ParticipantImpl* p):
 		b_thread(NULL),
 		work(io_service),
@@ -28,7 +30,8 @@ ResourceEvent::ResourceEvent(ParticipantImpl* p):
 }
 
 ResourceEvent::~ResourceEvent() {
-	pWarning( "Removing event thread " << b_thread->get_id() << std::endl);
+	const char* const METHOD_NAME = "~ResourceEvent";
+	logWarning(RTPS_PARTICIPANT,"Removing event thread " << b_thread->get_id());
 	io_service.reset();
 	io_service.stop();
 	b_thread->join();
@@ -50,7 +53,8 @@ void ResourceEvent::init_thread()
 
 void ResourceEvent::announce_thread()
 {
-	pInfo(RTPS_BLUE<<"Thread: " << b_thread->get_id() << " created and waiting for tasks."<<RTPS_DEF<<endl);
+	const char* const METHOD_NAME = "announce_thread";
+	logInfo(RTPS_PARTICIPANT,"Thread: " << b_thread->get_id() << " created and waiting for tasks.");
 	mp_participantImpl->ResourceSemaphorePost();
 
 }

@@ -23,6 +23,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "EDPStaticXML";
+
 EDPStaticXML::EDPStaticXML() {
 	// TODO Auto-generated constructor stub
 
@@ -49,7 +51,8 @@ EDPStaticXML::~EDPStaticXML()
 
 bool EDPStaticXML::loadXMLFile(std::string& filename)
 {
-	pInfo(RTPS_B_CYAN<<"Loading XML file: "<<filename<<endl);
+	const char* const METHOD_NAME = "loadXMLFile";
+	logInfo(RTPS_EDP,"File: "<<filename,EPRO_CYAN);
 	// Create an empty property tree object
 	ptree pt;
 	// Load the XML file into the property tree. If reading fails
@@ -59,7 +62,7 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 	}
 	catch (std::exception &e)
 	{
-		pError("Error reading xml file: " << e.what() << endl);
+		logError(RTPS_EDP,"Error reading xml file ("<<filename<< "). Error: " << e.what());
 		return false;
 	}
 	BOOST_FOREACH(ptree::value_type& xml_participant ,pt.get_child("staticdiscovery"))
@@ -78,7 +81,7 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 					
 						if(!loadXMLReaderEndpoint(xml_participant_child,pdata))
 						{
-							pError("Reader Endpoint has error, ignoring"<<endl);
+							logError(RTPS_EDP,"Reader Endpoint has error, ignoring");
 						}
 				}
 				else if(xml_participant_child.first == "writer")
@@ -86,12 +89,12 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 					
 						if(!loadXMLWriterEndpoint(xml_participant_child,pdata))
 						{
-							pError("Writer Endpoint has error, ignoring"<<endl);
+							logError(RTPS_EDP,"Writer Endpoint has error, ignoring");
 						}
 				}
 				else
 				{
-					pError("Unknown XMK tag: " << xml_participant_child.first);
+					logError(RTPS_EDP,"Unknown XMK tag: " << xml_participant_child.first);
 				}
 			}
 			m_participants.push_back(pdata);
@@ -102,17 +105,18 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 
 bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata)
 {
+	const char* const METHOD_NAME = "loadXMLReaderEndpoint";
 	ReaderProxyData* rdata = new ReaderProxyData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
 		//cout << "READER ENDPOINT: " << xml_endpoint_child.first << endl;
 		if(xml_endpoint_child.first == "userId")
 		{
-			//cout << "USER ID FOUND"<<endl;
+			//cout << "USER ID FOUND";
 			int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_endpointIds.insert(id).second == false)
 			{
-				pError("Repeated or negative ID in XML file"<<endl);
+				logError(RTPS_EDP,"Repeated or negative ID in XML file");
 				delete(rdata);
 				return false;
 			}
@@ -123,7 +127,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			int32_t id = boost::lexical_cast<int32_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_entityIds.insert(id).second == false)
 			{
-				pError("Repeated or negative entityId in XML file"<<endl);
+				logError(RTPS_EDP,"Repeated or negative entityId in XML file");
 				delete(rdata);
 				return false;
 			}
@@ -144,7 +148,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 				rdata->m_expectsInlineQos = false;
 			else
 			{
-				pError("Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
 				delete(rdata);return false;
 			}
 		}
@@ -171,7 +175,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			else
 			{
-				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
 				delete(rdata);return false;
 			}
 		}
@@ -184,7 +188,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 				rdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 			else
 			{
-				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
 				delete(rdata);return false;
 			}
 		}
@@ -223,12 +227,12 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			else
 			{
-				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
 				delete(rdata);return false;
 			}
 			if(rdata->m_topicName == "EPROSIMA_UNKNOWN_STRING" || rdata->m_typeName == "EPROSIMA_UNKNOWN_STRING")
 			{
-				pError("Bad XML file, topic: "<<rdata->m_topicName << " or typeName: "<<rdata->m_typeName << " undefined"<<endl);
+				logError(RTPS_EDP,"Bad XML file, topic: "<<rdata->m_topicName << " or typeName: "<<rdata->m_typeName << " undefined");
 				delete(rdata);
 				return false;
 			}
@@ -242,7 +246,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 				rdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
 			else
 			{
-				pError("Bad XML file, durability of kind: " << auxstring << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, durability of kind: " << auxstring << " is not valid");
 				delete(rdata);return false;
 			}
 		}
@@ -255,7 +259,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 				rdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
 			else
 			{
-				pError("Bad XML file, ownership of kind: " << auxstring << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, ownership of kind: " << auxstring << " is not valid");
 				delete(rdata);return false;
 			}
 		}
@@ -274,7 +278,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 				rdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 			else
 			{
-				pError("Bad XML file, liveliness of kind: " << auxstring << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, liveliness of kind: " << auxstring << " is not valid");
 				delete(rdata);return false;
 			}
 			auxstring = xml_endpoint_child.second.get("<xmlattr>.leaseDuration_ms","INF");
@@ -290,19 +294,19 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			#pragma warning(disable: 4101)
 			catch(std::exception &e)
 			{
-				pWarning("BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF"<<endl);
+				logWarning(RTPS_EDP,"BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF");
 				rdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
 			}
 			}
 		}
 		else
 		{
-			pWarning("Unkown Endpoint-XML tag, ignoring "<< xml_endpoint_child.first<<endl)
+			logWarning(RTPS_EDP,"Unkown Endpoint-XML tag, ignoring "<< xml_endpoint_child.first)
 		}
 	}
 	if(rdata->m_userDefinedId == 0)
 	{
-		pError("Reader XML endpoint with NO ID defined"<<endl);
+		logError(RTPS_EDP,"Reader XML endpoint with NO ID defined");
 		delete(rdata);
 		return false;
 	}
@@ -313,6 +317,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 
 bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata)
 {
+	const char* const METHOD_NAME = "loadXMLWriterEndpoint";
 	WriterProxyData* wdata = new WriterProxyData();
 	BOOST_FOREACH(ptree::value_type& xml_endpoint_child,xml_endpoint.second)
 	{
@@ -321,7 +326,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			int16_t id = boost::lexical_cast<int16_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_endpointIds.insert(id).second == false)
 			{
-				pError("Repeated or negative ID in XML file"<<endl);
+				logError(RTPS_EDP,"Repeated or negative ID in XML file");
 				delete(wdata);
 				return false;
 			}
@@ -332,7 +337,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			int32_t id = boost::lexical_cast<int32_t>(xml_endpoint_child.second.data());
 			if(id<=0 || m_entityIds.insert(id).second == false)
 			{
-				pError("Repeated or negative entityId in XML file"<<endl);
+				logError(RTPS_EDP,"Repeated or negative entityId in XML file");
 				delete(wdata);
 				return false;
 			}
@@ -343,7 +348,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 		}
 		else if(xml_endpoint_child.first == "expectsInlineQos")
 		{
-			pWarning("BAD XML tag: Writers don't use expectInlineQos tag"<<endl);
+			logWarning(RTPS_EDP,"BAD XML tag: Writers don't use expectInlineQos tag");
 		}
 		else if(xml_endpoint_child.first == "topicName")
 		{
@@ -368,7 +373,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			else
 			{
-				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
 				delete(wdata);return false;
 			}
 		}
@@ -381,7 +386,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 				wdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 			else
 			{
-				pError("Bad XML file, endpoint of stateKind: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
 				delete(wdata);return false;
 			}
 		}
@@ -420,12 +425,12 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			}
 			else
 			{
-				pError("Bad XML file, topic of kind: " << auxString << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
 				delete(wdata);return false;
 			}
 			if(wdata->m_topicName == "EPROSIMA_UNKNOWN_STRING" || wdata->m_typeName == "EPROSIMA_UNKNOWN_STRING")
 			{
-				pError("Bad XML file, topic: "<<wdata->m_topicName << " or typeName: "<<wdata->m_typeName << " undefined"<<endl);
+				logError(RTPS_EDP,"Bad XML file, topic: "<<wdata->m_topicName << " or typeName: "<<wdata->m_typeName << " undefined");
 				delete(wdata);
 				return false;
 			}
@@ -439,7 +444,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 				wdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
 			else
 			{
-				pError("Bad XML file, durability of kind: " << auxstring << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, durability of kind: " << auxstring << " is not valid");
 				delete(wdata);return false;
 			}
 		}
@@ -452,7 +457,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 				wdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
 			else
 			{
-				pError("Bad XML file, ownership of kind: " << auxstring << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, ownership of kind: " << auxstring << " is not valid");
 				delete(wdata);return false;
 			}
 			wdata->m_qos.m_ownershipStrength.value = xml_endpoint_child.second.get("<xmlattr>.strength",0);
@@ -472,7 +477,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 				wdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 			else
 			{
-				pError("Bad XML file, liveliness of kind: " << auxstring << " is not valid"<<endl);
+				logError(RTPS_EDP,"Bad XML file, liveliness of kind: " << auxstring << " is not valid");
 				delete(wdata);return false;
 			}
 			auxstring = xml_endpoint_child.second.get("<xmlattr>.leaseDuration_ms","INF");
@@ -488,19 +493,19 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			#pragma warning(disable: 4101)
 			catch(std::exception &e)
 			{
-				pWarning("BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF"<<endl);
+				logWarning(RTPS_EDP,"BAD XML:livelinessQos leaseDuration is a bad number: "<<auxstring<<" setting to INF");
 				wdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
 			}
 			}
 		}
 		else
 		{
-			pWarning("Unkown Endpoint-XML tag, ignoring "<< xml_endpoint_child.first<<endl)
+			logWarning(RTPS_EDP,"Unkown Endpoint-XML tag, ignoring "<< xml_endpoint_child.first)
 		}
 	}
 	if(wdata->m_userDefinedId == 0)
 	{
-		pError("Writer XML endpoint with NO ID defined"<<endl);
+		logError(RTPS_EDP,"Writer XML endpoint with NO ID defined");
 		delete(wdata);
 		return false;
 	}

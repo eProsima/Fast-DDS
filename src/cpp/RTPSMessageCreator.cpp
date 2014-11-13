@@ -37,20 +37,22 @@ namespace rtps{
 CDRMessagePool g_pool_submsg(100);
 eClock g_clock;
 
+static const char* const CLASS_NAME = "RTPSMessageCreator";
 
 RTPSMessageCreator::RTPSMessageCreator() {
 
 }
 
 RTPSMessageCreator::~RTPSMessageCreator() {
-	pDebugInfo("RTPSMessageCreator destructor"<<endl;);
+	const char* const METHOD_NAME = "~RTPSMessageCreator";
+	logInfo(RTPS_CDR_MSG,"RTPSMessageCreator destructor"<<endl;);
 }
 
 
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
-
+	const char* const METHOD_NAME = "addHeader";
 	try{
 		CDRMessage::addOctet(msg,'R');
 		CDRMessage::addOctet(msg,'T');
@@ -70,7 +72,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 	}
 	catch(int e)
 	{
-		pError("Header creation fails. "<< e <<endl);
+		logError(RTPS_CDR_MSG,"Header creation fails. "<< e <<endl);
 		return false;
 	}
 
@@ -89,7 +91,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 
 bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 		octet id,octet flags,uint16_t size) {
-
+	const char* const METHOD_NAME = "addSubmessageHeader";
 	try{
 		CDRMessage::addOctet(msg,id);
 		CDRMessage::addOctet(msg,flags);
@@ -98,7 +100,7 @@ bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 	}
 	catch(int e){
 
-		pError("Submessage Header creation fails. "<< e <<endl);
+		logError(RTPS_CDR_MSG,"Submessage Header creation fails. "<< e <<endl);
 		return false;
 	}
 
@@ -107,6 +109,7 @@ bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 
 bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag)
 {
+	const char* const METHOD_NAME = "addSubmessageInfoTS";
 	octet flags = 0x0;
 	uint16_t size = 8;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
@@ -135,7 +138,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 	}
 	catch(int e)
 	{
-		pError("Submessage Header creation fails."<<e<<endl);
+		logError(RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
 		return false;
 	}
 	return true;
@@ -143,6 +146,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 
 bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP)
 {
+	const char* const METHOD_NAME = "addSubmessageInfoDST";
 	octet flags = 0x0;
 	uint16_t size = 12;
 	if(EPROSIMA_ENDIAN == LITTLEEND)
@@ -162,7 +166,7 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t gu
 	}
 	catch(int e)
 	{
-		pError("Submessage Header creation fails."<<e<<endl);
+		logError(RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
 		return false;
 	}
 	return true;

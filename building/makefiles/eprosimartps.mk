@@ -29,12 +29,14 @@ EPROSIMARTPS_TARGET_Z= $(BASEDIR)/lib/$(EPROSIMA_TARGET)/$(EPROSIMARTPS_TARGET_Z
 EPROSIMARTPS_CFLAGS += $(CFLAGS) -std=c++0x -O2 -Wno-unknown-pragmas 
 EPROSIMARTPS_CFLAGS_DEBUG += $(CFLAGS_DEBUG) -std=c++0x  -Wno-unknown-pragmas -D__DEBUG
 
+
 EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS)  -I$(BASEDIR)/include \
 		  -I$(BASEDIR)/thirdparty/eprosima-common-code
 
+
 EPROSIMARTPS_SRC_CPPFILES= \
- 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
-		  $(BASEDIR)/src/cpp/utils/RTPSLog.cpp \
+		  $(BASEDIR)/thirdparty/eprosima-common-code/eProsima_cpp/log/Log.cpp \
+	          $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
@@ -110,7 +112,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLP.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
 		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPTopicDataType.cpp \
-		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
+		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp 
 
 
 # Project sources are copied to the current directory

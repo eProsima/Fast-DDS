@@ -22,7 +22,7 @@ namespace rtps{
 bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 		GuidPrefix_t& guidprefix,CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos){
 
-
+	const char* const METHOD_NAME = "addMessageData";
 	try{
 
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -35,7 +35,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		pError("Data message error"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Data message error"<<e<<endl)
 
 		return false;
 	}
@@ -46,7 +46,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 		TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos) {
-
+	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg(change->serializedPayload.length);
 	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
@@ -174,7 +174,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		g_pool_submsg.release_CDRMsg(submsgElem);
 	}
 	catch(int t){
-		pError("Data SUBmessage not created"<<t<<endl)
+		logError(RTPS_CDR_MSG,"Data SUBmessage not created"<<t<<endl)
 
 		return false;
 	}

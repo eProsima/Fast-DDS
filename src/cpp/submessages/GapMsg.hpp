@@ -20,6 +20,7 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefi
 		SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,
 		const EntityId_t& readerId,const EntityId_t& writerId)
 {
+	const char* const METHOD_NAME = "addSubmessageData";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -28,7 +29,7 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefi
 	}
 	catch(int e)
 	{
-		pError("Gap message error"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Gap message error"<<e<<endl)
 		return false;
 	}
 	return true;
@@ -36,7 +37,7 @@ bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefi
 
 bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId)
 {
-
+	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 		CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
@@ -59,7 +60,7 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& se
 	}
 	catch(int e)
 	{
-		pError("Gap submessage error"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Gap submessage error"<<e<<endl)
 		return false;
 	}
 

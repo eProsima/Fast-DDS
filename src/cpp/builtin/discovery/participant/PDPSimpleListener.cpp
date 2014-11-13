@@ -32,6 +32,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "PDPSimpleListener";
+
 void PDPSimpleListener::onNewDataMessage()
 {
 	newAddedCache();
@@ -39,8 +41,9 @@ void PDPSimpleListener::onNewDataMessage()
 
 bool PDPSimpleListener::newAddedCache()
 {
+	const char* const METHOD_NAME = "newAddedCache";
 	boost::lock_guard<Endpoint> guard(*mp_SPDP->mp_SPDPReader);
-	pInfo(RTPS_CYAN<<"SPDPListener: SPDP Message received"<<RTPS_DEF<<endl);
+	logInfo(RTPS_PDP,"SPDP Message received",EPRO_CYAN);
 	CacheChange_t* change = NULL;
 	if(mp_SPDP->mp_SPDPReader->get_last_added_cache(&change))
 	{
@@ -59,7 +62,7 @@ bool PDPSimpleListener::newAddedCache()
 				change->instanceHandle = m_participantProxyData.m_key;
 				if(m_participantProxyData.m_guid == mp_SPDP->mp_participant->getGuid())
 				{
-					pInfo(RTPS_CYAN<<"SPDPListener: Message from own participant, ignoring"<<RTPS_DEF<<endl)
+					logInfo(RTPS_PDP,"Message from own participant, ignoring",EPRO_CYAN)
 					return true;
 				}
 				//LOOK IF IS AN UPDATED INFORMATION
@@ -128,7 +131,7 @@ bool PDPSimpleListener::newAddedCache()
 	}
 	else
 	{
-		pError("SPDPListener: error reading Parameters from CDRMessage"<<endl);
+		logError(RTPS_PDP,"Error reading Parameters from CDRMessage",EPRO_CYAN);
 		return false;
 	}
 

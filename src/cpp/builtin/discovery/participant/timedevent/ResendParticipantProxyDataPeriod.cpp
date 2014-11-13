@@ -24,6 +24,8 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "ResendParticipantProxyDataPeriod";
+
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* pPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval):
 		TimedEvent(&pEvent->io_service,interval),
 		mp_PDP(pPDP)
@@ -40,10 +42,11 @@ ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 
 void ResendParticipantProxyDataPeriod::event(const boost::system::error_code& ec)
 {
+	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("ResendDiscoveryData Period" << endl);
+		logInfo(RTPS_PDP,"ResendDiscoveryData Period",EPRO_CYAN);
 		//FIXME: Change for liveliness protocol
 		mp_PDP->m_participantProxies.front()->m_manualLivelinessCount++;
 		mp_PDP->announceParticipantState(false);
@@ -52,12 +55,12 @@ void ResendParticipantProxyDataPeriod::event(const boost::system::error_code& ec
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pInfo("Response Data Period aborted"<<endl);
+		logInfo(RTPS_PDP,"Response Data Period aborted");
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("Response Data Period boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_PDP,"boost message: " <<ec.message());
 	}
 }
 

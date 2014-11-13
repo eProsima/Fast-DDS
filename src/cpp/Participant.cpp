@@ -33,6 +33,8 @@ namespace rtps {
 typedef std::vector<RTPSReader*>::iterator p_ReaderIterator;
 typedef std::vector<RTPSWriter*>::iterator p_WriterIterator;
 
+static const char* const CLASS_NAME = "ParticipantImpl";
+
 
 ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,uint32_t ID,
@@ -56,6 +58,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 							mp_participantListener(plisten),
 							mp_userParticipant(userP)
 {
+	const char* const METHOD_NAME = "ParticipantImpl";
 	userP->mp_impl = this;
 	m_userData = PParam.userData;
 
@@ -81,7 +84,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 		}
 		
 		std::string auxstr = ss.str();
-		pWarning("Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr<<endl);
+		logWarning(RTPS_PARTICIPANT,"Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
 	}
 	LocatorList_t defcopy = m_defaultUnicastLocatorList;
 	m_defaultUnicastLocatorList.clear();
@@ -103,7 +106,7 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 	}
 
 
-	pInfo("Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix<< endl);
+	logInfo(RTPS_PARTICIPANT,"Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix);
 
 
 	m_builtin = PParam.builtin;
@@ -117,7 +120,8 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 
 ParticipantImpl::~ParticipantImpl()
 {
-	pDebugInfo("Participant destructor"<<endl;);
+	const char* const METHOD_NAME = "~ParticipantImpl";
+	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
 				it!=m_listenResourceList.end();++it)
@@ -164,8 +168,9 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		StateKind_t kind, TopicDataType* ptype, PublisherListener* inlisten,
 		const EntityId_t& entityId)
 {
+	const char* const METHOD_NAME = "createWriter";
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-	pDebugInfo("Creating " << type << " Writer on topic: "<<param.topic.getTopicName()<<endl);
+	logInfo(RTPS_PARTICIPANT," on topic: "<<param.topic.getTopicName());
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -188,7 +193,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,WRITER))
 		{
-			pError("A writer with the same entityId already exists in this participant"<<endl;);
+			logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this participant");
 			return false;
 		}
 	}
@@ -238,8 +243,9 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		StateKind_t kind, TopicDataType* ptype, SubscriberListener* inlisten,
 		const EntityId_t& entityId)
 {
+	const char* const METHOD_NAME = "createReader";
 	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-	pDebugInfo("Creating " << type << " Reader on topic: "<<param.topic.getTopicName()<<endl);
+	logInfo(RTPS_PARTICIPANT," on topic: "<<param.topic.getTopicName());
 	EntityId_t entId;
 	if(entityId == c_EntityId_Unknown)
 	{
@@ -261,7 +267,7 @@ bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,READER))
 		{
-			pError("A reader with the same entityId already exists in this participant"<<endl;);
+			logError(RTPS_PARTICIPANT,"A reader with the same entityId already exists in this participant");
 			return false;
 		}
 	}
@@ -310,13 +316,14 @@ void ParticipantImpl::registerWriter(RTPSWriter* SWriter)
 
 bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
+	const char* const METHOD_NAME = "assignEndpointListenResources";
 	bool valid = true;
 	bool unicastempty = endp->unicastLocatorList.empty();
 	bool multicastempty = endp->multicastLocatorList.empty();
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getEndpointKind() == WRITER ? "WRITER" : "READER";
-		pWarning(auxstr << " created with no unicastLocatorList, adding default List"<<endl);
+		logWarning(RTPS_PARTICIPANT,auxstr << " created with no unicastLocatorList, adding default List");
 		for(LocatorListIterator lit = m_defaultUnicastLocatorList.begin();lit!=m_defaultUnicastLocatorList.end();++lit)
 		{
 			assignLocator2ListenResources(endp,lit,false,false);
@@ -473,9 +480,10 @@ void ParticipantImpl::ResourceSemaphoreWait()
 
 bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
+	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
 	if(m_builtin.use_STATIC_EndpointDiscoveryProtocol == false)
 	{
-		pWarning("Remote Endpoints can only be activated with static discovery protocol");
+		logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");
 		return false;
 	}
 	return m_builtinProtocols.mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
