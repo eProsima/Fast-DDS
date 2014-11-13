@@ -66,7 +66,7 @@ bool ResourceSend::initSend(const Locator_t& loc)
 		}
 		catch (boost::system::system_error const& e)
 		{
-			logWarning(RTPS_MSG_OUT,"UDPv4 Error binding: ("<<e.what()<< ") with socket: " << send_endpoint,C_YELLOW);
+			logWarning(RTPS_MSG_OUT,"UDPv4 Error binding: ("<<e.what()<< ") with socket: " << send_endpoint,EPRO_YELLOW);
 			m_sendLocator_v4.port++;
 		}
 	}

@@ -1,4 +1,4 @@
-#define VERSION_STR "0.5.1"
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 5
-#define VERSION_RELEA 1
+#define VERSION_STR "1.0.0"
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 0
+#define VERSION_RELEA 0
