@@ -25,7 +25,7 @@ namespace rtps {
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
-
+static const char* const CLASS_NAME = "WriterHistory";
 
 WriterHistory::WriterHistory(Endpoint* endp,
 		uint32_t payload_max_size):
@@ -43,9 +43,10 @@ WriterHistory::~WriterHistory()
 
 bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 {
+	const char* const METHOD_NAME = "add_change";
 	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
-		pWarning("Attempting to add Data to Full WriterCache: "<<this->mp_Endpoint->getGuid().entityId<< "/"<<this->mp_Endpoint->getTopic().getTopicName()<< " with KEEP ALL History "<<endl;)
+		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_Endpoint->getGuid().entityId<< "/"<<this->mp_Endpoint->getTopic().getTopicName()<< " with KEEP ALL History ";)
 		return false;
 	}
 	//NO KEY HISTORY
@@ -75,7 +76,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 			++m_lastCacheChangeSeqNum;
 			a_change->sequenceNumber = m_lastCacheChangeSeqNum;
 			m_changes.push_back(a_change);
-			pDebugInfo("WriterHistory: Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes"<< endl);
+			logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
 			updateMaxMinSeqNum();
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -98,7 +99,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
-			pDebugInfo("WriterHistory: found key: "<< vit->first<<endl);
+			logInfo(RTPS_HISTORY,"Found key: "<< vit->first);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -108,7 +109,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 				}
 				else
 				{
-					pWarning("WriterHistory: Change not added due to maximum number of samples per instance"<<endl;);
+					logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
 					return false;
 				}
 			}
@@ -130,7 +131,9 @@ bool WriterHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 			{
 				++m_lastCacheChangeSeqNum;
 				a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-				pDebugInfo("WriterHistory: " << this->mp_Endpoint->getGuid().entityId <<" Change "<< a_change->sequenceNumber.to64long()<< " added with key: "<<a_change->instanceHandle << " and "<<a_change->serializedPayload.length<< " bytes"<< endl);
+				logInfo(RTPS_HISTORY,this->mp_Endpoint->getGuid().entityId <<" Change "
+						<< a_change->sequenceNumber.to64long()<< " added with key: "<<a_change->instanceHandle
+						<< " and "<<a_change->serializedPayload.length<< " bytes");
 				m_changes.push_back(a_change);
 				updateMaxMinSeqNum();
 				vit->second.push_back(a_change);

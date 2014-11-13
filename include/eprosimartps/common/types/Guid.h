@@ -68,8 +68,9 @@ const GuidPrefix_t c_GuidPrefix_Unknown;
 
 inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	output << std::hex;
-	for(uint8_t i =0;i<12;++i)
+	for(uint8_t i =0;i<11;++i)
 		output<<(int)guiP.value[i]<<".";
+	output << (int)guiP.value[11];
 	return output<<std::dec;
 }
 
@@ -164,8 +165,7 @@ inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
 
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 	output << std::hex;
-	for(uint8_t i =0;i<4;++i)
-		output<<(int)enI.value[i]<<".";
+	output<<(int)enI.value[0]<<"."<<(int)enI.value[1]<<"."<<(int)enI.value[2]<<"."<<(int)enI.value[3];
 	return output << std::dec;
 }
 

@@ -19,6 +19,9 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "EDPSimpleTopicDataType";
+
+
 EDPSimpleTopicDataType::EDPSimpleTopicDataType()
 {
 
@@ -33,13 +36,15 @@ EDPSimpleTopicDataType::~EDPSimpleTopicDataType()
 
 bool EDPSimpleTopicDataType::serialize(void* data,SerializedPayload_t* payload)
 {
-	pError("SEDPTopicDatType serialize method should not have been called"<<endl);
+	const char* const METHOD_NAME = "serialize";
+	logError(RTPS_EDP,"This method should not have been called");
 	return false;
 }
 
 bool EDPSimpleTopicDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
-	pError("SEDPTopicDatType de-serialize method should not have been called"<<endl);
+	const char* const METHOD_NAME = "deserialize";
+		logError(RTPS_EDP,"This method should not have been called");
 	return false;
 }
 

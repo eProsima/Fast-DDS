@@ -109,7 +109,7 @@ void SubscribeDialog::on_buttonBox_accepted()
         SSub->m_shapeHistory.m_filter.m_useTimeFilter = true;
         if(this->ui->lineEdit_TimeBasedFilter->text()=="INF")
         {
-            pWarning("Setting TimeBasedFilter as Infinite should be avoided, putting 0 instead"<<endl);
+            //pWarning("Setting TimeBasedFilter as Infinite should be avoided, putting 0 instead"<<endl);
             SSub->m_attributes.qos.m_timeBasedFilter.minimum_separation.seconds = 0;
 
 

@@ -18,7 +18,7 @@ namespace rtps{
 bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
-
+	const char* const METHOD_NAME = "addMessageAcknack";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -27,7 +27,7 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t&
 	}
 	catch(int e)
 	{
-		pError("Data message not created"<<e<<endl);
+		logError(RTPS_CDR_MSG,"Data message not created"<<e<<endl);
 		return false;
 	}
 	return true;
@@ -37,6 +37,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
+	const char* const METHOD_NAME = "addSubmessageAcknack";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
@@ -62,7 +63,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	}
 	catch(int e)
 	{
-		pError("Message creator fails"<<e<<endl)
+		logError(RTPS_CDR_MSG,"Message creator fails"<<e<<endl)
 		return false;
 	}
 

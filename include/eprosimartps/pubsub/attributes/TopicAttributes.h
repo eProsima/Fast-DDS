@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright (c) 2014 eProsima. All rights reserved.
+  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
@@ -70,28 +70,31 @@ public:
 	ResourceLimitsQosPolicy resourceLimitsQos;
 	bool checkQos()
 	{
+		const char* const CLASS_NAME = "TopicAttributes";
+		const char* const METHOD_NAME = "checkQos";
 		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
 		{
-			pError("INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples"<<endl);
+
+			logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples"<<endl);
 			return false;
 		}
 		if(resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
-			pWarning("TOPIC QOS: max_samples < max_samples_per_instance*max_instances"<<endl);
+			logWarning(RTPS_QOS_CHECK,"TOPIC QOS: max_samples < max_samples_per_instance*max_instances"<<endl);
 		if(historyQos.kind == KEEP_LAST_HISTORY_QOS)
 		{
 			if(historyQos.depth > resourceLimitsQos.max_samples)
 			{
-				pError("INCORRECT TOPIC QOS: depth must be <= max_samples"<<endl;)
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples"<<endl;)
 						return false;
 			}
 			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == WITH_KEY)
 			{
-				pError("INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
 						return false;
 			}
 			if(historyQos.depth <=0 )
 			{
-				pError("INCORRECT TOPIC QOS: depth must be > 0"<<endl;)
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be > 0"<<endl;)
 										return false;
 			}
 		}
@@ -104,27 +107,27 @@ bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 		{
 	if(t1.topicKind != t2.topicKind)
 	{
-		cout << "a"<<endl;
+		//cout << "a"<<endl;
 		return true;
 	}
 	if(t1.topicName != t2.topicName)
 	{
-		cout << "b"<<endl;
+		//cout << "b"<<endl;
 		return true;
 	}
 	if(t1.topicDataType != t2.topicDataType)
 	{
-		cout << "c"<<endl;
+		//cout << "c"<<endl;
 		return true;
 	}
 	if(t1.historyQos.kind != t2.historyQos.kind)
 	{
-		cout << "d"<<endl;
+		//cout << "d"<<endl;
 		return true;
 	}
 	if(t1.historyQos.kind == KEEP_LAST_HISTORY_QOS && t1.historyQos.depth != t2.historyQos.depth)
 	{
-		cout << "e"<<endl;
+		//cout << "e"<<endl;
 		return true;
 	}
 	return false;

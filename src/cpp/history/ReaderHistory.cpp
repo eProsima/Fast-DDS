@@ -26,6 +26,8 @@ using namespace eprosima::pubsub;
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "ReaderHistory";
+
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
@@ -44,7 +46,7 @@ ReaderHistory::ReaderHistory(Endpoint* endp,
 
 {
 	mp_getKeyCache = m_changePool.reserve_Cache();
-	// TODO Auto-generated constructor stub
+	//TODO Auto-generated constructor stub
 }
 
 ReaderHistory::~ReaderHistory()
@@ -54,9 +56,11 @@ ReaderHistory::~ReaderHistory()
 
 bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 {
+	const char* const METHOD_NAME = "add_change";
 	if(m_isHistoryFull)
 	{
-		pWarning("Attempting to add Data to Full ReaderCache: "<<this->mp_Endpoint->getGuid().entityId<<endl;)
+		logWarning(RTPS_HISTORY,"Attempting to add Data to Full ReaderHistory: "
+				<<this->mp_Endpoint->getGuid().entityId;)
 		return false;
 	}
 	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
@@ -67,7 +71,8 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 			if((*it)->sequenceNumber == a_change->sequenceNumber &&
 					(*it)->writerGUID == a_change->writerGUID)
 			{
-				pDebugInfo("Change (seqNum: "<< a_change->sequenceNumber.to64long()<< ") already in ReaderHistory"<< endl);
+				logInfo(RTPS_HISTORY,"Change (seqNum: "
+						<< a_change->sequenceNumber.to64long()<< ") already in ReaderHistory";);
 				return false;
 			}
 			if((*it)->writerGUID == a_change->writerGUID &&
@@ -118,7 +123,9 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 			updateMaxMinSeqNum();
 			if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 				m_isHistoryFull = true;
-			pDebugInfo("ReaderHistory " <<this->mp_Endpoint->getGuid().entityId<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "<< a_change->writerGUID<<endl;);
+			logInfo(RTPS_HISTORY,this->mp_Endpoint->getGuid().entityId
+					<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
+					<< a_change->writerGUID;);
 			//print_changes_seqNum();
 			return true;
 		}
@@ -132,7 +139,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 		{
 			if(this->mp_Endpoint->getUserDefinedId() >= 0)
 			{
-				pDebugInfo("ReaderHistory getting Key of change with no Key transmitted"<<endl;)
+				logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
 						mp_reader->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
 				if(!mp_reader->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
@@ -145,13 +152,14 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 		}
 		else if(!a_change->instanceHandle.isDefined())
 		{
-			pWarning("ReaderHistory: NO KEY in topic: "<< this->mp_Endpoint->getTopic().topicName << " and no method to obtain it"<<endl);
+			logWarning(RTPS_HISTORY,"NO KEY in topic: "<< this->mp_Endpoint->getTopic().topicName
+					<< " and no method to obtain it";);
 			return false;
 		}
 		t_vectorPairKeyChanges::iterator vit;
 		if(find_Key(a_change,&vit))
 		{
-			//pDebugInfo("Trying to add change with KEY: "<< vit->first << endl;);
+			//logInfo(RTPS_EDP,"Trying to add change with KEY: "<< vit->first << endl;);
 			bool add = false;
 			if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 			{
@@ -161,7 +169,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 				}
 				else
 				{
-					pWarning("WriterHistory: Change not added due to maximum number of samples per instance"<<endl;);
+					logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance";);
 					return false;
 				}
 			}
@@ -210,7 +218,9 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* WP)
 					vit->second.push_back(a_change);
 					std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 				}
-				pDebugInfo("ReaderHistory " <<this->mp_Endpoint->getGuid().entityId<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle << endl;);
+				logInfo(RTPS_HISTORY,this->mp_Endpoint->getGuid().entityId
+						<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
+						<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle;);
 			//	print_changes_seqNum();
 				return true;
 			}
@@ -262,7 +272,8 @@ bool ReaderHistory::get_last_added_cache(CacheChange_t** change)
 
 bool ReaderHistory::removeCacheChangesByKey(InstanceHandle_t& key)
 {
-	pError("Not Implemented yet"<<endl);
+	const char* const METHOD_NAME = "removeCacheChangesByKey";
+	logError(RTPS_HISTORY,"Not Implemented yet";);
 	return false;
 }
 

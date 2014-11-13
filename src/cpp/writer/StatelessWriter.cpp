@@ -22,7 +22,7 @@
 namespace eprosima {
 namespace rtps {
 
-
+static const char* const CLASS_NAME = "StatelessWriter";
 
 StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
 				RTPSWriter(guidP,entId,param,ptype,STATELESS,param.userDefinedId,param.payloadMaxSize)
@@ -38,17 +38,19 @@ StatelessWriter::StatelessWriter(const PublisherAttributes& param,const GuidPref
 
 StatelessWriter::~StatelessWriter()
 {
-	pDebugInfo("StatelessWriter destructor"<<endl;);
+	const char* const METHOD_NAME = "~StatelessWriter";
+	logInfo(RTPS_HISTORY,"StatelessWriter destructor";);
 }
 
 bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 {
+	const char* const METHOD_NAME = "matched_reader_add";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderProxyData*>::iterator it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
 	{
 		if((*it)->m_guid == rdata->m_guid)
 		{
-			pWarning("Attempting to add existing reader" << endl);
+			logWarning(RTPS_HISTORY,"Attempting to add existing reader" );
 			return false;
 		}
 	}
@@ -77,7 +79,8 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 
 bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 {
-	pDebugInfo("Adding Locator: "<< loc<< " to StatelessWriter"<<endl;);
+	const char* const METHOD_NAME = "add_locator";
+	logInfo(RTPS_HISTORY,"Adding Locator: "<< loc<< " to StatelessWriter";);
 	std::vector<ReaderLocator>::iterator rit;
 	bool found = false;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
@@ -112,6 +115,7 @@ bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 
 bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 {
+	const char* const METHOD_NAME = "matched_reader_remove";
 	boost::lock_guard<Endpoint> guard(*this);
 	bool found = false;
 	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
@@ -126,7 +130,7 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 	}
 	if(found)
 	{
-		pDebugInfo("Reader Proxy removed: " <<rdata->m_guid<< endl);
+		logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<rdata->m_guid;);
 		for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
 				lit!=rdata->m_unicastLocatorList.end();++lit)
 		{
@@ -247,6 +251,7 @@ bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
 
 void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 {
+	const char* const METHOD_NAME = "unsent_change_add";
 	boost::lock_guard<Endpoint> guard(*this);
 	if(!reader_locator.empty())
 	{
@@ -270,12 +275,13 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 	}
 	else
 	{
-		pWarning( "No reader locator to add change" << std::endl);
+		logWarning(RTPS_HISTORY, "No reader locator to add change";);
 	}
 }
 
 void StatelessWriter::unsent_changes_not_empty()
 {
+	const char* const METHOD_NAME = "unsent_changes_not_empty";
 	boost::lock_guard<Endpoint> guard(*this);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 	{
@@ -309,7 +315,7 @@ void StatelessWriter::unsent_changes_not_empty()
 			//			}
 		}
 	}
-	pDebugInfo ( "Finish sending unsent changes" << endl);
+	logInfo (RTPS_HISTORY, "Finish sending unsent changes" ;);
 }
 
 

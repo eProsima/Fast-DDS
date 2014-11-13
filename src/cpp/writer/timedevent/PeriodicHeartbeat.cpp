@@ -25,7 +25,7 @@
 namespace eprosima {
 namespace rtps{
 
-
+static const char* const CLASS_NAME = "PeriodicHeartbeat";
 
 PeriodicHeartbeat::~PeriodicHeartbeat()
 {
@@ -42,11 +42,12 @@ PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW,boost::posix_time::mi
 
 void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 {
-	pDebugInfo("TimedEvent: PeriodicHeartbeat"<<endl;);
+	const char* const METHOD_NAME = "event";
+	logInfo(RTPS_WRITER,"TimedEvent: PeriodicHeartbeat";);
 	this->m_isWaiting = false;
 	if(ec == boost::system::errc::success)
 	{
-		pDebugInfo("Sending Heartbeat"<<endl);
+		logInfo(RTPS_WRITER,"Sending Heartbeat");
 		std::vector<ChangeForReader_t*> unack;
 		bool unacked_changes = false;
 		for(std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
@@ -89,12 +90,12 @@ void PeriodicHeartbeat::event(const boost::system::error_code& ec)
 	}
 	else if(ec==boost::asio::error::operation_aborted)
 	{
-		pWarning("Periodic Heartbeat aborted"<<endl);
+		logWarning(RTPS_WRITER,"Periodic Heartbeat aborted");
 		this->mp_stopSemaphore->post();
 	}
 	else
 	{
-		pInfo("Periodic Heartbeat boost message: " <<ec.message()<<endl);
+		logInfo(RTPS_WRITER,"Periodic Heartbeat boost message: " <<ec.message());
 	}
 }
 

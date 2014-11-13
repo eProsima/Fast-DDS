@@ -21,14 +21,17 @@
 namespace eprosima {
 namespace rtps {
 
+static const char* const CLASS_NAME = "RTPSMessageGroup";
+
+
 bool sort_changes_group (CacheChange_t* c1,CacheChange_t* c2)
 {
 	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
 }
 
-bool sort_SeqNum(SequenceNumber_t s1,SequenceNumber_t s2)
+bool sort_SeqNum(const SequenceNumber_t& s1,const SequenceNumber_t& s2)
 {
-	return(s1.to64long() < s2.to64long());
+	return(s1 < s2);
 }
 
 typedef std::pair<SequenceNumber_t,SequenceNumberSet_t> pair_T;
@@ -91,6 +94,7 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		std::vector<SequenceNumber_t>* changesSeqNum, const EntityId_t& readerId,
 		LocatorList_t* unicast, LocatorList_t* multicast)
 {
+	const char* const METHOD_NAME = "send_Changes_AsGap";
 	//cout << "CHANGES SEQ NUM: "<<changesSeqNum->size()<<endl;
 	std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
 	RTPSMessageGroup::prepare_SequenceNumberSet(changesSeqNum,&Sequences);
@@ -110,7 +114,7 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	gap_msg_size = cdrmsg_submessage->length;
 	if(gap_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
-		pError("The Gap messages are larger than max size, something is wrong" << endl);
+		logError(RTPS_WRITER,"The Gap messages are larger than max size, something is wrong");
 		return false;
 	}
 	bool first = true;
@@ -145,6 +149,7 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 
 void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId)
 {
+	const char* const METHOD_NAME = "prepareDataSubM";
 	ParameterList_t* inlineQos = NULL;
 	if(expectsInlineQos)
 	{
@@ -154,7 +159,7 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 	CDRMessage::initCDRMsg(submsg);
 	bool added= RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,expectsInlineQos,inlineQos);
 	if(!added)
-		pError("Problem adding DATA submsg to the CDRMessage, buffer too small"<<endl;);
+		logError(RTPS_WRITER,"Problem adding DATA submsg to the CDRMessage, buffer too small";);
 }
 
 
@@ -164,7 +169,8 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		LocatorList_t& unicast, LocatorList_t& multicast,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
-	pDebugInfo("Sending relevant changes as data messages" << endl);
+	const char* const METHOD_NAME = "send_Changes_AsData";
+	logInfo(RTPS_WRITER,"Sending relevant changes as data messages");
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
 	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
 	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
@@ -180,7 +186,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	data_msg_size = cdrmsg_submessage->length;
 	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
-		pError("The Data messages are larger than max size, something is wrong" << endl);
+		logError(RTPS_WRITER,"The Data messages are larger than max size, something is wrong");
 		return false;
 	}
 	bool first = true;
@@ -216,7 +222,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		}
 		else
 		{
-			pError("A problem occurred when adding a message"<<endl);
+			logError(RTPS_WRITER,"A problem occurred when adding a message");
 		}
 
 
@@ -229,7 +235,8 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
 		bool expectsInlineQos,const EntityId_t& ReaderId)
 {
-	pDebugInfo("Sending relevant changes as data messages" << endl);
+	const char* const METHOD_NAME = "send_Changes_AsData";
+	logInfo(RTPS_WRITER,"Sending relevant changes as data messages");
 	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
 	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
 	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
@@ -244,7 +251,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	data_msg_size = cdrmsg_submessage->length;
 	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
-		pError("The Data messages are larger than max size, something is wrong" << endl);
+		logError(RTPS_WRITER,"The Data messages are larger than max size, something is wrong");
 		return false;
 	}
 	bool first = true;
@@ -276,7 +283,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		}
 		else
 		{
-			pError("A problem occurred when adding a message"<<endl);
+			logError(RTPS_WRITER,"A problem occurred when adding a message");
 		}
 	}while(change_n < changes->size()); //There is still a message to add
 	return true;

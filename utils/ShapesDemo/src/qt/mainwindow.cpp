@@ -148,7 +148,21 @@ void MainWindow::on_actionStop_triggered()
 
 void MainWindow::on_actionExit_triggered()
 {
+    on_actionStop_triggered();
     this->close();
+}
+
+void MainWindow::on_MainWindow_destroyed()
+{
+    on_actionStop_triggered();
+    this->close();
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    on_actionStop_triggered();
+    this->close();
+    event->accept();
 }
 
 void MainWindow::addPublisherToTable(ShapePublisher* spub)
@@ -340,6 +354,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
     }
 }
+
+
 
 
 

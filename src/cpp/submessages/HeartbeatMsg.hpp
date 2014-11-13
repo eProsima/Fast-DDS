@@ -18,6 +18,7 @@ namespace rtps{
 bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
+	const char* const METHOD_NAME = "addSubmessageData";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -26,7 +27,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 	}
 	catch(int e)
 	{
-		pError("HB message not created"<<e<<endl)
+		logError(RTPS_CDR_MSG,"HB message not created"<<e<<endl)
 		return false;
 	}
 	return true;
@@ -35,6 +36,7 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
 		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
+	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 
@@ -64,7 +66,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 	}
 	catch(int e)
 	{
-		pError("MessageCreator fails"<<e<<endl)
+		logError(RTPS_CDR_MSG,"MessageCreator fails"<<e<<endl)
 		return false;
 	}
 
