@@ -1,0 +1,1 @@
+xcopy ..\..\..\include\eprosimartps\* "C:\Program Files\eProsima\eRTPS\include\eprosimartps\" /y /s

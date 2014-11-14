@@ -24,7 +24,7 @@ cd "..\.."
 :: Compile CDR library.
 cd "thirdparty\fastcdr"
 cd "utils\scripts"
-::call build_cdr.bat
+::call build_cdr.bat 
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\..\..\"
@@ -35,7 +35,14 @@ if not %errorstatus%==0 goto :exit
 
 :: Compile RTPS for target.
 cd "utils\scripts"
-::call build_ertps.bat
+::COMPILE VS2010
+set LIB_BOOST_PATH=C:\local\boost_1_53_0
+call build_ertps.bat win32VS2010 "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild" noclean
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+::COMPILE VS2013
+set LIB_BOOST_PATH=C:\local\boost_1_57_0
+call build_ertps.bat win32VS2013 "C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" noclean
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\.."
