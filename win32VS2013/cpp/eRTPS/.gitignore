@@ -1,0 +1,13 @@
+#VisuaL Studio Files:
+#############
+*.opensdf
+*.sdf
+*.suo
+*.obj
+*.dll
+*.lib
+*.log
+
+ipch
+eRTPS/Win32
+eRTPS/x64

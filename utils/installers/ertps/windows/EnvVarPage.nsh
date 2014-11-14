@@ -12,11 +12,17 @@ Var CheckboxEPROSIMARTPSHOME_State
 Var CheckboxScripts
 Var CheckboxScripts_State
 
-Var CheckboxX64
-Var CheckboxX64_State
+Var CheckboxX64_VS2010
+Var CheckboxX64_VS2010_State
 
-Var CheckboxI86
-Var CheckboxI86_State
+Var CheckboxI86_VS2010
+Var CheckboxI86_VS2010_State
+
+Var CheckboxX64_VS2013
+Var CheckboxX64_VS2013_State
+
+Var CheckboxI86_VS2013
+Var CheckboxI86_VS2013_State
 
 LangString PAGE_TITLE ${LANG_ENGLISH} "Environment variables setting"
 LangString PAGE_SUBTITLE ${LANG_ENGLISH} "Choose which environment variables you want to set."
@@ -50,32 +56,47 @@ Function VariablesEntornoPage
     ${EndIf}
     
     ${If} ${RunningX64}
-        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 platforms."
-        Pop $CheckboxX64  
-        ${If} ${SectionIsSelected} ${SEC_LIB_x64}
-            ${If} $CheckboxX64_State == ${BST_CHECKED}
-                ${NSD_Check} $CheckboxX64
+        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2010 platforms."
+        Pop $CheckboxX64_VS2010  
+        ${If} ${SectionIsSelected} ${SEC_LIB_x64_VS2010}
+            ${If} $CheckboxX64_VS2010_State == ${BST_CHECKED}
+                ${NSD_Check} $CheckboxX64_VS2010
             ${EndIf}
         ${Else}
-            ${NSD_AddStyle} $CheckboxX64 ${WS_DISABLED}
+            ${NSD_AddStyle} $CheckboxX64_VS2010 ${WS_DISABLED}
         ${EndIf}
-
         ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
-    ${NSD_OnClick} $CheckboxX64 ClickX64  
+		${NSD_OnClick} $CheckboxX64_VS2010 ClickX64_VS2010  
     
-        ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 platforms."
-        Pop $CheckboxI86
+		 ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2013 platforms."
+        Pop $CheckboxX64_VS2013  
+        ${If} ${SectionIsSelected} ${SEC_LIB_x64_VS2013}
+            ${If} $CheckboxX64_VS2013_State == ${BST_CHECKED}
+                ${NSD_Check} $CheckboxX64_VS2013
+            ${EndIf}
+        ${Else}
+            ${NSD_AddStyle} $CheckboxX64_VS2013 ${WS_DISABLED}
+        ${EndIf}
+        ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
+		${NSD_OnClick} $CheckboxX64_VS2013 ClickX64_VS2013  
+	
+        ${NSD_CreateCheckbox} 10 88u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2010 platforms."
+        Pop $CheckboxI86_VS2010
+		${NSD_CreateCheckbox} 10 110u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2013 platforms."
+        Pop $CheckboxI86_VS2013
     ${Else}
-        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 platforms."
-        Pop $CheckboxI86
+        ${NSD_CreateCheckbox} 10 88u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2010 platforms."
+        Pop $CheckboxI86_VS2010
+		${NSD_CreateCheckbox} 10 110u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2013 platforms."
+        Pop $CheckboxI86_VS2013
     ${EndIf}
 
-    ${If} ${SectionIsSelected} ${SEC_LIB_i86}
-        ${If} $CheckboxI86_State == ${BST_CHECKED}
-            ${NSD_Check} $CheckboxI86
+    ${If} ${SectionIsSelected} ${SEC_LIB_i86_VS2010}
+        ${If} $CheckboxI86_VS2010_State == ${BST_CHECKED}
+            ${NSD_Check} $CheckboxI86_VS2010
         ${EndIf}
     ${Else}
-        ${NSD_AddStyle} $CheckboxI86 ${WS_DISABLED}
+        ${NSD_AddStyle} $CheckboxI86_VS2010 ${WS_DISABLED}
     ${EndIf}
     
     ### La primera vez que lanzamos el instalador, el checkbox de EPROSIMARTPSHOME
@@ -90,7 +111,8 @@ Function VariablesEntornoPage
     ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
     ${NSD_OnClick} $CheckboxEPROSIMARTPSHOME ClickEPROSIMARTPSHOME 
     ${NSD_OnClick} $CheckboxScripts ClickScripts
-    ${NSD_OnClick} $CheckboxI86 ClickI86  
+    ${NSD_OnClick} $CheckboxI86_VS2010 ClickI86_VS2010  
+	${NSD_OnClick} $CheckboxI86_VS2013 ClickI86_VS2013 
 
     nsDialogs::Show
 FunctionEnd
@@ -110,25 +132,67 @@ FunctionEnd
 ### Callback invocado cuando se pulsa el CheckBox x64
 ### Sirve para deshabilitar el i86, pues no pueden aparecer a la vez
 ### También guardamos el estado en la variable _state
-Function ClickX64
-    Pop $CheckboxX64
-    ${NSD_GetState} $CheckboxX64 $0
+Function ClickX64_VS2010
+    Pop $CheckboxX64_VS2010
+    ${NSD_GetState} $CheckboxX64_VS2010 $0
     ${If} $0 == 1
-        ${NSD_SetState} $CheckboxI86 0
-        ${NSD_GetState} $CheckboxI86 $CheckboxI86_State
+        ${NSD_SetState} $CheckboxI86_VS2010 0
+        ${NSD_GetState} $CheckboxI86_VS2010 $CheckboxI86_VS2010_State
+		${NSD_SetState} $CheckboxI86_VS2013 0
+        ${NSD_GetState} $CheckboxI86_VS2013 $CheckboxI86_VS2013_State
+		${NSD_SetState} $CheckboxX64_VS2013 0
+        ${NSD_GetState} $CheckboxX64_VS2013 $CheckboxX64_VS2013_State
     ${EndIf}
-    ${NSD_GetState} $CheckboxX64 $CheckboxX64_State
+    ${NSD_GetState} $CheckboxX64_VS2010 $CheckboxX64_VS2010_State
 FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox i86
 ### Sirve para deshabilitar el x64, pues no pueden aparecer a la vez
 ### También guardamos el estado en la variable _state
-Function ClickI86
-    Pop $CheckboxI86
-    ${NSD_GetState} $CheckboxI86 $0
+Function ClickI86_VS2010
+    Pop $CheckboxI86_VS2010
+    ${NSD_GetState} $CheckboxI86_VS2010 $0
     ${If} $0 == 1
-        ${NSD_SetState} $CheckboxX64 0
-        ${NSD_GetState} $CheckboxX64 $CheckboxX64_State
+        ${NSD_SetState} $CheckboxX64_VS2010 0
+        ${NSD_GetState} $CheckboxX64_VS2010 $CheckboxX64_VS2010_State
+		${NSD_SetState} $CheckboxX64_VS2013 0
+        ${NSD_GetState} $CheckboxX64_VS2013 $CheckboxX64_VS2013_State
+		${NSD_SetState} $CheckboxI86_VS2013 0
+        ${NSD_GetState} $CheckboxI86_VS2013 $CheckboxI86_VS2013_State
     ${EndIf}
-    ${NSD_GetState} $CheckboxI86 $CheckboxI86_State
+    ${NSD_GetState} $CheckboxI86_VS2010 $CheckboxI86_VS2010_State
+FunctionEnd
+
+### Callback invocado cuando se pulsa el CheckBox x64 VS2013
+### Sirve para deshabilitar el i86 2013, pues no pueden aparecer a la vez
+### También guardamos el estado en la variable _state
+Function ClickX64_VS2013
+    Pop $CheckboxX64_VS2013
+    ${NSD_GetState} $CheckboxX64_VS2013 $0
+    ${If} $0 == 1
+        ${NSD_SetState} $CheckboxI86_VS2010 0
+        ${NSD_GetState} $CheckboxI86_VS2010 $CheckboxI86_VS2010_State
+		${NSD_SetState} $CheckboxI86_VS2013 0
+        ${NSD_GetState} $CheckboxI86_VS2013 $CheckboxI86_VS2013_State
+		${NSD_SetState} $CheckboxX64_VS2010 0
+        ${NSD_GetState} $CheckboxX64_VS2010 $CheckboxX64_VS2010_State
+    ${EndIf}
+    ${NSD_GetState} $CheckboxX64_VS2013 $CheckboxX64_VS2013_State
+FunctionEnd
+
+### Callback invocado cuando se pulsa el CheckBox i86
+### Sirve para deshabilitar el x64, pues no pueden aparecer a la vez
+### También guardamos el estado en la variable _state
+Function ClickI86_VS2013
+    Pop $CheckboxI86_VS2013
+    ${NSD_GetState} $CheckboxI86_VS2013 $0
+    ${If} $0 == 1
+        ${NSD_SetState} $CheckboxX64_VS2010 0
+        ${NSD_GetState} $CheckboxX64_VS2010 $CheckboxX64_VS2010_State
+		${NSD_SetState} $CheckboxX64_VS2013 0
+        ${NSD_GetState} $CheckboxX64_VS2013 $CheckboxX64_VS2013_State
+		${NSD_SetState} $CheckboxI86_VS2010 0
+        ${NSD_GetState} $CheckboxI86_VS2010 $CheckboxI86_VS2010_State
+    ${EndIf}
+    ${NSD_GetState} $CheckboxI86_VS2013 $CheckboxI86_VS2013_State
 FunctionEnd
