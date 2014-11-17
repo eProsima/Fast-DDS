@@ -67,7 +67,7 @@ if not %errorstatus%==0 goto :exit
 :: Copy pfd files into pdf dir
 copy "RTPS - Installation Manual.pdf" "pdf\RTPS - Installation Manual.pdf"
 del "RTPS - Installation Manual.pdf"
-set errorstatus=%ERRORLEVEL%
+set errorstatus=%ERRORLEVEL% 
 if not %errorstatus%==0 goto :exit
 
 copy "RTPS - User Manual.pdf" "pdf\RTPS - User Manual.pdf"
@@ -95,11 +95,15 @@ mkdir utils\doxygen\output\doxygen
 mkdir utils\doxygen\output\doxygen\html
 mkdir utils\doxygen\output\doxygen\latex
 cd "utils\doxygen"
+
 doxygen doxyfile_public_api
+
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd output\doxygen\latex
+
 call make.bat
+
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 ren refman.pdf "RTPS - API C++ Manual.pdf"
@@ -112,6 +116,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
 call qmake ShapesDemo.pro -r -spec win32-msvc2010
 call nmake clean
 call nmake
+
 call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
 cd ..\..
 
