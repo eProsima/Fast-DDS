@@ -16,20 +16,19 @@
 #ifndef PERIODICEVENT_H_
 #define PERIODICEVENT_H_
 
-//#define  _WINSOCK_DEPRECATED_NO_WARNINGS
-
-//#include <algorithm>
-//#include <boost\config\compiler\visualc.hpp>
 #include <boost/asio/io_service.hpp>
+
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/system/error_code.hpp>
+#include <boost/asio/placeholders.hpp>
+#include <boost/asio/io_service.hpp>
 #include <boost/bind.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include <boost/system/error_code.hpp>
-
-
 #include "eprosimartps/common/types/Time_t.h"
+
+
 
 namespace eprosima {
 namespace rtps{

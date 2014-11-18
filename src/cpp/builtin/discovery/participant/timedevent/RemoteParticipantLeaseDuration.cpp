@@ -17,6 +17,8 @@
 #include "eprosimartps/ParticipantProxyData.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+
 namespace eprosima {
 namespace rtps {
 

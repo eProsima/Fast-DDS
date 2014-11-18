@@ -16,7 +16,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
-
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 namespace eprosima {
 namespace rtps {
 

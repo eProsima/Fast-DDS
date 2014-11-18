@@ -24,7 +24,7 @@ cd "..\.."
 :: Compile CDR library.
 cd "thirdparty\fastcdr"
 cd "utils\scripts"
-::call build_cdr.bat
+::call build_cdr.bat 
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\..\..\"
@@ -35,7 +35,14 @@ if not %errorstatus%==0 goto :exit
 
 :: Compile RTPS for target.
 cd "utils\scripts"
-::call build_ertps.bat
+::COMPILE VS2010
+set LIB_BOOST_PATH=C:\local\boost_1_53_0
+call build_ertps.bat win32VS2010 "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild" noclean
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+::COMPILE VS2013
+set LIB_BOOST_PATH=C:\local\boost_1_57_0
+call build_ertps.bat win32VS2013 "C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" noclean
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\.."
@@ -60,7 +67,7 @@ if not %errorstatus%==0 goto :exit
 :: Copy pfd files into pdf dir
 copy "RTPS - Installation Manual.pdf" "pdf\RTPS - Installation Manual.pdf"
 del "RTPS - Installation Manual.pdf"
-set errorstatus=%ERRORLEVEL%
+set errorstatus=%ERRORLEVEL% 
 if not %errorstatus%==0 goto :exit
 
 copy "RTPS - User Manual.pdf" "pdf\RTPS - User Manual.pdf"
@@ -88,11 +95,15 @@ mkdir utils\doxygen\output\doxygen
 mkdir utils\doxygen\output\doxygen\html
 mkdir utils\doxygen\output\doxygen\latex
 cd "utils\doxygen"
+
 doxygen doxyfile_public_api
+
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd output\doxygen\latex
+
 call make.bat
+
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 ren refman.pdf "RTPS - API C++ Manual.pdf"
@@ -101,11 +112,7 @@ cd "..\..\..\..\.."
 
 :: Build utilities
 cd utils/ShapesDemo
-call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-call qmake ShapesDemo.pro -r -spec win32-msvc2010
-call nmake clean
-call nmake
-call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
+call build_shapesdemo.bat
 cd ..\..
 
 cd rtpsgen
