@@ -17,19 +17,19 @@
 #define PERIODICEVENT_H_
 
 
-#define BOOST_ASIO_DYN_LINK
+//#define BOOST_ASIO_DYN_LINK
 
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/system/error_code.hpp>
-
+#include <boost/asio/placeholders.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/bind.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "eprosimartps/common/types/Time_t.h"
 
-namespace boost{
-	namespace asio{ class io_service; } 
-	namespace interprocess { class interprocess_semaphore; }
-}
+
 
 namespace eprosima {
 namespace rtps{

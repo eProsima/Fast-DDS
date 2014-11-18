@@ -112,12 +112,7 @@ cd "..\..\..\..\.."
 
 :: Build utilities
 cd utils/ShapesDemo
-call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-call qmake ShapesDemo.pro -r -spec win32-msvc2010
-call nmake clean
-call nmake
-
-call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
+call build_shapesdemo.bat
 cd ..\..
 
 cd rtpsgen
