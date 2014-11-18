@@ -34,7 +34,7 @@ class ParticipantImpl;
  */
 class ResourceEvent {
 public:
-	ResourceEvent(ParticipantImpl*p);
+	ResourceEvent();
 	virtual ~ResourceEvent();
 	boost::thread* b_thread;
 	boost::asio::io_service io_service;
@@ -43,7 +43,7 @@ public:
 	/**
 	 * Method to initialize the thread.
 	 */
-	void init_thread();
+	void init_thread(ParticipantImpl*p);
 	/**
 	 * Task to announce the correctness of the thread.
 	 */

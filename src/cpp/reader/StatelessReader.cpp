@@ -17,6 +17,8 @@
 #include "eprosimartps/pubsub/SampleInfo.h"
 #include "eprosimartps/pubsub/TopicDataType.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+
 using namespace eprosima::pubsub;
 
 namespace eprosima {
@@ -46,7 +48,7 @@ StatelessReader::StatelessReader(const SubscriberAttributes& param,
 bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "takeNextCacheChange";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	CacheChange_t* change;
 	if(this->m_reader_cache.get_min_change(&change))
 	{
@@ -75,7 +77,7 @@ bool StatelessReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 bool StatelessReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "readNextCacheChange";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;
@@ -119,7 +121,7 @@ bool StatelessReader::isUnreadCacheChange()
 bool StatelessReader::matched_writer_add(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_add";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
 		if((*it)->m_guid == wdata->m_guid)
@@ -132,7 +134,7 @@ bool StatelessReader::matched_writer_add(WriterProxyData* wdata)
 bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_remove";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
 		if((*it)->m_guid == wdata->m_guid)
@@ -147,7 +149,7 @@ bool StatelessReader::matched_writer_remove(WriterProxyData* wdata)
 
 bool StatelessReader::matched_writer_is_matched(WriterProxyData* wdata)
 {
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxyData*>::iterator it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 	{
 		if((*it)->m_guid == wdata->m_guid)

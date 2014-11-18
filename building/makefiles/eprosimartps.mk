@@ -36,14 +36,18 @@ EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS)  -I$(BASEDIR)/include \
 
 EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/thirdparty/eprosima-common-code/eProsima_cpp/log/Log.cpp \
-	          $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
+		  $(BASEDIR)/src/cpp/rtps/Participant.cpp \
+		  $(BASEDIR)/src/cpp/rtps/ParticipantImpl.cpp \
+		  \
+	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
 		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
 		  $(BASEDIR)/src/cpp/utils/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/utils/md5.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/RTPSMessageCreator.cpp \
 		  $(BASEDIR)/src/cpp/CacheChangePool.cpp \
 		  \
@@ -72,8 +76,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/reader/timedevent/WriterProxyLiveliness.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
-		  $(BASEDIR)/src/cpp/Participant.cpp \
-		  $(BASEDIR)/src/cpp/ParticipantProxyData.cpp \
+		   $(BASEDIR)/src/cpp/ParticipantProxyData.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/resources/ListenResource.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \

@@ -8,7 +8,10 @@
 
 /**
  * @file Participant.h
-*/
+ */
+
+#ifndef PARTICIPANTIMPL_H_
+#define PARTICIPANTIMPL_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,28 +23,22 @@
 #include <unistd.h>
 #endif
 
-#include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
+namespace boost
+{
+namespace interprocess
+{
+class interprocess_semaphore;
+}
+}
 
 #include "eprosimartps/pubsub/attributes/all_attributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
-#include "eprosimartps/resources/ListenResource.h"
 #include "eprosimartps/resources/ResourceSend.h"
-
-#include "eprosimartps/qos/ReaderQos.h"
-#include "eprosimartps/qos/WriterQos.h"
-
-#include "eprosimartps/Endpoint.h"
-
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 
 
-#ifndef PARTICIPANT_H_
-#define PARTICIPANT_H_
 
 namespace eprosima {
 
@@ -79,9 +76,33 @@ class RTPSWriter;
 class ParticipantImpl
 {
 public:
-
-	ParticipantImpl(const ParticipantAttributes &param,const GuidPrefix_t& guidP,uint32_t ID,Participant* userP,ParticipantListener* plisten);
+	ParticipantImpl(const ParticipantAttributes &param,
+			const GuidPrefix_t& guidP,ParticipantListener* plisten);
 	virtual ~ParticipantImpl();
+
+
+private:
+	//!Attributes of the Participant
+	ParticipantAttributes m_att;
+	//!Guid of the participant.
+	const GUID_t m_guid;
+	//! Sending resources.
+	ResourceSend m_send_thr;
+	//! Event Resource
+	ResourceEvent m_event_thr;
+	//! BuiltinProtocols of this participant
+	BuiltinProtocols m_builtinProtocols;
+public:
+	/**
+	 * Create a Writer in this Participant.
+	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
+	 * @param param WriterAttributes to define the Writer.
+	 * @param entityId EntityId assigned to the Writer.
+	 *  * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+	 * @return True if the Writer was correctly created.
+	 */
+	bool createWriter(RTPSWriter** Writer,EndpointAttributes& param,const EntityId_t& entityId = c_EntityId_Unknown,
+			bool isBuiltin = false);
 
 
 	/**
@@ -98,20 +119,7 @@ public:
 	 */
 	bool createReader(RTPSReader** Reader,SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
 			TopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-	/**
-	 * Create a Writer in this Participant.
-	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
-	 * @param param PublisherAttributes to define the Writer.
-	 * @param payload_size Maximum payload size.
-	 * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
-	 * @param kind STATELESS or STATEFUL
-	 * @param ptype Pointer to the TOpicDataType object (optional).
-	 * @param plisten Pointer to the PublisherListener object (optional).
-	 * @param entityId EntityId assigned to the Writer.
-	 * @return True if the Writer was correctly created.
-	 */
-	bool createWriter(RTPSWriter** Writer,PublisherAttributes& param,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
-				TopicDataType* ptype = NULL,PublisherListener* plisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
+
 	/**
 	 * Register a writer in the builtin protocols.
 	 * @param Writer Pointer to the RTPSWriter to register.
@@ -182,10 +190,7 @@ public:
 		return m_participantName;
 	}
 
-	//!Default listening addresses.
-	LocatorList_t m_defaultUnicastLocatorList;
-	//!Default listening addresses.
-	LocatorList_t m_defaultMulticastLocatorList;
+
 
 	void ResourceSemaphorePost();
 
@@ -232,17 +237,9 @@ public:
 
 	uint32_t getParticipantID() const{return m_participantID;}
 private:
-	//SimpleParticipantDiscoveryProtocol m_SPDP;
-	const std::string m_participantName;
-	//StaticEndpointDiscoveryProtocol m_StaticEDP;
 
-	//!Guid of the participant.
-	const GUID_t m_guid;
 
-	//! Sending resources.
-	ResourceSend m_send_thr;
-	//! Event Resource
-	ResourceEvent m_event_thr;
+
 
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
@@ -269,62 +266,29 @@ private:
 	 * @return True if correct.
 	 */
 	bool assignEnpointToListenResources(Endpoint* endpoint,char type,bool isBuiltin);
-//	/*!
-//	 * Create a new listen thread in the specified locator.
-//	 * @param[in] loc Locator to use.
-//	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
-//	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
-//	 * @param[in] isBuiltin Indicates that the endpoint is builtin.
-//	 * @return True if correct.
-//	 */
-//	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
+	//	/*!
+	//	 * Create a new listen thread in the specified locator.
+	//	 * @param[in] loc Locator to use.
+	//	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
+	//	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
+	//	 * @param[in] isBuiltin Indicates that the endpoint is builtin.
+	//	 * @return True if correct.
+	//	 */
+	//	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 
 	//ParticipantDiscoveryProtocol* mp_PDP;
 
-	BuiltinProtocols m_builtinProtocols;
 
-	BuiltinAttributes m_builtin;
 
-	uint32_t m_participantID;
 
-	uint32_t m_send_socket_buffer_size;
-	uint32_t m_listen_socket_buffer_size;
+
 
 	ParticipantListener* mp_participantListener;
 
-	Participant* mp_userParticipant;
 
-	std::vector<octet> m_userData;
 
-};
-/**
- * @brief Class Participant, contains the public API for a Participant.
- * @ingroup MANAGEMENTMODULE
- */
-class RTPS_DllAPI Participant
-{
-	friend class ParticipantImpl;
-public:
-	Participant(ParticipantImpl* pimpl):mp_impl(pimpl){};
-	virtual ~ Participant(){};
-	//!Get the GUID_t of the participant.
-	const GUID_t& getGuid(){return mp_impl->getGuid();};
-	//!Force the announcement of the participant state.
-	void announceParticipantState(){return mp_impl->announceParticipantState();};
-	//!Method to loose the next change (ONLY FOR TEST).
-	void loose_next_change(){return mp_impl->loose_next_change();};
-	//!Stop the participant announcement period.
-	void stopParticipantAnnouncement(){return mp_impl->stopParticipantAnnouncement();};
-	//!Reset the participant announcement period.
-	void resetParticipantAnnouncement(){return mp_impl->resetParticipantAnnouncement();};
 
-	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
-	{
-		return mp_impl->newRemoteEndpointDiscovered(pguid,userDefinedId, kind);
-	}
-	uint32_t getParticipantID() const{return mp_impl->getParticipantID();}
-	private:
-	ParticipantImpl* mp_impl;
+
 };
 
 

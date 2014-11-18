@@ -11,23 +11,22 @@
  *
  */
 
-#include "eprosimartps/Endpoint.h"
+#include "eprosimartps/rtps/Endpoint.h"
+
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
 namespace rtps {
 
-Endpoint::Endpoint(GuidPrefix_t guid,
+Endpoint::Endpoint(ParticipantImpl* pimpl,
+					GuidPrefix_t guid,
 					EntityId_t entityId,
-					TopicAttributes topic,
-					TopicDataType* ptype,
 					StateKind_t state,
 					EndpointKind_t end,
 					int16_t userDefinedId):
-		m_guid(guid,entityId),m_topic(topic),m_stateType(state),m_endpointKind(end),m_userDefinedId(userDefinedId)
+mp_participant(pimpl),m_guid(guid,entityId),m_stateType(state),m_endpointKind(end),m_userDefinedId(userDefinedId),mp_mutex(new boost::recursive_mutex())
 {
-	mp_type = ptype;
-	mp_send_thr = NULL;
-	mp_event_thr = NULL;
+
 }
 
 Endpoint::~Endpoint() {

@@ -40,7 +40,7 @@ class ParticipantImpl;
 class ResourceSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
 {
 public:
-	ResourceSend(ParticipantImpl* par);
+	ResourceSend();
 	virtual ~ResourceSend();
 	/**
 	 * Send a CDR message syncrhonously. No waiting is required.
@@ -54,7 +54,7 @@ public:
 	 * @param loc Locator of hte address from where to start the sending socket.
 	 * @return True if correct
 	 */
-	bool initSend(const Locator_t& loc);
+	bool initSend(ParticipantImpl*,const Locator_t& loc);
 
 	//!FOR TESTING ONLY!!!!
 	void loose_next(){m_send_next = false;};

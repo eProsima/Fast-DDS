@@ -17,6 +17,7 @@
 
 #include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 
+#include <boost/thread/recursive_mutex.hpp>
 //#include "eprosimartps/qos/ParameterList.h"
 
 namespace eprosima {
@@ -45,7 +46,7 @@ StatelessWriter::~StatelessWriter()
 bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_add";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderProxyData*>::iterator it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
 	{
 		if((*it)->m_guid == rdata->m_guid)
@@ -116,7 +117,7 @@ bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_remove";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	bool found = false;
 	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
 			rit!=m_matched_readers.end();++rit)
@@ -148,7 +149,7 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 
 bool StatelessWriter::matched_reader_is_matched(ReaderProxyData* rdata)
 {
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
 			rit!=m_matched_readers.end();++rit)
 	{
@@ -232,8 +233,7 @@ bool StatelessWriter::reader_locator_add(Locator_t& loc,bool expectsInlineQos)
 
 void StatelessWriter::unsent_changes_reset()
 {
-
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		rit->unsent_changes.clear();
 		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();
@@ -252,7 +252,7 @@ bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
 void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 {
 	const char* const METHOD_NAME = "unsent_change_add";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(!reader_locator.empty())
 	{
 		for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
@@ -282,7 +282,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 void StatelessWriter::unsent_changes_not_empty()
 {
 	const char* const METHOD_NAME = "unsent_changes_not_empty";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 	{
 		if(!rit->unsent_changes.empty())

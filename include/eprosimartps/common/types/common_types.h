@@ -49,6 +49,17 @@ enum ReliabilityKind_t{
 	BEST_EFFORT
 };
 
+typedef enum EndpointKind_t{
+	READER,
+	WRITER
+}EndpointKind_t;
+
+typedef enum TopicKind_t{
+	NO_KEY,
+	WITH_KEY
+}TopicKind_t;
+
+
 #if defined(__LITTLE_ENDIAN__)
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #else
