@@ -32,7 +32,7 @@ class RTPSReader;
  */
 class BuiltinProtocols {
 public:
-	BuiltinProtocols(ParticipantImpl* p_part);
+	BuiltinProtocols();
 	virtual ~BuiltinProtocols();
 	/**
 	 * Initialize the builtin protocols.
@@ -40,7 +40,7 @@ public:
 	 * @param participantID ID of the local participant.
 	 * @return True if correct.
 	 */
-	bool initBuiltinProtocols(const BuiltinAttributes& attributes, uint32_t participantID);
+	bool initBuiltinProtocols(ParticipantImpl* p_part,const BuiltinAttributes& attributes, uint32_t participantID);
 	//!Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
 	bool updateMetatrafficLocators(LocatorList_t& loclist);
 

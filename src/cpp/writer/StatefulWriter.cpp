@@ -23,10 +23,9 @@
 
 #include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 
-//#include "eprosimartps/CDRMessage.h"
-//#include "eprosimartps/qos/ParameterList.h"
-
 #include "eprosimartps/utils/RTPSLog.h"
+
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
 namespace rtps {
@@ -69,7 +68,7 @@ StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix
 bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_add";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
@@ -113,7 +112,7 @@ bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
 bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_remove";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
@@ -133,7 +132,7 @@ bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
 
 bool StatefulWriter::matched_reader_is_matched(ReaderProxyData* rdata)
 {
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_data->m_guid == rdata->m_guid)
@@ -146,7 +145,7 @@ bool StatefulWriter::matched_reader_is_matched(ReaderProxyData* rdata)
 
 bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
@@ -184,7 +183,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 void StatefulWriter::unsent_change_add(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "unsent_change_add";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(!matched_readers.empty())
 	{
 		std::vector<ReaderProxy*>::iterator it;
@@ -227,7 +226,7 @@ bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
 void StatefulWriter::unsent_changes_not_empty()
 {
 	const char* const METHOD_NAME = "unsent_changes_not_empty";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<ReaderProxy*>::iterator rit;
 	boost::lock_guard<ResourceSend> guard2(*mp_send_thr);
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
@@ -322,7 +321,7 @@ bool StatefulWriter::removeMinSeqCacheChange()
 
 bool StatefulWriter::removeAllCacheChange(size_t* removed)
 {
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	int32_t n_count = 0;
 	while(this->removeMinSeqCacheChange())
 	{
@@ -338,7 +337,7 @@ bool StatefulWriter::removeAllCacheChange(size_t* removed)
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "change_removed_by_history";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	logInfo(RTPS_HISTORY,"WriterHistory commands change "<<a_change->sequenceNumber.to64long()<< " to be removed from StatefulWriter");
 
 	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();

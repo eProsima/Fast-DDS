@@ -19,6 +19,8 @@
 
 #include "eprosimartps/reader/WriterProxyData.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+
 using namespace eprosima::pubsub;
 
 namespace eprosima {
@@ -55,7 +57,7 @@ StatefulReader::StatefulReader(const SubscriberAttributes& param,
 bool StatefulReader::matched_writer_add(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_add";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
@@ -73,7 +75,7 @@ bool StatefulReader::matched_writer_add(WriterProxyData* wdata)
 bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_remove";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->m_data->m_guid == wdata->m_guid)
@@ -90,7 +92,7 @@ bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 
 bool StatefulReader::matched_writer_is_matched(WriterProxyData* wdata)
 {
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->m_data->m_guid == wdata->m_guid)
@@ -108,7 +110,7 @@ bool StatefulReader::matched_writer_is_matched(WriterProxyData* wdata)
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 {
 	const char* const METHOD_NAME = "matched_writer_lookup";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		if((*it)->m_data->m_guid == writerGUID)
@@ -125,7 +127,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "takeNextCacheChange";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	CacheChange_t* min_change;
 	SequenceNumber_t minSeqNum = c_SequenceNumber_Unknown;
 	SequenceNumber_t auxSeqNum;
@@ -170,7 +172,7 @@ bool StatefulReader::takeNextCacheChange(void* data,SampleInfo_t* info)
 bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "readNextCacheChange";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<CacheChange_t*> toremove;
 	bool readok = false;
 	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.changesBegin();
@@ -214,7 +216,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 	for(std::vector<CacheChange_t*>::iterator it = toremove.begin();
 			it!=toremove.end();++it)
 	{
-		logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired";)
+		logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired");
 		m_reader_cache.remove_change(*it);
 	}
 	return readok;
@@ -224,7 +226,7 @@ bool StatefulReader::readNextCacheChange(void*data,SampleInfo_t* info)
 bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 {
 	const char* const METHOD_NAME = "readNextCacheChange";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<CacheChange_t*> toremove;
 	bool readok = false;
 	for(std::vector<CacheChange_t*>::iterator it = m_reader_cache.changesBegin();
@@ -255,7 +257,7 @@ bool StatefulReader::readNextCacheChange(CacheChange_t** change)
 	for(std::vector<CacheChange_t*>::iterator it = toremove.begin();
 			it!=toremove.end();++it)
 	{
-		logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired";)
+		logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired");
 		m_reader_cache.remove_change(*it);
 	}
 	return readok;
@@ -270,7 +272,7 @@ bool StatefulReader::isUnreadCacheChange()
 bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterProxy* wp)
 {
 	const char* const METHOD_NAME = "change_removed_by_history";
-	boost::lock_guard<Endpoint> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(wp!=NULL || matched_writer_lookup(a_change->writerGUID,&wp))
 	{
 		std::vector<int> to_remove;

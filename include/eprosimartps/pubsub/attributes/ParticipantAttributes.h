@@ -106,6 +106,8 @@ public:
 		name = "defaultParticipant";
 		sendSocketBufferSize = 8712;
 		listenSocketBufferSize = 17424;
+		use_IP4_to_send = true;
+		use_IP6_to_send = false;
 		participantId = -1;
 }
 	virtual ~ParticipantAttributes(){};
@@ -138,8 +140,10 @@ public:
 
 	std::vector<octet> userData;
 
-	int32_t participantId;
+	int32_t participantID;
 
+	bool use_IP4_to_send;
+	bool use_IP6_to_send;
 
 
 };

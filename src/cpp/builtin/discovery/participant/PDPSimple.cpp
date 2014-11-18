@@ -67,9 +67,8 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	if(!createSPDPEndpoints())
 		return false;
 	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->unicastLocatorList);
-	this->mp_SPDPReader->lock();
-	this->mp_SPDPWriter->lock();
-
+	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	m_participantProxies.push_back(new ParticipantProxyData());
 	m_participantProxies.front()->initializeData(mp_participant,this);
 
@@ -93,8 +92,6 @@ bool PDPSimple::initPDP(ParticipantImpl* part,uint32_t participantID)
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,mp_participant->getEventResource(),
 			boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_discovery.leaseDuration_announcementperiod)));
 
-	this->mp_SPDPReader->unlock();
-	this->mp_SPDPWriter->unlock();
 	return true;
 }
 
@@ -299,7 +296,7 @@ bool PDPSimple::createSPDPEndpoints()
 		return false;
 	}
 
-	logInfo(RTPS_PDP,"SPDP Endpoints creation finished",EPRO_CYAN)
+	logInfo(RTPS_PDP,"SPDP Endpoints creation finished",EPRO_CYAN);
 	return true;
 }
 
@@ -453,8 +450,8 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
 	const char* const METHOD_NAME = "removeRemoteParticipant";
 	logInfo(RTPS_PDP,partGUID,EPRO_CYAN );
-	boost::lock_guard<Endpoint> guardW(*this->mp_SPDPWriter);
-	boost::lock_guard<Endpoint> guardR(*this->mp_SPDPReader);
+	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
 	ParticipantProxyData* pdata=nullptr;
 	//Remove it from our vector or participantProxies:
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
