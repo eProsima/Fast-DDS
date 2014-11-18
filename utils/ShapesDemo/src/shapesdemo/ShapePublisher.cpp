@@ -32,13 +32,13 @@ ShapePublisher::~ShapePublisher()
 //        mp_pub->dispose((void*)&this->m_shape.m_mainShape);
 //        mp_pub->unregister((void*)&this->m_shape.m_mainShape);
         mp_pub->dispose_and_unregister((void*)&this->m_shape);
-        DomainParticipant::removePublisher(this->mp_participant,mp_pub);
+        RTPSDomain::removePublisher(this->mp_participant,mp_pub);
     }
 }
 
 bool ShapePublisher::initPublisher()
 {
-    mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes,(PublisherListener*)this);
+    mp_pub = RTPSDomain::createPublisher(mp_participant,m_attributes,(PublisherListener*)this);
     if(mp_pub !=NULL)
     {
          isInitialized = true;

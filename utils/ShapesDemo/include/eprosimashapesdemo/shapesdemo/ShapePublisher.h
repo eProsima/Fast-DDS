@@ -19,7 +19,6 @@
 #include <QMutex>
 
 
-class dds::Publisher;
 
 /**
  * @brief The ShapePublisher class, implements a Publisher to transmit shapes.

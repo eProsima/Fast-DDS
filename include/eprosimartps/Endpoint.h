@@ -56,7 +56,8 @@ typedef enum EndpointKind_t{
  * Participant class. This way each instance of our class (Endpoint) has a pointer to the participant they belong to.
  * @ingroup COMMONMODULE
  */
-class Endpoint: public boost::basic_lockable_adapter<boost::recursive_mutex> {
+class Endpoint: public boost::basic_lockable_adapter<boost::recursive_mutex> 
+{
 public:
 	Endpoint(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,TopicDataType* ptype,StateKind_t state = STATELESS,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
 	virtual ~Endpoint();

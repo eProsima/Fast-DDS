@@ -60,12 +60,12 @@ bool ShapesDemo::init()
         pparam.defaultSendPort = 10042;
         pparam.sendSocketBufferSize = 65536;
         pparam.listenSocketBufferSize = 2*65536;
-        mp_participant = DomainParticipant::createParticipant(pparam);
+        mp_participant = RTPSDomain::createParticipant(pparam);
         if(mp_participant!=NULL)
         {
             // cout << "Participant Created "<< mp_participant->getGuid() << endl;l
             m_isInitialized = true;
-            DomainParticipant::registerType(&m_shapeTopicDataType);
+            RTPSDomain::registerType(&m_shapeTopicDataType);
             return true;
         }
         return false;
@@ -91,7 +91,7 @@ void ShapesDemo::stop()
             delete(*it);
         }
         m_subscribers.clear();
-        DomainParticipant::removeParticipant(mp_participant);
+        RTPSDomain::removeParticipant(mp_participant);
         cout << "All Stoped, removing"<<endl;
         mp_participant = NULL;
         m_isInitialized = false;

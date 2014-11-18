@@ -6,6 +6,9 @@ Name "eProsima RTPS"
 ### Necesario para tener permisos de borrar ciertos ficheros al desinstalar
 RequestExecutionLevel admin
 
+#!define VERSION "0.5.1"
+
+
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
 !define COMPANY eProsima
@@ -22,6 +25,8 @@ RequestExecutionLevel admin
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "eProsima\eRTPS"
 !define LIB_BOOST_PATH $%LIB_BOOST_PATH%
+!define LIB_BOOST_PATH_VS2010 "C:\local\boost_1_53_0"
+!define LIB_BOOST_PATH_VS2013 "C:\local\boost_1_57_0"
 
 # Included files
 !include Sections.nsh
@@ -31,41 +36,74 @@ RequestExecutionLevel admin
 
 # Installer sections Has to be defined at the beginning because they are used by EnvVarPage.nsh
 SectionGroup "Libraries" SECGRP0000
-     Section "x64 libraries" SEC_LIB_x64
+     Section "x64 VS2010 libraries" SEC_LIB_x64_VS2010
          SetOutPath $INSTDIR\lib\x64Win64VS2010
          SetOverwrite on
          File /r "..\..\..\..\lib\x64Win64VS2010\*"
-		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_thread*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_system*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64\boost_regex*"
-		 WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries" 1
+		 #File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64\boost_thread*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64\boost_system*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64\boost_regex*"
+		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2010 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
-         File "redistributables\vcredist_x64.exe"
+         File "redistributables\vcredist_x64_VS2010.exe"
      SectionEnd
 
-    Section "i86 libraries" SEC_LIB_i86
+    Section "i86 VS2010 libraries" SEC_LIB_i86_VS2010
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
         File /r "..\..\..\..\lib\i86Win32VS2010\*"
-		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
-		File /r "${LIB_BOOST_PATH}\lib\i86\boost_thread*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_system*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86\boost_regex*"
-        WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries" 1
+		#File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
+		File /r "${LIB_BOOST_PATH_VS2010}\lib\i86\boost_thread*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\i86\boost_system*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\i86\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\i86\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH_VS2010}\lib\i86\boost_regex*"
+        WriteRegStr HKLM "${REGKEY}\Components" "i86 VS2010 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
-        File "redistributables\vcredist_x86.exe"
+        File "redistributables\vcredist_x86_VS2010.exe"
+    SectionEnd
+	
+	Section "x64 VS2013libraries" SEC_LIB_x64_VS2013
+         SetOutPath $INSTDIR\lib\x64Win64VS2013
+         SetOverwrite on
+         File /r "..\..\..\..\lib\x64Win64VS2013\*"
+		 #File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64\boost_thread*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64\boost_system*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64\boost_regex*"
+		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2013 libraries" 1
+		 # Copy visual studio redistributable for x64
+         SetOutPath $TEMP
+         File "redistributables\vcredist_x64_VS2013.exe"
+     SectionEnd
+
+    Section "i86 VS2013 libraries" SEC_LIB_i86_VS2013
+        SetOutPath $INSTDIR\lib\i86Win32VS2013
+        SetOverwrite on
+        File /r "..\..\..\..\lib\i86Win32VS2013\*"
+		#File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
+		File /r "${LIB_BOOST_PATH_VS2013}\lib\i86\boost_thread*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86\boost_system*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86\boost_regex*"
+        WriteRegStr HKLM "${REGKEY}\Components" "i86 VS0213 libraries" 1
+		# Copy visual studio redistributable for i86
+        SetOutPath $TEMP
+        File "redistributables\vcredist_x86_VS2013.exe"
     SectionEnd
 SectionGroupEnd
 
 !include EnvVarPage.nsh
-!include InstallRedistributables.nsh
+!include InstallRedistributablesVS2010.nsh
+!include InstallRedistributablesVS2013.nsh
 
 # Variables
 Var StartMenuGroup
@@ -225,21 +263,34 @@ Section -post SEC0006
        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\rtpsgen"
        WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
     ${EndIf}
-    ${If} ${SectionIsSelected} ${SEC_LIB_x64}
-        ${If} $CheckboxX64_State == ${BST_CHECKED}
+    ${If} ${SectionIsSelected} ${SEC_LIB_x64_VS2010}
+        ${If} $CheckboxX64_VS2010_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
-             WriteRegStr HKLM "${REGKEY}\Components" "x64 libraries location" 1
+             WriteRegStr HKLM "${REGKEY}\Components" "x64 VS0210 libraries location" 1
         ${EndIf}
     ${EndIf}
-    ${If} ${SectionIsSelected} ${SEC_LIB_i86}
-        ${If} $CheckboxI86_State == ${BST_CHECKED}
+    ${If} ${SectionIsSelected} ${SEC_LIB_i86_VS2010}
+        ${If} $CheckboxI86_VS2010_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
-             WriteRegStr HKLM "${REGKEY}\Components" "i86 libraries location" 1
+             WriteRegStr HKLM "${REGKEY}\Components" "i86 VS2010 libraries location" 1
+        ${EndIf}
+    ${EndIf}
+	${If} ${SectionIsSelected} ${SEC_LIB_x64_VS2013}
+        ${If} $CheckboxX64_VS2013_State == ${BST_CHECKED}
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2013"
+             WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2013 libraries location" 1
+        ${EndIf}
+    ${EndIf}
+    ${If} ${SectionIsSelected} ${SEC_LIB_i86_VS2013}
+        ${If} $CheckboxI86_VS2013_State == ${BST_CHECKED}
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2013"
+             WriteRegStr HKLM "${REGKEY}\Components" "i86 VS2013 libraries location" 1
         ${EndIf}
     ${EndIf}
 	
 	# Comprobamos si tiene instalado los redistributables de Visual Studio
-    Call InstallRedistributables
+    Call InstallRedistributablesVS2010
+	Call InstallRedistributablesVS2013
 SectionEnd
 
 # Macro for selecting uninstaller sections
@@ -256,14 +307,24 @@ done${UNSECTION_ID}:
 !macroend
 
 # Uninstaller sections
-Section /o "-un.i86 libraries" UNSEC_LIB_i86
+Section /o "-un.i86 VS0210 libraries" UNSEC_LIB_i86_VS2010
     RmDir /r /REBOOTOK $INSTDIR\lib\i86Win32VS2010
-    DeleteRegValue HKLM "${REGKEY}\Components" "i86 libraries"
+    DeleteRegValue HKLM "${REGKEY}\Components" "i86 VS2010 libraries"
 SectionEnd
 
-Section /o "-un.x64 libraries" UNSEC_LIB_x64
+Section /o "-un.x64 VS2010 libraries" UNSEC_LIB_x64_VS2010
     RmDir /r /REBOOTOK $INSTDIR\lib\x64Win64VS2010
-    DeleteRegValue HKLM "${REGKEY}\Components" "x64 libraries"
+    DeleteRegValue HKLM "${REGKEY}\Components" "x64 VS2010 libraries"
+SectionEnd
+
+Section /o "-un.i86 VS2013 libraries" UNSEC_LIB_i86_VS2013
+    RmDir /r /REBOOTOK $INSTDIR\lib\i86Win32VS2013
+    DeleteRegValue HKLM "${REGKEY}\Components" "i86 VS2013 libraries"
+SectionEnd
+
+Section /o "-un.x64 VS0213 libraries" UNSEC_LIB_x64_VS2013
+    RmDir /r /REBOOTOK $INSTDIR\lib\x64Win64VS2013
+    DeleteRegValue HKLM "${REGKEY}\Components" "x64 VS2013 libraries"
 SectionEnd
 
 Section -un.post UNSEC0006
@@ -288,8 +349,10 @@ Section -un.post UNSEC0006
     RmDir /r /REBOOTOK $INSTDIR
     
     ### Quitamos las variables de entorno
-    DeleteRegValue HKLM "${REGKEY}\Components" "i86 libraries location"
-    DeleteRegValue HKLM "${REGKEY}\Components" "x64 libraries location"
+    DeleteRegValue HKLM "${REGKEY}\Components" "i86 VS2010 libraries location"
+    DeleteRegValue HKLM "${REGKEY}\Components" "x64 VS2010 libraries location"
+	DeleteRegValue HKLM "${REGKEY}\Components" "i86 VS2013 libraries location"
+    DeleteRegValue HKLM "${REGKEY}\Components" "x64 VS2013 libraries location"
     DeleteRegValue HKLM "${REGKEY}\Components" "Script location"
     DeleteRegValue HKLM "${REGKEY}\Components" "EPROSIMARTPSHOME"
     
@@ -297,6 +360,8 @@ Section -un.post UNSEC0006
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\rtpsgen"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
+	${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2013"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2014"
 SectionEnd
 
 # Installer functions
@@ -318,8 +383,10 @@ Function .onInit
 FunctionEnd
 
 Function ComponentsPageLeave
-  ${Unless} ${SectionIsSelected} ${SEC_LIB_x64}
-  ${AndUnless} ${SectionIsSelected} ${SEC_LIB_i86}
+  ${Unless} ${SectionIsSelected} ${SEC_LIB_x64_VS2010}
+  ${AndUnless} ${SectionIsSelected} ${SEC_LIB_i86_VS2010}
+  ${AndUnless} ${SectionIsSelected} ${SEC_LIB_i86_VS2013}
+  ${AndUnless} ${SectionIsSelected} ${SEC_LIB_i86_VS2013}
     MessageBox MB_OK|MB_ICONINFORMATION `Please select at least one library component.`
     Abort
   ${EndUnless}
@@ -330,15 +397,19 @@ Function un.onInit
 
     ReadRegStr $INSTDIR HKLM "${REGKEY}" Path
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
-    !insertmacro SELECT_UNSECTION "x64 libraries" ${UNSEC_LIB_x64}
-    !insertmacro SELECT_UNSECTION "i86 libraries" ${UNSEC_LIB_i86}
+    !insertmacro SELECT_UNSECTION "x64 VS2010 libraries" ${UNSEC_LIB_x64_VS2010}
+    !insertmacro SELECT_UNSECTION "i86 VS0210 libraries" ${UNSEC_LIB_i86_VS2010}
+	!insertmacro SELECT_UNSECTION "x64 VS2013 libraries" ${UNSEC_LIB_x64_VS2013}
+    !insertmacro SELECT_UNSECTION "i86 VS2013 libraries" ${UNSEC_LIB_i86_VS2013}
 FunctionEnd
 
 # Section Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SECGRP0000} "eProsima RTPS libraries."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64} "Libraries for x64 platforms."
-!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86} "Libraries for i86 platforms."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64_VS2010} "Libraries for x64 VS2010 platforms."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86_VS2010} "Libraries for i86 VS2010 platforms."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64_VS2013} "Libraries for x64 VS2013 platforms."
+!insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86_VS2013} "Libraries for i86 VS2013 platforms."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

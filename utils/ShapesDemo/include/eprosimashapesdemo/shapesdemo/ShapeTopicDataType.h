@@ -5,17 +5,16 @@
  * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
-#include "eprosimartps/dds/DDSTopicDataType.h"
+#include "eprosimartps/rtps_all.h"
 
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 
 using namespace eprosima;
-using namespace dds;
 
 /**
  * @brief The ShapeTopicDataType class, implements the serializing and deserializing methods.
  */
-class ShapeTopicDataType : public DDSTopicDataType
+class ShapeTopicDataType : public TopicDataType
 {
 public:
     ShapeTopicDataType();

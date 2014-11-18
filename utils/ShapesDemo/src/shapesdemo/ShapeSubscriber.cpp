@@ -28,14 +28,14 @@ ShapeSubscriber::ShapeSubscriber(Participant* par):
 
 ShapeSubscriber::~ShapeSubscriber() {
     // TODO Auto-generated destructor stub
-    DomainParticipant::removeSubscriber(this->mp_participant,mp_sub);
+    RTPSDomain::removeSubscriber(this->mp_participant,mp_sub);
     if(mp_contentFilter!=NULL)
         delete(mp_contentFilter);
 }
 
 bool ShapeSubscriber::initSubscriber()
 {
-    mp_sub = DomainParticipant::createSubscriber(mp_participant,m_attributes,(SubscriberListener*)this);
+    mp_sub = RTPSDomain::createSubscriber(mp_participant,m_attributes,(SubscriberListener*)this);
     if(mp_sub !=NULL)
         return true;
     return false;

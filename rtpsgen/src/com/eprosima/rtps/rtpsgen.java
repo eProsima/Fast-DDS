@@ -516,16 +516,22 @@ public class rtpsgen {
 			System.out.println("Generating solution for arch " + m_exampleOption + "...");
 			
 			if (m_exampleOption.substring(3, 6).equals("Win")) {
-				System.out.println("Generating VS2010 solution");
+				System.out.println("Generating Windows solution");
 				
-				if (m_exampleOption.startsWith("i86")) {
-					returnedValue = genVS2010(solution, null);
+				if (m_exampleOption.startsWith("i86")) 
+				{
+					if(m_exampleOption.charAt(m_exampleOption.length()-1) == '3')
+						returnedValue = genVS2013(solution, null);
+					else
+						returnedValue = genVS2010(solution, null);
 				} else if (m_exampleOption.startsWith("x64")) {
 					for (int index = 0; index < m_vsconfigurations.length; index++) {
 						m_vsconfigurations[index].setPlatform("x64");
 					}
-					
-					returnedValue = genVS2010(solution, "x64");
+					if(m_exampleOption.charAt(m_exampleOption.length()-1) == '3')
+						returnedValue = genVS2013(solution, "x64");
+					else
+						returnedValue = genVS2010(solution, "x64");
 				} else {
 					returnedValue = false;
 				}
@@ -612,6 +618,78 @@ public class rtpsgen {
 			
 		} else {
 			System.out.println("ERROR<" + METHOD_NAME + ">: Cannot load the template group VS2010");
+		}
+		
+		return returnedValue;
+	}
+	
+	private boolean genVS2013(Solution solution, String arch) {
+		
+		final String METHOD_NAME = "genVS2013";
+		boolean returnedValue = false;
+		
+		StringTemplateGroup vsTemplates = StringTemplateGroup.loadGroup("VS2013", DefaultTemplateLexer.class, null);
+		
+		if (vsTemplates != null) {
+			StringTemplate tsolution = vsTemplates.getInstanceOf("solution");
+			StringTemplate tproject = vsTemplates.getInstanceOf("project");
+			StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
+			StringTemplate tprojectPubSub = vsTemplates.getInstanceOf("projectPubSub");
+			StringTemplate tprojectFilesPubSub = vsTemplates.getInstanceOf("projectFilesPubSub");
+			
+			returnedValue = true;
+			
+			System.out.println("Proyectos: "+solution.getProjects().size());
+			for (int count = 0; returnedValue && (count < solution.getProjects().size()); ++count) {
+				Project project = (Project) solution.getProjects().get(count);
+				
+				tproject.setAttribute("solution", solution);
+				tproject.setAttribute("project", project);
+				tproject.setAttribute("example", m_exampleOption);
+				//tproject.setAttribute("local",  m_local);
+				
+				tprojectFiles.setAttribute("project", project);
+				
+				tprojectPubSub.setAttribute("solution", solution);
+				tprojectPubSub.setAttribute("project", project);
+				tprojectPubSub.setAttribute("example", m_exampleOption);
+				
+				tprojectFilesPubSub.setAttribute("project", project);
+				
+				for (int index = 0; index < m_vsconfigurations.length; index++) {
+					tproject.setAttribute("configurations", m_vsconfigurations[index]);
+					tprojectPubSub.setAttribute("configurations", m_vsconfigurations[index]);
+				}
+				
+				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
+					if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PublisherSubscriber-" + m_exampleOption + ".vcxproj", tprojectPubSub, m_replace)) {
+							returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PublisherSubscriber-" + m_exampleOption + ".vcxproj.filters", tprojectFilesPubSub, m_replace);
+						}
+					}
+				}
+				
+				tproject.reset();
+				tprojectFiles.reset();
+				tprojectPubSub.reset();
+				tprojectFilesPubSub.reset();
+				
+			}
+			
+			if (returnedValue) {
+				tsolution.setAttribute("solution", solution);
+				tsolution.setAttribute("example", m_exampleOption);
+				
+				// Project configurations
+				for (int index = 0; index < m_vsconfigurations.length; index++) {
+					tsolution.setAttribute("configurations", m_vsconfigurations[index]);
+				}
+				
+				returnedValue = Utils.writeFile(m_outputDir + "solution-" + m_exampleOption + ".sln", tsolution, m_replace);
+			}
+			
+		} else {
+			System.out.println("ERROR<" + METHOD_NAME + ">: Cannot load the template group VS2013");
 		}
 		
 		return returnedValue;
