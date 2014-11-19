@@ -7,13 +7,13 @@
  *************************************************************************/
 
 /**
- * @file ResourceSend.h
+ * @file ResourceSendImpl.h
  */
 
 
 
-#ifndef RESOURCESEND_H_
-#define RESOURCESEND_H_
+#ifndef RESOURCESENDIMPL_H_
+#define RESOURCESENDIMPL_H_
 #include <boost/asio.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/address_v6.hpp>
@@ -37,11 +37,11 @@ class ParticipantImpl;
  *  logic for merge different CDRMessages into a single RTPSMessages (HB piggybacking, for example).
  * @ingroup MANAGEMENTMODULE
  */
-class ResourceSend: public boost::basic_lockable_adapter<boost::recursive_mutex>
+class ResourceSendImpl
 {
 public:
-	ResourceSend();
-	virtual ~ResourceSend();
+	ResourceSendImpl();
+	virtual ~ResourceSendImpl();
 	/**
 	 * Send a CDR message syncrhonously. No waiting is required.
 	 * @param msg Pointer to the message.
@@ -54,11 +54,14 @@ public:
 	 * @param loc Locator of hte address from where to start the sending socket.
 	 * @return True if correct
 	 */
-	bool initSend(ParticipantImpl*,const Locator_t& loc);
+	bool initSend(ParticipantImpl*,const Locator_t& loc,bool useIP4, bool useIP6);
 
 	//!FOR TESTING ONLY!!!!
 	void loose_next(){m_send_next = false;};
+	boost::recursive_mutex* getMutex();
 private:
+	bool m_useIP4;
+	bool m_useIP6;
 	Locator_t m_sendLocator_v4;
 	Locator_t m_sendLocator_v6;
 	boost::asio::io_service m_send_service;
@@ -69,6 +72,7 @@ private:
 	size_t m_bytes_sent;
 	bool m_send_next;
 	ParticipantImpl* mp_participant;
+	boost::recursive_mutex* mp_mutex;
 
 };
 

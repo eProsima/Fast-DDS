@@ -17,7 +17,7 @@
 
 #include "eprosimartps/rtps/RTPSMessageCreator.h"
 
-#include "eprosimartps/resources/ResourceSend.h"
+#include "eprosimartps/rtps/resources/ResourceSend.h"
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
@@ -31,6 +31,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace rtps {
@@ -124,7 +125,7 @@ void StatefulWriter::unsent_changes_not_empty()
 	const char* const METHOD_NAME = "unsent_changes_not_empty";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<ReaderProxy*>::iterator rit;
-	boost::lock_guard<ResourceSend> guard2(*mp_send_thr);
+	boost::lock_guard<boost::recursive_mutex> guard2(*mp_send_thr->getMutex());
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*(*rit)->mp_mutex);
