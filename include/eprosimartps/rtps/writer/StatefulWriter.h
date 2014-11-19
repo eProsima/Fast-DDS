@@ -48,6 +48,7 @@ private:
 	std::vector<ReaderProxy*> matched_readers;
 	//!EntityId used to send the HB.(only for builtin types performance)
 	EntityId_t m_HBReaderEntityId;
+public:
 	/**
 	 * Add a specific change to all ReaderLocators.
 	 * @param p Pointer to the change.
@@ -87,7 +88,22 @@ private:
 	 * Remove the change with the minimum SequenceNumber
 	 * @return True if removed.
 	 */
+	bool is_acked_by_all(CacheChange_t* a_change);
+	/**
+	 * Update the Attributes of the Writer.
+	 */
+	void updateAttributes(WriterAttributes& att);
 
+	/**
+	 * Find a Reader Proxy in this writer.
+	 * @param[in] readerGuid The GUID_t of the reader.
+	 * @param[out] RP Pointer to pointer to return the ReaderProxy.
+	 * @return True if correct.
+	 */
+	bool matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP);
+
+private:
+	void updateTimes(WriterTimes& times);
 	//
 	//
 	//	/**

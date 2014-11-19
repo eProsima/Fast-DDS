@@ -15,17 +15,8 @@
 #define RTPSWRITER_H_
 
 #include "eprosimartps/rtps/Endpoint.h"
-//
-//#include "eprosimartps/history/WriterHistory.h"
-//
-//
-//#include "eprosimartps/writer/RTPSMessageGroup.h"
-//
-//#include "eprosimartps/qos/WriterQos.h"
-//#include "eprosimartps/pubsub/Publisher.h"
-//
-//#include "eprosimartps/qos/ParameterList.h"
-//#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
+#include "eprosimartps/rtps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/rtps/attributes/WriterAttributes.h"
 
 
 
@@ -35,42 +26,8 @@ namespace rtps {
 
 class UnsentChangesNotEmptyEvent;
 class WriterListener;
-
-
-class WriterTimes
-{
-public:
-	WriterTimes(){cout << "PONER VALORES POR DEFECTO"<<endl;};
-	virtual ~WriterTimes(){};
-	Duration_t heartbeatPeriod;
-	Duration_t nackResponseDelay;
-	Duration_t nackSupressionDuration;
-};
-
-class WriterAttributes
-{
-public:
-	WriterAttributes()
-{
-		endpoint.endpointKind = WRITER;
-		endpoint.durabilityKind = VOLATILE;
-}
-	virtual ~WriterAttributes();
-	EndpointAttributes endpoint;
-	WriterTimes times;
-};
-
-class RemoteReaderAttributes
-{
-public:
-	RemoteReaderAttributes()	{
-		endpoint.endpointKind = READER;
-	}
-	virtual ~RemoteReaderAttributes()	{	}
-	EndpointAttributes endpoint;
-	GUID_t guid;
-};
-
+class WriterHistory;
+class CacheChange_t;
 
 
 /**
@@ -110,9 +67,19 @@ public:
 	 */
 	virtual bool matched_reader_is_matched(RemoteReaderAttributes& ratt)=0;
 	/**
-	 * Remove the change with the minimum SequenceNumber
-	 * @return True if removed.
+	 * Check if a specific change has been acknowledged by all Readers.
+	 * Is only useful in reliable Writer. In BE Writers always returns true;
+	 * @return True if acknowledged by all.
 	 */
+	virtual bool is_acked_by_all(CacheChange_t* a_change){return true;}
+	/**
+	 * Update the Attributes of the Writer.
+	 */
+	virtual void updateAttributes(WriterAttributes& att)=0;
+	/**
+	 * This methods trigger the send operation for unsent changes.
+	 */
+	virtual void unsent_changes_not_empty()=0;
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.

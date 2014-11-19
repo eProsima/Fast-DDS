@@ -12,14 +12,13 @@
  */
 
 #include "eprosimartps/rtps/writer/StatelessWriter.h"
-
-#include "eprosimartps/writer/ReaderProxyData.h"
-#include "eprosimartps/utils/RTPSLog.h"
-
+#include "eprosimartps/rtps/history/WriterHistory.h"
 #include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {
@@ -28,7 +27,7 @@ static const char* const CLASS_NAME = "StatelessWriter";
 
 StatelessWriter::StatelessWriter(ParticipantImpl* pimpl,GUID_t guid,
 		WriterAttributes att,WriterHistory* hist):
-			RTPSWriter(pimpl,guid,att,hist)
+							RTPSWriter(pimpl,guid,att,hist)
 {
 
 }
@@ -80,28 +79,73 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* a_change)
 	return true;
 }
 
+void StatelessWriter::unsent_changes_not_empty()
+{
+	const char* const METHOD_NAME = "unsent_changes_not_empty";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+	{
+		if(!rit->unsent_changes.empty())
+		{
+			if(m_pushMode)
+			{
+				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
+				{
+					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
+							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
+				}
+				else
+				{
+					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
+							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+				}
+				rit->unsent_changes.clear();
+			}
+			//			else
+			//			{
+			//				SequenceNumber_t first,last;
+			//				m_writer_cache.get_seq_num_min(&first,NULL);
+			//				m_writer_cache.get_seq_num_max(&last,NULL);
+			//				m_heartbeatCount++;
+			//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+			//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+			//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
+			//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
+			//				rit->unsent_changes.clear();
+			//			}
+		}
+	}
+	logInfo (RTPS_HISTORY, "Finish sending unsent changes" ;);
+}
 
 
-bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
+/*
+ *	MATCHED_READER-RELATED METHODS
+ */
+
+bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderProxyData*>::iterator it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
+	if(rdata.guid != c_Guid_Unknown)
 	{
-		if((*it)->m_guid == rdata->m_guid)
+		for(auto it=m_matched_readers.begin();it!=m_matched_readers.end();++it)
 		{
-			logWarning(RTPS_HISTORY,"Attempting to add existing reader" );
-			return false;
+			if((*it).guid == rdata.guid)
+			{
+				logWarning(RTPS_HISTORY,"Attempting to add existing reader" );
+				return false;
+			}
 		}
 	}
 	bool unsent_changes_not_empty = false;
-	for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
-			lit!=rdata->m_unicastLocatorList.end();++lit)
+	for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
+			lit!=rdata.endpoint.unicastLocatorList.end();++lit)
 	{
 		unsent_changes_not_empty |= add_locator(rdata,*lit);
 	}
-	for(std::vector<Locator_t>::iterator lit = rdata->m_multicastLocatorList.begin();
-			lit!=rdata->m_multicastLocatorList.end();++lit)
+	for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
+			lit!=rdata.endpoint.multicastLocatorList.end();++lit)
 	{
 		unsent_changes_not_empty |= add_locator(rdata,*lit);
 	}
@@ -117,7 +161,7 @@ bool StatelessWriter::matched_reader_add(ReaderProxyData* rdata)
 }
 
 
-bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
+bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 {
 	const char* const METHOD_NAME = "add_locator";
 	logInfo(RTPS_HISTORY,"Adding Locator: "<< loc<< " to StatelessWriter";);
@@ -135,12 +179,12 @@ bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 	if(!found)
 	{
 		ReaderLocator rl;
-		rl.expectsInlineQos = rdata->m_expectsInlineQos;
+		rl.expectsInlineQos = rdata.expectsInlineQos;
 		rl.locator = loc;
 		reader_locator.push_back(rl);
 		rit = reader_locator.end()-1;
 	}
-	if(rdata->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
+	if(rdata.endpoint.durabilityKind >= TRANSIENT_LOCAL)
 	{
 		for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
 				it!=mp_history->changesEnd();++it)
@@ -153,31 +197,36 @@ bool StatelessWriter::add_locator(ReaderProxyData* rdata,Locator_t& loc)
 	return false;
 }
 
-bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
+bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_remove";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	bool found = false;
-	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
-			rit!=m_matched_readers.end();++rit)
+	if(rdata.guid == c_Guid_Unknown)
+		found = true;
+	else
 	{
-		if((*rit)->m_guid == rdata->m_guid)
+		for(auto rit = m_matched_readers.begin();
+				rit!=m_matched_readers.end();++rit)
 		{
-			found = true;
-			m_matched_readers.erase(rit);
-			break;
+			if((*rit).guid == rdata.guid)
+			{
+				found = true;
+				m_matched_readers.erase(rit);
+				break;
+			}
 		}
 	}
 	if(found)
 	{
-		logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<rdata->m_guid;);
-		for(std::vector<Locator_t>::iterator lit = rdata->m_unicastLocatorList.begin();
-				lit!=rdata->m_unicastLocatorList.end();++lit)
+		logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<rdata.guid;);
+		for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
+				lit!=rdata.endpoint.unicastLocatorList.end();++lit)
 		{
 			remove_locator(*lit);
 		}
-		for(std::vector<Locator_t>::iterator lit = rdata->m_multicastLocatorList.begin();
-				lit!=rdata->m_multicastLocatorList.end();++lit)
+		for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
+				lit!=rdata.endpoint.multicastLocatorList.end();++lit)
 		{
 			remove_locator(*lit);
 		}
@@ -186,13 +235,13 @@ bool StatelessWriter::matched_reader_remove(ReaderProxyData* rdata)
 	return false;
 }
 
-bool StatelessWriter::matched_reader_is_matched(ReaderProxyData* rdata)
+bool StatelessWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderProxyData*>::iterator rit = m_matched_readers.begin();
+	for(auto rit = m_matched_readers.begin();
 			rit!=m_matched_readers.end();++rit)
 	{
-		if((*rit)->m_guid == rdata->m_guid)
+		if((*rit).guid == rdata.guid)
 		{
 			return true;
 		}
@@ -202,7 +251,7 @@ bool StatelessWriter::matched_reader_is_matched(ReaderProxyData* rdata)
 
 bool StatelessWriter::remove_locator(Locator_t& loc)
 {
-	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+	for(auto rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 	{
 		if(rit->locator == loc)
 		{
@@ -247,105 +296,68 @@ bool StatelessWriter::remove_locator(Locator_t& loc)
 //	return true;
 //}
 //
-bool StatelessWriter::reader_locator_add(Locator_t& loc,bool expectsInlineQos)
-{
-	bool found = false;
-	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-	{
-		if(rit->locator == loc)
-		{
-			rit->n_used++;
-			found = true;
-			break;
-		}
-	}
-	if(!found)
-	{
-		ReaderLocator rl;
-		rl.expectsInlineQos = expectsInlineQos;
-		rl.locator = loc;
-		reader_locator.push_back(rl);
-	}
-	return true;
-}
+//bool StatelessWriter::reader_locator_add(Locator_t& loc,bool expectsInlineQos)
+//{
+//	bool found = false;
+//	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+//	{
+//		if(rit->locator == loc)
+//		{
+//			rit->n_used++;
+//			found = true;
+//			break;
+//		}
+//	}
+//	if(!found)
+//	{
+//		ReaderLocator rl;
+//		rl.expectsInlineQos = expectsInlineQos;
+//		rl.locator = loc;
+//		reader_locator.push_back(rl);
+//	}
+//	return true;
+//}
 
 
-void StatelessWriter::unsent_changes_reset()
-{
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
-		rit->unsent_changes.clear();
-		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
-				cit!=mp_history->changesEnd();++cit){
-			rit->unsent_changes.push_back((*cit));
-		}
-	}
-	unsent_changes_not_empty();
-}
-
-bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
-{
-	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
-}
-
-
-
-void StatelessWriter::unsent_changes_not_empty()
-{
-	const char* const METHOD_NAME = "unsent_changes_not_empty";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-	{
-		if(!rit->unsent_changes.empty())
-		{
-			if(m_pushMode)
-			{
-				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
-				{
-					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
-				}
-				else
-				{
-					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
-				}
-				rit->unsent_changes.clear();
-			}
-			//			else
-			//			{
-			//				SequenceNumber_t first,last;
-			//				m_writer_cache.get_seq_num_min(&first,NULL);
-			//				m_writer_cache.get_seq_num_max(&last,NULL);
-			//				m_heartbeatCount++;
-			//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-			//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-			//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-			//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-			//				rit->unsent_changes.clear();
-			//			}
-		}
-	}
-	logInfo (RTPS_HISTORY, "Finish sending unsent changes" ;);
-}
+//void StatelessWriter::unsent_changes_reset()
+//{
+//	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+//	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
+//		rit->unsent_changes.clear();
+//		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
+//				cit!=mp_history->changesEnd();++cit){
+//			rit->unsent_changes.push_back((*cit));
+//		}
+//	}
+//	unsent_changes_not_empty();
+//}
+//
+//bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
+//{
+//	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
+//}
 
 
-bool StatelessWriter::removeMinSeqCacheChange()
-{
-	return mp_history->remove_min_change();
-}l
 
-bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
-{
-	size_t n_r=this->mp_history->getHistorySize();
-	if(this->mp_history->remove_all_changes())
-	{
-		*n_removed = n_r;
-		return true;
-	}
-	else
-		return false;
-}
+
+
+
+//bool StatelessWriter::removeMinSeqCacheChange()
+//{
+//	return mp_history->remove_min_change();
+//}
+//
+//bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
+//{
+//	size_t n_r=this->mp_history->getHistorySize();
+//	if(this->mp_history->remove_all_changes())
+//	{
+//		*n_removed = n_r;
+//		return true;
+//	}
+//	else
+//		return false;
+//}
 
 
 

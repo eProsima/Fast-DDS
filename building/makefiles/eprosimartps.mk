@@ -37,6 +37,11 @@ EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS)  -I$(BASEDIR)/include \
 EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/thirdparty/eprosima-common-code/eProsima_cpp/log/Log.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/rtps/writer/RTPSWriter.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/StatefulWriter.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/ReaderProxy.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/StatelessWriter.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/rtps/Participant.cpp \
 		  $(BASEDIR)/src/cpp/rtps/ParticipantImpl.cpp \

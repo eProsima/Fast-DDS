@@ -23,6 +23,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace rtps {
@@ -40,7 +41,7 @@ ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,
 {
 	const char* const METHOD_NAME = "ReaderProxy";
 	mp_nackResponse = new NackResponseDelay(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay)));
-	mp_nackSupression = new NackSupressionDuration(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration)))
+	mp_nackSupression = new NackSupressionDuration(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration)));
 	logInfo(RTPS_HISTORY,"Reader Proxy created");
 }
 
@@ -49,8 +50,6 @@ ReaderProxy::~ReaderProxy()
 {
 
 }
-
-
 
 bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		ChangeForReader_t* changeForReader)

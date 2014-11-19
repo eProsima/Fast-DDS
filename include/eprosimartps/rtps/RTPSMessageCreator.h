@@ -10,17 +10,15 @@
  * @file RTPSMessageCreator.h
 */
 
+
+#ifndef CDRMESSAGECREATOR_H_
+#define CDRMESSAGECREATOR_H_
+
 #include "eprosimartps/common/types/CDRMessage_t.h"
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/common/types/SequenceNumber.h"
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/pubsub/attributes/TopicAttributes.h"
-
-
-
-#ifndef CDRMESSAGECREATOR_H_
-#define CDRMESSAGECREATOR_H_
 
 
 namespace eprosima {

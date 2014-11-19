@@ -224,7 +224,10 @@ const GUID_t c_Guid_Unknown;
 
 inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 {
-	output<<guid.guidPrefix<<"|"<<guid.entityId;
+	if(guid !=c_Guid_Unknown)
+		output<<guid.guidPrefix<<"|"<<guid.entityId;
+	else
+		output << "GUID UNKNOWN";
 	return output;
 }
 

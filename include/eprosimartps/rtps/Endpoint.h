@@ -18,6 +18,7 @@
 #include "eprosimartps/common/types/Locator.h"
 #include "eprosimartps/common/types/Guid.h"
 
+#include "eprosimartps/rtps/attributes/EndpointAttributes.h"
 
 namespace boost
 {
@@ -30,37 +31,6 @@ namespace rtps {
 class ParticipantImpl;
 class ResourceSend;
 class ResourceEvent;
-
-class EndpointAttributes
-{
-public:
-	EndpointAttributes()
-	{
-		topicKind = NO_KEY;
-		reliabilityKind = BEST_EFFORT;
-		durabilityKind = VOLATILE;
-		m_userDefinedID = -1;
-		m_entityID = -1;
-		endpointKind = WRITER;
-	};
-	virtual ~EndpointAttributes();
-	EndpointKind_t endpointKind;
-	TopicKind_t topicKind;
-	ReliabilityKind_t reliabilityKind;
-	DurabilityKind_t durabilityKind;
-	LocatorList_t unicastLocatorList;
-	LocatorList_t multicastLocatorList;
-	inline int16_t getUserDefinedID() const {return m_userDefinedID;}
-	inline int16_t getEntityID() const {return m_entityID;}
-	inline void setUserDefinedID(uint16_t id){m_userDefinedID = id;	};
-	inline void setEntityID(uint16_t id){m_entityID = id;	};
-private:
-	int16_t m_userDefinedID;
-	int16_t m_entityID;
-};
-
-
-
 
 
 /**
@@ -76,13 +46,13 @@ public:
 	Endpoint(ParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att);
 	virtual ~Endpoint();
 
-	inline const GUID_t& getGuid() const {	return m_guid;	}
+	inline const GUID_t& getGuid() const {	return m_guid;	};
 
 	inline boost::recursive_mutex* getMutex() const {return mp_mutex;}
 
 	inline ParticipantImpl* getParticipant() const {return mp_participant;}
 
-	inline EndpointAttributes* getAttributes() const {return &m_att;}
+	inline EndpointAttributes* getAttributes() {return &m_att;}
 
 protected:
 	//!Pointer to the participant containing this endpoints

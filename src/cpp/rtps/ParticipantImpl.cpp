@@ -12,20 +12,15 @@
  */
 
 #include "eprosimartps/rtps/ParticipantImpl.h"
-#include "eprosimartps/utils/RTPSLog.h"
 
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/reader/StatelessReader.h"
-#include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/reader/RTPSReader.h"
-#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/rtps/writer/StatelessWriter.h"
+#include "eprosimartps/rtps/writer/StatefulWriter.h"
+
+//#include "eprosimartps/reader/StatelessReader.h"
+//#include "eprosimartps/reader/StatefulReader.h"
 
 
 #include "eprosimartps/pubsub/RTPSDomain.h"
-
-
 
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 #include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
@@ -33,6 +28,10 @@
 
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/eClock.h"
+
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {

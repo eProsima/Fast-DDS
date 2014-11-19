@@ -108,7 +108,7 @@ public:
 		listenSocketBufferSize = 17424;
 		use_IP4_to_send = true;
 		use_IP6_to_send = false;
-		participantId = -1;
+		participantID = -1;
 }
 	virtual ~ParticipantAttributes(){};
 	/**
