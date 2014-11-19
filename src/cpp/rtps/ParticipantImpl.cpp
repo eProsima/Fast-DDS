@@ -19,6 +19,8 @@
 //#include "eprosimartps/reader/StatelessReader.h"
 //#include "eprosimartps/reader/StatefulReader.h"
 
+#include "eprosimartps/rtps/resources/ResourceSend.h"
+#include "eprosimartps/rtps/resources/ResourceEvent.h"
 
 #include "eprosimartps/pubsub/RTPSDomain.h"
 
@@ -44,6 +46,8 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
 		ParticipantListener* plisten):
 							m_guid(guidP,c_EntityId_Participant),
+							mp_send_thr(nullptr),
+							mp_event_thr(nullptr),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
 							mp_participantListener(plisten)
@@ -52,8 +56,10 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
-	m_send_thr.initSend(this,loc);
-	m_event_thr.init_thread(this);
+	mp_send_thr = new ResourceSend();
+	mp_send_thr->initSend(this,loc,m_att.use_IP4_to_send,m_att.use_IP6_to_send);
+	mp_event_thr = new ResourceEvent();
+	mp_event_thr->init_thread(this);
 
 	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
@@ -176,8 +182,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
 	//SWriter->setListener(inlisten);
 	//SWriter->setQos(param.qos,true);
-	SWriter->mp_send_thr = &this->m_send_thr;
-	SWriter->mp_event_thr = &this->m_event_thr;
+	SWriter->mp_send_thr = &this->mp_send_thr;
 	if(param.reliabilityKind == RELIABLE)
 	{
 		if(!assignEndpointListenResources((Endpoint*)SWriter,isBuiltin))
