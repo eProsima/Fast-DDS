@@ -14,32 +14,28 @@
 #ifndef RTPSWRITER_H_
 #define RTPSWRITER_H_
 
-#include "eprosimartps/Endpoint.h"
+#include "eprosimartps/rtps/Endpoint.h"
+//
+//#include "eprosimartps/history/WriterHistory.h"
+//
+//
+//#include "eprosimartps/writer/RTPSMessageGroup.h"
+//
+//#include "eprosimartps/qos/WriterQos.h"
+//#include "eprosimartps/pubsub/Publisher.h"
+//
+//#include "eprosimartps/qos/ParameterList.h"
+//#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
-#include "eprosimartps/history/WriterHistory.h"
 
-
-#include "eprosimartps/writer/RTPSMessageGroup.h"
-
-#include "eprosimartps/qos/WriterQos.h"
-#include "eprosimartps/pubsub/Publisher.h"
-
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
-
-using namespace eprosima::pubsub;
 
 namespace eprosima {
 
-namespace pubsub{
-
-class PublisherListener;
-}
-
 namespace rtps {
 
-class ReaderProxyData;
 class UnsentChangesNotEmptyEvent;
+class WriterListener;
+class CacheChangePool;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
@@ -49,9 +45,7 @@ class RTPSWriter: public Endpoint
 {
 	friend class LivelinessPeriodicAssertion;
 public:
-	RTPSWriter(GuidPrefix_t guid,EntityId_t entId,const PublisherAttributes& param,TopicDataType* ptype,
-			StateKind_t state = STATELESS,
-			int16_t userDefinedId=-1,uint32_t payload_size = 500);
+	RTPSWriter(ParticipantImpl*,GUID_t guid,EndpointAttributes att);
 	virtual ~RTPSWriter();
 
 	/**
@@ -64,6 +58,25 @@ public:
 	 * @return True if correct.
 	 */
 	bool new_change(ChangeKind_t changeKind,void* data,CacheChange_t** change_out);
+
+
+
+private:
+
+	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
+	bool m_pushMode;
+	//!Group created to send messages more efficiently
+	RTPSMessageGroup_t m_cdrmessages;
+	//!Writer Listener
+	WriterListener* mp_listener;
+	//!INdicates if the liveliness has been asserted
+	bool m_livelinessAsserted;
+	//!Event that manages unsent changes
+	UnsentChangesNotEmptyEvent* mp_unsetChangesNotEmpty;
+	//!CacheChangePool
+	CacheChangePool* mp_changePool;
+
+public:
 
 	/**
 	 * Add a change to the unsent list.
@@ -166,12 +179,7 @@ protected:
 
 	//!Changes associated with this writer.
 	WriterHistory m_writer_cache;
-	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
-	bool m_pushMode;
 
-	//Count_t m_heartbeatCount;
-
-	RTPSMessageGroup_t m_cdrmessages;
 
 	/**
 	 * Initialize the header message that is used in all RTPS Messages.

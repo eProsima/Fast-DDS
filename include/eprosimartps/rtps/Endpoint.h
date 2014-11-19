@@ -69,7 +69,7 @@ private:
 class Endpoint
 {
 public:
-	Endpoint(ParticipantImpl* pimpl,GuidPrefix_t guid,EntityId_t entId,ReliabilityKind_t rl = BEST_EFFORT,EndpointKind_t end = WRITER,int16_t userDefinedId=-1);
+	Endpoint(ParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att);
 	virtual ~Endpoint();
 
 	inline const GUID_t& getGuid() const {	return m_guid;	}

@@ -11,39 +11,29 @@
  *
  */
 
-#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/rtps/writer/RTPSWriter.h"
 
-#include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/pubsub/Publisher.h"
-#include "eprosimartps/pubsub/PublisherListener.h"
-#include "eprosimartps/pubsub/TopicDataType.h"
-#include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/utils/CacheChangePool.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/RTPSMessageCreator.h"
 
 namespace eprosima {
 namespace rtps {
 
 static const char* const CLASS_NAME = "RTPSWriter";
 
-RTPSWriter::RTPSWriter(GuidPrefix_t guidP,EntityId_t entId,const PublisherAttributes& param,TopicDataType* ptype,
-		StateKind_t state,
-		int16_t userDefinedId, uint32_t payload_size):
-									Endpoint(guidP,entId,param.topic,ptype,state,WRITER,userDefinedId),
-									#pragma warning(disable: 4355)
-									m_writer_cache((Endpoint*)this,payload_size),
-									m_pushMode(true),
-									//FIXME: Select a better size, not the payload but maybe more?
-									m_cdrmessages(payload_size),
-									mp_listener(NULL),
-									m_livelinessAsserted(false),
-									mp_unsetChangesNotEmpty(NULL)
+RTPSWriter::RTPSWriter(ParticipantImpl* impl,GUID_t guid,EndpointAttributes att):
+		Endpoint(impl,guid,att),
+		m_pushMode(true),
+		m_cdrmessages(att.payloadMaxSize),
+		mp_listener(nullptr),
+		m_livelinessAsserted(false),
+		mp_unsetChangesNotEmpty(nullptr),
+		mp_changePool(nullptr)
 {
 	const char* const METHOD_NAME = "RTPSWriter";
-	init_header();
-	logInfo(RTPS_WRITER,"RTPSWriter created";);
-
+	this->init_header();
+	logInfo(RTPS_WRITER,"RTPSWriter created");
 }
 
 void RTPSWriter::init_header()
@@ -51,7 +41,6 @@ void RTPSWriter::init_header()
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
 	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,m_guid.guidPrefix);
 }
-
 
 
 RTPSWriter::~RTPSWriter()
