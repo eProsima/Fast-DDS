@@ -41,8 +41,10 @@ public:
 		payloadMaxSize = 0;
 		m_userDefinedID = -1;
 		m_entityID = -1;
+		endpointKind = WRITER;
 	};
 	virtual ~EndpointAttributes();
+	EndpointKind_t endpointKind;
 	TopicKind_t topicKind;
 	ReliabilityKind_t reliabilityKind;
 	uint32_t payloadMaxSize;
@@ -76,6 +78,7 @@ public:
 
 	inline ParticipantImpl* getParticipant() const {return mp_participant;}
 
+	inline EndpointAttributes* getAttributes() const {return &m_att;}
 
 protected:
 	//!Pointer to the participant containing this endpoints
