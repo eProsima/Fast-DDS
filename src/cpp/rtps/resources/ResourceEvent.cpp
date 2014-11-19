@@ -12,8 +12,8 @@
  */
 
 
-#include "eprosimartps/resources/ResourceEvent.h"
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/rtps/resources/ResourceEvent.h"
+#include "eprosimartps/rtps/ParticipantImpl.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
@@ -21,10 +21,10 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "ResourceEvent";
 
-ResourceEvent::ResourceEvent(ParticipantImpl* p):
-		b_thread(NULL),
+ResourceEvent::ResourceEvent():
+		b_thread(nullptr),
 		work(io_service),
-		mp_participantImpl(p)
+		mp_participantImpl(nullptr)
 {
 
 }
@@ -44,8 +44,9 @@ void ResourceEvent::run_io_service()
 	io_service.run();
 }
 
-void ResourceEvent::init_thread()
+void ResourceEvent::init_thread(ParticipantImpl* pimpl)
 {
+	mp_participantImpl = pimpl;
 	b_thread = new boost::thread(&ResourceEvent::run_io_service,this);
 	io_service.post(boost::bind(&ResourceEvent::announce_thread,this));
 	mp_participantImpl->ResourceSemaphoreWait();

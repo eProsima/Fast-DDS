@@ -16,7 +16,6 @@
 
 
 #include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
@@ -36,6 +35,9 @@ class ResourceEvent {
 public:
 	ResourceEvent();
 	virtual ~ResourceEvent();
+
+	boost::asio::io_service* getIOService(){return io_service;};
+
 	boost::thread* b_thread;
 	boost::asio::io_service io_service;
 	boost::asio::io_service::work work;
