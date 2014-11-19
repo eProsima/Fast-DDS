@@ -14,17 +14,18 @@
 #ifndef WRITERHISTORY_H_
 #define WRITERHISTORY_H_
 
-#include "eprosimartps/history/History.h"
+#include "eprosimartps/rtps/history/History.h"
 
 namespace eprosima {
 namespace rtps {
 
-//typedef std::pair<InstanceHandle_t,uint32_t> t_KeyNumber;
+class RTPSWriter;
 
 class WriterHistory : public History
 {
+	friend class RTPSWriter;
 public:
-	WriterHistory(Endpoint* endp,uint32_t payload_max_size=5000);
+	WriterHistory(const HistoryAttributes&  att);
 	virtual ~WriterHistory();
 
 	/**
@@ -37,15 +38,30 @@ public:
 	 * @param wp Pointer to the writerProxy associated with the change that is going to be added (NOT USED IN WriterHistory).
 	 * @return True if added.
 	 */
-	bool add_change(CacheChange_t* a_change,WriterProxy* wp=NULL);
+	bool add_change(CacheChange_t* a_change);
+	/**
+	 * Remove a specific change from the history.
+	 * @param a_change Pointer to the CacheChange_t.
+	 * @return True if removed.
+	 */
+	bool remove_change(CacheChange_t* a_change);
 	/**
 	 * Remove the CacheChange_t with the minimum sequenceNumber.
 	 * @return True if correctly removed.
 	 */
 	bool remove_min_change();
 
-protected:
+
+
+private:
+	/**
+	 * Assign the Writer Associated with this History.
+	 * @param writer Pointer to the writer;
+	 */
+	void assignWriter(RTPSWriter* writer) {mp_writer = writer;};
+	//!Last CacheChange Sequence Number added to the History.
 	SequenceNumber_t m_lastCacheChangeSeqNum;
+	//!Pointer to the associated RTPSWriter;
 	RTPSWriter* mp_writer;
 };
 

@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/writer/ReaderProxy.h"
 #include "eprosimartps/writer/ReaderProxyData.h"
 
@@ -45,140 +45,27 @@ StatefulWriter::~StatefulWriter()
 	}
 }
 
-StatefulWriter::StatefulWriter(const PublisherAttributes& param,const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
-												RTPSWriter(guidP,entId,param,ptype,STATEFUL,param.userDefinedId,param.payloadMaxSize),
-												m_PubTimes(param.times),
-												mp_periodicHB(NULL)
+StatefulWriter::StatefulWriter(ParticipantImpl* pimpl,GUID_t guid,
+		WriterAttributes att,WriterHistory* hist):
+		RTPSWriter(pimpl,guid,att,hist),
+		mp_periodicHB(nullptr),
+		m_times(att.times)
 {
-	m_pushMode = param.pushMode;
-	unicastLocatorList = param.unicastLocatorList;
-	multicastLocatorList = param.multicastLocatorList;
-
 	m_heartbeatCount = 0;
-	if(entId == c_EntityId_SEDPPubWriter)
+	if(guid.entityId == c_EntityId_SEDPPubWriter)
 		m_HBReaderEntityId = c_EntityId_SEDPPubReader;
-	else if(entId == c_EntityId_SEDPSubWriter)
+	else if(guid.entityId == c_EntityId_SEDPSubWriter)
 		m_HBReaderEntityId = c_EntityId_SEDPSubReader;
-	else if(entId == c_EntityId_WriterLiveliness)
+	else if(guid.entityId == c_EntityId_WriterLiveliness)
 		m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
 	else
 		m_HBReaderEntityId = c_EntityId_Unknown;
 }
 
-bool StatefulWriter::matched_reader_add(ReaderProxyData* rdata)
-{
-	const char* const METHOD_NAME = "matched_reader_add";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
-	{
-		if((*it)->m_data->m_guid == rdata->m_guid)
-		{
-			logInfo(RTPS_HISTORY,"Attempting to add existing reader" << endl);
-			return false;
-		}
-	}
-	ReaderProxy* rp = new ReaderProxy(rdata,m_PubTimes,this);
-	if(mp_periodicHB==NULL)
-		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_PubTimes.heartbeatPeriod)));
-	if(rp->m_data->m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
-	{
-		for(std::vector<CacheChange_t*>::iterator cit=m_writer_cache.changesBegin();cit!=m_writer_cache.changesEnd();++cit)
-		{
-			ChangeForReader_t changeForReader;
-			changeForReader.setChange(*cit);
-			changeForReader.is_relevant = rp->pubsub_is_relevant(*cit);
+/*
+ *	CHANGE-RELATED METHODS
+ */
 
-			if(m_pushMode)
-				changeForReader.status = UNSENT;
-			else
-				changeForReader.status = UNACKNOWLEDGED;
-			rp->m_changesForReader.push_back(changeForReader);
-		}
-	}
-	matched_readers.push_back(rp);
-	logInfo(RTPS_HISTORY,"Reader Proxy added to StatefulWriter with "
-			<<rp->m_data->m_unicastLocatorList.size()<<"(u)-"
-			<<rp->m_data->m_multicastLocatorList.size()<<"(m) locators: "<<rp->m_data->m_guid);
-	if(rp->m_changesForReader.size()>0)
-	{
-		//unsent_changes_not_empty();
-		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,boost::posix_time::milliseconds(1));
-		this->mp_unsetChangesNotEmpty->restart_timer();
-		this->mp_unsetChangesNotEmpty = NULL;
-	}
-	return true;
-}
-
-bool StatefulWriter::matched_reader_remove(ReaderProxyData* rdata)
-{
-	const char* const METHOD_NAME = "matched_reader_remove";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
-	{
-		if((*it)->m_data->m_guid == rdata->m_guid)
-		{
-			logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<(*it)->m_data->m_guid);
-			delete(*it);
-			matched_readers.erase(it);
-
-			if(matched_readers.size()==0)
-				this->mp_periodicHB->stop_timer();
-			return true;
-		}
-	}
-	logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer")
-	return false;
-}
-
-bool StatefulWriter::matched_reader_is_matched(ReaderProxyData* rdata)
-{
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
-	{
-		if((*it)->m_data->m_guid == rdata->m_guid)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
-{
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	std::vector<ReaderProxy*>::iterator it;
-	for(it=matched_readers.begin();it!=matched_readers.end();++it)
-	{
-		if((*it)->m_data->m_guid == readerGuid)
-		{
-			*RP = *it;
-			return true;
-		}
-	}
-	return false;
-}
-
-bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
-{
-	const char* const METHOD_NAME = "is_acked_by_all";
-	std::vector<ReaderProxy*>::iterator it;
-	for(it=matched_readers.begin();it!=matched_readers.end();++it)
-	{
-		ChangeForReader_t changeForReader;
-		if((*it)->getChangeForReader(change,&changeForReader))
-		{
-			if(changeForReader.is_relevant)
-			{
-				if(changeForReader.status != ACKNOWLEDGED)
-				{
-					logInfo(RTPS_HISTORY,"Change not acked. Relevant: " << changeForReader.is_relevant<<" status: " << changeForReader.status << endl);
-					return false;
-				}
-			}
-		}
-	}
-	return true;
-}
 
 void StatefulWriter::unsent_change_add(CacheChange_t* change)
 {
@@ -206,19 +93,25 @@ void StatefulWriter::unsent_change_add(CacheChange_t* change)
 	}
 }
 
-bool sort_changeForReader_ptr (ChangeForReader_t* c1,ChangeForReader_t* c2)
-{
-	return(c1->seqNum < c2->seqNum);
-}
 
-bool sort_changeForReader(ChangeForReader_t c1,ChangeForReader_t c2)
+bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
-	return(c1.seqNum < c2.seqNum);
-}
-
-bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
-{
-	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
+	const char* const METHOD_NAME = "change_removed_by_history";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	logInfo(RTPS_HISTORY,"Change "<<a_change->sequenceNumber.to64long()<< " to be removed.");
+	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
+			it!=this->matched_readers.end();++it)
+	{
+		for(std::vector<ChangeForReader_t>::iterator chit = (*it)->m_changesForReader.begin();
+				chit!=(*it)->m_changesForReader.end();++chit)
+		{
+			if(chit->seqNum == a_change->sequenceNumber)
+			{
+				chit->notValid();
+			}
+		}
+	}
+	return true;
 }
 
 
@@ -235,8 +128,6 @@ void StatefulWriter::unsent_changes_not_empty()
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
-			//std::sort(ch_vec.begin(),ch_vec.end(),sort_changeForReader_ptr);
-			//Get relevant data cache changes
 			std::vector<CacheChange_t*> relevant_changes;
 			std::vector<SequenceNumber_t> not_relevant_changes;
 			std::vector<ChangeForReader_t*>::iterator cit;
@@ -277,8 +168,8 @@ void StatefulWriter::unsent_changes_not_empty()
 			{
 				CacheChange_t* first;
 				CacheChange_t* last;
-				m_writer_cache.get_min_change(&first);
-				m_writer_cache.get_max_change(&last);
+				mp_history->get_min_change(&first);
+				mp_history->get_max_change(&last);
 				if(first->sequenceNumber.to64long()>0 && last->sequenceNumber.to64long() >= first->sequenceNumber.to64long()  )
 				{
 				incrementHBCount();
@@ -297,12 +188,156 @@ void StatefulWriter::unsent_changes_not_empty()
 	logInfo(RTPS_HISTORY,"Finish sending unsent changes");
 }
 
+/*
+ *	MATCHED_READER-RELATED METHODS
+ */
+
+bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
+{
+	const char* const METHOD_NAME = "matched_reader_add";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	if(rdata.guid == c_Guid_Unknown)
+	{
+		logError(RTPS_WRITER,"Reliable Writer need GUID_t of matched readers");
+		return false;
+	}
+	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+	{
+		if((*it)->m_att.guid == rdata.guid)
+		{
+			logWarning(RTPS_HISTORY,"Attempting to add existing reader" << endl);
+			return false;
+		}
+	}
+	ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
+	if(mp_periodicHB==nullptr)
+		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_times.heartbeatPeriod)));
+	if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL)
+	{
+		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
+				cit!=mp_history->changesEnd();++cit)
+		{
+			ChangeForReader_t changeForReader;
+			changeForReader.setChange(*cit);
+			changeForReader.is_relevant = rp->pubsub_is_relevant(*cit);
+
+			if(m_pushMode)
+				changeForReader.status = UNSENT;
+			else
+				changeForReader.status = UNACKNOWLEDGED;
+			rp->m_changesForReader.push_back(changeForReader);
+		}
+	}
+	matched_readers.push_back(rp);
+	logInfo(RTPS_HISTORY,"Reader Proxy added to StatefulWriter with "
+			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
+			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators: "<<rp->m_att.guid);
+	if(rp->m_changesForReader.size()>0)
+	{
+		//unsent_changes_not_empty();
+		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,boost::posix_time::milliseconds(1));
+		this->mp_unsetChangesNotEmpty->restart_timer();
+		this->mp_unsetChangesNotEmpty = nullptr;
+	}
+	return true;
+}
+
+bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
+{
+	const char* const METHOD_NAME = "matched_reader_remove";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+	{
+		if((*it)->m_att.guid == rdata.guid)
+		{
+			logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<(*it)->m_data->m_guid);
+			delete(*it);
+			matched_readers.erase(it);
+			if(matched_readers.size()==0)
+				this->mp_periodicHB->stop_timer();
+			return true;
+		}
+	}
+	logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer")
+	return false;
+}
+
+bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
+	{
+		if((*it)->m_att.guid == rdata.guid)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::vector<ReaderProxy*>::iterator it;
+	for(it=matched_readers.begin();it!=matched_readers.end();++it)
+	{
+		if((*it)->m_att.guid == readerGuid)
+		{
+			*RP = *it;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
+{
+	const char* const METHOD_NAME = "is_acked_by_all";
+	std::vector<ReaderProxy*>::iterator it;
+	for(it=matched_readers.begin();it!=matched_readers.end();++it)
+	{
+		ChangeForReader_t changeForReader;
+		if((*it)->getChangeForReader(change,&changeForReader))
+		{
+			if(changeForReader.is_relevant)
+			{
+				if(changeForReader.status != ACKNOWLEDGED)
+				{
+					logInfo(RTPS_HISTORY,"Change not acked. Relevant: " << changeForReader.is_relevant<<" status: " << changeForReader.status << endl);
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+
+
+bool sort_changeForReader_ptr (ChangeForReader_t* c1,ChangeForReader_t* c2)
+{
+	return(c1->seqNum < c2->seqNum);
+}
+
+bool sort_changeForReader(ChangeForReader_t c1,ChangeForReader_t c2)
+{
+	return(c1.seqNum < c2.seqNum);
+}
+
+bool sort_changes (CacheChange_t* c1,CacheChange_t* c2)
+{
+	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
+}
+
+
+
+
 bool StatefulWriter::removeMinSeqCacheChange()
 {
 	const char* const METHOD_NAME = "removeMinSeqCacheChange";
 	logInfo(RTPS_HISTORY,"Removing min seq from StatefulWriter");
 	CacheChange_t* change;
-	if(m_writer_cache.get_min_change(&change))
+	if(mp_history->get_min_change(&change))
 	{
 		if(is_acked_by_all(change))
 		{
@@ -312,7 +347,7 @@ bool StatefulWriter::removeMinSeqCacheChange()
 				if(!(*it)->m_changesForReader.empty())
 					(*it)->m_changesForReader.erase((*it)->m_changesForReader.begin());
 			}
-			m_writer_cache.remove_min_change();
+			mp_history->remove_min_change();
 			return true;
 		}
 	}
@@ -328,42 +363,22 @@ bool StatefulWriter::removeAllCacheChange(size_t* removed)
 		n_count++;
 	}
 	*removed = n_count;
-	if(this->m_writer_cache.getHistorySize()==0)
+	if(this->mp_history->getHistorySize()==0)
 		return true;
 	else
 		return false;
 }
 
-bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
+
+
+
+void StatefulWriter::updateTimes(WriterTimes& times)
 {
-	const char* const METHOD_NAME = "change_removed_by_history";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	logInfo(RTPS_HISTORY,"WriterHistory commands change "<<a_change->sequenceNumber.to64long()<< " to be removed from StatefulWriter");
-
-	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
-			it!=this->matched_readers.end();++it)
-	{
-		for(std::vector<ChangeForReader_t>::iterator chit = (*it)->m_changesForReader.begin();
-				chit!=(*it)->m_changesForReader.end();++chit)
-		{
-			if(chit->seqNum == a_change->sequenceNumber)
-			{
-				chit->notValid();
-			}
-		}
-	}
-	m_writer_cache.remove_change(a_change);
-	return true;
-}
-
-
-void StatefulWriter::updateTimes(PublisherTimes& times)
-{
-	if(m_PubTimes.heartbeatPeriod != times.heartbeatPeriod)
+	if(m_times.heartbeatPeriod != times.heartbeatPeriod)
 	{
 		this->mp_periodicHB->update_interval(times.heartbeatPeriod);
 	}
-	if(m_PubTimes.nackResponseDelay != times.nackResponseDelay)
+	if(m_times.nackResponseDelay != times.nackResponseDelay)
 	{
 		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 				it!=this->matched_readers.end();++it)
@@ -371,7 +386,7 @@ void StatefulWriter::updateTimes(PublisherTimes& times)
 			(*it)->m_nackResponse.update_interval(times.nackResponseDelay);
 		}
 	}
-	if(m_PubTimes.nackSupressionDuration != times.nackSupressionDuration)
+	if(m_times.nackSupressionDuration != times.nackSupressionDuration)
 	{
 		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 				it!=this->matched_readers.end();++it)
@@ -379,7 +394,7 @@ void StatefulWriter::updateTimes(PublisherTimes& times)
 			(*it)->m_nackSupression.update_interval(times.nackSupressionDuration);
 		}
 	}
-	m_PubTimes = times;
+	m_times = times;
 }
 
 } /* namespace rtps */

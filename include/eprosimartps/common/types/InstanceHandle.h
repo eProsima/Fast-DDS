@@ -60,6 +60,8 @@ struct RTPS_DllAPI InstanceHandle_t{
 	}
 };
 
+const InstanceHandle_t c_InstanceHandle_Unknown;
+
 inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
 {
 	for(uint8_t i =0;i<16;++i)

@@ -12,31 +12,35 @@
  */
 
 
-#include "eprosimartps/writer/ReaderProxy.h"
-#include "eprosimartps/writer/ReaderProxyData.h"
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/writer/StatefulWriter.h"
+#include "eprosimartps/rtps/writer/ReaderProxy.h"
+
+#include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
+#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
+#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
 
+#include "eprosimartps/utils/RTPSLog.h"
+
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
 namespace rtps {
 
 static const char* const CLASS_NAME = "ReaderProxy";
 
-ReaderProxy::ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW):
-				m_data(rdata),
+ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW):
+				m_att(rdata),
 				mp_SFW(SW),
 				m_isRequestedChangesEmpty(true),
-				//m_periodicHB(this,boost::posix_time::milliseconds((int64_t)ceil(Time_t2MicroSec(times.heartbeatPeriod)*1e-3))),
-				#pragma warning(disable: 4355)
-				m_nackResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay))),
-				#pragma warning(disable: 4355)
-				m_nackSupression(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration))),
-				m_lastAcknackCount(0)
+				mp_nackResponse(nullptr),
+				mp_nackSupression(nullptr),
+				m_lastAcknackCount(0),
+				mp_mutex(new boost::recursive_mutex())
 {
 	const char* const METHOD_NAME = "ReaderProxy";
+	mp_nackResponse = new NackResponseDelay(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay)));
+	mp_nackSupression = new NackSupressionDuration(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration)))
 	logInfo(RTPS_HISTORY,"Reader Proxy created");
 }
 
@@ -52,7 +56,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		ChangeForReader_t* changeForReader)
 {
 	const char* const METHOD_NAME = "getChangeForReader";
-	boost::lock_guard<ReaderProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->seqNum == change->sequenceNumber)
@@ -70,7 +74,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* changeForReader)
 {
 	const char* const METHOD_NAME = "getChangeForReader";
-	boost::lock_guard<ReaderProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->seqNum == seq)
@@ -86,7 +90,7 @@ bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* ch
 
 bool ReaderProxy::acked_changes_set(SequenceNumber_t& seqNum)
 {
-	boost::lock_guard<ReaderProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
@@ -101,7 +105,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t& seqNum)
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
 {
 	const char* const METHOD_NAME = "requested_changes_set";
-	boost::lock_guard<ReaderProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
 	{
@@ -140,7 +144,7 @@ bool ReaderProxy::unacked_changes(std::vector<ChangeForReader_t*>* Changes)
 bool ReaderProxy::next_requested_change(ChangeForReader_t* changeForReader)
 {
 	std::vector<ChangeForReader_t*> changesList;
-	boost::lock_guard<ReaderProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(requested_changes(&changesList))
 	{
 		return minChange(&changesList,changeForReader);
@@ -161,9 +165,8 @@ bool ReaderProxy::next_unsent_change(ChangeForReader_t* changeForReader)
 bool ReaderProxy::changesList(std::vector<ChangeForReader_t*>* changesList,
 								ChangeForReaderStatus_t status)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	changesList->clear();
-	boost::lock_guard<ReaderProxy> guard(*this);
-
 	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
 	{
 		if(it->status == status)
@@ -206,7 +209,7 @@ bool ReaderProxy::max_acked_change(SequenceNumber_t* sn)
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 		ChangeForReader_t* changeForReader)
 {
-	boost::lock_guard<ReaderProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	*changeForReader = **std::min_element(Changes->begin(),Changes->end(),change_min);
 	return true;
 }

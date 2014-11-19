@@ -19,38 +19,33 @@
 
 
 #include <algorithm>
-#include <boost/thread/lockable_adapter.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
-#include "eprosimartps/common/CacheChange.h"
-
-#include "eprosimartps/writer/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
-#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
-
-#include "eprosimartps/qos/QosPolicies.h"
-
-using namespace eprosima::pubsub;
+namespace boost
+{
+class recursive_mutex;
+}
 
 namespace eprosima {
 namespace rtps {
 
 class StatefulWriter;
-class ReaderProxyData;
+class NackResponseDelay;
+class NackSupressionDuration;
 
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWRITER.
  * @ingroup WRITERMODULE
  */
-class ReaderProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
+class ReaderProxy
+{
 public:
 	virtual ~ReaderProxy();
-	ReaderProxy(ReaderProxyData* rdata,const PublisherTimes& times,StatefulWriter* SW);
+	ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
 
 	/**
 	 * Get the ChangeForReader struct associated with a determined change
@@ -123,8 +118,8 @@ public:
 	bool max_acked_change(SequenceNumber_t* sn);
 
 
-	//!Parameters of the ReaderProxy
-	ReaderProxyData* m_data;
+	//!Attributes of the Remote Reader
+	RemoteReaderAttributes m_att;
 
 
 	//!Pointer to the associated StatefulWriter.
@@ -140,9 +135,9 @@ public:
 
 
 	//!Timed Event to manage the Acknack response delay.
-	NackResponseDelay m_nackResponse;
+	NackResponseDelay* mp_nackResponse;
 	//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
-	NackSupressionDuration m_nackSupression;
+	NackSupressionDuration* mp_nackSupression;
 
 	uint32_t m_lastAcknackCount;
 
@@ -150,7 +145,7 @@ public:
 	//TODOG FILTER
 	bool pubsub_is_relevant(CacheChange_t* change);
 
-
+	boost::recursive_mutex* mp_mutex;
 
 };
 

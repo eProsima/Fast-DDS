@@ -44,10 +44,16 @@ enum Endianness_t{
 };
 
 //!Reliability enum used for internal purposes
-enum ReliabilityKind_t{
+typedef enum ReliabilityKind_t{
 	RELIABLE,
 	BEST_EFFORT
-};
+}ReliabilityKind_t;
+
+typedef enum DurabilityKind_t
+{
+	VOLATILE,
+	TRANSIENT_LOCAL
+}DurabilityKind_t;
 
 typedef enum EndpointKind_t{
 	READER,

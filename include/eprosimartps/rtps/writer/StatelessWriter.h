@@ -32,65 +32,79 @@ class ReaderProxyData;
  */
 class StatelessWriter : public RTPSWriter
 {
+	friend class ParticipantImpl;
 public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
-	StatelessWriter(const PublisherAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype);
+	StatelessWriter(ParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
 
-	/**
-	 * Add a matched reader.
-	 * @param rdata Pointer to the ReaderProxyData object added.
-	 * @return True if added.
-	 */
-	bool matched_reader_add(ReaderProxyData* rdata);
-	/**
-	 * Remove a matched reader.
-	 * @param rdata Pointer to the object to remove.
-	 * @return True if removed.
-	 */
-	bool matched_reader_remove(ReaderProxyData* rdata);
-	/**
-	 * Tells us if a specific Reader is matched against this writer
-	 * @param rdata Pointer to the ReaderProxyData object
-	 * @return True if it was matched.
-	 */
-	bool matched_reader_is_matched(ReaderProxyData* rdata);
-	/**
-	 * Add a ReaderLocator to the StatelessWriter.
-	 * @param locator Locator to add
-	 * @param expectsInlineQos Boolean variable indicating that the locator expects inline Qos.
-	 * @return
-	 */
-	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos);
-	//!Reset the unsent changes.
-	void unsent_changes_reset();
+
+private:
 	/**
 	 * Add a specific change to all ReaderLocators.
 	 * @param p Pointer to the change.
 	 */
 	void unsent_change_add(CacheChange_t* p);
 	/**
-	 * Method to indicate that there are changes not sent in some of all ReaderLocator.
+	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
+	 * @param a_change Pointer to the change that is going to be removed.
+	 * @return True if removed correctly.
 	 */
-	void unsent_changes_not_empty();
-	/**
-	 * Remove the change with the minimum SequenceNumber
-	 * @return True if removed.
-	 */
-	bool removeMinSeqCacheChange();
-	/**
-	 * Remove all changes from history
-	 * @param n_removed Pointer to return the number of elements removed.
-	 * @return True if correct.
-	 */
-	bool removeAllCacheChange(size_t* n_removed);
-	//!Get the number of matched subscribers.
-	size_t getMatchedSubscribers(){return reader_locator.size();}
 	bool change_removed_by_history(CacheChange_t* a_change);
-
+//
+//	/**
+//	 * Add a matched reader.
+//	 * @param rdata Pointer to the ReaderProxyData object added.
+//	 * @return True if added.
+//	 */
+//	bool matched_reader_add(ReaderProxyData* rdata);
+//	/**
+//	 * Remove a matched reader.
+//	 * @param rdata Pointer to the object to remove.
+//	 * @return True if removed.
+//	 */
+//	bool matched_reader_remove(ReaderProxyData* rdata);
+//	/**
+//	 * Tells us if a specific Reader is matched against this writer
+//	 * @param rdata Pointer to the ReaderProxyData object
+//	 * @return True if it was matched.
+//	 */
+//	bool matched_reader_is_matched(ReaderProxyData* rdata);
+//	/**
+//	 * Add a ReaderLocator to the StatelessWriter.
+//	 * @param locator Locator to add
+//	 * @param expectsInlineQos Boolean variable indicating that the locator expects inline Qos.
+//	 * @return
+//	 */
+//	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos);
+//	//!Reset the unsent changes.
+//	void unsent_changes_reset();
+//	/**
+//	 * Add a specific change to all ReaderLocators.
+//	 * @param p Pointer to the change.
+//	 */
+//	void unsent_change_add(CacheChange_t* p);
+//	/**
+//	 * Method to indicate that there are changes not sent in some of all ReaderLocator.
+//	 */
+//	void unsent_changes_not_empty();
+//	/**
+//	 * Remove the change with the minimum SequenceNumber
+//	 * @return True if removed.
+//	 */
+//	bool removeMinSeqCacheChange();
+//	/**
+//	 * Remove all changes from history
+//	 * @param n_removed Pointer to return the number of elements removed.
+//	 * @return True if correct.
+//	 */
+//	bool removeAllCacheChange(size_t* n_removed);
+//	//!Get the number of matched subscribers.
+//	size_t getMatchedSubscribers(){return reader_locator.size();}
+//	bool change_removed_by_history(CacheChange_t* a_change);
+//
 private:
-	Duration_t resendDataPeriod; //FIXME: Not used yet.
+	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
 	std::vector<ReaderProxyData*> m_matched_readers;
 	bool add_locator(ReaderProxyData* rdata,Locator_t& loc);
