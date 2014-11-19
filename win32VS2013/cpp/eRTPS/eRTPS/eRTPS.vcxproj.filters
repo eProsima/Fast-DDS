@@ -124,6 +124,12 @@
     <Filter Include="Header Files\eprosimartps\pubsub\attributes">
       <UniqueIdentifier>{4604a70b-119f-4b80-864f-c52965a43429}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\eprosimartps\rtps">
+      <UniqueIdentifier>{d70401c7-a21e-41fc-8009-83a4367e9b4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rtps">
+      <UniqueIdentifier>{dd5aefca-1455-4d99-a096-42b8aba5fe49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp">
@@ -144,9 +150,6 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.hpp">
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\Endpoint.h">
-      <Filter>Header Files\eprosimartps</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\eProsima_auto_link.h">
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
@@ -157,9 +160,6 @@
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h">
-      <Filter>Header Files\eprosimartps</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\Participant.h">
       <Filter>Header Files\eprosimartps</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h">
@@ -432,6 +432,15 @@
     <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\TopicAttributes.h">
       <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\rtps\Endpoint.h">
+      <Filter>Header Files\eprosimartps\rtps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\rtps\Participant.h">
+      <Filter>Header Files\eprosimartps\rtps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eprosimartps\rtps\ParticipantImpl.h">
+      <Filter>Header Files\eprosimartps\rtps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\writer\StatelessWriter.cpp">
@@ -491,13 +500,7 @@
     <ClCompile Include="..\..\..\..\src\cpp\qos\QosList.cpp">
       <Filter>Source Files\qos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\Endpoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\MessageReceiver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\Participant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\RTPSMessageCreator.cpp">
@@ -631,6 +634,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\pubsub\TopicDataType.cpp">
       <Filter>Source Files\pubsub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\Endpoint.cpp">
+      <Filter>Source Files\rtps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\Participant.cpp">
+      <Filter>Source Files\rtps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\ParticipantImpl.cpp">
+      <Filter>Source Files\rtps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
