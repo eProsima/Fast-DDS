@@ -65,8 +65,7 @@ protected:
 	boost::recursive_mutex* mp_mutex;
 	//!Send Resource
 	ResourceSend* mp_send_thr;
-	//!Event Resource
-	ResourceEvent* mp_event_thr;
+
 };
 
 

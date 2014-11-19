@@ -7,16 +7,12 @@
  *************************************************************************/
 
 /**
- * @file ListenResource.cpp
+ * @file ListenResourceImpl.cpp
  *
  */
 
-#include "eprosimartps/resources/ListenResource.h"
-
-#include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/reader/RTPSReader.h"
-#include "eprosimartps/Endpoint.h"
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/resources/ListenResourceImpl.h"
+#include "eprosimartps/rtps/ParticipantImpl.h"
 
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -27,23 +23,22 @@ using boost::asio::ip::udp;
 namespace eprosima {
 namespace rtps {
 
-static const char* const CLASS_NAME = "ListenResource";
+static const char* const CLASS_NAME = "ListenResourceImpl";
 
 typedef std::vector<RTPSWriter*>::iterator Wit;
 typedef std::vector<RTPSReader*>::iterator Rit;
 
-ListenResource::ListenResource(ParticipantImpl*p):
-		mp_participantImpl(p),
-		mp_thread(NULL),
-		m_listen_socket(m_io_service),
-		m_MessageReceiver(p->getListenSocketBufferSize())
+ListenResourceImpl::ListenResourceImpl():
+		mp_thread(nullptr),
+		m_listen_socket(m_io_service)
+		//m_MessageReceiver(p->getListenSocketBufferSize())
 {
-	m_MessageReceiver.mp_threadListen = this;
+	//m_MessageReceiver.mp_threadListen = this;
 }
 
-ListenResource::~ListenResource()
+ListenResourceImpl::~ListenResourceImpl()
 {
-	const char* const METHOD_NAME = "~ListenResource";
+	const char* const METHOD_NAME = "~ListenResourceImpl";
 	logWarning(RTPS_MSG_IN,"Removing listening thread " << mp_thread->get_id() << " locator: " << m_listenLoc,EPRO_BLUE);
 	m_listen_socket.close();
 	m_io_service.stop();
@@ -53,78 +48,7 @@ ListenResource::~ListenResource()
 	logInfo(RTPS_MSG_IN,"Listening thread closed succesfully",EPRO_BLUE);
 }
 
-bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
-{
-	boost::lock_guard<ListenResource> guard(*this);
-	if(endp->getEndpointKind() == WRITER)
-	{
-		for(Wit wit = m_assocWriters.begin();
-				wit!=m_assocWriters.end();++wit)
-		{
-			if((*wit)->getGuid().entityId == endp->getGuid().entityId)
-			{
-				m_assocWriters.erase(wit);
-				return true;
-			}
-		}
-	}
-	else if(endp->getEndpointKind() == READER)
-	{
-		for(Rit rit = m_assocReaders.begin();rit!=m_assocReaders.end();++rit)
-		{
-			if((*rit)->getGuid().entityId == endp->getGuid().entityId)
-			{
-				m_assocReaders.erase(rit);
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
-{
-	const char* const METHOD_NAME = "addAssociatedEndpoint";
-	boost::lock_guard<ListenResource> guard(*this);
-	bool found = false;
-	if(endp->getEndpointKind() == WRITER)
-	{
-		for(std::vector<RTPSWriter*>::iterator wit = m_assocWriters.begin();
-				wit!=m_assocWriters.end();++wit)
-		{
-			if((*wit)->getGuid().entityId == endp->getGuid().entityId)
-			{
-				found = true;
-				break;
-			}
-		}
-		if(!found)
-		{
-			m_assocWriters.push_back((RTPSWriter*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< m_listenLoc,EPRO_BLUE);
-			return true;
-		}
-	}
-	else if(endp->getEndpointKind() == READER)
-	{
-		for(std::vector<RTPSReader*>::iterator rit = m_assocReaders.begin();rit!=m_assocReaders.end();++rit)
-		{
-			if((*rit)->getGuid().entityId == endp->getGuid().entityId)
-			{
-				found = true;
-				break;
-			}
-		}
-		if(!found)
-		{
-			m_assocReaders.push_back((RTPSReader*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< m_listenLoc,EPRO_BLUE);
-			return true;
-		}
-	}
-	return false;
-}
-bool ListenResource::isListeningTo(const Locator_t& loc)
+bool ListenResourceImpl::isListeningTo(const Locator_t& loc)
 {
 
 	if(m_listenLoc == loc)
@@ -135,12 +59,12 @@ bool ListenResource::isListeningTo(const Locator_t& loc)
 
 
 
-void ListenResource::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
+void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
 	const char* const METHOD_NAME = "newCDRMessage";
 	if(err == boost::system::errc::success)
 	{
-		boost::lock_guard<ListenResource> guard(*this);
+		boost::lock_guard<boost::recursive_mutex> guard(m_mutex);
 		m_MessageReceiver.m_rec_msg.length = (uint16_t)msg_size;
 
 		if(m_MessageReceiver.m_rec_msg.length == 0)
@@ -172,7 +96,7 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
 				m_sender_endpoint,
-				boost::bind(&ListenResource::newCDRMessage, this,
+				boost::bind(&ListenResourceImpl::newCDRMessage, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
 	}
@@ -189,13 +113,13 @@ void ListenResource::newCDRMessage(const boost::system::error_code& err, std::si
 		m_listen_socket.async_receive_from(
 				boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
 				m_sender_endpoint,
-				boost::bind(&ListenResource::newCDRMessage, this,
+				boost::bind(&ListenResourceImpl::newCDRMessage, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
 	}
 }
 
-Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed)
+Locator_t ListenResourceImpl::init_thread(ParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
 	m_listenLoc = loc;
@@ -220,7 +144,7 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 	}
 	//OPEN THE SOCKET:
 	m_listen_socket.open(m_listen_endpoint.protocol());
-	m_listen_socket.set_option(boost::asio::socket_base::receive_buffer_size(this->mp_participantImpl->getListenSocketBufferSize()));
+	m_listen_socket.set_option(boost::asio::socket_base::receive_buffer_size(listenSocketSize));
 	if(isMulti)
 	{
 		m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
@@ -279,17 +203,17 @@ Locator_t ListenResource::init_thread(Locator_t& loc, bool isMulti, bool isFixed
 	m_listen_socket.async_receive_from(
 			boost::asio::buffer((void*)m_MessageReceiver.m_rec_msg.buffer, m_MessageReceiver.m_rec_msg.max_size),
 			m_sender_endpoint,
-			boost::bind(&ListenResource::newCDRMessage, this,
+			boost::bind(&ListenResourceImpl::newCDRMessage, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred));
 
-	mp_thread = new boost::thread(&ListenResource::run_io_service,this);
+	mp_thread = new boost::thread(&ListenResourceImpl::run_io_service,this);
 	mp_participantImpl->ResourceSemaphoreWait();
 	return m_listenLoc;
 
 }
 
-void ListenResource::run_io_service()
+void ListenResourceImpl::run_io_service()
 {
 	const char* const METHOD_NAME = "run_io_service";
 	logInfo(RTPS_MSG_IN,"Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),EPRO_BLUE) ;

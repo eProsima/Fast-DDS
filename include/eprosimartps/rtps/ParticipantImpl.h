@@ -89,9 +89,9 @@ private:
 	//!Guid of the participant.
 	const GUID_t m_guid;
 	//! Sending resources.
-	ResourceSend* m_send_thr;
+	ResourceSend* mp_send_thr;
 	//! Event Resource
-	ResourceEvent* m_event_thr;
+	ResourceEvent* mp_event_thr;
 	//! BuiltinProtocols of this participant
 	BuiltinProtocols m_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
