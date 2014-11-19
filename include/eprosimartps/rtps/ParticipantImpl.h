@@ -34,8 +34,6 @@ class interprocess_semaphore;
 
 #include "eprosimartps/rtps/attributes/ParticipantAttributes.h"
 
-#include "eprosimartps/resources/ResourceEvent.h"
-#include "eprosimartps/resources/ResourceSend.h"
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 
 
@@ -49,6 +47,8 @@ class RTPSReader;
 class RTPSWriter;
 class ParticipantListener;
 class ListenResource;
+class ResourceSend;
+class ResourceEvent;
 
 /**
  * @brief Class ParticipantImpl, it contains the private implementation of the Participant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -63,8 +63,6 @@ public:
 
 	inline const GUID_t& getGuid() const {return m_guid;};
 
-	//!Used for tests
-	void loose_next_change(){m_send_thr.loose_next();};
 	//! Announce ParticipantState (force the sending of a DPD message.)
 	void announceParticipantState();
 	//!Stop the Participant Announcement (used in tests to avoid multiple packets being send)
@@ -81,15 +79,19 @@ public:
 	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
     //!Get the participant ID
     inline uint32_t getParticipantID() const { return (uint32_t)m_att.participantID;};
+    //!Wait for the resource semaphore
+    void ResourceSemaphorePost();
+    //!Post to the resource semaphore
+    void ResourceSemaphoreWait();
 private:
 	//!Attributes of the Participant
 	ParticipantAttributes m_att;
 	//!Guid of the participant.
 	const GUID_t m_guid;
 	//! Sending resources.
-	ResourceSend m_send_thr;
+	ResourceSend* m_send_thr;
 	//! Event Resource
-	ResourceEvent m_event_thr;
+	ResourceEvent* m_event_thr;
 	//! BuiltinProtocols of this participant
 	BuiltinProtocols m_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
