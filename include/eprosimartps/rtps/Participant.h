@@ -14,22 +14,24 @@
 #ifndef PARTICIPANT_H_
 #define PARTICIPANT_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <sys/types.h>
+//
+//#if defined(_WIN32)
+//#include <process.h>
+//#else
+//#include <unistd.h>
+//#endif
 
-#if defined(_WIN32)
-#include <process.h>
-#else
-#include <unistd.h>
-#endif
+#include <cstdlib>
 
 #include "eprosimartps/common/types/Guid.h"
 
 namespace eprosima {
 namespace rtps {
 
-
+class ParticipantImpl;
 
 /**
  * @brief Class Participant, contains the public API for a Participant.

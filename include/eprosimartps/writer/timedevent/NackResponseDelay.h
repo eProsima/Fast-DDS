@@ -15,7 +15,7 @@
 #define NACKRESPONSEDELAY_H_
 
 #include "eprosimartps/utils/TimedEvent.h"
-#include "eprosimartps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/rtps/writer/RTPSMessageGroup.h"
 
 
 namespace eprosima {

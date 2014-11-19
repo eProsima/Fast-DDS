@@ -15,6 +15,8 @@
 
 #include "eprosimartps/rtps/history/WriterHistory.h"
 
+#include "eprosimartps/rtps/RTPSMessageCreator.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
@@ -23,9 +25,9 @@ namespace rtps {
 static const char* const CLASS_NAME = "RTPSWriter";
 
 RTPSWriter::RTPSWriter(ParticipantImpl* impl,GUID_t guid,WriterAttributes att,WriterHistory* hist):
-		Endpoint(impl,guid,att.endpointAttributes),
+		Endpoint(impl,guid,att.endpoint),
 		m_pushMode(true),
-		m_cdrmessages(att.endpointAttributes.payloadMaxSize),
+		m_cdrmessages(hist->m_att.payloadMaxSize),
 		mp_listener(nullptr),
 		m_livelinessAsserted(false),
 		mp_unsetChangesNotEmpty(nullptr),

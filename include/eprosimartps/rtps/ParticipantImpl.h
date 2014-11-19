@@ -32,7 +32,7 @@ class interprocess_semaphore;
 }
 }
 
-#include "eprosimartps/pubsub/attributes/ParticipantAttributes.h"
+#include "eprosimartps/rtps/attributes/ParticipantAttributes.h"
 
 #include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/resources/ResourceSend.h"
@@ -48,6 +48,7 @@ namespace rtps {
 class RTPSReader;
 class RTPSWriter;
 class ParticipantListener;
+class ListenResource;
 
 /**
  * @brief Class ParticipantImpl, it contains the private implementation of the Participant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -60,7 +61,26 @@ public:
 			const GuidPrefix_t& guidP,ParticipantListener* plisten);
 	virtual ~ParticipantImpl();
 
+	inline const GUID_t& getGuid() const {return m_guid;};
 
+	//!Used for tests
+	void loose_next_change(){m_send_thr.loose_next();};
+	//! Announce ParticipantState (force the sending of a DPD message.)
+	void announceParticipantState();
+	//!Stop the Participant Announcement (used in tests to avoid multiple packets being send)
+	void stopParticipantAnnouncement();
+	//!Reset to timer to make periodic Participant Announcements.
+	void resetParticipantAnnouncement();
+	/**
+	 * Activate a Remote Endpoint defined in the Static Discovery.
+	 * @param pguid GUID_t of the endpoint.
+	 * @param userDefinedId userDeinfed Id of the endpoint.
+	 * @param kind kind of endpoint
+	 * @return True if correct.
+	 */
+	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
+    //!Get the participant ID
+    inline uint32_t getParticipantID() const { return (uint32_t)m_att.participantID;};
 private:
 	//!Attributes of the Participant
 	ParticipantAttributes m_att;

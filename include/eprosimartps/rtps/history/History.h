@@ -55,9 +55,6 @@ class History
 public:
 	History(const HistoryAttributes&  att);
 	virtual ~History();
-
-
-protected:
 	//!Attributes of the History
 	HistoryAttributes m_att;
 	/**

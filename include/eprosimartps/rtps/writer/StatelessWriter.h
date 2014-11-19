@@ -15,16 +15,12 @@
 #define STATELESSWRITER_H_
 
 #include "eprosimartps/common/types/Time_t.h"
-#include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/writer/ReaderLocator.h"
-#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
-
-using namespace eprosima::pubsub;
+#include "eprosimartps/rtps/writer/RTPSWriter.h"
+#include "eprosimartps/rtps/writer/ReaderLocator.h"
 
 namespace eprosima {
 namespace rtps {
 
-class ReaderProxyData;
 
 /**
  * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
@@ -38,8 +34,6 @@ public:
 	virtual ~StatelessWriter();
 	StatelessWriter(ParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
 
-
-private:
 	/**
 	 * Add a specific change to all ReaderLocators.
 	 * @param p Pointer to the change.
@@ -51,25 +45,30 @@ private:
 	 * @return True if removed correctly.
 	 */
 	bool change_removed_by_history(CacheChange_t* a_change);
-//
-//	/**
-//	 * Add a matched reader.
-//	 * @param rdata Pointer to the ReaderProxyData object added.
-//	 * @return True if added.
-//	 */
-//	bool matched_reader_add(ReaderProxyData* rdata);
-//	/**
-//	 * Remove a matched reader.
-//	 * @param rdata Pointer to the object to remove.
-//	 * @return True if removed.
-//	 */
-//	bool matched_reader_remove(ReaderProxyData* rdata);
-//	/**
-//	 * Tells us if a specific Reader is matched against this writer
-//	 * @param rdata Pointer to the ReaderProxyData object
-//	 * @return True if it was matched.
-//	 */
-//	bool matched_reader_is_matched(ReaderProxyData* rdata);
+	/**
+	 * Add a matched reader.
+	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @return True if added.
+	 */
+	bool matched_reader_add(RemoteReaderAttributes& ratt);
+	/**
+	 * Remove a matched reader.
+	 * @param rdata Pointer to the object to remove.
+	 * @return True if removed.
+	 */
+	bool matched_reader_remove(RemoteReaderAttributes& ratt);
+	/**
+	 * Tells us if a specific Reader is matched against this writer
+	 * @param rdata Pointer to the ReaderProxyData object
+	 * @return True if it was matched.
+	 */
+	bool matched_reader_is_matched(RemoteReaderAttributes& ratt);
+	/**
+	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
+	 */
+	void unsent_changes_not_empty();
+private:
+
 //	/**
 //	 * Add a ReaderLocator to the StatelessWriter.
 //	 * @param locator Locator to add
@@ -106,8 +105,8 @@ private:
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
-	std::vector<ReaderProxyData*> m_matched_readers;
-	bool add_locator(ReaderProxyData* rdata,Locator_t& loc);
+	std::vector<RemoteReaderAttributes> m_matched_readers;
+	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 	bool remove_locator(Locator_t& loc);
 };
 
