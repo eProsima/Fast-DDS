@@ -18,13 +18,13 @@
 namespace eprosima {
 namespace rtps {
 
-Endpoint::Endpoint(ParticipantImpl* pimpl,
-					GuidPrefix_t guid,
-					EntityId_t entityId,
-					StateKind_t state,
-					EndpointKind_t end,
-					int16_t userDefinedId):
-mp_participant(pimpl),m_guid(guid,entityId),m_stateType(state),m_endpointKind(end),m_userDefinedId(userDefinedId),mp_mutex(new boost::recursive_mutex())
+Endpoint::Endpoint(ParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att):
+		mp_participant(pimpl),
+		m_guid(guid),
+		m_att(att),
+		mp_mutex(new boost::recursive_mutex()),
+		mp_send_thr(nullptr),
+		mp_event_thr(nullptr)
 {
 
 }
