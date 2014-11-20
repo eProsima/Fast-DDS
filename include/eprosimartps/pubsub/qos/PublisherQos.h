@@ -14,7 +14,7 @@
 #ifndef WRITERQOS_H_
 #define WRITERQOS_H_
 
-#include "eprosimartps/qos/QosPolicies.h"
+#include "eprosimartps/pubsub/qos/QosPolicies.h"
 
 namespace eprosima {
 namespace pubsub {
@@ -25,10 +25,10 @@ namespace pubsub {
  * during the EDP, not all of the behaviour associated with them has been implemented in the library.
  * The supported Qos in this version are: Durability, Liveliness, Reliability and Partition.
  */
-class RTPS_DllAPI WriterQos{
+class RTPS_DllAPI PublisherQos{
 public:
-	WriterQos();
-	virtual ~ WriterQos();
+	PublisherQos();
+	virtual ~ PublisherQos();
 	//!Durability Qos, implemented in the library.
 	DurabilityQosPolicy m_durability;
 	//!Durability Service Qos, NOT implemented in the library.
@@ -66,14 +66,14 @@ public:
 	 * @param qos Reference from a WriterQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	void setQos(const WriterQos& qos, bool first_time);
+	void setQos(const PublisherQos& qos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
 	 */
 	bool checkQos();
 
-	bool canQosBeUpdated(WriterQos& qos);
+	bool canQosBeUpdated(PublisherQos& qos);
 };
 
 
