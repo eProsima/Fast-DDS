@@ -14,7 +14,7 @@
 #ifndef WRITERATTRIBUTES_H_
 #define WRITERATTRIBUTES_H_
 
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Time_t.h"
 #include "eprosimartps/rtps/attributes/EndpointAttributes.h"
 namespace eprosima{
 namespace rtps{

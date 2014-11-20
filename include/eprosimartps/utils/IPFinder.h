@@ -33,7 +33,7 @@
 #include <vector>
 #include <string>
 
-#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/rtps/common/Locator.h"
 
 namespace eprosima {
 

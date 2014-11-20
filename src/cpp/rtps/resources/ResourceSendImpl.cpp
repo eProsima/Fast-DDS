@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/rtps/resources/ResourceSendImpl.h"
-#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "eprosimartps/rtps/common/CDRMessage_t.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 using boost::asio::ip::udp;

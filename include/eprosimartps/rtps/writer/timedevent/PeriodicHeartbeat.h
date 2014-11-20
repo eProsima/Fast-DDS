@@ -15,7 +15,7 @@
 #define PERIODICHEARTBEAT_H_
 
 #include "eprosimartps/rtps/resources/TimedEvent.h"
-#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "eprosimartps/rtps/common/CDRMessage_t.h"
 
 namespace eprosima {
 namespace rtps{

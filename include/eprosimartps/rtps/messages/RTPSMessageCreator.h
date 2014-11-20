@@ -14,11 +14,10 @@
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 
-#include "eprosimartps/common/types/CDRMessage_t.h"
-#include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/common/types/SequenceNumber.h"
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/rtps/common/CDRMessage_t.h"
+#include "eprosimartps/rtps/common/Guid.h"
+#include "eprosimartps/rtps/common/SequenceNumber.h"
+#include "eprosimartps/rtps/common/CacheChange.h"
 
 
 namespace eprosima {

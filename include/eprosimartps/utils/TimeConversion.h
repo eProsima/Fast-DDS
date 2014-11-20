@@ -15,7 +15,7 @@
 #define TIMECONVERSION_H_
 
 #include <cstdint>
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Time_t.h"
 
 namespace eprosima {
 namespace rtps {

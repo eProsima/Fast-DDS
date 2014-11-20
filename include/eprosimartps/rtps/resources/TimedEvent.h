@@ -15,7 +15,7 @@
 #define TIMEDEVENT_H_
 
 #include <cstdint>
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Time_t.h"
 namespace boost
 {
 namespace asio

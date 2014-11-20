@@ -26,7 +26,7 @@
 #include <boost/bind.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Time_t.h"
 
 
 

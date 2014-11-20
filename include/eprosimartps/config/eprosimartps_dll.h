@@ -57,7 +57,7 @@
 #define EPROSIMA_DYN_LINK
 #endif
 
-#include "eprosimartps/eProsima_auto_link.h"
+#include "eprosimartps/config/eProsima_auto_link.h"
 #endif // auto-linking disabled
 
 #endif // _EPROSIMARTPS_EPROSIMARTPS_DLL_H_

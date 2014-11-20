@@ -1,5 +1,5 @@
 #include "eprosimartps_dll.h"
-#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/rtps/common/Types.h"
 
 #include <string>
 #include <vector>

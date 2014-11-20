@@ -14,7 +14,7 @@
 #ifndef LISTENRESOURCEIMPL_H_
 #define LISTENRESOURCEIMPL _H_
 
-#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/rtps/common/Locator.h"
 
 
 #include <boost/asio.hpp>

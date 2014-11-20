@@ -16,9 +16,7 @@
 
 
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
-//#include "eprosimartps/writer/ReaderProxy.h"
-//
-//typedef std::vector<ReaderProxy*>::iterator p_ReaderProxyIterator;
+
 
 namespace eprosima {
 namespace rtps {

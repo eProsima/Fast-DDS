@@ -13,11 +13,11 @@
 #ifndef PARAM_LIST_T_H_
 #define PARAM_LIST_T_H_
 
-#include "eprosimartps/qos/ParameterTypes.h"
-#include "eprosimartps/common/RTPS_messages.h"
-#include "eprosimartps/common/types/CDRMessage_t.h"
-#include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/pubsub/qos/ParameterTypes.h"
+#include "eprosimartps/rtps/messages/RTPS_messages.h"
+#include "eprosimartps/rtps/common/CDRMessage_t.h"
+#include "eprosimartps/rtps/messages/CDRMessage.h"
+#include "eprosimartps/rtps/common/CacheChange.h"
 
 namespace eprosima {
 namespace pubsub {

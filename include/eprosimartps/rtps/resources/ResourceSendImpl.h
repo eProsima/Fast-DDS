@@ -24,7 +24,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "eprosimartps/common/types/Locator.h"
+#include "eprosimartps/rtps/common/Locator.h"
 
 namespace eprosima {
 namespace rtps {
