@@ -27,6 +27,7 @@ namespace eprosima {
 namespace rtps {
 
 class ParticipantImpl;
+class ListenResource;
 
 /**
  * Class ListenResourceImpl, used to control the listen sockets and the received messages.
@@ -34,9 +35,8 @@ class ParticipantImpl;
  */
 class ListenResourceImpl
 {
-	friend class MessageReceiver;
 public:
-	ListenResourceImpl();
+	ListenResourceImpl(ListenResource* LR);
 	virtual ~ListenResourceImpl();
 	/**
 	 * Initialize the listening thread.
@@ -53,9 +53,15 @@ public:
 //	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
 //	//!Get the pointer to the participant
 //	ParticipantImpl* getParticipantImpl(){return mp_participantImpl;};
+	void putToListen();
+
+	inline boost::recursive_mutex* getMutex() {return &m_mutex;};
+
+	inline const Locator_t& getListenLoc() const {return m_listenLoc;}
 
 private:
 	ParticipantImpl* mp_participantImpl;
+	ListenResource* mp_listenResource;
 	boost::thread* mp_thread;
 	boost::asio::io_service m_io_service;
 	boost::asio::ip::udp::socket m_listen_socket;

@@ -54,7 +54,7 @@ public:
 	 * @param loc Locator of hte address from where to start the sending socket.
 	 * @return True if correct
 	 */
-	bool initSend(ParticipantImpl*,const Locator_t& loc,bool useIP4, bool useIP6);
+	bool initSend(ParticipantImpl*,const Locator_t& loc,uint32_t sendseockBuffer,bool useIP4, bool useIP6);
 
 	//!FOR TESTING ONLY!!!!
 	void loose_next(){m_send_next = false;};

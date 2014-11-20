@@ -70,7 +70,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 	}
 	else
 	{
-		logWarning(RTPS_WRITER, "No reader locator to send change";);
+		logWarning(RTPS_WRITER, "No reader locator to send change");
 	}
 }
 

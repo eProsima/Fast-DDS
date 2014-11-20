@@ -129,7 +129,6 @@ const VendorId_t c_eProsimaVendorId={0x01,0x0F};
 
 }
 }
-#include "colors.h"
 
 #include "eprosimartps/eprosimartps_dll.h"
 

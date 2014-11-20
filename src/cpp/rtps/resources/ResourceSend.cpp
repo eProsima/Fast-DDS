@@ -13,6 +13,7 @@
 
 #include "eprosimartps/rtps/resources/ResourceSend.h"
 #include "eprosimartps/rtps/resources/ResourceSendImpl.h"
+#include "eprosimartps/rtps/ParticipantImpl.h"
 
 namespace eprosima {
 namespace rtps {
@@ -29,17 +30,20 @@ ResourceSend::~ResourceSend() {
 }
 
 bool ResourceSend::initSend(ParticipantImpl* pimpl, const Locator_t& loc,
-		bool useIP4, bool useIP6)
+		uint32_t sendsockBuffer,bool useIP4, bool useIP6)
 {
-	return mp_impl->initSend(pimpl,loc,useIP4,useIP6);
+	return mp_impl->initSend(pimpl,loc,sendsockBuffer,useIP4,useIP6);
 }
 
-bool ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
+void ResourceSend::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 {
 	return mp_impl->sendSync(msg,loc);
 }
 
-boost::recursive_mutex* ResourceSend::getMutex() {return mp_impl->getMutex();}
+boost::recursive_mutex* ResourceSend::getMutex()
+{
+	return mp_impl->getMutex();
+}
 
 } /* namespace rtps */
 } /* namespace eprosima */
