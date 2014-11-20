@@ -55,6 +55,8 @@ public:
 	Locator_t init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 			uint32_t listenSockSize,bool isMulti,bool isFixed);
 
+	bool isListeningTo(Locator_t&loc);
+
 };
 
 } /* namespace rtps */

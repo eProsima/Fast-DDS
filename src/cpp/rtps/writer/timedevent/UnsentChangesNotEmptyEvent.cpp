@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
 
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 

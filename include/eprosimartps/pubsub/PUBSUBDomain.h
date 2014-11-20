@@ -15,8 +15,8 @@
 #ifndef RTPSRTPSParticipant_H_
 #define RTPSRTPSParticipant_H_
 
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/pubsub/attributes/all_attributes.h"
+#include "eprosimartps/rtps/common/Types.h"
+#include "eprosimartps/rtps/attributes/RTPSParticipantAttributes.h"
 #include <set>
 
 

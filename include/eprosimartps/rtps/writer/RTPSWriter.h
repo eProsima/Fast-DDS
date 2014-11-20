@@ -38,8 +38,9 @@ class RTPSWriter: public Endpoint
 {
 	friend class WriterHistory;
 	friend class UnsentChangesNotEmptyEvent;
+	friend class RTPSParticipantImpl;
 protected:
-	RTPSWriter(RTPSParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
+	RTPSWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
 	virtual ~RTPSWriter();
 public:
 	/**
@@ -91,14 +92,14 @@ protected:
 	bool m_pushMode;
 	//!Group created to send messages more efficiently
 	RTPSMessageGroup_t m_cdrmessages;
-	//!Writer Listener
-	WriterListener* mp_listener;
 	//!INdicates if the liveliness has been asserted
 	bool m_livelinessAsserted;
 	//!Event that manages unsent changes
 	UnsentChangesNotEmptyEvent* mp_unsetChangesNotEmpty;
 	//!WriterHistory
 	WriterHistory* mp_history;
+	//!Listener
+	WriterListener* mp_listener;
 	/**
 	 * Initialize the header of hte CDRMessages.
 	 */

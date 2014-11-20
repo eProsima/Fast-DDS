@@ -11,12 +11,12 @@
  *
  */
 
+#include "eprosimartps/rtps/resources/ResourceEvent.h"
+
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-
-#include "eprosimartps/rtps/resources/ResourceEvent.h"
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
@@ -31,7 +31,7 @@ ResourceEvent::ResourceEvent():
 		mp_RTPSParticipantImpl(nullptr)
 {
 	mp_io_service = new boost::asio::io_service();
-	mp_work = new boost::asio::io_service::work(*mp_io_service);
+	mp_work = (void*)new boost::asio::io_service::work(*mp_io_service);
 }
 
 ResourceEvent::~ResourceEvent() {
@@ -41,7 +41,7 @@ ResourceEvent::~ResourceEvent() {
 	mp_io_service->stop();
 	mp_b_thread->join();
 	delete(mp_b_thread);
-	delete(mp_work);
+	delete((boost::asio::io_service::work*)mp_work);
 	delete(mp_io_service);
 
 }

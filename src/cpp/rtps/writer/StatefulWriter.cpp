@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
 
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 
 #include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
 
@@ -52,9 +52,9 @@ StatefulWriter::~StatefulWriter()
 	}
 }
 
-StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t guid,
-		WriterAttributes att,WriterHistory* hist):
-		RTPSWriter(pimpl,guid,att,hist),
+StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
+		WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
+		RTPSWriter(pimpl,guid,att,hist,listen),
 		mp_periodicHB(nullptr),
 		m_times(att.times)
 {

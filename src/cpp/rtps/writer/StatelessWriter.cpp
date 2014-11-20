@@ -25,9 +25,9 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "StatelessWriter";
 
-StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t guid,
-		WriterAttributes att,WriterHistory* hist):
-							RTPSWriter(pimpl,guid,att,hist)
+StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
+		WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
+							RTPSWriter(pimpl,guid,att,hist,listen)
 {
 
 }

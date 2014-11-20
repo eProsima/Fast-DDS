@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/writer/timedevent/NackSupressionDuration.h"
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 

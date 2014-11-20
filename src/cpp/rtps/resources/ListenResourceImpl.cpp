@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/resources/ListenResourceImpl.h"
 #include "eprosimartps/rtps/resources/ListenResource.h"
 #include "eprosimartps/rtps/messages/MessageReceiver.h"
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"

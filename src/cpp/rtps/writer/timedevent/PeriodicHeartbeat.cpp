@@ -16,7 +16,7 @@
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
 
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 
 #include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
 
