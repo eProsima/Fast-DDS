@@ -29,10 +29,10 @@ namespace pubsub {
 static const char* const CLASS_NAME = "PublisherImpl";
 
 PublisherImpl::PublisherImpl(RTPSParticipantImpl* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
-								mp_Writer(Win),
-								mp_type(pdatatype),
-								m_attributes(att),
-								mp_RTPSParticipant(p)
+										mp_Writer(Win),
+										mp_type(pdatatype),
+										m_attributes(att),
+										mp_RTPSParticipant(p)
 {
 
 }
@@ -71,6 +71,45 @@ bool PublisherImpl::dispose_and_unregister(void* Data) {
 }
 
 
+bool PublisherImpl::add_new_change(ChangeKind_t changeKind, void* data)
+{
+	if(mp_type->m_isGetKeyDefined)
+					{
+						mp_type->getKey(data,&ch->instanceHandle);
+					}
+					else
+					{
+						logWarning(RTPS_WRITER,"Get key function not defined";);
+					}
+
+	CacheChange_t * ch = mp_writer->new_change(changeKind);
+	if(ch != nullptr)
+	{
+		if(changeKind == ALIVE && data !=nullptr && mp_type !=nullptr)
+		{
+			if(!mp_type->serialize(data,&ch->serializedPayload))
+			{
+				logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
+				m_history.release_Cache(ch);
+				return false;
+			}
+			else if(ch->serializedPayload.length > mp_type->m_typeSize)
+			{
+				logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
+				m_writer_cache.release_Cache(ch);
+				return false;
+			}
+			else if(ch->serializedPayload.length == 0)
+			{
+				logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
+				m_writer_cache.release_Cache(ch);
+				return false;
+			}
+		}
+	}
+}
+
+
 bool PublisherImpl::removeMinSeqChange()
 {
 	return mp_Writer->removeMinSeqCacheChange();
@@ -86,16 +125,7 @@ size_t PublisherImpl::getHistoryElementsNumber()
 	return mp_Writer->getHistoryCacheSize();
 }
 
-size_t PublisherImpl::getMatchedSubscribers()
-{
-	return mp_Writer->getMatchedSubscribers();
-}
 
-bool PublisherImpl::assignListener(PublisherListener* listen_in)
-{
-	mp_Writer->setListener(listen_in);
-	return true;
-}
 
 const GUID_t& PublisherImpl::getGuid()
 {
