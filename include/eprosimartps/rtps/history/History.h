@@ -14,12 +14,7 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
-//#include <boost/thread.hpp>
-//#include <boost/thread/lockable_adapter.hpp>
-//#include <boost/thread/mutex.hpp>
-//#include <boost/thread/recursive_mutex.hpp>
-//
-//using namespace boost;
+
 #include "eprosimartps/rtps/history/CacheChangePool.h"
 
 #include "eprosimartps/rtps/common/SequenceNumber.h"

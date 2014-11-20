@@ -15,10 +15,10 @@
 #define QOS_POLICIES_H_
 
 #include <vector>
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/types/Time_t.h"
-#include "eprosimartps/qos/ParameterTypes.h"
-#include "eprosimartps/eprosima_stl_exports.hpp"
+#include "eprosimartps/rtps/common/Types.h"
+#include "eprosimartps/rtps/common/Time_t.h"
+#include "eprosimartps/pubsub/qos/ParameterTypes.h"
+#include "eprosimartps/config/eprosima_stl_exports.hpp"
 using namespace eprosima::rtps;
 
 
