@@ -25,7 +25,8 @@ namespace pubsub {
 class PublisherHistory:public WriterHistory
 {
 public:
-	typedef std::vector<std::pair<InstanceHandle_t,std::vector<CacheChange_t*>>> t_v_Inst_Caches;
+	typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
+	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
 	PublisherHistory();
 	virtual ~PublisherHistory();
 	bool add_pub_change(CacheChange_t* change);
