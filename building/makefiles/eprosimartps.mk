@@ -37,6 +37,16 @@ EPROSIMARTPS_INCLUDE_DIRS= $(INCLUDE_DIRS)  -I$(BASEDIR)/include \
 EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/thirdparty/eprosima-common-code/eProsima_cpp/log/Log.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/utils/eClock.cpp \
+		  $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
+		  $(BASEDIR)/src/cpp/utils/md5.cpp \
+		  $(BASEDIR)/src/cpp/utils/StringMatching.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipant.cpp \
+		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipantImpl.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/rtps/RTPSDomain.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/rtps/resources/ListenResourceImpl.cpp \
 		  $(BASEDIR)/src/cpp/rtps/resources/ListenResource.cpp \
 		  $(BASEDIR)/src/cpp/rtps/resources/ResourceSend.cpp \
@@ -44,6 +54,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/resources/ResourceEvent.cpp \
 		  $(BASEDIR)/src/cpp/rtps/resources/TimedEvent.cpp \
 		  $(BASEDIR)/src/cpp/rtps/resources/TimedEventImpl.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/writer/RTPSWriter.cpp \
 		  $(BASEDIR)/src/cpp/rtps/writer/StatefulWriter.cpp \
@@ -55,11 +67,9 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/NackSupressionDuration.cpp \
 		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/rtps/RTPSDomain.cpp \
-		  \
-		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipant.cpp \
-		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipantImpl.cpp \
+		  $(BASEDIR)/src/cpp/rtps/history/CacheChangePool.cpp \
+		  $(BASEDIR)/src/cpp/rtps/history/History.cpp \
+		  $(BASEDIR)/src/cpp/rtps/history/WriterHistory.cpp \
 		  \
 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \
@@ -74,18 +84,6 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/history/History.cpp \
 		  $(BASEDIR)/src/cpp/history/WriterHistory.cpp \
 		  $(BASEDIR)/src/cpp/history/ReaderHistory.cpp \
-		  \
-		  $(BASEDIR)/src/cpp/writer/RTPSWriter.cpp \
-		  $(BASEDIR)/src/cpp/writer/ReaderLocator.cpp \
-		  $(BASEDIR)/src/cpp/writer/StatelessWriter.cpp \
-		  $(BASEDIR)/src/cpp/writer/ReaderProxy.cpp \
-		  $(BASEDIR)/src/cpp/writer/ReaderProxyData.cpp \
-		  $(BASEDIR)/src/cpp/writer/StatefulWriter.cpp \
-		  $(BASEDIR)/src/cpp/writer/RTPSMessageGroup.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/PeriodicHeartbeat.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/NackResponseDelay.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/NackSupressionDuration.cpp \
-		  $(BASEDIR)/src/cpp/writer/timedevent/UnsentChangesNotEmptyEvent.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/reader/RTPSReader.cpp \
 		  $(BASEDIR)/src/cpp/reader/StatelessReader.cpp \

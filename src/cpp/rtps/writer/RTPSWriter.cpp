@@ -55,8 +55,9 @@ CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t h
 {
 	const char* const METHOD_NAME = "new_change";
 	logInfo(RTPS_WRITER,"Creating new change";);
-	CacheChange_t* ch = mp_history->reserve_Cache();
-	if(ch == nullptr)
+	CacheChange_t* ch = nullptr;
+
+	if(!mp_history->reserve_Cache(&ch))
 	{
 		logWarning(RTPS_WRITER,"Problem reserving Cache from the History";);
 		return nullptr;

@@ -13,11 +13,11 @@
 
 #include "eprosimartps/rtps/history/WriterHistory.h"
 
-#include "eprosimartps/common/CacheChange.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
 
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace rtps {
@@ -43,6 +43,7 @@ WriterHistory::~WriterHistory()
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "add_change";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(mp_writer == nullptr)
 	{
 		logError(RTPS_HISTORY,"You need to create a Writer with this History before adding any changes");
@@ -70,6 +71,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 bool WriterHistory::remove_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "remove_change";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(a_change == nullptr)
 	{
 		logError(RTPS_HISTORY,"Pointer is not valid")
@@ -113,6 +115,7 @@ void WriterHistory::updateMaxMinSeqNum()
 
 bool WriterHistory::remove_min_change()
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(remove_change(mp_minSeqCacheChange))
 	{
 		updateMaxMinSeqNum();

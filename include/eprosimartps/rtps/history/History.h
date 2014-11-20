@@ -26,7 +26,6 @@
 #include "eprosimartps/rtps/common/Guid.h"
 #include "eprosimartps/rtps/attributes/HistoryAttributes.h"
 
-using namespace eprosima::pubsub;
 
 namespace boost
 {
@@ -53,7 +52,7 @@ public:
 	 * Reserve a CacheChange_t from the CacheChange pool.
 	 * @return Pointer to the CacheChange_t.
 	 */
-	inline CacheChange_t* reserve_Cache(){	return m_changePool.reserve_Cache();	}
+	inline bool reserve_Cache(CacheChange_t** change){	return m_changePool.reserve_Cache(change);	}
 	/**
 	 * release a previously reserved CacheChange_t.
 	 * @param ch Pointer to the CacheChange_t.

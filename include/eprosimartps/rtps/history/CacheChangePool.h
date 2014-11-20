@@ -37,19 +37,20 @@ public:
 	virtual ~CacheChangePool();
 	CacheChangePool(uint16_t pool_size,uint32_t payload_size,int32_t max_pool_size);
 	//!Reserve a Cache from the pool.
-	CacheChange_t* reserve_Cache();
+	bool reserve_Cache(CacheChange_t** chan);
 	//!Release a Cache back to the pool.
 	void release_Cache(CacheChange_t*);
 	//!Get the size of the cache vector; all of them (reserved and not reserved).
-	size_t get_allCachesSize(){return allCaches.size();}
+	size_t get_allCachesSize(){return m_allCaches.size();}
 	//!Get the number of frre caches.
-	size_t get_freeCachesSize(){return freeCaches.size();}
+	size_t get_freeCachesSize(){return m_freeCaches.size();}
 private:
-	uint32_t payload_size;
-	uint16_t pool_size;
-	std::vector<CacheChange_t*> freeCaches;
-	std::vector<CacheChange_t*> allCaches;
-	void allocateGroup(uint16_t pool_size);
+	uint32_t m_payload_size;
+	uint16_t m_pool_size;
+	int32_t m_max_pool_size;
+	std::vector<CacheChange_t*> m_freeCaches;
+	std::vector<CacheChange_t*> m_allCaches;
+	bool allocateGroup(uint16_t pool_size);
 };
 
 } /* namespace rtps */
