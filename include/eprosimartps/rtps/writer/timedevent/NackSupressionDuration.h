@@ -14,7 +14,7 @@
 #ifndef NACKSUPRESSIONDURATION_H_
 #define NACKSUPRESSIONDURATION_H_
 
-#include "eprosimartps/utils/TimedEvent.h"
+#include "eprosimartps/rtps/resources/TimedEvent.h"
 
 namespace eprosima {
 namespace rtps {
@@ -26,12 +26,13 @@ class ReaderProxy;
  * NackSupressionDuration class, used to avoid too "recent" NACK messages.
  * @ingroup WRITERMODULE
  */
-class NackSupressionDuration:public TimedEvent {
+class NackSupressionDuration : public TimedEvent
+{
 public:
 	virtual ~NackSupressionDuration();
-	NackSupressionDuration(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
+	NackSupressionDuration(ReaderProxy* p_RP,double intervalmillisec);
 
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 
 	ReaderProxy* mp_RP;
 };

@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/writer/ReaderLocator.h"
+#include "eprosimartps/rtps/writer/ReaderLocator.h"
 #include "eprosimartps/common/CacheChange.h"
 
 

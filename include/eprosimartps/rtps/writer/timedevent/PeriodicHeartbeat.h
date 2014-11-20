@@ -14,14 +14,13 @@
 #ifndef PERIODICHEARTBEAT_H_
 #define PERIODICHEARTBEAT_H_
 
-#include "eprosimartps/utils/TimedEvent.h"
+#include "eprosimartps/rtps/resources/TimedEvent.h"
 #include "eprosimartps/common/types/CDRMessage_t.h"
 
 namespace eprosima {
 namespace rtps{
 
 class StatefulWriter;
-class ReaderProxy;
 
 
 /**
@@ -30,10 +29,10 @@ class ReaderProxy;
  */
 class PeriodicHeartbeat: public TimedEvent {
 public:
-	PeriodicHeartbeat(StatefulWriter* p_RP,boost::posix_time::milliseconds interval);
+	PeriodicHeartbeat(StatefulWriter* p_RP,double interval);
 	virtual ~PeriodicHeartbeat();
 
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 
 	CDRMessage_t m_periodic_hb_msg;
 	StatefulWriter* mp_SFW;

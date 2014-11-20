@@ -50,7 +50,7 @@ public:
 
 	inline boost::recursive_mutex* getMutex() const {return mp_mutex;}
 
-	inline ParticipantImpl* getParticipant() const {return mp_participant;}
+
 
 	inline EndpointAttributes* getAttributes() {return &m_att;}
 
@@ -63,8 +63,7 @@ protected:
 	EndpointAttributes m_att;
 	//!Mutex of the object
 	boost::recursive_mutex* mp_mutex;
-	//!Send Resource
-	ResourceSend* mp_send_thr;
+
 
 };
 

@@ -14,7 +14,7 @@
 #ifndef UNSENTCHANGESNOTEMPTYEVENT_H_
 #define UNSENTCHANGESNOTEMPTYEVENT_H_
 
-#include "eprosimartps/utils/TimedEvent.h"
+#include "eprosimartps/rtps/resources/TimedEvent.h"
 
 namespace eprosima {
 namespace rtps {
@@ -23,10 +23,10 @@ class RTPSWriter;
 
 class UnsentChangesNotEmptyEvent: public TimedEvent {
 public:
-	UnsentChangesNotEmptyEvent(RTPSWriter* writer,boost::posix_time::milliseconds interval);
+	UnsentChangesNotEmptyEvent(RTPSWriter* writer,double interval);
 	virtual ~UnsentChangesNotEmptyEvent();
 
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 
 	RTPSWriter* mp_writer;
 };

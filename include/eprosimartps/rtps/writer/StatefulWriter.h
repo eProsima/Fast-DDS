@@ -102,6 +102,16 @@ public:
 	 */
 	bool matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP);
 
+	inline Count_t getHeartbeatCount() const {return this->m_heartbeatCount;};
+
+	inline EntityId_t getHBReaderEntityId() {return this->m_HBReaderEntityId;};
+
+	inline std::vector<ReaderProxy*>::iterator matchedReadersBegin(){return this->matched_readers.begin();};
+
+	inline std::vector<ReaderProxy*>::iterator matchedReadersEnd(){return this->matched_readers.end();};
+
+	inline ParticipantImpl* getParticipant() const {return mp_participant;}
+
 private:
 	void updateTimes(WriterTimes& times);
 	//

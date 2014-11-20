@@ -13,7 +13,7 @@
 
 #include "eprosimartps/rtps/writer/StatelessWriter.h"
 #include "eprosimartps/rtps/history/WriterHistory.h"
-#include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+#include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -152,7 +152,7 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	if(unsent_changes_not_empty)
 	{
 		//unsent_changes_not_empty();
-		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,boost::posix_time::milliseconds(1));
+		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
 		this->mp_unsetChangesNotEmpty->restart_timer();
 		this->mp_unsetChangesNotEmpty = NULL;
 	}

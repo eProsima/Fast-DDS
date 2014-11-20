@@ -22,9 +22,7 @@ Endpoint::Endpoint(ParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att):
 		mp_participant(pimpl),
 		m_guid(guid),
 		m_att(att),
-		mp_mutex(new boost::recursive_mutex()),
-		mp_send_thr(nullptr),
-		mp_event_thr(nullptr)
+		mp_mutex(new boost::recursive_mutex())
 {
 
 }

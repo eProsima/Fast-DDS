@@ -26,10 +26,9 @@
 
 namespace boost
 {
-namespace interprocess
-{
-class interprocess_semaphore;
-}
+namespace interprocess{class interprocess_semaphore;}
+namespace asio{class io_service;}
+class recursive_mutex;
 }
 
 #include "eprosimartps/rtps/attributes/ParticipantAttributes.h"
@@ -49,6 +48,7 @@ class ResourceEvent;
 class BuiltinProtocols;
 class WriterAttributes;
 class Endpoint;
+class CDRMessage_t;
 
 
 /**
@@ -84,6 +84,12 @@ public:
     void ResourceSemaphorePost();
     //!Post to the resource semaphore
     void ResourceSemaphoreWait();
+    //!Get Pointer to the IO Service.
+    boost::asio::io_service* getIOService();
+    //!Send Method
+    void sendSync(CDRMessage_t* msg, const Locator_t& loc);
+    //!Get Send Mutex
+    boost::recursive_mutex* getSendMutex();
 private:
 	//!Attributes of the Participant
 	ParticipantAttributes m_att;
