@@ -11,19 +11,16 @@
  *
  */
 
-#include "eprosimartps/pubsub/Publisher.h"
+#include "eprosimartps/pubsub/publisher/Publisher.h"
 #include "eprosimartps/pubsub/TopicDataType.h"
-#include "eprosimartps/pubsub/PublisherListener.h"
-#include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/writer/ReaderLocator.h"
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/writer/ReaderProxy.h"
+#include "eprosimartps/pubsub/publisher/PublisherListener.h"
+#include "eprosimartps/rtps/writer/RTPSWriter.h"
+
 
 #include "eprosimartps/utils/RTPSLog.h"
 
 
-#include "eprosimartps/RTPSParticipant.h"
+//#include "eprosimartps/RTPSParticipant.h"
 
 namespace eprosima {
 namespace pubsub {
@@ -32,7 +29,6 @@ namespace pubsub {
 static const char* const CLASS_NAME = "PublisherImpl";
 
 PublisherImpl::PublisherImpl(RTPSParticipantImpl* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
-
 								mp_Writer(Win),
 								mp_type(pdatatype),
 								m_attributes(att),

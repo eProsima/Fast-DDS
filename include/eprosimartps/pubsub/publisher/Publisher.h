@@ -16,20 +16,13 @@
 #define PUBLISHER_H_
 #include <iostream>
 
-#include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/rtps/common/Locator.h"
+#include "eprosimartps/rtps/common/Guid.h"
 
 #include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
 namespace eprosima {
 
-namespace rtps{
-
-class RTPSWriter;
-class RTPSParticipantImpl;
-}
-
-using namespace rtps;
 
 /**
  * PUBSUB namespace. Contains the public API to interact with the RTPS protocol.
@@ -105,16 +98,13 @@ public:
 	size_t getHistoryElementsNumber();
 
 
-	bool assignListener(PublisherListener* listen);
-
-
 	const GUID_t& getGuid();
 
-	RTPSWriter* getWriterPtr() {
-		return mp_Writer;
-	}
+//	RTPSWriter* getWriterPtr() {
+//		return mp_Writer;
+//	}
 
-	size_t getMatchedSubscribers();
+	//size_t getMatchedSubscribersNumber();
 
 	/**
 	 * Update the Attributes of the publisher;
@@ -133,11 +123,11 @@ private:
 	RTPSWriter* mp_Writer;
 	//! Pointer to the TopicDataType object.
 	TopicDataType* mp_type;
-
 	//!Attributes of the Publisher
 	PublisherAttributes m_attributes;
-	//!Pointer to the RTPSParticipant
-		RTPSParticipantImpl* mp_RTPSParticipant;
+//	//!Pointer to the RTPSParticipant
+//	RTPSParticipantImpl* mp_RTPSParticipant;
+	PublisherHistory m_history;
 
 };
 
