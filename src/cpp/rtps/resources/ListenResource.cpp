@@ -121,6 +121,11 @@ Locator_t ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 	return mp_impl->init_thread(pimpl,loc,listenSockSize,isMulti,isFixed);
 }
 
+bool ListenResource::isListeningTo(Locator_t&loc)
+{
+	return mp_impl->isListeningTo(loc);
+}
+
 
 
 } /* namespace rtps */

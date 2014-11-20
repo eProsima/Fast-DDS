@@ -56,8 +56,10 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/rtps/RTPSParticipant.cpp \
-		  $(BASEDIR)/src/cpp/rtps/RTPSParticipantImpl.cpp \
+		  $(BASEDIR)/src/cpp/rtps/RTPSDomain.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipant.cpp \
+		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipantImpl.cpp \
 		  \
 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \

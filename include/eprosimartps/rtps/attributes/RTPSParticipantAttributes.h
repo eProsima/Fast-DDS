@@ -103,12 +103,12 @@ public:
 	RTPSParticipantAttributes()
 {
 		defaultSendPort = 10040;
-		name = "defaultRTPSParticipant";
+		setName("RTPSParticipant");
 		sendSocketBufferSize = 8712;
 		listenSocketBufferSize = 17424;
 		use_IP4_to_send = true;
 		use_IP6_to_send = false;
-		RTPSParticipantID = -1;
+		participantID = -1;
 }
 	virtual ~RTPSParticipantAttributes(){};
 	/**
@@ -131,19 +131,22 @@ public:
 	uint32_t sendSocketBufferSize;
 	//!Listen socket buffer for all listen resources.
 	uint32_t listenSocketBufferSize;
-	/**
-	 * RTPSParticipant name.
-	 */
-	std::string name;
 	//! Builtin parameters.
 	BuiltinAttributes builtin;
 
 	std::vector<octet> userData;
 
-	int32_t RTPSParticipantID;
+	int32_t participantID;
 
 	bool use_IP4_to_send;
 	bool use_IP6_to_send;
+
+	inline void setName(const char* nam){name = nam;}
+
+	inline const char* getName(){return name.c_str();}
+
+private:
+	std::string name;
 
 
 };

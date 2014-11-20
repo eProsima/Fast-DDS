@@ -43,7 +43,7 @@ class ResourceEvent;
 class Endpoint
 {
 public:
-	Endpoint(RTPSParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att);
+	Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
 	virtual ~Endpoint();
 
 	inline const GUID_t& getGuid() const {	return m_guid;	};

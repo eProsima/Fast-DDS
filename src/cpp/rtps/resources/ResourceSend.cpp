@@ -13,7 +13,7 @@
 
 #include "eprosimartps/rtps/resources/ResourceSend.h"
 #include "eprosimartps/rtps/resources/ResourceSendImpl.h"
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 
 namespace eprosima {
 namespace rtps {

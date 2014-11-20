@@ -23,7 +23,6 @@ class thread;
 namespace asio
 {
 class io_service;
-//class io_service::work;
 }
 }
 
@@ -46,7 +45,7 @@ public:
 
 	boost::thread* mp_b_thread;
 	boost::asio::io_service* mp_io_service;
-	boost::asio::io_service::work* mp_work;
+	void * mp_work;
 
 	/**
 	 * Method to initialize the thread.

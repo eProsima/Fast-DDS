@@ -24,14 +24,14 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "RTPSWriter";
 
-RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t guid,WriterAttributes att,WriterHistory* hist):
+RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
 				Endpoint(impl,guid,att.endpoint),
 				m_pushMode(true),
 				m_cdrmessages(hist->m_att.payloadMaxSize),
-				mp_listener(nullptr),
 				m_livelinessAsserted(false),
 				mp_unsetChangesNotEmpty(nullptr),
-				mp_history(hist)
+				mp_history(hist),
+				mp_listener(listen)
 {
 	const char* const METHOD_NAME = "RTPSWriter";
 	this->init_header();

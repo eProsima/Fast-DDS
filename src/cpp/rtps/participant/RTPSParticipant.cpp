@@ -11,8 +11,8 @@
  *
  */
 
-#include "eprosimartps/rtps/RTPSParticipant.h"
-#include "eprosimartps/rtps/RTPSParticipantImpl.h"
+#include "eprosimartps/rtps/participant/RTPSParticipant.h"
+#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
 #include "eprosimartps/rtps/Endpoint.h"
 
 namespace eprosima {
@@ -36,10 +36,10 @@ void RTPSParticipant::announceRTPSParticipantState()
 	return mp_impl->announceRTPSParticipantState();
 };
 
-void RTPSParticipant::loose_next_change()
-{
-	return mp_impl->loose_next_change();
-};
+//void RTPSParticipant::loose_next_change()
+//{
+//	return mp_impl->loose_next_change();
+//};
 
 void RTPSParticipant::stopRTPSParticipantAnnouncement()
 {

@@ -35,7 +35,7 @@ class StatefulWriter: public RTPSWriter
 	virtual ~StatefulWriter();
 private:
 	//!Constructor
-	StatefulWriter(RTPSParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
+	StatefulWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
 
 	Count_t m_heartbeatCount;
 	//!Timed Event to manage the periodic HB to the Reader.

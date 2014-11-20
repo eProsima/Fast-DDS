@@ -36,7 +36,7 @@ struct timezone
 
 #endif
 
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Time_t.h"
 
 
 namespace eprosima {

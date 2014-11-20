@@ -39,6 +39,7 @@ namespace eprosima {
 
 namespace rtps {
 
+class RTPSParticipant;
 class RTPSReader;
 class RTPSWriter;
 class RTPSParticipantListener;
@@ -49,6 +50,8 @@ class BuiltinProtocols;
 class WriterAttributes;
 class Endpoint;
 class CDRMessage_t;
+class WriterHistory;
+class WriterListener;
 
 
 /**
@@ -59,7 +62,7 @@ class RTPSParticipantImpl
 {
 public:
 	RTPSParticipantImpl(const RTPSParticipantAttributes &param,
-			const GuidPrefix_t& guidP,RTPSParticipantListener* plisten);
+			const GuidPrefix_t& guidP,RTPSParticipant* part,RTPSParticipantListener* plisten= nullptr);
 	virtual ~RTPSParticipantImpl();
 
 	inline const GUID_t& getGuid() const {return m_guid;};
@@ -79,7 +82,7 @@ public:
 	 */
 	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
     //!Get the RTPSParticipant ID
-    inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.RTPSParticipantID;};
+    inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.participantID;};
     //!Wait for the resource semaphore
     void ResourceSemaphorePost();
     //!Post to the resource semaphore
@@ -116,6 +119,10 @@ private:
 	std::vector<RTPSReader*> m_userReaderList;
 	//!Listen Resource list
 	std::vector<ListenResource*> m_listenResourceList;
+	//!Participant Listener
+	RTPSParticipantListener* mp_participantListener;
+	//!Pointer to the user participant
+	RTPSParticipant* mp_userParticipant;
 
 	/**
 	 * Method to check if a specific entityId already exists in this RTPSParticipant
@@ -150,8 +157,12 @@ public:
 	 *  * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
 	 * @return True if the Writer was correctly created.
 	 */
-	bool createWriter(RTPSWriter** Writer,WriterAttributes& param,const EntityId_t& entityId = c_EntityId_Unknown,
-			bool isBuiltin = false);
+	bool createWriter(RTPSWriter** Writer, WriterAttributes& param,WriterHistory* hist,WriterListener* listen,
+			const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
+
+	inline uint32_t getParticipantID() {return (uint32_t)this->m_att.participantID;};
+
+	bool deleteUserEndpoint(Endpoint*);
 
 	//
 	//	/**
