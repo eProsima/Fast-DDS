@@ -18,7 +18,7 @@
 #include "eprosimartps/rtps/RTPSMessageCreator.h"
 
 #include "eprosimartps/rtps/resources/ResourceSend.h"
-#include "eprosimartps/resources/ResourceEvent.h"
+//#include "eprosimartps/resources/ResourceEvent.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
 #include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"

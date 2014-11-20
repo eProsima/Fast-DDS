@@ -14,6 +14,8 @@
 #ifndef RESOURCESEND_H_
 #define RESOURCESEND_H_
 
+#include <cstdint>
+
 namespace boost
 {
 class recursive_mutex;
@@ -23,13 +25,17 @@ namespace eprosima {
 namespace rtps {
 
 class ResourceSendImpl;
+class ParticipantImpl;
+class Locator_t;
+class CDRMessage_t;
 
 class ResourceSend {
 public:
 	ResourceSend();
 	virtual ~ResourceSend();
-	bool initSend(ParticipantImpl* pimpl,const Locator_t& loc, bool useIP4, bool useIP6);
-	bool sendSync(CDRMessage_t* msg, const Locator_t& loc);
+	bool initSend(ParticipantImpl* pimpl,const Locator_t& loc,
+			uint32_t sendsockBuffer, bool useIP4, bool useIP6);
+	void sendSync(CDRMessage_t* msg, const Locator_t& loc);
 	boost::recursive_mutex* getMutex();
 private:
 	ResourceSendImpl* mp_impl;

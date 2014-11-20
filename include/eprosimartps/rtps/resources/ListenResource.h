@@ -15,7 +15,7 @@
 #define LISTENRESOURCE_H_
 
 #include <vector>
-
+#include <cstdlib>
 
 namespace eprosima {
 namespace rtps {
@@ -23,6 +23,8 @@ namespace rtps {
 class ListenResourceImpl;
 class RTPSWriter;
 class RTPSReader;
+class Endpoint;
+class MessageReceiver;
 
 class ListenResource {
 public:
@@ -41,9 +43,18 @@ public:
 	 */
 	bool removeAssociatedEndpoint(Endpoint* end);
 	ListenResourceImpl* mp_impl;
-	MessageReceiver m_receiver;
+	MessageReceiver* mp_receiver;
 	std::vector<RTPSWriter*> m_assocWriters;
 	std::vector<RTPSReader*> m_assocReaders;
+	inline bool hasAssociatedEndpoints()
+	{
+		return !(m_assocWriters.empty() && m_assocReaders.empty());
+	};
+	void setMsgRecMsgLength(uint32_t length);
+
+	Locator_t init_thread(ParticipantImpl* pimpl,Locator_t& loc,
+			uint32_t listenSockSize,bool isMulti,bool isFixed);
+
 };
 
 } /* namespace rtps */

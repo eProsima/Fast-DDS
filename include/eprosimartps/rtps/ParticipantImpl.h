@@ -33,10 +33,7 @@ class interprocess_semaphore;
 }
 
 #include "eprosimartps/rtps/attributes/ParticipantAttributes.h"
-
-#include "eprosimartps/builtin/BuiltinProtocols.h"
-
-
+#include "eprosimartps/common/types/Guid.h"
 
 namespace eprosima {
 
@@ -49,6 +46,10 @@ class ParticipantListener;
 class ListenResource;
 class ResourceSend;
 class ResourceEvent;
+class BuiltinProtocols;
+class WriterAttributes;
+class Endpoint;
+
 
 /**
  * @brief Class ParticipantImpl, it contains the private implementation of the Participant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -93,7 +94,7 @@ private:
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
 	//! BuiltinProtocols of this participant
-	BuiltinProtocols m_builtinProtocols;
+	BuiltinProtocols* m_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
@@ -143,7 +144,7 @@ public:
 	 *  * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
 	 * @return True if the Writer was correctly created.
 	 */
-	bool createWriter(RTPSWriter** Writer,EndpointAttributes& param,const EntityId_t& entityId = c_EntityId_Unknown,
+	bool createWriter(RTPSWriter** Writer,WriterAttributes& param,const EntityId_t& entityId = c_EntityId_Unknown,
 			bool isBuiltin = false);
 
 	//

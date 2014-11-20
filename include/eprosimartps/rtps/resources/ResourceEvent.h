@@ -15,11 +15,17 @@
 #define RESOURCEEVENT_H_
 
 
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
 
 
+namespace boost
+{
+class thread;
+namespace asio
+{
+class io_service;
+//class io_service::work;
+}
+}
 
 
 namespace eprosima {
@@ -36,11 +42,11 @@ public:
 	ResourceEvent();
 	virtual ~ResourceEvent();
 
-	boost::asio::io_service* getIOService(){return io_service;};
+	boost::asio::io_service* getIOService(){return mp_io_service;};
 
-	boost::thread* b_thread;
-	boost::asio::io_service io_service;
-	boost::asio::io_service::work work;
+	boost::thread* mp_b_thread;
+	boost::asio::io_service* mp_io_service;
+	boost::asio::io_service::work* mp_work;
 
 	/**
 	 * Method to initialize the thread.

@@ -42,6 +42,12 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/writer/ReaderProxy.cpp \
 		  $(BASEDIR)/src/cpp/rtps/writer/StatelessWriter.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/rtps/resources/ListenResourceImpl.cpp \
+		  $(BASEDIR)/src/cpp/rtps/resources/ListenResource.cpp \
+		  $(BASEDIR)/src/cpp/rtps/resources/ResourceSend.cpp \
+		  $(BASEDIR)/src/cpp/rtps/resources/ResourceSendImpl.cpp \
+		  $(BASEDIR)/src/cpp/rtps/resources/ResourceEvent.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/rtps/Participant.cpp \
 		  $(BASEDIR)/src/cpp/rtps/ParticipantImpl.cpp \
