@@ -52,6 +52,8 @@ public:
 
     double getIntervalMilliSec();
 
+    void stopSemaphorePost();
+
 private:
 	TimedEventImpl* mp_impl;
 };

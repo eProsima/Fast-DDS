@@ -15,7 +15,7 @@
 #define RTPSWRITER_H_
 
 #include "eprosimartps/rtps/Endpoint.h"
-#include "eprosimartps/rtps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/rtps/messages/RTPSMessageGroup.h"
 #include "eprosimartps/rtps/attributes/WriterAttributes.h"
 
 
@@ -37,6 +37,7 @@ class CacheChange_t;
 class RTPSWriter: public Endpoint
 {
 	friend class WriterHistory;
+	friend class UnsentChangesNotEmptyEvent;
 protected:
 	RTPSWriter(ParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
 	virtual ~RTPSWriter();
@@ -80,6 +81,10 @@ public:
 	 * This methods trigger the send operation for unsent changes.
 	 */
 	virtual void unsent_changes_not_empty()=0;
+	//!Get Min Seq Num in History.
+	SequenceNumber_t get_seq_num_min();
+	//!Get Max Seq Num in History.
+	SequenceNumber_t get_seq_num_max();
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -110,6 +115,8 @@ protected:
 	 * @return True if removed correctly.
 	 */
 	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
+
+	inline ParticipantImpl* getParticipant() const {return mp_participant;}
 
 	//public:
 	//

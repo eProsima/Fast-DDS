@@ -17,8 +17,8 @@
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
-#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
-#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
+#include "eprosimartps/rtps/writer/timedevent/NackResponseDelay.h"
+#include "eprosimartps/rtps/writer/timedevent/NackSupressionDuration.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -40,8 +40,8 @@ ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,
 				mp_mutex(new boost::recursive_mutex())
 {
 	const char* const METHOD_NAME = "ReaderProxy";
-	mp_nackResponse = new NackResponseDelay(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackResponseDelay)));
-	mp_nackSupression = new NackSupressionDuration(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(times.nackSupressionDuration)));
+	mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
+	mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 	logInfo(RTPS_HISTORY,"Reader Proxy created");
 }
 

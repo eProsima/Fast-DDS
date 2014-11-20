@@ -11,19 +11,21 @@
  *
  */
 
-#include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
-#include "eprosimartps/writer/RTPSWriter.h"
+#include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+#include "eprosimartps/rtps/writer/RTPSWriter.h"
+
+#include "eprosimartps/rtps/ParticipantImpl.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 
-#include "eprosimartps/resources/ResourceEvent.h"
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 namespace eprosima {
 namespace rtps {
 
 static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
 
-UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,boost::posix_time::milliseconds interval)
-: TimedEvent(&writer->mp_event_thr->io_service,interval),
+UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
+		double interval):
+		TimedEvent(writer->getParticipant()->getIOService(),interval),
   mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
@@ -32,27 +34,25 @@ UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,boost:
 
 UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 {
-	stop_timer();
-	delete(timer);
+
 }
 
-void UnsentChangesNotEmptyEvent::event(const boost::system::error_code& ec)
+void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
 	logInfo(RTPS_WRITER,"");
-	this->m_isWaiting = false;
-	if(ec == boost::system::errc::success)
+	if(code == EVENT_SUCCESS)
 	{
 		mp_writer->unsent_changes_not_empty();
 	}
-	else if(ec==boost::asio::error::operation_aborted)
+	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty aborted");
-		this->mp_stopSemaphore->post();
+		this->stopSemaphorePost();
 	}
 	else
 	{
-		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty boost message: " <<ec.message());
+		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty boost message: " <<msg);
 	}
 	delete(this);
 }

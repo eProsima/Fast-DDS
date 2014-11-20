@@ -15,7 +15,7 @@
 
 #include "eprosimartps/rtps/history/WriterHistory.h"
 
-#include "eprosimartps/rtps/RTPSMessageCreator.h"
+#include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -25,13 +25,13 @@ namespace rtps {
 static const char* const CLASS_NAME = "RTPSWriter";
 
 RTPSWriter::RTPSWriter(ParticipantImpl* impl,GUID_t guid,WriterAttributes att,WriterHistory* hist):
-		Endpoint(impl,guid,att.endpoint),
-		m_pushMode(true),
-		m_cdrmessages(hist->m_att.payloadMaxSize),
-		mp_listener(nullptr),
-		m_livelinessAsserted(false),
-		mp_unsetChangesNotEmpty(nullptr),
-		mp_history(hist)
+				Endpoint(impl,guid,att.endpoint),
+				m_pushMode(true),
+				m_cdrmessages(hist->m_att.payloadMaxSize),
+				mp_listener(nullptr),
+				m_livelinessAsserted(false),
+				mp_unsetChangesNotEmpty(nullptr),
+				mp_history(hist)
 {
 	const char* const METHOD_NAME = "RTPSWriter";
 	this->init_header();
@@ -61,45 +61,66 @@ CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t h
 		logWarning(RTPS_WRITER,"Problem reserving Cache from the History";);
 		return nullptr;
 	}
-//	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
-//	{
-//		if(!mp_type->serialize(data,&ch->serializedPayload))
-//		{
-//			logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
-//			m_writer_cache.release_Cache(ch);
-//			return false;
-//		}
-//		else if(ch->serializedPayload.length > mp_type->m_typeSize)
-//		{
-//			logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
-//			m_writer_cache.release_Cache(ch);
-//			return false;
-//		}
-//		else if(ch->serializedPayload.length == 0)
-//		{
-//			logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
-//			m_writer_cache.release_Cache(ch);
-//			return false;
-//		}
-//	}
+	//	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
+	//	{
+	//		if(!mp_type->serialize(data,&ch->serializedPayload))
+	//		{
+	//			logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
+	//			m_writer_cache.release_Cache(ch);
+	//			return false;
+	//		}
+	//		else if(ch->serializedPayload.length > mp_type->m_typeSize)
+	//		{
+	//			logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
+	//			m_writer_cache.release_Cache(ch);
+	//			return false;
+	//		}
+	//		else if(ch->serializedPayload.length == 0)
+	//		{
+	//			logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
+	//			m_writer_cache.release_Cache(ch);
+	//			return false;
+	//		}
+	//	}
 	ch->kind = changeKind;
 	if(m_att.topicKind == WITH_KEY && !handle.isDefined())
 	{
 		logError(RTPS_WRITER,"Changes in KEYED Writers need a valid instanceHandle");
 		return nullptr;
-//		if(mp_type->m_isGetKeyDefined)
-//		{
-//			mp_type->getKey(data,&ch->instanceHandle);
-//		}
-//		else
-//		{
-//			logWarning(RTPS_WRITER,"Get key function not defined";);
-//		}
+		//		if(mp_type->m_isGetKeyDefined)
+		//		{
+		//			mp_type->getKey(data,&ch->instanceHandle);
+		//		}
+		//		else
+		//		{
+		//			logWarning(RTPS_WRITER,"Get key function not defined";);
+		//		}
 	}
 	ch->instanceHandle = handle;
 	ch->writerGUID = m_guid;
 	return ch;
 }
+
+SequenceNumber_t RTPSWriter::get_seq_num_min()
+{
+	CacheChange_t* change;
+	mp_history->get_min_change(&change);
+	if(change!=nullptr)
+		return change->sequenceNumber;
+	else
+		return c_SequenceNumber_Unknown;
+}
+
+SequenceNumber_t RTPSWriter::get_seq_num_max()
+{
+	CacheChange_t* change;
+	mp_history->get_max_change(&change);
+	if(change!=nullptr)
+		return change->sequenceNumber;
+	else
+		return c_SequenceNumber_Unknown;
+}
+
 
 //bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 //{

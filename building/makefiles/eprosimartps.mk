@@ -49,6 +49,11 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/writer/StatefulWriter.cpp \
 		  $(BASEDIR)/src/cpp/rtps/writer/ReaderProxy.cpp \
 		  $(BASEDIR)/src/cpp/rtps/writer/StatelessWriter.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/ReaderLocator.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/PeriodicHeartbeat.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/NackResponseDelay.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/NackSupressionDuration.cpp \
+		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
 		  $(BASEDIR)/src/cpp/rtps/Participant.cpp \

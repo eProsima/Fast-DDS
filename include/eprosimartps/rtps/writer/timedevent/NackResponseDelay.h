@@ -14,8 +14,8 @@
 #ifndef NACKRESPONSEDELAY_H_
 #define NACKRESPONSEDELAY_H_
 
-#include "eprosimartps/utils/TimedEvent.h"
-#include "eprosimartps/rtps/writer/RTPSMessageGroup.h"
+#include "eprosimartps/rtps/resources/TimedEvent.h"
+#include "eprosimartps/rtps/messages/RTPSMessageGroup.h"
 
 
 namespace eprosima {
@@ -30,10 +30,10 @@ class ReaderProxy;
  */
 class NackResponseDelay:public TimedEvent {
 public:
-	NackResponseDelay(ReaderProxy* p_RP,boost::posix_time::milliseconds interval);
+	NackResponseDelay(ReaderProxy* p_RP,double intervalmillisec);
 	virtual ~NackResponseDelay();
 
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 
 	ReaderProxy* mp_RP;
 	RTPSMessageGroup_t m_cdrmessages;

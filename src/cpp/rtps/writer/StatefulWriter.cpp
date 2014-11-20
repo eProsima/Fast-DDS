@@ -13,18 +13,19 @@
 
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
-//#include "eprosimartps/writer/ReaderProxyData.h"
 
-#include "eprosimartps/rtps/RTPSMessageCreator.h"
+#include "eprosimartps/rtps/ParticipantImpl.h"
+
+#include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
 
 #include "eprosimartps/rtps/resources/ResourceSend.h"
-//#include "eprosimartps/resources/ResourceEvent.h"
+
 #include "eprosimartps/utils/TimeConversion.h"
 
-#include "eprosimartps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
-#include "eprosimartps/writer/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/writer/timedevent/NackSupressionDuration.h"
-#include "eprosimartps/writer/timedevent/NackResponseDelay.h"
+#include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+#include "eprosimartps/rtps/writer/timedevent/PeriodicHeartbeat.h"
+#include "eprosimartps/rtps/writer/timedevent/NackSupressionDuration.h"
+#include "eprosimartps/rtps/writer/timedevent/NackResponseDelay.h"
 
 #include "eprosimartps/rtps/history/WriterHistory.h"
 
@@ -125,7 +126,7 @@ void StatefulWriter::unsent_changes_not_empty()
 	const char* const METHOD_NAME = "unsent_changes_not_empty";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<ReaderProxy*>::iterator rit;
-	boost::lock_guard<boost::recursive_mutex> guard2(*mp_send_thr->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard2(*this->getParticipant()->getSendMutex());
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*(*rit)->mp_mutex);
@@ -182,9 +183,9 @@ void StatefulWriter::unsent_changes_not_empty()
 						c_EntityId_Unknown,m_guid.entityId,first->sequenceNumber,last->sequenceNumber,m_heartbeatCount,true,false);
 				std::vector<Locator_t>::iterator lit;
 				for(lit = (*rit)->m_att.endpoint.unicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.unicastLocatorList.end();++lit)
-					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+					getParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 				for(lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.multicastLocatorList.end();++lit)
-					mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+					getParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 				}
 			}
 		}
@@ -215,7 +216,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	}
 	ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
 	if(mp_periodicHB==nullptr)
-		mp_periodicHB = new PeriodicHeartbeat(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_times.heartbeatPeriod)));
+		mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 	if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL)
 	{
 		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
@@ -239,7 +240,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	if(rp->m_changesForReader.size()>0)
 	{
 		//unsent_changes_not_empty();
-		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,boost::posix_time::milliseconds(1));
+		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
 		this->mp_unsetChangesNotEmpty->restart_timer();
 		this->mp_unsetChangesNotEmpty = nullptr;
 	}
