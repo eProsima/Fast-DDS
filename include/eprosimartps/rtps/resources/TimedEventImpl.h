@@ -7,14 +7,14 @@
  *************************************************************************/
 
 /**
- * @file TimedEvent.h
+ * @file TimedEventImpl.h
  *
  */
 
 
 
-#ifndef PERIODICEVENT_H_
-#define PERIODICEVENT_H_
+#ifndef TIMEDEVENTIMPL_H_
+#define TIMEDEVENTIMPL_H_
 
 #include <boost/asio/io_service.hpp>
 
@@ -33,18 +33,20 @@
 namespace eprosima {
 namespace rtps{
 
+class TimedEvent;
+
 /**
  * Timed Event class used to define any timed events.
  * All timedEvents must be a specification of this class, implementing the event method.
  * @ingroup MANAGEMENTMODULE
  */
-class TimedEvent {
+class TimedEventImpl {
 public:
-	virtual ~TimedEvent(){};
+	virtual ~TimedEventImpl();
 	//! A io_service must be provided as well as the interval of the timedEvent.
-	TimedEvent(boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
+	TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
 	//! Pure abstract virtual method used to perform the event.
-	virtual void event(const boost::system::error_code& ec)=0;
+	void event(const boost::system::error_code& ec);
 
 
 protected:
@@ -52,6 +54,8 @@ protected:
 	boost::asio::deadline_timer* timer;
 	//!Interval to be used in the timed Event.
 	boost::posix_time::milliseconds m_interval_msec;
+	//!TimedEvent pointer
+	TimedEvent* mp_event;
 public:
 	bool m_isWaiting;
 	//!Method to restart the timer.
@@ -62,8 +66,9 @@ public:
 	//!Stop the timer
 	void stop_timer();
 
-	const boost::posix_time::milliseconds& getIntervalMsec() const {
-		return m_interval_msec;
+	double getIntervalMsec()
+	{
+		return m_interval_msec.total_nanoseconds()/1000;
 	}
 
 	double getRemainingTimeMilliSec()
