@@ -12,8 +12,8 @@
 
 #ifndef SERIALIZEDPAYLOAD_H_
 #define SERIALIZEDPAYLOAD_H_
-
-#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/config/eprosimartps_dll.h"
+#include "eprosimartps/rtps/common/Types.h"
 #include <cstring>
 #include <stdint.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@ namespace rtps{
 
 
 //!@brief Structure SerializedPayload_t.
-struct SerializedPayload_t{
+struct RTPS_DllAPI SerializedPayload_t{
 	//!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
 	uint16_t encapsulation;
 	//!Actual length of the data

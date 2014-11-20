@@ -17,10 +17,10 @@
 #define READERPROXY_H_
 
 #include <algorithm>
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/common/types/SequenceNumber.h"
-#include "eprosimartps/common/CacheChange.h"
+#include "eprosimartps/rtps/common/Types.h"
+#include "eprosimartps/rtps/common/Locator.h"
+#include "eprosimartps/rtps/common/SequenceNumber.h"
+#include "eprosimartps/rtps/common/CacheChange.h"
 #include "eprosimartps/rtps/attributes/WriterAttributes.h"
 namespace boost
 {

@@ -20,12 +20,12 @@
 //#include <boost/thread/recursive_mutex.hpp>
 //
 //using namespace boost;
+#include "eprosimartps/rtps/history/CacheChangePool.h"
 
-#include "eprosimartps/utils/CacheChangePool.h"
-#include "eprosimartps/common/types/SequenceNumber.h"
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/rtps/common/SequenceNumber.h"
+#include "eprosimartps/rtps/common/Guid.h"
+#include "eprosimartps/rtps/attributes/HistoryAttributes.h"
 
-#include "eprosimartps/qos/QosPolicies.h"
 using namespace eprosima::pubsub;
 
 namespace boost
@@ -36,15 +36,7 @@ namespace boost
 namespace eprosima {
 namespace rtps {
 
-class HistoryAttributes
-{
-public:
-	HistoryAttributes();
-	virtual ~HistoryAttributes();
-	uint32_t payloadMaxSize;
-	uint16_t initialReservedCaches;
-	int32_t maximumReservedCaches;
-};
+
 
 /**
  * Class History, container of the different CacheChanges and the methods to access them.

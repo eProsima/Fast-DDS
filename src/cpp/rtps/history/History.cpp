@@ -14,8 +14,8 @@
 
 #include "eprosimartps/rtps/history/History.h"
 
-#include "eprosimartps/common/CacheChange.h"
-#include "eprosimartps/utils/CacheChangePool.h"
+#include "eprosimartps/rtps/common/CacheChange.h"
+
 
 #include "eprosimartps/utils/RTPSLog.h"
 

@@ -14,7 +14,7 @@
 #ifndef STATELESSWRITER_H_
 #define STATELESSWRITER_H_
 
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Time_t.h"
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
 #include "eprosimartps/rtps/writer/ReaderLocator.h"
 

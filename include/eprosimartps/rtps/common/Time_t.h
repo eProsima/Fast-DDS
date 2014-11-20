@@ -12,10 +12,11 @@
 
 #ifndef TIME_T_H_
 #define TIME_T_H_
-#include "eprosimartps/eprosimartps_dll.h"
+#include "eprosimartps/config/eprosimartps_dll.h"
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+
 namespace eprosima{
 namespace rtps{
 //!Structure Time_t, used to describe times.

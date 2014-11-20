@@ -13,8 +13,8 @@
 #ifndef RTPS_MESSAGES_H_
 #define RTPS_MESSAGES_H_
 
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/rtps/common/Types.h"
+#include "eprosimartps/rtps/common/Guid.h"
 
 #include <iostream>
  #include <bitset>

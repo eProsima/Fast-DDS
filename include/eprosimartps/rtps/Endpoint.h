@@ -14,9 +14,9 @@
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/rtps/common/Types.h"
+#include "eprosimartps/rtps/common/Locator.h"
+#include "eprosimartps/rtps/common/Guid.h"
 
 #include "eprosimartps/rtps/attributes/EndpointAttributes.h"
 

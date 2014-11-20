@@ -12,8 +12,8 @@
 
 #ifndef RTPS_ELEM_LOCATOR_H_
 #define RTPS_ELEM_LOCATOR_H_
-
-#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/config/eprosimartps_dll.h"
+#include "eprosimartps/rtps/common/Types.h"
 #include <sstream>
 #include <vector>
 namespace eprosima{
@@ -77,12 +77,6 @@ public:
 		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
 		return ss.str();
 	}
-//	std::string printIPANDPort()
-//	{
-//		std::stringstream ss;
-//		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15]<<":"<<port;
-//		return ss.str();
-//	}
 	uint32_t to_IP4_long()
 	{
 		uint32_t addr;
@@ -140,7 +134,7 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 /**
  * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
  */
-class LocatorList_t{
+class RTPS_DllAPI LocatorList_t{
 public:
 	LocatorList_t(){};
 	~LocatorList_t(){};

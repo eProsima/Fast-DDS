@@ -15,8 +15,8 @@
 #ifndef CDRMESSAGE_H_
 #define CDRMESSAGE_H_
 
-#include "eprosimartps/common/types/CDRMessage_t.h"
-#include "eprosimartps/qos/ParameterTypes.h"
+#include "eprosimartps/rtps/common/CDRMessage_t.h"
+#include "eprosimartps/pubsub/qos/ParameterTypes.h"
 
 using namespace eprosima::pubsub;
 

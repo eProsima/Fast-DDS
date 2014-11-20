@@ -25,8 +25,8 @@
 //#endif
 
 #include <cstdlib>
-
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/config/eprosimartps_dll.h"
+#include "eprosimartps/rtps/common/Guid.h"
 
 namespace eprosima {
 namespace rtps {

@@ -13,7 +13,7 @@
 #ifndef ENDPOINTATTRIBUTES_H_
 #define ENDPOINTATTRIBUTES_H_
 
-#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/rtps/common/Types.h"
 
 namespace eprosima {
 namespace rtps {

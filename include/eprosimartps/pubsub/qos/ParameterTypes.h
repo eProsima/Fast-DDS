@@ -13,8 +13,8 @@
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
 
-#include "eprosimartps/common/types/all_common.h"
-#include "eprosimartps/eprosima_stl_exports.hpp"
+#include "eprosimartps/rtps/common/all_common.h"
+#include "eprosimartps/config/eprosima_stl_exports.hpp"
 
 #include <string>
 #include <vector>

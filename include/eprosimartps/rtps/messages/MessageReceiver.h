@@ -15,8 +15,8 @@
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 
-#include "eprosimartps/common/types/all_common.h"
-#include "eprosimartps/qos/ParameterList.h"
+#include "eprosimartps/rtps/common/all_common.h"
+#include "eprosimartps/pubsub/qos/ParameterList.h"
 
 using namespace eprosima::pubsub;
 

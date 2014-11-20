@@ -13,14 +13,15 @@
 #ifndef ALL_COMMON_H_
 #define ALL_COMMON_H_
 
-#include "eprosimartps/common/types/common_types.h"
-#include "eprosimartps/common/types/CDRMessage_t.h"
-#include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/common/types/InstanceHandle.h"
-#include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/common/types/SequenceNumber.h"
-#include "eprosimartps/common/types/SerializedPayload.h"
-#include "eprosimartps/common/types/Time_t.h"
+#include "eprosimartps/rtps/common/Types.h"
+#include "eprosimartps/rtps/common/CDRMessage_t.h"
+#include "eprosimartps/rtps/common/Guid.h"
+#include "eprosimartps/rtps/common/InstanceHandle.h"
+#include "eprosimartps/rtps/common/Locator.h"
+#include "eprosimartps/rtps/common/SequenceNumber.h"
+#include "eprosimartps/rtps/common/SerializedPayload.h"
+#include "eprosimartps/rtps/common/Time_t.h"
+#include "eprosimartps/rtps/common/CacheChange.h"
 
 
 

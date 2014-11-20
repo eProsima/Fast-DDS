@@ -32,7 +32,7 @@ class recursive_mutex;
 }
 
 #include "eprosimartps/rtps/attributes/ParticipantAttributes.h"
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/rtps/common/Guid.h"
 
 namespace eprosima {
 

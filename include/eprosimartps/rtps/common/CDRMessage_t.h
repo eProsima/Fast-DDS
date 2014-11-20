@@ -13,7 +13,7 @@
 #ifndef CDRMESSAGE_T_H_
 #define CDRMESSAGE_T_H_
 
-#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/rtps/common/Types.h"
 #include <stdlib.h>
 
 namespace eprosima{

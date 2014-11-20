@@ -15,9 +15,9 @@
 #ifndef READERLOCATOR_H_
 #define READERLOCATOR_H_
 #include <vector>
-#include "eprosimartps/common/types/Locator.h"
-#include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/common/types/SequenceNumber.h"
+#include "eprosimartps/rtps/common/Locator.h"
+#include "eprosimartps/rtps/common/Guid.h"
+#include "eprosimartps/rtps/common/SequenceNumber.h"
 
 
 namespace eprosima {

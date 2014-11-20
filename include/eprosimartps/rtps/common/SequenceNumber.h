@@ -12,8 +12,8 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
-
-#include "eprosimartps/common/types/common_types.h"
+#include "eprosimartps/config/eprosimartps_dll.h"
+#include "eprosimartps/rtps/common/Types.h"
 
 #include <vector>
 #include <cmath>
@@ -24,7 +24,7 @@ namespace rtps{
 
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
-struct SequenceNumber_t{
+struct RTPS_DllAPI SequenceNumber_t{
 	int32_t high;
 	uint32_t low;
 	SequenceNumber_t(){
