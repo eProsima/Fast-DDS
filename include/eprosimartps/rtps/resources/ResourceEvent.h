@@ -31,7 +31,7 @@ class io_service;
 namespace eprosima {
 namespace rtps {
 
-class ParticipantImpl;
+class RTPSParticipantImpl;
 
 /**
  * Class ResourceEvent used to manage the temporal events.
@@ -51,7 +51,7 @@ public:
 	/**
 	 * Method to initialize the thread.
 	 */
-	void init_thread(ParticipantImpl*p);
+	void init_thread(RTPSParticipantImpl*p);
 	/**
 	 * Task to announce the correctness of the thread.
 	 */
@@ -60,7 +60,7 @@ public:
 	//!Method to run the tasks
 	void run_io_service();
 
-	ParticipantImpl* mp_participantImpl;
+	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 };
 
 }

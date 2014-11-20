@@ -18,8 +18,8 @@
 namespace eprosima {
 namespace rtps {
 
-Endpoint::Endpoint(ParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att):
-		mp_participant(pimpl),
+Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att):
+		mp_RTPSParticipant(pimpl),
 		m_guid(guid),
 		m_att(att),
 		mp_mutex(new boost::recursive_mutex())

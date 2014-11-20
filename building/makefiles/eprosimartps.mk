@@ -56,8 +56,8 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/Endpoint.cpp \
-		  $(BASEDIR)/src/cpp/rtps/Participant.cpp \
-		  $(BASEDIR)/src/cpp/rtps/ParticipantImpl.cpp \
+		  $(BASEDIR)/src/cpp/rtps/RTPSParticipant.cpp \
+		  $(BASEDIR)/src/cpp/rtps/RTPSParticipantImpl.cpp \
 		  \
 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \
@@ -94,7 +94,7 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/reader/timedevent/WriterProxyLiveliness.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/MessageReceiver.cpp \
-		   $(BASEDIR)/src/cpp/ParticipantProxyData.cpp \
+		   $(BASEDIR)/src/cpp/RTPSParticipantProxyData.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/resources/ListenResource.cpp \
 		  $(BASEDIR)/src/cpp/resources/ResourceSend.cpp \
@@ -116,11 +116,11 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  \
 		  $(BASEDIR)/src/cpp/builtin/BuiltinProtocols.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimple.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleListener.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/RTPSParticipant/PDPSimple.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/RTPSParticipant/PDPSimpleListener.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/RTPSParticipant/PDPSimpleTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/RTPSParticipant/timedevent/RemoteRTPSParticipantLeaseDuration.cpp \
+		  $(BASEDIR)/src/cpp/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDP.cpp \
 		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimple.cpp \

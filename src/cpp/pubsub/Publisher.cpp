@@ -23,7 +23,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/RTPSParticipant.h"
 
 namespace eprosima {
 namespace pubsub {
@@ -31,12 +31,12 @@ namespace pubsub {
 
 static const char* const CLASS_NAME = "PublisherImpl";
 
-PublisherImpl::PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
+PublisherImpl::PublisherImpl(RTPSParticipantImpl* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
 
 								mp_Writer(Win),
 								mp_type(pdatatype),
 								m_attributes(att),
-								mp_participant(p)
+								mp_RTPSParticipant(p)
 {
 
 }
@@ -185,7 +185,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 		this->mp_Writer->setQos(att.qos,false);
 		this->m_attributes = att;
 		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-		mp_participant->getBuiltinProtocols()->updateLocalWriter(this->mp_Writer);
+		mp_RTPSParticipant->getBuiltinProtocols()->updateLocalWriter(this->mp_Writer);
 	}
 
 

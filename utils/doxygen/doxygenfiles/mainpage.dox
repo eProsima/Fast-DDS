@@ -5,7 +5,7 @@
  * Real-Time Publish-Subscribe (RTPS) is the wire interoperability protocol defined for the Data-Distribution Service (DDS) standard by 
  *the Object Management Group (OMG) consortium. This protocol standard is also defined by the OMG in the specification document 
  *“The Real-Time Publish-Subscribe Wire Protocol. DDS Interoperability Wire Protocol Specification (DDS-RTPS)” that can 
- *be obtained from the OMG web-page. The main objective of this specification is that all participants in a DDS communication 
+ *be obtained from the OMG web-page. The main objective of this specification is that all RTPSParticipants in a DDS communication 
  *structure, even if they use different vendor's implementations, can interoperate.
  * <br/><br/>
  *<h1>Scope</h1>
@@ -23,7 +23,7 @@
  *<h1>System architecture</h1>
  * A general view of the system architecture can be found below:
  * <img src="general_architecture.png" width="400" align="left" style="padding:0px 20px 0px 0px">
- *This diagram schematically shows how the user will be able to create and manage a participant on the network, 
+ *This diagram schematically shows how the user will be able to create and manage a RTPSParticipant on the network, 
  *as well as send and receive message through the Publisher and Subscriber APIs. This process will be internally 
  *managed by the Writer and Reader endpoints. The User APIs, although included in the library, are not part of the 
  *RTPS implementation. These are created to facilitate the testing of the system. To achieve full DDS functionality 
@@ -50,13 +50,13 @@ There are five different modules in the designed implementation:
 			</li>
 			<li>
 				<p align="JUSTIFY" >
-					<b>DDS &ndash; Public API Module:</b> This module contains the Public API available to the users to control their applications, creating Participants, Publishers and Subscribers.</p>
+					<b>DDS &ndash; Public API Module:</b> This module contains the Public API available to the users to control their applications, creating RTPSParticipants, Publishers and Subscribers.</p>
 			</li>
 		</ul>
  <br/>
  <h2>Interaction</h2>
 There are two different types on interaction defined in this architecture. On one side the interaction with the user of the protocol and on the other, the interaction between the modules of the library. These two types of interaction will now be detailed:
-<ul><li><b>User Interaction:</b> The user of this library will interact with two or more of the modules that contain public APIs (Management Writer and Reader). Using the APIs the user will be able to create a Participant and add Publisher and/or Subscriber. When this entities have been created the user will be able to send and receive data as RTPS Messages. 
+<ul><li><b>User Interaction:</b> The user of this library will interact with two or more of the modules that contain public APIs (Management Writer and Reader). Using the APIs the user will be able to create a RTPSParticipant and add Publisher and/or Subscriber. When this entities have been created the user will be able to send and receive data as RTPS Messages. 
 <li><b>Modules Interaction:</b> Both the Writer and the Reader include in their classes an instance of HistoryCache where they maintain information about the changes in the data-objects. Depending on the user interaction with the corresponding methods of the API, the Writer and the Reader will add, get or remove CacheChanges from theirs corresponding history.
 </ul>
 <br/>
@@ -64,17 +64,17 @@ There are two different types on interaction defined in this architecture. On on
 The correct behavior of the RTPS protocol will be achieved by using an event-based implementation. Multiple events will be handled by different threads allowing the application to efficiently tackle the different tasks. The thread structure, as well as the main events will be discussed in this section.
 <br/>
  <h3>Thread Structure</h3>
-For each RTPS participant, there would be different threads that manage different aspects of the RTPS implementation. Each application using this implementation will have at least these threads: helo 
+For each RTPS RTPSParticipant, there would be different threads that manage different aspects of the RTPS implementation. Each application using this implementation will have at least these threads: helo 
 <ul><li><b>Main thread:</b> This thread will be the thread managed by the dds application or the user. The user will interact with the objects through the defined public API's. 
-<li><b>Receive thread:</b> These threads will be in charge of listening to the different ports. Since these threads will be blocked until a RTPS message is received there would be a different thread for each different IP-port combination that the Participant is listening from. Multiple endpoints can be assigned to the same listen thread.
-<li><b>Event thread(s):</b> This thread will be in charge of processing the different events triggered wither by some periodic condition or by actions performed by the user in the main thread. In this version a single event thread will be created and used per Participant.
+<li><b>Receive thread:</b> These threads will be in charge of listening to the different ports. Since these threads will be blocked until a RTPS message is received there would be a different thread for each different IP-port combination that the RTPSParticipant is listening from. Multiple endpoints can be assigned to the same listen thread.
+<li><b>Event thread(s):</b> This thread will be in charge of processing the different events triggered wither by some periodic condition or by actions performed by the user in the main thread. In this version a single event thread will be created and used per RTPSParticipant.
 </ul>
 
  <h3>Resource Structure</h3>
-There are three main types of resources in the implementation, that directly correspond with three classes. All resources are managed by the Participant.
+There are three main types of resources in the implementation, that directly correspond with three classes. All resources are managed by the RTPSParticipant.
 <ul><li><b>ResourceListen:</b> Each listen resource is assigned to a single IP:port combination. It receives and process messages directed to that socket and performs the necessary actions in one or more of the associated Writers or Readers. In this version each ResourceListen runs a single thread listening to a single socket. Future version may alter this behaviour assigning multiple sockets (multiple ResourceListen objects) to a single listen thread. 
-<li><b>ResourceEvent: </b> This resource manages the time-delayed event triggered periodically or by some message-based event. A single resource is implemented per participant, with a single thread performing all the actions. Future versions may include multiple ResourceEvents running in multiple threads to improve performance. 
-<li><b>Event thread(s):</b> This resource manages ALL send operations in the Participant. This means that all endpoints included in a Participant send their messages through the socket defined in this resource. All messages are send synchronously. Future versions will include multiple ResourceSend objects and the possibility to asynchronously send messages.
+<li><b>ResourceEvent: </b> This resource manages the time-delayed event triggered periodically or by some message-based event. A single resource is implemented per RTPSParticipant, with a single thread performing all the actions. Future versions may include multiple ResourceEvents running in multiple threads to improve performance. 
+<li><b>Event thread(s):</b> This resource manages ALL send operations in the RTPSParticipant. This means that all endpoints included in a RTPSParticipant send their messages through the socket defined in this resource. All messages are send synchronously. Future versions will include multiple ResourceSend objects and the possibility to asynchronously send messages.
 </ul>
 
 

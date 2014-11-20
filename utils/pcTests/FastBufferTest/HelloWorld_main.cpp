@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	}
 
 	HelloWorldType myType;
-	DomainParticipant::registerType((DDSTopicDataType*)&myType);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&myType);
 
 	switch(type)
 	{
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 	}
 	}
 
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 
 	return 0;
 }

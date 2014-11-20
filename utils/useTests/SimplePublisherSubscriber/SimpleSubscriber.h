@@ -26,7 +26,7 @@ public:
 	bool init();
 	void run();
 private:
-	Participant *mp_participant;
+	RTPSParticipant *mp_RTPSParticipant;
 	Subscriber *mp_subscriber;
 	
 	class SubListener : public SubscriberListener

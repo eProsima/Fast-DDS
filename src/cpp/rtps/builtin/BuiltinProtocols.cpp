@@ -14,7 +14,7 @@
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 #include "eprosimartps/common/types/Locator.h"
 
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 #include "eprosimartps/builtin/discovery/endpoint/EDP.h"
 
 #include "eprosimartps/builtin/liveliness/WLP.h"
@@ -29,8 +29,8 @@
 namespace eprosima {
 namespace rtps {
 
-BuiltinProtocols::BuiltinProtocols(ParticipantImpl* part):
-														mp_participant(part),
+BuiltinProtocols::BuiltinProtocols(RTPSParticipantImpl* part):
+														mp_RTPSParticipant(part),
 														mp_PDP(NULL),
 														mp_WLP(NULL),
 														m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
@@ -45,14 +45,14 @@ BuiltinProtocols::~BuiltinProtocols() {
 }
 
 
-bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,uint32_t participantID)
+bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,uint32_t RTPSParticipantID)
 {
 	m_attributes = attributes;
 
 	RTPSDomainImpl* dp = RTPSDomainImpl::getInstance();
 	m_SPDP_WELL_KNOWN_MULTICAST_PORT = dp->getMulticastPort(m_attributes.domainId);
 
-	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getUnicastPort(m_attributes.domainId,participantID);
+	m_SPDP_WELL_KNOWN_UNICAST_PORT =  dp->getUnicastPort(m_attributes.domainId,RTPSParticipantID);
 
 	//cout << "PORTS: " << m_SPDP_WELL_KNOWN_MULTICAST_PORT << " "<< m_SPDP_WELL_KNOWN_UNICAST_PORT << endl;
 
@@ -90,20 +90,20 @@ bool BuiltinProtocols::initBuiltinProtocols(const BuiltinAttributes& attributes,
 			m_metatrafficUnicastLocatorList.push_back(*it);
 		}
 	}
-	if(m_attributes.use_SIMPLE_ParticipantDiscoveryProtocol)
+	if(m_attributes.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
 	{
 		mp_PDP = new PDPSimple(this);
-		mp_PDP->initPDP(mp_participant,participantID);
+		mp_PDP->initPDP(mp_RTPSParticipant,RTPSParticipantID);
 	}
 	if(m_attributes.use_WriterLivelinessProtocol)
 	{
-		mp_WLP = new WLP(this->mp_participant);
+		mp_WLP = new WLP(this->mp_RTPSParticipant);
 		mp_WLP->initWL(this);
 	}
-	if(m_attributes.use_SIMPLE_ParticipantDiscoveryProtocol)
+	if(m_attributes.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
 	{
-		mp_PDP->announceParticipantState(true);
-		mp_PDP->resetParticipantAnnouncement();
+		mp_PDP->announceRTPSParticipantState(true);
+		mp_PDP->resetRTPSParticipantAnnouncement();
 	}
 
 
@@ -190,19 +190,19 @@ bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
 	return ok;
 }
 
-void BuiltinProtocols::announceParticipantState()
+void BuiltinProtocols::announceRTPSParticipantState()
 {
-	mp_PDP->announceParticipantState(false);
+	mp_PDP->announceRTPSParticipantState(false);
 }
 
-void BuiltinProtocols::stopParticipantAnnouncement()
+void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 {
-	mp_PDP->stopParticipantAnnouncement();
+	mp_PDP->stopRTPSParticipantAnnouncement();
 }
 
-void BuiltinProtocols::resetParticipantAnnouncement()
+void BuiltinProtocols::resetRTPSParticipantAnnouncement()
 {
-	mp_PDP->resetParticipantAnnouncement();
+	mp_PDP->resetRTPSParticipantAnnouncement();
 }
 
 } /* namespace rtps */

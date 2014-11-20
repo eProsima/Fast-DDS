@@ -15,9 +15,9 @@
 #include "eprosimashapesdemo/qt/ContentFilterSelector.h"
 #include "eprosimartps/utils/TimeConversion.h"
 
-ShapeSubscriber::ShapeSubscriber(Participant* par):
+ShapeSubscriber::ShapeSubscriber(RTPSParticipant* par):
     mp_sub(NULL),
-    mp_participant(par),
+    mp_RTPSParticipant(par),
     hasReceived(false),
     m_mutex(QMutex::Recursive),
     mp_contentFilter(NULL)
@@ -28,14 +28,14 @@ ShapeSubscriber::ShapeSubscriber(Participant* par):
 
 ShapeSubscriber::~ShapeSubscriber() {
     // TODO Auto-generated destructor stub
-    RTPSDomain::removeSubscriber(this->mp_participant,mp_sub);
+    RTPSDomain::removeSubscriber(this->mp_RTPSParticipant,mp_sub);
     if(mp_contentFilter!=NULL)
         delete(mp_contentFilter);
 }
 
 bool ShapeSubscriber::initSubscriber()
 {
-    mp_sub = RTPSDomain::createSubscriber(mp_participant,m_attributes,(SubscriberListener*)this);
+    mp_sub = RTPSDomain::createSubscriber(mp_RTPSParticipant,m_attributes,(SubscriberListener*)this);
     if(mp_sub !=NULL)
         return true;
     return false;

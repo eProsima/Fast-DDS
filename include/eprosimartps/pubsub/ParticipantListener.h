@@ -7,33 +7,33 @@
  *************************************************************************/
 
 /**
- * @file ParticipantListener.h
+ * @file RTPSParticipantListener.h
  *
  */
 
-#ifndef PARTICIPANTLISTENER_H_
-#define PARTICIPANTLISTENER_H_
+#ifndef RTPSParticipantLISTENER_H_
+#define RTPSParticipantLISTENER_H_
 
-#include "eprosimartps/pubsub/ParticipantDiscoveryInfo.h"
+#include "eprosimartps/pubsub/RTPSParticipantDiscoveryInfo.h"
 
 
 namespace eprosima {
 
 namespace rtps
 {
-class Participant;
+class RTPSParticipant;
 }
 
 namespace pubsub {
 
-class ParticipantListener {
+class RTPSParticipantListener {
 public:
-	ParticipantListener() {};
-	virtual ~ParticipantListener() {};
-	virtual void onParticipantDiscovery(Participant* part,ParticipantDiscoveryInfo info) {};
+	RTPSParticipantListener() {};
+	virtual ~RTPSParticipantListener() {};
+	virtual void onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo info) {};
 };
 
 } /* namespace pubsub */
 } /* namespace eprosima */
 
-#endif /* PARTICIPANTLISTENER_H_ */
+#endif /* RTPSParticipantLISTENER_H_ */

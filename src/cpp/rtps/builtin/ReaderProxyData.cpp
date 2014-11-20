@@ -59,7 +59,7 @@ bool ReaderProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	{
-		ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_participantKey);
+		ParameterGuid_t* p = new ParameterGuid_t(PID_RTPSParticipant_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	{
@@ -294,15 +294,15 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				m_typeName = p->m_string;
 				break;
 			}
-			case PID_PARTICIPANT_GUID:
+			case PID_RTPSParticipant_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
 				for(uint8_t i =0;i<16;++i)
 				{
 					if(i<12)
-						m_participantKey.value[i] = p->guid.guidPrefix.value[i];
+						m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
 					else
-						m_participantKey.value[i] = p->guid.entityId.value[i];
+						m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i];
 				}
 				break;
 			}
@@ -368,7 +368,7 @@ void ReaderProxyData::clear()
 	m_unicastLocatorList.clear();
 	m_multicastLocatorList.clear();
 	m_key = InstanceHandle_t();
-	m_participantKey = InstanceHandle_t();
+	m_RTPSParticipantKey = InstanceHandle_t();
 	m_typeName = "";
 	m_topicName = "";
 	m_userDefinedId = 0;
@@ -395,7 +395,7 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
 	m_unicastLocatorList = rdata->m_unicastLocatorList;
 	m_multicastLocatorList = rdata->m_multicastLocatorList;
 	m_key = rdata->m_key;
-	m_participantKey = rdata->m_participantKey;
+	m_RTPSParticipantKey = rdata->m_RTPSParticipantKey;
 	m_typeName = rdata->m_typeName;
 	m_topicName = rdata->m_topicName;
 	m_userDefinedId = rdata->m_userDefinedId;

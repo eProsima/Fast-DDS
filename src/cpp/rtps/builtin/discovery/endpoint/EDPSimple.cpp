@@ -14,10 +14,10 @@
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
 
 
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/ParticipantProxyData.h"
+#include "eprosimartps/RTPSParticipant.h"
+#include "eprosimartps/RTPSParticipantProxyData.h"
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/StatefulReader.h"
@@ -34,7 +34,7 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "EDPSimple";
 
-EDPSimple::EDPSimple(PDPSimple* p,ParticipantImpl* part):
+EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
 				EDP(p,part),
 				mp_PubWriter(NULL),mp_SubWriter(NULL),
 				mp_PubReader(NULL),mp_SubReader(NULL),
@@ -91,10 +91,10 @@ bool EDPSimple::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
 		Wparam.payloadMaxSize = 10000;
-		Wparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_participant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
+		created &=this->mp_RTPSParticipant->createWriter(&waux,Wparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPPubWriter);
 		if(created)
 		{
 			mp_PubWriter = dynamic_cast<StatefulWriter*>(waux);
@@ -113,11 +113,11 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
 		Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 		Rparam.payloadMaxSize = 10000;
-		Rparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.userDefinedId = -1;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_participant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
+		created &=this->mp_RTPSParticipant->createReader(&raux,Rparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,
 				true,STATEFUL,(TopicDataType*)&m_subReaderTopicDataType,(SubscriberListener*)&m_listeners.m_subReaderListener,c_EntityId_SEDPSubReader);
 		if(created)
 		{
@@ -142,10 +142,10 @@ bool EDPSimple::createSEDPEndpoints()
 		Rparam.topic.resourceLimitsQos.max_samples = 1000000;
 		Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 		Rparam.payloadMaxSize = 10000;
-		Rparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-		Rparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+		Rparam.unicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Rparam.multicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_participant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
+		created &=this->mp_RTPSParticipant->createReader(&raux,Rparam,DISCOVERY_PUBLICATION_DATA_MAX_SIZE,
 				true,STATEFUL,(TopicDataType*)&m_pubReaderTopicDataType,(SubscriberListener*)&m_listeners.m_pubReaderListener,c_EntityId_SEDPPubReader);
 		if(created)
 		{
@@ -167,10 +167,10 @@ bool EDPSimple::createSEDPEndpoints()
 		Wparam.topic.resourceLimitsQos.max_samples = 1000;
 		Wparam.topic.resourceLimitsQos.allocated_samples = 20;
 		Wparam.payloadMaxSize = 10000;
-		Wparam.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-		Wparam.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+		Wparam.unicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficUnicastLocatorList;
+		Wparam.multicastLocatorList = this->mp_PDP->getLocalRTPSParticipantProxyData()->m_metatrafficMulticastLocatorList;
 		Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		created &=this->mp_participant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);
+		created &=this->mp_RTPSParticipant->createWriter(&waux,Wparam,DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE,true,STATEFUL,NULL,NULL,c_EntityId_SEDPSubWriter);
 		if(created)
 		{
 			mp_SubWriter = dynamic_cast<StatefulWriter*>(waux);
@@ -266,7 +266,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 
 
 
-void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
+void EDPSimple::assignRemoteEndpoints(RTPSParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints",EPRO_CYAN);
@@ -344,10 +344,10 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 }
 
 
-void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
+void EDPSimple::removeRemoteEndpoints(RTPSParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "removeRemoteEndpoints";
-	logInfo(RTPS_EDP,"For Participant: "<<pdata->m_guid,EPRO_CYAN);
+	logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid,EPRO_CYAN);
 	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{

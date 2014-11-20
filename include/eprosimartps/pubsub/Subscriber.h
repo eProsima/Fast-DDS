@@ -23,7 +23,7 @@ namespace eprosima {
 
 namespace rtps{
 class RTPSReader;
-class ParticipantImpl;
+class RTPSParticipantImpl;
 }
 
 using namespace rtps;
@@ -41,7 +41,7 @@ class SampleInfo_t;
  */
 class SubscriberImpl {
 public:
-	SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,TopicDataType* ptype,SubscriberAttributes& attr);
+	SubscriberImpl(RTPSParticipantImpl* p,RTPSReader* Rin,TopicDataType* ptype,SubscriberAttributes& attr);
 	virtual ~SubscriberImpl();
 
 	/**
@@ -104,14 +104,14 @@ private:
 	TopicDataType* mp_type;
 	//!Attributes of the Subscriber
 	SubscriberAttributes m_attributes;
-	//!Pointer to the participant
-	ParticipantImpl* mp_participant;
+	//!Pointer to the RTPSParticipant
+	RTPSParticipantImpl* mp_RTPSParticipant;
 
 };
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
- * This class should not be instantiated directly. DomainParticipant class should be used to correctly create this element.
+ * This class should not be instantiated directly. DomainRTPSParticipant class should be used to correctly create this element.
  * @ingroup PUBSUBMODULE
  * @snippet pubsub_example.cpp ex_Subscriber
  */

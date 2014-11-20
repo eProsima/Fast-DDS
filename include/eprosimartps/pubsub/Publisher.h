@@ -26,7 +26,7 @@ namespace eprosima {
 namespace rtps{
 
 class RTPSWriter;
-class ParticipantImpl;
+class RTPSParticipantImpl;
 }
 
 using namespace rtps;
@@ -49,9 +49,9 @@ public:
 
 	/**
 	 * Create a publisher, assigning its pointer to the associated writer.
-	 * Don't use directly, create Publisher using DomainParticipant static function.
+	 * Don't use directly, create Publisher using DomainRTPSParticipant static function.
 	 */
-	PublisherImpl(ParticipantImpl* p,RTPSWriter* Win,TopicDataType* ptype,PublisherAttributes& att);
+	PublisherImpl(RTPSParticipantImpl* p,RTPSWriter* Win,TopicDataType* ptype,PublisherAttributes& att);
 
 	virtual ~PublisherImpl();
 
@@ -136,15 +136,15 @@ private:
 
 	//!Attributes of the Publisher
 	PublisherAttributes m_attributes;
-	//!Pointer to the participant
-		ParticipantImpl* mp_participant;
+	//!Pointer to the RTPSParticipant
+		RTPSParticipantImpl* mp_RTPSParticipant;
 
 };
 
 
 /**
  * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
- * DomainParticipant class should be used to correctly initialize this element.
+ * DomainRTPSParticipant class should be used to correctly initialize this element.
  * @ingroup PUBSUBMODULE
  * @snippet pubsub_example.cpp ex_Publisher
  */

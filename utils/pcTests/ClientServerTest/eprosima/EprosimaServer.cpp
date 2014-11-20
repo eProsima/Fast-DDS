@@ -18,7 +18,7 @@
 EprosimaServer::EprosimaServer():
 mp_operation_sub(NULL),
 mp_result_pub(NULL),
-mp_participant(NULL),
+mp_RTPSParticipant(NULL),
 mp_resultdatatype(NULL),
 mp_operationdatatype(NULL),
 m_operationsListener(this),
@@ -30,9 +30,9 @@ m_resultsListener(this)
 
 EprosimaServer::~EprosimaServer()
 {
-	if(mp_participant!=NULL)
+	if(mp_RTPSParticipant!=NULL)
 	{
-		DomainParticipant::removeParticipant(mp_participant);
+		DomainRTPSParticipant::removeRTPSParticipant(mp_RTPSParticipant);
 	}
 	if(mp_resultdatatype!=NULL)
 		delete(mp_resultdatatype);
@@ -52,23 +52,23 @@ bool EprosimaServer::init()
 	//REGISTER TYPES
 	mp_resultdatatype = new ResultDataType();
 	mp_operationdatatype = new OperationDataType();
-	DomainParticipant::registerType(mp_resultdatatype);
-	DomainParticipant::registerType(mp_operationdatatype);
+	DomainRTPSParticipant::registerType(mp_resultdatatype);
+	DomainRTPSParticipant::registerType(mp_operationdatatype);
 
-	//CREATE PARTICIPANT
-	ParticipantAttributes PParam;
+	//CREATE RTPSParticipant
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.domainId = 80;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 8712;
 	PParam.listenSocketBufferSize = 17424;
-	PParam.name = "server_participant";
-	mp_participant = DomainParticipant::createParticipant(PParam);
-	if(mp_participant == NULL)
+	PParam.name = "server_RTPSParticipant";
+	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
+	if(mp_RTPSParticipant == NULL)
 		return false;
 
 	// DATA PUBLISHER
@@ -81,7 +81,7 @@ bool EprosimaServer::init()
 	PubDataparam.topic.resourceLimitsQos.max_samples = 1000;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = 1000;
 	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_result_pub = DomainParticipant::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_resultsListener);
+	mp_result_pub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,PubDataparam,(PublisherListener*)&this->m_resultsListener);
 	if(mp_result_pub == NULL)
 		return false;
 	//DATA SUBSCRIBER
@@ -96,7 +96,7 @@ bool EprosimaServer::init()
 	SubDataparam.topic.historyQos.depth = 1000;
 	SubDataparam.topic.resourceLimitsQos.max_samples = 1000;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = 1000;
-	mp_operation_sub = DomainParticipant::createSubscriber(mp_participant,SubDataparam,(SubscriberListener*)&this->m_operationsListener);
+	mp_operation_sub = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,SubDataparam,(SubscriberListener*)&this->m_operationsListener);
 	if(mp_operation_sub == NULL)
 		return false;
 

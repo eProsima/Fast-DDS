@@ -14,14 +14,10 @@
 #ifndef MATCHINGINFO_H_
 #define MATCHINGINFO_H_
 
-#include "eprosimartps/common/types/Guid.h"
+#include "eprosimartps/rtps/common/Guid.h"
 
 namespace eprosima{
-
-using namespace rtps;
-
-namespace pubsub{
-
+namespace rtps{
 
 /**
  * Enumeration MatchingStatus, indicates whether the matched publication/subscription method of the PublisherListener or SubscriberListener has

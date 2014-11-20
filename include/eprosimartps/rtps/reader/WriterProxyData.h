@@ -33,7 +33,7 @@ public:
 	LocatorList_t m_unicastLocatorList;
 	LocatorList_t m_multicastLocatorList;
 	InstanceHandle_t m_key;
-	InstanceHandle_t m_participantKey;
+	InstanceHandle_t m_RTPSParticipantKey;
 	std::string m_typeName;
 	std::string m_topicName;
 	uint16_t m_userDefinedId;

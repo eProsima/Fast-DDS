@@ -25,7 +25,7 @@ public:
 	virtual ~EprosimaClient();
 	Publisher* mp_operation_pub;
 	Subscriber* mp_result_sub;
-	Participant* mp_participant;
+	RTPSParticipant* mp_RTPSParticipant;
 	bool init();
 	Result::RESULTTYPE calculate(Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
 	bool isReady();

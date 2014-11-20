@@ -11,8 +11,8 @@
  *
  */
 
-#include "eprosimartps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -24,9 +24,9 @@
 namespace eprosima {
 namespace rtps {
 
-static const char* const CLASS_NAME = "ResendParticipantProxyDataPeriod";
+static const char* const CLASS_NAME = "ResendRTPSParticipantProxyDataPeriod";
 
-ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* pPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval):
+ResendRTPSParticipantProxyDataPeriod::ResendRTPSParticipantProxyDataPeriod(PDPSimple* pPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval):
 		TimedEvent(&pEvent->io_service,interval),
 		mp_PDP(pPDP)
 {
@@ -34,13 +34,13 @@ ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* pP
 
 }
 
-ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
+ResendRTPSParticipantProxyDataPeriod::~ResendRTPSParticipantProxyDataPeriod()
 {
 	stop_timer();
 	delete(timer);
 }
 
-void ResendParticipantProxyDataPeriod::event(const boost::system::error_code& ec)
+void ResendRTPSParticipantProxyDataPeriod::event(const boost::system::error_code& ec)
 {
 	const char* const METHOD_NAME = "event";
 	m_isWaiting = false;
@@ -48,8 +48,8 @@ void ResendParticipantProxyDataPeriod::event(const boost::system::error_code& ec
 	{
 		logInfo(RTPS_PDP,"ResendDiscoveryData Period",EPRO_CYAN);
 		//FIXME: Change for liveliness protocol
-		mp_PDP->m_participantProxies.front()->m_manualLivelinessCount++;
-		mp_PDP->announceParticipantState(false);
+		mp_PDP->m_RTPSParticipantProxies.front()->m_manualLivelinessCount++;
+		mp_PDP->announceRTPSParticipantState(false);
 
 		this->restart_timer();
 	}

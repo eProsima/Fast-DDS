@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file Participant.h
+ * @file RTPSParticipant.h
  */
 
-#ifndef PARTICIPANTIMPL_H_
-#define PARTICIPANTIMPL_H_
+#ifndef RTPSParticipantIMPL_H_
+#define RTPSParticipantIMPL_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@ namespace asio{class io_service;}
 class recursive_mutex;
 }
 
-#include "eprosimartps/rtps/attributes/ParticipantAttributes.h"
+#include "eprosimartps/rtps/attributes/RTPSParticipantAttributes.h"
 #include "eprosimartps/rtps/common/Guid.h"
 
 namespace eprosima {
@@ -41,7 +41,7 @@ namespace rtps {
 
 class RTPSReader;
 class RTPSWriter;
-class ParticipantListener;
+class RTPSParticipantListener;
 class ListenResource;
 class ResourceSend;
 class ResourceEvent;
@@ -52,24 +52,24 @@ class CDRMessage_t;
 
 
 /**
- * @brief Class ParticipantImpl, it contains the private implementation of the Participant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
+ * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup MANAGEMENTMODULE
  */
-class ParticipantImpl
+class RTPSParticipantImpl
 {
 public:
-	ParticipantImpl(const ParticipantAttributes &param,
-			const GuidPrefix_t& guidP,ParticipantListener* plisten);
-	virtual ~ParticipantImpl();
+	RTPSParticipantImpl(const RTPSParticipantAttributes &param,
+			const GuidPrefix_t& guidP,RTPSParticipantListener* plisten);
+	virtual ~RTPSParticipantImpl();
 
 	inline const GUID_t& getGuid() const {return m_guid;};
 
-	//! Announce ParticipantState (force the sending of a DPD message.)
-	void announceParticipantState();
-	//!Stop the Participant Announcement (used in tests to avoid multiple packets being send)
-	void stopParticipantAnnouncement();
-	//!Reset to timer to make periodic Participant Announcements.
-	void resetParticipantAnnouncement();
+	//! Announce RTPSParticipantState (force the sending of a DPD message.)
+	void announceRTPSParticipantState();
+	//!Stop the RTPSParticipant Announcement (used in tests to avoid multiple packets being send)
+	void stopRTPSParticipantAnnouncement();
+	//!Reset to timer to make periodic RTPSParticipant Announcements.
+	void resetRTPSParticipantAnnouncement();
 	/**
 	 * Activate a Remote Endpoint defined in the Static Discovery.
 	 * @param pguid GUID_t of the endpoint.
@@ -78,8 +78,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
-    //!Get the participant ID
-    inline uint32_t getParticipantID() const { return (uint32_t)m_att.participantID;};
+    //!Get the RTPSParticipant ID
+    inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.RTPSParticipantID;};
     //!Wait for the resource semaphore
     void ResourceSemaphorePost();
     //!Post to the resource semaphore
@@ -91,15 +91,15 @@ public:
     //!Get Send Mutex
     boost::recursive_mutex* getSendMutex();
 private:
-	//!Attributes of the Participant
-	ParticipantAttributes m_att;
-	//!Guid of the participant.
+	//!Attributes of the RTPSParticipant
+	RTPSParticipantAttributes m_att;
+	//!Guid of the RTPSParticipant.
 	const GUID_t m_guid;
 	//! Sending resources.
 	ResourceSend* mp_send_thr;
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
-	//! BuiltinProtocols of this participant
+	//! BuiltinProtocols of this RTPSParticipant
 	BuiltinProtocols* m_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
@@ -118,7 +118,7 @@ private:
 	std::vector<ListenResource*> m_listenResourceList;
 
 	/**
-	 * Method to check if a specific entityId already exists in this participant
+	 * Method to check if a specific entityId already exists in this RTPSParticipant
 	 * @param ent EnityId to check
 	 * @param kind Endpoint Kind.
 	 * @return True if exists.
@@ -143,7 +143,7 @@ private:
 
 public:
 	/**
-	 * Create a Writer in this Participant.
+	 * Create a Writer in this RTPSParticipant.
 	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
 	 * @param param WriterAttributes to define the Writer.
 	 * @param entityId EntityId assigned to the Writer.
@@ -155,7 +155,7 @@ public:
 
 	//
 	//	/**
-	//	 * Create a Reader in this Participant.
+	//	 * Create a Reader in this RTPSParticipant.
 	//	 * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
 	//	 * @param RParam SubscriberAttributes to define the Reader.
 	//	 * @param payload_size Maximum payload size.
@@ -185,7 +185,7 @@ public:
 	//
 	//
 	//	/**
-	//	 * Remove Endpoint from the participant. It closes all entities related to them that are no longer in use.
+	//	 * Remove Endpoint from the RTPSParticipant. It closes all entities related to them that are no longer in use.
 	//	 * For example, if a ResourceListen is not useful anymore the thread is closed and the instance removed.
 	//	 * @param[in] p_endpoint Pointer to the Endpoint that is going to be removed.
 	//	 * @param[in] type Char indicating if it is Reader ('R') or Writer ('W')
@@ -205,25 +205,25 @@ public:
 	//
 	//	//!Used for tests
 	//	void loose_next_change(){m_send_thr.loose_next();};
-	//	//! Announce ParticipantState (force the sending of a DPD message.)
-	//	void announceParticipantState();
-	//	//!Stop the Participant Announcement (used in tests to avoid multiple packets being send)
-	//	void stopParticipantAnnouncement();
-	//	//!Reset to timer to make periodic Participant Announcements.
-	//	void resetParticipantAnnouncement();
+	//	//! Announce RTPSParticipantState (force the sending of a DPD message.)
+	//	void announceRTPSParticipantState();
+	//	//!Stop the RTPSParticipant Announcement (used in tests to avoid multiple packets being send)
+	//	void stopRTPSParticipantAnnouncement();
+	//	//!Reset to timer to make periodic RTPSParticipant Announcements.
+	//	void resetRTPSParticipantAnnouncement();
 	//	/**
-	//	 * Get the GUID_t of the Participant.
-	//	 * @return GUID_t of the Participant.
+	//	 * Get the GUID_t of the RTPSParticipant.
+	//	 * @return GUID_t of the RTPSParticipant.
 	//	 */
 	//	const GUID_t& getGuid() const {
 	//		return m_guid;
 	//	}
 	//	/**
-	//	 * Get the Participant Name.
-	//	 * @return String with the participant Name.
+	//	 * Get the RTPSParticipant Name.
+	//	 * @return String with the RTPSParticipant Name.
 	//	 */
-	//	const std::string& getParticipantName() const {
-	//		return m_participantName;
+	//	const std::string& getRTPSParticipantName() const {
+	//		return m_RTPSParticipantName;
 	//	}
 	//
 	//
@@ -241,12 +241,12 @@ public:
 	//		return &m_event_thr;
 	//	}
 	//
-	//	uint32_t getParticipantId() const {
-	//		return m_participantID;
+	//	uint32_t getRTPSParticipantId() const {
+	//		return m_RTPSParticipantID;
 	//	}
 	//
-	//	void setParticipantId(uint32_t participantId) {
-	//		m_participantID = participantId;
+	//	void setRTPSParticipantId(uint32_t RTPSParticipantId) {
+	//		m_RTPSParticipantID = RTPSParticipantId;
 	//	}
 	//
 	//	uint32_t getListenSocketBufferSize() const {
@@ -263,15 +263,15 @@ public:
 	//
 	//	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 	//
-	//	void setListener(ParticipantListener* lis) {mp_participantListener = lis;}
+	//	void setListener(RTPSParticipantListener* lis) {mp_RTPSParticipantListener = lis;}
 	//
-	//	ParticipantListener* getListener() const {return mp_participantListener;}
+	//	RTPSParticipantListener* getListener() const {return mp_RTPSParticipantListener;}
 	//
-	//	Participant* getUserParticipant() const {return mp_userParticipant;}
+	//	RTPSParticipant* getUserRTPSParticipant() const {return mp_userRTPSParticipant;}
 	//
 	//	std::vector<octet> getUserData() const {return m_userData;}
 	//
-	//	uint32_t getParticipantID() const{return m_participantID;}
+	//	uint32_t getRTPSParticipantID() const{return m_RTPSParticipantID;}
 	//private:
 	//
 	//
@@ -295,14 +295,14 @@ public:
 	//	//	 */
 	//	//	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
 	//
-	//	//ParticipantDiscoveryProtocol* mp_PDP;
+	//	//RTPSParticipantDiscoveryProtocol* mp_PDP;
 	//
 	//
 	//
 	//
 	//
 	//
-	//	ParticipantListener* mp_participantListener;
+	//	RTPSParticipantListener* mp_RTPSParticipantListener;
 	//
 
 
@@ -314,7 +314,7 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* PARTICIPANT_H_ */
+#endif /* RTPSParticipant_H_ */
 
 
 

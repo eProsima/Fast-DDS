@@ -15,14 +15,14 @@
 #define PDPSIMPLELISTENER_H_
 #include "eprosimartps/pubsub/SubscriberListener.h"
 #include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/ParticipantProxyData.h"
+#include "eprosimartps/RTPSParticipantProxyData.h"
 using namespace eprosima::pubsub;
 
 namespace eprosima {
 namespace rtps {
 
 class SimplePDP;
-class DiscoveredParticipantData;
+class DiscoveredRTPSParticipantData;
 
 
 /**
@@ -41,10 +41,10 @@ public:
 	//!Process a new added cache with this method.
 	bool newAddedCache();
 	//FIXME: TO IMPLEMENT WHEN A StaticEDP is created.
-	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredParticipantData* pdata);
+	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredRTPSParticipantData* pdata);
 
-	//!Temporal ParticipantProxyData object used to read the messages.
-	ParticipantProxyData m_participantProxyData;
+	//!Temporal RTPSParticipantProxyData object used to read the messages.
+	RTPSParticipantProxyData m_RTPSParticipantProxyData;
 };
 
 

@@ -30,7 +30,7 @@ namespace eprosima {
 namespace rtps {
 
 struct CDRMessage_t;
-class ParticipantImpl;
+class RTPSParticipantImpl;
 
 /**
  * Class ResourceSend, used to manage the send operation. In future version it will contain the grouping
@@ -54,7 +54,7 @@ public:
 	 * @param loc Locator of hte address from where to start the sending socket.
 	 * @return True if correct
 	 */
-	bool initSend(ParticipantImpl*,const Locator_t& loc,uint32_t sendseockBuffer,bool useIP4, bool useIP6);
+	bool initSend(RTPSParticipantImpl*,const Locator_t& loc,uint32_t sendseockBuffer,bool useIP4, bool useIP6);
 
 	//!FOR TESTING ONLY!!!!
 	void loose_next(){m_send_next = false;};
@@ -71,7 +71,7 @@ private:
 	boost::asio::ip::udp::endpoint m_send_endpoint_v6;
 	size_t m_bytes_sent;
 	bool m_send_next;
-	ParticipantImpl* mp_participant;
+	RTPSParticipantImpl* mp_RTPSParticipant;
 	boost::recursive_mutex* mp_mutex;
 
 };

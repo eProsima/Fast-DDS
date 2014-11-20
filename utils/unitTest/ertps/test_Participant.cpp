@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file test_Participant.cpp
+ * @file test_RTPSParticipant.cpp
  *
  *  Created on: Apr 4, 2014
  *      Author: Gonzalo Rodriguez Canosa
@@ -17,39 +17,39 @@
 
 #include "gtest/gtest.h"
 #include "eprosimartps/rtps_all.h"
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/RTPSParticipant.h"
+#include "eprosimartps/dds/DomainRTPSParticipant.h"
 
 using namespace eprosima;
 namespace eprosima{
 namespace rtps{
 
 
-class ParticipantTest:public ::testing::Test
+class RTPSParticipantTest:public ::testing::Test
 {
 protected:
 
-	ParticipantParams_t param;
-	Participant* p;
+	RTPSParticipantParams_t param;
+	RTPSParticipant* p;
 	void SetUp()
 	{
 		param.domainId = 80;
-		p = DomainParticipant::createParticipant(param);
+		p = DomainRTPSParticipant::createRTPSParticipant(param);
 	}
 	void TearDown()
 	{
-		dds::DomainParticipant *dp = dds::DomainParticipant::getInstance();
-		dp->removeParticipant(p);
-		//	dp->removeParticipant();
+		dds::DomainRTPSParticipant *dp = dds::DomainRTPSParticipant::getInstance();
+		dp->removeRTPSParticipant(p);
+		//	dp->removeRTPSParticipant();
 	}
 };
 
 }
 }
 
-//TEST_F(ParticipantTest, Constructor)
+//TEST_F(RTPSParticipantTest, Constructor)
 //{
-//	EXPECT_TRUE(p->m_guid.entityId == ENTITYID_PARTICIPANT);
+//	EXPECT_TRUE(p->m_guid.entityId == ENTITYID_RTPSParticipant);
 //}
 
 

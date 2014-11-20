@@ -50,24 +50,24 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(MatchingInfo 
 }
 
 
-ThroughputPublisher::~ThroughputPublisher(){DomainParticipant::stopAll();}
+ThroughputPublisher::~ThroughputPublisher(){DomainRTPSParticipant::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
 																sema(0),
 																m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
 																ready(true)
 {
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;
-	PParam.name = "participant1";
-	mp_par = DomainParticipant::createParticipant(PParam);
+	PParam.name = "RTPSParticipant1";
+	mp_par = DomainRTPSParticipant::createRTPSParticipant(PParam);
 	if(mp_par == NULL)
 	{
 		cout << "ERROR"<<endl;
@@ -90,7 +90,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.resourceLimitsQos.max_samples = 10000;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datapub = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
+	mp_datapub = DomainRTPSParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
 	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -99,7 +99,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandS2P";
-	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
+	mp_commandsub = DomainRTPSParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam2;
 	Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Wparam2.topic.historyQos.depth = 50;
@@ -109,12 +109,12 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam2.topic.topicKind = NO_KEY;
 	Wparam2.topic.topicName = "ThroughputCommandP2S";
 	Wparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_commandpub = DomainParticipant::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
+	mp_commandpub = DomainRTPSParticipant::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datapub == NULL || mp_commandsub == NULL || mp_commandpub == NULL)
 		ready = false;
 
-	mp_par->stopParticipantAnnouncement();
+	mp_par->stopRTPSParticipantAnnouncement();
 	eClock::my_sleep(5000);
 }
 

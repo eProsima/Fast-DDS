@@ -25,7 +25,7 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "StatelessWriter";
 
-StatelessWriter::StatelessWriter(ParticipantImpl* pimpl,GUID_t guid,
+StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t guid,
 		WriterAttributes att,WriterHistory* hist):
 							RTPSWriter(pimpl,guid,att,hist)
 {
@@ -55,7 +55,7 @@ void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
 		{
 			rit->unsent_changes.push_back(cptr);
 
-			if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
+			if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
 			{
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
 						&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
@@ -89,7 +89,7 @@ void StatelessWriter::unsent_changes_not_empty()
 		{
 			if(m_pushMode)
 			{
-				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER)
+				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
 				{
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
 							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);

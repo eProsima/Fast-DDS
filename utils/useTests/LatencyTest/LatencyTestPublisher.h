@@ -30,7 +30,7 @@ public:
 	LatencyTestPublisher();
 	virtual ~LatencyTestPublisher();
 
-	Participant* mp_participant;
+	RTPSParticipant* mp_RTPSParticipant;
 	Publisher* mp_datapub;
 	Publisher* mp_commandpub;
 	Subscriber* mp_datasub;

@@ -28,11 +28,11 @@ namespace rtps {
  */
 class StatelessWriter : public RTPSWriter
 {
-	friend class ParticipantImpl;
+	friend class RTPSParticipantImpl;
 public:
 	//StatelessWriter();
 	virtual ~StatelessWriter();
-	StatelessWriter(ParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
+	StatelessWriter(RTPSParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
 
 	/**
 	 * Add a specific change to all ReaderLocators.

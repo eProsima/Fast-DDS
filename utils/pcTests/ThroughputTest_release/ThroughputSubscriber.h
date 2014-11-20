@@ -24,7 +24,7 @@ class ThroughputSubscriber
 public:
 	ThroughputSubscriber();
 	virtual ~ThroughputSubscriber();
-	Participant* mp_par;
+	RTPSParticipant* mp_par;
 	Subscriber* mp_datasub;
 	Publisher* mp_commandpubli;
 	Subscriber* mp_commandsub;

@@ -120,12 +120,12 @@ int main(int argc, char** argv)
 
 
 	SampleTypeDataType SampleTypeData;
-	DomainParticipant::registerType((DDSTopicDataType*)&SampleTypeData);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&SampleTypeData);
 
 
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
 
 	PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
@@ -136,10 +136,10 @@ int main(int argc, char** argv)
 	{
 	case 1:
 	{
-		PParam.name = "participant1";
+		PParam.name = "RTPSParticipant1";
 		//In this side we only have a Publisher so we don't need all discovery endpoints
 
-		Participant* p = DomainParticipant::createParticipant(PParam);
+		RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = NO_KEY;
 		Wparam.topic.topicDataType = "SampleType";
@@ -152,12 +152,12 @@ int main(int argc, char** argv)
 		Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
 		MyPubListener mylisten;
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
+		Publisher* pub = DomainRTPSParticipant::createPublisher(p,Wparam,(PublisherListener*)&mylisten);
 		if(pub == NULL)
 			return 0;
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
-		p->stopParticipantAnnouncement();
+		p->stopRTPSParticipantAnnouncement();
 
 		//PREPARE DATA FOR TESTS
 		SampleType ST;
@@ -189,8 +189,8 @@ int main(int argc, char** argv)
 	}
 	case 2:
 	{
-		PParam.name = "participant2";
-		Participant* p = DomainParticipant::createParticipant(PParam);
+		PParam.name = "RTPSParticipant2";
+		RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.topic.topicDataType = "SampleType";
 		Rparam.topic.topicName = "Example SampleType";
@@ -206,10 +206,10 @@ int main(int argc, char** argv)
 
 		MySubListener mylisten;
 		//cout << "length: "<<Rparam.qos.m_presentation.length << endl;
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
+		Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
-		//p->stopParticipantAnnouncement(); //Only for tests to see more clearly the communication
+		//p->stopRTPSParticipantAnnouncement(); //Only for tests to see more clearly the communication
 		int i = 0;
 		while(i<30)
 		{
@@ -235,7 +235,7 @@ int main(int argc, char** argv)
 	cout << "Enter numer to stop "<< endl;
 	int n;
 	cin >> n;
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 
 
 	return 0;

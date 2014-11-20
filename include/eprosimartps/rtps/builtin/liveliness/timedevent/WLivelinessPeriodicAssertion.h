@@ -26,7 +26,7 @@ namespace rtps {
 class WLP;
 
 /**
- * Class WLivelinessPeriodicAssertion, used to assert the liveliness of the writers in a participant.
+ * Class WLivelinessPeriodicAssertion, used to assert the liveliness of the writers in a RTPSParticipant.
  * @ingroup LIVELINESSMODULE
  */
 class WLivelinessPeriodicAssertion: public TimedEvent {
@@ -40,7 +40,7 @@ public:
 	WLP* mp_WLP;
 
 	bool AutomaticLivelinessAssertion();
-	bool ManualByParticipantLivelinessAssertion();
+	bool ManualByRTPSParticipantLivelinessAssertion();
 	CDRMessage_t m_msg;
 	InstanceHandle_t m_iHandle;
 	GuidPrefix_t m_guidP;

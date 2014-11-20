@@ -1,4 +1,4 @@
-<!--  StaticParticipantInfo.xml -->
+<!--  StaticRTPSParticipantInfo.xml -->
 <!--  Created on: Apr 23, 2014 -->
 <!--      Author: grcanosa -->
 
@@ -7,8 +7,8 @@
      
 <?xml version="1.0" encoding="utf-8"?>
 <staticdiscovery>
-	<participant>
-		<name>participant1</name>
+	<RTPSParticipant>
+		<name>RTPSParticipant1</name>
 		<endpoint type="WRITER">
 			<id>1</id>
 			<topic name="Test_topic1" dataType="TestType" kind="WITH_KEY"></topic>
@@ -27,10 +27,10 @@
 			<partitionQos>A</partitionQos>
 			<livelinessQos kind="AUTOMATIC_LIVELINESS_QOS" leaseDuration_ms="INF"></livelinessQos>
 		</endpoint>
-	</participant>
+	</RTPSParticipant>
 	
-	<participant>
-		<name>participant2</name>
+	<RTPSParticipant>
+		<name>RTPSParticipant2</name>
 		
 		<endpoint type="READER">
 			<id>17</id>
@@ -49,6 +49,6 @@
 			<expectsInlineQos>true</expectsInlineQos>
 		</endpoint>
 		
-	</participant>
+	</RTPSParticipant>
 	
-</participants>
+</RTPSParticipants>

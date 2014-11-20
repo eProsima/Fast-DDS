@@ -13,7 +13,7 @@
 #ifndef ALL_ATTRIBUTES_H_
 #define ALL_ATTRIBUTES_H_
 
-#include "ParticipantAttributes.h"
+#include "RTPSParticipantAttributes.h"
 #include "PublisherAttributes.h"
 #include "SubscriberAttributes.h"
 #include "TopicAttributes.h"

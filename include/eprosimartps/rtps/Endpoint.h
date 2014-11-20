@@ -28,22 +28,22 @@ namespace boost
 namespace eprosima {
 namespace rtps {
 
-class ParticipantImpl;
+class RTPSParticipantImpl;
 class ResourceSend;
 class ResourceEvent;
 
 
 /**
  * Class Endpoint, all entities of the RTPS network are a specification of this class.
- * Although the Participant is also defined as an endpoint in the RTPS specification in this implementation
- * the Participant class DOESN'T inherit from this class. The elements needed where added directly to the
- * Participant class. This way each instance of our class (Endpoint) has a pointer to the participant they belong to.
+ * Although the RTPSParticipant is also defined as an endpoint in the RTPS specification in this implementation
+ * the RTPSParticipant class DOESN'T inherit from this class. The elements needed where added directly to the
+ * RTPSParticipant class. This way each instance of our class (Endpoint) has a pointer to the RTPSParticipant they belong to.
  * @ingroup COMMONMODULE
  */
 class Endpoint
 {
 public:
-	Endpoint(ParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att);
+	Endpoint(RTPSParticipantImpl* pimpl,GUID_t guid,EndpointAttributes att);
 	virtual ~Endpoint();
 
 	inline const GUID_t& getGuid() const {	return m_guid;	};
@@ -55,8 +55,8 @@ public:
 	inline EndpointAttributes* getAttributes() {return &m_att;}
 
 protected:
-	//!Pointer to the participant containing this endpoints
-	ParticipantImpl* mp_participant;
+	//!Pointer to the RTPSParticipant containing this endpoints
+	RTPSParticipantImpl* mp_RTPSParticipant;
 	//! Guid of the Endpoint
 	const GUID_t m_guid;
 	//!Endpoint Attributes

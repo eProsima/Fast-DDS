@@ -149,24 +149,24 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo
 
 
 
-ThroughputSubscriber::~ThroughputSubscriber(){DomainParticipant::stopAll();}
+ThroughputSubscriber::~ThroughputSubscriber(){DomainRTPSParticipant::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
 								sema(0),
 								m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
 								ready(true),m_datasize(0),m_demand(0)
 {
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;
-	PParam.name = "participant2";
-	mp_par = DomainParticipant::createParticipant(PParam);
+	PParam.name = "RTPSParticipant2";
+	mp_par = DomainRTPSParticipant::createRTPSParticipant(PParam);
 	if(mp_par == NULL)
 	{
 		cout << "ERROR"<<endl;
@@ -188,7 +188,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Sparam.unicastLocatorList.push_back(Locator_t(10110));
-	mp_datasub = DomainParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
+	mp_datasub = DomainRTPSParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicDataType = "ThroughputCommand";
@@ -198,7 +198,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.unicastLocatorList.push_back(Locator_t(7556));
-	mp_commandsub = DomainParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
+	mp_commandsub = DomainRTPSParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
 	//Wparam.historyMaxSize = 20;
 	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -208,7 +208,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_commandpubli = DomainParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
+	mp_commandpubli = DomainRTPSParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datasub == NULL || mp_commandsub == NULL || mp_commandpubli == NULL)
 		ready = false;

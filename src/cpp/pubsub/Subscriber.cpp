@@ -23,7 +23,7 @@
 
 #include "eprosimartps/pubsub/SubscriberListener.h"
 
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/RTPSParticipant.h"
 
 
 
@@ -32,12 +32,12 @@ namespace pubsub {
 
 static const char* const CLASS_NAME = "SubscriberImpl";
 
-SubscriberImpl::SubscriberImpl(ParticipantImpl* p,RTPSReader* Rin,
+SubscriberImpl::SubscriberImpl(RTPSParticipantImpl* p,RTPSReader* Rin,
 		TopicDataType* ptype,SubscriberAttributes& att):
 												mp_Reader(Rin),
 												mp_type(ptype),
 												m_attributes(att),
-												mp_participant(p)
+												mp_RTPSParticipant(p)
 {
 
 }
@@ -178,7 +178,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 		this->mp_Reader->setQos(att.qos,false);
 		this->m_attributes = att;
 		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-		mp_participant->getBuiltinProtocols()->updateLocalReader(this->mp_Reader);
+		mp_RTPSParticipant->getBuiltinProtocols()->updateLocalReader(this->mp_Reader);
 	}
 
 

@@ -32,7 +32,7 @@ class RTPSReader;
  */
 class EDPSimple : public EDP {
 public:
-	EDPSimple(PDPSimple* p,ParticipantImpl* part);
+	EDPSimple(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPSimple();
 	//!Discovery attributes.
 	BuiltinAttributes m_discovery;
@@ -59,12 +59,12 @@ public:
 	 */
 	bool initEDP(BuiltinAttributes& attributes);
 	/**
-	 * This method assigns the remote builtin endpoints that the remote participant indicates is using to our local builtin endpoints.
-	 * @param pdata Pointer to the ParticipantProxyData object.
+	 * This method assigns the remote builtin endpoints that the remote RTPSParticipant indicates is using to our local builtin endpoints.
+	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 */
-	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+	void assignRemoteEndpoints(RTPSParticipantProxyData* pdata);
 
-	void removeRemoteEndpoints(ParticipantProxyData* pdata);
+	void removeRemoteEndpoints(RTPSParticipantProxyData* pdata);
 
 	/**
 	 * Create local SEDP Endpoints based on the DiscoveryAttributes.

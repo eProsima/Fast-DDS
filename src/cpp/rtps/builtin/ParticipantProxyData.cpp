@@ -7,22 +7,22 @@
  *************************************************************************/
 
 /**
- * @file ParticipantProxyData.cpp
+ * @file RTPSParticipantProxyData.cpp
  *
  */
 
-#include "eprosimartps/ParticipantProxyData.h"
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
+#include "eprosimartps/RTPSParticipantProxyData.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "eprosimartps/RTPSParticipant.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/timedevent/RemoteRTPSParticipantLeaseDuration.h"
 #include "eprosimartps/builtin/BuiltinProtocols.h"
 
 namespace eprosima {
 namespace rtps {
 
-static const char* const CLASS_NAME = "ParticipantProxyData";
+static const char* const CLASS_NAME = "RTPSParticipantProxyData";
 
-ParticipantProxyData::ParticipantProxyData():
+RTPSParticipantProxyData::RTPSParticipantProxyData():
 																		m_expectsInlineQos(false),
 																		m_availableBuiltinEndpoints(0),
 																		m_manualLivelinessCount(0),
@@ -35,10 +35,10 @@ ParticipantProxyData::ParticipantProxyData():
 		delete(mp_leaseDurationTimer);
 }
 
-ParticipantProxyData::~ParticipantProxyData()
+RTPSParticipantProxyData::~RTPSParticipantProxyData()
 {
-	const char* const METHOD_NAME = "~ParticipantProxyData";
-	logInfo(RTPS_PARTICIPANT,this->m_guid);
+	const char* const METHOD_NAME = "~RTPSParticipantProxyData";
+	logInfo(RTPS_RTPSParticipant,this->m_guid);
 	for(std::vector<ReaderProxyData*>::iterator it = this->m_readers.begin();
 			it!=this->m_readers.end();++it)
 	{
@@ -61,17 +61,17 @@ ParticipantProxyData::~ParticipantProxyData()
 	}
 }
 
-bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
+bool RTPSParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
 {
 	this->m_leaseDuration = part->getBuiltinAttributes().leaseDuration;
 	VENDORID_EPROSIMA(this->m_VendorId);
 
-	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
-	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_RTPSParticipant_ANNOUNCER;
+	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_RTPSParticipant_DETECTOR;
 	if(part->getBuiltinAttributes().use_WriterLivelinessProtocol)
 	{
-		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_RTPSParticipant_MESSAGE_DATA_WRITER;
+		this->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_RTPSParticipant_MESSAGE_DATA_READER;
 	}
 	if(part->getBuiltinAttributes().use_SIMPLE_EndpointDiscoveryProtocol)
 	{
@@ -103,7 +103,7 @@ bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 	this->m_metatrafficMulticastLocatorList = pdp->mp_builtin->m_metatrafficMulticastLocatorList;
 	this->m_metatrafficUnicastLocatorList = pdp->mp_builtin->m_metatrafficUnicastLocatorList;
 
-	this->m_participantName = part->getParticipantName();
+	this->m_RTPSParticipantName = part->getRTPSParticipantName();
 
 	this->m_userData = part->getUserData();
 
@@ -111,7 +111,7 @@ bool ParticipantProxyData::initializeData(ParticipantImpl* part,PDPSimple* pdp)
 }
 
 
-bool ParticipantProxyData::toParameterList()
+bool RTPSParticipantProxyData::toParameterList()
 {
 	if(m_hasChanged)
 	{
@@ -122,7 +122,7 @@ bool ParticipantProxyData::toParameterList()
 		valid &=QosList::addQos(&m_QosList,PID_VENDORID,this->m_VendorId);
 		if(this->m_expectsInlineQos)
 			valid &=QosList::addQos(&m_QosList,PID_EXPECTS_INLINE_QOS,this->m_expectsInlineQos);
-		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_GUID,this->m_guid);
+		valid &=QosList::addQos(&m_QosList,PID_RTPSParticipant_GUID,this->m_guid);
 		for(std::vector<Locator_t>::iterator it=this->m_metatrafficMulticastLocatorList.begin();
 				it!=this->m_metatrafficMulticastLocatorList.end();++it)
 		{
@@ -143,9 +143,9 @@ bool ParticipantProxyData::toParameterList()
 		{
 			valid &=QosList::addQos(&m_QosList,PID_DEFAULT_MULTICAST_LOCATOR,*it);
 		}
-		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_LEASE_DURATION,this->m_leaseDuration);
+		valid &=QosList::addQos(&m_QosList,PID_RTPSParticipant_LEASE_DURATION,this->m_leaseDuration);
 		valid &=QosList::addQos(&m_QosList,PID_BUILTIN_ENDPOINT_SET,(uint32_t)this->m_availableBuiltinEndpoints);
-		valid &=QosList::addQos(&m_QosList,PID_ENTITY_NAME,this->m_participantName);
+		valid &=QosList::addQos(&m_QosList,PID_ENTITY_NAME,this->m_RTPSParticipantName);
 
 		if(this->m_userData.size()>0)
 			valid &=QosList::addQos(&m_QosList,PID_USER_DATA,this->m_userData);
@@ -165,7 +165,7 @@ bool ParticipantProxyData::toParameterList()
 	return true;
 }
 
-bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
+bool RTPSParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
 
 	if(ParameterList::readParameterListfromCDRMsg(msg,&m_QosList.allQos,NULL,NULL)>0)
@@ -209,7 +209,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				this->m_expectsInlineQos = p->value;
 				break;
 			}
-			case PID_PARTICIPANT_GUID:
+			case PID_RTPSParticipant_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
 				this->m_guid = p->guid;
@@ -240,7 +240,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				this->m_defaultMulticastLocatorList.push_back(p->locator);
 				break;
 			}
-			case PID_PARTICIPANT_LEASE_DURATION:
+			case PID_RTPSParticipant_LEASE_DURATION:
 			{
 				ParameterTime_t* p = (ParameterTime_t*)(*it);
 				this->m_leaseDuration = p->time;
@@ -257,7 +257,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				
 				ParameterString_t* p = (ParameterString_t*)(*it);
 				//cout << "ENTITY NAME " << p->m_string<<endl;
-				this->m_participantName = p->m_string;
+				this->m_RTPSParticipantName = p->m_string;
 				break;
 			}
 			case PID_PROPERTY_LIST:
@@ -309,7 +309,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 }
 
 
-void ParticipantProxyData::clear()
+void RTPSParticipantProxyData::clear()
 {
 	m_protocolVersion = ProtocolVersion_t();
 	m_guid = GUID_t();
@@ -321,7 +321,7 @@ void ParticipantProxyData::clear()
 	m_defaultUnicastLocatorList.clear();
 	m_defaultMulticastLocatorList.clear();
 	m_manualLivelinessCount = 0;
-	m_participantName = "";
+	m_RTPSParticipantName = "";
 	m_key = InstanceHandle_t();
 	m_leaseDuration = Duration_t();
 	isAlive = true;
@@ -333,7 +333,7 @@ void ParticipantProxyData::clear()
 	m_userData.clear();
 }
 
-void ParticipantProxyData::copy(ParticipantProxyData& pdata)
+void RTPSParticipantProxyData::copy(RTPSParticipantProxyData& pdata)
 {
 	m_protocolVersion = pdata.m_protocolVersion;
 	m_guid = pdata.m_guid;
@@ -345,7 +345,7 @@ void ParticipantProxyData::copy(ParticipantProxyData& pdata)
 	m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
 	m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
 	m_manualLivelinessCount = pdata.m_manualLivelinessCount;
-	m_participantName = pdata.m_participantName;
+	m_RTPSParticipantName = pdata.m_RTPSParticipantName;
 	m_leaseDuration = pdata.m_leaseDuration;
 	m_key = pdata.m_key;
 	isAlive = pdata.isAlive;
@@ -354,7 +354,7 @@ void ParticipantProxyData::copy(ParticipantProxyData& pdata)
 
 }
 
-bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
+bool RTPSParticipantProxyData::updateData(RTPSParticipantProxyData& pdata)
 {
 	m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
 	m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;

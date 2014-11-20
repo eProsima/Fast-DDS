@@ -38,11 +38,11 @@ public:
 	void reset();
 	/**
 	 * Process a new CDR message.
-	 * @param[in] participantguidprefix Participant Guid Prefix
+	 * @param[in] RTPSParticipantguidprefix RTPSParticipant Guid Prefix
 	 * @param[in] loc Locator indicating the sending address.
 	 * @param[in] msg Pointer to the message
 	 */
-	void processCDRMsg(const GuidPrefix_t& participantguidprefix,Locator_t* loc, CDRMessage_t*msg);
+	void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Resource that contains this MessageReceiver.
 	ListenResource* mp_threadListen;
@@ -59,7 +59,7 @@ private:
 	VendorId_t sourceVendorId;
 	//!GuidPrefix of the entity that created the message
 	GuidPrefix_t sourceGuidPrefix;
-	//!GuidPrefix of the entity that receives the message. GuidPrefix of the Participant.
+	//!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.
 	GuidPrefix_t destGuidPrefix;
 	//!Reply addresses (unicast).
 	LocatorList_t unicastReplyLocatorList;

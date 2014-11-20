@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimpleTopicDataType.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/qos/ParameterList.h"
 namespace eprosima {
@@ -63,7 +63,7 @@ bool PDPSimpleTopicDataType::getKey(void*data,InstanceHandle_t* ihandle)
 		{
 			break;
 		}
-		if(pid == PID_PARTICIPANT_GUID)
+		if(pid == PID_RTPSParticipant_GUID)
 		{
 			valid &= CDRMessage::readData(&aux_msg,ihandle->value,16);
 			return true;

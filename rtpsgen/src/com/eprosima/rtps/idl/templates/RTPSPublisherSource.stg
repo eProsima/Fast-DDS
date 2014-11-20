@@ -7,19 +7,19 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.cpp"], description=["This f
 #include "$ctx.filename$Publisher.h"
 #include "$ctx.filename$PubSubType.h"
 
-$ctx.filename$Publisher::$ctx.filename$Publisher() : mp_participant(NULL), mp_publisher(NULL) {}
+$ctx.filename$Publisher::$ctx.filename$Publisher() : mp_RTPSParticipant(NULL), mp_publisher(NULL) {}
 
 $ctx.filename$Publisher::~$ctx.filename$Publisher() {}
 
 bool $ctx.filename$Publisher::init()
 {
-	// Create Participant
+	// Create RTPSParticipant
 	
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.builtin.domainId = 80;
-	PParam.name = "participant_publisher";  //You can put here the name you want
-	mp_participant = DomainParticipant::createParticipant(PParam);
-	if(mp_participant == NULL)
+	PParam.name = "RTPSParticipant_publisher";  //You can put here the name you want
+	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
+	if(mp_RTPSParticipant == NULL)
 		return false;
 	
 	// Create Publisher
@@ -28,7 +28,7 @@ bool $ctx.filename$Publisher::init()
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicDataType = "$ctx.m_firstStructure$";  //This type MUST be registered
 	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
-	mp_publisher = DomainParticipant::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	mp_publisher = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == NULL)
 		return false;
 	return true;

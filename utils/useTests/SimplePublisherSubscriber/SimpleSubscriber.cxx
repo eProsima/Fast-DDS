@@ -16,20 +16,20 @@
 #include "SimpleSubscriber.h"
 #include "SimplePubSubType.h"
 
-SimpleSubscriber::SimpleSubscriber() : mp_participant(NULL), mp_subscriber(NULL) {}
+SimpleSubscriber::SimpleSubscriber() : mp_RTPSParticipant(NULL), mp_subscriber(NULL) {}
 
 SimpleSubscriber::~SimpleSubscriber() {}
 
 bool SimpleSubscriber::init()
 {
-	// Create Participant
+	// Create RTPSParticipant
 	
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.builtin.domainId = 80; //MUST BE THE SAME AS IN THE PUBLISHER
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.name = "participant_subscriber"; //You can put the name you want
-	mp_participant = RTPSDomain::createParticipant(PParam);
-	if(mp_participant == NULL)
+	PParam.name = "RTPSParticipant_subscriber"; //You can put the name you want
+	mp_RTPSParticipant = RTPSDomain::createRTPSParticipant(PParam);
+	if(mp_RTPSParticipant == NULL)
 			return false;
 			
 	// Create Subscriber
@@ -38,7 +38,7 @@ bool SimpleSubscriber::init()
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicDataType = "SimpleStructPubSubType"; //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "SimplePubSubTopic";
-	mp_subscriber = RTPSDomain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+	mp_subscriber = RTPSDomain::createSubscriber(mp_RTPSParticipant,Rparam,(SubscriberListener*)&m_listener);
 	if(mp_subscriber == NULL)
 		return false;
 	m_listener.mp_sub = mp_subscriber; //We copy the pointer to the subscriber to be able to read and take data from the listener directly

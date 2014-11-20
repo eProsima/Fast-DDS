@@ -13,10 +13,10 @@
 
 #include "eprosimartps/builtin/discovery/endpoint/EDP.h"
 
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/ParticipantProxyData.h"
+#include "eprosimartps/RTPSParticipant.h"
+#include "eprosimartps/RTPSParticipantProxyData.h"
 
 #include "eprosimartps/writer/StatefulWriter.h"
 #include "eprosimartps/reader/StatefulReader.h"
@@ -41,9 +41,9 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "EDP";
 
-EDP::EDP(PDPSimple* p,ParticipantImpl* part):
+EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part):
 	mp_PDP(p),
-	mp_participant(part)
+	mp_RTPSParticipant(part)
 {
 	// TODO Auto-generated constructor stub
 
@@ -65,7 +65,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader)
 	rpd->m_key = rpd->m_guid;
 	rpd->m_multicastLocatorList = reader->multicastLocatorList;
 	rpd->m_unicastLocatorList = reader->unicastLocatorList;
-	rpd->m_participantKey = mp_participant->getGuid();
+	rpd->m_RTPSParticipantKey = mp_RTPSParticipant->getGuid();
 	rpd->m_topicName = reader->getTopic().getTopicName();
 	rpd->m_typeName = reader->getTopic().getTopicDataType();
 	rpd->m_topicKind = reader->getTopic().getTopicKind();
@@ -95,7 +95,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer)
 	wpd->m_key = wpd->m_guid;
 	wpd->m_multicastLocatorList = writer->multicastLocatorList;
 	wpd->m_unicastLocatorList = writer->unicastLocatorList;
-	wpd->m_participantKey = mp_participant->getGuid();
+	wpd->m_RTPSParticipantKey = mp_RTPSParticipant->getGuid();
 	wpd->m_topicName = writer->getTopic().getTopicName();
 	wpd->m_typeName = writer->getTopic().getTopicDataType();
 	wpd->m_topicKind = writer->getTopic().getTopicKind();
@@ -180,8 +180,8 @@ bool EDP::unpairWriterProxy(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "unpairWriterProxy";
 	logInfo(RTPS_EDP,wdata->m_guid << " in topic: "<< wdata->m_topicName,EPRO_CYAN);
-	for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
-			rit!=mp_participant->userReadersListEnd();++rit)
+	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
 	{
 		if((*rit)->matched_writer_remove(wdata))
 		{
@@ -202,8 +202,8 @@ bool EDP::unpairReaderProxy(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "unpairReaderProxy";
 		logInfo(RTPS_EDP,rdata->m_guid << " in topic: "<< rdata->m_topicName,EPRO_CYAN);
-	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
-			wit!=mp_participant->userWritersListEnd();++wit)
+	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
 	{
 		if((*wit)->matched_reader_remove(rdata))
 		{
@@ -401,8 +401,8 @@ bool EDP::pairingReader(RTPSReader* R)
 {
 	const char* const METHOD_NAME = "pairingReader";
 	logInfo(RTPS_EDP,R->getGuid()<<" in topic: \"" << R->getTopic().getTopicName()<<"\"",EPRO_CYAN);
-	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
-			pit!=mp_PDP->participantProxiesEnd();++pit)
+	for(std::vector<RTPSParticipantProxyData*>::const_iterator pit = mp_PDP->RTPSParticipantProxiesBegin();
+			pit!=mp_PDP->RTPSParticipantProxiesEnd();++pit)
 	{
 		for(std::vector<WriterProxyData*>::iterator wdatait = (*pit)->m_writers.begin();
 				wdatait!=(*pit)->m_writers.end();++wdatait)
@@ -446,8 +446,8 @@ bool EDP::pairingWriter(RTPSWriter* W)
 {
 	const char* const METHOD_NAME = "pairingWriter";
 		logInfo(RTPS_EDP,W->getGuid()<<" in topic: \"" << W->getTopic().getTopicName()<<"\"",EPRO_CYAN);
-	for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->participantProxiesBegin();
-			pit!=mp_PDP->participantProxiesEnd();++pit)
+	for(std::vector<RTPSParticipantProxyData*>::const_iterator pit = mp_PDP->RTPSParticipantProxiesBegin();
+			pit!=mp_PDP->RTPSParticipantProxiesEnd();++pit)
 	{
 		for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
 				rdatait!=(*pit)->m_readers.end();++rdatait)
@@ -492,8 +492,8 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "pairingReaderProxy";
 	logInfo(RTPS_EDP,rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\"",EPRO_CYAN);
-	for(std::vector<RTPSWriter*>::iterator wit = mp_participant->userWritersListBegin();
-			wit!=mp_participant->userWritersListEnd();++wit)
+	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
+			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
 	{
 		if(validMatching(*wit,rdata))
 		{
@@ -532,8 +532,8 @@ bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "pairingWriterProxy";
 	logInfo(RTPS_EDP,wdata->m_guid<<" in topic: \"" << wdata->m_topicName <<"\"",EPRO_CYAN);
-	for(std::vector<RTPSReader*>::iterator rit = mp_participant->userReadersListBegin();
-			rit!=mp_participant->userReadersListEnd();++rit)
+	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
 	{
 		if(validMatching(*rit,wdata))
 		{

@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
 
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -25,7 +25,7 @@ static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
 
 UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 		double interval):
-		TimedEvent(writer->getParticipant()->getIOService(),interval),
+		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval),
   mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub

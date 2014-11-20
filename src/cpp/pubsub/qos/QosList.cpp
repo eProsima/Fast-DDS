@@ -93,7 +93,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	else if(pid == PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT)
+	else if(pid == PID_RTPSParticipant_MANUAL_LIVELINESS_COUNT)
 	{
 
 		ParameterCount_t* p = new ParameterCount_t();
@@ -129,7 +129,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const GUID_t& guid)
 {
-	if(pid == PID_PARTICIPANT_GUID || pid == PID_GROUP_GUID)
+	if(pid == PID_RTPSParticipant_GUID || pid == PID_GROUP_GUID)
 	{
 
 		ParameterGuid_t* p = new ParameterGuid_t();
@@ -240,7 +240,7 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 
 //bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Count_t& count)
 //{
-//	if(pid == PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT)
+//	if(pid == PID_RTPSParticipant_MANUAL_LIVELINESS_COUNT)
 //	{
 //		ParameterCount_t* p = new ParameterCount_t();
 //		p->Pid = pid;
@@ -268,7 +268,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	const EntityId_t& entity
 }
 
 bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
-	if(pid == PID_PARTICIPANT_LEASE_DURATION)
+	if(pid == PID_RTPSParticipant_LEASE_DURATION)
 	{
 		ParameterTime_t* p = new ParameterTime_t();
 		p->Pid = pid;

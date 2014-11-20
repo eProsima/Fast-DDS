@@ -18,7 +18,7 @@ std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / siz
 
 
 LatencyTestPublisher::LatencyTestPublisher():
-										mp_participant(NULL),
+										mp_RTPSParticipant(NULL),
 										mp_datapub(NULL),
 										mp_commandpub(NULL),
 										mp_datasub(NULL),
@@ -51,19 +51,19 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 {
 	n_samples = n_sam;
 	n_subscribers = n_sub;
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.domainId = 80;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 8712;
 	PParam.listenSocketBufferSize = 17424;
-	PParam.name = "participant_pub";
-	mp_participant = RTPSDomain::createParticipant(PParam);
-	if(mp_participant == NULL)
+	PParam.name = "RTPSParticipant_pub";
+	mp_RTPSParticipant = RTPSDomain::createRTPSParticipant(PParam);
+	if(mp_RTPSParticipant == NULL)
 		return false;
 
 	m_clock.setTimeNow(&m_t1);
@@ -81,7 +81,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datapub = RTPSDomain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
+	mp_datapub = RTPSDomain::createPublisher(mp_RTPSParticipant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == NULL)
 		return false;
 	//DATA SUBSCRIBER
@@ -96,7 +96,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubDataparam.topic.historyQos.depth = 100;
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	mp_datasub = RTPSDomain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
+	mp_datasub = RTPSDomain::createSubscriber(mp_RTPSParticipant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == NULL)
 		return false;
 	//COMMAND PUBLISHER
@@ -108,7 +108,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubCommandParam.topic.historyQos.depth = 100;
 	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
-	mp_commandpub = RTPSDomain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
+	mp_commandpub = RTPSDomain::createPublisher(mp_RTPSParticipant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == NULL)
 		return false;
 	SubscriberAttributes SubCommandParam;
@@ -120,7 +120,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_commandsub = RTPSDomain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
+	mp_commandsub = RTPSDomain::createSubscriber(mp_RTPSParticipant,SubCommandParam,&this->m_commandsublistener);
 	if(mp_commandsub == NULL)
 		return false;
 	return true;

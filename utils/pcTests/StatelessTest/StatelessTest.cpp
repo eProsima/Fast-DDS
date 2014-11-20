@@ -24,7 +24,7 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/dds/DomainParticipant.h"
+#include "eprosimartps/dds/DomainRTPSParticipant.h"
 
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -178,12 +178,12 @@ int main(int argc, char** argv)
 		type = WR;
 
 	TestTypeDataType TestTypeData;
-	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
-	Participant* p = DomainParticipant::createParticipant(PParam);
+	PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
+	RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 
 	switch(type)
 	{
@@ -194,8 +194,8 @@ int main(int argc, char** argv)
 		PParam.topic.topicKind = WITH_KEY;
 		PParam.topic.topicDataType = "TestType";
 		PParam.topic.topicName = "Test_topic";
-		Publisher* pub1 = DomainParticipant::createPublisher(p,PParam);
-		Publisher* pub2 = DomainParticipant::createPublisher(p,PParam);
+		Publisher* pub1 = DomainRTPSParticipant::createPublisher(p,PParam);
+		Publisher* pub2 = DomainRTPSParticipant::createPublisher(p,PParam);
 		SubscriberAttributes Sparam;
 		Sparam.historyMaxSize = 50;
 		Sparam.topic.topicDataType = std::string("TestType");
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
 		loc.kind = 1;
 		loc.port = 10467;
 		Sparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Sparam);
+		Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Sparam);
 
 		loc.set_IP4_address(127,0,0,1);
 		loc.port = 10466;
@@ -278,7 +278,7 @@ int main(int argc, char** argv)
 		loc.kind = 1;
 		loc.port = 10469;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in port 10469
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
 		sub->assignListener((SubscriberListener*)&listener);
 		PublisherAttributes WParam;
@@ -286,7 +286,7 @@ int main(int argc, char** argv)
 		WParam.topic.topicKind = NO_KEY;
 		WParam.topic.topicDataType = "TestType";
 		WParam.topic.topicName = "Test_topic";
-		Publisher* pub1 = DomainParticipant::createPublisher(p,WParam);
+		Publisher* pub1 = DomainRTPSParticipant::createPublisher(p,WParam);
 		loc.set_IP4_address(192,168,1,IPTEST0);
 		pub1->addReaderLocator(loc,false);
 		while(1)
@@ -322,7 +322,7 @@ int main(int argc, char** argv)
 	cout << "Enter numer "<< endl;
 	int n;
 	cin >> n;
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 
 
 

@@ -30,8 +30,8 @@ src/cpp/reader/StatefulReader.cpp
 src/cpp/reader/timedevent/HeartbeatResponseDelay.cpp
 src/cpp/reader/timedevent/WriterProxyLiveliness.cpp
 src/cpp/MessageReceiver.cpp
-src/cpp/Participant.cpp
-src/cpp/ParticipantProxyData.cpp
+src/cpp/RTPSParticipant.cpp
+src/cpp/RTPSParticipantProxyData.cpp
 src/cpp/resources/ListenResource.cpp
 src/cpp/resources/ResourceSend.cpp
 src/cpp/resources/ResourceEvent.cpp
@@ -48,11 +48,11 @@ src/cpp/qos/QosPolicies.cpp
 src/cpp/qos/WriterQos.cpp
 src/cpp/qos/ReaderQos.cpp
 src/cpp/builtin/BuiltinProtocols.cpp
-src/cpp/builtin/discovery/participant/PDPSimple.cpp
-src/cpp/builtin/discovery/participant/PDPSimpleListener.cpp
-src/cpp/builtin/discovery/participant/PDPSimpleTopicDataType.cpp
-src/cpp/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
-src/cpp/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+src/cpp/builtin/discovery/RTPSParticipant/PDPSimple.cpp
+src/cpp/builtin/discovery/RTPSParticipant/PDPSimpleListener.cpp
+src/cpp/builtin/discovery/RTPSParticipant/PDPSimpleTopicDataType.cpp
+src/cpp/builtin/discovery/RTPSParticipant/timedevent/RemoteRTPSParticipantLeaseDuration.cpp
+src/cpp/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.cpp
 src/cpp/builtin/discovery/endpoint/EDP.cpp
 src/cpp/builtin/discovery/endpoint/EDPSimple.cpp
 src/cpp/builtin/discovery/endpoint/EDPSimpleListeners.cpp

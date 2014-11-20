@@ -39,7 +39,7 @@ class RTPSWriter: public Endpoint
 	friend class WriterHistory;
 	friend class UnsentChangesNotEmptyEvent;
 protected:
-	RTPSWriter(ParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
+	RTPSWriter(RTPSParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
 	virtual ~RTPSWriter();
 public:
 	/**
@@ -116,7 +116,7 @@ protected:
 	 */
 	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
 
-	inline ParticipantImpl* getParticipant() const {return mp_participant;}
+	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
 	//public:
 	//

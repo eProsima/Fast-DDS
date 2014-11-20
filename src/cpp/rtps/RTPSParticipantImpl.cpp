@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file Participant.cpp
+ * @file RTPSParticipant.cpp
  *
  */
 
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 
 #include "eprosimartps/rtps/writer/StatelessWriter.h"
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
@@ -25,7 +25,7 @@
 #include "eprosimartps/pubsub/RTPSDomain.h"
 
 #include "eprosimartps/builtin/BuiltinProtocols.h"
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 
 #include "eprosimartps/utils/IPFinder.h"
@@ -39,20 +39,20 @@ namespace eprosima {
 namespace rtps {
 
 
-static const char* const CLASS_NAME = "ParticipantImpl";
+static const char* const CLASS_NAME = "RTPSParticipantImpl";
 
 
-ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
+RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
-		ParticipantListener* plisten):
-							m_guid(guidP,c_EntityId_Participant),
+		RTPSParticipantListener* plisten):
+							m_guid(guidP,c_EntityId_RTPSParticipant),
 							mp_send_thr(nullptr),
 							mp_event_thr(nullptr),
 							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 							IdCounter(0),
-							mp_participantListener(plisten)
+							mp_RTPSParticipantListener(plisten)
 {
-	const char* const METHOD_NAME = "ParticipantImpl";
+	const char* const METHOD_NAME = "RTPSParticipantImpl";
 	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -72,13 +72,13 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 			lit->port=RTPSDomain::getPortBase()+
 					RTPSDomain::getDomainIdGain()*PParam.builtin.domainId+
 					RTPSDomain::getOffsetd3()+
-					RTPSDomain::getParticipantIdGain()*m_att.participantID;
+					RTPSDomain::getRTPSParticipantIdGain()*m_att.RTPSParticipantID;
 			m_att.defaultUnicastLocatorList.push_back(*lit);
 			ss << *lit << ";";
 		}
 		
 		std::string auxstr = ss.str();
-		logWarning(RTPS_PARTICIPANT,"Participant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
+		logWarning(RTPS_RTPSParticipant,"RTPSParticipant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
@@ -100,17 +100,17 @@ ParticipantImpl::ParticipantImpl(const ParticipantAttributes& PParam,
 	}
 
 
-	logInfo(RTPS_PARTICIPANT,"Participant \"" <<  m_participantName << "\" with guidPrefix: " <<m_guid.guidPrefix);
+	logInfo(RTPS_RTPSParticipant,"RTPSParticipant \"" <<  m_RTPSParticipantName << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
-	m_builtinProtocols.initBuiltinProtocols(PParam.builtin,m_att.participantID);
+	m_builtinProtocols.initBuiltinProtocols(PParam.builtin,m_att.RTPSParticipantID);
 
 }
 
 
-ParticipantImpl::~ParticipantImpl()
+RTPSParticipantImpl::~RTPSParticipantImpl()
 {
-	const char* const METHOD_NAME = "~ParticipantImpl";
-	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
+	const char* const METHOD_NAME = "~RTPSParticipantImpl";
+	logInfo(RTPS_RTPSParticipant,"removing "<<this->getGuid());
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
 				it!=m_listenResourceList.end();++it)
@@ -130,17 +130,17 @@ ParticipantImpl::~ParticipantImpl()
 
 /*
  *
- * MAIN PARTICIPANT IMPL API
+ * MAIN RTPSParticipant IMPL API
  *
  */
 
 
-bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
+bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		EndpointAttributes& param, const EntityId_t& entityId,bool isBuiltin)
 {
 	const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type);
+	logInfo(RTPS_RTPSParticipant," of type " << type);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -163,7 +163,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,WRITER))
 		{
-			logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this participant");
+			logError(RTPS_RTPSParticipant,"A writer with the same entityId already exists in this RTPSParticipant");
 			return false;
 		}
 	}
@@ -204,7 +204,7 @@ bool ParticipantImpl::createWriter(RTPSWriter** WriterOut,
  *  */
 
 
-bool ParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const
+bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const
 {
 	if(kind == WRITER)
 	{
@@ -235,7 +235,7 @@ bool ParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t kind) 
  */
 
 
-bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
+bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
 	const char* const METHOD_NAME = "assignEndpointListenResources";
 	bool valid = true;
@@ -245,7 +245,7 @@ bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuilti
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
-		logWarning(RTPS_PARTICIPANT,auxstr << " created with no unicastLocatorList, adding default List");
+		logWarning(RTPS_RTPSParticipant,auxstr << " created with no unicastLocatorList, adding default List");
 		for(LocatorListIterator lit = m_att.defaultUnicastLocatorList.begin();lit!=m_att.defaultUnicastLocatorList.end();++lit)
 		{
 			assignEndpoint2Locator(endp,lit,false,false);
@@ -282,7 +282,7 @@ bool ParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuilti
 }
 
 
-bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator lit,bool isMulti,bool isFixed)
+bool RTPSParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator lit,bool isMulti,bool isFixed)
 {
 	for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
 	{
@@ -341,14 +341,14 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //	return c_EntityId_Unknown;
 //}
 //
-//bool ParticipantImpl::createReader(RTPSReader** ReaderOut,
+//bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 //		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
 //		StateKind_t kind, TopicDataType* ptype, SubscriberListener* inlisten,
 //		const EntityId_t& entityId)
 //{
 //	const char* const METHOD_NAME = "createReader";
 //	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-//	logInfo(RTPS_PARTICIPANT," on topic: "<<param.topic.getTopicName());
+//	logInfo(RTPS_RTPSParticipant," on topic: "<<param.topic.getTopicName());
 //	EntityId_t entId;
 //	if(entityId == c_EntityId_Unknown)
 //	{
@@ -370,7 +370,7 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //		entId.value[0] = c[2];
 //		if(this->existsEntityId(entId,READER))
 //		{
-//			logError(RTPS_PARTICIPANT,"A reader with the same entityId already exists in this participant");
+//			logError(RTPS_RTPSParticipant,"A reader with the same entityId already exists in this RTPSParticipant");
 //			return false;
 //		}
 //	}
@@ -402,14 +402,14 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //	return true;
 //}
 //
-//void ParticipantImpl::registerReader(RTPSReader* SReader)
+//void RTPSParticipantImpl::registerReader(RTPSReader* SReader)
 //{
 //	eClock::my_sleep(30);
 //	m_userReaderList.push_back(SReader);
 //	m_builtinProtocols.addLocalReader(SReader);
 //}
 //
-//void ParticipantImpl::registerWriter(RTPSWriter* SWriter)
+//void RTPSParticipantImpl::registerWriter(RTPSWriter* SWriter)
 //{
 //	eClock::my_sleep(30);
 //	m_userWriterList.push_back(SWriter);
@@ -425,7 +425,7 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //
 //
 //
-//bool ParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
+//bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
 //{
 //	bool found = false;
 //	{
@@ -485,22 +485,22 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //	return true;
 //}
 //
-//void ParticipantImpl::announceParticipantState()
+//void RTPSParticipantImpl::announceRTPSParticipantState()
 //{
-//	this->m_builtinProtocols.announceParticipantState();
+//	this->m_builtinProtocols.announceRTPSParticipantState();
 //}
 //
-//void ParticipantImpl::stopParticipantAnnouncement()
+//void RTPSParticipantImpl::stopRTPSParticipantAnnouncement()
 //{
-//	this->m_builtinProtocols.stopParticipantAnnouncement();
+//	this->m_builtinProtocols.stopRTPSParticipantAnnouncement();
 //}
 //
-//void ParticipantImpl::resetParticipantAnnouncement()
+//void RTPSParticipantImpl::resetRTPSParticipantAnnouncement()
 //{
-//	this->m_builtinProtocols.resetParticipantAnnouncement();
+//	this->m_builtinProtocols.resetRTPSParticipantAnnouncement();
 //}
 //
-//void ParticipantImpl::ResourceSemaphorePost()
+//void RTPSParticipantImpl::ResourceSemaphorePost()
 //{
 //	if(mp_ResourceSemaphore!=NULL)
 //	{
@@ -508,7 +508,7 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //	}
 //}
 //
-//void ParticipantImpl::ResourceSemaphoreWait()
+//void RTPSParticipantImpl::ResourceSemaphoreWait()
 //{
 //	if(mp_ResourceSemaphore!=NULL)
 //	{
@@ -517,12 +517,12 @@ bool ParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator 
 //
 //}
 //
-//bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+//bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 //{
 //	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
 //	if(m_builtin.use_STATIC_EndpointDiscoveryProtocol == false)
 //	{
-//		logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");
+//		logWarning(RTPS_RTPSParticipant,"Remote Endpoints can only be activated with static discovery protocol");
 //		return false;
 //	}
 //	return m_builtinProtocols.mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);

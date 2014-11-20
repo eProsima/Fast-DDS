@@ -26,8 +26,8 @@
 
 #include "eprosimartps/pubsub/SubscriberListener.h"
 
-#include "eprosimartps/Participant.h"
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/RTPSParticipant.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 using namespace eprosima::pubsub;
 
@@ -82,7 +82,7 @@ void MessageReceiver::reset(){
 	multicastReplyLocatorList.push_back(defUniLoc);
 }
 
-void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
+void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	const char* const METHOD_NAME = "processCDRMsg";
@@ -92,7 +92,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		return;
 	}
 	reset();
-	destGuidPrefix = participantguidprefix;
+	destGuidPrefix = RTPSParticipantguidprefix;
 	unicastReplyLocatorList.begin()->kind = loc->kind;
 	uint8_t n_start = 0;
 	if(loc->kind == 1)
@@ -140,10 +140,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		{
 		case DATA:
 		{
-			if(this->destGuidPrefix != participantguidprefix)
+			if(this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN,"Data Submsg ignored, DST is another participant",EPRO_BLUE);
+				logInfo(RTPS_MSG_IN,"Data Submsg ignored, DST is another RTPSParticipant",EPRO_BLUE);
 			}
 			else
 			{
@@ -154,10 +154,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		}
 		case GAP:
 		{
-			if(this->destGuidPrefix != participantguidprefix)
+			if(this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN,"Gap Submsg ignored, DST is another participant...",EPRO_BLUE);
+				logInfo(RTPS_MSG_IN,"Gap Submsg ignored, DST is another RTPSParticipant...",EPRO_BLUE);
 			}
 			else
 			{
@@ -168,10 +168,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		}
 		case ACKNACK:
 		{
-			if(this->destGuidPrefix != participantguidprefix)
+			if(this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN,"Acknack Submsg ignored, DST is another participant...",EPRO_BLUE);
+				logInfo(RTPS_MSG_IN,"Acknack Submsg ignored, DST is another RTPSParticipant...",EPRO_BLUE);
 			}
 			else
 			{
@@ -182,10 +182,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& participantguidprefix,
 		}
 		case HEARTBEAT:
 		{
-			if(this->destGuidPrefix != participantguidprefix)
+			if(this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN,"HB Submsg ignored, DST is another participant...",EPRO_BLUE);
+				logInfo(RTPS_MSG_IN,"HB Submsg ignored, DST is another RTPSParticipant...",EPRO_BLUE);
 			}
 			else
 			{
@@ -497,7 +497,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					(*it)->release_Cache(change_to_add);
 					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
 					{
-						this->mp_threadListen->getParticipantImpl()->getBuiltinProtocols()->mp_PDP->assertRemoteParticipantLiveliness(this->sourceGuidPrefix);
+						this->mp_threadListen->getRTPSParticipantImpl()->getBuiltinProtocols()->mp_PDP->assertRemoteRTPSParticipantLiveliness(this->sourceGuidPrefix);
 					}
 				}
 			}
@@ -754,7 +754,7 @@ bool MessageReceiver::proc_Submsg_InfoDST(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(guidP != c_GuidPrefix_Unknown)
 	{
 		this->destGuidPrefix = guidP;
-		logInfo(RTPS_MSG_IN,"DST Participant is now: "<< this->destGuidPrefix,EPRO_BLUE);
+		logInfo(RTPS_MSG_IN,"DST RTPSParticipant is now: "<< this->destGuidPrefix,EPRO_BLUE);
 	}
 	//Is the final message?
 	if(smh->submessageLength == 0)
@@ -783,7 +783,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 		//Is the final message?
 		if(smh->submessageLength == 0)
 			*last = true;
-		logInfo(RTPS_MSG_IN,"SRC Participant is now: "<<this->sourceGuidPrefix,EPRO_BLUE);
+		logInfo(RTPS_MSG_IN,"SRC RTPSParticipant is now: "<<this->sourceGuidPrefix,EPRO_BLUE);
 		return true;
 	}
 	return false;

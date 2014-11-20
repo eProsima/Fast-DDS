@@ -56,31 +56,31 @@ modification history
 
 /* Delete all entities */
 static int publisher_shutdown(
-    DDSDomainParticipant *participant)
+    DDSDomainRTPSParticipant *RTPSParticipant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
-    if (participant != NULL) {
-        retcode = participant->delete_contained_entities();
+    if (RTPSParticipant != NULL) {
+        retcode = RTPSParticipant->delete_contained_entities();
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_contained_entities error %d\n", retcode);
             status = -1;
         }
 
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
+        retcode = DDSTheRTPSParticipantFactory->delete_RTPSParticipant(RTPSParticipant);
         if (retcode != DDS_RETCODE_OK) {
-            printf("delete_participant error %d\n", retcode);
+            printf("delete_RTPSParticipant error %d\n", retcode);
             status = -1;
         }
     }
 
     /* RTI Connext provides finalize_instance() method on
-       domain participant factory for people who want to release memory used
-       by the participant factory. Uncomment the following block of code for
+       domain RTPSParticipant factory for people who want to release memory used
+       by the RTPSParticipant factory. Uncomment the following block of code for
        clean destruction of the singleton. */
 /*
-    retcode = DDSDomainParticipantFactory::finalize_instance();
+    retcode = DDSDomainRTPSParticipantFactory::finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         printf("finalize_instance error %d\n", retcode);
         status = -1;
@@ -92,7 +92,7 @@ static int publisher_shutdown(
 
 extern "C" int publisher_main(int domainId, int sample_count)
 {
-    DDSDomainParticipant *participant = NULL;
+    DDSDomainRTPSParticipant *RTPSParticipant = NULL;
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
@@ -104,46 +104,46 @@ extern "C" int publisher_main(int domainId, int sample_count)
     int count = 0;  
     DDS_Duration_t send_period = {4,0};
 
-    /* To customize participant QoS, use 
+    /* To customize RTPSParticipant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
+    RTPSParticipant = DDSTheRTPSParticipantFactory->create_RTPSParticipant(
+        domainId, DDS_RTPSParticipant_QOS_DEFAULT, 
         NULL /* listener */, DDS_STATUS_MASK_NONE);
-    if (participant == NULL) {
-        printf("create_participant error\n");
-        publisher_shutdown(participant);
+    if (RTPSParticipant == NULL) {
+        printf("create_RTPSParticipant error\n");
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
 
     /* To customize publisher QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
-    publisher = participant->create_publisher(
+    publisher = RTPSParticipant->create_publisher(
         DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
 
     /* Register type before creating topic */
     type_name = SampleTypeTypeSupport::get_type_name();
     retcode = SampleTypeTypeSupport::register_type(
-        participant, type_name);
+        RTPSParticipant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
-        publisher_shutdown(participant);
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
 
     /* To customize topic QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic(
+    topic = RTPSParticipant->create_topic(
         "Example SampleType",
         type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
 
@@ -154,13 +154,13 @@ extern "C" int publisher_main(int domainId, int sample_count)
         DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
     SampleType_writer = SampleTypeDataWriter::narrow(writer);
     if (SampleType_writer == NULL) {
         printf("DataWriter narrow error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
 
@@ -170,7 +170,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     
     if (instance == NULL) {
         printf("SampleTypeTypeSupport::create_data error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(RTPSParticipant);
         return -1;
     }
 
@@ -212,7 +212,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     /* Delete all entities */
-    return publisher_shutdown(participant);
+    return publisher_shutdown(RTPSParticipant);
 }
 
 #if defined(RTI_WINCE)

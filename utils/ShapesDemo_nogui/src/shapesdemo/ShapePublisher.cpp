@@ -13,9 +13,9 @@
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 
 
-ShapePublisher::ShapePublisher(Participant* par):
+ShapePublisher::ShapePublisher(RTPSParticipant* par):
     mp_pub(NULL),
-    mp_participant(par),
+    mp_RTPSParticipant(par),
     //m_mutex(QMutex::Recursive),
     isInitialized(false),
     hasWritten(false)
@@ -32,13 +32,13 @@ ShapePublisher::~ShapePublisher()
 //        mp_pub->dispose((void*)&this->m_shape.m_mainShape);
 //        mp_pub->unregister((void*)&this->m_shape.m_mainShape);
         mp_pub->dispose_and_unregister((void*)&this->m_shape);
-        DomainParticipant::removePublisher(this->mp_participant,mp_pub);
+        DomainRTPSParticipant::removePublisher(this->mp_RTPSParticipant,mp_pub);
     }
 }
 
 bool ShapePublisher::initPublisher()
 {
-    mp_pub = DomainParticipant::createPublisher(mp_participant,m_attributes,(PublisherListener*)this);
+    mp_pub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,m_attributes,(PublisherListener*)this);
     if(mp_pub !=NULL)
     {
          isInitialized = true;

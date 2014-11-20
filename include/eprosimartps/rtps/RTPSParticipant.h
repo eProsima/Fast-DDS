@@ -7,12 +7,12 @@
  *************************************************************************/
 
 /**
- * @file Participant.h
+ * @file RTPSParticipant.h
 */
 
 
-#ifndef PARTICIPANT_H_
-#define PARTICIPANT_H_
+#ifndef RTPSParticipant_H_
+#define RTPSParticipant_H_
 
 //#include <stdio.h>
 //#include <stdlib.h>
@@ -31,42 +31,42 @@
 namespace eprosima {
 namespace rtps {
 
-class ParticipantImpl;
+class RTPSParticipantImpl;
 
 /**
- * @brief Class Participant, contains the public API for a Participant.
+ * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
  * @ingroup MANAGEMENTMODULE
  */
-class RTPS_DllAPI Participant
+class RTPS_DllAPI RTPSParticipant
 {
-	friend class ParticipantImpl;
+	friend class RTPSParticipantImpl;
 public:
-	Participant(ParticipantImpl* pimpl);
-	virtual ~ Participant();
-	//!Get the GUID_t of the participant.
+	RTPSParticipant(RTPSParticipantImpl* pimpl);
+	virtual ~ RTPSParticipant();
+	//!Get the GUID_t of the RTPSParticipant.
 	const GUID_t& getGuid() const ;
-	//!Force the announcement of the participant state.
-	void announceParticipantState();
+	//!Force the announcement of the RTPSParticipant state.
+	void announceRTPSParticipantState();
 	//!Method to loose the next change (ONLY FOR TEST).
 	void loose_next_change();
-	//!Stop the participant announcement period.
-	void stopParticipantAnnouncement();
-	//!Reset the participant announcement period.
-	void resetParticipantAnnouncement();
+	//!Stop the RTPSParticipant announcement period.
+	void stopRTPSParticipantAnnouncement();
+	//!Reset the RTPSParticipant announcement period.
+	void resetRTPSParticipantAnnouncement();
 
 	bool newRemoteWriterDiscovered(const GUID_t& pguid, int16_t userDefinedId);
 	bool newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId);
 
-	uint32_t getParticipantID() const;
+	uint32_t getRTPSParticipantID() const;
 	private:
-	ParticipantImpl* mp_impl;
+	RTPSParticipantImpl* mp_impl;
 };
 
 
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* PARTICIPANT_H_ */
+#endif /* RTPSParticipant_H_ */
 
 
 

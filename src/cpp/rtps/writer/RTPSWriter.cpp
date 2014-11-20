@@ -24,7 +24,7 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "RTPSWriter";
 
-RTPSWriter::RTPSWriter(ParticipantImpl* impl,GUID_t guid,WriterAttributes att,WriterHistory* hist):
+RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t guid,WriterAttributes att,WriterHistory* hist):
 				Endpoint(impl,guid,att.endpoint),
 				m_pushMode(true),
 				m_cdrmessages(hist->m_att.payloadMaxSize),
