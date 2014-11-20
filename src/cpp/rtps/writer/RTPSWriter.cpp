@@ -62,27 +62,7 @@ CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t h
 		logWarning(RTPS_WRITER,"Problem reserving Cache from the History";);
 		return nullptr;
 	}
-	//	if(changeKind == ALIVE && data !=NULL && mp_type !=NULL)
-	//	{
-	//		if(!mp_type->serialize(data,&ch->serializedPayload))
-	//		{
-	//			logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
-	//			m_writer_cache.release_Cache(ch);
-	//			return false;
-	//		}
-	//		else if(ch->serializedPayload.length > mp_type->m_typeSize)
-	//		{
-	//			logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
-	//			m_writer_cache.release_Cache(ch);
-	//			return false;
-	//		}
-	//		else if(ch->serializedPayload.length == 0)
-	//		{
-	//			logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
-	//			m_writer_cache.release_Cache(ch);
-	//			return false;
-	//		}
-	//	}
+
 	ch->kind = changeKind;
 	if(m_att.topicKind == WITH_KEY && !handle.isDefined())
 	{
