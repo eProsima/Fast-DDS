@@ -285,7 +285,7 @@
            </item>
            <item>
             <property name="text">
-             <string>MANUAL_BY_PARTICIPANT</string>
+             <string>MANUAL_BY_RTPSParticipant</string>
             </property>
            </item>
            <item>

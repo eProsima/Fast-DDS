@@ -12,7 +12,7 @@
  */
 
 #include "eprosimartps/builtin/discovery/endpoint/EDPStatic.h"
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 #include "eprosimartps/reader/WriterProxyData.h"
 #include "eprosimartps/writer/ReaderProxyData.h"
@@ -29,7 +29,7 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "EDPStatic";
 
-EDPStatic::EDPStatic(PDPSimple* p,ParticipantImpl* part):
+EDPStatic::EDPStatic(PDPSimple* p,RTPSParticipantImpl* part):
 																																																		EDP(p,part)
 {
 
@@ -95,10 +95,10 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 	const char* const METHOD_NAME = "processLocalReaderProxyData";
 	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName,EPRO_CYAN);
 	//Add the property list entry to our local pdp
-	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	RTPSParticipantProxyData* localpdata = this->mp_PDP->getLocalRTPSParticipantProxyData();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE",rdata->m_userDefinedId,rdata->m_guid.entityId));
 	localpdata->m_hasChanged = true;
-	this->mp_PDP->announceParticipantState(true);
+	this->mp_PDP->announceRTPSParticipantState(true);
 	return true;
 }
 
@@ -107,16 +107,16 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 	const char* const METHOD_NAME = "processLocalWriterProxyData";
 		logInfo(RTPS_EDP,wdata->m_guid.entityId<< " in topic: " <<wdata->m_topicName,EPRO_CYAN);
 	//Add the property list entry to our local pdp
-	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	RTPSParticipantProxyData* localpdata = this->mp_PDP->getLocalRTPSParticipantProxyData();
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",wdata->m_userDefinedId,wdata->m_guid.entityId));
 	localpdata->m_hasChanged = true;
-	this->mp_PDP->announceParticipantState(true);
+	this->mp_PDP->announceRTPSParticipantState(true);
 	return true;
 }
 
 bool EDPStatic::removeLocalReader(RTPSReader* R)
 {
-	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	RTPSParticipantProxyData* localpdata = this->mp_PDP->getLocalRTPSParticipantProxyData();
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
 			pit!=localpdata->m_properties.properties.end();++pit)
 	{
@@ -134,7 +134,7 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
 
 bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 {
-	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	RTPSParticipantProxyData* localpdata = this->mp_PDP->getLocalRTPSParticipantProxyData();
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
 			pit!=localpdata->m_properties.properties.end();++pit)
 	{
@@ -150,7 +150,7 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 	return false;
 }
 
-void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
+void EDPStatic::assignRemoteEndpoints(RTPSParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = pdata->m_properties.properties.begin();
@@ -200,11 +200,11 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	}
 }
 
-bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
+bool EDPStatic::newRemoteReader(RTPSParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
 	const char* const METHOD_NAME = "newRemoteReader";
 	ReaderProxyData* rpd = NULL;
-	if(m_edpXML.lookforReader(pdata->m_participantName,userId,&rpd))
+	if(m_edpXML.lookforReader(pdata->m_RTPSParticipantName,userId,&rpd))
 	{
 		logInfo(RTPS_EDP,"Activating: " << rpd->m_guid.entityId << " in topic " << rpd->m_topicName,EPRO_CYAN);
 		ReaderProxyData* newRPD = new ReaderProxyData();
@@ -220,7 +220,7 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 			return false;
 		}
 		newRPD->m_key = newRPD->m_guid;
-		newRPD->m_participantKey = pdata->m_guid;
+		newRPD->m_RTPSParticipantKey = pdata->m_guid;
 		if(this->mp_PDP->addReaderProxyData(newRPD,false))
 		{
 			//CHECK the locators:
@@ -237,11 +237,11 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 	return false;
 }
 
-bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
+bool EDPStatic::newRemoteWriter(RTPSParticipantProxyData* pdata,uint16_t userId,EntityId_t entId)
 {
 	const char* const METHOD_NAME = "newRemoteWriter";
 	WriterProxyData* wpd = NULL;
-	if(m_edpXML.lookforWriter(pdata->m_participantName,userId,&wpd))
+	if(m_edpXML.lookforWriter(pdata->m_RTPSParticipantName,userId,&wpd))
 	{
 		logInfo(RTPS_EDP,"Activating: " << wpd->m_guid.entityId << " in topic " << wpd->m_topicName,EPRO_CYAN);
 		WriterProxyData* newWPD = new WriterProxyData();
@@ -257,7 +257,7 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 			return false;
 		}
 		newWPD->m_key = newWPD->m_guid;
-		newWPD->m_participantKey = pdata->m_guid;
+		newWPD->m_RTPSParticipantKey = pdata->m_guid;
 		if(this->mp_PDP->addWriterProxyData(newWPD,false))
 		{
 			//CHECK the locators:

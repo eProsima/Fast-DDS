@@ -63,17 +63,17 @@ RTI Connext user manual.
 			
             </datareader_qos>
 
-            <participant_qos>
+            <RTPSParticipant_qos>
                 <!--
-                The participant name, if it is set, will be displayed in the
+                The RTPSParticipant name, if it is set, will be displayed in the
                 RTI Analyzer tool, making it easier for you to tell one
                 application from another when you're debugging.
                 -->
-                <participant_name>
+                <RTPSParticipant_name>
                     <name>RTI "Hello, World" Example</name>
-                </participant_name>
+                </RTPSParticipant_name>
 
-            </participant_qos>
+            </RTPSParticipant_qos>
         </qos_profile>
 
     </qos_library>

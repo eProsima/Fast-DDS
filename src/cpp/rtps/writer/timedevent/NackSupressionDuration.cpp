@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/writer/timedevent/NackSupressionDuration.h"
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
@@ -31,7 +31,7 @@ NackSupressionDuration::~NackSupressionDuration()
 }
 
 NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,double millisec):
-				TimedEvent(p_RP->mp_SFW->getParticipant()->getIOService(),millisec),
+				TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getIOService(),millisec),
 				mp_RP(p_RP)
 {
 

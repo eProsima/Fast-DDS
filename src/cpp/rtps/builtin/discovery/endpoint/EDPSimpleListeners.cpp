@@ -14,8 +14,8 @@
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimpleListeners.h"
 
 #include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "eprosimartps/RTPSParticipant.h"
 #include "eprosimartps/reader/StatefulReader.h"
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/common/types/InstanceHandle.h"
@@ -44,14 +44,14 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 			if(m_writerProxyData.readFromCDRMessage(&m_tempMsg))
 			{
 				change->instanceHandle = m_writerProxyData.m_key;
-				if(m_writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_participant->getGuid().guidPrefix)
+				if(m_writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 				{
-					logInfo(RTPS_EDP,"Message from own participant, ignoring",EPRO_CYAN)
+					logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring",EPRO_CYAN)
 							return;
 				}
 				//LOOK IF IS AN UPDATED INFORMATION
 				WriterProxyData* wdata = NULL;
-				ParticipantProxyData* pdata = NULL;
+				RTPSParticipantProxyData* pdata = NULL;
 				if(this->mp_SEDP->mp_PDP->addWriterProxyData(&m_writerProxyData,true,&wdata,&pdata)) //ADDED NEW DATA
 				{
 					//CHECK the locators:
@@ -63,9 +63,9 @@ void EDPSimplePUBReaderListener::onNewDataMessage()
 					wdata->m_isAlive = true;
 					mp_SEDP->pairingWriterProxy(wdata);
 				}
-				else if(pdata == NULL) //PARTICIPANT NOT FOUND
+				else if(pdata == NULL) //RTPSParticipant NOT FOUND
 				{
-					logWarning(RTPS_EDP,"Received message from UNKNOWN participant, removing");
+					logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
 					this->mp_SEDP->mp_PubReader->change_removed_by_history(change);
 					return;
 				}
@@ -108,14 +108,14 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 			if(m_readerProxyData.readFromCDRMessage(&m_tempMsg))
 			{
 				change->instanceHandle = m_readerProxyData.m_key;
-				if(m_readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_participant->getGuid().guidPrefix)
+				if(m_readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 				{
-					logInfo(RTPS_EDP,"From own participant, ignoring",EPRO_CYAN);
+					logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring",EPRO_CYAN);
 					return;
 				}
 				//LOOK IF IS AN UPDATED INFORMATION
 				ReaderProxyData* rdata = NULL;
-				ParticipantProxyData* pdata = NULL;
+				RTPSParticipantProxyData* pdata = NULL;
 				if(this->mp_SEDP->mp_PDP->addReaderProxyData(&m_readerProxyData,true,&rdata,&pdata)) //ADDED NEW DATA
 				{
 					//CHECK the locators:
@@ -126,9 +126,9 @@ void EDPSimpleSUBReaderListener::onNewDataMessage()
 					rdata->m_isAlive = true;
 					mp_SEDP->pairingReaderProxy(rdata);
 				}
-				else if(pdata == NULL) //PARTICIPANT NOT FOUND
+				else if(pdata == NULL) //RTPSParticipant NOT FOUND
 				{
-					logWarning(RTPS_EDP,"From UNKNOWN participant, removing");
+					logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
 					this->mp_SEDP->mp_PubReader->change_removed_by_history(change);
 					return;
 				}

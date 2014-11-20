@@ -16,19 +16,19 @@
 #include "SimplePublisher.h"
 #include "SimplePubSubType.h"
 
-SimplePublisher::SimplePublisher() : mp_participant(NULL), mp_publisher(NULL) {}
+SimplePublisher::SimplePublisher() : mp_RTPSParticipant(NULL), mp_publisher(NULL) {}
 
 SimplePublisher::~SimplePublisher() {}
 
 bool SimplePublisher::init()
 {
-	// Create Participant
+	// Create RTPSParticipant
 	
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.builtin.domainId = 80;
-	PParam.name = "participant_publisher";  //You can put here the name you want
-	mp_participant = RTPSDomain::createParticipant(PParam);
-	if(mp_participant == NULL)
+	PParam.name = "RTPSParticipant_publisher";  //You can put here the name you want
+	mp_RTPSParticipant = RTPSDomain::createRTPSParticipant(PParam);
+	if(mp_RTPSParticipant == NULL)
 		return false;
 	
 	// Create Publisher
@@ -37,7 +37,7 @@ bool SimplePublisher::init()
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicDataType = "SimpleStructPubSubType";  //This type MUST be registered
 	Wparam.topic.topicName = "SimplePubSubTopic";
-	mp_publisher = RTPSDomain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	mp_publisher = RTPSDomain::createPublisher(mp_RTPSParticipant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == NULL)
 		return false;
 	return true;

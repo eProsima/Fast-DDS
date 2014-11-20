@@ -30,7 +30,7 @@ public:
 private:
 	Subscriber* mp_operation_sub;
 	Publisher* mp_result_pub;
-	Participant* mp_participant;
+	RTPSParticipant* mp_RTPSParticipant;
 	Result::RESULTTYPE calculate(Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
 	ResultDataType* mp_resultdatatype;
 	OperationDataType* mp_operationdatatype;

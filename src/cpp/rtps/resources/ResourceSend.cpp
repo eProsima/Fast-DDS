@@ -13,7 +13,7 @@
 
 #include "eprosimartps/rtps/resources/ResourceSend.h"
 #include "eprosimartps/rtps/resources/ResourceSendImpl.h"
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 
 namespace eprosima {
 namespace rtps {
@@ -29,7 +29,7 @@ ResourceSend::~ResourceSend() {
 	// TODO Auto-generated destructor stub
 }
 
-bool ResourceSend::initSend(ParticipantImpl* pimpl, const Locator_t& loc,
+bool ResourceSend::initSend(RTPSParticipantImpl* pimpl, const Locator_t& loc,
 		uint32_t sendsockBuffer,bool useIP4, bool useIP6)
 {
 	return mp_impl->initSend(pimpl,loc,sendsockBuffer,useIP4,useIP6);

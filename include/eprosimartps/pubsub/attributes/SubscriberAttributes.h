@@ -62,7 +62,7 @@ public:
 	SubscriberTimes times;
 	//!Topic Attributes of the topic associated with this subscriber.
 	TopicAttributes topic;
-	//!User defined Id, only necessary if the participant uses StaticEndpointDiscoveryProtocol.
+	//!User defined Id, only necessary if the RTPSParticipant uses StaticEndpointDiscoveryProtocol.
 	int16_t userDefinedId;
 	//! Reader qos
 	ReaderQos qos;

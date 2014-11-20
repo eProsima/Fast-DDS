@@ -16,7 +16,7 @@
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
 
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 
 #include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
 
@@ -34,7 +34,7 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 }
 
 PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW,double interval):
-				TimedEvent(p_SFW->getParticipant()->getIOService(),interval),
+				TimedEvent(p_SFW->getRTPSParticipant()->getIOService(),interval),
 				mp_SFW(p_SFW)
 {
 
@@ -77,10 +77,10 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 				{
 					for(lit = (*rit)->m_att.endpoint.unicastLocatorList.begin();
 							lit!=(*rit)->m_att.endpoint.unicastLocatorList.end();++lit)
-						mp_SFW->getParticipant()->sendSync(&m_periodic_hb_msg,(*lit));
+						mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(*lit));
 					for(lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();
 							lit!=(*rit)->m_att.endpoint.multicastLocatorList.end();++lit)
-						mp_SFW->getParticipant()->sendSync(&m_periodic_hb_msg,(*lit));
+						mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(*lit));
 				}
 			}
 			//Reset TIMER

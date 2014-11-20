@@ -19,9 +19,9 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 	m_Hello.index(0);
 	m_Hello.message("HelloWorld");
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
@@ -29,8 +29,8 @@ HelloWorldPublisher::HelloWorldPublisher()
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 		PParam.sendSocketBufferSize = 8712;
 		PParam.listenSocketBufferSize = 17424;
-	PParam.name = "participant1";
-	mp_participant = DomainParticipant::createParticipant(PParam);
+	PParam.name = "RTPSParticipant1";
+	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
 
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
@@ -43,7 +43,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 	Wparam.times.heartbeatPeriod.seconds = 2;
 	Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_publisher = DomainParticipant::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	mp_publisher = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,Wparam,(PublisherListener*)&m_listener);
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()

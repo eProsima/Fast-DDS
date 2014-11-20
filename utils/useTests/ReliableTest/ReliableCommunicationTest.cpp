@@ -17,8 +17,8 @@
 
 #include "eprosimartps/rtps_all.h"
 
-//#include "eprosimartps/dds/DomainParticipant.h"
-//#include "eprosimartps/Participant.h"
+//#include "eprosimartps/dds/DomainRTPSParticipant.h"
+//#include "eprosimartps/RTPSParticipant.h"
 //
 //#include "eprosimartps/qos/ParameterList.h"
 //#include "eprosimartps/utils/RTPSLog.h"
@@ -168,9 +168,9 @@ int main(int argc, char** argv)
 	RTPSDomain::registerType((TopicDataType*)&TestTypeData);
 
 
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.builtin.domainId = 80;
 
@@ -179,11 +179,11 @@ int main(int argc, char** argv)
 	{
 	case 1:
 	{
-		PParam.name = "participant1";
+		PParam.name = "RTPSParticipant1";
 		//In this side we only have a Publisher so we don't need all discovery endpoints
 		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
-		Participant* p = RTPSDomain::createParticipant(PParam);
+		RTPSParticipant* p = RTPSDomain::createRTPSParticipant(PParam);
 		PublisherAttributes Wparam;
 		Wparam.topic.topicKind = WITH_KEY;
 		Wparam.topic.topicDataType = "TestType";
@@ -209,7 +209,7 @@ int main(int argc, char** argv)
 			return 0;
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
-		p->stopParticipantAnnouncement();
+		p->stopRTPSParticipantAnnouncement();
 		TestType tp;
 		COPYSTR(tp.name,"Obje1");
 		tp.value = 0;
@@ -242,11 +242,11 @@ int main(int argc, char** argv)
 	}
 	case 2:
 	{
-		PParam.name = "participant2";
+		PParam.name = "RTPSParticipant2";
 		//In this side we only have a subscriber so we dont need all discovery endpoints
 		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
 		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-		Participant* p = RTPSDomain::createParticipant(PParam);
+		RTPSParticipant* p = RTPSDomain::createRTPSParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.topic.topicDataType = "TestType";
 		Rparam.topic.topicName = "Test_Topic";
@@ -269,7 +269,7 @@ int main(int argc, char** argv)
 		Subscriber* sub = RTPSDomain::createSubscriber(p,Rparam,(SubscriberListener*)&mylisten);
 		cout << "Waiting for discovery"<<endl;
 		sema.wait();
-		p->stopParticipantAnnouncement(); //Only for tests to see more clearly the communication
+		p->stopRTPSParticipantAnnouncement(); //Only for tests to see more clearly the communication
 		int i = 0;
 		while(i<20)
 		{

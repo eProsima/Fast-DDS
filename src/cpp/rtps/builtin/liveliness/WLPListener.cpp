@@ -14,12 +14,12 @@
 #include "eprosimartps/builtin/liveliness/WLPListener.h"
 #include "eprosimartps/builtin/liveliness/WLP.h"
 
-#include "eprosimartps/builtin/discovery/participant/PDPSimple.h"
+#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/RTPSParticipant.h"
 #include "eprosimartps/reader/WriterProxyData.h"
 
 #include "eprosimartps/reader/StatefulReader.h"
@@ -46,12 +46,12 @@ typedef std::vector<WriterProxy*>::iterator WPIT;
 void WLPListener::onNewDataMessage()
 {
 	const char* const METHOD_NAME = "onNewDataMessage";
-	boost::lock_guard<Endpoint> guard(*(Endpoint*)this->mp_WLP->mp_builtinParticipantMessageReader);
+	boost::lock_guard<Endpoint> guard(*(Endpoint*)this->mp_WLP->mp_builtinRTPSParticipantMessageReader);
 	logInfo(RTPS_LIVELINESS,"",EPRO_MAGENTA);
 	CacheChange_t* change;
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
-	while(this->mp_WLP->mp_builtinParticipantMessageReader->readNextCacheChange(&change))
+	while(this->mp_WLP->mp_builtinRTPSParticipantMessageReader->readNextCacheChange(&change))
 	{
 		//Check the serializedPayload:
 		if(change->serializedPayload.length>0)
@@ -61,18 +61,18 @@ void WLPListener::onNewDataMessage()
 				guidP.value[i] = change->serializedPayload.data[i];
 			}
 			livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
-			logInfo(RTPS_LIVELINESS,"Participant "<<guidP<< " assert liveliness of "
+			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
 					<<((livelinessKind == 0x00)?"AUTOMATIC":"")
-					<<((livelinessKind==0x01)?"MANUAL_BY_PARTICIPANT":"")<< " writers",EPRO_MAGENTA);
+					<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers",EPRO_MAGENTA);
 		}
 		else
 		{
 			if(!separateKey(change->instanceHandle,&guidP,&livelinessKind))
 				return;
 		}
-		if(guidP == this->mp_WLP->mp_participant->getGuid().guidPrefix)
+		if(guidP == this->mp_WLP->mp_RTPSParticipant->getGuid().guidPrefix)
 		{
-			logInfo(RTPS_LIVELINESS,"Message from own participant, ignoring",EPRO_MAGENTA);
+			logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring",EPRO_MAGENTA);
 			return;
 		}
 		this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);

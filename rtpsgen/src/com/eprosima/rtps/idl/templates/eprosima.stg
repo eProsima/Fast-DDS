@@ -39,11 +39,11 @@ $varname$ = $interface.scopedname$$suffix$Plugin::get_typename();
 >>
 
 registerTypenameOperationAndCheck(operation, suffix, varname) ::= <<
-!$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::register_type(m_ddsTransport->getParticipant(), $varname$)
+!$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::register_type(m_ddsTransport->getRTPSParticipant(), $varname$)
 >>
 
 registerTypenameInterfaceAndCheck(interface, suffix, varname) ::= <<
-!$interface.scopedname$$suffix$Plugin::register_type(m_ddsTransport->getParticipant(), $varname$)
+!$interface.scopedname$$suffix$Plugin::register_type(m_ddsTransport->getRTPSParticipant(), $varname$)
 >>
 
 createDataCallback(operation, suffix) ::= <<

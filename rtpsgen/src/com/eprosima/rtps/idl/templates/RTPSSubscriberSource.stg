@@ -7,20 +7,20 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.cpp"], description=["This 
 #include "$ctx.filename$Subscriber.h"
 #include "$ctx.filename$PubSubType.h"
 
-$ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_participant(NULL), mp_subscriber(NULL) {}
+$ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_RTPSParticipant(NULL), mp_subscriber(NULL) {}
 
 $ctx.filename$Subscriber::~$ctx.filename$Subscriber() {}
 
 bool $ctx.filename$Subscriber::init()
 {
-	// Create Participant
+	// Create RTPSParticipant
 	
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.builtin.domainId = 80; //MUST BE THE SAME AS IN THE PUBLISHER
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.name = "participant_subscriber"; //You can put the name you want
-	mp_participant = DomainParticipant::createParticipant(PParam);
-	if(mp_participant == NULL)
+	PParam.name = "RTPSParticipant_subscriber"; //You can put the name you want
+	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
+	if(mp_RTPSParticipant == NULL)
 			return false;
 			
 	// Create Subscriber
@@ -29,7 +29,7 @@ bool $ctx.filename$Subscriber::init()
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicDataType = "$ctx.m_firstStructure$"; //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
-	mp_subscriber = DomainParticipant::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+	mp_subscriber = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,Rparam,(SubscriberListener*)&m_listener);
 	if(mp_subscriber == NULL)
 		return false;
 	m_listener.mp_sub = mp_subscriber; //We copy the pointer to the subscriber to be able to read and take data from the listener directly

@@ -74,26 +74,26 @@ int main(int argc, char** argv){
 	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
 
 	LatencyDataType latency_t;
-	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&latency_t);
 
 	TestCommandDataType command_t;
-	DomainParticipant::registerType((DDSTopicDataType*)&command_t);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&command_t);
 
-	//Create Participant
-	ParticipantAttributes PParam;
+	//Create RTPSParticipant
+	RTPSParticipantAttributes PParam;
 	PParam.builtin.domainId = 80;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.name = "participant_pub";
-	Participant* part = DomainParticipant::createParticipant(PParam);
+	PParam.name = "RTPSParticipant_pub";
+	RTPSParticipant* part = DomainRTPSParticipant::createRTPSParticipant(PParam);
 	//Create Publisher
 	PublisherAttributes PubDataparam;
 	PubDataparam.topic.topicDataType = "LatencyType";
 	PubDataparam.topic.topicKind = NO_KEY;
 	PubDataparam.topic.topicName = "Topic1";
 	PubListener publistener;
-	Publisher* pub = DomainParticipant::createPublisher(part,PubDataparam,(PublisherListener*)&publistener);
+	Publisher* pub = DomainRTPSParticipant::createPublisher(part,PubDataparam,(PublisherListener*)&publistener);
 
 	SubscriberAttributes SubDataparam;
 	Locator_t loc;
@@ -105,7 +105,7 @@ int main(int argc, char** argv){
 	SubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	SubListener sublistener;
-	Subscriber* sub = DomainParticipant::createSubscriber(part,SubDataparam,&sublistener);
+	Subscriber* sub = DomainRTPSParticipant::createSubscriber(part,SubDataparam,&sublistener);
 
 	//eClock::my_sleep(500);
 	//cout << "Getting Publisher Attributes "<<endl;
@@ -130,7 +130,7 @@ int main(int argc, char** argv){
 	sub->updateAttributes(satt);
 
 	eClock::my_sleep(2000);
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;

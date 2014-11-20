@@ -16,7 +16,7 @@
 #include "eprosimashapesdemo/qt/mainwindow.h"
 
 ShapesDemo::ShapesDemo(MainWindow *mw):
-    mp_participant(NULL),
+    mp_RTPSParticipant(NULL),
     m_isInitialized(false),
     minX(0),minY(0),maxX(0),maxY(0),
     m_mainWindow(mw),
@@ -34,14 +34,14 @@ ShapesDemo::~ShapesDemo()
     stop();
 }
 
-Participant* ShapesDemo::getParticipant()
+RTPSParticipant* ShapesDemo::getRTPSParticipant()
 {
-    if(m_isInitialized && mp_participant !=NULL)
-        return mp_participant;
+    if(m_isInitialized && mp_RTPSParticipant !=NULL)
+        return mp_RTPSParticipant;
     else
     {
         if(init())
-            return mp_participant;
+            return mp_RTPSParticipant;
     }
     return NULL;
 }
@@ -51,19 +51,19 @@ bool ShapesDemo::init()
     cout << "Initializing ShapesDemo "<< m_isInitialized <<endl;
     if(!m_isInitialized)
     {
-        cout <<"Creating new participant"<<endl;
-        ParticipantAttributes pparam;
-        pparam.name = "eProsimaParticipant";
+        cout <<"Creating new RTPSParticipant"<<endl;
+        RTPSParticipantAttributes pparam;
+        pparam.name = "eProsimaRTPSParticipant";
         pparam.builtin.domainId = m_options.m_domainId;
         pparam.builtin.leaseDuration.seconds = 100;
         pparam.builtin.leaseDuration_announcementperiod.seconds = 50;
         pparam.defaultSendPort = 10042;
         pparam.sendSocketBufferSize = 65536;
         pparam.listenSocketBufferSize = 2*65536;
-        mp_participant = RTPSDomain::createParticipant(pparam);
-        if(mp_participant!=NULL)
+        mp_RTPSParticipant = RTPSDomain::createRTPSParticipant(pparam);
+        if(mp_RTPSParticipant!=NULL)
         {
-            // cout << "Participant Created "<< mp_participant->getGuid() << endl;l
+            // cout << "RTPSParticipant Created "<< mp_RTPSParticipant->getGuid() << endl;l
             m_isInitialized = true;
             RTPSDomain::registerType(&m_shapeTopicDataType);
             return true;
@@ -91,9 +91,9 @@ void ShapesDemo::stop()
             delete(*it);
         }
         m_subscribers.clear();
-        RTPSDomain::removeParticipant(mp_participant);
+        RTPSDomain::removeRTPSParticipant(mp_RTPSParticipant);
         cout << "All Stoped, removing"<<endl;
-        mp_participant = NULL;
+        mp_RTPSParticipant = NULL;
         m_isInitialized = false;
     }
 }

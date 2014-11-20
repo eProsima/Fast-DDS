@@ -28,11 +28,11 @@ class ContentFilterSelector;
  */
 class ShapeSubscriber: public SubscriberListener {
 public:
-    ShapeSubscriber(Participant* par);
+    ShapeSubscriber(RTPSParticipant* par);
 	virtual ~ShapeSubscriber();
 	SubscriberAttributes m_attributes;
     Subscriber* mp_sub;
-	Participant* mp_participant;
+	RTPSParticipant* mp_RTPSParticipant;
     /**
      * @brief Initialize the subscriber
      * @return True if correct.

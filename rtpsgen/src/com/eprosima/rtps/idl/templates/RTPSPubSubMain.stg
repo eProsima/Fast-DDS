@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 	// Register the type being used
 	
 	$ctx.filename$PubSubType myType;
-	DomainParticipant::registerType((TopicDataType*) &myType);
+	DomainRTPSParticipant::registerType((TopicDataType*) &myType);
 	
 	switch(type)
 	{
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 	
 	return 0;
 }

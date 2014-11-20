@@ -14,7 +14,7 @@
 #include "eprosimartps/rtps/resources/ListenResourceImpl.h"
 #include "eprosimartps/rtps/resources/ListenResource.h"
 #include "eprosimartps/rtps/messages/MessageReceiver.h"
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -31,7 +31,7 @@ typedef std::vector<RTPSWriter*>::iterator Wit;
 typedef std::vector<RTPSReader*>::iterator Rit;
 
 ListenResourceImpl::ListenResourceImpl(ListenResource* LR):
-		mp_participantImpl(nullptr),
+		mp_RTPSParticipantImpl(nullptr),
 		mp_listenResource(LR),
 		mp_thread(nullptr),
 		m_listen_socket(m_io_service)
@@ -84,7 +84,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 		}
 		try
 		{
-			mp_listenResource->mp_receiver->processCDRMsg(mp_participantImpl->getGuid().guidPrefix,
+			mp_listenResource->mp_receiver->processCDRMsg(mp_RTPSParticipantImpl->getGuid().guidPrefix,
 					&m_senderLocator,
 					&mp_listenResource->mp_receiver->m_rec_msg);
 		}
@@ -108,7 +108,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 	}
 }
 
-Locator_t ListenResourceImpl::init_thread(ParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
+Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
 	m_listenLoc = loc;
@@ -191,7 +191,7 @@ Locator_t ListenResourceImpl::init_thread(ParticipantImpl* pimpl,Locator_t& loc,
 	this->putToListen();
 
 	mp_thread = new boost::thread(&ListenResourceImpl::run_io_service,this);
-	mp_participantImpl->ResourceSemaphoreWait();
+	mp_RTPSParticipantImpl->ResourceSemaphoreWait();
 	return m_listenLoc;
 }
 
@@ -212,7 +212,7 @@ void ListenResourceImpl::run_io_service()
 	const char* const METHOD_NAME = "run_io_service";
 	logInfo(RTPS_MSG_IN,"Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;
 
-	mp_participantImpl->ResourceSemaphorePost();
+	mp_RTPSParticipantImpl->ResourceSemaphorePost();
 
 	this->m_io_service.run();
 }

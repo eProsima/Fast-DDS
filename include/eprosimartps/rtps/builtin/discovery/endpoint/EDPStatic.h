@@ -45,7 +45,7 @@ public:
  */
 class EDPStatic : public EDP {
 public:
-	EDPStatic(PDPSimple* p,ParticipantImpl* part);
+	EDPStatic(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPStatic();
 	/**
 	 * Abstract method to initialize the EDP.
@@ -54,10 +54,10 @@ public:
 	 */
 	bool initEDP(BuiltinAttributes& attributes);
 	/**
-	 * Abstract method that assigns remote endpoints when a new participantProxyData is discovered.
+	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
 	 * @param pdata
 	 */
-	void assignRemoteEndpoints(ParticipantProxyData* pdata);
+	void assignRemoteEndpoints(RTPSParticipantProxyData* pdata);
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
 	 * @param R Pointer to the Reader to remove.
@@ -86,20 +86,20 @@ public:
 
 	/**
 	 * New Remote Writer has been found and this method process it and calls the pairing methods.
-	 * @param pdata Pointer to the ParticipantProxyData object.
+	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @param userId UserId.
 	 * @param entId EntityId.
 	 * @return True if correct.
 	 */
-	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	bool newRemoteWriter(RTPSParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	 * New Remote Reader has been found and this method process it and calls the pairing methods.
-	 * @param pdata Pointer to the ParticipantProxyData object.
+	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @param userId UserId.
 	 * @param entId EntityId.
 	 * @return true if correct.
 	 */
-	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	bool newRemoteReader(RTPSParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	* This method checks the provided entityId against the topic type to see if it matches
 	* @param rdata Pointer to the readerProxyData

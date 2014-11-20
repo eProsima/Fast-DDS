@@ -18,9 +18,9 @@
 
 
 
-//! [ex_ParticipantConstructor]
-Participant p;
-//! [ex_ParticipantConstructor]
+//! [ex_RTPSParticipantConstructor]
+RTPSParticipant p;
+//! [ex_RTPSParticipantConstructor]
 
 
 

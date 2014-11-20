@@ -26,11 +26,11 @@ class dds::Publisher;
  */
 class ShapePublisher: public PublisherListener {
 public:
-	ShapePublisher(Participant* par);
+	ShapePublisher(RTPSParticipant* par);
 	virtual ~ShapePublisher();
 	PublisherAttributes m_attributes;
 	Publisher* mp_pub;
-	Participant* mp_participant;
+	RTPSParticipant* mp_RTPSParticipant;
     /**
      * @brief Initialize the publisher.
      * @return  True if correct.

@@ -24,8 +24,8 @@
 
 #include "eprosimartps/rtps_all.h"
 
-#include "eprosimartps/dds/DomainParticipant.h"
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/dds/DomainRTPSParticipant.h"
+#include "eprosimartps/RTPSParticipant.h"
 
 #include "eprosimartps/qos/ParameterList.h"
 #include "eprosimartps/utils/RTPSLog.h"
@@ -177,13 +177,13 @@ int main(int argc, char** argv)
 		type = WR;
 
 	TestTypeDataType TestTypeData;
-	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 
 
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = false;
-	Participant* p = DomainParticipant::createParticipant(PParam);
+	PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
+	RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 
 
 	switch(type)
@@ -202,7 +202,7 @@ int main(int argc, char** argv)
 		loc.kind = 1;
 		loc.port = 10046;
 		Wparam.unicastLocatorList.push_back(loc);
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam);
+		Publisher* pub = DomainRTPSParticipant::createPublisher(p,Wparam);
 		if(pub == NULL)
 			return 0;
 		//Reader Proxy
@@ -250,7 +250,7 @@ int main(int argc, char** argv)
 		else if(type ==3)
 			loc.port = 10046;
 		Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+		Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam);
 		TestTypeListener listener;
 		sub->assignListener((SubscriberListener*)&listener);
 		int i = 0;
@@ -278,7 +278,7 @@ int main(int argc, char** argv)
 	cout << "Enter numer "<< endl;
 		int n;
 		cin >> n;
-		DomainParticipant::stopAll();
+		DomainRTPSParticipant::stopAll();
 
 
 	return 0;

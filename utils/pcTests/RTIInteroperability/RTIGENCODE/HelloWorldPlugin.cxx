@@ -153,37 +153,37 @@ SampleTypePluginSupport_print_data(
 
 
 
-PRESTypePluginParticipantData 
-SampleTypePlugin_on_participant_attached(
+PRESTypePluginRTPSParticipantData 
+SampleTypePlugin_on_RTPSParticipant_attached(
     void *registration_data,
-    const struct PRESTypePluginParticipantInfo *participant_info,
+    const struct PRESTypePluginRTPSParticipantInfo *RTPSParticipant_info,
     RTIBool top_level_registration,
     void *container_plugin_context,
     RTICdrTypeCode *type_code)
 {
 
     if (registration_data) {} /* To avoid warnings */
-    if (participant_info) {} /* To avoid warnings */
+    if (RTPSParticipant_info) {} /* To avoid warnings */
     if (top_level_registration) {} /* To avoid warnings */
     if (container_plugin_context) {} /* To avoid warnings */
     if (type_code) {} /* To avoid warnings */
-    return PRESTypePluginDefaultParticipantData_new(participant_info);
+    return PRESTypePluginDefaultRTPSParticipantData_new(RTPSParticipant_info);
 
 }
 
 
 void 
-SampleTypePlugin_on_participant_detached(
-    PRESTypePluginParticipantData participant_data)
+SampleTypePlugin_on_RTPSParticipant_detached(
+    PRESTypePluginRTPSParticipantData RTPSParticipant_data)
 {
 
-  PRESTypePluginDefaultParticipantData_delete(participant_data);
+  PRESTypePluginDefaultRTPSParticipantData_delete(RTPSParticipant_data);
 }
 
 
 PRESTypePluginEndpointData
 SampleTypePlugin_on_endpoint_attached(
-    PRESTypePluginParticipantData participant_data,
+    PRESTypePluginRTPSParticipantData RTPSParticipant_data,
     const struct PRESTypePluginEndpointInfo *endpoint_info,
     RTIBool top_level_registration, 
     void *containerPluginContext)
@@ -196,7 +196,7 @@ SampleTypePlugin_on_endpoint_attached(
    if (containerPluginContext) {} /* To avoid warnings */
 
     epd = PRESTypePluginDefaultEndpointData_new(
-            participant_data,
+            RTPSParticipant_data,
             endpoint_info,
             (PRESTypePluginDefaultEndpointDataCreateSampleFunction)
             SampleTypePluginSupport_create_data,
@@ -823,12 +823,12 @@ struct PRESTypePlugin *SampleTypePlugin_new(void)
     plugin->version = PLUGIN_VERSION;
 
     /* set up parent's function pointers */
-    plugin->onParticipantAttached =
-        (PRESTypePluginOnParticipantAttachedCallback)
-        SampleTypePlugin_on_participant_attached;
-    plugin->onParticipantDetached =
-        (PRESTypePluginOnParticipantDetachedCallback)
-        SampleTypePlugin_on_participant_detached;
+    plugin->onRTPSParticipantAttached =
+        (PRESTypePluginOnRTPSParticipantAttachedCallback)
+        SampleTypePlugin_on_RTPSParticipant_attached;
+    plugin->onRTPSParticipantDetached =
+        (PRESTypePluginOnRTPSParticipantDetachedCallback)
+        SampleTypePlugin_on_RTPSParticipant_detached;
     plugin->onEndpointAttached =
         (PRESTypePluginOnEndpointAttachedCallback)
         SampleTypePlugin_on_endpoint_attached;

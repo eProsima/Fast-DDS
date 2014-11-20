@@ -29,13 +29,13 @@ ResourceSendImpl::ResourceSendImpl() :
 						m_send_socket_v6(m_send_service),
 						m_bytes_sent(0),
 						m_send_next(true),
-						mp_participant(nullptr),
+						mp_RTPSParticipant(nullptr),
 						mp_mutex(new boost::recursive_mutex())
 {
 
 }
 
-bool ResourceSendImpl::initSend(ParticipantImpl* pimpl,const Locator_t& loc,uint32_t sendsockBuffer,bool useIP4,bool useIP6)
+bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,uint32_t sendsockBuffer,bool useIP4,bool useIP6)
 {
 	const char* const METHOD_NAME = "initSend";
 

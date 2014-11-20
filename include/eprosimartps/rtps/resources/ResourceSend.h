@@ -25,7 +25,7 @@ namespace eprosima {
 namespace rtps {
 
 class ResourceSendImpl;
-class ParticipantImpl;
+class RTPSParticipantImpl;
 class Locator_t;
 class CDRMessage_t;
 
@@ -33,7 +33,7 @@ class ResourceSend {
 public:
 	ResourceSend();
 	virtual ~ResourceSend();
-	bool initSend(ParticipantImpl* pimpl,const Locator_t& loc,
+	bool initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			uint32_t sendsockBuffer, bool useIP4, bool useIP6);
 	void sendSync(CDRMessage_t* msg, const Locator_t& loc);
 	boost::recursive_mutex* getMutex();

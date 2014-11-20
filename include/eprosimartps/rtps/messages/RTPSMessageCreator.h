@@ -47,7 +47,7 @@ public:
 	/**
 	 * Create a Header to the serialized message.
 	 * @param msg Pointer to the Message.
-	 * @param Prefix Participant prefix of the message.
+	 * @param Prefix RTPSParticipant prefix of the message.
 	 * @param version Protocol version.
 	 * @param vendorId Vendor Id.
 	 * @return True if correct.
@@ -71,7 +71,7 @@ public:
 	 * These methods create a CDR message for different types
 	 * Depending on the function a complete message (with RTPS Header is created) or only the submessage.
 	 * @param[out] msg Pointer to where the message is going to be created and stored.
-	 * @param[in] guidPrefix Guid Prefix of the participant.
+	 * @param[in] guidPrefix Guid Prefix of the RTPSParticipant.
 	 * @param[in] param Different parameters depending on the message.
 	 * @return True if correct.
 	 */

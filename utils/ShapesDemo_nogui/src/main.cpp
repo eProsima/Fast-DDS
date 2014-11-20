@@ -68,7 +68,7 @@ void publish(ShapesDemo *mp_sd, int argc, char *argv[])
 	parseArguments(argv);
 	
 
-	ShapePublisher* SP = new ShapePublisher(mp_sd->getParticipant());
+	ShapePublisher* SP = new ShapePublisher(mp_sd->getRTPSParticipant());
 	//Get the different elements
 	//ShapeAttributes
 	setShapeAttributes(SP, mp_sd);
@@ -114,7 +114,7 @@ void publish(ShapesDemo *mp_sd, int argc, char *argv[])
    //if(this->ui->comboBox_liveliness->currentIndex() == 0)
        SP->m_attributes.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
    /*if(this->ui->comboBox_liveliness->currentIndex() == 1)
-       SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+       SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_RTPSParticipant_LIVELINESS_QOS;
    if(this->ui->comboBox_liveliness->currentIndex() == 2)
        SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
    if(this->ui->lineEdit_leaseDuration->text()=="INF")
@@ -255,8 +255,8 @@ int main(int argc, char *argv[])
 	m_shapesDemo.init();
 	if(m_shapesDemo.isInitialized())
 	{
-		//addMessageToOutput(QString("Participant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
-		printf("Participant ready in domainId %d\n", m_shapesDemo.getOptions().m_domainId);
+		//addMessageToOutput(QString("RTPSParticipant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
+		printf("RTPSParticipant ready in domainId %d\n", m_shapesDemo.getOptions().m_domainId);
 	}
 	
 	publish(&m_shapesDemo, argc, argv);

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ResendParticipantProxyDataPeriod.h
+ * @file ResendRTPSParticipantProxyDataPeriod.h
  *
  */
 
@@ -24,16 +24,16 @@ namespace rtps {
 class PDPSimple;
 class ResourceEvent;
 /**
- * Class ResendParticipantProxyDataPeriod, TimedEvent used to periodically send the ParticipantDiscovery Data.
+ * Class ResendRTPSParticipantProxyDataPeriod, TimedEvent used to periodically send the RTPSParticipantDiscovery Data.
  * @ingroup DISCOVERYMODULE
  */
-class ResendParticipantProxyDataPeriod: public TimedEvent {
+class ResendRTPSParticipantProxyDataPeriod: public TimedEvent {
 public:
-	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
+	ResendRTPSParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 			ResourceEvent* pEvent,
 			boost::posix_time::milliseconds interval);
-	virtual ~ResendParticipantProxyDataPeriod();
-	//!Temporal event that resends the participantProxyData to all remote participants.
+	virtual ~ResendRTPSParticipantProxyDataPeriod();
+	//!Temporal event that resends the RTPSParticipantProxyData to all remote RTPSParticipants.
 	void event(const boost::system::error_code& ec);
 	//!Auxiliar data message.
 	CDRMessage_t m_data_msg;

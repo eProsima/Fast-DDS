@@ -26,7 +26,7 @@
 namespace eprosima {
 namespace rtps {
 
-class ParticipantImpl;
+class RTPSParticipantImpl;
 class ListenResource;
 
 /**
@@ -45,14 +45,14 @@ public:
 	 * @param isFixed Boolean to indicate whether another locator can be use in case the default is already being used.
 	 * @return The locator that has been opennend.
 	 */
-	Locator_t init_thread(ParticipantImpl* pimpl,Locator_t& loc,uint32_t listenSocketSize,bool isMulti,bool isFixed);
+	Locator_t init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,uint32_t listenSocketSize,bool isMulti,bool isFixed);
 
 	//!Returns true if the ListenResourceImpl is listenning to a specific locator.
 	bool isListeningTo(const Locator_t& loc);
 //	//!Returns trus if the ListenResourceImpl has any associated endpoints.
 //	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
-//	//!Get the pointer to the participant
-//	ParticipantImpl* getParticipantImpl(){return mp_participantImpl;};
+//	//!Get the pointer to the RTPSParticipant
+//	RTPSParticipantImpl* getRTPSParticipantImpl(){return mp_RTPSParticipantImpl;};
 	void putToListen();
 
 	inline boost::recursive_mutex* getMutex() {return &m_mutex;};
@@ -60,7 +60,7 @@ public:
 	inline const Locator_t& getListenLoc() const {return m_listenLoc;}
 
 private:
-	ParticipantImpl* mp_participantImpl;
+	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 	ListenResource* mp_listenResource;
 	boost::thread* mp_thread;
 	boost::asio::io_service m_io_service;

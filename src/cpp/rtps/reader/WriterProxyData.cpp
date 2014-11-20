@@ -56,7 +56,7 @@ bool WriterProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	{
-		ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_participantKey);
+		ParameterGuid_t* p = new ParameterGuid_t(PID_RTPSParticipant_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	{
@@ -308,15 +308,15 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				m_typeName = p->m_string;
 				break;
 			}
-			case PID_PARTICIPANT_GUID:
+			case PID_RTPSParticipant_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
 				for(uint8_t i =0;i<16;++i)
 				{
 					if(i<12)
-						m_participantKey.value[i] = p->guid.guidPrefix.value[i];
+						m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
 					else
-						m_participantKey.value[i] = p->guid.entityId.value[i];
+						m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i];
 				}
 				break;
 			}
@@ -374,7 +374,7 @@ void WriterProxyData::clear()
 	m_unicastLocatorList.clear();
 	m_multicastLocatorList.clear();
 	m_key = InstanceHandle_t();
-	m_participantKey = InstanceHandle_t();
+	m_RTPSParticipantKey = InstanceHandle_t();
 	m_typeName = "";
 	m_topicName = "";
 	m_userDefinedId = 0;
@@ -394,7 +394,7 @@ void WriterProxyData::copy(WriterProxyData* wdata)
 	m_unicastLocatorList = wdata->m_unicastLocatorList;
 	m_multicastLocatorList = wdata->m_multicastLocatorList;
 	m_key = wdata->m_key;
-	m_participantKey = wdata->m_participantKey;
+	m_RTPSParticipantKey = wdata->m_RTPSParticipantKey;
 	m_typeName = wdata->m_typeName;
 	m_topicName = wdata->m_topicName;
 	m_userDefinedId = wdata->m_userDefinedId;

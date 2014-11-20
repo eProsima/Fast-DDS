@@ -18,6 +18,6 @@ int main(int argc, char *argv[])
     w.show();
 
     a.exec();
-    DomainParticipant::stopAll();
+    DomainRTPSParticipant::stopAll();
     return 0;
 }

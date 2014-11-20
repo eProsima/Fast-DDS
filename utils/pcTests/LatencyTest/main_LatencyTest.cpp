@@ -133,10 +133,10 @@ int main(int argc, char** argv){
 	}
 
 	LatencyDataType latency_t;
-	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&latency_t);
 
 	TestCommandDataType command_t;
-	DomainParticipant::registerType((DDSTopicDataType*)&command_t);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&command_t);
 
 	switch (type)
 	{
@@ -157,7 +157,7 @@ int main(int argc, char** argv){
 	}
 	}
 
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;

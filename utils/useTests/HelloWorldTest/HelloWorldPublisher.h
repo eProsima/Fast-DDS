@@ -24,7 +24,7 @@ public:
 	bool publish();
 private:
 	HelloWorld m_Hello;
-	Participant* mp_participant;
+	RTPSParticipant* mp_RTPSParticipant;
 	Publisher* mp_publisher;
 	class PubListener:public PublisherListener
 	{

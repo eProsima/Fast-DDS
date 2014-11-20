@@ -14,19 +14,19 @@
 #ifndef EDP_H_
 #define EDP_H_
 
-#include "eprosimartps/pubsub/attributes/ParticipantAttributes.h"
+#include "eprosimartps/pubsub/attributes/RTPSParticipantAttributes.h"
 #include "eprosimartps/common/types/Guid.h"
 
 namespace eprosima {
 namespace rtps {
 
 class PDPSimple;
-class ParticipantProxyData;
+class RTPSParticipantProxyData;
 class RTPSWriter;
 class RTPSReader;
 class ReaderProxyData;
 class WriterProxyData;
-class ParticipantImpl;
+class RTPSParticipantImpl;
 
 
 /**
@@ -36,7 +36,7 @@ class ParticipantImpl;
  */
 class EDP {
 public:
-	EDP(PDPSimple* p,ParticipantImpl* part);
+	EDP(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDP();
 
 	/**
@@ -46,12 +46,12 @@ public:
 	 */
 	virtual bool initEDP(BuiltinAttributes& attributes)=0;
 	/**
-	 * Abstract method that assigns remote endpoints when a new participantProxyData is discovered.
+	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
 	 * @param pdata
 	 */
-	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
+	virtual void assignRemoteEndpoints(RTPSParticipantProxyData* pdata)=0;
 
-	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
+	virtual void removeRemoteEndpoints(RTPSParticipantProxyData* pdata){};
 
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
@@ -171,8 +171,8 @@ public:
 
 	//! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
 	PDPSimple* mp_PDP;
-	//! Pointer to the participant.
-	ParticipantImpl* mp_participant;
+	//! Pointer to the RTPSParticipant.
+	RTPSParticipantImpl* mp_RTPSParticipant;
 
 };
 

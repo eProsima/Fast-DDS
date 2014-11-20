@@ -7,13 +7,13 @@
  *************************************************************************/
 
 /**
- * @file DomainParticipant.h 	
+ * @file DomainRTPSParticipant.h 	
  */
 
 
 
-#ifndef RTPSPARTICIPANT_H_
-#define RTPSPARTICIPANT_H_
+#ifndef RTPSRTPSParticipant_H_
+#define RTPSRTPSParticipant_H_
 
 #include "eprosimartps/common/types/common_types.h"
 #include "eprosimartps/pubsub/attributes/all_attributes.h"
@@ -23,10 +23,10 @@
 namespace eprosima{
 
 namespace rtps{
-class Participant;
-class ParticipantImpl;
+class RTPSParticipant;
+class RTPSParticipantImpl;
 
-typedef std::pair<Participant*,ParticipantImpl*> ParticipantPair;
+typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> RTPSParticipantPair;
 
 }
 
@@ -45,72 +45,72 @@ class Subscriber;
 class SubscriberImpl;
 class PublisherListener;
 class SubscriberListener;
-class ParticipantListener;
+class RTPSParticipantListener;
 
 typedef std::pair<Subscriber*,SubscriberImpl*> SubscriberPair;
 typedef std::pair<Publisher*,PublisherImpl*> PublisherPair;
 
 /**
- * Class DomainParticipantImpl, singleton that performs all operations permitted by the DomainParticipant class. It also stores information
- * regarding all Participants created in this Domain.
+ * Class DomainRTPSParticipantImpl, singleton that performs all operations permitted by the DomainRTPSParticipant class. It also stores information
+ * regarding all RTPSParticipants created in this Domain.
  */
 class RTPSDomainImpl
 {
 private:
 	RTPSDomainImpl();
     /**
-     * DomainParticipant destructor
+     * DomainRTPSParticipant destructor
      */
     ~RTPSDomainImpl();
 
-    bool getParticipantImpl(Participant*,ParticipantImpl**);
+    bool getRTPSParticipantImpl(RTPSParticipant*,RTPSParticipantImpl**);
 
 public:
     /**
-     * Method to shut down all participants, readers, writers, etc.
+     * Method to shut down all RTPSParticipants, readers, writers, etc.
      * It must be called at the end of the process to avoid memory leaks.
-     * It also shut downs the DomainParticipant.
+     * It also shut downs the DomainRTPSParticipant.
      */
     void stopAll();
 	/**
-	 * @brief Create a Publisher in the given Participant. 
-	 * @param p Pointer to the Participant.
+	 * @brief Create a Publisher in the given RTPSParticipant. 
+	 * @param p Pointer to the RTPSParticipant.
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @param plisten Pointer to the PublisherListener (optional).
 	 * @return Pointer to the publisher. 
 	 */
-    Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL);
+    Publisher* createPublisher(RTPSParticipant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL);
 	/**
-	 * @brief Create a Subscriber in the given Participant. 
-	 * @param p Pointer to the Participant.
+	 * @brief Create a Subscriber in the given RTPSParticipant. 
+	 * @param p Pointer to the RTPSParticipant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @param slisten Pointer to the SubscriberListener (optional).
 	 * @return Pointer to the subscriber. 
 	 */
-    Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL);
+    Subscriber* createSubscriber(RTPSParticipant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL);
 
     /**
-     * @brief Create a Participant.
-     * @snippet pubsub_example.cpp ex_ParticipantCreation
-     * @param PParam Participant Parameters.
-     * @return Pointer to the participant.
+     * @brief Create a RTPSParticipant.
+     * @snippet pubsub_example.cpp ex_RTPSParticipantCreation
+     * @param PParam RTPSParticipant Parameters.
+     * @return Pointer to the RTPSParticipant.
      */
-    Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL);
+    RTPSParticipant* createRTPSParticipant(const RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = NULL);
 
     /**
-     * Remove a participant and delete all its associated Writers, Readers, resources, etc.
-     * @param[in] p Pointer to the Participant;
+     * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
+     * @param[in] p Pointer to the RTPSParticipant;
      * @return True if correct.
      */
-    bool removeParticipant(Participant* p);
+    bool removeRTPSParticipant(RTPSParticipant* p);
     /**
-     * Remove a publisher from the Participant.
+     * Remove a publisher from the RTPSParticipant.
      */
-    bool removePublisher(Participant* p,Publisher* pub);
+    bool removePublisher(RTPSParticipant* p,Publisher* pub);
     /**
-     * Remove a subscriber from a participant.
+     * Remove a subscriber from a RTPSParticipant.
      */
-    bool removeSubscriber(Participant* p,Subscriber* sub);
+    bool removeSubscriber(RTPSParticipant* p,Subscriber* sub);
 
     /**
      * Register a type in the domain.
@@ -144,7 +144,7 @@ public:
     {
     	m_portBase = PB;
     	m_domainIdGain = DG;
-    	m_participantIdGain = PG;
+    	m_RTPSParticipantIdGain = PG;
     	m_offsetd0 = d0;
     	m_offsetd1 = d1;
     	m_offsetd2 = d2;
@@ -164,12 +164,12 @@ public:
 
 	uint16_t getOffsetd3() const {		return m_offsetd3;	}
 
-	uint16_t getParticipantIdGain() const {		return m_participantIdGain;	}
+	uint16_t getRTPSParticipantIdGain() const {		return m_RTPSParticipantIdGain;	}
 
 	uint16_t getPortBase() const {		return m_portBase;	}
 
-	void setMaxParticipantId(uint32_t maxParticipantId) {
-		m_maxParticipantID = maxParticipantId;
+	void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
+		m_maxRTPSParticipantID = maxRTPSParticipantId;
 	}
 
 	///@}
@@ -178,21 +178,21 @@ public:
 	{
 		return getPortBase()+ getDomainIdGain() * domainId+ getOffsetd0();
 	}
-	uint32_t getUnicastPort(uint32_t domainId,uint32_t participantID)
+	uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
 	{
-		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getParticipantIdGain() * participantID;
+		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getRTPSParticipantIdGain() * RTPSParticipantID;
 	}
 
 
 private:
-	uint32_t m_maxParticipantID;
+	uint32_t m_maxRTPSParticipantID;
 	static bool instanceFlag;
 	static RTPSDomainImpl *single;
 	std::vector<TopicDataType*> m_registeredTypes;
 
 	uint16_t m_portBase;
 	uint16_t m_domainIdGain;
-	uint16_t m_participantIdGain;
+	uint16_t m_RTPSParticipantIdGain;
 	uint16_t m_offsetd0;
 	uint16_t m_offsetd1;
 	uint16_t m_offsetd2;
@@ -200,24 +200,24 @@ private:
 
 	std::vector<PublisherPair> m_publisherList;
 	std::vector<SubscriberPair> m_subscriberList;
-	std::vector<ParticipantPair> m_participants;
+	std::vector<RTPSParticipantPair> m_RTPSParticipants;
 
 	uint16_t m_DomainId;
 
 	/**
-	 * @brief Get Id to create a participant.
+	 * @brief Get Id to create a RTPSParticipant.
 	 * @return Different ID for each call.
 	 */
 	uint32_t getNewId();
 
-	std::set<uint32_t> m_participantIDs;
+	std::set<uint32_t> m_RTPSParticipantIDs;
 
 };
 
 
 
 /**
- * Class DomainParticipant, contains the static functions to create Publishers and Subscribers, as well as to register types.
+ * Class DomainRTPSParticipant, contains the static functions to create Publishers and Subscribers, as well as to register types.
  * It can be directly accessed by the user, though only by static methods.
   * @ingroup PUBSUBMODULE
  */
@@ -225,66 +225,66 @@ class RTPS_DllAPI RTPSDomain
 {
 public:
 	/**
-	 * Method to shut down all participants, readers, writers, etc.
+	 * Method to shut down all RTPSParticipants, readers, writers, etc.
 	 * It must be called at the end of the process to avoid memory leaks.
-	 * It also shut downs the DomainParticipant.
+	 * It also shut downs the DomainRTPSParticipant.
 	 */
 	static void stopAll()
 	{
 		RTPSDomainImpl::getInstance()->stopAll();
 	}
 	/**
-	 * @brief Create a Publisher in the given Participant.
-	 * @param p Pointer to the Participant.
+	 * @brief Create a Publisher in the given RTPSParticipant.
+	 * @param p Pointer to the RTPSParticipant.
 	 * @param WParam Writer Parameters to create a Publisher.
 	 * @param plisten Pointer to the PublisherListener (optional).
 	 * @return Pointer to the publisher.
 	 */
-	static Publisher* createPublisher(Participant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL)
+	static Publisher* createPublisher(RTPSParticipant* p, PublisherAttributes& WParam,PublisherListener* plisten=NULL)
 	{
 		return (RTPSDomainImpl::getInstance()->createPublisher(p,WParam,plisten));
 	}
 	/**
-	 * @brief Create a Subscriber in the given Participant.
-	 * @param p Pointer to the Participant.
+	 * @brief Create a Subscriber in the given RTPSParticipant.
+	 * @param p Pointer to the RTPSParticipant.
 	 * @param RParam Reader Parameters to create a Publisher.
 	 * @param slisten Pointer to the SubscriberListener (optional).
 	 * @return Pointer to the subscriber.
 	 */
-	static Subscriber* createSubscriber(Participant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL)
+	static Subscriber* createSubscriber(RTPSParticipant* p, SubscriberAttributes& RParam,SubscriberListener* slisten=NULL)
 	{
 		return (RTPSDomainImpl::getInstance()->createSubscriber(p,RParam,slisten));
 	}
 	/**
-	 * @brief Create a Participant.
-	 * @snippet pubsub_example.cpp ex_ParticipantCreation
-	 * @param PParam Participant Parameters.
-	 * @return Pointer to the participant.
+	 * @brief Create a RTPSParticipant.
+	 * @snippet pubsub_example.cpp ex_RTPSParticipantCreation
+	 * @param PParam RTPSParticipant Parameters.
+	 * @return Pointer to the RTPSParticipant.
 	 */
-	static Participant* createParticipant(const ParticipantAttributes& PParam,ParticipantListener* plisten = NULL)
+	static RTPSParticipant* createRTPSParticipant(const RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = NULL)
 	{
-		return (RTPSDomainImpl::getInstance()->createParticipant(PParam,plisten));
+		return (RTPSDomainImpl::getInstance()->createRTPSParticipant(PParam,plisten));
 	}
 	/**
-	 * Remove a participant and delete all its associated Writers, Readers, resources, etc.
-	 * @param[in] p Pointer to the Participant;
+	 * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
+	 * @param[in] p Pointer to the RTPSParticipant;
 	 * @return True if correct.
 	 */
-	static bool removeParticipant(Participant* p)
+	static bool removeRTPSParticipant(RTPSParticipant* p)
 	{
-		return (RTPSDomainImpl::getInstance()->removeParticipant( p));
+		return (RTPSDomainImpl::getInstance()->removeRTPSParticipant( p));
 	}
 	/**
-	 * Remove a publisher from the Participant.
+	 * Remove a publisher from the RTPSParticipant.
 	 */
-	static bool removePublisher(Participant* p,Publisher* pub)
+	static bool removePublisher(RTPSParticipant* p,Publisher* pub)
 	{
 		return (RTPSDomainImpl::getInstance()->removePublisher( p, pub));
 	}
 	/**
-	 * Remove a subscriber from a participant.
+	 * Remove a subscriber from a RTPSParticipant.
 	 */
-	static bool removeSubscriber(Participant* p,Subscriber* sub)
+	static bool removeSubscriber(RTPSParticipant* p,Subscriber* sub)
 	{
 		return (RTPSDomainImpl::getInstance()->removeSubscriber( p, sub));
 	}
@@ -332,7 +332,7 @@ public:
 
 	static uint16_t getOffsetd3()  {		return (RTPSDomainImpl::getInstance()->getOffsetd3());	}
 
-	static uint16_t getParticipantIdGain()  {		return (RTPSDomainImpl::getInstance()->getParticipantIdGain());	}
+	static uint16_t getRTPSParticipantIdGain()  {		return (RTPSDomainImpl::getInstance()->getRTPSParticipantIdGain());	}
 
 	static uint16_t getPortBase()  {		return (RTPSDomainImpl::getInstance()->getPortBase());	}
 
@@ -348,4 +348,4 @@ private:
 } /* namespace pubsub */
 } /* namespace eprosima */
 
-#endif /* DOMAINPARTICIPANT_H_ */
+#endif /* DOMAINRTPSParticipant_H_ */

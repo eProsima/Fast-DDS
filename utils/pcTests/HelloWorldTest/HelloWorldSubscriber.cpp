@@ -17,9 +17,9 @@
 
 HelloWorldSubscriber::HelloWorldSubscriber() {
 
-	ParticipantAttributes PParam;
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10043;
-	PParam.builtin.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
@@ -27,8 +27,8 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 8712;
 	PParam.listenSocketBufferSize = 17424;
-	PParam.name = "participant2";
-	mp_participant = DomainParticipant::createParticipant(PParam);
+	PParam.name = "RTPSParticipant2";
+	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
 
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
@@ -40,7 +40,7 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-	mp_subscriber = DomainParticipant::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+	mp_subscriber = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,Rparam,(SubscriberListener*)&m_listener);
 	m_listener.mp_sub = mp_subscriber;
 
 }

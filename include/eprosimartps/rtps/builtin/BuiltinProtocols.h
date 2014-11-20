@@ -14,7 +14,7 @@
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
 
-#include "eprosimartps/pubsub/attributes/ParticipantAttributes.h"
+#include "eprosimartps/pubsub/attributes/RTPSParticipantAttributes.h"
 
 
 namespace eprosima {
@@ -22,7 +22,7 @@ namespace rtps {
 
 class PDPSimple;
 class WLP;
-class ParticipantImpl;
+class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 
@@ -37,15 +37,15 @@ public:
 	/**
 	 * Initialize the builtin protocols.
 	 * @param attributes DiscoveryAttributes
-	 * @param participantID ID of the local participant.
+	 * @param RTPSParticipantID ID of the local RTPSParticipant.
 	 * @return True if correct.
 	 */
-	bool initBuiltinProtocols(ParticipantImpl* p_part,const BuiltinAttributes& attributes, uint32_t participantID);
+	bool initBuiltinProtocols(RTPSParticipantImpl* p_part,const BuiltinAttributes& attributes, uint32_t RTPSParticipantID);
 	//!Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
 	bool updateMetatrafficLocators(LocatorList_t& loclist);
 
 	BuiltinAttributes m_attributes;
-	ParticipantImpl* mp_participant;
+	RTPSParticipantImpl* mp_RTPSParticipant;
 	PDPSimple* mp_PDP;
 	WLP* mp_WLP;
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
@@ -92,12 +92,12 @@ public:
 	 */
 	bool removeLocalReader(RTPSReader* R);
 
-	//! Announce ParticipantState (force the sending of a DPD message.)
-	void announceParticipantState();
-	//!Stop the Participant Announcement (used in tests to avoid multiple packets being send)
-	void stopParticipantAnnouncement();
-	//!Reset to timer to make periodic Participant Announcements.
-	void resetParticipantAnnouncement();
+	//! Announce RTPSParticipantState (force the sending of a DPD message.)
+	void announceRTPSParticipantState();
+	//!Stop the RTPSParticipant Announcement (used in tests to avoid multiple packets being send)
+	void stopRTPSParticipantAnnouncement();
+	//!Reset to timer to make periodic RTPSParticipant Announcements.
+	void resetRTPSParticipantAnnouncement();
 
 };
 

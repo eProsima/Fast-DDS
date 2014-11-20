@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->m_shapesDemo.init();
     if(m_shapesDemo.isInitialized())
     {
-        addMessageToOutput(QString("Participant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
+        addMessageToOutput(QString("RTPSParticipant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
     }
 }
 
@@ -134,7 +134,7 @@ void MainWindow::on_actionStart_triggered()
     if(this->m_shapesDemo.init())
     {
         if(m_shapesDemo.isInitialized())
-            addMessageToOutput(QString("Participant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
+            addMessageToOutput(QString("RTPSParticipant ready in domainId %1").arg(m_shapesDemo.getOptions().m_domainId),true);
     }
 }
 
@@ -204,8 +204,8 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
 
     if(spub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         items.append(new QStandardItem("AUTOMATIC"));
-    else if(spub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-        items.append(new QStandardItem("MAN_PARTICIPANT"));
+    else if(spub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_RTPSParticipant_LIVELINESS_QOS)
+        items.append(new QStandardItem("MAN_RTPSParticipant"));
     else
         items.append(new QStandardItem("MAN_TOPIC"));
 
@@ -263,8 +263,8 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
 
     if(ssub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         items.append(new QStandardItem("AUTOMATIC"));
-    else if(ssub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-        items.append(new QStandardItem("MAN_PARTICIPANT"));
+    else if(ssub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_RTPSParticipant_LIVELINESS_QOS)
+        items.append(new QStandardItem("MAN_RTPSParticipant"));
     else
         items.append(new QStandardItem("MAN_TOPIC"));
 

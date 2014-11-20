@@ -22,8 +22,8 @@
 #include <bitset>
 #include <cstdint>
 //
-//#include "eprosimartps/dds/DomainParticipant.h"
-//#include "eprosimartps/Participant.h"
+//#include "eprosimartps/dds/DomainRTPSParticipant.h"
+//#include "eprosimartps/RTPSParticipant.h"
 //#include "eprosimartps/dds/Publisher.h"
 //#include "eprosimartps/dds/Subscriber.h"
 //#include "eprosimartps/dds/attributes/all_attributes.h"
@@ -203,16 +203,16 @@ int main(int argc, char** argv)
 	pDebugInfo("Stargin"<<endl);
 
 	TestTypeDataType TestTypeData;
-	DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&TestTypeData);
 //	LocatorList_t myIP;
-//	DomainParticipant::getIPAddress(&myIP);
+//	DomainRTPSParticipant::getIPAddress(&myIP);
 //	cout << "My IP: " << myIP.size() << ": " << myIP.begin()->printIP4Port()<< endl;
-	//***********  PARTICIPANT  ******************//
-	ParticipantAttributes PParam;
+	//***********  RTPSParticipant  ******************//
+	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.discovery.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
-	PParam.discovery.resendDiscoveryParticipantDataPeriod.seconds = 30;
+	PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.discovery.resendDiscoveryRTPSParticipantDataPeriod.seconds = 30;
 
 	PParam.discovery.domainId = 0;
 	cout << "a"<<endl;
@@ -223,8 +223,8 @@ int main(int argc, char** argv)
 		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 			PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 
-		PParam.name = "participant1";
-		Participant* p = DomainParticipant::createParticipant(PParam);
+		PParam.name = "RTPSParticipant1";
+		RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 
 
 		PublisherAttributes Wparam;
@@ -239,7 +239,7 @@ int main(int argc, char** argv)
 		Wparam.qos.m_durability.kind = eprosima::dds::DurabilityQosPolicyKind_t::PERSISTENT_DURABILITY_QOS;
 		Wparam.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 		MyPubListener mylisten;
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mylisten);
+		Publisher* pub = DomainRTPSParticipant::createPublisher(p,Wparam,&mylisten);
 
 
 		SubscriberAttributes Rparam;
@@ -253,10 +253,10 @@ int main(int argc, char** argv)
 //		Rparam.unicastLocatorList.push_back(loc); //Listen in the 10469 port
 		Rparam.userDefinedId = 2;
 		MySubListener mysubl;
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,&mysubl);
+		Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam,&mysubl);
 
 
-	//	p->announceParticipantState();
+	//	p->announceRTPSParticipantState();
 		cout << "Sleeping 4 seconds"<<endl;
 		my_sleep(4);
 		TestType tp1,tp_in;
@@ -285,9 +285,9 @@ int main(int argc, char** argv)
 	{
 		PParam.discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 		PParam.discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-		//***********  PARTICIPANT  ******************//
-		PParam.name = "participant2";
-		Participant* p = DomainParticipant::createParticipant(PParam);
+		//***********  RTPSParticipant  ******************//
+		PParam.name = "RTPSParticipant2";
+		RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 		SubscriberAttributes Rparam;
 		Rparam.userDefinedId = 17;
 		Rparam.historyMaxSize = 50;
@@ -302,7 +302,7 @@ int main(int argc, char** argv)
 		loc.port = 10047;
 		Rparam.unicastLocatorList.push_back(loc);
 		MySubListener mylisten;
-		Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,&mylisten);
+		Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam,&mylisten);
 
 		PublisherAttributes Wparam;
 		Wparam.userDefinedId = 18;
@@ -311,9 +311,9 @@ int main(int argc, char** argv)
 		Wparam.topic.topicName = std::string("Test_topic2");
 		Wparam.historyMaxSize = 14;
 		MyPubListener mypublisten;
-		Publisher* pub = DomainParticipant::createPublisher(p,Wparam,&mypublisten);
+		Publisher* pub = DomainRTPSParticipant::createPublisher(p,Wparam,&mypublisten);
 
-		p->announceParticipantState();
+		p->announceRTPSParticipantState();
 
 	//	my_sleep(4);
 		TestType tp_in;
@@ -332,7 +332,7 @@ int main(int argc, char** argv)
 
 	sleep(2);
 
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 
 
 	return 0;

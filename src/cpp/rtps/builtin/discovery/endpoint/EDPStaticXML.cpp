@@ -33,8 +33,8 @@ EDPStaticXML::EDPStaticXML() {
 EDPStaticXML::~EDPStaticXML()
 {
 	// TODO Auto-generated destructor stub
-	for(std::vector<StaticParticipantInfo*>::iterator pit = m_participants.begin();
-			pit!=m_participants.end();++pit)
+	for(std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
+			pit!=m_RTPSParticipants.end();++pit)
 	{
 		for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
 				rit!=(*pit)->m_readers.end();++rit)
@@ -65,45 +65,45 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 		logError(RTPS_EDP,"Error reading xml file ("<<filename<< "). Error: " << e.what());
 		return false;
 	}
-	BOOST_FOREACH(ptree::value_type& xml_participant ,pt.get_child("staticdiscovery"))
+	BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant ,pt.get_child("staticdiscovery"))
 	{
-		if(xml_participant.first == "participant")
+		if(xml_RTPSParticipant.first == "RTPSParticipant")
 		{
-			StaticParticipantInfo* pdata= new StaticParticipantInfo();
-			BOOST_FOREACH(ptree::value_type& xml_participant_child,xml_participant.second)
+			StaticRTPSParticipantInfo* pdata= new StaticRTPSParticipantInfo();
+			BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant_child,xml_RTPSParticipant.second)
 			{
-				if(xml_participant_child.first == "name")
+				if(xml_RTPSParticipant_child.first == "name")
 				{
-					pdata->m_participantName = xml_participant_child.second.data();
+					pdata->m_RTPSParticipantName = xml_RTPSParticipant_child.second.data();
 				}
-				else if(xml_participant_child.first == "reader")
+				else if(xml_RTPSParticipant_child.first == "reader")
 				{
 					
-						if(!loadXMLReaderEndpoint(xml_participant_child,pdata))
+						if(!loadXMLReaderEndpoint(xml_RTPSParticipant_child,pdata))
 						{
 							logError(RTPS_EDP,"Reader Endpoint has error, ignoring");
 						}
 				}
-				else if(xml_participant_child.first == "writer")
+				else if(xml_RTPSParticipant_child.first == "writer")
 				{
 					
-						if(!loadXMLWriterEndpoint(xml_participant_child,pdata))
+						if(!loadXMLWriterEndpoint(xml_RTPSParticipant_child,pdata))
 						{
 							logError(RTPS_EDP,"Writer Endpoint has error, ignoring");
 						}
 				}
 				else
 				{
-					logError(RTPS_EDP,"Unknown XMK tag: " << xml_participant_child.first);
+					logError(RTPS_EDP,"Unknown XMK tag: " << xml_RTPSParticipant_child.first);
 				}
 			}
-			m_participants.push_back(pdata);
+			m_RTPSParticipants.push_back(pdata);
 		}
 	}
 	return true;
 }
 
-bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata)
+bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata)
 {
 	const char* const METHOD_NAME = "loadXMLReaderEndpoint";
 	ReaderProxyData* rdata = new ReaderProxyData();
@@ -272,8 +272,8 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 			std::string auxstring= xml_endpoint_child.second.get("<xmlattr>.kind","LIVELINESS kind NOT PRESENT");
 			if(auxstring == "AUTOMATIC_LIVELINESS_QOS")
 				rdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-			else if(auxstring == "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS")
-				rdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+			else if(auxstring == "MANUAL_BY_RTPSParticipant_LIVELINESS_QOS")
+				rdata->m_qos.m_liveliness.kind = MANUAL_BY_RTPSParticipant_LIVELINESS_QOS;
 			else if(auxstring == "MANUAL_BY_TOPIC_LIVELINESS_QOS")
 				rdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 			else
@@ -315,7 +315,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticP
 }
 
 
-bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata)
+bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata)
 {
 	const char* const METHOD_NAME = "loadXMLWriterEndpoint";
 	WriterProxyData* wdata = new WriterProxyData();
@@ -471,8 +471,8 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 			std::string auxstring= xml_endpoint_child.second.get("<xmlattr>.kind","LIVELINESS kind NOT PRESENT");
 			if(auxstring == "AUTOMATIC_LIVELINESS_QOS")
 				wdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-			else if(auxstring == "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS")
-				wdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+			else if(auxstring == "MANUAL_BY_RTPSParticipant_LIVELINESS_QOS")
+				wdata->m_qos.m_liveliness.kind = MANUAL_BY_RTPSParticipant_LIVELINESS_QOS;
 			else if(auxstring == "MANUAL_BY_TOPIC_LIVELINESS_QOS")
 				wdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 			else
@@ -516,10 +516,10 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticP
 bool EDPStaticXML::lookforReader(std::string partname, uint16_t id,
 		ReaderProxyData** rdataptr)
 {
-	for(std::vector<StaticParticipantInfo*>::iterator pit = m_participants.begin();
-			pit!=m_participants.end();++pit)
+	for(std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
+			pit!=m_RTPSParticipants.end();++pit)
 	{
-		if((*pit)->m_participantName == partname || true) //it doenst matter the name fo the participant, only for organizational purposes
+		if((*pit)->m_RTPSParticipantName == partname || true) //it doenst matter the name fo the RTPSParticipant, only for organizational purposes
 		{
 			for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
 					rit!=(*pit)->m_readers.end();++rit)
@@ -538,10 +538,10 @@ bool EDPStaticXML::lookforReader(std::string partname, uint16_t id,
 bool EDPStaticXML::lookforWriter(std::string partname, uint16_t id,
 		WriterProxyData** wdataptr)
 {
-	for(std::vector<StaticParticipantInfo*>::iterator pit = m_participants.begin();
-			pit!=m_participants.end();++pit)
+	for(std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
+			pit!=m_RTPSParticipants.end();++pit)
 	{
-		if((*pit)->m_participantName == partname || true) //it doenst matter the name fo the participant, only for organizational purposes
+		if((*pit)->m_RTPSParticipantName == partname || true) //it doenst matter the name fo the RTPSParticipant, only for organizational purposes
 		{
 			for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
 					wit!=(*pit)->m_writers.end();++wit)

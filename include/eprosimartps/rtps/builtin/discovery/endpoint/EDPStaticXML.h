@@ -32,14 +32,14 @@ class WriterProxyData;
 
 
 /**
- * Class StaticParticipantInfo, contains the ifnormation of writers and readers loaded from the XML file.
+ * Class StaticRTPSParticipantInfo, contains the ifnormation of writers and readers loaded from the XML file.
  * @ingroup DISCOVERYMODULE
  */
-class StaticParticipantInfo{
+class StaticRTPSParticipantInfo{
 public:
-	StaticParticipantInfo(){};
-	virtual ~StaticParticipantInfo(){};
-	std::string m_participantName;
+	StaticRTPSParticipantInfo(){};
+	virtual ~StaticRTPSParticipantInfo(){};
+	std::string m_RTPSParticipantName;
 	std::vector<ReaderProxyData*> m_readers;
 	std::vector<WriterProxyData*> m_writers;
 };
@@ -61,20 +61,20 @@ public:
 	/**
 	 * Load a Reader endpoint.
 	 * @param xml_endpoint Reference of a tree child for a reader.
-	 * @param pdata Pointer to the participantInfo where the reader must be added.
+	 * @param pdata Pointer to the RTPSParticipantInfo where the reader must be added.
 	 * @return True if correctly added.
 	 */
-	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata);
+	bool loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata);
 	/**
 	 * Load a Writer endpoint.
 	 * @param xml_endpoint Reference of a tree child for a writer.
-	 * @param pdata Pointer to the participantInfo where the reader must be added.
+	 * @param pdata Pointer to the RTPSParticipantInfo where the reader must be added.
 	 * @return True if correctly added.
 	 */
-	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticParticipantInfo* pdata);
+	bool loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata);
 	/**
 	 * Look for a reader in the previously loaded endpoints.
-	 * @param[in] partname Participant name
+	 * @param[in] partname RTPSParticipant name
 	 * @param[in] id Id of the reader
 	 * @param[out] rdataptr Pointer to pointer to return the information.
 	 * @return True if found.
@@ -82,7 +82,7 @@ public:
 	bool lookforReader(std::string partname,uint16_t id,ReaderProxyData** rdataptr);
 	/**
 	 * Look for a writer in the previously loaded endpoints.
-	 * @param[in] partname Participant name
+	 * @param[in] partname RTPSParticipant name
 	 * @param[in] id Id of the writer
 	 * @param[out] wdataptr Pointer to pointer to return the information.
 	 * @return
@@ -93,7 +93,7 @@ private:
 	std::set<int16_t> m_endpointIds;
 	std::set<uint32_t> m_entityIds;
 
-	std::vector<StaticParticipantInfo*> m_participants;
+	std::vector<StaticRTPSParticipantInfo*> m_RTPSParticipants;
 };
 
 } /* namespace rtps */

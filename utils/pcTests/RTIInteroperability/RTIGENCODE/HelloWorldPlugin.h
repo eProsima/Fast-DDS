@@ -80,21 +80,21 @@ SampleTypePluginSupport_print_data(
     Callback functions:
  * ---------------------------------------------------------------------------- */
 
-NDDSUSERDllExport extern PRESTypePluginParticipantData 
-SampleTypePlugin_on_participant_attached(
+NDDSUSERDllExport extern PRESTypePluginRTPSParticipantData 
+SampleTypePlugin_on_RTPSParticipant_attached(
     void *registration_data, 
-    const struct PRESTypePluginParticipantInfo *participant_info,
+    const struct PRESTypePluginRTPSParticipantInfo *RTPSParticipant_info,
     RTIBool top_level_registration, 
     void *container_plugin_context,
     RTICdrTypeCode *typeCode);
 
 NDDSUSERDllExport extern void 
-SampleTypePlugin_on_participant_detached(
-    PRESTypePluginParticipantData participant_data);
+SampleTypePlugin_on_RTPSParticipant_detached(
+    PRESTypePluginRTPSParticipantData RTPSParticipant_data);
     
 NDDSUSERDllExport extern PRESTypePluginEndpointData 
 SampleTypePlugin_on_endpoint_attached(
-    PRESTypePluginParticipantData participant_data,
+    PRESTypePluginRTPSParticipantData RTPSParticipant_data,
     const struct PRESTypePluginEndpointInfo *endpoint_info,
     RTIBool top_level_registration, 
     void *container_plugin_context);

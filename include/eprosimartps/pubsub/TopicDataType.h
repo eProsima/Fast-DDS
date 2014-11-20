@@ -29,7 +29,7 @@ namespace pubsub {
 
 
 /**
- * Class TopicDataType used to provide the DomainParticipant with the methods to serialize, deserialize and get the key of a specific data type.
+ * Class TopicDataType used to provide the DomainRTPSParticipant with the methods to serialize, deserialize and get the key of a specific data type.
  * The user should created a class that inherits from this one, where Serialize and deserialize methods MUST be implemented.
  * @ingroup MODULE
  * @snippet pubsub_example.cpp ex_TopicDataType

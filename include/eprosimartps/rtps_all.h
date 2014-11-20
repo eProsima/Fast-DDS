@@ -20,14 +20,14 @@
 #include "eprosimartps/common/types/all_common.h"
 
 #include "eprosimartps/pubsub/attributes/all_attributes.h"
-#include "eprosimartps/Participant.h"
+#include "eprosimartps/RTPSParticipant.h"
 #include "eprosimartps/pubsub/TopicDataType.h"
 #include "eprosimartps/pubsub/RTPSDomain.h"
 #include "eprosimartps/pubsub/Publisher.h"
 #include "eprosimartps/pubsub/Subscriber.h"
 #include "eprosimartps/pubsub/PublisherListener.h"
 #include "eprosimartps/pubsub/SubscriberListener.h"
-#include "eprosimartps/pubsub/ParticipantListener.h"
+#include "eprosimartps/pubsub/RTPSParticipantListener.h"
 
 #include "eprosimartps/pubsub/SampleInfo.h"
 

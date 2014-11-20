@@ -38,7 +38,7 @@ SubscribeDialog::~SubscribeDialog()
 
 void SubscribeDialog::on_buttonBox_accepted()
 {
-    ShapeSubscriber* SSub = new ShapeSubscriber(this->mp_sd->getParticipant());
+    ShapeSubscriber* SSub = new ShapeSubscriber(this->mp_sd->getRTPSParticipant());
 
     SSub->m_attributes.expectsInlineQos = false;
 

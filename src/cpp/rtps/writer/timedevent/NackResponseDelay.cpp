@@ -15,7 +15,7 @@
 
 #include "eprosimartps/rtps/writer/StatefulWriter.h"
 #include "eprosimartps/rtps/writer/ReaderProxy.h"
-#include "eprosimartps/rtps/ParticipantImpl.h"
+#include "eprosimartps/rtps/RTPSParticipantImpl.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -35,7 +35,7 @@ NackResponseDelay::~NackResponseDelay()
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
-						TimedEvent(p_RP->mp_SFW->getParticipant()->getIOService(),millisec),
+						TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getIOService(),millisec),
 						mp_RP(p_RP)
 {
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
@@ -102,7 +102,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 							first,last,mp_RP->mp_SFW->getHeartbeatCount(),true,false);
 					std::vector<Locator_t>::iterator lit;
 					for(lit = mp_RP->m_att.endpoint.unicastLocatorList.begin();lit!=mp_RP->m_att.endpoint.unicastLocatorList.end();++lit)
-						mp_RP->mp_SFW->getParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+						mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 				}
 				//					for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
 				//						mp_RP->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));

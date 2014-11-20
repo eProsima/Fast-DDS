@@ -7,12 +7,12 @@
  *************************************************************************/
 
 /**
- * @file ParticipantDiscoveryInfo.h
+ * @file RTPSParticipantDiscoveryInfo.h
  *
  */
 
-#ifndef PARTICIPANTDISCOVERYINFO_H_
-#define PARTICIPANTDISCOVERYINFO_H_
+#ifndef RTPSParticipantDISCOVERYINFO_H_
+#define RTPSParticipantDISCOVERYINFO_H_
 
 #include "eprosimartps/common/types/Guid.h"
 #include "eprosimartps/qos/QosPolicies.h"
@@ -22,26 +22,26 @@ namespace pubsub {
 
 enum DISCOVERY_STATUS
 {
-	DISCOVERED_PARTICIPANT,
-	CHANGED_QOS_PARTICIPANT,
-	REMOVED_PARTICIPANT
+	DISCOVERED_RTPSParticipant,
+	CHANGED_QOS_RTPSParticipant,
+	REMOVED_RTPSParticipant
 };
 
 typedef std::vector<std::pair<std::string,std::string>> PropertyList;
 typedef std::vector<octet> UserData;
 
-class ParticipantDiscoveryInfo {
+class RTPSParticipantDiscoveryInfo {
 public:
-	ParticipantDiscoveryInfo(){};
-	virtual ~ParticipantDiscoveryInfo(){};
+	RTPSParticipantDiscoveryInfo(){};
+	virtual ~RTPSParticipantDiscoveryInfo(){};
 	DISCOVERY_STATUS m_status;
 	GUID_t m_guid;
 	PropertyList m_propertyList;
 	UserData m_userData;
-	std::string m_participantName;
+	std::string m_RTPSParticipantName;
 };
 
 } /* namespace pubsub */
 } /* namespace eprosima */
 
-#endif /* PARTICIPANTDISCOVERYINFO_H_ */
+#endif /* RTPSParticipantDISCOVERYINFO_H_ */

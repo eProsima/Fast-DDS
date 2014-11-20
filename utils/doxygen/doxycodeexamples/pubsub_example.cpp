@@ -98,11 +98,11 @@ bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 	return true;
 }
 
-//Before using it an object of this type must be defined and registered in the domain participant.
+//Before using it an object of this type must be defined and registered in the domain RTPSParticipant.
 //Different objects with different names should be used if the Publisher/Subscriber are defined in different threads.
 //Thread safety would be considered for future releases.
 TestTypeDataType TestTypeData;
-DomainParticipant::registerType((TopicDataType*)&TestTypeData);
+DomainRTPSParticipant::registerType((TopicDataType*)&TestTypeData);
 //! [ex_DDSTopicDataType]
 
 //! [ex_Publisher]
@@ -113,7 +113,7 @@ PParam.historyMaxSize = 20;
 PParam.topic.topicKind = WITH_KEY;
 PParam.topic.topicDataType = "TestType";
 PParam.topic.topicName = "Test_topic";
-Publisher* pub1 = DomainParticipant::createPublisher(p,PParam);
+Publisher* pub1 = DomainRTPSParticipant::createPublisher(p,PParam);
 
 Locator_t loc;
 loc.kind = 1;
@@ -135,7 +135,7 @@ Rparam.reliability.reliabilityKind = RELIABLE;
 Locator_t loc;
 loc.port = 10046;
 Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
-Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
+Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam);
 //! [ex_Subscriber]
 
 //! [ex_SubscriberListener]
@@ -161,7 +161,7 @@ public:
 
 //Somewhere in the code, create an object an register assign it to the subscriber.
 TestTypeListener listener;
-Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&listener);
+Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&listener);
 //...
 
 //You can also create it and assign it later, although this is not recommended since the onSubscriptionMatched may not be called
@@ -177,16 +177,16 @@ using namespace eprosima::rtps;
 class TestTypeListener: public PublisherListener
 {
 public:
-	Participant* p;
-	ParticipantAttributes Pparam;
+	RTPSParticipant* p;
+	RTPSParticipantAttributes Pparam;
 	eprosima::dds::Publisher* pub;
 	PublisherAttributes Pubparam;
 	TestTypeListener()
 	{
-		//The participant should have been created and accessible to this method.
-		p = DomainParticipant::createParticipant(Pparam);
+		//The RTPSParticipant should have been created and accessible to this method.
+		p = DomainRTPSParticipant::createRTPSParticipant(Pparam);
 		//PublisherAttributes must be set to the user preferences.
-		pub = DomainParticipant::createPublisher(p,Pubparam,(PublisherListener*)this);
+		pub = DomainRTPSParticipant::createPublisher(p,Pubparam,(PublisherListener*)this);
 	};
 	~TestTypeListener(){};
 	void onHistoryFull()
@@ -208,26 +208,26 @@ public:
 };
 //! [ex_PublisherListener]
 
-//! [ex_ParticipantCreation]
+//! [ex_RTPSParticipantCreation]
 using namespace eprosima::rtps;
 using namespace eprosima::pubsub;
-ParticipantAttributes PParam;
-PParam.name = "participant1";
+RTPSParticipantAttributes PParam;
+PParam.name = "RTPSParticipant1";
 PParam.defaultSendPort = 10042;
 PParam.domainId = 50;
-PParam.discovery.use_SIMPLE_ParticipantDiscoveryProtocol = true;
+PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 PParam.discovery.resendSPDPDataPeriod_sec = 30;
 PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
 PParam.discovery.m_staticEndpointXMLFilename = "StaticEndpointDefinition.xml";
 Locator_t loc;
 loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
 PParam.defaultUnicastLocatorList.push_back(loc);
-Participant* p = DomainParticipant::createParticipant(PParam);
+RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 if(p!=NULL)
 {
-	//Participant correctly created
+	//RTPSParticipant correctly created
 }
-//! [ex_ParticipantCreation]
+//! [ex_RTPSParticipantCreation]
 
 
 

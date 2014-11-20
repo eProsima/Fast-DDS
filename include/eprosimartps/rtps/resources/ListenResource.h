@@ -52,7 +52,7 @@ public:
 	};
 	void setMsgRecMsgLength(uint32_t length);
 
-	Locator_t init_thread(ParticipantImpl* pimpl,Locator_t& loc,
+	Locator_t init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 			uint32_t listenSockSize,bool isMulti,bool isFixed);
 
 };

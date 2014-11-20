@@ -31,7 +31,7 @@ PublishDialog::~PublishDialog()
 
 void PublishDialog::on_button_OkCancel_accepted()
 {
-    ShapePublisher* SP = new ShapePublisher(this->mp_sd->getParticipant());
+    ShapePublisher* SP = new ShapePublisher(this->mp_sd->getRTPSParticipant());
        //Get the different elements
     //ShapeAttributes
     setShapeAttributes(SP);
@@ -68,7 +68,7 @@ void PublishDialog::on_button_OkCancel_accepted()
    if(this->ui->comboBox_liveliness->currentIndex() == 0)
        SP->m_attributes.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
    if(this->ui->comboBox_liveliness->currentIndex() == 1)
-       SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+       SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_RTPSParticipant_LIVELINESS_QOS;
    if(this->ui->comboBox_liveliness->currentIndex() == 2)
        SP->m_attributes.qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
    if(this->ui->lineEdit_leaseDuration->text()=="INF")

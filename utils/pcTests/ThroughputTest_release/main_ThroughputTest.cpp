@@ -93,10 +93,10 @@ int main(int argc, char** argv){
 	}
 
 	LatencyDataType latency_t;
-	DomainParticipant::registerType((DDSTopicDataType*)&latency_t);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&latency_t);
 
 	ThroughputCommandDataType throuputcommand_t;
-	DomainParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
+	DomainRTPSParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
 
 
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv){
 	}
 	}
 
-	DomainParticipant::stopAll();
+	DomainRTPSParticipant::stopAll();
 
 
 	return 0;

@@ -114,7 +114,7 @@ void ListenResource::setMsgRecMsgLength(uint32_t length)
 	mp_receiver->m_rec_msg.length = length;
 }
 
-Locator_t ListenResource::init_thread(ParticipantImpl* pimpl,Locator_t& loc,
+Locator_t ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 			uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
 	mp_receiver = new MessageReceiver(listenSockSize);

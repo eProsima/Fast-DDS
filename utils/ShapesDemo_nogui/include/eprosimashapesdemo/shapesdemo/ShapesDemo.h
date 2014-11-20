@@ -65,14 +65,14 @@ public:
      */
     bool init();
     /**
-     * @brief Stop the demo (removes the participants and all publishers and subscribers.)
+     * @brief Stop the demo (removes the RTPSParticipants and all publishers and subscribers.)
      */
     void stop();
     /**
-     * @brief Get a pointer to the participant.
-     * @return Participant pointer.
+     * @brief Get a pointer to the RTPSParticipant.
+     * @return RTPSParticipant pointer.
      */
-    Participant* getParticipant();
+    RTPSParticipant* getRTPSParticipant();
     /**
      * @brief Add a ShapePublisher to the demo.
      * @param SP Pointer to the ShapePublisher object.
@@ -136,7 +136,7 @@ public:
 private:
     std::vector<ShapePublisher*> m_publishers;
     std::vector<ShapeSubscriber*> m_subscribers;
-    Participant* mp_participant;
+    RTPSParticipant* mp_RTPSParticipant;
 
     //std::vector<ShapeType*> m_shapes;
     bool m_isInitialized;

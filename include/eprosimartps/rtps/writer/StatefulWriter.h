@@ -30,12 +30,12 @@ class ReaderProxy;
  */
 class StatefulWriter: public RTPSWriter
 {
-	friend class ParticipantImpl;
+	friend class RTPSParticipantImpl;
 	//!Destructor
 	virtual ~StatefulWriter();
 private:
 	//!Constructor
-	StatefulWriter(ParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
+	StatefulWriter(RTPSParticipantImpl*,GUID_t guid,WriterAttributes att,WriterHistory* hist);
 
 	Count_t m_heartbeatCount;
 	//!Timed Event to manage the periodic HB to the Reader.
@@ -108,7 +108,7 @@ public:
 
 	inline std::vector<ReaderProxy*>::iterator matchedReadersEnd(){return this->matched_readers.end();};
 
-	inline ParticipantImpl* getParticipant() const {return mp_participant;}
+	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
 private:
 	void updateTimes(WriterTimes& times);
