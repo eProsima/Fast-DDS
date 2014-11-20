@@ -20,6 +20,7 @@
 #include "eprosimartps/utils/RTPSLog.h"
 
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace rtps {
@@ -40,7 +41,7 @@ History::History(const HistoryAttributes & att):
 
 {
 	//const char* const METHOD_NAME = "History";
-	mp_invalidCache = m_changePool.reserve_Cache();
+	m_changePool.reserve_Cache(&mp_invalidCache);
 	mp_invalidCache->writerGUID = c_Guid_Unknown;
 	mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
 	mp_minSeqCacheChange = mp_invalidCache;
