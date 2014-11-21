@@ -21,9 +21,17 @@
 
 #include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
 
+#include "eprosimartps/pubsub/publisher/PublisherHistory.h"
+
+#include "eprosimartps/rtps/writer/WriterListener.h"
 namespace eprosima {
 
+namespace rtps
+{
+class RTPSWriter;
+}
 
+using namespace rtps;
 /**
  * PUBSUB namespace. Contains the public API to interact with the RTPS protocol.
  * @ingroup PUBSUBMODULE
@@ -32,6 +40,7 @@ namespace pubsub {
 
 class TopicDataType;
 class PublisherListener;
+class PUBSUBParticipantImpl;
 
 
 /**
@@ -45,7 +54,8 @@ public:
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainRTPSParticipant static function.
 	 */
-	PublisherImpl(PUBSUBParticipantImpl* p,TopicDataType* ptype,PublisherAttributes& att);
+	PublisherImpl(PUBSUBParticipantImpl* p,TopicDataType* ptype,
+			PublisherAttributes& att,PublisherListener* p_listen = nullptr);
 
 	virtual ~PublisherImpl();
 
@@ -84,10 +94,10 @@ public:
 	/**
 	 * Get the Attributes of the Subscriber.
 	 */
-	PublisherAttributes getAttributes();
+	PublisherAttributes& getAttributes();
 
 private:
-	PUBSUBParticipant* mp_participant;
+	PUBSUBParticipantImpl* mp_participant;
 	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_writer;
 	//! Pointer to the TopicDataType object.
@@ -96,10 +106,17 @@ private:
 	PublisherAttributes m_att;
 	//!Publisher History
 	PublisherHistory m_history;
-	class PublisherImplListener: public WriterListener
+	//!PublisherListener
+	PublisherListener* mp_listener;
+	//!Listener to capture the events of the Writer
+	class PublisherWriterListener: public WriterListener
 	{
-
-	}m_listener;
+	public:
+		PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
+		virtual ~PublisherWriterListener(){};
+		void onWriterMatched(MatchingInfo info);
+		PublisherImpl* mp_publisherImpl;
+	}m_writerListener;
 
 };
 

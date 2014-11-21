@@ -53,7 +53,7 @@ public:
 
 
 
-private:
+protected:
 	/**
 	 * Assign the Writer Associated with this History.
 	 * @param writer Pointer to the writer;

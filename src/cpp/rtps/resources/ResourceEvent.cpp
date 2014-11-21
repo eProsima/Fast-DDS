@@ -36,7 +36,7 @@ ResourceEvent::ResourceEvent():
 
 ResourceEvent::~ResourceEvent() {
 	const char* const METHOD_NAME = "~ResourceEvent";
-	logWarning(RTPS_RTPSParticipant,"Removing event thread " << mp_b_thread->get_id());
+	logWarning(RTPS_PARTICIPANT,"Removing event thread " << mp_b_thread->get_id());
 	mp_io_service->reset();
 	mp_io_service->stop();
 	mp_b_thread->join();
@@ -62,7 +62,7 @@ void ResourceEvent::init_thread(RTPSParticipantImpl* pimpl)
 void ResourceEvent::announce_thread()
 {
 	const char* const METHOD_NAME = "announce_thread";
-	logInfo(RTPS_RTPSParticipant,"Thread: " << mp_b_thread->get_id() << " created and waiting for tasks.");
+	logInfo(RTPS_PARTICIPANT,"Thread: " << mp_b_thread->get_id() << " created and waiting for tasks.");
 	mp_RTPSParticipantImpl->ResourceSemaphorePost();
 
 }

@@ -14,6 +14,8 @@
 #ifndef PUBSUBPARTICIPANT_H_
 #define PUBSUBPARTICIPANT_H_
 
+#include "eprosimartps/rtps/common/Guid.h"
+
 #include "eprosimartps/rtps/attributes/RTPSParticipantAttributes.h"
 
 using namespace eprosima::rtps;
@@ -21,18 +23,23 @@ using namespace eprosima::rtps;
 namespace eprosima {
 namespace pubsub {
 
-class RTPSParticipant;
-class RTPSParticipantListener;
+class PUBSUBParticipantImpl;
+
 
 class PUBSUBParticipant {
+	friend class PUBSUBDomain;
+	friend class PUBSUBParticipantImpl;
 private:
-	PUBSUBParticipant(RTPSParticipantAttributes att);
+	PUBSUBParticipant();
 	virtual ~PUBSUBParticipant();
 
-	Publisher* createPublisher(PublisherAttributes& att, PublisherListener* listen= nullptr);
 
-	RTPSParticipant* mp_participant;
-	RTPSParticipantListener mp_participantListener;
+	PUBSUBParticipantImpl* mp_impl;
+
+public:
+
+	const GUID_t& getGuid()const ;
+
 };
 
 } /* namespace pubsub */

@@ -14,22 +14,15 @@
 #define TOPICPARAMETERS_H_
 
 #include <string>
-#include "eprosimartps/qos/QosPolicies.h"
+
+#include "eprosimartps/rtps/common/Types.h"
+
+#include "eprosimartps/pubsub/qos/QosPolicies.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
+using namespace eprosima::rtps;
+
 namespace eprosima {
-namespace rtps {
-
-//!@brief Enum TopicKind_t.
-typedef enum TopicKind_t{
-	NO_KEY=1,
-	WITH_KEY=2
-}TopicKind_t;
-
-}
-
-using namespace rtps;
-
 namespace pubsub{
 
 /**

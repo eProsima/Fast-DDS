@@ -51,7 +51,7 @@ public:
 	 * Add a specific change to all ReaderLocators.
 	 * @param p Pointer to the change.
 	 */
-	void unsent_change_add(CacheChange_t* p);
+	void unsent_change_added_to_history(CacheChange_t* p);
 	/**
 	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
 	 * @param a_change Pointer to the change that is going to be removed.

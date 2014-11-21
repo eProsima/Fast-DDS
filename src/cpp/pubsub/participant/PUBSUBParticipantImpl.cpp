@@ -12,8 +12,16 @@
  */
 
 #include "eprosimartps/pubsub/participant/PUBSUBParticipantImpl.h"
+#include "eprosimartps/pubsub/participant/PUBSUBParticipant.h"
+
+#include "eprosimartps/pubsub/TopicDataType.h"
+
+#include "eprosimartps/rtps/participant/RTPSParticipant.h"
 
 #include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
+#include "eprosimartps/pubsub/publisher/PublisherImpl.h"
+#include "eprosimartps/pubsub/publisher/Publisher.h"
+
 
 #include "eprosimartps/rtps/RTPSDomain.h"
 
@@ -24,16 +32,22 @@ namespace pubsub {
 
 static const char* const CLASS_NAME = "PUBSUBParticipantImpl";
 
-PUBSUBParticipantImpl::PUBSUBParticipantImpl(RTPSParticipantAttributes& patt,RTPSParticipant* part):
+PUBSUBParticipantImpl::PUBSUBParticipantImpl(RTPSParticipantAttributes& patt,PUBSUBParticipant* pspart,RTPSParticipant* part):
 		m_att(patt),
-		mp_rtpsParticipant(part)
+		mp_rtpsParticipant(part),
+		mp_pubsubParticipant(pspart)
 {
-
+	mp_pubsubParticipant->mp_impl = this;
 }
 
 PUBSUBParticipantImpl::~PUBSUBParticipantImpl()
 {
 	// TODO Auto-generated destructor stub
+}
+
+const GUID_t& PUBSUBParticipantImpl::getGuid() const
+{
+	return this->mp_rtpsParticipant->getGuid();
 }
 
 Publisher* PUBSUBParticipantImpl::createPublisher(PublisherAttributes& att,
@@ -55,7 +69,6 @@ Publisher* PUBSUBParticipantImpl::createPublisher(PublisherAttributes& att,
 		logError(PUBSUB_PARTICIPANT,"Keyed Topic needs getKey function");
 		return nullptr;
 	}
-	PublisherImpl* pubImpl = nullptr;
 	if(m_att.builtin.use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(att.getUserDefinedID() <= 0)
@@ -81,10 +94,10 @@ Publisher* PUBSUBParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.setUserDefinedID(att.getUserDefinedID());
 	watt.times = att.times;
 
-	RTPSWriter* writer RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
+	RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
 												watt,
 												(WriterHistory*)&pubimpl->m_history,
-												(WriterListener*)&pubimpl->m_listener);
+												(WriterListener*)&pubimpl->m_writerListener);
 	if(writer == nullptr)
 	{
 		logError(PUBSUB_PARTICIPANT,"Problem creating associated Writer");
@@ -98,7 +111,7 @@ Publisher* PUBSUBParticipantImpl::createPublisher(PublisherAttributes& att,
 	m_publishers.push_back(pubpair);
 
 	//REGISTER THE WRITER
-	this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
+	//this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
 
 	return pub;
 };
@@ -108,7 +121,7 @@ bool PUBSUBParticipantImpl::getRegisteredType(const char* typeName, TopicDataTyp
 	for(std::vector<TopicDataType*>::iterator it=m_types.begin();
 			it!=m_types.end();++it)
 	{
-		if(strcmp((*it)->m_topicDataTypeName.c_str(),typeName)==0)
+		if(strcmp((*it)->getName(),typeName)==0)
 		{
 			*type = *it;
 			return true;

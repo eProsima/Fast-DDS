@@ -64,7 +64,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 	m_changes.push_back(a_change);
 	logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
 	updateMaxMinSeqNum();
-	mp_writer->unsent_change_add(a_change);
+	mp_writer->unsent_change_added_to_history(a_change);
 	return true;
 }
 

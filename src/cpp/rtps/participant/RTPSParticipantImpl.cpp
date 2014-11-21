@@ -23,7 +23,7 @@
 //#include "eprosimartps/reader/StatelessReader.h"
 //#include "eprosimartps/reader/StatefulReader.h"
 
-
+#include "eprosimartps/rtps/participant/RTPSParticipant.h"
 
 #include "eprosimartps/rtps/RTPSDomain.h"
 
@@ -61,6 +61,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
+	mp_userParticipant->mp_impl = this;
 	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
@@ -77,16 +78,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
 		{
-			lit->port=RTPSDomain::getPortBase()+
-					RTPSDomain::getDomainIdGain()*PParam.builtin.domainId+
-					RTPSDomain::getOffsetd3()+
-					RTPSDomain::getRTPSParticipantIdGain()*m_att.participantID;
+			lit->port=m_att.port.portBase+
+					m_att.port.domainIDGain*PParam.builtin.domainId+
+					m_att.port.offsetd3+
+					m_att.port.participantIDGain*m_att.participantID;
 			m_att.defaultUnicastLocatorList.push_back(*lit);
 			ss << *lit << ";";
 		}
 		
 		std::string auxstr = ss.str();
-		logWarning(RTPS_RTPSParticipant,"RTPSParticipant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
+		logWarning(RTPS_PARTICIPANT,"RTPSParticipant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
@@ -108,7 +109,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	}
 
 
-	logInfo(RTPS_RTPSParticipant,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
+	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
 	//m_builtinProtocols->initBuiltinProtocols(PParam.builtin,m_att.participantID);
 
@@ -118,7 +119,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
 	const char* const METHOD_NAME = "~RTPSParticipantImpl";
-	logInfo(RTPS_RTPSParticipant,"removing "<<this->getGuid());
+	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
 				it!=m_listenResourceList.end();++it)
@@ -133,6 +134,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 		delete(*it);
 
 	delete(this->mp_ResourceSemaphore);
+	delete(this->mp_userParticipant);
 
 }
 
@@ -148,7 +150,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 {
 	const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_RTPSParticipant," of type " << type);
+	logInfo(RTPS_PARTICIPANT," of type " << type);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -171,7 +173,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,WRITER))
 		{
-			logError(RTPS_RTPSParticipant,"A writer with the same entityId already exists in this RTPSParticipant");
+			logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
 			return false;
 		}
 	}
@@ -253,7 +255,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
-		logWarning(RTPS_RTPSParticipant,auxstr << " created with no unicastLocatorList, adding default List");
+		logWarning(RTPS_PARTICIPANT,auxstr << " created with no unicastLocatorList, adding default List");
 		for(LocatorListIterator lit = m_att.defaultUnicastLocatorList.begin();lit!=m_att.defaultUnicastLocatorList.end();++lit)
 		{
 			assignEndpoint2Locator(endp,lit,false,false);

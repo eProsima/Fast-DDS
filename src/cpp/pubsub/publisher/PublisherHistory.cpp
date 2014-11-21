@@ -13,6 +13,10 @@
 
 #include "eprosimartps/pubsub/publisher/PublisherHistory.h"
 
+#include "eprosimartps/pubsub/publisher/PublisherImpl.h"
+
+#include "eprosimartps/rtps/writer/RTPSWriter.h"
+
 #include "eprosimartps/utils/RTPSLog.h"
 
 static const char* const CLASS_NAME = "PublisherHistory";
@@ -20,7 +24,13 @@ static const char* const CLASS_NAME = "PublisherHistory";
 namespace eprosima {
 namespace pubsub {
 
-PublisherHistory::PublisherHistory() {
+PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
+		ResourceLimitsQosPolicy& resource):
+				WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples+30)),
+	m_historyQos(history),
+	m_resourceLimitsQos(resource),
+	mp_pubImpl(pimpl)
+{
 	// TODO Auto-generated constructor stub
 
 }
@@ -35,12 +45,12 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 	const char* const METHOD_NAME = "add_pub_change";
 	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
-		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_writer->getGuid().entityId
+		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId
 				<< " with KEEP ALL History ";)
 						return false;
 	}
 	//NO KEY HISTORY
-	if(mp_pub->getTopic().topicKind == NO_KEY)
+	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
 		bool add = false;
 		if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
@@ -55,7 +65,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 			}
 			else
 			{
-				if(mp_writer->change_removed_by_history(mp_minSeqCacheChange))
+				if(this->remove_change(mp_minSeqCacheChange))
 				{
 					add =true;
 				}
@@ -80,7 +90,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 		}
 	}
 	//HISTORY WITH KEY
-	else if(mp_pub->getTopic().topicKind == WITH_KEY)
+	else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
 	{
 		t_v_Inst_Caches::iterator vit;
 		if(find_Key(change,&vit))
@@ -107,7 +117,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 				}
 				else
 				{
-					if(mp_writer->change_removed_by_history(vit->second.front()))
+					if(remove_change(vit->second.front()))
 					{
 						add =true;
 					}
@@ -118,9 +128,9 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 				if(this->add_change(change))
 				{
 
-					logInfo(RTPS_HISTORY,this->mp_Endpoint->getGuid().entityId <<" Change "
-							<< a_change->sequenceNumber.to64long()<< " added with key: "<<a_change->instanceHandle
-							<< " and "<<a_change->serializedPayload.length<< " bytes");
+					logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
+							<< change->sequenceNumber.to64long()<< " added with key: "<<change->instanceHandle
+							<< " and "<<change->serializedPayload.length<< " bytes");
 					vit->second.push_back(change);
 					if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 					{

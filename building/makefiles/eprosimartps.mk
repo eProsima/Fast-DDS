@@ -71,6 +71,13 @@ EPROSIMARTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/history/History.cpp \
 		  $(BASEDIR)/src/cpp/rtps/history/WriterHistory.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/pubsub/PUBSUBDomain.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/participant/PUBSUBParticipant.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/participant/PUBSUBParticipantImpl.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/publisher/Publisher.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/publisher/PublisherImpl.cpp \
+		  $(BASEDIR)/src/cpp/pubsub/publisher/PublisherHistory.cpp \
+		  \
 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \
 		  $(BASEDIR)/src/cpp/utils/eClock.cpp \

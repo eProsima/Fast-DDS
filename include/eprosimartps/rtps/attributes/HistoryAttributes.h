@@ -22,7 +22,10 @@ class HistoryAttributes
 {
 public:
 	HistoryAttributes();
-	virtual ~HistoryAttributes();
+	HistoryAttributes(uint32_t payload,uint16_t initial,int32_t maxRes):
+		payloadMaxSize(payload),initialReservedCaches(initial),
+		maximumReservedCaches(maxRes){}
+	virtual ~HistoryAttributes(){};
 	uint32_t payloadMaxSize;
 	uint16_t initialReservedCaches;
 	int32_t maximumReservedCaches;

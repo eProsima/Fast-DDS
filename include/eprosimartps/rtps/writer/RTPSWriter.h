@@ -109,7 +109,7 @@ protected:
 	 * Add a change to the unsent list.
 	 * @param change Pointer to the change to add.
 	 */
-	virtual void unsent_change_add(CacheChange_t* change)=0;
+	virtual void unsent_change_added_to_history(CacheChange_t* change)=0;
 	/**
 	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
 	 * @param a_change Pointer to the change that is going to be removed.
