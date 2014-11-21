@@ -45,6 +45,14 @@ public:
 		offsetd3 = 11;
 	};
 	virtual ~PortParameters(){}
+	inline uint32_t getMulticastPort(uint32_t domainId)
+	{
+		return portBase+ domainIDGain * domainId+ offsetd0;
+	}
+	inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
+	{
+		return portBase+ domainIDGain * domainId	+ offsetd1	+ participantIDGain * RTPSParticipantID;
+	}
 
 	uint16_t portBase;
 	uint16_t domainIDGain;

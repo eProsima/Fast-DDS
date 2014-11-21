@@ -96,14 +96,7 @@ public:
 		m_maxRTPSParticipantID = maxRTPSParticipantId;
 	}
 
-//	static inline uint32_t getMulticastPort(uint32_t domainId)
-//	{
-//		return getPortBase()+ getDomainIdGain() * domainId+ getOffsetd0();
-//	}
-//	static inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
-//	{
-//		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getRTPSParticipantIdGain() * RTPSParticipantID;
-//	}
+
 
 private:
 	static uint32_t m_maxRTPSParticipantID;

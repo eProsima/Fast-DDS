@@ -31,17 +31,17 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "WLP";
 
-WLP::WLP(RTPSParticipantImpl* p):
+WLP::WLP(BuiltinProtocols* p):
 												m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
 												m_minManRTPSParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
-												mp_RTPSParticipant(p),
-												mp_builtinProtocols(NULL),
-												mp_builtinRTPSParticipantMessageWriter(NULL),
-												mp_builtinRTPSParticipantMessageReader(NULL),
+												mp_participantImpl(nullptr),
+												mp_builtinProtocols(p),
+												mp_builtinRTPSParticipantMessageWriter(nullptr),
+												mp_builtinRTPSParticipantMessageReader(nullptr),
 #pragma warning(disable: 4355)
 												m_listener(this),
-												mp_livelinessAutomatic(NULL),
-												mp_livelinessManRTPSParticipant(NULL)
+												mp_livelinessAutomatic(nullptr),
+												mp_livelinessManRTPSParticipant(nullptr)
 {
 
 
@@ -52,11 +52,11 @@ WLP::~WLP()
 	// TODO Auto-generated destructor stub
 }
 
-bool WLP::initWL(BuiltinProtocols* prot)
+bool WLP::initWL(RTPSParticipantImpl* p)
 {
 	const char* const METHOD_NAME = "initWL";
 	logInfo(RTPS_LIVELINESS,"Beginning Liveliness Protocol",EPRO_MAGENTA);
-	mp_builtinProtocols = prot;
+	mp_participantImpl = p;
 	return createEndpoints();
 }
 

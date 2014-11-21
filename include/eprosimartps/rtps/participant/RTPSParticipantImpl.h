@@ -36,6 +36,13 @@ class recursive_mutex;
 
 namespace eprosima {
 
+namespace pubsub
+{
+	class WriterQos;
+	class ReaderQos;
+}
+
+using namespace pubsub;
 
 namespace rtps {
 
@@ -52,6 +59,7 @@ class Endpoint;
 class CDRMessage_t;
 class WriterHistory;
 class WriterListener;
+class TopicAttributes;
 
 
 /**
@@ -103,7 +111,7 @@ private:
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
 	//! BuiltinProtocols of this RTPSParticipant
-	BuiltinProtocols* m_builtinProtocols;
+	BuiltinProtocols* mp_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
 	boost::interprocess::interprocess_semaphore* mp_ResourceSemaphore;
 	//!Id counter to correctly assign the ids to writers and readers.
@@ -148,6 +156,7 @@ private:
 	 */
 	bool assignEndpoint2Locator(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
 
+
 public:
 	/**
 	 * Create a Writer in this RTPSParticipant.
@@ -160,7 +169,17 @@ public:
 	bool createWriter(RTPSWriter** Writer, WriterAttributes& param,WriterHistory* hist,WriterListener* listen,
 			const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
 
+	/**
+	 *
+	 * @param Writer
+	 * @param topicAtt
+	 * @param wqos
+	 */
+	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+
 	inline uint32_t getParticipantID() {return (uint32_t)this->m_att.participantID;};
+
+	inline RTPSParticipantAttributes& getAttributes() {return m_att;};
 
 	bool deleteUserEndpoint(Endpoint*);
 
@@ -181,10 +200,7 @@ public:
 	//			TopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
 	//
 	//	/**
-	//	 * Register a writer in the builtin protocols.
-	//	 * @param Writer Pointer to the RTPSWriter to register.
-	//	 */
-	//	void registerWriter(RTPSWriter* Writer);
+
 	//	/**
 	//	 * Register a reader in the builtin protocols.
 	//	 * @param Reader Pointer to the RTPSReader to register.

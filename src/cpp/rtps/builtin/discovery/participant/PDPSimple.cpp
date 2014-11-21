@@ -11,12 +11,12 @@
  *
  */
 
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimple.h"
 
-#include "eprosimartps/builtin/BuiltinProtocols.h"
-#include "eprosimartps/builtin/liveliness/WLP.h"
+#include "eprosimartps/rtps/builtin/BuiltinProtocols.h"
+#include "eprosimartps/rtps/builtin/liveliness/WLP.h"
 
-#include "eprosimartps/pubsub/RTPSDomain.h"
+//#include "eprosimartps/pubsub/RTPSDomain.h"
 
 
 #include "eprosimartps/RTPSParticipant.h"
@@ -57,16 +57,16 @@ PDPSimple::~PDPSimple() {
 	// TODO Auto-generated destructor stub
 }
 
-bool PDPSimple::initPDP(RTPSParticipantImpl* part,uint32_t RTPSParticipantID)
+bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 {
 	const char* const METHOD_NAME = "initPDP";
 	logInfo(RTPS_PDP,"Beginning",EPRO_B_CYAN);
 	mp_RTPSParticipant = part;
-	m_discovery = mp_RTPSParticipant->getBuiltinAttributes();
+	m_discovery = mp_RTPSParticipant->getAttributes().builtin;
 
 	if(!createSPDPEndpoints())
 		return false;
-	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->unicastLocatorList);
+	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->m_att.unicastLocatorList);
 	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	m_RTPSParticipantProxies.push_back(new RTPSParticipantProxyData());
