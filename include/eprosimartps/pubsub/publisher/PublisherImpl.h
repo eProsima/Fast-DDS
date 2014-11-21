@@ -12,8 +12,8 @@
 
 
 
-#ifndef PUBLISHER_H_
-#define PUBLISHER_H_
+#ifndef PUBLISHERIMPL_H_
+#define PUBLISHERIMPL_H_
 #include <iostream>
 
 #include "eprosimartps/rtps/common/Locator.h"
@@ -38,47 +38,19 @@ class PublisherListener;
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
  */
 class PublisherImpl {
+	friend class PUBSUBParticipantImpl;
 public:
 
 	/**
 	 * Create a publisher, assigning its pointer to the associated writer.
 	 * Don't use directly, create Publisher using DomainRTPSParticipant static function.
 	 */
-	PublisherImpl(RTPSParticipantImpl* p,RTPSWriter* Win,TopicDataType* ptype,PublisherAttributes& att);
+	PublisherImpl(PUBSUBParticipantImpl* p,TopicDataType* ptype,PublisherAttributes& att);
 
 	virtual ~PublisherImpl();
 
 
-	bool add_new_change(ChangeKind_t kind, void* Data);
-
-//
-//	/**
-//	 * Write data to the topic.
-//	 * @param Data Pointer to the data
-//	 * @return True if correct
-//	 * @par Calling example:
-//	 * @snippet pubsub_example.cpp ex_PublisherWrite
-//	 */
-//	bool write(void*Data);
-//
-//	/**
-//	 * Dispose of a previously written data.
-//	 * @param Data Pointer to the data.
-//	 * @return True if correct.
-//	 */
-//	bool dispose(void*Data);
-//	/**
-//	 * Unregister a previously written data.
-//	 * @param Data Pointer to the data.
-//	 * @return True if correct.
-//	 */
-//	bool unregister(void*Data);
-//	/**
-//	 * Dispose and unregister a previously written data.
-//	 * @param Data Pointer to the data.
-//	 * @return True if correct.
-//	 */
-//	bool dispose_and_unregister(void*Data);
+	bool create_new_change(ChangeKind_t kind, void* Data);
 
 
 	/**
@@ -115,14 +87,19 @@ public:
 	PublisherAttributes getAttributes();
 
 private:
+	PUBSUBParticipant* mp_participant;
 	//! Pointer to the associated Data Writer.
 	RTPSWriter* mp_writer;
 	//! Pointer to the TopicDataType object.
 	TopicDataType* mp_type;
 	//!Attributes of the Publisher
-	PublisherAttributes m_attributes;
+	PublisherAttributes m_att;
 	//!Publisher History
 	PublisherHistory m_history;
+	class PublisherImplListener: public WriterListener
+	{
+
+	}m_listener;
 
 };
 

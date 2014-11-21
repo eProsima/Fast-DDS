@@ -92,37 +92,7 @@ public:
 
 
 
-    /**
-     * Set the parameters used to calculate the default ports in the discovery.
-     */
-    static inline void setPortParameters(uint16_t PB,uint16_t DG,uint16_t PG,uint16_t d0,uint16_t d1,uint16_t d2,uint16_t d3)
-    {
-    	m_portBase = PB;
-    	m_domainIdGain = DG;
-    	m_RTPSParticipantIdGain = PG;
-    	m_offsetd0 = d0;
-    	m_offsetd1 = d1;
-    	m_offsetd2 = d2;
-    	m_offsetd3 = d3;
-    }
-    /** @name Methods to get the default Port numbers.
-     */
-
-	static inline uint16_t getDomainIdGain() {		return m_domainIdGain;	}
-
-	static inline uint16_t getOffsetd0() {		return m_offsetd0;	}
-
-	static inline uint16_t getOffsetd1() {		return m_offsetd1;	}
-
-	static inline uint16_t getOffsetd2() {		return m_offsetd2;	}
-
-	static inline uint16_t getOffsetd3() {		return m_offsetd3;	}
-
-	static inline uint16_t getRTPSParticipantIdGain() {		return m_RTPSParticipantIdGain;	}
-
-	static inline uint16_t getPortBase() {		return m_portBase;	}
-
-	static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
+   	static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
 		m_maxRTPSParticipantID = maxRTPSParticipantId;
 	}
 
@@ -139,15 +109,6 @@ private:
 	static uint32_t m_maxRTPSParticipantID;
 	static bool instanceFlag;
 	static RTPSDomain *single;
-
-	static uint16_t m_portBase;
-	static uint16_t m_domainIdGain;
-	static uint16_t m_RTPSParticipantIdGain;
-	static uint16_t m_offsetd0;
-	static uint16_t m_offsetd1;
-	static uint16_t m_offsetd2;
-	static uint16_t m_offsetd3;
-	static uint16_t m_DomainId;
 
 	static std::vector<RTPSParticipantPair> m_RTPSParticipants;
 

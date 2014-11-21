@@ -31,7 +31,29 @@ public:
 	}
 };
 
+class PortParameters
+{
+public:
+	PortParameters()
+	{
+		portBase = 7400;
+		participantIDGain = 2;
+		domainIDGain = 250;
+		offsetd0 = 0;
+		offsetd1 = 10;
+		offsetd2 = 1;
+		offsetd3 = 11;
+	};
+	virtual ~PortParameters(){}
 
+	uint16_t portBase;
+	uint16_t domainIDGain;
+	uint16_t participantIDGain;
+	uint16_t offsetd0;
+	uint16_t offsetd1;
+	uint16_t offsetd2;
+	uint16_t offsetd3;
+};
 
 /**
  * Class BuiltinAttributes used to define the behavior of the RTPSParticipant builtin protocols.
@@ -133,7 +155,8 @@ public:
 	uint32_t listenSocketBufferSize;
 	//! Builtin parameters.
 	BuiltinAttributes builtin;
-
+	//Port Parameters
+	PortParameters port;
 	std::vector<octet> userData;
 
 	int32_t participantID;

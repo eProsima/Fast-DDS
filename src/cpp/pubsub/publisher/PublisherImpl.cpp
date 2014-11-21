@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/pubsub/publisher/Publisher.h"
+#include "eprosimartps/pubsub/publisher/PublisherImpl.h"
 #include "eprosimartps/pubsub/TopicDataType.h"
 #include "eprosimartps/pubsub/publisher/PublisherListener.h"
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
@@ -28,10 +28,10 @@ namespace pubsub {
 
 static const char* const CLASS_NAME = "PublisherImpl";
 
-PublisherImpl::PublisherImpl(RTPSParticipantImpl* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
-										mp_Writer(Win),
+PublisherImpl::PublisherImpl(PUBSUBParticipant* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
+										mp_writer(Win),
 										mp_type(pdatatype),
-										m_attributes(att),
+										m_att(att),
 										mp_RTPSParticipant(p)
 {
 
@@ -42,50 +42,35 @@ PublisherImpl::~PublisherImpl() {
 	logInfo(RTPS_WRITER,"OK");
 }
 
-bool PublisherImpl::write(void* Data) {
-	const char* const METHOD_NAME = "write";
-	logInfo(RTPS_WRITER,"Writing new data");
-	return mp_Writer->add_new_change(ALIVE,Data);
-}
 
-bool PublisherImpl::dispose(void* Data)
+
+
+bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 {
-	const char* const METHOD_NAME = "dispose";
-	logInfo(RTPS_WRITER,"Disposing of Data");
-	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED,Data);
-}
-
-
-bool PublisherImpl::unregister(void* Data) {
-	const char* const METHOD_NAME = "unregister";
-	//Convert data to serialized Payload
-	logInfo(RTPS_WRITER,"Unregistering of Data");
-	return mp_Writer->add_new_change(NOT_ALIVE_UNREGISTERED,Data);
-}
-
-bool PublisherImpl::dispose_and_unregister(void* Data) {
-	//Convert data to serialized Payload
-	const char* const METHOD_NAME = "dispose_and_unregister";
-	logInfo(RTPS_WRITER,"Disposing and Unregistering Data");
-	return mp_Writer->add_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
-}
-
-
-bool PublisherImpl::add_new_change(ChangeKind_t changeKind, void* data)
-{
-	if(mp_type->m_isGetKeyDefined)
-					{
-						mp_type->getKey(data,&ch->instanceHandle);
-					}
-					else
-					{
-						logWarning(RTPS_WRITER,"Get key function not defined";);
-					}
-
-	CacheChange_t * ch = mp_writer->new_change(changeKind);
+	const char* const METHOD_NAME = "create_new_change";
+	if (data == nullptr)
+	{
+		logError(PUBSUB_PUBLISHER, "Data pointer not valid");
+		return false;
+	}
+	if(changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
+			changeKind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+	{
+		if(m_att.topic.topicKind == NO_KEY)
+		{
+			logError(PUBSUB_PUBLISHER,"Topic is NO_KEY, operation not permitted");
+			return false;
+		}
+	}
+	InstanceHandle_t handle;
+	if(m_att.topic.topicKind == WITH_KEY)
+	{
+		mp_type->getKey(data,&handle);
+	}
+	CacheChange_t * ch = mp_writer->new_change(changeKind,handle);
 	if(ch != nullptr)
 	{
-		if(changeKind == ALIVE && data !=nullptr && mp_type !=nullptr)
+		if(changeKind == ALIVE)
 		{
 			if(!mp_type->serialize(data,&ch->serializedPayload))
 			{
@@ -96,13 +81,13 @@ bool PublisherImpl::add_new_change(ChangeKind_t changeKind, void* data)
 			else if(ch->serializedPayload.length > mp_type->m_typeSize)
 			{
 				logWarning(RTPS_WRITER,"Serialized Payload length larger than maximum type size ("<<ch->serializedPayload.length<<"/"<< mp_type->m_typeSize<<")";);
-				m_writer_cache.release_Cache(ch);
+				m_history.release_Cache(ch);
 				return false;
 			}
 			else if(ch->serializedPayload.length == 0)
 			{
 				logWarning(RTPS_WRITER,"Serialized Payload length must be set to >0 ";);
-				m_writer_cache.release_Cache(ch);
+				m_history.release_Cache(ch);
 				return false;
 			}
 		}
