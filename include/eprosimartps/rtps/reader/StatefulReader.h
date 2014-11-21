@@ -62,42 +62,50 @@ private:
 	 */
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 
-	/**
-	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-	 * pointed by the StatusInfo_t structure.
-	 * @param data Pointer to memory that can hold a sample.
-	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-	 * @return True if correct.
-	 */
-	bool readNextCacheChange(void*data,SampleInfo_t* info);
-	/**
-	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-	 * pointed by the StatusInfo_t structure.
-	 * @param data Pointer to memory that can hold a sample.
-	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-	 * @return True if correct.
-	 */
-	bool takeNextCacheChange(void*data,SampleInfo_t* info);
-
-	bool readNextCacheChange(CacheChange_t** change);
-	//!Returns true if there are unread cacheChanges.
-	bool isUnreadCacheChange();
-	/**
-	 * Get the number of matched publishers.
-	 * @return True if correct.
-	 */
-	size_t getMatchedPublishers(){return matched_writers.size();}
-
-	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
-	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
-	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-	bool change_removed_by_history(CacheChange_t*,WriterProxy*prox = NULL);
 	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
-	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=NULL);
+	bool acceptMsgFrom(GUID_t& entityGUID,WriterProxy** wp = nullptr);
+	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
+	//!
+	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
 
-	bool updateTimes(SubscriberTimes time);
 
-	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
+//	/**
+//	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+//	 * pointed by the StatusInfo_t structure.
+//	 * @param data Pointer to memory that can hold a sample.
+//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+//	 * @return True if correct.
+//	 */
+//	bool readNextCacheChange(void*data,SampleInfo_t* info);
+//	/**
+//	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+//	 * pointed by the StatusInfo_t structure.
+//	 * @param data Pointer to memory that can hold a sample.
+//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+//	 * @return True if correct.
+//	 */
+//	bool takeNextCacheChange(void*data,SampleInfo_t* info);
+//
+//	bool readNextCacheChange(CacheChange_t** change);
+//	//!Returns true if there are unread cacheChanges.
+//	bool isUnreadCacheChange();
+//	/**
+//	 * Get the number of matched publishers.
+//	 * @return True if correct.
+//	 */
+//	size_t getMatchedPublishers(){return matched_writers.size();}
+//
+//	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
+//	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
+//	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+//	bool change_removed_by_history(CacheChange_t*,WriterProxy*prox = NULL);
+//	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
+//	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=NULL);
+//
+//	bool updateTimes(SubscriberTimes time);
+//
+//	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
 
 private:
 	ReaderTimes m_times;

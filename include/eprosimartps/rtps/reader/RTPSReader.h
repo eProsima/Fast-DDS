@@ -67,8 +67,8 @@ public:
 	virtual bool acceptMsgFrom(GUID_t& entityGUID,WriterProxy** wp = nullptr)=0;
 	//!
 	virtual bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr)=0;
-		//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-		virtual bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr)=0;
+	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	virtual bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr)=0;
 
 	inline bool reserve_Cache(CacheChange_t** change)
 			{return mp_history->reserve_Cache(change);}
