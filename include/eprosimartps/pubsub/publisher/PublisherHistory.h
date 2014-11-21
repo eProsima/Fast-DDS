@@ -22,12 +22,14 @@ using namespace eprosima::rtps;
 namespace eprosima {
 namespace pubsub {
 
+class PublisherImpl;
+
 class PublisherHistory:public WriterHistory
 {
 public:
 	typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
-	PublisherHistory();
+	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
 	virtual ~PublisherHistory();
 	bool add_pub_change(CacheChange_t* change);
 private:
@@ -38,7 +40,7 @@ private:
 	//!ResourceLimitsQosPolicy values.
 	ResourceLimitsQosPolicy m_resourceLimitsQos;
 	//!Publisher Pointer
-	PublisherImpl* mp_pub;
+	PublisherImpl* mp_pubImpl;
 
 	bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
 };

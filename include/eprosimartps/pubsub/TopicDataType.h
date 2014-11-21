@@ -36,8 +36,11 @@ namespace pubsub {
  */
 class RTPS_DllAPI TopicDataType {
 public:
-	TopicDataType();
-	virtual ~TopicDataType();
+	TopicDataType(){
+		this->m_typeSize = 0;
+		this->m_isGetKeyDefined = false;;
+	}
+	virtual ~TopicDataType(){};
 	/**
 	 * Serialize method, it should be implemented by the user, since it is abstract.
 	 * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
@@ -59,7 +62,7 @@ public:
 	 * @param[out] ihandle Pointer to the Handle.
 	 * @return True if correct.
 	 */
-	virtual bool getKey(void*data,InstanceHandle_t* ihandle);
+	virtual bool getKey(void*data,InstanceHandle_t* ihandle){return false;};
 	inline void setName(const char* nam) {m_topicDataTypeName = nam;};
 	inline const char* getName(){return m_topicDataTypeName.c_str();}
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum

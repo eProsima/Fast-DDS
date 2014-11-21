@@ -45,7 +45,7 @@ StatelessWriter::~StatelessWriter()
  *	CHANGE-RELATED METHODS
  */
 
-void StatelessWriter::unsent_change_add(CacheChange_t* cptr)
+void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
 	const char* const METHOD_NAME = "unsent_change_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);

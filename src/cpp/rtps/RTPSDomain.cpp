@@ -53,16 +53,15 @@ RTPSDomain::RTPSDomain()
 RTPSDomain::~RTPSDomain()
 {
 const char* const METHOD_NAME = "~RTPSDomain";
-	logInfo(RTPS_RTPSParticipant,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
+	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
 
-	for(std::vector<RTPSParticipantPair>::iterator it=m_RTPSParticipants.begin();
+	for(auto it=m_RTPSParticipants.begin();
 			it!=m_RTPSParticipants.end();++it)
 	{
-		delete(it->first);
 		delete(it->second);
 	}
 
-	logInfo(RTPS_RTPSParticipant,"RTPSParticipants deleted correctly ");
+	logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
 
 	RTPSDomain::instanceFlag = false;
 	eClock::my_sleep(100);
@@ -76,11 +75,11 @@ void RTPSDomain::stopAll()
 	delete(getInstance());
 }
 
-RTPSParticipant* RTPSDomain::createRTPSParticipant(const RTPSParticipantAttributes& PParam,
+RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
 														RTPSParticipantListener* listen)
 {
 	const char* const METHOD_NAME = "createRTPSParticipant";
-	logInfo(RTPS_RTPSParticipant,"");
+	logInfo(RTPS_PARTICIPANT,"");
 
 	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod)
 	{
@@ -136,11 +135,10 @@ RTPSParticipant* RTPSDomain::createRTPSParticipant(const RTPSParticipantAttribut
 	guidP.value[11] = ((octet*)&ID)[3];
 
 	RTPSParticipant* p = new RTPSParticipant(nullptr);
-
 	RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
 	m_maxRTPSParticipantID = pimpl->getParticipantID();
 
-	m_RTPSParticipants.push_back(RTPSParticipantPair(p,pimpl));
+	m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
 	return p;
 }
 

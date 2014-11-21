@@ -41,7 +41,7 @@ class WriterListener;
  */
 class RTPSDomain
 {
-	typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> RTPSParticipantPair;
+	typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> t_p_RTPSParticipant;
 private:
 	RTPSDomain();
     /**
@@ -63,7 +63,7 @@ public:
      * @param PParam RTPSParticipant Parameters.
      * @return Pointer to the RTPSParticipant.
      */
-    static RTPSParticipant* createRTPSParticipant(const RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = nullptr);
+    static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = nullptr);
 
     /**
      *
@@ -96,21 +96,21 @@ public:
 		m_maxRTPSParticipantID = maxRTPSParticipantId;
 	}
 
-	static inline uint32_t getMulticastPort(uint32_t domainId)
-	{
-		return getPortBase()+ getDomainIdGain() * domainId+ getOffsetd0();
-	}
-	static inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
-	{
-		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getRTPSParticipantIdGain() * RTPSParticipantID;
-	}
+//	static inline uint32_t getMulticastPort(uint32_t domainId)
+//	{
+//		return getPortBase()+ getDomainIdGain() * domainId+ getOffsetd0();
+//	}
+//	static inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
+//	{
+//		return getPortBase()+ getDomainIdGain() * domainId	+ getOffsetd1()	+ getRTPSParticipantIdGain() * RTPSParticipantID;
+//	}
 
 private:
 	static uint32_t m_maxRTPSParticipantID;
 	static bool instanceFlag;
 	static RTPSDomain *single;
 
-	static std::vector<RTPSParticipantPair> m_RTPSParticipants;
+	static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
 	/**
 	 * @brief Get Id to create a RTPSParticipant.

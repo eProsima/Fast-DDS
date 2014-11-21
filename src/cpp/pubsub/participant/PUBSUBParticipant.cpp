@@ -13,16 +13,14 @@
 
 #include "eprosimartps/pubsub/participant/PUBSUBParticipant.h"
 
-#include "eprosimartps/rtps/RTPSDomain.h"
+#include "eprosimartps/pubsub/participant/PUBSUBParticipantImpl.h"
 
 namespace eprosima {
 namespace pubsub {
 
-PUBSUBParticipant::PUBSUBParticipant(RTPSParticipantAttributes att):
-		mp_participant(nullptr)
+PUBSUBParticipant::PUBSUBParticipant():
+		mp_impl(nullptr)
 {
-
-	//mp_participant = RTPSDomain::createRTPSParticipant(att,)
 
 }
 
@@ -30,11 +28,11 @@ PUBSUBParticipant::~PUBSUBParticipant() {
 	// TODO Auto-generated destructor stub
 }
 
-
-Publisher* PUBSUBParticipant::createPublisher(PublisherAttributes& att, PublisherListener* listen)
+const GUID_t& PUBSUBParticipant::getGuid() const
 {
-
+	return mp_impl->getGuid();
 }
+
 
 
 } /* namespace pubsub */

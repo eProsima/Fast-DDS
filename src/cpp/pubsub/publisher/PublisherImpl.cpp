@@ -28,11 +28,15 @@ namespace pubsub {
 
 static const char* const CLASS_NAME = "PublisherImpl";
 
-PublisherImpl::PublisherImpl(PUBSUBParticipant* p,RTPSWriter* Win,TopicDataType*pdatatype,PublisherAttributes& att):
-										mp_writer(Win),
+PublisherImpl::PublisherImpl(PUBSUBParticipantImpl* p,TopicDataType*pdatatype,
+		PublisherAttributes& att,PublisherListener* listen ):
+										mp_participant(p),
+										mp_writer(nullptr),
 										mp_type(pdatatype),
 										m_att(att),
-										mp_RTPSParticipant(p)
+										m_history(this,pdatatype->m_typeSize,att.topic.historyQos,att.topic.resourceLimitsQos),
+										mp_listener(listen),
+										m_writerListener(this)
 {
 
 }
@@ -91,118 +95,130 @@ bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 				return false;
 			}
 		}
+		if(!this->m_history.add_pub_change(ch))
+		{
+			m_history.release_Cache(ch);
+			return false;
+		}
+		return true;
 	}
+	return false;
 }
 
 
-bool PublisherImpl::removeMinSeqChange()
-{
-	return mp_Writer->removeMinSeqCacheChange();
-}
-
-bool PublisherImpl::removeAllChange(size_t* removed)
-{
-	return mp_Writer->removeAllCacheChange(removed);
-}
-
-size_t PublisherImpl::getHistoryElementsNumber()
-{
-	return mp_Writer->getHistoryCacheSize();
-}
+//bool PublisherImpl::removeMinSeqChange()
+//{
+//	return mp_writer->removeMinSeqCacheChange();
+//}
+//
+//bool PublisherImpl::removeAllChange(size_t* removed)
+//{
+//	return mp_writer->removeAllCacheChange(removed);
+//}
+//
+//size_t PublisherImpl::getHistoryElementsNumber()
+//{
+//	return mp_writer->getHistoryCacheSize();
+//}
 
 
 
 const GUID_t& PublisherImpl::getGuid()
 {
-	return mp_Writer->getGuid();
+	return mp_writer->getGuid();
 }
+//
+//bool PublisherImpl::updateAttributes(PublisherAttributes& att)
+//{
+//	const char* const METHOD_NAME = "updateAttributes";
+//	bool updated = true;
+//	bool missing = false;
+//	if(this->mp_writer->getStateType() == STATEFUL)
+//	{
+//		if(att.unicastLocatorList.size() != this->m_att.unicastLocatorList.size() ||
+//				att.multicastLocatorList.size() != this->m_att.multicastLocatorList.size())
+//		{
+//			logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
+//			updated &= false;
+//		}
+//		else
+//		{
+//			for(LocatorListIterator lit1 = this->m_att.unicastLocatorList.begin();
+//					lit1!=this->m_att.unicastLocatorList.end();++lit1)
+//			{
+//				missing = true;
+//				for(LocatorListIterator lit2 = att.unicastLocatorList.begin();
+//						lit2!= att.unicastLocatorList.end();++lit2)
+//				{
+//					if(*lit1 == *lit2)
+//					{
+//						missing = false;
+//						break;
+//					}
+//				}
+//				if(missing)
+//				{
+//					logWarning(RTPS_WRITER,"Locator: "<< *lit1 << " not present in new list");
+//					logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
+//				}
+//			}
+//			for(LocatorListIterator lit1 = this->m_att.multicastLocatorList.begin();
+//					lit1!=this->m_att.multicastLocatorList.end();++lit1)
+//			{
+//				missing = true;
+//				for(LocatorListIterator lit2 = att.multicastLocatorList.begin();
+//						lit2!= att.multicastLocatorList.end();++lit2)
+//				{
+//					if(*lit1 == *lit2)
+//					{
+//						missing = false;
+//						break;
+//					}
+//				}
+//				if(missing)
+//				{
+//					logWarning(RTPS_WRITER,"Locator: "<< *lit1<< " not present in new list");
+//					logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
+//				}
+//			}
+//		}
+//	}
+//
+//	//TOPIC ATTRIBUTES
+//	if(this->m_att.topic != att.topic)
+//	{
+//		logWarning(RTPS_WRITER,"Topic Attributes cannot be updated");
+//		updated &= false;
+//	}
+//	//QOS:
+//	//CHECK IF THE QOS CAN BE SET
+//	if(!this->mp_writer->canQosBeUpdated(att.qos))
+//	{
+//		updated &=false;
+//	}
+//	if(updated)
+//	{
+//		if(this->mp_writer->getStateType() == STATEFUL)
+//		{
+//			//UPDATE TIMES:
+//			StatefulWriter* sfw = (StatefulWriter*)mp_writer;
+//			sfw->updateTimes(att.times);
+//		}
+//		this->mp_writer->setQos(att.qos,false);
+//		this->m_att = att;
+//		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
+//		mp_RTPSParticipant->getBuiltinProtocols()->updateLocalWriter(this->mp_writer);
+//	}
+//
+//
+//	return updated;
+//}
 
-bool PublisherImpl::updateAttributes(PublisherAttributes& att)
+void PublisherImpl::PublisherWriterListener::onWriterMatched(MatchingInfo info)
 {
-	const char* const METHOD_NAME = "updateAttributes";
-	bool updated = true;
-	bool missing = false;
-	if(this->mp_Writer->getStateType() == STATEFUL)
-	{
-		if(att.unicastLocatorList.size() != this->m_attributes.unicastLocatorList.size() ||
-				att.multicastLocatorList.size() != this->m_attributes.multicastLocatorList.size())
-		{
-			logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
-			updated &= false;
-		}
-		else
-		{
-			for(LocatorListIterator lit1 = this->m_attributes.unicastLocatorList.begin();
-					lit1!=this->m_attributes.unicastLocatorList.end();++lit1)
-			{
-				missing = true;
-				for(LocatorListIterator lit2 = att.unicastLocatorList.begin();
-						lit2!= att.unicastLocatorList.end();++lit2)
-				{
-					if(*lit1 == *lit2)
-					{
-						missing = false;
-						break;
-					}
-				}
-				if(missing)
-				{
-					logWarning(RTPS_WRITER,"Locator: "<< *lit1 << " not present in new list");
-					logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
-				}
-			}
-			for(LocatorListIterator lit1 = this->m_attributes.multicastLocatorList.begin();
-					lit1!=this->m_attributes.multicastLocatorList.end();++lit1)
-			{
-				missing = true;
-				for(LocatorListIterator lit2 = att.multicastLocatorList.begin();
-						lit2!= att.multicastLocatorList.end();++lit2)
-				{
-					if(*lit1 == *lit2)
-					{
-						missing = false;
-						break;
-					}
-				}
-				if(missing)
-				{
-					logWarning(RTPS_WRITER,"Locator: "<< *lit1<< " not present in new list");
-					logWarning(RTPS_WRITER,"Locator Lists cannot be changed or updated in this version");
-				}
-			}
-		}
-	}
-
-	//TOPIC ATTRIBUTES
-	if(this->m_attributes.topic != att.topic)
-	{
-		logWarning(RTPS_WRITER,"Topic Attributes cannot be updated");
-		updated &= false;
-	}
-	//QOS:
-	//CHECK IF THE QOS CAN BE SET
-	if(!this->mp_Writer->canQosBeUpdated(att.qos))
-	{
-		updated &=false;
-	}
-	if(updated)
-	{
-		if(this->mp_Writer->getStateType() == STATEFUL)
-		{
-			//UPDATE TIMES:
-			StatefulWriter* sfw = (StatefulWriter*)mp_Writer;
-			sfw->updateTimes(att.times);
-		}
-		this->mp_Writer->setQos(att.qos,false);
-		this->m_attributes = att;
-		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-		mp_RTPSParticipant->getBuiltinProtocols()->updateLocalWriter(this->mp_Writer);
-	}
-
-
-	return updated;
+	if(mp_publisherImpl->mp_listener!=nullptr)
+		mp_publisherImpl->mp_listener->onPublicationMatched(info);
 }
-
 
 } /* namespace pubsub */
 } /* namespace eprosima */
