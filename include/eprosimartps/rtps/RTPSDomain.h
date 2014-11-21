@@ -33,6 +33,10 @@ class RTPSWriter;
 class WriterAttributes;
 class WriterHistory;
 class WriterListener;
+class RTPSReader;
+class ReaderAttributes;
+class ReaderHistory;
+class ReaderListener;
 
 
 /**
@@ -44,55 +48,60 @@ class RTPSDomain
 	typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> t_p_RTPSParticipant;
 private:
 	RTPSDomain();
-    /**
-     * DomainRTPSParticipant destructor
-     */
-    ~RTPSDomain();
+	/**
+	 * DomainRTPSParticipant destructor
+	 */
+	~RTPSDomain();
 
 public:
-    /**
-     * Method to shut down all RTPSParticipants, readers, writers, etc.
-     * It must be called at the end of the process to avoid memory leaks.
-     * It also shut downs the DomainRTPSParticipant.
-     */
-    static void stopAll();
+	/**
+	 * Method to shut down all RTPSParticipants, readers, writers, etc.
+	 * It must be called at the end of the process to avoid memory leaks.
+	 * It also shut downs the DomainRTPSParticipant.
+	 */
+	static void stopAll();
 
-    /**
-     * @brief Create a RTPSParticipant.
-     * @snippet pubsub_example.cpp ex_RTPSParticipantCreation
-     * @param PParam RTPSParticipant Parameters.
-     * @return Pointer to the RTPSParticipant.
-     */
-    static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = nullptr);
+	/**
+	 * @brief Create a RTPSParticipant.
+	 * @snippet pubsub_example.cpp ex_RTPSParticipantCreation
+	 * @param PParam RTPSParticipant Parameters.
+	 * @return Pointer to the RTPSParticipant.
+	 */
+	static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = nullptr);
 
-    /**
-     *
-     * @param watt
-     * @param hist
-     * @param listen
-     * @return
-     */
-    static RTPSWriter* createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen = nullptr);
+	/**
+	 *
+	 * @param watt
+	 * @param hist
+	 * @param listen
+	 * @return
+	 */
+	static RTPSWriter* createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen = nullptr);
 
 
-    static bool removeRTPSWriter(RTPSWriter* writer);
+	static bool removeRTPSWriter(RTPSWriter* writer);
 
-    /**
-     * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
-     * @param[in] p Pointer to the RTPSParticipant;
-     * @return True if correct.
-     */
-    static bool removeRTPSParticipant(RTPSParticipant* p);
+
+	static RTPSReader* createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt, ReaderHistory* hist, ReaderListener* listen = nullptr);
+
+	static bool removeRTPSReader(RTPSReader* reader);
+
+	/**
+	 * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
+	 * @param[in] p Pointer to the RTPSParticipant;
+	 * @return True if correct.
+	 */
+	static bool removeRTPSParticipant(RTPSParticipant* p);
 
 	/**
 	 * @brief Get pointer to the unique instance of this class.
 	 * @return Pointer to the instance.
 	 */
-    static RTPSDomain* getInstance();
+	static RTPSDomain* getInstance();
 
 
 
-   	static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
+	static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
 		m_maxRTPSParticipantID = maxRTPSParticipantId;
 	}
 

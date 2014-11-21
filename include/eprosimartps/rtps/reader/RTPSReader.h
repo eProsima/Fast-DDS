@@ -15,83 +15,68 @@
 #ifndef RTPSREADER_H_
 #define RTPSREADER_H_
 
-#include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 
 
-#include "eprosimartps/Endpoint.h"
-//#include "eprosimartps/HistoryCache.h"
-#include "eprosimartps/history/ReaderHistory.h"
-#include "eprosimartps/writer/RTPSMessageGroup.h"
-#include "eprosimartps/qos/ReaderQos.h"
-#include "eprosimartps/pubsub/Subscriber.h"
-#include "eprosimartps/utils/Semaphore.h"
+#include "eprosimartps/rtps/Endpoint.h"
+#include "eprosimartps/rtps/attributes/ReaderAttributes.h"
 
 
-
-using namespace eprosima::pubsub;
 
 namespace eprosima {
 
-namespace pubsub{
-
-class SubscriberListener;
-class SampleInfo_t;
-}
-
 namespace rtps {
 
-class WriterProxyData;
-
+class ReaderListener;
+class ReaderHistory;
+class CacheChange_t;
 
 /**
  * Class RTPSReader, manages the reception of data from the writers.
  * @ingroup READERMODULE
  */
-class RTPSReader : public Endpoint{
-
+class RTPSReader : public Endpoint
+{
+	friend class ReaderHistory;
+	friend class RTPSParticipantImpl;
 public:
-	RTPSReader(GuidPrefix_t guid,EntityId_t entId,TopicAttributes topic,TopicDataType* ptype,
-			StateKind_t state = STATELESS,
-			int16_t userDefinedId=-1,uint32_t payload_size = 500);
+	RTPSReader(RTPSParticipantImpl*,GUID_t& guid,
+			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
 	virtual ~RTPSReader();
-	/**
-	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-	 * pointed by the StatusInfo_t structure.
-	 * @param data Pointer to memory that can hold a sample.
-	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-	 * @return True if correct.
-	 */
-	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
-	/**
-	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-	 * pointed by the StatusInfo_t structure.
-	 * @param data Pointer to memory that can hold a sample.
-	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-	 * @return True if correct.
-	 */
-	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
+//	/**
+//	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+//	 * pointed by the StatusInfo_t structure.
+//	 * @param data Pointer to memory that can hold a sample.
+//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+//	 * @return True if correct.
+//	 */
+//	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
+//	/**
+//	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+//	 * pointed by the StatusInfo_t structure.
+//	 * @param data Pointer to memory that can hold a sample.
+//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+//	 * @return True if correct.
+//	 */
+//	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
 	/**
 	 * Add a matched writer represented by a WriterProxyData object.
 	 * @param wdata Pointer to the WPD object to add.
 	 * @return True if correctly added.
 	 */
-	virtual bool matched_writer_add(WriterProxyData* wdata)=0;
+	virtual bool matched_writer_add(RemoteWriterAttributes& wdata)=0;
 	/**
 	 * Remove a WriterProxyData from the matached writers.
 	 * @param wdata Pointer to the WPD object.
 	 * @return True if correct.
 	 */
-	virtual bool matched_writer_remove(WriterProxyData* wdata)=0;
+	virtual bool matched_writer_remove(RemoteWriterAttributes& wdata)=0;
 	/**
 	 * Tells us if a specific Writer is matched against this reader
 	 * @param wdata Pointer to the WriterProxyData object
 	 * @return True if it is matched.
 	 */
-	virtual bool matched_writer_is_matched(WriterProxyData* wdata)=0;
+	virtual bool matched_writer_is_matched(RemoteWriterAttributes&)=0;
 	/**
 	 * Get the number of matched publishers.
 	 * @return True if correct.

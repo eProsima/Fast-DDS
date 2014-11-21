@@ -208,13 +208,90 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		}
 	}
 	m_allWriterList.push_back(SWriter);
+	if(!isBuiltin)
+		m_userWriterList.push_back(SWriter);
 	*WriterOut = SWriter;
 	return true;
 }
 
+
+bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
+		ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin)
+{
+	const char* const METHOD_NAME = "createReader";
+	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
+	logInfo(RTPS_PARTICIPANT," of type " << type);
+	EntityId_t entId;
+	if(entityId== c_EntityId_Unknown)
+	{
+		if(param.endpoint.topicKind == NO_KEY)
+			entId.value[3] = 0x03;
+		else if(param.endpoint.topicKind == WITH_KEY)
+			entId.value[3] = 0x02;
+		uint32_t idnum;
+		if(param.endpoint.getEntityID()>0)
+			idnum = param.endpoint.getEntityID();
+		else
+		{
+			IdCounter++;
+			idnum = IdCounter;
+		}
+
+		octet* c = (octet*)&idnum;
+		entId.value[2] = c[0];
+		entId.value[1] = c[1];
+		entId.value[0] = c[2];
+		if(this->existsEntityId(entId,WRITER))
+		{
+			logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
+			return false;
+		}
+	}
+	else
+	{
+		entId = entityId;
+	}
+	RTPSReader* SReader = nullptr;
+	GUID_t guid(m_guid.guidPrefix,entId);
+	if(param.endpoint.reliabilityKind == BEST_EFFORT)
+		SReader = (RTPSReader*)new StatelessReader(this,guid,param,hist,listen);
+	else if(param.endpoint.reliabilityKind == RELIABLE)
+		SReader = (RTPSReader*)new StatefulReader(this,guid,param,hist,listen);
+
+	if(SReader==nullptr)
+		return false;
+
+	//SReader->setListener(inlisten);
+	//SReader->setQos(param.qos,true);
+	if(isBuiltin)
+	{
+		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
+	}
+
+	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
+	{
+		delete(SReader);
+		return false;
+	}
+
+	m_allReaderList.push_back(SReader);
+	if(!isBuiltin)
+		m_userReaderList.push_back(SReader);
+	*ReaderOut = SReader;
+	return true;
+}
+
+
+
+
 bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
 	return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
+}
+
+bool RTPSParticipantImpl::registerReader(RTPSReader* reader,TopicAttributes& topicAtt,ReaderQos& rqos)
+{
+	return this->mp_builtinProtocols->addLocalReader(reader,topicAtt,rqos);
 }
 
 

@@ -23,6 +23,7 @@
 #include "eprosimartps/utils/IPFinder.h"
 
 #include "eprosimartps/rtps/writer/RTPSWriter.h"
+#include "eprosimartps/rtps/writer/RTPSReader.h"
 
 namespace eprosima {
 namespace rtps {
@@ -186,6 +187,34 @@ bool RTPSDomain::removeRTPSWriter(RTPSWriter* writer)
 		if(it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
 		{
 			return it->second->deleteUserEndpoint((Endpoint*)writer);
+		}
+	}
+	return nullptr;
+}
+
+RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt,
+		ReaderHistory* rhist, ReaderListener* rlisten)
+{
+	for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+	{
+		if(it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
+		{
+			RTPSReader* reader;
+			if(it->second->createReader(&writ,ratt,rhist,rlisten))
+				return reader;
+			return nullptr;
+		}
+	}
+	return nullptr;
+}
+
+bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
+{
+	for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+	{
+		if(it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
+		{
+			return it->second->deleteUserEndpoint((Endpoint*)reader);
 		}
 	}
 	return nullptr;
