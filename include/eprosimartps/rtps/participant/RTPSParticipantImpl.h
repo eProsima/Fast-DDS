@@ -169,13 +169,13 @@ public:
 	bool createWriter(RTPSWriter** Writer, WriterAttributes& param,WriterHistory* hist,WriterListener* listen,
 			const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
 
-	/**
-	 *
-	 * @param Writer
-	 * @param topicAtt
-	 * @param wqos
-	 */
+	bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
+				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
+
+
 	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+
+	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
 
 	inline uint32_t getParticipantID() {return (uint32_t)this->m_att.participantID;};
 

@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef WRITERATTRIBUTES_H_
-#define WRITERATTRIBUTES_H_
+#ifndef READERATTRIBUTES_H_
+#define READERATTRIBUTES_H_
 
 #include "eprosimartps/rtps/common/Time_t.h"
 #include "eprosimartps/rtps/attributes/EndpointAttributes.h"
@@ -20,49 +20,44 @@ namespace eprosima{
 namespace rtps{
 
 
-class WriterTimes
+class ReaderTimes
 {
 public:
-	WriterTimes()
+	ReaderTimes()
 	{
-		heartbeatPeriod.seconds = 3;
-		nackResponseDelay.fraction = 200*1000*1000;
+		heartbeatResponseDelay.fraction = 500*1000*1000;
 	};
-	virtual ~WriterTimes(){};
-	Duration_t heartbeatPeriod;
-	Duration_t nackResponseDelay;
-	Duration_t nackSupressionDuration;
+	virtual ~ReaderTimes(){};
+	Duration_t heartbeatResponseDelay;
 };
 
-class WriterAttributes
+class ReaderAttributes
 {
 public:
-	WriterAttributes()
-	{
-		endpoint.endpointKind = WRITER;
-		endpoint.durabilityKind = TRANSIENT_LOCAL;
-		endpoint.reliabilityKind = RELIABLE;
-	};
-	virtual ~WriterAttributes();
-	EndpointAttributes endpoint;
-	WriterTimes times;
-};
-
-class RemoteReaderAttributes
-{
-public:
-	RemoteReaderAttributes()
+	ReaderAttributes()
 	{
 		endpoint.endpointKind = READER;
-		expectsInlineQos = false;
+		endpoint.durabilityKind = VOLATILE;
+		endpoint.reliabilityKind = BEST_EFFORT;
 	};
-	virtual ~RemoteReaderAttributes()
+	virtual ~ReaderAttributes();
+	EndpointAttributes endpoint;
+	ReaderTimes times;
+};
+
+class RemoteWriterAttributes
+{
+public:
+	RemoteWriterAttributes()
+	{
+		endpoint.endpointKind = WRITER;
+	};
+	virtual ~RemoteWriterAttributes()
 	{
 
 	};
 	EndpointAttributes endpoint;
 	GUID_t guid;
-	bool expectsInlineQos;
 };
 
 }
