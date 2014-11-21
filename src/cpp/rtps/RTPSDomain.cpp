@@ -46,14 +46,7 @@ RTPSDomain* RTPSDomain::getInstance()
 RTPSDomain::RTPSDomain()
 {
 	m_maxRTPSParticipantID = 0;//private constructor
-	m_portBase = 7400;
-	m_RTPSParticipantIdGain = 2;
-	m_domainIdGain = 250;
-	m_offsetd0 = 0;
-	m_offsetd1 = 10;
-	m_offsetd2 = 1;
-	m_offsetd3 = 11;
-	m_DomainId = 80;
+
 	srand (static_cast <unsigned> (time(0)));
 }
 
@@ -91,7 +84,7 @@ RTPSParticipant* RTPSDomain::createRTPSParticipant(const RTPSParticipantAttribut
 
 	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod)
 	{
-		logError(RTPS_RTPSParticipant,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
+		logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
 		return nullptr;
 	}
 	uint32_t ID;
@@ -106,7 +99,7 @@ RTPSParticipant* RTPSDomain::createRTPSParticipant(const RTPSParticipantAttribut
 		ID = PParam.participantID;
 		if(m_RTPSParticipantIDs.insert(ID).second == false)
 		{
-			logError(RTPS_RTPSParticipant,"RTPSParticipant with the same ID already exists" << endl;)
+			logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists" << endl;)
 			return nullptr;
 		}
 	}
@@ -169,7 +162,7 @@ bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
 			}
 		}
 	}
-	logError(RTPS_RTPSParticipant,"RTPSParticipant not valid or not recognized");
+	logError(RTPS_PARTICIPANT,"RTPSParticipant not valid or not recognized");
 	return false;
 }
 
