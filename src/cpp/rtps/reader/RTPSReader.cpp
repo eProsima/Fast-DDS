@@ -11,7 +11,9 @@
  *
 */
 
-#include "eprosimartps/reader/RTPSReader.h"
+#include "eprosimartps/rtps/reader/RTPSReader.h"
+
+#include "eprosimartps/rtps/history/ReaderHistory.h"
 
 #include "eprosimartps/utils/RTPSLog.h"
 
@@ -19,15 +21,11 @@ namespace eprosima {
 namespace rtps {
 static const char* const CLASS_NAME = "RTPSReader";
 
-RTPSReader::RTPSReader(GuidPrefix_t guidP,EntityId_t entId,TopicAttributes topic,TopicDataType* ptype,
-		StateKind_t state,
-		int16_t userDefinedId,uint32_t payload_size):
-		Endpoint(guidP,entId,topic,ptype,state,READER,userDefinedId),
-		//mp_Sub(NULL),
-		mp_listener(NULL),
-		#pragma warning(disable: 4355)
-		m_reader_cache((Endpoint*)this,payload_size),
-		m_expectsInlineQos(true),
+RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
+		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* rlisten):
+		Endpoint(pimpl,guid,att.endpoint),
+		mp_history(hist),
+		mp_listener(rlisten),
 		m_acceptMessagesToUnknownReaders(true),
 		m_acceptMessagesFromUnkownWriters(true)
 
@@ -51,12 +49,6 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 	else
 		return false;
 }
-
-bool RTPSReader::removeCacheChangesByKey(InstanceHandle_t& key)
-{
-	return m_reader_cache.removeCacheChangesByKey(key);
-}
-
 
 
 

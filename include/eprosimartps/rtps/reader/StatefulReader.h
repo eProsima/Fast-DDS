@@ -14,12 +14,14 @@
 #define STATEFULREADER_H_
 
 
-#include "eprosimartps/reader/RTPSReader.h"
-#include "eprosimartps/reader/WriterProxy.h"
+#include "eprosimartps/rtps/reader/RTPSReader.h"
+
 
 
 namespace eprosima {
 namespace rtps {
+
+class WriterProxy;
 
 /**
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
@@ -27,10 +29,11 @@ namespace rtps {
  */
 class StatefulReader:public RTPSReader {
 public:
-	//StatefulReader();
+	friend class RTPSParticipantImpl;
+private:
 	virtual ~StatefulReader();
-	StatefulReader(const SubscriberAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype);
+	StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
+			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
 
 
 	/**
@@ -38,19 +41,19 @@ public:
 	 * @param wdata Pointer to the WPD object to add.
 	 * @return True if correctly added.
 	 */
-	bool matched_writer_add(WriterProxyData* wdata);
+	bool matched_writer_add(RemoteWriterAttributes& wdata);
 	/**
 	 * Remove a WriterProxyData from the matached writers.
 	 * @param wdata Pointer to the WPD object.
 	 * @return True if correct.
 	 */
-	bool matched_writer_remove(WriterProxyData* wdata);
+	bool matched_writer_remove(RemoteWriterAttributes& wdata);
 	/**
 	 * Tells us if a specific Writer is matched against this reader
 	 * @param wdata Pointer to the WriterProxyData object
 	 * @return True if it is matched.
 	 */
-	bool matched_writer_is_matched(WriterProxyData* wdata);
+	bool matched_writer_is_matched(RemoteWriterAttributes& wdata);
 	/**
 	 * Look for a specific WriterProxy.
 	 * @param writerGUID GUID_t of the writer we are looking for.
@@ -97,7 +100,7 @@ public:
 	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
 
 private:
-	SubscriberTimes m_SubTimes;
+	ReaderTimes m_times;
 	//! Vector containing pointers to the matched writers.
 	std::vector<WriterProxy*> matched_writers;
 };

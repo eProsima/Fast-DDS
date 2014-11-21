@@ -39,10 +39,12 @@ public:
 		endpoint.endpointKind = READER;
 		endpoint.durabilityKind = VOLATILE;
 		endpoint.reliabilityKind = BEST_EFFORT;
+		expectsInlineQos = false;
 	};
 	virtual ~ReaderAttributes();
 	EndpointAttributes endpoint;
 	ReaderTimes times;
+	bool expectsInlineQos;
 };
 
 class RemoteWriterAttributes
