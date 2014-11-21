@@ -27,8 +27,8 @@
 
 #include "eprosimartps/rtps/RTPSDomain.h"
 
-//#include "eprosimartps/builtin/BuiltinProtocols.h"
-//#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "eprosimartps/rtps/builtin/BuiltinProtocols.h"
+#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimple.h"
 
 #include "eprosimartps/utils/IPFinder.h"
 #include "eprosimartps/utils/eClock.h"
@@ -38,6 +38,8 @@
 #include <boost/thread/lock_guard.hpp>
 
 #include "eprosimartps/utils/RTPSLog.h"
+
+using namespace pubsub;
 
 namespace eprosima {
 namespace rtps {
@@ -50,14 +52,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):
-							m_guid(guidP,c_EntityId_RTPSParticipant),
-							mp_send_thr(nullptr),
-							mp_event_thr(nullptr),
-							m_builtinProtocols(nullptr),
-							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-							IdCounter(0),
-							mp_participantListener(plisten),
-							mp_userParticipant(par)
+											m_guid(guidP,c_EntityId_RTPSParticipant),
+											mp_send_thr(nullptr),
+											mp_event_thr(nullptr),
+											mp_builtinProtocols(nullptr),
+											mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+											IdCounter(0),
+											mp_participantListener(plisten),
+											mp_userParticipant(par)
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
@@ -85,7 +87,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 			m_att.defaultUnicastLocatorList.push_back(*lit);
 			ss << *lit << ";";
 		}
-		
+
 		std::string auxstr = ss.str();
 		logWarning(RTPS_PARTICIPANT,"RTPSParticipant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
 	}
@@ -103,7 +105,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
 		ListenResource* LR = new ListenResource();
-				Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false);
+		Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false);
 		m_att.defaultMulticastLocatorList.push_back(loc);
 		this->m_listenResourceList.push_back(LR);
 	}
@@ -111,7 +113,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
-	//m_builtinProtocols->initBuiltinProtocols(PParam.builtin,m_att.participantID);
+	mp_builtinProtocols = new BuiltinProtocols();
+	if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
+	{
+		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
+	}
 
 }
 
@@ -122,12 +128,12 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
-				it!=m_listenResourceList.end();++it)
-			delete(*it);
+			it!=m_listenResourceList.end();++it)
+		delete(*it);
 
-//	for(std::vector<RTPSReader*>::iterator it=m_userReaderList.begin();
-//			it!=m_userReaderList.end();++it)
-//		delete(*it);
+	//	for(std::vector<RTPSReader*>::iterator it=m_userReaderList.begin();
+	//			it!=m_userReaderList.end();++it)
+	//		delete(*it);
 
 	for(std::vector<RTPSWriter*>::iterator it=m_userWriterList.begin();
 			it!=m_userWriterList.end();++it)
@@ -166,7 +172,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			IdCounter++;
 			idnum = IdCounter;
 		}
-		
+
 		octet* c = (octet*)&idnum;
 		entId.value[2] = c[0];
 		entId.value[1] = c[1];
@@ -206,6 +212,11 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	return true;
 }
 
+bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
+{
+	return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
+}
+
 
 /*
  *
@@ -219,7 +230,7 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
 	if(kind == WRITER)
 	{
 		for(std::vector<RTPSWriter*>::const_iterator it = m_userWriterList.begin();
-			it!=m_userWriterList.end();++it)
+				it!=m_userWriterList.end();++it)
 		{
 			if(ent == (*it)->getGuid().entityId)
 				return true;
@@ -227,12 +238,12 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
 	}
 	else
 	{
-//		for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
-//			it!=m_userReaderList.end();++it)
-//		{
-//			if(ent == (*it)->getGuid().entityId)
-//				return true;
-//		}
+		//		for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
+		//			it!=m_userReaderList.end();++it)
+		//		{
+		//			if(ent == (*it)->getGuid().entityId)
+		//				return true;
+		//		}
 	}
 	return false;
 }
@@ -323,58 +334,58 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
 	bool found = false;
 	{
-	boost::lock_guard<boost::recursive_mutex> guard(*p_endpoint->getMutex());
-	if(p_endpoint->getAttributes()->endpointKind == WRITER)
-	{
-		for(auto wit=m_userWriterList.begin();
-				wit!=m_userWriterList.end();++wit)
+		boost::lock_guard<boost::recursive_mutex> guard(*p_endpoint->getMutex());
+		if(p_endpoint->getAttributes()->endpointKind == WRITER)
 		{
-			if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+			for(auto wit=m_userWriterList.begin();
+					wit!=m_userWriterList.end();++wit)
 			{
-				m_userWriterList.erase(wit);
-				found = true;
+				if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+				{
+					m_userWriterList.erase(wit);
+					found = true;
+					break;
+				}
+			}
+		}
+		//	if(type == 'R')
+		//	{
+		//		for(p_ReaderIterator rit=m_userReaderList.begin()
+		//				;rit!=m_userReaderList.end();++rit)
+		//		{
+		//			if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+		//			{
+		//				m_userReaderList.erase(rit);
+		//				found = true;
+		//				break;
+		//			}
+		//		}
+		//	}
+		if(!found)
+			return false;
+		//REMOVE FOR BUILTINPROTOCOLS
+		//	if(p_endpoint->getAttributes()->endpointKind == WRITER)
+		//		m_builtinProtocols.removeLocalWriter((RTPSWriter*)p_endpoint);
+		//	else
+		//		m_builtinProtocols.removeLocalReader((RTPSReader*)p_endpoint);
+		//	//BUILTINPROTOCOLS
+		//Remove it from threadListenList
+		std::vector<ListenResource*>::iterator thit;
+		for(thit=m_listenResourceList.begin();
+				thit!=m_listenResourceList.end();thit++)
+		{
+			(*thit)->removeAssociatedEndpoint(p_endpoint);
+		}
+		for(thit=m_listenResourceList.begin();
+				thit!=m_listenResourceList.end();thit++)
+		{
+			if(!(*thit)->hasAssociatedEndpoints())
+			{
+				delete(*thit);
+				m_listenResourceList.erase(thit);
 				break;
 			}
 		}
-	}
-//	if(type == 'R')
-//	{
-//		for(p_ReaderIterator rit=m_userReaderList.begin()
-//				;rit!=m_userReaderList.end();++rit)
-//		{
-//			if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
-//			{
-//				m_userReaderList.erase(rit);
-//				found = true;
-//				break;
-//			}
-//		}
-//	}
-	if(!found)
-		return false;
-	//REMOVE FOR BUILTINPROTOCOLS
-//	if(p_endpoint->getAttributes()->endpointKind == WRITER)
-//		m_builtinProtocols.removeLocalWriter((RTPSWriter*)p_endpoint);
-//	else
-//		m_builtinProtocols.removeLocalReader((RTPSReader*)p_endpoint);
-//	//BUILTINPROTOCOLS
-	//Remove it from threadListenList
-	std::vector<ListenResource*>::iterator thit;
-	for(thit=m_listenResourceList.begin();
-			thit!=m_listenResourceList.end();thit++)
-	{
-		(*thit)->removeAssociatedEndpoint(p_endpoint);
-    }
-	for(thit=m_listenResourceList.begin();
-			thit!=m_listenResourceList.end();thit++)
-	{
-		if(!(*thit)->hasAssociatedEndpoints())
-		{
-			delete(*thit);
-			m_listenResourceList.erase(thit);
-			break;
-		}
-	}
 
 	}
 	delete(p_endpoint);

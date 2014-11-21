@@ -14,10 +14,20 @@
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
 
-#include "eprosimartps/pubsub/attributes/RTPSParticipantAttributes.h"
+#include "eprosimartps/rtps/attributes/RTPSParticipantAttributes.h"
 
 
 namespace eprosima {
+
+namespace pubsub
+{
+	class WriterQos;
+	class ReaderQos;
+	class TopicAttributes;
+}
+
+using namespace pubsub;
+
 namespace rtps {
 
 class PDPSimple;
@@ -31,21 +41,23 @@ class RTPSReader;
  * @ingroup MANAGEMENTMODULE
  */
 class BuiltinProtocols {
-public:
+	friend class RTPSParticipantImpl;
+private:
 	BuiltinProtocols();
 	virtual ~BuiltinProtocols();
+public:
 	/**
 	 * Initialize the builtin protocols.
 	 * @param attributes DiscoveryAttributes
 	 * @param RTPSParticipantID ID of the local RTPSParticipant.
 	 * @return True if correct.
 	 */
-	bool initBuiltinProtocols(RTPSParticipantImpl* p_part,const BuiltinAttributes& attributes, uint32_t RTPSParticipantID);
+	bool initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes);
 	//!Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
 	bool updateMetatrafficLocators(LocatorList_t& loclist);
 
-	BuiltinAttributes m_attributes;
-	RTPSParticipantImpl* mp_RTPSParticipant;
+	BuiltinAttributes m_att;
+	RTPSParticipantImpl* mp_participantImpl;
 	PDPSimple* mp_PDP;
 	WLP* mp_WLP;
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
@@ -60,37 +72,37 @@ public:
 	 * @param w Pointer to the RTPSWriter.
 	 * @return True if correct.
 	 */
-	bool addLocalWriter(RTPSWriter* w);
-	/**
-	 * Add a local Reader to the BuiltinProtocols.
-	 * @param R Pointer to the RTPSReader.
-	 * @return True if correct.
-	 */
-	bool addLocalReader(RTPSReader* R);
-	/**
-	 * Update a local Writer QOS (NOT IMPLEMENTED YET)
-	 * @param W
-	 * @return
-	 */
-	bool updateLocalWriter(RTPSWriter* W);
-	/**
-	 * Update a local Reader QOS (NOT IMPLEMENTED YET)
-	 * @param R
-	 * @return
-	 */
-	bool updateLocalReader(RTPSReader* R);
+	bool addLocalWriter(RTPSWriter* w,TopicAttributes& topicAtt,WriterQos& wqos);
+//	/**
+//	 * Add a local Reader to the BuiltinProtocols.
+//	 * @param R Pointer to the RTPSReader.
+//	 * @return True if correct.
+//	 */
+//	bool addLocalReader(RTPSReader* R);
+//	/**
+//	 * Update a local Writer QOS (NOT IMPLEMENTED YET)
+//	 * @param W
+//	 * @return
+//	 */
+//	bool updateLocalWriter(RTPSWriter* W);
+//	/**
+//	 * Update a local Reader QOS (NOT IMPLEMENTED YET)
+//	 * @param R
+//	 * @return
+//	 */
+//	bool updateLocalReader(RTPSReader* R);
 	/**
 	 * Remove a local Writer from the builtinProtocols.
 	 * @param W Pointer to the writer.
 	 * @return True if correctly removed.
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
-	/**
-	 * Remove a local Reader from the builtinProtocols.
-	 * @param R Pointer to the reader.
-	 * @return True if correctly removed.
-	 */
-	bool removeLocalReader(RTPSReader* R);
+//	/**
+//	 * Remove a local Reader from the builtinProtocols.
+//	 * @param R Pointer to the reader.
+//	 * @return True if correctly removed.
+//	 */
+//	bool removeLocalReader(RTPSReader* R);
 
 	//! Announce RTPSParticipantState (force the sending of a DPD message.)
 	void announceRTPSParticipantState();

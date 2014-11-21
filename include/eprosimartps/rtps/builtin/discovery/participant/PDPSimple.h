@@ -14,11 +14,9 @@
 #ifndef PDPSIMPLE_H_
 #define PDPSIMPLE_H_
 
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimpleListener.h"
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimpleTopicDataType.h"
-#include "eprosimartps/pubsub/attributes/RTPSParticipantAttributes.h"
-
-#include "eprosimartps/Endpoint.h"
+#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
+#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
+#include "eprosimartps/rtps/attributes/RTPSParticipantAttributes.h"
 
 namespace eprosima {
 namespace rtps {
@@ -49,7 +47,7 @@ public:
 	 * @param RTPSParticipantID RTPSParticipantID used to create the RTPSParticipant.
 	 * @return
 	 */
-	bool initPDP(RTPSParticipantImpl* part,uint32_t RTPSParticipantID);
+	bool initPDP(RTPSParticipantImpl* part);
 
 	//!Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
 	/**

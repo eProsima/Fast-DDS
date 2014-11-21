@@ -49,14 +49,14 @@ class WLP : public boost::basic_lockable_adapter<boost::recursive_mutex>
 	friend class WLPListener;
 	friend class WLivelinessPeriodicAssertion;
 public:
-	WLP(RTPSParticipantImpl* p);
+	WLP(BuiltinProtocols* prot);
 	virtual ~WLP();
 	/**
 	 * Initialize the WLP protocol.
 	 * @param prot Pointer to the BuiltinProtocols object.
 	 * @return true if the initialziacion was succesful.
 	 */
-	bool initWL(BuiltinProtocols* prot);
+	bool initWL(RTPSParticipantImpl* p);
 	/**
 	 * Create the endpoitns used in the WLP.
 	 * @return true if correct.
@@ -94,7 +94,7 @@ public:
 
 private:
 	//!Pointer to the local RTPSParticipant.
-	RTPSParticipantImpl* mp_RTPSParticipant;
+	RTPSParticipantImpl* mp_participantImpl;
 	//!Pointer to the builtinprotocol class.
 	BuiltinProtocols* mp_builtinProtocols;
 	//!Pointer to the builtinRTPSParticipantMEssageWriter.

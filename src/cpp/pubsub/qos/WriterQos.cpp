@@ -7,30 +7,30 @@
  *************************************************************************/
 
 /**
- * @file PublisherQos.cpp
+ * @file WriterQos.cpp
  *
  */
 
-#include "eprosimartps/pubsub/qos/PublisherQos.h"
+#include "eprosimartps/pubsub/qos/WriterQos.h"
 #include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace pubsub {
 
-static const char* const CLASS_NAME = "PublisherQos";
+static const char* const CLASS_NAME = "WriterQos";
 
-PublisherQos::PublisherQos()
+WriterQos::WriterQos()
 {
 	this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 }
 
-PublisherQos::~PublisherQos()
+WriterQos::~WriterQos()
 {
 
 }
 
 
-void PublisherQos::setQos(const  PublisherQos& qos, bool first_time)
+void WriterQos::setQos(const  WriterQos& qos, bool first_time)
 {
 	if(first_time)
 	{
@@ -128,7 +128,7 @@ void PublisherQos::setQos(const  PublisherQos& qos, bool first_time)
 	}
 }
 
-bool PublisherQos::checkQos()
+bool WriterQos::checkQos()
 {
 	const char* const METHOD_NAME = "checkQos";
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
@@ -163,7 +163,7 @@ bool PublisherQos::checkQos()
 }
 
 
-bool PublisherQos::canQosBeUpdated(PublisherQos& qos)
+bool WriterQos::canQosBeUpdated(WriterQos& qos)
 {
 	const char* const METHOD_NAME = "canQosBeUpdated";
 	bool updatable = true;
