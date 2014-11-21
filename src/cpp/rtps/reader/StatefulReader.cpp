@@ -11,15 +11,13 @@
  *
  */
 
-#include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include "eprosimartps/rtps/reader/StatefulReader.h"
 
-#include "eprosimartps/pubsub/SampleInfo.h"
-#include "eprosimartps/pubsub/TopicDataType.h"
 
-#include "eprosimartps/reader/WriterProxyData.h"
-
+#include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+
+#include "eprosimartps/utils/RTPSLog.h"
 
 using namespace eprosima::pubsub;
 
@@ -41,44 +39,40 @@ StatefulReader::~StatefulReader()
 
 
 
-StatefulReader::StatefulReader(const SubscriberAttributes& param,
-		const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype):
-																RTPSReader(guidP,entId,param.topic,ptype,STATEFUL,
-																		param.userDefinedId,param.payloadMaxSize),
-																		m_SubTimes(param.times)
+StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
+		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
+		RTPSReader(pimpl,guid,att,hist, listen),
+		m_times(att.times)
 {
-	//locator lists:
-	unicastLocatorList = param.unicastLocatorList;
-	multicastLocatorList = param.multicastLocatorList;
-	m_expectsInlineQos = param.expectsInlineQos;
+
 }
 
 
-bool StatefulReader::matched_writer_add(WriterProxyData* wdata)
+bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
-		if((*it)->m_data->m_guid == wdata->m_guid)
+		if((*it)->m_data->m_guid == wdata.guid)
 		{
 			logWarning(RTPS_READER,"Attempting to add existing writer");
 			return false;
 		}
 	}
-	WriterProxy* wp = new WriterProxy(wdata,m_SubTimes.heartbeatResponseDelay,this);
+	WriterProxy* wp = new WriterProxy(wdata,m_times.heartbeatResponseDelay,this);
 	matched_writers.push_back(wp);
 	logInfo(RTPS_READER,"Writer Proxy " <<wp->m_data->m_guid <<" added to :" <<wp->m_data->m_guid);
 	return true;
 }
-bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
+bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_remove";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		if((*it)->m_data->m_guid == wdata->m_guid)
+		if((*it)->m_data->m_guid == wdata.guid)
 		{
 			logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_data->m_guid);
 			delete(*it);
@@ -90,21 +84,18 @@ bool StatefulReader::matched_writer_remove(WriterProxyData* wdata)
 	return false;
 }
 
-bool StatefulReader::matched_writer_is_matched(WriterProxyData* wdata)
+bool StatefulReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		if((*it)->m_data->m_guid == wdata->m_guid)
+		if((*it)->m_data->m_guid == wdata.guid)
 		{
 			return true;
 		}
 	}
 	return false;
 }
-
-
-
 
 
 bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)

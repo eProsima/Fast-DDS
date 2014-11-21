@@ -31,9 +31,10 @@ class ReaderProxy;
 class StatefulWriter: public RTPSWriter
 {
 	friend class RTPSParticipantImpl;
+private:
 	//!Destructor
 	virtual ~StatefulWriter();
-private:
+
 	//!Constructor
 	StatefulWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
 
