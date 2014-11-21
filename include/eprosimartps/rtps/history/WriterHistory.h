@@ -54,11 +54,11 @@ public:
 
 
 protected:
-	/**
-	 * Assign the Writer Associated with this History.
-	 * @param writer Pointer to the writer;
-	 */
-	void assignWriter(RTPSWriter* writer) {mp_writer = writer;};
+//	/**
+//	 * Assign the Writer Associated with this History.
+//	 * @param writer Pointer to the writer;
+//	 */
+//	void assignWriter(RTPSWriter* writer) {mp_writer = writer;};
 	//!Last CacheChange Sequence Number added to the History.
 	SequenceNumber_t m_lastCacheChangeSeqNum;
 	//!Pointer to the associated RTPSWriter;
