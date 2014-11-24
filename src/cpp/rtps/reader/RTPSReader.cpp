@@ -32,7 +32,7 @@ RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
 
 {
 	const char* const METHOD_NAME = "RTPSReader";
-	logInfo(RTPS_READER,"RTPSReader created correctly in topic: "<<this->getTopic().topicName;);
+	logInfo(RTPS_READER,"RTPSReader created correctly");
 }
 
 RTPSReader::~RTPSReader()
