@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,15 +11,16 @@
  *
  */
 
-#include "eprosimartps/rtps/resources/ResourceEvent.h"
+#include "fastrtps/rtps/resources/ResourceEvent.h"
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "ResourceEvent";
@@ -66,6 +67,6 @@ void ResourceEvent::announce_thread()
 	mp_RTPSParticipantImpl->ResourceSemaphorePost();
 
 }
-
-} /* namespace pubsub */
+}
+} /* namespace */
 } /* namespace eprosima */

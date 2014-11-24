@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,14 +11,15 @@
  *
  */
 
-#include "eprosimartps/writer/RTPSMessageGroup.h"
-#include "eprosimartps/RTPSMessageCreator.h"
-#include "eprosimartps/writer/RTPSWriter.h"
-#include "eprosimartps/resources/ResourceSend.h"
+#include "fastrtps/writer/RTPSMessageGroup.h"
+#include "fastrtps/RTPSMessageCreator.h"
+#include "fastrtps/writer/RTPSWriter.h"
+#include "fastrtps/resources/ResourceSend.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "RTPSMessageGroup";
@@ -301,6 +302,6 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

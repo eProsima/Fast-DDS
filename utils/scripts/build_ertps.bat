@@ -6,7 +6,7 @@
 set errorstatus=0
 
 :: Get the current vesion of CDR
-call thirdparty\dev-env\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONRTPS ..\..\include\eprosimartps\eprosimartps_version.h
+call thirdparty\dev-env\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONRTPS ..\..\include\fastrtps\fastrtps_version.h
 if not %errorstatus%==0 goto :exit
 
 set WIN32VER=%1

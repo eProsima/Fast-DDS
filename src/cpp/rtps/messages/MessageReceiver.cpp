@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,27 +11,28 @@
  *
  */
 
-#include "eprosimartps/MessageReceiver.h"
-#include "eprosimartps/common/RTPS_messages.h"
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/resources/ListenResource.h"
+#include "fastrtps/MessageReceiver.h"
+#include "fastrtps/common/RTPS_messages.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/resources/ListenResource.h"
 
-#include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/reader/StatelessReader.h"
+#include "fastrtps/writer/StatefulWriter.h"
+#include "fastrtps/reader/StatefulReader.h"
+#include "fastrtps/writer/StatelessWriter.h"
+#include "fastrtps/reader/StatelessReader.h"
 
-#include "eprosimartps/writer/ReaderProxyData.h"
-#include "eprosimartps/reader/WriterProxyData.h"
+#include "fastrtps/writer/ReaderProxyData.h"
+#include "fastrtps/reader/WriterProxyData.h"
 
-#include "eprosimartps/pubsub/SubscriberListener.h"
+#include "fastrtps/pubsub/SubscriberListener.h"
 
-#include "eprosimartps/RTPSParticipant.h"
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "fastrtps/RTPSParticipant.h"
+#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 using namespace eprosima::pubsub;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "MessageReceiver";
@@ -792,6 +793,6 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

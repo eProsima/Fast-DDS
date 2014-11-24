@@ -49,16 +49,16 @@ FORMS    +=   forms/mainwindow.ui \
 UI_DIR = $$_PRO_FILE_PWD_/forms/ui/
 MOC_DIR = $$_PRO_FILE_PWD_/forms/ui/
 
-unix: CONFIG(release, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartps
-else:unix: CONFIG(debug, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -leprosimartpsd
+unix: CONFIG(release, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -lfastrtps
+else:unix: CONFIG(debug, debug|release):LIBS += -L$$PWD/../../lib/x64Linux2.6gcc/ -lfastrtpsd
 
 INCLUDEPATH += $$PWD/../../include
 INCLUDEPATH += $$PWD/../../thirdparty/eprosima-common-code
 DEPENDPATH += $$PWD/../../include
 DEPENDPATH += $$PWD/../../thirdparty/eprosima-common-code
 
-unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartpsd.a
-else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libeprosimartps.a
+unix: CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libfastrtpsd.a
+else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64Linux2.6gcc/libfastrtps.a
 
 
 
@@ -104,14 +104,14 @@ SOURCES += \
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibeprosimartps-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
-win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibeprosimartpsd-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibfastrtps-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibfastrtpsd-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
 
 
 INCLUDEPATH += $$PWD/../../include2
 DEPENDPATH += $$PWD/../../include2
 
-win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.1.lib
+win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libfastrtps-0.5.1.lib
 
 
 
@@ -119,8 +119,8 @@ win32:INCLUDEPATH += $$PWD/../../include
 win32:DEPENDPATH += $$PWD/../../lib/i86Win32VS2010 C:\Windows\System32
 
 
-#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartps-0.5.1.lib Shlwapi.lib Iphlpapi.lib
-#win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libeprosimartpsd-0.5.1.lib Shlwapi.lib Iphlpapi.lib
+#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libfastrtps-0.5.1.lib Shlwapi.lib Iphlpapi.lib
+#win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libfastrtpsd-0.5.1.lib Shlwapi.lib Iphlpapi.lib
 
 RESOURCES += \
     images/eprosimalogo.qrc

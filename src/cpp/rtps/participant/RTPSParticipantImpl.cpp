@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,37 +11,38 @@
  *
  */
 
-#include "eprosimartps/rtps/resources/ResourceSend.h"
-#include "eprosimartps/rtps/resources/ResourceEvent.h"
-#include "eprosimartps/rtps/resources/ListenResource.h"
+#include "fastrtps/rtps/resources/ResourceSend.h"
+#include "fastrtps/rtps/resources/ResourceEvent.h"
+#include "fastrtps/rtps/resources/ListenResource.h"
 
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-#include "eprosimartps/rtps/writer/StatelessWriter.h"
-#include "eprosimartps/rtps/writer/StatefulWriter.h"
+#include "fastrtps/rtps/writer/StatelessWriter.h"
+#include "fastrtps/rtps/writer/StatefulWriter.h"
 
-//#include "eprosimartps/reader/StatelessReader.h"
-//#include "eprosimartps/reader/StatefulReader.h"
+//#include "fastrtps/reader/StatelessReader.h"
+//#include "fastrtps/reader/StatefulReader.h"
 
-#include "eprosimartps/rtps/participant/RTPSParticipant.h"
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
 
-#include "eprosimartps/rtps/RTPSDomain.h"
+#include "fastrtps/rtps/RTPSDomain.h"
 
-#include "eprosimartps/rtps/builtin/BuiltinProtocols.h"
-#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
 
-#include "eprosimartps/utils/IPFinder.h"
-#include "eprosimartps/utils/eClock.h"
+#include "fastrtps/utils/IPFinder.h"
+#include "fastrtps/utils/eClock.h"
 
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
-using namespace pubsub;
+
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 
@@ -685,7 +686,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 //	}
 //	return m_builtinProtocols.mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
 //}
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

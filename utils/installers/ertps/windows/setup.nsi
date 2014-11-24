@@ -112,7 +112,7 @@ Var StartMenuGroup
 ReserveFile "${NSISDIR}\Plugins\newadvsplash.dll"
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ..\..\..\..\doc\licenses\EPROSIMARTPS_LIBRARY_LICENSE.txt 
+!insertmacro MUI_PAGE_LICENSE ..\..\..\..\doc\licenses\fastrtps_LIBRARY_LICENSE.txt 
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE ComponentsPageLeave
 !insertmacro MUI_PAGE_COMPONENTS
@@ -255,8 +255,8 @@ Section -post SEC0006
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
     
     ### Actualizamos las variables de entorno que se hayan marcado
-    ${If} $CheckboxEPROSIMARTPSHOME_State == ${BST_CHECKED}
-       ${EnvVarUpdate} $0 "EPROSIMARTPSHOME" "P" "HKLM" "$INSTDIR"
+    ${If} $CheckboxfastrtpsHOME_State == ${BST_CHECKED}
+       ${EnvVarUpdate} $0 "fastrtpsHOME" "P" "HKLM" "$INSTDIR"
        WriteRegStr HKLM "${REGKEY}\Components" "FASTRPCHOME" 1
     ${EndIf}
     ${If} $CheckboxScripts_State == ${BST_CHECKED}
@@ -354,9 +354,9 @@ Section -un.post UNSEC0006
 	DeleteRegValue HKLM "${REGKEY}\Components" "i86 VS2013 libraries location"
     DeleteRegValue HKLM "${REGKEY}\Components" "x64 VS2013 libraries location"
     DeleteRegValue HKLM "${REGKEY}\Components" "Script location"
-    DeleteRegValue HKLM "${REGKEY}\Components" "EPROSIMARTPSHOME"
+    DeleteRegValue HKLM "${REGKEY}\Components" "fastrtpsHOME"
     
-    ${un.EnvVarUpdate} $0 "EPROSIMARTPSHOME" "R" "HKLM" "$INSTDIR"
+    ${un.EnvVarUpdate} $0 "fastrtpsHOME" "R" "HKLM" "$INSTDIR"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\rtpsgen"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"

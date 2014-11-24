@@ -1,10 +1,10 @@
 :: This script execute Visual Studio getting first the version of the product.
 
 :: Get the current vesion of FastCDR
-call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONEPROSIMARTPS ..\..\..\include\eprosimartps\eprosimartps_version.h
+call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONfastrtps ..\..\..\include\fastrtps\fastrtps_version.h
 if not %errorstatus%==0 goto :EOF
 
-set VERSION=-%VERSIONEPROSIMARTPS%
+set VERSION=-%VERSIONfastrtps%
 
 set LIB_BOOST_PATH=C:\local\boost_1_57_0
 

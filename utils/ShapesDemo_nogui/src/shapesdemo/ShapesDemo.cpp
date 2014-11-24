@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS ShapesDemo is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -53,7 +53,7 @@ bool ShapesDemo::init()
     {
         cout <<"Creating new RTPSParticipant"<<endl;
         RTPSParticipantAttributes pparam;
-        pparam.name = "eProsimaRTPSParticipant";
+        pparam.name = "fastrtpsParticipant";
         pparam.builtin.domainId = m_options.m_domainId;
         pparam.builtin.leaseDuration.seconds = 100;
         pparam.builtin.leaseDuration_announcementperiod.seconds = 50;

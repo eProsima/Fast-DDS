@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,18 +11,19 @@
  *
  */
 
-#include "eprosimartps/rtps/resources/ListenResourceImpl.h"
-#include "eprosimartps/rtps/resources/ListenResource.h"
-#include "eprosimartps/rtps/messages/MessageReceiver.h"
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/resources/ListenResourceImpl.h"
+#include "fastrtps/rtps/resources/ListenResource.h"
+#include "fastrtps/rtps/messages/MessageReceiver.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-#include "eprosimartps/utils/IPFinder.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/IPFinder.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 
 using boost::asio::ip::udp;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "ListenResourceImpl";
@@ -216,6 +217,6 @@ void ListenResourceImpl::run_io_service()
 
 	this->m_io_service.run();
 }
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

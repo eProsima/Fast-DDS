@@ -42,7 +42,7 @@ HELLOWORLDTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/ShapesDemo
 HELLOWORLDTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../include -I$(BASEDIR)/include
 
 
-HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L/home/eprosima/raspi/boost_inst_dir/lib/ -L$(BASEDIR)/../../lib/$(EPROSIMA_TARGET) -leprosimartps -lboost_system -lboost_thread 
+HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L/home/eprosima/raspi/boost_inst_dir/lib/ -L$(BASEDIR)/../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread 
 
 HELLOWORLDTEST_SRC_CFILES=
 

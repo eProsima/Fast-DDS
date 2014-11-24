@@ -30,7 +30,7 @@ if not %errorstatus%==0 goto :exit
 cd "..\..\..\..\"
 
 :: Get the current vesion of RTPS
-call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONRTPS include/eprosimartps/eprosimartps_version.h
+call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONRTPS include/fastrtps/fastrtps_version.h
 if not %errorstatus%==0 goto :exit
 
 :: Compile RTPS for target.

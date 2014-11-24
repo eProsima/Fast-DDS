@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,20 +11,20 @@
  *
  */
 
-#include "eprosimartps/rtps/builtin/BuiltinProtocols.h"
-#include "eprosimartps/rtps/common/Locator.h"
+#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
+#include "fastrtps/rtps/common/Locator.h"
 
-#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "eprosimartps/rtps/builtin/discovery/endpoint/EDP.h"
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
 
-#include "eprosimartps/rtps/builtin/liveliness/WLP.h"
+#include "fastrtps/rtps/builtin/liveliness/WLP.h"
 
-//#include "eprosimartps/reader/StatelessReader.h"
+//#include "fastrtps/reader/StatelessReader.h"
 
-//#include "eprosimartps/pubsub/RTPSDomain.h"
+//#include "fastrtps/pubsub/RTPSDomain.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/IPFinder.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/IPFinder.h"
 
 namespace eprosima {
 namespace rtps {

@@ -32,7 +32,7 @@ public class Solution extends com.eprosima.solution.Solution
 
         for(int count = 0; count < libraries.size(); ++count)
         {
-            if(m_example.contains("Win") && libraries.get(count).startsWith("eprosimartps"))
+            if(m_example.contains("Win") && libraries.get(count).startsWith("fastrtps"))
                 ret.add(libraries.get(count) + "-" + m_version);
             else
                 ret.add(libraries.get(count));
@@ -48,7 +48,7 @@ public class Solution extends com.eprosima.solution.Solution
 
         for(int count = 0; count < libraries.size(); ++count)
         {
-            if(m_example.contains("Win") && libraries.get(count).startsWith("eprosimartps"))
+            if(m_example.contains("Win") && libraries.get(count).startsWith("fastrtps"))
                 ret.add(libraries.get(count) + "d-" + m_version);
             else
                 ret.add(libraries.get(count) + "d");
@@ -66,7 +66,7 @@ public class Solution extends com.eprosima.solution.Solution
         {
             if(libraries.get(count).startsWith("ndds"))
                 ret.add(libraries.get(count) + "z");
-            else if(m_example.contains("Win") && libraries.get(count).startsWith("eprosimartps"))
+            else if(m_example.contains("Win") && libraries.get(count).startsWith("fastrtps"))
                 ret.add("lib" + libraries.get(count) + "-" + m_version);
             else
                 ret.add("lib" + libraries.get(count));
@@ -84,7 +84,7 @@ public class Solution extends com.eprosima.solution.Solution
         {
             if(libraries.get(count).startsWith("ndds"))
                 ret.add(libraries.get(count) + "zd");
-            else if(m_example.contains("Win") && libraries.get(count).startsWith("eprosimartps"))
+            else if(m_example.contains("Win") && libraries.get(count).startsWith("fastrtps"))
                 ret.add("lib" + libraries.get(count) + "d-" + m_version);
             else
                 ret.add("lib" + libraries.get(count) + "d");

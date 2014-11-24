@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -12,19 +12,19 @@
  */
 #include <limits>
 
-#include "eprosimartps/builtin/liveliness/WLP.h"
-#include "eprosimartps/common/types/Guid.h"
-#include "eprosimartps/RTPSParticipant.h"
-#include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/reader/WriterProxy.h"
+#include "fastrtps/builtin/liveliness/WLP.h"
+#include "fastrtps/common/types/Guid.h"
+#include "fastrtps/RTPSParticipant.h"
+#include "fastrtps/writer/StatefulWriter.h"
+#include "fastrtps/reader/StatefulReader.h"
+#include "fastrtps/reader/WriterProxy.h"
 
-#include "eprosimartps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h"
-#include "eprosimartps/builtin/BuiltinProtocols.h"
-#include "eprosimartps/RTPSParticipantProxyData.h"
+#include "fastrtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h"
+#include "fastrtps/builtin/BuiltinProtocols.h"
+#include "fastrtps/RTPSParticipantProxyData.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/TimeConversion.h"
 
 namespace eprosima {
 namespace rtps {

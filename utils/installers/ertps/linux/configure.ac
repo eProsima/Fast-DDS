@@ -2,7 +2,7 @@ m4_define([version_major],[0])
 m4_define([version_minor],[5])
 m4_define([version_micro],[1])
 
-AC_INIT([eprosimartps], [VERSION], [support@eprosima.com], [eprosimartps], [http://eprosima.com/])
+AC_INIT([fastrtps], [VERSION], [support@eprosima.com], [fastrtps], [http://eprosima.com/])
 AC_PREREQ([2.59])
 AM_INIT_AUTOMAKE([1.10 no-define foreign]):
 AC_PROG_CXX

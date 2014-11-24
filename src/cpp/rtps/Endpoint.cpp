@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,11 +11,12 @@
  *
  */
 
-#include "eprosimartps/rtps/Endpoint.h"
+#include "fastrtps/rtps/Endpoint.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att):
@@ -33,3 +34,4 @@ Endpoint::~Endpoint() {
 
 } /* namespace rtps */
 } /* namespace eprosima */
+}

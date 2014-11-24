@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,14 +11,15 @@
  *
  */
 
-#include "eprosimartps/rtps/history/ReaderHistory.h"
+#include "fastrtps/rtps/history/ReaderHistory.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/rtps/reader/RTPSReader.h"
-#include "eprosimartps/rtps/reader/ReaderListener.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/rtps/reader/RTPSReader.h"
+#include "fastrtps/rtps/reader/ReaderListener.h"
 
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "ReaderHistory";
@@ -324,6 +325,6 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
 //	return false;
 //}
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

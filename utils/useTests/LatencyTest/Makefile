@@ -39,7 +39,7 @@ STATETEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTest
 STATETEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(EPROSIMADIR)/code
 
-STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartps -lboost_system -lboost_thread
+STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread
 
 STATETEST_SRC_CFILES=
 

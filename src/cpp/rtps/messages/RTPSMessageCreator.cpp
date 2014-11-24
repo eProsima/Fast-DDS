@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,26 +11,27 @@
  *
  */
 
-#include "eprosimartps/RTPSMessageCreator.h"
-#include "eprosimartps/CDRMessage.h"
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/utils/eClock.h"
-//#include "eprosimartps/utils/ObjectPool.h"
-#include "eprosimartps/utils/CDRMessagePool.h"
-#include "eprosimartps/common/RTPS_messages.h"
+#include "fastrtps/RTPSMessageCreator.h"
+#include "fastrtps/CDRMessage.h"
+#include "fastrtps/qos/ParameterList.h"
+#include "fastrtps/utils/eClock.h"
+//#include "fastrtps/utils/ObjectPool.h"
+#include "fastrtps/utils/CDRMessagePool.h"
+#include "fastrtps/common/RTPS_messages.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 using namespace boost::posix_time;
 
 
 
-using namespace eprosima::pubsub;
+using namespace eprosima::fastrtps;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
@@ -180,7 +181,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalida
 	g_clock.setTimeNow(&time_now);
 	return RTPSMessageCreator::addSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
-
+}
 }; /* namespace rtps */
 }; /* namespace eprosima */
 

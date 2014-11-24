@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,15 +11,16 @@
  *
  */
 
-#include "eprosimartps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/rtps/writer/RTPSWriter.h"
 
-#include "eprosimartps/rtps/resources/ListenResource.h"
-#include "eprosimartps/rtps/resources/ListenResourceImpl.h"
-#include "eprosimartps/rtps/messages/MessageReceiver.h"
+#include "fastrtps/rtps/resources/ListenResource.h"
+#include "fastrtps/rtps/resources/ListenResourceImpl.h"
+#include "fastrtps/rtps/messages/MessageReceiver.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "ListenResource";
@@ -128,5 +129,5 @@ bool ListenResource::isListeningTo(Locator_t&loc)
 
 
 
-} /* namespace rtps */
+}} /* namespace rtps */
 } /* namespace eprosima */

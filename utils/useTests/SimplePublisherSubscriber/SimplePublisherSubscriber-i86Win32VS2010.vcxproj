@@ -88,7 +88,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(EPROSIMARTPSHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(fastrtpsHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;EPROSIMA_ALL_DYN_LINK;BOOST_ALL_DYN_LINK;_DEBUG;</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -98,14 +98,14 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>SimpleTypesd.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(fastrtpsHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(EPROSIMARTPSHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(fastrtpsHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;EPROSIMA_ALL_DYN_LINK;BOOST_ALL_DYN_LINK;NDEBUG;</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -115,14 +115,14 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>SimpleTypes.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(fastrtpsHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(EPROSIMARTPSHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(fastrtpsHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;BOOST_ALL_DYN_LINK;_DEBUG;</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -132,14 +132,14 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>libSimpleTypesd.lib;Shlwapi.lib;Iphlpapi.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(fastrtpsHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(EPROSIMARTPSHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(fastrtpsHOME)\include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;BOOST_ALL_DYN_LINK;NDEBUG;</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -149,7 +149,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>libSimpleTypes.lib;Shlwapi.lib;Iphlpapi.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>$(EPROSIMARTPSHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(fastrtpsHOME)/lib/i86Win32VS2010;.\lib\i86Win32VS2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

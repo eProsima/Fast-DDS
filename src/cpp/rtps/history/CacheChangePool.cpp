@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,11 +11,12 @@
  *
  */
 
-#include "eprosimartps/rtps/history/CacheChangePool.h"
-#include "eprosimartps/rtps/common/CacheChange.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/rtps/history/CacheChangePool.h"
+#include "fastrtps/rtps/common/CacheChange.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "CacheChangePool";
@@ -93,6 +94,6 @@ bool CacheChangePool::allocateGroup(uint16_t group_size)
 	//logInfo(RTPS_UTILS,"Finish allocating CacheChange_t");
 	return added;
 }
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

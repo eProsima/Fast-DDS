@@ -1,1 +1,1 @@
-xcopy ..\..\..\include\eprosimartps\* "C:\Program Files\eProsima\eRTPS\include\eprosimartps\" /y /s
+xcopy ..\..\..\include\fastrtps\* "C:\Program Files\eProsima\eRTPS\include\fastrtps\" /y /s

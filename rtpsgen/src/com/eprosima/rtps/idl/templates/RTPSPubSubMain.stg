@@ -4,7 +4,7 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubMain.cpp"], description=["This file acts as a main entry point to the application."])$
 
 
-#include "eprosimartps/rtps_all.h"
+#include "fastrtps/rtps_all.h"
 #include "$ctx.filename$Publisher.h"
 #include "$ctx.filename$Subscriber.h"
 #include "$ctx.filename$PubSubType.h"

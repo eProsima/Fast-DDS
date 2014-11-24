@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -12,9 +12,11 @@
  */
 #include <cmath>
 #include <iostream>
-#include "eprosimartps/utils/eClock.h"
+#include "fastrtps/utils/eClock.h"
+using namespace eprosima::fastrtps::rtps;
+
 namespace eprosima {
-namespace rtps {
+namespace fastrtps {
 	//FIXME: UTC SECONDS AUTOMATICALLY
 eClock::eClock():
 		m_seconds_from_1900_to_1970(0),

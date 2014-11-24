@@ -18,7 +18,7 @@ function package
 {
     
 	# Get the current version of eRTPS
-	. thirdparty/dev-env/scripts/common_pack_functions.sh getVersionFromCPP ertpsversion include/eprosimartps/eprosimartps_version.h
+	. thirdparty/dev-env/scripts/common_pack_functions.sh getVersionFromCPP ertpsversion include/fastrtps/fastrtps_version.h
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 

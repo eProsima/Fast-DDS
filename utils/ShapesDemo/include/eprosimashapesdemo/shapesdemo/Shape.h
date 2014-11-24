@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -13,8 +13,8 @@
 
 #ifndef SHAPE_H_
 #define SHAPE_H_
-#include "eprosimartps/common/types/Time_t.h"
-#include "eprosimartps/common/types/Guid.h"
+#include "fastrtps/common/types/Time_t.h"
+#include "fastrtps/common/types/Guid.h"
 
 using namespace eprosima::rtps;
 

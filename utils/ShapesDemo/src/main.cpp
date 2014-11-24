@@ -1,6 +1,6 @@
 #include "eprosimashapesdemo/qt/mainwindow.h"
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/eClock.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/eClock.h"
 #include <QApplication>
 //#include <stdafx.h>
 #include "eprosimashapesdemo/utils/md5.h"

@@ -6,8 +6,8 @@ Var FirstTime
 
 Var Label
 
-Var CheckboxEPROSIMARTPSHOME
-Var CheckboxEPROSIMARTPSHOME_State
+Var CheckboxfastrtpsHOME
+Var CheckboxfastrtpsHOME_State
 
 Var CheckboxScripts
 Var CheckboxScripts_State
@@ -39,14 +39,14 @@ Function VariablesEntornoPage
         Abort
     ${EndIf}
        
-    ### Creación de los elementos gráficos    
+    ### Creaciï¿½n de los elementos grï¿½ficos    
     ${NSD_CreateLabel} 0 0 100% 20u "Check the environment variables you want to set and uncheck the environment variables you don't want to set. Click Next to continue."
     Pop $Label
 
-    ${NSD_CreateCheckbox} 10 20u 100% 12u "Set the EPROSIMARTPSHOME environment variable."
-    Pop $CheckboxEPROSIMARTPSHOME
-    ${If} $CheckboxEPROSIMARTPSHOME_State == ${BST_CHECKED}
-        ${NSD_Check} $CheckboxEPROSIMARTPSHOME
+    ${NSD_CreateCheckbox} 10 20u 100% 12u "Set the fastrtpsHOME environment variable."
+    Pop $CheckboxfastrtpsHOME
+    ${If} $CheckboxfastrtpsHOME_State == ${BST_CHECKED}
+        ${NSD_Check} $CheckboxfastrtpsHOME
     ${EndIf}
         
     ${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH environment variable the location of eProsima RTPSGEN scripts"
@@ -99,17 +99,17 @@ Function VariablesEntornoPage
         ${NSD_AddStyle} $CheckboxI86_VS2010 ${WS_DISABLED}
     ${EndIf}
     
-    ### La primera vez que lanzamos el instalador, el checkbox de EPROSIMARTPSHOME
+    ### La primera vez que lanzamos el instalador, el checkbox de fastrtpsHOME
     ### y el de SCRIPTS deben estar marcados. 
     StrCmp $FirstTime "FirstTime" +5 0 ### Si son iguales las cadenas, GOTO +5, si no, GOTO 0
-        ${NSD_Check} $CheckboxEPROSIMARTPSHOME
+        ${NSD_Check} $CheckboxfastrtpsHOME
         ${NSD_Check} $CheckboxScripts
-        ${NSD_GetState} $CheckboxEPROSIMARTPSHOME $CheckboxEPROSIMARTPSHOME_State
+        ${NSD_GetState} $CheckboxfastrtpsHOME $CheckboxfastrtpsHOME_State
         ${NSD_GetState} $CheckboxScripts $CheckboxScripts_State
         StrCpy $FirstTime "FirstTime"
         
     ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
-    ${NSD_OnClick} $CheckboxEPROSIMARTPSHOME ClickEPROSIMARTPSHOME 
+    ${NSD_OnClick} $CheckboxfastrtpsHOME ClickfastrtpsHOME 
     ${NSD_OnClick} $CheckboxScripts ClickScripts
     ${NSD_OnClick} $CheckboxI86_VS2010 ClickI86_VS2010  
 	${NSD_OnClick} $CheckboxI86_VS2013 ClickI86_VS2013 
@@ -117,10 +117,10 @@ Function VariablesEntornoPage
     nsDialogs::Show
 FunctionEnd
 
-### Callback invocado cuando se pulsa el CheckBox EPROSIMARTPSHOME
+### Callback invocado cuando se pulsa el CheckBox fastrtpsHOME
 ### Guardamos el estado en la variable _state
-Function ClickEPROSIMARTPSHOME
-    ${NSD_GetState} $CheckboxEPROSIMARTPSHOME $CheckboxEPROSIMARTPSHOME_State
+Function ClickfastrtpsHOME
+    ${NSD_GetState} $CheckboxfastrtpsHOME $CheckboxfastrtpsHOME_State
 FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox Scripts
@@ -131,7 +131,7 @@ FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox x64
 ### Sirve para deshabilitar el i86, pues no pueden aparecer a la vez
-### También guardamos el estado en la variable _state
+### Tambiï¿½n guardamos el estado en la variable _state
 Function ClickX64_VS2010
     Pop $CheckboxX64_VS2010
     ${NSD_GetState} $CheckboxX64_VS2010 $0
@@ -148,7 +148,7 @@ FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox i86
 ### Sirve para deshabilitar el x64, pues no pueden aparecer a la vez
-### También guardamos el estado en la variable _state
+### Tambiï¿½n guardamos el estado en la variable _state
 Function ClickI86_VS2010
     Pop $CheckboxI86_VS2010
     ${NSD_GetState} $CheckboxI86_VS2010 $0
@@ -165,7 +165,7 @@ FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox x64 VS2013
 ### Sirve para deshabilitar el i86 2013, pues no pueden aparecer a la vez
-### También guardamos el estado en la variable _state
+### Tambiï¿½n guardamos el estado en la variable _state
 Function ClickX64_VS2013
     Pop $CheckboxX64_VS2013
     ${NSD_GetState} $CheckboxX64_VS2013 $0
@@ -182,7 +182,7 @@ FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox i86
 ### Sirve para deshabilitar el x64, pues no pueden aparecer a la vez
-### También guardamos el estado en la variable _state
+### Tambiï¿½n guardamos el estado en la variable _state
 Function ClickI86_VS2013
     Pop $CheckboxI86_VS2013
     ${NSD_GetState} $CheckboxI86_VS2013 $0

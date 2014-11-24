@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,11 +11,12 @@
  *
  */
 
-#include "eprosimartps/rtps/resources/ResourceSend.h"
-#include "eprosimartps/rtps/resources/ResourceSendImpl.h"
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/resources/ResourceSend.h"
+#include "fastrtps/rtps/resources/ResourceSendImpl.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 ResourceSend::ResourceSend()
@@ -44,6 +45,6 @@ boost::recursive_mutex* ResourceSend::getMutex()
 {
 	return mp_impl->getMutex();
 }
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
