@@ -13,26 +13,16 @@
 
 #ifndef SUBSCRIBER_H_
 #define SUBSCRIBER_H_
-#include <iostream>
 
-#include "fastrtps/common/types/Locator.h"
-#include "fastrtps/common/types/Guid.h"
-#include "fastrtps/attributes/SubscriberAttributes.h"
+#include "fastrtps/rtps/common/Guid.h"
+
+using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 
-namespace rtps{
-class RTPSReader;
-class RTPSParticipantImpl;
-}
+namespace fastrtps{
 
-using namespace rtps;
-
-namespace pubsub {
-
-class TopicDataType;
-class SubscriberListener;
-class SampleInfo_t;
+class SubscriberImpl;
 
 
 
@@ -48,46 +38,12 @@ class RTPS_DllAPI Subscriber
 public:
 	Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
 	virtual ~Subscriber(){};
-	const GUID_t& getGuid()
-	{
-		return mp_impl->getGuid();
-	}
+	const GUID_t& getGuid();
 
 	/**
 	 * Method to block the current thread until an unread message is available
 	 */
-	void waitForUnreadMessage()
-	{
-		return mp_impl->waitForUnreadMessage();
-	}
-
-	/**
-	 * Assign a RTPSListener to perform actions when certain events happen.
-	 * @param[in] p_listener Pointer to the RTPSListener.
-	 */
-	bool assignListener(SubscriberListener* p_listener)
-	{
-		return mp_impl->assignListener(p_listener);
-	}
-
-
-	/**
-	 * Function to determine if the history is full
-	 */
-	bool isHistoryFull()
-	{
-		return mp_impl->isHistoryFull();
-	}
-
-	/**
-	 * Get the number of elements currently stored in the HistoryCache.
-	 */
-	size_t getHistoryElementsNumber()
-	{
-		return mp_impl->getHistoryElementsNumber();
-	}
-
-
+	void waitForUnreadMessage();
 
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.
@@ -95,14 +51,8 @@ public:
 
 	///@{
 
-	bool readNextData(void* data,SampleInfo_t* info)
-	{
-		return mp_impl->readNextData(data,info);
-	}
-	bool takeNextData(void* data,SampleInfo_t* info)
-	{
-		return mp_impl->takeNextData(data,info);
-	}
+	bool readNextData(void* data,SampleInfo_t* info);
+	bool takeNextData(void* data,SampleInfo_t* info);
 	///@}
 
 	/**
@@ -110,17 +60,13 @@ public:
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;
 	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
 	 */
-	bool updateAttributes(SubscriberAttributes& att)
-	{
-		return mp_impl->updateAttributes(att);
-	}
+	bool updateAttributes(SubscriberAttributes& att);
 	/**
 	 * Get the Attributes of the Subscriber.
 	 */
-	SubscriberAttributes getAttributes(){return mp_impl->getAttributes();}
+	SubscriberAttributes getAttributes();
 
 
-	size_t getMatchedPublishers(){return mp_impl->getMatchedPublishers();}
 private:
 	SubscriberImpl* mp_impl;
 };
