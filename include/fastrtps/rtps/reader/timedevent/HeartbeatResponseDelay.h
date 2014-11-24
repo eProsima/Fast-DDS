@@ -14,8 +14,9 @@
 #ifndef HEARTBEATRESPONSEDELAY_H_
 #define HEARTBEATRESPONSEDELAY_H_
 
-#include "fastrtps/utils/TimedEvent.h"
-#include "fastrtps/common/types/CDRMessage_t.h"
+#include "fastrtps/rtps/resources/TimedEvent.h"
+#include "fastrtps/rtps/common/CDRMessage_t.h"
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -30,9 +31,9 @@ class WriterProxy;
 class HeartbeatResponseDelay:public TimedEvent {
 public:
 	virtual ~HeartbeatResponseDelay();
-	HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_time::milliseconds interval);
+	HeartbeatResponseDelay(WriterProxy* p_WP,double interval);
 
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the WriterProxy associated with this specific event.
 	WriterProxy* mp_WP;
 	//!CDRMessage_t used in the response.

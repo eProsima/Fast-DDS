@@ -11,41 +11,41 @@
  *
  */
 
-#include "fastrtps/reader/timedevent/HeartbeatResponseDelay.h"
-#include "fastrtps/reader/WriterProxy.h"
-#include "fastrtps/reader/WriterProxyData.h"
-#include "fastrtps/reader/StatefulReader.h"
+#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include "fastrtps/rtps/reader/WriterProxy.h"
 
-#include "fastrtps/resources/ResourceSend.h"
-#include "fastrtps/resources/ResourceEvent.h"
+#include "fastrtps/rtps/reader/StatefulReader.h"
 
-#include "fastrtps/RTPSMessageCreator.h"
+//#include "fastrtps/resources/ResourceSend.h"
+//#include "fastrtps/resources/ResourceEvent.h"
+//
+#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "HeartbeatResponseDelay";
 
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
-	stop_timer();
-	delete(timer);
+
 }
 
-HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,boost::posix_time::milliseconds interval):
-		TimedEvent(&p_WP->mp_SFR->mp_event_thr->io_service,interval),
+HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval):
+		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval),
 		mp_WP(p_WP)
 {
 
 }
 
-void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
+void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
-	m_isWaiting = false;
-	if(ec == boost::system::errc::success)
+
+	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_READER,"");
 		std::vector<ChangeFromWriter_t*> ch_vec;
@@ -81,35 +81,37 @@ void HeartbeatResponseDelay::event(const boost::system::error_code& ec)
 			RTPSMessageCreator::addMessageAcknack(&m_heartbeat_response_msg,
 												mp_WP->mp_SFR->getGuid().guidPrefix,
 												mp_WP->mp_SFR->getGuid().entityId,
-												mp_WP->m_data->m_guid.entityId,
+												mp_WP->m_att.guid.entityId,
 												sns,
 												mp_WP->m_acknackCount,
 												final);
 
 			std::vector<Locator_t>::iterator lit;
 
-			for(lit = mp_WP->m_data->m_unicastLocatorList.begin();lit!=mp_WP->m_data->m_unicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
+			for(lit = mp_WP->m_att.endpoint.unicastLocatorList.begin();
+					lit!=mp_WP->m_att.endpoint.unicastLocatorList.end();++lit)
+				mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,(*lit));
 
-			for(lit = mp_WP->m_data->m_multicastLocatorList.begin();lit!=mp_WP->m_data->m_multicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->mp_send_thr->sendSync(&m_heartbeat_response_msg,(*lit));
+			for(lit = mp_WP->m_att.endpoint.multicastLocatorList.begin();
+					lit!=mp_WP->m_att.endpoint.multicastLocatorList.end();++lit)
+				mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,(*lit));
 
 		}
 
 	}
-	else if(ec==boost::asio::error::operation_aborted)
+	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_READER,"Response aborted");
-		this->mp_stopSemaphore->post();
+		this->stopSemaphorePost();
 	}
 	else
 	{
-		logInfo(RTPS_READER,"Response boost message: " <<ec.message());
+		logInfo(RTPS_READER,"Response boost message: " <<msg);
 	}
 }
 
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
