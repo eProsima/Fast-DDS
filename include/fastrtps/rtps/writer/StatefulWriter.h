@@ -112,8 +112,9 @@ public:
 
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
-private:
+
 	void updateTimes(WriterTimes& times);
+private:
 	//
 	//
 	//	/**
