@@ -11,13 +11,13 @@
  *
  */
 
-#include "fastrtps/pubsub/publisher/Publisher.h"
-#include "fastrtps/pubsub/publisher/PublisherImpl.h"
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/publisher/PublisherImpl.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 static const char* const CLASS_NAME = "Publisher";
 
@@ -34,14 +34,14 @@ Publisher::~Publisher() {
 
 bool Publisher::write(void* Data) {
 	const char* const METHOD_NAME = "write";
-	logInfo(PUBSUB_PUBLISHER,"Writing new data");
+	logInfo(PUBLISHER,"Writing new data");
 	return mp_impl->create_new_change(ALIVE,Data);
 }
 
 bool Publisher::dispose(void* Data)
 {
 	const char* const METHOD_NAME = "dispose";
-	logInfo(PUBSUB_PUBLISHER,"Disposing of Data");
+	logInfo(PUBLISHER,"Disposing of Data");
 	return mp_impl->create_new_change(NOT_ALIVE_DISPOSED,Data);
 }
 
@@ -49,14 +49,14 @@ bool Publisher::dispose(void* Data)
 bool Publisher::unregister(void* Data) {
 	const char* const METHOD_NAME = "unregister";
 	//Convert data to serialized Payload
-	logInfo(PUBSUB_PUBLISHER,"Unregistering of Data");
+	logInfo(PUBLISHER,"Unregistering of Data");
 	return mp_impl->create_new_change(NOT_ALIVE_UNREGISTERED,Data);
 }
 
 bool Publisher::dispose_and_unregister(void* Data) {
 	//Convert data to serialized Payload
 	const char* const METHOD_NAME = "dispose_and_unregister";
-	logInfo(PUBSUB_PUBLISHER,"Disposing and Unregistering Data");
+	logInfo(PUBLISHER,"Disposing and Unregistering Data");
 	return mp_impl->create_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
 }
 
