@@ -55,6 +55,7 @@ public:
 	{
 		endpoint.endpointKind = WRITER;
 		livelinessLeaseDuration = c_TimeInfinite;
+		ownershipStrength = 0;
 	};
 	virtual ~RemoteWriterAttributes()
 	{
@@ -63,6 +64,7 @@ public:
 	EndpointAttributes endpoint;
 	GUID_t guid;
 	Duration_t livelinessLeaseDuration;
+	uint16_t ownershipStrength;
 };
 }
 }

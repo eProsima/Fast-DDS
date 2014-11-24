@@ -115,12 +115,12 @@ public:
 
 	SequenceNumber_t m_lastRemovedSeqNum;
 
-	/**
-	 * Remove a ChangeFromWriter based on the SequenceNumber of its associated change.
-	 * @param seq SequenceNumber
-	 * @return True if correct.
-	 */
-	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
+//	/**
+//	 * Remove a ChangeFromWriter based on the SequenceNumber of its associated change.
+//	 * @param seq SequenceNumber
+//	 * @return True if correct.
+//	 */
+//	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
 	bool get_change(SequenceNumber_t& seq,CacheChange_t** change);
 

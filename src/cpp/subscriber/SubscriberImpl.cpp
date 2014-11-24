@@ -52,7 +52,7 @@ void SubscriberImpl::waitForUnreadMessage()
 	{
 		while(1)
 		{
-			this->m_semaphore.wait();
+			m_history.waitSemaphore();
 			if(m_history.isUnreadCacheChange())
 				break;
 		}
