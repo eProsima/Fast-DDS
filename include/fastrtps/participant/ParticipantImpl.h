@@ -81,6 +81,7 @@ private:
 
 	class MyRTPSParticipantListener : public RTPSParticipantListener
 	{
+	public:
 		MyRTPSParticipantListener(ParticipantImpl* impl): mp_participantimpl(impl){};
 		virtual ~MyRTPSParticipantListener(){};
 		void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info);

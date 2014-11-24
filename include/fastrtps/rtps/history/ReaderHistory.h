@@ -28,6 +28,7 @@ struct FirstLastSeqNum
 };
 
 class WriterProxy;
+class RTPSReader;
 
 class ReaderHistory: public History {
 	friend class RTPSReader;
