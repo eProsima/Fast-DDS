@@ -150,8 +150,8 @@
 		</copy>
         <!--> Copy version file.<-->
 		<copy todir="${build.classes}">
-			<fileset dir="${basedir}${file.separator}..${file.separator}include${file.separator}eprosimartps">
-				<include name="eprosimartps_version.h" />
+			<fileset dir="${basedir}${file.separator}..${file.separator}include${file.separator}fastrtps">
+				<include name="fastrtps_version.h" />
 			</fileset>
 		</copy>
 	</target>

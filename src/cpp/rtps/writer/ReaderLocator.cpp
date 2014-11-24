@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,11 +11,12 @@
  *
  */
 
-#include "eprosimartps/rtps/writer/ReaderLocator.h"
-#include "eprosimartps/rtps/common/CacheChange.h"
+#include "fastrtps/rtps/writer/ReaderLocator.h"
+#include "fastrtps/rtps/common/CacheChange.h"
 
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 ReaderLocator::ReaderLocator() {
@@ -112,7 +113,7 @@ bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin){
 	}
 	return false;
 }
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

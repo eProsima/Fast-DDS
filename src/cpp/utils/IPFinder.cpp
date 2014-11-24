@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,9 +11,10 @@
  *
  */
 
-#include "eprosimartps/utils/IPFinder.h"
+#include "fastrtps/utils/IPFinder.h"
 
 namespace eprosima {
+namespace fastrtps{
 
 IPFinder::IPFinder() {
 
@@ -132,5 +133,5 @@ bool IPFinder::getIPAddress(LocatorList_t* locators)
 
 	return false;
 }
-
+}
 } /* namespace eprosima */

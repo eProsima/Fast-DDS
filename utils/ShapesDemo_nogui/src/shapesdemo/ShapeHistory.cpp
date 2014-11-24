@@ -2,11 +2,11 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS ShapesDemo is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 #include "eprosimashapesdemo/shapesdemo/ShapeHistory.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/TimeConversion.h"
 inline bool compareGUID(GUID_t& g1, GUID_t& g2)
 {
     for(uint8_t i =0;i<16;++i)

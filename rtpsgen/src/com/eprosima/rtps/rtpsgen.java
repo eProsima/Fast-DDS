@@ -52,7 +52,7 @@ public class rtpsgen {
 	private static ArrayList<String> m_platforms = null;
 	
 	private Vector<String> m_idlFiles;
-	protected static String m_appEnv = "EPROSIMARTPSHOME";
+	protected static String m_appEnv = "fastrtpsHOME";
 	private String m_exampleOption = null;
 	private String m_languageOption = "C++";
     private boolean m_ppDisable = false; //TODO
@@ -65,7 +65,7 @@ public class rtpsgen {
     
     private boolean m_publishercode = true;
     private boolean m_subscribercode = true;
-    protected static String m_localAppProduct = "eprosimartps";
+    protected static String m_localAppProduct = "fastrtps";
     private ArrayList m_includePaths = new ArrayList();
     
     private String m_command = null;
@@ -239,7 +239,7 @@ public class rtpsgen {
 			}
 			
 			// Add product library
-			solution.addLibrary("eprosimartps");
+			solution.addLibrary("fastrtps");
 			
 			for (int count = 0; returnedValue && (count < m_idlFiles.size()); ++count) {
 				Project project = process(m_idlFiles.get(count));
@@ -306,7 +306,7 @@ public class rtpsgen {
         {
             //InputStream input = this.getClass().getResourceAsStream("/rtps_version.h");
         	
-        	InputStream input = this.getClass().getClassLoader().getResourceAsStream("eprosimartps_version.h");
+        	InputStream input = this.getClass().getClassLoader().getResourceAsStream("fastrtps_version.h");
             byte[] b = new byte[input.available()];
             input.read(b);
             String text = new String(b);

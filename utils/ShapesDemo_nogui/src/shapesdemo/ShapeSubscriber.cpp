@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -13,7 +13,7 @@
 
 #include "eprosimashapesdemo/shapesdemo/ShapeSubscriber.h"
 #include "eprosimashapesdemo/qt/ContentFilterSelector.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/TimeConversion.h"
 
 ShapeSubscriber::ShapeSubscriber(RTPSParticipant* par):
     mp_sub(NULL),

@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,30 +11,31 @@
  *
  */
 
-#include "eprosimartps/rtps/writer/StatefulWriter.h"
-#include "eprosimartps/rtps/writer/ReaderProxy.h"
+#include "fastrtps/rtps/writer/StatefulWriter.h"
+#include "fastrtps/rtps/writer/ReaderProxy.h"
 
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-#include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
+#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
 
-#include "eprosimartps/rtps/resources/ResourceSend.h"
+#include "fastrtps/rtps/resources/ResourceSend.h"
 
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/TimeConversion.h"
 
-#include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
-#include "eprosimartps/rtps/writer/timedevent/PeriodicHeartbeat.h"
-#include "eprosimartps/rtps/writer/timedevent/NackSupressionDuration.h"
-#include "eprosimartps/rtps/writer/timedevent/NackResponseDelay.h"
+#include "fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+#include "fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h"
+#include "fastrtps/rtps/writer/timedevent/NackSupressionDuration.h"
+#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
 
-#include "eprosimartps/rtps/history/WriterHistory.h"
+#include "fastrtps/rtps/history/WriterHistory.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "StatefulWriter";
@@ -87,7 +88,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 				changeForReader.status = UNSENT;
 			else
 				changeForReader.status = UNACKNOWLEDGED;
-			changeForReader.is_relevant = (*it)->pubsub_is_relevant(change);
+			changeForReader.is_relevant = (*it)->rtps_is_relevant(change);
 			(*it)->m_changesForReader.push_back(changeForReader);
 		}
 		unsent_changes_not_empty();
@@ -224,7 +225,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 		{
 			ChangeForReader_t changeForReader;
 			changeForReader.setChange(*cit);
-			changeForReader.is_relevant = rp->pubsub_is_relevant(*cit);
+			changeForReader.is_relevant = rp->rtps_is_relevant(*cit);
 
 			if(m_pushMode)
 				changeForReader.status = UNSENT;
@@ -418,3 +419,4 @@ void StatefulWriter::updateTimes(WriterTimes& times)
 
 } /* namespace rtps */
 } /* namespace eprosima */
+}

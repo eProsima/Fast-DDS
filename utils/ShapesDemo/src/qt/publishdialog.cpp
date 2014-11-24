@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS ShapesDemo is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 #include "eprosimashapesdemo/qt/publishdialog.h"
@@ -11,7 +11,7 @@
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
 
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/TimeConversion.h"
 
 
 PublishDialog::PublishDialog(ShapesDemo* psd,QWidget *parent) :

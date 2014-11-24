@@ -26,7 +26,7 @@ Function InstallRedistributablesVS2010
     StrCmp $I86NeededVS2010 "1" notinstall install
 
     install:
-    messageBox MB_YESNO|MB_ICONQUESTION "eProsimaRTPS needs Visual Studio 2010 Redistributable packages.$\nDo you want to install it?" IDNO notinstall
+    messageBox MB_YESNO|MB_ICONQUESTION "fastrtps needs Visual Studio 2010 Redistributable packages.$\nDo you want to install it?" IDNO notinstall
 
     ${If} $X64NeededVS2010 != "1"
         ExecWait "$TEMP\vcredist_x64_2010.exe"

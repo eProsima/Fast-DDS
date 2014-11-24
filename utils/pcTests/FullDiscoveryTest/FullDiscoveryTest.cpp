@@ -2,7 +2,7 @@
  * Copyright (c) 2013 eProsima. All rights reserved.
  *
  * This copy of FastCdr is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -22,22 +22,22 @@
 #include <bitset>
 #include <cstdint>
 //
-//#include "eprosimartps/dds/DomainRTPSParticipant.h"
-//#include "eprosimartps/RTPSParticipant.h"
-//#include "eprosimartps/dds/Publisher.h"
-//#include "eprosimartps/dds/Subscriber.h"
-//#include "eprosimartps/dds/attributes/all_attributes.h"
-//#include "eprosimartps/qos/ParameterList.h"
-//#include "eprosimartps/qos/DDSQosPolicies.h"
-//#include "eprosimartps/utils/RTPSLog.h"
-//#include "eprosimartps/dds/DDSTopicDataType.h"
+//#include "fastrtps/dds/DomainRTPSParticipant.h"
+//#include "fastrtps/RTPSParticipant.h"
+//#include "fastrtps/dds/Publisher.h"
+//#include "fastrtps/dds/Subscriber.h"
+//#include "fastrtps/dds/attributes/all_attributes.h"
+//#include "fastrtps/qos/ParameterList.h"
+//#include "fastrtps/qos/DDSQosPolicies.h"
+//#include "fastrtps/utils/RTPSLog.h"
+//#include "fastrtps/dds/DDSTopicDataType.h"
 //
-//#include "eprosimartps/dds/PublisherListener.h"
-//#include "eprosimartps/dds/SubscriberListener.h"
+//#include "fastrtps/dds/PublisherListener.h"
+//#include "fastrtps/dds/SubscriberListener.h"
 //
-//#include "eprosimartps/dds/SampleInfo.h"
+//#include "fastrtps/dds/SampleInfo.h"
 
-#include "eprosimartps/rtps_all.h"
+#include "fastrtps/rtps_all.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"

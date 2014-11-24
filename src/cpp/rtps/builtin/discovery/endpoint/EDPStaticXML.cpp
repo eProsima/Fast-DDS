@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,12 +11,12 @@
  *
  */
 
-#include "eprosimartps/builtin/discovery/endpoint/EDPStaticXML.h"
+#include "fastrtps/builtin/discovery/endpoint/EDPStaticXML.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/TimeConversion.h"
-#include "eprosimartps/reader/WriterProxyData.h"
-#include "eprosimartps/writer/ReaderProxyData.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/TimeConversion.h"
+#include "fastrtps/reader/WriterProxyData.h"
+#include "fastrtps/writer/ReaderProxyData.h"
 
 #include "boost/lexical_cast.hpp"
 

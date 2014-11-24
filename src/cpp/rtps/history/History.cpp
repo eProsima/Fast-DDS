@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -12,17 +12,18 @@
  */
 
 
-#include "eprosimartps/rtps/history/History.h"
+#include "fastrtps/rtps/history/History.h"
 
-#include "eprosimartps/rtps/common/CacheChange.h"
+#include "fastrtps/rtps/common/CacheChange.h"
 
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "History";
@@ -131,13 +132,14 @@ bool History::get_max_change(CacheChange_t** max_change)
 	}
 	return false;
 }
-
+}
 }
 }
 
 #include <sstream>
 
 namespace eprosima{
+namespace fastrtps{
 namespace rtps{
 
 void History::print_changes_seqNum2()
@@ -153,6 +155,6 @@ void History::print_changes_seqNum2()
 }
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

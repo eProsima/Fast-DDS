@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,23 +11,23 @@
  *
  */
 
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimpleListener.h"
+#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimpleListener.h"
 
-#include "eprosimartps/builtin/discovery/RTPSParticipant/timedevent/RemoteRTPSParticipantLeaseDuration.h"
+#include "fastrtps/builtin/discovery/RTPSParticipant/timedevent/RemoteRTPSParticipantLeaseDuration.h"
 
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
-#include "eprosimartps/builtin/discovery/endpoint/EDP.h"
-#include "eprosimartps/RTPSParticipant.h"
-#include "eprosimartps/reader/StatelessReader.h"
-#include "eprosimartps/writer/StatelessWriter.h"
+#include "fastrtps/builtin/discovery/endpoint/EDP.h"
+#include "fastrtps/RTPSParticipant.h"
+#include "fastrtps/reader/StatelessReader.h"
+#include "fastrtps/writer/StatelessWriter.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/eClock.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/eClock.h"
+#include "fastrtps/utils/TimeConversion.h"
 
-#include "eprosimartps/pubsub/RTPSParticipantDiscoveryInfo.h"
-#include "eprosimartps/pubsub/RTPSParticipantListener.h"
+#include "fastrtps/pubsub/RTPSParticipantDiscoveryInfo.h"
+#include "fastrtps/pubsub/RTPSParticipantListener.h"
 
 namespace eprosima {
 namespace rtps {

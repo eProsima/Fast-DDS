@@ -13,13 +13,13 @@
 # To create RPM in CentOs you have to follow this link:
 #   http://wiki.centos.org/HowTos/SetupRpmBuildEnvironment
 
-project="eprosimartps"
+project="fastrtps"
 
 
 installer()
 {
     # Copy licenses.
-    cp ../../../../doc/licenses/EPROSIMARTPS_LIBRARY_LICENSE.txt tmp/$project
+    cp ../../../../doc/licenses/fastrtps_LIBRARY_LICENSE.txt tmp/$project
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cp ../../../../doc/licenses/LGPLv3_LICENSE.txt tmp/$project
@@ -79,24 +79,24 @@ installer()
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
-    # eProsimaRTPS headers
+    # fastrtps headers
     mkdir -p tmp/$project/include
-    cp -r ../../../../include/eprosimartps tmp/$project/include
+    cp -r ../../../../include/fastrtps tmp/$project/include
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
 	# Copy eProsima header files
-    mkdir -p tmp/$project/include/eprosimartps/eProsima_cpp
-    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/include/eprosimartps/eProsima_cpp
+    mkdir -p tmp/$project/include/fastrtps/eProsima_cpp
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/include/fastrtps/eProsima_cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h tmp/$project/include/eprosimartps/eProsima_cpp
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h tmp/$project/include/fastrtps/eProsima_cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
-    # Copy eProsimaRTPS sources
+    # Copy fastrtps sources
     cd ../../../..
-    cp --parents `cat building/makefiles/eprosimartps_sources` utils/installers/ertps/linux/tmp/$project
+    cp --parents `cat building/makefiles/fastrtps_sources` utils/installers/ertps/linux/tmp/$project
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     mkdir -p utils/installers/ertps/linux/tmp/$project/src/cpp/submessages/
@@ -130,13 +130,13 @@ installer()
     sed -i "s/VERSION_RELEASE/`echo ${version} | cut -d. -f3`/g" Makefile.am
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    sourcefiles=$(cat ../../../../../../building/makefiles/eprosimartps_sources | sed -e ':a;N;$!ba;s/\n/ /g')
-    sed -i -e "s#EPROSIMARTPS_SOURCES#$sourcefiles#" Makefile.am
+    sourcefiles=$(cat ../../../../../../building/makefiles/fastrtps_sources | sed -e ':a;N;$!ba;s/\n/ /g')
+    sed -i -e "s#fastrtps_SOURCES#$sourcefiles#" Makefile.am
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    includefiles=$(cat ../../../../../../building/includes/eprosimartps_includes | sed -e 's#^#eprosimartps/#')
+    includefiles=$(cat ../../../../../../building/includes/fastrtps_includes | sed -e 's#^#fastrtps/#')
     includefiles=$(echo $includefiles | sed -e ':a;N;$!ba;s/\n/ /g')
-    #includefiles+=" eprosimartps/eProsima_auto_link.h eprosimartps/eprosimartps_dll.h"
+    #includefiles+=" fastrtps/eProsima_auto_link.h fastrtps/fastrtps_dll.h"
     sed -i -e "s#INCLUDE_FILES#$includefiles#" include/Makefile.am
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
@@ -149,7 +149,7 @@ installer()
     find tmp/ -iname "*~" -exec rm -f {} \;
 
     cd tmp
-    tar cvzf "../eprosimartps_${version}-Linux.tar.gz" $project
+    tar cvzf "../fastrtps_${version}-Linux.tar.gz" $project
     errorstatus=$?
     cd ..
     if [ $errorstatus != 0 ]; then return; fi

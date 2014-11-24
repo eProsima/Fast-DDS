@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,21 +11,21 @@
  *
  */
 
-#include "eprosimartps/pubsub/participant/PUBSUBParticipantImpl.h"
-#include "eprosimartps/pubsub/participant/PUBSUBParticipant.h"
+#include "fastrtps/pubsub/participant/PUBSUBParticipantImpl.h"
+#include "fastrtps/pubsub/participant/PUBSUBParticipant.h"
 
-#include "eprosimartps/pubsub/TopicDataType.h"
+#include "fastrtps/pubsub/TopicDataType.h"
 
-#include "eprosimartps/rtps/participant/RTPSParticipant.h"
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
 
-#include "eprosimartps/pubsub/attributes/PublisherAttributes.h"
-#include "eprosimartps/pubsub/publisher/PublisherImpl.h"
-#include "eprosimartps/pubsub/publisher/Publisher.h"
+#include "fastrtps/pubsub/attributes/PublisherAttributes.h"
+#include "fastrtps/pubsub/publisher/PublisherImpl.h"
+#include "fastrtps/pubsub/publisher/Publisher.h"
 
 
-#include "eprosimartps/rtps/RTPSDomain.h"
+#include "fastrtps/rtps/RTPSDomain.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace pubsub {

@@ -40,8 +40,8 @@ THROUGHPUTTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/ThroughputTest
 THROUGHPUTTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(EPROSIMADIR)/code
 
-THROUGHPUTTEST_LIBS_DEBUG=   -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartpsd -lboost_system -lboost_thread
-THROUGHPUTTEST_LIBS_RELEASE=  -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -leprosimartps -lboost_system -lboost_thread
+THROUGHPUTTEST_LIBS_DEBUG=   -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread
+THROUGHPUTTEST_LIBS_RELEASE=  -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread
 
 THROUGHPUTTEST_SRC_CFILES=
 

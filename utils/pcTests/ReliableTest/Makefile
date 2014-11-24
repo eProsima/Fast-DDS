@@ -38,8 +38,8 @@ RELIABLETEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/ReliableTest
 RELIABLETEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(EPROSIMADIR)/code
 
-RELIABLETEST_LIBS_DEBUG= $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -leprosimartpsd -lboost_system -lboost_thread
-RELIABLETEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -leprosimartps -lboost_system -lboost_thread
+RELIABLETEST_LIBS_DEBUG= $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtpsd -lboost_system -lboost_thread
+RELIABLETEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread
 
 RELIABLETEST_SRC_CFILES=
 

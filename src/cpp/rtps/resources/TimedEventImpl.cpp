@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -12,12 +12,13 @@
  */
 
 
-#include "eprosimartps/rtps/resources/TimedEventImpl.h"
-#include "eprosimartps/rtps/resources/TimedEvent.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/rtps/resources/TimedEventImpl.h"
+#include "fastrtps/rtps/resources/TimedEvent.h"
+#include "fastrtps/utils/TimeConversion.h"
 
 
 namespace eprosima{
+namespace fastrtps{
 namespace rtps{
 
 
@@ -86,7 +87,7 @@ void TimedEventImpl::event(const boost::system::error_code& ec)
 	}
 }
 
-
+}
 }
 }
 

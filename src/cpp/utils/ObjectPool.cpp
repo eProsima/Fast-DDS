@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,8 +11,8 @@
  *
  */
 
-#include "eprosimartps/utils/ObjectPool.h"
-#include "eprosimartps/common/types/CDRMessage_t.h"
+#include "fastrtps/utils/ObjectPool.h"
+#include "fastrtps/common/types/CDRMessage_t.h"
 
 
 namespace eprosima {

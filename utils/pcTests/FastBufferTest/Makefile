@@ -27,9 +27,9 @@ HELLOWORLDTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          						-I$(EPROSIMADIR)/code \
                          						-I$(FASTCDR_DIR)/include
 
-HELLOWORLDTEST_LIBS_DEBUG= $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -leprosimartpsd -lboost_system -lboost_thread \
+HELLOWORLDTEST_LIBS_DEBUG= $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtpsd -lboost_system -lboost_thread \
 										 -L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdrd
-HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -leprosimartps -lboost_system -lboost_thread \
+HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread \
 										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdrd
 
 HELLOWORLDTEST_SRC_CFILES=

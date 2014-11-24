@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,14 +11,14 @@
  *
  */
 
-#include "eprosimartps/builtin/discovery/endpoint/EDPSimpleListeners.h"
+#include "fastrtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
 
-#include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
-#include "eprosimartps/builtin/discovery/RTPSParticipant/PDPSimple.h"
-#include "eprosimartps/RTPSParticipant.h"
-#include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/common/types/InstanceHandle.h"
+#include "fastrtps/builtin/discovery/endpoint/EDPSimple.h"
+#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "fastrtps/RTPSParticipant.h"
+#include "fastrtps/reader/StatefulReader.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/common/types/InstanceHandle.h"
 
 
 namespace eprosima {

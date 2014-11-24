@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.endl
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -12,20 +12,21 @@
  */
 
 
-#include "eprosimartps/rtps/writer/ReaderProxy.h"
+#include "fastrtps/rtps/writer/ReaderProxy.h"
 
-#include "eprosimartps/rtps/writer/StatefulWriter.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/rtps/writer/StatefulWriter.h"
+#include "fastrtps/utils/TimeConversion.h"
 
-#include "eprosimartps/rtps/writer/timedevent/NackResponseDelay.h"
-#include "eprosimartps/rtps/writer/timedevent/NackSupressionDuration.h"
+#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
+#include "fastrtps/rtps/writer/timedevent/NackSupressionDuration.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "ReaderProxy";
@@ -213,11 +214,11 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 	return true;
 }
 
-bool ReaderProxy::pubsub_is_relevant(CacheChange_t* change)
+bool ReaderProxy::rtps_is_relevant(CacheChange_t* change)
 {
 	return true;
 }
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

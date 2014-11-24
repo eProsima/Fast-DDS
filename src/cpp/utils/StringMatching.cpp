@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,7 +11,7 @@
  *
  */
 
-#include "eprosimartps/utils/StringMatching.h"
+#include "fastrtps/utils/StringMatching.h"
 
 #if defined(_WIN32)
 #include "Shlwapi.h"
@@ -20,6 +20,7 @@
 #endif
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 StringMatching::StringMatching() {
@@ -53,6 +54,6 @@ bool StringMatching::matchString(const char* str1, const char* str2)
 
 #endif
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

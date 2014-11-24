@@ -2,7 +2,7 @@
  * Copyright (c) 2013 eProsima. All rights reserved.
  *
  * This copy of FastCdr is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -22,13 +22,13 @@
 #include <bitset>
 #include <cstdint>
 
-#include "eprosimartps/rtps_all.h"
+#include "fastrtps/rtps_all.h"
 
-#include "eprosimartps/dds/DomainRTPSParticipant.h"
-#include "eprosimartps/RTPSParticipant.h"
+#include "fastrtps/dds/DomainRTPSParticipant.h"
+#include "fastrtps/RTPSParticipant.h"
 
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/qos/ParameterList.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"

@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,17 +11,17 @@
  *
  */
 
-#include "eprosimartps/reader/timedevent/HeartbeatResponseDelay.h"
-#include "eprosimartps/reader/WriterProxy.h"
-#include "eprosimartps/reader/WriterProxyData.h"
-#include "eprosimartps/reader/StatefulReader.h"
+#include "fastrtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include "fastrtps/reader/WriterProxy.h"
+#include "fastrtps/reader/WriterProxyData.h"
+#include "fastrtps/reader/StatefulReader.h"
 
-#include "eprosimartps/resources/ResourceSend.h"
-#include "eprosimartps/resources/ResourceEvent.h"
+#include "fastrtps/resources/ResourceSend.h"
+#include "fastrtps/resources/ResourceEvent.h"
 
-#include "eprosimartps/RTPSMessageCreator.h"
+#include "fastrtps/RTPSMessageCreator.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
 namespace rtps {

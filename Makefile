@@ -10,11 +10,11 @@ LNK=ln
 
 
 -include $(BASEDIR)/thirdparty/dev-env/building/makefiles/eProsima.mk
--include $(BASEDIR)/building/makefiles/eprosimartps.mk
+-include $(BASEDIR)/building/makefiles/fastrtps.mk
 
 .PHONY: all
 
-all: eprosimartps
+all: fastrtps
 
 clean:
 	@rm -f $(OBJS)

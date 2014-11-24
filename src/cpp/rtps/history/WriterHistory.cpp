@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,10 +11,10 @@
  *
  */
 
-#include "eprosimartps/rtps/history/WriterHistory.h"
+#include "fastrtps/rtps/history/WriterHistory.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/rtps/writer/RTPSWriter.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

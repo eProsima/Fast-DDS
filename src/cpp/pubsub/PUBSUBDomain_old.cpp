@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,21 +11,21 @@
  *
  */
 
-#include "eprosimartps/pubsub/RTPSDomain.h"
-#include "eprosimartps/pubsub/TopicDataType.h"
-#include "eprosimartps/pubsub/SubscriberListener.h"
-#include "eprosimartps/pubsub/PublisherListener.h"
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/reader/StatelessReader.h"
-#include "eprosimartps/reader/StatefulReader.h"
-#include "eprosimartps/writer/StatefulWriter.h"
-#include "eprosimartps/pubsub/Publisher.h"
-#include "eprosimartps/pubsub/Subscriber.h"
-#include "eprosimartps/RTPSParticipant.h"
+#include "fastrtps/pubsub/RTPSDomain.h"
+#include "fastrtps/pubsub/TopicDataType.h"
+#include "fastrtps/pubsub/SubscriberListener.h"
+#include "fastrtps/pubsub/PublisherListener.h"
+#include "fastrtps/writer/StatelessWriter.h"
+#include "fastrtps/reader/StatelessReader.h"
+#include "fastrtps/reader/StatefulReader.h"
+#include "fastrtps/writer/StatefulWriter.h"
+#include "fastrtps/pubsub/Publisher.h"
+#include "fastrtps/pubsub/Subscriber.h"
+#include "fastrtps/RTPSParticipant.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/eClock.h"
-#include "eprosimartps/utils/IPFinder.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/eClock.h"
+#include "fastrtps/utils/IPFinder.h"
 
 #include <cstdlib>
 #include <ctime>

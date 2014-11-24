@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,21 +11,22 @@
  *
  */
 
-#include "eprosimartps/rtps/RTPSDomain.h"
+#include "fastrtps/rtps/RTPSDomain.h"
 
-#include "eprosimartps/rtps/participant/RTPSParticipant.h"
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 
-#include "eprosimartps/utils/eClock.h"
-#include "eprosimartps/utils/IPFinder.h"
+#include "fastrtps/utils/eClock.h"
+#include "fastrtps/utils/IPFinder.h"
 
-#include "eprosimartps/rtps/writer/RTPSWriter.h"
-#include "eprosimartps/rtps/writer/RTPSReader.h"
+#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/rtps/writer/RTPSReader.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "DomainRTPSParticipant";
@@ -72,7 +73,6 @@ const char* const METHOD_NAME = "~RTPSDomain";
 
 void RTPSDomain::stopAll()
 {
-	//delete(PubSubDomain::getInstance());
 	delete(getInstance());
 }
 
@@ -221,8 +221,9 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
 }
 
 
-
-} /* namespace pubsub */
+}
+} /* namespace  */
 } /* namespace eprosima */
 
 
+}

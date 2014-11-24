@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\eprosimartps">
+    <Filter Include="Header Files\fastrtps">
       <UniqueIdentifier>{789a2c91-9f6e-40f0-9d67-f8c2e15803c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\qos">
@@ -34,28 +34,28 @@
     <Filter Include="Source Files\writer">
       <UniqueIdentifier>{5ae918d0-8a5d-439d-b627-18ac1fae51ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\common">
+    <Filter Include="Header Files\fastrtps\common">
       <UniqueIdentifier>{23f96963-03fc-42ad-b96f-721e8d739ae4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\qos">
+    <Filter Include="Header Files\fastrtps\qos">
       <UniqueIdentifier>{6985c5ae-5e52-4dc4-bca7-911bda99cc4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\reader">
+    <Filter Include="Header Files\fastrtps\reader">
       <UniqueIdentifier>{a903d1e7-5613-4567-ace8-5ec75171dd31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\resources">
+    <Filter Include="Header Files\fastrtps\resources">
       <UniqueIdentifier>{ebf9dad4-2ca0-4eac-a687-eef1280b817d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\utils">
+    <Filter Include="Header Files\fastrtps\utils">
       <UniqueIdentifier>{c8a8b59a-be6d-4a5d-8628-e6bc3f3d294c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\writer">
+    <Filter Include="Header Files\fastrtps\writer">
       <UniqueIdentifier>{a2df7efb-bde0-4b77-b1e6-88bfb6389cc3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\common\types">
+    <Filter Include="Header Files\fastrtps\common\types">
       <UniqueIdentifier>{0c24004b-2705-4789-9c4f-afbaacd55627}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\reader\timedevent">
+    <Filter Include="Header Files\fastrtps\reader\timedevent">
       <UniqueIdentifier>{f9487150-1a0b-4d44-9e8c-245c092ffd30}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\reader\timedevent">
@@ -64,34 +64,34 @@
     <Filter Include="Source Files\writer\timedevent">
       <UniqueIdentifier>{979fdd8c-45ca-4765-9d53-854d8d92b33f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\writer\timedevent">
+    <Filter Include="Header Files\fastrtps\writer\timedevent">
       <UniqueIdentifier>{7d389060-9274-40f2-9fde-008ddad09484}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\history">
+    <Filter Include="Header Files\fastrtps\history">
       <UniqueIdentifier>{0ac9dbc0-69f4-41b7-8d5c-8a592a1b4584}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\history">
       <UniqueIdentifier>{bd823d71-838c-4fa9-89bd-c001a4e332c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin">
+    <Filter Include="Header Files\fastrtps\builtin">
       <UniqueIdentifier>{f7230019-b5d5-4b82-a26e-a55645e29f66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin\liveliness">
+    <Filter Include="Header Files\fastrtps\builtin\liveliness">
       <UniqueIdentifier>{1a36c720-5acf-4183-94ba-668caf5b3535}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin\discovery">
+    <Filter Include="Header Files\fastrtps\builtin\discovery">
       <UniqueIdentifier>{bf182005-aca2-407b-b17e-9fc1f2347ae4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin\discovery\RTPSParticipant">
+    <Filter Include="Header Files\fastrtps\builtin\discovery\RTPSParticipant">
       <UniqueIdentifier>{27e37cbd-d49c-4bca-9422-0c76d7a0a35c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin\discovery\endpoint">
+    <Filter Include="Header Files\fastrtps\builtin\discovery\endpoint">
       <UniqueIdentifier>{47c8b1c6-f5d7-44ca-a68c-3b8507227a55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin\liveliness\timedevent">
+    <Filter Include="Header Files\fastrtps\builtin\liveliness\timedevent">
       <UniqueIdentifier>{c15b6b9e-15f4-400e-88b9-839dd243983e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\builtin\discovery\RTPSParticipant\timedevent">
+    <Filter Include="Header Files\fastrtps\builtin\discovery\RTPSParticipant\timedevent">
       <UniqueIdentifier>{ba3c58f9-9a83-45ef-9a17-f99457869884}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\builtin">
@@ -119,10 +119,10 @@
     <Filter Include="Source Files\pubsub">
       <UniqueIdentifier>{edceaed4-0018-4c0f-904c-48a7cb3d0fe3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\pubsub">
+    <Filter Include="Header Files\fastrtps\pubsub">
       <UniqueIdentifier>{51fc8fce-070d-48fa-a579-933e4c337924}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\eprosimartps\pubsub\attributes">
+    <Filter Include="Header Files\fastrtps\pubsub\attributes">
       <UniqueIdentifier>{4604a70b-119f-4b80-864f-c52965a43429}</UniqueIdentifier>
 </Filter>
     <Filter Include="Header Files\thirdparty">
@@ -152,245 +152,245 @@
     <ClInclude Include="..\..\..\..\src\cpp\submessages\HeartbeatMsg.hpp">
       <Filter>Source Files\submessages</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\CDRMessage.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.hpp">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\CDRMessage.hpp">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\Endpoint.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\Endpoint.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eProsima_auto_link.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\eProsima_auto_link.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_dll.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_dll.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_version.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\MessageReceiver.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSParticipant.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\RTPSParticipant.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps_all.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSMessageCreator.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\RTPSMessageCreator.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterList.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\ParameterList.h">
+      <Filter>Header Files\fastrtps\qos</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterTypes.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\ParameterTypes.h">
+      <Filter>Header Files\fastrtps\qos</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosList.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\QosList.h">
+      <Filter>Header Files\fastrtps\qos</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ReaderQos.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\ReaderQos.h">
+      <Filter>Header Files\fastrtps\qos</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\WriterQos.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\WriterQos.h">
+      <Filter>Header Files\fastrtps\qos</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\RTPSReader.h">
-      <Filter>Header Files\eprosimartps\reader</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\RTPSReader.h">
+      <Filter>Header Files\fastrtps\reader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatefulReader.h">
-      <Filter>Header Files\eprosimartps\reader</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\StatefulReader.h">
+      <Filter>Header Files\fastrtps\reader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatelessReader.h">
-      <Filter>Header Files\eprosimartps\reader</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\StatelessReader.h">
+      <Filter>Header Files\fastrtps\reader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxy.h">
-      <Filter>Header Files\eprosimartps\reader</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\WriterProxy.h">
+      <Filter>Header Files\fastrtps\reader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ListenResource.h">
-      <Filter>Header Files\eprosimartps\resources</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\resources\ListenResource.h">
+      <Filter>Header Files\fastrtps\resources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceEvent.h">
-      <Filter>Header Files\eprosimartps\resources</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\resources\ResourceEvent.h">
+      <Filter>Header Files\fastrtps\resources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h">
-      <Filter>Header Files\eprosimartps\resources</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\resources\ResourceSend.h">
+      <Filter>Header Files\fastrtps\resources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\CacheChangePool.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\eClock.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\IPFinder.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\IPFinder.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\ObjectPool.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\RTPSLog.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\Semaphore.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderLocator.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\ReaderLocator.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxy.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\ReaderProxy.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSMessageGroup.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\RTPSMessageGroup.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSWriter.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\RTPSWriter.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatefulWriter.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\StatefulWriter.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatelessWriter.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\StatelessWriter.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\CacheChange.h">
-      <Filter>Header Files\eprosimartps\common</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\CacheChange.h">
+      <Filter>Header Files\fastrtps\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\doxygen_modules.h">
-      <Filter>Header Files\eprosimartps\common</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\doxygen_modules.h">
+      <Filter>Header Files\fastrtps\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\RTPS_messages.h">
-      <Filter>Header Files\eprosimartps\common</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\RTPS_messages.h">
+      <Filter>Header Files\fastrtps\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\all_common.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\all_common.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\CDRMessage_t.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\CDRMessage_t.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\colors.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\colors.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\common_types.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\common_types.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Guid.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\Guid.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\InstanceHandle.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\InstanceHandle.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Locator.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\Locator.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\SequenceNumber.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\SequenceNumber.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\SerializedPayload.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\SerializedPayload.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Time_t.h">
-      <Filter>Header Files\eprosimartps\common\types</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\Time_t.h">
+      <Filter>Header Files\fastrtps\common\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackResponseDelay.h">
-      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\NackResponseDelay.h">
+      <Filter>Header Files\fastrtps\writer\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackSupressionDuration.h">
-      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\NackSupressionDuration.h">
+      <Filter>Header Files\fastrtps\writer\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\PeriodicHeartbeat.h">
-      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\PeriodicHeartbeat.h">
+      <Filter>Header Files\fastrtps\writer\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\TimedEvent.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\HeartbeatResponseDelay.h">
-      <Filter>Header Files\eprosimartps\reader\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\timedevent\HeartbeatResponseDelay.h">
+      <Filter>Header Files\fastrtps\reader\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\WriterProxyLiveliness.h">
-      <Filter>Header Files\eprosimartps\reader\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\timedevent\WriterProxyLiveliness.h">
+      <Filter>Header Files\fastrtps\reader\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\history\History.h">
-      <Filter>Header Files\eprosimartps\history</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\history\History.h">
+      <Filter>Header Files\fastrtps\history</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\history\ReaderHistory.h">
-      <Filter>Header Files\eprosimartps\history</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\history\ReaderHistory.h">
+      <Filter>Header Files\fastrtps\history</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\history\WriterHistory.h">
-      <Filter>Header Files\eprosimartps\history</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\history\WriterHistory.h">
+      <Filter>Header Files\fastrtps\history</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\StringMatching.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\BuiltinProtocols.h">
-      <Filter>Header Files\eprosimartps\builtin</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\BuiltinProtocols.h">
+      <Filter>Header Files\fastrtps\builtin</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDP.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDP.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\endpoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimple.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPSimple.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\endpoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleListeners.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPSimpleListeners.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\endpoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\endpoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStatic.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPStatic.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\endpoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\PDPSimple.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\RTPSParticipant</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\PDPSimple.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\RTPSParticipant</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\PDPSimpleListener.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\RTPSParticipant</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\PDPSimpleListener.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\RTPSParticipant</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\PDPSimpleTopicDataType.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\RTPSParticipant</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\PDPSimpleTopicDataType.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\RTPSParticipant</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLP.h">
-      <Filter>Header Files\eprosimartps\builtin\liveliness</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\WLP.h">
+      <Filter>Header Files\fastrtps\builtin\liveliness</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPListener.h">
-      <Filter>Header Files\eprosimartps\builtin\liveliness</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\WLPListener.h">
+      <Filter>Header Files\fastrtps\builtin\liveliness</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h">
-      <Filter>Header Files\eprosimartps\builtin\liveliness\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h">
+      <Filter>Header Files\fastrtps\builtin\liveliness\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\timedevent\RemoteRTPSParticipantLeaseDuration.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\RTPSParticipant\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\timedevent\RemoteRTPSParticipantLeaseDuration.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\RTPSParticipant\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\timedevent\ResendRTPSParticipantProxyDataPeriod.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\RTPSParticipant\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\timedevent\ResendRTPSParticipantProxyDataPeriod.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\RTPSParticipant\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSParticipantProxyData.h">
-      <Filter>Header Files\eprosimartps</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\RTPSParticipantProxyData.h">
+      <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxyData.h">
-      <Filter>Header Files\eprosimartps\writer</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\ReaderProxyData.h">
+      <Filter>Header Files\fastrtps\writer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxyData.h">
-      <Filter>Header Files\eprosimartps\reader</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\WriterProxyData.h">
+      <Filter>Header Files\fastrtps\reader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h">
-      <Filter>Header Files\eprosimartps\builtin\discovery\endpoint</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPStaticXML.h">
+      <Filter>Header Files\fastrtps\builtin\discovery\endpoint</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\TimeConversion.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPTopicDataType.h">
-      <Filter>Header Files\eprosimartps\builtin\liveliness</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\WLPTopicDataType.h">
+      <Filter>Header Files\fastrtps\builtin\liveliness</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CDRMessagePool.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\CDRMessagePool.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\UnsentChangesNotEmptyEvent.h">
-      <Filter>Header Files\eprosimartps\writer\timedevent</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\UnsentChangesNotEmptyEvent.h">
+      <Filter>Header Files\fastrtps\writer\timedevent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\md5.h">
-      <Filter>Header Files\eprosimartps\utils</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\md5.h">
+      <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
 
     <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\eProsima_Colors.h">
@@ -399,66 +399,66 @@
     <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.h">
       <Filter>Header Files\thirdparty\log</Filter>
 	</ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\RTPSParticipantDiscoveryInfo.h">
-      <Filter>Header Files\eprosimartps\dds</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\dds\RTPSParticipantDiscoveryInfo.h">
+      <Filter>Header Files\fastrtps\dds</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\dds\RTPSParticipantListener.h">
-      <Filter>Header Files\eprosimartps\dds</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\dds\RTPSParticipantListener.h">
+      <Filter>Header Files\fastrtps\dds</Filter>
     </ClInclude>
 
-    <ClInclude Include="..\..\..\..\include\eprosimartps\stl_string_export.hpp">
+    <ClInclude Include="..\..\..\..\include\fastrtps\stl_string_export.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosima_stl_exports.hpp">
+    <ClInclude Include="..\..\..\..\include\fastrtps\eprosima_stl_exports.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosPolicies.h">
-      <Filter>Header Files\eprosimartps\qos</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\QosPolicies.h">
+      <Filter>Header Files\fastrtps\qos</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\MatchingInfo.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\MatchingInfo.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSParticipantDiscoveryInfo.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\RTPSParticipantDiscoveryInfo.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSParticipantListener.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\RTPSParticipantListener.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\Publisher.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\Publisher.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\PublisherListener.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\PublisherListener.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSDomain.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\RTPSDomain.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\SampleInfo.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\SampleInfo.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\Subscriber.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\Subscriber.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\SubscriberListener.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\SubscriberListener.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\TopicDataType.h">
-      <Filter>Header Files\eprosimartps\pubsub</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\TopicDataType.h">
+      <Filter>Header Files\fastrtps\pubsub</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\all_attributes.h">
-      <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\all_attributes.h">
+      <Filter>Header Files\fastrtps\pubsub\attributes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\RTPSParticipantAttributes.h">
-      <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\RTPSParticipantAttributes.h">
+      <Filter>Header Files\fastrtps\pubsub\attributes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\PublisherAttributes.h">
-      <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\PublisherAttributes.h">
+      <Filter>Header Files\fastrtps\pubsub\attributes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\SubscriberAttributes.h">
-      <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\SubscriberAttributes.h">
+      <Filter>Header Files\fastrtps\pubsub\attributes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\TopicAttributes.h">
-      <Filter>Header Files\eprosimartps\pubsub\attributes</Filter>
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\TopicAttributes.h">
+      <Filter>Header Files\fastrtps\pubsub\attributes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

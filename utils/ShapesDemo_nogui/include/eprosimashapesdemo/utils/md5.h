@@ -36,7 +36,7 @@ documentation and/or software.
 #include <cstring>
 #include <iostream>
 
-#include "eprosimartps/eprosimartps_dll.h"
+#include "fastrtps/fastrtps_dll.h"
 
 // a small class for calculating MD5 hashes of strings or byte arrays
 // it is not meant to be fast or secure

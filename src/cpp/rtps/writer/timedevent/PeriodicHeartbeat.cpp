@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,19 +11,20 @@
  *
  */
 
-#include "eprosimartps/rtps/writer/timedevent/PeriodicHeartbeat.h"
+#include "fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h"
 
-#include "eprosimartps/rtps/writer/StatefulWriter.h"
-#include "eprosimartps/rtps/writer/ReaderProxy.h"
+#include "fastrtps/rtps/writer/StatefulWriter.h"
+#include "fastrtps/rtps/writer/ReaderProxy.h"
 
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-#include "eprosimartps/rtps/messages/RTPSMessageCreator.h"
+#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps{
 
 static const char* const CLASS_NAME = "PeriodicHeartbeat";
@@ -99,6 +100,6 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 	}
 }
 
-
+}
 }
 } /* namespace eprosima */

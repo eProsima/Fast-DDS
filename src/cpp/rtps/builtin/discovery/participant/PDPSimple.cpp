@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,26 +11,26 @@
  *
  */
 
-#include "eprosimartps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
 
-#include "eprosimartps/rtps/builtin/BuiltinProtocols.h"
-#include "eprosimartps/rtps/builtin/liveliness/WLP.h"
+#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
+#include "fastrtps/rtps/builtin/liveliness/WLP.h"
 
-//#include "eprosimartps/pubsub/RTPSDomain.h"
+//#include "fastrtps/pubsub/RTPSDomain.h"
 
 
-#include "eprosimartps/RTPSParticipant.h"
-#include "eprosimartps/RTPSParticipantProxyData.h"
-#include "eprosimartps/writer/StatelessWriter.h"
-#include "eprosimartps/reader/StatelessReader.h"
+#include "fastrtps/RTPSParticipant.h"
+#include "fastrtps/RTPSParticipantProxyData.h"
+#include "fastrtps/writer/StatelessWriter.h"
+#include "fastrtps/reader/StatelessReader.h"
 
-#include "eprosimartps/builtin/discovery/endpoint/EDPSimple.h"
-#include "eprosimartps/builtin/discovery/endpoint/EDPStatic.h"
-#include "eprosimartps/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.h"
+#include "fastrtps/builtin/discovery/endpoint/EDPSimple.h"
+#include "fastrtps/builtin/discovery/endpoint/EDPStatic.h"
+#include "fastrtps/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.h"
 
-#include "eprosimartps/utils/RTPSLog.h"
-#include "eprosimartps/utils/eClock.h"
-#include "eprosimartps/utils/TimeConversion.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/utils/eClock.h"
+#include "fastrtps/utils/TimeConversion.h"
 
 using namespace eprosima::pubsub;
 

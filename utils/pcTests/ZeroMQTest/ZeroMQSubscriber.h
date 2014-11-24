@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -16,7 +16,7 @@
 
 #include <zmq.hpp>
 #include <iostream>
-#include "eprosimartps/rtps_all.h"
+#include "fastrtps/rtps_all.h"
 using namespace std;
 
 class ZeroMQSubscriber {

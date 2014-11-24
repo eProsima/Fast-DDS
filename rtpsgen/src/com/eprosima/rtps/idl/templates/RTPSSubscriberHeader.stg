@@ -7,7 +7,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.h"], description=["This he
 #ifndef _$ctx.filename;format="toUpper"$_SUBSCRIBER_H_
 #define _$ctx.filename;format="toUpper"$_SUBSCRIBER_H_
 
-#include "eprosimartps/rtps_all.h"
+#include "fastrtps/rtps_all.h"
 
 class $ctx.filename$Subscriber 
 {

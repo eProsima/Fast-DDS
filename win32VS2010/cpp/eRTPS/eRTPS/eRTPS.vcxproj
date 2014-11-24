@@ -121,38 +121,38 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\..\..\..\lib\i86Win32VS2010\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>libeprosimartpsd$(VERSION)</TargetName>
+    <TargetName>libfastrtpsd$(VERSION)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\..\..\..\lib\x64Win64VS2010\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>libeprosimartpsd$(VERSION)</TargetName>
+    <TargetName>libfastrtpsd$(VERSION)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|Win32'">
     <OutDir>$(ProjectDir)..\..\..\..\lib\i86Win32VS2010\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>eprosimartpsd$(VERSION)</TargetName>
+    <TargetName>fastrtpsd$(VERSION)</TargetName>
     <TargetExt>.dll</TargetExt>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugDLL|x64'">
     <OutDir>$(ProjectDir)..\..\..\..\lib\x64Win64VS2010\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>eprosimartpsd$(VERSION)</TargetName>
+    <TargetName>fastrtpsd$(VERSION)</TargetName>
     <TargetExt>.dll</TargetExt>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
     <OutDir>$(ProjectDir)..\..\..\..\lib\i86Win32VS2010\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>eprosimartps$(VERSION)</TargetName>
+    <TargetName>fastrtps$(VERSION)</TargetName>
     <TargetExt>.dll</TargetExt>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <OutDir>$(ProjectDir)..\..\..\..\lib\x64Win64VS2010\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>eprosimartps$(VERSION)</TargetName>
+    <TargetName>fastrtps$(VERSION)</TargetName>
     <TargetExt>.dll</TargetExt>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
@@ -169,16 +169,16 @@
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>libeprosimartps$(VERSION)</TargetName>
+    <TargetName>libfastrtps$(VERSION)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>libeprosimartps$(VERSION)</TargetName>
+    <TargetName>libfastrtps$(VERSION)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -200,7 +200,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -220,7 +220,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;fastrtps_SOURCE;fastrtps_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -236,7 +236,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;fastrtps_SOURCE;fastrtps_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -252,7 +252,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>;__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>;__LITTLE_ENDIAN__;_WIN32;fastrtps_SOURCE;fastrtps_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
@@ -269,7 +269,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;EPROSIMARTPS_SOURCE;EPROSIMARTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;fastrtps_SOURCE;fastrtps_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
@@ -287,7 +287,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>
       </DebugInformationFormat>
@@ -313,7 +313,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\eprosimartps</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
@@ -328,104 +328,104 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\BuiltinProtocols.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDP.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimple.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleListeners.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStatic.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\endpoint\EDPStaticXML.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\PDPSimple.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\PDPSimpleListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\PDPSimpleTopicDataType.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\timedevent\RemoteRTPSParticipantLeaseDuration.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\discovery\RTPSParticipant\timedevent\ResendRTPSParticipantProxyDataPeriod.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLP.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\builtin\liveliness\WLPTopicDataType.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\CDRMessage.hpp" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\CacheChange.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\doxygen_modules.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\RTPS_messages.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\all_common.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\CDRMessage_t.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\colors.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\common_types.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Guid.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\InstanceHandle.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Locator.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\SequenceNumber.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\SerializedPayload.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\common\types\Time_t.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\Endpoint.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_dll.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosimartps_version.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eProsima_auto_link.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\eprosima_stl_exports.hpp" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\history\History.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\history\ReaderHistory.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\history\WriterHistory.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\MessageReceiver.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSParticipant.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSParticipantProxyData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\all_attributes.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\RTPSParticipantAttributes.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\PublisherAttributes.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\SubscriberAttributes.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\attributes\TopicAttributes.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\MatchingInfo.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSParticipantDiscoveryInfo.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSParticipantListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\Publisher.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\PublisherListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\RTPSDomain.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\SampleInfo.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\Subscriber.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\SubscriberListener.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\pubsub\TopicDataType.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosPolicies.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterList.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ParameterTypes.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\QosList.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\ReaderQos.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\qos\WriterQos.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\RTPSReader.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatefulReader.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\StatelessReader.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\HeartbeatResponseDelay.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\timedevent\WriterProxyLiveliness.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxy.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\reader\WriterProxyData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ListenResource.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceEvent.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\resources\ResourceSend.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\RTPSMessageCreator.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\rtps_all.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\stl_string_export.hpp" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CacheChangePool.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\CDRMessagePool.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\eClock.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\IPFinder.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\md5.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\ObjectPool.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\RTPSLog.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\Semaphore.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\StringMatching.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimeConversion.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\utils\TimedEvent.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderLocator.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxy.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\ReaderProxyData.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSMessageGroup.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\RTPSWriter.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatefulWriter.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\StatelessWriter.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackResponseDelay.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\NackSupressionDuration.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\PeriodicHeartbeat.h" />
-    <ClInclude Include="..\..\..\..\include\eprosimartps\writer\timedevent\UnsentChangesNotEmptyEvent.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\BuiltinProtocols.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDP.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPSimple.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPSimpleListeners.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPSimpleTopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPStatic.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\endpoint\EDPStaticXML.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\PDPSimple.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\PDPSimpleListener.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\PDPSimpleTopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\timedevent\RemoteRTPSParticipantLeaseDuration.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\discovery\RTPSParticipant\timedevent\ResendRTPSParticipantProxyDataPeriod.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\WLP.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\WLPListener.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\builtin\liveliness\WLPTopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\CDRMessage.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\CDRMessage.hpp" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\CacheChange.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\doxygen_modules.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\RTPS_messages.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\all_common.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\CDRMessage_t.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\colors.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\common_types.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\Guid.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\InstanceHandle.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\Locator.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\SequenceNumber.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\SerializedPayload.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\common\types\Time_t.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\Endpoint.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_dll.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_version.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\eProsima_auto_link.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\eprosima_stl_exports.hpp" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\history\History.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\history\ReaderHistory.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\history\WriterHistory.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\MessageReceiver.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\RTPSParticipant.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\RTPSParticipantProxyData.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\all_attributes.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\RTPSParticipantAttributes.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\PublisherAttributes.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\SubscriberAttributes.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\attributes\TopicAttributes.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\MatchingInfo.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\RTPSParticipantDiscoveryInfo.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\RTPSParticipantListener.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\Publisher.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\PublisherListener.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\RTPSDomain.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\SampleInfo.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\Subscriber.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\SubscriberListener.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\pubsub\TopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\QosPolicies.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\ParameterList.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\ParameterTypes.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\QosList.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\ReaderQos.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\qos\WriterQos.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\RTPSReader.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\StatefulReader.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\StatelessReader.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\timedevent\HeartbeatResponseDelay.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\timedevent\WriterProxyLiveliness.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\WriterProxy.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\reader\WriterProxyData.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\resources\ListenResource.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\resources\ResourceEvent.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\resources\ResourceSend.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\RTPSMessageCreator.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps_all.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\stl_string_export.hpp" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\CacheChangePool.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\CDRMessagePool.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\eClock.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\IPFinder.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\md5.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\ObjectPool.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\RTPSLog.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\Semaphore.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\StringMatching.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\TimeConversion.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\utils\TimedEvent.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\ReaderLocator.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\ReaderProxy.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\ReaderProxyData.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\RTPSMessageGroup.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\RTPSWriter.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\StatefulWriter.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\StatelessWriter.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\NackResponseDelay.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\NackSupressionDuration.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\PeriodicHeartbeat.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\writer\timedevent\UnsentChangesNotEmptyEvent.h" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\AckNackMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\DataMsg.hpp" />
     <ClInclude Include="..\..\..\..\src\cpp\submessages\GapMsg.hpp" />

@@ -24,8 +24,8 @@ UNITTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/unitTest
 UNITTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../include \
                          -I$(EPROSIMADIR)/code
 
-UNITTEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../lib/$(EPROSIMA_TARGET)  -leprosimartpsd -lboost_system -lboost_thread -lgtest -lpthread
-UNITTEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../lib/$(EPROSIMA_TARGET)  -leprosimartps -lboost_system -lboost_thread -lgtest -lpthread
+UNITTEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lgtest -lpthread
+UNITTEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lgtest -lpthread
 
 UNITTEST_SRC_CFILES=
 

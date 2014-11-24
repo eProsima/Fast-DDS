@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,16 +11,17 @@
  *
  */
 
-#include "eprosimartps/rtps/writer/StatelessWriter.h"
-#include "eprosimartps/rtps/history/WriterHistory.h"
-#include "eprosimartps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+#include "fastrtps/rtps/writer/StatelessWriter.h"
+#include "fastrtps/rtps/history/WriterHistory.h"
+#include "fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "StatelessWriter";
@@ -365,3 +366,4 @@ bool StatelessWriter::remove_locator(Locator_t& loc)
 } /* namespace eprosima */
 
 
+}

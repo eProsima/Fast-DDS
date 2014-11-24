@@ -26,7 +26,7 @@ Function InstallRedistributablesVS2013
     StrCmp $I86NeededVS2013 "1" notinstall install
 
     install:
-    messageBox MB_YESNO|MB_ICONQUESTION "eProsimaRTPS needs Visual Studio 2013 Redistributable packages.$\nDo you want to install it?" IDNO notinstall
+    messageBox MB_YESNO|MB_ICONQUESTION "fastrtps needs Visual Studio 2013 Redistributable packages.$\nDo you want to install it?" IDNO notinstall
 
     ${If} $X64NeededVS2013 != "1"
         ExecWait "$TEMP\vcredist_x64_2013.exe"

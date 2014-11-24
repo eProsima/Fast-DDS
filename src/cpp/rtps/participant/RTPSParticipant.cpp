@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,11 +11,12 @@
  *
  */
 
-#include "eprosimartps/rtps/participant/RTPSParticipant.h"
-#include "eprosimartps/rtps/participant/RTPSParticipantImpl.h"
-#include "eprosimartps/rtps/Endpoint.h"
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/Endpoint.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 RTPSParticipant::RTPSParticipant(RTPSParticipantImpl* pimpl):mp_impl(pimpl)
@@ -65,7 +66,7 @@ uint32_t RTPSParticipant::getRTPSParticipantID() const
 }
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

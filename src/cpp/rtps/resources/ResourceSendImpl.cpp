@@ -2,7 +2,7 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,13 +11,14 @@
  *
  */
 
-#include "eprosimartps/rtps/resources/ResourceSendImpl.h"
-#include "eprosimartps/rtps/common/CDRMessage_t.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include "fastrtps/rtps/resources/ResourceSendImpl.h"
+#include "fastrtps/rtps/common/CDRMessage_t.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 using boost::asio::ip::udp;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "SendResource";
@@ -190,6 +191,6 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 
 boost::recursive_mutex* ResourceSendImpl::getMutex() {return mp_mutex;}
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
