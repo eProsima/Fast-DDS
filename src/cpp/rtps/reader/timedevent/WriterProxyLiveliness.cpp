@@ -11,70 +11,66 @@
  *
  */
 
-#include "fastrtps/reader/timedevent/WriterProxyLiveliness.h"
-#include "fastrtps/reader/StatefulReader.h"
-#include "fastrtps/reader/WriterProxy.h"
-#include "fastrtps/reader/WriterProxyData.h"
-#include "fastrtps/resources/ResourceEvent.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h"
+#include "fastrtps/rtps/reader/StatefulReader.h"
+#include "fastrtps/rtps/reader/WriterProxy.h"
 
-#include "fastrtps/pubsub/SubscriberListener.h"
+#include "fastrtps/utils/RTPSLog.h"
 
 
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "WriterProxyLiveliness";
 
-WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* wp,boost::posix_time::milliseconds interval):
-				TimedEvent(&wp->mp_SFR->mp_event_thr->io_service,interval),
-				mp_WP(wp)
+WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
+		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval),
+				mp_WP(p_WP)
 {
 
 }
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
 {
-	stop_timer();
-	delete(timer);
+
 }
 
-void WriterProxyLiveliness::event(const boost::system::error_code& ec)
+void WriterProxyLiveliness::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
-	m_isWaiting = false;
-	if(ec == boost::system::errc::success)
+	if(code == EVENT_SUCCESS)
 	{
 	
 		logInfo(RTPS_LIVELINESS,"Checking Writer: "<<mp_WP->m_data->m_guid,RTPS_MAGENTA);
-		if(!mp_WP->m_data->m_isAlive)
+		if(!mp_WP->isAlive())
 		{
-			logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMsec().total_milliseconds()<< " ms",RTPS_MAGENTA);
-			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_data))
+			logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMilliSec()<< " ms",C_MAGENTA);
+			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att))
 			{
-				if(mp_WP->mp_SFR->getListener()!=NULL)
+				if(mp_WP->mp_SFR->getListener()!=nullptr)
 				{
-					MatchingInfo info(REMOVED_MATCHING,mp_WP->m_data->m_guid);
-					mp_WP->mp_SFR->getListener()->onSubscriptionMatched(info);
+					MatchingInfo info(REMOVED_MATCHING,mp_WP->m_att.guid);
+					mp_WP->mp_SFR->getListener()->onReaderMatched(info);
 				}
 			}
 			return;
 		}
 		this->restart_timer();
 	}
-	else if(ec==boost::asio::error::operation_aborted)
+	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_LIVELINESS,"Aborted");
-		this->mp_stopSemaphore->post();
+		this->stopSemaphorePost();
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"boost message: " <<ec.message());
+		logInfo(RTPS_LIVELINESS,"boost message: " <<msg);
 	}
 }
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

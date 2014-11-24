@@ -18,6 +18,7 @@
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 static const char* const CLASS_NAME = "RTPSReader";
 
@@ -51,7 +52,7 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 }
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

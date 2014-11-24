@@ -71,6 +71,8 @@ private:
 	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
 
 
+	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
+
 //	/**
 //	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
 //	 * pointed by the StatusInfo_t structure.
@@ -107,6 +109,8 @@ private:
 //	bool updateTimes(SubscriberTimes time);
 //
 //	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
+
+	inline ReaderTimes& getTimes(){return m_times;};
 
 private:
 	ReaderTimes m_times;

@@ -14,7 +14,7 @@
 #ifndef WRITERPROXYLIVELINESS_H_
 #define WRITERPROXYLIVELINESS_H_
 
-#include "fastrtps/utils/TimedEvent.h"
+#include "fastrtps/rtps/resources/TimedEvent.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -26,9 +26,9 @@ class WriterProxy;
  */
 class WriterProxyLiveliness: public TimedEvent {
 public:
-	WriterProxyLiveliness(WriterProxy* wp,boost::posix_time::milliseconds interval);
+	WriterProxyLiveliness(WriterProxy* wp,double interval);
 	virtual ~WriterProxyLiveliness();
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the WriterProxy associated with this specific event.
 	WriterProxy* mp_WP;
 };

@@ -15,32 +15,37 @@
 
 
 
-#include <boost/thread/lockable_adapter.hpp>
-#include <boost/thread/recursive_mutex.hpp>
 
-#include "fastrtps/common/types/common_types.h"
-#include "fastrtps/common/types/Locator.h"
-#include "fastrtps/pubsub/attributes/SubscriberAttributes.h"
 
-#include "fastrtps/common/CacheChange.h"
-#include "fastrtps/reader/timedevent/HeartbeatResponseDelay.h"
-#include "fastrtps/reader/timedevent/WriterProxyLiveliness.h"
+#include "fastrtps/rtps/common/Types.h"
+#include "fastrtps/rtps/common/Locator.h"
 
-using namespace eprosima::pubsub;
+#include "fastrtps/rtps/common/CacheChange.h"
+
+
+namespace boost
+{
+class recursive_mutex;
+}
+
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
+class RemoteWriterAttributes;
 class StatefulReader;
-class WriterProxyData;
+class HeartbeatResponseDelay;
+class WriterProxyLiveliness;
+
 /**
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
  * @ingroup READERMODULE
  */
-class WriterProxy: public boost::basic_lockable_adapter<boost::recursive_mutex> {
+class WriterProxy {
 public:
 	virtual ~WriterProxy();
-	WriterProxy(WriterProxyData* wdata,Duration_t heartbeatResponse,StatefulReader* SR);
+	WriterProxy(RemoteWriterAttributes& watt,Duration_t heartbeatResponse,StatefulReader* SR);
 
 	/**
 	 * Get the maximum sequenceNumber received from this Writer.
@@ -90,7 +95,7 @@ public:
 	//! Pointer to associated StatefulReader.
 	StatefulReader* mp_SFR;
 	//! Parameters of the WriterProxy
-	WriterProxyData* m_data;
+	RemoteWriterAttributes m_att;
 	//!Vector containing the ChangeFromWriter_t objects.
 	std::vector<ChangeFromWriter_t> m_changesFromW;
 	//! Acknack Count
@@ -100,9 +105,9 @@ public:
 
 	bool m_isMissingChangesEmpty;
 	//!Timed event to postpone the heartbeatResponse.
-	HeartbeatResponseDelay m_heartbeatResponse;
+	HeartbeatResponseDelay* mp_heartbeatResponse;
 	//!TO check the liveliness Status periodically.
-	WriterProxyLiveliness m_writerProxyLiveliness;
+	WriterProxyLiveliness* mp_writerProxyLiveliness;
 
 
 	bool m_heartbeatFinalFlag;
@@ -118,6 +123,9 @@ public:
 	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
 	bool get_change(SequenceNumber_t& seq,CacheChange_t** change);
+
+	inline bool isAlive(){return m_isAlive;};
+	inline void assertLiveliness(){m_isAlive=true;};
 
 private:
 	/**
@@ -136,14 +144,17 @@ private:
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
 	bool m_hasMinAvailableSeqNumChanged;
-	//bool m_livelinessAsserted;
+	bool m_isAlive;
 
 	void print_changes_fromWriter_test2();
 
 	bool m_firstReceived;
 
+	boost::recursive_mutex* mp_mutex;
+
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

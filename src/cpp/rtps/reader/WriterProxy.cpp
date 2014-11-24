@@ -11,15 +11,20 @@
  *
  */
 
-#include "fastrtps/reader/WriterProxy.h"
-#include "fastrtps/reader/StatefulReader.h"
-#include "fastrtps/reader/WriterProxyData.h"
+#include "fastrtps/rtps/reader/WriterProxy.h"
+#include "fastrtps/rtps/reader/StatefulReader.h"
+
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/utils/TimeConversion.h"
 
+#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
+#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include "fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "WriterProxy";
@@ -27,34 +32,36 @@ static const char* const CLASS_NAME = "WriterProxy";
 WriterProxy::~WriterProxy()
 {
 	//pDebugInfo("WriterProxy destructor"<<endl;);
-	m_writerProxyLiveliness.stop_timer();
+	mp_writerProxyLiveliness->stop_timer();
+	delete(mp_writerProxyLiveliness);
+	delete(mp_heartbeatResponse);
 }
 
-WriterProxy::WriterProxy(WriterProxyData* wdata,
+WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 		Duration_t heartbeatResponse,
 		StatefulReader* SR) :
 						mp_SFR(SR),
-						m_data(wdata),
+						m_att(watt),
 						m_acknackCount(0),
 						m_lastHeartbeatCount(0),
 						m_isMissingChangesEmpty(true),
-#pragma warning(disable: 4355)
-						m_heartbeatResponse(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(heartbeatResponse))),
-#pragma warning(disable: 4355)
-						m_writerProxyLiveliness(this,boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(wdata->m_qos.m_liveliness.lease_duration))),
+						mp_heartbeatResponse(nullptr),
+						mp_writerProxyLiveliness(nullptr),
 						m_heartbeatFinalFlag(false),
 						m_hasMaxAvailableSeqNumChanged(false),
 						m_hasMinAvailableSeqNumChanged(false),
-						//m_livelinessAsserted(true),
-						m_firstReceived(true)
+						m_isAlive(true),
+						m_firstReceived(true),
+						mp_mutex(new boost::recursive_mutex())
 
 {
 	const char* const METHOD_NAME = "WriterProxy";
 	m_changesFromW.clear();
-	Time_t aux;
-	TIME_INFINITE(aux);
-	if(m_data->m_qos.m_liveliness.lease_duration < aux)
-		m_writerProxyLiveliness.restart_timer();
+	//Create Events
+	mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration));
+	mp_heartbeatResponse = new HeartbeatResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
+	if(m_att.livelinessLeaseDuration < c_TimeInfinite)
+		mp_writerProxyLiveliness->restart_timer();
 	logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
 }
 
@@ -62,7 +69,7 @@ bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "missing_changes_update";
 	logInfo(RTPS_READER,m_data->m_guid.entityId<<": changes up to seqNum: "<<seqNum.to64long()<<" missing.");
-	boost::lock_guard<WriterProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//	SequenceNumber_t seq = (seqNum)+1;
 	//	add_unknown_changes(seq);
 	add_changes_from_writer_up_to(seqNum);
@@ -123,7 +130,7 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "lost_changes_update";
 	logInfo(RTPS_READER,m_data->m_guid.entityId<<": up to seqNum: "<<seqNum.to64long());
-	boost::lock_guard<WriterProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//	SequenceNumber_t seq = (seqNum)+1;
 	//	add_unknown_changes(seq);
 	add_changes_from_writer_up_to(seqNum);
@@ -146,7 +153,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "received_change_set";
 	logInfo(RTPS_READER,m_data->m_guid.entityId<<": seqNum: "<<change->sequenceNumber.to64long());
-	boost::lock_guard<WriterProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
 	if(!this->m_firstReceived || m_changesFromW.size()>0)
@@ -183,7 +190,7 @@ bool WriterProxy::received_change_set(CacheChange_t* change)
 bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "irrelevant_change_set";
-	boost::lock_guard<WriterProxy> guard(*this);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
 	add_changes_from_writer_up_to(seqNum);
@@ -209,7 +216,7 @@ bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
 	//const char* const METHOD_NAME = "missing_changes";
 	if(!m_changesFromW.empty())
 	{
-		boost::lock_guard<WriterProxy> guard(*this);
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		missing->clear();
 		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 		{
@@ -232,7 +239,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	const char* const METHOD_NAME = "available_changes_max";
 	if(!m_changesFromW.empty())
 	{
-		boost::lock_guard<WriterProxy> guard(*this);
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		//print_changes_fromWriter_test();
 		if(m_hasMaxAvailableSeqNumChanged)
 		{
@@ -281,7 +288,7 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 	const char* const METHOD_NAME = "available_changes_min";
 	if(!m_changesFromW.empty())
 	{
-		boost::lock_guard<WriterProxy> guard(*this);
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		if(m_hasMinAvailableSeqNumChanged)
 		{
 			//Order changesFromWriter
@@ -322,7 +329,7 @@ void WriterProxy::print_changes_fromWriter_test2()
 {
 	const char* const METHOD_NAME = "status";
 	std::stringstream ss;
-	ss << this->m_data->m_guid.entityId<<": ";
+	ss << this->m_att.guid.entityId<<": ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
 		ss << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";
@@ -334,6 +341,7 @@ void WriterProxy::print_changes_fromWriter_test2()
 bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
 {
 	const char* const METHOD_NAME = "removeChangesFromWriterUpTo";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
 		if(it->seqNum < seq)
@@ -369,6 +377,7 @@ bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
 
 bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ChangeFromWriter_t>::iterator it = this->m_changesFromW.begin();
 			it!= this->m_changesFromW.end();++it)
 	{
@@ -381,6 +390,6 @@ bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
 	return false;
 }
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

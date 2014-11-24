@@ -19,9 +19,10 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
-using namespace eprosima::pubsub;
+
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "StatefulReader";
@@ -55,7 +56,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
 			it!=matched_writers.end();++it)
 	{
-		if((*it)->m_data->m_guid == wdata.guid)
+		if((*it)->m_att.guid == wdata.guid)
 		{
 			logWarning(RTPS_READER,"Attempting to add existing writer");
 			return false;
@@ -422,6 +423,6 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox =
 //}
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
