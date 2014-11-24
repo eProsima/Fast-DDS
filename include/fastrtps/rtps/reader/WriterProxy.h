@@ -22,6 +22,7 @@
 
 #include "fastrtps/rtps/common/CacheChange.h"
 
+#include "fastrtps/rtps/attributes/ReaderAttributes.h"
 
 namespace boost
 {
@@ -33,7 +34,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class RemoteWriterAttributes;
 class StatefulReader;
 class HeartbeatResponseDelay;
 class WriterProxyLiveliness;
@@ -127,6 +127,7 @@ public:
 	inline bool isAlive(){return m_isAlive;};
 	inline void assertLiveliness(){m_isAlive=true;};
 
+	inline boost::recursive_mutex* getMutex(){return mp_mutex;};
 private:
 	/**
 	 * Add changesFromWriter up to the sequenceNumber passed, but not including.

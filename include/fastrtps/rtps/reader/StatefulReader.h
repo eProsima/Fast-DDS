@@ -35,8 +35,7 @@ private:
 	virtual ~StatefulReader();
 	StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
 			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
-
-
+public:
 	/**
 	 * Add a matched writer represented by a WriterProxyData object.
 	 * @param wdata Pointer to the WPD object to add.

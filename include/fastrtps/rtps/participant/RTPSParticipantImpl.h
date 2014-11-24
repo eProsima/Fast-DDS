@@ -44,18 +44,30 @@ namespace fastrtps{
 namespace rtps {
 
 class RTPSParticipant;
-class RTPSReader;
-class RTPSWriter;
 class RTPSParticipantListener;
+
+
 class ListenResource;
 class ResourceSend;
 class ResourceEvent;
+
 class BuiltinProtocols;
-class WriterAttributes;
-class Endpoint;
 class CDRMessage_t;
+
+class Endpoint;
+
+
+class RTPSWriter;
+class WriterAttributes;
 class WriterHistory;
 class WriterListener;
+
+class RTPSReader;
+class ReaderAttributes;
+class ReaderHistory;
+class ReaderListener;
+
+
 class TopicAttributes;
 
 

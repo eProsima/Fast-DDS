@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-using namespace eprosima::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 
 namespace eprosima {
