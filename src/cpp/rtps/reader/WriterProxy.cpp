@@ -17,7 +17,7 @@
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/utils/TimeConversion.h"
 
-#include <boost/thread/lockable_adapter.hpp>
+#include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
 #include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
@@ -68,7 +68,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "missing_changes_update";
-	logInfo(RTPS_READER,m_data->m_guid.entityId<<": changes up to seqNum: "<<seqNum.to64long()<<" missing.");
+	logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: "<<seqNum.to64long()<<" missing.");
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//	SequenceNumber_t seq = (seqNum)+1;
 	//	add_unknown_changes(seq);
@@ -119,7 +119,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 		chw.seqNum = firstSN;
 		chw.status = UNKNOWN;
 		chw.is_relevant = true;
-		logInfo(RTPS_READER,"WP "<<this->m_data->m_guid << " adding unknown changes up to: "<<chw.seqNum.to64long());
+		logInfo(RTPS_READER,"WP "<<this->m_att.guid << " adding unknown changes up to: "<<chw.seqNum.to64long());
 		m_changesFromW.push_back(chw);
 
 	}
@@ -129,7 +129,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "lost_changes_update";
-	logInfo(RTPS_READER,m_data->m_guid.entityId<<": up to seqNum: "<<seqNum.to64long());
+	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum.to64long());
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//	SequenceNumber_t seq = (seqNum)+1;
 	//	add_unknown_changes(seq);
@@ -152,7 +152,7 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 bool WriterProxy::received_change_set(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "received_change_set";
-	logInfo(RTPS_READER,m_data->m_guid.entityId<<": seqNum: "<<change->sequenceNumber.to64long());
+	logInfo(RTPS_READER,m_att.guid.entityId<<": seqNum: "<<change->sequenceNumber.to64long());
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;

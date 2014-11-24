@@ -15,13 +15,14 @@
 #include "fastrtps/rtps/reader/WriterProxy.h"
 
 #include "fastrtps/rtps/reader/StatefulReader.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-//#include "fastrtps/resources/ResourceSend.h"
-//#include "fastrtps/resources/ResourceEvent.h"
-//
 #include "fastrtps/rtps/messages/RTPSMessageCreator.h"
-
+#include "fastrtps/rtps/messages/CDRMessage.h"
 #include "fastrtps/utils/RTPSLog.h"
+
+#include <boost/thread/lock_guard.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -50,8 +51,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 		logInfo(RTPS_READER,"");
 		std::vector<ChangeFromWriter_t*> ch_vec;
 		{
-			boost::lock_guard<WriterProxy> guard(*mp_WP);
-			mp_WP->missing_changes(&ch_vec);
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_WP->getMutex());
+		mp_WP->missing_changes(&ch_vec);
 		}
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
