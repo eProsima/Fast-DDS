@@ -13,6 +13,8 @@
 
 #include "fastrtps/participant/ParticipantImpl.h"
 #include "fastrtps/participant/Participant.h"
+#include "fastrtps/participant/ParticipantDiscoveryInfo.h"
+#include "fastrtps/participant/ParticipantListener.h"
 
 #include "fastrtps/TopicDataType.h"
 
@@ -22,6 +24,9 @@
 #include "fastrtps/publisher/PublisherImpl.h"
 #include "fastrtps/publisher/Publisher.h"
 
+#include "fastrtps/attributes/SubscriberAttributes.h"
+#include "fastrtps/subscriber/SubscriberImpl.h"
+#include "fastrtps/subscriber/Subscriber.h"
 
 #include "fastrtps/rtps/RTPSDomain.h"
 
@@ -58,7 +63,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		PublisherListener* listen)
 {
 	const char* const METHOD_NAME = "createPublisher";
-	logInfo(_PARTICIPANT,"CREATING PUBLISHER",C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING PUBLISHER",C_B_YELLOW)
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;
@@ -84,7 +89,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
-	PublisherImpl* pubimpl = new PublisherImpl(this,p_type,att);
+	PublisherImpl* pubimpl = new PublisherImpl(this,p_type,att,listen);
 	Publisher* pub = new Publisher(pubimpl);
 
 	WriterAttributes watt;
@@ -124,7 +129,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {
 	const char* const METHOD_NAME = "createSubscriber";
-	logInfo(_PARTICIPANT,"CREATING SUBSCRIBER",C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING SUBSCRIBER",C_B_YELLOW)
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;
@@ -150,7 +155,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
-	SubscriberImpl* subimpl = new SubscriberImpl(this,p_type,att);
+	SubscriberImpl* subimpl = new SubscriberImpl(this,p_type,att,listen);
 	Subscriber* sub = new Subscriber(subimpl);
 
 	ReaderAttributes ratt;
@@ -164,7 +169,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.endpoint.setUserDefinedID(att.getUserDefinedID());
 	ratt.times = att.times;
 
-	RTPSWriter* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
+	RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
 												ratt,
 												(ReaderHistory*)&subimpl->m_history,
 												(ReaderListener*)&subimpl->m_readerListener);
@@ -180,7 +185,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	t_p_SubscriberPair subpair;
 	subpair.first = sub;
 	subpair.second = subimpl;
-	m_publishers.push_back(subpair);
+	m_subscribers.push_back(subpair);
 
 	//REGISTER THE READER
 	//this->mp_rtpsParticipant->registerReader(writer,att.topic,att.qos);

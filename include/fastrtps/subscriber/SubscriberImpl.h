@@ -42,7 +42,8 @@ class SampleInfo_t;
 class SubscriberImpl {
 	friend class ParticipantImpl;
 public:
-	SubscriberImpl(RTPSParticipantImpl* p,RTPSReader* Rin,TopicDataType* ptype,SubscriberAttributes& attr);
+	SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
+			SubscriberAttributes& attr,SubscriberListener* listen = nullptr);
 	virtual ~SubscriberImpl();
 
 	/**
