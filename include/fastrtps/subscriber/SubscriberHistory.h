@@ -16,6 +16,7 @@
 
 #include "fastrtps/rtps/history/ReaderHistory.h"
 #include "fastrtps/qos/QosPolicies.h"
+#include "fastrtps/subscriber/SampleInfo.h"
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -33,6 +34,12 @@ public:
 	virtual ~SubscriberHistory();
 
 	bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
+
+	bool readNextData(void* data, SampleInfo_t* info);
+
+	bool takeNextData(void* data, SampleInfo_t* info);
+
+	bool isUnreadCache();
 
 private:
 

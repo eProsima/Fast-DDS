@@ -36,6 +36,7 @@ public:
 	{
 		m_userDefinedID = -1;
 				m_entityID = -1;
+				expectsInlineQos = false;
 	};
 	virtual ~SubscriberAttributes(){};
 	//!Topic Attributes
@@ -46,6 +47,7 @@ public:
 	ReaderTimes times;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
+	bool expectsInlineQos;
 	inline int16_t getUserDefinedID() const {return m_userDefinedID;}
 	inline int16_t getEntityID() const {return m_entityID;}
 	inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
