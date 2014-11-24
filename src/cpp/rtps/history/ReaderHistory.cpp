@@ -15,6 +15,7 @@
 
 #include "eprosimartps/utils/RTPSLog.h"
 #include "eprosimartps/rtps/reader/RTPSReader.h"
+#include "eprosimartps/rtps/reader/ReaderListener.h"
 
 
 namespace eprosima {
@@ -62,9 +63,13 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 		logError(RTPS_HISTORY,"The Payload length is larger than the maximum payload size");
 		return false;
 	}
+	if(a_change->writerGUID == c_Guid_Unknown)
+	{
+		logError(RTPS_HISTORY,"The Writer GUID_t must be defined");
+	}
 	m_changes.push_back(a_change);
 	logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
-	mp_reader->getListener()->newCacheChangeAdded(mp_reader,a_change);
+	mp_reader->getListener()->onNewCacheChangeAdded(mp_reader,a_change);
 	return true;
 }
 
@@ -77,20 +82,16 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
 		logError(RTPS_HISTORY,"Pointer is not valid")
 		return false;
 	}
-	if(a_change->writerGUID != mp_writer->getGuid())
-	{
-		logError(RTPS_HISTORY,"The GUID_t of the change doesn't correspond with the GUID_t of the writer");
-		return false;
-	}
 	for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
 			chit!=m_changes.end();++chit)
 	{
-		if((*chit)->sequenceNumber == a_change->sequenceNumber)
+		if((*chit)->sequenceNumber == a_change->sequenceNumber &&
+				(*chit)->writerGUID == a_change->writerGUID)
 		{
 			m_changePool.release_Cache(a_change);
 			m_changes.erase(chit);
 			updateMaxMinSeqNum();
-			mp_writer->change_removed_by_history(a_change);
+			mp_reader->change_removed_by_history(a_change);
 			return true;
 		}
 	}
