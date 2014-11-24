@@ -72,23 +72,20 @@ public:
 
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
-//	/**
-//	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-//	 * pointed by the StatusInfo_t structure.
-//	 * @param data Pointer to memory that can hold a sample.
-//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-//	 * @return True if correct.
-//	 */
-//	bool readNextCacheChange(void*data,SampleInfo_t* info);
-//	/**
-//	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-//	 * pointed by the StatusInfo_t structure.
-//	 * @param data Pointer to memory that can hold a sample.
-//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-//	 * @return True if correct.
-//	 */
-//	bool takeNextCacheChange(void*data,SampleInfo_t* info);
-//
+	/**
+	 * Read the next unread CacheChange_t from the history
+	 * @param change POinter to pointer of CacheChange_t
+	 * @return True if read.
+	 */
+	bool nextUnreadCache(CacheChange_t** change);
+	/**
+	 * Take the next CacheChange_t from the history;
+	 * @param change Pointer to pointer of CacheChange_t
+	 * @return True if read.
+	 */
+	bool nextUntakenCache(CacheChange_t** change);
+
+
 //	bool readNextCacheChange(CacheChange_t** change);
 //	//!Returns true if there are unread cacheChanges.
 //	bool isUnreadCacheChange();

@@ -69,16 +69,25 @@ public:
 	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
 	virtual bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr)=0;
 
-//	inline bool reserve_Cache(CacheChange_t** change)
-//			{return mp_history->reserve_Cache(change);}
-//	inline void release_Cache(CacheChange_t* ch)
-//			{return mp_history->release_Cache(ch);}
 
 	ReaderListener* getListener(){return mp_listener;}
 
 	bool acceptMsgDirectedTo(EntityId_t& entityId);
 
 protected:
+
+	/**
+	 * Read the next unread CacheChange_t from the history
+	 * @param change POinter to pointer of CacheChange_t
+	 * @return True if read.
+	 */
+	virtual bool nextUnreadCache(CacheChange_t** change)=0;
+	/**
+	 * Get the next CacheChange_t from the history to take.
+	 * @param change Pointer to pointer of CacheChange_t
+	 * @return True if read.
+	 */
+	virtual bool nextUntakenCache(CacheChange_t** change)=0;
 
 	void setTrustedWriter(EntityId_t writer)
 	{
@@ -123,21 +132,24 @@ protected:
 //	virtual bool isUnreadCacheChange()=0;
 // *
 // *	//
-//	//	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-//	//	 * pointed by the StatusInfo_t structure.
-//	//	 * @param data Pointer to memory that can hold a sample.
-//	//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-//	//	 * @return True if correct.
+
 //	//
-//	//	virtual bool readNextCacheChange(void*data,SampleInfo_t* info)=0;
-//	//	/**
-//	//	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-//	//	 * pointed by the StatusInfo_t structure.
-//	//	 * @param data Pointer to memory that can hold a sample.
-//	//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-//	//	 * @return True if correct.
-//	//
-//	//	virtual bool takeNextCacheChange(void*data,SampleInfo_t* info)=0;
+//	/**
+//	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+//	 * pointed by the StatusInfo_t structure.
+//	 * @param data Pointer to memory that can hold a sample.
+//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+//	 * @return True if correct.
+//	 */
+//	virtual bool readNextCacheChange(CacheChange_t** change)=0;
+////	/**
+////	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+////	 * pointed by the StatusInfo_t structure.
+////	 * @param data Pointer to memory that can hold a sample.
+////	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+////	 * @return True if correct.
+////	 */
+////	virtual bool takeNextCacheChange(CacheChange_t** change)=0;
 // *
 // *
 // */

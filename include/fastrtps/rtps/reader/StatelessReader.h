@@ -15,10 +15,7 @@
 #define STATELESSREADER_H_
 
 
-#include "fastrtps/reader/RTPSReader.h"
-
-#include "fastrtps/pubsub/attributes/SubscriberAttributes.h"
-
+#include "fastrtps/rtps/reader/RTPSReader.h"
 
 
 namespace eprosima {
@@ -26,71 +23,89 @@ namespace fastrtps{
 namespace rtps {
 
 /**
- * Class StatelessReader, specialization of the RTPSReader.
+ * Class StatelessReader, specialization of the RTPSReader for Best Effort Readers.
  * @ingroup READERMODULE
  */
 class StatelessReader: public RTPSReader {
+	friend class RTPSParticipantImpl;
 public:
 	virtual ~StatelessReader();
-	StatelessReader(const SubscriberAttributes& wParam,
-			const GuidPrefix_t&guidP, const EntityId_t& entId,TopicDataType* ptype);
+	StatelessReader(RTPSParticipantImpl*,GUID_t& guid,
+			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
 
-
-	/**
-	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-	 * pointed by the StatusInfo_t structure.
-	 * @param data Pointer to memory that can hold a sample.
-	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-	 * @return True if correct.
-	 */
-	bool readNextCacheChange(void*data,SampleInfo_t* info);
-	/**
-	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-	 * pointed by the StatusInfo_t structure.
-	 * @param data Pointer to memory that can hold a sample.
-	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-	 * @return True if correct.
-	 */
-	bool takeNextCacheChange(void*data,SampleInfo_t* info);
-	//!Returns true if there are unread cacheChanges.
-	bool isUnreadCacheChange();
-	/**
-	 * Get the number of matched publishers.
-	 * @return True if correct.
-	 */
-	size_t getMatchedPublishers(){return 0;}
 	/**
 	 * Add a matched writer represented by a WriterProxyData object.
 	 * @param wdata Pointer to the WPD object to add.
 	 * @return True if correctly added.
 	 */
-	bool matched_writer_add(WriterProxyData* wdata);
+	bool matched_writer_add(RemoteWriterAttributes& wdata);
 	/**
 	 * Remove a WriterProxyData from the matached writers.
 	 * @param wdata Pointer to the WPD object.
 	 * @return True if correct.
 	 */
-	bool matched_writer_remove(WriterProxyData* wdata);
+	bool matched_writer_remove(RemoteWriterAttributes& wdata);
 	/**
 	 * Tells us if a specific Writer is matched against this reader
 	 * @param wdata Pointer to the WriterProxyData object
 	 * @return True if it is matched.
 	 */
-	bool matched_writer_is_matched(WriterProxyData* wdata);
+	bool matched_writer_is_matched(RemoteWriterAttributes& wdata);
 
 	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = NULL);
+	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
 	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
-	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=NULL);
+	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=nullptr);
 
-	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL){return m_reader_cache.add_change(a_change,prox);};
+	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
+
+	/**
+	 * Read the next unread CacheChange_t from the history
+	 * @param change POinter to pointer of CacheChange_t
+	 * @return True if read.
+	 */
+	bool nextUnreadCache(CacheChange_t** change);
+	/**
+	 * Take the next CacheChange_t from the history;
+	 * @param change Pointer to pointer of CacheChange_t
+	 * @return True if read.
+	 */
+	bool nextUntakenCache(CacheChange_t** change);
 
 private:
 	//!List of GUID_t os matched writers.
 	//!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
-	std::vector<WriterProxyData*> m_matched_writers;
+	std::vector<RemoteWriterAttributes> m_matched_writers;
 
 };
+
+/*
+ *
+ *
+ * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+ * pointed by the StatusInfo_t structure.
+ * @param data Pointer to memory that can hold a sample.
+ * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+ * @return True if correct.
+
+	bool readNextCacheChange(void*data,SampleInfo_t* info);
+
+ * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
+ * pointed by the StatusInfo_t structure.
+ * @param data Pointer to memory that can hold a sample.
+ * @param info Pointer to SampleInfo_t structure to gather information about the sample.
+ * @return True if correct.
+ *
+	bool takeNextCacheChange(void*data,SampleInfo_t* info);
+	//!Returns true if there are unread cacheChanges.
+	bool isUnreadCacheChange();
+ *
+ */
+
+
+
+
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */
