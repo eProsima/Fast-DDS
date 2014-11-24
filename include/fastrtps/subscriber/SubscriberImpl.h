@@ -34,7 +34,7 @@ using namespace rtps;
 class TopicDataType;
 class SubscriberListener;
 class ParticipantImpl;
-class SampleInfo_t* info;
+class SampleInfo_t;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -49,23 +49,6 @@ public:
 	 * Method to block the current thread until an unread message is available
 	 */
 	void waitForUnreadMessage();
-
-	/**
-	 * Assign a RTPSListener to perform actions when certain events happen.
-	 * @param[in] p_listener Pointer to the RTPSListener.
-	 */
-	bool assignListener(SubscriberListener* p_listener);
-
-
-	/**
-	 * Function to determine if the history is full
-	 */
-	bool isHistoryFull();
-
-	/**
-	 * Get the number of elements currently stored in the HistoryCache.
-	 */
-	size_t getHistoryElementsNumber();
 
 
 	/** @name Read or take data methods.
@@ -86,13 +69,10 @@ public:
 	bool updateAttributes(SubscriberAttributes& att);
 
 
-	size_t getMatchedPublishers();
+
 
 	const GUID_t& getGuid();
 
-//	RTPSReader* getReaderPtr() {
-//		return mp_Reader;
-//	}
 	/**
 	 * Get the Attributes of the Subscriber.
 	 */
