@@ -32,7 +32,7 @@ bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 	return c1->sequenceNumber < c2->sequenceNumber;
 }
 
-ReaderHistory::ReaderHistory(HistoryAttributes& att):
+ReaderHistory::ReaderHistory(const HistoryAttributes& att):
 						History(att),
 						mp_reader(nullptr)
 
