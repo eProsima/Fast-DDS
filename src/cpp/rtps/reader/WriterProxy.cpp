@@ -338,42 +338,42 @@ void WriterProxy::print_changes_fromWriter_test2()
 	logInfo(RTPS_READER,auxstr;);
 }
 
-bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
-{
-	const char* const METHOD_NAME = "removeChangesFromWriterUpTo";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-	{
-		if(it->seqNum < seq)
-		{
-			if(it->status == RECEIVED || it->status == LOST)
-			{
-				m_lastRemovedSeqNum = it->seqNum;
-				m_changesFromW.erase(it);
-				m_hasMinAvailableSeqNumChanged = true;
-			}
-		}
-		else if(it->seqNum == seq)
-		{
-
-			if(it->status == RECEIVED || it->status == LOST)
-			{
-				m_lastRemovedSeqNum = it->seqNum;
-				m_changesFromW.erase(it);
-				m_hasMinAvailableSeqNumChanged = true;
-				logInfo(RTPS_READER,m_lastRemovedSeqNum.to64long()<< " OK";);
-				return true;
-			}
-			else
-			{
-				logInfo(RTPS_READER,it->seqNum.to64long()<< " NOT OK";);
-				return false;
-			}
-
-		}
-	}
-	return false;
-}
+//bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
+//{
+//	const char* const METHOD_NAME = "removeChangesFromWriterUpTo";
+//	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+//	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+//	{
+//		if(it->seqNum < seq)
+//		{
+//			if(it->status == RECEIVED || it->status == LOST)
+//			{
+//				m_lastRemovedSeqNum = it->seqNum;
+//				m_changesFromW.erase(it);
+//				m_hasMinAvailableSeqNumChanged = true;
+//			}
+//		}
+//		else if(it->seqNum == seq)
+//		{
+//
+//			if(it->status == RECEIVED || it->status == LOST)
+//			{
+//				m_lastRemovedSeqNum = it->seqNum;
+//				m_changesFromW.erase(it);
+//				m_hasMinAvailableSeqNumChanged = true;
+//				logInfo(RTPS_READER,m_lastRemovedSeqNum.to64long()<< " OK";);
+//				return true;
+//			}
+//			else
+//			{
+//				logInfo(RTPS_READER,it->seqNum.to64long()<< " NOT OK";);
+//				return false;
+//			}
+//
+//		}
+//	}
+//	return false;
+//}
 
 bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
 {
