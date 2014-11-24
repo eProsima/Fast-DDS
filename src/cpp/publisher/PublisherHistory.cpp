@@ -11,9 +11,9 @@
  *
  */
 
-#include "fastrtps/pubsub/publisher/PublisherHistory.h"
+#include "fastrtps/publisher/PublisherHistory.h"
 
-#include "fastrtps/pubsub/publisher/PublisherImpl.h"
+#include "fastrtps/publisher/PublisherImpl.h"
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 
@@ -22,7 +22,7 @@
 static const char* const CLASS_NAME = "PublisherHistory";
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):

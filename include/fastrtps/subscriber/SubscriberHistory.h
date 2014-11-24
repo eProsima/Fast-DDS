@@ -2,19 +2,19 @@
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
 /**
- * @file PublisherHistory.h
+ * @file SubscriberHistory.h
  *
  */
 
-#ifndef PUBLISHERHISTORY_H_
-#define PUBLISHERHISTORY_H_
+#ifndef SUBSCRIBERHISTORY_H_
+#define SUBSCRIBERHISTORY_H_
 
-#include "fastrtps/rtps/history/WriterHistory.h"
+#include "fastrtps/rtps/history/ReaderHistory.h"
 #include "fastrtps/qos/QosPolicies.h"
 
 using namespace eprosima::fastrtps::rtps;
@@ -22,18 +22,38 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastrtps {
 
-class PublisherImpl;
+class SubscriberImpl;
 
-class PublisherHistory:public WriterHistory
-{
+class SubscriberHistory: public ReaderHistory {
 public:
 	typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
-	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
+	SubscriberHistory(SubscriberImpl* pimpl,uint32_t payloadMax,
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
-	virtual ~PublisherHistory();
-	bool add_pub_change(CacheChange_t* change);
+	virtual ~SubscriberHistory();
+
+	bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
+
 private:
+
+	void increaseUnreadCount()
+	{
+		++m_unreadCacheCount;
+	}
+	//!Decrease the unread count.
+	void decreaseUnreadCount()
+	{
+		if(m_unreadCacheCount>0)
+			--m_unreadCacheCount;
+	}
+	//!Get the unread count.
+	uint64_t getUnreadCount()
+	{
+		return m_unreadCacheCount;
+	}
+	uint64_t m_unreadCacheCount;
+
+
 	//!Vector of pointer to the CacheChange_t divided by key.
 	t_v_Inst_Caches m_keyedChanges;
 	//!HistoryQosPolicy values.
@@ -41,12 +61,16 @@ private:
 	//!ResourceLimitsQosPolicy values.
 	ResourceLimitsQosPolicy m_resourceLimitsQos;
 	//!Publisher Pointer
-	PublisherImpl* mp_pubImpl;
+	SubscriberImpl* mp_subImpl;
+	//!Change to obtain key when it is not provided
+	CacheChange_t* mp_getKeyCache;
+
 
 	bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
+
 };
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* PUBLISHERHISTORY_H_ */
+#endif /* SUBSCRIBERHISTORY_H_ */
