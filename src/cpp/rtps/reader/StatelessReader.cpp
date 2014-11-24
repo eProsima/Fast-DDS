@@ -13,6 +13,7 @@
 
 #include "fastrtps/rtps/reader/StatelessReader.h"
 #include "fastrtps/rtps/history/ReaderHistory.h"
+#include "fastrtps/rtps/reader/ReaderListener.h"
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/rtps/common/CacheChange.h"
 
@@ -34,7 +35,7 @@ StatelessReader::~StatelessReader()
 
 StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-		RTPSReader(pimpl,guid,att,hist, listen)
+				RTPSReader(pimpl,guid,att,hist, listen)
 {
 
 }
@@ -85,7 +86,16 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
 {
-	return mp_history->received_change(change, prox);
+	if(mp_history->received_change(change, prox))
+	{
+		if(getListener()!=nullptr)
+		{
+			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
+		}
+		mp_history->postSemaphore();
+		return true;
+	}
+	return false;
 }
 
 bool StatelessReader::nextUntakenCache(CacheChange_t** change)

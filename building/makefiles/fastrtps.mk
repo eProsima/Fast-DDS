@@ -73,6 +73,11 @@ FASTRTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/reader/StatelessReader.cpp \
 		  $(BASEDIR)/src/cpp/rtps/reader/RTPSReader.cpp \
 		  \
+		  $(BASEDIR)/src/cpp/rtps/messages/CDRMessagePool.cpp \
+		  $(BASEDIR)/src/cpp/rtps/messages/RTPSMessageCreator.cpp \
+		  $(BASEDIR)/src/cpp/rtps/messages/RTPSMessageGroup.cpp \
+		  $(BASEDIR)/src/cpp/rtps/messages/MessageReceiver.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipant.cpp \
 		  $(BASEDIR)/src/cpp/rtps/participant/RTPSParticipantImpl.cpp \
 		  \

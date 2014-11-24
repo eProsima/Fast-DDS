@@ -11,7 +11,7 @@
  *
  */
 
-#include "fastrtps/utils/CDRMessagePool.h"
+#include "fastrtps/rtps/messages/CDRMessagePool.h"
 
 namespace eprosima {
 namespace fastrtps{

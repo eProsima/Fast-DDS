@@ -51,6 +51,16 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
 		return false;
 }
 
+bool RTPSReader::reserveCache(CacheChange_t** change)
+{
+	return mp_history->reserve_Cache(change);
+}
+
+void RTPSReader::releaseCache(CacheChange_t* change)
+{
+		return mp_history->release_Cache(change);
+}
+
 
 }
 } /* namespace rtps */

@@ -11,10 +11,11 @@
  *
  */
 
-#include "fastrtps/writer/RTPSMessageGroup.h"
-#include "fastrtps/RTPSMessageCreator.h"
-#include "fastrtps/writer/RTPSWriter.h"
-#include "fastrtps/resources/ResourceSend.h"
+#include "fastrtps/rtps/messages/RTPSMessageGroup.h"
+#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
+#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+//#include "fastrtps/resources/ResourceSend.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
@@ -140,9 +141,9 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		}
 		std::vector<Locator_t>::iterator lit;
 		for(lit = unicast->begin();lit!=unicast->end();++lit)
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
 		for(lit = multicast->begin();lit!=multicast->end();++lit)
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add
 	return true;
@@ -154,11 +155,12 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 	ParameterList_t* inlineQos = NULL;
 	if(expectsInlineQos)
 	{
-		if(W->getInlineQos()->m_parameters.size()>0)
-			inlineQos = W->getInlineQos();
+		//TODOG INLINEQOS
+//		if(W->getInlineQos()->m_parameters.size()>0)
+//			inlineQos = W->getInlineQos();
 	}
 	CDRMessage::initCDRMsg(submsg);
-	bool added= RTPSMessageCreator::addSubmessageData(submsg,change,W->getTopic().getTopicKind(),ReaderId,expectsInlineQos,inlineQos);
+	bool added= RTPSMessageCreator::addSubmessageData(submsg,change,W->getAttributes()->topicKind,ReaderId,expectsInlineQos,inlineQos);
 	if(!added)
 		logError(RTPS_WRITER,"Problem adding DATA submsg to the CDRMessage, buffer too small";);
 }
@@ -216,10 +218,10 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		if(added)
 		{
 			for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
-				W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+				W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
 
 			for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
-				W->mp_send_thr->sendSync(cdrmsg_fullmsg,(*lit));
+				W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
 		}
 		else
 		{
@@ -280,7 +282,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		}
 		if(added)
 		{
-			W->mp_send_thr->sendSync(cdrmsg_fullmsg,loc);
+			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,loc);
 		}
 		else
 		{

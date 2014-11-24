@@ -38,6 +38,7 @@ class RTPSReader : public Endpoint
 {
 	friend class ReaderHistory;
 	friend class RTPSParticipantImpl;
+	friend class MessageReceiver;
 protected:
 	RTPSReader(RTPSParticipantImpl*,GUID_t& guid,
 			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
@@ -74,6 +75,9 @@ public:
 
 	bool acceptMsgDirectedTo(EntityId_t& entityId);
 
+	bool reserveCache(CacheChange_t** change);
+
+	void releaseCache(CacheChange_t* change);
 protected:
 
 	/**
@@ -101,6 +105,8 @@ protected:
 	bool m_acceptMessagesToUnknownReaders;
 	bool m_acceptMessagesFromUnkownWriters;
 	EntityId_t m_trustedWriterEntityId;
+
+
 };
 
 

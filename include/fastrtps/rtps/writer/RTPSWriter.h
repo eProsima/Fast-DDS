@@ -39,6 +39,7 @@ class RTPSWriter: public Endpoint
 	friend class WriterHistory;
 	friend class UnsentChangesNotEmptyEvent;
 	friend class RTPSParticipantImpl;
+	friend class RTPSMessageGroup;
 protected:
 	RTPSWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
 	virtual ~RTPSWriter();

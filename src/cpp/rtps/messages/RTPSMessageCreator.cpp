@@ -11,13 +11,12 @@
  *
  */
 
-#include "fastrtps/RTPSMessageCreator.h"
-#include "fastrtps/CDRMessage.h"
+#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
+#include "fastrtps/rtps/messages/CDRMessage.h"
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/utils/eClock.h"
-//#include "fastrtps/utils/ObjectPool.h"
-#include "fastrtps/utils/CDRMessagePool.h"
-#include "fastrtps/common/RTPS_messages.h"
+#include "fastrtps/rtps/messages/CDRMessagePool.h"
+//#include "fastrtps/common/RTPS_messages.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
