@@ -12,6 +12,9 @@
  */
 
 #include "fastrtps/subscriber/SubscriberHistory.h"
+#include "fastrtps/subscriber/SubscriberImpl.h"
+
+
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/utils/RTPSLog.h"
 
@@ -23,6 +26,7 @@ static const char* const CLASS_NAME = "SubscriberHistory";
 SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSize,
 		HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):
+		ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples+30)),
 				m_unreadCacheCount(0),
 				m_historyQos(history),
 				m_resourceLimitsQos(resource),
@@ -85,7 +89,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 				bool read = false;
 				if(mp_minSeqCacheChange->isRead)
 					read = true;
-				if(mp_reader->change_removed_by_history(mp_minSeqCacheChange,WP))
+				if(this->remove_change(mp_minSeqCacheChange))
 				{
 					if(!read)
 					{
@@ -118,18 +122,18 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 	//HISTORY WITH KEY
 	else if(mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
 	{
-		if(!a_change->instanceHandle.isDefined() && mp_subImpl->mp_type !=nullptr)
+		if(!a_change->instanceHandle.isDefined() && mp_subImpl->getType() !=nullptr)
 		{
 //			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
 //			{
 				logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
-						mp_subImpl->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
-				if(!mp_subImpl->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
+						mp_subImpl->getType()->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
+				if(!mp_subImpl->getType()->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
 			//}
 //			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
 //			{
-//				if(!mp_subImpl->mp_type->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
+//				if(!mp_subImpl->getType()->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
 //					return false;
 //			}
 		}
@@ -167,7 +171,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 					bool read = false;
 					if(vit->second.front()->isRead)
 						read = true;
-					if(mp_reader->change_removed_by_history(vit->second.front(),WP))
+					if(this->remove_change(vit->second.front()))
 					{
 						if(!read)
 						{
@@ -225,7 +229,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 		this->decreaseUnreadCount();
 		logInfo(SUBSCRIBER,this->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
 		if(change->kind == ALIVE)
-			this->mp_subImpl->mp_type->deserialize(&change->serializedPayload,data);
+			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
 		{
 			info->sampleKind = change->kind;
@@ -237,7 +241,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 					change->instanceHandle == c_InstanceHandle_Unknown &&
 					change->kind == ALIVE)
 			{
-				this->mp_subImpl->mp_type->getKey(data,&change->instanceHandle);
+				this->mp_subImpl->getType()->getKey(data,&change->instanceHandle);
 			}
 			info->iHandle = change->instanceHandle;
 		}
@@ -257,7 +261,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 		this->decreaseUnreadCount();
 		logInfo(SUBSCRIBER,this->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
 		if(change->kind == ALIVE)
-			this->mp_subImpl->mp_type->deserialize(&change->serializedPayload,data);
+			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
 		{
 			info->sampleKind = change->kind;
@@ -269,7 +273,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 					change->instanceHandle == c_InstanceHandle_Unknown &&
 					change->kind == ALIVE)
 			{
-				this->mp_subImpl->mp_type->getKey(data,&change->instanceHandle);
+				this->mp_subImpl->getType()->getKey(data,&change->instanceHandle);
 			}
 			info->iHandle = change->instanceHandle;
 		}

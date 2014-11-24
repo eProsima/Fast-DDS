@@ -33,7 +33,7 @@ class RTPSReader;
 class ReaderHistory: public History {
 	friend class RTPSReader;
 public:
-	ReaderHistory(HistoryAttributes& att);
+	ReaderHistory(const HistoryAttributes& att);
 	virtual ~ReaderHistory();
 
 	virtual bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
@@ -47,7 +47,7 @@ public:
 	bool add_change(CacheChange_t* a_change,WriterProxy*prox= nullptr);
 
 	bool remove_change(CacheChange_t* a_change);
-private:
+
 	/**
 	 * Sort the CacheChange_t from the History.
 	 */
@@ -56,7 +56,7 @@ private:
 	 * Update the maximum and minimum sequenceNumber cacheChanges.
 	 */
 	void updateMaxMinSeqNum();
-public:
+
 	void postSemaphore();
 
 	void waitSemaphore();

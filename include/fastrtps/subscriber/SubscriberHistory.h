@@ -23,6 +23,11 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastrtps {
 
+namespace rtps{
+class WriterProxy;
+}
+using namespace rtps;
+
 class SubscriberImpl;
 
 class SubscriberHistory: public ReaderHistory {

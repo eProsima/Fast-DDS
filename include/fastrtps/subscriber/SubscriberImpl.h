@@ -79,6 +79,8 @@ public:
 	 */
 	SubscriberAttributes getAttributes(){return m_att;}
 
+	TopicDataType* getType() {return mp_type;};
+
 private:
 	//!Participant
 	ParticipantImpl* mp_participant;
