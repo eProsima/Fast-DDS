@@ -13,6 +13,8 @@
 #ifndef SAMPLEINFO_H_
 #define SAMPLEINFO_H_
 
+#include "fastrtps/config/fastrtps_dll.h"
+
 namespace eprosima {
 namespace fastrtps {
 

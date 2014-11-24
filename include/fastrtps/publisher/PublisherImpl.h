@@ -14,7 +14,7 @@
 
 #ifndef PUBLISHERIMPL_H_
 #define PUBLISHERIMPL_H_
-#include <iostream>
+
 
 #include "fastrtps/rtps/common/Locator.h"
 #include "fastrtps/rtps/common/Guid.h"
@@ -24,6 +24,7 @@
 #include "fastrtps/publisher/PublisherHistory.h"
 
 #include "fastrtps/rtps/writer/WriterListener.h"
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps
