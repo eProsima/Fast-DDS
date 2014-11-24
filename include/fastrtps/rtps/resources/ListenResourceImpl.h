@@ -58,7 +58,7 @@ public:
 
 	inline boost::recursive_mutex* getMutex() {return &m_mutex;};
 
-	inline const Locator_t& getListenLoc() const {return m_listenLoc;}
+	inline const Locator_t& getListenLocator() const {return m_listenLoc;}
 
 private:
 	RTPSParticipantImpl* mp_RTPSParticipantImpl;

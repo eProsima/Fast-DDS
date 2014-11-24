@@ -86,7 +86,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLoc(),C_BLUE);
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator(),C_BLUE);
 			return true;
 		}
 	}
@@ -103,7 +103,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLoc(),C_BLUE);
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator(),C_BLUE);
 			return true;
 		}
 	}
@@ -125,6 +125,11 @@ Locator_t ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 bool ListenResource::isListeningTo(Locator_t&loc)
 {
 	return mp_impl->isListeningTo(loc);
+}
+
+const Locator_t& ListenResource::getListenLocator()
+{
+	return mp_impl->getListenLocator();
 }
 
 

@@ -26,6 +26,7 @@ class RTPSWriter;
 class RTPSReader;
 class Endpoint;
 class MessageReceiver;
+class RTPSParticipantImpl;
 
 class ListenResource {
 public:
@@ -57,6 +58,8 @@ public:
 			uint32_t listenSockSize,bool isMulti,bool isFixed);
 
 	bool isListeningTo(Locator_t&loc);
+
+	const Locator_t& getListenLocator();
 
 };
 }

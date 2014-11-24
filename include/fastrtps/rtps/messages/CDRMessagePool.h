@@ -14,7 +14,7 @@
 #ifndef CDRMESSAGEPOOL_H_
 #define CDRMESSAGEPOOL_H_
 
-#include "fastrtps/common/types/CDRMessage_t.h"
+#include "fastrtps/rtps/common/CDRMessage_t.h"
 #include <vector>
 
 namespace eprosima {

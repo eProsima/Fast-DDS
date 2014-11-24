@@ -13,6 +13,7 @@
 
 #include "fastrtps/rtps/reader/StatefulReader.h"
 #include "fastrtps/rtps/reader/WriterProxy.h"
+#include "fastrtps/rtps/reader/ReaderListener.h"
 #include "fastrtps/rtps/history/ReaderHistory.h"
 
 #include <boost/thread/lock_guard.hpp>
@@ -195,7 +196,21 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 	if(this->mp_history->received_change(a_change,prox))
 	{
 		if(prox->received_change_set(a_change))
+		{
+			SequenceNumber_t maxSeqNumAvailable;
+			prox->available_changes_max(&maxSeqNumAvailable);
+			if(a_change->sequenceNumber <= maxSeqNumAvailable)
+			{
+				if(getListener()!=nullptr)
+				{
+					//cout << "CALLING NEWDATAMESSAGE "<<endl;
+					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+					//cout << "FINISH CALLING " <<endl;
+				}
+				mp_history->postSemaphore();
+			}
 			return true;
+		}
 	}
 	return false;
 }

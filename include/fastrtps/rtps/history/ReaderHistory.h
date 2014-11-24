@@ -55,6 +55,10 @@ private:
 	 * Update the maximum and minimum sequenceNumber cacheChanges.
 	 */
 	void updateMaxMinSeqNum();
+public:
+	void postSemaphore();
+
+	void waitSemaphore();
 //	/**
 //	 * Method to know whether there are unread CacheChange_t.
 //	 * @return True if there are unread.
