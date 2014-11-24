@@ -11,24 +11,26 @@
  *
  */
 
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+
 #include "fastrtps/rtps/resources/ResourceSend.h"
 #include "fastrtps/rtps/resources/ResourceEvent.h"
 #include "fastrtps/rtps/resources/ListenResource.h"
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+
 
 #include "fastrtps/rtps/writer/StatelessWriter.h"
 #include "fastrtps/rtps/writer/StatefulWriter.h"
 
-//#include "fastrtps/reader/StatelessReader.h"
-//#include "fastrtps/reader/StatefulReader.h"
+#include "fastrtps/rtps/reader/StatelessReader.h"
+#include "fastrtps/rtps/reader/StatefulReader.h"
 
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
 
 #include "fastrtps/rtps/RTPSDomain.h"
 
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+//#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
+//#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
 
 #include "fastrtps/utils/IPFinder.h"
 #include "fastrtps/utils/eClock.h"
@@ -47,6 +49,16 @@ namespace rtps {
 
 
 static const char* const CLASS_NAME = "RTPSParticipantImpl";
+
+static EntityId_t TrustedWriter(const EntityId_t& reader)
+{
+	if(reader == c_EntityId_SPDPReader) return c_EntityId_SPDPWriter;
+	if(reader == c_EntityId_SEDPPubReader) return c_EntityId_SEDPPubWriter;
+	if(reader == c_EntityId_SEDPSubReader) return c_EntityId_SEDPSubWriter;
+	if(reader == c_EntityId_ReaderLiveliness) return c_EntityId_WriterLiveliness;
+
+	return c_EntityId_Unknown;
+}
 
 
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
@@ -114,11 +126,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
-	mp_builtinProtocols = new BuiltinProtocols();
-	if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
-	{
-		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
-	}
+//	mp_builtinProtocols = new BuiltinProtocols();
+//	if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
+//	{
+//		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
+//	}
 
 }
 
@@ -287,12 +299,14 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
 bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
-	return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
+	//return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
+	return true;
 }
 
 bool RTPSParticipantImpl::registerReader(RTPSReader* reader,TopicAttributes& topicAtt,ReaderQos& rqos)
 {
-	return this->mp_builtinProtocols->addLocalReader(reader,topicAtt,rqos);
+	//return this->mp_builtinProtocols->addLocalReader(reader,topicAtt,rqos);
+	return true;
 }
 
 
@@ -490,15 +504,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 //
 //
 //
-//static EntityId_t TrustedWriter(const EntityId_t& reader)
-//{
-//	if(reader == c_EntityId_SPDPReader) return c_EntityId_SPDPWriter;
-//	if(reader == c_EntityId_SEDPPubReader) return c_EntityId_SEDPPubWriter;
-//	if(reader == c_EntityId_SEDPSubReader) return c_EntityId_SEDPSubWriter;
-//	if(reader == c_EntityId_ReaderLiveliness) return c_EntityId_WriterLiveliness;
-//
-//	return c_EntityId_Unknown;
-//}
+
 //
 //bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 //		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,

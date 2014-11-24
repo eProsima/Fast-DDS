@@ -219,7 +219,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 
 
 //
-bool StatefulReader::nextUntakenCache(CacheChange_t** change)
+bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
 	//const char* const METHOD_NAME = "nextUntakenCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -239,6 +239,8 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change)
 	}
 	if(available && wp->get_change(minSeqNum,change))
 	{
+		if(wpout !=nullptr)
+			*wpout = wp;
 		return true;
 //		logInfo(RTPS_READER,this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long());
 //		if(min_change->kind == ALIVE)
@@ -264,7 +266,7 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change)
 	return false;
 }
 //
-bool StatefulReader::nextUnreadCache(CacheChange_t** change)
+bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 {
 	const char* const METHOD_NAME = "nextUnreadCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -283,6 +285,8 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change)
 			if(seq >= (*it)->sequenceNumber)
 			{
 				*change = *it;
+				if(wpout !=nullptr)
+							*wpout = wp;
 				return true;
 //				if((*it)->kind == ALIVE)
 //				{
