@@ -13,10 +13,12 @@
 #ifndef SUBLISTENER_H_
 #define SUBLISTENER_H_
 
-#include "fastrtps/common/types/common_types.h"
-#include "fastrtps/pubsub/MatchingInfo.h"
+#include "fastrtps/rtps/common/MatchingInfo.h"
+
+using namespace eprosima::fastrtps::rtps;
+
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.

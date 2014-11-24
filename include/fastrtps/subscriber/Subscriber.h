@@ -23,7 +23,8 @@ namespace eprosima {
 namespace fastrtps{
 
 class SubscriberImpl;
-
+class SampleInfo_t;
+class SubscriberAttributes;
 
 
 

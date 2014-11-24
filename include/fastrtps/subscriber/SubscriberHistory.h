@@ -41,23 +41,24 @@ public:
 
 	bool isUnreadCache();
 
-private:
 
-	void increaseUnreadCount()
+
+	inline void increaseUnreadCount()
 	{
 		++m_unreadCacheCount;
 	}
 	//!Decrease the unread count.
-	void decreaseUnreadCount()
+	inline void decreaseUnreadCount()
 	{
 		if(m_unreadCacheCount>0)
 			--m_unreadCacheCount;
 	}
 	//!Get the unread count.
-	uint64_t getUnreadCount()
+	inline uint64_t getUnreadCount()
 	{
 		return m_unreadCacheCount;
 	}
+private:
 	uint64_t m_unreadCacheCount;
 
 

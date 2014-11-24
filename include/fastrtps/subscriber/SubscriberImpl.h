@@ -94,6 +94,7 @@ private:
 	SubscriberListener* mp_listener;
 	class SubscriberReaderListener : public ReaderListener
 	{
+	public:
 		SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s){};
 		virtual ~SubscriberReaderListener(){};
 		void onReaderMatched(MatchingInfo info);
