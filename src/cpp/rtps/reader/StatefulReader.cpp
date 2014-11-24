@@ -343,19 +343,19 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change)
 //	return false;
 //}
 //
-//bool StatefulReader::updateTimes(SubscriberTimes ti)
-//{
-//	if(m_SubTimes.heartbeatResponseDelay != ti.heartbeatResponseDelay)
-//	{
-//		m_SubTimes = ti;
-//		for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
-//				wit!=this->matched_writers.end();++wit)
-//		{
-//			(*wit)->m_heartbeatResponse.update_interval(m_SubTimes.heartbeatResponseDelay);
-//		}
-//	}
-//	return true;
-//}
+bool StatefulReader::updateTimes(ReaderTimes& ti)
+{
+	if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)
+	{
+		m_times = ti;
+		for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
+				wit!=this->matched_writers.end();++wit)
+		{
+			(*wit)->mp_heartbeatResponse->update_interval(m_times.heartbeatResponseDelay);
+		}
+	}
+	return true;
+}
 //
 
 

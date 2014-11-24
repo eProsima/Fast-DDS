@@ -12,7 +12,7 @@
  */
 
 #include "fastrtps/subscriber/SubscriberHistory.h"
-
+#include "fastrtps/TopicDataType.h"
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
@@ -120,18 +120,18 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 	{
 		if(!a_change->instanceHandle.isDefined() && mp_subImpl->mp_type !=nullptr)
 		{
-			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
-			{
+//			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
+//			{
 				logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
 						mp_subImpl->mp_type->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
 				if(!mp_subImpl->mp_type->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
 					return false;
-			}
-			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
-			{
-				if(!mp_reader->mp_type->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
-					return false;
-			}
+			//}
+//			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
+//			{
+//				if(!mp_subImpl->mp_type->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
+//					return false;
+//			}
 		}
 		else if(!a_change->instanceHandle.isDefined())
 		{
@@ -215,6 +215,69 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 	return false;
 }
 
+bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
+{
+	CacheChange_t* change;
+	WriterProxy * wp;
+	if(this->mp_reader->nextUnreadCache(&change,&wp))
+	{
+		change->isRead = true;
+		this->decreaseUnreadCount();
+		logInfo(SUBSCRIBER,this->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
+		if(change->kind == ALIVE)
+			this->mp_subImpl->mp_type->deserialize(&change->serializedPayload,data);
+		if(info!=nullptr)
+		{
+			info->sampleKind = change->kind;
+			info->writerGUID = change->writerGUID;
+			info->sourceTimestamp = change->sourceTimestamp;
+			if(this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+				info->ownershipStrength = wp->m_att.ownershipStrength;
+			if(this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+					change->instanceHandle == c_InstanceHandle_Unknown &&
+					change->kind == ALIVE)
+			{
+				this->mp_subImpl->mp_type->getKey(data,&change->instanceHandle);
+			}
+			info->iHandle = change->instanceHandle;
+		}
+		return true;
+	}
+	return false;
+}
+
+
+bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
+{
+	CacheChange_t* change;
+	WriterProxy * wp;
+	if(this->mp_reader->nextUntakenCache(&change,&wp))
+	{
+		change->isRead = true;
+		this->decreaseUnreadCount();
+		logInfo(SUBSCRIBER,this->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
+		if(change->kind == ALIVE)
+			this->mp_subImpl->mp_type->deserialize(&change->serializedPayload,data);
+		if(info!=nullptr)
+		{
+			info->sampleKind = change->kind;
+			info->writerGUID = change->writerGUID;
+			info->sourceTimestamp = change->sourceTimestamp;
+			if(this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+				info->ownershipStrength = wp->m_att.ownershipStrength;
+			if(this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+					change->instanceHandle == c_InstanceHandle_Unknown &&
+					change->kind == ALIVE)
+			{
+				this->mp_subImpl->mp_type->getKey(data,&change->instanceHandle);
+			}
+			info->iHandle = change->instanceHandle;
+		}
+		this->remove_change(change);
+		return true;
+	}
+	return false;
+}
 
 } /* namespace fastrtps */
 } /* namespace eprosima */

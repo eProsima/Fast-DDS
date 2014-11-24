@@ -85,13 +85,13 @@ protected:
 	 * @param change POinter to pointer of CacheChange_t
 	 * @return True if read.
 	 */
-	virtual bool nextUnreadCache(CacheChange_t** change)=0;
+	virtual bool nextUnreadCache(CacheChange_t** change,WriterProxy** wp)=0;
 	/**
 	 * Get the next CacheChange_t from the history to take.
 	 * @param change Pointer to pointer of CacheChange_t
 	 * @return True if read.
 	 */
-	virtual bool nextUntakenCache(CacheChange_t** change)=0;
+	virtual bool nextUntakenCache(CacheChange_t** change,WriterProxy** wp)=0;
 
 	void setTrustedWriter(EntityId_t writer)
 	{

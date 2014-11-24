@@ -102,7 +102,7 @@ public:
 //	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
 //	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=NULL);
 //
-//	bool updateTimes(SubscriberTimes time);
+	bool updateTimes(ReaderTimes& times);
 //
 //	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
 
