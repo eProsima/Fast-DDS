@@ -15,6 +15,7 @@
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/subscriber/SubscriberListener.h"
 #include "fastrtps/rtps/reader/RTPSReader.h"
+#include "fastrtps/rtps/reader/StatefulReader.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
@@ -25,8 +26,8 @@ namespace fastrtps {
 
 static const char* const CLASS_NAME = "SubscriberImpl";
 
-SubscriberImpl::SubscriberImpl(RTPSParticipantImpl* p,RTPSReader* Rin,
-		TopicDataType* ptype,SubscriberAttributes& att):
+SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
+		SubscriberAttributes& att,SubscriberListener* listen):
 												mp_participant(p),
 												mp_reader(nullptr),
 												mp_type(ptype),
@@ -42,18 +43,18 @@ SubscriberImpl::SubscriberImpl(RTPSParticipantImpl* p,RTPSReader* Rin,
 SubscriberImpl::~SubscriberImpl()
 {
 	const char* const METHOD_NAME = "~SubscriberImpl";
-	logInfo(RTPS_READER,this->getGuid().entityId << " in topic: "<<this->m_attributes.topic.topicName);
+	logInfo(RTPS_READER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
 }
 
 
 void SubscriberImpl::waitForUnreadMessage()
 {
-	if(!m_history.isUnreadCacheChange())
+	if(!m_history.getUnreadCount()>0)
 	{
 		while(1)
 		{
 			m_history.waitSemaphore();
-			if(m_history.isUnreadCacheChange())
+			if(m_history.getUnreadCount()>0)
 				break;
 		}
 	}
@@ -145,7 +146,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 	}
 	if(updated)
 	{
-		this->m_att.expectsInlineQos(att.expectsInlineQos);
+		this->m_att.expectsInlineQos = att.expectsInlineQos;
 		if(this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
 		{
 			//UPDATE TIMES:
