@@ -46,15 +46,15 @@ public:
 	bool add_change(CacheChange_t* a_change,WriterProxy*prox= nullptr);
 
 	bool remove_change(CacheChange_t* a_change);
-//private:
-//	/**
-//	 * Sort the CacheChange_t from the History.
-//	 */
-//	void sortCacheChanges();
-//	/**
-//	 * Update the maximum and minimum sequenceNumber cacheChanges.
-//	 */
-//	void updateMaxMinSeqNum();
+private:
+	/**
+	 * Sort the CacheChange_t from the History.
+	 */
+	void sortCacheChanges();
+	/**
+	 * Update the maximum and minimum sequenceNumber cacheChanges.
+	 */
+	void updateMaxMinSeqNum();
 //	/**
 //	 * Method to know whether there are unread CacheChange_t.
 //	 * @return True if there are unread.
