@@ -10,32 +10,20 @@
  * @file SubscriberAttributes.h 	
  */
 
-#ifndef SUBSCRIBERPARAMS_H_
-#define SUBSCRIBERPARAMS_H_
+#ifndef SUBSCRIBERATTRIBUTES_H_
+#define SUBSCRIBERATTRIBUTES_H_
 
 
-
-#include "fastrtps/rtps/common/Types.h"
 #include "fastrtps/rtps/common/Time_t.h"
 #include "fastrtps/rtps/common/Locator.h"
+#include "fastrtps/rtps/attributes/ReaderAttributes.h"
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ReaderQos.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 namespace eprosima {
 namespace fastrtps {
-
-class SubscriberTimes{
-public:
-	//!Delay the response to a HB.
-		Duration_t heartbeatResponseDelay;
-	//	//!Ignore too son received HB (after previously send acknack).
-	//	Duration_t heartbeatSupressionDuration;
-		SubscriberTimes()
-		{
-			heartbeatResponseDelay.fraction = 500*1000*1000;
-		}
-		~SubscriberTimes(){};
-};
 
 /**
  * Class SubscriberAttributes, used by the user to define the attributes of a Subscriber.
@@ -45,43 +33,26 @@ class SubscriberAttributes {
 
 public:
 	SubscriberAttributes()
-{
-		expectsInlineQos = false;
-		userDefinedId = 0;
-		payloadMaxSize = 500;
-		entityId = -1;
-};
+	{
+		m_userDefinedID = -1;
+				m_entityID = -1;
+	};
 	virtual ~SubscriberAttributes(){};
-	//! Expects Inline Qos (true or false)
-	bool expectsInlineQos;
-	//!Unicast Locator List that the Subscriber should be listening.
-	LocatorList_t unicastLocatorList;
-	//!Multicas LocatorList where the Subscriber should be listening.
-	LocatorList_t multicastLocatorList;
-	//!Times attributes of the Subscriber.
-	SubscriberTimes times;
-	//!Topic Attributes of the topic associated with this subscriber.
+	//!Topic Attributes
 	TopicAttributes topic;
-	//!User defined Id, only necessary if the RTPSParticipant uses StaticEndpointDiscoveryProtocol.
-	int16_t userDefinedId;
-	//! Reader qos
+	//!QOS
 	ReaderQos qos;
-
-
-	uint32_t payloadMaxSize;
-	bool setEntityId(uint32_t id) {
-		if (id>0 && id <= 16777215 )
-		{
-			entityId = id;
-			return true;
-		}
-		return false;
-	}
-		const uint32_t getEntityId() const {return entityId>0?(uint32_t)entityId:0; }
-
+	//!Times
+	ReaderTimes times;
+	LocatorList_t unicastLocatorList;
+	LocatorList_t multicastLocatorList;
+	inline int16_t getUserDefinedID() const {return m_userDefinedID;}
+	inline int16_t getEntityID() const {return m_entityID;}
+	inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
+	inline void setEntityID(uint8_t id){m_entityID = id;	};
 private:
-	//! The user can define the entityId first three bytes as long as its unique.
-	int32_t entityId;
+	int16_t m_userDefinedID;
+	int16_t m_entityID;
 };
 
 } /* namespace fastrtps */

@@ -14,26 +14,22 @@
 #ifndef DOMAIN_H_
 #define DOMAIN_H_
 
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include "fastrtps/attributes/ParticipantAttributes.h"
 
 namespace eprosima{
 namespace fastrtps{
 
-namespace rtps
-{
-class RTPSParticipantListener;
-}
 
-
-using namespace rtps;
-
-
-
+class ParticipantListener;
 class Participant;
 class ParticipantImpl;
 class Publisher;
 class PublisherAttributes;
 class PublisherListener;
+class Subscriber;
+class SubscriberAttributes;
+class SubscriberListener;
+
 
 class Domain
 {
@@ -41,11 +37,13 @@ class Domain
 public:
 	Domain();
 	virtual ~Domain();
-	static Participant* createParticipant(RTPSParticipantAttributes& att,RTPSParticipantListener* listen = nullptr);
+	static Participant* createParticipant(ParticipantAttributes& att,ParticipantListener* listen = nullptr);
 
 	static Publisher* createPublisher(Participant* part,PublisherAttributes& att, PublisherListener* listen = nullptr);
 
-	static std::vector<t_p_Participant> m_pubsubParticipants;
+	static Subscriber* createSubscriber(Participant* part,SubscriberAttributes& att, SubscriberListener* listen = nullptr);
+
+	static std::vector<t_p_Participant> m_participants;
 
 
 };

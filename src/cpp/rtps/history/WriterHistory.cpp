@@ -20,6 +20,7 @@
 #include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 
@@ -131,6 +132,6 @@ bool WriterHistory::remove_min_change()
 
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

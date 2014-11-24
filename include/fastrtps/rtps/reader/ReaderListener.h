@@ -16,8 +16,8 @@
 
 #include "fastrtps/rtps/common/MatchingInfo.h"
 
-namespace eprosima
-{
+namespace eprosima{
+namespace fastrtps{
 namespace rtps{
 
 
@@ -32,7 +32,8 @@ public:
 
 }
 }
+}
 
 
 
-#endif /* WRITERLISTENER_H_ */
+#endif /* READERLISTENER_H_ */
