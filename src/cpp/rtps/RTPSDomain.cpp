@@ -23,7 +23,7 @@
 #include "fastrtps/utils/IPFinder.h"
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/writer/RTPSReader.h"
+#include "fastrtps/rtps/reader/RTPSReader.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -200,7 +200,7 @@ RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& r
 		if(it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
 		{
 			RTPSReader* reader;
-			if(it->second->createReader(&writ,ratt,rhist,rlisten))
+			if(it->second->createReader(&reader,ratt,rhist,rlisten))
 				return reader;
 			return nullptr;
 		}
@@ -226,4 +226,4 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
 } /* namespace eprosima */
 
 
-}
+

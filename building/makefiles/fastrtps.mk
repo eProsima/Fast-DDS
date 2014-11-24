@@ -86,9 +86,14 @@ FASTRTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/Domain.cpp \
 		  $(BASEDIR)/src/cpp/participant/Participant.cpp \
 		  $(BASEDIR)/src/cpp/participant/ParticipantImpl.cpp \
+		  \
 		  $(BASEDIR)/src/cpp/publisher/Publisher.cpp \
 		  $(BASEDIR)/src/cpp/publisher/PublisherImpl.cpp \
 		  $(BASEDIR)/src/cpp/publisher/PublisherHistory.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/subscriber/Subscriber.cpp \
+		  $(BASEDIR)/src/cpp/subscriber/SubscriberImpl.cpp \
+		  $(BASEDIR)/src/cpp/subscriber/SubscriberHistory.cpp \
 		  \
 	      $(BASEDIR)/src/cpp/utils/IPFinder.cpp \
 		  $(BASEDIR)/src/cpp/utils/CDRMessagePool.cpp \

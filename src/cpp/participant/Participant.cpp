@@ -7,28 +7,28 @@
  *************************************************************************/
 
 /**
- * @file PUBSUBParticipant.cpp
+ * @file Participant.cpp
  *
  */
 
-#include "fastrtps/pubsub/participant/PUBSUBParticipant.h"
+#include "fastrtps/participant/Participant.h"
 
-#include "fastrtps/pubsub/participant/PUBSUBParticipantImpl.h"
+#include "fastrtps/participant/ParticipantImpl.h"
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
-PUBSUBParticipant::PUBSUBParticipant():
+Participant::Participant():
 		mp_impl(nullptr)
 {
 
 }
 
-PUBSUBParticipant::~PUBSUBParticipant() {
+Participant::~Participant() {
 	// TODO Auto-generated destructor stub
 }
 
-const GUID_t& PUBSUBParticipant::getGuid() const
+const GUID_t& Participant::getGuid() const
 {
 	return mp_impl->getGuid();
 }

@@ -64,13 +64,13 @@ public:
 	 * @param change POinter to pointer of CacheChange_t
 	 * @return True if read.
 	 */
-	bool nextUnreadCache(CacheChange_t** change);
+	bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
 	/**
 	 * Take the next CacheChange_t from the history;
 	 * @param change Pointer to pointer of CacheChange_t
 	 * @return True if read.
 	 */
-	bool nextUntakenCache(CacheChange_t** change);
+	bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
 
 private:
 	//!List of GUID_t os matched writers.

@@ -98,7 +98,7 @@ bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
 	return false;
 }
 
-bool StatelessReader::nextUntakenCache(CacheChange_t** change)
+bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
 	//const char* const METHOD_NAME = "nextUntakenCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -106,7 +106,7 @@ bool StatelessReader::nextUntakenCache(CacheChange_t** change)
 }
 
 
-bool StatelessReader::nextUnreadCache(CacheChange_t** change)
+bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 {
 	const char* const METHOD_NAME = "nextUnreadCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
