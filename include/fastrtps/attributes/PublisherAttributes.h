@@ -10,10 +10,9 @@
  * @file PublisherAttributes.h	
  */
 
-#ifndef PUBLISHERPARAMETERS_H_
-#define PUBLISHERPARAMETERS_H_
+#ifndef PUBLISHERATTRIBUTES_H_
+#define PUBLISHERATTRIBUTES_H_
 
-#include <iostream>
 
 #include "fastrtps/rtps/common/Locator.h"
 #include "fastrtps/rtps/common/Time_t.h"
@@ -21,7 +20,7 @@
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/WriterQos.h"
 
-using namespace eprosima::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps{
@@ -42,15 +41,15 @@ public:
 	//!Topic Attributes for the Publisher
 	TopicAttributes topic;
 	//!QOS for the Publisher
-	PublisherQos qos;
+	WriterQos qos;
 	//!Writer Attributes
 	WriterTimes times;
 	LocatorList_t unicastLocatorList;
 	LocatorList_t multicastLocatorList;
 	inline int16_t getUserDefinedID() const {return m_userDefinedID;}
 	inline int16_t getEntityID() const {return m_entityID;}
-	inline void setUserDefinedID(uint16_t id){m_userDefinedID = id;	};
-	inline void setEntityID(uint16_t id){m_entityID = id;	};
+	inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
+	inline void setEntityID(uint8_t id){m_entityID = id;	};
 private:
 	int16_t m_userDefinedID;
 	int16_t m_entityID;
@@ -59,4 +58,4 @@ private:
 }
 } /* namespace eprosima */
 
-#endif /* PUBLISHERPARAMETERS_H_ */
+#endif /* PUBLISHERATTRIBUTES_H_ */
