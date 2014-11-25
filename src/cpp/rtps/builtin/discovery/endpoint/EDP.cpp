@@ -167,8 +167,10 @@ bool EDP::removeWriterProxy(const GUID_t& writer)
 	WriterProxyData* wdata = nullptr;
 	if(this->mp_PDP->lookupWriterProxyData(writer,&wdata))
 	{
+		logInfo(RTPS_EDP," in topic: "<<wdata->m_topicName,C_CYAN);
 		unpairWriterProxy(wdata);
 		this->mp_PDP->removeWriterProxyData(wdata);
+
 		return true;
 	}
 	return false;
@@ -181,6 +183,7 @@ bool EDP::removeReaderProxy(const GUID_t& reader)
 	ReaderProxyData* rdata = nullptr;
 	if(this->mp_PDP->lookupReaderProxyData(reader,&rdata))
 	{
+		logInfo(RTPS_EDP," in topic: "<<rdata->m_topicName,C_CYAN);
 		unpairReaderProxy(rdata);
 		this->mp_PDP->removeReaderProxyData(rdata);
 		return true;

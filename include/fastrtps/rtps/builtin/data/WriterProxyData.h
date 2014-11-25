@@ -17,6 +17,8 @@
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/qos/WriterQos.h"
 
+#include "fastrtps/rtps/attributes/ReaderAttributes.h"
+
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
