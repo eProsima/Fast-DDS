@@ -15,32 +15,32 @@
 #define RESENDDATAPERIOD_H_
 
 
-#include "fastrtps/utils/TimedEvent.h"
-#include "fastrtps/common/types/CDRMessage_t.h"
+#include "fastrtps/rtps/resources/TimedEvent.h"
+#include "fastrtps/rtps/common/CDRMessage_t.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class PDPSimple;
-class ResourceEvent;
+
 /**
  * Class ResendRTPSParticipantProxyDataPeriod, TimedEvent used to periodically send the RTPSParticipantDiscovery Data.
  * @ingroup DISCOVERYMODULE
  */
-class ResendRTPSParticipantProxyDataPeriod: public TimedEvent {
+class ResendParticipantProxyDataPeriod: public TimedEvent {
 public:
-	ResendRTPSParticipantProxyDataPeriod(PDPSimple* p_SPDP,
-			ResourceEvent* pEvent,
-			boost::posix_time::milliseconds interval);
-	virtual ~ResendRTPSParticipantProxyDataPeriod();
+	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
+			double interval);
+	virtual ~ResendParticipantProxyDataPeriod();
 	//!Temporal event that resends the RTPSParticipantProxyData to all remote RTPSParticipants.
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 	//!Auxiliar data message.
 	CDRMessage_t m_data_msg;
 	//!Pointer to the PDPSimple object.
 	PDPSimple* mp_PDP;
 };
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

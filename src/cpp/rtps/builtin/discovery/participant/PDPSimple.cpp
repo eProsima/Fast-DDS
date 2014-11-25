@@ -12,29 +12,42 @@
  */
 
 #include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
 
 #include "fastrtps/rtps/builtin/BuiltinProtocols.h"
 #include "fastrtps/rtps/builtin/liveliness/WLP.h"
 
-//#include "fastrtps/pubsub/RTPSDomain.h"
+#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
+#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
+#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h"
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h"
+
+#include "fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
 
 
-#include "fastrtps/RTPSParticipant.h"
-#include "fastrtps/RTPSParticipantProxyData.h"
-#include "fastrtps/writer/StatelessWriter.h"
-#include "fastrtps/reader/StatelessReader.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/builtin/discovery/endpoint/EDPSimple.h"
-#include "fastrtps/builtin/discovery/endpoint/EDPStatic.h"
-#include "fastrtps/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.h"
+#include "fastrtps/rtps/writer/StatelessWriter.h"
+#include "fastrtps/rtps/reader/StatelessReader.h"
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/utils/eClock.h"
+#include "fastrtps/rtps/history/WriterHistory.h"
+#include "fastrtps/rtps/history/ReaderHistory.h"
+
+
+//#include "fastrtps/utils/eClock.h"
 #include "fastrtps/utils/TimeConversion.h"
 
-using namespace eprosima::pubsub;
+#include "fastrtps/utils/RTPSLog.h"
+
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
+using namespace eprosima::fastrtps;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "PDPSimple";
@@ -46,9 +59,11 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
 	mp_SPDPReader(nullptr),
 	mp_EDP(nullptr),
 	m_hasChangedLocalPDP(true),
-	mp_resendRTPSParticipantTimer(nullptr),
-	#pragma warning(disable: 4355)
-	m_listener(this)
+	mp_resendParticipantTimer(nullptr),
+	mp_listener(nullptr),
+	mp_topicDataType(nullptr),
+	mp_SPDPWriterHistory(nullptr),
+	mp_SPDPReaderHistory(nullptr)
 {
 
 }
@@ -60,17 +75,17 @@ PDPSimple::~PDPSimple() {
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 {
 	const char* const METHOD_NAME = "initPDP";
-	logInfo(RTPS_PDP,"Beginning",EPRO_B_CYAN);
+	logInfo(RTPS_PDP,"Beginning",C_B_CYAN);
 	mp_RTPSParticipant = part;
 	m_discovery = mp_RTPSParticipant->getAttributes().builtin;
 
 	if(!createSPDPEndpoints())
 		return false;
-	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->m_att.unicastLocatorList);
+	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
 	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
-	m_RTPSParticipantProxies.push_back(new RTPSParticipantProxyData());
-	m_RTPSParticipantProxies.front()->initializeData(mp_RTPSParticipant,this);
+	m_participantProxies.push_back(new ParticipantProxyData());
+	m_participantProxies.front()->initializeData(mp_RTPSParticipant,this);
 
 	//INIT EDP
 	if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
@@ -89,43 +104,41 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 		return false;
 	}
 
-	mp_resendRTPSParticipantTimer = new ResendRTPSParticipantProxyDataPeriod(this,mp_RTPSParticipant->getEventResource(),
-			boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(m_discovery.leaseDuration_announcementperiod)));
+	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
 
 	return true;
 }
 
-void PDPSimple::stopRTPSParticipantAnnouncement()
+void PDPSimple::stopParticipantAnnouncement()
 {
-	mp_resendRTPSParticipantTimer->stop_timer();
+	mp_resendParticipantTimer->stop_timer();
 }
 
-void PDPSimple::resetRTPSParticipantAnnouncement()
+void PDPSimple::resetParticipantAnnouncement()
 {
-	mp_resendRTPSParticipantTimer->restart_timer();
+	mp_resendParticipantTimer->restart_timer();
 }
 
-void PDPSimple::announceRTPSParticipantState(bool new_change)
+void PDPSimple::announceParticipantState(bool new_change)
 {
 	const char* const METHOD_NAME = "announceRTPSParticipantState";
-	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",EPRO_CYAN);
+	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",C_CYAN);
 	CacheChange_t* change = nullptr;
 	if(new_change || m_hasChangedLocalPDP)
 	{
-		m_RTPSParticipantProxies.front()->m_manualLivelinessCount++;
-		if(mp_SPDPWriter->getHistoryCacheSize() > 0)
-			mp_SPDPWriter->removeMinSeqCacheChange();
-		mp_SPDPWriter->new_change(ALIVE,nullptr,&change);
-		change->instanceHandle = m_RTPSParticipantProxies.front()->m_key;
-		if(m_RTPSParticipantProxies.front()->toParameterList())
+		this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
+		if(mp_SPDPWriterHistory->getHistorySize() > 0)
+			mp_SPDPWriterHistory->remove_min_change();
+		change = mp_SPDPWriter->new_change(ALIVE);
+		change->instanceHandle = getLocalParticipantProxyData()->m_key;
+		if(getLocalParticipantProxyData()->toParameterList())
 		{
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
-			change->serializedPayload.length = m_RTPSParticipantProxies.front()->m_QosList.allQos.m_cdrmsg.length;
-			memcpy(change->serializedPayload.data,m_RTPSParticipantProxies.front()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
-			mp_SPDPWriter->add_change(change);
+			change->serializedPayload.length = getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+			memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+			mp_SPDPWriterHistory->add_change(change);
 		}
 		m_hasChangedLocalPDP = false;
-		mp_SPDPWriter->unsent_change_add(change);
 	}
 	else
 	{
@@ -136,15 +149,13 @@ void PDPSimple::announceRTPSParticipantState(bool new_change)
 
 bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata)
 {
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	for(auto pit : m_participantProxies)
 	{
-		for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
-				rit!=(*pit)->m_readers.end();++rit)
+		for(auto rit : (*pit).m_readers)
 		{
-			if((*rit)->m_guid == reader)
+			if(rit->m_guid == reader)
 			{
-				*rdata = *rit;
+				*rdata = rit;
 				return true;
 			}
 		}
@@ -154,15 +165,13 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rd
 
 bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata)
 {
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	for(auto pit : m_participantProxies)
 	{
-		for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
-				wit!=(*pit)->m_writers.end();++wit)
+		for(auto wit : (*pit).m_writers)
 		{
-			if((*wit)->m_guid == writer)
+			if(wit->m_guid == writer)
 			{
-				*wdata = *wit;
+				*wdata = wit;
 				return true;
 			}
 		}
@@ -173,9 +182,9 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wd
 bool PDPSimple::removeReaderProxyData(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "removeReaderProxyData";
-	logInfo(RTPS_PDP,rdata->m_guid,EPRO_CYAN);
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	logInfo(RTPS_PDP,rdata->m_guid,C_CYAN);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
 	{
 		for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
 				rit!=(*pit)->m_readers.end();++rit)
@@ -194,9 +203,9 @@ bool PDPSimple::removeReaderProxyData(ReaderProxyData* rdata)
 bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "removeWriterProxyData";
-	logInfo(RTPS_PDP,wdata->m_guid,EPRO_CYAN);
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	logInfo(RTPS_PDP,wdata->m_guid,C_CYAN);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
 	{
 		for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
 				wit!=(*pit)->m_writers.end();++wit)
@@ -213,12 +222,12 @@ bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 }
 
 
-bool PDPSimple::lookupRTPSParticipantProxyData(const GUID_t& pguid,RTPSParticipantProxyData** pdata)
+bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata)
 {
-	const char* const METHOD_NAME = "lookupRTPSParticipantProxyData";
-	logInfo(RTPS_PDP,pguid,EPRO_CYAN);
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	const char* const METHOD_NAME = "lookupParticipantProxyData";
+	logInfo(RTPS_PDP,pguid,C_CYAN);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
 	{
 		if((*pit)->m_guid == pguid)
 		{
@@ -232,81 +241,73 @@ bool PDPSimple::lookupRTPSParticipantProxyData(const GUID_t& pguid,RTPSParticipa
 bool PDPSimple::createSPDPEndpoints()
 {
 	const char* const METHOD_NAME = "createSPDPEndpoints";
-	logInfo(RTPS_PDP,"Beginning",EPRO_CYAN);
+	logInfo(RTPS_PDP,"Beginning",C_CYAN);
 	//SPDP BUILTIN RTPSParticipant WRITER
-	PublisherAttributes Wparam;
-	Wparam.pushMode = true;
-	//Wparam.historyMaxSize = 1;
-	//Locators where it is going to listen
-	Wparam.topic.topicName = "DCPSRTPSParticipant";
-	Wparam.topic.topicDataType = "DiscoveredRTPSParticipantData";
-	Wparam.topic.topicKind = WITH_KEY;
-	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Wparam.topic.historyQos.depth = 1;
-	Wparam.topic.resourceLimitsQos.max_instances = 1;
-	Wparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
-	Wparam.topic.resourceLimitsQos.max_samples = 2;
-	Wparam.topic.resourceLimitsQos.allocated_samples = 2;
-	Wparam.payloadMaxSize = 10000;
-	Wparam.userDefinedId = -99;
-	Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	HistoryAttributes hatt;
+	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.initialReservedCaches = 5;
+	hatt.maximumReservedCaches = 10;
+	mp_SPDPWriterHistory = new WriterHistory(hatt);
+	WriterAttributes watt;
+	watt.endpoint.endpointKind = WRITER;
+	watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+	watt.endpoint.reliabilityKind = BEST_EFFORT;
+	watt.endpoint.topicKind = WITH_KEY;
 	RTPSWriter* wout;
-	if(mp_RTPSParticipant->createWriter(&wout,Wparam,DISCOVERY_RTPSParticipant_DATA_MAX_SIZE,true,STATELESS,nullptr,nullptr,c_EntityId_SPDPWriter))
+	if(mp_RTPSParticipant->createWriter(&wout,watt,mp_SPDPWriterHistory,nullptr,c_EntityId_SPDPWriter,true))
 	{
 		mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
+		RemoteReaderAttributes ratt;
 		for(LocatorListIterator lit = mp_builtin->m_metatrafficMulticastLocatorList.begin();
 				lit!=mp_builtin->m_metatrafficMulticastLocatorList.end();++lit)
-			mp_SPDPWriter->reader_locator_add(*lit,false);
+			mp_SPDPWriter->add_locator(ratt,*lit);
 		if(this->mp_builtin->m_useMandatory)
-			mp_SPDPWriter->reader_locator_add(mp_builtin->m_mandatoryMulticastLocator,false);
+			mp_SPDPWriter->add_locator(ratt,mp_builtin->m_mandatoryMulticastLocator);
 	}
 	else
 	{
-		logError(RTPS_PDP,"SimplePDP Writer creation failed",EPRO_CYAN);
+		logError(RTPS_PDP,"SimplePDP Writer creation failed",C_CYAN);
+		delete(mp_SPDPWriterHistory);
+		mp_SPDPWriterHistory = nullptr;
 		return false;
 	}
-	//SPDP BUILTIN RTPSParticipant READER
-	SubscriberAttributes Rparam;
-	//	Rparam.historyMaxSize = 100;
-	//  Locators where it is going to listen
-	Rparam.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-	Rparam.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-	Rparam.topic.topicKind = WITH_KEY;
-	Rparam.topic.topicName = "DCPSRTPSParticipant";
-	Rparam.topic.topicDataType = "DiscoveredRTPSParticipantData";
-	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Rparam.topic.historyQos.depth = 1;
-	Rparam.topic.resourceLimitsQos.max_instances = 1000;
-	Rparam.topic.resourceLimitsQos.max_samples_per_instance = 1;
-	Rparam.topic.resourceLimitsQos.max_samples = 1000;
-	Rparam.topic.resourceLimitsQos.allocated_samples = 500;
-	Rparam.payloadMaxSize = 10000;
-	Rparam.userDefinedId = -99;
-	Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+	hatt.initialReservedCaches = 250;
+	hatt.maximumReservedCaches = 5000;
+	mp_SPDPReaderHistory = new ReaderHistory(hatt);
+	ReaderAttributes ratt;
+	ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+	ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+	ratt.endpoint.topicKind = WITH_KEY;
+	ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+	ratt.endpoint.reliabilityKind = BEST_EFFORT;
+	mp_listener = new PDPSimpleListener(this);
 	RTPSReader* rout;
-	if(mp_RTPSParticipant->createReader(&rout,Rparam,DISCOVERY_RTPSParticipant_DATA_MAX_SIZE,
-			true,STATELESS,(TopicDataType*)&m_topicDataType,(SubscriberListener*)&this->m_listener,c_EntityId_SPDPReader))
+	if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true))
 	{
 		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
-		//mp_SPDPReader->setListener();
 	}
 	else
 	{
-		logError(RTPS_PDP,"SimplePDP Reader creation failed",EPRO_CYAN);
+		logError(RTPS_PDP,"SimplePDP Reader creation failed",C_CYAN);
+		delete(mp_SPDPReaderHistory);
+		mp_SPDPReaderHistory = nullptr;
+		delete(mp_listener);
+		mp_listener = nullptr;
 		return false;
 	}
 
-	logInfo(RTPS_PDP,"SPDP Endpoints creation finished",EPRO_CYAN);
+	logInfo(RTPS_PDP,"SPDP Endpoints creation finished",C_CYAN);
 	return true;
 }
 
 bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
-		ReaderProxyData** returnReaderProxyData,RTPSParticipantProxyData** pdata)
+		ReaderProxyData** returnReaderProxyData,ParticipantProxyData** pdata)
 {
 	const char* const METHOD_NAME = "addReaderProxyData";
-	logInfo(RTPS_PDP,rdata->m_guid,EPRO_CYAN);
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	logInfo(RTPS_PDP,rdata->m_guid,C_CYAN);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
 	{
 		if((*pit)->m_guid.guidPrefix == rdata->m_guid.guidPrefix)
 		{
@@ -343,12 +344,12 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 }
 
 bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
-		WriterProxyData** returnWriterProxyData,RTPSParticipantProxyData** pdata)
+		WriterProxyData** returnWriterProxyData,ParticipantProxyData** pdata)
 {
 	const char* const METHOD_NAME = "addWriterProxyData";
-	logInfo(RTPS_PDP,wdata->m_guid,EPRO_CYAN);
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	logInfo(RTPS_PDP,wdata->m_guid,C_CYAN);
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
 	{
 		if((*pit)->m_guid.guidPrefix == wdata->m_guid.guidPrefix)
 		{
@@ -385,39 +386,39 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 	return false;
 }
 
-void PDPSimple::assignRemoteEndpoints(RTPSParticipantProxyData* pdata)
+void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "assignRemoteEndpoints";
-	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid.guidPrefix,EPRO_CYAN);
+	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid.guidPrefix,C_CYAN);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_RTPSParticipant_ANNOUNCER;
 	if(auxendp!=0)
 	{
-		WriterProxyData* wp = new WriterProxyData();
-		wp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
-		wp->m_guid.entityId = c_EntityId_SPDPWriter;
-		wp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-		wp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		wp->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-		wp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		pdata->m_builtinWriters.push_back(wp);
-		mp_SPDPReader->matched_writer_add(wp);
+		RemoteWriterAttributes watt;
+		watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+		watt.guid.entityId = c_EntityId_SPDPWriter;
+		watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		watt.endpoint.reliabilityKind = BEST_EFFORT;
+		watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+		pdata->m_builtinWriters.push_back(watt);
+		mp_SPDPReader->matched_writer_add(watt);
 	}
 	auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_RTPSParticipant_DETECTOR;
 	if(auxendp!=0)
 	{
-		ReaderProxyData* rp = new ReaderProxyData();
-		rp->m_expectsInlineQos = false;
-		rp->m_guid.guidPrefix = pdata->m_guid.guidPrefix;
-		rp->m_guid.entityId = c_EntityId_SPDPReader;
-		rp->m_unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-		rp->m_multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-		rp->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-		rp->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-		pdata->m_builtinReaders.push_back(rp);
-		mp_SPDPWriter->matched_reader_add(rp);
+		RemoteReaderAttributes ratt;
+		ratt.expectsInlineQos = false;
+		ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+		ratt.guid.entityId = c_EntityId_SPDPReader;
+		ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+		ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+		ratt.endpoint.reliabilityKind = BEST_EFFORT;
+		ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+		pdata->m_builtinReaders.push_back(ratt);
+		mp_SPDPWriter->matched_reader_add(ratt);
 	}
 
 	//Inform EDP of new RTPSParticipant data:
@@ -428,39 +429,39 @@ void PDPSimple::assignRemoteEndpoints(RTPSParticipantProxyData* pdata)
 }
 
 
-void PDPSimple::removeRemoteEndpoints(RTPSParticipantProxyData* pdata)
+void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "removeRemoteEndpoints";
-	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid,EPRO_CYAN);
-	for(std::vector<ReaderProxyData*>::iterator it = pdata->m_builtinReaders.begin();
+	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid,C_CYAN);
+	for(auto it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)
 	{
-		if((*it)->m_guid.entityId == c_EntityId_SPDPReader && this->mp_SPDPWriter !=nullptr)
+		if((*it).guid.entityId == c_EntityId_SPDPReader && this->mp_SPDPWriter !=nullptr)
 			mp_SPDPWriter->matched_reader_remove(*it);
 	}
-	for(std::vector<WriterProxyData*>::iterator it = pdata->m_builtinWriters.begin();
+	for(auto it = pdata->m_builtinWriters.begin();
 			it!=pdata->m_builtinWriters.end();++it)
 	{
-		if((*it)->m_guid.entityId == c_EntityId_SPDPWriter && this->mp_SPDPReader !=nullptr)
+		if((*it).guid.entityId == c_EntityId_SPDPWriter && this->mp_SPDPReader !=nullptr)
 			mp_SPDPReader->matched_writer_remove(*it);
 	}
 }
 
-bool PDPSimple::removeRemoteRTPSParticipant(GUID_t& partGUID)
+bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
 	const char* const METHOD_NAME = "removeRemoteRTPSParticipant";
-	logInfo(RTPS_PDP,partGUID,EPRO_CYAN );
+	logInfo(RTPS_PDP,partGUID,C_CYAN );
 	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-	RTPSParticipantProxyData* pdata=nullptr;
+	ParticipantProxyData* pdata=nullptr;
 	//Remove it from our vector or RTPSParticipantProxies:
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit = m_RTPSParticipantProxies.begin();
-			pit!=m_RTPSParticipantProxies.end();++pit)
+	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+			pit!=m_participantProxies.end();++pit)
 	{
 		if((*pit)->m_guid == partGUID)
 		{
 			pdata = *pit;
-			m_RTPSParticipantProxies.erase(pit);
+			m_participantProxies.erase(pit);
 			break;
 		}
 	}
@@ -479,12 +480,12 @@ bool PDPSimple::removeRemoteRTPSParticipant(GUID_t& partGUID)
 		this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
 		this->mp_EDP->removeRemoteEndpoints(pdata);
 		this->removeRemoteEndpoints(pdata);
-		for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReader->readerHistoryCacheBegin();
-				it!=this->mp_SPDPReader->readerHistoryCacheEnd();++it)
+		for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReaderHistory->changesBegin();
+				it!=this->mp_SPDPReaderHistory->changesEnd();++it)
 		{
 			if((*it)->instanceHandle == pdata->m_key)
 			{
-				this->mp_SPDPReader->change_removed_by_history(*it);
+				this->mp_SPDPReaderHistory->remove_change(*it);
 				break;
 			}
 		}
@@ -497,15 +498,15 @@ bool PDPSimple::removeRemoteRTPSParticipant(GUID_t& partGUID)
 }
 
 
-void PDPSimple::assertRemoteRTPSParticipantLiveliness(GuidPrefix_t& guidP)
+void PDPSimple::assertRemoteParticipantLiveliness(GuidPrefix_t& guidP)
 {
 	const char* const METHOD_NAME = "assertRemoteRTPSParticipantLiveliness";
-	for(std::vector<RTPSParticipantProxyData*>::iterator it = this->m_RTPSParticipantProxies.begin();
-			it!=this->m_RTPSParticipantProxies.end();++it)
+	for(std::vector<ParticipantProxyData*>::iterator it = this->m_participantProxies.begin();
+			it!=this->m_participantProxies.end();++it)
 	{
 		if((*it)->m_guid.guidPrefix == guidP)
 		{
-			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive",EPRO_MAGENTA);
+			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive",C_MAGENTA);
 			(*it)->isAlive = true;
 			break;
 		}
@@ -516,13 +517,13 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 {
 	const char* const METHOD_NAME = "assertLocalWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
-			<<(kind==MANUAL_BY_RTPSParticipant_LIVELINESS_QOS?"MANUAL_BY_RTPSParticipant":""),EPRO_MAGENTA);
-	for(std::vector<WriterProxyData*>::iterator wit = this->m_RTPSParticipantProxies.front()->m_writers.begin();
-			wit!=this->m_RTPSParticipantProxies.front()->m_writers.end();++wit)
+			<<(kind==MANUAL_BY_RTPSParticipant_LIVELINESS_QOS?"MANUAL_BY_RTPSParticipant":""),C_MAGENTA);
+	for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
+			wit!=this->m_participantProxies.front()->m_writers.end();++wit)
 	{
 		if((*wit)->m_qos.m_liveliness.kind == kind)
 		{
-			logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->m_guid.entityId << " marked as ALIVE",EPRO_MAGENTA);
+			logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->m_guid.entityId << " marked as ALIVE",C_MAGENTA);
 			(*wit)->m_isAlive = true;
 		}
 	}
@@ -530,8 +531,8 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
-	for(std::vector<RTPSParticipantProxyData*>::iterator pit=this->m_RTPSParticipantProxies.begin();
-			pit!=this->m_RTPSParticipantProxies.end();++pit)
+	for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
+			pit!=this->m_participantProxies.end();++pit)
 	{
 		if((*pit)->m_guid.guidPrefix == guidP)
 		{
@@ -548,8 +549,8 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 
 bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
-	RTPSParticipantProxyData* pdata;
-	if(lookupRTPSParticipantProxyData(pguid, &pdata))
+	ParticipantProxyData* pdata;
+	if(lookupParticipantProxyData(pguid, &pdata))
 	{
 		if(kind == WRITER)
 			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
@@ -559,7 +560,7 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16
 	return false;
 }
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

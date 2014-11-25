@@ -11,19 +11,19 @@
  *
 */
 
-#ifndef RTPSParticipantLEASEDURATION_H_
-#define RTPSParticipantLEASEDURATION_H_
-#include "fastrtps/common/types/Guid.h"
-#include "fastrtps/utils/TimedEvent.h"
+#ifndef RTPSPARTICIPANTLEASEDURATION_H_
+#define RTPSPARTICIPANTLEASEDURATION_H_
+
+#include "fastrtps/rtps/resources/TimedEvent.h"
 
 
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class PDPSimple;
-class ResourceEvent;
-class RTPSParticipantProxyData;
+class ParticipantProxyData;
 
 /**
  * Class RemoteRTPSParticipantLeaseDuration, TimedEvent designed to remove a
@@ -31,26 +31,27 @@ class RTPSParticipantProxyData;
  * announce its liveliness each leaseDuration period.
  * @ingroup DISCOVERYMODULE
  */
-class RemoteRTPSParticipantLeaseDuration:public TimedEvent {
+class RemoteRTPSParticipantLeaseDuration:public TimedEvent
+{
 public:
 	RemoteRTPSParticipantLeaseDuration(PDPSimple* p_SPDP,
-			RTPSParticipantProxyData* pdata,
-			ResourceEvent* pEvent,
-			boost::posix_time::milliseconds interval);
+			ParticipantProxyData* pdata,
+			double interval);
 	virtual ~RemoteRTPSParticipantLeaseDuration();
 	/**
 	 * temporal event that check if the RTPSParticipant is alive, and removes it if not.
 	 * @param ec
 	 */
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the PDPSimple object.
 	PDPSimple* mp_PDP;
 	//!Pointer to the RTPSParticipantProxyData object that contains this temporal event.
-	RTPSParticipantProxyData* mp_RTPSParticipantProxyData;
+	ParticipantProxyData* mp_participantProxyData;
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* RTPSParticipantLEASEDURATION_H_ */
+#endif /* RTPSPARTICIPANTLEASEDURATION_H_ */

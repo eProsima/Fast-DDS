@@ -20,16 +20,15 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "fastrtps/common/types/Time_t.h"
-#include "fastrtps/common/types/Locator.h"
+#include "fastrtps/rtps/common/Time_t.h"
+#include "fastrtps/rtps/common/Locator.h"
 
-#include "fastrtps/common/types/Time_t.h"
-#include "fastrtps/common/types/Locator.h"
 
-#include "fastrtps/builtin/liveliness/WLPListener.h"
-#include "fastrtps/builtin/liveliness/WLPTopicDataType.h"
+//#include "fastrtps/rtps/builtin/liveliness/WLPListener.h"
+//#include "fastrtps/rtps/builtin/liveliness/WLPTopicDataType.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -67,15 +66,15 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @return True if correct.
 	 */
-	bool assignRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	bool assignRemoteEndpoints(ParticipantProxyData* pdata);
 
-	void removeRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 	/**
 	 * Add a local writer to the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
 	 * @return True if correct.
 	 */
-	bool addLocalWriter(RTPSWriter* W);
+	bool addLocalWriter(RTPSWriter* W,WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
@@ -89,8 +88,9 @@ public:
 
 	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 
-	bool updateLocalWriter(RTPSWriter* W);
+	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
 
+	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participantImpl;}
 
 private:
 	//!Pointer to the local RTPSParticipant.
@@ -102,7 +102,7 @@ private:
 	//!Pointer to the builtinRTPSParticipantMEssageReader.
 	StatefulReader* mp_builtinRTPSParticipantMessageReader;
 	//!Listener object.
-	WLPListener m_listener;
+	//WLPListener m_listener;
 	//!Pointer to the periodic assertion timer object for the automatic liveliness writers.
 	WLivelinessPeriodicAssertion* mp_livelinessAutomatic;
 	//!Pointer to the periodic assertion timer object for the manual by RTPSParticipant liveliness writers.
@@ -112,10 +112,11 @@ private:
 	//!List of the writers using manual by RTPSParticipant liveliness.
 	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
 	//!TopicDataType to extract the key.
-	WLPTopicDataType m_wlpTopicDataType;
+	//WLPTopicDataType m_wlpTopicDataType;
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

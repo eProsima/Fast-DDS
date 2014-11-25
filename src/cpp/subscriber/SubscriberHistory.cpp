@@ -44,6 +44,7 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
 
 SubscriberHistory::~SubscriberHistory() {
 	// TODO Auto-generated destructor stub
+	this->release_Cache(mp_getKeyCache);
 }
 
 bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP)

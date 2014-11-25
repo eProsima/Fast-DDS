@@ -11,29 +11,30 @@
  *
  */
 
-#include "fastrtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h"
-#include "fastrtps/builtin/liveliness/WLP.h"
-#include "fastrtps/RTPSParticipant.h"
-
-#include "fastrtps/reader/StatefulReader.h"
-#include "fastrtps/writer/StatefulWriter.h"
+#include "fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h"
+#include "fastrtps/rtps/builtin/liveliness/WLP.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+//
+//#include "fastrtps/reader/StatefulReader.h"
+//#include "fastrtps/writer/StatefulWriter.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/utils/eClock.h"
 
-#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+//#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "WLivelinessPeriodicAssertion";
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
-								TimedEvent(&pwlp->mp_RTPSParticipant->getEventResource()->io_service, boost::posix_time::milliseconds(0)),
+								TimedEvent(&pwlp->getRTPSParticipant()->getIOService(), 0),
 								m_livelinessKind(kind),
 								mp_WLP(pwlp)
 {
-	m_guidP = this->mp_WLP->mp_RTPSParticipant->getGuid().guidPrefix;
+	m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;
 	for(uint8_t i =0;i<12;++i)
 	{
 		m_iHandle.value[i] = m_guidP.value[i];
@@ -44,18 +45,15 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
 	const char* const METHOD_NAME = "WLivelinessPeriodicAssertion";
-	logInfo(RTPS_LIVELINESS,"TimedEvent destructor.",EPRO_MAGENTA);
-	stop_timer();
-	delete(timer);
+	logInfo(RTPS_LIVELINESS,"TimedEvent destructor.",C_MAGENTA);
 }
 
-void WLivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
+void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg= nullptr)
 {
 	const char* const METHOD_NAME = "event";
-	this->m_isWaiting = false;
-	if(ec == boost::system::errc::success)
+	if(code == EVENT_SUCCESS)
 	{
-		logInfo(RTPS_LIVELINESS,"Period: "<< this->m_interval_msec,EPRO_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Period: "<< this->m_interval_msec,C_MAGENTA);
 		if(this->mp_WLP->mp_builtinRTPSParticipantMessageWriter->matchedReadersSize()>0)
 		{
 			if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
@@ -66,14 +64,14 @@ void WLivelinessPeriodicAssertion::event(const boost::system::error_code& ec)
 		this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertLocalWritersLiveliness(m_livelinessKind);
 		this->restart_timer();
 	}
-	else if(ec==boost::asio::error::operation_aborted)
+	else if(code == EVENT_ABORT)
 	{
-		logWarning(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",EPRO_MAGENTA);
-		this->mp_stopSemaphore->post();
+		logWarning(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",C_MAGENTA);
+		this->stopSemaphorePost();
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"Boost message: " <<ec.message(),EPRO_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Boost message: " <<ec.message(),C_MAGENTA);
 	}
 }
 
@@ -137,6 +135,6 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 	return false;
 }
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

@@ -25,6 +25,7 @@ namespace fastrtps{
 
 
 class ParticipantImpl;
+class ParticipantAttributes;
 
 
 class Participant {
@@ -40,6 +41,8 @@ private:
 public:
 
 	const GUID_t& getGuid()const ;
+
+	const ParticipantAttributes& getAttributes();
 
 };
 

@@ -13,21 +13,33 @@
 
 #ifndef PDPSIMPLE_H_
 #define PDPSIMPLE_H_
-
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
+#include "fastrtps/rtps/common/Guid.h"
+//#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
+//#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
 #include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
 
+#include "fastrtps/qos/QosPolicies.h"
+
+using namespace eprosima::fastrtps;
+
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class StatelessWriter;
 class StatelessReader;
+class WriterHistory;
+class ReaderHistory;
 class RTPSParticipantImpl;
 class BuiltinProtocols;
 class EDP;
-class ResendRTPSParticipantProxyDataPeriod;
-class RemoteRTPSParticipantLeaseDuration;
+class ResendParticipantProxyDataPeriod;
+class RemoteParticipantLeaseDuration;
+class ReaderProxyData;
+class WriterProxyData;
+class ParticipantProxyData;
+class PDPSimpleTopicDataType;
+class PDPSimpleListener;
 
 
 /**
@@ -54,11 +66,11 @@ public:
 	 * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
 	 * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
 	 */
-	void announceRTPSParticipantState(bool new_change);
+	void announceParticipantState(bool new_change);
 	//!Stop the RTPSParticipantAnnouncement (only used in tests).
-	void stopRTPSParticipantAnnouncement();
+	void stopParticipantAnnouncement();
 	//!Reset the RTPSParticipantAnnouncement (only used in tests).
-	void resetRTPSParticipantAnnouncement();
+	void resetParticipantAnnouncement();
 
 	/**
 	 *
@@ -69,12 +81,12 @@ public:
 	 * @return
 	 */
 	bool addReaderProxyData(ReaderProxyData* rdata,bool copydata=false,
-			ReaderProxyData** returnReaderProxyData=NULL,
-			RTPSParticipantProxyData** pdata = NULL);
+			ReaderProxyData** returnReaderProxyData=nullptr,
+			ParticipantProxyData** pdata = nullptr);
 
 	bool addWriterProxyData(WriterProxyData* wdata,bool copydata=false,
-			WriterProxyData** returnWriterProxyData=NULL,
-			RTPSParticipantProxyData** pdata = NULL);
+			WriterProxyData** returnWriterProxyData=nullptr,
+			ParticipantProxyData** pdata = nullptr);
 
 	/**
 	 * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
@@ -96,7 +108,7 @@ public:
 	 * @param[out] pdata Pointer to pointer of the RTPSParticipantProxyData object.
 	 * @return True if found.
 	 */
-	bool lookupRTPSParticipantProxyData(const GUID_t& pguid,RTPSParticipantProxyData** pdata);
+	bool lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata);
 	/**
 	 * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
 	 * @param rdata Pointer to the ReaderProxyData object.
@@ -114,43 +126,43 @@ public:
 	 * This method assigns remtoe endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 */
-	void assignRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
-	void removeRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 
 	/**
 	 * This method removes a remote RTPSParticipant and all its writers and readers.
 	 * @param partGUID GUID_t of the remote RTPSParticipant.
 	 * @return true if correct.
 	 */
-	bool removeRemoteRTPSParticipant(GUID_t& partGUID);
+	bool removeRemoteParticipant(GUID_t& partGUID);
 	//!Pointer to the builtin protocols object.
 	BuiltinProtocols* mp_builtin;
 	/**
 	 * Get a pointer to the local RTPSParticipant RTPSParticipantProxyData object.
 	 * @return Pointer.
 	 */
-	RTPSParticipantProxyData* getLocalRTPSParticipantProxyData()
+	ParticipantProxyData* getLocalParticipantProxyData()
 	{
-		return m_RTPSParticipantProxies.front();
+		return m_participantProxies.front();
 	}
 	/**
 	 * Get a pointer to the EDP object.
 	 * @return
 	 */
-	EDP* getEDP(){return mp_EDP;}
+	inline EDP* getEDP(){return mp_EDP;}
 	/**
 	 * Get a cons_iterator to the beginning of the RTPSParticipant Proxies.
 	 * @return const_iterator.
 	 */
-	std::vector<RTPSParticipantProxyData*>::const_iterator RTPSParticipantProxiesBegin(){return m_RTPSParticipantProxies.begin();};
+	std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin(){return m_participantProxies.begin();};
 	/**
 	 * Get a cons_iterator to the end RTPSParticipant Proxies.
 	 * @return const_iterator.
 	 */
-	std::vector<RTPSParticipantProxyData*>::const_iterator RTPSParticipantProxiesEnd(){return m_RTPSParticipantProxies.end();};
+	std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
 
-	void assertRemoteRTPSParticipantLiveliness(GuidPrefix_t& guidP);
+	void assertRemoteParticipantLiveliness(GuidPrefix_t& guidP);
 
 	void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
 
@@ -158,7 +170,7 @@ public:
 
 	bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
-	RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;};
+	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;};
 
 private:
 	//!Pointer to the local RTPSParticipant.
@@ -172,15 +184,19 @@ private:
 	//!Pointer to the EDP object.
 	EDP* mp_EDP;
 	//!Registered RTPSParticipants (including the local one, that is the first one.)
-	std::vector<RTPSParticipantProxyData*> m_RTPSParticipantProxies;
+	std::vector<ParticipantProxyData*> m_participantProxies;
 	//!Variable to indicate if any parameter has changed.
 	bool m_hasChangedLocalPDP;
 	//!TimedEvent to periodically resend the local RTPSParticipant information.
-	ResendRTPSParticipantProxyDataPeriod* mp_resendRTPSParticipantTimer;
+	ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
 	//!Listener for the SPDP messages.
-	PDPSimpleListener m_listener;
+	PDPSimpleListener* mp_listener;
 	//!TopicDataType object to extract the key from unregistering messages.
-	PDPSimpleTopicDataType m_topicDataType;
+	PDPSimpleTopicDataType* mp_topicDataType;
+	//!WriterHistory
+	WriterHistory* mp_SPDPWriterHistory;
+	//!Reader History
+	ReaderHistory* mp_SPDPReaderHistory;
 
 	/**
 	 * Create the SPDP Writer and Reader
@@ -192,6 +208,7 @@ private:
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

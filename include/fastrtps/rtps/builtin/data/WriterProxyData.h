@@ -13,13 +13,14 @@
 
 #ifndef WRITERPROXYDATA_H_
 #define WRITERPROXYDATA_H_
-#include "fastrtps/pubsub/attributes/TopicAttributes.h"
+#include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/qos/WriterQos.h"
 
-using namespace eprosima::pubsub;
+using namespace eprosima::fastrtps;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 struct CDRMessage_t;
@@ -54,6 +55,7 @@ public:
 	bool readFromCDRMessage(CDRMessage_t* msg);
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

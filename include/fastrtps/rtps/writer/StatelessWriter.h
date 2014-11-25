@@ -74,6 +74,12 @@ public:
 	 */
 	void updateAttributes(WriterAttributes& att){/*TODOG TO FINISH METHOD*/		};
 
+	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
+
+	bool remove_locator(Locator_t& loc);
+
+	//!Reset the unsent changes.
+	void unsent_changes_reset();
 private:
 
 	//	/**
@@ -83,8 +89,7 @@ private:
 	//	 * @return
 	//	 */
 	//	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos);
-	//	//!Reset the unsent changes.
-	//	void unsent_changes_reset();
+
 	//	/**
 	//	 * Add a specific change to all ReaderLocators.
 	//	 * @param p Pointer to the change.
@@ -113,8 +118,7 @@ private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
-	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
-	bool remove_locator(Locator_t& loc);
+
 };
 }
 } /* namespace rtps */

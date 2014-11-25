@@ -33,6 +33,10 @@ const GUID_t& Participant::getGuid() const
 	return mp_impl->getGuid();
 }
 
+const ParticipantAttributes& Participant::getAttributes()
+{
+	return mp_impl->getAttributes();
+}
 
 
 } /* namespace pubsub */

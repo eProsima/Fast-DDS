@@ -86,6 +86,18 @@ Subscriber* Domain::createSubscriber(Participant* part,SubscriberAttributes& att
 	return nullptr;
 }
 
+bool Domain::registerType(Participant* part, TopicDataType* type)
+{
+	for(auto it : m_participants)
+	{
+		if(it.second->getGuid() == part->getGuid())
+		{
+			return part->mp_impl->registerType(type);
+		}
+	}
+	return false;
+}
+
 
 } /* namespace pubsub */
 } /* namespace eprosima */
