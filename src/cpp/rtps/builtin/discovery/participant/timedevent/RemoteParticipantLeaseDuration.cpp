@@ -15,6 +15,9 @@
 
 #include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
 #include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
+
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+
 #include "fastrtps/utils/RTPSLog.h"
 
 
@@ -46,14 +49,14 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_LIVELINESS,"Checking RTPSParticipant: "
-				<< mp_RTPSParticipantProxyData->m_RTPSParticipantName << " with GUID: "
-				<< mp_RTPSParticipantProxyData->m_guid,EPRO_MAGENTA);
+				<< mp_participantProxyData->m_participantName << " with GUID: "
+				<< mp_participantProxyData->m_guid,C_MAGENTA);
 		if(mp_participantProxyData->isAlive)
 			mp_participantProxyData->isAlive = false;
 		else
 		{
 			logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
-					<< mp_RTPSParticipantProxyData->m_guid,EPRO_MAGENTA);
+					<< mp_participantProxyData->m_guid,C_MAGENTA);
 			mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 			return;
 		}

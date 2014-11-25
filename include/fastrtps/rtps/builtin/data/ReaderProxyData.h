@@ -73,6 +73,10 @@ public:
 	 * @param rdata Pointer to the object from where the information must be copied.
 	 */
 	void copy(ReaderProxyData* rdata);
+
+	RemoteReaderAttributes& toRemoteReaderAttributes();
+
+	RemoteReaderAttributes m_remoteAtt;
 };
 
 }

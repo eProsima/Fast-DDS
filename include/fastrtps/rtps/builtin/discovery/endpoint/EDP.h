@@ -15,14 +15,19 @@
 #define EDP_H_
 
 #include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
-
+#include "fastrtps/rtps/common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps{
+
+class TopicAttributes;
+class ReaderQos;
+class WriterQos;
+
 namespace rtps {
 
 class PDPSimple;
-class RTPSParticipantProxyData;
+class ParticipantProxyData;
 class RTPSWriter;
 class RTPSReader;
 class ReaderProxyData;
@@ -112,14 +117,14 @@ public:
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return True if the two can be matched.
 	 */
-	bool validMatching(RTPSWriter* W,ReaderProxyData* rdata);
+	bool validMatching(WriterProxyData* wdata,ReaderProxyData* rdata);
 	/**
 	 * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
 	 * @param R Pointer to the reader.
 	 * @param wdata Pointer to the WriterProxyData object.
 	 * @return True if the two can be matched.
 	 */
-	bool validMatching(RTPSReader* R,WriterProxyData* wdata);
+	bool validMatching(ReaderProxyData* rdata,WriterProxyData* wdata);
 	/**
 	 * Remove a WriterProxyDataObject based on its GUID_t.
 	 * @param writer Reference to the writer GUID.

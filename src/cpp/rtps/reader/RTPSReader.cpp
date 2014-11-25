@@ -28,7 +28,8 @@ RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
 		mp_history(hist),
 		mp_listener(rlisten),
 		m_acceptMessagesToUnknownReaders(true),
-		m_acceptMessagesFromUnkownWriters(true)
+		m_acceptMessagesFromUnkownWriters(true),
+		m_expectsInlineQos(att.expectsInlineQos)
 
 {
 	const char* const METHOD_NAME = "RTPSReader";

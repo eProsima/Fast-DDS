@@ -48,7 +48,7 @@ struct CDRMessage_t{
 	}
 	~CDRMessage_t()
 	{
-		if(buffer != NULL)
+		if(buffer != nullptr)
 			free(buffer);
 	}
 	CDRMessage_t(uint32_t size)

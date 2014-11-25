@@ -103,6 +103,11 @@ SequenceNumber_t RTPSWriter::get_seq_num_max()
 		return c_SequenceNumber_Unknown;
 }
 
+uint32_t RTPSWriter::getTypeMaxSerialized()
+{
+	return mp_history->getTypeMaxSerialized();
+}
+
 
 //bool RTPSWriter::add_new_change(ChangeKind_t kind,void*Data)
 //{

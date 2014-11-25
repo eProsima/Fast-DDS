@@ -13,7 +13,7 @@
 
 #include "fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
 #include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-
+#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
 #include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
 #include "fastrtps/utils/RTPSLog.h"
@@ -44,10 +44,10 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
 	const char* const METHOD_NAME = "event";
 	if(code == EVENT_SUCCESS)
 	{
-		logInfo(RTPS_PDP,"ResendDiscoveryData Period",EPRO_CYAN);
+		logInfo(RTPS_PDP,"ResendDiscoveryData Period",C_CYAN);
 		//FIXME: Change for liveliness protocol
-		mp_PDP->getLocalRTPSParticipantProxyData()->m_manualLivelinessCount++;
-		mp_PDP->announceRTPSParticipantState(false);
+		mp_PDP->getLocalParticipantProxyData()->m_manualLivelinessCount++;
+		mp_PDP->announceParticipantState(false);
 
 		this->restart_timer();
 	}

@@ -115,6 +115,8 @@ public:
 	 */
 	bool get_max_change(CacheChange_t** max_change);
 
+	inline uint32_t getTypeMaxSerialized(){return m_changePool.getPayloadSize();}
+
 protected:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;

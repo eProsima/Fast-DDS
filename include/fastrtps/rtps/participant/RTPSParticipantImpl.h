@@ -39,7 +39,7 @@ namespace fastrtps{
 
 	class WriterQos;
 	class ReaderQos;
-
+	class TopicAttributes;
 
 namespace rtps {
 
@@ -68,7 +68,7 @@ class ReaderHistory;
 class ReaderListener;
 
 
-class TopicAttributes;
+
 
 
 /**
@@ -110,6 +110,10 @@ public:
     void sendSync(CDRMessage_t* msg, const Locator_t& loc);
     //!Get Send Mutex
     boost::recursive_mutex* getSendMutex();
+
+    inline RTPSParticipantListener* getListener(){return mp_participantListener;}
+
+    inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
 private:
 	//!Attributes of the RTPSParticipant
 	RTPSParticipantAttributes m_att;
@@ -192,6 +196,14 @@ public:
 
 	bool deleteUserEndpoint(Endpoint*);
 
+	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
+
+	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
+
+	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
+
+	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
 	//
 	//	/**
 	//	 * Create a Reader in this RTPSParticipant.
@@ -230,13 +242,7 @@ public:
 	//	bool deleteUserEndpoint(Endpoint* p_endpoint,char type);
 	//
 	//
-	//	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
-	//
-	//	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
-	//
-	//	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
-	//
-	//	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
 	//
 	//
 	//	//!Used for tests

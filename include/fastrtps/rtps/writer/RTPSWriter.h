@@ -87,6 +87,10 @@ public:
 	SequenceNumber_t get_seq_num_min();
 	//!Get Max Seq Num in History.
 	SequenceNumber_t get_seq_num_max();
+
+	uint32_t getTypeMaxSerialized();
+
+	inline WriterListener* getListener(){return mp_listener; };
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.

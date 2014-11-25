@@ -34,7 +34,11 @@ class RTPSReader;
  */
 class PDPSimpleListener: public ReaderListener {
 public:
-	PDPSimpleListener(PDPSimple* in_SPDP):mp_SPDP(in_SPDP){};
+	PDPSimpleListener(PDPSimple* in_SPDP):mp_SPDP(in_SPDP)
+	{
+		free(aux_msg.buffer);
+		aux_msg.buffer = nullptr;
+	};
 	virtual ~PDPSimpleListener(){};
 	//!Pointer to the associated mp_SPDP;
 	PDPSimple* mp_SPDP;
@@ -42,11 +46,11 @@ public:
 	void onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change);
 	//!Process a new added cache with this method.
 	bool newAddedCache();
-	//FIXME: TO IMPLEMENT WHEN A StaticEDP is created.
-	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredParticipantData* pdata);
 
+	bool getKey(CacheChange_t* change);
 	//!Temporal RTPSParticipantProxyData object used to read the messages.
 	ParticipantProxyData m_ParticipantProxyData;
+	CDRMessage_t aux_msg;
 };
 
 

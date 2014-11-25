@@ -45,6 +45,8 @@ public:
 	size_t get_allCachesSize(){return m_allCaches.size();}
 	//!Get the number of frre caches.
 	size_t get_freeCachesSize(){return m_freeCaches.size();}
+
+	inline uint32_t getPayloadSize(){return m_payload_size;};
 private:
 	uint32_t m_payload_size;
 	uint16_t m_pool_size;

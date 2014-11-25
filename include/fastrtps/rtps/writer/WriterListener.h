@@ -20,13 +20,14 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+class RTPSWriter;
 
 class WriterListener
 {
 public:
 	WriterListener(){};
 	virtual ~WriterListener(){};
-	virtual void onWriterMatched(MatchingInfo info){};
+	virtual void onWriterMatched(RTPSWriter* writer,MatchingInfo info){};
 };
 }
 }
