@@ -16,7 +16,7 @@
 
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
 

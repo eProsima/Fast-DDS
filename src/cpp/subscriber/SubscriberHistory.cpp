@@ -14,9 +14,14 @@
 #include "fastrtps/subscriber/SubscriberHistory.h"
 #include "fastrtps/subscriber/SubscriberImpl.h"
 
+#include "fastrtps/rtps/reader/RTPSReader.h"
+#include "fastrtps/rtps/reader/WriterProxy.h"
 
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/utils/RTPSLog.h"
+
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,6 +49,7 @@ SubscriberHistory::~SubscriberHistory() {
 bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP)
 {
 	const char* const METHOD_NAME = "add_change";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(m_isHistoryFull)
 	{
 		logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
@@ -205,7 +211,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 						vit->second.push_back(a_change);
 						std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 					}
-					logInfo(SUBSCRIBER,this->mp_Endpoint->getGuid().entityId
+					logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId
 							<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
 							<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle;);
 					//	print_changes_seqNum();
@@ -221,13 +227,15 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 
 bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 {
+	const char* const METHOD_NAME = "readNextData";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	CacheChange_t* change;
 	WriterProxy * wp;
 	if(this->mp_reader->nextUnreadCache(&change,&wp))
 	{
 		change->isRead = true;
 		this->decreaseUnreadCount();
-		logInfo(SUBSCRIBER,this->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
+		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
@@ -253,13 +261,15 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 
 bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 {
+	const char* const METHOD_NAME = "takeNextData";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	CacheChange_t* change;
 	WriterProxy * wp;
 	if(this->mp_reader->nextUntakenCache(&change,&wp))
 	{
 		change->isRead = true;
 		this->decreaseUnreadCount();
-		logInfo(SUBSCRIBER,this->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
+		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)

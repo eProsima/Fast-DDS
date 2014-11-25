@@ -15,7 +15,7 @@
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 static const char* const CLASS_NAME = "ReaderQos";
 

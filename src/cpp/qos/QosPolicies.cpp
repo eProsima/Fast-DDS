@@ -13,10 +13,10 @@
 
 #include "fastrtps/qos/QosPolicies.h"
 
-#include "fastrtps/CDRMessage.h"
+#include "fastrtps/rtps/messages/CDRMessage.h"
 #include "fastrtps/utils/RTPSLog.h"
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 
 
