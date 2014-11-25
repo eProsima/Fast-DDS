@@ -11,16 +11,17 @@
  *
  */
 
-#include "fastrtps/builtin/discovery/endpoint/EDPStaticXML.h"
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDPStaticXML.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/utils/TimeConversion.h"
-#include "fastrtps/reader/WriterProxyData.h"
-#include "fastrtps/writer/ReaderProxyData.h"
+#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
 
 #include "boost/lexical_cast.hpp"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "EDPStaticXML";
@@ -52,7 +53,7 @@ EDPStaticXML::~EDPStaticXML()
 bool EDPStaticXML::loadXMLFile(std::string& filename)
 {
 	const char* const METHOD_NAME = "loadXMLFile";
-	logInfo(RTPS_EDP,"File: "<<filename,EPRO_CYAN);
+	logInfo(RTPS_EDP,"File: "<<filename,C_CYAN);
 	// Create an empty property tree object
 	ptree pt;
 	// Load the XML file into the property tree. If reading fails
@@ -272,8 +273,8 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticR
 			std::string auxstring= xml_endpoint_child.second.get("<xmlattr>.kind","LIVELINESS kind NOT PRESENT");
 			if(auxstring == "AUTOMATIC_LIVELINESS_QOS")
 				rdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-			else if(auxstring == "MANUAL_BY_RTPSParticipant_LIVELINESS_QOS")
-				rdata->m_qos.m_liveliness.kind = MANUAL_BY_RTPSParticipant_LIVELINESS_QOS;
+			else if(auxstring == "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS")
+				rdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
 			else if(auxstring == "MANUAL_BY_TOPIC_LIVELINESS_QOS")
 				rdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 			else
@@ -471,8 +472,8 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 			std::string auxstring= xml_endpoint_child.second.get("<xmlattr>.kind","LIVELINESS kind NOT PRESENT");
 			if(auxstring == "AUTOMATIC_LIVELINESS_QOS")
 				wdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-			else if(auxstring == "MANUAL_BY_RTPSParticipant_LIVELINESS_QOS")
-				wdata->m_qos.m_liveliness.kind = MANUAL_BY_RTPSParticipant_LIVELINESS_QOS;
+			else if(auxstring == "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS")
+				wdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
 			else if(auxstring == "MANUAL_BY_TOPIC_LIVELINESS_QOS")
 				wdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
 			else
@@ -558,10 +559,7 @@ bool EDPStaticXML::lookforWriter(std::string partname, uint16_t id,
 }
 
 
-
-
-
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

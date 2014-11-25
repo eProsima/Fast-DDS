@@ -16,7 +16,7 @@
 
 
 #include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
-//#include "fastrtps/builtin/discovery/endpoint/EDPStaticXML.h"
+
 
 namespace eprosima {
 namespace fastrtps{
@@ -116,7 +116,7 @@ public:
 	**/
 	bool checkEntityId(WriterProxyData* wdata);
 private:
-	EDPStaticXML* m_edpXML;
+	EDPStaticXML* mp_edpXML;
 	BuiltinAttributes m_attributes;
 };
 
