@@ -12,7 +12,7 @@
  */
 #include <limits>
 
-#include "fastrtps/builtin/liveliness/WLP.h"
+#include "fastrtps/rtps/builtin/liveliness/WLP.h"
 #include "fastrtps/common/types/Guid.h"
 #include "fastrtps/RTPSParticipant.h"
 #include "fastrtps/writer/StatefulWriter.h"
@@ -27,6 +27,7 @@
 #include "fastrtps/utils/TimeConversion.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "WLP";
@@ -388,7 +389,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W)
 	return true;
 }
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

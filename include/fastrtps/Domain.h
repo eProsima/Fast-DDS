@@ -29,6 +29,7 @@ class PublisherListener;
 class Subscriber;
 class SubscriberAttributes;
 class SubscriberListener;
+class TopicDataType;
 
 
 class Domain
@@ -42,6 +43,8 @@ public:
 	static Publisher* createPublisher(Participant* part,PublisherAttributes& att, PublisherListener* listen = nullptr);
 
 	static Subscriber* createSubscriber(Participant* part,SubscriberAttributes& att, SubscriberListener* listen = nullptr);
+
+	static bool registerType(Participant* part, TopicDataType * type);
 
 	static std::vector<t_p_Participant> m_participants;
 

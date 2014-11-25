@@ -11,59 +11,57 @@
  *
  */
 
-#include "fastrtps/builtin/discovery/RTPSParticipant/timedevent/ResendRTPSParticipantProxyDataPeriod.h"
-#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
-//#include "fastrtps/resources/ResourceSend.h"
-#include "fastrtps/resources/ResourceEvent.h"
 
-//#include "fastrtps/RTPSMessageCreator.h"
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "ResendRTPSParticipantProxyDataPeriod";
+static const char* const CLASS_NAME = "ResendParticipantProxyDataPeriod";
 
-ResendRTPSParticipantProxyDataPeriod::ResendRTPSParticipantProxyDataPeriod(PDPSimple* pPDP,ResourceEvent* pEvent,boost::posix_time::milliseconds interval):
-		TimedEvent(&pEvent->io_service,interval),
-		mp_PDP(pPDP)
+ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
+		double interval):
+				TimedEvent(p_SPDP->getRTPSParticipant()->getIOService(),interval),
+				mp_PDP(p_SPDP)
 {
 
 
 }
 
-ResendRTPSParticipantProxyDataPeriod::~ResendRTPSParticipantProxyDataPeriod()
+ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 {
-	stop_timer();
-	delete(timer);
+
 }
 
-void ResendRTPSParticipantProxyDataPeriod::event(const boost::system::error_code& ec)
+void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
-	m_isWaiting = false;
-	if(ec == boost::system::errc::success)
+	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_PDP,"ResendDiscoveryData Period",EPRO_CYAN);
 		//FIXME: Change for liveliness protocol
-		mp_PDP->m_RTPSParticipantProxies.front()->m_manualLivelinessCount++;
+		mp_PDP->getLocalRTPSParticipantProxyData()->m_manualLivelinessCount++;
 		mp_PDP->announceRTPSParticipantState(false);
 
 		this->restart_timer();
 	}
-	else if(ec==boost::asio::error::operation_aborted)
+	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_PDP,"Response Data Period aborted");
-		this->mp_stopSemaphore->post();
+		this->stopSemaphorePost();
 	}
 	else
 	{
-		logInfo(RTPS_PDP,"boost message: " <<ec.message());
+		logInfo(RTPS_PDP,"boost message: " <<msg);
 	}
 }
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

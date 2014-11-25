@@ -102,27 +102,30 @@ FASTRTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/qos/WriterQos.cpp \
 		  $(BASEDIR)/src/cpp/qos/ReaderQos.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/builtin/BuiltinProtocols.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/BuiltinProtocols.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimple.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleListener.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/PDPSimple.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/PDPSimpleListener.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDP.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimple.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimpleListeners.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPSimpleTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPSimple.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPSimpleTopicDataType.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPStaticXML.cpp \
-		  $(BASEDIR)/src/cpp/builtin/discovery/endpoint/EDPStatic.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPStaticXML.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPStatic.cpp \
 		  \
-		  $(BASEDIR)/src/cpp/builtin/liveliness/WLP.cpp \
-		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPListener.cpp \
-		  $(BASEDIR)/src/cpp/builtin/liveliness/WLPTopicDataType.cpp \
-		  $(BASEDIR)/src/cpp/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp 
-
+		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/WLP.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/WLPListener.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/WLPTopicDataType.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
+		  \
+		  $(BASEDIR)/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/data/WriterProxyData.cpp \
+		  $(BASEDIR)/src/cpp/rtps/builtin/data/ReaderProxyData.cpp 
 
 # Project sources are copied to the current directory
 FASTRTPS_SRCS= $(FASTRTPS_SRC_CFILES) $(FASTRTPS_SRC_CPPFILES)

@@ -19,14 +19,11 @@
 
 namespace eprosima {
 
-namespace pubsub
-{
+namespace fastrtps{
+
 	class WriterQos;
 	class ReaderQos;
 	class TopicAttributes;
-}
-
-using namespace pubsub;
 
 namespace rtps {
 
@@ -73,36 +70,36 @@ public:
 	 * @return True if correct.
 	 */
 	bool addLocalWriter(RTPSWriter* w,TopicAttributes& topicAtt,WriterQos& wqos);
-//	/**
-//	 * Add a local Reader to the BuiltinProtocols.
-//	 * @param R Pointer to the RTPSReader.
-//	 * @return True if correct.
-//	 */
-//	bool addLocalReader(RTPSReader* R);
-//	/**
-//	 * Update a local Writer QOS (NOT IMPLEMENTED YET)
-//	 * @param W
-//	 * @return
-//	 */
-//	bool updateLocalWriter(RTPSWriter* W);
-//	/**
-//	 * Update a local Reader QOS (NOT IMPLEMENTED YET)
-//	 * @param R
-//	 * @return
-//	 */
-//	bool updateLocalReader(RTPSReader* R);
+	/**
+	 * Add a local Reader to the BuiltinProtocols.
+	 * @param R Pointer to the RTPSReader.
+	 * @return True if correct.
+	 */
+	bool addLocalReader(RTPSReader* R,TopicAttributes& topicAtt, ReaderQos& rqos);
+	/**
+	 * Update a local Writer QOS (NOT IMPLEMENTED YET)
+	 * @param W
+	 * @return
+	 */
+	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
+	/**
+	 * Update a local Reader QOS (NOT IMPLEMENTED YET)
+	 * @param R
+	 * @return
+	 */
+	bool updateLocalReader(RTPSReader* R,ReaderQos& qos);
 	/**
 	 * Remove a local Writer from the builtinProtocols.
 	 * @param W Pointer to the writer.
 	 * @return True if correctly removed.
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
-//	/**
-//	 * Remove a local Reader from the builtinProtocols.
-//	 * @param R Pointer to the reader.
-//	 * @return True if correctly removed.
-//	 */
-//	bool removeLocalReader(RTPSReader* R);
+	/**
+	 * Remove a local Reader from the builtinProtocols.
+	 * @param R Pointer to the reader.
+	 * @return True if correctly removed.
+	 */
+	bool removeLocalReader(RTPSReader* R);
 
 	//! Announce RTPSParticipantState (force the sending of a DPD message.)
 	void announceRTPSParticipantState();
@@ -113,6 +110,7 @@ public:
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

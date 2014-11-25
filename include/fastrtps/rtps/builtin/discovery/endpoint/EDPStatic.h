@@ -15,11 +15,14 @@
 #define EDPSTATIC_H_
 
 
-#include "fastrtps/builtin/discovery/endpoint/EDP.h"
-#include "fastrtps/builtin/discovery/endpoint/EDPStaticXML.h"
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
+//#include "fastrtps/builtin/discovery/endpoint/EDPStaticXML.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
+
+class EDPStaticXML;
 
 /**
  * Class EDPStaticProperty, used to read and write the strings from the properties used to transmit the EntityId_t.
@@ -57,7 +60,7 @@ public:
 	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
 	 * @param pdata
 	 */
-	void assignRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
 	 * @param R Pointer to the Reader to remove.
@@ -91,7 +94,7 @@ public:
 	 * @param entId EntityId.
 	 * @return True if correct.
 	 */
-	bool newRemoteWriter(RTPSParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	bool newRemoteWriter(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	 * New Remote Reader has been found and this method process it and calls the pairing methods.
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
@@ -99,7 +102,7 @@ public:
 	 * @param entId EntityId.
 	 * @return true if correct.
 	 */
-	bool newRemoteReader(RTPSParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
+	bool newRemoteReader(ParticipantProxyData*pdata,uint16_t userId, EntityId_t entId=c_EntityId_Unknown);
 	/**
 	* This method checks the provided entityId against the topic type to see if it matches
 	* @param rdata Pointer to the readerProxyData
@@ -113,10 +116,11 @@ public:
 	**/
 	bool checkEntityId(WriterProxyData* wdata);
 private:
-	EDPStaticXML m_edpXML;
+	EDPStaticXML* m_edpXML;
 	BuiltinAttributes m_attributes;
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

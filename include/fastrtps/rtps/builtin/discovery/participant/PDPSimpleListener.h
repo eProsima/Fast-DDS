@@ -13,16 +13,18 @@
 
 #ifndef PDPSIMPLELISTENER_H_
 #define PDPSIMPLELISTENER_H_
-#include "fastrtps/pubsub/SubscriberListener.h"
+#include "fastrtps/rtps/reader/ReaderListener.h"
 #include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/RTPSParticipantProxyData.h"
-using namespace eprosima::pubsub;
+#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
+using namespace eprosima::fastrtps;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
-class SimplePDP;
-class DiscoveredRTPSParticipantData;
+class PDPSimple;
+class DiscoveredParticipantData;
+class RTPSReader;
 
 
 /**
@@ -30,25 +32,25 @@ class DiscoveredRTPSParticipantData;
  * This class is implemented in order to use the same structure than with any other RTPSReader.
  * @ingroup DISCOVERYMODULE
  */
-class PDPSimpleListener: public SubscriberListener {
+class PDPSimpleListener: public ReaderListener {
 public:
 	PDPSimpleListener(PDPSimple* in_SPDP):mp_SPDP(in_SPDP){};
 	virtual ~PDPSimpleListener(){};
 	//!Pointer to the associated mp_SPDP;
 	PDPSimple* mp_SPDP;
-	//!Method to be called when a new data message is received.l
-	void onNewDataMessage();
+	//!new added cache
+	void onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change);
 	//!Process a new added cache with this method.
 	bool newAddedCache();
 	//FIXME: TO IMPLEMENT WHEN A StaticEDP is created.
-	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredRTPSParticipantData* pdata);
+	void assignUserId(std::string& type,uint16_t userId,EntityId_t& entityId,DiscoveredParticipantData* pdata);
 
 	//!Temporal RTPSParticipantProxyData object used to read the messages.
-	RTPSParticipantProxyData m_RTPSParticipantProxyData;
+	ParticipantProxyData m_ParticipantProxyData;
 };
 
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

@@ -7,25 +7,23 @@
  *************************************************************************/
 
 /**
- * @file RTPSParticipantProxyData.h
+ * @file ParticipantProxyData.h
  *
  */
 
-#ifndef RTPSParticipantPROXYDATA_H_
-#define RTPSParticipantPROXYDATA_H_
+#ifndef PARTICIPANTPROXYDATA_H_
+#define PARTICIPANTPROXYDATA_H_
 
 #include "fastrtps/qos/QosList.h"
 #include "fastrtps/qos/ParameterList.h"
 
-#include "fastrtps/reader/WriterProxyData.h"
-#include "fastrtps/writer/ReaderProxyData.h"
+#include "fastrtps/rtps/attributes/WriterAttributes.h"
+#include "fastrtps/rtps/attributes/ReaderAttributes.h"
 
-
-
-#define DISCOVERY_RTPSParticipant_DATA_MAX_SIZE 500
-#define DISCOVERY_TOPIC_DATA_MAX_SIZE 400
-#define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 600
-#define DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE 600
+#define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 2000
+#define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
+#define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 2000
+#define DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE 2000
 
 #define DISC_BUILTIN_ENDPOINT_RTPSParticipant_ANNOUNCER 0x00000001 << 0;
 #define DISC_BUILTIN_ENDPOINT_RTPSParticipant_DETECTOR 0x00000001 << 1;
@@ -41,18 +39,21 @@
 #define BUILTIN_ENDPOINT_RTPSParticipant_MESSAGE_DATA_READER 0x00000001 << 11;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 struct CDRMessage_t;
 class PDPSimple;
 class RemoteRTPSParticipantLeaseDuration;
 class RTPSParticipantImpl;
+class ReaderProxyData;
+class WriterProxyData;
 
 
-class RTPSParticipantProxyData {
+class ParticipantProxyData {
 public:
-	RTPSParticipantProxyData();
-	virtual ~RTPSParticipantProxyData();
+	ParticipantProxyData();
+	virtual ~ParticipantProxyData();
 
 	ProtocolVersion_t m_protocolVersion;
 	GUID_t m_guid;
@@ -75,8 +76,8 @@ public:
 	RemoteRTPSParticipantLeaseDuration* mp_leaseDurationTimer;
 	std::vector<ReaderProxyData*> m_readers;
 	std::vector<WriterProxyData*> m_writers;
-	std::vector<ReaderProxyData*> m_builtinReaders;
-	std::vector<WriterProxyData*> m_builtinWriters;
+	std::vector<RemoteReaderAttributes> m_builtinReaders;
+	std::vector<RemoteWriterAttributes> m_builtinWriters;
 	/**
 	 * Initialize the object with the data of the lcoal RTPSParticipant.
 	 * @param part Pointer to the RTPSParticipant.
@@ -89,7 +90,7 @@ public:
 	 * @param pdata
 	 * @return
 	 */
-	bool updateData(RTPSParticipantProxyData& pdata);
+	bool updateData(ParticipantProxyData& pdata);
 	//!Convert information to parameter list.
 	bool toParameterList();
 	//!Read the parameter list from a recevied CDRMessage_t
@@ -97,11 +98,12 @@ public:
 	//!Clear the data (restore to default state.)
 	void clear();
 	//!Copy the data from another object.
-	void copy(RTPSParticipantProxyData& pdata);
+	void copy(ParticipantProxyData& pdata);
 
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

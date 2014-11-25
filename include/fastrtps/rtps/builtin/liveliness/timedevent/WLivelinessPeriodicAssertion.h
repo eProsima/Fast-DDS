@@ -15,12 +15,13 @@
 #define WLIVELINESSPERIODICASSERTION_H_
 
 #include "fastrtps/qos/QosPolicies.h"
-#include "fastrtps/utils/TimedEvent.h"
+#include "fastrtps/rtps/resources/TimedEvent.h"
 #include "fastrtps/qos/ParameterList.h"
 
-using namespace eprosima::pubsub;
+using namespace eprosima::fastrtps;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class WLP;
@@ -33,7 +34,7 @@ class WLivelinessPeriodicAssertion: public TimedEvent {
 public:
 	WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind);
 	virtual ~WLivelinessPeriodicAssertion();
-	void event(const boost::system::error_code& ec);
+	void event(EventCode code, const char* msg= nullptr);
 	//!Liveliness Kind that is being asserted by this object.
 	LivelinessQosPolicyKind m_livelinessKind;
 	//!Pointer to the WLP object.
@@ -48,5 +49,5 @@ public:
 
 } /* namespace rtps */
 } /* namespace eprosima */
-
+}
 #endif /* WLIVELINESSPERIODICASSERTION_H_ */

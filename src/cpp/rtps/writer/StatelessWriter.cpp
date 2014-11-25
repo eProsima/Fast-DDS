@@ -320,18 +320,18 @@ bool StatelessWriter::remove_locator(Locator_t& loc)
 //}
 
 
-//void StatelessWriter::unsent_changes_reset()
-//{
-//	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-//	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
-//		rit->unsent_changes.clear();
-//		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
-//				cit!=mp_history->changesEnd();++cit){
-//			rit->unsent_changes.push_back((*cit));
-//		}
-//	}
-//	unsent_changes_not_empty();
-//}
+void StatelessWriter::unsent_changes_reset()
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
+		rit->unsent_changes.clear();
+		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
+				cit!=mp_history->changesEnd();++cit){
+			rit->unsent_changes.push_back((*cit));
+		}
+	}
+	unsent_changes_not_empty();
+}
 //
 //bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
 //{

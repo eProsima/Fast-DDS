@@ -13,13 +13,14 @@
 
 #ifndef READERPROXYDATA_H_
 #define READERPROXYDATA_H_
-#include "fastrtps/pubsub/attributes/TopicAttributes.h"
+#include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/qos/ReaderQos.h"
 
-using namespace eprosima::pubsub;
+using namespace eprosima::fastrtps;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 struct CDRMessage_t;
@@ -74,6 +75,7 @@ public:
 	void copy(ReaderProxyData* rdata);
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

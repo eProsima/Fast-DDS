@@ -11,67 +11,65 @@
  *
  */
 
-#include "fastrtps/builtin/discovery/RTPSParticipant/timedevent/RemoteRTPSParticipantLeaseDuration.h"
-#include "fastrtps/resources/ResourceEvent.h"
-#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
-#include "fastrtps/RTPSParticipantProxyData.h"
+#include "fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
+
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
 #include "fastrtps/utils/RTPSLog.h"
 
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "RemoteRTPSParticipantLeaseDuration";
+static const char* const CLASS_NAME = "RemoteParticipantLeaseDuration";
 
-RemoteRTPSParticipantLeaseDuration::RemoteRTPSParticipantLeaseDuration(PDPSimple* pPDP,
-		RTPSParticipantProxyData* pdata,
-		ResourceEvent* pEvent,
-		boost::posix_time::milliseconds interval):
-				TimedEvent(&pEvent->io_service,interval),
-				mp_PDP(pPDP),
-				mp_RTPSParticipantProxyData(pdata)
+RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
+		ParticipantProxyData* pdata,
+		double interval):
+				TimedEvent(p_SPDP->getRTPSParticipant()->getIOService(),interval),
+				mp_PDP(p_SPDP),
+				mp_participantProxyData(pdata)
 {
 
 }
 
-RemoteRTPSParticipantLeaseDuration::~RemoteRTPSParticipantLeaseDuration()
+RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 {
-	stop_timer();
-	delete(timer);
+
 }
 
-void RemoteRTPSParticipantLeaseDuration::event(const boost::system::error_code& ec)
+void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
-	m_isWaiting = false;
-	if(ec == boost::system::errc::success)
+	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_LIVELINESS,"Checking RTPSParticipant: "
 				<< mp_RTPSParticipantProxyData->m_RTPSParticipantName << " with GUID: "
 				<< mp_RTPSParticipantProxyData->m_guid,EPRO_MAGENTA);
-		if(mp_RTPSParticipantProxyData->isAlive)
-			mp_RTPSParticipantProxyData->isAlive = false;
+		if(mp_participantProxyData->isAlive)
+			mp_participantProxyData->isAlive = false;
 		else
 		{
 			logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
 					<< mp_RTPSParticipantProxyData->m_guid,EPRO_MAGENTA);
-			mp_PDP->removeRemoteRTPSParticipant(mp_RTPSParticipantProxyData->m_guid);
+			mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 			return;
 		}
 		this->restart_timer();
 	}
-	else if(ec==boost::asio::error::operation_aborted)
+	else if(code == EVENT_ABORT)
 	{
-		logInfo(RTPS_LIVELINESS,"Remote RTPSParticipant Lease Duration aborted",EPRO_MAGENTA);
-		this->mp_stopSemaphore->post();
+		logInfo(RTPS_LIVELINESS,"Remote RTPSParticipant Lease Duration aborted",C_MAGENTA);
+		this->stopSemaphorePost();
 	}
 	else
 	{
-		logInfo(RTPS_LIVELINESS,"boost message: " <<ec.message(),EPRO_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"boost message: " <<msg,C_MAGENTA);
 	}
 }
 
-
+}
 } /* namespace rtps */
 } /* namespace eprosima */

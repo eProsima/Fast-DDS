@@ -14,11 +14,12 @@
 #ifndef EDPSIMPLE_H_
 #define EDPSIMPLE_H_
 
-#include "fastrtps/builtin/discovery/endpoint/EDP.h"
-#include "fastrtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
-#include "fastrtps/builtin/discovery/endpoint/EDPSimpleTopicDataType.h"
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
+//#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
+//#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleTopicDataType.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class StatefulReader;
@@ -44,12 +45,12 @@ public:
 	StatefulReader* mp_PubReader;
 	//!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
 	StatefulReader* mp_SubReader;
-	//!EDPSimpleListeners object, contains two listeners for the Publication and Subscription readers.
-	EDPSimpleListeners m_listeners;
-	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
-	EDPSimpleTopicDataType m_pubReaderTopicDataType;
-	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
-	EDPSimpleTopicDataType m_subReaderTopicDataType;
+//	//!EDPSimpleListeners object, contains two listeners for the Publication and Subscription readers.
+//	EDPSimpleListeners* m_listeners;
+//	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
+//	EDPSimpleTopicDataType* m_pubReaderTopicDataType;
+//	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
+//	EDPSimpleTopicDataType* m_subReaderTopicDataType;
 
 
 	/**
@@ -62,9 +63,9 @@ public:
 	 * This method assigns the remote builtin endpoints that the remote RTPSParticipant indicates is using to our local builtin endpoints.
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 */
-	void assignRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
-	void removeRemoteEndpoints(RTPSParticipantProxyData* pdata);
+	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 
 	/**
 	 * Create local SEDP Endpoints based on the DiscoveryAttributes.
@@ -98,6 +99,7 @@ public:
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

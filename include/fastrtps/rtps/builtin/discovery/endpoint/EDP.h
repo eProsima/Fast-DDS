@@ -14,10 +14,11 @@
 #ifndef EDP_H_
 #define EDP_H_
 
-#include "fastrtps/pubsub/attributes/RTPSParticipantAttributes.h"
-#include "fastrtps/common/types/Guid.h"
+#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class PDPSimple;
@@ -49,9 +50,9 @@ public:
 	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
 	 * @param pdata
 	 */
-	virtual void assignRemoteEndpoints(RTPSParticipantProxyData* pdata)=0;
+	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
 
-	virtual void removeRemoteEndpoints(RTPSParticipantProxyData* pdata){};
+	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
 
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
@@ -84,25 +85,25 @@ public:
 	 * @param R Pointer to the RTPSReader.
 	 * @return True if correct.
 	 */
-	bool newLocalReaderProxyData(RTPSReader* R);
+	bool newLocalReaderProxyData(RTPSReader* R,TopicAttributes& att, ReaderQos& wqos);
 	/**
 	 * Create a new ReaderPD for a local Writer.
 	 * @param W Pointer to the RTPSWriter.
 	 * @return True if correct.
 	 */
-	bool newLocalWriterProxyData(RTPSWriter* W);
+	bool newLocalWriterProxyData(RTPSWriter* W,TopicAttributes& att, WriterQos& qos);
 	/**
 	 * A previously created Reader has been updated
 	 * @param R Pointer to the reader;
 	 * @return True if correctly updated
 	 */
-	bool updatedLocalReader(RTPSReader* R);
+	bool updatedLocalReader(RTPSReader* R,ReaderQos& qos);
 	/**
 	 * A previously created Writer has been updated
 	 * @param W Pointer to the Writer
 	 * @return True if correctly updated
 	 */
-	bool updatedLocalWriter(RTPSWriter* W);
+	bool updatedLocalWriter(RTPSWriter* W,WriterQos& qos);
 
 
 	/**
@@ -176,6 +177,7 @@ public:
 
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

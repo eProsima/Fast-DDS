@@ -61,6 +61,8 @@ public:
 
 	const GUID_t& getGuid() const;
 
+	inline const ParticipantAttributes& getAttributes() const {return m_att;};
+
 private:
 	//!Participant Attributes
 	ParticipantAttributes m_att;
