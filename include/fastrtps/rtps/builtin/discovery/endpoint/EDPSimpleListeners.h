@@ -14,59 +14,54 @@
 #ifndef EDPSIMPLELISTENER_H_
 #define EDPSIMPLELISTENER_H_
 
-#include "fastrtps/pubsub/SubscriberListener.h"
+#include "fastrtps/rtps/reader/ReaderListener.h"
 
-#include "fastrtps/writer/ReaderProxyData.h"
-#include "fastrtps/reader/WriterProxyData.h"
+#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
+#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
 
-using namespace eprosima::pubsub;
+
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class EDPSimple;
+class RTPSReader;
+class CacheChange_t;
+
 /**
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERYMODULE
  */
-class EDPSimplePUBReaderListener:public SubscriberListener{
+class EDPSimplePUBListener:public ReaderListener{
 public:
-	EDPSimplePUBReaderListener(EDPSimple* p):mp_SEDP(p){};
-	virtual ~EDPSimplePUBReaderListener(){};
-	void onNewDataMessage();
+	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);};
+	virtual ~EDPSimplePUBListener(){};
+	void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change);
+	bool computeKey(CacheChange_t* change);
 	EDPSimple* mp_SEDP;
 	WriterProxyData m_writerProxyData;
 	CDRMessage_t m_tempMsg;
+	CDRMessage_t aux_msg;
 };
 /**
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERYMODULE
  */
-class EDPSimpleSUBReaderListener:public SubscriberListener{
+class EDPSimpleSUBListener:public ReaderListener{
 public:
-	EDPSimpleSUBReaderListener(EDPSimple* p):mp_SEDP(p){};
-	virtual ~EDPSimpleSUBReaderListener(){};
-	void onNewDataMessage();
+	EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);};
+	virtual ~EDPSimpleSUBListener(){};
+	void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change);
+	bool computeKey(CacheChange_t* change);
 	EDPSimple* mp_SEDP;
 	ReaderProxyData m_readerProxyData;
 	CDRMessage_t m_tempMsg;
-};
-
-/**
- * Class EDPSimpleListeners that contains two different Listeners for the Publications and Subscriptions Readers.
- * @ingroup DISCOVERYMODULE
- */
-class EDPSimpleListeners {
-public:
-	EDPSimpleListeners(EDPSimple* p):
-		m_pubReaderListener(p),
-		m_subReaderListener(p){};
-	virtual ~EDPSimpleListeners(){};
-	EDPSimplePUBReaderListener m_pubReaderListener;
-	EDPSimpleSUBReaderListener m_subReaderListener;
+	CDRMessage_t aux_msg;
 };
 
 } /* namespace rtps */
+}
 } /* namespace eprosima */
 
 #endif /* EDPSIMPLELISTENER_H_ */

@@ -121,7 +121,7 @@ void PDPSimple::resetParticipantAnnouncement()
 
 void PDPSimple::announceParticipantState(bool new_change)
 {
-	const char* const METHOD_NAME = "announceRTPSParticipantState";
+	const char* const METHOD_NAME = "announceParticipantState";
 	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",C_CYAN);
 	CacheChange_t* change = nullptr;
 	if(new_change || m_hasChangedLocalPDP)
@@ -392,7 +392,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid.guidPrefix,C_CYAN);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
-	auxendp &=DISC_BUILTIN_ENDPOINT_RTPSParticipant_ANNOUNCER;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 	if(auxendp!=0)
 	{
 		RemoteWriterAttributes watt;
@@ -406,7 +406,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		mp_SPDPReader->matched_writer_add(watt);
 	}
 	auxendp = endp;
-	auxendp &=DISC_BUILTIN_ENDPOINT_RTPSParticipant_DETECTOR;
+	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 	if(auxendp!=0)
 	{
 		RemoteReaderAttributes ratt;
@@ -449,7 +449,7 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
-	const char* const METHOD_NAME = "removeRemoteRTPSParticipant";
+	const char* const METHOD_NAME = "removeRemoteParticipant";
 	logInfo(RTPS_PDP,partGUID,C_CYAN );
 	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
@@ -500,7 +500,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 
 void PDPSimple::assertRemoteParticipantLiveliness(GuidPrefix_t& guidP)
 {
-	const char* const METHOD_NAME = "assertRemoteRTPSParticipantLiveliness";
+	const char* const METHOD_NAME = "assertRemoteParticipantLiveliness";
 	for(std::vector<ParticipantProxyData*>::iterator it = this->m_participantProxies.begin();
 			it!=this->m_participantProxies.end();++it)
 	{
@@ -517,7 +517,7 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 {
 	const char* const METHOD_NAME = "assertLocalWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
-			<<(kind==MANUAL_BY_RTPSParticipant_LIVELINESS_QOS?"MANUAL_BY_RTPSParticipant":""),C_MAGENTA);
+			<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);
 	for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
 			wit!=this->m_participantProxies.front()->m_writers.end();++wit)
 	{

@@ -26,27 +26,38 @@ class StatefulReader;
 class StatefulWriter;
 class RTPSWriter;
 class RTPSReader;
+class EDPSimplePUBListener;
+class EDPSimpleSUBListener;
+class ReaderHistory;
+class WriterHistory;
+
 
 /**
  * Class EDPSimple, implements the SimpleEndpointDiscoveryProtocol defined in the RTPS specification. Inherits from EDP class.
  * @ingroup DISCOVERYMODULE
  */
 class EDPSimple : public EDP {
+	typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
+	typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
 public:
 	EDPSimple(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPSimple();
 	//!Discovery attributes.
 	BuiltinAttributes m_discovery;
 	//!Pointer to the Publications Writer (only created if indicated in the DiscoveryAtributes).
-	StatefulWriter* mp_PubWriter;
+	t_p_StatefulWriter mp_PubWriter;
 	//!Pointer to the Subscriptions Writer (only created if indicated in the DiscoveryAtributes).
-	StatefulWriter* mp_SubWriter;
+	t_p_StatefulWriter mp_SubWriter;
 	//!Pointer to the Publications Reader (only created if indicated in the DiscoveryAtributes).
-	StatefulReader* mp_PubReader;
+	t_p_StatefulReader mp_PubReader;
 	//!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
-	StatefulReader* mp_SubReader;
-//	//!EDPSimpleListeners object, contains two listeners for the Publication and Subscription readers.
-//	EDPSimpleListeners* m_listeners;
+	t_p_StatefulReader mp_SubReader;
+
+	EDPSimplePUBListener* mp_pubListen;
+
+	EDPSimpleSUBListener* mp_subListen;
+
+
 //	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
 //	EDPSimpleTopicDataType* m_pubReaderTopicDataType;
 //	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.

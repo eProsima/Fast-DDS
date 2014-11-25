@@ -112,7 +112,6 @@ FASTRTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPSimple.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp \
-		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPSimpleTopicDataType.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPStaticXML.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/endpoint/EDPStatic.cpp \
