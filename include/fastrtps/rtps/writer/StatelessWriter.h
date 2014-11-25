@@ -80,6 +80,8 @@ public:
 
 	//!Reset the unsent changes.
 	void unsent_changes_reset();
+
+	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 private:
 
 	//	/**

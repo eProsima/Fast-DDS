@@ -11,13 +11,14 @@
  *
  */
 
-#include "fastrtps/writer/ReaderProxyData.h"
+#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
 
-#include "fastrtps/common/types/CDRMessage_t.h"
+#include "fastrtps/rtps/common/CDRMessage_t.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 static const char* const CLASS_NAME = "ReaderProxyData";
@@ -175,7 +176,7 @@ bool ReaderProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 
-	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters",RTPS_CYAN);
+	logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << m_parameterList.m_parameters.size()<< " parameters",C_CYAN);
 	return true;
 }
 
@@ -346,7 +347,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			default:
 			{
-				logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED";,RTPS_CYAN);
+				logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED",C_CYAN);
 				break;
 			}
 			}
@@ -406,7 +407,20 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
 	m_topicKind = rdata->m_topicKind;
 }
 
+RemoteReaderAttributes& ReaderProxyData::toRemoteReaderAttributes()
+{
+	m_remoteAtt.guid = m_guid;
+	m_remoteAtt.expectsInlineQos = this->m_expectsInlineQos;
+	m_remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
+	m_remoteAtt.endpoint.endpointKind = READER;
+	m_remoteAtt.endpoint.topicKind = m_topicKind;
+	m_remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+	m_remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
+	m_remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
+	return m_remoteAtt;
+}
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 

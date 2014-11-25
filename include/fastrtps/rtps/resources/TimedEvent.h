@@ -55,6 +55,10 @@ public:
 
     void stopSemaphorePost();
 
+    bool isWaiting();
+
+    double getRemainingTimeMilliSec();
+
 private:
 	TimedEventImpl* mp_impl;
 };

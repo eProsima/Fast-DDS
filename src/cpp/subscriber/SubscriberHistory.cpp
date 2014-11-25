@@ -28,6 +28,11 @@ namespace fastrtps {
 
 static const char* const CLASS_NAME = "SubscriberHistory";
 
+inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
+{
+	return c1->sequenceNumber < c2->sequenceNumber;
+}
+
 SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSize,
 		HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):

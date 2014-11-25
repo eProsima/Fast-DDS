@@ -112,6 +112,7 @@ public:
 
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
+	inline size_t getMatchedReadersSize() const {return matched_readers.size();};
 
 	void updateTimes(WriterTimes& times);
 private:

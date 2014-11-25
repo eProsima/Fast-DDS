@@ -72,6 +72,8 @@ public:
 	 */
 	bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
 
+	inline size_t getMatchedWritersSize() const {return m_matched_writers.size();};
+
 private:
 	//!List of GUID_t os matched writers.
 	//!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();

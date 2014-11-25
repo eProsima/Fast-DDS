@@ -54,6 +54,16 @@ double TimedEvent::getIntervalMilliSec()
 {
 	return mp_impl->getIntervalMsec();
 }
+
+bool TimedEvent::isWaiting()
+{
+	return mp_impl->m_isWaiting;
+}
+
+double TimedEvent::getRemainingTimeMilliSec()
+{
+	return mp_impl->getRemainingTimeMilliSec();
+}
 }
 } /* namespace rtps */
 } /* namespace eprosima */
