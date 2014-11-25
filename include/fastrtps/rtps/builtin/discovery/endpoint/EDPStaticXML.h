@@ -25,6 +25,7 @@
 using boost::property_tree::ptree;
 
 namespace eprosima {
+namespace fastrtps{
 namespace rtps {
 
 class ReaderProxyData;
@@ -32,7 +33,7 @@ class WriterProxyData;
 
 
 /**
- * Class StaticRTPSParticipantInfo, contains the ifnormation of writers and readers loaded from the XML file.
+ * Class StaticRTPSParticipantInfo, contains the information of writers and readers loaded from the XML file.
  * @ingroup DISCOVERYMODULE
  */
 class StaticRTPSParticipantInfo{
@@ -96,6 +97,7 @@ private:
 	std::vector<StaticRTPSParticipantInfo*> m_RTPSParticipants;
 };
 
+}
 } /* namespace rtps */
 } /* namespace eprosima */
 
