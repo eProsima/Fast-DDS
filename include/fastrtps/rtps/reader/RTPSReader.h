@@ -92,6 +92,8 @@ public:
 	 * @return True if read.
 	 */
 	virtual bool nextUntakenCache(CacheChange_t** change,WriterProxy** wp)=0;
+
+	inline bool expectsInlineQos(){return m_expectsInlineQos;};
 protected:
 	void setTrustedWriter(EntityId_t writer)
 	{
@@ -105,6 +107,7 @@ protected:
 	bool m_acceptMessagesToUnknownReaders;
 	bool m_acceptMessagesFromUnkownWriters;
 	EntityId_t m_trustedWriterEntityId;
+	bool m_expectsInlineQos;
 
 
 };

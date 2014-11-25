@@ -17,7 +17,6 @@
 #include "fastrtps/rtps/resources/TimedEvent.h"
 
 
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -31,13 +30,13 @@ class ParticipantProxyData;
  * announce its liveliness each leaseDuration period.
  * @ingroup DISCOVERYMODULE
  */
-class RemoteRTPSParticipantLeaseDuration:public TimedEvent
+class RemoteParticipantLeaseDuration:public TimedEvent
 {
 public:
-	RemoteRTPSParticipantLeaseDuration(PDPSimple* p_SPDP,
+	RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
 			ParticipantProxyData* pdata,
 			double interval);
-	virtual ~RemoteRTPSParticipantLeaseDuration();
+	virtual ~RemoteParticipantLeaseDuration();
 	/**
 	 * temporal event that check if the RTPSParticipant is alive, and removes it if not.
 	 * @param ec

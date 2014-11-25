@@ -53,6 +53,9 @@ public:
 	bool toParameterList();
 	//!Read a parameter list from a CDRMessage_t.
 	bool readFromCDRMessage(CDRMessage_t* msg);
+
+	RemoteWriterAttributes& toRemoteWriterAttributes();
+	RemoteWriterAttributes m_remoteAtt;
 };
 
 }

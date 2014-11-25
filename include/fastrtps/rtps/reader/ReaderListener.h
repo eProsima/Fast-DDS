@@ -28,14 +28,12 @@ class ReaderListener
 public:
 	ReaderListener(){};
 	virtual ~ReaderListener(){};
-	virtual void onReaderMatched(MatchingInfo info){};
+	virtual void onReaderMatched(RTPSReader* reader,MatchingInfo info){};
 	virtual void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change){};
 };
 
 }
 }
 }
-
-
 
 #endif /* READERLISTENER_H_ */

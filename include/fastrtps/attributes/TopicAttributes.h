@@ -1,5 +1,5 @@
 /*************************************************************************
-  * Copyright (c) 2014 eProsima. All rights reserved.
+ * Copyright (c) 2014 eProsima. All rights reserved.
  *
  * This copy of eProsima RTPS is licensed to you under the terms described in the
  * fastrtps_LIBRARY_LICENSE file included in this distribution.
@@ -68,27 +68,27 @@ public:
 		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
 		{
 
-			logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples"<<endl);
+			logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples");
 			return false;
 		}
 		if(resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
-			logWarning(RTPS_QOS_CHECK,"TOPIC QOS: max_samples < max_samples_per_instance*max_instances"<<endl);
+			logWarning(RTPS_QOS_CHECK,"TOPIC QOS: max_samples < max_samples_per_instance*max_instances");
 		if(historyQos.kind == KEEP_LAST_HISTORY_QOS)
 		{
 			if(historyQos.depth > resourceLimitsQos.max_samples)
 			{
-				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples"<<endl;)
-						return false;
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples");
+				return false;
 			}
 			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == WITH_KEY)
 			{
 				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
-						return false;
+										return false;
 			}
 			if(historyQos.depth <=0 )
 			{
-				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be > 0"<<endl;)
-										return false;
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be > 0");
+				return false;
 			}
 		}
 		return true;
@@ -97,7 +97,7 @@ public:
 
 
 bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
-		{
+{
 	if(t1.topicKind != t2.topicKind)
 	{
 		//cout << "a"<<endl;
@@ -124,10 +124,10 @@ bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 		return true;
 	}
 	return false;
-		}
+};
 
 
-} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* TOPICPARAMETERS_H_ */

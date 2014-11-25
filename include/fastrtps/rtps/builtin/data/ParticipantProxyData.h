@@ -44,7 +44,7 @@ namespace rtps {
 
 struct CDRMessage_t;
 class PDPSimple;
-class RemoteRTPSParticipantLeaseDuration;
+class RemoteParticipantLeaseDuration;
 class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
@@ -65,7 +65,7 @@ public:
 	LocatorList_t m_defaultUnicastLocatorList;
 	LocatorList_t m_defaultMulticastLocatorList;
 	Count_t m_manualLivelinessCount;
-	std::string m_RTPSParticipantName;
+	std::string m_participantName;
 	InstanceHandle_t m_key;
 	Duration_t m_leaseDuration;
 	bool isAlive;
@@ -73,7 +73,7 @@ public:
 	ParameterPropertyList_t m_properties;
 	std::vector<octet> m_userData;
 	bool m_hasChanged;
-	RemoteRTPSParticipantLeaseDuration* mp_leaseDurationTimer;
+	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
 	std::vector<ReaderProxyData*> m_readers;
 	std::vector<WriterProxyData*> m_writers;
 	std::vector<RemoteReaderAttributes> m_builtinReaders;

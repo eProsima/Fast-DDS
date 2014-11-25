@@ -13,22 +13,24 @@
 
 #include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
 
-//#include "fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
-//
+#include "fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
+
 #include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
 #include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 //
-//#include "fastrtps/builtin/discovery/endpoint/EDP.h"
+#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
 //#include "fastrtps/RTPSParticipant.h"
-//#include "fastrtps/reader/StatelessReader.h"
+#include "fastrtps/rtps/reader/RTPSReader.h"
+
+#include "fastrtps/rtps/history/ReaderHistory.h"
 //#include "fastrtps/writer/StatelessWriter.h"
 //
 //#include "fastrtps/utils/RTPSLog.h"
 //#include "fastrtps/utils/eClock.h"
-//#include "fastrtps/utils/TimeConversion.h"
+#include "fastrtps/utils/TimeConversion.h"
 //
-//#include "fastrtps/pubsub/RTPSParticipantDiscoveryInfo.h"
-//#include "fastrtps/pubsub/RTPSParticipantListener.h"
+#include "fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h"
+#include "fastrtps/rtps/participant/RTPSParticipantListener.h"
 
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -45,11 +47,20 @@ static const char* const CLASS_NAME = "PDPSimpleListener";
 
 void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change)
 {
-	const char* const METHOD_NAME = "newAddedCache";
+	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
 	if(change->kind == ALIVE)
 	{
+		if(change->instanceHandle == c_InstanceHandle_Unknown)
+		{
+			if(!this->getKey(change))
+			{
+				logWarning(RTPS_PDP,"Problem getting the key of the change, removing",C_CYAN);
+				this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
+				return;
+			}
+		}
 		//LOAD INFORMATION IN TEMPORAL RTPSParticipant PROXY DATA
 		m_ParticipantProxyData.clear();
 		CDRMessage_t msg;
@@ -61,31 +72,31 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 			//AFTER CORRECTLY READING IT
 			//CHECK IF IS THE SAME RTPSParticipant
 			change->instanceHandle = m_ParticipantProxyData.m_key;
-			if(m_ParticipantProxyData.m_guid == mp_SPDP->getParticipant()->getGuid())
+			if(m_ParticipantProxyData.m_guid == mp_SPDP->getRTPSParticipant()->getGuid())
 			{
 				logInfo(RTPS_PDP,"Message from own RTPSParticipant, ignoring",C_CYAN)
-						return;
+								return;
 			}
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;
 			for(auto it : mp_SPDP->m_participantProxies)
 			{
-				if(m_ParticipantProxyData.m_key == (*it)->m_key)
+				if(m_ParticipantProxyData.m_key == it->m_key)
 				{
 					found = true;
-					pdata_ptr = (*it);
+					pdata_ptr = it;
 					break;
 				}
 			}
 			RTPSParticipantDiscoveryInfo info;
 			info.m_guid = m_ParticipantProxyData.m_guid;
-			info.m_RTPSParticipantName = m_ParticipantProxyData.m_RTPSParticipantName;
+			info.m_RTPSParticipantName = m_ParticipantProxyData.m_participantName;
 			info.m_propertyList = m_ParticipantProxyData.m_properties.properties;
 			info.m_userData = m_ParticipantProxyData.m_userData;
 			if(!found)
 			{
-				info.m_status = DISCOVERED_PARTICIPANT;
+				info.m_status = DISCOVERED_RTPSPARTICIPANT;
 				//IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
 				ParticipantProxyData* pdata = new ParticipantProxyData();
 				pdata->copy(m_ParticipantProxyData);
@@ -94,20 +105,19 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 				this->mp_SPDP->m_participantProxies.push_back(pdata_ptr);
 				pdata_ptr->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
 						pdata_ptr,
-						mp_SPDP->mp_RTPSParticipant->getEventResource(),
-						boost::posix_time::milliseconds(TimeConv::Time_t2MilliSecondsInt64(pdata_ptr->m_leaseDuration)));
+						TimeConv::Time_t2MilliSecondsDouble(pdata_ptr->m_leaseDuration));
 				pdata_ptr->mp_leaseDurationTimer->restart_timer();
 				mp_SPDP->assignRemoteEndpoints(pdata_ptr);
-				mp_SPDP->announceRTPSParticipantState(false);
+				mp_SPDP->announceParticipantState(false);
 			}
 			else
 			{
-				info.m_status = CHANGED_QOS_PARTICIPANT;
+				info.m_status = CHANGED_QOS_RTPSPARTICIPANT;
 				pdata_ptr->updateData(m_ParticipantProxyData);
 				if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 					mp_SPDP->mp_EDP->assignRemoteEndpoints(&m_ParticipantProxyData);
 			}
-			if(this->mp_SPDP->getRTPSParticipant()->getListener()!=NULL)
+			if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
 				this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
 						this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
 						info);
@@ -121,10 +131,10 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 		iHandle2GUID(guid,change->instanceHandle);
 		this->mp_SPDP->removeRemoteParticipant(guid);
 		RTPSParticipantDiscoveryInfo info;
-		info.m_status = REMOVED_PARTICIPANT;
+		info.m_status = REMOVED_RTPSPARTICIPANT;
 		info.m_guid = guid;
-		if(this->mp_SPDP->getRTPSParticipantImpl()->getListener()!=nullptr)
-			this->mp_SPDP->getRTPSParticipantImpl()->getListener()->onRTPSParticipantDiscovery(
+		if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
+			this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
 					this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
 					info);
 	}
@@ -137,6 +147,43 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 
 	return;
 }
+
+bool PDPSimpleListener::getKey(CacheChange_t* change)
+{
+	SerializedPayload_t* pl = &change->serializedPayload;
+	CDRMessage::initCDRMsg(&aux_msg);
+	aux_msg.buffer = pl->data;
+	aux_msg.length = pl->length;
+	aux_msg.max_size = pl->max_size;
+	aux_msg.msg_endian = pl->encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
+	bool valid = false;
+	uint16_t pid;
+	uint16_t plength;
+	while(aux_msg.pos < aux_msg.length)
+	{
+		valid = true;
+		valid&=CDRMessage::readUInt16(&aux_msg,(uint16_t*)&pid);
+		valid&=CDRMessage::readUInt16(&aux_msg,&plength);
+		if(pid == PID_SENTINEL)
+		{
+			break;
+		}
+		if(pid == PID_RTPSParticipant_GUID)
+		{
+			valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
+			return true;
+		}
+		if(pid == PID_KEY_HASH)
+		{
+			valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
+			return true;
+		}
+		aux_msg.pos+=plength;
+	}
+	return false;
+}
+
+
 
 }
 } /* namespace rtps */

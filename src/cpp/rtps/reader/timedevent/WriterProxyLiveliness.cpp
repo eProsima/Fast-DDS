@@ -56,7 +56,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 				if(mp_WP->mp_SFR->getListener()!=nullptr)
 				{
 					MatchingInfo info(REMOVED_MATCHING,mp_WP->m_att.guid);
-					mp_WP->mp_SFR->getListener()->onReaderMatched(info);
+					mp_WP->mp_SFR->getListener()->onReaderMatched((RTPSReader*)mp_WP->mp_SFR,info);
 				}
 			}
 			return;

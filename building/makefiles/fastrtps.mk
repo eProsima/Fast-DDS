@@ -106,7 +106,6 @@ FASTRTPS_SRC_CPPFILES= \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/PDPSimple.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/PDPSimpleListener.cpp \
-		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp \
 		  \
