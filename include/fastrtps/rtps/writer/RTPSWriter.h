@@ -91,6 +91,10 @@ public:
 	uint32_t getTypeMaxSerialized();
 
 	inline WriterListener* getListener(){return mp_listener; };
+
+	inline bool getLivelinessAsserted() {return m_livelinessAsserted;};
+
+	inline void setLivelinessAsserted(bool l){m_livelinessAsserted = l;};
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.

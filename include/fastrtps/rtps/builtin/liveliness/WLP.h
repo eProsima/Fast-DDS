@@ -16,19 +16,21 @@
 
 #include <vector>
 
-#include <boost/thread/lockable_adapter.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-
 #include "fastrtps/rtps/common/Time_t.h"
 #include "fastrtps/rtps/common/Locator.h"
 
+namespace boost
+{
+class recursive_mutex;
+}
 
-//#include "fastrtps/rtps/builtin/liveliness/WLPListener.h"
-//#include "fastrtps/rtps/builtin/liveliness/WLPTopicDataType.h"
 
 namespace eprosima {
 namespace fastrtps{
+
+class WriterQos;
+
+
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -36,14 +38,17 @@ class StatefulWriter;
 class StatefulReader;
 class RTPSWriter;
 class BuiltinProtocols;
-class RTPSParticipantProxyData;
+class ParticipantProxyData;
 class WLivelinessPeriodicAssertion;
+class WLPListener;
+class WriterHistory;
+class ReaderHistory;
 
 /**
  * Class WLP that implements the Writer Liveliness Protocol described in the RTPS specification.
  * @ingroup LIVELINESSMODULE
  */
-class WLP : public boost::basic_lockable_adapter<boost::recursive_mutex>
+class WLP
 {
 	friend class WLPListener;
 	friend class WLivelinessPeriodicAssertion;
@@ -82,27 +87,32 @@ public:
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 
-	int64_t m_minAutomatic_MilliSec;
+	double m_minAutomatic_MilliSec;
 
-	int64_t m_minManRTPSParticipant_MilliSec;
+	double m_minManRTPSParticipant_MilliSec;
 
 	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 
 	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
 
-	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participantImpl;}
+	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
+
+	inline boost::recursive_mutex* getMutex() {return mp_mutex;};
 
 private:
 	//!Pointer to the local RTPSParticipant.
-	RTPSParticipantImpl* mp_participantImpl;
+	RTPSParticipantImpl* mp_participant;
 	//!Pointer to the builtinprotocol class.
 	BuiltinProtocols* mp_builtinProtocols;
 	//!Pointer to the builtinRTPSParticipantMEssageWriter.
-	StatefulWriter* mp_builtinRTPSParticipantMessageWriter;
+	StatefulWriter* mp_builtinWriter;
 	//!Pointer to the builtinRTPSParticipantMEssageReader.
-	StatefulReader* mp_builtinRTPSParticipantMessageReader;
+	StatefulReader* mp_builtinReader;
+	//!Hist
+	WriterHistory* mp_builtinWriterHistory;
+	ReaderHistory* mp_builtinReaderHistory;
 	//!Listener object.
-	//WLPListener m_listener;
+	WLPListener* mp_listener;
 	//!Pointer to the periodic assertion timer object for the automatic liveliness writers.
 	WLivelinessPeriodicAssertion* mp_livelinessAutomatic;
 	//!Pointer to the periodic assertion timer object for the manual by RTPSParticipant liveliness writers.
@@ -111,8 +121,8 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by RTPSParticipant liveliness.
 	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
-	//!TopicDataType to extract the key.
-	//WLPTopicDataType m_wlpTopicDataType;
+
+	boost::recursive_mutex* mp_mutex;
 
 };
 

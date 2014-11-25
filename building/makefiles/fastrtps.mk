@@ -118,7 +118,6 @@ FASTRTPS_SRC_CPPFILES= \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/WLP.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/WLPListener.cpp \
-		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/WLPTopicDataType.cpp \
 		  $(BASEDIR)/src/cpp/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp \

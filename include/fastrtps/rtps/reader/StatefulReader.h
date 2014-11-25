@@ -108,6 +108,8 @@ public:
 
 	inline ReaderTimes& getTimes(){return m_times;};
 
+	inline size_t getMatchedWritersSize() const {return matched_writers.size();};
+
 private:
 	ReaderTimes m_times;
 	//! Vector containing pointers to the matched writers.
