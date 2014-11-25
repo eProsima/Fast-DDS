@@ -17,6 +17,8 @@
 #include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -27,10 +29,7 @@ static const char* const CLASS_NAME = "ReaderHistory";
 //typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 //typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
-bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
-{
-	return c1->sequenceNumber < c2->sequenceNumber;
-}
+
 
 ReaderHistory::ReaderHistory(const HistoryAttributes& att):
 						History(att),

@@ -78,7 +78,7 @@ public:
 	bool reserveCache(CacheChange_t** change);
 
 	void releaseCache(CacheChange_t* change);
-protected:
+
 
 	/**
 	 * Read the next unread CacheChange_t from the history
@@ -92,7 +92,7 @@ protected:
 	 * @return True if read.
 	 */
 	virtual bool nextUntakenCache(CacheChange_t** change,WriterProxy** wp)=0;
-
+protected:
 	void setTrustedWriter(EntityId_t writer)
 	{
 		m_acceptMessagesFromUnkownWriters=false;

@@ -16,7 +16,7 @@
 #include "fastrtps/qos/QosPolicies.h"
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 QosList_t::QosList_t()
 {

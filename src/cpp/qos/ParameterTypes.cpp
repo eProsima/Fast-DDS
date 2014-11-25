@@ -13,10 +13,10 @@
 
 #include "fastrtps/qos/ParameterTypes.h"
 
-#include "fastrtps/CDRMessage.h"
+#include "fastrtps/rtps/messages/CDRMessage.h"
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 
 // PARAMETER

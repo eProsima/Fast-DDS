@@ -11,11 +11,11 @@
  *
  */
 
-#include "fastrtps/pubsub/qos/WriterQos.h"
+#include "fastrtps/qos/WriterQos.h"
 #include "fastrtps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace pubsub {
+namespace fastrtps {
 
 static const char* const CLASS_NAME = "WriterQos";
 

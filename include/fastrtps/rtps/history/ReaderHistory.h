@@ -15,6 +15,7 @@
 #define READERHISTORY_H_
 
 #include "fastrtps/rtps/history/History.h"
+#include "fastrtps/rtps/common/CacheChange.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -90,6 +91,11 @@ public:
 protected:
 	RTPSReader* mp_reader;
 };
+
+bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
+{
+	return c1->sequenceNumber < c2->sequenceNumber;
+}
 
 }
 } /* namespace rtps */
