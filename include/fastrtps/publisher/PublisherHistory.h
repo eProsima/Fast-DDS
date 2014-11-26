@@ -34,8 +34,6 @@ public:
 	virtual ~PublisherHistory();
 	bool add_pub_change(CacheChange_t* change);
 
-	bool removeMinSeqChange();
-
 	bool removeAllChange(size_t* removed);
 
 private:
