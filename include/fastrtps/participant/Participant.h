@@ -28,7 +28,7 @@ class ParticipantImpl;
 class ParticipantAttributes;
 
 
-class Participant {
+class RTPS_DllAPI Participant {
 	friend class Domain;
 	friend class ParticipantImpl;
 private:

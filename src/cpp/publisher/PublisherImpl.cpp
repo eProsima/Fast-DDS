@@ -36,8 +36,10 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										mp_writer(nullptr),
 										mp_type(pdatatype),
 										m_att(att),
+#pragma warning (disable : 4355 )
 										m_history(this,pdatatype->m_typeSize,att.topic.historyQos,att.topic.resourceLimitsQos),
 										mp_listener(listen),
+#pragma warning (disable : 4355 )
 										m_writerListener(this)
 {
 

@@ -35,17 +35,18 @@ class TopicDataType;
 class Domain
 {
 	typedef std::pair<Participant*,ParticipantImpl*> t_p_Participant;
-public:
+
 	Domain();
 	virtual ~Domain();
-	static Participant* createParticipant(ParticipantAttributes& att,ParticipantListener* listen = nullptr);
+public:
+	RTPS_DllAPI static Participant* createParticipant(ParticipantAttributes& att, ParticipantListener* listen = nullptr);
 
-	static Publisher* createPublisher(Participant* part,PublisherAttributes& att, PublisherListener* listen = nullptr);
+	RTPS_DllAPI static Publisher* createPublisher(Participant* part, PublisherAttributes& att, PublisherListener* listen = nullptr);
 
-	static Subscriber* createSubscriber(Participant* part,SubscriberAttributes& att, SubscriberListener* listen = nullptr);
+	RTPS_DllAPI static Subscriber* createSubscriber(Participant* part, SubscriberAttributes& att, SubscriberListener* listen = nullptr);
 
-	static bool registerType(Participant* part, TopicDataType * type);
-
+	RTPS_DllAPI static bool registerType(Participant* part, TopicDataType * type);
+private:
 	static std::vector<t_p_Participant> m_participants;
 
 

@@ -19,10 +19,10 @@ namespace fastrtps{
 namespace rtps{
 
 
-class HistoryAttributes
+	class RTPS_DllAPI HistoryAttributes
 {
 public:
-	HistoryAttributes();
+	HistoryAttributes(){};
 	HistoryAttributes(uint32_t payload,uint16_t initial,int32_t maxRes):
 		payloadMaxSize(payload),initialReservedCaches(initial),
 		maximumReservedCaches(maxRes){}

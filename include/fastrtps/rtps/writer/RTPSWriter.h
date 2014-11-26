@@ -34,7 +34,7 @@ struct CacheChange_t;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITERMODULE
  */
-class RTPSWriter: public Endpoint
+class RTPSWriter : public Endpoint
 {
 	friend class WriterHistory;
 	friend class UnsentChangesNotEmptyEvent;
@@ -50,51 +50,51 @@ public:
 	 * @param handle InstanceHandle to assign.
 	 * @return Pointer to the CacheChange or nullptr if incorrect.
 	 */
-	CacheChange_t* new_change(ChangeKind_t changeKind,InstanceHandle_t handle = c_InstanceHandle_Unknown);
+	RTPS_DllAPI CacheChange_t* new_change(ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
 	/**
 	 * Add a matched reader.
 	 * @param rdata Pointer to the ReaderProxyData object added.
 	 * @return True if added.
 	 */
-	virtual bool matched_reader_add(RemoteReaderAttributes& ratt)=0;
+	RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
 	/**
 	 * Remove a matched reader.
 	 * @param rdata Pointer to the object to remove.
 	 * @return True if removed.
 	 */
-	virtual bool matched_reader_remove(RemoteReaderAttributes& ratt)=0;
+	RTPS_DllAPI virtual bool matched_reader_remove(RemoteReaderAttributes& ratt) = 0;
 	/**
 	 * Tells us if a specific Reader is matched against this writer
 	 * @param rdata Pointer to the ReaderProxyData object
 	 * @return True if it was matched.
 	 */
-	virtual bool matched_reader_is_matched(RemoteReaderAttributes& ratt)=0;
+	RTPS_DllAPI virtual bool matched_reader_is_matched(RemoteReaderAttributes& ratt) = 0;
 	/**
 	 * Check if a specific change has been acknowledged by all Readers.
 	 * Is only useful in reliable Writer. In BE Writers always returns true;
 	 * @return True if acknowledged by all.
 	 */
-	virtual bool is_acked_by_all(CacheChange_t* a_change){return true;}
+	RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* a_change){ return true; }
 	/**
 	 * Update the Attributes of the Writer.
 	 */
-	virtual void updateAttributes(WriterAttributes& att)=0;
+	RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
 	/**
 	 * This methods trigger the send operation for unsent changes.
 	 */
-	virtual void unsent_changes_not_empty()=0;
+	RTPS_DllAPI virtual void unsent_changes_not_empty() = 0;
 	//!Get Min Seq Num in History.
-	SequenceNumber_t get_seq_num_min();
+	RTPS_DllAPI SequenceNumber_t get_seq_num_min();
 	//!Get Max Seq Num in History.
-	SequenceNumber_t get_seq_num_max();
+	RTPS_DllAPI SequenceNumber_t get_seq_num_max();
 
-	uint32_t getTypeMaxSerialized();
+	RTPS_DllAPI uint32_t getTypeMaxSerialized();
 
-	inline WriterListener* getListener(){return mp_listener; };
+	RTPS_DllAPI inline WriterListener* getListener(){ return mp_listener; };
 
-	inline bool getLivelinessAsserted() {return m_livelinessAsserted;};
+	RTPS_DllAPI inline bool getLivelinessAsserted() { return m_livelinessAsserted; };
 
-	inline void setLivelinessAsserted(bool l){m_livelinessAsserted = l;};
+	RTPS_DllAPI inline void setLivelinessAsserted(bool l){ m_livelinessAsserted = l; };
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.

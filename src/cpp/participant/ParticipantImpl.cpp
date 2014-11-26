@@ -44,6 +44,7 @@ ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart
 		mp_rtpsParticipant(nullptr),
 		mp_participant(pspart),
 		mp_listener(listen),
+#pragma warning (disable : 4355 )
 		m_rtps_listener(this)
 {
 	mp_participant->mp_impl = this;
@@ -207,6 +208,38 @@ bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** ty
 	}
 	return false;
 }
+
+bool ParticipantImpl::registerType(TopicDataType* type)
+{
+	const char* const METHOD_NAME = "registerType";
+	if (type->m_typeSize <= 0)
+	{
+		logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
+		return false;
+	}
+	if (type->m_typeSize > PAYLOAD_MAX_SIZE)
+	{
+		logError(PARTICIPANT, "Current version only supports types of sizes < " << PAYLOAD_MAX_SIZE);
+		return false;
+	}
+	if (std::string(type->getName()).size() <= 0)
+	{
+		logError(PARTICIPANT, "Registered Type must have a name");
+		return false;
+	}
+	for (auto ty = m_types.begin(); ty != m_types.end();++ty)
+	{
+		if (strcmp((*ty)->getName(), type->getName()) == 0)
+		{
+			logError(PARTICIPANT, "Type with the same name already exists:" << type->getName());
+			return false;
+		}
+	}
+	m_types.push_back(type);
+	logInfo(PARTICIPANT, "Type " << type->getName() << " registered.");
+	return true;
+}
+
 
 void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo rtpsinfo)
 {

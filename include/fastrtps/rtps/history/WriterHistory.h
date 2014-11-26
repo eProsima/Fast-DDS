@@ -26,31 +26,31 @@ class WriterHistory : public History
 {
 	friend class RTPSWriter;
 public:
-	WriterHistory(const HistoryAttributes&  att);
-	virtual ~WriterHistory();
+	RTPS_DllAPI WriterHistory(const HistoryAttributes&  att);
+	RTPS_DllAPI virtual ~WriterHistory();
 
 	/**
 	 * Update the maximum and minimum sequenceNumber cacheChanges.
 	 */
-	void updateMaxMinSeqNum();
+	RTPS_DllAPI void updateMaxMinSeqNum();
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.
 	 * @param a_change Pointer to the CacheChange to add.
 	 * @param wp Pointer to the writerProxy associated with the change that is going to be added (NOT USED IN WriterHistory).
 	 * @return True if added.
 	 */
-	bool add_change(CacheChange_t* a_change);
+	RTPS_DllAPI bool add_change(CacheChange_t* a_change);
 	/**
 	 * Remove a specific change from the history.
 	 * @param a_change Pointer to the CacheChange_t.
 	 * @return True if removed.
 	 */
-	bool remove_change(CacheChange_t* a_change);
+	RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
 	/**
 	 * Remove the CacheChange_t with the minimum sequenceNumber.
 	 * @return True if correctly removed.
 	 */
-	bool remove_min_change();
+	RTPS_DllAPI bool remove_min_change();
 
 
 

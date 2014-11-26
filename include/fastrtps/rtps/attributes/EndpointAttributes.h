@@ -19,7 +19,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class EndpointAttributes
+	class EndpointAttributes
 {
 public:
 	EndpointAttributes()
@@ -31,7 +31,7 @@ public:
 		m_entityID = -1;
 		endpointKind = WRITER;
 	};
-	virtual ~EndpointAttributes();
+	virtual ~EndpointAttributes(){};
 	EndpointKind_t endpointKind;
 	TopicKind_t topicKind;
 	ReliabilityKind_t reliabilityKind;

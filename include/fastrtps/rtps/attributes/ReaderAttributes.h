@@ -21,7 +21,7 @@ namespace fastrtps{
 namespace rtps{
 
 
-class ReaderTimes
+	class   ReaderTimes
 {
 public:
 	ReaderTimes()
@@ -32,7 +32,7 @@ public:
 	Duration_t heartbeatResponseDelay;
 };
 
-class ReaderAttributes
+	class  ReaderAttributes
 {
 public:
 	ReaderAttributes()
@@ -42,13 +42,13 @@ public:
 		endpoint.reliabilityKind = BEST_EFFORT;
 		expectsInlineQos = false;
 	};
-	virtual ~ReaderAttributes();
+	virtual ~ReaderAttributes(){};
 	EndpointAttributes endpoint;
 	ReaderTimes times;
 	bool expectsInlineQos;
 };
 
-class RemoteWriterAttributes
+	class  RemoteWriterAttributes
 {
 public:
 	RemoteWriterAttributes()

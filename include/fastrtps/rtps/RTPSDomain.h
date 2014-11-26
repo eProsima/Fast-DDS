@@ -59,7 +59,7 @@ public:
 	 * It must be called at the end of the process to avoid memory leaks.
 	 * It also shut downs the DomainRTPSParticipant.
 	 */
-	static void stopAll();
+	RTPS_DllAPI static void stopAll();
 
 	/**
 	 * @brief Create a RTPSParticipant.
@@ -67,7 +67,7 @@ public:
 	 * @param PParam RTPSParticipant Parameters.
 	 * @return Pointer to the RTPSParticipant.
 	 */
-	static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam,RTPSParticipantListener* plisten = nullptr);
+	RTPS_DllAPI static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam, RTPSParticipantListener* plisten = nullptr);
 
 	/**
 	 *
@@ -76,22 +76,22 @@ public:
 	 * @param listen
 	 * @return
 	 */
-	static RTPSWriter* createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen = nullptr);
+	RTPS_DllAPI static RTPSWriter* createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen = nullptr);
 
 
-	static bool removeRTPSWriter(RTPSWriter* writer);
+	RTPS_DllAPI static bool removeRTPSWriter(RTPSWriter* writer);
 
 
-	static RTPSReader* createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt, ReaderHistory* hist, ReaderListener* listen = nullptr);
+	RTPS_DllAPI static RTPSReader* createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt, ReaderHistory* hist, ReaderListener* listen = nullptr);
 
-	static bool removeRTPSReader(RTPSReader* reader);
+	RTPS_DllAPI static bool removeRTPSReader(RTPSReader* reader);
 
 	/**
 	 * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
 	 * @param[in] p Pointer to the RTPSParticipant;
 	 * @return True if correct.
 	 */
-	static bool removeRTPSParticipant(RTPSParticipant* p);
+	RTPS_DllAPI static bool removeRTPSParticipant(RTPSParticipant* p);
 
 	/**
 	 * @brief Get pointer to the unique instance of this class.

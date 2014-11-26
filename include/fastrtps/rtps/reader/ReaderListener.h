@@ -23,7 +23,7 @@ namespace rtps{
 class RTPSReader;
 struct CacheChange_t;
 
-class ReaderListener
+class RTPS_DllAPI ReaderListener
 {
 public:
 	ReaderListener(){};

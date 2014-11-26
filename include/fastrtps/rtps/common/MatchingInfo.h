@@ -24,7 +24,7 @@ namespace rtps{
  * Enumeration MatchingStatus, indicates whether the matched publication/subscription method of the PublisherListener or SubscriberListener has
  * been called for a matching or a removal of a remote endpoint.
  */
-enum MatchingStatus{
+	enum RTPS_DllAPI MatchingStatus{
 	MATCHED_MATCHING,//!< MATCHED_MATCHING, new publisher/subscriber found
 	REMOVED_MATCHING //!< REMOVED_MATCHING, publisher/subscriber removed
 
@@ -33,7 +33,7 @@ enum MatchingStatus{
 /**
  * Class MatchingInfo contains information about the matching between two endpoints.
  */
-class MatchingInfo
+	class RTPS_DllAPI MatchingInfo
 {
 public:
 	MatchingInfo():status(MATCHED_MATCHING){};

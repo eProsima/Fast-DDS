@@ -80,12 +80,13 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;
-			for(auto it : mp_SPDP->m_participantProxies)
+			for (auto it = mp_SPDP->m_participantProxies.begin();
+				it != mp_SPDP->m_participantProxies.end();++it)
 			{
-				if(m_ParticipantProxyData.m_key == it->m_key)
+				if(m_ParticipantProxyData.m_key == (*it)->m_key)
 				{
 					found = true;
-					pdata_ptr = it;
+					pdata_ptr = (*it);
 					break;
 				}
 			}

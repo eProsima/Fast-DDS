@@ -22,7 +22,7 @@ namespace fastrtps{
 namespace rtps{
 
 
-enum DISCOVERY_STATUS
+	enum RTPS_DllAPI DISCOVERY_STATUS
 {
 	DISCOVERED_RTPSPARTICIPANT,
 	CHANGED_QOS_RTPSPARTICIPANT,
@@ -32,7 +32,7 @@ enum DISCOVERY_STATUS
 typedef std::vector<std::pair<std::string,std::string>> PropertyList;
 typedef std::vector<octet> UserData;
 
-class RTPSParticipantDiscoveryInfo {
+class RTPSParticipantDiscoveryInfo{
 public:
 	RTPSParticipantDiscoveryInfo():m_status(DISCOVERED_RTPSPARTICIPANT){};
 	virtual ~RTPSParticipantDiscoveryInfo(){};

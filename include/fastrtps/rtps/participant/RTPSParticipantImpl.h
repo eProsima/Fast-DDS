@@ -68,9 +68,6 @@ class ReaderHistory;
 class ReaderListener;
 
 
-
-
-
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup MANAGEMENTMODULE
@@ -105,7 +102,7 @@ public:
     //!Post to the resource semaphore
     void ResourceSemaphoreWait();
     //!Get Pointer to the IO Service.
-    boost::asio::io_service* getIOService();
+	boost::asio::io_service* getIOService();
     //!Send Method
     void sendSync(CDRMessage_t* msg, const Locator_t& loc);
     //!Get Send Mutex

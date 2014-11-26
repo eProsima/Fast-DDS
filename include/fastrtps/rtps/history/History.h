@@ -14,6 +14,7 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
+#include "fastrtps/config/fastrtps_dll.h"
 
 #include "fastrtps/rtps/history/CacheChangePool.h"
 
@@ -39,34 +40,35 @@ namespace rtps {
  */
 class History
 {
-public:
+protected:
 	History(const HistoryAttributes&  att);
 	virtual ~History();
+public:
 	//!Attributes of the History
 	HistoryAttributes m_att;
 	/**
 	 * Reserve a CacheChange_t from the CacheChange pool.
 	 * @return Pointer to the CacheChange_t.
 	 */
-	inline bool reserve_Cache(CacheChange_t** change){	return m_changePool.reserve_Cache(change);	}
+	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change){ return m_changePool.reserve_Cache(change); }
 	/**
 	 * release a previously reserved CacheChange_t.
 	 * @param ch Pointer to the CacheChange_t.
 	 */
-	inline void release_Cache(CacheChange_t* ch)	{		return m_changePool.release_Cache(ch);	}
+	RTPS_DllAPI inline void release_Cache(CacheChange_t* ch)	{ return m_changePool.release_Cache(ch); }
 
 	//!Returns true if the History is full.
-	bool isFull()	{		return m_isHistoryFull;	}
+	RTPS_DllAPI bool isFull()	{ return m_isHistoryFull; }
 	/**
 	 * Get the History size.
 	 * @return Size of the history.
 	 */
-	size_t getHistorySize(){		return m_changes.size();	}
+	RTPS_DllAPI size_t getHistorySize(){ return m_changes.size(); }
 	/**
 	 * Remove all changes from the History
 	 * @return True if everything was correctly removed.
 	 */
-	bool remove_all_changes();
+	RTPS_DllAPI bool remove_all_changes();
 	/**
 	 * Update the maximum and minimum sequenceNumbers.
 	 */
@@ -96,26 +98,26 @@ public:
 	 * Get the beginning of the changes history iterator.
 	 * @return Iterator to the beginning of the vector.
 	 */
-	std::vector<CacheChange_t*>::iterator changesBegin(){return m_changes.begin();}
+	RTPS_DllAPI std::vector<CacheChange_t*>::iterator changesBegin(){ return m_changes.begin(); }
 	/**
 	 * Get the end of the changes history iterator.
 	 * @return Iterator to the end of the vector.
 	 */
-	std::vector<CacheChange_t*>::iterator changesEnd(){return m_changes.end();}
+	RTPS_DllAPI std::vector<CacheChange_t*>::iterator changesEnd(){ return m_changes.end(); }
 	/**
 	 * Get the minimum CacheChange_t.
 	 * @param min_change Pointer to pointer to the minimum change.
 	 * @return True if correct.
 	 */
-	bool get_min_change(CacheChange_t** min_change);
+	RTPS_DllAPI bool get_min_change(CacheChange_t** min_change);
 	/**
 	 * Get the maximum CacheChange_t.
 	 * @param max_change Pointer to pointer to the maximum change.
 	 * @return True if correct.
 	 */
-	bool get_max_change(CacheChange_t** max_change);
+	RTPS_DllAPI bool get_max_change(CacheChange_t** max_change);
 
-	inline uint32_t getTypeMaxSerialized(){return m_changePool.getPayloadSize();}
+	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getPayloadSize(); }
 
 protected:
 	//!Vector of pointers to the CacheChange_t.
