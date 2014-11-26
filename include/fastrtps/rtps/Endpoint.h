@@ -43,17 +43,18 @@ class ResourceEvent;
  */
 class Endpoint
 {
-public:
+	friend class RTPSParticipantImpl;
+protected:
 	Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
 	virtual ~Endpoint();
+public:
+	RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; };
 
-	inline const GUID_t& getGuid() const {	return m_guid;	};
-
-	inline boost::recursive_mutex* getMutex() const {return mp_mutex;}
+	RTPS_DllAPI inline boost::recursive_mutex* getMutex() const { return mp_mutex; }
 
 
 
-	inline EndpointAttributes* getAttributes() {return &m_att;}
+	RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
 
 protected:
 	//!Pointer to the RTPSParticipant containing this endpoints

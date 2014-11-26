@@ -19,6 +19,7 @@
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -37,7 +38,8 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1, CacheChange_t*c2)
 
 ReaderHistory::ReaderHistory(const HistoryAttributes& att):
 						History(att),
-						mp_reader(nullptr)
+						mp_reader(nullptr),
+						mp_semaphore(new boost::interprocess::interprocess_semaphore(0))
 
 {
 
@@ -125,6 +127,17 @@ void ReaderHistory::updateMaxMinSeqNum()
 		mp_maxSeqCacheChange = m_changes.back();
 	}
 }
+
+void ReaderHistory::postSemaphore()
+{
+	return mp_semaphore->post();
+}
+
+void ReaderHistory::waitSemaphore()
+{
+	return mp_semaphore->wait();
+}
+
 //
 //bool ReaderHistory::isUnreadCache()
 //{

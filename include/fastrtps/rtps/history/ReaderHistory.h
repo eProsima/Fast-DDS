@@ -17,6 +17,11 @@
 #include "fastrtps/rtps/history/History.h"
 #include "fastrtps/rtps/common/CacheChange.h"
 
+namespace boost
+{
+	namespace interprocess{ class interprocess_semaphore; }
+}
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -31,13 +36,13 @@ struct FirstLastSeqNum
 class WriterProxy;
 class RTPSReader;
 
-class ReaderHistory: public History {
+class ReaderHistory : public History {
 	friend class RTPSReader;
 public:
-	ReaderHistory(const HistoryAttributes& att);
-	virtual ~ReaderHistory();
+	RTPS_DllAPI ReaderHistory(const HistoryAttributes& att);
+	RTPS_DllAPI virtual ~ReaderHistory();
 
-	virtual bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
+	RTPS_DllAPI virtual bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
 
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.
@@ -45,22 +50,22 @@ public:
 	 * @param prox Pointer to the writerProxy associated with the change that is going to be added.
 	 * @return True if added.
 	 */
-	bool add_change(CacheChange_t* a_change,WriterProxy*prox= nullptr);
+	RTPS_DllAPI bool add_change(CacheChange_t* a_change, WriterProxy*prox = nullptr);
 
-	bool remove_change(CacheChange_t* a_change);
+	RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
 
 	/**
 	 * Sort the CacheChange_t from the History.
 	 */
-	void sortCacheChanges();
+	RTPS_DllAPI void sortCacheChanges();
 	/**
 	 * Update the maximum and minimum sequenceNumber cacheChanges.
 	 */
-	void updateMaxMinSeqNum();
+	RTPS_DllAPI void updateMaxMinSeqNum();
 
-	void postSemaphore();
+	RTPS_DllAPI void postSemaphore();
 
-	void waitSemaphore();
+	RTPS_DllAPI void waitSemaphore();
 //	/**
 //	 * Method to know whether there are unread CacheChange_t.
 //	 * @return True if there are unread.
@@ -90,7 +95,7 @@ public:
 
 protected:
 	RTPSReader* mp_reader;
-
+	boost::interprocess::interprocess_semaphore* mp_semaphore;
 
 };
 

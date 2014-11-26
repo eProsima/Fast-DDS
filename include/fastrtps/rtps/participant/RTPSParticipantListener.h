@@ -22,7 +22,7 @@ namespace rtps{
 
 class RTPSParticipant;
 
-class RTPSParticipantListener
+class RTPS_DllAPI RTPSParticipantListener
 {
 public:
 	RTPSParticipantListener(){};

@@ -273,9 +273,6 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\md5.h">
       <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\fastrtps\utils\ObjectPool.h">
-      <Filter>Header Files\fastrtps\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\RTPSLog.h">
       <Filter>Header Files\fastrtps\utils</Filter>
     </ClInclude>

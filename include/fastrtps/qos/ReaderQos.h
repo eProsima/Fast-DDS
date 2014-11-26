@@ -22,7 +22,7 @@ namespace fastrtps {
  * during the EDP, not all of the behaviour associated with them has been implemented in the library.
  * The supported Qos in this version are: Durability, Liveliness, Reliability and Partition.
  */
-class ReaderQos{
+class RTPS_DllAPI ReaderQos{
 public:
 	ReaderQos(){};
 	virtual ~ReaderQos(){};

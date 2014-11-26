@@ -23,8 +23,8 @@ namespace fastrtps {
 
 class ParticipantDiscoveryInfo {
 public:
-	ParticipantDiscoveryInfo();
-	virtual ~ParticipantDiscoveryInfo();
+	ParticipantDiscoveryInfo(){};
+	virtual ~ParticipantDiscoveryInfo(){};
 	RTPSParticipantDiscoveryInfo rtps;
 };
 

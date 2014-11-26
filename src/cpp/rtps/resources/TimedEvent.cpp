@@ -64,6 +64,13 @@ double TimedEvent::getRemainingTimeMilliSec()
 {
 	return mp_impl->getRemainingTimeMilliSec();
 }
+
+void TimedEvent::stopSemaphorePost()
+{
+	return mp_impl->mp_stopSemaphore->post();
+}
+
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

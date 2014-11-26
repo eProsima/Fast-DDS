@@ -21,9 +21,9 @@ namespace fastrtps {
 
 class ParticipantListener {
 public:
-	ParticipantListener();
-	virtual ~ParticipantListener();
-	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info);
+	ParticipantListener(){};
+	virtual ~ParticipantListener(){};
+	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){};
 };
 
 } /* namespace fastrtps */

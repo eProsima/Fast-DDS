@@ -95,7 +95,7 @@ public:
 	/**
 	 * Get the Attributes of the Subscriber.
 	 */
-	PublisherAttributes& getAttributes();
+	inline const PublisherAttributes& getAttributes(){ return m_att; };
 
 private:
 	ParticipantImpl* mp_participant;

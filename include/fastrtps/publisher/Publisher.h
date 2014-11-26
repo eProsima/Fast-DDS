@@ -14,12 +14,14 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
+#include "fastrtps/config/fastrtps_dll.h"
+
 namespace eprosima {
 namespace fastrtps {
 
 class PublisherImpl;
 
-class Publisher {
+class RTPS_DllAPI Publisher {
 public:
 	Publisher(PublisherImpl* pimpl);
 	virtual ~Publisher();

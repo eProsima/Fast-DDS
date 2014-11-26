@@ -20,7 +20,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class SimpleEDPAttributes{
+	class SimpleEDPAttributes{
 public:
 	bool use_PublicationWriterANDSubscriptionReader;
 	bool use_PublicationReaderANDSubscriptionWriter;
@@ -32,7 +32,7 @@ public:
 	}
 };
 
-class PortParameters
+	class PortParameters
 {
 public:
 	PortParameters()
@@ -68,7 +68,7 @@ public:
  * Class BuiltinAttributes used to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup ATTRIBUTESMODULE
  */
-class BuiltinAttributes{
+	class BuiltinAttributes{
 public:
 	/**
 	 * If set to false, NO discovery whatsoever would be used.
@@ -90,8 +90,7 @@ public:
 	bool use_STATIC_EndpointDiscoveryProtocol;
 
 
-	//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
-	std::string m_staticEndpointXMLFilename;
+	
 	/**
 	 * DomainId to be used by the RTPSParticipant (80 by default).
 	 */
@@ -121,6 +120,11 @@ public:
 		
 	};
 	virtual ~BuiltinAttributes(){};
+	const char* getStaticEndpointXMLFilename(){ return m_staticEndpointXMLFilename.c_str(); };
+	void setStaticEndpointXMLFilename(const char* str){ m_staticEndpointXMLFilename = std::string(str); };
+private:
+		//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
+		std::string m_staticEndpointXMLFilename;
 };
 
 
@@ -129,7 +133,7 @@ public:
  * Class RTPSParticipantParameters used to define different aspects of a RTPSParticipant.
  * @ingroup ATTRIBUTESMODULE
  */
-class RTPSParticipantAttributes {
+	class RTPSParticipantAttributes {
 public:
 	RTPSParticipantAttributes()
 {

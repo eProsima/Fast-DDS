@@ -22,7 +22,7 @@ namespace rtps{
 
 class RTPSWriter;
 
-class WriterListener
+class RTPS_DllAPI WriterListener
 {
 public:
 	WriterListener(){};

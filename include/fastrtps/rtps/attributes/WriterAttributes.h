@@ -21,7 +21,7 @@ namespace fastrtps{
 namespace rtps{
 
 
-class WriterTimes
+	class  WriterTimes
 {
 public:
 	WriterTimes()
@@ -35,7 +35,7 @@ public:
 	Duration_t nackSupressionDuration;
 };
 
-class WriterAttributes
+	class  WriterAttributes
 {
 public:
 	WriterAttributes()
@@ -44,12 +44,12 @@ public:
 		endpoint.durabilityKind = TRANSIENT_LOCAL;
 		endpoint.reliabilityKind = RELIABLE;
 	};
-	virtual ~WriterAttributes();
+	virtual ~WriterAttributes(){};
 	EndpointAttributes endpoint;
 	WriterTimes times;
 };
 
-class RemoteReaderAttributes
+	class  RemoteReaderAttributes
 {
 public:
 	RemoteReaderAttributes()

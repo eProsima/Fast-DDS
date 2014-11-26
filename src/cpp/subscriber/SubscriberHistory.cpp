@@ -299,5 +299,35 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 	return false;
 }
 
+bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::iterator* vit_out)
+{
+	const char* const METHOD_NAME = "find_Key";
+	t_v_Inst_Caches::iterator vit;
+	bool found = false;
+	for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
+	{
+		if (a_change->instanceHandle == vit->first)
+		{
+			*vit_out = vit;
+			return true;
+		}
+	}
+	if (!found)
+	{
+		if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
+		{
+			t_p_I_Change newpair;
+			newpair.first = a_change->instanceHandle;
+			m_keyedChanges.push_back(newpair);
+			*vit_out = m_keyedChanges.end() - 1;
+			return true;
+		}
+		else
+			logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
+	}
+	return false;
+}
+
+
 } /* namespace fastrtps */
 } /* namespace eprosima */

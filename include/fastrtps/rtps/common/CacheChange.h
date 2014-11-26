@@ -27,7 +27,7 @@ namespace rtps{
 /**
  * Enum ChangeKind_t, different types of changes.
  */
-enum ChangeKind_t{
+	enum RTPS_DllAPI ChangeKind_t{
 	ALIVE,                //!< ALIVE
 	NOT_ALIVE_DISPOSED,   //!< NOT_ALIVE_DISPOSED
 	NOT_ALIVE_UNREGISTERED,//!< NOT_ALIVE_UNREGISTERED
@@ -60,7 +60,7 @@ enum ChangeFromWriterStatus_t{
  * Structure CacheChange_t, contains information on a specific CacheChange.
  * @ingroup COMMONMODULE
  */
- struct CacheChange_t{
+struct RTPS_DllAPI CacheChange_t{
 	//!Kind of change
 	ChangeKind_t kind;
 	//!GUID_t of the writer that generated this change.

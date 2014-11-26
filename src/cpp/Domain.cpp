@@ -26,6 +26,8 @@ namespace fastrtps {
 
 static const char* const CLASS_NAME = "Domain";
 
+std::vector<Domain::t_p_Participant> Domain::m_participants;
+
 
 Domain::Domain()
 {
@@ -63,9 +65,9 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
 Publisher* Domain::createPublisher(Participant* part,PublisherAttributes& att,
 		PublisherListener* listen )
 {
-	for(auto it : m_participants)
+	for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
 	{
-		if(it.second->getGuid() == part->getGuid())
+		if(it->second->getGuid() == part->getGuid())
 		{
 			return part->mp_impl->createPublisher(att,listen);
 		}
@@ -76,9 +78,9 @@ Publisher* Domain::createPublisher(Participant* part,PublisherAttributes& att,
 Subscriber* Domain::createSubscriber(Participant* part,SubscriberAttributes& att,
 		SubscriberListener* listen )
 {
-	for(auto it : m_participants)
+	for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
 	{
-		if(it.second->getGuid() == part->getGuid())
+		if(it->second->getGuid() == part->getGuid())
 		{
 			return part->mp_impl->createSubscriber(att,listen);
 		}
@@ -88,9 +90,9 @@ Subscriber* Domain::createSubscriber(Participant* part,SubscriberAttributes& att
 
 bool Domain::registerType(Participant* part, TopicDataType* type)
 {
-	for(auto it : m_participants)
+	for (auto it = m_participants.begin(); it != m_participants.end();++it)
 	{
-		if(it.second->getGuid() == part->getGuid())
+		if(it->second->getGuid() == part->getGuid())
 		{
 			return part->mp_impl->registerType(type);
 		}

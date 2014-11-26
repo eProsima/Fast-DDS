@@ -32,8 +32,10 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 												mp_reader(nullptr),
 												mp_type(ptype),
 												m_att(att),
+#pragma warning (disable : 4355 )
 												m_history(this,ptype->m_typeSize,att.topic.historyQos,att.topic.resourceLimitsQos),
 												mp_listener(listen),
+#pragma warning (disable : 4355 )
 												m_readerListener(this)
 {
 
@@ -160,5 +162,19 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 	}
 	return updated;
 }
+
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change)
+{
+
+}
+
+void SubscriberImpl::SubscriberReaderListener::onReaderMatched(MatchingInfo info)
+{
+	if (this->mp_subscriberImpl->mp_listener != nullptr)
+	{
+		mp_subscriberImpl->mp_listener->onSubscriptionMatched(info);
+	}
+}
+
 } /* namespace fastrtps */
 } /* namespace eprosima */

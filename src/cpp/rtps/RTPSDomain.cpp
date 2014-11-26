@@ -31,7 +31,11 @@ namespace rtps {
 static const char* const CLASS_NAME = "DomainRTPSParticipant";
 
 bool RTPSDomain::instanceFlag = false;
-RTPSDomain* RTPSDomain::single = NULL;
+RTPSDomain* RTPSDomain::single = nullptr;
+uint32_t RTPSDomain::m_maxRTPSParticipantID = 0;
+std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
+std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
+
 
 RTPSDomain* RTPSDomain::getInstance()
 {

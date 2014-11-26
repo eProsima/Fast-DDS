@@ -29,8 +29,8 @@
 
 #include "fastrtps/rtps/RTPSDomain.h"
 
-//#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-//#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
+#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
 
 #include "fastrtps/utils/IPFinder.h"
 #include "fastrtps/utils/eClock.h"
@@ -126,11 +126,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
-//	mp_builtinProtocols = new BuiltinProtocols();
-//	if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
-//	{
-//		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
-//	}
+	mp_builtinProtocols = new BuiltinProtocols();
+	if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
+	{
+		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
+	}
 
 }
 
@@ -440,27 +440,27 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 				}
 			}
 		}
-		//	if(type == 'R')
-		//	{
-		//		for(p_ReaderIterator rit=m_userReaderList.begin()
-		//				;rit!=m_userReaderList.end();++rit)
-		//		{
-		//			if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
-		//			{
-		//				m_userReaderList.erase(rit);
-		//				found = true;
-		//				break;
-		//			}
-		//		}
-		//	}
+		else
+			{
+				for(auto rit=m_userReaderList.begin()
+						;rit!=m_userReaderList.end();++rit)
+			{
+				if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
+					{
+					m_userReaderList.erase(rit);
+					found = true;
+						break;
+					}
+			}
+			}
 		if(!found)
 			return false;
 		//REMOVE FOR BUILTINPROTOCOLS
-		//	if(p_endpoint->getAttributes()->endpointKind == WRITER)
-		//		m_builtinProtocols.removeLocalWriter((RTPSWriter*)p_endpoint);
-		//	else
-		//		m_builtinProtocols.removeLocalReader((RTPSReader*)p_endpoint);
-		//	//BUILTINPROTOCOLS
+			if(p_endpoint->getAttributes()->endpointKind == WRITER)
+				mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
+			else
+				mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
+			//BUILTINPROTOCOLS
 		//Remove it from threadListenList
 		std::vector<ListenResource*>::iterator thit;
 		for(thit=m_listenResourceList.begin();
@@ -485,13 +485,66 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 }
 
 
+boost::asio::io_service* RTPSParticipantImpl::getIOService()
+{
+	return this->mp_event_thr->getIOService();
+}
+
+void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
+{
+	return mp_send_thr->sendSync(msg, loc);
+}
+
+void RTPSParticipantImpl::announceRTPSParticipantState()
+{
+	return mp_builtinProtocols->announceRTPSParticipantState();
+}
+
+void RTPSParticipantImpl::stopRTPSParticipantAnnouncement()
+{
+	return mp_builtinProtocols->stopRTPSParticipantAnnouncement();
+}
+
+void RTPSParticipantImpl::resetRTPSParticipantAnnouncement()
+{
+	return mp_builtinProtocols->resetRTPSParticipantAnnouncement();
+}
 
 
+bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
+{
+	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
+	if(m_att.builtin.use_STATIC_EndpointDiscoveryProtocol == false)
+	{
+		logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");
+		return false;
+	}
+	return mp_builtinProtocols->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
+}
+
+void RTPSParticipantImpl::ResourceSemaphorePost()
+{
+	if(mp_ResourceSemaphore!=nullptr)
+	{
+		mp_ResourceSemaphore->post();
+	}
+}
+
+void RTPSParticipantImpl::ResourceSemaphoreWait()
+{
+	if (mp_ResourceSemaphore != nullptr)
+	{
+		mp_ResourceSemaphore->wait();
+	}
+
+}
+
+boost::recursive_mutex* RTPSParticipantImpl::getSendMutex()
+{
+	return mp_send_thr->getMutex();
+}
 
 
-
-
-
 //
 //
 //
@@ -505,67 +558,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 //
 //
 
-//
-//bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
-//		SubscriberAttributes& param, uint32_t payload_size, bool isBuiltin,
-//		StateKind_t kind, TopicDataType* ptype, SubscriberListener* inlisten,
-//		const EntityId_t& entityId)
-//{
-//	const char* const METHOD_NAME = "createReader";
-//	std::string type = (kind == STATELESS) ? "STATELESS" :"STATEFUL";
-//	logInfo(RTPS_RTPSParticipant," on topic: "<<param.topic.getTopicName());
-//	EntityId_t entId;
-//	if(entityId == c_EntityId_Unknown)
-//	{
-//		if(param.topic.getTopicKind() == NO_KEY)
-//			entId.value[3] = 0x04;
-//		else if(param.topic.getTopicKind() == WITH_KEY)
-//			entId.value[3] = 0x07;
-//		uint32_t idnum;
-//		if(param.getEntityId()>0)
-//			idnum = param.getEntityId();
-//		else
-//		{
-//			IdCounter++;
-//			idnum = IdCounter;
-//		}
-//		octet* c = (octet*)&idnum;
-//		entId.value[2] = c[0];
-//		entId.value[1] = c[1];
-//		entId.value[0] = c[2];
-//		if(this->existsEntityId(entId,READER))
-//		{
-//			logError(RTPS_RTPSParticipant,"A reader with the same entityId already exists in this RTPSParticipant");
-//			return false;
-//		}
-//	}
-//	else
-//		entId = entityId;
-//	RTPSReader* SReader = NULL;
-//	if(kind == STATELESS)
-//		SReader = (RTPSReader*)new StatelessReader(param, m_guid.guidPrefix,entId,ptype);
-//	else if(kind == STATEFUL)
-//		SReader = (RTPSReader*)new StatefulReader(param, m_guid.guidPrefix,entId,ptype);
-//	if(SReader==NULL)
-//		return false;
-//	SReader->setListener(inlisten);
-//	SReader->setQos(param.qos,true);
-//	SReader->mp_send_thr = &this->m_send_thr;
-//	SReader->mp_event_thr = &this->m_event_thr;
-//	if(isBuiltin)
-//	{
-//		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
-//	}
-//	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
-//	{
-//		delete(SReader);
-//		return false;
-//	}
-//	m_allReaderList.push_back(SReader);
-//
-//	*ReaderOut = SReader;
-//	return true;
-//}
 //
 //void RTPSParticipantImpl::registerReader(RTPSReader* SReader)
 //{
@@ -590,108 +582,14 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 //
 //
 //
-//bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint,char type)
-//{
-//	bool found = false;
-//	{
-//	boost::lock_guard<boost::recursive_mutex> guard(*p_endpoint->getMutex());
-//	if(type == 'W')
-//	{
-//		for(p_WriterIterator wit=m_userWriterList.begin();
-//				wit!=m_userWriterList.end();++wit)
-//		{
-//			if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
-//			{
-//				m_userWriterList.erase(wit);
-//				found = true;
-//				break;
-//			}
-//		}
-//	}
-//	if(type == 'R')
-//	{
-//		for(p_ReaderIterator rit=m_userReaderList.begin()
-//				;rit!=m_userReaderList.end();++rit)
-//		{
-//			if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
-//			{
-//				m_userReaderList.erase(rit);
-//				found = true;
-//				break;
-//			}
-//		}
-//	}
-//	if(!found)
-//		return false;
-//	if(p_endpoint->getEndpointKind()==WRITER)
-//		m_builtinProtocols.removeLocalWriter((RTPSWriter*)p_endpoint);
-//	else
-//		m_builtinProtocols.removeLocalReader((RTPSReader*)p_endpoint);
-//	//Remove it from threadListenList
-//	std::vector<ListenResource*>::iterator thit;
-//	for(thit=m_listenResourceList.begin();
-//			thit!=m_listenResourceList.end();thit++)
-//	{
-//		(*thit)->removeAssociatedEndpoint(p_endpoint);
-//    }
-//	for(thit=m_listenResourceList.begin();
-//			thit!=m_listenResourceList.end();thit++)
-//	{
-//		if(!(*thit)->hasAssociatedEndpoints())
-//		{
-//						delete(*thit);
-//			m_listenResourceList.erase(thit);
-//			break;
-//		}
-//	}
+
+
 //
-//	}
-//	delete(p_endpoint);
-//	return true;
-//}
-//
-//void RTPSParticipantImpl::announceRTPSParticipantState()
-//{
-//	this->m_builtinProtocols.announceRTPSParticipantState();
-//}
-//
-//void RTPSParticipantImpl::stopRTPSParticipantAnnouncement()
-//{
-//	this->m_builtinProtocols.stopRTPSParticipantAnnouncement();
-//}
-//
-//void RTPSParticipantImpl::resetRTPSParticipantAnnouncement()
-//{
-//	this->m_builtinProtocols.resetRTPSParticipantAnnouncement();
-//}
-//
-//void RTPSParticipantImpl::ResourceSemaphorePost()
-//{
-//	if(mp_ResourceSemaphore!=NULL)
-//	{
-//		mp_ResourceSemaphore->post();
-//	}
-//}
-//
-//void RTPSParticipantImpl::ResourceSemaphoreWait()
-//{
-//	if(mp_ResourceSemaphore!=NULL)
-//	{
-//		mp_ResourceSemaphore->wait();
-//	}
+
 //
 //}
 //
-//bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
-//{
-//	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
-//	if(m_builtin.use_STATIC_EndpointDiscoveryProtocol == false)
-//	{
-//		logWarning(RTPS_RTPSParticipant,"Remote Endpoints can only be activated with static discovery protocol");
-//		return false;
-//	}
-//	return m_builtinProtocols.mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
-//}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

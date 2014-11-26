@@ -149,13 +149,15 @@ void PDPSimple::announceParticipantState(bool new_change)
 
 bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata)
 {
-	for(auto pit : m_participantProxies)
+	for (auto pit = m_participantProxies.begin();
+		pit != m_participantProxies.end();++pit)
 	{
-		for(auto rit : (*pit).m_readers)
+		for (auto rit = (*pit)->m_readers.begin();
+			rit != (*pit)->m_readers.end();++rit)
 		{
-			if(rit->m_guid == reader)
+			if((*rit)->m_guid == reader)
 			{
-				*rdata = rit;
+				*rdata = *rit;
 				return true;
 			}
 		}
@@ -165,13 +167,15 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rd
 
 bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata)
 {
-	for(auto pit : m_participantProxies)
+	for (auto pit = m_participantProxies.begin();
+		pit != m_participantProxies.end(); ++pit)
 	{
-		for(auto wit : (*pit).m_writers)
+		for (auto wit = (*pit)->m_writers.begin();
+			wit != (*pit)->m_writers.end(); ++wit)
 		{
-			if(wit->m_guid == writer)
+			if((*wit)->m_guid == writer)
 			{
-				*wdata = wit;
+				*wdata = *wit;
 				return true;
 			}
 		}

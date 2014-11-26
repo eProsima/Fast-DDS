@@ -176,7 +176,6 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\eClock.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\IPFinder.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\md5.h" />
-    <ClInclude Include="..\..\..\..\include\fastrtps\utils\ObjectPool.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\RTPSLog.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\StringMatching.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\TimeConversion.h" />
@@ -619,7 +618,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86Win32VS2010</AdditionalLibraryDirectories>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
@@ -635,7 +634,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86Win32VS2010</AdditionalLibraryDirectories>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
@@ -651,7 +650,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64Win64VS2013</AdditionalLibraryDirectories>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
@@ -667,7 +666,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64Win64VS2010</AdditionalLibraryDirectories>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <SubSystem>NotSet</SubSystem>
@@ -685,7 +684,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86Win32VS2010</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
@@ -702,7 +701,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\i86Win32VS2010</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
@@ -719,7 +718,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64Win64VS2013</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
@@ -736,7 +735,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LIB_BOOST_PATH)\lib\x64Win64VS2010</AdditionalLibraryDirectories>
       <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;iphlpapi.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>

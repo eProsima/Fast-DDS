@@ -382,29 +382,30 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "removeRemoteEndpoints";
 	logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid,C_CYAN);
-	for(auto it : pdata->m_builtinReaders)
+	for (auto it = pdata->m_builtinReaders.begin(); it != pdata->m_builtinReaders.end();++it)
 	{
-		if(it.guid.entityId == c_EntityId_SEDPPubReader && this->mp_PubWriter.first !=nullptr)
+		if(it->guid.entityId == c_EntityId_SEDPPubReader && this->mp_PubWriter.first !=nullptr)
 		{
-			mp_PubWriter.first->matched_reader_remove(it);
+			mp_PubWriter.first->matched_reader_remove(*it);
 			continue;
 		}
-		if(it.guid.entityId == c_EntityId_SEDPSubReader && this->mp_SubWriter.first !=nullptr)
+		if(it->guid.entityId == c_EntityId_SEDPSubReader && this->mp_SubWriter.first !=nullptr)
 		{
-			mp_SubWriter.first->matched_reader_remove(it);
+			mp_SubWriter.first->matched_reader_remove(*it);
 			continue;
 		}
 	}
-	for(auto it : pdata->m_builtinWriters)
+	
+	for (auto it = pdata->m_builtinWriters.begin(); it != pdata->m_builtinWriters.end(); ++it)
 	{
-		if(it.guid.entityId == c_EntityId_SEDPPubWriter && this->mp_PubReader.first !=nullptr)
+		if(it->guid.entityId == c_EntityId_SEDPPubWriter && this->mp_PubReader.first !=nullptr)
 		{
-			mp_PubReader.first->matched_writer_remove(it);
+			mp_PubReader.first->matched_writer_remove(*it);
 			continue;
 		}
-		if(it.guid.entityId == c_EntityId_SEDPSubWriter && this->mp_SubReader.first !=nullptr)
+		if(it->guid.entityId == c_EntityId_SEDPSubWriter && this->mp_SubReader.first !=nullptr)
 		{
-			mp_SubReader.first->matched_writer_remove(it);
+			mp_SubReader.first->matched_writer_remove(*it);
 			continue;
 		}
 	}
