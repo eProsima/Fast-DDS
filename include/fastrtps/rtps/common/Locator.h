@@ -39,7 +39,7 @@ public:
 	Locator_t():kind(1),port(0){
 		LOCATOR_ADDRESS_INVALID(address);
 	}
-	Locator_t(Locator_t& loc):
+	Locator_t(Locator_t&& loc):
 		kind(loc.kind),
 		port(loc.port)
 	{
