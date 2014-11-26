@@ -65,6 +65,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+
+
 	PParam.rtps.sendSocketBufferSize = 8712;
 	PParam.rtps.listenSocketBufferSize = 17424;
 	PParam.rtps.setName("Participant_pub");

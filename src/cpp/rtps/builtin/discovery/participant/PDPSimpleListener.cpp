@@ -75,8 +75,10 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 			if(m_ParticipantProxyData.m_guid == mp_SPDP->getRTPSParticipant()->getGuid())
 			{
 				logInfo(RTPS_PDP,"Message from own RTPSParticipant, ignoring",C_CYAN)
-								return;
+				this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
+				return;
 			}
+			logError(RTPS_PDP,"Missing change with the same KEY replace");
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;

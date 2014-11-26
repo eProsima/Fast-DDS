@@ -82,8 +82,13 @@ void MessageReceiver::reset(){
 	TIME_INVALID(timestamp);
 
 	unicastReplyLocatorList.clear();
+	unicastReplyLocatorList.reserve(1);
 	multicastReplyLocatorList.clear();
-	unicastReplyLocatorList.push_back(defUniLoc);
+	Locator_t  loc;
+	LocatorList_t locList;
+	locList.clear();
+	locList.push_back(loc);
+	unicastReplyLocatorList.push_back(loc);
 	multicastReplyLocatorList.push_back(defUniLoc);
 }
 
@@ -96,7 +101,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		logWarning(RTPS_MSG_IN,"Received message too short, ignoring",C_BLUE)
 		return;
 	}
-	reset();
+	this->reset();
 	destGuidPrefix = RTPSParticipantguidprefix;
 	unicastReplyLocatorList.begin()->kind = loc->kind;
 	uint8_t n_start = 0;
