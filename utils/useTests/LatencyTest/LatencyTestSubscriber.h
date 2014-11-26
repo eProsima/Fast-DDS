@@ -15,13 +15,13 @@
 #define LATENCYTESTSUBSCRIBER_H_
 
 #include "LatencyTestTypes.h"
-
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 class LatencyTestSubscriber {
 public:
 	LatencyTestSubscriber();
 	virtual ~LatencyTestSubscriber();
 
-	RTPSParticipant* mp_RTPSParticipant;
+	Participant* mp_participant;
 	Publisher* mp_datapub;
 	Publisher* mp_commandpub;
 	Subscriber* mp_datasub;
@@ -72,6 +72,8 @@ public:
 		LatencyTestSubscriber* mp_up;
 	}m_commandsublistener;
 	bool m_echo;
+	LatencyDataType latency_t;
+		TestCommandDataType command_t;
 
 };
 

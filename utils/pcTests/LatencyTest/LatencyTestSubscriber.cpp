@@ -17,12 +17,12 @@ uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
 LatencyTestSubscriber::LatencyTestSubscriber():
-				mp_RTPSParticipant(NULL),
-				mp_datapub(NULL),
-				mp_commandpub(NULL),
-				mp_datasub(NULL),
-				mp_commandsub(NULL),
-				mp_latency(NULL),
+				mp_participant(nullptr),
+				mp_datapub(nullptr),
+				mp_commandpub(nullptr),
+				mp_datasub(nullptr),
+				mp_commandsub(nullptr),
+				mp_latency(nullptr),
 				m_disc_sema(0),
 				m_comm_sema(0),
 				m_data_sema(0),
@@ -48,21 +48,22 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 {
 	m_echo = echo;
 	n_samples = nsam;
-	RTPSParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.builtin.domainId = 80;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 65536;
-	PParam.listenSocketBufferSize = 2*65536;
-	PParam.name = "RTPSParticipant_sub";
-	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
-	if(mp_RTPSParticipant == NULL)
+	ParticipantAttributes PParam;
+	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.domainId = 80;
+	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.sendSocketBufferSize = 65536;
+	PParam.rtps.listenSocketBufferSize = 2*65536;
+	PParam.rtps.setName("Participant_sub");
+	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant == nullptr)
 		return false;
-
+	Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
+		Domain::registerType(mp_participant,(TopicDataType*)&command_t);
 	// DATA PUBLISHER
 	PublisherAttributes PubDataparam;
 	PubDataparam.topic.topicDataType = "LatencyType";
@@ -73,8 +74,8 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datapub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
-	if(mp_datapub == NULL)
+	mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
+	if(mp_datapub == nullptr)
 		return false;
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
@@ -89,8 +90,8 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datasub = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,SubDataparam,&this->m_datasublistener);
-	if(mp_datasub == NULL)
+	mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
+	if(mp_datasub == nullptr)
 		return false;
 	//COMMAND PUBLISHER
 	PublisherAttributes PubCommandParam;
@@ -101,8 +102,8 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubCommandParam.topic.historyQos.depth = 100;
 	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
-	mp_commandpub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,PubCommandParam,&this->m_commandpublistener);
-	if(mp_commandpub == NULL)
+	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
+	if(mp_commandpub == nullptr)
 		return false;
 	SubscriberAttributes SubCommandParam;
 	SubCommandParam.topic.topicDataType = "TestCommandType";
@@ -113,8 +114,8 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_commandsub = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,SubCommandParam,&this->m_commandsublistener);
-	if(mp_commandsub == NULL)
+	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
+	if(mp_commandsub == nullptr)
 		return false;
 	return true;
 }
@@ -125,7 +126,7 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(MatchingInfo i
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Data Pub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -134,7 +135,7 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo 
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Data Sub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -145,7 +146,7 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(MatchingInf
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Command Pub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -154,7 +155,7 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(MatchingIn
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Command Sub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -196,7 +197,7 @@ void LatencyTestSubscriber::run()
 	{
 		m_disc_sema.wait();
 	}
-	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
+	cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
 	for(std::vector<uint32_t>::iterator ndata = data_size_sub.begin();ndata!=data_size_sub.end();++ndata)
 	{
 		if(!this->test(*ndata))

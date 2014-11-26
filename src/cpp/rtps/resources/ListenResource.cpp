@@ -35,6 +35,9 @@ ListenResource::ListenResource():
 
 ListenResource::~ListenResource() {
 	// TODO Auto-generated destructor stub
+
+	delete(mp_impl);
+	delete(mp_receiver);
 }
 
 

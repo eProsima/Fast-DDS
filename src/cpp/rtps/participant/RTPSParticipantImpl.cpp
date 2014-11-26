@@ -102,7 +102,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		}
 
 		std::string auxstr = ss.str();
-		logWarning(RTPS_PARTICIPANT,"RTPSParticipant created with NO default Unicast Locator List, adding Locators: "<<auxstr);
+		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<auxstr);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
@@ -524,7 +524,7 @@ bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16
 
 void RTPSParticipantImpl::ResourceSemaphorePost()
 {
-	if(mp_ResourceSemaphore!=nullptr)
+	if(mp_ResourceSemaphore != nullptr)
 	{
 		mp_ResourceSemaphore->post();
 	}

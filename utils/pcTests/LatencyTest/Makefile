@@ -37,10 +37,10 @@ STATETEST_TARGET_DEBUG= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTestd
 STATETEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTest
 
 STATETEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
-                         -I$(EPROSIMADIR)/code
+                         -I$(BASEDIR)/../../../thirdparty/eprosima-common-code
 
-STATETEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread
-STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread
+STATETEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time
+STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time
 
 STATETEST_SRC_CFILES=
 

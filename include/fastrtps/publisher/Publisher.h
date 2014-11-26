@@ -15,6 +15,7 @@
 #define PUBLISHER_H_
 
 #include "fastrtps/config/fastrtps_dll.h"
+#include <cstdio>
 
 namespace eprosima {
 namespace fastrtps {
@@ -52,6 +53,8 @@ public:
 	 * @return True if correct.
 	 */
 	bool dispose_and_unregister(void*Data);
+
+	bool removeAllChange(size_t* removed = nullptr);
 
 private:
 	PublisherImpl* mp_impl;

@@ -37,9 +37,8 @@ STATETEST_CFLAGS = $(CFLAGS) -std=c++0x
 STATETEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/LatencyTest
 
 STATETEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
-                         -I$(EPROSIMADIR)/code
-
-STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread
+								-I$(BASEDIR)/../../../thirdparty/eprosima-common-code 
+STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time
 
 STATETEST_SRC_CFILES=
 

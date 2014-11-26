@@ -14,7 +14,7 @@
 #ifndef LATENCYTESTTYPES_H_
 #define LATENCYTESTTYPES_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/fastrtps_all.h"
 
 
 
@@ -59,7 +59,7 @@ class LatencyDataType: public TopicDataType
 public:
 	LatencyDataType()
 {
-		m_topicDataTypeName = "LatencyType";
+		setName("LatencyType");
 		m_typeSize = 15000;
 		m_isGetKeyDefined = false;
 };
@@ -90,7 +90,7 @@ class TestCommandDataType:public TopicDataType
 public:
 	TestCommandDataType()
 {
-		m_topicDataTypeName = "TestCommandType";
+		setName("TestCommandType");
 		m_typeSize = 4;
 		m_isGetKeyDefined = false;
 };
