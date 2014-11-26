@@ -82,10 +82,7 @@ void MessageReceiver::reset(){
 	TIME_INVALID(timestamp);
 
 	unicastReplyLocatorList.clear();
-
 	multicastReplyLocatorList.clear();
-
-
 	unicastReplyLocatorList.push_back(defUniLoc);
 	multicastReplyLocatorList.push_back(defUniLoc);
 }

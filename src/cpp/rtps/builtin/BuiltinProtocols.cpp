@@ -33,6 +33,8 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+static const char* const CLASS_NAME = "BuiltinProtocols";
+
 BuiltinProtocols::BuiltinProtocols():
 				mp_participantImpl(nullptr),
 				mp_PDP(nullptr),
@@ -51,6 +53,7 @@ BuiltinProtocols::~BuiltinProtocols() {
 
 bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes)
 {
+	const char* const METHOD_NAME = "initBuiltinProtocols";
 	mp_participantImpl = p_part;
 	m_att = attributes;
 
@@ -106,7 +109,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 		mp_PDP->resetParticipantAnnouncement();
 	}
 
-
+	logError(RTPS_PDP,"SLEEPING 5 SECONDS-DEBUG");
 	eClock::my_sleep(5000);
 
 	return true;

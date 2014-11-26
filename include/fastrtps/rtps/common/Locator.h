@@ -39,10 +39,17 @@ public:
 	Locator_t():kind(1),port(0){
 		LOCATOR_ADDRESS_INVALID(address);
 	}
-	Locator_t(const Locator_t& loc):
+	Locator_t(Locator_t& loc):
 		kind(loc.kind),
 		port(loc.port)
 	{
+		for(uint8_t i = 0;i<16;++i)
+			address[i] = loc.address[i];
+	}
+	Locator_t(const Locator_t& loc)
+	{
+		kind = loc.kind;
+		port=loc.port;
 		for(uint8_t i = 0;i<16;++i)
 			address[i] = loc.address[i];
 	}
@@ -155,10 +162,9 @@ public:
 	RTPS_DllAPI size_t size(){
 		return m_locators.size();
 	}
-	RTPS_DllAPI void clear(){
-		m_locators.clear();
-		return;
-	}
+	RTPS_DllAPI void clear(){ return m_locators.clear();}
+	RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}
+	RTPS_DllAPI void resize(size_t num) { return m_locators.resize(num);}
 	RTPS_DllAPI void push_back(Locator_t loc)
 	{
 		bool already = false;
