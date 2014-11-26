@@ -18,7 +18,7 @@
 
 
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/fastrtps_all.h"
 
 #include "LatencyTestPublisher.h"
 #include "LatencyTestSubscriber.h"
@@ -43,9 +43,9 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 const int c_n_samples = 10000;
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
-	cout << "Starting "<< endl;
-	pInfo("Starting"<<endl)
+	Log::setVerbosity(VERB_INFO);
+	//cout << "Starting "<< endl;
+	logUser("Starting");
 	int type;
 	int sub_number = 1;
 	int n_samples = c_n_samples;
@@ -132,12 +132,6 @@ int main(int argc, char** argv){
 		cout << "LatencyTest subscriber echo/noecho NUM_SAMPLES" <<endl;
 		return 0;
 	}
-
-	LatencyDataType latency_t;
-	RTPSDomain::registerType((TopicDataType*)&latency_t);
-
-	TestCommandDataType command_t;
-	RTPSDomain::registerType((TopicDataType*)&command_t);
 
 	switch (type)
 	{

@@ -60,5 +60,12 @@ bool Publisher::dispose_and_unregister(void* Data) {
 	return mp_impl->create_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
 }
 
+bool Publisher::removeAllChange(size_t* removed )
+{
+	const char* const METHOD_NAME = "removeAllChange";
+	logInfo(PUBLISHER,"Removing all data from history");
+	return mp_impl->removeAllChange(removed);
+}
+
 } /* namespace pubsub */
 } /* namespace eprosima */

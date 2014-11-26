@@ -11,25 +11,47 @@
  *
  */
 
-#ifndef RTPS_ALL_H_
-#define RTPS_ALL_H_
+#ifndef FASTRTPS_ALL_H_
+#define FASTRTPS_ALL_H_
 
-//USE THIS HEADER WITH CAUTION.
-//IT INCLUDES ALL NECESSARY ELEMENTS TO COMPILE A TESTS USING THE PUBLIC API.
+//USER THIS HEADER TO CREATE RAPID PROTOTYPES AND TESTS
+//DO NOT INCLUDE IN PROJETCTS WERE COMPILATION TIME OR SIZE IS REVELANT
+//SINCE IT INCLUDES ALL NECESSARY HEADERS.
 
-#include "fastrtps/common/types/all_common.h"
+#include "fastrtps/rtps/common/all_common.h"
 
-#include "fastrtps/pubsub/attributes/all_attributes.h"
-#include "fastrtps/RTPSParticipant.h"
-#include "fastrtps/pubsub/TopicDataType.h"
-#include "fastrtps/pubsub/RTPSDomain.h"
-#include "fastrtps/pubsub/Publisher.h"
-#include "fastrtps/pubsub/Subscriber.h"
-#include "fastrtps/pubsub/PublisherListener.h"
-#include "fastrtps/pubsub/SubscriberListener.h"
-#include "fastrtps/pubsub/RTPSParticipantListener.h"
+#include "fastrtps/rtps/attributes/WriterAttributes.h"
+#include "fastrtps/rtps/attributes/ReaderAttributes.h"
 
-#include "fastrtps/pubsub/SampleInfo.h"
+#include "fastrtps/rtps/RTPSDomain.h"
+
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
+#include "fastrtps/rtps/participant/RTPSParticipantListener.h"
+#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/rtps/writer/WriterListener.h"
+#include "fastrtps/rtps/history/WriterHistory.h"
+
+#include "fastrtps/rtps/reader/RTPSReader.h"
+#include "fastrtps/rtps/reader/ReaderListener.h"
+#include "fastrtps/rtps/history/ReaderHistory.h"
+
+
+#include "fastrtps/Domain.h"
+
+#include "fastrtps/participant/Participant.h"
+#include "fastrtps/participant/ParticipantListener.h"
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/subscriber/Subscriber.h"
+#include "fastrtps/publisher/PublisherListener.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+
+
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/attributes/PublisherAttributes.h"
+#include "fastrtps/attributes/SubscriberAttributes.h"
+
+#include "fastrtps/subscriber/SampleInfo.h"
+#include "fastrtps/TopicDataType.h"
 
 #include "fastrtps/utils/IPFinder.h"
 #include "fastrtps/utils/RTPSLog.h"
@@ -39,8 +61,7 @@
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/qos/QosPolicies.h"
 
-using namespace eprosima;
-using namespace pubsub;
-using namespace rtps;
+#include "fastrtps/utils/RTPSLog.h"
 
-#endif /* RTPS_ALL_H_ */
+
+#endif /* FASTRTPS_ALL_H_ */

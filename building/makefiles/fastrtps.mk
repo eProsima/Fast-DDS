@@ -65,6 +65,7 @@ FASTRTPS_SRC_CPPFILES= \
 		  $(BASEDIR)/src/cpp/rtps/history/CacheChangePool.cpp \
 		  $(BASEDIR)/src/cpp/rtps/history/History.cpp \
 		  $(BASEDIR)/src/cpp/rtps/history/WriterHistory.cpp \
+		  $(BASEDIR)/src/cpp/rtps/history/ReaderHistory.cpp \
 		  \
 		  $(BASEDIR)/src/cpp/rtps/reader/timedevent/HeartbeatResponseDelay.cpp \
 		  $(BASEDIR)/src/cpp/rtps/reader/timedevent/WriterProxyLiveliness.cpp \

@@ -13,7 +13,14 @@
 #ifndef SAMPLEINFO_H_
 #define SAMPLEINFO_H_
 
+#include <cstdint>
+
 #include "fastrtps/config/fastrtps_dll.h"
+
+#include "fastrtps/rtps/common/Guid.h"
+#include "fastrtps/rtps/common/Time_t.h"
+#include "fastrtps/rtps/common/InstanceHandle.h"
+#include "fastrtps/rtps/common/CacheChange.h"
 
 namespace eprosima {
 namespace fastrtps {

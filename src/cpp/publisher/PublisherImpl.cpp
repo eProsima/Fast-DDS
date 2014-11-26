@@ -110,15 +110,15 @@ bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 }
 
 
-//bool PublisherImpl::removeMinSeqChange()
-//{
-//	return mp_writer->removeMinSeqCacheChange();
-//}
-//
-//bool PublisherImpl::removeAllChange(size_t* removed)
-//{
-//	return mp_writer->removeAllCacheChange(removed);
-//}
+bool PublisherImpl::removeMinSeqChange()
+{
+	return m_history.removeMinSeqChange();
+}
+
+bool PublisherImpl::removeAllChange(size_t* removed)
+{
+	return m_history.removeAllChange(removed);
+}
 //
 //size_t PublisherImpl::getHistoryElementsNumber()
 //{

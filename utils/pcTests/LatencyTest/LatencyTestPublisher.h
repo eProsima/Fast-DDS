@@ -16,6 +16,8 @@
 
 #include "LatencyTestTypes.h"
 
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+
 class TimeStats{
 public:
 	TimeStats():nbytes(0),min(0),max(0),mean(0),p50(0),p90(0),p99(0),p9999(0),stdev(0){}
@@ -30,7 +32,7 @@ public:
 	LatencyTestPublisher();
 	virtual ~LatencyTestPublisher();
 
-	RTPSParticipant* mp_RTPSParticipant;
+	Participant* mp_participant;
 	Publisher* mp_datapub;
 	Publisher* mp_commandpub;
 	Subscriber* mp_datasub;
@@ -93,7 +95,8 @@ public:
 		LatencyTestPublisher* mp_up;
 		int n_matched;
 	}m_commandsublistener;
-
+	LatencyDataType latency_t;
+		TestCommandDataType command_t;
 
 
 };

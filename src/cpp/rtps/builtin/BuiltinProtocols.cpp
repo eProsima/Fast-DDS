@@ -25,6 +25,8 @@
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/utils/IPFinder.h"
 
+#include "fastrtps/utils/eClock.h"
+
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
@@ -32,11 +34,11 @@ namespace fastrtps{
 namespace rtps {
 
 BuiltinProtocols::BuiltinProtocols():
-		mp_participantImpl(nullptr),
-		mp_PDP(nullptr),
-		mp_WLP(nullptr),
-		m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
-		m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
+				mp_participantImpl(nullptr),
+				mp_PDP(nullptr),
+				mp_WLP(nullptr),
+				m_SPDP_WELL_KNOWN_MULTICAST_PORT(7400),
+				m_SPDP_WELL_KNOWN_UNICAST_PORT(7410)
 {
 	// TODO Auto-generated constructor stub
 	m_useMandatory = false;
@@ -68,7 +70,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	{
 		m_useMandatory = true;
 		for(std::vector<Locator_t>::iterator it = m_att.metatrafficMulticastLocatorList.begin();
-			it!=m_att.metatrafficMulticastLocatorList.end();++it)
+				it!=m_att.metatrafficMulticastLocatorList.end();++it)
 		{
 			m_metatrafficMulticastLocatorList.push_back(*it);
 		}
@@ -86,7 +88,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	else
 	{
 		for(std::vector<Locator_t>::iterator it = m_att.metatrafficUnicastLocatorList.begin();
-		it!=m_att.metatrafficUnicastLocatorList.end();++it)
+				it!=m_att.metatrafficUnicastLocatorList.end();++it)
 		{
 			m_metatrafficUnicastLocatorList.push_back(*it);
 		}
@@ -95,20 +97,19 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	{
 		mp_PDP = new PDPSimple(this);
 		mp_PDP->initPDP(mp_participantImpl);
-	}
-	if(m_att.use_WriterLivelinessProtocol)
-	{
-		mp_WLP = new WLP(this);
-		mp_WLP->initWL(mp_participantImpl);
-	}
-	if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
-	{
+		if(m_att.use_WriterLivelinessProtocol)
+		{
+			mp_WLP = new WLP(this);
+			mp_WLP->initWL(mp_participantImpl);
+		}
 		mp_PDP->announceParticipantState(true);
 		mp_PDP->resetParticipantAnnouncement();
 	}
 
 
-	return false;
+	eClock::my_sleep(5000);
+
+	return true;
 }
 
 bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)

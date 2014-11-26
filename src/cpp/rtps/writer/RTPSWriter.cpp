@@ -35,6 +35,7 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& 
 				mp_listener(listen)
 {
 	const char* const METHOD_NAME = "RTPSWriter";
+	mp_history->mp_writer = this;
 	this->init_header();
 	logInfo(RTPS_WRITER,"RTPSWriter created");
 }
@@ -67,8 +68,7 @@ CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t h
 	ch->kind = changeKind;
 	if(m_att.topicKind == WITH_KEY && !handle.isDefined())
 	{
-		logError(RTPS_WRITER,"Changes in KEYED Writers need a valid instanceHandle");
-		return nullptr;
+		logWarning(RTPS_WRITER,"Changes in KEYED Writers need a valid instanceHandle");
 		//		if(mp_type->m_isGetKeyDefined)
 		//		{
 		//			mp_type->getKey(data,&ch->instanceHandle);

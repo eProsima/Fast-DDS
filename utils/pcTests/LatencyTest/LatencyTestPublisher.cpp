@@ -12,19 +12,25 @@
  */
 
 #include "LatencyTestPublisher.h"
+#include "fastrtps/utils/RTPSLog.h"
+
+using namespace eprosima;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
+static const char * const CLASS_NAME = "LatencyTestPublisher";
 
 LatencyTestPublisher::LatencyTestPublisher():
-										mp_RTPSParticipant(NULL),
-										mp_datapub(NULL),
-										mp_commandpub(NULL),
-										mp_datasub(NULL),
-										mp_commandsub(NULL),
-										mp_latency_in(NULL),
-										mp_latency_out(NULL),
+										mp_participant(nullptr),
+										mp_datapub(nullptr),
+										mp_commandpub(nullptr),
+										mp_datasub(nullptr),
+										mp_commandsub(nullptr),
+										mp_latency_in(nullptr),
+										mp_latency_out(nullptr),
 										m_overhead(0.0),
 										n_subscribers(0),
 										n_samples(0),
@@ -51,21 +57,22 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 {
 	n_samples = n_sam;
 	n_subscribers = n_sub;
-	RTPSParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.builtin.domainId = 80;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 8712;
-	PParam.listenSocketBufferSize = 17424;
-	PParam.name = "RTPSParticipant_pub";
-	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
-	if(mp_RTPSParticipant == NULL)
+	ParticipantAttributes PParam;
+	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.domainId = 80;
+	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.sendSocketBufferSize = 8712;
+	PParam.rtps.listenSocketBufferSize = 17424;
+	PParam.rtps.setName("Participant_pub");
+	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant == nullptr)
 		return false;
-
+	Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
+		Domain::registerType(mp_participant,(TopicDataType*)&command_t);
 	m_clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_clock.setTimeNow(&m_t2);
@@ -81,8 +88,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datapub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
-	if(mp_datapub == NULL)
+	mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
+	if(mp_datapub == nullptr)
 		return false;
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
@@ -96,8 +103,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubDataparam.topic.historyQos.depth = 100;
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	mp_datasub = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,SubDataparam,&this->m_datasublistener);
-	if(mp_datasub == NULL)
+	mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
+	if(mp_datasub == nullptr)
 		return false;
 	//COMMAND PUBLISHER
 	PublisherAttributes PubCommandParam;
@@ -108,8 +115,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubCommandParam.topic.historyQos.depth = 100;
 	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
-	mp_commandpub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,PubCommandParam,&this->m_commandpublistener);
-	if(mp_commandpub == NULL)
+	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
+	if(mp_commandpub == nullptr)
 		return false;
 	SubscriberAttributes SubCommandParam;
 	SubCommandParam.topic.topicDataType = "TestCommandType";
@@ -120,8 +127,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_commandsub = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,SubCommandParam,&this->m_commandsublistener);
-	if(mp_commandsub == NULL)
+	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
+	if(mp_commandsub == nullptr)
 		return false;
 	return true;
 }
@@ -130,12 +137,12 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(MatchingInfo in
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Data Pub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
 
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			pError("More matched subscribers than expected"<<endl);
+			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -148,12 +155,12 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(MatchingInfo i
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Data Sub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
 
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			pError("More matched subscribers than expected"<<endl);
+			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -166,12 +173,12 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(MatchingInfo
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Command Pub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
 
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			pError("More matched subscribers than expected"<<endl);
+			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -184,12 +191,12 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(MatchingInf
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << RTPS_MAGENTA << "Command Sub Matched "<<RTPS_DEF<<endl;
+		cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
 
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			pError("More matched subscribers than expected"<<endl);
+			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -224,7 +231,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 		mp_up->m_status = -1;
 		mp_up->m_data_sema.post();
 	}
-	else if(mp_up->mp_latency_in->seqnum == NSAMPLES)
+	else if(mp_up->mp_latency_in->seqnum == mp_up->n_samples)
 	{
 
 		mp_up->m_clock.setTimeNow(&mp_up->m_t2);
@@ -287,7 +294,7 @@ void LatencyTestPublisher::run()
 		if(m_status == -1)
 			return;
 	}
-	cout << RTPS_B_MAGENTA << "DISCOVERY COMPLETE "<<RTPS_DEF<<endl;
+	cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
 	printf("Printing round-trip times in us, statistics for %d samples\n",n_samples);
 	printf("   Bytes,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
 	printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
@@ -345,7 +352,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.mean = (double)( *m_times.begin()/(NSAMPLES+1));
+	TS.mean = (double)( *m_times.begin()/(n_samples+1));
 	m_stats.push_back(TS);
 }
 void LatencyTestPublisher::printStat(TimeStats& TS)

@@ -129,8 +129,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 		this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
 		if(mp_SPDPWriterHistory->getHistorySize() > 0)
 			mp_SPDPWriterHistory->remove_min_change();
-		change = mp_SPDPWriter->new_change(ALIVE);
-		change->instanceHandle = getLocalParticipantProxyData()->m_key;
+		change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
 		if(getLocalParticipantProxyData()->toParameterList())
 		{
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;

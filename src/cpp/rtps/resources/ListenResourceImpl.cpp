@@ -112,6 +112,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
+	this->mp_RTPSParticipantImpl = pimpl;
 	m_listenLoc = loc;
 	boost::asio::ip::address address = boost::asio::ip::address::from_string(m_listenLoc.to_IP4_string());
 	if(m_listenLoc.address[12]==0 && m_listenLoc.address[13]==0 && m_listenLoc.address[14]==0 && m_listenLoc.address[15]==0) //LISTEN IN ALL INTERFACES
@@ -156,7 +157,7 @@ Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& 
 	else
 	{
 		bool binded = false;
-		for(uint8_t i =0;i<100;++i)
+		for(uint8_t i =0;i<1000;++i)
 		{
 			m_listen_endpoint.port(m_listen_endpoint.port()+i);
 			try
@@ -173,7 +174,7 @@ Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& 
 		}
 		if(!binded)
 		{
-			logError(RTPS_MSG_IN,"Tried 100 ports and none was working",C_BLUE);
+			logError(RTPS_MSG_IN,"Tried 1000 ports and none was working",C_BLUE);
 			m_listenLoc.kind = -1;
 			return m_listenLoc;
 		}

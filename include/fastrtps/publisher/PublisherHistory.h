@@ -33,6 +33,11 @@ public:
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
 	virtual ~PublisherHistory();
 	bool add_pub_change(CacheChange_t* change);
+
+	bool removeMinSeqChange();
+
+	bool removeAllChange(size_t* removed);
+
 private:
 	//!Vector of pointer to the CacheChange_t divided by key.
 	t_v_Inst_Caches m_keyedChanges;

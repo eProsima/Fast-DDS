@@ -18,13 +18,12 @@
 
 
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/fastrtps_all.h"
 
 #include "LatencyTestPublisher.h"
 #include "LatencyTestSubscriber.h"
 
 using namespace eprosima;
-using namespace dds;
 using namespace rtps;
 using namespace std;
 
@@ -44,9 +43,9 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 const int c_n_samples = 10000;
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
-	cout << "Starting "<< endl;
-	pInfo("Starting"<<endl)
+	Log::setVerbosity(VERB_INFO);
+	//cout << "Starting "<< endl;
+	logUser("Starting");
 	int type;
 	int sub_number = 1;
 	int n_samples = c_n_samples;
@@ -129,14 +128,10 @@ int main(int argc, char** argv){
 	else
 	{
 		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
+		cout << "LatencyTest publisher NUM_SUBSCRIBERS NUM_SAMPLES"<<endl;
+		cout << "LatencyTest subscriber echo/noecho NUM_SAMPLES" <<endl;
 		return 0;
 	}
-
-	LatencyDataType latency_t;
-	DomainRTPSParticipant::registerType((DDSTopicDataType*)&latency_t);
-
-	TestCommandDataType command_t;
-	DomainRTPSParticipant::registerType((DDSTopicDataType*)&command_t);
 
 	switch (type)
 	{
@@ -157,7 +152,7 @@ int main(int argc, char** argv){
 	}
 	}
 
-	DomainRTPSParticipant::stopAll();
+	RTPSDomain::stopAll();
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;

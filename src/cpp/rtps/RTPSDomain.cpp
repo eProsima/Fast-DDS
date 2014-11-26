@@ -28,7 +28,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const char* const CLASS_NAME = "DomainRTPSParticipant";
+static const char* const CLASS_NAME = "RTPSDomain";
 
 bool RTPSDomain::instanceFlag = false;
 RTPSDomain* RTPSDomain::single = nullptr;
@@ -82,12 +82,17 @@ void RTPSDomain::stopAll()
 RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
 														RTPSParticipantListener* listen)
 {
-	const char* const METHOD_NAME = "createRTPSParticipant";
+	const char* const METHOD_NAME = "createParticipant";
 	logInfo(RTPS_PARTICIPANT,"");
 
 	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod)
 	{
 		logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
+		return nullptr;
+	}
+	if(PParam.use_IP4_to_send == false && PParam.use_IP6_to_send == false)
+	{
+		logError(RTPS_PARTICIPANT,"Use IP4 OR User IP6 to send must be set to true");
 		return nullptr;
 	}
 	uint32_t ID;

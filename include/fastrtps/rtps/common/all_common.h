@@ -10,19 +10,19 @@
  * @file all_common.h	
  */
 
-#ifndef ALL_COMMON_H_
-#define ALL_COMMON_H_
+#ifndef FASTRTPS_ALL_COMMON_H_
+#define FASTRTPS_ALL_COMMON_H_
 
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/CDRMessage_t.h"
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/common/InstanceHandle.h"
-#include "fastrtps/rtps/common/Locator.h"
-#include "fastrtps/rtps/common/SequenceNumber.h"
-#include "fastrtps/rtps/common/SerializedPayload.h"
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include "Types.h"
+#include "CDRMessage_t.h"
+#include "Guid.h"
+#include "InstanceHandle.h"
+#include "Locator.h"
+#include "SequenceNumber.h"
+#include "SerializedPayload.h"
+#include "Time_t.h"
+#include "CacheChange.h"
+#include "MatchingInfo.h"
 
 
-
-#endif /* ALL_COMMON_H_ */
+#endif /* FASTRTPS_ALL_COMMON_H_ */
