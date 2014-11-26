@@ -16,6 +16,7 @@
 #include "fastrtps/rtps/common/Types.h"
 #include <sstream>
 #include <vector>
+#include <cstdint>
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -165,7 +166,7 @@ public:
 	RTPS_DllAPI void clear(){ return m_locators.clear();}
 	RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}
 	RTPS_DllAPI void resize(size_t num) { return m_locators.resize(num);}
-	RTPS_DllAPI void push_back(Locator_t loc)
+	RTPS_DllAPI void push_back(Locator_t& loc)
 	{
 		bool already = false;
 		for(LocatorListIterator it=this->begin();it!=this->end();++it)

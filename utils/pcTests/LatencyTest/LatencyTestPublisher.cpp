@@ -65,6 +65,13 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+
+	PParam.rtps.builtin.metatrafficUnicastLocatorList.clear();
+			Locator_t loc2;
+			Locator_t loc3(loc2);
+			PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(loc2);
+
+
 	PParam.rtps.sendSocketBufferSize = 8712;
 	PParam.rtps.listenSocketBufferSize = 17424;
 	PParam.rtps.setName("Participant_pub");

@@ -201,7 +201,7 @@ void ListenResourceImpl::putToListen()
 {
 	CDRMessage::initCDRMsg(&mp_listenResource->mp_receiver->m_rec_msg);
 		m_listen_socket.async_receive_from(
-				boost::asio::buffer((void*)&mp_listenResource->mp_receiver->m_rec_msg.buffer,
+				boost::asio::buffer((void*)mp_listenResource->mp_receiver->m_rec_msg.buffer,
 						mp_listenResource->mp_receiver->m_rec_msg.max_size),
 				m_sender_endpoint,
 				boost::bind(&ListenResourceImpl::newCDRMessage, this,

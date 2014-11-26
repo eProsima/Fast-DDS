@@ -122,6 +122,7 @@ Locator_t ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 			uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
 	mp_receiver = new MessageReceiver(listenSockSize);
+	mp_receiver->mp_threadListen = this;
 	return mp_impl->init_thread(pimpl,loc,listenSockSize,isMulti,isFixed);
 }
 
