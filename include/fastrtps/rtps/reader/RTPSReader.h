@@ -27,7 +27,7 @@ namespace rtps {
 
 class ReaderListener;
 class ReaderHistory;
-class CacheChange_t;
+struct CacheChange_t;
 class WriterProxy;
 
 /**

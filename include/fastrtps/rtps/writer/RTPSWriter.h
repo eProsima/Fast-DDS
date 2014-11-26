@@ -27,7 +27,7 @@ namespace rtps {
 class UnsentChangesNotEmptyEvent;
 class WriterListener;
 class WriterHistory;
-class CacheChange_t;
+struct CacheChange_t;
 
 
 /**

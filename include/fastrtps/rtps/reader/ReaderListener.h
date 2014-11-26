@@ -21,7 +21,7 @@ namespace fastrtps{
 namespace rtps{
 
 class RTPSReader;
-class CacheChange_t;
+struct CacheChange_t;
 
 class ReaderListener
 {

@@ -27,7 +27,7 @@ namespace rtps {
 
 class EDPSimple;
 class RTPSReader;
-class CacheChange_t;
+struct CacheChange_t;
 
 /**
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.

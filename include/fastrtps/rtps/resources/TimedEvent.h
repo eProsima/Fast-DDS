@@ -49,7 +49,7 @@ public:
 
 	bool update_interval(const Duration_t& inter);
 
-	bool update_interval_millisec(int64_t time_millisec);
+	bool update_interval_millisec(double time_millisec);
 
     double getIntervalMilliSec();
 

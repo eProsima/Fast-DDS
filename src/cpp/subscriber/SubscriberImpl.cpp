@@ -49,7 +49,7 @@ SubscriberImpl::~SubscriberImpl()
 
 void SubscriberImpl::waitForUnreadMessage()
 {
-	if(!m_history.getUnreadCount()>0)
+	if(m_history.getUnreadCount()==0)
 	{
 		while(1)
 		{

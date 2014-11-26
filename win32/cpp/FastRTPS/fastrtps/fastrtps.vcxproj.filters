@@ -163,6 +163,18 @@
     <Filter Include="Header Files\fastrtps\rtps\builtin\discovery\participant\timedevent">
       <UniqueIdentifier>{608e7661-a724-4042-ba49-4557d4b97970}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\eProsima_cpp">
+      <UniqueIdentifier>{395b1232-2f5d-424a-954c-4f9e33871f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eProsima_cpp\log">
+      <UniqueIdentifier>{26643465-70de-4036-bfb4-252414ed2ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\eProsima_cpp">
+      <UniqueIdentifier>{1be476f6-2a13-4e72-a00c-cd58d24102fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\eProsima_cpp\log">
+      <UniqueIdentifier>{b00e06d2-10e0-4aef-a93a-7b2868b1f6b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\fastrtps\attributes\all_attributes.h">
@@ -516,6 +528,12 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.h">
       <Filter>Header Files\fastrtps\rtps\builtin\discovery\participant\timedevent</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.h">
+      <Filter>Header Files\eProsima_cpp\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Colors.h">
+      <Filter>Header Files\eProsima_cpp\log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\participant\Participant.cpp">
@@ -554,9 +572,6 @@
     <ClCompile Include="..\..\..\..\src\cpp\qos\ReaderQos.cpp">
       <Filter>Source Files\qos</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\subscriber\SubscriberListener.cpp">
-      <Filter>Source Files\subscriber</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\subscriber\Subscriber.cpp">
       <Filter>Source Files\subscriber</Filter>
     </ClCompile>
@@ -576,9 +591,6 @@
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\utils\md5.cpp">
-      <Filter>Source Files\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\src\cpp\utils\ObjectPool.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\rtps\Endpoint.cpp">
@@ -730,6 +742,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\cpp\rtps\builtin\discovery\endpoint\EDPStaticXML.cpp">
       <Filter>Source Files\rtps\builtin\discovery\endpoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.cpp">
+      <Filter>Source Files\eProsima_cpp\log</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

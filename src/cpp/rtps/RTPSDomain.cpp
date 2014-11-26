@@ -18,9 +18,8 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
-
-#include "fastrtps/utils/eClock.h"
 #include "fastrtps/utils/IPFinder.h"
+#include "fastrtps/utils/eClock.h"
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/reader/RTPSReader.h"

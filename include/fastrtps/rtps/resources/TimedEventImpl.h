@@ -45,7 +45,7 @@ class TimedEventImpl {
 public:
 	virtual ~TimedEventImpl();
 	//! A io_service must be provided as well as the interval of the timedEvent.
-	TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::milliseconds interval);
+	TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::microseconds interval);
 	//! Pure abstract virtual method used to perform the event.
 	void event(const boost::system::error_code& ec);
 
@@ -54,7 +54,7 @@ protected:
 	//!Pointer to the timer.
 	boost::asio::deadline_timer* timer;
 	//!Interval to be used in the timed Event.
-	boost::posix_time::milliseconds m_interval_msec;
+	boost::posix_time::microseconds m_interval_microsec;
 	//!TimedEvent pointer
 	TimedEvent* mp_event;
 public:
@@ -63,13 +63,13 @@ public:
 	void restart_timer();
 	//! TO update the interval, the timer is not restarted and the new interval will onyl be used the next time you call restart_timer().
 	bool update_interval(const Duration_t& time);
-	bool update_interval_millisec(int64_t time_millisec);
+	bool update_interval_millisec(double time_millisec);
 	//!Stop the timer
 	void stop_timer();
 
 	double getIntervalMsec()
 	{
-		return m_interval_msec.total_nanoseconds()/1000;
+		return (double)(m_interval_microsec.total_microseconds()/1000);
 	}
 
 	double getRemainingTimeMilliSec()
