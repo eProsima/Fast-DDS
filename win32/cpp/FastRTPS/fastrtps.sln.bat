@@ -1,7 +1,7 @@
 :: This script execute Visual Studio getting first the version of the product.
 
 :: Get the current vesion of FastCDR
-call %EPROSIMADIR%\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONFASTRTPS ..\..\..\include\fastrtps\fastrtps_version.h
+call ..\..\..\thirdparty\dev-env\scripts\common_pack_functions.bat :getVersionFromCPP VERSIONFASTRTPS ..\..\..\include\fastrtps\fastrtps_version.h
 if not %errorstatus%==0 goto :EOF
 
 set VERSION=-%VERSIONFASTRTPS%
