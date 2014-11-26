@@ -179,15 +179,11 @@ bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterato
 	return false;
 }
 
-bool PublisherHistory::removeMinSeqChange()
-{
-	return this->removeMinSeqChange();
-}
 
 bool PublisherHistory::removeAllChange(size_t* removed)
 {
 	size_t rem = 0;
-	while(removeMinSeqChange())
+	while(remove_min_change())
 		++rem;
 	if(removed!=nullptr)
 		*removed = rem;
