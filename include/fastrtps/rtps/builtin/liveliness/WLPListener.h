@@ -33,7 +33,7 @@ namespace rtps {
 
 class WLP;
 class RTPSReader;
-class CacheChange_t;
+struct CacheChange_t;
 
 /**
  * Class WLPListener that receives the liveliness messages asserting the liveliness of remote endpoints.

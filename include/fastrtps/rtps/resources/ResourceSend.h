@@ -28,7 +28,7 @@ namespace rtps {
 class ResourceSendImpl;
 class RTPSParticipantImpl;
 class Locator_t;
-class CDRMessage_t;
+struct CDRMessage_t;
 
 class ResourceSend {
 public:

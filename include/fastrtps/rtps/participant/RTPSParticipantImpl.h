@@ -52,7 +52,7 @@ class ResourceSend;
 class ResourceEvent;
 
 class BuiltinProtocols;
-class CDRMessage_t;
+struct CDRMessage_t;
 
 class Endpoint;
 

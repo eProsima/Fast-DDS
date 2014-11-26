@@ -135,24 +135,24 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 /**
  * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
  */
-class RTPS_DllAPI LocatorList_t{
+class LocatorList_t{
 public:
-	LocatorList_t(){};
-	~LocatorList_t(){};
-	LocatorListIterator begin(){
+	RTPS_DllAPI LocatorList_t(){};
+	RTPS_DllAPI ~LocatorList_t(){};
+	RTPS_DllAPI LocatorListIterator begin(){
 		return m_locators.begin();
 	}
-	LocatorListIterator end(){
+	RTPS_DllAPI LocatorListIterator end(){
 		return m_locators.end();
 	}
-	size_t size(){
+	RTPS_DllAPI size_t size(){
 		return m_locators.size();
 	}
-	void clear(){
+	RTPS_DllAPI void clear(){
 		m_locators.clear();
 		return;
 	}
-	void push_back(Locator_t loc)
+	RTPS_DllAPI void push_back(Locator_t loc)
 	{
 		bool already = false;
 		for(LocatorListIterator it=this->begin();it!=this->end();++it)
@@ -166,7 +166,7 @@ public:
 		if(!already)
 			m_locators.push_back(loc);
 	}
-	bool empty(){
+	RTPS_DllAPI bool empty(){
 		return m_locators.empty();
 	}
 private:

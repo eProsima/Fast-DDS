@@ -44,8 +44,8 @@ namespace rtps {
 static const char* const CLASS_NAME = "WLP";
 
 WLP::WLP(BuiltinProtocols* p):
-																		m_minAutomatic_MilliSec(std::numeric_limits<int64_t>::max()),
-																		m_minManRTPSParticipant_MilliSec(std::numeric_limits<int64_t>::max()),
+																		m_minAutomatic_MilliSec(std::numeric_limits<double>::max()),
+																		m_minManRTPSParticipant_MilliSec(std::numeric_limits<double>::max()),
 																		mp_participant(nullptr),
 																		mp_builtinProtocols(p),
 																		mp_builtinWriter(nullptr),
@@ -282,7 +282,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 		bool found = false;
 		if(wdata->m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
 		{
-			m_minAutomatic_MilliSec = std::numeric_limits<int64_t>::max();
+			m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
 			for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
 			{
 				WriterProxyData* wdata2;
@@ -320,7 +320,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 		}
 		else if(wdata->m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 		{
-			m_minManRTPSParticipant_MilliSec = std::numeric_limits<int64_t>::max();
+			m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
 			for(t_WIT it= m_livManRTPSParticipantWriters.begin();it!=m_livManRTPSParticipantWriters.end();++it)
 			{
 				WriterProxyData* wdata2;
@@ -371,7 +371,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
 	const char* const METHOD_NAME = "updateLocalWriter";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId,C_MAGENTA);
-	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsInt64(wqos.m_liveliness.announcement_period));
+	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
 	if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
 	{
 		if(mp_livelinessAutomatic == nullptr)
