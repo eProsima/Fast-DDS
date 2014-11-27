@@ -31,8 +31,9 @@ class WriterProxy;
 class StatefulReader:public RTPSReader {
 public:
 	friend class RTPSParticipantImpl;
-private:
+
 	virtual ~StatefulReader();
+private:
 	StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
 			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
 public:

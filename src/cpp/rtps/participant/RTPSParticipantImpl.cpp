@@ -139,21 +139,26 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 {
 	const char* const METHOD_NAME = "~RTPSParticipantImpl";
 	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
+
+
+	for(std::vector<RTPSReader*>::iterator it=m_userReaderList.begin();
+			it!=m_userReaderList.end();++it)
+		RTPSDomain::removeRTPSReader(*it);
+
+	for(std::vector<RTPSWriter*>::iterator it=m_userWriterList.begin();
+			it!=m_userWriterList.end();++it)
+		RTPSDomain::removeRTPSWriter(*it);
+
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
 			it!=m_listenResourceList.end();++it)
 		delete(*it);
 
-	//	for(std::vector<RTPSReader*>::iterator it=m_userReaderList.begin();
-	//			it!=m_userReaderList.end();++it)
-	//		delete(*it);
-
-	for(std::vector<RTPSWriter*>::iterator it=m_userWriterList.begin();
-			it!=m_userWriterList.end();++it)
-		delete(*it);
+	delete(this->mp_builtinProtocols);
 
 	delete(this->mp_ResourceSemaphore);
 	delete(this->mp_userParticipant);
+
 
 }
 

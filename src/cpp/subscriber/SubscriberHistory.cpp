@@ -273,9 +273,11 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 	WriterProxy * wp;
 	if(this->mp_reader->nextUntakenCache(&change,&wp))
 	{
+		if(!change->isRead)
+			this->decreaseUnreadCount();
 		change->isRead = true;
-		this->decreaseUnreadCount();
-		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": taking "<< change->sequenceNumber.to64long());
+		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": taking seqNum"<< change->sequenceNumber.to64long() <<
+				" from writer: "<<change->writerGUID);
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
@@ -296,6 +298,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 		this->remove_change(change);
 		return true;
 	}
+	//cout << "NEXT UNTAKEN CACHE BAD"<<endl;
 	return false;
 }
 

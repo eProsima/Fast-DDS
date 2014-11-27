@@ -43,7 +43,8 @@ EDPStatic::EDPStatic(PDPSimple* p,RTPSParticipantImpl* part):
 
 EDPStatic::~EDPStatic()
 {
-
+	if(mp_edpXML != nullptr)
+		delete(mp_edpXML);
 }
 
 bool EDPStatic::initEDP(BuiltinAttributes& attributes)

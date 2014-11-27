@@ -93,11 +93,7 @@ public:
 	 */
 	RTPS_DllAPI static bool removeRTPSParticipant(RTPSParticipant* p);
 
-	/**
-	 * @brief Get pointer to the unique instance of this class.
-	 * @return Pointer to the instance.
-	 */
-	static RTPSDomain* getInstance();
+
 
 
 
@@ -109,8 +105,6 @@ public:
 
 private:
 	static uint32_t m_maxRTPSParticipantID;
-	static bool instanceFlag;
-	static RTPSDomain *single;
 
 	static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 

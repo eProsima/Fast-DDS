@@ -153,7 +153,7 @@ int main(int argc, char** argv){
 	}
 	}
 
-	RTPSDomain::stopAll();
+	Domain::stopAll();
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;

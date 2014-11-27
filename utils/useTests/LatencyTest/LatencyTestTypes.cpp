@@ -44,6 +44,9 @@ bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
 bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
 	TestCommandType* t = (TestCommandType*)data;
+//	cout << "PAYLOAD LENGTH: "<<payload->length << endl;
+//	cout << "PAYLOAD FIRST BYTE: "<< (int)payload->data[0] << endl;
 	 t->m_command = *(TESTCOMMAND*)payload->data;
+//	cout << "COMMAND: "<<t->m_command<< endl;
 	return true;
 }

@@ -30,53 +30,36 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "RTPSDomain";
 
-bool RTPSDomain::instanceFlag = false;
-RTPSDomain* RTPSDomain::single = nullptr;
+
 uint32_t RTPSDomain::m_maxRTPSParticipantID = 0;
 std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
 std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
 
 
-RTPSDomain* RTPSDomain::getInstance()
-{
-	if(! instanceFlag)
-	{
-		single = new RTPSDomain();
-		instanceFlag = true;
-	}
-
-	return single;
-}
 
 RTPSDomain::RTPSDomain()
 {
-	m_maxRTPSParticipantID = 0;//private constructor
-
 	srand (static_cast <unsigned> (time(0)));
 }
 
 RTPSDomain::~RTPSDomain()
 {
-const char* const METHOD_NAME = "~RTPSDomain";
-	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
-
-	for(auto it=m_RTPSParticipants.begin();
-			it!=m_RTPSParticipants.end();++it)
-	{
-		delete(it->second);
-	}
-
-	logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
-
-	RTPSDomain::instanceFlag = false;
-	eClock::my_sleep(100);
-	Log::removeLog();
 
 }
 
 void RTPSDomain::stopAll()
 {
-	delete(getInstance());
+	const char* const METHOD_NAME = "~RTPSDomain";
+	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
+
+	for(auto it=m_RTPSParticipants.begin();
+			it!=m_RTPSParticipants.end();++it)
+	{
+		RTPSDomain::removeRTPSParticipant(it->first);
+	}
+	logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
+	eClock::my_sleep(100);
+	Log::removeLog();
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
@@ -162,7 +145,6 @@ bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
 		{
 			if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
 			{
-				delete(it->first);
 				delete(it->second);
 				m_RTPSParticipants.erase(it);
 				return true;
@@ -197,7 +179,7 @@ bool RTPSDomain::removeRTPSWriter(RTPSWriter* writer)
 			return it->second->deleteUserEndpoint((Endpoint*)writer);
 		}
 	}
-	return nullptr;
+	return false;
 }
 
 RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt,
@@ -225,7 +207,7 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
 			return it->second->deleteUserEndpoint((Endpoint*)reader);
 		}
 	}
-	return nullptr;
+	return false;
 }
 
 

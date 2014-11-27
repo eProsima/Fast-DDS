@@ -67,5 +67,10 @@ bool Publisher::removeAllChange(size_t* removed )
 	return mp_impl->removeAllChange(removed);
 }
 
+const GUID_t& Publisher::getGuid()
+{
+	return mp_impl->getGuid();
+}
+
 } /* namespace pubsub */
 } /* namespace eprosima */

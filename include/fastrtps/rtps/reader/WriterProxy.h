@@ -92,6 +92,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool missing_changes(std::vector<ChangeFromWriter_t*>* missing);
+
 	//! Pointer to associated StatefulReader.
 	StatefulReader* mp_SFR;
 	//! Parameters of the WriterProxy

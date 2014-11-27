@@ -14,7 +14,7 @@
 #ifndef LATENCYTESTTYPES_H_
 #define LATENCYTESTTYPES_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/fastrtps_all.h"
 
 
 
@@ -54,7 +54,7 @@ inline bool operator==(LatencyType& lt1, LatencyType& lt2)
 	return true;
 }
 
-class LatencyDataType: public DDSTopicDataType
+class LatencyDataType: public TopicDataType
 {
 public:
 	LatencyDataType()
@@ -85,7 +85,7 @@ typedef struct TestCommandType
 	TestCommandType(TESTCOMMAND com):m_command(com){}
 }TestCommandType;
 
-class TestCommandDataType:public DDSTopicDataType
+class TestCommandDataType:public TopicDataType
 {
 public:
 	TestCommandDataType()

@@ -40,19 +40,55 @@ namespace fastrtps {
 static const char* const CLASS_NAME = "ParticipantImpl";
 
 ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
-		m_att(patt),
-		mp_rtpsParticipant(nullptr),
-		mp_participant(pspart),
-		mp_listener(listen),
+						m_att(patt),
+						mp_rtpsParticipant(nullptr),
+						mp_participant(pspart),
+						mp_listener(listen),
 #pragma warning (disable : 4355 )
-		m_rtps_listener(this)
+						m_rtps_listener(this)
 {
 	mp_participant->mp_impl = this;
 }
 
 ParticipantImpl::~ParticipantImpl()
 {
-	// TODO Auto-generated destructor stub
+	delete(mp_participant);
+	for(auto pit = this->m_publishers.begin();pit!= m_publishers.end();++pit)
+	{
+		this->removePublisher(pit->first);
+	}
+	for(auto sit = m_subscribers.begin();sit!= m_subscribers.end();++sit)
+	{
+		this->removeSubscriber(sit->first);
+	}
+	RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
+}
+
+
+bool ParticipantImpl::removePublisher(Publisher* pub)
+{
+	for(auto pit = this->m_publishers.begin();pit!= m_publishers.end();++pit)
+	{
+		if(pit->second->getGuid() == pub->getGuid())
+		{
+			delete(pit->second);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ParticipantImpl::removeSubscriber(Subscriber* sub)
+{
+	for(auto sit = m_subscribers.begin();sit!= m_subscribers.end();++sit)
+	{
+		if(sit->second->getGuid() == sub->getGuid())
+		{
+			delete(sit->second);
+			return true;
+		}
+	}
+	return false;
 }
 
 const GUID_t& ParticipantImpl::getGuid() const
@@ -107,9 +143,9 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.times = att.times;
 
 	RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
-												watt,
-												(WriterHistory*)&pubimpl->m_history,
-												(WriterListener*)&pubimpl->m_writerListener);
+			watt,
+			(WriterHistory*)&pubimpl->m_history,
+			(WriterListener*)&pubimpl->m_writerListener);
 	if(writer == nullptr)
 	{
 		logError(PARTICIPANT,"Problem creating associated Writer");
@@ -175,9 +211,9 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.times = att.times;
 
 	RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
-												ratt,
-												(ReaderHistory*)&subimpl->m_history,
-												(ReaderListener*)&subimpl->m_readerListener);
+			ratt,
+			(ReaderHistory*)&subimpl->m_history,
+			(ReaderListener*)&subimpl->m_readerListener);
 	if(reader == nullptr)
 	{
 		logError(PARTICIPANT,"Problem creating associated Reader");

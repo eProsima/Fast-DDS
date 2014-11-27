@@ -17,6 +17,11 @@
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/participant/ParticipantImpl.h"
 
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/subscriber/Subscriber.h"
+
+#include "fastrtps/utils/eClock.h"
+
 #include "fastrtps/utils/RTPSLog.h"
 
 using namespace eprosima::fastrtps::rtps;
@@ -39,6 +44,58 @@ Domain::~Domain()
 {
 
 }
+
+void Domain::stopAll()
+{
+	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	{
+		Domain::removeParticipant(it->first);
+	}
+	eClock::my_sleep(100);
+	Log::removeLog();
+}
+
+bool Domain::removeParticipant(Participant* part)
+{
+	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	{
+		if(it->second->getGuid() == part->getGuid())
+		{
+			//FOUND
+			delete(it->second);
+			m_participants.erase(it);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Domain::removePublisher(Publisher* pub)
+{
+	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	{
+		if(it->second->getGuid().guidPrefix == pub->getGuid().guidPrefix)
+		{
+			//FOUND
+			return it->second->removePublisher(pub);
+		}
+	}
+	return false;
+}
+
+bool Domain::removeSubscriber(Subscriber* sub)
+{
+	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	{
+		if(it->second->getGuid().guidPrefix == sub->getGuid().guidPrefix)
+		{
+			//FOUND
+			return it->second->removeSubscriber(sub);
+		}
+	}
+	return false;
+}
+
 
 Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantListener* listen)
 {

@@ -40,19 +40,19 @@ WriterProxy::~WriterProxy()
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 		Duration_t heartbeatResponse,
 		StatefulReader* SR) :
-						mp_SFR(SR),
-						m_att(watt),
-						m_acknackCount(0),
-						m_lastHeartbeatCount(0),
-						m_isMissingChangesEmpty(true),
-						mp_heartbeatResponse(nullptr),
-						mp_writerProxyLiveliness(nullptr),
-						m_heartbeatFinalFlag(false),
-						m_hasMaxAvailableSeqNumChanged(false),
-						m_hasMinAvailableSeqNumChanged(false),
-						m_isAlive(true),
-						m_firstReceived(true),
-						mp_mutex(new boost::recursive_mutex())
+										mp_SFR(SR),
+										m_att(watt),
+										m_acknackCount(0),
+										m_lastHeartbeatCount(0),
+										m_isMissingChangesEmpty(true),
+										mp_heartbeatResponse(nullptr),
+										mp_writerProxyLiveliness(nullptr),
+										m_heartbeatFinalFlag(false),
+										m_hasMaxAvailableSeqNumChanged(false),
+										m_hasMinAvailableSeqNumChanged(false),
+										m_isAlive(true),
+										m_firstReceived(true),
+										mp_mutex(new boost::recursive_mutex())
 
 {
 	const char* const METHOD_NAME = "WriterProxy";
@@ -236,91 +236,92 @@ bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
 
 bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 {
-	const char* const METHOD_NAME = "available_changes_max";
-	if(!m_changesFromW.empty())
+	//const char* const METHOD_NAME = "available_changes_max";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	//print_changes_fromWriter_test();
+	if(this->m_lastRemovedSeqNum.to64long() <= 0 && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+		return false;
+	if(m_hasMaxAvailableSeqNumChanged)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-		//print_changes_fromWriter_test();
-		if(m_hasMaxAvailableSeqNumChanged)
+		//Order changesFromWriter
+		//std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
+		seqNum->high = 0;
+		seqNum->low = 0;
+		//We check the rest for the largest one with Status Received or lost
+		//ignoring the first one that are not valid.
+		//		bool first_ones = true;
+		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 		{
-			//Order changesFromWriter
-			//std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-			seqNum->high = 0;
-			seqNum->low = 0;
-			//We check the rest for the largest one with Status Received or lost
-			//ignoring the first one that are not valid.
-			//		bool first_ones = true;
-			for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+			//				if(!it->isValid() && first_ones)
+			//				{
+			//					continue;
+			//				}
+			if((it->status == RECEIVED || it->status == LOST))
 			{
-				//				if(!it->isValid() && first_ones)
-				//				{
-				//					continue;
-				//				}
-				if((it->status == RECEIVED || it->status == LOST))
-				{
-					//	first_ones = false;
-					*seqNum = it->seqNum;
-					m_max_available_seqNum = it->seqNum;
-					m_hasMaxAvailableSeqNumChanged = false;
-				}
-				else
-					break;
+				//	first_ones = false;
+				*seqNum = it->seqNum;
+				m_max_available_seqNum = it->seqNum;
+				m_hasMaxAvailableSeqNumChanged = false;
 			}
+			else
+				break;
 		}
-		else
-			*seqNum = this->m_max_available_seqNum;
-
-		if(*seqNum<this->m_lastRemovedSeqNum)
-		{
-			*seqNum = this->m_lastRemovedSeqNum;
-			m_max_available_seqNum = this->m_lastRemovedSeqNum;
-			m_hasMaxAvailableSeqNumChanged = false;
-		}
-		return true;
 	}
-	logInfo(RTPS_READER,"No changes");
-	return false;
+	else
+		*seqNum = this->m_max_available_seqNum;
+
+	if(*seqNum<this->m_lastRemovedSeqNum)
+	{
+		*seqNum = this->m_lastRemovedSeqNum;
+		m_max_available_seqNum = this->m_lastRemovedSeqNum;
+		m_hasMaxAvailableSeqNumChanged = false;
+	}
+	return true;
 }
 
 
 bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 {
-	const char* const METHOD_NAME = "available_changes_min";
-	if(!m_changesFromW.empty())
+	//const char* const METHOD_NAME = "available_changes_min";
+	if(this->m_lastRemovedSeqNum.to64long() <= 0 && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+		return false;
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	if(m_hasMinAvailableSeqNumChanged)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-		if(m_hasMinAvailableSeqNumChanged)
+		//Order changesFromWriter
+		//	std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
+		seqNum->high = 0;
+		seqNum->low = 0;
+		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 		{
-			//Order changesFromWriter
-			//	std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-			seqNum->high = 0;
-			seqNum->low = 0;
-			for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+			if(it->status == RECEIVED)
 			{
-				if(it->status == RECEIVED)
-				{
-					*seqNum = it->seqNum;
-					this->m_min_available_seqNum = it->seqNum;
-					m_hasMinAvailableSeqNumChanged = false;
-					return true;
-				}
-				else if(it->status == LOST)
-				{
-					continue;
-				}
-				else
-				{
-					return false;
-				}
+				*seqNum = it->seqNum;
+				this->m_min_available_seqNum = it->seqNum;
+				m_hasMinAvailableSeqNumChanged = false;
+				return true;
+			}
+			else if(it->status == LOST)
+			{
+				continue;
+			}
+			else
+			{
+				return false;
 			}
 		}
-		else
-		{
-			*seqNum = this->m_min_available_seqNum;
-			return true;
-		}
 	}
-	logInfo(RTPS_READER,"No changes");
+	else
+	{
+		*seqNum = this->m_min_available_seqNum;
+		return true;
+	}
+	if(*seqNum<this->m_lastRemovedSeqNum)
+	{
+		*seqNum = this->m_lastRemovedSeqNum;
+		m_min_available_seqNum = this->m_lastRemovedSeqNum;
+		m_hasMinAvailableSeqNumChanged = false;
+	}
 	return false;
 }
 

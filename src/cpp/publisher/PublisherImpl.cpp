@@ -12,6 +12,7 @@
  */
 
 #include "fastrtps/publisher/PublisherImpl.h"
+#include "fastrtps/publisher/Publisher.h"
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/publisher/PublisherListener.h"
 
@@ -19,6 +20,7 @@
 #include "fastrtps/rtps/writer/StatefulWriter.h"
 
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
+#include "fastrtps/rtps/RTPSDomain.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
@@ -47,9 +49,12 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 
 }
 
-PublisherImpl::~PublisherImpl() {
+PublisherImpl::~PublisherImpl()
+{
 	const char* const METHOD_NAME = "~PublisherImpl";
-	logInfo(RTPS_WRITER,"OK");
+	logInfo(PUBLISHER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+	RTPSDomain::removeRTPSWriter(mp_writer);
+	delete(this->mp_userPublisher);
 }
 
 
@@ -121,13 +126,6 @@ bool PublisherImpl::removeAllChange(size_t* removed)
 {
 	return m_history.removeAllChange(removed);
 }
-//
-//size_t PublisherImpl::getHistoryElementsNumber()
-//{
-//	return mp_writer->getHistoryCacheSize();
-//}
-
-
 
 const GUID_t& PublisherImpl::getGuid()
 {

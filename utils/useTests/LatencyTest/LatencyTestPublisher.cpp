@@ -321,7 +321,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	TestCommandType command;
 	command.m_command = READY;
 	mp_commandpub->write(&command);
-	//	cout << "WATIGIN FOR COMMAND RESPONSES ";
+	//cout << "WAITING FOR COMMAND RESPONSES ";
 	for(uint8_t i = 0;i<n_subscribers;++i)
 	{
 		m_comm_sema.wait();
@@ -340,7 +340,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	//TEST FINISHED:
 	size_t removed=0;
 	mp_datapub->removeAllChange(&removed);
-	//	cout << "REMOVED: "<< removed<<endl;
+	//cout << "   REMOVED: "<< removed<<endl;
 	analizeTimes(datasize);
 	printStat(m_stats.back());
 	//	delete(mp_latency_in);

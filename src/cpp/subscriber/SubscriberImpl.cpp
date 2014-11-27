@@ -12,12 +12,13 @@
  */
 
 #include "fastrtps/subscriber/SubscriberImpl.h"
+#include "fastrtps/subscriber/Subscriber.h"
 #include "fastrtps/TopicDataType.h"
 #include "fastrtps/subscriber/SubscriberListener.h"
 #include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/reader/StatefulReader.h"
 
-
+#include "fastrtps/rtps/RTPSDomain.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
 
 #include "fastrtps/utils/RTPSLog.h"
@@ -51,7 +52,9 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 SubscriberImpl::~SubscriberImpl()
 {
 	const char* const METHOD_NAME = "~SubscriberImpl";
-	logInfo(RTPS_READER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+	logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+	RTPSDomain::removeRTPSReader(mp_reader);
+	delete(this->mp_userSubscriber);
 }
 
 
@@ -173,6 +176,7 @@ void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader*
 {
 	if(mp_subscriberImpl->mp_listener != nullptr)
 	{
+		//cout << "FIRST BYTE: "<< (int)change->serializedPayload.data[0] << endl;
 		mp_subscriberImpl->mp_listener->onNewDataMessage(mp_subscriberImpl->mp_userSubscriber);
 	}
 }

@@ -45,7 +45,15 @@ public:
 
 	RTPS_DllAPI static Subscriber* createSubscriber(Participant* part, SubscriberAttributes& att, SubscriberListener* listen = nullptr);
 
+	RTPS_DllAPI static bool removeParticipant(Participant* part);
+
+	RTPS_DllAPI static bool removePublisher(Publisher* pub);
+
+	RTPS_DllAPI static bool removeSubscriber(Subscriber* sub);
+
 	RTPS_DllAPI static bool registerType(Participant* part, TopicDataType * type);
+
+	RTPS_DllAPI static void stopAll();
 private:
 	static std::vector<t_p_Participant> m_participants;
 
