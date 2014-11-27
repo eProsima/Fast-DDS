@@ -30,6 +30,7 @@ namespace fastrtps{
 namespace rtps
 {
 class RTPSWriter;
+class RTPSParticipant;
 }
 
 using namespace rtps;
@@ -42,6 +43,7 @@ using namespace rtps;
 class TopicDataType;
 class PublisherListener;
 class ParticipantImpl;
+class Publisher;
 
 
 /**
@@ -115,9 +117,13 @@ private:
 	public:
 		PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
 		virtual ~PublisherWriterListener(){};
-		void onWriterMatched(MatchingInfo info);
+		void onWriterMatched(RTPSWriter* writer,MatchingInfo info);
 		PublisherImpl* mp_publisherImpl;
 	}m_writerListener;
+
+	Publisher* mp_userPublisher;
+
+	RTPSParticipant* mp_rtpsParticipant;
 
 };
 

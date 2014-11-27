@@ -62,7 +62,7 @@ public:
 	public:
 		DataPubListener(LatencyTestPublisher* up):mp_up(up),n_matched(0){}
 		~DataPubListener(){}
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 		LatencyTestPublisher* mp_up;
 		int n_matched;
 	}m_datapublistener;
@@ -71,8 +71,8 @@ public:
 	public:
 		DataSubListener(LatencyTestPublisher* up):mp_up(up),n_matched(0){}
 		~DataSubListener(){}
-		void onSubscriptionMatched(MatchingInfo into);
-		void onNewDataMessage();
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo into);
+		void onNewDataMessage(Subscriber* sub);
 		LatencyTestPublisher* mp_up;
 		int n_matched;
 	}m_datasublistener;
@@ -81,7 +81,7 @@ public:
 	public:
 		CommandPubListener(LatencyTestPublisher* up):mp_up(up),n_matched(0){}
 		~CommandPubListener(){}
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 		LatencyTestPublisher* mp_up;
 		int n_matched;
 	}m_commandpublistener;
@@ -90,8 +90,8 @@ public:
 	public:
 		CommandSubListener(LatencyTestPublisher* up):mp_up(up),n_matched(0){}
 		~CommandSubListener(){}
-		void onSubscriptionMatched(MatchingInfo into);
-		void onNewDataMessage();
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo into);
+		void onNewDataMessage(Subscriber* sub);
 		LatencyTestPublisher* mp_up;
 		int n_matched;
 	}m_commandsublistener;

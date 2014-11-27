@@ -37,7 +37,7 @@ class EDPSimplePUBListener:public ReaderListener{
 public:
 	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);};
 	virtual ~EDPSimplePUBListener(){};
-	void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change);
+	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
 	bool computeKey(CacheChange_t* change);
 	EDPSimple* mp_SEDP;
 	WriterProxyData m_writerProxyData;
@@ -52,7 +52,7 @@ class EDPSimpleSUBListener:public ReaderListener{
 public:
 	EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);};
 	virtual ~EDPSimpleSUBListener(){};
-	void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change);
+	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
 	bool computeKey(CacheChange_t* change);
 	EDPSimple* mp_SEDP;
 	ReaderProxyData m_readerProxyData;

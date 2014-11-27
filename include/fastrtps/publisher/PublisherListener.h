@@ -34,11 +34,11 @@ public:
 	/**
 	 * This method is called when the Publisher is matched (or unatched) against an endpoint.
 	 */
-	virtual void onPublicationMatched(MatchingInfo info){};
+	virtual void onPublicationMatched(Publisher* pub,MatchingInfo info){};
 	/**
 	 * This method is called when the History is full.
 	 */
-	virtual void onHistoryFull(){};
+	virtual void onHistoryFull(Publisher* pub){};
 };
 
 } /* namespace rtps */

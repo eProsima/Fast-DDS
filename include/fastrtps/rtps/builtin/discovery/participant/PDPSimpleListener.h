@@ -43,7 +43,7 @@ public:
 	//!Pointer to the associated mp_SPDP;
 	PDPSimple* mp_SPDP;
 	//!new added cache
-	void onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change);
+	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
 	//!Process a new added cache with this method.
 	bool newAddedCache();
 
