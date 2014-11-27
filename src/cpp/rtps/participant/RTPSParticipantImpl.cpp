@@ -131,7 +131,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	{
 		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
 	}
-
+	eClock::my_sleep(300);
 }
 
 
