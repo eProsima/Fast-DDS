@@ -72,6 +72,9 @@ public:
 
 	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
 
+	bool updateWriter(RTPSWriter* Writer,WriterQos& wqos);
+	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
+
 private:
 	RTPSParticipantImpl* mp_impl;
 };

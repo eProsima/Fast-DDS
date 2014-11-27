@@ -17,8 +17,12 @@
 #include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/reader/StatefulReader.h"
 
+
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
+
 #include "fastrtps/utils/RTPSLog.h"
 
+using namespace eprosima::fastrtps::rtps;
 
 
 namespace eprosima {
@@ -36,7 +40,9 @@ SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 												m_history(this,ptype->m_typeSize,att.topic.historyQos,att.topic.resourceLimitsQos),
 												mp_listener(listen),
 #pragma warning (disable : 4355 )
-												m_readerListener(this)
+												m_readerListener(this),
+												 mp_userSubscriber(nullptr),
+												mp_rtpsParticipant(nullptr)
 {
 
 }
@@ -158,21 +164,24 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 		this->m_att.qos.setQos(att.qos,false);
 		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
 		//TODOG
-		//mp_participant->getRTPSParticipant()->getBuiltinProtocols()->updateLocalWriter(this->mp_writer);
+		mp_rtpsParticipant->updateReader(this->mp_reader,m_att.qos);
 	}
 	return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change)
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
 {
-
+	if(mp_subscriberImpl->mp_listener != nullptr)
+	{
+		mp_subscriberImpl->mp_listener->onNewDataMessage(mp_subscriberImpl->mp_userSubscriber);
+	}
 }
 
-void SubscriberImpl::SubscriberReaderListener::onReaderMatched(MatchingInfo info)
+void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* reader,MatchingInfo info)
 {
 	if (this->mp_subscriberImpl->mp_listener != nullptr)
 	{
-		mp_subscriberImpl->mp_listener->onSubscriptionMatched(info);
+		mp_subscriberImpl->mp_listener->onSubscriptionMatched(mp_subscriberImpl->mp_userSubscriber,info);
 	}
 }
 

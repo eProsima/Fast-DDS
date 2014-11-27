@@ -75,6 +75,16 @@ bool RTPSParticipant::registerReader(RTPSReader* Reader,TopicAttributes& topicAt
 	return mp_impl->registerReader(Reader,topicAtt, rqos);
 }
 
+bool RTPSParticipant::updateWriter(RTPSWriter* Writer,WriterQos& wqos)
+{
+	return mp_impl->updateLocalWriter(Writer, wqos);
+}
+
+bool RTPSParticipant::updateReader(RTPSReader* Reader,ReaderQos& rqos)
+{
+	return mp_impl->updateLocalReader(Reader, rqos);
+}
+
 
 }
 } /* namespace rtps */

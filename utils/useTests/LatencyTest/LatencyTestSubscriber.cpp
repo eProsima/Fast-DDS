@@ -122,7 +122,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 
 
 
-void LatencyTestSubscriber::DataPubListener::onPublicationMatched(MatchingInfo info)
+void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -131,7 +131,7 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(MatchingInfo i
 	}
 }
 
-void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo info)
+void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -142,7 +142,7 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo 
 
 
 
-void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo info)
+void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -151,7 +151,7 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(MatchingInf
 	}
 }
 
-void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
+void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -160,7 +160,7 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(MatchingIn
 	}
 }
 
-void LatencyTestSubscriber::CommandSubListener::onNewDataMessage()
+void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 {
 	TestCommandType command;
 	mp_up->mp_commandsub->takeNextData(&command,&mp_up->m_sampleinfo);
@@ -177,7 +177,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage()
 	}
 }
 
-void LatencyTestSubscriber::DataSubListener::onNewDataMessage()
+void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
 	//	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;

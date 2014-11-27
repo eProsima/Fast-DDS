@@ -92,6 +92,8 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 
 	PublisherImpl* pubimpl = new PublisherImpl(this,p_type,att,listen);
 	Publisher* pub = new Publisher(pubimpl);
+	pubimpl->mp_userPublisher = pub;
+	pubimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
 
 	WriterAttributes watt;
 	watt.endpoint.durabilityKind = att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS ? VOLATILE : TRANSIENT_LOCAL;
@@ -158,6 +160,8 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 
 	SubscriberImpl* subimpl = new SubscriberImpl(this,p_type,att,listen);
 	Subscriber* sub = new Subscriber(subimpl);
+	subimpl->mp_userSubscriber = sub;
+	subimpl->mp_rtpsParticipant = this->mp_rtpsParticipant;
 
 	ReaderAttributes ratt;
 	ratt.endpoint.durabilityKind = att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS ? VOLATILE : TRANSIENT_LOCAL;

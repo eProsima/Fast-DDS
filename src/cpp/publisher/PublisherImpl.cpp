@@ -18,11 +18,11 @@
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/writer/StatefulWriter.h"
 
+#include "fastrtps/rtps/participant/RTPSParticipant.h"
 
 #include "fastrtps/utils/RTPSLog.h"
 
-
-//#include "fastrtps/RTPSParticipant.h"
+using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps {
@@ -40,7 +40,9 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										m_history(this,pdatatype->m_typeSize,att.topic.historyQos,att.topic.resourceLimitsQos),
 										mp_listener(listen),
 #pragma warning (disable : 4355 )
-										m_writerListener(this)
+										m_writerListener(this),
+										mp_userPublisher(nullptr),
+										mp_rtpsParticipant(nullptr)
 {
 
 }
@@ -212,17 +214,17 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 		this->m_att = att;
 		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
 		//TODOG
-		//mp_participant->getRTPSParticipant()->getBuiltinProtocols()->updateLocalWriter(this->mp_writer);
+		mp_rtpsParticipant->updateWriter(this->mp_writer,m_att.qos);
 	}
 
 
 	return updated;
 }
 
-void PublisherImpl::PublisherWriterListener::onWriterMatched(MatchingInfo info)
+void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* writer,MatchingInfo info)
 {
 	if(mp_publisherImpl->mp_listener!=nullptr)
-		mp_publisherImpl->mp_listener->onPublicationMatched(info);
+		mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
 }
 
 } /* namespace pubsub */

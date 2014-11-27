@@ -187,6 +187,10 @@ public:
 
 	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
 
+	bool updateLocalWriter(RTPSWriter* Writer,WriterQos& wqos);
+
+	bool updateLocalReader(RTPSReader* Reader, ReaderQos& rqos);
+
 	inline uint32_t getParticipantID() {return (uint32_t)this->m_att.participantID;};
 
 	inline RTPSParticipantAttributes& getAttributes() {return m_att;};

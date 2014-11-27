@@ -35,10 +35,11 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change)
+void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
 {
 	const char* const CLASS_NAME = "EDPSimplePUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
+	CacheChange_t* change = (CacheChange_t*)change_in;
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
@@ -156,10 +157,11 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 	return compute_key(&aux_msg,change);
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change)
+void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
 {
 	const char* const CLASS_NAME = "EDPSimpleSUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
+	CacheChange_t* change = (CacheChange_t*)change_in;
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))

@@ -134,7 +134,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	return true;
 }
 
-void LatencyTestPublisher::DataPubListener::onPublicationMatched(MatchingInfo info)
+void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -152,7 +152,7 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(MatchingInfo in
 	}
 }
 
-void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(MatchingInfo info)
+void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -170,7 +170,7 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(MatchingInfo i
 	}
 }
 
-void LatencyTestPublisher::CommandPubListener::onPublicationMatched(MatchingInfo info)
+void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -188,7 +188,7 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(MatchingInfo
 	}
 }
 
-void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
+void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -206,7 +206,7 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(MatchingInf
 	}
 }
 
-void LatencyTestPublisher::CommandSubListener::onNewDataMessage()
+void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* sub)
 {
 	TestCommandType command;
 	SampleInfo_t info;
@@ -218,7 +218,7 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage()
 	}
 }
 #if defined(_WIN32)
-void LatencyTestPublisher::DataSubListener::onNewDataMessage()
+void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
 
@@ -251,7 +251,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage()
 	}
 }
 #else
-void LatencyTestPublisher::DataSubListener::onNewDataMessage()
+void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
 	//eClock::my_sleep(50);

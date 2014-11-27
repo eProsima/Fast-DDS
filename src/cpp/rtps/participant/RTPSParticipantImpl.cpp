@@ -256,7 +256,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,WRITER))
 		{
-			logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
+			logError(RTPS_PARTICIPANT,"A reader with the same entityId already exists in this RTPSParticipant");
 			return false;
 		}
 	}
@@ -300,15 +300,22 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
 	return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
-	return true;
 }
 
 bool RTPSParticipantImpl::registerReader(RTPSReader* reader,TopicAttributes& topicAtt,ReaderQos& rqos)
 {
 	return this->mp_builtinProtocols->addLocalReader(reader,topicAtt,rqos);
-	return true;
 }
 
+bool RTPSParticipantImpl::updateLocalWriter(RTPSWriter* Writer,WriterQos& wqos)
+{
+	return this->mp_builtinProtocols->updateLocalWriter(Writer,wqos);
+}
+
+bool RTPSParticipantImpl::updateLocalReader(RTPSReader* reader,ReaderQos& rqos)
+{
+	return this->mp_builtinProtocols->updateLocalReader(reader,rqos);
+}
 
 /*
  *
@@ -358,7 +365,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
-		logWarning(RTPS_PARTICIPANT,auxstr << " created with no unicastLocatorList, adding default List");
+		logWarning(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
 		for(LocatorListIterator lit = m_att.defaultUnicastLocatorList.begin();lit!=m_att.defaultUnicastLocatorList.end();++lit)
 		{
 			assignEndpoint2Locator(endp,lit,false,false);

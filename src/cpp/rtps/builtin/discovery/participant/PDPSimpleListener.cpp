@@ -45,9 +45,10 @@ namespace rtps {
 static const char* const CLASS_NAME = "PDPSimpleListener";
 
 
-void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change)
+void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
+	CacheChange_t* change = (CacheChange_t*)(change_in);
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
 	logInfo(RTPS_PDP,"SPDP Message received 2",C_CYAN);

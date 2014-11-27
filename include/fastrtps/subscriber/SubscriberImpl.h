@@ -27,6 +27,7 @@ namespace fastrtps {
 namespace rtps
 {
 class RTPSReader;
+class RTPSParticipant;
 }
 
 using namespace rtps;
@@ -35,6 +36,7 @@ class TopicDataType;
 class SubscriberListener;
 class ParticipantImpl;
 class SampleInfo_t;
+class Subscriber;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -84,6 +86,7 @@ public:
 private:
 	//!Participant
 	ParticipantImpl* mp_participant;
+
 	//!Pointer to associated RTPSReader
 	RTPSReader* mp_reader;
 	//! Pointer to the TopicDataType object.
@@ -99,11 +102,14 @@ private:
 	public:
 		SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s){};
 		virtual ~SubscriberReaderListener(){};
-		void onReaderMatched(MatchingInfo info);
-		void onNewCacheChangeAdded(RTPSReader * reader,CacheChange_t* change);
+		void onReaderMatched(RTPSReader* reader,MatchingInfo info);
+		void onNewCacheChangeAdded(RTPSReader * reader,const CacheChange_t* const change);
 		SubscriberImpl* mp_subscriberImpl;
 	}m_readerListener;
 
+	Subscriber* mp_userSubscriber;
+	//!RTPSParticipant
+		RTPSParticipant* mp_rtpsParticipant;
 };
 
 

@@ -29,7 +29,7 @@ public:
 	ReaderListener(){};
 	virtual ~ReaderListener(){};
 	virtual void onReaderMatched(RTPSReader* reader,MatchingInfo info){};
-	virtual void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* change){};
+	virtual void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change){};
 };
 
 }
