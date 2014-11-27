@@ -121,7 +121,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	m_publishers.push_back(pubpair);
 
 	//REGISTER THE WRITER
-	//this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
+	this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
 
 	return pub;
 };
@@ -189,7 +189,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	m_subscribers.push_back(subpair);
 
 	//REGISTER THE READER
-	//this->mp_rtpsParticipant->registerReader(writer,att.topic,att.qos);
+	this->mp_rtpsParticipant->registerReader(reader,att.topic,att.qos);
 
 	return sub;
 };

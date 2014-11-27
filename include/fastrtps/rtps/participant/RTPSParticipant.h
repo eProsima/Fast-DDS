@@ -30,9 +30,17 @@
 
 namespace eprosima {
 namespace fastrtps{
+
+class TopicAttributes;
+class WriterQos;
+class ReaderQos;
+
 namespace rtps {
 
 class RTPSParticipantImpl;
+class RTPSWriter;
+class RTPSReader;
+
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
@@ -59,7 +67,12 @@ public:
 	bool newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId);
 
 	uint32_t getRTPSParticipantID() const;
-	private:
+
+	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+
+	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
+
+private:
 	RTPSParticipantImpl* mp_impl;
 };
 

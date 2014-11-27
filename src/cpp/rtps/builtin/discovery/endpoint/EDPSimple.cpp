@@ -195,10 +195,9 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 	logInfo(RTPS_EDP,rdata->m_guid.entityId,C_CYAN);
 	if(mp_SubWriter.first !=nullptr)
 	{
-		CacheChange_t* change = mp_SubWriter.first->new_change(ALIVE);
+		CacheChange_t* change = mp_SubWriter.first->new_change(ALIVE,rdata->m_key);
 		if(change !=nullptr)
 		{
-			change->instanceHandle = rdata->m_key;
 			rdata->toParameterList();
 			ParameterList::updateCDRMsg(&rdata->m_parameterList,EPROSIMA_ENDIAN);
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
@@ -225,10 +224,9 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 	logInfo(RTPS_EDP,wdata->m_guid.entityId,C_CYAN);
 	if(mp_PubWriter.first !=nullptr)
 	{
-		CacheChange_t* change = mp_PubWriter.first->new_change(ALIVE);
+		CacheChange_t* change = mp_PubWriter.first->new_change(ALIVE, wdata->m_key);
 		if(change != nullptr)
 		{
-			change->instanceHandle = wdata->m_key;
 			wdata->toParameterList();
 			ParameterList::updateCDRMsg(&wdata->m_parameterList,EPROSIMA_ENDIAN);
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
@@ -256,10 +254,11 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 	logInfo(RTPS_EDP,W->getGuid().entityId,C_CYAN);
 	if(mp_PubWriter.first!=nullptr)
 	{
-		CacheChange_t* change = mp_PubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
+		InstanceHandle_t iH;
+		iH = W->getGuid();
+		CacheChange_t* change = mp_PubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
 		if(change != nullptr)
 		{
-			change->instanceHandle = W->getGuid();
 			for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
 			{
 				if((*ch)->instanceHandle == change->instanceHandle)
@@ -280,10 +279,11 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 	logInfo(RTPS_EDP,R->getGuid().entityId,C_CYAN);
 	if(mp_SubWriter.first!=nullptr)
 	{
-		CacheChange_t* change = mp_SubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
+		InstanceHandle_t iH;
+		iH = (R->getGuid());
+		CacheChange_t* change = mp_SubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
 		if(change != nullptr)
 		{
-			change->instanceHandle = R->getGuid();
 			for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
 			{
 				if((*ch)->instanceHandle == change->instanceHandle)

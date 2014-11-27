@@ -454,7 +454,8 @@ bool EDP::pairingReader(RTPSReader* R)
 				else
 				{
 					//logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
-					if(R->matched_writer_remove((*wdatait)->toRemoteWriterAttributes()))
+					if(R->matched_writer_is_matched((*wdatait)->toRemoteWriterAttributes())
+							&& R->matched_writer_remove((*wdatait)->toRemoteWriterAttributes()))
 					{
 						//MATCHED AND ADDED CORRECTLY:
 						if(R->getListener()!=nullptr)
@@ -505,7 +506,8 @@ bool EDP::pairingWriter(RTPSWriter* W)
 				else
 				{
 					//logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
-					if(W->matched_reader_remove((*rdatait)->toRemoteReaderAttributes()))
+					if(W->matched_reader_is_matched((*rdatait)->toRemoteReaderAttributes()) &&
+							W->matched_reader_remove((*rdatait)->toRemoteReaderAttributes()))
 					{
 						//MATCHED AND ADDED CORRECTLY:
 						if(W->getListener()!=nullptr)
@@ -551,7 +553,8 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 			}
 			else
 			{
-				if((*wit)->matched_reader_remove(rdata->toRemoteReaderAttributes()))
+				if((*wit)->matched_reader_is_matched(rdata->toRemoteReaderAttributes())
+						&& (*wit)->matched_reader_remove(rdata->toRemoteReaderAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:
 					if((*wit)->getListener()!=nullptr)
@@ -595,7 +598,8 @@ bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 			}
 			else
 			{
-				if((*rit)->matched_writer_remove(wdata->toRemoteWriterAttributes()))
+				if((*rit)->matched_writer_is_matched(wdata->toRemoteWriterAttributes())
+						&& (*rit)->matched_writer_remove(wdata->toRemoteWriterAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:
 					if((*rit)->getListener()!=nullptr)

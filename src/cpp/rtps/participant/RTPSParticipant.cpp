@@ -65,6 +65,16 @@ uint32_t RTPSParticipant::getRTPSParticipantID() const
 	return mp_impl->getRTPSParticipantID();
 }
 
+bool RTPSParticipant::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
+{
+	return mp_impl->registerWriter(Writer,topicAtt, wqos);
+}
+
+bool RTPSParticipant::registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos)
+{
+	return mp_impl->registerReader(Reader,topicAtt, rqos);
+}
+
 
 }
 } /* namespace rtps */

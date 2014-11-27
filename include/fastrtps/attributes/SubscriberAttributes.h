@@ -35,8 +35,8 @@ public:
 	SubscriberAttributes()
 	{
 		m_userDefinedID = -1;
-				m_entityID = -1;
-				expectsInlineQos = false;
+		m_entityID = -1;
+		expectsInlineQos = false;
 	};
 	virtual ~SubscriberAttributes(){};
 	//!Topic Attributes

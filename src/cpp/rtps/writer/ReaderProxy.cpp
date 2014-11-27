@@ -43,7 +43,7 @@ ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,
 	const char* const METHOD_NAME = "ReaderProxy";
 	mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
 	mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
-	logInfo(RTPS_HISTORY,"Reader Proxy created");
+	logInfo(RTPS_WRITER,"Reader Proxy created");
 }
 
 
@@ -62,7 +62,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		if(it->seqNum == change->sequenceNumber)
 		{
 			*changeForReader = *it;
-			logInfo(RTPS_HISTORY,"Change " << change->sequenceNumber.to64long()<< " found in Reader Proxy " << endl);
+			logInfo(RTPS_WRITER,"Change " << change->sequenceNumber.to64long()<< " found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -80,7 +80,7 @@ bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* ch
 		if(it->seqNum == seq)
 		{
 			*changeForReader = *it;
-			logInfo(RTPS_HISTORY,"Change " << seq.to64long()<<" found in Reader Proxy " << endl);
+			logInfo(RTPS_WRITER,"Change " << seq.to64long()<<" found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -119,7 +119,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 			}
 		}
 	}
-	logInfo(RTPS_HISTORY,"Requested Changes Set" << endl);
+	logInfo(RTPS_WRITER,"Requested Changes Set");
 	return true;
 }
 

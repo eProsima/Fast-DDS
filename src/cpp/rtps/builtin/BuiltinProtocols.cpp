@@ -25,7 +25,7 @@
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/utils/IPFinder.h"
 
-#include "fastrtps/utils/eClock.h"
+
 
 using namespace eprosima::fastrtps;
 
@@ -53,7 +53,7 @@ BuiltinProtocols::~BuiltinProtocols() {
 
 bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes)
 {
-	const char* const METHOD_NAME = "initBuiltinProtocols";
+	//const char* const METHOD_NAME = "initBuiltinProtocols";
 	mp_participantImpl = p_part;
 	m_att = attributes;
 
@@ -108,9 +108,6 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 		mp_PDP->announceParticipantState(true);
 		mp_PDP->resetParticipantAnnouncement();
 	}
-
-	logError(RTPS_PDP,"SLEEPING 5 SECONDS-DEBUG");
-	eClock::my_sleep(5000);
 
 	return true;
 }
