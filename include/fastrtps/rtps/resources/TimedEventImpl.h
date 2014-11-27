@@ -43,7 +43,7 @@ class TimedEvent;
  */
 class TimedEventImpl {
 public:
-	virtual ~TimedEventImpl();
+	~TimedEventImpl();
 	//! A io_service must be provided as well as the interval of the timedEvent.
 	TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::microseconds interval);
 	//! Pure abstract virtual method used to perform the event.

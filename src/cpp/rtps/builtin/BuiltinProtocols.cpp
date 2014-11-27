@@ -125,11 +125,11 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
 bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& topicAtt,fastrtps::WriterQos& wqos)
 {
 	bool ok = false;
-	if(mp_PDP!=NULL)
+	if(mp_PDP!=nullptr)
 	{
 		ok |= mp_PDP->getEDP()->newLocalWriterProxyData(w,topicAtt,wqos);
 	}
-	if(mp_WLP !=NULL)
+	if(mp_WLP !=nullptr)
 	{
 		ok|= mp_WLP->addLocalWriter(w,wqos);
 	}
@@ -139,7 +139,7 @@ bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& t
 bool BuiltinProtocols::addLocalReader(RTPSReader* R,fastrtps::TopicAttributes& topicAtt, fastrtps::ReaderQos& rqos)
 {
 	bool ok = false;
-	if(mp_PDP!=NULL)
+	if(mp_PDP!=nullptr)
 	{
 		ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R,topicAtt, rqos);
 	}
@@ -175,13 +175,13 @@ bool BuiltinProtocols::updateLocalReader(RTPSReader* R,ReaderQos& rqos)
 bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
 {
 	bool ok = false;
+	if(mp_WLP !=nullptr)
+	{
+		ok|= mp_WLP->removeLocalWriter(W);
+	}
 	if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
 	{
 		ok|= mp_PDP->getEDP()->removeLocalWriter(W);
-	}
-	if(mp_WLP !=NULL)
-	{
-		ok|= mp_WLP->removeLocalWriter(W);
 	}
 	return ok;
 }

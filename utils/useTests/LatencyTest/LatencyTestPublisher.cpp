@@ -308,6 +308,10 @@ void LatencyTestPublisher::run()
 		//		cout << "Enter number to start next text: ";
 		//		std::cin >> aux;
 	}
+	cout << "REMOVING PUBLISHER"<<endl;
+	Domain::removePublisher(this->mp_commandpub);
+	cout << "REMOVING SUBSCRIBER"<<endl;
+	Domain::removeSubscriber(mp_commandsub);
 }
 
 bool LatencyTestPublisher::test(uint32_t datasize)

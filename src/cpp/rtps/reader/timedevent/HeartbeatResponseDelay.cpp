@@ -32,7 +32,7 @@ static const char* const CLASS_NAME = "HeartbeatResponseDelay";
 
 HeartbeatResponseDelay::~HeartbeatResponseDelay()
 {
-
+	stop_timer();
 }
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval):

@@ -34,7 +34,7 @@ TimedEventImpl::TimedEventImpl(TimedEvent* event,boost::asio::io_service* serv,b
 
 TimedEventImpl::~TimedEventImpl()
 {
-	stop_timer();
+//	stop_timer();
 	delete(timer);
 	delete(mp_stopSemaphore);
 }

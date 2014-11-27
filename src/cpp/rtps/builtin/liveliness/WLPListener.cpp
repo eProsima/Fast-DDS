@@ -153,6 +153,7 @@ bool WLPListener::computeKey(CacheChange_t* change)
 			{
 				change->instanceHandle.value[i] = aux_msg.buffer[i];
 			}
+			aux_msg.buffer = nullptr;
 			return true;
 		}
 		return false;

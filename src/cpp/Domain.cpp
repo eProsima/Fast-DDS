@@ -47,9 +47,9 @@ Domain::~Domain()
 
 void Domain::stopAll()
 {
-	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	while(m_participants.size()>0)
 	{
-		Domain::removeParticipant(it->first);
+		Domain::removeParticipant(m_participants.begin()->first);
 	}
 	eClock::my_sleep(100);
 	Log::removeLog();

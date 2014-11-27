@@ -142,8 +142,10 @@ static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
 			}
 			aux_msg->pos+=plength;
 		}
+		aux_msg->buffer = nullptr;
 		return false;
 	}
+	aux_msg->buffer = nullptr;
 	return true;
 }
 

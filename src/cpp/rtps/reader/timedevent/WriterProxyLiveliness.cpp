@@ -38,7 +38,7 @@ WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
 {
-
+	stop_timer();
 }
 
 void WriterProxyLiveliness::event(EventCode code, const char* msg)

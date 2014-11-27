@@ -170,7 +170,6 @@ bool EDP::removeWriterProxy(const GUID_t& writer)
 		logInfo(RTPS_EDP," in topic: "<<wdata->m_topicName,C_CYAN);
 		unpairWriterProxy(wdata);
 		this->mp_PDP->removeWriterProxyData(wdata);
-
 		return true;
 	}
 	return false;
