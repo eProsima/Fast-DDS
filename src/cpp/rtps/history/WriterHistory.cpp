@@ -88,10 +88,10 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
 	{
 		if((*chit)->sequenceNumber == a_change->sequenceNumber)
 		{
+			mp_writer->change_removed_by_history(a_change);
 			m_changePool.release_Cache(a_change);
 			m_changes.erase(chit);
 			updateMaxMinSeqNum();
-			mp_writer->change_removed_by_history(a_change);
 			return true;
 		}
 	}

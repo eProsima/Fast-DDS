@@ -94,11 +94,11 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
 		if((*chit)->sequenceNumber == a_change->sequenceNumber &&
 				(*chit)->writerGUID == a_change->writerGUID)
 		{
+			mp_reader->change_removed_by_history(a_change);
 			m_changePool.release_Cache(a_change);
 			m_changes.erase(chit);
 			sortCacheChanges();
 			updateMaxMinSeqNum();
-			mp_reader->change_removed_by_history(a_change);
 			return true;
 		}
 	}
