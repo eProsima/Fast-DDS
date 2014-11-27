@@ -43,7 +43,7 @@ static const char* const CLASS_NAME = "StatefulWriter";
 StatefulWriter::~StatefulWriter()
 {
 	const char* const METHOD_NAME = "~StatefulWriter";
-	logInfo(RTPS_HISTORY,"StatefulWriter destructor");
+	logInfo(RTPS_WRITER,"StatefulWriter destructor");
 	if(mp_periodicHB !=nullptr)
 		delete(mp_periodicHB);
 	for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
@@ -95,7 +95,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 	}
 	else
 	{
-		logInfo(RTPS_HISTORY,"No reader proxy to add change.");
+		logInfo(RTPS_WRITER,"No reader proxy to add change.");
 	}
 }
 
@@ -104,7 +104,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "change_removed_by_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	logInfo(RTPS_HISTORY,"Change "<<a_change->sequenceNumber.to64long()<< " to be removed.");
+	logInfo(RTPS_WRITER,"Change "<<a_change->sequenceNumber.to64long()<< " to be removed.");
 	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 			it!=this->matched_readers.end();++it)
 	{
@@ -191,7 +191,7 @@ void StatefulWriter::unsent_changes_not_empty()
 			}
 		}
 	}
-	logInfo(RTPS_HISTORY,"Finish sending unsent changes");
+	logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
 /*
@@ -211,7 +211,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	{
 		if((*it)->m_att.guid == rdata.guid)
 		{
-			logWarning(RTPS_HISTORY,"Attempting to add existing reader" << endl);
+			logWarning(RTPS_WRITER, "Attempting to add existing reader" << endl);
 			return false;
 		}
 	}
@@ -235,7 +235,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 		}
 	}
 	matched_readers.push_back(rp);
-	logInfo(RTPS_HISTORY,"Reader Proxy added to StatefulWriter with "
+	logInfo(RTPS_WRITER, "Reader Proxy added to StatefulWriter with "
 			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
 			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators: "<<rp->m_att.guid);
 	if(rp->m_changesForReader.size()>0)
@@ -256,7 +256,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 	{
 		if((*it)->m_att.guid == rdata.guid)
 		{
-			logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<(*it)->m_att.guid);
+			logInfo(RTPS_WRITER, "Reader Proxy removed: " << (*it)->m_att.guid);
 			delete(*it);
 			matched_readers.erase(it);
 			if(matched_readers.size()==0)
@@ -314,7 +314,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 			{
 				if(changeForReader.status != ACKNOWLEDGED)
 				{
-					logInfo(RTPS_HISTORY,"Change not acked. Relevant: " << changeForReader.is_relevant<<" status: " << changeForReader.status << endl);
+					logInfo(RTPS_WRITER, "Change not acked. Relevant: " << changeForReader.is_relevant << " status: " << changeForReader.status << endl);
 					return false;
 				}
 			}
