@@ -61,15 +61,23 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
 	m_hasChangedLocalPDP(true),
 	mp_resendParticipantTimer(nullptr),
 	mp_listener(nullptr),
-	mp_topicDataType(nullptr),
 	mp_SPDPWriterHistory(nullptr),
 	mp_SPDPReaderHistory(nullptr)
 {
 
 }
 
-PDPSimple::~PDPSimple() {
-	// TODO Auto-generated destructor stub
+PDPSimple::~PDPSimple()
+{
+	if(mp_EDP!=nullptr)
+		delete(mp_EDP);
+	delete(mp_SPDPWriter);
+	delete(mp_SPDPReader);
+	delete(mp_SPDPWriterHistory);
+	delete(mp_SPDPReaderHistory);
+	if(mp_resendParticipantTimer!=nullptr)
+		delete(mp_resendParticipantTimer);
+	delete(mp_listener);
 }
 
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)

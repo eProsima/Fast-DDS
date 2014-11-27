@@ -54,8 +54,32 @@ EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
 
 }
 
-EDPSimple::~EDPSimple() {
-	// TODO Auto-generated destructor stub
+EDPSimple::~EDPSimple()
+{
+	if(this->mp_PubReader.first !=nullptr)
+	{
+		delete(mp_PubReader.first);
+		delete(mp_PubReader.second);
+	}
+	if(this->mp_SubReader.first !=nullptr)
+	{
+		delete(mp_SubReader.first);
+		delete(mp_SubReader.second);
+	}
+	if(this->mp_PubWriter.first !=nullptr)
+	{
+		delete(mp_PubWriter.first);
+		delete(mp_PubWriter.second);
+	}
+	if(this->mp_SubWriter.first !=nullptr)
+	{
+		delete(mp_SubWriter.first);
+		delete(mp_SubWriter.second);
+	}
+	if(mp_pubListen!=nullptr)
+		delete(mp_pubListen);
+	if(mp_subListen !=nullptr)
+		delete(mp_subListen);
 }
 
 

@@ -117,7 +117,7 @@ void WriterHistory::updateMaxMinSeqNum()
 bool WriterHistory::remove_min_change()
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(remove_change(mp_minSeqCacheChange))
+	if(m_changes.size() > 0 && remove_change(mp_minSeqCacheChange))
 	{
 		updateMaxMinSeqNum();
 		return true;

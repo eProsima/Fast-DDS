@@ -59,6 +59,10 @@ public:
 
 	Subscriber* createSubscriber(SubscriberAttributes& att, SubscriberListener* listen=nullptr);
 
+	bool removePublisher(Publisher* pub);
+
+	bool removeSubscriber(Subscriber* sub);
+
 	const GUID_t& getGuid() const;
 
 	inline const ParticipantAttributes& getAttributes() const {return m_att;};

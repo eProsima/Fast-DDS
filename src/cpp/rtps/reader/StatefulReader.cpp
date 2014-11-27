@@ -148,18 +148,28 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 	if(wp!=nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
 	{
 		std::vector<int> to_remove;
+		bool continuous_removal = true;
 		for(size_t i = 0;i<wp->m_changesFromW.size();++i)
 		{
-			if(!wp->m_changesFromW.at(i).isValid() && (wp->m_changesFromW.at(i).status == RECEIVED || wp->m_changesFromW.at(i).status == LOST))
-			{
-				wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
-				to_remove.push_back((int)i);
-			}
 			if(a_change->sequenceNumber == wp->m_changesFromW.at(i).seqNum)
 			{
 				wp->m_changesFromW.at(i).notValid();
+				if(continuous_removal)
+				{
+					wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
+					to_remove.push_back((int)i);
+				}
 				break;
 			}
+			if(!wp->m_changesFromW.at(i).isValid()
+					&& (wp->m_changesFromW.at(i).status == RECEIVED || wp->m_changesFromW.at(i).status == LOST)
+					&& continuous_removal)
+			{
+				wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
+				to_remove.push_back((int)i);
+				continue;
+			}
+			continuous_removal = false;
 		}
 		for(std::vector<int>::reverse_iterator it = to_remove.rbegin();
 				it!=to_remove.rend();++it)
@@ -221,15 +231,17 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 //
 bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
-	//const char* const METHOD_NAME = "nextUntakenCache";
+	const char* const METHOD_NAME = "nextUntakenCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	SequenceNumber_t minSeqNum = c_SequenceNumber_Unknown;
 	SequenceNumber_t auxSeqNum;
 	WriterProxy* wp = nullptr;
 	bool available = false;
+	logInfo(RTPS_READER,this->getGuid().entityId<<": looking through: "<< matched_writers.size() << " WriterProxies");
 	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();it!=matched_writers.end();++it)
 	{
 		(*it)->available_changes_min(&auxSeqNum);
+		//cout << "AVAILABLE MIN: "<< auxSeqNum << endl;
 		if(auxSeqNum.to64long() > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
 		{
 			available = true;
@@ -237,6 +249,7 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 			wp = *it;
 		}
 	}
+	//cout << "AVAILABLE? "<< available << endl;
 	if(available && wp->get_change(minSeqNum,change))
 	{
 		if(wpout !=nullptr)

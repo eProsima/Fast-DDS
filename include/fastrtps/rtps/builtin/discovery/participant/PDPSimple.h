@@ -38,7 +38,6 @@ class RemoteParticipantLeaseDuration;
 class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
-class PDPSimpleTopicDataType;
 class PDPSimpleListener;
 
 
@@ -191,8 +190,6 @@ private:
 	ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
 	//!Listener for the SPDP messages.
 	PDPSimpleListener* mp_listener;
-	//!TopicDataType object to extract the key from unregistering messages.
-	PDPSimpleTopicDataType* mp_topicDataType;
 	//!WriterHistory
 	WriterHistory* mp_SPDPWriterHistory;
 	//!Reader History

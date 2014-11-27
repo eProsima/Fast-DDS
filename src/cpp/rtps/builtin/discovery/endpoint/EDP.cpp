@@ -482,7 +482,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 	{
 		logInfo(RTPS_EDP,W->getGuid()<<" in topic: \"" << wdata->m_topicName<<"\"",C_CYAN);
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
-				pit!=mp_PDP->ParticipantProxiesBegin();++pit)
+				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{
 			for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
 					rdatait!=(*pit)->m_readers.end();++rdatait)

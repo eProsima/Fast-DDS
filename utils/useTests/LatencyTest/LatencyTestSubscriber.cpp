@@ -23,23 +23,23 @@ uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
 LatencyTestSubscriber::LatencyTestSubscriber():
-				mp_participant(nullptr),
-				mp_datapub(nullptr),
-				mp_commandpub(nullptr),
-				mp_datasub(nullptr),
-				mp_commandsub(nullptr),
-				mp_latency(nullptr),
-				m_disc_sema(0),
-				m_comm_sema(0),
-				m_data_sema(0),
-				m_status(0),
-				n_received(0),
-				n_samples(0),
-				m_datapublistener(this),
-				m_datasublistener(this),
-				m_commandpublistener(this),
-				m_commandsublistener(this),
-				m_echo(true)
+						mp_participant(nullptr),
+						mp_datapub(nullptr),
+						mp_commandpub(nullptr),
+						mp_datasub(nullptr),
+						mp_commandsub(nullptr),
+						mp_latency(nullptr),
+						m_disc_sema(0),
+						m_comm_sema(0),
+						m_data_sema(0),
+						m_status(0),
+						n_received(0),
+						n_samples(0),
+						m_datapublistener(this),
+						m_datasublistener(this),
+						m_commandpublistener(this),
+						m_commandsublistener(this),
+						m_echo(true)
 {
 
 
@@ -69,7 +69,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	if(mp_participant == nullptr)
 		return false;
 	Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
-		Domain::registerType(mp_participant,(TopicDataType*)&command_t);
+	Domain::registerType(mp_participant,(TopicDataType*)&command_t);
 	// DATA PUBLISHER
 	PublisherAttributes PubDataparam;
 	PubDataparam.topic.topicDataType = "LatencyType";
@@ -169,25 +169,33 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber
 void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 {
 	TestCommandType command;
-	mp_up->mp_commandsub->takeNextData(&command,&mp_up->m_sampleinfo);
-	cout << "RCOMMAND: "<< command.m_command << endl;
-	if(command.m_command == READY)
+	if(mp_up->mp_commandsub->takeNextData(&command,&mp_up->m_sampleinfo))
 	{
-		cout << "Publisher has new test ready..."<<endl;
-		mp_up->m_comm_sema.post();
+		cout << "RCOMMAND: "<< command.m_command << endl;
+		if(command.m_command == READY)
+		{
+			cout << "Publisher has new test ready..."<<endl;
+			mp_up->m_comm_sema.post();
+		}
+		else if(command.m_command == STOP_ERROR)
+		{
+			mp_up->m_status = -1;
+			mp_up->m_comm_sema.post();
+		}
+		else if(command.m_command == DEFAULT)
+		{
+			logUser("Something is wrong");
+		}
 	}
-	else if(command.m_command == STOP_ERROR)
-	{
-		mp_up->m_status = -1;
-		mp_up->m_comm_sema.post();
-	}
+	//cout << "SAMPLE INFO: "<< mp_up->m_sampleinfo.writerGUID << mp_up->m_sampleinfo.sampleKind << endl;
 }
 
 void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
-	//	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
-	//	eClock::my_sleep(50);
+//		cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
+//	//	eClock::my_sleep(50);
+//		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
 	if(mp_up->m_echo)
 		mp_up->mp_datapub->write((void*)mp_up->mp_latency);
 	if(mp_up->mp_latency->seqnum == (uint32_t)mp_up->n_samples)
@@ -220,14 +228,13 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
 	n_received = 0;
 	TestCommandType command;
 	command.m_command = BEGIN;
-	mp_commandpub->write(&command);
-
 	cout << "Testing with data size: " << datasize+4<<endl;
+	mp_commandpub->write(&command);
 	m_data_sema.wait();
 	cout << "TEST OF SiZE: "<< datasize +4 << " ENDS"<<endl;
 	size_t removed;
 	this->mp_datapub->removeAllChange(&removed);
-	cout << "REMOVED: "<< removed<<endl;
+	//cout << "REMOVED: "<< removed<<endl;
 	delete(mp_latency);
 	if(m_status == -1)
 		return false;

@@ -30,11 +30,10 @@ namespace rtps {
 class StatelessWriter : public RTPSWriter
 {
 	friend class RTPSParticipantImpl;
-public:
-	//StatelessWriter();
-	virtual ~StatelessWriter();
-	StatelessWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
 
+	StatelessWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+public:
+	virtual ~StatelessWriter();
 	/**
 	 * Add a specific change to all ReaderLocators.
 	 * @param p Pointer to the change.

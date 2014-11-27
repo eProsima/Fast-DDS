@@ -16,9 +16,17 @@
 
 #include "fastrtps/config/fastrtps_dll.h"
 #include <cstdio>
+#include "fastrtps/rtps/common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps {
+
+namespace rtps
+{
+class GUID_t;
+}
+using namespace rtps;
+
 
 class PublisherImpl;
 
@@ -55,6 +63,8 @@ public:
 	bool dispose_and_unregister(void*Data);
 
 	bool removeAllChange(size_t* removed = nullptr);
+
+	const GUID_t& getGuid();
 
 private:
 	PublisherImpl* mp_impl;
