@@ -362,7 +362,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 		else
 			return false;
 	}
-	logWarning(RTPS_LIVELINESS,"Trying to remove a Writerthat was not registered",C_MAGENTA);
+	logWarning(RTPS_LIVELINESS,"Writer "<<W->getGuid().entityId << " not found.",C_MAGENTA);
 	return false;
 }
 

@@ -51,7 +51,7 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
 	const char* const METHOD_NAME = "WLivelinessPeriodicAssertion";
-	logInfo(RTPS_LIVELINESS,"TimedEvent destructor.",C_MAGENTA);
+	stop_timer();
 }
 
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)

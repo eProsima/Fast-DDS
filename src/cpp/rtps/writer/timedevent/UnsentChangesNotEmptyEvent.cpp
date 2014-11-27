@@ -35,7 +35,7 @@ UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 
 UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 {
-
+	stop_timer();
 }
 
 void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)

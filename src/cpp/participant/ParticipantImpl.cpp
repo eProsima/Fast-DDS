@@ -53,13 +53,13 @@ ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart
 ParticipantImpl::~ParticipantImpl()
 {
 	delete(mp_participant);
-	for(auto pit = this->m_publishers.begin();pit!= m_publishers.end();++pit)
+	while(m_publishers.size()>0)
 	{
-		this->removePublisher(pit->first);
+		this->removePublisher(m_publishers.begin()->first);
 	}
-	for(auto sit = m_subscribers.begin();sit!= m_subscribers.end();++sit)
+	while(m_subscribers.size()>0)
 	{
-		this->removeSubscriber(sit->first);
+		this->removeSubscriber(m_subscribers.begin()->first);
 	}
 	RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
 }
@@ -72,6 +72,7 @@ bool ParticipantImpl::removePublisher(Publisher* pub)
 		if(pit->second->getGuid() == pub->getGuid())
 		{
 			delete(pit->second);
+			m_publishers.erase(pit);
 			return true;
 		}
 	}
@@ -85,6 +86,7 @@ bool ParticipantImpl::removeSubscriber(Subscriber* sub)
 		if(sit->second->getGuid() == sub->getGuid())
 		{
 			delete(sit->second);
+			m_subscribers.erase(sit);
 			return true;
 		}
 	}

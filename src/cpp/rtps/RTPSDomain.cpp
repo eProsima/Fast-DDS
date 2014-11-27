@@ -52,10 +52,9 @@ void RTPSDomain::stopAll()
 	const char* const METHOD_NAME = "~RTPSDomain";
 	logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN",C_WHITE);
 
-	for(auto it=m_RTPSParticipants.begin();
-			it!=m_RTPSParticipants.end();++it)
+	while(m_RTPSParticipants.size()>0)
 	{
-		RTPSDomain::removeRTPSParticipant(it->first);
+		RTPSDomain::removeRTPSParticipant(m_RTPSParticipants.begin()->first);
 	}
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
 	eClock::my_sleep(100);

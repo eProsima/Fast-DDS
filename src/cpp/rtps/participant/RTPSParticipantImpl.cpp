@@ -141,13 +141,11 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 
 
-	for(std::vector<RTPSReader*>::iterator it=m_userReaderList.begin();
-			it!=m_userReaderList.end();++it)
-		RTPSDomain::removeRTPSReader(*it);
+	while(m_userReaderList.size()>0)
+		RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
 
-	for(std::vector<RTPSWriter*>::iterator it=m_userWriterList.begin();
-			it!=m_userWriterList.end();++it)
-		RTPSDomain::removeRTPSWriter(*it);
+	while(m_userWriterList.size()>0)
+			RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
