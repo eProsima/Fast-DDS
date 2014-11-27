@@ -39,7 +39,7 @@ StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 StatelessWriter::~StatelessWriter()
 {
 	const char* const METHOD_NAME = "~StatelessWriter";
-	logInfo(RTPS_HISTORY,"StatelessWriter destructor";);
+	logInfo(RTPS_WRITER,"StatelessWriter destructor";);
 }
 
 /*
@@ -116,7 +116,7 @@ void StatelessWriter::unsent_changes_not_empty()
 			//			}
 		}
 	}
-	logInfo (RTPS_HISTORY, "Finish sending unsent changes" ;);
+	logInfo(RTPS_WRITER, "Finish sending unsent changes";);
 }
 
 
@@ -134,7 +134,7 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 		{
 			if((*it).guid == rdata.guid)
 			{
-				logWarning(RTPS_HISTORY,"Attempting to add existing reader" );
+				logWarning(RTPS_WRITER, "Attempting to add existing reader");
 				return false;
 			}
 		}
@@ -165,7 +165,7 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 {
 	const char* const METHOD_NAME = "add_locator";
-	logInfo(RTPS_HISTORY,"Adding Locator: "<< loc<< " to StatelessWriter";);
+	logInfo(RTPS_WRITER, "Adding Locator: " << loc << " to StatelessWriter";);
 	std::vector<ReaderLocator>::iterator rit;
 	bool found = false;
 	for(rit=reader_locator.begin();rit!=reader_locator.end();++rit)
@@ -220,7 +220,7 @@ bool StatelessWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 	}
 	if(found)
 	{
-		logInfo(RTPS_HISTORY,"Reader Proxy removed: " <<rdata.guid;);
+		logInfo(RTPS_WRITER, "Reader Proxy removed: " << rdata.guid;);
 		for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
 				lit!=rdata.endpoint.unicastLocatorList.end();++lit)
 		{

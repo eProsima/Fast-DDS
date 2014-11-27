@@ -23,7 +23,7 @@ namespace fastrtps {
 
 namespace rtps
 {
-class GUID_t;
+struct GUID_t;
 }
 using namespace rtps;
 
