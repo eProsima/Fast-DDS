@@ -44,10 +44,10 @@ STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -
 
 STATETEST_SRC_CFILES=
 
-STATETEST_SRC_CPPFILES= $(BASEDIR)/LatencyTestPublisher.cpp \
-					$(BASEDIR)/LatencyTestSubscriber.cpp \
-					$(BASEDIR)/LatencyTestTypes.cpp \
-					$(BASEDIR)/main_LatencyTest.cpp
+STATETEST_SRC_CPPFILES= $(BASEDIR)/../../useTests/LatencyTest/LatencyTestPublisher.cpp \
+					$(BASEDIR)/../../useTests/LatencyTest/LatencyTestSubscriber.cpp \
+					$(BASEDIR)/../../useTests/LatencyTest/LatencyTestTypes.cpp \
+					$(BASEDIR)/../../useTests/LatencyTest/main_LatencyTest.cpp
 
 # Project sources are copied to the current directory
 STATETEST_SRCS= $(STATETEST_SRC_CFILES) $(STATETEST_SRC_CPPFILES)

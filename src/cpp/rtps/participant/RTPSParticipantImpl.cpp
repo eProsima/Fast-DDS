@@ -299,13 +299,13 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
 bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
 {
-	//return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
+	return this->mp_builtinProtocols->addLocalWriter(Writer,topicAtt,wqos);
 	return true;
 }
 
 bool RTPSParticipantImpl::registerReader(RTPSReader* reader,TopicAttributes& topicAtt,ReaderQos& rqos)
 {
-	//return this->mp_builtinProtocols->addLocalReader(reader,topicAtt,rqos);
+	return this->mp_builtinProtocols->addLocalReader(reader,topicAtt,rqos);
 	return true;
 }
 

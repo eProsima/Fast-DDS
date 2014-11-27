@@ -66,12 +66,9 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
 
-
 	PParam.rtps.sendSocketBufferSize = 8712;
 	PParam.rtps.listenSocketBufferSize = 17424;
 	PParam.rtps.setName("Participant_pub");
-	PParam.rtps.use_IP4_to_send = true;
-	PParam.rtps.use_IP6_to_send = false;
 	mp_participant = Domain::createParticipant(PParam);
 	if(mp_participant == nullptr)
 		return false;

@@ -49,18 +49,19 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
-	logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guard2(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
+	logInfo(RTPS_PDP,"SPDP Message received 2",C_CYAN);
+	if(change->instanceHandle == c_InstanceHandle_Unknown)
+	{
+		if(!this->getKey(change))
+		{
+			logWarning(RTPS_PDP,"Problem getting the key of the change, removing",C_CYAN);
+			this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
+			return;
+		}
+	}
 	if(change->kind == ALIVE)
 	{
-		if(change->instanceHandle == c_InstanceHandle_Unknown)
-		{
-			if(!this->getKey(change))
-			{
-				logWarning(RTPS_PDP,"Problem getting the key of the change, removing",C_CYAN);
-				this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
-				return;
-			}
-		}
 		//LOAD INFORMATION IN TEMPORAL RTPSParticipant PROXY DATA
 		m_ParticipantProxyData.clear();
 		CDRMessage_t msg;
@@ -74,11 +75,20 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* 
 			change->instanceHandle = m_ParticipantProxyData.m_key;
 			if(m_ParticipantProxyData.m_guid == mp_SPDP->getRTPSParticipant()->getGuid())
 			{
-				logInfo(RTPS_PDP,"Message from own RTPSParticipant, ignoring",C_CYAN)
+				logInfo(RTPS_PDP,"Message from own RTPSParticipant, removing",C_CYAN);
 				this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
 				return;
 			}
-			logError(RTPS_PDP,"Missing change with the same KEY replace");
+			for(auto chit = this->mp_SPDP->mp_SPDPReaderHistory->changesBegin();
+					chit != mp_SPDP->mp_SPDPReaderHistory->changesEnd();++chit)
+			{
+				if((*chit)->instanceHandle == change->instanceHandle &&
+						(*chit)->sequenceNumber < change->sequenceNumber)
+				{
+					mp_SPDP->mp_SPDPReaderHistory->remove_change(*chit);
+					break;
+				}
+			}
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;

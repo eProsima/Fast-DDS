@@ -76,7 +76,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
 	m_changes.push_back(a_change);
 	updateMaxMinSeqNum();
 	logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
-	mp_reader->getListener()->onNewCacheChangeAdded(mp_reader,a_change);
 	return true;
 }
 

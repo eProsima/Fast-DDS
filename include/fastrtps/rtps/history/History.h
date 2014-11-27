@@ -119,6 +119,8 @@ public:
 
 	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getPayloadSize(); }
 
+	RTPS_DllAPI inline boost::recursive_mutex* getMutex() {return mp_mutex;};
+
 protected:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;

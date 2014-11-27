@@ -87,7 +87,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, CacheChange
 				for(auto ch = mp_SEDP->mp_PubReader.second->changesBegin();
 						ch!=mp_SEDP->mp_PubReader.second->changesEnd();++ch)
 				{
-					if((*ch)->instanceHandle == change->instanceHandle)
+					if((*ch)->instanceHandle == change->instanceHandle &&
+							(*ch)->sequenceNumber < change->sequenceNumber)
 						mp_SEDP->mp_PubReader.second->remove_change(*ch);
 				}
 				wdata->update(&m_writerProxyData);
