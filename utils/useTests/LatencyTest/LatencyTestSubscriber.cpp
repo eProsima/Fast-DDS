@@ -12,6 +12,12 @@
  */
 
 #include "LatencyTestSubscriber.h"
+#include "fastrtps/utils/RTPSLog.h"
+
+using namespace eprosima;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 
 uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
@@ -126,7 +132,7 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* pub
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
+		logUser("Data Pub Matched ",C_MAGENTA);
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -135,7 +141,7 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* s
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
+		logUser("Data Sub Matched ",C_MAGENTA);
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -146,7 +152,7 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* 
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
+		logUser("Command Pub Matched ",C_MAGENTA);
 		mp_up->m_disc_sema.post();
 	}
 }
@@ -155,7 +161,7 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber
 {
 	if(info.status == MATCHED_MATCHING)
 	{
-		cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
+		logUser("Command Sub Matched ",C_MAGENTA);
 		mp_up->m_disc_sema.post();
 	}
 }

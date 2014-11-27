@@ -275,7 +275,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 	{
 		change->isRead = true;
 		this->decreaseUnreadCount();
-		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
+		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": taking "<< change->sequenceNumber.to64long());
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
