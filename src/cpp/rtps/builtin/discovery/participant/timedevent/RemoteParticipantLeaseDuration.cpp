@@ -64,7 +64,8 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logInfo(RTPS_LIVELINESS,"Remote RTPSParticipant Lease Duration aborted",C_MAGENTA);
+		logInfo(RTPS_LIVELINESS," Stopped for "<<mp_participantProxyData->m_participantName
+				<< " with ID: "<< mp_participantProxyData->m_guid.guidPrefix,C_MAGENTA);
 		this->stopSemaphorePost();
 	}
 	else

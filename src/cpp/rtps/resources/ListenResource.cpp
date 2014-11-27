@@ -89,7 +89,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator(),C_BLUE);
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator());
 			return true;
 		}
 	}
@@ -106,7 +106,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator(),C_BLUE);
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator());
 			return true;
 		}
 	}
@@ -121,6 +121,8 @@ void ListenResource::setMsgRecMsgLength(uint32_t length)
 Locator_t ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 			uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
+	const char* const METHOD_NAME = "init_thread";
+	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc);
 	mp_receiver = new MessageReceiver(listenSockSize);
 	mp_receiver->mp_threadListen = this;
 	return mp_impl->init_thread(pimpl,loc,listenSockSize,isMulti,isFixed);

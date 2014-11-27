@@ -64,7 +64,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 		PublisherListener* listen)
 {
 	const char* const METHOD_NAME = "createPublisher";
-	logInfo(PARTICIPANT,"CREATING PUBLISHER",C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;
@@ -132,7 +132,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {
 	const char* const METHOD_NAME = "createSubscriber";
-	logInfo(PARTICIPANT,"CREATING SUBSCRIBER",C_B_YELLOW)
+	logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName(),C_B_YELLOW)
 	//Look for the correct type registration
 
 	TopicDataType* p_type = nullptr;

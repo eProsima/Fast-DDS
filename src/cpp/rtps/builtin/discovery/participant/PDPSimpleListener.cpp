@@ -51,7 +51,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 	CacheChange_t* change = (CacheChange_t*)(change_in);
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
-	logInfo(RTPS_PDP,"SPDP Message received 2",C_CYAN);
+	logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
 	if(change->instanceHandle == c_InstanceHandle_Unknown)
 	{
 		if(!this->getKey(change))

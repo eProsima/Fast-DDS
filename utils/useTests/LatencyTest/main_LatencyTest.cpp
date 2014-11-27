@@ -44,6 +44,7 @@ const int c_n_samples = 10000;
 
 int main(int argc, char** argv){
 	Log::setVerbosity(VERB_INFO);
+	Log::logFileName("LatencyTest.txt",true);
 	//cout << "Starting "<< endl;
 	logUser("Starting");
 	int type;
