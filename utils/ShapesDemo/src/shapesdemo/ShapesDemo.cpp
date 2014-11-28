@@ -15,14 +15,19 @@
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include "eprosimashapesdemo/qt/mainwindow.h"
 
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/Domain.h"
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/subscriber/Subscriber.h"
+
 ShapesDemo::ShapesDemo(MainWindow *mw):
-    mp_RTPSParticipant(NULL),
+    mp_participant(nullptr),
     m_isInitialized(false),
     minX(0),minY(0),maxX(0),maxY(0),
     m_mainWindow(mw),
     m_mutex(QMutex::Recursive)
 {
-    srand (time(NULL));
+    srand (time(nullptr));
     minX = 0;
     minY = 0;
     maxX = MAX_DRAW_AREA_X;
@@ -34,16 +39,16 @@ ShapesDemo::~ShapesDemo()
     stop();
 }
 
-RTPSParticipant* ShapesDemo::getRTPSParticipant()
+Participant* ShapesDemo::getParticipant()
 {
-    if(m_isInitialized && mp_RTPSParticipant !=NULL)
-        return mp_RTPSParticipant;
+    if(m_isInitialized && mp_participant !=nullptr)
+        return mp_participant;
     else
     {
         if(init())
-            return mp_RTPSParticipant;
+            return mp_participant;
     }
-    return NULL;
+    return nullptr;
 }
 
 bool ShapesDemo::init()
@@ -51,21 +56,23 @@ bool ShapesDemo::init()
     cout << "Initializing ShapesDemo "<< m_isInitialized <<endl;
     if(!m_isInitialized)
     {
-        cout <<"Creating new RTPSParticipant"<<endl;
-        RTPSParticipantAttributes pparam;
-        pparam.name = "fastrtpsParticipant";
-        pparam.builtin.domainId = m_options.m_domainId;
-        pparam.builtin.leaseDuration.seconds = 100;
-        pparam.builtin.leaseDuration_announcementperiod.seconds = 50;
-        pparam.defaultSendPort = 10042;
-        pparam.sendSocketBufferSize = 65536;
-        pparam.listenSocketBufferSize = 2*65536;
-        mp_RTPSParticipant = RTPSDomain::createRTPSParticipant(pparam);
-        if(mp_RTPSParticipant!=NULL)
+        cout <<"Creating new Participant"<<endl;
+        ParticipantAttributes pparam;
+        pparam.rtps.setName("fastrtpsParticipant");
+        pparam.rtps.builtin.domainId = m_options.m_domainId;
+        pparam.rtps.builtin.leaseDuration.seconds = 100;
+        pparam.rtps.builtin.leaseDuration_announcementperiod.seconds = 50;
+        pparam.rtps.defaultSendPort = 10042;
+        pparam.rtps.sendSocketBufferSize = 65536;
+        pparam.rtps.listenSocketBufferSize = 2*65536;
+        pparam.rtps.use_IP6_to_send = false;
+        pparam.rtps.use_IP4_to_send = true;
+        mp_participant = Domain::createParticipant(pparam);
+        if(mp_participant!=nullptr)
         {
-            // cout << "RTPSParticipant Created "<< mp_RTPSParticipant->getGuid() << endl;l
+            // cout << "RTPSParticipant Created "<< mp_participant->getGuid() << endl;l
             m_isInitialized = true;
-            RTPSDomain::registerType(&m_shapeTopicDataType);
+            Domain::registerType(mp_participant,&m_shapeTopicDataType);
             return true;
         }
         return false;
@@ -91,9 +98,9 @@ void ShapesDemo::stop()
             delete(*it);
         }
         m_subscribers.clear();
-        RTPSDomain::removeRTPSParticipant(mp_RTPSParticipant);
+        Domain::removeParticipant(mp_participant);
         cout << "All Stoped, removing"<<endl;
-        mp_RTPSParticipant = NULL;
+        mp_participant = nullptr;
         m_isInitialized = false;
     }
 }
