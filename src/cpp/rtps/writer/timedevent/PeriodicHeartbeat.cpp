@@ -67,7 +67,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 		{
 			SequenceNumber_t first = mp_SFW->get_seq_num_min();
 			SequenceNumber_t last = mp_SFW->get_seq_num_max();
-			if(first.to64long()>0 && last.to64long() >= first.to64long())
+			if(first != c_SequenceNumber_Unknown && last != c_SequenceNumber_Unknown && last >= first)
 			{
 				mp_SFW->incrementHBCount();
 				CDRMessage::initCDRMsg(&m_periodic_hb_msg);

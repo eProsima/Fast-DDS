@@ -20,7 +20,7 @@ namespace fastrtps {
 	//FIXME: UTC SECONDS AUTOMATICALLY
 eClock::eClock():
 		m_seconds_from_1900_to_1970(0),
-		m_utc_seconds_diff(2*60*60)
+		m_utc_seconds_diff(0)
 {
 #if defined(_WIN32)
 	QueryPerformanceFrequency(&freq);

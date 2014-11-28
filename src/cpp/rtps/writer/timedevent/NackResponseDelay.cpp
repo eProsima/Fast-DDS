@@ -95,7 +95,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
 				SequenceNumber_t first = mp_RP->mp_SFW->get_seq_num_min();
 				SequenceNumber_t last = mp_RP->mp_SFW->get_seq_num_min();
-				if(first.to64long() > 0 && last.to64long()>=first.to64long())
+				if(first != c_SequenceNumber_Unknown && last != c_SequenceNumber_Unknown && last >= first)
 				{
 					mp_RP->mp_SFW->incrementHBCount();
 					RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,mp_RP->mp_SFW->getGuid().guidPrefix,
