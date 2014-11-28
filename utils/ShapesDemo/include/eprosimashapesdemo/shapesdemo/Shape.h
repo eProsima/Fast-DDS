@@ -13,10 +13,11 @@
 
 #ifndef SHAPE_H_
 #define SHAPE_H_
-#include "fastrtps/common/types/Time_t.h"
-#include "fastrtps/common/types/Guid.h"
+#include "fastrtps/rtps/common/Time_t.h"
+#include "fastrtps/rtps/common/Guid.h"
 
-using namespace eprosima::rtps;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 #include <cstdint>
 #include <sstream>

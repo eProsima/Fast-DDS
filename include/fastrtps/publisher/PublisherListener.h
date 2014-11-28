@@ -21,6 +21,8 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastrtps {
 
+class Publisher;
+
 /**
  * Class PublisherListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup FASTRTPSMODULE
