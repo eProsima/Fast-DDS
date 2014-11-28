@@ -534,7 +534,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -556,7 +556,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -617,6 +617,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;fastrtps_SOURCE;fastrtps_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -633,6 +634,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;fastrtps_SOURCE;fastrtps_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -755,7 +757,7 @@
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -781,7 +783,7 @@
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
