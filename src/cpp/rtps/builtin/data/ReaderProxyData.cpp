@@ -24,10 +24,10 @@ namespace rtps {
 static const char* const CLASS_NAME = "ReaderProxyData";
 
 ReaderProxyData::ReaderProxyData():
-											m_expectsInlineQos(false),
-											m_userDefinedId(0),
-											m_isAlive(true),
-											m_topicKind(NO_KEY)
+													m_expectsInlineQos(false),
+													m_userDefinedId(0),
+													m_isAlive(true),
+													m_topicKind(NO_KEY)
 {
 
 }
@@ -77,6 +77,14 @@ bool ReaderProxyData::toParameterList()
 	}
 	{
 		ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,m_guid);
+		m_parameterList.m_parameters.push_back((Parameter_t*)p);
+	}
+	{
+		ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(PID_PROTOCOL_VERSION,4);
+		m_parameterList.m_parameters.push_back((Parameter_t*)p);
+	}
+	{
+		ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	if(m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)

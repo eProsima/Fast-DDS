@@ -86,8 +86,7 @@ CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t h
 SequenceNumber_t RTPSWriter::get_seq_num_min()
 {
 	CacheChange_t* change;
-	mp_history->get_min_change(&change);
-	if(change!=nullptr)
+	if(mp_history->get_min_change(&change) && change!= nullptr)
 		return change->sequenceNumber;
 	else
 		return c_SequenceNumber_Unknown;
@@ -96,8 +95,7 @@ SequenceNumber_t RTPSWriter::get_seq_num_min()
 SequenceNumber_t RTPSWriter::get_seq_num_max()
 {
 	CacheChange_t* change;
-	mp_history->get_max_change(&change);
-	if(change!=nullptr)
+	if(mp_history->get_max_change(&change) && change!=nullptr)
 		return change->sequenceNumber;
 	else
 		return c_SequenceNumber_Unknown;
