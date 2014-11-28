@@ -171,8 +171,8 @@ public:
 class RTPS_DllAPI ParameterGuid_t: public Parameter_t {
 public:
 	GUID_t guid;
-	ParameterGuid_t(){GUID_UNKNOWN(guid);};
-	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){GUID_UNKNOWN(guid);};
+	ParameterGuid_t(){};
+	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	ParameterGuid_t(ParameterId_t pid,uint16_t in_length,GUID_t guidin):Parameter_t(pid,in_length),guid(guidin){};
 	ParameterGuid_t(ParameterId_t pid,uint16_t in_length,InstanceHandle_t& iH):Parameter_t(pid,in_length)
 	{
@@ -192,8 +192,8 @@ public:
 class RTPS_DllAPI ParameterProtocolVersion_t: public Parameter_t {
 public:
 	ProtocolVersion_t protocolVersion;
-	ParameterProtocolVersion_t(){PROTOCOLVERSION(protocolVersion);};
-	ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){PROTOCOLVERSION(protocolVersion);};
+	ParameterProtocolVersion_t(){protocolVersion = c_ProtocolVersion;};
+	ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){protocolVersion = c_ProtocolVersion;};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -202,8 +202,8 @@ public:
 class RTPS_DllAPI ParameterVendorId_t:public Parameter_t{
 public:
 	VendorId_t vendorId;
-	ParameterVendorId_t(){VENDORID_EPROSIMA(vendorId);};
-	ParameterVendorId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){VENDORID_EPROSIMA(vendorId);};
+	ParameterVendorId_t(){set_VendorId_eProsima(vendorId);};
+	ParameterVendorId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){set_VendorId_eProsima(vendorId);};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

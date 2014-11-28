@@ -64,7 +64,7 @@ ParticipantProxyData::~ParticipantProxyData()
 bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
 {
 	this->m_leaseDuration = part->getAttributes().builtin.leaseDuration;
-	VENDORID_EPROSIMA(this->m_VendorId);
+	set_VendorId_eProsima(this->m_VendorId);
 
 	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
 	this->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
@@ -186,10 +186,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			case PID_PROTOCOL_VERSION:
 			{
-				ProtocolVersion_t pv;
-				PROTOCOLVERSION(pv);
 				ParameterProtocolVersion_t * p = (ParameterProtocolVersion_t*)(*it);
-				if(p->protocolVersion.m_major < pv.m_major)
+				if(p->protocolVersion.m_major < c_ProtocolVersion.m_major)
 				{
 					return false;
 				}
@@ -313,7 +311,7 @@ void ParticipantProxyData::clear()
 {
 	m_protocolVersion = ProtocolVersion_t();
 	m_guid = GUID_t();
-	VENDORID_UNKNOWN(m_VendorId);
+	set_VendorId_Unknown(m_VendorId);
 	m_expectsInlineQos = false;
 	m_availableBuiltinEndpoints = 0;
 	m_metatrafficUnicastLocatorList.clear();

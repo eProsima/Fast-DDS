@@ -46,16 +46,16 @@ static const char* const CLASS_NAME = "MessageReceiver";
 
 
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
-				m_rec_msg(rec_buffer_size)
+						m_rec_msg(rec_buffer_size)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
-	PROTOCOLVERSION(destVersion);
-	PROTOCOLVERSION(sourceVersion);
-	VENDORID_UNKNOWN(sourceVendorId);
-	GUIDPREFIX_UNKNOWN(sourceGuidPrefix);
-	GUIDPREFIX_UNKNOWN(destGuidPrefix);
+	destVersion = c_ProtocolVersion;
+	sourceVersion = c_ProtocolVersion;
+	set_VendorId_Unknown(sourceVendorId);
+	sourceGuidPrefix = c_GuidPrefix_Unknown;
+	destGuidPrefix = c_GuidPrefix_Unknown;
 	haveTimestamp = false;
-	TIME_INVALID(timestamp);
+	timestamp = c_TimeInvalid;
 
 	defUniLoc.kind = LOCATOR_KIND_UDPv4;
 	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
@@ -73,13 +73,13 @@ MessageReceiver::~MessageReceiver()
 }
 
 void MessageReceiver::reset(){
-	PROTOCOLVERSION(destVersion);
-	PROTOCOLVERSION(sourceVersion);
-	VENDORID_UNKNOWN(sourceVendorId);
-	GUIDPREFIX_UNKNOWN(sourceGuidPrefix);
-	GUIDPREFIX_UNKNOWN(destGuidPrefix);
+	destVersion = c_ProtocolVersion;
+	sourceVersion = c_ProtocolVersion;
+	set_VendorId_Unknown(sourceVendorId);
+	sourceGuidPrefix = c_GuidPrefix_Unknown;
+	destGuidPrefix = c_GuidPrefix_Unknown;
 	haveTimestamp = false;
-	TIME_INVALID(timestamp);
+	timestamp = c_TimeInvalid;
 
 	unicastReplyLocatorList.clear();
 	unicastReplyLocatorList.reserve(1);
@@ -99,7 +99,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		logWarning(RTPS_MSG_IN,"Received message too short, ignoring",C_BLUE)
-		return;
+				return;
 	}
 	this->reset();
 	destGuidPrefix = RTPSParticipantguidprefix;
@@ -313,7 +313,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(keyFlag && dataFlag)
 	{
 		logWarning(RTPS_MSG_IN, "Message received with Data and Key Flag set, ignoring")
-		return false;
+				return false;
 	}
 
 	//Assign message endianness
@@ -372,7 +372,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
 	{
 		logWarning(RTPS_MSG_IN,"Invalid message received, bad sequence Number",C_BLUE)
-		return false;
+				return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -471,13 +471,13 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			else
 			{
-				 if((*it)->reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
-					 change_to_add->copy(ch);
-				 else
-				 {
-					 logError(RTPS_MSG_IN,"Problem reserving, error",C_BLUE);
-					 return false;
-				 }
+				if((*it)->reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
+					change_to_add->copy(ch);
+				else
+				{
+					logError(RTPS_MSG_IN,"Problem reserving, error",C_BLUE);
+					return false;
+				}
 			}
 			if(haveTimestamp)
 				change_to_add->sourceTimestamp = this->timestamp;

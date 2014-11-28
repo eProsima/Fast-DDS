@@ -183,7 +183,6 @@ inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
 }
 
 
-#define SEQUENCENUMBER_UNKOWN(sq) {sq.high=-1;sq.low=0;}
 
 const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
 

@@ -43,9 +43,6 @@ struct RTPS_DllAPI GuidPrefix_t{
 		return *this;
 	}
 };
-
-#define GUIDPREFIX_UNKNOWN(g) {for(uint8_t i=0;i<12;i++) g.value[i]=0x0;}
-
 inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 {
 	for(uint8_t i =0;i<12;i++)
@@ -220,7 +217,6 @@ inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
 		return false;
 }
 
-#define GUID_UNKNOWN(gui) {GUIDPREFIX_UNKNOWN(gui.guidPrefix); gui.entityId = ENTITYID_UNKNOWN;}
 
 const GUID_t c_Guid_Unknown;
 
@@ -229,7 +225,7 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 	if(guid !=c_Guid_Unknown)
 		output<<guid.guidPrefix<<"|"<<guid.entityId;
 	else
-		output << "GUID UNKNOWN";
+		output << "|GUID UNKNOWN|";
 	return output;
 }
 

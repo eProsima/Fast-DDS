@@ -97,12 +97,9 @@ inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 	return output << t.seconds<<"."<<t.fraction;
 }
 
-#define TIME_ZERO(t){t.seconds=0;t.fraction=0;}
-#define TIME_INVALID(t){t.seconds=-1;t.fraction=0xffffffff;}
-#define TIME_INFINITE(t){t.seconds=0x7fffffff;t.fraction=0xffffffff;}
-
 const Time_t c_TimeInfinite(0x7fffffff,0xffffffff);
 const Time_t c_TimeZero(0,0);
+const Time_t c_TimeInvalid(-1,0xffffffff);
 
 typedef Time_t Duration_t;
 

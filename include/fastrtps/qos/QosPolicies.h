@@ -89,7 +89,7 @@ enum LivelinessQosPolicyKind:octet {
 class RTPS_DllAPI LivelinessQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
-						kind(AUTOMATIC_LIVELINESS_QOS){TIME_INFINITE(lease_duration); TIME_INFINITE(announcement_period);};
+						kind(AUTOMATIC_LIVELINESS_QOS){lease_duration = c_TimeInfinite; announcement_period = c_TimeInfinite;};
 	virtual ~LivelinessQosPolicy(){};
 	LivelinessQosPolicyKind kind;
 	Duration_t lease_duration;

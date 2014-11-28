@@ -42,9 +42,10 @@ namespace rtps{
 	ProtocolVersion_t version;
 	VendorId_t vendorId;;
 	GuidPrefix_t guidPrefix;
-	Header_t(){
-		PROTOCOLVERSION(version);
-		VENDORID_EPROSIMA(vendorId);
+	Header_t():
+		version(c_ProtocolVersion)
+	{
+				set_VendorId_eProsima(vendorId);
 	}
 	~Header_t(){
 	}

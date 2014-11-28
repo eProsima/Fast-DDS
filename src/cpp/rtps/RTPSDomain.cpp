@@ -104,15 +104,15 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 	IPFinder::getIPAddress(&loc);
 	if(loc.size()>0)
 	{
-		guidP.value[0] = c_eProsimaVendorId[0];
-		guidP.value[1] = c_eProsimaVendorId[1];
+		guidP.value[0] = c_VendorId_eProsima[0];
+		guidP.value[1] = c_VendorId_eProsima[1];
 		guidP.value[2] = loc.begin()->address[14];
 		guidP.value[3] = loc.begin()->address[15];
 	}
 	else
 	{
-		guidP.value[0] = c_eProsimaVendorId[0];
-		guidP.value[1] = c_eProsimaVendorId[1];
+		guidP.value[0] = c_VendorId_eProsima[0];
+		guidP.value[1] = c_VendorId_eProsima[1];
 		guidP.value[2] = 127;
 		guidP.value[3] = 1;
 	}
