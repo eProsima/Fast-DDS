@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-RTPSVERSION = 0.5.1
+RTPSVERSION = 1.0.0
 
 QT  += core
 #QT  -= gui
@@ -64,7 +64,7 @@ else:unix: CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/x64
 
 unix: LIBS += -lboost_thread -lboost_system -lboost_date_time
 win32:INCLUDEPATH += $(LIB_BOOST_PATH)/
-win32:LIBS += -L$(LIB_BOOST_PATH)/lib/i86/
+win32:LIBS += -L$(LIB_BOOST_PATH)/lib/i86Win32VS2010/
 
 
 HEADERS += \
@@ -104,14 +104,14 @@ SOURCES += \
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibfastrtps-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
-win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibfastrtpsd-0.5.1 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibfastrtps-1.0.0 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/i86Win32VS2010 -llibfastrtpsd-1.0.0 -L"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib" -lShlwapi -lIphlpapi
 
 
 INCLUDEPATH += $$PWD/../../include2
 DEPENDPATH += $$PWD/../../include2
 
-win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libfastrtps-0.5.1.lib
+win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/i86Win32VS2010/libfastrtps-1.0.0.lib
 
 
 

@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <ctime>
 
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapePublisher.h"
