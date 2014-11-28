@@ -133,11 +133,13 @@ static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
 			if(pid == PID_KEY_HASH)
 			{
 				valid &= CDRMessage::readData(aux_msg,change->instanceHandle.value,16);
+				aux_msg->buffer = nullptr;
 				return true;
 			}
 			if(pid == PID_ENDPOINT_GUID)
 			{
 				valid &= CDRMessage::readData(aux_msg,change->instanceHandle.value,16);
+				aux_msg->buffer = nullptr;
 				return true;
 			}
 			aux_msg->pos+=plength;

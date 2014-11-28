@@ -13,14 +13,21 @@
 
 #ifndef SHAPESDEMO_H_
 #define SHAPESDEMO_H_
-#include "fastrtps/rtps_all.h"
+
 #include "eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeDefinitions.h"
 #include <QMutex>
 
 
+namespace eprosima
+{
+namespace fastrtps
+{
+class Participant;
+}
+}
 
-
+using namespace eprosima::fastrtps;
 
 
 
@@ -69,10 +76,10 @@ public:
      */
     void stop();
     /**
-     * @brief Get a pointer to the RTPSParticipant.
-     * @return RTPSParticipant pointer.
+     * @brief Get a pointer to the Participant.
+     * @return Participant pointer.
      */
-    RTPSParticipant* getRTPSParticipant();
+    Participant* getParticipant();
     /**
      * @brief Add a ShapePublisher to the demo.
      * @param SP Pointer to the ShapePublisher object.
@@ -136,7 +143,7 @@ public:
 private:
     std::vector<ShapePublisher*> m_publishers;
     std::vector<ShapeSubscriber*> m_subscribers;
-    RTPSParticipant* mp_RTPSParticipant;
+    Participant* mp_participant;
 
     //std::vector<ShapeType*> m_shapes;
     bool m_isInitialized;

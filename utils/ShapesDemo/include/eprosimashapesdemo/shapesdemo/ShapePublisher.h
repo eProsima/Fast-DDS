@@ -14,22 +14,25 @@
 #ifndef SHAPEPUBLISHER_H_
 #define SHAPEPUBLISHER_H_
 
-#include "fastrtps/rtps_all.h"
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include <QMutex>
+#include "fastrtps/attributes/PublisherAttributes.h"
+#include "fastrtps/publisher/PublisherListener.h"
 
+#include "fastrtps/fastrtps_fwd.h"
 
+using namespace eprosima::fastrtps;
 
 /**
  * @brief The ShapePublisher class, implements a Publisher to transmit shapes.
  */
 class ShapePublisher: public PublisherListener {
 public:
-	ShapePublisher(RTPSParticipant* par);
+    ShapePublisher(Participant* par);
 	virtual ~ShapePublisher();
 	PublisherAttributes m_attributes;
 	Publisher* mp_pub;
-	RTPSParticipant* mp_RTPSParticipant;
+    Participant* mp_participant;
     /**
      * @brief Initialize the publisher.
      * @return  True if correct.
@@ -43,7 +46,7 @@ public:
      * @brief onPublicationMatched
      * @param info
      */
-    void onPublicationMatched(MatchingInfo info);
+    void onPublicationMatched(Publisher* pub,MatchingInfo info);
 
     Shape m_shape;
     QMutex m_mutex;

@@ -20,22 +20,6 @@
 
 #include "fastrtps/rtps/common/all_common.h"
 
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
-#include "fastrtps/rtps/attributes/ReaderAttributes.h"
-
-#include "fastrtps/rtps/RTPSDomain.h"
-
-#include "fastrtps/rtps/participant/RTPSParticipant.h"
-#include "fastrtps/rtps/participant/RTPSParticipantListener.h"
-#include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/writer/WriterListener.h"
-#include "fastrtps/rtps/history/WriterHistory.h"
-
-#include "fastrtps/rtps/reader/RTPSReader.h"
-#include "fastrtps/rtps/reader/ReaderListener.h"
-#include "fastrtps/rtps/history/ReaderHistory.h"
-
-
 #include "fastrtps/Domain.h"
 
 #include "fastrtps/participant/Participant.h"

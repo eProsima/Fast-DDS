@@ -20,6 +20,8 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastrtps {
 
+class Subscriber;
+
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  * @ingroup PUBSUBMODULE
