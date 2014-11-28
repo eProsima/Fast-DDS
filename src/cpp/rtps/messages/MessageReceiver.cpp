@@ -144,6 +144,10 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 					<< ") with current msg position/length ("<<msg->pos << "/"<<msg->length << ")",C_BLUE);
 			return;
 		}
+		if(submsgh.submessageLength == 0) //THIS IS THE LAST SUBMESSAGE
+		{
+			submsgh.submsgLengthLarger = msg->length - msg->pos;
+		}
 		valid = true;
 		count++;
 		switch(submsgh.submessageId)
@@ -391,7 +395,13 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	if(dataFlag || keyFlag)
 	{
-		int16_t payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
+		int32_t payload_size;
+		if(smh->submessageLength>0)
+			payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
+		else
+		{
+			payload_size = smh->submsgLengthLarger;
+		}
 		msg->pos+=1;
 		octet encapsulation =0;
 		CDRMessage::readOctet(msg,&encapsulation);
