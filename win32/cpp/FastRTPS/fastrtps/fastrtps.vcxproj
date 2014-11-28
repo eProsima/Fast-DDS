@@ -78,6 +78,7 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\config\fastrtps_dll.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\Domain.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_all.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_fwd.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_version.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\participant\Participant.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\participant\ParticipantDiscoveryInfo.h" />
@@ -87,7 +88,6 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\publisher\PublisherHistory.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\publisher\PublisherImpl.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\publisher\PublisherListener.h" />
-    <ClInclude Include="..\..\..\..\include\fastrtps\PUBSUBDomain_old.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\qos\ParameterList.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\qos\ParameterTypes.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\qos\QosList.h" />
@@ -157,6 +157,8 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\resources\TimedEvent.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\resources\TimedEventImpl.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\RTPSDomain.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\rtps_all.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\rtps_fwd.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\writer\ReaderLocator.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\writer\ReaderProxy.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\writer\RTPSWriter.h" />
