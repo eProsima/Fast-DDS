@@ -15,11 +15,11 @@
  *              grcanosa@gmail.com
  */
 
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 
 //! [ex_readAllUnreadCache]
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 std::vector<(void*)(TypeStructure*)> vec; //TypeStructure is your own define structure for the topic
 readAllUnreadCache(&vec);
@@ -41,8 +41,8 @@ write((void*)&tp);
 //! [ex_PublisherWrite]
 
 
-//! [ex_DDSTopicDataType]
-using namespace eprosima::dds;
+//! [ex_TopicDataType]
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 typedef struct TestType{
 	char name[6]; //KEY
@@ -64,7 +64,7 @@ typedef struct TestType{
 	}
 }TestType;
 
-class TestTypeDataType:public DDSTopicDataType
+class TestTypeDataType:public TopicDataType
 {
 public:
 	TestTypeDataType()
@@ -102,11 +102,11 @@ bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 //Different objects with different names should be used if the Publisher/Subscriber are defined in different threads.
 //Thread safety would be considered for future releases.
 TestTypeDataType TestTypeData;
-DomainParticipant::registerType((DDSTopicDataType*)&TestTypeData);
+DomainParticipant::registerType((TopicDataType*)&TestTypeData);
 //! [ex_DDSTopicDataType]
 
 //! [ex_Publisher]
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 PublisherAttributes PParam;
 PParam.historyMaxSize = 20;
@@ -125,7 +125,7 @@ pub1->write((void*)&tp1);
 //! [ex_Publisher]
 
 //! [ex_Subscriber]
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 SubscriberAttributes Rparam;
 Rparam.historyMaxSize = 15;
@@ -139,7 +139,7 @@ Subscriber* sub = DomainParticipant::createSubscriber(p,Rparam);
 //! [ex_Subscriber]
 
 //! [ex_SubscriberListener]
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 //Create a class that inherits from SubscriberListener and implement the methods you need.
 class TestTypeListener: public SubscriberListener{
@@ -171,7 +171,7 @@ sub->assignListener((SubscriberListener*)&listener2);
 //! [ex_SubscriberListener]
 
 //! [ex_PublisherListener]
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 //Create a class that inherits from PublisherListener and implement the methods you need.
 class TestTypeListener: public PublisherListener
@@ -210,7 +210,7 @@ public:
 
 //! [ex_ParticipantCreation]
 using namespace eprosima::rtps;
-using namespace eprosima::dds;
+using namespace eprosima::pubsub;
 ParticipantAttributes PParam;
 PParam.name = "participant1";
 PParam.defaultSendPort = 10042;

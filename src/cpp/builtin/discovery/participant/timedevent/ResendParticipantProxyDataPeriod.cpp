@@ -20,7 +20,7 @@
 #include "eprosimartps/resources/ResourceEvent.h"
 
 //#include "eprosimartps/RTPSMessageCreator.h"
-
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 namespace eprosima {
 namespace rtps {
 

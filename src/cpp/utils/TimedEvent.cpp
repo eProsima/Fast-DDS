@@ -15,7 +15,9 @@
 #include "eprosimartps/utils/TimedEvent.h"
 #include "eprosimartps/utils/TimeConversion.h"
 #include <boost/asio/placeholders.hpp>
-
+#include <boost/asio/io_service.hpp>
+#include <boost/bind.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 namespace eprosima{
 namespace rtps{
