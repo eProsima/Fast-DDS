@@ -14,12 +14,18 @@
 #ifndef SHAPESUBSCRIBER_H_
 #define SHAPESUBSCRIBER_H_
 
-#include "fastrtps/rtps_all.h"
+
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include "eprosimashapesdemo/shapesdemo/ShapesDemo.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeHistory.h"
 #include <QMutex>
 
+#include "fastrtps/attributes/SubscriberAttributes.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+
+#include "fastrtps/fastrtps_fwd.h"
+
+using namespace eprosima::fastrtps;
 
 class ContentFilterSelector;
 
@@ -28,11 +34,11 @@ class ContentFilterSelector;
  */
 class ShapeSubscriber: public SubscriberListener {
 public:
-    ShapeSubscriber(RTPSParticipant* par);
+    ShapeSubscriber(Participant* par);
 	virtual ~ShapeSubscriber();
 	SubscriberAttributes m_attributes;
     Subscriber* mp_sub;
-	RTPSParticipant* mp_RTPSParticipant;
+    Participant* mp_participant;
     /**
      * @brief Initialize the subscriber
      * @return True if correct.

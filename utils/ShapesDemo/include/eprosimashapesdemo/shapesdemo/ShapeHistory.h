@@ -7,7 +7,7 @@
  *************************************************************************/
 #ifndef SHAPEHISTORY_H
 #define SHAPEHISTORY_H
-#include "fastrtps/rtps_all.h"
+
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
 #include <vector>
 #include <list>

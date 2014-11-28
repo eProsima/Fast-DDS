@@ -5,11 +5,11 @@
  * fastrtps_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
-#include "fastrtps/rtps_all.h"
 
 #include "eprosimashapesdemo/shapesdemo/Shape.h"
-
+#include "fastrtps/TopicDataType.h"
 using namespace eprosima;
+using namespace eprosima::fastrtps;
 
 /**
  * @brief The ShapeTopicDataType class, implements the serializing and deserializing methods.
