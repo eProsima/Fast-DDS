@@ -112,21 +112,30 @@ struct RTPS_DllAPI ProtocolVersion_t{
 	}
 };
 
-#define PROTOCOLVERSION_1_0(pv) {pv.m_major=1;pv.m_minor=0;}
-#define PROTOCOLVERSION_1_1(pv) {pv.m_major=1;pv.m_minor=1;}
-#define PROTOCOLVERSION_2_0(pv) {pv.m_major=2;pv.m_minor=0;}
-#define PROTOCOLVERSION_2_1(pv) {pv.m_major=2;pv.m_minor=1;}
-#define PROTOCOLVERSION_2_2(pv) {pv.m_major=2;pv.m_minor=2;}
-#define PROTOCOLVERSION PROTOCOLVERSION_2_2
+
+const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);
+const ProtocolVersion_t c_ProtocolVersion_2_1(2,1);
+const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
 
 const ProtocolVersion_t c_ProtocolVersion(2,1);
 
-#define VENDORID_UNKNOWN(vi) {vi[0]=0;vi[1]=0;}
-#define VENDORID_EPROSIMA(vi) {vi[0]=0x01;vi[1]=0x0F;}
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
 typedef octet VendorId_t[2];
 
-const VendorId_t c_eProsimaVendorId={0x01,0x0F};
+const VendorId_t c_VendorId_Unknown={0x00,0x00};
+const VendorId_t c_VendorId_eProsima={0x01,0x0F};
+
+
+static inline void set_VendorId_Unknown(VendorId_t& id)
+{
+	id[0]=0x0;id[1]=0x0;
+}
+
+static inline void set_VendorId_eProsima(VendorId_t& id)
+{
+	id[0]=0x01;id[1]=0x0F;
+}
+
 }
 }
 }
