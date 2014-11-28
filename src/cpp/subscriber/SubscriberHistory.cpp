@@ -36,7 +36,7 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSize,
 		HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):
-		ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples+30)),
+				ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples+30)),
 				m_unreadCacheCount(0),
 				m_historyQos(history),
 				m_resourceLimitsQos(resource),
@@ -101,7 +101,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 				bool read = false;
 				if(mp_minSeqCacheChange->isRead)
 					read = true;
-				if(this->remove_change(mp_minSeqCacheChange))
+				if(this->remove_change_sub(mp_minSeqCacheChange))
 				{
 					if(!read)
 					{
@@ -136,18 +136,18 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 	{
 		if(!a_change->instanceHandle.isDefined() && mp_subImpl->getType() !=nullptr)
 		{
-//			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
-//			{
-				logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
-						mp_subImpl->getType()->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
-				if(!mp_subImpl->getType()->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
-					return false;
+			//			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
+			//			{
+			logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
+								mp_subImpl->getType()->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
+			if(!mp_subImpl->getType()->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
+				return false;
 			//}
-//			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
-//			{
-//				if(!mp_subImpl->getType()->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
-//					return false;
-//			}
+			//			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
+			//			{
+			//				if(!mp_subImpl->getType()->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
+			//					return false;
+			//			}
 		}
 		else if(!a_change->instanceHandle.isDefined())
 		{
@@ -183,7 +183,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 					bool read = false;
 					if(vit->second.front()->isRead)
 						read = true;
-					if(this->remove_change(vit->second.front()))
+					if(this->remove_change_sub(vit->second.front(),&vit))
 					{
 						if(!read)
 						{
@@ -219,7 +219,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 					}
 					logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId
 							<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
-							<< a_change->writerGUID<< "with KEY: "<< a_change->instanceHandle;);
+							<< a_change->writerGUID<< " with KEY: "<< a_change->instanceHandle;);
 					//	print_changes_seqNum();
 					return true;
 				}
@@ -295,7 +295,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 			}
 			info->iHandle = change->instanceHandle;
 		}
-		this->remove_change(change);
+		this->remove_change_sub(change);
 		return true;
 	}
 	//cout << "NEXT UNTAKEN CACHE BAD"<<endl;
@@ -327,6 +327,43 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
 		}
 		else
 			logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
+	}
+	return false;
+}
+
+
+bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
+{
+	const char* const METHOD_NAME = "remove_change_sub";
+	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+	{
+		return this->remove_change(change);
+	}
+	else
+	{
+		t_v_Inst_Caches::iterator vit;
+		if(vit_in!=nullptr)
+			vit = *vit_in;
+		else if(this->find_Key(change,&vit))
+		{
+
+		}
+		else
+			return false;
+		for(auto chit = vit->second.begin();
+				chit!= vit->second.end();++chit)
+		{
+			if((*chit)->sequenceNumber == change->sequenceNumber
+					&& (*chit)->writerGUID == change->writerGUID)
+			{
+				if(remove_change(change))
+				{
+					vit->second.erase(chit);
+					return true;
+				}
+			}
+		}
+		logError(SUBSCRIBER,"Change not found, something is wrong");
 	}
 	return false;
 }

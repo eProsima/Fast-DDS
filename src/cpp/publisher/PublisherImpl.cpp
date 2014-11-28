@@ -119,7 +119,7 @@ bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 
 bool PublisherImpl::removeMinSeqChange()
 {
-	return m_history.remove_min_change();
+	return m_history.removeMinChange();
 }
 
 bool PublisherImpl::removeAllChange(size_t* removed)

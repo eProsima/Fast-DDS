@@ -80,6 +80,9 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
 	}
 	if(a_change->writerGUID != mp_writer->getGuid())
 	{
+//		cout << "a change " << a_change->sequenceNumber<< endl;
+//		cout << "a change "<< a_change->writerGUID << endl;
+//		cout << "writer: "<< mp_writer->getGuid()<<endl;
 		logError(RTPS_HISTORY,"The GUID_t of the change doesn't correspond with the GUID_t of the writer");
 		return false;
 	}

@@ -38,7 +38,7 @@ class RTPS_DllAPI TopicDataType {
 public:
 	TopicDataType(){
 		this->m_typeSize = 0;
-		this->m_isGetKeyDefined = false;;
+        this->m_isGetKeyDefined = false;
 	}
 	virtual ~TopicDataType(){};
 	/**
@@ -55,15 +55,16 @@ public:
 	 * @param[out] data Pointer to the data
 	 * @return True if correct.
 	 */
-	virtual bool deserialize(SerializedPayload_t* payload,void * data)=0;
+    virtual bool deserialize(SerializedPayload_t* payload,void * data)=0;
 	/**
 	 * Get the key associated with the data.
 	 * @param[in] data Pointer to the data.
 	 * @param[out] ihandle Pointer to the Handle.
 	 * @return True if correct.
 	 */
-	virtual bool getKey(void*data,InstanceHandle_t* ihandle){return false;};
-	inline void setName(const char* nam) {m_topicDataTypeName = nam;};
+    virtual bool getKey(void*data,InstanceHandle_t* ihandle){return false;}
+
+    inline void setName(const char* nam) {m_topicDataTypeName = std::string(nam);}
 	inline const char* getName(){return m_topicDataTypeName.c_str();}
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
 	//! size of the string respect the maximum defined size.).

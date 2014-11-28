@@ -11,7 +11,7 @@
 ShapeTopicDataType::ShapeTopicDataType()
 {
     this->m_isGetKeyDefined = true;
-    this->m_topicDataTypeName = "ShapeType";
+    setName("ShapeType");
     this->m_typeSize = 152;//4+4+4+128+4; 152 is to equal RTI.
 }
 
