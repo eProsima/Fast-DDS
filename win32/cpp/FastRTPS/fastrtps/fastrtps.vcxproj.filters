@@ -288,9 +288,6 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_version.h">
       <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\fastrtps\PUBSUBDomain_old.h">
-      <Filter>Header Files\fastrtps</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\fastrtps\TopicDataType.h">
       <Filter>Header Files\fastrtps</Filter>
     </ClInclude>
@@ -530,6 +527,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Colors.h">
       <Filter>Header Files\eProsima_cpp\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\fastrtps_fwd.h">
+      <Filter>Header Files\fastrtps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\rtps_all.h">
+      <Filter>Header Files\fastrtps\rtps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\rtps_fwd.h">
+      <Filter>Header Files\fastrtps\rtps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
