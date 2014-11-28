@@ -28,7 +28,7 @@ using namespace eprosima::fastrtps;
  */
 class ShapePublisher: public PublisherListener {
 public:
-	ShapePublisher(RTPSParticipant* par);
+    ShapePublisher(Participant* par);
 	virtual ~ShapePublisher();
 	PublisherAttributes m_attributes;
 	Publisher* mp_pub;

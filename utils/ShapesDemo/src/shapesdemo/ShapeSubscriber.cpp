@@ -15,12 +15,16 @@
 #include "eprosimashapesdemo/qt/ContentFilterSelector.h"
 #include "fastrtps/utils/TimeConversion.h"
 
-ShapeSubscriber::ShapeSubscriber(RTPSParticipant* par):
-    mp_sub(NULL),
-    mp_RTPSParticipant(par),
+#include "fastrtps/subscriber/Subscriber.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+#include "fastrtps/Domain.h"
+
+ShapeSubscriber::ShapeSubscriber(Participant* par):
+    mp_sub(nullptr),
+    mp_participant(par),
     hasReceived(false),
     m_mutex(QMutex::Recursive),
-    mp_contentFilter(NULL)
+    mp_contentFilter(nullptr)
 {
     // TODO Auto-generated constructor stub
 
@@ -28,15 +32,15 @@ ShapeSubscriber::ShapeSubscriber(RTPSParticipant* par):
 
 ShapeSubscriber::~ShapeSubscriber() {
     // TODO Auto-generated destructor stub
-    RTPSDomain::removeSubscriber(this->mp_RTPSParticipant,mp_sub);
-    if(mp_contentFilter!=NULL)
+    Domain::removeSubscriber(mp_sub);
+    if(mp_contentFilter!=nullptr)
         delete(mp_contentFilter);
 }
 
 bool ShapeSubscriber::initSubscriber()
 {
-    mp_sub = RTPSDomain::createSubscriber(mp_RTPSParticipant,m_attributes,(SubscriberListener*)this);
-    if(mp_sub !=NULL)
+    mp_sub = Domain::createSubscriber(mp_participant,m_attributes,(SubscriberListener*)this);
+    if(mp_sub !=nullptr)
         return true;
     return false;
 }
@@ -44,7 +48,7 @@ bool ShapeSubscriber::initSubscriber()
 
 
 
-void ShapeSubscriber::onNewDataMessage()
+void ShapeSubscriber::onNewDataMessage(Subscriber *sub)
 {
     // cout << "New DATA Message "<<endl;
     Shape shape;
@@ -81,7 +85,7 @@ void ShapeSubscriber::onNewDataMessage()
 
 
 
-void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
+void ShapeSubscriber::onSubscriptionMatched(Subscriber *sub, MatchingInfo info)
 {
     if(info.status ==MATCHED_MATCHING)
     {

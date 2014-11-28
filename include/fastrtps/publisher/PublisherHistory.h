@@ -36,6 +36,10 @@ public:
 
 	bool removeAllChange(size_t* removed);
 
+	bool removeMinChange();
+
+	bool remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
+
 private:
 	//!Vector of pointer to the CacheChange_t divided by key.
 	t_v_Inst_Caches m_keyedChanges;

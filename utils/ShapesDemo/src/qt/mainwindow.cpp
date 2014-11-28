@@ -204,8 +204,8 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
 
     if(spub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         items.append(new QStandardItem("AUTOMATIC"));
-    else if(spub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_RTPSParticipant_LIVELINESS_QOS)
-        items.append(new QStandardItem("MAN_RTPSParticipant"));
+    else if(spub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        items.append(new QStandardItem("MAN_PARTICIPANT"));
     else
         items.append(new QStandardItem("MAN_TOPIC"));
 
@@ -263,8 +263,8 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
 
     if(ssub->m_attributes.qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         items.append(new QStandardItem("AUTOMATIC"));
-    else if(ssub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_RTPSParticipant_LIVELINESS_QOS)
-        items.append(new QStandardItem("MAN_RTPSParticipant"));
+    else if(ssub->m_attributes.qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        items.append(new QStandardItem("MAN_PARTICIPANT"));
     else
         items.append(new QStandardItem("MAN_TOPIC"));
 

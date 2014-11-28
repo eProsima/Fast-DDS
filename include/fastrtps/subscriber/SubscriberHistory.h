@@ -46,6 +46,7 @@ public:
 
 	bool isUnreadCache();
 
+	bool remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
 
 	inline void increaseUnreadCount()
