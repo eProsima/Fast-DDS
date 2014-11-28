@@ -1,0 +1,334 @@
+group VS2010;
+
+solution(solution, example, configurations) ::= <<
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+$solution.projects : {$projectReferences(solution=solution, project=it, example=example)$$if(it.containsInterfaces)$$projectReferencesExtra(solution=solution, project=it, example=example)$$endif$};separator="\n"$
+Global
+$\t$GlobalSection(SolutionConfigurationPlatforms) = preSolution
+$configurations:{conf |$\t$$\t$$conf.name$|$conf.platform$ = $conf.name$|$conf.platform$};separator="\n"$
+$\t$EndGlobalSection
+$\t$GlobalSection(ProjectConfigurationPlatforms) = postSolution
+$solution.projects : {$projectConfigurationPlatforms(solution=solution, project=it, configurations=configurations)$}; separator="\n"$
+$\t$EndGlobalSection
+$\t$GlobalSection(SolutionProperties) = preSolution
+$\t$$\t$HideSolutionNode = FALSE
+$\t$EndGlobalSection
+EndGlobal
+
+>>
+
+project(solution, project, example, configurations, local) ::= <<
+<?xml version="1.0" encoding="Windows-1252"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    $configurations:{<ProjectConfiguration Include="$it.name$|$it.platform$">
+      <Configuration>$it.name$</Configuration>
+      <Platform>$it.platform$</Platform>
+    </ProjectConfiguration>};separator="\n"$
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>$project.name$Types</ProjectName>
+    <ProjectGuid>{$project.guid$}</ProjectGuid>
+    <RootNamespace>$project.name$Types</RootNamespace>
+  </PropertyGroup>
+  <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'" Label="Configuration">
+    <ConfigurationType>$if(it.dll)$DynamicLibrary$else$StaticLibrary$endif$</ConfigurationType>
+    <UseDebugLibraries>$if(it.debug)$true$else$false$endif$</UseDebugLibraries>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+	<PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>};separator="\n"$
+  <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  $configurations:{<ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
+    <Import Project="\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>};separator="\n"$
+  <PropertyGroup Label="UserMacros" />
+  $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
+    <IntDir>\$(Platform)\\\$(Configuration)\\\$(ProjectName)\</IntDir>
+    <OutDir>.\lib\\$example$\</OutDir>
+    <TargetName>$if(!it.dll)$lib$endif$\$(ProjectName)$if(it.debug)$d$endif$</TargetName>
+  </PropertyGroup>};separator="\n"$
+  $configurations:{<ItemDefinitionGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
+      <AdditionalIncludeDirectories>\$(EPROSIMARTPSHOME)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>$preprocessorDefs(conf=it)$;$if(it.dll)$;EPROSIMA_USER_DLL_EXPORT$endif$;$solution.defines : {define |$define$;}$%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      $bigObjOption()$
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Shlwapi.lib;Iphlpapi.lib;$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;$if(!it.dll)$WS2_32.lib;$endif$%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>};separator="\n"$
+  <ItemGroup>
+    $project.commonSrcFiles : {srcfile |<ClCompile Include="$srcfile$" />}; separator="\n"$
+  </ItemGroup>
+  <ItemGroup>
+    $project.commonIncludeFiles : {incfile |<ClInclude Include="$incfile$" />}; separator="\n"$
+  </ItemGroup>
+  <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
+>>
+
+projectPubSub(solution, project, example, configurations, local) ::= <<
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    $configurations:{<ProjectConfiguration Include="$it.name$|$it.platform$">
+      <Configuration>$it.name$</Configuration>
+      <Platform>$it.platform$</Platform>
+    </ProjectConfiguration>};separator="\n"$
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>$project.name$PublisherSubscriber</ProjectName>
+    <ProjectGuid>{$project.guid$}</ProjectGuid>
+    <RootNamespace>$project.name$PublisherSubscriber</RootNamespace>
+  </PropertyGroup>
+  <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>$if(it.debug)$true$else$false$endif$</UseDebugLibraries>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+	<PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>};separator="\n"$
+  <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  $configurations:{<ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
+    <Import Project="\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>};separator="\n"$
+  <PropertyGroup Label="UserMacros" />
+  $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
+    <IntDir>\$(Platform)\\\$(Configuration)\</IntDir>
+    <OutDir>.\bin\\$example$\</OutDir>
+    <TargetName>$if(!it.dll)$lib$endif$\$(ProjectName)$if(it.debug)$d$endif$</TargetName>
+  </PropertyGroup>};separator="\n"$
+  $configurations:{<ItemDefinitionGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
+      <AdditionalIncludeDirectories>\$(EPROSIMARTPSHOME)\include;\$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_ALL_DYN_LINK;$endif$BOOST_ALL_DYN_LINK;$if(it.debug)$_DEBUG;$else$NDEBUG;$endif$</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>$if(!it.dll)$lib$endif$$project.name$Types$if(it.debug)$d$endif$.lib;$if(!it.dll)$Shlwapi.lib;Iphlpapi.lib;$endif$$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>};separator="\n"$
+  <ItemGroup>
+    $project.projectSrcFiles : {srcfile |<ClCompile Include="$srcfile$" />}; separator="\n"$
+  </ItemGroup>
+  <ItemGroup>
+    $project.projectIncludeFiles : {incfile |<ClInclude Include="$incfile$" />}; separator="\n"$
+  </ItemGroup>
+  <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
+>>
+
+projectFiles(project) ::= <<
+<?xml version="1.0" encoding="Windows-1252"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    $project.commonSrcFiles : {srcfile |
+    <ClCompile Include="$srcfile$">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    }; separator="\n"$
+  </ItemGroup>
+  <ItemGroup>
+    $project.commonIncludeFiles : {incfile |
+    <ClInclude Include="$incfile$">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    }; separator="\n"$
+  </ItemGroup>
+</Project>
+>>
+
+projectFilesPubSub(project) ::= <<
+<?xml version="1.0" encoding="Windows-1252"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    $project.projectSrcFiles : {srcfile |
+    <ClCompile Include="$srcfile$">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    }; separator="\n"$
+  </ItemGroup>
+  <ItemGroup>
+    $project.projectIncludeFiles : {incfile |
+    <ClInclude Include="$incfile$">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    }; separator="\n"$
+  </ItemGroup>
+</Project>
+>>
+
+
+
+/************************************************************************
+ *                                                                      *
+ *   Internal Templates: For internal use only.                         *
+ *                                                                      *
+ ************************************************************************
+ */
+ 
+preprocessorDefs(conf) ::= <<
+WIN32;_CRT_SECURE_NO_WARNINGS;$if(conf.dll)$WIN32_LEAN_AND_MEAN;$endif$$if(conf.debug)$_DEBUG$else$NDEBUG$endif$
+>>
+
+preprocessorTypesLibDefs(conf) ::= <<
+>>
+
+bigObjOption() ::= <<
+>>
+
+/**
+ * projectRef: Internal Template
+ * Produces Project Reference in a VS2005/2008 solution file. 
+ * 
+ * Params:
+ *   project : Object with name, guid and dependsOn properties.
+ *
+ * Uses:
+ */ 
+projectReferences(solution, project, example) ::= <<
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$Types", "$project.name$Types-$example$.vcxproj", "{$project.guid$}"
+$\t$ProjectSection(ProjectDependencies) = postProject
+$project.dependenciesGuids : {$\t$$\t${$it$} = {$it$}}; separator="\n"$
+$\t$EndProjectSection$\n$
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$PublisherSubscriber", "$project.name$PublisherSubscriber-$example$.vcxproj", "{$project.exampleGuid$}"
+$\t$ProjectSection(ProjectDependencies) = postProject
+$\t$$\t${$project.guid$} = {$project.guid$}
+$project.dependenciesGuids : {$\t$$\t${$it$} = {$it$}}; separator="\n"$
+$\t$EndProjectSection$\n$
+EndProject
+>>
+
+projectReferencesExtra(solution, project, example) ::= <<
+
+>>
+
+/**
+ * projectConfigurationPlatforms: Internal Template
+ * Produces the ProjectConfigurationPlatforms section content of a VS2005 solution file
+ * for the project guid provided 
+ * 
+ * Params:
+ *   guid           : Project GUID.
+ *   configurations : List of configuration names. 
+ *
+ * Uses:
+ *   postSolution - local
+ */ 
+projectConfigurationPlatforms(solution, project, configurations) ::= <<
+$configurations:{conf | $postSolution(solution=solution, project=project, conf=conf)$$if(project.containsInterfaces)$$postSolutionExtra(solution=solution, project=project, conf=conf)$$endif$};separator="\n"$
+>>
+
+
+/**
+ * postSolution: Internal Template
+ * Produces the Active and Build.0 attributes in projectConfigurationPlatforms section
+ * of a VS2005 solution file, for the given project guid and configuration name.
+ * and configuration name.
+ * 
+ * Params:
+ *   guid : Project GUID.
+ *   conf : Configuration name. 
+ *
+ * Uses:
+ */ 
+postSolution(solution, project, conf) ::= <<
+$\t$$\t${$project.guid$}.$conf.name$|$conf.platform$.ActiveCfg = $conf.name$|$conf.platform$
+$\t$$\t${$project.guid$}.$conf.name$|$conf.platform$.Build.0 = $conf.name$|$conf.platform$
+$\t$$\t${$project.exampleGuid$}.$conf.name$|$conf.platform$.ActiveCfg = $conf.name$|$conf.platform$
+$\t$$\t${$project.exampleGuid$}.$conf.name$|$conf.platform$.Build.0 = $conf.name$|$conf.platform$
+>>
+
+postSolutionExtra(solution, project, conf) ::= <<
+>>
+
+/**
+ * ignoreDefaultLibraryNames: Internal Template
+ * Produces the IgnoreDefaultLibraryNames attribute of VCLinkerTool 
+ * in a configuration section of a VS2005 .vcproj file. 
+ * 
+ * Params:
+ *   conf : VSCOnfiguration object. 
+ *
+ * Uses:
+ */ 
+ignoreDefaultLibraryNames(conf) ::= <<
+>>
+
+/**
+ * generateDebugInformation: Internal Template
+ * Produces the GenerateDebugInformation attribute of VCLinkerTool 
+ * in a configuration section of a VS2005 .vcproj file. 
+ * 
+ * Params:
+ *   conf : VSCOnfiguration object. 
+ *
+ * Uses:
+ */ 
+generateDebugInformation(conf) ::= <<
+$if(conf.debug)$true$else$false$endif$
+>>
+
+/**
+ * runtimeLibrary: Internal Template
+ * Produces the RuntimeLibrary attribute of VCCLCompilerTool 
+ * in a configuration section of a VS2005 .vcproj file. 
+ * 
+ * Params:
+ *   conf : VSCOnfiguration object. 
+ *
+ * Uses:
+ */ 
+runtimeLibrary(conf) ::= <<
+$if(it.dll)$$if(it.debug)$MultiThreadedDebugDLL$else$MultiThreadedDLL$endif$$else$$if(it.debug)$MultiThreadedDebug$else$MultiThreaded$endif$$endif$
+>>

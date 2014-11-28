@@ -26,7 +26,8 @@ namespace eprosima {
 namespace pubsub {
 
 
-class PublisherTimes{
+class PublisherTimes
+{
 public:
 	//!Period to send HB.
 	Duration_t heartbeatPeriod;
