@@ -61,6 +61,7 @@ inline std::ostream& operator<<(std::ostream& output,const Header_t& h){
  struct SubmessageHeader_t{
 	octet submessageId;
 	uint16_t submessageLength;
+	uint32_t submsgLengthLarger;
 	SubmessageFlag flags;
 };
 

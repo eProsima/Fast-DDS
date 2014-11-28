@@ -184,7 +184,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 	}
 	else
 	{
-		logWarning(RTPS_MSG_OUT,"Destination "<< loc << " not valid for this ListenReosurce",C_YELLOW);
+		logInfo(RTPS_MSG_OUT,"Destination "<< loc << " not valid for this ListenResource",C_YELLOW);
 	}
 
 }
