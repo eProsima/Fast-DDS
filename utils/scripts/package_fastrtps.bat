@@ -47,31 +47,31 @@ cd "doc"
 mkdir pdf
 mkdir html
 :: Installation manual
-soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\RTPS - Installation Manual.odt,%VERSIONRTPS%)"
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS - Installation Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: User manual
-soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\RTPS - User Manual.odt,%VERSIONRTPS%)"
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS - User Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: RTPSGEN User manual
-soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\RTPSGEN - User Manual.odt,%VERSIONRTPS%)"
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FASTRTPSGEN - User Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
 :: Copy pfd files into pdf dir
-copy "RTPS - Installation Manual.pdf" "pdf\RTPS - Installation Manual.pdf"
-del "RTPS - Installation Manual.pdf"
+copy "FastRTPS - Installation Manual.pdf" "pdf\FastRTPS - Installation Manual.pdf"
+del "FastRTPS - Installation Manual.pdf"
 set errorstatus=%ERRORLEVEL% 
 if not %errorstatus%==0 goto :exit
 
-copy "RTPS - User Manual.pdf" "pdf\RTPS - User Manual.pdf"
-del "RTPS - User Manual.pdf"
+copy "FastRTPS - User Manual.pdf" "pdf\FastRTPS - User Manual.pdf"
+del "FastRTPS - User Manual.pdf"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
-copy "RTPSGEN - User Manual.pdf" "pdf\RTPSGEN - User Manual.pdf"
-del "RTPSGEN - User Manual.pdf"
+copy "FASTRTPSGEN - User Manual.pdf" "pdf\FASTRTPSGEN - User Manual.pdf"
+del "FASTRTPSGEN - User Manual.pdf"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
@@ -101,8 +101,8 @@ cd output\doxygen\latex
 
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
-ren refman.pdf "RTPS - API C++ Manual.pdf"
-copy "RTPS - API C++ Manual.pdf" "..\..\..\..\..\doc\pdf\RTPS - API C++ Manual.pdf"
+ren refman.pdf "FastRTPS - API C++ Manual.pdf"
+copy "FastRTPS - API C++ Manual.pdf" "..\..\..\..\..\doc\pdf\FastRTPS - API C++ Manual.pdf"
 cd "..\..\..\..\.."
 
 :: Build utilities
