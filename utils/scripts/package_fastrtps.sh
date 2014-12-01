@@ -27,7 +27,7 @@ function package
 	EPROSIMA_TARGET="i86Linux2.6gcc"
 	COMP="g++"
 	rm -rf lib/$EPROSIMA_TARGET
-	EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
+	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
@@ -36,7 +36,7 @@ function package
 	EPROSIMA_TARGET="x64Linux2.6gcc"
 	COMP="g++"
 	rm -rf lib/$EPROSIMA_TARGET
-	EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
+	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
@@ -51,33 +51,34 @@ function package
 
 	# Create PDFS from documentation.
 	cd doc	# Installation manual
-	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/RTPS - Installation Manual.odt,$ertpsversion)"
+	echo "PROCESSING DOCUMENTATION"
+	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/FastRTPS - Installation Manual.odt,$ertpsversion)"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	cp "RTPS - Installation Manual.pdf" $PWD/pdf/
+	cp "FastRTPS - Installation Manual.pdf" $PWD/pdf/
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	rm "RTPS - Installation Manual.pdf"
+	rm "FastRTPS - Installation Manual.pdf"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	# User manual
-	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/RTPS - User Manual.odt,$ertpsversion)"
+	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/FastRTPS - User Manual.odt,$ertpsversion)"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	cp "RTPS - User Manual.pdf" $PWD/pdf/
+	cp "FastRTPS - User Manual.pdf" $PWD/pdf/
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	rm "RTPS - User Manual.pdf"
+	rm "FastRTPS - User Manual.pdf"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	# RTPSGEN User manual
-	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/RTPSGEN - User Manual.odt,$ertpsversion)"
+	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/FASTRTPSGEN - User Manual.odt,$ertpsversion)"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	cp "RTPSGEN - User Manual.pdf" $PWD/pdf/
+	cp "FASTRTPSGEN - User Manual.pdf" $PWD/pdf/
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
-	rm "RTPSGEN - User Manual.pdf"
+	rm "FASTRTPSGEN - User Manual.pdf"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 	cd ..
@@ -114,7 +115,7 @@ function package
 	
 
 	# Create installers
-	cd utils/installers/ertps/linux
+	cd utils/installers/fastrtps/linux
 	./setup_linux.sh $ertpsversion
 	errorstatus=$?
 	cd ../../../../
