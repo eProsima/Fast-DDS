@@ -15,6 +15,15 @@
 #define THROUGHPUTPUBLISHER_H_
 
 #include "ThroughputTypes.h"
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/utils/eClock.h"
+
+#include "fastrtps/publisher/PublisherListener.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+
+using namespace eprosima::fastrtps;
+
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include <vector>
 #include <string>
@@ -25,7 +34,7 @@ class ThroughputPublisher
 public:
 	ThroughputPublisher();
 	virtual ~ThroughputPublisher();
-	RTPSParticipant* mp_par;
+	Participant* mp_par;
 	Publisher* mp_datapub;
 	Publisher* mp_commandpub;
 	Subscriber* mp_commandsub;
@@ -39,7 +48,7 @@ public:
 		DataPubListener(ThroughputPublisher& up);
 		virtual ~DataPubListener();
 		ThroughputPublisher& m_up;
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 	}m_DataPubListener;
 
 	class CommandSubListener:public SubscriberListener
@@ -48,7 +57,7 @@ public:
 		CommandSubListener(ThroughputPublisher& up);
 		virtual ~CommandSubListener();
 		ThroughputPublisher& m_up;
-		void onSubscriptionMatched(MatchingInfo info);
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
 	}m_CommandSubListener;
 	class CommandPubListener:public PublisherListener
 	{
@@ -56,7 +65,7 @@ public:
 		CommandPubListener(ThroughputPublisher& up);
 		virtual ~CommandPubListener();
 		ThroughputPublisher& m_up;
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 	}m_CommandPubListener;
 
 
@@ -65,6 +74,8 @@ public:
 	void run(uint32_t test_time,int demand = 0,int msg_size = 0);
 	bool test(uint32_t test_time,uint32_t demand,uint32_t size);
 	std::vector<TroughputResults> m_timeStats;
+	LatencyDataType latency_t;
+		ThroughputCommandDataType throuputcommand_t;
 };
 
 

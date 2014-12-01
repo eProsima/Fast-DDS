@@ -40,27 +40,28 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 }
 
 
-bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* payload)
+bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* p)
 {
 	ThroughputCommandType* t = (ThroughputCommandType*)data;
-	uint32_t n = (uint32_t)t->m_command;
-	Payload::addUInt32(payload,n);
-	Payload::addUInt32(payload,t->m_size);
-	Payload::addUInt32(payload,t->m_demand);
-	Payload::addUInt32(payload,t->m_lostsamples);
-	Payload::addUInt64(payload,t->m_lastrecsample);
-	Payload::addUInt64(payload,t->m_totaltime);
+	p->length = 0;
+	*(uint32_t*)p->data = (uint32_t)t->m_command;p->length+=4;
+	*(uint32_t*)&(p->data[p->length]) = (uint32_t)t->m_size;p->length+=4;
+	*(uint32_t*)&(p->data[p->length]) = (uint32_t)t->m_demand;p->length+=4;
+	*(uint32_t*)&(p->data[p->length]) = (uint32_t)t->m_lostsamples;p->length+=4;
+	*(uint64_t*)&(p->data[p->length]) = (uint32_t)t->m_lastrecsample;p->length+=8;
+	*(uint64_t*)&(p->data[p->length]) = (uint32_t)t->m_totaltime;p->length+=8;
 	return true;
 }
-bool ThroughputCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool ThroughputCommandDataType::deserialize(SerializedPayload_t* p,void * data)
 {
 	ThroughputCommandType* t = (ThroughputCommandType*)data;
-	Payload::readUInt32(payload,(uint32_t*)&t->m_command);
-	Payload::readUInt32(payload,&t->m_size);
-	Payload::readUInt32(payload,&t->m_demand);
-	Payload::readUInt32(payload,&t->m_lostsamples);
-	Payload::readUInt64(payload,&t->m_lastrecsample);
-	Payload::readUInt64(payload,&t->m_totaltime);
+	p->pos = 0;
+	t->m_command = (e_Command)*(uint32_t*)p->data;p->pos+=4;
+	t->m_size = *(uint32_t*)&p->data[p->pos];p->pos+=4;
+	t->m_demand = *(uint32_t*)&p->data[p->pos];p->pos+=4;
+	t->m_lostsamples = *(uint32_t*)&p->data[p->pos];p->pos+=4;
+	t->m_lastrecsample = *(uint64_t*)&p->data[p->pos];p->pos+=8;
+	t->m_totaltime = *(uint64_t*)&p->data[p->pos];p->pos+=8;
 	return true;
 }
 
