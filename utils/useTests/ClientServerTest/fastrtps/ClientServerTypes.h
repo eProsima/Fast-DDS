@@ -14,7 +14,12 @@
 #ifndef CLIENTSERVERTYPES_H_
 #define CLIENTSERVERTYPES_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/TopicDataType.h"
+#include "fastrtps/rtps/common/all_common.h"
+
+using namespace eprosima;
+using namespace fastrtps;
+using namespace rtps;
 
 namespace clientserver{
 
@@ -37,12 +42,12 @@ public:
 	~Operation(){}
 };
 
-class OperationDataType:public DDSTopicDataType
+class OperationDataType:public TopicDataType
 {
 public:
 	OperationDataType()
 {
-		m_topicDataTypeName = "Operation";
+		setName("Operation");
 		m_typeSize = 16+4+4+2*sizeof(int32_t);
 		m_isGetKeyDefined = false;
 };
@@ -70,12 +75,12 @@ public:
 };
 
 
-class ResultDataType:public DDSTopicDataType
+class ResultDataType:public TopicDataType
 {
 public:
 	ResultDataType()
 {
-		m_topicDataTypeName = "Result";
+		setName("Result");
 		m_typeSize = 16+4+4+sizeof(int32_t);
 		m_isGetKeyDefined = false;
 };

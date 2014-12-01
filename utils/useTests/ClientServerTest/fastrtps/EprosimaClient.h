@@ -14,8 +14,16 @@
 #ifndef EPROSIMACLIENT_H_
 #define EPROSIMACLIENT_H_
 
-#include "fastrtps/rtps_all.h"
 #include "ClientServerTypes.h"
+
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+
+#include "fastrtps/publisher/PublisherListener.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+
+using namespace eprosima;
+using namespace fastrtps;
 
 using namespace clientserver;
 
@@ -25,7 +33,7 @@ public:
 	virtual ~EprosimaClient();
 	Publisher* mp_operation_pub;
 	Subscriber* mp_result_sub;
-	RTPSParticipant* mp_RTPSParticipant;
+	Participant* mp_participant;
 	bool init();
 	Result::RESULTTYPE calculate(Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
 	bool isReady();
@@ -43,7 +51,7 @@ private:
 		OperationListener(EprosimaClient* up):mp_up(up){}
 		~OperationListener(){}
 		EprosimaClient* mp_up;
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 	}m_operationsListener;
 	class ResultListener:public SubscriberListener
 	{
@@ -51,8 +59,8 @@ private:
 		ResultListener(EprosimaClient* up):mp_up(up){}
 		~ResultListener(){}
 		EprosimaClient* mp_up;
-		void onSubscriptionMatched(MatchingInfo info);
-		void onNewDataMessage();
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onNewDataMessage(Subscriber* sub);
 	}m_resultsListener;
 	bool m_isReady;
 	int m_operationMatched;
