@@ -58,7 +58,7 @@ Function VariablesEntornoPage
     ${If} ${RunningX64}
         ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2010 platforms."
         Pop $CheckboxX64_VS2010  
-        ${If} ${SectionIsSelected} ${SEC_LIB_x64_VS2010}
+        ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
             ${If} $CheckboxX64_VS2010_State == ${BST_CHECKED}
                 ${NSD_Check} $CheckboxX64_VS2010
             ${EndIf}
@@ -70,7 +70,7 @@ Function VariablesEntornoPage
     
 		 ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2013 platforms."
         Pop $CheckboxX64_VS2013  
-        ${If} ${SectionIsSelected} ${SEC_LIB_x64_VS2013}
+        ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2013}
             ${If} $CheckboxX64_VS2013_State == ${BST_CHECKED}
                 ${NSD_Check} $CheckboxX64_VS2013
             ${EndIf}
@@ -91,7 +91,7 @@ Function VariablesEntornoPage
         Pop $CheckboxI86_VS2013
     ${EndIf}
 
-    ${If} ${SectionIsSelected} ${SEC_LIB_i86_VS2010}
+    ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2010}
         ${If} $CheckboxI86_VS2010_State == ${BST_CHECKED}
             ${NSD_Check} $CheckboxI86_VS2010
         ${EndIf}

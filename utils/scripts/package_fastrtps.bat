@@ -97,7 +97,7 @@ set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd output\doxygen\latex
 
-call make.bat
+::call make.bat
 
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
