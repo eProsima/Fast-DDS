@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Created-By: eProsima
-Main-Class: com.eprosima.rtps.rtpsgen
+Main-Class: com.eprosima.fastrtps.fastrtpsgen
 Class-Path: antlr-2.7.7.jar antxr.jar stringtemplate-3.2.1.jar

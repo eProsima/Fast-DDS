@@ -11,5 +11,5 @@ if [ $? != 0 ]; then
     java_exec="${JAVA_HOME}/bin/java"
 fi
 
-exec $java_exec -jar "$dir/rtpsgen.jar" "$@"
+exec $java_exec -jar "$dir/fastrtpsgen.jar" "$@"
 

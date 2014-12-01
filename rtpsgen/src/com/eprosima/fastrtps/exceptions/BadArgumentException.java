@@ -1,4 +1,4 @@
-package com.eprosima.rtps.exceptions;
+package com.eprosima.fastrtps.exceptions;
 
 public class BadArgumentException extends Exception
 {

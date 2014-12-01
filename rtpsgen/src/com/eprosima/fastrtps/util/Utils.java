@@ -1,4 +1,4 @@
-package com.eprosima.rtps.util;
+package com.eprosima.fastrtps.util;
 
 import org.antlr.stringtemplate.StringTemplate;
 
