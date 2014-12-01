@@ -27,4 +27,4 @@ if not %ERRORLEVEL%==0 (
    )
 )
 
-%java_exec% -jar "%dir%\rtpsgen.jar" %args%
+%java_exec% -jar "%dir%\fastrtpsgen.jar" %args%

@@ -1,4 +1,4 @@
-package com.eprosima.rtps.idl.grammar;
+package com.eprosima.fastrtps.idl.grammar;
 
 import java.util.ArrayList;
 import java.util.Stack;

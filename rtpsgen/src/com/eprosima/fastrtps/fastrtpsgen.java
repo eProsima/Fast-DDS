@@ -1,4 +1,4 @@
-package com.eprosima.rtps;
+package com.eprosima.fastrtps;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -41,7 +41,7 @@ import com.eprosima.log.ColorMessage;
 
 // TODO: Implement Solution & Project in com.eprosima.rtps.solution
 
-public class rtpsgen {
+public class fastrtpsgen {
 	
 	/*
 	 * ----------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ public class rtpsgen {
     private final String m_defaultOutputDir = "." + File.separator;
     private String m_outputDir = m_defaultOutputDir;
     private String m_tempDir = null;
-    protected static String m_appName = "rtpsgen";
+    protected static String m_appName = "fastrtpsgen";
     
     private boolean m_publishercode = true;
     private boolean m_subscribercode = true;
@@ -87,7 +87,7 @@ public class rtpsgen {
 	 * Constructor
 	 */
 	
-	public rtpsgen(String [] args) throws BadArgumentException {
+	public fastrtpsgen(String [] args) throws BadArgumentException {
 		
 		int count = 0;
 		String arg;
@@ -277,16 +277,16 @@ public class rtpsgen {
 		
 		boolean returnedValue = false;
 		
-		rtpsgen.m_platforms = new ArrayList<String>();
+		fastrtpsgen.m_platforms = new ArrayList<String>();
 		
 		try {
 			
-			InputStream input = rtpsgen.class.getClassLoader().getResourceAsStream("platforms"); // TODO Modificar esto antes de exportarlo
+			InputStream input = fastrtpsgen.class.getClassLoader().getResourceAsStream("platforms"); // TODO Modificar esto antes de exportarlo
 			InputStreamReader ir = new InputStreamReader(input);
 			BufferedReader reader = new BufferedReader(ir);
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				rtpsgen.m_platforms.add(line);
+				fastrtpsgen.m_platforms.add(line);
 			}
 			
 			returnedValue = true;
@@ -822,7 +822,7 @@ public class rtpsgen {
 			
 			try {
 				
-				rtpsgen main = new rtpsgen(args);
+				fastrtpsgen main = new fastrtpsgen(args);
 				if (main.execute()) {
 					System.exit(0);
 				}

@@ -1,4 +1,4 @@
-package com.eprosima.rtps.solution;
+package com.eprosima.fastrtps.solution;
 
 import java.util.ArrayList;
 

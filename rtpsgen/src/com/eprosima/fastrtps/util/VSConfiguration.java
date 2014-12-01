@@ -14,7 +14,7 @@
  * =====================================================================   *
  */
 
-package com.eprosima.rtps.util;
+package com.eprosima.fastrtps.util;
 
 public class VSConfiguration {
 	

@@ -16,7 +16,7 @@
  * =====================================================================   *
 -->
 
-<project name="rtpsgen" default="jar" basedir=".">
+<project name="fastrtpsgen" default="jar" basedir=".">
 
 	<macrodef name="antlr">
 		<attribute name="base" />
@@ -159,12 +159,12 @@
 	<!-- =================================================================== -->
 	<!-- Creates the jar archive                                             -->
 	<!-- =================================================================== -->
-	<target name="rtpsgen_jar" depends="init,compile" description="Builds the rtpsgen library (.jar).">
-		<jar jarfile="${build.rtpsgen.jar}" basedir="${build.classes}" manifest="manifest">
+	<target name="fastrtpsgen_jar" depends="init,compile" description="Builds the rtpsgen library (.jar).">
+		<jar jarfile="${build.fastrtpsgen.jar}" basedir="${build.classes}" manifest="manifest">
 		</jar>
 	</target>
 
-	<target name="jars" depends="rtpsgen_jar" description="Builds all libraries (.jar)"/>
+	<target name="jars" depends="fastrtpsgen_jar" description="Builds all libraries (.jar)"/>
 
 	<!-- =================================================================== -->
 	<!-- Cleans up generated classes                                         -->
