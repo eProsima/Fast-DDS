@@ -19,7 +19,7 @@ project="fastrtps"
 installer()
 {
     # Copy licenses.
-    cp ../../../../doc/licenses/fastrtps_LIBRARY_LICENSE.txt tmp/$project
+    cp ../../../../doc/licenses/FASTRTPS_LIBRARY_LICENSE.txt tmp/$project
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cp ../../../../doc/licenses/LGPLv3_LICENSE.txt tmp/$project
@@ -29,13 +29,13 @@ installer()
     # Copy documentation.
     mkdir -p tmp/$project/doc
     mkdir -p tmp/$project/doc/pdf
-    cp "../../../../doc/pdf/RTPS - Installation Manual.pdf" tmp/$project/doc/pdf/
+    cp "../../../../doc/pdf/FastRTPS - Installation Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/pdf/RTPS - User Manual.pdf" tmp/$project/doc/pdf/
+    cp "../../../../doc/pdf/FastRTPS - User Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/pdf/RTPSGEN - User Manual.pdf" tmp/$project/doc/pdf/
+    cp "../../../../doc/pdf/FASTRTPSGEN - User Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     ##cp "../../../../doc/index.html" tmp/$project/doc/
@@ -96,14 +96,10 @@ installer()
 
     # Copy fastrtps sources
     cd ../../../..
-    cp --parents `cat building/makefiles/fastrtps_sources` utils/installers/ertps/linux/tmp/$project
+    cp --parents `cat building/makefiles/fastrtps_sources` utils/installers/fastrtps/linux/tmp/$project
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    mkdir -p utils/installers/ertps/linux/tmp/$project/src/cpp/submessages/
-    cp --parents src/cpp/submessages/* utils/installers/ertps/linux/tmp/$project/
-    errorstatus=$?
-    if [ $errorstatus != 0 ]; then return; fi
-    cd utils/installers/ertps/linux
+    cd utils/installers/fastrtps/linux
 
     # Copy autoconf configuration files.
     cp configure.ac tmp/$project/configure.ac
