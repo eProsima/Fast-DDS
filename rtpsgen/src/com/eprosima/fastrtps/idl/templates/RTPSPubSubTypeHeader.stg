@@ -7,7 +7,9 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.h"], description=["Thi
 #ifndef _$ctx.filename;format="toUpper"$_PUBSUBTYPE_H_
 #define _$ctx.filename;format="toUpper"$_PUBSUBTYPE_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/TopicDataType.h"
+
+using namespace eprosima::fastrtps;
 
 #include "$ctx.filename$.h"
 

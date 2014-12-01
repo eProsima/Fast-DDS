@@ -7,7 +7,12 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.h"], description=["This he
 #ifndef _$ctx.filename;format="toUpper"$_SUBSCRIBER_H_
 #define _$ctx.filename;format="toUpper"$_SUBSCRIBER_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+#include "$ctx.filename$PubSubType.h"
+
+using namespace eprosima::fastrtps;
 
 class $ctx.filename$Subscriber 
 {
@@ -17,7 +22,7 @@ public:
 	bool init();
 	void run();
 private:
-	RTPSParticipant *mp_RTPSParticipant;
+	Participant *mp_participant;
 	Subscriber *mp_subscriber;
 	
 	class SubListener : public SubscriberListener
@@ -25,12 +30,12 @@ private:
 	public:
 		SubListener() : n_matched(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(MatchingInfo info);
-		void onNewDataMessage();
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onNewDataMessage(Subscriber* sub);
 		SampleInfo_t m_info;
-		Subscriber* mp_sub;
 		int n_matched;
 	} m_listener;
+	$ctx.filename$PubSubType myType;
 };
 
 #endif // _$ctx.filename; format="toUpper"$_SUBSCRIBER_H_

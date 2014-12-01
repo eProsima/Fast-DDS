@@ -93,7 +93,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logWarning(RTPS_WRITER,"Aborted");
+		logInfo(RTPS_WRITER,"Aborted");
 		this->stopSemaphorePost();
 	}
 	else

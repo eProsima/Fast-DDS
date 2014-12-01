@@ -7,7 +7,12 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.h"], description=["This hea
 #ifndef _$ctx.filename;format="toUpper"$_PUBLISHER_H_
 #define _$ctx.filename;format="toUpper"$_PUBLISHER_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/publisher/PublisherListener.h"
+
+#include "$ctx.filename$PubSubType.h"
+
+using namespace eprosima::fastrtps;
 
 class $ctx.filename$Publisher 
 {
@@ -17,7 +22,7 @@ public:
 	bool init();
 	void run();
 private:
-	RTPSParticipant *mp_RTPSParticipant;
+	Participant *mp_participant;
 	Publisher *mp_publisher;
 	
 	class PubListener : public PublisherListener
@@ -25,9 +30,10 @@ private:
 	public:
 		PubListener() : n_matched(0){};
 		~PubListener(){};
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 		int n_matched;
 	} m_listener;
+	$ctx.filename$PubSubType myType;
 };
 
 #endif // _$ctx.filename; format="toUpper"$_PUBLISHER_H_

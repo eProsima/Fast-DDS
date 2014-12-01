@@ -537,6 +537,9 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\rtps_fwd.h">
       <Filter>Header Files\fastrtps\rtps</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log_dll.h">
+      <Filter>Header Files\eProsima_cpp\log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\participant\Participant.cpp">

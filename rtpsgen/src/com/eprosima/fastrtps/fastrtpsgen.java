@@ -24,12 +24,12 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.antlr.stringtemplate.StringTemplateGroupLoader;
 import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 
-import com.eprosima.rtps.exceptions.BadArgumentException;
-import com.eprosima.rtps.idl.grammar.Context;
-import com.eprosima.rtps.solution.Project;
-import com.eprosima.rtps.solution.Solution;
-import com.eprosima.rtps.util.Utils;
-import com.eprosima.rtps.util.VSConfiguration;
+import com.eprosima.fastrtps.exceptions.BadArgumentException;
+import com.eprosima.fastrtps.idl.grammar.Context;
+import com.eprosima.fastrtps.solution.Project;
+import com.eprosima.fastrtps.solution.Solution;
+import com.eprosima.fastrtps.util.Utils;
+import com.eprosima.fastrtps.util.VSConfiguration;
 import com.eprosima.idl.generator.manager.TemplateGroup;
 import com.eprosima.idl.generator.manager.TemplateManager;
 import com.eprosima.idl.parser.grammar.IDLLexer;
@@ -39,7 +39,7 @@ import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.idl.util.Util;
 import com.eprosima.log.ColorMessage;
 
-// TODO: Implement Solution & Project in com.eprosima.rtps.solution
+// TODO: Implement Solution & Project in com.eprosima.fastrtps.solution
 
 public class fastrtpsgen {
 	
@@ -52,7 +52,7 @@ public class fastrtpsgen {
 	private static ArrayList<String> m_platforms = null;
 	
 	private Vector<String> m_idlFiles;
-	protected static String m_appEnv = "fastrtpsHOME";
+	protected static String m_appEnv = "FASTRTPSHOME";
 	private String m_exampleOption = null;
 	private String m_languageOption = "C++";
     private boolean m_ppDisable = false; //TODO
@@ -202,7 +202,7 @@ public class fastrtpsgen {
 			
 			// Load string templates
 			System.out.println("Loading templates...");
-			StringTemplateGroupLoader loader = new CommonGroupLoader("com/eprosima/rtps/idl/templates", new TemplateErrorListener());
+			StringTemplateGroupLoader loader = new CommonGroupLoader("com/eprosima/fastrtps/idl/templates", new TemplateErrorListener());
 			StringTemplateGroup.registerGroupLoader(loader);
 			
 			// Load IDL types for stringtemplates
@@ -216,7 +216,7 @@ public class fastrtpsgen {
 			}
 			
 			// Protocol FASTCDR
-			TypeCode.cpptypesgr = StringTemplateGroup.loadGroup("Types", DefaultTemplateLexer.class, null); //TODOQuitar Types.stg de com.eprosima.rtps.idl.templates y copiarlo con el build
+			TypeCode.cpptypesgr = StringTemplateGroup.loadGroup("Types", DefaultTemplateLexer.class, null); //TODOQuitar Types.stg de com.eprosima.fastrtps.idl.templates y copiarlo con el build
 			TemplateManager.middlgr = StringTemplateGroup.loadGroup("eprosima", DefaultTemplateLexer.class, null);
 			
 			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
@@ -304,7 +304,7 @@ public class fastrtpsgen {
     {
         try
         {
-            //InputStream input = this.getClass().getResourceAsStream("/rtps_version.h");
+            //InputStream input = this.getClass().getResourceAsStream("/fastrtps_version.h");
         	
         	InputStream input = this.getClass().getClassLoader().getResourceAsStream("fastrtps_version.h");
             byte[] b = new byte[input.available()];
@@ -384,7 +384,7 @@ public class fastrtpsgen {
 		
 		try {
 			// Protocol CDR
-			project = parseIDLtoCDR(idlFilename); // TODO: Quitar archivos copiados TypesHeader.stg, TypesSource.stg, PubSubTypeHeader.stg de la carpeta com.eprosima.rtps.idl.templates
+			project = parseIDLtoCDR(idlFilename); // TODO: Quitar archivos copiados TypesHeader.stg, TypesSource.stg, PubSubTypeHeader.stg de la carpeta com.eprosima.fastrtps.idl.templates
 		} catch (Exception ioe) {
 			System.out.println(ColorMessage.error() + "Cannot generate the files");
 			if (!ioe.getMessage().equals("")) {

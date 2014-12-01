@@ -6,31 +6,31 @@
  *
  *************************************************************************/
 
-#ifndef _fastrtps_fastrtps_DLL_H_
-#define _fastrtps_fastrtps_DLL_H_
+#ifndef _FASTRTPS_FASTRTPS_DLL_H_
+#define _FASTRTPS_FASTRTPS_DLL_H_
 
 // normalize macros
-#if !defined(fastrtps_DYN_LINK) && !defined(fastrtps_STATIC_LINK) \
+#if !defined(FASTRTPS_DYN_LINK) && !defined(FASTRTPS_STATIC_LINK) \
     && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
-#define fastrtps_STATIC_LINK
+#define FASTRTPS_STATIC_LINK
 #endif
 
-#if defined(EPROSIMA_ALL_DYN_LINK) && !defined(fastrtps_DYN_LINK)
+#if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTRTPS_DYN_LINK)
 #define fastrtps_DYN_LINK
 #endif
 
-#if defined(fastrtps_DYN_LINK) && defined(fastrtps_STATIC_LINK)
+#if defined(FASTRTPS_DYN_LINK) && defined(FASTRTPS_STATIC_LINK)
 #error Must not define both fastrtps_DYN_LINK and fastrtps_STATIC_LINK
 #endif
 
-#if defined(EPROSIMA_ALL_NO_LIB) && !defined(fastrtps_NO_LIB)
+#if defined(EPROSIMA_ALL_NO_LIB) && !defined(FASTRTPS_NO_LIB)
 #define fastrtps_NO_LIB
 #endif
 
 // enable dynamic linking
 
 #if defined(_WIN32)
-#if defined(EPROSIMA_ALL_DYN_LINK) || defined(fastrtps_DYN_LINK)
+#if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTRTPS_DYN_LINK)
 #if defined(fastrtps_SOURCE)
 #define RTPS_DllAPI __declspec( dllexport )
 #else
@@ -45,15 +45,15 @@
 
 // Auto linking.
 
-#if !defined(fastrtps_SOURCE) && !defined(EPROSIMA_ALL_NO_LIB) \
-    && !defined(fastrtps_NO_LIB)
+#if !defined(FASTRTPS_SOURCE) && !defined(EPROSIMA_ALL_NO_LIB) \
+    && !defined(FASTRTPS_NO_LIB)
 
 #include "fastrtps/fastrtps_version.h"
 
 // Set properties.
 #define EPROSIMA_LIB_NAME fastrtps
 
-#if defined(EPROSIMA_ALL_DYN_LINK) || defined(fastrtps_DYN_LINK)
+#if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTRTPS_DYN_LINK)
 #define EPROSIMA_DYN_LINK
 #endif
 

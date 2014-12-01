@@ -1,1 +1,2 @@
-xcopy ..\..\..\include\fastrtps\* "C:\Program Files\eProsima\eRTPS\include\fastrtps\" /y /s
+xcopy ..\..\..\include\fastrtps\* "C:\Program Files\eProsima\FastRTPS\include\fastrtps\" /y /s
+xcopy ..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\*.h "C:\Program Files\eProsima\eProsima_cpp\log\" /y /s

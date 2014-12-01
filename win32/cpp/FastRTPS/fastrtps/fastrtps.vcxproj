@@ -187,6 +187,7 @@
     <ClInclude Include="..\..\..\..\src\cpp\rtps\messages\submessages\HeartbeatMsg.hpp" />
     <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Colors.h" />
     <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.h" />
+    <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log_dll.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\Domain.cpp" />

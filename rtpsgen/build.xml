@@ -62,9 +62,9 @@
 		<filter token="copyright" value="${copyright}" />
 
 		<!-- Source related properties -->
-		<property name="rtps.dir" value="${basedir}" />
-		<property name="rtps.src.dir" value="${rtps.dir}${file.separator}src" />
-		<property name="rtps.src.java" value="${rtps.src.dir}" />
+		<property name="fastrtps.dir" value="${basedir}" />
+		<property name="fastrtps.src.dir" value="${fastrtps.dir}${file.separator}src" />
+		<property name="fastrtps.src.java" value="${fastrtps.src.dir}" />
 		<property name="idl.dir" value="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}idl" />
         <property name="idl.src.dir" value="${idl.dir}${file.separator}src" />
 		<property name="idl.src.java" value="${idl.src.dir}" />
@@ -79,7 +79,7 @@
 		<property name="build.src" value="${build.dir}${file.separator}src" />
 		<property name="build.classes" value="${build.dir}" />
 		<property name="build.javadocs" value="${basedir}${file.separator}docs${file.separator}api" />
-		<property name="build.rtpsgen.jar" value="${lib.dir}${file.separator}${name}.jar" />
+		<property name="build.fastrtpsgen.jar" value="${lib.dir}${file.separator}${name}.jar" />
 		
 		<path id="build.classpath">
 			<fileset dir="${lib.dir}">
@@ -125,16 +125,16 @@
         <antlr base="${idl.src.java}${file.separator}com/eprosima/idl/parser/grammar" grammar="${idl.grammar.dir}${file.separator}idl.g" />
 		<echo>Compiling java code...</echo>
 		<mkdir dir="${build.classes}" />
-        <javac source="1.6" target="1.6" srcdir="${idl.src.java}:${rtps.src.java}" destdir="${build.classes}">
+        <javac source="1.6" target="1.6" srcdir="${idl.src.java}:${fastrtps.src.java}" destdir="${build.classes}">
 			<classpath refid="build.classpath"/>
 		</javac>
         <!--> Copy stringtemplates of rtps.<-->
 		<copy todir="${build.classes}">
-			<fileset dir="${rtps.src.dir}" includes="**/*.stg" />
+			<fileset dir="${fastrtps.src.dir}" includes="**/*.stg" />
 		</copy>
         <!--> Copy common stringtemplates with Fast Buffers.<-->
         <!--> TODO Quitar el overwrite<-->
-        <copy todir="${build.classes}${file.separator}com${file.separator}eprosima${file.separator}rtps${file.separator}idl${file.separator}templates"
+        <copy todir="${build.classes}${file.separator}com${file.separator}eprosima${file.separator}fastrtps${file.separator}idl${file.separator}templates"
             overwrite="yes">
             <fileset dir="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}fastcdr${file.separator}src${file.separator}java${file.separator}com${file.separator}eprosima${file.separator}fastcdr${file.separator}templates">
 				<include name="Types.stg" />
@@ -159,7 +159,7 @@
 	<!-- =================================================================== -->
 	<!-- Creates the jar archive                                             -->
 	<!-- =================================================================== -->
-	<target name="fastrtpsgen_jar" depends="init,compile" description="Builds the rtpsgen library (.jar).">
+	<target name="fastrtpsgen_jar" depends="init,compile" description="Builds the fastrtpsgen library (.jar).">
 		<jar jarfile="${build.fastrtpsgen.jar}" basedir="${build.classes}" manifest="manifest">
 		</jar>
 	</target>
