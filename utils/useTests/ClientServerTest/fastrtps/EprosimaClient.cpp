@@ -13,12 +13,14 @@
 
 #include "EprosimaClient.h"
 
+#include "fastrtps/fastrtps_all.h"
+
 EprosimaClient::EprosimaClient():
-mp_operation_pub(NULL),
-mp_result_sub(NULL),
-mp_RTPSParticipant(NULL),
-mp_resultdatatype(NULL),
-mp_operationdatatype(NULL),
+mp_operation_pub(nullptr),
+mp_result_sub(nullptr),
+mp_participant(nullptr),
+mp_resultdatatype(nullptr),
+mp_operationdatatype(nullptr),
 m_operationsListener(this),
 m_resultsListener(this),
 m_isReady(false),
@@ -31,35 +33,37 @@ m_resultMatched(0)
 
 EprosimaClient::~EprosimaClient()
 {
-	if(mp_resultdatatype!=NULL)
+	if(mp_resultdatatype!=nullptr)
 		delete(mp_resultdatatype);
-	if(mp_operationdatatype!=NULL)
+	if(mp_operationdatatype!=nullptr)
 		delete(mp_operationdatatype);
 }
 
 bool EprosimaClient::init()
 {
+
+
+	//CREATE RTPSParticipant
+	ParticipantAttributes PParam;
+	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.domainId = 80;
+	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.sendSocketBufferSize = 8712;
+	PParam.rtps.listenSocketBufferSize = 17424;
+	PParam.rtps.setName( "client_RTPSParticipant");
+	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant == nullptr)
+		return false;
+
 	//REGISTER TYPES
 	mp_resultdatatype = new ResultDataType();
 	mp_operationdatatype = new OperationDataType();
-	DomainRTPSParticipant::registerType(mp_resultdatatype);
-	DomainRTPSParticipant::registerType(mp_operationdatatype);
-
-	//CREATE RTPSParticipant
-	RTPSParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.builtin.domainId = 80;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 8712;
-	PParam.listenSocketBufferSize = 17424;
-	PParam.name = "client_RTPSParticipant";
-	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
-	if(mp_RTPSParticipant == NULL)
-		return false;
+	Domain::registerType(mp_participant,mp_resultdatatype);
+	Domain::registerType(mp_participant,mp_operationdatatype);
 
 	// DATA PUBLISHER
 	PublisherAttributes PubDataparam;
@@ -71,8 +75,8 @@ bool EprosimaClient::init()
 	PubDataparam.topic.resourceLimitsQos.max_samples = 50;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = 50;
 	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_operation_pub = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,PubDataparam,(PublisherListener*)&this->m_operationsListener);
-	if(mp_operation_pub == NULL)
+	mp_operation_pub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_operationsListener);
+	if(mp_operation_pub == nullptr)
 		return false;
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
@@ -86,8 +90,8 @@ bool EprosimaClient::init()
 	SubDataparam.topic.historyQos.depth = 100;
 	SubDataparam.topic.resourceLimitsQos.max_samples = 100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = 100;
-	mp_result_sub = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,SubDataparam,(SubscriberListener*)&this->m_resultsListener);
-	if(mp_result_sub == NULL)
+	mp_result_sub = Domain::createSubscriber(mp_participant,SubDataparam,(SubscriberListener*)&this->m_resultsListener);
+	if(mp_result_sub == nullptr)
 		return false;
 
 	return true;
@@ -124,7 +128,7 @@ void EprosimaClient::resetResult()
 	m_result.m_result = 0;
 }
 
-void EprosimaClient::OperationListener::onPublicationMatched(MatchingInfo info)
+void EprosimaClient::OperationListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -135,7 +139,7 @@ void EprosimaClient::OperationListener::onPublicationMatched(MatchingInfo info)
 	mp_up->isReady();
 }
 
-void EprosimaClient::ResultListener::onSubscriptionMatched(MatchingInfo info)
+void EprosimaClient::ResultListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -146,7 +150,7 @@ void EprosimaClient::ResultListener::onSubscriptionMatched(MatchingInfo info)
 	mp_up->isReady();
 }
 
-void EprosimaClient::ResultListener::onNewDataMessage()
+void EprosimaClient::ResultListener::onNewDataMessage(Subscriber* sub)
 {
 }
 

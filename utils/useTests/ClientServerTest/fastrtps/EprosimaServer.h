@@ -14,8 +14,16 @@
 #ifndef EPROSIMASERVER_H_
 #define EPROSIMASERVER_H_
 
-#include "fastrtps/rtps_all.h"
 #include "ClientServerTypes.h"
+
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+
+#include "fastrtps/publisher/PublisherListener.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+
+using namespace eprosima;
+using namespace fastrtps;
 
 using namespace clientserver;
 
@@ -30,7 +38,7 @@ public:
 private:
 	Subscriber* mp_operation_sub;
 	Publisher* mp_result_pub;
-	RTPSParticipant* mp_RTPSParticipant;
+	Participant* mp_participant;
 	Result::RESULTTYPE calculate(Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
 	ResultDataType* mp_resultdatatype;
 	OperationDataType* mp_operationdatatype;
@@ -40,8 +48,8 @@ private:
 		OperationListener(EprosimaServer* up):mp_up(up){}
 		~OperationListener(){}
 		EprosimaServer* mp_up;
-		void onSubscriptionMatched(MatchingInfo info);
-		void onNewDataMessage();
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onNewDataMessage(Subscriber*sub);
 		Operation m_operation;
 		SampleInfo_t m_sampleInfo;
 		Result m_result;
@@ -52,7 +60,7 @@ private:
 		ResultListener(EprosimaServer* up):mp_up(up){}
 		~ResultListener(){}
 		EprosimaServer* mp_up;
-		void onPublicationMatched(MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo info);
 	}m_resultsListener;
 };
 
