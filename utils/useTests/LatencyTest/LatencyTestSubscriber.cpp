@@ -35,13 +35,16 @@ LatencyTestSubscriber::LatencyTestSubscriber():
 						m_status(0),
 						n_received(0),
 						n_samples(0),
-						m_datapublistener(this),
-						m_datasublistener(this),
-						m_commandpublistener(this),
-						m_commandsublistener(this),
+						m_datapublistener(nullptr),
+						m_datasublistener(nullptr),
+						m_commandpublistener(nullptr),
+						m_commandsublistener(nullptr),
 						m_echo(true)
 {
-
+	m_datapublistener.mp_up = this;
+	m_datasublistener.mp_up = this;
+	m_commandpublistener.mp_up = this;
+	m_commandsublistener.mp_up = this;
 
 }
 

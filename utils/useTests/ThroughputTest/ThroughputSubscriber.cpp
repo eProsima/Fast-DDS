@@ -150,7 +150,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			comm.m_size = m_up.m_datasize+4+4;
 			comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
 			comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
-			comm.m_totaltime = TimeConv::Time_t2MicroSecondsDouble(m_up.m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_up.m_t1);
+			comm.m_totaltime = (uint64_t)(TimeConv::Time_t2MicroSecondsDouble(m_up.m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_up.m_t1));
 			//cout << "SEND COMMAND: "<< comm.m_command << endl;
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&comm);
@@ -187,6 +187,7 @@ ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
 														sema(0),
+#pragma warning(disable:4355)
 														m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
 														ready(true),m_datasize(0),m_demand(0)
 {
