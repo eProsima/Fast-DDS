@@ -24,7 +24,7 @@ cd "..\.."
 :: Compile CDR library.
 cd "thirdparty\fastcdr"
 cd "utils\scripts"
-::call build_cdr.bat 
+call build_cdr.bat noclean
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd "..\..\..\..\"
@@ -115,7 +115,7 @@ call ant jars
 cd ..
 
 :: Create installers.
-cd "utils\installers\ertps\windows"
+cd "utils\installers\fastrtps\windows"
 :: Win32 installer.
 makensis.exe /DVERSION="%VERSIONRTPS%" setup.nsi
 set errorstatus=%ERRORLEVEL%
