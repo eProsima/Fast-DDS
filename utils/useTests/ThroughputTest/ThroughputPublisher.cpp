@@ -16,6 +16,16 @@
 #include "ThroughputPublisher.h"
 #include "fastrtps/utils/TimeConversion.h"
 
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/attributes/PublisherAttributes.h"
+#include "fastrtps/attributes/SubscriberAttributes.h"
+
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/subscriber/Subscriber.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+
+#include "fastrtps/Domain.h"
+
 uint32_t g_dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
 //uint32_t dataspub[] = {504,1016,2040,4088,8184};
 std::vector<uint32_t> g_data_size_pub (g_dataspub, g_dataspub + sizeof(g_dataspub) / sizeof(uint32_t) );
@@ -27,53 +37,78 @@ vector<uint32_t> g_demand_pub (g_demandspub, g_demandspub + sizeof(g_demandspub)
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::DataPubListener::~DataPubListener(){};
 
-void ThroughputPublisher::DataPubListener::onPublicationMatched(MatchingInfo info)
+void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
-	cout << RTPS_RED << "DATA    Pub Matched"<<RTPS_DEF<<endl;
-	m_up.sema.post();
+
+	if(info.status == MATCHED_MATCHING)
+	{
+		cout << C_RED << "DATA Pub Matched"<<C_DEF<<endl;
+		m_up.sema.post();
+	}
+	else
+	{
+		cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+	}
 }
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){};
-void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
+void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
-	cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
-	m_up.sema.post();
+	if(info.status == MATCHED_MATCHING)
+	{
+		cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
+		m_up.sema.post();
+	}
+	else
+	{
+		cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+	}
 }
 
 ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){};
-void ThroughputPublisher::CommandPubListener::onPublicationMatched(MatchingInfo info)
+void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
-	cout << RTPS_RED << "COMMAND Pub Matched"<<RTPS_DEF<<endl;
-	m_up.sema.post();
+	if(info.status == MATCHED_MATCHING)
+	{
+		cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<endl;
+		m_up.sema.post();
+	}
+	else
+	{
+		cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+	}
 }
 
 
-ThroughputPublisher::~ThroughputPublisher(){DomainRTPSParticipant::stopAll();}
+ThroughputPublisher::~ThroughputPublisher(){Domain::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
-																sema(0),
-																m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-																ready(true)
+																				sema(0),
+																				m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+																				ready(true)
 {
-	RTPSParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 65536;
-	PParam.listenSocketBufferSize = 2*65536;
-	PParam.name = "RTPSParticipant1";
-	mp_par = DomainRTPSParticipant::createRTPSParticipant(PParam);
-	if(mp_par == NULL)
+	ParticipantAttributes PParam;
+	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.sendSocketBufferSize = 65536;
+	PParam.rtps.listenSocketBufferSize = 2*65536;
+	PParam.rtps.setName("Participant_publisher");
+	mp_par = Domain::createParticipant(PParam);
+	if(mp_par == nullptr)
 	{
-		cout << "ERROR"<<endl;
+		cout << "ERROR creating participant"<<endl;
 		ready = false;
 		return;
 	}
+	//REGISTER THE TYPES
+	Domain::registerType(mp_par,(TopicDataType*)&latency_t);
+	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
@@ -90,7 +125,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.resourceLimitsQos.max_samples = 10000;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_datapub = DomainRTPSParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
+	mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
 	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -99,7 +134,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandS2P";
-	mp_commandsub = DomainRTPSParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
+	mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam2;
 	Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Wparam2.topic.historyQos.depth = 50;
@@ -109,12 +144,12 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam2.topic.topicKind = NO_KEY;
 	Wparam2.topic.topicName = "ThroughputCommandP2S";
 	Wparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_commandpub = DomainRTPSParticipant::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
+	mp_commandpub = Domain::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
 
-	if(mp_datapub == NULL || mp_commandsub == NULL || mp_commandpub == NULL)
+	if(mp_datapub == nullptr || mp_commandsub == nullptr || mp_commandpub == nullptr)
 		ready = false;
 
-	mp_par->stopRTPSParticipantAnnouncement();
+	//mp_par->stopParticipantAnnouncement();
 	eClock::my_sleep(5000);
 }
 
@@ -170,7 +205,7 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 				if(!test(test_time,*dit,*sit))
 				{
 					command.m_command = ALL_STOPS;
-				//	cout << "SEND COMMAND "<< command.m_command << endl;
+					//	cout << "SEND COMMAND "<< command.m_command << endl;
 					mp_commandpub->write((void*)&command);
 					return;
 				}
@@ -178,7 +213,7 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 		}
 	}
 	command.m_command = ALL_STOPS;
-//	cout << "SEND COMMAND "<< command.m_command << endl;
+	//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
 }
 

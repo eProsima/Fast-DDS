@@ -14,8 +14,10 @@
 #ifndef THROUGHPUTTYPES_H_
 #define THROUGHPUTTYPES_H_
 
-#include "fastrtps/rtps_all.h"
-
+#include "fastrtps/TopicDataType.h"
+#include "fastrtps/utils/RTPSLog.h"
+using namespace eprosima;
+using namespace eprosima::fastrtps;
 
 //typedef struct TroughputTimeStats{
 //	uint32_t nsamples;
@@ -147,12 +149,12 @@ inline bool operator==(LatencyType& lt1,LatencyType& lt2)
 				}
 
 
-class LatencyDataType: public DDSTopicDataType
+class LatencyDataType: public TopicDataType
 {
 public:
 	LatencyDataType()
 {
-		m_topicDataTypeName = "LatencyType";
+		setName("LatencyType");
 		m_typeSize = 25000;
 		m_isGetKeyDefined = false;
 };
@@ -203,18 +205,18 @@ inline std::ostream& operator<<(std::ostream& output,const ThroughputCommandType
 	case (TEST_ENDS): return output << "TEST_ENDS";
 	case (ALL_STOPS): return output << "ALL_STOPS";
 	case (TEST_RESULTS): return output << "TEST RESULTS";
-	default: return output << RTPS_B_RED<<"UNKNOWN COMMAND"<<RTPS_DEF;
+	default: return output << C_B_RED<<"UNKNOWN COMMAND"<<C_DEF;
 	}
 	return output;
 }
 
 
-class ThroughputCommandDataType:public DDSTopicDataType
+class ThroughputCommandDataType:public TopicDataType
 {
 public:
 	ThroughputCommandDataType()
 {
-		m_topicDataTypeName = "ThroughputCommand";
+		setName("ThroughputCommand");
 		m_typeSize = 4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double);
 		m_isGetKeyDefined = false;
 };

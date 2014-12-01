@@ -13,6 +13,19 @@
 
 #include "ThroughputSubscriber.h"
 #include "fastrtps/utils/TimeConversion.h"
+
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/attributes/PublisherAttributes.h"
+#include "fastrtps/attributes/SubscriberAttributes.h"
+
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/subscriber/Subscriber.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+
+#include "fastrtps/Domain.h"
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 #include <vector>
 
 int writecalls= 0;
@@ -24,7 +37,7 @@ int writecalls= 0;
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-		m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(NULL)
+								m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
 {
 
 };
@@ -39,14 +52,21 @@ void ThroughputSubscriber::DataSubListener::reset(){
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(MatchingInfo info)
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
-	cout << RTPS_RED << "DATA    Sub Matched"<<RTPS_DEF<<endl;
-	m_up.sema.post();
+	if(info.status == MATCHED_MATCHING)
+	{
+		cout << C_RED << "DATA Sub Matched"<<C_DEF<<endl;
+		m_up.sema.post();
+	}
+	else
+	{
+		cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+	}
 }
-void ThroughputSubscriber::DataSubListener::onNewDataMessage()
+void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
-//	cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
+	//	cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
 	m_up.mp_datasub->takeNextData((void*)latencyin,&info);
 	//myfile << latencyin.seqnum << ",";
 	if(info.sampleKind == ALIVE)
@@ -74,12 +94,19 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
 
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(MatchingInfo info)
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
-	//cout << RTPS_RED << "COMMAND Sub Matched"<<RTPS_DEF<<endl;
-	m_up.sema.post();
+	if(info.status == MATCHED_MATCHING)
+	{
+		cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
+		m_up.sema.post();
+	}
+	else
+	{
+		cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+	}
 }
-void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
+void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 {
 	//cout << "Command Received: ";
 	if(m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info))
@@ -90,11 +117,11 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 		default: break;
 		case (DEFAULT): break;
 		case (BEGIN):
-			{
+						{
 			break;
-			}
+						}
 		case (READY_TO_START):
-				{
+							{
 			m_up.m_datasize = m_commandin.m_size;
 			m_up.m_demand = m_commandin.m_demand;
 			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -106,14 +133,14 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&command);
 			break;
-				}
+							}
 		case (TEST_STARTS):
-			{
+						{
 			m_up.m_Clock.setTimeNow(&m_up.m_t1);
 			break;
-			}
+						}
 		case (TEST_ENDS):
-			{
+						{
 			m_up.m_Clock.setTimeNow(&m_up.m_t2);
 			m_up.m_DataSubListener.saveNumbers();
 			//cout << "TEST ends, sending results"<<endl;
@@ -129,7 +156,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 			m_up.mp_commandpubli->write(&comm);
 
 			break;
-			}
+						}
 		case (ALL_STOPS): m_up.sema.post();break;
 		}
 	}
@@ -141,38 +168,50 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage()
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched(MatchingInfo info)
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
-	cout << RTPS_RED << "COMMAND Pub Matched"<<RTPS_DEF<<endl;
-	m_up.sema.post();
+	if(info.status == MATCHED_MATCHING)
+	{
+		cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<endl;
+		m_up.sema.post();
+	}
+	else
+	{
+		cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+	}
 }
 
 
 
-ThroughputSubscriber::~ThroughputSubscriber(){DomainRTPSParticipant::stopAll();}
+ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
-								sema(0),
-								m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-								ready(true),m_datasize(0),m_demand(0)
+														sema(0),
+														m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+														ready(true),m_datasize(0),m_demand(0)
 {
-	RTPSParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.sendSocketBufferSize = 65536;
-	PParam.listenSocketBufferSize = 2*65536;
-	PParam.name = "RTPSParticipant2";
-	mp_par = DomainRTPSParticipant::createRTPSParticipant(PParam);
-	if(mp_par == NULL)
+	ParticipantAttributes PParam;
+	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.sendSocketBufferSize = 65536;
+	PParam.rtps.listenSocketBufferSize = 2*65536;
+	PParam.rtps.setName("Participant_subscriber");
+	mp_par = Domain::createParticipant(PParam);
+	if(mp_par == nullptr)
 	{
 		cout << "ERROR"<<endl;
 		ready = false;
 		return;
 	}
+	//REGISTER THE TYPES
+	Domain::registerType(mp_par,(TopicDataType*)&latency_t);
+	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
+
+
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
@@ -187,8 +226,10 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.historyQos.depth = 1;
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
-	Sparam.unicastLocatorList.push_back(Locator_t(10110));
-	mp_datasub = DomainRTPSParticipant::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
+	Locator_t loc;
+	loc.port = 10110;
+	Sparam.unicastLocatorList.push_back(loc);
+	mp_datasub = Domain::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
 	//COMMAND
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicDataType = "ThroughputCommand";
@@ -197,8 +238,9 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-	Rparam.unicastLocatorList.push_back(Locator_t(7556));
-	mp_commandsub = DomainRTPSParticipant::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
+	loc.port = 7556;
+	Rparam.unicastLocatorList.push_back(loc);
+	mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam;
 	//Wparam.historyMaxSize = 20;
 	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -208,9 +250,9 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "ThroughputCommandS2P";
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	mp_commandpubli = DomainRTPSParticipant::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
+	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
-	if(mp_datasub == NULL || mp_commandsub == NULL || mp_commandpubli == NULL)
+	if(mp_datasub == nullptr || mp_commandsub == nullptr || mp_commandpubli == nullptr)
 		ready = false;
 
 	eClock::my_sleep(1000);

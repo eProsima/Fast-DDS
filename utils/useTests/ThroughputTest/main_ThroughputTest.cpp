@@ -15,16 +15,17 @@
 #include <bitset>
 #include <cstdint>
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/utils/RTPSLog.h"
+#include "fastrtps/Domain.h"
+using namespace eprosima;
+using namespace fastrtps;
 
 #include "ThroughputTypes.h"
 
 #include "ThroughputPublisher.h"
 #include "ThroughputSubscriber.h"
 
-using namespace eprosima;
-using namespace dds;
-using namespace rtps;
+
 using namespace std;
 
 
@@ -42,9 +43,8 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 int main(int argc, char** argv){
-	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
+	Log::setVerbosity(VERB_WARNING);
 	cout << "Starting "<< endl;
-	pInfo("Starting"<<endl)
 	int type;
 	uint32_t test_time_sec = 30;
 	int demand = 0;
@@ -92,12 +92,6 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
-	LatencyDataType latency_t;
-	DomainRTPSParticipant::registerType((DDSTopicDataType*)&latency_t);
-
-	ThroughputCommandDataType throuputcommand_t;
-	DomainRTPSParticipant::registerType((DDSTopicDataType*)&throuputcommand_t);
-
 
 
 	switch (type)
@@ -117,7 +111,7 @@ int main(int argc, char** argv){
 	}
 	}
 
-	DomainRTPSParticipant::stopAll();
+	Domain::stopAll();
 
 
 	return 0;
