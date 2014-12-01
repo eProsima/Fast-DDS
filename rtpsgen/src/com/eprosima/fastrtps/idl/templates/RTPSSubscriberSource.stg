@@ -3,11 +3,17 @@ group ProtocolHeader;
 main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.cpp"], description=["This file contains the implementation of the subscriber functions."])$
 
+#include "fastrtps/participant/Participant.h"
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/subscriber/Subscriber.h"
+#include "fastrtps/attributes/SubscriberAttributes.h"
+
+#include "fastrtps/Domain.h"
 
 #include "$ctx.filename$Subscriber.h"
-#include "$ctx.filename$PubSubType.h"
 
-$ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_RTPSParticipant(NULL), mp_subscriber(NULL) {}
+
+$ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
 
 $ctx.filename$Subscriber::~$ctx.filename$Subscriber() {}
 
@@ -15,28 +21,31 @@ bool $ctx.filename$Subscriber::init()
 {
 	// Create RTPSParticipant
 	
-	RTPSParticipantAttributes PParam;
-	PParam.builtin.domainId = 80; //MUST BE THE SAME AS IN THE PUBLISHER
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-	PParam.name = "RTPSParticipant_subscriber"; //You can put the name you want
-	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
-	if(mp_RTPSParticipant == NULL)
+	ParticipantAttributes PParam;
+	PParam.rtps.builtin.domainId = 80; //MUST BE THE SAME AS IN THE PUBLISHER
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
+	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant == nullptr)
 			return false;
+	
+	//Register the type
+	
+	Domain::registerType(mp_participant,(TopicDataType*) &myType);		
 			
 	// Create Subscriber
 			
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = "$ctx.m_firstStructure$"; //Must be registered before the creation of the subscriber
+	Rparam.topic.topicDataType = "$ctx.m_firstStructure$PubSubType"; //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
-	mp_subscriber = DomainRTPSParticipant::createSubscriber(mp_RTPSParticipant,Rparam,(SubscriberListener*)&m_listener);
-	if(mp_subscriber == NULL)
+	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+	if(mp_subscriber == nullptr)
 		return false;
-	m_listener.mp_sub = mp_subscriber; //We copy the pointer to the subscriber to be able to read and take data from the listener directly
 	return true;
 }
 
-void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(MatchingInfo info)
+void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{
@@ -50,22 +59,18 @@ void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(MatchingInfo i
 	}
 }
 
-void $ctx.filename$Subscriber::SubListener::onNewDataMessage()
+void $ctx.filename$Subscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-	if(mp_sub!=NULL)
-	{
 		// Take data
 		$ctx.m_firstStructure$ st;
 		
-		if(mp_sub->takeNextData(&st, &m_info))
+		if(sub->takeNextData(&st, &m_info))
 		{
 			if(m_info.sampleKind == ALIVE)
 			{
 				// Print your structure data here.
 			}
 		}
-
-	}
 }
 
 void $ctx.filename$Subscriber::run()

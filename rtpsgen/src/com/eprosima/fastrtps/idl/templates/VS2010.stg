@@ -55,7 +55,7 @@ project(solution, project, example, configurations, local) ::= <<
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
-      <AdditionalIncludeDirectories>\$(fastrtpsHOME)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\$(FASTRTPSHOME)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>$preprocessorDefs(conf=it)$;$if(it.dll)$;EPROSIMA_USER_DLL_EXPORT$endif$;$solution.defines : {define |$define$;}$%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -118,7 +118,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>$if(it.debug)$Disabled$else$MaxSpeed$endif$</Optimization>
-      <AdditionalIncludeDirectories>\$(fastrtpsHOME)\include;\$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\$(FASTRTPSHOME)\include;\$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;$if(it.dll)$EPROSIMA_ALL_DYN_LINK;$endif$BOOST_ALL_DYN_LINK;$if(it.debug)$_DEBUG;$else$NDEBUG;$endif$</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>

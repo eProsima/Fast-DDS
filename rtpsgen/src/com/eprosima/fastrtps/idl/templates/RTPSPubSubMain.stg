@@ -4,14 +4,19 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubMain.cpp"], description=["This file acts as a main entry point to the application."])$
 
 
-#include "fastrtps/rtps_all.h"
 #include "$ctx.filename$Publisher.h"
 #include "$ctx.filename$Subscriber.h"
-#include "$ctx.filename$PubSubType.h"
+
+
+#include "fastrtps/Domain.h"
+#include "fastrtps/utils/RTPSLog.h"
+
+using namespace eprosima;
+using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(EPROSIMA_WARNING_VERB_LEVEL);
+	Log::setVerbosity(VERB_WARNING);
 	cout << "Starting " << endl;
 	int type = 1;
 	if (argc > 1)
@@ -33,8 +38,6 @@ int main(int argc, char** argv)
 	
 	// Register the type being used
 	
-	$ctx.filename$PubSubType myType;
-	DomainRTPSParticipant::registerType((TopicDataType*) &myType);
 	
 	switch(type)
 	{
@@ -58,7 +61,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	DomainRTPSParticipant::stopAll();
+	Domain::stopAll();
 	
 	return 0;
 }
