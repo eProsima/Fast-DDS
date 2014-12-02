@@ -13,7 +13,7 @@
 # To create RPM in CentOs you have to follow this link:
 #   http://wiki.centos.org/HowTos/SetupRpmBuildEnvironment
 
-project="fastrtps"
+project="FastRTPS"
 
 
 installer()
@@ -145,7 +145,7 @@ installer()
     find tmp/ -iname "*~" -exec rm -f {} \;
 
     cd tmp
-    tar cvzf "../fastrtps_${version}-Linux.tar.gz" $project
+    tar cvzf "../FastRTPS_${version}-Linux.tar.gz" $project
     errorstatus=$?
     cd ..
     if [ $errorstatus != 0 ]; then return; fi
