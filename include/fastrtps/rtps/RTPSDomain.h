@@ -65,25 +65,41 @@ public:
 	 * @brief Create a RTPSParticipant.
 	 * @snippet fastrtps_example.cpp ex_RTPSParticipantCreation
 	 * @param PParam RTPSParticipant Parameters.
+	 * @param plisten Pointer to the ParticipantListener.
 	 * @return Pointer to the RTPSParticipant.
 	 */
 	RTPS_DllAPI static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam, RTPSParticipantListener* plisten = nullptr);
 
 	/**
-	 *
-	 * @param watt
-	 * @param hist
-	 * @param listen
-	 * @return
+	 * Create a RTPSWriter in a participant.
+	 * @param p Pointer to the RTPSParticipant.
+	 * @param watt Writer Attributes.
+	 * @param hist Pointer to the WriterHistory.
+	 * @param listen Pointer to the WriterListener.
+	 * @return Pointer to the created RTPSWriter.
 	 */
 	RTPS_DllAPI static RTPSWriter* createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen = nullptr);
-
-
+	/**
+	 * Remove a RTPSWriter.
+	 * @param writer Pointer to the writer you want to remove.
+	 * @return  True if correctly removed.
+	 */
 	RTPS_DllAPI static bool removeRTPSWriter(RTPSWriter* writer);
 
-
+	/**
+	 * Create a RTPSReader in a participant.
+	 * @param p Pointer to the RTPSParticipant.
+	 * @param ratt Reader Attributes.
+	 * @param hist Pointer to the ReaderHistory.
+	 * @param listen Pointer to the ReaderListener.
+	 * @return Pointer to the created RTPSReader.
+	 */
 	RTPS_DllAPI static RTPSReader* createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt, ReaderHistory* hist, ReaderListener* listen = nullptr);
-
+	/**
+	 * Remove a RTPSReader.
+	 * @param reader Pointer to the reader you want to remove.
+	 * @return  True if correctly removed.
+	 */
 	RTPS_DllAPI static bool removeRTPSReader(RTPSReader* reader);
 
 	/**
@@ -93,10 +109,10 @@ public:
 	 */
 	RTPS_DllAPI static bool removeRTPSParticipant(RTPSParticipant* p);
 
-
-
-
-
+	/**
+	 * Set the maximum RTPSParticipantID.
+	 * @param maxRTPSParticipantId ID.
+	 */
 	static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId) {
 		m_maxRTPSParticipantID = maxRTPSParticipantId;
 	}

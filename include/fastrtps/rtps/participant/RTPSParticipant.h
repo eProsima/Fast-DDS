@@ -8,21 +8,11 @@
 
 /**
  * @file RTPSParticipant.h
-*/
+ */
 
 
 #ifndef RTPSParticipant_H_
 #define RTPSParticipant_H_
-
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <sys/types.h>
-//
-//#if defined(_WIN32)
-//#include <process.h>
-//#else
-//#include <unistd.h>
-//#endif
 
 #include <cstdlib>
 #include "fastrtps/config/fastrtps_dll.h"
@@ -62,16 +52,45 @@ public:
 	void stopRTPSParticipantAnnouncement();
 	//!Reset the RTPSParticipant announcement period.
 	void resetRTPSParticipantAnnouncement();
-
+	/**
+	 * Indicate the Participant that you have discovered a new Remote Writer.
+	 * This method can be used by the user to implements its own Static Endpoint
+	 * Discovery Protocol
+	 * @param pguid GUID_t of the discovered Writer.
+	 * @param userDefinedId ID of the discovered Writer.
+	 * @return True if correctly added.
+	 */
 	bool newRemoteWriterDiscovered(const GUID_t& pguid, int16_t userDefinedId);
+	/**
+	 * Indicate the Participant that you have discovered a new Remote Reader.
+	 * This method can be used by the user to implements its own Static Endpoint
+	 * Discovery Protocol
+	 * @param pguid GUID_t of the discovered Reader.
+	 * @param userDefinedId ID of the discovered Reader.
+	 * @return True if correctly added.
+	 */
 	bool newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId);
-
+	//!Get the Participant ID.
 	uint32_t getRTPSParticipantID() const;
-
+	/**
+	 * Register a RTPSWriter in the builtin Protocols.
+	 * @param Writer Pointer to the RTPSWriter.
+	 * @param topicAtt Topic Attributes where you want to register it.
+	 * @param wqos WriterQos.
+	 * @return True if correctly registered.
+	 */
 	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
-
+	/**
+	 * Register a RTPSReader in the builtin Protocols.
+	 * @param Reader Pointer to the RTPSReader.
+	 * @param topicAtt Topic Attributes where you want to register it.
+	 * @param rqos ReaderQos.
+	 * @return True if correctly registered.
+	 */
 	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
-
+	/**
+	 * Update the QOS
+	 */
 	bool updateWriter(RTPSWriter* Writer,WriterQos& wqos);
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
 
