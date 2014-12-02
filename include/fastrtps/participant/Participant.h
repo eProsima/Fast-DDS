@@ -28,7 +28,7 @@ class ParticipantImpl;
 class ParticipantAttributes;
 
 /**
- * 
+ * Participant used to group Publishers and Subscribers.
  */
 class RTPS_DllAPI Participant {
 	friend class Domain;
@@ -42,14 +42,14 @@ private:
 public:
 
 	/**
-	*
-	* @return
+	*	Get the GUID_t of the associated RTPSParticipant.
+	* @return GUID_t
 	*/
 	const GUID_t& getGuid()const ;
 
 	/**
-	*
-	* @return
+	* Get the ParticipantAttributes.
+	* @return ParticipantAttributes.
 	*/
 	const ParticipantAttributes& getAttributes();
 

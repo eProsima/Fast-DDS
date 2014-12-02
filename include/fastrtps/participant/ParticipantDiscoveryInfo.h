@@ -22,13 +22,13 @@ namespace eprosima {
 namespace fastrtps {
 
 /**
- * 
+ * This class provides the user with information regarding a Discovered Participant.
  */
 class ParticipantDiscoveryInfo {
 public:
 	ParticipantDiscoveryInfo(){};
 	virtual ~ParticipantDiscoveryInfo(){};
-	//!
+	//!RTPSParticipantAttributes of the discovered participant.
 	RTPSParticipantDiscoveryInfo rtps;
 };
 

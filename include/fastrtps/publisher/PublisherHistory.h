@@ -25,22 +25,20 @@ namespace fastrtps {
 class PublisherImpl;
 
 /**
- * 
+ * This class implements a WriterHistory with support for keyed topics and HistoryQOS.
+ * This class is created by the PublisherImpl and should not be used by the user directly.
  */
 class PublisherHistory:public WriterHistory
 {
 public:
-	//!
 	typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
-	//!
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
-	
 	/**
-	* Constructor
-	* @param pimpl
-	* @param payloadMax
-	* @param history
-	* @param resource
+	* Constructor of the PublisherHistory.
+	* @param pimpl Pointer to the PublisherImpl.
+	* @param payloadMax Maximum payload size.
+	* @param history QOS of the associated History.
+	* @param resource ResourceLimits for the History.
 	*/
 	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
@@ -48,29 +46,30 @@ public:
 	virtual ~PublisherHistory();
 	
 	/**
-	*
-	* @param change
-	* @return
+	* Add a change comming from the Publisher.
+	* @param change Pointer to the change
+	* @return True if added.
 	*/
 	bool add_pub_change(CacheChange_t* change);
 
 	/**
-	*
-	* @param removed
-	* @return
+	* Remove all change from the associated history.
+	* @param removed Number of elements removed.
+	* @return True if all elements were removed.
 	*/
 	bool removeAllChange(size_t* removed);
 
 	/**
-	*
-	* @return
+	* Remove the change with the minimum sequence Number.
+	* @return True if removed.
 	*/
 	bool removeMinChange();
 
 	/**
-	* @param change
-	* @param vit
-	* @return
+	* Remove a change by the publisher History.
+	* @param change Pointer to the CacheChange_t.
+	* @param vit Pointer to the iterator of the Keyed history vector.
+	* @return True if removed.
 	*/
 	bool remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 

@@ -31,7 +31,7 @@ using namespace rtps;
 class PublisherImpl;
 
 /**
- * 
+ * Class Publisher, used to send data to associated subscribers.
  */
 class RTPS_DllAPI Publisher {
 public:
@@ -66,15 +66,15 @@ public:
 	bool dispose_and_unregister(void*Data);
 
 	/**
-	 * 
-	 * @param removed
-	 * @return
+	 * Remove all the Changes in the associated RTPSWriter.
+	 * @param[out] removed Number of elements removed
+	 * @return True if all elements were removed.
 	 */
 	bool removeAllChange(size_t* removed = nullptr);
 
 	/**
-	 * 
-	 * @return
+	 * Get the GUID_t of the associated RTPSWriter.
+	 * @return GUID_t.
 	 */
 	const GUID_t& getGuid();
 
