@@ -1,0 +1,1 @@
+cp ../../lib/x64Linux2.6gcc/* /usr/local/lib/

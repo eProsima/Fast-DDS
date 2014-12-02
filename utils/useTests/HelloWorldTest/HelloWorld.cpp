@@ -77,7 +77,7 @@ void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
     if(m_message.length() <= 255)
     scdr << m_message;
     else
-    throw BadParamException(std::string("The maximum length was exceeded"));
+    throw BadParamException("The maximum length was exceeded");
 }
 
 void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)

@@ -2,4 +2,6 @@
 
 export EPROSIMA_TARGET="x64Linux2.6gcc"
 export COMP="g++"
+cd ../..
 make $1
+cd utils/scripts

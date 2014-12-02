@@ -14,10 +14,11 @@
 #ifndef HELLOWORLDTYPE_H_
 #define HELLOWORLDTYPE_H_
 
-#include "fastrtps/rtps_all.h"
+#include "fastrtps/TopicDataType.h"
 
+using namespace eprosima::fastrtps;
 
-class HelloWorldType:public DDSTopicDataType {
+class HelloWorldType:public TopicDataType {
 public:
 	HelloWorldType();
 	virtual ~HelloWorldType();
