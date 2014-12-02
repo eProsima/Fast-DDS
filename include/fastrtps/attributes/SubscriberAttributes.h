@@ -43,13 +43,13 @@ public:
 	TopicAttributes topic;
 	//!QOS
 	ReaderQos qos;
-	//!Times
+	//!Times for a RELIABLE Reader
 	ReaderTimes times;
 	//!Unicast locator list
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
-	
+	//!Expects Inline QOS
 	bool expectsInlineQos;
 	
 	/**

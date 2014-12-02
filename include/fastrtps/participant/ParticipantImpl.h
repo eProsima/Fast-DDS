@@ -40,7 +40,7 @@ class SubscriberAttributes;
 class SubscriberListener;
 
 /**
- * 
+ * This is the implementation class of the Participant.
  */
 class ParticipantImpl {
 	friend class Domain;
@@ -55,45 +55,45 @@ private:
 public:
 
 	/**
-	*
-	* @param type
-	* @return
+	* Register a type in this participant.
+	* @param type Pointer to the TopicDatType.
+	* @return True if registered.
 	*/
 	bool registerType(TopicDataType* type);
 
 	/**
-	*
-	* @param att
-	* @param listen
-	* @return
+	* Create a Publisher in this Participant.
+	* @param att Attributes of the Publisher.
+	* @param listen Pointer to the listener.
+	* @return Pointer to the created Publisher.
 	*/
 	Publisher* createPublisher(PublisherAttributes& att, PublisherListener* listen=nullptr);
 
 	/**
-	*
-	* @param att
-	* @param listen
-	* @return
+	* Create a Subscriber in this Participant.
+	* @param att Attributes of the Subscriber
+	* @param listen Pointer to the listener.
+	* @return Pointer to the created Subscriber.
 	*/
 	Subscriber* createSubscriber(SubscriberAttributes& att, SubscriberListener* listen=nullptr);
 
 	/**
-	*
-	* @param pub
-	* @return
+	* Remove a Publisher from this participant.
+	* @param pub Pointer to the Publisher.
+	* @return True if correctly removed.
 	*/
 	bool removePublisher(Publisher* pub);
 
 	/**
-	*
-	* @param sub
-	* @return
+	* Remove a Subscriber from this participant.
+	* @param sub Pointer to the Subscriber.
+	* @return True if correctly removed.
 	*/
 	bool removeSubscriber(Subscriber* sub);
 
 	/**
-	*
-	* @return
+	* Get the GUID_t of the associated RTPSParticipant.
+	* @return GUID_t.
 	*/
 	const GUID_t& getGuid() const;
 

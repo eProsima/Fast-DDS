@@ -70,10 +70,14 @@ public:
 	std::string topicName;
 	//!Topic Data Type.
 	std::string topicDataType;
-
+	//!QOS Regarding the History to be saved.
 	HistoryQosPolicy historyQos;
-
+	//!QOS Regarding the resources to allocate.
 	ResourceLimitsQosPolicy resourceLimitsQos;
+	/**
+	 * Method to check whether the defined QOS are correct.
+	 * @return True if they are valid.
+	 */
 	bool checkQos()
 	{
 		const char* const CLASS_NAME = "TopicAttributes";

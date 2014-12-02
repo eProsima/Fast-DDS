@@ -30,6 +30,7 @@ class ParticipantAttributes
 public:
 	ParticipantAttributes(){};
 	virtual ~ParticipantAttributes(){};
+	//!Attributes of the associated RTPSParticipant.
 	RTPSParticipantAttributes rtps;
 };
 
