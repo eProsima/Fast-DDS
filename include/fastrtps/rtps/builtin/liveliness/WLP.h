@@ -53,6 +53,9 @@ class WLP
 	friend class WLPListener;
 	friend class WLivelinessPeriodicAssertion;
 public:
+	/**
+	* @param prot
+	*/
 	WLP(BuiltinProtocols* prot);
 	virtual ~WLP();
 	/**
@@ -72,7 +75,10 @@ public:
 	 * @return True if correct.
 	 */
 	bool assignRemoteEndpoints(ParticipantProxyData* pdata);
-
+	/**
+	 * Remove remote endpoints from the liveliness protocol.
+	 * @param pdata Pointer to the ParticipantProxyData to remove
+	 */
 	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 	/**
 	 * Add a local writer to the liveliness protocol.
@@ -82,21 +88,40 @@ public:
 	bool addLocalWriter(RTPSWriter* W,WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
-	 * @param W Pointer to the RTPSWriter.
+	 * @param Pointer to the RTPSWriter.
 	 * @return True if correct.
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 
+	//!
 	double m_minAutomatic_MilliSec;
-
+	//!
 	double m_minManRTPSParticipant_MilliSec;
-
+	
+	/**
+	 * Get the builtin protocols
+	 * @return Builtin protocols
+	 */
 	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
-
+	
+	/**
+	 * Update local writer.
+	 * @param W Writer to update
+	 * @param wqos New writer QoS
+	 * @return True on success
+	 */
 	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
-
+	
+	/**
+	 * Get the RTPS participant
+	 * @return RTPS participant
+	 */
 	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
-
+	
+	/**
+	 * Get the mutex
+	 * @return mutex
+	 */
 	inline boost::recursive_mutex* getMutex() {return mp_mutex;};
 
 private:

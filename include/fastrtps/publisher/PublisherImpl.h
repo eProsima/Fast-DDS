@@ -62,9 +62,13 @@ public:
 
 	virtual ~PublisherImpl();
 
-
+	/**
+	 * 
+	 * @param kind
+	 * @param  Data
+	 * @return
+	 */
 	bool create_new_change(ChangeKind_t kind, void* Data);
-
 
 	/**
 	 * Removes the cache change with the minimum sequence number
@@ -84,7 +88,10 @@ public:
 	 */
 	size_t getHistoryElementsNumber();
 
-
+	/**
+	 * 
+	 * @return
+	 */
 	const GUID_t& getGuid();
 
 	/**
@@ -96,6 +103,7 @@ public:
 
 	/**
 	 * Get the Attributes of the Subscriber.
+	 * @return Attributes of the Subscriber.
 	 */
 	inline const PublisherAttributes& getAttributes(){ return m_att; };
 

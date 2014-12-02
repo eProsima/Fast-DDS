@@ -50,18 +50,33 @@ public:
 	 * @return True if correct.
 	 */
 	bool initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes);
-	//!Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
+	
+	/**
+	 * Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
+	 * @param loclist LocatorList to update
+	 * @return True on success
+	 */
 	bool updateMetatrafficLocators(LocatorList_t& loclist);
 
+	//!
 	BuiltinAttributes m_att;
+	//!
 	RTPSParticipantImpl* mp_participantImpl;
+	//!
 	PDPSimple* mp_PDP;
+	//!
 	WLP* mp_WLP;
+	//!
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
+	//!
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
+	//!
 	LocatorList_t m_metatrafficMulticastLocatorList;
+	//!
 	LocatorList_t m_metatrafficUnicastLocatorList;
+	//!
 	Locator_t m_mandatoryMulticastLocator;
+	//!
 	bool m_useMandatory;
 
 	/**
@@ -77,14 +92,16 @@ public:
 	 */
 	bool addLocalReader(RTPSReader* R,TopicAttributes& topicAtt, ReaderQos& rqos);
 	/**
-	 * Update a local Writer QOS (NOT IMPLEMENTED YET)
-	 * @param W
+	 * Update a local Writer QOS
+	 * @param W Writer to update
+	 * @param qos New Writer QoS
 	 * @return
 	 */
 	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
 	/**
-	 * Update a local Reader QOS (NOT IMPLEMENTED YET)
-	 * @param R
+	 * Update a local Reader QOS
+	 * @param R Reader to update
+	 * @param qos New Reader QoS
 	 * @return
 	 */
 	bool updateLocalReader(RTPSReader* R,ReaderQos& qos);

@@ -39,14 +39,27 @@ public:
 }
 	virtual ~TopicAttributes() {
 	}
+	
+	/**
+	 * Get the topic data type
+	 * @return Topic data type
+	 */
 	const std::string& getTopicDataType() const {
 		return topicDataType;
 	}
 
+	/**
+	 * Get the topic kind
+	 * @return Topic kind
+	 */
 	TopicKind_t getTopicKind() const {
 		return topicKind;
 	}
 
+	/**
+	 * Get the topic name
+	 * @return Topic name
+	 */
 	const std::string& getTopicName() const {
 		return topicName;
 	}
@@ -95,7 +108,12 @@ public:
 	}
 };
 
-
+/**
+ * Check if two topic attributes are not equal
+ * @param t1 First instance of TopicAttributes to compare 
+ * @param t2 Second instance of TopicAttributes to compare 
+ * @return True if the instances are not equal. False if the instances are equal.
+ */
 bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 {
 	if(t1.topicKind != t2.topicKind)

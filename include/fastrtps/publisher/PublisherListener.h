@@ -35,10 +35,13 @@ public:
 	virtual ~PublisherListener(){};
 	/**
 	 * This method is called when the Publisher is matched (or unatched) against an endpoint.
+	 * @param pub
+	 * @param info
 	 */
 	virtual void onPublicationMatched(Publisher* pub,MatchingInfo info){};
 	/**
 	 * This method is called when the History is full.
+	 * @param pub
 	 */
 	virtual void onHistoryFull(Publisher* pub){};
 };

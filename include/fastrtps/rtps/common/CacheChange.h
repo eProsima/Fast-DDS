@@ -75,12 +75,19 @@ struct RTPS_DllAPI CacheChange_t{
 	bool isRead;
 	//!Source TimeStamp (only used in Readers)
 	Time_t sourceTimestamp;
+	
+	//!Default constructor.
 	CacheChange_t():
 		kind(ALIVE),
 		isRead(false)
 	{
 
 	}
+	
+	/**
+	* Constructor with payload size
+	* @param payload_size Serialized payload size
+	*/
 	CacheChange_t(uint32_t payload_size):
 		kind(ALIVE),
 		serializedPayload(payload_size),
@@ -117,13 +124,24 @@ struct RTPS_DllAPI CacheChange_t{
  public:
 	 ChangeForReader_t():status(UNSENT),is_relevant(true),m_isValid(false),change(NULL){};
 	 virtual ~ChangeForReader_t(){};
+	 //!Status
 	 ChangeForReaderStatus_t status;
+	 //!Boolean specifying if this change is relevant
 	bool is_relevant;
+	//!Sequence number
 	SequenceNumber_t seqNum;
+	 /**
+	 * Get the cache change
+	 * @return Cache change
+	 */
 	CacheChange_t* getChange()
 	{
 		return change;
 	}
+	 /**
+	 * Set the cache change
+	 * @param a_change Cache change
+	 */
 	bool setChange(CacheChange_t* a_change)
 	{
 		m_isValid = true;
@@ -131,12 +149,16 @@ struct RTPS_DllAPI CacheChange_t{
 		change = a_change;
 		return true;
 	}
+	
+	 //! Set change as not valid
 	void notValid()
 	{
 		is_relevant = false;
 		m_isValid = false;
 		change = NULL;
 	}
+	
+	//! Set change as valid
 	bool isValid()
 	{
 		return m_isValid;
@@ -157,13 +179,24 @@ class ChangeFromWriter_t
 
 	 }
 	 virtual ~ChangeFromWriter_t(){};
+	 //!Status
 	 ChangeFromWriterStatus_t status;
+	 //!Boolean specifying if this change is relevant
 	 bool is_relevant;
+	 //!Sequence number
 	 SequenceNumber_t seqNum;
+	 /**
+	 * Get the cache change
+	 * @return Cache change
+	 */
 	 CacheChange_t* getChange()
 	 {
 		 return change;
 	 }
+	 /**
+	 * Set the cache change
+	 * @param a_change Cache change
+	 */
 	 bool setChange(CacheChange_t* a_change)
 	 {
 		 m_isValid = true;
@@ -171,12 +204,14 @@ class ChangeFromWriter_t
 		 change = a_change;
 		 return true;
 	 }
+	 //! Set change as not valid
 	 void notValid()
 	 {
 		 is_relevant = false;
 		 m_isValid = false;
 		 change = NULL;
 	 }
+	 //! Set change as valid
 	 bool isValid()
 	 {
 		 return m_isValid;

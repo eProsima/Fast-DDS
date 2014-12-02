@@ -45,12 +45,35 @@ public:
 	ReaderQos qos;
 	//!Times
 	ReaderTimes times;
+	//!Unicast locator list
 	LocatorList_t unicastLocatorList;
+	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
+	
 	bool expectsInlineQos;
+	
+	/**
+	 * Get the user defined ID
+	 * @return User defined ID
+	 */
 	inline int16_t getUserDefinedID() const {return m_userDefinedID;}
+	
+	/**
+	 * Get the entity defined ID
+	 * @return Entity ID
+	 */
 	inline int16_t getEntityID() const {return m_entityID;}
+	
+	/**
+	 * Set the user defined ID
+	 * @param User defined ID to be set
+	 */
 	inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
+	
+	/**
+	 * Set the entity ID
+	 * @param Entity ID to be set
+	 */
 	inline void setEntityID(uint8_t id){m_entityID = id;	};
 private:
 	int16_t m_userDefinedID;

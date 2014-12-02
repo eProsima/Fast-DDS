@@ -21,7 +21,10 @@ namespace fastrtps{
 namespace rtps{
 
 
-	class   ReaderTimes
+/**
+ *
+ */
+class   ReaderTimes
 {
 public:
 	ReaderTimes()
@@ -29,10 +32,14 @@ public:
 		heartbeatResponseDelay.fraction = 500*1000*1000;
 	};
 	virtual ~ReaderTimes(){};
+	//!
 	Duration_t heartbeatResponseDelay;
 };
 
-	class  ReaderAttributes
+/**
+ *
+ */
+class  ReaderAttributes
 {
 public:
 	ReaderAttributes()
@@ -43,12 +50,18 @@ public:
 		expectsInlineQos = false;
 	};
 	virtual ~ReaderAttributes(){};
+	//!
 	EndpointAttributes endpoint;
+	//!
 	ReaderTimes times;
+	//!
 	bool expectsInlineQos;
 };
 
-	class  RemoteWriterAttributes
+/**
+ *
+ */
+class  RemoteWriterAttributes
 {
 public:
 	RemoteWriterAttributes()
@@ -61,9 +74,13 @@ public:
 	{
 
 	};
+	//!
 	EndpointAttributes endpoint;
+	//!
 	GUID_t guid;
+	//!
 	Duration_t livelinessLeaseDuration;
+	//!
 	uint16_t ownershipStrength;
 };
 }
