@@ -99,15 +99,15 @@ void PublishDialog::on_button_OkCancel_accepted()
        SP->m_attributes.qos.m_ownershipStrength.value = this->ui->spin_ownershipStrength->value();
     //PARTITIONS:
    if(this->ui->checkBox_Asterisk->isChecked())
-       SP->m_attributes.qos.m_partition.names.push_back("*");
+       SP->m_attributes.qos.m_partition.push_back("*");
     if(this->ui->checkBox_A->isChecked())
-        SP->m_attributes.qos.m_partition.names.push_back("A");
+        SP->m_attributes.qos.m_partition.push_back("A");
     if(this->ui->checkBox_B->isChecked())
-        SP->m_attributes.qos.m_partition.names.push_back("B");
+        SP->m_attributes.qos.m_partition.push_back("B");
     if(this->ui->checkBox_C->isChecked())
-        SP->m_attributes.qos.m_partition.names.push_back("C");
+        SP->m_attributes.qos.m_partition.push_back("C");
     if(this->ui->checkBox_D->isChecked())
-        SP->m_attributes.qos.m_partition.names.push_back("D");
+        SP->m_attributes.qos.m_partition.push_back("D");
 
 
 

@@ -17,7 +17,7 @@
 #include "eprosimashapesdemo/shapesdemo/ShapeTopicDataType.h"
 #include "eprosimashapesdemo/shapesdemo/ShapeDefinitions.h"
 #include <QMutex>
-
+#include <vector>
 
 namespace eprosima
 {
