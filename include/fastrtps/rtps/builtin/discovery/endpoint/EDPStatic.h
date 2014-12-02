@@ -33,12 +33,28 @@ class EDPStaticProperty
 public:
 	EDPStaticProperty():m_userId(0){};
 	~EDPStaticProperty(){};
+	//!Endpoint type
 	std::string m_endpointType;
+	//!Status
 	std::string m_status;
+	//!User ID as string
 	std::string m_userIdStr;
+	//!User ID
 	uint16_t m_userId;
+	//!Entity ID
 	EntityId_t m_entityId;
+	/**
+	* @param type
+	* @param status
+	* @param id
+	* @param end
+	* @return
+	*/
 	static std::pair<std::string,std::string> toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent);
+	/**
+	* @param property
+	* @return
+	*/
 	bool fromProperty(std::pair<std::string,std::string> property);
 };
 
@@ -48,6 +64,10 @@ public:
  */
 class EDPStatic : public EDP {
 public:
+	/**
+	* @param p
+	* @param part
+	*/
 	EDPStatic(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPStatic();
 	/**

@@ -19,10 +19,19 @@
 namespace eprosima {
 namespace fastrtps {
 
+/**
+ * 
+ */
 class ParticipantListener {
 public:
 	ParticipantListener(){};
 	virtual ~ParticipantListener(){};
+	
+	/**
+	*
+	* @param p
+	* @param info
+	*/
 	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){};
 };
 

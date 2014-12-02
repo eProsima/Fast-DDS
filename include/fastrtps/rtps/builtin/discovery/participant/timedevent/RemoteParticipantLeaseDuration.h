@@ -33,6 +33,12 @@ class ParticipantProxyData;
 class RemoteParticipantLeaseDuration:public TimedEvent
 {
 public:
+	/**
+	 * 
+	 * @param p_SPDP
+	 * @param pdata
+	 * @param interval
+	 */
 	RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
 			ParticipantProxyData* pdata,
 			double interval);
@@ -40,6 +46,7 @@ public:
 	/**
 	 * temporal event that check if the RTPSParticipant is alive, and removes it if not.
 	 * @param ec
+	 * @param msg
 	 */
 	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the PDPSimple object.

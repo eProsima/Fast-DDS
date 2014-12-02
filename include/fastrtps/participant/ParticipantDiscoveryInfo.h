@@ -21,10 +21,14 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastrtps {
 
+/**
+ * 
+ */
 class ParticipantDiscoveryInfo {
 public:
 	ParticipantDiscoveryInfo(){};
 	virtual ~ParticipantDiscoveryInfo(){};
+	//!
 	RTPSParticipantDiscoveryInfo rtps;
 };
 

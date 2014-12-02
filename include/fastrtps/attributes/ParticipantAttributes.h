@@ -21,6 +21,10 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima{
 namespace fastrtps{
 
+/**
+ * Class ParticipantAttributes, used by the user to define the attributes of a Participant.
+ * @ingroup ATTRIBUTESMODULE
+ */
 class ParticipantAttributes
 {
 public:

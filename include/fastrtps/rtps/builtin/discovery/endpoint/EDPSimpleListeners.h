@@ -35,13 +35,27 @@ struct CacheChange_t;
  */
 class EDPSimplePUBListener:public ReaderListener{
 public:
+	/**
+	* @param p
+	*/
 	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);aux_msg.buffer = nullptr;};
 	virtual ~EDPSimplePUBListener(){};
+	/**
+	* @param reader
+	* @param change
+	*/
 	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
+	/**
+	* @param change
+	*/
 	bool computeKey(CacheChange_t* change);
+	//!
 	EDPSimple* mp_SEDP;
+	//!
 	WriterProxyData m_writerProxyData;
+	//!
 	CDRMessage_t m_tempMsg;
+	//!
 	CDRMessage_t aux_msg;
 };
 /**
@@ -50,13 +64,27 @@ public:
  */
 class EDPSimpleSUBListener:public ReaderListener{
 public:
+	/**
+	* @param p
+	*/
 	EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);aux_msg.buffer = nullptr;};
 	virtual ~EDPSimpleSUBListener(){};
+	/**
+	* @param reader
+	* @param change
+	*/
 	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
+	/**
+	* @param change
+	*/
 	bool computeKey(CacheChange_t* change);
+	//!
 	EDPSimple* mp_SEDP;
+	//!
 	ReaderProxyData m_readerProxyData;
+	//!
 	CDRMessage_t m_tempMsg;
+	//!
 	CDRMessage_t aux_msg;
 };
 

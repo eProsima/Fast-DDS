@@ -39,8 +39,9 @@ class SubscriberImpl;
 class SubscriberAttributes;
 class SubscriberListener;
 
-
-
+/**
+ * 
+ */
 class ParticipantImpl {
 	friend class Domain;
 	typedef std::pair<Publisher*,PublisherImpl*> t_p_PublisherPair;
@@ -53,18 +54,53 @@ private:
 
 public:
 
+	/**
+	*
+	* @param type
+	* @return
+	*/
 	bool registerType(TopicDataType* type);
 
+	/**
+	*
+	* @param att
+	* @param listen
+	* @return
+	*/
 	Publisher* createPublisher(PublisherAttributes& att, PublisherListener* listen=nullptr);
 
+	/**
+	*
+	* @param att
+	* @param listen
+	* @return
+	*/
 	Subscriber* createSubscriber(SubscriberAttributes& att, SubscriberListener* listen=nullptr);
 
+	/**
+	*
+	* @param pub
+	* @return
+	*/
 	bool removePublisher(Publisher* pub);
 
+	/**
+	*
+	* @param sub
+	* @return
+	*/
 	bool removeSubscriber(Subscriber* sub);
 
+	/**
+	*
+	* @return
+	*/
 	const GUID_t& getGuid() const;
 
+	/**
+	* Get the participant attributes
+	* @return Participant attributes
+	*/
 	inline const ParticipantAttributes& getAttributes() const {return m_att;};
 
 private:

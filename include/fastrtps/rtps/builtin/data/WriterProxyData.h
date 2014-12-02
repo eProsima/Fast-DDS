@@ -27,23 +27,39 @@ namespace rtps {
 
 struct CDRMessage_t;
 
+/**
+ *
+ */
 class WriterProxyData {
 public:
 	WriterProxyData();
 	virtual ~WriterProxyData();
 
+	//!GUID
 	GUID_t m_guid;
+	//!Unicast locator list
 	LocatorList_t m_unicastLocatorList;
+	//!Multicast locator list
 	LocatorList_t m_multicastLocatorList;
+	//!
 	InstanceHandle_t m_key;
+	//!
 	InstanceHandle_t m_RTPSParticipantKey;
+	//!Type name
 	std::string m_typeName;
+	//!Topic name
 	std::string m_topicName;
+	//!User defined ID
 	uint16_t m_userDefinedId;
+	//!
 	WriterQos m_qos;
+	//!
 	uint32_t m_typeMaxSerialized;
+	//!
 	bool m_isAlive;
+	//!Topic kind
 	TopicKind_t m_topicKind;
+	//!
 	ParameterList_t m_parameterList;
 	//!Clear the information and return the object to the default state.
 	void clear();
@@ -55,8 +71,11 @@ public:
 	bool toParameterList();
 	//!Read a parameter list from a CDRMessage_t.
 	bool readFromCDRMessage(CDRMessage_t* msg);
-
+	/**
+	 * @return
+	 */
 	RemoteWriterAttributes& toRemoteWriterAttributes();
+	//!
 	RemoteWriterAttributes m_remoteAtt;
 };
 

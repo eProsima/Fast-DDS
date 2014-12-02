@@ -20,7 +20,10 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-	class SimpleEDPAttributes{
+/**
+ *
+ */
+class SimpleEDPAttributes{
 public:
 	bool use_PublicationWriterANDSubscriptionReader;
 	bool use_PublicationReaderANDSubscriptionWriter;
@@ -32,7 +35,10 @@ public:
 	}
 };
 
-	class PortParameters
+/**
+ *
+ */
+class PortParameters
 {
 public:
 	PortParameters()
@@ -46,10 +52,23 @@ public:
 		offsetd3 = 11;
 	};
 	virtual ~PortParameters(){}
+	/**
+	 * Get the multicast port
+	 *
+	 * @param domainId
+	 * @return Multicast port
+	 */
 	inline uint32_t getMulticastPort(uint32_t domainId)
 	{
 		return portBase+ domainIDGain * domainId+ offsetd0;
 	}
+	/**
+	 * Get the unicast port
+	 *
+ 	 * @param domainId
+	 * @param RTPSParticipantID
+	 * @return Unicast port
+	 */
 	inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
 	{
 		return portBase+ domainIDGain * domainId	+ offsetd1	+ participantIDGain * RTPSParticipantID;
@@ -77,6 +96,7 @@ public:
 	 */
 	bool use_SIMPLE_RTPSParticipantDiscoveryProtocol;
 
+	//!
 	bool use_WriterLivelinessProtocol;
 	/**
 	 * If set to true, SimpleEDP would be used.
@@ -88,8 +108,6 @@ public:
 	 * The XML filename must be provided.
 	 */
 	bool use_STATIC_EndpointDiscoveryProtocol;
-
-
 	
 	/**
 	 * DomainId to be used by the RTPSParticipant (80 by default).
@@ -102,9 +120,11 @@ public:
 	 * as well as to all Multicast ports.
 	 */
 	Duration_t leaseDuration_announcementperiod;
+	//!
 	SimpleEDPAttributes m_simpleEDP;
-
+	//!
 	LocatorList_t metatrafficUnicastLocatorList;
+	//!
 	LocatorList_t metatrafficMulticastLocatorList;
 
 	BuiltinAttributes()
@@ -120,7 +140,15 @@ public:
 		
 	};
 	virtual ~BuiltinAttributes(){};
+	/**
+	* Get the static endpoint XML filename
+	* @return Static endpoint XML filename
+	*/
 	const char* getStaticEndpointXMLFilename(){ return m_staticEndpointXMLFilename.c_str(); };
+	/**
+	* Set the static endpoint XML filename
+	* @param str Static endpoint XML filename
+	*/
 	void setStaticEndpointXMLFilename(const char* str){ m_staticEndpointXMLFilename = std::string(str); };
 private:
 		//! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
