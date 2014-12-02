@@ -18,7 +18,7 @@
 
 HelloWorldType::HelloWorldType() {
 	setName("HelloWorldType");
-	m_typeSize = HelloWorld::getMaxCdrSerializedSize();
+	m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize();
 	m_isGetKeyDefined = false;
 
 }
