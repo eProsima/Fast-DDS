@@ -266,7 +266,7 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticR
 		}
 		else if(xml_endpoint_child.first == "partitionQos")
 		{
-			rdata->m_qos.m_partition.names.push_back((std::string)xml_endpoint_child.second.data());
+			rdata->m_qos.m_partition.push_back(((std::string)xml_endpoint_child.second.data()).c_str());
 		}
 		else if(xml_endpoint_child.first == "livelinessQos")
 		{
@@ -465,7 +465,7 @@ bool EDPStaticXML::loadXMLWriterEndpoint(ptree::value_type& xml_endpoint,StaticR
 		}
 		else if(xml_endpoint_child.first == "partitionQos")
 		{
-			wdata->m_qos.m_partition.names.push_back((std::string)xml_endpoint_child.second.data());
+			wdata->m_qos.m_partition.push_back(((std::string)xml_endpoint_child.second.data()).c_str());
 		}
 		else if(xml_endpoint_child.first == "livelinessQos")
 		{

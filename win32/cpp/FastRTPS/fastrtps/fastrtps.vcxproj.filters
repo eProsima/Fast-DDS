@@ -198,9 +198,6 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\config\eProsima_auto_link.h">
       <Filter>Header Files\fastrtps\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\fastrtps\config\eprosima_stl_exports.hpp">
-      <Filter>Header Files\fastrtps\config</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\fastrtps\config\fastrtps_dll.h">
       <Filter>Header Files\fastrtps\config</Filter>
     </ClInclude>
@@ -539,6 +536,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log_dll.h">
       <Filter>Header Files\eProsima_cpp\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\config\old_eprosima_stl_exports.hpp">
+      <Filter>Header Files\fastrtps\config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

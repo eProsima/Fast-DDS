@@ -255,7 +255,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				
 				ParameterString_t* p = (ParameterString_t*)(*it);
 				//cout << "ENTITY NAME " << p->m_string<<endl;
-				this->m_participantName = p->m_string;
+				this->m_participantName = std::string(p->getName());
 				break;
 			}
 			case PID_PROPERTY_LIST:
@@ -294,7 +294,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			case PID_USER_DATA:
 			{
 				UserDataQosPolicy*p = (UserDataQosPolicy*)(*it);
-				this->m_userData = p->dataVec;
+				this->m_userData = p->getDataVec();
 				break;
 			}
 			default: break;

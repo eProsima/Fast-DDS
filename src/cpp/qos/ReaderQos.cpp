@@ -19,7 +19,7 @@ namespace fastrtps {
 
 static const char* const CLASS_NAME = "ReaderQos";
 
-void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
+void ReaderQos::setQos( ReaderQos& qos, bool first_time)
 {
 	if(first_time)
 	{
@@ -61,7 +61,7 @@ void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
 		m_destinationOrder = qos.m_destinationOrder;
 		m_destinationOrder.hasChanged = true;
 	}
-	if(m_userData.dataVec != qos.m_userData.dataVec )
+	if (m_userData.getDataVec() != qos.m_userData.getDataVec())
 	{
 		m_userData = qos.m_userData;
 		m_userData.hasChanged = true;
@@ -78,17 +78,17 @@ void ReaderQos::setQos( const ReaderQos& qos, bool first_time)
 		m_presentation = qos.m_presentation;
 		m_presentation.hasChanged = true;
 	}
-	if(qos.m_partition.names.size()>0)
+	if(qos.m_partition.getNames().size()>0)
 	{
 		m_partition = qos.m_partition;
 		m_partition.hasChanged = true;
 	}
-	if(m_topicData.value != qos.m_topicData.value )
+	if (m_topicData.getValue() != qos.m_topicData.getValue())
 	{
 		m_topicData = qos.m_topicData;
 		m_topicData.hasChanged = true;
 	}
-	if(m_groupData.value != qos.m_groupData.value )
+	if(m_groupData.getValue() != qos.m_groupData.getValue() )
 	{
 		m_groupData = qos.m_groupData;
 		m_groupData.hasChanged = true;

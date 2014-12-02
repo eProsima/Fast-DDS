@@ -18,7 +18,6 @@
 #include "fastrtps/rtps/common/Types.h"
 #include "fastrtps/rtps/common/Time_t.h"
 #include "fastrtps/qos/ParameterTypes.h"
-#include "fastrtps/config/eprosima_stl_exports.hpp"
 using namespace eprosima::fastrtps::rtps;
 
 
@@ -142,13 +141,18 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class RTPS_DllAPI UserDataQosPolicy : private Parameter_t, public QosPolicy{
+class UserDataQosPolicy : private Parameter_t, public QosPolicy{
 	friend class ParameterList;
 public:
-	UserDataQosPolicy():Parameter_t(PID_USER_DATA,0),QosPolicy(false){};
-	virtual ~UserDataQosPolicy(){};
+	RTPS_DllAPI UserDataQosPolicy() :Parameter_t(PID_USER_DATA, 0), QosPolicy(false){};
+	RTPS_DllAPI virtual ~UserDataQosPolicy(){};
+	
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+
+	RTPS_DllAPI inline std::vector<octet> getDataVec(){ return dataVec; };
+	RTPS_DllAPI inline void setDataVec(std::vector<octet>& vec){ dataVec = vec; };
+private:
 	std::vector<octet> dataVec;
-	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
 class RTPS_DllAPI TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
@@ -182,34 +186,49 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class RTPS_DllAPI PartitionQosPolicy : private Parameter_t, public QosPolicy
+class  PartitionQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
+	friend class EDP;
 public:
-	PartitionQosPolicy():Parameter_t(PID_PARTITION,0),QosPolicy(false){};
-	virtual ~PartitionQosPolicy(){};
-	//std::vector<octet> name;
+	RTPS_DllAPI PartitionQosPolicy() :Parameter_t(PID_PARTITION, 0), QosPolicy(false){};
+	RTPS_DllAPI virtual ~PartitionQosPolicy(){};
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string("oc")); };
+	RTPS_DllAPI inline void clear(){ names.clear(); };
+	RTPS_DllAPI inline std::vector<std::string> getNames(){ return names; };
+	RTPS_DllAPI inline void setNames(std::vector<std::string> nam){ names = nam; };
+private:
 	std::vector<std::string> names;
-	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-class RTPS_DllAPI TopicDataQosPolicy : private Parameter_t, public QosPolicy
+class  TopicDataQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
 public:
+	RTPS_DllAPI TopicDataQosPolicy() :Parameter_t(PID_TOPIC_DATA, 0), QosPolicy(false){};
+	RTPS_DllAPI virtual ~TopicDataQosPolicy(){};
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	RTPS_DllAPI inline void push_back(octet oc){ value.push_back(oc); };
+	RTPS_DllAPI inline void clear(){ value.clear(); };
+	RTPS_DllAPI inline void setValue(std::vector<octet> ocv){ value = ocv; };
+	RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
+private:
 	std::vector<octet> value;
-	TopicDataQosPolicy():Parameter_t(PID_TOPIC_DATA,0),QosPolicy(false){};
-	virtual ~TopicDataQosPolicy(){};
-	bool addToCDRMessage(CDRMessage_t* msg);
 };
-class RTPS_DllAPI GroupDataQosPolicy : private Parameter_t, public QosPolicy
+class  GroupDataQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
 public:
-	GroupDataQosPolicy():Parameter_t(PID_GROUP_DATA,0),QosPolicy(false){}
-	virtual ~GroupDataQosPolicy(){};
+	RTPS_DllAPI GroupDataQosPolicy() :Parameter_t(PID_GROUP_DATA, 0), QosPolicy(false){}
+	RTPS_DllAPI virtual ~GroupDataQosPolicy(){};
+	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+	RTPS_DllAPI inline void push_back(octet oc){ value.push_back(oc); };
+	RTPS_DllAPI inline void clear(){ value.clear(); };
+	RTPS_DllAPI inline void setValue(std::vector<octet> ocv){ value = ocv; };
+	RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
+private:
 	std::vector<octet> value;
-	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
  enum HistoryQosPolicyKind:octet {

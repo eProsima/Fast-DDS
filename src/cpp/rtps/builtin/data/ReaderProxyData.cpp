@@ -294,13 +294,13 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			case PID_TOPIC_NAME:
 			{
 				ParameterString_t*p = (ParameterString_t*)(*it);
-				m_topicName = p->m_string;
+				m_topicName = std::string(p->getName());
 				break;
 			}
 			case PID_TYPE_NAME:
 			{
 				ParameterString_t*p = (ParameterString_t*)(*it);
-				m_typeName = p->m_string;
+				m_typeName = std::string(p->getName());
 				break;
 			}
 			case PID_RTPSParticipant_GUID:

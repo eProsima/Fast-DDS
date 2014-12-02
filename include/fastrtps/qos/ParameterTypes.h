@@ -14,7 +14,7 @@
 #define PARAMETERTYPES_H_
 
 #include "fastrtps/rtps/common/all_common.h"
-#include "fastrtps/config/eprosima_stl_exports.hpp"
+
 
 #include <string>
 #include <vector>
@@ -148,13 +148,16 @@ public:
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
-class RTPS_DllAPI ParameterString_t: public Parameter_t {
+class ParameterString_t: public Parameter_t {
 public:
-	std::string m_string;
 	ParameterString_t(){};
-	ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-	ParameterString_t(ParameterId_t pid,uint16_t in_length,std::string& strin):Parameter_t(pid,in_length),m_string(strin){}
+	ParameterString_t(ParameterId_t pid, uint16_t in_length) :Parameter_t(pid, in_length){};
+	ParameterString_t(ParameterId_t pid, uint16_t in_length, std::string& strin) :Parameter_t(pid, in_length), m_string(strin){}
 	bool addToCDRMessage(CDRMessage_t* msg);
+	inline const char* getName()const { return m_string.c_str(); };
+	inline void setName(const char* name){ m_string = std::string(name); };
+private:
+	std::string m_string;
 };
 
 class RTPS_DllAPI ParameterPort_t: public Parameter_t {
@@ -272,7 +275,7 @@ public:
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
-class RTPS_DllAPI ParameterPropertyList_t:public Parameter_t{
+class ParameterPropertyList_t:public Parameter_t{
 public:
 	std::vector<std::pair<std::string,std::string>> properties;
 	ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST,0){};

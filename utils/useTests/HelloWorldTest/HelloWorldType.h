@@ -18,6 +18,8 @@
 
 using namespace eprosima::fastrtps;
 
+#include "HelloWorld.h"
+
 class HelloWorldType:public TopicDataType {
 public:
 	HelloWorldType();
