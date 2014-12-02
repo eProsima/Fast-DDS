@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\fastrtps">
+      <UniqueIdentifier>{4a9ee446-4e8c-4809-ab87-32feaf0b16bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\fastrtps">
+      <UniqueIdentifier>{c92e5d56-6195-4b2f-9600-04dec90da23e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main_ClientServerTestFastRTPS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fastrtps\ClientServerTypes.cpp">
+      <Filter>Source Files\fastrtps</Filter>
+    </ClCompile>
+    <ClCompile Include="fastrtps\EprosimaClient.cpp">
+      <Filter>Source Files\fastrtps</Filter>
+    </ClCompile>
+    <ClCompile Include="fastrtps\EprosimaClientTest.cpp">
+      <Filter>Source Files\fastrtps</Filter>
+    </ClCompile>
+    <ClCompile Include="fastrtps\EprosimaServer.cpp">
+      <Filter>Source Files\fastrtps</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fastrtps\ClientServerTypes.h">
+      <Filter>Header Files\fastrtps</Filter>
+    </ClInclude>
+    <ClInclude Include="fastrtps\EprosimaClient.h">
+      <Filter>Header Files\fastrtps</Filter>
+    </ClInclude>
+    <ClInclude Include="fastrtps\EprosimaClientTest.h">
+      <Filter>Header Files\fastrtps</Filter>
+    </ClInclude>
+    <ClInclude Include="fastrtps\EprosimaServer.h">
+      <Filter>Header Files\fastrtps</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

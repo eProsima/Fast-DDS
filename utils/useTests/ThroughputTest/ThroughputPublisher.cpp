@@ -86,6 +86,7 @@ ThroughputPublisher::~ThroughputPublisher(){Domain::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
 																				sema(0),
+#pragma warning(disable:4355)
 																				m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
 																				ready(true)
 {
@@ -242,7 +243,7 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
 		eClock::my_sleep(10);
-		timewait_us+=m_overhead+10;
+		timewait_us+=(uint64_t)m_overhead+10;
 		//cout << "Removing all..."<<endl;
 		mp_datapub->removeAllChange(&aux);
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
@@ -262,7 +263,7 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			result.demand = demand;
 			result.payload_size = size+4+4;
 			result.publisher.send_samples = samples;
-			result.publisher.totaltime_us = TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us;
+			result.publisher.totaltime_us = (uint64_t)(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us);
 			result.subscriber.recv_samples = command.m_lastrecsample-command.m_lostsamples;
 			result.subscriber.totaltime_us = command.m_totaltime;
 			result.subscriber.lost_samples = command.m_lostsamples;

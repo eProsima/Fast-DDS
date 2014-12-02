@@ -39,12 +39,15 @@ LatencyTestPublisher::LatencyTestPublisher():
 										m_data_sema(0),
 										m_status(0),
 										n_received(0),
-										m_datapublistener(this),
-										m_datasublistener(this),
-										m_commandpublistener(this),
-										m_commandsublistener(this)
+										m_datapublistener(nullptr),
+										m_datasublistener(nullptr),
+										m_commandpublistener(nullptr),
+										m_commandsublistener(nullptr)
 {
-
+	m_datapublistener.mp_up = this;
+	m_datasublistener.mp_up = this;
+	m_commandpublistener.mp_up = this;
+	m_commandsublistener.mp_up = this;
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
@@ -365,17 +368,17 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
-			TS.min,
+			TS.m_min,
 			TS.p50,TS.p90,TS.p99,TS.p9999,
-			TS.max);
+			TS.m_max);
 }
 #else
 void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.min = *std::min_element(m_times.begin(),m_times.end());
-	TS.max = *std::max_element(m_times.begin(),m_times.end());
+	TS.m_min = *std::min_element(m_times.begin(),m_times.end());
+	TS.m_max = *std::max_element(m_times.begin(),m_times.end());
 	TS.mean = std::accumulate(m_times.begin(),m_times.end(),0)/m_times.size();
 	double auxstdev=0;
 	for(std::vector<double>::iterator tit=m_times.begin();tit!=m_times.end();++tit)
@@ -424,8 +427,8 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
-			TS.min,
+			TS.m_min,
 			TS.p50,TS.p90,TS.p99,TS.p9999,
-			TS.max);
+			TS.m_max);
 }
 #endif
