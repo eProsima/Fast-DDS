@@ -27,7 +27,9 @@ namespace fastrtps{
 class ParticipantImpl;
 class ParticipantAttributes;
 
-
+/**
+ * 
+ */
 class RTPS_DllAPI Participant {
 	friend class Domain;
 	friend class ParticipantImpl;
@@ -35,13 +37,20 @@ private:
 	Participant();
 	virtual ~Participant();
 
-
 	ParticipantImpl* mp_impl;
 
 public:
 
+	/**
+	*
+	* @return
+	*/
 	const GUID_t& getGuid()const ;
 
+	/**
+	*
+	* @return
+	*/
 	const ParticipantAttributes& getAttributes();
 
 };

@@ -21,7 +21,10 @@ namespace fastrtps{
 namespace rtps{
 
 
-	class  WriterTimes
+/**
+ *
+ */
+class  WriterTimes
 {
 public:
 	WriterTimes()
@@ -30,12 +33,18 @@ public:
 		nackResponseDelay.fraction = 200*1000*1000;
 	};
 	virtual ~WriterTimes(){};
+	//!
 	Duration_t heartbeatPeriod;
+	//!
 	Duration_t nackResponseDelay;
+	//!
 	Duration_t nackSupressionDuration;
 };
 
-	class  WriterAttributes
+/**
+ *
+ */
+class  WriterAttributes
 {
 public:
 	WriterAttributes()
@@ -45,11 +54,16 @@ public:
 		endpoint.reliabilityKind = RELIABLE;
 	};
 	virtual ~WriterAttributes(){};
+	//!
 	EndpointAttributes endpoint;
+	//!
 	WriterTimes times;
 };
 
-	class  RemoteReaderAttributes
+/**
+ *
+ */
+class  RemoteReaderAttributes
 {
 public:
 	RemoteReaderAttributes()
@@ -61,8 +75,11 @@ public:
 	{
 
 	};
+	//!
 	EndpointAttributes endpoint;
+	//!
 	GUID_t guid;
+	//!
 	bool expectsInlineQos;
 };
 }

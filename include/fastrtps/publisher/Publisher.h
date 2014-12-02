@@ -30,6 +30,9 @@ using namespace rtps;
 
 class PublisherImpl;
 
+/**
+ * 
+ */
 class RTPS_DllAPI Publisher {
 public:
 	Publisher(PublisherImpl* pimpl);
@@ -62,8 +65,17 @@ public:
 	 */
 	bool dispose_and_unregister(void*Data);
 
+	/**
+	 * 
+	 * @param removed
+	 * @return
+	 */
 	bool removeAllChange(size_t* removed = nullptr);
 
+	/**
+	 * 
+	 * @return
+	 */
 	const GUID_t& getGuid();
 
 private:

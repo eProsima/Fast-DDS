@@ -50,34 +50,59 @@ class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
 
-
+/**
+*
+*/
 class ParticipantProxyData {
 public:
 	ParticipantProxyData();
 	virtual ~ParticipantProxyData();
 
+	//!Protocol version
 	ProtocolVersion_t m_protocolVersion;
+	//!GUID
 	GUID_t m_guid;
+	//!Vendor ID
 	VendorId_t m_VendorId;
+	//!
 	bool m_expectsInlineQos;
+	//!Available builtin endpoints
 	BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+	//!Metatraffic unicast locator list
 	LocatorList_t m_metatrafficUnicastLocatorList;
+	//!Metatraffic multicast locator list
 	LocatorList_t m_metatrafficMulticastLocatorList;
+	//!Default unicast locator list
 	LocatorList_t m_defaultUnicastLocatorList;
+	//!Default multicast locator list
 	LocatorList_t m_defaultMulticastLocatorList;
+	//!Manual liveliness count
 	Count_t m_manualLivelinessCount;
+	//!Participant name
 	std::string m_participantName;
+	//!
 	InstanceHandle_t m_key;
+	//!
 	Duration_t m_leaseDuration;
+	//!
 	bool isAlive;
+	//!
 	QosList_t m_QosList;
+	//!
 	ParameterPropertyList_t m_properties;
+	//!
 	std::vector<octet> m_userData;
+	//!
 	bool m_hasChanged;
+	//!
 	RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
+	//!
 	std::vector<ReaderProxyData*> m_readers;
+	//!
 	std::vector<WriterProxyData*> m_writers;
+	//!
 	std::vector<RemoteReaderAttributes> m_builtinReaders;
+	//!
 	std::vector<RemoteWriterAttributes> m_builtinWriters;
 	/**
 	 * Initialize the object with the data of the lcoal RTPSParticipant.
@@ -88,17 +113,26 @@ public:
 	bool initializeData(RTPSParticipantImpl* part, PDPSimple* pdp);
 	/**
 	 * Update the data.
-	 * @param pdata
-	 * @return
+	 * @param pdata Object to copy the data from
+	 * @return True on success
 	 */
 	bool updateData(ParticipantProxyData& pdata);
-	//!Convert information to parameter list.
+	/**
+	 * Convert information to parameter list.
+	 * @return True on success
+	 */
 	bool toParameterList();
-	//!Read the parameter list from a recevied CDRMessage_t
+	/**
+	 * Read the parameter list from a recevied CDRMessage_t
+	 * @return True on success
+	 */
 	bool readFromCDRMessage(CDRMessage_t* msg);
 	//!Clear the data (restore to default state.)
 	void clear();
-	//!Copy the data from another object.
+	/**
+	 * Copy the data from another object.
+	 * @param pdata Object to copy the data from
+	 */
 	void copy(ParticipantProxyData& pdata);
 
 

@@ -25,15 +25,24 @@ namespace rtps{
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
 struct RTPS_DllAPI GuidPrefix_t{
 	octet value[12];
+	//!Default constructor. Set the Guid prefix to 0.
 	GuidPrefix_t()
 	{
 		for(uint8_t i =0;i<12;i++)
 			value[i] = 0;
 	}
+	/**
+	* Guid prefix constructor
+	* @param guid Guid prefix
+	*/
 	GuidPrefix_t(octet guid[12]){
 		for(uint8_t i =0;i<12;i++)
 			value[i] = guid[i];
 	}
+	/**
+	* Guid prefix assignment operator
+	* @param guidpre Guid prefix to copy the values from
+	*/
 	GuidPrefix_t& operator=(const GuidPrefix_t& guidpre)
 	{
 		for(uint8_t i =0;i<12;i++)
@@ -43,6 +52,13 @@ struct RTPS_DllAPI GuidPrefix_t{
 		return *this;
 	}
 };
+
+	/**
+	* Guid prefix comparison operator
+	* @param guid1 First guid prefix to compare
+	* @param guid2 Second guid prefix to compare
+	* @return True if the guid prefixes are equal
+	*/
 inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 {
 	for(uint8_t i =0;i<12;i++)
@@ -53,6 +69,12 @@ inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 	return true;
 }
 
+	/**
+	* Guid prefix comparison operator
+	* @param guid1 First guid prefix to compare
+	* @param guid2 Second guid prefix to compare
+	* @return True if the guid prefixes are not equal
+	*/
 inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 {
 	for(uint8_t i =0;i<12;i++)
@@ -65,6 +87,12 @@ inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
+	/**
+	* 
+	* @param output 
+	* @param guiP 
+	* @return 
+	*/
 inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	output << std::hex;
 	for(uint8_t i =0;i<11;++i)
@@ -89,15 +117,24 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 //!@brief Structure EntityId_t, entity id part of GUID_t.
  struct RTPS_DllAPI EntityId_t{
 	octet value[4];
+	//! Default constructor. Uknown entity.
 	EntityId_t(){
 		*this = ENTITYID_UNKNOWN;
 	}
+	/**
+	* Main constructor.
+	* @param id Entity id
+	*/
 	EntityId_t(uint32_t id)
 	{
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
 		reverse();
 	}
+	/**
+	* Assignment operator.
+	* @param id Entity to copy values from
+	*/
 	EntityId_t& operator=(const EntityId_t& id)
 	{
 		value[0] = id.value[0];
@@ -106,6 +143,10 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 		value[3] = id.value[3];
 		return *this;
 	}
+	/**
+	* Assignment operator.
+	* @param id Entity id to copy
+	*/
 	EntityId_t& operator=(uint32_t id){
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
@@ -114,6 +155,7 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 		return *this;
 		//return id;
 	}
+	//! 
 	void reverse(){
 		octet oaux;
 		oaux = value[3];
@@ -125,6 +167,12 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	}
 };
 
+	/**
+	* Guid prefix comparison operator
+	* @param id1 EntityId to compare
+	* @param id2 ID prefix to compare
+	* @return True if equal
+	*/
 inline bool operator==(EntityId_t& eid,const uint32_t id2)
 {
 	if(DEFAULT_ENDIAN == LITTLEEND)
@@ -139,6 +187,12 @@ inline bool operator==(EntityId_t& eid,const uint32_t id2)
 		eid.reverse();
 	return result;
 }
+	/**
+	* Guid prefix comparison operator
+	* @param id1 First EntityId to compare
+	* @param id2 Second EntityId to compare
+	* @return True if equal
+	*/
 inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
 {
 	for(uint8_t i =0;i<4;++i)
@@ -149,6 +203,12 @@ inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
 	return true;
 }
 
+	/**
+	* Guid prefix comparison operator
+	* @param id1 First EntityId to compare
+	* @param id2 Second EntityId to compare
+	* @return True if not equal
+	*/
 inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
 {
 	for(uint8_t i =0;i<4;++i)
@@ -159,9 +219,12 @@ inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
 	return false;
 }
 
-
-
-
+	/**
+	* 
+	* @param output 
+	* @param enI 
+	* @return 
+	*/
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 	output << std::hex;
 	output<<(int)enI.value[0]<<"."<<(int)enI.value[1]<<"."<<(int)enI.value[2]<<"."<<(int)enI.value[3];

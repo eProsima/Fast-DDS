@@ -34,7 +34,6 @@ class ReaderProxyData;
 class WriterProxyData;
 class RTPSParticipantImpl;
 
-
 /**
  * Class EDP, base class for Endpoint Discovery Protocols. It contains generic methods used by the two EDP implemented (EDPSimple and EDPStatic), as well as abstract methods
  * definitions required by the specific implementations.
@@ -42,6 +41,10 @@ class RTPSParticipantImpl;
  */
 class EDP {
 public:
+	/**
+	* @param p
+	* @param part
+	*/
 	EDP(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDP();
 
@@ -53,10 +56,13 @@ public:
 	virtual bool initEDP(BuiltinAttributes& attributes)=0;
 	/**
 	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
-	 * @param pdata
+	 * @param pdata Discovered ParticipantProxyData
 	 */
 	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
-
+	/**
+	 * Remove remote endpoints from the endpoint discovery protocol
+	 * @param pdata Pointer to the ParticipantProxyData to remove
+	 */
 	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
 
 	/**
