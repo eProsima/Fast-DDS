@@ -22,7 +22,7 @@ namespace rtps{
 
 
 /**
- *
+ * Times associated with Reliable RTPSWriter events.
  */
 class  WriterTimes
 {
@@ -33,16 +33,16 @@ public:
 		nackResponseDelay.fraction = 200*1000*1000;
 	};
 	virtual ~WriterTimes(){};
-	//!
+	//! Periodic HB period
 	Duration_t heartbeatPeriod;
-	//!
+	//!Delay to apply to the response of a ACKNACK message.
 	Duration_t nackResponseDelay;
-	//!
+	//!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent.
 	Duration_t nackSupressionDuration;
 };
 
 /**
- *
+ * Attributes of a RTPSWriter.
  */
 class  WriterAttributes
 {
@@ -54,14 +54,14 @@ public:
 		endpoint.reliabilityKind = RELIABLE;
 	};
 	virtual ~WriterAttributes(){};
-	//!
+	//!Attributes of the associated endpoint.
 	EndpointAttributes endpoint;
-	//!
+	//!Writer Times (only used for RELIABLE).
 	WriterTimes times;
 };
 
 /**
- *
+ * Attributes that define RemoteReader.
  */
 class  RemoteReaderAttributes
 {
@@ -75,11 +75,11 @@ public:
 	{
 
 	};
-	//!
+	//!Attributes of the associated endpoint.
 	EndpointAttributes endpoint;
-	//!
+	//!GUID_t of the reader.
 	GUID_t guid;
-	//!
+	//!Expects inline QOS.
 	bool expectsInlineQos;
 };
 }

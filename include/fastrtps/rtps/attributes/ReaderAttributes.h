@@ -22,7 +22,7 @@ namespace rtps{
 
 
 /**
- *
+ * Times associated with a Reliable Reader.
  */
 class   ReaderTimes
 {
@@ -32,12 +32,12 @@ public:
 		heartbeatResponseDelay.fraction = 500*1000*1000;
 	};
 	virtual ~ReaderTimes(){};
-	//!
+	//!Delay to be applied when a hearbeat message is received.
 	Duration_t heartbeatResponseDelay;
 };
 
 /**
- *
+ * Attributes of a RTPSReader.
  */
 class  ReaderAttributes
 {
@@ -50,16 +50,16 @@ public:
 		expectsInlineQos = false;
 	};
 	virtual ~ReaderAttributes(){};
-	//!
+	//!Attributes of the associated endpoint.
 	EndpointAttributes endpoint;
-	//!
+	//!Times associated with this reader.
 	ReaderTimes times;
-	//!
+	//!Indicates if the reader expects Inline qos.
 	bool expectsInlineQos;
 };
 
 /**
- *
+ * Attributes that define a remote Writer.
  */
 class  RemoteWriterAttributes
 {
@@ -74,13 +74,13 @@ public:
 	{
 
 	};
-	//!
+	//!Attributes of the associated endpoint.
 	EndpointAttributes endpoint;
-	//!
+	//!GUID_t of the writer, can be unknown if the reader is best effort.
 	GUID_t guid;
-	//!
+	//!Liveliness lease duration.
 	Duration_t livelinessLeaseDuration;
-	//!
+	//!Ownership Strength of the associated writer.
 	uint16_t ownershipStrength;
 };
 }

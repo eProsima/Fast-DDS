@@ -21,7 +21,7 @@ namespace fastrtps{
 namespace rtps {
 
 /**
- *
+ * Attributes of the Simple Endpoint Discovery Protocol.
  */
 class SimpleEDPAttributes{
 public:
@@ -36,7 +36,7 @@ public:
 };
 
 /**
- *
+ * Port Parameters related with the RTPS protocol.
  */
 class PortParameters
 {
@@ -53,9 +53,9 @@ public:
 	};
 	virtual ~PortParameters(){}
 	/**
-	 * Get the multicast port
+	 * Get a multicast port based on the domain ID.
 	 *
-	 * @param domainId
+	 * @param domainId Domain ID.
 	 * @return Multicast port
 	 */
 	inline uint32_t getMulticastPort(uint32_t domainId)
@@ -63,10 +63,10 @@ public:
 		return portBase+ domainIDGain * domainId+ offsetd0;
 	}
 	/**
-	 * Get the unicast port
+	 * Get a unicast port baes on the domain ID and the participant ID.
 	 *
- 	 * @param domainId
-	 * @param RTPSParticipantID
+ 	 * @param domainId Domain ID.
+	 * @param RTPSParticipantID Participant ID.
 	 * @return Unicast port
 	 */
 	inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
@@ -96,11 +96,10 @@ public:
 	 */
 	bool use_SIMPLE_RTPSParticipantDiscoveryProtocol;
 
-	//!
+	//!Indicates to use the WriterLiveliness protocol.
 	bool use_WriterLivelinessProtocol;
 	/**
 	 * If set to true, SimpleEDP would be used.
-	 * This is NOT included in release 0.3.
 	 */
 	bool use_SIMPLE_EndpointDiscoveryProtocol;
 	/**
@@ -120,11 +119,11 @@ public:
 	 * as well as to all Multicast ports.
 	 */
 	Duration_t leaseDuration_announcementperiod;
-	//!
+	//!Attributes of the SimpleEDP protocol
 	SimpleEDPAttributes m_simpleEDP;
-	//!
+	//!Metatraffic Unicast Locator List
 	LocatorList_t metatrafficUnicastLocatorList;
-	//!
+	//!Metatraffic Multicast Locator List.
 	LocatorList_t metatrafficMulticastLocatorList;
 
 	BuiltinAttributes()
@@ -161,7 +160,7 @@ private:
  * Class RTPSParticipantParameters used to define different aspects of a RTPSParticipant.
  * @ingroup ATTRIBUTESMODULE
  */
-	class RTPSParticipantAttributes {
+class RTPSParticipantAttributes {
 public:
 	RTPSParticipantAttributes()
 {
@@ -196,17 +195,19 @@ public:
 	uint32_t listenSocketBufferSize;
 	//! Builtin parameters.
 	BuiltinAttributes builtin;
-	//Port Parameters
+	//!Port Parameters
 	PortParameters port;
+	//!User Data of the participant
 	std::vector<octet> userData;
-
+	//!Participant ID
 	int32_t participantID;
-
+	//!Use IP4 to send messages.
 	bool use_IP4_to_send;
+	//!Use IP6 to send messages.
 	bool use_IP6_to_send;
-
+	//!Set the name of the participant.
 	inline void setName(const char* nam){name = nam;}
-
+	//!Get the name of the participant.
 	inline const char* getName(){return name.c_str();}
 
 private:
