@@ -24,6 +24,10 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima{
 namespace fastrtps{
 
+namespace rtps{
+class EDP;
+}
+
 /**
  * QosPolicy is a base class for all the different QoS defined to the Writers and Readers.
  */
@@ -189,7 +193,7 @@ public:
 class  PartitionQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
-	friend class EDP;
+	friend class rtps::EDP;
 public:
 	RTPS_DllAPI PartitionQosPolicy() :Parameter_t(PID_PARTITION, 0), QosPolicy(false){};
 	RTPS_DllAPI virtual ~PartitionQosPolicy(){};
