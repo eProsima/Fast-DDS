@@ -37,6 +37,7 @@ public:
 	int32_t kind;
 	uint32_t port;
 	octet address[16];
+	//!Default constructor
 	Locator_t():kind(1),port(0){
 		LOCATOR_ADDRESS_INVALID(address);
 	}
