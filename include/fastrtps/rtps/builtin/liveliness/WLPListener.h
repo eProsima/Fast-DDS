@@ -41,18 +41,37 @@ struct CacheChange_t;
  */
 class WLPListener: public ReaderListener {
 public:
+	/**
+	 *
+	 * @param
+	 */
 	WLPListener(WLP* pwlp);
 	virtual ~WLPListener();
 
+	/**
+	* @param reader
+	* @param change
+	*/
 	void onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change);
 //	bool processParameterList(ParameterList_t* param,
 //			GuidPrefix_t* guidP,
 //			LivelinessQosPolicyKind* liveliness);
 
+	/**
+	* @param key
+	* @param guidP
+	* @param liveliness
+	*/
 	bool separateKey(InstanceHandle_t& key,
 			GuidPrefix_t* guidP,
 			LivelinessQosPolicyKind* liveliness);
+			
+	/**
+	* @param change
+	*/
 	bool computeKey(CacheChange_t* change);
+	
+	//!
 	CDRMessage_t aux_msg;
 
 private:

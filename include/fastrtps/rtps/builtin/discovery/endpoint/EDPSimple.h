@@ -80,8 +80,8 @@ public:
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 	/**
-	 * 
-	 * @param pdata Pointer to the RTPSParticipantProxyData object.
+	 * Remove remote endpoints from the endpoint discovery protocol
+	 * @param pdata Pointer to the ParticipantProxyData to remove
 	 */
 	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 

@@ -60,8 +60,8 @@ public:
 	 */
 	virtual void assignRemoteEndpoints(ParticipantProxyData* pdata)=0;
 	/**
-	 * 
-	 * @param pdata 
+	 * Remove remote endpoints from the endpoint discovery protocol
+	 * @param pdata Pointer to the ParticipantProxyData to remove
 	 */
 	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
 
