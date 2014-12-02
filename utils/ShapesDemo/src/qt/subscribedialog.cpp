@@ -94,15 +94,15 @@ void SubscribeDialog::on_buttonBox_accepted()
     }
     //PARTITIONS:
     if(this->ui->checkBox_Asterisk->isChecked())
-        SSub->m_attributes.qos.m_partition.names.push_back("*");
+        SSub->m_attributes.qos.m_partition.push_back("*");
     if(this->ui->checkBox_A->isChecked())
-        SSub->m_attributes.qos.m_partition.names.push_back("A");
+        SSub->m_attributes.qos.m_partition.push_back("A");
     if(this->ui->checkBox_B->isChecked())
-        SSub->m_attributes.qos.m_partition.names.push_back("B");
+        SSub->m_attributes.qos.m_partition.push_back("B");
     if(this->ui->checkBox_C->isChecked())
-        SSub->m_attributes.qos.m_partition.names.push_back("C");
+        SSub->m_attributes.qos.m_partition.push_back("C");
     if(this->ui->checkBox_D->isChecked())
-        SSub->m_attributes.qos.m_partition.names.push_back("D");
+        SSub->m_attributes.qos.m_partition.push_back("D");
     //Time Filter
     if(this->ui->checkBox_timeBasedFilter->isChecked())
     {

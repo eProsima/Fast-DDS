@@ -179,8 +179,9 @@ void MainWindow::addPublisherToTable(ShapePublisher* spub)
     items.append(new QStandardItem(QString("%1").arg(spub->m_attributes.topic.historyQos.depth)));
     //PARTITIONS:
     QString partitions;
-    for(std::vector<std::string>::iterator it = spub->m_attributes.qos.m_partition.names.begin();
-        it!=spub->m_attributes.qos.m_partition.names.end();it++)
+    std::vector<std::string> part = spub->m_attributes.qos.m_partition.getNames();
+    for(std::vector<std::string>::iterator it = part.begin();
+        it!=part.end();it++)
     {
         partitions.append(it->c_str());
         partitions.append(" ");
@@ -240,8 +241,9 @@ void MainWindow::addSubscriberToTable(ShapeSubscriber* ssub)
     items.append(new QStandardItem(QString("%1").arg(ssub->m_attributes.topic.historyQos.depth)));
     //PARTITIONS:
     QString partitions;
-    for(std::vector<std::string>::iterator it = ssub->m_attributes.qos.m_partition.names.begin();
-        it!=ssub->m_attributes.qos.m_partition.names.end();it++)
+    std::vector<std::string> part = ssub->m_attributes.qos.m_partition.getNames();
+    for(std::vector<std::string>::iterator it = part.begin();
+        it!=part.end();it++)
     {
         partitions.append(it->c_str());
         partitions.append(" ");
