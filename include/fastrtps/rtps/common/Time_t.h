@@ -22,16 +22,23 @@ namespace fastrtps{
 namespace rtps{
 //!Structure Time_t, used to describe times.
 struct RTPS_DllAPI Time_t{
+	//!Seconds
 	int32_t seconds;
+	//!Fraction of second
 	uint32_t fraction;
 	//int64_t to64time(){
 	//	return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
 	//}
+	//! Default constructor. Sets values to zero.
 	Time_t()
 	{
 		seconds = 0;
 		fraction = 0;
 	}
+	/**
+	* @param sec Seconds
+	* @param frac Fraction of second
+	*/
 	Time_t(int32_t sec,uint32_t frac)
 	{
 		seconds = sec;
@@ -41,7 +48,12 @@ struct RTPS_DllAPI Time_t{
 };
 
 
-
+/**
+* Comparison assignment
+* @param t1 First Time_t to compare
+* @param t2 Second Time_t to compare
+* @return True if equal
+*/
 static inline bool operator==(const Time_t& t1,const Time_t& t2)
 {
 	if(t1.seconds!=t2.seconds)
@@ -51,6 +63,12 @@ static inline bool operator==(const Time_t& t1,const Time_t& t2)
 	return true;
 }
 
+/**
+* Comparison assignment
+* @param t1 First Time_t to compare
+* @param t2 Second Time_t to compare
+* @return True if not equal
+*/
 static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 {
 	if(t1.seconds!=t2.seconds)
@@ -60,6 +78,12 @@ static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 	return false;
 }
 
+/**
+ * Checks if a Time_t is less than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less than the second
+ */
 static inline bool operator<(const Time_t& t1,const Time_t& t2)
 {
 	if(t1.seconds < t2.seconds)
@@ -75,6 +99,12 @@ static inline bool operator<(const Time_t& t1,const Time_t& t2)
 	}
 }
 
+/**
+ * Checks if a Time_t is less or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less or equal than the second
+ */
 static inline bool operator<=(const Time_t& t1,const Time_t& t2)
 {
 	if(t1.seconds < t2.seconds)
@@ -90,8 +120,12 @@ static inline bool operator<=(const Time_t& t1,const Time_t& t2)
 	}
 }
 
-
-
+/**
+ * 
+ * @param output
+ * @param seqNum
+ * @return 
+ */
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 {
 	return output << t.seconds<<"."<<t.fraction;
