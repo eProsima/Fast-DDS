@@ -21,13 +21,14 @@ mp_result_sub(nullptr),
 mp_participant(nullptr),
 mp_resultdatatype(nullptr),
 mp_operationdatatype(nullptr),
-m_operationsListener(this),
-m_resultsListener(this),
+m_operationsListener(nullptr),
+m_resultsListener(nullptr),
 m_isReady(false),
 m_operationMatched(0),
 m_resultMatched(0)
 {
-
+	m_operationsListener.mp_up = this;
+	m_resultsListener.mp_up = this;
 
 }
 
