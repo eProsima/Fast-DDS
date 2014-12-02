@@ -1,6 +1,6 @@
 ::Build ShapesDemo application
 
-set LIB_BOOST_PATH=C:\local\boost_1_57_0
+::set LIB_BOOST_PATH=C:\local\boost_1_57_0
 call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
 call qmake ShapesDemo.pro -r -spec win32-msvc2010
 call nmake clean
@@ -8,14 +8,14 @@ call nmake
 call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" amd64
 ::Copy necessary auxiliary files
 mkdir files\bin
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_date_time-vc100-mt-1_57.dll" "files\bin\boost_date_time-vc100-mt-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_date_time-vc100-mt-gd-1_57.dll" "files\bin\boost_date_time-vc100-mt-gd-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_signals-vc100-mt-1_57.dll" "files\bin\boost_signals-vc100-mt-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_signals-vc100-mt-gd-1_57.dll" "files\bin\boost_signals-vc100-mt-gd-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_system-vc100-mt-1_57.dll" "files\bin\boost_system-vc100-mt-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_system-vc100-mt-gd-1_57.dll" "files\bin\boost_system-vc100-mt-gd-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_thread-vc100-mt-1_57.dll" "files\bin\boost_thread-vc100-mt-1_53.dll"
-copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_thread-vc100-mt-gd-1_57.dll" "files\bin\boost_thread-vc100-mt-gd-1_53.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_date_time-vc100-mt-1_57.dll" "files\bin\boost_date_time-vc100-mt-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_date_time-vc100-mt-gd-1_57.dll" "files\bin\boost_date_time-vc100-mt-gd-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_signals-vc100-mt-1_57.dll" "files\bin\boost_signals-vc100-mt-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_signals-vc100-mt-gd-1_57.dll" "files\bin\boost_signals-vc100-mt-gd-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_system-vc100-mt-1_57.dll" "files\bin\boost_system-vc100-mt-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_system-vc100-mt-gd-1_57.dll" "files\bin\boost_system-vc100-mt-gd-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_thread-vc100-mt-1_57.dll" "files\bin\boost_thread-vc100-mt-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_thread-vc100-mt-gd-1_57.dll" "files\bin\boost_thread-vc100-mt-gd-1_57.dll"
 mkdir files\bin\platforms
 set QTDIR=C:\Qt\5.3\msvc2010_opengl
 copy "%QTDIR%\plugins\platforms\qminimal.dll" "files\bin\platforms\qminimal.dll"

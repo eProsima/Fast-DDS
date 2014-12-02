@@ -67,17 +67,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fastrtps\ClientServerTypes.cpp" />
-    <ClCompile Include="fastrtps\EprosimaClient.cpp" />
-    <ClCompile Include="fastrtps\EprosimaClientTest.cpp" />
-    <ClCompile Include="fastrtps\EprosimaServer.cpp" />
+    <ClCompile Include="ClientServerTypes.cpp" />
+    <ClCompile Include="EprosimaClient.cpp" />
+    <ClCompile Include="EprosimaClientTest.cpp" />
+    <ClCompile Include="EprosimaServer.cpp" />
     <ClCompile Include="main_ClientServerTestFastRTPS.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fastrtps\ClientServerTypes.h" />
-    <ClInclude Include="fastrtps\EprosimaClient.h" />
-    <ClInclude Include="fastrtps\EprosimaClientTest.h" />
-    <ClInclude Include="fastrtps\EprosimaServer.h" />
+    <ClInclude Include="ClientServerTypes.h" />
+    <ClInclude Include="EprosimaClient.h" />
+    <ClInclude Include="EprosimaClientTest.h" />
+    <ClInclude Include="EprosimaServer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>ClientServerTest</ProjectName>

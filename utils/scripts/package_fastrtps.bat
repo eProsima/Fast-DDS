@@ -47,31 +47,31 @@ cd "doc"
 mkdir pdf
 mkdir html
 :: Installation manual
-soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS - Installation Manual.odt,%VERSIONRTPS%)"
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS_Installation_Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: User manual
-soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS - User Manual.odt,%VERSIONRTPS%)"
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS_User_Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 :: RTPSGEN User manual
-soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FASTRTPSGEN - User Manual.odt,%VERSIONRTPS%)"
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FASTRTPSGEN_User_Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
 :: Copy pfd files into pdf dir
-copy "FastRTPS - Installation Manual.pdf" "pdf\FastRTPS - Installation Manual.pdf"
-del "FastRTPS - Installation Manual.pdf"
+copy "FastRTPS_Installation_Manual.pdf" "pdf\FastRTPS_Installation_Manual.pdf"
+del "FastRTPS_Installation_Manual.pdf"
 set errorstatus=%ERRORLEVEL% 
 if not %errorstatus%==0 goto :exit
 
-copy "FastRTPS - User Manual.pdf" "pdf\FastRTPS - User Manual.pdf"
-del "FastRTPS - User Manual.pdf"
+copy "FastRTPS_User_Manual.pdf" "pdf\FastRTPS_User_Manual.pdf"
+del "FastRTPS_User_Manual.pdf"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
-copy "FASTRTPSGEN - User Manual.pdf" "pdf\FASTRTPSGEN - User Manual.pdf"
-del "FASTRTPSGEN - User Manual.pdf"
+copy "FASTRTPSGEN_User_Manual.pdf" "pdf\FASTRTPSGEN_User_Manual.pdf"
+del "FASTRTPSGEN_User_Manual.pdf"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 
@@ -97,12 +97,12 @@ set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 cd output\doxygen\latex
 
-::call make.bat
+call make.bat
 
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
-ren refman.pdf "FastRTPS - API C++ Manual.pdf"
-copy "FastRTPS - API C++ Manual.pdf" "..\..\..\..\..\doc\pdf\FastRTPS - API C++ Manual.pdf"
+ren refman.pdf "FastRTPS_API_C++_Manual.pdf"
+copy "FastRTPS_API_C++_Manual.pdf" "..\..\..\..\..\doc\pdf\FastRTPS_API_C++_Manual.pdf"
 cd "..\..\..\..\.."
 
 :: Build utilities

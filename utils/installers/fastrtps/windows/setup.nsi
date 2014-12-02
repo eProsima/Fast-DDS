@@ -25,8 +25,6 @@ RequestExecutionLevel admin
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "eProsima\FastRTPS"
 !define LIB_BOOST_PATH $%LIB_BOOST_PATH%
-!define LIB_BOOST_PATH_VS2010 "C:\local\boost_1_57_0"
-!define LIB_BOOST_PATH_VS2013 "C:\local\boost_1_57_0"
 
 # Included files
 !include Sections.nsh
@@ -41,11 +39,11 @@ SectionGroup "Libraries" SECGRP0000
          SetOverwrite on
          File /r "..\..\..\..\lib\x64Win64VS2010\*"
 		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
-		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64Win64VS2010\boost_thread*"
-		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64Win64VS2010\boost_system*"
-		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64Win64VS2010\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64Win64VS2010\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH_VS2010}\lib\x64Win64VS2010\boost_regex*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_regex*"
 		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2010 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
@@ -57,11 +55,11 @@ SectionGroup "Libraries" SECGRP0000
         SetOverwrite on
         File /r "..\..\..\..\lib\i86Win32VS2010\*"
 		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2010\*"
-		File /r "${LIB_BOOST_PATH_VS2010}\lib\i86Win32VS2010\boost_thread*"
-		File /r "${LIB_BOOST_PATH_VS2010}\lib\i86Win32VS2010\boost_system*"
-		File /r "${LIB_BOOST_PATH_VS2010}\lib\i86Win32VS2010\boost_date_time*"
-		File /r "${LIB_BOOST_PATH_VS2010}\lib\i86Win32VS2010\boost_chrono*"
-		File /r "${LIB_BOOST_PATH_VS2010}\lib\i86Win32VS2010\boost_regex*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2010\boost_thread*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2010\boost_system*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2010\boost_date_time*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2010\boost_chrono*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2010\boost_regex*"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 VS2010 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
@@ -73,11 +71,11 @@ SectionGroup "Libraries" SECGRP0000
          SetOverwrite on
 		 File /r "..\..\..\..\lib\x64Win64VS2013\*"
 		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2013\*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64Win64VS2013\boost_thread*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64Win64VS2013\boost_system*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64Win64VS2013\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64Win64VS2013\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\x64Win64VS2013\boost_regex*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_regex*"
 		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2013 libraries" 1
 		 # Copy visual studio redistributable for x64
          SetOutPath $TEMP
@@ -89,11 +87,11 @@ SectionGroup "Libraries" SECGRP0000
         SetOverwrite on
         File /r "..\..\..\..\lib\i86Win32VS2013\*"
 		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2013\*"
-		File /r "${LIB_BOOST_PATH_VS2013}\lib\i86Win32VS2013\boost_thread*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86Win32VS2013\boost_system*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86Win32VS2013\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86Win32VS2013\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH_VS2013}\lib\i86Win32VS2013\boost_regex*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_regex*"
         WriteRegStr HKLM "${REGKEY}\Components" "i86 VS0213 libraries" 1
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
@@ -237,6 +235,7 @@ Section -post SEC0006
     SetOverwrite on
     File /r ..\..\..\..\doc\licenses\*
     File ..\..\..\..\README.html
+	File ..\..\..\..\*.png
     
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR
