@@ -14,7 +14,14 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
-#include "fastrtps/rtps_all.h"
+#include "HelloWorldType.h"
+
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/attributes/SubscriberAttributes.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+using namespace eprosima::fastrtps;
+
 #include "HelloWorld.h"
 
 class HelloWorldSubscriber {
@@ -22,21 +29,20 @@ public:
 	HelloWorldSubscriber();
 	virtual ~HelloWorldSubscriber();
 private:
-	RTPSParticipant* mp_RTPSParticipant;
+	Participant* mp_participant;
 	Subscriber* mp_subscriber;
 	class SubListener:public SubscriberListener
 	{
 	public:
-		SubListener():mp_sub(NULL),n_matched(0){};
+		SubListener():n_matched(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(MatchingInfo info);
-		void onNewDataMessage();
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onNewDataMessage(Subscriber* sub);
 		HelloWorld m_Hello;
 		SampleInfo_t m_info;
-		Subscriber* mp_sub;
 		int n_matched;
 	}m_listener;
-
+	HelloWorldType m_type;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

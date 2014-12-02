@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#: This script packs eRTPS product for any platform in Linux.
+#: This script packs FastRTPS product for any platform in Linux.
 #
 # This script needs the next programs to be run.
 # - subversion

@@ -26,7 +26,7 @@ CFLAGS = $(COMMON_CFLAGS) -O2
 CFLAGS_DEBUG= $(COMMON_CFLAGS) -g -D__DEBUG
 
 
-FASTCDR_DIR = /home/grcanosa/workspace/fastcdr
+FASTCDR_DIR = $(BASEDIR)/../../../thirdparty/fastcdr
 
 
 HELLOWORLDTEST_OUTDIR= $(OUTDIR)/HelloWorldTest
@@ -43,21 +43,21 @@ HELLOWORLDTEST_TARGET_DEBUG= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/HelloWorldTestd
 HELLOWORLDTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/HelloWorldTest
 
 HELLOWORLDTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
-                         						-I$(EPROSIMADIR)/code \
+                         						-I$(BASEDIR)/../../../thirdparty/eprosima-common-code \
                          						-I$(FASTCDR_DIR)/include
 
-HELLOWORLDTEST_LIBS_DEBUG= $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtpsd -lboost_system -lboost_thread \
+HELLOWORLDTEST_LIBS_DEBUG= $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time \
 										 -L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdrd
-HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread \
-										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdrd
+HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread -lboost_date_time\
+										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdr
 
 HELLOWORLDTEST_SRC_CFILES=
 
-HELLOWORLDTEST_SRC_CPPFILES= $(BASEDIR)/HelloWorld.cpp \
-								$(BASEDIR)/HelloWorldType.cpp \
-								 $(BASEDIR)/HelloWorldPublisher.cpp \
-								 $(BASEDIR)/HelloWorldSubscriber.cpp \
-								 $(BASEDIR)/HelloWorld_main.cpp 
+HELLOWORLDTEST_SRC_CPPFILES= $(BASEDIR)/../../useTests/HelloWorldTest/HelloWorld.cpp \
+								$(BASEDIR)/../../useTests/HelloWorldTest/HelloWorldType.cpp \
+								 $(BASEDIR)/../../useTests/HelloWorldTest/HelloWorldPublisher.cpp \
+								 $(BASEDIR)/../../useTests/HelloWorldTest/HelloWorldSubscriber.cpp \
+								 $(BASEDIR)/../../useTests/HelloWorldTest/HelloWorld_main.cpp 
 
 
 # Project sources are copied to the current directory

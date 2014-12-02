@@ -18,9 +18,9 @@
 #include "HelloWorld.h"
 
 HelloWorldType::HelloWorldType() {
-	m_topicDataTypeName = "HelloWorldType";
+	setName("HelloWorldType");
 	HelloWorld example;
-	m_typeSize = example.getMaxCdrSerializedSize(0);
+	m_typeSize = example.getMaxCdrSerializedSize();
 	m_isGetKeyDefined = false;
 
 }

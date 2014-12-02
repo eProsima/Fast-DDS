@@ -12,6 +12,12 @@
  */
 
 #include "HelloWorldPublisher.h"
+#include "fastrtps/participant/Participant.h"
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/attributes/PublisherAttributes.h"
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/Domain.h"
+
 
 
 HelloWorldPublisher::HelloWorldPublisher()
@@ -19,19 +25,24 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 	m_Hello.index(0);
 	m_Hello.message("HelloWorld");
-	RTPSParticipantAttributes PParam;
-	PParam.defaultSendPort = 10042;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-	PParam.builtin.domainId = 80;
-	TIME_INFINITE(PParam.builtin.leaseDuration);
-		PParam.sendSocketBufferSize = 8712;
-		PParam.listenSocketBufferSize = 17424;
-	PParam.name = "RTPSParticipant1";
-	mp_RTPSParticipant = DomainRTPSParticipant::createRTPSParticipant(PParam);
+	ParticipantAttributes PParam;
+	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.domainId = 80;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.sendSocketBufferSize = 8712;
+	PParam.rtps.listenSocketBufferSize = 17424;
+	PParam.rtps.setName("Participant_pub");
+	mp_participant = Domain::createParticipant(PParam);
 
+	//REGISTER THE TYPE
+
+	Domain::registerType(mp_participant,&m_type);
+
+	//CREATE THE PUBLISHER
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicDataType = "HelloWorldType";
@@ -43,7 +54,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 	Wparam.times.heartbeatPeriod.seconds = 2;
 	Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	mp_publisher = DomainRTPSParticipant::createPublisher(mp_RTPSParticipant,Wparam,(PublisherListener*)&m_listener);
+	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
@@ -51,7 +62,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 	// TODO Auto-generated destructor stub
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(MatchingInfo info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

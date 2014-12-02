@@ -11,15 +11,16 @@
  *
  */
 
-#include "fastrtps/rtps_all.h"
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
-#include "HelloWorldType.h"
 
+#include "fastrtps/Domain.h"
+
+#include "fastrtps/utils/eClock.h"
 
 int main(int argc, char** argv)
 {
-	RTPSLog::setVerbosity(EPROSIMA_DEBUGINFO_VERB_LEVEL);
+
 	cout << "Starting "<< endl;
 	int type = 1;
 	if(argc > 1)
@@ -35,8 +36,6 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-	HelloWorldType myType;
-	DomainRTPSParticipant::registerType((DDSTopicDataType*)&myType);
 
 	switch(type)
 	{
@@ -70,7 +69,7 @@ int main(int argc, char** argv)
 	}
 	}
 
-	DomainRTPSParticipant::stopAll();
+	Domain::stopAll();
 
 	return 0;
 }
