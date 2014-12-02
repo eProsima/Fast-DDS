@@ -40,6 +40,10 @@ class EDPSimple : public EDP {
 	typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
 	typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
 public:
+	/**
+	* @param p
+	* @param part
+	*/
 	EDPSimple(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPSimple();
 	//!Discovery attributes.
@@ -52,9 +56,9 @@ public:
 	t_p_StatefulReader mp_PubReader;
 	//!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
 	t_p_StatefulReader mp_SubReader;
-
+	//!
 	EDPSimplePUBListener* mp_pubListen;
-
+	//!
 	EDPSimpleSUBListener* mp_subListen;
 
 
@@ -75,7 +79,10 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
-
+	/**
+	 * 
+	 * @param pdata Pointer to the RTPSParticipantProxyData object.
+	 */
 	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 
 	/**

@@ -30,6 +30,12 @@ class PDPSimple;
  */
 class ResendParticipantProxyDataPeriod: public TimedEvent {
 public:
+
+	/**
+	 * 
+	 * @param p_SPDP
+	 * @param interval
+	 */
 	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 			double interval);
 	virtual ~ResendParticipantProxyDataPeriod();

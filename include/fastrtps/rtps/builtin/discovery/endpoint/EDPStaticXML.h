@@ -40,8 +40,11 @@ class StaticRTPSParticipantInfo{
 public:
 	StaticRTPSParticipantInfo(){};
 	virtual ~StaticRTPSParticipantInfo(){};
+	//!RTPS PArticipant name
 	std::string m_RTPSParticipantName;
+	//!
 	std::vector<ReaderProxyData*> m_readers;
+	//!
 	std::vector<WriterProxyData*> m_writers;
 };
 
@@ -86,7 +89,7 @@ public:
 	 * @param[in] partname RTPSParticipant name
 	 * @param[in] id Id of the writer
 	 * @param[out] wdataptr Pointer to pointer to return the information.
-	 * @return
+	 * @return True if found
 	 */
 	bool lookforWriter(std::string partname,uint16_t id,WriterProxyData** wdataptr);
 

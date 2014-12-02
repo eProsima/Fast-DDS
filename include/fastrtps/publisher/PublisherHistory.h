@@ -24,20 +24,54 @@ namespace fastrtps {
 
 class PublisherImpl;
 
+/**
+ * 
+ */
 class PublisherHistory:public WriterHistory
 {
 public:
+	//!
 	typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
+	//!
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
+	
+	/**
+	* Constructor
+	* @param pimpl
+	* @param payloadMax
+	* @param history
+	* @param resource
+	*/
 	PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
+			
 	virtual ~PublisherHistory();
+	
+	/**
+	*
+	* @param change
+	* @return
+	*/
 	bool add_pub_change(CacheChange_t* change);
 
+	/**
+	*
+	* @param removed
+	* @return
+	*/
 	bool removeAllChange(size_t* removed);
 
+	/**
+	*
+	* @return
+	*/
 	bool removeMinChange();
 
+	/**
+	* @param change
+	* @param vit
+	* @return
+	*/
 	bool remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
 private:

@@ -51,6 +51,9 @@ typedef enum DurabilityQosPolicyKind_t: octet{
 
 #define PARAMETER_KIND_LENGTH 4
 
+/**
+ *
+ */
 class RTPS_DllAPI DurabilityQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
@@ -60,7 +63,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-
+/**
+ *
+ */
 class RTPS_DllAPI DeadlineQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite){	};
@@ -69,6 +74,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero){};
@@ -86,6 +94,9 @@ enum LivelinessQosPolicyKind:octet {
 			MANUAL_BY_TOPIC_LIVELINESS_QOS       //!< MANUAL_BY_TOPIC_LIVELINESS_QOS
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI LivelinessQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
@@ -97,16 +108,25 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 enum ReliabilityQosPolicyKind:octet {
 	BEST_EFFORT_RELIABILITY_QOS = 0x01,
 	RELIABLE_RELIABILITY_QOS = 0x02
 };
 
+/**
+ *
+ */
 enum OwnershipQosPolicyKind:octet {
 	SHARED_OWNERSHIP_QOS,
 			EXCLUSIVE_OWNERSHIP_QOS
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI OwnershipQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),QosPolicy(true),
@@ -116,11 +136,17 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 enum DestinationOrderQosPolicyKind :octet{
 	BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS,
 	BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI ReliabilityQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
@@ -133,6 +159,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	DestinationOrderQosPolicyKind kind;
@@ -142,6 +171,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI UserDataQosPolicy : private Parameter_t, public QosPolicy{
 	friend class ParameterList;
 public:
@@ -151,6 +183,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
 public:
 
@@ -160,6 +195,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 enum PresentationQosPolicyAccessScopeKind:octet
 {
 	INSTANCE_PRESENTATION_QOS,
@@ -169,6 +207,9 @@ enum PresentationQosPolicyAccessScopeKind:octet
 
 #define PARAMETER_PRESENTATION_LENGTH 8
 
+/**
+ *
+ */
 class RTPS_DllAPI PresentationQosPolicy : private Parameter_t, public QosPolicy
 {
 public:
@@ -182,6 +223,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI PartitionQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
@@ -193,6 +237,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI TopicDataQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
@@ -202,6 +249,10 @@ public:
 	virtual ~TopicDataQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
+
+/**
+ *
+ */
 class RTPS_DllAPI GroupDataQosPolicy : private Parameter_t, public QosPolicy
 {
 	friend class ParameterList;
@@ -212,11 +263,17 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
  enum HistoryQosPolicyKind:octet {
 	KEEP_LAST_HISTORY_QOS,
 	KEEP_ALL_HISTORY_QOS
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI HistoryQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	HistoryQosPolicyKind kind;
@@ -227,6 +284,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	Duration_t service_cleanup_delay;
@@ -242,6 +302,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI LifespanQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeInfinite){};
@@ -250,7 +313,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
-
+/**
+ *
+ */
 class RTPS_DllAPI OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	uint32_t value;
@@ -259,6 +324,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
 public:
 	int32_t max_samples;
@@ -271,6 +339,9 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+ *
+ */
 class RTPS_DllAPI TransportPriorityQosPolicy : private Parameter_t , public QosPolicy{
 public:
 	uint32_t value;
