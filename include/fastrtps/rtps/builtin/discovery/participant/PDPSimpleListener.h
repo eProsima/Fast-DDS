@@ -34,6 +34,9 @@ class RTPSReader;
  */
 class PDPSimpleListener: public ReaderListener {
 public:
+	/**
+	* @param in_SPDP
+	*/
 	PDPSimpleListener(PDPSimple* in_SPDP):mp_SPDP(in_SPDP)
 	{
 		free(aux_msg.buffer);
@@ -42,14 +45,26 @@ public:
 	virtual ~PDPSimpleListener(){};
 	//!Pointer to the associated mp_SPDP;
 	PDPSimple* mp_SPDP;
-	//!new added cache
+	/**
+	 * New added cache
+	 * @param reader
+	 * @param change
+	 */
 	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
-	//!Process a new added cache with this method.
+	/**
+	 * Process a new added cache with this method.
+	 * @return True on success
+	 */
 	bool newAddedCache();
-
+	/**
+	 * 
+	 * @param
+	 * @return True on success
+	 */
 	bool getKey(CacheChange_t* change);
 	//!Temporal RTPSParticipantProxyData object used to read the messages.
 	ParticipantProxyData m_ParticipantProxyData;
+	//!
 	CDRMessage_t aux_msg;
 };
 

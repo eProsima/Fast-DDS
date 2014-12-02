@@ -38,6 +38,7 @@ namespace rtps{
  * @ingroup COMMONMODULE
  */
 struct CDRMessage_t{
+	//! Default constructor
 	CDRMessage_t(){
 		pos = 0;
 		length = 0;
@@ -51,6 +52,10 @@ struct CDRMessage_t{
 		if(buffer != nullptr)
 			free(buffer);
 	}
+	/**
+	 * Constructor with maximum size
+	 * @param size Maximum size
+	 */
 	CDRMessage_t(uint32_t size)
 	{
 		pos = 0;

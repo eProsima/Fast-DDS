@@ -50,17 +50,19 @@ class PDPSimple {
 	friend class RemoteRTPSParticipantLeaseDuration;
 	friend class PDPSimpleListener;
 public:
+	/**
+	* @param builtin
+	*/
 	PDPSimple(BuiltinProtocols* builtin);
 	virtual ~PDPSimple();
 	/**
 	 * Initialize the PDP.
 	 * @param part Pointer to the RTPSParticipant.
 	 * @param RTPSParticipantID RTPSParticipantID used to create the RTPSParticipant.
-	 * @return
+	 * @return True on success
 	 */
 	bool initPDP(RTPSParticipantImpl* part);
 
-	//!Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
 	/**
 	 * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
 	 * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
@@ -83,6 +85,14 @@ public:
 			ReaderProxyData** returnReaderProxyData=nullptr,
 			ParticipantProxyData** pdata = nullptr);
 
+	/**
+	 *
+	 * @param wdata
+	 * @param copydata
+	 * @param returnWriterProxyData
+	 * @param pdata
+	 * @return
+	 */
 	bool addWriterProxyData(WriterProxyData* wdata,bool copydata=false,
 			WriterProxyData** returnWriterProxyData=nullptr,
 			ParticipantProxyData** pdata = nullptr);
@@ -127,6 +137,10 @@ public:
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 
+	/**
+	 * Remove remote endpoints from the participant discovery protocol
+	 * @param pdata Pointer to the ParticipantProxyData to remove
+	 */
 	void removeRemoteEndpoints(ParticipantProxyData* pdata);
 
 	/**
@@ -139,7 +153,7 @@ public:
 	BuiltinProtocols* mp_builtin;
 	/**
 	 * Get a pointer to the local RTPSParticipant RTPSParticipantProxyData object.
-	 * @return Pointer.
+	 * @return Pointer to the local RTPSParticipant RTPSParticipantProxyData object.
 	 */
 	ParticipantProxyData* getLocalParticipantProxyData()
 	{
@@ -147,7 +161,7 @@ public:
 	}
 	/**
 	 * Get a pointer to the EDP object.
-	 * @return
+	 * @return pointer to the EDP object.
 	 */
 	inline EDP* getEDP(){return mp_EDP;}
 	/**
@@ -161,14 +175,33 @@ public:
 	 */
 	std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
 
+	/**
+	* @param guidP
+	*/
 	void assertRemoteParticipantLiveliness(GuidPrefix_t& guidP);
 
+	/**
+	* @param kind
+	*/
 	void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
 
+	/**
+	* @param guidP
+	* @param kind
+	*/
 	void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
 
+	/**
+	* @param pguid
+	* @param userDefinedId
+	* @param kind
+	*/
 	bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
+	/**
+	* Get the RTPS participant
+	* @return RTPS participant
+	*/
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;};
 
 private:
