@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 			else
 			{
 				//cout << "Sleeping till discovery"<<endl;
-				eClock::my_sleep(100);
+				eClock::my_sleep(200);
 				--i;
 			}
 		}
