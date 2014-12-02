@@ -36,7 +36,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)
 	{
 		ParameterString_t* p = new ParameterString_t();
 		p->Pid = pid;
-		p->m_string = string_in;
+		p->setName(string_in.c_str());
 		//p->length = string_in.size()+2;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		qos->allQos.m_hasChanged = true;
@@ -285,7 +285,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVe
 	if(pid == PID_USER_DATA)
 	{
 		UserDataQosPolicy* p = new UserDataQosPolicy();
-		p->dataVec = ocVec;
+		p->setDataVec(ocVec);
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		qos->allQos.m_hasChanged = true;
 		return true;

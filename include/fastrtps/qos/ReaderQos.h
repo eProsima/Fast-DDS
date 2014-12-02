@@ -22,10 +22,10 @@ namespace fastrtps {
  * during the EDP, not all of the behaviour associated with them has been implemented in the library.
  * The supported Qos in this version are: Durability, Liveliness, Reliability and Partition.
  */
-class RTPS_DllAPI ReaderQos{
+class  ReaderQos{
 public:
-	ReaderQos(){};
-	virtual ~ReaderQos(){};
+	RTPS_DllAPI ReaderQos(){};
+	RTPS_DllAPI virtual ~ReaderQos(){};
 	//!Durability Qos, implemented in the library.
 	DurabilityQosPolicy m_durability;
 	//!Deadline Qos, NOT implemented in the library.
@@ -61,18 +61,18 @@ public:
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
 	 */
-	void setQos(const ReaderQos& readerqos, bool first_time);
+	RTPS_DllAPI void setQos(ReaderQos& readerqos, bool first_time);
 	/**
 	 * Check if the Qos values are compatible between each other.
 	 * @return True if correct.
 	 */
-	bool checkQos();
+	RTPS_DllAPI bool checkQos();
 	/**
 	 * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
 	 * @param qos Reference to the new qos.
 	 * @return True if they can be updated.
 	 */
-	bool canQosBeUpdated(ReaderQos& qos);
+	RTPS_DllAPI bool canQosBeUpdated(ReaderQos& qos);
 };
 
 

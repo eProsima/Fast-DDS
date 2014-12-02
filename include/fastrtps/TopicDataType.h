@@ -17,7 +17,6 @@
 #include "fastrtps/rtps/common/SerializedPayload.h"
 #include "fastrtps/rtps/common/InstanceHandle.h"
 #include "fastrtps/utils/md5.h"
-#include "fastrtps/config/eprosima_stl_exports.hpp"
 #include <string>
 
 using namespace eprosima::fastrtps::rtps;
@@ -34,13 +33,13 @@ namespace fastrtps {
  * @ingroup MODULE
  * @snippet fastrtps_example.cpp ex_TopicDataType
  */
-class RTPS_DllAPI TopicDataType {
+class  TopicDataType {
 public:
-	TopicDataType(){
+	RTPS_DllAPI TopicDataType(){
 		this->m_typeSize = 0;
         this->m_isGetKeyDefined = false;
 	}
-	virtual ~TopicDataType(){};
+	RTPS_DllAPI virtual ~TopicDataType(){};
 	/**
 	 * Serialize method, it should be implemented by the user, since it is abstract.
 	 * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
@@ -48,24 +47,24 @@ public:
 	 * @param[out] payload Pointer to the payload
 	 * @return True if correct.
 	 */
-	virtual bool serialize(void*data,SerializedPayload_t* payload)=0;
+	RTPS_DllAPI virtual bool serialize(void*data, SerializedPayload_t* payload) = 0;
 	/**
 	 * Deserialize method, it should be implemented by the user, since it is abstract.
 	 * @param[in] payload Pointer to the payload
 	 * @param[out] data Pointer to the data
 	 * @return True if correct.
 	 */
-    virtual bool deserialize(SerializedPayload_t* payload,void * data)=0;
+	RTPS_DllAPI virtual bool deserialize(SerializedPayload_t* payload, void * data) = 0;
 	/**
 	 * Get the key associated with the data.
 	 * @param[in] data Pointer to the data.
 	 * @param[out] ihandle Pointer to the Handle.
 	 * @return True if correct.
 	 */
-    virtual bool getKey(void*data,InstanceHandle_t* ihandle){return false;}
+	RTPS_DllAPI virtual bool getKey(void*data, InstanceHandle_t* ihandle){ return false; }
 
-    inline void setName(const char* nam) {m_topicDataTypeName = std::string(nam);}
-	inline const char* getName(){return m_topicDataTypeName.c_str();}
+	RTPS_DllAPI inline void setName(const char* nam) { m_topicDataTypeName = std::string(nam); }
+	RTPS_DllAPI inline const char* getName(){ return m_topicDataTypeName.c_str(); }
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
 	//! size of the string respect the maximum defined size.).
 	uint32_t m_typeSize;

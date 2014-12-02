@@ -15,12 +15,10 @@
 #include "fastcdr/Cdr.h"
 
 #include "HelloWorldType.h"
-#include "HelloWorld.h"
 
 HelloWorldType::HelloWorldType() {
 	setName("HelloWorldType");
-	HelloWorld example;
-	m_typeSize = example.getMaxCdrSerializedSize();
+	m_typeSize = HelloWorld::getMaxCdrSerializedSize();
 	m_isGetKeyDefined = false;
 
 }
@@ -38,7 +36,7 @@ bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
 	eprosima::fastcdr::Cdr ser(fastbuffer);
 	//serialize the object:
 	hw->serialize(ser);
-	payload->length = ser.getSerializedDataLength();
+	payload->length = (uint32_t)ser.getSerializedDataLength();
 	return true;
 }
 
