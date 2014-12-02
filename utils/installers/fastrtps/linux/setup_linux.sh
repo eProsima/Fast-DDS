@@ -29,13 +29,13 @@ installer()
     # Copy documentation.
     mkdir -p tmp/$project/doc
     mkdir -p tmp/$project/doc/pdf
-    cp "../../../../doc/pdf/FastRTPS - Installation Manual.pdf" tmp/$project/doc/pdf/
+    cp "../../../../doc/pdf/FastRTPS_Installation_Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/pdf/FastRTPS - User Manual.pdf" tmp/$project/doc/pdf/
+    cp "../../../../doc/pdf/FastRTPS_User_Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../../doc/pdf/FASTRTPSGEN - User Manual.pdf" tmp/$project/doc/pdf/
+    cp "../../../../doc/pdf/FASTRTPSGEN_User_Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     ##cp "../../../../doc/index.html" tmp/$project/doc/
@@ -44,7 +44,7 @@ installer()
     cp -r "../../../doxygen/output/doxygen/html" tmp/$project/doc/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../doxygen/output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/RTPS - API C++ Manual.pdf"
+    cp "../../../doxygen/output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/RTPS_API_C++_Manual.pdf"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
