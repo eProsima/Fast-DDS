@@ -21,8 +21,8 @@
 #include <cstdint>
 #include <sstream>
 
-#include "fastrtps/EprosimaServer.h"
-#include "fastrtps/EprosimaClientTest.h"
+#include "EprosimaServer.h"
+#include "EprosimaClientTest.h"
 
 
 #include "fastrtps/utils/RTPSLog.h"
