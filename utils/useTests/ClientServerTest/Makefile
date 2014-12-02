@@ -39,10 +39,10 @@ CLIENTSERVERTEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TAR
 
 CLIENTSERVERTEST_SRC_CFILES=
 
-CLIENTSERVERTEST_SRC_CPPFILES= 	$(BASEDIR)/fastrtps/ClientServerTypes.cpp \
-						$(BASEDIR)/fastrtps/EprosimaClient.cpp \
-						$(BASEDIR)/fastrtps/EprosimaServer.cpp \
-						$(BASEDIR)/fastrtps/EprosimaClientTest.cpp \
+CLIENTSERVERTEST_SRC_CPPFILES= 	$(BASEDIR)/ClientServerTypes.cpp \
+						$(BASEDIR)/EprosimaClient.cpp \
+						$(BASEDIR)/EprosimaServer.cpp \
+						$(BASEDIR)/EprosimaClientTest.cpp \
 						$(BASEDIR)/main_ClientServerTestFastRTPS.cpp
 
 # Project sources are copied to the current directory
