@@ -33,13 +33,20 @@ namespace rtps{
 /**
  * Class MatchingInfo contains information about the matching between two endpoints.
  */
-	class RTPS_DllAPI MatchingInfo
+class RTPS_DllAPI MatchingInfo
 {
 public:
+	//!Default constructor
 	MatchingInfo():status(MATCHED_MATCHING){};
+	/**
+	* @param stat Status
+	* @param guid GUID
+	*/
 	MatchingInfo(MatchingStatus stat,const GUID_t&guid):status(stat),remoteEndpointGuid(guid){};
 	~MatchingInfo(){};
+	//!Status
 	MatchingStatus status;
+	//!Remote endpoint GUID
 	GUID_t remoteEndpointGuid;
 };
 }

@@ -24,12 +24,18 @@ namespace rtps{
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
  */
 struct RTPS_DllAPI InstanceHandle_t{
+	//!Value
 	octet value[16];
 	InstanceHandle_t()
 	{
 		for(uint8_t i=0;i<16;i++)
 			value[i] = 0;
 	}
+	
+	/**
+	* Assingment operator
+	* @param ihandle Instance handle to copy the data from
+	*/
 	InstanceHandle_t& operator=(const InstanceHandle_t& ihandle){
 
 		for(uint8_t i =0;i<16;i++)
@@ -38,6 +44,11 @@ struct RTPS_DllAPI InstanceHandle_t{
 		}
 		return *this;
 	}
+	
+	/**
+	* Assingment operator
+	* @param guid GUID to copy the data from
+	*/
 	InstanceHandle_t& operator=(const GUID_t& guid)
 	{
 		for(uint8_t i =0;i<16;i++)
@@ -50,6 +61,10 @@ struct RTPS_DllAPI InstanceHandle_t{
 		return *this;
 	}
 
+	/**
+	* Know if the instance handle is defined
+	* @return True if the values are not zero.
+	*/
 	bool isDefined()
 	{
 		for(uint8_t i=0;i<16;++i)
@@ -63,6 +78,12 @@ struct RTPS_DllAPI InstanceHandle_t{
 
 const InstanceHandle_t c_InstanceHandle_Unknown;
 
+/**
+* Comparison operator
+* @param ihandle1 First InstanceHandle_t to compare
+* @param ihandle2 Second InstanceHandle_t to compare
+* @return True if equal
+*/
 inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t& ihandle2)
 {
 	for(uint8_t i =0;i<16;++i)
@@ -73,6 +94,11 @@ inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t
 	return true;
 }
 
+/**
+* Convert InstanceHandle_t to GUID
+* @param guid GUID to store the results
+* @param ihandle InstanceHandle_t to copy
+*/
 inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 {
 	for(uint8_t i = 0;i<16;++i)
@@ -85,6 +111,11 @@ inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 	return;
 }
 
+/**
+* Convert GUID to InstanceHandle_t
+* @param ihandle InstanceHandle_t to store the results
+* @param guid GUID to copy
+*/
 inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
 {
 	GUID_t guid;
@@ -98,6 +129,11 @@ inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
 	return guid;
 }
 
+/**
+* 
+* @param output 
+* @param iHandle
+*/
 inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHandle)
 {
 	output << std::hex;

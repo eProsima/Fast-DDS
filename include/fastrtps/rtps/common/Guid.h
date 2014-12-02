@@ -250,22 +250,45 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
  struct RTPS_DllAPI GUID_t{
+	//!Guid prefix
 	GuidPrefix_t guidPrefix;
+	//!Entity id
 	EntityId_t entityId;
+	/**
+	* Assignment operator
+	* @param guid GUID to copy the data from.
+	*/
 	GUID_t& operator=(const GUID_t& guid)
 	{
 		guidPrefix = guid.guidPrefix;
 		entityId = guid.entityId;
 		return *this;
 	}
-
+	
+	//! Default constructor
 	GUID_t(){};
+	
+	/**
+	* @param guidP Guid prefix
+	* @param id Entity id
+	*/	
 	GUID_t(const GuidPrefix_t& guidP,uint32_t id):
 		guidPrefix(guidP),entityId(id) {}
+	
+	/**
+	* @param guidP Guid prefix
+	* @param id Entity id
+	*/	
 	GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
 		guidPrefix(guidP),entityId(entId) {}
 };
 
+	/**
+	* GUID comparison operator
+	* @param g1 First GUID to compare
+	* @param g2 Second GUID to compare
+	* @return True if equal
+	*/
 inline bool operator==(const GUID_t& g1,const GUID_t& g2){
 	if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
 		return true;
@@ -273,6 +296,12 @@ inline bool operator==(const GUID_t& g1,const GUID_t& g2){
 		return false;
 }
 
+	/**
+	* GUID comparison operator
+	* @param g1 First GUID to compare
+	* @param g2 Second GUID to compare
+	* @return True if not equal
+	*/
 inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
 	if(g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
 		return true;
@@ -283,6 +312,12 @@ inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
 
 const GUID_t c_Guid_Unknown;
 
+	/**
+	* 
+	* @param output 
+	* @param enI 
+	* @return 
+	*/
 inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 {
 	if(guid !=c_Guid_Unknown)

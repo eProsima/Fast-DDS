@@ -39,9 +39,12 @@ struct RTPS_DllAPI SerializedPayload_t{
 	uint16_t length;
 	//!Pointer to the data.
 	octet* data;
+	//!Maximum size of the payload
 	uint16_t max_size;
 	//!Position when reading
 	uint16_t pos;
+	
+	//!Default constructor
 	SerializedPayload_t(){
 		length = 0;
 		data = NULL;
@@ -49,6 +52,10 @@ struct RTPS_DllAPI SerializedPayload_t{
 		max_size = 0;
 		pos = 0;
 	}
+	
+	/**
+	* @param len Maximum size of the payload
+	*/
 	SerializedPayload_t(short len){
 		encapsulation = CDR_BE;
 		length = 0;
@@ -56,9 +63,11 @@ struct RTPS_DllAPI SerializedPayload_t{
 		max_size = len;
 		pos = 0;
 	}
+	
 	~SerializedPayload_t(){
 		this->empty();
 	}
+	
 	/*!
 	 * Copy another structure (including allocating new space for the data.)
 	 * @param[in] serData Pointer to the structure to copy
@@ -74,6 +83,8 @@ struct RTPS_DllAPI SerializedPayload_t{
 		memcpy(data,serData->data,length);
 		return true;
 	}
+	
+	//! Empty the payload
 	void empty()
 	{
 		length= 0;
