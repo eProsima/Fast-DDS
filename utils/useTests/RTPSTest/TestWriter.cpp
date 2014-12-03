@@ -47,11 +47,13 @@ bool TestWriter::init()
 	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant==nullptr)
 		return false;
+
 	//CREATE WRITERHISTORY
 	HistoryAttributes hatt;
 	hatt.payloadMaxSize = 255;
 	mp_history = new WriterHistory(hatt);
-	//CREATE
+
+	//CREATE WRITER
 	WriterAttributes watt;
 	watt.endpoint.reliabilityKind = BEST_EFFORT;
 	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history);
