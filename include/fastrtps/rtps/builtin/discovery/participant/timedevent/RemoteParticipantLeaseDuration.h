@@ -43,11 +43,13 @@ public:
 			ParticipantProxyData* pdata,
 			double interval);
 	virtual ~RemoteParticipantLeaseDuration();
-	/**
-	 * temporal event that check if the RTPSParticipant is alive, and removes it if not.
-	 * @param ec
-	 * @param msg
-	 */
+
+ 	/**
+	*  Temporal event that check if the RTPSParticipant is alive, and removes it if not.
+	*
+	* @param code Code representing the status of the event
+	* @param msg Message associated to the event
+	*/
 	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the PDPSimple object.
 	PDPSimple* mp_PDP;

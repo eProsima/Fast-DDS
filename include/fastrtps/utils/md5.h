@@ -38,6 +38,7 @@ documentation and/or software.
 
 #include "fastrtps/config/fastrtps_dll.h"
 
+/**
 // a small class for calculating MD5 hashes of strings or byte arrays
 // it is not meant to be fast or secure
 //
@@ -48,6 +49,7 @@ documentation and/or software.
 //      MD5(std::string).hexdigest()
 //
 // assumes that char is 8 bit and int is 32 bit
+*/
 class RTPS_DllAPI MD5
 {
 public:

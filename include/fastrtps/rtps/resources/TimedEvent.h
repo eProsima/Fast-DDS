@@ -54,9 +54,10 @@ public:
 	virtual ~TimedEvent();
 	
 	/**
+	* Method invoked when the event occurs. Abstract method.
 	*
-	* @param code
-	* @param msg
+	* @param code Code representing the status of the event
+	* @param msg Message associated to the event
 	*/
 	virtual void event(EventCode code,const char* msg=nullptr)=0;
 	
