@@ -31,9 +31,19 @@ class WriterProxy;
 class HeartbeatResponseDelay:public TimedEvent {
 public:
 	virtual ~HeartbeatResponseDelay();
+	
+	/**
+	* @param p_WP
+	* @param interval
+	*/
 	HeartbeatResponseDelay(WriterProxy* p_WP,double interval);
-
+	
+	/**
+	* @param code
+	* @param msg
+	*/
 	void event(EventCode code, const char* msg= nullptr);
+	
 	//!Pointer to the WriterProxy associated with this specific event.
 	WriterProxy* mp_WP;
 	//!CDRMessage_t used in the response.

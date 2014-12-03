@@ -22,11 +22,20 @@ namespace rtps{
 
 class RTPSParticipant;
 
+/**
+*
+*/
 class RTPS_DllAPI RTPSParticipantListener
 {
 public:
 	RTPSParticipantListener(){};
 	virtual ~RTPSParticipantListener(){};
+	
+	/**
+	* This method is invoked when a new participant is discovered
+	* @param part Discovered participant
+	* @param info Discovery information of the participant
+	*/
 	virtual void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info){};
 };
 }

@@ -46,6 +46,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool matched_writer_remove(RemoteWriterAttributes& wdata);
+	
 	/**
 	 * Tells us if a specific Writer is matched against this reader
 	 * @param wdata Pointer to the WriterProxyData object
@@ -53,11 +54,28 @@ public:
 	 */
 	bool matched_writer_is_matched(RemoteWriterAttributes& wdata);
 
-	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	/**
+	* Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	* @param 
+	* @param prox
+	* @return
+	*/
 	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
-	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
+	
+	/**
+	 * Check if the reader accepts messages from a writer with a specific GUID_t.
+	 *
+	 * @param entityGUID GUID to check
+	 * @param wp Writer to check
+	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
+	 */
 	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=nullptr);
 
+	/**
+	* @param a_change
+	* @param prox
+	* @return
+	*/
 	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
 
 	/**
@@ -73,6 +91,10 @@ public:
 	 */
 	bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
 
+	/**
+	* Get the number of matched writers
+	* @return Number of matched writers
+	*/
 	inline size_t getMatchedWritersSize() const {return m_matched_writers.size();};
 
 private:

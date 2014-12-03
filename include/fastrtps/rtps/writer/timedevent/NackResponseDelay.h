@@ -31,12 +31,23 @@ class ReaderProxy;
  */
 class NackResponseDelay:public TimedEvent {
 public:
+	/**
+	*
+	* @param p_RP
+	* @param intervalmillisec	*/
 	NackResponseDelay(ReaderProxy* p_RP,double intervalmillisec);
 	virtual ~NackResponseDelay();
 
+	/**
+	*
+	* @param code
+	* @param msg
+	*/
 	void event(EventCode code, const char* msg= nullptr);
 
+	//!Associated reader proxy
 	ReaderProxy* mp_RP;
+	//!Messages
 	RTPSMessageGroup_t m_cdrmessages;
 };
 }

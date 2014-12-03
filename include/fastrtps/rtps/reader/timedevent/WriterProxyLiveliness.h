@@ -26,8 +26,16 @@ class WriterProxy;
  */
 class WriterProxyLiveliness: public TimedEvent {
 public:
+	/**
+	* @param wp
+	* @param interval
+	*/
 	WriterProxyLiveliness(WriterProxy* wp,double interval);
 	virtual ~WriterProxyLiveliness();
+	/**
+	* @param code
+	* @param msg
+	*/
 	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the WriterProxy associated with this specific event.
 	WriterProxy* mp_WP;

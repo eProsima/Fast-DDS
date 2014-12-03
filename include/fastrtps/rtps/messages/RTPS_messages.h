@@ -39,8 +39,11 @@ namespace rtps{
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
  struct Header_t{
+	//!Protocol version
 	ProtocolVersion_t version;
+	//!Vendor ID
 	VendorId_t vendorId;;
+	//!GUID prefix
 	GuidPrefix_t guidPrefix;
 	Header_t():
 		version(c_ProtocolVersion)
@@ -51,6 +54,11 @@ namespace rtps{
 	}
 };
 
+/**
+* @param output
+* @param h
+* @return
+*/
 inline std::ostream& operator<<(std::ostream& output,const Header_t& h){
 	output << "RTPS HEADER of Version: " << (int)h.version.m_major << "." << (int)h.version.m_minor;
 	output << "  || VendorId: " <<std::hex<< (int)h.vendorId[0] << "." <<(int)h.vendorId[1] << std::dec;
@@ -70,6 +78,11 @@ using std::cout;
 using std::endl;
 using std::bitset;
 
+/**
+* @param output
+* @param sh
+* @return
+*/
 inline std::ostream& operator<<(std::ostream& output,const SubmessageHeader_t& sh){
 	output << "Submessage Header, ID: " <<std::hex<< (int)sh.submessageId << std::dec;
 	output << " length: " << (int)sh.submessageLength << " flags " << (bitset<8>) sh.flags;

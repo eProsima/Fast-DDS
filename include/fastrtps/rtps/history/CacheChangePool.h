@@ -36,6 +36,11 @@ struct CacheChange_t;
 class CacheChangePool {
 public:
 	virtual ~CacheChangePool();
+	/**
+	* @param pool_size
+	* @param payload_size
+	* @param max_pool_size
+	*/
 	CacheChangePool(uint16_t pool_size,uint32_t payload_size,int32_t max_pool_size);
 	//!Reserve a Cache from the pool.
 	bool reserve_Cache(CacheChange_t** chan);
