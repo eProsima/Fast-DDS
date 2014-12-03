@@ -39,8 +39,16 @@ public:
 	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 			double interval);
 	virtual ~ResendParticipantProxyDataPeriod();
-	//!Temporal event that resends the RTPSParticipantProxyData to all remote RTPSParticipants.
+	
+	/**
+	* Method invoked when the event occurs.
+	* This temporal event resends the RTPSParticipantProxyData to all remote RTPSParticipants.
+	*
+	* @param code Code representing the status of the event
+	* @param msg Message associated to the event
+	*/
 	void event(EventCode code, const char* msg= nullptr);
+	
 	//!Auxiliar data message.
 	CDRMessage_t m_data_msg;
 	//!Pointer to the PDPSimple object.

@@ -77,23 +77,48 @@ public:
 	RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* a_change){ return true; }
 	/**
 	 * Update the Attributes of the Writer.
+	 * @param att New attributes
 	 */
 	RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
 	/**
 	 * This methods trigger the send operation for unsent changes.
 	 */
 	RTPS_DllAPI virtual void unsent_changes_not_empty() = 0;
-	//!Get Min Seq Num in History.
+	
+	/**
+	* Get Min Seq Num in History.
+	* @return Minimum sequence number in history
+	*/
 	RTPS_DllAPI SequenceNumber_t get_seq_num_min();
-	//!Get Max Seq Num in History.
+	
+	/**
+	* Get Max Seq Num in History.
+	* @return Maximum sequence number in history
+	*/
 	RTPS_DllAPI SequenceNumber_t get_seq_num_max();
-
+	
+	/**
+	* Get maximum size of the serialized type
+	* @return Maximum size of the serialized type
+	*/
 	RTPS_DllAPI uint32_t getTypeMaxSerialized();
-
+	
+	/**
+	* Get listener
+	* @return Listener
+	*/
 	RTPS_DllAPI inline WriterListener* getListener(){ return mp_listener; };
-
+	 
+	/**
+	* Get the asserted liveliness
+	* @return Asserted liveliness
+	*/
 	RTPS_DllAPI inline bool getLivelinessAsserted() { return m_livelinessAsserted; };
-
+	
+	/**
+	* Get the asserted liveliness
+	* @return asserted liveliness
+	*/
 	RTPS_DllAPI inline void setLivelinessAsserted(bool l){ m_livelinessAsserted = l; };
 protected:
 
@@ -126,6 +151,10 @@ protected:
 	 */
 	virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
 
+	/**
+	* Get RTPS participant
+	* @return RTPS participant
+	*/
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
 	//public:

@@ -30,36 +30,71 @@ using namespace rtps;
 
 class SubscriberImpl;
 
+/**
+ * Class SubscriberHistory, container of the different CacheChanges of a subscriber
+ */
 class SubscriberHistory: public ReaderHistory {
 public:
 	typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_p_I_Change;
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
+	
+	/**
+	*
+	* @param pimpl
+	* @param payloadMax
+	* @param history
+	* @param resource
+	*/
 	SubscriberHistory(SubscriberImpl* pimpl,uint32_t payloadMax,
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
 	virtual ~SubscriberHistory();
 
+	/**
+	*
+	* @param change
+	* @param prox
+	* @return
+	*/
 	bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
 
+	/** @name Read or take data methods.
+	 * Methods to read or take data from the History.
+	 */
+	///@{
 	bool readNextData(void* data, SampleInfo_t* info);
-
 	bool takeNextData(void* data, SampleInfo_t* info);
-
+	///@}
+	
+	/**
+	 * Method to know whether there are unread CacheChange_t.
+	 * @return True if there are unread.
+	 */
 	bool isUnreadCache();
 
+	/**
+	*
+	* @param change
+	* @param vit
+	* @return
+	*/
 	bool remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
-
+	//!Increase the unread count.
 	inline void increaseUnreadCount()
 	{
 		++m_unreadCacheCount;
 	}
+	
 	//!Decrease the unread count.
 	inline void decreaseUnreadCount()
 	{
 		if(m_unreadCacheCount>0)
 			--m_unreadCacheCount;
 	}
-	//!Get the unread count.
+	
+	/** Get the unread count.
+	* @return Unread count
+	*/
 	inline uint64_t getUnreadCount()
 	{
 		return m_unreadCacheCount;

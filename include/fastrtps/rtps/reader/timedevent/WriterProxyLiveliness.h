@@ -33,8 +33,10 @@ public:
 	WriterProxyLiveliness(WriterProxy* wp,double interval);
 	virtual ~WriterProxyLiveliness();
 	/**
-	* @param code
-	* @param msg
+	* Method invoked when the event occurs
+	*
+	* @param code Code representing the status of the event
+	* @param msg Message associated to the event
 	*/
 	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the WriterProxy associated with this specific event.

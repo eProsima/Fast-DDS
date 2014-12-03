@@ -30,6 +30,9 @@ namespace rtps {
 template <typename T>
 class ObjectPool {
 public:
+	/**
+	* @param defaultGroupSize Default group size
+	*/
 	ObjectPool(uint16_t defaultGroupSize);
 	virtual ~ObjectPool();
 	T& reserve_Object();
