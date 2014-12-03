@@ -22,13 +22,27 @@ namespace rtps {
 
 class RTPSWriter;
 
+/**
+ *
+ */
 class UnsentChangesNotEmptyEvent: public TimedEvent {
 public:
+	/**
+	*
+	* @param writer
+	* @param interval
+	*/
 	UnsentChangesNotEmptyEvent(RTPSWriter* writer,double interval);
 	virtual ~UnsentChangesNotEmptyEvent();
-
+	
+	/**
+	*
+	* @param code
+	* @param msg
+	*/
 	void event(EventCode code, const char* msg= nullptr);
-
+	
+	//!
 	RTPSWriter* mp_writer;
 };
 }

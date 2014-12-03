@@ -38,7 +38,9 @@ public:
 	RTPSMessageCreator();
 	virtual ~RTPSMessageCreator();
 
+	//!
 	CDRMessage_t rtpsmc_submsgElem;
+	//!
 	CDRMessage_t rtpsmc_submsgHeader;
 
 
@@ -53,6 +55,12 @@ public:
 	 */
 	static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
 
+	/**
+	 * Create a Header to the serialized message.
+	 * @param msg Pointer to the Message.
+	 * @param Prefix RTPSParticipant prefix of the message.
+	 * @return True if correct.
+	 */
 	static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix);
 
 	/**

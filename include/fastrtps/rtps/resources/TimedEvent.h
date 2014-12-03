@@ -30,33 +30,78 @@ namespace rtps {
 
 class TimedEventImpl;
 
-
+/**
+ * Timed Event class used to define any timed events.
+ */
 class TimedEvent {
 public:
+
+	/**
+	* Enum representing event statuses
+	*/
 	enum EventCode
 	{
 		EVENT_SUCCESS,
 		EVENT_ABORT,
 		EVENT_MSG
 	};
+	
+	/**
+	* @param serv IO service
+	* @param milliseconds Interval of the timedEvent.
+	*/
 	TimedEvent(boost::asio::io_service* serv,double milliseconds);
 	virtual ~TimedEvent();
+	
+	/**
+	*
+	* @param code
+	* @param msg
+	*/
 	virtual void event(EventCode code,const char* msg=nullptr)=0;
-
+	
+	//!Method to restart the timer.
 	void restart_timer();
-
+	//!Method to stop the timer.
 	void stop_timer();
-
+	
+	/**
+	* Update event interval.
+	* When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
+	*
+	* @param inter New interval for the timedEvent
+	* @return true on success
+	*/
 	bool update_interval(const Duration_t& inter);
-
+	
+	/**
+	* Update event interval.
+	* When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
+	*
+	* @param time_millisec New interval for the timedEvent
+	* @return true on success
+	*/
 	bool update_interval_millisec(double time_millisec);
-
+	
+	/**
+	* Get the milliseconds interval
+	* @return Mulliseconds interval
+	*/
     double getIntervalMilliSec();
-
+	
+	//!
     void stopSemaphorePost();
-
+	
+	/**
+	* Check if the instance is waiting
+	* @return true if the instace is waiting
+	*/
     bool isWaiting();
-
+	
+	/**
+	* Get the remaining milliseconds for the timer to expire
+	* @return Remaining milliseconds for the timer to expire
+	*/
     double getRemainingTimeMilliSec();
 
 private:

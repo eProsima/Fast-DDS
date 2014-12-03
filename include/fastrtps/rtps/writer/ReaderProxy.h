@@ -44,6 +44,13 @@ class ReaderProxy
 {
 public:
 	virtual ~ReaderProxy();
+	
+	/**
+	*
+	* @param rdata
+	* @param times
+	* @param SW
+	*/
 	ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
 
 	/**
@@ -111,25 +118,40 @@ public:
 	 */
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
-
-
-
+	/**
+	 * 
+	 * @param sn
+	 * @return
+	 */
 	bool max_acked_change(SequenceNumber_t* sn);
 
 
 	//!Attributes of the Remote Reader
 	RemoteReaderAttributes m_att;
 
-
 	//!Pointer to the associated StatefulWriter.
 	StatefulWriter* mp_SFW;
 
 	//!Vector of the changes and its state.
 	std::vector<ChangeForReader_t> m_changesForReader;
+	
+	//!Tells whether the requested changes list is empty
 	bool m_isRequestedChangesEmpty;
 
+	/**
+	 * 
+	 * @param Changes
+	 * @param status
+	 * @return
+	 */
 	bool changesList(std::vector<ChangeForReader_t*>* Changes,ChangeForReaderStatus_t status);
 
+	/**
+	 * 
+	 * @param Changes
+	 * @param changeForReader
+	 * @return
+	 */
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
 
 
@@ -137,13 +159,19 @@ public:
 	NackResponseDelay* mp_nackResponse;
 	//!Timed Event to manage the delay to mark a change as UNACKED after sending it.
 	NackSupressionDuration* mp_nackSupression;
-
+	//!Last ack/nack count
 	uint32_t m_lastAcknackCount;
 
 
 	//TODOG FILTER
+	/**
+	 * 
+	 * @param change
+	 * @return
+	 */
 	bool rtps_is_relevant(CacheChange_t* change);
 
+	//!Mutex
 	boost::recursive_mutex* mp_mutex;
 
 };

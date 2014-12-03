@@ -22,10 +22,17 @@ namespace rtps {
 
 class RTPSWriter;
 
+/**
+ * Class WriterHistory, container of the different CacheChanges of a writer
+ * @ingroup COMMONMODULE
+ */
 class WriterHistory : public History
 {
 	friend class RTPSWriter;
 public:
+	/**
+	* @param att
+	*/
 	RTPS_DllAPI WriterHistory(const HistoryAttributes&  att);
 	RTPS_DllAPI virtual ~WriterHistory();
 

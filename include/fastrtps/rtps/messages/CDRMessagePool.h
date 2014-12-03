@@ -21,13 +21,28 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-
+/**
+*
+*/
 class CDRMessagePool {
 public:
+	/**
+	* @param
+	*/
 	CDRMessagePool(uint32_t defaultGroupSize);
 	virtual ~CDRMessagePool();
+	
+	//!
 	CDRMessage_t& reserve_CDRMsg();
+	
+	/**
+	* @param payload
+	*/
 	CDRMessage_t& reserve_CDRMsg(uint16_t payload);
+	
+	/**
+	* @param obj
+	*/
 	void release_CDRMsg(CDRMessage_t& obj);
 protected:
 	std::vector<CDRMessage_t*> m_free_objects;

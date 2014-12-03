@@ -75,10 +75,20 @@ class ReaderListener;
 class RTPSParticipantImpl
 {
 public:
+	/**
+	* @param param
+	* @param guidP
+	* @param part
+	* @param plisten
+	*/
 	RTPSParticipantImpl(const RTPSParticipantAttributes &param,
 			const GuidPrefix_t& guidP,RTPSParticipant* part,RTPSParticipantListener* plisten= nullptr);
 	virtual ~RTPSParticipantImpl();
 
+	/**
+	* Get associated GUID
+	* @return Associated GUID
+	*/
 	inline const GUID_t& getGuid() const {return m_guid;};
 
 	//! Announce RTPSParticipantState (force the sending of a DPD message.)
@@ -95,11 +105,14 @@ public:
 	 * @return True if correct.
 	 */
 	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
-    //!Get the RTPSParticipant ID
+    /**
+	 * Get the RTPSParticipant ID
+	 * @return RTPSParticipant ID
+	 */
     inline uint32_t getRTPSParticipantID() const { return (uint32_t)m_att.participantID;};
-    //!Wait for the resource semaphore
-    void ResourceSemaphorePost();
     //!Post to the resource semaphore
+    void ResourceSemaphorePost();
+    //!Wait for the resource semaphore
     void ResourceSemaphoreWait();
     //!Get Pointer to the IO Service.
 	boost::asio::io_service* getIOService();
@@ -108,8 +121,16 @@ public:
     //!Get Send Mutex
     boost::recursive_mutex* getSendMutex();
 
+	/**
+	* Get the participant listener
+	* @return participant listener
+	*/
     inline RTPSParticipantListener* getListener(){return mp_participantListener;}
 
+	/**
+	* Get the participant
+	* @return participant
+	*/
     inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
 private:
 	//!Attributes of the RTPSParticipant
@@ -173,36 +194,98 @@ public:
 	 * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
 	 * @param param WriterAttributes to define the Writer.
 	 * @param entityId EntityId assigned to the Writer.
-	 *  * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+	 * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
 	 * @return True if the Writer was correctly created.
 	 */
 	bool createWriter(RTPSWriter** Writer, WriterAttributes& param,WriterHistory* hist,WriterListener* listen,
 			const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
 
+	/**
+	 * Create a Reader in this RTPSParticipant.
+	 * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
+	 * @param param ReaderAttributes to define the Reader.
+	 * @param entityId EntityId assigned to the Reader.
+	 * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+	 * @return True if the Reader was correctly created.
+	 */
 	bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
 				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
 
-
+	/**
+	* 
+	* @param Writer
+	* @param topicAtt
+	* @param wqos
+	* @return 
+	*/
 	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
 
-	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
+	/**
+	* 
+	* @param Reader
+	* @param topicAtt
+	* @param rqos
+	* @return 
+	*/
+	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
 
+	/**
+	* Update local writer QoS
+	* @param Writer Writer to update
+	* @param wqos New QoS for the writer
+	* @return True on success
+	*/
 	bool updateLocalWriter(RTPSWriter* Writer,WriterQos& wqos);
 
+	/**
+	* Update local reader QoS
+	* @param Reader Reader to update
+	* @param rqos New QoS for the reader
+	* @return True on success
+	*/
 	bool updateLocalReader(RTPSReader* Reader, ReaderQos& rqos);
 
+	/**
+	* Get the participant id
+	* @return Participant id
+	*/
 	inline uint32_t getParticipantID() {return (uint32_t)this->m_att.participantID;};
 
+	/**
+	* Get the participant attributes
+	* @return Participant attributes
+	*/
 	inline RTPSParticipantAttributes& getAttributes() {return m_att;};
 
+	/**
+	* Delete a user endpoint
+	* @param Endpoint to delete
+	* @return True on success
+	*/
 	bool deleteUserEndpoint(Endpoint*);
 
+	/**
+	* Get the begin of the user reader list
+	* @return Iterator pointing to the begin of the user reader list
+	*/
 	std::vector<RTPSReader*>::iterator userReadersListBegin(){return m_userReaderList.begin();};
 
+	/**
+	* Get the end of the user reader list
+	* @return Iterator pointing to the end of the user reader list
+	*/
 	std::vector<RTPSReader*>::iterator userReadersListEnd(){return m_userReaderList.end();};
 
+	/**
+	* Get the begin of the user writer list
+	* @return Iterator pointing to the begin of the user writer list
+	*/
 	std::vector<RTPSWriter*>::iterator userWritersListBegin(){return m_userWriterList.begin();};
 
+	/**
+	* Get the end of the user writer list
+	* @return Iterator pointing to the end of the user writer list
+	*/
 	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
 
 	//
