@@ -23,6 +23,7 @@
 
 #include "fastrtps/rtps/history/WriterHistory.h"
 
+
 TestWriter::TestWriter():
 mp_participant(nullptr),
 mp_writer(nullptr),
@@ -73,8 +74,13 @@ void TestWriter::run()
 	for(int i = 0;i<10;++i )
 	{
 		CacheChange_t * ch = mp_writer->new_change(ALIVE);
+#if defined(_WIN32)
 		ch->serializedPayload.length =
-				sprintf((char*)ch->serializedPayload.data,"My example string %d",i);
+			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
+#else
+		ch->serializedPayload.length =
+			sprintf((char*)ch->serializedPayload.data,"My example string %d",i);
+#endif
 		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
 		mp_history->add_change(ch);
 	}
