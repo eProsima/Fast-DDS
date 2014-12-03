@@ -33,6 +33,9 @@ struct SubmessageHeader_t;
  */
 class MessageReceiver {
 public:
+	/**
+	* @param rec_buffer_size
+	*/
 	MessageReceiver(uint32_t rec_buffer_size);
 	virtual ~MessageReceiver();
 	//!Reset the MessageReceiver to process a new message.
@@ -47,8 +50,9 @@ public:
 
 	//!Pointer to the Listen Resource that contains this MessageReceiver.
 	ListenResource* mp_threadListen;
-
+	//!Received message
 	CDRMessage_t m_rec_msg;
+	//!PArameter list
 	ParameterList_t m_ParamList;
 
 

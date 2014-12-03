@@ -23,12 +23,27 @@ namespace rtps{
 class RTPSReader;
 struct CacheChange_t;
 
+/**
+*
+*/
 class RTPS_DllAPI ReaderListener
 {
 public:
 	ReaderListener(){};
 	virtual ~ReaderListener(){};
+	
+	/**
+	* This method is invoked when a new reader matches
+	* @param reader Matching reader
+	* @param info Matching information of the reader
+	*/
 	virtual void onReaderMatched(RTPSReader* reader,MatchingInfo info){};
+	
+	/**
+	*
+	* @param reader
+	* @param change
+	*/
 	virtual void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change){};
 };
 

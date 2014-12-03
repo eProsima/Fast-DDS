@@ -48,7 +48,8 @@ public:
 	HistoryAttributes m_att;
 	/**
 	 * Reserve a CacheChange_t from the CacheChange pool.
-	 * @return Pointer to the CacheChange_t.
+	 * @param[out] change Pointer to pointer to the CacheChange_t to reserve
+	 * @return True is reserved
 	 */
 	RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change){ return m_changePool.reserve_Cache(change); }
 	/**
@@ -57,7 +58,10 @@ public:
 	 */
 	RTPS_DllAPI inline void release_Cache(CacheChange_t* ch)	{ return m_changePool.release_Cache(ch); }
 
-	//!Returns true if the History is full.
+	/**
+	* Check if the history is full
+	* @return true if the History is full.
+	*/
 	RTPS_DllAPI bool isFull()	{ return m_isHistoryFull; }
 	/**
 	 * Get the History size.
@@ -116,9 +120,15 @@ public:
 	 * @return True if correct.
 	 */
 	RTPS_DllAPI bool get_max_change(CacheChange_t** max_change);
-
+	/**
+	 * Get the maximum serialized payload size
+	 * @return Maximum serialized payload size
+	 */
 	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getPayloadSize(); }
-
+	/**
+	 * Get the mutex
+	 * @return Mutex
+	 */
 	RTPS_DllAPI inline boost::recursive_mutex* getMutex() {return mp_mutex;};
 
 protected:

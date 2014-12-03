@@ -63,14 +63,34 @@ public:
 	 */
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 
-	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
+	/**
+	 * Check if the reader accepts messages from a writer with a specific GUID_t.
+	 *
+	 * @param entityGUID GUID to check
+	 * @param wp Writer to check
+	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
+	 */
 	bool acceptMsgFrom(GUID_t& entityGUID,WriterProxy** wp = nullptr);
-	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	
+	/**
+	* Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	* @param 
+	* @param prox
+	* @return
+	*/
 	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
-	//!
+	
+	/**
+	* @param a_change
+	* @param prox
+	* @return
+	*/
 	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
 
-
+	/**
+	* Get the RTPS participant
+	* @return Associated RTPS participant
+	*/
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
 	/**
@@ -79,6 +99,7 @@ public:
 	 * @return True if read.
 	 */
 	bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
+	
 	/**
 	 * Take the next CacheChange_t from the history;
 	 * @param change Pointer to pointer of CacheChange_t
@@ -103,15 +124,30 @@ public:
 //	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
 //	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=NULL);
 //
+	/**
+	*
+	* @param
+	* @return
+	*/
 	bool updateTimes(ReaderTimes& times);
 //
 //	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
 
+	/**
+	*
+	* @return
+	*/
 	inline ReaderTimes& getTimes(){return m_times;};
 
+	/**
+	* Get the number of matched writers
+	* @return Number of matched writers
+	*/
 	inline size_t getMatchedWritersSize() const {return matched_writers.size();};
 
 private:
+
+	//!
 	ReaderTimes m_times;
 	//! Vector containing pointers to the matched writers.
 	std::vector<WriterProxy*> matched_writers;

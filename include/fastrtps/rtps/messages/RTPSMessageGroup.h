@@ -48,6 +48,16 @@ class RTPSWriter;
  */
 class RTPSMessageGroup {
 public:
+
+/**
+ * @param msg_group
+ * @param W
+ * @param changesSeqNum
+ * @param readerId
+ * @param unicast
+ * @param multicast
+ * @return 
+ */
 static bool send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 						RTPSWriter* W,
 						std::vector<SequenceNumber_t>* changesSeqNum,
@@ -56,21 +66,55 @@ static bool send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 						LocatorList_t* multicast);
 
 
-
+/**
+ * @param changesSeqNum
+ * @param Sequences
+ */
 static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
 		std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences);
 
+/**
+ * @param msg_group
+ * @param W
+ * @param changes
+ * @param unicast
+ * @param multicast
+ * @param expectsInlineQos
+ * @param ReaderId
+ * @return 
+ */
 static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
-		 LocatorList_t& unicast, LocatorList_t& multicast,
-		bool expectsInlineQos,const EntityId_t& ReaderId);
+		LocatorList_t& unicast,
+		LocatorList_t& multicast,
+		bool expectsInlineQos,
+		const EntityId_t& ReaderId);
 
+/**
+ * @param msg_group
+ * @param W
+ * @param changes
+ * @param loc
+ * @param expectsInlineQos
+ * @param ReaderId
+ * @return 
+ */
 static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
-		bool expectsInlineQos,const EntityId_t& ReaderId);
+		std::vector<CacheChange_t*>* changes,
+		const Locator_t& loc,
+		bool expectsInlineQos,
+		const EntityId_t& ReaderId);
 
+/**
+ * @param W
+ * @param submsg
+ * @param expectsInlineQos
+ * @param change
+ * @param ReaderId
+ * @return 
+ */
 static void prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId);
 
 

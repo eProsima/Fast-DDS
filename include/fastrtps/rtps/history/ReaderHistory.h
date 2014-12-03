@@ -36,12 +36,23 @@ struct FirstLastSeqNum
 class WriterProxy;
 class RTPSReader;
 
+/**
+ * Class ReaderHistory, container of the different CacheChanges of a reader
+ * @ingroup COMMONMODULE
+ */
 class ReaderHistory : public History {
 	friend class RTPSReader;
 public:
+	/**
+	* @param att
+	*/
 	RTPS_DllAPI ReaderHistory(const HistoryAttributes& att);
 	RTPS_DllAPI virtual ~ReaderHistory();
 
+	/**
+	* @param change
+	* @param prox
+	*/
 	RTPS_DllAPI virtual bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
 
 	/**
@@ -52,6 +63,11 @@ public:
 	 */
 	RTPS_DllAPI bool add_change(CacheChange_t* a_change, WriterProxy*prox = nullptr);
 
+	/**
+	 * Remove a CacheChange_t from the ReaderHistory.
+	 * @param a_change Pointer to the CacheChange to remove.
+	 * @return True if removed.
+	 */
 	RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
 
 	/**
@@ -63,8 +79,9 @@ public:
 	 */
 	RTPS_DllAPI void updateMaxMinSeqNum();
 
+	//!Post to the semaphore
 	RTPS_DllAPI void postSemaphore();
-
+	//!Wait for the semaphore
 	RTPS_DllAPI void waitSemaphore();
 //	/**
 //	 * Method to know whether there are unread CacheChange_t.

@@ -33,6 +33,10 @@ struct CacheChange_t;
 class ReaderLocator {
 public:
 	ReaderLocator();
+	/**
+	* @param locator
+	* @param expectsInlineQos
+	*/
 	ReaderLocator(Locator_t& locator, bool expectsInlineQos);
 	virtual ~ReaderLocator();
 	//!Address of this ReaderLocator.
