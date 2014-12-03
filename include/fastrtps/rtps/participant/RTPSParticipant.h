@@ -40,6 +40,9 @@ class RTPS_DllAPI RTPSParticipant
 {
 	friend class RTPSParticipantImpl;
 public:
+	/**
+	* @param pimpl Implementation
+	*/
 	RTPSParticipant(RTPSParticipantImpl* pimpl);
 	virtual ~ RTPSParticipant();
 	//!Get the GUID_t of the RTPSParticipant.
@@ -70,7 +73,10 @@ public:
 	 * @return True if correctly added.
 	 */
 	bool newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId);
-	//!Get the Participant ID.
+	/**
+	 * Get the Participant ID.
+	 * @return Participant ID.
+	 */
 	uint32_t getRTPSParticipantID() const;
 	/**
 	 * Register a RTPSWriter in the builtin Protocols.
@@ -89,9 +95,18 @@ public:
 	 */
 	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
 	/**
-	 * Update the QOS
+	 * Update writer QOS
+	 * @param Writer to update
+	 * @param wqos New writer QoS
+	 * return true on success
 	 */
 	bool updateWriter(RTPSWriter* Writer,WriterQos& wqos);
+	/**
+	 * Update reader QOS
+	 * @param Reader to update
+	 * @param rqos New reader QoS
+	 * return true on success
+	 */
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
 
 private:

@@ -30,12 +30,24 @@ class StatefulWriter;
  */
 class PeriodicHeartbeat: public TimedEvent {
 public:
+	/**
+	*
+	* @param p_RP
+	* @param interval
+	*/
 	PeriodicHeartbeat(StatefulWriter* p_RP,double interval);
 	virtual ~PeriodicHeartbeat();
-
+	
+	/**
+	*
+	* @param code
+	* @param msg
+	*/
 	void event(EventCode code, const char* msg= nullptr);
 
+	//!
 	CDRMessage_t m_periodic_hb_msg;
+	//!
 	StatefulWriter* mp_SFW;
 };
 

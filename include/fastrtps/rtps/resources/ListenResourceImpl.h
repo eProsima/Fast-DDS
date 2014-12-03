@@ -37,27 +37,46 @@ class ListenResource;
 class ListenResourceImpl
 {
 public:
+	/**
+	* @param LR Listen resource
+	*/
 	ListenResourceImpl(ListenResource* LR);
+	
 	virtual ~ListenResourceImpl();
 	/**
 	 * Initialize the listening thread.
 	 * @param loc Locator to open the socket.
+	 * @param listenSockSize Maximum size of the socket
 	 * @param isMulti Boolean for when is multicast.
 	 * @param isFixed Boolean to indicate whether another locator can be use in case the default is already being used.
 	 * @return The locator that has been opennend.
 	 */
 	Locator_t init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,uint32_t listenSocketSize,bool isMulti,bool isFixed);
 
-	//!Returns true if the ListenResourceImpl is listenning to a specific locator.
+	/**
+	* Check if the instance is listening to a locator
+	* @param loc Locator to check
+	* @return true is the instance is listening to the given locator
+	*/
 	bool isListeningTo(const Locator_t& loc);
 //	//!Returns trus if the ListenResourceImpl has any associated endpoints.
 //	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
 //	//!Get the pointer to the RTPSParticipant
 //	RTPSParticipantImpl* getRTPSParticipantImpl(){return mp_RTPSParticipantImpl;};
+
+	//!
 	void putToListen();
 
+	/**
+	* Get the mutex
+	* @return Associated mutex
+	*/
 	inline boost::recursive_mutex* getMutex() {return &m_mutex;};
 
+	/**
+	* Get the listen locator
+	* @return Listen locator
+	*/
 	inline const Locator_t& getListenLocator() const {return m_listenLoc;}
 
 private:

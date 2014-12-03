@@ -45,6 +45,13 @@ class WriterProxyLiveliness;
 class WriterProxy {
 public:
 	virtual ~WriterProxy();
+	
+	/**
+	*
+	* @param watt
+	* @param heartbeatResponse
+	* @param SR
+	*/
 	WriterProxy(RemoteWriterAttributes& watt,Duration_t heartbeatResponse,StatefulReader* SR);
 
 	/**
@@ -53,12 +60,14 @@ public:
 	 * @return True if correct.
 	 */
 	bool available_changes_max(SequenceNumber_t* seqNum);
+	
 	/**
 	 * Get the minimum sequenceNumber available from this Writer.
 	 * @param[out] seqNum Pointer to the sequenceNumber
 	 * @return True if correct.
 	 */
 	bool available_changes_min(SequenceNumber_t* seqNum);
+	
 	/**
 	 * Update the missing changes up to the provided sequenceNumber.
 	 * All changes with status UNKNOWN with seqNum <= input seqNum are marked MISSING.
@@ -66,6 +75,7 @@ public:
 	 * @return True if correct.
 	 */
 	bool missing_changes_update(SequenceNumber_t& seqNum);
+	
 	/**
 	 * Update the lost changes up to the provided sequenceNumber.
 	 * All changes with status UNKNOWN or MISSING with seqNum < input seqNum are marked LOST.
@@ -73,21 +83,23 @@ public:
 	 * @return True if correct.
 	 */
 	bool lost_changes_update(SequenceNumber_t& seqNum);
+	
 	/**
 	 * The provided change is marked as RECEIVED.
 	 * @param[in] change Pointer to the change
 	 * @return True if correct.
 	 */
 	bool received_change_set(CacheChange_t* change);
+	
 	/**
-	 * The change of the input seqNum is marked as RECEIVED and NOT RELEVANT.
-	 * @param seqNum
-	 * @return
+	 * Set a change as RECEIVED and NOT RELEVANT.
+	 * @param seqNum Sequence number of the change
+	 * @return true on success
 	 */
 	bool irrelevant_change_set(SequenceNumber_t& seqNum);
 
 	/**
-	 * THe method returns a vector containing all missing changes.
+	 * The method returns a vector containing all missing changes.
 	 * @param missing Pointer to vector of pointers to ChangeFromWriter_t structure.
 	 * @return True if correct.
 	 */
@@ -103,17 +115,15 @@ public:
 	uint32_t m_acknackCount;
 	//! LAst HEartbeatcount.
 	uint32_t m_lastHeartbeatCount;
-
+	//!
 	bool m_isMissingChangesEmpty;
 	//!Timed event to postpone the heartbeatResponse.
 	HeartbeatResponseDelay* mp_heartbeatResponse;
 	//!TO check the liveliness Status periodically.
 	WriterProxyLiveliness* mp_writerProxyLiveliness;
-
-
+	//!
 	bool m_heartbeatFinalFlag;
-
-
+	//!
 	SequenceNumber_t m_lastRemovedSeqNum;
 
 //	/**
@@ -123,11 +133,30 @@ public:
 //	 */
 //	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
+	/**
+	* Get a specific change by its sequence number
+	*
+	* @param seq Sequence number of the change
+	* @param change Pointer to pointer to CacheChange_t, to store the change
+	* @return true on success
+	*/
 	bool get_change(SequenceNumber_t& seq,CacheChange_t** change);
 
+	/**
+	* Check if the writer is alive
+	* @return true if the writer is alive
+	*/
 	inline bool isAlive(){return m_isAlive;};
+	
+	/**
+	* Set the writer as alive
+	*/
 	inline void assertLiveliness(){m_isAlive=true;};
 
+	/**
+	* Get the mutex
+	* @return Associated mutex
+	*/
 	inline boost::recursive_mutex* getMutex(){return mp_mutex;};
 private:
 	/**

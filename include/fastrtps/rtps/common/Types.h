@@ -50,17 +50,20 @@ typedef enum ReliabilityKind_t{
 	BEST_EFFORT
 }ReliabilityKind_t;
 
+//!Durability kind
 typedef enum DurabilityKind_t
 {
 	VOLATILE,
 	TRANSIENT_LOCAL
 }DurabilityKind_t;
 
+//!Endpoint kind
 typedef enum EndpointKind_t{
 	READER,
 	WRITER
 }EndpointKind_t;
 
+//!Topic kind
 typedef enum TopicKind_t{
 	NO_KEY,
 	WITH_KEY

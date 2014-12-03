@@ -43,6 +43,7 @@ class ResourceSendImpl
 public:
 	ResourceSendImpl();
 	virtual ~ResourceSendImpl();
+	
 	/**
 	 * Send a CDR message syncrhonously. No waiting is required.
 	 * @param msg Pointer to the message.
@@ -51,14 +52,24 @@ public:
 	void sendSync(CDRMessage_t* msg,const Locator_t& loc);
 
 	/**
-	 * Initialize the sending socket.
-	 * @param loc Locator of hte address from where to start the sending socket.
-	 * @return True if correct
-	 */
+	* Initialize the sending socket. 
+	*
+	* @param pimpl
+	* @param loc Locator of the address from where to start the sending socket.
+	* @param sendsockBuffer
+	* @param useIP4 Booleand telling whether to use IPv4
+	* @param useIP6 Booleand telling whether to use IPv6
+	* @return true on success
+	*/
 	bool initSend(RTPSParticipantImpl*,const Locator_t& loc,uint32_t sendseockBuffer,bool useIP4, bool useIP6);
 
 	//!FOR TESTING ONLY!!!!
 	void loose_next(){m_send_next = false;};
+	
+	/**
+	* Get associated mutex
+	* @return Associated mutex
+	*/
 	boost::recursive_mutex* getMutex();
 private:
 	bool m_useIP4;

@@ -44,8 +44,13 @@ class TimedEvent;
 class TimedEventImpl {
 public:
 	~TimedEventImpl();
-	//! A io_service must be provided as well as the interval of the timedEvent.
+	
+	/**
+	* @param serv IO service
+	* @param milliseconds Interval of the timedEvent.
+	*/
 	TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::microseconds interval);
+	
 	//! Pure abstract virtual method used to perform the event.
 	void event(const boost::system::error_code& ec);
 
@@ -58,20 +63,45 @@ protected:
 	//!TimedEvent pointer
 	TimedEvent* mp_event;
 public:
+	//!Boolean that tells if the instance is waiting
 	bool m_isWaiting;
 	//!Method to restart the timer.
 	void restart_timer();
-	//! TO update the interval, the timer is not restarted and the new interval will onyl be used the next time you call restart_timer().
+	
+	/**
+	* Update event interval.
+	* When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
+	*
+	* @param inter New interval for the timedEvent
+	* @return true on success
+	*/
 	bool update_interval(const Duration_t& time);
+	
+	/**
+	* Update event interval.
+	* When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
+	*
+	* @param time_millisec New interval for the timedEvent
+	* @return true on success
+	*/
 	bool update_interval_millisec(double time_millisec);
+	
 	//!Stop the timer
 	void stop_timer();
 
+	/**
+	* Get interval in milliseconds
+	* @return Event interval in milliseconds
+	*/
 	double getIntervalMsec()
 	{
 		return (double)(m_interval_microsec.total_microseconds()/1000);
 	}
 
+	/**
+	* Get the remaining milliseconds for the timer to expire
+	* @return Remaining milliseconds for the timer to expire
+	*/
 	double getRemainingTimeMilliSec()
 	{
 		return (double)timer->expires_from_now().total_milliseconds();

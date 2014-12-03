@@ -31,10 +31,21 @@ class NackSupressionDuration : public TimedEvent
 {
 public:
 	virtual ~NackSupressionDuration();
+	/**
+	*
+	* @param p_RP
+	* @param intervalmillisec
+	*/
 	NackSupressionDuration(ReaderProxy* p_RP,double intervalmillisec);
 
+	/**
+	*
+	* @param code
+	* @param msg
+	*/
 	void event(EventCode code, const char* msg= nullptr);
 
+	//!Reader proxy
 	ReaderProxy* mp_RP;
 };
 
