@@ -91,6 +91,7 @@ public:
 	bool is_acked_by_all(CacheChange_t* a_change);
 	/**
 	 * Update the Attributes of the Writer.
+	 * @param att New attributes
 	 */
 	void updateAttributes(WriterAttributes& att);
 
@@ -102,18 +103,43 @@ public:
 	 */
 	bool matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP);
 
+	/** Get count of heartbeats
+	* @return count of heartbeats
+	*/
 	inline Count_t getHeartbeatCount() const {return this->m_heartbeatCount;};
-
+	
+	/** Get heartbeat reader entity id
+	* @return heartbeat reader entity id
+	*/
 	inline EntityId_t getHBReaderEntityId() {return this->m_HBReaderEntityId;};
 
+	/**
+	* Get the begin of the matched readers
+	* @return A vector iterator pointing to de begin of the matched readers list
+	*/
 	inline std::vector<ReaderProxy*>::iterator matchedReadersBegin(){return this->matched_readers.begin();};
 
+	/**
+	* Get the end of the matched readers
+	* @return A vector iterator pointing to de end of the matched readers list
+	*/
 	inline std::vector<ReaderProxy*>::iterator matchedReadersEnd(){return this->matched_readers.end();};
 
+	/**
+	* Get the RTPS participant
+	* @return RTPS participant
+	*/
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
+	/**
+	* Get the number of matched readers
+	* @return Number of the matched readers
+	*/
 	inline size_t getMatchedReadersSize() const {return matched_readers.size();};
 
+	/**
+	* @param times
+	*/
 	void updateTimes(WriterTimes& times);
 private:
 	//

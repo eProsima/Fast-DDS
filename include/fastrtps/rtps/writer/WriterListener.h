@@ -22,11 +22,19 @@ namespace rtps{
 
 class RTPSWriter;
 
+/**
+*
+*/
 class RTPS_DllAPI WriterListener
 {
 public:
 	WriterListener(){};
 	virtual ~WriterListener(){};
+	
+	/**
+	* @param writer
+	* @param info
+	*/
 	virtual void onWriterMatched(RTPSWriter* writer,MatchingInfo info){};
 };
 }

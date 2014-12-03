@@ -25,7 +25,9 @@ class StringMatching {
 public:
 	StringMatching();
 	virtual ~StringMatching();
-	//!Static method to match two strings.
+	/** Static method to match two strings.
+	* It checks the string specified by the input argument to see if it matches the pattern specified by the pattern argument.
+	*/
 	static bool matchString(const char* pattern,const char* input);
 	//FIXME: 	CONVERTIR EN INLINE
 };

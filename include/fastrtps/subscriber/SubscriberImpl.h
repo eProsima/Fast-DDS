@@ -44,6 +44,13 @@ class Subscriber;
 class SubscriberImpl {
 	friend class ParticipantImpl;
 public:
+
+	/**
+	* @param p
+	* @param ptype
+	* @param attr
+	* @param listen
+	*/
 	SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
 			SubscriberAttributes& attr,SubscriberListener* listen = nullptr);
 	virtual ~SubscriberImpl();
@@ -64,6 +71,7 @@ public:
 	bool takeNextData(void* data,SampleInfo_t* info);
 
 	///@}
+	
 	/**
 	 * Update the Attributes of the subscriber;
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;
@@ -71,16 +79,22 @@ public:
 	 */
 	bool updateAttributes(SubscriberAttributes& att);
 
-
-
-
+	/**
+	* Get associated GUID
+	* @return Associated GUID
+	*/
 	const GUID_t& getGuid();
 
 	/**
 	 * Get the Attributes of the Subscriber.
+	 * @return Attributes of the Subscriber.
 	 */
 	SubscriberAttributes getAttributes(){return m_att;}
 
+	/**
+	* Get topic data type
+	* @return Topic data type
+	*/
 	TopicDataType* getType() {return mp_type;};
 
 private:

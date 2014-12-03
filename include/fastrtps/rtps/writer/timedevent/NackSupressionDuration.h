@@ -39,9 +39,10 @@ public:
 	NackSupressionDuration(ReaderProxy* p_RP,double intervalmillisec);
 
 	/**
+	* Method invoked when the event occurs
 	*
-	* @param code
-	* @param msg
+	* @param code Code representing the status of the event
+	* @param msg Message associated to the event
 	*/
 	void event(EventCode code, const char* msg= nullptr);
 

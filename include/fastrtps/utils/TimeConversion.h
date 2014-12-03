@@ -22,26 +22,50 @@ namespace fastrtps{
 namespace rtps {
 
 namespace TimeConv{
+
+/**
+* Convert Time_t to seconds as a double
+*/ 
 inline double Time_t2SecondsDouble(const Time_t& t)
 {
 	return (double)t.seconds + (double)(t.fraction/pow(2.0,32));
 }
+
+/**
+* Convert Time_t to seconds as an int64
+*/ 
 inline int64_t Time_t2MicroSecondsInt64(const Time_t& t)
 {
 	return (int64_t)(t.fraction/pow(2.0,32)*pow(10.0,6))+t.seconds*(int64_t)pow(10.0,6);
 }
+
+/**
+* Convert Time_t to microseconds as a double
+*/ 
 inline double Time_t2MicroSecondsDouble(const Time_t& t)
 {
 	return ((double)t.fraction/pow(2.0,32)*pow(10.0,6))+(double)t.seconds*pow(10.0,6);
 }
+
+/**
+* Convert Time_t to milliseconds as an int64
+*/ 
 inline int64_t Time_t2MilliSecondsInt64(const Time_t& t)
 {
 	return (int64_t)(t.fraction/pow(2.0,32)*pow(10.0,3))+t.seconds*(int64_t)pow(10.0,3);
 }
+
+/**
+* Convert Time_t to milliseconds as a double
+*/ 
 inline double Time_t2MilliSecondsDouble(const Time_t& t)
 {
 	return ((double)t.fraction/pow(2.0,32)*pow(10.0,3))+(double)t.seconds*pow(10.0,3);
 }
+
+/**
+* Convert milliseconds to Time_t
+*/ 
 inline Time_t MilliSeconds2Time_t(double millisec)
 {
 	Time_t t;
@@ -49,6 +73,10 @@ inline Time_t MilliSeconds2Time_t(double millisec)
 	t.fraction = (uint32_t)((millisec-(double)t.seconds*pow(10.0,3))/pow(10.0,3)*pow(2.0,32));
 	return t;
 }
+
+/**
+* Convert microseconds to Time_t
+*/
 inline Time_t MicroSeconds2Time_t(double microsec)
 {
 	Time_t t;
@@ -56,6 +84,10 @@ inline Time_t MicroSeconds2Time_t(double microsec)
 	t.fraction = (uint32_t)((microsec-(double)t.seconds*pow(10.0,6))/pow(10.0,6)*pow(2.0,32));
 	return t;
 }
+
+/**
+* Convert seconds to Time_t
+*/
 inline Time_t Seconds2Time_t(double seconds)
 {
 	Time_t t;
@@ -64,6 +96,9 @@ inline Time_t Seconds2Time_t(double seconds)
 	return t;
 }
 
+/**
+* Get the absolute difference between two Time_t in milliseconds as double
+*/
 inline double Time_tAbsDiff2DoubleMillisec(const Time_t& t1,const Time_t& t2)
 {
 	double result = 0;
@@ -93,8 +128,6 @@ inline Time_t SecondsWithRandOffset2Time_t(double sec, double randoff)
 	sec = sec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
 	return Seconds2Time_t(sec);
 }
-
-
 
 };
 }
