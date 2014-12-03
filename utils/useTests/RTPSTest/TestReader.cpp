@@ -53,6 +53,7 @@ bool TestReader::init()
 	hatt.payloadMaxSize = 255;
 	mp_history = new ReaderHistory(hatt);
 
+	//CREATE READER
 	ReaderAttributes ratt;
 	Locator_t loc(22222);
 	ratt.endpoint.unicastLocatorList.push_back(loc);
