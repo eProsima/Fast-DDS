@@ -94,6 +94,9 @@ public:
 	RTPS_DllAPI virtual bool nextUntakenCache(CacheChange_t** change, WriterProxy** wp) = 0;
 
 	RTPS_DllAPI inline bool expectsInlineQos(){ return m_expectsInlineQos; };
+
+	RTPS_DllAPI inline ReaderHistory* getHistory() {return mp_history;};
+
 protected:
 	void setTrustedWriter(EntityId_t writer)
 	{

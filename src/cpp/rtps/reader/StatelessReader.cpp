@@ -141,12 +141,7 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
 	if(this->m_acceptMessagesFromUnkownWriters)
 	{
-		for(std::vector<RemoteWriterAttributes>::iterator it = this->m_matched_writers.begin();
-				it!=m_matched_writers.end();++it)
-		{
-			if((*it).guid == writerId)
-				return true;
-		}
+		return true;
 	}
 	else
 	{

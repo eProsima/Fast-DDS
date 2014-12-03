@@ -7,28 +7,25 @@
  *************************************************************************/
 
 /**
- * @file rtps_fwd.h
+ * @file TestWriter.h
  *
  */
 
-#ifndef RTPS_FWD_H_
-#define RTPS_FWD_H_
+#ifndef TESTWRITER_H_
+#define TESTWRITER_H_
 
-namespace eprosima
-{
-namespace fastrtps
-{
-namespace rtps
-{
-class RTPSWriter;
-class RTPSReader;
-class WriterHistory;
-class ReaderHistory;
-class RTPSParticipant;
-}
-}
-}
+#include "fastrtps/rtps/rtps_fwd.h"
+using namespace eprosima::fastrtps::rtps;
 
+class TestWriter {
+public:
+	TestWriter();
+	virtual ~TestWriter();
+	RTPSParticipant* mp_participant;
+	RTPSWriter* mp_writer;
+	WriterHistory* mp_history;
+	bool init();
+	void run();
+};
 
-
-#endif /* RTPS_FWD_H_ */
+#endif /* TESTWRITER_H_ */
