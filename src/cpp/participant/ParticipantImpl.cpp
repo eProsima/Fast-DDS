@@ -140,8 +140,8 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	watt.endpoint.topicKind = att.topic.topicKind;
 	watt.endpoint.unicastLocatorList = att.unicastLocatorList;
-	watt.endpoint.setEntityID(att.getEntityID());
-	watt.endpoint.setUserDefinedID(att.getUserDefinedID());
+	watt.endpoint.setEntityID((uint8_t)att.getEntityID());
+	watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
 	watt.times = att.times;
 
 	RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
@@ -208,8 +208,8 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	ratt.endpoint.topicKind = att.topic.topicKind;
 	ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
-	ratt.endpoint.setEntityID(att.getEntityID());
-	ratt.endpoint.setUserDefinedID(att.getUserDefinedID());
+	ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
+	ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
 	ratt.times = att.times;
 
 	RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
