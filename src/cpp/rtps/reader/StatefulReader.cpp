@@ -132,6 +132,7 @@ bool StatefulReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 				return true;
 			}
 		}
+		return true;
 	}
 	else
 	{

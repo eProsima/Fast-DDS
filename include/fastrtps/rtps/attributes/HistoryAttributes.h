@@ -26,7 +26,7 @@ class RTPS_DllAPI HistoryAttributes
 public:
 	HistoryAttributes():
 		payloadMaxSize(0),
-		initialReservedCaches(0),
+		initialReservedCaches(100),
 		maximumReservedCaches(-1)
 	{};
 	/** Constructor

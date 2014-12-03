@@ -60,7 +60,7 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	defUniLoc.kind = LOCATOR_KIND_UDPv4;
 	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
 	defUniLoc.port = LOCATOR_PORT_INVALID;
-	mp_threadListen = NULL;
+	mp_threadListen = nullptr;
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 
 }
@@ -350,7 +350,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			break;
 		}
 	}
-	if(firstReader == NULL) //Reader not found
+	if(firstReader == nullptr) //Reader not found
 	{
 		logWarning(RTPS_MSG_IN,"No Reader in this Locator ("<<mp_threadListen->getListenLocator()<< ")"
 				" accepts this message (directed to: " <<readerID << ")",C_BLUE);
@@ -458,7 +458,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
 		//boost::lock_guard<boost::recursive_mutex> guard(*(Endpoint*)(*it));
-		WriterProxy* pWP = NULL;
+		WriterProxy* pWP = nullptr;
 		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
 			logInfo(RTPS_MSG_IN,"MessageReceiver: Trying to add change "

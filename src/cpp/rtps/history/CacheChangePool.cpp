@@ -77,7 +77,7 @@ bool CacheChangePool::allocateGroup(uint16_t group_size)
 	bool added = false;
 	for(uint16_t i = 0;i<group_size;i++)
 	{
-		if(m_max_pool_size > 0 && m_pool_size < m_max_pool_size)
+		if(m_max_pool_size < 0 || m_pool_size < m_max_pool_size)
 		{
 			CacheChange_t* ch = new CacheChange_t(m_payload_size);
 			m_allCaches.push_back(ch);
