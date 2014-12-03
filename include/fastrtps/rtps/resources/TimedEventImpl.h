@@ -51,7 +51,12 @@ public:
 	*/
 	TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::microseconds interval);
 	
-	//! Pure abstract virtual method used to perform the event.
+	/**
+	* Method invoked when the event occurs. Abstract method.
+	*
+	* @param code Code representing the status of the event
+	* @param msg Message associated to the event
+	*/
 	void event(const boost::system::error_code& ec);
 
 

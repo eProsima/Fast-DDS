@@ -48,12 +48,23 @@ protected:
 	Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
 	virtual ~Endpoint();
 public:
+
+	/**
+	* Get associated GUID
+	* @return Associated GUID
+	*/
 	RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; };
 
+	/**
+	* Get mutex
+	* @return Associated Mutex
+	*/
 	RTPS_DllAPI inline boost::recursive_mutex* getMutex() const { return mp_mutex; }
 
-
-
+	/**
+	* Get associated attributes
+	* @return Endpoint attributes
+	*/
 	RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
 
 protected:

@@ -48,6 +48,7 @@ public:
 	 * @return True if correct.
 	 */
 	RTPS_DllAPI virtual bool serialize(void*data, SerializedPayload_t* payload) = 0;
+	
 	/**
 	 * Deserialize method, it should be implemented by the user, since it is abstract.
 	 * @param[in] payload Pointer to the payload
@@ -55,6 +56,7 @@ public:
 	 * @return True if correct.
 	 */
 	RTPS_DllAPI virtual bool deserialize(SerializedPayload_t* payload, void * data) = 0;
+	
 	/**
 	 * Get the key associated with the data.
 	 * @param[in] data Pointer to the data.
@@ -63,12 +65,23 @@ public:
 	 */
 	RTPS_DllAPI virtual bool getKey(void*data, InstanceHandle_t* ihandle){ return false; }
 
+	/**
+	* Set topic data type name
+	* @param nam Topic data type name
+	*/
 	RTPS_DllAPI inline void setName(const char* nam) { m_topicDataTypeName = std::string(nam); }
+	
+	/**
+	* Get topic data type name
+	* @return Topic data type name
+	*/
 	RTPS_DllAPI inline const char* getName(){ return m_topicDataTypeName.c_str(); }
+	
 	//! Maximum Type size in bytes. (If the type includes a string the user MUST ensure that the maximum
 	//! size of the string respect the maximum defined size.).
 	uint32_t m_typeSize;
-	//! Indicates wheter the method to obtain the key has been implemented.
+	
+	//! Indicates whether the method to obtain the key has been implemented.
 	bool m_isGetKeyDefined;
 private:
 	//! Data Type Name.

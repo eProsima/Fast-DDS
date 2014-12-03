@@ -52,6 +52,7 @@ public:
 	/**
 	* @param change
 	* @param prox
+	* @return
 	*/
 	RTPS_DllAPI virtual bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
 

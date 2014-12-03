@@ -70,16 +70,34 @@ public:
 
 	/**
 	 * Update the Attributes of the Writer.
+	 * @param att New attributes
 	 */
 	void updateAttributes(WriterAttributes& att){/*TODOG TO FINISH METHOD*/		};
 
+	/**
+	* Add a remote locator
+	*
+	* @param rdata 
+	* @param loc Locator to add
+	* @return true on success
+	*/
 	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 
+	/**
+	* Remove a remote locator from the writer
+	*
+	* @param loc Locator to remove
+	* @return true on success
+	*/
 	bool remove_locator(Locator_t& loc);
 
 	//!Reset the unsent changes.
 	void unsent_changes_reset();
 
+	/**
+	* Get the number of matched readers
+	* @param Number of matched readers
+	*/
 	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 private:
 

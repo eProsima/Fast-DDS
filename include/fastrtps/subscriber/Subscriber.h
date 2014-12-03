@@ -37,8 +37,16 @@ class SubscriberAttributes;
 class RTPS_DllAPI Subscriber
 {
 public:
+	/**
+	* @param pimpl Actual implementation of the subscriber
+	*/
 	Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
 	virtual ~Subscriber(){};
+	
+	/**
+	* Get the associated GUID
+	* @return Associated GUID
+	*/
 	const GUID_t& getGuid();
 
 	/**
@@ -62,8 +70,10 @@ public:
 	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
 	 */
 	bool updateAttributes(SubscriberAttributes& att);
+	
 	/**
 	 * Get the Attributes of the Subscriber.
+	 * @return Attributes of the subscriber
 	 */
 	SubscriberAttributes getAttributes();
 
