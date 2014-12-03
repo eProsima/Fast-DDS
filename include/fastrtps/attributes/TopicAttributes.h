@@ -31,12 +31,22 @@ namespace fastrtps{
  */
 class TopicAttributes {
 public:
+	/**
+	 * Default constructor
+	 */
 	TopicAttributes()
 {
 		topicKind = NO_KEY;
 		topicName = "UNDEF";
 		topicDataType = "UNDEF";
 }
+	//!Constructor, you need to provide the topic name and the topic data type.
+	TopicAttributes(const char* name, const char* dataType, TopicKind_t tKind= NO_KEY)
+	{
+		topicKind = tKind;
+		topicName = std::string(name);
+		topicDataType = std::string(dataType);
+	}
 	virtual ~TopicAttributes() {
 	}
 	
