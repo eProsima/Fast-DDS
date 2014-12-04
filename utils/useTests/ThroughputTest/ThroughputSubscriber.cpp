@@ -224,7 +224,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
 	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Sparam.topic.historyQos.depth = 1;
+	Sparam.topic.historyQos.depth = 1000;
 	Sparam.topic.resourceLimitsQos.max_samples = 10000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Locator_t loc;

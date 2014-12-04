@@ -38,7 +38,10 @@ CacheChangePool::CacheChangePool(uint16_t pool_size,uint32_t payload_size,int32_
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
 	m_payload_size = payload_size;
 	m_pool_size = 0;
-	m_max_pool_size = max_pool_size;
+	if(pool_size > max_pool_size && max_pool_size > 0)
+		m_max_pool_size = pool_size;
+	else
+		m_max_pool_size = max_pool_size;
 	allocateGroup(pool_size);
 }
 
