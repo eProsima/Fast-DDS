@@ -26,6 +26,8 @@
 
 #include "fastrtps/Domain.h"
 
+#include <map>
+
 uint32_t g_dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
 //uint32_t dataspub[] = {504,1016,2040,4088,8184};
 std::vector<uint32_t> g_data_size_pub (g_dataspub, g_dataspub + sizeof(g_dataspub) / sizeof(uint32_t) );
@@ -33,6 +35,10 @@ std::vector<uint32_t> g_data_size_pub (g_dataspub, g_dataspub + sizeof(g_dataspu
 uint32_t g_demandspub[] = {500,750,850,1000,1250,1400,1500,1600,1750,2000};
 vector<uint32_t> g_demand_pub (g_demandspub, g_demandspub + sizeof(g_demandspub) / sizeof(uint32_t) );
 
+std::map<uint32_t,uint32_t> g_datademand = {
+		{8,100}, {8,200}, {8,300}, {8,500},
+		{24,100}, {24,200},{24,300},{24,500},
+};
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::DataPubListener::~DataPubListener(){};
@@ -85,10 +91,10 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pu
 ThroughputPublisher::~ThroughputPublisher(){Domain::stopAll();}
 
 ThroughputPublisher::ThroughputPublisher():
-																				sema(0),
+																										sema(0),
 #pragma warning(disable:4355)
-																				m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-																				ready(true)
+																										m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+																										ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
@@ -157,42 +163,36 @@ ThroughputPublisher::ThroughputPublisher():
 void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 {
 	if(!ready)
+	{
+
 		return;
+	}
+	if(demand == 0 || msg_size == 0)
+	{
+		if(!this->loadDemandsPayload())
+			return;
+	}
+	else
+	{
+		m_demand_payload[msg_size-8].push_back(demand);
+	}
 	cout << "Waiting for discovery"<<endl;
 	sema.wait();
 	sema.wait();
 	sema.wait();
 	cout << "Discovery complete"<<endl;
-	std::vector<uint32_t> data_size_pub;
-	std::vector<uint32_t> demand_pub;
-	if(demand == 0)
-	{
-		demand_pub = g_demand_pub;
-	}
-	else
-	{
-		demand_pub.push_back(demand);
-	}
-	if(msg_size == 0)
-	{
-		data_size_pub = g_data_size_pub;
-	}
-	else
-	{
-		data_size_pub.push_back(msg_size);
-	}
 
 	ThroughputCommandType command;
 	SampleInfo_t info;
 	printResultTitle();
-	for(std::vector<uint32_t>::iterator sit=data_size_pub.begin();sit!=data_size_pub.end();++sit)
+	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
 	{
-		for(std::vector<uint32_t>::iterator dit=demand_pub.begin();dit!=demand_pub.end();++dit)
+		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
 		{
 			eClock::my_sleep(100);
 			//cout << "Starting test with demand: " << *dit << endl;
 			command.m_command = READY_TO_START;
-			command.m_size = *sit;
+			command.m_size = sit->first;
 			command.m_demand = *dit;
 			//cout << "SEND COMMAND "<< command.m_command << endl;
 			mp_commandpub->write((void*)&command);
@@ -203,7 +203,7 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 			//cout << "Received command of type: "<< command << endl;
 			if(command.m_command == BEGIN)
 			{
-				if(!test(test_time,*dit,*sit))
+				if(!test(test_time,*dit,sit->first))
 				{
 					command.m_command = ALL_STOPS;
 					//	cout << "SEND COMMAND "<< command.m_command << endl;
@@ -283,5 +283,78 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 	return false;
 
 }
+
+
+bool ThroughputPublisher::loadDemandsPayload()
+{
+	std::ifstream fi("payloads_demands.csv");
+	cout << "Reading File: payloads_demands.csv" << endl;
+	std::string DELIM = ";";
+	if(!fi.is_open())
+	{
+		std::cout << "Could not open file: "<<"payload_demands.csv" << " , closing." <<std::endl;
+		return false;
+	}
+
+	std::string line;
+	size_t start;
+	size_t end;
+	bool first = true;
+	bool more = true;
+	while(std::getline(fi,line))
+	{
+	//	cout << "READING LINE: "<< line<<endl;
+		start = 0;
+		end = line.find(DELIM);
+		first = true;
+		uint32_t payload;
+		uint32_t demand;
+		more = true;
+		while(more)
+		{
+		//	cout << "SUBSTR: "<< line.substr(start,end-start) << endl;
+			std::istringstream iss(line.substr(start,end-start));
+			if(first)
+			{
+				iss >> payload;
+				if(payload<8)
+				{
+					cout << "Minimum payload is 16 bytes"<<endl;
+					return false;
+				}
+				payload -=8;
+				first = false;
+			}
+			else
+			{
+				iss >> demand;
+				m_demand_payload[payload].push_back(demand);
+			}
+			start = end+DELIM.length();
+			end = line.find(DELIM,start);
+			if(end == std::string::npos)
+			{
+				more = false;
+				std::istringstream iss(line.substr(start,end-start));
+				if(iss >> demand)
+					m_demand_payload[payload].push_back(demand);
+			}
+		}
+	}
+	fi.close();
+	cout << "Performing test with this payloads/demands:"<<endl;
+	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
+	{
+		cout << "Payload: "<< sit->first+8 << ": ";
+		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
+		{
+			cout << *dit << ", ";
+		}
+		cout << endl;
+	}
+
+	return true;
+}
+
 
 

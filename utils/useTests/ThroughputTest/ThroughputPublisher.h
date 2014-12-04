@@ -76,6 +76,9 @@ public:
 	std::vector<TroughputResults> m_timeStats;
 	LatencyDataType latency_t;
 		ThroughputCommandDataType throuputcommand_t;
+
+	bool loadDemandsPayload();
+	std::map<uint32_t,std::vector<uint32_t>> m_demand_payload;
 };
 
 
