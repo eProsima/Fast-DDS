@@ -47,10 +47,10 @@ public:
 	virtual ~WriterProxy();
 	
 	/**
-	*
-	* @param watt
-	* @param heartbeatResponse
-	* @param SR
+	* Constructor.
+	* @param watt RemoteWriterAttributes.
+	* @param heartbeatResponse Time the Reader should wait to respond to a heartbeat.
+	* @param SR Pointer to the StatefulReader.
 	*/
 	WriterProxy(RemoteWriterAttributes& watt,Duration_t heartbeatResponse,StatefulReader* SR);
 
@@ -115,23 +115,16 @@ public:
 	uint32_t m_acknackCount;
 	//! LAst HEartbeatcount.
 	uint32_t m_lastHeartbeatCount;
-	//!
+	//!Indicates if they are missing changes.
 	bool m_isMissingChangesEmpty;
 	//!Timed event to postpone the heartbeatResponse.
 	HeartbeatResponseDelay* mp_heartbeatResponse;
 	//!TO check the liveliness Status periodically.
 	WriterProxyLiveliness* mp_writerProxyLiveliness;
-	//!
+	//!Indicates if the heartbeat has the final flag set.
 	bool m_heartbeatFinalFlag;
-	//!
+	//!Last Removed SequenceNumber.
 	SequenceNumber_t m_lastRemovedSeqNum;
-
-//	/**
-//	 * Remove a ChangeFromWriter based on the SequenceNumber of its associated change.
-//	 * @param seq SequenceNumber
-//	 * @return True if correct.
-//	 */
-//	bool removeChangesFromWriterUpTo(SequenceNumber_t& seq);
 
 	/**
 	* Get a specific change by its sequence number

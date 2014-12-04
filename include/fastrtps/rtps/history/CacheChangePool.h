@@ -37,9 +37,10 @@ class CacheChangePool {
 public:
 	virtual ~CacheChangePool();
 	/**
-	* @param pool_size
-	* @param payload_size
-	* @param max_pool_size
+	 * Constructor.
+	* @param pool_size The initial pool size
+	* @param payload_size The payload size associated with the pool.
+	* @param max_pool_size Maximum payload size. If set to -1 the pool will keep reserving until something breaks.
 	*/
 	CacheChangePool(uint16_t pool_size,uint32_t payload_size,int32_t max_pool_size);
 	//!Reserve a Cache from the pool.
@@ -50,7 +51,7 @@ public:
 	size_t get_allCachesSize(){return m_allCaches.size();}
 	//!Get the number of frre caches.
 	size_t get_freeCachesSize(){return m_freeCaches.size();}
-
+	//!Get the payload size associated with the Pool.
 	inline uint32_t getPayloadSize(){return m_payload_size;};
 private:
 	uint32_t m_payload_size;

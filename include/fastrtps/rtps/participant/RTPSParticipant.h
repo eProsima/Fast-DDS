@@ -39,12 +39,15 @@ class RTPSReader;
 class RTPS_DllAPI RTPSParticipant
 {
 	friend class RTPSParticipantImpl;
-public:
+	friend class RTPSDomain;
+private:
 	/**
-	* @param pimpl Implementation
+	 * Constructor. Requires a pointer to the implementation.
+	* @param pimpl Implementation.
 	*/
 	RTPSParticipant(RTPSParticipantImpl* pimpl);
 	virtual ~ RTPSParticipant();
+public:
 	//!Get the GUID_t of the RTPSParticipant.
 	const GUID_t& getGuid() const ;
 	//!Force the announcement of the RTPSParticipant state.
@@ -98,18 +101,19 @@ public:
 	 * Update writer QOS
 	 * @param Writer to update
 	 * @param wqos New writer QoS
-	 * return true on success
+	 * @return true on success
 	 */
 	bool updateWriter(RTPSWriter* Writer,WriterQos& wqos);
 	/**
 	 * Update reader QOS
 	 * @param Reader to update
 	 * @param rqos New reader QoS
-	 * return true on success
+	 * @return true on success
 	 */
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
 
 private:
+	//!Pointer to the implementation.
 	RTPSParticipantImpl* mp_impl;
 };
 

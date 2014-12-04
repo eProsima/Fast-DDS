@@ -69,47 +69,49 @@ public:
 	 * Check if the reader accepts messages from a writer with a specific GUID_t.
 	 *
 	 * @param entityGUID GUID to check
-	 * @param wp Writer to check
+	 * @param wp Pointer to pointer of the WriterProxy. Since we already look for it wee return the pointer
+	 * so the execution can run faster.
 	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
 	 */
 	RTPS_DllAPI virtual bool acceptMsgFrom(GUID_t& entityGUID, WriterProxy** wp = nullptr) = 0;
 	
 	/**
-	* @param a_change
-	* @param prox
-	* @return
+	* This method is called when a new change is received. This method calls the received_change of the History
+	* and depending on the implementation performs different actions.
+	* @param a_change Pointer of the change to add.
+	* @param prox Pointer to the WriterProxy that adds the Change.
+	* @return True if added.
 	*/
 	RTPS_DllAPI virtual bool change_received(CacheChange_t* a_change, WriterProxy* prox = nullptr) = 0;
 	
 	/**
 	* Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-	* @param 
-	* @param prox
-	* @return
+	* @param change Pointer to the CacheChange_t.
+	* @param prox Pointer to the WriterProxy.
+	* @return True if correctly removed.
 	*/
-	RTPS_DllAPI virtual bool change_removed_by_history(CacheChange_t*, WriterProxy* prox = nullptr) = 0;
+	RTPS_DllAPI virtual bool change_removed_by_history(CacheChange_t* change, WriterProxy* prox = nullptr) = 0;
 
 	/**
-	* Get the associated listener
-	* @return Associated reader listener
+	* Get the associated listener.
+	* @return Pointer to the associated reader listener.
 	*/
 	RTPS_DllAPI ReaderListener* getListener(){ return mp_listener; }
 
 	/**
-	* @param entityId
-	* @return
+	 * Returns true if the reader accepts a message directed to entityId.
 	*/
 	RTPS_DllAPI bool acceptMsgDirectedTo(EntityId_t& entityId);
 	
 	/**
-	* @param change
-	* @return
+	 * Reserve a CacheChange_t.
+	* @param change Pointer to pointer to the Cache.
+	* @return True if correctly reserved.
 	*/
 	RTPS_DllAPI bool reserveCache(CacheChange_t** change);
 	
 	/**
-	* @param change
-	* @return
+	 * Release a cacheChange.
 	*/
 	RTPS_DllAPI void releaseCache(CacheChange_t* change);
 
@@ -128,10 +130,10 @@ public:
 	RTPS_DllAPI virtual bool nextUntakenCache(CacheChange_t** change, WriterProxy** wp) = 0;
 	
 	/**
-	* @return
+	* @return True if the reader expects Inline QOS.
 	*/
 	RTPS_DllAPI inline bool expectsInlineQos(){ return m_expectsInlineQos; };
-
+	//! Returns a pointer to the associated History.
 	RTPS_DllAPI inline ReaderHistory* getHistory() {return mp_history;};
 
 protected:
@@ -151,58 +153,6 @@ protected:
 
 
 };
-
-
-///*
-// *
-// * void setListener(SubscriberListener* plistener){mp_listener = plistener;}
-//	void setQos( ReaderQos& qos,bool first)	{return m_qos.setQos(qos,first);}
-//	bool canQosBeUpdated(ReaderQos& qos){return m_qos.canQosBeUpdated(qos);}
-// *
-// *
-//
-// *std::vector<CacheChange_t*>::iterator readerHistoryCacheBegin(){return m_reader_cache.changesBegin();}
-//	std::vector<CacheChange_t*>::iterator readerHistoryCacheEnd(){return m_reader_cache.changesEnd();}
-// *
-//	/**
-// * Remove the CacheChange_t's that match the InstanceHandle_t passed.
-// * @param key The instance handle to remove.
-// * @return True if correct.
-//
-//	bool removeCacheChangesByKey(InstanceHandle_t& key);
-// *
-// *
-// *	/**
-//	 * Get the number of matched publishers.
-//	 * @return True if correct.
-//
-//	virtual size_t getMatchedPublishers()=0;
-//	//!Returns true if there are unread cacheChanges.
-//	virtual bool isUnreadCacheChange()=0;
-// *
-// *	//
-
-//	//
-//	/**
-//	 * Read the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-//	 * pointed by the StatusInfo_t structure.
-//	 * @param data Pointer to memory that can hold a sample.
-//	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-//	 * @return True if correct.
-//	 */
-//	virtual bool readNextCacheChange(CacheChange_t** change)=0;
-////	/**
-////	 * Take the next CacheChange_t from the history, deserializing it into the memory pointer by data (if the status is ALIVE), and filling the information
-////	 * pointed by the StatusInfo_t structure.
-////	 * @param data Pointer to memory that can hold a sample.
-////	 * @param info Pointer to SampleInfo_t structure to gather information about the sample.
-////	 * @return True if correct.
-////	 */
-////	virtual bool takeNextCacheChange(CacheChange_t** change)=0;
-// *
-// *
-// */
-//
 
 }
 } /* namespace rtps */

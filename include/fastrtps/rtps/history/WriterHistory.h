@@ -31,7 +31,7 @@ class WriterHistory : public History
 	friend class RTPSWriter;
 public:
 	/**
-	* @param att
+	* Constructor of the WriterHistory.
 	*/
 	RTPS_DllAPI WriterHistory(const HistoryAttributes&  att);
 	RTPS_DllAPI virtual ~WriterHistory();
@@ -43,7 +43,6 @@ public:
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.
 	 * @param a_change Pointer to the CacheChange to add.
-	 * @param wp Pointer to the writerProxy associated with the change that is going to be added (NOT USED IN WriterHistory).
 	 * @return True if added.
 	 */
 	RTPS_DllAPI bool add_change(CacheChange_t* a_change);
@@ -58,22 +57,14 @@ public:
 	 * @return True if correctly removed.
 	 */
 	RTPS_DllAPI bool remove_min_change();
-
-
-
 protected:
-//	/**
-//	 * Assign the Writer Associated with this History.
-//	 * @param writer Pointer to the writer;
-//	 */
-//	void assignWriter(RTPSWriter* writer) {mp_writer = writer;};
 	//!Last CacheChange Sequence Number added to the History.
 	SequenceNumber_t m_lastCacheChangeSeqNum;
 	//!Pointer to the associated RTPSWriter;
 	RTPSWriter* mp_writer;
 };
 }
-} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* WRITERHISTORY_H_ */

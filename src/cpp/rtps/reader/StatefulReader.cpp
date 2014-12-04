@@ -204,7 +204,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 	prox->available_changes_max(&maxSeq);
 	if(a_change->sequenceNumber <= maxSeq)
 		return false;
-	if(this->mp_history->received_change(a_change,prox))
+	if(this->mp_history->received_change(a_change))
 	{
 		if(prox->received_change_set(a_change))
 		{

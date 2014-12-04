@@ -67,30 +67,33 @@ public:
 	 * Check if the reader accepts messages from a writer with a specific GUID_t.
 	 *
 	 * @param entityGUID GUID to check
-	 * @param wp Writer to check
+	 * @param wp Pointer to pointer of the WriterProxy. Since we already look for it wee return the pointer
+	 * so the execution can run faster.
 	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
 	 */
 	bool acceptMsgFrom(GUID_t& entityGUID,WriterProxy** wp = nullptr);
-	
+
 	/**
-	* Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-	* @param 
-	* @param prox
-	* @return
-	*/
+	 * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+	 * @param change Pointer to the CacheChange_t.
+	 * @param prox Pointer to the WriterProxy.
+	 * @return True if correctly removed.
+	 */
 	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
-	
+
 	/**
-	* @param a_change
-	* @param prox
-	* @return
-	*/
+	 * This method is called when a new change is received. This method calls the received_change of the History
+	 * and depending on the implementation performs different actions.
+	 * @param a_change Pointer of the change to add.
+	 * @param prox Pointer to the WriterProxy that adds the Change.
+	 * @return True if added.
+	 */
 	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
 
 	/**
-	* Get the RTPS participant
-	* @return Associated RTPS participant
-	*/
+	 * Get the RTPS participant
+	 * @return Associated RTPS participant
+	 */
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
 	/**
@@ -99,7 +102,7 @@ public:
 	 * @return True if read.
 	 */
 	bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
-	
+
 	/**
 	 * Take the next CacheChange_t from the history;
 	 * @param change Pointer to pointer of CacheChange_t
@@ -108,46 +111,28 @@ public:
 	bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
 
 
-//	bool readNextCacheChange(CacheChange_t** change);
-//	//!Returns true if there are unread cacheChanges.
-//	bool isUnreadCacheChange();
-//	/**
-//	 * Get the number of matched publishers.
-//	 * @return True if correct.
-//	 */
-//	size_t getMatchedPublishers(){return matched_writers.size();}
-//
-//	std::vector<WriterProxy*>::iterator MatchedWritersBegin(){return matched_writers.begin();}
-//	std::vector<WriterProxy*>::iterator MatchedWritersEnd(){return matched_writers.end();}
-//	//!Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-//	bool change_removed_by_history(CacheChange_t*,WriterProxy*prox = NULL);
-//	//!Returns true if the reader accepts messages from the writer with GUID_t entityGUID.
-//	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=NULL);
-//
 	/**
-	*
-	* @param
-	* @return
-	*/
+	 * Update the times parameters of the Reader.
+	 * @param times ReaderTimes reference.
+	 * @return True if correctly updated.
+	 */
 	bool updateTimes(ReaderTimes& times);
-//
-//	bool add_change(CacheChange_t* a_change,WriterProxy* prox = NULL);
 
 	/**
-	*
-	* @return
-	*/
+	 *
+	 * @return Reference to the ReaderTimes.
+	 */
 	inline ReaderTimes& getTimes(){return m_times;};
 
 	/**
-	* Get the number of matched writers
-	* @return Number of matched writers
-	*/
+	 * Get the number of matched writers
+	 * @return Number of matched writers
+	 */
 	inline size_t getMatchedWritersSize() const {return matched_writers.size();};
 
 private:
 
-	//!
+	//!ReaderTimes of the StatefulReader.
 	ReaderTimes m_times;
 	//! Vector containing pointers to the matched writers.
 	std::vector<WriterProxy*> matched_writers;

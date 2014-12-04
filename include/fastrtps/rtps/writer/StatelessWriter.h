@@ -72,22 +72,24 @@ public:
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes
 	 */
-	void updateAttributes(WriterAttributes& att){/*TODOG TO FINISH METHOD*/		};
+	void updateAttributes(WriterAttributes& att){
+		//FOR NOW THERE IS NOTHING TO UPDATE.
+	};
 
 	/**
-	* Add a remote locator
+	* Add a remote locator.
 	*
-	* @param rdata 
-	* @param loc Locator to add
-	* @return true on success
+	* @param rdata RemoteReaderAttributes necessary to create a new locator.
+	* @param loc Locator to add.
+	* @return True on success.
 	*/
 	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 
 	/**
-	* Remove a remote locator from the writer
+	* Remove a remote locator from the writer.
 	*
-	* @param loc Locator to remove
-	* @return true on success
+	* @param loc Locator to remove.
+	* @return True on success.
 	*/
 	bool remove_locator(Locator_t& loc);
 
@@ -99,40 +101,7 @@ public:
 	* @param Number of matched readers
 	*/
 	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
-private:
 
-	//	/**
-	//	 * Add a ReaderLocator to the StatelessWriter.
-	//	 * @param locator Locator to add
-	//	 * @param expectsInlineQos Boolean variable indicating that the locator expects inline Qos.
-	//	 * @return
-	//	 */
-	//	bool reader_locator_add(Locator_t& locator,bool expectsInlineQos);
-
-	//	/**
-	//	 * Add a specific change to all ReaderLocators.
-	//	 * @param p Pointer to the change.
-	//	 */
-	//	void unsent_change_add(CacheChange_t* p);
-	//	/**
-	//	 * Method to indicate that there are changes not sent in some of all ReaderLocator.
-	//	 */
-	//	void unsent_changes_not_empty();
-	//	/**
-	//	 * Remove the change with the minimum SequenceNumber
-	//	 * @return True if removed.
-	//	 */
-	//	bool removeMinSeqCacheChange();
-	//	/**
-	//	 * Remove all changes from history
-	//	 * @param n_removed Pointer to return the number of elements removed.
-	//	 * @return True if correct.
-	//	 */
-	//	bool removeAllCacheChange(size_t* n_removed);
-	//	//!Get the number of matched subscribers.
-	//	size_t getMatchedSubscribers(){return reader_locator.size();}
-	//	bool change_removed_by_history(CacheChange_t* a_change);
-	//
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;

@@ -24,7 +24,8 @@ class RTPSReader;
 struct CacheChange_t;
 
 /**
-*
+* This class can be used by the user to override some of is virtual method to program some
+* actions to certain events.
 */
 class RTPS_DllAPI ReaderListener
 {
@@ -40,9 +41,12 @@ public:
 	virtual void onReaderMatched(RTPSReader* reader,MatchingInfo info){};
 	
 	/**
-	*
-	* @param reader
-	* @param change
+	* This method is called when a new CacheChange_t is added to the ReaderHistory.
+	* @param reader Pointer to the reader.
+	* @param change Pointer to the CacheChange_t. THis is a const pointer to const data
+	* to indicate that the user should not dispose of this data himself.
+	* To remove the data call the remove_change method of the ReaderHistory.
+	* reader->getHistory()->remove_change((CacheChange_t*)change).
 	*/
 	virtual void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change){};
 };

@@ -86,7 +86,7 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
 {
-	if(mp_history->received_change(change, prox))
+	if(mp_history->received_change(change))
 	{
 		if(getListener()!=nullptr)
 		{
