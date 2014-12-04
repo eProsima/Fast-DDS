@@ -13,7 +13,7 @@
 
 #ifndef SUBSCRIBERIMPL_H_
 #define SUBSCRIBERIMPL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/Locator.h"
 #include "fastrtps/rtps/common/Guid.h"
 
@@ -129,5 +129,5 @@ private:
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* SUBSCRIBERIMPL_H_ */

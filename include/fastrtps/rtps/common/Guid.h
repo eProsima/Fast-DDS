@@ -173,18 +173,18 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	* @param id2 ID prefix to compare
 	* @return True if equal
 	*/
-inline bool operator==(EntityId_t& eid,const uint32_t id2)
+inline bool operator==(EntityId_t& id1,const uint32_t id2)
 {
 	if(DEFAULT_ENDIAN == LITTLEEND)
-		eid.reverse();
-	uint32_t* aux1 = (uint32_t*)(eid.value);
+		id1.reverse();
+	uint32_t* aux1 = (uint32_t*)(id1.value);
 	bool result = true;
 	if(*aux1 == id2)
 		result = true;
 	else
 		result = false;
 	if(DEFAULT_ENDIAN == LITTLEEND)
-		eid.reverse();
+		id1.reverse();
 	return result;
 }
 	/**
@@ -277,7 +277,7 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 	
 	/**
 	* @param guidP Guid prefix
-	* @param id Entity id
+	* @param entId Entity id
 	*/	
 	GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
 		guidPrefix(guidP),entityId(entId) {}
@@ -313,10 +313,10 @@ inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
 const GUID_t c_Guid_Unknown;
 
 	/**
-	* 
-	* @param output 
-	* @param enI 
-	* @return 
+	* Stream operator, prints a GUID.
+	* @param output Output stream.
+	* @param guid GUID_t to print.
+	* @return Stream operator.
 	*/
 inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 {

@@ -13,7 +13,7 @@
 
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 #include "fastrtps/rtps/common/Guid.h"
 #include "fastrtps/rtps/common/SequenceNumber.h"
@@ -121,5 +121,5 @@ public:
 }
 }; /* namespace rtps */
 }; /* namespace eprosima */
-
+#endif
 #endif /* CDRMESSAGECREATOR_H_ */

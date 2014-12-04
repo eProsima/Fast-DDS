@@ -12,7 +12,7 @@
 
 #ifndef WRITERPROXY_H_
 #define WRITERPROXY_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 
 
@@ -181,5 +181,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* WRITERPROXY_H_ */

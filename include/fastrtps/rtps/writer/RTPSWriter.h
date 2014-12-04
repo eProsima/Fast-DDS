@@ -53,19 +53,19 @@ public:
 	RTPS_DllAPI CacheChange_t* new_change(ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
 	/**
 	 * Add a matched reader.
-	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @param ratt Pointer to the ReaderProxyData object added.
 	 * @return True if added.
 	 */
 	RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
 	/**
 	 * Remove a matched reader.
-	 * @param rdata Pointer to the object to remove.
+	 * @param ratt Pointer to the object to remove.
 	 * @return True if removed.
 	 */
 	RTPS_DllAPI virtual bool matched_reader_remove(RemoteReaderAttributes& ratt) = 0;
 	/**
 	 * Tells us if a specific Reader is matched against this writer
-	 * @param rdata Pointer to the ReaderProxyData object
+	 * @param ratt Pointer to the ReaderProxyData object
 	 * @return True if it was matched.
 	 */
 	RTPS_DllAPI virtual bool matched_reader_is_matched(RemoteReaderAttributes& ratt) = 0;

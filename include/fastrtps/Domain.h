@@ -78,7 +78,7 @@ public:
 	RTPS_DllAPI static bool removePublisher(Publisher* pub);
 	/**
 	 * Remove a Subscriber.
-	 * @param pub Pointer to the Subscriber.
+	 * @param sub Pointer to the Subscriber.
 	 * @return True if correctly removed.
 	 */
 	RTPS_DllAPI static bool removeSubscriber(Subscriber* sub);

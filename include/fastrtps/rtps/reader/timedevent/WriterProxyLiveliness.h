@@ -13,7 +13,7 @@
 
 #ifndef WRITERPROXYLIVELINESS_H_
 #define WRITERPROXYLIVELINESS_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/resources/TimedEvent.h"
 
 namespace eprosima {
@@ -45,5 +45,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* WRITERPROXYLIVELINESS_H_ */

@@ -12,7 +12,7 @@
 
 #ifndef RTPSParticipantIMPL_H_
 #define RTPSParticipantIMPL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -288,158 +288,12 @@ public:
 	*/
 	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
 
-	//
-	//	/**
-	//	 * Create a Reader in this RTPSParticipant.
-	//	 * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
-	//	 * @param RParam SubscriberAttributes to define the Reader.
-	//	 * @param payload_size Maximum payload size.
-	//	 * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
-	//	 * @param kind STATEFUL or STATELESS.
-	//	 * @param ptype Pointer to the TOpicDataType object (optional).
-	//	 * @param slisten Pointer to the SubscriberListener object (optional).
-	//	 * @param entityId EntityId assigned to the Reader.
-	//	 * @return True if the Reader was correctly created.
-	//	 */
-	//	bool createReader(RTPSReader** Reader,SubscriberAttributes& RParam,uint32_t payload_size,bool isBuiltin,StateKind_t kind,
-	//			TopicDataType* ptype = NULL,SubscriberListener* slisten=NULL,const EntityId_t& entityId = c_EntityId_Unknown);
-	//
-	//	/**
-
-	//	/**
-	//	 * Register a reader in the builtin protocols.
-	//	 * @param Reader Pointer to the RTPSReader to register.
-	//	 */
-	//	void registerReader(RTPSReader* Reader);
-
-	//	/**
-
-	//
-	//
-	//	/**
-	//	 * Remove Endpoint from the RTPSParticipant. It closes all entities related to them that are no longer in use.
-	//	 * For example, if a ResourceListen is not useful anymore the thread is closed and the instance removed.
-	//	 * @param[in] p_endpoint Pointer to the Endpoint that is going to be removed.
-	//	 * @param[in] type Char indicating if it is Reader ('R') or Writer ('W')
-	//	 * @return True if correct.
-	//	 */
-	//	bool deleteUserEndpoint(Endpoint* p_endpoint,char type);
-	//
-	//
-
-	//
-	//
-	//	//!Used for tests
-	//	void loose_next_change(){m_send_thr.loose_next();};
-	//	//! Announce RTPSParticipantState (force the sending of a DPD message.)
-	//	void announceRTPSParticipantState();
-	//	//!Stop the RTPSParticipant Announcement (used in tests to avoid multiple packets being send)
-	//	void stopRTPSParticipantAnnouncement();
-	//	//!Reset to timer to make periodic RTPSParticipant Announcements.
-	//	void resetRTPSParticipantAnnouncement();
-	//	/**
-	//	 * Get the GUID_t of the RTPSParticipant.
-	//	 * @return GUID_t of the RTPSParticipant.
-	//	 */
-	//	const GUID_t& getGuid() const {
-	//		return m_guid;
-	//	}
-	//	/**
-	//	 * Get the RTPSParticipant Name.
-	//	 * @return String with the RTPSParticipant Name.
-	//	 */
-	//	const std::string& getRTPSParticipantName() const {
-	//		return m_RTPSParticipantName;
-	//	}
-	//
-	//
-	//
-	//	void ResourceSemaphorePost();
-	//
-	//	void ResourceSemaphoreWait();
-	//
-	//	const BuiltinAttributes& getBuiltinAttributes() const {
-	//		return m_builtin;
-	//	}
-	//
-	//	ResourceEvent* getEventResource()
-	//	{
-	//		return &m_event_thr;
-	//	}
-	//
-	//	uint32_t getRTPSParticipantId() const {
-	//		return m_RTPSParticipantID;
-	//	}
-	//
-	//	void setRTPSParticipantId(uint32_t RTPSParticipantId) {
-	//		m_RTPSParticipantID = RTPSParticipantId;
-	//	}
-	//
-	//	uint32_t getListenSocketBufferSize() const {
-	//		return m_listen_socket_buffer_size;
-	//	}
-	//
-	//	uint32_t getSendSocketBufferSize() const {
-	//		return m_send_socket_buffer_size;
-	//	}
-	//
-	//	BuiltinProtocols* getBuiltinProtocols(){return &m_builtinProtocols;}
-	//
-	//	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
-	//
-	//	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
-	//
-	//	void setListener(RTPSParticipantListener* lis) {mp_RTPSParticipantListener = lis;}
-	//
-	//	RTPSParticipantListener* getListener() const {return mp_RTPSParticipantListener;}
-	//
-	//	RTPSParticipant* getUserRTPSParticipant() const {return mp_userRTPSParticipant;}
-	//
-	//	std::vector<octet> getUserData() const {return m_userData;}
-	//
-	//	uint32_t getRTPSParticipantID() const{return m_RTPSParticipantID;}
-	//private:
-	//
-	//
-	//
-	//
-	//	/*!
-	//	 * Assign a given Endpoint to one of the current listen thread or create a new one.
-	//	 * @param[in] endpoint Pointer to the Endpoint to add.
-	//	 * @param[in] type Type of the Endpoint (R or W)(Reader or Writer).
-	//	 * @param[in] isBuiltin Indicates if the endpoint is Builtin or not.
-	//	 * @return True if correct.
-	//	 */
-	//	bool assignEnpointToListenResources(Endpoint* endpoint,char type,bool isBuiltin);
-	//	//	/*!
-	//	//	 * Create a new listen thread in the specified locator.
-	//	//	 * @param[in] loc Locator to use.
-	//	//	 * @param[out] listenthread Pointer to pointer of this class to correctly initialize the listening recourse.
-	//	//	 * @param[in] isMulticast To indicate whether the new lsited thread is multicast.
-	//	//	 * @param[in] isBuiltin Indicates that the endpoint is builtin.
-	//	//	 * @return True if correct.
-	//	//	 */
-	//	//	bool addNewListenResource(Locator_t& loc,ResourceListen** listenthread,bool isMulticast,bool isBuiltin);
-	//
-	//	//RTPSParticipantDiscoveryProtocol* mp_PDP;
-	//
-	//
-	//
-	//
-	//
-	//
-	//	RTPSParticipantListener* mp_RTPSParticipantListener;
-	//
-
-
-
-
 };
 
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* RTPSParticipant_H_ */
 
 

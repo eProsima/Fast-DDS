@@ -13,7 +13,7 @@
 
 #ifndef EDPSIMPLELISTENER_H_
 #define EDPSIMPLELISTENER_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
 #include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
@@ -91,5 +91,5 @@ public:
 } /* namespace rtps */
 }
 } /* namespace eprosima */
-
+#endif
 #endif /* EDPSIMPLELISTENER_H_ */

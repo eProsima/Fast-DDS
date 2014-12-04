@@ -13,7 +13,7 @@
 
 #ifndef WLPLISTENER_H_
 #define WLPLISTENER_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
 #include "fastrtps/rtps/common/Guid.h"
@@ -82,4 +82,5 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 }
+#endif
 #endif /* WLPLISTENER_H_ */

@@ -13,7 +13,7 @@
 
 #ifndef WLIVELINESSPERIODICASSERTION_H_
 #define WLIVELINESSPERIODICASSERTION_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/qos/QosPolicies.h"
 #include "fastrtps/rtps/resources/TimedEvent.h"
 #include "fastrtps/qos/ParameterList.h"
@@ -65,4 +65,5 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 }
+#endif
 #endif /* WLIVELINESSPERIODICASSERTION_H_ */

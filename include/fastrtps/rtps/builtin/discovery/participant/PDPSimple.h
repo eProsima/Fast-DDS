@@ -13,6 +13,8 @@
 
 #ifndef PDPSIMPLE_H_
 #define PDPSIMPLE_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "fastrtps/rtps/common/Guid.h"
 //#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
 //#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
@@ -241,5 +243,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* PDPSIMPLE_H_ */

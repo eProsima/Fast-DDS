@@ -13,6 +13,8 @@
 
 #ifndef READERPROXYDATA_H_
 #define READERPROXYDATA_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/qos/ReaderQos.h"
@@ -101,4 +103,5 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* READERPROXYDATA_H_ */

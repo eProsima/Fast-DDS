@@ -13,7 +13,7 @@
 
 #ifndef STATELESSREADER_H_
 #define STATELESSREADER_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/reader/RTPSReader.h"
 
@@ -110,5 +110,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* STATELESSREADER_H_ */

@@ -14,7 +14,7 @@
 
 #ifndef CDRMESSAGE_H_
 #define CDRMESSAGE_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 #include "fastrtps/qos/ParameterTypes.h"
 
@@ -114,4 +114,5 @@ namespace CDRMessage{
 #include "CDRMessage.hpp"
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
+#endif
 #endif /* CDRMESSAGE_H_ */

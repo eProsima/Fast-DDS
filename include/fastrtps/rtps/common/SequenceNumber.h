@@ -218,7 +218,7 @@ inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& s
 
 /**
  * Substract one SequenceNumber_t from another
- * @param seq1 Base SequenceNumber_t
+ * @param seq Base SequenceNumber_t
  * @param inc SequenceNumber_t to substract
  * @return Result of the substraction
  */
@@ -237,7 +237,7 @@ inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
 
 /**
  * Add one SequenceNumber_t to another
- * @param seq1 Base SequenceNumber_t
+ * @param seqin Base SequenceNumber_t
  * @param inc SequenceNumber_t to add
  * @return Result of the addition
  */
@@ -384,10 +384,10 @@ private:
 };
 
 /**
- * 
- * @param output
- * @param seqNum
- * @return 
+ * Prints a sequence Number set
+ * @param output Output Stream
+ * @param sns SequenceNumber set
+ * @return OStream.
  */
 inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns){
 	return output<< sns.print();

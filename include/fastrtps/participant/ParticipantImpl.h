@@ -13,7 +13,7 @@
 
 #ifndef PARTICIPANTIMPL_H_
 #define PARTICIPANTIMPL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/Guid.h"
 #include "fastrtps/rtps/participant/RTPSParticipantListener.h"
 #include "fastrtps/attributes/ParticipantAttributes.h"
@@ -134,5 +134,5 @@ private:
 
 } /* namespace  */
 } /* namespace eprosima */
-
+#endif
 #endif /* PARTICIPANTIMPL_H_ */

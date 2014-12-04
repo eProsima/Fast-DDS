@@ -12,7 +12,7 @@
 
 #ifndef QOSLIST_H_
 #define QOSLIST_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/all_common.h"
 #include "fastrtps/qos/ParameterList.h"
 
@@ -66,5 +66,5 @@ public:
 
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* QOSLIST_H_ */

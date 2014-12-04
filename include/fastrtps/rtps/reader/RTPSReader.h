@@ -63,7 +63,7 @@ public:
 	 * @param wdata Pointer to the WriterProxyData object
 	 * @return True if it is matched.
 	 */
-	RTPS_DllAPI virtual bool matched_writer_is_matched(RemoteWriterAttributes&) = 0;
+	RTPS_DllAPI virtual bool matched_writer_is_matched(RemoteWriterAttributes& wdata) = 0;
 
 	/**
 	 * Check if the reader accepts messages from a writer with a specific GUID_t.
@@ -118,13 +118,15 @@ public:
 	/**
 	 * Read the next unread CacheChange_t from the history
 	 * @param change POinter to pointer of CacheChange_t
+	 * @param wp Pointer to pointer to the WriterProxy
 	 * @return True if read.
 	 */
 	RTPS_DllAPI virtual bool nextUnreadCache(CacheChange_t** change, WriterProxy** wp) = 0;
 	
 	/**
 	 * Get the next CacheChange_t from the history to take.
-	 * @param change Pointer to pointer of CacheChange_t
+	 * @param change Pointer to pointer of CacheChange_t.
+	 * @param wp Pointer to pointer to the WriterProxy.
 	 * @return True if read.
 	 */
 	RTPS_DllAPI virtual bool nextUntakenCache(CacheChange_t** change, WriterProxy** wp) = 0;

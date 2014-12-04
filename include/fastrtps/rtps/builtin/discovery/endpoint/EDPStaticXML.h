@@ -13,6 +13,7 @@
 
 #ifndef EDPSTATICXML_H_
 #define EDPSTATICXML_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <set>
 #include <vector>
@@ -103,5 +104,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* EDPSTATICXML_H_ */

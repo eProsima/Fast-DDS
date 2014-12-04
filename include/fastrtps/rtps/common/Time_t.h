@@ -120,12 +120,6 @@ static inline bool operator<=(const Time_t& t1,const Time_t& t2)
 	}
 }
 
-/**
- * 
- * @param output
- * @param seqNum
- * @return 
- */
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 {
 	return output << t.seconds<<"."<<t.fraction;

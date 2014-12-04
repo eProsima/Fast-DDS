@@ -13,6 +13,8 @@
 
 #ifndef RTPSMESSAGEGROUP_H_
 #define RTPSMESSAGEGROUP_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <vector>
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 #include "fastrtps/qos/ParameterList.h"
@@ -123,4 +125,5 @@ static void prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlin
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* RTPSMESSAGEGROUP_H_ */

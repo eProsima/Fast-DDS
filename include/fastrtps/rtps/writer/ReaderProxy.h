@@ -15,7 +15,7 @@
 
 #ifndef READERPROXY_H_
 #define READERPROXY_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <algorithm>
 #include "fastrtps/rtps/common/Types.h"
 #include "fastrtps/rtps/common/Locator.h"
@@ -177,5 +177,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* READERPROXY_H_ */

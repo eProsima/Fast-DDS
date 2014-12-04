@@ -13,6 +13,8 @@
 
 #ifndef WRITERPROXYDATA_H_
 #define WRITERPROXYDATA_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/qos/WriterQos.h"
@@ -83,4 +85,5 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* WRITERPROXYDATA_H_ */

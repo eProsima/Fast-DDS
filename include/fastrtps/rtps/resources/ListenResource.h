@@ -13,7 +13,7 @@
 
 #ifndef LISTENRESOURCE_H_
 #define LISTENRESOURCE_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <vector>
 #include <cstdlib>
 
@@ -104,5 +104,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* LISTENRESOURCE_H_ */

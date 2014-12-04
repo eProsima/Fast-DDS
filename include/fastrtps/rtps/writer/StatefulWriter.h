@@ -13,7 +13,7 @@
 
 #ifndef STATEFULWRITER_H_
 #define STATEFULWRITER_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 
@@ -150,5 +150,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* STATEFULWRITER_H_ */

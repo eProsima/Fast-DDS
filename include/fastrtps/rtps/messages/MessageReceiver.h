@@ -14,7 +14,7 @@
 
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/all_common.h"
 #include "fastrtps/qos/ParameterList.h"
 
@@ -131,5 +131,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* MESSAGERECEIVER_H_ */

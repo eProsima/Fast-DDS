@@ -13,7 +13,7 @@
 
 #ifndef EDPSTATIC_H_
 #define EDPSTATIC_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
 
@@ -144,4 +144,5 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* EDPSTATIC_H_ */

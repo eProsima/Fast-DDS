@@ -13,6 +13,7 @@
 
 #ifndef EDPSIMPLE_H_
 #define EDPSIMPLE_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
 //#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
@@ -121,4 +122,5 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* EDPSIMPLE_H_ */
