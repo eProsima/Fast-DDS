@@ -43,7 +43,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_WARNING);
+	Log::setVerbosity(VERB_INFO);
 	cout << "Starting "<< endl;
 	int type;
 	uint32_t test_time_sec = 30;
