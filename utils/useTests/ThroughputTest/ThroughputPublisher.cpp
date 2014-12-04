@@ -35,11 +35,6 @@ std::vector<uint32_t> g_data_size_pub (g_dataspub, g_dataspub + sizeof(g_dataspu
 uint32_t g_demandspub[] = {500,750,850,1000,1250,1400,1500,1600,1750,2000};
 vector<uint32_t> g_demand_pub (g_demandspub, g_demandspub + sizeof(g_demandspub) / sizeof(uint32_t) );
 
-std::map<uint32_t,uint32_t> g_datademand = {
-		{8,100}, {8,200}, {8,300}, {8,500},
-		{24,100}, {24,200},{24,300},{24,500},
-};
-
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::DataPubListener::~DataPubListener(){};
 

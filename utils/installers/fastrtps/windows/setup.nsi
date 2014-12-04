@@ -129,8 +129,8 @@ var /GLOBAL RICHI_FINISH_MESSAGE
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile eProsima_RTPS_${VERSION}.exe
-InstallDir "$PROGRAMFILES\eProsima\eRTPS"
+OutFile eProsima_Fast_RTPS_${VERSION}.exe
+InstallDir "$PROGRAMFILES\eProsima\FastRTPS"
 CRCCheck on
 XPStyle on
 ShowInstDetails show
