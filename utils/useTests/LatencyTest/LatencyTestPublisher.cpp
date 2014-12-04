@@ -14,6 +14,8 @@
 #include "LatencyTestPublisher.h"
 #include "fastrtps/utils/RTPSLog.h"
 
+
+
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -99,7 +101,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubscriberAttributes SubDataparam;
 	Locator_t loc;
 	loc.port = 7555;
-	PubDataparam.unicastLocatorList.push_back(loc);
+	SubDataparam.unicastLocatorList.push_back(loc);
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencySUB2PUB";

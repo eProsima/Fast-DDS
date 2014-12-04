@@ -40,12 +40,12 @@ namespace fastrtps {
 static const char* const CLASS_NAME = "ParticipantImpl";
 
 ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
-						m_att(patt),
-						mp_rtpsParticipant(nullptr),
-						mp_participant(pspart),
-						mp_listener(listen),
+								m_att(patt),
+								mp_rtpsParticipant(nullptr),
+								mp_participant(pspart),
+								mp_listener(listen),
 #pragma warning (disable : 4355 )
-						m_rtps_listener(this)
+								m_rtps_listener(this)
 {
 	mp_participant->mp_impl = this;
 }
@@ -140,8 +140,10 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	watt.endpoint.topicKind = att.topic.topicKind;
 	watt.endpoint.unicastLocatorList = att.unicastLocatorList;
-	watt.endpoint.setEntityID((uint8_t)att.getEntityID());
-	watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
+	if(att.getEntityID()>0)
+		watt.endpoint.setEntityID((uint8_t)att.getEntityID());
+	if(att.getUserDefinedID()>0)
+		watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
 	watt.times = att.times;
 
 	RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
@@ -208,8 +210,10 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	ratt.endpoint.topicKind = att.topic.topicKind;
 	ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
-	ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
-	ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
+	if(att.getEntityID()>0)
+		ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
+	if(att.getUserDefinedID()>0)
+		ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
 	ratt.times = att.times;
 
 	RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
