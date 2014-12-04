@@ -199,7 +199,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
 	PParam.rtps.sendSocketBufferSize = 65536;
-	PParam.rtps.listenSocketBufferSize = 2*65536;
+	PParam.rtps.listenSocketBufferSize = 150000;
 	PParam.rtps.setName("Participant_subscriber");
 	mp_par = Domain::createParticipant(PParam);
 	if(mp_par == nullptr)
@@ -225,7 +225,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.topicName = "LatencyUp";
 	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Sparam.topic.historyQos.depth = 1000;
-	Sparam.topic.resourceLimitsQos.max_samples = 10000;
+	Sparam.topic.resourceLimitsQos.max_samples = 100000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
 	Locator_t loc;
 	loc.port = 10110;
