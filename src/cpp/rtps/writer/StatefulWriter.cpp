@@ -388,7 +388,6 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 
 void StatefulWriter::updateAttributes(WriterAttributes& att)
 {
-	cout << "TO FINISH"<<endl;
 	this->updateTimes(att.times);
 }
 

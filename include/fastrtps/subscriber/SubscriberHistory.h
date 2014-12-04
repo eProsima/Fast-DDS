@@ -55,10 +55,13 @@ public:
 	* @param prox
 	* @return
 	*/
-	bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
+	bool received_change(CacheChange_t* change);
 
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.
+	 * @param data Pointer to the object where you want to read or take the information.
+	 * @param info Pointer to a SampleInfo_t object where you want
+	 * to store the information about the retrieved data
 	 */
 	///@{
 	bool readNextData(void* data, SampleInfo_t* info);
@@ -72,10 +75,10 @@ public:
 	bool isUnreadCache();
 
 	/**
-	*
-	* @param change
-	* @param vit
-	* @return
+	* This method is called when you want to remove a change from the SubscriberHistory.
+	* @param change Pointer to the CacheChange_t.
+	* @param vit Pointer to the iterator of the key-ordered cacheChange vector.
+	* @return True if removed.
 	*/
 	bool remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
@@ -100,9 +103,8 @@ public:
 		return m_unreadCacheCount;
 	}
 private:
+	//!Number of unread CacheChange_t.
 	uint64_t m_unreadCacheCount;
-
-
 	//!Vector of pointer to the CacheChange_t divided by key.
 	t_v_Inst_Caches m_keyedChanges;
 	//!HistoryQosPolicy values.
@@ -113,7 +115,6 @@ private:
 	SubscriberImpl* mp_subImpl;
 	//!Change to obtain key when it is not provided
 	CacheChange_t* mp_getKeyCache;
-
 
 	bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
 

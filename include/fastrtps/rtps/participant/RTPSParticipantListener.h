@@ -23,7 +23,7 @@ namespace rtps{
 class RTPSParticipant;
 
 /**
-*
+* Class with virtual method that the user can overload to respond to certain events.
 */
 class RTPS_DllAPI RTPSParticipantListener
 {

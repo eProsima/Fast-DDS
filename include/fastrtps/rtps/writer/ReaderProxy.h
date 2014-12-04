@@ -37,7 +37,7 @@ class NackSupressionDuration;
 
 
 /**
- * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWRITER.
+ * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
  * @ingroup WRITERMODULE
  */
 class ReaderProxy
@@ -46,10 +46,10 @@ public:
 	virtual ~ReaderProxy();
 	
 	/**
-	*
-	* @param rdata
-	* @param times
-	* @param SW
+	* Constructor.
+	* @param rdata RemoteWriterAttributes to use in the creation.
+	* @param times WriterTimes to use in the ReaderProxy.
+	* @param SW Pointer to the StatefulWriter.
 	*/
 	ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
 
@@ -119,9 +119,9 @@ public:
 	bool unacked_changes(std::vector<ChangeForReader_t*>* reqChanges);
 
 	/**
-	 * 
-	 * @param sn
-	 * @return
+	 * Sets the passes sequnceNumber to the maximum SequenceNumber_t.
+	 * @param sn Pointer to the sequenceNumber.
+	 * @return True if correct.
 	 */
 	bool max_acked_change(SequenceNumber_t* sn);
 
@@ -139,21 +139,20 @@ public:
 	bool m_isRequestedChangesEmpty;
 
 	/**
-	 * 
-	 * @param Changes
-	 * @param status
-	 * @return
+	 * Returns a list of CacheChange_t that have the passes status.
+	 * @param Changes Pointer to a vector of CacheChange_t pointers.
+	 * @param status Status to be used.
+	 * @return True if correctly obtained.
 	 */
 	bool changesList(std::vector<ChangeForReader_t*>* Changes,ChangeForReaderStatus_t status);
 
 	/**
-	 * 
-	 * @param Changes
-	 * @param changeForReader
-	 * @return
+	 * Return the minimum change in a vector of CacheChange_t.
+	 * @param Changes Pointer to a vector of CacheChange_t.
+	 * @param changeForReader Pointer to the CacheChange_t.
+	 * @return True if correct.
 	 */
 	bool minChange(std::vector<ChangeForReader_t*>* Changes,ChangeForReader_t* changeForReader);
-
 
 	//!Timed Event to manage the Acknack response delay.
 	NackResponseDelay* mp_nackResponse;
@@ -165,11 +164,11 @@ public:
 
 	//TODOG FILTER
 	/**
-	 * 
+	 * Filter a CacheChange_t, in this version always returns true.
 	 * @param change
 	 * @return
 	 */
-	bool rtps_is_relevant(CacheChange_t* change);
+	inline bool rtps_is_relevant(CacheChange_t* change){return true;};
 
 	//!Mutex
 	boost::recursive_mutex* mp_mutex;

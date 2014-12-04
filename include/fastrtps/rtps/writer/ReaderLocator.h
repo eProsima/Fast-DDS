@@ -34,8 +34,9 @@ class ReaderLocator {
 public:
 	ReaderLocator();
 	/**
-	* @param locator
-	* @param expectsInlineQos
+	 * Constructor.
+	* @param locator Locator to create the ReaderLocator.
+	* @param expectsInlineQos Indicate that the ReaderLocator expects inline QOS.
 	*/
 	ReaderLocator(Locator_t& locator, bool expectsInlineQos);
 	virtual ~ReaderLocator();
@@ -74,12 +75,12 @@ public:
 	 * @return True if correct.
 	 */
 	bool remove_unsent_change(CacheChange_t* cpoin);
-	/**
-	 * Change the requested changes to the provided set.
-	 * @param seqs Vector of SequenceNumbers.
-	 * @param readerGUI
-	 * @param history
-	 */
+//	/**
+//	 * Change the requested changes to the provided set.
+//	 * @param seqs Vector of SequenceNumbers.
+//	 * @param readerGUI
+//	 * @param history
+//	 */
 
 };
 }

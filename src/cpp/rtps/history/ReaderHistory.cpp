@@ -50,12 +50,12 @@ ReaderHistory::~ReaderHistory()
 	// TODO Auto-generated destructor stub
 }
 
-bool ReaderHistory::received_change(CacheChange_t* change, WriterProxy* wp)
+bool ReaderHistory::received_change(CacheChange_t* change)
 {
-	return add_change(change,wp);
+	return add_change(change);
 }
 
-bool ReaderHistory::add_change(CacheChange_t* a_change,WriterProxy* wp)
+bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "add_change";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);

@@ -38,7 +38,7 @@ public:
 private:
 	//!Constructor
 	StatefulWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
-
+	//!Count of the sent heartbeats.
 	Count_t m_heartbeatCount;
 	//!Timed Event to manage the periodic HB to the Reader.
 	PeriodicHeartbeat* mp_periodicHB;
@@ -138,100 +138,11 @@ public:
 	inline size_t getMatchedReadersSize() const {return matched_readers.size();};
 
 	/**
-	* @param times
+	 * Update the WriterTimes attributes of all associated ReaderProxy.
+	* @param times WriterTimes parameter.
 	*/
 	void updateTimes(WriterTimes& times);
 private:
-	//
-	//
-	//	/**
-	//	 * Add a matched reader.
-	//	 * @param rdata Pointer to the ReaderProxyData object added.
-	//	 * @return True if added.
-	//	 */
-	//	bool matched_reader_add(ReaderProxyData* rdata);
-	//	/**
-	//	 * Remove a matched reader.
-	//	 * @param rdata Pointer to the object to remove.
-	//	 * @return True if removed.
-	//	 */
-	//	bool matched_reader_remove(ReaderProxyData* rdata);
-	//	/**
-	//	 * Tells us if a specific Reader is matched against this writer
-	//	 * @param rdata Pointer to the ReaderProxyData object
-	//	 * @return True if it was matched.
-	//	 */
-	//	bool matched_reader_is_matched(ReaderProxyData* rdata);
-	//	/**
-	//	 * Find a Reader Proxy in this writer.
-	//	 * @param[in] readerGuid The GUID_t of the reader.
-	//	 * @param[out] RP Pointer to pointer to return the ReaderProxy.
-	//	 * @return True if correct.
-	//	 */
-	//	bool matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP);
-	//
-	//	/**
-	//	 * Find out if a change is acked by all ReaderProxy.
-	//	 * @param change Pointer to the change.
-	//	 * @return True if correct.
-	//	 */
-	//	bool is_acked_by_all(CacheChange_t* change);
-	//
-	//	/**
-	//	 * Add the provided change to the unsent changes vectors of all matched Readers.
-	//	 * @param[in] change Pointer to the change
-	//	 */
-	//	void unsent_change_add(CacheChange_t* change);
-	//
-
-	//	/**
-	//	 * Remove the change with the minimum SequenceNumber
-	//	 * @return True if removed.
-	//	 */
-	//	bool removeMinSeqCacheChange();
-	//	/**
-	//	 * Remove all changes from history
-	//	 * @param n_removed Pointer to return the number of elements removed.
-	//	 * @return True if correct.
-	//	 */
-	//	bool removeAllCacheChange(size_t* n_removed);
-
-	//
-	//
-	//	auto matchedReadersBegin()
-	//	{
-	//		return matched_readers.begin();
-	//	};
-	//	auto matchedReadersEnd()
-	//	{
-	//		return matched_readers.end();
-	//	}
-	//	size_t matchedReadersSize()
-	//	{
-	//		return matched_readers.size();
-	//	}
-	//	Count_t getHeartbeatCount() const {
-	//		return m_heartbeatCount;
-	//	}
-	//
-	//	size_t getMatchedSubscribers(){return matched_readers.size();}
-	//
-	//	EntityId_t& getHBReaderEntityId()
-	//	{
-	//		return m_HBReaderEntityId;
-	//	}
-	//
-	//	bool change_removed_by_history(CacheChange_t* a_change);
-	//
-	//	void updateTimes(WriterTimes& times);
-	//
-	//private:
-
-	//
-	//	WriterTimes m_PubTimes;
-	//
-	//
-	//
 
 
 

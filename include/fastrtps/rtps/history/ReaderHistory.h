@@ -26,12 +26,12 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-struct FirstLastSeqNum
-{
-	GUID_t wGuid;
-	SequenceNumber_t first;
-	SequenceNumber_t last;
-};
+//struct FirstLastSeqNum
+//{
+//	GUID_t wGuid;
+//	SequenceNumber_t first;
+//	SequenceNumber_t last;
+//};
 
 class WriterProxy;
 class RTPSReader;
@@ -44,25 +44,26 @@ class ReaderHistory : public History {
 	friend class RTPSReader;
 public:
 	/**
-	* @param att
+	* Constructor of the ReaderHistory. It needs a HistoryAttributes.
 	*/
 	RTPS_DllAPI ReaderHistory(const HistoryAttributes& att);
 	RTPS_DllAPI virtual ~ReaderHistory();
 
 	/**
-	* @param change
-	* @param prox
-	* @return
+	* Virtual method that is called when a new change is received.
+	* In this implementation this method just calls add_change. The suer can overload this method in case
+	* he needs to perform additional checks before adding the change.
+	* @param change Pointer to the change
+	* @return True if added.
 	*/
-	RTPS_DllAPI virtual bool received_change(CacheChange_t* change, WriterProxy*prox = nullptr);
+	RTPS_DllAPI virtual bool received_change(CacheChange_t* change);
 
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.
 	 * @param a_change Pointer to the CacheChange to add.
-	 * @param prox Pointer to the writerProxy associated with the change that is going to be added.
 	 * @return True if added.
 	 */
-	RTPS_DllAPI bool add_change(CacheChange_t* a_change, WriterProxy*prox = nullptr);
+	RTPS_DllAPI bool add_change(CacheChange_t* a_change);
 
 	/**
 	 * Remove a CacheChange_t from the ReaderHistory.
@@ -84,35 +85,10 @@ public:
 	RTPS_DllAPI void postSemaphore();
 	//!Wait for the semaphore
 	RTPS_DllAPI void waitSemaphore();
-//	/**
-//	 * Method to know whether there are unread CacheChange_t.
-//	 * @return True if there are unread.
-//	 */
-//	bool isUnreadCache();
-//	//!Increase the unread count.
-//	void increaseUnreadCount()
-//	{
-//		++m_unreadCacheCount;
-//	}
-//	//!Decrease the unread count.
-//	void decreaseUnreadCount()
-//	{
-//		if(m_unreadCacheCount>0)
-//			--m_unreadCacheCount;
-//	}
-//	//!Get the unread count.
-//	uint64_t getUnreadCount()
-//	{
-//		return m_unreadCacheCount;
-//	}
-//	//!Get the last added cacheChange.
-//	bool get_last_added_cache(CacheChange_t** change);
-//	//!Remove all the changes of a specific InstanceHandle_t.
-//	bool removeCacheChangesByKey(InstanceHandle_t& key);
-
-
 protected:
+	//!Pointer to the reader
 	RTPSReader* mp_reader;
+	//!Pointer to the semaphore, used to halt execution until new message arrives.
 	boost::interprocess::interprocess_semaphore* mp_semaphore;
 
 };

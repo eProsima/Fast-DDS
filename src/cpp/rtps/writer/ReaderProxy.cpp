@@ -214,10 +214,7 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 	return true;
 }
 
-bool ReaderProxy::rtps_is_relevant(CacheChange_t* change)
-{
-	return true;
-}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

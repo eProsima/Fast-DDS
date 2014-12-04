@@ -52,7 +52,7 @@ SubscriberHistory::~SubscriberHistory() {
 	this->release_Cache(mp_getKeyCache);
 }
 
-bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP)
+bool SubscriberHistory::received_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "add_change";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -113,7 +113,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 		}
 		if(add)
 		{
-			if(this->add_change(a_change, WP))
+			if(this->add_change(a_change))
 			{
 				increaseUnreadCount();
 				if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
@@ -195,7 +195,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, WriterProxy* WP
 			}
 			if(add)
 			{
-				if(this->add_change(a_change, WP))
+				if(this->add_change(a_change))
 				{
 					increaseUnreadCount();
 					if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)

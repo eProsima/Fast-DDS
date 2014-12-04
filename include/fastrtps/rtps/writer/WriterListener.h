@@ -23,7 +23,7 @@ namespace rtps{
 class RTPSWriter;
 
 /**
-*
+* Class with virtual method so the user can implement callbacks to certain events.
 */
 class RTPS_DllAPI WriterListener
 {
@@ -32,8 +32,9 @@ public:
 	virtual ~WriterListener(){};
 	
 	/**
-	* @param writer
-	* @param info
+	* This method is called when a new Reader is matched with this Writer by hte builtin protocols
+	* @param writer Pointer to the RTPSWriter.
+	* @param info Matching Information.
 	*/
 	virtual void onWriterMatched(RTPSWriter* writer,MatchingInfo info){};
 };
