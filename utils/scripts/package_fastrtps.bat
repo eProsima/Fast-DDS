@@ -36,7 +36,7 @@ if not %errorstatus%==0 goto :exit
 :: Compile RTPS for target.
 cd "utils\scripts"
 ::COMPILE VS2013
-set LIB_BOOST_PATH=C:\local\boost_1_57_0
+::set LIB_BOOST_PATH=C:\local\boost_1_57_0
 call build_fastrtps.bat noclean
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
