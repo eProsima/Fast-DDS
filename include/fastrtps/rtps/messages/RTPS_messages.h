@@ -12,7 +12,7 @@
 
 #ifndef RTPS_MESSAGES_H_
 #define RTPS_MESSAGES_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/Types.h"
 #include "fastrtps/rtps/common/Guid.h"
 
@@ -93,5 +93,5 @@ inline std::ostream& operator<<(std::ostream& output,const SubmessageHeader_t& s
 }
 
 
-
+#endif
 #endif /* RTPS_MESSAGES_H_ */

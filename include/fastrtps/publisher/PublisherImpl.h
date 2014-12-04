@@ -14,7 +14,7 @@
 
 #ifndef PUBLISHERIMPL_H_
 #define PUBLISHERIMPL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/common/Locator.h"
 #include "fastrtps/rtps/common/Guid.h"
@@ -135,122 +135,8 @@ private:
 
 };
 
-//
-///**
-// * Class Publisher, contains the public API to send new data. This class should not be instantiated directly.
-// * DomainRTPSParticipant class should be used to correctly initialize this element.
-// * @ingroup MODULE
-// * @snippet _example.cpp ex_Publisher
-// */
-//class RTPS_DllAPI Publisher{
-//public:
-//	Publisher(PublisherImpl* pin):mp_impl(pin){};
-//	virtual ~Publisher(){};
-//
-//
-//	bool assignListener(PublisherListener* listen_in)
-//	{
-//		return mp_impl->assignListener(listen_in);
-//	}
-//	/**
-//	 * Write data to the topic.
-//	 * @param Data Pointer to the data
-//	 * @return True if correct
-//	 * @par Calling example:
-//	 * @snippet pubsub_example.cpp ex_PublisherWrite
-//	 */
-//	bool write(void*Data)
-//	{
-//		return mp_impl->write(Data);
-//	}
-//
-//	/**
-//	 * Dispose of a previously written data.
-//	 * @param Data Pointer to the data.
-//	 * @return True if correct.
-//	 */
-//	bool dispose(void*Data)
-//	{
-//		return mp_impl->dispose(Data);
-//	}
-//	/**
-//	 * Unregister a previously written data.
-//	 * @param Data Pointer to the data.
-//	 * @return True if correct.
-//	 */
-//	bool unregister(void*Data)
-//	{
-//		return mp_impl->unregister(Data);
-//	}
-//	/**
-//	 * Dispose and unregister a previously written data.
-//	 * @param Data Pointer to the data.
-//	 * @return True if correct.
-//	 */
-//	bool dispose_and_unregister(void*Data)
-//	{
-//		return mp_impl->dispose_and_unregister(Data);
-//	}
-//
-//
-//	/**
-//	 * Removes the cache change with the minimum sequence number
-//	 * @return True if correct.
-//	 */
-//	bool removeMinSeqChange()
-//	{
-//		return mp_impl->removeMinSeqChange();
-//	}
-//	/**
-//	 * Removes all changes from the History.
-//	 * @param[out] removed Number of removed elements
-//	 * @return True if correct.
-//	 */
-//	bool removeAllChange(size_t* removed)
-//	{
-//		return mp_impl->removeAllChange(removed);
-//	}
-//
-//	/**
-//	 * Get the number of elements in the History.
-//	 * @return Number of elements in the History.
-//	 */
-//	size_t getHistoryElementsNumber()
-//	{
-//		return mp_impl->getHistoryElementsNumber();
-//	}
-//
-//
-//	const GUID_t& getGuid()
-//	{
-//		return mp_impl->getGuid();
-//	}
-//
-//	size_t getMatchedSubscribers()
-//	{
-//		return mp_impl->getMatchedSubscribers();
-//	}
-//
-//	/**
-//	 * Update the Attributes of the Publisher;
-//	 * @param att Reference to a PublisherAttributes object to update the parameters;
-//	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
-//	 */
-//	bool updateAttributes(PublisherAttributes& att)
-//	{
-//		return mp_impl->updateAttributes(att);
-//	}
-//	/**
-//	 * Get the Attributes of the Publisher.
-//	 */
-//	PublisherAttributes getAttributes(){return mp_impl->getAttributes();}
-//
-//private:
-//	PublisherImpl* mp_impl;
-//};
-
 
 } /* namespace  */
 } /* namespace eprosima */
-
+#endif
 #endif /* PUBLISHER_H_ */

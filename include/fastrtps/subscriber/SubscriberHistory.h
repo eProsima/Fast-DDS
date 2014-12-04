@@ -13,7 +13,7 @@
 
 #ifndef SUBSCRIBERHISTORY_H_
 #define SUBSCRIBERHISTORY_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/history/ReaderHistory.h"
 #include "fastrtps/qos/QosPolicies.h"
 #include "fastrtps/subscriber/SampleInfo.h"
@@ -122,5 +122,5 @@ private:
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* SUBSCRIBERHISTORY_H_ */

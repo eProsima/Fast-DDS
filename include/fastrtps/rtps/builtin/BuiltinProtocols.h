@@ -13,7 +13,7 @@
 
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
 
 
@@ -130,5 +130,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* BUILTINPROTOCOLS_H_ */

@@ -12,7 +12,7 @@
 
 #ifndef PARAM_LIST_T_H_
 #define PARAM_LIST_T_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/qos/ParameterTypes.h"
 #include "fastrtps/rtps/messages/RTPS_messages.h"
 #include "fastrtps/rtps/common/CDRMessage_t.h"
@@ -87,5 +87,5 @@ public:
 
 } /* namespace  */
 } /* namespace eprosima */
-
+#endif
 #endif /* PARAMLISTT_H_ */

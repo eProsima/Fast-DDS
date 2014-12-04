@@ -13,7 +13,7 @@
 
 #ifndef PERIODICHEARTBEAT_H_
 #define PERIODICHEARTBEAT_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/resources/TimedEvent.h"
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 
@@ -58,5 +58,5 @@ public:
 }
 }
 } /* namespace eprosima */
-
+#endif
 #endif /* PERIODICHEARTBEAT_H_ */

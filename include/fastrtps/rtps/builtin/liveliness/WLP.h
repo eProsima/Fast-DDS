@@ -13,7 +13,7 @@
 
 #ifndef WLP_H_
 #define WLP_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <vector>
 
 #include "fastrtps/rtps/common/Time_t.h"
@@ -154,5 +154,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* WLP_H_ */

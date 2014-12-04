@@ -12,7 +12,7 @@
 
 #ifndef CDRMESSAGE_T_H_
 #define CDRMESSAGE_T_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/Types.h"
 #include <stdlib.h>
 
@@ -78,5 +78,5 @@ struct CDRMessage_t{
 }
 }
 }
-
+#endif
 #endif /* CDRMESSAGE_T_H_ */

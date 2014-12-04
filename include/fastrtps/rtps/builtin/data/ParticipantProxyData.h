@@ -13,7 +13,7 @@
 
 #ifndef PARTICIPANTPROXYDATA_H_
 #define PARTICIPANTPROXYDATA_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/qos/QosList.h"
 #include "fastrtps/qos/ParameterList.h"
 
@@ -141,5 +141,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* RTPSParticipantPROXYDATA_H_ */

@@ -114,7 +114,7 @@ inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 /**
 * Convert GUID to InstanceHandle_t
 * @param ihandle InstanceHandle_t to store the results
-* @param guid GUID to copy
+* @return GUID_t
 */
 inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
 {

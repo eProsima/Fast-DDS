@@ -13,6 +13,8 @@
 
 #ifndef LISTENRESOURCEIMPL_H_
 #define LISTENRESOURCEIMPL _H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 
 #include "fastrtps/rtps/common/Locator.h"
 
@@ -111,5 +113,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* LISTENRESOURCE_H_ */

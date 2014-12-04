@@ -14,6 +14,8 @@
 
 #ifndef RESOURCESENDIMPL_H_
 #define RESOURCESENDIMPL_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <boost/asio.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/address_v6.hpp>
@@ -90,5 +92,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* RESOURCESEND_H_ */

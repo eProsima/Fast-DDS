@@ -13,7 +13,7 @@
 
 #ifndef RESOURCESEND_H_
 #define RESOURCESEND_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <cstdint>
 
 namespace boost
@@ -70,5 +70,5 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* RESOURCESEND_H_ */

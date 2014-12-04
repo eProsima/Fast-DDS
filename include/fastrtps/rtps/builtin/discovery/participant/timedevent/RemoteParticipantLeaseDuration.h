@@ -13,7 +13,7 @@
 
 #ifndef RTPSPARTICIPANTLEASEDURATION_H_
 #define RTPSPARTICIPANTLEASEDURATION_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/resources/TimedEvent.h"
 
 
@@ -61,5 +61,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* RTPSPARTICIPANTLEASEDURATION_H_ */

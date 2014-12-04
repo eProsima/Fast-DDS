@@ -96,7 +96,7 @@ public:
 	 * @param rqos ReaderQos.
 	 * @return True if correctly registered.
 	 */
-	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& wqos);
+	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
 	/**
 	 * Update writer QOS
 	 * @param Writer to update

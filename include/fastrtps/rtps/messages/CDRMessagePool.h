@@ -13,7 +13,7 @@
 
 #ifndef CDRMESSAGEPOOL_H_
 #define CDRMESSAGEPOOL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 #include <vector>
 
@@ -59,5 +59,5 @@ protected:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* CDRMESSAGEPOOL_H_ */

@@ -15,7 +15,7 @@
 
 #ifndef TIMEDEVENTIMPL_H_
 #define TIMEDEVENTIMPL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <boost/asio/io_service.hpp>
 
 #include <boost/asio/deadline_timer.hpp>
@@ -121,5 +121,5 @@ public:
 }
 }
 } /* namespace eprosima */
-
+#endif
 #endif /* PERIODICEVENT_H_ */

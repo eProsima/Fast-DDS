@@ -69,7 +69,7 @@ class TestTypeDataType:public TopicDataType
 public:
 	TestTypeDataType()
 {
-		m_topicDataTypeName = "TestType";
+		setName("TestType");
 		m_typeSize = 6+4+sizeof(double); //This is the maximum size of this type.
 		m_isGetKeyDefined = true;
 };
@@ -85,9 +85,6 @@ bool TestTypeDataType::serialize(void*data,SerializedPayload_t* payload)
 {
 	payload->length = sizeof(TestType);
 	payload->encapsulation = CDR_LE;
-	if(payload->data !=NULL)
-		free(payload->data);
-	payload->data = (octet*)malloc(payload->length);
 	memcpy(payload->data,data,payload->length);
 	return true;
 }
@@ -102,8 +99,9 @@ bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 //Different objects with different names should be used if the Publisher/Subscriber are defined in different threads.
 //Thread safety would be considered for future releases.
 TestTypeDataType TestTypeData;
-DomainRTPSParticipant::registerType((TopicDataType*)&TestTypeData);
-//! [ex_DDSTopicDataType]
+Participant* part; //CREATED SOMEWHERE ELSE
+Domain::registerType(part,(TopicDataType*)&TestTypeData);
+//! [ex_TopicDataType]
 
 //! [ex_Publisher]
 using namespace eprosima::pubsub;
@@ -222,12 +220,19 @@ PParam.discovery.m_staticEndpointXMLFilename = "StaticEndpointDefinition.xml";
 Locator_t loc;
 loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
 PParam.defaultUnicastLocatorList.push_back(loc);
-RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
+RTPSParticipant* p = RTPSDomain::createRTPSParticipant(PParam);
 if(p!=NULL)
 {
 	//RTPSParticipant correctly created
 }
 //! [ex_RTPSParticipantCreation]
 
+
+//! [ex_RTPSParticipantCreation]
+class MyListener : public RTPSParticipantListener { ... };
+MyListener listen;
+ParticipantAttributes patt;
+RTPSParticipant* p = RTPSDomain::createRTPSParticipant(patt,(RTPSParticipantListener*)&listen);
+//! [ex_RTPSParticipantCreation]
 
 

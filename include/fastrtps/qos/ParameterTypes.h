@@ -12,7 +12,7 @@
 
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/all_common.h"
 
 
@@ -477,6 +477,6 @@ public:
 } //end of namespace
 } //end of namespace eprosima
 
-
+#endif
 #endif /* PARAMETERTYPES_H_ */
 

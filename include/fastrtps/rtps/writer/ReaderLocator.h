@@ -14,6 +14,8 @@
 
 #ifndef READERLOCATOR_H_
 #define READERLOCATOR_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <vector>
 #include "fastrtps/rtps/common/Locator.h"
 #include "fastrtps/rtps/common/Guid.h"
@@ -86,5 +88,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* READERLOCATOR_H_ */

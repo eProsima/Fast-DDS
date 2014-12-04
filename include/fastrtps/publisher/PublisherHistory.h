@@ -13,7 +13,7 @@
 
 #ifndef PUBLISHERHISTORY_H_
 #define PUBLISHERHISTORY_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/history/WriterHistory.h"
 #include "fastrtps/qos/QosPolicies.h"
 
@@ -88,5 +88,5 @@ private:
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* PUBLISHERHISTORY_H_ */

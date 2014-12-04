@@ -13,6 +13,8 @@
 
 #ifndef PDPSIMPLELISTENER_H_
 #define PDPSIMPLELISTENER_H_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "fastrtps/rtps/reader/ReaderListener.h"
 #include "fastrtps/qos/ParameterList.h"
 #include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
@@ -73,4 +75,5 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* PDPSIMPLELISTENER_H_ */

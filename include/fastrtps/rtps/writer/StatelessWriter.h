@@ -13,7 +13,7 @@
 
 #ifndef STATELESSWRITER_H_
 #define STATELESSWRITER_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "fastrtps/rtps/common/Time_t.h"
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/writer/ReaderLocator.h"
@@ -112,4 +112,5 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 
+#endif
 #endif /* STATELESSWRITER_H_ */

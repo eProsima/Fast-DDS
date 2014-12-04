@@ -19,7 +19,6 @@
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
-
 namespace fastrtps{
 
 class SubscriberImpl;
