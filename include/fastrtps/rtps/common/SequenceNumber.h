@@ -25,6 +25,7 @@ namespace rtps{
 
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
+//!@ingroup COMMON_MODULE
 struct RTPS_DllAPI SequenceNumber_t{
 	//!
 	int32_t high;
@@ -280,6 +281,7 @@ inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seq
 
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
+//!@ingroup COMMON_MODULE
 class SequenceNumberSet_t{
 public:
 	//!Base sequence number

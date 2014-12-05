@@ -38,7 +38,7 @@ class RTPSParticipantImpl;
 /**
  * Class EDP, base class for Endpoint Discovery Protocols. It contains generic methods used by the two EDP implemented (EDPSimple and EDPStatic), as well as abstract methods
  * definitions required by the specific implementations.
- * @ingroup DISCOVERYMODULE
+ * @ingroup DISCOVERY_MODULE
  */
 class EDP {
 public:

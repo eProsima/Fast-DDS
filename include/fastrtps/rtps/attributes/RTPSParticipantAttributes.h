@@ -22,6 +22,7 @@ namespace rtps {
 
 /**
  * Attributes of the Simple Endpoint Discovery Protocol.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class SimpleEDPAttributes{
 public:
@@ -37,6 +38,7 @@ public:
 
 /**
  * Port Parameters related with the RTPS protocol.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class PortParameters
 {
@@ -85,7 +87,7 @@ public:
 
 /**
  * Class BuiltinAttributes used to define the behavior of the RTPSParticipant builtin protocols.
- * @ingroup ATTRIBUTESMODULE
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 	class BuiltinAttributes{
 public:
@@ -158,7 +160,7 @@ private:
 
 /**
  * Class RTPSParticipantParameters used to define different aspects of a RTPSParticipant.
- * @ingroup ATTRIBUTESMODULE
+ *@ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPSParticipantAttributes {
 public:

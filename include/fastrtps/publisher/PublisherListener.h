@@ -25,8 +25,8 @@ class Publisher;
 
 /**
  * Class PublisherListener, it should be used by the end user to implement specific callbacks to certain actions.
- * @ingroup FASTRTPSMODULE
- * @snippet pubsub_example.cpp ex_PublisherListener
+ * @ingroup FASTRTPS_MODULE
+ * @snippet fastrtps_example.cpp ex_PublisherListener
  */
 class RTPS_DllAPI PublisherListener
 {

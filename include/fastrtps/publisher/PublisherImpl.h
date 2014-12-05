@@ -34,10 +34,7 @@ class RTPSParticipant;
 }
 
 using namespace rtps;
-/**
- * FASTRTPS namespace. Contains the public API to interact with the RTPS protocol.
- * @ingroup FASTRTPSMODULE
- */
+
 
 
 class TopicDataType;
@@ -48,6 +45,7 @@ class Publisher;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
+ * @ingroup FASTRTPS_MODULE
  */
 class PublisherImpl {
 	friend class ParticipantImpl;

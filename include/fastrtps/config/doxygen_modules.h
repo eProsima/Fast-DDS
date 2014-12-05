@@ -16,82 +16,108 @@
 //Description of doxygen modules, not used in actual code.
 
  /*!
- * @defgroup fastrtpsAPIREFERENCE eProsima RTPS API Reference
- * @brief eProsima RTPS API grouped in modules.
+ * @defgroup FASTRTPS_GENERAL_API eProsima Fast RTPS API Reference
+ * @brief eProsima Fast RTPS API grouped in modules.
  */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 
  /*!
- * @defgroup RTPSMODULE RTPS
- * @ingroup fastrtpsAPIREFERENCE
+ * @defgroup RTPS_MODULE RTPS
+ * @ingroup FASTRTPS_GENERAL_API
  * @brief RTPS API
  * This is an implementation of the RTPS communication standard defined by the OMG.
- * The PUBLISHER_SUBSCRIBER - Public API provided is provided to the users to create applications and to manage them.
  */
 
-#endif
+
 /*!
- * @defgroup FASTRTPSMODULE Public API
- * @ingroup fastrtpsAPIREFERENCE
- * @brief PUBLISHER_SUBSCRIBER Public API
- * This Module contains the Public API for this library.
+ * @defgroup FASTRTPS_MODULE Publisher Subscriber Public API
+ * @ingroup FASTRTPS_GENERAL_API
+ * @brief Publisher Subscriber Public API
+ * This Module contains the PPublisher Subscriber Layer created to facilitate the use of the RTPS protocol.
  */
 
-/** @defgroup ATTRIBUTESMODULE Attributes Module.
- * @ingroup FASTRTPSMODULE
+/** @defgroup FASTRTPS_ATTRIBUTES_MODULE Fast RTPS Attributes Module.
+ * @ingroup FASTRTPS_MODULE
  * @brief Attributes class used to define the public entities that the user should use to control this library.
  */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+/** @defgroup RTPS_ATTRIBUTES_MODULE RTPS Attributes Module.
+ * @ingroup RTPS_MODULE
+ * @brief Attributes class used to define the public entities that the user should use to control this library.
+ */
 
 
-/** @defgroup COMMONMODULE Common Module.
- * @ingroup RTPSMODULE
+/** @defgroup COMMON_MODULE Common Module.
+ * @ingroup RTPS_MODULE
  * Common structures used by multiple elements.
  */
 
-/** @defgroup PARAMETERMODULE Qos Module
- * @ingroup COMMONMODULE
- * All the different Qos and parameters are included here.
- */
-
-/** @defgroup WRITERMODULE Writer Module
- * @ingroup RTPSMODULE
+/** @defgroup WRITER_MODULE Writer Module
+ * @ingroup RTPS_MODULE
  * This module contains all classes and methods associated with RTPSWriter and its specifications, as well as other necessary classes.
  */
 
-/** @defgroup READERMODULE Reader Module
- * @ingroup RTPSMODULE
+/** @defgroup READER_MODULE Reader Module
+ * @ingroup RTPS_MODULE
  * This module contains all classes and methods associated with RTPSReader and its specifications, as well as other necessary classes.
  */
 
-/** @defgroup MANAGEMENTMODULE Management Module
- * @ingroup RTPSMODULE
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/** @defgroup PARAMETER_MODULE Qos Module
+ * @ingroup COMMON_MODULE
+ * All the different Qos and parameters are included here.
+ */
+
+/** @defgroup MANAGEMENT_MODULE Management Module
+ * @ingroup FASTRTPS_GENERAL_API
  * This module contains classes and methods associated with the management of all other objects. The most important ones
  * are the communication (ResourceSend and ResourceListen) and event (ResourceEvent) resources.
  */
 
-/** @defgroup DISCOVERYMODULE Discovery Module
- * @ingroup MANAGEMENTMODULE
+/** @defgroup BUILTIN_MODULE Builtin Protocols Module
+ * @ingroup MANAGEMENT_MODULE
+ * This module contains the general Builtin Protocols.
+ */
+
+/** @defgroup DISCOVERY_MODULE Discovery Module
+ * @ingroup MANAGEMENT_MODULE
  * This module contains the classes associated with the Discovery Protocols.
  */
 
-/** @defgroup LIVELINESSMODULE Liveliness Module
- * @ingroup MANAGEMENTMODULE
+/** @defgroup LIVELINESS_MODULE Liveliness Module
+ * @ingroup MANAGEMENT_MODULE
  * This module contains the classes associated with the Writer Liveliness Protocols.
  */
 
-
-
 #endif
 
-/** @defgroup UTILITIESMODULE Shared Utilities
- * @ingroup fastrtpsAPIREFERENCE
+
+/** @defgroup UTILITIES_MODULE Shared Utilities
+ * @ingroup FASTRTPS_GENERAL_API
  * Shared utilities that can be used by one or more classes in different modules. They are not strictly part of the RTPS implementation
  * but very useful to implement different functionalities.
  */
 
+/**
+ * @namespace eprosima eProsima namespace.
+ * @ingroup FASTRTPS_GENERAL_API
+ */
 
+/**
+ * @namespace eprosima::fastrtps Contains the publisher subscriber layer.
+ * @ingroup FASTRTPS_MODULE
+ */
+
+/**
+ * @namespace eprosima::fastrtps::rtps Contains the RTPS protocol implementation
+ * @ingroup RTPS_MODULE
+ */
+
+/**
+ * @namespace eprosima::fastrtps::rtps::TimeConv Auxiliary methods to convert to Time_t to more manageable types.
+ *  @ingroup UTILITIES_MODULE
+  */
 
 #endif /* RTPS_DOXYGEN_MODULES_H_ */

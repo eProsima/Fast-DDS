@@ -26,7 +26,7 @@ class ReaderProxy;
 
 /**
  * NackSupressionDuration class, used to avoid too "recent" NACK messages.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class NackSupressionDuration : public TimedEvent
 {

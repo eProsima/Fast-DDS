@@ -23,6 +23,7 @@ namespace fastrtps {
 
 /**
  * This class provides the user with information regarding a Discovered Participant.
+ * @ingroup FASTRTPS_MODULE
  */
 class ParticipantDiscoveryInfo {
 public:

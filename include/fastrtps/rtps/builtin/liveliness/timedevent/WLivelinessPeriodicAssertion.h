@@ -28,7 +28,7 @@ class WLP;
 
 /**
  * Class WLivelinessPeriodicAssertion, used to assert the liveliness of the writers in a RTPSParticipant.
- * @ingroup LIVELINESSMODULE
+ * @ingroup LIVELINESS_MODULE
  */
 class WLivelinessPeriodicAssertion: public TimedEvent {
 public:

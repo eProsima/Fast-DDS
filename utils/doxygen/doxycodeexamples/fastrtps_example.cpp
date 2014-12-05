@@ -206,26 +206,26 @@ public:
 };
 //! [ex_PublisherListener]
 
-//! [ex_RTPSParticipantCreation]
-using namespace eprosima::rtps;
-using namespace eprosima::pubsub;
-RTPSParticipantAttributes PParam;
-PParam.name = "RTPSParticipant1";
-PParam.defaultSendPort = 10042;
-PParam.domainId = 50;
-PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-PParam.discovery.resendSPDPDataPeriod_sec = 30;
-PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
-PParam.discovery.m_staticEndpointXMLFilename = "StaticEndpointDefinition.xml";
-Locator_t loc;
-loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
-PParam.defaultUnicastLocatorList.push_back(loc);
-RTPSParticipant* p = RTPSDomain::createRTPSParticipant(PParam);
-if(p!=NULL)
-{
-	//RTPSParticipant correctly created
-}
-//! [ex_RTPSParticipantCreation]
+// //! [ex_ RTPSParticipantCreation]
+//using namespace eprosima::rtps;
+//using namespace eprosima::pubsub;
+//RTPSParticipantAttributes PParam;
+//PParam.setName("RTPSParticipant");
+//PParam.defaultSendPort = 10042;
+//PParam.domainId = 50;
+//PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+//PParam.discovery.resendSPDPDataPeriod_sec = 30;
+//PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
+//PParam.discovery.m_staticEndpointXMLFilename = "StaticEndpointDefinition.xml";
+//Locator_t loc;
+//loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
+//PParam.defaultUnicastLocatorList.push_back(loc);
+//RTPSParticipant* p = RTPSDomain::createRTPSParticipant(PParam);
+//if(p!=nullptr)
+//{
+//	//RTPSParticipant correctly created
+//}
+// //! [ex_ RTPSParticipantCreation]
 
 
 //! [ex_RTPSParticipantCreation]

@@ -26,7 +26,7 @@ class WriterProxy;
 
 /**
  * Class HeartbeatResponseDelay, TimedEvent used to delay the response to a specific HB.
- * @ingroup READERMODULE
+ * @ingroup READER_MODULE
  */
 class HeartbeatResponseDelay:public TimedEvent {
 public:

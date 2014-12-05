@@ -38,6 +38,7 @@ namespace rtps{
 #define	DATA_FRAG 0x16
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
+//!@ingroup COMMON_MODULE
  struct Header_t{
 	//!Protocol version
 	ProtocolVersion_t version;

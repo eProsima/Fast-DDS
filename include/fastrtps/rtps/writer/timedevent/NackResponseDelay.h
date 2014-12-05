@@ -27,7 +27,7 @@ class ReaderProxy;
 
 /**
  * NackResponseDelay class use to delay the response to an NACK message.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class NackResponseDelay:public TimedEvent {
 public:

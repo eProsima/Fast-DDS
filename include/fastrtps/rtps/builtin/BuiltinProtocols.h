@@ -35,7 +35,7 @@ class RTPSReader;
 
 /**
  * Class BuiltinProtocols that contains builtin endpoints implementing the discovery and liveliness protocols.
- * @ingroup MANAGEMENTMODULE
+ * *@ingroup BUILTIN_MODULE
  */
 class BuiltinProtocols {
 	friend class RTPSParticipantImpl;

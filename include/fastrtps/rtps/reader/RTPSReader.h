@@ -32,7 +32,7 @@ class WriterProxy;
 
 /**
  * Class RTPSReader, manages the reception of data from the writers.
- * @ingroup READERMODULE
+ * @ingroup READER_MODULE
  */
 class RTPSReader : public Endpoint
 {

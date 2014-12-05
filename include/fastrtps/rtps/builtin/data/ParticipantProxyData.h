@@ -51,7 +51,7 @@ class ReaderProxyData;
 class WriterProxyData;
 
 /**
-*
+*@ingroup BUILTIN_MODULE
 */
 class ParticipantProxyData {
 public:

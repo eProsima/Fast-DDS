@@ -20,6 +20,7 @@ namespace rtps{
 
 /**
  * Attributes of a WriterHistory or a ReaderHistory.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPS_DllAPI HistoryAttributes
 {

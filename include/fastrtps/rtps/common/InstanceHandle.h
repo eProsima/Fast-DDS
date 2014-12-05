@@ -22,6 +22,7 @@ namespace rtps{
 
 /**
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
+ * @ingroup COMMON_MODULE
  */
 struct RTPS_DllAPI InstanceHandle_t{
 	//!Value

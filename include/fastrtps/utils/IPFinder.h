@@ -40,7 +40,7 @@ namespace fastrtps{
 using namespace rtps;
 /**
  * Find IPs of the computer.
- * @ingroup UTILITIESMODULE
+ * @ingroup UTILITIES_MODULE
  */
 class IPFinder {
 public:

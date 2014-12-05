@@ -26,6 +26,7 @@ struct CacheChange_t;
 /**
 * This class can be used by the user to override some of is virtual method to program some
 * actions to certain events.
+*  @ingroup READER_MODULE
 */
 class RTPS_DllAPI ReaderListener
 {

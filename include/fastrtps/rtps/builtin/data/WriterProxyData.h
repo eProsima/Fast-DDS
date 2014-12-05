@@ -30,7 +30,7 @@ namespace rtps {
 struct CDRMessage_t;
 
 /**
- *
+ **@ingroup BUILTIN_MODULE
  */
 class WriterProxyData {
 public:

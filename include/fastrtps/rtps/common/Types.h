@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file common_types.h	
+ * @file Types.h
  */
 
 #ifndef COMMON_TYPES_H_
@@ -20,22 +20,14 @@
 
 #include "fastrtps/config/fastrtps_dll.h"
 
-/**
- * @namespace eprosima
- * @ingroup fastrtpsAPIREFERENCE
- * eProsima namespace. It contains everything.
- */
+
 namespace eprosima{
 namespace fastrtps{
-
-/**
- * RTPS namespace. Functions and structures dedicated to implement the RTPS protocol.
- * @ingroup RTPSMODULE
- */
 namespace rtps{
 
 /*!
  * @brief This enumeration represents endianness types.
+ * @ingroup COMMON_MODULE
  */
 enum Endianness_t{
 	//! @brief Big endianness.
@@ -45,12 +37,14 @@ enum Endianness_t{
 };
 
 //!Reliability enum used for internal purposes
+//!@ingroup COMMON_MODULE
 typedef enum ReliabilityKind_t{
 	RELIABLE,
 	BEST_EFFORT
 }ReliabilityKind_t;
 
 //!Durability kind
+//!@ingroup COMMON_MODULE
 typedef enum DurabilityKind_t
 {
 	VOLATILE,
@@ -58,6 +52,7 @@ typedef enum DurabilityKind_t
 }DurabilityKind_t;
 
 //!Endpoint kind
+//!@ingroup COMMON_MODULE
 typedef enum EndpointKind_t{
 	READER,
 	WRITER

@@ -27,7 +27,7 @@ namespace fastrtps{
 
 /**
  * Class TopicAttributes, used by the user to define the attributes of the topic associated with a Publisher or Subscriber.
- * @ingroup ATTRIBUTESMODULE
+ * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
 class TopicAttributes {
 public:

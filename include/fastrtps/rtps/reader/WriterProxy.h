@@ -40,7 +40,7 @@ class WriterProxyLiveliness;
 
 /**
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
- * @ingroup READERMODULE
+ * @ingroup READER_MODULE
  */
 class WriterProxy {
 public:

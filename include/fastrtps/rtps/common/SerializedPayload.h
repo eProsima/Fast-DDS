@@ -32,6 +32,7 @@ namespace rtps{
 
 
 //!@brief Structure SerializedPayload_t.
+//!@ingroup COMMON_MODULE
 struct RTPS_DllAPI SerializedPayload_t{
 	//!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
 	uint16_t encapsulation;

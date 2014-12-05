@@ -24,7 +24,7 @@ class RTPSWriter;
 
 /**
  * Class WriterHistory, container of the different CacheChanges of a writer
- * @ingroup COMMONMODULE
+ * @ingroup WRITER_MODULE
  */
 class WriterHistory : public History
 {

@@ -22,6 +22,7 @@ namespace fastrtps {
 
 /**
  * QosList_t class contains two ParameterList_t for the Qos.
+ * @ingroup PARAMETER_MODULE
  */
 class QosList_t {
 public:
@@ -35,6 +36,7 @@ public:
 
 /**
  * QosList class, that contains static methods to add Qos to a QosList_t structure.
+ * @ingroup PARAMETER_MODULE
  */
 class QosList
 {

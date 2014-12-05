@@ -41,6 +41,7 @@ class SubscriberListener;
 
 /**
  * This is the implementation class of the Participant.
+ * @ingroup FASTRTPS_MODULE
  */
 class ParticipantImpl {
 	friend class Domain;

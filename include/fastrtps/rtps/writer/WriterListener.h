@@ -24,6 +24,7 @@ class RTPSWriter;
 
 /**
 * Class with virtual method so the user can implement callbacks to certain events.
+*  @ingroup WRITER_MODULE
 */
 class RTPS_DllAPI WriterListener
 {

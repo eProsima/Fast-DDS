@@ -31,7 +31,7 @@ struct CacheChange_t;
 
 /**
  * Class CacheChangePool, used by the HistoryCache to pre-reserve a number of CacheChange_t to avoid dynamically reserving memory in the middle of execution loops.
- * @ingroup COMMONMODULE
+ * @ingroup COMMON_MODULE
  */
 class CacheChangePool {
 public:

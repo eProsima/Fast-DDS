@@ -32,6 +32,7 @@ class SubscriberImpl;
 
 /**
  * Class SubscriberHistory, container of the different CacheChanges of a subscriber
+ *  @ingroup FASTRTPS_MODULE
  */
 class SubscriberHistory: public ReaderHistory {
 public:
