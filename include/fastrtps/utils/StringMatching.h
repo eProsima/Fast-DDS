@@ -13,13 +13,14 @@
 
 #ifndef STRINGMATCHING_H_
 #define STRINGMATCHING_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 /**
  * Class StringMatching used to match different strings against each other as defined by the POSIX fnmatch API (1003.2-1992
 section B.6).
+ @ingroup UTILITIES_MODULE
  */
 class StringMatching {
 public:
@@ -34,5 +35,5 @@ public:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* STRINGMATCHING_H_ */

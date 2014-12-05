@@ -70,7 +70,7 @@ class ReaderListener;
 
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
- * @ingroup MANAGEMENTMODULE
+ * @ingroup RTPS_MODULE
  */
 class RTPSParticipantImpl
 {

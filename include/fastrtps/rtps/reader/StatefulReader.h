@@ -26,7 +26,7 @@ class WriterProxy;
 
 /**
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
- * @ingroup READERMODULE
+ * @ingroup READER_MODULE
  */
 class StatefulReader:public RTPSReader {
 public:

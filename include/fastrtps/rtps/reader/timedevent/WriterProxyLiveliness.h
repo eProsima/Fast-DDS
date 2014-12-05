@@ -23,6 +23,7 @@ namespace rtps {
 class WriterProxy;
 /**
  * Class WriterProxyLiveliness, timed event to check the liveliness of a writer each leaseDuration.
+ *  @ingroup READER_MODULE
  */
 class WriterProxyLiveliness: public TimedEvent {
 public:

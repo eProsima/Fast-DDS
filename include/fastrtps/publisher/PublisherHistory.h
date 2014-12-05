@@ -27,6 +27,7 @@ class PublisherImpl;
 /**
  * This class implements a WriterHistory with support for keyed topics and HistoryQOS.
  * This class is created by the PublisherImpl and should not be used by the user directly.
+ * @ingroup FASTRTPS_MODULE
  */
 class PublisherHistory:public WriterHistory
 {

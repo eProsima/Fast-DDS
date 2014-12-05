@@ -24,6 +24,7 @@ namespace fastrtps {
 
 /**
  * ParameterList_t class, used to store multiple parameters as a vector of pointers to the base class.
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterList_t {
 public:
@@ -60,6 +61,7 @@ public:
 
 /**
  * ParameterList class has static methods to update or read a ParameterList_t
+ * @ingroup PARAMETER_MODULE
  */
 class ParameterList
 {

@@ -35,7 +35,7 @@ class WriterProxyData;
 
 /**
  * Class StaticRTPSParticipantInfo, contains the information of writers and readers loaded from the XML file.
- * @ingroup DISCOVERYMODULE
+ *@ingroup DISCOVERY_MODULE
  */
 class StaticRTPSParticipantInfo{
 public:

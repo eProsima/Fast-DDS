@@ -38,7 +38,7 @@ class RTPSReader;
 
 /**
  * Class ReaderHistory, container of the different CacheChanges of a reader
- * @ingroup COMMONMODULE
+ * @ingroup READER_MODULE
  */
 class ReaderHistory : public History {
 	friend class RTPSReader;

@@ -36,7 +36,7 @@ namespace rtps {
 
 /**
  * Class History, container of the different CacheChanges and the methods to access them.
- * @ingroup COMMONMODULE
+ * @ingroup COMMON_MODULE
  */
 class History
 {

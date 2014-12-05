@@ -34,7 +34,7 @@ class ListenResource;
 
 /**
  * Class ListenResourceImpl, used to control the listen sockets and the received messages.
- * @ingroup MANAGEMENTMODULE
+ *@ingroup MANAGEMENT_MODULE
  */
 class ListenResourceImpl
 {

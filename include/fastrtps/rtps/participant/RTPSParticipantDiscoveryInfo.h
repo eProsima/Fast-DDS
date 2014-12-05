@@ -22,7 +22,12 @@ namespace fastrtps{
 namespace rtps{
 
 //!Discovery status
+//!@ingroup RTPS_MODULE
+#if defined(_WIN32)
 enum RTPS_DllAPI DISCOVERY_STATUS
+#else
+enum  DISCOVERY_STATUS
+#endif
 {
 	DISCOVERED_RTPSPARTICIPANT,
 	CHANGED_QOS_RTPSPARTICIPANT,
@@ -34,6 +39,7 @@ typedef std::vector<octet> UserData;
 
 /**
 * Discovery information of the RTPS Participant.
+* @ingroup RTPS_MODULE
 */
 class RTPSParticipantDiscoveryInfo{
 public:

@@ -32,6 +32,7 @@ class PublisherImpl;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
+ * @ingroup FASTRTPS_MODULE
  */
 class RTPS_DllAPI Publisher {
 public:

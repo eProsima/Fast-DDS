@@ -30,8 +30,8 @@ class ParameterList_t;
 namespace rtps{
 
 /**
- * @brief Class CDRMessageCreator, allows the generation of serialized CDR RTPS Messages.
- * @ingroup MANAGEMENTMODULE
+ * @brief Class RTPSMessageCreator, allows the generation of serialized CDR RTPS Messages.
+ * @ingroup MANAGEMENT_MODULE
  */
 class RTPSMessageCreator {
 public:

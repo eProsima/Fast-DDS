@@ -25,7 +25,7 @@ namespace rtps {
 
 /**
  * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class RTPSMessageGroup_t{
 public:
@@ -46,7 +46,7 @@ class RTPSWriter;
 
 /**
  * RTPSMessageGroup class used to send multiple changes as a single CDRMessage.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class RTPSMessageGroup {
 public:

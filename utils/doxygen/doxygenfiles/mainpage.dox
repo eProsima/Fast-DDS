@@ -1,5 +1,5 @@
 /*!
- * @mainpage eProsima RTPS Implementation
+ * @mainpage eProsima Fast RTPS library.
  * <div id="mainpage" style="width:95%;text-align:justify;text-justify:inter-word">
  * <h1>Purpose</h1>
  * Real-Time Publish-Subscribe (RTPS) is the wire interoperability protocol defined for the Data-Distribution Service (DDS) standard by 

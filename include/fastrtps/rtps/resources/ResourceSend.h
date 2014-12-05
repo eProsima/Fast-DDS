@@ -31,7 +31,7 @@ class Locator_t;
 struct CDRMessage_t;
 
 /**
-*
+*@ingroup MANAGEMENT_MODULE
 */
 class ResourceSend {
 public:

@@ -30,7 +30,7 @@ struct CacheChange_t;
 
 /**
  * Class ReaderLocator, contains information about a locator, without saving its state.
-  * @ingroup WRITERMODULE
+  * @ingroup WRITER_MODULE
  */
 class ReaderLocator {
 public:

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file DomainRTPSParticipant.h 	
+ * @file RTPSDomain.h
  */
 
 
@@ -40,8 +40,9 @@ class ReaderListener;
 
 
 /**
- * Class DomainRTPSParticipantImpl, singleton that performs all operations permitted by the DomainRTPSParticipant class. It also stores information
- * regarding all RTPSParticipants created in this Domain.
+ * Class RTPSDomain,it manages the creation and destruction of RTPSParticipant RTPSWriter and RTPSReader. It stores
+ * a list of all created RTPSParticipant. Is has only static methods.
+ * @ingroup RTPS_MODULE
  */
 class RTPSDomain
 {

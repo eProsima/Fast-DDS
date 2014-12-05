@@ -21,6 +21,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 //!Structure Time_t, used to describe times.
+//!@ingroup COMMON_MODULE
 struct RTPS_DllAPI Time_t{
 	//!Seconds
 	int32_t seconds;

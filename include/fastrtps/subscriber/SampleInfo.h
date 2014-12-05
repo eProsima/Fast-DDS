@@ -29,6 +29,7 @@ namespace fastrtps {
  * Information provided along with a sample when reading data from a Subscriber.
  * Currently only the type of sample is provided (ALIVE, NOT_ALIVE_DISPOSED or NOT_ALIVE_UNREGISTER),
  * but more information will be added in future releases.
+ * @ingroup FASTRTPS_MODULE
  */
 class RTPS_DllAPI SampleInfo_t {
 public:

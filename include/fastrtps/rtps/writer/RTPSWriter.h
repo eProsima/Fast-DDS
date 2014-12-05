@@ -32,7 +32,7 @@ struct CacheChange_t;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class RTPSWriter : public Endpoint
 {

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file RemoteRTPSParticipantLeaseDuration.h
+ * @file RemoteParticipantLeaseDuration.h
  *
 */
 
@@ -28,7 +28,7 @@ class ParticipantProxyData;
  * Class RemoteRTPSParticipantLeaseDuration, TimedEvent designed to remove a
  * remote RTPSParticipant and all its Readers and Writers from the local RTPSParticipant if it fails to
  * announce its liveliness each leaseDuration period.
- * @ingroup DISCOVERYMODULE
+ *@ingroup DISCOVERY_MODULE
  */
 class RemoteParticipantLeaseDuration:public TimedEvent
 {

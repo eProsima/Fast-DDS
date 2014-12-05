@@ -28,7 +28,7 @@ namespace fastrtps{
 
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
- * @ingroup ATTRIBUTESMODULE
+ * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
 class PublisherAttributes {
 
@@ -63,13 +63,13 @@ public:
 	
 	/**
 	 * Set the user defined ID
-	 * @param User defined ID to be set
+	 * @param id User defined ID to be set
 	 */
 	inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
 	
 	/**
 	 * Set the entity ID
-	 * @param Entity ID to be set
+	 * @param id Entity ID to be set
 	 */
 	inline void setEntityID(uint8_t id){m_entityID = id;	};
 private:

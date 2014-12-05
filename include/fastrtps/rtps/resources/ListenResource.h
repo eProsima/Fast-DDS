@@ -29,7 +29,7 @@ class MessageReceiver;
 class RTPSParticipantImpl;
 
 /**
-*
+*@ingroup MANAGEMENT_MODULE
 */
 class ListenResource {
 public:

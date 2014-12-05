@@ -38,7 +38,7 @@ using namespace rtps;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
- * @addtogroup PARAMETERMODULE
+ * @addtogroup PARAMETER_MODULE
  * @{
  */
 
@@ -109,6 +109,7 @@ enum ParameterId_t	:uint16_t
 
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
+//!@ingroup PARAMETER_MODULE
 class RTPS_DllAPI Parameter_t {
 public:
 	//!Parameter ID
@@ -132,7 +133,7 @@ public:
 };
 
 /**
- *
+ *@ingroup PARAMETER_MODULE
  */
 class RTPS_DllAPI ParameterKey_t:public Parameter_t{
 public:

@@ -29,7 +29,7 @@ struct SubmessageHeader_t;
 
 /**
  * Class MessageReceiver, process the received messages.
- * @ingroup MANAGEMENTMODULE
+ * @ingroup MANAGEMENT_MODULE
  */
 class MessageReceiver {
 public:

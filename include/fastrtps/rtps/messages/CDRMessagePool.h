@@ -22,7 +22,7 @@ namespace fastrtps{
 namespace rtps {
 
 /**
-*
+*@ingroup COMMON_MODULE
 */
 class CDRMessagePool {
 public:

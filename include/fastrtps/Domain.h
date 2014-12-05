@@ -33,6 +33,7 @@ class TopicDataType;
 
 /**
  * Class Domain, use to interact with the Publisher Subscriber API of the Fast RTPS implementation.
+ *  @ingroup FASTRTPS_MODULE
  */
 class Domain
 {

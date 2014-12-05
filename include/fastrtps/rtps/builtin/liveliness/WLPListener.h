@@ -37,7 +37,7 @@ struct CacheChange_t;
 
 /**
  * Class WLPListener that receives the liveliness messages asserting the liveliness of remote endpoints.
- * @ingroup LIVELINESSMODULE
+ * @ingroup LIVELINESS_MODULE
  */
 class WLPListener: public ReaderListener {
 public:

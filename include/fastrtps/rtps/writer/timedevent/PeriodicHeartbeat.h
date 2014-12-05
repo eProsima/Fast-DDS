@@ -26,7 +26,7 @@ class StatefulWriter;
 
 /**
  * PeriodicHeartbeat class, controls the periodic send operation of HB.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class PeriodicHeartbeat: public TimedEvent {
 public:

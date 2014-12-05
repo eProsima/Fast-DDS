@@ -46,7 +46,7 @@ class ReaderHistory;
 
 /**
  * Class WLP that implements the Writer Liveliness Protocol described in the RTPS specification.
- * @ingroup LIVELINESSMODULE
+ * @ingroup LIVELINESS_MODULE
  */
 class WLP
 {

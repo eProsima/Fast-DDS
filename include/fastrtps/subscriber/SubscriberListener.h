@@ -24,8 +24,8 @@ class Subscriber;
 
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
- * @ingroup PUBSUBMODULE
- * @snippet pubsub_example.cpp ex_SubscriberListener
+ * @ingroup FASTRTPS_MODULE
+ * @snippet fastrtps_example.cpp ex_SubscriberListener
  */
 class RTPS_DllAPI SubscriberListener {
 public:

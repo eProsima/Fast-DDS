@@ -23,6 +23,7 @@ namespace rtps{
 
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
+//!@ingroup COMMON_MODULE
 struct RTPS_DllAPI GuidPrefix_t{
 	octet value[12];
 	//!Default constructor. Set the Guid prefix to 0.
@@ -87,12 +88,7 @@ inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
-	/**
-	* 
-	* @param output 
-	* @param guiP 
-	* @return 
-	*/
+
 inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	output << std::hex;
 	for(uint8_t i =0;i<11;++i)
@@ -115,6 +111,7 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 #define ENTITYID_P2P_BUILTIN_RTPSParticipant_MESSAGE_READER  0x000200C7
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
+//!@ingroup COMMON_MODULE
  struct RTPS_DllAPI EntityId_t{
 	octet value[4];
 	//! Default constructor. Uknown entity.
@@ -219,12 +216,7 @@ inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
 	return false;
 }
 
-	/**
-	* 
-	* @param output 
-	* @param enI 
-	* @return 
-	*/
+
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 	output << std::hex;
 	output<<(int)enI.value[0]<<"."<<(int)enI.value[1]<<"."<<(int)enI.value[2]<<"."<<(int)enI.value[3];
@@ -249,6 +241,7 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
+//!@ingroup COMMON_MODULE
  struct RTPS_DllAPI GUID_t{
 	//!Guid prefix
 	GuidPrefix_t guidPrefix;

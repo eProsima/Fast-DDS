@@ -34,7 +34,7 @@ class RTPSReader;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
- * @ingroup MANAGEMENTMODULE
+ * @ingroup RTPS_MODULE
  */
 class RTPS_DllAPI RTPSParticipant
 {

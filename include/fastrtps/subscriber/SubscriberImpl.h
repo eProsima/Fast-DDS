@@ -40,6 +40,7 @@ class Subscriber;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
+ *  @ingroup FASTRTPS_MODULE
  */
 class SubscriberImpl {
 	friend class ParticipantImpl;

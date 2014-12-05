@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /**
- * @file ResendRTPSParticipantProxyDataPeriod.h
+ * @file ResendParticipantProxyDataPeriod.h
  *
  */
 
@@ -25,8 +25,8 @@ namespace rtps {
 class PDPSimple;
 
 /**
- * Class ResendRTPSParticipantProxyDataPeriod, TimedEvent used to periodically send the RTPSParticipantDiscovery Data.
- * @ingroup DISCOVERYMODULE
+ * Class ResendParticipantProxyDataPeriod, TimedEvent used to periodically send the RTPSParticipantDiscovery Data.
+ *@ingroup DISCOVERY_MODULE
  */
 class ResendParticipantProxyDataPeriod: public TimedEvent {
 public:

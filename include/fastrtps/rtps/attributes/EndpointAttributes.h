@@ -21,6 +21,7 @@ namespace rtps {
 
 /**
  * Attributes associated with an Endpoint.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class EndpointAttributes
 {

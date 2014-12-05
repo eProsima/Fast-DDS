@@ -38,7 +38,7 @@ class NackSupressionDuration;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
- * @ingroup WRITERMODULE
+ * @ingroup WRITER_MODULE
  */
 class ReaderProxy
 {

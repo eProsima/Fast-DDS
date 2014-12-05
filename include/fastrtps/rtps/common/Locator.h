@@ -32,6 +32,7 @@ namespace rtps{
 
 
 //!@brief Class Locator_t, uniquely identifies a address+port combination.
+//!@ingroup COMMON_MODULE
 class RTPS_DllAPI Locator_t{
 public:
 	int32_t kind;
@@ -150,6 +151,7 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 
 /**
  * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.
+ * @ingroup COMMON_MODULE
  */
 class LocatorList_t{
 public:

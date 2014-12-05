@@ -23,7 +23,7 @@ namespace fastrtps{
 
 /**
  * Class ParticipantAttributes, used by the user to define the attributes of a Participant.
- * @ingroup ATTRIBUTESMODULE
+ * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
 class ParticipantAttributes
 {

@@ -23,7 +23,7 @@ namespace rtps {
 class RTPSWriter;
 
 /**
- *
+ * @ingroup WRITER_MODULE
  */
 class UnsentChangesNotEmptyEvent: public TimedEvent {
 public:

@@ -31,7 +31,7 @@ struct CacheChange_t;
 
 /**
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
- * @ingroup DISCOVERYMODULE
+ *@ingroup DISCOVERY_MODULE
  */
 class EDPSimplePUBListener:public ReaderListener{
 public:
@@ -60,7 +60,7 @@ public:
 };
 /**
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
- * @ingroup DISCOVERYMODULE
+ *@ingroup DISCOVERY_MODULE
  */
 class EDPSimpleSUBListener:public ReaderListener{
 public:

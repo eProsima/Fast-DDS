@@ -23,6 +23,7 @@ namespace rtps{
 
 /**
  * Times associated with a Reliable Reader.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class   ReaderTimes
 {
@@ -38,6 +39,7 @@ public:
 
 /**
  * Attributes of a RTPSReader.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  ReaderAttributes
 {
@@ -60,6 +62,7 @@ public:
 
 /**
  * Attributes that define a remote Writer.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  RemoteWriterAttributes
 {

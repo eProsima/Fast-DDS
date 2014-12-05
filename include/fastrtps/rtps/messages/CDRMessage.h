@@ -26,7 +26,7 @@ namespace rtps {
 
 /**
  * Namespace CDRMessage, contains inline methods to initialize CDRMessage_t and add or read different data types.
- @ingroup COMMONMODULE
+ @ingroup COMMON_MODULE
  */
 namespace CDRMessage{
 

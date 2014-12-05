@@ -24,41 +24,26 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+
 /**
- * Enum ChangeKind_t, different types of changes.
+ * @enum ChangeKind_t, different types of CacheChange_t.
+ * @ingroup COMMON_MODULE
  */
+#if defined(_WIN32)
 	enum RTPS_DllAPI ChangeKind_t{
+#else
+	enum ChangeKind_t{
+#endif
 	ALIVE,                //!< ALIVE
 	NOT_ALIVE_DISPOSED,   //!< NOT_ALIVE_DISPOSED
 	NOT_ALIVE_UNREGISTERED,//!< NOT_ALIVE_UNREGISTERED
-	NOT_ALIVE_DISPOSED_UNREGISTERED
-};
-
-/**
- * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
- */
-enum ChangeForReaderStatus_t{
-	UNSENT = 0,        //!< UNSENT
-	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
-	REQUESTED = 2,     //!< REQUESTED
-	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
-	UNDERWAY = 4       //!< UNDERWAY
-};
-/**
- * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
- */
-enum ChangeFromWriterStatus_t{
-	UNKNOWN = 0,
-	MISSING = 1,
-	//REQUESTED_WITH_NACK,
-	RECEIVED = 2,
-	LOST = 3
+	NOT_ALIVE_DISPOSED_UNREGISTERED //!<NOT_ALIVE_DISPOSED_UNREGISTERED
 };
 
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
- * @ingroup COMMONMODULE
+ * @ingroup COMMON_MODULE
  */
 struct RTPS_DllAPI CacheChange_t{
 	//!Kind of change
@@ -117,8 +102,36 @@ struct RTPS_DllAPI CacheChange_t{
 	}
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
+ *  @ingroup COMMON_MODULE
+ */
+enum ChangeForReaderStatus_t{
+	UNSENT = 0,        //!< UNSENT
+	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
+	REQUESTED = 2,     //!< REQUESTED
+	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
+	UNDERWAY = 4       //!< UNDERWAY
+};
+/**
+ * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
+ *  @ingroup COMMON_MODULE
+ */
+enum ChangeFromWriterStatus_t{
+	UNKNOWN = 0,
+	MISSING = 1,
+	//REQUESTED_WITH_NACK,
+	RECEIVED = 2,
+	LOST = 3
+};
+
+
+
 /**
  * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
+ *  @ingroup COMMON_MODULE
  */
  class ChangeForReader_t{
  public:
@@ -170,6 +183,7 @@ struct RTPS_DllAPI CacheChange_t{
 
 /**
  * Struct ChangeFromWriter_t used to indicate the state of a specific change with respect to a specific writer, as well as its relevance.
+ *  @ingroup COMMON_MODULE
  */
 class ChangeFromWriter_t
 {
@@ -222,7 +236,7 @@ class ChangeFromWriter_t
 
 };
 
-
+#endif
 
 
 }

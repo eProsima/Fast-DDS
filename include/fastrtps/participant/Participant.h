@@ -29,6 +29,7 @@ class ParticipantAttributes;
 
 /**
  * Participant used to group Publishers and Subscribers.
+ * @ingroup FASTRTPS_MODULE
  */
 class RTPS_DllAPI Participant {
 	friend class Domain;

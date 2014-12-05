@@ -35,7 +35,7 @@ class WriterHistory;
 
 /**
  * Class EDPSimple, implements the SimpleEndpointDiscoveryProtocol defined in the RTPS specification. Inherits from EDP class.
- * @ingroup DISCOVERYMODULE
+ *@ingroup DISCOVERY_MODULE
  */
 class EDPSimple : public EDP {
 	typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;

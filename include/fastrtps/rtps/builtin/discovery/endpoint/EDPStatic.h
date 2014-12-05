@@ -26,7 +26,7 @@ class EDPStaticXML;
 
 /**
  * Class EDPStaticProperty, used to read and write the strings from the properties used to transmit the EntityId_t.
- * @ingroup DISCOVERYMODULE
+ *@ingroup DISCOVERY_MODULE
  */
 class EDPStaticProperty
 {

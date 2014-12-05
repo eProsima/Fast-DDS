@@ -35,7 +35,7 @@ class RTPSParticipantImpl;
 
 /**
  * Class ResourceEvent used to manage the temporal events.
- * @ingroup MANAGEMENTMODULE
+ *@ingroup MANAGEMENT_MODULE
  */
 class ResourceEvent {
 public:
