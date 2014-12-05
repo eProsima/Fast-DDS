@@ -16,6 +16,8 @@ copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_system-vc100-mt-1_57.dll" "files
 copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_system-vc100-mt-gd-1_57.dll" "files\bin\boost_system-vc100-mt-gd-1_57.dll"
 copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_thread-vc100-mt-1_57.dll" "files\bin\boost_thread-vc100-mt-1_57.dll"
 copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_thread-vc100-mt-gd-1_57.dll" "files\bin\boost_thread-vc100-mt-gd-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_chrono-vc100-mt-1_57.dll" "files\bin\boost_chrono-vc100-mt-1_57.dll"
+copy "%LIB_BOOST_PATH%\lib\i86Win32VS2010\boost_chrono-vc100-mt-gd-1_57.dll" "files\bin\boost_chrono-vc100-mt-gd-1_57.dll"
 mkdir files\bin\platforms
 set QTDIR=C:\Qt\5.3\msvc2010_opengl
 copy "%QTDIR%\plugins\platforms\qminimal.dll" "files\bin\platforms\qminimal.dll"
