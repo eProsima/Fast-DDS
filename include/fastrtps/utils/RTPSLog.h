@@ -25,7 +25,7 @@ namespace eprosima{
  *  @ingroup UTILITIES_MODULE
  */
 #if defined(_WIN32)
-enum RTPS_DllAPI LOG_CATEGORY: uint32_t
+enum LOG_DllAPI LOG_CATEGORY
 #else
 enum LOG_CATEGORY : uint32_t
 #endif
