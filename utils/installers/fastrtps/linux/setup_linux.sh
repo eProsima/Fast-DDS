@@ -85,7 +85,7 @@ installer()
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
-	# Copy eProsima header files
+    # Copy eProsima header files
     mkdir -p tmp/$project/include/fastrtps/eProsima_cpp
     cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/include/fastrtps/eProsima_cpp
     errorstatus=$?
@@ -93,6 +93,16 @@ installer()
     cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h tmp/$project/include/fastrtps/eProsima_cpp
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
+ 
+    mkdir -p tmp/$project/include/fastrtps/eProsima_cpp/log
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/log/*.h tmp/$project/include/fastrtps/eProsima_cpp/log
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+	
+    mkdir -p tmp/$project/thirdparty/eprosima-common-code/eProsima_cpp/log
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/log/*.h tmp/$project/thirdparty/eprosima-common-code/eProsima_cpp/log
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi	
 
     # Copy fastrtps sources
     cd ../../../..
@@ -100,6 +110,8 @@ installer()
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
     cd utils/installers/fastrtps/linux
+	
+    #read -p "Press any key..."
 
     # Copy autoconf configuration files.
     cp configure.ac tmp/$project/configure.ac
