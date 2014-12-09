@@ -690,6 +690,7 @@
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
