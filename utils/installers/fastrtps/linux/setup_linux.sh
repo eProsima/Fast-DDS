@@ -66,10 +66,10 @@ installer()
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy RTPSGEN scripts and jar
-    mkdir -p tmp/$project/rtpsgen
-    cp -r ../../../../rtpsgen/scripts/* tmp/$project/rtpsgen
-    cp    ../../../../rtpsgen/lib/* tmp/$project/rtpsgen  
-    chmod 755 tmp/$project/rtpsgen/rtpsgen.sh  
+    mkdir -p tmp/$project/fastrtpsgen
+    cp -r ../../../../fastrtpsgen/scripts/* tmp/$project/fastrtpsgen
+    cp    ../../../../fastrtpsgen/lib/* tmp/$project/fastrtpsgen  
+    chmod 755 tmp/$project/fastrtpsgen/fastrtpsgen.sh  
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
