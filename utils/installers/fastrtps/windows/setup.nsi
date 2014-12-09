@@ -129,7 +129,7 @@ var /GLOBAL RICHI_FINISH_MESSAGE
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile eProsima_Fast_RTPS_${VERSION}.exe
+OutFile eProsima_FastRTPS_${VERSION}.exe
 InstallDir "$PROGRAMFILES\eProsima\FastRTPS"
 CRCCheck on
 XPStyle on
@@ -181,10 +181,10 @@ Section -post SEC0006
 	File /r "..\..\..\..\utils\ShapesDemo\release\*.exe"
 	
 	
-	SetOutPath $INSTDIR\rtpsgen
+	SetOutPath $INSTDIR\fastrtpsgen
     SetOverwrite on
-	File /r "..\..\..\..\rtpsgen\scripts\*"
-	File /r "..\..\..\..\rtpsgen\lib\*"
+	File /r "..\..\..\..\fastrtpsgen\scripts\*"
+	File /r "..\..\..\..\fastrtpsgen\lib\*"
 	
 	#Copy fastcdr include files
 	SetOutPath $INSTDIR\include
@@ -262,7 +262,7 @@ Section -post SEC0006
        WriteRegStr HKLM "${REGKEY}\Components" "FASTRTPSHOME" 1
     ${EndIf}
     ${If} $CheckboxScripts_State == ${BST_CHECKED}
-       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\rtpsgen"
+       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\fastrtpsgen"
        WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
     ${EndIf}
     ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
@@ -344,7 +344,7 @@ Section -un.post UNSEC0006
     RmDir /REBOOTOK $INSTDIR\lib
     RmDir /r /REBOOTOK $INSTDIR\include
     RmDir /r /REBOOTOK $INSTDIR\idl
-    RmDir /r /REBOOTOK $INSTDIR\rtpsgen
+    RmDir /r /REBOOTOK $INSTDIR\fastrtpsgen
     RmDir /r /REBOOTOK $INSTDIR\classes
     RmDir /r /REBOOTOK $INSTDIR\examples
     RmDir /r /REBOOTOK $INSTDIR\doc
@@ -359,7 +359,7 @@ Section -un.post UNSEC0006
     DeleteRegValue HKLM "${REGKEY}\Components" "fastrtpsHOME"
     
     ${un.EnvVarUpdate} $0 "fastrtpsHOME" "R" "HKLM" "$INSTDIR"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\rtpsgen"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\fastrtpsgen"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
 	${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2013"

@@ -110,7 +110,7 @@ cd utils/ShapesDemo
 call build_shapesdemo.bat
 cd ..\..
 
-cd rtpsgen
+cd fastrtpsgen
 call ant jars
 cd ..
 
