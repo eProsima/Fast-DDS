@@ -5,7 +5,6 @@ attributes/SubscriberAttributes.h
 attributes/TopicAttributes.h
 config/doxygen_modules.h
 config/eProsima_auto_link.h
-config/eprosima_stl_exports.hpp
 config/fastrtps_dll.h
 Domain.h
 fastrtps_all.h
