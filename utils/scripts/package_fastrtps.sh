@@ -109,7 +109,7 @@ function package
 	#cd utils/ShapesDemo
 	#qmake ShapesDemo.pro -r -spec linux-g++-64
 
-	cd rtpsgen
+	cd fastrtpsgen
 	ant jars
 	cd ..
 	
