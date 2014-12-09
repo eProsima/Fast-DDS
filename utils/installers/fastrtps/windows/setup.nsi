@@ -160,7 +160,9 @@ Section -post SEC0006
     SetOutPath $INSTDIR\doc\html
     SetOverwrite on
 	#Copy latex documentation
-    File /r "..\..\..\..\utils\doxygen\output\doxygen\html\*"
+    
+	File /r "..\..\..\..\utils\doxygen\output\doxygen\html\*"
+	
 	#SetOutPath $INSTDIR\doc\doxygen\latex
     #SetOverwrite on
     #File /r "..\..\..\..\doc\doxygen\latex\*"

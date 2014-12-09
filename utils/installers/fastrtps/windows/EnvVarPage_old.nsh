@@ -49,18 +49,14 @@ Function VariablesEntornoPage
         ${NSD_Check} $CheckboxfastrtpsHOME
     ${EndIf}
         
-    ${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH environment variable the location of eProsima RTPSGEN scripts."
+    ${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH environment variable the location of eProsima RTPSGEN scripts"
     Pop $CheckboxScripts
     ${If} $CheckboxScripts_State == ${BST_CHECKED}
         ${NSD_Check} $CheckboxScripts
     ${EndIf}
-	
-	
-	
-	
     
     ${If} ${RunningX64}
-        ${NSD_CreateRadioButton} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2010 platforms."
+        ${NSD_CreateCheckbox} 10 44u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2010 platforms."
         Pop $CheckboxX64_VS2010  
         ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
             ${If} $CheckboxX64_VS2010_State == ${BST_CHECKED}
@@ -72,7 +68,7 @@ Function VariablesEntornoPage
         ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
 		${NSD_OnClick} $CheckboxX64_VS2010 ClickX64_VS2010  
     
-		 ${NSD_CreateRadioButton} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2013 platforms."
+		 ${NSD_CreateCheckbox} 10 66u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for x64 VS2013 platforms."
         Pop $CheckboxX64_VS2013  
         ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2013}
             ${If} $CheckboxX64_VS2013_State == ${BST_CHECKED}
@@ -84,14 +80,14 @@ Function VariablesEntornoPage
         ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
 		${NSD_OnClick} $CheckboxX64_VS2013 ClickX64_VS2013  
 	
-        ${NSD_CreateRadioButton} 10 88u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2010 platforms."
+        ${NSD_CreateCheckbox} 10 88u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2010 platforms."
         Pop $CheckboxI86_VS2010
-		${NSD_CreateRadioButton} 10 110u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2013 platforms."
+		${NSD_CreateCheckbox} 10 110u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2013 platforms."
         Pop $CheckboxI86_VS2013
     ${Else}
-        ${NSD_CreateRadioButton} 10 88u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2010 platforms."
+        ${NSD_CreateCheckbox} 10 88u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2010 platforms."
         Pop $CheckboxI86_VS2010
-		${NSD_CreateRadioButton} 10 110u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2013 platforms."
+		${NSD_CreateCheckbox} 10 110u 100% 24u "&Add to the PATH environment variable the location of eProsima RTPS target$\r$\nlibraries for i86 VS2013 platforms."
         Pop $CheckboxI86_VS2013
     ${EndIf}
 
@@ -101,7 +97,7 @@ Function VariablesEntornoPage
         ${EndIf}
     ${Else}
         ${NSD_AddStyle} $CheckboxI86_VS2010 ${WS_DISABLED}
-    ${EndIf} 
+    ${EndIf}
     
     ### La primera vez que lanzamos el instalador, el checkbox de fastrtpsHOME
     ### y el de SCRIPTS deben estar marcados. 
