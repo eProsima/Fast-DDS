@@ -535,9 +535,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FASTRTPS_SOURCE;BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -549,7 +550,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
     <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug2010|Win32'">
@@ -560,6 +561,7 @@
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -581,6 +583,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;;BOOST_ALL_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -601,6 +604,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\include\fastrtps</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;;BOOST_ALL_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -621,6 +625,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -638,6 +643,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -655,6 +661,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -672,6 +679,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(ProjectDir)..\..\..\..\include;$(LIB_BOOST_PATH);$(ProjectDir)..\..\..\..\thirdparty\eprosima-common-code;$(LIB_BOOST_PATH);$(EPROSIMADIR)\code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_DYN_LINK;__DEBUG;__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -691,6 +699,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -708,6 +717,7 @@
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -725,6 +735,7 @@
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -742,6 +753,7 @@
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;_WIN32;FASTRTPS_SOURCE;FASTRTPS_DYN_LINK;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;LOG_SOURCE;LOG_DYN_LINK</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -762,6 +774,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -788,6 +801,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -813,6 +827,7 @@
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;;BOOST_ALL_DYN_LINK</PreprocessorDefinitions>
       <OmitFramePointers>false</OmitFramePointers>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -834,6 +849,7 @@
       <PreprocessorDefinitions>__LITTLE_ENDIAN__;%(PreprocessorDefinitions);_WIN32_WINNT=0x0501;;BOOST_ALL_DYN_LINK</PreprocessorDefinitions>
       <OmitFramePointers>false</OmitFramePointers>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
