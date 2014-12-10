@@ -77,13 +77,13 @@ void $ctx.filename$Publisher::run()
 	$ctx.m_lastStructure$ st;
 	
 	/* Initialize your structure here */
+	
 	int msgsent = 0;
 	char ch;
 	mp_publisher->write(&st);++msgsent;
 	cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
-	while(cin >> char)
+	while(std::cin \>> ch)
 	{
-		cout << endl;
 		if(ch == 'y')
 		{
 			mp_publisher->write(&st);++msgsent;
@@ -96,7 +96,7 @@ void $ctx.filename$Publisher::run()
 		}
 		else
 		{
-			cout << "Command " << ch << " not recognized, please enter "y/n" << endl;
+			cout << "Command " << ch << " not recognized, please enter \"y/n\":";
 		}
 	}
 }
