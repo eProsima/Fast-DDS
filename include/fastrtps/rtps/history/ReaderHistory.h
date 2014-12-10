@@ -16,6 +16,9 @@
 
 #include "fastrtps/rtps/history/History.h"
 #include "fastrtps/rtps/common/CacheChange.h"
+#include <map>
+#include <set>
+
 
 namespace boost
 {
@@ -90,6 +93,8 @@ protected:
 	RTPSReader* mp_reader;
 	//!Pointer to the semaphore, used to halt execution until new message arrives.
 	boost::interprocess::interprocess_semaphore* mp_semaphore;
+	//!Information about changes already in History
+	std::map<GUID_t, std::set<SequenceNumber_t>> m_historyRecord;
 
 };
 

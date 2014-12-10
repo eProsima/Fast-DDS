@@ -58,6 +58,7 @@ public:
 
 
 private:
+	CacheChange_t* mp_change;
 	//!Protocol version of the message
 	ProtocolVersion_t sourceVersion;
 	//!VendorID that created the message
