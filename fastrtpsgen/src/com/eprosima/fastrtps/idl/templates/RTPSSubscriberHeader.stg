@@ -28,12 +28,13 @@ private:
 	class SubListener : public SubscriberListener
 	{
 	public:
-		SubListener() : n_matched(0){};
+		SubListener() : n_matched(0),n_msg(0){};
 		~SubListener(){};
 		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
 		void onNewDataMessage(Subscriber* sub);
 		SampleInfo_t m_info;
 		int n_matched;
+		int n_msg;
 	} m_listener;
 	$ctx.filename$PubSubType myType;
 };
