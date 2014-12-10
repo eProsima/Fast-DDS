@@ -16,7 +16,7 @@
 
 #include <vector>
 #include "fastrtps/rtps/common/Types.h"
-
+#include "fastrtps/rtps/common/Guid.h"
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{

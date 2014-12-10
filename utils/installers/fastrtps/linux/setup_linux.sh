@@ -86,11 +86,12 @@ installer()
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy eProsima header files
-    mkdir -p tmp/$project/include/fastrtps/eProsima_cpp
-    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/include/fastrtps/eProsima_cpp
+	mkdir -p tmp/$project/thirdparty/eprosima-common-code/eProsima_cpp/
+    mkdir -p tmp/$project/thirdparty/eprosima-common-code/eProsima_cpp/config/
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h tmp/$project/thirdparty/eprosima-common-code/eProsima_cpp/config/eProsima_auto_link.h
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h tmp/$project/include/fastrtps/eProsima_cpp
+    cp ../../../../thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h tmp/$project/thirdparty/eprosima-common-code/eProsima_cpp/config/eProsimaMacros.h
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
  

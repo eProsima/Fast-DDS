@@ -38,6 +38,12 @@ const ParticipantAttributes& Participant::getAttributes()
 	return mp_impl->getAttributes();
 }
 
+bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
+	EndpointKind_t kind)
+{
+	return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
+}
+
 
 } /* namespace pubsub */
 } /* namespace eprosima */
