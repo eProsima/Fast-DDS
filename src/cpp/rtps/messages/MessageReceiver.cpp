@@ -30,9 +30,10 @@
 
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
-//#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
 //#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
-
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 #include "fastrtps/utils/RTPSLog.h"
 
@@ -419,7 +420,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			else
 			{
-				logWarning(RTPS_MSG_IN,"Serlialized Payload larger than maximum allowed size "
+				logWarning(RTPS_MSG_IN,"Serialized Payload larger than maximum allowed size "
 						"("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")",C_BLUE);
 				firstReader->releaseCache(ch);
 				return false;
@@ -457,11 +458,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		//boost::lock_guard<boost::recursive_mutex> guard(*(Endpoint*)(*it));
+		boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
 		WriterProxy* pWP = nullptr;
 		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
-			logInfo(RTPS_MSG_IN,"MessageReceiver: Trying to add change "
+			logInfo(RTPS_MSG_IN,"Trying to add change "
 					<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId,C_BLUE);
 			CacheChange_t* change_to_add;
 			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
@@ -489,8 +490,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				}
 				else
 				{
-					(*it)->releaseCache(change_to_add);
 					logInfo(RTPS_MSG_IN,"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long(),C_BLUE);
+					(*it)->releaseCache(change_to_add);
 				}
 
 			}
@@ -508,7 +509,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
 					{
 						//TODOG BUILTIN
-						//this->mp_threadListen->getRTPSParticipantImpl()->getBuiltinProtocols()->mp_PDP->assertRemoteRTPSParticipantLiveliness(this->sourceGuidPrefix);
+						this->mp_threadListen->getRTPSParticipantImpl()->assertRemoteRTPSParticipantLiveliness(this->sourceGuidPrefix);
 					}
 				}
 			}

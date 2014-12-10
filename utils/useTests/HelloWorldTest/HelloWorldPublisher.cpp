@@ -83,6 +83,8 @@ bool HelloWorldPublisher::publish()
 		m_Hello.index(m_Hello.index()+1);
 		mp_publisher->write((void*)&m_Hello);
 		cout << "Message: "<<m_Hello.message()<< " "<< m_Hello.index()<< " SENT"<<endl;
+		int aux;
+		std::cin >> aux;
 		return true;
 	}
 	return false;
