@@ -189,6 +189,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 {
 	//First look for WriterProxy in case is not provided
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(prox == nullptr)
 	{
 		if(!this->matched_writer_lookup(a_change->writerGUID,&prox))

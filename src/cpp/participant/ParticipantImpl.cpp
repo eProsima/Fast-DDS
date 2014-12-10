@@ -297,5 +297,15 @@ void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPS
 	}
 }
 
+bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
+	EndpointKind_t kind)
+{
+	if (kind == WRITER)
+		return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
+	else 
+		return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
+	return false;
+}
+
 } /* namespace pubsub */
 } /* namespace eprosima */

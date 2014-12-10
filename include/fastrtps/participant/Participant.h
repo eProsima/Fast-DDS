@@ -53,6 +53,18 @@ public:
 	* @return ParticipantAttributes.
 	*/
 	const ParticipantAttributes& getAttributes();
+	/**
+	* This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
+	* included in FastRTPS, for example when communicating with other implementations.
+	* It indicates the Participant that an Endpoint from the XML has been discovered and
+	* should be activated.
+	* @param partguid Participant GUID_t.
+	* @param userId User defined ID as shown in the XML file.
+	* @param kind EndpointKind (WRITER or READER)
+	* @return True if correctly found and activated.
+	*/
+	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
+		EndpointKind_t kind);
 
 };
 
