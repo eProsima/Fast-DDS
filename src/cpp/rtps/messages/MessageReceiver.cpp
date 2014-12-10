@@ -47,6 +47,7 @@ static const char* const CLASS_NAME = "MessageReceiver";
 
 
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
+						mp_change(nullptr),
 						m_rec_msg(rec_buffer_size)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
@@ -64,12 +65,15 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	mp_threadListen = nullptr;
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 
+	mp_change = new CacheChange_t(rec_buffer_size);
+
 }
 
 MessageReceiver::~MessageReceiver()
 {
 	const char* const METHOD_NAME = "~MessageReceiver";
 	this->m_ParamList.deleteParams();
+	delete(mp_change);
 	logInfo(RTPS_MSG_IN,"",C_BLUE);
 }
 
@@ -91,6 +95,17 @@ void MessageReceiver::reset(){
 	locList.push_back(loc);
 	unicastReplyLocatorList.push_back(loc);
 	multicastReplyLocatorList.push_back(defUniLoc);
+	mp_change->kind = ALIVE;
+	mp_change->sequenceNumber.high = 0;
+	mp_change->sequenceNumber.low = 0;
+	mp_change->writerGUID = c_Guid_Unknown;
+	mp_change->serializedPayload.length = 0;
+	mp_change->serializedPayload.pos = 0;
+	for (uint8_t i = 0; i<16; ++i)
+		mp_change->instanceHandle.value[i] = 0;
+	mp_change->isRead = 0;
+	mp_change->sourceTimestamp.seconds = 0;
+	mp_change->sourceTimestamp.fraction = 0;
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
@@ -359,11 +374,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	//FOUND THE READER.
 	//We ask the reader for a cachechange to store the information.
-	CacheChange_t* ch;
-	if(!firstReader->reserveCache(&ch))
-	{
-		logError(RTPS_MSG_IN,"Problem Reserving CacheChange_t",C_BLUE)
-	}
+	CacheChange_t* ch = mp_change;
 	ch->writerGUID.guidPrefix = sourceGuidPrefix;
 	CDRMessage::readEntityId(msg,&ch->writerGUID.entityId);
 
@@ -465,21 +476,14 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			logInfo(RTPS_MSG_IN,"Trying to add change "
 					<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId,C_BLUE);
 			CacheChange_t* change_to_add;
-			if(firstReader->getGuid().entityId == (*it)->getGuid().entityId) //IS the same as the first one
-			{
-				change_to_add = ch;
-				firstReaderNeedsToRelease = false;
-			}
-			else
-			{
-				if((*it)->reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
+			if((*it)->reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
 					change_to_add->copy(ch);
 				else
 				{
 					logError(RTPS_MSG_IN,"Problem reserving, error",C_BLUE);
 					return false;
 				}
-			}
+			
 			if(haveTimestamp)
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -516,8 +520,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		}
 	}
 	//cout << "CHECKED ALL READERS "<<endl;
-	if(firstReaderNeedsToRelease)
-		firstReader->releaseCache(ch);
 	logInfo(RTPS_MSG_IN,"Sub Message DATA processed",C_BLUE);
 	return true;
 }

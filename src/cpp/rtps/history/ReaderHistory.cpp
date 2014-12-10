@@ -73,10 +73,15 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	{
 		logError(RTPS_HISTORY,"The Writer GUID_t must be defined");
 	}
-	m_changes.push_back(a_change);
-	updateMaxMinSeqNum();
-	logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber.to64long() << " added with "<<a_change->serializedPayload.length<< " bytes");
-	return true;
+	m_historyRecord.insert(std::make_pair(a_change->writerGUID,std::set<SequenceNumber_t>()));
+	if ((m_historyRecord[a_change->writerGUID].insert(a_change->sequenceNumber)).second)
+	{
+		m_changes.push_back(a_change);
+		updateMaxMinSeqNum();
+		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber.to64long() << " added with " << a_change->serializedPayload.length << " bytes");
+		return true;
+	}
+	return false;
 }
 
 bool ReaderHistory::remove_change(CacheChange_t* a_change)
