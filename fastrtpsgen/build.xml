@@ -164,7 +164,7 @@
 		</jar>
 	</target>
 
-	<target name="jars" depends="fastrtpsgen_jar" description="Builds all libraries (.jar)"/>
+	<target name="jar" depends="fastrtpsgen_jar" description="Builds all libraries (.jar)"/>
 
 	<!-- =================================================================== -->
 	<!-- Cleans up generated classes                                         -->
