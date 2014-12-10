@@ -113,7 +113,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
   $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
     <IntDir>\$(Platform)\\\$(Configuration)\\\$(ProjectName)\</IntDir>
     <OutDir>.\bin\\$example$\</OutDir>
-    <TargetName>$if(!it.dll)$lib$endif$\$(ProjectName)$if(it.debug)$d$endif$</TargetName>
+    <TargetName>\$(ProjectName)$if(it.debug)$d$endif$</TargetName>
   </PropertyGroup>};separator="\n"$
   $configurations:{<ItemDefinitionGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
     <ClCompile>
