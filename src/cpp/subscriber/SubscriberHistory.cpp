@@ -335,6 +335,7 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
 bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
 {
 	const char* const METHOD_NAME = "remove_change_sub";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
 		return this->remove_change(change);
