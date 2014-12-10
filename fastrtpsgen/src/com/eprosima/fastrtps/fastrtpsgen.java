@@ -567,7 +567,6 @@ public class fastrtpsgen {
 			
 			returnedValue = true;
 			
-			System.out.println("Proyectos: "+solution.getProjects().size());
 			for (int count = 0; returnedValue && (count < solution.getProjects().size()); ++count) {
 				Project project = (Project) solution.getProjects().get(count);
 				
@@ -639,7 +638,6 @@ public class fastrtpsgen {
 			
 			returnedValue = true;
 			
-			System.out.println("Proyectos: "+solution.getProjects().size());
 			for (int count = 0; returnedValue && (count < solution.getProjects().size()); ++count) {
 				Project project = (Project) solution.getProjects().get(count);
 				
