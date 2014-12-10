@@ -27,7 +27,7 @@ bool $ctx.filename$Publisher::init()
 	// Create RTPSParticipant
 	
 	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 80;
+	PParam.rtps.builtin.domainId = 0;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
 	PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
 	mp_participant = Domain::createParticipant(PParam);
@@ -42,7 +42,7 @@ bool $ctx.filename$Publisher::init()
 	
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicDataType = "$ctx.m_lastStructure$PubSubType";  //This type MUST be registered
+	Wparam.topic.topicDataType = "$ctx.m_lastStructure$";  //This type MUST be registered
 	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == nullptr)
