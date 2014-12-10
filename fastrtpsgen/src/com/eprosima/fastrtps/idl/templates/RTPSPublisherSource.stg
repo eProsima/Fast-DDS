@@ -47,6 +47,7 @@ bool $ctx.filename$Publisher::init()
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == nullptr)
 		return false;
+	cout << "Publisher created, waiting for Subscribers." << endl;
 	return true;
 }
 
@@ -76,8 +77,28 @@ void $ctx.filename$Publisher::run()
 	$ctx.m_firstStructure$ st;
 	
 	/* Initialize your structure here */
-	
-	mp_publisher->write(&st);
+	int msgsent = 0;
+	char ch;
+	mp_publisher->write(&st);++msgsent;
+	cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
+	while(cin >> char)
+	{
+		cout << endl;
+		if(ch == 'y')
+		{
+			mp_publisher->write(&st);++msgsent;
+			cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
+		}
+		else if(ch == 'n')
+		{
+			cout << "Stopping execution " << endl;
+			break;
+		}
+		else
+		{
+			cout << "Command " << ch << " not recognized, please enter "y/n" << endl;
+		}
+	}
 }
 
 >>
