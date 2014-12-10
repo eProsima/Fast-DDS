@@ -509,7 +509,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 }
 
 
-void PDPSimple::assertRemoteParticipantLiveliness(GuidPrefix_t& guidP)
+void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 {
 	const char* const METHOD_NAME = "assertRemoteParticipantLiveliness";
 	for(std::vector<ParticipantProxyData*>::iterator it = this->m_participantProxies.begin();

@@ -108,7 +108,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultUnicastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource();
+		ListenResource* LR = new ListenResource(this);
 		Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false);
 		m_att.defaultUnicastLocatorList.push_back(loc);
 		this->m_listenResourceList.push_back(LR);
@@ -117,7 +117,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource();
+		ListenResource* LR = new ListenResource(this);
 		Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false);
 		m_att.defaultMulticastLocatorList.push_back(loc);
 		this->m_listenResourceList.push_back(LR);
@@ -415,7 +415,7 @@ bool RTPSParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListItera
 			return true;
 		}
 	}
-	ListenResource* LR = new ListenResource();
+	ListenResource* LR = new ListenResource(this);
 	Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed);
 	if(loc.kind>0)
 	{
@@ -552,6 +552,11 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
 boost::recursive_mutex* RTPSParticipantImpl::getSendMutex()
 {
 	return mp_send_thr->getMutex();
+}
+
+void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP)
+{
+	this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
 }
 
 

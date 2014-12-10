@@ -105,6 +105,13 @@ public:
 	 * @return True if correct.
 	 */
 	bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
+
+	/**
+	 * Assert the liveliness of a remote participant
+	 * @param guidP GuidPrefix_t of the participant.
+	 */
+	void assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP);
+
     /**
 	 * Get the RTPSParticipant ID
 	 * @return RTPSParticipant ID

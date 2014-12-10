@@ -33,7 +33,7 @@ class RTPSParticipantImpl;
 */
 class ListenResource {
 public:
-	ListenResource();
+	ListenResource(RTPSParticipantImpl* partimpl);
 	virtual ~ListenResource();
 	
 	/**
@@ -99,6 +99,10 @@ public:
 	* @return Listen locator
 	*/
 	const Locator_t& getListenLocator();
+
+	inline RTPSParticipantImpl* getRTPSParticipantImpl() {return mp_RTPSParticipantImpl;}
+
+	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 
 };
 }

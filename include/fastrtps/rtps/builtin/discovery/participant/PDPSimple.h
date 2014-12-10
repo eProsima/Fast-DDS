@@ -180,7 +180,7 @@ public:
 	/**
 	* @param guidP
 	*/
-	void assertRemoteParticipantLiveliness(GuidPrefix_t& guidP);
+	void assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP);
 
 	/**
 	* @param kind
