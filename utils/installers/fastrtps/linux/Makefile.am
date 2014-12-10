@@ -18,11 +18,12 @@ install-data-hook:
 	cp -r FASTRTPS_LIBRARY_LICENSE.txt $(DESTDIR)$(datadir)/doc/fastrtps; \
 	cp -r LGPLv3_LICENSE.txt $(DESTDIR)$(datadir)/doc/fastrtps; \
 	mkdir -p $(DESTDIR)$(datadir)/fastrtps; \
-	cp -r examples $(DESTDIR)$(datadir)/fastrtps/;
-	mkdir -p $(DESTDIR)$(datadir)/fastrtpsgen; \
-	cp -r fastrtpsgen $(DESTDIR)$(datadir)/fastrtps/;
+	cp -r examples $(DESTDIR)$(datadir)/fastrtps/; \
+	cp -r fastrtpsgen $(DESTDIR)$(datadir)/fastrtps/; \
+	mkdir -p $(DESTDIR)$(includedir)/eProsima_cpp; \
+	cp -r thirdparty/eprosima-common-code/eProsima_cpp/* $(DESTDIR)$(includedir)/eProsima_cpp;
 
 uninstall-hook:
 	rm -r $(DESTDIR)$(datadir)/doc/fastrtps; \
 	rm -r $(DESTDIR)$(datadir)/fastrtps; \
-	rm -r $(DESTDIR)$(datadir)/include/fastrtps
+	rm -r $(DESTDIR)$(includedir)/fastrtps
