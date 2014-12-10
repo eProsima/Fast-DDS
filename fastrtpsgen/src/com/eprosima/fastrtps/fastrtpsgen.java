@@ -780,8 +780,8 @@ public class fastrtpsgen {
 		
 		try {
 			Process preprocessor = Runtime.getRuntime().exec(lineCommandArray);
-			ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null);
-			ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, of);
+			ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null, false);
+			ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, of, true);
 			errorOutput.start();
 			normalOutput.start();
 			exitVal = preprocessor.waitFor();
@@ -849,13 +849,15 @@ class ProcessOutput extends Thread
     boolean m_check_failures;
     boolean m_found_error = false;
     final String clLine = "#line";
+    boolean m_printLine = false;
 
-    ProcessOutput(InputStream is, String type, boolean check_failures, OutputStream of)
+    ProcessOutput(InputStream is, String type, boolean check_failures, OutputStream of, boolean printLine)
     {
         this.is = is;
         this.type = type;
         m_check_failures = check_failures;
         this.of = of;
+        m_printLine = printLine;
     }
 
     public void run()
@@ -868,7 +870,10 @@ class ProcessOutput extends Thread
             while ( (line = br.readLine()) != null)
             {
                 if(of == null)
-                    System.out.println(line);
+                {
+                    if(m_printLine)
+                        System.out.println(line);
+                }
                 else
                 {
                     // Sustituir los \\ que pone cl.exe por \
