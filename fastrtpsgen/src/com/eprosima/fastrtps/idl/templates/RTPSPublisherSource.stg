@@ -42,7 +42,7 @@ bool $ctx.filename$Publisher::init()
 	
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicDataType = "$ctx.m_firstStructure$PubSubType";  //This type MUST be registered
+	Wparam.topic.topicDataType = "$ctx.m_lastStructure$PubSubType";  //This type MUST be registered
 	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == nullptr)
@@ -73,7 +73,7 @@ void $ctx.filename$Publisher::run()
 	
 	// Publication code
 	
-	$ctx.m_firstStructure$ st;
+	$ctx.m_lastStructure$ st;
 	
 	/* Initialize your structure here */
 	

@@ -43,8 +43,8 @@ public class Context extends com.eprosima.idl.context.Context
         super.addTypeCode(name, typecode);
         
         // TODO: Exception.
-        if (m_firstStructure == null && typecode.getKind() == TypeCode.KIND_STRUCT && isInScopedFile()) {
-        	m_firstStructure = name;
+        if(typecode.getKind() == TypeCode.KIND_STRUCT && isInScopedFile()) {
+        	m_lastStructure = name;
         }
     }
 
@@ -53,7 +53,7 @@ public class Context extends com.eprosima.idl.context.Context
      */
     public boolean isProjectNeedTypes()
     {
-    	com.eprosima.idl.parser.tree.Exception ex = null;;
+    	com.eprosima.idl.parser.tree.Exception ex = null;
     	
     	if((ex = getFirstException()) != null)
     		return true;
@@ -168,14 +168,14 @@ public class Context extends com.eprosima.idl.context.Context
     // TODO Remove
     private String m_appProduct = null;
     
-    private String m_firstStructure = null;
+    private String m_lastStructure = null;
 
-	public String getM_firstStructure() {
-		return m_firstStructure;
+	public String getM_lastStructure() {
+		return m_lastStructure;
 	}
 
-	public void setM_firstStructure(String m_firstStructure) {
-		this.m_firstStructure = m_firstStructure;
+	public void setM_lastStructure(String m_lastStructure) {
+		this.m_lastStructure = m_lastStructure;
 	}
     
 }

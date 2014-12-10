@@ -37,7 +37,7 @@ bool $ctx.filename$Subscriber::init()
 			
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicDataType = "$ctx.m_firstStructure$PubSubType"; //Must be registered before the creation of the subscriber
+	Rparam.topic.topicDataType = "$ctx.m_lastStructure$PubSubType"; //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 	if(mp_subscriber == nullptr)
@@ -62,7 +62,7 @@ void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* su
 void $ctx.filename$Subscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
 		// Take data
-		$ctx.m_firstStructure$ st;
+		$ctx.m_lastStructure$ st;
 		
 		if(sub->takeNextData(&st, &m_info))
 		{
