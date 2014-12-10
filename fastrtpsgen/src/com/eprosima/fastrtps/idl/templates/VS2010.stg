@@ -60,6 +60,7 @@ project(solution, project, example, configurations, local) ::= <<
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
+      <ProgramDataBaseFileName>\$(TargetDir)\$(TargetName).pdb</ProgramDataBaseFileName>
       $bigObjOption()$
     </ClCompile>
     <Link>
@@ -110,7 +111,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
   </ImportGroup>};separator="\n"$
   <PropertyGroup Label="UserMacros" />
   $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
-    <IntDir>\$(Platform)\\\$(Configuration)\</IntDir>
+    <IntDir>\$(Platform)\\\$(Configuration)\\\$(ProjectName)\</IntDir>
     <OutDir>.\bin\\$example$\</OutDir>
     <TargetName>$if(!it.dll)$lib$endif$\$(ProjectName)$if(it.debug)$d$endif$</TargetName>
   </PropertyGroup>};separator="\n"$
@@ -123,6 +124,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
+      <ProgramDataBaseFileName>\$(TargetDir)\$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -220,6 +222,7 @@ preprocessorTypesLibDefs(conf) ::= <<
 >>
 
 bigObjOption() ::= <<
+<AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
 >>
 
 /**
