@@ -1,14 +1,14 @@
 package com.eprosima.fastrtps.solution;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.eprosima.solution.GUIDGenerator;
 import com.eprosima.idl.util.Util;
 
 public class Project extends com.eprosima.solution.Project
 {
-	public Project(String name, String file, HashSet dependencies)
+	public Project(String name, String file, LinkedHashSet dependencies)
 	{
         super(name, file, dependencies);
 
