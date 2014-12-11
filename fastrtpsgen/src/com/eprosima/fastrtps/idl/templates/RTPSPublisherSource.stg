@@ -42,7 +42,7 @@ bool $ctx.filename$Publisher::init()
 	
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicDataType = "$ctx.m_lastStructure$";  //This type MUST be registered
+	Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
 	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == nullptr)
@@ -79,14 +79,12 @@ void $ctx.filename$Publisher::run()
 	/* Initialize your structure here */
 	
 	int msgsent = 0;
-	char ch;
-	mp_publisher->write(&st);++msgsent;
-	cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
-	while(std::cin \>> ch)
+	char ch = 'y';
+	do
 	{
 		if(ch == 'y')
 		{
-			mp_publisher->write(&st);++msgsent;
+			mp_publisher->write(&st);  ++msgsent;
 			cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
 		}
 		else if(ch == 'n')
@@ -98,7 +96,7 @@ void $ctx.filename$Publisher::run()
 		{
 			cout << "Command " << ch << " not recognized, please enter \"y/n\":";
 		}
-	}
+	}while(std::cin \>> ch);
 }
 
 >>
