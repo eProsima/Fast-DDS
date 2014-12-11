@@ -23,27 +23,29 @@ function package
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Compile eRTPS for i86.
-	rm -rf output
+	
 	EPROSIMA_TARGET="i86Linux2.6gcc"
 	COMP="g++"
-	rm -rf lib/$EPROSIMA_TARGET
+	#rm -rf output
+	#rm -rf lib/$EPROSIMA_TARGET
 	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Compile eRTPS for x64.
-	rm -rf output
 	EPROSIMA_TARGET="x64Linux2.6gcc"
 	COMP="g++"
-	rm -rf lib/$EPROSIMA_TARGET
+	#rm -rf output
+	#rm -rf lib/$EPROSIMA_TARGET
 	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Compile eRTPS for ARM.
-	rm -rf output
+	
 	EPROSIMA_TARGET="armelf_linux_eabi"
 	COMP="arm-unknown-linux-gnueabi-g++"
+	#rm -rf output
 	#rm -rf lib/$EPROSIMA_TARGET
 	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
