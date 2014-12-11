@@ -82,9 +82,8 @@ bool HelloWorldPublisher::publish()
 	{
 		m_Hello.index(m_Hello.index()+1);
 		mp_publisher->write((void*)&m_Hello);
-		cout << "Message: "<<m_Hello.message()<< " "<< m_Hello.index()<< " SENT"<<endl;
-		int aux;
-		std::cin >> aux;
+		cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT, press enter to send another one."<<endl;
+		std::cin.ignore();
 		return true;
 	}
 	return false;

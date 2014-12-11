@@ -76,10 +76,10 @@ public:
 private:
 	bool m_useIP4;
 	bool m_useIP6;
-	Locator_t m_sendLocator_v4;
+	std::vector<Locator_t> mv_sendLocator_v4;
 	Locator_t m_sendLocator_v6;
 	boost::asio::io_service m_send_service;
-	boost::asio::ip::udp::socket m_send_socket_v4;
+	std::vector<boost::asio::ip::udp::socket*> mv_send_socket_v4;
 	boost::asio::ip::udp::socket m_send_socket_v6;
 	boost::asio::ip::udp::endpoint m_send_endpoint_v4;
 	boost::asio::ip::udp::endpoint m_send_endpoint_v6;

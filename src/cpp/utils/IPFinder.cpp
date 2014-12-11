@@ -34,6 +34,8 @@ bool IPFinder::getIP4s(std::vector<std::string>* vec_name)
 	PIP_ADAPTER_UNICAST_ADDRESS ua;
 
 	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, NULL, &size);
+
+
 	if (rv != ERROR_BUFFER_OVERFLOW) {
 		fprintf(stderr, "GetAdaptersAddresses() failed...");
 		return false;
@@ -60,7 +62,7 @@ bool IPFinder::getIP4s(std::vector<std::string>* vec_name)
 			memset(buf, 0, BUFSIZ);
 			getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
 			vec_name->push_back(std::string(buf));
-		//	printf("Buffer: %s\n", buf);
+			//printf("Buffer: %s\n", buf);
 			}
 		}
 	}
@@ -117,8 +119,8 @@ bool IPFinder::getIPAddress(LocatorList_t* locators)
 			ss >> a >>ch >>b >> ch >> c >>ch >>d;
 			if(a== 127 && b== 0 && c== 0 && d == 1)
 				continue;
-			if(a==169 && b==254)
-				continue;
+	//		if(a==169 && b==254)
+	//			continue;
 			Locator_t loc;
 			loc.kind = 1;
 			loc.port = 0;
