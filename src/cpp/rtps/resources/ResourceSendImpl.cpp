@@ -135,15 +135,17 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		for(uint8_t i=0;i<4;i++)
 			addr[i] = loc.address[12+i];
 		m_send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
+		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
+		{
 		logInfo(RTPS_MSG_OUT,"UDPv4: " << msg->length << " bytes TO endpoint: " << m_send_endpoint_v4
-				<< " FROM " << m_send_socket_v4.local_endpoint(),C_YELLOW);
+			<< " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
 		if(m_send_endpoint_v4.port()>0)
 		{
 			m_bytes_sent = 0;
 			if(m_send_next)
 			{
-				for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
-				{
+				
+
 					try {
 						m_bytes_sent = (*sockit)->send_to(boost::asio::buffer((void*)msg->buffer, msg->length), m_send_endpoint_v4);
 					}
@@ -151,7 +153,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 						// Should print the actual error message
 						logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
 					}
-				}
+				
 			}
 			else
 			{
@@ -165,6 +167,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		}
 		else
 			logError(RTPS_MSG_OUT,"Port error",C_YELLOW);
+		}
 	}
 	else if(loc.kind == LOCATOR_KIND_UDPv6 && m_useIP6)
 	{
