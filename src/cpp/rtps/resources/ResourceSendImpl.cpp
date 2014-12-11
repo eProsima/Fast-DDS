@@ -15,6 +15,8 @@
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 #include "fastrtps/utils/RTPSLog.h"
 
+#include "fastrtps/utils/IPFinder.h"
+
 using boost::asio::ip::udp;
 
 namespace eprosima {
@@ -26,7 +28,7 @@ static const char* const CLASS_NAME = "SendResource";
 ResourceSendImpl::ResourceSendImpl() :
 						m_useIP4(true),
 						m_useIP6(true),
-						m_send_socket_v4(m_send_service),
+						//m_send_socket_v4(m_send_service),
 						m_send_socket_v6(m_send_service),
 						m_bytes_sent(0),
 						m_send_next(true),
@@ -39,42 +41,52 @@ ResourceSendImpl::ResourceSendImpl() :
 bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,uint32_t sendsockBuffer,bool useIP4,bool useIP6)
 {
 	const char* const METHOD_NAME = "initSend";
-
 	m_useIP4 = useIP4;
 	m_useIP6 = useIP6;
+
+	LocatorList_t list;
+	IPFinder::getIPAddress(&list);
+	int index = 0;
 	boost::asio::socket_base::send_buffer_size option;
 	bool not_bind = true;
-	if(m_useIP4)
+	for (auto lit = list.begin(); lit != list.end(); ++lit)
 	{
-		m_sendLocator_v4 = loc;
-		m_sendLocator_v4.port = loc.port;
-		//OPEN SOCKETS:
-		m_send_socket_v4.open(boost::asio::ip::udp::v4());
-		m_send_socket_v4.set_option(boost::asio::socket_base::send_buffer_size(sendsockBuffer));
-
-		while(not_bind)
+		
+		if (m_useIP4)
 		{
-			udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::udp::v4(),m_sendLocator_v4.port);
-			try{
-				m_send_socket_v4.bind(send_endpoint);
-				not_bind = false;
-			}
-			catch (boost::system::system_error const& e)
-			{
-				logWarning(RTPS_MSG_OUT,"UDPv4 Error binding: ("<<e.what()<< ") with socket: " << send_endpoint,C_YELLOW);
-				m_sendLocator_v4.port++;
-			}
-		}
+			mv_sendLocator_v4.push_back(loc);
+			mv_sendLocator_v4.at(index).port = loc.port;
+			//OPEN SOCKETS:
+			mv_send_socket_v4.push_back(new boost::asio::ip::udp::socket(m_send_service));
+			mv_send_socket_v4.at(index)->open(boost::asio::ip::udp::v4());
+			mv_send_socket_v4.at(index)->set_option(boost::asio::socket_base::send_buffer_size(sendsockBuffer));
 
-		m_send_socket_v4.get_option(option);
-		logInfo (RTPS_MSG_OUT,"UDPv4: " << m_send_socket_v4.local_endpoint()<<"|| State: " << m_send_socket_v4.is_open() <<
-				" || buffer size: " <<option.value(),C_YELLOW);
-		not_bind = true;
+			while (not_bind)
+			{
+				udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(lit->to_IP4_long()), mv_sendLocator_v4.at(index).port);
+				try{
+					mv_send_socket_v4.at(index)->bind(send_endpoint);
+					not_bind = false;
+				}
+				catch (boost::system::system_error const& e)
+				{
+					logWarning(RTPS_MSG_OUT, "UDPv4 Error binding: (" << e.what() << ") with socket: " << send_endpoint, C_YELLOW);
+					mv_sendLocator_v4.at(index).port++;
+				}
+			}
+
+			mv_send_socket_v4.at(index)->get_option(option);
+			logInfo(RTPS_MSG_OUT, "UDPv4: " << m_send_socket_v4.local_endpoint() << "|| State: " << m_send_socket_v4.is_open() <<
+				" || buffer size: " << option.value(), C_YELLOW);
+			not_bind = true;
+		}
+		++index;
 	}
+	--index;
 	if(m_useIP6)
 	{
-		m_sendLocator_v4 = loc;
-		m_sendLocator_v6.port = m_sendLocator_v4.port+1;
+		m_sendLocator_v6 = loc;
+		m_sendLocator_v6.port = mv_sendLocator_v4.at(index).port+1;
 		//OPEN SOCKETS:
 		m_send_socket_v6.open(boost::asio::ip::udp::v4());
 		m_send_socket_v6.set_option(boost::asio::socket_base::send_buffer_size(sendsockBuffer));
@@ -104,9 +116,11 @@ ResourceSendImpl::~ResourceSendImpl()
 {
 	const char* const METHOD_NAME = "~SendResource";
 	logInfo(RTPS_MSG_OUT,"",C_YELLOW);
-	m_send_socket_v4.close();
+	for (auto it = mv_send_socket_v4.begin(); it != mv_send_socket_v4.end(); ++it)
+		(*it)->close();
 	m_send_socket_v6.close();
 	m_send_service.stop();
+	delete(mp_mutex);
 }
 
 void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
@@ -128,11 +142,15 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 			m_bytes_sent = 0;
 			if(m_send_next)
 			{
-				try {
-					m_bytes_sent = m_send_socket_v4.send_to(boost::asio::buffer((void*)msg->buffer,msg->length),m_send_endpoint_v4);
-				} catch (const std::exception& error) {
-					// Should print the actual error message
-					logWarning(RTPS_MSG_OUT,"Error: " <<error.what(),C_YELLOW);
+				for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
+				{
+					try {
+						m_bytes_sent = (*sockit)->send_to(boost::asio::buffer((void*)msg->buffer, msg->length), m_send_endpoint_v4);
+					}
+					catch (const std::exception& error) {
+						// Should print the actual error message
+						logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
+					}
 				}
 			}
 			else

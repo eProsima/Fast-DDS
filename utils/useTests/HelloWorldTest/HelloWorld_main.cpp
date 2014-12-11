@@ -65,9 +65,8 @@ int main(int argc, char** argv)
 	case 2:
 	{
 		HelloWorldSubscriber mysub;
-		cout << "Enter number to stop: ";
-		int aux;
-		std::cin>>aux;
+		cout << "Waiting for messages, press enter to stop."<<endl;
+		std::cin.ignore();
 		break;
 	}
 	}
