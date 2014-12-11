@@ -120,6 +120,8 @@ ResourceSendImpl::~ResourceSendImpl()
 		(*it)->close();
 	m_send_socket_v6.close();
 	m_send_service.stop();
+	for (auto it = mv_send_socket_v4.begin(); it != mv_send_socket_v4.end(); ++it)
+		delete(*it);
 	delete(mp_mutex);
 }
 
