@@ -76,7 +76,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			}
 
 			mv_send_socket_v4.at(index)->get_option(option);
-			logInfo(RTPS_MSG_OUT, "UDPv4: " << m_send_socket_v4.local_endpoint() << "|| State: " << m_send_socket_v4.is_open() <<
+			logInfo(RTPS_MSG_OUT, "UDPv4: " << mv_send_socket_v4.at(index)->local_endpoint() << "|| State: " << mv_send_socket_v4.at(index)->is_open() <<
 				" || buffer size: " << option.value(), C_YELLOW);
 			not_bind = true;
 		}
