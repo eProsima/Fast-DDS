@@ -53,7 +53,7 @@ enum E_SIDE
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_WARNING);
+	Log::setVerbosity(VERB_ERROR);
 	cout << "Starting "<< endl;
 	E_SIDE side;
 	int samples = 10000;
