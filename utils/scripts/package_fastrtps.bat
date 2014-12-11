@@ -111,6 +111,7 @@ call build_shapesdemo.bat
 cd ..\..
 
 cd fastrtpsgen
+rd /S /Q build
 call ant jar
 cd ..
 
