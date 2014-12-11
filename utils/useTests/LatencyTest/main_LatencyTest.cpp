@@ -44,10 +44,9 @@ const int c_n_samples = 10000;
 
 int main(int argc, char** argv){
 
-	Log::setVerbosity(VERB_INFO);
+	Log::setVerbosity(VERB_ERROR);
 	//Log::setCategoryVerbosity(RTPS_LIVELINESS,VERB_INFO);
-	Log::logFileName("LatencyTest.txt",true);
-	//cout << "Starting "<< endl;
+	//Log::logFileName("LatencyTest.txt",true);
 	logUser("Starting");
 	int type;
 	int sub_number = 1;

@@ -29,9 +29,8 @@ using namespace std;
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_INFO);
-	//Log::logFileName("LatencyTest.txt",true);
-	//cout << "Starting "<< endl;
+	Log::setVerbosity(VERB_ERROR);
+
 	logUser("Starting");
 	int type;
 	if(argc > 1)
