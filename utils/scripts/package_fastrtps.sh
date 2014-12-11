@@ -110,6 +110,7 @@ function package
 	#qmake ShapesDemo.pro -r -spec linux-g++-64
 
 	cd fastrtpsgen
+	rm -R build
 	ant jar
 	cd ..
 	
