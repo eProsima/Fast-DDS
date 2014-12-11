@@ -46,11 +46,6 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	Rparam.topic.resourceLimitsQos.max_samples = 50;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	Locator_t loc;
-	loc.port = 11111;
-	Rparam.unicastLocatorList.push_back(loc);
-	loc.port = 11112;
-	Rparam.unicastLocatorList.push_back(loc);
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
 }
@@ -75,10 +70,11 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,Ma
 
 void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-	while(sub->takeNextData((void*)&m_Hello,&m_info))
+	if(sub->takeNextData((void*)&m_Hello, &m_info))
 	{
 		if(m_info.sampleKind == ALIVE)
 		{
+			// Print your structure data here.
 			cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<endl;
 		}
 	}
