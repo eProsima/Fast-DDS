@@ -122,7 +122,7 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
 			pai.first = IP4;
 			pai.second = std::string(host);
 			vec_name->push_back(pai);
-			printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 		else if(family == AF_INET6)
 		{
@@ -136,7 +136,7 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
 			pai.first = IP6;
 			pai.second = std::string(host);
 			vec_name->push_back(pai);
-			printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
 	return true;
