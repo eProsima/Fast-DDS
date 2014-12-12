@@ -116,7 +116,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 #if defined(_WIN32)
 				send_endpoint = udp::endpoint(boost::asio::ip::address_v6(bt), sendLocv6.port);
 #else
-				send_endpoint = udp::endpoint(boost::asio::ip::address_v6(), sendLocv6.port);
+				send_endpoint = udp::endpoint(boost::asio::ip::address_v6(bt), sendLocv6.port);
 #endif
 				try{
 					sendSocketv6->bind(send_endpoint);
