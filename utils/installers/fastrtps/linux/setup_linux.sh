@@ -44,12 +44,13 @@ installer()
     cp -r "../../../doxygen/output/doxygen/html" tmp/$project/doc/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
-    cp "../../../doxygen/output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/RTPS_API_C++_Manual.pdf"
+    cp "../../../doxygen/output/doxygen/latex/refman.pdf" "tmp/$project/doc/pdf/FastRTPS_API_C++_Manual.pdf"
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
     # Copy README
     cp ../../../../README.html tmp/$project/
+    cp ../../../../README_*.png tmp/$project/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
