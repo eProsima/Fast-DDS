@@ -119,7 +119,7 @@ Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& 
 	{
 		logInfo(RTPS_MSG_IN,"Defined Locator IP with 0s (listen to all interfaces), setting first interface as value",C_BLUE);
 		LocatorList_t myIP;
-		IPFinder::getIPAddress(&myIP);
+		IPFinder::getIP4Address(&myIP);
 		m_listenLoc= *myIP.begin();
 		m_listenLoc.port = loc.port;
 	}
@@ -186,7 +186,7 @@ Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& 
 	{
 		logInfo(RTPS_MSG_IN,"Joining group: "<<m_listenLoc.to_IP4_string(),C_BLUE);
 		LocatorList_t loclist;
-		IPFinder::getIPAddress(&loclist);
+		IPFinder::getIP4Address(&loclist);
 		for(LocatorListIterator it=loclist.begin();it!=loclist.end();++it)
 			m_listen_socket.set_option( boost::asio::ip::multicast::join_group(address.to_v4(),boost::asio::ip::address_v4::from_string(it->to_IP4_string())) );
 	}

@@ -101,7 +101,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 #endif
 	GuidPrefix_t guidP;
 	LocatorList_t loc;
-	IPFinder::getIPAddress(&loc);
+	IPFinder::getIP4Address(&loc);
 	if(loc.size()>0)
 	{
 		guidP.value[0] = c_VendorId_eProsima[0];
