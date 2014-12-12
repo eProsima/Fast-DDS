@@ -15,6 +15,7 @@ install-data-hook:
 	mkdir -p $(DESTDIR)$(datadir)/doc/fastrtps; \
 	cp -r doc/* $(DESTDIR)$(datadir)/doc/fastrtps; \
 	cp -r README.html $(DESTDIR)$(datadir)/doc/fastrtps; \
+	cp -r README_*.png $(DESTDIR)$(datadir)/doc/fastrtps; \
 	cp -r FASTRTPS_LIBRARY_LICENSE.txt $(DESTDIR)$(datadir)/doc/fastrtps; \
 	cp -r LGPLv3_LICENSE.txt $(DESTDIR)$(datadir)/doc/fastrtps; \
 	mkdir -p $(DESTDIR)$(datadir)/fastrtps; \
