@@ -88,7 +88,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
 		LocatorList_t myIP;
-		IPFinder::getIPAddress(&myIP);
+		IPFinder::getIP4Address(&myIP);
 		std::stringstream ss;
 
 		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)

@@ -23,7 +23,7 @@ using namespace eprosima;
 
 int main(int argc, char** argv)
 {
-	Log::setVerbosity(VERB_ERROR);
+	Log::setVerbosity(VERB_INFO);
 	cout << "Starting "<< endl;
 	int type = 1;
 	if(argc > 1)

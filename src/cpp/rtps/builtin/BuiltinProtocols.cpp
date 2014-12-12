@@ -85,7 +85,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	if(m_att.metatrafficUnicastLocatorList.empty())
 	{
 		LocatorList_t locators;
-		IPFinder::getIPAddress(&locators);
+		IPFinder::getIP4Address(&locators);
 		for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
 		{
 			it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
