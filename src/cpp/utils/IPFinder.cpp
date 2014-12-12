@@ -70,21 +70,21 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name)
 	}
 	//cout << "IP INFORMATION " << endl;
 	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
-		
+
 		for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
 			char buf[BUFSIZ];
 
 			int family = ua->Address.lpSockaddr->sa_family;
 			if(family == AF_INET || family == AF_INET6) //IP4
 			{
-			//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
-			memset(buf, 0, BUFSIZ);
-			getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
-			pair_IP pai;
-			pai.first = family == AF_INET ? IP4 : IP6;
-			pai.second = std::string(buf);
-			vec_name->push_back(pai);
-			//printf("Buffer: %s\n", buf);
+				//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
+				memset(buf, 0, BUFSIZ);
+				getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
+				pair_IP pai;
+				pai.first = family == AF_INET ? IP4 : IP6;
+				pai.second = std::string(buf);
+				vec_name->push_back(pai);
+				//printf("Buffer: %s\n", buf);
 			}
 		}
 	}
@@ -95,7 +95,7 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name)
 
 #else
 
-bool IPFinder::getIP4s(std::vector<pair_IP* vec_name )
+bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, s;
@@ -110,18 +110,36 @@ bool IPFinder::getIP4s(std::vector<pair_IP* vec_name )
 	{
 		family = ifa->ifa_addr->sa_family;
 
-		if (family == AF_INET) {
+		if (family == AF_INET)
+		{
 			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
 					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 			if (s != 0) {
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
 				exit(EXIT_FAILURE);
 			}
-			vec_name->push_back(host);
-			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+			pair_IP pai;
+			pai.first = IP4;
+			pai.second = std::string(host);
+			vec_name->push_back(pai);
+			printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+		}
+		else if(family == AF_INET6)
+		{
+			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
+					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+			if (s != 0) {
+				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+				exit(EXIT_FAILURE);
+			}
+			pair_IP pai;
+			pai.first = IP6;
+			pai.second = std::string(host);
+			vec_name->push_back(pai);
+			printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
-return true;
+	return true;
 }
 #endif
 
@@ -154,7 +172,7 @@ bool IPFinder::getAllIPAddress(LocatorList_t* locators)
 	{
 		locators->clear();
 		for (auto it = ip_names.begin();
-			it != ip_names.end(); ++it)
+				it != ip_names.end(); ++it)
 		{
 			if (it->first == IP6)
 			{
@@ -182,7 +200,7 @@ bool IPFinder::getIP6Address(LocatorList_t* locators)
 
 		locators->clear();
 		for (auto it = ip_names.begin();
-			it != ip_names.end(); ++it)
+				it != ip_names.end(); ++it)
 		{
 			if (it->first == IP6)
 			{
@@ -314,7 +332,7 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 		cout << it << " ";
 	cout << endl;
 	cout << "LOCATOR: " << *loc << endl;
-	*/
+	 */
 	return true;
 }
 
