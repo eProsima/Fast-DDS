@@ -25,15 +25,17 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "SendResource";
 
+static const int MAX_BIND_TRIES = 100;
+
 ResourceSendImpl::ResourceSendImpl() :
-						m_useIP4(true),
-						m_useIP6(true),
-						//m_send_socket_v4(m_send_service),
-						//m_send_socket_v6(m_send_service),
-						m_bytes_sent(0),
-						m_send_next(true),
-						mp_RTPSParticipant(nullptr),
-						mp_mutex(new boost::recursive_mutex())
+										m_useIP4(true),
+										m_useIP6(true),
+										//m_send_socket_v4(m_send_service),
+										//m_send_socket_v6(m_send_service),
+										m_bytes_sent(0),
+										m_send_next(true),
+										mp_RTPSParticipant(nullptr),
+										mp_mutex(new boost::recursive_mutex())
 {
 
 }
@@ -48,6 +50,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 	IPFinder::getAllIPAddress(&list);
 	boost::asio::socket_base::send_buffer_size option;
 	bool not_bind = true;
+	int bind_tries = 0;
 	for (auto lit = list.begin(); lit != list.end(); ++lit)
 	{
 		if (lit->kind == LOCATOR_KIND_UDPv4 && m_useIP4)
@@ -60,25 +63,38 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			auto sendSocketv4 = mv_send_socket_v4.back();
 			sendSocketv4->open(boost::asio::ip::udp::v4());
 			sendSocketv4->set_option(boost::asio::socket_base::send_buffer_size(sendsockBuffer));
-
-			while (not_bind)
+			bind_tries = 0;
+			udp::endpoint send_endpoint;
+			while (not_bind && bind_tries < MAX_BIND_TRIES)
 			{
-				udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v4(lit->to_IP4_long()), sendLocv4.port);
+				send_endpoint = udp::endpoint(boost::asio::ip::address_v4(lit->to_IP4_long()), sendLocv4.port);
 				try{
 					sendSocketv4->bind(send_endpoint);
 					not_bind = false;
 				}
 				catch (boost::system::system_error const& e)
 				{
-					logWarning(RTPS_MSG_OUT, "UDPv4 Error binding: (" << e.what() << ") with socket: " << send_endpoint, C_YELLOW);
+					logInfo(RTPS_MSG_OUT, "UDPv4 Error binding endpoint: (" << send_endpoint << ") with socket: " << sendSocketv4->local_endpoint()
+							<< " with boost msg: "<<e.what() , C_YELLOW);
 					sendLocv4.port++;
 				}
+				++bind_tries;
 			}
-
-			sendSocketv4->get_option(option);
-			logInfo(RTPS_MSG_OUT, "UDPv4: " << sendSocketv4->local_endpoint() << "|| State: " << sendSocketv4->is_open() <<
-				" || buffer size: " << option.value(), C_YELLOW);
+			if(!not_bind)
+			{
+				sendSocketv4->get_option(option);
+				logInfo(RTPS_MSG_OUT, "UDPv4: " << sendSocketv4->local_endpoint() << "|| State: " << sendSocketv4->is_open() <<
+						" || buffer size: " << option.value(), C_YELLOW);
+			}
+			else
+			{
+				logWarning(RTPS_MSG_OUT,"UDPv4: Maxmimum Number of tries while binding in this interface: "<<send_endpoint,C_YELLOW)
+				mv_sendLocator_v4.erase(mv_sendLocator_v4.end()-1);
+				delete(*(mv_send_socket_v4.end()-1));
+				mv_send_socket_v4.erase(mv_send_socket_v4.end()-1);
+			}
 			not_bind = true;
+
 		}
 		else if (lit->kind == LOCATOR_KIND_UDPv6 && m_useIP6)
 		{
@@ -90,28 +106,39 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			auto sendSocketv6 = mv_send_socket_v6.back();
 			sendSocketv6->open(boost::asio::ip::udp::v6());
 			sendSocketv6->set_option(boost::asio::socket_base::send_buffer_size(sendsockBuffer));
-
-			while (not_bind)
+			bind_tries = 0;
+			udp::endpoint send_endpoint;
+			while (not_bind && bind_tries < MAX_BIND_TRIES)
 			{
 				boost::asio::ip::address_v6::bytes_type bt;
 				for (uint8_t i = 0; i < 16;++i)
 					bt[i] = lit->address[i];
-				udp::endpoint send_endpoint = udp::endpoint(boost::asio::ip::address_v6(bt), sendLocv6.port);
+				send_endpoint = udp::endpoint(boost::asio::ip::address_v6(bt), sendLocv6.port);
 				try{
 					sendSocketv6->bind(send_endpoint);
 					not_bind = false;
 				}
 				catch (boost::system::system_error const& e)
 				{
-					logWarning(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ") with socket: " << send_endpoint, C_YELLOW);
-					logWarning(RTPS_MSG_OUT, "UDPv6 Error binding boost msg: " << e.what(), C_YELLOW);
+					logInfo(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ") with socket: " << sendSocketv6->local_endpoint()
+							<< " with boost msg: "<<e.what() , C_YELLOW);
 					sendLocv6.port++;
 				}
+				++bind_tries;
 			}
-
-			sendSocketv6->get_option(option);
-			logInfo(RTPS_MSG_OUT, "UDPv6: " << sendSocketv6->local_endpoint() << "|| State: " << sendSocketv6->is_open() <<
-				" || buffer size: " << option.value(), C_YELLOW);
+			if(!not_bind)
+			{
+				sendSocketv6->get_option(option);
+				logInfo(RTPS_MSG_OUT, "UDPv6: " << sendSocketv6->local_endpoint() << "|| State: " << sendSocketv6->is_open() <<
+						" || buffer size: " << option.value(), C_YELLOW);
+			}
+			else
+			{
+				logWarning(RTPS_MSG_OUT,"UDPv6: Maxmimum Number of tries while binding in this endpoint: "<<send_endpoint,C_YELLOW);
+				mv_sendLocator_v6.erase(mv_sendLocator_v6.end()-1);
+				delete(*(mv_send_socket_v6.end()-1));
+				mv_send_socket_v6.erase(mv_send_socket_v6.end()-1);
+			}
 			not_bind = true;
 		}
 
@@ -151,13 +178,13 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		m_send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
 		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
 		{
-		logInfo(RTPS_MSG_OUT,"UDPv4: " << msg->length << " bytes TO endpoint: " << m_send_endpoint_v4
-			<< " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
-		if(m_send_endpoint_v4.port()>0)
-		{
-			m_bytes_sent = 0;
-			if(m_send_next)
+			logInfo(RTPS_MSG_OUT,"UDPv4: " << msg->length << " bytes TO endpoint: " << m_send_endpoint_v4
+					<< " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
+			if(m_send_endpoint_v4.port()>0)
 			{
+				m_bytes_sent = 0;
+				if(m_send_next)
+				{
 					try {
 						m_bytes_sent = (*sockit)->send_to(boost::asio::buffer((void*)msg->buffer, msg->length), m_send_endpoint_v4);
 					}
@@ -165,20 +192,20 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 						// Should print the actual error message
 						logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
 					}
-				
+
+				}
+				else
+				{
+					m_send_next = true;
+				}
+				logInfo (RTPS_MSG_OUT,"SENT " << m_bytes_sent,C_YELLOW);
+			}
+			else if(m_send_endpoint_v4.port()<=0)
+			{
+				logWarning(RTPS_MSG_OUT,"Port invalid",C_YELLOW);
 			}
 			else
-			{
-				m_send_next = true;
-			}
-			logInfo (RTPS_MSG_OUT,"SENT " << m_bytes_sent,C_YELLOW);
-		}
-		else if(m_send_endpoint_v4.port()<=0)
-		{
-			logWarning(RTPS_MSG_OUT,"Port invalid",C_YELLOW);
-		}
-		else
-			logError(RTPS_MSG_OUT,"Port error",C_YELLOW);
+				logError(RTPS_MSG_OUT,"Port error",C_YELLOW);
 		}
 	}
 	else if(loc.kind == LOCATOR_KIND_UDPv6 && m_useIP6)
@@ -190,7 +217,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT, "UDPv6: " << msg->length << " bytes TO endpoint: "
-				<< m_send_endpoint_v6 << " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
+					<< m_send_endpoint_v6 << " FROM " << (*sockit)->local_endpoint(), C_YELLOW);
 			if (m_send_endpoint_v6.port()>0)
 			{
 				m_bytes_sent = 0;
