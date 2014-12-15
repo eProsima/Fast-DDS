@@ -95,7 +95,7 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name)
 
 #else
 
-bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
+bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, s;
@@ -118,11 +118,14 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
 				exit(EXIT_FAILURE);
 			}
-			pair_IP pai;
-			pai.first = IP4;
-			pai.second = std::string(host);
-			vec_name->push_back(pai);
+			info_IP info;
+			info.type = IP4;
+			info.name = std::string(host);
+			if(!parseIP4(info.name,&info.locator))
+				info.type = IP4_LOCAL;
+			vec_name->push_back(info);
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
+
 		}
 		else if(family == AF_INET6)
 		{
@@ -132,10 +135,14 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
 				exit(EXIT_FAILURE);
 			}
-			pair_IP pai;
-			pai.first = IP6;
-			pai.second = std::string(host);
-			vec_name->push_back(pai);
+			struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
+			info_IP info;
+			info.type = IP6;
+			info.name = std::string(host);
+			if(!parseIP6(info.name,&info.locator))
+				info.type = IP6_LOCAL;
+			info.scope_id = so->sin6_scope_id;
+			vec_name->push_back(info);
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
@@ -145,7 +152,7 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name )
 
 bool IPFinder::getIP4Address(LocatorList_t* locators)
 {
-	std::vector<pair_IP> ip_names;
+	std::vector<info_IP> ip_names;
 	if(IPFinder::getIPs(&ip_names))
 	{
 
@@ -153,11 +160,9 @@ bool IPFinder::getIP4Address(LocatorList_t* locators)
 		for(auto it=ip_names.begin();
 				it!=ip_names.end();++it)
 		{
-			if (it->first == IP4)
+			if (it->type == IP4)
 			{
-				Locator_t loc;
-				if (parseIP4(it->second,&loc))
-					locators->push_back(loc);
+				locators->push_back(it->locator);
 			}
 		}
 		return true;
@@ -167,24 +172,20 @@ bool IPFinder::getIP4Address(LocatorList_t* locators)
 
 bool IPFinder::getAllIPAddress(LocatorList_t* locators)
 {
-	std::vector<pair_IP> ip_names;
+	std::vector<info_IP> ip_names;
 	if (IPFinder::getIPs(&ip_names))
 	{
 		locators->clear();
 		for (auto it = ip_names.begin();
 				it != ip_names.end(); ++it)
 		{
-			if (it->first == IP6)
+			if (it->type == IP6)
 			{
-				Locator_t loc;
-				if (parseIP6(it->second, &loc))
-					locators->push_back(loc);
+				locators->push_back(it->locator);
 			}
-			else if (it->first == IP4)
+			else if (it->type == IP4)
 			{
-				Locator_t loc;
-				if (parseIP4(it->second, &loc))
-					locators->push_back(loc);
+				locators->push_back(it->locator);
 			}
 		}
 		return true;
@@ -194,7 +195,7 @@ bool IPFinder::getAllIPAddress(LocatorList_t* locators)
 
 bool IPFinder::getIP6Address(LocatorList_t* locators)
 {
-	std::vector<pair_IP> ip_names;
+	std::vector<info_IP> ip_names;
 	if (IPFinder::getIPs(&ip_names))
 	{
 
@@ -202,12 +203,9 @@ bool IPFinder::getIP6Address(LocatorList_t* locators)
 		for (auto it = ip_names.begin();
 				it != ip_names.end(); ++it)
 		{
-			if (it->first == IP6)
+			if (it->type == IP6)
 			{
-				Locator_t loc;
-				if (parseIP6(it->second, &loc))
-					locators->push_back(loc);
-
+				locators->push_back(it->locator);
 			}
 		}
 		return true;

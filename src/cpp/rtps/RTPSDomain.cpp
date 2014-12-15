@@ -62,7 +62,7 @@ void RTPSDomain::stopAll()
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
-														RTPSParticipantListener* listen)
+		RTPSParticipantListener* listen)
 {
 	const char* const METHOD_NAME = "createParticipant";
 	logInfo(RTPS_PARTICIPANT,"");
@@ -90,7 +90,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 		if(m_RTPSParticipantIDs.insert(ID).second == false)
 		{
 			logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists" << endl;)
-			return nullptr;
+							return nullptr;
 		}
 	}
 	int pid;
@@ -171,11 +171,14 @@ RTPSWriter* RTPSDomain::createRTPSWriter(RTPSParticipant* p, WriterAttributes& w
 
 bool RTPSDomain::removeRTPSWriter(RTPSWriter* writer)
 {
-	for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+	if(writer!=nullptr)
 	{
-		if(it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
+		for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
 		{
-			return it->second->deleteUserEndpoint((Endpoint*)writer);
+			if(it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
+			{
+				return it->second->deleteUserEndpoint((Endpoint*)writer);
+			}
 		}
 	}
 	return false;
@@ -199,11 +202,14 @@ RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& r
 
 bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
 {
-	for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
+	if(reader !=  nullptr)
 	{
-		if(it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
+		for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
 		{
-			return it->second->deleteUserEndpoint((Endpoint*)reader);
+			if(it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
+			{
+				return it->second->deleteUserEndpoint((Endpoint*)reader);
+			}
 		}
 	}
 	return false;

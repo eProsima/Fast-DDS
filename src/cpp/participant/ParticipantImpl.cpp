@@ -153,10 +153,11 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	if(writer == nullptr)
 	{
 		logError(PARTICIPANT,"Problem creating associated Writer");
+		delete(pubimpl);
 		return nullptr;
 	}
 	pubimpl->mp_writer = writer;
-	//SAVE THE PUBLICHER PAIR
+	//SAVE THE PUBLISHER PAIR
 	t_p_PublisherPair pubpair;
 	pubpair.first = pub;
 	pubpair.second = pubimpl;
@@ -224,7 +225,6 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	{
 		logError(PARTICIPANT,"Problem creating associated Reader");
 		delete(subimpl);
-		delete(sub);
 		return nullptr;
 	}
 	subimpl->mp_reader = reader;

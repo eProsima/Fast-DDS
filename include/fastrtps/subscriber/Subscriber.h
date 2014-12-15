@@ -35,12 +35,14 @@ class SubscriberAttributes;
  */
 class RTPS_DllAPI Subscriber
 {
+	friend class SubscriberImpl;
+	virtual ~Subscriber(){};
 public:
 	/**
 	* @param pimpl Actual implementation of the subscriber
 	*/
 	Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
-	virtual ~Subscriber(){};
+
 	
 	/**
 	* Get the associated GUID
