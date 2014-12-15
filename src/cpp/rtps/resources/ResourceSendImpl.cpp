@@ -72,6 +72,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 					sendSocketv4->bind(send_endpoint);
 					not_bind = false;
 				}
+#pragma warning(disable:4101)
 				catch (boost::system::system_error const& e)
 				{
 					logInfo(RTPS_MSG_OUT, "UDPv4 Error binding endpoint: (" << send_endpoint << ") with socket: " << sendSocketv4->local_endpoint()
@@ -121,6 +122,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 					sendSocketv6->bind(send_endpoint);
 					not_bind = false;
 				}
+#pragma warning(disable:4101)
 				catch (boost::system::system_error const& e)
 				{
 					logInfo(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ") with socket: " << sendSocketv6->local_endpoint()
