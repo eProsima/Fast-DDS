@@ -65,14 +65,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):
-																					m_guid(guidP,c_EntityId_RTPSParticipant),
-																					mp_send_thr(nullptr),
-																					mp_event_thr(nullptr),
-																					mp_builtinProtocols(nullptr),
-																					mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-																					IdCounter(0),
-																					mp_participantListener(plisten),
-																					mp_userParticipant(par)
+																							m_guid(guidP,c_EntityId_RTPSParticipant),
+																							mp_send_thr(nullptr),
+																							mp_event_thr(nullptr),
+																							mp_builtinProtocols(nullptr),
+																							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+																							IdCounter(0),
+																							mp_participantListener(plisten),
+																							mp_userParticipant(par)
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
@@ -87,22 +87,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
-		LocatorList_t myIP;
-		IPFinder::getIP4Address(&myIP);
-		std::stringstream ss;
-
-		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
-		{
-			lit->port=m_att.port.portBase+
-					m_att.port.domainIDGain*PParam.builtin.domainId+
-					m_att.port.offsetd3+
-					m_att.port.participantIDGain*m_att.participantID;
-			m_att.defaultUnicastLocatorList.push_back(*lit);
-			ss << *lit << ";";
-		}
-
-		std::string auxstr = ss.str();
-		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<auxstr);
+		Locator_t loc;
+		loc.port=m_att.port.portBase+
+				m_att.port.domainIDGain*PParam.builtin.domainId+
+				m_att.port.offsetd3+
+				m_att.port.participantIDGain*m_att.participantID;
+		loc.kind = LOCATOR_KIND_UDPv4;
+		m_att.defaultUnicastLocatorList.push_back(loc);
+		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
@@ -406,7 +398,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 {
 	bool valid = true;
 	LocatorList_t finalList;
-	bool added;
+	bool added = false;
 	for(auto lit = list.begin();lit != list.end();++lit)
 	{
 		added = false;
@@ -429,6 +421,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 			LocatorList_t locList = LR->getListenLocators();
 			finalList.push_back(locList);
 			m_listenResourceList.push_back(LR);
+			added = true;
 		}
 		else
 		{
