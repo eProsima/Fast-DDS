@@ -47,7 +47,7 @@ IPFinder::~IPFinder() {
 #if defined(_WIN32)
 
 
-bool IPFinder::getIPs(std::vector<pair_IP>* vec_name)
+bool IPFinder::getIPs(std::vector<info_IP>* vec_name)
 {
 	DWORD rv, size;
 	PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
@@ -75,15 +75,25 @@ bool IPFinder::getIPs(std::vector<pair_IP>* vec_name)
 			char buf[BUFSIZ];
 
 			int family = ua->Address.lpSockaddr->sa_family;
+			
 			if(family == AF_INET || family == AF_INET6) //IP4
 			{
 				//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
 				memset(buf, 0, BUFSIZ);
 				getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
-				pair_IP pai;
-				pai.first = family == AF_INET ? IP4 : IP6;
-				pai.second = std::string(buf);
-				vec_name->push_back(pai);
+				info_IP info;
+				info.type = family == AF_INET ? IP4 : IP6;
+				info.name = std::string(buf);
+				if (info.type == IP4 && !parseIP4(info.name, &info.locator))
+					info.type = IP4_LOCAL;
+				else if (info.type == IP6 && !parseIP6(info.name, &info.locator))
+					info.type = IP6_LOCAL;
+				if (info.type == IP6)
+				{
+					sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
+					info.scope_id = so->sin6_scope_id;
+				}
+				vec_name->push_back(info);
 				//printf("Buffer: %s\n", buf);
 			}
 		}
