@@ -113,6 +113,28 @@ public:
 	}
 };
 
+
+inline bool IsAddressDefined(const Locator_t& loc)
+{
+	if(loc.kind == 1)
+	{
+		for(uint8_t i = 12;i<16;++i)
+		{
+			if(loc.address[i] != 0)
+				return true;
+		}
+	}
+	else if (loc.kind == 2)
+	{
+		for(uint8_t i = 0;i<16;++i)
+		{
+			if(loc.address[i] != 0)
+				return true;
+		}
+	}
+	return false;
+}
+
 inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
 	if(loc1.kind!=loc2.kind)
 		return false;
@@ -157,6 +179,10 @@ class LocatorList_t{
 public:
 	RTPS_DllAPI LocatorList_t(){};
 	RTPS_DllAPI ~LocatorList_t(){};
+	RTPS_DllAPI LocatorList_t(const LocatorList_t& list)
+	{
+		m_locators = list.m_locators;
+	}
 	RTPS_DllAPI LocatorListIterator begin(){
 		return m_locators.begin();
 	}
@@ -183,13 +209,39 @@ public:
 		if(!already)
 			m_locators.push_back(loc);
 	}
+	RTPS_DllAPI void push_back(LocatorList_t& locList)
+	{
+		for(auto it = locList.m_locators.begin();it!=locList.m_locators.end();++it)
+			this->push_back(*it);
+	}
 	RTPS_DllAPI bool empty(){
 		return m_locators.empty();
 	}
+	RTPS_DllAPI bool contains(const Locator_t& loc)
+	{
+		for(LocatorListIterator it=this->begin();it!=this->end();++it)
+		{
+			if(loc == *it)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	friend std::ostream& operator <<(std::ostream& output,const LocatorList_t& loc);
 private:
 	std::vector<Locator_t> m_locators;
 
 };
+
+inline std::ostream& operator<<(std::ostream& output,const LocatorList_t& locList)
+{
+	for(auto it = locList.m_locators.begin();it!=locList.m_locators.end();++it)
+	{
+		output << *it << ",";
+	}
+	return output;
+}
 
 
 }

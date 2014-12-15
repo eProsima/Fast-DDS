@@ -12,6 +12,7 @@
  */
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/rtps/reader/RTPSReader.h"
 
 #include "fastrtps/rtps/resources/ListenResource.h"
 #include "fastrtps/rtps/resources/ListenResourceImpl.h"
@@ -26,8 +27,8 @@ namespace rtps {
 static const char* const CLASS_NAME = "ListenResource";
 
 ListenResource::ListenResource(RTPSParticipantImpl* partimpl):
-		mp_receiver(nullptr),
-		mp_RTPSParticipantImpl(partimpl)
+				mp_receiver(nullptr),
+				mp_RTPSParticipantImpl(partimpl)
 {
 	// TODO Auto-generated constructor stub
 	mp_impl = new ListenResourceImpl(this);
@@ -37,8 +38,10 @@ ListenResource::ListenResource(RTPSParticipantImpl* partimpl):
 ListenResource::~ListenResource() {
 	// TODO Auto-generated destructor stub
 
-	delete(mp_impl);
-	delete(mp_receiver);
+	if(mp_impl!=nullptr)
+		delete(mp_impl);
+	if(mp_receiver !=nullptr)
+		delete(mp_receiver);
 }
 
 
@@ -61,11 +64,11 @@ bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 	{
 		for(auto rit = m_assocReaders.begin();rit!=m_assocReaders.end();++rit)
 		{
-//			if((*rit)->getGuid().entityId == endp->getGuid().entityId)
-//			{
-//				m_assocReaders.erase(rit);
-//				return true;
-//			}
+			if((*rit)->getGuid().entityId == endp->getGuid().entityId)
+			{
+				m_assocReaders.erase(rit);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -90,7 +93,7 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 		if(!found)
 		{
 			m_assocWriters.push_back((RTPSWriter*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator());
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocators());
 			return true;
 		}
 	}
@@ -98,16 +101,17 @@ bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 	{
 		for(std::vector<RTPSReader*>::iterator rit = m_assocReaders.begin();rit!=m_assocReaders.end();++rit)
 		{
-//			if((*rit)->getGuid().entityId == endp->getGuid().entityId)
-//			{
-//				found = true;
-//				break;
-//			}
+			if((*rit)->getGuid().entityId == endp->getGuid().entityId)
+			{
+				found = true;
+				break;
+			}
 		}
 		if(!found)
 		{
 			m_assocReaders.push_back((RTPSReader*)endp);
-			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "<< mp_impl->getListenLocator());
+			logInfo(RTPS_MSG_IN,endp->getGuid().entityId << " added to: "
+					<< mp_impl->getListenLocators());
 			return true;
 		}
 	}
@@ -119,11 +123,16 @@ void ListenResource::setMsgRecMsgLength(uint32_t length)
 	mp_receiver->m_rec_msg.length = length;
 }
 
-Locator_t ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
-			uint32_t listenSockSize,bool isMulti,bool isFixed)
+bool ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
+		uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
-	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc);
+	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc,C_BLUE);
+	if(!IsAddressDefined(loc) && isMulti)
+	{
+		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address",C_BLUE);
+		return false;
+	}
 	mp_receiver = new MessageReceiver(listenSockSize);
 	mp_receiver->mp_threadListen = this;
 	return mp_impl->init_thread(pimpl,loc,listenSockSize,isMulti,isFixed);
@@ -134,9 +143,9 @@ bool ListenResource::isListeningTo(Locator_t&loc)
 	return mp_impl->isListeningTo(loc);
 }
 
-const Locator_t& ListenResource::getListenLocator()
+const LocatorList_t& ListenResource::getListenLocators()
 {
-	return mp_impl->getListenLocator();
+	return mp_impl->getListenLocators();
 }
 
 
