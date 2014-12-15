@@ -46,14 +46,14 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 	m_useIP4 = useIP4;
 	m_useIP6 = useIP6;
 
-	LocatorList_t list;
-	IPFinder::getAllIPAddress(&list);
+	std::vector<IPFinder::info_IP> locNames;
+	IPFinder::getIPs(&locNames);
 	boost::asio::socket_base::send_buffer_size option;
 	bool not_bind = true;
 	int bind_tries = 0;
-	for (auto lit = list.begin(); lit != list.end(); ++lit)
+	for (auto ipit = locNames.begin(); ipit != locNames.end(); ++ipit)
 	{
-		if (lit->kind == LOCATOR_KIND_UDPv4 && m_useIP4)
+		if (ipit->type == IPFinder::IP4 && m_useIP4)
 		{
 			mv_sendLocator_v4.push_back(loc);
 			auto sendLocv4 = mv_sendLocator_v4.back();
@@ -67,7 +67,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			udp::endpoint send_endpoint;
 			while (not_bind && bind_tries < MAX_BIND_TRIES)
 			{
-				send_endpoint = udp::endpoint(boost::asio::ip::address_v4(lit->to_IP4_long()), sendLocv4.port);
+				send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(ipit->name), sendLocv4.port);
 				try{
 					sendSocketv4->bind(send_endpoint);
 					not_bind = false;
@@ -96,7 +96,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			not_bind = true;
 
 		}
-		else if (lit->kind == LOCATOR_KIND_UDPv6 && m_useIP6)
+		else if (ipit->type == IPFinder::IP6 && m_useIP6)
 		{
 			mv_sendLocator_v6.push_back(loc);
 			auto sendLocv6 = mv_sendLocator_v6.back();
@@ -112,12 +112,11 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			{
 				boost::asio::ip::address_v6::bytes_type bt;
 				for (uint8_t i = 0; i < 16;++i)
-					bt[i] = lit->address[i];
-#if defined(_WIN32)
-				send_endpoint = udp::endpoint(boost::asio::ip::address_v6(bt), sendLocv6.port);
-#else
-				send_endpoint = udp::endpoint(boost::asio::ip::address_v6(bt), sendLocv6.port);
-#endif
+					bt[i] = ipit->locator.address[i];
+				boost::asio::ip::address_v6 addr = boost::asio::ip::address_v6(bt);
+				addr.scope_id(ipit->scope_id);
+				send_endpoint = udp::endpoint(addr, sendLocv6.port);
+				cout << "IP6 ADDRESS: "<< send_endpoint << endl;
 				try{
 					sendSocketv6->bind(send_endpoint);
 					not_bind = false;
@@ -218,7 +217,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		for(uint8_t i=0;i<16;i++)
 			addr[i] = loc.address[i];
 		m_send_endpoint_v6 = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
-		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
+		for (auto sockit = mv_send_socket_v6.begin(); sockit != mv_send_socket_v6.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT, "UDPv6: " << msg->length << " bytes TO endpoint: "
 					<< m_send_endpoint_v6 << " FROM " << (*sockit)->local_endpoint(), C_YELLOW);

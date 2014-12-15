@@ -32,10 +32,10 @@ typedef std::vector<RTPSWriter*>::iterator Wit;
 typedef std::vector<RTPSReader*>::iterator Rit;
 
 ListenResourceImpl::ListenResourceImpl(ListenResource* LR):
-		mp_RTPSParticipantImpl(nullptr),
-		mp_listenResource(LR),
-		mp_thread(nullptr),
-		m_listen_socket(m_io_service)
+				mp_RTPSParticipantImpl(nullptr),
+				mp_listenResource(LR),
+				mp_thread(nullptr),
+				m_listen_socket(m_io_service)
 
 {
 
@@ -44,13 +44,16 @@ ListenResourceImpl::ListenResourceImpl(ListenResource* LR):
 ListenResourceImpl::~ListenResourceImpl()
 {
 	const char* const METHOD_NAME = "~ListenResourceImpl";
-	logWarning(RTPS_MSG_IN,"Removing listening thread " << mp_thread->get_id() << " locator: " << m_listenLoc,C_BLUE);
-	m_listen_socket.close();
-	m_io_service.stop();
-	logInfo(RTPS_MSG_IN,"Joining with thread",C_BLUE);
-	mp_thread->join();
-	delete(mp_thread);
-	logInfo(RTPS_MSG_IN,"Listening thread closed succesfully",C_BLUE);
+	if(mp_thread !=nullptr)
+	{
+		logWarning(RTPS_MSG_IN,"Removing listening thread " << mp_thread->get_id() << " locator: " << m_listenLoc,C_BLUE);
+		m_listen_socket.close();
+		m_io_service.stop();
+		logInfo(RTPS_MSG_IN,"Joining with thread",C_BLUE);
+		mp_thread->join();
+		delete(mp_thread);
+		logInfo(RTPS_MSG_IN,"Listening thread closed succesfully",C_BLUE);
+	}
 }
 
 bool ListenResourceImpl::isListeningTo(const Locator_t& loc)
@@ -112,6 +115,12 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, uint32_t listenSocketSize, bool isMulti, bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
+	if(loc.kind == 2)
+	{
+		m_listenLoc.kind = -1;
+		logWarning(RTPS_MSG_IN,"IPv6 Listening locators not supported",C_BLUE);
+		return m_listenLoc;
+	}
 	this->mp_RTPSParticipantImpl = pimpl;
 	m_listenLoc = loc;
 	boost::asio::ip::address address = boost::asio::ip::address::from_string(m_listenLoc.to_IP4_string());
@@ -200,13 +209,13 @@ Locator_t ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& 
 void ListenResourceImpl::putToListen()
 {
 	CDRMessage::initCDRMsg(&mp_listenResource->mp_receiver->m_rec_msg);
-		m_listen_socket.async_receive_from(
-				boost::asio::buffer((void*)mp_listenResource->mp_receiver->m_rec_msg.buffer,
-						mp_listenResource->mp_receiver->m_rec_msg.max_size),
-				m_sender_endpoint,
-				boost::bind(&ListenResourceImpl::newCDRMessage, this,
-						boost::asio::placeholders::error,
-						boost::asio::placeholders::bytes_transferred));
+	m_listen_socket.async_receive_from(
+			boost::asio::buffer((void*)mp_listenResource->mp_receiver->m_rec_msg.buffer,
+					mp_listenResource->mp_receiver->m_rec_msg.max_size),
+					m_sender_endpoint,
+					boost::bind(&ListenResourceImpl::newCDRMessage, this,
+							boost::asio::placeholders::error,
+							boost::asio::placeholders::bytes_transferred));
 }
 
 void ListenResourceImpl::run_io_service()

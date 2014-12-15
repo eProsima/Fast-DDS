@@ -35,9 +35,11 @@ class PublisherImpl;
  * @ingroup FASTRTPS_MODULE
  */
 class RTPS_DllAPI Publisher {
+	friend class PublisherImpl;
+	virtual ~Publisher();
 public:
 	Publisher(PublisherImpl* pimpl);
-	virtual ~Publisher();
+
 	/**
 	 * Write data to the topic.
 	 * @param Data Pointer to the data

@@ -371,7 +371,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 		logWarning(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
 		for(LocatorListIterator lit = m_att.defaultUnicastLocatorList.begin();lit!=m_att.defaultUnicastLocatorList.end();++lit)
 		{
-			assignEndpoint2Locator(endp,lit,false,false);
+			valid &= assignEndpoint2Locator(endp,lit,false,false);
 		}
 		endp->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
 	}

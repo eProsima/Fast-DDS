@@ -57,14 +57,17 @@ void Domain::stopAll()
 
 bool Domain::removeParticipant(Participant* part)
 {
-	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	if(part!=nullptr)
 	{
-		if(it->second->getGuid() == part->getGuid())
+		for(auto it = m_participants.begin();it!= m_participants.end();++it)
 		{
-			//FOUND
-			delete(it->second);
-			m_participants.erase(it);
-			return true;
+			if(it->second->getGuid() == part->getGuid())
+			{
+				//FOUND
+				delete(it->second);
+				m_participants.erase(it);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -72,12 +75,15 @@ bool Domain::removeParticipant(Participant* part)
 
 bool Domain::removePublisher(Publisher* pub)
 {
-	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	if(pub!=nullptr)
 	{
-		if(it->second->getGuid().guidPrefix == pub->getGuid().guidPrefix)
+		for(auto it = m_participants.begin();it!= m_participants.end();++it)
 		{
-			//FOUND
-			return it->second->removePublisher(pub);
+			if(it->second->getGuid().guidPrefix == pub->getGuid().guidPrefix)
+			{
+				//FOUND
+				return it->second->removePublisher(pub);
+			}
 		}
 	}
 	return false;
@@ -85,12 +91,15 @@ bool Domain::removePublisher(Publisher* pub)
 
 bool Domain::removeSubscriber(Subscriber* sub)
 {
-	for(auto it = m_participants.begin();it!= m_participants.end();++it)
+	if(sub!=nullptr)
 	{
-		if(it->second->getGuid().guidPrefix == sub->getGuid().guidPrefix)
+		for(auto it = m_participants.begin();it!= m_participants.end();++it)
 		{
-			//FOUND
-			return it->second->removeSubscriber(sub);
+			if(it->second->getGuid().guidPrefix == sub->getGuid().guidPrefix)
+			{
+				//FOUND
+				return it->second->removeSubscriber(sub);
+			}
 		}
 	}
 	return false;

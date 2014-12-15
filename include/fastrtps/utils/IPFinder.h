@@ -33,15 +33,23 @@ public:
 	enum IPTYPE
 	{
 		IP4,
-		IP6
+		IP6,
+		IP4_LOCAL,
+		IP6_LOCAL
 	};
-	typedef std::pair<IPTYPE, std::string> pair_IP;
+	typedef struct info_IP
+	{
+		IPTYPE type;
+		uint32_t scope_id;
+		std::string name;
+		Locator_t locator;
+	}info_IP;
 	IPFinder();
 	virtual ~IPFinder();
 #if defined(_WIN32)
-	RTPS_DllAPI static bool getIPs(std::vector<pair_IP>* vec_name);
+	RTPS_DllAPI static bool getIPs(std::vector<info_IP>* vec_name);
 #else
-	static bool getIPs(std::vector<pair_IP>* vec_name);
+	static bool getIPs(std::vector<info_IP>* vec_name);
 #endif
 	//!Get the IPAdresses in all interfaces.
 	RTPS_DllAPI static bool getIP4Address(LocatorList_t* locators);
