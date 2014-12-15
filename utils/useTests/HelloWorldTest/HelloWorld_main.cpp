@@ -47,8 +47,9 @@ int main(int argc, char** argv)
 	{
 	case 1:
 	{
-		RTPSParticipantAttributes patt;
-		patt.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
+		/*
+		//RTPSParticipantAttributes patt;
+		//patt.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 		patt.builtin.use_WriterLivelinessProtocol = false;
 		RTPSParticipant* part = RTPSDomain::createParticipant(patt);
 		WriterAttributes watt;
@@ -58,31 +59,31 @@ int main(int argc, char** argv)
 		RTPSWriter* writer=RTPSDomain::createRTPSWriter(part,watt,hist);
 		RemoteReaderAttributes ratt;
 		Locator_t loc;
-		loc.set_IP4_address(192,168,56,101);
+		loc.set_IP4_address(192,168,1,27);
 		loc.port = 27405;
+		//ratt.endpoint.unicastLocatorList.push_back(loc);
+		loc.set_IP4_address(169, 254, 229, 255);
 		ratt.endpoint.unicastLocatorList.push_back(loc);
 		writer->matched_reader_add(ratt);
 		CacheChange_t* change = writer->new_change(ALIVE);
 		change->serializedPayload.length = 2;
 		hist->add_change(change);
+		*/
 
-//
-//		HelloWorldPublisher mypub;
-//		for(int i = 0;i<10;++i)
-//		{
-//			if(mypub.publish())
-//			{
-////				int aux;
-////				std::cin>>aux;
-//				eClock::my_sleep(500);
-//			}
-//			else
-//			{
-//				//cout << "Sleeping till discovery"<<endl;
-//				eClock::my_sleep(200);
-//				--i;
-//			}
-	//}
+		HelloWorldPublisher mypub;
+		for(int i = 0;i<10;++i)
+		{
+			if(mypub.publish())
+			{
+				eClock::my_sleep(500);
+			}
+			else
+			{
+				//cout << "Sleeping till discovery"<<endl;
+				eClock::my_sleep(200);
+				--i;
+			}
+}
 		break;
 	}
 	case 2:
