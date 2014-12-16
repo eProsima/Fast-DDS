@@ -6,7 +6,7 @@ Name "Fast RTPS"
 ### Necesario para tener permisos de borrar ciertos ficheros al desinstalar
 RequestExecutionLevel admin
 
-#!define VERSION "1.0.0"
+!define VERSION "1.0.0"
 
 
 # General Symbol Definitions
@@ -34,22 +34,6 @@ RequestExecutionLevel admin
 
 # Installer sections Has to be defined at the beginning because they are used by EnvVarPage.nsh
 SectionGroup "Libraries" SECGRP0000
-     Section "x64 VS2010 libraries" SEC_LIB_x64VS2010
-         SetOutPath $INSTDIR\lib\x64Win64VS2010
-         SetOverwrite on
-         File /r "..\..\..\..\lib\x64Win64VS2010\*"
-		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_thread*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_system*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_regex*"
-		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2010 libraries" 1
-		 # Copy visual studio redistributable for x64
-         SetOutPath $TEMP
-         #File "redistributables\vcredist_x64_VS2010.exe"
-     SectionEnd
-	 
 	Section "x64 VS2013 libraries" SEC_LIB_x64VS2013
          SetOutPath $INSTDIR\lib\x64Win64VS2013
          SetOverwrite on
@@ -65,6 +49,38 @@ SectionGroup "Libraries" SECGRP0000
          SetOutPath $TEMP
         # File "redistributables\vcredist_x64_VS2013.exe"
      SectionEnd
+
+    Section "x64 VS2010 libraries" SEC_LIB_x64VS2010
+         SetOutPath $INSTDIR\lib\x64Win64VS2010
+         SetOverwrite on
+         File /r "..\..\..\..\lib\x64Win64VS2010\*"
+		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2010\*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2010\boost_regex*"
+		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2010 libraries" 1
+		 # Copy visual studio redistributable for x64
+         SetOutPath $TEMP
+         #File "redistributables\vcredist_x64_VS2010.exe"
+    SectionEnd
+	 
+	Section "i86 VS2013 libraries" SEC_LIB_i86VS2013
+        SetOutPath $INSTDIR\lib\i86Win32VS2013
+        SetOverwrite on
+        File /r "..\..\..\..\lib\i86Win32VS2013\*"
+		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2013\*"
+		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_regex*"
+        WriteRegStr HKLM "${REGKEY}\Components" "i86 VS0213 libraries" 1
+		# Copy visual studio redistributable for i86
+        SetOutPath $TEMP
+        #File "redistributables\vcredist_x86_VS2013.exe"
+    SectionEnd 
 	 
     Section "i86 VS2010 libraries" SEC_LIB_i86VS2010
         SetOutPath $INSTDIR\lib\i86Win32VS2010
@@ -80,22 +96,6 @@ SectionGroup "Libraries" SECGRP0000
 		# Copy visual studio redistributable for i86
         SetOutPath $TEMP
         #File "redistributables\vcredist_x86_VS2010.exe"
-    SectionEnd
-	
-    Section "i86 VS2013 libraries" SEC_LIB_i86VS2013
-        SetOutPath $INSTDIR\lib\i86Win32VS2013
-        SetOverwrite on
-        File /r "..\..\..\..\lib\i86Win32VS2013\*"
-		File /r "..\..\..\..\thirdparty\fastcdr\lib\i86Win32VS2013\*"
-		File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_thread*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_system*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH}\lib\i86Win32VS2013\boost_regex*"
-        WriteRegStr HKLM "${REGKEY}\Components" "i86 VS0213 libraries" 1
-		# Copy visual studio redistributable for i86
-        SetOutPath $TEMP
-        #File "redistributables\vcredist_x86_VS2013.exe"
     SectionEnd
 SectionGroupEnd
 
@@ -266,25 +266,25 @@ Section -post SEC0006
        WriteRegStr HKLM "${REGKEY}\Components" "Script location" 1
     ${EndIf}
     ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
-        ${If} $CheckboxX64_VS2010_State == ${BST_CHECKED}
+        ${If} $RadioButtonX64_VS2010_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
              WriteRegStr HKLM "${REGKEY}\Components" "x64 VS0210 libraries location" 1
         ${EndIf}
     ${EndIf}
     ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2010}
-        ${If} $CheckboxI86_VS2010_State == ${BST_CHECKED}
+        ${If} $RadioButtonI86_VS2010_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
              WriteRegStr HKLM "${REGKEY}\Components" "i86 VS2010 libraries location" 1
         ${EndIf}
     ${EndIf}
 	${If} ${SectionIsSelected} ${SEC_LIB_x64VS2013}
-        ${If} $CheckboxX64_VS2013_State == ${BST_CHECKED}
+        ${If} $RadioButtonX64_VS2013_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2013"
              WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2013 libraries location" 1
         ${EndIf}
     ${EndIf}
     ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2013}
-        ${If} $CheckboxI86_VS2013_State == ${BST_CHECKED}
+        ${If} $RadioButtonI86_VS2013_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2013"
              WriteRegStr HKLM "${REGKEY}\Components" "i86 VS2013 libraries location" 1
         ${EndIf}
