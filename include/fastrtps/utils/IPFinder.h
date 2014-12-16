@@ -14,21 +14,7 @@
 #ifndef IPFINDER_H_
 #define IPFINDER_H_
 
-#if defined(_WIN32)
-	#include <stdio.h>
-	#include <winsock2.h>
-	#include <iphlpapi.h>
-	#include <ws2tcpip.h>
-#else
-	#include <arpa/inet.h>
-	#include <sys/socket.h>
-	#include <netdb.h>
-	#include <ifaddrs.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <unistd.h>
-	#include <string.h>
-#endif
+
 
 #include <vector>
 #include <string>
@@ -44,15 +30,33 @@ using namespace rtps;
  */
 class IPFinder {
 public:
+	enum IPTYPE
+	{
+		IP4,
+		IP6,
+		IP4_LOCAL,
+		IP6_LOCAL
+	};
+	typedef struct info_IP
+	{
+		IPTYPE type;
+		uint32_t scope_id;
+		std::string name;
+		Locator_t locator;
+	}info_IP;
 	IPFinder();
 	virtual ~IPFinder();
 #if defined(_WIN32)
-	RTPS_DllAPI static bool getIP4s(std::vector<std::string>* vec_name);
+	RTPS_DllAPI static bool getIPs(std::vector<info_IP>* vec_name);
 #else
-	static bool getIP4s(std::vector<std::string>* vec_name);
+	static bool getIPs(std::vector<info_IP>* vec_name);
 #endif
 	//!Get the IPAdresses in all interfaces.
-	static bool getIPAddress(LocatorList_t* locators);
+	RTPS_DllAPI static bool getIP4Address(LocatorList_t* locators);
+	RTPS_DllAPI static bool getIP6Address(LocatorList_t* locators);
+	RTPS_DllAPI static bool getAllIPAddress(LocatorList_t* locators);
+	RTPS_DllAPI static bool parseIP4(std::string& str,Locator_t* loc);
+	RTPS_DllAPI static bool parseIP6(std::string& str,Locator_t* loc);
 };
 }
 } /* namespace eprosima */

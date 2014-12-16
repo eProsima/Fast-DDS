@@ -82,9 +82,9 @@ public:
 	* @param listenSockSize Maximum size of the socket
 	* @param isMulti Boolean for when is multicast.
 	* @param isFixed Boolean to indicate whether another locator can be use in case the default is already being used.
-	* @return The open locator
+	* @return True if the socket was openned.
 	*/
-	Locator_t init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
+	bool init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 			uint32_t listenSockSize,bool isMulti,bool isFixed);
 
 	/**
@@ -95,10 +95,10 @@ public:
 	bool isListeningTo(Locator_t&loc);
 
 	/**
-	* Get the listen locator
-	* @return Listen locator
+	* Get the listen locator list
+	* @return Listen locator list
 	*/
-	const Locator_t& getListenLocator();
+	const LocatorList_t& getListenLocators();
 
 	inline RTPSParticipantImpl* getRTPSParticipantImpl() {return mp_RTPSParticipantImpl;}
 
