@@ -49,7 +49,23 @@ SectionGroup "Libraries" SECGRP0000
          SetOutPath $TEMP
          #File "redistributables\vcredist_x64_VS2010.exe"
      SectionEnd
-
+	 
+	Section "x64 VS2013 libraries" SEC_LIB_x64VS2013
+         SetOutPath $INSTDIR\lib\x64Win64VS2013
+         SetOverwrite on
+		 File /r "..\..\..\..\lib\x64Win64VS2013\*"
+		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2013\*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_thread*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_system*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_date_time*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_chrono*"
+		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_regex*"
+		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2013 libraries" 1
+		 # Copy visual studio redistributable for x64
+         SetOutPath $TEMP
+        # File "redistributables\vcredist_x64_VS2013.exe"
+     SectionEnd
+	 
     Section "i86 VS2010 libraries" SEC_LIB_i86VS2010
         SetOutPath $INSTDIR\lib\i86Win32VS2010
         SetOverwrite on
@@ -66,22 +82,6 @@ SectionGroup "Libraries" SECGRP0000
         #File "redistributables\vcredist_x86_VS2010.exe"
     SectionEnd
 	
-	Section "x64 VS2013libraries" SEC_LIB_x64VS2013
-         SetOutPath $INSTDIR\lib\x64Win64VS2013
-         SetOverwrite on
-		 File /r "..\..\..\..\lib\x64Win64VS2013\*"
-		 File /r "..\..\..\..\thirdparty\fastcdr\lib\x64Win64VS2013\*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_thread*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_system*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_date_time*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_chrono*"
-		 File /r "${LIB_BOOST_PATH}\lib\x64Win64VS2013\boost_regex*"
-		 WriteRegStr HKLM "${REGKEY}\Components" "x64 VS2013 libraries" 1
-		 # Copy visual studio redistributable for x64
-         SetOutPath $TEMP
-        # File "redistributables\vcredist_x64_VS2013.exe"
-     SectionEnd
-
     Section "i86 VS2013 libraries" SEC_LIB_i86VS2013
         SetOutPath $INSTDIR\lib\i86Win32VS2013
         SetOverwrite on
@@ -407,7 +407,7 @@ FunctionEnd
 
 # Section Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-!insertmacro MUI_DESCRIPTION_TEXT ${SECGRP0000} "eProsima RTPS libraries."
+!insertmacro MUI_DESCRIPTION_TEXT ${SECGRP0000} "eProsima FastRTPS libraries."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64VS2010} "Libraries for x64 VS2010 platforms."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_i86VS2010} "Libraries for i86 VS2010 platforms."
 !insertmacro MUI_DESCRIPTION_TEXT ${SEC_LIB_x64VS2013} "Libraries for x64 VS2013 platforms."
