@@ -223,39 +223,41 @@ Function SelectDefaultBestConfiguration
 FunctionEnd
 
 Function EnableRadioX64
-${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
-	${If} $CheckboxRadioButtons_State == 1
- ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2013}
-		EnableWindow $RadioButtonX64_VS2013 1	
- ${Else}
-		EnableWindow $RadioButtonX64_VS2013 0
- ${EndIf}
- ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
-		EnableWindow $RadioButtonX64_VS2010 1	
- ${Else}
-		EnableWindow $RadioButtonX64_VS2010 0
- ${EndIf}
- ${Else}
- EnableWindow $RadioButtonX64_VS2013 0
- EnableWindow $RadioButtonX64_VS2010 0
- ${EndIf}
+	${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
+	${If} ${RunningX64}
+		${If} $CheckboxRadioButtons_State == 1
+			${If} ${SectionIsSelected} ${SEC_LIB_x64VS2013}
+				EnableWindow $RadioButtonX64_VS2013 1	
+			${Else}
+				EnableWindow $RadioButtonX64_VS2013 0
+			${EndIf}
+			${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
+				EnableWindow $RadioButtonX64_VS2010 1	
+			${Else}
+				EnableWindow $RadioButtonX64_VS2010 0
+			${EndIf}
+		${Else}
+			EnableWindow $RadioButtonX64_VS2013 0
+			EnableWindow $RadioButtonX64_VS2010 0
+		${EndIf}
+	${EndIf}
 FunctionEnd
 
 Function EnableRadioI86
-${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
+	${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
 	${If} $CheckboxRadioButtons_State == 1
- ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2013}
-		EnableWindow $RadioButtonI86_VS2013 1	
- ${Else}
+		${If} ${SectionIsSelected} ${SEC_LIB_i86VS2013}
+			EnableWindow $RadioButtonI86_VS2013 1	
+		${Else}
+			EnableWindow $RadioButtonI86_VS2013 0
+		${EndIf}
+		${If} ${SectionIsSelected} ${SEC_LIB_i86VS2010}
+			EnableWindow $RadioButtonI86_VS2010 1	
+		${Else}
+			EnableWindow $RadioButtonI86_VS2010 0
+		${EndIf}
+	${Else}
 		EnableWindow $RadioButtonI86_VS2013 0
- ${EndIf}
- ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2010}
-		EnableWindow $RadioButtonI86_VS2010 1	
- ${Else}
 		EnableWindow $RadioButtonI86_VS2010 0
- ${EndIf}
- ${Else}
- EnableWindow $RadioButtonI86_VS2013 0
- EnableWindow $RadioButtonI86_VS2010 0
-  ${EndIf}
+	${EndIf}
 FunctionEnd
