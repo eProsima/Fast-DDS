@@ -47,8 +47,8 @@ static const char* const CLASS_NAME = "MessageReceiver";
 
 
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
-						mp_change(nullptr),
-						m_rec_msg(rec_buffer_size)
+						m_rec_msg(rec_buffer_size),
+						mp_change(nullptr)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
 	destVersion = c_ProtocolVersion;
@@ -351,10 +351,9 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = nullptr;
-	bool firstReaderNeedsToRelease = true;
 	if(mp_threadListen->m_assocReaders.empty())
 	{
-		logWarning(RTPS_MSG_IN,"Data received in locator: "<<mp_threadListen->getListenLocator()<< ", when NO readers are listening",C_BLUE);
+		logWarning(RTPS_MSG_IN,"Data received in locator: "<<mp_threadListen->getListenLocators()<< ", when NO readers are listening",C_BLUE);
 		return false;
 	}
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
@@ -368,7 +367,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	if(firstReader == nullptr) //Reader not found
 	{
-		logWarning(RTPS_MSG_IN,"No Reader in this Locator ("<<mp_threadListen->getListenLocator()<< ")"
+		logWarning(RTPS_MSG_IN,"No Reader in this Locator ("<<mp_threadListen->getListenLocators()<< ")"
 				" accepts this message (directed to: " <<readerID << ")",C_BLUE);
 		return false;
 	}

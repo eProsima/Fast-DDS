@@ -65,14 +65,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):
-											m_guid(guidP,c_EntityId_RTPSParticipant),
-											mp_send_thr(nullptr),
-											mp_event_thr(nullptr),
-											mp_builtinProtocols(nullptr),
-											mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-											IdCounter(0),
-											mp_participantListener(plisten),
-											mp_userParticipant(par)
+																							m_guid(guidP,c_EntityId_RTPSParticipant),
+																							mp_send_thr(nullptr),
+																							mp_event_thr(nullptr),
+																							mp_builtinProtocols(nullptr),
+																							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+																							IdCounter(0),
+																							mp_participantListener(plisten),
+																							mp_userParticipant(par)
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
@@ -87,40 +87,44 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
-		LocatorList_t myIP;
-		IPFinder::getIPAddress(&myIP);
-		std::stringstream ss;
-
-		for(LocatorListIterator lit = myIP.begin();lit!=myIP.end();++lit)
-		{
-			lit->port=m_att.port.portBase+
-					m_att.port.domainIDGain*PParam.builtin.domainId+
-					m_att.port.offsetd3+
-					m_att.port.participantIDGain*m_att.participantID;
-			m_att.defaultUnicastLocatorList.push_back(*lit);
-			ss << *lit << ";";
-		}
-
-		std::string auxstr = ss.str();
-		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<auxstr);
+		Locator_t loc;
+		loc.port=m_att.port.portBase+
+				m_att.port.domainIDGain*PParam.builtin.domainId+
+				m_att.port.offsetd3+
+				m_att.port.participantIDGain*m_att.participantID;
+		loc.kind = LOCATOR_KIND_UDPv4;
+		m_att.defaultUnicastLocatorList.push_back(loc);
+		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
 		ListenResource* LR = new ListenResource(this);
-		Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false);
-		m_att.defaultUnicastLocatorList.push_back(loc);
-		this->m_listenResourceList.push_back(LR);
+		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false))
+		{
+			m_att.defaultUnicastLocatorList = LR->getListenLocators();
+			this->m_listenResourceList.push_back(LR);
+		}
+		else
+		{
+			delete(LR);
+		}
 	}
 	defcopy = m_att.defaultMulticastLocatorList;
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
 		ListenResource* LR = new ListenResource(this);
-		Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false);
-		m_att.defaultMulticastLocatorList.push_back(loc);
-		this->m_listenResourceList.push_back(LR);
+		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false))
+		{
+			m_att.defaultMulticastLocatorList = LR->getListenLocators();
+			this->m_listenResourceList.push_back(LR);
+		}
+		else
+		{
+			delete(LR);
+		}
 	}
 
 
@@ -145,7 +149,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 		RTPSDomain::removeRTPSReader(*m_userReaderList.begin());
 
 	while(m_userWriterList.size()>0)
-			RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
+		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
 	//Destruct threads:
 	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
@@ -340,12 +344,12 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
 	}
 	else
 	{
-		//		for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
-		//			it!=m_userReaderList.end();++it)
-		//		{
-		//			if(ent == (*it)->getGuid().entityId)
-		//				return true;
-		//		}
+		for(std::vector<RTPSReader*>::const_iterator it = m_userReaderList.begin();
+				it!=m_userReaderList.end();++it)
+		{
+			if(ent == (*it)->getGuid().entityId)
+				return true;
+		}
 	}
 	return false;
 }
@@ -369,66 +373,65 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
 		logWarning(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
-		for(LocatorListIterator lit = m_att.defaultUnicastLocatorList.begin();lit!=m_att.defaultUnicastLocatorList.end();++lit)
-		{
-			assignEndpoint2Locator(endp,lit,false,false);
-		}
+		valid &= assignEndpoint2LocatorList(endp,m_att.defaultUnicastLocatorList,false,false);
 		endp->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
 	}
 	else
 	{
-		for(LocatorListIterator lit = endp->getAttributes()->unicastLocatorList.begin();
-				lit!=endp->getAttributes()->unicastLocatorList.end();++lit)
-		{
-			valid &= assignEndpoint2Locator(endp,lit,false,!isBuiltin);
-		}
+		valid &= assignEndpoint2LocatorList(endp,endp->getAttributes()->unicastLocatorList,false,!isBuiltin);
 	}
 	//MULTICAST
 	if(multicastempty && !isBuiltin && unicastempty)
 	{
-		for(LocatorListIterator lit =m_att.defaultMulticastLocatorList.begin();
-				lit!=m_att.defaultMulticastLocatorList.end();++lit)
-		{
-			valid &= assignEndpoint2Locator(endp,lit,true,false);
-		}
+		valid &= assignEndpoint2LocatorList(endp,m_att.defaultMulticastLocatorList,true,false);
 		endp->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
 	}
 	else
 	{
-		for(LocatorListIterator lit = endp->getAttributes()->multicastLocatorList.begin();
-				lit!=endp->getAttributes()->multicastLocatorList.end();++lit)
-		{
-			valid &= assignEndpoint2Locator(endp,lit,true,!isBuiltin);
-		}
+		valid &= assignEndpoint2LocatorList(endp,endp->getAttributes()->multicastLocatorList,true,!isBuiltin);
 	}
 	return valid;
 }
 
 
-bool RTPSParticipantImpl::assignEndpoint2Locator(Endpoint* endp,LocatorListIterator lit,bool isMulti,bool isFixed)
+bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list,bool isMulti,bool isFixed)
 {
-	for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
+	bool valid = true;
+	LocatorList_t finalList;
+	bool added = false;
+	for(auto lit = list.begin();lit != list.end();++lit)
 	{
-		if((*it)->isListeningTo(*lit))
+		added = false;
+		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
 		{
-			(*it)->addAssociatedEndpoint(endp);
-			return true;
+			if((*it)->isListeningTo(*lit))
+			{
+				(*it)->addAssociatedEndpoint(endp);
+				LocatorList_t locList = (*it)->getListenLocators();
+				finalList.push_back(locList);
+				added = true;
+			}
+		}
+		if(added)
+			break;
+		ListenResource* LR = new ListenResource(this);
+		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
+		{
+			LR->addAssociatedEndpoint(endp);
+			LocatorList_t locList = LR->getListenLocators();
+			finalList.push_back(locList);
+			m_listenResourceList.push_back(LR);
+			added = true;
+		}
+		else
+		{
+			delete(LR);
+			valid &= false;
 		}
 	}
-	ListenResource* LR = new ListenResource(this);
-	Locator_t loc = LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed);
-	if(loc.kind>0)
-	{
-		LR->addAssociatedEndpoint(endp);
-		*lit = loc;
-		m_listenResourceList.push_back(LR);
-		return true;
-	}
-	else
-	{
-		delete(LR);
-		return false;
-	}
+	if(valid && added)
+		list = finalList;
+	return valid;
 }
 
 
@@ -451,26 +454,26 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			}
 		}
 		else
-			{
-				for(auto rit=m_userReaderList.begin()
-						;rit!=m_userReaderList.end();++rit)
+		{
+			for(auto rit=m_userReaderList.begin()
+					;rit!=m_userReaderList.end();++rit)
 			{
 				if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
-					{
+				{
 					m_userReaderList.erase(rit);
 					found = true;
-						break;
-					}
+					break;
+				}
 			}
-			}
+		}
 		if(!found)
 			return false;
 		//REMOVE FOR BUILTINPROTOCOLS
-			if(p_endpoint->getAttributes()->endpointKind == WRITER)
-				mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
-			else
-				mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
-			//BUILTINPROTOCOLS
+		if(p_endpoint->getAttributes()->endpointKind == WRITER)
+			mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
+		else
+			mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
+		//BUILTINPROTOCOLS
 		//Remove it from threadListenList
 		std::vector<ListenResource*>::iterator thit;
 		for(thit=m_listenResourceList.begin();

@@ -51,9 +51,9 @@ public:
 	 * @param listenSockSize Maximum size of the socket
 	 * @param isMulti Boolean for when is multicast.
 	 * @param isFixed Boolean to indicate whether another locator can be use in case the default is already being used.
-	 * @return The locator that has been opennend.
+	 * @return If the openning was succesful
 	 */
-	Locator_t init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,uint32_t listenSocketSize,bool isMulti,bool isFixed);
+	bool init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,uint32_t listenSocketSize,bool isMulti,bool isFixed);
 
 	/**
 	* Check if the instance is listening to a locator
@@ -76,12 +76,12 @@ public:
 	inline boost::recursive_mutex* getMutex() {return &m_mutex;};
 
 	/**
-	* Get the listen locator
-	* @return Listen locator
+	* Get the listen locators
+	* @return Listen locators
 	*/
-	inline const Locator_t& getListenLocator() const {return m_listenLoc;}
+	inline const LocatorList_t& getListenLocators() const {return mv_listenLoc;}
 
-private:
+	private:
 	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 	ListenResource* mp_listenResource;
 	boost::thread* mp_thread;
@@ -90,7 +90,9 @@ private:
 	boost::asio::ip::udp::endpoint m_sender_endpoint;
 	boost::asio::ip::udp::endpoint m_listen_endpoint;
 
-	Locator_t m_listenLoc;
+	void getLocatorAddresses( Locator_t& loc);
+	void joinMulticastGroup(boost::asio::ip::address& addr);
+	LocatorList_t mv_listenLoc;
 	Locator_t m_senderLocator;
 
 

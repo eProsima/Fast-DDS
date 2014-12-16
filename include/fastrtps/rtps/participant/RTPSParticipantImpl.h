@@ -192,7 +192,7 @@ private:
 	 * @param isFixed Boolean indicating that is a fixed listenresource.
 	 * @return True if assigned.
 	 */
-	bool assignEndpoint2Locator(Endpoint* pend,LocatorListIterator lit,bool isMulticast,bool isFixed);
+	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
 
 
 public:
