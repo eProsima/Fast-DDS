@@ -6,7 +6,7 @@ Name "Fast RTPS"
 ### Necesario para tener permisos de borrar ciertos ficheros al desinstalar
 RequestExecutionLevel admin
 
-!define VERSION "1.0.0"
+#!define VERSION "1.0.0"
 
 
 # General Symbol Definitions
