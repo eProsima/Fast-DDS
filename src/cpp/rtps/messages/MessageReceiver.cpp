@@ -511,7 +511,6 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					(*it)->releaseCache(change_to_add);
 					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
 					{
-						//TODOG BUILTIN
 						this->mp_threadListen->getRTPSParticipantImpl()->assertRemoteRTPSParticipantLiveliness(this->sourceGuidPrefix);
 					}
 				}

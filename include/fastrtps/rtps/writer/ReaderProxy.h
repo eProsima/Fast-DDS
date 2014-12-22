@@ -162,7 +162,6 @@ public:
 	uint32_t m_lastAcknackCount;
 
 
-	//TODOG FILTER
 	/**
 	 * Filter a CacheChange_t, in this version always returns true.
 	 * @param change
