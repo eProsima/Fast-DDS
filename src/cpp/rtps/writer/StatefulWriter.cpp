@@ -78,6 +78,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "unsent_change_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	LocatorList_t unilocList;
+	LocatorList_t multilocList;
+	std::vector<CacheChange_t*> changeV;
+	changeV.push_back(change);
+	bool expectsInlineQos = false;
 	if(!matched_readers.empty())
 	{
 		for(auto it=matched_readers.begin();it!=matched_readers.end();++it)
@@ -85,13 +90,21 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 			ChangeForReader_t changeForReader;
 			changeForReader.setChange(change);
 			if(m_pushMode)
-				changeForReader.status = UNSENT;
+				changeForReader.status = UNDERWAY;
 			else
 				changeForReader.status = UNACKNOWLEDGED;
 			changeForReader.is_relevant = (*it)->rtps_is_relevant(change);
 			(*it)->m_changesForReader.push_back(changeForReader);
+			unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
+			multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
+			expectsInlineQos |= (*it)->m_att.expectsInlineQos;
 		}
-		unsent_changes_not_empty();
+		RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+			&changeV,
+			unilocList,
+			multilocList,
+			expectsInlineQos,
+			c_EntityId_Unknown);
 	}
 	else
 	{
