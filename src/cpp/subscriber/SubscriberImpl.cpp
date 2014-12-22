@@ -166,7 +166,6 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 		}
 		this->m_att.qos.setQos(att.qos,false);
 		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-		//TODOG
 		mp_rtpsParticipant->updateReader(this->mp_reader,m_att.qos);
 	}
 	return updated;
