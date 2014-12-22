@@ -210,8 +210,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 		}
 		this->m_att.qos.setQos(att.qos,false);
 		this->m_att = att;
-		//NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-		//TODOG
+		//Notify the participant that a Writer has changed its QOS
 		mp_rtpsParticipant->updateWriter(this->mp_writer,m_att.qos);
 	}
 
