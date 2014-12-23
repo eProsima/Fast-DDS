@@ -67,18 +67,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LatencyTestPublisher.cpp" />
-    <ClCompile Include="LatencyTestSubscriber.cpp" />
-    <ClCompile Include="LatencyTestTypes.cpp" />
-    <ClCompile Include="main_LatencyTest.cpp" />
+    <ClCompile Include="main_RTPSTest.cpp" />
+    <ClCompile Include="TestReader.cpp" />
+    <ClCompile Include="TestWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LatencyTestPublisher.h" />
-    <ClInclude Include="LatencyTestSubscriber.h" />
-    <ClInclude Include="LatencyTestTypes.h" />
+    <ClInclude Include="TestReader.h" />
+    <ClInclude Include="TestWriter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>LatencyTest</ProjectName>
+    <ProjectName>RTPSTest</ProjectName>
     <ProjectGuid>{3CF60608-D8BB-CDD4-2972-346628289C34}</ProjectGuid>
     <RootNamespace>gonzaPublisherSubscriber</RootNamespace>
   </PropertyGroup>

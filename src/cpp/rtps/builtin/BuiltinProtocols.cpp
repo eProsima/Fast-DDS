@@ -126,24 +126,38 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
 
 bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& topicAtt,fastrtps::WriterQos& wqos)
 {
+	const char* const METHOD_NAME = "addLocalWriter";
 	bool ok = false;
 	if(mp_PDP!=nullptr)
 	{
 		ok |= mp_PDP->getEDP()->newLocalWriterProxyData(w,topicAtt,wqos);
 	}
+	else
+	{
+		logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Writer is impossible");
+	}
 	if(mp_WLP !=nullptr)
 	{
 		ok|= mp_WLP->addLocalWriter(w,wqos);
+	}
+	else
+	{
+		logWarning(RTPS_LIVELINESS, "LIVELINESS is not used in this Participant, register a Writer is impossible");
 	}
 	return ok;
 }
 
 bool BuiltinProtocols::addLocalReader(RTPSReader* R,fastrtps::TopicAttributes& topicAtt, fastrtps::ReaderQos& rqos)
 {
+	const char* const METHOD_NAME = "addLocalReader";
 	bool ok = false;
 	if(mp_PDP!=nullptr)
 	{
 		ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R,topicAtt, rqos);
+	}
+	else
+	{
+		logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
 	}
 	return ok;
 }
