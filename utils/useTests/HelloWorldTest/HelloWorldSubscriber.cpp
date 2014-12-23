@@ -46,14 +46,9 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	Rparam.topic.resourceLimitsQos.max_samples = 50;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	Locator_t loc;
-	loc.kind = 1;
-	loc.port = 27405;
-	//loc.address[0] = 0xff;
-	//loc.address[1] = 0x02;
-	//loc.address[15] = 0x02;
-	Rparam.unicastLocatorList.push_back(loc);
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+
+	
 
 }
 
