@@ -75,16 +75,18 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 						mp_SFW->getHBReaderEntityId(),mp_SFW->getGuid().entityId,
 						first,last,mp_SFW->getHeartbeatCount(),false,false);
 				std::vector<Locator_t>::iterator lit;
+				LocatorList_t locList;
 				for(std::vector<ReaderProxy*>::iterator rit = mp_SFW->matchedReadersBegin();
 						rit!=mp_SFW->matchedReadersEnd();++rit)
 				{
-					for(lit = (*rit)->m_att.endpoint.unicastLocatorList.begin();
-							lit!=(*rit)->m_att.endpoint.unicastLocatorList.end();++lit)
-						mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(*lit));
-					for(lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();
-							lit!=(*rit)->m_att.endpoint.multicastLocatorList.end();++lit)
-						mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg,(*lit));
+					locList.push_back((*rit)->m_att.endpoint.unicastLocatorList);
+					locList.push_back((*rit)->m_att.endpoint.multicastLocatorList);
 				}
+				for (lit = locList.begin(); lit != locList.end(); ++lit)
+					mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg, (*lit));
+			//	for (lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();
+				//	lit != (*rit)->m_att.endpoint.multicastLocatorList.end(); ++lit)
+					//mp_SFW->getRTPSParticipant()->sendSync(&m_periodic_hb_msg, (*lit));
 			}
 			//Reset TIMER
 			this->restart_timer();

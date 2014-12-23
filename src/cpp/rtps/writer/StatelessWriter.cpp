@@ -50,23 +50,26 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
 	const char* const METHOD_NAME = "unsent_change_add";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	std::vector<CacheChange_t*> change;
+	change.push_back(cptr);
+	LocatorList_t locList;
+	LocatorList_t locList2;
 	if(!reader_locator.empty())
 	{
 		for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 		{
-			rit->unsent_changes.push_back(cptr);
+			locList.push_back(rit->locator);
+		}
 
-			if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
-			{
-				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-						&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
-			}
-			else
-			{
-				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-						&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
-			}
-			rit->unsent_changes.clear();
+		if (this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+		{
+			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+				&change,locList,locList2, false, c_EntityId_SPDPReader);
+		}
+		else
+		{
+			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+				&change, locList, locList2, false, c_EntityId_Unknown);
 		}
 	}
 	else
