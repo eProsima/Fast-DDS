@@ -76,7 +76,7 @@
     <ClInclude Include="TestWriter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>RTPSTest</ProjectName>
+    <ProjectName>RTPSReliable</ProjectName>
     <ProjectGuid>{3CF60608-D8BB-CDD4-2972-346628289C34}</ProjectGuid>
     <RootNamespace>gonzaPublisherSubscriber</RootNamespace>
   </PropertyGroup>
@@ -288,40 +288,40 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\x64Win64VS2013\</OutDir>
-    <TargetName>lib$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug2010|x64'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\x64Win64VS2010\</OutDir>
-    <TargetName>lib$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>lib$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)d</TargetName>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\i86Win32VS2013\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug2010|Win32'">
-    <TargetName>lib$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)d</TargetName>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\i86Win32VS2013\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\x64Win64VS2013\</OutDir>
-    <TargetName>lib$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release2010|x64'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\x64Win64VS2010\</OutDir>
-    <TargetName>lib$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>lib$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\i86Win32VS2013\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release2010|Win32'">
-    <TargetName>lib$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>.\bin\i86Win32VS2010\</OutDir>
   </PropertyGroup>
