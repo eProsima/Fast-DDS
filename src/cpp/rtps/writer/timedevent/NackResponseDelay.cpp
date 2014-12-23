@@ -104,9 +104,10 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 					std::vector<Locator_t>::iterator lit;
 					for(lit = mp_RP->m_att.endpoint.unicastLocatorList.begin();lit!=mp_RP->m_att.endpoint.unicastLocatorList.end();++lit)
 						mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+					for (lit = mp_RP->m_att.endpoint.multicastLocatorList.begin(); lit != mp_RP->m_att.endpoint.multicastLocatorList.end(); ++lit)
+						mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (*lit));
 				}
-				//					for(lit = (*rit)->m_param.multicastLocatorList.begin();lit!=mp_RP->m_param.multicastLocatorList.end();++lit)
-				//						mp_RP->mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+				
 			}
 		}
 
