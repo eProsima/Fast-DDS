@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.ParseException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -23,6 +24,8 @@ import org.antlr.stringtemplate.StringTemplateErrorListener;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.antlr.stringtemplate.StringTemplateGroupLoader;
 import org.antlr.stringtemplate.language.DefaultTemplateLexer;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 
 import com.eprosima.fastrtps.exceptions.BadArgumentException;
 import com.eprosima.fastrtps.idl.grammar.Context;
@@ -32,9 +35,14 @@ import com.eprosima.fastrtps.util.Utils;
 import com.eprosima.fastrtps.util.VSConfiguration;
 import com.eprosima.idl.generator.manager.TemplateGroup;
 import com.eprosima.idl.generator.manager.TemplateManager;
+import com.eprosima.idl.generator.manager.TemplateExtension;
 import com.eprosima.idl.parser.grammar.IDLLexer;
 import com.eprosima.idl.parser.grammar.IDLParser;
 import com.eprosima.idl.parser.tree.Interface;
+import com.eprosima.idl.parser.tree.Specification;
+import com.eprosima.idl.parser.tree.AnnotationDeclaration;
+import com.eprosima.idl.parser.tree.AnnotationMember;
+import com.eprosima.idl.parser.typecode.PrimitiveTypeCode;
 import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.idl.util.Util;
 import com.eprosima.log.ColorMessage;
@@ -196,17 +204,13 @@ public class fastrtpsgen {
 		
 		boolean returnedValue = globalInit();
 		
-		if (returnedValue) {
-			
-			Solution solution = new Solution(m_exampleOption, getVersion(), m_publishercode, m_subscribercode);
+		if (returnedValue)
+        {
+            Solution solution = new Solution(m_exampleOption, getVersion(), m_publishercode, m_subscribercode);
 			
 			// Load string templates
 			System.out.println("Loading templates...");
-			StringTemplateGroupLoader loader = new CommonGroupLoader("com/eprosima/fastrtps/idl/templates", new TemplateErrorListener());
-			StringTemplateGroup.registerGroupLoader(loader);
-			
-			// Load IDL types for stringtemplates
-			TypeCode.idltypesgr = StringTemplateGroup.loadGroup("idlTypes", DefaultTemplateLexer.class, null);
+            TemplateManager.setGroupLoaderDirectories("com/eprosima/fastrtps/idl/templates:com/eprosima/fastcdr/idl/templates");
 			
 			// In local for all products
 			//solution.addInclude("$(EPROSIMADIR)/code");
@@ -214,10 +218,6 @@ public class fastrtpsgen {
 			if(m_exampleOption != null) {
 				solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
 			}
-			
-			// Protocol FASTCDR
-			TypeCode.cpptypesgr = StringTemplateGroup.loadGroup("Types", DefaultTemplateLexer.class, null); //TODOQuitar Types.stg de com.eprosima.fastrtps.idl.templates y copiarlo con el build
-			TemplateManager.middlgr = StringTemplateGroup.loadGroup("eprosima", DefaultTemplateLexer.class, null);
 			
 			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
 				solution.addLibrary("boost_system");
@@ -384,7 +384,7 @@ public class fastrtpsgen {
 		
 		try {
 			// Protocol CDR
-			project = parseIDLtoCDR(idlFilename); // TODO: Quitar archivos copiados TypesHeader.stg, TypesSource.stg, PubSubTypeHeader.stg de la carpeta com.eprosima.fastrtps.idl.templates
+			project = parseIDL(idlFilename); // TODO: Quitar archivos copiados TypesHeader.stg, TypesSource.stg, PubSubTypeHeader.stg de la carpeta com.eprosima.fastrtps.idl.templates
 		} catch (Exception ioe) {
 			System.out.println(ColorMessage.error() + "Cannot generate the files");
 			if (!ioe.getMessage().equals("")) {
@@ -396,7 +396,7 @@ public class fastrtpsgen {
 		
 	}
 	
-	private Project parseIDLtoCDR(String idlFilename) {
+	private Project parseIDL(String idlFilename) {
 		boolean returnedValue = false;
 		String idlParseFileName = idlFilename;
 		Project project = null;
@@ -409,15 +409,23 @@ public class fastrtpsgen {
 		
 		if (idlParseFileName != null) {
 			Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
+             
+            // Create default @Key annotations.
+            AnnotationDeclaration keyann = ctx.createAnnotationDeclaration("Key");
+            keyann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
 			
 			// Create template manager
-			TemplateManager tmanager = new TemplateManager();
-			
-			//tmanager.registerRenderer(String.class, new A());
+			TemplateManager tmanager = new TemplateManager("FastCdrCommon:eprosima:Common");
 
+            List<TemplateExtension> extensions = new ArrayList<TemplateExtension>();
+			
 			// Load common types template
-			tmanager.addGroup("TypesHeader");
-			tmanager.addGroup("TypesSource");
+            extensions.add(new TemplateExtension("struct_type", "keyFunctionHeadersStruct"));
+            extensions.add(new TemplateExtension("union_type", "keyFunctionHeadersUnion"));
+			tmanager.addGroup("TypesHeader", extensions);
+            extensions.clear();
+            extensions.add(new TemplateExtension("struct_type", "keyFunctionSourcesStruct"));
+			tmanager.addGroup("TypesSource", extensions);
 			
 			// TODO: Uncomment following lines and create templates
 			
@@ -441,12 +449,14 @@ public class fastrtpsgen {
 			maintemplates.setAttribute("ctx", ctx);
 			
 			try {
-				InputStream input = new FileInputStream(idlParseFileName);
+                ANTLRFileStream input = new ANTLRFileStream(idlParseFileName);
 				IDLLexer lexer = new IDLLexer(input);
 				lexer.setContext(ctx);
-				IDLParser parser = new IDLParser(lexer);
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+				IDLParser parser = new IDLParser(tokens);
 				// Pass the finelame without the extension
-				returnedValue = parser.specification(ctx, tmanager, maintemplates);
+                Specification specification = parser.specification(ctx, tmanager, maintemplates).spec;
+                returnedValue = specification != null;
 				
 			} catch (FileNotFoundException ex) {
 				System.out.println(ColorMessage.error("FileNotFounException") + "The File " + idlParseFileName + " was not found.");
