@@ -43,8 +43,9 @@ class RTPSParticipantImpl;
 class EDP {
 public:
 	/**
-	* @param p
-	* @param part
+	* Constructor.
+	* @param p Pointer to the PDPSimple
+	* @param part Pointer to the RTPSParticipantImpl
 	*/
 	EDP(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDP();
@@ -116,8 +117,6 @@ public:
 	 * @return True if correctly updated
 	 */
 	bool updatedLocalWriter(RTPSWriter* W,WriterQos& qos);
-
-
 	/**
 	 * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
 	 * @param W Pointer to the writer.

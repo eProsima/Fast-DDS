@@ -44,18 +44,19 @@ public:
 	//!Entity ID
 	EntityId_t m_entityId;
 	/**
-	* @param type
-	* @param status
-	* @param id
-	* @param end
-	* @return
+	* Convert information to a property
+	* @param type Type of endpoint
+	* @param status Status of the endpoint
+	* @param id User Id 
+	* @param end EntityId
+	* @return Pair of two strings.
 	*/
 	static std::pair<std::string,std::string> toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent);
 	/**
-	* @param property
-	* @return
+	* @param in_property Input property-
+	* @return True if correctly read
 	*/
-	bool fromProperty(std::pair<std::string,std::string> property);
+	bool fromProperty(std::pair<std::string,std::string> in_property);
 };
 
 /**
@@ -65,8 +66,9 @@ public:
 class EDPStatic : public EDP {
 public:
 	/**
-	* @param p
-	* @param part
+	* Constructor.
+	* @param p Pointer to the PDPSimple.
+	* @param part Pointer to the RTPSParticipantImpl.
 	*/
 	EDPStatic(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPStatic();
@@ -78,7 +80,7 @@ public:
 	bool initEDP(BuiltinAttributes& attributes);
 	/**
 	 * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
-	 * @param pdata
+	 * @param pdata Pointer to the ParticipantProxyData.
 	 */
 	void assignRemoteEndpoints(ParticipantProxyData* pdata);
 	/**

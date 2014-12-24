@@ -16,8 +16,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/common/Guid.h"
-//#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
-//#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleTopicDataType.h"
 #include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
 
 #include "fastrtps/qos/QosPolicies.h"
@@ -53,7 +51,8 @@ class PDPSimple {
 	friend class PDPSimpleListener;
 public:
 	/**
-	* @param builtin
+	* Constructor
+	* @param builtin Pointer to the BuiltinProcols object.
 	*/
 	PDPSimple(BuiltinProtocols* builtin);
 	virtual ~PDPSimple();
@@ -76,24 +75,24 @@ public:
 	void resetParticipantAnnouncement();
 
 	/**
-	 *
-	 * @param rdata
-	 * @param copydata
-	 * @param returnReaderProxyData
-	 * @param pdata
-	 * @return
+	 * Add a ReaderProxyData to the correct ParticipantProxyData.
+	 * @param rdata Pointer to the ReaderProxyData objectr to add.
+	 * @param copydata Boolean variable indicating the need to copy the passed object.
+	 * @param returnReaderProxyData Pointer to pointer in case you wanted the data copied.
+	 * @param pdata Pointer to the associated ParticipantProxyData.
+	 * @return True if correct.
 	 */
 	bool addReaderProxyData(ReaderProxyData* rdata,bool copydata=false,
 			ReaderProxyData** returnReaderProxyData=nullptr,
 			ParticipantProxyData** pdata = nullptr);
 
 	/**
-	 *
-	 * @param wdata
-	 * @param copydata
-	 * @param returnWriterProxyData
-	 * @param pdata
-	 * @return
+	 * Add a WriterProxyData to the correct ParticipantProxyData.
+	 * @param wdata Pointer to the WriterProxyData objectr to add.
+	 * @param copydata Boolean variable indicating the need to copy the passed object.
+	 * @param returnWriterProxyData Pointer to pointer in case you wanted the data copied.
+	 * @param pdata Pointer to the associated ParticipantProxyData.
+	 * @return True if correct.
 	 */
 	bool addWriterProxyData(WriterProxyData* wdata,bool copydata=false,
 			WriterProxyData** returnWriterProxyData=nullptr,
@@ -178,25 +177,29 @@ public:
 	std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
 
 	/**
-	* @param guidP
+	* Assert the liveliness of a Remote Participant.
+	* @param guidP GuidPrefix_t of the participant whose liveliness is being asserted.
 	*/
 	void assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP);
 
 	/**
-	* @param kind
+	* Assert the liveliness of a Local Writer.
+	* @param kind LivilinessQosPolicyKind to be asserted.
 	*/
 	void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
 
 	/**
-	* @param guidP
-	* @param kind
+	* Assert the liveliness of remote writers.
+	* @param guidP GuidPrefix_t of the participant whose writers liveliness is begin asserted.
+	* @param kind LivelinessQosPolicyKind of the writers.
 	*/
 	void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
 
 	/**
-	* @param pguid
-	* @param userDefinedId
-	* @param kind
+	* Activate a new Remote Endpoint that has been statically discovered.
+	* @param pguid GUID_t of the participant.
+	* @param userDefinedId User Defined ID.
+	* @param kind Kind of endpoint.
 	*/
 	bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
