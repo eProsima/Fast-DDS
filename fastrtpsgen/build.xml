@@ -18,30 +18,6 @@
 
 <project name="fastrtpsgen" default="jar" basedir=".">
 
-	<macrodef name="antlr">
-		<attribute name="base" />
-		<attribute name="grammar" />
-		<sequential>
-            <java classname="antlr.Tool" classpath="./lib/antlr-2.7.7.jar">
-				<arg value="-o" />
-				<arg value="@{base}" />
-				<arg value="@{grammar}" />
-			</java>
-		</sequential>
-	</macrodef>
-
-	<macrodef name="antxr">
-		<attribute name="base" />
-		<attribute name="grammar" />
-		<sequential>
-            <java classname="com.javadude.antxr.Tool" classpath="./lib/antxr.jar">
-				<arg value="-o" />
-				<arg value="@{base}" />
-				<arg value="@{grammar}" />
-			</java>
-		</sequential>
-	</macrodef>
-
 	<target name="init">
 		<tstamp>
 			<format property="src.timestamp" pattern="dd/MM/yyyy" />
@@ -66,9 +42,12 @@
 		<property name="fastrtps.src.dir" value="${fastrtps.dir}${file.separator}src" />
 		<property name="fastrtps.src.java" value="${fastrtps.src.dir}" />
 		<property name="idl.dir" value="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}idl" />
-        <property name="idl.src.dir" value="${idl.dir}${file.separator}src" />
+        <property name="idl.classes.dir" value="${idl.dir}${file.separator}build${file.separator}classes" />
+        <property name="idl.src.dir" value="${idl.dir}${file.separator}src/main/java" />
 		<property name="idl.src.java" value="${idl.src.dir}" />
-		<property name="idl.grammar.dir" value="${idl.dir}${file.separator}grammars" />
+        <property name="fastcdr.dir" value="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}fastcdr" />
+        <property name="fastcdr.src.dir" value="${fastcdr.dir}${file.separator}src${file.separator}java" />
+		<property name="fastcdr.src.java" value="${fastcdr.src.dir}" />
         <property name="lib.dir" value="${basedir}${file.separator}lib${file.separator}" />
 		<property name="output.dir" value="${basedir}${file.separator}..${file.separator}classes" />
 		<property name="tmp.dir" value="./tmp" />
@@ -83,7 +62,7 @@
 		
 		<path id="build.classpath">
 			<fileset dir="${lib.dir}">
-				<include name="antlr-2.7.7.jar" />
+				<include name="antlr-4.4.jar" />
 				<include name="stringtemplate-3.2.1.jar" />
 				<include name="antxr.jar" />
 			</fileset>
@@ -107,6 +86,38 @@
 		<property name="library.includes" value="${bundle.includes}" />
 
 	</target>
+	
+	<!-- =================================================================== -->
+	<!-- IDL build and clean targets                                         -->
+	<!-- =================================================================== -->
+	<target name="compile-idl">
+		<!-- Echo compilation properties -->
+		<echo>Building IDL ANTLR grammars... Some warnings are expected...</echo>
+		<exec executable="cmd" osfamily="windows">
+			<arg value="/c"/>
+			<arg value="gradle -b ./../thirdparty/idl/build.gradle build"/>
+		</exec>
+		<exec executable="gradle" osfamily="unix">
+			<arg value="-b"/>
+			<arg value="./../thirdparty/idl/build.gradle"/>
+            <arg value="build"/>
+		</exec>
+		<copy todir="${build.classes}${file.separator}com${file.separator}eprosima" >
+			<fileset dir="${idl.classes.dir}${file.separator}main${file.separator}com${file.separator}eprosima" />
+		</copy>
+	</target>
+	
+	<target name="clean-idl">
+		<exec executable="cmd" osfamily="windows">
+			<arg value="/c"/>
+			<arg value="gradle -b ./../thirdparty/idl/build.gradle clean"/>
+		</exec>
+		<exec executable="gradle" osfamily="unix">
+			<arg value="-b"/>
+			<arg value="./../thirdparty/idl/build.gradle"/>
+            <arg value="clean"/>
+		</exec>
+	</target>
 
 
 	<!-- =================================================================== -->
@@ -119,29 +130,25 @@
 	<!-- =================================================================== -->
 	<!-- Compiles the source code                                            -->
 	<!-- =================================================================== -->
-	<target name="compile" depends="init, prepare-sources" description="Compiles the sources. (Default)">
+	<target name="compile" depends="init, prepare-sources, compile-idl" description="Compiles the sources. (Default)">
 		<!-- Echo compilation properties -->
-		<echo>Building IDL ANTLR grammars... Some warnings are expected...</echo>
-        <antlr base="${idl.src.java}${file.separator}com/eprosima/idl/parser/grammar" grammar="${idl.grammar.dir}${file.separator}idl.g" />
 		<echo>Compiling java code...</echo>
 		<mkdir dir="${build.classes}" />
-        <javac source="1.6" target="1.6" srcdir="${idl.src.java}:${fastrtps.src.java}" destdir="${build.classes}">
+        <javac source="1.6" target="1.6" srcdir="${fastrtps.src.java}:${fastcdr.src.java}" destdir="${build.classes}">
 			<classpath refid="build.classpath"/>
 		</javac>
+        <!--> Copy stringtemplates of idl parser <-->
+        <copy todir="${build.classes}">
+            <fileset dir="${idl.src.java}" includes="**/*.stg"/>
+        </copy>
         <!--> Copy stringtemplates of rtps.<-->
 		<copy todir="${build.classes}">
 			<fileset dir="${fastrtps.src.dir}" includes="**/*.stg" />
 		</copy>
-        <!--> Copy common stringtemplates with Fast Buffers.<-->
-        <!--> TODO Quitar el overwrite<-->
-        <copy todir="${build.classes}${file.separator}com${file.separator}eprosima${file.separator}fastrtps${file.separator}idl${file.separator}templates"
-            overwrite="yes">
-            <fileset dir="${basedir}${file.separator}..${file.separator}thirdparty${file.separator}fastcdr${file.separator}src${file.separator}java${file.separator}com${file.separator}eprosima${file.separator}fastcdr${file.separator}templates">
-				<include name="Types.stg" />
-				<include name="TypesHeader.stg" />
-				<include name="TypesSource.stg" />
-			</fileset>
-		</copy>
+        <!--> Copy stringtemplates of fastcdr.<-->
+        <copy todir="${build.classes}">
+            <fileset dir="${fastcdr.src.java}" includes="**/*.stg"/>
+        </copy>
         <!--> Copy platform file.<-->
 		<copy todir="${build.classes}">
 			<fileset dir="${basedir}${file.separator}resources">
@@ -156,10 +163,23 @@
 		</copy>
 	</target>
 
+    <target name="includejars" depends="init,compile" description="Incluide dependent Jar files.">
+        <copy todir="${build.dir}">
+            <restrict>
+                <name name="*.class"/>
+                <archives>
+                    <zips>
+                        <fileset dir="${lib.dir}" includes="antlr-4.4.jar,antlr-2.7.7.jar,stringtemplate-3.2.1.jar,antxr.jar" />
+                    </zips>
+                </archives>
+            </restrict>
+        </copy>
+    </target>
+
 	<!-- =================================================================== -->
 	<!-- Creates the jar archive                                             -->
 	<!-- =================================================================== -->
-	<target name="fastrtpsgen_jar" depends="init,compile" description="Builds the fastrtpsgen library (.jar).">
+	<target name="fastrtpsgen_jar" depends="init,compile,includejars" description="Builds the fastrtpsgen library (.jar).">
 		<jar jarfile="${build.fastrtpsgen.jar}" basedir="${build.classes}" manifest="manifest">
 		</jar>
 	</target>
