@@ -32,9 +32,9 @@ class ResendParticipantProxyDataPeriod: public TimedEvent {
 public:
 
 	/**
-	 * 
-	 * @param p_SPDP
-	 * @param interval
+	 * Constructor.
+	 * @param p_SPDP Pointer to the PDPSimple.
+	 * @param interval Interval in ms.
 	 */
 	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 			double interval);
@@ -43,7 +43,6 @@ public:
 	/**
 	* Method invoked when the event occurs.
 	* This temporal event resends the RTPSParticipantProxyData to all remote RTPSParticipants.
-	*
 	* @param code Code representing the status of the event
 	* @param msg Message associated to the event
 	*/

@@ -54,7 +54,8 @@ class WLP
 	friend class WLivelinessPeriodicAssertion;
 public:
 	/**
-	* @param prot
+	* Constructor
+	* @param prot Pointer to the BuiltinProtocols object.
 	*/
 	WLP(BuiltinProtocols* prot);
 	virtual ~WLP();
@@ -93,9 +94,9 @@ public:
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 
-	//!
+	//!MInimum time of the automatic writers liveliness period.
 	double m_minAutomatic_MilliSec;
-	//!
+	//!Minimum time of the manual by participant writers liveliness period.
 	double m_minManRTPSParticipant_MilliSec;
 	
 	/**
@@ -146,7 +147,7 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by RTPSParticipant liveliness.
 	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
-
+	//!Mutex.
 	boost::recursive_mutex* mp_mutex;
 
 };

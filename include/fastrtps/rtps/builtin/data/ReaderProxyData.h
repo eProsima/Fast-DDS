@@ -58,9 +58,9 @@ public:
 	LocatorList_t m_unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t m_multicastLocatorList;
-	//!
+	//!GUID_t of the Reader converted to InstanceHandle_t
 	InstanceHandle_t m_key;
-	//!
+	//!GUID_t of the participant converted to InstanceHandle
 	InstanceHandle_t m_RTPSParticipantKey;
 	//!Type name
 	std::string m_typeName;
@@ -68,9 +68,9 @@ public:
 	std::string m_topicName;
 	//!User defined ID
 	uint16_t m_userDefinedId;
-	//!
+	//!Reader Qos	
 	ReaderQos m_qos;
-	//!
+	//!Field to indicate if the Reader is Alive.
 	bool m_isAlive;
 	//!Topic kind
 	TopicKind_t m_topicKind;
@@ -92,11 +92,12 @@ public:
 	void copy(ReaderProxyData* rdata);
 
 	/**
-	* @return 
+	* Convert the ProxyData information to RemoteReaderAttributes object. 
+	* @return Reference to the RemoteReaderAttributes object.
 	*/
 	RemoteReaderAttributes& toRemoteReaderAttributes();
 
-	//!
+	//!Remote Attributes associated with this proxy data.
 	RemoteReaderAttributes m_remoteAtt;
 };
 

@@ -36,26 +36,29 @@ struct CacheChange_t;
 class EDPSimplePUBListener:public ReaderListener{
 public:
 	/**
-	* @param p
+	Constructor
+	* @param p Pointer to the EDPSimple associated with this listener.
 	*/
 	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);aux_msg.buffer = nullptr;};
 	virtual ~EDPSimplePUBListener(){};
 	/**
+	* Virtual method, 
 	* @param reader
 	* @param change
 	*/
 	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
 	/**
-	* @param change
+	* Compute the Key from a CacheChange_t
+	* @param change Pointer to the change.
 	*/
 	bool computeKey(CacheChange_t* change);
-	//!
+	//!Pointer to the EDPSimple
 	EDPSimple* mp_SEDP;
-	//!
+	//!WriterProxyData where to store the information
 	WriterProxyData m_writerProxyData;
-	//!
+	//!Temporal message to deserialize the information.
 	CDRMessage_t m_tempMsg;
-	//!
+	//!Auxiliay message.
 	CDRMessage_t aux_msg;
 };
 /**
@@ -78,13 +81,13 @@ public:
 	* @param change
 	*/
 	bool computeKey(CacheChange_t* change);
-	//!
+	//!Pointer to the EDPSimple
 	EDPSimple* mp_SEDP;
-	//!
+	//!ReaderProxyData object to store the recevied information.
 	ReaderProxyData m_readerProxyData;
-	//!
+	//!Temporal message to deserialize the information.
 	CDRMessage_t m_tempMsg;
-	//!
+	//!Auxiliay message.
 	CDRMessage_t aux_msg;
 };
 

@@ -35,6 +35,9 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
+#include <limits>
+
+
 #include "fastrtps/utils/RTPSLog.h"
 
 using namespace eprosima::fastrtps;
@@ -64,9 +67,9 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	defUniLoc.port = LOCATOR_PORT_INVALID;
 	mp_threadListen = nullptr;
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
-
-	mp_change = new CacheChange_t(rec_buffer_size);
-
+	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
+	mp_change = new CacheChange_t(max_payload);
+	cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 
 MessageReceiver::~MessageReceiver()
@@ -106,6 +109,7 @@ void MessageReceiver::reset(){
 	mp_change->isRead = 0;
 	mp_change->sourceTimestamp.seconds = 0;
 	mp_change->sourceTimestamp.fraction = 0;
+	cout << "MESSAGE RECEIVER RESEST WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
@@ -476,13 +480,19 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 					<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId,C_BLUE);
 			CacheChange_t* change_to_add;
 			if((*it)->reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
-					change_to_add->copy(ch);
-				else
+			{ 
+				if (!change_to_add->copy(ch))
 				{
-					logError(RTPS_MSG_IN,"Problem reserving, error",C_BLUE);
+					logWarning(RTPS_MSG_IN, "Problem copying CacheChange, received data is: " << ch->serializedPayload.length
+						<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
 					return false;
 				}
-			
+			}
+			else
+			{
+				logError(RTPS_MSG_IN,"Problem reserving CacheChange",C_BLUE);
+				return false;
+			}
 			if(haveTimestamp)
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)

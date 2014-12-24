@@ -48,7 +48,7 @@ struct RTPS_DllAPI SerializedPayload_t{
 	//!Default constructor
 	SerializedPayload_t(){
 		length = 0;
-		data = NULL;
+		data = nullptr;
 		encapsulation = CDR_BE;
 		max_size = 0;
 		pos = 0;
@@ -57,7 +57,7 @@ struct RTPS_DllAPI SerializedPayload_t{
 	/**
 	* @param len Maximum size of the payload
 	*/
-	SerializedPayload_t(short len){
+	SerializedPayload_t(uint16_t len){
 		encapsulation = CDR_BE;
 		length = 0;
 		data = (octet*)malloc(len);
@@ -79,7 +79,7 @@ struct RTPS_DllAPI SerializedPayload_t{
 			return false;
 		length = serData->length;
 		encapsulation = serData->encapsulation;
-		if(data == NULL)
+		if(data == nullptr)
 			data = (octet*)malloc(length);
 		memcpy(data,serData->data,length);
 		return true;
@@ -91,9 +91,9 @@ struct RTPS_DllAPI SerializedPayload_t{
 		length= 0;
 		encapsulation = CDR_BE;
 		max_size = 0;
-		if(data!=NULL)
+		if(data!=nullptr)
 			free(data);
-		data = NULL;
+		data = nullptr;
 	}
 };
 }

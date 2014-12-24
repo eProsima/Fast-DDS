@@ -33,14 +33,14 @@ class WLP;
 class WLivelinessPeriodicAssertion: public TimedEvent {
 public:
 	/**
-	* @param pwlp
-	* @param kind
+	* Constructor
+	* @param pwlp Pointer to the WLP object.
+	* @param kind Kind of the periodic assertion timed event
 	*/
 	WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind);
 	virtual ~WLivelinessPeriodicAssertion();
 	/**
 	* Method invoked when the event occurs
-	*
 	* @param code Code representing the status of the event
 	* @param msg Message associated to the event
 	*/
@@ -49,16 +49,15 @@ public:
 	LivelinessQosPolicyKind m_livelinessKind;
 	//!Pointer to the WLP object.
 	WLP* mp_WLP;
-
-	//!
+	//!Assert the liveliness of AUTOMATIC kind Writers.
 	bool AutomaticLivelinessAssertion();
-	//!
+	//!Assert the liveliness of MANUAL_BY_PARTICIPANT kind writers.
 	bool ManualByRTPSParticipantLivelinessAssertion();
-	//!
+	//!Message to store the data.
 	CDRMessage_t m_msg;
-	//!
+	//!Instance Handle
 	InstanceHandle_t m_iHandle;
-	//!
+	//!GuidPrefix_t
 	GuidPrefix_t m_guidP;
 };
 
