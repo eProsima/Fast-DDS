@@ -45,28 +45,20 @@ namespace rtps {
 
 class RTPSParticipant;
 class RTPSParticipantListener;
-
-
 class ListenResource;
 class ResourceSend;
 class ResourceEvent;
-
 class BuiltinProtocols;
 struct CDRMessage_t;
-
 class Endpoint;
-
-
 class RTPSWriter;
 class WriterAttributes;
 class WriterHistory;
 class WriterListener;
-
 class RTPSReader;
 class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
-
 
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -219,20 +211,20 @@ public:
 				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
 
 	/**
-	* 
-	* @param Writer
-	* @param topicAtt
-	* @param wqos
-	* @return 
+	* Register a Writer in the BuiltinProtocols.
+	* @param Writer Pointer to the RTPSWriter.
+	* @param topicAtt TopicAttributes of the Writer.
+	* @param wqos WriterQos.
+	* @return True if correctly registered.
 	*/
 	bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
 
 	/**
-	* 
-	* @param Reader
-	* @param topicAtt
-	* @param rqos
-	* @return 
+	* Register a Reader in the BuiltinProtocols.
+	* @param Reader Pointer to the RTPSReader.
+	* @param topicAtt TopicAttributes of the Reader.
+	* @param rqos ReaderQos.
+	* @return  True if correctly registered.
 	*/
 	bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
 
