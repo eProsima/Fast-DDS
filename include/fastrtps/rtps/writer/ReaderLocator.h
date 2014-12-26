@@ -77,12 +77,6 @@ public:
 	 * @return True if correct.
 	 */
 	bool remove_unsent_change(CacheChange_t* cpoin);
-//	/**
-//	 * Change the requested changes to the provided set.
-//	 * @param seqs Vector of SequenceNumbers.
-//	 * @param readerGUI
-//	 * @param history
-//	 */
 
 };
 }

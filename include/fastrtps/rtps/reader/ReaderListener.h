@@ -44,7 +44,7 @@ public:
 	/**
 	* This method is called when a new CacheChange_t is added to the ReaderHistory.
 	* @param reader Pointer to the reader.
-	* @param change Pointer to the CacheChange_t. THis is a const pointer to const data
+	* @param change Pointer to the CacheChange_t. This is a const pointer to const data
 	* to indicate that the user should not dispose of this data himself.
 	* To remove the data call the remove_change method of the ReaderHistory.
 	* reader->getHistory()->remove_change((CacheChange_t*)change).
