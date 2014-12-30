@@ -75,7 +75,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	}
 	else
 	{
-		m_useMandatory = true;
+		m_useMandatory = false;
 		for(std::vector<Locator_t>::iterator it = m_att.metatrafficMulticastLocatorList.begin();
 				it!=m_att.metatrafficMulticastLocatorList.end();++it)
 		{
