@@ -68,7 +68,7 @@ public:
 	//!Method to run the tasks
 	void run_io_service();
 
-	//!
+	//!Pointer to the RTPSParticipantImpl.
 	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 };
 }

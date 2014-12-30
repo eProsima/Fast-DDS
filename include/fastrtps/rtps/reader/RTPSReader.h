@@ -148,9 +148,13 @@ protected:
 	ReaderHistory* mp_history;
 	//!Listener
 	ReaderListener* mp_listener;
+	//!Accept msg to unknwon readers (default=true)
 	bool m_acceptMessagesToUnknownReaders;
+	//!Accept msg from unknwon writers (BE-true,RE-false)
 	bool m_acceptMessagesFromUnkownWriters;
+	//!Trusted writer (for Builtin)
 	EntityId_t m_trustedWriterEntityId;
+	//!Expects Inline Qos.
 	bool m_expectsInlineQos;
 
 

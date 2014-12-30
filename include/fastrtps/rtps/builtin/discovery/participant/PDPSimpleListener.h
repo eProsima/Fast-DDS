@@ -59,14 +59,14 @@ public:
 	 */
 	bool newAddedCache();
 	/**
-	 * 
-	 * @param
+	 * Get the key of a CacheChange_t
+	 * @param change Pointer to the CacheChange_t
 	 * @return True on success
 	 */
 	bool getKey(CacheChange_t* change);
 	//!Temporal RTPSParticipantProxyData object used to read the messages.
 	ParticipantProxyData m_ParticipantProxyData;
-	//!
+	//!Auxiliary message.
 	CDRMessage_t aux_msg;
 };
 

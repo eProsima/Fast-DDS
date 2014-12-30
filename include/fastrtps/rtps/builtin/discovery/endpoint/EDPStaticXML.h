@@ -43,9 +43,9 @@ public:
 	virtual ~StaticRTPSParticipantInfo(){};
 	//!RTPS PArticipant name
 	std::string m_RTPSParticipantName;
-	//!
+	//!Vector of ReaderProxyData pointer
 	std::vector<ReaderProxyData*> m_readers;
-	//!
+	//!Vector of ReaderProxyData pointer
 	std::vector<WriterProxyData*> m_writers;
 };
 

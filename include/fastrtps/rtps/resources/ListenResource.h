@@ -99,9 +99,9 @@ public:
 	* @return Listen locator list
 	*/
 	const LocatorList_t& getListenLocators();
-
+	//!Get the pointer to the RTPSParticipantImpl object.
 	inline RTPSParticipantImpl* getRTPSParticipantImpl() {return mp_RTPSParticipantImpl;}
-
+	//!Pointer to the RTPSParticipantImpl.
 	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 
 };

@@ -92,10 +92,7 @@ struct RTPS_DllAPI CacheChange_t{
 		instanceHandle = ch_ptr->instanceHandle;
 		sequenceNumber = ch_ptr->sequenceNumber;
 		sourceTimestamp = ch_ptr->sourceTimestamp;
-		if(serializedPayload.copy(&ch_ptr->serializedPayload))
-			return true;
-		else
-			return false;
+		return serializedPayload.copy(&ch_ptr->serializedPayload);
 	}
 	~CacheChange_t(){
 
