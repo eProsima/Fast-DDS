@@ -117,7 +117,6 @@ public:
 	 * @return True if correctly updated.
 	 */
 	bool updateTimes(ReaderTimes& times);
-
 	/**
 	 *
 	 * @return Reference to the ReaderTimes.
