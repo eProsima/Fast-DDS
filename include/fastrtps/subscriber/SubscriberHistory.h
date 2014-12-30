@@ -115,7 +115,7 @@ private:
 	//!Publisher Pointer
 	SubscriberImpl* mp_subImpl;
 	//!Change to obtain key when it is not provided
-	CacheChange_t* mp_getKeyCache;
+	void* mp_getKeyBuffer;
 
 	bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
 

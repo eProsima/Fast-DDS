@@ -211,6 +211,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	ratt.endpoint.topicKind = att.topic.topicKind;
 	ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	ratt.expectsInlineQos = att.expectsInlineQos;
 	if(att.getEntityID()>0)
 		ratt.endpoint.setEntityID((uint8_t)att.getEntityID());
 	if(att.getUserDefinedID()>0)

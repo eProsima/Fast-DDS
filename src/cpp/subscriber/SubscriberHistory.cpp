@@ -41,15 +41,15 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
 				m_historyQos(history),
 				m_resourceLimitsQos(resource),
 				mp_subImpl(simpl),
-				mp_getKeyCache(nullptr)
+				mp_getKeyBuffer(nullptr)
 {
 	// TODO Auto-generated constructor stub
-	this->reserve_Cache(&mp_getKeyCache);
+	mp_getKeyBuffer = malloc(PAYLOAD_MAX_SIZE);
 }
 
 SubscriberHistory::~SubscriberHistory() {
 	// TODO Auto-generated destructor stub
-	this->release_Cache(mp_getKeyCache);
+	free(mp_getKeyBuffer);
 }
 
 bool SubscriberHistory::received_change(CacheChange_t* a_change)
@@ -139,8 +139,8 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 			//			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
 			//			{
 			logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
-								mp_subImpl->getType()->deserialize(&a_change->serializedPayload,(void*)mp_getKeyCache->serializedPayload.data);
-			if(!mp_subImpl->getType()->getKey((void*)mp_getKeyCache->serializedPayload.data,&a_change->instanceHandle))
+			mp_subImpl->getType()->deserialize(&a_change->serializedPayload,mp_getKeyBuffer);
+			if(!mp_subImpl->getType()->getKey(mp_getKeyBuffer,&a_change->instanceHandle))
 				return false;
 			//}
 			//			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
