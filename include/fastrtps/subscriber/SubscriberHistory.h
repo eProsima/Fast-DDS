@@ -114,8 +114,8 @@ private:
 	ResourceLimitsQosPolicy m_resourceLimitsQos;
 	//!Publisher Pointer
 	SubscriberImpl* mp_subImpl;
-	//!Change to obtain key when it is not provided
-	void* mp_getKeyBuffer;
+	//!Type object to deserialize Key
+	void * mp_getKeyObject;
 
 	bool find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
 

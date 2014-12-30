@@ -56,7 +56,17 @@ public:
 	 * @return True if correct.
 	 */
 	RTPS_DllAPI virtual bool deserialize(SerializedPayload_t* payload, void * data) = 0;
-	
+	/**
+	 * Create a Data Type.
+	 * @return Void pointer to the created object.
+	 */
+	RTPS_DllAPI virtual void * createData() = 0;
+	/**
+	 * Remove a previously created object.
+	 * @param data Pointer to the created Data.
+	 */
+	RTPS_DllAPI virtual void deleteData(void * data) = 0;
+
 	/**
 	 * Get the key associated with the data.
 	 * @param[in] data Pointer to the data.

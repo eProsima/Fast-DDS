@@ -41,15 +41,15 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
 				m_historyQos(history),
 				m_resourceLimitsQos(resource),
 				mp_subImpl(simpl),
-				mp_getKeyBuffer(nullptr)
+				mp_getKeyObject(nullptr)
 {
 	// TODO Auto-generated constructor stub
-	mp_getKeyBuffer = malloc(PAYLOAD_MAX_SIZE);
+	mp_getKeyObject = mp_subImpl->getType()->createData();
 }
 
 SubscriberHistory::~SubscriberHistory() {
 	// TODO Auto-generated destructor stub
-	free(mp_getKeyBuffer);
+	mp_subImpl->getType()->deleteData(mp_getKeyObject);
 }
 
 bool SubscriberHistory::received_change(CacheChange_t* a_change)
@@ -136,18 +136,11 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 	{
 		if(!a_change->instanceHandle.isDefined() && mp_subImpl->getType() !=nullptr)
 		{
-			//			if(mp_subImpl->getAttributes().getUserDefinedId() >= 0)
-			//			{
 			logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
-			mp_subImpl->getType()->deserialize(&a_change->serializedPayload,mp_getKeyBuffer);
-			if(!mp_subImpl->getType()->getKey(mp_getKeyBuffer,&a_change->instanceHandle))
+			mp_subImpl->getType()->deserialize(&a_change->serializedPayload,mp_getKeyObject);
+			if(!mp_subImpl->getType()->getKey(mp_getKeyObject,&a_change->instanceHandle))
 				return false;
-			//}
-			//			else //FOR BUILTIN ENDPOINTS WE DIRECTLY SUPPLY THE SERIALIZEDPAYLOAD
-			//			{
-			//				if(!mp_subImpl->getType()->getKey((void*)&a_change->serializedPayload,&a_change->instanceHandle))
-			//					return false;
-			//			}
+
 		}
 		else if(!a_change->instanceHandle.isDefined())
 		{
