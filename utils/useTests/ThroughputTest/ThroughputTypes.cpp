@@ -41,6 +41,16 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 	return true;
 }
 
+void* LatencyDataType::createData()
+{
+	return (void*)new LatencyType(this->m_typeSize);
+}
+void LatencyDataType::deleteData(void* data)
+{
+	delete((LatencyType*)data);
+}
+
+
 
 bool ThroughputCommandDataType::serialize(void*data,SerializedPayload_t* p)
 {
@@ -65,6 +75,15 @@ bool ThroughputCommandDataType::deserialize(SerializedPayload_t* p,void * data)
 	t->m_lastrecsample = *(uint64_t*)&p->data[p->pos];p->pos+=8;
 	t->m_totaltime = *(uint64_t*)&p->data[p->pos];p->pos+=8;
 	return true;
+}
+
+void* ThroughputCommandDataType::createData()
+{
+	return (void*)new ThroughputCommandType();
+}
+void ThroughputCommandDataType::deleteData(void* data)
+{
+	delete((ThroughputCommandType*)data);
 }
 
 

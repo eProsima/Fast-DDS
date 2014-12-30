@@ -52,6 +52,15 @@ bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
 	return true;
 }
 
+void* HelloWorldType::createData()
+{
+	return (void*)new HelloWorld();
+}
+void HelloWorldType::deleteData(void* data)
+{
+	delete((HelloWorld*)data);
+}
+
 bool HelloWorldType::getKey(void* data, InstanceHandle_t* ihandle)
 {
 	return false;
