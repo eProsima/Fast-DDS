@@ -45,11 +45,13 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
 {
 	// TODO Auto-generated constructor stub
 	mp_getKeyObject = mp_subImpl->getType()->createData();
+
 }
 
 SubscriberHistory::~SubscriberHistory() {
 	// TODO Auto-generated destructor stub
 	mp_subImpl->getType()->deleteData(mp_getKeyObject);
+
 }
 
 bool SubscriberHistory::received_change(CacheChange_t* a_change)
