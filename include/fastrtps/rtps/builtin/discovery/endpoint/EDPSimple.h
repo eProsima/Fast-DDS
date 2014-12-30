@@ -32,7 +32,8 @@ class WriterHistory;
 
 
 /**
- * Class EDPSimple, implements the SimpleEndpointDiscoveryProtocol defined in the RTPS specification. Inherits from EDP class.
+ * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.
+ * Inherits from EDP class.
  *@ingroup DISCOVERY_MODULE
  */
 class EDPSimple : public EDP {
