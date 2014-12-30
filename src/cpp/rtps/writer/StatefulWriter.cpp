@@ -76,7 +76,7 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
-	const char* const METHOD_NAME = "unsent_change_add";
+	const char* const METHOD_NAME = "unsent_change_added_to_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	LocatorList_t unilocList;
 	LocatorList_t multilocList;
@@ -165,12 +165,15 @@ void StatefulWriter::unsent_changes_not_empty()
 			if(m_pushMode)
 			{
 				if(!relevant_changes.empty())
+				{
+					//cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
 							&relevant_changes,
 							(*rit)->m_att.endpoint.unicastLocatorList,
 							(*rit)->m_att.endpoint.multicastLocatorList,
 							(*rit)->m_att.expectsInlineQos,
 							(*rit)->m_att.guid.entityId);
+				}
 				if(!not_relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,
 							&not_relevant_changes,

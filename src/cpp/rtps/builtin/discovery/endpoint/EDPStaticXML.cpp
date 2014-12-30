@@ -68,7 +68,7 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 	}
 	BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant ,pt.get_child("staticdiscovery"))
 	{
-		if(xml_RTPSParticipant.first == "RTPSParticipant")
+		if(xml_RTPSParticipant.first == "participant")
 		{
 			StaticRTPSParticipantInfo* pdata= new StaticRTPSParticipantInfo();
 			BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant_child,xml_RTPSParticipant.second)
@@ -101,6 +101,7 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 			m_RTPSParticipants.push_back(pdata);
 		}
 	}
+	logInfo(RTPS_EDP, "Finished parsing, "<< m_RTPSParticipants.size()<< " participants found.",C_CYAN);
 	return true;
 }
 
@@ -146,7 +147,10 @@ bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticR
 				//cout << "READER WITH EXPECTS INLINE QOS " << endl;
 			}
 			else if (auxString == "false")
+			{
 				rdata->m_expectsInlineQos = false;
+				//cout << "READER NOT NOT NOT EXPECTS INLINE QOS " << endl;
+			}
 			else
 			{
 				logError(RTPS_EDP,"Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
