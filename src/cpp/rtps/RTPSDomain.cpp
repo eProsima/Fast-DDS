@@ -90,7 +90,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 		if(m_RTPSParticipantIDs.insert(ID).second == false)
 		{
 			logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists" << endl;)
-							return nullptr;
+			return nullptr;
 		}
 	}
 	int pid;
@@ -127,7 +127,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 
 	RTPSParticipant* p = new RTPSParticipant(nullptr);
 	RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
-	m_maxRTPSParticipantID = pimpl->getParticipantID();
+	m_maxRTPSParticipantID = pimpl->getRTPSParticipantID();
 
 	m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
 	return p;
@@ -144,6 +144,7 @@ bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
 		{
 			if(it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
 			{
+				m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(it->second->getRTPSParticipantID()));
 				delete(it->second);
 				m_RTPSParticipants.erase(it);
 				return true;

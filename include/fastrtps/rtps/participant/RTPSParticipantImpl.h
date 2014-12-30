@@ -244,11 +244,7 @@ public:
 	*/
 	bool updateLocalReader(RTPSReader* Reader, ReaderQos& rqos);
 
-	/**
-	* Get the participant id
-	* @return Participant id
-	*/
-	inline uint32_t getParticipantID() {return (uint32_t)this->m_att.participantID;};
+
 
 	/**
 	* Get the participant attributes
