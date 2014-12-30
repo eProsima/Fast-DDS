@@ -168,12 +168,13 @@ private:
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
 	bool m_hasMinAvailableSeqNumChanged;
+	//!Is the writer alive
 	bool m_isAlive;
-
+	//Print Method for log purposes
 	void print_changes_fromWriter_test2();
-
+	//!First msg has been received
 	bool m_firstReceived;
-
+	//!Mutex Pointer
 	boost::recursive_mutex* mp_mutex;
 
 };

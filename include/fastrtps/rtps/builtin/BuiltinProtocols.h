@@ -58,25 +58,25 @@ public:
 	 */
 	bool updateMetatrafficLocators(LocatorList_t& loclist);
 
-	//!
+	//!BuiltinAttributes of the builtin protocols.
 	BuiltinAttributes m_att;
-	//!
+	//!Pointer to the RTPSParticipantImpl.
 	RTPSParticipantImpl* mp_participantImpl;
-	//!
+	//!Pointer to the PDPSimple.
 	PDPSimple* mp_PDP;
-	//!
+	//!Pointer to the WLP
 	WLP* mp_WLP;
-	//!
+	//!Port number for the multicast locators.
 	uint32_t m_SPDP_WELL_KNOWN_MULTICAST_PORT;
-	//!
+	//!Port number for the unicast locators.
 	uint32_t m_SPDP_WELL_KNOWN_UNICAST_PORT;
-	//!
+	//!Locator list for metatraffic
 	LocatorList_t m_metatrafficMulticastLocatorList;
-	//!
+	//!Locator List for metatraffic unicast
 	LocatorList_t m_metatrafficUnicastLocatorList;
-	//!
+	//!Mandatory Multicast Locator (239.255.0.1)
 	Locator_t m_mandatoryMulticastLocator;
-	//!
+	//!Use the mandatory locator.
 	bool m_useMandatory;
 
 	/**

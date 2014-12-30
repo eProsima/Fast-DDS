@@ -42,36 +42,36 @@ struct CacheChange_t;
 class WLPListener: public ReaderListener {
 public:
 	/**
-	 *
-	 * @param
+	 * Constructor
+	 * @param Pointer to the WLP object.
 	 */
 	WLPListener(WLP* pwlp);
 	virtual ~WLPListener();
 
 	/**
+	*
 	* @param reader
 	* @param change
 	*/
 	void onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change);
-//	bool processParameterList(ParameterList_t* param,
-//			GuidPrefix_t* guidP,
-//			LivelinessQosPolicyKind* liveliness);
-
 	/**
-	* @param key
-	* @param guidP
-	* @param liveliness
+	* Separate the Key between the GuidPrefix_t and the liveliness Kind
+	* @param key InstanceHandle_t to separate.
+	* @param guidP GuidPrefix_t pointer to store the info.
+	* @param liveliness Liveliness Kind Pointer.
+	* @return True if correctly separated.
 	*/
 	bool separateKey(InstanceHandle_t& key,
 			GuidPrefix_t* guidP,
 			LivelinessQosPolicyKind* liveliness);
 			
 	/**
+	* Compute the key from a CacheChange_t 
 	* @param change
 	*/
 	bool computeKey(CacheChange_t* change);
 	
-	//!
+	//!Auxiliary message.
 	CDRMessage_t aux_msg;
 
 private:

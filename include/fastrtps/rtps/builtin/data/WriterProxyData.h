@@ -43,9 +43,9 @@ public:
 	LocatorList_t m_unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t m_multicastLocatorList;
-	//!
+	//!GUID_t of the Writer converted to InstanceHandle_t
 	InstanceHandle_t m_key;
-	//!
+	//!GUID_t of the participant converted to InstanceHandle
 	InstanceHandle_t m_RTPSParticipantKey;
 	//!Type name
 	std::string m_typeName;
@@ -53,11 +53,11 @@ public:
 	std::string m_topicName;
 	//!User defined ID
 	uint16_t m_userDefinedId;
-	//!
+	//!WriterQOS
 	WriterQos m_qos;
-	//!
+	//!Maximum size of the type associated with this Wrtiter, serialized.
 	uint32_t m_typeMaxSerialized;
-	//!
+	//!Indicates if the Writer is Alive.
 	bool m_isAlive;
 	//!Topic kind
 	TopicKind_t m_topicKind;
@@ -74,10 +74,11 @@ public:
 	//!Read a parameter list from a CDRMessage_t.
 	bool readFromCDRMessage(CDRMessage_t* msg);
 	/**
-	 * @return
-	 */
+	* Convert the ProxyData information to RemoteWriterAttributes object.
+	* @return Reference to the RemoteWriterAttributes object.
+	*/
 	RemoteWriterAttributes& toRemoteWriterAttributes();
-	//!
+	//!Remote Attributes associated with this proxy data.
 	RemoteWriterAttributes m_remoteAtt;
 };
 

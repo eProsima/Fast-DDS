@@ -16,8 +16,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
-//#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
-//#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleTopicDataType.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -34,7 +32,8 @@ class WriterHistory;
 
 
 /**
- * Class EDPSimple, implements the SimpleEndpointDiscoveryProtocol defined in the RTPS specification. Inherits from EDP class.
+ * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.
+ * Inherits from EDP class.
  *@ingroup DISCOVERY_MODULE
  */
 class EDPSimple : public EDP {
@@ -42,8 +41,9 @@ class EDPSimple : public EDP {
 	typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
 public:
 	/**
-	* @param p
-	* @param part
+	* Constructor.
+	* @param p Pointer to the PDPSimple
+	* @param part Pointer to the RTPSParticipantImpl
 	*/
 	EDPSimple(PDPSimple* p,RTPSParticipantImpl* part);
 	virtual ~EDPSimple();
@@ -57,17 +57,10 @@ public:
 	t_p_StatefulReader mp_PubReader;
 	//!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
 	t_p_StatefulReader mp_SubReader;
-	//!
+	//!Pointer to the ReaderListener associated with PubReader
 	EDPSimplePUBListener* mp_pubListen;
-	//!
+	//!Pointer to the ReaderListener associated with SubReader
 	EDPSimpleSUBListener* mp_subListen;
-
-
-//	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
-//	EDPSimpleTopicDataType* m_pubReaderTopicDataType;
-//	//!EDPSimpleTopicDataType to extract the key from unregistering and disposing messages.
-//	EDPSimpleTopicDataType* m_subReaderTopicDataType;
-
 
 	/**
 	 * Initialization method.

@@ -61,10 +61,6 @@ public:
 	* @return true is the instance is listening to the given locator
 	*/
 	bool isListeningTo(const Locator_t& loc);
-//	//!Returns trus if the ListenResourceImpl has any associated endpoints.
-//	bool hasAssociatedEndpoints(){return !(m_assocWriters.empty() && m_assocReaders.empty());};
-//	//!Get the pointer to the RTPSParticipant
-//	RTPSParticipantImpl* getRTPSParticipantImpl(){return mp_RTPSParticipantImpl;};
 
 	//!
 	void putToListen();
