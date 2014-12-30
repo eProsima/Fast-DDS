@@ -27,6 +27,8 @@ public:
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 	bool getKey(void*data,InstanceHandle_t* ihandle);
+	void* createData();
+	void deleteData(void* data);
 };
 
 

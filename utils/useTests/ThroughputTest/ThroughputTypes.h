@@ -86,46 +86,10 @@ inline void printResults(TroughputResults& res)
 
 #endif
 
-//
-//inline std::ostream& operator<<(std::ostream& output,const TroughputTimeStats& ts)
-//{
-//	return output << ts.nsamples << "||"<<ts.totaltime_us<< "||"<<ts.Mbitsec;
-//}
-//
-//inline void printTimeStatsPublisher(const TroughputTimeStats& ts )
-//{
-//	//cout << "demand here; " << ts.demand << endl;
-//	//printf("%6u",ts.demand);
-//	printf("%6u,%12u, %7.2f,%6u,%12lu \n",ts.samplesize,ts.nsamples,ts.Mbitsec,ts.demand,ts.totaltime_us);
-//}
-//
-//inline void printTimeStatsSubscriber(const TroughputTimeStats& ts )
-//{
-//	printf("%6u,%6u,%12u,%6u,%6u,%6u, %7.2f,%12lu \n",ts.samplesize,ts.demand,ts.nsamples,ts.lostsamples,0,0,ts.Mbitsec,ts.totaltime_us);
-//}
-//
-//inline void printLabelsSubscriber()
-//{
-//	printf(" bytes,demand,     samples,  lost,   UNK,   UNK, Mbits/s,    time(us)\n");
-//	printf("------ ------ ------------ ------ ------ ------  ------- ------------\n");
-//}
-//
-//inline void printLabelsPublisher()
-//{
-//	printf(" bytes,     samples, Mbits/s,demand,    time(us)\n");
-//	printf("------ ------------  ------- ------ ------------\n");
-//}
-
-
 
 typedef struct LatencyType{
 	uint32_t seqnum;
 	std::vector<uint8_t> data;
-	//	LatencyType():
-	//		seqnum(0)
-	//	{
-	//		seqnum = 0;
-	//	}
 	LatencyType(uint16_t number):
 		seqnum(0),
 		data(number,0)
@@ -161,6 +125,8 @@ public:
 	~LatencyDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	void* createData();
+			void deleteData(void* data);
 };
 
 enum e_Command:uint32_t{
@@ -223,6 +189,8 @@ public:
 	~ThroughputCommandDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	void* createData();
+			void deleteData(void* data);
 };
 
 

@@ -66,6 +66,8 @@ public:
 	~LatencyDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	void* createData();
+		void deleteData(void* data);
 };
 
 enum TESTCOMMAND:uint32_t{
@@ -97,6 +99,8 @@ public:
 	~TestCommandDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	void* createData();
+		void deleteData(void* data);
 };
 
 

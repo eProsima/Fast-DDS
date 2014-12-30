@@ -22,6 +22,8 @@ public:
     bool deserialize(SerializedPayload_t *payload, void *data);
     bool getKey(void *data, InstanceHandle_t *ihandle);
     bool serialize(void *data, SerializedPayload_t *payload);
+    void* createData();
+    void deleteData(void* data);
 };
 
 typedef std::pair<SD_COLOR,InstanceHandle_t> colorPair;

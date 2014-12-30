@@ -54,6 +54,8 @@ public:
 	~OperationDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	void* createData();
+	void deleteData(void* data);
 };
 
 
@@ -87,6 +89,8 @@ public:
 	~ResultDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
+	void* createData();
+	void deleteData(void* data);
 };
 }
 #endif /* CLIENTSERVERTYPES_H_ */

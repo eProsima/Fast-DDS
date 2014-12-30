@@ -74,6 +74,16 @@ bool ShapeTopicDataType::deserialize(SerializedPayload_t *payload, void *data)
     return false;
 }
 
+void* ShapeTopicDataType::createData()
+{
+    return (void*)new Shape();
+}
+
+void ShapeTopicDataType::deleteData(void *data)
+{
+    delete((Shape*)data);
+}
+
 bool ShapeTopicDataType::getKey(void *data, InstanceHandle_t *ihandle)
 {
     Shape* sh = (Shape*)data;

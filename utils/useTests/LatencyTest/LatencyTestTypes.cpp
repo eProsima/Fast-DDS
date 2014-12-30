@@ -34,6 +34,15 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 	return true;
 }
 
+void* LatencyDataType::createData()
+{
+	return (void*)new LatencyType();
+}
+void LatencyDataType::deleteData(void* data)
+{
+	delete((LatencyType*)data);
+}
+
 
 bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
 {
@@ -50,4 +59,13 @@ bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 	 t->m_command = *(TESTCOMMAND*)payload->data;
 //	cout << "COMMAND: "<<t->m_command<< endl;
 	return true;
+}
+
+void* TestCommandDataType::createData()
+{
+	return (void*)new TestCommandType();
+}
+void TestCommandDataType::deleteData(void* data)
+{
+	delete((TestCommandType*)data);
 }

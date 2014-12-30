@@ -46,6 +46,15 @@ bool OperationDataType::deserialize(SerializedPayload_t* payload, void* data)
 	return false;
 }
 
+void* OperationDataType::createData()
+{
+	return (void*)new Operation();
+}
+	void OperationDataType::deleteData(void* data)
+	{
+		delete((Operation*)data);
+	}
+
 bool ResultDataType::serialize(void* data, SerializedPayload_t* payload)
 {
 	Result* res = (Result*)data;
@@ -73,6 +82,15 @@ bool ResultDataType::deserialize(SerializedPayload_t* payload, void* data)
 		return true;
 	}
 	return false;
+}
+
+void* ResultDataType::createData()
+{
+	return (void*)new Result();
+}
+void ResultDataType::deleteData(void* data)
+{
+	delete((Result*)data);
 }
 
 }
