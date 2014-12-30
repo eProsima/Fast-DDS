@@ -57,6 +57,16 @@ bool $ctx.filename$PubSubType::deserialize(SerializedPayload_t* payload, void* d
 	return true;
 }
 
+void* $ctx.filename$PubSubType::createData()
+{
+	return (void*)new $ctx.m_lastStructure$();
+}
+
+void $ctx.filename$PubSubType::deleteData(void* data)
+{
+	delete(($ctx.m_lastStructure$*)data);
+}
+
 bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle) 
 {
 	if(!m_isGetKeyDefined)
