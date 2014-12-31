@@ -53,16 +53,16 @@ namespace rtps {
 static const char* const CLASS_NAME = "PDPSimple";
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-	mp_builtin(built),
-	mp_RTPSParticipant(nullptr),
-	mp_SPDPWriter(nullptr),
-	mp_SPDPReader(nullptr),
-	mp_EDP(nullptr),
-	m_hasChangedLocalPDP(true),
-	mp_resendParticipantTimer(nullptr),
-	mp_listener(nullptr),
-	mp_SPDPWriterHistory(nullptr),
-	mp_SPDPReaderHistory(nullptr)
+			mp_builtin(built),
+			mp_RTPSParticipant(nullptr),
+			mp_SPDPWriter(nullptr),
+			mp_SPDPReader(nullptr),
+			mp_EDP(nullptr),
+			m_hasChangedLocalPDP(true),
+			mp_resendParticipantTimer(nullptr),
+			mp_listener(nullptr),
+			mp_SPDPWriterHistory(nullptr),
+			mp_SPDPReaderHistory(nullptr)
 {
 
 }
@@ -157,10 +157,10 @@ void PDPSimple::announceParticipantState(bool new_change)
 bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata)
 {
 	for (auto pit = m_participantProxies.begin();
-		pit != m_participantProxies.end();++pit)
+			pit != m_participantProxies.end();++pit)
 	{
 		for (auto rit = (*pit)->m_readers.begin();
-			rit != (*pit)->m_readers.end();++rit)
+				rit != (*pit)->m_readers.end();++rit)
 		{
 			if((*rit)->m_guid == reader)
 			{
@@ -175,10 +175,10 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rd
 bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata)
 {
 	for (auto pit = m_participantProxies.begin();
-		pit != m_participantProxies.end(); ++pit)
+			pit != m_participantProxies.end(); ++pit)
 	{
 		for (auto wit = (*pit)->m_writers.begin();
-			wit != (*pit)->m_writers.end(); ++wit)
+				wit != (*pit)->m_writers.end(); ++wit)
 		{
 			if((*wit)->m_guid == writer)
 			{
@@ -243,7 +243,7 @@ bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyD
 		if((*pit)->m_guid == pguid)
 		{
 			*pdata = *pit;
-				return true;
+			return true;
 		}
 	}
 	return false;
@@ -478,17 +478,21 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 	}
 	if(pdata !=nullptr)
 	{
-		for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
-				rit!= pdata->m_readers.end();++rit)
+		if(mp_EDP!=nullptr)
 		{
-			mp_EDP->unpairReaderProxy(*rit);
+			for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
+					rit!= pdata->m_readers.end();++rit)
+			{
+				mp_EDP->unpairReaderProxy(*rit);
+			}
+			for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
+					wit!=pdata->m_writers.end();++wit)
+			{
+				mp_EDP->unpairWriterProxy(*wit);
+			}
 		}
-		for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
-				wit!=pdata->m_writers.end();++wit)
-		{
-			mp_EDP->unpairWriterProxy(*wit);
-		}
-		this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
+		if(mp_builtin->mp_WLP != nullptr)
+			this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
 		this->mp_EDP->removeRemoteEndpoints(pdata);
 		this->removeRemoteEndpoints(pdata);
 		for(std::vector<CacheChange_t*>::iterator it=this->mp_SPDPReaderHistory->changesBegin();

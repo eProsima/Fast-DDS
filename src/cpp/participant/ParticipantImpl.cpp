@@ -294,6 +294,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPS
 	{
 		ParticipantDiscoveryInfo info;
 		info.rtps = rtpsinfo;
+		this->mp_participantimpl->mp_rtpsParticipant = part;
 		this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant,info);
 	}
 }
