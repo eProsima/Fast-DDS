@@ -93,6 +93,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 			return nullptr;
 		}
 	}
+	PParam.participantID = ID;
 	int pid;
 #if defined(_WIN32)
 	pid = (int)_getpid();
