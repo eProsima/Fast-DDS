@@ -14,12 +14,21 @@
 #ifndef METATESTSUBSCRIBER_H_
 #define METATESTSUBSCRIBER_H_
 
+#include "fastrtps/fastrtps_fwd.h"
+using namespace eprosima::fastrtps;
+
 namespace eprosima {
 
 class MetaTestSubscriber {
 public:
 	MetaTestSubscriber();
 	virtual ~MetaTestSubscriber();
+	bool init();
+	void run();
+
+private:
+	Publisher* mp_pub;
+	Subscriber* mp_sub;
 };
 
 } /* namespace eprosima */

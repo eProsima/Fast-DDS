@@ -12,9 +12,7 @@
  */
 
 #include "fastrtps/utils/TimeConversion.h"
-
 #include "ZeroMQPublisher.h"
-
 #include <sstream>
 #include <numeric>
 
@@ -33,9 +31,7 @@ ZeroMQPublisher::ZeroMQPublisher():
 
 {
 	// TODO Auto-generated constructor stub
-
 	m_clock.setTimeNow(&m_t1);
-
 	for(int i=0;i<1000;i++)
 		m_clock.setTimeNow(&m_t2);
 	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
@@ -206,8 +202,8 @@ void ZeroMQPublisher::analizeTimes(uint32_t datasize)
 {
 	TimeStats TS;
 	TS.nbytes = datasize+4;
-	TS.min = *std::min_element(m_times.begin(),m_times.end());
-	TS.max = *std::max_element(m_times.begin(),m_times.end());
+	TS.tmin = *std::min_element(m_times.begin(),m_times.end());
+	TS.tmax = *std::max_element(m_times.begin(),m_times.end());
 	TS.mean = std::accumulate(m_times.begin(),m_times.end(),0)/m_times.size();
 	double auxstdev=0;
 	for(std::vector<double>::iterator tit=m_times.begin();tit!=m_times.end();++tit)
@@ -256,8 +252,8 @@ void ZeroMQPublisher::printStat(TimeStats& TS)
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
-			TS.min,
+			TS.tmin,
 			TS.p50,TS.p90,TS.p99,TS.p9999,
-			TS.max);
+			TS.tmax);
 }
 #endif

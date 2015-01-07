@@ -15,7 +15,10 @@
 
 namespace eprosima {
 
-MetaTestSubscriber::MetaTestSubscriber() {
+MetaTestSubscriber::MetaTestSubscriber():
+		mp_pub(nullptr),
+		mp_sub(nullptr)
+{
 	// TODO Auto-generated constructor stub
 
 }
