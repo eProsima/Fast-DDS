@@ -73,7 +73,7 @@ public:
 	}m_commandsublistener;
 	bool m_echo;
 	LatencyDataType latency_t;
-		TestCommandDataType command_t;
+	TestCommandDataType command_t;
 
 };
 

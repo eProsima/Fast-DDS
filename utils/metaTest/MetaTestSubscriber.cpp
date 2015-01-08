@@ -49,7 +49,7 @@ bool MetaTestSubscriber::init()
 
 	mp_sub = Domain::createSubscriber(mp_par,Rparam,&m_sublisten);
 
-	if(mp_pub == nullptr || mp_sub == nullptr)
+	if(mp_par == nullptr ||mp_pub == nullptr || mp_sub == nullptr)
 		return false;
 	return true;
 }

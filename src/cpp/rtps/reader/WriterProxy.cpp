@@ -314,15 +314,15 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 	else
 	{
 		*seqNum = this->m_min_available_seqNum;
-		return true;
 	}
-	if(*seqNum<this->m_lastRemovedSeqNum)
+	if(*seqNum<=this->m_lastRemovedSeqNum)
 	{
 		*seqNum = this->m_lastRemovedSeqNum;
 		m_min_available_seqNum = this->m_lastRemovedSeqNum;
 		m_hasMinAvailableSeqNumChanged = false;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 
