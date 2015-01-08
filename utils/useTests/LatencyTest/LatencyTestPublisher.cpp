@@ -20,31 +20,31 @@ using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
+uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12288};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
 static const char * const CLASS_NAME = "LatencyTestPublisher";
 
 LatencyTestPublisher::LatencyTestPublisher():
-										mp_participant(nullptr),
-										mp_datapub(nullptr),
-										mp_commandpub(nullptr),
-										mp_datasub(nullptr),
-										mp_commandsub(nullptr),
-										mp_latency_in(nullptr),
-										mp_latency_out(nullptr),
-										m_overhead(0.0),
-										n_subscribers(0),
-										n_samples(0),
-										m_disc_sema(0),
-										m_comm_sema(0),
-										m_data_sema(0),
-										m_status(0),
-										n_received(0),
-										m_datapublistener(nullptr),
-										m_datasublistener(nullptr),
-										m_commandpublistener(nullptr),
-										m_commandsublistener(nullptr)
+												mp_participant(nullptr),
+												mp_datapub(nullptr),
+												mp_commandpub(nullptr),
+												mp_datasub(nullptr),
+												mp_commandsub(nullptr),
+												mp_latency_in(nullptr),
+												mp_latency_out(nullptr),
+												m_overhead(0.0),
+												n_subscribers(0),
+												n_samples(0),
+												m_disc_sema(0),
+												m_comm_sema(0),
+												m_data_sema(0),
+												m_status(0),
+												n_received(0),
+												m_datapublistener(nullptr),
+												m_datasublistener(nullptr),
+												m_commandpublistener(nullptr),
+												m_commandsublistener(nullptr)
 {
 	m_datapublistener.mp_up = this;
 	m_datasublistener.mp_up = this;
@@ -54,7 +54,7 @@ LatencyTestPublisher::LatencyTestPublisher():
 
 LatencyTestPublisher::~LatencyTestPublisher()
 {
-
+	Domain::removeParticipant(mp_participant);
 }
 
 
@@ -78,7 +78,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	if(mp_participant == nullptr)
 		return false;
 	Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
-		Domain::registerType(mp_participant,(TopicDataType*)&command_t);
+	Domain::registerType(mp_participant,(TopicDataType*)&command_t);
 	m_clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_clock.setTimeNow(&m_t2);
@@ -93,15 +93,15 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubDataparam.topic.historyQos.depth = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Locator_t loc;
+	loc.port = 15000;
+	PubDataparam.unicastLocatorList.push_back(loc);
 	mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == nullptr)
 		return false;
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
-	Locator_t loc;
-	loc.port = 7555;
-	SubDataparam.unicastLocatorList.push_back(loc);
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencySUB2PUB";
@@ -109,6 +109,13 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubDataparam.topic.historyQos.depth = 100;
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
+	//SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	loc.port = 15001;
+	SubDataparam.unicastLocatorList.push_back(loc);
+
+
+
 	mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == nullptr)
 		return false;
@@ -121,6 +128,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubCommandParam.topic.historyQos.depth = 100;
 	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
+	PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == nullptr)
 		return false;
@@ -133,6 +141,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
 	if(mp_commandsub == nullptr)
 		return false;
@@ -215,12 +224,22 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* sub)
 {
 	TestCommandType command;
 	SampleInfo_t info;
-	mp_up->mp_commandsub->takeNextData((void*)&command,&info);
-	if(info.sampleKind == ALIVE)
+	//	cout << "COMMAND RECEIVED"<<endl;
+	if(mp_up->mp_commandsub->takeNextData((void*)&command,&info))
 	{
-		if(command.m_command == BEGIN)
-			mp_up->m_comm_sema.post();
+		if(info.sampleKind == ALIVE)
+		{
+			//cout << "ALIVE "<<command.m_command<<endl;
+			if(command.m_command == BEGIN)
+			{
+				//	cout << "POSTING"<<endl;
+				eClock::my_sleep(50);
+				mp_up->m_comm_sema.post();
+			}
+		}
 	}
+	else
+		cout<< "Problem reading"<<endl;
 }
 #if defined(_WIN32)
 void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
@@ -275,7 +294,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 	}
 	else if(mp_up->mp_latency_in->seqnum == (uint32_t)mp_up->n_samples) //TEST FINISHED
 	{
-	//	cout << "TEST with samples: "<<mp_up->n_samples<< " finished "<<endl;
+		cout << "TEST with samples: "<<mp_up->n_samples<< " finished "<<endl;
 		mp_up->m_data_sema.post();
 	}
 	else
@@ -330,11 +349,12 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	TestCommandType command;
 	command.m_command = READY;
 	mp_commandpub->write(&command);
-	//cout << "WAITING FOR COMMAND RESPONSES ";
+	//cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
 	for(uint8_t i = 0;i<n_subscribers;++i)
 	{
+		//cout << "WAITING"<<endl;
 		m_comm_sema.wait();
-		//cout << (int)i << " ";
+		//	cout << (int)i << " "<<std::flush;
 	}
 	//cout << endl;
 	//BEGIN THE TEST:

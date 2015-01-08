@@ -50,7 +50,7 @@ LatencyTestSubscriber::LatencyTestSubscriber():
 
 LatencyTestSubscriber::~LatencyTestSubscriber()
 {
-
+	Domain::removeParticipant(mp_participant);
 }
 
 bool LatencyTestSubscriber::init(bool echo,int nsam)
@@ -73,6 +73,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 		return false;
 	Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
 	Domain::registerType(mp_participant,(TopicDataType*)&command_t);
+
 	// DATA PUBLISHER
 	PublisherAttributes PubDataparam;
 	PubDataparam.topic.topicDataType = "LatencyType";
@@ -82,26 +83,33 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubDataparam.topic.historyQos.depth = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Locator_t loc;
+	//loc.port = 15002;
+	PubDataparam.unicastLocatorList.push_back(loc);
 	mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == nullptr)
 		return false;
+
 	//DATA SUBSCRIBER
 	SubscriberAttributes SubDataparam;
-	Locator_t loc;
-	loc.port = 7555;
-	PubDataparam.unicastLocatorList.push_back(loc);
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencyPUB2SUB";
 	SubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	SubDataparam.topic.historyQos.depth = 100;
+	SubDataparam.topic.historyQos.depth = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	loc.port = 15003;
+	//SubDataparam.unicastLocatorList.push_back(loc);
+	loc.set_IP4_address(233,252,124,2);
+	SubDataparam.multicastLocatorList.push_back(loc);
 	mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == nullptr)
 		return false;
+
 	//COMMAND PUBLISHER
 	PublisherAttributes PubCommandParam;
 	PubCommandParam.topic.topicDataType = "TestCommandType";
@@ -111,6 +119,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubCommandParam.topic.historyQos.depth = 100;
 	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
+	PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == nullptr)
 		return false;
@@ -123,6 +132,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
 	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
 	if(mp_commandsub == nullptr)
 		return false;
@@ -202,7 +212,9 @@ void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 	if(mp_up->m_echo)
 		mp_up->mp_datapub->write((void*)mp_up->mp_latency);
 	if(mp_up->mp_latency->seqnum == (uint32_t)mp_up->n_samples)
+	{
 		mp_up->m_data_sema.post();
+	}
 }
 
 
@@ -235,6 +247,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
 	mp_commandpub->write(&command);
 	m_data_sema.wait();
 	cout << "TEST OF SiZE: "<< datasize +4 << " ENDS"<<endl;
+	eClock::my_sleep(50);
 	size_t removed;
 	this->mp_datapub->removeAllChange(&removed);
 	//cout << "REMOVED: "<< removed<<endl;

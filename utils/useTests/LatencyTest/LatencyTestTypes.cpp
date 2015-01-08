@@ -36,10 +36,12 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 
 void* LatencyDataType::createData()
 {
+
 	return (void*)new LatencyType();
 }
 void LatencyDataType::deleteData(void* data)
 {
+
 	delete((LatencyType*)data);
 }
 
@@ -63,9 +65,11 @@ bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 
 void* TestCommandDataType::createData()
 {
+
 	return (void*)new TestCommandType();
 }
 void TestCommandDataType::deleteData(void* data)
 {
+
 	delete((TestCommandType*)data);
 }

@@ -49,7 +49,6 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
 }
 
 SubscriberHistory::~SubscriberHistory() {
-	// TODO Auto-generated destructor stub
 	mp_subImpl->getType()->deleteData(mp_getKeyObject);
 
 }

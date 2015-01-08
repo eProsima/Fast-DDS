@@ -44,8 +44,8 @@ StatefulReader::~StatefulReader()
 
 StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-		RTPSReader(pimpl,guid,att,hist, listen),
-		m_times(att.times)
+						RTPSReader(pimpl,guid,att,hist, listen),
+						m_times(att.times)
 {
 
 }
@@ -120,25 +120,20 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 
 bool StatefulReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
-	if(this->m_acceptMessagesFromUnkownWriters)
-	{
-		for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-				it!=matched_writers.end();++it)
-		{
-			if((*it)->m_att.guid == writerId)
-			{
-				if(wp!=nullptr)
-					*wp = *it;
-				return true;
-			}
-		}
+	if(writerId.entityId == this->m_trustedWriterEntityId)
 		return true;
-	}
-	else
+
+	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
+			it!=matched_writers.end();++it)
 	{
-		if(writerId.entityId == this->m_trustedWriterEntityId)
+		if((*it)->m_att.guid == writerId)
+		{
+			if(wp!=nullptr)
+				*wp = *it;
 			return true;
+		}
 	}
+
 	return false;
 }
 
@@ -242,13 +237,15 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 	logInfo(RTPS_READER,this->getGuid().entityId<<": looking through: "<< matched_writers.size() << " WriterProxies");
 	for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();it!=matched_writers.end();++it)
 	{
-		(*it)->available_changes_min(&auxSeqNum);
-		//cout << "AVAILABLE MIN: "<< auxSeqNum << endl;
-		if(auxSeqNum.to64long() > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
+		if((*it)->available_changes_min(&auxSeqNum))
 		{
-			available = true;
-			minSeqNum = auxSeqNum;
-			wp = *it;
+			//logUser("AVAILABLE MIN for writer: "<<(*it)->m_att.guid<< " : " << auxSeqNum);
+			if(auxSeqNum.to64long() > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
+			{
+				available = true;
+				minSeqNum = auxSeqNum;
+				wp = *it;
+			}
 		}
 	}
 	//cout << "AVAILABLE? "<< available << endl;
@@ -257,26 +254,26 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 		if(wpout !=nullptr)
 			*wpout = wp;
 		return true;
-//		logInfo(RTPS_READER,this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long());
-//		if(min_change->kind == ALIVE)
-//			this->mp_type->deserialize(&min_change->serializedPayload,data);
-//		if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
-//		{
-//			if(info!=NULL)
-//			{
-//				info->sampleKind = min_change->kind;
-//				info->writerGUID = min_change->writerGUID;
-//				info->sourceTimestamp = min_change->sourceTimestamp;
-//				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-//					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-//				if(!min_change->isRead)
-//					m_reader_cache.decreaseUnreadCount();
-//				info->iHandle = min_change->instanceHandle;
-//			}
-//			if(!m_reader_cache.remove_change(min_change))
-//				logWarning(RTPS_READER,"Problem removing change " << min_change->sequenceNumber <<" from ReaderHistory");
-//			return true;
-//		}
+		//		logInfo(RTPS_READER,this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long());
+		//		if(min_change->kind == ALIVE)
+		//			this->mp_type->deserialize(&min_change->serializedPayload,data);
+		//		if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
+		//		{
+		//			if(info!=NULL)
+		//			{
+		//				info->sampleKind = min_change->kind;
+		//				info->writerGUID = min_change->writerGUID;
+		//				info->sourceTimestamp = min_change->sourceTimestamp;
+		//				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+		//					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+		//				if(!min_change->isRead)
+		//					m_reader_cache.decreaseUnreadCount();
+		//				info->iHandle = min_change->instanceHandle;
+		//			}
+		//			if(!m_reader_cache.remove_change(min_change))
+		//				logWarning(RTPS_READER,"Problem removing change " << min_change->sequenceNumber <<" from ReaderHistory");
+		//			return true;
+		//		}
 	}
 	return false;
 }
@@ -301,26 +298,26 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 			{
 				*change = *it;
 				if(wpout !=nullptr)
-							*wpout = wp;
+					*wpout = wp;
 				return true;
-//				if((*it)->kind == ALIVE)
-//				{
-//					this->mp_type->deserialize(&(*it)->serializedPayload,data);
-//				}
-//				(*it)->isRead = true;
-//				if(info!=NULL)
-//				{
-//					info->sampleKind = (*it)->kind;
-//					info->writerGUID = (*it)->writerGUID;
-//					info->sourceTimestamp = (*it)->sourceTimestamp;
-//					info->iHandle = (*it)->instanceHandle;
-//					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-//						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-//				}
-//				m_reader_cache.decreaseUnreadCount();
-//				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
-//				readok = true;
-//				break;
+				//				if((*it)->kind == ALIVE)
+				//				{
+				//					this->mp_type->deserialize(&(*it)->serializedPayload,data);
+				//				}
+				//				(*it)->isRead = true;
+				//				if(info!=NULL)
+				//				{
+				//					info->sampleKind = (*it)->kind;
+				//					info->writerGUID = (*it)->writerGUID;
+				//					info->sourceTimestamp = (*it)->sourceTimestamp;
+				//					info->iHandle = (*it)->instanceHandle;
+				//					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+				//						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+				//				}
+				//				m_reader_cache.decreaseUnreadCount();
+				//				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
+				//				readok = true;
+				//				break;
 			}
 		}
 		else
