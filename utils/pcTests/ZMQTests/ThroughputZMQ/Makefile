@@ -36,14 +36,15 @@ THROUGHPUTTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/ThroughputTest
 THROUGHPUTTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(BASEDIR)/../../../thirdparty/eprosima-common-code
 
-THROUGHPUTTEST_LIBS_RELEASE=  -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time
+THROUGHPUTTEST_LIBS_RELEASE=  -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system \
+ -lboost_thread -lboost_date_time -lzmq
 
 THROUGHPUTTEST_SRC_CFILES=
 
 THROUGHPUTTEST_SRC_CPPFILES= $(BASEDIR)/../../useTests/ZMQThroughputTypes.cpp \
 								$(BASEDIR)/../../ZMQThroughputPublisher.cpp \
 								$(BASEDIR)/../../ZMQThroughputSubscriber.cpp \
-								$(BASEDIR)/../../main_ThroughputTest.cpp 
+								$(BASEDIR)/../../main_ZMQThroughputTest.cpp 
 								
 
 # Project sources are copied to the current directory

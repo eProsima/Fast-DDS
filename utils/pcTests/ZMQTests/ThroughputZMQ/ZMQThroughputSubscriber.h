@@ -16,7 +16,7 @@
 
 
 #include <zmq.hpp>
-
+#include <boost/thread.hpp>
 #include "ZMQThroughputTypes.h"
 
 #include "fastrtps/utils/eClock.h"
@@ -61,48 +61,12 @@ public:
 	int commandReceived();
 
 	LatencyType* latencyin;
-
+	boost::thread* mp_latencyThread;
 	void resetResults();
 	void saveNumbers();
 
-	class DataSubListener:public SubscriberListener
-	{
-	public:
-		DataSubListener(ThroughputSubscriber& up);
-		virtual ~DataSubListener();
-		ThroughputSubscriber& m_up;
+	void processMessages();
 
-		uint32_t lastseqnum,saved_lastseqnum;
-		uint32_t lostsamples,saved_lostsamples;
-		bool first;
-		LatencyType* latencyin;
-		SampleInfo_t info;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
-		void onNewDataMessage(Subscriber* sub);
-		void saveNumbers();
-		std::ofstream myfile;
-	}m_DataSubListener;
-
-	class CommandSubListener:public SubscriberListener
-	{
-	public:
-		CommandSubListener(ThroughputSubscriber& up);
-		virtual ~CommandSubListener();
-		ThroughputSubscriber& m_up;
-		ThroughputCommandType m_commandin;
-		SampleInfo_t info;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
-		void onNewDataMessage(Subscriber* sub);
-		void saveNumbers();
-	}m_CommandSubListener;
-	class CommandPubListener:public PublisherListener
-	{
-	public:
-		CommandPubListener(ThroughputSubscriber& up);
-		virtual ~CommandPubListener();
-		ThroughputSubscriber& m_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo info);
-	}m_CommandPubListener;
 
 };
 
