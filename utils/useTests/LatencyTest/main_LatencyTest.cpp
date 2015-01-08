@@ -2,7 +2,7 @@
  * Copyright (c) 2013 eProsima. All rights reserved.
  *
  * This copy of FastCdr is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -44,7 +44,7 @@ const int c_n_samples = 10000;
 
 int main(int argc, char** argv){
 
-	Log::setVerbosity(VERB_ERROR);
+	Log::setVerbosity(VERB_INFO);
 	//Log::setCategoryVerbosity(RTPS_LIVELINESS,VERB_INFO);
 	//Log::logFileName("LatencyTest.txt",true);
 	logUser("Starting");

@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -73,7 +73,7 @@ public:
 	}m_commandsublistener;
 	bool m_echo;
 	LatencyDataType latency_t;
-		TestCommandDataType command_t;
+	TestCommandDataType command_t;
 
 };
 

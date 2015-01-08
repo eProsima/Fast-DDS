@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -314,15 +314,15 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 	else
 	{
 		*seqNum = this->m_min_available_seqNum;
-		return true;
 	}
-	if(*seqNum<this->m_lastRemovedSeqNum)
+	if(*seqNum<=this->m_lastRemovedSeqNum)
 	{
 		*seqNum = this->m_lastRemovedSeqNum;
 		m_min_available_seqNum = this->m_lastRemovedSeqNum;
 		m_hasMinAvailableSeqNumChanged = false;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 

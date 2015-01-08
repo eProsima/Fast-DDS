@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -49,7 +49,6 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
 }
 
 SubscriberHistory::~SubscriberHistory() {
-	// TODO Auto-generated destructor stub
 	mp_subImpl->getType()->deleteData(mp_getKeyObject);
 
 }

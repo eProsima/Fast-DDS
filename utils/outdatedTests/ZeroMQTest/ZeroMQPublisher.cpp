@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,7 +11,10 @@
  *
  */
 
+#include "fastrtps/utils/TimeConversion.h"
+
 #include "ZeroMQPublisher.h"
+
 #include <sstream>
 #include <numeric>
 
@@ -30,7 +33,9 @@ ZeroMQPublisher::ZeroMQPublisher():
 
 {
 	// TODO Auto-generated constructor stub
+
 	m_clock.setTimeNow(&m_t1);
+
 	for(int i=0;i<1000;i++)
 		m_clock.setTimeNow(&m_t2);
 	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;

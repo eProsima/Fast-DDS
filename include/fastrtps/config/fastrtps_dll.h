@@ -2,7 +2,7 @@
  * Copyright (c) 201 4 eProsima. All rights reserved.
  *
  * This copy of fastrtps is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
