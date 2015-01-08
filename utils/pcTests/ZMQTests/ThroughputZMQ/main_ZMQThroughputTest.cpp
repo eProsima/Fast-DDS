@@ -17,13 +17,10 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
-using namespace eprosima;
-using namespace fastrtps;
 
-#include "ThroughputTypes.h"
 
-#include "ThroughputPublisher.h"
-#include "ThroughputSubscriber.h"
+#include "ZMQThroughputPublisher.h"
+#include "ZMQThroughputSubscriber.h"
 
 
 using namespace std;
@@ -49,6 +46,8 @@ int main(int argc, char** argv){
 	uint32_t test_time_sec = 30;
 	int demand = 0;
 	int msg_size = 0;
+	std::string IP;
+	uint32_t PORTBASE;
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
@@ -98,15 +97,17 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		ThroughputPublisher tpub;
-		tpub.run(test_time_sec,demand,msg_size);
+		ZMQThroughputPublisher tpub;
+		if(tpub.init(IP,PORTBASE))
+			tpub.run(test_time_sec,demand,msg_size);
 		break;
 	}
 	case 2:
 	{
 
-		ThroughputSubscriber tsub;
-		tsub.run();
+		ZMQThroughputSubscriber tsub;
+		if(tsub.init(IP,PORTBASE))
+			tsub.run();
 		break;
 	}
 	}

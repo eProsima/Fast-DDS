@@ -31,15 +31,19 @@ int writecalls= 0;
 
 
 
-ZMQThroughputSubscriber::~ZMQThroughputSubscriber(){Domain::stopAll();}
+ZMQThroughputSubscriber::~ZMQThroughputSubscriber(){}
 
 ZMQThroughputSubscriber::ZMQThroughputSubscriber():	sema(0),
 		mp_context(nullptr),
-		mp_datasub(nullptr),mp_commandpub(nullptr),
+		mp_commandpub(nullptr),
+		mp_datasub(nullptr),
 		mp_commandsub(nullptr),
 		ready(true),m_datasize(0),m_demand(0),
 		command_msg(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double)),
-		latencyin(nullptr)
+		lastseqnum(0),saved_lastseqnum(0),
+		lostsamples(0),saved_lostsamples(0),
+		latencyin(nullptr),
+		mp_latencyThread(nullptr)
 {
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
@@ -55,9 +59,9 @@ bool ZMQThroughputSubscriber::init(std::string pubIP,uint32_t basePORT)
 	mp_context = new zmq::context_t(1);
 
 	mp_commandsub = new zmq::socket_t(*mp_context,ZMQ_SUB);
-	stringstream ss2;
-	ss2 << "tcp://"<<pubIP<<":"<<(basePORT+2);
-	mp_commandsub->connect(ss2.str().c_str());
+	stringstream ss1;
+	ss1 << "tcp://"<<pubIP<<":"<<(basePORT+2);
+	mp_commandsub->connect(ss1.str().c_str());
 	mp_commandsub->setsockopt(ZMQ_SUBSCRIBE,0,0);
 
 	mp_datasub = new zmq::socket_t(*mp_context,ZMQ_SUB);
@@ -87,17 +91,51 @@ void ZMQThroughputSubscriber::run()
 {
 	if(!ready)
 		return;
+	mp_latencyThread = new boost::thread(&ZMQThroughputSubscriber::processMessages,this);
 	while(1)
 	{
 		mp_commandsub->recv(&command_msg);
 		m_commandDataType.deserialize(&command_msg,&m_commandin);
 		int res = commandReceived();
 		if(res == -1)
-			break;
+		{
+			mp_datasub->close();
+			mp_latencyThread->join();
+			delete(mp_latencyThread);
+			return;
+		}
+		else if(res == 1) //TEST STARTS
+		{
 
+		}
+		else if(res == 2) //TEST ENDS
+		{
+
+		}
 	}
 	return;
+}
 
+void ZMQThroughputSubscriber::processMessages()
+{
+	while(1)
+	{
+		zmq::message_t msg;
+		try{
+			mp_datasub->recv(&msg);
+			m_latencyDataType.deserialize(&msg,&latencyin);
+			if((lastseqnum+1)<latencyin->seqnum)
+			{
+				lostsamples+=latencyin->seqnum-lastseqnum-1;
+				//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+			}
+			lastseqnum = latencyin->seqnum;
+		}
+		catch(const zmq::error_t& ex)
+		{
+			break;
+		}
+	}
 }
 
 int ZMQThroughputSubscriber::commandReceived()
@@ -105,20 +143,13 @@ int ZMQThroughputSubscriber::commandReceived()
 	//cout << "RECEIVED COMMAND: "<< m_commandin.m_command << endl;
 	switch(m_commandin.m_command)
 	{
-	default:
-	{
+	case (DEFAULT):	{
 		break;
 	}
-	case (DEFAULT):
-	{
+	case (BEGIN):{
 		break;
 	}
-	case (BEGIN):
-	{
-		break;
-	}
-	case (READY_TO_START):
-	{
+	case (READY_TO_START):{
 		m_datasize = m_commandin.m_size;
 		m_demand = m_commandin.m_demand;
 		//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -134,14 +165,12 @@ int ZMQThroughputSubscriber::commandReceived()
 		return 0;
 		break;
 	}
-	case (TEST_STARTS):
-	{
+	case (TEST_STARTS):	{
 		m_Clock.setTimeNow(&m_t1);
 		return 1;
 		break;
 	}
-	case (TEST_ENDS):
-	{
+	case (TEST_ENDS):{
 		m_Clock.setTimeNow(&m_t2);
 		saveNumbers();
 		//cout << "TEST ends, sending results"<<endl;
@@ -157,75 +186,31 @@ int ZMQThroughputSubscriber::commandReceived()
 		m_commandDataType.serialize(&m_commandout,&command_msg);
 		mp_commandpub->send(command_msg);
 		eClock::my_sleep(100);
-		return 0;
+		return 2;
 		break;
 	}
-	case (ALL_STOPS):
-	{
+	case (ALL_STOPS):{
 		return -1;
 		break;
 	}
+	default:
+		break;
 	}
 	return 0;
 }
 
 
-
-
-ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-																														m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
+void ZMQThroughputSubscriber::resetResults()
 {
-
-};
-ThroughputSubscriber::DataSubListener::~DataSubListener()
-{
-
-};
-
-void ThroughputSubscriber::DataSubListener::reset(){
 	lastseqnum = 0;
-	first = true;
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
-{
-	if(info.status == MATCHED_MATCHING)
-	{
-		cout << C_RED << "DATA Sub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
-	}
-	else
-	{
-		cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
-	}
-}
-void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
-{
-	//	cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
-	m_up.mp_datasub->takeNextData((void*)latencyin,&info);
-	//myfile << latencyin.seqnum << ",";
-	if(info.sampleKind == ALIVE)
-	{
-		if((lastseqnum+1)<latencyin->seqnum)
-		{
-			lostsamples+=latencyin->seqnum-lastseqnum-1;
-			//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
-		}
-		lastseqnum = latencyin->seqnum;
-	}
-	else
-	{
-		cout << "NOT ALIVE DATA RECEIVED"<<endl;
-	}
-}
-
-void ThroughputSubscriber::DataSubListener::saveNumbers()
+void ZMQThroughputSubscriber::saveNumbers()
 {
 	saved_lastseqnum = lastseqnum;
 	saved_lostsamples = lostsamples;
 }
-
 
 
 
