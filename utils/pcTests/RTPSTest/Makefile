@@ -44,9 +44,9 @@ STATETEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -
 
 STATETEST_SRC_CFILES=
 
-STATETEST_SRC_CPPFILES= $(BASEDIR)/../../useTests/RTPSTest/TestWriter.cpp \
-					$(BASEDIR)/../../useTests/RTPSTest/TestReader.cpp \
-					$(BASEDIR)/../../useTests/RTPSTest/main_RTPSTest.cpp 
+STATETEST_SRC_CPPFILES= $(BASEDIR)/../../useTests/RTPSTest_as_socket/TestWriter.cpp \
+					$(BASEDIR)/../../useTests/RTPSTest_as_socket/TestReader.cpp \
+					$(BASEDIR)/../../useTests/RTPSTest_as_socket/main_RTPSTest.cpp 
 
 # Project sources are copied to the current directory
 STATETEST_SRCS= $(STATETEST_SRC_CFILES) $(STATETEST_SRC_CPPFILES)

@@ -340,12 +340,12 @@ bool ThroughputPublisher::loadDemandsPayload()
 	cout << "Performing test with this payloads/demands:"<<endl;
 	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
 	{
-		cout << "Payload: "<< sit->first+8 << ": ";
+		printf("Payload: %6d; Demands: ",sit->first+8);
 		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
 		{
-			cout << *dit << ", ";
+			printf("%6d, ",*dit);
 		}
-		cout << endl;
+		printf("\n");
 	}
 
 	return true;
