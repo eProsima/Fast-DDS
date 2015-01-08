@@ -38,6 +38,7 @@ public:
 	virtual ~ZMQThroughputSubscriber();
 	boost::interprocess::interprocess_semaphore sema;
 	zmq::context_t* mp_context;
+	zmq::context_t* mp_dataContext;
 	zmq::socket_t* mp_commandpub;
 	zmq::socket_t* mp_datasub;
 	zmq::socket_t* mp_commandsub;
@@ -54,14 +55,16 @@ public:
 	ThroughputCommandType m_commandin;
 	ThroughputCommandType m_commandout;
 
-	zmq::message_t command_msg;
-
+	//zmq::message_t command_msg;
+	//zmq::message_t latencymsg;
 	uint32_t lastseqnum,saved_lastseqnum;
 	uint32_t lostsamples,saved_lostsamples;
 	int commandReceived();
 
 	LatencyType* latencyin;
 	boost::thread* mp_latencyThread;
+	string publisherIP;
+	uint32_t basePORT;
 	void resetResults();
 	void saveNumbers();
 

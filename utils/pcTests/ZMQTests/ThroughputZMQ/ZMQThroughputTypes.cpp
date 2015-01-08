@@ -30,10 +30,7 @@ bool ZMQLatencyDataType::deserialize(zmq::message_t* payload,void * data)
 	LatencyType* lt = (LatencyType*)data;
 	lt->seqnum = *(uint32_t*)payload->data();
 	uint32_t siz = *(uint32_t*)((uint8_t*)payload->data()+4);
-	//std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
 	std::copy((uint8_t*)payload->data() + 8, (uint8_t*)payload->data() + 8 + siz, lt->data.begin());
-	//		lt->data.clear();
-	//		lt->data.insert(lt->data.end(),payload->data+8,payload->data+8+siz);
 	return true;
 }
 

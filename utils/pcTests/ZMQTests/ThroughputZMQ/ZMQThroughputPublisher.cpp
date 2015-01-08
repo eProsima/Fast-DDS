@@ -29,7 +29,13 @@ vector<uint32_t> g_demand_pub (g_demandspub, g_demandspub + sizeof(g_demandspub)
 
 ZMQThroughputPublisher::~ZMQThroughputPublisher()
 {
-
+	mp_datapub->close();
+	mp_commandpub->close();
+	mp_commandsub->close();
+	delete(mp_context);
+	delete(mp_datapub);
+	delete(mp_commandpub);
+	delete(mp_commandsub);
 }
 
 ZMQThroughputPublisher::ZMQThroughputPublisher():
@@ -74,7 +80,7 @@ bool ZMQThroughputPublisher::init(std::string subIP,uint32_t basePORT)
 	{
 		return false;
 	}
-	eClock::my_sleep(5000);
+	eClock::my_sleep(3000);
 	ready = true;
 	return true;
 }
@@ -97,7 +103,7 @@ void ZMQThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 
 	ThroughputCommandType command;
 	printResultTitle();
-	zmq::message_t command_msg(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+
 	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
 	{
 		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
@@ -107,22 +113,24 @@ void ZMQThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 			command.m_command = READY_TO_START;
 			command.m_size = sit->first;
 			command.m_demand = *dit;
-			//cout << "SEND COMMAND "<< command.m_command << endl;
-
-			m_commandDataType.serialize(&command,&command_msg);
-			mp_commandpub->send(command_msg);
+		//cout << "SEND COMMAND "<< command.m_command << endl;
+			zmq::message_t command_msg1(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+			m_commandDataType.serialize(&command,&command_msg1);
+			mp_commandpub->send(command_msg1);
 			command.m_command = DEFAULT;
-			mp_commandsub->recv(&command_msg);
-			m_commandDataType.deserialize(&command_msg,&command);
+			zmq::message_t command_msg2(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+			mp_commandsub->recv(&command_msg2);
+			m_commandDataType.deserialize(&command_msg2,&command);
 
 			if(command.m_command == BEGIN)
 			{
 				if(!test(test_time,*dit,sit->first))
 				{
 					command.m_command = ALL_STOPS;
-					//	cout << "SEND COMMAND "<< command.m_command << endl;
-					m_commandDataType.serialize(&command,&command_msg);
-					mp_commandpub->send(command_msg);
+					//		cout << "SEND COMMAND "<< command.m_command << endl;
+					zmq::message_t command_msg3(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+					m_commandDataType.serialize(&command,&command_msg3);
+					mp_commandpub->send(command_msg3);
 					return;
 				}
 			}
@@ -130,23 +138,24 @@ void ZMQThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 	}
 	command.m_command = ALL_STOPS;
 	//	cout << "SEND COMMAND "<< command.m_command << endl;
-	m_commandDataType.serialize(&command,&command_msg);
-	mp_commandpub->send(command_msg);
+	zmq::message_t command_msg4(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+	m_commandDataType.serialize(&command,&command_msg4);
+	mp_commandpub->send(command_msg4);
+	eClock::my_sleep(50);
 }
 
 bool ZMQThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 {
-	zmq::message_t command_msg(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
-	zmq::message_t latency_msg(sizeof(uint32_t)+size);
 	LatencyType latency(size);
 	m_Clock.setTimeNow(&m_t2);
 	uint64_t timewait_us=0;
 	uint32_t samples=0;
 	ThroughputCommandType command;
 	command.m_command = TEST_STARTS;
-	//cout << "SEND COMMAND "<< command.m_command << endl;
-	m_commandDataType.serialize(&command,&command_msg);
-	mp_commandpub->send(command_msg);
+	//	cout << "SEND COMMAND "<< command.m_command << endl;
+	zmq::message_t command_msg1(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+	m_commandDataType.serialize(&command,&command_msg1);
+	mp_commandpub->send(command_msg1);
 	eClock::my_sleep(5);
 	m_Clock.setTimeNow(&m_t1);
 	while(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)<test_time*1000000)
@@ -154,6 +163,7 @@ bool ZMQThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t si
 		for(uint32_t sample=0;sample<demand;sample++)
 		{
 			latency.seqnum++;
+			zmq::message_t latency_msg(2*sizeof(uint32_t)+size);
 			m_latencyDataType.serialize(&latency,&latency_msg);
 			mp_datapub->send(latency_msg);
 			//cout << sample << "*"<<std::flush;
@@ -167,12 +177,14 @@ bool ZMQThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t si
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;
-	m_commandDataType.serialize(&command,&command_msg);
-	//cout << "SEND COMMAND "<< command.m_command << endl;
-	mp_commandpub->send(command_msg);
-	mp_commandsub->recv(&command_msg);
-	m_commandDataType.deserialize(&command_msg,&command);
-	//cout << "RECI COMMAND "<< command.m_command << endl;
+	zmq::message_t command_msg2(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+	m_commandDataType.serialize(&command,&command_msg2);
+	//	cout << "SEND COMMAND "<< command.m_command << endl;
+	mp_commandpub->send(command_msg2);
+	zmq::message_t command_msg3(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
+	mp_commandsub->recv(&command_msg3);
+	m_commandDataType.deserialize(&command_msg3,&command);
+	//	cout << "RECI COMMAND "<< command.m_command << endl;
 	if(command.m_command == TEST_RESULTS)
 	{
 		//cout << "Received results from subscriber"<<endl;
@@ -254,12 +266,12 @@ bool ZMQThroughputPublisher::loadDemandsPayload()
 	cout << "Performing test with this payloads/demands:"<<endl;
 	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
 	{
-		cout << "Payload: "<< sit->first+8 << ": ";
+		printf("Payload: %6d; Demands: ",sit->first+8);
 		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
 		{
-			cout << *dit << ", ";
+			printf("%6d, ",*dit);
 		}
-		cout << endl;
+		printf("\n");
 	}
 
 	return true;

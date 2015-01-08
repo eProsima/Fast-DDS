@@ -47,34 +47,39 @@ int main(int argc, char** argv){
 	int demand = 0;
 	int msg_size = 0;
 	std::string IP;
-	uint32_t PORTBASE;
-	if(argc > 1)
+	uint32_t PORTBASE = 10000;
+	if(argc > 2)
 	{
 		if(strcmp(argv[1],"publisher")==0)
 			type = 1;
 		if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
-		if(argc > 2 && type == 1)
+		if(argc > 2)
 		{
 			std::istringstream iss( argv[2] );
+			IP = iss.str();
+		}
+		if(argc > 3 && type == 1)
+		{
+			std::istringstream iss( argv[3] );
 			if (!(iss >> test_time_sec))
 			{
 				cout << "Problem reading test time,using 30s as default value "<< endl;
 				test_time_sec = 30;
 			}
 		}
-		if (argc > 3 && type == 1)
+		if (argc > 4 && type == 1)
 		{
-			std::istringstream iss_demand( argv[3] );
+			std::istringstream iss_demand( argv[4] );
 			if (!(iss_demand >> demand))
 			{
 				cout << "Problem reading demand,using default demand vector "<< endl;
 				demand = 0;
 			}
 		}
-		if (argc > 4 && type == 1)
+		if (argc > 5 && type == 1)
 		{
-			std::istringstream iss_size( argv[4] );
+			std::istringstream iss_size( argv[5] );
 			if (!(iss_size >> msg_size))
 			{
 				cout << "Problem reading msg size,using default size vector "<< endl;
@@ -84,10 +89,10 @@ int main(int argc, char** argv){
 	}
 	else
 	{
-		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
+		cout << "Needs publisher OR subscriber argument and IP"<<endl;
 		cout << "Usage: "<<endl;
-		cout << "ThroughputTest \"publisher\" [seconds] [demand] [msg_size]"<<endl;
-		cout << "ThroughputTest \"subscriber\""<<endl;
+		cout << "ZMQThroughput \"publisher\" subscriberIP [seconds] [demand] [msg_size]"<<endl;
+		cout << "ZMQThroughput \"subscriber\" publisherIP "<<endl;
 		return 0;
 	}
 
