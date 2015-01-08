@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -67,7 +67,7 @@ public:
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 	void* createData();
-		void deleteData(void* data);
+	void deleteData(void* data);
 };
 
 enum TESTCOMMAND:uint32_t{

@@ -1,0 +1,17 @@
+enum TestKind
+{
+	T_RTPS
+};
+
+union TestInfo switch(TestKind)
+{
+	case T_RTPS:
+		string t_rtps_ip;
+};
+
+
+struct MetaTestType
+{
+	TestInfo info;
+
+};

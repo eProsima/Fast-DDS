@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -69,7 +69,7 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 	mp_change = new CacheChange_t(max_payload);
-	cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
+	//cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 
 MessageReceiver::~MessageReceiver()
@@ -109,7 +109,7 @@ void MessageReceiver::reset(){
 	mp_change->isRead = 0;
 	mp_change->sourceTimestamp.seconds = 0;
 	mp_change->sourceTimestamp.fraction = 0;
-	cout << "MESSAGE RECEIVER RESEST WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
+	//cout << "MESSAGE RECEIVER RESEST WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
@@ -485,6 +485,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				{
 					logWarning(RTPS_MSG_IN, "Problem copying CacheChange, received data is: " << ch->serializedPayload.length
 						<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+					(*it)->releaseCache(change_to_add);
 					return false;
 				}
 			}

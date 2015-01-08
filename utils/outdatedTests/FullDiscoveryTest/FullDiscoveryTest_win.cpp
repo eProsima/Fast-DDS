@@ -2,7 +2,7 @@
  * Copyright (c) 2013 eProsima. All rights reserved.
  *
  * This copy of FastCdr is licensed to you under the terms described in the
- * fastrtps_LIBRARY_LICENSE file included in this distribution.
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
