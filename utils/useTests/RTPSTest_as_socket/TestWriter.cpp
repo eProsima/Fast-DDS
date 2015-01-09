@@ -64,9 +64,9 @@ bool TestWriter::init()
 	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
 	RemoteReaderAttributes ratt;
 	Locator_t loc;
-	loc.set_IP4_address(127,0,0,1);
-	loc.port = 22222; //MUSE BE THE SAME AS THE READER
-	ratt.endpoint.unicastLocatorList.push_back(loc);
+	loc.set_IP4_address(235,240,0,1);
+	loc.port = 22222;
+	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_writer->matched_reader_add(ratt);
 	return true;
 }

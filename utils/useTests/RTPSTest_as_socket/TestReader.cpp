@@ -55,8 +55,10 @@ bool TestReader::init()
 
 	//CREATE READER
 	ReaderAttributes ratt;
-	Locator_t loc(22222);
-	ratt.endpoint.unicastLocatorList.push_back(loc);
+	Locator_t loc;
+	loc.set_IP4_address(235,240,0,1);
+	loc.port = 22222;
+	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
 	if(mp_reader == nullptr)
 		return false;

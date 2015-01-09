@@ -101,7 +101,7 @@ int main(int argc, char** argv){
 	}
 
 
-	Domain::stopAll();
+	
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;
