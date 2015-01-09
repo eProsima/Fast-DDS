@@ -93,8 +93,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubDataparam.topic.historyQos.depth = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	//PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Locator_t loc;
 	loc.port = 15000;
 	PubDataparam.unicastLocatorList.push_back(loc);
@@ -295,7 +295,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 	}
 	else if(mp_up->mp_latency_in->seqnum == (uint32_t)mp_up->n_samples) //TEST FINISHED
 	{
-		cout << "TEST with samples: "<<mp_up->n_samples<< " finished "<<endl;
+		//cout << "TEST with samples: "<<mp_up->n_samples<< " finished "<<endl;
 		mp_up->m_data_sema.post();
 	}
 	else

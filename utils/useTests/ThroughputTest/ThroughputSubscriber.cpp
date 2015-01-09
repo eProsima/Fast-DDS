@@ -224,7 +224,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.historyQos.depth = 100000;
 	Sparam.topic.resourceLimitsQos.max_samples = 100000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 100000;
-	Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Locator_t loc;
 	loc.port = 10110;
 	Sparam.unicastLocatorList.push_back(loc);
@@ -234,7 +234,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
-	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	loc.port = 7556;
