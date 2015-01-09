@@ -235,6 +235,7 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Rparam.topic.historyQos.depth = 20;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	loc.port = 7556;

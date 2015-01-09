@@ -95,7 +95,7 @@ public:
 		if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
 		{
 
-			logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS:max_samples_per_instance must be <= than max_samples");
+			logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"):max_samples_per_instance must be <= than max_samples");
 			return false;
 		}
 		if(resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples && topicKind == WITH_KEY)
@@ -104,17 +104,17 @@ public:
 		{
 			if(historyQos.depth > resourceLimitsQos.max_samples)
 			{
-				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples");
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): depth must be <= max_samples");
 				return false;
 			}
 			if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == WITH_KEY)
 			{
-				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be <= max_samples_per_instance"<<endl;)
-										return false;
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): depth must be <= max_samples_per_instance"<<endl);
+				return false;
 			}
 			if(historyQos.depth <=0 )
 			{
-				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS: depth must be > 0");
+				logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): depth must be > 0");
 				return false;
 			}
 		}
