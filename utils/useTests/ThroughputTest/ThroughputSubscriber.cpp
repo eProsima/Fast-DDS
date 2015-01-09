@@ -29,15 +29,10 @@ using namespace eprosima::fastrtps::rtps;
 #include <vector>
 
 int writecalls= 0;
-//uint32_t datassub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
-//std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
-//
-//uint32_t demandssub[] = {1,10,20,30,50,60,70,80};
-//std::vector<uint32_t> demand_sub (demandssub, demandssub + sizeof(demandssub) / sizeof(uint32_t) );
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-								m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
+										m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
 {
 
 };
@@ -67,20 +62,22 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* su
 void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	//	cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
-	m_up.mp_datasub->takeNextData((void*)latencyin,&info);
-	//myfile << latencyin.seqnum << ",";
-	if(info.sampleKind == ALIVE)
+	while(m_up.mp_datasub->takeNextData((void*)latencyin,&info))
 	{
-		if((lastseqnum+1)<latencyin->seqnum)
+		//myfile << latencyin.seqnum << ",";
+		if(info.sampleKind == ALIVE)
 		{
-			lostsamples+=latencyin->seqnum-lastseqnum-1;
-			//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+			if((lastseqnum+1)<latencyin->seqnum)
+			{
+				lostsamples+=latencyin->seqnum-lastseqnum-1;
+				//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+			}
+			lastseqnum = latencyin->seqnum;
 		}
-		lastseqnum = latencyin->seqnum;
-	}
-	else
-	{
-		cout << "NOT ALIVE DATA RECEIVED"<<endl;
+		else
+		{
+			cout << "NOT ALIVE DATA RECEIVED"<<endl;
+		}
 	}
 }
 
@@ -117,11 +114,11 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 		default: break;
 		case (DEFAULT): break;
 		case (BEGIN):
-						{
-			break;
-						}
-		case (READY_TO_START):
 							{
+			break;
+							}
+		case (READY_TO_START):
+								{
 			m_up.m_datasize = m_commandin.m_size;
 			m_up.m_demand = m_commandin.m_demand;
 			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -133,14 +130,14 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&command);
 			break;
-							}
+								}
 		case (TEST_STARTS):
-						{
+							{
 			m_up.m_Clock.setTimeNow(&m_up.m_t1);
 			break;
-						}
+							}
 		case (TEST_ENDS):
-						{
+							{
 			m_up.m_Clock.setTimeNow(&m_up.m_t2);
 			m_up.m_DataSubListener.saveNumbers();
 			//cout << "TEST ends, sending results"<<endl;
@@ -156,7 +153,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			m_up.mp_commandpubli->write(&comm);
 
 			break;
-						}
+							}
 		case (ALL_STOPS): m_up.sema.post();break;
 		}
 	}
@@ -186,10 +183,10 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* p
 ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
-														sema(0),
+																sema(0),
 #pragma warning(disable:4355)
-														m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-														ready(true),m_datasize(0),m_demand(0)
+																m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+																ready(true),m_datasize(0),m_demand(0)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
@@ -218,15 +215,16 @@ ThroughputSubscriber::ThroughputSubscriber():
 		m_Clock.setTimeNow(&m_t2);
 	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
-	//PUBLISHER
+	//SUBSCRIBER
 	SubscriberAttributes Sparam;
 	Sparam.topic.topicDataType = "LatencyType";
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
 	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Sparam.topic.historyQos.depth = 1000;
+	Sparam.topic.historyQos.depth = 100000;
 	Sparam.topic.resourceLimitsQos.max_samples = 100000;
-	Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
+	Sparam.topic.resourceLimitsQos.allocated_samples = 100000;
+	Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	Locator_t loc;
 	loc.port = 10110;
 	Sparam.unicastLocatorList.push_back(loc);

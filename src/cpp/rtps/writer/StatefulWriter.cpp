@@ -127,6 +127,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 			if(chit->seqNum == a_change->sequenceNumber)
 			{
 				chit->notValid();
+				break;
 			}
 		}
 	}

@@ -93,7 +93,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubDataparam.topic.historyQos.depth = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Locator_t loc;
 	loc.port = 15000;
 	PubDataparam.unicastLocatorList.push_back(loc);
@@ -109,8 +110,8 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubDataparam.topic.historyQos.depth = 100;
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	//SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	//SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15001;
 	SubDataparam.unicastLocatorList.push_back(loc);
 
