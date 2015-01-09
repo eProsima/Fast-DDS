@@ -83,7 +83,8 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	PubDataparam.topic.historyQos.depth = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Locator_t loc;
 	//loc.port = 15002;
 	PubDataparam.unicastLocatorList.push_back(loc);
@@ -101,7 +102,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	//SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15003;
 	//SubDataparam.unicastLocatorList.push_back(loc);
 	loc.set_IP4_address(233,252,124,2);

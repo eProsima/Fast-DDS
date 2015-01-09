@@ -110,6 +110,7 @@ bool ZeroMQSubscriber::test(uint32_t datasize)
 		mp_datapub->send(latency_out);
 	}
 	cout << "TEST OF SiZE: "<< datasize +4 << " ENDS"<<endl;
+	eClock::my_sleep(100);
 
 
 	return true;

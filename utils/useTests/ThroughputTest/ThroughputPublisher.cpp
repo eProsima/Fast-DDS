@@ -28,12 +28,7 @@
 
 #include <map>
 
-uint32_t g_dataspub[] = {8,24,56,120,248,504,1016,2040,4088,8184};
-//uint32_t dataspub[] = {504,1016,2040,4088,8184};
-std::vector<uint32_t> g_data_size_pub (g_dataspub, g_dataspub + sizeof(g_dataspub) / sizeof(uint32_t) );
 
-uint32_t g_demandspub[] = {500,750,850,1000,1250,1400,1500,1600,1750,2000};
-vector<uint32_t> g_demand_pub (g_demandspub, g_demandspub + sizeof(g_demandspub) / sizeof(uint32_t) );
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::DataPubListener::~DataPubListener(){};
@@ -111,23 +106,29 @@ ThroughputPublisher::ThroughputPublisher():
 	//REGISTER THE TYPES
 	Domain::registerType(mp_par,(TopicDataType*)&latency_t);
 	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
+	//Overhead
 	m_Clock.setTimeNow(&m_t1);
 	for(int i=0;i<1000;i++)
 		m_Clock.setTimeNow(&m_t2);
 	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
-	//PUBLISHER
+
+	//DATA PUBLISHER
 	PublisherAttributes Wparam;
-	//Wparam.historyMaxSize = 10000;
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
 	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Wparam.topic.historyQos.depth = 1;
-	Wparam.topic.resourceLimitsQos.max_samples = 10000;
-	Wparam.topic.resourceLimitsQos.allocated_samples = 10000;
-	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Wparam.topic.historyQos.depth = 10000;
+	Wparam.topic.resourceLimitsQos.max_samples = 100000;
+	Wparam.topic.resourceLimitsQos.allocated_samples = 100000;
+	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Wparam.times.heartbeatPeriod.seconds = 5;
+	Wparam.times.nackSupressionDuration.seconds = 0;
+	Wparam.times.nackSupressionDuration.fraction = 0;
 	mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
+
+
 	//COMMAND
 	SubscriberAttributes Rparam;
 	Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -237,14 +238,15 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 		m_Clock.setTimeNow(&m_t2);
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
-		eClock::my_sleep(10);
-		timewait_us+=(uint64_t)m_overhead+10;
+		eClock::my_sleep(20);
+		timewait_us+=(uint64_t)m_overhead+20;
 		//cout << "Removing all..."<<endl;
-		mp_datapub->removeAllChange(&aux);
+		//mp_datapub->removeAllChange(&aux);
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;
 	//cout << "SEND COMMAND "<< command.m_command << endl;
+	eClock::my_sleep(100);
 	mp_commandpub->write((void*)&command);
 	mp_commandpub->removeAllChange(&aux);
 	mp_commandsub->waitForUnreadMessage();
