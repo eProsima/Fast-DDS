@@ -26,7 +26,7 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-	Log::setVerbosity(VERB_INFO);
+	Log::setVerbosity(VERB_ERROR);
 	cout << "Starting "<< endl;
 	int type = 1;
 	if(argc > 1)

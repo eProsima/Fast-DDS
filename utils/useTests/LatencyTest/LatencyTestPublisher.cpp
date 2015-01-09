@@ -294,7 +294,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 	}
 	else if(mp_up->mp_latency_in->seqnum == (uint32_t)mp_up->n_samples) //TEST FINISHED
 	{
-		cout << "TEST with samples: "<<mp_up->n_samples<< " finished "<<endl;
+		//cout << "TEST with samples: "<<mp_up->n_samples<< " finished "<<endl;
 		mp_up->m_data_sema.post();
 	}
 	else
