@@ -47,29 +47,6 @@ int main(int argc, char** argv)
 	{
 	case 1:
 	{
-		/*
-		//RTPSParticipantAttributes patt;
-		//patt.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
-		patt.builtin.use_WriterLivelinessProtocol = false;
-		RTPSParticipant* part = RTPSDomain::createParticipant(patt);
-		WriterAttributes watt;
-		watt.endpoint.reliabilityKind = BEST_EFFORT;
-		HistoryAttributes hatt;
-		WriterHistory* hist = new WriterHistory(hatt);
-		RTPSWriter* writer=RTPSDomain::createRTPSWriter(part,watt,hist);
-		RemoteReaderAttributes ratt;
-		Locator_t loc;
-		loc.set_IP4_address(192,168,1,27);
-		loc.port = 27405;
-		//ratt.endpoint.unicastLocatorList.push_back(loc);
-		loc.set_IP4_address(169, 254, 229, 255);
-		ratt.endpoint.unicastLocatorList.push_back(loc);
-		writer->matched_reader_add(ratt);
-		CacheChange_t* change = writer->new_change(ALIVE);
-		change->serializedPayload.length = 2;
-		hist->add_change(change);
-		*/
-
 		HelloWorldPublisher mypub;
 		for(int i = 0;i<10;++i)
 		{
@@ -94,8 +71,6 @@ int main(int argc, char** argv)
 		break;
 	}
 	}
-
-	Domain::stopAll();
 
 	return 0;
 }
