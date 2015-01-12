@@ -80,7 +80,7 @@ void MetaTestPublisher::run()
 	//RUN ALL TESTS
 	ss << "T_RTPS_REGISTERED: " << t_rtps_registered() << endl;
 	ss << "T_RTPS_SOCKET    : " << t_rtps_socket() << endl;
-
+	ss << "T_CLIENT_SERVER  : " << t_client_server() << endl;
 
 
 	MetaTestType testinfo;
@@ -89,6 +89,11 @@ void MetaTestPublisher::run()
 
 
 	logUser("TEST SUMMARY"<<endl<<ss.str());
+}
+
+std::string MetaTestPublisher::t_client_server()
+{
+	return "TO IMPLEMENT";
 }
 
 std::string MetaTestPublisher::t_rtps_registered()

@@ -72,6 +72,7 @@ private:
 	//TEST METHODS
 	std::string t_rtps_socket();
 	std::string t_rtps_registered();
+	std::string t_client_server();
 };
 
 } /* namespace eprosima */

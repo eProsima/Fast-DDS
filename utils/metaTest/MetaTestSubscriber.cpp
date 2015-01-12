@@ -90,6 +90,12 @@ void MetaTestSubscriber::run()
 	}
 }
 
+
+void MetaTestSubscriber::t_client_server(MetaTestType& testinfo)
+{
+
+}
+
 void MetaTestSubscriber::t_rtps_registered(MetaTestType& testinfo)
 {
 	logUser("Starting TEST RTPS REGISTERED");

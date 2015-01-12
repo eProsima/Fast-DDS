@@ -73,6 +73,7 @@ private:
 	//TEST METHODS:
 	void t_rtps_socket(MetaTestType& testinfo);
 	void t_rtps_registered(MetaTestType& testinfo);
+	void t_client_server(MetaTestType& testinfo);
 
 };
 
