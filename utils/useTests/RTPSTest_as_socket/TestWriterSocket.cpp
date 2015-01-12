@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file TestWriter.cpp
+ * @file TestWriterSocket.cpp
  *
  */
 
-#include "TestWriter.h"
+#include "TestWriterSocket.h"
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
@@ -23,16 +23,8 @@
 
 #include "fastrtps/rtps/history/WriterHistory.h"
 
-#include "fastrtps/attributes/TopicAttributes.h"
-#include "fastrtps/qos/WriterQos.h"
 
-#include "fastrtps/utils/eClock.h"
-
-using namespace eprosima;
-using namespace fastrtps;
-
-
-TestWriter::TestWriter():
+TestWriterSocket::TestWriterSocket():
 mp_participant(nullptr),
 mp_writer(nullptr),
 mp_history(nullptr)
@@ -41,18 +33,18 @@ mp_history(nullptr)
 
 }
 
-TestWriter::~TestWriter()
+TestWriterSocket::~TestWriterSocket()
 {
 	RTPSDomain::removeRTPSParticipant(mp_participant);
 	delete(mp_history);
 }
 
-bool TestWriter::init()
+bool TestWriterSocket::init(std::string ip, uint32_t port)
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.use_WriterLivelinessProtocol = true;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
+	PParam.builtin.use_WriterLivelinessProtocol = false;
 	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant==nullptr)
 		return false;
@@ -64,34 +56,24 @@ bool TestWriter::init()
 
 	//CREATE WRITER
 	WriterAttributes watt;
-	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);
+	watt.endpoint.reliabilityKind = BEST_EFFORT;
+	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history);
 	if(mp_writer == nullptr)
 		return false;
 
+	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
+	RemoteReaderAttributes ratt;
+	Locator_t loc;
+	loc.set_IP4_address(ip);
+	loc.port = port;
+	ratt.endpoint.multicastLocatorList.push_back(loc);
+	mp_writer->matched_reader_add(ratt);
 	return true;
 }
 
-bool TestWriter::reg()
+void TestWriterSocket::run(uint16_t nmsgs)
 {
-	cout << "Registering Writer" << endl;
-	TopicAttributes Tatt;
-	Tatt.topicKind = NO_KEY;
-	Tatt.topicDataType = "string";
-	Tatt.topicName = "exampleTopic";
-	WriterQos Wqos;
-	return mp_participant->registerWriter(mp_writer, Tatt, Wqos);
-}
-
-
-void TestWriter::run()
-{
-	cout << "Waiting for matched Readers" << endl;
-	while (m_listener.n_matched==0)
-	{
-		eClock::my_sleep(250);
-	}
-
-	for(int i = 0;i<10;++i )
+	for(int i = 0;i<nmsgs;++i )
 	{
 		CacheChange_t * ch = mp_writer->new_change(ALIVE);
 #if defined(_WIN32)

@@ -17,6 +17,9 @@
 #include "fastrtps/fastrtps_fwd.h"
 #include "fastrtps/publisher/PublisherListener.h"
 #include "fastrtps/subscriber/SubscriberListener.h"
+#include "types/MetaTestTypes.h"
+#include "types/MetaTestTypesPubSubType.h"
+
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
@@ -32,7 +35,7 @@ private:
 	Participant* mp_par;
 	Publisher* mp_pub;
 	Subscriber* mp_sub;
-
+	MetaTestTypesPubSubType m_dataType;
 	class MyPubListen : public PublisherListener
 	{
 	public:
@@ -40,7 +43,12 @@ private:
 		~MyPubListen(){};
 		void onPublicationMatched(Publisher* pub,MatchingInfo info)
 		{
-			if(info.status == MATCHED_MATCHING) n_matched++;
+
+			if(info.status == MATCHED_MATCHING)
+			{
+				n_matched++;
+				cout << "Publication Matched"<<endl;
+			}
 			else if(info.status == REMOVED_MATCHING) n_matched--;
 		}
 		int n_matched;
@@ -50,14 +58,22 @@ private:
 	public:
 		MySubListen():n_matched(0){};
 		~MySubListen(){};
-		void onSubscriptionMatched(Publisher* pub,MatchingInfo info)
+		void onSubscriptionMatched(Subscriber* pub,MatchingInfo info)
 		{
-			if(info.status == MATCHED_MATCHING) n_matched++;
+			if(info.status == MATCHED_MATCHING){
+				n_matched++;
+				cout << "Subscription Matched"<<endl;
+			}
 			else if(info.status == REMOVED_MATCHING) n_matched--;
 		}
-		void onNewDataMessage(Subscriber* sub);
+		//void onNewDataMessage(Subscriber* sub);
 		int n_matched;
 	}m_sublisten;
+
+	//TEST METHODS:
+	void t_rtps_socket(MetaTestType& testinfo);
+	void t_rtps_reliable(MetaTestType& testinfo);
+
 };
 
 } /* namespace eprosima */

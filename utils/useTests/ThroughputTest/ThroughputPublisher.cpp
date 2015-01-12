@@ -122,10 +122,10 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.historyQos.depth = 10000;
 	Wparam.topic.resourceLimitsQos.max_samples = 100000;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 100000;
-	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(5);
-	Wparam.times.nackSupressionDuration.seconds = 0;
-	Wparam.times.nackSupressionDuration.fraction = 0;
+	Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
+	Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
 	mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 
 

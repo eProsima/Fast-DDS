@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file TestReader.cpp
+ * @file TestReaderRegistered.cpp
  *
  */
 
-#include "TestReader.h"
+#include "TestReaderRegistered.h"
 
 #include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
@@ -29,7 +29,7 @@
 using namespace eprosima;
 using namespace fastrtps;
 
-TestReader::TestReader():
+TestReaderRegistered::TestReaderRegistered():
 mp_participant(nullptr),
 mp_reader(nullptr),
 mp_history(nullptr)
@@ -38,13 +38,13 @@ mp_history(nullptr)
 
 }
 
-TestReader::~TestReader()
+TestReaderRegistered::~TestReaderRegistered()
 {
 	RTPSDomain::removeRTPSParticipant(mp_participant);
 	delete(mp_history);
 }
 
-bool TestReader::init()
+bool TestReaderRegistered::init()
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
@@ -69,7 +69,7 @@ bool TestReader::init()
 	return true;
 }
 
-bool TestReader::reg()
+bool TestReaderRegistered::reg()
 {
 	cout << "Registering Reader" << endl;
 	TopicAttributes Tatt;
@@ -80,13 +80,13 @@ bool TestReader::reg()
 	return mp_participant->registerReader(mp_reader, Tatt, Rqos);
 }
 
-void TestReader::run()
+void TestReaderRegistered::run()
 {
 	printf("Press Enter to stop the Reader.\n");
 	std::cin.ignore();
 }
 
-void TestReader::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
+void TestReaderRegistered::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
 {
 	printf("Received: %s\n",change->serializedPayload.data);
 	reader->getHistory()->remove_change((CacheChange_t*)change);
