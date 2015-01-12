@@ -1,7 +1,7 @@
 enum TestKind
 {
 	T_RTPS_SOCKET,
-	T_RTPS_RE,
+	T_RTPS_REG,
 	T_CLIENT_SERVER,
 	T_HELLOWORLD,
 	STOP_ALL_TESTS
@@ -25,5 +25,6 @@ struct MetaTestType
 	string ip_string;
 	short ip_port;
 	short samples;
+	string comment;
 
 };

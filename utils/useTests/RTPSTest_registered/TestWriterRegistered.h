@@ -28,7 +28,7 @@ public:
 	WriterHistory* mp_history;
 	bool init(); //Initialize writer
 	bool reg(); //Register the Writer
-	void run(); //Run the Writer
+	void run(uint16_t samples); //Run the Writer
 	class MyListener :public WriterListener
 	{
 	public:

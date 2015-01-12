@@ -58,7 +58,7 @@ int main(int argc, char** argv){
 	{
 		TestWriterRegistered TW;
 		if(TW.init() && TW.reg())
-			TW.run();
+			TW.run(10);
 		break;
 	}
 	case 2:

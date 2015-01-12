@@ -31,6 +31,7 @@ MetaTestType::MetaTestType()
     m_ip_string = "";
     m_ip_port = 0;
     m_samples = 0;
+    m_comment = "";
 }
 
 MetaTestType::~MetaTestType()
@@ -44,6 +45,7 @@ MetaTestType::MetaTestType(const MetaTestType &x)
     m_ip_string = x.m_ip_string;
     m_ip_port = x.m_ip_port;
     m_samples = x.m_samples;
+    m_comment = x.m_comment;
 }
 
 MetaTestType::MetaTestType(MetaTestType &&x)
@@ -53,6 +55,7 @@ MetaTestType::MetaTestType(MetaTestType &&x)
     m_ip_string = x.m_ip_string;
     m_ip_port = x.m_ip_port;
     m_samples = x.m_samples;
+    m_comment = x.m_comment;
 }
 
 MetaTestType& MetaTestType::operator=(const MetaTestType &x)
@@ -62,6 +65,7 @@ MetaTestType& MetaTestType::operator=(const MetaTestType &x)
     m_ip_string = x.m_ip_string;
     m_ip_port = x.m_ip_port;
     m_samples = x.m_samples;
+    m_comment = x.m_comment;
     
     return *this;
 }
@@ -73,6 +77,7 @@ MetaTestType& MetaTestType::operator=(MetaTestType &&x)
     m_ip_string = x.m_ip_string;
     m_ip_port = x.m_ip_port;
     m_samples = x.m_samples;
+    m_comment = x.m_comment;
     
     return *this;
 }
@@ -86,6 +91,7 @@ size_t MetaTestType::getMaxCdrSerializedSize(size_t current_alignment)
     current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + 255 + 1;
     current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
     current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
+    current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + 255 + 1;
 
     return current_align;
 }
@@ -116,6 +122,10 @@ void MetaTestType::serialize(eprosima::fastcdr::Cdr &scdr) const
 
     scdr << m_samples;
 
+    if(m_comment.length() <= 255)
+    scdr << m_comment;
+    else
+        throw eprosima::fastcdr::exception::BadParamException("comment field exceeds the maximum length");
 }
 
 void MetaTestType::deserialize(eprosima::fastcdr::Cdr &dcdr)
@@ -125,10 +135,12 @@ void MetaTestType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ip_string;
     dcdr >> m_ip_port;
     dcdr >> m_samples;
+    dcdr >> m_comment;
 }
 
 void MetaTestType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
+	 
 	 
 	 
 	 

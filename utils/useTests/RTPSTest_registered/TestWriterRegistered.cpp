@@ -83,7 +83,7 @@ bool TestWriterRegistered::reg()
 }
 
 
-void TestWriterRegistered::run()
+void TestWriterRegistered::run(uint16_t samples)
 {
 	cout << "Waiting for matched Readers" << endl;
 	while (m_listener.n_matched==0)
@@ -91,7 +91,7 @@ void TestWriterRegistered::run()
 		eClock::my_sleep(250);
 	}
 
-	for(int i = 0;i<10;++i )
+	for(int i = 0;i<samples;++i )
 	{
 		CacheChange_t * ch = mp_writer->new_change(ALIVE);
 #if defined(_WIN32)

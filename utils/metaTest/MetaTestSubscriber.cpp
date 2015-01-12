@@ -18,6 +18,7 @@
 //TESTS INCLUDE FILES
 
 #include "../useTests/RTPSTest_as_socket/TestReaderSocket.h"
+#include "../useTests/RTPSTest_registered/TestReaderRegistered.h"
 
 namespace eprosima {
 
@@ -43,7 +44,7 @@ bool MetaTestSubscriber::init()
 
 	mp_par = Domain::createParticipant(Patt);
 	if(mp_par == nullptr)
-			return false;
+		return false;
 	Domain::registerType(mp_par,&m_dataType);
 
 	PublisherAttributes Wparam;
@@ -78,14 +79,60 @@ void MetaTestSubscriber::run()
 			{
 			case T_RTPS_SOCKET:
 				t_rtps_socket(testinfo);
-			case T_RTPS_RE:
-				t_rtps_reliable(testinfo);
+				break;
+			case T_RTPS_REG:
+				t_rtps_registered(testinfo);
+				break;
 			case STOP_ALL_TESTS:
 				return;
 			}
 		}
 	}
 }
+
+void MetaTestSubscriber::t_rtps_registered(MetaTestType& testinfo)
+{
+	logUser("Starting TEST RTPS REGISTERED");
+	TestReaderRegistered trreg;
+	SampleInfo_t sampleinfo;
+	if(trreg.init() && trreg.reg())
+	{
+		while (trreg.m_listener.n_matched==0)
+		{
+			eClock::my_sleep(100);
+		}
+		testinfo.status(T_SUB_READY);
+		mp_pub->write(&testinfo);
+		mp_sub->waitForUnreadMessage();
+		if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+		{
+			if(testinfo.status() == T_PUB_FINISH)
+			{
+				logUser("Publisher has finished (" << testinfo.samples() << " samples send), I received: "
+						<<trreg.m_listener.n_received);
+				if(trreg.m_listener.n_received == testinfo.samples())
+				{
+					testinfo.status(T_SUB_OK);
+					mp_pub->write(&testinfo);
+					return;
+				}
+				else
+					testinfo.comment("Bad samples number received");
+			}
+			else
+				testinfo.comment("Received bad finish code");
+		}
+		else
+			testinfo.comment("Meta Error");
+	}
+	else
+		testinfo.comment("Subscriber Initialization failure");
+	testinfo.status(T_SUB_FAILED);
+	mp_pub->write(&testinfo);
+	return;
+}
+
+
 
 void MetaTestSubscriber::t_rtps_socket(MetaTestType& testinfo)
 {
@@ -99,23 +146,32 @@ void MetaTestSubscriber::t_rtps_socket(MetaTestType& testinfo)
 		mp_sub->waitForUnreadMessage();
 		if(mp_sub->takeNextData(&testinfo,&sampleinfo))
 		{
-			if(testinfo.status() == T_PUB_FINISH && tsocket.m_listener.m_received == testinfo.samples())
+			if(testinfo.status() == T_PUB_FINISH)
 			{
-				testinfo.status(T_SUB_OK);
-				mp_pub->write(&testinfo);
-				return;
+				logUser("Publisher has finished (" << testinfo.samples() << " samples send), I received: "
+						<<tsocket.m_listener.m_received);
+				if(tsocket.m_listener.m_received == testinfo.samples())
+				{
+					testinfo.status(T_SUB_OK);
+					mp_pub->write(&testinfo);
+					return;
+				}
+				else
+					testinfo.comment("Bad samples number received");
 			}
+			else
+				testinfo.comment("Received bad finish code");
 		}
+		else
+			testinfo.comment("Meta Error");
 	}
+	else
+		testinfo.comment("Subscriber Initialization failure");
 	testinfo.status(T_SUB_FAILED);
 	mp_pub->write(&testinfo);
 	return;
 }
 
-void MetaTestSubscriber::t_rtps_reliable(MetaTestType& testinfo)
-{
-
-}
 
 
 } /* namespace eprosima */

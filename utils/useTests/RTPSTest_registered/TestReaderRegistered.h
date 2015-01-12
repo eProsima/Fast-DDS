@@ -32,9 +32,15 @@ public:
 	class MyListener:public ReaderListener
 	{
 	public:
-		MyListener(){};
+		MyListener():n_received(0),n_matched(0){};
 		~MyListener(){};
 		void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
+		void onReaderMatched(RTPSReader* reader,MatchingInfo info)
+		{
+			if(info.status == MATCHED_MATCHING) n_matched++;
+		};
+		uint32_t n_received;
+		uint32_t n_matched;
 	}m_listener;
 };
 
