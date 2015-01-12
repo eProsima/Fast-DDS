@@ -1,17 +1,29 @@
 enum TestKind
 {
-	T_RTPS
+	T_RTPS_SOCKET,
+	T_RTPS_RE,
+	T_CLIENT_SERVER,
+	T_HELLOWORLD,
+	STOP_ALL_TESTS
 };
 
-union TestInfo switch(TestKind)
+enum TestStatus
 {
-	case T_RTPS:
-		string t_rtps_ip;
-};
+	T_PUB_STARTS,
+	T_SUB_READY,
+	T_SUB_FAILED,
+	T_SUB_OK,
+	T_PUB_FINISH
+	
 
+};
 
 struct MetaTestType
 {
-	TestInfo info;
+	TestKind kind;
+	TestStatus status;
+	string ip_string;
+	short ip_port;
+	short samples;
 
 };

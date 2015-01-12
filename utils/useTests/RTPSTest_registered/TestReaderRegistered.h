@@ -7,22 +7,22 @@
  *************************************************************************/
 
 /**
- * @file TestReader.h
+ * @file TestReaderRegistered.h
  *
  */
 
-#ifndef TESTREADER_H_
-#define TESTREADER_H_
+#ifndef TESTREADERREGISTERED_H_
+#define TESTREADERREGISTERED_H_
 
 #include "fastrtps/rtps/rtps_fwd.h"
 using namespace eprosima::fastrtps::rtps;
 
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
-class TestReader {
+class TestReaderRegistered {
 public:
-	TestReader();
-	virtual ~TestReader();
+	TestReaderRegistered();
+	virtual ~TestReaderRegistered();
 	RTPSParticipant* mp_participant;
 	RTPSReader* mp_reader;
 	ReaderHistory* mp_history;

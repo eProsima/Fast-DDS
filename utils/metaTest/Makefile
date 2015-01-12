@@ -39,12 +39,18 @@ METATEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/MetaTest
 METATEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(BASEDIR)/../../../thirdparty/eprosima-common-code
 
-METATEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time
-METATEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time
+METATEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time -lfastcdr
+METATEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time -lfastcdr
 
 METATEST_SRC_CFILES=
 
-METATEST_SRC_CPPFILES= $(BASEDIR)/../../
+METATEST_SRC_CPPFILES=  $(BASEDIR)/main_MetaTest.cpp \
+						$(BASEDIR)/MetaTestPublisher.cpp \
+						$(BASEDIR)/MetaTestSubscriber.cpp \
+						$(BASEDIR)/types/MetaTestTypes.cpp \
+						$(BASEDIR)/MetaTestTypesPubSubType.cpp \
+						$(BASEDIR)/../useTests/RTPSTest_as_socket/TestReaderSocket.cpp \
+						$(BASEDIR)/../useTests/RTPSTest_as_socket/TestWriterSocket.cpp 
 
 # Project sources are copied to the current directory
 METATEST_SRCS= $(METATEST_SRC_CFILES) $(METATEST_SRC_CPPFILES)

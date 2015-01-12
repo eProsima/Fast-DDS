@@ -7,34 +7,36 @@
  *************************************************************************/
 
 /**
- * @file TestReader.h
+ * @file TestReaderSocket.h
  *
  */
 
-#ifndef TESTREADER_H_
-#define TESTREADER_H_
+#ifndef TESTREADERSOCKET_H_
+#define TESTREADERSOCKET_H_
 
 #include "fastrtps/rtps/rtps_fwd.h"
 using namespace eprosima::fastrtps::rtps;
 
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
-class TestReader {
+class TestReaderSocket {
 public:
-	TestReader();
-	virtual ~TestReader();
+	TestReaderSocket();
+	virtual ~TestReaderSocket();
 	RTPSParticipant* mp_participant;
 	RTPSReader* mp_reader;
 	ReaderHistory* mp_history;
-	bool init();
+	bool init(std::string ip,uint32_t port);
 	void run();
 	class MyListener:public ReaderListener
 	{
 	public:
-		MyListener(){};
+		MyListener():m_received(0){};
 		~MyListener(){};
 		void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
+		uint32_t m_received;
 	}m_listener;
+
 };
 
 #endif /* TESTREADER_H_ */

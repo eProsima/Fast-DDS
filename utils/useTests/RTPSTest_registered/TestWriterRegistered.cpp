@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file TestWriter.cpp
+ * @file TestWriterRegistered.cpp
  *
  */
 
-#include "TestWriter.h"
+#include "TestWriterRegistered.h"
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
@@ -23,8 +23,16 @@
 
 #include "fastrtps/rtps/history/WriterHistory.h"
 
+#include "fastrtps/attributes/TopicAttributes.h"
+#include "fastrtps/qos/WriterQos.h"
 
-TestWriter::TestWriter():
+#include "fastrtps/utils/eClock.h"
+
+using namespace eprosima;
+using namespace fastrtps;
+
+
+TestWriterRegistered::TestWriterRegistered():
 mp_participant(nullptr),
 mp_writer(nullptr),
 mp_history(nullptr)
@@ -33,18 +41,18 @@ mp_history(nullptr)
 
 }
 
-TestWriter::~TestWriter()
+TestWriterRegistered::~TestWriterRegistered()
 {
 	RTPSDomain::removeRTPSParticipant(mp_participant);
 	delete(mp_history);
 }
 
-bool TestWriter::init()
+bool TestWriterRegistered::init()
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
-	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
-	PParam.builtin.use_WriterLivelinessProtocol = false;
+	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+	PParam.builtin.use_WriterLivelinessProtocol = true;
 	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant==nullptr)
 		return false;
@@ -56,23 +64,33 @@ bool TestWriter::init()
 
 	//CREATE WRITER
 	WriterAttributes watt;
-	watt.endpoint.reliabilityKind = BEST_EFFORT;
-	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history);
+	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);
 	if(mp_writer == nullptr)
 		return false;
 
-	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
-	RemoteReaderAttributes ratt;
-	Locator_t loc;
-	loc.set_IP4_address(235,240,0,1);
-	loc.port = 22222;
-	ratt.endpoint.multicastLocatorList.push_back(loc);
-	mp_writer->matched_reader_add(ratt);
 	return true;
 }
 
-void TestWriter::run()
+bool TestWriterRegistered::reg()
 {
+	cout << "Registering Writer" << endl;
+	TopicAttributes Tatt;
+	Tatt.topicKind = NO_KEY;
+	Tatt.topicDataType = "string";
+	Tatt.topicName = "exampleTopic";
+	WriterQos Wqos;
+	return mp_participant->registerWriter(mp_writer, Tatt, Wqos);
+}
+
+
+void TestWriterRegistered::run()
+{
+	cout << "Waiting for matched Readers" << endl;
+	while (m_listener.n_matched==0)
+	{
+		eClock::my_sleep(250);
+	}
+
 	for(int i = 0;i<10;++i )
 	{
 		CacheChange_t * ch = mp_writer->new_change(ALIVE);
