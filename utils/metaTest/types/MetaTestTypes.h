@@ -48,7 +48,7 @@ namespace eprosima
 enum TestKind : uint32_t
 {
     T_RTPS_SOCKET,
-    T_RTPS_RE,
+    T_RTPS_REG,
     T_CLIENT_SERVER,
     T_HELLOWORLD,
     STOP_ALL_TESTS
@@ -237,6 +237,32 @@ public:
     {
         return m_samples;
     }
+    /*!
+     * @brief This function sets a value in member comment
+     * @param _comment New value for member comment
+     */
+    inline eProsima_user_DllExport void comment(std::string _comment)
+    {
+        m_comment = _comment;
+    }
+
+    /*!
+     * @brief This function returns the value of member comment
+     * @return Value of member comment
+     */
+    inline eProsima_user_DllExport std::string comment() const
+    {
+        return m_comment;
+    }
+
+    /*!
+     * @brief This function returns a reference to member comment
+     * @return Reference to member comment
+     */
+    inline eProsima_user_DllExport std::string& comment()
+    {
+        return m_comment;
+    }
     
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -284,6 +310,7 @@ private:
     std::string m_ip_string;
     int16_t m_ip_port;
     int16_t m_samples;
+    std::string m_comment;
 };
 
 #endif // _MetaTestTypes_H_

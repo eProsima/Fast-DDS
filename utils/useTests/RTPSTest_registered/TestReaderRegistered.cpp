@@ -90,4 +90,5 @@ void TestReaderRegistered::MyListener::onNewCacheChangeAdded(RTPSReader* reader,
 {
 	printf("Received: %s\n",change->serializedPayload.data);
 	reader->getHistory()->remove_change((CacheChange_t*)change);
+	n_received++;
 }

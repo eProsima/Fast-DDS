@@ -24,6 +24,7 @@
 //TESTS INCLUDE FILES
 
 #include "../useTests/RTPSTest_as_socket/TestWriterSocket.h"
+#include "../useTests/RTPSTest_registered/TestWriterRegistered.h"
 
 namespace eprosima {
 
@@ -76,7 +77,10 @@ void MetaTestPublisher::run()
 	while(m_publisten.n_matched == 0 || m_sublisten.n_matched == 0)
 		eClock::my_sleep(300);
 	std::stringstream ss;
-	ss << "T_RTPS_SOCKET " << t_rtps_socket() << endl;
+	//RUN ALL TESTS
+	ss << "T_RTPS_REGISTERED: " << t_rtps_registered() << endl;
+	ss << "T_RTPS_SOCKET    : " << t_rtps_socket() << endl;
+
 
 
 	MetaTestType testinfo;
@@ -84,10 +88,45 @@ void MetaTestPublisher::run()
 	mp_pub->write(&testinfo);
 
 
-	//	cout << "TEST SUMMARY "<<endl;
-	//	std::cout << ss.str() << endl;
 	logUser("TEST SUMMARY"<<endl<<ss.str());
 }
+
+std::string MetaTestPublisher::t_rtps_registered()
+{
+	logUser("Starting TEST RTPS REGISTERED");
+	MetaTestType testinfo;
+	SampleInfo_t sampleinfo;
+	testinfo.kind(T_RTPS_REG);
+	mp_pub->write(&testinfo);
+	TestWriterRegistered twreg;
+	if(twreg.init() && twreg.reg())
+	{
+		mp_sub->waitForUnreadMessage();
+		if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+		{
+			if(testinfo.status() == T_SUB_READY)
+			{
+				twreg.run(10);
+				eClock::my_sleep(150);
+				testinfo.status(T_PUB_FINISH);
+				testinfo.samples(10);
+				mp_pub->write(&testinfo);
+				mp_sub->waitForUnreadMessage();
+				if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+				{
+					if(testinfo.status() == T_SUB_OK)
+						return "OK";
+					else
+						return "Subscriber Failed";
+				}
+				return "META ERROR";
+			}
+		}
+	}
+	return " Writer not initialized";
+}
+
+
 
 std::string MetaTestPublisher::t_rtps_socket()
 {
@@ -110,6 +149,7 @@ std::string MetaTestPublisher::t_rtps_socket()
 			if(tsocket.init("239.255.1.4",port))
 			{
 				tsocket.run(10);
+				eClock::my_sleep(150);
 				testinfo.status(T_PUB_FINISH);
 				testinfo.samples(10);
 				mp_pub->write(&testinfo);
@@ -119,7 +159,11 @@ std::string MetaTestPublisher::t_rtps_socket()
 					if(testinfo.status() == T_SUB_OK)
 						return "OK";
 					else
-						return "FAILED";
+					{
+						std::stringstream ss;
+						ss << "FAILED "<<testinfo.comment();
+						return ss.str();
+					}
 				}
 			}
 			else
@@ -129,22 +173,15 @@ std::string MetaTestPublisher::t_rtps_socket()
 		}
 		else if(testinfo.status() == T_SUB_FAILED)
 		{
-			return "Reader FAILED Initialization";
+			std::stringstream ss;
+			ss << "FAILED "<<testinfo.comment();
+			return ss.str();
 		}
 	}
 	return "META ERROR";
 }
 
-std::string MetaTestPublisher::t_rtps_reliable()
-{
-	logUser("Starting TEST RTPS SOCKET");
-	MetaTestType testinfo;
-	testinfo.kind(T_RTPS_RE);
 
-
-
-	return "META ERROR";
-}
 
 
 } /* namespace eprosima */
