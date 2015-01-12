@@ -99,7 +99,7 @@ void TestWriterRegistered::run(uint16_t samples)
 			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
 #else
 		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %d",i);
+			sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
 #endif
 		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
 		mp_history->add_change(ch);
