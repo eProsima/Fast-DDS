@@ -17,61 +17,64 @@
 #include <sstream>
 
 #include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/rtps/RTPSDomain.h"
 
-#include "TestWriterSocket.h"
-#include "TestReaderSocket.h"
+#include "MetaTestPublisher.h"
+#include "MetaTestSubscriber.h"
+
 
 using namespace eprosima;
-using namespace fastrtps;
-using namespace rtps;
 using namespace std;
 
 
 int main(int argc, char** argv){
 	Log::setVerbosity(VERB_ERROR);
+	#if defined(_DEBUG)
+	Log::setVerbosity(VERB_INFO);
+#endif
+
+
+	Log::logFileName("MetaTest",true);
 
 	logUser("Starting");
 	int type;
 	if(argc > 1)
 	{
-		if(strcmp(argv[1],"writer")==0)
+		if(strcmp(argv[1],"publisher")==0)
 			type = 1;
-		else if(strcmp(argv[1],"reader")==0)
+		else if(strcmp(argv[1],"subscriber")==0)
 			type = 2;
 		else
 		{
-			cout << "NEEDS writer OR reader as first argument"<<endl;
+			cout << "NEEDS publisher OR subscriber as first argument"<<endl;
 			return 0;
 		}
 	}
 	else
 	{
-		cout << "NEEDS writer OR reader ARGUMENT"<<endl;
-		cout << "RTPSTest writer"<<endl;
-		cout << "RTPSTest reader" <<endl;
+		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
+		cout << "MetaTest publisher"<<endl;
+		cout << "MetaTest subscriber" <<endl;
 		return 0;
 	}
 	switch (type)
 	{
 	case 1:
 	{
-		TestWriterSocket TW;
-		if(TW.init("239.255.1.4",22222))
-			TW.run(10);
+		MetaTestPublisher mPub;
+		if(mPub.init())
+			mPub.run();
 		break;
 	}
 	case 2:
 	{
-		TestReaderSocket TR;
-		if(TR.init("239.255.1.4",22222))
-			TR.run();
+		MetaTestSubscriber mSub;
+		if(mSub.init())
+			mSub.run();
 		break;
 	}
 	}
 
-	RTPSDomain::stopAll();
-	cout << "EVERYTHING STOPPED FINE"<<endl;
+
 
 	return 0;
 }

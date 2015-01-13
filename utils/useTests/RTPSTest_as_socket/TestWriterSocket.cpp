@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file TestWriter.cpp
+ * @file TestWriterSocket.cpp
  *
  */
 
-#include "TestWriter.h"
+#include "TestWriterSocket.h"
 
 #include "fastrtps/rtps/writer/RTPSWriter.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
@@ -24,7 +24,7 @@
 #include "fastrtps/rtps/history/WriterHistory.h"
 
 
-TestWriter::TestWriter():
+TestWriterSocket::TestWriterSocket():
 mp_participant(nullptr),
 mp_writer(nullptr),
 mp_history(nullptr)
@@ -33,13 +33,13 @@ mp_history(nullptr)
 
 }
 
-TestWriter::~TestWriter()
+TestWriterSocket::~TestWriterSocket()
 {
 	RTPSDomain::removeRTPSParticipant(mp_participant);
 	delete(mp_history);
 }
 
-bool TestWriter::init()
+bool TestWriterSocket::init(std::string ip, uint32_t port)
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
@@ -64,16 +64,16 @@ bool TestWriter::init()
 	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
 	RemoteReaderAttributes ratt;
 	Locator_t loc;
-	loc.set_IP4_address(235,240,0,1);
-	loc.port = 22222;
+	loc.set_IP4_address(ip);
+	loc.port = port;
 	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_writer->matched_reader_add(ratt);
 	return true;
 }
 
-void TestWriter::run()
+void TestWriterSocket::run(uint16_t nmsgs)
 {
-	for(int i = 0;i<10;++i )
+	for(int i = 0;i<nmsgs;++i )
 	{
 		CacheChange_t * ch = mp_writer->new_change(ALIVE);
 #if defined(_WIN32)
@@ -81,7 +81,7 @@ void TestWriter::run()
 			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
 #else
 		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %d",i);
+			sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
 #endif
 		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
 		mp_history->add_change(ch);

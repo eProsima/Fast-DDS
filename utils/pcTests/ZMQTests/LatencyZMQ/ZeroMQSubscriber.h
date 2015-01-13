@@ -28,7 +28,7 @@ class ZeroMQSubscriber {
 public:
 	ZeroMQSubscriber();
 	virtual ~ZeroMQSubscriber();
-	bool init(string pubip, int n_samples=1000);
+	bool init(int n_sub,string pubip, int n_samples=1000);
 	void run();
 	bool test(uint32_t datasize);
 private:
@@ -38,6 +38,7 @@ private:
 	zmq::socket_t* mp_datasub;
 	zmq::socket_t* mp_commandsub;
 	int n_samples;
+	int n_sub;
 };
 
 #endif /* ZEROMQSUBSCRIBER_H_ */

@@ -19,8 +19,8 @@
 #include "fastrtps/utils/RTPSLog.h"
 #include "fastrtps/rtps/RTPSDomain.h"
 
-#include "TestWriter.h"
-#include "TestReader.h"
+#include "TestWriterRegistered.h"
+#include "TestReaderRegistered.h"
 
 using namespace eprosima;
 using namespace fastrtps;
@@ -56,14 +56,14 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		TestWriter TW;
+		TestWriterRegistered TW;
 		if(TW.init() && TW.reg())
-			TW.run();
+			TW.run(10);
 		break;
 	}
 	case 2:
 	{
-		TestReader TR;
+		TestReaderRegistered TR;
 		if(TR.init() && TR.reg())
 			TR.run();
 		break;

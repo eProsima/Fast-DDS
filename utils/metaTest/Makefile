@@ -39,12 +39,20 @@ METATEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/MetaTest
 METATEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          -I$(BASEDIR)/../../../thirdparty/eprosima-common-code
 
-METATEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time
-METATEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time
+METATEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time -lfastcdr
+METATEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time -lfastcdr
 
 METATEST_SRC_CFILES=
 
-METATEST_SRC_CPPFILES= $(BASEDIR)/../../
+METATEST_SRC_CPPFILES=  $(BASEDIR)/main_MetaTest.cpp \
+						$(BASEDIR)/MetaTestPublisher.cpp \
+						$(BASEDIR)/MetaTestSubscriber.cpp \
+						$(BASEDIR)/types/MetaTestTypes.cxx \
+						$(BASEDIR)/MetaTestTypesPubSubType.cpp \
+						$(BASEDIR)/../useTests/RTPSTest_as_socket/TestReaderSocket.cpp \
+						$(BASEDIR)/../useTests/RTPSTest_as_socket/TestWriterSocket.cpp \
+						$(BASEDIR)/../useTests/RTPSTest_registered/TestWriterRegistered.cpp \
+						$(BASEDIR)/../useTests/RTPSTest_registered/TestReaderRegistered.cpp 
 
 # Project sources are copied to the current directory
 METATEST_SRCS= $(METATEST_SRC_CFILES) $(METATEST_SRC_CPPFILES)
@@ -81,6 +89,7 @@ $(METATEST_TARGET): $(METATEST_OBJS_RELEASE)
 
 vpath %.c $(METATEST_SOURCES_DIRS)
 vpath %.cpp $(METATEST_SOURCES_DIRS)
+vpath %.cxx $(METATEST_SOURCES_DIRS)
 
 $(METATEST_OUTDIR_DEBUG)/%.o:%.c
 	@echo Calculating dependencies \(DEBUG mode\) $<
@@ -113,6 +122,18 @@ $(METATEST_OUTDIR_DEBUG)/%.cpp.o:%.cpp
 	@$(CPP) $(METATEST_CFLAGS_DEBUG) $(METATEST_INCLUDE_DIRS) $< -o $@
 
 $(METATEST_OUTDIR_RELEASE)/%.cpp.o:%.cpp
+	@echo Calculating dependencies \(RELEASE mode\) $<
+	@$(CPP) $(METATEST_CFLAGS) -MM $(METATEST_CFLAGS) $(METATEST_INCLUDE_DIRS) $< | sed "s/^.*:/$(METATEST_SED_OUTPUT_DIR_RELEASE)\/&/g" > $(@:%.o=%.d)
+	@echo Compiling \(RELEASE mode\) $<
+	@$(CPP) $(METATEST_CFLAGS) $(METATEST_INCLUDE_DIRS) $< -o $@
+	
+$(METATEST_OUTDIR_DEBUG)/%.cxx.o:%.cxx
+	@echo Calculating dependencies \(DEBUG mode\) $<
+	@$(CPP) $(METATEST_CFLAGS_DEBUG) -MM $(METATEST_INCLUDE_DIRS) $< | sed "s/^.*:/$(METATEST_SED_OUTPUT_DIR_DEBUG)\/&/g" > $(@:%.o=%.d)
+	@echo Compiling \(DEBUG mode\) $<
+	@$(CPP) $(METATEST_CFLAGS_DEBUG) $(METATEST_INCLUDE_DIRS) $< -o $@
+
+$(METATEST_OUTDIR_RELEASE)/%.cxx.o:%.cxx
 	@echo Calculating dependencies \(RELEASE mode\) $<
 	@$(CPP) $(METATEST_CFLAGS) -MM $(METATEST_CFLAGS) $(METATEST_INCLUDE_DIRS) $< | sed "s/^.*:/$(METATEST_SED_OUTPUT_DIR_RELEASE)\/&/g" > $(@:%.o=%.d)
 	@echo Compiling \(RELEASE mode\) $<

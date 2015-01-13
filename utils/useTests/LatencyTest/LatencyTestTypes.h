@@ -17,7 +17,6 @@
 #include "fastrtps/fastrtps_all.h"
 
 
-
 class LatencyType{
 public:
 	uint32_t seqnum;
@@ -60,7 +59,7 @@ public:
 	LatencyDataType()
 {
 		setName("LatencyType");
-		m_typeSize = 15000;
+		m_typeSize = 17000;
 		m_isGetKeyDefined = false;
 };
 	~LatencyDataType(){};

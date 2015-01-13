@@ -7,22 +7,22 @@
  *************************************************************************/
 
 /**
- * @file TestReader.h
+ * @file TestReaderRegistered.h
  *
  */
 
-#ifndef TESTREADER_H_
-#define TESTREADER_H_
+#ifndef TESTREADERREGISTERED_H_
+#define TESTREADERREGISTERED_H_
 
 #include "fastrtps/rtps/rtps_fwd.h"
 using namespace eprosima::fastrtps::rtps;
 
 #include "fastrtps/rtps/reader/ReaderListener.h"
 
-class TestReader {
+class TestReaderRegistered {
 public:
-	TestReader();
-	virtual ~TestReader();
+	TestReaderRegistered();
+	virtual ~TestReaderRegistered();
 	RTPSParticipant* mp_participant;
 	RTPSReader* mp_reader;
 	ReaderHistory* mp_history;
@@ -32,9 +32,15 @@ public:
 	class MyListener:public ReaderListener
 	{
 	public:
-		MyListener(){};
+		MyListener():n_received(0),n_matched(0){};
 		~MyListener(){};
 		void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
+		void onReaderMatched(RTPSReader* reader,MatchingInfo info)
+		{
+			if(info.status == MATCHED_MATCHING) n_matched++;
+		};
+		uint32_t n_received;
+		uint32_t n_matched;
 	}m_listener;
 };
 

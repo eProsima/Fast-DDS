@@ -7,47 +7,44 @@
  *************************************************************************/
 
 /**
- * @file TestWriter.cpp
+ * @file TestReaderRegistered.cpp
  *
  */
 
-#include "TestWriter.h"
+#include "TestReaderRegistered.h"
 
-#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
 #include "fastrtps/rtps/RTPSDomain.h"
 
 #include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
+#include "fastrtps/rtps/attributes/ReaderAttributes.h"
 #include "fastrtps/rtps/attributes/HistoryAttributes.h"
 
-#include "fastrtps/rtps/history/WriterHistory.h"
+#include "fastrtps/rtps/history/ReaderHistory.h"
 
 #include "fastrtps/attributes/TopicAttributes.h"
-#include "fastrtps/qos/WriterQos.h"
-
-#include "fastrtps/utils/eClock.h"
+#include "fastrtps/qos/ReaderQos.h"
 
 using namespace eprosima;
 using namespace fastrtps;
 
-
-TestWriter::TestWriter():
+TestReaderRegistered::TestReaderRegistered():
 mp_participant(nullptr),
-mp_writer(nullptr),
+mp_reader(nullptr),
 mp_history(nullptr)
 {
 
 
 }
 
-TestWriter::~TestWriter()
+TestReaderRegistered::~TestReaderRegistered()
 {
 	RTPSDomain::removeRTPSParticipant(mp_participant);
 	delete(mp_history);
 }
 
-bool TestWriter::init()
+bool TestReaderRegistered::init()
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
@@ -56,52 +53,42 @@ bool TestWriter::init()
 	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant==nullptr)
 		return false;
-
-	//CREATE WRITERHISTORY
+	//CREATE READERHISTORY
 	HistoryAttributes hatt;
 	hatt.payloadMaxSize = 255;
-	mp_history = new WriterHistory(hatt);
+	mp_history = new ReaderHistory(hatt);
 
-	//CREATE WRITER
-	WriterAttributes watt;
-	mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);
-	if(mp_writer == nullptr)
+	//CREATE READER
+	ReaderAttributes ratt;
+	Locator_t loc(22222);
+	ratt.endpoint.unicastLocatorList.push_back(loc);
+	mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
+	if(mp_reader == nullptr)
 		return false;
 
 	return true;
 }
 
-bool TestWriter::reg()
+bool TestReaderRegistered::reg()
 {
-	cout << "Registering Writer" << endl;
+	cout << "Registering Reader" << endl;
 	TopicAttributes Tatt;
 	Tatt.topicKind = NO_KEY;
 	Tatt.topicDataType = "string";
 	Tatt.topicName = "exampleTopic";
-	WriterQos Wqos;
-	return mp_participant->registerWriter(mp_writer, Tatt, Wqos);
+	ReaderQos Rqos;
+	return mp_participant->registerReader(mp_reader, Tatt, Rqos);
 }
 
-
-void TestWriter::run()
+void TestReaderRegistered::run()
 {
-	cout << "Waiting for matched Readers" << endl;
-	while (m_listener.n_matched==0)
-	{
-		eClock::my_sleep(250);
-	}
+	printf("Press Enter to stop the Reader.\n");
+	std::cin.ignore();
+}
 
-	for(int i = 0;i<10;++i )
-	{
-		CacheChange_t * ch = mp_writer->new_change(ALIVE);
-#if defined(_WIN32)
-		ch->serializedPayload.length =
-			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
-#else
-		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %d",i);
-#endif
-		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
-		mp_history->add_change(ch);
-	}
+void TestReaderRegistered::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
+{
+	printf("Received: %s\n",change->serializedPayload.data);
+	reader->getHistory()->remove_change((CacheChange_t*)change);
+	n_received++;
 }

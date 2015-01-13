@@ -7,11 +7,11 @@
  *************************************************************************/
 
 /**
- * @file TestReader.cpp
+ * @file TestReaderSocket.cpp
  *
  */
 
-#include "TestReader.h"
+#include "TestReaderSocket.h"
 
 #include "fastrtps/rtps/reader/RTPSReader.h"
 #include "fastrtps/rtps/participant/RTPSParticipant.h"
@@ -24,7 +24,7 @@
 #include "fastrtps/rtps/history/ReaderHistory.h"
 
 
-TestReader::TestReader():
+TestReaderSocket::TestReaderSocket():
 mp_participant(nullptr),
 mp_reader(nullptr),
 mp_history(nullptr)
@@ -33,13 +33,13 @@ mp_history(nullptr)
 
 }
 
-TestReader::~TestReader()
+TestReaderSocket::~TestReaderSocket()
 {
 	RTPSDomain::removeRTPSParticipant(mp_participant);
 	delete(mp_history);
 }
 
-bool TestReader::init()
+bool TestReaderSocket::init(std::string ip, uint32_t port)
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
@@ -56,8 +56,8 @@ bool TestReader::init()
 	//CREATE READER
 	ReaderAttributes ratt;
 	Locator_t loc;
-	loc.set_IP4_address(235,240,0,1);
-	loc.port = 22222;
+	loc.set_IP4_address(ip);
+	loc.port = port;
 	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
 	if(mp_reader == nullptr)
@@ -66,15 +66,16 @@ bool TestReader::init()
 	return true;
 }
 
-void TestReader::run()
+void TestReaderSocket::run()
 {
 	printf("Enter number to stop reader.\n");
 	int aux;
 	std::cin >> aux;
 }
 
-void TestReader::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
+void TestReaderSocket::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
 {
 	printf("Received: %s\n",change->serializedPayload.data);
 	reader->getHistory()->remove_change((CacheChange_t*)change);
+	m_received++;
 }
