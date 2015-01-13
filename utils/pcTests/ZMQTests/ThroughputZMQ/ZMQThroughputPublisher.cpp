@@ -171,8 +171,8 @@ bool ZMQThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t si
 		m_Clock.setTimeNow(&m_t2);
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
-		eClock::my_sleep(10);
-		timewait_us+=(uint64_t)m_overhead+10;
+		eClock::my_sleep(5);
+		timewait_us+=(uint64_t)m_overhead+5;
 		//cout << "Removing all..."<<endl;
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
