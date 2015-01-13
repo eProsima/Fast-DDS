@@ -44,9 +44,15 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 int main(int argc, char** argv){
 	Log::setVerbosity(VERB_ERROR);
+//	Log::logFileName("Throughput.txt",true);
+//	Log::setCategoryVerbosity(RTPS_WRITER,VERB_INFO);
+//	Log::setCategoryVerbosity(RTPS_HISTORY,VERB_INFO);
+//	Log::setCategoryVerbosity(RTPS_MSG_OUT,VERB_INFO);
+
 	cout << "Starting Throughput Test"<< endl;
 	int type;
-	uint32_t test_time_sec = 30;
+	uint32_t test_time_sec = 5;
+	int n_subscribers = 1;
 	int demand = 0;
 	int msg_size = 0;
 	if(argc > 1)
@@ -58,24 +64,30 @@ int main(int argc, char** argv){
 		if(argc > 2 && type == 1)
 		{
 			std::istringstream iss( argv[2] );
+			if (!(iss >> n_subscribers) || n_subscribers !=1)
+			{
+				cout << "Currently only 1 subscriber is permitted. "<< endl;
+				n_subscribers = 1;
+			}
+		}
+		if(argc > 3 && type == 1)
+		{
+			std::istringstream iss( argv[3] );
 			if (!(iss >> test_time_sec))
 			{
 				cout << "Problem reading test time,using 30s as default value "<< endl;
-				test_time_sec = 30;
+				test_time_sec = 5;
 			}
 		}
-		if (argc > 3 && type == 1)
+		if (argc > 5 && type == 1)
 		{
-			std::istringstream iss_demand( argv[3] );
+			std::istringstream iss_demand( argv[4] );
 			if (!(iss_demand >> demand))
 			{
 				cout << "Problem reading demand,using default demand vector "<< endl;
 				demand = 0;
 			}
-		}
-		if (argc > 4 && type == 1)
-		{
-			std::istringstream iss_size( argv[4] );
+			std::istringstream iss_size( argv[5] );
 			if (!(iss_size >> msg_size))
 			{
 				cout << "Problem reading msg size,using default size vector "<< endl;
@@ -86,9 +98,14 @@ int main(int argc, char** argv){
 	else
 	{
 		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
+		cout << "Optional arguments in brackets."<<endl;
+		cout << "If no demand or msg_size is provided the .cvs file is used"<<endl;
 		cout << "Usage: "<<endl;
-		cout << "ThroughputTest \"publisher\" seconds demand msg_size"<<endl;
+		cout << "ThroughputTest \"publisher\" [n_subscribers=1] [seconds=5] [demand] [msg_size]"<<endl;
 		cout << "ThroughputTest \"subscriber\""<<endl;
+		cout << "Example: "<< endl;
+		cout << "ThroughputTest publisher 1 5 100 16"<<endl;
+		cout << "ThroughputTest subscriber"<<endl;
 		return 0;
 	}
 

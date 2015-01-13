@@ -32,7 +32,7 @@ int writecalls= 0;
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-										m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
+														m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
 {
 
 };
@@ -67,6 +67,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 		//myfile << latencyin.seqnum << ",";
 		if(info.sampleKind == ALIVE)
 		{
+			//		cout << "R:"<<latencyin->seqnum;//<<std::flush;
 			if((lastseqnum+1)<latencyin->seqnum)
 			{
 				lostsamples+=latencyin->seqnum-lastseqnum-1;
@@ -79,6 +80,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 			cout << "NOT ALIVE DATA RECEIVED"<<endl;
 		}
 	}
+	//	cout << ";O|"<<std::flush;
 }
 
 void ThroughputSubscriber::DataSubListener::saveNumbers()
@@ -113,12 +115,10 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 		{
 		default: break;
 		case (DEFAULT): break;
-		case (BEGIN):
-							{
+		case (BEGIN):{
 			break;
-							}
-		case (READY_TO_START):
-								{
+		}
+		case (READY_TO_START):{
 			m_up.m_datasize = m_commandin.m_size;
 			m_up.m_demand = m_commandin.m_demand;
 			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
@@ -130,14 +130,12 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&command);
 			break;
-								}
-		case (TEST_STARTS):
-							{
+		}
+		case (TEST_STARTS):{
 			m_up.m_Clock.setTimeNow(&m_up.m_t1);
 			break;
-							}
-		case (TEST_ENDS):
-							{
+		}
+		case (TEST_ENDS):{
 			m_up.m_Clock.setTimeNow(&m_up.m_t2);
 			m_up.m_DataSubListener.saveNumbers();
 			//cout << "TEST ends, sending results"<<endl;
@@ -151,9 +149,8 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			//cout << "SEND COMMAND: "<< comm.m_command << endl;
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&comm);
-
 			break;
-							}
+		}
 		case (ALL_STOPS): m_up.sema.post();break;
 		}
 	}
@@ -183,10 +180,10 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* p
 ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
 ThroughputSubscriber::ThroughputSubscriber():
-																sema(0),
+																				sema(0),
 #pragma warning(disable:4355)
-																m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-																ready(true),m_datasize(0),m_demand(0)
+																				m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+																				ready(true),m_datasize(0),m_demand(0)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
@@ -195,8 +192,8 @@ ThroughputSubscriber::ThroughputSubscriber():
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 65536;
-	PParam.rtps.listenSocketBufferSize = 150000;
+	PParam.rtps.sendSocketBufferSize = 655360;
+	PParam.rtps.listenSocketBufferSize = 5*655360;
 	PParam.rtps.setName("Participant_subscriber");
 	mp_par = Domain::createParticipant(PParam);
 	if(mp_par == nullptr)
@@ -215,17 +212,24 @@ ThroughputSubscriber::ThroughputSubscriber():
 		m_Clock.setTimeNow(&m_t2);
 	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
 	cout << "Overhead " << m_overhead << endl;
-	//SUBSCRIBER
+	//SUBSCRIBER DATA
 	SubscriberAttributes Sparam;
 	Sparam.topic.topicDataType = "LatencyType";
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
+	//RELIABLE
+	Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+	Sparam.topic.historyQos.depth = 1000000;
+	Sparam.topic.resourceLimitsQos.max_samples = 1000000;
+	Sparam.topic.resourceLimitsQos.allocated_samples = 1000000;
+	//Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	//BEST EFFORT
+	Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Sparam.topic.historyQos.depth = 100000;
-	Sparam.topic.resourceLimitsQos.max_samples = 100000;
-	Sparam.topic.resourceLimitsQos.allocated_samples = 100000;
-	Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	//Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Sparam.topic.historyQos.depth = 10;
+	Sparam.topic.resourceLimitsQos.max_samples = 1000;
+	Sparam.topic.resourceLimitsQos.allocated_samples = 1000;
+
 	Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
 	Locator_t loc;
 	loc.port = 10110;

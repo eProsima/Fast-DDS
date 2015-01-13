@@ -72,7 +72,7 @@ int main (int argc, char** argv)
 		cout << "ZMQTest subscriber SUB_NUMBER PUB_IP N_SAMPLES"<<endl;
 		cout << "Example: "<<endl;
 		cout << "ZMQTest publisher 2 192.168.1.11 192.168.1.12 10000"<<endl;
-		cout << "ZMQTest subscriber 1 192.168.1.10" <<endl;
+		cout << "ZMQTest subscriber 1 192.168.1.10 10000" <<endl;
 		return 0;
 	}
 

@@ -78,13 +78,13 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pu
 }
 
 
-ThroughputPublisher::~ThroughputPublisher(){Domain::stopAll();}
+ThroughputPublisher::~ThroughputPublisher(){Domain::removeParticipant(mp_par);}
 
 ThroughputPublisher::ThroughputPublisher():
-																										sema(0),
+																												sema(0),
 #pragma warning(disable:4355)
-																										m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-																										ready(true)
+																												m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+																												ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
@@ -93,8 +93,8 @@ ThroughputPublisher::ThroughputPublisher():
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.sendSocketBufferSize = 65536;
-	PParam.rtps.listenSocketBufferSize = 2*65536;
+	PParam.rtps.sendSocketBufferSize = 2*655360;
+	PParam.rtps.listenSocketBufferSize = 655360;
 	PParam.rtps.setName("Participant_publisher");
 	mp_par = Domain::createParticipant(PParam);
 	if(mp_par == nullptr)
@@ -118,15 +118,21 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
-	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Wparam.topic.historyQos.depth = 1000;
-	Wparam.topic.resourceLimitsQos.max_samples = 100000;
-	Wparam.topic.resourceLimitsQos.allocated_samples = 100000;
-	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	//Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(5);
-	Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
-	Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+	//RELIABLE
+
+//	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(1);
+//	Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
+//	Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+//	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
+	//BEST EFFORT:
+	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+
+
+    Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    Wparam.topic.resourceLimitsQos.max_samples = 15000;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 15000;
+
 	mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 
 
@@ -236,20 +242,21 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			mp_datapub->write((void*)&latency);
 			//cout << sample << "*"<<std::flush;
 		}
+		cout << "WAITING"<<endl;
+		eClock::my_sleep(5000);
 		m_Clock.setTimeNow(&m_t2);
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
 		eClock::my_sleep(20);
 		timewait_us+=(uint64_t)m_overhead+20;
 		//cout << "Removing all..."<<endl;
-		mp_datapub->removeAllChange(&aux);
+		//mp_datapub->removeAllChange(&aux);
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;
 	//cout << "SEND COMMAND "<< command.m_command << endl;
 	eClock::my_sleep(100);
 	mp_commandpub->write((void*)&command);
-	mp_commandpub->removeAllChange(&aux);
 	mp_commandsub->waitForUnreadMessage();
 	if(mp_commandsub->takeNextData((void*)&command,&info))
 	{
@@ -268,6 +275,8 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			result.compute();
 			m_timeStats.push_back(result);
 			printResults(result);
+			mp_commandpub->removeAllChange(&aux);
+			mp_datapub->removeAllChange();
 			return true;
 		}
 		else
@@ -301,7 +310,7 @@ bool ThroughputPublisher::loadDemandsPayload()
 	bool more = true;
 	while(std::getline(fi,line))
 	{
-	//	cout << "READING LINE: "<< line<<endl;
+		//	cout << "READING LINE: "<< line<<endl;
 		start = 0;
 		end = line.find(DELIM);
 		first = true;
@@ -310,7 +319,7 @@ bool ThroughputPublisher::loadDemandsPayload()
 		more = true;
 		while(more)
 		{
-		//	cout << "SUBSTR: "<< line.substr(start,end-start) << endl;
+			//	cout << "SUBSTR: "<< line.substr(start,end-start) << endl;
 			std::istringstream iss(line.substr(start,end-start));
 			if(first)
 			{
