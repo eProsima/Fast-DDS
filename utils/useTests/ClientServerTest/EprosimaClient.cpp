@@ -34,10 +34,12 @@ m_resultMatched(0)
 
 EprosimaClient::~EprosimaClient()
 {
+	Domain::stopAll();
 	if(mp_resultdatatype!=nullptr)
 		delete(mp_resultdatatype);
 	if(mp_operationdatatype!=nullptr)
 		delete(mp_operationdatatype);
+	
 }
 
 bool EprosimaClient::init()
