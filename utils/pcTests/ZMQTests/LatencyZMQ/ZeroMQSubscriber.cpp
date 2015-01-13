@@ -15,17 +15,18 @@
 #include "ZeroMQSubscriber.h"
 #include <sstream>
 
-uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
+uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
 
 ZeroMQSubscriber::ZeroMQSubscriber():
-		mp_context(NULL),
-		mp_datapub(NULL),
-		mp_commandpub(NULL),
-		mp_datasub(NULL),
-		mp_commandsub(NULL),
-		n_samples(1000)
+						mp_context(nullptr),
+						mp_datapub(nullptr),
+						mp_commandpub(nullptr),
+						mp_datasub(nullptr),
+						mp_commandsub(nullptr),
+						n_samples(1000),
+						n_sub(0)
 {
 
 }
@@ -35,33 +36,42 @@ ZeroMQSubscriber::~ZeroMQSubscriber()
 	// TODO Auto-generated destructor stub
 }
 
-bool ZeroMQSubscriber::init(string pubip,int samples)
+bool ZeroMQSubscriber::init(int nsub,string pubip,int samples)
 {
 	n_samples = samples;
-
+	n_sub = nsub;
 	mp_context = new zmq::context_t(1);
 	mp_datasub = new zmq::socket_t(*mp_context,ZMQ_SUB);
 	cout << "PUB IP: "<< pubip << endl;
 	stringstream ss;
-	ss << "tcp://"<<pubip<<":7551";
-	cout << "Complete pubip: "<< ss.str()<<endl;
+	ss << "tcp://"<<pubip<<":17551";
+	cout << "Connecting to Data Publisher: "<< ss.str()<<endl;
 	mp_datasub->connect(ss.str().c_str());
 	mp_datasub->setsockopt(ZMQ_SUBSCRIBE,0,0);
 	mp_commandsub = new zmq::socket_t(*mp_context,ZMQ_SUB);
 	stringstream ss2;
-	ss2 << "tcp://"<<pubip<<":7552";
+	ss2 << "tcp://"<<pubip<<":17552";
+	cout << "Connecting to Command Publisher: "<< ss2.str()<<endl;
 	mp_commandsub->connect(ss2.str().c_str());
 	mp_commandsub->setsockopt(ZMQ_SUBSCRIBE,0,0);
 	eClock::my_sleep(300);
 
 
 	mp_datapub = new zmq::socket_t(*mp_context,ZMQ_PUB);
-	mp_datapub->bind("tcp://*:7553");
+	int port = 17553 + n_sub-1;
+	std::stringstream ss3;
+	ss3 << "tcp://*:"<< port;
+	cout << "Creating Data Publisher: "<< ss3.str()<<endl;
+	mp_datapub->bind(ss3.str().c_str());
 	//mp_datapub->bind("ipc://latency.ipc");
 	mp_commandpub = new zmq::socket_t(*mp_context,ZMQ_PUB);
-	mp_commandpub->bind("tcp://*:7554");
+	port = 17573 + n_sub-1;
+	std::stringstream ss4;
+	ss4 << "tcp://*:"<< port;
+	cout << "Creating Command Publisher: "<< ss4.str()<<endl;
+	mp_commandpub->bind(ss4.str().c_str());
 	//mp_commandpub->bind("ipc://command2sub.ipc");
-	eClock::my_sleep(500);
+	eClock::my_sleep(200);
 
 
 
@@ -100,14 +110,17 @@ bool ZeroMQSubscriber::test(uint32_t datasize)
 		zmq::message_t latency_in;
 		zmq::message_t latency_out(datasize+4);
 		mp_datasub->recv(&latency_in);
-		//cout << "received of size:"<<latency_in.size()<<endl;
-//		std::istringstream iss(static_cast<char*>(latency_in.data()));
-//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
-//
-//		memset(latency_out.data(),'S',datasize+4);
-		memcpy(latency_out.data(),latency_in.data(),latency_in.size());
-	//	cout << "REC/SENT: "<< *(uint32_t*)latency_in.data() <<" / "<<*(uint32_t*)latency_out.data()<<endl;
-		mp_datapub->send(latency_out);
+		if(n_sub == 1)
+		{
+			//cout << "received of size:"<<latency_in.size()<<endl;
+			//		std::istringstream iss(static_cast<char*>(latency_in.data()));
+			//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
+			//
+			//		memset(latency_out.data(),'S',datasize+4);
+			memcpy(latency_out.data(),latency_in.data(),latency_in.size());
+			//	cout << "REC/SENT: "<< *(uint32_t*)latency_in.data() <<" / "<<*(uint32_t*)latency_out.data()<<endl;
+			mp_datapub->send(latency_out);
+		}
 	}
 	cout << "TEST OF SiZE: "<< datasize +4 << " ENDS"<<endl;
 	eClock::my_sleep(100);

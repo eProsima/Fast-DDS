@@ -224,7 +224,9 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.historyQos.depth = 100000;
 	Sparam.topic.resourceLimitsQos.max_samples = 100000;
 	Sparam.topic.resourceLimitsQos.allocated_samples = 100000;
-	Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	//Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
 	Locator_t loc;
 	loc.port = 10110;
 	Sparam.unicastLocatorList.push_back(loc);

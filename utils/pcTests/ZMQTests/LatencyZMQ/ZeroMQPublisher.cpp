@@ -16,18 +16,21 @@
 #include <sstream>
 #include <numeric>
 
+#define TIME_LIMIT_US 10000
 
-uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12284};
+
+uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
 ZeroMQPublisher::ZeroMQPublisher():
-						m_overhead(0),
-						mp_context(NULL),
-						mp_datapub(NULL),
-						mp_commandpub(NULL),
-						mp_datasub(NULL),
-						mp_commandsub(NULL),
-						n_samples(1000)
+								m_overhead(0),
+								mp_context(NULL),
+								mp_datapub(NULL),
+								mp_commandpub(NULL),
+								mp_datasub(NULL),
+								mp_commandsub(NULL),
+								n_samples(1000),
+								n_sub(0)
 
 {
 	// TODO Auto-generated constructor stub
@@ -42,27 +45,34 @@ ZeroMQPublisher::~ZeroMQPublisher() {
 	// TODO Auto-generated destructor stub
 }
 
-bool ZeroMQPublisher::init(string subip,int samples)
+bool ZeroMQPublisher::init(std::vector<std::string>subIP,int samples)
 {
 	n_samples = samples;
+	n_sub = subIP.size();
 	mp_context = new zmq::context_t(1);
 	mp_datasub = new zmq::socket_t(*mp_context,ZMQ_SUB);
-	stringstream ss;
-	ss << "tcp://"<<subip<<":7553";
-	mp_datasub->connect(ss.str().c_str());
-	mp_datasub->setsockopt(ZMQ_SUBSCRIBE,0,0);
 	mp_commandsub = new zmq::socket_t(*mp_context,ZMQ_SUB);
-	stringstream ss2;
-	ss2 << "tcp://"<<subip<<":7554";
-	mp_commandsub->connect(ss2.str().c_str());
-	mp_commandsub->setsockopt(ZMQ_SUBSCRIBE,0,0);
+	for(auto it=n_sub-1;it>=0;--it)
+	{
+		stringstream ss;
+		int port = 17553 + it;
+		ss << "tcp://"<<subIP.at(it)<<":"<<port;
+		mp_datasub->connect(ss.str().c_str());
+		mp_datasub->setsockopt(ZMQ_SUBSCRIBE,0,0);
+
+		stringstream ss2;
+		port = 17573 + it;
+		ss2 << "tcp://"<<subIP.at(it)<<":"<<port;
+		mp_commandsub->connect(ss2.str().c_str());
+		mp_commandsub->setsockopt(ZMQ_SUBSCRIBE,0,0);
+	}
 	eClock::my_sleep(300);
 
 	mp_datapub = new zmq::socket_t(*mp_context,ZMQ_PUB);
-	mp_datapub->bind("tcp://*:7551");
+	mp_datapub->bind("tcp://*:17551");
 	//mp_datapub->bind("ipc://latency.ipc");
 	mp_commandpub = new zmq::socket_t(*mp_context,ZMQ_PUB);
-	mp_commandpub->bind("tcp://*:7552");
+	mp_commandpub->bind("tcp://*:17552");
 	//mp_commandpub->bind("ipc://command2sub.ipc");
 	eClock::my_sleep(500);
 
@@ -109,14 +119,14 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 		zmq::message_t latency_in;
 		memset(latency_out.data(),65,datasize+4);
 		sprintf((char*)(latency_out.data()),"%d",i);
-		
+
 		mp_datapub->send(latency_out);
 		mp_datasub->recv(&latency_in);
-//		std::istringstream iss(static_cast<char*>(latency_in.data()));
-//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
-		
+		//		std::istringstream iss(static_cast<char*>(latency_in.data()));
+		//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
+
 		sscanf((char*)latency_in.data(),"%d",&result);
-	//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
+		//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
 		//cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<" / "<<*(uint32_t*)latency_in.data()<<endl;
 		if(result != i)
 		{
@@ -125,12 +135,12 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 			mp_commandpub->send(command);
 			return false;
 		}
-		
+
 
 	}
 	m_clock.setTimeNow(&m_t2);
 	m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(m_t2)
-		-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead);
+	-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead);
 	analizeTimes(datasize);
 	printStat(m_stats.back());
 
@@ -176,11 +186,11 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 		m_clock.setTimeNow(&m_t1);
 		mp_datapub->send(latency_out);
 		mp_datasub->recv(&latency_in);
-//		std::istringstream iss(static_cast<char*>(latency_in.data()));
-//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
+		//		std::istringstream iss(static_cast<char*>(latency_in.data()));
+		//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
 		m_clock.setTimeNow(&m_t2);
 		sscanf((char*)latency_in.data(),"%d",&result);
-	//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
+		//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
 		//cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<" / "<<*(uint32_t*)latency_in.data()<<endl;
 		if(result != i)
 		{
@@ -189,8 +199,10 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 			mp_commandpub->send(command);
 			return false;
 		}
-		m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(m_t2)
-		-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead);
+		double time = TimeConv::Time_t2MicroSecondsDouble(m_t2)
+					-TimeConv::Time_t2MicroSecondsDouble(m_t1)-m_overhead*2;
+		if(time <= TIME_LIMIT_US)
+			m_times.push_back(time);
 
 	}
 	analizeTimes(datasize);

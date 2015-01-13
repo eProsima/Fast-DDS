@@ -7,28 +7,28 @@
  *************************************************************************/
 
 /**
- * @file TestWriter.h
+ * @file TestWriterRegistered.h
  *
  */
 
-#ifndef TESTWRITER_H_
-#define TESTWRITER_H_
+#ifndef TESTWRITERREGISTERED_H_
+#define TESTWRITERREGISTERED_H_
 
 #include "fastrtps/rtps/rtps_fwd.h"
 using namespace eprosima::fastrtps::rtps;
 
 #include "fastrtps/rtps/writer/WriterListener.h"
 
-class TestWriter {
+class TestWriterRegistered {
 public:
-	TestWriter();
-	virtual ~TestWriter();
+	TestWriterRegistered();
+	virtual ~TestWriterRegistered();
 	RTPSParticipant* mp_participant;
 	RTPSWriter* mp_writer;
 	WriterHistory* mp_history;
 	bool init(); //Initialize writer
 	bool reg(); //Register the Writer
-	void run(); //Run the Writer
+	void run(uint16_t samples); //Run the Writer
 	class MyListener :public WriterListener
 	{
 	public:

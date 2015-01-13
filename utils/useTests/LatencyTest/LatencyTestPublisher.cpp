@@ -14,13 +14,13 @@
 #include "LatencyTestPublisher.h"
 #include "fastrtps/utils/RTPSLog.h"
 
-
+#define TIME_LIMIT_US 10000
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,12288};
+uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
 static const char * const CLASS_NAME = "LatencyTestPublisher";
@@ -90,9 +90,9 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	PubDataparam.topic.topicKind = NO_KEY;
 	PubDataparam.topic.topicName = "LatencyPUB2SUB";
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	PubDataparam.topic.historyQos.depth = n_samples+100;
-	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
-	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
+	PubDataparam.topic.historyQos.depth = n_samples +100;
+	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples +100;
+	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples +100;//n_samples+100;
 	PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	//PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Locator_t loc;
@@ -106,12 +106,12 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencySUB2PUB";
-	SubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	SubDataparam.topic.historyQos.depth = 100;
-	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples+100;
-	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
-	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-	//SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	SubDataparam.topic.historyQos.depth = 50;
+	SubDataparam.topic.resourceLimitsQos.max_samples = 50;//n_samples+100;
+	SubDataparam.topic.resourceLimitsQos.allocated_samples = 50;//n_samples+100;
+	//SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15001;
 	SubDataparam.unicastLocatorList.push_back(loc);
 
@@ -280,10 +280,11 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
 	//eClock::my_sleep(50);
-	//cout << "R: "<< mp_up->mp_latency_in->seqnum <<std::flush;
-	//cout <<"T|"<<std::flush;
+	//cout << "R: "<< mp_up->mp_latency_in->seqnum <<"|"<<std::flush;
 	mp_up->m_clock.setTimeNow(&mp_up->m_t2);
-	mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
+	double time= TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead*2;
+	if(time <= TIME_LIMIT_US)
+		mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
 	if(mp_up->mp_latency_in->seqnum != mp_up->mp_latency_out->seqnum)
 	{
 		cout << "ERROR IN TEST"<<endl;
