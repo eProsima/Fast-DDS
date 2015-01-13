@@ -155,7 +155,7 @@ int main(int argc, char** argv){
 	}
 
 	eClock::my_sleep(1000);
-	Domain::stopAll();
+	
 	cout << "EVERYTHING STOPPED FINE"<<endl;
 
 	return 0;
