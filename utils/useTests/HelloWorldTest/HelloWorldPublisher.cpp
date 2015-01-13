@@ -61,6 +61,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 HelloWorldPublisher::~HelloWorldPublisher()
 {
 	// TODO Auto-generated destructor stub
+	Domain::stopAll();
 }
 
 void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
