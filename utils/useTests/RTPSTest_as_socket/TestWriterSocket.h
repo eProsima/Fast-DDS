@@ -19,6 +19,7 @@ using namespace eprosima::fastrtps::rtps;
 
 #include <string>
 #include <cstdio>
+#include <cstdint>
 
 class TestWriterSocket {
 public:

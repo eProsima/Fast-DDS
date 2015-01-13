@@ -67,16 +67,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main_RTPSTest.cpp" />
-    <ClCompile Include="TestReader.cpp" />
-    <ClCompile Include="TestWriter.cpp" />
+    <ClInclude Include="TestReaderRegistered.h" />
+    <ClInclude Include="TestWriterRegistered.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestReader.h" />
-    <ClInclude Include="TestWriter.h" />
+    <ClCompile Include="main_RTPSTest.cpp" />
+    <ClCompile Include="TestReaderRegistered.cpp" />
+    <ClCompile Include="TestWriterRegistered.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>RTPSReliable</ProjectName>
+    <ProjectName>RTPSRegistered</ProjectName>
     <ProjectGuid>{3CF60608-D8BB-CDD4-2972-346628289C34}</ProjectGuid>
     <RootNamespace>gonzaPublisherSubscriber</RootNamespace>
   </PropertyGroup>

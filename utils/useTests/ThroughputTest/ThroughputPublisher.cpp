@@ -122,8 +122,8 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.historyQos.depth = 1000;
 	Wparam.topic.resourceLimitsQos.max_samples = 100000;
 	Wparam.topic.resourceLimitsQos.allocated_samples = 100000;
-	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	//Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+	//Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(5);
 	Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
 	Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
@@ -242,7 +242,6 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 		eClock::my_sleep(20);
 		timewait_us+=(uint64_t)m_overhead+20;
 		//cout << "Removing all..."<<endl;
-		mp_datapub->removeAllChange(&aux);
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;
@@ -268,6 +267,7 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			result.compute();
 			m_timeStats.push_back(result);
 			printResults(result);
+			mp_datapub->removeAllChange(&aux);
 			return true;
 		}
 		else
