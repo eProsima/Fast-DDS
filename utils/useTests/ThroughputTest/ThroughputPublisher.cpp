@@ -118,6 +118,7 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.topicDataType = "LatencyType";
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
+
 	//RELIABLE
 
 //	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(1);
@@ -129,9 +130,10 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 
 
-    Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Wparam.topic.resourceLimitsQos.max_samples = 15000;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 15000;
+    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    Wparam.topic.historyQos.depth = 1;
+    Wparam.topic.resourceLimitsQos.max_samples = 1000000;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 100;
 
 	mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 
@@ -242,15 +244,14 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			mp_datapub->write((void*)&latency);
 			//cout << sample << "*"<<std::flush;
 		}
-		cout << "WAITING"<<endl;
-		eClock::my_sleep(5000);
 		m_Clock.setTimeNow(&m_t2);
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
-		eClock::my_sleep(20);
-		timewait_us+=(uint64_t)m_overhead+20;
+		eClock::my_sleep(5);
+		timewait_us+=(uint64_t)m_overhead+5;
 		//cout << "Removing all..."<<endl;
 		//mp_datapub->removeAllChange(&aux);
+
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
 	command.m_command = TEST_ENDS;

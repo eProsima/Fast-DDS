@@ -54,6 +54,7 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 
 HelloWorldSubscriber::~HelloWorldSubscriber() {
 	// TODO Auto-generated destructor stub
+	Domain::stopAll();
 }
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
