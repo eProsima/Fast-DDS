@@ -20,6 +20,7 @@ using namespace eprosima::fastrtps::rtps;
 
 
 uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
+
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
 
 LatencyTestSubscriber::LatencyTestSubscriber():
@@ -104,9 +105,9 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	//SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15003;
-	//SubDataparam.unicastLocatorList.push_back(loc);
-	loc.set_IP4_address(233,252,124,2);
-	SubDataparam.multicastLocatorList.push_back(loc);
+	SubDataparam.unicastLocatorList.push_back(loc);
+	//loc.set_IP4_address(233,252,124,2);
+	//SubDataparam.multicastLocatorList.push_back(loc);
 	mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == nullptr)
 		return false;
@@ -207,7 +208,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
 void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 {
 	mp_up->mp_datasub->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
-		//cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
+		cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
 //	//	eClock::my_sleep(50);
 //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
 	if(mp_up->m_echo)

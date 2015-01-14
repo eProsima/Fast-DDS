@@ -21,6 +21,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
+
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
 static const char * const CLASS_NAME = "LatencyTestPublisher";
@@ -107,7 +108,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	SubDataparam.topic.topicKind = NO_KEY;
 	SubDataparam.topic.topicName = "LatencySUB2PUB";
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	SubDataparam.topic.historyQos.depth = 50;
+	SubDataparam.topic.historyQos.depth = 1;
 	SubDataparam.topic.resourceLimitsQos.max_samples = 50;//n_samples+100;
 	SubDataparam.topic.resourceLimitsQos.allocated_samples = 50;//n_samples+100;
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -259,7 +260,6 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 	}
 	else if(mp_up->mp_latency_in->seqnum == mp_up->n_samples)
 	{
-
 		mp_up->m_clock.setTimeNow(&mp_up->m_t2);
 		mp_up->m_times.push_back(TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t2)-TimeConv::Time_t2MicroSecondsDouble(mp_up->m_t1)-mp_up->m_overhead);
 		mp_up->m_data_sema.post();
@@ -267,7 +267,6 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 	}
 	else
 	{
-
 		mp_up->mp_latency_out->seqnum++;
 		mp_up->mp_datapub->write(mp_up->mp_latency_out);
 		mp_up->mp_latency_in->seqnum = 0;
@@ -356,7 +355,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	{
 		//cout << "WAITING"<<endl;
 		m_comm_sema.wait();
-		//	cout << (int)i << " "<<std::flush;
+		//cout << (int)i << " "<<std::flush;
 	}
 	//cout << endl;
 	//BEGIN THE TEST:
