@@ -70,31 +70,33 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name)
 	}
 	//cout << "IP INFORMATION " << endl;
 	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
+		if (aa->OperStatus == 1) //is ENABLED
+		{
+			for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
+				char buf[BUFSIZ];
 
-		for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
-			char buf[BUFSIZ];
+				int family = ua->Address.lpSockaddr->sa_family;
 
-			int family = ua->Address.lpSockaddr->sa_family;
-			
-			if(family == AF_INET || family == AF_INET6) //IP4
-			{
-				//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
-				memset(buf, 0, BUFSIZ);
-				getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
-				info_IP info;
-				info.type = family == AF_INET ? IP4 : IP6;
-				info.name = std::string(buf);
-				if (info.type == IP4 && !parseIP4(info.name, &info.locator))
-					info.type = IP4_LOCAL;
-				else if (info.type == IP6 && !parseIP6(info.name, &info.locator))
-					info.type = IP6_LOCAL;
-				if (info.type == IP6)
+				if (family == AF_INET || family == AF_INET6) //IP4
 				{
-					sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
-					info.scope_id = so->sin6_scope_id;
+					//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
+					memset(buf, 0, BUFSIZ);
+					getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
+					info_IP info;
+					info.type = family == AF_INET ? IP4 : IP6;
+					info.name = std::string(buf);
+					if (info.type == IP4 && !parseIP4(info.name, &info.locator))
+						info.type = IP4_LOCAL;
+					else if (info.type == IP6 && !parseIP6(info.name, &info.locator))
+						info.type = IP6_LOCAL;
+					if (info.type == IP6)
+					{
+						sockaddr_in6* so = (sockaddr_in6*)ua->Address.lpSockaddr;
+						info.scope_id = so->sin6_scope_id;
+					}
+					vec_name->push_back(info);
+					//printf("Buffer: %s\n", buf);
 				}
-				vec_name->push_back(info);
-				//printf("Buffer: %s\n", buf);
 			}
 		}
 	}
