@@ -34,7 +34,7 @@ m_resultMatched(0)
 
 EprosimaClient::~EprosimaClient()
 {
-	Domain::stopAll();
+	Domain::removeParticipant(mp_participant);
 	if(mp_resultdatatype!=nullptr)
 		delete(mp_resultdatatype);
 	if(mp_operationdatatype!=nullptr)

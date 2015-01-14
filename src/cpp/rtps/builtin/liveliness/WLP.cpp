@@ -64,6 +64,16 @@ WLP::WLP(BuiltinProtocols* p):
 WLP::~WLP()
 {
 	// TODO Auto-generated destructor stub
+	delete(this->mp_builtinReader);
+	delete(this->mp_builtinWriter);
+	delete(this->mp_builtinReaderHistory);
+	delete(this->mp_builtinWriterHistory);
+	delete(this->mp_listener);
+	if(this->mp_livelinessAutomatic!=nullptr)
+		delete(mp_livelinessAutomatic);
+	if(this->mp_livelinessManRTPSParticipant!=nullptr)
+		delete(this->mp_livelinessManRTPSParticipant);
+	delete(mp_mutex);
 }
 
 bool WLP::initWL(RTPSParticipantImpl* p)

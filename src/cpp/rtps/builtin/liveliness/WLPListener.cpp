@@ -47,7 +47,7 @@ WLPListener::WLPListener(WLP* plwp):
 
 WLPListener::~WLPListener()
 {
-
+	aux_msg.buffer = nullptr;
 }
 
 

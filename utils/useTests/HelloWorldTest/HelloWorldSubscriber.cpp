@@ -17,10 +17,16 @@
 #include "fastrtps/attributes/SubscriberAttributes.h"
 #include "fastrtps/subscriber/Subscriber.h"
 #include "fastrtps/Domain.h"
+#include "fastrtps/utils/eClock.h"
 
 
-HelloWorldSubscriber::HelloWorldSubscriber() {
+HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
+mp_subscriber(nullptr)
+{
+}
 
+bool HelloWorldSubscriber::init()
+{
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10043;
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
@@ -33,6 +39,9 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	PParam.rtps.listenSocketBufferSize = 17424;
 	PParam.rtps.setName("Participant_sub");
 	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant==nullptr)
+		return false;
+
 	//REGISTER THE TYPE
 
 	Domain::registerType(mp_participant,&m_type);
@@ -42,19 +51,22 @@ HelloWorldSubscriber::HelloWorldSubscriber() {
 	Rparam.topic.topicDataType = "HelloWorldType";
 	Rparam.topic.topicName = "HelloWorldTopic";
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	Rparam.topic.historyQos.depth = 20;
+	Rparam.topic.historyQos.depth = 30;
 	Rparam.topic.resourceLimitsQos.max_samples = 50;
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
-	
+	if(mp_subscriber == nullptr)
+		return false;
 
+
+	return true;
 }
 
 HelloWorldSubscriber::~HelloWorldSubscriber() {
 	// TODO Auto-generated destructor stub
-	Domain::stopAll();
+	Domain::removeParticipant(mp_participant);
 }
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
@@ -84,3 +96,16 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 
 }
 
+
+void HelloWorldSubscriber::run()
+{
+	cout << "Subscriber running. Please press enter to stop the Subscriber" << endl;
+	std::cin.ignore();
+}
+
+void HelloWorldSubscriber::run(uint32_t number)
+{
+	cout << "Subscriber running until "<< number << "samples have been received"<<endl;
+	while(number < this->m_listener.n_samples)
+		eClock::my_sleep(500);
+}

@@ -29,7 +29,7 @@ Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& a
 }
 
 Endpoint::~Endpoint() {
-
+	delete(mp_mutex);
 }
 
 } /* namespace rtps */

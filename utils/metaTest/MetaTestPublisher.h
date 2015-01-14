@@ -29,7 +29,7 @@ public:
 	virtual ~MetaTestPublisher();
 	bool init();
 	void run();
-
+	void clean();
 private:
 	Participant* mp_par;
 	Publisher* mp_pub;
@@ -73,6 +73,7 @@ private:
 	std::string t_rtps_socket();
 	std::string t_rtps_registered();
 	std::string t_client_server();
+	std::string t_hello_world();
 };
 
 } /* namespace eprosima */

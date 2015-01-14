@@ -216,10 +216,11 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 	if(str_size>1)
 	{
 	*stri = std::string();stri->resize(str_size-1);
-	octet* oc1 = new octet[str_size];
+	octet* oc1 = (octet*)malloc(str_size);
 	valid &= CDRMessage::readData(msg,oc1,str_size);
 	for(uint32_t i =0;i<str_size-1;i++)
 		stri->at(i) = oc1[i];
+	free((void*)oc1);
 	}
 	else
 	{

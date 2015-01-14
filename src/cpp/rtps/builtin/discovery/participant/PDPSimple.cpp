@@ -78,6 +78,11 @@ PDPSimple::~PDPSimple()
 	if(mp_resendParticipantTimer!=nullptr)
 		delete(mp_resendParticipantTimer);
 	delete(mp_listener);
+	for(auto it = this->m_participantProxies.begin();
+			it!=this->m_participantProxies.end();++it)
+	{
+		delete(*it);
+	}
 }
 
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)

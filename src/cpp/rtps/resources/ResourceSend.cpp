@@ -28,6 +28,7 @@ ResourceSend::ResourceSend()
 
 ResourceSend::~ResourceSend() {
 	// TODO Auto-generated destructor stub
+	delete(mp_impl);
 }
 
 bool ResourceSend::initSend(RTPSParticipantImpl* pimpl, const Locator_t& loc,

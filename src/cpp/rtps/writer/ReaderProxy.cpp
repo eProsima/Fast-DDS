@@ -49,7 +49,9 @@ ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,
 
 ReaderProxy::~ReaderProxy()
 {
-
+	delete(mp_nackResponse);
+	delete(mp_nackSupression);
+	delete(mp_mutex);
 }
 
 bool ReaderProxy::getChangeForReader(CacheChange_t* change,

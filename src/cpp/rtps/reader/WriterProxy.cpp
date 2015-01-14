@@ -35,6 +35,7 @@ WriterProxy::~WriterProxy()
 	mp_writerProxyLiveliness->stop_timer();
 	delete(mp_writerProxyLiveliness);
 	delete(mp_heartbeatResponse);
+	delete(mp_mutex);
 }
 
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,

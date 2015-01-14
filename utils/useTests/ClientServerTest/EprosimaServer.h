@@ -34,7 +34,10 @@ public:
 	EprosimaServer();
 	virtual ~EprosimaServer();
 	bool init();
+	//Serve indefinitely.
 	void serve();
+	//Serve for samples operations.
+	void serve(uint32_t samples);
 private:
 	Subscriber* mp_operation_sub;
 	Publisher* mp_result_pub;
@@ -42,6 +45,8 @@ private:
 	Result::RESULTTYPE calculate(Operation::OPERATIONTYPE type, int32_t num1,int32_t num2,int32_t* result);
 	ResultDataType* mp_resultdatatype;
 	OperationDataType* mp_operationdatatype;
+public:
+	uint32_t m_n_served;
 	class OperationListener:public SubscriberListener
 	{
 	public:

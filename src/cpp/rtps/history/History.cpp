@@ -49,12 +49,14 @@ History::History(const HistoryAttributes & att):
 	mp_minSeqCacheChange = mp_invalidCache;
 	mp_maxSeqCacheChange = mp_invalidCache;
 	//logInfo(RTPS_HISTORY,"History created");
+
 }
 
 History::~History()
 {
 	const char* const METHOD_NAME = "~History";
 	logInfo(RTPS_HISTORY,"");
+	delete(mp_mutex);
 }
 
 

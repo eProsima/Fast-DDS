@@ -30,10 +30,11 @@ int main(int argc, char** argv){
 	Log::setVerbosity(VERB_ERROR);
 	#if defined(_DEBUG)
 	Log::setVerbosity(VERB_INFO);
-#endif
-
-
 	Log::logFileName("MetaTest",true);
+	#endif
+
+
+
 
 	logUser("Starting");
 	int type;
