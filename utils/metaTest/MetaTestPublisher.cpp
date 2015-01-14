@@ -25,6 +25,8 @@
 
 #include "../useTests/RTPSTest_as_socket/TestWriterSocket.h"
 #include "../useTests/RTPSTest_registered/TestWriterRegistered.h"
+#include "../useTests/ClientServerTest/EprosimaClient.h"
+#include "../useTests/HelloWorldTest/HelloWorldPublisher.h"
 
 namespace eprosima {
 
@@ -56,6 +58,8 @@ bool MetaTestPublisher::init()
 	PublisherAttributes Wparam;
 	Wparam.topic.topicName = "metaTest_P2S";
 	Wparam.topic.topicDataType = "MetaTestType";
+	Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+	Wparam.topic.historyQos.depth = 1;
 
 	mp_pub = Domain::createPublisher(mp_par,Wparam,&m_publisten);
 
@@ -78,10 +82,14 @@ void MetaTestPublisher::run()
 		eClock::my_sleep(300);
 	std::stringstream ss;
 	//RUN ALL TESTS
+	ss << "T_HELLO_WORLD    : " << t_hello_world() << endl;
+	clean();
 	ss << "T_RTPS_REGISTERED: " << t_rtps_registered() << endl;
+	clean();
 	ss << "T_RTPS_SOCKET    : " << t_rtps_socket() << endl;
+	clean();
 	ss << "T_CLIENT_SERVER  : " << t_client_server() << endl;
-
+	clean();
 
 	MetaTestType testinfo;
 	testinfo.kind(STOP_ALL_TESTS);
@@ -91,9 +99,114 @@ void MetaTestPublisher::run()
 	logUser("TEST SUMMARY"<<endl<<ss.str());
 }
 
+void MetaTestPublisher::clean()
+{
+	mp_pub->removeAllChange();
+	eClock::my_sleep(500);
+}
+
+std::string MetaTestPublisher::t_hello_world()
+{
+	logUser("Starting TEST HELLO WORLD");
+	int samples = 10;
+	MetaTestType testinfo;
+	SampleInfo_t sampleinfo;
+	testinfo.kind(T_HELLO_WORLD);
+	testinfo.samples(samples);
+	mp_pub->write(&testinfo);
+	HelloWorldPublisher hwpub;
+	if(hwpub.init())
+	{
+		mp_sub->waitForUnreadMessage();
+		if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+		{
+			if(testinfo.status() == T_SUB_READY)
+			{
+				printf("Running\n");
+				hwpub.run(samples);
+				printf("Finished");
+				eClock::my_sleep(150);
+				testinfo.status(T_PUB_FINISH);
+				testinfo.samples(samples);
+				mp_pub->write(&testinfo);
+				mp_sub->waitForUnreadMessage();
+				if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+				{
+					if(testinfo.status() == T_SUB_OK)
+						return "OK";
+					else
+					{
+						std::stringstream ss;
+						ss << "FAILED "<<testinfo.comment();
+						return ss.str();
+					}
+				}
+				return "META ERROR";
+			}
+			else if(testinfo.status() == T_SUB_FAILED)
+			{
+				std::stringstream ss;
+				ss << "FAILED "<<testinfo.comment();
+				return ss.str();
+			}
+		}
+		return "META ERROR";
+	}
+	return " HelloWorld Publisher not initialized";
+}
+
+
 std::string MetaTestPublisher::t_client_server()
 {
-	return "TO IMPLEMENT";
+	logUser("Starting TEST CLIENT SERVER");
+	int samples = 20;
+	MetaTestType testinfo;
+	SampleInfo_t sampleinfo;
+	testinfo.kind(T_CLIENT_SERVER);
+	testinfo.samples(samples);
+	mp_pub->write(&testinfo);
+	EprosimaClient client;
+	if(client.init())
+	{
+		mp_sub->waitForUnreadMessage();
+		if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+		{
+			if(testinfo.status() == T_SUB_READY)
+			{
+				int32_t res;
+				while(!client.isReady())
+				{
+					eClock::my_sleep(100);
+				}
+				cout << "Running client for "<< samples << " samples"<<endl;
+				for(int i = 0;i<samples;++i)
+				{
+					if(client.calculate(Operation::ADDITION,10,20,&res) != Result::GOOD_RESULT)
+						return "Bad Calculation performed";
+				}
+				testinfo.status(T_PUB_FINISH);
+				mp_pub->write(&testinfo);
+				mp_sub->waitForUnreadMessage();
+				if(mp_sub->takeNextData(&testinfo,&sampleinfo))
+				{
+					if(testinfo.status() == T_SUB_OK)
+						return "OK";
+					else
+						return "Subscriber Failed";
+				}
+				return "META ERROR";
+
+			}
+			else if(testinfo.status() == T_SUB_FAILED)
+			{
+				std::stringstream ss;
+				ss << "FAILED "<<testinfo.comment();
+				return ss.str();
+			}
+		}
+		return "Meta Error";
+	}
+	return " Client not initialized";
 }
 
 std::string MetaTestPublisher::t_rtps_registered()
@@ -126,7 +239,14 @@ std::string MetaTestPublisher::t_rtps_registered()
 				}
 				return "META ERROR";
 			}
+			else if(testinfo.status() == T_SUB_FAILED)
+			{
+				std::stringstream ss;
+				ss << "FAILED "<<testinfo.comment();
+				return ss.str();
+			}
 		}
+		return "META ERROR";
 	}
 	return " Writer not initialized";
 }

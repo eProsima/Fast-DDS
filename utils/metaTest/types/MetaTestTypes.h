@@ -50,7 +50,7 @@ enum TestKind : uint32_t
     T_RTPS_SOCKET,
     T_RTPS_REG,
     T_CLIENT_SERVER,
-    T_HELLOWORLD,
+    T_HELLO_WORLD,
     STOP_ALL_TESTS
 };
 /*!

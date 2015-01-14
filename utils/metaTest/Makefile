@@ -52,7 +52,14 @@ METATEST_SRC_CPPFILES=  $(BASEDIR)/main_MetaTest.cpp \
 						$(BASEDIR)/../useTests/RTPSTest_as_socket/TestReaderSocket.cpp \
 						$(BASEDIR)/../useTests/RTPSTest_as_socket/TestWriterSocket.cpp \
 						$(BASEDIR)/../useTests/RTPSTest_registered/TestWriterRegistered.cpp \
-						$(BASEDIR)/../useTests/RTPSTest_registered/TestReaderRegistered.cpp 
+						$(BASEDIR)/../useTests/RTPSTest_registered/TestReaderRegistered.cpp \
+						$(BASEDIR)/../useTests/ClientServerTest/EprosimaClient.cpp \
+						$(BASEDIR)/../useTests/ClientServerTest/EprosimaServer.cpp \
+						$(BASEDIR)/../useTests/ClientServerTest/ClientServerTypes.cpp \
+						$(BASEDIR)/../useTests/HelloWorldTest/HelloWorldPublisher.cpp \
+						$(BASEDIR)/../useTests/HelloWorldTest/HelloWorldSubscriber.cpp \
+						$(BASEDIR)/../useTests/HelloWorldTest/HelloWorldType.cpp \
+						$(BASEDIR)/../useTests/HelloWorldTest/HelloWorld.cpp 
 
 # Project sources are copied to the current directory
 METATEST_SRCS= $(METATEST_SRC_CFILES) $(METATEST_SRC_CPPFILES)

@@ -161,7 +161,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	delete(this->mp_ResourceSemaphore);
 	delete(this->mp_userParticipant);
 
-
+	delete(this->mp_send_thr);
+	delete(this->mp_event_thr);
 }
 
 /*

@@ -48,29 +48,22 @@ int main(int argc, char** argv)
 	case 1:
 	{
 		HelloWorldPublisher mypub;
-		for(int i = 0;i<10;++i)
+		if(mypub.init())
 		{
-			if(mypub.publish())
-			{
-				eClock::my_sleep(500);
-			}
-			else
-			{
-				//cout << "Sleeping till discovery"<<endl;
-				eClock::my_sleep(200);
-				--i;
-			}
-}
+			mypub.run(10);
+		}
 		break;
 	}
 	case 2:
 	{
 		HelloWorldSubscriber mysub;
-		cout << "Waiting for messages, press enter to stop."<<endl;
-		std::cin.ignore();
+		if(mysub.init())
+		{
+			mysub.run();
+		}
 		break;
 	}
 	}
-
+	Domain::stopAll();
 	return 0;
 }

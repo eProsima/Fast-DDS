@@ -21,6 +21,7 @@ mp_result_pub(nullptr),
 mp_participant(nullptr),
 mp_resultdatatype(nullptr),
 mp_operationdatatype(nullptr),
+m_n_served(0),
 m_operationsListener(nullptr),
 m_resultsListener(nullptr)
 {
@@ -46,6 +47,12 @@ void EprosimaServer::serve()
 	cout << "Enter a number to stop the server: ";
 	int aux;
 	std::cin >> aux;
+}
+
+void EprosimaServer::serve(uint32_t samples)
+{
+	while(m_n_served < samples)
+		eClock::my_sleep(100);
 }
 
 bool EprosimaServer::init()
@@ -140,6 +147,7 @@ void EprosimaServer::OperationListener::onNewDataMessage(Subscriber* sub)
 	mp_up->mp_operation_sub->takeNextData((void*)&m_operation,&m_sampleInfo);
 	if(m_sampleInfo.sampleKind == ALIVE)
 	{
+		++mp_up->m_n_served;
 		m_result.m_guid = m_operation.m_guid;
 		m_result.m_operationId = m_operation.m_operationId;
 		m_result.m_result = 0;

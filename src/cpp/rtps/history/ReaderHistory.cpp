@@ -48,6 +48,7 @@ ReaderHistory::ReaderHistory(const HistoryAttributes& att):
 ReaderHistory::~ReaderHistory()
 {
 	// TODO Auto-generated destructor stub
+	delete(mp_semaphore);
 }
 
 bool ReaderHistory::received_change(CacheChange_t* change)

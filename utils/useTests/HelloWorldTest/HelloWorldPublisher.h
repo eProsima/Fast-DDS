@@ -27,7 +27,12 @@ class HelloWorldPublisher {
 public:
 	HelloWorldPublisher();
 	virtual ~HelloWorldPublisher();
+	//!Initialize
+	bool init();
+	//!Publish a sample
 	bool publish();
+	//!Run for number samples
+	void run(uint32_t number);
 private:
 	HelloWorld m_Hello;
 	Participant* mp_participant;

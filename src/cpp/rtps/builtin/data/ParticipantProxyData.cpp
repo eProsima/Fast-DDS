@@ -59,6 +59,12 @@ ParticipantProxyData::~ParticipantProxyData()
 	{
 		delete(*it);
 	}
+	m_QosList.inlineQos.deleteParams();
+	m_QosList.allQos.deleteParams();
+	if(this->mp_leaseDurationTimer !=nullptr)
+	{
+		delete(mp_leaseDurationTimer);
+	}
 }
 
 bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
@@ -117,6 +123,7 @@ bool ParticipantProxyData::toParameterList()
 	{
 		m_QosList.allQos.deleteParams();
 		m_QosList.allQos.resetList();
+		m_QosList.inlineQos.deleteParams();
 		m_QosList.inlineQos.resetList();
 		bool valid = QosList::addQos(&m_QosList,PID_PROTOCOL_VERSION,this->m_protocolVersion);
 		valid &=QosList::addQos(&m_QosList,PID_VENDORID,this->m_VendorId);
