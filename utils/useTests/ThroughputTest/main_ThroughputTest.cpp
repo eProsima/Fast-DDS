@@ -43,8 +43,8 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 int main(int argc, char** argv){
-	Log::setVerbosity(VERB_ERROR);
-//	Log::logFileName("Throughput.txt",true);
+	Log::setVerbosity(VERB_INFO);
+	Log::logFileName("Throughput.txt",true);
 //	Log::setCategoryVerbosity(RTPS_WRITER,VERB_INFO);
 //	Log::setCategoryVerbosity(RTPS_HISTORY,VERB_INFO);
 //	Log::setCategoryVerbosity(RTPS_MSG_OUT,VERB_INFO);

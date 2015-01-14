@@ -42,7 +42,7 @@ public:
 	* @param payload_size The payload size associated with the pool.
 	* @param max_pool_size Maximum payload size. If set to -1 the pool will keep reserving until something breaks.
 	*/
-	CacheChangePool(uint16_t pool_size,uint32_t payload_size,int32_t max_pool_size);
+	CacheChangePool(uint32_t pool_size,uint32_t payload_size,int32_t max_pool_size);
 	//!Reserve a Cache from the pool.
 	bool reserve_Cache(CacheChange_t** chan);
 	//!Release a Cache back to the pool.
@@ -55,11 +55,11 @@ public:
 	inline uint32_t getPayloadSize(){return m_payload_size;};
 private:
 	uint32_t m_payload_size;
-	uint16_t m_pool_size;
+	uint32_t m_pool_size;
 	int32_t m_max_pool_size;
 	std::vector<CacheChange_t*> m_freeCaches;
 	std::vector<CacheChange_t*> m_allCaches;
-	bool allocateGroup(uint16_t pool_size);
+	bool allocateGroup(uint32_t pool_size);
 };
 }
 } /* namespace rtps */

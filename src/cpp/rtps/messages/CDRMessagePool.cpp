@@ -61,8 +61,8 @@ CDRMessage_t& CDRMessagePool::reserve_CDRMsg()
 {
 	if(m_free_objects.empty())
 		allocateGroup();
-	CDRMessage_t* msg = *m_free_objects.begin();
-	m_free_objects.erase(m_free_objects.begin());
+	CDRMessage_t* msg = m_free_objects.back();
+	m_free_objects.erase(m_free_objects.end()-1);
 	return *msg;
 }
 
@@ -70,7 +70,7 @@ CDRMessage_t& CDRMessagePool::reserve_CDRMsg(uint16_t payload)
 {
 	if(m_free_objects.empty())
 		allocateGroup(payload);
-	CDRMessage_t* msg = *m_free_objects.begin();
+	CDRMessage_t* msg = m_free_objects.back();
 	if(msg->max_size-RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE<payload)
 	{
 		msg = new CDRMessage_t(payload+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
@@ -78,7 +78,7 @@ CDRMessage_t& CDRMessagePool::reserve_CDRMsg(uint16_t payload)
 	}
 	else
 	{
-		m_free_objects.erase(m_free_objects.begin());
+		m_free_objects.erase(m_free_objects.end()-1);
 	}
 	return *msg;
 }

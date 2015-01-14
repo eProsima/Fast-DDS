@@ -32,14 +32,19 @@ CacheChangePool::~CacheChangePool()
 	}
 }
 
-CacheChangePool::CacheChangePool(uint16_t pool_size,uint32_t payload_size,int32_t max_pool_size)
+CacheChangePool::CacheChangePool(uint32_t pool_size,uint32_t payload_size,int32_t max_pool_size)
 {
 	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
 	m_payload_size = payload_size;
 	m_pool_size = 0;
-	if(pool_size > max_pool_size && max_pool_size > 0)
-		m_max_pool_size = pool_size;
+	if(max_pool_size > 0)
+	{
+		if(pool_size > (uint32_t)max_pool_size)
+		{
+			m_max_pool_size = pool_size;
+		}
+	}
 	else
 		m_max_pool_size = max_pool_size;
 	allocateGroup(pool_size);
@@ -52,8 +57,8 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 		if(!allocateGroup((uint16_t)(ceil((float)m_pool_size/10)+10)))
 			return false;
 	}
-	*chan = m_freeCaches.front();
-	m_freeCaches.erase(m_freeCaches.begin());
+	*chan = m_freeCaches.back();
+	m_freeCaches.erase(m_freeCaches.end()-1);
 	return true;
 }
 
@@ -73,14 +78,14 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
 	m_freeCaches.push_back(ch);
 }
 
-bool CacheChangePool::allocateGroup(uint16_t group_size)
+bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
 	const char* const METHOD_NAME = "allocateGroup";
 	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
 	bool added = false;
 	for(uint16_t i = 0;i<group_size;i++)
 	{
-		if(m_max_pool_size < 0 || m_pool_size < m_max_pool_size)
+		if(m_max_pool_size <= 0 || m_pool_size < (uint32_t)m_max_pool_size)
 		{
 			CacheChange_t* ch = new CacheChange_t(m_payload_size);
 			m_allCaches.push_back(ch);
