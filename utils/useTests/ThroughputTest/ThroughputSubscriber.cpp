@@ -218,22 +218,17 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Sparam.topic.topicKind = NO_KEY;
 	Sparam.topic.topicName = "LatencyUp";
 	//RELIABLE
-	Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	Sparam.topic.historyQos.depth = 1000000;
-	Sparam.topic.resourceLimitsQos.max_samples = 1000000;
-	Sparam.topic.resourceLimitsQos.allocated_samples = 1000000;
-	Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
-
+	//Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
 	//Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
 	//BEST EFFORT
 	Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+
+
 	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Sparam.topic.historyQos.depth = 1000;
-	Sparam.topic.resourceLimitsQos.max_samples = 1000;
-	Sparam.topic.resourceLimitsQos.allocated_samples = 1000;
-	//Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-	Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-
+	Sparam.topic.resourceLimitsQos.max_samples = 10000;
+	Sparam.topic.resourceLimitsQos.allocated_samples = 1100;
 
 	Locator_t loc;
 	loc.port = 10110;

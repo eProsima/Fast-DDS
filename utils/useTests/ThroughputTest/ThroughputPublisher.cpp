@@ -119,8 +119,8 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicName = "LatencyUp";
 
-	//RELIABLE
 
+	//RELIABLE
 //	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(1);
 //	Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
 //	Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
@@ -132,8 +132,8 @@ ThroughputPublisher::ThroughputPublisher():
 
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 1;
-    Wparam.topic.resourceLimitsQos.max_samples = 1000000;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 100;
+    Wparam.topic.resourceLimitsQos.max_samples = 100000;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 1000;
 
 	mp_datapub = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_DataPubListener);
 
