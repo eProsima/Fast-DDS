@@ -14,6 +14,7 @@
 #include "fastrtps/utils/TimeConversion.h"
 #include "ZeroMQSubscriber.h"
 #include <sstream>
+#include <vector>
 
 uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
 std::vector<uint32_t> data_size_sub (datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );

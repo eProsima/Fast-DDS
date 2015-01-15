@@ -105,9 +105,9 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	SubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	//SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15003;
-	SubDataparam.unicastLocatorList.push_back(loc);
-	//loc.set_IP4_address(233,252,124,2);
-	//SubDataparam.multicastLocatorList.push_back(loc);
+	//SubDataparam.unicastLocatorList.push_back(loc);
+	loc.set_IP4_address(239,255,0,2);
+	SubDataparam.multicastLocatorList.push_back(loc);
 	mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
 	if(mp_datasub == nullptr)
 		return false;

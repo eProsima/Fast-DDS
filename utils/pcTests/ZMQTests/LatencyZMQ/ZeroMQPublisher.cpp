@@ -48,7 +48,7 @@ ZeroMQPublisher::~ZeroMQPublisher() {
 bool ZeroMQPublisher::init(std::vector<std::string>subIP,int samples)
 {
 	n_samples = samples;
-	n_sub = subIP.size();
+	n_sub = (int)subIP.size();
 	mp_context = new zmq::context_t(1);
 	mp_datasub = new zmq::socket_t(*mp_context,ZMQ_SUB);
 	mp_commandsub = new zmq::socket_t(*mp_context,ZMQ_SUB);
@@ -118,16 +118,19 @@ bool ZeroMQPublisher::test(uint32_t datasize)
 		zmq::message_t latency_out(datasize+4);
 		zmq::message_t latency_in;
 		memset(latency_out.data(),65,datasize+4);
+#if defined(_WIN32)
+		sprintf_s((char*)(latency_out.data()),datasize+4, "%d", i);
+#else
 		sprintf((char*)(latency_out.data()),"%d",i);
-
+#endif
 		mp_datapub->send(latency_out);
 		mp_datasub->recv(&latency_in);
 		//		std::istringstream iss(static_cast<char*>(latency_in.data()));
 		//		cout << "RECEIVED DATA: "<< iss.str()<< endl;
 
-		sscanf((char*)latency_in.data(),"%d",&result);
+		sscanf_s((char*)latency_in.data(),"%d",&result);
 		//	cout << "recevied result: "<< result << " and i is: "<<i << endl;
-		//cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<" / "<<*(uint32_t*)latency_in.data()<<endl;
+		//  cout << "SENT/REC: "<< *(uint32_t*)latency_out.data() <<" / "<<*(uint32_t*)latency_in.data()<<endl;
 		if(result != i)
 		{
 			cout << "RECEIVED BAD MESSAGE, STOPPING TEST"<<endl;

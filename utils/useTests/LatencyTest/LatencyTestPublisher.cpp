@@ -268,6 +268,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* sub)
 	else
 	{
 		mp_up->mp_latency_out->seqnum++;
+		cout << "W:" << mp_up->mp_latency_out->seqnum << "|" << std::flush;
 		mp_up->mp_datapub->write(mp_up->mp_latency_out);
 		mp_up->mp_latency_in->seqnum = 0;
 		mp_up->n_received = 0;
