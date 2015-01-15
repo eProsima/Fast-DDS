@@ -38,6 +38,9 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -333,6 +336,7 @@ void EDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 	//FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
 	//auxendp = 1;
+	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	if(auxendp!=0 && mp_PubReader.first!=nullptr) //Exist Pub Writer and i have pub reader
 	{
 		logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader",C_CYAN);
@@ -406,6 +410,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "removeRemoteEndpoints";
 	logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	for (auto it = pdata->m_builtinReaders.begin(); it != pdata->m_builtinReaders.end();++it)
 	{
 		if(it->guid.entityId == c_EntityId_SEDPPubReader && this->mp_PubWriter.first !=nullptr)
