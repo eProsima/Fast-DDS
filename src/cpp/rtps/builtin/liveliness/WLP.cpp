@@ -153,6 +153,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "assignRemoteEndpoints";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
 	logInfo(RTPS_LIVELINESS,"For remote RTPSParticipant "<<pdata->m_guid,C_MAGENTA);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t partdet = endp;
@@ -201,6 +202,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "removeRemoteEndpoints";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
 	logInfo(RTPS_LIVELINESS,"for RTPSParticipant: "<<pdata->m_guid,C_MAGENTA);
 	for(auto it = pdata->m_builtinReaders.begin();
 			it!=pdata->m_builtinReaders.end();++it)

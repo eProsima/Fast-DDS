@@ -25,6 +25,10 @@
 #include "fastrtps/utils/RTPSLog.h"
 
 #include "fastrtps/qos/QosPolicies.h"
+
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 using namespace eprosima::fastrtps;
 
 
@@ -40,7 +44,8 @@ ParticipantProxyData::ParticipantProxyData():
 m_manualLivelinessCount(0),
 		isAlive(false),
 		m_hasChanged(true),
-		mp_leaseDurationTimer(nullptr)
+		mp_leaseDurationTimer(nullptr),
+		mp_mutex(new boost::recursive_mutex())
 {
 
 }
@@ -65,6 +70,7 @@ ParticipantProxyData::~ParticipantProxyData()
 	{
 		delete(mp_leaseDurationTimer);
 	}
+	delete(mp_mutex);
 }
 
 bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* pdp)
