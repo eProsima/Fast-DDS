@@ -32,7 +32,7 @@ CacheChangePool::~CacheChangePool()
 	}
 }
 
-CacheChangePool::CacheChangePool(uint32_t pool_size,uint32_t payload_size,int32_t max_pool_size)
+CacheChangePool::CacheChangePool(int32_t pool_size,uint32_t payload_size,int32_t max_pool_size)
 {
 	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
@@ -40,13 +40,16 @@ CacheChangePool::CacheChangePool(uint32_t pool_size,uint32_t payload_size,int32_
 	m_pool_size = 0;
 	if(max_pool_size > 0)
 	{
-		if(pool_size > (uint32_t)max_pool_size)
+		if (pool_size > max_pool_size)
 		{
-			m_max_pool_size = pool_size;
+			m_max_pool_size = (uint32_t)abs(pool_size);
 		}
+		else
+			m_max_pool_size = (uint32_t)abs(max_pool_size);
 	}
 	else
-		m_max_pool_size = max_pool_size;
+		m_max_pool_size = 0;
+	//cout << "CREATING CACHECHANGEPOOL WIHT MAX: " << m_max_pool_size << " and pool size: " << pool_size << endl;
 	allocateGroup(pool_size);
 }
 
@@ -54,8 +57,10 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 {
 	if(m_freeCaches.empty())
 	{
-		if(!allocateGroup((uint16_t)(ceil((float)m_pool_size/10)+10)))
+		if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
+		{
 			return false;
+		}
 	}
 	*chan = m_freeCaches.back();
 	m_freeCaches.erase(m_freeCaches.end()-1);
@@ -83,22 +88,30 @@ bool CacheChangePool::allocateGroup(uint32_t group_size)
 	const char* const METHOD_NAME = "allocateGroup";
 	logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
 	bool added = false;
-	for(uint16_t i = 0;i<group_size;i++)
+	uint32_t reserved = 0;
+	if (m_max_pool_size == 0)
+		reserved = group_size;
+	else
 	{
-		if(m_max_pool_size <= 0 || m_pool_size < (uint32_t)m_max_pool_size)
+		if (m_pool_size + group_size > m_max_pool_size)
 		{
+			reserved = m_max_pool_size - m_pool_size;
+		}
+		else
+		{
+			reserved = group_size;
+		}
+	}
+	for(uint32_t i = 0;i<reserved;i++)
+	{
 			CacheChange_t* ch = new CacheChange_t(m_payload_size);
 			m_allCaches.push_back(ch);
 			m_freeCaches.push_back(ch);
 			++m_pool_size;
 			added = true;
-		}
-		else
-		{
-			logWarning(RTPS_HISTORY,"Maximum number of allowed reserved caches reached");
-			break;
-		}
 	}
+	if (!added)
+		logWarning(RTPS_HISTORY, "Maximum number of allowed reserved caches reached");
 	//logInfo(RTPS_UTILS,"Finish allocating CacheChange_t");
 	return added;
 }
