@@ -491,7 +491,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			else
 			{
-				logError(RTPS_MSG_IN,"Problem reserving CacheChange",C_BLUE);
+				logError(RTPS_MSG_IN, "Problem reserving CacheChange in reader: " << (*it)->getGuid().entityId, C_BLUE);
 				return false;
 			}
 			if(haveTimestamp)

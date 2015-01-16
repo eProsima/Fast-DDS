@@ -26,7 +26,7 @@ namespace fastrtps {
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):
-						WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples+30)),
+						WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
 						m_historyQos(history),
 						m_resourceLimitsQos(resource),
 						mp_pubImpl(pimpl)

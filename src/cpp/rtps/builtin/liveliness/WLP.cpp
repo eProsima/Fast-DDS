@@ -89,8 +89,8 @@ bool WLP::createEndpoints()
 	const char* const METHOD_NAME = "createEndpoints";
 	//CREATE WRITER
 	HistoryAttributes hatt;
-	hatt.initialReservedCaches = 5;
-	hatt.maximumReservedCaches = 100;
+	hatt.initialReservedCaches = 20;
+	hatt.maximumReservedCaches = 1000;
 	hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
 	mp_builtinWriterHistory = new WriterHistory(hatt);
 	WriterAttributes watt;

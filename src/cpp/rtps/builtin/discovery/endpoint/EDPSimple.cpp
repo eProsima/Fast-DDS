@@ -111,7 +111,7 @@ bool EDPSimple::createSEDPEndpoints()
 	if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
 	{
 		hatt.initialReservedCaches = 100;
-		hatt.maximumReservedCaches = 2000;
+		hatt.maximumReservedCaches = 5000;
 		hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
 		mp_PubWriter.second = new WriterHistory(hatt);
 		//Wparam.pushMode = true;
@@ -186,7 +186,7 @@ bool EDPSimple::createSEDPEndpoints()
 			mp_pubListen = nullptr;
 		}
 		hatt.initialReservedCaches = 100;
-		hatt.maximumReservedCaches = 2000;
+		hatt.maximumReservedCaches = 5000;
 		hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
 		mp_SubWriter.second = new WriterHistory(hatt);
 		//Wparam.pushMode = true;

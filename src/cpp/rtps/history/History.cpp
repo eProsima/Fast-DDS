@@ -41,7 +41,7 @@ History::History(const HistoryAttributes & att):
 		mp_mutex(new boost::recursive_mutex())
 
 {
-	m_changes.reserve(att.initialReservedCaches);
+	m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
 	//const char* const METHOD_NAME = "History";
 	m_changePool.reserve_Cache(&mp_invalidCache);
 	mp_invalidCache->writerGUID = c_Guid_Unknown;

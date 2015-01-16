@@ -261,8 +261,8 @@ bool PDPSimple::createSPDPEndpoints()
 	//SPDP BUILTIN RTPSParticipant WRITER
 	HistoryAttributes hatt;
 	hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-	hatt.initialReservedCaches = 5;
-	hatt.maximumReservedCaches = 10;
+	hatt.initialReservedCaches = 20;
+	hatt.maximumReservedCaches = 100;
 	mp_SPDPWriterHistory = new WriterHistory(hatt);
 	WriterAttributes watt;
 	watt.endpoint.endpointKind = WRITER;

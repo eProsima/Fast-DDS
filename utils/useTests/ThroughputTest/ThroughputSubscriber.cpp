@@ -67,7 +67,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
 		//myfile << latencyin.seqnum << ",";
 		if(info.sampleKind == ALIVE)
 		{
-			//		cout << "R:"<<latencyin->seqnum;//<<std::flush;
+			cout << "R:"<<latencyin->seqnum<<std::flush;
 			if((lastseqnum+1)<latencyin->seqnum)
 			{
 				lostsamples+=latencyin->seqnum-lastseqnum-1;
@@ -138,7 +138,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 		case (TEST_ENDS):{
 			m_up.m_Clock.setTimeNow(&m_up.m_t2);
 			m_up.m_DataSubListener.saveNumbers();
-			//cout << "TEST ends, sending results"<<endl;
+			cout << "TEST ends, sending results"<<endl;
 			ThroughputCommandType comm;
 			comm.m_command = TEST_RESULTS;
 			comm.m_demand = m_up.m_demand;
@@ -146,6 +146,8 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
 			comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
 			comm.m_totaltime = (uint64_t)(TimeConv::Time_t2MicroSecondsDouble(m_up.m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_up.m_t1));
+			cout << "LastRecSample: " << comm.m_lastrecsample << endl;
+			cout << "Lost Samples: " << comm.m_lostsamples << endl;
 			//cout << "SEND COMMAND: "<< comm.m_command << endl;
 			//cout << "writecall "<< ++writecalls << endl;
 			m_up.mp_commandpubli->write(&comm);
