@@ -409,7 +409,6 @@ public class fastrtpsgen {
 		
 		if (idlParseFileName != null) {
 			Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
-			
 			// Create template manager
 			TemplateManager tmanager = new TemplateManager();
 			
@@ -470,12 +469,12 @@ public class fastrtpsgen {
 				
 				// TODO: Uncomment following lines and create templates
 				
-				System.out.println("Generating generic type files...");
+				System.out.println("Generating TopicDataTypes files...");
 				if (m_exampleOption != null) {
-					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubType.h", maintemplates.getTemplate("RTPSPubSubTypeHeader"), m_replace)) {
-						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubType.cxx", maintemplates.getTemplate("RTPSPubSubTypeSource"), m_replace)) {
-							project.addProjectIncludeFile(onlyFileName + "PubSubType.h");
-							project.addProjectSrcFile(onlyFileName + "PubSubType.cxx");
+					if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubTypes.h", maintemplates.getTemplate("RTPSPubSubTypeHeader"), m_replace)) {
+						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubTypes.cxx", maintemplates.getTemplate("RTPSPubSubTypeSource"), m_replace)) {
+							project.addProjectIncludeFile(onlyFileName + "PubSubTypes.h");
+							project.addProjectSrcFile(onlyFileName + "PubSubTypes.cxx");
 						}
 					}
 					

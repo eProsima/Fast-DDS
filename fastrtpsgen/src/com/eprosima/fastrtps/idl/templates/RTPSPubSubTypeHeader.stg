@@ -1,11 +1,11 @@
 group ProtocolHeader;
 
 main(ctx, definitions) ::= <<
-$fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.h"], description=["This header file contains the declaration of the serialization functions."])$
+$fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This header file contains the declaration of the serialization functions."])$
 
 
-#ifndef _$ctx.filename;format="toUpper"$_PUBSUBTYPE_H_
-#define _$ctx.filename;format="toUpper"$_PUBSUBTYPE_H_
+#ifndef _$ctx.fileNameUpper$_PUBSUBTYPES_H_
+#define _$ctx.fileNameUpper$_PUBSUBTYPES_H_
 
 #include "fastrtps/TopicDataType.h"
 
@@ -13,10 +13,63 @@ using namespace eprosima::fastrtps;
 
 #include "$ctx.filename$.h"
 
-class $ctx.filename$PubSubType : public TopicDataType {
+$definitions; separator="\n"$
+
+#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
+>>
+
+// TODO name -> module
+module(ctx, module, definition_list) ::= <<
+namespace $module.name$
+{
+    $definition_list$
+}
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+interface(ctx, interface, export_list) ::= <<
+/*!
+ * @brief This class represents the interface $interface.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
+ */
+namespace $interface.name$
+{
+    $export_list$
+}
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, exception) ::= << >>
+
+operation(ctx, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, const) ::= <<
+const $const.typeCode.cppTypename$ $const.name$ = $const.value$;
+>>
+
+typedef_decl(ctx, typedefs) ::= <<
+$typedefs : { typedef |typedef $typedef.typedefContentTypeCode.cppTypename$ $typedef.name$;}; separator="\n"$
+>>
+
+struct_type(ctx, struct) ::= <<
+/*!
+ * @brief This class represents the TopicDataType of the type $struct.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
+ */
+class $struct.name$PubSubType : public TopicDataType {
 public:
-	$ctx.filename$PubSubType();
-	virtual ~$ctx.filename$PubSubType();
+	$struct.name$PubSubType();
+	virtual ~$struct.name$PubSubType();
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);
@@ -25,62 +78,9 @@ public:
 	MD5 m_md5;
 	unsigned char* m_keyBuffer;
 };
-
-#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
 >>
-
-module(ctx, module, definition_list) ::= <<
-$definition_list$
->>
-
-definition_list(definitions) ::= <<
-$definitions; separator="\n"$
-
->>
-
-interface(ctx, interface, export_list) ::= <<
-$export_list$
->>
-
-export_list(exports) ::= <<
-$exports; separator="\n"$
-
->>
-
-exception(ctx, exception) ::= <<>>
-
-operation(ctx, operation, param_list) ::= <<
-$if(ctx.client)$
-/*!
- * @brief This method implements the proxy part of the protocol for the operation $operation.name$.
- *        It has to be implemented by the child classes.
- */
-virtual $paramRetType(operation.rettype)$ $operation.parent.formatedScopedname$_$operation.name$($paramDeclsOnlyOutByRef(params=operation.parameters)$) = 0;
-$endif$
-
-$if(ctx.dds)$
-$if(!operation.oneway)$
-/*!
- * @brief This asynchronous method implements the proxy part of the protocol for the operation $operation.name$.
- *        It has to be implemented by the child classes.
- */
-virtual void $operation.parent.formatedScopedname$_$operation.name$_async($operation.parent.scopedname$_$operation.name$CallbackHandler &obj$paramDeclsByValue(params=operation.inputparam, separatorInicial=", ")$) = 0;
-
-$endif$
-$endif$
-
->>
-
-param_list(parameters) ::= <<>>
-
-param(parameter) ::= <<>>
-
-const_decl(ctx, const) ::= <<>>
-
-typedef_decl(ctx, typedefs) ::= <<>>
-
-struct_type(ctx, struct) ::= <<>>
 
 union_type(ctx, union) ::= <<>>
 
 enum_type(ctx, enum) ::= <<>>
+
