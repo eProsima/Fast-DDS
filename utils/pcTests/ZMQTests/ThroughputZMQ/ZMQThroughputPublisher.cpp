@@ -176,6 +176,7 @@ bool ZMQThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t si
 		//cout << "Removing all..."<<endl;
 		//cout << (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))<<endl;
 	}
+	eClock::my_sleep(200);
 	command.m_command = TEST_ENDS;
 	zmq::message_t command_msg2(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
 	m_commandDataType.serialize(&command,&command_msg2);

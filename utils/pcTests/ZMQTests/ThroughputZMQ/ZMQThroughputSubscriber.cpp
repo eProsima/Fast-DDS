@@ -112,13 +112,6 @@ void ZMQThroughputSubscriber::run()
 		else if(res == 1) //TEST STARTS
 		{
 
-			stringstream ss2;
-			ss2 << "tcp://"<<publisherIP<<":"<<(basePORT+1);
-			mp_dataContext = new zmq::context_t(1);
-			mp_datasub = new zmq::socket_t(*mp_dataContext,ZMQ_SUB);
-			mp_datasub->connect(ss2.str().c_str());
-			mp_datasub->setsockopt(ZMQ_SUBSCRIBE,0,0);
-			mp_latencyThread = new boost::thread(&ZMQThroughputSubscriber::processMessages,this);
 		}
 		else if(res == 2) //TEST ENDS
 		{
@@ -184,6 +177,16 @@ int ZMQThroughputSubscriber::commandReceived()
 		m_commandout.m_command = BEGIN;
 		zmq::message_t command_msg(4*sizeof(uint32_t)+2*sizeof(uint64_t)+sizeof(double));
 		m_commandDataType.serialize(&m_commandout,&command_msg);
+
+
+		stringstream ss2;
+		ss2 << "tcp://" << publisherIP << ":" << (basePORT + 1);
+		mp_dataContext = new zmq::context_t(1);
+		mp_datasub = new zmq::socket_t(*mp_dataContext, ZMQ_SUB);
+		mp_datasub->connect(ss2.str().c_str());
+		mp_datasub->setsockopt(ZMQ_SUBSCRIBE, 0, 0);
+		mp_latencyThread = new boost::thread(&ZMQThroughputSubscriber::processMessages, this);
+
 		mp_commandpub->send(command_msg);
 		return 0;
 		break;

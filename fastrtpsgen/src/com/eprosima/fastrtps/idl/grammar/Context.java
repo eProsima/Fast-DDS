@@ -13,8 +13,7 @@ public class Context extends com.eprosima.idl.context.Context
             String appProduct)
     {
         super(filename, file, includePaths);
-        
-        
+        m_fileNameUpper = filename.toUpperCase();
         m_subscribercode = subscribercode;
         m_publishercode = publishercode;
         m_randomGenNames = new Stack<String>();
@@ -177,5 +176,17 @@ public class Context extends com.eprosima.idl.context.Context
 	public void setM_lastStructure(String m_lastStructure) {
 		this.m_lastStructure = m_lastStructure;
 	}
+	private String m_fileNameUpper = null;
+	
+	public void setFilename(String filename)
+    {
+		super.setFilename(filename);
+		m_fileNameUpper = filename.toUpperCase();
+    }
+	public String getFileNameUpper()
+	{
+		return m_fileNameUpper;
+	}
+	
     
 }
