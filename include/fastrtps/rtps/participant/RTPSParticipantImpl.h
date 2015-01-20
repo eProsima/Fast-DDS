@@ -119,7 +119,8 @@ public:
     void sendSync(CDRMessage_t* msg, const Locator_t& loc);
     //!Get Send Mutex
     boost::recursive_mutex* getSendMutex();
-
+    //!Get the participant Mutex
+    boost::recursive_mutex* getParticipantMutex() const {return mp_mutex;};
 	/**
 	* Get the participant listener
 	* @return participant listener
@@ -185,8 +186,8 @@ private:
 	 * @return True if assigned.
 	 */
 	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
-
-
+	//!Participant Mutex
+	boost::recursive_mutex* mp_mutex;
 public:
 	/**
 	 * Create a Writer in this RTPSParticipant.

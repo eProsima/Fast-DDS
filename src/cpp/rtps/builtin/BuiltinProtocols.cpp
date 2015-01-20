@@ -48,10 +48,10 @@ BuiltinProtocols::BuiltinProtocols():
 
 BuiltinProtocols::~BuiltinProtocols() {
 	// TODO Auto-generated destructor stub
-	if(mp_PDP!=nullptr)
-		delete(mp_PDP);
 	if(mp_WLP!=nullptr)
 		delete(mp_WLP);
+	if(mp_PDP!=nullptr)
+		delete(mp_PDP);
 }
 
 

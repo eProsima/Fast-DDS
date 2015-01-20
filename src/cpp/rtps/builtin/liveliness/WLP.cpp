@@ -43,19 +43,18 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "WLP";
 
-WLP::WLP(BuiltinProtocols* p):
-																		m_minAutomatic_MilliSec(std::numeric_limits<double>::max()),
-																		m_minManRTPSParticipant_MilliSec(std::numeric_limits<double>::max()),
-																		mp_participant(nullptr),
-																		mp_builtinProtocols(p),
-																		mp_builtinWriter(nullptr),
-																		mp_builtinReader(nullptr),
-																		mp_builtinWriterHistory(nullptr),
-																		mp_builtinReaderHistory(nullptr),
-																		mp_listener(nullptr),
-																		mp_livelinessAutomatic(nullptr),
-																		mp_livelinessManRTPSParticipant(nullptr),
-																		mp_mutex(new boost::recursive_mutex)
+WLP::WLP(BuiltinProtocols* p):	m_minAutomatic_MilliSec(std::numeric_limits<double>::max()),
+		m_minManRTPSParticipant_MilliSec(std::numeric_limits<double>::max()),
+		mp_participant(nullptr),
+		mp_builtinProtocols(p),
+		mp_builtinWriter(nullptr),
+		mp_builtinReader(nullptr),
+		mp_builtinWriterHistory(nullptr),
+		mp_builtinReaderHistory(nullptr),
+		mp_listener(nullptr),
+		mp_livelinessAutomatic(nullptr),
+		mp_livelinessManRTPSParticipant(nullptr),
+		mp_mutex(new boost::recursive_mutex)
 {
 
 
