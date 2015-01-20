@@ -127,7 +127,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
       <ProgramDataBaseFileName>\$(TargetDir)\$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>$if(it.debug)$true$else$false$endif$</GenerateDebugInformation>
       <AdditionalDependencies>$if(!it.dll)$lib$endif$$project.name$Types$if(it.debug)$d$endif$.lib;$if(!it.dll)$Shlwapi.lib;Iphlpapi.lib;$endif$$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
