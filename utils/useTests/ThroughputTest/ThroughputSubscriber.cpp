@@ -47,7 +47,7 @@ void ThroughputSubscriber::DataSubListener::reset(){
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -93,7 +93,7 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
 
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -164,7 +164,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

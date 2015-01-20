@@ -39,7 +39,7 @@ public:
 	* @param reader Matching reader
 	* @param info Matching information of the reader
 	*/
-	virtual void onReaderMatched(RTPSReader* reader,MatchingInfo info){};
+	virtual void onReaderMatched(RTPSReader* reader,MatchingInfo& info){};
 	
 	/**
 	* This method is called when a new CacheChange_t is added to the ReaderHistory.

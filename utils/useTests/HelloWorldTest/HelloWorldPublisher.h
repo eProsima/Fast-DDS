@@ -42,7 +42,7 @@ private:
 	public:
 		PubListener():n_matched(0){};
 		~PubListener(){};
-		void onPublicationMatched(Publisher* pub,MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 		int n_matched;
 	}m_listener;
 	HelloWorldType m_type;

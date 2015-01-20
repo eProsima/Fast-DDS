@@ -46,7 +46,7 @@ public:
 	 * @param sub Subscriber
 	 * @param info Matching information
 	 */
-	virtual void onSubscriptionMatched(Subscriber* sub, MatchingInfo info){};
+	virtual void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){};
 };
 
 } /* namespace pubsub */

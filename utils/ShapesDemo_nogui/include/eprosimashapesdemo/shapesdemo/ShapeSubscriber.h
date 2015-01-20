@@ -40,7 +40,7 @@ public:
 	bool initSubscriber();
 
 	void onNewDataMessage();
-    void onSubscriptionMatched(MatchingInfo info);
+    void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
     void adjustContentFilter(ShapeFilter& m_filter);
     void assignContentFilterPointer(ContentFilterSelector* p){mp_contentFilter = p;}
 	bool hasReceived;

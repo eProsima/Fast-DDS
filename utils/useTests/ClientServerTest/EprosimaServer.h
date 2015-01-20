@@ -53,7 +53,7 @@ public:
 		OperationListener(EprosimaServer* up):mp_up(up){}
 		~OperationListener(){}
 		EprosimaServer* mp_up;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber*sub);
 		Operation m_operation;
 		SampleInfo_t m_sampleInfo;
@@ -65,7 +65,7 @@ public:
 		ResultListener(EprosimaServer* up):mp_up(up){}
 		~ResultListener(){}
 		EprosimaServer* mp_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 	}m_resultsListener;
 };
 

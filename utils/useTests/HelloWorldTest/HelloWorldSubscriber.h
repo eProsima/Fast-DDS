@@ -45,7 +45,7 @@ public:
 	public:
 		SubListener():n_matched(0),n_samples(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);
 		HelloWorld m_Hello;
 		SampleInfo_t m_info;

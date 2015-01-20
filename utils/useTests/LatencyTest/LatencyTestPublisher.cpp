@@ -150,7 +150,7 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	return true;
 }
 
-void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -168,7 +168,7 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* pub,
 	}
 }
 
-void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -186,7 +186,7 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* su
 	}
 }
 
-void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -204,7 +204,7 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* p
 	}
 }
 
-void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

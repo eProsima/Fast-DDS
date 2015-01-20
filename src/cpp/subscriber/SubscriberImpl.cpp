@@ -180,7 +180,7 @@ void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader*
 	}
 }
 
-void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* reader,MatchingInfo info)
+void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* reader,MatchingInfo& info)
 {
 	if (this->mp_subscriberImpl->mp_listener != nullptr)
 	{

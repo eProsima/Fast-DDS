@@ -117,7 +117,7 @@ private:
 	public:
 		SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s){};
 		virtual ~SubscriberReaderListener(){};
-		void onReaderMatched(RTPSReader* reader,MatchingInfo info);
+		void onReaderMatched(RTPSReader* reader,MatchingInfo& info);
 		void onNewCacheChangeAdded(RTPSReader * reader,const CacheChange_t* const change);
 		SubscriberImpl* mp_subscriberImpl;
 	}m_readerListener;

@@ -51,7 +51,7 @@ bool $ctx.filename$Publisher::init()
 	return true;
 }
 
-void $ctx.filename$Publisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void $ctx.filename$Publisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{
