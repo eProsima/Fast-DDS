@@ -82,14 +82,15 @@ void MetaTestPublisher::run()
 		eClock::my_sleep(300);
 	std::stringstream ss;
 	//RUN ALL TESTS
-	ss << "T_HELLO_WORLD    : " << t_hello_world() << endl;
-	clean();
+
 	ss << "T_RTPS_REGISTERED: " << t_rtps_registered() << endl;
 	clean();
 	ss << "T_RTPS_SOCKET    : " << t_rtps_socket() << endl;
 	clean();
 	ss << "T_CLIENT_SERVER  : " << t_client_server() << endl;
 	clean();
+	ss << "T_HELLO_WORLD    : " << t_hello_world() << endl;
+		clean();
 
 	MetaTestType testinfo;
 	testinfo.kind(STOP_ALL_TESTS);
@@ -125,7 +126,7 @@ std::string MetaTestPublisher::t_hello_world()
 				printf("Running\n");
 				hwpub.run(samples);
 				printf("Finished");
-				eClock::my_sleep(150);
+				eClock::my_sleep(200);
 				testinfo.status(T_PUB_FINISH);
 				testinfo.samples(samples);
 				mp_pub->write(&testinfo);
