@@ -113,6 +113,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 				info.m_status = DISCOVERED_RTPSPARTICIPANT;
 				//IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
 				ParticipantProxyData* pdata = new ParticipantProxyData();
+				boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 				pdata->copy(m_ParticipantProxyData);
 				pdata_ptr = pdata;
 				pdata_ptr->isAlive = true;
@@ -127,6 +128,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 			else
 			{
 				info.m_status = CHANGED_QOS_RTPSPARTICIPANT;
+				boost::lock_guard<boost::recursive_mutex> guard(*pdata_ptr->mp_mutex);
 				pdata_ptr->updateData(m_ParticipantProxyData);
 				if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
 					mp_SPDP->mp_EDP->assignRemoteEndpoints(&m_ParticipantProxyData);
