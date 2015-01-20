@@ -45,6 +45,9 @@
 #include "fastrtps/utils/StringMatching.h"
 #include "fastrtps/utils/RTPSLog.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
@@ -432,6 +435,7 @@ bool EDP::pairingReader(RTPSReader* R)
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
 			for(std::vector<WriterProxyData*>::iterator wdatait = (*pit)->m_writers.begin();
 					wdatait!=(*pit)->m_writers.end();++wdatait)
 			{
@@ -483,6 +487,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*(*pit)->mp_mutex);
 			for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
 					rdatait!=(*pit)->m_readers.end();++rdatait)
 			{

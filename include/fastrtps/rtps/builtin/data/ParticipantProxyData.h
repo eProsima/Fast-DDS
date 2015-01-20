@@ -39,6 +39,11 @@
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER 0x00000001 << 10;
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER 0x00000001 << 11;
 
+namespace boost
+{
+	class recursive_mutex;
+}
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -105,6 +110,8 @@ public:
 	std::vector<RemoteReaderAttributes> m_builtinReaders;
 	//!
 	std::vector<RemoteWriterAttributes> m_builtinWriters;
+
+	boost::recursive_mutex* mp_mutex;
 	/**
 	 * Initialize the object with the data of the lcoal RTPSParticipant.
 	 * @param part Pointer to the RTPSParticipant.
