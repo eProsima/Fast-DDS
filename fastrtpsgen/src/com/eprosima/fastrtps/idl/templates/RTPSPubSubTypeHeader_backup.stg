@@ -1,42 +1,21 @@
 group ProtocolHeader;
 
 main(ctx, definitions) ::= <<
-$fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.h"], description=["This header file contains the declaration of the publisher functions."])$
+$fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This header file contains the declaration of the serialization functions."])$
 
 
-#ifndef _$ctx.fileNameUpper$_PUBLISHER_H_
-#define _$ctx.fileNameUpper$_PUBLISHER_H_
+#ifndef _$ctx.filename;format="toUpper"$_PUBSUBTYPES_H_
+#define _$ctx.filename;format="toUpper"$_PUBSUBTYPES_H_
 
-#include "fastrtps/fastrtps_fwd.h"
-#include "fastrtps/publisher/PublisherListener.h"
-
-#include "$ctx.filename$PubSubTypes.h"
+#include "fastrtps/TopicDataType.h"
 
 using namespace eprosima::fastrtps;
 
-class $ctx.filename$Publisher 
-{
-public:
-	$ctx.filename$Publisher();
-	virtual ~$ctx.filename$Publisher();
-	bool init();
-	void run();
-private:
-	Participant *mp_participant;
-	Publisher *mp_publisher;
-	
-	class PubListener : public PublisherListener
-	{
-	public:
-		PubListener() : n_matched(0){};
-		~PubListener(){};
-		void onPublicationMatched(Publisher* pub,MatchingInfo info);
-		int n_matched;
-	} m_listener;
-	$ctx.m_lastStructure$PubSubType myType;
-};
+#include "$ctx.filename$.h"
 
-#endif // _$ctx.fileNameUpper$_PUBLISHER_H_
+
+
+#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
 >>
 
 module(ctx, module, definition_list) ::= <<
@@ -89,7 +68,8 @@ const_decl(ctx, const) ::= <<>>
 
 typedef_decl(ctx, typedefs) ::= <<>>
 
-struct_type(ctx, struct) ::= <<>>
+struct_type(ctx, struct) ::= <<
+>>
 
 union_type(ctx, union) ::= <<>>
 
