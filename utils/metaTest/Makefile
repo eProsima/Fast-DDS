@@ -36,11 +36,11 @@ METATEST_CFLAGS_DEBUG = $(CFLAGS_DEBUG) -std=c++0x
 METATEST_TARGET_DEBUG= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/MetaTestd
 METATEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/MetaTest
 
-METATEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
-                         -I$(BASEDIR)/../../../thirdparty/eprosima-common-code
+METATEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../include \
+                         -I$(BASEDIR)/../../thirdparty/eprosima-common-code
 
-METATEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time -lfastcdr
-METATEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time -lfastcdr
+METATEST_LIBS_DEBUG=  $(LIBS_DEBUG) -L$(BASEDIR)/../../lib/$(EPROSIMA_TARGET)  -lfastrtpsd -lboost_system -lboost_thread -lboost_date_time -lfastcdr
+METATEST_LIBS_RELEASE=  $(LIBS) -L$(BASEDIR)/../../lib/$(EPROSIMA_TARGET)  -lfastrtps -lboost_system -lboost_thread -lboost_date_time -lfastcdr
 
 METATEST_SRC_CFILES=
 

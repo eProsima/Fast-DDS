@@ -121,7 +121,12 @@ void MetaTestSubscriber::t_hello_world(MetaTestType& testinfo)
 					return;
 				}
 				else
-					testinfo.comment("Bad samples number received");
+				{
+					std::stringstream ss;
+					ss << "Received "<<hwsub.m_listener.n_samples << " samples of the expected ";
+					ss << (uint16_t)testinfo.samples();
+					testinfo.comment(ss.str());
+				}
 			}
 			else
 			{

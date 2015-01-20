@@ -89,6 +89,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 	{
 		if(m_info.sampleKind == ALIVE)
 		{
+			this->n_samples++;
 			// Print your structure data here.
 			cout << "Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<endl;
 		}
