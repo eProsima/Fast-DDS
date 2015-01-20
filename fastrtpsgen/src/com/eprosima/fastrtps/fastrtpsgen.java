@@ -219,11 +219,6 @@ public class fastrtpsgen {
 			TypeCode.cpptypesgr = StringTemplateGroup.loadGroup("Types", DefaultTemplateLexer.class, null); //TODOQuitar Types.stg de com.eprosima.fastrtps.idl.templates y copiarlo con el build
 			TemplateManager.middlgr = StringTemplateGroup.loadGroup("eprosima", DefaultTemplateLexer.class, null);
 			
-			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
-				solution.addLibrary("boost_system");
-				solution.addLibrary("boost_thread");
-			}
-			
 			if(m_exampleOption != null && m_exampleOption.contains("Win"))
             {
 				solution.addInclude("$(LIB_BOOST_PATH)");
@@ -240,6 +235,14 @@ public class fastrtpsgen {
 			
 			// Add product library
 			solution.addLibrary("fastrtps");
+			
+			//Add boost dependencies as libraries in Linux.
+			//TODO Automatically link with fastrtps
+			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
+				solution.addLibrary("boost_system");
+				solution.addLibrary("boost_thread");
+				solution.addLibrary("boost_date_time");
+			}
 			
 			for (int count = 0; returnedValue && (count < m_idlFiles.size()); ++count) {
 				Project project = process(m_idlFiles.get(count));
