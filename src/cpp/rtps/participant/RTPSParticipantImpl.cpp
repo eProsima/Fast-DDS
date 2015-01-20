@@ -65,14 +65,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):
-																							m_guid(guidP,c_EntityId_RTPSParticipant),
-																							mp_send_thr(nullptr),
-																							mp_event_thr(nullptr),
-																							mp_builtinProtocols(nullptr),
-																							mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-																							IdCounter(0),
-																							mp_participantListener(plisten),
-																							mp_userParticipant(par)
+																													m_guid(guidP,c_EntityId_RTPSParticipant),
+																													mp_send_thr(nullptr),
+																													mp_event_thr(nullptr),
+																													mp_builtinProtocols(nullptr),
+																													mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+																													IdCounter(0),
+																													mp_participantListener(plisten),
+																													mp_userParticipant(par)
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
@@ -208,6 +208,18 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	{
 		entId = entityId;
 	}
+	if(!param.endpoint.unicastLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Unicast Locator List for Writer contains invalid Locator");
+		return false;
+	}
+	if(!param.endpoint.multicastLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
+		return false;
+	}
+
+
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -271,6 +283,16 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 	else
 	{
 		entId = entityId;
+	}
+	if(!param.endpoint.unicastLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Unicast Locator List for Reader contains invalid Locator");
+		return false;
+	}
+	if(!param.endpoint.multicastLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
+		return false;
 	}
 	RTPSReader* SReader = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
