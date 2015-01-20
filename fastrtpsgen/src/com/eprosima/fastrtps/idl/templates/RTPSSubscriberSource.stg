@@ -15,7 +15,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.cpp"], description=["This 
 
 $ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
 
-$ctx.filename$Subscriber::~$ctx.filename$Subscriber() {	Domain::stopAll();}
+$ctx.filename$Subscriber::~$ctx.filename$Subscriber() {	Domain::removeParticipant(mp_participant);}
 
 bool $ctx.filename$Subscriber::init()
 {
