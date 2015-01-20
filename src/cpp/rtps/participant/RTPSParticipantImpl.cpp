@@ -64,18 +64,19 @@ static EntityId_t TrustedWriter(const EntityId_t& reader)
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
-		RTPSParticipantListener* plisten):
-																													m_guid(guidP,c_EntityId_RTPSParticipant),
-																													mp_send_thr(nullptr),
-																													mp_event_thr(nullptr),
-																													mp_builtinProtocols(nullptr),
-																													mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-																													IdCounter(0),
-																													mp_participantListener(plisten),
-																													mp_userParticipant(par)
+		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
+				mp_send_thr(nullptr),
+				mp_event_thr(nullptr),
+				mp_builtinProtocols(nullptr),
+				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+				IdCounter(0),
+				mp_participantListener(plisten),
+				mp_userParticipant(par),
+				mp_mutex(new boost::recursive_mutex())
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
 	m_att = PParam;
 	Locator_t loc;
@@ -163,6 +164,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
 	delete(this->mp_send_thr);
 	delete(this->mp_event_thr);
+	delete(this->mp_mutex);
 }
 
 /*
@@ -240,6 +242,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);
 	if(!isBuiltin)
 		m_userWriterList.push_back(SWriter);
@@ -316,7 +319,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		delete(SReader);
 		return false;
 	}
-
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allReaderList.push_back(SReader);
 	if(!isBuiltin)
 		m_userReaderList.push_back(SReader);
@@ -425,6 +428,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 	for(auto lit = list.begin();lit != list.end();++lit)
 	{
 		added = false;
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
 		{
 			if((*it)->isListeningTo(*lit))
@@ -462,9 +466,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
 	bool found = false;
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*p_endpoint->getMutex());
+		boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 		if(p_endpoint->getAttributes()->endpointKind == WRITER)
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 			for(auto wit=m_userWriterList.begin();
 					wit!=m_userWriterList.end();++wit)
 			{
@@ -481,6 +486,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			for(auto rit=m_userReaderList.begin()
 					;rit!=m_userReaderList.end();++rit)
 			{
+				boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 				if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 				{
 					m_userReaderList.erase(rit);
@@ -499,6 +505,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		//BUILTINPROTOCOLS
 		//Remove it from threadListenList
 		std::vector<ListenResource*>::iterator thit;
+		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		for(thit=m_listenResourceList.begin();
 				thit!=m_listenResourceList.end();thit++)
 		{
@@ -514,7 +521,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 				break;
 			}
 		}
-
 	}
 	delete(p_endpoint);
 	return true;
@@ -586,50 +592,6 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
 }
 
 
-//
-//
-//
-//
-//
-//
-//
-//
-
-//
-//
-//
-
-//
-//void RTPSParticipantImpl::registerReader(RTPSReader* SReader)
-//{
-//	eClock::my_sleep(30);
-//	m_userReaderList.push_back(SReader);
-//	m_builtinProtocols.addLocalReader(SReader);
-//}
-//
-//void RTPSParticipantImpl::registerWriter(RTPSWriter* SWriter)
-//{
-//	eClock::my_sleep(30);
-//	m_userWriterList.push_back(SWriter);
-//	m_builtinProtocols.addLocalWriter(SWriter);
-//}
-//
-//
-
-//
-//
-
-//
-//
-//
-//
-
-
-//
-
-//
-//}
-//
 
 }
 } /* namespace rtps */

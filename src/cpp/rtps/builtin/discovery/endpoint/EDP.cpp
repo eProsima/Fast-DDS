@@ -56,9 +56,8 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "EDP";
 
-EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part):
-															mp_PDP(p),
-															mp_RTPSParticipant(part)
+EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part):	mp_PDP(p),
+		mp_RTPSParticipant(part)
 {
 	// TODO Auto-generated constructor stub
 
@@ -197,6 +196,7 @@ bool EDP::unpairWriterProxy(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "unpairWriterProxy";
 	logInfo(RTPS_EDP,wdata->m_guid << " in topic: "<< wdata->m_topicName,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
 	{
@@ -221,6 +221,7 @@ bool EDP::unpairReaderProxy(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "unpairReaderProxy";
 	logInfo(RTPS_EDP,rdata->m_guid << " in topic: "<< rdata->m_topicName,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
 			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
 	{
@@ -255,7 +256,7 @@ bool EDP::validMatching(WriterProxyData* wdata,ReaderProxyData* rdata)
 		logWarning(RTPS_EDP,"INCOMPATIBLE QOS:Remote Reader "<<rdata->m_guid << " is publishing in topic "
 				<< rdata->m_topicName << "(keyed:"<<rdata->m_topicKind<<
 				"), local writer publishes as keyed: "<<wdata->m_topicKind,C_CYAN)
-																																																												return false;
+																																																														return false;
 	}
 	if(!rdata->m_isAlive) //Matching
 	{
@@ -346,7 +347,7 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 	{
 		logWarning(RTPS_EDP,"INCOMPATIBLE QOS:Remote Writer "<<wdata->m_guid << " is publishing in topic " << wdata->m_topicName << "(keyed:"<<wdata->m_topicKind<<
 				"), local reader subscribes as keyed: "<<rdata->m_topicKind,C_CYAN)
-																																																															return false;
+																																																																	return false;
 	}
 	if(!wdata->m_isAlive) //Matching
 	{
@@ -432,6 +433,7 @@ bool EDP::pairingReader(RTPSReader* R)
 	if(this->mp_PDP->lookupReaderProxyData(R->getGuid(),&rdata))
 	{
 		logInfo(RTPS_EDP,R->getGuid()<<" in topic: \"" << rdata->m_topicName<<"\"",C_CYAN);
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_PDP->getMutex());
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{
@@ -484,6 +486,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 	if(this->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata))
 	{
 		logInfo(RTPS_EDP,W->getGuid()<<" in topic: \"" << wdata->m_topicName<<"\"",C_CYAN);
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_PDP->getMutex());
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{
@@ -534,6 +537,7 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "pairingReaderProxy";
 	logInfo(RTPS_EDP,rdata->m_guid<<" in topic: \"" << rdata->m_topicName <<"\"",C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
 			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
 	{
@@ -579,6 +583,7 @@ bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "pairingWriterProxy";
 	logInfo(RTPS_EDP,wdata->m_guid<<" in topic: \"" << wdata->m_topicName <<"\"",C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
 	{

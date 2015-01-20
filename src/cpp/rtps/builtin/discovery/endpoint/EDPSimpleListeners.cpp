@@ -85,6 +85,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheC
 			}
 			else //NOT ADDED BECAUSE IT WAS ALREADY THERE
 			{
+				boost::lock_guard<boost::recursive_mutex> guard(*mp_SEDP->mp_PubReader.second->getMutex());
 				for(auto ch = mp_SEDP->mp_PubReader.second->changesBegin();
 						ch!=mp_SEDP->mp_PubReader.second->changesEnd();++ch)
 				{
@@ -211,6 +212,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheC
 			}
 			else //NOT ADDED BECAUSE IT WAS ALREADY THERE
 			{
+				boost::lock_guard<boost::recursive_mutex> guard(*mp_SEDP->mp_SubReader.second->getMutex());
 				for(auto ch = mp_SEDP->mp_SubReader.second->changesBegin();
 						ch!=mp_SEDP->mp_SubReader.second->changesEnd();++ch)
 				{
