@@ -89,9 +89,19 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 		ID = PParam.participantID;
 		if(m_RTPSParticipantIDs.insert(ID).second == false)
 		{
-			logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists" << endl;)
+			logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists");
 			return nullptr;
 		}
+	}
+	if(!PParam.defaultUnicastLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Default Unicast Locator List contains invalid Locator");
+		return nullptr;
+	}
+	if(!PParam.defaultMulticastLocatorList.isValid())
+	{
+		logError(RTPS_PARTICIPANT,"Default Multicast Locator List contains invalid Locator");
+		return nullptr;
 	}
 	PParam.participantID = ID;
 	int pid;

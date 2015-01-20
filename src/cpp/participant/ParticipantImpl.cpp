@@ -40,12 +40,12 @@ namespace fastrtps {
 static const char* const CLASS_NAME = "ParticipantImpl";
 
 ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
-								m_att(patt),
-								mp_rtpsParticipant(nullptr),
-								mp_participant(pspart),
-								mp_listener(listen),
+												m_att(patt),
+												mp_rtpsParticipant(nullptr),
+												mp_participant(pspart),
+												mp_listener(listen),
 #pragma warning (disable : 4355 )
-								m_rtps_listener(this)
+												m_rtps_listener(this)
 {
 	mp_participant->mp_impl = this;
 }
@@ -125,6 +125,16 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 			return nullptr;
 		}
 	}
+	if(!att.unicastLocatorList.isValid())
+	{
+		logError(PARTICIPANT,"Unicast Locator List for Publisher contains invalid Locator");
+		return nullptr;
+	}
+	if(!att.multicastLocatorList.isValid())
+	{
+		logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
+		return nullptr;
+	}
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
@@ -195,6 +205,16 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 			logError(PARTICIPANT,"Static EDP requires user defined Id");
 			return nullptr;
 		}
+	}
+	if(!att.unicastLocatorList.isValid())
+	{
+		logError(PARTICIPANT,"Unicast Locator List for Subscriber contains invalid Locator");
+		return nullptr;
+	}
+	if(!att.multicastLocatorList.isValid())
+	{
+		logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
+		return nullptr;
 	}
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
@@ -300,7 +320,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPS
 }
 
 bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
-	EndpointKind_t kind)
+		EndpointKind_t kind)
 {
 	if (kind == WRITER)
 		return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);

@@ -135,6 +135,16 @@ inline bool IsAddressDefined(const Locator_t& loc)
 	return false;
 }
 
+inline bool IsLocatorValid(const Locator_t&loc)
+{
+	if(loc.kind<0)
+		return false;
+	if(loc.port == 0)
+		return false;
+	return IsAddressDefined(loc);
+
+}
+
 inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
 	if(loc1.kind!=loc2.kind)
 		return false;
@@ -227,6 +237,15 @@ public:
 			}
 		}
 		return false;
+	}
+	RTPS_DllAPI bool isValid()
+	{
+		for(LocatorListIterator it=this->begin();it!=this->end();++it)
+		{
+			if(!IsLocatorValid(*it))
+				return false;
+		}
+		return true;
 	}
 	friend std::ostream& operator <<(std::ostream& output,const LocatorList_t& loc);
 private:
