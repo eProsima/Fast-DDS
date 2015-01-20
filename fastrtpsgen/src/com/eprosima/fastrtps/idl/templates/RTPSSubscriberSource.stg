@@ -45,7 +45,7 @@ bool $ctx.filename$Subscriber::init()
 	return true;
 }
 
-void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{

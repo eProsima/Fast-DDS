@@ -148,7 +148,7 @@ public:
 	{
 		cout <<"New Message"<<endl;
 	}
-	void onSubscriptionMatched(MatchingInfo info)
+	void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 	{
 		if(info.status == MATCHED_MATCHING)
 			cout << "Discovery"<<endl;
@@ -191,7 +191,7 @@ public:
 	{
 		pub->removeMinSeqCache();
 	}
-	void onPublicationMatched(MatchingInfo info)
+	void onPublicationMatched(Publisher* pub,MatchingInfo& info)
 	{
 		if(info.status == MATCHED_MATCHING)
 		{

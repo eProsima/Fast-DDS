@@ -51,7 +51,7 @@ private:
 		OperationListener(EprosimaClient* up):mp_up(up){}
 		~OperationListener(){}
 		EprosimaClient* mp_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 	}m_operationsListener;
 	class ResultListener:public SubscriberListener
 	{
@@ -59,7 +59,7 @@ private:
 		ResultListener(EprosimaClient* up):mp_up(up){}
 		~ResultListener(){}
 		EprosimaClient* mp_up;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);
 	}m_resultsListener;
 	bool m_isReady;

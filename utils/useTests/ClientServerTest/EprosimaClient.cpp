@@ -131,7 +131,7 @@ void EprosimaClient::resetResult()
 	m_result.m_result = 0;
 }
 
-void EprosimaClient::OperationListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void EprosimaClient::OperationListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -142,7 +142,7 @@ void EprosimaClient::OperationListener::onPublicationMatched(Publisher* pub,Matc
 	mp_up->isReady();
 }
 
-void EprosimaClient::ResultListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void EprosimaClient::ResultListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

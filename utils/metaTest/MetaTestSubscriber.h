@@ -41,7 +41,7 @@ private:
 	public:
 		MyPubListen():n_matched(0){};
 		~MyPubListen(){};
-		void onPublicationMatched(Publisher* pub,MatchingInfo info)
+		void onPublicationMatched(Publisher* pub,MatchingInfo& info)
 		{
 
 			if(info.status == MATCHED_MATCHING)
@@ -58,7 +58,7 @@ private:
 	public:
 		MySubListen():n_matched(0){};
 		~MySubListen(){};
-		void onSubscriptionMatched(Subscriber* pub,MatchingInfo info)
+		void onSubscriptionMatched(Subscriber* pub,MatchingInfo& info)
 		{
 			if(info.status == MATCHED_MATCHING){
 				n_matched++;

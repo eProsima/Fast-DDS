@@ -123,7 +123,7 @@ private:
 	public:
 		PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
 		virtual ~PublisherWriterListener(){};
-		void onWriterMatched(RTPSWriter* writer,MatchingInfo info);
+		void onWriterMatched(RTPSWriter* writer,MatchingInfo& info);
 		PublisherImpl* mp_publisherImpl;
 	}m_writerListener;
 

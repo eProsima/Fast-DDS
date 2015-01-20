@@ -157,14 +157,14 @@ void EprosimaServer::OperationListener::onNewDataMessage(Subscriber* sub)
 	}
 }
 
-void EprosimaServer::OperationListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void EprosimaServer::OperationListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 
 }
 
 
 
-void EprosimaServer::ResultListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void EprosimaServer::ResultListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 
 }

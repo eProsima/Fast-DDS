@@ -58,7 +58,7 @@ public:
 		bool first;
 		LatencyType* latencyin;
 		SampleInfo_t info;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);
 		void saveNumbers();
 		std::ofstream myfile;
@@ -72,7 +72,7 @@ public:
 		ThroughputSubscriber& m_up;
 		ThroughputCommandType m_commandin;
 		SampleInfo_t info;
-		void onSubscriptionMatched(Subscriber* sub,MatchingInfo info);
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);
 		void saveNumbers();
 	}m_CommandSubListener;
@@ -82,7 +82,7 @@ public:
 		CommandPubListener(ThroughputSubscriber& up);
 		virtual ~CommandPubListener();
 		ThroughputSubscriber& m_up;
-		void onPublicationMatched(Publisher* pub,MatchingInfo info);
+		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 	}m_CommandPubListener;
 	bool ready;
 	uint32_t m_datasize;

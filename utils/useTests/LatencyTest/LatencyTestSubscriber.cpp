@@ -144,7 +144,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 
 
 
-void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -153,7 +153,7 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* pub
 	}
 }
 
-void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -164,7 +164,7 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* s
 
 
 
-void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -173,7 +173,7 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* 
 	}
 }
 
-void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

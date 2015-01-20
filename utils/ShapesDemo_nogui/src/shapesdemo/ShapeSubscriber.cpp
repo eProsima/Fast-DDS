@@ -81,7 +81,7 @@ void ShapeSubscriber::onNewDataMessage()
 
 
 
-void ShapeSubscriber::onSubscriptionMatched(MatchingInfo info)
+void ShapeSubscriber::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
     if(info.status ==MATCHED_MATCHING)
     {

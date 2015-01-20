@@ -33,7 +33,7 @@
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::DataPubListener::~DataPubListener(){};
 
-void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 
 	if(info.status == MATCHED_MATCHING)
@@ -49,7 +49,7 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* pub,M
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){};
-void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo info)
+void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -64,7 +64,7 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* 
 
 ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){};
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){};
-void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo info)
+void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

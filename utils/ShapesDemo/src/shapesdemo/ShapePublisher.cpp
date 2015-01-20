@@ -64,7 +64,7 @@ void ShapePublisher::write()
     }
 }
 
-void ShapePublisher::onPublicationMatched(Publisher *pub, MatchingInfo info)
+void ShapePublisher::onPublicationMatched(Publisher *pub, MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
         cout << "Publisher MATCHES Sub: "<< info.remoteEndpointGuid << "*****************************"<<endl;

@@ -46,7 +46,7 @@ public:
      * @brief onPublicationMatched
      * @param info
      */
-    void onPublicationMatched(Publisher* pub,MatchingInfo info);
+    void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 
     Shape m_shape;
     QMutex m_mutex;
