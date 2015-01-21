@@ -188,6 +188,8 @@ private:
 	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
+	//!ListenThreadId
+	uint32_t m_threadID;
 public:
 	/**
 	 * Create a Writer in this RTPSParticipant.

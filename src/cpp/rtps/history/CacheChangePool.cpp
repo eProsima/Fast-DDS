@@ -15,6 +15,9 @@
 #include "fastrtps/rtps/common/CacheChange.h"
 #include "fastrtps/utils/RTPSLog.h"
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -30,10 +33,12 @@ CacheChangePool::~CacheChangePool()
 	{
 		delete(*it);
 	}
+	delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size,uint32_t payload_size,int32_t max_pool_size)
+CacheChangePool::CacheChangePool(int32_t pool_size,uint32_t payload_size,int32_t max_pool_size):mp_mutex(new boost::mutex())
 {
+	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
 	logInfo(RTPS_UTILS,"Creating CacheChangePool of size: "<<pool_size << " with payload of size: " << payload_size);
 	m_payload_size = payload_size;
@@ -55,6 +60,7 @@ CacheChangePool::CacheChangePool(int32_t pool_size,uint32_t payload_size,int32_t
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 {
+	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	if(m_freeCaches.empty())
 	{
 		if (!allocateGroup((uint16_t)(ceil((float)m_pool_size / 10) + 10)))
@@ -69,6 +75,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
+	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	ch->kind = ALIVE;
 	ch->sequenceNumber.high = 0;
 	ch->sequenceNumber.low = 0;

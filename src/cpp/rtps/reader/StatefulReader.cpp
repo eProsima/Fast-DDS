@@ -66,7 +66,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 	}
 	WriterProxy* wp = new WriterProxy(wdata,m_times.heartbeatResponseDelay,this);
 	matched_writers.push_back(wp);
-	logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to :" <<m_guid);
+	logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
 	return true;
 }
 bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
@@ -183,23 +183,31 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 
 bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 {
+	const char* const METHOD_NAME = "change_received";
 	//First look for WriterProxy in case is not provided
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(prox == nullptr)
 	{
 		if(!this->matched_writer_lookup(a_change->writerGUID,&prox))
 		{
+			logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID <<" not matched to this Reader "<< m_guid.entityId);
 			return false;
 		}
 	}
 	//WITH THE WRITERPROXY FOUND:
 	//Check if we can add it
 	if(a_change->sequenceNumber <= prox->m_lastRemovedSeqNum)
+	{
+		logInfo(RTPS_READER, "Change "<<a_change->sequenceNumber<< " <= than last Removed Seq Number "<<prox->m_lastRemovedSeqNum);
 		return false;
+	}
 	SequenceNumber_t maxSeq;
 	prox->available_changes_max(&maxSeq);
 	if(a_change->sequenceNumber <= maxSeq)
+	{
+		logInfo(RTPS_READER, "Change "<<a_change->sequenceNumber<< " <= than max available Seqnum "<<maxSeq);
 		return false;
+	}
 	if(this->mp_history->received_change(a_change))
 	{
 		if(prox->received_change_set(a_change))

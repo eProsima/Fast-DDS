@@ -72,7 +72,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				IdCounter(0),
 				mp_participantListener(plisten),
 				mp_userParticipant(par),
-				mp_mutex(new boost::recursive_mutex())
+				mp_mutex(new boost::recursive_mutex()),
+				m_threadID(0)
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
@@ -101,7 +102,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultUnicastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource(this);
+		ListenResource* LR = new ListenResource(this,++m_threadID);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false))
 		{
 			m_att.defaultUnicastLocatorList = LR->getListenLocators();
@@ -116,7 +117,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource(this);
+		ListenResource* LR = new ListenResource(this,++m_threadID);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false))
 		{
 			m_att.defaultMulticastLocatorList = LR->getListenLocators();
@@ -441,7 +442,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		}
 		if(added)
 			break;
-		ListenResource* LR = new ListenResource(this);
+		ListenResource* LR = new ListenResource(this,++m_threadID);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
 		{
 			LR->addAssociatedEndpoint(endp);

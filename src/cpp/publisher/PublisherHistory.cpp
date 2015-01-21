@@ -19,6 +19,9 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 static const char* const CLASS_NAME = "PublisherHistory";
 
 namespace eprosima {
@@ -43,6 +46,7 @@ PublisherHistory::~PublisherHistory() {
 bool PublisherHistory::add_pub_change(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "add_pub_change";
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
 		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId
@@ -182,6 +186,7 @@ bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterato
 
 bool PublisherHistory::removeAllChange(size_t* removed)
 {
+
 	size_t rem = 0;
 	//while(remove_min_change())
 	while(m_changes.size()>0)
@@ -201,6 +206,7 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 
 bool PublisherHistory::removeMinChange()
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	if(m_changes.size()>0)
 		return remove_change_pub(m_changes.front());
 	return false;
@@ -208,6 +214,7 @@ bool PublisherHistory::removeMinChange()
 
 bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "remove_change_pub";
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
