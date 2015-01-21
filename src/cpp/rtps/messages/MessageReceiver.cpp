@@ -116,6 +116,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	const char* const METHOD_NAME = "processCDRMsg";
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->mp_impl->getMutex());
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		logWarning(RTPS_MSG_IN,"Received message too short, ignoring",C_BLUE)
@@ -467,7 +468,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-	logInfo(RTPS_MSG_IN,"Looking through all RTPSReaders associated with this ListenResource",C_BLUE);
+	logInfo(RTPS_MSG_IN,"Looking through all RTPSReaders associated with this ListenResource (%d)"<<mp_threadListen->m_assocReaders.size(),C_BLUE);
 	//Look for the correct reader to add the change
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
