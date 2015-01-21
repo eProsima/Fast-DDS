@@ -468,7 +468,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-	logInfo(RTPS_MSG_IN,"Looking through all RTPSReaders associated with this ListenResource (%d)"<<mp_threadListen->m_assocReaders.size(),C_BLUE);
+	logInfo(RTPS_MSG_IN,"Looking through all RTPSReaders associated with this ListenResource: "<<mp_threadListen->m_assocReaders.size(),C_BLUE);
 	//Look for the correct reader to add the change
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
