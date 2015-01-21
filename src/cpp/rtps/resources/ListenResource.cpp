@@ -148,6 +148,8 @@ const LocatorList_t& ListenResource::getListenLocators()
 	return mp_impl->getListenLocators();
 }
 
+boost::recursive_mutex* ListenResource::getMutex(){return mp_impl->getMutex();}
+
 
 
 }} /* namespace rtps */

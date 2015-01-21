@@ -17,6 +17,12 @@
 #include <vector>
 #include <cstdlib>
 
+namespace boost
+{
+
+class recursive_mutex;
+}
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -103,6 +109,9 @@ public:
 	inline RTPSParticipantImpl* getRTPSParticipantImpl() {return mp_RTPSParticipantImpl;}
 	//!Pointer to the RTPSParticipantImpl.
 	RTPSParticipantImpl* mp_RTPSParticipantImpl;
+
+	//!Get the associated Mutex
+	boost::recursive_mutex* getMutex();
 
 };
 }

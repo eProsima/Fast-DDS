@@ -116,7 +116,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	const char* const METHOD_NAME = "processCDRMsg";
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->mp_impl->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		logWarning(RTPS_MSG_IN,"Received message too short, ignoring",C_BLUE)
