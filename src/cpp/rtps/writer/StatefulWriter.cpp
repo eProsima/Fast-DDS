@@ -252,9 +252,9 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 		}
 	}
 	matched_readers.push_back(rp);
-	logInfo(RTPS_WRITER, "Reader Proxy added to StatefulWriter with "
+	logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
 			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
-			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators: "<<rp->m_att.guid);
+			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators");
 	if(rp->m_changesForReader.size()>0)
 	{
 		//unsent_changes_not_empty();

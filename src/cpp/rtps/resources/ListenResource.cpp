@@ -26,9 +26,10 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "ListenResource";
 
-ListenResource::ListenResource(RTPSParticipantImpl* partimpl):
+ListenResource::ListenResource(RTPSParticipantImpl* partimpl,uint32_t ID):
 				mp_receiver(nullptr),
-				mp_RTPSParticipantImpl(partimpl)
+				mp_RTPSParticipantImpl(partimpl),
+				m_ID(ID)
 {
 	// TODO Auto-generated constructor stub
 	mp_impl = new ListenResourceImpl(this);
