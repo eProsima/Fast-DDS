@@ -86,9 +86,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_send_thr->initSend(this,loc,m_att.sendSocketBufferSize,m_att.use_IP4_to_send,m_att.use_IP6_to_send);
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
-
+	bool hasLocatorsDefined = true;
 	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
+		hasLocatorsDefined = false;
 		Locator_t loc;
 		loc.port=m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
@@ -96,7 +97,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_att.port.participantIDGain*m_att.participantID;
 		loc.kind = LOCATOR_KIND_UDPv4;
 		m_att.defaultUnicastLocatorList.push_back(loc);
-		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
@@ -113,6 +113,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 			delete(LR);
 		}
 	}
+	if(!hasLocatorsDefined)
+		logWarning(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	defcopy = m_att.defaultMulticastLocatorList;
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
