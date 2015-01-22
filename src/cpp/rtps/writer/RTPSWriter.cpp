@@ -50,18 +50,18 @@ void RTPSWriter::init_header()
 RTPSWriter::~RTPSWriter()
 {
 	const char* const METHOD_NAME = "~RTPSWriter";
-	logInfo(RTPS_WRITER,"RTPSWriter destructor";;);
+	logInfo(RTPS_WRITER,"RTPSWriter destructor");
 }
 
 CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t handle)
 {
 	const char* const METHOD_NAME = "new_change";
-	logInfo(RTPS_WRITER,"Creating new change";);
+	logInfo(RTPS_WRITER,"Creating new change");
 	CacheChange_t* ch = nullptr;
 
 	if(!mp_history->reserve_Cache(&ch))
 	{
-		logWarning(RTPS_WRITER,"Problem reserving Cache from the History";);
+		logWarning(RTPS_WRITER,"Problem reserving Cache from the History");
 		return nullptr;
 	}
 

@@ -29,10 +29,10 @@ namespace fastrtps {
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):
-						WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
-						m_historyQos(history),
-						m_resourceLimitsQos(resource),
-						mp_pubImpl(pimpl)
+								WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
+								m_historyQos(history),
+								m_resourceLimitsQos(resource),
+								mp_pubImpl(pimpl)
 {
 	// TODO Auto-generated constructor stub
 
@@ -50,8 +50,8 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
 		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId
-				<< " with KEEP ALL History ";)
-								return false;
+				<< " with KEEP ALL History ");
+		return false;
 	}
 	//NO KEY HISTORY
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
