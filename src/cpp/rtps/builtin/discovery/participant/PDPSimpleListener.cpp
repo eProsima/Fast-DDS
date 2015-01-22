@@ -185,7 +185,7 @@ bool PDPSimpleListener::getKey(CacheChange_t* change)
 		{
 			break;
 		}
-		if(pid == PID_RTPSParticipant_GUID)
+		if(pid == PID_PARTICIPANT_GUID)
 		{
 			valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
 			aux_msg.buffer = nullptr;

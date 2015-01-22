@@ -40,7 +40,7 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
-#define IDSTRING "(ID:"<<this->mp_threadListen->m_ID<<")"<<
+#define IDSTRING "(ID:"<<this->mp_threadListen->m_ID<<") "<<
 
 using namespace eprosima::fastrtps;
 
@@ -68,7 +68,7 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
 	defUniLoc.port = LOCATOR_PORT_INVALID;
 	mp_threadListen = nullptr;
-	logInfo(RTPS_MSG_IN,IDSTRING"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 	mp_change = new CacheChange_t(max_payload);
 	//cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
@@ -79,7 +79,7 @@ MessageReceiver::~MessageReceiver()
 	const char* const METHOD_NAME = "~MessageReceiver";
 	this->m_ParamList.deleteParams();
 	delete(mp_change);
-	logInfo(RTPS_MSG_IN,IDSTRING"",C_BLUE);
+	logInfo(RTPS_MSG_IN,"",C_BLUE);
 }
 
 void MessageReceiver::reset(){
@@ -499,7 +499,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			}
 			if(haveTimestamp)
 				change_to_add->sourceTimestamp = this->timestamp;
-			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
+			if((*it)->getAttributes()->reliabilityKind == RELIABLE && pWP!=nullptr)
 			{
 				if((*it)->change_received(change_to_add,pWP))
 				{
@@ -652,11 +652,11 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
 				//Look for the readerProxy the acknack is from
+				boost::lock_guard<boost::recursive_mutex> guardW(*SF->getMutex());
 				for(auto rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
-					if((*rit)->m_att.guid == readerGUID )//|| (*rit)->m_param.remoteReaderGuid.entityId == ENTITYID_UNKNOWN) //FIXME: only for testing
+					if((*rit)->m_att.guid == readerGUID )
 					{
-
 						if((*rit)->m_lastAcknackCount < Ackcount)
 						{
 							(*rit)->m_lastAcknackCount = Ackcount;

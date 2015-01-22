@@ -290,15 +290,18 @@ private:
 };
 
 /**
+ * Kinds of HistoryQosPolicy.
  *
  */
  enum HistoryQosPolicyKind:octet {
-	KEEP_LAST_HISTORY_QOS,
-	KEEP_ALL_HISTORY_QOS
+	 KEEP_LAST_HISTORY_QOS, //!Keep the last "depth" samples
+	KEEP_ALL_HISTORY_QOS //!Kepp all samples until the ResourceLimits are exhausted
 };
 
 /**
- *
+ * Defines the HistoryQosPolicy of the Topic in the Writer or Reader side.
+ * kind: HistoryQosPolicyKind : default: KEEP_LAST_HISTORY_QOS
+ * depth: Number of samples to store if KEEP_LAST_HISTORY_QOS : default: 1000
  */
 class RTPS_DllAPI HistoryQosPolicy : private Parameter_t, public QosPolicy {
 public:
