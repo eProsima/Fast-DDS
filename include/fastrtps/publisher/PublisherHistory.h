@@ -25,7 +25,7 @@ namespace fastrtps {
 class PublisherImpl;
 
 /**
- * This class implements a WriterHistory with support for keyed topics and HistoryQOS.
+ * Class PublisherHistory, implementing a WriterHistory with support for keyed topics and HistoryQOS.
  * This class is created by the PublisherImpl and should not be used by the user directly.
  * @ingroup FASTRTPS_MODULE
  */

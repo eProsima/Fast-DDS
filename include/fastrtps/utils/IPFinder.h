@@ -25,18 +25,25 @@ namespace eprosima {
 namespace fastrtps{
 using namespace rtps;
 /**
- * Find IPs of the computer.
+ * Class IPFinder, to determine the IP of the NICs.
  * @ingroup UTILITIES_MODULE
  */
 class IPFinder {
 public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+	/**
+	 * Enum IPTYPE, to define the type of IP obtained from the NICs.
+	 */
 	enum IPTYPE
 	{
-		IP4,
-		IP6,
-		IP4_LOCAL,
-		IP6_LOCAL
+		IP4,      //!< IP4
+		IP6,      //!< IP6
+		IP4_LOCAL,//!< IP4_LOCAL
+		IP6_LOCAL //!< IP6_LOCAL
 	};
+	/**
+	 * Structure info_IP with information about a specific IP obtained from a NIC.
+	 */
 	typedef struct info_IP
 	{
 		IPTYPE type;
@@ -44,6 +51,7 @@ public:
 		std::string name;
 		Locator_t locator;
 	}info_IP;
+#endif
 	IPFinder();
 	virtual ~IPFinder();
 #if defined(_WIN32)

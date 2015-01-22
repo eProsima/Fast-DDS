@@ -28,7 +28,7 @@ class ParticipantImpl;
 class ParticipantAttributes;
 
 /**
- * Participant used to group Publishers and Subscribers.
+ * Class Participant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTRTPS_MODULE
  */
 class RTPS_DllAPI Participant {

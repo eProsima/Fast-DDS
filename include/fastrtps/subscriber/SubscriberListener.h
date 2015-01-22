@@ -36,11 +36,11 @@ public:
 	 * @param sub Subscriber
 	 */
 	virtual void onNewDataMessage(Subscriber * sub){};
-	/**
-	 * Virtual method to be called when the History is Full.
-	 * @param sub Subscriber
-	 */
-	virtual void onHistoryFull(Subscriber* sub){};
+//	/**
+//	 * Virtual method to be called when the History is Full.
+//	 * @param sub Subscriber
+//	 */
+//	virtual void onHistoryFull(Subscriber* sub){};
 	/**
 	 * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
 	 * @param sub Subscriber
