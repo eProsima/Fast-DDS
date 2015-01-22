@@ -75,20 +75,6 @@ uint64_t eClock::intervalEnd()
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #else //UNIX VERSION
 #include <unistd.h>
 

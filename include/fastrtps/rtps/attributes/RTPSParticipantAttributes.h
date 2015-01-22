@@ -10,8 +10,8 @@
  * @file RTPSParticipantAttributes.h 	
  */
 
-#ifndef RTPSParticipantPARAMETERS_H_
-#define RTPSParticipantPARAMETERS_H_
+#ifndef _RTPSPARTICIPANTPARAMETERS_H_
+#define _RTPSPARTICIPANTPARAMETERS_H_
 
 #include "fastrtps/rtps/common/Time_t.h"
 #include "fastrtps/rtps/common/Locator.h"
@@ -21,12 +21,14 @@ namespace fastrtps{
 namespace rtps {
 
 /**
- * Attributes of the Simple Endpoint Discovery Protocol.
+ * Class SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class SimpleEDPAttributes{
 public:
+	//!Default value true.
 	bool use_PublicationWriterANDSubscriptionReader;
+	//!Default value true.
 	bool use_PublicationReaderANDSubscriptionWriter;
 	SimpleEDPAttributes():
 		use_PublicationWriterANDSubscriptionReader(true),
@@ -37,7 +39,7 @@ public:
 };
 
 /**
- * Port Parameters related with the RTPS protocol.
+ * Class PortParameters, to define the port parameters and gains related with the RTPS protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class PortParameters
@@ -75,18 +77,24 @@ public:
 	{
 		return portBase+ domainIDGain * domainId	+ offsetd1	+ participantIDGain * RTPSParticipantID;
 	}
-
+	//!PortBase, default value 7400.
 	uint16_t portBase;
+	//!DomainID gain, default value 250.
 	uint16_t domainIDGain;
+	//!ParticipantID gain, default value 2.
 	uint16_t participantIDGain;
+	//!Offset d0, default value 0.
 	uint16_t offsetd0;
+	//!Offset d1, default value 10.
 	uint16_t offsetd1;
+	//!Offset d2, default value 1.
 	uint16_t offsetd2;
+	//!Offset d3, default value 11.
 	uint16_t offsetd3;
 };
 
 /**
- * Class BuiltinAttributes used to define the behavior of the RTPSParticipant builtin protocols.
+ * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 	class BuiltinAttributes{
@@ -159,7 +167,7 @@ private:
 
 
 /**
- * Class RTPSParticipantParameters used to define different aspects of a RTPSParticipant.
+ * Class RTPSParticipantAttributes used to define different aspects of a RTPSParticipant.
  *@ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPSParticipantAttributes {
@@ -168,8 +176,8 @@ public:
 {
 		defaultSendPort = 10040;
 		setName("RTPSParticipant");
-		sendSocketBufferSize = 8712;
-		listenSocketBufferSize = 17424;
+		sendSocketBufferSize = 65536;
+		listenSocketBufferSize = 65536;
 		use_IP4_to_send = true;
 		use_IP6_to_send = false;
 		participantID = -1;
@@ -186,14 +194,13 @@ public:
 	 */
 	LocatorList_t defaultMulticastLocatorList;
 	/**
-	 * Default send port that all Endpoints in the RTPSParticipant would use to send messages.
+	 * Default send port that all Endpoints in the RTPSParticipant would use to send messages, default value 10040.
 	 * In this release all Endpoints use the same resource (socket) to send messages.
-	 * THis will change in future releases.
 	 */
 	uint32_t defaultSendPort;
-	//!Send socket buffer for the send resource.
+	//!Send socket buffer size for the send resource, default value 65536.
 	uint32_t sendSocketBufferSize;
-	//!Listen socket buffer for all listen resources.
+	//!Listen socket buffer for all listen resources, default value 65536.
 	uint32_t listenSocketBufferSize;
 	//! Builtin parameters.
 	BuiltinAttributes builtin;
@@ -213,6 +220,7 @@ public:
 	inline const char* getName(){return name.c_str();}
 
 private:
+	//!Name of the participant.
 	std::string name;
 
 
@@ -221,4 +229,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* RTPSParticipantPARAMETERS_H_ */
+#endif /* _RTPSPARTICIPANTPARAMETERS_H_ */

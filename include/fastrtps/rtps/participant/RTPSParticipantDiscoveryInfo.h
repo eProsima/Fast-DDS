@@ -21,7 +21,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-//!Discovery status
+//!Enum DISCOVERY_STATUS, three different status for discovered participants.
 //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
 enum RTPS_DllAPI DISCOVERY_STATUS
@@ -38,7 +38,7 @@ typedef std::vector<std::pair<std::string,std::string>> PropertyList;
 typedef std::vector<octet> UserData;
 
 /**
-* Discovery information of the RTPS Participant.
+* Class RTPSParticipantDiscoveryInfo with discovery information of the RTPS Participant.
 * @ingroup RTPS_MODULE
 */
 class RTPSParticipantDiscoveryInfo{
