@@ -399,7 +399,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
-		logWarning(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
+		logInfo(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
 		valid &= assignEndpoint2LocatorList(endp,m_att.defaultUnicastLocatorList,false,false);
 		endp->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
 	}

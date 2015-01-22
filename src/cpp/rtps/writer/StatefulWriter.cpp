@@ -228,7 +228,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	{
 		if((*it)->m_att.guid == rdata.guid)
 		{
-			logWarning(RTPS_WRITER, "Attempting to add existing reader" << endl);
+			logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
 			return false;
 		}
 	}

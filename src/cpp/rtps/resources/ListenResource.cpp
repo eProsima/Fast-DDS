@@ -128,7 +128,7 @@ bool ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 		uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
-	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc << " with ID: "<< m_ID,C_BLUE);
 	if(!IsAddressDefined(loc) && isMulti)
 	{
 		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address",C_BLUE);
