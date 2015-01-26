@@ -469,7 +469,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
 	bool found = false;
 	{
-		boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
+
 		if(p_endpoint->getAttributes()->endpointKind == WRITER)
 		{
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -486,10 +486,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		}
 		else
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 			for(auto rit=m_userReaderList.begin()
 					;rit!=m_userReaderList.end();++rit)
 			{
-				boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 				if((*rit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 				{
 					m_userReaderList.erase(rit);
@@ -525,6 +525,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			}
 		}
 	}
+	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 	delete(p_endpoint);
 	return true;
 }
