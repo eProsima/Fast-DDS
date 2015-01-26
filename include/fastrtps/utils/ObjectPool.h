@@ -13,7 +13,7 @@
 
 #ifndef OBJECTPOOL_H_
 #define OBJECTPOOL_H_
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <vector>
 #include <cstdint>
 
@@ -47,5 +47,5 @@ protected:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
+#endif
 #endif /* OBJECTPOOL_H_ */

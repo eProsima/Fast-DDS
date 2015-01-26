@@ -19,15 +19,17 @@ namespace fastrtps{
 namespace rtps{
 
 /**
- * Attributes of a WriterHistory or a ReaderHistory.
+ * Class HistoryAttributes, to specify the attributes of a WriterHistory or a ReaderHistory.
+ * This class is only intended to be used with the RTPS API.
+ * The Publsiher-Subscriber API has other fields to define this values (HistoryQosPolicy and ResourceLimitsQosPolicy).
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPS_DllAPI HistoryAttributes
 {
 public:
 	HistoryAttributes():
-		payloadMaxSize(50),
-		initialReservedCaches(100),
+		payloadMaxSize(500),
+		initialReservedCaches(500),
 		maximumReservedCaches(0)
 	{};
 	/** Constructor
@@ -39,9 +41,9 @@ public:
 		payloadMaxSize(payload),initialReservedCaches(initial),
 		maximumReservedCaches(maxRes){}
 	virtual ~HistoryAttributes(){};
-	//!Maximum payload size of the history.
+	//!Maximum payload size of the history, default value 500.
 	uint32_t payloadMaxSize;
-	//!Number of the initial Reserved Caches.
+	//!Number of the initial Reserved Caches, default value 500.
 	int32_t initialReservedCaches;
 	//!Maximum number of reserved caches. Default value is 0 that indicates to keep reserving until something breaks.
 	int32_t maximumReservedCaches;
