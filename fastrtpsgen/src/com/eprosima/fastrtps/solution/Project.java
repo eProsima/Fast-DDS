@@ -130,6 +130,15 @@ public class Project extends com.eprosima.solution.Project
 		return GUIDGenerator.genGUID(getFile() + "PubSubExample");
 	}
 	
+	public boolean getHasStruct()
+	{
+		return m_hasStruct;
+	}
+	public void setHasStruct(boolean bol)
+	{
+		m_hasStruct = bol;
+	}
+	
 	private boolean m_containsInterfaces = false;
 	private ArrayList m_subscribersrcfiles = null;
 	private ArrayList m_subscriberincludefiles = null;
@@ -138,5 +147,6 @@ public class Project extends com.eprosima.solution.Project
 	
 	private ArrayList m_projectsrcfiles = null;
 	private ArrayList m_projectincludefiles = null;
+	private boolean m_hasStruct = false;
 	String m_guid = null;
 }
