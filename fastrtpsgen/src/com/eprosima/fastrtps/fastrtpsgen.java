@@ -348,7 +348,7 @@ public class fastrtpsgen {
 		System.out.println("\t\t\tSupported platforms:");
 		for(int count = 0; count < m_platforms.size(); ++count)
 			System.out.println("\t\t\t * " + m_platforms.get(count));
-		System.out.println("\t\t-language <C++>: Programming language (default: C++).");
+		//System.out.println("\t\t-language <C++>: Programming language (default: C++).");
 		System.out.println("\t\t-replace: replaces existing generated files.");
 		System.out.println("\t\t-ppDisable: disables the preprocessor.");
 		System.out.println("\t\t-ppPath: specifies the preprocessor path.");
