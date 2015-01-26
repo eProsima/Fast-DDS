@@ -15,7 +15,7 @@
 *.dmg
 *.gz
 *.iso
-*.jar
+fastrtpsgen.jar
 *.rar
 *.tar
 *.zip
