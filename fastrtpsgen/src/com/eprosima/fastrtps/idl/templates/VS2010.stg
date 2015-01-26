@@ -240,12 +240,14 @@ $\t$ProjectSection(ProjectDependencies) = postProject
 $project.dependenciesGuids : {$\t$$\t${$it$} = {$it$}}; separator="\n"$
 $\t$EndProjectSection$\n$
 EndProject
+$if(project.hasStruct)$
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "$project.name$PublisherSubscriber", "$project.name$PublisherSubscriber-$example$.vcxproj", "{$project.exampleGuid$}"
 $\t$ProjectSection(ProjectDependencies) = postProject
 $\t$$\t${$project.guid$} = {$project.guid$}
 $project.dependenciesGuids : {$\t$$\t${$it$} = {$it$}}; separator="\n"$
 $\t$EndProjectSection$\n$
 EndProject
+$endif$
 >>
 
 projectReferencesExtra(solution, project, example) ::= <<
