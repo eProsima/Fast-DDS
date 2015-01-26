@@ -106,6 +106,7 @@ struct RTPS_DllAPI SequenceNumber_t{
 
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
  * Compares two SequenceNumber_t.
@@ -255,7 +256,11 @@ inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
 	return seq;
 }
 
+#endif
+
 const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
  * Sorts two instances of SequenceNumber_t
@@ -278,7 +283,7 @@ inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seq
 	return output << ((uint64_t)seqNum.high *(uint64_t)pow(2.0,32) + (uint64_t)seqNum.low);
 }
 
-
+#endif
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 //!@ingroup COMMON_MODULE
@@ -385,6 +390,8 @@ private:
 	std::vector<SequenceNumber_t> set;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /**
  * Prints a sequence Number set
  * @param output Output Stream
@@ -395,6 +402,7 @@ inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns){
 	return output<< sns.print();
 }
 
+#endif
 
 }
 }

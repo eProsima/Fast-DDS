@@ -22,7 +22,7 @@ namespace rtps{
 
 
 /**
- * Times associated with Reliable RTPSWriter events.
+ * Class WriterTimes, defining the times associated with the Reliable Writers events.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  WriterTimes
@@ -34,16 +34,16 @@ public:
 		nackResponseDelay.fraction = 200*1000*1000;
 	};
 	virtual ~WriterTimes(){};
-	//! Periodic HB period
+	//! Periodic HB period, default value 3s.
 	Duration_t heartbeatPeriod;
-	//!Delay to apply to the response of a ACKNACK message.
+	//!Delay to apply to the response of a ACKNACK message, default value ~45ms.
 	Duration_t nackResponseDelay;
-	//!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent.
+	//!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
 	Duration_t nackSupressionDuration;
 };
 
 /**
- * Attributes of a RTPSWriter.
+ * Class WriterAttributes, defining the attributes of a RTPSWriter.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  WriterAttributes
@@ -63,7 +63,7 @@ public:
 };
 
 /**
- * Attributes that define RemoteReader.
+ * Class RemoteReaderAttributes, to define the attributes of a Remote Reader.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  RemoteReaderAttributes

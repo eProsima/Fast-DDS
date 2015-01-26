@@ -50,6 +50,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 	IPFinder::getIPs(&locNames);
 	boost::asio::socket_base::send_buffer_size option;
 	bool not_bind = true;
+	bool initialized = false;
 	int bind_tries = 0;
 	for (auto ipit = locNames.begin(); ipit != locNames.end(); ++ipit)
 	{
@@ -72,11 +73,10 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 					sendSocketv4->bind(send_endpoint);
 					not_bind = false;
 				}
-#pragma warning(disable:4101)
+				#pragma warning(disable:4101)
 				catch (boost::system::system_error const& e)
 				{
-					logInfo(RTPS_MSG_OUT, "UDPv4 Error binding endpoint: (" << send_endpoint << ") with socket: " << sendSocketv4->local_endpoint()
-							<< " with boost msg: "<<e.what() , C_YELLOW);
+					logInfo(RTPS_MSG_OUT, "UDPv4 Error binding endpoint: (" << send_endpoint << ")" << " with boost msg: "<<e.what() , C_YELLOW);
 					sendLocv4.port++;
 				}
 				++bind_tries;
@@ -86,6 +86,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 				sendSocketv4->get_option(option);
 				logInfo(RTPS_MSG_OUT, "UDPv4: " << sendSocketv4->local_endpoint() << "|| State: " << sendSocketv4->is_open() <<
 						" || buffer size: " << option.value(), C_YELLOW);
+				initialized = true;
 			}
 			else
 			{
@@ -122,11 +123,10 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 					sendSocketv6->bind(send_endpoint);
 					not_bind = false;
 				}
-#pragma warning(disable:4101)
+                #pragma warning(disable:4101)
 				catch (boost::system::system_error const& e)
 				{
-					logInfo(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ") with socket: " << sendSocketv6->local_endpoint()
-							<< " with boost msg: "<<e.what() , C_YELLOW);
+					logInfo(RTPS_MSG_OUT, "UDPv6 Error binding endpoint: (" << send_endpoint << ")"<< " with boost msg: "<<e.what() , C_YELLOW);
 					sendLocv6.port++;
 				}
 				++bind_tries;
@@ -136,6 +136,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 				sendSocketv6->get_option(option);
 				logInfo(RTPS_MSG_OUT, "UDPv6: " << sendSocketv6->local_endpoint() << "|| State: " << sendSocketv6->is_open() <<
 						" || buffer size: " << option.value(), C_YELLOW);
+				initialized = true;
 			}
 			else
 			{
@@ -146,10 +147,9 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,
 			}
 			not_bind = true;
 		}
-
 	}
 
-	return true;
+	return initialized;
 }
 
 

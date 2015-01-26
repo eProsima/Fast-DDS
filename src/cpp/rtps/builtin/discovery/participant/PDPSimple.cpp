@@ -62,13 +62,15 @@ PDPSimple::PDPSimple(BuiltinProtocols* built):
 			mp_resendParticipantTimer(nullptr),
 			mp_listener(nullptr),
 			mp_SPDPWriterHistory(nullptr),
-			mp_SPDPReaderHistory(nullptr)
+			mp_SPDPReaderHistory(nullptr),
+			mp_mutex(new boost::recursive_mutex())
 {
 
 }
 
 PDPSimple::~PDPSimple()
 {
+	mp_mutex->lock();
 	if(mp_EDP!=nullptr)
 		delete(mp_EDP);
 	delete(mp_SPDPWriter);
@@ -83,6 +85,8 @@ PDPSimple::~PDPSimple()
 	{
 		delete(*it);
 	}
+	mp_mutex->unlock();
+	delete(mp_mutex);
 }
 
 bool PDPSimple::initPDP(RTPSParticipantImpl* part)
@@ -91,7 +95,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 	logInfo(RTPS_PDP,"Beginning",C_B_CYAN);
 	mp_RTPSParticipant = part;
 	m_discovery = mp_RTPSParticipant->getAttributes().builtin;
-
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	if(!createSPDPEndpoints())
 		return false;
 	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
@@ -161,6 +165,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 
 bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata)
 {
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for (auto pit = m_participantProxies.begin();
 			pit != m_participantProxies.end();++pit)
 	{
@@ -180,6 +185,7 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rd
 
 bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata)
 {
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for (auto pit = m_participantProxies.begin();
 			pit != m_participantProxies.end(); ++pit)
 	{
@@ -201,6 +207,7 @@ bool PDPSimple::removeReaderProxyData(ReaderProxyData* rdata)
 {
 	const char* const METHOD_NAME = "removeReaderProxyData";
 	logInfo(RTPS_PDP,rdata->m_guid,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -223,6 +230,7 @@ bool PDPSimple::removeWriterProxyData(WriterProxyData* wdata)
 {
 	const char* const METHOD_NAME = "removeWriterProxyData";
 	logInfo(RTPS_PDP,wdata->m_guid,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -246,6 +254,7 @@ bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyD
 {
 	const char* const METHOD_NAME = "lookupParticipantProxyData";
 	logInfo(RTPS_PDP,pguid,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -326,6 +335,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata,bool copydata,
 {
 	const char* const METHOD_NAME = "addReaderProxyData";
 	logInfo(RTPS_PDP,rdata->m_guid,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -369,6 +379,7 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 {
 	const char* const METHOD_NAME = "addWriterProxyData";
 	logInfo(RTPS_PDP,wdata->m_guid,C_CYAN);
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -479,6 +490,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
 	ParticipantProxyData* pdata=nullptr;
 	//Remove it from our vector or RTPSParticipantProxies:
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -492,9 +504,9 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 	}
 	if(pdata !=nullptr)
 	{
+		boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 		if(mp_EDP!=nullptr)
 		{
-			boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 			for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
 					rit!= pdata->m_readers.end();++rit)
 			{
@@ -519,6 +531,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 				break;
 			}
 		}
+		pdata->mp_mutex->unlock();
 		delete(pdata);
 		return true;
 	}
@@ -531,6 +544,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 {
 	const char* const METHOD_NAME = "assertRemoteParticipantLiveliness";
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator it = this->m_participantProxies.begin();
 			it!=this->m_participantProxies.end();++it)
 	{
@@ -549,6 +563,8 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 	const char* const METHOD_NAME = "assertLocalWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
 			<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard2(*this->m_participantProxies.front()->mp_mutex);
 	for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
 			wit!=this->m_participantProxies.front()->m_writers.end();++wit)
 	{
@@ -562,6 +578,7 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
 			pit!=this->m_participantProxies.end();++pit)
 	{

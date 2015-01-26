@@ -23,6 +23,8 @@ namespace fastrtps{
 
 /**
  * Class ParticipantAttributes, used by the user to define the attributes of a Participant.
+ * The Participants in the Publisher-Subscriber layer are only a container to a RTPSParticipant, so their attributes are the same.
+ * Still to maintain the equivalence this class is used to define them.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
 class ParticipantAttributes

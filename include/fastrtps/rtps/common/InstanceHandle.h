@@ -79,6 +79,8 @@ struct RTPS_DllAPI InstanceHandle_t{
 
 const InstanceHandle_t c_InstanceHandle_Unknown;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /**
 * Comparison operator
 * @param ihandle1 First InstanceHandle_t to compare
@@ -94,6 +96,7 @@ inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t
 	}
 	return true;
 }
+#endif
 
 /**
 * Convert InstanceHandle_t to GUID
@@ -111,6 +114,7 @@ inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 	}
 	return;
 }
+
 
 /**
 * Convert GUID to InstanceHandle_t
@@ -130,6 +134,8 @@ inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
 	return guid;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /**
 * 
 * @param output 
@@ -143,6 +149,9 @@ inline std::ostream& operator<<(std::ostream& output,const InstanceHandle_t& iHa
 	output << (int)iHandle.value[15] << std::dec;
 	return output;
 }
+
+#endif
+
 }
 }
 }

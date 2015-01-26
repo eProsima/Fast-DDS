@@ -141,7 +141,7 @@ inline bool IsLocatorValid(const Locator_t&loc)
 		return false;
 	if(loc.port == 0)
 		return false;
-	return IsAddressDefined(loc);
+	return true;
 
 }
 

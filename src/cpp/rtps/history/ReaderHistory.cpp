@@ -82,6 +82,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber.to64long() << " added with " << a_change->serializedPayload.length << " bytes");
 		return true;
 	}
+	logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber.to64long() << " from "<< a_change->writerGUID << " not added.");
 	return false;
 }
 

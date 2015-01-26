@@ -20,16 +20,15 @@
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
-//!Structure Time_t, used to describe times.
-//!@ingroup COMMON_MODULE
+/**
+ * Structure Time_t, used to describe times.
+ * @ingroup COMMON_MODULE
+ */
 struct RTPS_DllAPI Time_t{
 	//!Seconds
 	int32_t seconds;
-	//!Fraction of second
+	//!Fraction of second (1 fraction = 1/(2^32) seconds)
 	uint32_t fraction;
-	//int64_t to64time(){
-	//	return (int64_t)seconds+((int64_t)(fraction/pow(2.0,32)));
-	//}
 	//! Default constructor. Sets values to zero.
 	Time_t()
 	{
@@ -48,6 +47,7 @@ struct RTPS_DllAPI Time_t{
 	
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
 * Comparison assignment
@@ -125,6 +125,8 @@ inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 {
 	return output << t.seconds<<"."<<t.fraction;
 }
+
+#endif
 
 const Time_t c_TimeInfinite(0x7fffffff,0xffffffff);
 const Time_t c_TimeZero(0,0);

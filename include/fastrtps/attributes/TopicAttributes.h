@@ -74,7 +74,7 @@ public:
 		return topicName;
 	}
 
-	//! TopicKind_t (WITH_KEY or NO_KEY)
+	//! TopicKind_t, default value NO_KEY.
 	TopicKind_t topicKind;
 	//! Topic Name.
 	std::string topicName;
@@ -122,6 +122,8 @@ public:
 	}
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /**
  * Check if two topic attributes are not equal
  * @param t1 First instance of TopicAttributes to compare 
@@ -157,7 +159,7 @@ bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 	}
 	return false;
 };
-
+#endif
 
 } /* namespace fastrtps */
 } /* namespace eprosima */

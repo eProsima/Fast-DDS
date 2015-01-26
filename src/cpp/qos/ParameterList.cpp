@@ -172,7 +172,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				}
 				break;
 			}
-			case PID_RTPSParticipant_GUID:
+			case PID_PARTICIPANT_GUID:
 			case PID_GROUP_GUID:
 			case PID_ENDPOINT_GUID:
 			{
@@ -447,22 +447,22 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				paramlist_byte_size +=plength;
 				break;
 			}
-			case PID_RTPSParticipant_MANUAL_LIVELINESS_COUNT:
+			case PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT:
 			{
-				ParameterCount_t*p = new ParameterCount_t(PID_RTPSParticipant_MANUAL_LIVELINESS_COUNT,plength);
+				ParameterCount_t*p = new ParameterCount_t(PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT,plength);
 				valid&=CDRMessage::readUInt32(msg,&p->count);
 				IF_VALID_ADD
 			}
-			case PID_RTPSParticipant_BUILTIN_ENDPOINTS:
+			case PID_PARTICIPANT_BUILTIN_ENDPOINTS:
 			case PID_BUILTIN_ENDPOINT_SET:
 			{
 				ParameterBuiltinEndpointSet_t * p = new ParameterBuiltinEndpointSet_t(pid,plength);
 				valid &= CDRMessage::readUInt32(msg,&p->endpointSet);
 				IF_VALID_ADD
 			}
-			case PID_RTPSParticipant_LEASE_DURATION:
+			case PID_PARTICIPANT_LEASE_DURATION:
 			{
-				ParameterTime_t* p = new ParameterTime_t(PID_RTPSParticipant_LEASE_DURATION,plength);
+				ParameterTime_t* p = new ParameterTime_t(PID_PARTICIPANT_LEASE_DURATION,plength);
 				valid &= CDRMessage::readInt32(msg,&p->time.seconds);
 				valid &= CDRMessage::readUInt32(msg,&p->time.fraction);
 				IF_VALID_ADD
@@ -474,7 +474,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				paramlist_byte_size +=plength;
 				break;
 			}
-			case PID_RTPSParticipant_ENTITYID:
+			case PID_PARTICIPANT_ENTITYID:
 			case PID_GROUP_ENTITYID:
 			{
 				ParameterEntityId_t * p = new ParameterEntityId_t(pid,plength);

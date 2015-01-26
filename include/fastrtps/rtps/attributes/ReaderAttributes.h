@@ -22,10 +22,10 @@ namespace rtps{
 
 
 /**
- * Times associated with a Reliable Reader.
+ * Class ReaderTimes, defining the times associated with the Reliable Readers events.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class   ReaderTimes
+class ReaderTimes
 {
 public:
 	ReaderTimes()
@@ -33,12 +33,12 @@ public:
 		heartbeatResponseDelay.fraction = 500*1000*1000;
 	};
 	virtual ~ReaderTimes(){};
-	//!Delay to be applied when a hearbeat message is received.
+	//!Delay to be applied when a hearbeat message is received, default value ~116ms.
 	Duration_t heartbeatResponseDelay;
 };
 
 /**
- * Attributes of a RTPSReader.
+ * Class ReaderAttributes, to define the attributes of a RTPSReader.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  ReaderAttributes
@@ -56,12 +56,12 @@ public:
 	EndpointAttributes endpoint;
 	//!Times associated with this reader.
 	ReaderTimes times;
-	//!Indicates if the reader expects Inline qos.
+	//!Indicates if the reader expects Inline qos, default value 0.
 	bool expectsInlineQos;
 };
 
 /**
- * Attributes that define a remote Writer.
+ * Class RemoteWriterAttributes, to define the attributes of a Remote Writer.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class  RemoteWriterAttributes
@@ -81,7 +81,7 @@ public:
 	EndpointAttributes endpoint;
 	//!GUID_t of the writer, can be unknown if the reader is best effort.
 	GUID_t guid;
-	//!Liveliness lease duration.
+	//!Liveliness lease duration, default value c_TimeInfinite.
 	Duration_t livelinessLeaseDuration;
 	//!Ownership Strength of the associated writer.
 	uint16_t ownershipStrength;
