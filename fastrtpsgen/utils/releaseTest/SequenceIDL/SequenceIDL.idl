@@ -1,6 +1,6 @@
 struct SeqStruct
 {
-	sequence<boolean> aboolean;
+	
 	sequence<char> achar;
 	sequence<double> adouble;
 	sequence<float> afloat;
@@ -9,5 +9,6 @@ struct SeqStruct
 	sequence<short> ashort;
 	sequence<string> astring;
 	sequence<string<1024> > astring2;
+	sequence<boolean> aboolean;
 
 };
