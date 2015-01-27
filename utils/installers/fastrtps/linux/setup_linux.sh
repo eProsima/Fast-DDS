@@ -69,7 +69,7 @@ installer()
     # Copy RTPSGEN scripts and jar
     mkdir -p tmp/$project/fastrtpsgen
     cp -r ../../../../fastrtpsgen/scripts/* tmp/$project/fastrtpsgen
-    cp    ../../../../fastrtpsgen/lib/* tmp/$project/fastrtpsgen  
+    cp    ../../../../fastrtpsgen/lib/fastrtpsgen.jar tmp/$project/fastrtpsgen  
     chmod 755 tmp/$project/fastrtpsgen/fastrtpsgen.sh  
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
