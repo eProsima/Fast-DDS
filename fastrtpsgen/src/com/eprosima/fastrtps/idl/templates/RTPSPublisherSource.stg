@@ -101,7 +101,7 @@ void $ctx.filename$Publisher::run()
 
 >>
 
-module(ctx, module, definition_list) ::= <<
+module(ctx, parent, module, definition_list) ::= <<
 $definition_list$
 >>
 
@@ -110,7 +110,7 @@ $definitions; separator="\n"$
 
 >>
 
-interface(ctx, interface, export_list) ::= <<
+interface(ctx, parent, interface, export_list) ::= <<
 $export_list$
 >>
 
@@ -119,9 +119,9 @@ $exports; separator="\n"$
 
 >>
 
-exception(ctx, exception) ::= <<>>
+exception(ctx, parent, exception) ::= <<>>
 
-operation(ctx, operation, param_list) ::= <<
+operation(ctx, parent, operation, param_list) ::= <<
 $if(ctx.client)$
 /*!
  * @brief This method implements the proxy part of the protocol for the operation $operation.name$.
@@ -147,12 +147,12 @@ param_list(parameters) ::= <<>>
 
 param(parameter) ::= <<>>
 
-const_decl(ctx, const) ::= <<>>
+const_decl(ctx, parent, const) ::= <<>>
 
-typedef_decl(ctx, typedefs) ::= <<>>
+typedef_decl(ctx, parent, typedefs) ::= <<>>
 
-struct_type(ctx, struct) ::= <<>>
+struct_type(ctx, parent, struct) ::= <<>>
 
-union_type(ctx, union) ::= <<>>
+union_type(ctx, parent, union) ::= <<>>
 
-enum_type(ctx, enum) ::= <<>>
+enum_type(ctx, parent, enum) ::= <<>>
