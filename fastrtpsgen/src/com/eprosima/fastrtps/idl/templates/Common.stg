@@ -67,15 +67,15 @@ eProsima_user_DllExport static bool isKeyDefined();
 eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 >>
 
-keyFunctionHeadersStruct(ctx, struct) ::= <<
+keyFunctionHeadersStruct(ctx, parent, struct) ::= <<
 $keyFunctionHeaders(struct)$
 >>
 
-keyFunctionHeadersUnion(ctx, union) ::= <<
+keyFunctionHeadersUnion(ctx, parent, union) ::= <<
 $keyFunctionHeaders(union)$
 >>
 
-keyFunctionSourcesStruct(ctx, struct) ::= <<
+keyFunctionSourcesStruct(ctx, parent, struct) ::= <<
 size_t $struct.scopedname$::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
