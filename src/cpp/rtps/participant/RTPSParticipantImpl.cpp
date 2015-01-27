@@ -102,7 +102,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultUnicastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource(this,++m_threadID);
+		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false))
 		{
 			m_att.defaultUnicastLocatorList = LR->getListenLocators();
@@ -119,7 +119,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource(this,++m_threadID);
+		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false))
 		{
 			m_att.defaultMulticastLocatorList = LR->getListenLocators();
@@ -444,7 +444,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		}
 		if(added)
 			break;
-		ListenResource* LR = new ListenResource(this,++m_threadID);
+		ListenResource* LR = new ListenResource(this,++m_threadID,false);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
 		{
 			LR->addAssociatedEndpoint(endp);
@@ -514,18 +514,24 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		{
 			(*thit)->removeAssociatedEndpoint(p_endpoint);
 		}
-		for(thit=m_listenResourceList.begin();
-				thit!=m_listenResourceList.end();thit++)
+		bool continue_removing = true;
+		while(continue_removing)
 		{
-			if(!(*thit)->hasAssociatedEndpoints())
+			continue_removing = false;
+			for(thit=m_listenResourceList.begin();
+					thit!=m_listenResourceList.end();thit++)
 			{
-				delete(*thit);
-				m_listenResourceList.erase(thit);
-				break;
+				if(!(*thit)->hasAssociatedEndpoints() && ! (*thit)->m_isDefaultListenResource)
+				{
+					delete(*thit);
+					m_listenResourceList.erase(thit);
+					continue_removing = true;
+					break;
+				}
 			}
 		}
 	}
-	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
+	//	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 	delete(p_endpoint);
 	return true;
 }

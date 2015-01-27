@@ -35,10 +35,12 @@ interface(ctx, interface, export_list) ::= <<
  * @brief This class represents the interface $interface.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
  */
-namespace $interface.name$
+class $ctx.filename;format="toUpper"$_DllAPI $interface.name$ $if(interface.bases)$: $interface.bases : {base |public $base.scopedname$}; separator=", "$$endif$
 {
+    public:
+
     $export_list$
-}
+};
 >>
 
 export_list(exports) ::= <<

@@ -26,10 +26,7 @@ $definitions; separator="\n"$
 >>
 
 interface(ctx, interface, export_list) ::= <<
-namespace $interface.name$
-{
-    $export_list$
-} //End of namespace $interface.name$
+$export_list$
 >>
 
 export_list(exports) ::= <<
