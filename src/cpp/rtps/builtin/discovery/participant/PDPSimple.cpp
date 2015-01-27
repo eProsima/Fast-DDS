@@ -504,7 +504,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 	}
 	if(pdata !=nullptr)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
+		pdata->mp_mutex->lock();
 		if(mp_EDP!=nullptr)
 		{
 			for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
