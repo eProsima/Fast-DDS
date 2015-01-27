@@ -15,13 +15,15 @@ LIBS = $solution.libraryPaths : {path |-L$path$};separator=" "$ $solution.librar
 
 DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
 
-all: \$(DIRECTORIES) $solution.projects:{$it.name$ $it.name$PublisherSubscriber}; separator=" \\\n\t"$
+all: \$(DIRECTORIES) $solution.projects:{$it.name$ $if(it.hasStruct)$$it.name$PublisherSubscriber$endif$}; separator=" \\\n\t"$
 
 $solution.projects:{
 $it.name$_TARGET= lib/$example$/lib$it.name$.so
 $it.name$_TARGET_Z= lib/$example$/lib$it.name$.a
 
+$if(it.hasStruct)$
 $it.name$_CLIENT_EXAMPLE_TARGET= bin/$example$/$it.name$PublisherSubscriber
+$endif$
 
 $it.name$_COMMON_SRC_CXXFILES = $it.commonSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$
 
@@ -42,12 +44,14 @@ OBJS+= \$($it.name$OBJS)
 \$($it.name$_TARGET_Z): \$($it.name$_COMMONOBJS)
 	\$(AR) -cru \$($it.name$_TARGET_Z) \$($it.name$_COMMONOBJS)
 
+$if(it.hasStruct)$
 \$($it.name$_CLIENT_EXAMPLE_TARGET): \$($it.name$OBJS) lib/$example$/lib$it.name$.a $it.dependencies : {dep | lib/$example$/lib$dep$.a}; separator=" "$
 	\$(LN) \$(LDFLAGS) -o \$@ \$($it.name$OBJS) -Wl,-Bstatic -Llib/$example$ -l$it.name$ $it.dependencies : {dep | -l$dep$}; separator=" "$ -Wl,-Bdynamic \$(LIBS)
 
 $it.name$PublisherSubscriber : \$($it.name$_CLIENT_EXAMPLE_TARGET)
+$endif$
 
-$it.name$: \$($it.name$_TARGET) \$($it.name$_TARGET_Z) $it.name$PublisherSubscriber}; separator="\n"$
+$it.name$: \$($it.name$_TARGET) \$($it.name$_TARGET_Z) $if(it.hasStruct)$$it.name$PublisherSubscriber$endif$}; separator="\n"$
 
 output/$example$/%.o:%.cxx
 	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$(DEFINES) -c \$< -o \$@
@@ -55,7 +59,7 @@ output/$example$/%.o:%.cxx
 output/$example$/%.o:%.cpp
 	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$(DEFINES) -c \$< -o \$@
 
-.PHONY: $solution.projects:{$it.name$ $it.name$PublisherSubscriber}; separator=" \\\n\t"$
+.PHONY: $solution.projects:{$it.name$ $if(it.hasStruct)$$it.name$PublisherSubscriber$endif$}; separator=" \\\n\t"$
 
 clean:
 	@rm -f \$(OBJS)
