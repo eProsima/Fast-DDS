@@ -1,0 +1,18 @@
+struct S1
+{
+	long value;
+};
+
+union UN1 switch(long)
+{
+	case 1:
+		long value;
+	default:
+		boolean abool;
+};
+
+enum MYENUM
+{
+	HOLA,
+	ADIOS
+};
