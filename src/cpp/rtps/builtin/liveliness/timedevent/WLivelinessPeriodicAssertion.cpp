@@ -72,7 +72,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logWarning(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",C_MAGENTA);
+		logInfo(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",C_MAGENTA);
 		this->stopSemaphorePost();
 	}
 	else

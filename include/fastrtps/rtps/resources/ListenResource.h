@@ -39,7 +39,7 @@ class RTPSParticipantImpl;
 */
 class ListenResource {
 public:
-	ListenResource(RTPSParticipantImpl* partimpl,uint32_t ID);
+	ListenResource(RTPSParticipantImpl* partimpl,uint32_t ID,bool isDefault);
 	virtual ~ListenResource();
 	
 	/**
@@ -114,6 +114,8 @@ public:
 	boost::recursive_mutex* getMutex();
 
 	const uint32_t m_ID;
+
+	const bool m_isDefaultListenResource;
 };
 }
 } /* namespace rtps */
