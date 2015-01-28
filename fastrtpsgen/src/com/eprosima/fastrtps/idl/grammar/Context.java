@@ -39,22 +39,15 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     public StructTypeCode createStructTypeCode(String name)
     {
         StructTypeCode structObject = new StructTypeCode(getScope(), name);
+
+        if(isInScopedFile())
+        {
+            m_lastStructure = structObject;
+        }
+
         return structObject;
     }
     
-    /*!
-     * @brief This function adds a global typecode to the context.
-     */
-    public void addTypeCode(String name, TypeCode typecode)
-    {
-        super.addTypeCode(name, typecode);
-        
-        // TODO: Exception.
-        if(typecode.getKind() == TypeCode.KIND_STRUCT && isInScopedFile()) {
-        	m_lastStructure = name;
-        }
-    }
-
     public boolean isClient()
     {
         return m_subscribercode;
@@ -152,15 +145,12 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     // TODO Remove
     private String m_appProduct = null;
     
-    private String m_lastStructure = null;
+    private TypeCode m_lastStructure = null;
 
-	public String getM_lastStructure() {
+	public TypeCode getM_lastStructure() {
 		return m_lastStructure;
 	}
 
-	public void setM_lastStructure(String m_lastStructure) {
-		this.m_lastStructure = m_lastStructure;
-	}
 	private String m_fileNameUpper = null;
 	
 	public void setFilename(String filename)

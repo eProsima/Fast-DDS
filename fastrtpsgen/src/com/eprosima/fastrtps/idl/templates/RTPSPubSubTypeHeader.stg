@@ -19,7 +19,7 @@ $definitions; separator="\n"$
 >>
 
 // TODO name -> module
-module(ctx, module, definition_list) ::= <<
+module(ctx, parent, module, definition_list) ::= <<
 namespace $module.name$
 {
     $definition_list$
@@ -30,7 +30,7 @@ definition_list(definitions) ::= <<
 $definitions; separator="\n"$
 >>
 
-interface(ctx, interface, export_list) ::= <<
+interface(ctx, parent, interface, export_list) ::= <<
 /*!
  * @brief This class represents the interface $interface.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
@@ -47,23 +47,23 @@ export_list(exports) ::= <<
 $exports; separator="\n"$
 >>
 
-exception(ctx, exception) ::= << >>
+exception(ctx, parent, exception) ::= << >>
 
-operation(ctx, operation, param_list) ::= <<>>
+operation(ctx, parent, operation, param_list) ::= <<>>
 
 param_list(parameters) ::= <<>>
 
 param(parameter) ::= <<>>
 
-const_decl(ctx, const) ::= <<
+const_decl(ctx, parent, const) ::= <<
 const $const.typeCode.cppTypename$ $const.name$ = $const.value$;
 >>
 
-typedef_decl(ctx, typedefs) ::= <<
+typedef_decl(ctx, parent, typedefs) ::= <<
 $typedefs : { typedef |typedef $typedef.typedefContentTypeCode.cppTypename$ $typedef.name$;}; separator="\n"$
 >>
 
-struct_type(ctx, struct) ::= <<
+struct_type(ctx, parent, struct) ::= <<
 /*!
  * @brief This class represents the TopicDataType of the type $struct.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
@@ -82,7 +82,7 @@ public:
 };
 >>
 
-union_type(ctx, union) ::= <<>>
+union_type(ctx, parent, union) ::= <<>>
 
-enum_type(ctx, enum) ::= <<>>
+enum_type(ctx, parent, enum) ::= <<>>
 
