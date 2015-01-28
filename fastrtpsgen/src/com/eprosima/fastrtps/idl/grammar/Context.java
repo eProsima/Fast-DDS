@@ -145,10 +145,16 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     // TODO Remove
     private String m_appProduct = null;
     
-    private TypeCode m_lastStructure = null;
+    private org.omg.CORBA.TypeCode m_lastStructure = null;
 
 	public TypeCode getM_lastStructure() {
 		return m_lastStructure;
+	}
+	
+	public String getM_lastStructureName()
+	{
+		if(m_lastStructure != null)
+			return m_lastStructure.name();
 	}
 
 	private String m_fileNameUpper = null;
