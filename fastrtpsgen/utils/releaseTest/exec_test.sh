@@ -22,7 +22,7 @@ function execTest
 	done
 	echo "FOUND IDL FILES: $IDLFILES"
 	#Generate Info
-	cp ../../../lib/*.jar .
+	cp ../../../lib/fastrtpsgen.jar .
 	java -jar fastrtpsgen.jar -example $configuration -replace $IDLFILES
 	errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
@@ -78,5 +78,5 @@ else
 	echo "TESTS OK: $correcttests"
 fi
 
-exit $errorstatus
+exit $globalerrorstatus
 
