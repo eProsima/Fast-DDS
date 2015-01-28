@@ -59,7 +59,7 @@ else
 	for dir in $(find . -mindepth 1 -maxdepth 1 -path ./output -prune -o -path ./.svn -prune -o -type d -printf "%f\n"); do
 		echo "EXECUTING IN DIRECTORY $dir"
 		cd $dir
-		execTest $1 $2
+		execTest $1 "delete"
 		cd ..
 		if [ $errorstatus == 0 ]; then
 		    echo "TEST $dir SUCCESSFULL"
