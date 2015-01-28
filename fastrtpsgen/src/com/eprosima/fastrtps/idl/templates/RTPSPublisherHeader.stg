@@ -33,7 +33,7 @@ private:
 		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
 		int n_matched;
 	} m_listener;
-	$ctx.m_lastStructure$PubSubType myType;
+	$ctx.m_lastStructureTopicDataTypeName$PubSubType myType;
 };
 
 #endif // _$ctx.fileNameUpper$_PUBLISHER_H_

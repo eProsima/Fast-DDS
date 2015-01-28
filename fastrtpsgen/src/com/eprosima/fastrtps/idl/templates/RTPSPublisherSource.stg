@@ -74,7 +74,7 @@ void $ctx.filename$Publisher::run()
 	
 	// Publication code
 	
-	$ctx.m_lastStructure$ st;
+	$ctx.m_lastStructureScopedName$ st;
 	
 	/* Initialize your structure here */
 	

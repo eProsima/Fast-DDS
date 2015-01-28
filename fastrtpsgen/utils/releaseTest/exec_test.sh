@@ -33,6 +33,7 @@ function execTest
 	errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 	#Remove all files:
+	if [ $2 == "nodelete" ]; then return; fi
 	rm -R bin/
 	rm -R output/
 	rm -R lib/
@@ -42,9 +43,9 @@ function execTest
 	rm *.jar
 }
 
-if [ "$#" == "1" ]; then
+if [ $# -ge 1 ]; then
 	cd $1
-	execTest
+	execTest $1 $2
 	cd ..
 	if [ $errorstatus == 0 ]; then
 		echo "TEST $1 SUCCESSFULL"
@@ -58,7 +59,7 @@ else
 	for dir in $(find . -mindepth 1 -maxdepth 1 -path ./output -prune -o -path ./.svn -prune -o -type d -printf "%f\n"); do
 		echo "EXECUTING IN DIRECTORY $dir"
 		cd $dir
-		execTest
+		execTest $1 $2
 		cd ..
 		if [ $errorstatus == 0 ]; then
 		    echo "TEST $dir SUCCESSFULL"
