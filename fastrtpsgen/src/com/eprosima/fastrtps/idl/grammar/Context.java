@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import com.eprosima.idl.parser.tree.Interface;
+import com.eprosima.idl.parser.tree.TypeDeclaration;
 import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.fastrtps.idl.parser.typecode.StructTypeCode;
 
@@ -145,16 +146,37 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     // TODO Remove
     private String m_appProduct = null;
     
-    private org.omg.CORBA.TypeCode m_lastStructure = null;
+    private StructTypeCode m_lastStructure = null;
 
-	public TypeCode getM_lastStructure() {
-		return m_lastStructure;
+	public String getM_lastStructureTopicDataTypeName() {
+		String name = new String("");
+		if(m_lastStructure!=null)
+		{	
+			if(m_lastStructure.getParent() instanceof TypeDeclaration &&
+			   ((TypeDeclaration)m_lastStructure.getParent()).getParent() != null &&
+			   ((TypeDeclaration)m_lastStructure.getParent()).getParent() instanceof Interface)
+			{
+				name = name + ((Interface)((TypeDeclaration)m_lastStructure.getParent()).getParent()).getScopedname() + "_" + m_lastStructure.getName();
+			}
+			else
+				name = m_lastStructure.getScopedname();
+		}
+		return name;
 	}
 	
-	public String getM_lastStructureName()
+	public String getM_lastStructureScopedName(){
+		if(m_lastStructure!=null)
+		{
+			return m_lastStructure.getScopedname();
+		}
+		return null;
+	}
+	
+	public boolean existsLastStructure()
 	{
 		if(m_lastStructure != null)
-			return m_lastStructure.name();
+			return true;
+		return false;
 	}
 
 	private String m_fileNameUpper = null;

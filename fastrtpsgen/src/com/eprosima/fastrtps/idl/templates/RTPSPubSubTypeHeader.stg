@@ -31,16 +31,7 @@ $definitions; separator="\n"$
 >>
 
 interface(ctx, parent, interface, export_list) ::= <<
-/*!
- * @brief This class represents the interface $interface.name$ defined by the user in the IDL file.
- * @ingroup $ctx.trimfilename$
- */
-class $ctx.filename;format="toUpper"$_DllAPI $interface.name$ $if(interface.bases)$: $interface.bases : {base |public $base.scopedname$}; separator=", "$$endif$
-{
-    public:
-
-    $export_list$
-};
+$export_list$
 >>
 
 export_list(exports) ::= <<
@@ -68,10 +59,10 @@ struct_type(ctx, parent, struct) ::= <<
  * @brief This class represents the TopicDataType of the type $struct.name$ defined by the user in the IDL file.
  * @ingroup $ctx.trimfilename$
  */
-class $struct.name$PubSubType : public TopicDataType {
+class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : public TopicDataType {
 public:
-	$struct.name$PubSubType();
-	virtual ~$struct.name$PubSubType();
+	$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+	virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
 	bool serialize(void *data, SerializedPayload_t *payload);
 	bool deserialize(SerializedPayload_t *payload, void *data);
 	bool getKey(void *data, InstanceHandle_t *ihandle);

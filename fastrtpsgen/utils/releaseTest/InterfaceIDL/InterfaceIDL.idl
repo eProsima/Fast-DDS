@@ -1,3 +1,6 @@
+module MODU
+{
+
 interface MOD1
 {
 	struct S1
@@ -28,10 +31,4 @@ interface MOD2
 	};
 };
 
-struct S2
-{
-	S1 astruct1;
-	MOD2::S1 astruct2;
-	MOD1::S2 astruct3;
 };
-

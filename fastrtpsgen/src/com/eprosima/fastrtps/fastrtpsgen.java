@@ -489,7 +489,7 @@ public class fastrtpsgen {
 				}
 
 				// TODO: Uncomment following lines and create templates
-				if(ctx.getM_lastStructureName() != null)
+				if(ctx.existsLastStructure())
 				{
 					m_atLeastOneStructure = true;
 					project.setHasStruct(true);

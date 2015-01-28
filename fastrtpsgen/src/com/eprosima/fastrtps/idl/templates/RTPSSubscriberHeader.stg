@@ -36,7 +36,7 @@ private:
 		int n_matched;
 		int n_msg;
 	} m_listener;
-	$ctx.m_lastStructure$PubSubType myType;
+	$ctx.m_lastStructureTopicDataTypeName$PubSubType myType;
 };
 
 #endif // _$ctx.filename; format="toUpper"$_SUBSCRIBER_H_

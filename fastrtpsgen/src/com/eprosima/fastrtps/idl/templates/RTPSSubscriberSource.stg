@@ -62,7 +62,7 @@ void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* su
 void $ctx.filename$Subscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
 		// Take data
-		$ctx.m_lastStructure$ st;
+		$ctx.m_lastStructureScopedName$ st;
 		
 		if(sub->takeNextData(&st, &m_info))
 		{
