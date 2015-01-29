@@ -184,7 +184,7 @@ Section -post SEC0006
 	SetOutPath $INSTDIR\fastrtpsgen
     SetOverwrite on
 	File /r "..\..\..\..\fastrtpsgen\scripts\*"
-	File /r "..\..\..\..\fastrtpsgen\lib\*"
+	File /r "..\..\..\..\fastrtpsgen\lib\fastrtpsgen.jar"
 	
 	#Copy fastcdr include files
 	SetOutPath $INSTDIR\include

@@ -161,6 +161,7 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 		this->mp_unsetChangesNotEmpty = NULL;
 	}
 	this->m_matched_readers.push_back(rdata);
+	logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);
 	return true;
 }
 

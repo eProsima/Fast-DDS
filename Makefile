@@ -1,8 +1,8 @@
 BASEDIR=.
 OUTDIR= $(BASEDIR)/output
-CC= $(COMP)
-CPP= $(COMP)
-LN= $(COMP)
+CC= gcc
+CPP= g++
+LN= g++
 AR=ar
 CP=cp
 LNK=ln

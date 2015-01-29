@@ -46,7 +46,7 @@ namespace rtps{
  * @ingroup COMMON_MODULE
  */
 struct RTPS_DllAPI CacheChange_t{
-	//!Kind of change
+	//!Kind of change, default value ALIVE.
 	ChangeKind_t kind;
 	//!GUID_t of the writer that generated this change.
 	GUID_t writerGUID;

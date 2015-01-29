@@ -22,6 +22,11 @@
 
 using namespace eprosima::fastrtps;
 
+namespace boost
+{
+class recursive_mutex;
+}
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -51,9 +56,9 @@ class PDPSimple {
 	friend class PDPSimpleListener;
 public:
 	/**
-	* Constructor
-	* @param builtin Pointer to the BuiltinProcols object.
-	*/
+	 * Constructor
+	 * @param builtin Pointer to the BuiltinProcols object.
+	 */
 	PDPSimple(BuiltinProtocols* builtin);
 	virtual ~PDPSimple();
 	/**
@@ -177,37 +182,42 @@ public:
 	std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
 
 	/**
-	* Assert the liveliness of a Remote Participant.
-	* @param guidP GuidPrefix_t of the participant whose liveliness is being asserted.
-	*/
+	 * Assert the liveliness of a Remote Participant.
+	 * @param guidP GuidPrefix_t of the participant whose liveliness is being asserted.
+	 */
 	void assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP);
 
 	/**
-	* Assert the liveliness of a Local Writer.
-	* @param kind LivilinessQosPolicyKind to be asserted.
-	*/
+	 * Assert the liveliness of a Local Writer.
+	 * @param kind LivilinessQosPolicyKind to be asserted.
+	 */
 	void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
 
 	/**
-	* Assert the liveliness of remote writers.
-	* @param guidP GuidPrefix_t of the participant whose writers liveliness is begin asserted.
-	* @param kind LivelinessQosPolicyKind of the writers.
-	*/
+	 * Assert the liveliness of remote writers.
+	 * @param guidP GuidPrefix_t of the participant whose writers liveliness is begin asserted.
+	 * @param kind LivelinessQosPolicyKind of the writers.
+	 */
 	void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
 
 	/**
-	* Activate a new Remote Endpoint that has been statically discovered.
-	* @param pguid GUID_t of the participant.
-	* @param userDefinedId User Defined ID.
-	* @param kind Kind of endpoint.
-	*/
+	 * Activate a new Remote Endpoint that has been statically discovered.
+	 * @param pguid GUID_t of the participant.
+	 * @param userDefinedId User Defined ID.
+	 * @param kind Kind of endpoint.
+	 */
 	bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
 
 	/**
-	* Get the RTPS participant
-	* @return RTPS participant
-	*/
+	 * Get the RTPS participant
+	 * @return RTPS participant
+	 */
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;};
+	/**
+	 * Get the mutex.
+	 * @return Pointer to the Mutex
+	 */
+	inline boost::recursive_mutex* getMutex() const {return mp_mutex;}
 
 private:
 	//!Pointer to the local RTPSParticipant.
@@ -238,6 +248,7 @@ private:
 	 * @return True if correct.
 	 */
 	bool createSPDPEndpoints();
+	boost::recursive_mutex* mp_mutex;
 
 
 

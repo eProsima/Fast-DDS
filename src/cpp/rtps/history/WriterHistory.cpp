@@ -52,7 +52,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 	}
 	if(a_change->writerGUID != mp_writer->getGuid())
 	{
-		logError(RTPS_HISTORY,"The GUID_t of the change doesn't correspond with the GUID_t of the writer");
+		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
 		return false;
 	}
 	if(a_change->serializedPayload.length > m_att.payloadMaxSize)
@@ -83,7 +83,7 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
 //		cout << "a change " << a_change->sequenceNumber<< endl;
 //		cout << "a change "<< a_change->writerGUID << endl;
 //		cout << "writer: "<< mp_writer->getGuid()<<endl;
-		logError(RTPS_HISTORY,"The GUID_t of the change doesn't correspond with the GUID_t of the writer");
+		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
 		return false;
 	}
 	for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();

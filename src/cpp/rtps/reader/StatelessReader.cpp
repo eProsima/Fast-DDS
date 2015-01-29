@@ -51,7 +51,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 		if((*it).guid == wdata.guid)
 			return false;
 	}
-	logInfo(RTPS_READER,wdata.guid << " added to the matched writer list");
+	logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
 	m_matched_writers.push_back(wdata);
 	return true;
 }
@@ -63,7 +63,7 @@ bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 	{
 		if((*it).guid == wdata.guid)
 		{
-			logInfo(RTPS_READER,"Writer Proxy removed: " <<wdata.guid);
+			logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
 			m_matched_writers.erase(it);
 			return true;
 		}

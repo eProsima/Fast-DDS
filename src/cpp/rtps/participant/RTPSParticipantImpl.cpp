@@ -64,18 +64,20 @@ static EntityId_t TrustedWriter(const EntityId_t& reader)
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
-		RTPSParticipantListener* plisten):
-																													m_guid(guidP,c_EntityId_RTPSParticipant),
-																													mp_send_thr(nullptr),
-																													mp_event_thr(nullptr),
-																													mp_builtinProtocols(nullptr),
-																													mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
-																													IdCounter(0),
-																													mp_participantListener(plisten),
-																													mp_userParticipant(par)
+		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
+				mp_send_thr(nullptr),
+				mp_event_thr(nullptr),
+				mp_builtinProtocols(nullptr),
+				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
+				IdCounter(0),
+				mp_participantListener(plisten),
+				mp_userParticipant(par),
+				mp_mutex(new boost::recursive_mutex()),
+				m_threadID(0)
 
 {
 	const char* const METHOD_NAME = "RTPSParticipantImpl";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
 	m_att = PParam;
 	Locator_t loc;
@@ -84,9 +86,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_send_thr->initSend(this,loc,m_att.sendSocketBufferSize,m_att.use_IP4_to_send,m_att.use_IP6_to_send);
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
-
+	bool hasLocatorsDefined = true;
 	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
+		hasLocatorsDefined = false;
 		Locator_t loc;
 		loc.port=m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
@@ -94,13 +97,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_att.port.participantIDGain*m_att.participantID;
 		loc.kind = LOCATOR_KIND_UDPv4;
 		m_att.defaultUnicastLocatorList.push_back(loc);
-		logWarning(RTPS_PARTICIPANT,"Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource(this);
+		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false))
 		{
 			m_att.defaultUnicastLocatorList = LR->getListenLocators();
@@ -111,11 +113,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 			delete(LR);
 		}
 	}
+	if(!hasLocatorsDefined)
+		logWarning(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	defcopy = m_att.defaultMulticastLocatorList;
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
-		ListenResource* LR = new ListenResource(this);
+		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false))
 		{
 			m_att.defaultMulticastLocatorList = LR->getListenLocators();
@@ -163,6 +167,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
 	delete(this->mp_send_thr);
 	delete(this->mp_event_thr);
+	delete(this->mp_mutex);
 }
 
 /*
@@ -240,6 +245,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);
 	if(!isBuiltin)
 		m_userWriterList.push_back(SWriter);
@@ -316,7 +322,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		delete(SReader);
 		return false;
 	}
-
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allReaderList.push_back(SReader);
 	if(!isBuiltin)
 		m_userReaderList.push_back(SReader);
@@ -395,7 +401,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
-		logWarning(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
+		logInfo(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
 		valid &= assignEndpoint2LocatorList(endp,m_att.defaultUnicastLocatorList,false,false);
 		endp->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
 	}
@@ -425,6 +431,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 	for(auto lit = list.begin();lit != list.end();++lit)
 	{
 		added = false;
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
 		{
 			if((*it)->isListeningTo(*lit))
@@ -437,7 +444,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		}
 		if(added)
 			break;
-		ListenResource* LR = new ListenResource(this);
+		ListenResource* LR = new ListenResource(this,++m_threadID,false);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
 		{
 			LR->addAssociatedEndpoint(endp);
@@ -462,9 +469,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
 	bool found = false;
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*p_endpoint->getMutex());
+
 		if(p_endpoint->getAttributes()->endpointKind == WRITER)
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 			for(auto wit=m_userWriterList.begin();
 					wit!=m_userWriterList.end();++wit)
 			{
@@ -478,6 +486,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		}
 		else
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 			for(auto rit=m_userReaderList.begin()
 					;rit!=m_userReaderList.end();++rit)
 			{
@@ -499,23 +508,30 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		//BUILTINPROTOCOLS
 		//Remove it from threadListenList
 		std::vector<ListenResource*>::iterator thit;
+		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		for(thit=m_listenResourceList.begin();
 				thit!=m_listenResourceList.end();thit++)
 		{
 			(*thit)->removeAssociatedEndpoint(p_endpoint);
 		}
-		for(thit=m_listenResourceList.begin();
-				thit!=m_listenResourceList.end();thit++)
+		bool continue_removing = true;
+		while(continue_removing)
 		{
-			if(!(*thit)->hasAssociatedEndpoints())
+			continue_removing = false;
+			for(thit=m_listenResourceList.begin();
+					thit!=m_listenResourceList.end();thit++)
 			{
-				delete(*thit);
-				m_listenResourceList.erase(thit);
-				break;
+				if(!(*thit)->hasAssociatedEndpoints() && ! (*thit)->m_isDefaultListenResource)
+				{
+					delete(*thit);
+					m_listenResourceList.erase(thit);
+					continue_removing = true;
+					break;
+				}
 			}
 		}
-
 	}
+	//	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 	delete(p_endpoint);
 	return true;
 }
@@ -586,50 +602,6 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
 }
 
 
-//
-//
-//
-//
-//
-//
-//
-//
-
-//
-//
-//
-
-//
-//void RTPSParticipantImpl::registerReader(RTPSReader* SReader)
-//{
-//	eClock::my_sleep(30);
-//	m_userReaderList.push_back(SReader);
-//	m_builtinProtocols.addLocalReader(SReader);
-//}
-//
-//void RTPSParticipantImpl::registerWriter(RTPSWriter* SWriter)
-//{
-//	eClock::my_sleep(30);
-//	m_userWriterList.push_back(SWriter);
-//	m_builtinProtocols.addLocalWriter(SWriter);
-//}
-//
-//
-
-//
-//
-
-//
-//
-//
-//
-
-
-//
-
-//
-//}
-//
 
 }
 } /* namespace rtps */

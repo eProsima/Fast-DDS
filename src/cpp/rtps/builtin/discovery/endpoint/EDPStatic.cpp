@@ -25,6 +25,9 @@
 
 #include "fastrtps/utils/RTPSLog.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+
 #include <sstream>
 
 namespace eprosima {
@@ -104,6 +107,7 @@ bool EDPStatic::processLocalReaderProxyData(ReaderProxyData* rdata)
 	logInfo(RTPS_EDP,rdata->m_guid.entityId<< " in topic: " <<rdata->m_topicName,C_CYAN);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE",rdata->m_userDefinedId,rdata->m_guid.entityId));
 	localpdata->m_hasChanged = true;
 	this->mp_PDP->announceParticipantState(true);
@@ -116,6 +120,7 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 		logInfo(RTPS_EDP,wdata->m_guid.entityId<< " in topic: " <<wdata->m_topicName,C_CYAN);
 	//Add the property list entry to our local pdp
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
 	localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",
 			wdata->m_userDefinedId,wdata->m_guid.entityId));
 	localpdata->m_hasChanged = true;
@@ -126,6 +131,7 @@ bool EDPStatic::processLocalWriterProxyData(WriterProxyData* wdata)
 bool EDPStatic::removeLocalReader(RTPSReader* R)
 {
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
 			pit!=localpdata->m_properties.properties.end();++pit)
 	{
@@ -145,6 +151,7 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
 bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 {
 	ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+	boost::lock_guard<boost::recursive_mutex> guard(*localpdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = localpdata->m_properties.properties.begin();
 			pit!=localpdata->m_properties.properties.end();++pit)
 	{
@@ -164,6 +171,7 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "assignRemoteEndpoints";
+	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	for(std::vector<std::pair<std::string,std::string>>::iterator pit = pdata->m_properties.properties.begin();
 			pit!=pdata->m_properties.properties.end();++pit)
 	{

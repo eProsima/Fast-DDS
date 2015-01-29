@@ -39,11 +39,11 @@ public:
 	 * @param info Information regarding the matched subscriber
 	 */
 	virtual void onPublicationMatched(Publisher* pub,MatchingInfo& info){};
-	/**
-	 * This method is called when the History is full.
-	 * @param pub Pointer to the Publisher.
-	 */
-	virtual void onHistoryFull(Publisher* pub){};
+//	/**
+//	 * This method is called when the History is full.
+//	 * @param pub Pointer to the Publisher.
+//	 */
+//	virtual void onHistoryFull(Publisher* pub){};
 };
 
 } /* namespace rtps */

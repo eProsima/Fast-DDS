@@ -54,6 +54,8 @@ struct RTPS_DllAPI GuidPrefix_t{
 	}
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 	/**
 	* Guid prefix comparison operator
 	* @param guid1 First guid prefix to compare
@@ -85,6 +87,8 @@ inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
 	}
 	return false;
 }
+
+#endif
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
@@ -164,6 +168,8 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	}
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 	/**
 	* Guid prefix comparison operator
 	* @param id1 EntityId to compare
@@ -216,6 +222,7 @@ inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
 	return false;
 }
 
+#endif
 
 inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
 	output << std::hex;
@@ -276,6 +283,8 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 		guidPrefix(guidP),entityId(entId) {}
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 	/**
 	* GUID comparison operator
 	* @param g1 First GUID to compare
@@ -315,8 +324,11 @@ inline bool operator<(const GUID_t& g1, const GUID_t& g2){
 	}
 	return false;
 }
+#endif
 
 const GUID_t c_Guid_Unknown;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 	/**
 	* Stream operator, prints a GUID.
@@ -332,6 +344,8 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 		output << "|GUID UNKNOWN|";
 	return output;
 }
+
+#endif
 
 }
 }
