@@ -34,9 +34,9 @@ union UN3 switch(MYENUM)
 
 union UN4 switch(char)
 {
-	case 'a':
+	case 1:
 		long value;
-	case 'b':
+	case 2:
 		long value2;
 	default:
 		boolean abool;
