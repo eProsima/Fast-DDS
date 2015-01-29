@@ -11,11 +11,11 @@ enum MYENUM2
 	RAFA
 };
 
-union MYUNION switch(char)
+union MYUNION switch(long)
 {
-	case 'a':
+	case 1:
 		long value;
-	case 'b':
+	case 2:
 		long value2;
 	default:
 		boolean ar;
