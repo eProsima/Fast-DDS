@@ -88,7 +88,7 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	
 	Locator_t loc;
-	//loc.port = 15002;
+	loc.port = 15002;
 	PubDataparam.unicastLocatorList.push_back(loc);
 	mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
 	if(mp_datapub == nullptr)
