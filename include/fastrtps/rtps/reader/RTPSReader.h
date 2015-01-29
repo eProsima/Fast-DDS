@@ -39,6 +39,7 @@ class RTPSReader : public Endpoint
 	friend class ReaderHistory;
 	friend class RTPSParticipantImpl;
 	friend class MessageReceiver;
+	friend class EDP;
 protected:
 	RTPSReader(RTPSParticipantImpl*,GUID_t& guid,
 			ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);

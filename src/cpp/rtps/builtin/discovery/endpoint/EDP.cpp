@@ -85,6 +85,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader,TopicAttributes& att, Reade
 	rpd->m_topicKind = att.getTopicKind();
 	rpd->m_qos = rqos;
 	rpd->m_userDefinedId = reader->getAttributes()->getUserDefinedID();
+	reader->m_acceptMessagesFromUnkownWriters = false;
 	//ADD IT TO THE LIST OF READERPROXYDATA
 	if(!this->mp_PDP->addReaderProxyData(rpd))
 	{

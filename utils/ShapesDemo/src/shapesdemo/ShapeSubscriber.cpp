@@ -57,6 +57,7 @@ void ShapeSubscriber::onNewDataMessage(Subscriber *sub)
     while(mp_sub->takeNextData((void*)&shape,&info))
     {
         // shape.m_x += 5;
+        //cout << "Shape of type: "<< shape.m_type << "RECEIVED"<<endl;
         shape.m_time = info.sourceTimestamp;
         shape.m_writerGuid = info.writerGUID;
         shape.m_strength = info.ownershipStrength;

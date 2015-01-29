@@ -40,8 +40,6 @@ void SubscribeDialog::on_buttonBox_accepted()
 {
     ShapeSubscriber* SSub = new ShapeSubscriber(this->mp_sd->getParticipant());
 
-    SSub->m_attributes.expectsInlineQos = false;
-
 
     //SHAPE/TOPIC:
     if(this->ui->combo_Shape->currentText() == QString("Square"))
@@ -63,6 +61,7 @@ void SubscribeDialog::on_buttonBox_accepted()
     SSub->m_attributes.topic.topicKind = WITH_KEY;
 
     //History:
+    SSub->m_attributes.expectsInlineQos = true;
     SSub->m_attributes.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     SSub->m_attributes.topic.historyQos.depth = this->ui->spin_HistoryQos->value();
     SSub->m_shapeHistory.m_history_depth = this->ui->spin_HistoryQos->value();
