@@ -1,1 +1,0 @@
-call "bin\ShapesDemo.exe"

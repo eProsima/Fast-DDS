@@ -1,4 +1,0 @@
-#!/bin/bash
-
-#TO BE CALLED FROM THE ROOT DIRECTORY OF HTE PROJECT
-cp ./lib/x64Linux2.6gcc/* /usr/local/lib/
