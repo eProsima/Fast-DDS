@@ -35,7 +35,7 @@ StatelessReader::~StatelessReader()
 
 StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-				RTPSReader(pimpl,guid,att,hist, listen)
+						RTPSReader(pimpl,guid,att,hist, listen)
 {
 
 }
@@ -53,6 +53,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 	}
 	logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
 	m_matched_writers.push_back(wdata);
+	m_acceptMessagesFromUnkownWriters = false;
 	return true;
 }
 bool StatelessReader::matched_writer_remove(RemoteWriterAttributes& wdata)
@@ -148,6 +149,14 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 	{
 		if(writerId.entityId == this->m_trustedWriterEntityId)
 			return true;
+		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+		for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+		{
+			if((*it).guid == writerId)
+			{
+				return true;
+			}
+		}
 	}
 	return false;
 }
