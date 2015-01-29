@@ -286,6 +286,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 		CacheChange_t* change = mp_PubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
 		if(change != nullptr)
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
 			for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
 			{
 				if((*ch)->instanceHandle == change->instanceHandle)
@@ -311,6 +312,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 		CacheChange_t* change = mp_SubWriter.first->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
 		if(change != nullptr)
 		{
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_SubWriter.second->getMutex());
 			for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
 			{
 				if((*ch)->instanceHandle == change->instanceHandle)

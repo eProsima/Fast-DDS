@@ -56,7 +56,7 @@ bool WriterProxyData::toParameterList()
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	{
-		ParameterGuid_t* p = new ParameterGuid_t(PID_RTPSParticipant_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
+		ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
 		m_parameterList.m_parameters.push_back((Parameter_t*)p);
 	}
 	{
@@ -308,7 +308,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				m_typeName = std::string(p->getName());
 				break;
 			}
-			case PID_RTPSParticipant_GUID:
+			case PID_PARTICIPANT_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
 				for(uint8_t i =0;i<16;++i)
@@ -354,8 +354,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			}
 			default:
 			{
-				logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(*it)->Pid <<
-						" NOT CONSIDERED",C_CYAN);
+				//logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(*it)->Pid <<" NOT CONSIDERED",C_CYAN);
 				break;
 			}
 			}

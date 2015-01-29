@@ -135,7 +135,7 @@ bool ParticipantProxyData::toParameterList()
 		valid &=QosList::addQos(&m_QosList,PID_VENDORID,this->m_VendorId);
 		if(this->m_expectsInlineQos)
 			valid &=QosList::addQos(&m_QosList,PID_EXPECTS_INLINE_QOS,this->m_expectsInlineQos);
-		valid &=QosList::addQos(&m_QosList,PID_RTPSParticipant_GUID,this->m_guid);
+		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_GUID,this->m_guid);
 		for(std::vector<Locator_t>::iterator it=this->m_metatrafficMulticastLocatorList.begin();
 				it!=this->m_metatrafficMulticastLocatorList.end();++it)
 		{
@@ -156,7 +156,7 @@ bool ParticipantProxyData::toParameterList()
 		{
 			valid &=QosList::addQos(&m_QosList,PID_DEFAULT_MULTICAST_LOCATOR,*it);
 		}
-		valid &=QosList::addQos(&m_QosList,PID_RTPSParticipant_LEASE_DURATION,this->m_leaseDuration);
+		valid &=QosList::addQos(&m_QosList,PID_PARTICIPANT_LEASE_DURATION,this->m_leaseDuration);
 		valid &=QosList::addQos(&m_QosList,PID_BUILTIN_ENDPOINT_SET,(uint32_t)this->m_availableBuiltinEndpoints);
 		valid &=QosList::addQos(&m_QosList,PID_ENTITY_NAME,this->m_participantName);
 
@@ -220,7 +220,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				this->m_expectsInlineQos = p->value;
 				break;
 			}
-			case PID_RTPSParticipant_GUID:
+			case PID_PARTICIPANT_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
 				this->m_guid = p->guid;
@@ -251,7 +251,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 				this->m_defaultMulticastLocatorList.push_back(p->locator);
 				break;
 			}
-			case PID_RTPSParticipant_LEASE_DURATION:
+			case PID_PARTICIPANT_LEASE_DURATION:
 			{
 				ParameterTime_t* p = (ParameterTime_t*)(*it);
 				this->m_leaseDuration = p->time;

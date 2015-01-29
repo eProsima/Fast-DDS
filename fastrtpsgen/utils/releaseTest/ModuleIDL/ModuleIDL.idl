@@ -1,0 +1,38 @@
+module MOD1
+{
+	struct S1
+	{
+		long value;		
+	};
+
+	struct S2
+	{
+		long value2;
+	};
+};
+
+struct S1
+{
+	MOD1::S1 astruct;
+};
+
+module MOD2
+{
+	struct S1
+	{
+		long value;
+	};
+	struct S2
+	{
+		S1 astruct;
+	};
+};
+
+struct S2
+{
+	S1 astruct1;
+	MOD2::S1 astruct2;
+	MOD1::S2 astruct3;
+};
+
+

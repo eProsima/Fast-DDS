@@ -1,0 +1,16 @@
+struct S1
+{
+	boolean aboolean;
+	char achar;
+	double adouble;
+	float afloat;
+	long along;
+	unsigned long along2;
+	long long along3;
+	unsigned long long along4;
+	octet aoctet;
+	short ashort;
+	unsigned short ashort2;
+	string astring;
+	string<1024> astring2;
+};	

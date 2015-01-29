@@ -22,7 +22,7 @@ namespace eprosima {
 namespace fastrtps {
 
 /**
- * This class provides the user with information regarding a Discovered Participant.
+ * Class ParticipantDiscoveryInfo, provided to the user with information regarding a Discovered Participant.
  * @ingroup FASTRTPS_MODULE
  */
 class ParticipantDiscoveryInfo {

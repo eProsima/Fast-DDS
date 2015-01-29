@@ -1,0 +1,14 @@
+struct SeqStruct
+{
+	
+	sequence<char> achar;
+	sequence<double> adouble;
+	sequence<float> afloat;
+	sequence<long> along;
+	sequence<octet> aoctet;
+	sequence<short> ashort;
+	sequence<string> astring;
+	sequence<string<1024> > astring2;
+	sequence<boolean> aboolean;
+
+};

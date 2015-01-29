@@ -44,7 +44,7 @@ void NackSupressionDuration::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
-		logInfo(RTPS_WRITER,"NackSupression: changing underway to unacked for Reader: "<<mp_RP->m_att.guid);
+		logInfo(RTPS_WRITER,"Changing underway to unacked for Reader: "<<mp_RP->m_att.guid);
 		for(std::vector<ChangeForReader_t>::iterator cit=mp_RP->m_changesForReader.begin();
 				cit!=mp_RP->m_changesForReader.end();++cit)
 		{

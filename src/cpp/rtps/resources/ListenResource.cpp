@@ -26,9 +26,11 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "ListenResource";
 
-ListenResource::ListenResource(RTPSParticipantImpl* partimpl):
+ListenResource::ListenResource(RTPSParticipantImpl* partimpl,uint32_t ID,bool isDefault):
 				mp_receiver(nullptr),
-				mp_RTPSParticipantImpl(partimpl)
+				mp_RTPSParticipantImpl(partimpl),
+				m_ID(ID),
+				m_isDefaultListenResource(isDefault)
 {
 	// TODO Auto-generated constructor stub
 	mp_impl = new ListenResourceImpl(this);
@@ -47,7 +49,7 @@ ListenResource::~ListenResource() {
 
 bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_impl->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*this->getMutex());
 	if(endp->getAttributes()->endpointKind == WRITER)
 	{
 		for(auto wit = m_assocWriters.begin();
@@ -127,7 +129,7 @@ bool ListenResource::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc,
 		uint32_t listenSockSize,bool isMulti,bool isFixed)
 {
 	const char* const METHOD_NAME = "init_thread";
-	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc,C_BLUE);
+	logInfo(RTPS_MSG_IN,"Creating ListenResource in: "<<loc << " with ID: "<< m_ID,C_BLUE);
 	if(!IsAddressDefined(loc) && isMulti)
 	{
 		logWarning(RTPS_MSG_IN,"MulticastAddresses need to have the IP defined, ignoring this address",C_BLUE);
@@ -147,6 +149,8 @@ const LocatorList_t& ListenResource::getListenLocators()
 {
 	return mp_impl->getListenLocators();
 }
+
+boost::recursive_mutex* ListenResource::getMutex(){return mp_impl->getMutex();}
 
 
 

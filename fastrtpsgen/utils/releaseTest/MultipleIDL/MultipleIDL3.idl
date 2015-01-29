@@ -1,0 +1,13 @@
+enum MYENUM4
+{
+	LILA,
+	LILE,
+	LILO
+
+};
+
+struct MYSTRUCT2
+{
+	long value;
+	string message;
+};

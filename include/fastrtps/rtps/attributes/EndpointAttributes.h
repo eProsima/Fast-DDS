@@ -20,7 +20,7 @@ namespace fastrtps{
 namespace rtps {
 
 /**
- * Attributes associated with an Endpoint.
+ * Structure EndpointAttributes, describing the attributes associated with an RTPS Endpoint.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class EndpointAttributes
@@ -36,13 +36,13 @@ public:
 		endpointKind = WRITER;
 	};
 	virtual ~EndpointAttributes(){};
-	//!Endpoint kind
+	//!Endpoint kind, default value WRITER
 	EndpointKind_t endpointKind;
-	//!Tipoc kind
+	//!Topic kind, default value NO_KEY
 	TopicKind_t topicKind;
-	//!Reliability kind
+	//!Reliability kind, default value BEST_EFFORT
 	ReliabilityKind_t reliabilityKind;
-	//!Durability kind
+	//!Durability kind, default value VOLATILE
 	DurabilityKind_t durabilityKind;
 	//!Unicast locator list
 	LocatorList_t unicastLocatorList;
@@ -74,7 +74,9 @@ public:
 	inline void setEntityID(uint8_t id){m_entityID = id;	};
 	
 private:
+	//!User Defined ID, used for StaticEndpointDiscovery, default value -1.
 	int16_t m_userDefinedID;
+	//!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
 	int16_t m_entityID;
 };
 }

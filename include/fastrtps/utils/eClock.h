@@ -45,14 +45,15 @@ namespace fastrtps{
 
 
 /**
- * Clock used to obtain the time in us since 1900.
+ * Class eClock used to obtain the time and to sleep some processes.
+ * Time measured since  in us since 1970.
  * @ingroup UTILITIES_MODULE
  */
 class RTPS_DllAPI eClock {
 public:
 	eClock();
 	virtual ~eClock();
-	//!Seconds from 1900 to 1970
+	//!Seconds from 1900 to 1970, initialized to 0 to comply with RTPS 2.2
 	int32_t m_seconds_from_1900_to_1970;
 	//!Difference from UTC in seconds
 	int32_t m_utc_seconds_diff;

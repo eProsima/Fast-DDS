@@ -93,6 +93,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;
+			boost::lock_guard<boost::recursive_mutex> guard(*mp_SPDP->getMutex());
 			for (auto it = mp_SPDP->m_participantProxies.begin();
 				it != mp_SPDP->m_participantProxies.end();++it)
 			{
@@ -184,7 +185,7 @@ bool PDPSimpleListener::getKey(CacheChange_t* change)
 		{
 			break;
 		}
-		if(pid == PID_RTPSParticipant_GUID)
+		if(pid == PID_PARTICIPANT_GUID)
 		{
 			valid &= CDRMessage::readData(&aux_msg,change->instanceHandle.value,16);
 			aux_msg.buffer = nullptr;
