@@ -3,6 +3,8 @@
 
 setlocal EnableDelayedExpansion
 @echo off
+
+
 echo "STARTING TESTS"
 :: Initialize the returned value to 0 (all succesfully)
 set errorstatus=0
@@ -21,14 +23,14 @@ for %%a in ("%configurations:,=" "%") do (
 :: Get number of arguments
 set argC=0
 for %%x in (%*) do set /A argC+=1
-echo "UNTIL HERE OK %argC%"
+echo "Proviced arguments: %argC%"
 :: Get the optional parameter
 if "%argC%" == "1" (
-	echo "EXECUTING %1"
+	echo "EXECUTING TEST %1"
 	cd %1
 	call :execTest
 	cd ..
-	if %errorstatus% == 0 	(
+	if !errorstatus!==0 	(
 		echo TEST %1 SUCESSFUL
 	) else 	(
 		echo TEST %1 FAILED
@@ -41,18 +43,18 @@ if "%argC%" == "1" (
 		cd %%D
 		call :execTest
 		cd ..
-		if %errorstatus% == 0 (
-			echo TEST %1 SUCESSFUL
-			set correcttests="%correcttests% %1"
+		if !errorstatus!==0 (
+			echo "TEST %%D SUCESSFUL"
+			set "correcttests=!correcttests! %%~NXD"
 		) else (
-			echo TEST %1 FAILED
+			echo "TEST %%D FAILED"
 			set globalerrorstatus=1
-			set failedtests="%failedtests% %1"
+			set "failedtests=!failedtests! %%~NXD"
 		)
 	)
 )
 echo "TESTS FINISHED"
-if %globalerrorstatus% == 0 (
+if !globalerrorstatus!==0 (
     echo "TEST SUCCESSFULL"
 ) else (
     echo "TESTS FAILED: %failedtests%"
@@ -66,6 +68,7 @@ exit /b %globalerrorstatus%
 :: @param Plaform for Visual Studio.
 :: @param Name of the test
 :execTest
+set errorstatus=0
 ::Get the IDL files:
 echo "EXECUTING TEST"
 set "IDLFILES= "
@@ -77,8 +80,10 @@ echo "FOUND IDL FILES: %IDLFILES%"
 ::Generate Info
 copy ..\..\..\lib\fastrtpsgen.jar .
 java -jar fastrtpsgen.jar -example %configuration% -replace %IDLFILES%
-set errorstatus=%ERRORLEVEL%
-if not %errorstatus%==0 goto :EOF
+if errorlevel 1 (
+	set errorstatus=1
+	goto :EOF
+)
 if exist *.sln ( 
 	echo "Solution exists, compiling"
 	for %%s in ("%configurations:,=" "%") do (
@@ -87,8 +92,10 @@ if exist *.sln (
 		msbuild "solution-%configuration%.sln" /t:Clean /p:Configuration=%%s /p:Platform="%platform%"
 		:: Build the visual solution
 		msbuild "solution-%configuration%.sln" /t:Build /p:Configuration=%%s /p:Platform="%platform%"
-		set errorstatus=%ERRORLEVEL%
-		if not %errorstatus%==0 goto :EOF
+		if errorlevel 1 (
+			set errorstatus=1
+			goto :EOF
+		)
 	)
 	rd /s /q x64
 	rd /s /q bin
