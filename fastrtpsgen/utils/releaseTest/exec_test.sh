@@ -25,9 +25,15 @@ function execTest
 	cp ../../../lib/fastrtpsgen.jar .
 	java -jar fastrtpsgen.jar -example $configuration -replace $IDLFILES
 	errorstatus=$?
+	
     if [ $errorstatus != 0 ]; then return; fi
 	#If the makefile is not present than can be OK.
-	if [ ! -f "makefile_$configuration" ]; then return; fi
+	if [ ! -f "makefile_$configuration" ]; then 
+		rm *.jar
+		rm *.h
+		rm *.cxx
+		return; 
+	fi
 	#Compile
 	make -f makefile_$configuration all
 	errorstatus=$?
