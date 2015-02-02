@@ -123,6 +123,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 			logError(RTPS_MSG_IN,IDSTRING"Error processing message: " << e,C_BLUE);
 
 		}
+		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" ,C_BLUE);
 		this->putToListen();
 	}
 	else if(err == boost::asio::error::operation_aborted)
