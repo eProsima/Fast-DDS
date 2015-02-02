@@ -69,6 +69,10 @@ void SubscribeDialog::on_buttonBox_accepted()
     SSub->m_attributes.topic.resourceLimitsQos.max_samples_per_instance = this->ui->spin_HistoryQos->value();
     SSub->m_attributes.topic.resourceLimitsQos.max_samples = this->ui->spin_HistoryQos->value()*20;
 
+    //SSub->m_attributes.qos.m_durabilityService.hasChanged = true;
+    //SSub->m_attributes.qos.m_timeBasedFilter.hasChanged = true;
+    SSub->m_attributes.qos.m_presentation.hasChanged = true;
+
     //Reliability
     if(this->ui->checkBox_reliable->isChecked())
         SSub->m_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
