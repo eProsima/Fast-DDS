@@ -58,6 +58,15 @@ if not %errorstatus%==0 goto :exit
 soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FASTRTPSGEN_User_Manual.odt,%VERSIONRTPS%)"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
+:: ShapesDemo User manual
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS_ShapesDemo_User_Manual.odt,%VERSIONRTPS%)"
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+:: ShapesDemo Interoperability 
+soffice.exe --headless "macro:///eProsima.documentation.changeVersion(%CD%\FastRTPS_ShapesDemo_Interoperability_Troubleshooting.odt,%VERSIONRTPS%)"
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+
 
 :: Copy pfd files into pdf dir
 copy "FastRTPS_Installation_Manual.pdf" "pdf\FastRTPS_Installation_Manual.pdf"
@@ -72,6 +81,16 @@ if not %errorstatus%==0 goto :exit
 
 copy "FASTRTPSGEN_User_Manual.pdf" "pdf\FASTRTPSGEN_User_Manual.pdf"
 del "FASTRTPSGEN_User_Manual.pdf"
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+
+copy "FastRTPS_ShapesDemo_User_Manual.pdf" "pdf\FastRTPS_ShapesDemo_User_Manual.pdf"
+del "FastRTPS_ShapesDemo_User_Manual.pdf"
+set errorstatus=%ERRORLEVEL%
+if not %errorstatus%==0 goto :exit
+
+copy "FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf" "pdf\FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf"
+del "FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf"
 set errorstatus=%ERRORLEVEL%
 if not %errorstatus%==0 goto :exit
 

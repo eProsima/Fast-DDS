@@ -18,6 +18,11 @@
 #include <QStandardItemModel>
 #include <QKeyEvent>
 #include <QDateTime>
+#include <QMessageBox>
+#include <QDesktopServices>
+#include <QDir>
+#include <QProcess>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -303,7 +308,7 @@ void MainWindow::on_actionDelete_Enpoint_triggered()
 
 void MainWindow::removeRow(int row)
 {
-  //  cout << "REMOVING ROW **************************"<<endl;
+    //  cout << "REMOVING ROW **************************"<<endl;
     m_pubsub->removeRow(row);
     for(std::vector<SD_Endpoint>::iterator it = this->m_pubsub_pointers.begin();
         it!=this->m_pubsub_pointers.end();++it)
@@ -312,13 +317,13 @@ void MainWindow::removeRow(int row)
         {
             if(it->type == PUB)
             {
-               // cout << "REMOVING PUBLISHER "<<endl;
+                // cout << "REMOVING PUBLISHER "<<endl;
                 this->m_shapesDemo.removePublisher(it->pub);
                 addMessageToOutput(QString("Removed Publisher"),false);
             }
             else
             {
-             //   cout << "REMOVING SUBSCRIBER "<<endl;
+                //   cout << "REMOVING SUBSCRIBER "<<endl;
                 this->m_shapesDemo.removeSubscriber(it->sub);
                 addMessageToOutput(QString("Removed Subscriber"),false);
             }
@@ -326,7 +331,7 @@ void MainWindow::removeRow(int row)
             for(std::vector<SD_Endpoint>::iterator it2 = it;it2!=this->m_pubsub_pointers.end();++it2)
             {
                 it2->pos--;
-              //  cout << "POSITION -1"<<endl;
+                //  cout << "POSITION -1"<<endl;
             }
             m_pubsub_pointers.erase(it);
             break;
@@ -358,8 +363,29 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 }
 
 
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("About");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setTextFormat(Qt::RichText);   //this is what makes the links clickable
+    msgBox.setText(QString("<p><strong>eProsima Shapes Demo 1.0.0</strong></p><p>Copyright (C) eProsima 2015</p> <p><a href=http://www.eProsima.com>http:://www.eProsima.com</a></p>"));
+    msgBox.exec();
 
+}
 
+void MainWindow::on_actionUser_Manual_triggered()
+{
+    QDesktopServices::openUrl(QUrl("file:///C:/Program Files/eProsima/FastRTPS/doc/pdf/FastRTPS_ShapesDemo_User_Manual.pdf"));
+    QString str(QDir::currentPath());
+     str.append("/FASTRTPSGEN_User_Manual.pdf");
+    QDesktopServices::openUrl(QUrl(str, QUrl::TolerantMode));
+}
 
-
-
+void MainWindow::on_actionInteroperability_Troubleshooting_triggered()
+{
+    QDesktopServices::openUrl(QUrl("file:///C:/Program Files/eProsima/FastRTPS/doc/pdf/FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf"));
+    QString str(QDir::currentPath());
+     str.append("/FASTRTPSGEN_User_Manual.pdf");
+    QDesktopServices::openUrl(QUrl(str, QUrl::TolerantMode));
+}

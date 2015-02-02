@@ -179,6 +179,8 @@ Section -post SEC0006
 	SetOutPath $INSTDIR\examples\ShapesDemo\bin
     SetOverwrite on
 	File /r "..\..\..\..\utils\ShapesDemo\release\*.exe"
+	File /r "..\..\..\..\doc\pdf\FastRTPS_ShapesDemo_User_Manual.pdf"
+	File /r "..\..\..\..\doc\pdf\FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf"
 	
 	
 	SetOutPath $INSTDIR\fastrtpsgen
@@ -246,6 +248,7 @@ Section -post SEC0006
     SetOutPath $SMPROGRAMS\$StartMenuGroup
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\README.lnk" $INSTDIR\README.html
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
+	CreateShortcut "$SMPROGRAMS\$StartMenuGroup\eProsima Shapes Demo.lnk" $INSTDIR\examples\ShapesDemo\bin\ShapesDemo.exe
     !insertmacro MUI_STARTMENU_WRITE_END
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"

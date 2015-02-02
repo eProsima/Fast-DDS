@@ -103,6 +103,12 @@ private slots:
 
     void closeEvent(QCloseEvent* event);
 
+    void on_actionAbout_triggered();
+
+    void on_actionUser_Manual_triggered();
+
+    void on_actionInteroperability_Troubleshooting_triggered();
+
 public slots:
 
     void on_actionStart_triggered();

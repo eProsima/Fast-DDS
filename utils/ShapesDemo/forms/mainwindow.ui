@@ -356,8 +356,17 @@
     <addaction name="actionStop"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionUser_Manual"/>
+    <addaction name="actionInteroperability_Troubleshooting"/>
+   </widget>
    <addaction name="menuControl"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionPreferences">
    <property name="text">
@@ -382,6 +391,21 @@
   <action name="actionDelete_Enpoint">
    <property name="text">
     <string>Delete Enpoint</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionUser_Manual">
+   <property name="text">
+    <string>User Manual</string>
+   </property>
+  </action>
+  <action name="actionInteroperability_Troubleshooting">
+   <property name="text">
+    <string>Interoperability Troubleshooting</string>
    </property>
   </action>
  </widget>
