@@ -67,9 +67,9 @@ void ShapePublisher::write()
 void ShapePublisher::onPublicationMatched(Publisher *pub, MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
-        cout << "Publisher MATCHES Sub: "<< info.remoteEndpointGuid << "*****************************"<<endl;
+        cout << "Publisher in topic" << m_attributes.topic.getTopicName() << " MATCHES Sub: "<< info.remoteEndpointGuid << "*****************************"<<endl;
     else if(info.status == REMOVED_MATCHING)
-        cout << "Publisher REMOVED Sub " << info.remoteEndpointGuid << "*****************************"<<endl;
+        cout << "Publisher in topic" << m_attributes.topic.getTopicName() << " REMOVES Sub " << info.remoteEndpointGuid << "*****************************"<<endl;
 }
 
 

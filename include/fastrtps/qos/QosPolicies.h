@@ -268,10 +268,10 @@ public:
 	RTPS_DllAPI PartitionQosPolicy() :Parameter_t(PID_PARTITION, 0), QosPolicy(false){};
 	RTPS_DllAPI virtual ~PartitionQosPolicy(){};
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
-	RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string("oc")); };
+    RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string(oc)); hasChanged=true; };
 	RTPS_DllAPI inline void clear(){ names.clear(); };
 	RTPS_DllAPI inline std::vector<std::string> getNames(){ return names; };
-	RTPS_DllAPI inline void setNames(std::vector<std::string> nam){ names = nam; };
+    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; };
 private:
 	std::vector<std::string> names;
 };
