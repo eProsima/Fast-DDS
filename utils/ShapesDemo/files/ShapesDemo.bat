@@ -1,1 +1,1 @@
-call "bin\ShapesDemo.exe"
+start "" "bin\ShapesDemo.exe"
