@@ -52,8 +52,8 @@ static const char* const CLASS_NAME = "MessageReceiver";
 
 
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
-						m_rec_msg(rec_buffer_size),
-						mp_change(nullptr)
+												m_rec_msg(rec_buffer_size),
+												mp_change(nullptr)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
 	destVersion = c_ProtocolVersion;
@@ -118,11 +118,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	const char* const METHOD_NAME = "processCDRMsg";
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex()); //TODO Comprobar si se puede poner en las subfunciones de la clase.
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring",C_BLUE)
-				return;
+		logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring",C_BLUE);
+		return;
 	}
 	this->reset();
 	destGuidPrefix = RTPSParticipantguidprefix;
@@ -268,7 +268,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 
 }
 
-bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
+bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
 {
 	const char* const METHOD_NAME = "checkRTPSHeader";
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
@@ -335,8 +335,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	bool keyFlag = smh->flags & BIT(3) ? true : false;
 	if(keyFlag && dataFlag)
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Message received with Data and Key Flag set, ignoring")
-				return false;
+		logWarning(RTPS_MSG_IN,IDSTRING"Message received with Data and Key Flag set, ignoring");
+		return false;
 	}
 
 	//Assign message endianness
@@ -387,10 +387,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//Get sequence number
 	CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
 
-	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
+	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number",C_BLUE)
-				return false;
+		logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number",C_BLUE);
+		return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -405,7 +405,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		if(inlineQosSize <= 0)
 		{
 			logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
-			firstReader->releaseCache(ch);
+			//firstReader->releaseCache(ch);
 			return false;
 		}
 
@@ -439,7 +439,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			{
 				logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
 						"("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")",C_BLUE);
-				firstReader->releaseCache(ch);
+				//firstReader->releaseCache(ch);
 				return false;
 			}
 		}
@@ -487,7 +487,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				if (!change_to_add->copy(ch))
 				{
 					logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << ch->serializedPayload.length
-						<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+							<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
 					(*it)->releaseCache(change_to_add);
 					return false;
 				}
@@ -501,9 +501,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE && pWP!=nullptr)
 			{
+				pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
 				if((*it)->change_received(change_to_add,pWP))
 				{
-
+					//pWP->assertLiveliness();
 				}
 				else
 				{

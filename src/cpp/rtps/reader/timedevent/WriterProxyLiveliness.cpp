@@ -61,6 +61,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 			}
 			return;
 		}
+		mp_WP->setNotAlive();
 		this->restart_timer();
 	}
 	else if(code == EVENT_ABORT)

@@ -83,6 +83,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 	std::vector<CacheChange_t*> changeV;
 	changeV.push_back(change);
 	bool expectsInlineQos = false;
+	this->setLivelinessAsserted(true);
 	if(!matched_readers.empty())
 	{
 		for(auto it=matched_readers.begin();it!=matched_readers.end();++it)

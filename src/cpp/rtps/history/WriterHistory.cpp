@@ -129,7 +129,7 @@ bool WriterHistory::remove_min_change()
 		return false;
 }
 
-
+//TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.
 
 
 

@@ -38,6 +38,12 @@ installer()
     cp "../../../../doc/pdf/FASTRTPSGEN_User_Manual.pdf" tmp/$project/doc/pdf/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
+	cp "../../../../doc/pdf/FastRTPS_ShapesDemo_User_Manual.pdf" tmp/$project/doc/pdf/
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
+	cp "../../../../doc/pdf/FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf" tmp/$project/doc/pdf/
+    errorstatus=$?
+    if [ $errorstatus != 0 ]; then return; fi
     ##cp "../../../../doc/index.html" tmp/$project/doc/
     #errorstatus=$?
     #if [ $errorstatus != 0 ]; then return; fi

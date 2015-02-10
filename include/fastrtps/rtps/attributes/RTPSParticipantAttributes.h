@@ -142,7 +142,7 @@ public:
 		use_SIMPLE_EndpointDiscoveryProtocol = true;
 		use_STATIC_EndpointDiscoveryProtocol = false;
 		m_staticEndpointXMLFilename = "";
-		domainId = 80;
+		domainId = 0;
 		leaseDuration.seconds = 500;
 		leaseDuration_announcementperiod.seconds = 250;
 		use_WriterLivelinessProtocol = true;

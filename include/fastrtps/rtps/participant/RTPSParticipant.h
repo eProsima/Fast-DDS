@@ -52,11 +52,11 @@ public:
 	const GUID_t& getGuid() const ;
 	//!Force the announcement of the RTPSParticipant state.
 	void announceRTPSParticipantState();
-	//!Method to loose the next change (ONLY FOR TEST).
+	//!Method to loose the next change (ONLY FOR TEST). //TODO remove this method because is only for testing
 	void loose_next_change();
-	//!Stop the RTPSParticipant announcement period.
+	//!Stop the RTPSParticipant announcement period. //TODO remove this method because is only for testing
 	void stopRTPSParticipantAnnouncement();
-	//!Reset the RTPSParticipant announcement period.
+	//!Reset the RTPSParticipant announcement period. //TODO remove this method because is only for testing
 	void resetRTPSParticipantAnnouncement();
 	/**
 	 * Indicate the Participant that you have discovered a new Remote Writer.

@@ -140,7 +140,7 @@ void ReaderHistory::postSemaphore()
 	return mp_semaphore->post();
 }
 
-void ReaderHistory::waitSemaphore()
+void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario sepa que es para esperar a un cachechange nuevo
 {
 	return mp_semaphore->wait();
 }

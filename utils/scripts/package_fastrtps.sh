@@ -83,6 +83,28 @@ function package
 	rm "FASTRTPSGEN_User_Manual.pdf"
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
+# ShapesDemo User manual
+	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/FastRTPS_ShapesDemo_User_Manual.odt,$ertpsversion)"
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	cp "FastRTPS_ShapesDemo_User_Manual.pdf" $PWD/pdf/
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	rm "FastRTPS_ShapesDemo_User_Manual.pdf"
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
+# ShapesDemo interoperability User manual
+	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/FastRTPS_ShapesDemo_Interoperability_Troubleshooting.odt,$ertpsversion)"
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	cp "FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf" $PWD/pdf/
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+	rm "FastRTPS_ShapesDemo_Interoperability_Troubleshooting.pdf"
+	errorstatus=$?
+	if [ $errorstatus != 0 ]; then return; fi
+
 	cd ..
 
 	# Create README

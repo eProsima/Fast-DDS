@@ -31,6 +31,8 @@
 
 #include "fastrtps/rtps/writer/StatelessWriter.h"
 #include "fastrtps/rtps/reader/StatelessReader.h"
+#include "fastrtps/rtps/reader/StatefulReader.h"
+#include "fastrtps/rtps/reader/WriterProxy.h"
 
 #include "fastrtps/rtps/history/WriterHistory.h"
 #include "fastrtps/rtps/history/ReaderHistory.h"
@@ -53,17 +55,17 @@ namespace rtps {
 static const char* const CLASS_NAME = "PDPSimple";
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-			mp_builtin(built),
-			mp_RTPSParticipant(nullptr),
-			mp_SPDPWriter(nullptr),
-			mp_SPDPReader(nullptr),
-			mp_EDP(nullptr),
-			m_hasChangedLocalPDP(true),
-			mp_resendParticipantTimer(nullptr),
-			mp_listener(nullptr),
-			mp_SPDPWriterHistory(nullptr),
-			mp_SPDPReaderHistory(nullptr),
-			mp_mutex(new boost::recursive_mutex())
+					mp_builtin(built),
+					mp_RTPSParticipant(nullptr),
+					mp_SPDPWriter(nullptr),
+					mp_SPDPReader(nullptr),
+					mp_EDP(nullptr),
+					m_hasChangedLocalPDP(true),
+					mp_resendParticipantTimer(nullptr),
+					mp_listener(nullptr),
+					mp_SPDPWriterHistory(nullptr),
+					mp_SPDPReaderHistory(nullptr),
+					mp_mutex(new boost::recursive_mutex())
 {
 
 }
@@ -589,25 +591,42 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 					wit != (*pit)->m_writers.end();++wit)
 			{
 				if((*wit)->m_qos.m_liveliness.kind == kind)
-					(*wit)->m_isAlive;
+				{
+					(*wit)->m_isAlive = true;
+					boost::lock_guard<boost::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
+					for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+							rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
+					{
+						if((*rit)->getAttributes()->reliabilityKind == RELIABLE)
+						{
+							StatefulReader* sfr = (StatefulReader*)(*rit);
+							WriterProxy* WP;
+							if(sfr->matched_writer_lookup((*wit)->m_guid,&WP))
+							{
+								WP->assertLiveliness();
+								continue;
+							}
+						}
+					}
+					}
+				}
+				break;
 			}
-			break;
 		}
 	}
-}
 
-bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
-{
-	ParticipantProxyData* pdata;
-	if(lookupParticipantProxyData(pguid, &pdata))
+	bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 	{
-		if(kind == WRITER)
-			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
-		else
-			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+		ParticipantProxyData* pdata;
+		if(lookupParticipantProxyData(pguid, &pdata))
+		{
+			if(kind == WRITER)
+				dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
+			else
+				dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+		}
+		return false;
 	}
-	return false;
-}
 
 }
 } /* namespace rtps */

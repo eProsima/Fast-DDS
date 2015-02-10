@@ -219,7 +219,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	else
 	{
 		bool binded = false;
-		for(uint8_t i =0;i<1000;++i)
+		for(uint8_t i =0;i<1000;++i) //TODO make it configurable by user.
 		{
 			m_listen_endpoint.port(m_listen_endpoint.port()+i);
 			try

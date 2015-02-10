@@ -147,6 +147,12 @@ public:
 	inline void assertLiveliness(){m_isAlive=true;};
 
 	/**
+	 * Set the writer as not alive
+	 * @return
+	 */
+	inline void setNotAlive(){m_isAlive = false;};
+
+	/**
 	* Get the mutex
 	* @return Associated mutex
 	*/

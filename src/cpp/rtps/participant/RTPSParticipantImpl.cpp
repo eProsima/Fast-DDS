@@ -87,7 +87,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
 	bool hasLocatorsDefined = true;
-	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
+	//If no default locator is defined you define one.
+	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
 		hasLocatorsDefined = false;
 		Locator_t loc;
@@ -443,7 +444,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 			}
 		}
 		if(added)
-			break;
+			continue;
 		ListenResource* LR = new ListenResource(this,++m_threadID,false);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
 		{

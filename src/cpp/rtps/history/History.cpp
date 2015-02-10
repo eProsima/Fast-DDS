@@ -139,6 +139,8 @@ bool History::get_max_change(CacheChange_t** max_change)
 }
 }
 
+
+//TODO Remove if you want.
 #include <sstream>
 
 namespace eprosima{
