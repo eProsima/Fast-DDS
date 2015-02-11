@@ -251,7 +251,8 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 						ch_to_give = nullptr;
 						if(mp_history->get_change(notifySeqNum,prox->m_att.guid,&ch_to_give))
 						{
-							getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
+							if(!ch_to_give->isRead)
+								getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
 						}
 						notifySeqNum++;
 					}
