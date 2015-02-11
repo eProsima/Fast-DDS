@@ -5,14 +5,10 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cross.exe.debug.52589616" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/x86_64-linux-gnu"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6/include-fixed"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/local/include"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6/include"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6/backward"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6/x86_64-linux-gnu"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6"/>
+						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MIN__" value="double(2.22507385850720138309e-308L)"/>
+						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MAX__" value="double(1.79769313486231570815e+308L)"/>
+						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_EPSILON__" value="double(2.22044604925031308085e-16L)"/>
+						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_DENORM_MIN__" value="double(4.94065645841246544177e-324L)"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="unix" value="1"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="linux" value="1"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="_LP64" value="1"/>
@@ -210,18 +206,14 @@
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DEC128_EPSILON__" value="1E-33DL"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DEBUG" value="1"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MIN_EXP__" value="(-1021)"/>
-						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MIN__" value="((double)2.22507385850720138309e-308L)"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MIN_10_EXP__" value="(-307)"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MAX_EXP__" value="1024"/>
-						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MAX__" value="((double)1.79769313486231570815e+308L)"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MAX_10_EXP__" value="308"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_MANT_DIG__" value="53"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_HAS_QUIET_NAN__" value="1"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_HAS_INFINITY__" value="1"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_HAS_DENORM__" value="1"/>
-						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_EPSILON__" value="((double)2.22044604925031308085e-16L)"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_DIG__" value="15"/>
-						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_DENORM_MIN__" value="((double)4.94065645841246544177e-324L)"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__DBL_DECIMAL_DIG__" value="17"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__CHAR_BIT__" value="8"/>
 						<entry flags="BUILTIN|RESOLVED" kind="macro" name="__CHAR32_TYPE__" value="unsigned int"/>

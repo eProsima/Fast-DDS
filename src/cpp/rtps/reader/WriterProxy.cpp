@@ -27,13 +27,18 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 3;
+
 static const char* const CLASS_NAME = "WriterProxy";
 
 WriterProxy::~WriterProxy()
 {
 	//pDebugInfo("WriterProxy destructor"<<endl;);
-	mp_writerProxyLiveliness->stop_timer();
-	delete(mp_writerProxyLiveliness);
+	if(mp_writerProxyLiveliness!=nullptr)
+	{
+		mp_writerProxyLiveliness->stop_timer();
+		delete(mp_writerProxyLiveliness);
+	}
 	delete(mp_heartbeatResponse);
 	delete(mp_mutex);
 }
@@ -41,25 +46,25 @@ WriterProxy::~WriterProxy()
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 		Duration_t heartbeatResponse,
 		StatefulReader* SR) :
-										mp_SFR(SR),
-										m_att(watt),
-										m_acknackCount(0),
-										m_lastHeartbeatCount(0),
-										m_isMissingChangesEmpty(true),
-										mp_heartbeatResponse(nullptr),
-										mp_writerProxyLiveliness(nullptr),
-										m_heartbeatFinalFlag(false),
-										m_hasMaxAvailableSeqNumChanged(false),
-										m_hasMinAvailableSeqNumChanged(false),
-										m_isAlive(true),
-										m_firstReceived(true),
-										mp_mutex(new boost::recursive_mutex())
+												mp_SFR(SR),
+												m_att(watt),
+												m_acknackCount(0),
+												m_lastHeartbeatCount(0),
+												m_isMissingChangesEmpty(true),
+												mp_heartbeatResponse(nullptr),
+												mp_writerProxyLiveliness(nullptr),
+												m_heartbeatFinalFlag(false),
+												m_hasMaxAvailableSeqNumChanged(false),
+												m_hasMinAvailableSeqNumChanged(false),
+												m_isAlive(true),
+												m_firstReceived(true),
+												mp_mutex(new boost::recursive_mutex())
 
 {
 	const char* const METHOD_NAME = "WriterProxy";
 	m_changesFromW.clear();
 	//Create Events
-	mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration));
+	mp_writerProxyLiveliness = new WriterProxyLiveliness(this,TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration)*WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER);
 	mp_heartbeatResponse = new HeartbeatResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
 	if(m_att.livelinessLeaseDuration < c_TimeInfinite)
 		mp_writerProxyLiveliness->restart_timer();
@@ -391,6 +396,20 @@ bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
 	}
 	return false;
 }
+
+void WriterProxy::assertLiveliness()
+{
+	const char* const METHOD_NAME = "assertLiveliness";
+	logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
+	m_isAlive=true;
+	if(this->mp_writerProxyLiveliness->isWaiting())
+	{
+		this->mp_writerProxyLiveliness->stop_timer();
+	}
+	this->mp_writerProxyLiveliness->restart_timer();
+};
+
+
 
 }
 } /* namespace rtps */

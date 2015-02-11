@@ -69,6 +69,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 	logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
 	return true;
 }
+
 bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 {
 	const char* const METHOD_NAME = "matched_writer_remove";
@@ -79,6 +80,25 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 		{
 			logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
 			delete(*it);
+			matched_writers.erase(it);
+			return true;
+		}
+	}
+	logInfo(RTPS_READER,"Writer Proxy " << wdata.guid << " doesn't exist in reader "<<this->getGuid().entityId);
+	return false;
+}
+
+bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata,bool deleteWP)
+{
+	const char* const METHOD_NAME = "matched_writer_remove";
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+	{
+		if((*it)->m_att.guid == wdata.guid)
+		{
+			logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
+			if(deleteWP)
+				delete(*it);
 			matched_writers.erase(it);
 			return true;
 		}
@@ -218,9 +238,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 			{
 				if(getListener()!=nullptr)
 				{
-					//cout << "CALLING NEWDATAMESSAGE "<<endl;
 					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
-					//cout << "FINISH CALLING " <<endl;
 				}
 				mp_history->postSemaphore();
 			}

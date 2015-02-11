@@ -36,9 +36,9 @@ namespace rtps {
 static const char* const CLASS_NAME = "WLivelinessPeriodicAssertion";
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
-										TimedEvent(pwlp->getRTPSParticipant()->getIOService(), 0),
-										m_livelinessKind(kind),
-										mp_WLP(pwlp)
+												TimedEvent(pwlp->getRTPSParticipant()->getIOService(), 0),
+												m_livelinessKind(kind),
+												mp_WLP(pwlp)
 {
 	m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;
 	for(uint8_t i =0;i<12;++i)
@@ -87,22 +87,26 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 	if(this->mp_WLP->m_livAutomaticWriters.size()>0)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->mp_builtinWriter->getMutex());
-		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change(ALIVE);
+		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change(ALIVE,m_iHandle);
 		if(change!=nullptr)
 		{
-			change->instanceHandle = m_iHandle;
+			//change->instanceHandle = m_iHandle;
 			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
 			memcpy(change->serializedPayload.data,m_guidP.value,12);
 			for(uint8_t i =12;i<24;++i)
 				change->serializedPayload.data[i] = 0;
 			change->serializedPayload.data[15] = m_livelinessKind+1;
 			change->serializedPayload.length = 12+4+4+4;
-			for(auto ch = mp_WLP->mp_builtinWriterHistory->changesBegin();
-					ch!=mp_WLP->mp_builtinWriterHistory->changesEnd();++ch)
+			if(mp_WLP->mp_builtinWriterHistory->getHistorySize() > 0)
 			{
-				if((*ch)->instanceHandle == change->instanceHandle)
+				for(std::vector<CacheChange_t*>::iterator chit = mp_WLP->mp_builtinWriterHistory->changesBegin();
+						chit!=mp_WLP->mp_builtinWriterHistory->changesEnd();++chit)
 				{
-					mp_WLP->mp_builtinWriterHistory->remove_change(*ch);
+					if((*chit)->instanceHandle == change->instanceHandle)
+					{
+						mp_WLP->mp_builtinWriterHistory->remove_change(*chit);
+						break;
+					}
 				}
 			}
 			mp_WLP->mp_builtinWriterHistory->add_change(change);

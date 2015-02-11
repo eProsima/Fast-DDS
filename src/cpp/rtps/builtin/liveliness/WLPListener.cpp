@@ -40,7 +40,7 @@ namespace rtps {
 static const char* const CLASS_NAME = "WLPListener";
 
 WLPListener::WLPListener(WLP* plwp):
-										mp_WLP(plwp)
+																		mp_WLP(plwp)
 {
 	free(aux_msg.buffer);
 }
@@ -53,7 +53,7 @@ WLPListener::~WLPListener()
 
 typedef std::vector<WriterProxy*>::iterator WPIT;
 
-void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change)
+void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const changeIN)
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
@@ -61,6 +61,7 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change
 	logInfo(RTPS_LIVELINESS,"",C_MAGENTA);
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
+	CacheChange_t* change = (CacheChange_t*)changeIN;
 	if(!computeKey(change))
 	{
 		logWarning(RTPS_LIVELINESS,"Problem obtaining the Key",C_MAGENTA);
@@ -70,7 +71,8 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change
 	for(auto ch = this->mp_WLP->mp_builtinReaderHistory->changesBegin();
 			ch!=mp_WLP->mp_builtinReaderHistory->changesEnd();++ch)
 	{
-		if((*ch)->instanceHandle == change->instanceHandle)
+		if((*ch)->instanceHandle == change->instanceHandle &&
+				(*ch)->sequenceNumber < change->sequenceNumber)
 		{
 			mp_WLP->mp_builtinReaderHistory->remove_change(*ch);
 			break;
@@ -83,15 +85,16 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,CacheChange_t* change
 			guidP.value[i] = change->serializedPayload.data[i];
 		}
 		livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
-		logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
-				<<((livelinessKind == 0x00)?"AUTOMATIC":"")
-				<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers",C_MAGENTA);
+
 	}
 	else
 	{
 		if(!separateKey(change->instanceHandle,&guidP,&livelinessKind))
 			return;
 	}
+	logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
+			<<((livelinessKind == 0x00)?"AUTOMATIC":"")
+			<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers",C_MAGENTA);
 	if(guidP == reader->getGuid().guidPrefix)
 	{
 		logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring",C_MAGENTA);

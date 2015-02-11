@@ -144,8 +144,7 @@ public:
 	/**
 	* Set the writer as alive
 	*/
-	inline void assertLiveliness(){m_isAlive=true;};
-
+	void assertLiveliness();
 	/**
 	 * Set the writer as not alive
 	 * @return
