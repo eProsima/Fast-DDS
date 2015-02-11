@@ -64,6 +64,9 @@ public:
 	* @return Associated mutex
 	*/
 	boost::recursive_mutex* getMutex();
+
+	void loose_next_change();
+
 private:
 	ResourceSendImpl* mp_impl;
 };

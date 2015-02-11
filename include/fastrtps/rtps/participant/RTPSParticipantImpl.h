@@ -89,6 +89,9 @@ public:
 	void stopRTPSParticipantAnnouncement();
 	//!Reset to timer to make periodic RTPSParticipant Announcements.
 	void resetRTPSParticipantAnnouncement();
+
+	void loose_next_change();
+
 	/**
 	 * Activate a Remote Endpoint defined in the Static Discovery.
 	 * @param pguid GUID_t of the endpoint.

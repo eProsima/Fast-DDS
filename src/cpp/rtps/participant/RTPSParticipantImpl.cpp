@@ -563,6 +563,11 @@ void RTPSParticipantImpl::resetRTPSParticipantAnnouncement()
 	return mp_builtinProtocols->resetRTPSParticipantAnnouncement();
 }
 
+void RTPSParticipantImpl::loose_next_change()
+{
+	this->mp_send_thr->loose_next_change();
+}
+
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
