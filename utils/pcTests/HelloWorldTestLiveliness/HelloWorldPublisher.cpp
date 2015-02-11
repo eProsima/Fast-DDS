@@ -65,7 +65,7 @@ bool HelloWorldPublisher::init()
 	Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
 	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	Wparam.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-	Wparam.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(5001);
+	Wparam.qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t(5000);
 	Wparam.qos.m_liveliness.announcement_period = TimeConv::MilliSeconds2Time_t(5000);
 
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);

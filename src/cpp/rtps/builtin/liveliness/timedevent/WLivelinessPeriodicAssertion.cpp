@@ -50,7 +50,7 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
-	const char* const METHOD_NAME = "WLivelinessPeriodicAssertion";
+	//const char* const METHOD_NAME = "~WLivelinessPeriodicAssertion";
 	stop_timer();
 }
 

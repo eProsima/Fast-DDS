@@ -27,7 +27,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 3;
+static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 1;
 
 static const char* const CLASS_NAME = "WriterProxy";
 
