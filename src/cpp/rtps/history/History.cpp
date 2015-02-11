@@ -135,6 +135,24 @@ bool History::get_max_change(CacheChange_t** max_change)
 	}
 	return false;
 }
+
+bool History::get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change)
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+			it!=m_changes.end();++it)
+	{
+		if((*it)->sequenceNumber == seq && (*it)->writerGUID == guid)
+		{
+			*change = *it;
+			return true;
+		}
+		else if((*it)->sequenceNumber > seq)
+			break;
+	}
+	return false;
+}
+
 }
 }
 }

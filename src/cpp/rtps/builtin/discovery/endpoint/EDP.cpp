@@ -426,6 +426,7 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 
 }
 
+//TODO Estas cuatro funciones comparten codigo comun (2 a 2) y se podrían seguramente combinar.
 
 bool EDP::pairingReader(RTPSReader* R)
 {
@@ -480,6 +481,7 @@ bool EDP::pairingReader(RTPSReader* R)
 	return false;
 }
 
+//TODO Añadir WriterProxyData como argumento con nullptr como valor por defecto.
 bool EDP::pairingWriter(RTPSWriter* W)
 {
 	const char* const METHOD_NAME = "pairingWriter";

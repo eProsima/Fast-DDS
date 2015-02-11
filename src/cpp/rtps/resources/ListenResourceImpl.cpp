@@ -47,7 +47,7 @@ ListenResourceImpl::~ListenResourceImpl()
 	const char* const METHOD_NAME = "~ListenResourceImpl";
 	if(mp_thread !=nullptr)
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
+		logInfo(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
 				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc,C_BLUE);
 		m_listen_socket.close();
 		m_io_service.stop();

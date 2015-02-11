@@ -44,8 +44,8 @@ StatefulReader::~StatefulReader()
 
 StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-						RTPSReader(pimpl,guid,att,hist, listen),
-						m_times(att.times)
+								RTPSReader(pimpl,guid,att,hist, listen),
+								m_times(att.times)
 {
 
 }
@@ -232,16 +232,43 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 	{
 		if(prox->received_change_set(a_change))
 		{
-			SequenceNumber_t maxSeqNumAvailable;
-			prox->available_changes_max(&maxSeqNumAvailable);
-			if(a_change->sequenceNumber <= maxSeqNumAvailable)
+			if(getListener()!=nullptr)
 			{
-				if(getListener()!=nullptr)
+				SequenceNumber_t maxSeqNumAvailable;
+				prox->available_changes_max(&maxSeqNumAvailable);
+				if(a_change->sequenceNumber == maxSeqNumAvailable)
 				{
 					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
 				}
-				mp_history->postSemaphore();
+				else if(a_change->sequenceNumber < maxSeqNumAvailable)
+				{
+					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+					SequenceNumber_t notifySeqNum = a_change->sequenceNumber+1;
+					CacheChange_t* ch_to_give = nullptr;
+					//TODO Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
+					while(notifySeqNum <= maxSeqNumAvailable)
+					{
+						ch_to_give = nullptr;
+						if(mp_history->get_change(notifySeqNum,prox->m_att.guid,&ch_to_give))
+						{
+							getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
+						}
+						notifySeqNum++;
+					}
+				}
+				else
+				{
+					//DO NOTHING; SOME CHANGES ARE MISSING
+				}
 			}
+//			if(a_change->sequenceNumber <= maxSeqNumAvailable)
+//			{
+//				if(getListener()!=nullptr) //TODO while del actual al maximo. y llamar al metodo, solo si no esta leido.
+//				{
+//					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+//				}
+//				mp_history->postSemaphore();
+//			}
 			return true;
 		}
 	}

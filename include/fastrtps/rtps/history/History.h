@@ -116,6 +116,8 @@ public:
 	 */
 	RTPS_DllAPI inline boost::recursive_mutex* getMutex() {return mp_mutex;};
 
+	RTPS_DllAPI bool get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change);
+
 protected:
 	//!Vector of pointers to the CacheChange_t.
 	std::vector<CacheChange_t*> m_changes;

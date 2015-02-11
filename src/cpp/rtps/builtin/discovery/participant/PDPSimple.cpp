@@ -98,8 +98,10 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 	mp_RTPSParticipant = part;
 	m_discovery = mp_RTPSParticipant->getAttributes().builtin;
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+	//CREATE ENDPOINTS
 	if(!createSPDPEndpoints())
 		return false;
+	//UPDATE METATRAFFIC.
 	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
 	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
@@ -153,6 +155,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 		{
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+			//TODO Optimizacion, intentar quitar la copia.
 			memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
 			mp_SPDPWriterHistory->add_change(change);
 		}
@@ -414,7 +417,6 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 			{
 				(*pit)->m_writers.push_back(wdata);
 			}
-			return true;
 			return true;
 		}
 	}
