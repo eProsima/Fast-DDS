@@ -283,6 +283,14 @@ inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seq
 	return output << ((uint64_t)seqNum.high *(uint64_t)pow(2.0,32) + (uint64_t)seqNum.low);
 }
 
+inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber_t>& seqNumSet){
+	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
+		{
+			output << *sit << " ";
+		}
+	return output;
+}
+
 #endif
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
