@@ -168,3 +168,5 @@ void SubscribeDialog::on_checkBox_timeBasedFilter_clicked(bool checked)
 {
     this->ui->lineEdit_TimeBasedFilter->setEnabled(checked);
 }
+
+

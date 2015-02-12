@@ -141,6 +141,7 @@ void ShapesDemo::moveAllShapes()
 
 void ShapesDemo::moveShape(Shape* sh)
 {
+    //TODO ESTAS DOS LINEAS NO SON NECESARIAS.
     if(sh->m_changeDir)
         getNewDirection(sh);
     //Apply movement

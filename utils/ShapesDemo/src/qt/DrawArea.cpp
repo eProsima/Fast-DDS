@@ -54,7 +54,6 @@ void DrawArea::paintEvent(QPaintEvent * e/* event */)
     QStyleOption opt;
     opt.init(this);
 
-
     QPainter painter(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
     drawShapes(&painter);

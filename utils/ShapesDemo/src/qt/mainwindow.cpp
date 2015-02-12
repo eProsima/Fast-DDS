@@ -112,7 +112,7 @@ void MainWindow::on_bt_subscribe_clicked()
 {
     SubscribeDialog* pd = new SubscribeDialog(this->getShapesDemo(),this);
     pd->show();
-
+    //TODO Revisar quien llama al destructor.
 }
 
 
