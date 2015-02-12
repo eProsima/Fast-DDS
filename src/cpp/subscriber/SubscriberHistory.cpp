@@ -36,14 +36,14 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSize,
 		HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):
-				ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
-				m_unreadCacheCount(0),
-				m_historyQos(history),
-				m_resourceLimitsQos(resource),
-				mp_subImpl(simpl),
-				mp_getKeyObject(nullptr)
+								ReaderHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
+								m_unreadCacheCount(0),
+								m_historyQos(history),
+								m_resourceLimitsQos(resource),
+								mp_subImpl(simpl),
+								mp_getKeyObject(nullptr)
 {
-	// TODO Auto-generated constructor stub
+
 	mp_getKeyObject = mp_subImpl->getType()->createData();
 
 }
@@ -138,7 +138,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 		if(!a_change->instanceHandle.isDefined() && mp_subImpl->getType() !=nullptr)
 		{
 			logInfo(RTPS_HISTORY,"Getting Key of change with no Key transmitted")
-			mp_subImpl->getType()->deserialize(&a_change->serializedPayload,mp_getKeyObject);
+							mp_subImpl->getType()->deserialize(&a_change->serializedPayload,mp_getKeyObject);
 			if(!mp_subImpl->getType()->getKey(mp_getKeyObject,&a_change->instanceHandle))
 				return false;
 
@@ -320,7 +320,22 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
 			return true;
 		}
 		else
+		{
+			for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
+			{
+				if (vit->second.size() == 0)
+				{
+					m_keyedChanges.erase(vit);
+					t_p_I_Change newpair;
+					newpair.first = a_change->instanceHandle;
+					m_keyedChanges.push_back(newpair);
+					*vit_out = m_keyedChanges.end() - 1;
+					return true;
+				}
+			}
 			logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
+		}
+
 	}
 	return false;
 }

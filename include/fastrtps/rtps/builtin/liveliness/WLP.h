@@ -134,8 +134,9 @@ private:
 	StatefulWriter* mp_builtinWriter;
 	//!Pointer to the builtinRTPSParticipantMEssageReader.
 	StatefulReader* mp_builtinReader;
-	//!Hist
+	//!Writer History
 	WriterHistory* mp_builtinWriterHistory;
+	//!Reader History
 	ReaderHistory* mp_builtinReaderHistory;
 	//!Listener object.
 	WLPListener* mp_listener;

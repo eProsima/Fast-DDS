@@ -143,7 +143,6 @@ bool ReaderProxy::unacked_changes(std::vector<ChangeForReader_t*>* Changes)
 }
 
 
-
 bool ReaderProxy::next_requested_change(ChangeForReader_t* changeForReader)
 {
 	std::vector<ChangeForReader_t*> changesList;
