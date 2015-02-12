@@ -138,6 +138,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	if(!att.qos.checkQos() || !att.topic.checkQos())
 		return nullptr;
 
+	//TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
 	PublisherImpl* pubimpl = new PublisherImpl(this,p_type,att,listen);
 	Publisher* pub = new Publisher(pubimpl);
 	pubimpl->mp_userPublisher = pub;

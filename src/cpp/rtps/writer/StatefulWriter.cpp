@@ -68,6 +68,7 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
 	else
 		m_HBReaderEntityId = c_EntityId_Unknown;
+	mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 }
 
 /*
@@ -99,6 +100,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 			unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
 			multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
 			expectsInlineQos |= (*it)->m_att.expectsInlineQos;
+			(*it)->mp_nackSupression->restart_timer();
 		}
 		RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
 			&changeV,
@@ -106,6 +108,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 			multilocList,
 			expectsInlineQos,
 			c_EntityId_Unknown);
+		this->mp_periodicHB->restart_timer();
 	}
 	else
 	{

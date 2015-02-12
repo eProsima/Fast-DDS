@@ -46,6 +46,12 @@ boost::recursive_mutex* ResourceSend::getMutex()
 {
 	return mp_impl->getMutex();
 }
+
+void ResourceSend::loose_next_change()
+{
+	return mp_impl->loose_next();
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

@@ -138,6 +138,7 @@ Publisher* Domain::createPublisher(Participant* part,PublisherAttributes& att,
 			return part->mp_impl->createPublisher(att,listen);
 		}
 	}
+	//TODO MOSTRAR MENSAJE DE ERROR WARNING y COMPROBAR QUE EL PUNTERO QUE ME PASA NO ES NULL
 	return nullptr;
 }
 
@@ -156,6 +157,8 @@ Subscriber* Domain::createSubscriber(Participant* part,SubscriberAttributes& att
 
 bool Domain::registerType(Participant* part, TopicDataType* type)
 {
+	//TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
+	//haya problemas si el usuario lo destruye antes de tiempo.
 	for (auto it = m_participants.begin(); it != m_participants.end();++it)
 	{
 		if(it->second->getGuid() == part->getGuid())

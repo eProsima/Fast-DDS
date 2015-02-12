@@ -29,10 +29,10 @@ namespace fastrtps {
 
 PublisherHistory::PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMaxSize,HistoryQosPolicy& history,
 		ResourceLimitsQosPolicy& resource):
-								WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
-								m_historyQos(history),
-								m_resourceLimitsQos(resource),
-								mp_pubImpl(pimpl)
+										WriterHistory(HistoryAttributes(payloadMaxSize,resource.allocated_samples,resource.max_samples)),
+										m_historyQos(history),
+										m_resourceLimitsQos(resource),
+										mp_pubImpl(pimpl)
 {
 	// TODO Auto-generated constructor stub
 
@@ -123,7 +123,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 				{
 					if(remove_change_pub(vit->second.front(),&vit))
 					{
-						add =true;
+						add = true;
 					}
 				}
 			}
@@ -178,7 +178,21 @@ bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterato
 			return true;
 		}
 		else
-			logWarning(RTPS_HISTORY,"History has reached the maximum number of instances"<<endl;)
+		{
+			for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
+			{
+				if (vit->second.size() == 0)
+				{
+					m_keyedChanges.erase(vit);
+					t_p_I_Change newpair;
+					newpair.first = a_change->instanceHandle;
+					m_keyedChanges.push_back(newpair);
+					*vit_out = m_keyedChanges.end() - 1;
+					return true;
+				}
+			}
+			logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
+		}
 	}
 	return false;
 }

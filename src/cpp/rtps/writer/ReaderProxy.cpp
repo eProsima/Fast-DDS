@@ -121,7 +121,8 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 			}
 		}
 	}
-	logInfo(RTPS_WRITER,"Requested Changes Set");
+	if(!m_isRequestedChangesEmpty)
+		logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
 	return true;
 }
 
@@ -140,7 +141,6 @@ bool ReaderProxy::unacked_changes(std::vector<ChangeForReader_t*>* Changes)
 {
 	return changesList(Changes,UNACKNOWLEDGED);
 }
-
 
 
 bool ReaderProxy::next_requested_change(ChangeForReader_t* changeForReader)
