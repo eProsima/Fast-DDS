@@ -74,10 +74,10 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 				}
 				else
 				{
-					//	cout << "ADDED "<<(*cit)->seqNum.to64long()<< " TO NOT RELEVANT CHANGES"<<endl;
 					not_relevant_changes.push_back((*cit)->seqNum);
 				}
 			}
+			mp_RP->m_isRequestedChangesEmpty = true;
 			if(!relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
 						&relevant_changes,
@@ -108,7 +108,6 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 					for (lit = mp_RP->m_att.endpoint.multicastLocatorList.begin(); lit != mp_RP->m_att.endpoint.multicastLocatorList.end(); ++lit)
 						mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (*lit));
 				}
-				
 			}
 		}
 
