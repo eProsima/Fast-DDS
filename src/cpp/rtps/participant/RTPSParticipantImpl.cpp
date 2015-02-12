@@ -183,7 +183,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 {
 	const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type);
+	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -260,7 +260,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 {
 	const char* const METHOD_NAME = "createReader";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type);
+	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
