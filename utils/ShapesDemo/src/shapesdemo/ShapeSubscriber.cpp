@@ -69,7 +69,7 @@ void ShapeSubscriber::onNewDataMessage(Subscriber *sub)
         }
         else
         {
-            cout << "NOT ALIVE DATA"<<endl;
+            //cout << "NOT ALIVE DATA"<<endl;
             //GET THE COLOR:
             SD_COLOR color = getColorFromInstanceHandle(info.iHandle);
             if(info.sampleKind == NOT_ALIVE_DISPOSED)
@@ -90,7 +90,7 @@ void ShapeSubscriber::onSubscriptionMatched(Subscriber *sub, MatchingInfo& info)
 {
     if(info.status ==MATCHED_MATCHING)
     {
-        cout << "Subscriber  in topic" << m_attributes.topic.getTopicName() << " MATCHES Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
+        cout << "Subscriber in topic " << m_attributes.topic.getTopicName() << " MATCHES Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         bool found = false;
         for(std::vector<GUID_t>::iterator it = m_remoteWriters.begin();
             it!=m_remoteWriters.end();++it)
@@ -109,7 +109,7 @@ void ShapeSubscriber::onSubscriptionMatched(Subscriber *sub, MatchingInfo& info)
     }
     else if(info.status == REMOVED_MATCHING)
     {
-        cout << "Subscriber in topic" << m_attributes.topic.getTopicName() << " REMOVES Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
+        cout << "Subscriber in topic " << m_attributes.topic.getTopicName() << " REMOVES Pub: " << info.remoteEndpointGuid <<"*****************************"<<endl;
         m_mutex.lock();
         m_shapeHistory.removedOwner(info.remoteEndpointGuid);
         m_mutex.unlock();

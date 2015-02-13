@@ -34,6 +34,7 @@ SubscribeDialog::SubscribeDialog(ShapesDemo* psd,QWidget *parent) :
 
 SubscribeDialog::~SubscribeDialog()
 {
+
     delete ui;
 }
 
