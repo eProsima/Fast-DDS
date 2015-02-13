@@ -18,7 +18,7 @@ OptionsDialog::OptionsDialog(MainWindow *mw, ShapesDemo* psd, QWidget *parent) :
     this->ui->horizontalSlider_speed->setValue(opt.m_movementSpeed);
 
     setEnableState();
-
+    setAttribute ( Qt::WA_DeleteOnClose, true );
 
 }
 

@@ -62,7 +62,7 @@ void UpdateThread::updateAll(void)
         m_mainW->writeNewSamples();
     if(m_timer !=NULL && m_hasIntervalChanged)
     {
-        cout << "Changing interval timer"<<endl;
+        //cout << "Changing interval timer"<<endl;
         m_timer->setInterval(m_interval);
         m_hasIntervalChanged = false;
     }

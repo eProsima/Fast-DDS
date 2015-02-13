@@ -19,6 +19,7 @@ PublishDialog::PublishDialog(ShapesDemo* psd,QWidget *parent) :
     ui(new Ui::PublishDialog),
     mp_sd(psd)
 {
+    setAttribute ( Qt::WA_DeleteOnClose, true );
     ui->setupUi(this);
 }
 

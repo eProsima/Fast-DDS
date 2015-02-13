@@ -29,6 +29,7 @@ SubscribeDialog::SubscribeDialog(ShapesDemo* psd,QWidget *parent) :
     //    ui->lineEdit_minX->setValidator(new QIntValidator(this));
     //    ui->lineEdit_minY->setValidator(new QIntValidator(this));
     ui->lineEdit_TimeBasedFilter->setValidator(new QIntValidator(this));
+    setAttribute ( Qt::WA_DeleteOnClose, true );
 }
 
 SubscribeDialog::~SubscribeDialog()
