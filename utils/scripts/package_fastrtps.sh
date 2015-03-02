@@ -26,18 +26,18 @@ function package
 	
 	EPROSIMA_TARGET="i86Linux2.6gcc"
 	COMP="g++"
-	#rm -rf output
-	#rm -rf lib/$EPROSIMA_TARGET
-	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
+	rm -rf output
+	rm -rf lib/$EPROSIMA_TARGET
+	EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
 	# Compile eRTPS for x64.
 	EPROSIMA_TARGET="x64Linux2.6gcc"
 	COMP="g++"
-	#rm -rf output
-	#rm -rf lib/$EPROSIMA_TARGET
-	#EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
+	rm -rf output
+	rm -rf lib/$EPROSIMA_TARGET
+	EPROSIMA_TARGET=${EPROSIMA_TARGET} COMP=${COMP} make
 	errorstatus=$?
 	if [ $errorstatus != 0 ]; then return; fi
 
@@ -53,6 +53,7 @@ function package
 
 	# Create PDFS from documentation.
 	cd doc	# Installation manual
+    mkdir -p pdf
 	echo "PROCESSING DOCUMENTATION"
 	soffice --headless "macro:///eProsima.documentation.changeVersion($PWD/FastRTPS_Installation_Manual.odt,$ertpsversion)"
 	errorstatus=$?

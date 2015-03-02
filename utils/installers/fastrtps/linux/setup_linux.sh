@@ -56,7 +56,6 @@ installer()
 
     # Copy README
     cp ../../../../README.html tmp/$project/
-    cp ../../../../README_*.png tmp/$project/
     errorstatus=$?
     if [ $errorstatus != 0 ]; then return; fi
 
