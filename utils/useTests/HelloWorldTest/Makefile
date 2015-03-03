@@ -24,11 +24,6 @@ EPROSIMA_TARGET=x64Linux2.6gcc
 
 CFLAGS = $(COMMON_CFLAGS) -O2
 
-
-
-FASTCDR_DIR = /home/grcanosa/workspace/fastcdr
-
-
 HELLOWORLDTEST_OUTDIR= $(OUTDIR)/HelloWorldTest
 HELLOWORLDTEST_OUTDIR_RELEASE = $(HELLOWORLDTEST_OUTDIR)/release
 
@@ -40,10 +35,10 @@ HELLOWORLDTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/HelloWorldTest
 
 HELLOWORLDTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          						-I$(BASEDIR)/../../../thirdparty/eprosima-common-code \
-                         						-I$(FASTCDR_DIR)/include
+                         						-I$(BASEDIR)/../../../thirdparty/fastcdr/include
 
 HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread -lboost_date_time \
-										-L$(FASTCDR_DIR)/lib/$(EPROSIMA_TARGET) -lfastcdr
+							 -L$(BASEDIR)/../../../thirdparty/fastcdr/lib/$(EPROSIMA_TARGET) -lfastcdr
 
 HELLOWORLDTEST_SRC_CFILES=
 
