@@ -239,7 +239,6 @@ Section -post SEC0006
     SetOverwrite on
     File /r ..\..\..\..\doc\licenses\*
     File ..\..\..\..\README.html
-	File ..\..\..\..\*.png
     
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR
