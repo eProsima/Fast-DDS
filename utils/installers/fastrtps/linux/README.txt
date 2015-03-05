@@ -18,10 +18,10 @@ Linux distribution package manager.
 3. Install the eProsima Fast RTPS software.
 
     For 32-bit machines
-    $ cd fastrtps; ./configure --libdir=/usr/lib; make; make install
+    $ cd FastRTPS; ./configure --libdir=/usr/lib; make; make install
 
     For 64-bit machines
-    $ cd fastrtps; ./configure --libdir=/usr/lib64; make; make install
+    $ cd FastRTPS; ./configure --libdir=/usr/lib64; make; make install
 
 For more information read the Installation manual located in
 "FastRTPS/doc/pdf/FastRTPS_Installation Manual.pdf"
