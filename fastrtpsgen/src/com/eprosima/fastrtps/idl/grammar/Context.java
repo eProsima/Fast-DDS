@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import com.eprosima.idl.parser.tree.Interface;
 import com.eprosima.idl.parser.tree.TypeDeclaration;
+import com.eprosima.idl.parser.tree.Annotation;
 import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.fastrtps.idl.parser.typecode.StructTypeCode;
 
@@ -39,14 +40,27 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     @Override
     public StructTypeCode createStructTypeCode(String name)
     {
-        StructTypeCode structObject = new StructTypeCode(getScope(), name);
+        return new StructTypeCode(getScope(), name);
+    }
 
-        if(isInScopedFile())
+    @Override
+    public void addTypeDeclaration(TypeDeclaration typedecl)
+    {
+        super.addTypeDeclaration(typedecl);
+
+        if(typedecl.getTypeCode().getKind() == TypeCode.KIND_STRUCT && typedecl.isInScope())
         {
-            m_lastStructure = structObject;
-        }
+            Annotation topicann = typedecl.getAnnotations().get("Topic");
 
-        return structObject;
+            if(!m_usingTopicAnnotation ||
+                    (m_usingTopicAnnotation && topicann != null && topicann.getValue("value").equalsIgnoreCase("true")))
+            {
+                m_lastStructure = typedecl;
+
+                if(topicann != null)
+                    m_usingTopicAnnotation = true;
+            }
+        }
     }
     
     public boolean isClient()
@@ -125,6 +139,37 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 
     /*** End ***/
 
+    //// Java block ////
+    public void setPackage(String pack)
+    {
+        if(pack != null && !pack.isEmpty())
+        {
+            m_package = pack + ".";
+            m_packageDir = m_package.replace('.', '/');
+        }
+    }
+
+    public boolean isIsPackageEmpty()
+    {
+        return m_package.isEmpty();
+    }
+
+    public String getPackage()
+    {
+        return m_package;
+    }
+
+    public String getPackageDir()
+    {
+        return m_packageDir;
+    }
+
+    public String getPackageUnder()
+    {
+        return m_package.replace('.', '_');
+    }
+    //// End Java block ////
+
     private String m_typelimitation = null;
     
     //! Cache the first interface.
@@ -146,17 +191,17 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     // TODO Remove
     private String m_appProduct = null;
     
-    private StructTypeCode m_lastStructure = null;
+    private TypeDeclaration m_lastStructure = null;
+    private boolean m_usingTopicAnnotation = false;
 
 	public String getM_lastStructureTopicDataTypeName() {
 		String name = new String("");
+
 		if(m_lastStructure!=null)
 		{	
-			if(m_lastStructure.getParent() instanceof TypeDeclaration &&
-			   ((TypeDeclaration)m_lastStructure.getParent()).getParent() != null &&
-			   ((TypeDeclaration)m_lastStructure.getParent()).getParent() instanceof Interface)
+            if(m_lastStructure.getParent() instanceof Interface)
 			{
-				name = name + ((Interface)((TypeDeclaration)m_lastStructure.getParent()).getParent()).getScopedname() + "_" + m_lastStructure.getName();
+				name = name + ((Interface)m_lastStructure.getParent()).getScopedname() + "_" + m_lastStructure.getName();
 			}
 			else
 				name = m_lastStructure.getScopedname();
@@ -191,5 +236,11 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 		return m_fileNameUpper;
 	}
 	
+    //// Java block ////
+    // Java package name.
+    private String m_package = "";
+    // Java package dir.
+    private String m_packageDir = "";
+    //// End Java block
     
 }

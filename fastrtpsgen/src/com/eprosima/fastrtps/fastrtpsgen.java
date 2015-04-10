@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.HashMap;
 
 import javax.swing.plaf.basic.BasicFormattedTextFieldUI;
 
@@ -46,6 +47,7 @@ import com.eprosima.idl.parser.typecode.PrimitiveTypeCode;
 import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.idl.util.Util;
 import com.eprosima.log.ColorMessage;
+import com.eprosima.fastcdr.idl.generator.TypesGenerator;
 
 // TODO: Implement Solution & Project in com.eprosima.fastrtps.solution
 
@@ -62,7 +64,6 @@ public class fastrtpsgen {
 	private Vector<String> m_idlFiles;
 	protected static String m_appEnv = "FASTRTPSHOME";
 	private String m_exampleOption = null;
-	private String m_languageOption = "C++";
 	private boolean m_ppDisable = false; //TODO
 	private boolean m_replace = false;
 	private String m_ppPath = null;
@@ -89,6 +90,19 @@ public class fastrtpsgen {
 		new VSConfiguration("Release", "Win32", false, false)};
 
 	private String m_os = null;
+    private boolean m_local = false;
+
+    //! Default package used in Java files.
+    private String m_package = "";
+
+    // Use to know the programming language
+    public enum LANGUAGE
+    {
+        CPP,
+        JAVA
+    };
+
+    private LANGUAGE m_languageOption = LANGUAGE.CPP; // Default language -> CPP
 
 	/*
 	 * ----------------------------------------------------------------------------------------
@@ -122,16 +136,35 @@ public class fastrtpsgen {
 				} else {
 					throw new BadArgumentException("No architecture speficied after -example argument");
 				}
-			} else if (arg.equals("-language")) {
-				if (count < args.length) {
-					m_languageOption = args[count++];
-					if (!m_languageOption.equals("C++") && !m_languageOption.equals("c++")) {
-						throw new BadArgumentException("Unknown language " + m_languageOption);
-					}
-				} else {
+			} else if (arg.equals("-language"))
+            {
+				if (count < args.length)
+                {
+                    String languageOption = args[count++];
+
+                    if(languageOption.equalsIgnoreCase("c++"))
+                        m_languageOption = LANGUAGE.CPP;
+                    else if(languageOption.equalsIgnoreCase("java"))
+                        m_languageOption = LANGUAGE.JAVA;
+                    else
+                        throw new BadArgumentException("Unknown language " +  languageOption);
+				}
+                else
+                {
 					throw new BadArgumentException("No language specified after -language argument");
 				}
-			} else if(arg.equals("-ppPath")) {
+			}
+            else if(arg.equals("-package"))
+            {
+                if(count < args.length)
+                {
+                    m_package = args[count++];
+                }
+                else
+                    throw new BadArgumentException("No package after -package argument");
+            }
+            else if(arg.equals("-ppPath"))
+            {
 				if (count < args.length) {
 					m_ppPath = args[count++];
 				} else {
@@ -153,7 +186,12 @@ public class fastrtpsgen {
 			} else if (arg.equals("-help")) {
 				printHelp();
 				System.exit(0);
-			} else { // TODO: More options: -local, -rpm, -debug -I
+			}
+            else if(arg.equals("-local"))
+            {
+                m_local = true;
+            }
+            else { // TODO: More options: -local, -rpm, -debug -I
 				throw new BadArgumentException("Unknown argument " + arg);
 			}
 
@@ -207,7 +245,7 @@ public class fastrtpsgen {
 		
 		if (returnedValue)
         {
-            Solution solution = new Solution(m_exampleOption, getVersion(), m_publishercode, m_subscribercode);
+            Solution solution = new Solution(m_languageOption, m_exampleOption, getVersion(), m_publishercode, m_subscribercode);
 			
 			// Load string templates
 			System.out.println("Loading templates...");
@@ -219,6 +257,15 @@ public class fastrtpsgen {
 			if(m_exampleOption != null) {
 				solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
 			}
+
+            // If Java, include jni headers
+            if(m_languageOption == LANGUAGE.JAVA)
+            {
+                solution.addInclude("$(JAVA_HOME)/include");
+
+                if(m_exampleOption != null && m_exampleOption.contains("Linux"))
+                    solution.addInclude("$(JAVA_HOME)/include/linux");
+            }
 			
 			if (m_exampleOption != null && m_exampleOption.contains("Linux")) {
 				solution.addLibrary("boost_system");
@@ -230,9 +277,29 @@ public class fastrtpsgen {
 				solution.addInclude("$(LIB_BOOST_PATH)");
 			}
 
-			// m_local = true
-			//solution.addInclude("$(FAST_BUFFERS)/include");
-			//solution.addLibraryPath("$(FAST_BUFFERS)/lib/" + m_exampleOption);
+            if(m_local)
+            {
+                solution.addInclude("$(" + m_appEnv + ")/thirdparty/fastcdr/include");
+
+                if(m_exampleOption != null)
+                {
+                    if(!m_exampleOption.contains("Win"))
+                    {
+                        if(m_exampleOption.startsWith("i86Linux2.6gcc"))
+                        {
+                            solution.addLibraryPath("$(" + m_appEnv + ")/thirdparty/fastcdr/lib/i86Linux2.6gcc");
+                        }
+                        else if(m_exampleOption.startsWith("x64Linux2.6gcc"))
+                        {
+                            solution.addLibraryPath("$(" + m_appEnv + ")/thirdparty/fastcdr/lib/x64Linux2.6gcc");
+                        }
+                    }
+                    else
+                    {
+                        solution.addLibraryPath("$(" + m_appEnv + ")/thirdparty/fastcdr/lib/" + m_exampleOption);
+                    }
+                }
+            }
 
 
 			if (m_exampleOption != null && !m_exampleOption.contains("Win")) {
@@ -419,9 +486,13 @@ public class fastrtpsgen {
 		if (idlParseFileName != null) {
 			Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
              
-            // Create default @Key annotations.
-            AnnotationDeclaration keyann = ctx.createAnnotationDeclaration("Key");
+            // Create default @Key annotation.
+            AnnotationDeclaration keyann = ctx.createAnnotationDeclaration("Key", null);
             keyann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
+
+            // Create default @Topic annotation.
+            AnnotationDeclaration topicann = ctx.createAnnotationDeclaration("Topic", null);
+            topicann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
 			
 			// Create template manager
 			TemplateManager tmanager = new TemplateManager("FastCdrCommon:eprosima:Common");
@@ -453,6 +524,17 @@ public class fastrtpsgen {
 			// Load PubSubMain template
 			tmanager.addGroup("RTPSPubSubMain");
 
+            // Add JNI sources.
+            if(m_languageOption == LANGUAGE.JAVA)
+            {
+                tmanager.addGroup("JNIHeader");
+                tmanager.addGroup("JNISource");
+                tmanager.addGroup("JavaSource");
+
+                // Set package in context.
+                ctx.setPackage(m_package);
+            }
+
 			// Create main template
 			TemplateGroup maintemplates = tmanager.createTemplateGroup("main");
 			maintemplates.setAttribute("ctx", ctx);
@@ -476,7 +558,8 @@ public class fastrtpsgen {
 				System.out.println(ColorMessage.error("Exception") + ex.getMessage());
 			}
 
-			if (returnedValue) {
+			if (returnedValue)
+            {
 				// Create information of project for solution
 				project = new Project(onlyFileName, idlFilename, ctx.getDependencies());
 
@@ -493,16 +576,19 @@ public class fastrtpsgen {
 				{
 					m_atLeastOneStructure = true;
 					project.setHasStruct(true);
-					if (m_exampleOption != null) {
 
-						System.out.println("Generating TopicDataTypes files...");
-						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubTypes.h", maintemplates.getTemplate("RTPSPubSubTypeHeader"), m_replace)) {
-							if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubTypes.cxx", maintemplates.getTemplate("RTPSPubSubTypeSource"), m_replace)) {
-								project.addProjectIncludeFile(onlyFileName + "PubSubTypes.h");
-								project.addProjectSrcFile(onlyFileName + "PubSubTypes.cxx");
-							}
-						}
+                    System.out.println("Generating TopicDataTypes files...");
+                    if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubTypes.h", maintemplates.getTemplate("RTPSPubSubTypeHeader"), m_replace))
+                    {
+                        if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "PubSubTypes.cxx", maintemplates.getTemplate("RTPSPubSubTypeSource"), m_replace))
+                        {
+                            project.addProjectIncludeFile(onlyFileName + "PubSubTypes.h");
+                            project.addProjectSrcFile(onlyFileName + "PubSubTypes.cxx");
+                        }
+                    }
 
+                    if (m_exampleOption != null)
+                    {
 						System.out.println("Generating Publisher files...");
 						if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Publisher.h", maintemplates.getTemplate("RTPSPublisherHeader"), m_replace)) {
 							if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "Publisher.cxx", maintemplates.getTemplate("RTPSPublisherSource"), m_replace)) {
@@ -527,6 +613,59 @@ public class fastrtpsgen {
 				}
 			}
 
+            // Java support (Java classes and JNI code)
+            if(returnedValue && m_languageOption == LANGUAGE.JAVA)
+            {
+                String outputDir = m_outputDir;
+
+                // Make directories from package.
+                if(!m_package.isEmpty())
+                {
+                    outputDir = m_outputDir + File.separator + m_package.replace('.', File.separatorChar);
+                    File dirs = new File(outputDir);
+
+                    if(!dirs.exists())
+                    {
+                        if(!dirs.mkdirs())
+                        {
+                            System.out.println(ColorMessage.error() + "Cannot create directories for Java packages.");
+                            return null;
+                        }
+                    }
+                }
+
+                // Java classes.
+                TypesGenerator typeGen = new TypesGenerator(tmanager, m_outputDir, m_replace);
+                TypeCode.javapackage = m_package + (m_package.isEmpty() ? "" : ".");
+                //HashMap<String, String> typegenExtensions = new HashMap<String, String>();
+                //typegenExtensions.put("struct_type", "mierda");
+                if(!typeGen.generate(ctx, outputDir + File.separator, m_package, null))
+                {
+                    System.out.println(ColorMessage.error() + "generating Java types");
+                    return null;
+                }
+
+                if(!Utils.writeFile(m_outputDir + onlyFileName + "PubSub.java", maintemplates.getTemplate("JavaSource"), m_replace))
+                    return null;
+
+                // Call javah application for each interface.
+				if(ctx.existsLastStructure())
+                {
+                    if(!callJavah(idlFilename))
+                        return null;
+                }
+
+                /*if(Utils.writeFile(m_outputDir + onlyFileName + "JNII.h", maintemplates.getTemplate("JNIHeader"), m_replace))
+                    project.addJniIncludeFile(onlyFileName + "JNII.h");
+                else
+                    return null;*/
+
+                StringTemplate jnisourceTemplate = maintemplates.getTemplate("JNISource");
+                if(Utils.writeFile(m_outputDir + onlyFileName + "PubSubJNI.cxx", jnisourceTemplate, m_replace))
+                    project.addJniSrcFile(onlyFileName + "PubSubJNI.cxx");
+                else
+                    return null;
+            }
 		}
 
 		return returnedValue ? project : null;
@@ -749,7 +888,8 @@ public class fastrtpsgen {
 		return returnedValue;
 	}
 
-	String callPreprocessor(String idlFilename) {
+	String callPreprocessor(String idlFilename)
+    {
 		final String METHOD_NAME = "callPreprocessor";
 
 		// Set line command.
@@ -813,7 +953,7 @@ public class fastrtpsgen {
 
 		try {
 			Process preprocessor = Runtime.getRuntime().exec(lineCommandArray);
-			ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null, false);
+			ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null, true);
 			ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, of, true);
 			errorOutput.start();
 			normalOutput.start();
@@ -841,6 +981,126 @@ public class fastrtpsgen {
 
 		return outputfile;
 	}
+
+    boolean callJavah(String idlFilename)
+    {
+        final String METHOD_NAME = "calljavah";
+        // Set line command.
+        ArrayList<String> lineCommand = new ArrayList<String>();
+        String[] lineCommandArray = null;
+        String fileDir = Util.getIDLFileDirectoryOnly(idlFilename);
+        String javafile = (m_outputDir != null ? m_outputDir : "") +
+            (!m_package.isEmpty() ? m_package.replace('.', File.separatorChar) + File.separator : "") +
+            Util.getIDLFileNameOnly(idlFilename) + "PubSub.java";
+        String headerfile = m_outputDir + Util.getIDLFileNameOnly(idlFilename) + "PubSubJNI.h";
+        int exitVal = -1;
+        String javac = null;
+        String javah = null;
+
+        // First call javac
+        if(m_os.contains("Windows"))
+        {
+            javac = "javac.exe";
+        }
+        else if(m_os.contains("Linux"))
+        {
+            javac = "javac";
+        }
+
+        // Add command
+        lineCommand.add(javac);
+        if(m_tempDir != null)
+        {
+            lineCommand.add("-d");
+            lineCommand.add(m_tempDir);
+        }
+
+        if( fileDir != null && !fileDir.isEmpty())
+        {
+            lineCommand.add("-sourcepath");
+            lineCommand.add(m_outputDir);
+        }
+
+        lineCommand.add(javafile);
+
+        lineCommandArray = new String[lineCommand.size()];
+        lineCommandArray = (String[])lineCommand.toArray(lineCommandArray);
+
+        try
+        {
+            Process preprocessor = Runtime.getRuntime().exec(lineCommandArray);
+            ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null, true);
+            ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, null, true);
+            errorOutput.start();
+            normalOutput.start();
+            exitVal = preprocessor.waitFor();
+            errorOutput.join();
+            normalOutput.join();
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ColorMessage.error(METHOD_NAME) + "Cannot execute the javac application. Reason: " + ex.getMessage());
+            return false;
+        }
+
+        if(exitVal != 0)
+        {
+            System.out.println(ColorMessage.error(METHOD_NAME) + "javac application return an error " + exitVal);
+            return false;
+        }
+
+        lineCommand = new ArrayList<String>();
+
+        if(m_os.contains("Windows"))
+        {
+            javah = "javah.exe";
+        }
+        else if(m_os.contains("Linux"))
+        {
+            javah = "javah";
+        }
+
+        // Add command
+        lineCommand.add(javah);
+        lineCommand.add("-jni");
+        if(m_tempDir != null)
+        {
+            lineCommand.add("-cp");
+            lineCommand.add(m_tempDir);
+        }
+        lineCommand.add("-o");
+        lineCommand.add(headerfile);
+        lineCommand.add((!m_package.isEmpty() ? m_package + "." : "") +
+                Util.getIDLFileNameOnly(idlFilename) + "PubSub");
+
+        lineCommandArray = new String[lineCommand.size()];
+        lineCommandArray = (String[])lineCommand.toArray(lineCommandArray);
+
+        try
+        {
+            Process preprocessor = Runtime.getRuntime().exec(lineCommandArray);
+            ProcessOutput errorOutput = new ProcessOutput(preprocessor.getErrorStream(), "ERROR", false, null, true);
+            ProcessOutput normalOutput = new ProcessOutput(preprocessor.getInputStream(), "OUTPUT", false, null, true);
+            errorOutput.start();
+            normalOutput.start();
+            exitVal = preprocessor.waitFor();
+            errorOutput.join();
+            normalOutput.join();
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ColorMessage.error(METHOD_NAME) + "Cannot execute the javah application. Reason: " + ex.getMessage());
+            return false;
+        }
+
+        if(exitVal != 0)
+        {
+            System.out.println(ColorMessage.error(METHOD_NAME) + "javah application return an error " + exitVal);
+            return false;
+        }
+
+        return true;
+    }
 
 	/*
 	 * ----------------------------------------------------------------------------------------

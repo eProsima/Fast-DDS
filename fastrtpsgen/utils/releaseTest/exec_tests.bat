@@ -79,7 +79,7 @@ for %%i in (*.idl) do (
 echo "FOUND IDL FILES: %IDLFILES%"
 ::Generate Info
 copy ..\..\..\lib\fastrtpsgen.jar .
-java -jar fastrtpsgen.jar -example %configuration% -replace %IDLFILES%
+java -jar fastrtpsgen.jar -local -example %configuration% -replace %IDLFILES%
 if errorlevel 1 (
 	set errorstatus=1
 	goto :EOF
