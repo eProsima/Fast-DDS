@@ -4,7 +4,7 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSub.java"], description=[""])$
 
 $if(!ctx.isPackageEmpty)$
-package $ctx.package$;
+package $ctx.onlyPackage$;
 $endif$
 
 public class $ctx.filename$PubSub

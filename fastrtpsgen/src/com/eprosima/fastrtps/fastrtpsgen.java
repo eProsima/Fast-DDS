@@ -637,15 +637,14 @@ public class fastrtpsgen {
                 // Java classes.
                 TypesGenerator typeGen = new TypesGenerator(tmanager, m_outputDir, m_replace);
                 TypeCode.javapackage = m_package + (m_package.isEmpty() ? "" : ".");
-                //HashMap<String, String> typegenExtensions = new HashMap<String, String>();
-                //typegenExtensions.put("struct_type", "mierda");
                 if(!typeGen.generate(ctx, outputDir + File.separator, m_package, null))
                 {
                     System.out.println(ColorMessage.error() + "generating Java types");
                     return null;
                 }
 
-                if(!Utils.writeFile(m_outputDir + onlyFileName + "PubSub.java", maintemplates.getTemplate("JavaSource"), m_replace))
+                System.out.println("Generando fichero " + m_outputDir + onlyFileName + "PubSub.java");
+                if(!Utils.writeFile(outputDir + File.separator + onlyFileName + "PubSub.java", maintemplates.getTemplate("JavaSource"), m_replace))
                     return null;
 
                 // Call javah application for each interface.

@@ -52,16 +52,13 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
         {
             Annotation topicann = typedecl.getAnnotations().get("Topic");
 
-            if(!m_usingTopicAnnotation ||
-                    (m_usingTopicAnnotation && topicann != null && topicann.getValue("value").equalsIgnoreCase("true")))
+            if(topicann != null && topicann.getValue("value").equalsIgnoreCase("false"))
             {
-                m_lastStructure = typedecl;
                 StructTypeCode structtypecode = (StructTypeCode)typedecl.getTypeCode();
-                structtypecode.setIsTopic(true);
-
-                if(topicann != null)
-                    m_usingTopicAnnotation = true;
+                structtypecode.setIsTopic(false);
             }
+            else
+                m_lastStructure = typedecl;
         }
     }
     
@@ -147,6 +144,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
         if(pack != null && !pack.isEmpty())
         {
             m_package = pack + ".";
+            m_onlypackage = pack;
             m_packageDir = m_package.replace('.', '/');
         }
     }
@@ -159,6 +157,11 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     public String getPackage()
     {
         return m_package;
+    }
+
+    public String getOnlyPackage()
+    {
+        return m_onlypackage;
     }
 
     public String getPackageDir()
@@ -194,7 +197,6 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private String m_appProduct = null;
     
     private TypeDeclaration m_lastStructure = null;
-    private boolean m_usingTopicAnnotation = false;
 
 	public String getM_lastStructureTopicDataTypeName() {
 		String name = new String("");
@@ -241,6 +243,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     //// Java block ////
     // Java package name.
     private String m_package = "";
+    private String m_onlypackage = "";
     // Java package dir.
     private String m_packageDir = "";
     //// End Java block

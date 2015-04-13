@@ -96,10 +96,6 @@ void $struct.scopedname$::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 }
 >>
 
-mierda(ctx, parent, struct) ::= <<
-MIERDAAAA $struct.scopedname$
->>
-
 boolean_converter ::= [
     "true":"true",
     default:

@@ -41,5 +41,5 @@ public class StructTypeCode extends com.eprosima.idl.parser.typecode.StructTypeC
         return istopic_;
     }
 
-    private boolean istopic_ = false;
+    private boolean istopic_ = true;
 }
