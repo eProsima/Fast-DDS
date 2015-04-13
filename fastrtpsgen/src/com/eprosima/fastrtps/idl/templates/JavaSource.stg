@@ -9,13 +9,18 @@ $endif$
 
 public class $ctx.filename$PubSub
 {
-    private native long $ctx.filename$PubSub_init_participant();
+    static
+    {
+        System.loadLibrary("$ctx.filename$JNI");
+    }
+
+    private native long $ctx.filename$PubSub_create_participant();
 
     public boolean isInit() { return (participant_ != 0); }
 
     public $ctx.filename$PubSub()
     {
-        participant_ = $ctx.filename$PubSub_init_participant();
+        participant_ = $ctx.filename$PubSub_create_participant();
     }
 
     private native void $ctx.filename$PubSub_delete_participant(long participant);
@@ -30,9 +35,9 @@ public class $ctx.filename$PubSub
     }
 
     private long participant_ = 0;
-}
 
-$definitions; separator="\n"$
+    $definitions; separator="\n"$
+}
 >>
 
 module(ctx, parent, module, definition_list) ::= <<
@@ -65,7 +70,32 @@ const_decl(ctx, parent, const) ::= <<>>
 
 typedef_decl(ctx, parent, typedefs) ::= <<>>
 
-struct_type(ctx, parent, struct) ::= <<>>
+struct_type(ctx, parent, struct) ::= <<
+$if(struct.isTopic)$
+private native long $struct.name$_create_subscriber_internal(long participant);
+
+public boolean is$struct.name$Init() { return ($struct.name$_ != 0); }
+
+public void $struct.name$_create_subscriber()
+{
+    $struct.name$_ = $struct.name$_create_subscriber_internal(participant_);
+}
+
+private native void $struct.name$_delete_subscriber_internal(long pointer);
+
+public void $struct.name$_delete_subscriber()
+{
+    if($struct.name$_ != 0)
+    {
+        $struct.name$_delete_subscriber_internal($struct.name$_);
+        $struct.name$_ = 0;
+    }
+}
+
+private long $struct.name$_ = 0;
+
+$endif$
+>>
 
 union_type(ctx, parent, union) ::= <<>>
 

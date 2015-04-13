@@ -56,6 +56,8 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
                     (m_usingTopicAnnotation && topicann != null && topicann.getValue("value").equalsIgnoreCase("true")))
             {
                 m_lastStructure = typedecl;
+                StructTypeCode structtypecode = (StructTypeCode)typedecl.getTypeCode();
+                structtypecode.setIsTopic(true);
 
                 if(topicann != null)
                     m_usingTopicAnnotation = true;

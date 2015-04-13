@@ -655,10 +655,10 @@ public class fastrtpsgen {
                         return null;
                 }
 
-                /*if(Utils.writeFile(m_outputDir + onlyFileName + "JNII.h", maintemplates.getTemplate("JNIHeader"), m_replace))
-                    project.addJniIncludeFile(onlyFileName + "JNII.h");
+                if(Utils.writeFile(m_outputDir + onlyFileName + "PubSubJNII.h", maintemplates.getTemplate("JNIHeader"), m_replace))
+                    project.addJniIncludeFile(onlyFileName + "PubSubJNII.h");
                 else
-                    return null;*/
+                    return null;
 
                 StringTemplate jnisourceTemplate = maintemplates.getTemplate("JNISource");
                 if(Utils.writeFile(m_outputDir + onlyFileName + "PubSubJNI.cxx", jnisourceTemplate, m_replace))

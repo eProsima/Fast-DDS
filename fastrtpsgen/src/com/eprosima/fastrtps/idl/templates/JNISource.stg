@@ -6,13 +6,14 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "JNI.cxx"], description=[""])$
 $ctx.scopedInterfaces : { interface | #include "$interface.name$JNI.h"}; separator="\n"$
 
 $ctx.directIncludeDependencies : {include | #include "$include$JNII.h"}; separator="\n"$
-//#include "$ctx.filename$JNII.h"
+#include "$ctx.filename$PubSubJNII.h"
 
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/Domain.h>
+#include "$ctx.filename$PubSubTypes.h"
 
 using namespace eprosima::fastrtps;
 
@@ -24,11 +25,11 @@ using namespace eprosima::fastrtps;
 #define JNICALL
 #endif
 
-class $ctx.filename$JNI
+class $ctx.filename$PubSubJNI
 {
     public:
 
-        $ctx.filename$JNI() : participant_(NULL)
+        $ctx.filename$PubSubJNI() : participant_(NULL)
         {
             ParticipantAttributes PParam;
             PParam.rtps.builtin.domainId = 0;
@@ -37,7 +38,7 @@ class $ctx.filename$JNI
             participant_ = Domain::createParticipant(PParam);
         }
 
-        virtual ~$ctx.filename$JNI()
+        virtual ~$ctx.filename$PubSubJNI()
         {
             if(participant_ != NULL)
                 Domain::removeParticipant(participant_);
@@ -49,6 +50,18 @@ class $ctx.filename$JNI
 
         Participant *participant_;
 };
+
+JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$ctx.filename$_1create_1participant(JNIEnv *env,
+        jobject obj)
+{
+    return (jlong)new $ctx.filename$PubSubJNI();
+}
+
+JNIEXPORT void JNICALL Java_$ctx.packageUnder$$ctx.filename$_1delete_1participant(JNIEnv *env,
+        jobject obj, jlong pointer)
+{
+    delete ($ctx.filename$PubSubJNI*)pointer;
+}
 
 $definitions; separator="\n"$
 >>
@@ -64,34 +77,6 @@ $definitions; separator="\n"$
 annotation(ctx, annotation) ::= <<>>
 
 interface(ctx, parent, interface, export_list) ::= <<
-
-JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$interface.name$_$interface.name$_1init(JNIEnv *env,
-        jobject obj, jstring toAddress)
-{
-    const char *inToAddress = env->GetStringUTFChars(toAddress, NULL);
-    std::string sToAddress(inToAddress);
-    env->ReleaseStringUTFChars(toAddress, inToAddress);
-    $interface.name$JNI *jni = NULL;
-
-    try
-    {
-        jni = new $interface.name$JNI(sToAddress);
-    }
-    catch(InitializeException &ex)
-    {
-        jclass except = env->FindClass("java/lang/Exception");
-        env->ThrowNew(except, ex.what());
-    }
-
-    return (jlong)jni;
-}
-
-JNIEXPORT void JNICALL Java_$ctx.packageUnder$$interface.name$_$interface.name$_1delete(JNIEnv *env,
-        jobject obj, jlong pointer)
-{
-    delete ($interface.name$JNI*)pointer;
-}
-
 $export_list$
 
 >>
@@ -103,61 +88,6 @@ $exports; separator="\n"$
 exception(ctx, parent, exception) ::= <<>>
 
 operation(ctx, parent, operation, param_list) ::= <<
-JNIEXPORT $if(operation.rettype)$$jniParam.(operation.rettype.stType)$$else$void$endif$
-JNICALL Java_$ctx.packageUnder$$parent.name$_$parent.name$_$operation.jniname$(
-        JNIEnv *env, jobject obj, jlong pointer $if(operation.parameters)$,$endif$
-        $operation.parameters : { param | $jniParam.(param.typecode.stType)$ $param.name$}; separator=","$)
-{
-    jclass except = env->FindClass("java/lang/Exception");
-
-    $operation.parameters : { param |
-    $if(param.typecode.primitive)$
-    $if(param.typecode.isType_d)$
-    const char *_in_$param.name$ = env->GetStringUTFChars($param.name$, NULL);
-    std::string _$param.name$(_in_$param.name$);
-    env->ReleaseStringUTFChars($param.name$, _in_$param.name$);
-    $endif$
-    $else$
-    $param.typecode.scopedname$ _$param.name$;
-    $param.typecode.name$_copy(_$param.name$, $param.name$, env);
-    $endif$
-    }; separator="\n"$
-
-    $if(operation.rettype)$
-    $jniParam.(operation.rettype.stType)$ ret;
-    $operation.rettype.scopedname$ _ret;
-    $endif$
-
-    try
-    {
-        $if(operation.rettype)$
-        _ret =
-        $endif$
-        (($parent.name$JNI*)pointer)->getProxy()->$operation.name$(
-        $operation.parameters : { param |
-        $if(param.typecode.primitive)$
-        $if(param.typecode.isType_d)$
-        _$param.name$
-        $else$
-        $operation.param$
-        $endif$
-        $else$
-        _$param.name$
-        $endif$
-        }; separator=","$);
-    }
-    catch(SystemException &ex)
-    {
-        env->ThrowNew(except, ex.what());
-    }
-
-    $if(operation.rettype)$
-    $createReturnValue(typecode=operation.rettype)$
-
-    return ret;
-    $endif$
-}
-
 $param_list$
 >>
 
@@ -216,6 +146,50 @@ void $struct.name$_copy(jobject dst, $struct.scopedname$ &src, JNIEnv *env)
     $insertMember(ctx=ctx, parent=struct, member=member)$
 
     }; separator="\n"$
+}
+
+class $struct.name$PubSubJNI
+{
+    public:
+
+        $struct.name$PubSubJNI(Participant *participant) : subscriber_(NULL)
+        {
+            //Register the type
+            Domain::registerType(participant,(TopicDataType*)&type_);		
+
+            // Create Subscriber
+            SubscriberAttributes Rparam;
+            Rparam.topic.topicKind = $if(struct.hasKey)$WITH_KEY$else$NO_KEY$endif$;
+            Rparam.topic.topicDataType = type_.getName();
+            Rparam.topic.topicName = "$struct.name$PubSubTopic";
+            subscriber_ = Domain::createSubscriber(participant, Rparam, NULL/*(SubscriberListener*)&m_listener*/);
+        }
+
+        virtual ~$struct.name$PubSubJNI()
+        {
+            if(subscriber_ != NULL)
+                Domain::removeSubscriber(subscriber_);
+        }
+
+        Subscriber* getSubscriber() { return subscriber_;}
+
+    private:
+
+        Subscriber *subscriber_;
+        $struct.name$PubSubType type_;
+};
+
+JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$struct.name$_1create_1subscriber_1internal(JNIEnv *env,
+        jobject obj, jlong participant)
+{
+    $ctx.filename$PubSubJNI *p = ($ctx.filename$PubSubJNI*)participant;
+    return (jlong)new $struct.name$PubSubJNI(p->getParticipant());
+}
+
+JNIEXPORT void JNICALL Java_$ctx.packageUnder$$ctx.filename$_1delete_1subscriber_1internal(JNIEnv *env,
+        jobject obj, jlong pointer)
+{
+    delete ($struct.name$PubSubJNI*)pointer;
 }
 >>
 
