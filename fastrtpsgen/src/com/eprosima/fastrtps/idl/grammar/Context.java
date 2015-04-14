@@ -128,7 +128,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 
     public boolean isFastcdr()
     {
-        return false;
+        return activateFusion_;
     }
 
     public boolean isAnyCdr()
@@ -137,6 +137,11 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     }
 
     /*** End ***/
+
+    public void setActivateFusion(boolean value)
+    {
+        activateFusion_ = value;
+    }
 
     //// Java block ////
     public void setPackage(String pack)
@@ -246,6 +251,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private String m_onlypackage = "";
     // Java package dir.
     private String m_packageDir = "";
+    private boolean activateFusion_ = false;
     //// End Java block
     
 }

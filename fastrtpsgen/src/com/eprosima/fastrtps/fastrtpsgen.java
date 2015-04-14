@@ -91,6 +91,7 @@ public class fastrtpsgen {
 
 	private String m_os = null;
     private boolean m_local = false;
+    private boolean fusion_ = false;
 
     //! Default package used in Java files.
     private String m_package = "";
@@ -190,6 +191,10 @@ public class fastrtpsgen {
             else if(arg.equals("-local"))
             {
                 m_local = true;
+            }
+            else if(arg.equals("-fusion"))
+            {
+                fusion_ = true;
             }
             else { // TODO: More options: -local, -rpm, -debug -I
 				throw new BadArgumentException("Unknown argument " + arg);
@@ -485,6 +490,8 @@ public class fastrtpsgen {
 
 		if (idlParseFileName != null) {
 			Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
+            
+            if(fusion_) ctx.setActivateFusion(true);
              
             // Create default @Key annotation.
             AnnotationDeclaration keyann = ctx.createAnnotationDeclaration("Key", null);
