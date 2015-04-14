@@ -285,6 +285,7 @@ public class fastrtpsgen {
             if(m_local)
             {
                 solution.addInclude("$(" + m_appEnv + ")/thirdparty/fastcdr/include");
+                solution.addInclude("$(" + m_appEnv + ")/thirdparty/eprosima-common-code");
 
                 if(m_exampleOption != null)
                 {
@@ -644,7 +645,7 @@ public class fastrtpsgen {
                 // Java classes.
                 TypesGenerator typeGen = new TypesGenerator(tmanager, m_outputDir, m_replace);
                 TypeCode.javapackage = m_package + (m_package.isEmpty() ? "" : ".");
-                if(!typeGen.generate(ctx, outputDir + File.separator, m_package, null))
+                if(!typeGen.generate(ctx, outputDir + File.separator, m_package, onlyFileName + "PubSub", null))
                 {
                     System.out.println(ColorMessage.error() + "generating Java types");
                     return null;
