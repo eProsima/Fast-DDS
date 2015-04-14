@@ -645,7 +645,7 @@ public class fastrtpsgen {
                 // Java classes.
                 TypesGenerator typeGen = new TypesGenerator(tmanager, m_outputDir, m_replace);
                 TypeCode.javapackage = m_package + (m_package.isEmpty() ? "" : ".");
-                if(!typeGen.generate(ctx, outputDir + File.separator, m_package, onlyFileName + "PubSub", null))
+                if(!typeGen.generate(ctx, outputDir + File.separator, m_package, onlyFileName, null))
                 {
                     System.out.println(ColorMessage.error() + "generating Java types");
                     return null;
