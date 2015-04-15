@@ -26,8 +26,8 @@ $it.name$_CLIENT_EXAMPLE_TARGET= bin/$example$/$it.name$PublisherSubscriber
 $endif$
 
 $if(solution.isJavaLanguage)$
-$it.name$_JNI_TARGET= lib/$example$/lib$it.name$JNI.so
-$it.name$_JNI_TARGET_Z= lib/$example$/lib$it.name$JNI.a
+$it.name$_JNI_TARGET= lib/$example$/lib$it.name$PubSubJNI.so
+$it.name$_JNI_TARGET_Z= lib/$example$/lib$it.name$PubSubJNI.a
 $endif$
 
 $it.name$_COMMON_SRC_CXXFILES = $it.commonSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$

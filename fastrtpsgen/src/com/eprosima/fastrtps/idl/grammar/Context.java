@@ -225,6 +225,13 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 		}
 		return null;
 	}
+
+    public boolean isThereIsStructure()
+    {
+        if(m_lastStructure != null)
+            return true;
+        return false;
+    }
 	
 	public boolean existsLastStructure()
 	{
@@ -244,6 +251,11 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 	{
 		return m_fileNameUpper;
 	}
+
+    public String getJniFilename()
+    {
+        return getFilename().replace("_", "_1");
+    }
 	
     //// Java block ////
     // Java package name.

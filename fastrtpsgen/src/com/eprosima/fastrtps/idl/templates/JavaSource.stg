@@ -11,25 +11,25 @@ public class $ctx.filename$PubSub
 {
     static
     {
-        System.loadLibrary("$ctx.filename$JNI");
+        System.loadLibrary("$ctx.filename$PubSubJNI");
     }
 
-    private native long $ctx.filename$PubSub_create_participant();
+    private native long create_participant();
 
     public boolean isInit() { return (participant_ != 0); }
 
     public $ctx.filename$PubSub()
     {
-        participant_ = $ctx.filename$PubSub_create_participant();
+        participant_ = create_participant();
     }
 
-    private native void $ctx.filename$PubSub_delete_participant(long participant);
+    private native void delete_participant(long participant);
 
     public void dispose()
     {
         if(participant_ != 0)
         {
-            $ctx.filename$PubSub_delete_participant(participant_);
+            delete_participant(participant_);
             participant_ = 0;
         }
     }
@@ -72,13 +72,18 @@ typedef_decl(ctx, parent, typedefs) ::= <<>>
 
 struct_type(ctx, parent, struct) ::= <<
 $if(struct.isTopic)$
-private native long $struct.name$_create_subscriber_internal(long participant);
+public interface $struct.name$Listener
+{
+    public void receive($ctx.package$$struct.javaScopedname$ data);
+};
+
+private native long $struct.name$_create_subscriber_internal(long participant, $struct.name$Listener listener);
 
 public boolean is$struct.name$Init() { return ($struct.name$_ != 0); }
 
-public void $struct.name$_create_subscriber()
+public void $struct.name$_create_subscriber($struct.name$Listener listener)
 {
-    $struct.name$_ = $struct.name$_create_subscriber_internal(participant_);
+    $struct.name$_ = $struct.name$_create_subscriber_internal(participant_, listener);
 }
 
 private native void $struct.name$_delete_subscriber_internal(long pointer);

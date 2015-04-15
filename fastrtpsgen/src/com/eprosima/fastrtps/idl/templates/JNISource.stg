@@ -3,9 +3,7 @@ group JNISource;
 main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "JNI.cxx"], description=[""])$
 
-$ctx.scopedInterfaces : { interface | #include "$interface.name$JNI.h"}; separator="\n"$
-
-$ctx.directIncludeDependencies : {include | #include "$include$JNII.h"}; separator="\n"$
+$ctx.directIncludeDependencies : {include | #include "$include$PubSubJNII.h"}; separator="\n"$
 #include "$ctx.filename$PubSubJNII.h"
 
 #include <fastrtps/participant/Participant.h>
@@ -13,7 +11,11 @@ $ctx.directIncludeDependencies : {include | #include "$include$JNII.h"}; separat
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/Domain.h>
-#include "$ctx.filename$PubSubTypes.h"
+#include <fastrtps/TopicDataType.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps;
 
@@ -51,13 +53,13 @@ class $ctx.filename$PubSubJNI
         Participant *participant_;
 };
 
-JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$ctx.filename$_1create_1participant(JNIEnv *env,
+extern "C" JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$ctx.jniFilename$PubSub_create_1participant(JNIEnv *env,
         jobject obj)
 {
     return (jlong)new $ctx.filename$PubSubJNI();
 }
 
-JNIEXPORT void JNICALL Java_$ctx.packageUnder$$ctx.filename$_1delete_1participant(JNIEnv *env,
+extern "C" JNIEXPORT void JNICALL Java_$ctx.packageUnder$$ctx.jniFilename$PubSub_delete_1participant(JNIEnv *env,
         jobject obj, jlong pointer)
 {
     delete ($ctx.filename$PubSubJNI*)pointer;
@@ -158,23 +160,32 @@ bool $struct.name$_copy(jobject dst, $struct.scopedname$ &src, JNIEnv *env)
     $insertMember(ctx=ctx, parent=struct, member=member)$
 
     }; separator="\n"$
+
+    return true;
 }
 
-class $struct.name$PubSubJNI
+class $struct.name$PubSubJNI : public TopicDataType, public SubscriberListener
 {
     public:
 
-        $struct.name$PubSubJNI(Participant *participant) : subscriber_(NULL)
+        $struct.name$PubSubJNI(Participant *participant, JavaVM *vm, jint version,
+                jobject listener, jmethodID receiveId) : subscriber_(NULL),
+        vm_(vm), version_(version), listener_(listener), receiveId_(receiveId)
         {
+            setName("$struct.scopedname$");
+            m_typeSize = (uint32_t)$struct.scopedname$::getMaxCdrSerializedSize();
+            m_isGetKeyDefined = $struct.scopedname$::isKeyDefined();
+            m_keyBuffer = (unsigned char*)malloc($struct.scopedname$::getKeyMaxCdrSerializedSize()>16 ? $struct.scopedname$::getKeyMaxCdrSerializedSize() : 16);
+
             //Register the type
-            Domain::registerType(participant,(TopicDataType*)&type_);		
+            Domain::registerType(participant,(TopicDataType*)this);		
 
             // Create Subscriber
             SubscriberAttributes Rparam;
             Rparam.topic.topicKind = $if(struct.hasKey)$WITH_KEY$else$NO_KEY$endif$;
-            Rparam.topic.topicDataType = type_.getName();
-            Rparam.topic.topicName = "$struct.name$PubSubTopic";
-            subscriber_ = Domain::createSubscriber(participant, Rparam, NULL/*(SubscriberListener*)&m_listener*/);
+            Rparam.topic.topicDataType = getName();
+            Rparam.topic.topicName = "$struct.scopedname$PubSubTopic";
+            subscriber_ = Domain::createSubscriber(participant, Rparam, this);
         }
 
         virtual ~$struct.name$PubSubJNI()
@@ -183,22 +194,190 @@ class $struct.name$PubSubJNI
                 Domain::removeSubscriber(subscriber_);
         }
 
+        bool serialize(void *data, SerializedPayload_t *payload)
+        {
+            $struct.scopedname$ *p_type = ($struct.scopedname$*) data;
+            eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
+            eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
+            payload->encapsulation = CDR_LE;
+            p_type->serialize(ser);
+            payload->length = (uint16_t)ser.getSerializedDataLength();
+            return true;
+        }
+
+        bool deserialize(SerializedPayload_t* payload, void* data)
+        {
+            $struct.scopedname$* p_type = ($struct.scopedname$*) data;
+            eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
+            eprosima::fastcdr::Cdr::Endianness endian = payload->encapsulation == CDR_LE ? eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS : eprosima::fastcdr::Cdr::BIG_ENDIANNESS;
+            eprosima::fastcdr::Cdr deser(fastbuffer,endian);
+            p_type->deserialize(deser);
+            return true;
+        }
+
+        void* createData()
+        {
+            return (void*)new $struct.scopedname$();
+        }
+
+        void deleteData(void* data)
+        {
+            delete(($struct.scopedname$*)data);
+        }
+
+        bool getKey(void *data, InstanceHandle_t* handle)
+        {
+            if(!m_isGetKeyDefined)
+                return false;
+            $struct.scopedname$* p_type = ($struct.scopedname$*) data;
+            eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,$struct.scopedname$::getKeyMaxCdrSerializedSize());
+            eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
+            p_type->serializeKey(ser);
+            if($struct.scopedname$::getKeyMaxCdrSerializedSize()>16)
+            {
+                m_md5.init();
+                m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+                m_md5.finalize();
+                for(uint8_t i = 0;i<16;++i)    	{
+                    handle->value[i] = m_md5.digest[i];
+                }
+            }
+            else    {
+                for(uint8_t i = 0;i<16;++i)    	{
+                    handle->value[i] = m_keyBuffer[i];
+                }
+            }
+            return true;
+        }
+
+        void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+        {
+        }
+
+        void onNewDataMessage(Subscriber* sub)
+        {
+            JNIEnv *env;
+            int getEnvStat = vm_->GetEnv((void**)&env, version_);
+            if(getEnvStat == JNI_EDETACHED)
+            {
+                if(vm_->AttachCurrentThread((void**)&env, NULL) != 0)
+                {
+                }
+            }
+            else if(getEnvStat == JNI_OK)
+            {
+            }
+            else if(getEnvStat == JNI_EVERSION)
+            {
+            }
+
+            jclass except = env->FindClass("java/lang/Exception");
+
+            $struct.scopedname$ data;
+            SampleInfo_t info;
+
+            while(sub->takeNextData(&data, &info))
+            {
+                if(info.sampleKind == ALIVE)
+                {
+
+                    jclass dataClass = env->FindClass("$ctx.packageDir$$struct.jniScopedname$");
+
+                    if(dataClass == NULL)
+                    {
+                        env->ThrowNew(except, "Cannot obtains $ctx.package$$struct.javaScopedname$ class");
+                        return;
+                    }
+
+                    jmethodID dataConstructor = env->GetMethodID(dataClass, "<init>", "()V");
+
+                    if(dataConstructor == NULL)
+                    {
+                        env->ThrowNew(except, "Cannot find constructor of $ctx.package$$struct.javaScopedname$ class");
+                        return;
+                    }
+
+                    jobject dataObj = env->NewObject(dataClass, dataConstructor);
+
+                    if(dataObj == NULL)
+                    {
+                        env->ThrowNew(except, "Cannot create an object of $ctx.package$$struct.javaScopedname$ class");
+                        return;
+                    }
+
+                    if(!$struct.name$_copy(dataObj, data, env))
+                        return;
+
+                    env->CallVoidMethod(listener_, receiveId_, dataObj);
+
+                }
+            }
+
+            if(env->ExceptionCheck())
+            {
+                env->ExceptionDescribe();
+            }
+
+            vm_->DetachCurrentThread();
+        }
+
         Subscriber* getSubscriber() { return subscriber_;}
+          
 
     private:
 
         Subscriber *subscriber_;
-        $struct.name$PubSubType type_;
+        JavaVM *vm_;
+        jint version_;
+        jobject listener_;
+        jmethodID receiveId_;
+        MD5 m_md5;
+        unsigned char* m_keyBuffer;
 };
 
-JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$struct.name$_1create_1subscriber_1internal(JNIEnv *env,
-        jobject obj, jlong participant)
+extern "C" JNIEXPORT jlong JNICALL Java_$ctx.packageUnder$$ctx.jniFilename$PubSub_$struct.name$_1create_1subscriber_1internal(JNIEnv *env,
+        jobject obj, jlong participant, jobject listener)
 {
+    jclass except = env->FindClass("java/lang/Exception");
     $ctx.filename$PubSubJNI *p = ($ctx.filename$PubSubJNI*)participant;
-    return (jlong)new $struct.name$PubSubJNI(p->getParticipant());
+
+    JavaVM *g_vm = NULL;
+    if(env->GetJavaVM(&g_vm) != 0)
+    {
+        env->ThrowNew(except, "Cannot obtain the pointer for the Java VM");
+        return 0;
+    }
+
+    jint version = env->GetVersion();
+
+    jobject g_obj = env->NewGlobalRef(listener);
+
+    if(g_obj == NULL)
+    {
+        env->ThrowNew(except, "Cannot obtain a global reference of class of the listener of $struct.javaScopedname$ topic");
+        return 0;
+    }
+
+    jclass $struct.name$Class = env->GetObjectClass(g_obj);
+
+    if($struct.name$Class == NULL)
+    {
+        env->ThrowNew(except, "Cannot obtain the class of the listener of $struct.javaScopedname$ topic");
+        return 0;
+    }
+
+    jmethodID $struct.name$ReceiveId = env->GetMethodID($struct.name$Class, "receive", "(L$ctx.packageDir$$struct.jniScopedname$;)V");
+
+    if($struct.name$ReceiveId == NULL)
+    {
+        env->ThrowNew(except, "Cannot obtain receive method of the listener of $struct.javaScopedname$ topic");
+        return 0;
+    }
+
+    return (jlong)new $struct.name$PubSubJNI(p->getParticipant(), g_vm, version, g_obj, $struct.name$ReceiveId);
 }
 
-JNIEXPORT void JNICALL Java_$ctx.packageUnder$$ctx.filename$_1delete_1subscriber_1internal(JNIEnv *env,
+extern "C" JNIEXPORT void JNICALL Java_$ctx.packageUnder$$ctx.jniFilename$PubSub_$struct.name$_1delete_1subscriber_1internal(JNIEnv *env,
         jobject obj, jlong pointer)
 {
     delete ($struct.name$PubSubJNI*)pointer;

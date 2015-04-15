@@ -651,13 +651,13 @@ public class fastrtpsgen {
                     return null;
                 }
 
-                System.out.println("Generando fichero " + m_outputDir + onlyFileName + "PubSub.java");
-                if(!Utils.writeFile(outputDir + File.separator + onlyFileName + "PubSub.java", maintemplates.getTemplate("JavaSource"), m_replace))
-                    return null;
-
-                // Call javah application for each interface.
 				if(ctx.existsLastStructure())
                 {
+                    System.out.println("Generando fichero " + m_outputDir + onlyFileName + "PubSub.java");
+                    if(!Utils.writeFile(outputDir + File.separator + onlyFileName + "PubSub.java", maintemplates.getTemplate("JavaSource"), m_replace))
+                        return null;
+
+                    // Call javah application for each structure.
                     if(!callJavah(idlFilename))
                         return null;
                 }
