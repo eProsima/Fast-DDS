@@ -739,6 +739,13 @@ public class fastrtpsgen {
 			StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
 			StringTemplate tprojectPubSub = vsTemplates.getInstanceOf("projectPubSub");
 			StringTemplate tprojectFilesPubSub = vsTemplates.getInstanceOf("projectFilesPubSub");
+            StringTemplate tprojectJNI = null;
+            StringTemplate tprojectFilesJNI = null;
+            if(m_languageOption == LANGUAGE.JAVA)
+            {
+                tprojectJNI = vsTemplates.getInstanceOf("projectJNI");
+                tprojectFilesJNI = vsTemplates.getInstanceOf("projectFilesJNI");
+            }
 
 			returnedValue = true;
 
@@ -758,9 +765,23 @@ public class fastrtpsgen {
 
 				tprojectFilesPubSub.setAttribute("project", project);
 
+                if(m_languageOption == LANGUAGE.JAVA)
+                {
+                    tprojectJNI.setAttribute("solution", solution);
+                    tprojectJNI.setAttribute("project", project);
+                    tprojectJNI.setAttribute("example", m_exampleOption);
+                    tprojectJNI.setAttribute("local", m_local);
+
+                    tprojectFilesJNI.setAttribute("project", project);
+                }
+
 				for (int index = 0; index < m_vsconfigurations.length; index++) {
 					tproject.setAttribute("configurations", m_vsconfigurations[index]);
 					tprojectPubSub.setAttribute("configurations", m_vsconfigurations[index]);
+                    if(m_languageOption == LANGUAGE.JAVA)
+                    {
+                        tprojectJNI.setAttribute("configurations", m_vsconfigurations[index]);
+                    }
 				}
 
 				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
@@ -774,11 +795,23 @@ public class fastrtpsgen {
 					}
 				}
 
+                if(returnedValue && m_languageOption == LANGUAGE.JAVA)
+                {
+                    if(returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSubJNI-" + m_exampleOption + ".vcxproj", tprojectJNI, m_replace))
+                    {
+                        returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSubJNI-" + m_exampleOption + ".vcxproj.filters", tprojectFilesJNI, m_replace);
+                    }
+                }
+
 				tproject.reset();
 				tprojectFiles.reset();
 				tprojectPubSub.reset();
 				tprojectFilesPubSub.reset();
-
+                if(m_languageOption == LANGUAGE.JAVA)
+                {
+                    tprojectJNI.reset();
+                    tprojectFilesJNI.reset();
+                }
 			}
 
 			if (returnedValue) {
@@ -789,6 +822,9 @@ public class fastrtpsgen {
 				for (int index = 0; index < m_vsconfigurations.length; index++) {
 					tsolution.setAttribute("configurations", m_vsconfigurations[index]);
 				}
+
+                if(m_languageOption == LANGUAGE.JAVA)
+                    tsolution.setAttribute("generateJava", true);
 
 				returnedValue = Utils.writeFile(m_outputDir + "solution-" + m_exampleOption + ".sln", tsolution, m_replace);
 			}
@@ -813,6 +849,13 @@ public class fastrtpsgen {
 			StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
 			StringTemplate tprojectPubSub = vsTemplates.getInstanceOf("projectPubSub");
 			StringTemplate tprojectFilesPubSub = vsTemplates.getInstanceOf("projectFilesPubSub");
+            StringTemplate tprojectJNI = null;
+            StringTemplate tprojectFilesJNI = null;
+            if(m_languageOption == LANGUAGE.JAVA)
+            {
+                tprojectJNI = vsTemplates.getInstanceOf("projectJNI");
+                tprojectFilesJNI = vsTemplates.getInstanceOf("projectFilesJNI");
+            }
 
 			returnedValue = true;
 
@@ -832,9 +875,23 @@ public class fastrtpsgen {
 
 				tprojectFilesPubSub.setAttribute("project", project);
 
+                if(m_languageOption == LANGUAGE.JAVA)
+                {
+                    tprojectJNI.setAttribute("solution", solution);
+                    tprojectJNI.setAttribute("project", project);
+                    tprojectJNI.setAttribute("example", m_exampleOption);
+                    tprojectJNI.setAttribute("local", m_local);
+
+                    tprojectFilesJNI.setAttribute("project", project);
+                }
+
 				for (int index = 0; index < m_vsconfigurations.length; index++) {
 					tproject.setAttribute("configurations", m_vsconfigurations[index]);
 					tprojectPubSub.setAttribute("configurations", m_vsconfigurations[index]);
+                    if(m_languageOption == LANGUAGE.JAVA)
+                    {
+                        tprojectJNI.setAttribute("configurations", m_vsconfigurations[index]);
+                    }
 				}
 
 				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
@@ -848,10 +905,23 @@ public class fastrtpsgen {
 					}
 				}
 
+                if(returnedValue && m_languageOption == LANGUAGE.JAVA)
+                {
+                    if(returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSubJNI-" + m_exampleOption + ".vcxproj", tprojectJNI, m_replace))
+                    {
+                        returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSubJNI-" + m_exampleOption + ".vcxproj.filters", tprojectFilesJNI, m_replace);
+                    }
+                }
+
 				tproject.reset();
 				tprojectFiles.reset();
 				tprojectPubSub.reset();
 				tprojectFilesPubSub.reset();
+                if(m_languageOption == LANGUAGE.JAVA)
+                {
+                    tprojectJNI.reset();
+                    tprojectFilesJNI.reset();
+                }
 
 			}
 
@@ -863,6 +933,9 @@ public class fastrtpsgen {
 				for (int index = 0; index < m_vsconfigurations.length; index++) {
 					tsolution.setAttribute("configurations", m_vsconfigurations[index]);
 				}
+
+                if(m_languageOption == LANGUAGE.JAVA)
+                    tsolution.setAttribute("generateJava", true);
 
 				returnedValue = Utils.writeFile(m_outputDir + "solution-" + m_exampleOption + ".sln", tsolution, m_replace);
 			}
