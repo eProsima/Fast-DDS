@@ -49,8 +49,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)(change_in);
-	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guard2(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
 	if(change->instanceHandle == c_InstanceHandle_Unknown)
 	{
@@ -80,6 +79,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 				this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
 				return;
 			}
+            boost::unique_lock<boost::recursive_mutex> lock(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
 			for(auto chit = this->mp_SPDP->mp_SPDPReaderHistory->changesBegin();
 					chit != mp_SPDP->mp_SPDPReaderHistory->changesEnd();++chit)
 			{
@@ -90,6 +90,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 					break;
 				}
 			}
+            lock.unlock();
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;

@@ -103,8 +103,8 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 		return false;
 	//UPDATE METATRAFFIC.
 	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
-	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	m_participantProxies.push_back(new ParticipantProxyData());
 	m_participantProxies.front()->initializeData(mp_RTPSParticipant,this);
 

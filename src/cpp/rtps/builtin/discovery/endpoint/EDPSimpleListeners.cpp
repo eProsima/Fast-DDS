@@ -40,7 +40,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheC
 	const char* const CLASS_NAME = "EDPSimplePUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
 	{
@@ -167,7 +167,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheC
 	const char* const CLASS_NAME = "EDPSimpleSUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
 	{

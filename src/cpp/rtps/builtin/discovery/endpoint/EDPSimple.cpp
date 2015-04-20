@@ -230,6 +230,7 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = rdata->m_parameterList.m_cdrmsg.length;
 			memcpy(change->serializedPayload.data,rdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
+            boost::unique_lock<boost::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
 			for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
 			{
 				if((*ch)->instanceHandle == change->instanceHandle)
@@ -238,6 +239,7 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 					break;
 				}
 			}
+            lock.unlock();
 			mp_SubWriter.second->add_change(change);
 			return true;
 		}
@@ -259,6 +261,7 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = wdata->m_parameterList.m_cdrmsg.length;
 			memcpy(change->serializedPayload.data,wdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
+            boost::unique_lock<boost::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
 			for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)
 			{
 				if((*ch)->instanceHandle == change->instanceHandle)
@@ -267,6 +270,7 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 					break;
 				}
 			}
+            lock.unlock();
 			mp_PubWriter.second->add_change(change);
 			return true;
 		}

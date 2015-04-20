@@ -140,6 +140,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 
 bool StatefulReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(writerId.entityId == this->m_trustedWriterEntityId)
 		return true;
 
@@ -163,6 +164,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(wp!=nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
 	{
+        boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*wp->getMutex());
 		std::vector<int> to_remove;
 		bool continuous_removal = true;
 		for(size_t i = 0;i<wp->m_changesFromW.size();++i)

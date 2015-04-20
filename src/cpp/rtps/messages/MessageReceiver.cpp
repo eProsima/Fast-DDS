@@ -501,6 +501,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE && pWP!=nullptr)
 			{
+                boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*pWP->getMutex());
 				pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
 				if((*it)->change_received(change_to_add,pWP))
 				{
@@ -571,6 +572,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
 		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -581,6 +583,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				//FIXME: Ignoring too close received HB.
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
+                    lock.unlock();
+
+                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
 					if(WP->m_lastHeartbeatCount < HBCount)
 					{
 						WP->m_lastHeartbeatCount = HBCount;
@@ -647,15 +652,19 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
 	{
+        //Look for the readerProxy the acknack is from
+        boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
+
 		if((*it)->getGuid() == writerGUID)
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
-				//Look for the readerProxy the acknack is from
-				boost::lock_guard<boost::recursive_mutex> guardW(*SF->getMutex());
+				
 				for(auto rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
+                    boost::lock_guard<boost::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
+
 					if((*rit)->m_att.guid == readerGUID )
 					{
 						if((*rit)->m_lastAcknackCount < Ackcount)
@@ -718,6 +727,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
 		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -727,6 +737,9 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 				WriterProxy* WP;
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
+                    lock.unlock();
+
+                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
 					SequenceNumber_t auxSN;
 					SequenceNumber_t finalSN = gapList.base -1;
 					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)
