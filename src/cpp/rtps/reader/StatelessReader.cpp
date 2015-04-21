@@ -88,15 +88,12 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    printf("RECEIVING 0x%p\n", this);
+
 	if(mp_history->received_change(change))
 	{
-    printf("END RECEIVING\n");
 		if(getListener()!=nullptr)
 		{
-    printf("ONNEWCHACHE\n");
 			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
-    printf("END ONNEWCHACHE\n");
 		}
 		mp_history->postSemaphore();
 		return true;
