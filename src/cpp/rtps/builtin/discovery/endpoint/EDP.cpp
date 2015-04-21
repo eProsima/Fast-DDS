@@ -544,13 +544,16 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
 			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
 	{
-		boost::lock_guard<boost::recursive_mutex> guardW(*(*wit)->getMutex());
+        GUID_t writerGUID;
+		boost::unique_lock<boost::recursive_mutex> lock(*(*wit)->getMutex());
+        writerGUID = (*wit)->getGuid();
+        lock.unlock();
 		WriterProxyData* wdata = nullptr;
-		if(mp_PDP->lookupWriterProxyData((*wit)->getGuid(),&wdata))
+		if(mp_PDP->lookupWriterProxyData(writerGUID,&wdata))
 		{
 			if(validMatching(wdata,rdata))
 			{
-				logInfo(RTPS_EDP,"Valid Matching to local writer: "<<(*wit)->getGuid().entityId,C_CYAN);
+                logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId, C_CYAN);
 				if((*wit)->matched_reader_add(rdata->toRemoteReaderAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -591,13 +594,16 @@ bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
 	{
-		boost::lock_guard<boost::recursive_mutex> guardR(*(*rit)->getMutex());
+        GUID_t readerGUID;
+		boost::unique_lock<boost::recursive_mutex> lock(*(*rit)->getMutex());
+        readerGUID = (*rit)->getGuid();
+        lock.unlock();
 		ReaderProxyData* rdata = nullptr;
-		if(mp_PDP->lookupReaderProxyData((*rit)->getGuid(),&rdata))
+        if(mp_PDP->lookupReaderProxyData(readerGUID, &rdata))
 		{
 			if(validMatching(rdata,wdata))
 			{
-				logInfo(RTPS_EDP,"Valid Matching to local reader: "<<(*rit)->getGuid().entityId,C_CYAN);
+                logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId, C_CYAN);
 				if((*rit)->matched_writer_add(wdata->toRemoteWriterAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:
