@@ -314,13 +314,17 @@ inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
 inline bool operator<(const GUID_t& g1, const GUID_t& g2){
 	for (uint8_t i = 0; i < 12; ++i)
 	{
-		if (g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
-			return true;
+        if(g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
+            return true;
+        else if(g1.guidPrefix.value[i] > g2.guidPrefix.value[i])
+            return false;
 	}
 	for (uint8_t i = 0; i < 4; ++i)
 	{
-		if (g1.entityId.value[i] < g2.entityId.value[i])
-			return true;
+        if(g1.entityId.value[i] < g2.entityId.value[i])
+            return true;
+        else if(g1.entityId.value[i] > g2.entityId.value[i])
+            return false;
 	}
 	return false;
 }
