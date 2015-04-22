@@ -475,7 +475,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
+        // TODO Genera deadlock. revisar.
+		//boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
 		WriterProxy* pWP = nullptr;
 		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
