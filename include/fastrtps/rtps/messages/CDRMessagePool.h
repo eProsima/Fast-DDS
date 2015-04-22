@@ -17,6 +17,11 @@
 #include "fastrtps/rtps/common/CDRMessage_t.h"
 #include <vector>
 
+namespace boost
+{
+    class mutex;
+}
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -50,6 +55,7 @@ protected:
 	uint16_t m_group_size;
 	void allocateGroup();
 	void allocateGroup(uint16_t payload);
+    boost::mutex *mutex_;
 };
 
 

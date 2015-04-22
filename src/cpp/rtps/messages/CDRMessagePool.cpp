@@ -13,15 +13,18 @@
 
 #include "fastrtps/rtps/messages/CDRMessagePool.h"
 
+#include <boost/thread/mutex.hpp>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 
 CDRMessagePool::CDRMessagePool(uint32_t defaultGroupsize):
-			m_group_size(defaultGroupsize)
+m_group_size(defaultGroupsize), mutex_(nullptr)
 {
 	allocateGroup();
+    mutex_ = new boost::mutex();
 }
 
 
@@ -48,17 +51,20 @@ void CDRMessagePool::allocateGroup(uint16_t payload)
 
 CDRMessagePool::~CDRMessagePool()
 {
-
 	for(std::vector<CDRMessage_t*>::iterator it=m_all_objects.begin();
 			it!=m_all_objects.end();++it)
 	{
 		delete(*it);
 	}
+
+    if(mutex_ != nullptr)
+        delete mutex_;
 }
 
 
 CDRMessage_t& CDRMessagePool::reserve_CDRMsg()
 {
+    boost::unique_lock<boost::mutex> lock(*mutex_);
 	if(m_free_objects.empty())
 		allocateGroup();
 	CDRMessage_t* msg = m_free_objects.back();
@@ -68,6 +74,7 @@ CDRMessage_t& CDRMessagePool::reserve_CDRMsg()
 
 CDRMessage_t& CDRMessagePool::reserve_CDRMsg(uint16_t payload)
 {
+    boost::unique_lock<boost::mutex> lock(*mutex_);
 	if(m_free_objects.empty())
 		allocateGroup(payload);
 	CDRMessage_t* msg = m_free_objects.back();
@@ -86,6 +93,7 @@ CDRMessage_t& CDRMessagePool::reserve_CDRMsg(uint16_t payload)
 
 void CDRMessagePool::release_CDRMsg(CDRMessage_t& obj)
 {
+    boost::unique_lock<boost::mutex> lock(*mutex_);
 	m_free_objects.push_back(&obj);
 }
 }
