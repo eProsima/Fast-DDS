@@ -15,7 +15,7 @@
 #define STATEFULWRITER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include "RTPSWriter.h"
 
 
 namespace eprosima {

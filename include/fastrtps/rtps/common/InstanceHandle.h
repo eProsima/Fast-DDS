@@ -12,9 +12,9 @@
 
 #ifndef INSTANCEHANDLE_H_
 #define INSTANCEHANDLE_H_
-#include "fastrtps/config/fastrtps_dll.h"
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Guid.h"
+#include "../../config/fastrtps_dll.h"
+#include "Types.h"
+#include "Guid.h"
 
 namespace eprosima{
 namespace fastrtps{

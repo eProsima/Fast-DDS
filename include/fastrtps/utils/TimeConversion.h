@@ -15,7 +15,7 @@
 #define TIMECONVERSION_H_
 
 #include <cstdint>
-#include "fastrtps/rtps/common/Time_t.h"
+#include "../rtps/common/Time_t.h"
 
 namespace eprosima {
 namespace fastrtps{

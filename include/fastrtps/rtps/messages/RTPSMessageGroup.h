@@ -16,8 +16,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <vector>
-#include "fastrtps/rtps/common/CDRMessage_t.h"
-#include "fastrtps/qos/ParameterList.h"
+#include "../common/CDRMessage_t.h"
+#include "../../qos/ParameterList.h"
 
 namespace eprosima {
 namespace fastrtps{

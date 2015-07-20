@@ -14,7 +14,7 @@
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include "../attributes/RTPSParticipantAttributes.h"
 
 
 namespace eprosima {

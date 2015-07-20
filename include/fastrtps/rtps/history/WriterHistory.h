@@ -14,7 +14,7 @@
 #ifndef WRITERHISTORY_H_
 #define WRITERHISTORY_H_
 
-#include "fastrtps/rtps/history/History.h"
+#include "History.h"
 
 namespace eprosima {
 namespace fastrtps{

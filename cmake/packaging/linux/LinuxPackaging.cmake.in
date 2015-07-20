@@ -1,0 +1,29 @@
+set(PROJECT_NAME @PROJECT_NAME@)
+set(PROJECT_NAME_STYLED @PROJECT_NAME_STYLED@)
+set(PROJECT_NAME_UPPER @PROJECT_NAME_UPPER@)
+set(PROJECT_VERSION_AUTOTOOLS @PROJECT_MAJOR_VERSION@:@PROJECT_MINOR_VERSION@:@PROJECT_MICRO_VERSION@)
+
+if(${CPACK_GENERATOR} STREQUAL "TGZ" )
+    # Define name of the TGZ file
+    set(CPACK_PACKAGE_FILE_NAME eProsima_${PROJECT_NAME_STYLED}-@PROJECT_VERSION@-Linux)
+
+    if(${CPACK_TOPLEVEL_TAG} STREQUAL "Linux-Source")
+
+        # Include to prepare Makefiles
+        include(@PROJECT_BINARY_DIR@/cmake/packaging/linux/autotools_generator.cmake) 
+
+        # Prepare Makefile.am for autotools
+        configure_file(@PROJECT_SOURCE_DIR@/Makefile.am.in @PROJECT_BINARY_DIR@/Makefile.am)
+
+        # Prepare src/cpp/Makefile.am for autotools
+        generate_sources_for_autotools()
+        configure_file(@PROJECT_SOURCE_DIR@/src/cpp/Makefile.am.in @PROJECT_BINARY_DIR@/src/cpp/Makefile.am)
+
+        # Prepare include/Makefile.am for autotools
+        generate_public_headers_for_autotools()
+        configure_file(@PROJECT_SOURCE_DIR@/include/Makefile.am.in @PROJECT_BINARY_DIR@/include/Makefile.am)
+
+        # Define cmake script to copy autotools files.
+        set(CPACK_INSTALL_SCRIPT "@PROJECT_BINARY_DIR@/cmake/packaging/linux/AutotoolsPackaging.cmake")
+    endif()
+endif()

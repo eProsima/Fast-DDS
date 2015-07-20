@@ -15,7 +15,7 @@
 #define EDPSTATIC_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
+#include "EDP.h"
 
 
 namespace eprosima {

@@ -15,12 +15,12 @@
 
 #include <cstdint>
 
-#include "fastrtps/config/fastrtps_dll.h"
+#include "../config/fastrtps_dll.h"
 
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/InstanceHandle.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include "../rtps/common/Guid.h"
+#include "../rtps/common/Time_t.h"
+#include "../rtps/common/InstanceHandle.h"
+#include "../rtps/common/CacheChange.h"
 
 namespace eprosima {
 namespace fastrtps {

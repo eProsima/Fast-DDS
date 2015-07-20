@@ -14,10 +14,10 @@
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/CDRMessage_t.h"
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/common/SequenceNumber.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include "../common/CDRMessage_t.h"
+#include "../common/Guid.h"
+#include "../common/SequenceNumber.h"
+#include "../common/CacheChange.h"
 
 
 namespace eprosima {

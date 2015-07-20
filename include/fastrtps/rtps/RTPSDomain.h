@@ -15,9 +15,9 @@
 #ifndef RTPSRTPSParticipant_H_
 #define RTPSRTPSParticipant_H_
 
-#include "fastrtps/rtps/common/Types.h"
+#include "common/Types.h"
 
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include "attributes/RTPSParticipantAttributes.h"
 
 #include <set>
 

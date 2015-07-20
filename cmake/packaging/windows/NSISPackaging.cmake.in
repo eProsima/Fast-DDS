@@ -1,0 +1,17 @@
+# Prepare auxiliary NSIS scripts
+string(TOUPPER "@PROJECT_NAME@" PROJECT_NAME_UPPER)
+if(@EPROSIMA_INSTALLER@)
+configure_file(@PROJECT_SOURCE_DIR@/cmake/packaging/windows/EnvVarPage.nsh.in ${CPACK_TOPLEVEL_DIRECTORY}/EnvVarPage.nsh @ONLY)
+else()
+configure_file(@PROJECT_SOURCE_DIR@/cmake/packaging/windows/EnvVarPage_one_arch.nsh.in ${CPACK_TOPLEVEL_DIRECTORY}/EnvVarPage.nsh @ONLY)
+endif()
+
+file(COPY @PROJECT_SOURCE_DIR@/cmake/packaging/windows/EnvVarUpdate.nsh
+    DESTINATION ${CPACK_TOPLEVEL_DIRECTORY})
+
+file(COPY @PROJECT_SOURCE_DIR@/cmake/packaging/windows/InstallRedistributables.nsh
+    DESTINATION ${CPACK_TOPLEVEL_DIRECTORY})
+
+# Copy images
+file(COPY @PROJECT_SOURCE_DIR@/utils/images/logo/eProsimaLogo.jpg
+    DESTINATION ${CPACK_TOPLEVEL_DIRECTORY})

@@ -1,0 +1,2 @@
+library_includedir = $(includedir)
+nobase_library_include_HEADERS = ${${PROJECT_NAME}_PUBLIC_HEADERS_AUTOTOOLS}

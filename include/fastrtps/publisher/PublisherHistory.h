@@ -14,8 +14,8 @@
 #ifndef PUBLISHERHISTORY_H_
 #define PUBLISHERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/history/WriterHistory.h"
-#include "fastrtps/qos/QosPolicies.h"
+#include "../rtps/history/WriterHistory.h"
+#include "../qos/QosPolicies.h"
 
 using namespace eprosima::fastrtps::rtps;
 

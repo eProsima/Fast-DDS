@@ -14,7 +14,7 @@
 #ifndef RTPSLOG_H_
 #define RTPSLOG_H_
 
-#include "eProsima_cpp/log/Log.h"
+#include "../log/Log.h"
 
 namespace eprosima{
 

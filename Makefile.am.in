@@ -1,0 +1,4 @@
+SUBDIRS = include src/cpp
+
+@PROJECT_NAME@_licenciasdir = $(datadir)/doc/fastcdr
+@PROJECT_NAME@_licencias_DATA = @PROJECT_NAME_UPPER@_LIBRARY_LICENSE.txt LGPLv3_LICENSE.txt

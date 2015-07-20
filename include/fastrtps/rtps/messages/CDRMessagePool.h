@@ -14,7 +14,7 @@
 #ifndef CDRMESSAGEPOOL_H_
 #define CDRMESSAGEPOOL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/CDRMessage_t.h"
+#include "../common/CDRMessage_t.h"
 #include <vector>
 
 namespace eprosima {
