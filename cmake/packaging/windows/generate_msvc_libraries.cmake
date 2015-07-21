@@ -19,7 +19,7 @@ macro(generate_msvc_libraries platform)
 
     file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/../${platform}")
 
-    execute_process(COMMAND cmake -G "${GENERATOR}" ../..
+    execute_process(COMMAND cmake -G "${GENERATOR}" -DEPROSIMA_BUILD=${EPROSIMA_BUILD} ../..
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/../${platform}
         RESULT_VARIABLE EXECUTE_RESULT)
 

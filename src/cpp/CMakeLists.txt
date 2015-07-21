@@ -125,6 +125,11 @@ if(MSVC OR MSVC_IDE)
     target_include_directories(${PROJECT_NAME}_static PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
         )
+
+    # Link library to external win32 libraries.
+    target_link_libraries(${PROJECT_NAME}
+        iphlpapi Shlwapi
+        )
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_definitions(-D__DEBUG)
