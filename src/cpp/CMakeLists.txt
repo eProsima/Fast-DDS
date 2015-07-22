@@ -1,4 +1,5 @@
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 # Set source files
 set_sources(
@@ -90,7 +91,7 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-DFASTRTPS_SOURCE)
 if(WIN32)
-    add_definitions(-DFASTRTPS_DYN_LINK -DBOOST_ALL_DYN_LINK)
+    add_definitions(-DBOOST_ALL_DYN_LINK)
 endif()
 
 # Include public api
@@ -103,33 +104,48 @@ include_directories(${Boost_INCLUDE_DIR})
 
 # Create libraries
 if(MSVC OR MSVC_IDE)
-    add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
-    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-${PROJECT_VERSION})
-    set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${PROJECT_NAME}d-${PROJECT_VERSION})
+    if(EPROSIMA_INSTALLER)
+        generate_msvc_libraries(i86Win32VS2010)
+        generate_msvc_libraries(x64Win64VS2010)
+        generate_msvc_libraries(i86Win32VS2013)
+        generate_msvc_libraries(x64Win64VS2013)
+    else()
+        add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+        set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-${PROJECT_VERSION})
+        set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${PROJECT_NAME}d-${PROJECT_VERSION})
 
-    add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_SOURCES})
-    # Rename the library to have a "lib" before.
-    set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME}-${PROJECT_VERSION})
-    set_target_properties(${PROJECT_NAME}_static PROPERTIES DEBUG_OUTPUT_NAME lib${PROJECT_NAME}d-${PROJECT_VERSION})
+        add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_SOURCES})
+        # Rename the library to have a "lib" before.
+        set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME}-${PROJECT_VERSION})
+        set_target_properties(${PROJECT_NAME}_static PROPERTIES DEBUG_OUTPUT_NAME lib${PROJECT_NAME}d-${PROJECT_VERSION})
 
-    set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG
-        ${PROJECT_BINARY_DIR}/lib)
-    set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG
-        ${PROJECT_BINARY_DIR}/lib)
-    set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE
-        ${PROJECT_BINARY_DIR}/lib)
-    set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE
-        ${PROJECT_BINARY_DIR}/lib)
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG
+            ${PROJECT_BINARY_DIR}/lib)
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG
+            ${PROJECT_BINARY_DIR}/lib)
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE
+            ${PROJECT_BINARY_DIR}/lib)
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE
+            ${PROJECT_BINARY_DIR}/lib)
 
-    # Define public headers for static library
-    target_include_directories(${PROJECT_NAME}_static PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-        )
+        # Export symbols in DLL library
+        target_compile_definitions(${PROJECT_NAME} PRIVATE FASTRTPS_DYN_LINK)
 
-    # Link library to external win32 libraries.
-    target_link_libraries(${PROJECT_NAME}
-        iphlpapi Shlwapi
-        )
+        # Define public headers
+        target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+            )
+
+        # Define public headers for static library
+        target_include_directories(${PROJECT_NAME}_static PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+            )
+
+        # Link library to external win32 libraries.
+        target_link_libraries(${PROJECT_NAME}
+            ${Boost_LIBRARIES} iphlpapi Shlwapi
+            )
+    endif()
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_definitions(-D__DEBUG)
@@ -141,17 +157,17 @@ else()
     # Set the output directory for the library.
     set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
         ${PROJECT_BINARY_DIR}/lib)
+
+    # Define public headers
+    target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        )
+
+    # Link library to external libraries.
+    target_link_libraries(${PROJECT_NAME}
+        ${Boost_LIBRARIES}
+        )
 endif()
-
-# Define public headers
-target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    )
-
-# Link library to external libraries.
-target_link_libraries(${PROJECT_NAME}
-    ${Boost_LIBRARIES}
-    )
 
 ###############################################################################
 # Packaging
@@ -175,59 +191,12 @@ set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Head
 # Install libraries
 if(MSVC OR MSVC_IDE)
     if(EPROSIMA_INSTALLER)
-        ## i86Win32VS2010
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2010/lib/
-            DESTINATION ${LIB_INSTALL_DIR}/i86Win32VS2010
-            COMPONENT libraries_i86Win32VS2010
-            FILES_MATCHING
-            PATTERN "*${PROJECT_NAME}*-${PROJECT_VERSION}*"
-            )
-        set(CPACK_COMPONENT_LIBRARIES_I86WIN32VS2010_DISPLAY_NAME "i86Win32VS2010" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_I86WIN32VS2010_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform i86Win32VS2010" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_I86WIN32VS2010_GROUP "Libraries" PARENT_SCOPE)
-
-        # x64Win64VS2010
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2010/lib/
-            DESTINATION ${LIB_INSTALL_DIR}/x64Win64VS2010
-            COMPONENT libraries_x64Win64VS2010
-            FILES_MATCHING
-            PATTERN "*${PROJECT_NAME}*-${PROJECT_VERSION}*"
-            )
-        set(CPACK_COMPONENT_LIBRARIES_X64WIN64VS2010_DISPLAY_NAME "x64Win64VS2010" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_X64WIN64VS2010_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform x64Win64VS2010" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_X64WIN64VS2010_GROUP "Libraries" PARENT_SCOPE)
-
-        # i86Win32VS2013
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2013/lib/
-            DESTINATION ${LIB_INSTALL_DIR}/i86Win32VS2013
-            COMPONENT libraries_i86Win32VS2013
-            FILES_MATCHING
-            PATTERN "*${PROJECT_NAME}*-${PROJECT_VERSION}*"
-            )
-        set(CPACK_COMPONENT_LIBRARIES_I86WIN32VS2013_DISPLAY_NAME "i86Win32VS2013" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_I86WIN32VS2013_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform i86Win32VS2013" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_I86WIN32VS2013_GROUP "Libraries" PARENT_SCOPE)
-
-        # x64Win64VS2013
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2013/lib/
-            DESTINATION ${LIB_INSTALL_DIR}/x64Win64VS2013
-            COMPONENT libraries_x64Win64VS2013
-            FILES_MATCHING
-            PATTERN "*${PROJECT_NAME}*-${PROJECT_VERSION}*"
-            )
-        set(CPACK_COMPONENT_LIBRARIES_X64WIN64VS2013_DISPLAY_NAME "x64Win64VS2013" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_X64WIN64VS2013_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform x64Win64VS2013" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_X64WIN64VS2013_GROUP "Libraries" PARENT_SCOPE)
+        install_msvc_libraries(i86Win32VS2010)
+        install_msvc_libraries(x64Win64VS2010)
+        install_msvc_libraries(i86Win32VS2013)
+        install_msvc_libraries(x64Win64VS2013)
     else()
-        install(TARGETS ${PROJECT_NAME}
-            EXPORT ${PROJECT_NAME}Targets
-            RUNTIME DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
-            LIBRARY DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
-            ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
-            COMPONENT libraries_${MSVC_ARCH}
-            )
-
-        install(TARGETS ${PROJECT_NAME}_static
+        install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static
             EXPORT ${PROJECT_NAME}Targets
             RUNTIME DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
             LIBRARY DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
@@ -260,3 +229,12 @@ install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
     ${PROJECT_SOURCE_DIR}/LGPLv3_LICENSE.txt
     DESTINATION .
     )
+
+# Install examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+    DESTINATION .
+    COMPONENT examples
+    )
+
+set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples" PARENT_SCOPE)
+set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples" PARENT_SCOPE)

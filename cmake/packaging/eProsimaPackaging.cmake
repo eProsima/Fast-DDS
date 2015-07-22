@@ -49,15 +49,6 @@ install(FILES ${PROJECT_BINARY_DIR}/cmake/packaging/${PROJECT_NAME}Config.cmake
 if(WIN32)
     set(CPACK_GENERATOR NSIS)
 
-    # Generate all libraries.
-    if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
-        include(${PROJECT_SOURCE_DIR}/cmake/packaging/windows/generate_msvc_libraries.cmake)
-        generate_msvc_libraries(i86Win32VS2010)
-        generate_msvc_libraries(x64Win64VS2010)
-        generate_msvc_libraries(i86Win32VS2013)
-        generate_msvc_libraries(x64Win64VS2013)
-    endif()
-
     configure_file(${PROJECT_SOURCE_DIR}/cmake/packaging/windows/WindowsPackaging.cmake.in ${PROJECT_BINARY_DIR}/cmake/packaging/windows/WindowsPackaging.cmake @ONLY)
     configure_file(${PROJECT_SOURCE_DIR}/cmake/packaging/windows/NSISPackaging.cmake.in ${PROJECT_BINARY_DIR}/cmake/packaging/windows/NSISPackaging.cmake @ONLY)
 

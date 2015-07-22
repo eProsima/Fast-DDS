@@ -1,4 +1,6 @@
 ; CPack install script designed for a nmake build
+!include nsDialogs.nsh
+!include LogicLib.nsh
 
 ;--------------------------------
 ; You must define these values
@@ -564,6 +566,20 @@ FunctionEnd
 @CPACK_NSIS_INSTALLER_MUI_FINISHPAGE_RUN_CODE@
 
 ;--------------------------------
+Function DisableReadme
+  ${IfNot} ${SectionIsSectionGroup} ${documentation}
+  ${AndIf} ${SectionIsSelected} ${documentation}
+  Goto done
+  ${EndIf}
+
+  ReadINIStr $0 "$PLUGINSDIR\ioSpecial.ini" "Field 4" "HWND"
+  ${NSD_SetState} $0 0
+  EnableWindow $0 0
+
+  done:
+FunctionEnd
+
+;--------------------------------
 ;Pages
   !insertmacro MUI_PAGE_WELCOME
 
@@ -581,6 +597,8 @@ FunctionEnd
 
   Page custom VariablesEntornoPage
   !insertmacro MUI_PAGE_INSTFILES
+  !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\Readme.html
+  !define MUI_PAGE_CUSTOMFUNCTION_SHOW DisableReadme
   !insertmacro MUI_PAGE_FINISH
 
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -714,6 +732,10 @@ Section "-Core installation"
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
 @CPACK_NSIS_CREATE_ICONS@
 @CPACK_NSIS_CREATE_ICONS_EXTRA@
+  ${IfNot} ${SectionIsSectionGroup} ${documentation}
+  ${AndIf} ${SectionIsSelected} ${documentation}
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\README.lnk" "$INSTDIR\README.html"
+  ${EndIf}
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
   ;Read a value from an InstallOptions INI file
@@ -874,6 +896,7 @@ Section "Uninstall"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
 
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\README.lnk"
 @CPACK_NSIS_DELETE_ICONS@
 @CPACK_NSIS_DELETE_ICONS_EXTRA@
 

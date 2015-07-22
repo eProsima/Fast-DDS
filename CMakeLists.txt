@@ -68,41 +68,24 @@ message(STATUS "Version: ${PROJECT_VERSION}")
 message(STATUS "To change de version modify the file configure.ac")
 
 ###############################################################################
-# Load external eProsima projects.
-###############################################################################
-
-option(EPROSIMA_BUILD "Activate the use of internal thirdparties" OFF)
-if(EPROSIMA_BUILD)
-
-# Verify thirdparties
-include(${PROJECT_SOURCE_DIR}/cmake/dev/thirdparty.cmake)
-message(STATUS "Checking thirdparties...")
-check_thirdparties()
-
-include(ExternalProject)
-
-ExternalProject_Add(fastcdr
-    CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    ${PROJECT_SOURCE_DIR}/thirdparty/fastcdr
-    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-    -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}/external-install
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/fastcdr
-    BINARY_DIR ${PROJECT_BINARY_DIR}/external-build
-    )
-
-else()
-
-find_package(fastcdr)
-
-endif()
-
-
-###############################################################################
 # Generation of windows installers.
 ###############################################################################
 if(WIN32)
     option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
 endif()
+
+###############################################################################
+# Load external eProsima projects.
+###############################################################################
+
+option(EPROSIMA_BUILD "Activate the use of internal thirdparties" OFF)
+
+if(EPROSIMA_INSTALLER)
+    set(EPROSIMA_BUILD ON)
+endif()
+
+include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
+find_eprosima_package(fastcdr)
 
 ###############################################################################
 # Test system configuration
@@ -121,6 +104,7 @@ endif()
 ###############################################################################
 # Check libraries
 ###############################################################################
+include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
 check_boost(thread system date_time chrono regex)
 
 ###############################################################################
@@ -128,7 +112,12 @@ check_boost(thread system date_time chrono regex)
 ###############################################################################
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
-
+if(WIN32)
+    set(DOC_DIR "doc/")
+else()
+    set(DOC_DIR "./")
+endif()
+set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
 ###############################################################################
 # Compile FastCDR library.
 ###############################################################################
@@ -142,6 +131,142 @@ add_subdirectory(src/cpp)
 #add_subdirectory(test)
 
 ###############################################################################
+# Documentation
+###############################################################################
+# Add an option to toggle the generation of the API documentation.
+option(BUILD_DOCUMENTATION "Use doxygen and libreoffice to create product documentation" OFF)
+
+if(EPROSIMA_INSTALLER)
+    set(BUILD_DOCUMENTATION ON)
+    set(DOXYGEN_SHOULD_SKIP_THIS_PUBLIC "DOXYGEN_SHOULD_SKIP_THIS_PUBLIC")
+endif()
+
+if(BUILD_DOCUMENTATION)
+    find_package(Doxygen)
+    if(NOT DOXYGEN_FOUND)
+        message(FATAL_ERROR "doxygen is needed to build the documentation.
+        Please install it correctly")
+    endif()
+    find_package(LATEX)
+    if(NOT LATEX_COMPILER)
+        message(FATAL_ERROR "latex is needed to build the documentation.
+        Please install it correctly")
+    endif()
+    if(UNIX)
+        find_program(DOXYFILE_MAKE make)
+        if(NOT DOXYFILE_MAKE)
+            message(FATAL_ERROR "make is needed to build the documentation.
+            Please install it correctly")
+        endif()
+    elseif(WIN32)
+        set(DOXYFILE_MAKE make.bat)
+    endif()
+    find_program(LIBREOFFICE_EXE soffice)
+    if(NOT LIBREOFFICE_EXE)
+        message(FATAL_ERROR "libreoffice is needed to build the documentation.
+        Please install it correctly")
+    endif()
+    
+    # Target to create documentation directories
+    add_custom_target(docdirs
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/doc
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/doc/pdf
+        COMMENT "Creating documentation directory" VERBATIM)
+
+    ### Doxygen ########################3
+
+    # Configure the template doxyfile for or specific project
+    configure_file(doxyfile.in ${PROJECT_BINARY_DIR}/doxyfile @ONLY IMMEDIATE)
+    # Add custom target to run doxygen when ever the project is build
+    add_custom_target(doxygen
+        COMMAND "${DOXYGEN_EXECUTABLE}" "${PROJECT_BINARY_DIR}/doxyfile"
+        SOURCES "${PROJECT_BINARY_DIR}/doxyfile"
+        COMMENT "Generating API documentation with doxygen" VERBATIM)
+    # Add custom post_build target to run make and generate latex
+    # documentation.
+    add_custom_command(TARGET doxygen POST_BUILD
+        COMMAND "${DOXYFILE_MAKE}"
+        COMMAND cp refman.pdf "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - C++ API Manual.pdf"
+        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doxygen/latex"
+        COMMENT "Running LaTex for doxygen documentation" VERBATIM)
+
+    add_dependencies(doxygen docdirs)
+
+    # Instalation of doxygen files
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/html
+        DESTINATION ${DOC_INSTALL_DIR}
+        COMPONENT documentation
+        )
+
+    install(FILES "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - C++ API Manual.pdf"
+        DESTINATION ${DOC_INSTALL_DIR}/pdf
+        COMPONENT documentation
+        )
+
+    ### Libreoffice ########################3
+
+    if(WIN32)
+        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,./doc/)")
+        set(README_LOCATION "${PROJECT_BINARY_DIR}/")
+        set(README_INSTALL_LOCATION ".")
+    elseif()
+        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION})")
+        set(README_LOCATION "${PROJECT_BINARY_DIR}/doc/")
+        set(README_INSTALL_LOCATION "${DOC_INSTALL_DIR}")
+    endif()
+
+    add_custom_target(libreoffice
+        COMMAND "${LIBREOFFICE_EXE}" --headless
+        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt,${PROJECT_VERSION})"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
+        COMMAND "${LIBREOFFICE_EXE}" --headless
+        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.odt,${PROJECT_VERSION})"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
+        COMMAND "${LIBREOFFICE_EXE}" --headless
+        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.odt,${PROJECT_VERSION})"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.pdf"
+        COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO} 
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
+        DEPENDS
+        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt"
+        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.odt"
+        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.odt"
+        "${PROJECT_SOURCE_DIR}/doc/README.odt"
+        COMMENT "Generating documentation with libreoffice" VERBATIM)
+
+    add_dependencies(libreoffice docdirs)
+
+    add_custom_target(doc ALL
+        COMMENT "Generated project documentation" VERBATIM)
+
+    add_dependencies(doc doxygen libreoffice)
+
+    # Instalation of pdf files
+    install(FILES 
+        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
+        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
+        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.pdf"
+        DESTINATION ${DOC_INSTALL_DIR}/pdf
+        COMPONENT documentation
+        )
+
+    install(FILES 
+        "${README_LOCATION}/README.html"
+        DESTINATION ${README_INSTALL_LOCATION}
+        COMPONENT documentation
+        )
+
+    ### Documentation compoment
+    set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
+    set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} documentation")
+
+endif()
+
+###############################################################################
 # Packaging
 ###############################################################################
+# Install external eprosima libraries
+install_eprosima_fastcdr()
+install_boost(thread system date_time chrono regex)
+
 include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)

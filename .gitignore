@@ -1,3 +1,10 @@
+# Backup GVim files.
+*~
+# Temporaly GVim files.
+*.swp
+# Build directory
+build/
+###################
 # Compiled source #
 ###################
 *.com
@@ -46,5 +53,4 @@ Release
 lib
 output
 
-*~
 /bin/

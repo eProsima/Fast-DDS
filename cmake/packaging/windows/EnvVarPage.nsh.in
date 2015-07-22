@@ -1,5 +1,3 @@
-!include nsDialogs.nsh
-!include LogicLib.nsh
 !include EnvVarUpdate.nsh
 
 Var Dialog
