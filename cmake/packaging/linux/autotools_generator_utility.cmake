@@ -5,4 +5,3 @@ macro(generate_autotools_generator_script)
     configure_file(${PROJECT_SOURCE_DIR}/cmake/packaging/linux/autotools_generator.cmake.in ${PROJECT_BINARY_DIR}/cmake/packaging/linux/autotools_generator.cmake.in @ONLY)
     configure_file(${PROJECT_BINARY_DIR}/cmake/packaging/linux/autotools_generator.cmake.in ${PROJECT_BINARY_DIR}/cmake/packaging/linux/autotools_generator.cmake @ONLY)
 endmacro()
-

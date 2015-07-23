@@ -69,11 +69,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     include(${PROJECT_SOURCE_DIR}/cmake/packaging/linux/autotools_generator_utility.cmake)
     generate_autotools_generator_script()
 
-    # Ignore not source files
-    set(CPACK_SOURCE_IGNORE_FILES "~$" ".txt$" ".swp$")
-    # Define source directories
-    set(CPACK_SOURCE_INSTALLED_DIRECTORIES "${PROJECT_SOURCE_DIR}/src/cpp;src/cpp;${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME};include/${PROJECT_NAME}")
-
     # Set cpack project config file.
     set(CPACK_PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/cmake/packaging/linux/LinuxPackaging.cmake)
 endif()

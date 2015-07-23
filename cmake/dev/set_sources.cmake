@@ -21,12 +21,12 @@ macro(set_public_headers_directory abs_directory rel_directory)
 
 endmacro()
 
-macro(set_public_header directory file)
-    install(FILES ${directory}/${file}
+macro(set_public_header abs_directory rel_directory file)
+    install(FILES ${abs_directory}/${rel_directory}/${file}
         ${ARGN}
         )
 
     get_property(${PROJECT_NAME}_PUBLIC_HEADERS_FILES GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_FILES_PROPERTY)
-    set(${PROJECT_NAME}_PUBLIC_HEADERS_FILES ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES} ${file})
+    set(${PROJECT_NAME}_PUBLIC_HEADERS_FILES ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES} ${rel_directory}/${file})
     set_property(GLOBAL PROPERTY ${PROJECT_NAME}_PUBLIC_HEADERS_FILES_PROPERTY ${${PROJECT_NAME}_PUBLIC_HEADERS_FILES})
 endmacro()

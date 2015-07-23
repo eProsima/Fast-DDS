@@ -22,7 +22,7 @@ function execTest
 	done
 	echo "FOUND IDL FILES: $IDLFILES"
 	#Generate Info
-	cp ../../../lib/fastrtpsgen.jar .
+	cp ../../../../classes/fastrtpsgen.jar .
 	java -jar fastrtpsgen.jar -example $configuration -replace $IDLFILES
 	errorstatus=$?
 	

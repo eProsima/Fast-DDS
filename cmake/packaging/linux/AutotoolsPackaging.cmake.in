@@ -1,76 +1,18 @@
-# Copy licenses
-execute_process(COMMAND cp LGPLv3_LICENSE.txt ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_SOURCE_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of LGPLv3 license")
-endif()
-
-execute_process(COMMAND cp @PROJECT_NAME_UPPER@_LIBRARY_LICENSE.txt ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_SOURCE_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of @PROJECT_NAME@ license")
-endif()
-
 # Copy configure.ac
-execute_process(COMMAND cp configure.ac ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_SOURCE_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of configure.ac")
-endif()
-
-# Copy Makefile.am
-execute_process(COMMAND cp Makefile.am ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_BINARY_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of Makefile.am")
-endif()
-
-# Copy include/Makefile.am
-execute_process(COMMAND cp --parents include/Makefile.am ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_BINARY_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of include/Makefile.am")
-endif()
-
-# Copy src/cpp/Makefile.am
-execute_process(COMMAND cp --parents src/cpp/Makefile.am ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_BINARY_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of src/cpp/Makefile.am")
-endif()
+file(INSTALL @PROJECT_SOURCE_DIR@/configure.ac
+    DESTINATION @PROJECT_BINARY_DIR@/autotools
+    )
 
 # Copy m4 diretory
-execute_process(COMMAND cp -r m4 ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
-    WORKING_DIRECTORY @PROJECT_SOURCE_DIR@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the copy of m4 directory")
-endif()
-
+file(INSTALL @PROJECT_SOURCE_DIR@/m4
+    DESTINATION @PROJECT_BINARY_DIR@/autotools
+    )
 
 # Create include/@PROJECT_NAME@
-execute_process(COMMAND mkdir ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}/include/@PROJECT_NAME@
-    RESULT_VARIABLE EXECUTE_RESULT)
-
-if(NOT EXECUTE_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed the creation of include/@PROJECT_NAME@")
-endif()
+file(MAKE_DIRECTORY @PROJECT_BINARY_DIR@/autotools/include/@PROJECT_NAME@)
 
 # Run autoreconf
-execute_process(COMMAND autoreconf -fi ${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}
+execute_process(COMMAND autoreconf -fi @PROJECT_BINARY_DIR@/autotools
     RESULT_VARIABLE EXECUTE_RESULT)
 
 if(NOT EXECUTE_RESULT EQUAL 0)

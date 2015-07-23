@@ -180,13 +180,31 @@ set_public_headers_directory(${PROJECT_SOURCE_DIR}/include ${PROJECT_NAME}
     )
 
 # Install config.h header
-install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
+set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
     COMPONENT headers
     )
 
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
+
+# Install sources
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
+    DESTINATION src
+    COMPONENT sources
+    FILES_MATCHING
+    PATTERN "*.c"
+    PATTERN "*.cpp"
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+    )
+if(UNIX)
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
+        DESTINATION .
+        USE_SOURCE_PERMISSIONS
+        COMPONENT sources
+        )
+endif()
 
 # Install libraries
 if(MSVC OR MSVC_IDE)
@@ -223,18 +241,3 @@ else()
     set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries" PARENT_SCOPE)
     set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
 endif()
-
-# Install licenses
-install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
-    ${PROJECT_SOURCE_DIR}/LGPLv3_LICENSE.txt
-    DESTINATION .
-    )
-
-# Install examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
-    DESTINATION .
-    COMPONENT examples
-    )
-
-set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples" PARENT_SCOPE)
-set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples" PARENT_SCOPE)

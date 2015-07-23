@@ -4,6 +4,8 @@
 *.swp
 # Build directory
 build/
+# Gradle directory
+.gradle
 ###################
 # Compiled source #
 ###################

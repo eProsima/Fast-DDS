@@ -1,0 +1,62 @@
+// internal plugins
+apply plugin: 'java'
+apply plugin: 'eclipse' // Eclipse integration
+
+description = """"""
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files('../thirdparty/idl/build/libs/idlparser-1.0.0.jar')
+}
+
+task buildIDLParser(type: GradleBuild) {
+    buildFile = '../thirdparty/idl/idl.gradle'
+    tasks = ['clean', 'build']
+}
+
+task copyResources {
+    // Copy platforms file
+    File outputDir = file(new File(buildDir, "resources/main"))
+    outputDir.exists() || outputDir.mkdirs()
+    project.copy {
+        from(file(new File(projectDir, 'resources/platforms')))
+        into(outputDir)
+    }
+
+    // Create version file
+    Properties pversion = new Properties()
+    pversion.setProperty('version', project.customversion.toString())
+    File versionFile = new File("${project.buildDir}/resources/main/version")
+    versionFile.createNewFile();
+    pversion.store(versionFile.newWriter(), null)
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+            srcDir '../thirdparty/fastcdr/src/java'
+        }
+
+        resources {
+            srcDir 'src'
+            include '**/*.stg'
+            srcDir '../thirdparty/fastcdr/src/java'
+            include '**/*.stg'
+        }
+    }
+}
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    baseName = 'fastrtpsgen'
+    destinationDir = file(new File(projectDir, '../classes'))
+    manifest {
+        attributes("Created-By": "eProsima", "Main-Class": "com.eprosima.fastrtps.fastrtpsgen")
+    }
+}
+
+compileJava.dependsOn buildIDLParser

@@ -113,11 +113,30 @@ check_boost(thread system date_time chrono regex)
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
 if(WIN32)
-    set(DOC_DIR "doc/")
+    set(DOC_DIR "doc")
 else()
-    set(DOC_DIR "./")
+    set(DOC_DIR ".")
 endif()
 set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
+
+###############################################################################
+# Java application
+###############################################################################
+option(JAVA_BUILD "Activate the compilation of the Java application" OFF)
+
+if(EPROSIMA_INSTALLER)
+    set(JAVA_BUILD ON)
+endif()
+
+if(JAVA_BUILD)
+    include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
+
+    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen
+        THIRDPARTY idl
+        THIRDPARTY fastcdr
+        )
+endif()
+
 ###############################################################################
 # Compile FastCDR library.
 ###############################################################################
@@ -144,27 +163,28 @@ endif()
 if(BUILD_DOCUMENTATION)
     find_package(Doxygen)
     if(NOT DOXYGEN_FOUND)
-        message(FATAL_ERROR "doxygen is needed to build the documentation.
-        Please install it correctly")
+        message(FATAL_ERROR "doxygen is needed to build the documentation. Please install it correctly")
     endif()
     find_package(LATEX)
     if(NOT LATEX_COMPILER)
-        message(FATAL_ERROR "latex is needed to build the documentation.
-        Please install it correctly")
+        message(FATAL_ERROR "latex is needed to build the documentation. Please install it correctly")
     endif()
     if(UNIX)
         find_program(DOXYFILE_MAKE make)
-        if(NOT DOXYFILE_MAKE)
-            message(FATAL_ERROR "make is needed to build the documentation.
-            Please install it correctly")
+        if(DOXYFILE_MAKE)
+            message(STATUS "Found Make: ${DOXYFILE_MAKE}")
+        else()
+            message(FATAL_ERROR "make is needed to build the documentation. Please install it correctly")
         endif()
     elseif(WIN32)
         set(DOXYFILE_MAKE make.bat)
     endif()
     find_program(LIBREOFFICE_EXE soffice)
-    if(NOT LIBREOFFICE_EXE)
-        message(FATAL_ERROR "libreoffice is needed to build the documentation.
-        Please install it correctly")
+    if(LIBREOFFICE_EXE)
+        message(STATUS "Found Libreoffice: ${LIBREOFFICE_EXE}")
+        message(STATUS "Recall you need to have installed the eProsima macros for Libreoffice")
+    else()
+        message(FATAL_ERROR "libreoffice is needed to build the documentation. Please install it correctly")
     endif()
     
     # Target to create documentation directories
@@ -209,7 +229,7 @@ if(BUILD_DOCUMENTATION)
         set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,./doc/)")
         set(README_LOCATION "${PROJECT_BINARY_DIR}/")
         set(README_INSTALL_LOCATION ".")
-    elseif()
+    else()
         set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION})")
         set(README_LOCATION "${PROJECT_BINARY_DIR}/doc/")
         set(README_INSTALL_LOCATION "${DOC_INSTALL_DIR}")
@@ -223,14 +243,14 @@ if(BUILD_DOCUMENTATION)
         "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.odt,${PROJECT_VERSION})"
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
         COMMAND "${LIBREOFFICE_EXE}" --headless
-        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.odt,${PROJECT_VERSION})"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.pdf"
+        "macro:///eProsima.documentation.changeVersion(${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.odt,${PROJECT_VERSION})"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf" "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf"
         COMMAND "${LIBREOFFICE_EXE}" --headless ${LIBREOFFICE_CONVERT_README_MACRO} 
         COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_SOURCE_DIR}/doc/README.html" "${README_LOCATION}/README.html"
         DEPENDS
         "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.odt"
         "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.odt"
-        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.odt"
+        "${PROJECT_SOURCE_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.odt"
         "${PROJECT_SOURCE_DIR}/doc/README.odt"
         COMMENT "Generating documentation with libreoffice" VERBATIM)
 
@@ -240,12 +260,40 @@ if(BUILD_DOCUMENTATION)
         COMMENT "Generated project documentation" VERBATIM)
 
     add_dependencies(doc doxygen libreoffice)
+endif()
 
+###############################################################################
+# Packaging
+###############################################################################
+# Install external eprosima libraries
+install_eprosima_fastcdr()
+install_boost(thread system date_time chrono regex)
+
+# Install licenses
+install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
+    ${PROJECT_SOURCE_DIR}/LGPLv3_LICENSE.txt
+    DESTINATION .
+    COMPONENT licenses
+    )
+set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
+
+# Install examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+    DESTINATION .
+    COMPONENT examples
+    )
+
+set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
+set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
+
+set(CPACK_COMPONENTS_ALL headers licenses examples)
+
+if(BUILD_DOCUMENTATION)
     # Instalation of pdf files
     install(FILES 
         "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - Installation Manual.pdf"
         "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_LARGE} - User Manual.pdf"
-        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_STYLED}GEN - User Manual.pdf"
+        "${PROJECT_BINARY_DIR}/doc/pdf/${PROJECT_NAME_UPPER}GEN - User Manual.pdf"
         DESTINATION ${DOC_INSTALL_DIR}/pdf
         COMPONENT documentation
         )
@@ -260,13 +308,22 @@ if(BUILD_DOCUMENTATION)
     set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
     set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} documentation")
 
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} documentation)
 endif()
 
-###############################################################################
-# Packaging
-###############################################################################
-# Install external eprosima libraries
-install_eprosima_fastcdr()
-install_boost(thread system date_time chrono regex)
+if(MSVC OR MSVC_IDE)
+    if(EPROSIMA_INSTALLER)
+        set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL}
+            libraries_i86Win32VS2010
+            libraries_x64Win64VS2010
+            libraries_i86Win32VS2013
+            libraries_x64Win64VS2013
+            )
+    else()
+        set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
+    endif()
+else()
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries)
+endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
