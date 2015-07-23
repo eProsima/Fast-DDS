@@ -52,6 +52,7 @@ LT_INIT
 AC_CONFIG_HEADERS(include/fastrtps/config.h:include/fastrtps/config.h.in)
 AC_CONFIG_FILES([Makefile
                  include/Makefile
-                 src/cpp/Makefile])
+                 src/cpp/Makefile
+                 bin/fastrtpsgen.sh])
 
 AC_OUTPUT

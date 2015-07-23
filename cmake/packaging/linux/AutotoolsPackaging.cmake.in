@@ -11,6 +11,9 @@ file(INSTALL @PROJECT_SOURCE_DIR@/m4
 # Create include/@PROJECT_NAME@
 file(MAKE_DIRECTORY @PROJECT_BINARY_DIR@/autotools/include/@PROJECT_NAME@)
 
+file(COPY @PROJECT_SOURCE_DIR@/fastrtpsgen/script/fastrtpsgen.sh.in
+    @PROJECT_BINARY_DIR@/autotools/bin)
+
 # Run autoreconf
 execute_process(COMMAND autoreconf -fi @PROJECT_BINARY_DIR@/autotools
     RESULT_VARIABLE EXECUTE_RESULT)
