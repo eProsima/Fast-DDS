@@ -13,19 +13,19 @@ correcttests=""
 # @param Name of the test
 function execTest
 {
-    #Get the IDL files:
-    IDLFILES=""
-    for i in $(ls);do
-        if [[ $i =~ .*\.idl$ ]];then
-            IDLFILES="$IDLFILES $i" 
-        fi
-    done
-    echo "FOUND IDL FILES: $IDLFILES"
-    #Generate Info
-    cp ../../../lib/fastrtpsgen.jar .
-    java -jar fastrtpsgen.jar -local -example $configuration -replace $IDLFILES
-    errorstatus=$?
-
+	#Get the IDL files:
+	IDLFILES=""
+	for i in $(ls);do
+    	if [[ $i =~ .*\.idl$ ]];then
+    	    IDLFILES="$IDLFILES $i" 
+    	fi
+	done
+	echo "FOUND IDL FILES: $IDLFILES"
+	#Generate Info
+	cp ../../../share/fastrtps/fastrtpsgen.jar .
+	java -jar fastrtpsgen.jar -local -example $configuration -replace $IDLFILES
+	errorstatus=$?
+	
     if [ $errorstatus != 0 ]; then return; fi
     #If the makefile is not present than can be OK.
     if [ ! -f "makefile_$configuration" ]; then 

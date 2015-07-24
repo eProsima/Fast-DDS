@@ -1,3 +1,12 @@
+# Backup GVim files.
+*~
+# Temporaly GVim files.
+*.swp
+# Build directory
+build/
+# Gradle directory
+.gradle
+###################
 # Compiled source #
 ###################
 *.com
@@ -46,5 +55,4 @@ Release
 lib
 output
 
-*~
 /bin/

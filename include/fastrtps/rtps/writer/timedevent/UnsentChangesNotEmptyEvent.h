@@ -14,7 +14,7 @@
 #ifndef UNSENTCHANGESNOTEMPTYEVENT_H_
 #define UNSENTCHANGESNOTEMPTYEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/resources/TimedEvent.h"
+#include "../../resources/TimedEvent.h"
 
 namespace eprosima {
 namespace fastrtps{

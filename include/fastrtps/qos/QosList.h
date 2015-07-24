@@ -13,8 +13,8 @@
 #ifndef QOSLIST_H_
 #define QOSLIST_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/all_common.h"
-#include "fastrtps/qos/ParameterList.h"
+#include "../rtps/common/all_common.h"
+#include "ParameterList.h"
 
 
 namespace eprosima {

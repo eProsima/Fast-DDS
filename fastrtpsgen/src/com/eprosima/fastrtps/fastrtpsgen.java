@@ -388,13 +388,12 @@ public class fastrtpsgen {
 		{
 			//InputStream input = this.getClass().getResourceAsStream("/fastrtps_version.h");
 
-			InputStream input = this.getClass().getClassLoader().getResourceAsStream("fastrtps_version.h");
+			InputStream input = this.getClass().getClassLoader().getResourceAsStream("version");
 			byte[] b = new byte[input.available()];
 			input.read(b);
 			String text = new String(b);
-			int beginindex = text.indexOf("\"");
-			int endindex = text.indexOf("\"", beginindex + 1);
-			return text.substring(beginindex + 1, endindex);
+			int beginindex = text.indexOf("=");
+			return text.substring(beginindex + 1);
 		}
 		catch(Exception ex)
 		{

@@ -14,11 +14,11 @@
 
 #ifndef ENDPOINT_H_
 #define ENDPOINT_H_
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Locator.h"
-#include "fastrtps/rtps/common/Guid.h"
+#include "common/Types.h"
+#include "common/Locator.h"
+#include "common/Guid.h"
 
-#include "fastrtps/rtps/attributes/EndpointAttributes.h"
+#include "attributes/EndpointAttributes.h"
 
 namespace boost
 {

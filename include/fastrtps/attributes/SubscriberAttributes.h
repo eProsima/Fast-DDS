@@ -14,11 +14,11 @@
 #define SUBSCRIBERATTRIBUTES_H_
 
 
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/Locator.h"
-#include "fastrtps/rtps/attributes/ReaderAttributes.h"
-#include "fastrtps/attributes/TopicAttributes.h"
-#include "fastrtps/qos/ReaderQos.h"
+#include "../rtps/common/Time_t.h"
+#include "../rtps/common/Locator.h"
+#include "../rtps/attributes/ReaderAttributes.h"
+#include "TopicAttributes.h"
+#include "../qos/ReaderQos.h"
 
 using namespace eprosima::fastrtps::rtps;
 

@@ -36,7 +36,7 @@ documentation and/or software.
 #include <cstring>
 #include <iostream>
 
-#include "fastrtps/config/fastrtps_dll.h"
+#include "../config/fastrtps_dll.h"
 
 /**
 * Class MD5, for calculating MD5 hashes of strings or byte arrays

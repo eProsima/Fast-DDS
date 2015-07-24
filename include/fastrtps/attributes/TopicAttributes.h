@@ -15,10 +15,10 @@
 
 #include <string>
 
-#include "fastrtps/rtps/common/Types.h"
+#include "../rtps/common/Types.h"
 
-#include "fastrtps/qos/QosPolicies.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "../qos/QosPolicies.h"
+#include "../utils/RTPSLog.h"
 
 using namespace eprosima::fastrtps::rtps;
 

@@ -14,7 +14,7 @@
 #ifndef WRITERQOS_H_
 #define WRITERQOS_H_
 
-#include "fastrtps/qos/QosPolicies.h"
+#include "QosPolicies.h"
 
 namespace eprosima {
 namespace fastrtps {

@@ -14,9 +14,9 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
-#include "fastrtps/config/fastrtps_dll.h"
+#include "../config/fastrtps_dll.h"
 #include <cstdio>
-#include "fastrtps/rtps/common/Guid.h"
+#include "../rtps/common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps {

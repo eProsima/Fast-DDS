@@ -18,34 +18,34 @@
 //DO NOT INCLUDE IN PROJETCTS WERE COMPILATION TIME OR SIZE IS REVELANT
 //SINCE IT INCLUDES ALL NECESSARY HEADERS.
 
-#include "fastrtps/rtps/common/all_common.h"
+#include "rtps/common/all_common.h"
 
-#include "fastrtps/Domain.h"
+#include "Domain.h"
 
-#include "fastrtps/participant/Participant.h"
-#include "fastrtps/participant/ParticipantListener.h"
-#include "fastrtps/publisher/Publisher.h"
-#include "fastrtps/subscriber/Subscriber.h"
-#include "fastrtps/publisher/PublisherListener.h"
-#include "fastrtps/subscriber/SubscriberListener.h"
+#include "participant/Participant.h"
+#include "participant/ParticipantListener.h"
+#include "publisher/Publisher.h"
+#include "subscriber/Subscriber.h"
+#include "publisher/PublisherListener.h"
+#include "subscriber/SubscriberListener.h"
 
 
-#include "fastrtps/attributes/ParticipantAttributes.h"
-#include "fastrtps/attributes/PublisherAttributes.h"
-#include "fastrtps/attributes/SubscriberAttributes.h"
+#include "attributes/ParticipantAttributes.h"
+#include "attributes/PublisherAttributes.h"
+#include "attributes/SubscriberAttributes.h"
 
-#include "fastrtps/subscriber/SampleInfo.h"
-#include "fastrtps/TopicDataType.h"
+#include "subscriber/SampleInfo.h"
+#include "TopicDataType.h"
 
-#include "fastrtps/utils/IPFinder.h"
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/utils/eClock.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include "utils/IPFinder.h"
+#include "utils/RTPSLog.h"
+#include "utils/eClock.h"
+#include "utils/TimeConversion.h"
 
-#include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/qos/QosPolicies.h"
+#include "qos/ParameterList.h"
+#include "qos/QosPolicies.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include "utils/RTPSLog.h"
 
 
 #endif /* FASTRTPS_ALL_H_ */

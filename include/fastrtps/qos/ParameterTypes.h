@@ -13,7 +13,7 @@
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/all_common.h"
+#include "../rtps/common/all_common.h"
 
 
 #include <string>

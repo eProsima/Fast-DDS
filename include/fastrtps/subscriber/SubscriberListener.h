@@ -13,7 +13,7 @@
 #ifndef SUBLISTENER_H_
 #define SUBLISTENER_H_
 
-#include "fastrtps/rtps/common/MatchingInfo.h"
+#include "../rtps/common/MatchingInfo.h"
 
 using namespace eprosima::fastrtps::rtps;
 

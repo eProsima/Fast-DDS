@@ -14,9 +14,9 @@
 #ifndef PARTICIPANT_H_
 #define PARTICIPANT_H_
 
-#include "fastrtps/rtps/common/Guid.h"
+#include "../rtps/common/Guid.h"
 
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include "../rtps/attributes/RTPSParticipantAttributes.h"
 
 using namespace eprosima::fastrtps::rtps;
 

@@ -15,8 +15,8 @@
 #define EDP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
-#include "fastrtps/rtps/common/Guid.h"
+#include "../../../attributes/RTPSParticipantAttributes.h"
+#include "../../../common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps{

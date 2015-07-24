@@ -14,9 +14,9 @@
 #ifndef PARTICIPANTIMPL_H_
 #define PARTICIPANTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/participant/RTPSParticipantListener.h"
-#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "../rtps/common/Guid.h"
+#include "../rtps/participant/RTPSParticipantListener.h"
+#include "../attributes/ParticipantAttributes.h"
 
 namespace eprosima{
 namespace fastrtps{

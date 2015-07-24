@@ -13,10 +13,10 @@
 #ifndef TOPICDATATYPE_H_
 #define TOPICDATATYPE_H_
 
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/SerializedPayload.h"
-#include "fastrtps/rtps/common/InstanceHandle.h"
-#include "fastrtps/utils/md5.h"
+#include "rtps/common/Types.h"
+#include "rtps/common/SerializedPayload.h"
+#include "rtps/common/InstanceHandle.h"
+#include "utils/md5.h"
 #include <string>
 
 using namespace eprosima::fastrtps::rtps;

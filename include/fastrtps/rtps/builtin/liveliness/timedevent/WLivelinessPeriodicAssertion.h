@@ -14,9 +14,9 @@
 #ifndef WLIVELINESSPERIODICASSERTION_H_
 #define WLIVELINESSPERIODICASSERTION_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/qos/QosPolicies.h"
-#include "fastrtps/rtps/resources/TimedEvent.h"
-#include "fastrtps/qos/ParameterList.h"
+#include "../../../../qos/QosPolicies.h"
+#include "../../../resources/TimedEvent.h"
+#include "../../../../qos/ParameterList.h"
 
 using namespace eprosima::fastrtps;
 

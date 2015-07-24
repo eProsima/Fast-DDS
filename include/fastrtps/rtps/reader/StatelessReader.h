@@ -15,7 +15,7 @@
 #define STATELESSREADER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/rtps/reader/RTPSReader.h"
+#include "RTPSReader.h"
 
 
 namespace eprosima {

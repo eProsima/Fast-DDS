@@ -14,7 +14,7 @@
 #ifndef MATCHINGINFO_H_
 #define MATCHINGINFO_H_
 
-#include "fastrtps/rtps/common/Guid.h"
+#include "Guid.h"
 
 namespace eprosima{
 namespace fastrtps{

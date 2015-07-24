@@ -17,9 +17,9 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <vector>
-#include "fastrtps/rtps/common/Locator.h"
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/common/SequenceNumber.h"
+#include "../common/Locator.h"
+#include "../common/Guid.h"
+#include "../common/SequenceNumber.h"
 
 
 namespace eprosima {

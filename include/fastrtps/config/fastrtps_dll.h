@@ -9,6 +9,8 @@
 #ifndef _FASTRTPS_FASTRTPS_DLL_H_
 #define _FASTRTPS_FASTRTPS_DLL_H_
 
+#include <fastrtps/config.h>
+
 // normalize macros
 #if !defined(FASTRTPS_DYN_LINK) && !defined(FASTRTPS_STATIC_LINK) \
     && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
@@ -48,8 +50,6 @@
 #if !defined(FASTRTPS_SOURCE) && !defined(EPROSIMA_ALL_NO_LIB) \
     && !defined(FASTRTPS_NO_LIB)
 
-#include "fastrtps/fastrtps_version.h"
-
 // Set properties.
 #define EPROSIMA_LIB_NAME fastrtps
 
@@ -57,7 +57,7 @@
 #define EPROSIMA_DYN_LINK
 #endif
 
-#include "fastrtps/config/eProsima_auto_link.h"
+#include "eProsima_auto_link.h"
 #endif // auto-linking disabled
 
 #endif // _fastrtps_fastrtps_DLL_H_

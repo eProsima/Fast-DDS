@@ -14,7 +14,7 @@
 #ifndef PARTICIPANTLISTENER_H_
 #define PARTICIPANTLISTENER_H_
 
-#include "fastrtps/participant/ParticipantDiscoveryInfo.h"
+#include "ParticipantDiscoveryInfo.h"
 
 namespace eprosima {
 namespace fastrtps {
