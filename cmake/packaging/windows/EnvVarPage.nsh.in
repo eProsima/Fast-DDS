@@ -8,6 +8,9 @@ Var Label
 Var CheckboxHOME
 Var CheckboxHOME_State
 
+Var CheckboxScripts
+Var CheckboxScripts_State
+
 Var CheckboxRadioButtons
 Var CheckboxRadioButtons_State
 
@@ -49,8 +52,14 @@ Function VariablesEntornoPage
     ${If} $CheckboxHOME_State == ${BST_CHECKED}
         ${NSD_Check} $CheckboxHOME
     ${EndIf}
+
+    ${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH environment variable the location of @PROJECT_NAME_LARGE@ scripts"
+    Pop $CheckboxScripts
+    ${If} $CheckboxScripts_State == ${BST_CHECKED}
+        ${NSD_Check} $CheckboxScripts
+    ${EndIf}
         
-	${NSD_CreateCheckbox} 10 32u 100% 12u "&Add to the PATH the location of eProsima @PROJECT_NAME_LARGE@ libraries."
+	${NSD_CreateCheckbox} 10 44u 100% 12u "&Add to the PATH the location of eProsima @PROJECT_NAME_LARGE@ libraries."
     Pop $CheckboxRadioButtons
     ${If} $CheckboxRadioButtons_State == ${BST_CHECKED}
         ${NSD_Check} $CheckboxRadioButtons
@@ -60,8 +69,10 @@ Function VariablesEntornoPage
     ### y el de SCRIPTS deben estar marcados. 
     StrCmp $FirstTime "FirstTime" +5 0 ### Si son iguales las cadenas, GOTO +5, si no, GOTO 0
         ${NSD_Check} $CheckboxHOME
+        ${NSD_Check} $CheckboxScripts
 		${NSD_Check} $CheckboxRadioButtons
         ${NSD_GetState} $CheckboxHOME $CheckboxHOME_State
+        ${NSD_GetState} $CheckboxScripts $CheckboxScripts_State
 		${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
         StrCpy $FirstTime "FirstTime"
 
@@ -106,6 +117,7 @@ Function VariablesEntornoPage
         
     ### Fijamos los callbacks para cuando se haga click en los CheckBoxes
     ${NSD_OnClick} $CheckboxHOME ClickHOME 
+    ${NSD_OnClick} $CheckboxScripts ClickScripts
 	${NSD_OnClick} $CheckboxRadioButtons ClickCheckboxRadioButtons
     ${NSD_OnClick} $RadioButtonI86_VS2010 ClickI86_VS2010  
 	${NSD_OnClick} $RadioButtonI86_VS2013 ClickI86_VS2013 
@@ -119,6 +131,12 @@ FunctionEnd
 ### Guardamos el estado en la variable _state
 Function ClickHOME
     ${NSD_GetState} $CheckboxHOME $CheckboxHOME_State
+FunctionEnd
+
+### Callback invocado cuando se pulsa el CheckBox Scripts
+### Guardamos el estado en la variable _state
+Function ClickScripts
+    ${NSD_GetState} $CheckboxScripts $CheckboxScripts_State
 FunctionEnd
 
 Function ClickCheckboxRadioButtons
@@ -257,6 +275,10 @@ Function InstallVarEnvs
        ${EnvVarUpdate} $0 "@PROJECT_NAME_UPPER@HOME" "P" "HKLM" "$INSTDIR"
        WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "@PROJECT_NAME_UPPER@HOME" 1
     ${EndIf}
+    ${If} $CheckboxScripts_State == ${BST_CHECKED}
+       ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
+       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "Script location" 1
+    ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_x64Win64VS2010}
         ${If} $RadioButtonX64_VS2010_State == ${BST_CHECKED}
              ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
@@ -290,6 +312,11 @@ Var RegKeyCheck
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "@PROJECT_NAME_UPPER@HOME"
     ${un.EnvVarUpdate} $0 "@PROJECT_NAME_UPPER@HOME" "R" "HKLM" "$INSTDIR"
+  ${EndIf}
+  ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "Script location"
+  ${If} $RegKeyCheck == 1
+    DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "Script location"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
   ${EndIf}
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location"
   ${If} $RegKeyCheck == 1
