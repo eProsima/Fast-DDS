@@ -19,9 +19,9 @@ AC_PREREQ([2.59])
 AM_INIT_AUTOMAKE([1.10 no-define foreign subdir-objects])
 
 # Makes version available in config.h
-AC_DEFINE(VERSION_MAJOR, version_major, [fastrtps version major])
-AC_DEFINE(VERSION_MINOR, version_minor, [fastrtps version minor])
-AC_DEFINE(VERSION_MICRO, version_micro, [fastrtps version micro])
+AC_DEFINE(FASTRTPS_VERSION_MAJOR, version_major, [fastrtps version major])
+AC_DEFINE(FASTRTPS_VERSION_MINOR, version_minor, [fastrtps version minor])
+AC_DEFINE(FASTRTPS_VERSION_MICRO, version_micro, [fastrtps version micro])
 
 # Check stdcxx
 AX_CXX_COMPILE_STDCXX_11(,optional)
@@ -53,6 +53,6 @@ AC_CONFIG_HEADERS(include/fastrtps/config.h:include/fastrtps/config.h.in)
 AC_CONFIG_FILES([Makefile
                  include/Makefile
                  src/cpp/Makefile
-                 bin/fastrtpsgen.sh])
+                 .bin/fastrtpsgen])
 
 AC_OUTPUT

@@ -53,7 +53,7 @@ sourceSets {
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     baseName = 'fastrtpsgen'
-    destinationDir = file(new File(projectDir, '../classes'))
+    destinationDir = file(new File(projectDir, 'share/fastrtps'))
     manifest {
         attributes("Created-By": "eProsima", "Main-Class": "com.eprosima.fastrtps.fastrtpsgen")
     }

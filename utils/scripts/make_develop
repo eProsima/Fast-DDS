@@ -1,8 +1,0 @@
-#!/bin/bash
-
-#TO BE CALLED FROM THE ROOT DIRECTORY OF THE PROJECT
-export EPROSIMA_TARGET="x64Linux2.6gcc"
-export COMP="g++"
-
-make $1
-

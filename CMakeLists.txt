@@ -27,7 +27,7 @@ message(STATUS "Configuring ${PROJECT_NAME_LAGE}")
 # Version information                                                         #
 ###############################################################################
 
-#If not set, copy over FastCDR version from configure.ac
+#If not set, copy over product version from configure.ac
 if(NOT PROJECT_MAJOR_VERSION)
     file(STRINGS
         ${PROJECT_SOURCE_DIR}/configure.ac
@@ -110,25 +110,27 @@ check_boost(thread system date_time chrono regex)
 ###############################################################################
 # Installation paths
 ###############################################################################
+set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
+set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
 if(WIN32)
     set(DOC_DIR "doc")
 else()
-    set(DOC_DIR ".")
+    set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
 endif()
 set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
 
 ###############################################################################
 # Java application
 ###############################################################################
-option(JAVA_BUILD "Activate the compilation of the Java application" OFF)
+option(BUILD_JAVA "Activate the compilation of the Java application" OFF)
 
 if(EPROSIMA_INSTALLER)
-    set(JAVA_BUILD ON)
+    set(BUILD_JAVA ON)
 endif()
 
-if(JAVA_BUILD)
+if(BUILD_JAVA)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
 
     gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen
@@ -138,7 +140,7 @@ if(JAVA_BUILD)
 endif()
 
 ###############################################################################
-# Compile FastCDR library.
+# Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
 
@@ -288,6 +290,33 @@ set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} example
 
 set(CPACK_COMPONENTS_ALL headers licenses examples)
 
+if(BUILD_JAVA)
+    install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/share/fastrtps/${PROJECT_NAME}gen.jar
+        DESTINATION ${DATA_INSTALL_DIR}/${PROJECT_NAME}
+        COMPONENT java
+        )
+
+    if(WIN32)
+        install(PROGRAMS
+            ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/scripts/${PROJECT_NAME}gen.bat
+            DESTINATION ${BIN_INSTALL_DIR}
+            COMPONENT java
+            )
+    else()
+        install(PROGRAMS
+            ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/scripts/${PROJECT_NAME}gen
+            DESTINATION ${BIN_INSTALL_DIR}
+            COMPONENT java
+            )
+    endif()
+
+    ### Java component
+    set(CPACK_COMPONENT_JAVA_DISPLAY_NAME "Java application")
+    set(CPACK_COMPONENT_JAVA_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} generator")
+
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} java)
+endif()
+
 if(BUILD_DOCUMENTATION)
     # Instalation of pdf files
     install(FILES 
@@ -304,7 +333,7 @@ if(BUILD_DOCUMENTATION)
         COMPONENT documentation
         )
 
-    ### Documentation compoment
+    ### Documentation component
     set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
     set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} documentation")
 
