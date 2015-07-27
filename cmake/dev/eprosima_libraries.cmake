@@ -4,7 +4,12 @@ macro(find_eprosima_package package)
         message(STATUS "Checking ${package} thirdparty...")
         execute_process(COMMAND git submodule update --recursive --init thirdparty/${package}
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            RESULT_VARIABLE EXECUTE_RESULT
             )
+
+        if(NOT EXECUTE_RESULT EQUAL 0)
+            message(FATAL_ERROR "Failed updating Git submodule ${package}")
+        endif()
 
         include(ExternalProject)
 
