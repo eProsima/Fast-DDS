@@ -11,9 +11,7 @@ SUBDIRS = include src/cpp
 
 install-data-hook:
 	mkdir -p $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
-	cp -r pdf $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
-	cp -r html $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
-	cp README.html $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
+	cp -r share/doc/* $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
 	mkdir -p $(DESTDIR)$(datadir)/@PROJECT_NAME@; \
 	cp -r examples $(DESTDIR)$(datadir)/@PROJECT_NAME@/;
 
