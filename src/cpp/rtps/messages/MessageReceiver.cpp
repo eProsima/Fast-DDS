@@ -11,34 +11,31 @@
  *
  */
 
-#include "fastrtps/rtps/messages/MessageReceiver.h"
-//#include "fastrtps/common/RTPS_messages.h"
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include "fastrtps/rtps/resources/ListenResource.h"
+#include <fastrtps/rtps/resources/ListenResource.h>
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
-//#include "fastrtps/rtps/writer/StatelessWriter.h"
-//#include "fastrtps/rtps/reader/StatelessReader.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/rtps/writer/ReaderProxy.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
+#include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
 
-#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 
-#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
+#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 
-#include "fastrtps/rtps/reader/ReaderListener.h"
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-//#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "../participant/RTPSParticipantImpl.h"
+
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 #include <limits>
 
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #define IDSTRING "(ID:"<<this->mp_threadListen->m_ID<<") "<<
 

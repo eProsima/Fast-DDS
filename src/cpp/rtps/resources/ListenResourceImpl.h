@@ -16,7 +16,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 
-#include "../common/Locator.h"
+#include <fastrtps/rtps/common/Locator.h>
 
 
 #include <boost/asio.hpp>

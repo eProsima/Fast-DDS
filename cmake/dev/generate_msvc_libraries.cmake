@@ -36,7 +36,7 @@ macro(install_msvc_libraries platform)
         DESTINATION ${LIB_INSTALL_DIR}/${platform}
         COMPONENT libraries_${platform}
         FILES_MATCHING
-        PATTERN "*${PROJECT_NAME}*-${PROJECT_VERSION}*"
+        PATTERN "*${PROJECT_NAME}*-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}*"
         )
     string(TOUPPER "${platform}" ${platform}_UPPER)
     set(CPACK_COMPONENT_LIBRARIES_${${platform}_UPPER}_DISPLAY_NAME "${platform}" PARENT_SCOPE)

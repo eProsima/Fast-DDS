@@ -14,12 +14,12 @@
 #ifndef SUBSCRIBERIMPL_H_
 #define SUBSCRIBERIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../rtps/common/Locator.h"
-#include "../rtps/common/Guid.h"
+#include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/Guid.h>
 
-#include "../attributes/SubscriberAttributes.h"
-#include "SubscriberHistory.h"
-#include "../rtps/reader/ReaderListener.h"
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/subscriber/SubscriberHistory.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
 
 namespace eprosima {

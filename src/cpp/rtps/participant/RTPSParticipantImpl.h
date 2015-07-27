@@ -31,8 +31,8 @@ namespace asio{class io_service;}
 class recursive_mutex;
 }
 
-#include "../attributes/RTPSParticipantAttributes.h"
-#include "../common/Guid.h"
+#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/rtps/common/Guid.h>
 
 namespace eprosima {
 namespace fastrtps{

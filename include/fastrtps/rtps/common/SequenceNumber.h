@@ -12,7 +12,7 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 #include "Types.h"
 
 #include <vector>

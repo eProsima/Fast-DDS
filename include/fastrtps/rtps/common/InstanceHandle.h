@@ -12,7 +12,7 @@
 
 #ifndef INSTANCEHANDLE_H_
 #define INSTANCEHANDLE_H_
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 #include "Types.h"
 #include "Guid.h"
 

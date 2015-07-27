@@ -11,17 +11,17 @@
  *
  */
 
-#include "fastrtps/rtps/reader/WriterProxy.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
+#include <fastrtps/rtps/reader/WriterProxy.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
-#include "fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h"
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
+#include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
 
 namespace eprosima {
 namespace fastrtps{

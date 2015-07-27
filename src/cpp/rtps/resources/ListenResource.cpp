@@ -11,14 +11,14 @@
  *
  */
 
-#include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/reader/RTPSReader.h"
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
 
-#include "fastrtps/rtps/resources/ListenResource.h"
-#include "fastrtps/rtps/resources/ListenResourceImpl.h"
-#include "fastrtps/rtps/messages/MessageReceiver.h"
+#include <fastrtps/rtps/resources/ListenResource.h>
+#include "ListenResourceImpl.h"
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{

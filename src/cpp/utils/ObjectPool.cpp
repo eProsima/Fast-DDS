@@ -11,8 +11,8 @@
  *
  */
 
-#include "fastrtps/utils/ObjectPool.h"
-#include "fastrtps/common/types/CDRMessage_t.h"
+#include <fastrtps/utils/ObjectPool.h>
+#include <fastrtps/common/types/CDRMessage_t.h>
 
 
 namespace eprosima {

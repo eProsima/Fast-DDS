@@ -15,7 +15,7 @@
 #define RTPSParticipant_H_
 
 #include <cstdlib>
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
 
 namespace eprosima {

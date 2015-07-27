@@ -111,13 +111,13 @@ if(MSVC OR MSVC_IDE)
         generate_msvc_libraries(x64Win64VS2013)
     else()
         add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
-        set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-${PROJECT_VERSION})
-        set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${PROJECT_NAME}d-${PROJECT_VERSION})
+        set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
+        set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${PROJECT_NAME}d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_SOURCES})
         # Rename the library to have a "lib" before.
-        set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME}-${PROJECT_VERSION})
-        set_target_properties(${PROJECT_NAME}_static PROPERTIES DEBUG_OUTPUT_NAME lib${PROJECT_NAME}d-${PROJECT_VERSION})
+        set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME}-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
+        set_target_properties(${PROJECT_NAME}_static PROPERTIES DEBUG_OUTPUT_NAME lib${PROJECT_NAME}d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG
             ${PROJECT_BINARY_DIR}/lib)
@@ -132,12 +132,14 @@ if(MSVC OR MSVC_IDE)
         target_compile_definitions(${PROJECT_NAME} PRIVATE FASTRTPS_DYN_LINK)
 
         # Define public headers
-        target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        target_include_directories(${PROJECT_NAME} PUBLIC
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
             $<INSTALL_INTERFACE:include>
             )
 
         # Define public headers for static library
-        target_include_directories(${PROJECT_NAME}_static PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        target_include_directories(${PROJECT_NAME}_static PUBLIC
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
             $<INSTALL_INTERFACE:include>
             )
 
@@ -159,7 +161,8 @@ else()
         ${PROJECT_BINARY_DIR}/lib)
 
     # Define public headers
-    target_include_directories(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
         $<INSTALL_INTERFACE:include>
         )
 

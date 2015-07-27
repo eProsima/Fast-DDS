@@ -11,32 +11,32 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/rtps/attributes/HistoryAttributes.h"
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
-#include "fastrtps/rtps/attributes/ReaderAttributes.h"
-
-
-#include "fastrtps/rtps/history/ReaderHistory.h"
-#include "fastrtps/rtps/history/WriterHistory.h"
+#include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/attributes/ReaderAttributes.h>
 
 
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
+#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
 
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+
+
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

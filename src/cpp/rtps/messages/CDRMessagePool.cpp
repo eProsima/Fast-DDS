@@ -11,7 +11,7 @@
  *
  */
 
-#include "fastrtps/rtps/messages/CDRMessagePool.h"
+#include <fastrtps/rtps/messages/CDRMessagePool.h>
 
 #include <boost/thread/mutex.hpp>
 

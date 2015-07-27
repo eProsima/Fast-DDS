@@ -13,7 +13,7 @@
 #ifndef RTPS_GUID_H_
 #define RTPS_GUID_H_
 #include <cstdint>
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 #include "Types.h"
 
 namespace eprosima{

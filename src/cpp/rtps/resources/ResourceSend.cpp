@@ -11,9 +11,9 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ResourceSend.h"
-#include "fastrtps/rtps/resources/ResourceSendImpl.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/resources/ResourceSend.h>
+#include "ResourceSendImpl.h"
+#include "../participant/RTPSParticipantImpl.h"
 
 namespace eprosima {
 namespace fastrtps{

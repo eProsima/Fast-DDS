@@ -26,7 +26,7 @@
 #include <boost/bind.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include "../common/Time_t.h"
+#include <fastrtps/rtps/common/Time_t.h>
 
 
 

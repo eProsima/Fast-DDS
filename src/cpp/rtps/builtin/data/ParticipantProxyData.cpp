@@ -11,20 +11,20 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
-#include "fastrtps/qos/QosPolicies.h"
+#include <fastrtps/qos/QosPolicies.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

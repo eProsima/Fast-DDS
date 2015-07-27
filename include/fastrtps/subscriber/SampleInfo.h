@@ -15,7 +15,7 @@
 
 #include <cstdint>
 
-#include "../config/fastrtps_dll.h"
+#include "../fastrtps_dll.h"
 
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"

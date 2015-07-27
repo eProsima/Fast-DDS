@@ -11,7 +11,7 @@
  *
  */
 
-#include "fastrtps/utils/StringMatching.h"
+#include <fastrtps/utils/StringMatching.h>
 
 #if defined(_WIN32)
 #include "Shlwapi.h"

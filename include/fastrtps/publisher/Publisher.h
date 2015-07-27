@@ -14,7 +14,7 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
-#include "../config/fastrtps_dll.h"
+#include "../fastrtps_dll.h"
 #include <cstdio>
 #include "../rtps/common/Guid.h"
 

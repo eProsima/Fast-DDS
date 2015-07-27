@@ -12,7 +12,7 @@
 
 #ifndef SERIALIZEDPAYLOAD_H_
 #define SERIALIZEDPAYLOAD_H_
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 #include "Types.h"
 #include <cstring>
 #include <stdint.h>

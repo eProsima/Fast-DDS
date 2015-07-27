@@ -9,7 +9,7 @@
 #ifndef _FASTRTPS_FASTRTPS_DLL_H_
 #define _FASTRTPS_FASTRTPS_DLL_H_
 
-#include <fastrtps/config.h>
+#include "config.h"
 
 // normalize macros
 #if !defined(FASTRTPS_DYN_LINK) && !defined(FASTRTPS_STATIC_LINK) \

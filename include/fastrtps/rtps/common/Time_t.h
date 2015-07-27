@@ -12,7 +12,7 @@
 
 #ifndef TIME_T_H_
 #define TIME_T_H_
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 #include <cmath>
 #include <cstdint>
 #include <iostream>

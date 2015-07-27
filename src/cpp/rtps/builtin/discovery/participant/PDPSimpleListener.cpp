@@ -11,32 +11,28 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-//
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
-//#include "fastrtps/RTPSParticipant.h"
-#include "fastrtps/rtps/reader/RTPSReader.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include "../../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/history/ReaderHistory.h"
-//#include "fastrtps/writer/StatelessWriter.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
+
+#include <fastrtps/rtps/history/ReaderHistory.h>
+
+#include <fastrtps/utils/TimeConversion.h>
 //
-//#include "fastrtps/utils/RTPSLog.h"
-//#include "fastrtps/utils/eClock.h"
-#include "fastrtps/utils/TimeConversion.h"
-//
-#include "fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h"
-#include "fastrtps/rtps/participant/RTPSParticipantListener.h"
+#include <fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{

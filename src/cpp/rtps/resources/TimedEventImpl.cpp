@@ -12,9 +12,9 @@
  */
 
 
-#include "fastrtps/rtps/resources/TimedEventImpl.h"
-#include "fastrtps/rtps/resources/TimedEvent.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include "TimedEventImpl.h"
+#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 
 namespace eprosima{

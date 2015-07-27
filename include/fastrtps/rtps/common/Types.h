@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <stdint.h>
 
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 
 
 namespace eprosima{

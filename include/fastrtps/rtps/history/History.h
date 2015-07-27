@@ -14,7 +14,7 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
-#include "../../config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 
 #include "CacheChangePool.h"
 

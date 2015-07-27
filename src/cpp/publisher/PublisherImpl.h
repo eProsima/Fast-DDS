@@ -16,14 +16,14 @@
 #define PUBLISHERIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../rtps/common/Locator.h"
-#include "../rtps/common/Guid.h"
+#include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/Guid.h>
 
-#include "../attributes/PublisherAttributes.h"
+#include <fastrtps/attributes/PublisherAttributes.h>
 
-#include "PublisherHistory.h"
+#include <fastrtps/publisher/PublisherHistory.h>
 
-#include "../rtps/writer/WriterListener.h"
+#include <fastrtps/rtps/writer/WriterListener.h>
 
 namespace eprosima {
 namespace fastrtps{
