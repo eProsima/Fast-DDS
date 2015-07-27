@@ -23,11 +23,10 @@ macro(find_eprosima_package package)
             BINARY_DIR ${PROJECT_BINARY_DIR}/external-build/${package}
             )
 
-    else()
-
-        find_package(${package})
-
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_BINARY_DIR}/external-install)
     endif()
+
+    find_package(${package})
 endmacro()
 
 macro(install_eprosima_fastcdr)
