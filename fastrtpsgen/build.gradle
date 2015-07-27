@@ -28,7 +28,7 @@ task copyResources {
 
     // Create version file
     Properties pversion = new Properties()
-    pversion.setProperty('version', project.customversion.toString())
+    project.hasProperty('customversion') ? pversion.setProperty('version', project.customversion.toString()) : pversion.setProperty('version', '0.0.0')
     File versionFile = new File("${project.buildDir}/resources/main/version")
     versionFile.createNewFile();
     pversion.store(versionFile.newWriter(), null)
@@ -60,3 +60,7 @@ jar {
 }
 
 compileJava.dependsOn buildIDLParser
+compileJava {
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+}
