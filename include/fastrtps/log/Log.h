@@ -17,8 +17,8 @@
  */
 
 
-#ifndef EPROLOG_H_
-#define EPROLOG_H_
+#ifndef _FASTRTPS_LOG_LOG_H_
+#define _FASTRTPS_LOG_LOG_H_
 
 #include <iostream>
 #include <fstream>
@@ -29,10 +29,7 @@
 #include <map>
 
 #include "Colors.h"
-
-#include "Log_dll.h"
-
-
+#include "../fastrtps_dll.h"
 
 namespace boost
 {
@@ -45,7 +42,7 @@ namespace eprosima {
 	* LOG_CATEGORY enumeration forward declaration. Is defined for each application.
 	*/
 #if defined(_WIN32)
-enum LOG_DllAPI LOG_CATEGORY;
+enum RTPS_DllAPI LOG_CATEGORY;
 #else
 enum LOG_CATEGORY:uint32_t;
 #endif
@@ -111,30 +108,30 @@ public:
 	 * Set the maximum verbosity level for ALL categories.
 	 * @param level Verbosity level.
 	 */
-	LOG_DllAPI static void setVerbosity(LOG_VERBOSITY_LVL level);
+	RTPS_DllAPI static void setVerbosity(LOG_VERBOSITY_LVL level);
 	/**
 	 * Set the maximum verbosity level for a specific category.
 	 * @param cat LOG_CATEGORY
 	 * @param level Verbosity level.
 	 */
-	LOG_DllAPI static void setCategoryVerbosity(LOG_CATEGORY cat, LOG_VERBOSITY_LVL level);
+	RTPS_DllAPI static void setCategoryVerbosity(LOG_CATEGORY cat, LOG_VERBOSITY_LVL level);
 	/**
 	 * Set the log Filename. If this method is not called no text log will be created.
 	 * @param filename The name of the log file to create
 	 * @param add_date_to_filename If set to true the name of the log file will be date_filename.txt
 	 */
-	LOG_DllAPI static void logFileName(const char* filename, bool add_date_to_filename = false);
+	RTPS_DllAPI static void logFileName(const char* filename, bool add_date_to_filename = false);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-	LOG_DllAPI static LogMessage& logMessage(LOG_TYPE type, LOG_CATEGORY cat,
+	RTPS_DllAPI static LogMessage& logMessage(LOG_TYPE type, LOG_CATEGORY cat,
 						const char* CLASS_NAME,
 						const char* METHOD_NAME,
 						const char* COLOR = nullptr);
-	LOG_DllAPI static LogMessage& logMessage(LOG_TYPE type, const char* COLOR = nullptr);
+	RTPS_DllAPI static LogMessage& logMessage(LOG_TYPE type, const char* COLOR = nullptr);
 
-	LOG_DllAPI static void addMessage(LogMessage& lm);
+	RTPS_DllAPI static void addMessage(LogMessage& lm);
 
-	LOG_DllAPI static void removeLog();
+	RTPS_DllAPI static void removeLog();
 
 
 
@@ -221,4 +218,4 @@ private:
  * @}
  */
 
-#endif /* EPROLOG_H_ */
+#endif /* _FASTRTPS_LOG_LOG_H_ */

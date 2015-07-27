@@ -10,8 +10,8 @@
  * @file Colors.h
  */
 
-#ifndef C_COLORS_H_
-#define C_COLORS_H_
+#ifndef _FASTRTPS_LOG_COLORS_H_
+#define _FASTRTPS_LOG_COLORS_H_
 
 
 #if defined(_WIN32)
@@ -51,4 +51,4 @@
 #endif
 
 
-#endif /* COLORS_H_ */
+#endif /* _FASTRTPS_LOG_COLORS_H_ */
