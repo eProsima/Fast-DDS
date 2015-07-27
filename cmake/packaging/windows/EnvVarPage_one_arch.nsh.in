@@ -55,7 +55,7 @@ Function VariablesEntornoPage
 
     ### La primera vez que lanzamos el instalador, el checkbox de HOME
     ### y el de SCRIPTS deben estar marcados. 
-    StrCmp $FirstTime "FirstTime" +5 0 ### Si son iguales las cadenas, GOTO +5, si no, GOTO 0
+    StrCmp $FirstTime "FirstTime" jumpfirsttime 0 ### Si son iguales las cadenas, GOTO +5, si no, GOTO 0
         ${NSD_Check} $CheckboxHOME
         ${NSD_Check} $CheckboxScripts
 		${NSD_Check} $CheckboxRadioButtons
@@ -63,6 +63,8 @@ Function VariablesEntornoPage
         ${NSD_GetState} $CheckboxScripts $CheckboxScripts_State
 		${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
         StrCpy $FirstTime "FirstTime"
+
+    jumpfirsttime:
 
     ${If} ${SectionIsSelected} ${libraries_@MSVC_ARCH@}
       EnableWindow $CheckboxRadioButtons 1	

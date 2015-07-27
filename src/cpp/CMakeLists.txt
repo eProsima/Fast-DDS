@@ -91,7 +91,7 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
-    add_definitions(-DBOOST_ALL_DYN_LINK)
+    add_definitions(-DBOOST_ALL_DYN_LINK -D_WIN32_WINNT=0x0501)
 endif()
 
 # Include public api

@@ -122,7 +122,9 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 		}
 	}
 	if(!m_isRequestedChangesEmpty)
+	{
 		logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
+	}
 	return true;
 }
 
