@@ -75,19 +75,6 @@ if(WIN32)
 endif()
 
 ###############################################################################
-# Load external eProsima projects.
-###############################################################################
-
-option(EPROSIMA_BUILD "Activate the use of internal thirdparties" OFF)
-
-if(EPROSIMA_INSTALLER)
-    set(EPROSIMA_BUILD ON)
-endif()
-
-include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
-find_eprosima_package(fastcdr)
-
-###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/check_configuration.cmake)
@@ -100,6 +87,19 @@ check_endianness()
 if(MSVC OR MSVC_IDE)
     check_msvc_arch()
 endif()
+
+###############################################################################
+# Load external eProsima projects.
+###############################################################################
+
+option(EPROSIMA_BUILD "Activate the use of internal thirdparties" OFF)
+
+if(EPROSIMA_INSTALLER)
+    set(EPROSIMA_BUILD ON)
+endif()
+
+include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
+find_eprosima_package(fastcdr)
 
 ###############################################################################
 # Check libraries
