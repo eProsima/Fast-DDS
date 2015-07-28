@@ -1,15 +1,19 @@
 macro(find_eprosima_package package)
     if(EPROSIMA_BUILD)
         set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
+        if(NOT MSVC AND NOT MSVC_IDE)
+            set(BUILD_OPTION "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\n")
+        endif()
+
         file(MAKE_DIRECTORY ${${package}ExternalDir})
         file(WRITE ${${package}ExternalDir}/CMakeLists.txt
             "cmake_minimum_required(VERSION 2.8.7)\n"
             "include(ExternalProject)\n"
             "ExternalProject_Add(${package}\n"
-             "CONFIGURE_COMMAND ${CMAKE_COMMAND}\n"
+             "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
              "${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
              "-G \"${CMAKE_GENERATOR}\"\n"
-             "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\n"
+             ${BUILD_OPTION}
              "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install\n"
              "UPDATE_COMMAND git submodule update --recursive --init ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
              "SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
@@ -18,7 +22,7 @@ macro(find_eprosima_package package)
 
          execute_process(COMMAND ${CMAKE_COMMAND}
              -G ${CMAKE_GENERATOR}
-             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+             ${BUILD_OPTION}
              WORKING_DIRECTORY ${${package}ExternalDir}
              RESULT_VARIABLE EXECUTE_RESULT
              )
@@ -27,13 +31,33 @@ macro(find_eprosima_package package)
              message(FATAL_ERROR "Cannot configure Git submodule ${package}")
          endif()
 
-         execute_process(COMMAND ${CMAKE_COMMAND} --build .
-             WORKING_DIRECTORY ${${package}ExternalDir}
-             RESULT_VARIABLE EXECUTE_RESULT
-             )
+         if(MSVC OR MSVC_IDE)
+             execute_process(COMMAND ${CMAKE_COMMAND} --build . --config debug
+                 WORKING_DIRECTORY ${${package}ExternalDir}
+                 RESULT_VARIABLE EXECUTE_RESULT
+                 )
 
-         if(NOT EXECUTE_RESULT EQUAL 0)
-             message(FATAL_ERROR "Cannot build Git submodule ${package}")
+             if(NOT EXECUTE_RESULT EQUAL 0)
+                 message(FATAL_ERROR "Cannot build Git submodule ${package} in debug mode")
+             endif()
+
+             execute_process(COMMAND ${CMAKE_COMMAND} --build . --config release
+                 WORKING_DIRECTORY ${${package}ExternalDir}
+                 RESULT_VARIABLE EXECUTE_RESULT
+                 )
+
+             if(NOT EXECUTE_RESULT EQUAL 0)
+                 message(FATAL_ERROR "Cannot build Git submodule ${package} in release mode")
+             endif()
+         else()
+             execute_process(COMMAND ${CMAKE_COMMAND} --build .
+                 WORKING_DIRECTORY ${${package}ExternalDir}
+                 RESULT_VARIABLE EXECUTE_RESULT
+                 )
+
+             if(NOT EXECUTE_RESULT EQUAL 0)
+                 message(FATAL_ERROR "Cannot build Git submodule ${package}")
+             endif()
          endif()
 
          set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${${package}ExternalDir}/install)
@@ -70,10 +94,6 @@ macro(install_eprosima_fastcdr)
                 COMPONENT libraries_x64Win64VS2013
                 )
         else()
-            #install(DIRECTORY ${PROJECT_BINARY_DIR}/external-install/lib/${MSVC_ARCH}
-            #    DESTINATION ${LIB_INSTALL_DIR}
-            #    COMPONENT libraries_${MSVC_ARCH}
-            #    )
             install(DIRECTORY ${fastcdr_LIB_DIR}/${MSVC_ARCH}
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_${MSVC_ARCH}
