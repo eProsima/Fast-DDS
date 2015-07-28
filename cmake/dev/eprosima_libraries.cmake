@@ -1,83 +1,88 @@
 macro(find_eprosima_package package)
     if(EPROSIMA_BUILD)
-        # Verify thirdparty
-        message(STATUS "Checking ${package} thirdparty...")
-        execute_process(COMMAND git submodule update --recursive --init thirdparty/${package}
-            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-            RESULT_VARIABLE EXECUTE_RESULT
-            )
+        set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
+        file(MAKE_DIRECTORY ${${package}ExternalDir})
+        file(WRITE ${${package}ExternalDir}/CMakeLists.txt
+            "cmake_minimum_required(VERSION 2.8.7)\n"
+            "include(ExternalProject)\n"
+            "ExternalProject_Add(${package}\n"
+             "CONFIGURE_COMMAND ${CMAKE_COMMAND}\n"
+             "${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
+             "-G \"${CMAKE_GENERATOR}\"\n"
+             "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\n"
+             "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install\n"
+             "UPDATE_COMMAND git submodule update --recursive --init ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
+             "SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
+             "BINARY_DIR ${${package}ExternalDir}/build\n"
+             ")\n")
 
-        if(NOT EXECUTE_RESULT EQUAL 0)
-            message(FATAL_ERROR "Failed updating Git submodule ${package}")
-        endif()
+         execute_process(COMMAND ${CMAKE_COMMAND}
+             -G ${CMAKE_GENERATOR}
+             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+             WORKING_DIRECTORY ${${package}ExternalDir}
+             RESULT_VARIABLE EXECUTE_RESULT
+             )
 
-        include(ExternalProject)
+         if(NOT EXECUTE_RESULT EQUAL 0)
+             message(FATAL_ERROR "Cannot configure Git submodule ${package}")
+         endif()
 
-        ExternalProject_Add(${package}
-            CONFIGURE_COMMAND ${CMAKE_COMMAND}
-            ${PROJECT_SOURCE_DIR}/thirdparty/${package}
-            -G ${CMAKE_GENERATOR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}/external-install
-            SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/${package}
-            BINARY_DIR ${PROJECT_BINARY_DIR}/external-build/${package}
-            )
-    else()
+         execute_process(COMMAND ${CMAKE_COMMAND} --build .
+             WORKING_DIRECTORY ${${package}ExternalDir}
+             RESULT_VARIABLE EXECUTE_RESULT
+             )
 
-        find_package(${package})
+         if(NOT EXECUTE_RESULT EQUAL 0)
+             message(FATAL_ERROR "Cannot build Git submodule ${package}")
+         endif()
+
+         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${${package}ExternalDir}/install)
 
     endif()
+
+    find_package(${package})
+
 endmacro()
 
 macro(install_eprosima_fastcdr)
     if(MSVC OR MSVC_IDE)
         # Install includes
-        if(EPROSIMA_BUILD)
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/external-install/include/fastcdr 
-                DESTINATION ${INCLUDE_INSTALL_DIR}
-                COMPONENT headers
-                )
-        else()
-            install(DIRECTORY ${fastcdr_INCLUDE_DIR}/fastcdr
-                DESTINATION ${INCLUDE_INSTALL_DIR}
-                COMPONENT headers
-                )
-        endif()
+        install(DIRECTORY ${fastcdr_INCLUDE_DIR}/fastcdr
+            DESTINATION ${INCLUDE_INSTALL_DIR}
+            COMPONENT headers
+            )
 
         if(EPROSIMA_INSTALLER)
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2010/external-install/lib/i86Win32VS2010
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2010/external/fastcdr/install/lib/i86Win32VS2010
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_i86Win32VS2010
                 )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2010/external-install/lib/x64Win64VS2010
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2010/external/fastcdr/install/lib/x64Win64VS2010
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_x64Win64VS2010
                 )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2013/external-install/lib/i86Win32VS2013
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2013/external/fastcdr/install/lib/i86Win32VS2013
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_i86Win32VS2013
                 )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2013/external-install/lib/x64Win64VS2013
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2013/external/fastcdr/install/lib/x64Win64VS2013
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_x64Win64VS2013
                 )
         else()
-            if(EPROSIMA_BUILD)
-                install(DIRECTORY ${PROJECT_BINARY_DIR}/external-install/lib/${MSVC_ARCH}
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_${MSVC_ARCH}
-                    )
-            else()
-                install(DIRECTORY ${fastcdr_LIB_DIR}/${MSVC_ARCH}
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_${MSVC_ARCH}
-                    )
-            endif()
+            #install(DIRECTORY ${PROJECT_BINARY_DIR}/external-install/lib/${MSVC_ARCH}
+            #    DESTINATION ${LIB_INSTALL_DIR}
+            #    COMPONENT libraries_${MSVC_ARCH}
+            #    )
+            install(DIRECTORY ${fastcdr_LIB_DIR}/${MSVC_ARCH}
+                DESTINATION ${LIB_INSTALL_DIR}
+                COMPONENT libraries_${MSVC_ARCH}
+                )
         endif()
 
         # Install license
         if(EPROSIMA_BUILD)
-            install(FILES ${PROJECT_BINARY_DIR}/external-install/FASTCDR_LIBRARY_LICENSE.txt
+            install(FILES ${PROJECT_BINARY_DIR}/external/fastcdr/install/FASTCDR_LIBRARY_LICENSE.txt
                 DESTINATION .
                 )
         else()
