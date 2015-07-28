@@ -11,12 +11,12 @@
  *
  */
 
-#include "fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
-#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{

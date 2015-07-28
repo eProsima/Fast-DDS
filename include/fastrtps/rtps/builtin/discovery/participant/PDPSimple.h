@@ -15,10 +15,10 @@
 #define PDPSIMPLE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include "../../../common/Guid.h"
+#include "../../../attributes/RTPSParticipantAttributes.h"
 
-#include "fastrtps/qos/QosPolicies.h"
+#include "../../../../qos/QosPolicies.h"
 
 using namespace eprosima::fastrtps;
 

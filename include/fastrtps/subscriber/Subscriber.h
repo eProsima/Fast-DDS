@@ -14,7 +14,7 @@
 #ifndef SUBSCRIBER_H_
 #define SUBSCRIBER_H_
 
-#include "fastrtps/rtps/common/Guid.h"
+#include "../rtps/common/Guid.h"
 
 using namespace eprosima::fastrtps::rtps;
 

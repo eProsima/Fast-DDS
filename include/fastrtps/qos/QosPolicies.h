@@ -15,9 +15,9 @@
 #define QOS_POLICIES_H_
 
 #include <vector>
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/qos/ParameterTypes.h"
+#include "../rtps/common/Types.h"
+#include "../rtps/common/Time_t.h"
+#include "ParameterTypes.h"
 using namespace eprosima::fastrtps::rtps;
 
 

@@ -13,8 +13,8 @@
 #ifndef _RTPSPARTICIPANTPARAMETERS_H_
 #define _RTPSPARTICIPANTPARAMETERS_H_
 
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/Locator.h"
+#include "../common/Time_t.h"
+#include "../common/Locator.h"
 
 namespace eprosima {
 namespace fastrtps{

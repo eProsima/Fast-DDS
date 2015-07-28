@@ -11,12 +11,12 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPStaticXML.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStaticXML.h>
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/utils/TimeConversion.h"
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 
 #include "boost/lexical_cast.hpp"
 

@@ -12,15 +12,15 @@
  */
 
 
-#include "fastrtps/rtps/writer/ReaderProxy.h"
+#include <fastrtps/rtps/writer/ReaderProxy.h>
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/utils/TimeConversion.h>
 
-#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
-#include "fastrtps/rtps/writer/timedevent/NackSupressionDuration.h"
+#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
+#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -122,7 +122,9 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 		}
 	}
 	if(!m_isRequestedChangesEmpty)
+	{
 		logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
+	}
 	return true;
 }
 

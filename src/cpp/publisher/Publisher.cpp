@@ -11,10 +11,10 @@
  *
  */
 
-#include "fastrtps/publisher/Publisher.h"
-#include "fastrtps/publisher/PublisherImpl.h"
+#include <fastrtps/publisher/Publisher.h>
+#include "PublisherImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps {

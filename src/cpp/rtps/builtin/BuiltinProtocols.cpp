@@ -11,19 +11,19 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-#include "fastrtps/rtps/common/Locator.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/common/Locator.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 
-#include "fastrtps/rtps/builtin/liveliness/WLP.h"
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../participant/RTPSParticipantImpl.h"
 
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/utils/IPFinder.h"
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/utils/IPFinder.h>
 
 
 

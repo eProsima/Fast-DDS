@@ -15,11 +15,11 @@
 #define READERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/attributes/TopicAttributes.h"
-#include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/qos/ReaderQos.h"
+#include "../../../attributes/TopicAttributes.h"
+#include "../../../qos/ParameterList.h"
+#include "../../../qos/ReaderQos.h"
 
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
+#include "../../attributes/WriterAttributes.h"
 
 using namespace eprosima::fastrtps;
 

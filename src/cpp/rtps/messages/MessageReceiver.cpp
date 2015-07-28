@@ -11,34 +11,31 @@
  *
  */
 
-#include "fastrtps/rtps/messages/MessageReceiver.h"
-//#include "fastrtps/common/RTPS_messages.h"
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include "fastrtps/rtps/resources/ListenResource.h"
+#include <fastrtps/rtps/resources/ListenResource.h>
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
-//#include "fastrtps/rtps/writer/StatelessWriter.h"
-//#include "fastrtps/rtps/reader/StatelessReader.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/rtps/writer/ReaderProxy.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
+#include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
 
-#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 
-#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
+#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 
-#include "fastrtps/rtps/reader/ReaderListener.h"
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-//#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "../participant/RTPSParticipantImpl.h"
+
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 #include <limits>
 
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #define IDSTRING "(ID:"<<this->mp_threadListen->m_ID<<") "<<
 
@@ -475,7 +472,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
+        // TODO Genera deadlock. revisar.
+		//boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
 		WriterProxy* pWP = nullptr;
 		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
@@ -501,6 +499,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE && pWP!=nullptr)
 			{
+                boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*pWP->getMutex());
 				pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
 				if((*it)->change_received(change_to_add,pWP))
 				{
@@ -571,6 +570,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
 		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -581,6 +581,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				//FIXME: Ignoring too close received HB.
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
+                    lock.unlock();
+
+                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
 					if(WP->m_lastHeartbeatCount < HBCount)
 					{
 						WP->m_lastHeartbeatCount = HBCount;
@@ -647,15 +650,19 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
 	{
+        //Look for the readerProxy the acknack is from
+        boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
+
 		if((*it)->getGuid() == writerGUID)
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
-				//Look for the readerProxy the acknack is from
-				boost::lock_guard<boost::recursive_mutex> guardW(*SF->getMutex());
+				
 				for(auto rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
+                    boost::lock_guard<boost::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
+
 					if((*rit)->m_att.guid == readerGUID )
 					{
 						if((*rit)->m_lastAcknackCount < Ackcount)
@@ -718,6 +725,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
 		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -727,6 +735,9 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 				WriterProxy* WP;
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
+                    lock.unlock();
+
+                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
 					SequenceNumber_t auxSN;
 					SequenceNumber_t finalSN = gapList.base -1;
 					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)

@@ -11,13 +11,13 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ResourceEvent.h"
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "../participant/RTPSParticipantImpl.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{

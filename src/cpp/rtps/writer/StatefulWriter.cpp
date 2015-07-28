@@ -11,25 +11,25 @@
  *
  */
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/writer/ReaderProxy.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/ReaderProxy.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
-#include "fastrtps/rtps/resources/ResourceSend.h"
+#include <fastrtps/rtps/resources/ResourceSend.h>
 
-#include "fastrtps/utils/TimeConversion.h"
+#include <fastrtps/utils/TimeConversion.h>
 
-#include "fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
-#include "fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h"
-#include "fastrtps/rtps/writer/timedevent/NackSupressionDuration.h"
-#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
+#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
+#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
+#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 
-#include "fastrtps/rtps/history/WriterHistory.h"
+#include <fastrtps/rtps/history/WriterHistory.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

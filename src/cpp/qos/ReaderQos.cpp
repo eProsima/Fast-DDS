@@ -11,8 +11,8 @@
  *
  */
 
-#include "fastrtps/qos/ReaderQos.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/qos/ReaderQos.h>
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps {

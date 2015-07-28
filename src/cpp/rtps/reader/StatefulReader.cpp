@@ -11,15 +11,15 @@
  *
  */
 
-#include "fastrtps/rtps/reader/StatefulReader.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
-#include "fastrtps/rtps/reader/ReaderListener.h"
-#include "fastrtps/rtps/history/ReaderHistory.h"
-#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 
 
@@ -140,6 +140,7 @@ bool StatefulReader::matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP)
 
 bool StatefulReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(writerId.entityId == this->m_trustedWriterEntityId)
 		return true;
 
@@ -163,6 +164,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(wp!=nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
 	{
+        boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*wp->getMutex());
 		std::vector<int> to_remove;
 		bool continuous_removal = true;
 		for(size_t i = 0;i<wp->m_changesFromW.size();++i)
@@ -205,7 +207,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 {
 	const char* const METHOD_NAME = "change_received";
 	//First look for WriterProxy in case is not provided
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 	if(prox == nullptr)
 	{
 		if(!this->matched_writer_lookup(a_change->writerGUID,&prox))
@@ -238,11 +240,15 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 				prox->available_changes_max(&maxSeqNumAvailable);
 				if(a_change->sequenceNumber == maxSeqNumAvailable)
 				{
+                    lock.unlock();
 					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+                    lock.lock();
 				}
 				else if(a_change->sequenceNumber < maxSeqNumAvailable)
 				{
+                    lock.unlock();
 					getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+                    lock.lock();
 					SequenceNumber_t notifySeqNum = a_change->sequenceNumber+1;
 					CacheChange_t* ch_to_give = nullptr;
 					//TODO Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
@@ -252,7 +258,11 @@ bool StatefulReader::change_received(CacheChange_t* a_change,WriterProxy* prox)
 						if(mp_history->get_change(notifySeqNum,prox->m_att.guid,&ch_to_give))
 						{
 							if(!ch_to_give->isRead)
+                            {
+                                lock.unlock();
 								getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
+                                lock.lock();
+                            }
 						}
 						notifySeqNum++;
 					}

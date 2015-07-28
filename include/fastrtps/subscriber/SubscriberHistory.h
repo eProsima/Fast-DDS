@@ -14,9 +14,9 @@
 #ifndef SUBSCRIBERHISTORY_H_
 #define SUBSCRIBERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/history/ReaderHistory.h"
-#include "fastrtps/qos/QosPolicies.h"
-#include "fastrtps/subscriber/SampleInfo.h"
+#include "../rtps/history/ReaderHistory.h"
+#include "../qos/QosPolicies.h"
+#include "SampleInfo.h"
 
 using namespace eprosima::fastrtps::rtps;
 

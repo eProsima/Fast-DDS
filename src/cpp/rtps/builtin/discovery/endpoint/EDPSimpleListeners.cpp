@@ -11,25 +11,23 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include "../../../participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/rtps/history/ReaderHistory.h"
+#include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include "fastrtps/rtps/common/InstanceHandle.h"
+#include <fastrtps/rtps/common/InstanceHandle.h>
 
-//#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
-//#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -40,7 +38,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheC
 	const char* const CLASS_NAME = "EDPSimplePUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_PubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
 	{
@@ -167,7 +165,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheC
 	const char* const CLASS_NAME = "EDPSimpleSUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)change_in;
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*this->mp_SEDP->mp_SubReader.first->getMutex());
 	logInfo(RTPS_EDP,"");
 	if(!computeKey(change))
 	{

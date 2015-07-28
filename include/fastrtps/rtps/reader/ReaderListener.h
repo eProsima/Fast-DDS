@@ -14,7 +14,7 @@
 #ifndef READERLISTENER_H_
 #define READERLISTENER_H_
 
-#include "fastrtps/rtps/common/MatchingInfo.h"
+#include "../common/MatchingInfo.h"
 
 namespace eprosima{
 namespace fastrtps{

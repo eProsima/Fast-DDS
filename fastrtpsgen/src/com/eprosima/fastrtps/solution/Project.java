@@ -18,6 +18,8 @@ public class Project extends com.eprosima.solution.Project
 		m_publisherincludefiles = new ArrayList();
 		m_projectincludefiles = new ArrayList();
 		m_projectsrcfiles = new ArrayList();
+        m_jnisrcfiles = new ArrayList<String>();
+        m_jniincludefiles = new ArrayList<String>();
 	}
 	
 	public void addSubscriberSrcFile(String file)
@@ -79,6 +81,26 @@ public class Project extends com.eprosima.solution.Project
 	{
 		return m_projectsrcfiles;
 	}
+
+    public void addJniSrcFile(String file)
+    {
+        m_jnisrcfiles.add(file);
+    }
+
+    public ArrayList<String> getJniSrcFiles()
+    {
+        return m_jnisrcfiles;
+    }
+
+    public void addJniIncludeFile(String file)
+    {
+        m_jniincludefiles.add(file);
+    }
+
+    public ArrayList<String> getJniIncludeFiles()
+    {
+        return m_jniincludefiles;
+    }
 	
 	public boolean getContainsInterfaces()
 	{
@@ -129,6 +151,32 @@ public class Project extends com.eprosima.solution.Project
 	{
 		return GUIDGenerator.genGUID(getFile() + "PubSubExample");
 	}
+
+	/*!
+	 * @brief Used in string templates.
+	 */
+	public String getJniGuid()
+	{
+		return GUIDGenerator.genGUID(getFile() + "JNI");
+	}
+
+    public ArrayList<String> getDependenciesJNIGuids()
+	{
+		ArrayList<String> deps = new ArrayList<String>(getFullDependencies());
+		ArrayList<String> array = new ArrayList<String>();
+		
+		for(int count = 0; count < deps.size(); ++count)
+		{
+			if(!getParent().getOS().contains("Windows") ||
+					getParent().existsProject(deps.get(count)))
+			{
+				//System.out.println("Adding GUID of " + deps.get(count));
+				array.add(GUIDGenerator.genGUID(deps.get(count) + "JNI"));
+			}
+		}
+		
+		return array;
+	}
 	
 	public boolean getHasStruct()
 	{
@@ -148,5 +196,7 @@ public class Project extends com.eprosima.solution.Project
 	private ArrayList m_projectsrcfiles = null;
 	private ArrayList m_projectincludefiles = null;
 	private boolean m_hasStruct = false;
+	private ArrayList<String> m_jnisrcfiles = null;
+	private ArrayList<String> m_jniincludefiles = null;
 	String m_guid = null;
 }

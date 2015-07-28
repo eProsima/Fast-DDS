@@ -15,8 +15,8 @@
 #ifndef CDRMESSAGE_H_
 #define CDRMESSAGE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/CDRMessage_t.h"
-#include "fastrtps/qos/ParameterTypes.h"
+#include "../common/CDRMessage_t.h"
+#include "../../qos/ParameterTypes.h"
 
 using namespace eprosima::fastrtps;
 

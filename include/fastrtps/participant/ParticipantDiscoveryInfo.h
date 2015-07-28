@@ -14,7 +14,7 @@
 #ifndef PARTICIPANTDISCOVERYINFO_H_
 #define PARTICIPANTDISCOVERYINFO_H_
 
-#include "fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h"
+#include "../rtps/participant/RTPSParticipantDiscoveryInfo.h"
 
 using namespace eprosima::fastrtps::rtps;
 

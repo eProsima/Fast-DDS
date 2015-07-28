@@ -11,12 +11,12 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include "../../../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 
 namespace eprosima {

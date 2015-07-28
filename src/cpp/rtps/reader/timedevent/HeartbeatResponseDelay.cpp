@@ -11,15 +11,15 @@
  *
  */
 
-#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
 
-#include "fastrtps/rtps/reader/StatefulReader.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include "../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
-#include "fastrtps/rtps/messages/CDRMessage.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>

@@ -11,37 +11,36 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h>
 
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-#include "fastrtps/rtps/builtin/liveliness/WLP.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
-
-
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-
-#include "fastrtps/rtps/writer/StatelessWriter.h"
-#include "fastrtps/rtps/reader/StatelessReader.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
-
-#include "fastrtps/rtps/history/WriterHistory.h"
-#include "fastrtps/rtps/history/ReaderHistory.h"
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
 
 
-//#include "fastrtps/utils/eClock.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include "../../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/reader/StatelessReader.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
+
+#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/history/ReaderHistory.h>
+
+
+#include <fastrtps/utils/TimeConversion.h>
+
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -103,8 +102,8 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 		return false;
 	//UPDATE METATRAFFIC.
 	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
-	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	m_participantProxies.push_back(new ParticipantProxyData());
 	m_participantProxies.front()->initializeData(mp_RTPSParticipant,this);
 

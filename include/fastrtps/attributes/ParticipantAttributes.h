@@ -14,7 +14,7 @@
 #ifndef PARTICIPANTATTRIBUTES_H_
 #define PARTICIPANTATTRIBUTES_H_
 
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include "../rtps/attributes/RTPSParticipantAttributes.h"
 
 using namespace eprosima::fastrtps::rtps;
 

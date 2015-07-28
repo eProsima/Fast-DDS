@@ -16,8 +16,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <vector>
 
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/Locator.h"
+#include "../../common/Time_t.h"
+#include "../../common/Locator.h"
 
 namespace boost
 {

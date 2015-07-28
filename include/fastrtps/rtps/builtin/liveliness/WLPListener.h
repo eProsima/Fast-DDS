@@ -14,12 +14,12 @@
 #ifndef WLPLISTENER_H_
 #define WLPLISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/reader/ReaderListener.h"
+#include "../../reader/ReaderListener.h"
 
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/common/InstanceHandle.h"
-#include "fastrtps/qos/QosPolicies.h"
-#include "fastrtps/qos/ParameterList.h"
+#include "../../common/Guid.h"
+#include "../../common/InstanceHandle.h"
+#include "../../../qos/QosPolicies.h"
+#include "../../../qos/ParameterList.h"
 
 
 using namespace eprosima::fastrtps;

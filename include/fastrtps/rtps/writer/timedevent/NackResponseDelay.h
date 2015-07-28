@@ -14,8 +14,8 @@
 #ifndef NACKRESPONSEDELAY_H_
 #define NACKRESPONSEDELAY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/resources/TimedEvent.h"
-#include "fastrtps/rtps/messages/RTPSMessageGroup.h"
+#include "../../resources/TimedEvent.h"
+#include "../../messages/RTPSMessageGroup.h"
 
 
 namespace eprosima {

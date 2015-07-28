@@ -11,13 +11,13 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ListenResourceImpl.h"
-#include "fastrtps/rtps/resources/ListenResource.h"
-#include "fastrtps/rtps/messages/MessageReceiver.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "ListenResourceImpl.h"
+#include <fastrtps/rtps/resources/ListenResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include "../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/IPFinder.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/RTPSLog.h>
 
 #define IDSTRING "(ID:"<<this->mp_listenResource->m_ID<<") "<<
 

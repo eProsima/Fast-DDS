@@ -14,8 +14,8 @@
 #ifndef READERHISTORY_H_
 #define READERHISTORY_H_
 
-#include "fastrtps/rtps/history/History.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include "History.h"
+#include "../common/CacheChange.h"
 #include <map>
 #include <set>
 

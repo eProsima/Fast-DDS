@@ -14,9 +14,9 @@
 #ifndef RTPSWRITER_H_
 #define RTPSWRITER_H_
 
-#include "fastrtps/rtps/Endpoint.h"
-#include "fastrtps/rtps/messages/RTPSMessageGroup.h"
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
+#include "../Endpoint.h"
+#include "../messages/RTPSMessageGroup.h"
+#include "../attributes/WriterAttributes.h"
 
 
 

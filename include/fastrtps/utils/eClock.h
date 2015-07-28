@@ -36,7 +36,7 @@ struct timezone
 
 #endif
 
-#include "fastrtps/rtps/common/Time_t.h"
+#include "../rtps/common/Time_t.h"
 
 using namespace eprosima::fastrtps::rtps;
 

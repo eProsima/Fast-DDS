@@ -12,8 +12,8 @@
 
 #ifndef RTPS_ELEM_LOCATOR_H_
 #define RTPS_ELEM_LOCATOR_H_
-#include "fastrtps/config/fastrtps_dll.h"
-#include "fastrtps/rtps/common/Types.h"
+#include "../../fastrtps_dll.h"
+#include "Types.h"
 #include <sstream>
 #include <vector>
 #include <cstdint>

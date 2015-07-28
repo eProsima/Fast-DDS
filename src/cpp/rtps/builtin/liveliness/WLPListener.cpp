@@ -11,22 +11,17 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/liveliness/WLPListener.h"
-#include "fastrtps/rtps/builtin/liveliness/WLP.h"
+#include <fastrtps/rtps/builtin/liveliness/WLPListener.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
-#include "fastrtps/rtps/history/ReaderHistory.h"
+#include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-//#include "fastrtps/common/types/Guid.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
-//
-//#include "fastrtps/RTPSParticipant.h"
-//#include "fastrtps/reader/WriterProxyData.h"
-//
-#include "fastrtps/rtps/reader/StatefulReader.h"
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

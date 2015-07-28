@@ -12,8 +12,8 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
-#include "fastrtps/config/fastrtps_dll.h"
-#include "fastrtps/rtps/common/Types.h"
+#include "../../fastrtps_dll.h"
+#include "Types.h"
 
 #include <vector>
 #include <cmath>
