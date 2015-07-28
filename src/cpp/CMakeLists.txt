@@ -219,15 +219,22 @@ if(MSVC OR MSVC_IDE)
     else()
         install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static
             EXPORT ${PROJECT_NAME}Targets
-            RUNTIME DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
-            LIBRARY DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
-            ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
+            RUNTIME DESTINATION ${LIB_INSTALL_DIR}
+            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+            ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT libraries_${MSVC_ARCH}
             )
 
+        export(EXPORT ${PROJECT_NAME}Targets FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
+        install(EXPORT ${PROJECT_NAME}Targets
+            DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
+            COMPONENT cmake
+            )
+
+
         # Install pdb files
         install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/
-            DESTINATION ${LIB_INSTALL_DIR}/${MSVC_ARCH}
+            DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT libraries_${MSVC_ARCH}
             FILES_MATCHING
             PATTERN "*.pdb"
@@ -247,6 +254,12 @@ else()
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
         COMPONENT libraries
+        )
+
+    export(EXPORT ${PROJECT_NAME}Targets FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
+    install(EXPORT ${PROJECT_NAME}Targets
+        DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
+        COMPONENT cmake
         )
 
     set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries" PARENT_SCOPE)

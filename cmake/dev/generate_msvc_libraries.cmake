@@ -33,10 +33,16 @@ endmacro()
 
 macro(install_msvc_libraries platform)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/../${platform}/lib/
-        DESTINATION ${LIB_INSTALL_DIR}/${platform}
+        DESTINATION lib/${platform}
         COMPONENT libraries_${platform}
         FILES_MATCHING
         PATTERN "*${PROJECT_NAME}*-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}*"
+        )
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/../${platform}/cmake/config/
+        DESTINATION lib/${platform}/${PROJECT_NAME}/cmake
+        COMPONENT cmake
+        FILES_MATCHING
+        PATTERN "*.cmake"
         )
     string(TOUPPER "${platform}" ${platform}_UPPER)
     set(CPACK_COMPONENT_LIBRARIES_${${platform}_UPPER}_DISPLAY_NAME "${platform}" PARENT_SCOPE)
