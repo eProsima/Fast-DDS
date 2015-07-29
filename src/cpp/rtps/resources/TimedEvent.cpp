@@ -11,8 +11,8 @@
  *
  */
 
-#include "fastrtps/rtps/resources/TimedEvent.h"
-#include "fastrtps/rtps/resources/TimedEventImpl.h"
+#include <fastrtps/rtps/resources/TimedEvent.h>
+#include "TimedEventImpl.h"
 
 
 

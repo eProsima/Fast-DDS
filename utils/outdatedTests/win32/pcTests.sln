@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StatelessTest1", "StatelessTest1\StatelessTest1.vcxproj", "{07EDC096-F83B-42BA-9756-20C98FEA8002}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StatefulTest", "StatefulTest\StatefulTest.vcxproj", "{1A26FC75-9F39-4D68-8527-DE9437BEC824}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiscoveryTest", "DiscovertyTest\DiscoveryTest.vcxproj", "{9A0765E1-297A-40AB-9E05-6D97A2A68F50}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZeroMQTest", "ZeroMQTest\ZeroMQTest.vcxproj", "{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		debug_reader|Win32 = debug_reader|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07EDC096-F83B-42BA-9756-20C98FEA8002}.debug_reader|Win32.ActiveCfg = Debug|Win32
+		{07EDC096-F83B-42BA-9756-20C98FEA8002}.debug_reader|Win32.Build.0 = Debug|Win32
+		{07EDC096-F83B-42BA-9756-20C98FEA8002}.Debug|Win32.ActiveCfg = Debug|Win32
+		{07EDC096-F83B-42BA-9756-20C98FEA8002}.Debug|Win32.Build.0 = Debug|Win32
+		{07EDC096-F83B-42BA-9756-20C98FEA8002}.Release|Win32.ActiveCfg = Release|Win32
+		{07EDC096-F83B-42BA-9756-20C98FEA8002}.Release|Win32.Build.0 = Release|Win32
+		{1A26FC75-9F39-4D68-8527-DE9437BEC824}.debug_reader|Win32.ActiveCfg = Debug|Win32
+		{1A26FC75-9F39-4D68-8527-DE9437BEC824}.debug_reader|Win32.Build.0 = Debug|Win32
+		{1A26FC75-9F39-4D68-8527-DE9437BEC824}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1A26FC75-9F39-4D68-8527-DE9437BEC824}.Debug|Win32.Build.0 = Debug|Win32
+		{1A26FC75-9F39-4D68-8527-DE9437BEC824}.Release|Win32.ActiveCfg = Release|Win32
+		{1A26FC75-9F39-4D68-8527-DE9437BEC824}.Release|Win32.Build.0 = Release|Win32
+		{9A0765E1-297A-40AB-9E05-6D97A2A68F50}.debug_reader|Win32.ActiveCfg = Debug|Win32
+		{9A0765E1-297A-40AB-9E05-6D97A2A68F50}.debug_reader|Win32.Build.0 = Debug|Win32
+		{9A0765E1-297A-40AB-9E05-6D97A2A68F50}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9A0765E1-297A-40AB-9E05-6D97A2A68F50}.Debug|Win32.Build.0 = Debug|Win32
+		{9A0765E1-297A-40AB-9E05-6D97A2A68F50}.Release|Win32.ActiveCfg = Release|Win32
+		{9A0765E1-297A-40AB-9E05-6D97A2A68F50}.Release|Win32.Build.0 = Release|Win32
+		{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}.debug_reader|Win32.ActiveCfg = Debug|Win32
+		{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}.debug_reader|Win32.Build.0 = Debug|Win32
+		{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}.Debug|Win32.ActiveCfg = Debug|Win32
+		{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}.Debug|Win32.Build.0 = Debug|Win32
+		{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}.Release|Win32.ActiveCfg = Release|Win32
+		{094BF7C7-18E3-4AE8-9EFE-AF9CB24D6C48}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

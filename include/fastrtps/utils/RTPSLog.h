@@ -14,7 +14,7 @@
 #ifndef RTPSLOG_H_
 #define RTPSLOG_H_
 
-#include "eProsima_cpp/log/Log.h"
+#include "../log/Log.h"
 
 namespace eprosima{
 
@@ -25,7 +25,7 @@ namespace eprosima{
  *  @ingroup UTILITIES_MODULE
  */
 #if defined(_WIN32)
-enum LOG_DllAPI LOG_CATEGORY
+enum RTPS_DllAPI LOG_CATEGORY
 #else
 enum LOG_CATEGORY : uint32_t
 #endif

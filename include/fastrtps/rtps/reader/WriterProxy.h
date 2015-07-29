@@ -17,12 +17,12 @@
 
 
 
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Locator.h"
+#include "../common/Types.h"
+#include "../common/Locator.h"
 
-#include "fastrtps/rtps/common/CacheChange.h"
+#include "../common/CacheChange.h"
 
-#include "fastrtps/rtps/attributes/ReaderAttributes.h"
+#include "../attributes/ReaderAttributes.h"
 
 namespace boost
 {
@@ -144,7 +144,12 @@ public:
 	/**
 	* Set the writer as alive
 	*/
-	inline void assertLiveliness(){m_isAlive=true;};
+	void assertLiveliness();
+	/**
+	 * Set the writer as not alive
+	 * @return
+	 */
+	inline void setNotAlive(){m_isAlive = false;};
 
 	/**
 	* Get the mutex

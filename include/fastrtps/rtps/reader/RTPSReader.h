@@ -16,8 +16,8 @@
 #define RTPSREADER_H_
 
 
-#include "fastrtps/rtps/Endpoint.h"
-#include "fastrtps/rtps/attributes/ReaderAttributes.h"
+#include "../Endpoint.h"
+#include "../attributes/ReaderAttributes.h"
 
 
 

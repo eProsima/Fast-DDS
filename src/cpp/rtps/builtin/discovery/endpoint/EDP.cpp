@@ -11,39 +11,27 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-//
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
-//
-#include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/reader/RTPSReader.h"
-#include "fastrtps/rtps/writer/WriterListener.h"
-#include "fastrtps/rtps/reader/ReaderListener.h"
-//#include "fastrtps/writer/StatelessWriter.h"
-//#include "fastrtps/reader/StatelessReader.h"
-//
-//#include "fastrtps/reader/WriterProxyData.h"
-//#include "fastrtps/writer/ReaderProxyData.h"
-//
+#include "../../../participant/RTPSParticipantImpl.h"
 
-//#include "fastrtps/utils/IPFinder.h"
 
-//
-//#include "fastrtps/pubsub/PublisherListener.h"
-//#include "fastrtps/pubsub/SubscriberListener.h"
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
-#include "fastrtps/attributes/TopicAttributes.h"
-#include "fastrtps/rtps/common/MatchingInfo.h"
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/rtps/common/MatchingInfo.h>
 
-#include "fastrtps/utils/StringMatching.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/StringMatching.h>
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -426,6 +414,7 @@ bool EDP::validMatching(ReaderProxyData* rdata,WriterProxyData* wdata)
 
 }
 
+//TODO Estas cuatro funciones comparten codigo comun (2 a 2) y se podrían seguramente combinar.
 
 bool EDP::pairingReader(RTPSReader* R)
 {
@@ -480,6 +469,7 @@ bool EDP::pairingReader(RTPSReader* R)
 	return false;
 }
 
+//TODO Añadir WriterProxyData como argumento con nullptr como valor por defecto.
 bool EDP::pairingWriter(RTPSWriter* W)
 {
 	const char* const METHOD_NAME = "pairingWriter";
@@ -542,13 +532,16 @@ bool EDP::pairingReaderProxy(ReaderProxyData* rdata)
 	for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
 			wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
 	{
-		boost::lock_guard<boost::recursive_mutex> guardW(*(*wit)->getMutex());
+        GUID_t writerGUID;
+		boost::unique_lock<boost::recursive_mutex> lock(*(*wit)->getMutex());
+        writerGUID = (*wit)->getGuid();
+        lock.unlock();
 		WriterProxyData* wdata = nullptr;
-		if(mp_PDP->lookupWriterProxyData((*wit)->getGuid(),&wdata))
+		if(mp_PDP->lookupWriterProxyData(writerGUID,&wdata))
 		{
 			if(validMatching(wdata,rdata))
 			{
-				logInfo(RTPS_EDP,"Valid Matching to local writer: "<<(*wit)->getGuid().entityId,C_CYAN);
+                logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId, C_CYAN);
 				if((*wit)->matched_reader_add(rdata->toRemoteReaderAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:
@@ -589,13 +582,16 @@ bool EDP::pairingWriterProxy(WriterProxyData* wdata)
 	for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
 			rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
 	{
-		boost::lock_guard<boost::recursive_mutex> guardR(*(*rit)->getMutex());
+        GUID_t readerGUID;
+		boost::unique_lock<boost::recursive_mutex> lock(*(*rit)->getMutex());
+        readerGUID = (*rit)->getGuid();
+        lock.unlock();
 		ReaderProxyData* rdata = nullptr;
-		if(mp_PDP->lookupReaderProxyData((*rit)->getGuid(),&rdata))
+        if(mp_PDP->lookupReaderProxyData(readerGUID, &rdata))
 		{
 			if(validMatching(rdata,wdata))
 			{
-				logInfo(RTPS_EDP,"Valid Matching to local reader: "<<(*rit)->getGuid().entityId,C_CYAN);
+                logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId, C_CYAN);
 				if((*rit)->matched_writer_add(wdata->toRemoteWriterAttributes()))
 				{
 					//MATCHED AND ADDED CORRECTLY:

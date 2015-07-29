@@ -2,11 +2,7 @@ group eprosima;
 
 paramTypeByValue(typecode) ::= <<
 $if(typecode.primitive)$
-$if(typecode.isType_d)$
-const $typecode.cppTypename$&
-$else$
 $typecode.cppTypename$
-$endif$
 $else$
 const $typecode.cppTypename$&
 $endif$

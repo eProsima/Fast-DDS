@@ -11,13 +11,13 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ListenResourceImpl.h"
-#include "fastrtps/rtps/resources/ListenResource.h"
-#include "fastrtps/rtps/messages/MessageReceiver.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "ListenResourceImpl.h"
+#include <fastrtps/rtps/resources/ListenResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include "../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/IPFinder.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/RTPSLog.h>
 
 #define IDSTRING "(ID:"<<this->mp_listenResource->m_ID<<") "<<
 
@@ -47,7 +47,7 @@ ListenResourceImpl::~ListenResourceImpl()
 	const char* const METHOD_NAME = "~ListenResourceImpl";
 	if(mp_thread !=nullptr)
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
+		logInfo(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
 				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc,C_BLUE);
 		m_listen_socket.close();
 		m_io_service.stop();
@@ -123,6 +123,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 			logError(RTPS_MSG_IN,IDSTRING"Error processing message: " << e,C_BLUE);
 
 		}
+		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" ,C_BLUE);
 		this->putToListen();
 	}
 	else if(err == boost::asio::error::operation_aborted)
@@ -218,7 +219,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	else
 	{
 		bool binded = false;
-		for(uint8_t i =0;i<1000;++i)
+		for(uint8_t i =0;i<1000;++i) //TODO make it configurable by user.
 		{
 			m_listen_endpoint.port(m_listen_endpoint.port()+i);
 			try

@@ -15,9 +15,9 @@
 #define QOS_POLICIES_H_
 
 #include <vector>
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/qos/ParameterTypes.h"
+#include "../rtps/common/Types.h"
+#include "../rtps/common/Time_t.h"
+#include "ParameterTypes.h"
 using namespace eprosima::fastrtps::rtps;
 
 
@@ -104,9 +104,12 @@ typedef enum LivelinessQosPolicyKind:octet {
 
 /**
  * Class LivelinessQosPolicy, to indicate the Liveliness of the Writers.
- * This QosPolicy can be defined for the Subscribers and is transmitted but only the Writer Liveliness protocol is implemented in this version.
+ * This QosPolicy can be defined for the Subscribers and is transmitted but only the Writer Liveliness protocol
+ * is implemented in this version. The user should set the lease_duration and the announcement_period with values that differ
+ * in at least 30%. Values too close to each other may cause the failure of the writer liveliness assertion in networks
+ * with high latency or with lots of communication errors.
  * kind: Default value AUTOMATIC_LIVELINESS_QOS
- * lease_duration: Default value c_TimeInfinite
+ * lease_duration: Default value c_TimeInfinite.
  * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
 class RTPS_DllAPI LivelinessQosPolicy : private Parameter_t, public QosPolicy {
@@ -268,10 +271,10 @@ public:
 	RTPS_DllAPI PartitionQosPolicy() :Parameter_t(PID_PARTITION, 0), QosPolicy(false){};
 	RTPS_DllAPI virtual ~PartitionQosPolicy(){};
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
-	RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string("oc")); };
+    RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string(oc)); hasChanged=true; };
 	RTPS_DllAPI inline void clear(){ names.clear(); };
 	RTPS_DllAPI inline std::vector<std::string> getNames(){ return names; };
-	RTPS_DllAPI inline void setNames(std::vector<std::string> nam){ names = nam; };
+    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; };
 private:
 	std::vector<std::string> names;
 };

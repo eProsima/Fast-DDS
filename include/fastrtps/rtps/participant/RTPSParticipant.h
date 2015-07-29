@@ -15,8 +15,8 @@
 #define RTPSParticipant_H_
 
 #include <cstdlib>
-#include "fastrtps/config/fastrtps_dll.h"
-#include "fastrtps/rtps/common/Guid.h"
+#include "../../fastrtps_dll.h"
+#include "../common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -52,11 +52,11 @@ public:
 	const GUID_t& getGuid() const ;
 	//!Force the announcement of the RTPSParticipant state.
 	void announceRTPSParticipantState();
-	//!Method to loose the next change (ONLY FOR TEST).
-	void loose_next_change();
-	//!Stop the RTPSParticipant announcement period.
+//	//!Method to loose the next change (ONLY FOR TEST). //TODO remove this method because is only for testing
+//	void loose_next_change();
+	//!Stop the RTPSParticipant announcement period. //TODO remove this method because is only for testing
 	void stopRTPSParticipantAnnouncement();
-	//!Reset the RTPSParticipant announcement period.
+	//!Reset the RTPSParticipant announcement period. //TODO remove this method because is only for testing
 	void resetRTPSParticipantAnnouncement();
 	/**
 	 * Indicate the Participant that you have discovered a new Remote Writer.

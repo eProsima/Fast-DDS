@@ -11,8 +11,8 @@
  *
  */
 
-#include "fastrtps/rtps/writer/ReaderLocator.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include <fastrtps/rtps/writer/ReaderLocator.h>
+#include <fastrtps/rtps/common/CacheChange.h>
 
 
 namespace eprosima {

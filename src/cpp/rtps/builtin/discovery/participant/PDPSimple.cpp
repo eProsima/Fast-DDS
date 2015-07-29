@@ -11,35 +11,36 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h>
 
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-#include "fastrtps/rtps/builtin/liveliness/WLP.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h"
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h"
-
-
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-
-#include "fastrtps/rtps/writer/StatelessWriter.h"
-#include "fastrtps/rtps/reader/StatelessReader.h"
-
-#include "fastrtps/rtps/history/WriterHistory.h"
-#include "fastrtps/rtps/history/ReaderHistory.h"
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
 
 
-//#include "fastrtps/utils/eClock.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include "../../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/reader/StatelessReader.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
+
+#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/history/ReaderHistory.h>
+
+
+#include <fastrtps/utils/TimeConversion.h>
+
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -53,17 +54,17 @@ namespace rtps {
 static const char* const CLASS_NAME = "PDPSimple";
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-			mp_builtin(built),
-			mp_RTPSParticipant(nullptr),
-			mp_SPDPWriter(nullptr),
-			mp_SPDPReader(nullptr),
-			mp_EDP(nullptr),
-			m_hasChangedLocalPDP(true),
-			mp_resendParticipantTimer(nullptr),
-			mp_listener(nullptr),
-			mp_SPDPWriterHistory(nullptr),
-			mp_SPDPReaderHistory(nullptr),
-			mp_mutex(new boost::recursive_mutex())
+					mp_builtin(built),
+					mp_RTPSParticipant(nullptr),
+					mp_SPDPWriter(nullptr),
+					mp_SPDPReader(nullptr),
+					mp_EDP(nullptr),
+					m_hasChangedLocalPDP(true),
+					mp_resendParticipantTimer(nullptr),
+					mp_listener(nullptr),
+					mp_SPDPWriterHistory(nullptr),
+					mp_SPDPReaderHistory(nullptr),
+					mp_mutex(new boost::recursive_mutex())
 {
 
 }
@@ -96,11 +97,13 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 	mp_RTPSParticipant = part;
 	m_discovery = mp_RTPSParticipant->getAttributes().builtin;
 	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+	//CREATE ENDPOINTS
 	if(!createSPDPEndpoints())
 		return false;
+	//UPDATE METATRAFFIC.
 	mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
-	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
 	m_participantProxies.push_back(new ParticipantProxyData());
 	m_participantProxies.front()->initializeData(mp_RTPSParticipant,this);
 
@@ -151,6 +154,7 @@ void PDPSimple::announceParticipantState(bool new_change)
 		{
 			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
 			change->serializedPayload.length = getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+			//TODO Optimizacion, intentar quitar la copia.
 			memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
 			mp_SPDPWriterHistory->add_change(change);
 		}
@@ -413,7 +417,6 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata,bool copydata,
 				(*pit)->m_writers.push_back(wdata);
 			}
 			return true;
-			return true;
 		}
 	}
 	return false;
@@ -579,6 +582,9 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+	const char* const METHOD_NAME = "assertRemoteWritersLiveliness";
+	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
+				<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);
 	for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
 			pit!=this->m_participantProxies.end();++pit)
 	{
@@ -589,25 +595,42 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 					wit != (*pit)->m_writers.end();++wit)
 			{
 				if((*wit)->m_qos.m_liveliness.kind == kind)
-					(*wit)->m_isAlive;
+				{
+					(*wit)->m_isAlive = true;
+					boost::lock_guard<boost::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
+					for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
+							rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
+					{
+						if((*rit)->getAttributes()->reliabilityKind == RELIABLE)
+						{
+							StatefulReader* sfr = (StatefulReader*)(*rit);
+							WriterProxy* WP;
+							if(sfr->matched_writer_lookup((*wit)->m_guid,&WP))
+							{
+								WP->assertLiveliness();
+								continue;
+							}
+						}
+					}
+					}
+				}
+				break;
 			}
-			break;
 		}
 	}
-}
 
-bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
-{
-	ParticipantProxyData* pdata;
-	if(lookupParticipantProxyData(pguid, &pdata))
+	bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 	{
-		if(kind == WRITER)
-			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
-		else
-			dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+		ParticipantProxyData* pdata;
+		if(lookupParticipantProxyData(pguid, &pdata))
+		{
+			if(kind == WRITER)
+				dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
+			else
+				dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+		}
+		return false;
 	}
-	return false;
-}
 
 }
 } /* namespace rtps */

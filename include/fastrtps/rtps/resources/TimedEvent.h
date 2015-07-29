@@ -15,7 +15,7 @@
 #define TIMEDEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <cstdint>
-#include "fastrtps/rtps/common/Time_t.h"
+#include "../common/Time_t.h"
 namespace boost
 {
 namespace asio

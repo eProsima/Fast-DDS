@@ -14,7 +14,7 @@
 #ifndef DOMAIN_H_
 #define DOMAIN_H_
 
-#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "attributes/ParticipantAttributes.h"
 
 namespace eprosima{
 namespace fastrtps{

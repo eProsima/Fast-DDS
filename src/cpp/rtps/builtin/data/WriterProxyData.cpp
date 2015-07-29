@@ -11,11 +11,11 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
-#include "fastrtps/rtps/common/CDRMessage_t.h"
+#include <fastrtps/rtps/common/CDRMessage_t.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -189,7 +189,7 @@ bool WriterProxyData::toParameterList()
 
 bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-	const char* const METHOD_NAME = "readFromCDRMessage";
+	//const char* const METHOD_NAME = "readFromCDRMessage";
 	if(ParameterList::readParameterListfromCDRMsg(msg,&m_parameterList,NULL,NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();

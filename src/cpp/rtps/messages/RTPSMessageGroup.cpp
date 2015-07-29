@@ -11,13 +11,12 @@
  *
  */
 
-#include "fastrtps/rtps/messages/RTPSMessageGroup.h"
-#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
-#include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-//#include "fastrtps/resources/ResourceSend.h"
+#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include "../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -198,7 +197,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		bool added = false;
 		CDRMessage::initCDRMsg(cdrmsg_fullmsg);
 		CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
-		RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg,false);
+		RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg,false); //Change here to add a INFO_TS for DATA.
 		if(first)
 		{
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);

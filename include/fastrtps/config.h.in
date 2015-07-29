@@ -1,0 +1,24 @@
+#ifndef _FASTRTPS_CONFIG_H_
+#define _FASTRTPS_CONFIG_H_
+
+#ifndef FASTRTPS_VERSION_MAJOR
+#define FASTRTPS_VERSION_MAJOR @FASTRTPS_VERSION_MAJOR@
+#endif
+#ifndef FASTRTPS_VERSION_MINOR
+#define FASTRTPS_VERSION_MINOR @FASTRTPS_VERSION_MINOR@
+#endif
+#ifndef FASTRTPS_VERSION_MICRO
+#define FASTRTPS_VERSION_MICRO @FASTRTPS_VERSION_MICRO@
+#endif
+
+// C++11 support defines
+#ifndef HAVE_CXX11
+#define HAVE_CXX11 @HAVE_CXX11@
+#endif
+
+// Endianness defines
+#ifndef __BIG_ENDIAN__
+#define __BIG_ENDIAN__ @__BIG_ENDIAN__@
+#endif
+
+#endif // _FASTRTPS_CONFIG_H_

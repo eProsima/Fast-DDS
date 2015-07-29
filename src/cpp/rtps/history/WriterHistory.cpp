@@ -11,10 +11,10 @@
  *
  */
 
-#include "fastrtps/rtps/history/WriterHistory.h"
+#include <fastrtps/rtps/history/WriterHistory.h>
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/rtps/writer/RTPSWriter.h"
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -129,7 +129,7 @@ bool WriterHistory::remove_min_change()
 		return false;
 }
 
-
+//TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.
 
 
 

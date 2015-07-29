@@ -13,7 +13,7 @@
 #ifndef CDRMESSAGE_T_H_
 #define CDRMESSAGE_T_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/Types.h"
+#include "Types.h"
 #include <stdlib.h>
 
 namespace eprosima{

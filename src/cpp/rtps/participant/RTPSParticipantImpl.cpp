@@ -11,35 +11,35 @@
  *
  */
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/resources/ResourceSend.h"
-#include "fastrtps/rtps/resources/ResourceEvent.h"
-#include "fastrtps/rtps/resources/ListenResource.h"
+#include <fastrtps/rtps/resources/ResourceSend.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/resources/ListenResource.h>
 
 
 
-#include "fastrtps/rtps/writer/StatelessWriter.h"
-#include "fastrtps/rtps/writer/StatefulWriter.h"
+#include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 
-#include "fastrtps/rtps/reader/StatelessReader.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
+#include <fastrtps/rtps/reader/StatelessReader.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipant.h"
+#include <fastrtps/rtps/participant/RTPSParticipant.h>
 
-#include "fastrtps/rtps/RTPSDomain.h"
+#include <fastrtps/rtps/RTPSDomain.h>
 
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
-#include "fastrtps/utils/IPFinder.h"
-#include "fastrtps/utils/eClock.h"
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/eClock.h>
 
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 
 
@@ -87,7 +87,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
 	bool hasLocatorsDefined = true;
-	if(m_att.defaultMulticastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
+	//If no default locator is defined you define one.
+	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
 		hasLocatorsDefined = false;
 		Locator_t loc;
@@ -182,7 +183,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 {
 	const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type);
+	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -259,7 +260,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 {
 	const char* const METHOD_NAME = "createReader";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type);
+	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -395,29 +396,42 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 {
 	const char* const METHOD_NAME = "assignEndpointListenResources";
 	bool valid = true;
-	boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex()); //  Fixed bug #914
 	bool unicastempty = endp->getAttributes()->unicastLocatorList.empty();
 	bool multicastempty = endp->getAttributes()->multicastLocatorList.empty();
+    LocatorList_t uniList, mulList;
+
+    if(!unicastempty)
+        uniList = endp->getAttributes()->unicastLocatorList;
+    if(!multicastempty)
+        mulList = endp->getAttributes()->multicastLocatorList;
+
 	if(unicastempty && !isBuiltin && multicastempty)
 	{
 		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
 		logInfo(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
 		valid &= assignEndpoint2LocatorList(endp,m_att.defaultUnicastLocatorList,false,false);
+        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
 		endp->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
 	}
 	else
 	{
-		valid &= assignEndpoint2LocatorList(endp,endp->getAttributes()->unicastLocatorList,false,!isBuiltin);
+        valid &= assignEndpoint2LocatorList(endp, uniList, false, !isBuiltin);
+        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
+        endp->getAttributes()->unicastLocatorList = uniList;
 	}
 	//MULTICAST
 	if(multicastempty && !isBuiltin && unicastempty)
 	{
 		valid &= assignEndpoint2LocatorList(endp,m_att.defaultMulticastLocatorList,true,false);
+        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
 		endp->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
 	}
 	else
 	{
-		valid &= assignEndpoint2LocatorList(endp,endp->getAttributes()->multicastLocatorList,true,!isBuiltin);
+        valid &= assignEndpoint2LocatorList(endp, mulList, true, !isBuiltin);
+        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
+        endp->getAttributes()->multicastLocatorList = mulList;
 	}
 	return valid;
 }
@@ -443,7 +457,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 			}
 		}
 		if(added)
-			break;
+			continue;
 		ListenResource* LR = new ListenResource(this,++m_threadID,false);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
 		{
@@ -560,6 +574,11 @@ void RTPSParticipantImpl::stopRTPSParticipantAnnouncement()
 void RTPSParticipantImpl::resetRTPSParticipantAnnouncement()
 {
 	return mp_builtinProtocols->resetRTPSParticipantAnnouncement();
+}
+
+void RTPSParticipantImpl::loose_next_change()
+{
+	this->mp_send_thr->loose_next_change();
 }
 
 

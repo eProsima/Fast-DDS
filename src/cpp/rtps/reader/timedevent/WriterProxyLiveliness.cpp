@@ -11,15 +11,15 @@
  *
  */
 
-#include "fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h"
-#include "fastrtps/rtps/common/MatchingInfo.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
-#include "fastrtps/rtps/reader/ReaderListener.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
+#include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
+#include <fastrtps/rtps/common/MatchingInfo.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 
 
@@ -47,11 +47,11 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 	
-		logInfo(RTPS_LIVELINESS,"Checking Writer: "<<mp_WP->m_att.guid,C_MAGENTA);
-		if(!mp_WP->isAlive())
-		{
-			logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMilliSec()<< " ms",C_MAGENTA);
-			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att))
+		logInfo(RTPS_LIVELINESS,"Deleting Writer: "<<mp_WP->m_att.guid,C_MAGENTA);
+//		if(!mp_WP->isAlive())
+//		{
+			//logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMilliSec()<< " ms",C_MAGENTA);
+			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att,false))
 			{
 				if(mp_WP->mp_SFR->getListener()!=nullptr)
 				{
@@ -59,13 +59,17 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 					mp_WP->mp_SFR->getListener()->onReaderMatched((RTPSReader*)mp_WP->mp_SFR,info);
 				}
 			}
+			//NOW WE DELETE THE OBJECTS
+			mp_WP->mp_writerProxyLiveliness = nullptr;
+			delete(mp_WP);
+			delete(this);
 			return;
-		}
-		this->restart_timer();
+//		}
+//		mp_WP->setNotAlive();
+//		this->restart_timer();
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logInfo(RTPS_LIVELINESS,"Aborted");
 		this->stopSemaphorePost();
 	}
 	else

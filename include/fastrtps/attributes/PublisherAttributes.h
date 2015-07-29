@@ -14,11 +14,11 @@
 #define PUBLISHERATTRIBUTES_H_
 
 
-#include "fastrtps/rtps/common/Locator.h"
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
-#include "fastrtps/attributes/TopicAttributes.h"
-#include "fastrtps/qos/WriterQos.h"
+#include "../rtps/common/Locator.h"
+#include "../rtps/common/Time_t.h"
+#include "../rtps/attributes/WriterAttributes.h"
+#include "TopicAttributes.h"
+#include "../qos/WriterQos.h"
 
 using namespace eprosima::fastrtps::rtps;
 

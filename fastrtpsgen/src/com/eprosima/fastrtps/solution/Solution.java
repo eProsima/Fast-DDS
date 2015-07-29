@@ -1,10 +1,12 @@
 package com.eprosima.fastrtps.solution;
 
+import com.eprosima.fastrtps.fastrtpsgen;
+
 import java.util.ArrayList;
 
 public class Solution extends com.eprosima.solution.Solution
 {
-    public Solution(String example, String version, boolean serverside, boolean clientside)
+    public Solution(fastrtpsgen.LANGUAGE language, String example, String version, boolean serverside, boolean clientside)
     {
         super();
 
@@ -12,6 +14,7 @@ public class Solution extends com.eprosima.solution.Solution
         m_subscriberside = clientside;
         m_version = version;
         m_example = example;
+        m_language = language;
     }
 
     public boolean getPublisherside()
@@ -93,8 +96,14 @@ public class Solution extends com.eprosima.solution.Solution
         return ret;
     }
 
+    public boolean isIsJavaLanguage()
+    {
+        return m_language == fastrtpsgen.LANGUAGE.JAVA;
+    }
+
     private boolean m_publisherside = true;
     private boolean m_subscriberside = true;
     private String m_version = null;
     private String m_example = null;
+    private fastrtpsgen.LANGUAGE m_language = fastrtpsgen.LANGUAGE.CPP; // Default language -> c++
 }

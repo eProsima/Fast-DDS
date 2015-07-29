@@ -1,0 +1,21 @@
+SUBDIRS = include src/cpp
+
+@PROJECT_NAME@_licenciasdir = $(datadir)/doc/@PROJECT_NAME@
+@PROJECT_NAME@_licencias_DATA = @PROJECT_NAME_UPPER@_LIBRARY_LICENSE.txt LGPLv3_LICENSE.txt
+
+@PROJECT_NAME@_scriptdir = $(bindir)
+@PROJECT_NAME@_script_SCRIPTS = .bin/@PROJECT_NAME@gen
+
+@PROJECT_NAME@_javadir = $(datadir)/@PROJECT_NAME@
+@PROJECT_NAME@_java_DATA = share/@PROJECT_NAME@/@PROJECT_NAME@gen.jar
+
+install-data-hook:
+	mkdir -p $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
+	cp -r share/doc/* $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
+	mkdir -p $(DESTDIR)$(datadir)/@PROJECT_NAME@; \
+	cp -r examples $(DESTDIR)$(datadir)/@PROJECT_NAME@/;
+
+uninstall-hook:
+	rm -r $(DESTDIR)$(datadir)/doc/@PROJECT_NAME@; \
+	rm -r $(DESTDIR)$(datadir)/@PROJECT_NAME@
+	rm -r $(DESTDIR)$(includedir)/@PROJECT_NAME@

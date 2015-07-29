@@ -13,12 +13,12 @@
 #ifndef CACHECHANGE_H_
 #define CACHECHANGE_H_
 
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/common/SequenceNumber.h"
-#include "fastrtps/rtps/common/SerializedPayload.h"
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/InstanceHandle.h"
+#include "Types.h"
+#include "Guid.h"
+#include "SequenceNumber.h"
+#include "SerializedPayload.h"
+#include "Time_t.h"
+#include "InstanceHandle.h"
 
 namespace eprosima{
 namespace fastrtps{

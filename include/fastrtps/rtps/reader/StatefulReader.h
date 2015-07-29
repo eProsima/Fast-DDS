@@ -14,7 +14,7 @@
 #define STATEFULREADER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "fastrtps/rtps/reader/RTPSReader.h"
+#include "RTPSReader.h"
 
 
 
@@ -43,6 +43,13 @@ public:
 	 * @return True if correctly added.
 	 */
 	bool matched_writer_add(RemoteWriterAttributes& wdata);
+	/**
+	 * Remove a WriterProxyData from the matached writers.
+	 * @param wdata Pointer to the WPD object.
+	 * @param deleteWP If the Reader has to delete the associated WP object or not.
+	 * @return True if correct.
+	 */
+	bool matched_writer_remove(RemoteWriterAttributes& wdata,bool deleteWP);
 	/**
 	 * Remove a WriterProxyData from the matached writers.
 	 * @param wdata Pointer to the WPD object.

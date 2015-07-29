@@ -11,9 +11,9 @@
  *
  */
 
-#include "fastrtps/participant/Participant.h"
+#include <fastrtps/participant/Participant.h>
 
-#include "fastrtps/participant/ParticipantImpl.h"
+#include "ParticipantImpl.h"
 
 namespace eprosima {
 namespace fastrtps {

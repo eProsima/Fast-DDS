@@ -14,13 +14,13 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
-#include "fastrtps/config/fastrtps_dll.h"
+#include "../../fastrtps_dll.h"
 
-#include "fastrtps/rtps/history/CacheChangePool.h"
+#include "CacheChangePool.h"
 
-#include "fastrtps/rtps/common/SequenceNumber.h"
-#include "fastrtps/rtps/common/Guid.h"
-#include "fastrtps/rtps/attributes/HistoryAttributes.h"
+#include "../common/SequenceNumber.h"
+#include "../common/Guid.h"
+#include "../attributes/HistoryAttributes.h"
 
 
 namespace boost
@@ -115,6 +115,8 @@ public:
 	 * @return Mutex
 	 */
 	RTPS_DllAPI inline boost::recursive_mutex* getMutex() {return mp_mutex;};
+
+	RTPS_DllAPI bool get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change);
 
 protected:
 	//!Vector of pointers to the CacheChange_t.

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!-- 
+Description
+XML QoS Profile for HelloWorld
+
+The QoS configuration of the DDS entities in the generated example is 
+loaded from this file.
+
+This file is used only when it is in the current working directory
+or when the enviroment variable
+NDDS_QOS_PROFILES is defined and points to this file.
+
+For more information about XML QoS Profiles see Chapter 15 in the 
+RTI Connext user manual.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="/opt/rti/ndds.5.0.0/scripts/../resource/rtiddsgen/../qos_profiles_5.0.0/schema/rti_dds_qos_profiles.xsd"
+     version="5.0.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="HelloWorld_Library">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter 
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="HelloWorld_Profile" is_default_qos="true">
+            <!-- QoS used to configure the data writer created in the example code -->                
+            <datawriter_qos>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    <max_blocking_time>
+                        <sec>60</sec>
+                    </max_blocking_time>
+                </reliability>                
+
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+
+                <protocol>
+                    <rtps_reliable_writer>
+                        <min_send_window_size>50</min_send_window_size>
+                        <max_send_window_size>50</max_send_window_size>
+                    </rtps_reliable_writer>
+                </protocol>
+		
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->                
+            <datareader_qos>
+
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+    
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+			
+            </datareader_qos>
+
+            <RTPSParticipant_qos>
+                <!--
+                The RTPSParticipant name, if it is set, will be displayed in the
+                RTI Analyzer tool, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <RTPSParticipant_name>
+                    <name>RTI "Hello, World" Example</name>
+                </RTPSParticipant_name>
+
+            </RTPSParticipant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>

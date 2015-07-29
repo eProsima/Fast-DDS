@@ -11,13 +11,13 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ResourceEvent.h"
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "../participant/RTPSParticipantImpl.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -37,7 +37,7 @@ ResourceEvent::ResourceEvent():
 
 ResourceEvent::~ResourceEvent() {
 	const char* const METHOD_NAME = "~ResourceEvent";
-	logWarning(RTPS_PARTICIPANT,"Removing event thread " << mp_b_thread->get_id());
+	logInfo(RTPS_PARTICIPANT,"Removing event thread " << mp_b_thread->get_id());
 	mp_io_service->reset();
 	mp_io_service->stop();
 	mp_b_thread->join();

@@ -17,11 +17,11 @@
 #define READERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <algorithm>
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Locator.h"
-#include "fastrtps/rtps/common/SequenceNumber.h"
-#include "fastrtps/rtps/common/CacheChange.h"
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
+#include "../common/Types.h"
+#include "../common/Locator.h"
+#include "../common/SequenceNumber.h"
+#include "../common/CacheChange.h"
+#include "../attributes/WriterAttributes.h"
 namespace boost
 {
 class recursive_mutex;

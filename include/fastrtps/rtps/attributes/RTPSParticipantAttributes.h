@@ -13,8 +13,8 @@
 #ifndef _RTPSPARTICIPANTPARAMETERS_H_
 #define _RTPSPARTICIPANTPARAMETERS_H_
 
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/Locator.h"
+#include "../common/Time_t.h"
+#include "../common/Locator.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -142,7 +142,7 @@ public:
 		use_SIMPLE_EndpointDiscoveryProtocol = true;
 		use_STATIC_EndpointDiscoveryProtocol = false;
 		m_staticEndpointXMLFilename = "";
-		domainId = 80;
+		domainId = 0;
 		leaseDuration.seconds = 500;
 		leaseDuration_announcementperiod.seconds = 250;
 		use_WriterLivelinessProtocol = true;

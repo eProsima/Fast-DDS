@@ -11,9 +11,9 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ResourceSend.h"
-#include "fastrtps/rtps/resources/ResourceSendImpl.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/resources/ResourceSend.h>
+#include "ResourceSendImpl.h"
+#include "../participant/RTPSParticipantImpl.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -46,6 +46,12 @@ boost::recursive_mutex* ResourceSend::getMutex()
 {
 	return mp_impl->getMutex();
 }
+
+void ResourceSend::loose_next_change()
+{
+	return mp_impl->loose_next();
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

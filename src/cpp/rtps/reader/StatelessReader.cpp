@@ -11,11 +11,11 @@
  *             	
  */
 
-#include "fastrtps/rtps/reader/StatelessReader.h"
-#include "fastrtps/rtps/history/ReaderHistory.h"
-#include "fastrtps/rtps/reader/ReaderListener.h"
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include <fastrtps/rtps/reader/StatelessReader.h>
+#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/rtps/common/CacheChange.h>
 
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -87,13 +87,16 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
 	if(mp_history->received_change(change))
 	{
 		if(getListener()!=nullptr)
 		{
+            lock.unlock();
 			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
 		}
+        lock.lock();
 		mp_history->postSemaphore();
 		return true;
 	}
@@ -115,6 +118,7 @@ bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout
 	//m_reader_cache.sortCacheChangesBySeqNum();
 	bool found = false;
 	std::vector<CacheChange_t*>::iterator it;
+	//TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
 	for(it = mp_history->changesBegin();
 			it!=mp_history->changesEnd();++it)
 	{
@@ -141,6 +145,7 @@ bool StatelessReader::change_removed_by_history(CacheChange_t*ch,WriterProxy*pro
 
 bool StatelessReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 {
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(this->m_acceptMessagesFromUnkownWriters)
 	{
 		return true;
@@ -149,7 +154,6 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
 	{
 		if(writerId.entityId == this->m_trustedWriterEntityId)
 			return true;
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 		{
 			if((*it).guid == writerId)

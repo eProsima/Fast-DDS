@@ -14,10 +14,10 @@
 #ifndef EDPSIMPLELISTENER_H_
 #define EDPSIMPLELISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/reader/ReaderListener.h"
+#include "../../../reader/ReaderListener.h"
 
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+#include "../../data/ReaderProxyData.h"
+#include "../../data/WriterProxyData.h"
 
 
 

@@ -11,25 +11,25 @@
  *
  */
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/writer/ReaderProxy.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/ReaderProxy.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
-#include "fastrtps/rtps/resources/ResourceSend.h"
+#include <fastrtps/rtps/resources/ResourceSend.h>
 
-#include "fastrtps/utils/TimeConversion.h"
+#include <fastrtps/utils/TimeConversion.h>
 
-#include "fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
-#include "fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h"
-#include "fastrtps/rtps/writer/timedevent/NackSupressionDuration.h"
-#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
+#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
+#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
+#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 
-#include "fastrtps/rtps/history/WriterHistory.h"
+#include <fastrtps/rtps/history/WriterHistory.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -68,6 +68,7 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
 	else
 		m_HBReaderEntityId = c_EntityId_Unknown;
+	mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 }
 
 /*
@@ -83,6 +84,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 	std::vector<CacheChange_t*> changeV;
 	changeV.push_back(change);
 	bool expectsInlineQos = false;
+	this->setLivelinessAsserted(true);
 	if(!matched_readers.empty())
 	{
 		for(auto it=matched_readers.begin();it!=matched_readers.end();++it)
@@ -98,6 +100,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 			unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
 			multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
 			expectsInlineQos |= (*it)->m_att.expectsInlineQos;
+			(*it)->mp_nackSupression->restart_timer();
 		}
 		RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
 			&changeV,
@@ -105,6 +108,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 			multilocList,
 			expectsInlineQos,
 			c_EntityId_Unknown);
+		this->mp_periodicHB->restart_timer();
 	}
 	else
 	{

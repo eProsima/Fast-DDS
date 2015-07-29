@@ -15,8 +15,8 @@
 #define RTPSPARTICIPANTDISCOVERYINFO_H_
 
 #include <vector>
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Guid.h"
+#include "../common/Types.h"
+#include "../common/Guid.h"
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{

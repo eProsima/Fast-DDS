@@ -11,8 +11,8 @@
  *
  */
 
-#include "fastrtps/subscriber/Subscriber.h"
-#include "fastrtps/subscriber/SubscriberImpl.h"
+#include <fastrtps/subscriber/Subscriber.h>
+#include "SubscriberImpl.h"
 
 namespace eprosima {
 namespace fastrtps {

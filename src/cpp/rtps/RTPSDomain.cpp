@@ -11,18 +11,18 @@
  *
  */
 
-#include "fastrtps/rtps/RTPSDomain.h"
+#include <fastrtps/rtps/RTPSDomain.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipant.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include "participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
-#include "fastrtps/utils/IPFinder.h"
-#include "fastrtps/utils/eClock.h"
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/eClock.h>
 
-#include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/reader/RTPSReader.h"
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -67,7 +67,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 	const char* const METHOD_NAME = "createParticipant";
 	logInfo(RTPS_PARTICIPANT,"");
 
-	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod)
+	if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod) //TODO CHeckear si puedo ser infinito
 	{
 		logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
 		return nullptr;

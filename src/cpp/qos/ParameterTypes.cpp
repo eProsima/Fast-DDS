@@ -11,9 +11,9 @@
  *
  */
 
-#include "fastrtps/qos/ParameterTypes.h"
+#include <fastrtps/qos/ParameterTypes.h>
 
-#include "fastrtps/rtps/messages/CDRMessage.h"
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 namespace eprosima {
 namespace fastrtps {

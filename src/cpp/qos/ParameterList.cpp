@@ -11,8 +11,8 @@
  *
  */
 
-#include "fastrtps/qos/ParameterList.h"
-#include "fastrtps/qos/QosPolicies.h"
+#include <fastrtps/qos/ParameterList.h>
+#include <fastrtps/qos/QosPolicies.h>
 
 
 namespace eprosima {

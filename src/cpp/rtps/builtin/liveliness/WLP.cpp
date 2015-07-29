@@ -12,26 +12,23 @@
  */
 #include <limits>
 
-#include "fastrtps/rtps/builtin/liveliness/WLP.h"
-#include "fastrtps/rtps/builtin/liveliness/WLPListener.h"
-#include "fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h"
-//#include "fastrtps/common/types/Guid.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
-#include "fastrtps/rtps/history/WriterHistory.h"
-#include "fastrtps/rtps/history/ReaderHistory.h"
-//#include "fastrtps/reader/WriterProxy.h"
-//
-//#include "fastrtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h"
-#include "fastrtps/rtps/builtin/BuiltinProtocols.h"
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastrtps/rtps/builtin/liveliness/WLPListener.h>
+#include <fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h>
+#include "../../participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include "fastrtps/rtps/builtin/data/ParticipantProxyData.h"
-#include "fastrtps/rtps/builtin/data/WriterProxyData.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/utils/TimeConversion.h"
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -157,10 +154,12 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t partdet = endp;
 	uint32_t auxendp = endp;
-	partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+	//TODO Hacer el check con RTI y solo añadirlo cuando el vendor ID sea RTI.
+	partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
 	auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 	//auxendp = 1;
 	//FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
+
 	if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
 	{
 		logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader",C_MAGENTA);

@@ -11,16 +11,16 @@
  *
  */
 
-#include "fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h"
+#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/writer/ReaderProxy.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/ReaderProxy.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
+#include "../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/messages/RTPSMessageCreator.h"
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

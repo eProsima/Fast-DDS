@@ -16,8 +16,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <vector>
 
-#include "fastrtps/rtps/common/Time_t.h"
-#include "fastrtps/rtps/common/Locator.h"
+#include "../../common/Time_t.h"
+#include "../../common/Locator.h"
 
 namespace boost
 {
@@ -134,8 +134,9 @@ private:
 	StatefulWriter* mp_builtinWriter;
 	//!Pointer to the builtinRTPSParticipantMEssageReader.
 	StatefulReader* mp_builtinReader;
-	//!Hist
+	//!Writer History
 	WriterHistory* mp_builtinWriterHistory;
+	//!Reader History
 	ReaderHistory* mp_builtinReaderHistory;
 	//!Listener object.
 	WLPListener* mp_listener;

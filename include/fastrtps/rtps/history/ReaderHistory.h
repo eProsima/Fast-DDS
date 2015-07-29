@@ -14,8 +14,8 @@
 #ifndef READERHISTORY_H_
 #define READERHISTORY_H_
 
-#include "fastrtps/rtps/history/History.h"
-#include "fastrtps/rtps/common/CacheChange.h"
+#include "History.h"
+#include "../common/CacheChange.h"
 #include <map>
 #include <set>
 
@@ -94,7 +94,8 @@ protected:
 	//!Pointer to the semaphore, used to halt execution until new message arrives.
 	boost::interprocess::interprocess_semaphore* mp_semaphore;
 	//!Information about changes already in History
-	std::map<GUID_t, std::set<SequenceNumber_t>> m_historyRecord;
+	std::map<GUID_t, std::set<SequenceNumber_t>> m_historyRecord;//TODO sustituir por una clase que sea más efectiva,
+																//que no guarde todos los numeros de secuencia rebidiso sino los que falten
 
 };
 

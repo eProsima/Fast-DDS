@@ -11,14 +11,14 @@
  *
  */
 
-#include "fastrtps/rtps/writer/StatelessWriter.h"
-#include "fastrtps/rtps/history/WriterHistory.h"
-#include "fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h"
+#include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -48,13 +48,14 @@ StatelessWriter::~StatelessWriter()
 
 void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
-	const char* const METHOD_NAME = "unsent_change_add";
+	const char* const METHOD_NAME = "unsent_change_added_to_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	std::vector<CacheChange_t*> change;
 	change.push_back(cptr);
 	LocatorList_t locList;
 	LocatorList_t locList2;
-	if(!reader_locator.empty())
+	this->setLivelinessAsserted(true);
+	if(!reader_locator.empty()) //TODO change to m_reader_locator.
 	{
 		for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
 		{
@@ -191,6 +192,8 @@ bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 	}
 	if(rdata.endpoint.durabilityKind >= TRANSIENT_LOCAL)
 	{
+		//TODO check if the history needs to be protected,
+		//Cuando un hilo añade un remote reader y otro hilo está añadiendo cambios a la historia.
 		for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
 				it!=mp_history->changesEnd();++it)
 		{

@@ -11,11 +11,11 @@
  *
  */
 
-#include "fastrtps/rtps/history/ReaderHistory.h"
+#include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/rtps/reader/RTPSReader.h"
-#include "fastrtps/rtps/reader/ReaderListener.h"
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -140,7 +140,7 @@ void ReaderHistory::postSemaphore()
 	return mp_semaphore->post();
 }
 
-void ReaderHistory::waitSemaphore()
+void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario sepa que es para esperar a un cachechange nuevo
 {
 	return mp_semaphore->wait();
 }

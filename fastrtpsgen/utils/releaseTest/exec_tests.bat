@@ -15,15 +15,15 @@ set failedtests=
 set correcttests=
 set configurations=Release DLL,Release,Debug DLL,Debug
 
-for %%a in ("%configurations:,=" "%") do (
-	echo "CONFIGURATION %%a"
-)
+::for %%a in ("%configurations:,=" "%") do (
+::	echo "CONFIGURATION %%a"
+::)
 
 
 :: Get number of arguments
 set argC=0
 for %%x in (%*) do set /A argC+=1
-echo "Proviced arguments: %argC%"
+echo "Provided number of arguments: %argC%"
 :: Get the optional parameter
 if "%argC%" == "1" (
 	echo "EXECUTING TEST %1"
@@ -53,9 +53,9 @@ if "%argC%" == "1" (
 		)
 	)
 )
-echo "TESTS FINISHED"
+echo "ALL TESTS HAVE FINISHED, RESULTS:"
 if !globalerrorstatus!==0 (
-    echo "TEST SUCCESSFULL"
+    echo "ALL TESTS SUCCESSFULL"
 ) else (
     echo "TESTS FAILED: %failedtests%"
 	echo "TESTS OK: %correcttests%"
@@ -79,7 +79,7 @@ for %%i in (*.idl) do (
 echo "FOUND IDL FILES: %IDLFILES%"
 ::Generate Info
 copy ..\..\..\lib\fastrtpsgen.jar .
-java -jar fastrtpsgen.jar -example %configuration% -replace %IDLFILES%
+java -jar fastrtpsgen.jar -local -example %configuration% -replace %IDLFILES%
 if errorlevel 1 (
 	set errorstatus=1
 	goto :EOF

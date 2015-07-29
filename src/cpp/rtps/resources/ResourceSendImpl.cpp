@@ -11,11 +11,11 @@
  *
  */
 
-#include "fastrtps/rtps/resources/ResourceSendImpl.h"
-#include "fastrtps/rtps/common/CDRMessage_t.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include "ResourceSendImpl.h"
+#include <fastrtps/rtps/common/CDRMessage_t.h>
+#include <fastrtps/utils/RTPSLog.h>
 
-#include "fastrtps/utils/IPFinder.h"
+#include <fastrtps/utils/IPFinder.h>
 
 using boost::asio::ip::udp;
 

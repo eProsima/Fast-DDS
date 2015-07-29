@@ -11,34 +11,31 @@
  *
  */
 
-#include "fastrtps/rtps/messages/MessageReceiver.h"
-//#include "fastrtps/common/RTPS_messages.h"
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include "fastrtps/rtps/resources/ListenResource.h"
+#include <fastrtps/rtps/resources/ListenResource.h>
 
-#include "fastrtps/rtps/writer/StatefulWriter.h"
-#include "fastrtps/rtps/reader/StatefulReader.h"
-//#include "fastrtps/rtps/writer/StatelessWriter.h"
-//#include "fastrtps/rtps/reader/StatelessReader.h"
+#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
-#include "fastrtps/rtps/writer/ReaderProxy.h"
-#include "fastrtps/rtps/reader/WriterProxy.h"
+#include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastrtps/rtps/reader/WriterProxy.h>
 
-#include "fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h"
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 
-#include "fastrtps/rtps/writer/timedevent/NackResponseDelay.h"
+#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 
-#include "fastrtps/rtps/reader/ReaderListener.h"
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-//#include "fastrtps/builtin/discovery/RTPSParticipant/PDPSimple.h"
+#include "../participant/RTPSParticipantImpl.h"
+
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 #include <limits>
 
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 #define IDSTRING "(ID:"<<this->mp_threadListen->m_ID<<") "<<
 
@@ -52,8 +49,8 @@ static const char* const CLASS_NAME = "MessageReceiver";
 
 
 MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
-						m_rec_msg(rec_buffer_size),
-						mp_change(nullptr)
+												m_rec_msg(rec_buffer_size),
+												mp_change(nullptr)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
 	destVersion = c_ProtocolVersion;
@@ -118,11 +115,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		Locator_t* loc,CDRMessage_t*msg)
 {
 	const char* const METHOD_NAME = "processCDRMsg";
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex()); //TODO Comprobar si se puede poner en las subfunciones de la clase.
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring",C_BLUE)
-				return;
+		logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring",C_BLUE);
+		return;
 	}
 	this->reset();
 	destGuidPrefix = RTPSParticipantguidprefix;
@@ -268,7 +265,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 
 }
 
-bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg)
+bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
 {
 	const char* const METHOD_NAME = "checkRTPSHeader";
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
@@ -335,8 +332,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	bool keyFlag = smh->flags & BIT(3) ? true : false;
 	if(keyFlag && dataFlag)
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Message received with Data and Key Flag set, ignoring")
-				return false;
+		logWarning(RTPS_MSG_IN,IDSTRING"Message received with Data and Key Flag set, ignoring");
+		return false;
 	}
 
 	//Assign message endianness
@@ -387,10 +384,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//Get sequence number
 	CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
 
-	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid
+	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number",C_BLUE)
-				return false;
+		logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number",C_BLUE);
+		return false;
 	}
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
@@ -405,7 +402,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		if(inlineQosSize <= 0)
 		{
 			logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
-			firstReader->releaseCache(ch);
+			//firstReader->releaseCache(ch);
 			return false;
 		}
 
@@ -439,7 +436,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 			{
 				logWarning(RTPS_MSG_IN,IDSTRING"Serialized Payload larger than maximum allowed size "
 						"("<<payload_size-2-2<<"/"<<ch->serializedPayload.max_size<<")",C_BLUE);
-				firstReader->releaseCache(ch);
+				//firstReader->releaseCache(ch);
 				return false;
 			}
 		}
@@ -475,7 +472,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
+        // TODO Genera deadlock. revisar.
+		//boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
 		WriterProxy* pWP = nullptr;
 		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
 		{
@@ -487,7 +485,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				if (!change_to_add->copy(ch))
 				{
 					logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << ch->serializedPayload.length
-						<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+							<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
 					(*it)->releaseCache(change_to_add);
 					return false;
 				}
@@ -501,9 +499,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				change_to_add->sourceTimestamp = this->timestamp;
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE && pWP!=nullptr)
 			{
+                boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*pWP->getMutex());
+				pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
 				if((*it)->change_received(change_to_add,pWP))
 				{
-
+					//pWP->assertLiveliness();
 				}
 				else
 				{
@@ -570,6 +570,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
 		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -580,6 +581,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 				//FIXME: Ignoring too close received HB.
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
+                    lock.unlock();
+
+                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
 					if(WP->m_lastHeartbeatCount < HBCount)
 					{
 						WP->m_lastHeartbeatCount = HBCount;
@@ -646,15 +650,19 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
 	{
+        //Look for the readerProxy the acknack is from
+        boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
+
 		if((*it)->getGuid() == writerGUID)
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
 			{
 				StatefulWriter* SF = (StatefulWriter*)(*it);
-				//Look for the readerProxy the acknack is from
-				boost::lock_guard<boost::recursive_mutex> guardW(*SF->getMutex());
+				
 				for(auto rit = SF->matchedReadersBegin();rit!=SF->matchedReadersEnd();++rit)
 				{
+                    boost::lock_guard<boost::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
+
 					if((*rit)->m_att.guid == readerGUID )
 					{
 						if((*rit)->m_lastAcknackCount < Ackcount)
@@ -717,6 +725,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
+        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
 		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
 			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -726,6 +735,9 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 				WriterProxy* WP;
 				if(SR->matched_writer_lookup(writerGUID,&WP))
 				{
+                    lock.unlock();
+
+                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
 					SequenceNumber_t auxSN;
 					SequenceNumber_t finalSN = gapList.base -1;
 					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)

@@ -11,32 +11,28 @@
  *
  */
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h"
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 
-#include "fastrtps/rtps/builtin/discovery/participant/PDPSimple.h"
-#include "fastrtps/rtps/participant/RTPSParticipantImpl.h"
-//
-#include "fastrtps/rtps/builtin/discovery/endpoint/EDP.h"
-//#include "fastrtps/RTPSParticipant.h"
-#include "fastrtps/rtps/reader/RTPSReader.h"
+#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include "../../../participant/RTPSParticipantImpl.h"
 
-#include "fastrtps/rtps/history/ReaderHistory.h"
-//#include "fastrtps/writer/StatelessWriter.h"
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastrtps/rtps/reader/RTPSReader.h>
+
+#include <fastrtps/rtps/history/ReaderHistory.h>
+
+#include <fastrtps/utils/TimeConversion.h>
 //
-//#include "fastrtps/utils/RTPSLog.h"
-//#include "fastrtps/utils/eClock.h"
-#include "fastrtps/utils/TimeConversion.h"
-//
-#include "fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h"
-#include "fastrtps/rtps/participant/RTPSParticipantListener.h"
+#include <fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -49,8 +45,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)(change_in);
-	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guard2(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
+	//boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
 	if(change->instanceHandle == c_InstanceHandle_Unknown)
 	{
@@ -80,6 +75,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 				this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
 				return;
 			}
+            boost::unique_lock<boost::recursive_mutex> lock(*mp_SPDP->mp_SPDPReaderHistory->getMutex());
 			for(auto chit = this->mp_SPDP->mp_SPDPReaderHistory->changesBegin();
 					chit != mp_SPDP->mp_SPDPReaderHistory->changesEnd();++chit)
 			{
@@ -90,6 +86,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 					break;
 				}
 			}
+            lock.unlock();
 			//LOOK IF IS AN UPDATED INFORMATION
 			ParticipantProxyData* pdata_ptr;
 			bool found = false;

@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import com.eprosima.idl.parser.tree.Interface;
 import com.eprosima.idl.parser.tree.TypeDeclaration;
+import com.eprosima.idl.parser.tree.Annotation;
 import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.fastrtps.idl.parser.typecode.StructTypeCode;
 
@@ -39,14 +40,26 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     @Override
     public StructTypeCode createStructTypeCode(String name)
     {
-        StructTypeCode structObject = new StructTypeCode(getScope(), name);
+        return new StructTypeCode(getScope(), name);
+    }
 
-        if(isInScopedFile())
+    @Override
+    public void addTypeDeclaration(TypeDeclaration typedecl)
+    {
+        super.addTypeDeclaration(typedecl);
+
+        if(typedecl.getTypeCode().getKind() == TypeCode.KIND_STRUCT && typedecl.isInScope())
         {
-            m_lastStructure = structObject;
-        }
+            Annotation topicann = typedecl.getAnnotations().get("Topic");
 
-        return structObject;
+            if(topicann != null && topicann.getValue("value").equalsIgnoreCase("false"))
+            {
+                StructTypeCode structtypecode = (StructTypeCode)typedecl.getTypeCode();
+                structtypecode.setIsTopic(false);
+            }
+            else
+                m_lastStructure = typedecl;
+        }
     }
     
     public boolean isClient()
@@ -115,7 +128,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 
     public boolean isFastcdr()
     {
-        return false;
+        return activateFusion_;
     }
 
     public boolean isAnyCdr()
@@ -124,6 +137,48 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     }
 
     /*** End ***/
+
+    public void setActivateFusion(boolean value)
+    {
+        activateFusion_ = value;
+    }
+
+    //// Java block ////
+    public void setPackage(String pack)
+    {
+        if(pack != null && !pack.isEmpty())
+        {
+            m_package = pack + ".";
+            m_onlypackage = pack;
+            m_packageDir = m_package.replace('.', '/');
+        }
+    }
+
+    public boolean isIsPackageEmpty()
+    {
+        return m_package.isEmpty();
+    }
+
+    public String getPackage()
+    {
+        return m_package;
+    }
+
+    public String getOnlyPackage()
+    {
+        return m_onlypackage;
+    }
+
+    public String getPackageDir()
+    {
+        return m_packageDir;
+    }
+
+    public String getPackageUnder()
+    {
+        return m_package.replace('.', '_');
+    }
+    //// End Java block ////
 
     private String m_typelimitation = null;
     
@@ -146,17 +201,16 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     // TODO Remove
     private String m_appProduct = null;
     
-    private StructTypeCode m_lastStructure = null;
+    private TypeDeclaration m_lastStructure = null;
 
 	public String getM_lastStructureTopicDataTypeName() {
 		String name = new String("");
+
 		if(m_lastStructure!=null)
 		{	
-			if(m_lastStructure.getParent() instanceof TypeDeclaration &&
-			   ((TypeDeclaration)m_lastStructure.getParent()).getParent() != null &&
-			   ((TypeDeclaration)m_lastStructure.getParent()).getParent() instanceof Interface)
+            if(m_lastStructure.getParent() instanceof Interface)
 			{
-				name = name + ((Interface)((TypeDeclaration)m_lastStructure.getParent()).getParent()).getScopedname() + "_" + m_lastStructure.getName();
+				name = name + ((Interface)m_lastStructure.getParent()).getScopedname() + "_" + m_lastStructure.getName();
 			}
 			else
 				name = m_lastStructure.getScopedname();
@@ -171,6 +225,13 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 		}
 		return null;
 	}
+
+    public boolean isThereIsStructure()
+    {
+        if(m_lastStructure != null)
+            return true;
+        return false;
+    }
 	
 	public boolean existsLastStructure()
 	{
@@ -190,6 +251,19 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 	{
 		return m_fileNameUpper;
 	}
+
+    public String getJniFilename()
+    {
+        return getFilename().replace("_", "_1");
+    }
 	
+    //// Java block ////
+    // Java package name.
+    private String m_package = "";
+    private String m_onlypackage = "";
+    // Java package dir.
+    private String m_packageDir = "";
+    private boolean activateFusion_ = false;
+    //// End Java block
     
 }

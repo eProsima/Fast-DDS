@@ -13,8 +13,8 @@
 #ifndef RTPS_MESSAGES_H_
 #define RTPS_MESSAGES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/Guid.h"
+#include "../common/Types.h"
+#include "../common/Guid.h"
 
 #include <iostream>
  #include <bitset>

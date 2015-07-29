@@ -12,8 +12,8 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
-#include "fastrtps/config/fastrtps_dll.h"
-#include "fastrtps/rtps/common/Types.h"
+#include "../../fastrtps_dll.h"
+#include "Types.h"
 
 #include <vector>
 #include <cmath>
@@ -281,6 +281,14 @@ inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
  */
 inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seqNum){
 	return output << ((uint64_t)seqNum.high *(uint64_t)pow(2.0,32) + (uint64_t)seqNum.low);
+}
+
+inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber_t>& seqNumSet){
+	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
+		{
+			output << *sit << " ";
+		}
+	return output;
 }
 
 #endif

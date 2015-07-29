@@ -13,8 +13,8 @@
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
 
-#include "fastrtps/rtps/common/Types.h"
-#include "fastrtps/rtps/common/MatchingInfo.h"
+#include "../rtps/common/Types.h"
+#include "../rtps/common/MatchingInfo.h"
 
 using namespace eprosima::fastrtps::rtps;
 
