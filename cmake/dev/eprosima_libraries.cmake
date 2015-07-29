@@ -15,6 +15,7 @@ macro(find_eprosima_package package)
              "-G \"${CMAKE_GENERATOR}\"\n"
              ${BUILD_OPTION}
              "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install\n"
+             "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}\n"
              "UPDATE_COMMAND git submodule update --recursive --init ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
              "SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
              "BINARY_DIR ${${package}ExternalDir}/build\n"
