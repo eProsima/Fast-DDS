@@ -1,0 +1,22 @@
+enum MYENUM1
+{
+	HOLA,
+	ADIOS
+};
+
+enum MYENUM2
+{
+	RICARDO,
+	RUBEN,
+	RAFA
+};
+
+union MYUNION switch(long)
+{
+	case 1:
+		long value;
+	case 2:
+		long value2;
+	default:
+		boolean ar;
+};

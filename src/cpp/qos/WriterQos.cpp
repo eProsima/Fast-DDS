@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,15 +11,18 @@
  *
  */
 
-#include "eprosimartps/qos/WriterQos.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include <fastrtps/qos/WriterQos.h>
+#include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
-namespace dds {
+namespace fastrtps {
+
+static const char* const CLASS_NAME = "WriterQos";
 
 WriterQos::WriterQos()
 {
 	this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+	this->m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 WriterQos::~WriterQos()
@@ -28,7 +31,7 @@ WriterQos::~WriterQos()
 }
 
 
-void WriterQos::setQos(const  WriterQos& qos, bool first_time)
+void WriterQos::setQos( WriterQos& qos, bool first_time)
 {
 	if(first_time)
 	{
@@ -70,7 +73,7 @@ void WriterQos::setQos(const  WriterQos& qos, bool first_time)
 		m_destinationOrder = qos.m_destinationOrder;
 		m_destinationOrder.hasChanged = true;
 	}
-	if(m_userData.data != qos.m_userData.data )
+	if (m_userData.getDataVec() != qos.m_userData.getDataVec())
 	{
 		m_userData = qos.m_userData;
 		m_userData.hasChanged = true;
@@ -87,18 +90,18 @@ void WriterQos::setQos(const  WriterQos& qos, bool first_time)
 		m_presentation = qos.m_presentation;
 		m_presentation.hasChanged = true;
 	}
-	if(qos.m_partition.names.size()>0)
+	if(qos.m_partition.getNames().size()>0)
 	{
 		m_partition = qos.m_partition;
 		m_partition.hasChanged = true;
 	}
 
-	if(m_topicData.value != qos.m_topicData.value )
+	if (m_topicData.getValue() != qos.m_topicData.getValue())
 	{
 		m_topicData = qos.m_topicData;
 		m_topicData.hasChanged = true;
 	}
-	if(m_groupData.value != qos.m_groupData.value )
+	if (m_groupData.getValue() != qos.m_groupData.getValue())
 	{
 		m_groupData = qos.m_groupData;
 		m_groupData.hasChanged = true;
@@ -128,31 +131,32 @@ void WriterQos::setQos(const  WriterQos& qos, bool first_time)
 
 bool WriterQos::checkQos()
 {
+	const char* const METHOD_NAME = "checkQos";
 	if(m_durability.kind == TRANSIENT_DURABILITY_QOS)
 	{
-		pError("TRANSIENT Durability not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"TRANSIENT Durability not supported");
 		return false;
 	}
 	if(m_durability.kind == PERSISTENT_DURABILITY_QOS)
 	{
-		pError("PERSISTENT Durability not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"PERSISTENT Durability not supported");
 		return false;
 	}
 	if(m_destinationOrder.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
 	{
-		pError("BY SOURCE TIMESTAMP DestinationOrder not supported"<<endl);
+		logError(RTPS_QOS_CHECK,"BY SOURCE TIMESTAMP DestinationOrder not supported");
 		return false;
 	}
 	if(m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS && m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
 	{
-		pError("BEST_EFFORT incompatible with EXCLUSIVE ownership"<<endl);
+		logError(RTPS_QOS_CHECK,"BEST_EFFORT incompatible with EXCLUSIVE ownership");
 		return false;
 	}
 	if(m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS || m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
 	{
 		if(m_liveliness.lease_duration < c_TimeInfinite && m_liveliness.lease_duration <= m_liveliness.announcement_period)
 		{
-			pError("WRITERQOS: LeaseDuration <= announcement period " << endl;);
+			logError(RTPS_QOS_CHECK,"WRITERQOS: LeaseDuration <= announcement period.");
 			return false;
 		}
 	}
@@ -162,40 +166,41 @@ bool WriterQos::checkQos()
 
 bool WriterQos::canQosBeUpdated(WriterQos& qos)
 {
+	const char* const METHOD_NAME = "canQosBeUpdated";
 	bool updatable = true;
 	if(	m_durability.kind != qos.m_durability.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Durability kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Durability kind cannot be changed after the creation of a subscriber.");
 	}
 
 	if(m_liveliness.kind !=  qos.m_liveliness.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Liveliness Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Liveliness Kind cannot be changed after the creation of a subscriber.");
 	}
 
 	if(m_reliability.kind != qos.m_reliability.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Reliability Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Reliability Kind cannot be changed after the creation of a subscriber.");
 	}
 	if(m_ownership.kind != qos.m_ownership.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Ownership Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Ownership Kind cannot be changed after the creation of a subscriber.");
 	}
 	if(m_destinationOrder.kind != qos.m_destinationOrder.kind)
 	{
 		updatable = false;
-		pWarning("WriterQos:Destination order Kind cannot be changed after the creation of a subscriber."<<endl);
+		logWarning(RTPS_QOS_CHECK,"Destination order Kind cannot be changed after the creation of a subscriber.");
 	}
 	return updatable;
 
 }
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

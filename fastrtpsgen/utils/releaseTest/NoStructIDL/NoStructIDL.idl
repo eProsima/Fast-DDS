@@ -1,0 +1,43 @@
+union UN1 switch(long)
+{
+	case 1:
+		long value;
+	case 2:
+		long value2;
+	default:
+		boolean abool;
+};
+
+union UN2 switch(boolean)
+{
+	case true:
+		long value;
+	default:
+		long value2;
+};
+
+enum MYENUM
+{
+	HOLA,
+	ADIOS
+};
+
+union UN3 switch(MYENUM)
+{
+	case HOLA:
+		long value;
+	case ADIOS:
+		long value2;
+	default:
+		boolean abool;
+};
+
+union UN4 switch(char)
+{
+	case 1:
+		long value;
+	case 2:
+		long value2;
+	default:
+		boolean abool;
+};

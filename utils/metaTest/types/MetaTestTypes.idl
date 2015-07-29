@@ -1,0 +1,30 @@
+enum TestKind
+{
+	T_RTPS_SOCKET,
+	T_RTPS_REG,
+	T_CLIENT_SERVER,
+	T_HELLO_WORLD,
+	STOP_ALL_TESTS
+};
+
+enum TestStatus
+{
+	T_PUB_STARTS,
+	T_SUB_READY,
+	T_SUB_FAILED,
+	T_SUB_OK,
+	T_PUB_FINISH
+	
+
+};
+
+struct MetaTestType
+{
+	TestKind kind;
+	TestStatus status;
+	string ip_string;
+	short ip_port;
+	short samples;
+	string comment;
+
+};

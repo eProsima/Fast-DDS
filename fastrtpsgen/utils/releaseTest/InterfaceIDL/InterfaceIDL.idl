@@ -1,0 +1,34 @@
+module MODU
+{
+
+interface MOD1
+{
+	struct S1
+	{
+		long value;		
+	};
+
+	struct S2
+	{
+		long value2;
+	};
+};
+
+struct S1
+{
+	MOD1::S1 astruct;
+};
+
+interface MOD2
+{
+	struct S1
+	{
+		long value;
+	};
+	struct S2
+	{
+		S1 astruct;
+	};
+};
+
+};

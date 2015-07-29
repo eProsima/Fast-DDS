@@ -1,0 +1,13 @@
+bin
+output
+Debug 
+Release
+win32
+#VisuaL Studio Files:
+#############
+*.opensdf
+*.sdf
+debug_reader
+ipch
+
+

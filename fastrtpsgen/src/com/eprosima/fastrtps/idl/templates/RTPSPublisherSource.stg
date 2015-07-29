@@ -1,0 +1,140 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.cpp"], description=["This file contains the implementation of the publisher functions."])$
+
+
+#include "fastrtps/participant/Participant.h"
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/publisher/Publisher.h"
+#include "fastrtps/attributes/PublisherAttributes.h"
+
+#include "fastrtps/Domain.h"
+
+#include "fastrtps/utils/eClock.h"
+
+#include "$ctx.filename$Publisher.h"
+
+
+
+
+$ctx.filename$Publisher::$ctx.filename$Publisher() : mp_participant(nullptr), mp_publisher(nullptr) {}
+
+$ctx.filename$Publisher::~$ctx.filename$Publisher() {	Domain::removeParticipant(mp_participant);}
+
+bool $ctx.filename$Publisher::init()
+{
+	// Create RTPSParticipant
+	
+	ParticipantAttributes PParam;
+	PParam.rtps.builtin.domainId = 0;
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.setName("Participant_publisher");  //You can put here the name you want
+	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant == nullptr)
+		return false;
+	
+	//Register the type
+	
+	Domain::registerType(mp_participant,(TopicDataType*) &myType);
+	
+	// Create Publisher
+	
+	PublisherAttributes Wparam;
+	Wparam.topic.topicKind = NO_KEY;
+	Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
+	Wparam.topic.topicName = "$ctx.filename$PubSubTopic";
+	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
+	if(mp_publisher == nullptr)
+		return false;
+	cout << "Publisher created, waiting for Subscribers." << endl;
+	return true;
+}
+
+void $ctx.filename$Publisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+{
+	if (info.status == MATCHED_MATCHING)
+	{
+		n_matched++;
+		cout << "Publisher matched" << endl;
+	}
+	else
+	{
+		n_matched--;
+		cout << "Publisher unmatched" << endl;
+	}
+}
+
+void $ctx.filename$Publisher::run()
+{
+	while(m_listener.n_matched == 0)
+	{
+		eClock::my_sleep(250); // Sleep 250 ms
+	}
+	
+	// Publication code
+	
+	$ctx.m_lastStructureScopedName$ st;
+	
+	/* Initialize your structure here */
+	
+	int msgsent = 0;
+	char ch = 'y';
+	do
+	{
+		if(ch == 'y')
+		{
+			mp_publisher->write(&st);  ++msgsent;
+			cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
+		}
+		else if(ch == 'n')
+		{
+			cout << "Stopping execution " << endl;
+			break;
+		}
+		else
+		{
+			cout << "Command " << ch << " not recognized, please enter \"y/n\":";
+		}
+	}while(std::cin \>> ch);
+}
+
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+struct_type(ctx, parent, struct) ::= <<>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>

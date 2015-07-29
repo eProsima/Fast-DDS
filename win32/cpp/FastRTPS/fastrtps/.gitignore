@@ -1,0 +1,10 @@
+#VisuaL Studio Files:
+#############
+*.opensdf
+*.sdf
+*.suo
+*.obj
+*.dll
+*.lib
+*.log
+*.cd

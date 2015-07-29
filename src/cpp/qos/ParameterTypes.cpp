@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,12 +11,12 @@
  *
  */
 
-#include "eprosimartps/qos/ParameterTypes.h"
+#include <fastrtps/qos/ParameterTypes.h>
 
-#include "eprosimartps/CDRMessage.h"
+#include <fastrtps/rtps/messages/CDRMessage.h>
 
 namespace eprosima {
-namespace dds {
+namespace fastrtps {
 
 
 // PARAMETER
@@ -189,7 +189,7 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 }
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

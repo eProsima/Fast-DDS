@@ -1,0 +1,7 @@
+*.cxx
+*.h
+*.jar
+makefile_*
+bin/
+lib/
+output/

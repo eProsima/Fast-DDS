@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,16 +11,14 @@
  *
  */
 
-#include "eprosimartps/qos/ParameterList.h"
-#include "eprosimartps/qos/DDSQosPolicies.h"
+#include <fastrtps/qos/ParameterList.h>
+#include <fastrtps/qos/QosPolicies.h>
 
-#include "eprosimartps/utils/RTPSLog.h"
 
 namespace eprosima {
-namespace dds {
+namespace fastrtps {
 
 #define IF_VALID_ADD {if(valid){plist->m_parameters.push_back((Parameter_t*)p);plist->m_hasChanged = true;paramlist_byte_size += plength;}else{delete(p);return -1;}break;}
-
 
 
 bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
@@ -42,7 +40,6 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 	else
 	{
 		plist->m_hasChanged = false;
-		pDebugInfo("Param msg created correctly"<<endl);
 		return true;
 	}
 }
@@ -61,6 +58,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 		valid&=CDRMessage::readUInt16(msg,(uint16_t*)&pid);
 		valid&=CDRMessage::readUInt16(msg,&plength);
 		paramlist_byte_size +=4;
+		//cout << "PARAMETER WITH ID: " << std::hex << (uint32_t)pid <<std::dec<< endl;
 		if(valid)
 		{
 			switch(pid)
@@ -200,7 +198,9 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 //				cout << msg->pos << endl;
 				ParameterString_t* p = new ParameterString_t(pid,plength);
-				valid &= CDRMessage::readString(msg,&p->m_string);
+				std::string aux;
+				valid &= CDRMessage::readString(msg,&aux);
+				p->setName(aux.c_str());
 //				cout << "READ: "<< p->m_string<<endl;
 //				cout << msg->pos << endl;
 				IF_VALID_ADD
@@ -210,48 +210,25 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 				ParameterPropertyList_t* p = new ParameterPropertyList_t(pid,plength);
 				uint32_t num_properties;
 				valid&=CDRMessage::readUInt32(msg,&num_properties);
-								//uint16_t msg_pos_first = msg->pos;
+				//uint16_t msg_pos_first = msg->pos;
+				//cout << "READING PARAMETER PROPERTY LIST " << endl;
 				std::string str;
 				std::pair<std::string,std::string> pair;
 				//uint32_t rest=0;
 				for(uint32_t n_prop =0;n_prop<num_properties;++n_prop)
 				{
+					//cout << "READING PROPERTY " << n_prop << endl;
 					pair.first.clear();
 					valid &= CDRMessage::readString(msg,&pair.first);
 					pair.second.clear();
 					valid &= CDRMessage::readString(msg,&pair.second);
-//					//STRING 1
-//					uint32_t str_size = 1;
-//					valid&=CDRMessage::readUInt32(msg,&str_size);
-//
-//					str = std::string();str.resize(str_size);
-//					octet* oc1 = new octet[str_size];
-//					valid &= CDRMessage::readData(msg,oc1,str_size);
-//					for(uint32_t i =0;i<str_size;i++)
-//						str.at(i) = oc1[i];
-//					pair.first = str;
-//					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
-//					rest = rest==0 ? 0 : 4-rest;
-//					msg->pos+=rest;
-//					//STRING 2
-//					valid&=CDRMessage::readUInt32(msg,&str_size);
-//					str = std::string();str.resize(str_size);
-//
-//					octet* oc2 = new octet[str_size];
-//					valid &= CDRMessage::readData(msg,oc2,str_size);
-//					for(uint32_t i =0;i<str_size;i++)
-//						str.at(i) = oc2[i];
-//					pair.second = str;
-//					rest = (uint32_t)(str_size-4*floor((float)str_size/4));
-//										rest = rest==0 ? 0 : 4-rest;
-//										msg->pos+=rest;
+
 					p->properties.push_back(pair);
 //					delete(oc1);
 //					delete(oc2);
 				}
 				if(valid)
 				{
-
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
@@ -261,7 +238,6 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 					delete(p);
 					return -1;
 				}
-				break;
 				break;
 			}
 			case PID_STATUS_INFO:
@@ -349,13 +325,16 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 			{
 				UserDataQosPolicy* p = new UserDataQosPolicy();
 				p->length = plength;
-				uint32_t str_size = 1;
-				valid&=CDRMessage::readUInt32(msg,&str_size);
-				p->data.resize(str_size);
-				octet* oc=new octet[str_size];
-				valid &= CDRMessage::readData(msg,oc,str_size);
-				for(uint32_t i =0;i<str_size;i++)
-					p->data.at(i) = oc[i];
+				//cout << "Parameter length " << plength << endl;
+				uint32_t vec_size = 0;
+				valid&=CDRMessage::readUInt32(msg,&vec_size);
+				//cout << "User Data of size " << vec_size << endl;
+				p->dataVec.resize(vec_size);
+				octet* oc=new octet[vec_size];
+				valid &= CDRMessage::readData(msg,p->dataVec.data(),vec_size);
+				for(uint32_t i =0;i<vec_size;i++)
+					p->dataVec.at(i) = oc[i];
+				msg->pos += (plength - 4 - vec_size);
 				if(valid)
 				{
 					plist->m_parameters.push_back((Parameter_t*)p);
@@ -518,7 +497,7 @@ uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLi
 	return paramlist_byte_size;
 }
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */
 
 

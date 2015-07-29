@@ -1,0 +1,81 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.h"], description=["This header file contains the declaration of the subscriber functions."])$
+
+
+#ifndef _$ctx.fileNameUpper$_SUBSCRIBER_H_
+#define _$ctx.fileNameUpper$_SUBSCRIBER_H_
+
+#include "fastrtps/fastrtps_fwd.h"
+#include "fastrtps/subscriber/SubscriberListener.h"
+#include "fastrtps/subscriber/SampleInfo.h"
+#include "$ctx.filename$PubSubTypes.h"
+
+using namespace eprosima::fastrtps;
+
+class $ctx.filename$Subscriber 
+{
+public:
+	$ctx.filename$Subscriber();
+	virtual ~$ctx.filename$Subscriber();
+	bool init();
+	void run();
+private:
+	Participant *mp_participant;
+	Subscriber *mp_subscriber;
+	
+	class SubListener : public SubscriberListener
+	{
+	public:
+		SubListener() : n_matched(0),n_msg(0){};
+		~SubListener(){};
+		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
+		void onNewDataMessage(Subscriber* sub);
+		SampleInfo_t m_info;
+		int n_matched;
+		int n_msg;
+	} m_listener;
+	$ctx.m_lastStructureTopicDataTypeName$PubSubType myType;
+};
+
+#endif // _$ctx.filename; format="toUpper"$_SUBSCRIBER_H_
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+struct_type(ctx, parent, struct) ::= <<>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>

@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -11,10 +11,12 @@
  *
  */
 
-#include "eprosimartps/qos/QosList.h"
-#include "eprosimartps/utils/RTPSLog.h"
+#include <fastrtps/qos/QosList.h>
+
+#include <fastrtps/qos/QosPolicies.h>
+
 namespace eprosima {
-namespace dds {
+namespace fastrtps {
 
 QosList_t::QosList_t()
 {
@@ -34,7 +36,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)
 	{
 		ParameterString_t* p = new ParameterString_t();
 		p->Pid = pid;
-		p->m_string = string_in;
+		p->setName(string_in.c_str());
 		//p->length = string_in.size()+2;
 		qos->allQos.m_parameters.push_back((Parameter_t*)p);
 		qos->allQos.m_hasChanged = true;
@@ -45,7 +47,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::string& string_in)
 		}
 		return true;
 	}
-	pWarning("PID not correspond with String Parameter."<<endl)
+
 	return false;
 }
 
@@ -63,7 +65,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Locator_t& loc)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with Locator Parameter."<<endl)
+
 	return false;
 }
 
@@ -102,7 +104,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	uint32_t input_uint32)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with UInt32_t Parameter "<< (int)pid << endl)
+
 	return false;
 }
 
@@ -119,7 +121,7 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	bool in_bool)
 		qos->allQos.m_hasChanged = true;
 		return true;
 	}
-	pWarning("PID not correspond with ExpectsInlineQos" << endl);
+
 	return false;
 }
 
@@ -221,6 +223,18 @@ bool QosList::addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::st
 	return false;
 }
 
+ bool QosList::addQos(QosList_t* qos,ParameterId_t pid, const ParameterPropertyList_t& list)
+ {
+	 ParameterPropertyList_t* p = new ParameterPropertyList_t();
+	 for(std::vector<std::pair<std::string,std::string>>::const_iterator it = list.properties.begin();
+		 it!= list.properties.end();++it)
+	 {
+		 p->properties.push_back(*it);
+	 }
+	 qos->allQos.m_parameters.push_back((Parameter_t*)p);
+	 qos->allQos.m_hasChanged = true;
+	 return true;
+ }
 
 
 
@@ -267,6 +281,18 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 	return false;
 }
 
+bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVec) {
+	if(pid == PID_USER_DATA)
+	{
+		UserDataQosPolicy* p = new UserDataQosPolicy();
+		p->setDataVec(ocVec);
+		qos->allQos.m_parameters.push_back((Parameter_t*)p);
+		qos->allQos.m_hasChanged = true;
+		return true;
+	}
+	return false;
+}
+
 //bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	BuiltinEndpointSet_t endpointset)
 //{
 //	if(pid == PID_BUILTIN_ENDPOINT_SET)
@@ -285,5 +311,5 @@ bool QosList::addQos(QosList_t* qos, ParameterId_t pid,	Time_t& time_in) {
 
 
 
-} /* namespace dds */
+} /* namespace pubsub */
 } /* namespace eprosima */

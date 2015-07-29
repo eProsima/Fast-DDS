@@ -1,0 +1,14 @@
+bin
+output
+
+#VisuaL Studio Files:
+#############
+*.opensdf
+*.sdf
+*.suo
+
+ipch
+Debug
+Release
+x64
+Win32

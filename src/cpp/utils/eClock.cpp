@@ -1,8 +1,8 @@
 /*************************************************************************
  * Copyright (c) 2014 eProsima. All rights reserved.
  *
- * This copy of eProsima RTPS is licensed to you under the terms described in the
- * EPROSIMARTPS_LIBRARY_LICENSE file included in this distribution.
+ * This copy of eProsima Fast RTPS is licensed to you under the terms described in the
+ * FASTRTPS_LIBRARY_LICENSE file included in this distribution.
  *
  *************************************************************************/
 
@@ -12,13 +12,15 @@
  */
 #include <cmath>
 #include <iostream>
-#include "eprosimartps/utils/eClock.h"
+#include <fastrtps/utils/eClock.h>
+using namespace eprosima::fastrtps::rtps;
+
 namespace eprosima {
-namespace rtps {
+namespace fastrtps {
 	//FIXME: UTC SECONDS AUTOMATICALLY
 eClock::eClock():
-		m_seconds_from_1900_to_1970(2208988800),
-		m_utc_seconds_diff(2*60*60)
+		m_seconds_from_1900_to_1970(0),
+		m_utc_seconds_diff(0)
 {
 #if defined(_WIN32)
 	QueryPerformanceFrequency(&freq);
@@ -42,9 +44,12 @@ bool eClock::setTimeNow(Time_t* tnow)
     ftlong |= ft.dwLowDateTime;
     ftlong /=10;
     ftlong -= 11644473600000000ULL;
-	tnow->seconds = (int32_t)((ftlong/1000000)+(long)m_seconds_from_1900_to_1970+(long)m_utc_seconds_diff);
-	//std::cout<<std::fixed<< "fraction bf and aft  " << (tt%1000000) << " ** " << ((tt%1000000)*pow(10.0,-6)*pow(2.0,32)) << " ++ "<<((uint32_t)((tt%1000000)*pow(10.0,-6)*pow(2.0,32)))/pow(2.0,32)*pow(10.0,6)<< std::endl;
-	tnow->fraction = (uint32_t)((ftlong%1000000)*pow(10.0,-6)*pow(2.0,32));
+	
+//	std::cout << "ftlong: " << ftlong << std::endl;
+	//std::cout << "sec from 1900 " << m_seconds_from_1900_to_1970<<std::endl;
+	tnow->seconds = (int32_t)((long)(ftlong/1000000UL)+(long)m_seconds_from_1900_to_1970+(long)m_utc_seconds_diff);
+	//std::cout << "seconds: " << tnow->seconds << " seconds " << std::endl;
+	tnow->fraction = (uint32_t)((long)(ftlong%1000000UL)*pow(10.0,-6)*pow(2.0,32));
 	return true;
 }
 
@@ -69,20 +74,6 @@ uint64_t eClock::intervalEnd()
 	return 0;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #else //UNIX VERSION
 #include <unistd.h>

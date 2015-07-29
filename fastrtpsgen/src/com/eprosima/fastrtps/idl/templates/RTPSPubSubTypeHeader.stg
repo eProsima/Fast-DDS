@@ -1,0 +1,81 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This header file contains the declaration of the serialization functions."])$
+
+
+#ifndef _$ctx.fileNameUpper$_PUBSUBTYPES_H_
+#define _$ctx.fileNameUpper$_PUBSUBTYPES_H_
+
+#include "fastrtps/TopicDataType.h"
+
+using namespace eprosima::fastrtps;
+
+#include "$ctx.filename$.h"
+
+$definitions; separator="\n"$
+
+#endif // _$ctx.filename; format="toUpper"$_PUBSUBTYPE_H_
+>>
+
+// TODO name -> module
+module(ctx, parent, module, definition_list) ::= <<
+namespace $module.name$
+{
+    $definition_list$
+}
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, parent, exception) ::= << >>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<
+const $const.typeCode.cppTypename$ $const.name$ = $const.value$;
+>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<
+$typedefs : { typedef |typedef $typedef.typedefContentTypeCode.cppTypename$ $typedef.name$;}; separator="\n"$
+>>
+
+struct_type(ctx, parent, struct) ::= <<
+/*!
+ * @brief This class represents the TopicDataType of the type $struct.name$ defined by the user in the IDL file.
+ * @ingroup $ctx.trimfilename$
+ */
+class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : public TopicDataType {
+public:
+	$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+	virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+	bool serialize(void *data, SerializedPayload_t *payload);
+	bool deserialize(SerializedPayload_t *payload, void *data);
+	bool getKey(void *data, InstanceHandle_t *ihandle);
+	void* createData();
+	void deleteData(void * data);
+	MD5 m_md5;
+	unsigned char* m_keyBuffer;
+};
+>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+

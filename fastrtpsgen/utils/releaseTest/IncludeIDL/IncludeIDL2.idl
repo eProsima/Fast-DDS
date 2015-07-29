@@ -1,0 +1,9 @@
+#include "IncludeIDL1.idl"
+
+
+struct S2
+{
+	S1 astru;
+	UN1 auni;
+	MYENUM aenum;
+};

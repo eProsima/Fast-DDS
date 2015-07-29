@@ -1,0 +1,27 @@
+set(PROJECT_NAME_LARGE "@PROJECT_NAME_LARGE@")
+set(MSVC_ARCH @MSVC_ARCH@)
+
+if(${CPACK_GENERATOR} STREQUAL "NSIS" )
+    cmake_policy(SET CMP0012 NEW)
+
+    if(@EPROSIMA_INSTALLER@)
+        # Define name of the NSIS file
+        set(CPACK_PACKAGE_FILE_NAME eProsima_@PROJECT_NAME_STYLED@-@PROJECT_VERSION@-Windows)
+    else()
+        # Define name of the NSIS file
+        set(CPACK_PACKAGE_FILE_NAME eProsima_@PROJECT_NAME_STYLED@-@PROJECT_VERSION@-${MSVC_ARCH})
+    endif()
+
+    set(CPACK_NSIS_DISPLAY_NAME "@PROJECT_NAME_LARGE@ @PROJECT_VERSION@")
+    set(CPACK_NSIS_PACKAGE_NAME "eProsima @PROJECT_NAME_LARGE@ @PROJECT_VERSION@")
+    set(CPACK_NSIS_URL_INFO_ABOUT "www.eprosima.com")
+    set(CPACK_NSIS_CONTACT "support@eprosima.com")
+    set(CPACK_NSIS_MUI_ICON "@PROJECT_SOURCE_DIR@\\utils\\images\\icon\\eprosima_icon.ico")
+    set(CPACK_PACKAGE_ICON "@PROJECT_SOURCE_DIR@\\utils\\images\\icon\\eprosima_icon.bmp")
+    set(CPACK_NSIS_INSTALL_ROOT "$VARPROGRAMFILES\\eProsima")
+    set(CPACK_RESOURCE_FILE_README "@PROJECT_BINARY_DIR@/README.html")
+    
+    # Define cmake script to copy images files and prepare auxiliary NSIS scripts.
+    set(CPACK_INSTALL_SCRIPT "@PROJECT_BINARY_DIR@/cmake/packaging/windows/NSISPackaging.cmake")
+endif()
+

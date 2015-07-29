@@ -1,0 +1,124 @@
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.cpp"], description=["This file contains the implementation of the subscriber functions."])$
+
+#include "fastrtps/participant/Participant.h"
+#include "fastrtps/attributes/ParticipantAttributes.h"
+#include "fastrtps/subscriber/Subscriber.h"
+#include "fastrtps/attributes/SubscriberAttributes.h"
+
+#include "fastrtps/Domain.h"
+
+#include "$ctx.filename$Subscriber.h"
+
+
+$ctx.filename$Subscriber::$ctx.filename$Subscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
+
+$ctx.filename$Subscriber::~$ctx.filename$Subscriber() {	Domain::removeParticipant(mp_participant);}
+
+bool $ctx.filename$Subscriber::init()
+{
+	// Create RTPSParticipant
+	
+	ParticipantAttributes PParam;
+	PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
+	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+	PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
+	mp_participant = Domain::createParticipant(PParam);
+	if(mp_participant == nullptr)
+			return false;
+	
+	//Register the type
+	
+	Domain::registerType(mp_participant,(TopicDataType*) &myType);		
+			
+	// Create Subscriber
+			
+	SubscriberAttributes Rparam;
+	Rparam.topic.topicKind = NO_KEY;
+	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
+	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
+	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+	if(mp_subscriber == nullptr)
+		return false;
+	return true;
+}
+
+void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+{
+	if (info.status == MATCHED_MATCHING)
+	{
+		n_matched++;
+		cout << "Subscriber matched" << endl;
+	}
+	else
+	{
+		n_matched--;
+		cout << "Subscriber unmatched" << endl;
+	}
+}
+
+void $ctx.filename$Subscriber::SubListener::onNewDataMessage(Subscriber* sub)
+{
+		// Take data
+		$ctx.m_lastStructureScopedName$ st;
+		
+		if(sub->takeNextData(&st, &m_info))
+		{
+			if(m_info.sampleKind == ALIVE)
+			{
+				// Print your structure data here.
+				++n_msg;
+				cout << "Sample received, count=" << n_msg << endl;
+			}
+		}
+}
+
+void $ctx.filename$Subscriber::run()
+{
+	cout << "Waiting for Data, press Enter to stop the Subscriber. "<<endl;
+	std::cin.ignore();
+	cout << "Shutting down the Subscriber." << endl;
+}
+
+
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+struct_type(ctx, parent, struct) ::= <<>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
