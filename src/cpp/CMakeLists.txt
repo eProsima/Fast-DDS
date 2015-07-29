@@ -205,6 +205,7 @@ if(UNIX)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
         DESTINATION .
         USE_SOURCE_PERMISSIONS
+        OPTIONAL
         COMPONENT sources
         )
 endif()
