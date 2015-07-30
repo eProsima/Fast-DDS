@@ -221,7 +221,7 @@ if(MSVC OR MSVC_IDE)
             COMPONENT libraries_${MSVC_ARCH}
             )
 
-        export(EXPORT ${PROJECT_NAME}Targets FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
+        export(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
         install(EXPORT ${PROJECT_NAME}Targets
             DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
             COMPONENT cmake
@@ -252,7 +252,7 @@ else()
         COMPONENT libraries
         )
 
-    export(EXPORT ${PROJECT_NAME}Targets FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
+    export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
     install(EXPORT ${PROJECT_NAME}Targets
         DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
         COMPONENT cmake
