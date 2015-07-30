@@ -94,11 +94,6 @@ if(WIN32)
     add_definitions(-DBOOST_ALL_DYN_LINK -D_WIN32_WINNT=0x0501)
 endif()
 
-# Include public api
-include_directories(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
-    )
-
 # Include Boost header files.
 include_directories(${Boost_INCLUDE_DIR})
 
