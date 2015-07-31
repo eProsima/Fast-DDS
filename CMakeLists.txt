@@ -92,10 +92,16 @@ endif()
 # Load external eProsima projects.
 ###############################################################################
 
-option(EPROSIMA_BUILD "Activate the use of internal thirdparties" OFF)
+option(EPROSIMA_BUILD "Activate internal building" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
+endif()
+
+option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
+
+if(EPROSIMA_BUILD)
+    set(THIRDPARTY ON)
 endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)

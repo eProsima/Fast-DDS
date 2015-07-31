@@ -1,5 +1,12 @@
 macro(find_eprosima_package package)
-    if(EPROSIMA_BUILD)
+    if(THIRDPARTY)
+        set(USE_BOOST "")
+        foreach(arg ${ARGN})
+            if("${arg}" STREQUAL "USE_BOOST")
+                set(USE_BOOST "-DEPROSIMA_BOOST=${EPROSIMA_BOOST}\n")
+            endif()
+        endforeach()
+
         set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
         if(NOT MSVC AND NOT MSVC_IDE)
             set(BUILD_OPTION "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\n")
@@ -14,6 +21,7 @@ macro(find_eprosima_package package)
              "${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
              "-G \"${CMAKE_GENERATOR}\"\n"
              ${BUILD_OPTION}
+             ${USE_BOOST}
              "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install\n"
              "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}\n"
              "UPDATE_COMMAND git submodule update --recursive --init ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
@@ -103,7 +111,7 @@ macro(install_eprosima_fastcdr)
         endif()
 
         # Install license
-        if(EPROSIMA_BUILD)
+        if(THIRDPARTY)
             install(FILES ${PROJECT_BINARY_DIR}/external/fastcdr/install/FASTCDR_LIBRARY_LICENSE.txt
                 DESTINATION .
                 )
