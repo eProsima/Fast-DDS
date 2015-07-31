@@ -146,8 +146,8 @@ if(BUILD_JAVA)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
 
     gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen
-        THIRDPARTY idl
-        THIRDPARTY fastcdr
+        THIRDPARTY_DEPENDENCY idl
+        THIRDPARTY_DEPENDENCY fastcdr
         )
 endif()
 
