@@ -89,15 +89,23 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 ###############################################################################
-# Load external eProsima projects.
+# eProsima build options
 ###############################################################################
-
 option(EPROSIMA_BUILD "Activate internal building" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
 endif()
 
+###############################################################################
+# Check libraries
+###############################################################################
+include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
+check_boost(thread system date_time chrono regex)
+
+###############################################################################
+# Load external eProsima projects.
+###############################################################################
 option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
 
 if(EPROSIMA_BUILD)
@@ -106,12 +114,6 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 find_eprosima_package(fastcdr)
-
-###############################################################################
-# Check libraries
-###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
-check_boost(thread system date_time chrono regex)
 
 ###############################################################################
 # Installation paths
