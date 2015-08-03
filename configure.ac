@@ -25,6 +25,9 @@ AC_DEFINE(FASTRTPS_VERSION_MICRO, version_micro, [fastrtps version micro])
 
 # Check stdcxx
 AX_CXX_COMPILE_STDCXX_11(,optional)
+AS_IF([test $HAVE_CXX11 = 1],
+      [AC_DEFINE(HAVE_CXX0X, 1, ["Define if g++ supports C++0x features. "])],
+      [AX_CXX_COMPILE_STDCXX_0X()])
 
 # Check endianess
 AC_C_BIGENDIAN(
