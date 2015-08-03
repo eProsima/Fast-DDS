@@ -13,7 +13,7 @@ macro(gradle_build directory)
 
     set(THIRDPARTY_FOUND false)
     foreach(arg ${ARGN})
-        if(${arg} STREQUAL "THIRDPARTY")
+        if("${arg}" STREQUAL "THIRDPARTY_DEPENDENCY")
             set(THIRDPARTY_FOUND true)
         else()
             if(THIRDPARTY_FOUND)

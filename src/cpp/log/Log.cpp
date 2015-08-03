@@ -15,7 +15,7 @@
 
 
 
-#include <log/Log.h>
+#include <fastrtps/log/Log.h>
 
 #define START_N_MESSAGES 2000
 #define MIN_N_MESSAGES 500

@@ -1,7 +1,7 @@
 ###############################################################################
 # CMake build rules for FastRTPS                                                
 ###############################################################################
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.11)
 
 # Set CMAKE_BUILD_TYPE to Release by default.
 if(DEFINED CMAKE_BUILD_TYPE)
@@ -89,23 +89,31 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 ###############################################################################
-# Load external eProsima projects.
+# eProsima build options
 ###############################################################################
-
-option(EPROSIMA_BUILD "Activate the use of internal thirdparties" OFF)
+option(EPROSIMA_BUILD "Activate internal building" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
 endif()
-
-include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
-find_eprosima_package(fastcdr)
 
 ###############################################################################
 # Check libraries
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
 check_boost(thread system date_time chrono regex)
+
+###############################################################################
+# Load external eProsima projects.
+###############################################################################
+option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
+
+if(EPROSIMA_BUILD)
+    set(THIRDPARTY ON)
+endif()
+
+include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
+find_eprosima_package(fastcdr)
 
 ###############################################################################
 # Installation paths
@@ -138,8 +146,8 @@ if(BUILD_JAVA)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
 
     gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen
-        THIRDPARTY idl
-        THIRDPARTY fastcdr
+        THIRDPARTY_DEPENDENCY idl
+        THIRDPARTY_DEPENDENCY fastcdr
         )
 endif()
 

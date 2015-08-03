@@ -1,10 +1,17 @@
 macro(check_boost)
+    if(WIN32)
+        option(EPROSIMA_BOOST "Activate special sset of BOOST_LIBRARYDIR" OFF)
+        if(EPROSIMA_BUILD)
+            set(EPROSIMA_BOOST ON)
+        endif()
+    endif()
+
     # Find package Boost
     set(Boost_USE_STATIC_LIBS OFF)
     set(Boost_USE_MULTITHREADED ON)
     set(Boost_USE_STATIC_RUNTIME OFF)
     set(BOOST_ALL_DYN_LINK ON)
-    if(WIN32 AND EPROSIMA_BUILD)
+    if(WIN32 AND EPROSIMA_BOOST)
         set(BOOST_LIBRARYDIR $ENV{BOOST_LIBRARYDIR}/${MSVC_ARCH})
     endif()
     find_package(Boost COMPONENTS ${ARGN})

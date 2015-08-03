@@ -38,11 +38,18 @@ macro(install_msvc_libraries platform)
         FILES_MATCHING
         PATTERN "*${PROJECT_NAME}*-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}*"
         )
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/../${platform}/cmake/config/
+    install(FILES
+        ${PROJECT_BINARY_DIR}/../${platform}/cmake/config/${PROJECT_NAME}Config.cmake
+        ${PROJECT_BINARY_DIR}/../${platform}/cmake/config/${PROJECT_NAME}ConfigVersion.cmake
         DESTINATION lib/${platform}/${PROJECT_NAME}/cmake
         COMPONENT cmake
-        FILES_MATCHING
-        PATTERN "*.cmake"
+        )
+    install(FILES
+        ${PROJECT_BINARY_DIR}/../${platform}/src/cpp/CMakeFiles/Export/lib/${platform}/${PROJECT_NAME}/cmake/${PROJECT_NAME}Targets.cmake
+        ${PROJECT_BINARY_DIR}/../${platform}/src/cpp/CMakeFiles/Export/lib/${platform}/${PROJECT_NAME}/cmake/${PROJECT_NAME}Targets-release.cmake
+        ${PROJECT_BINARY_DIR}/../${platform}/src/cpp/CMakeFiles/Export/lib/${platform}/${PROJECT_NAME}/cmake/${PROJECT_NAME}Targets-debug.cmake
+        DESTINATION lib/${platform}/${PROJECT_NAME}/cmake
+        COMPONENT cmake
         )
     string(TOUPPER "${platform}" ${platform}_UPPER)
     set(CPACK_COMPONENT_LIBRARIES_${${platform}_UPPER}_DISPLAY_NAME "${platform}" PARENT_SCOPE)

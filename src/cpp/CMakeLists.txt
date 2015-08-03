@@ -94,11 +94,6 @@ if(WIN32)
     add_definitions(-DBOOST_ALL_DYN_LINK -D_WIN32_WINNT=0x0501)
 endif()
 
-# Include public api
-include_directories(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}
-    )
-
 # Include Boost header files.
 include_directories(${Boost_INCLUDE_DIR})
 
@@ -205,6 +200,7 @@ if(UNIX)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
         DESTINATION .
         USE_SOURCE_PERMISSIONS
+        OPTIONAL
         COMPONENT sources
         )
 endif()
@@ -225,7 +221,7 @@ if(MSVC OR MSVC_IDE)
             COMPONENT libraries_${MSVC_ARCH}
             )
 
-        export(EXPORT ${PROJECT_NAME}Targets FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
+        export(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
         install(EXPORT ${PROJECT_NAME}Targets
             DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
             COMPONENT cmake
@@ -256,7 +252,7 @@ else()
         COMPONENT libraries
         )
 
-    export(EXPORT ${PROJECT_NAME}Targets FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
+    export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
     install(EXPORT ${PROJECT_NAME}Targets
         DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
         COMPONENT cmake
