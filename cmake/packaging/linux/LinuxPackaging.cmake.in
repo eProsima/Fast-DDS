@@ -11,7 +11,7 @@ if(${CPACK_GENERATOR} STREQUAL "TGZ" )
 
         # Define name of the TGZ file
         set(CPACK_PACKAGE_FILE_NAME eProsima_${PROJECT_NAME_STYLED}-@PROJECT_VERSION@-Linux)
-        set(CPACK_COMPONENTS_ALL headers sources examples licenses)
+        set(CPACK_COMPONENTS_ALL headers sources examples)
         if(BUILD_JAVA)
             set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} java)
         endif()
