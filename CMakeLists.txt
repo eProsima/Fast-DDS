@@ -132,6 +132,11 @@ else()
     set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
 endif()
 set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
+if(WIN32)
+    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
+else()
+    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
+endif()
 
 ###############################################################################
 # Java application
@@ -286,7 +291,7 @@ install_boost(thread system date_time chrono regex)
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
     ${PROJECT_SOURCE_DIR}/LGPLv3_LICENSE.txt
-    DESTINATION .
+    DESTINATION ${LICENSE_INSTALL_DIR}
     COMPONENT licenses
     )
 set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
