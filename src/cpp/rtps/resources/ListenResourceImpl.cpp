@@ -219,7 +219,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	else
 	{
 		bool binded = false;
-		for(uint8_t i =0;i<1000;++i) //TODO make it configurable by user.
+		for(uint8_t i =0;i<255;++i) //TODO make it configurable by user.
 		{
 			m_listen_endpoint.port(m_listen_endpoint.port()+i);
 			try
@@ -235,7 +235,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 		}
 		if(!binded)
 		{
-			logError(RTPS_MSG_IN,"Tried 1000 ports and none was working, last tried: "<< m_listen_endpoint,C_BLUE);
+			logError(RTPS_MSG_IN,"Tried 255 ports and none was working, last tried: "<< m_listen_endpoint,C_BLUE);
 			return false;
 		}
 		else

@@ -23,6 +23,12 @@ set(${PROJECT_NAME}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} library provides
 
 message(STATUS "Configuring ${PROJECT_NAME_LAGE}")
 
+# Turn on -std=c++11 on clang to avoid warnings about using c++11 features and
+# errors about forward declaring of enum's.
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
 ###############################################################################
 # Version information                                                         #
 ###############################################################################
