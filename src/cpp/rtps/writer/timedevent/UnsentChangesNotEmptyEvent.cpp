@@ -41,7 +41,10 @@ UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
-	logInfo(RTPS_WRITER,"");
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 		mp_writer->unsent_changes_not_empty();

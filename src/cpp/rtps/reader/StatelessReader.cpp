@@ -85,7 +85,7 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 	return false;
 }
 
-bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
+bool StatelessReader::change_received(CacheChange_t* change, WriterProxy* /*prox*/)
 {
 	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
@@ -103,7 +103,7 @@ bool StatelessReader::change_received(CacheChange_t* change,WriterProxy* prox)
 	return false;
 }
 
-bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
+bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
 	//const char* const METHOD_NAME = "nextUntakenCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -111,7 +111,7 @@ bool StatelessReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpou
 }
 
 
-bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
+bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
 	const char* const METHOD_NAME = "nextUnreadCache";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -138,12 +138,12 @@ bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout
 }
 
 
-bool StatelessReader::change_removed_by_history(CacheChange_t*ch,WriterProxy*prox)
+bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterProxy* /*prox*/)
 {
 	return true;
 }
 
-bool StatelessReader::acceptMsgFrom(GUID_t& writerId,WriterProxy** wp)
+bool StatelessReader::acceptMsgFrom(GUID_t& writerId, WriterProxy** /*wp*/)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(this->m_acceptMessagesFromUnkownWriters)

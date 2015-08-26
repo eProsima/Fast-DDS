@@ -119,7 +119,7 @@ public:
 
 };
 }
-}; /* namespace rtps */
-}; /* namespace eprosima */
+} /* namespace rtps */
+} /* namespace eprosima */
 #endif
 #endif /* CDRMESSAGECREATOR_H_ */

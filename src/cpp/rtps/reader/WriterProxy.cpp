@@ -44,7 +44,7 @@ WriterProxy::~WriterProxy()
 }
 
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
-		Duration_t heartbeatResponse,
+		Duration_t /*heartbeatResponse*/,
 		StatefulReader* SR) :
 												mp_SFR(SR),
 												m_att(watt),
@@ -246,7 +246,9 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//print_changes_fromWriter_test();
 	if(this->m_lastRemovedSeqNum.to64long() <= 0 && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+    {
 		return false;
+    }
 	if(m_hasMaxAvailableSeqNumChanged)
 	{
 		//Order changesFromWriter
@@ -407,7 +409,7 @@ void WriterProxy::assertLiveliness()
 		this->mp_writerProxyLiveliness->stop_timer();
 	}
 	this->mp_writerProxyLiveliness->restart_timer();
-};
+}
 
 
 

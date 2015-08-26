@@ -21,21 +21,22 @@ namespace rtps {
 
 RTPSParticipant::RTPSParticipant(RTPSParticipantImpl* pimpl):mp_impl(pimpl)
 {
-};
+}
+
 RTPSParticipant::~RTPSParticipant()
 {
 
-};
+}
 
 const GUID_t& RTPSParticipant::getGuid() const
 {
 	return mp_impl->getGuid();
-};
+}
 
 void RTPSParticipant::announceRTPSParticipantState()
 {
 	return mp_impl->announceRTPSParticipantState();
-};
+}
 
 //void RTPSParticipant::loose_next_change()
 //{
@@ -45,12 +46,12 @@ void RTPSParticipant::announceRTPSParticipantState()
 void RTPSParticipant::stopRTPSParticipantAnnouncement()
 {
 	return mp_impl->stopRTPSParticipantAnnouncement();
-};
+}
 
 void RTPSParticipant::resetRTPSParticipantAnnouncement()
 {
 	return mp_impl->resetRTPSParticipantAnnouncement();
-};
+}
 
 bool RTPSParticipant::newRemoteWriterDiscovered(const GUID_t& pguid, int16_t userDefinedId)
 {

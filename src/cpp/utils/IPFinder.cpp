@@ -128,6 +128,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 			if (s != 0) {
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                freeifaddrs(ifaddr);
 				exit(EXIT_FAILURE);
 			}
 			info_IP info;
@@ -145,6 +146,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 			if (s != 0) {
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                freeifaddrs(ifaddr);
 				exit(EXIT_FAILURE);
 			}
 			struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
@@ -158,6 +160,8 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
+
+    freeifaddrs(ifaddr);
 	return true;
 }
 #endif

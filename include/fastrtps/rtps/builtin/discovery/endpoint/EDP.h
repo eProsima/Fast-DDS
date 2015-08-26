@@ -65,7 +65,7 @@ public:
 	 * Remove remote endpoints from the endpoint discovery protocol
 	 * @param pdata Pointer to the ParticipantProxyData to remove
 	 */
-	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){};
+	virtual void removeRemoteEndpoints(ParticipantProxyData* /*pdata*/){};
 
 	/**
 	 * Abstract method that removes a local Reader from the discovery method

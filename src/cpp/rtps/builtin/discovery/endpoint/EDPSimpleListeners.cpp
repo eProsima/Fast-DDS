@@ -33,7 +33,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
+void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
 	const char* const CLASS_NAME = "EDPSimplePUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
@@ -160,7 +160,7 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 	return compute_key(&aux_msg,change);
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
+void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
 	const char* const CLASS_NAME = "EDPSimpleSUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";

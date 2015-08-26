@@ -44,6 +44,10 @@ WriterProxyLiveliness::~WriterProxyLiveliness()
 void WriterProxyLiveliness::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 	

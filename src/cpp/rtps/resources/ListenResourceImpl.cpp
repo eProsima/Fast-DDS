@@ -108,7 +108,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 		}
 		catch(boost::system::system_error const& e)
 		{
-			logError(RTPS_MSG_IN,"Boost error: "<<e.what());
+			logError(RTPS_MSG_IN,"Boost error: " << e.what());
 			this->putToListen();
 			return;
 		}
@@ -219,7 +219,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	else
 	{
 		bool binded = false;
-		for(uint8_t i =0;i<1000;++i) //TODO make it configurable by user.
+		for(uint8_t i = 0; i < 100; ++i) //TODO make it configurable by user.
 		{
 			m_listen_endpoint.port(m_listen_endpoint.port()+i);
 			try

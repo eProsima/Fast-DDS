@@ -40,7 +40,7 @@ ResourceSendImpl::ResourceSendImpl() :
 
 }
 
-bool ResourceSendImpl::initSend(RTPSParticipantImpl* pimpl,const Locator_t& loc,uint32_t sendsockBuffer,bool useIP4,bool useIP6)
+bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t& loc, uint32_t sendsockBuffer, bool useIP4, bool useIP6)
 {
 	const char* const METHOD_NAME = "initSend";
 	m_useIP4 = useIP4;

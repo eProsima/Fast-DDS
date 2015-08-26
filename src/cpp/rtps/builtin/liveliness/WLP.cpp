@@ -376,9 +376,13 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 	return false;
 }
 
-bool WLP::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
+bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 {
 	const char* const METHOD_NAME = "updateLocalWriter";
+
+    // Unused in release mode.
+    (void)W;
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId,C_MAGENTA);
 	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));

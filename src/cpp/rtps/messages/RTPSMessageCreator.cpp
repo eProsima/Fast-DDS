@@ -180,8 +180,8 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalida
 	return RTPSMessageCreator::addSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
 }
-}; /* namespace rtps */
-}; /* namespace eprosima */
+} /* namespace rtps */
+} /* namespace eprosima */
 
 
 #include "submessages/DataMsg.hpp"

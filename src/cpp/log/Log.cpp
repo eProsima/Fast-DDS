@@ -33,7 +33,11 @@ static const int MAXWIDTH = 43;
 
 Log::Log(): mp_logFile(NULL),
 		m_logFileDefined(false),
+#if defined(__DEBUG) || defined(_DEBUG)
 		m_defaultVerbosityLevel(VERB_INFO),
+#else
+		m_defaultVerbosityLevel(VERB_ERROR),
+#endif
 		mp_logMesgMutex(NULL),
 		mp_printMutex(NULL)
 
@@ -242,9 +246,9 @@ void Log::printLogMessage(LogMessage& lm)
 	{
 		if(getCategory(lm.m_cat)->second >= VERB_ERROR)
 		{
-			std::cout << C_B_RED << "[ Error ]" << C_DEF;
+			std::cout << C_B_RED << "[Error]" << C_DEF;
 			if(this->m_logFileDefined)
-				(*this->mp_logFile) << lm.m_date.str().c_str()<< "[ Error ]";
+				(*this->mp_logFile) << lm.m_date.str().c_str()<< "[Error]";
 			printMessageString(lm);
 		}
 		break;
@@ -264,9 +268,9 @@ void Log::printLogMessage(LogMessage& lm)
 	{
 		if(getCategory(lm.m_cat)->second >= VERB_INFO)
 		{
-			std::cout << C_B_GREEN << "[LogInfo]" << C_DEF;
+			std::cout << C_B_GREEN << "[Info]" << C_DEF;
 			if(this->m_logFileDefined)
-				(*this->mp_logFile) <<lm.m_date.str().c_str()<< "[LogInfo]";
+				(*this->mp_logFile) <<lm.m_date.str().c_str()<< "[Info]";
 			printMessageString(lm);
 		}
 		break;

@@ -158,7 +158,7 @@ bool inline operator!=(TopicAttributes& t1, TopicAttributes& t2)
 		return true;
 	}
 	return false;
-};
+}
 #endif
 
 } /* namespace fastrtps */

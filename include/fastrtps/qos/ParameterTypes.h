@@ -460,7 +460,7 @@ public:
 	 * @param pid Pid of the parameter
 	 * @param length Its associated length
 	 */
-	ParameterPropertyList_t(ParameterId_t pid,uint16_t in_length):Parameter_t(PID_PROPERTY_LIST,in_length){};
+	ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST,in_length){};
 	/**
 	 * Add the parameter to a CDRMessage_t message.
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.

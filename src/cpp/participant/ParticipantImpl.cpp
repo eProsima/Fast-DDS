@@ -178,7 +178,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
 
 	return pub;
-};
+}
 
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
@@ -260,7 +260,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	this->mp_rtpsParticipant->registerReader(reader,att.topic,att.qos);
 
 	return sub;
-};
+}
 
 
 bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** type)

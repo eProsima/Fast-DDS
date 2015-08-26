@@ -51,6 +51,10 @@ bool sort_chFR (ChangeForReader_t* c1,ChangeForReader_t* c2)
 void NackResponseDelay::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_WRITER,"Responding to Acknack msg";);

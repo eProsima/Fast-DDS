@@ -72,7 +72,7 @@ public:
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes
 	 */
-	void updateAttributes(WriterAttributes& att){
+	void updateAttributes(WriterAttributes& /*att*/){
 		//FOR NOW THERE IS NOTHING TO UPDATE.
 	};
 

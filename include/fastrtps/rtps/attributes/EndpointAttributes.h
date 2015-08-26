@@ -14,6 +14,7 @@
 #define ENDPOINTATTRIBUTES_H_
 
 #include "../common/Types.h"
+#include "../common/Locator.h"
 
 namespace eprosima {
 namespace fastrtps{
