@@ -319,7 +319,7 @@ void ListenResourceImpl::run_io_service()
 	const char* const METHOD_NAME = "run_io_service";
 	try
 	{
-		logInfo(RTPS_MSG_IN,"Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;
+		logInfo(RTPS_MSG_IN,"Thread: " << boost::this_thread::get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;
 
 		mp_RTPSParticipantImpl->ResourceSemaphorePost();
 

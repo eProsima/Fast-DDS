@@ -106,6 +106,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		status = status | BIT(1);
 	}
 
+    // TODO Check, because I saw init the message two times (other on RTPSMessageGroup::prepareDataSubM)
 	CDRMessage::initCDRMsg(&submsgElem);
 	bool added_no_error = true;
 	try{

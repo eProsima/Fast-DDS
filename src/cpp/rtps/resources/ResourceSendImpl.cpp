@@ -178,8 +178,9 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 	if(loc.kind == LOCATOR_KIND_UDPv4 && m_useIP4)
 	{
 		boost::asio::ip::address_v4::bytes_type addr;
-		for(uint8_t i=0;i<4;i++)
-			addr[i] = loc.address[12+i];
+		for(uint8_t i = 0; i < 4; ++i)
+			addr[i] = loc.address[12 + i];
+        // TODO Check why it is global
 		m_send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
 		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
 		{

@@ -47,11 +47,13 @@ struct CDRMessage_t{
 
 		msg_endian = EPROSIMA_ENDIAN;
 	}
+
 	~CDRMessage_t()
 	{
 		if(buffer != nullptr)
 			free(buffer);
 	}
+
 	/**
 	 * Constructor with maximum size
 	 * @param size Maximum size
@@ -64,6 +66,7 @@ struct CDRMessage_t{
 		max_size = size;
 		msg_endian = EPROSIMA_ENDIAN;
 	}
+
 	//!Pointer to the buffer where the data is stored.
 	octet* buffer;
 	//!Read or write position.

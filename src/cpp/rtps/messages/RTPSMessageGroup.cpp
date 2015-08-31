@@ -205,6 +205,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 			added = true;
 		}
 	//	cout << "msg lengtH:" <<cdrmsg_fullmsg->length<< "data size: "<<data_msg_size<< " max size: "<<cdrmsg_fullmsg->max_size<<endl;
+    //	TODO Maybe an error because use the previous length.
 		while(cdrmsg_fullmsg->length + data_msg_size < cdrmsg_fullmsg->max_size
 				&& (change_n + 1) <= (uint16_t)changes->size()) //another one fits in the full message
 		{

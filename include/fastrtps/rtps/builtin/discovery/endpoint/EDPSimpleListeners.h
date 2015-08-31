@@ -70,8 +70,9 @@ public:
 	/**
 	* @param p
 	*/
-	EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);aux_msg.buffer = nullptr;};
-	virtual ~EDPSimpleSUBListener(){};
+	EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){}
+
+	virtual ~EDPSimpleSUBListener(){}
 	/**
 	* @param reader
 	* @param change

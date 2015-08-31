@@ -11,14 +11,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     # Unit tests
     ###############################################################################
     set(BLACKBOXTESTS_SOURCE BlackboxTests.cpp
+        types/HelloWorld.cpp
+        types/HelloWorldType.cpp
         RTPSAsSocketReader.cpp
         RTPSAsSocketWriter.cpp
         RTPSWithRegistrationReader.cpp
         RTPSWithRegistrationWriter.cpp
+        PubSubHelloWorldReader.cpp
+        PubSubHelloWorldWriter.cpp
         )
     add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
     add_gtest(BlackboxTests ${BLACKBOXTESTS_SOURCE})
     target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(BlackboxTests fastrtps ${GTEST_LIBRARIES})
+    target_link_libraries(BlackboxTests fastrtps fastcdr ${GTEST_LIBRARIES})
 endif()
 

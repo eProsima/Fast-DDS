@@ -6,6 +6,8 @@
 #include "RTPSAsNonReliableWithRegistrationWriter.hpp"
 #include "RTPSAsReliableWithRegistrationReader.hpp"
 #include "RTPSAsReliableWithRegistrationWriter.hpp"
+#include "PubSubAsNonReliableHelloWorldReader.hpp"
+#include "PubSubAsNonReliableHelloWorldWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -138,6 +140,36 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
     reader.block(*msgs.rbegin(), std::chrono::seconds(60));
 
     msgs = reader.getNonReceivedMessages();
+    ASSERT_EQ(msgs.size(), 0);
+}
+
+TEST(BlackBox, PubSubAsNonReliableHelloworld)
+{
+    PubSubAsNonReliableHelloWorldReader reader;
+    PubSubAsNonReliableHelloWorldWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    for(unsigned int tries = 0; tries < 20; ++tries)
+    {
+        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        if(msgs.empty())
+            break;
+
+        writer.send(msgs);
+        reader.block(*msgs.rbegin(), std::chrono::seconds(1));
+    }
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
     ASSERT_EQ(msgs.size(), 0);
 }
 
