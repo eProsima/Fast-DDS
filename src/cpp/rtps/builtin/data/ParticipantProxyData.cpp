@@ -376,7 +376,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 	m_leaseDuration = pdata.m_leaseDuration;
 	m_userData = pdata.m_userData;
 	isAlive = true;
-	if(this->mp_leaseDurationTimer!=nullptr && this->mp_leaseDurationTimer->isWaiting())
+	if(this->mp_leaseDurationTimer != nullptr)
 	{
 		mp_leaseDurationTimer->stop_timer();
 		mp_leaseDurationTimer->update_interval(m_leaseDuration);

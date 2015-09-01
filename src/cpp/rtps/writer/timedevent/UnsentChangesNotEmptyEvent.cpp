@@ -26,7 +26,7 @@ static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
 
 UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 		double interval):
-		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval),
+		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval, ALLWAYS),
   mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
@@ -52,13 +52,11 @@ void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty aborted");
-		this->stopSemaphorePost();
 	}
 	else
 	{
 		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty boost message: " <<msg);
 	}
-	delete(this);
 }
 
 }

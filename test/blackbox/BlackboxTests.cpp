@@ -54,6 +54,13 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
     }
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
     ASSERT_EQ(msgs.size(), 0);
 }
 
@@ -81,6 +88,13 @@ TEST(BlackBox, RTPSAsReliableSocket)
     reader.block(*msgs.rbegin(), std::chrono::seconds(60));
 
     msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
     ASSERT_EQ(msgs.size(), 0);
 }
 
@@ -112,6 +126,13 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
     }
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
     ASSERT_EQ(msgs.size(), 0);
 }
 
@@ -140,6 +161,13 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
     reader.block(*msgs.rbegin(), std::chrono::seconds(60));
 
     msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
     ASSERT_EQ(msgs.size(), 0);
 }
 
@@ -170,6 +198,13 @@ TEST(BlackBox, PubSubAsNonReliableHelloworld)
     }
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
     ASSERT_EQ(msgs.size(), 0);
 }
 

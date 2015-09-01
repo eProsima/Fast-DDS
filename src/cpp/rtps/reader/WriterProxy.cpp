@@ -402,12 +402,14 @@ bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
 void WriterProxy::assertLiveliness()
 {
 	const char* const METHOD_NAME = "assertLiveliness";
+
 	logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
+
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
 	m_isAlive=true;
-	if(this->mp_writerProxyLiveliness->isWaiting())
-	{
-		this->mp_writerProxyLiveliness->stop_timer();
-	}
+
+    this->mp_writerProxyLiveliness->stop_timer();
 	this->mp_writerProxyLiveliness->restart_timer();
 }
 

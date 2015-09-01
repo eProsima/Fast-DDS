@@ -16,14 +16,18 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/utils/RTPSLog.h>
 #include <fastrtps/rtps/common/CacheChange.h>
+#include "../participant/RTPSParticipantImpl.h"
 
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
+#include <boost/thread.hpp>
 
-namespace eprosima {
-namespace fastrtps{
-namespace rtps {
+#include <cassert>
+
+#define IDSTRING "(ID:"<< boost::this_thread::get_id() <<") "<<
+
+using namespace eprosima::fastrtps::rtps;
 
 static const char* const CLASS_NAME = "StatelessReader";
 
@@ -85,18 +89,19 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 	return false;
 }
 
-bool StatelessReader::change_received(CacheChange_t* change, WriterProxy* /*prox*/)
+bool StatelessReader::change_received(CacheChange_t* change)
 {
 	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
 	if(mp_history->received_change(change))
 	{
-		if(getListener()!=nullptr)
+		if(getListener() != nullptr)
 		{
             lock.unlock();
 			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
+            lock.lock();
 		}
-        lock.lock();
+
 		mp_history->postSemaphore();
 		return true;
 	}
@@ -143,9 +148,65 @@ bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterPro
 	return true;
 }
 
-bool StatelessReader::acceptMsgFrom(GUID_t& writerId, WriterProxy** /*wp*/)
+bool StatelessReader::processDataMsg(CacheChange_t *change)
 {
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    const char* const METHOD_NAME = "processDataMsg";
+
+    assert(change);
+
+	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+    if(acceptMsgFrom(change->writerGUID))
+    {
+        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber.to64long() <<" TO reader: "<< getGuid().entityId,C_BLUE);
+
+        CacheChange_t* change_to_add;
+
+        if(reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
+        { 
+            if (!change_to_add->copy(change))
+            {
+                logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
+                        << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+                releaseCache(change_to_add);
+                return false;
+            }
+        }
+        else
+        {
+            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId, C_BLUE);
+            return false;
+        }
+
+        lock.unlock(); // Next function has its own lock.
+        if(!change_received(change_to_add))
+        {
+            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
+                    <<change_to_add->sequenceNumber.to64long(),C_BLUE);
+            releaseCache(change_to_add);
+            if(getGuid().entityId == c_EntityId_SPDPReader)
+            {
+                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
+            }
+        }
+    }
+
+    return true;
+}
+
+bool StatelessReader::processHeartbeatMsg(GUID_t& /*writerGUID*/, uint32_t /*hbCount*/, SequenceNumber_t& /*firstSN*/,
+        SequenceNumber_t& /*lastSN*/, bool /*finalFlag*/, bool /*livelinessFlag*/)
+{
+    return true;
+}
+
+bool StatelessReader::processGapMsg(GUID_t& /*writerGUID*/, SequenceNumber_t& /*gapStart*/, SequenceNumberSet_t& /*gapList*/)
+{
+    return true;
+}
+
+bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
+{
 	if(this->m_acceptMessagesFromUnkownWriters)
 	{
 		return true;
@@ -154,6 +215,7 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId, WriterProxy** /*wp*/)
 	{
 		if(writerId.entityId == this->m_trustedWriterEntityId)
 			return true;
+
 		for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
 		{
 			if((*it).guid == writerId)
@@ -162,11 +224,6 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId, WriterProxy** /*wp*/)
 			}
 		}
 	}
+
 	return false;
 }
-
-}
-} /* namespace rtps */
-} /* namespace eprosima */
-
-

@@ -58,7 +58,6 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_PDP,"Response Data Period aborted");
-		this->stopSemaphorePost();
 	}
 	else
 	{

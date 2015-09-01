@@ -46,12 +46,19 @@ public:
 		EVENT_ABORT,
 		EVENT_MSG
 	};
+
+    enum AUTODESTRUCTION_MODE
+    {
+        NONE,
+        ON_SUCCESS,
+        ALLWAYS
+    };
 	
 	/**
 	* @param serv IO service
 	* @param milliseconds Interval of the timedEvent.
 	*/
-	TimedEvent(boost::asio::io_service* serv,double milliseconds);
+	TimedEvent(boost::asio::io_service* serv,double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 	virtual ~TimedEvent();
 	
 	/**
@@ -90,15 +97,6 @@ public:
 	* @return Mulliseconds interval
 	*/
     double getIntervalMilliSec();
-	
-	//!
-    void stopSemaphorePost();
-	
-	/**
-	* Check if the instance is waiting
-	* @return true if the instace is waiting
-	*/
-    bool isWaiting();
 	
 	/**
 	* Get the remaining milliseconds for the timer to expire

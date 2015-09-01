@@ -106,7 +106,6 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_READER,"Response aborted");
-		this->stopSemaphorePost();
 	}
 	else
 	{

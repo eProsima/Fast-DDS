@@ -119,7 +119,6 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_WRITER,"Nack response aborted");
-		this->stopSemaphorePost();
 	}
 	else
 	{

@@ -244,7 +244,7 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessAutomatic->isWaiting() && mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
 			{
 				mp_livelinessAutomatic->stop_timer();
 			}
@@ -266,7 +266,7 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessManRTPSParticipant->isWaiting() && mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
 			{
 				mp_livelinessManRTPSParticipant->stop_timer();
 			}
@@ -400,7 +400,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 			m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessAutomatic->isWaiting() && mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
 			{
 				mp_livelinessAutomatic->stop_timer();
 			}
@@ -421,7 +421,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 			m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessManRTPSParticipant->isWaiting() && mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
 			{
 				mp_livelinessManRTPSParticipant->stop_timer();
 			}
