@@ -142,9 +142,10 @@ public:
 	* @param times WriterTimes parameter.
 	*/
 	void updateTimes(WriterTimes& times);
+
 private:
 
-
+    StatefulWriter& operator=(const StatefulWriter&) NON_COPYABLE_CXX11;
 
 };
 }

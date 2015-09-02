@@ -81,5 +81,5 @@ void PubSubHelloWorldWriter::waitDiscovery()
     if(matched_ == 0)
         cv_.wait_for(lock, std::chrono::seconds(10));
 
-    ASSERT_NE(matched_, 0);
+    ASSERT_NE(matched_, 0u);
 }

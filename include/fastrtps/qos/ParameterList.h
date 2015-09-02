@@ -81,7 +81,7 @@ public:
 	 * @param[out] chkind Pointer to the change Kind.
 	 * @return Number of bytes of the parameter list.
 	 */
-	static uint32_t readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind);
+	static int32_t readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind);
 
 };
 

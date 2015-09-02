@@ -32,7 +32,11 @@ inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 	}
 	msg->pos = 0;
 	msg->length = 0;
-	msg->msg_endian = EPROSIMA_ENDIAN;
+#if EPROSIMA_BIG_ENDIAN
+    msg->msg_endian = BIGEND;
+#else
+    msg->msg_endian = LITTLEEND;
+#endif
 	return true;
 }
 
@@ -51,13 +55,13 @@ inline bool CDRMessage::readEntityId(CDRMessage_t* msg,const EntityId_t* id) {
 	return true;
 }
 
-inline bool CDRMessage::readData(CDRMessage_t* msg,octet* o,uint16_t length) {
+inline bool CDRMessage::readData(CDRMessage_t* msg, octet* o, uint32_t length) {
 	memcpy(o,&msg->buffer[msg->pos],length);
 	msg->pos+=length;
 	return true;
 }
 
-inline bool CDRMessage::readDataReversed(CDRMessage_t* msg,octet* o,uint16_t length) {
+inline bool CDRMessage::readDataReversed(CDRMessage_t* msg, octet* o, uint32_t length) {
     for(uint16_t i=0;i<length;i++)
 	{
 		*(o+i)=*(msg->buffer+msg->pos+length-1-i);
@@ -449,7 +453,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	}
 
 	addUInt32(msg,numBits);
-	uint8_t n_longs = (numBits+31)/32;
+	uint8_t n_longs = (uint8_t)((numBits+31)/32);
 	int32_t* bitmap = new int32_t[n_longs];
 	for(uint32_t i= 0;i<n_longs;i++)
 	{

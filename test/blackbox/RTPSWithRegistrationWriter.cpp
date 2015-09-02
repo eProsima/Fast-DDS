@@ -78,8 +78,8 @@ void RTPSWithRegistrationWriter::send(const std::list<uint16_t> &msgs)
 		CacheChange_t * ch = writer_->new_change(ALIVE);
 
 #if defined(_WIN32)
-		ch->serializedPayload.length =
-			sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
+        ch->serializedPayload.length =
+            (uint16_t)((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
 #else
 		ch->serializedPayload.length =
 			sprintf((char*)ch->serializedPayload.data,"My example string %hu", *it) + 1;
@@ -103,5 +103,5 @@ void RTPSWithRegistrationWriter::waitDiscovery()
     if(matched_ == 0)
         cv_.wait_for(lock, std::chrono::seconds(10));
 
-    ASSERT_NE(matched_, 0);
+    ASSERT_NE(matched_, 0u);
 }

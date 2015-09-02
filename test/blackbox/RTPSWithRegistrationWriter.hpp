@@ -40,6 +40,8 @@ class RTPSWithRegistrationWriter
 
         private:
 
+            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+
             RTPSWithRegistrationWriter &writer_;
 
     } listener_;
@@ -55,6 +57,8 @@ class RTPSWithRegistrationWriter
         virtual void configWriter(WriterAttributes &wattr) = 0;
 
     private:
+
+        RTPSWithRegistrationWriter& operator=(const RTPSWithRegistrationWriter&) NON_COPYABLE_CXX11;
 
         RTPSParticipant *participant_;
         RTPSWriter *writer_;

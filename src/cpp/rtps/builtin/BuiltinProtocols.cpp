@@ -174,8 +174,6 @@ bool BuiltinProtocols::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
 		ok |= mp_WLP->updateLocalWriter(W,wqos);
 	}
 	return ok;
-
-	return true;
 }
 
 bool BuiltinProtocols::updateLocalReader(RTPSReader* R,ReaderQos& rqos)

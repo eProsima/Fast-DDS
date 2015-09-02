@@ -394,7 +394,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
 		msg->pos += (octetsToInlineQos-RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
 
-	uint32_t inlineQosSize = 0;
+	int32_t inlineQosSize = 0;
 
 	if(inlineQosFlag)
 	{
@@ -428,7 +428,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		{
 			if(ch->serializedPayload.max_size >= payload_size-2-2)
 			{
-				ch->serializedPayload.length = payload_size-2-2;
+				ch->serializedPayload.length = (uint16_t)(payload_size-2-2);
 				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
 				ch->kind = ALIVE;
 			}

@@ -42,15 +42,12 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& se
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 		CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
-	if(EPROSIMA_ENDIAN == BIGEND)
-	{
-		flags = flags | BIT(0);
-		submsgElem.msg_endian   = BIGEND;
-	}
-	else
-	{
-		submsgElem.msg_endian  = LITTLEEND;
-	}
+#if EPROSIMA_BIG_ENDIAN
+    submsgElem.msg_endian = BIGEND;
+#else
+	flags = flags | BIT(0);
+	submsgElem.msg_endian   = LITTLEEND;
+#endif
 
 	try{
 		CDRMessage::addEntityId(&submsgElem,&readerId);
@@ -67,7 +64,7 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& se
 
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::addSubmessageHeader(msg, GAP,flags,submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg, GAP, flags, (uint16_t)submsgElem.length);
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);
 	g_pool_submsg.release_CDRMsg(submsgElem);

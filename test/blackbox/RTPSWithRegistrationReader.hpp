@@ -39,6 +39,9 @@ class RTPSWithRegistrationReader
                 }
 
             private:
+
+                Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+
                 RTPSWithRegistrationReader &reader_;
         } listener_;
 
@@ -55,6 +58,8 @@ class RTPSWithRegistrationReader
         virtual void configReader(ReaderAttributes &rattr) = 0;
 
     private:
+
+        RTPSWithRegistrationReader& operator=(const RTPSWithRegistrationReader&) NON_COPYABLE_CXX11;
 
         RTPSParticipant *participant_;
         RTPSReader *reader_;

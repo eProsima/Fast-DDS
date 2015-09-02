@@ -53,15 +53,13 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 	//Create the two CDR msgs
 	//CDRMessage_t submsgElem;
 	octet flags = 0x0;
-	if(EPROSIMA_ENDIAN == LITTLEEND)
-	{
-		flags = flags | BIT(0);
-		 submsgElem.msg_endian = LITTLEEND;
-	}
-	else
-	{
-		 submsgElem.msg_endian = BIGEND;
-	}
+#if EPROSIMA_BIG_ENDIAN
+    submsgElem.msg_endian = BIGEND;
+#else
+	flags = flags | BIT(0);
+	submsgElem.msg_endian = LITTLEEND;
+#endif
+
 	//Find out flags
 	bool dataFlag = false;
 	bool keyFlag = false;
@@ -169,7 +167,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 		}
 
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.
-		added_no_error &= RTPSMessageCreator::addSubmessageHeader(msg, DATA,flags,submsgElem.length);
+		added_no_error &= RTPSMessageCreator::addSubmessageHeader(msg, DATA,flags, (uint16_t)submsgElem.length);
 		//Append Submessage elements to msg
 
 		added_no_error &= CDRMessage::appendMsg(msg, &submsgElem);

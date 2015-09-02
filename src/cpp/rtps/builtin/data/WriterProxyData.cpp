@@ -418,7 +418,7 @@ RemoteWriterAttributes& WriterProxyData::toRemoteWriterAttributes()
 {
 	m_remoteAtt.guid = m_guid;
 	m_remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
-	m_remoteAtt.ownershipStrength = m_qos.m_ownershipStrength.value;
+	m_remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
 	m_remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
 	m_remoteAtt.endpoint.endpointKind = WRITER;
 	m_remoteAtt.endpoint.topicKind = m_topicKind;

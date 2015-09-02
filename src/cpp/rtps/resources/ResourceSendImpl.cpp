@@ -68,7 +68,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 			udp::endpoint send_endpoint;
 			while (not_bind && bind_tries < MAX_BIND_TRIES)
 			{
-				send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(ipit->name), sendLocv4.port);
+				send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(ipit->name), (uint16_t)sendLocv4.port);
 				try{
 					sendSocketv4->bind(send_endpoint);
 					not_bind = false;
@@ -117,7 +117,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 					bt[i] = ipit->locator.address[i];
 				boost::asio::ip::address_v6 addr = boost::asio::ip::address_v6(bt);
 				addr.scope_id(ipit->scope_id);
-				send_endpoint = udp::endpoint(addr, sendLocv6.port);
+				send_endpoint = udp::endpoint(addr, (uint16_t)sendLocv6.port);
 				//cout << "IP6 ADDRESS: "<< send_endpoint << endl;
 				try{
 					sendSocketv6->bind(send_endpoint);
@@ -181,7 +181,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		for(uint8_t i = 0; i < 4; ++i)
 			addr[i] = loc.address[12 + i];
         // TODO Check why it is global
-		m_send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
+		m_send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr), (uint16_t)loc.port);
 		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT,"UDPv4: " << msg->length << " bytes TO endpoint: " << m_send_endpoint_v4
@@ -219,7 +219,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		boost::asio::ip::address_v6::bytes_type addr;
 		for(uint8_t i=0;i<16;i++)
 			addr[i] = loc.address[i];
-		m_send_endpoint_v6 = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
+		m_send_endpoint_v6 = udp::endpoint(boost::asio::ip::address_v6(addr), (uint16_t)loc.port);
 		for (auto sockit = mv_send_socket_v6.begin(); sockit != mv_send_socket_v6.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT, "UDPv6: " << msg->length << " bytes TO endpoint: "

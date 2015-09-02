@@ -45,7 +45,7 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 }
 
 
-uint32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind)
+int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind)
 {
 	uint32_t paramlist_byte_size = 0;
 	bool is_sentinel = false;

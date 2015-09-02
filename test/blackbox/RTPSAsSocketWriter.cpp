@@ -78,7 +78,7 @@ void RTPSAsSocketWriter::send(const std::list<uint16_t> &msgs)
 
 #if defined(_WIN32)
 		ch->serializedPayload.length =
-			sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
+            (uint16_t)sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
 #else
 		ch->serializedPayload.length =
 			sprintf((char*)ch->serializedPayload.data,"My example string %hu", *it) + 1;

@@ -253,10 +253,10 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 {
 	std::vector<std::string> hexdigits;
 
-	size_t start = 0;
-	size_t end;
+	size_t start = 0, end = 0;
 	std::string auxstr;
-	while (1)
+
+    while(end != std::string::npos)
 	{
 		end = str.find(':',start);
 		if (end - start > 1)
@@ -266,8 +266,6 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 		else
 			hexdigits.push_back(std::string("EMPTY"));
 		start = end + 1;
-		if (end == std::string::npos)
-			break;
 	}
 	if (*hexdigits.begin() == std::string("EMPTY") && *(hexdigits.begin() + 1) == std::string("EMPTY"))
 		return false;

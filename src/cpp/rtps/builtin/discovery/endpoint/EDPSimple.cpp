@@ -226,9 +226,14 @@ bool EDPSimple::processLocalReaderProxyData(ReaderProxyData* rdata)
 		if(change !=nullptr)
 		{
 			rdata->toParameterList();
-			ParameterList::updateCDRMsg(&rdata->m_parameterList,EPROSIMA_ENDIAN);
-			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
-			change->serializedPayload.length = rdata->m_parameterList.m_cdrmsg.length;
+#if EPROSIMA_BIG_ENDIAN
+			ParameterList::updateCDRMsg(&rdata->m_parameterList, BIGEND);
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            ParameterList::updateCDRMsg(&rdata->m_parameterList, LITTLEEND);
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+			change->serializedPayload.length = (uint16_t)rdata->m_parameterList.m_cdrmsg.length;
 			memcpy(change->serializedPayload.data,rdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
             boost::unique_lock<boost::recursive_mutex> lock(*mp_SubWriter.second->getMutex());
 			for(auto ch = mp_SubWriter.second->changesBegin();ch!=mp_SubWriter.second->changesEnd();++ch)
@@ -257,9 +262,14 @@ bool EDPSimple::processLocalWriterProxyData(WriterProxyData* wdata)
 		if(change != nullptr)
 		{
 			wdata->toParameterList();
-			ParameterList::updateCDRMsg(&wdata->m_parameterList,EPROSIMA_ENDIAN);
-			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
-			change->serializedPayload.length = wdata->m_parameterList.m_cdrmsg.length;
+#if EPROSIMA_BIG_ENDIAN
+			ParameterList::updateCDRMsg(&wdata->m_parameterList,BIGEND);
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            ParameterList::updateCDRMsg(&wdata->m_parameterList, LITTLEEND);
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+			change->serializedPayload.length = (uint16_t)wdata->m_parameterList.m_cdrmsg.length;
 			memcpy(change->serializedPayload.data,wdata->m_parameterList.m_cdrmsg.buffer,change->serializedPayload.length);
             boost::unique_lock<boost::recursive_mutex> lock(*mp_PubWriter.second->getMutex());
 			for(auto ch = mp_PubWriter.second->changesBegin();ch!=mp_PubWriter.second->changesEnd();++ch)

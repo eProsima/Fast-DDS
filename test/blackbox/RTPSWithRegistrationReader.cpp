@@ -109,7 +109,7 @@ void RTPSWithRegistrationReader::waitDiscovery()
     if(matched_ == 0)
         cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
-    ASSERT_NE(matched_, 0);
+    ASSERT_NE(matched_, 0u);
 }
 
 void RTPSWithRegistrationReader::matched()
@@ -130,6 +130,10 @@ void RTPSWithRegistrationReader::Listener::onNewCacheChangeAdded(RTPSReader* rea
     history->remove_change((CacheChange_t*)change);
 
     uint16_t number;
+#ifdef WIN32
+    ASSERT_EQ(sscanf_s((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
+#else
     ASSERT_EQ(sscanf((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
+#endif
     reader_.newNumber(number);
 }

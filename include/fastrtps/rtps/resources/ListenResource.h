@@ -116,6 +116,10 @@ public:
 	const uint32_t m_ID;
 
 	const bool m_isDefaultListenResource;
+
+private:
+
+    ListenResource& operator=(const ListenResource&) NON_COPYABLE_CXX11;
 };
 }
 } /* namespace rtps */

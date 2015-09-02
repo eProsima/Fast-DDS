@@ -113,22 +113,19 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 	}
 	else
 		firstSN = m_changesFromW.back().seqNum;
-	while(1)
-	{
 
-		++firstSN;
-		if(firstSN>seq)
-		{
-			break;
-		}
+    ++firstSN;
+    while(firstSN <= seq)
+	{
 		ChangeFromWriter_t chw;
 		chw.seqNum = firstSN;
 		chw.status = UNKNOWN;
 		chw.is_relevant = true;
 		logInfo(RTPS_READER,"WP "<<this->m_att.guid << " adding unknown changes up to: "<<chw.seqNum.to64long());
 		m_changesFromW.push_back(chw);
-
+        ++firstSN;
 	}
+
 	return true;
 }
 
@@ -212,8 +209,6 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 	}
 	logError(RTPS_READER,"Something has gone wrong"<<endl;);
 	return false;
-
-	return true;
 }
 
 
