@@ -88,7 +88,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const Cach
 			}
             lock.unlock();
 			//LOOK IF IS AN UPDATED INFORMATION
-			ParticipantProxyData* pdata_ptr;
+			ParticipantProxyData* pdata_ptr = nullptr;
 			bool found = false;
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_SPDP->getMutex());
 			for (auto it = mp_SPDP->m_participantProxies.begin();

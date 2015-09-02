@@ -3,7 +3,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     # If Windows, link against export dll functions
     if(WIN32)
-        add_definitions(-DFASTRTPS_DYN_LINK)
+        add_definitions(-DFASTRTPS_DYN_LINK -DFASTCDR_DYN_LINK)
     endif()
 
 

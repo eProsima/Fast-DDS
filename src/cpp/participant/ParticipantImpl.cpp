@@ -327,7 +327,6 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16
 		return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
 	else 
 		return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
-	return false;
 }
 
 } /* namespace pubsub */

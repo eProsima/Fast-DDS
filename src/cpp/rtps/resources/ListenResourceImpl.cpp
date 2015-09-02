@@ -177,7 +177,7 @@ void ListenResourceImpl::getLocatorAddresses( Locator_t& loc)
 		}
 		mv_listenLoc.push_back(loc);
 	}
-	m_listen_endpoint.port(loc.port);
+	m_listen_endpoint.port((uint16_t)loc.port);
 }
 
 

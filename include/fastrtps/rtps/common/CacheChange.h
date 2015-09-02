@@ -76,7 +76,7 @@ struct RTPS_DllAPI CacheChange_t{
     // TODO Check pass uint32_t to serializedPayload that needs int16_t.
 	CacheChange_t(uint32_t payload_size):
 		kind(ALIVE),
-		serializedPayload(payload_size),
+		serializedPayload((uint16_t)payload_size),
 		isRead(false)
 	{
 

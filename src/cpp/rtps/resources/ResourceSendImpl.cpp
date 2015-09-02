@@ -68,7 +68,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 			udp::endpoint send_endpoint;
 			while (not_bind && bind_tries < MAX_BIND_TRIES)
 			{
-				send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(ipit->name), sendLocv4.port);
+				send_endpoint = udp::endpoint(boost::asio::ip::address_v4::from_string(ipit->name), (uint16_t)sendLocv4.port);
 				try{
 					sendSocketv4->bind(send_endpoint);
 					not_bind = false;
@@ -117,7 +117,7 @@ bool ResourceSendImpl::initSend(RTPSParticipantImpl* /*pimpl*/, const Locator_t&
 					bt[i] = ipit->locator.address[i];
 				boost::asio::ip::address_v6 addr = boost::asio::ip::address_v6(bt);
 				addr.scope_id(ipit->scope_id);
-				send_endpoint = udp::endpoint(addr, sendLocv6.port);
+				send_endpoint = udp::endpoint(addr, (uint16_t)sendLocv6.port);
 				//cout << "IP6 ADDRESS: "<< send_endpoint << endl;
 				try{
 					sendSocketv6->bind(send_endpoint);

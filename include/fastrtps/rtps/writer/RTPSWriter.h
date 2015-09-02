@@ -157,7 +157,9 @@ protected:
 	*/
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
+    private:
 
+        RTPSWriter& operator=(const RTPSWriter&) NON_COPYABLE_CXX11;
 };
 }
 } /* namespace rtps */

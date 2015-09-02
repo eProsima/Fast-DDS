@@ -34,6 +34,9 @@ class RTPSAsSocketReader
                 void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
 
             private:
+
+                Listener& operator=(const Listener&)NON_COPYABLE_CXX11;
+
                 RTPSAsSocketReader &reader_;
         } listener_;
 
@@ -49,6 +52,8 @@ class RTPSAsSocketReader
         virtual void addRemoteWriter(RTPSReader *reader, std::string &ip, uint32_t port, GUID_t &guid) = 0;
 
     private:
+
+        RTPSAsSocketReader& operator=(const RTPSAsSocketReader&) NON_COPYABLE_CXX11;
 
         RTPSParticipant *participant_;
         RTPSReader *reader_;

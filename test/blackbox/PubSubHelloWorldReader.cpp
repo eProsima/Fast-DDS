@@ -82,8 +82,7 @@ void PubSubHelloWorldReader::block(uint16_t lastvalue, const std::chrono::second
     std::unique_lock<std::mutex> lock(mutex_);
     lastvalue_ = lastvalue;
     if(lastvalue_ == *msgs_.rbegin())
-        //cv_.wait_for(lock, seconds);
-        cv_.wait(lock);
+        cv_.wait_for(lock, seconds);
 }
 
 void PubSubHelloWorldReader::waitDiscovery()
@@ -93,7 +92,7 @@ void PubSubHelloWorldReader::waitDiscovery()
     if(matched_ == 0)
         cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
-    ASSERT_NE(matched_, 0);
+    ASSERT_NE(matched_, 0u);
 }
 
 void PubSubHelloWorldReader::matched()

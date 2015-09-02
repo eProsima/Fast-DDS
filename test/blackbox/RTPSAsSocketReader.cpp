@@ -110,6 +110,10 @@ void RTPSAsSocketReader::Listener::onNewCacheChangeAdded(RTPSReader* reader, con
     history->remove_change((CacheChange_t*)change);
 
     uint16_t number;
+#ifdef WIN32
+    ASSERT_EQ(sscanf_s((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
+#else
     ASSERT_EQ(sscanf((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
+#endif
     reader_.newNumber(number);
 }

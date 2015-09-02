@@ -159,7 +159,9 @@ protected:
 	//!Expects Inline Qos.
 	bool m_expectsInlineQos;
 
+    private:
 
+        RTPSReader& operator=(const RTPSReader&) NON_COPYABLE_CXX11;
 };
 
 }

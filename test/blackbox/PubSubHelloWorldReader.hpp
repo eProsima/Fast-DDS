@@ -41,6 +41,9 @@ class PubSubHelloWorldReader
                 }
 
             private:
+
+                Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+
                 PubSubHelloWorldReader &reader_;
         } listener_;
 
@@ -57,6 +60,8 @@ class PubSubHelloWorldReader
         virtual void configSubscriber(SubscriberAttributes &sattr) = 0;
 
     private:
+
+        PubSubHelloWorldReader& operator=(const PubSubHelloWorldReader&)NON_COPYABLE_CXX11;
 
         Participant *participant_;
         Subscriber *subscriber_;

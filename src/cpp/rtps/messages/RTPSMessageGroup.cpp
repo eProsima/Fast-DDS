@@ -112,7 +112,7 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	RTPSMessageCreator::addSubmessageGap(cdrmsg_submessage,seqit->first,seqit->second,
 			readerId,W->getGuid().entityId);
 
-	gap_msg_size = cdrmsg_submessage->length;
+	gap_msg_size = (uint16_t)cdrmsg_submessage->length;
 	if(gap_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
 		logError(RTPS_WRITER,"The Gap messages are larger than max size, something is wrong");
@@ -185,7 +185,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	uint16_t change_n = 1;
 	//FIRST SUBMESSAGE
 	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
-	data_msg_size = cdrmsg_submessage->length;
+	data_msg_size = (uint16_t)cdrmsg_submessage->length;
 	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
 		logError(RTPS_WRITER,"The Data messages are larger than max size, something is wrong");
@@ -251,7 +251,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	//FIRST SUBMESSAGE
 	std::vector<CacheChange_t*>::iterator cit = changes->begin();
 	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
-	data_msg_size = cdrmsg_submessage->length;
+	data_msg_size = (uint16_t)cdrmsg_submessage->length;
 	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
 		logError(RTPS_WRITER,"The Data messages are larger than max size, something is wrong");

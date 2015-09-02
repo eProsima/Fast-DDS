@@ -36,7 +36,7 @@ bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
 	eprosima::fastcdr::Cdr ser(fastbuffer);
 	//serialize the object:
 	hw->serialize(ser);
-	payload->length = (uint32_t)ser.getSerializedDataLength();
+	payload->length = (uint16_t)ser.getSerializedDataLength();
 	return true;
 }
 

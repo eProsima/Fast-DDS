@@ -42,6 +42,8 @@ class PubSubHelloWorldWriter
 
         private:
 
+            Listener& operator=(const Listener&) NON_COPYABLE_CXX11;
+
             PubSubHelloWorldWriter &writer_;
 
     } listener_;
@@ -57,6 +59,8 @@ class PubSubHelloWorldWriter
         virtual void configPublisher(PublisherAttributes &puattr) = 0;
 
     private:
+
+        PubSubHelloWorldWriter& operator=(const PubSubHelloWorldWriter&)NON_COPYABLE_CXX11;
 
         Participant *participant_;
         Publisher *publisher_;

@@ -65,13 +65,13 @@ typedef enum TopicKind_t{
 }TopicKind_t;
 
 
-#if defined(__LITTLE_ENDIAN__)
-const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
-#else
+#if __BIG_ENDIAN__
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
+#else
+const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif
 
-#define EPROSIMA_ENDIAN LITTLEEND
+#define EPROSIMA_BIG_ENDIAN 0
 
 
 typedef unsigned char octet;
