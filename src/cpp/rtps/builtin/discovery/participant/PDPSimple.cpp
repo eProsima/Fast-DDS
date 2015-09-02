@@ -429,6 +429,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    // TODO Review because the mutex is already take in PDPSimpleListener.
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	if(auxendp!=0)
 	{

@@ -81,8 +81,6 @@ private:
 	boost::asio::io_service m_send_service;
 	std::vector<boost::asio::ip::udp::socket*> mv_send_socket_v4;
 	std::vector<boost::asio::ip::udp::socket*> mv_send_socket_v6;
-	boost::asio::ip::udp::endpoint m_send_endpoint_v4;
-	boost::asio::ip::udp::endpoint m_send_endpoint_v6;
 	size_t m_bytes_sent;
 	bool m_send_next;
 	RTPSParticipantImpl* mp_RTPSParticipant;

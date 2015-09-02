@@ -382,6 +382,7 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
 
 inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec)
 {
+    // TODO Calculate without padding
 	if(msg->pos+4+ocvec->size()>=msg->max_size)
 	{
 		return false;
@@ -391,9 +392,15 @@ inline bool CDRMessage::addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocve
 
 	int rest = ocvec->size()% 4;
 	if (rest != 0)
+    {
 		rest = 4 - rest; //how many you have to add
-	msg->pos+=rest;
-	msg->length+=rest;
+
+		octet oc = '\0';
+		for (int i = 0; i < rest; i++) {
+			valid &= CDRMessage::addOctet(msg, oc);
+		}
+	}
+
 	return valid;
 }
 
