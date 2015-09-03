@@ -180,7 +180,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		boost::asio::ip::address_v4::bytes_type addr;
 		for(uint8_t i = 0; i < 4; ++i)
 			addr[i] = loc.address[12 + i];
-        boost::asio::ip::udp::endpoint send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr),loc.port);
+        boost::asio::ip::udp::endpoint send_endpoint_v4 = udp::endpoint(boost::asio::ip::address_v4(addr), (uint16_t)loc.port);
 		for (auto sockit = mv_send_socket_v4.begin(); sockit != mv_send_socket_v4.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT,"UDPv4: " << msg->length << " bytes TO endpoint: " << send_endpoint_v4
@@ -214,7 +214,7 @@ void ResourceSendImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 		boost::asio::ip::address_v6::bytes_type addr;
 		for(uint8_t i = 0; i < 16; i++)
 			addr[i] = loc.address[i];
-        boost::asio::ip::udp::endpoint send_endpoint_v6 = udp::endpoint(boost::asio::ip::address_v6(addr),loc.port);
+        boost::asio::ip::udp::endpoint send_endpoint_v6 = udp::endpoint(boost::asio::ip::address_v6(addr), (uint16_t)loc.port);
 		for (auto sockit = mv_send_socket_v6.begin(); sockit != mv_send_socket_v6.end(); ++sockit)
 		{
 			logInfo(RTPS_MSG_OUT, "UDPv6: " << msg->length << " bytes TO endpoint: "

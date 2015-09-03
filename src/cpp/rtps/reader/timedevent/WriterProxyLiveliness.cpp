@@ -72,6 +72,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
+        logInfo(RTPS_LIVELINESS, "WriterProxyLiveliness aborted");
 	}
 	else
 	{

@@ -65,8 +65,8 @@ void TimedEventImpl::stop_timer()
 	{
         m_isWaiting = false;
         lock.unlock();
-		timer->cancel();
-		this->mp_stopSemaphore->wait();
+        if(timer->cancel() > 0)
+            this->mp_stopSemaphore->wait();
 	}
 }
 

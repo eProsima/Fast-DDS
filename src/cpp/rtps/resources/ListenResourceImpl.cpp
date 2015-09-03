@@ -78,10 +78,11 @@ bool ListenResourceImpl::isListeningTo(const Locator_t& loc)
 void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
 	const char* const METHOD_NAME = "newCDRMessage";
+
 	if(err == boost::system::errc::success)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(m_mutex);
 		mp_listenResource->setMsgRecMsgLength((uint32_t)msg_size);
+
 		if(msg_size == 0)
 			return;
 		try{
@@ -112,6 +113,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 			this->putToListen();
 			return;
 		}
+        
 		try
 		{
 			mp_listenResource->mp_receiver->processCDRMsg(mp_RTPSParticipantImpl->getGuid().guidPrefix,
@@ -123,6 +125,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 			logError(RTPS_MSG_IN,IDSTRING"Error processing message: " << e,C_BLUE);
 
 		}
+
 		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" ,C_BLUE);
 		this->putToListen();
 	}

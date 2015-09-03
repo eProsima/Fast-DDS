@@ -400,7 +400,7 @@ void WriterProxy::assertLiveliness()
 
 	logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
 
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	//boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	m_isAlive=true;
 

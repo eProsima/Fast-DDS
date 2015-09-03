@@ -112,18 +112,22 @@ void MessageReceiver::reset(){
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
-		Locator_t* loc,CDRMessage_t*msg)
+		Locator_t* loc, CDRMessage_t*msg)
 {
+
 	const char* const METHOD_NAME = "processCDRMsg";
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex()); //TODO Comprobar si se puede poner en las subfunciones de la clase.
+
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring",C_BLUE);
 		return;
 	}
+
 	this->reset();
+
 	destGuidPrefix = RTPSParticipantguidprefix;
 	unicastReplyLocatorList.begin()->kind = loc->kind;
+
 	uint8_t n_start = 0;
 	if(loc->kind == 1)
 		n_start = 12;
@@ -134,6 +138,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		logWarning(RTPS_MSG_IN,IDSTRING"Locator kind invalid",C_BLUE);
 		return;
 	}
+
 	for(uint8_t i = n_start;i<16;i++)
 	{
 		unicastReplyLocatorList.begin()->address[i] = loc->address[i];
@@ -268,13 +273,16 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
 {
 	const char* const METHOD_NAME = "checkRTPSHeader";
+
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
 			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
 	{
 		logInfo(RTPS_MSG_IN,IDSTRING"Msg received with no RTPS in header, ignoring...",C_BLUE);
 		return false;
 	}
+
 	msg->pos+=4;
+
 	//CHECK AND SET protocol version
 	if(msg->buffer[msg->pos] <= destVersion.m_major)
 	{
@@ -286,6 +294,7 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the
 		logWarning(RTPS_MSG_IN,IDSTRING"Major RTPS Version not supported",C_BLUE);
 		return false;
 	}
+
 	//Set source vendor id
 	sourceVendorId[0] = msg->buffer[msg->pos];msg->pos++;
 	sourceVendorId[1] = msg->buffer[msg->pos];msg->pos++;
@@ -319,6 +328,8 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	const char* const METHOD_NAME = "proc_Submsg_Data";
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+
 	//READ and PROCESS
 	if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
 	{
@@ -360,6 +371,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		logWarning(RTPS_MSG_IN,IDSTRING"Data received in locator: "<<mp_threadListen->getListenLocators()<< ", when NO readers are listening",C_BLUE);
 		return false;
 	}
+
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
@@ -514,6 +526,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct reader and writers:
 	for(std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
 			it != mp_threadListen->m_assocReaders.end(); ++it)
@@ -555,8 +568,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct writer to use the acknack
-
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
 	{
@@ -630,7 +643,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart.to64long()<=0)
 		return false;
 
-
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{

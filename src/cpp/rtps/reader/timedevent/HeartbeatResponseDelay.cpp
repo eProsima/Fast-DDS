@@ -105,11 +105,11 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logInfo(RTPS_READER,"Response aborted");
+		logInfo(RTPS_READER,"HeartbeatResponseDelay aborted");
 	}
 	else
 	{
-		logInfo(RTPS_READER,"Response boost message: " <<msg);
+		logInfo(RTPS_READER,"HeartbeatResponseDelay boost message: " <<msg);
 	}
 }
 

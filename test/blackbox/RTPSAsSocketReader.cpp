@@ -95,7 +95,7 @@ void RTPSAsSocketReader::block(uint16_t lastvalue, const std::chrono::seconds &s
 {
     std::unique_lock<std::mutex> lock(mutex_);
     lastvalue_ = lastvalue;
-    if(lastvalue_ == *msgs_.rbegin())
+    if(!msgs_.empty() && lastvalue_ == *msgs_.rbegin())
         cv_.wait_for(lock, seconds);
 }
 
