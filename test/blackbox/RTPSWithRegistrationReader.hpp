@@ -17,6 +17,7 @@
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/qos/ReaderQos.h>
 
 #include <list>
 #include <condition_variable>
@@ -55,7 +56,7 @@ class RTPSWithRegistrationReader
         void block(uint16_t lastvalue, const std::chrono::seconds &seconds);
         void waitDiscovery();
         void matched();
-        virtual void configReader(ReaderAttributes &rattr) = 0;
+        virtual void configReader(ReaderAttributes &rattr, eprosima::fastrtps::ReaderQos &rqos) = 0;
 
     private:
 

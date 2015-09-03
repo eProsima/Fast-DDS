@@ -216,7 +216,9 @@ public:
 	 * @return True if the Reader was correctly created.
 	 */
 	bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
-				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
+				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false, bool enable = true);
+
+    bool enableReader(RTPSReader *reader, bool isBuiltin = false);
 
 	/**
 	* Register a Writer in the BuiltinProtocols.

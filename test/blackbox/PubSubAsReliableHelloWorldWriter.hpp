@@ -7,23 +7,23 @@
  *************************************************************************/
 
 /**
- * @file PubSubAsReliableHelloWorldWriter.hpp
+ * @file PubSubAsNonReliableHelloWorldWriter.hpp
  *
  */
 
-#ifndef _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDWRITER_HPP_
-#define _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDWRITER_HPP_
+#ifndef _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDWRITER_HPP_
+#define _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDWRITER_HPP_
 
 #include "PubSubHelloWorldWriter.hpp" 
 
-class PubSubAsReliableHelloWorldWriter : public PubSubHelloWorldWriter
+class PubSubAsNonReliableHelloWorldWriter : public PubSubHelloWorldWriter
 {
     public:
         void configPublisher(PublisherAttributes &puattr)
         {
-            puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            puattr.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         }
 };
 
-#endif // _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDWRITER_HPP_
+#endif // _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDWRITER_HPP_
 

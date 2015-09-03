@@ -294,6 +294,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
                 if(continuous_removal)
                 {
                     wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
+				    wp->m_hasMinAvailableSeqNumChanged = true;
                     to_remove.push_back((int)i);
                 }
                 break;
@@ -303,6 +304,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
                     && continuous_removal)
             {
                 wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
+                wp->m_hasMinAvailableSeqNumChanged = true;
                 to_remove.push_back((int)i);
                 continue;
             }
@@ -372,11 +374,12 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
                 }
                 else if(a_change->sequenceNumber < maxSeqNumAvailable)
                 {
+                    SequenceNumber_t notifySeqNum = a_change->sequenceNumber + 1;
+
                     lock.unlock();
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
                     lock.lock();
 
-                    SequenceNumber_t notifySeqNum = a_change->sequenceNumber+1;
                     CacheChange_t* ch_to_give = nullptr;
                     //TODO Intentar optimizar esto para que no haya que recorrer la lista de cambios cada vez
                     while(notifySeqNum <= maxSeqNumAvailable)

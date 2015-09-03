@@ -17,6 +17,7 @@
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/qos/WriterQos.h>
 
 #include <string>
 #include <list>
@@ -54,7 +55,7 @@ class RTPSWithRegistrationWriter
         void send(const std::list<uint16_t> &msgs);
         void matched();
         void waitDiscovery();
-        virtual void configWriter(WriterAttributes &wattr) = 0;
+        virtual void configWriter(WriterAttributes &wattr, eprosima::fastrtps::WriterQos &wqos) = 0;
 
     private:
 

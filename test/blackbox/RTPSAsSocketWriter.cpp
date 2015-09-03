@@ -53,6 +53,10 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 
 	//Create writer
 	WriterAttributes wattr;
+	Locator_t loc;
+	loc.set_IP4_address(ip);
+	loc.port = port;
+	wattr.endpoint.multicastLocatorList.push_back(loc);
     configWriter(wattr);
 	writer_ = RTPSDomain::createRTPSWriter(participant_, wattr, history_);
     ASSERT_NE(writer_, nullptr);
@@ -60,7 +64,6 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	//Add remote reader (in this case a reader in the same machine)
     GUID_t guid = participant_->getGuid();
 	RemoteReaderAttributes rattr;
-	Locator_t loc;
 	loc.set_IP4_address(ip);
 	loc.port = port;
 	rattr.endpoint.multicastLocatorList.push_back(loc);

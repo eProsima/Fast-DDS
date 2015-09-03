@@ -22,7 +22,6 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/ReaderQos.h>
 
 #include <gtest/gtest.h>
 
@@ -56,9 +55,10 @@ void RTPSWithRegistrationReader::init(uint32_t port, uint16_t nmsgs)
 
 	//Create reader
 	ReaderAttributes rattr;
+    eprosima::fastrtps::ReaderQos Rqos;
 	Locator_t loc(port);
 	rattr.endpoint.unicastLocatorList.push_back(loc);
-    configReader(rattr);
+    configReader(rattr, Rqos);
 	reader_ = RTPSDomain::createRTPSReader(participant_, rattr, history_, &listener_);
     ASSERT_NE(reader_, nullptr);
 
@@ -66,7 +66,6 @@ void RTPSWithRegistrationReader::init(uint32_t port, uint16_t nmsgs)
 	tattr.topicKind = NO_KEY;
 	tattr.topicDataType = "string";
 	tattr.topicName = "exampleTopic";
-    eprosima::fastrtps::ReaderQos Rqos;
 	ASSERT_EQ(participant_->registerReader(reader_, tattr, Rqos), true);
 
     // Initialize list of msgs

@@ -8,6 +8,8 @@
 #include "RTPSAsReliableWithRegistrationWriter.hpp"
 #include "PubSubAsNonReliableHelloWorldReader.hpp"
 #include "PubSubAsNonReliableHelloWorldWriter.hpp"
+#include "PubSubAsReliableHelloWorldReader.hpp"
+#include "PubSubAsReliableHelloWorldWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -153,6 +155,7 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
     if(!writer.isInitialized())
         return;
 
+    // Because its volatile the durability
     reader.waitDiscovery();
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
@@ -198,6 +201,41 @@ TEST(BlackBox, PubSubAsNonReliableHelloworld)
     }
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
+}
+
+TEST(BlackBox, PubSubAsReliableHelloworld)
+{
+    PubSubAsReliableHelloWorldReader reader;
+    PubSubAsReliableHelloWorldWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability
+    reader.waitDiscovery();
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
+    writer.send(msgs);
+    reader.block(*msgs.rbegin(), std::chrono::seconds(60));
+
+    msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
     {
         std::cout << "Samples not received:";

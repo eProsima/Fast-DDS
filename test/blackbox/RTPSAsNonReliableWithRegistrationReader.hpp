@@ -19,7 +19,7 @@
 class RTPSAsNonReliableWithRegistrationReader : public RTPSWithRegistrationReader
 {
     public:
-        void configReader(ReaderAttributes &/*rattr*/) {};
+        void configReader(ReaderAttributes &/*rattr*/, eprosima::fastrtps::ReaderQos& /*rqos*/) {};
 };
 
 #endif // _TEST_BLACKBOX_RTPSASNONRELIABLEWITHREGISTRATIONREADER_HPP_

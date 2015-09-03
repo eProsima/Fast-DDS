@@ -19,9 +19,10 @@
 class RTPSAsNonReliableWithRegistrationWriter : public RTPSWithRegistrationWriter
 {
     public:
-        void configWriter(WriterAttributes &wattr)
+        void configWriter(WriterAttributes &wattr, eprosima::fastrtps::WriterQos &wqos)
         {
             wattr.endpoint.reliabilityKind = BEST_EFFORT;
+            wqos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
         }
 };
 

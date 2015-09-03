@@ -22,7 +22,6 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/WriterQos.h>
 
 #include <gtest/gtest.h>
 
@@ -55,7 +54,8 @@ void RTPSWithRegistrationWriter::init()
 
 	//Create writer
 	WriterAttributes wattr;
-    configWriter(wattr);
+    eprosima::fastrtps::WriterQos Wqos;
+    configWriter(wattr, Wqos);
 	writer_ = RTPSDomain::createRTPSWriter(participant_, wattr, history_, &listener_);
     ASSERT_NE(writer_, nullptr);
 
@@ -63,7 +63,6 @@ void RTPSWithRegistrationWriter::init()
 	tattr.topicKind = NO_KEY;
 	tattr.topicDataType = "string";
 	tattr.topicName = "exampleTopic";
-    eprosima::fastrtps::WriterQos Wqos;
 	ASSERT_EQ(participant_->registerWriter(writer_, tattr, Wqos), true);
 
     initialized_ = true;

@@ -124,6 +124,9 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 		return false;
 	}
 
+    if(!mp_RTPSParticipant->enableReader(mp_SPDPReader, true))
+        return false;
+
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
 
 	return true;
@@ -320,7 +323,7 @@ bool PDPSimple::createSPDPEndpoints()
 	ratt.endpoint.reliabilityKind = BEST_EFFORT;
 	mp_listener = new PDPSimpleListener(this);
 	RTPSReader* rout;
-	if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true))
+	if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true, false))
 	{
 		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
 	}

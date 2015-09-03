@@ -19,9 +19,10 @@
 class RTPSAsReliableWithRegistrationReader : public RTPSWithRegistrationReader
 {
     public:
-        void configReader(ReaderAttributes &rattr)
+        void configReader(ReaderAttributes &rattr, eprosima::fastrtps::ReaderQos &rqos)
         {
             rattr.endpoint.reliabilityKind = RELIABLE;
+            rqos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
         };
 };
 
