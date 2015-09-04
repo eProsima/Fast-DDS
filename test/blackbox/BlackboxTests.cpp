@@ -250,5 +250,8 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
+#if defined(WIN32) && defined(_DEBUG)
+    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
+#endif
     return RUN_ALL_TESTS();
 }
