@@ -56,6 +56,10 @@ WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_LIVELINESS,"Period: "<< this->getIntervalMilliSec(),C_MAGENTA);
@@ -72,7 +76,6 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_LIVELINESS,"Liveliness Periodic Assertion aborted",C_MAGENTA);
-		this->stopSemaphorePost();
 	}
 	else
 	{
@@ -90,7 +93,11 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 		if(change!=nullptr)
 		{
 			//change->instanceHandle = m_iHandle;
-			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
+#if EPROSIMA_BIG_ENDIAN
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
 			memcpy(change->serializedPayload.data,m_guidP.value,12);
 			for(uint8_t i =12;i<24;++i)
 				change->serializedPayload.data[i] = 0;
@@ -134,7 +141,11 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 		if(change!=nullptr)
 		{
 			change->instanceHandle = m_iHandle;
-			change->serializedPayload.encapsulation = (EPROSIMA_ENDIAN == BIGEND) ? PL_CDR_BE: PL_CDR_LE;
+#if EPROSIMA_BIG_ENDIAN
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
 			memcpy(change->serializedPayload.data,m_guidP.value,12);
 
 			for(uint8_t i =12;i<24;++i)

@@ -125,6 +125,7 @@ public:
 	bool m_heartbeatFinalFlag;
 	//!Last Removed SequenceNumber.
 	SequenceNumber_t m_lastRemovedSeqNum;
+	bool m_hasMinAvailableSeqNumChanged;
 
 	/**
 	* Get a specific change by its sequence number
@@ -172,7 +173,6 @@ private:
 	SequenceNumber_t m_max_available_seqNum;
 	SequenceNumber_t m_min_available_seqNum;
 	bool m_hasMaxAvailableSeqNumChanged;
-	bool m_hasMinAvailableSeqNumChanged;
 	//!Is the writer alive
 	bool m_isAlive;
 	//Print Method for log purposes

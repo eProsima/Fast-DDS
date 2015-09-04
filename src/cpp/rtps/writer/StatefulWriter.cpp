@@ -262,9 +262,11 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	if(rp->m_changesForReader.size()>0)
 	{
 		//unsent_changes_not_empty();
-		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
+        if(this->mp_unsetChangesNotEmpty == nullptr)
+        {
+            this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
+        }
 		this->mp_unsetChangesNotEmpty->restart_timer();
-		this->mp_unsetChangesNotEmpty = nullptr;
 	}
 	return true;
 }

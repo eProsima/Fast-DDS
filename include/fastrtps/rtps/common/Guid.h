@@ -151,8 +151,9 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	EntityId_t& operator=(uint32_t id){
 		uint32_t* aux = (uint32_t*)(value);
 		*aux = id;
-		if(DEFAULT_ENDIAN == LITTLEEND)
-			reverse();
+#if !__BIG_ENDIAN__
+		reverse();
+#endif
 		return *this;
 		//return id;
 	}
@@ -178,16 +179,18 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 	*/
 inline bool operator==(EntityId_t& id1,const uint32_t id2)
 {
-	if(DEFAULT_ENDIAN == LITTLEEND)
+#if !__BIG_ENDIAN__
 		id1.reverse();
+#endif
 	uint32_t* aux1 = (uint32_t*)(id1.value);
 	bool result = true;
 	if(*aux1 == id2)
 		result = true;
 	else
 		result = false;
-	if(DEFAULT_ENDIAN == LITTLEEND)
-		id1.reverse();
+#if !__BIG_ENDIAN__
+	id1.reverse();
+#endif
 	return result;
 }
 	/**

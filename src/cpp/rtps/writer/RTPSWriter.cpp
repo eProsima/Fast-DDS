@@ -12,11 +12,9 @@
  */
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
-
 #include <fastrtps/rtps/history/WriterHistory.h>
-
+#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-
 #include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
@@ -51,6 +49,12 @@ RTPSWriter::~RTPSWriter()
 {
 	const char* const METHOD_NAME = "~RTPSWriter";
 	logInfo(RTPS_WRITER,"RTPSWriter destructor");
+
+    if(mp_unsetChangesNotEmpty != nullptr)
+    {
+        mp_unsetChangesNotEmpty->stop_timer();
+        delete mp_unsetChangesNotEmpty;
+    }
 }
 
 CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t handle)

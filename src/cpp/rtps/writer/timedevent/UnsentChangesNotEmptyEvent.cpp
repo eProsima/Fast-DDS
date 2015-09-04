@@ -26,7 +26,7 @@ static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
 
 UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 		double interval):
-		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval),
+		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval, NONE),
   mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
@@ -41,7 +41,10 @@ UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
-	logInfo(RTPS_WRITER,"");
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 		mp_writer->unsent_changes_not_empty();
@@ -49,13 +52,11 @@ void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty aborted");
-		this->stopSemaphorePost();
 	}
 	else
 	{
 		logInfo(RTPS_WRITER,"UnsentChangesNotEmpty boost message: " <<msg);
 	}
-	delete(this);
 }
 
 }

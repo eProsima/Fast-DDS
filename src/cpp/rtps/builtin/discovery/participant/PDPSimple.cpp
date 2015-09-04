@@ -124,6 +124,9 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 		return false;
 	}
 
+    if(!mp_RTPSParticipant->enableReader(mp_SPDPReader, true))
+        return false;
+
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
 
 	return true;
@@ -152,8 +155,12 @@ void PDPSimple::announceParticipantState(bool new_change)
 		change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
 		if(getLocalParticipantProxyData()->toParameterList())
 		{
-			change->serializedPayload.encapsulation = EPROSIMA_ENDIAN == BIGEND ? PL_CDR_BE: PL_CDR_LE;
-			change->serializedPayload.length = getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+#if EPROSIMA_BIG_ENDIAN
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+			change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
 			//TODO Optimizacion, intentar quitar la copia.
 			memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
 			mp_SPDPWriterHistory->add_change(change);
@@ -316,7 +323,7 @@ bool PDPSimple::createSPDPEndpoints()
 	ratt.endpoint.reliabilityKind = BEST_EFFORT;
 	mp_listener = new PDPSimpleListener(this);
 	RTPSReader* rout;
-	if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true))
+	if(mp_RTPSParticipant->createReader(&rout,ratt,mp_SPDPReaderHistory,mp_listener,c_EntityId_SPDPReader,true, false))
 	{
 		mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
 	}
@@ -429,6 +436,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
 	uint32_t auxendp = endp;
 	auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    // TODO Review because the mutex is already take in PDPSimpleListener.
 	boost::lock_guard<boost::recursive_mutex> guard(*pdata->mp_mutex);
 	if(auxendp!=0)
 	{

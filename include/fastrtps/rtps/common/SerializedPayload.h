@@ -98,6 +98,6 @@ struct RTPS_DllAPI SerializedPayload_t{
 };
 }
 }
-};
+}
 
 #endif /* SERIALIZEDPAYLOAD_H_ */

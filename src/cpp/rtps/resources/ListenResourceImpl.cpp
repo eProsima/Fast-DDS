@@ -78,10 +78,11 @@ bool ListenResourceImpl::isListeningTo(const Locator_t& loc)
 void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std::size_t msg_size)
 {
 	const char* const METHOD_NAME = "newCDRMessage";
+
 	if(err == boost::system::errc::success)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(m_mutex);
 		mp_listenResource->setMsgRecMsgLength((uint32_t)msg_size);
+
 		if(msg_size == 0)
 			return;
 		try{
@@ -108,10 +109,11 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 		}
 		catch(boost::system::system_error const& e)
 		{
-			logError(RTPS_MSG_IN,"Boost error: "<<e.what());
+			logError(RTPS_MSG_IN,"Boost error: " << e.what());
 			this->putToListen();
 			return;
 		}
+        
 		try
 		{
 			mp_listenResource->mp_receiver->processCDRMsg(mp_RTPSParticipantImpl->getGuid().guidPrefix,
@@ -123,6 +125,7 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 			logError(RTPS_MSG_IN,IDSTRING"Error processing message: " << e,C_BLUE);
 
 		}
+
 		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" ,C_BLUE);
 		this->putToListen();
 	}
@@ -177,7 +180,7 @@ void ListenResourceImpl::getLocatorAddresses( Locator_t& loc)
 		}
 		mv_listenLoc.push_back(loc);
 	}
-	m_listen_endpoint.port(loc.port);
+	m_listen_endpoint.port((uint16_t)loc.port);
 }
 
 
@@ -219,7 +222,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	else
 	{
 		bool binded = false;
-		for(uint8_t i =0;i<1000;++i) //TODO make it configurable by user.
+		for(uint8_t i = 0; i < 100; ++i) //TODO make it configurable by user.
 		{
 			m_listen_endpoint.port(m_listen_endpoint.port()+i);
 			try
@@ -319,7 +322,7 @@ void ListenResourceImpl::run_io_service()
 	const char* const METHOD_NAME = "run_io_service";
 	try
 	{
-		logInfo(RTPS_MSG_IN,"Thread: " << mp_thread->get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;
+		logInfo(RTPS_MSG_IN,"Thread: " << boost::this_thread::get_id() << " listening in IP: " << m_listen_socket.local_endpoint(),C_BLUE) ;
 
 		mp_RTPSParticipantImpl->ResourceSemaphorePost();
 

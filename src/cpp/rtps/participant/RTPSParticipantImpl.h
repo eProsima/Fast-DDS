@@ -166,6 +166,8 @@ private:
 	//!Pointer to the user participant
 	RTPSParticipant* mp_userParticipant;
 
+    RTPSParticipantImpl& operator=(const RTPSParticipantImpl&) NON_COPYABLE_CXX11;
+
 	/**
 	 * Method to check if a specific entityId already exists in this RTPSParticipant
 	 * @param ent EnityId to check
@@ -214,7 +216,9 @@ public:
 	 * @return True if the Reader was correctly created.
 	 */
 	bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
-				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false);
+				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false, bool enable = true);
+
+    bool enableReader(RTPSReader *reader, bool isBuiltin = false);
 
 	/**
 	* Register a Writer in the BuiltinProtocols.

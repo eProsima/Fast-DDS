@@ -170,7 +170,11 @@ bool ParticipantProxyData::toParameterList()
 		//		if(this.use_STATIC_EndpointDiscoveryProtocol)
 		//			valid&= this->addStaticEDPInfo();
 
-		valid &=ParameterList::updateCDRMsg(&m_QosList.allQos,EPROSIMA_ENDIAN);
+#if EPROSIMA_BIG_ENDIAN
+		valid &=ParameterList::updateCDRMsg(&m_QosList.allQos, BIGEND);
+#else
+        valid &= ParameterList::updateCDRMsg(&m_QosList.allQos, LITTLEEND);
+#endif
 		if(valid)
 			m_hasChanged = false;
 		return valid;
@@ -376,7 +380,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 	m_leaseDuration = pdata.m_leaseDuration;
 	m_userData = pdata.m_userData;
 	isAlive = true;
-	if(this->mp_leaseDurationTimer!=nullptr && this->mp_leaseDurationTimer->isWaiting())
+	if(this->mp_leaseDurationTimer != nullptr)
 	{
 		mp_leaseDurationTimer->stop_timer();
 		mp_leaseDurationTimer->update_interval(m_leaseDuration);

@@ -29,6 +29,8 @@ class ReaderListener;
 class ReaderHistory;
 struct CacheChange_t;
 class WriterProxy;
+struct SequenceNumber_t;
+class SequenceNumberSet_t;
 
 /**
  * Class RTPSReader, manages the reception of data from the writers.
@@ -67,23 +69,27 @@ public:
 	RTPS_DllAPI virtual bool matched_writer_is_matched(RemoteWriterAttributes& wdata) = 0;
 
 	/**
-	 * Check if the reader accepts messages from a writer with a specific GUID_t.
-	 *
-	 * @param entityGUID GUID to check
-	 * @param wp Pointer to pointer of the WriterProxy. Since we already look for it wee return the pointer
-	 * so the execution can run faster.
-	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
-	 */
-	RTPS_DllAPI virtual bool acceptMsgFrom(GUID_t& entityGUID, WriterProxy** wp = nullptr) = 0;
-	
-	/**
-	* This method is called when a new change is received. This method calls the received_change of the History
-	* and depending on the implementation performs different actions.
-	* @param a_change Pointer of the change to add.
-	* @param prox Pointer to the WriterProxy that adds the Change.
-	* @return True if added.
+	 * Returns true if the reader accepts a message directed to entityId.
 	*/
-	RTPS_DllAPI virtual bool change_received(CacheChange_t* a_change, WriterProxy* prox = nullptr) = 0;
+	RTPS_DllAPI bool acceptMsgDirectedTo(EntityId_t& entityId);
+
+	/**
+	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	 *
+     * @param change Pointer to the CacheChange_t.
+	 * @return true if the reader accepts messages from the.
+	 */
+	RTPS_DllAPI virtual bool processDataMsg(CacheChange_t *change) = 0;
+
+	/**
+	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	 *
+	 * @return true if the reader accepts messages from the.
+	 */
+    RTPS_DllAPI virtual bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
+            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag) = 0;
+
+    RTPS_DllAPI virtual bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList) = 0;
 	
 	/**
 	* Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -98,11 +104,6 @@ public:
 	* @return Pointer to the associated reader listener.
 	*/
 	RTPS_DllAPI ReaderListener* getListener(){ return mp_listener; }
-
-	/**
-	 * Returns true if the reader accepts a message directed to entityId.
-	*/
-	RTPS_DllAPI bool acceptMsgDirectedTo(EntityId_t& entityId);
 	
 	/**
 	 * Reserve a CacheChange_t.
@@ -158,7 +159,9 @@ protected:
 	//!Expects Inline Qos.
 	bool m_expectsInlineQos;
 
+    private:
 
+        RTPSReader& operator=(const RTPSReader&) NON_COPYABLE_CXX11;
 };
 
 }

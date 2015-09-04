@@ -39,12 +39,11 @@ public:
 	/**
 	* @param in_SPDP
 	*/
-	PDPSimpleListener(PDPSimple* in_SPDP):mp_SPDP(in_SPDP)
+	PDPSimpleListener(PDPSimple* in_SPDP) : mp_SPDP(in_SPDP)
 	{
-		free(aux_msg.buffer);
-		aux_msg.buffer = nullptr;
-	};
-	virtual ~PDPSimpleListener(){};
+	}
+
+	virtual ~PDPSimpleListener() {}
 	//!Pointer to the associated mp_SPDP;
 	PDPSimple* mp_SPDP;
 	/**

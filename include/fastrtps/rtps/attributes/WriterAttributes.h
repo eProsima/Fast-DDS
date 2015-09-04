@@ -15,6 +15,7 @@
 #define WRITERATTRIBUTES_H_
 
 #include "../common/Time_t.h"
+#include "../common/Guid.h"
 #include "EndpointAttributes.h"
 namespace eprosima{
 namespace fastrtps{

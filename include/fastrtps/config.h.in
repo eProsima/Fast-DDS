@@ -26,4 +26,13 @@
 #define __BIG_ENDIAN__ @__BIG_ENDIAN__@
 #endif
 
+// C++11 Non-copyable feature
+#ifndef NON_COPYABLE_CXX11
+#ifdef HAVE_CXX0X
+#define NON_COPYABLE_CXX11 = delete
+#else
+#define NON_COPYABLE_CXX11
+#endif
+#endif
+
 #endif // _FASTRTPS_CONFIG_H_

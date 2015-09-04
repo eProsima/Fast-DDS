@@ -58,7 +58,7 @@ enum LOG_CATEGORY:uint32_t;
 		VERB_INFO
 	};
 
-	enum LOG_TYPE :uint32_t
+	enum LOG_TYPE : uint32_t
 	{
 		T_GENERAL,
 		T_ERROR,
@@ -177,6 +177,10 @@ private:
 
 } /* namespace eprosima */
 
+#define logGenerator_(verbosity,cat,str){eprosima::LogMessage& lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logGenerator2_(verbosity,cat,str,color){eprosima::LogMessage& lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME,color);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logSelector_(arg1, arg2, function, ...) function
+#define logSelectGenerator_(...) logSelector_(__VA_ARGS__, logGenerator2_, logGenerator_, )
 
 
 /**
@@ -192,7 +196,7 @@ private:
 * const char* METHOD_NAME and const char* CLASS_NAME MUST be defined.
 * @code logError(LOG_CATEGORY,auxInt << " I print the error message " << otherVariable, C_RED); @endcode
 */
-#define logError(cat,str,...){eprosima::LogMessage& lm = eprosima::Log::logMessage(eprosima::T_ERROR,cat,CLASS_NAME,METHOD_NAME,##__VA_ARGS__);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logError(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_ERROR, cat, __VA_ARGS__)
 /**
 * @def logWarning
 * Log a Warning into a category. The warning will only show if the verbosity of a specific category is greater that the VERB_WARNING level.
@@ -200,7 +204,8 @@ private:
 * @code logWarning(LOG_CATEGORY,auxInt << " I print the info message " << otherVariable, C_RED);
 * logWarning(LOG_CATEGORY,auxInt << " Whathever stream i want " << otherVariable);   @endcode
 */
-#define logWarning(cat,str,...){eprosima::LogMessage& lm = eprosima::Log::logMessage(eprosima::T_WARNING,cat,CLASS_NAME,METHOD_NAME,##__VA_ARGS__);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logWarning(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_WARNING, cat, __VA_ARGS__)
+
 #if defined(__DEBUG) || defined(_DEBUG)
 /**
 * @def logInfo
@@ -209,9 +214,9 @@ private:
 *  @code logInfo(LOG_CATEGORY,auxInt << " I print the info message " << otherVariable, C_RED);
 * logInfo(LOG_CATEGORY,auxInt << " Whathever stream i want " << otherVariable);   @endcode
 */
-#define logInfo(cat,str,...){eprosima::LogMessage& lm = eprosima::Log::logMessage(eprosima::T_INFO,cat,CLASS_NAME,METHOD_NAME,##__VA_ARGS__);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logInfo(cat,...) logSelectGenerator_(__VA_ARGS__)(eprosima::T_INFO, cat, __VA_ARGS__)
 #else
-#define logInfo(cat,str,...)
+#define logInfo(cat,...){(void)METHOD_NAME;}
 #endif
 
 /**

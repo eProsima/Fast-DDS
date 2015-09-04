@@ -112,18 +112,22 @@ void MessageReceiver::reset(){
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
-		Locator_t* loc,CDRMessage_t*msg)
+		Locator_t* loc, CDRMessage_t*msg)
 {
+
 	const char* const METHOD_NAME = "processCDRMsg";
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex()); //TODO Comprobar si se puede poner en las subfunciones de la clase.
+
 	if(msg->length < RTPSMESSAGE_HEADER_SIZE)
 	{
 		logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring",C_BLUE);
 		return;
 	}
+
 	this->reset();
+
 	destGuidPrefix = RTPSParticipantguidprefix;
 	unicastReplyLocatorList.begin()->kind = loc->kind;
+
 	uint8_t n_start = 0;
 	if(loc->kind == 1)
 		n_start = 12;
@@ -134,6 +138,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 		logWarning(RTPS_MSG_IN,IDSTRING"Locator kind invalid",C_BLUE);
 		return;
 	}
+
 	for(uint8_t i = n_start;i<16;i++)
 	{
 		unicastReplyLocatorList.begin()->address[i] = loc->address[i];
@@ -268,13 +273,16 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
 {
 	const char* const METHOD_NAME = "checkRTPSHeader";
+
 	if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
 			msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
 	{
 		logInfo(RTPS_MSG_IN,IDSTRING"Msg received with no RTPS in header, ignoring...",C_BLUE);
 		return false;
 	}
+
 	msg->pos+=4;
+
 	//CHECK AND SET protocol version
 	if(msg->buffer[msg->pos] <= destVersion.m_major)
 	{
@@ -286,6 +294,7 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the
 		logWarning(RTPS_MSG_IN,IDSTRING"Major RTPS Version not supported",C_BLUE);
 		return false;
 	}
+
 	//Set source vendor id
 	sourceVendorId[0] = msg->buffer[msg->pos];msg->pos++;
 	sourceVendorId[1] = msg->buffer[msg->pos];msg->pos++;
@@ -319,6 +328,8 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	const char* const METHOD_NAME = "proc_Submsg_Data";
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+
 	//READ and PROCESS
 	if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
 	{
@@ -360,6 +371,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		logWarning(RTPS_MSG_IN,IDSTRING"Data received in locator: "<<mp_threadListen->getListenLocators()<< ", when NO readers are listening",C_BLUE);
 		return false;
 	}
+
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
@@ -394,7 +406,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG)
 		msg->pos += (octetsToInlineQos-RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
 
-	uint32_t inlineQosSize = 0;
+	int32_t inlineQosSize = 0;
 
 	if(inlineQosFlag)
 	{
@@ -428,7 +440,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		{
 			if(ch->serializedPayload.max_size >= payload_size-2-2)
 			{
-				ch->serializedPayload.length = payload_size-2-2;
+				ch->serializedPayload.length = (uint16_t)(payload_size-2-2);
 				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
 				ch->kind = ALIVE;
 			}
@@ -465,73 +477,23 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	if(smh->submessageLength == 0)
 		*last = true;
 
+    // Set sourcetimestamp
+    if(haveTimestamp)
+        ch->sourceTimestamp = this->timestamp;
+
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 	logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: "<<mp_threadListen->m_assocReaders.size(),C_BLUE);
 	//Look for the correct reader to add the change
-	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
-			it!=mp_threadListen->m_assocReaders.end();++it)
+	for(std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
+			it != mp_threadListen->m_assocReaders.end(); ++it)
 	{
-        // TODO Genera deadlock. revisar.
-		//boost::lock_guard<boost::recursive_mutex> guard(*(*it)->getMutex());
-		WriterProxy* pWP = nullptr;
-		if((*it)->acceptMsgDirectedTo(readerID) && (*it)->acceptMsgFrom(ch->writerGUID,&pWP)) //add
+		if((*it)->acceptMsgDirectedTo(readerID))
 		{
-			logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change "
-					<< ch->sequenceNumber.to64long() <<" TO reader: "<<(*it)->getGuid().entityId,C_BLUE);
-			CacheChange_t* change_to_add;
-			if((*it)->reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
-			{ 
-				if (!change_to_add->copy(ch))
-				{
-					logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << ch->serializedPayload.length
-							<< " bytes and max size in reader " << (*it)->getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
-					(*it)->releaseCache(change_to_add);
-					return false;
-				}
-			}
-			else
-			{
-				logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << (*it)->getGuid().entityId, C_BLUE);
-				return false;
-			}
-			if(haveTimestamp)
-				change_to_add->sourceTimestamp = this->timestamp;
-			if((*it)->getAttributes()->reliabilityKind == RELIABLE && pWP!=nullptr)
-			{
-                boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*pWP->getMutex());
-				pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-				if((*it)->change_received(change_to_add,pWP))
-				{
-					//pWP->assertLiveliness();
-				}
-				else
-				{
-					logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long(),C_BLUE);
-					(*it)->releaseCache(change_to_add);
-				}
-
-			}
-			else
-			{
-				if((*it)->change_received(change_to_add))
-				{
-
-				}
-				else
-				{
-					logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
-							<<change_to_add->sequenceNumber.to64long(),C_BLUE);
-					(*it)->releaseCache(change_to_add);
-					if((*it)->getGuid().entityId == c_EntityId_SPDPReader)
-					{
-						this->mp_threadListen->getRTPSParticipantImpl()->assertRemoteRTPSParticipantLiveliness(this->sourceGuidPrefix);
-					}
-				}
-			}
+            (*it)->processDataMsg(ch);
 		}
 	}
-	//cout << "CHECKED ALL READERS "<<endl;
+
 	logInfo(RTPS_MSG_IN,IDSTRING"Sub Message DATA processed",C_BLUE);
 	return true;
 }
@@ -548,7 +510,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	else
 		msg->msg_endian = BIGEND;
 
-	GUID_t readerGUID,writerGUID;
+	GUID_t readerGUID, writerGUID;
 	readerGUID.guidPrefix = destGuidPrefix;
 	CDRMessage::readEntityId(msg,&readerGUID.entityId);
 	writerGUID.guidPrefix = sourceGuidPrefix;
@@ -564,53 +526,14 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct reader and writers:
-
-
-	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
-			it!=mp_threadListen->m_assocReaders.end();++it)
+	for(std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
+			it != mp_threadListen->m_assocReaders.end(); ++it)
 	{
-        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
-		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId)) //(*it)->acceptMsgDirectedTo(readerGUID.entityId) &&
+		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
-			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
-			{
-				StatefulReader* SR = (StatefulReader*)(*it);
-				//Look for the associated writer
-				WriterProxy* WP;
-				//FIXME: Ignoring too close received HB.
-				if(SR->matched_writer_lookup(writerGUID,&WP))
-				{
-                    lock.unlock();
-
-                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
-					if(WP->m_lastHeartbeatCount < HBCount)
-					{
-						WP->m_lastHeartbeatCount = HBCount;
-						WP->lost_changes_update(firstSN);
-						WP->missing_changes_update(lastSN);
-						WP->m_heartbeatFinalFlag = finalFlag;
-						//Analyze wheter a acknack message is needed:
-
-						if(!finalFlag)
-						{
-							WP->mp_heartbeatResponse->restart_timer();
-						}
-						else if(finalFlag && !livelinessFlag)
-						{
-							if(!WP->m_isMissingChangesEmpty)
-								WP->mp_heartbeatResponse->restart_timer();
-						}
-						//FIXME: livelinessFlag
-						if(livelinessFlag )//TODOG && WP->m_att->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-							WP->assertLiveliness();
-					}
-				}
-				else
-				{
-					logInfo(RTPS_MSG_IN,IDSTRING"HB received from NOT associated writer",C_BLUE);
-				}
-			}
+            (*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
 		}
 	}
 	//Is the final message?
@@ -645,8 +568,8 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct writer to use the acknack
-
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
 	{
@@ -697,7 +620,6 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 
 bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_Gap";
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	//Assign message endianness
 	if(endiannessFlag)
@@ -721,36 +643,16 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart.to64long()<=0)
 		return false;
 
-
+    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
-        boost::unique_lock<boost::recursive_mutex> lock(*(*it)->getMutex());
-		if((*it)->acceptMsgFrom(writerGUID) && (*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
-			if((*it)->getAttributes()->reliabilityKind == RELIABLE)
-			{
-				StatefulReader* SR = (StatefulReader*)(*it);
-				//Look for the associated writer
-				WriterProxy* WP;
-				if(SR->matched_writer_lookup(writerGUID,&WP))
-				{
-                    lock.unlock();
-
-                    boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*WP->getMutex());
-					SequenceNumber_t auxSN;
-					SequenceNumber_t finalSN = gapList.base -1;
-					for(auxSN = gapStart;auxSN<=finalSN;auxSN++)
-						WP->irrelevant_change_set(auxSN);
-
-					for(std::vector<SequenceNumber_t>::iterator it=gapList.get_begin();it!=gapList.get_end();++it)
-						WP->irrelevant_change_set((*it));
-				}
-				else
-					logWarning(RTPS_MSG_IN,IDSTRING"GAP received from NOT associated writer",C_BLUE);
-			}
+            (*it)->processGapMsg(writerGUID, gapStart, gapList);
 		}
 	}
+
 	return true;
 }
 

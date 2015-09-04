@@ -42,15 +42,13 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 	octet flags = 0x0;
-	if(EPROSIMA_ENDIAN == LITTLEEND)
-	{
-		flags = flags | BIT(0);
-				submsgElem.msg_endian  = LITTLEEND;
-	}
-	else
-	{
-		submsgElem.msg_endian =  BIGEND;
-	}
+#if EPROSIMA_BIG_ENDIAN
+    submsgElem.msg_endian = BIGEND;
+#else
+	flags = flags | BIT(0);
+	submsgElem.msg_endian  = LITTLEEND;
+#endif
+
 	if(finalFlag)
 		flags = flags | BIT(1);
 
@@ -69,7 +67,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 	}
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::addSubmessageHeader(msg,ACKNACK,flags,submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg,ACKNACK, flags, (uint16_t)submsgElem.length);
 	//Append Submessage elements to msg
 
 	CDRMessage::appendMsg(msg, &submsgElem);

@@ -21,7 +21,7 @@ namespace rtps {
 
 
 CDRMessagePool::CDRMessagePool(uint32_t defaultGroupsize):
-m_group_size(defaultGroupsize), mutex_(nullptr)
+m_group_size((uint16_t)defaultGroupsize), mutex_(nullptr)
 {
 	allocateGroup();
     mutex_ = new boost::mutex();

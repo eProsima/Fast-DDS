@@ -190,7 +190,7 @@ bool ReaderProxyData::toParameterList()
 
 bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-	const char* const METHOD_NAME = "readFromCDRMessage";
+	//const char* const METHOD_NAME = "readFromCDRMessage";
 	if(ParameterList::readParameterListfromCDRMsg(msg,&m_parameterList,NULL,NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();
@@ -306,12 +306,12 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			case PID_PARTICIPANT_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-				for(uint8_t i =0;i<16;++i)
+				for(uint8_t i = 0; i < 16; ++i)
 				{
-					if(i<12)
+					if(i < 12)
 						m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
 					else
-						m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i];
+						m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
 				}
 				break;
 			}
@@ -324,7 +324,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 					if(i<12)
 						m_key.value[i] = p->guid.guidPrefix.value[i];
 					else
-						m_key.value[i] = p->guid.entityId.value[i-12];
+						m_key.value[i] = p->guid.entityId.value[i - 12];
 				}
 				break;
 			}

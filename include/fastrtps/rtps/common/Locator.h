@@ -99,16 +99,14 @@ public:
 	{
 		uint32_t addr;
 		octet* oaddr = (octet*)&addr;
-		if(DEFAULT_ENDIAN == LITTLEEND)
-		{
-			oaddr[0] = address[15];oaddr[1] = address[14];
-			oaddr[2] = address[13];oaddr[3] = address[12];
-		}
-		else if(DEFAULT_ENDIAN == BIGEND)
-		{
-			oaddr[0] = address[12];oaddr[1] = address[13];
-			oaddr[2] = address[14];oaddr[3] = address[15];
-		}
+#if __BIG_ENDIAN__
+        oaddr[0] = address[12];oaddr[1] = address[13];
+        oaddr[2] = address[14];oaddr[3] = address[15];
+#else
+		oaddr[0] = address[15];oaddr[1] = address[14];
+		oaddr[2] = address[13];oaddr[3] = address[12];
+#endif
+
 		return addr;
 	}
 };

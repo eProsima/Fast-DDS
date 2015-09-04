@@ -45,13 +45,19 @@ struct CDRMessage_t{
 		buffer = (octet*) malloc(RTPSMESSAGE_DEFAULT_SIZE);
 		max_size = RTPSMESSAGE_DEFAULT_SIZE;
 
-		msg_endian = EPROSIMA_ENDIAN;
+#if EPROSIMA_BIG_ENDIAN
+		msg_endian = BIGEND;
+#else
+        msg_endian = LITTLEEND;
+#endif
 	}
+
 	~CDRMessage_t()
 	{
 		if(buffer != nullptr)
 			free(buffer);
 	}
+
 	/**
 	 * Constructor with maximum size
 	 * @param size Maximum size
@@ -62,8 +68,13 @@ struct CDRMessage_t{
 		length = 0;
 		buffer = (octet*) malloc(size);
 		max_size = size;
-		msg_endian = EPROSIMA_ENDIAN;
+#if EPROSIMA_BIG_ENDIAN
+        msg_endian = BIGEND;
+#else
+        msg_endian = LITTLEEND;
+#endif
 	}
+
 	//!Pointer to the buffer where the data is stored.
 	octet* buffer;
 	//!Read or write position.

@@ -167,7 +167,7 @@ public:
 	 * @param change
 	 * @return
 	 */
-	inline bool rtps_is_relevant(CacheChange_t* change){return true;};
+	inline bool rtps_is_relevant(CacheChange_t* /*change*/){return true;};
 
 	//!Mutex
 	boost::recursive_mutex* mp_mutex;

@@ -44,7 +44,7 @@ WriterProxy::~WriterProxy()
 }
 
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
-		Duration_t heartbeatResponse,
+		Duration_t /*heartbeatResponse*/,
 		StatefulReader* SR) :
 												mp_SFR(SR),
 												m_att(watt),
@@ -54,8 +54,8 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 												mp_heartbeatResponse(nullptr),
 												mp_writerProxyLiveliness(nullptr),
 												m_heartbeatFinalFlag(false),
-												m_hasMaxAvailableSeqNumChanged(false),
 												m_hasMinAvailableSeqNumChanged(false),
+												m_hasMaxAvailableSeqNumChanged(false),
 												m_isAlive(true),
 												m_firstReceived(true),
 												mp_mutex(new boost::recursive_mutex())
@@ -113,22 +113,19 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 	}
 	else
 		firstSN = m_changesFromW.back().seqNum;
-	while(1)
-	{
 
-		++firstSN;
-		if(firstSN>seq)
-		{
-			break;
-		}
+    ++firstSN;
+    while(firstSN <= seq)
+	{
 		ChangeFromWriter_t chw;
 		chw.seqNum = firstSN;
 		chw.status = UNKNOWN;
 		chw.is_relevant = true;
 		logInfo(RTPS_READER,"WP "<<this->m_att.guid << " adding unknown changes up to: "<<chw.seqNum.to64long());
 		m_changesFromW.push_back(chw);
-
+        ++firstSN;
 	}
+
 	return true;
 }
 
@@ -212,8 +209,6 @@ bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
 	}
 	logError(RTPS_READER,"Something has gone wrong"<<endl;);
 	return false;
-
-	return true;
 }
 
 
@@ -246,7 +241,9 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//print_changes_fromWriter_test();
 	if(this->m_lastRemovedSeqNum.to64long() <= 0 && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+    {
 		return false;
+    }
 	if(m_hasMaxAvailableSeqNumChanged)
 	{
 		//Order changesFromWriter
@@ -400,14 +397,16 @@ bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
 void WriterProxy::assertLiveliness()
 {
 	const char* const METHOD_NAME = "assertLiveliness";
+
 	logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
+
+	//boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
 	m_isAlive=true;
-	if(this->mp_writerProxyLiveliness->isWaiting())
-	{
-		this->mp_writerProxyLiveliness->stop_timer();
-	}
+
+    this->mp_writerProxyLiveliness->stop_timer();
 	this->mp_writerProxyLiveliness->restart_timer();
-};
+}
 
 
 

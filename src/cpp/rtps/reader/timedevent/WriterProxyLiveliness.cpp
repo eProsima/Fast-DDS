@@ -30,7 +30,7 @@ namespace rtps {
 static const char* const CLASS_NAME = "WriterProxyLiveliness";
 
 WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
-		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval),
+		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval, TimedEvent::ON_SUCCESS),
 				mp_WP(p_WP)
 {
 
@@ -44,6 +44,10 @@ WriterProxyLiveliness::~WriterProxyLiveliness()
 void WriterProxyLiveliness::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 	
@@ -59,18 +63,16 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 					mp_WP->mp_SFR->getListener()->onReaderMatched((RTPSReader*)mp_WP->mp_SFR,info);
 				}
 			}
-			//NOW WE DELETE THE OBJECTS
+
 			mp_WP->mp_writerProxyLiveliness = nullptr;
 			delete(mp_WP);
-			delete(this);
-			return;
 //		}
 //		mp_WP->setNotAlive();
 //		this->restart_timer();
 	}
 	else if(code == EVENT_ABORT)
 	{
-		this->stopSemaphorePost();
+        logInfo(RTPS_LIVELINESS, "WriterProxyLiveliness aborted");
 	}
 	else
 	{

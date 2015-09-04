@@ -178,7 +178,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
 
 	return pub;
-};
+}
 
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
@@ -260,7 +260,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 	this->mp_rtpsParticipant->registerReader(reader,att.topic,att.qos);
 
 	return sub;
-};
+}
 
 
 bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** type)
@@ -327,7 +327,6 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16
 		return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
 	else 
 		return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
-	return false;
 }
 
 } /* namespace pubsub */

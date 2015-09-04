@@ -46,6 +46,9 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
 
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_READER,"");
@@ -102,12 +105,11 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	}
 	else if(code == EVENT_ABORT)
 	{
-		logInfo(RTPS_READER,"Response aborted");
-		this->stopSemaphorePost();
+		logInfo(RTPS_READER,"HeartbeatResponseDelay aborted");
 	}
 	else
 	{
-		logInfo(RTPS_READER,"Response boost message: " <<msg);
+		logInfo(RTPS_READER,"HeartbeatResponseDelay boost message: " <<msg);
 	}
 }
 

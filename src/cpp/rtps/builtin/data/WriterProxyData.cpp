@@ -311,12 +311,12 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 			case PID_PARTICIPANT_GUID:
 			{
 				ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-				for(uint8_t i =0;i<16;++i)
+				for(uint8_t i = 0; i < 16; ++i)
 				{
-					if(i<12)
+					if(i < 12)
 						m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
 					else
-						m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i];
+						m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
 				}
 				break;
 			}
@@ -329,7 +329,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 					if(i<12)
 						m_key.value[i] = p->guid.guidPrefix.value[i];
 					else
-						m_key.value[i] = p->guid.entityId.value[i-12];
+						m_key.value[i] = p->guid.entityId.value[i - 12];
 				}
 				break;
 			}
@@ -418,7 +418,7 @@ RemoteWriterAttributes& WriterProxyData::toRemoteWriterAttributes()
 {
 	m_remoteAtt.guid = m_guid;
 	m_remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
-	m_remoteAtt.ownershipStrength = m_qos.m_ownershipStrength.value;
+	m_remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
 	m_remoteAtt.endpoint.durabilityKind = m_qos.m_durability.kind == TRANSIENT_LOCAL_DURABILITY_QOS ? TRANSIENT_LOCAL : VOLATILE;
 	m_remoteAtt.endpoint.endpointKind = WRITER;
 	m_remoteAtt.endpoint.topicKind = m_topicKind;
