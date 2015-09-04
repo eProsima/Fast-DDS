@@ -41,8 +41,8 @@ namespace CDRMessage{
 	 */
 	/// @{
 	  inline bool readEntityId(CDRMessage_t* msg,const EntityId_t*id);
-	  inline bool readData(CDRMessage_t* msg,octet* o,uint16_t length);
-	  inline bool readDataReversed(CDRMessage_t* msg,octet* o,uint16_t length);
+	  inline bool readData(CDRMessage_t* msg, octet* o, uint32_t length);
+	  inline bool readDataReversed(CDRMessage_t* msg, octet* o, uint32_t length);
 	  inline bool readInt32(CDRMessage_t* msg,int32_t* lo);
 	  inline bool readUInt32(CDRMessage_t* msg,uint32_t* ulo);
 	  inline bool readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn);

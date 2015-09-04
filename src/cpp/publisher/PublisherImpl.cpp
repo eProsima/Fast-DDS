@@ -218,7 +218,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
 	return updated;
 }
 
-void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* writer,MatchingInfo& info)
+void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*writer*/,MatchingInfo& info)
 {
 	if(mp_publisherImpl->mp_listener!=nullptr)
 		mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);

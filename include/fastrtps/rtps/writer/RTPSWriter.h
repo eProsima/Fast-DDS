@@ -74,7 +74,7 @@ public:
 	 * Is only useful in reliable Writer. In BE Writers always returns true;
 	 * @return True if acknowledged by all.
 	 */
-	RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* a_change){ return true; }
+	RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* /*a_change*/){ return true; }
 	/**
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes
@@ -157,7 +157,9 @@ protected:
 	*/
 	inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
+    private:
 
+        RTPSWriter& operator=(const RTPSWriter&) NON_COPYABLE_CXX11;
 };
 }
 } /* namespace rtps */

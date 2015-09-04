@@ -171,7 +171,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
 	return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/)
 {
 	if(mp_subscriberImpl->mp_listener != nullptr)
 	{
@@ -180,7 +180,7 @@ void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader*
 	}
 }
 
-void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* reader,MatchingInfo& info)
+void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& info)
 {
 	if (this->mp_subscriberImpl->mp_listener != nullptr)
 	{

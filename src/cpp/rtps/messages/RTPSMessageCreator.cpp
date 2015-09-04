@@ -111,15 +111,13 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 	const char* const METHOD_NAME = "addSubmessageInfoTS";
 	octet flags = 0x0;
 	uint16_t size = 8;
-	if(EPROSIMA_ENDIAN == LITTLEEND)
-	{
-		flags = flags | BIT(0);
-		msg->msg_endian  = LITTLEEND;
-	}
-	else
-	{
-		msg->msg_endian = BIGEND;
-	}
+#if EPROSIMA_BIG_ENDIAN
+    msg->msg_endian = BIGEND;
+#else
+	flags = flags | BIT(0);
+	msg->msg_endian  = LITTLEEND;
+#endif
+
 	if(invalidateFlag)
 	{
 		flags = flags | BIT(1);
@@ -148,15 +146,13 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t gu
 	const char* const METHOD_NAME = "addSubmessageInfoDST";
 	octet flags = 0x0;
 	uint16_t size = 12;
-	if(EPROSIMA_ENDIAN == LITTLEEND)
-	{
-		flags = flags | BIT(0);
-		msg->msg_endian  = LITTLEEND;
-	}
-	else
-	{
-		msg->msg_endian = BIGEND;
-	}
+#if EPROSIMA_BIG_ENDIAN
+    msg->msg_endian = BIGEND;
+#else
+	flags = flags | BIT(0);
+	msg->msg_endian  = LITTLEEND;
+#endif
+
 	try{
 		CDRMessage::addOctet(msg,INFO_DST);
 		CDRMessage::addOctet(msg,flags);
@@ -180,8 +176,8 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalida
 	return RTPSMessageCreator::addSubmessageInfoTS(msg,time_now,invalidateFlag);
 }
 }
-}; /* namespace rtps */
-}; /* namespace eprosima */
+} /* namespace rtps */
+} /* namespace eprosima */
 
 
 #include "submessages/DataMsg.hpp"

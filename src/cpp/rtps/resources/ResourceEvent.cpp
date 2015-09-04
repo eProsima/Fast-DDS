@@ -63,7 +63,7 @@ void ResourceEvent::init_thread(RTPSParticipantImpl* pimpl)
 void ResourceEvent::announce_thread()
 {
 	const char* const METHOD_NAME = "announce_thread";
-	logInfo(RTPS_PARTICIPANT,"Thread: " << mp_b_thread->get_id() << " created and waiting for tasks.");
+	logInfo(RTPS_PARTICIPANT,"Thread: " << boost::this_thread::get_id() << " created and waiting for tasks.");
 	mp_RTPSParticipantImpl->ResourceSemaphorePost();
 
 }

@@ -43,7 +43,7 @@ namespace rtps{
 	//!Protocol version
 	ProtocolVersion_t version;
 	//!Vendor ID
-	VendorId_t vendorId;;
+	VendorId_t vendorId;
 	//!GUID prefix
 	GuidPrefix_t guidPrefix;
 	Header_t():

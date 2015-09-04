@@ -77,6 +77,9 @@ protected:
 	//!Mutex of the object
 	boost::recursive_mutex* mp_mutex;
 
+private:
+
+    Endpoint& operator=(const Endpoint&)NON_COPYABLE_CXX11;
 
 };
 

@@ -79,7 +79,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 	}
 }
 
-bool StatelessWriter::change_removed_by_history(CacheChange_t* a_change)
+bool StatelessWriter::change_removed_by_history(CacheChange_t* /*a_change*/)
 {
 	return true;
 }

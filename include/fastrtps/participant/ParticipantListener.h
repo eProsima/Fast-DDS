@@ -33,7 +33,7 @@ public:
 	* @param p Pointer to the Participant
 	* @param info DiscoveryInfo.
 	*/
-	virtual void onParticipantDiscovery(Participant* p, ParticipantDiscoveryInfo info){};
+	virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo /*info*/){};
 };
 
 } /* namespace fastrtps */

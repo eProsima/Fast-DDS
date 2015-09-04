@@ -256,7 +256,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
 
 bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
-		ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin)
+		ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin, bool enable)
 {
 	const char* const METHOD_NAME = "createReader";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
@@ -318,17 +318,31 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
 	}
 
-	if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
-	{
-		delete(SReader);
-		return false;
-	}
+    if(enable)
+    {
+        if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allReaderList.push_back(SReader);
 	if(!isBuiltin)
 		m_userReaderList.push_back(SReader);
 	*ReaderOut = SReader;
 	return true;
+}
+
+bool RTPSParticipantImpl::enableReader(RTPSReader *reader, bool isBuiltin)
+{
+    if(!assignEndpointListenResources((Endpoint*)reader,isBuiltin))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 

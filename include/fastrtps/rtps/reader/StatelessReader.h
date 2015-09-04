@@ -63,23 +63,30 @@ public:
 	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
 
 	/**
-	 * Check if the reader accepts messages from a writer with a specific GUID_t.
+	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
 	 *
-	 * @param entityGUID GUID to check
-	 * @param wp Pointer to pointer of the WriterProxy. Since we already look for it wee return the pointer
-	 * so the execution can run faster.
-	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
+     * @param change Pointer to the CacheChange_t.
+	 * @return true if the reader accepts messages from the.
 	 */
-	bool acceptMsgFrom(GUID_t& entityId,WriterProxy**wp=nullptr);
+	bool processDataMsg(CacheChange_t *change);
+
+	/**
+	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	 *
+	 * @return true if the reader accepts messages from the.
+	 */
+    bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
+            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
+
+    bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList);
 
 	/**
 	 * This method is called when a new change is received. This method calls the received_change of the History
 	 * and depending on the implementation performs different actions.
 	 * @param a_change Pointer of the change to add.
-	 * @param prox Pointer to the WriterProxy that adds the Change.
 	 * @return True if added.
 	 */
-	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
+	bool change_received(CacheChange_t* a_change);
 
 	/**
 	 * Read the next unread CacheChange_t from the history
@@ -101,6 +108,9 @@ public:
 	inline size_t getMatchedWritersSize() const {return m_matched_writers.size();};
 
 private:
+
+	bool acceptMsgFrom(GUID_t& entityId);
+
 	//!List of GUID_t os matched writers.
 	//!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
 	std::vector<RemoteWriterAttributes> m_matched_writers;

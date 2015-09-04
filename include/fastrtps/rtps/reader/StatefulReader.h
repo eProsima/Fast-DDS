@@ -71,14 +71,22 @@ public:
 	bool matched_writer_lookup(GUID_t& writerGUID,WriterProxy** WP);
 
 	/**
-	 * Check if the reader accepts messages from a writer with a specific GUID_t.
+	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
 	 *
-	 * @param entityGUID GUID to check
-	 * @param wp Pointer to pointer of the WriterProxy. Since we already look for it wee return the pointer
-	 * so the execution can run faster.
-	 * @return true if the reader accepts messages from the writer with GUID_t entityGUID.
+     * @param change Pointer to the CacheChange_t.
+	 * @return true if the reader accepts messages from the.
 	 */
-	bool acceptMsgFrom(GUID_t& entityGUID,WriterProxy** wp = nullptr);
+	bool processDataMsg(CacheChange_t *change);
+
+	/**
+	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	 *
+	 * @return true if the reader accepts messages from the.
+	 */
+    bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
+            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
+
+    bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList);
 
 	/**
 	 * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -95,7 +103,7 @@ public:
 	 * @param prox Pointer to the WriterProxy that adds the Change.
 	 * @return True if added.
 	 */
-	bool change_received(CacheChange_t* a_change,WriterProxy* prox = nullptr);
+	bool change_received(CacheChange_t* a_change, WriterProxy* prox);
 
 	/**
 	 * Get the RTPS participant
@@ -137,6 +145,8 @@ public:
 	inline size_t getMatchedWritersSize() const {return matched_writers.size();};
 
 private:
+
+	bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp, bool checkTrusted = true);
 
 	//!ReaderTimes of the StatefulReader.
 	ReaderTimes m_times;

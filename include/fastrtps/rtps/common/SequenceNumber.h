@@ -76,7 +76,7 @@ struct RTPS_DllAPI SequenceNumber_t{
 		return *this;
 	}
 	
-	SequenceNumber_t& operator++(int unused){
+	SequenceNumber_t& operator++(int /*unused*/){
 		if(low == pow(2.0,32))
 		{high++;low = 0;}
 		else
@@ -206,16 +206,16 @@ inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq
  */
 inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& seq2)
 {
-	if(seq1.high>seq2.high)
-			return false;
-		else if(seq1.high < seq2.high)
-			return true;
-		else
-		{
-			if(seq1.low <= seq2.low)
-				return true;
-		}
-		return false;
+    if(seq1.high>seq2.high)
+        return false;
+    else if(seq1.high < seq2.high)
+        return true;
+    else
+    {
+        if(seq1.low <= seq2.low)
+            return true;
+    }
+    return false;
 }
 
 /**

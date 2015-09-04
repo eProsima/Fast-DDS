@@ -75,6 +75,19 @@ if(WIN32)
 endif()
 
 ###############################################################################
+# Warning level
+###############################################################################
+if(MSVC OR MSVC_IDE)
+    if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+        string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS] /W4")
+    endif()
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas")
+endif()
+
+###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/check_configuration.cmake)
@@ -164,9 +177,12 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-#enable_testing()
-#include(CTest)
-#add_subdirectory(test)
+find_package(GTest)
+if(GTEST_FOUND)
+    enable_testing()
+    include(CTest)
+    add_subdirectory(test)
+endif()
 
 ###############################################################################
 # Documentation

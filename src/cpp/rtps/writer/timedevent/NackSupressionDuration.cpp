@@ -41,6 +41,10 @@ NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,double millisec
 void NackSupressionDuration::event(EventCode code, const char* msg)
 {
 	const char* const METHOD_NAME = "event";
+
+    // Unused in release mode.
+    (void)msg;
+
 	if(code == EVENT_SUCCESS)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
@@ -61,7 +65,6 @@ void NackSupressionDuration::event(EventCode code, const char* msg)
 	else if(code == EVENT_ABORT)
 	{
 		logInfo(RTPS_WRITER,"Aborted");
-		this->stopSemaphorePost();
 	}
 	else
 	{

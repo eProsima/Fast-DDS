@@ -128,6 +128,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 			if (s != 0) {
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                freeifaddrs(ifaddr);
 				exit(EXIT_FAILURE);
 			}
 			info_IP info;
@@ -145,6 +146,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 					host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 			if (s != 0) {
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                freeifaddrs(ifaddr);
 				exit(EXIT_FAILURE);
 			}
 			struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
@@ -158,6 +160,8 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 			//printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
 		}
 	}
+
+    freeifaddrs(ifaddr);
 	return true;
 }
 #endif
@@ -249,10 +253,10 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 {
 	std::vector<std::string> hexdigits;
 
-	size_t start = 0;
-	size_t end;
+	size_t start = 0, end = 0;
 	std::string auxstr;
-	while (1)
+
+    while(end != std::string::npos)
 	{
 		end = str.find(':',start);
 		if (end - start > 1)
@@ -262,8 +266,6 @@ RTPS_DllAPI bool IPFinder::parseIP6(std::string& str,Locator_t* loc)
 		else
 			hexdigits.push_back(std::string("EMPTY"));
 		start = end + 1;
-		if (end == std::string::npos)
-			break;
 	}
 	if (*hexdigits.begin() == std::string("EMPTY") && *(hexdigits.begin() + 1) == std::string("EMPTY"))
 		return false;

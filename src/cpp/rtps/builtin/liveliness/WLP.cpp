@@ -244,7 +244,7 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessAutomatic->isWaiting() && mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
 			{
 				mp_livelinessAutomatic->stop_timer();
 			}
@@ -266,7 +266,7 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessManRTPSParticipant->isWaiting() && mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
 			{
 				mp_livelinessManRTPSParticipant->stop_timer();
 			}
@@ -376,9 +376,13 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 	return false;
 }
 
-bool WLP::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
+bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 {
 	const char* const METHOD_NAME = "updateLocalWriter";
+
+    // Unused in release mode.
+    (void)W;
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId,C_MAGENTA);
 	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
@@ -396,7 +400,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessAutomatic->isWaiting() && mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
 			{
 				mp_livelinessAutomatic->stop_timer();
 			}
@@ -417,7 +421,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-			if(mp_livelinessManRTPSParticipant->isWaiting() && mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
 			{
 				mp_livelinessManRTPSParticipant->stop_timer();
 			}

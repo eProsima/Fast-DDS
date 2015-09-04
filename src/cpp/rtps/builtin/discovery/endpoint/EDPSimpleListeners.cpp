@@ -33,7 +33,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
+void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
 	const char* const CLASS_NAME = "EDPSimplePUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
@@ -113,6 +113,8 @@ static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
 	{
 		SerializedPayload_t* pl = &change->serializedPayload;
 		CDRMessage::initCDRMsg(aux_msg);
+        // TODO CHange because it create a buffer to remove after.
+        free(aux_msg->buffer);
 		aux_msg->buffer = pl->data;
 		aux_msg->length = pl->length;
 		aux_msg->max_size = pl->max_size;
@@ -160,7 +162,7 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 	return compute_key(&aux_msg,change);
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
+void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change_in)
 {
 	const char* const CLASS_NAME = "EDPSimpleSUBListener";
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";

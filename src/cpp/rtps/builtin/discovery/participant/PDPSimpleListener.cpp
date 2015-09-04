@@ -41,11 +41,11 @@ namespace rtps {
 static const char* const CLASS_NAME = "PDPSimpleListener";
 
 
-void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change_in)
+void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	CacheChange_t* change = (CacheChange_t*)(change_in);
-	//boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
 	logInfo(RTPS_PDP,"SPDP Message received",C_CYAN);
 	if(change->instanceHandle == c_InstanceHandle_Unknown)
 	{
@@ -88,7 +88,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChan
 			}
             lock.unlock();
 			//LOOK IF IS AN UPDATED INFORMATION
-			ParticipantProxyData* pdata_ptr;
+			ParticipantProxyData* pdata_ptr = nullptr;
 			bool found = false;
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_SPDP->getMutex());
 			for (auto it = mp_SPDP->m_participantProxies.begin();
@@ -166,6 +166,8 @@ bool PDPSimpleListener::getKey(CacheChange_t* change)
 {
 	SerializedPayload_t* pl = &change->serializedPayload;
 	CDRMessage::initCDRMsg(&aux_msg);
+    // TODO CHange because it create a buffer to remove after.
+    free(aux_msg.buffer);
 	aux_msg.buffer = pl->data;
 	aux_msg.length = pl->length;
 	aux_msg.max_size = pl->max_size;

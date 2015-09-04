@@ -20,9 +20,9 @@ namespace fastrtps {
 
 
 // PARAMETER
-Parameter_t::Parameter_t():Pid(PID_PAD), length(0) { };
-Parameter_t::~Parameter_t(){};
-Parameter_t::Parameter_t(ParameterId_t pid,uint16_t in_length):Pid(pid),length(in_length) {};
+Parameter_t::Parameter_t():Pid(PID_PAD), length(0) { }
+Parameter_t::~Parameter_t(){}
+Parameter_t::Parameter_t(ParameterId_t pid,uint16_t in_length):Pid(pid),length(in_length) {}
 
 // PARAMETER LOCATOR
 bool ParameterLocator_t::addToCDRMessage(CDRMessage_t* msg)
@@ -51,7 +51,7 @@ bool ParameterString_t::addToCDRMessage(CDRMessage_t* msg)
 	int rest = (str_siz+1) % 4;
 	if (rest != 0)
 		rest = 4 - rest; //how many you have to add
-	this->length = str_siz+1 + 4 + rest;
+	this->length = (uint16_t)(str_siz+1 + 4 + rest);
 	valid &= CDRMessage::addUInt16(msg, this->length);
 	valid &= CDRMessage::addUInt32(msg, str_siz+1);
 	valid &= CDRMessage::addData(msg,
@@ -170,7 +170,7 @@ bool ParameterBuiltinEndpointSet_t::addToCDRMessage(CDRMessage_t*msg)
 bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
-	uint16_t pos_str = msg->pos;
+	uint16_t pos_str = (uint16_t)msg->pos;
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
 	valid &= CDRMessage::addUInt32(msg,(uint32_t)this->properties.size());
 	for(std::vector<std::pair<std::string,std::string>>::iterator it = this->properties.begin();
@@ -179,7 +179,7 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 		valid &= CDRMessage::addString(msg,it->first);
 		valid &= CDRMessage::addString(msg,it->second);
 	}
-	uint16_t pos_param_end = msg->pos;
+	uint16_t pos_param_end = (uint16_t)msg->pos;
 	this->length = pos_param_end-pos_str-2;
 	msg->pos = pos_str;
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);

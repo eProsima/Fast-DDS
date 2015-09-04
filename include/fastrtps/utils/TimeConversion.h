@@ -130,7 +130,7 @@ inline Time_t SecondsWithRandOffset2Time_t(double sec, double randoff)
 	return Seconds2Time_t(sec);
 }
 
-};
+}
 }
 } /* namespace rtps */
 } /* namespace eprosima */

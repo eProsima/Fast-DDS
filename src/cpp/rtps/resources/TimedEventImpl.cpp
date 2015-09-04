@@ -17,16 +17,15 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+using namespace eprosima::fastrtps::rtps;
 
-
-TimedEventImpl::TimedEventImpl(TimedEvent* event,boost::asio::io_service* serv,boost::posix_time::microseconds interval):
+TimedEventImpl::TimedEventImpl(TimedEvent* event,boost::asio::io_service* serv, boost::posix_time::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction):
 				timer(new boost::asio::deadline_timer(*serv,interval)),
 				m_interval_microsec(interval),
 				mp_event(event),
 				m_isWaiting(false),
+                isRunning_(false),
+                autodestruction_(autodestruction),
 				mp_stopSemaphore(new boost::interprocess::interprocess_semaphore(0))
 {
 	//TIME_INFINITE(m_timeInfinite);
@@ -34,13 +33,15 @@ TimedEventImpl::TimedEventImpl(TimedEvent* event,boost::asio::io_service* serv,b
 
 TimedEventImpl::~TimedEventImpl()
 {
-//	stop_timer();
 	delete(timer);
 	delete(mp_stopSemaphore);
 }
 
 void TimedEventImpl::restart_timer()
 {
+    boost::unique_lock<boost::mutex> lock(mutex_);
+
+    // If not running restart the event.
 	if(!m_isWaiting)
 	{
 		m_isWaiting = true;
@@ -51,10 +52,21 @@ void TimedEventImpl::restart_timer()
 
 void TimedEventImpl::stop_timer()
 {
+    boost::unique_lock<boost::mutex> lock(mutex_);
+
+    // If the event is in execution, wait to be finished
+    if(isRunning_)
+    {
+        cond_.wait(lock);
+    }
+
+    // If the event is waiting to be executed, cancel it and wait until the abortion.
 	if(m_isWaiting)
 	{
-		timer->cancel();
-		this->mp_stopSemaphore->wait();
+        m_isWaiting = false;
+        lock.unlock();
+        if(timer->cancel() > 0)
+            this->mp_stopSemaphore->wait();
 	}
 }
 
@@ -72,7 +84,14 @@ bool TimedEventImpl::update_interval_millisec(double time_millisec)
 
 void TimedEventImpl::event(const boost::system::error_code& ec)
 {
-	m_isWaiting = false;
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    // Prevent the event is running but blocked while the event is being stopped.
+    if(!m_isWaiting && ec != boost::asio::error::operation_aborted)
+        return;
+    m_isWaiting = false;
+    isRunning_ = true;
+    lock.unlock();
+
 	if(ec == boost::system::errc::success)
 	{
 		this->mp_event->event(TimedEvent::EVENT_SUCCESS);
@@ -83,12 +102,19 @@ void TimedEventImpl::event(const boost::system::error_code& ec)
 	}
 	else
 	{
-		this->mp_event->event(TimedEvent::EVENT_MSG,ec.message().c_str());
+		this->mp_event->event(TimedEvent::EVENT_MSG, ec.message().c_str());
 	}
-}
 
-}
-}
-}
+    // In a normal execution, warn the execution is finished.
+    lock.lock();
+    isRunning_ = false;
+    lock.unlock();
+    cond_.notify_one();
 
-
+    if(autodestruction_ == TimedEvent::ALLWAYS)
+        delete this->mp_event;
+    else if(ec == boost::system::errc::success && autodestruction_ == TimedEvent::ON_SUCCESS)
+        delete this->mp_event;
+    else if(ec == boost::asio::error::operation_aborted)
+        mp_stopSemaphore->post();
+}
