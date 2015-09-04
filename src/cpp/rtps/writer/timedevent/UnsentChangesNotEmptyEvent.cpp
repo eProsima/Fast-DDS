@@ -26,7 +26,7 @@ static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
 
 UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 		double interval):
-		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval, ALLWAYS),
+		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval, NONE),
   mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
