@@ -536,12 +536,12 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		//BUILTINPROTOCOLS
 		//Remove it from threadListenList
 		std::vector<ListenResource*>::iterator thit;
-		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		for(thit=m_listenResourceList.begin();
 				thit!=m_listenResourceList.end();thit++)
 		{
 			(*thit)->removeAssociatedEndpoint(p_endpoint);
 		}
+		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		bool continue_removing = true;
 		while(continue_removing)
 		{

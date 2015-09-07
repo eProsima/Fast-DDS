@@ -180,8 +180,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
         }
 
-        lock.unlock(); // Next function has its own lock.
-        if(!change_received(change_to_add, pWP))
+        if(!change_received(change_to_add, pWP, lock))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long(),C_BLUE);
             releaseCache(change_to_add);
@@ -324,13 +323,11 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterPro
     return false;
 }
 
-bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
+bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock)
 {
     const char* const METHOD_NAME = "change_received";
 
     //First look for WriterProxy in case is not provided
-    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
-
     if(prox == nullptr)
     {
         if(!this->matched_writer_lookup(a_change->writerGUID,&prox))
