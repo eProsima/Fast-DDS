@@ -28,10 +28,10 @@
 
 // C++11 Non-copyable feature
 #ifndef NON_COPYABLE_CXX11
-#ifdef HAVE_CXX0X
-#define NON_COPYABLE_CXX11 = delete
-#else
+#if !defined(HAVE_CXX0X) || (defined(_MSC_VER) && _MSC_VER <= 1600)
 #define NON_COPYABLE_CXX11
+#else
+#define NON_COPYABLE_CXX11 = delete
 #endif
 #endif
 
