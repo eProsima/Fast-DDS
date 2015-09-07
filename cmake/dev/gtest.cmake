@@ -14,7 +14,7 @@ macro(add_gtest test)
                 # Add environment
                 if(WIN32)
                     set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTIES ENVIRONMENT
-                        "PATH=${PROJECT_BINARY_DIR}/lib\\;${fastcdr_LIB_DIR}\\;${Boost_LIBRARY_DIR}\\;$ENV{PATH}")
+                        "PATH=${PROJECT_BINARY_DIR}/lib\\;${fastcdr_LIB_DIR}\\;${Boost_LIBRARY_DIR_RELEASE}\\;$ENV{PATH}")
                 endif()
             endforeach()
         endforeach()
