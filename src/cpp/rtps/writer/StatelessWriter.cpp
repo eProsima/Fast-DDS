@@ -157,9 +157,11 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	if(unsent_changes_not_empty)
 	{
 		//unsent_changes_not_empty();
-		this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
+        if(this->mp_unsetChangesNotEmpty == nullptr)
+        {
+            this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
+        }
 		this->mp_unsetChangesNotEmpty->restart_timer();
-		this->mp_unsetChangesNotEmpty = NULL;
 	}
 	this->m_matched_readers.push_back(rdata);
 	logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);

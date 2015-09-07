@@ -16,6 +16,10 @@
 
 #include "RTPSReader.h"
 
+namespace boost
+{
+    template<typename T> class unique_lock;
+}
 
 
 namespace eprosima {
@@ -103,7 +107,7 @@ public:
 	 * @param prox Pointer to the WriterProxy that adds the Change.
 	 * @return True if added.
 	 */
-	bool change_received(CacheChange_t* a_change, WriterProxy* prox);
+	bool change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock);
 
 	/**
 	 * Get the RTPS participant

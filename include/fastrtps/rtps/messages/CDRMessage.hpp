@@ -477,7 +477,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 	{
 		addInt32(msg,bitmap[i]);
 	}
-	delete(bitmap);
+	delete[] bitmap;
 	return true;
 }
 
