@@ -169,7 +169,7 @@ LogMessage& Log::logMessage(LOG_TYPE type, LOG_CATEGORY cat, const char* CLASS_N
 		log->m_color << C_DEF;
 	log->m_msg.str("");
 	log->m_msg <<  "["<<CLASS_NAME << "::"<<METHOD_NAME;
-	log->m_msg << std::left << std::setw(MAXWIDTH -log->m_msg.str().size())<< "] ";
+    log->m_msg << std::left << std::setw(log->m_msg.str().size() >= MAXWIDTH ? 0 : MAXWIDTH - log->m_msg.str().size()) << "] ";
 	log->m_date.str("");
 	log->m_date << "["<< boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time())<<"]";
 	return *log;
