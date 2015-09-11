@@ -166,6 +166,15 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 			added_no_error &= CDRMessage::addParameterSentinel(&submsgElem);
 		}
 
+        // Align submessage to rtps alignment (4).
+        uint32_t align = (4 - submsgElem.pos % 4) & 3;
+
+        if(align > 0)
+        {
+            submsgElem.pos += align;
+            submsgElem.length += align;
+        }
+
 		//Once the submessage elements are added, the submessage header is created, assigning the correct size.
 		added_no_error &= RTPSMessageCreator::addSubmessageHeader(msg, DATA,flags, (uint16_t)submsgElem.length);
 		//Append Submessage elements to msg

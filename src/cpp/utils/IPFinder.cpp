@@ -235,13 +235,14 @@ RTPS_DllAPI bool IPFinder::parseIP4(std::string& str,Locator_t*loc)
 	int a, b, c, d;
 	char ch;
 	ss >> a >> ch >> b >> ch >> c >> ch >> d;
-	if (a == 127 && b == 0 && c == 0 && d == 1)
-		return false;
+    //TODO Property to activate or deactivate the loopback interface.
+	//if (a == 127 && b == 0 && c == 0 && d == 1)
+		//return false;
 	//		if(a==169 && b==254)
 	//			continue;
 	loc->kind = 1;
 	loc->port = 0;
-	for (int8_t i = 0; i < 2; ++i)
+	for (int8_t i = 0; i < 12; ++i)
 		loc->address[i] = 0;
 	loc->address[12] = (octet)a;
 	loc->address[13] = (octet)b;
