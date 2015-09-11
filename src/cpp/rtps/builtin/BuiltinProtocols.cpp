@@ -84,15 +84,13 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	}
 	if(m_att.metatrafficUnicastLocatorList.empty())
 	{
-//		LocatorList_t locators;
-//		IPFinder::getIP4Address(&locators);
-//		for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
-//		{
-		Locator_t loc;
-			loc.port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
-			loc.kind = LOCATOR_KIND_UDPv4;
-			m_metatrafficUnicastLocatorList.push_back(loc);
-		//}
+		LocatorList_t locators;
+		IPFinder::getIP4Address(&locators);
+        for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
+        {
+            it->port = m_SPDP_WELL_KNOWN_UNICAST_PORT;
+            m_metatrafficUnicastLocatorList.push_back(*it);
+        }
 	}
 	else
 	{

@@ -237,24 +237,29 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 		}
 	}
 	ReaderProxy* rp = new ReaderProxy(rdata,m_times,this);
+    //TODO Revisar porque se piensa que puede estar a null
 	if(mp_periodicHB==nullptr)
 		mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
-	if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL)
-	{
-		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
-				cit!=mp_history->changesEnd();++cit)
-		{
-			ChangeForReader_t changeForReader;
-			changeForReader.setChange(*cit);
-			changeForReader.is_relevant = rp->rtps_is_relevant(*cit);
 
-			if(m_pushMode)
-				changeForReader.status = UNSENT;
-			else
-				changeForReader.status = UNACKNOWLEDGED;
-			rp->m_changesForReader.push_back(changeForReader);
-		}
-	}
+    for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();
+            cit!=mp_history->changesEnd();++cit)
+    {
+        ChangeForReader_t changeForReader;
+        changeForReader.setChange(*cit);
+
+        if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes()->durabilityKind == TRANSIENT_LOCAL)
+            changeForReader.is_relevant = rp->rtps_is_relevant(*cit);
+        else
+            changeForReader.is_relevant = false;
+
+
+        if(m_pushMode)
+            changeForReader.status = UNSENT;
+        else
+            changeForReader.status = UNACKNOWLEDGED;
+        rp->m_changesForReader.push_back(changeForReader);
+    }
+
 	matched_readers.push_back(rp);
 	logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
 			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
