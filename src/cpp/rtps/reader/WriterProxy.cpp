@@ -299,10 +299,15 @@ bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 		{
 			if(it->status == RECEIVED)
 			{
-				*seqNum = it->seqNum;
-				this->m_min_available_seqNum = it->seqNum;
-				m_hasMinAvailableSeqNumChanged = false;
-				return true;
+                if(it->isValid())
+                {
+                    *seqNum = it->seqNum;
+                    this->m_min_available_seqNum = it->seqNum;
+                    m_hasMinAvailableSeqNumChanged = false;
+                    return true;
+                }
+                else
+                    continue;
 			}
 			else if(it->status == LOST)
 			{
