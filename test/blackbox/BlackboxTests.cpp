@@ -10,6 +10,8 @@
 #include "PubSubAsNonReliableHelloWorldWriter.hpp"
 #include "PubSubAsReliableHelloWorldReader.hpp"
 #include "PubSubAsReliableHelloWorldWriter.hpp"
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
+#include "ReqRepAsReliableHelloWorldReplier.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -244,6 +246,29 @@ TEST(BlackBox, PubSubAsReliableHelloworld)
         std::cout << std::endl;
     }
     ASSERT_EQ(msgs.size(), 0);
+}
+
+TEST(BlackBox, ReqRepAsReliableHelloworld)
+{
+    ReqRepAsReliableHelloWorldRequester requester;
+    ReqRepAsReliableHelloWorldReplier replier;
+    const uint16_t nmsgs = 100;
+
+    requester.init();
+
+    if(!requester.isInitialized())
+        return;
+
+    replier.init();
+
+    if(!replier.isInitialized())
+        return;
+
+    for(uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester.send(count);
+        ASSERT_EQ(requester.block(count, std::chrono::seconds(10)), true);
+    }
 }
 
 int main(int argc, char **argv)

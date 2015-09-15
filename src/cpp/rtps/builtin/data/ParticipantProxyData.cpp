@@ -185,7 +185,7 @@ bool ParticipantProxyData::toParameterList()
 bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
 
-	if(ParameterList::readParameterListfromCDRMsg(msg,&m_QosList.allQos,NULL,NULL)>0)
+	if(ParameterList::readParameterListfromCDRMsg(msg, &m_QosList.allQos, NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_QosList.allQos.m_parameters.begin();
 				it!=m_QosList.allQos.m_parameters.end();++it)

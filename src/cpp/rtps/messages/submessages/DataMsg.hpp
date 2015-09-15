@@ -88,6 +88,13 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 			keyFlag = false;
 		}
 	}
+    // Maybe the inline QoS because a WriteParam.
+    else if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
+    {
+        inlineQosFlag = true;
+        flags = flags | BIT(1);
+    }
+
 	if(dataFlag)
 		flags = flags | BIT(2);
 	if(keyFlag)
@@ -123,20 +130,28 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* chan
 
 		if(inlineQosFlag) //inlineQoS
 		{
-			if(inlineQos!=NULL)
+			if(inlineQos != NULL)
 			{
-				if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian!=submsgElem.msg_endian)
+				if(inlineQos->m_hasChanged || inlineQos->m_cdrmsg.msg_endian != submsgElem.msg_endian)
 				{
 					ParameterList::updateCDRMsg(inlineQos,submsgElem.msg_endian);
 				}
 			}
+
+            if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
+            {
+                CDRMessage::addParameterSampleIdentity(&submsgElem, change->write_params.related_sample_identity());
+            }
+
 			if(topicKind == WITH_KEY)
 			{
 				//cout << "ADDDING PARAMETER KEY " << endl;
 				CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
 			}
+
 			if(change->kind != ALIVE)
 				CDRMessage::addParameterStatus(&submsgElem,status);
+
 			if(inlineQos!=NULL)
 				CDRMessage::appendMsg(&submsgElem,&inlineQos->m_cdrmsg);
 			else

@@ -45,7 +45,7 @@ bool ParameterList::updateCDRMsg(ParameterList_t* plist,Endianness_t endian)
 }
 
 
-int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist,InstanceHandle_t* handle,ChangeKind_t* chkind)
+int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterList_t*plist, CacheChange_t *change)
 {
 	uint32_t paramlist_byte_size = 0;
 	bool is_sentinel = false;
@@ -243,12 +243,12 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLis
 			case PID_STATUS_INFO:
 			{
 				octet status = msg->buffer[msg->pos+3];
-				if(status == 1)
-					*chkind = NOT_ALIVE_DISPOSED;
-				else if (status == 2)
-					*chkind = NOT_ALIVE_UNREGISTERED;
-				else if (status == 3)
-					*chkind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+				if(status == 1 && change != NULL)
+					change->kind = NOT_ALIVE_DISPOSED;
+				else if (status == 2 && change != NULL)
+					change->kind = NOT_ALIVE_UNREGISTERED;
+				else if (status == 3 && change != NULL)
+					change->kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
 				msg->pos+=4;
 				paramlist_byte_size+=4;
 				break;
@@ -259,8 +259,8 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLis
 				p->Pid = PID_KEY_HASH;
 				p->length = 16;
 				valid&=CDRMessage::readData(msg,p->key.value,16);
-				if(handle!=NULL)
-					*handle = p->key;
+                if(change != NULL)
+                    change->instanceHandle = p->key;
 				IF_VALID_ADD
 			}
 			case PID_SENTINEL:
@@ -487,6 +487,17 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLis
 				valid &= CDRMessage::readUInt32(msg,&p->count);
 				IF_VALID_ADD
 			}
+            case PID_RELATED_SAMPLE_IDENTITY:
+            {
+                ParameterSampleIdentity_t *p = new ParameterSampleIdentity_t(pid, plength);
+				valid &= CDRMessage::readData(msg, p->sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
+				valid &= CDRMessage::readData(msg, p->sample_id.writer_guid().entityId.value, EntityId_t::size);
+				valid &= CDRMessage::readInt32(msg, &p->sample_id.sequence_number().high);
+				valid &= CDRMessage::readUInt32(msg, &p->sample_id.sequence_number().low);
+                if(change != NULL)
+                    change->write_params.sample_identity(p->sample_id);
+                IF_VALID_ADD
+            }
 			}
 		}
 		else

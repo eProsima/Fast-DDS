@@ -410,7 +410,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 	if(inlineQosFlag)
 	{
-		inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind);
+		inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch);
+
 		if(inlineQosSize <= 0)
 		{
 			logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
@@ -464,7 +465,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 				return false;
 			}
 			//uint32_t param_size;
-			if(ParameterList::readParameterListfromCDRMsg(msg,&m_ParamList,&ch->instanceHandle,&ch->kind) <= 0)
+			if(ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch) <= 0)
 			{
 				logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, keyFlag ParameterList",C_BLUE);
 				return false;

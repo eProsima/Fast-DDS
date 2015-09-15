@@ -37,12 +37,19 @@ struct RTPS_DllAPI SequenceNumber_t{
 		high = 0;
 		low = 0;
 	}
+
+    /*!
+     * @brief Copy constructor.
+     */
+    SequenceNumber_t(const SequenceNumber_t &seq) : high(seq.high), low(seq.low)
+    {
+    }
 	
 	/**
 	* @param hi
 	* @param lo
 	*/
-	SequenceNumber_t(int32_t hi,uint32_t lo):
+	SequenceNumber_t(int32_t hi, uint32_t lo):
 		high(hi),low(lo)
 	{
 
@@ -89,7 +96,7 @@ struct RTPS_DllAPI SequenceNumber_t{
 	* @param inc Number to add to the SequenceNumber
 	*/
 	SequenceNumber_t& operator+=(int inc)
-									{
+    {
 		if(this->low+inc>pow(2.0,32))
 		{
 			int module = (int)floor((inc+this->low)/pow(2.0,32));
@@ -101,8 +108,12 @@ struct RTPS_DllAPI SequenceNumber_t{
 		}
 
 		return *this;
-									}
+    }
 
+    static SequenceNumber_t unknown()
+    {
+        return SequenceNumber_t(-1, 0);
+    }
 
 };
 

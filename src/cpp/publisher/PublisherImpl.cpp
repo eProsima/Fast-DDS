@@ -32,6 +32,8 @@ namespace fastrtps {
 
 static const char* const CLASS_NAME = "PublisherImpl";
 
+static ::rtps::WriteParams WRITE_PARAM_DEFAULT;
+
 PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 		PublisherAttributes& att,PublisherListener* listen ):
 										mp_participant(p),
@@ -59,8 +61,12 @@ PublisherImpl::~PublisherImpl()
 
 
 
-
 bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
+{
+    return create_new_change_with_params(changeKind, data, WRITE_PARAM_DEFAULT);
+}
+
+bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void* data, WriteParams &wparams)
 {
 	const char* const METHOD_NAME = "create_new_change";
 	if (data == nullptr)
@@ -106,11 +112,25 @@ bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 				return false;
 			}
 		}
+
+        if(&wparams != &WRITE_PARAM_DEFAULT)
+        {
+            ch->write_params = wparams;
+        }
+
 		if(!this->m_history.add_pub_change(ch))
 		{
 			m_history.release_Cache(ch);
 			return false;
 		}
+
+        // Updated sample identity
+        if(&wparams != &WRITE_PARAM_DEFAULT)
+        {
+            wparams.sample_identity().writer_guid(ch->writerGUID);
+            wparams.sample_identity().sequence_number(ch->sequenceNumber);
+        }
+
 		return true;
 	}
 	return false;
