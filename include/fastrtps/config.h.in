@@ -21,6 +21,17 @@
 #define HAVE_CXX0X @HAVE_CXX0X@
 #endif
 
+// C++ constexpr support
+#ifndef HAVE_CXX_CONSTEXPR
+#define HAVE_CXX_CONSTEXPR @HAVE_CXX_CONSTEXPR@
+#endif
+
+#if HAVE_CXX_CONSTEXPR
+#define CONSTEXPR constexpr
+#else
+#define CONSTEXPR const
+#endif
+
 // Endianness defines
 #ifndef __BIG_ENDIAN__
 #define __BIG_ENDIAN__ @__BIG_ENDIAN__@

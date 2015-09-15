@@ -267,7 +267,7 @@ TEST(BlackBox, ReqRepAsReliableHelloworld)
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
-        ASSERT_EQ(requester.block(count, std::chrono::seconds(10)), true);
+        requester.block(std::chrono::seconds(10));
     }
 }
 

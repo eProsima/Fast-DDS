@@ -77,19 +77,16 @@ void ReqRepHelloWorldRequester::newNumber(SampleIdentity related_sample_identity
         cv_.notify_one();
 }
 
-bool ReqRepHelloWorldRequester::block(uint16_t current_number, const std::chrono::seconds &seconds)
+void ReqRepHelloWorldRequester::block(const std::chrono::seconds &seconds)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    current_number_ = current_number;
+
     if(current_number_ != number_received_)
     {
-        if(cv_.wait_for(lock, seconds) == std::cv_status::no_timeout)
-        {
-            return true;
-        }
+        ASSERT_EQ(cv_.wait_for(lock, seconds), std::cv_status::no_timeout);
     }
 
-    return false;
+    ASSERT_EQ(current_number_, number_received_);
 }
 
 void ReqRepHelloWorldRequester::waitDiscovery()
@@ -135,7 +132,10 @@ void ReqRepHelloWorldRequester::send(const uint16_t number)
     HelloWorld hello;
     hello.index(number);
     hello.message("HelloWorld");
-    ASSERT_EQ(request_publisher_->write((void*)&hello, wparams), true);
 
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    ASSERT_EQ(request_publisher_->write((void*)&hello, wparams), true);
     related_sample_identity_ = wparams.sample_identity();
+    current_number_ = number;
 }

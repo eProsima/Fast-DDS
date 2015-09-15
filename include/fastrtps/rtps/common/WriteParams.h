@@ -24,7 +24,7 @@ namespace eprosima
              * @brief This class contains additional information of a CacheChange.
              * @ingroup COMMON_MODULE
              */
-            class WriteParams
+            class RTPS_DllAPI WriteParams
             {
                 public:
 

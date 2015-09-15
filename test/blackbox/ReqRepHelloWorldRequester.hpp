@@ -75,7 +75,7 @@ class ReqRepHelloWorldRequester
         void init();
         bool isInitialized() const { return initialized_; }
         void newNumber(SampleIdentity related_sample_identity, uint16_t number);
-        bool block(uint16_t current_number, const std::chrono::seconds &seconds);
+        void block(const std::chrono::seconds &seconds);
         void waitDiscovery();
         void matched();
         void send(const uint16_t number);

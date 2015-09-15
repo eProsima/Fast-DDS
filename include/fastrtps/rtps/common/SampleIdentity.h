@@ -25,7 +25,7 @@ namespace eprosima
              * @brief This class is used to specify a sample
              * @ingroup COMMON_MODULE
              */
-            class SampleIdentity
+            class RTPS_DllAPI SampleIdentity
             {
                 public:
 

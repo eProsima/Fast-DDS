@@ -23,6 +23,16 @@ macro(check_stdcxx)
     endif()
 endmacro()
 
+macro(check_compile_feature)
+    # Check constexpr
+    list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_constexpr" CXX_CONSTEXPR_SUPPORTED)
+    if(${CXX_CONSTEXPR_SUPPORTED} GREATER -1)
+        set(HAVE_CXX_CONSTEXPR 1)
+    else()
+        set(HAVE_CXX_CONSTEXPR 0)
+    endif()
+endmacro()
+
 macro(check_endianness)
     # Test endianness
     include(TestBigEndian)
