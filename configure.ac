@@ -29,6 +29,11 @@ AS_IF([test $HAVE_CXX11 = 1],
       [AC_DEFINE(HAVE_CXX0X, 1, ["Define if g++ supports C++0x features. "])],
       [AX_CXX_COMPILE_STDCXX_0X()])
 
+# Check constexpr
+AS_IF([test $HAVE_CXX11 = 1],
+      [AC_DEFINE(HAVE_CXX_CONSTEXPR, 1, ["Define if g++ support constexpr feature. "])],
+      [AC_DEFINE(HAVE_CXX_CONSTEXPR, 0, ["Define if g++ support constexpr feature. "])])
+
 # Check endianess
 AC_C_BIGENDIAN(
   AC_DEFINE(__BIG_ENDIAN__, 1, [machine is bigendian]),
