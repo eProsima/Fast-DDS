@@ -21,8 +21,6 @@ namespace rtps {
 
 #include <algorithm>
 
-
-
 inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 {
 	if(msg->buffer==NULL)
@@ -238,7 +236,8 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 }
 
 
-inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint32_t length) {
+inline bool CDRMessage::addData(CDRMessage_t*msg, const octet *data, const uint32_t length)
+{
 	if(msg->pos + length > msg->max_size)
 	{
 		return false;
@@ -250,7 +249,8 @@ inline bool CDRMessage::addData(CDRMessage_t*msg, octet* data, uint32_t length) 
 	return true;
 }
 
-inline bool CDRMessage::addDataReversed(CDRMessage_t*msg, octet* data, uint32_t length) {
+inline bool CDRMessage::addDataReversed(CDRMessage_t*msg, const octet *data, const uint32_t length)
+{
 	if(msg->pos + length > msg->max_size)
 	{
 		return false;
@@ -527,8 +527,8 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 	{
 		return false;
 	}
-	CDRMessage::addUInt16(msg,PID_SENTINEL);
-	CDRMessage::addUInt16(msg,0);
+	CDRMessage::addUInt16(msg, PID_SENTINEL);
+	CDRMessage::addUInt16(msg, 0);
 
 	return true;
 }
@@ -552,7 +552,21 @@ inline bool CDRMessage::addString(CDRMessage_t*msg,std::string& in_str)
 	return valid;
 }
 
+inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id)
+{
+	if(msg->pos + 28 >= msg->max_size)
+	{
+		return false;
+	}
 
+	CDRMessage::addUInt16(msg, PID_RELATED_SAMPLE_IDENTITY);
+	CDRMessage::addUInt16(msg, 24);
+    CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
+    CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);
+    CDRMessage::addInt32(msg, sample_id.sequence_number().high);
+    CDRMessage::addUInt32(msg, sample_id.sequence_number().low);
+	return true;
+}
 
 
 

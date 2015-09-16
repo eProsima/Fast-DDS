@@ -14,8 +14,7 @@
 #define CACHECHANGE_H_
 
 #include "Types.h"
-#include "Guid.h"
-#include "SequenceNumber.h"
+#include "WriteParams.h"
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "InstanceHandle.h"
@@ -60,6 +59,8 @@ struct RTPS_DllAPI CacheChange_t{
 	bool isRead;
 	//!Source TimeStamp (only used in Readers)
 	Time_t sourceTimestamp;
+
+    WriteParams write_params;
 	
 	//!Default constructor.
 	CacheChange_t():
@@ -93,6 +94,7 @@ struct RTPS_DllAPI CacheChange_t{
 		instanceHandle = ch_ptr->instanceHandle;
 		sequenceNumber = ch_ptr->sequenceNumber;
 		sourceTimestamp = ch_ptr->sourceTimestamp;
+        write_params = ch_ptr->write_params;
 		return serializedPayload.copy(&ch_ptr->serializedPayload);
 	}
 	~CacheChange_t(){

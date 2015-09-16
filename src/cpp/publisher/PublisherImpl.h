@@ -69,6 +69,15 @@ public:
 	bool create_new_change(ChangeKind_t kind, void* Data);
 
 	/**
+	 * 
+	 * @param kind
+	 * @param  Data
+     * @param wparams
+	 * @return
+	 */
+	bool create_new_change_with_params(ChangeKind_t kind, void* Data, WriteParams &wparams);
+
+	/**
 	 * Removes the cache change with the minimum sequence number
 	 * @return True if correct.
 	 */

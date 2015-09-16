@@ -188,6 +188,17 @@ bool ParameterPropertyList_t::addToCDRMessage(CDRMessage_t*msg)
 	return valid;
 }
 
+bool ParameterSampleIdentity_t::addToCDRMessage(CDRMessage_t*msg)
+{
+	bool valid = CDRMessage::addUInt16(msg, this->Pid);
+	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
+    valid &= CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
+    valid &= CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);
+    valid &= CDRMessage::addInt32(msg, sample_id.sequence_number().high);
+    valid &= CDRMessage::addUInt32(msg, sample_id.sequence_number().low);
+	return valid;
+}
+
 
 } /* namespace pubsub */
 } /* namespace eprosima */

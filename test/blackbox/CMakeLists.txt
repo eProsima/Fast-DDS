@@ -19,6 +19,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         RTPSWithRegistrationWriter.cpp
         PubSubHelloWorldReader.cpp
         PubSubHelloWorldWriter.cpp
+        ReqRepHelloWorldRequester.cpp
+        ReqRepHelloWorldReplier.cpp
         )
     add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
     add_gtest(BlackboxTests ${BLACKBOXTESTS_SOURCE})

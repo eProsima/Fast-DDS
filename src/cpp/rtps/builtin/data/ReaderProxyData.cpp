@@ -191,7 +191,7 @@ bool ReaderProxyData::toParameterList()
 bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
 	//const char* const METHOD_NAME = "readFromCDRMessage";
-	if(ParameterList::readParameterListfromCDRMsg(msg,&m_parameterList,NULL,NULL)>0)
+	if(ParameterList::readParameterListfromCDRMsg(msg, &m_parameterList, NULL)>0)
 	{
 		for(std::vector<Parameter_t*>::iterator it = m_parameterList.m_parameters.begin();
 				it!=m_parameterList.m_parameters.end();++it)

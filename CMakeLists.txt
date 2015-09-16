@@ -92,6 +92,7 @@ endif()
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/check_configuration.cmake)
 check_stdcxx()
+check_compile_feature()
 check_endianness()
 
 ###############################################################################

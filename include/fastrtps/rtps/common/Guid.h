@@ -12,9 +12,12 @@
 
 #ifndef RTPS_GUID_H_
 #define RTPS_GUID_H_
-#include <cstdint>
+
 #include "../../fastrtps_dll.h"
 #include "Types.h"
+
+#include <cstdint>
+#include <cstring>
 
 namespace eprosima{
 namespace fastrtps{
@@ -24,71 +27,93 @@ namespace rtps{
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI GuidPrefix_t{
-	octet value[12];
+struct RTPS_DllAPI GuidPrefix_t
+{
+    static CONSTEXPR unsigned int size = 12;
+	octet value[size];
+
 	//!Default constructor. Set the Guid prefix to 0.
 	GuidPrefix_t()
 	{
-		for(uint8_t i =0;i<12;i++)
-			value[i] = 0;
+        memset(value, 0, size);
 	}
+
 	/**
 	* Guid prefix constructor
 	* @param guid Guid prefix
 	*/
-	GuidPrefix_t(octet guid[12]){
-		for(uint8_t i =0;i<12;i++)
-			value[i] = guid[i];
+	GuidPrefix_t(octet guid[size])
+    {
+        memcpy(value, guid, size);
 	}
+
+    /*!
+     * Guid prefix copy constructor.
+     * @param g Guid prefix to copy the values from
+     */
+    GuidPrefix_t(const GuidPrefix_t &g)
+    {
+        memcpy(value, g.value, size);
+    }
+
+    /*!
+     * Guid prefix move constructor.
+     * @param g Guid prefix to copy the values from
+     */
+    GuidPrefix_t(GuidPrefix_t &&g)
+    {
+        memmove(value, g.value, size);
+    }
+
 	/**
 	* Guid prefix assignment operator
 	* @param guidpre Guid prefix to copy the values from
 	*/
-	GuidPrefix_t& operator=(const GuidPrefix_t& guidpre)
+	GuidPrefix_t& operator=(const GuidPrefix_t &guidpre)
 	{
-		for(uint8_t i =0;i<12;i++)
-		{
-			value[i] = guidpre.value[i];
-		}
+        memcpy(value, guidpre.value, size);
 		return *this;
 	}
-};
+
+	/**
+	* Guid prefix assignment operator
+	* @param guidpre Guid prefix to copy the values from
+	*/
+	GuidPrefix_t& operator=(GuidPrefix_t &&guidpre)
+	{
+        memmove(value, guidpre.value, size);
+		return *this;
+	}
+
+    static GuidPrefix_t unknown()
+    {
+        return GuidPrefix_t();
+    }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-	/**
-	* Guid prefix comparison operator
-	* @param guid1 First guid prefix to compare
-	* @param guid2 Second guid prefix to compare
-	* @return True if the guid prefixes are equal
-	*/
-inline bool operator==(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
-{
-	for(uint8_t i =0;i<12;i++)
-	{
-		if(guid1.value[i] != guid2.value[i])
-			return false;
-	}
-	return true;
-}
+    /**
+     * Guid prefix comparison operator
+     * @param prefix guid prefix to compare
+     * @return True if the guid prefixes are equal
+     */
+    bool operator==(const GuidPrefix_t& prefix) const
+    {
+        return (memcmp(value, prefix.value, size) == 0);
+    }
 
-	/**
-	* Guid prefix comparison operator
-	* @param guid1 First guid prefix to compare
-	* @param guid2 Second guid prefix to compare
-	* @return True if the guid prefixes are not equal
-	*/
-inline bool operator!=(const GuidPrefix_t& guid1,const GuidPrefix_t& guid2)
-{
-	for(uint8_t i =0;i<12;i++)
-	{
-		if(guid1.value[i] != guid2.value[i])
-			return true;
-	}
-	return false;
-}
+    /**
+     * Guid prefix comparison operator
+     * @param prefix Second guid prefix to compare
+     * @return True if the guid prefixes are not equal
+     */
+    bool operator!=(const GuidPrefix_t& prefix) const
+    {
+        return (memcmp(value, prefix.value, size) != 0);
+    }
 
 #endif
+};
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
@@ -117,7 +142,8 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
  struct RTPS_DllAPI EntityId_t{
-	octet value[4];
+    static CONSTEXPR unsigned int size = 4;
+	octet value[size];
 	//! Default constructor. Uknown entity.
 	EntityId_t(){
 		*this = ENTITYID_UNKNOWN;
@@ -132,18 +158,35 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 		*aux = id;
 		reverse();
 	}
-	/**
-	* Assignment operator.
-	* @param id Entity to copy values from
-	*/
-	EntityId_t& operator=(const EntityId_t& id)
-	{
-		value[0] = id.value[0];
-		value[1] = id.value[1];
-		value[2] = id.value[2];
-		value[3] = id.value[3];
-		return *this;
-	}
+
+    /*!
+     * @brief Copy constructor
+     */
+    EntityId_t(const EntityId_t &id)
+    {
+        memcpy(value, id.value, size);
+    }
+
+    /*!
+     * @brief Move constructor
+     */
+    EntityId_t(EntityId_t &&id)
+    {
+        memmove(value, id.value, size);
+    }
+
+    EntityId_t& operator=(const EntityId_t &id)
+    {
+        memcpy(value, id.value, size);
+        return *this;
+    }
+
+    EntityId_t& operator=(EntityId_t &&id)
+    {
+        memmove(value, id.value, size);
+        return *this;
+    }
+
 	/**
 	* Assignment operator.
 	* @param id Entity id to copy
@@ -167,6 +210,11 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
 		value[2] = value[1];
 		value[1] = oaux;
 	}
+
+    static EntityId_t unknown()
+    {
+        return EntityId_t();
+    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -257,19 +305,50 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 	GuidPrefix_t guidPrefix;
 	//!Entity id
 	EntityId_t entityId;
+
+	
+	/*!
+     * DDefault constructor. Contructs an unknown GUID.
+     */
+	GUID_t(){};
+
+    /*!
+     * Copy constructor.
+     */
+    GUID_t(const GUID_t &g) : guidPrefix(g.guidPrefix),
+    entityId(g.entityId)
+     {
+     }
+
+    /*!
+     * Move constructor.
+     */
+    GUID_t(GUID_t &&g) : guidPrefix(std::move(g.guidPrefix)),
+    entityId(std::move(g.entityId))
+     {
+     }
+
 	/**
 	* Assignment operator
 	* @param guid GUID to copy the data from.
 	*/
-	GUID_t& operator=(const GUID_t& guid)
+	GUID_t& operator=(const GUID_t &guid)
 	{
 		guidPrefix = guid.guidPrefix;
 		entityId = guid.entityId;
 		return *this;
 	}
-	
-	//! Default constructor
-	GUID_t(){};
+
+	/**
+	* Assignment operator
+	* @param guid GUID to copy the data from.
+	*/
+	GUID_t& operator=(GUID_t &&guid)
+	{
+		guidPrefix = std::move(guid.guidPrefix);
+		entityId = std::move(guid.entityId);
+		return *this;
+	}
 	
 	/**
 	* @param guidP Guid prefix
@@ -284,6 +363,11 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 	*/	
 	GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
 		guidPrefix(guidP),entityId(entId) {}
+
+    static GUID_t unknown()
+    {
+        return GUID_t();
+    };
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

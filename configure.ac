@@ -7,7 +7,7 @@
 #
 m4_define([version_major],[1])
 m4_define([version_minor],[0])
-m4_define([version_micro],[3])
+m4_define([version_micro],[4])
 
 AC_INIT([fastrtps], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima FastRTPS], [http://eprosima.com/])
 CONFIG_ARGS="$*"
@@ -28,6 +28,11 @@ AX_CXX_COMPILE_STDCXX_11(,optional)
 AS_IF([test $HAVE_CXX11 = 1],
       [AC_DEFINE(HAVE_CXX0X, 1, ["Define if g++ supports C++0x features. "])],
       [AX_CXX_COMPILE_STDCXX_0X()])
+
+# Check constexpr
+AS_IF([test $HAVE_CXX11 = 1],
+      [AC_DEFINE(HAVE_CXX_CONSTEXPR, 1, ["Define if g++ support constexpr feature. "])],
+      [AC_DEFINE(HAVE_CXX_CONSTEXPR, 0, ["Define if g++ support constexpr feature. "])])
 
 # Check endianess
 AC_C_BIGENDIAN(

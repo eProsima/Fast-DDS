@@ -24,6 +24,7 @@ namespace fastrtps {
 namespace rtps
 {
 struct GUID_t;
+class WriteParams;
 }
 using namespace rtps;
 
@@ -48,6 +49,16 @@ public:
 	 * @snippet fastrtps_example.cpp ex_PublisherWrite
 	 */
 	bool write(void*Data);
+
+	/**
+	 * Write data with params to the topic.
+	 * @param Data Pointer to the data
+     * @param Extra parameters.
+	 * @return True if correct
+	 * @par Calling example:
+	 * @snippet fastrtps_example.cpp ex_PublisherWrite
+	 */
+	bool write(void*Data, WriteParams &wparams);
 
 	/**
 	 * Dispose of a previously written data.

@@ -97,7 +97,9 @@ enum ParameterId_t	: uint16_t
 	PID_ENTITY_NAME = 0x0062,
 	PID_KEY_HASH = 0x0070,
 	PID_STATUS_INFO = 0x0071,
-	PID_ENDPOINT_GUID = 0x005a
+	PID_ENDPOINT_GUID = 0x005a,
+    //PID_RELATED_SAMPLE_IDENTITY = 0x0083
+    PID_RELATED_SAMPLE_IDENTITY = 0x800f
 };
 
 
@@ -461,6 +463,31 @@ public:
 	 * @param length Its associated length
 	 */
 	ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST,in_length){};
+	/**
+	 * Add the parameter to a CDRMessage_t message.
+	 * @param[in,out] msg Pointer to the message where the parameter should be added.
+	 * @return True if the parameter was correctly added.
+	 */
+	bool addToCDRMessage(CDRMessage_t* msg);
+};
+
+/**
+ *
+ */
+class RTPS_DllAPI ParameterSampleIdentity_t : public Parameter_t
+{
+public:
+    SampleIdentity sample_id;
+
+	ParameterSampleIdentity_t() : sample_id(SampleIdentity::unknown()) {}
+
+	/**
+	 * Constructor using a parameter PID and the parameter length
+	 * @param pid Pid of the parameter
+	 * @param length Its associated length
+	 */
+	ParameterSampleIdentity_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid,in_length), sample_id(SampleIdentity::unknown()) {}
+
 	/**
 	 * Add the parameter to a CDRMessage_t message.
 	 * @param[in,out] msg Pointer to the message where the parameter should be added.

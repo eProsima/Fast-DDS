@@ -38,6 +38,12 @@ bool Publisher::write(void* Data) {
 	return mp_impl->create_new_change(ALIVE,Data);
 }
 
+bool Publisher::write(void* Data, WriteParams &wparams) {
+	const char* const METHOD_NAME = "write";
+	logInfo(PUBLISHER,"Writing new data with WriteParams");
+	return mp_impl->create_new_change_with_params(ALIVE, Data, wparams);
+}
+
 bool Publisher::dispose(void* Data)
 {
 	const char* const METHOD_NAME = "dispose";

@@ -84,8 +84,8 @@ namespace CDRMessage{
 	 */
 	/// @{
 
-      inline bool addData(CDRMessage_t*,octet*,uint32_t number_bytes);
-      inline bool addDataReversed(CDRMessage_t*,octet*,uint32_t byte_number);
+      inline bool addData(CDRMessage_t*, const octet*, const uint32_t number_bytes);
+      inline bool addDataReversed(CDRMessage_t*, const octet*, const uint32_t byte_number);
 	  inline bool addOctet(CDRMessage_t*msg,octet o);
 	  inline bool addUInt16(CDRMessage_t*msg,uint16_t us);
 	  inline bool addInt32(CDRMessage_t*msg,int32_t lo);
@@ -101,6 +101,7 @@ namespace CDRMessage{
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
 	  inline bool addString(CDRMessage_t*msg,std::string& in_str);
 	  inline bool addOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
+      inline bool addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id);
 	///@}
 
 }

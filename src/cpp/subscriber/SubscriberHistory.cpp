@@ -241,7 +241,8 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 		if(info!=nullptr)
 		{
 			info->sampleKind = change->kind;
-			info->writerGUID = change->writerGUID;
+			info->sample_identity.writer_guid(change->writerGUID);
+            info->sample_identity.sequence_number(change->sequenceNumber);
 			info->sourceTimestamp = change->sourceTimestamp;
 			if(this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
 				info->ownershipStrength = wp->m_att.ownershipStrength;
@@ -252,6 +253,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 				this->mp_subImpl->getType()->getKey(data,&change->instanceHandle);
 			}
 			info->iHandle = change->instanceHandle;
+            info->related_sample_identity = change->write_params.sample_identity();
 		}
 		return true;
 	}
@@ -271,13 +273,14 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 			this->decreaseUnreadCount();
 		change->isRead = true;
 		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": taking seqNum"<< change->sequenceNumber.to64long() <<
-				" from writer: "<<change->writerGUID);
+				" from writer: "<< change->writerGUID);
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
 		{
 			info->sampleKind = change->kind;
-			info->writerGUID = change->writerGUID;
+			info->sample_identity.writer_guid(change->writerGUID);
+            info->sample_identity.sequence_number(change->sequenceNumber);
 			info->sourceTimestamp = change->sourceTimestamp;
 			if(this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
 				info->ownershipStrength = wp->m_att.ownershipStrength;
@@ -288,6 +291,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 				this->mp_subImpl->getType()->getKey(data,&change->instanceHandle);
 			}
 			info->iHandle = change->instanceHandle;
+            info->related_sample_identity = change->write_params.sample_identity();
 		}
 		this->remove_change_sub(change);
 		return true;
