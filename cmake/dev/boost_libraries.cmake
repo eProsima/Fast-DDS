@@ -16,7 +16,7 @@ macro(check_boost)
     endif()
     find_package(Boost COMPONENTS ${ARGN})
     if(NOT Boost_FOUND)
-        message(FATAL_ERROR "Cannot find Boost libraries")
+        message(FATAL_ERROR "Cannot find Boost components: ${ARGN}")
     endif()
 endmacro()
 
