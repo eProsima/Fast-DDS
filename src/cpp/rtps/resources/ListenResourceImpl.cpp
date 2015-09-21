@@ -238,7 +238,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 		}
 		if(!binded)
 		{
-			logError(RTPS_MSG_IN,"Tried 1000 ports and none was working, last tried: "<< m_listen_endpoint,C_BLUE);
+			logError(RTPS_MSG_IN,"Tried 100 ports and none was working, last tried: "<< m_listen_endpoint,C_BLUE);
 			return false;
 		}
 		else
