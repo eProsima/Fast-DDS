@@ -104,28 +104,28 @@ inline double Time_tAbsDiff2DoubleMillisec(const Time_t& t1,const Time_t& t2)
 {
 	double result = 0;
 	result +=(double)abs((t2.seconds-t1.seconds)*1000);
-	result +=(double)abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
+	result +=(double)std::abs((t2.fraction-t1.fraction)/pow(2.0,32)*1000);
 	return result;
 }
 
 //! Create a random Time_t that is millisec + [-randoff,randoff]
 inline Time_t MilliSecondsWithRandOffset2Time_t(double millisec, double randoff)
 {
-	randoff = abs(randoff);
+	randoff = std::abs(randoff);
 	millisec = millisec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
 	return MilliSeconds2Time_t(millisec);
 }
 //! Create a random Time_t that is microsec + [-randoff,randoff]
 inline Time_t MicroSecondsWithRandOffset2Time_t(double microsec, double randoff)
 {
-	randoff = abs(randoff);
+	randoff = std::abs(randoff);
 	microsec = microsec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
 	return MicroSeconds2Time_t(microsec);
 }
 //! Create a random Time_t that is sec + [-randoff,randoff]
 inline Time_t SecondsWithRandOffset2Time_t(double sec, double randoff)
 {
-	randoff = abs(randoff);
+	randoff = std::abs(randoff);
 	sec = sec + (-randoff) + static_cast <double> (rand()) /( static_cast <double> (RAND_MAX/(2*randoff)));
 	return Seconds2Time_t(sec);
 }
