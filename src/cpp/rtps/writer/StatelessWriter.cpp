@@ -65,12 +65,12 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 		if (this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
 		{
 			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-				&change,locList,locList2, false, c_EntityId_SPDPReader);
+				&change, c_GuidPrefix_Unknown, c_EntityId_SPDPReader, locList, locList2, false);
 		}
 		else
 		{
 			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-				&change, locList, locList2, false, c_EntityId_Unknown);
+				&change, c_GuidPrefix_Unknown, c_EntityId_Unknown, locList, locList2, false);
 		}
 	}
 	else
@@ -97,12 +97,12 @@ void StatelessWriter::unsent_changes_not_empty()
 				if(this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
 				{
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_SPDPReader);
+							&rit->unsent_changes, c_GuidPrefix_Unknown, c_EntityId_SPDPReader, rit->locator, rit->expectsInlineQos);
 				}
 				else
 				{
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&rit->unsent_changes,rit->locator,rit->expectsInlineQos,c_EntityId_Unknown);
+							&rit->unsent_changes, c_GuidPrefix_Unknown, c_EntityId_Unknown, rit->locator, rit->expectsInlineQos);
 				}
 				rit->unsent_changes.clear();
 			}

@@ -17,12 +17,14 @@ namespace fastrtps{
 namespace rtps{
 
 bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
+        const GuidPrefix_t& remoteGuidPrefix,
 		const EntityId_t& readerId,const EntityId_t& writerId,
 		SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
 	const char* const METHOD_NAME = "addMessageAcknack";
 	try
 	{
 		RTPSMessageCreator::addHeader(msg,guidprefix);
+        RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
 		RTPSMessageCreator::addSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
 		msg->length = msg->pos;
 	}

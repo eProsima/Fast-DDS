@@ -85,13 +85,15 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 			if(!relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
 						&relevant_changes,
+                        mp_RP->m_att.guid.guidPrefix,
+                        mp_RP->m_att.guid.entityId,
 						mp_RP->m_att.endpoint.unicastLocatorList,
 						mp_RP->m_att.endpoint.multicastLocatorList,
-						mp_RP->m_att.expectsInlineQos,
-						mp_RP->m_att.guid.entityId);
+						mp_RP->m_att.expectsInlineQos);
 			if(!not_relevant_changes.empty())
 				RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
 						&not_relevant_changes,
+                        mp_RP->m_att.guid.guidPrefix,
 						mp_RP->m_att.guid.entityId,
 						&mp_RP->m_att.endpoint.unicastLocatorList,
 						&mp_RP->m_att.endpoint.multicastLocatorList);

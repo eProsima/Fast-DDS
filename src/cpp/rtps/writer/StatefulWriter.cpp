@@ -104,10 +104,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 		}
 		RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
 			&changeV,
+            c_GuidPrefix_Unknown,
+            c_EntityId_Unknown,
 			unilocList,
 			multilocList,
-			expectsInlineQos,
-			c_EntityId_Unknown);
+			expectsInlineQos);
 		this->mp_periodicHB->restart_timer();
 	}
 	else
@@ -174,14 +175,16 @@ void StatefulWriter::unsent_changes_not_empty()
 					//cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
 					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
 							&relevant_changes,
+                            (*rit)->m_att.guid.guidPrefix,
+                            (*rit)->m_att.guid.entityId,
 							(*rit)->m_att.endpoint.unicastLocatorList,
 							(*rit)->m_att.endpoint.multicastLocatorList,
-							(*rit)->m_att.expectsInlineQos,
-							(*rit)->m_att.guid.entityId);
+							(*rit)->m_att.expectsInlineQos);
 				}
 				if(!not_relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,
 							&not_relevant_changes,
+                            (*rit)->m_att.guid.guidPrefix,
 							(*rit)->m_att.guid.entityId,
 							&(*rit)->m_att.endpoint.unicastLocatorList,
 							&(*rit)->m_att.endpoint.multicastLocatorList);

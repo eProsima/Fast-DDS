@@ -63,6 +63,7 @@ public:
 static bool send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 						RTPSWriter* W,
 						std::vector<SequenceNumber_t>* changesSeqNum,
+                        const GuidPrefix_t& remoteGuidPrefix,
 						const EntityId_t& readerId,
 						LocatorList_t* unicast,
 						LocatorList_t* multicast);
@@ -88,10 +89,11 @@ static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqN
 static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
+        const GuidPrefix_t& remoteGuidPrefix,
+        const EntityId_t& ReaderId,
 		LocatorList_t& unicast,
 		LocatorList_t& multicast,
-		bool expectsInlineQos,
-		const EntityId_t& ReaderId);
+		bool expectsInlineQos);
 
 /**
  * @param msg_group
@@ -105,9 +107,10 @@ static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
 		std::vector<CacheChange_t*>* changes,
+        const GuidPrefix_t& remoteGuidPrefix,
+        const EntityId_t& ReaderId,
 		const Locator_t& loc,
-		bool expectsInlineQos,
-		const EntityId_t& ReaderId);
+		bool expectsInlineQos);
 
 /**
  * @param W

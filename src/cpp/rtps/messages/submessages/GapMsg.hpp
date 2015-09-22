@@ -17,14 +17,16 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+bool RTPSMessageCreator::addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& guidprefix,
+        const GuidPrefix_t& remoteGuidPrefix,
 		SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,
 		const EntityId_t& readerId,const EntityId_t& writerId)
 {
 	const char* const METHOD_NAME = "addSubmessageData";
 	try
 	{
-		RTPSMessageCreator::addHeader(msg,guidprefix);
+		RTPSMessageCreator::addHeader(msg, guidprefix);
+        RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
 		RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
 		RTPSMessageCreator::addSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
 	}

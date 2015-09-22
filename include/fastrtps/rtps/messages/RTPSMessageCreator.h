@@ -92,7 +92,7 @@ public:
 	static bool addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
 
-	static bool addMessageGap(CDRMessage_t* msg,GuidPrefix_t& guidprefix,
+	static bool addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
 			SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
 	static bool addSubmessageGap(CDRMessage_t* msg,SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
 
@@ -102,7 +102,7 @@ public:
 	static bool addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,const EntityId_t& writerId,
 			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag);
 
-	static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
+	static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
 			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
 	static bool addSubmessageAcknack(CDRMessage_t* msg,

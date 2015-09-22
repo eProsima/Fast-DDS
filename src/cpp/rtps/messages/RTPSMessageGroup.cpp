@@ -91,8 +91,8 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* 
 
 
 bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
-		RTPSWriter* W,
-		std::vector<SequenceNumber_t>* changesSeqNum, const EntityId_t& readerId,
+		RTPSWriter* W, std::vector<SequenceNumber_t>* changesSeqNum,
+        const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,
 		LocatorList_t* unicast, LocatorList_t* multicast)
 {
 	const char* const METHOD_NAME = "send_Changes_AsGap";
@@ -123,6 +123,13 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	{
 		CDRMessage::initCDRMsg(cdrmsg_fullmsg);
 		CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
+
+        // If there is a destinatary, send the submessage INFO_DST.
+        if(remoteGuidPrefix != c_GuidPrefix_Unknown)
+        {
+            RTPSMessageCreator::addSubmessageInfoDST(cdrmsg_fullmsg, remoteGuidPrefix);
+        }
+
 		if(first)
 		{
 			CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
@@ -166,10 +173,10 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 
 
 bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,
+		RTPSWriter* W, std::vector<CacheChange_t*>* changes,
+        const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
 		LocatorList_t& unicast, LocatorList_t& multicast,
-		bool expectsInlineQos,const EntityId_t& ReaderId)
+		bool expectsInlineQos)
 {
 	const char* const METHOD_NAME = "send_Changes_AsData";
 	logInfo(RTPS_WRITER,"Sending relevant changes as data messages");
@@ -197,6 +204,13 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		bool added = false;
 		CDRMessage::initCDRMsg(cdrmsg_fullmsg);
 		CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
+
+        // If there is a destinatary, send the submessage INFO_DST.
+        if(remoteGuidPrefix != c_GuidPrefix_Unknown)
+        {
+            RTPSMessageCreator::addSubmessageInfoDST(cdrmsg_fullmsg, remoteGuidPrefix);
+        }
+
 		RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg,false); //Change here to add a INFO_TS for DATA.
 		if(first)
 		{
@@ -234,9 +248,9 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 }
 
 bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,const Locator_t& loc,
-		bool expectsInlineQos,const EntityId_t& ReaderId)
+		RTPSWriter* W, std::vector<CacheChange_t*>* changes,
+        const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
+        const Locator_t& loc, bool expectsInlineQos)
 {
 	const char* const METHOD_NAME = "send_Changes_AsData";
 	logInfo(RTPS_WRITER,"Sending relevant changes as data messages");
@@ -263,6 +277,13 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		bool added = false;
 		CDRMessage::initCDRMsg(cdrmsg_fullmsg);
 		CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
+
+        // If there is a destinatary, send the submessage INFO_DST.
+        if(remoteGuidPrefix != c_GuidPrefix_Unknown)
+        {
+            RTPSMessageCreator::addSubmessageInfoDST(cdrmsg_fullmsg, remoteGuidPrefix);
+        }
+
 		RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg,false);
 		if(first)
 		{
