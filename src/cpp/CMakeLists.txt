@@ -124,7 +124,7 @@ if(MSVC OR MSVC_IDE)
             ${PROJECT_BINARY_DIR}/lib)
 
         # Export symbols in DLL library
-        target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME_UPPER}_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
