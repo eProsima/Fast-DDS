@@ -302,8 +302,10 @@ endif()
 # Packaging
 ###############################################################################
 # Install external eprosima libraries
-install_eprosima_fastcdr()
-install_boost(thread system date_time chrono regex)
+if(EPROSIMA_BUILD)
+    install_eprosima_fastcdr()
+    install_boost(thread system date_time chrono regex)
+endif()
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
