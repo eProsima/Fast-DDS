@@ -12,6 +12,12 @@ macro(find_eprosima_package package)
             set(BUILD_OPTION "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\n")
         endif()
 
+        # Separate CMAKE_PREFIX_PATH
+        set(CMAKE_PREFIX_PATH_ "")
+        foreach(cmake_prefix_path_element ${CMAKE_PREFIX_PATH})
+            set(CMAKE_PREFIX_PATH_ "${CMAKE_PREFIX_PATH_} -DCMAKE_PREFIX_PATH=${cmake_prefix_path_element}")
+        endforeach()
+
         file(MAKE_DIRECTORY ${${package}ExternalDir})
         file(WRITE ${${package}ExternalDir}/CMakeLists.txt
             "cmake_minimum_required(VERSION 2.8.11)\n"
@@ -23,7 +29,7 @@ macro(find_eprosima_package package)
              ${BUILD_OPTION}
              ${_USE_BOOST}
              "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install\n"
-             "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}\n"
+             "${CMAKE_PREFIX_PATH_}\n"
              "DOWNLOAD_COMMAND echo\n"
              "UPDATE_COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update --recursive --init thirdparty/${package}\n"
              "SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
