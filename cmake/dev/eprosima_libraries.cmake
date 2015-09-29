@@ -1,9 +1,9 @@
 macro(find_eprosima_package package)
     if(THIRDPARTY)
-        set(_USE_BOOST "")
+        set(USE_BOOST_ "")
         foreach(arg ${ARGN})
             if("${arg}" STREQUAL "USE_BOOST")
-                set(_USE_BOOST "-DEPROSIMA_BOOST=${EPROSIMA_BOOST}\n")
+                set(USE_BOOST_ "-DEPROSIMA_BOOST=${EPROSIMA_BOOST}\n")
             endif()
         endforeach()
 
@@ -13,10 +13,16 @@ macro(find_eprosima_package package)
         endif()
 
         # Separate CMAKE_PREFIX_PATH
-        set(CMAKE_PREFIX_PATH_ "")
-        foreach(cmake_prefix_path_element ${CMAKE_PREFIX_PATH})
-            set(CMAKE_PREFIX_PATH_ "${CMAKE_PREFIX_PATH_} -DCMAKE_PREFIX_PATH=${cmake_prefix_path_element}")
-        endforeach()
+        string(REPLACE ";" "|" CMAKE_PREFIX_PATH_ "${CMAKE_PREFIX_PATH}")
+        set(${package}_CMAKE_ARGS
+             "${PROJECT_SOURCE_DIR}/thirdparty/${package}"
+             "-G \"${CMAKE_GENERATOR}\""
+             ${BUILD_OPTION}
+             ${USE_BOOST_}
+             "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install"
+             "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH_}"
+             )
+        list(APPEND ${package}_CMAKE_ARGS LIST_SEPARATOR "|")
 
         file(MAKE_DIRECTORY ${${package}ExternalDir})
         file(WRITE ${${package}ExternalDir}/CMakeLists.txt
@@ -24,12 +30,7 @@ macro(find_eprosima_package package)
             "include(ExternalProject)\n"
             "ExternalProject_Add(${package}\n"
              "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
-             "${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
-             "-G \"${CMAKE_GENERATOR}\"\n"
-             ${BUILD_OPTION}
-             ${_USE_BOOST}
-             "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install\n"
-             "${CMAKE_PREFIX_PATH_}\n"
+             "${${package}_CMAKE_ARGS}\n"
              "DOWNLOAD_COMMAND echo\n"
              "UPDATE_COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update --recursive --init thirdparty/${package}\n"
              "SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
