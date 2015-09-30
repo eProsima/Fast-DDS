@@ -18,15 +18,15 @@
 #endif
 
 #if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTRTPS_DYN_LINK)
-#define fastrtps_DYN_LINK
+#define FASTRTPS_DYN_LINK
 #endif
 
 #if defined(FASTRTPS_DYN_LINK) && defined(FASTRTPS_STATIC_LINK)
-#error Must not define both fastrtps_DYN_LINK and fastrtps_STATIC_LINK
+#error Must not define both FASTRTPS_DYN_LINK and FASTRTPS_STATIC_LINK
 #endif
 
 #if defined(EPROSIMA_ALL_NO_LIB) && !defined(FASTRTPS_NO_LIB)
-#define fastrtps_NO_LIB
+#define FASTRTPS_NO_LIB
 #endif
 
 // enable dynamic linking
@@ -37,7 +37,7 @@
 #define RTPS_DllAPI __declspec( dllexport )
 #else
 #define RTPS_DllAPI __declspec( dllimport )
-#endif // fastrtps_SOURCE
+#endif // FASTRTPS_SOURCE
 #else
 #define RTPS_DllAPI
 #endif
