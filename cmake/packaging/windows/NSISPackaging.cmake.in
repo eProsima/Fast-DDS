@@ -1,5 +1,11 @@
 # Prepare auxiliary NSIS scripts
 string(TOUPPER "@PROJECT_NAME@" PROJECT_NAME_UPPER)
+
+set(MSVC_ARCH_DIR "")
+if(@EPROSIMA_BUILD@)
+    set(MSVC_ARCH_DIR "\\@MSVC_ARCH@")
+endif()
+
 if(@EPROSIMA_INSTALLER@)
 configure_file(@PROJECT_SOURCE_DIR@/cmake/packaging/windows/EnvVarPage.nsh.in ${CPACK_TOPLEVEL_DIRECTORY}/EnvVarPage.nsh @ONLY)
 else()

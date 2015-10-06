@@ -67,7 +67,7 @@ macro(find_eprosima_package package)
                  message(FATAL_ERROR "Cannot build Git submodule ${package} in release mode")
              endif()
 
-             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${${package}ExternalDir}/install/lib/${MSVC_ARCH})
+             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${${package}ExternalDir}/install/${LIB_INSTALL_DIR})
          else()
              execute_process(COMMAND ${CMAKE_COMMAND} --build .
                  WORKING_DIRECTORY ${${package}ExternalDir}
