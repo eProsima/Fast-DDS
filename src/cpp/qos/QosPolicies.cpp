@@ -74,7 +74,10 @@ bool OwnershipQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 bool ReliabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 	bool valid = CDRMessage::addUInt16(msg, this->Pid);
 	valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
-	valid &= CDRMessage::addOctet(msg,kind);msg->pos+=3;msg->length+=3;
+	valid &= CDRMessage::addOctet(msg,kind);
+	valid &= CDRMessage::addOctet(msg,0);
+	valid &= CDRMessage::addOctet(msg,0);
+	valid &= CDRMessage::addOctet(msg,0);
 	valid &= CDRMessage::addInt32(msg,max_blocking_time.seconds);
 	valid &= CDRMessage::addUInt32(msg,max_blocking_time.fraction);
 	return valid;
