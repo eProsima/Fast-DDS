@@ -262,7 +262,7 @@ if(BUILD_DOCUMENTATION)
     ### Libreoffice ########################3
 
     if(WIN32)
-        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,./doc/)")
+        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,/doc/)")
         set(README_LOCATION "${PROJECT_BINARY_DIR}/")
         set(README_INSTALL_LOCATION ".")
     else()

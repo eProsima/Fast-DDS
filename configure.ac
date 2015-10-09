@@ -45,9 +45,10 @@ AC_C_BIGENDIAN(
 AX_BOOST_BASE([1.53],
 	AC_MSG_NOTICE([Found Boost]),
 	AC_MSG_ERROR([Could not find Boost]))
-AX_BOOST_SYSTEM
 AX_BOOST_THREAD
+AX_BOOST_SYSTEM
 AX_BOOST_DATE_TIME
+AX_BOOST_CHRONO
 
 # Check for libraries used in the main build process
 AC_PROG_CXX

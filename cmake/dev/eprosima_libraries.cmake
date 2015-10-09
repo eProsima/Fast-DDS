@@ -95,20 +95,20 @@ macro(install_eprosima_fastcdr)
             )
 
         if(EPROSIMA_INSTALLER)
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2010/external/fastcdr/install/lib/i86Win32VS2010
-                DESTINATION lib
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2010/external/fastcdr/install/lib/
+                DESTINATION lib/i86Win32VS2010
                 COMPONENT libraries_i86Win32VS2010
                 )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2010/external/fastcdr/install/lib/x64Win64VS2010
-                DESTINATION lib
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2010/external/fastcdr/install/lib/
+                DESTINATION lib/x64Win64VS2010
                 COMPONENT libraries_x64Win64VS2010
                 )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2013/external/fastcdr/install/lib/i86Win32VS2013
-                DESTINATION lib
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2013/external/fastcdr/install/lib/
+                DESTINATION lib/i86Win32VS2013
                 COMPONENT libraries_i86Win32VS2013
                 )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2013/external/fastcdr/install/lib/x64Win64VS2013
-                DESTINATION lib
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2013/external/fastcdr/install/lib/
+                DESTINATION lib/x64Win64VS2013
                 COMPONENT libraries_x64Win64VS2013
                 )
         else()
