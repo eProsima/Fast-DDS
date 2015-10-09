@@ -111,6 +111,11 @@ macro(install_eprosima_fastcdr)
                 DESTINATION lib/x64Win64VS2013
                 COMPONENT libraries_x64Win64VS2013
                 )
+        elseif(EPROSIMA_BUILD)
+            install(DIRECTORY ${fastcdr_LIB_DIR}
+                DESTINATION lib/${MSVC_ARCH}
+                COMPONENT libraries_${MSVC_ARCH}
+                )
         else()
             install(DIRECTORY ${fastcdr_LIB_DIR}
                 DESTINATION lib
