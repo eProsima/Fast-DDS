@@ -129,7 +129,7 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 
-if(NOT (EPROSIMA_INSTALLER AND(MSVC OR MSVC_IDE)))
+if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
     find_eprosima_package(fastcdr)
 endif()
 
