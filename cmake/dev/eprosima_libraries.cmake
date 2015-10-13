@@ -3,13 +3,19 @@ macro(find_eprosima_package package)
         set(USE_BOOST_ "")
         foreach(arg ${ARGN})
             if("${arg}" STREQUAL "USE_BOOST")
-                set(USE_BOOST_ "-DEPROSIMA_BOOST=${EPROSIMA_BOOST}\n")
+                set(USE_BOOST_ "-DEPROSIMA_BOOST=${EPROSIMA_BOOST}")
             endif()
         endforeach()
 
         set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
         if(NOT MSVC AND NOT MSVC_IDE)
-            set(BUILD_OPTION "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\n")
+            set(BUILD_OPTION "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
+        endif()
+
+        if(MINION)
+            set(CMAKE_INSTALL_PREFIX_ "${CMAKE_INSTALL_PREFIX}")
+        else()
+            set(CMAKE_INSTALL_PREFIX_ "${PROJECT_BINARY_DIR}/external/install")
         endif()
 
         # Separate CMAKE_PREFIX_PATH
@@ -19,7 +25,8 @@ macro(find_eprosima_package package)
              "-G \"${CMAKE_GENERATOR}\""
              ${BUILD_OPTION}
              ${USE_BOOST_}
-             "-DCMAKE_INSTALL_PREFIX=${${package}ExternalDir}/install"
+             "-DMINION=ON"
+             "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX_}"
              "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH_}"
              )
         list(APPEND ${package}_CMAKE_ARGS LIST_SEPARATOR "|")
@@ -49,7 +56,7 @@ macro(find_eprosima_package package)
          endif()
 
          if(MSVC OR MSVC_IDE)
-             execute_process(COMMAND ${CMAKE_COMMAND} --build . --config debug
+             execute_process(COMMAND ${CMAKE_COMMAND} --build . --config Debug
                  WORKING_DIRECTORY ${${package}ExternalDir}
                  RESULT_VARIABLE EXECUTE_RESULT
                  )
@@ -58,7 +65,7 @@ macro(find_eprosima_package package)
                  message(FATAL_ERROR "Cannot build Git submodule ${package} in debug mode")
              endif()
 
-             execute_process(COMMAND ${CMAKE_COMMAND} --build . --config release
+             execute_process(COMMAND ${CMAKE_COMMAND} --build . --config Release
                  WORKING_DIRECTORY ${${package}ExternalDir}
                  RESULT_VARIABLE EXECUTE_RESULT
                  )
@@ -66,8 +73,6 @@ macro(find_eprosima_package package)
              if(NOT EXECUTE_RESULT EQUAL 0)
                  message(FATAL_ERROR "Cannot build Git submodule ${package} in release mode")
              endif()
-
-             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${${package}ExternalDir}/install)
          else()
              execute_process(COMMAND ${CMAKE_COMMAND} --build .
                  WORKING_DIRECTORY ${${package}ExternalDir}
@@ -78,58 +83,26 @@ macro(find_eprosima_package package)
                  message(FATAL_ERROR "Cannot build Git submodule ${package}")
              endif()
 
-             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${${package}ExternalDir}/install)
          endif()
+
+         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_INSTALL_PREFIX_})
     endif()
 
     find_package(${package})
 
 endmacro()
 
-macro(install_eprosima_fastcdr)
+macro(install_eprosima_libraries)
     if(MSVC OR MSVC_IDE)
         # Install includes
-        install(DIRECTORY ${fastcdr_INCLUDE_DIR}/fastcdr
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/include/
             DESTINATION ${INCLUDE_INSTALL_DIR}
             COMPONENT headers
             )
 
-        if(EPROSIMA_INSTALLER)
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2010/external/fastcdr/install/lib/
-                DESTINATION lib/i86Win32VS2010
-                COMPONENT libraries_i86Win32VS2010
-                )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2010/external/fastcdr/install/lib/
-                DESTINATION lib/x64Win64VS2010
-                COMPONENT libraries_x64Win64VS2010
-                )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../i86Win32VS2013/external/fastcdr/install/lib/
-                DESTINATION lib/i86Win32VS2013
-                COMPONENT libraries_i86Win32VS2013
-                )
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/../x64Win64VS2013/external/fastcdr/install/lib/
-                DESTINATION lib/x64Win64VS2013
-                COMPONENT libraries_x64Win64VS2013
-                )
-        elseif(EPROSIMA_BUILD)
-            install(DIRECTORY ${fastcdr_LIB_DIR}
-                DESTINATION lib/${MSVC_ARCH}
-                COMPONENT libraries_${MSVC_ARCH}
-                )
-        else()
-            install(DIRECTORY ${fastcdr_LIB_DIR}
-                DESTINATION lib
-                COMPONENT libraries_${MSVC_ARCH}
-                )
-        endif()
-
-        # Install license
-        if(THIRDPARTY)
-            install(FILES ${PROJECT_BINARY_DIR}/external/fastcdr/install/FASTCDR_LIBRARY_LICENSE.txt
-                DESTINATION .
-                )
-        else()
-            # TODO Ver si puedo usar un LICENSE_INSTALL_DIR y que lo piye la configuración CMake.
-        endif()
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/lib/
+            DESTINATION lib
+            COMPONENT libraries_${MSVC_ARCH}
+            )
     endif()
 endmacro()

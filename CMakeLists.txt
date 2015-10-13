@@ -106,6 +106,7 @@ endif()
 # eProsima build options
 ###############################################################################
 option(EPROSIMA_BUILD "Activate internal building" OFF)
+option(MINION "Tells if it is a subproject of a superproject" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
@@ -127,18 +128,17 @@ if(EPROSIMA_BUILD)
 endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
-find_eprosima_package(fastcdr)
+
+if(NOT (EPROSIMA_INSTALLER AND(MSVC OR MSVC_IDE)))
+    find_eprosima_package(fastcdr)
+endif()
 
 ###############################################################################
 # Installation paths
 ###############################################################################
 set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
-if((MSVC OR MSVC_IDE) AND EPROSIMA_BUILD)
-    set(LIB_INSTALL_DIR lib/${MSVC_ARCH}/ CACHE PATH "Installation directory for libraries")
-else()
-    set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
-endif()
+set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
 set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
 if(WIN32)
     set(DOC_DIR "doc")
@@ -302,8 +302,8 @@ endif()
 # Packaging
 ###############################################################################
 # Install external eprosima libraries
-if(EPROSIMA_BUILD)
-    install_eprosima_fastcdr()
+if(EPROSIMA_INSTALLER)
+    install_eprosima_libraries()
     install_boost(thread system date_time chrono regex)
 endif()
 

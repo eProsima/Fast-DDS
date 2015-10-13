@@ -18,39 +18,27 @@ macro(generate_msvc_libraries platform)
     endif()
 
     add_custom_target(${PROJECT_NAME}_${platform}_dir
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/../${platform}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/eprosima_installer/${platform}"
         )
 
     add_custom_target(${PROJECT_NAME}_${platform} ALL
-        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR}" -DEPROSIMA_BUILD=${EPROSIMA_BUILD} ../..
+        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR}" -DEPROSIMA_BUILD=ON -DLIB_INSTALL_DIR:PATH=lib/${platform} -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ../../../..
         COMMAND ${CMAKE_COMMAND} --build . --config Release
         COMMAND ${CMAKE_COMMAND} --build . --config Debug
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/../${platform}
+        COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
+        COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}
         )
 
     add_dependencies(${PROJECT_NAME}_${platform} ${PROJECT_NAME}_${platform}_dir)
 endmacro()
 
 macro(install_msvc_libraries platform)
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/../${platform}/lib/
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/lib/
         DESTINATION lib/${platform}
         COMPONENT libraries_${platform}
-        FILES_MATCHING
-        PATTERN "*${PROJECT_NAME}*-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}*"
         )
-    install(FILES
-        ${PROJECT_BINARY_DIR}/../${platform}/cmake/config/${PROJECT_NAME}Config.cmake
-        ${PROJECT_BINARY_DIR}/../${platform}/cmake/config/${PROJECT_NAME}ConfigVersion.cmake
-        DESTINATION lib/${platform}/${PROJECT_NAME}/cmake
-        COMPONENT cmake
-        )
-    install(FILES
-        ${PROJECT_BINARY_DIR}/../${platform}/src/cpp/CMakeFiles/Export/lib/${platform}/${PROJECT_NAME}/cmake/${PROJECT_NAME}Targets.cmake
-        ${PROJECT_BINARY_DIR}/../${platform}/src/cpp/CMakeFiles/Export/lib/${platform}/${PROJECT_NAME}/cmake/${PROJECT_NAME}Targets-release.cmake
-        ${PROJECT_BINARY_DIR}/../${platform}/src/cpp/CMakeFiles/Export/lib/${platform}/${PROJECT_NAME}/cmake/${PROJECT_NAME}Targets-debug.cmake
-        DESTINATION lib/${platform}/${PROJECT_NAME}/cmake
-        COMPONENT cmake
-        )
+
     string(TOUPPER "${platform}" ${platform}_UPPER)
     set(CPACK_COMPONENT_LIBRARIES_${${platform}_UPPER}_DISPLAY_NAME "${platform}" PARENT_SCOPE)
     set(CPACK_COMPONENT_LIBRARIES_${${platform}_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${platform}" PARENT_SCOPE)
