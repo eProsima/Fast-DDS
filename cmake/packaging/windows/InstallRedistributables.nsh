@@ -14,8 +14,8 @@ Function InstallRedistributables
 
     # Check if it is necessary to install to x64VS2010
     ${If} ${RunningX64}
-        ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2010}
-        ${OrIf} ${SectionIsSelected} ${SEC_LIB_i86VS2010}
+        ${If} ${SectionIsSelected} ${libraries_x64Win64VS2010}
+        ${OrIf} ${SectionIsSelected} ${libraries_i86Win32VS2010}
 	    ClearErrors
             SetRegView 64
             ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1D8E6291-B0D5-35EC-8441-6616F567A0F7}" "Version"
@@ -24,7 +24,7 @@ Function InstallRedistributables
         ${EndIf}
     ${Else}
         # Check if it is necessary to install to i86VS2010
-        ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2010}
+        ${If} ${SectionIsSelected} ${libraries_i86Win32VS2010}
 	    ClearErrors
             ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}" "Version"
             IfErrors 0 VC2010RedistInstalled
@@ -36,8 +36,8 @@ Function InstallRedistributables
 
     # Check if it is necessary to install to x64VS2013
     ${If} ${RunningX64}
-        ${If} ${SectionIsSelected} ${SEC_LIB_x64VS2013}
-        ${OrIf} ${SectionIsSelected} ${SEC_LIB_i86VS2013}
+        ${If} ${SectionIsSelected} ${libraries_x64Win64VS2013}
+        ${OrIf} ${SectionIsSelected} ${libraries_i86Win32VS2013}
 	    ClearErrors
             SetRegView 64
             ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{A749D8E6-B613-3BE3-8F5F-045C84EBA29B}" "Version"
@@ -46,7 +46,7 @@ Function InstallRedistributables
         ${EndIf}
     ${Else}
         # Check if it is necessary to install to i86VS2013
-        ${If} ${SectionIsSelected} ${SEC_LIB_i86VS2013}
+        ${If} ${SectionIsSelected} ${libraries_i86Win32VS2013}
 	    ClearErrors
             ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{13A4EE12-23EA-3371-91EE-EFB36DDFFF3E}" "Version"
             IfErrors 0 VC2013RedistInstalled

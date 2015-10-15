@@ -27,7 +27,7 @@ macro(install_boost)
                 #i86Win32VS2010
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/i86Win32VS2010" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_i86Win32VS2010
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc100-mt*"
@@ -36,7 +36,7 @@ macro(install_boost)
                 #x64Win64VS2010
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/x64Win64VS2010" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_x64Win64VS2010
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc100-mt*"
@@ -45,7 +45,7 @@ macro(install_boost)
                 #i86Win32VS2013
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/i86Win32VS2013" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_i86Win32VS2013
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc120-mt*"
@@ -54,7 +54,7 @@ macro(install_boost)
                 #x64Win64VS2013
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/x64Win64VS2013" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_x64Win64VS2013
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc120-mt*"
@@ -71,8 +71,8 @@ macro(install_boost)
                 #Normalize path
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE ${BOOST_LIBRARYDIR} ABSOLUTE)
 
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_${MSVC_ARCH}
                     FILES_MATCHING
                     PATTERN "boost_${arg}-${BOOST_ARCH}-mt*"

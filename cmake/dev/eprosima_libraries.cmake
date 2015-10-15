@@ -27,7 +27,8 @@ macro(find_eprosima_package package)
                 ${BUILD_OPTION}
                 ${USE_BOOST_}
                 "-DMINION=ON"
-                "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX_}"
+                "-DLIB_INSTALL_DIR:PATH=${LIB_INSTALL_DIR}"
+                "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX_}"
                 "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH_}"
                 )
             list(APPEND ${package}_CMAKE_ARGS LIST_SEPARATOR "|")
@@ -95,16 +96,46 @@ macro(find_eprosima_package package)
 endmacro()
 
 macro(install_eprosima_libraries)
-    if((MSVC OR MSVC_IDE) AND NOT MINION AND NOT EPROSIMA_INSTALLER)
-        # Install includes
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/include/
-            DESTINATION ${INCLUDE_INSTALL_DIR}
-            COMPONENT headers
-            )
+    if((MSVC OR MSVC_IDE) AND EPROSIMA_BUILD AND NOT MINION)
+        if(EPROSIMA_INSTALLER)
+            # Install includes. Take from x64Win64VS2013
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/include/
+                DESTINATION ${INCLUDE_INSTALL_DIR}
+                COMPONENT headers
+                OPTIONAL
+                )
 
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/lib/
-            DESTINATION ${LIB_INSTALL_DIR}
-            COMPONENT libraries_${MSVC_ARCH}
-            )
+            # Install licenses. Take from x64Win64VS2013
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/
+                DESTINATION ${LICENSE_INSTALL_DIR}
+                COMPONENT licenses
+                OPTIONAL
+                FILES_MATCHING
+                PATTERN *.txt
+                )
+        else()
+            # Install includes
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/include/
+                DESTINATION ${INCLUDE_INSTALL_DIR}
+                COMPONENT headers
+                OPTIONAL
+                )
+
+            # Install libraries
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/lib/
+                DESTINATION ${LIB_INSTALL_DIR}
+                COMPONENT libraries_${MSVC_ARCH}
+                OPTIONAL
+                )
+
+            # Install licenses
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/
+                DESTINATION ${LICENSE_INSTALL_DIR}
+                COMPONENT licenses
+                OPTIONAL
+                FILES_MATCHING
+                PATTERN *.txt
+                )
+        endif()
     endif()
 endmacro()

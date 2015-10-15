@@ -103,6 +103,25 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 ###############################################################################
+# Installation paths
+###############################################################################
+set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
+set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
+set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
+set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
+if(WIN32)
+    set(DOC_DIR "doc")
+else()
+    set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
+endif()
+set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
+if(WIN32)
+    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
+else()
+    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
+endif()
+
+###############################################################################
 # eProsima build options
 ###############################################################################
 option(EPROSIMA_BUILD "Activate internal building" OFF)
@@ -130,25 +149,6 @@ endif()
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 
 find_eprosima_package(fastcdr)
-
-###############################################################################
-# Installation paths
-###############################################################################
-set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
-set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
-set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
-set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
-if(WIN32)
-    set(DOC_DIR "doc")
-else()
-    set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
-endif()
-set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
-if(WIN32)
-    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
-else()
-    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
-endif()
 
 ###############################################################################
 # Java application
