@@ -129,9 +129,7 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 
-if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
-    find_eprosima_package(fastcdr)
-endif()
+find_eprosima_package(fastcdr)
 
 ###############################################################################
 # Installation paths
@@ -302,10 +300,8 @@ endif()
 # Packaging
 ###############################################################################
 # Install external eprosima libraries
-if(EPROSIMA_INSTALLER)
-    install_eprosima_libraries()
-    install_boost(thread system date_time chrono regex)
-endif()
+install_eprosima_libraries()
+install_boost(thread system date_time chrono regex)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
