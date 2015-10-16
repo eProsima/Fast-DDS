@@ -28,6 +28,7 @@ macro(find_eprosima_package package)
                 ${USE_BOOST_}
                 "-DMINION=ON"
                 "-DLIB_INSTALL_DIR:PATH=${LIB_INSTALL_DIR}"
+                "-DLICENSE_INSTALL_DIR:PATH=licenses"
                 "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX_}"
                 "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH_}"
                 )
@@ -106,12 +107,10 @@ macro(install_eprosima_libraries)
                 )
 
             # Install licenses. Take from x64Win64VS2013
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/licenses/
                 DESTINATION ${LICENSE_INSTALL_DIR}
                 COMPONENT licenses
                 OPTIONAL
-                FILES_MATCHING
-                PATTERN *.txt
                 )
         else()
             # Install includes
@@ -129,12 +128,10 @@ macro(install_eprosima_libraries)
                 )
 
             # Install licenses
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/licenses/
                 DESTINATION ${LICENSE_INSTALL_DIR}
                 COMPONENT licenses
                 OPTIONAL
-                FILES_MATCHING
-                PATTERN *.txt
                 )
         endif()
     endif()
