@@ -61,11 +61,13 @@ struct RTPS_DllAPI CacheChange_t{
 	Time_t sourceTimestamp;
 
     WriteParams write_params;
+    bool is_untyped_;
 	
 	//!Default constructor.
 	CacheChange_t():
 		kind(ALIVE),
-		isRead(false)
+		isRead(false),
+        is_untyped_(true)
 	{
 
 	}
@@ -75,10 +77,11 @@ struct RTPS_DllAPI CacheChange_t{
 	* @param payload_size Serialized payload size
 	*/
     // TODO Check pass uint32_t to serializedPayload that needs int16_t.
-	CacheChange_t(uint32_t payload_size):
+	CacheChange_t(uint32_t payload_size, bool is_untyped = false):
 		kind(ALIVE),
 		serializedPayload((uint16_t)payload_size),
-		isRead(false)
+		isRead(false),
+        is_untyped_(is_untyped)
 	{
 
 	}
@@ -95,7 +98,7 @@ struct RTPS_DllAPI CacheChange_t{
 		sequenceNumber = ch_ptr->sequenceNumber;
 		sourceTimestamp = ch_ptr->sourceTimestamp;
         write_params = ch_ptr->write_params;
-		return serializedPayload.copy(&ch_ptr->serializedPayload);
+		return serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 	}
 	~CacheChange_t(){
 

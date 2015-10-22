@@ -74,10 +74,17 @@ struct RTPS_DllAPI SerializedPayload_t{
 	 * @param[in] serData Pointer to the structure to copy
 	 * @return True if correct
 	 */
-	bool copy(SerializedPayload_t* serData){
-		if(serData->length>max_size)
-			return false;
+	bool copy(SerializedPayload_t* serData, bool with_limit = true)
+    {
 		length = serData->length;
+
+		if(serData->length > max_size)
+        {
+            if(with_limit)
+                return false;
+            else
+                length = max_size;
+        }
 		encapsulation = serData->encapsulation;
 		if(data == nullptr)
 			data = (octet*)malloc(length);

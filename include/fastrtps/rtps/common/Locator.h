@@ -38,10 +38,13 @@ public:
 	int32_t kind;
 	uint32_t port;
 	octet address[16];
+
 	//!Default constructor
-	Locator_t():kind(1),port(0){
+	Locator_t():kind(1),port(0)
+    {
 		LOCATOR_ADDRESS_INVALID(address);
 	}
+
 	Locator_t(Locator_t&& loc):
 		kind(loc.kind),
 		port(loc.port)
@@ -49,17 +52,20 @@ public:
 		for(uint8_t i = 0;i<16;++i)
 			address[i] = loc.address[i];
 	}
-	Locator_t(const Locator_t& loc)
+
+	Locator_t(const Locator_t& loc) :
+		kind(loc.kind),
+		port(loc.port)
 	{
-		kind = loc.kind;
-		port=loc.port;
 		for(uint8_t i = 0;i<16;++i)
 			address[i] = loc.address[i];
 	}
+
 	Locator_t(uint32_t portin):kind(1),port(portin)
 	{
 		LOCATOR_ADDRESS_INVALID(address);
 	}
+    
 	Locator_t& operator=(const Locator_t& loc)
 	{
 		kind = loc.kind;
@@ -114,17 +120,17 @@ public:
 
 inline bool IsAddressDefined(const Locator_t& loc)
 {
-	if(loc.kind == 1)
+	if(loc.kind == LOCATOR_KIND_UDPv4)
 	{
-		for(uint8_t i = 12;i<16;++i)
+		for(uint8_t i = 12; i < 16; ++i)
 		{
 			if(loc.address[i] != 0)
 				return true;
 		}
 	}
-	else if (loc.kind == 2)
+	else if (loc.kind == LOCATOR_KIND_UDPv6)
 	{
-		for(uint8_t i = 0;i<16;++i)
+		for(uint8_t i = 0; i < 16; ++i)
 		{
 			if(loc.address[i] != 0)
 				return true;
@@ -203,10 +209,10 @@ public:
 	RTPS_DllAPI void clear(){ return m_locators.clear();}
 	RTPS_DllAPI void reserve(size_t num){ return m_locators.reserve(num);}
 	RTPS_DllAPI void resize(size_t num) { return m_locators.resize(num);}
-	RTPS_DllAPI void push_back(Locator_t& loc)
+	RTPS_DllAPI void push_back(const Locator_t& loc)
 	{
 		bool already = false;
-		for(LocatorListIterator it=this->begin();it!=this->end();++it)
+		for(LocatorListIterator it=this->begin(); it!=this->end(); ++it)
 		{
 			if(loc == *it)
 			{
@@ -217,25 +223,38 @@ public:
 		if(!already)
 			m_locators.push_back(loc);
 	}
-	RTPS_DllAPI void push_back(LocatorList_t& locList)
+
+	RTPS_DllAPI void push_back(const LocatorList_t& locList)
 	{
-		for(auto it = locList.m_locators.begin();it!=locList.m_locators.end();++it)
+		for(auto it = locList.m_locators.begin(); it!=locList.m_locators.end(); ++it)
+        {
 			this->push_back(*it);
+        }
 	}
+
 	RTPS_DllAPI bool empty(){
 		return m_locators.empty();
 	}
+
 	RTPS_DllAPI bool contains(const Locator_t& loc)
 	{
 		for(LocatorListIterator it=this->begin();it!=this->end();++it)
 		{
-			if(loc == *it)
-			{
-				return true;
-			}
+            if(IsAddressDefined(*it))
+            {
+                if(loc == *it)
+                    return true;
+            }
+            else
+            {
+                if(loc.kind == (*it).kind && loc.port == (*it).port)
+                    return true;
+            }
 		}
+
 		return false;
 	}
+
 	RTPS_DllAPI bool isValid()
 	{
 		for(LocatorListIterator it=this->begin();it!=this->end();++it)

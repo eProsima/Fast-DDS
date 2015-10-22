@@ -7,7 +7,7 @@
 #
 m4_define([version_major],[1])
 m4_define([version_minor],[0])
-m4_define([version_micro],[4])
+m4_define([version_micro],[5])
 
 AC_INIT([fastrtps], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima FastRTPS], [http://eprosima.com/])
 CONFIG_ARGS="$*"
@@ -45,9 +45,10 @@ AC_C_BIGENDIAN(
 AX_BOOST_BASE([1.53],
 	AC_MSG_NOTICE([Found Boost]),
 	AC_MSG_ERROR([Could not find Boost]))
-AX_BOOST_SYSTEM
 AX_BOOST_THREAD
+AX_BOOST_SYSTEM
 AX_BOOST_DATE_TIME
+AX_BOOST_CHRONO
 
 # Check for libraries used in the main build process
 AC_PROG_CXX

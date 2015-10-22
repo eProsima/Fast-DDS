@@ -106,7 +106,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false))
 		{
-			m_att.defaultUnicastLocatorList = LR->getListenLocators();
+			m_att.defaultUnicastLocatorList.push_back(LR->getListenLocators());
 			this->m_listenResourceList.push_back(LR);
 		}
 		else
@@ -115,7 +115,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		}
 	}
 	if(!hasLocatorsDefined)
-		logWarning(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
+		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 	defcopy = m_att.defaultMulticastLocatorList;
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
@@ -123,7 +123,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false))
 		{
-			m_att.defaultMulticastLocatorList = LR->getListenLocators();
+			m_att.defaultMulticastLocatorList.push_back(LR->getListenLocators());
 			this->m_listenResourceList.push_back(LR);
 		}
 		else
@@ -450,6 +450,43 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	return valid;
 }
 
+bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed)
+{
+	bool valid = true;
+	LocatorList_t finalList;
+	bool added = false;
+	for(auto lit = list.begin();lit != list.end();++lit)
+	{
+		added = false;
+		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
+		{
+			if((*it)->isListeningTo(*lit))
+			{
+				LocatorList_t locList = (*it)->getListenLocators();
+				finalList.push_back(locList);
+				added = true;
+			}
+		}
+		if(added)
+			continue;
+		ListenResource* LR = new ListenResource(this,++m_threadID,false);
+		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
+		{
+			LocatorList_t locList = LR->getListenLocators();
+			finalList.push_back(locList);
+			m_listenResourceList.push_back(LR);
+			added = true;
+		}
+		else
+		{
+			delete(LR);
+			valid &= false;
+		}
+	}
+	if(valid && added)
+		list = finalList;
+	return valid;
+}
 
 bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list,bool isMulti,bool isFixed)
 {

@@ -1,13 +1,24 @@
 macro(gradle_build directory)
-    find_program(GRADLE_EXE gradle)
+    find_package(Java 1.6 COMPONENTS Runtime REQUIRED)
+    if(WIN32)
+        find_program(GRADLE_EXE gradle.bat)
+    else()
+        find_program(GRADLE_EXE gradle)
+    endif()
+
     if(GRADLE_EXE)
         message(STATUS "Found Gradle: ${GRADLE_EXE}")
     else()
         message(FATAL_ERROR "gradle is needed to build the java application. Please install it correctly")
     endif()
 
+    get_filename_component(Java_JAVA_EXECUTABLE_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
+
     add_custom_target(java ALL
-        COMMAND "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
+        COMMAND ${CMAKE_COMMAND} -E env
+        --unset=JAVA_HOME
+        "PATH=${Java_JAVA_EXECUTABLE_DIR}"
+        "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
         WORKING_DIRECTORY ${directory}
         COMMENT "Generating Java application" VERBATIM)
 

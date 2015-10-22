@@ -10,9 +10,11 @@ macro(check_boost)
     set(Boost_USE_STATIC_LIBS OFF)
     set(Boost_USE_MULTITHREADED ON)
     set(Boost_USE_STATIC_RUNTIME OFF)
-    set(BOOST_ALL_DYN_LINK ON)
     if(WIN32 AND EPROSIMA_BOOST)
-        set(BOOST_LIBRARYDIR $ENV{BOOST_LIBRARYDIR}/${MSVC_ARCH})
+        set(BOOST_LIBRARYDIR_ $ENV{BOOST_LIBRARYDIR})
+        if(BOOST_LIBRARYDIR_)
+            file(TO_CMAKE_PATH "${BOOST_LIBRARYDIR_}/${MSVC_ARCH}" BOOST_LIBRARYDIR)
+        endif()
     endif()
     find_package(Boost REQUIRED COMPONENTS ${ARGN})
     if(NOT Boost_FOUND)
@@ -27,7 +29,7 @@ macro(install_boost)
                 #i86Win32VS2010
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/i86Win32VS2010" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_i86Win32VS2010
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc100-mt*"
@@ -36,7 +38,7 @@ macro(install_boost)
                 #x64Win64VS2010
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/x64Win64VS2010" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_x64Win64VS2010
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc100-mt*"
@@ -45,7 +47,7 @@ macro(install_boost)
                 #i86Win32VS2013
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/i86Win32VS2013" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_i86Win32VS2013
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc120-mt*"
@@ -54,7 +56,7 @@ macro(install_boost)
                 #x64Win64VS2013
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/x64Win64VS2013" ABSOLUTE)
                 install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_x64Win64VS2013
                     FILES_MATCHING
                     PATTERN "boost_${arg}-vc120-mt*"
@@ -71,8 +73,8 @@ macro(install_boost)
                 #Normalize path
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE ${BOOST_LIBRARYDIR} ABSOLUTE)
 
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION lib
+                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
+                    DESTINATION ${LIB_INSTALL_DIR}
                     COMPONENT libraries_${MSVC_ARCH}
                     FILES_MATCHING
                     PATTERN "boost_${arg}-${BOOST_ARCH}-mt*"

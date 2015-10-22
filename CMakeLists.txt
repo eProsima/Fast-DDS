@@ -103,9 +103,29 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 ###############################################################################
+# Installation paths
+###############################################################################
+set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
+set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
+set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
+set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
+if(WIN32)
+    set(DOC_DIR "doc")
+else()
+    set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
+endif()
+set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
+if(WIN32)
+    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
+else()
+    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
+endif()
+
+###############################################################################
 # eProsima build options
 ###############################################################################
 option(EPROSIMA_BUILD "Activate internal building" OFF)
+option(MINION "Tells if it is a subproject of a superproject" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(EPROSIMA_BUILD ON)
@@ -127,30 +147,8 @@ if(EPROSIMA_BUILD)
 endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
-find_eprosima_package(fastcdr)
 
-###############################################################################
-# Installation paths
-###############################################################################
-set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
-set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
-if((MSVC OR MSVC_IDE) AND EPROSIMA_BUILD)
-    set(LIB_INSTALL_DIR lib/${MSVC_ARCH}/ CACHE PATH "Installation directory for libraries")
-else()
-    set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
-endif()
-set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
-if(WIN32)
-    set(DOC_DIR "doc")
-else()
-    set(DOC_DIR "${DATA_INSTALL_DIR}/doc")
-endif()
-set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
-if(WIN32)
-    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
-else()
-    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
-endif()
+find_eprosima_package(fastcdr)
 
 ###############################################################################
 # Java application
@@ -262,7 +260,7 @@ if(BUILD_DOCUMENTATION)
     ### Libreoffice ########################3
 
     if(WIN32)
-        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,./doc/)")
+        set(LIBREOFFICE_CONVERT_README_MACRO "macro:///eProsima.documentation.changeHyperlinksAndVersionToHTML(${PROJECT_SOURCE_DIR}/doc/README.odt,${PROJECT_VERSION},./,/doc/)")
         set(README_LOCATION "${PROJECT_BINARY_DIR}/")
         set(README_INSTALL_LOCATION ".")
     else()
@@ -302,10 +300,8 @@ endif()
 # Packaging
 ###############################################################################
 # Install external eprosima libraries
-if(EPROSIMA_BUILD)
-    install_eprosima_fastcdr()
-    install_boost(thread system date_time chrono regex)
-endif()
+install_eprosima_libraries()
+install_boost(thread system date_time chrono regex)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
