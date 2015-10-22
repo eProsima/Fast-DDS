@@ -23,7 +23,7 @@ macro(find_eprosima_package package)
             string(REPLACE ";" "|" CMAKE_PREFIX_PATH_ "${CMAKE_PREFIX_PATH}")
             set(${package}_CMAKE_ARGS
                 "${PROJECT_SOURCE_DIR}/thirdparty/${package}"
-                "-G \"${CMAKE_GENERATOR}\""
+                "\${GENERATOR}"
                 ${BUILD_OPTION}
                 ${USE_BOOST_}
                 "-DMINION=ON"
@@ -38,6 +38,7 @@ macro(find_eprosima_package package)
             file(WRITE ${${package}ExternalDir}/CMakeLists.txt
                 "cmake_minimum_required(VERSION 2.8.11)\n"
                 "include(ExternalProject)\n"
+                "set(GENERATOR -G \"${CMAKE_GENERATOR}\")\n"
                 "ExternalProject_Add(${package}\n"
                 "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
                 "${${package}_CMAKE_ARGS}\n"
