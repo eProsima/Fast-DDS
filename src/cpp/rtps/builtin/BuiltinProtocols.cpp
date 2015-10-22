@@ -82,6 +82,9 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 			m_metatrafficMulticastLocatorList.push_back(*it);
 		}
 	}
+
+    p_part->assignLocatorForBuiltin_unsafe(m_metatrafficMulticastLocatorList, true, false);
+
 	if(m_att.metatrafficUnicastLocatorList.empty())
 	{
 		LocatorList_t locators;
@@ -100,6 +103,9 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 			m_metatrafficUnicastLocatorList.push_back(*it);
 		}
 	}
+
+    p_part->assignLocatorForBuiltin_unsafe(m_metatrafficUnicastLocatorList, false, false);
+
 	if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
 	{
 		mp_PDP = new PDPSimple(this);

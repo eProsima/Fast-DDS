@@ -135,6 +135,9 @@ public:
 	* @return participant
 	*/
     inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
+
+    bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);
+
 private:
 	//!Attributes of the RTPSParticipant
 	RTPSParticipantAttributes m_att;

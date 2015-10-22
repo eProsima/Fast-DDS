@@ -86,7 +86,7 @@ public:
 	boost::asio::ip::udp::endpoint m_sender_endpoint;
 	boost::asio::ip::udp::endpoint m_listen_endpoint;
 
-	void getLocatorAddresses( Locator_t& loc);
+	void getLocatorAddresses(Locator_t& loc, bool isMulti);
 	void joinMulticastGroup(boost::asio::ip::address& addr);
 	LocatorList_t mv_listenLoc;
 	Locator_t m_senderLocator;

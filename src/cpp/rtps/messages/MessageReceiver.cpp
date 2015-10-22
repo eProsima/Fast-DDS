@@ -67,7 +67,7 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	mp_threadListen = nullptr;
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
-	mp_change = new CacheChange_t(max_payload);
+	mp_change = new CacheChange_t(max_payload, true);
 	//cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
 

@@ -129,7 +129,7 @@ private:
 	 * @brief Get Id to create a RTPSParticipant.
 	 * @return Different ID for each call.
 	 */
-	static inline uint32_t getNewId() {return ++m_maxRTPSParticipantID;};
+	static inline uint32_t getNewId() {return m_maxRTPSParticipantID++;}
 
 	static std::set<uint32_t> m_RTPSParticipantIDs;
 

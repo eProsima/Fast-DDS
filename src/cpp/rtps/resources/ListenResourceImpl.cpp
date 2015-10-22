@@ -142,44 +142,36 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 	}
 }
 
-void ListenResourceImpl::getLocatorAddresses( Locator_t& loc)
+// NOTE This version allways listen in ANY.
+void ListenResourceImpl::getLocatorAddresses(Locator_t& loc, bool isMulti)
 {
 	const char* const METHOD_NAME = "getLocatorAddresses";
-	if(!IsAddressDefined(loc)) //LISTEN IN ALL INTERFACES
-	{
-		logInfo(RTPS_MSG_IN,"Defined Locator IP with 0s (listen to all interfaces), listening to all interfaces",C_BLUE);
-		LocatorList_t myIP;
-		if(loc.kind == LOCATOR_KIND_UDPv4)
-		{
-			IPFinder::getIP4Address(&myIP);
-			m_listen_endpoint.address(boost::asio::ip::address_v4());
-		}
-		else if(loc.kind == LOCATOR_KIND_UDPv6)
-		{
-			IPFinder::getIP6Address(&myIP);
-			m_listen_endpoint.address(boost::asio::ip::address_v6());
-		}
-		for(auto lit = myIP.begin();lit!= myIP.end();++lit)
-		{
-			lit->port = loc.port;
-			mv_listenLoc.push_back(*lit);
-		}
-	}
-	else
-	{
-		if(loc.kind == LOCATOR_KIND_UDPv4)
-		{
-			m_listen_endpoint.address(boost::asio::ip::address_v4::from_string(loc.to_IP4_string().c_str()));
-		}
-		else if(loc.kind == LOCATOR_KIND_UDPv6)
-		{
-			boost::asio::ip::address_v6::bytes_type bt;
-			for (uint8_t i = 0; i < 16;++i)
-				bt[i] = loc.address[i];
-			m_listen_endpoint.address(boost::asio::ip::address_v6(bt));
-		}
-		mv_listenLoc.push_back(loc);
-	}
+
+    logInfo(RTPS_MSG_IN,"Defined Locator IP with 0s (listen to all interfaces), listening to all interfaces",C_BLUE);
+    LocatorList_t myIP;
+
+    if(loc.kind == LOCATOR_KIND_UDPv4)
+    {
+        IPFinder::getIP4Address(&myIP);
+        m_listen_endpoint.address(boost::asio::ip::address_v4());
+    }
+    else if(loc.kind == LOCATOR_KIND_UDPv6)
+    {
+        IPFinder::getIP6Address(&myIP);
+        m_listen_endpoint.address(boost::asio::ip::address_v6());
+    }
+
+    for(auto lit = myIP.begin();lit!= myIP.end();++lit)
+    {
+        lit->port = loc.port;
+        mv_listenLoc.push_back(*lit);
+    }
+
+    if(isMulti)
+    {
+        mv_listenLoc.push_back(loc);
+    }
+
 	m_listen_endpoint.port((uint16_t)loc.port);
 }
 
@@ -191,7 +183,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	if(loc.kind == LOCATOR_KIND_INVALID)
 		return false;
 
-	getLocatorAddresses(loc);
+	getLocatorAddresses(loc, isMulti);
 	logInfo(RTPS_MSG_IN,"Initializing in : "<<mv_listenLoc,C_BLUE);
 	boost::asio::ip::address multiaddress;
 	//OPEN THE SOCKET:
@@ -201,12 +193,20 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 	{
 		m_listen_socket.set_option( boost::asio::ip::udp::socket::reuse_address( true ) );
 		m_listen_socket.set_option( boost::asio::ip::multicast::enable_loopback( true ) );
-		multiaddress = m_listen_endpoint.address();
-		if(loc.kind == 1)
-			m_listen_endpoint.address(boost::asio::ip::address_v4());
-		else if(loc.kind == 2)
-			m_listen_endpoint.address(boost::asio::ip::address_v6());
+
+        if(loc.kind == LOCATOR_KIND_UDPv4)
+        {
+            multiaddress = boost::asio::ip::address_v4::from_string(loc.to_IP4_string().c_str());
+        }
+        else if(loc.kind == LOCATOR_KIND_UDPv6)
+        {
+			boost::asio::ip::address_v6::bytes_type bt;
+			for (uint8_t i = 0; i < 16; ++i)
+				bt[i] = loc.address[i];
+            multiaddress = boost::asio::ip::address_v6(bt);
+        }
 	}
+
 	if(isFixed)
 	{
 		try
@@ -236,6 +236,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 				logInfo(RTPS_MSG_IN,"Tried port "<< m_listen_endpoint.port() << ", trying next...",C_BLUE);
 			}
 		}
+
 		if(!binded)
 		{
 			logError(RTPS_MSG_IN,"Tried 100 ports and none was working, last tried: "<< m_listen_endpoint,C_BLUE);
@@ -247,6 +248,7 @@ bool ListenResourceImpl::init_thread(RTPSParticipantImpl* pimpl,Locator_t& loc, 
 				lit->port = m_listen_endpoint.port();
 		}
 	}
+
 	boost::asio::socket_base::receive_buffer_size option;
 	m_listen_socket.get_option(option);
 	logInfo(RTPS_MSG_IN,"Created: " << m_listen_endpoint<< " || Listen buffer size: " << option.value(),C_BLUE);
