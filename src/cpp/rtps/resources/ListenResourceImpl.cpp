@@ -161,13 +161,15 @@ void ListenResourceImpl::getLocatorAddresses(Locator_t& loc, bool isMulti)
         m_listen_endpoint.address(boost::asio::ip::address_v6());
     }
 
-    for(auto lit = myIP.begin();lit!= myIP.end();++lit)
+    if(!isMulti)
     {
-        lit->port = loc.port;
-        mv_listenLoc.push_back(*lit);
+        for(auto lit = myIP.begin();lit!= myIP.end();++lit)
+        {
+            lit->port = loc.port;
+            mv_listenLoc.push_back(*lit);
+        }
     }
-
-    if(isMulti)
+    else
     {
         mv_listenLoc.push_back(loc);
     }
