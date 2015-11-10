@@ -1,4 +1,4 @@
-if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
+if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
 
     # If Windows, link against export dll functions

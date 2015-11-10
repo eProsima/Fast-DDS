@@ -92,7 +92,13 @@ macro(find_eprosima_package package)
             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_INSTALL_PREFIX_})
         endif()
 
-        find_package(${package})
+        find_package(${package} QUIET)
+
+        if(fastcdr_FOUND)
+            message(STATUS "${package} library found...")
+        else()
+            message(STATUS "${package} library not found...")
+        endif()
 
     endif()
 endmacro()
