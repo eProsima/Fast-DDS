@@ -293,25 +293,25 @@ Function InstallVarEnvs
     ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_x64Win64VS2010}
         ${If} $RadioButtonX64_VS2010_State == ${BST_CHECKED}
-             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin\x64Win64VS2010"
              WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location" 1
         ${EndIf}
     ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_i86Win32VS2010}
         ${If} $RadioButtonI86_VS2010_State == ${BST_CHECKED}
-             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin\i86Win32VS2010"
              WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2010 libraries location" 1
         ${EndIf}
     ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_x64Win64VS2013}
         ${If} $RadioButtonX64_VS2013_State == ${BST_CHECKED}
-             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\x64Win64VS2013"
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin\x64Win64VS2013"
              WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2013 libraries location" 1
         ${EndIf}
     ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_i86Win32VS2013}
         ${If} $RadioButtonI86_VS2013_State == ${BST_CHECKED}
-             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib\i86Win32VS2013"
+             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin\i86Win32VS2013"
              WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2013 libraries location" 1
         ${EndIf}
     ${EndIf}
@@ -333,21 +333,21 @@ Var RegKeyCheck
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location"
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2010"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin\x64Win64VS2010"
   ${EndIf}
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2010 libraries location"
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2010 libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2010"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin\i86Win32VS2010"
   ${EndIf}
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2013 libraries location"
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2013 libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\x64Win64VS2013"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin\x64Win64VS2013"
   ${EndIf}
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2013 libraries location"
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2013 libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib\i86Win32VS2013"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin\i86Win32VS2013"
   ${EndIf}
 !macroend
