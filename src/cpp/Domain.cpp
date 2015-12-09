@@ -192,7 +192,7 @@ bool Domain::unregisterType(Participant* part, const char* typeName)
 			return part->mp_impl->unregisterType(typeName);
 		}
 	}
-	return false;
+	return true;
 }
 
 
