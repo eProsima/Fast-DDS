@@ -91,7 +91,7 @@ public:
 	 * @param type Returned type.
 	 * @return True if type was found.
 	 */
-    RTPS_DllAPI bool getRegisteredType(Participant* part, const char* typeName, TopicDataType** type);
+    RTPS_DllAPI static bool getRegisteredType(Participant* part, const char* typeName, TopicDataType** type);
 
 	/**
 	 * Register a type in a participant.
