@@ -83,6 +83,16 @@ public:
 	 * @return True if correctly removed.
 	 */
 	RTPS_DllAPI static bool removeSubscriber(Subscriber* sub);
+
+	/**
+	 * Return a registered type.
+	 * @param part Pointer to the Participant.
+	 * @param typeName Name of the type.
+	 * @param type Returned type.
+	 * @return True if type was found.
+	 */
+    bool getRegisteredType(Participant* part, const char* typeName, TopicDataType** type);
+
 	/**
 	 * Register a type in a participant.
 	 * @param part Pointer to the Participant.
@@ -90,6 +100,14 @@ public:
 	 * @return True if correctly registered.
 	 */
 	RTPS_DllAPI static bool registerType(Participant* part, TopicDataType * type);
+
+	/**
+	 * Unregister a type in a participant.
+	 * @param part Pointer to the Participant.
+	 * @param typeName Name of the type.
+	 * @return True if correctly unregistered.
+	 */
+	RTPS_DllAPI static bool unregisterType(Participant* part, const char* typeName);
 	/**
 	 * Stop and remove all participants and publishers and subscribers in this Domain.
 	 */

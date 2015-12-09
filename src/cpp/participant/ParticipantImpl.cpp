@@ -308,6 +308,37 @@ bool ParticipantImpl::registerType(TopicDataType* type)
 	return true;
 }
 
+bool ParticipantImpl::unregisterType(const char* typeName)
+{
+    TopicDataType *type = nullptr;
+
+	for (auto ty = m_types.begin(); ty != m_types.end(); ++ty)
+	{
+		if(strcmp((*ty)->getName(), typeName) == 0)
+		{
+            type = *ty;
+		}
+	}
+
+    if(type != nullptr)
+    {
+        bool inUse = false;
+        for(auto sit = m_subscribers.begin(); sit!= m_subscribers.end(); ++sit)
+        {
+            if(strcmp(sit->second->getType()->getName(), typeName) == 0)
+            {
+                inUse = true;
+                break;
+            }
+        }
+
+        if(inUse)
+            return false;
+    }
+
+	return true;
+}
+
 
 void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo rtpsinfo)
 {

@@ -63,6 +63,13 @@ public:
 	bool registerType(TopicDataType* type);
 
 	/**
+	* Unregister a type in this participant.
+	* @param typeName Name of the type
+	* @return True if unregistered.
+	*/
+	bool unregisterType(const char* typeName);
+
+	/**
 	* Create a Publisher in this Participant.
 	* @param att Attributes of the Publisher.
 	* @param listen Pointer to the listener.
