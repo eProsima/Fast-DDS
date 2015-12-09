@@ -324,13 +324,17 @@ bool ParticipantImpl::unregisterType(const char* typeName)
     if(typeit != m_types.end())
     {
         bool inUse = false;
-        for(auto sit = m_subscribers.begin(); sit!= m_subscribers.end(); ++sit)
+
+        for(auto sit = m_subscribers.begin(); !inUse && sit!= m_subscribers.end(); ++sit)
         {
             if(strcmp(sit->second->getType()->getName(), typeName) == 0)
-            {
                 inUse = true;
-                break;
-            }
+        }
+
+        for(auto pit = m_publishers.begin(); pit!= m_publishers.end(); ++pit)
+        {
+            if(strcmp(pit->second->getType()->getName(), typeName) == 0)
+                inUse = true;
         }
 
         if(!inUse)
