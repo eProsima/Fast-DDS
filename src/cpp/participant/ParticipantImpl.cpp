@@ -310,17 +310,18 @@ bool ParticipantImpl::registerType(TopicDataType* type)
 
 bool ParticipantImpl::unregisterType(const char* typeName)
 {
-    TopicDataType *type = nullptr;
+    bool retValue = true;
+    std::vector<TopicDataType*>::iterator typeit;
 
-	for (auto ty = m_types.begin(); ty != m_types.end(); ++ty)
+	for (typeit = m_types.begin(); typeit != m_types.end(); ++typeit)
 	{
-		if(strcmp((*ty)->getName(), typeName) == 0)
+		if(strcmp((*typeit)->getName(), typeName) == 0)
 		{
-            type = *ty;
+            break;
 		}
 	}
 
-    if(type != nullptr)
+    if(typeit != m_types.end())
     {
         bool inUse = false;
         for(auto sit = m_subscribers.begin(); sit!= m_subscribers.end(); ++sit)
@@ -332,11 +333,17 @@ bool ParticipantImpl::unregisterType(const char* typeName)
             }
         }
 
-        if(inUse)
-            return false;
+        if(!inUse)
+        {
+            m_types.erase(typeit);
+        }
+        else
+        {
+            retValue =  false;
+        }
     }
 
-	return true;
+	return retValue;
 }
 
 
