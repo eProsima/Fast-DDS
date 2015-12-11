@@ -308,6 +308,48 @@ bool ParticipantImpl::registerType(TopicDataType* type)
 	return true;
 }
 
+bool ParticipantImpl::unregisterType(const char* typeName)
+{
+    bool retValue = true;
+    std::vector<TopicDataType*>::iterator typeit;
+
+	for (typeit = m_types.begin(); typeit != m_types.end(); ++typeit)
+	{
+		if(strcmp((*typeit)->getName(), typeName) == 0)
+		{
+            break;
+		}
+	}
+
+    if(typeit != m_types.end())
+    {
+        bool inUse = false;
+
+        for(auto sit = m_subscribers.begin(); !inUse && sit!= m_subscribers.end(); ++sit)
+        {
+            if(strcmp(sit->second->getType()->getName(), typeName) == 0)
+                inUse = true;
+        }
+
+        for(auto pit = m_publishers.begin(); pit!= m_publishers.end(); ++pit)
+        {
+            if(strcmp(pit->second->getType()->getName(), typeName) == 0)
+                inUse = true;
+        }
+
+        if(!inUse)
+        {
+            m_types.erase(typeit);
+        }
+        else
+        {
+            retValue =  false;
+        }
+    }
+
+	return retValue;
+}
+
 
 void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo rtpsinfo)
 {

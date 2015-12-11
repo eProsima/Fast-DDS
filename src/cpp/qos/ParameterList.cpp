@@ -340,12 +340,12 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg,ParameterLis
 					plist->m_parameters.push_back((Parameter_t*)p);
 					plist->m_hasChanged = true;
 					paramlist_byte_size += plength;
-					delete(oc);
+					delete[] oc;
 				}
 				else
 				{
 					delete(p);
-					delete(oc);
+					delete[] oc;
 					return -1;
 				}
 				break;

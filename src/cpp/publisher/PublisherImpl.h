@@ -114,6 +114,12 @@ public:
 	 */
 	inline const PublisherAttributes& getAttributes(){ return m_att; };
 
+	/**
+	* Get topic data type
+	* @return Topic data type
+	*/
+	TopicDataType* getType() {return mp_type;};
+
 private:
 	ParticipantImpl* mp_participant;
 	//! Pointer to the associated Data Writer.

@@ -155,6 +155,18 @@ Subscriber* Domain::createSubscriber(Participant* part,SubscriberAttributes& att
 	return nullptr;
 }
 
+bool Domain::getRegisteredType(Participant* part, const char* typeName, TopicDataType** type)
+{
+	for (auto it = m_participants.begin(); it != m_participants.end();++it)
+	{
+		if(it->second->getGuid() == part->getGuid())
+		{
+			return part->mp_impl->getRegisteredType(typeName, type);
+		}
+	}
+	return false;
+}
+
 bool Domain::registerType(Participant* part, TopicDataType* type)
 {
 	//TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
@@ -167,6 +179,20 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
 		}
 	}
 	return false;
+}
+
+bool Domain::unregisterType(Participant* part, const char* typeName)
+{
+	//TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
+	//haya problemas si el usuario lo destruye antes de tiempo.
+	for (auto it = m_participants.begin(); it != m_participants.end();++it)
+	{
+		if(it->second->getGuid() == part->getGuid())
+		{
+			return part->mp_impl->unregisterType(typeName);
+		}
+	}
+	return true;
 }
 
 

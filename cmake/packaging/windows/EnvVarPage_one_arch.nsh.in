@@ -108,7 +108,7 @@ Function InstallVarEnvs
     ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_@MSVC_ARCH@}
       ${If} $CheckboxRadioButtons_State == ${BST_CHECKED}
-         ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\lib@MSVC_ARCH_DIR@"
+         ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
          WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "@MSVC_ARCH@ libraries location" 1
       ${EndIf}
     ${EndIf}
@@ -130,7 +130,7 @@ Var RegKeyCheck
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "@MSVC_ARCH@ libraries location"
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "@MSVC_ARCH@ libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\lib@MSVC_ARCH_DIR@"
+    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
   ${EndIf}
 !macroend
 
