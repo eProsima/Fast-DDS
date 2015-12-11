@@ -138,7 +138,6 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
 
 	RTPSParticipant* p = new RTPSParticipant(nullptr);
 	RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
-	m_maxRTPSParticipantID = pimpl->getRTPSParticipantID();
 
 	m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
 	return p;
