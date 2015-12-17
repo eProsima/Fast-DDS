@@ -34,7 +34,6 @@ ResourceSendImpl::ResourceSendImpl() :
 										//m_send_socket_v6(m_send_service),
 										m_bytes_sent(0),
 										m_send_next(true),
-										mp_RTPSParticipant(nullptr),
 										mp_mutex(new boost::recursive_mutex())
 {
 
