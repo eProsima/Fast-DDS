@@ -83,7 +83,6 @@ private:
 	std::vector<boost::asio::ip::udp::socket*> mv_send_socket_v6;
 	size_t m_bytes_sent;
 	bool m_send_next;
-	RTPSParticipantImpl* mp_RTPSParticipant;
 	boost::recursive_mutex* mp_mutex;
 
 };
