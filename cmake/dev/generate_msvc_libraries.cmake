@@ -32,12 +32,12 @@ macro(generate_msvc_libraries platform)
 endmacro()
 
 macro(install_msvc_libraries platform)
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/bin/
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${BIN_INSTALL_DIR}/
         DESTINATION ${BIN_INSTALL_DIR}/${platform}
         COMPONENT libraries_${platform}
         )
 
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/lib/
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${LIB_INSTALL_DIR}/
         DESTINATION ${LIB_INSTALL_DIR}/${platform}
         COMPONENT libraries_${platform}
         )

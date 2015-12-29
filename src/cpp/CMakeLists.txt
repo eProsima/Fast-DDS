@@ -106,22 +106,13 @@ if(MSVC OR MSVC_IDE)
         generate_msvc_libraries(x64Win64VS2013)
     else()
         add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
-        set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
-        set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${PROJECT_NAME}d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         add_library(${PROJECT_NAME}_static STATIC ${${PROJECT_NAME}_SOURCES})
         # Rename the library to have a "lib" before.
-        set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME}-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
-        set_target_properties(${PROJECT_NAME}_static PROPERTIES DEBUG_OUTPUT_NAME lib${PROJECT_NAME}d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
+        set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 
-        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG
-            ${PROJECT_BINARY_DIR}/lib)
-        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG
-            ${PROJECT_BINARY_DIR}/lib)
-        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE
-            ${PROJECT_BINARY_DIR}/lib)
-        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE
-            ${PROJECT_BINARY_DIR}/lib)
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RELEASE_POSTFIX -${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         # Export symbols in DLL library
         target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
@@ -187,16 +178,17 @@ set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
 
 # Install sources
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
-    DESTINATION src
-    COMPONENT sources
-    FILES_MATCHING
-    PATTERN "*.c"
-    PATTERN "*.cpp"
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-    )
-if(UNIX)
+if(UNIX AND EPROSIMA_INSTALLER)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
+        DESTINATION src
+        COMPONENT sources
+        FILES_MATCHING
+        PATTERN "*.c"
+        PATTERN "*.cpp"
+        PATTERN "*.h"
+        PATTERN "*.hpp"
+        )
+
     install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
         DESTINATION .
         USE_SOURCE_PERMISSIONS
@@ -229,9 +221,10 @@ if(MSVC OR MSVC_IDE)
 
 
         # Install pdb files
-        install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/
+        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}}/Debug/
             DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT libraries_${MSVC_ARCH}
+            CONFIGURATIONS Debug
             FILES_MATCHING
             PATTERN "*.pdb"
             )

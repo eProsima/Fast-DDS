@@ -27,6 +27,8 @@ macro(find_eprosima_package package)
                 ${BUILD_OPTION}
                 ${USE_BOOST_}
                 "-DMINION=ON"
+                "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"
+                "-DINCLUDE_INSTALL_DIR:PATH=${INCLUDE_INSTALL_DIR}"
                 "-DLIB_INSTALL_DIR:PATH=${LIB_INSTALL_DIR}"
                 "-DLICENSE_INSTALL_DIR:PATH=licenses"
                 "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX_}"
@@ -107,7 +109,7 @@ macro(install_eprosima_libraries)
     if((MSVC OR MSVC_IDE) AND EPROSIMA_BUILD AND NOT MINION)
         if(EPROSIMA_INSTALLER)
             # Install includes. Take from x64Win64VS2013
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/include/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/${INCLUDE_INSTALL_DIR}/
                 DESTINATION ${INCLUDE_INSTALL_DIR}
                 COMPONENT headers
                 OPTIONAL
@@ -121,17 +123,49 @@ macro(install_eprosima_libraries)
                 )
         else()
             # Install includes
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/include/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${INCLUDE_INSTALL_DIR}/
                 DESTINATION ${INCLUDE_INSTALL_DIR}
                 COMPONENT headers
                 OPTIONAL
                 )
 
             # Install libraries
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/lib/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${BIN_INSTALL_DIR}/
+                DESTINATION ${BIN_INSTALL_DIR}
+                COMPONENT libraries_${MSVC_ARCH}
+                CONFIGURATIONS Debug
+                OPTIONAL
+                FILES_MATCHING
+                PATTERN "*d.*"
+                PATTERN "*d-*.*"
+                )
+
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${BIN_INSTALL_DIR}/
+                DESTINATION ${BIN_INSTALL_DIR}
+                COMPONENT libraries_${MSVC_ARCH}
+                CONFIGURATIONS Release
+                OPTIONAL
+                PATTERN "*d.*" EXCLUDE
+                PATTERN "*d-*.*" EXCLUDE
+                )
+
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_${MSVC_ARCH}
+                CONFIGURATIONS Debug
                 OPTIONAL
+                FILES_MATCHING
+                PATTERN "*d.*"
+                PATTERN "*d-*.*"
+                )
+
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
+                DESTINATION ${LIB_INSTALL_DIR}
+                COMPONENT libraries_${MSVC_ARCH}
+                CONFIGURATIONS Release
+                OPTIONAL
+                PATTERN "*d.*" EXCLUDE
+                PATTERN "*d-*.*" EXCLUDE
                 )
 
             # Install licenses
