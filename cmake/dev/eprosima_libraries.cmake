@@ -96,7 +96,7 @@ macro(find_eprosima_package package)
 
         find_package(${package} QUIET)
 
-        if(fastcdr_FOUND)
+        if(${package}_FOUND)
             message(STATUS "${package} library found...")
         else()
             message(STATUS "${package} library not found...")
