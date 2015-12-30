@@ -145,6 +145,8 @@ macro(install_eprosima_libraries)
                 COMPONENT libraries_${MSVC_ARCH}
                 CONFIGURATIONS Release
                 OPTIONAL
+                FILES_MATCHING
+                PATTERN "*"
                 PATTERN "*d.*" EXCLUDE
                 PATTERN "*d-*.*" EXCLUDE
                 )
@@ -164,6 +166,8 @@ macro(install_eprosima_libraries)
                 COMPONENT libraries_${MSVC_ARCH}
                 CONFIGURATIONS Release
                 OPTIONAL
+                FILES_MATCHING
+                PATTERN "*"
                 PATTERN "*d.*" EXCLUDE
                 PATTERN "*d-*.*" EXCLUDE
                 )
