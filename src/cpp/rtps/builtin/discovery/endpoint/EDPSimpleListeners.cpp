@@ -13,6 +13,8 @@
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include "../../../participant/RTPSParticipantImpl.h"
@@ -47,15 +49,15 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 	if(change->kind == ALIVE)
 	{
 		//LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
-		m_writerProxyData.clear();
-		CDRMessage::initCDRMsg(&m_tempMsg);
-		m_tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-		m_tempMsg.length = change->serializedPayload.length;
-		memcpy(m_tempMsg.buffer,change->serializedPayload.data,m_tempMsg.length);
-		if(m_writerProxyData.readFromCDRMessage(&m_tempMsg))
+		WriterProxyData writerProxyData;
+		CDRMessage_t tempMsg;
+		tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
+		tempMsg.length = change->serializedPayload.length;
+		memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
+		if(writerProxyData.readFromCDRMessage(&tempMsg))
 		{
-			change->instanceHandle = m_writerProxyData.m_key;
-			if(m_writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+			change->instanceHandle = writerProxyData.m_key;
+			if(writerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
 				logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring",C_CYAN);
 				mp_SEDP->mp_PubReader.second->remove_change(change);
@@ -64,7 +66,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			//LOOK IF IS AN UPDATED INFORMATION
 			WriterProxyData* wdata = nullptr;
 			ParticipantProxyData* pdata = nullptr;
-			if(this->mp_SEDP->mp_PDP->addWriterProxyData(&m_writerProxyData,true,&wdata,&pdata)) //ADDED NEW DATA
+			if(this->mp_SEDP->mp_PDP->addWriterProxyData(&writerProxyData,true,&wdata,&pdata)) //ADDED NEW DATA
 			{
 				//CHECK the locators:
 				if(wdata->m_unicastLocatorList.empty() && wdata->m_multicastLocatorList.empty())
@@ -91,7 +93,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 							(*ch)->sequenceNumber < change->sequenceNumber)
 						mp_SEDP->mp_PubReader.second->remove_change(*ch);
 				}
-				wdata->update(&m_writerProxyData);
+				wdata->update(&writerProxyData);
 				mp_SEDP->pairingWriterProxy(wdata);
 			}
 		}
@@ -154,11 +156,13 @@ static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
 
 bool EDPSimplePUBListener::computeKey(CacheChange_t* change)
 {
+    CDRMessage_t aux_msg;
 	return compute_key(&aux_msg,change);
 }
 
 bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 {
+    CDRMessage_t aux_msg;
 	return compute_key(&aux_msg,change);
 }
 
@@ -176,15 +180,15 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 	if(change->kind == ALIVE)
 	{
 		//LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
-		m_readerProxyData.clear();
-		CDRMessage::initCDRMsg(&m_tempMsg);
-		m_tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
-		m_tempMsg.length = change->serializedPayload.length;
-		memcpy(m_tempMsg.buffer,change->serializedPayload.data,m_tempMsg.length);
-		if(m_readerProxyData.readFromCDRMessage(&m_tempMsg))
+		ReaderProxyData readerProxyData;
+		CDRMessage_t tempMsg;
+		tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
+		tempMsg.length = change->serializedPayload.length;
+		memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
+		if(readerProxyData.readFromCDRMessage(&tempMsg))
 		{
-			change->instanceHandle = m_readerProxyData.m_key;
-			if(m_readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
+			change->instanceHandle = readerProxyData.m_key;
+			if(readerProxyData.m_guid.guidPrefix == mp_SEDP->mp_RTPSParticipant->getGuid().guidPrefix)
 			{
 				logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring",C_CYAN);
 				mp_SEDP->mp_SubReader.second->remove_change(change);
@@ -193,7 +197,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			//LOOK IF IS AN UPDATED INFORMATION
 			ReaderProxyData* rdata = nullptr;
 			ParticipantProxyData* pdata = nullptr;
-			if(this->mp_SEDP->mp_PDP->addReaderProxyData(&m_readerProxyData,true,&rdata,&pdata)) //ADDED NEW DATA
+			if(this->mp_SEDP->mp_PDP->addReaderProxyData(&readerProxyData,true,&rdata,&pdata)) //ADDED NEW DATA
 			{
 				//CHECK the locators:
 				if(rdata->m_unicastLocatorList.empty() && rdata->m_multicastLocatorList.empty())
@@ -219,7 +223,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 					if((*ch)->instanceHandle == change->instanceHandle)
 						mp_SEDP->mp_SubReader.second->remove_change(*ch);
 				}
-				rdata->update(&m_readerProxyData);
+				rdata->update(&readerProxyData);
 				mp_SEDP->pairingReaderProxy(rdata);
 			}
 		}

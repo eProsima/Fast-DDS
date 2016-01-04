@@ -16,11 +16,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../../../reader/ReaderListener.h"
 
-#include "../../data/ReaderProxyData.h"
-#include "../../data/WriterProxyData.h"
-
-
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -39,7 +34,7 @@ public:
 	Constructor
 	* @param p Pointer to the EDPSimple associated with this listener.
 	*/
-	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){free(aux_msg.buffer);aux_msg.buffer = nullptr;};
+	EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){};
 	virtual ~EDPSimplePUBListener(){};
 	/**
 	* Virtual method, 
@@ -54,12 +49,6 @@ public:
 	bool computeKey(CacheChange_t* change);
 	//!Pointer to the EDPSimple
 	EDPSimple* mp_SEDP;
-	//!WriterProxyData where to store the information
-	WriterProxyData m_writerProxyData;
-	//!Temporal message to deserialize the information.
-	CDRMessage_t m_tempMsg;
-	//!Auxiliay message.
-	CDRMessage_t aux_msg;
 };
 /**
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
@@ -84,12 +73,6 @@ public:
 	bool computeKey(CacheChange_t* change);
 	//!Pointer to the EDPSimple
 	EDPSimple* mp_SEDP;
-	//!ReaderProxyData object to store the recevied information.
-	ReaderProxyData m_readerProxyData;
-	//!Temporal message to deserialize the information.
-	CDRMessage_t m_tempMsg;
-	//!Auxiliay message.
-	CDRMessage_t aux_msg;
 };
 
 } /* namespace rtps */
