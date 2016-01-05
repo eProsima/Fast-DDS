@@ -88,10 +88,10 @@ void TimedEventImpl::event(const boost::system::error_code& ec)
     TimedEvent::EventCode code = TimedEvent::EVENT_MSG;
     const char *message = nullptr;
 
-    if(ec == boost::system::errc::success)
-        code = TimedEvent::EVENT_SUCCESS;
-    else if(ec == boost::asio::error::operation_aborted || !m_isWaiting)
+    if(ec == boost::asio::error::operation_aborted || !m_isWaiting)
         code = TimedEvent::EVENT_ABORT;
+    else if(ec == boost::system::errc::success)
+        code = TimedEvent::EVENT_SUCCESS;
     else
         message = ec.message().c_str();
 
