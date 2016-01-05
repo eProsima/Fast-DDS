@@ -26,7 +26,7 @@ if(NOT((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
         ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Config.cmake
         INSTALL_DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
-        PATH_VARS INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
+        PATH_VARS BIN_INSTALL_DIR INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
         )
     write_basic_package_version_file(${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}ConfigVersion.cmake
         VERSION ${PROJECT_VERSION}
