@@ -65,8 +65,8 @@ void TimedEventImpl::stop_timer()
 	{
         m_isWaiting = false;
         lock.unlock();
-        if(timer->cancel() > 0)
-            this->mp_stopSemaphore->wait();
+        timer->cancel();
+        this->mp_stopSemaphore->wait();
 	}
 }
 
@@ -85,25 +85,21 @@ bool TimedEventImpl::update_interval_millisec(double time_millisec)
 void TimedEventImpl::event(const boost::system::error_code& ec)
 {
     boost::unique_lock<boost::mutex> lock(mutex_);
-    // Prevent the event is running but blocked while the event is being stopped.
-    if(!m_isWaiting && ec != boost::asio::error::operation_aborted)
-        return;
+    TimedEvent::EventCode code = TimedEvent::EVENT_MSG;
+    const char *message = nullptr;
+
+    if(ec == boost::asio::error::operation_aborted || !m_isWaiting)
+        code = TimedEvent::EVENT_ABORT;
+    else if(ec == boost::system::errc::success)
+        code = TimedEvent::EVENT_SUCCESS;
+    else
+        message = ec.message().c_str();
+
     m_isWaiting = false;
     isRunning_ = true;
     lock.unlock();
 
-	if(ec == boost::system::errc::success)
-	{
-		this->mp_event->event(TimedEvent::EVENT_SUCCESS);
-	}
-	else if(ec==boost::asio::error::operation_aborted)
-	{
-		this->mp_event->event(TimedEvent::EVENT_ABORT);
-	}
-	else
-	{
-		this->mp_event->event(TimedEvent::EVENT_MSG, ec.message().c_str());
-	}
+    this->mp_event->event(code, message);
 
     // In a normal execution, warn the execution is finished.
     lock.lock();
@@ -113,8 +109,8 @@ void TimedEventImpl::event(const boost::system::error_code& ec)
 
     if(autodestruction_ == TimedEvent::ALLWAYS)
         delete this->mp_event;
-    else if(ec == boost::system::errc::success && autodestruction_ == TimedEvent::ON_SUCCESS)
+    else if(code == TimedEvent::EVENT_SUCCESS && autodestruction_ == TimedEvent::ON_SUCCESS)
         delete this->mp_event;
-    else if(ec == boost::asio::error::operation_aborted)
+    else if(code == TimedEvent::EVENT_ABORT)
         mp_stopSemaphore->post();
 }

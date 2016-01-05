@@ -8,22 +8,22 @@ macro(add_gtest test)
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_NAME ${GTEST_NAME})
                 list(GET GTEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_NAME 3 GTEST_NAME)
-                add_test(${GTEST_GROUP_NAME}.${GTEST_NAME}
-                    ${test}
+                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_NAME}
+                    COMMAND ${test}
                     --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_NAME})
                 # Add environment
                 if(WIN32)
                     set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTIES ENVIRONMENT
-                        "PATH=${PROJECT_BINARY_DIR}/lib\\;${fastcdr_LIB_DIR}\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
                 endif()
             endforeach()
         endforeach()
     else()
-        add_test(${test} ${test})
+        add_test(NAME ${test} COMMAND ${test})
         # Add environment
         if(WIN32)
             set_tests_properties(${test} PROPERTIES ENVIRONMENT
-                "PATH=${PROJECT_BINARY_DIR}/lib\\;${fastcdr_LIB_DIR}\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
         endif()
     endif()
 endmacro()

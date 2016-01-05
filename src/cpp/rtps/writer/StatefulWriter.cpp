@@ -282,19 +282,30 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_remove";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    ReaderProxy *rproxy = nullptr;
+	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
 		if((*it)->m_att.guid == rdata.guid)
 		{
 			logInfo(RTPS_WRITER, "Reader Proxy removed: " << (*it)->m_att.guid);
-			delete(*it);
+            rproxy = *it;
 			matched_readers.erase(it);
 			if(matched_readers.size()==0)
 				this->mp_periodicHB->stop_timer();
-			return true;
+            break;
 		}
 	}
+
+    lock.unlock();
+
+    if(rproxy != nullptr)
+    {
+        delete rproxy;
+        return true;
+    }
+
 	logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer")
 	return false;
 }
@@ -424,6 +435,7 @@ void StatefulWriter::updateAttributes(WriterAttributes& att)
 
 void StatefulWriter::updateTimes(WriterTimes& times)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(m_times.heartbeatPeriod != times.heartbeatPeriod)
 	{
 		this->mp_periodicHB->update_interval(times.heartbeatPeriod);

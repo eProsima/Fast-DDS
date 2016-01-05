@@ -22,46 +22,23 @@ macro(check_boost)
     endif()
 endmacro()
 
-macro(install_boost)
+macro(install_boost FILETYPE)
     if(MSVC OR MSVC_IDE)
-        foreach(arg ${ARGN})
-            if(EPROSIMA_INSTALLER)
-                #i86Win32VS2010
-                get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/i86Win32VS2010" ABSOLUTE)
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_i86Win32VS2010
-                    FILES_MATCHING
-                    PATTERN "boost_${arg}-vc100-mt*"
-                    )
+        set(RUNTIME_FILES_ 0)
+        set(LIBRARY_FILES_ 0)
+        if("${FILETYPE}" MATCHES "^([Rr][Uu][Nn][Tt][Ii][Mm][Ee])$")
+            set(RUNTIME_FILES_ 1)
+        elseif("${FILETYPE}" MATCHES "^([Ll][Ii][Bb][Rr][Aa][Rr][Yy])$")
+            set(LIBRARY_FILES_ 1)
+        elseif("${FILETYPE}" MATCHES "^([Aa][Ll][Ll])$")
+            set(RUNTIME_FILES_ 1)
+            set(LIBRARY_FILES_ 1)
+        else()
+            message(FATAL_ERROR "Bad parameter in install_boost macro")
+        endif()
 
-                #x64Win64VS2010
-                get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/x64Win64VS2010" ABSOLUTE)
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_x64Win64VS2010
-                    FILES_MATCHING
-                    PATTERN "boost_${arg}-vc100-mt*"
-                    )
-
-                #i86Win32VS2013
-                get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/i86Win32VS2013" ABSOLUTE)
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_i86Win32VS2013
-                    FILES_MATCHING
-                    PATTERN "boost_${arg}-vc120-mt*"
-                    )
-
-                #x64Win64VS2013
-                get_filename_component(BOOST_LIBRARYDIR_NORMALIZE "$ENV{BOOST_LIBRARYDIR}/x64Win64VS2013" ABSOLUTE)
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_x64Win64VS2013
-                    FILES_MATCHING
-                    PATTERN "boost_${arg}-vc120-mt*"
-                    )
-            elseif(EPROSIMA_BUILD)
+        foreach(arg_ ${ARGN})
+            if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER)
                 if(MSVC10)
                     set(BOOST_ARCH "vc100")
                 elseif(MSVC11)
@@ -73,12 +50,45 @@ macro(install_boost)
                 #Normalize path
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE ${BOOST_LIBRARYDIR} ABSOLUTE)
 
-                install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
-                    DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT libraries_${MSVC_ARCH}
-                    FILES_MATCHING
-                    PATTERN "boost_${arg}-${BOOST_ARCH}-mt*"
-                    )
+                # Runtime
+                if(RUNTIME_FILES_)
+                    install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
+                        DESTINATION ${BIN_INSTALL_DIR}
+                        COMPONENT libraries_${MSVC_ARCH}
+                        CONFIGURATIONS Debug
+                        FILES_MATCHING
+                        PATTERN "boost_${arg_}-${BOOST_ARCH}-mt-gd*.dll"
+                        )
+
+                    install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
+                        DESTINATION ${BIN_INSTALL_DIR}
+                        COMPONENT libraries_${MSVC_ARCH}
+                        CONFIGURATIONS Release
+                        FILES_MATCHING
+                        PATTERN "boost_${arg_}-${BOOST_ARCH}-mt*.dll"
+                        PATTERN "boost_${arg_}-${BOOST_ARCH}-mt-gd*.dll" EXCLUDE
+                        )
+                endif()
+
+                # Library
+                if(LIBRARY_FILES_)
+                    install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
+                        DESTINATION ${LIB_INSTALL_DIR}
+                        COMPONENT libraries_${MSVC_ARCH}
+                        CONFIGURATIONS Debug
+                        FILES_MATCHING
+                        PATTERN "boost_${arg_}-${BOOST_ARCH}-mt-gd*.lib"
+                        )
+
+                    install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
+                        DESTINATION ${LIB_INSTALL_DIR}
+                        COMPONENT libraries_${MSVC_ARCH}
+                        CONFIGURATIONS Release
+                        FILES_MATCHING
+                        PATTERN "boost_${arg_}-${BOOST_ARCH}-mt*.lib"
+                        PATTERN "boost_${arg_}-${BOOST_ARCH}-mt-gd*.lib" EXCLUDE
+                        )
+                endif()
             endif()
         endforeach()
     endif()

@@ -65,9 +65,9 @@ public:
 	* Method invoked when the event occurs. Abstract method.
 	*
 	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
+	* @param msg Message associated to the event. It can be nullptr.
 	*/
-	virtual void event(EventCode code,const char* msg=nullptr)=0;
+	virtual void event(EventCode code, const char* msg) = 0;
 	
 	//!Method to restart the timer.
 	void restart_timer();
