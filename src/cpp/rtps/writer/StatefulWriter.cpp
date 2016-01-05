@@ -424,6 +424,7 @@ void StatefulWriter::updateAttributes(WriterAttributes& att)
 
 void StatefulWriter::updateTimes(WriterTimes& times)
 {
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(m_times.heartbeatPeriod != times.heartbeatPeriod)
 	{
 		this->mp_periodicHB->update_interval(times.heartbeatPeriod);

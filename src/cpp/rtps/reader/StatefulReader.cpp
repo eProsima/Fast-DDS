@@ -552,6 +552,7 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 //
 bool StatefulReader::updateTimes(ReaderTimes& ti)
 {
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)
     {
         m_times = ti;
