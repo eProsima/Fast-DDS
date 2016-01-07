@@ -56,6 +56,13 @@ SubscriberHistory::~SubscriberHistory() {
 bool SubscriberHistory::received_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "add_change";
+
+	if(mp_reader == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Reader with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(m_isHistoryFull)
 	{
@@ -228,6 +235,13 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "readNextData";
+
+	if(mp_reader == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Reader with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	CacheChange_t* change;
 	WriterProxy * wp;
@@ -264,6 +278,13 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 {
 	const char* const METHOD_NAME = "takeNextData";
+
+	if(mp_reader == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Reader with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	CacheChange_t* change;
 	WriterProxy * wp;
@@ -348,6 +369,13 @@ bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::itera
 bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
 {
 	const char* const METHOD_NAME = "remove_change_sub";
+
+	if(mp_reader == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Reader with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{

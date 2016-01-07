@@ -33,6 +33,7 @@ RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
 
 {
 	mp_history->mp_reader = this;
+    mp_history->mp_mutex = mp_mutex;
 	const char* const METHOD_NAME = "RTPSReader";
 	logInfo(RTPS_READER,"RTPSReader created correctly");
 }
@@ -41,6 +42,8 @@ RTPSReader::~RTPSReader()
 {
 	const char* const METHOD_NAME = "~RTPSReader";
 	logInfo(RTPS_READER,"Removing reader "<<this->getGuid().entityId;);
+    mp_history->mp_reader = nullptr;
+    mp_history->mp_mutex = nullptr;
 }
 
 bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)

@@ -46,6 +46,13 @@ PublisherHistory::~PublisherHistory() {
 bool PublisherHistory::add_pub_change(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "add_pub_change";
+
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 	{
@@ -220,6 +227,13 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 
 bool PublisherHistory::removeMinChange()
 {
+    const char* const METHOD_NAME = "removeMinChange";
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	if(m_changes.size()>0)
 		return remove_change_pub(m_changes.front());
@@ -228,8 +242,15 @@ bool PublisherHistory::removeMinChange()
 
 bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
 {
+    const char* const METHOD_NAME = "remove_change_pub";
+
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
-	const char* const METHOD_NAME = "remove_change_pub";
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
 		return this->remove_change(change);
