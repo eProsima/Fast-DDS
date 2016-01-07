@@ -22,6 +22,8 @@
 #include "../common/Guid.h"
 #include "../attributes/HistoryAttributes.h"
 
+#include <cassert>
+
 
 namespace boost
 {
@@ -99,22 +101,25 @@ public:
 	 * @return True if correct.
 	 */
 	RTPS_DllAPI bool get_min_change(CacheChange_t** min_change);
+
 	/**
 	 * Get the maximum CacheChange_t.
 	 * @param max_change Pointer to pointer to the maximum change.
 	 * @return True if correct.
 	 */
 	RTPS_DllAPI bool get_max_change(CacheChange_t** max_change);
+
 	/**
 	 * Get the maximum serialized payload size
 	 * @return Maximum serialized payload size
 	 */
 	RTPS_DllAPI inline uint32_t getTypeMaxSerialized(){ return m_changePool.getPayloadSize(); }
-	/**
+
+	/*!
 	 * Get the mutex
 	 * @return Mutex
 	 */
-	RTPS_DllAPI inline boost::recursive_mutex* getMutex() {return mp_mutex;};
+	RTPS_DllAPI inline boost::recursive_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
 
 	RTPS_DllAPI bool get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change);
 

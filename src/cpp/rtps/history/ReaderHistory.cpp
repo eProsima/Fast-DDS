@@ -59,12 +59,14 @@ bool ReaderHistory::received_change(CacheChange_t* change)
 bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "add_change";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(mp_reader == nullptr)
+
+	if(mp_reader == nullptr || mp_mutex == nullptr)
 	{
 		logError(RTPS_HISTORY,"You need to create a Reader with this History before adding any changes");
 		return false;
 	}
+
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(a_change->serializedPayload.length > m_att.payloadMaxSize)
 	{
 		logError(RTPS_HISTORY,"The Payload length is larger than the maximum payload size");
@@ -89,6 +91,13 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 bool ReaderHistory::remove_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "remove_change";
+
+	if(mp_reader == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Reader with this History before removing any changes");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(a_change == nullptr)
 	{

@@ -105,18 +105,28 @@ bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata)
 bool StatefulReader::matched_writer_remove(RemoteWriterAttributes& wdata,bool deleteWP)
 {
     const char* const METHOD_NAME = "matched_writer_remove";
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    WriterProxy *wproxy = nullptr;
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
         if((*it)->m_att.guid == wdata.guid)
         {
             logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
-            if(deleteWP)
-                delete(*it);
+            wproxy = *it;
             matched_writers.erase(it);
-            return true;
+            break;
         }
     }
+
+    lock.unlock();
+
+    if(wproxy != nullptr && deleteWP)
+    {
+        delete(wproxy);
+        return true;
+    }
+
     logInfo(RTPS_READER,"Writer Proxy " << wdata.guid << " doesn't exist in reader "<<this->getGuid().entityId);
     return false;
 }

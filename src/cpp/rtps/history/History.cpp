@@ -38,7 +38,7 @@ History::History(const HistoryAttributes & att):
 		m_changePool(att.initialReservedCaches,att.payloadMaxSize,att.maximumReservedCaches),
 		mp_minSeqCacheChange(nullptr),
 		mp_maxSeqCacheChange(nullptr),
-		mp_mutex(new boost::recursive_mutex())
+		mp_mutex(nullptr)
 
 {
 	m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
@@ -56,12 +56,19 @@ History::~History()
 {
 	const char* const METHOD_NAME = "~History";
 	logInfo(RTPS_HISTORY,"");
-	delete(mp_mutex);
 }
 
 
 bool History::remove_all_changes()
 {
+    const char* const METHOD_NAME = "remove_all_changes";
+
+	if(mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a RTPS Entity with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(!m_changes.empty())
 	{
@@ -138,6 +145,14 @@ bool History::get_max_change(CacheChange_t** max_change)
 
 bool History::get_change(SequenceNumber_t& seq, GUID_t& guid,CacheChange_t** change)
 {
+    const char* const METHOD_NAME = "get_change";
+
+	if(mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a RTPS Entity with this History before using it");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
 			it!=m_changes.end();++it)

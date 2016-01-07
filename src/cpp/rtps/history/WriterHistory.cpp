@@ -44,12 +44,14 @@ WriterHistory::~WriterHistory()
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "add_change";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(mp_writer == nullptr)
+
+	if(mp_writer == nullptr || mp_mutex == nullptr)
 	{
 		logError(RTPS_HISTORY,"You need to create a Writer with this History before adding any changes");
 		return false;
 	}
+
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(a_change->writerGUID != mp_writer->getGuid())
 	{
 		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
@@ -72,6 +74,13 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 bool WriterHistory::remove_change(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "remove_change";
+
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before removing any changes");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(a_change == nullptr)
 	{
@@ -119,6 +128,14 @@ void WriterHistory::updateMaxMinSeqNum()
 
 bool WriterHistory::remove_min_change()
 {
+    const char* const METHOD_NAME = "remove_min_change";
+
+	if(mp_writer == nullptr || mp_mutex == nullptr)
+	{
+		logError(RTPS_HISTORY,"You need to create a Writer with this History before removing any changes");
+		return false;
+	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(m_changes.size() > 0 && remove_change(mp_minSeqCacheChange))
 	{

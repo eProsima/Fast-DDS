@@ -34,6 +34,7 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& 
 {
 	const char* const METHOD_NAME = "RTPSWriter";
 	mp_history->mp_writer = this;
+    mp_history->mp_mutex = mp_mutex;
 	this->init_header();
 	logInfo(RTPS_WRITER,"RTPSWriter created");
 }
@@ -55,6 +56,9 @@ RTPSWriter::~RTPSWriter()
         mp_unsetChangesNotEmpty->stop_timer();
         delete mp_unsetChangesNotEmpty;
     }
+
+    mp_history->mp_writer = nullptr;
+    mp_history->mp_mutex = nullptr;
 }
 
 CacheChange_t* RTPSWriter::new_change(ChangeKind_t changeKind,InstanceHandle_t handle)
