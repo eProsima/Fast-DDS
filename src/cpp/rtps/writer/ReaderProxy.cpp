@@ -94,7 +94,7 @@ bool ReaderProxy::acked_changes_set(SequenceNumber_t& seqNum)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-	for(std::vector<ChangeForReader_t>::iterator it=m_changesForReader.begin();it!=m_changesForReader.end();++it)
+	for(std::vector<ChangeForReader_t>::iterator it = m_changesForReader.begin(); it != m_changesForReader.end(); ++it)
 	{
 		if(it->seqNum < seqNum)
 		{
