@@ -284,6 +284,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 	const char* const METHOD_NAME = "matched_reader_remove";
     ReaderProxy *rproxy = nullptr;
 	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    bool match = false;
 
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
@@ -294,6 +295,8 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 			matched_readers.erase(it);
 			if(matched_readers.size()==0)
 				this->mp_periodicHB->stop_timer();
+
+            match = true;
             break;
 		}
 	}
@@ -305,6 +308,9 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
         delete rproxy;
         return true;
     }
+
+    if(match && this->getAttributes()->durabilityKind == VOLATILE)
+        clean_history();
 
 	logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer")
 	return false;
@@ -373,7 +379,7 @@ void StatefulWriter::clean_history()
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
             cit != mp_history->changesEnd(); ++cit)
     {
-        bool acknowledge = true;
+        bool acknowledge = true, linked = false;
 
         for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
         {
@@ -381,6 +387,8 @@ void StatefulWriter::clean_history()
 
             if((*it)->getChangeForReader(*cit, &cr))
             {
+                linked = true;
+
                 if(cr.status != ACKNOWLEDGED)
                 {
                     acknowledge = false;
@@ -389,7 +397,7 @@ void StatefulWriter::clean_history()
             }
         }
 
-        if(acknowledge)
+        if(!linked || acknowledge)
             ackca.push_back(*cit);
     }
 
