@@ -284,6 +284,12 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
 	return false;
 }
 
+bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
+{
+    printf("PUBLISHER HISTORY\n");
+    return remove_change_pub(a_change);
+}
+
 
 } /* namespace pubsub */
 } /* namespace eprosima */

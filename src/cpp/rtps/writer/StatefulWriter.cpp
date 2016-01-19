@@ -365,6 +365,41 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 	return true;
 }
 
+void StatefulWriter::clean_history()
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::vector<CacheChange_t*> ackca;
+
+    for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
+            cit != mp_history->changesEnd(); ++cit)
+    {
+        bool acknowledge = true;
+
+        for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
+        {
+            ChangeForReader_t cr; 
+
+            if((*it)->getChangeForReader(*cit, &cr))
+            {
+                if(cr.status != ACKNOWLEDGED)
+                {
+                    acknowledge = false;
+                    break;
+                }
+            }
+        }
+
+        if(acknowledge)
+            ackca.push_back(*cit);
+    }
+
+    for(std::vector<CacheChange_t*>::iterator cit = ackca.begin();
+            cit != ackca.end(); ++cit)
+    {
+        mp_history->remove_change_g(*cit);
+    }
+}
+
 
 //
 //bool sort_changeForReader_ptr (ChangeForReader_t* c1,ChangeForReader_t* c2)

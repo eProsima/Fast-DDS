@@ -52,6 +52,8 @@ public:
 	 * @return True if removed.
 	 */
 	RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
+
+    virtual bool remove_change_g(CacheChange_t* a_change);
 	/**
 	 * Remove the CacheChange_t with the minimum sequenceNumber.
 	 * @return True if correctly removed.

@@ -111,6 +111,12 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
 	return false;
 }
 
+bool WriterHistory::remove_change_g(CacheChange_t* a_change)
+{
+    printf("WRITER HISTORY\n");
+    return remove_change(a_change);
+}
+
 void WriterHistory::updateMaxMinSeqNum()
 {
 	if(m_changes.size()==0)

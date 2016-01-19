@@ -74,6 +74,8 @@ public:
 	*/
 	bool remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
 
+    virtual bool remove_change_g(CacheChange_t* a_change);
+
 private:
 	//!Vector of pointer to the CacheChange_t divided by key.
 	t_v_Inst_Caches m_keyedChanges;

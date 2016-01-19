@@ -598,6 +598,14 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							{
 								(*rit)->mp_nackResponse->restart_timer();
 							}
+
+                            if(SF->getAttributes()->durabilityKind == VOLATILE)
+                            {
+                                // Clean history.
+                                // TODO Change mechanism
+                                SF->clean_history();
+                            }
+
 						}
 						break;
 					}

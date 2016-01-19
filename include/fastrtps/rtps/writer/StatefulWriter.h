@@ -89,6 +89,9 @@ public:
 	 * @return True if removed.
 	 */
 	bool is_acked_by_all(CacheChange_t* a_change);
+
+    void clean_history();
+
 	/**
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes
