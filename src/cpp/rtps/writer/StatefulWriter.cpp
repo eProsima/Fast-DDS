@@ -303,17 +303,17 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 
     lock.unlock();
 
+    if(match && this->getAttributes()->durabilityKind == VOLATILE)
+        clean_history();
+
     if(rproxy != nullptr)
     {
         delete rproxy;
         return true;
     }
 
-    if(match && this->getAttributes()->durabilityKind == VOLATILE)
-        clean_history();
-
-	logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer")
-	return false;
+    logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer");
+    return false;
 }
 
 bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
