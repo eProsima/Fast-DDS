@@ -284,7 +284,6 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 	const char* const METHOD_NAME = "matched_reader_remove";
     ReaderProxy *rproxy = nullptr;
 	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
-    bool match = false;
 
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
@@ -296,19 +295,19 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 			if(matched_readers.size()==0)
 				this->mp_periodicHB->stop_timer();
 
-            match = true;
             break;
 		}
 	}
 
     lock.unlock();
 
-    if(match && this->getAttributes()->durabilityKind == VOLATILE)
-        clean_history();
-
     if(rproxy != nullptr)
     {
         delete rproxy;
+
+        if(this->getAttributes()->durabilityKind == VOLATILE)
+            clean_history();
+
         return true;
     }
 
