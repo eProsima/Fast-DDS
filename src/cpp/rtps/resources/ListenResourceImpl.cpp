@@ -36,7 +36,8 @@ ListenResourceImpl::ListenResourceImpl(ListenResource* LR):
 																								mp_RTPSParticipantImpl(nullptr),
 																								mp_listenResource(LR),
 																								mp_thread(nullptr),
-																								m_listen_socket(m_io_service)
+																								m_listen_socket(m_io_service),
+                                                                                                runningAsync_(false), stopped_(false)
 
 {
 
@@ -47,12 +48,24 @@ ListenResourceImpl::~ListenResourceImpl()
 	const char* const METHOD_NAME = "~ListenResourceImpl";
 	if(mp_thread !=nullptr)
 	{
+        boost::unique_lock<boost::mutex> lock(mutex_);
+        if(runningAsync_)
+            cond_.wait(lock);
+
 		logInfo(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
 				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc,C_BLUE);
+        //printf("CLOSING %p\n", &m_listen_socket);
+		m_listen_socket.cancel();
 		m_listen_socket.close();
+        //printf("STOPING\n");
 		m_io_service.stop();
+        stopped_ = true;
+        lock.unlock();
+
+        //printf("STOPPED\n");
 		logInfo(RTPS_MSG_IN,"Joining with thread",C_BLUE);
 		mp_thread->join();
+        //printf("JOINNED\n");
 		delete(mp_thread);
 		logInfo(RTPS_MSG_IN,"Listening thread closed succesfully",C_BLUE);
 	}
@@ -81,6 +94,12 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 
 	if(err == boost::system::errc::success)
 	{
+        boost::unique_lock<boost::mutex> lock(mutex_);
+        if(stopped_)
+            return;
+        runningAsync_ = true;
+        lock.unlock();
+
 		mp_listenResource->setMsgRecMsgLength((uint32_t)msg_size);
 
 		if(msg_size == 0)
@@ -110,6 +129,10 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 		catch(boost::system::system_error const& e)
 		{
 			logError(RTPS_MSG_IN,"Boost error: " << e.what());
+            lock.lock();
+            runningAsync_ = false;
+            lock.unlock();
+            cond_.notify_one();
 			this->putToListen();
 			return;
 		}
@@ -127,6 +150,10 @@ void ListenResourceImpl::newCDRMessage(const boost::system::error_code& err, std
 		}
 
 		logInfo(RTPS_MSG_IN,IDSTRING " Message of size "<< mp_listenResource->mp_receiver->m_rec_msg.length <<" processed" ,C_BLUE);
+        lock.lock();
+        runningAsync_ = false;
+        lock.unlock();
+        cond_.notify_one();
 		this->putToListen();
 	}
 	else if(err == boost::asio::error::operation_aborted)

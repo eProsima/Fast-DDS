@@ -23,7 +23,6 @@
 #include <boost/asio/ip/udp.hpp>
 
 #include <boost/thread.hpp>
-#include <boost/thread/recursive_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -69,7 +68,7 @@ public:
 	* Get the mutex
 	* @return Associated mutex
 	*/
-	inline boost::recursive_mutex* getMutex() {return &m_mutex;};
+	inline boost::mutex* getMutex() {return &mutex_;};
 
 	/**
 	* Get the listen locators
@@ -105,7 +104,10 @@ public:
 	//! Method to run the io_service.
 	void run_io_service();
 
-	boost::recursive_mutex m_mutex;
+	boost::mutex mutex_;
+	boost::condition_variable cond_;
+    bool runningAsync_;
+    bool stopped_;
 
 };
 }

@@ -60,7 +60,7 @@ struct RTPS_DllAPI SerializedPayload_t{
 	SerializedPayload_t(uint16_t len){
 		encapsulation = CDR_BE;
 		length = 0;
-		data = (octet*)malloc(len);
+		data = (octet*)calloc(len, sizeof(octet));
 		max_size = len;
 		pos = 0;
 	}
@@ -87,7 +87,7 @@ struct RTPS_DllAPI SerializedPayload_t{
         }
 		encapsulation = serData->encapsulation;
 		if(data == nullptr)
-			data = (octet*)malloc(length);
+			data = (octet*)calloc(length, sizeof(octet));
 		memcpy(data,serData->data,length);
 		return true;
 	}
