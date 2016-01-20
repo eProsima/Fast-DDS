@@ -131,8 +131,6 @@ public:
 
 	RTPS_DllAPI static void addMessage(LogMessage* lm);
 
-	RTPS_DllAPI static void removeLog();
-
 	CategoryVerbosity::iterator getCategory(LOG_CATEGORY cat);
 
 private:
@@ -141,8 +139,7 @@ private:
 
 	static Log* getInstance();
 
-	static Log* m_instance;
-	static bool m_instanceFlag;
+	static Log m_instance;
 
 	std::ofstream* mp_logFile;
 	bool m_logFileDefined;

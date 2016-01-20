@@ -52,7 +52,6 @@ void Domain::stopAll()
 		Domain::removeParticipant(m_participants.begin()->first);
 	}
 	eClock::my_sleep(100);
-	Log::removeLog();
 }
 
 bool Domain::removeParticipant(Participant* part)

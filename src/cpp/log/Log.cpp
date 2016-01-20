@@ -25,8 +25,7 @@
 #include <boost/date_time/posix_time/posix_time_io.hpp>
 namespace eprosima {
 
-Log* Log::m_instance = NULL;
-bool Log::m_instanceFlag = false;
+Log Log::m_instance;
 
 static const int MAXWIDTH = 43;
 
@@ -54,11 +53,6 @@ Log::Log(): mp_logFile(NULL),
 
 }
 
-void Log::removeLog()
-{
-	delete(Log::getInstance());
-}
-
 Log::~Log() {
 	// TODO Auto-generated destructor stub
 	if(mp_logFile !=NULL)
@@ -70,8 +64,6 @@ Log::~Log() {
 	delete(mp_logMesgMutex);
 	delete(mp_printMutex);
 
-	m_instanceFlag = false;
-	m_instance = nullptr;
 	while(m_logMessages.size()>0)
 	{
 		delete(m_logMessages.front());
@@ -81,12 +73,7 @@ Log::~Log() {
 
 Log* Log::getInstance()
 {
-	if(!m_instanceFlag)
-	{
-		m_instance = new Log();
-		m_instanceFlag = true;
-	}
-	return m_instance;
+	return &m_instance;
 }
 
 void Log::setVerbosity(LOG_VERBOSITY_LVL level)
