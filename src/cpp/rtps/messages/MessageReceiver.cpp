@@ -92,10 +92,8 @@ void MessageReceiver::reset(){
 	unicastReplyLocatorList.clear();
 	unicastReplyLocatorList.reserve(1);
 	multicastReplyLocatorList.clear();
+	multicastReplyLocatorList.reserve(1);
 	Locator_t  loc;
-	LocatorList_t locList;
-	locList.clear();
-	locList.push_back(loc);
 	unicastReplyLocatorList.push_back(loc);
 	multicastReplyLocatorList.push_back(defUniLoc);
 	mp_change->kind = ALIVE;
