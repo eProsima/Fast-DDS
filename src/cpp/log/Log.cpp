@@ -133,7 +133,7 @@ void Log::logFileName(const char* filename,bool add_date_to_name)
 
 LogMessage* Log::getLogMessage()
 {
-	mp_logMesgMutex->lock();
+    boost::unique_lock<boost::mutex> lock(*mp_logMesgMutex);
 	if(m_logMessages.size()<MIN_N_MESSAGES)
 	{
 		for(uint32_t i = 0;i<MIN_N_MESSAGES;++i)
@@ -141,18 +141,16 @@ LogMessage* Log::getLogMessage()
 	}
 	LogMessage* msg = m_logMessages.front();
 	m_logMessages.pop();
-	mp_logMesgMutex->unlock();
 	return msg;
 }
 
 CategoryVerbosity::iterator Log::getCategory(LOG_CATEGORY cat)
 {
-	mp_logMesgMutex->lock();
+    boost::unique_lock<boost::mutex> lock(*mp_logMesgMutex);
 	CategoryVerbosity::iterator it = m_categories.find(cat);
 	if(it != m_categories.end())
 		return it;
 	m_categories[cat] = m_defaultVerbosityLevel;
-	mp_logMesgMutex->unlock();
 	return m_categories.find(cat);
 }
 
