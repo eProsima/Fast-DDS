@@ -329,6 +329,9 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	const char* const METHOD_NAME = "proc_Submsg_Data";
     boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
 
+    // Reset param list
+    m_ParamList.deleteParams();
+
 	//READ and PROCESS
 	if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
 	{
