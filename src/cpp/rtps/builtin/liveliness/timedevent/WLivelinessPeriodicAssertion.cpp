@@ -88,7 +88,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getMutex());
 	if(this->mp_WLP->m_livAutomaticWriters.size()>0)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->mp_builtinWriter->getMutex());
+		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
 		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change(ALIVE,m_iHandle);
 		if(change!=nullptr)
 		{
@@ -136,7 +136,7 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 	}
 	if(livelinessAsserted)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->mp_builtinWriter->getMutex());
+		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
 		CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change(ALIVE);
 		if(change!=nullptr)
 		{

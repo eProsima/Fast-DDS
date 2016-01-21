@@ -71,38 +71,44 @@ bool EDPStaticXML::loadXMLFile(std::string& filename)
 		if(xml_RTPSParticipant.first == "participant")
 		{
 			StaticRTPSParticipantInfo* pdata= new StaticRTPSParticipantInfo();
-			BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant_child,xml_RTPSParticipant.second)
-			{
-				if(xml_RTPSParticipant_child.first == "name")
-				{
-					pdata->m_RTPSParticipantName = xml_RTPSParticipant_child.second.data();
-				}
-				else if(xml_RTPSParticipant_child.first == "reader")
-				{
-					
-						if(!loadXMLReaderEndpoint(xml_RTPSParticipant_child,pdata))
-						{
-							logError(RTPS_EDP,"Reader Endpoint has error, ignoring");
-						}
-				}
-				else if(xml_RTPSParticipant_child.first == "writer")
-				{
-					
-						if(!loadXMLWriterEndpoint(xml_RTPSParticipant_child,pdata))
-						{
-							logError(RTPS_EDP,"Writer Endpoint has error, ignoring");
-						}
-				}
-				else
-				{
-					logError(RTPS_EDP,"Unknown XMK tag: " << xml_RTPSParticipant_child.first);
-				}
-			}
+            loadXMLParticipantEndpoint(xml_RTPSParticipant, pdata);
 			m_RTPSParticipants.push_back(pdata);
 		}
 	}
 	logInfo(RTPS_EDP, "Finished parsing, "<< m_RTPSParticipants.size()<< " participants found.",C_CYAN);
 	return true;
+}
+
+void EDPStaticXML::loadXMLParticipantEndpoint(ptree::value_type& xml_endpoint, StaticRTPSParticipantInfo* pdata)
+{
+	const char* const METHOD_NAME = "loadXMLParticipantEndpoint";
+    BOOST_FOREACH(ptree::value_type& xml_RTPSParticipant_child, xml_endpoint.second)
+    {
+        if(xml_RTPSParticipant_child.first == "name")
+        {
+            pdata->m_RTPSParticipantName = xml_RTPSParticipant_child.second.data();
+        }
+        else if(xml_RTPSParticipant_child.first == "reader")
+        {
+
+            if(!loadXMLReaderEndpoint(xml_RTPSParticipant_child,pdata))
+            {
+                logError(RTPS_EDP,"Reader Endpoint has error, ignoring");
+            }
+        }
+        else if(xml_RTPSParticipant_child.first == "writer")
+        {
+
+            if(!loadXMLWriterEndpoint(xml_RTPSParticipant_child,pdata))
+            {
+                logError(RTPS_EDP,"Writer Endpoint has error, ignoring");
+            }
+        }
+        else
+        {
+            logError(RTPS_EDP,"Unknown XMK tag: " << xml_RTPSParticipant_child.first);
+        }
+    }
 }
 
 bool EDPStaticXML::loadXMLReaderEndpoint(ptree::value_type& xml_endpoint,StaticRTPSParticipantInfo* pdata)

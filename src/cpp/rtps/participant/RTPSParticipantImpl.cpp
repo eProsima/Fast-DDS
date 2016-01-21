@@ -91,13 +91,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
 		hasLocatorsDefined = false;
-		Locator_t loc;
-		loc.port=m_att.port.portBase+
+		Locator_t loc2;
+		loc2.port=m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
 				m_att.port.offsetd3+
 				m_att.port.participantIDGain*m_att.participantID;
-		loc.kind = LOCATOR_KIND_UDPv4;
-		m_att.defaultUnicastLocatorList.push_back(loc);
+		loc2.kind = LOCATOR_KIND_UDPv4;
+		m_att.defaultUnicastLocatorList.push_back(loc2);
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();

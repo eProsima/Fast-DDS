@@ -589,7 +589,7 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> pguard(*this->mp_mutex);
 	const char* const METHOD_NAME = "assertRemoteWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
 				<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);

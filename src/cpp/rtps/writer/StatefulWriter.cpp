@@ -149,7 +149,7 @@ void StatefulWriter::unsent_changes_not_empty()
 	boost::lock_guard<boost::recursive_mutex> guard2(*this->getRTPSParticipant()->getSendMutex());
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*(*rit)->mp_mutex);
+		boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{

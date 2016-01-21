@@ -62,12 +62,11 @@ void SubscriberImpl::waitForUnreadMessage()
 {
 	if(m_history.getUnreadCount()==0)
 	{
-		while(1)
+        do
 		{
 			m_history.waitSemaphore();
-			if(m_history.getUnreadCount()>0)
-				break;
 		}
+        while(m_history.getUnreadCount() == 0);
 	}
 }
 
