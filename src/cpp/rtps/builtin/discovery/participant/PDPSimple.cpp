@@ -497,11 +497,11 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
 	const char* const METHOD_NAME = "removeRemoteParticipant";
 	logInfo(RTPS_PDP,partGUID,C_CYAN );
-	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-	ParticipantProxyData* pdata=nullptr;
+	boost::unique_lock<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+	boost::unique_lock<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+	ParticipantProxyData* pdata = nullptr;
 	//Remove it from our vector or RTPSParticipantProxies:
-	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+	boost::unique_lock<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -513,6 +513,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 			break;
 		}
 	}
+
 	if(pdata !=nullptr)
 	{
 		pdata->mp_mutex->lock();
@@ -543,12 +544,16 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 			}
 		}
 		pdata->mp_mutex->unlock();
+
+        guardPDP.unlock();
+        guardW.unlock();
+        guardR.unlock();
+
 		delete(pdata);
 		return true;
 	}
 
 	return false;
-
 }
 
 
