@@ -30,6 +30,7 @@
 #include "../participant/RTPSParticipantImpl.h"
 
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
 #include <limits>
@@ -91,10 +92,8 @@ void MessageReceiver::reset(){
 	unicastReplyLocatorList.clear();
 	unicastReplyLocatorList.reserve(1);
 	multicastReplyLocatorList.clear();
+	multicastReplyLocatorList.reserve(1);
 	Locator_t  loc;
-	LocatorList_t locList;
-	locList.clear();
-	locList.push_back(loc);
 	unicastReplyLocatorList.push_back(loc);
 	multicastReplyLocatorList.push_back(defUniLoc);
 	mp_change->kind = ALIVE;
@@ -328,7 +327,10 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	const char* const METHOD_NAME = "proc_Submsg_Data";
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+
+    // Reset param list
+    m_ParamList.deleteParams();
 
 	//READ and PROCESS
 	if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
@@ -526,7 +528,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct reader and writers:
 	for(std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
 			it != mp_threadListen->m_assocReaders.end(); ++it)
@@ -568,7 +570,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct writer to use the acknack
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
@@ -598,6 +600,14 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 							{
 								(*rit)->mp_nackResponse->restart_timer();
 							}
+
+                            if(SF->getAttributes()->durabilityKind == VOLATILE)
+                            {
+                                // Clean history.
+                                // TODO Change mechanism
+                                SF->clean_history();
+                            }
+
 						}
 						break;
 					}
@@ -643,7 +653,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart.to64long()<=0)
 		return false;
 
-    boost::lock_guard<boost::recursive_mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{

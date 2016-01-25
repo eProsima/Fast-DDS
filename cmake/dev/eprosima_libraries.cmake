@@ -179,5 +179,25 @@ macro(install_eprosima_libraries)
                 OPTIONAL
                 )
         endif()
+    elseif(UNIX AND EPROSIMA_BUILD AND NOT MINION AND NOT EPROSIMA_INSTALLER)
+            # Install includes
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${INCLUDE_INSTALL_DIR}/
+                DESTINATION ${INCLUDE_INSTALL_DIR}
+                COMPONENT headers
+                OPTIONAL
+                )
+
+            # Install libraries
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
+                DESTINATION ${LIB_INSTALL_DIR}
+                COMPONENT libraries
+                )
+
+            # Install licenses
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/licenses/
+                DESTINATION ${LICENSE_INSTALL_DIR}
+                COMPONENT licenses
+                OPTIONAL
+                )
     endif()
 endmacro()

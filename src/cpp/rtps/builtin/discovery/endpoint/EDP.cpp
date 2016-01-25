@@ -423,7 +423,7 @@ bool EDP::pairingReader(RTPSReader* R)
 	if(this->mp_PDP->lookupReaderProxyData(R->getGuid(),&rdata))
 	{
 		logInfo(RTPS_EDP,R->getGuid()<<" in topic: \"" << rdata->m_topicName<<"\"",C_CYAN);
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_PDP->getMutex());
+		boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{
@@ -477,7 +477,7 @@ bool EDP::pairingWriter(RTPSWriter* W)
 	if(this->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata))
 	{
 		logInfo(RTPS_EDP,W->getGuid()<<" in topic: \"" << wdata->m_topicName<<"\"",C_CYAN);
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_PDP->getMutex());
+		boost::lock_guard<boost::recursive_mutex> pguard(*mp_PDP->getMutex());
 		for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
 				pit!=mp_PDP->ParticipantProxiesEnd();++pit)
 		{

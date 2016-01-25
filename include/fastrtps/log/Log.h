@@ -123,17 +123,15 @@ public:
 	RTPS_DllAPI static void logFileName(const char* filename, bool add_date_to_filename = false);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-	RTPS_DllAPI static LogMessage& logMessage(LOG_TYPE type, LOG_CATEGORY cat,
+	RTPS_DllAPI static LogMessage* logMessage(LOG_TYPE type, LOG_CATEGORY cat,
 						const char* CLASS_NAME,
 						const char* METHOD_NAME,
 						const char* COLOR = nullptr);
-	RTPS_DllAPI static LogMessage& logMessage(LOG_TYPE type, const char* COLOR = nullptr);
+	RTPS_DllAPI static LogMessage* logMessage(LOG_TYPE type, const char* COLOR = nullptr);
 
-	RTPS_DllAPI static void addMessage(LogMessage& lm);
+	RTPS_DllAPI static void addMessage(LogMessage* lm);
 
-	RTPS_DllAPI static void removeLog();
-
-
+	CategoryVerbosity::iterator getCategory(LOG_CATEGORY cat);
 
 private:
 	Log();
@@ -141,8 +139,7 @@ private:
 
 	static Log* getInstance();
 
-	static Log* m_instance;
-	static bool m_instanceFlag;
+	static Log m_instance;
 
 	std::ofstream* mp_logFile;
 	bool m_logFileDefined;
@@ -150,8 +147,6 @@ private:
 	LOG_VERBOSITY_LVL m_defaultVerbosityLevel;
 
 	CategoryVerbosity m_categories;
-
-	CategoryVerbosity::iterator getCategory(LOG_CATEGORY cat);
 
 	LogMessage* getLogMessage();
 
@@ -164,8 +159,8 @@ private:
 	boost::mutex* mp_logMesgMutex;
 	boost::mutex* mp_printMutex;
 
-	void printLogMessage(LogMessage& lm);
-	void printMessageString(LogMessage& lm);
+	void printLogMessage(LogMessage* lm);
+	void printMessageString(LogMessage* lm);
 
 	//void printLogMsg(LogMessage* lm);
 	//void printMsg(LogMessage* lm);
@@ -177,8 +172,8 @@ private:
 
 } /* namespace eprosima */
 
-#define logGenerator_(verbosity,cat,str){eprosima::LogMessage& lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME);lm.m_msg << str;eprosima::Log::addMessage(lm); }
-#define logGenerator2_(verbosity,cat,str,color){eprosima::LogMessage& lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME,color);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logGenerator_(verbosity,cat,str){eprosima::LogMessage* lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME);if(lm){lm->m_msg << str;eprosima::Log::addMessage(lm);}}
+#define logGenerator2_(verbosity,cat,str,color){eprosima::LogMessage* lm = eprosima::Log::logMessage(verbosity,cat,CLASS_NAME,METHOD_NAME,color);if(lm){lm->m_msg << str;eprosima::Log::addMessage(lm);}}
 #define logSelector_(arg1, arg2, function, ...) function
 #define logSelectGenerator_(...) logSelector_(__VA_ARGS__, logGenerator2_, logGenerator_, )
 
@@ -188,7 +183,7 @@ private:
 * @brief Create a user log entry.
 * @code logUser("My Log User Message " << auxInt << auxString,C_BLUE);   @endcode
 */
-#define logUser(str,...) {eprosima::LogMessage& lm = eprosima::Log::logMessage(eprosima::T_GENERAL,##__VA_ARGS__);lm.m_msg << str;eprosima::Log::addMessage(lm); }
+#define logUser(str,...) {eprosima::LogMessage* lm = eprosima::Log::logMessage(eprosima::T_GENERAL,##__VA_ARGS__);if(lm){lm->m_msg << str;eprosima::Log::addMessage(lm);}}
 
 /**
 * @def logError

@@ -845,6 +845,7 @@ dl.bug
 #projectlogo img
 { 
 	border: 0px none;
+    width: 400px
 }
  
 #projectname
@@ -947,3 +948,6 @@ dl.citelist dd {
   }
 }
 
+div.image img[src="eProsimaLogo.png"] {
+    width: 300px
+}

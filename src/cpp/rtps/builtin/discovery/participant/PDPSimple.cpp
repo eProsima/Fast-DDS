@@ -142,35 +142,57 @@ void PDPSimple::resetParticipantAnnouncement()
 	mp_resendParticipantTimer->restart_timer();
 }
 
-void PDPSimple::announceParticipantState(bool new_change)
+void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 {
 	const char* const METHOD_NAME = "announceParticipantState";
 	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",C_CYAN);
 	CacheChange_t* change = nullptr;
-	if(new_change || m_hasChangedLocalPDP)
-	{
-		this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
-		if(mp_SPDPWriterHistory->getHistorySize() > 0)
-			mp_SPDPWriterHistory->remove_min_change();
-		change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
-		if(getLocalParticipantProxyData()->toParameterList())
-		{
+
+    if(!dispose)
+    {
+        if(new_change || m_hasChangedLocalPDP)
+        {
+            this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
+            if(mp_SPDPWriterHistory->getHistorySize() > 0)
+                mp_SPDPWriterHistory->remove_min_change();
+            change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
+            if(getLocalParticipantProxyData()->toParameterList())
+            {
+#if EPROSIMA_BIG_ENDIAN
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+                change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+                //TODO Optimizacion, intentar quitar la copia.
+                memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+                mp_SPDPWriterHistory->add_change(change);
+            }
+            m_hasChangedLocalPDP = false;
+        }
+        else
+        {
+            mp_SPDPWriter->unsent_changes_reset();
+        }
+    }
+    else
+    {
+        if(mp_SPDPWriterHistory->getHistorySize() > 0)
+            mp_SPDPWriterHistory->remove_min_change();
+        change = mp_SPDPWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        if(getLocalParticipantProxyData()->toParameterList())
+        {
 #if EPROSIMA_BIG_ENDIAN
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
-			change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
-			//TODO Optimizacion, intentar quitar la copia.
-			memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
-			mp_SPDPWriterHistory->add_change(change);
-		}
-		m_hasChangedLocalPDP = false;
-	}
-	else
-	{
-		mp_SPDPWriter->unsent_changes_reset();
-	}
+            change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+            //TODO Optimizacion, intentar quitar la copia.
+            memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+            mp_SPDPWriterHistory->add_change(change);
+        }
+    }
 
 }
 
@@ -497,11 +519,11 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 {
 	const char* const METHOD_NAME = "removeRemoteParticipant";
 	logInfo(RTPS_PDP,partGUID,C_CYAN );
-	boost::lock_guard<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
-	ParticipantProxyData* pdata=nullptr;
+	boost::unique_lock<boost::recursive_mutex> guardW(*this->mp_SPDPWriter->getMutex());
+	boost::unique_lock<boost::recursive_mutex> guardR(*this->mp_SPDPReader->getMutex());
+	ParticipantProxyData* pdata = nullptr;
 	//Remove it from our vector or RTPSParticipantProxies:
-	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+	boost::unique_lock<boost::recursive_mutex> guardPDP(*this->mp_mutex);
 	for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
 			pit!=m_participantProxies.end();++pit)
 	{
@@ -513,6 +535,7 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 			break;
 		}
 	}
+
 	if(pdata !=nullptr)
 	{
 		pdata->mp_mutex->lock();
@@ -543,12 +566,16 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 			}
 		}
 		pdata->mp_mutex->unlock();
+
+        guardPDP.unlock();
+        guardW.unlock();
+        guardR.unlock();
+
 		delete(pdata);
 		return true;
 	}
 
 	return false;
-
 }
 
 
@@ -589,7 +616,7 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
 
 void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> pguard(*this->mp_mutex);
 	const char* const METHOD_NAME = "assertRemoteWritersLiveliness";
 	logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
 				<<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""),C_MAGENTA);

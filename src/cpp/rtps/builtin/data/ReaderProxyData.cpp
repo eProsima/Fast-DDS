@@ -387,7 +387,6 @@ void ReaderProxyData::clear()
 
 
 	m_parameterList.deleteParams();
-	m_parameterList.resetList();
 }
 
 void ReaderProxyData::update(ReaderProxyData* rdata)

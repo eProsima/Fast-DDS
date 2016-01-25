@@ -25,8 +25,7 @@
 #include <boost/date_time/posix_time/posix_time_io.hpp>
 namespace eprosima {
 
-Log* Log::m_instance = NULL;
-bool Log::m_instanceFlag = false;
+Log Log::m_instance;
 
 static const int MAXWIDTH = 43;
 
@@ -54,11 +53,6 @@ Log::Log(): mp_logFile(NULL),
 
 }
 
-void Log::removeLog()
-{
-	delete(Log::getInstance());
-}
-
 Log::~Log() {
 	// TODO Auto-generated destructor stub
 	if(mp_logFile !=NULL)
@@ -70,8 +64,6 @@ Log::~Log() {
 	delete(mp_logMesgMutex);
 	delete(mp_printMutex);
 
-	m_instanceFlag = false;
-	m_instance = nullptr;
 	while(m_logMessages.size()>0)
 	{
 		delete(m_logMessages.front());
@@ -81,12 +73,7 @@ Log::~Log() {
 
 Log* Log::getInstance()
 {
-	if(!m_instanceFlag)
-	{
-		m_instance = new Log();
-		m_instanceFlag = true;
-	}
-	return m_instance;
+	return &m_instance;
 }
 
 void Log::setVerbosity(LOG_VERBOSITY_LVL level)
@@ -133,7 +120,7 @@ void Log::logFileName(const char* filename,bool add_date_to_name)
 
 LogMessage* Log::getLogMessage()
 {
-	mp_logMesgMutex->lock();
+    boost::unique_lock<boost::mutex> lock(*mp_logMesgMutex);
 	if(m_logMessages.size()<MIN_N_MESSAGES)
 	{
 		for(uint32_t i = 0;i<MIN_N_MESSAGES;++i)
@@ -141,12 +128,12 @@ LogMessage* Log::getLogMessage()
 	}
 	LogMessage* msg = m_logMessages.front();
 	m_logMessages.pop();
-	mp_logMesgMutex->unlock();
 	return msg;
 }
 
 CategoryVerbosity::iterator Log::getCategory(LOG_CATEGORY cat)
 {
+    boost::unique_lock<boost::mutex> lock(*mp_logMesgMutex);
 	CategoryVerbosity::iterator it = m_categories.find(cat);
 	if(it != m_categories.end())
 		return it;
@@ -155,10 +142,30 @@ CategoryVerbosity::iterator Log::getCategory(LOG_CATEGORY cat)
 }
 
 
-LogMessage& Log::logMessage(LOG_TYPE type, LOG_CATEGORY cat, const char* CLASS_NAME,
+LogMessage* Log::logMessage(LOG_TYPE type, LOG_CATEGORY cat, const char* CLASS_NAME,
 		const char* METHOD_NAME,const char * COLOR)
 {
 	Log* ELOG = Log::getInstance();
+
+    switch(type)
+    {
+        default:
+        case T_GENERAL:
+            break;
+        case T_ERROR:
+                if(ELOG->getCategory(cat)->second < VERB_ERROR)
+                    return nullptr;
+                break;
+        case T_WARNING:
+                if(ELOG->getCategory(cat)->second < VERB_WARNING)
+                    return nullptr;
+                break;
+        case T_INFO:
+                if(ELOG->getCategory(cat)->second < VERB_INFO)
+                    return nullptr;
+                break;
+    }
+
 	LogMessage* log = ELOG->getLogMessage();
 	log->m_type = type;
 	log->m_cat = cat;
@@ -172,12 +179,33 @@ LogMessage& Log::logMessage(LOG_TYPE type, LOG_CATEGORY cat, const char* CLASS_N
     log->m_msg << std::left << std::setw(log->m_msg.str().size() >= MAXWIDTH ? 0 : MAXWIDTH - log->m_msg.str().size()) << "] ";
 	log->m_date.str("");
 	log->m_date << "["<< boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time())<<"]";
-	return *log;
+
+	return log;
 }
 
-LogMessage& Log::logMessage(LOG_TYPE type,const char* COLOR)
+LogMessage* Log::logMessage(LOG_TYPE type,const char* COLOR)
 {
 	Log* ELOG = Log::getInstance();
+
+    switch(type)
+    {
+        default:
+        case T_GENERAL:
+            break;
+        case T_ERROR:
+                if(ELOG->getCategory((LOG_CATEGORY)0)->second < VERB_ERROR)
+                    return nullptr;
+                break;
+        case T_WARNING:
+                if(ELOG->getCategory((LOG_CATEGORY)0)->second < VERB_WARNING)
+                    return nullptr;
+                break;
+        case T_INFO:
+                if(ELOG->getCategory((LOG_CATEGORY)0)->second < VERB_INFO)
+                    return nullptr;
+                break;
+    }
+
 	LogMessage* log = ELOG->getLogMessage();
 	log->m_type = type;
 	log->m_msg.str("");
@@ -187,19 +215,20 @@ LogMessage& Log::logMessage(LOG_TYPE type,const char* COLOR)
 			log->m_color << C_DEF;
 	log->m_date.str("");
 	log->m_date << "["<< boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time())<<"]";
-	return *log;
+
+	return log;
 }
 
 
-void Log::addMessage(LogMessage& lm)
+void Log::addMessage(LogMessage* lm)
 {
 	Log* ELOG = Log::getInstance();
 	ELOG->mp_printMutex->lock();
 	ELOG->printLogMessage(lm);
 	ELOG->mp_printMutex->unlock();
-	lm.reset();
+	lm->reset();
 	ELOG->mp_logMesgMutex->lock();
-	ELOG->m_logMessages.push(&lm);
+	ELOG->m_logMessages.push(lm);
 	ELOG->mp_logMesgMutex->unlock();
 }
 
@@ -229,48 +258,48 @@ void Log::addMessage(LogMessage& lm)
 //	}
 //}
 
-void Log::printLogMessage(LogMessage& lm)
+void Log::printLogMessage(LogMessage* lm)
 {
-	switch(lm.m_type)
+	switch(lm->m_type)
 	{
 	default:
 	case T_GENERAL:
 	{
 		std::cout << C_BRIGHT<<"[UserLog]"<< C_DEF;
 		if(this->m_logFileDefined)
-			(*this->mp_logFile) <<lm.m_date.str().c_str()<< "[UserLog]";
+			(*this->mp_logFile) <<lm->m_date.str().c_str()<< "[UserLog]";
 		printMessageString(lm);
 		break;
 	}
 	case T_ERROR:
 	{
-		if(getCategory(lm.m_cat)->second >= VERB_ERROR)
+		if(getCategory(lm->m_cat)->second >= VERB_ERROR)
 		{
 			std::cout << C_B_RED << "[Error]" << C_DEF;
 			if(this->m_logFileDefined)
-				(*this->mp_logFile) << lm.m_date.str().c_str()<< "[Error]";
+				(*this->mp_logFile) << lm->m_date.str().c_str()<< "[Error]";
 			printMessageString(lm);
 		}
 		break;
 	}
 	case T_WARNING:
 	{
-		if(getCategory(lm.m_cat)->second >= VERB_WARNING)
+		if(getCategory(lm->m_cat)->second >= VERB_WARNING)
 		{
 			std::cout << C_B_YELLOW << "[Warning]" << C_DEF;
 			if(this->m_logFileDefined)
-				(*this->mp_logFile) <<lm.m_date.str().c_str()<< "[Warning]";
+				(*this->mp_logFile) <<lm->m_date.str().c_str()<< "[Warning]";
 			printMessageString(lm);
 		}
 		break;
 	}
 	case T_INFO:
 	{
-		if(getCategory(lm.m_cat)->second >= VERB_INFO)
+		if(getCategory(lm->m_cat)->second >= VERB_INFO)
 		{
 			std::cout << C_B_GREEN << "[Info]" << C_DEF;
 			if(this->m_logFileDefined)
-				(*this->mp_logFile) <<lm.m_date.str().c_str()<< "[Info]";
+				(*this->mp_logFile) <<lm->m_date.str().c_str()<< "[Info]";
 			printMessageString(lm);
 		}
 		break;
@@ -278,12 +307,12 @@ void Log::printLogMessage(LogMessage& lm)
 	}
 }
 
-void Log::printMessageString(LogMessage& lm)
+void Log::printMessageString(LogMessage* lm)
 {
-	std::cout << lm.m_color.str() << lm.m_msg.str() << C_DEF<< std::endl;
+	std::cout << lm->m_color.str() << lm->m_msg.str() << C_DEF<< std::endl;
 	if(this->m_logFileDefined)
 	{
-		(*this->mp_logFile) << lm.m_msg.str().c_str() << std::endl;
+		(*this->mp_logFile) << lm->m_msg.str().c_str() << std::endl;
 
 	}
 }

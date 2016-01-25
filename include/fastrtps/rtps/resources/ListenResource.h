@@ -19,8 +19,7 @@
 
 namespace boost
 {
-
-class recursive_mutex;
+    class mutex;
 }
 
 namespace eprosima {
@@ -111,7 +110,7 @@ public:
 	RTPSParticipantImpl* mp_RTPSParticipantImpl;
 
 	//!Get the associated Mutex
-	boost::recursive_mutex* getMutex();
+	boost::mutex* getMutex();
 
 	const uint32_t m_ID;
 

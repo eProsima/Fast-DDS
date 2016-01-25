@@ -51,7 +51,7 @@ PROJECT_BRIEF          = "@PROJECT_NAME_LARGE@"
 # and the maximum width should not exceed 200 pixels. Doxygen will copy the logo
 # to the output directory.
 
-PROJECT_LOGO           = @PROJECT_SOURCE_DIR@/utils/images/logo/eProsimaLogo.jpg
+PROJECT_LOGO           = @PROJECT_SOURCE_DIR@/utils/images/logo/eProsimaLogo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is

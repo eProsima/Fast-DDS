@@ -41,7 +41,7 @@ HelloWorld::HelloWorld(const HelloWorld &x)
 HelloWorld::HelloWorld(HelloWorld &&x)
 {
     m_index = x.m_index;
-    m_message = x.m_message;
+    m_message = std::move(x.m_message);
 }
 
 HelloWorld& HelloWorld::operator=(const HelloWorld &x)
@@ -55,7 +55,7 @@ HelloWorld& HelloWorld::operator=(const HelloWorld &x)
 HelloWorld& HelloWorld::operator=(HelloWorld &&x)
 {
     m_index = x.m_index;
-    m_message = x.m_message;
+    m_message = std::move(x.m_message);
     
     return *this;
 }
@@ -64,7 +64,7 @@ size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;
             
-    current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4);
+    current_align += 2 + eprosima::fastcdr::Cdr::alignment(current_align, 2);
     current_align += 4 + eprosima::fastcdr::Cdr::alignment(current_align, 4) + 255 + 1;
 
     return current_align;

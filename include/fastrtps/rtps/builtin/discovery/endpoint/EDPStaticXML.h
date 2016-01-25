@@ -63,6 +63,9 @@ public:
 	 * @return True if correct.
 	 */
 	bool loadXMLFile(std::string& filename);
+
+    void loadXMLParticipantEndpoint(ptree::value_type& xml_endpoint, StaticRTPSParticipantInfo* pdata);
+
 	/**
 	 * Load a Reader endpoint.
 	 * @param xml_endpoint Reference of a tree child for a reader.

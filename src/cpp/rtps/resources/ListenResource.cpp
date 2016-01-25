@@ -49,7 +49,7 @@ ListenResource::~ListenResource() {
 
 bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->getMutex());
+	boost::lock_guard<boost::mutex> guard(*this->getMutex());
 	if(endp->getAttributes()->endpointKind == WRITER)
 	{
 		for(auto wit = m_assocWriters.begin();
@@ -79,7 +79,7 @@ bool ListenResource::removeAssociatedEndpoint(Endpoint* endp)
 bool ListenResource::addAssociatedEndpoint(Endpoint* endp)
 {
 	const char* const METHOD_NAME = "addAssociatedEndpoint";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_impl->getMutex());
+	boost::lock_guard<boost::mutex> guard(*mp_impl->getMutex());
 	bool found = false;
 	if(endp->getAttributes()->endpointKind == WRITER)
 	{
@@ -150,7 +150,7 @@ const LocatorList_t& ListenResource::getListenLocators()
 	return mp_impl->getListenLocators();
 }
 
-boost::recursive_mutex* ListenResource::getMutex(){return mp_impl->getMutex();}
+boost::mutex* ListenResource::getMutex(){return mp_impl->getMutex();}
 
 
 

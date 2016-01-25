@@ -58,7 +58,6 @@ void RTPSDomain::stopAll()
 	}
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
 	eClock::my_sleep(100);
-	Log::removeLog();
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,

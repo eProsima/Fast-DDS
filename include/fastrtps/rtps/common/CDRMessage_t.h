@@ -66,8 +66,14 @@ struct CDRMessage_t{
 	{
 		pos = 0;
 		length = 0;
-		buffer = (octet*) malloc(size);
-		max_size = size;
+
+        if(size != 0)
+            buffer = (octet*)malloc(size);
+        else
+            buffer = nullptr;
+
+        max_size = size;
+
 #if EPROSIMA_BIG_ENDIAN
         msg_endian = BIGEND;
 #else

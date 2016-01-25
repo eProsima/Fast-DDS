@@ -80,19 +80,9 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			else if(pdata == nullptr) //RTPSParticipant NOT FOUND
 			{
 				logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
-				this->mp_SEDP->mp_PubReader.second->remove_change(change);
-				return;
 			}
 			else //NOT ADDED BECAUSE IT WAS ALREADY THERE
 			{
-				boost::lock_guard<boost::recursive_mutex> guard(*mp_SEDP->mp_PubReader.second->getMutex());
-				for(auto ch = mp_SEDP->mp_PubReader.second->changesBegin();
-						ch!=mp_SEDP->mp_PubReader.second->changesEnd();++ch)
-				{
-					if((*ch)->instanceHandle == change->instanceHandle &&
-							(*ch)->sequenceNumber < change->sequenceNumber)
-						mp_SEDP->mp_PubReader.second->remove_change(*ch);
-				}
 				wdata->update(&writerProxyData);
 				mp_SEDP->pairingWriterProxy(wdata);
 			}
@@ -103,9 +93,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		//REMOVE WRITER FROM OUR READERS:
 		logInfo(RTPS_EDP,"Disposed Remote Writer, removing...",C_CYAN);
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-		mp_SEDP->mp_PubReader.second->remove_change(change);
 		this->mp_SEDP->removeWriterProxy(auxGUID);
 	}
+
+    //Removing change from history
+    this->mp_SEDP->mp_PubReader.second->remove_change(change);
+
 	return;
 }
 
@@ -114,9 +107,6 @@ static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
 	if(change->instanceHandle == c_InstanceHandle_Unknown)
 	{
 		SerializedPayload_t* pl = &change->serializedPayload;
-		CDRMessage::initCDRMsg(aux_msg);
-        // TODO CHange because it create a buffer to remove after.
-        free(aux_msg->buffer);
 		aux_msg->buffer = pl->data;
 		aux_msg->length = pl->length;
 		aux_msg->max_size = pl->max_size;
@@ -156,13 +146,13 @@ static inline bool compute_key(CDRMessage_t* aux_msg,CacheChange_t* change)
 
 bool EDPSimplePUBListener::computeKey(CacheChange_t* change)
 {
-    CDRMessage_t aux_msg;
+    CDRMessage_t aux_msg(0);
 	return compute_key(&aux_msg,change);
 }
 
 bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 {
-    CDRMessage_t aux_msg;
+    CDRMessage_t aux_msg(0);
 	return compute_key(&aux_msg,change);
 }
 
@@ -211,18 +201,9 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			else if(pdata == nullptr) //RTPSParticipant NOT FOUND
 			{
 				logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
-				this->mp_SEDP->mp_SubReader.second->remove_change(change);
-				return;
 			}
 			else //NOT ADDED BECAUSE IT WAS ALREADY THERE
 			{
-				boost::lock_guard<boost::recursive_mutex> guard(*mp_SEDP->mp_SubReader.second->getMutex());
-				for(auto ch = mp_SEDP->mp_SubReader.second->changesBegin();
-						ch!=mp_SEDP->mp_SubReader.second->changesEnd();++ch)
-				{
-					if((*ch)->instanceHandle == change->instanceHandle)
-						mp_SEDP->mp_SubReader.second->remove_change(*ch);
-				}
 				rdata->update(&readerProxyData);
 				mp_SEDP->pairingReaderProxy(rdata);
 			}
@@ -233,9 +214,12 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		//REMOVE WRITER FROM OUR READERS:
 		logInfo(RTPS_EDP,"Disposed Remote Reader, removing...",C_CYAN);
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-		mp_SEDP->mp_SubReader.second->remove_change(change);
 		this->mp_SEDP->removeReaderProxy(auxGUID);
 	}
+
+    // Remove change from history.
+    this->mp_SEDP->mp_SubReader.second->remove_change(change);
+
 	return;
 }
 

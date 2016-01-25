@@ -28,10 +28,11 @@ macro(gradle_build directory)
             set(THIRDPARTY_FOUND true)
         else()
             if(THIRDPARTY_FOUND)
-                add_custom_command(TARGET java PRE_BUILD
+                add_custom_target(git_submodule_update_${arg}
                     COMMAND git submodule update --recursive --init thirdparty/${arg}
                     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
                     COMMENT "Updating Git module ${arg}" VERBATIM)
+                add_dependencies(java git_submodule_update_${arg})
                 set(THIRDPARTY_FOUND false)
             else()
                 message(FATAL_ERROR "Bad use of gradle_build command")

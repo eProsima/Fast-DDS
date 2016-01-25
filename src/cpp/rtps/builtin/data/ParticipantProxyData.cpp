@@ -103,12 +103,12 @@ bool ParticipantProxyData::initializeData(RTPSParticipantImpl* part,PDPSimple* p
 	this->m_defaultMulticastLocatorList = part->getAttributes().defaultMulticastLocatorList;
 	this->m_expectsInlineQos = false;
 	this->m_guid = part->getGuid();
-	for(uint8_t i =0;i<16;++i)
+	for(uint8_t i = 0; i<16; ++i)
 	{
 		if(i<12)
 			this->m_key.value[i] = m_guid.guidPrefix.value[i];
-		if(i>=16)
-			this->m_key.value[i] = m_guid.entityId.value[i];
+        else
+			this->m_key.value[i] = m_guid.entityId.value[i - 12];
 	}
 
 

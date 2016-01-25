@@ -149,7 +149,7 @@ void StatefulWriter::unsent_changes_not_empty()
 	boost::lock_guard<boost::recursive_mutex> guard2(*this->getRTPSParticipant()->getSendMutex());
 	for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
 	{
-		boost::lock_guard<boost::recursive_mutex> guard(*(*rit)->mp_mutex);
+		boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
@@ -294,6 +294,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 			matched_readers.erase(it);
 			if(matched_readers.size()==0)
 				this->mp_periodicHB->stop_timer();
+
             break;
 		}
 	}
@@ -303,11 +304,15 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
     if(rproxy != nullptr)
     {
         delete rproxy;
+
+        if(this->getAttributes()->durabilityKind == VOLATILE)
+            clean_history();
+
         return true;
     }
 
-	logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer")
-	return false;
+    logInfo(RTPS_HISTORY,"Reader Proxy doesn't exist in this writer");
+    return false;
 }
 
 bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
@@ -363,6 +368,43 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 		}
 	}
 	return true;
+}
+
+void StatefulWriter::clean_history()
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::vector<CacheChange_t*> ackca;
+
+    for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
+            cit != mp_history->changesEnd(); ++cit)
+    {
+        bool acknowledge = true, linked = false;
+
+        for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
+        {
+            ChangeForReader_t cr; 
+
+            if((*it)->getChangeForReader(*cit, &cr))
+            {
+                linked = true;
+
+                if(cr.status != ACKNOWLEDGED)
+                {
+                    acknowledge = false;
+                    break;
+                }
+            }
+        }
+
+        if(!linked || acknowledge)
+            ackca.push_back(*cit);
+    }
+
+    for(std::vector<CacheChange_t*>::iterator cit = ackca.begin();
+            cit != ackca.end(); ++cit)
+    {
+        mp_history->remove_change_g(*cit);
+    }
 }
 
 
