@@ -142,35 +142,57 @@ void PDPSimple::resetParticipantAnnouncement()
 	mp_resendParticipantTimer->restart_timer();
 }
 
-void PDPSimple::announceParticipantState(bool new_change)
+void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 {
 	const char* const METHOD_NAME = "announceParticipantState";
 	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",C_CYAN);
 	CacheChange_t* change = nullptr;
-	if(new_change || m_hasChangedLocalPDP)
-	{
-		this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
-		if(mp_SPDPWriterHistory->getHistorySize() > 0)
-			mp_SPDPWriterHistory->remove_min_change();
-		change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
-		if(getLocalParticipantProxyData()->toParameterList())
-		{
+
+    if(!dispose)
+    {
+        if(new_change || m_hasChangedLocalPDP)
+        {
+            this->getLocalParticipantProxyData()->m_manualLivelinessCount++;
+            if(mp_SPDPWriterHistory->getHistorySize() > 0)
+                mp_SPDPWriterHistory->remove_min_change();
+            change = mp_SPDPWriter->new_change(ALIVE,getLocalParticipantProxyData()->m_key);
+            if(getLocalParticipantProxyData()->toParameterList())
+            {
+#if EPROSIMA_BIG_ENDIAN
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+                change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+                //TODO Optimizacion, intentar quitar la copia.
+                memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+                mp_SPDPWriterHistory->add_change(change);
+            }
+            m_hasChangedLocalPDP = false;
+        }
+        else
+        {
+            mp_SPDPWriter->unsent_changes_reset();
+        }
+    }
+    else
+    {
+        if(mp_SPDPWriterHistory->getHistorySize() > 0)
+            mp_SPDPWriterHistory->remove_min_change();
+        change = mp_SPDPWriter->new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        if(getLocalParticipantProxyData()->toParameterList())
+        {
 #if EPROSIMA_BIG_ENDIAN
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
 #endif
-			change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
-			//TODO Optimizacion, intentar quitar la copia.
-			memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
-			mp_SPDPWriterHistory->add_change(change);
-		}
-		m_hasChangedLocalPDP = false;
-	}
-	else
-	{
-		mp_SPDPWriter->unsent_changes_reset();
-	}
+            change->serializedPayload.length = (uint16_t)getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.length;
+            //TODO Optimizacion, intentar quitar la copia.
+            memcpy(change->serializedPayload.data,getLocalParticipantProxyData()->m_QosList.allQos.m_cdrmsg.buffer,change->serializedPayload.length);
+            mp_SPDPWriterHistory->add_change(change);
+        }
+    }
 
 }
 

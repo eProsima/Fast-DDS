@@ -48,7 +48,7 @@ project(solution, project, example, configurations, local) ::= <<
   <PropertyGroup Label="UserMacros" />
   $configurations:{<PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
     <IntDir>\$(Platform)\\\$(Configuration)\\\$(ProjectName)\</IntDir>
-    <OutDir>.\lib\\$example$\</OutDir>
+    <OutDir>.\\$if(!it.dll)$lib$else$bin$endif$\\$example$\</OutDir>
     <TargetName>$if(!it.dll)$lib$endif$\$(ProjectName)$if(it.debug)$d$endif$</TargetName>
   </PropertyGroup>};separator="\n"$
   $configurations:{<ItemDefinitionGroup Condition="'\$(Configuration)|\$(Platform)'=='$it.name$|$it.platform$'">
@@ -60,15 +60,23 @@ project(solution, project, example, configurations, local) ::= <<
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <ProgramDataBaseFileName>\$(TargetDir)\$(TargetName).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>.\lib\\$example$\\\$(TargetName).pdb</ProgramDataBaseFileName>
       $bigObjOption()$
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Shlwapi.lib;Iphlpapi.lib;$project.dependencies : {dep |$if(!it.dll)$lib$endif$$dep$Types$if(it.debug)$d$endif$.lib}; separator=";"$;$if(!it.dll)$WS2_32.lib;$endif$%(AdditionalDependencies)</AdditionalDependencies>
+      $if(it.dll)$
       <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$solution.libraryPaths : {path |$path$;}$.\lib\\$example$;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>.\lib\\$example$\\\$(TargetName).lib</ImportLibrary>
+      $endif$   
     </Link>
+    $if(!it.dll)$
+    <Lib>
+      <OutputFile>\$(TargetDir)\$(TargetName)\$(TargetExt)</OutputFile>
+    </Lib>
+    $endif$
   </ItemDefinitionGroup>};separator="\n"$
   <ItemGroup>
     $project.commonSrcFiles : {srcfile |<ClCompile Include="$srcfile$" />}; separator="\n"$

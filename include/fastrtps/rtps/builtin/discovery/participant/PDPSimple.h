@@ -73,7 +73,7 @@ public:
 	 * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
 	 * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
 	 */
-	void announceParticipantState(bool new_change);
+	void announceParticipantState(bool new_change, bool dispose = false);
 	//!Stop the RTPSParticipantAnnouncement (only used in tests).
 	void stopParticipantAnnouncement();
 	//!Reset the RTPSParticipantAnnouncement (only used in tests).
