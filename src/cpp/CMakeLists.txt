@@ -223,7 +223,7 @@ if(MSVC OR MSVC_IDE)
 
 
         # Install pdb files
-        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}}/Debug/
+        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
             DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT libraries_${MSVC_ARCH}
             CONFIGURATIONS Debug
