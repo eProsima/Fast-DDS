@@ -1,6 +1,6 @@
 macro(check_boost)
     if(WIN32)
-        option(EPROSIMA_BOOST "Activate special sset of BOOST_LIBRARYDIR" OFF)
+        option(EPROSIMA_BOOST "Activate special set of BOOST_LIBRARYDIR" OFF)
         if(EPROSIMA_BUILD)
             set(EPROSIMA_BOOST ON)
         endif()
