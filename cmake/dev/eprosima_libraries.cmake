@@ -48,7 +48,7 @@ macro(find_eprosima_package package)
                 "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
                 "${${package}_CMAKE_ARGS}\n"
                 "DOWNLOAD_COMMAND echo\n"
-                "UPDATE_COMMAND cd \"${PROJECT_SOURCE_DIR}\" && git submodule update --recursive --init \"thirdparty/${package}\"\n"
+                "UPDATE_COMMAND git submodule update --recursive --init ${PROJECT_SOURCE_DIR}/thirdparty/${package}\n"
                 "SOURCE_DIR \${SOURCE_DIR_}\n"
                 "BINARY_DIR \"${${package}ExternalDir}/build\"\n"
                 ")\n")
@@ -91,7 +91,6 @@ macro(find_eprosima_package package)
                 if(NOT EXECUTE_RESULT EQUAL 0)
                     message(FATAL_ERROR "Cannot build Git submodule ${package}")
                 endif()
-
             endif()
 
             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${CMAKE_INSTALL_PREFIX_})
