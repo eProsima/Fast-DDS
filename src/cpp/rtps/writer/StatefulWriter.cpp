@@ -89,6 +89,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 	{
 		for(auto it=matched_readers.begin();it!=matched_readers.end();++it)
 		{
+            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 			ChangeForReader_t changeForReader;
 			changeForReader.setChange(change);
 			if(m_pushMode)
@@ -126,6 +127,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 			it!=this->matched_readers.end();++it)
 	{
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 		for(std::vector<ChangeForReader_t>::iterator chit = (*it)->m_changesForReader.begin();
 				chit!=(*it)->m_changesForReader.end();++chit)
 		{
@@ -233,6 +235,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	}
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 		if((*it)->m_att.guid == rdata.guid)
 		{
 			logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
@@ -287,6 +290,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
 
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 		if((*it)->m_att.guid == rdata.guid)
 		{
 			logInfo(RTPS_WRITER, "Reader Proxy removed: " << (*it)->m_att.guid);
@@ -320,6 +324,7 @@ bool StatefulWriter::matched_reader_is_matched(RemoteReaderAttributes& rdata)
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 		if((*it)->m_att.guid == rdata.guid)
 		{
 			return true;
@@ -334,6 +339,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 		if((*it)->m_att.guid == readerGuid)
 		{
 			*RP = *it;
@@ -354,6 +360,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 	std::vector<ReaderProxy*>::iterator it;
 	for(it=matched_readers.begin();it!=matched_readers.end();++it)
 	{
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 		ChangeForReader_t changeForReader;
 		if((*it)->getChangeForReader(change,&changeForReader))
 		{
@@ -382,6 +389,7 @@ void StatefulWriter::clean_history()
 
         for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
         {
+            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
             ChangeForReader_t cr; 
 
             if((*it)->getChangeForReader(*cit, &cr))
@@ -487,6 +495,7 @@ void StatefulWriter::updateTimes(WriterTimes& times)
 		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 				it!=this->matched_readers.end();++it)
 		{
+            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 			(*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
 		}
 	}
@@ -495,6 +504,7 @@ void StatefulWriter::updateTimes(WriterTimes& times)
 		for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 				it!=this->matched_readers.end();++it)
 		{
+            boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
 			(*it)->mp_nackSupression->update_interval(times.nackSupressionDuration);
 		}
 	}
