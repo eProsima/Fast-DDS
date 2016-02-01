@@ -48,7 +48,7 @@ macro(find_eprosima_package package)
                 "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
                 "${${package}_CMAKE_ARGS}\n"
                 "DOWNLOAD_COMMAND echo\n"
-                "UPDATE_COMMAND cd ${PROJECT_SOURCE_DIR} && git submodule update --recursive --init \"thirdparty/${package}\"\n"
+                "UPDATE_COMMAND cd \"${PROJECT_SOURCE_DIR}\" && git submodule update --recursive --init \"thirdparty/${package}\"\n"
                 "SOURCE_DIR \${SOURCE_DIR_}\n"
                 "BINARY_DIR \"${${package}ExternalDir}/build\"\n"
                 ")\n")
