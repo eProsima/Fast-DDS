@@ -217,7 +217,7 @@ public:
 	//!Set the name of the participant.
 	inline void setName(const char* nam){name = nam;}
 	//!Get the name of the participant.
-	inline const char* getName(){return name.c_str();}
+	inline const char* getName() const {return name.c_str();}
 
 private:
 	//!Name of the participant.
