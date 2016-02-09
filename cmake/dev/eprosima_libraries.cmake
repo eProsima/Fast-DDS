@@ -192,6 +192,7 @@ macro(install_eprosima_libraries)
             # Install libraries
             install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
                 DESTINATION ${LIB_INSTALL_DIR}
+                USE_SOURCE_PERMISSIONS
                 COMPONENT libraries
                 )
 
