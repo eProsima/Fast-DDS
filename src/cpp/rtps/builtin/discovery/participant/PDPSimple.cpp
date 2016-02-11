@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
@@ -134,7 +135,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 
 void PDPSimple::stopParticipantAnnouncement()
 {
-	mp_resendParticipantTimer->stop_timer();
+	mp_resendParticipantTimer->cancel_timer();
 }
 
 void PDPSimple::resetParticipantAnnouncement()
@@ -590,7 +591,9 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 		if((*it)->m_guid.guidPrefix == guidP)
 		{
 			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive",C_MAGENTA);
+            // TODO Ricardo: Study if isAlive attribute is necessary.
 			(*it)->isAlive = true;
+            (*it)->mp_leaseDurationTimer->restart_timer();
 			break;
 		}
 	}

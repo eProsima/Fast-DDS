@@ -52,10 +52,7 @@ RTPSWriter::~RTPSWriter()
 	logInfo(RTPS_WRITER,"RTPSWriter destructor");
 
     if(mp_unsetChangesNotEmpty != nullptr)
-    {
-        mp_unsetChangesNotEmpty->stop_timer();
         delete mp_unsetChangesNotEmpty;
-    }
 
     mp_history->mp_writer = nullptr;
     mp_history->mp_mutex = nullptr;

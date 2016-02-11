@@ -293,7 +293,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
             rproxy = *it;
 			matched_readers.erase(it);
 			if(matched_readers.size()==0)
-				this->mp_periodicHB->stop_timer();
+				this->mp_periodicHB->cancel_timer();
 
             break;
 		}

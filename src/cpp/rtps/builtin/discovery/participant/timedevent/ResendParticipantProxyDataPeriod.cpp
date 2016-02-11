@@ -36,7 +36,6 @@ ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_
 
 ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 {
-	stop_timer();
 }
 
 void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)

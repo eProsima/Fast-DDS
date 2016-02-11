@@ -68,11 +68,11 @@ public:
 	* @param msg Message associated to the event. It can be nullptr.
 	*/
 	virtual void event(EventCode code, const char* msg) = 0;
+
+    void cancel_timer();
 	
 	//!Method to restart the timer.
 	void restart_timer();
-	//!Method to stop the timer.
-	void stop_timer();
 	
 	/**
 	* Update event interval.

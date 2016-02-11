@@ -30,14 +30,15 @@ TimedEvent::~TimedEvent()
 	delete(mp_impl);
 }
 
+void TimedEvent::cancel_timer()
+{
+	mp_impl->cancel_timer();
+}
+
+
 void TimedEvent::restart_timer()
 {
 	mp_impl->restart_timer();
-}
-
-void TimedEvent::stop_timer()
-{
-	mp_impl->stop_timer();
 }
 
 bool TimedEvent::update_interval(const Duration_t& inter)

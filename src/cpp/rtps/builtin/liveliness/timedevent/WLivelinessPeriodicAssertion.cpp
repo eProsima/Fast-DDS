@@ -49,8 +49,6 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
-	//const char* const METHOD_NAME = "~WLivelinessPeriodicAssertion";
-	stop_timer();
 }
 
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)

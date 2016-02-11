@@ -31,14 +31,13 @@ static const char* const CLASS_NAME = "WriterProxyLiveliness";
 
 WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
 		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval, TimedEvent::ON_SUCCESS),
-				mp_WP(p_WP)
+        mp_WP(p_WP)
 {
 
 }
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
 {
-	stop_timer();
 }
 
 void WriterProxyLiveliness::event(EventCode code, const char* msg)

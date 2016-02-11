@@ -28,7 +28,6 @@ static const char* const CLASS_NAME = "NackSupressionDuration";
 
 NackSupressionDuration::~NackSupressionDuration()
 {
-	stop_timer();
 }
 
 NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,double millisec):

@@ -32,7 +32,6 @@ static const char* const CLASS_NAME = "NackResponseDelay";
 
 NackResponseDelay::~NackResponseDelay()
 {
-	stop_timer();
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):

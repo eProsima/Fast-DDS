@@ -30,12 +30,10 @@ UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
   mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
-
 }
 
 UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 {
-	stop_timer();
 }
 
 void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)

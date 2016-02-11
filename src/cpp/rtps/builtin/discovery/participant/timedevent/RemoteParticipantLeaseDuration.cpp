@@ -31,7 +31,7 @@ static const char* const CLASS_NAME = "RemoteParticipantLeaseDuration";
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
 		ParticipantProxyData* pdata,
 		double interval):
-				TimedEvent(p_SPDP->getRTPSParticipant()->getIOService(),interval),
+				TimedEvent(p_SPDP->getRTPSParticipant()->getIOService(), interval, TimedEvent::ON_SUCCESS),
 				mp_PDP(p_SPDP),
 				mp_participantProxyData(pdata)
 {
@@ -40,7 +40,6 @@ RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP
 
 RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 {
-	stop_timer();
 }
 
 void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
@@ -51,20 +50,12 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
     (void)msg;
 
 	if(code == EVENT_SUCCESS)
-	{
-		logInfo(RTPS_LIVELINESS,"Checking RTPSParticipant: "
-				<< mp_participantProxyData->m_participantName << " with GUID: "
-				<< mp_participantProxyData->m_guid,C_MAGENTA);
-		if(mp_participantProxyData->isAlive)
-			mp_participantProxyData->isAlive = false;
-		else
-		{
-			logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
-					<< mp_participantProxyData->m_guid,C_MAGENTA);
-			mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
-			return;
-		}
-		this->restart_timer();
+    {
+        logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
+                << mp_participantProxyData->m_guid,C_MAGENTA);
+        // Set pointer to null because this call will be delete itself.
+        mp_participantProxyData->mp_leaseDurationTimer = nullptr;
+        mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 	}
 	else if(code == EVENT_ABORT)
 	{

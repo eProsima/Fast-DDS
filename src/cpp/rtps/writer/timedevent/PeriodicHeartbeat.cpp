@@ -35,7 +35,6 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 {
 	const char* const METHOD_NAME = "~PeriodicHeartbeat";
 	logInfo(RTPS_WRITER,"Destroying PeriodicHB");
-	stop_timer();
 }
 
 PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW,double interval):
