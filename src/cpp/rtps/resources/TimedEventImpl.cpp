@@ -17,6 +17,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <boost/atomic.hpp>
+#include <cassert>
 
 namespace eprosima
 {
@@ -62,6 +63,8 @@ TimedEventImpl::~TimedEventImpl()
     boost::unique_lock<boost::mutex> lock(mutex_);
     // Exchange state to avoid race conditions.
     TimerState::StateCode code = state_.get()->code_.exchange(TimerState::DESTROYED, boost::memory_order_relaxed);
+    // code cannot be DESTROYED. In this case it is wrong usage of class.
+    assert(code != TimerState::DESTROYED);
 
 
     // Don't bother to wait here. If running the event, this is not the event thread.
@@ -79,13 +82,13 @@ void TimedEventImpl::cancel_timer()
     // Lock timer to protect state_ and timer_ objects.
     boost::unique_lock<boost::mutex> lock(mutex_);
 
-    TimerState::StateCode code = state_.get()->code_.load(boost::memory_order_relaxed);
+    // Exchange state to avoid race conditions.
+    TimerState::StateCode code = state_.get()->code_.exchange(TimerState::CANCELLED, boost::memory_order_relaxed);
+    // code cannot be DESTROYED. In this case it is wrong usage of class.
+    assert(code != TimerState::DESTROYED);
 
-    if(code != TimerState::WAITING)
-        return;
-
-    state_.get()->code_.store(TimerState::CANCELLED, boost::memory_order_relaxed);
-    timer_.cancel();
+    if(code == TimerState::WAITING)
+        timer_.cancel();
 }
 
 void TimedEventImpl::restart_timer()
@@ -140,8 +143,7 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
     // If the destructor is waiting, signal it.
     cond_.notify_one();
 
-    if(autodestruction_ == TimedEvent::ALLWAYS)
-        delete this->mp_event;
-    else if(code == TimedEvent::EVENT_SUCCESS && autodestruction_ == TimedEvent::ON_SUCCESS)
+    if(autodestruction_ == TimedEvent::ALLWAYS ||
+            (code == TimedEvent::EVENT_SUCCESS && autodestruction_ == TimedEvent::ON_SUCCESS))
         delete this->mp_event;
 }

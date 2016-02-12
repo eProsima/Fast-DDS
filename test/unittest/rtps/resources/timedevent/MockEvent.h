@@ -6,6 +6,7 @@
 #include <boost/asio.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/atomic.hpp>
+#include <boost/thread.hpp>
 
 class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
@@ -17,10 +18,13 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 
         void event(EventCode code, const char* msg= nullptr);
 
-        void wait();
+        bool wait(unsigned int milliseconds);
 
         boost::atomic_int successed_;
         boost::atomic_int cancelled_;
+        static int destructed_;
+        static boost::mutex destruction_mutex_;
+        static boost::condition_variable destruction_cond_;
 
     private:
 

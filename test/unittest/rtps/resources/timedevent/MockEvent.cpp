@@ -1,5 +1,9 @@
 #include "MockEvent.h"
 
+int MockEvent::destructed_ = 0;
+boost::mutex MockEvent::destruction_mutex_;
+boost::condition_variable MockEvent::destruction_cond_;
+
 MockEvent::MockEvent(boost::asio::io_service *service, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
     TimedEvent(service, milliseconds, autodestruction), successed_(0), cancelled_(0), semaphore_(0)
 {
@@ -7,6 +11,10 @@ MockEvent::MockEvent(boost::asio::io_service *service, double milliseconds, Time
 
 MockEvent::~MockEvent()
 {
+    destruction_mutex_.lock();
+    ++destructed_;
+    destruction_mutex_.unlock();
+    destruction_cond_.notify_one();
 }
 
 void MockEvent::event(EventCode code, const char* msg)
@@ -21,7 +29,8 @@ void MockEvent::event(EventCode code, const char* msg)
     semaphore_.post();
 }
 
-void MockEvent::wait()
+bool MockEvent::wait(unsigned int milliseconds)
 {
-    semaphore_.wait();
+    boost::system_time const timeout = boost::get_system_time() + boost::posix_time::milliseconds(milliseconds);
+    return semaphore_.timed_wait(timeout);
 }
