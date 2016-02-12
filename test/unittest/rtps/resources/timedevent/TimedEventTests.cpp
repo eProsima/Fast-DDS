@@ -17,6 +17,7 @@ class TimedEventEnvironment : public ::testing::Environment
         {
             service_.stop();
             thread_->join();
+            delete thread_;
         }
 
         void run()
@@ -100,7 +101,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
     MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     event->restart_timer();
-    ASSERT_TRUE(event->wait(200));
     
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
@@ -142,7 +142,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
 
     // Last event will be successful.
     event->restart_timer();
-    ASSERT_TRUE(event->wait(200));
     
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
@@ -184,7 +183,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
 
     // Last event will be successful.
     event->restart_timer();
-    ASSERT_TRUE(event->wait(10));
     
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
@@ -203,9 +201,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
     for(int i = 0; i < 10; ++i)
         event->restart_timer();
 
-    for(int i = 0; i < 10; ++i)
-        ASSERT_TRUE(event->wait(200));
-
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -223,9 +218,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
     for(int i = 0; i < 10; ++i)
         event->restart_timer();
 
-    for(int i = 0; i < 10; ++i)
-        ASSERT_TRUE(event->wait(10));
-
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -241,7 +233,6 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_SuccessEvents)
     MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
-    ASSERT_TRUE(event->wait(200));
     
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
@@ -260,8 +251,6 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_CancelEvents)
     event->restart_timer();
     event->cancel_timer();
 
-    ASSERT_TRUE(event->wait(200));
-
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
@@ -278,8 +267,6 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_QuickCancelEvents)
 
     event->restart_timer();
     event->cancel_timer();
-
-    ASSERT_TRUE(event->wait(10));
 
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
