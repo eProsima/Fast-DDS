@@ -163,7 +163,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
         event->restart_timer();
         event->cancel_timer();
 
-        ASSERT_TRUE(event->wait(10));
+        ASSERT_TRUE(event->wait(100));
 
         boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
@@ -284,7 +284,7 @@ void restart(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
         event->restart_timer();
 
         if(sleep_time > 0)
-            usleep(sleep_time);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(sleep_time));
     }
 }
 
@@ -295,7 +295,7 @@ void cancel(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
         event->cancel_timer();
 
         if(sleep_time > 0)
-            usleep(sleep_time);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(sleep_time));
     }
 }
 
@@ -329,7 +329,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
 
     // Wait all expected times
     for(unsigned int i = 0; i < 180; ++i)
-        ASSERT_TRUE(event.wait(120));
+        ASSERT_TRUE(event.wait(200));
 
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
@@ -367,7 +367,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
 
     // Wait all expected times
     for(unsigned int i = 0; i < 180; ++i)
-        ASSERT_TRUE(event.wait(10));
+        ASSERT_TRUE(event.wait(100));
 
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
@@ -405,7 +405,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
 
     // Wait all expected times
     for(unsigned int i = 0; i < 180; ++i)
-        ASSERT_TRUE(event.wait(10));
+        ASSERT_TRUE(event.wait(100));
 
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
@@ -416,8 +416,5 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
-#if defined(WIN32) && defined(_DEBUG)
-    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
-#endif
     return RUN_ALL_TESTS();
 }
