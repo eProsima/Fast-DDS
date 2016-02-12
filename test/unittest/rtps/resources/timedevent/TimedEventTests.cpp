@@ -1,5 +1,6 @@
 #include "MockEvent.h"
 
+#include <boost/random.hpp>
 #include <gtest/gtest.h>
 
 class TimedEventEnvironment : public ::testing::Environment
@@ -36,7 +37,7 @@ TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing:
 
 TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
 {
-    MockEvent event(&env->service_, 100);
+    MockEvent event(&env->service_, 100, false);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -56,7 +57,7 @@ TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
 
 TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
 {
-    MockEvent event(&env->service_, 100);
+    MockEvent event(&env->service_, 100, false);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -77,7 +78,7 @@ TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
 
 TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
 {
-    MockEvent event(&env->service_, 100);
+    MockEvent event(&env->service_, 100, false);
 
     for(int i = 0; i < 10; ++i)
         event.restart_timer();
@@ -98,7 +99,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(&env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     event->restart_timer();
     
@@ -114,7 +115,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(&env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     // Cancel ten times.
     for(int i = 0; i < 10; ++i)
@@ -155,7 +156,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 0, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(&env->service_, 0, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     // Cancel ten times.
     for(int i = 0; i < 10; ++i)
@@ -196,7 +197,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(&env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     for(int i = 0; i < 10; ++i)
         event->restart_timer();
@@ -213,7 +214,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 0, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(&env->service_, 0, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     for(int i = 0; i < 10; ++i)
         event->restart_timer();
@@ -230,7 +231,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_SuccessEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(&env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
     
@@ -246,7 +247,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_CancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 100, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(&env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
     event->cancel_timer();
@@ -263,10 +264,61 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_QuickCancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(&env->service_, 0, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(&env->service_, 0, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
     event->cancel_timer();
+
+    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+
+    if(MockEvent::destructed_ != 1)
+        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+
+    ASSERT_EQ(MockEvent::destructed_, 1);
+}
+
+TEST(TimedEvent, EventNonAutoDestruct_AutoRestart)
+{
+    // Restart destriction counter.
+    MockEvent::destructed_ = 0;
+    MockEvent *event = new MockEvent(&env->service_, 10 , true);
+
+    for(unsigned int i = 0; i < 100; ++i)
+    {
+        event->restart_timer();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+    }
+
+    int successed = event->successed_.load(boost::memory_order_relaxed);
+
+    ASSERT_GE(successed , 100);
+
+    delete event;
+
+    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+
+    if(MockEvent::destructed_ != 1)
+        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+
+    ASSERT_EQ(MockEvent::destructed_, 1);
+}
+
+
+TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
+{
+    // Restart destriction counter.
+    MockEvent::destructed_ = 0;
+
+    boost::mt19937 rng;
+    boost::uniform_int<> range(10, 100);
+    boost::variate_generator<boost::mt19937, boost::uniform_int<>> random(rng, range);
+
+    MockEvent* event = new MockEvent(&env->service_, 2, true);
+
+    event->restart_timer();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(random()));
+
+    delete event;
 
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
@@ -304,7 +356,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
     boost::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(&env->service_, 2);
+    MockEvent event(&env->service_, 2, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 100ms between each one.
@@ -342,7 +394,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
     boost::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(&env->service_, 2);
+    MockEvent event(&env->service_, 2, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 2ms between each one.
@@ -380,7 +432,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
     boost::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(&env->service_, 2);
+    MockEvent event(&env->service_, 2, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 0ms between each one.
@@ -411,6 +463,35 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
 
     ASSERT_EQ(successed + cancelled, 180);
+}
+
+TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
+{
+    boost::thread *thr1 = nullptr, *thr2 = nullptr,
+        *thr3 = nullptr, *thr4 = nullptr;
+
+    MockEvent event(&env->service_, 2, true);
+
+    // 2 Thread restarting and two thread cancel.
+    // Thread 1 -> AutoRestart 100 times waiting 2ms between each one.
+    // Thread 2 -> AutoRestart 100 times waiting 3ms between each one.
+    // Thread 3 -> AutoRestart 80 times waiting 4ms between each one.
+    // Thread 4 -> AutoRestart 80 times waiting 5ms between each one.
+
+    thr1 = new boost::thread(restart, &event, 100, 2); 
+    thr2 = new boost::thread(restart, &event, 100, 3); 
+    thr3 = new boost::thread(restart, &event, 80, 4); 
+    thr4 = new boost::thread(restart, &event, 80, 5); 
+
+    thr1->join();
+    thr2->join();
+    thr3->join();
+    thr4->join();
+
+    delete thr1;
+    delete thr2;
+    delete thr3;
+    delete thr4;
 }
 
 int main(int argc, char **argv)

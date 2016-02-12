@@ -84,8 +84,6 @@ void TimedEventImpl::cancel_timer()
 
     // Exchange state to avoid race conditions.
     TimerState::StateCode code = state_.get()->code_.exchange(TimerState::CANCELLED, boost::memory_order_relaxed);
-    // code cannot be DESTROYED. In this case it is wrong usage of class.
-    assert(code != TimerState::DESTROYED);
 
     if(code == TimerState::WAITING)
         timer_.cancel();
@@ -93,15 +91,25 @@ void TimedEventImpl::cancel_timer()
 
 void TimedEventImpl::restart_timer()
 {
-    cancel_timer();
-
     // Lock timer to protect state_ and timer_ objects.
     boost::unique_lock<boost::mutex> lock(mutex_);
-    state_.reset(new TimerState());
-    state_.get()->code_.store(TimerState::WAITING, boost::memory_order_relaxed);
 
-    timer_.expires_from_now(m_interval_microsec);
-    timer_.async_wait(boost::bind(&TimedEventImpl::event,this,boost::asio::placeholders::error, state_));
+    // Cancel previous event.
+    // Exchange state to avoid race conditions.
+    TimerState::StateCode code = state_.get()->code_.exchange(TimerState::CANCELLED, boost::memory_order_relaxed);
+
+    if(code == TimerState::WAITING)
+        timer_.cancel();
+
+    // if the code is executed in the event thread, and the event is being destroyed, don't start other event
+    if(code != TimerState::DESTROYED)
+    {
+        state_.reset(new TimerState());
+        state_.get()->code_.store(TimerState::WAITING, boost::memory_order_relaxed);
+
+        timer_.expires_from_now(m_interval_microsec);
+        timer_.async_wait(boost::bind(&TimedEventImpl::event,this,boost::asio::placeholders::error, state_));
+    }
 }
 
 bool TimedEventImpl::update_interval(const Duration_t& inter)

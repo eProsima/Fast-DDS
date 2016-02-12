@@ -593,7 +593,8 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 			logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive",C_MAGENTA);
             // TODO Ricardo: Study if isAlive attribute is necessary.
 			(*it)->isAlive = true;
-            (*it)->mp_leaseDurationTimer->restart_timer();
+            if((*it)->mp_leaseDurationTimer != nullptr)
+                (*it)->mp_leaseDurationTimer->restart_timer();
 			break;
 		}
 	}

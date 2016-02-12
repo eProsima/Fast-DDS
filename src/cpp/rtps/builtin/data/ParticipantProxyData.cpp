@@ -66,7 +66,7 @@ ParticipantProxyData::~ParticipantProxyData()
 	}
 	m_QosList.inlineQos.deleteParams();
 	m_QosList.allQos.deleteParams();
-	if(this->mp_leaseDurationTimer !=nullptr)
+	if(this->mp_leaseDurationTimer != nullptr)
 		delete(mp_leaseDurationTimer);
 
 	delete(mp_mutex);

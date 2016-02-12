@@ -4,8 +4,8 @@ int MockEvent::destructed_ = 0;
 boost::mutex MockEvent::destruction_mutex_;
 boost::condition_variable MockEvent::destruction_cond_;
 
-MockEvent::MockEvent(boost::asio::io_service *service, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
-    TimedEvent(service, milliseconds, autodestruction), successed_(0), cancelled_(0), semaphore_(0)
+MockEvent::MockEvent(boost::asio::io_service *service, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
+    TimedEvent(service, milliseconds, autodestruction), successed_(0), cancelled_(0), semaphore_(0), autorestart_(autorestart)
 {
 }
 
@@ -22,7 +22,12 @@ void MockEvent::event(EventCode code, const char* msg)
     (void)msg;
 
     if(code == EventCode::EVENT_SUCCESS)
+    {
         successed_.fetch_add(1, boost::memory_order_relaxed);
+
+        if(autorestart_)
+            restart_timer();
+    }
     else if(code == EventCode::EVENT_ABORT)
         cancelled_.fetch_add(1, boost::memory_order_relaxed);
 

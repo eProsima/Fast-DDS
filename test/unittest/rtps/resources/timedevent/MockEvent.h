@@ -12,7 +12,7 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
     public:
 
-        MockEvent(boost::asio::io_service *service, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+        MockEvent(boost::asio::io_service *service, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 
         virtual ~MockEvent();
 
@@ -29,6 +29,7 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
     private:
 
         boost::interprocess::interprocess_semaphore semaphore_;
+        bool autorestart_;
 };
 
 #endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
