@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/common/MatchingInfo.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
@@ -30,8 +31,9 @@ namespace rtps {
 static const char* const CLASS_NAME = "WriterProxyLiveliness";
 
 WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
-		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval, TimedEvent::ON_SUCCESS),
-        mp_WP(p_WP)
+TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
+mp_WP(p_WP)
 {
 
 }

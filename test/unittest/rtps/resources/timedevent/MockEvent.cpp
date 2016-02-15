@@ -4,8 +4,8 @@ int MockEvent::destructed_ = 0;
 boost::mutex MockEvent::destruction_mutex_;
 boost::condition_variable MockEvent::destruction_cond_;
 
-MockEvent::MockEvent(boost::asio::io_service *service, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
-    TimedEvent(service, milliseconds, autodestruction), successed_(0), cancelled_(0), semaphore_(0), autorestart_(autorestart)
+MockEvent::MockEvent(boost::asio::io_service& service, const boost::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
+    TimedEvent(service, event_thread, milliseconds, autodestruction), successed_(0), cancelled_(0), semaphore_(0), autorestart_(autorestart)
 {
 }
 

@@ -42,11 +42,21 @@ public:
 	ResourceEvent();
 	virtual ~ResourceEvent();
 
+    /**
+    * Method to initialize the thread.
+    * @param p
+    */
+    void init_thread(RTPSParticipantImpl*p);
+
 	/**
 	* Get the associated IO service
 	* @return Associated IO service
 	*/
-	boost::asio::io_service* getIOService(){return mp_io_service;};
+	boost::asio::io_service& getIOService() { return *mp_io_service; }
+
+    boost::thread& getThread() { return *mp_b_thread; }
+
+private:
 
 	//!Thread
 	boost::thread* mp_b_thread;
@@ -55,11 +65,6 @@ public:
 	//!
 	void * mp_work;
 
-	/**
-	 * Method to initialize the thread.
-	 * @param p 
-	 */
-	void init_thread(RTPSParticipantImpl*p);
 	/**
 	 * Task to announce the correctness of the thread.
 	 */

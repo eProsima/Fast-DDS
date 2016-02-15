@@ -95,11 +95,16 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 				changeForReader.status = UNDERWAY;
 			else
 				changeForReader.status = UNACKNOWLEDGED;
+            // Block access to ReaderProxy
+            (*it)->mp_mutex->lock();
 			changeForReader.is_relevant = (*it)->rtps_is_relevant(change);
 			(*it)->m_changesForReader.push_back(changeForReader);
 			unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
 			multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
 			expectsInlineQos |= (*it)->m_att.expectsInlineQos;
+            // Release access before restart the timer.
+            (*it)->mp_mutex->unlock();
+
 			(*it)->mp_nackSupression->restart_timer();
 		}
 		RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,

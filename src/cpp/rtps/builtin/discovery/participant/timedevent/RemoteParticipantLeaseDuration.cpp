@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
@@ -33,7 +34,8 @@ static const char* const CLASS_NAME = "RemoteParticipantLeaseDuration";
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
 		ParticipantProxyData* pdata,
 		double interval):
-				TimedEvent(p_SPDP->getRTPSParticipant()->getIOService(), interval, TimedEvent::ON_SUCCESS),
+				TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+                p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
 				mp_PDP(p_SPDP),
 				mp_participantProxyData(pdata)
 {

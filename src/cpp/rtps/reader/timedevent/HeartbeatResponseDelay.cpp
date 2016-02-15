@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/reader/WriterProxy.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -35,8 +36,9 @@ HeartbeatResponseDelay::~HeartbeatResponseDelay()
 }
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval):
-		TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getIOService(),interval),
-		mp_WP(p_WP)
+TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
+mp_WP(p_WP)
 {
 
 }

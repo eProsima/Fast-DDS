@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
@@ -35,8 +36,9 @@ NackResponseDelay::~NackResponseDelay()
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
-						TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getIOService(),millisec),
-						mp_RP(p_RP)
+TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
+mp_RP(p_RP)
 {
 	CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
 	RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->getGuid().guidPrefix);

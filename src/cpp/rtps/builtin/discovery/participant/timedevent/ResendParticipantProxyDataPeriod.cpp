@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include "../../../../participant/RTPSParticipantImpl.h"
@@ -27,8 +28,9 @@ static const char* const CLASS_NAME = "ResendParticipantProxyDataPeriod";
 
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
 		double interval):
-				TimedEvent(p_SPDP->getRTPSParticipant()->getIOService(),interval),
-				mp_PDP(p_SPDP)
+        TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+        p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
+		mp_PDP(p_SPDP)
 {
 
 

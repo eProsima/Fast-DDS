@@ -32,6 +32,7 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
+#include <boost/thread/thread.hpp>
 
 
 
@@ -58,7 +59,7 @@ namespace eprosima
                      * @param serv IO service
                      * @param milliseconds Interval of the timedEvent.
                      */
-                    TimedEventImpl(TimedEvent* ev,boost::asio::io_service* serv,boost::posix_time::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction);
+                    TimedEventImpl(TimedEvent* ev, boost::asio::io_service &service, const boost::thread& event_thread, boost::posix_time::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction);
 
                     /**
                      * Method invoked when the event occurs. Abstract method.
@@ -128,6 +129,8 @@ namespace eprosima
                     boost::condition_variable cond_;
 
                     std::shared_ptr<TimerState> state_;
+
+                    boost::thread::id event_thread_id_;
             };
 
 

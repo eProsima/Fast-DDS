@@ -602,9 +602,9 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 }
 
 
-boost::asio::io_service* RTPSParticipantImpl::getIOService()
+ResourceEvent& RTPSParticipantImpl::getEventResource()
 {
-	return this->mp_event_thr->getIOService();
+	return *this->mp_event_thr;
 }
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
