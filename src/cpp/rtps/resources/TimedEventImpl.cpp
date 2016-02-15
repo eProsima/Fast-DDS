@@ -161,6 +161,10 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
 
     // If the destructor is waiting, signal it.
     boost::unique_lock<boost::mutex> lock(mutex_);
+
+    scode = TimerState::RUNNING;
+    ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::INACTIVE, boost::memory_order_relaxed);
+
     cond_.notify_one();
 
     if(autodestruction_ == TimedEvent::ALLWAYS ||
@@ -170,6 +174,4 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
         lock.unlock();
         delete this->mp_event;
     }
-
-    state.get()->code_.store(TimerState::INACTIVE, boost::memory_order_relaxed);
 }
