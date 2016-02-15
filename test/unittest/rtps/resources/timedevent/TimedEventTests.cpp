@@ -492,6 +492,11 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     delete thr2;
     delete thr3;
     delete thr4;
+
+    int successed = event.successed_.load(boost::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+
+    ASSERT_GE(successed + cancelled, 360);
 }
 
 int main(int argc, char **argv)

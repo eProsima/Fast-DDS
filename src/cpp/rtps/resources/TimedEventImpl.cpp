@@ -63,9 +63,9 @@ TimedEventImpl::~TimedEventImpl()
     boost::unique_lock<boost::mutex> lock(mutex_);
     // Exchange state to avoid race conditions.
     TimerState::StateCode code = state_.get()->code_.exchange(TimerState::DESTROYED, boost::memory_order_relaxed);
+
     // code cannot be DESTROYED. In this case it is wrong usage of class.
     assert(code != TimerState::DESTROYED);
-
 
     // Don't bother to wait here. If running the event, this is not the event thread.
     if(code == TimerState::RUNNING)
@@ -79,27 +79,37 @@ TimedEventImpl::~TimedEventImpl()
  */
 void TimedEventImpl::cancel_timer()
 {
+    TimerState::StateCode code = TimerState::WAITING;
+
     // Lock timer to protect state_ and timer_ objects.
     boost::unique_lock<boost::mutex> lock(mutex_);
 
     // Exchange state to avoid race conditions.
-    TimerState::StateCode code = state_.get()->code_.exchange(TimerState::CANCELLED, boost::memory_order_relaxed);
+    bool ret = state_.get()->code_.compare_exchange_strong(code, TimerState::CANCELLED, boost::memory_order_relaxed);
 
-    if(code == TimerState::WAITING)
+    if(ret)
+    {
         timer_.cancel();
+        mp_event->event(TimedEvent::EVENT_ABORT, nullptr);
+    }
 }
 
 void TimedEventImpl::restart_timer()
 {
+    TimerState::StateCode code = TimerState::WAITING;
+
     // Lock timer to protect state_ and timer_ objects.
     boost::unique_lock<boost::mutex> lock(mutex_);
 
     // Cancel previous event.
     // Exchange state to avoid race conditions.
-    TimerState::StateCode code = state_.get()->code_.exchange(TimerState::CANCELLED, boost::memory_order_relaxed);
+    bool ret = state_.get()->code_.compare_exchange_strong(code, TimerState::CANCELLED, boost::memory_order_relaxed);
 
-    if(code == TimerState::WAITING)
+    if(ret)
+    {
         timer_.cancel();
+        mp_event->event(TimedEvent::EVENT_ABORT, nullptr);
+    }
 
     // if the code is executed in the event thread, and the event is being destroyed, don't start other event
     if(code != TimerState::DESTROYED)
@@ -128,26 +138,26 @@ bool TimedEventImpl::update_interval_millisec(double time_millisec)
 
 void TimedEventImpl::event(const boost::system::error_code& ec, const std::shared_ptr<TimerState>& state)
 {
-    // First step is exchange the state, to prevent race condition from the destruction case.
-    TimerState::StateCode scode = state.get()->code_.exchange(TimerState::RUNNING, boost::memory_order_relaxed);
+    TimerState::StateCode scode = TimerState::WAITING;
 
-    if(scode == TimerState::DESTROYED)
+    // First step is exchange the state, to prevent race condition from the destruction case.
+    bool ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::RUNNING, boost::memory_order_relaxed);
+
+    // Check bad preconditions
+    assert(!(ret && scode == TimerState::DESTROYED));
+
+    if(scode != TimerState::WAITING || !ret || ec == boost::asio::error::operation_aborted)
         return;
 
     TimedEvent::EventCode code = TimedEvent::EVENT_MSG;
     const char *message = nullptr;
 
-    if(ec == boost::asio::error::operation_aborted || scode != TimerState::WAITING)
-        code = TimedEvent::EVENT_ABORT;
-    else if(ec == boost::system::errc::success)
+    if(ec == boost::system::errc::success)
         code = TimedEvent::EVENT_SUCCESS;
     else
         message = ec.message().c_str();
 
     this->mp_event->event(code, message);
-
-    
-    state.get()->code_.store(TimerState::INACTIVE, boost::memory_order_relaxed);
 
     // If the destructor is waiting, signal it.
     boost::unique_lock<boost::mutex> lock(mutex_);
@@ -160,4 +170,6 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
         lock.unlock();
         delete this->mp_event;
     }
+
+    state.get()->code_.store(TimerState::INACTIVE, boost::memory_order_relaxed);
 }

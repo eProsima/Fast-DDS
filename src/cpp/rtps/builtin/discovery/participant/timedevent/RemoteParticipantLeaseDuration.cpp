@@ -20,6 +20,8 @@
 
 #include <fastrtps/utils/RTPSLog.h>
 
+#include <boost/thread/recursive_mutex.hpp>
+
 
 
 namespace eprosima {
@@ -54,7 +56,9 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
                 << mp_participantProxyData->m_guid,C_MAGENTA);
         // Set pointer to null because this call will be delete itself.
+        mp_participantProxyData->mp_mutex->lock();
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;
+        mp_participantProxyData->mp_mutex->unlock();
         mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid);
 	}
 	else if(code == EVENT_ABORT)
