@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 RTPSAsSocketWriter::RTPSAsSocketWriter(): participant_(nullptr),
@@ -42,6 +43,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 	pattr.builtin.use_WriterLivelinessProtocol = false;
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
     pattr.participantID = 2;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);

@@ -20,6 +20,7 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 PubSubHelloWorldReader::PubSubHelloWorldReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
@@ -37,6 +38,7 @@ PubSubHelloWorldReader::~PubSubHelloWorldReader()
 void PubSubHelloWorldReader::init(uint16_t nmsgs)
 {
 	ParticipantAttributes pattr;
+    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
 	participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -47,7 +49,6 @@ void PubSubHelloWorldReader::init(uint16_t nmsgs)
 	SubscriberAttributes sattr;
 	sattr.topic.topicKind = NO_KEY;
 	sattr.topic.topicDataType = "HelloWorldType";
-	sattr.topic.topicName = "HelloWorldTopic";
     configSubscriber(sattr);
 	subscriber_ = Domain::createSubscriber(participant_, sattr, &listener_);
     ASSERT_NE(subscriber_, nullptr);

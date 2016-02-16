@@ -15,11 +15,15 @@
 #define _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDREADER_HPP_
 
 #include "PubSubHelloWorldReader.hpp" 
+#include <boost/asio.hpp>
 
 class PubSubAsNonReliableHelloWorldReader : public PubSubHelloWorldReader
 {
     public:
-        void configSubscriber(SubscriberAttributes &/*rattr*/) {};
+        void configSubscriber(SubscriberAttributes& sattr)
+        {
+            sattr.topic.topicName = "PubSubAsNonReliableHelloworld_" + boost::asio::ip::host_name();
+        };
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDREADER_HPP_

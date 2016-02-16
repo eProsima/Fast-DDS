@@ -7,23 +7,24 @@
  *************************************************************************/
 
 /**
- * @file PubSubAsNonReliableHelloWorldWriter.hpp
+ * @file PubSubAsReliableHelloWorldWriter.hpp
  *
  */
 
-#ifndef _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDWRITER_HPP_
-#define _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDWRITER_HPP_
+#ifndef _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDWRITER_HPP_
+#define _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDWRITER_HPP_
 
 #include "PubSubHelloWorldWriter.hpp" 
+#include <boost/asio.hpp>
 
-class PubSubAsNonReliableHelloWorldWriter : public PubSubHelloWorldWriter
+class PubSubAsReliableHelloWorldWriter : public PubSubHelloWorldWriter
 {
     public:
         void configPublisher(PublisherAttributes &puattr)
         {
-            puattr.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+            puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            puattr.topic.topicName = "PubSubAsReliableHelloworld_" + boost::asio::ip::host_name();
         }
 };
 
-#endif // _TEST_BLACKBOX_PUBSUBASNONRELIABLEHELLOWORLDWRITER_HPP_
-
+#endif // _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDWRITER_HPP_

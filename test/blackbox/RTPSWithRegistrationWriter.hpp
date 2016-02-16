@@ -18,12 +18,14 @@
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/WriterQos.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <string>
 #include <list>
 #include <condition_variable>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps;
+using namespace ::rtps;
 
 class RTPSWithRegistrationWriter 
 {
@@ -56,6 +58,7 @@ class RTPSWithRegistrationWriter
         void matched();
         void waitDiscovery();
         virtual void configWriter(WriterAttributes &wattr, eprosima::fastrtps::WriterQos &wqos) = 0;
+        virtual void configTopic(TopicAttributes &tattr) = 0;
 
     private:
 

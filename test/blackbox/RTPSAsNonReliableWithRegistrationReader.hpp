@@ -15,11 +15,17 @@
 #define _TEST_BLACKBOX_RTPSASNONRELIABLEWITHREGISTRATIONREADER_HPP_
 
 #include "RTPSWithRegistrationReader.hpp" 
+#include <boost/asio.hpp>
 
 class RTPSAsNonReliableWithRegistrationReader : public RTPSWithRegistrationReader
 {
     public:
         void configReader(ReaderAttributes &/*rattr*/, eprosima::fastrtps::ReaderQos& /*rqos*/) {};
+
+        void configTopic(TopicAttributes &tattr)
+        {
+            tattr.topicName = "RTPSAsNonReliableWithRegistration_" + boost::asio::ip::host_name();
+        };
 };
 
 #endif // _TEST_BLACKBOX_RTPSASNONRELIABLEWITHREGISTRATIONREADER_HPP_

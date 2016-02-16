@@ -15,13 +15,15 @@
 #define _TEST_BLACKBOX_PUBSUBASRELIABLEHELLOWORLDREADER_HPP_
 
 #include "PubSubHelloWorldReader.hpp" 
+#include <boost/asio.hpp>
 
 class PubSubAsReliableHelloWorldReader : public PubSubHelloWorldReader
 {
     public:
-        void configSubscriber(SubscriberAttributes &rattr)
+        void configSubscriber(SubscriberAttributes &sattr)
         {
-            rattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            sattr.topic.topicName = "PubSubAsReliableHelloworld_" + boost::asio::ip::host_name();
         };
 };
 

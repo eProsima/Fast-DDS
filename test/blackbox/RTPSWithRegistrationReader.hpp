@@ -18,11 +18,13 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <list>
 #include <condition_variable>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps;
+using namespace ::rtps;
 
 class RTPSWithRegistrationReader 
 {
@@ -57,6 +59,7 @@ class RTPSWithRegistrationReader
         void waitDiscovery();
         void matched();
         virtual void configReader(ReaderAttributes &rattr, eprosima::fastrtps::ReaderQos &rqos) = 0;
+        virtual void configTopic(TopicAttributes &tattr) = 0;
 
     private:
 

@@ -15,6 +15,7 @@
 #define _TEST_BLACKBOX_RTPSASRELIABLEWITHREGISTRATIONWRITER_HPP_
 
 #include "RTPSWithRegistrationWriter.hpp" 
+#include <boost/asio.hpp>
 
 class RTPSAsReliableWithRegistrationWriter : public RTPSWithRegistrationWriter
 {
@@ -23,6 +24,11 @@ class RTPSAsReliableWithRegistrationWriter : public RTPSWithRegistrationWriter
         {
             wattr.endpoint.reliabilityKind = RELIABLE;
             wqos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        }
+
+        void configTopic(TopicAttributes &tattr)
+        {
+            tattr.topicName = "RTPSAsReliableWithRegistration_" + boost::asio::ip::host_name();
         }
 };
 

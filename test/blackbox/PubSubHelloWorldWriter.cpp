@@ -19,6 +19,7 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 PubSubHelloWorldWriter::PubSubHelloWorldWriter(): listener_(*this), participant_(nullptr),
@@ -36,6 +37,7 @@ void PubSubHelloWorldWriter::init()
 {
 	//Create participant
 	ParticipantAttributes pattr;
+    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
 	participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -46,7 +48,6 @@ void PubSubHelloWorldWriter::init()
 	PublisherAttributes puattr;
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
-	puattr.topic.topicName = "HelloWorldTopic";
     configPublisher(puattr);
 	publisher_ = Domain::createPublisher(participant_, puattr, &listener_);
     ASSERT_NE(publisher_, nullptr);
