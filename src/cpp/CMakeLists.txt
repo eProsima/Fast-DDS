@@ -117,7 +117,8 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         # Export symbols in DLL library
-        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC BOOST_ALL_DYN_LINK ${PROJECT_NAME_UPPER}_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME}_static PUBLIC BOOST_ALL_DYN_LINK)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
