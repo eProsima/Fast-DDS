@@ -77,8 +77,8 @@ class ReqRepHelloWorldReplier
         void newNumber(SampleIdentity sample_identity, uint16_t number);
         void waitDiscovery();
         void matched();
-        virtual void configSubscriber(SubscriberAttributes &sattr) = 0;
-        virtual void configPublisher(PublisherAttributes &puattr) = 0;
+        virtual void configSubscriber(SubscriberAttributes &sattr, const std::string& suffix) = 0;
+        virtual void configPublisher(PublisherAttributes &puattr, const std::string& suffix) = 0;
 
     private:
 
