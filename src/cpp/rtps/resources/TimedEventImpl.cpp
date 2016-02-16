@@ -149,7 +149,7 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
 
     if(scode != TimerState::WAITING || !ret || ec == boost::asio::error::operation_aborted)
     {
-        if(autodestruction_ == TimedEvent::ALLWAYS && scode != TimerState::DESTROYED)
+        if(scode != TimerState::DESTROYED && autodestruction_ == TimedEvent::ALLWAYS)
             delete this->mp_event;
         
         return;
