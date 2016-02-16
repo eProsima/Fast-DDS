@@ -108,15 +108,14 @@ void TimedEventImpl::restart_timer()
         timer_.cancel();
         mp_event->event(TimedEvent::EVENT_ABORT, nullptr);
     }
-    // If the event is running, wait to it finishes. In other case the event can be destroyed but there is no more
-    // access to this running event information.
-    else if(code == TimerState::RUNNING && event_thread_id_ != boost::this_thread::get_id())
-        cond_.wait(lock);
 
     // if the code is executed in the event thread, and the event is being destroyed, don't start other event
     if(code != TimerState::DESTROYED)
     {
-        state_.reset(new TimerState());
+        // If the event is running, reuse the state. In other case the event can be destroyed but there is no more
+        // access to this running event information.
+        if(code != TimerState::RUNNING && code != TimerState::INACTIVE)
+            state_.reset(new TimerState());
         state_.get()->code_.store(TimerState::WAITING, boost::memory_order_relaxed);
 
         timer_.expires_from_now(m_interval_microsec);
