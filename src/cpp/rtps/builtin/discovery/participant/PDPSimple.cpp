@@ -149,6 +149,8 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 	logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")",C_CYAN);
 	CacheChange_t* change = nullptr;
 
+	boost::lock_guard<boost::recursive_mutex> guardPDP(*this->mp_mutex);
+
     if(!dispose)
     {
         if(new_change || m_hasChangedLocalPDP)

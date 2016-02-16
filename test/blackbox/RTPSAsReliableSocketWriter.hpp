@@ -45,6 +45,11 @@ class RTPSAsReliableSocketWriter : public RTPSAsSocketWriter
             rattr.guid.entityId.value[2] = 1;
             rattr.guid.entityId.value[3] = 4;
         }
+
+        std::string getText()
+        {
+            return "RTPSAsReliableSocket";
+        }
 };
 
 #endif // _TEST_BLACKBOX_RTPSASRELIABLESOCKETWRITER_HPP_
