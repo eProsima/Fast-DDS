@@ -407,6 +407,7 @@ void WriterProxy::assertLiveliness()
 
 	m_isAlive=true;
 
+	this->mp_writerProxyLiveliness->cancel_timer();
 	this->mp_writerProxyLiveliness->restart_timer();
 }
 

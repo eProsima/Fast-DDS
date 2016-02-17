@@ -381,6 +381,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 	isAlive = true;
 	if(this->mp_leaseDurationTimer != nullptr)
 	{
+		mp_leaseDurationTimer->cancel_timer();
 		mp_leaseDurationTimer->update_interval(m_leaseDuration);
 		mp_leaseDurationTimer->restart_timer();
 	}

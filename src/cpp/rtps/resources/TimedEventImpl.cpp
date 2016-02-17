@@ -94,23 +94,15 @@ void TimedEventImpl::cancel_timer()
 
 void TimedEventImpl::restart_timer()
 {
-    TimerState::StateCode code = TimerState::WAITING;
-
     // Lock timer to protect state_ and timer_ objects.
     boost::unique_lock<boost::mutex> lock(mutex_);
 
-    // Cancel previous event.
-    // Exchange state to avoid race conditions. Only WAITING state can be CANCELLED:
-    bool ret = state_.get()->code_.compare_exchange_strong(code, TimerState::CANCELLED, boost::memory_order_relaxed);
+    // Get current state.
+    TimerState::StateCode code = state_.get()->code_.load(boost::memory_order_relaxed);
 
-    if(ret)
-    {
-        timer_.cancel();
-        mp_event->event(TimedEvent::EVENT_ABORT, nullptr);
-    }
-
-    // if the code is executed in the event thread, and the event is being destroyed, don't start other event
-    if(code != TimerState::DESTROYED)
+    // if the code is executed in the event thread, and the event is being destroyed, don't start other event.
+    // if the code indicate an event is already waiting, don't start other event.
+    if(code != TimerState::DESTROYED && code != TimerState::WAITING)
     {
         // If the event is running, reuse the state. In other case the event can be destroyed but there is no more
         // access to this running event information.

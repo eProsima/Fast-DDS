@@ -245,7 +245,10 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
-                mp_livelinessAutomatic->restart_timer();
+            {
+                mp_livelinessAutomatic->cancel_timer();
+            }
+            mp_livelinessAutomatic->restart_timer();
 		}
 		m_livAutomaticWriters.push_back(W);
 	}
@@ -264,7 +267,10 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
-                mp_livelinessManRTPSParticipant->restart_timer();
+            {
+                mp_livelinessManRTPSParticipant->cancel_timer();
+            }
+            mp_livelinessManRTPSParticipant->restart_timer();
 		}
 		m_livManRTPSParticipantWriters.push_back(W);
 	}
@@ -393,7 +399,10 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
-                mp_livelinessAutomatic->restart_timer();
+            {
+                mp_livelinessAutomatic->cancel_timer();
+            }
+            mp_livelinessAutomatic->restart_timer();
 		}
 	}
 	else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -411,7 +420,10 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
-                mp_livelinessManRTPSParticipant->restart_timer();
+            {
+                mp_livelinessManRTPSParticipant->cancel_timer();
+            }
+            mp_livelinessManRTPSParticipant->restart_timer();
 		}
 	}
 	return true;
