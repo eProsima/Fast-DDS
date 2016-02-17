@@ -176,13 +176,9 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
-check_gtest()
-if(GTEST_FOUND)
-    enable_testing()
-    include(CTest)
-    add_subdirectory(test)
-endif()
+enable_testing()
+include(CTest)
+add_subdirectory(test)
 
 ###############################################################################
 # Documentation
