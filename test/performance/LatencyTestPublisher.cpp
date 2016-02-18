@@ -419,7 +419,7 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 	output_xml << "\t\t<description><![CDATA[" << n_samples << " samples of " << TS.nbytes << " bytes.]]></description>" << std::endl;
 	output_xml << "\t\t<result>" << std::endl;
 	output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
-	output_xml << "\t\t\t<executiontime unit=\"ms\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+	output_xml << "\t\t\t<executiontime unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
 	output_xml << "\t\t</result>" << std::endl;
 	output_xml << "\t</test>" << std::endl;
 
@@ -485,7 +485,7 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 	output_xml << "\t<test name=\"" << TS.nbytes << " bytes\" executed=\"yes\" >" << std::endl;
 	output_xml << "\t\t<result>" << std::endl;
 	output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
-	output_xml << "\t\t\t<executiontime unit=\"ms\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+	output_xml << "\t\t\t<executiontime unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
 	output_xml << "\t\t</result>" << std::endl;
 	output_xml << "\t</test>" << std::endl;
 
