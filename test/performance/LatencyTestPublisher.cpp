@@ -20,7 +20,8 @@ using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-uint32_t dataspub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
+//uint32_t dataspub[] = { 12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380 };
+uint32_t dataspub[] = { 12, 28, 60 }; // XXX TODO
 
 std::vector<uint32_t> data_size_pub (dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
 
@@ -51,6 +52,8 @@ LatencyTestPublisher::LatencyTestPublisher():
 	m_datasublistener.mp_up = this;
 	m_commandpublistener.mp_up = this;
 	m_commandsublistener.mp_up = this;
+
+	output_xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
@@ -61,6 +64,23 @@ LatencyTestPublisher::~LatencyTestPublisher()
 
 bool LatencyTestPublisher::init(int n_sub,int n_sam)
 {
+	//////////////////////////////
+	char date_buffer[9];
+	char time_buffer[7];
+	time_t t = time(0);   // get time now
+	struct tm * now = localtime(&t);
+	strftime(date_buffer, 9, "%Y%m%d", now);
+	strftime(time_buffer, 7, "%H%M%S", now);
+	
+	output_xml_name << "LatencyTest-" << date_buffer << time_buffer << ".xml";
+
+	output_xml << "<report name=\"LatencyTest-" << date_buffer << time_buffer << "\" categ=\"LatencyTest\" >" << std::endl;
+	output_xml << "\t<start>" << std::endl;
+	output_xml << "\t\t<date format=\"YYYYMMDD\" val=\"" << date_buffer << "\" />" << std::endl;
+	output_xml << "\t\t<time format=\"HHMMSS\" val=\"" << time_buffer << "\" />" << std::endl;
+	output_xml << "\t</start>" << std::endl;
+	//////////////////////////////
+
 	n_samples = n_sam;
 	n_subscribers = n_sub;
 	ParticipantAttributes PParam;
@@ -338,6 +358,12 @@ void LatencyTestPublisher::run()
 	Domain::removePublisher(this->mp_commandpub);
 	cout << "REMOVING SUBSCRIBER"<<endl;
 	Domain::removeSubscriber(mp_commandsub);
+
+	output_xml << "</report>" << std::endl;
+	std::ofstream outFile;
+	outFile.open(output_xml_name.str());
+	outFile << output_xml.str();
+	outFile.close();
 }
 
 bool LatencyTestPublisher::test(uint32_t datasize)
@@ -389,6 +415,14 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 }
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
+	output_xml << "\t<test name=\"" << TS.nbytes << " bytes\" executed=\"yes\" >" << std::endl;
+	output_xml << "\t\t<description><![CDATA[" << n_samples << " samples of " << TS.nbytes << " bytes.]]></description>" << std::endl;
+	output_xml << "\t\t<result>" << std::endl;
+	output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
+	output_xml << "\t\t\t<executiontime unit=\"ms\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+	output_xml << "\t\t</result>" << std::endl;
+	output_xml << "\t</test>" << std::endl;
+
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,
@@ -448,6 +482,13 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
+	output_xml << "\t<test name=\"" << TS.nbytes << " bytes\" executed=\"yes\" >" << std::endl;
+	output_xml << "\t\t<result>" << std::endl;
+	output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
+	output_xml << "\t\t\t<executiontime unit=\"ms\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+	output_xml << "\t\t</result>" << std::endl;
+	output_xml << "\t</test>" << std::endl;
+
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,

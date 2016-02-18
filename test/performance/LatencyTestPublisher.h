@@ -97,8 +97,9 @@ public:
 	}m_commandsublistener;
 	LatencyDataType latency_t;
 		TestCommandDataType command_t;
-
-
+		
+	std::stringstream output_xml_name;
+	std::stringstream output_xml;
 };
 
 

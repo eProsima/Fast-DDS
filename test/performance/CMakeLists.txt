@@ -1,5 +1,6 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     find_package(Threads REQUIRED)
+	find_package(PythonInterp 3 REQUIRED)
 
     # If Windows, link against export dll functions
     if(WIN32)
@@ -27,5 +28,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 	target_include_directories(ThroughputTest PRIVATE ${Boost_INCLUDE_DIR})
 	target_link_libraries(ThroughputTest fastrtps ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
+	add_test(NAME LatencyTest
+			COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}\\latency_tests.py)
+	if(WIN32)
+		set_property(TEST LatencyTest PROPERTY ENVIRONMENT
+			"PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
+        set_property(TEST LatencyTest APPEND PROPERTY ENVIRONMENT
+			"LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>")
+	endif()
+	
 endif()
 
