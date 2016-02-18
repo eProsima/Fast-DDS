@@ -38,6 +38,8 @@ class PubSubHelloWorldReader
                 {
                     if (info.status == MATCHED_MATCHING)
                         reader_.matched();
+                    else
+                        reader_.unmatched();
                 }
 
             private:
@@ -51,12 +53,15 @@ class PubSubHelloWorldReader
         virtual ~PubSubHelloWorldReader();
         void init(uint16_t nmsgs);
         bool isInitialized() const { return initialized_; }
+        void destroy();
         void newNumber(uint16_t number);
         std::list<uint16_t> getNonReceivedMessages();
         uint16_t lastvalue_;
         void block(uint16_t lastvalue, const std::chrono::seconds &seconds);
         void waitDiscovery();
+        void waitRemoval();
         void matched();
+        void unmatched();
         virtual void configSubscriber(SubscriberAttributes &sattr) = 0;
 
     private:

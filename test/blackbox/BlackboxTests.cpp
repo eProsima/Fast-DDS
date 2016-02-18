@@ -271,6 +271,36 @@ TEST(BlackBox, ReqRepAsReliableHelloworld)
     }
 }
 
+TEST(BlackBox, ParticipantRemoval)
+{
+    PubSubAsReliableHelloWorldReader reader;
+    PubSubAsReliableHelloWorldWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability.
+    reader.waitDiscovery();
+
+    // Send some data.
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    writer.send(msgs);
+
+    // Destroy the writer participant.
+    writer.destroy();
+
+    // Check that reader receives the unmatched.
+    reader.waitRemoval();
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

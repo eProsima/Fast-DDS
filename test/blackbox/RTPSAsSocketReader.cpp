@@ -44,7 +44,7 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 	pattr.builtin.use_WriterLivelinessProtocol = false;
-    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
     pattr.participantID = 1;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
@@ -76,11 +76,11 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
     }
 
     text_ = getText();
-    domainId_ = pattr.builtin.domainId;
+    domainId_ = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
     hostname_ = boost::asio::ip::host_name();
 
     std::ostringstream word;
-    word << text_ << "_" << domainId_ << "_" << hostname_;
+    word << text_ << "_" << hostname_ << "_" << domainId_;
     word_ = word.str();
 
     initialized_ = true;

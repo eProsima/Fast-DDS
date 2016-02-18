@@ -16,6 +16,7 @@
 
 #include "RTPSWithRegistrationWriter.hpp" 
 #include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class RTPSAsReliableWithRegistrationWriter : public RTPSWithRegistrationWriter
 {
@@ -29,6 +30,7 @@ class RTPSAsReliableWithRegistrationWriter : public RTPSWithRegistrationWriter
         void configTopic(TopicAttributes &tattr)
         {
             tattr.topicName = "RTPSAsReliableWithRegistration_" + boost::asio::ip::host_name();
+            tattr.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
         }
 };
 

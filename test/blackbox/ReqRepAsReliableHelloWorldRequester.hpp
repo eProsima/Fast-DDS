@@ -16,6 +16,7 @@
 
 #include "ReqRepHelloWorldRequester.hpp" 
 #include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
 {
@@ -24,6 +25,7 @@ class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
         {
             rattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
             rattr.topic.topicName = "ReqRepAsReliableHelloworld_" + boost::asio::ip::host_name();
+            rattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
             rattr.topic.topicName += "_" + suffix;
         };
 
@@ -31,6 +33,7 @@ class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
         {
             puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
             puattr.topic.topicName = "ReqRepAsReliableHelloworld_" + boost::asio::ip::host_name();
+            puattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
             puattr.topic.topicName += "_" + suffix;
         }
 };

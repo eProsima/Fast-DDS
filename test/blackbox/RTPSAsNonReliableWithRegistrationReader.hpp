@@ -16,6 +16,7 @@
 
 #include "RTPSWithRegistrationReader.hpp" 
 #include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class RTPSAsNonReliableWithRegistrationReader : public RTPSWithRegistrationReader
 {
@@ -25,6 +26,7 @@ class RTPSAsNonReliableWithRegistrationReader : public RTPSWithRegistrationReade
         void configTopic(TopicAttributes &tattr)
         {
             tattr.topicName = "RTPSAsNonReliableWithRegistration_" + boost::asio::ip::host_name();
+            tattr.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
         };
 };
 

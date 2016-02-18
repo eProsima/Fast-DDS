@@ -16,6 +16,7 @@
 
 #include "PubSubHelloWorldReader.hpp" 
 #include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class PubSubAsNonReliableHelloWorldReader : public PubSubHelloWorldReader
 {
@@ -23,6 +24,7 @@ class PubSubAsNonReliableHelloWorldReader : public PubSubHelloWorldReader
         void configSubscriber(SubscriberAttributes& sattr)
         {
             sattr.topic.topicName = "PubSubAsNonReliableHelloworld_" + boost::asio::ip::host_name();
+            sattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
         };
 };
 

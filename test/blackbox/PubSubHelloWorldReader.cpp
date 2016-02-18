@@ -38,7 +38,7 @@ PubSubHelloWorldReader::~PubSubHelloWorldReader()
 void PubSubHelloWorldReader::init(uint16_t nmsgs)
 {
 	ParticipantAttributes pattr;
-    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
+    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -60,6 +60,15 @@ void PubSubHelloWorldReader::init(uint16_t nmsgs)
     }
 
     initialized_ = true;
+}
+
+void PubSubHelloWorldReader::destroy()
+{
+    if(participant_ != nullptr)
+    {
+        Domain::removeParticipant(participant_);
+        participant_ = nullptr;
+    }
 }
 
 void PubSubHelloWorldReader::newNumber(uint16_t number)
@@ -96,10 +105,27 @@ void PubSubHelloWorldReader::waitDiscovery()
     ASSERT_NE(matched_, 0u);
 }
 
+void PubSubHelloWorldReader::waitRemoval()
+{
+    std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+    if(matched_ != 0)
+        cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+
+    ASSERT_EQ(matched_, 0u);
+}
+
 void PubSubHelloWorldReader::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
+    cvDiscovery_.notify_one();
+}
+
+void PubSubHelloWorldReader::unmatched()
+{
+    std::unique_lock<std::mutex> lock(mutexDiscovery_);
+    --matched_;
     cvDiscovery_.notify_one();
 }
 

@@ -43,7 +43,7 @@ void RTPSWithRegistrationWriter::init()
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	pattr.builtin.use_WriterLivelinessProtocol = true;
-    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 

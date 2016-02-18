@@ -16,6 +16,7 @@
 
 #include "PubSubHelloWorldWriter.hpp" 
 #include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class PubSubAsReliableHelloWorldWriter : public PubSubHelloWorldWriter
 {
@@ -24,6 +25,7 @@ class PubSubAsReliableHelloWorldWriter : public PubSubHelloWorldWriter
         {
             puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
             puattr.topic.topicName = "PubSubAsReliableHelloworld_" + boost::asio::ip::host_name();
+            puattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
         }
 };
 

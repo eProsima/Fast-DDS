@@ -40,7 +40,7 @@ ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
 void ReqRepHelloWorldReplier::init()
 {
 	ParticipantAttributes pattr;
-    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
+    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
