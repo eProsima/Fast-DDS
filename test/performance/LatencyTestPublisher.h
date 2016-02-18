@@ -98,8 +98,9 @@ public:
 	LatencyDataType latency_t;
 		TestCommandDataType command_t;
 		
-	std::stringstream output_xml_name;
-	std::stringstream output_xml;
+	std::vector<uint32_t> data_size_pub;
+	std::stringstream output_jtl_name;
+	std::stringstream output_jtl;
 };
 
 

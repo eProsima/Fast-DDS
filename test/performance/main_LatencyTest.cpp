@@ -52,6 +52,9 @@ int main(int argc, char** argv){
 	int sub_number = 1;
 	int n_samples = c_n_samples;
 	bool echo = true;
+
+	uint32_t data_size = 16 - 4;
+
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
@@ -63,16 +66,27 @@ int main(int argc, char** argv){
 			cout << "NEEDS publisher OR subscriber as first argument"<<endl;
 			return 0;
 		}
-		if(argc > 2 && type == 1)
+
+		if (argc > 2) {
+			std::istringstream iss(argv[2]);
+			if (!(iss >> data_size))
+			{
+				cout << "Problem reading bytes " << endl;
+				data_size = 16;
+			}
+			data_size -= 4;
+		}
+		
+		if(argc > 3 && type == 1)
 		{
-			std::istringstream iss( argv[2] );
+			std::istringstream iss( argv[3] );
 			if (!(iss >> sub_number))
 			{
 				cout << "Problem reading subscriber number "<< endl;
 			}
 			if(argc > 3) //READ SAMPLES NUMBER
 			{
-				std::istringstream iss2( argv[3] );
+				std::istringstream iss2( argv[4] );
 				if (!(iss2 >> n_samples))
 				{
 					cout << "Problem reading subscriber number "<< endl;
@@ -89,14 +103,14 @@ int main(int argc, char** argv){
 				}
 			}
 		}
-		else if(argc > 2 && type == 2)
+		else if(argc > 3 && type == 2)
 		{
-			if(strcmp(argv[2],"echo")==0)
+			if(strcmp(argv[3],"echo")==0)
 			{
 				cout << "Subscriber will ECHO"<<endl;
 				echo = true;
 			}
-			else if(strcmp(argv[2],"noecho")==0)
+			else if(strcmp(argv[3],"noecho")==0)
 			{
 				cout << "Subscriber will NOT ECHO"<<endl;
 				echo = false;
@@ -108,7 +122,7 @@ int main(int argc, char** argv){
 			}
 			if(argc > 3) //READ SAMPLES NUMBER
 			{
-				std::istringstream iss( argv[3] );
+				std::istringstream iss( argv[4] );
 				if (!(iss >> n_samples))
 				{
 					cout << "Problem reading subscriber number "<< endl;
@@ -130,8 +144,8 @@ int main(int argc, char** argv){
 	else
 	{
 		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
-		cout << "LatencyTest publisher NUM_SUBSCRIBERS NUM_SAMPLES"<<endl;
-		cout << "LatencyTest subscriber echo/noecho NUM_SAMPLES" <<endl;
+		cout << "LatencyTest publisher BYTES NUM_SUBSCRIBERS NUM_SAMPLES"<<endl;
+		cout << "LatencyTest subscriber BYTES echo/noecho NUM_SAMPLES" <<endl;
 		return 0;
 	}
 
@@ -141,6 +155,7 @@ int main(int argc, char** argv){
 	{
 		cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
 		LatencyTestPublisher latencyPub;
+		latencyPub.data_size_pub.push_back(data_size);
 		latencyPub.init(sub_number,n_samples);
 		latencyPub.run();
 		break;
@@ -148,6 +163,7 @@ int main(int argc, char** argv){
 	case 2:
 	{
 		LatencyTestSubscriber latencySub;
+		latencySub.data_size_sub.push_back(data_size);
 		latencySub.init(echo,n_samples);
 		latencySub.run();
 		break;

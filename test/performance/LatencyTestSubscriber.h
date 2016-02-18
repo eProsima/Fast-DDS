@@ -75,6 +75,7 @@ public:
 	LatencyDataType latency_t;
 	TestCommandDataType command_t;
 
+	std::vector<uint32_t> data_size_sub;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */
