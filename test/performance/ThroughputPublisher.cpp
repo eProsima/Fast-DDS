@@ -163,6 +163,8 @@ ThroughputPublisher::ThroughputPublisher():
 
 	//mp_par->stopParticipantAnnouncement();
 	eClock::my_sleep(5000);
+
+	output_xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
 }
 
 void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
@@ -186,6 +188,23 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 	sema.wait();
 	sema.wait();
 	cout << "Discovery complete"<<endl;
+
+	//////////////////////////////
+	char date_buffer[9];
+	char time_buffer[7];
+	time_t t = time(0);   // get time now
+	struct tm * now = localtime(&t);
+	strftime(date_buffer, 9, "%Y%m%d", now);
+	strftime(time_buffer, 7, "%H%M%S", now);
+
+	output_xml_name << "Throughput-" << date_buffer << time_buffer << ".xml";
+
+	output_xml << "<report name=\"Throughput-" << date_buffer << time_buffer << "\" categ=\"Throughput\" >" << std::endl;
+	output_xml << "\t<start>" << std::endl;
+	output_xml << "\t\t<date format=\"YYYYMMDD\" val=\"" << date_buffer << "\" />" << std::endl;
+	output_xml << "\t\t<time format=\"HHMMSS\" val=\"" << time_buffer << "\" />" << std::endl;
+	output_xml << "\t</start>" << std::endl;
+	//////////////////////////////
 
 	ThroughputCommandType command;
 	SampleInfo_t info;

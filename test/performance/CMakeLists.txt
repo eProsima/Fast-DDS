@@ -2,11 +2,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     find_package(Threads REQUIRED)
 	find_package(PythonInterp 3 REQUIRED)
 
-    # If Windows, link against export dll functions
-    if(WIN32)
-        add_definitions(-DFASTRTPS_DYN_LINK -DFASTCDR_DYN_LINK)
-    endif()
-
     ###############################################################################
     # Unit tests
     ###############################################################################
@@ -29,7 +24,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 	target_link_libraries(ThroughputTest fastrtps ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 	add_test(NAME LatencyTest
-			COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py)
+			COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py")
 	if(WIN32)
 		set_property(TEST LatencyTest PROPERTY ENVIRONMENT
 			"PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;${BOOST_LIBRARYDIR}\\;$ENV{PATH}")
