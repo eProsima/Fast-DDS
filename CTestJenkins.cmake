@@ -46,7 +46,7 @@ if(CTEST_COVERAGE_COMMAND)
     ctest_coverage(${QUIET_})
 endif()
 if(CTEST_MEMORYCHECK_COMMAND)
-    ctest_memcheck(${QUIET_})
+    ctest_memcheck(EXCLUDE_LABEL NoMemoryCheck ${QUIET_})
 endif()
 ctest_submit(${QUIET_})
 

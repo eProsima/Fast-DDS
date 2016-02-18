@@ -197,9 +197,9 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 	strftime(date_buffer, 9, "%Y%m%d", now);
 	strftime(time_buffer, 7, "%H%M%S", now);
 
-	output_xml_name << "Throughput-" << date_buffer << time_buffer << ".xml";
+	output_xml_name << "perf_Throughput_" << date_buffer << time_buffer << ".xml";
 
-	output_xml << "<report name=\"Throughput-" << date_buffer << time_buffer << "\" categ=\"Throughput\" >" << std::endl;
+	output_xml << "<report name=\"Throughput_" << date_buffer << time_buffer << "\" categ=\"Throughput\" >" << std::endl;
 	output_xml << "\t<start>" << std::endl;
 	output_xml << "\t\t<date format=\"YYYYMMDD\" val=\"" << date_buffer << "\" />" << std::endl;
 	output_xml << "\t\t<time format=\"HHMMSS\" val=\"" << time_buffer << "\" />" << std::endl;
@@ -240,6 +240,12 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 	command.m_command = ALL_STOPS;
 	//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
+	
+	output_xml << "</report>" << std::endl;
+	std::ofstream outFile;
+	outFile.open(output_xml_name.str());
+	outFile << output_xml.str();
+	outFile.close();
 }
 
 bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
@@ -298,20 +304,15 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			output_xml << "\t<test name=\"" << result.payload_size << " bytes, " << result.demand << " demand\" executed=\"yes\" >" << std::endl;
 			output_xml << "\t\t<result>" << std::endl;
 			output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
-
 			output_xml << "\t\t\t<metrics>" << std::endl;
 			output_xml << "\t\t\t\t<sent_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-
-			output_xml << "\t\t\t\t<send_time unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<send_throughput unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<received_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<lost_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<receive_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<receive_throughput unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t</metrics>" << std::endl;
-
-			//output_xml << "\t\t\t<executiontime unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
-
+			output_xml << "\t\t\t\t<send_time unit=\"us\" mesure=\"" << result.publisher.totaltime_us << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<send_throughput unit=\"MBits/sec\" mesure=\"" << result.publisher.MBitssec << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<received_samples unit=\"samples\" mesure=\"" << result.subscriber.recv_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<lost_samples unit=\"samples\" mesure=\"" << result.subscriber.lost_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<receive_time unit=\"us\" mesure=\"" << result.subscriber.totaltime_us << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<receive_throughput unit=\"samples\" mesure=\"" << result.subscriber.MBitssec << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t</metrics>" << std::endl;			
 			output_xml << "\t\t</result>" << std::endl;
 			output_xml << "\t</test>" << std::endl;
 
@@ -335,7 +336,7 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 
 bool ThroughputPublisher::loadDemandsPayload()
 {
-	std::ifstream fi("payloads_demands.csv");
+	std::ifstream fi(std::getenv("CMAKE_CURRENT_SOURCE_DIR") + std::string("/") + "payloads_demands.csv");
 	cout << "Reading File: payloads_demands.csv" << endl;
 	std::string DELIM = ";";
 	if(!fi.is_open())
