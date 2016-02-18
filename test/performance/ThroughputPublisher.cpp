@@ -294,6 +294,27 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			result.subscriber.lost_samples = command.m_lostsamples;
 			result.compute();
 			m_timeStats.push_back(result);
+
+			output_xml << "\t<test name=\"" << result.payload_size << " bytes, " << result.demand << " demand\" executed=\"yes\" >" << std::endl;
+			output_xml << "\t\t<result>" << std::endl;
+			output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
+
+			output_xml << "\t\t\t<metrics>" << std::endl;
+			output_xml << "\t\t\t\t<sent_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+
+			output_xml << "\t\t\t\t<send_time unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<send_throughput unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<received_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<lost_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<receive_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t\t<receive_throughput unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
+			output_xml << "\t\t\t</metrics>" << std::endl;
+
+			//output_xml << "\t\t\t<executiontime unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+
+			output_xml << "\t\t</result>" << std::endl;
+			output_xml << "\t</test>" << std::endl;
+
 			printResults(result);
 			mp_commandpub->removeAllChange(&aux);
 			mp_datapub->removeAllChange();

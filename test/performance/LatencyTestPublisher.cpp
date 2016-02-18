@@ -72,9 +72,9 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	strftime(date_buffer, 9, "%Y%m%d", now);
 	strftime(time_buffer, 7, "%H%M%S", now);
 	
-	output_xml_name << "LatencyTest-" << date_buffer << time_buffer << ".xml";
+	output_xml_name << "perf_LatencyTest_" << date_buffer << time_buffer << ".xml";
 
-	output_xml << "<report name=\"LatencyTest-" << date_buffer << time_buffer << "\" categ=\"LatencyTest\" >" << std::endl;
+	output_xml << "<report name=\"LatencyTest_" << date_buffer << time_buffer << "\" categ=\"LatencyTest\" >" << std::endl;
 	output_xml << "\t<start>" << std::endl;
 	output_xml << "\t\t<date format=\"YYYYMMDD\" val=\"" << date_buffer << "\" />" << std::endl;
 	output_xml << "\t\t<time format=\"HHMMSS\" val=\"" << time_buffer << "\" />" << std::endl;
@@ -417,9 +417,12 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 {
 	output_xml << "\t<test name=\"" << TS.nbytes << " bytes\" executed=\"yes\" >" << std::endl;
 	output_xml << "\t\t<description><![CDATA[" << n_samples << " samples of " << TS.nbytes << " bytes.]]></description>" << std::endl;
+	output_xml << "\t\t<targets>" << std::endl;
+	output_xml << "\t\t\t<target threaded=\"true\">C++</target>" << std::endl;
+	output_xml << "\t\t</targets>" << std::endl;	
 	output_xml << "\t\t<result>" << std::endl;
 	output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
-	output_xml << "\t\t\t<executiontime unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+	output_xml << "\t\t\t<performance unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
 	output_xml << "\t\t</result>" << std::endl;
 	output_xml << "\t</test>" << std::endl;
 
@@ -483,9 +486,13 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
 	output_xml << "\t<test name=\"" << TS.nbytes << " bytes\" executed=\"yes\" >" << std::endl;
+	output_xml << "\t\t<description><![CDATA[" << n_samples << " samples of " << TS.nbytes << " bytes.]]></description>" << std::endl;
+	output_xml << "\t\t<targets>" << std::endl;
+	output_xml << "\t\t\t<target threaded=\"true\">C++</target>" << std::endl;
+	output_xml << "\t\t</targets>" << std::endl;	
 	output_xml << "\t\t<result>" << std::endl;
 	output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
-	output_xml << "\t\t\t<executiontime unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
+	output_xml << "\t\t\t<performance unit=\"us\" mesure = \"" << TS.mean << "\" isRelevant=\"true\" />" << std::endl;
 	output_xml << "\t\t</result>" << std::endl;
 	output_xml << "\t</test>" << std::endl;
 
