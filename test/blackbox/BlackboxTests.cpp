@@ -12,6 +12,8 @@
 #include "PubSubAsReliableHelloWorldWriter.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include "PubSubAsReliableData64kbReader.hpp"
+#include "PubSubAsReliableData64kbWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -275,6 +277,36 @@ TEST(BlackBox, ParticipantRemoval)
 {
     PubSubAsReliableHelloWorldReader reader;
     PubSubAsReliableHelloWorldWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability.
+    reader.waitDiscovery();
+
+    // Send some data.
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    writer.send(msgs);
+
+    // Destroy the writer participant.
+    writer.destroy();
+
+    // Check that reader receives the unmatched.
+    reader.waitRemoval();
+}
+
+TEST(BlackBox, PubSubAsReliableData64kb)
+{
+    PubSubAsReliableData64kbReader reader;
+    PubSubAsReliableData64kbWriter writer;
     const uint16_t nmsgs = 100;
     
     reader.init(nmsgs);
