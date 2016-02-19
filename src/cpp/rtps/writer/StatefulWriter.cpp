@@ -44,8 +44,14 @@ StatefulWriter::~StatefulWriter()
 {
 	const char* const METHOD_NAME = "~StatefulWriter";
 	logInfo(RTPS_WRITER,"StatefulWriter destructor");
+
+    // Destroy parent events
+    if(mp_unsetChangesNotEmpty != nullptr)
+        delete mp_unsetChangesNotEmpty;
+
 	if(mp_periodicHB !=nullptr)
 		delete(mp_periodicHB);
+
 	for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
 			it!=matched_readers.end();++it)
 	{
@@ -96,11 +102,16 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 				changeForReader.status = UNDERWAY;
 			else
 				changeForReader.status = UNACKNOWLEDGED;
+            // Block access to ReaderProxy
+            (*it)->mp_mutex->lock();
 			changeForReader.is_relevant = (*it)->rtps_is_relevant(change);
 			(*it)->m_changesForReader.push_back(changeForReader);
 			unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
 			multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
 			expectsInlineQos |= (*it)->m_att.expectsInlineQos;
+            // Release access before restart the timer.
+            (*it)->mp_mutex->unlock();
+
 			(*it)->mp_nackSupression->restart_timer();
 		}
 		RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
@@ -297,7 +308,7 @@ bool StatefulWriter::matched_reader_remove(RemoteReaderAttributes& rdata)
             rproxy = *it;
 			matched_readers.erase(it);
 			if(matched_readers.size()==0)
-				this->mp_periodicHB->stop_timer();
+				this->mp_periodicHB->cancel_timer();
 
             break;
 		}

@@ -32,6 +32,7 @@ class RTPSAsSocketWriter
         void send(const std::list<uint16_t> &msgs);
         virtual void configWriter(WriterAttributes &wattr) = 0;
         virtual void configRemoteReader(RemoteReaderAttributes &rattr, GUID_t &guid) = 0;
+        virtual std::string getText() = 0;
 
     private:
 
@@ -39,6 +40,9 @@ class RTPSAsSocketWriter
         RTPSWriter *writer_;
         WriterHistory *history_;
         bool initialized_;
+        std::string text_;
+        uint32_t domainId_;
+        std::string hostname_;
 };
 
 #endif // _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_

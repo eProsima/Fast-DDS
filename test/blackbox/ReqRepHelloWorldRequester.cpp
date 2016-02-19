@@ -22,6 +22,7 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 ReqRepHelloWorldRequester::ReqRepHelloWorldRequester(): reply_listener_(*this), request_listener_(*this),
@@ -40,6 +41,7 @@ ReqRepHelloWorldRequester::~ReqRepHelloWorldRequester()
 void ReqRepHelloWorldRequester::init()
 {
 	ParticipantAttributes pattr;
+    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -50,8 +52,7 @@ void ReqRepHelloWorldRequester::init()
 	SubscriberAttributes sattr;
 	sattr.topic.topicKind = NO_KEY;
 	sattr.topic.topicDataType = "HelloWorldType";
-	sattr.topic.topicName = "HelloWorldTopicReply";
-    configSubscriber(sattr);
+    configSubscriber(sattr, "Reply");
 	reply_subscriber_ = Domain::createSubscriber(participant_, sattr, &reply_listener_);
     ASSERT_NE(reply_subscriber_, nullptr);
 
@@ -59,8 +60,7 @@ void ReqRepHelloWorldRequester::init()
 	PublisherAttributes puattr;
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
-	puattr.topic.topicName = "HelloWorldTopicRequest";
-    configPublisher(puattr);
+    configPublisher(puattr, "Request");
 	request_publisher_ = Domain::createPublisher(participant_, puattr, &request_listener_);
     ASSERT_NE(request_publisher_, nullptr);
 

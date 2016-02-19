@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
@@ -35,12 +36,11 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 {
 	const char* const METHOD_NAME = "~PeriodicHeartbeat";
 	logInfo(RTPS_WRITER,"Destroying PeriodicHB");
-	stop_timer();
 }
 
 PeriodicHeartbeat::PeriodicHeartbeat(StatefulWriter* p_SFW,double interval):
-										TimedEvent(p_SFW->getRTPSParticipant()->getIOService(),interval),
-										mp_SFW(p_SFW)
+TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval), mp_SFW(p_SFW)
 {
 
 }

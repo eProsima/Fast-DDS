@@ -116,8 +116,8 @@ public:
     void ResourceSemaphorePost();
     //!Wait for the resource semaphore
     void ResourceSemaphoreWait();
-    //!Get Pointer to the IO Service.
-	boost::asio::io_service* getIOService();
+    //!Get Pointer to the Event Resource.
+	ResourceEvent& getEventResource();
     //!Send Method
     void sendSync(CDRMessage_t* msg, const Locator_t& loc);
     //!Get Send Mutex

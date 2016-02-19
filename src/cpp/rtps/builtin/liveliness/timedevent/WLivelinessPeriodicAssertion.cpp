@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 
@@ -35,9 +36,9 @@ namespace rtps {
 static const char* const CLASS_NAME = "WLivelinessPeriodicAssertion";
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
-												TimedEvent(pwlp->getRTPSParticipant()->getIOService(), 0),
-												m_livelinessKind(kind),
-												mp_WLP(pwlp)
+TimedEvent(pwlp->getRTPSParticipant()->getEventResource().getIOService(),
+pwlp->getRTPSParticipant()->getEventResource().getThread(), 0),
+m_livelinessKind(kind), mp_WLP(pwlp)
 {
 	m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;
 	for(uint8_t i =0;i<12;++i)
@@ -49,8 +50,6 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQ
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
-	//const char* const METHOD_NAME = "~WLivelinessPeriodicAssertion";
-	stop_timer();
 }
 
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)

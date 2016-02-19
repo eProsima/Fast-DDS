@@ -38,7 +38,6 @@ ResourceEvent::ResourceEvent():
 ResourceEvent::~ResourceEvent() {
 	const char* const METHOD_NAME = "~ResourceEvent";
 	logInfo(RTPS_PARTICIPANT,"Removing event thread " << mp_b_thread->get_id());
-	mp_io_service->reset();
 	mp_io_service->stop();
 	mp_b_thread->join();
 	delete(mp_b_thread);

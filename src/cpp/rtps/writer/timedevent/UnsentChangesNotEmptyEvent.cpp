@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include "../../participant/RTPSParticipantImpl.h"
@@ -26,16 +27,15 @@ static const char* const CLASS_NAME = "UnsentChangesNotEmptyEvent";
 
 UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 		double interval):
-		TimedEvent(writer->getRTPSParticipant()->getIOService(),interval, NONE),
-  mp_writer(writer)
+        TimedEvent(writer->getRTPSParticipant()->getEventResource().getIOService(),
+        writer->getRTPSParticipant()->getEventResource().getThread(), interval, NONE),
+        mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
-
 }
 
 UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 {
-	stop_timer();
 }
 
 void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)

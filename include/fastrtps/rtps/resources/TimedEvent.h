@@ -18,10 +18,12 @@
 #include "../common/Time_t.h"
 namespace boost
 {
-namespace asio
-{
-class io_service;
-}
+    class thread;
+
+    namespace asio
+    {
+        class io_service;
+    }
 }
 
 namespace eprosima {
@@ -58,7 +60,7 @@ public:
 	* @param serv IO service
 	* @param milliseconds Interval of the timedEvent.
 	*/
-	TimedEvent(boost::asio::io_service* serv,double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+    TimedEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 	virtual ~TimedEvent();
 	
 	/**
@@ -68,11 +70,11 @@ public:
 	* @param msg Message associated to the event. It can be nullptr.
 	*/
 	virtual void event(EventCode code, const char* msg) = 0;
+
+    void cancel_timer();
 	
 	//!Method to restart the timer.
 	void restart_timer();
-	//!Method to stop the timer.
-	void stop_timer();
 	
 	/**
 	* Update event interval.

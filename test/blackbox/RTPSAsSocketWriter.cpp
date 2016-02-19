@@ -21,7 +21,10 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <boost/asio.hpp>
 #include <gtest/gtest.h>
+#include <inttypes.h>
 
 RTPSAsSocketWriter::RTPSAsSocketWriter(): participant_(nullptr),
     writer_(nullptr), history_(nullptr), initialized_(false)
@@ -42,6 +45,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 	pattr.builtin.use_WriterLivelinessProtocol = false;
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
     pattr.participantID = 2;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
@@ -70,6 +74,10 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
     configRemoteReader(rattr, guid);
 	writer_->matched_reader_add(rattr);
 
+    text_ = getText();
+    domainId_ = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
+    hostname_ = boost::asio::ip::host_name();
+
     initialized_ = true;
 }
 
@@ -81,10 +89,10 @@ void RTPSAsSocketWriter::send(const std::list<uint16_t> &msgs)
 
 #if defined(_WIN32)
 		ch->serializedPayload.length =
-            (uint16_t)sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %hu", *it) + 1;
+            (uint16_t)sprintf_s((char*)ch->serializedPayload.data, 255, "%s_%s_%I32u %hu", text_.c_str(), hostname_.c_str(), domainId_, *it) + 1;
 #else
 		ch->serializedPayload.length =
-			sprintf((char*)ch->serializedPayload.data,"My example string %hu", *it) + 1;
+			snprintf((char*)ch->serializedPayload.data, 255, "%s_%s_%" PRIu32 " %hu", text_.c_str(), hostname_.c_str(), domainId_, *it) + 1;
 #endif
 
 		history_->add_change(ch);

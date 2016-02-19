@@ -54,18 +54,16 @@ ListenResourceImpl::~ListenResourceImpl()
 
 		logInfo(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
 				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc,C_BLUE);
-        //printf("CLOSING %p\n", &m_listen_socket);
-		m_listen_socket.cancel();
+
 		m_listen_socket.close();
-        //printf("STOPING\n");
+
 		m_io_service.stop();
         stopped_ = true;
         lock.unlock();
 
-        //printf("STOPPED\n");
 		logInfo(RTPS_MSG_IN,"Joining with thread",C_BLUE);
 		mp_thread->join();
-        //printf("JOINNED\n");
+
 		delete(mp_thread);
 		logInfo(RTPS_MSG_IN,"Listening thread closed succesfully",C_BLUE);
 	}
