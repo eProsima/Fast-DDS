@@ -27,7 +27,7 @@ Data64kbType::Data64kbType() {
 
 Data64kbType::~Data64kbType() {
 	if(m_keyBuffer!=nullptr)
-		delete(m_keyBuffer);
+		free(m_keyBuffer);
 }
 
 bool Data64kbType::serialize(void *data, SerializedPayload_t *payload) {

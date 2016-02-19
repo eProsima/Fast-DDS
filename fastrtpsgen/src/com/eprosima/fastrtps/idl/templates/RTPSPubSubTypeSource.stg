@@ -4,8 +4,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.cpp"], description=["This header file contains the implementation of the serialization functions."])$
 
 
-#include "fastcdr/FastBuffer.h"
-#include "fastcdr/Cdr.h"
+#include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
 
 #include "$ctx.filename$PubSubTypes.h"
 
@@ -58,7 +58,7 @@ $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::$if(parent
 
 $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType() {
 	if(m_keyBuffer!=nullptr)
-		delete(m_keyBuffer);
+		free(m_keyBuffer);
 }
 
 bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::serialize(void *data, SerializedPayload_t *payload) {
