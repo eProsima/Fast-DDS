@@ -84,7 +84,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 
 bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	if(this->mp_WLP->m_livAutomaticWriters.size()>0)
 	{
 		boost::lock_guard<boost::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
@@ -122,7 +122,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
 
 bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
 {
-	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	bool livelinessAsserted = false;
 	for(std::vector<RTPSWriter*>::iterator wit=this->mp_WLP->m_livManRTPSParticipantWriters.begin();
 			wit!=this->mp_WLP->m_livManRTPSParticipantWriters.end();++wit)
