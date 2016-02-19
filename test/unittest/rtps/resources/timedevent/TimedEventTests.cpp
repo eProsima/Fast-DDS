@@ -81,7 +81,10 @@ TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
     MockEvent event(env->service_, *env->thread_, 100, false);
 
     for(int i = 0; i < 10; ++i)
+    {
+        event.cancel_timer();
         event.restart_timer();
+    }
 
     for(int i = 0; i < 10; ++i)
         ASSERT_TRUE(event.wait(200));
@@ -356,7 +359,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
     boost::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(env->service_, *env->thread_, 2, false);
+    MockEvent event(env->service_, *env->thread_, 3, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 100ms between each one.
@@ -379,14 +382,12 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
     delete thr3;
     delete thr4;
 
-    // Wait all expected times
-    for(unsigned int i = 0; i < 180; ++i)
-        ASSERT_TRUE(event.wait(200));
-
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
 
-    ASSERT_EQ(successed + cancelled, 180);
+    // Wait all expected times
+    for(int i = 0; i < successed + cancelled; ++i)
+        ASSERT_TRUE(event.wait(200));
 }
 
 TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
@@ -394,7 +395,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
     boost::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(env->service_, *env->thread_, 2, false);
+    MockEvent event(env->service_, *env->thread_, 3, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 2ms between each one.
@@ -404,8 +405,8 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
 
     thr1 = new boost::thread(restart, &event, 100, 2); 
     thr2 = new boost::thread(cancel, &event, 100, 2); 
-    thr3 = new boost::thread(restart, &event, 80, 3); 
-    thr4 = new boost::thread(cancel, &event, 80, 3); 
+    thr3 = new boost::thread(restart, &event, 80, 4); 
+    thr4 = new boost::thread(cancel, &event, 80, 4); 
 
     thr1->join();
     thr2->join();
@@ -417,14 +418,12 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
     delete thr3;
     delete thr4;
 
-    // Wait all expected times
-    for(unsigned int i = 0; i < 180; ++i)
-        ASSERT_TRUE(event.wait(100));
-
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
 
-    ASSERT_EQ(successed + cancelled, 180);
+    // Wait all expected times
+    for(int i = 0; i < successed + cancelled; ++i)
+        ASSERT_TRUE(event.wait(100));
 }
 
 TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
@@ -455,14 +454,12 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
     delete thr3;
     delete thr4;
 
-    // Wait all expected times
-    for(unsigned int i = 0; i < 180; ++i)
-        ASSERT_TRUE(event.wait(100));
-
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
 
-    ASSERT_EQ(successed + cancelled, 180);
+    // Wait all expected times
+    for(int i = 0; i < successed + cancelled; ++i)
+        ASSERT_TRUE(event.wait(100));
 }
 
 TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
@@ -496,7 +493,9 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     int successed = event.successed_.load(boost::memory_order_relaxed);
     int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
 
-    ASSERT_GE(successed + cancelled, 360);
+    // Wait all expected times
+    for(int i = 0; i < successed + cancelled; ++i)
+        ASSERT_TRUE(event.wait(100));
 }
 
 int main(int argc, char **argv)
