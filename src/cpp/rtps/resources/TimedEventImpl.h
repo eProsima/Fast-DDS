@@ -102,6 +102,8 @@ namespace eprosima
 
                     void cancel_timer();
 
+                    void destroy();
+
                     /**
                      * Get interval in milliseconds
                      * @return Event interval in milliseconds

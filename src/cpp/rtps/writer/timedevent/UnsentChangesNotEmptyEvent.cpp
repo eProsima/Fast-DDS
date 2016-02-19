@@ -36,6 +36,7 @@ UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
 
 UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
 {
+    destroy();
 }
 
 void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)

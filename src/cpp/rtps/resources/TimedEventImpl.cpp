@@ -57,6 +57,10 @@ autodestruction_(autodestruction), state_(std::make_shared<TimerState>()), event
 
 TimedEventImpl::~TimedEventImpl()
 {
+}
+
+void TimedEventImpl::destroy()
+{
     boost::unique_lock<boost::mutex> lock(mutex_);
     // Exchange state to avoid race conditions. Any state will go to state DESTROYED.
     TimerState::StateCode code = state_.get()->code_.exchange(TimerState::DESTROYED, boost::memory_order_relaxed);

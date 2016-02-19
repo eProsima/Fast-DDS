@@ -40,6 +40,7 @@ mp_WP(p_WP)
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
 {
+    destroy();
 }
 
 void WriterProxyLiveliness::event(EventCode code, const char* msg)

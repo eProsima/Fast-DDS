@@ -44,6 +44,7 @@ RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP
 
 RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 {
+    destroy();
 }
 
 void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)

@@ -33,6 +33,7 @@ static const char* const CLASS_NAME = "NackResponseDelay";
 
 NackResponseDelay::~NackResponseDelay()
 {
+    destroy();
 }
 
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):

@@ -50,6 +50,7 @@ m_livelinessKind(kind), mp_WLP(pwlp)
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
+    destroy();
 }
 
 void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)

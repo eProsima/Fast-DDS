@@ -106,6 +106,10 @@ public:
 	*/
     double getRemainingTimeMilliSec();
 
+    protected:
+
+    void destroy();
+
 private:
 	TimedEventImpl* mp_impl;
 };

@@ -61,6 +61,11 @@ double TimedEvent::getRemainingTimeMilliSec()
 	return mp_impl->getRemainingTimeMilliSec();
 }
 
+void TimedEvent::destroy()
+{
+    mp_impl->destroy();
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */
