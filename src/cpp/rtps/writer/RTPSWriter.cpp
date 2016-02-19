@@ -51,8 +51,7 @@ RTPSWriter::~RTPSWriter()
 	const char* const METHOD_NAME = "~RTPSWriter";
 	logInfo(RTPS_WRITER,"RTPSWriter destructor");
 
-    if(mp_unsetChangesNotEmpty != nullptr)
-        delete mp_unsetChangesNotEmpty;
+    // Deletion of the events has to be made in child destructor.
 
     mp_history->mp_writer = nullptr;
     mp_history->mp_mutex = nullptr;

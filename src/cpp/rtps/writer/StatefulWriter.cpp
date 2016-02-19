@@ -44,8 +44,14 @@ StatefulWriter::~StatefulWriter()
 {
 	const char* const METHOD_NAME = "~StatefulWriter";
 	logInfo(RTPS_WRITER,"StatefulWriter destructor");
+
+    // Destroy parent events
+    if(mp_unsetChangesNotEmpty != nullptr)
+        delete mp_unsetChangesNotEmpty;
+
 	if(mp_periodicHB !=nullptr)
 		delete(mp_periodicHB);
+
 	for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
 			it!=matched_readers.end();++it)
 	{
