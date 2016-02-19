@@ -24,8 +24,12 @@ class PubSubAsReliableHelloWorldReader : public PubSubHelloWorldReader
         void configSubscriber(SubscriberAttributes &sattr)
         {
             sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            sattr.topic.topicName = "PubSubAsReliableHelloworld_" + boost::asio::ip::host_name();
-            sattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
+
+            std::ostringstream t;
+
+            t << "PubSubAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            sattr.topic.topicName = t.str();
         };
 };
 

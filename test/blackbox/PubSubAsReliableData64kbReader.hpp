@@ -24,8 +24,12 @@ class PubSubAsReliableData64kbReader : public PubSubData64kbReader
         void configSubscriber(SubscriberAttributes &sattr)
         {
             sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            sattr.topic.topicName = "PubSubAsReliableData64kb_" + boost::asio::ip::host_name();
-            sattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
+
+            std::ostringstream t;
+
+            t << "PubSubAsReliableData64kb_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            sattr.topic.topicName = t.str();
         };
 };
 

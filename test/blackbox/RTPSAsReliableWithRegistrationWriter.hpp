@@ -29,8 +29,11 @@ class RTPSAsReliableWithRegistrationWriter : public RTPSWithRegistrationWriter
 
         void configTopic(TopicAttributes &tattr)
         {
-            tattr.topicName = "RTPSAsReliableWithRegistration_" + boost::asio::ip::host_name();
-            tattr.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
+            std::ostringstream t;
+
+            t << "RTPSAsReliableWithRegistration_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            tattr.topicName = t.str();
         }
 };
 

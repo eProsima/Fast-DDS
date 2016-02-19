@@ -24,8 +24,12 @@ class PubSubAsNonReliableHelloWorldWriter : public PubSubHelloWorldWriter
         void configPublisher(PublisherAttributes &puattr)
         {
             puattr.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-            puattr.topic.topicName = "PubSubAsNonReliableHelloworld_" + boost::asio::ip::host_name();
-            puattr.topic.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
+
+            std::ostringstream t;
+
+            t << "PubSubAsNonReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            puattr.topic.topicName = t.str();
         }
 };
 

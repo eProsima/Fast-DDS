@@ -29,8 +29,11 @@ class RTPSAsNonReliableWithRegistrationWriter : public RTPSWithRegistrationWrite
 
         void configTopic(TopicAttributes &tattr)
         {
-            tattr.topicName = "RTPSAsNonReliableWithRegistration_" + boost::asio::ip::host_name();
-            tattr.topicName += "_" + boost::interprocess::ipcdetail::get_current_process_id();
+            std::ostringstream t;
+
+            t << "RTPSAsNonReliableWithRegistration_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            tattr.topicName = t.str();
         }
 };
 
