@@ -8,7 +8,7 @@ set(CTEST_CMAKE_GENERATOR "${JENKINS_GENERATOR}")
 set(CTEST_BUILD_OPTIONS "${JENKINS_BUILD_OPTIONS}")
 set(CTEST_BUILD_CONFIGURATION "${JENKINS_BUILD_CONFIGURATION}")
 
-set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "${CTEST_MEMORYCHECK_COMMAND_OPTIONS} -q --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --xml=yes --xml-file=test_%p_memcheck.xml --suppressions='${CTEST_SOURCE_DIRECTORY}/valgrind.supp'")
+set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "${CTEST_MEMORYCHECK_COMMAND_OPTIONS} -q --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --xml=yes --xml-file=test_%p_memcheck.xml \"--suppressions=${CTEST_SOURCE_DIRECTORY}/valgrind.supp\"")
 
 set(CTEST_COVERAGE_CXX_FLAGS "-DCMAKE_CXX_FLAGS:STRING=-fprofile-arcs -ftest-coverage")
 set(CTEST_COVERAGE_EXE_LD_FLAGS "-DCMAKE_EXE_LINKER_FLAGS:STRING=-fprofile-arcs -ftest-coverage")
