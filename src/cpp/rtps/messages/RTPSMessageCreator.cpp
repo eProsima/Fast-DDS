@@ -51,29 +51,21 @@ RTPSMessageCreator::~RTPSMessageCreator() {
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
 		ProtocolVersion_t version,VendorId_t vendorId)
 {
-	const char* const METHOD_NAME = "addHeader";
-	try{
-		CDRMessage::addOctet(msg,'R');
-		CDRMessage::addOctet(msg,'T');
-		CDRMessage::addOctet(msg,'P');
-		CDRMessage::addOctet(msg,'S');
+    CDRMessage::addOctet(msg,'R');
+    CDRMessage::addOctet(msg,'T');
+    CDRMessage::addOctet(msg,'P');
+    CDRMessage::addOctet(msg,'S');
 
-		CDRMessage::addOctet(msg,version.m_major);
-		CDRMessage::addOctet(msg,version.m_minor);
+    CDRMessage::addOctet(msg,version.m_major);
+    CDRMessage::addOctet(msg,version.m_minor);
 
-		CDRMessage::addOctet(msg,vendorId[0]);
-		CDRMessage::addOctet(msg,vendorId[1]);
+    CDRMessage::addOctet(msg,vendorId[0]);
+    CDRMessage::addOctet(msg,vendorId[1]);
 
-		for (uint8_t i = 0;i<12;i++){
-			CDRMessage::addOctet(msg,guidPrefix.value[i]);
-		}
-		msg->length = msg->pos;
-	}
-	catch(int e)
-	{
-		logError(RTPS_CDR_MSG,"Header creation fails. "<< e <<endl);
-		return false;
-	}
+    for (uint8_t i = 0;i<12;i++){
+        CDRMessage::addOctet(msg,guidPrefix.value[i]);
+    }
+    msg->length = msg->pos;
 
 	return true;
 }
@@ -90,25 +82,16 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 
 bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
 		octet id,octet flags,uint16_t size) {
-	const char* const METHOD_NAME = "addSubmessageHeader";
-	try{
-		CDRMessage::addOctet(msg,id);
-		CDRMessage::addOctet(msg,flags);
-		CDRMessage::addUInt16(msg, size);
-		msg->length = msg->pos;
-	}
-	catch(int e){
-
-		logError(RTPS_CDR_MSG,"Submessage Header creation fails. "<< e <<endl);
-		return false;
-	}
+    CDRMessage::addOctet(msg,id);
+    CDRMessage::addOctet(msg,flags);
+    CDRMessage::addUInt16(msg, size);
+    msg->length = msg->pos;
 
 	return true;
 }
 
 bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag)
 {
-	const char* const METHOD_NAME = "addSubmessageInfoTS";
 	octet flags = 0x0;
 	uint16_t size = 8;
 #if EPROSIMA_BIG_ENDIAN
@@ -123,27 +106,21 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
 		flags = flags | BIT(1);
 		size = 0;
 	}
-	try{
-		CDRMessage::addOctet(msg,INFO_TS);
-		CDRMessage::addOctet(msg,flags);
-		CDRMessage::addUInt16(msg, size);
-		if(!invalidateFlag)
-		{
-			CDRMessage::addInt32(msg,time.seconds);
-			CDRMessage::addUInt32(msg,time.fraction);
-		}
-	}
-	catch(int e)
-	{
-		logError(RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
-		return false;
-	}
+
+    CDRMessage::addOctet(msg,INFO_TS);
+    CDRMessage::addOctet(msg,flags);
+    CDRMessage::addUInt16(msg, size);
+    if(!invalidateFlag)
+    {
+        CDRMessage::addInt32(msg,time.seconds);
+        CDRMessage::addUInt32(msg,time.fraction);
+    }
+
 	return true;
 }
 
 bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP)
 {
-	const char* const METHOD_NAME = "addSubmessageInfoDST";
 	octet flags = 0x0;
 	uint16_t size = 12;
 #if EPROSIMA_BIG_ENDIAN
@@ -153,17 +130,11 @@ bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t gu
 	msg->msg_endian  = LITTLEEND;
 #endif
 
-	try{
-		CDRMessage::addOctet(msg,INFO_DST);
-		CDRMessage::addOctet(msg,flags);
-		CDRMessage::addUInt16(msg, size);
-		CDRMessage::addData(msg,guidP.value,12);
-	}
-	catch(int e)
-	{
-		logError(RTPS_CDR_MSG,"Submessage Header creation fails."<<e<<endl);
-		return false;
-	}
+    CDRMessage::addOctet(msg,INFO_DST);
+    CDRMessage::addOctet(msg,flags);
+    CDRMessage::addUInt16(msg, size);
+    CDRMessage::addData(msg,guidP.value,12);
+
 	return true;
 }
 

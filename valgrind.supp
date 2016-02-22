@@ -1,5 +1,5 @@
 {
-   <insert_a_suppression_name_here>
+   <Gentoo>
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:malloc
@@ -8,4 +8,14 @@
    fun:call_init
    fun:_dl_init
    obj:/usr/lib64/ld-2.21.so
+}
+{
+   <Fedora 22/23>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib64/libstdc++.so.6.0.21
+   fun:call_init.part.0
+   fun:_dl_init
+   obj:/usr/lib64/ld-2.22.so
 }

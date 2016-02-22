@@ -70,11 +70,11 @@ void PubSubData64kbWriter::send(const std::list<uint16_t> &msgs)
 
     Data64kb data;
     for(int i = 0; i < 63996; ++i)
-        data.data().push_back(i);
+        data.data().push_back((unsigned char)i);
 
 	for(std::list<uint16_t>::const_iterator it = msgs.begin(); it != msgs.end(); ++it)
 	{
-        data.data()[0] = *it;
+        data.data()[0] = (unsigned char)*it;
         ASSERT_EQ(publisher_->write((void*)&data), true);
 	}
 }
