@@ -19,6 +19,7 @@
 
 #include <fastrtps/publisher/Publisher.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 PubSubHelloWorldWriter::PubSubHelloWorldWriter(): listener_(*this), participant_(nullptr),
@@ -36,6 +37,7 @@ void PubSubHelloWorldWriter::init()
 {
 	//Create participant
 	ParticipantAttributes pattr;
+    pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = Domain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -46,12 +48,20 @@ void PubSubHelloWorldWriter::init()
 	PublisherAttributes puattr;
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
-	puattr.topic.topicName = "HelloWorldTopic";
     configPublisher(puattr);
 	publisher_ = Domain::createPublisher(participant_, puattr, &listener_);
     ASSERT_NE(publisher_, nullptr);
 
     initialized_ = true;
+}
+
+void PubSubHelloWorldWriter::destroy()
+{
+    if(participant_ != nullptr)
+    {
+        Domain::removeParticipant(participant_);
+        participant_ = nullptr;
+    }
 }
 
 void PubSubHelloWorldWriter::send(const std::list<uint16_t> &msgs)
@@ -74,6 +84,13 @@ void PubSubHelloWorldWriter::matched()
     cv_.notify_one();
 }
 
+void PubSubHelloWorldWriter::unmatched()
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    --matched_;
+    cv_.notify_one();
+}
+
 void PubSubHelloWorldWriter::waitDiscovery()
 {
     std::unique_lock<std::mutex> lock(mutex_);
@@ -82,4 +99,14 @@ void PubSubHelloWorldWriter::waitDiscovery()
         cv_.wait_for(lock, std::chrono::seconds(10));
 
     ASSERT_NE(matched_, 0u);
+}
+
+void PubSubHelloWorldWriter::waitRemoval()
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    if(matched_ != 0)
+        cv_.wait_for(lock, std::chrono::seconds(10));
+
+    ASSERT_EQ(matched_, 0u);
 }

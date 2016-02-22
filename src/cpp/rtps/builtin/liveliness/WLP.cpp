@@ -50,8 +50,7 @@ WLP::WLP(BuiltinProtocols* p):	m_minAutomatic_MilliSec(std::numeric_limits<doubl
 		mp_builtinReaderHistory(nullptr),
 		mp_listener(nullptr),
 		mp_livelinessAutomatic(nullptr),
-		mp_livelinessManRTPSParticipant(nullptr),
-		mp_mutex(new boost::recursive_mutex)
+		mp_livelinessManRTPSParticipant(nullptr)
 {
 
 
@@ -69,7 +68,6 @@ WLP::~WLP()
 		delete(mp_livelinessAutomatic);
 	if(this->mp_livelinessManRTPSParticipant!=nullptr)
 		delete(this->mp_livelinessManRTPSParticipant);
-	delete(mp_mutex);
 }
 
 bool WLP::initWL(RTPSParticipantImpl* p)
@@ -148,7 +146,7 @@ bool WLP::createEndpoints()
 bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "assignRemoteEndpoints";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
 	logInfo(RTPS_LIVELINESS,"For remote RTPSParticipant "<<pdata->m_guid,C_MAGENTA);
 	uint32_t endp = pdata->m_availableBuiltinEndpoints;
@@ -199,7 +197,7 @@ bool WLP::assignRemoteEndpoints(ParticipantProxyData* pdata)
 void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
 	const char* const METHOD_NAME = "removeRemoteEndpoints";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	boost::lock_guard<boost::recursive_mutex> guard2(*pdata->mp_mutex);
 	logInfo(RTPS_LIVELINESS,"for RTPSParticipant: "<<pdata->m_guid,C_MAGENTA);
 	for(auto it = pdata->m_builtinReaders.begin();
@@ -227,7 +225,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 {
 	const char* const METHOD_NAME = "addLocalWriter";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId	<<" to Liveliness Protocol",C_MAGENTA)
 	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
 	if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
@@ -245,10 +243,10 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
-			{
-				mp_livelinessAutomatic->stop_timer();
-			}
-			mp_livelinessAutomatic->restart_timer();
+            {
+                mp_livelinessAutomatic->cancel_timer();
+            }
+            mp_livelinessAutomatic->restart_timer();
 		}
 		m_livAutomaticWriters.push_back(W);
 	}
@@ -267,10 +265,10 @@ bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
-			{
-				mp_livelinessManRTPSParticipant->stop_timer();
-			}
-			mp_livelinessManRTPSParticipant->restart_timer();
+            {
+                mp_livelinessManRTPSParticipant->cancel_timer();
+            }
+            mp_livelinessManRTPSParticipant->restart_timer();
 		}
 		m_livManRTPSParticipantWriters.push_back(W);
 	}
@@ -282,12 +280,13 @@ typedef std::vector<RTPSWriter*>::iterator t_WIT;
 bool WLP::removeLocalWriter(RTPSWriter* W)
 {
 	const char* const METHOD_NAME = "removeLocalWriter";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId
 			<<" from Liveliness Protocol",C_MAGENTA);
 	t_WIT wToEraseIt;
+    ParticipantProxyData* pdata = nullptr;
 	WriterProxyData* wdata = nullptr;
-	if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata))
+	if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(),&wdata, &pdata))
 	{
 		bool found = false;
 		if(wdata->m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
@@ -295,8 +294,9 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 			m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
 			for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
 			{
+                ParticipantProxyData* pdata2 = nullptr;
 				WriterProxyData* wdata2;
-				if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(),&wdata2))
+				if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(),&wdata2, &pdata2))
 				{
 					double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2->m_qos.m_liveliness.announcement_period));
 					if(W->getGuid().entityId == (*it)->getGuid().entityId)
@@ -320,7 +320,6 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 						mp_livelinessAutomatic->update_interval_millisec(m_minAutomatic_MilliSec);
 					else
 					{
-						mp_livelinessAutomatic->stop_timer();
 						delete(mp_livelinessAutomatic);
 						mp_livelinessAutomatic = nullptr;
 
@@ -333,8 +332,9 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 			m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
 			for(t_WIT it= m_livManRTPSParticipantWriters.begin();it!=m_livManRTPSParticipantWriters.end();++it)
 			{
-				WriterProxyData* wdata2;
-				if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(),&wdata2))
+                ParticipantProxyData* pdata2 = nullptr;
+                WriterProxyData* wdata2 = nullptr;
+				if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(),&wdata2, &pdata2))
 				{
 					double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2->m_qos.m_liveliness.announcement_period));
 					if(W->getGuid().entityId == (*it)->getGuid().entityId)
@@ -358,7 +358,6 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
 						mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 					else
 					{
-						mp_livelinessManRTPSParticipant->stop_timer();
 						delete(mp_livelinessManRTPSParticipant);
 						mp_livelinessManRTPSParticipant = nullptr;
 					}
@@ -383,7 +382,7 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
     // Unused in release mode.
     (void)W;
 
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,W->getGuid().entityId,C_MAGENTA);
 	double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
 	if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
@@ -401,10 +400,10 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 			mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
-			{
-				mp_livelinessAutomatic->stop_timer();
-			}
-			mp_livelinessAutomatic->restart_timer();
+            {
+                mp_livelinessAutomatic->cancel_timer();
+            }
+            mp_livelinessAutomatic->restart_timer();
 		}
 	}
 	else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -422,10 +421,10 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
 			mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
 			//CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
 			if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
-			{
-				mp_livelinessManRTPSParticipant->stop_timer();
-			}
-			mp_livelinessManRTPSParticipant->restart_timer();
+            {
+                mp_livelinessManRTPSParticipant->cancel_timer();
+            }
+            mp_livelinessManRTPSParticipant->restart_timer();
 		}
 	}
 	return true;

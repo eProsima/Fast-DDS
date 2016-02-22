@@ -37,7 +37,6 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
 bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,
 		const EntityId_t& writerId,SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag)
 {
-	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
 	CDRMessage::initCDRMsg(&submsgElem);
 
@@ -55,21 +54,12 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId
 		flags = flags | BIT(2);
 
 
-	try{
-		CDRMessage::addEntityId(&submsgElem,&readerId);
-		CDRMessage::addEntityId(&submsgElem,&writerId);
-		//Add Sequence Number
-		CDRMessage::addSequenceNumber(&submsgElem,&firstSN);
-		CDRMessage::addSequenceNumber(&submsgElem,&lastSN);
-		CDRMessage::addInt32(&submsgElem,(int32_t)count);
-	}
-	catch(int e)
-	{
-		logError(RTPS_CDR_MSG,"MessageCreator fails"<<e<<endl)
-		return false;
-	}
-
-
+    CDRMessage::addEntityId(&submsgElem,&readerId);
+    CDRMessage::addEntityId(&submsgElem,&writerId);
+    //Add Sequence Number
+    CDRMessage::addSequenceNumber(&submsgElem,&firstSN);
+    CDRMessage::addSequenceNumber(&submsgElem,&lastSN);
+    CDRMessage::addInt32(&submsgElem,(int32_t)count);
 
 	//Once the submessage elements are added, the header is created
     RTPSMessageCreator::addSubmessageHeader(msg, HEARTBEAT, flags, (uint16_t)submsgElem.length);

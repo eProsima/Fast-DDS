@@ -109,14 +109,14 @@ public:
 	 * @param[out] rdata Pointer to pointer of the ReaderProxyData object.
 	 * @return True if found.
 	 */
-	bool lookupReaderProxyData(const GUID_t& reader,ReaderProxyData** rdata);
+    bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata, ParticipantProxyData** pdata);
 	/**
 	 * This method returns a pointer to a WriterProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
 	 * @param[in] writer GUID_t of the writer we are looking for.
 	 * @param[out] rdata Pointer to pointer of the WriterProxyData object.
 	 * @return True if found.
 	 */
-	bool lookupWriterProxyData(const GUID_t& writer,WriterProxyData** rdata);
+    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData** rdata, ParticipantProxyData** pdata);
 	/**
 	 * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
 	 * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.
@@ -129,13 +129,13 @@ public:
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return true if found and deleted.
 	 */
-	bool removeReaderProxyData(ReaderProxyData* rdata);
+    bool removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyData* rdata);
 	/**
 	 * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
 	 * @param wdata Pointer to the WriterProxyData object.
 	 * @return true if found and deleted.
 	 */
-	bool removeWriterProxyData(WriterProxyData* wdata);
+    bool removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyData* wdata);
 
 	/**
 	 * This method assigns remtoe endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.

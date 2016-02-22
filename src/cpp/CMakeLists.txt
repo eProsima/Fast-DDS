@@ -93,7 +93,7 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 # If Windows, set define for export dll functions
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
-    add_definitions(-DBOOST_ALL_DYN_LINK -D_WIN32_WINNT=0x0501)
+    add_definitions(-D_WIN32_WINNT=0x0501)
 endif()
 
 # Include Boost header files.
@@ -117,7 +117,8 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         # Export symbols in DLL library
-        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC BOOST_ALL_DYN_LINK ${PROJECT_NAME_UPPER}_DYN_LINK)
+        target_compile_definitions(${PROJECT_NAME}_static PUBLIC BOOST_ALL_DYN_LINK)
 
         # Define public headers
         target_include_directories(${PROJECT_NAME} PUBLIC
@@ -143,10 +144,6 @@ else()
 
     #Create library
     add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
-
-    # Set the output directory for the library.
-    set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-        ${PROJECT_BINARY_DIR}/lib)
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
@@ -223,7 +220,7 @@ if(MSVC OR MSVC_IDE)
 
 
         # Install pdb files
-        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}}/Debug/
+        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
             DESTINATION ${LIB_INSTALL_DIR}
             COMPONENT libraries_${MSVC_ARCH}
             CONFIGURATIONS Debug

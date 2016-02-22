@@ -50,6 +50,7 @@ class RTPSAsSocketReader
         void block(uint16_t lastvalue, const std::chrono::seconds &seconds);
         virtual void configReader(ReaderAttributes &rattr) = 0;
         virtual void addRemoteWriter(RTPSReader *reader, std::string &ip, uint32_t port, GUID_t &guid) = 0;
+        virtual std::string getText() = 0;
 
     private:
 
@@ -62,6 +63,10 @@ class RTPSAsSocketReader
         std::list<uint16_t> msgs_;
         std::mutex mutex_;
         std::condition_variable cv_;
+        std::string text_;
+        uint32_t domainId_;
+        std::string hostname_;
+        std::string word_;
 };
 
 #endif // _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_

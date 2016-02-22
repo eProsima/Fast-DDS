@@ -260,7 +260,7 @@ public class fastrtpsgen {
 			//solution.addInclude("$(EPROSIMADIR)/code");
 			solution.addInclude("$(" + m_appEnv + ")/include");
 			if(m_exampleOption != null) {
-				solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
+				solution.addLibraryPath("$(" + m_appEnv + ")/lib");
 			}
 
             // If Java, include jni headers
@@ -281,31 +281,6 @@ public class fastrtpsgen {
 			{
 				solution.addInclude("$(LIB_BOOST_PATH)");
 			}
-
-            if(m_local)
-            {
-                solution.addInclude("$(" + m_appEnv + ")/thirdparty/fastcdr/include");
-                solution.addInclude("$(" + m_appEnv + ")/thirdparty/eprosima-common-code");
-
-                if(m_exampleOption != null)
-                {
-                    if(!m_exampleOption.contains("Win"))
-                    {
-                        if(m_exampleOption.startsWith("i86Linux2.6gcc"))
-                        {
-                            solution.addLibraryPath("$(" + m_appEnv + ")/thirdparty/fastcdr/lib/i86Linux2.6gcc");
-                        }
-                        else if(m_exampleOption.startsWith("x64Linux2.6gcc"))
-                        {
-                            solution.addLibraryPath("$(" + m_appEnv + ")/thirdparty/fastcdr/lib/x64Linux2.6gcc");
-                        }
-                    }
-                    else
-                    {
-                        solution.addLibraryPath("$(" + m_appEnv + ")/thirdparty/fastcdr/lib/" + m_exampleOption);
-                    }
-                }
-            }
 
 
 			if (m_exampleOption != null && !m_exampleOption.contains("Win")) {

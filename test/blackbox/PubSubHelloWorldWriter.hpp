@@ -38,6 +38,8 @@ class PubSubHelloWorldWriter
             {
                 if (info.status == MATCHED_MATCHING)
                     writer_.matched();
+                else
+                    writer_.unmatched();
             }
 
         private:
@@ -53,9 +55,12 @@ class PubSubHelloWorldWriter
         virtual ~PubSubHelloWorldWriter();
         void init();
         bool isInitialized() const { return initialized_; }
+        void destroy();
         void send(const std::list<uint16_t> &msgs);
         void matched();
+        void unmatched();
         void waitDiscovery();
+        void waitRemoval();
         virtual void configPublisher(PublisherAttributes &puattr) = 0;
 
     private:

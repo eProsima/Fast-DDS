@@ -13,11 +13,18 @@ macro(gradle_build directory)
     endif()
 
     get_filename_component(Java_JAVA_EXECUTABLE_DIR ${Java_JAVA_EXECUTABLE} DIRECTORY)
+    file(TO_NATIVE_PATH "${Java_JAVA_EXECUTABLE_DIR}" Java_JAVA_EXECUTABLE_DIR_NATIVE)
+
+    if(WIN32)
+        set(delimiter_ ";")
+    else()
+        set(delimiter_ ":")
+    endif()
 
     add_custom_target(java ALL
         COMMAND ${CMAKE_COMMAND} -E env
         --unset=JAVA_HOME
-        "PATH=${Java_JAVA_EXECUTABLE_DIR}"
+        "PATH=${Java_JAVA_EXECUTABLE_DIR_NATIVE}${delimiter_}$<JOIN:$ENV{PATH},${delimiter_}>"
         "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
         WORKING_DIRECTORY ${directory}
         COMMENT "Generating Java application" VERBATIM)

@@ -21,8 +21,7 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/attributes/TopicAttributes.h>
-
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 RTPSWithRegistrationReader::RTPSWithRegistrationReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
@@ -44,6 +43,7 @@ void RTPSWithRegistrationReader::init(uint32_t port, uint16_t nmsgs)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	pattr.builtin.use_WriterLivelinessProtocol = true;
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -65,7 +65,7 @@ void RTPSWithRegistrationReader::init(uint32_t port, uint16_t nmsgs)
     eprosima::fastrtps::TopicAttributes tattr;
 	tattr.topicKind = NO_KEY;
 	tattr.topicDataType = "string";
-	tattr.topicName = "exampleTopic";
+    configTopic(tattr);
 	ASSERT_EQ(participant_->registerReader(reader_, tattr, Rqos), true);
 
     // Initialize list of msgs

@@ -15,11 +15,22 @@
 #define _TEST_BLACKBOX_RTPSASNONRELIABLEWITHREGISTRATIONREADER_HPP_
 
 #include "RTPSWithRegistrationReader.hpp" 
+#include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class RTPSAsNonReliableWithRegistrationReader : public RTPSWithRegistrationReader
 {
     public:
         void configReader(ReaderAttributes &/*rattr*/, eprosima::fastrtps::ReaderQos& /*rqos*/) {};
+
+        void configTopic(TopicAttributes &tattr)
+        {
+            std::ostringstream t;
+
+            t << "RTPSAsNonReliableWithRegistration_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            tattr.topicName = t.str();
+        };
 };
 
 #endif // _TEST_BLACKBOX_RTPSASNONRELIABLEWITHREGISTRATIONREADER_HPP_

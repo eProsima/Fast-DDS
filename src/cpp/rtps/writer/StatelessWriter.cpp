@@ -40,6 +40,10 @@ StatelessWriter::~StatelessWriter()
 {
 	const char* const METHOD_NAME = "~StatelessWriter";
 	logInfo(RTPS_WRITER,"StatelessWriter destructor";);
+
+    // Destroy parent events
+    if(mp_unsetChangesNotEmpty != nullptr)
+        delete mp_unsetChangesNotEmpty;
 }
 
 /*

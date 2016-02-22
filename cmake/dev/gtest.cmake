@@ -1,5 +1,27 @@
 option(GTEST_INDIVIDUAL "Activate the execution of GTest tests" OFF)
 
+macro(check_gtest)
+    if(WIN32)
+        option(EPROSIMA_GTEST "Activate special set of GTEST_ROOT" OFF)
+        if(EPROSIMA_BUILD)
+            set(EPROSIMA_GTEST ON)
+        endif()
+    endif()
+
+    # Find package GTest
+    if(WIN32 AND EPROSIMA_GTEST)
+        if(NOT GTEST_ROOT)
+            set(GTEST_ROOT_ $ENV{GTEST_ROOT})
+            if(GTEST_ROOT_)
+                file(TO_CMAKE_PATH "${GTEST_ROOT_}/${MSVC_ARCH}" GTEST_ROOT)
+            endif()
+        else()
+            file(TO_CMAKE_PATH "${GTEST_ROOT}/${MSVC_ARCH}" GTEST_ROOT)
+        endif()
+    endif()
+    find_package(GTest)
+endmacro()
+
 macro(add_gtest test)
     if(GTEST_INDIVIDUAL)
         foreach(GTEST_SOURCE_FILE ${ARGN})

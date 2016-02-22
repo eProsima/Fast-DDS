@@ -135,7 +135,7 @@ endif()
 # Check libraries
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
-check_boost(thread system date_time chrono regex)
+check_boost(thread system date_time chrono regex atomic)
 
 ###############################################################################
 # Load external eProsima projects.
@@ -176,7 +176,8 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-find_package(GTest)
+include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
+check_gtest()
 if(GTEST_FOUND)
     enable_testing()
     include(CTest)
@@ -301,7 +302,7 @@ endif()
 ###############################################################################
 # Install external eprosima libraries
 install_eprosima_libraries()
-install_boost(ALL thread system date_time chrono regex)
+install_boost(ALL thread system date_time chrono regex atomic)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt

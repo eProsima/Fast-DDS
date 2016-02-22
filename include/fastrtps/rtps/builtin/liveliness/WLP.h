@@ -119,12 +119,6 @@ public:
 	 */
 	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
 	
-	/**
-	 * Get the mutex
-	 * @return mutex
-	 */
-	inline boost::recursive_mutex* getMutex() {return mp_mutex;};
-
 private:
 	//!Pointer to the local RTPSParticipant.
 	RTPSParticipantImpl* mp_participant;
@@ -148,9 +142,6 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by RTPSParticipant liveliness.
 	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
-	//!Mutex.
-	boost::recursive_mutex* mp_mutex;
-
 };
 
 }
