@@ -259,8 +259,9 @@ public class fastrtpsgen {
 			// In local for all products
 			//solution.addInclude("$(EPROSIMADIR)/code");
 			solution.addInclude("$(" + m_appEnv + ")/include");
+            solution.addLibraryPath("$(" + m_appEnv + ")/lib");
 			if(m_exampleOption != null) {
-				solution.addLibraryPath("$(" + m_appEnv + ")/lib");
+				solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
 			}
 
             // If Java, include jni headers
