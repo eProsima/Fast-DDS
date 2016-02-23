@@ -52,7 +52,7 @@ LatencyTestPublisher::LatencyTestPublisher():
 	m_commandpublistener.mp_up = this;
 	m_commandsublistener.mp_up = this;
 
-	output_jtl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+	//output_jtl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
@@ -63,6 +63,9 @@ LatencyTestPublisher::~LatencyTestPublisher()
 
 bool LatencyTestPublisher::init(int n_sub,int n_sam)
 {
+	n_samples = n_sam;
+	n_subscribers = n_sub;
+
 	//////////////////////////////
 	char date_buffer[9];
 	char time_buffer[7];
@@ -71,13 +74,16 @@ bool LatencyTestPublisher::init(int n_sub,int n_sam)
 	strftime(date_buffer, 9, "%Y%m%d", now);
 	strftime(time_buffer, 7, "%H%M%S", now);
 
-	output_jtl_name << "perf_LatencyTest_" << date_buffer << time_buffer << ".jtl";
+	//output_jtl_name << "perf_LatencyTest_" << date_buffer << time_buffer << ".jtl";
+	output_file_name << "perf_LatencyTest.csv";
 
-	output_jtl << "<testResults version = \"1.2\">" << std::endl;
+	//output_jtl << "<testResults version = \"1.2\">" << std::endl;
+
+	//output_jtl << "\t<sample t=\"" << TS.mean << "\" lb=\"" << n_samples << " samples of " << TS.nbytes << " bytes.\" />" << std::endl;
+
+	output_file << "\"" << n_samples << " samples of " << data_size_pub.at(0) + 4 << " bytes (us)\"" << std::endl;
 	//////////////////////////////
 
-	n_samples = n_sam;
-	n_subscribers = n_sub;
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
 	PParam.rtps.builtin.domainId = 80;
@@ -354,10 +360,10 @@ void LatencyTestPublisher::run()
 	cout << "REMOVING SUBSCRIBER"<<endl;
 	Domain::removeSubscriber(mp_commandsub);
 
-	output_jtl << "</testResults>" << std::endl;
+	// output_jtl << "</testResults>" << std::endl;
 	std::ofstream outFile;
-	outFile.open(output_jtl_name.str());
-	outFile << output_jtl.str();
+	outFile.open(output_file_name.str());
+	outFile << output_file.str();
 	outFile.close();
 }
 
@@ -410,7 +416,8 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 }
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
-	output_jtl << "\t<sample t=\"" << TS.mean << "\" lb=\"" << n_samples << " samples of " << TS.nbytes << " bytes.\" />" << std::endl;
+	//output_jtl << "\t<sample t=\"" << TS.mean << "\" lb=\"" << n_samples << " samples of " << TS.nbytes << " bytes.\" />" << std::endl;
+	output_file << "\"" << TS.mean << "\"" << std::endl;
 
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8llu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
@@ -471,6 +478,9 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
+	//output_jtl << "\t<sample t=\"" << TS.mean << "\" lb=\"" << n_samples << " samples of " << TS.nbytes << " bytes.\" />" << std::endl;
+	output_file << TS.mean << std::endl;
+
 	//cout << "MEAN PRINTING: " << TS.mean << endl;
 	printf("%8lu,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes,TS.stdev,TS.mean,

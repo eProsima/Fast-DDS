@@ -99,8 +99,8 @@ public:
 		TestCommandDataType command_t;
 		
 	std::vector<uint32_t> data_size_pub;
-	std::stringstream output_jtl_name;
-	std::stringstream output_jtl;
+	std::stringstream output_file_name;
+	std::stringstream output_file;
 };
 
 
