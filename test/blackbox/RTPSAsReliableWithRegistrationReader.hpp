@@ -15,6 +15,8 @@
 #define _TEST_BLACKBOX_RTPSASRELIABLEWITHREGISTRATIONREADER_HPP_
 
 #include "RTPSWithRegistrationReader.hpp" 
+#include <boost/asio.hpp>
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 
 class RTPSAsReliableWithRegistrationReader : public RTPSWithRegistrationReader
 {
@@ -23,6 +25,15 @@ class RTPSAsReliableWithRegistrationReader : public RTPSWithRegistrationReader
         {
             rattr.endpoint.reliabilityKind = RELIABLE;
             rqos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        };
+
+        void configTopic(TopicAttributes &tattr)
+        {
+            std::ostringstream t;
+
+            t << "RTPSAsReliableWithRegistration_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+
+            tattr.topicName = t.str();
         };
 };
 

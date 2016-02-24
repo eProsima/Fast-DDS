@@ -22,6 +22,11 @@ class RTPSAsNonReliableSocketReader : public RTPSAsSocketReader
         void configReader(ReaderAttributes &/*rattr*/) {};
 
         void addRemoteWriter(RTPSReader* /*reader*/, std::string &/*ip*/, uint32_t /*port*/, GUID_t &/*guid*/) {}
+
+        std::string getText()
+        {
+            return "RTPSAsNonReliableSocket";
+        }
 };
 
 #endif // _TEST_BLACKBOX_RTPSASNONRELIABLESOCKETREADER_HPP_

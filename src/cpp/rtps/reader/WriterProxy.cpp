@@ -35,10 +35,8 @@ WriterProxy::~WriterProxy()
 {
 	//pDebugInfo("WriterProxy destructor"<<endl;);
 	if(mp_writerProxyLiveliness!=nullptr)
-	{
-		mp_writerProxyLiveliness->stop_timer();
 		delete(mp_writerProxyLiveliness);
-	}
+
 	delete(mp_heartbeatResponse);
 	delete(mp_mutex);
 }
@@ -409,7 +407,7 @@ void WriterProxy::assertLiveliness()
 
 	m_isAlive=true;
 
-    this->mp_writerProxyLiveliness->stop_timer();
+	this->mp_writerProxyLiveliness->cancel_timer();
 	this->mp_writerProxyLiveliness->restart_timer();
 }
 

@@ -71,7 +71,7 @@ macro(find_eprosima_package package)
                     )
 
                 if(NOT EXECUTE_RESULT EQUAL 0)
-                    message(FATAL_ERROR "Cannot build Git submodule ${package} in debug mode")
+                    message(FATAL_ERROR "Cannot build Git submodule ${package} in Debug mode")
                 endif()
 
                 execute_process(COMMAND ${CMAKE_COMMAND} --build . --config Release
@@ -80,7 +80,16 @@ macro(find_eprosima_package package)
                     )
 
                 if(NOT EXECUTE_RESULT EQUAL 0)
-                    message(FATAL_ERROR "Cannot build Git submodule ${package} in release mode")
+                    message(FATAL_ERROR "Cannot build Git submodule ${package} in Release mode")
+                endif()
+
+                execute_process(COMMAND ${CMAKE_COMMAND} --build . --config RelWithDebInfo
+                    WORKING_DIRECTORY ${${package}ExternalDir}
+                    RESULT_VARIABLE EXECUTE_RESULT
+                    )
+
+                if(NOT EXECUTE_RESULT EQUAL 0)
+                    message(FATAL_ERROR "Cannot build Git submodule ${package} in RelWithDebInfo mode")
                 endif()
             else()
                 execute_process(COMMAND ${CMAKE_COMMAND} --build .
@@ -192,6 +201,7 @@ macro(install_eprosima_libraries)
             # Install libraries
             install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
                 DESTINATION ${LIB_INSTALL_DIR}
+                USE_SOURCE_PERMISSIONS
                 COMPONENT libraries
                 )
 

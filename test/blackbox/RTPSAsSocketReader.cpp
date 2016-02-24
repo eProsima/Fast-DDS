@@ -21,6 +21,8 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
+#include <boost/interprocess/detail/os_thread_functions.hpp>
+#include <boost/asio.hpp>
 #include <gtest/gtest.h>
 
 RTPSAsSocketReader::RTPSAsSocketReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
@@ -42,6 +44,7 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = false;
 	pattr.builtin.use_WriterLivelinessProtocol = false;
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
     pattr.participantID = 1;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
@@ -71,6 +74,14 @@ void RTPSAsSocketReader::init(std::string &ip, uint32_t port, uint16_t nmsgs)
     {
         msgs_.push_back(count);
     }
+
+    text_ = getText();
+    domainId_ = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
+    hostname_ = boost::asio::ip::host_name();
+
+    std::ostringstream word;
+    word << text_ << "_" << hostname_ << "_" << domainId_;
+    word_ = word.str();
 
     initialized_ = true;
 }
@@ -110,10 +121,13 @@ void RTPSAsSocketReader::Listener::onNewCacheChangeAdded(RTPSReader* reader, con
     history->remove_change((CacheChange_t*)change);
 
     uint16_t number;
-#ifdef WIN32
-    ASSERT_EQ(sscanf_s((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
-#else
-    ASSERT_EQ(sscanf((char*)change->serializedPayload.data, "My example string %hu", &number), 1);
-#endif
-    reader_.newNumber(number);
+    std::istringstream input((char*)change->serializedPayload.data);
+    std::string word;
+    input >> word;
+
+    if(word.compare(reader_.word_) == 0)
+    {
+        input >> number;
+        reader_.newNumber(number);
+    }
 }

@@ -7,8 +7,8 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.h"], description=["This hea
 #ifndef _$ctx.fileNameUpper$_PUBLISHER_H_
 #define _$ctx.fileNameUpper$_PUBLISHER_H_
 
-#include "fastrtps/fastrtps_fwd.h"
-#include "fastrtps/publisher/PublisherListener.h"
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/publisher/PublisherListener.h>
 
 #include "$ctx.filename$PubSubTypes.h"
 

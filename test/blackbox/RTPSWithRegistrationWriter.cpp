@@ -21,8 +21,7 @@
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 
-#include <fastrtps/attributes/TopicAttributes.h>
-
+#include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
 RTPSWithRegistrationWriter::RTPSWithRegistrationWriter(): listener_(*this), participant_(nullptr),
@@ -44,6 +43,7 @@ void RTPSWithRegistrationWriter::init()
 	RTPSParticipantAttributes pattr;
 	pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	pattr.builtin.use_WriterLivelinessProtocol = true;
+    pattr.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
 	participant_ = RTPSDomain::createParticipant(pattr);
     ASSERT_NE(participant_, nullptr);
 
@@ -62,7 +62,7 @@ void RTPSWithRegistrationWriter::init()
     eprosima::fastrtps::TopicAttributes tattr;
 	tattr.topicKind = NO_KEY;
 	tattr.topicDataType = "string";
-	tattr.topicName = "exampleTopic";
+    configTopic(tattr);
 	ASSERT_EQ(participant_->registerWriter(writer_, tattr, Wqos), true);
 
     initialized_ = true;

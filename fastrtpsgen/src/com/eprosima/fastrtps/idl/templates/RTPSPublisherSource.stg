@@ -4,14 +4,14 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.cpp"], description=["This file contains the implementation of the publisher functions."])$
 
 
-#include "fastrtps/participant/Participant.h"
-#include "fastrtps/attributes/ParticipantAttributes.h"
-#include "fastrtps/publisher/Publisher.h"
-#include "fastrtps/attributes/PublisherAttributes.h"
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 
-#include "fastrtps/Domain.h"
+#include <fastrtps/Domain.h>
 
-#include "fastrtps/utils/eClock.h"
+#include <fastrtps/utils/eClock.h>
 
 #include "$ctx.filename$Publisher.h"
 

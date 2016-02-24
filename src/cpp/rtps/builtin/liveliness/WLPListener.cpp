@@ -52,7 +52,7 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 {
 	const char* const METHOD_NAME = "onNewCacheChangeAdded";
 	boost::lock_guard<boost::recursive_mutex> guard(*reader->getMutex());
-	boost::lock_guard<boost::recursive_mutex> guard2(*mp_WLP->getMutex());
+	boost::lock_guard<boost::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,"",C_MAGENTA);
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;

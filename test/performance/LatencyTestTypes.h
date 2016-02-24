@@ -21,21 +21,13 @@ class LatencyType{
 public:
 	uint32_t seqnum;
 	std::vector<uint8_t> data;
-	LatencyType():
-		seqnum(0)
-	{
-		seqnum = 0;
-	}
-	LatencyType(uint16_t number):
-		seqnum(0),
-		data(number,0)
-	{
 
-	}
-	~LatencyType()
-	{
+	LatencyType(): seqnum(0) {}
 
-	}
+	LatencyType(uint16_t number) :
+		seqnum(0), data(number,0) {}
+
+	~LatencyType() {}
 };
 
 

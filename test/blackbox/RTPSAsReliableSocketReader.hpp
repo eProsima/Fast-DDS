@@ -53,6 +53,11 @@ class RTPSAsReliableSocketReader : public RTPSAsSocketReader
             wattr.guid.entityId.value[3] = 3;
             reader->matched_writer_add(wattr);
         }
+
+        std::string getText()
+        {
+            return "RTPSAsReliableSocket";
+        }
 };
 
 #endif // _TEST_BLACKBOX_RTPSASRELIABLESOCKETREADER_HPP_

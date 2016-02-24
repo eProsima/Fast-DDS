@@ -7,9 +7,9 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.h"], description=["This he
 #ifndef _$ctx.fileNameUpper$_SUBSCRIBER_H_
 #define _$ctx.fileNameUpper$_SUBSCRIBER_H_
 
-#include "fastrtps/fastrtps_fwd.h"
-#include "fastrtps/subscriber/SubscriberListener.h"
-#include "fastrtps/subscriber/SampleInfo.h"
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 #include "$ctx.filename$PubSubTypes.h"
 
 using namespace eprosima::fastrtps;

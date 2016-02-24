@@ -4,8 +4,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.cpp"], description=["This header file contains the implementation of the serialization functions."])$
 
 
-#include "fastcdr/FastBuffer.h"
-#include "fastcdr/Cdr.h"
+#include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
 
 #include "$ctx.filename$PubSubTypes.h"
 
@@ -58,14 +58,14 @@ $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::$if(parent
 
 $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType() {
 	if(m_keyBuffer!=nullptr)
-		delete(m_keyBuffer);
+		free(m_keyBuffer);
 }
 
 bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::serialize(void *data, SerializedPayload_t *payload) {
 	$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$ *p_type = ($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*) data;
 	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that serializes the data.
-	payload->encapsulation = CDR_LE;  	//Select the correct endianess
+	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
+    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	p_type->serialize(ser); 	// Serialize the object:
     payload->length = (uint16_t)ser.getSerializedDataLength(); 	//Get the serialized length
 	return true;
@@ -74,8 +74,7 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::seria
 bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::deserialize(SerializedPayload_t* payload, void* data) {
 	$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$* p_type = ($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*) data; 	//Convert DATA to pointer of your type
 	eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
-	eprosima::fastcdr::Cdr::Endianness endian = payload->encapsulation == CDR_LE ? eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS : eprosima::fastcdr::Cdr::BIG_ENDIANNESS; 	//select the correct endianess
-	eprosima::fastcdr::Cdr deser(fastbuffer,endian); 	// Object that deserializes the data.
+	eprosima::fastcdr::Cdr deser(fastbuffer, payload->encapsulation == CDR_BE ? eprosima::fastcdr::Cdr::BIG_ENDIANNESS : eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS); 	// Object that deserializes the data.
 	p_type->deserialize(deser);	//Deserialize the object:
 	return true;
 }

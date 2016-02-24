@@ -6,7 +6,8 @@
  *
  *************************************************************************/
 
-
+#include "LatencyTestPublisher.h"
+#include "LatencyTestSubscriber.h"
 
 #include <stdio.h>
 #include <string>
@@ -16,12 +17,10 @@
 #include <cstdint>
 #include <sstream>
 
+#include <fastrtps/fastrtps_all.h>
 
+#include <boost/program_options.hpp>
 
-#include "fastrtps/fastrtps_all.h"
-
-#include "LatencyTestPublisher.h"
-#include "LatencyTestSubscriber.h"
 
 using namespace eprosima;
 using namespace rtps;
@@ -45,15 +44,33 @@ const int c_n_samples = 10000;
 int main(int argc, char** argv){
 
 	Log::setVerbosity(VERB_ERROR);
-	//Log::setCategoryVerbosity(RTPS_LIVELINESS,VERB_INFO);
-	//Log::logFileName("LatencyTest.txt",true);
+
+    boost::program_options::options_description p_optionals("Publisher optional options");
+    p_optionals.add_options()
+        ("help,h", "produce help message")
+        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
+        ("subscribers,n", boost::program_options::value<int>()->default_value(1), "number of subscribers")
+        ("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
+        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+        ;
+
+    boost::program_options::options_description s_optionals("Subscriber optional options");
+    s_optionals.add_options()
+        ("help,h", "produce help message")
+        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
+        ("echo,e", boost::program_options::value<string>()->default_value("true"), "echo mode (\"true\"/\"false\")")
+        ("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
+        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+        ;
+
+
 	logUser("Starting");
 	int type;
 	int sub_number = 1;
 	int n_samples = c_n_samples;
 	bool echo = true;
-
-	uint32_t data_size = 16 - 4;
+    bool reliable = false;
+    uint32_t pid = 80;
 
 	if(argc > 1)
 	{
@@ -63,112 +80,107 @@ int main(int argc, char** argv){
 			type = 2;
 		else
 		{
-			cout << "NEEDS publisher OR subscriber as first argument"<<endl;
-			return 0;
+			cout << "Usage: LatencyTest <publisher|subscriber>"<< endl;
+            cout << p_optionals << endl;
+            cout << s_optionals << endl;
+			return -1;
 		}
 
-		if (argc > 2) {
-			std::istringstream iss(argv[2]);
-			if (!(iss >> data_size))
-			{
-				cout << "Problem reading bytes " << endl;
-				data_size = 16;
-			}
-			data_size -= 4;
-		}
-		
-		if(argc > 3 && type == 1)
-		{
-			std::istringstream iss( argv[3] );
-			if (!(iss >> sub_number))
-			{
-				cout << "Problem reading subscriber number "<< endl;
-			}
-			if(argc > 3) //READ SAMPLES NUMBER
-			{
-				std::istringstream iss2( argv[4] );
-				if (!(iss2 >> n_samples))
-				{
-					cout << "Problem reading subscriber number "<< endl;
-					n_samples = c_n_samples;
-				}
-				else if (n_samples < 10)
-				{
-					cout << "Samples number must be >= 10"<<endl;
-					n_samples = 10;
-				}
-				else
-				{
-					cout << "Reading number of samples: "<< n_samples << endl;
-				}
-			}
-		}
-		else if(argc > 3 && type == 2)
-		{
-			if(strcmp(argv[3],"echo")==0)
-			{
-				cout << "Subscriber will ECHO"<<endl;
-				echo = true;
-			}
-			else if(strcmp(argv[3],"noecho")==0)
-			{
-				cout << "Subscriber will NOT ECHO"<<endl;
-				echo = false;
-			}
-			else
-			{
-				cout << "Second argument of subscribers needs to be echo or noecho"<<endl;
-				return 0;
-			}
-			if(argc > 3) //READ SAMPLES NUMBER
-			{
-				std::istringstream iss( argv[4] );
-				if (!(iss >> n_samples))
-				{
-					cout << "Problem reading subscriber number "<< endl;
-					n_samples = c_n_samples;
-				}
-				else if (n_samples < 10)
-				{
-					cout << "Samples number must be >= 10"<<endl;
-					n_samples = 10;
-				}
-				else
-				{
-					cout << "Reading number of samples: "<< n_samples << endl;
-				}
-			}
-		}
+        boost::program_options::variables_map vm;
 
+        if(type == 1)
+        {
+            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, p_optionals), vm);
+            boost::program_options::notify(vm);
+
+            if(vm.count("help"))
+            {
+                cout << "Usage: LatencyTest publisher"<< endl;
+                cout << p_optionals << endl;
+                return 0;
+            }
+
+            sub_number = vm["subscribers"].as<int>();
+        }
+        else
+        {
+            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, s_optionals), vm);
+            boost::program_options::notify(vm);
+
+            if(vm.count("help"))
+            {
+                cout << "Usage: LatencyTest subscriber"<< endl;
+                cout << s_optionals << endl;
+                return 0;
+            }
+
+            string s_echo = vm["echo"].as<std::string>();
+            
+            if(s_echo.compare("true") == 0)
+            {
+                echo = true;
+            }
+            else if(s_echo.compare("false") == 0)
+            {
+                echo = false;
+            }
+            else
+            {
+                cout << "Bad argument for option --echo. Valid values: \"true\"/\"false\".\n" << endl;
+                cout << "Usage: LatencyTest subscriber"<< endl;
+                cout << s_optionals << endl;
+                return -1;
+            }
+        }
+
+        std::string reliability = vm["reliability"].as<std::string>();
+
+        if(reliability.compare("reliable") == 0)
+        {
+            reliable = true;
+        }
+        else if(reliability.compare("besteffort") == 0)
+        {
+            reliable = false;
+        }
+        else
+        {
+            cout << "Bad argument for option --reliability. Valid values: \"reliable\"/\"besteffort\".\n" << endl;
+            cout << "Usage: LatencyTest <publisher|subscriber>"<< endl;
+            cout << p_optionals << endl;
+            cout << s_optionals << endl;
+            return -1;
+        }
+
+        n_samples = vm["samples"].as<int>();
+        pid = vm["pid"].as<uint32_t>();
 	}
 	else
 	{
-		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
-		cout << "LatencyTest publisher BYTES NUM_SUBSCRIBERS NUM_SAMPLES"<<endl;
-		cout << "LatencyTest subscriber BYTES echo/noecho NUM_SAMPLES" <<endl;
-		return 0;
+        cout << "Usage: LatencyTest <publisher|subscriber>"<< endl;
+        cout << p_optionals << endl;
+        cout << s_optionals << endl;
+		return -1;
 	}
 
-	switch (type)
-	{
-	case 1:
-	{
-		cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
-		LatencyTestPublisher latencyPub;
-		latencyPub.data_size_pub.push_back(data_size);
-		latencyPub.init(sub_number,n_samples);
-		latencyPub.run();
-		break;
-	}
-	case 2:
-	{
-		LatencyTestSubscriber latencySub;
-		latencySub.data_size_sub.push_back(data_size);
-		latencySub.init(echo,n_samples);
-		latencySub.run();
-		break;
-	}
-	}
+    switch (type)
+    {
+        case 1:
+            {
+                cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
+                LatencyTestPublisher latencyPub;
+                latencyPub.init(sub_number,n_samples, reliable, pid);
+                latencyPub.run();
+                break;
+            }
+        case 2:
+            {
+                LatencyTestSubscriber latencySub;
+                latencySub.init(echo,n_samples, reliable, pid);
+                latencySub.run();
+                break;
+            }
+    }
 
 	eClock::my_sleep(1000);
 	

@@ -4,8 +4,8 @@ main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.cpp"], description=["This header file contains the implementation of the serialization functions."])$
 
 
-#include "fastcdr/FastBuffer.h"
-#include "fastcdr/Cdr.h"
+#include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
 
 #include "$ctx.filename$PubSubType.h"
 

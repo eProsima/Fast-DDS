@@ -3,12 +3,12 @@ group ProtocolHeader;
 main(ctx, definitions) ::= <<
 $fileHeader(ctx=ctx,  file=[ctx.filename, "Subscriber.cpp"], description=["This file contains the implementation of the subscriber functions."])$
 
-#include "fastrtps/participant/Participant.h"
-#include "fastrtps/attributes/ParticipantAttributes.h"
-#include "fastrtps/subscriber/Subscriber.h"
-#include "fastrtps/attributes/SubscriberAttributes.h"
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include "fastrtps/Domain.h"
+#include <fastrtps/Domain.h>
 
 #include "$ctx.filename$Subscriber.h"
 

@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include "../../participant/RTPSParticipantImpl.h"
@@ -28,12 +29,13 @@ static const char* const CLASS_NAME = "NackSupressionDuration";
 
 NackSupressionDuration::~NackSupressionDuration()
 {
-	stop_timer();
+    destroy();
 }
 
 NackSupressionDuration::NackSupressionDuration(ReaderProxy* p_RP,double millisec):
-				TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getIOService(),millisec),
-				mp_RP(p_RP)
+TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
+mp_RP(p_RP)
 {
 
 }

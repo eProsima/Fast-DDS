@@ -103,11 +103,11 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 pdata->copy(m_ParticipantProxyData);
                 pdata_ptr = pdata;
                 pdata_ptr->isAlive = true;
-                this->mp_SPDP->m_participantProxies.push_back(pdata_ptr);
                 pdata_ptr->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
                         pdata_ptr,
                         TimeConv::Time_t2MilliSecondsDouble(pdata_ptr->m_leaseDuration));
                 pdata_ptr->mp_leaseDurationTimer->restart_timer();
+                this->mp_SPDP->m_participantProxies.push_back(pdata_ptr);
                 mp_SPDP->assignRemoteEndpoints(pdata_ptr);
                 mp_SPDP->announceParticipantState(false);
             }

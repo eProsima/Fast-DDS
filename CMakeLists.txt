@@ -1,7 +1,7 @@
 ###############################################################################
 # CMake build rules for FastRTPS                                                
 ###############################################################################
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.12)
 
 # Set CMAKE_BUILD_TYPE to Release by default.
 if(DEFINED CMAKE_BUILD_TYPE)
@@ -135,7 +135,7 @@ endif()
 # Check libraries
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
-check_boost(thread system date_time chrono regex)
+check_boost(thread system date_time chrono regex atomic program_options)
 
 ###############################################################################
 # Load external eProsima projects.
@@ -298,7 +298,7 @@ endif()
 ###############################################################################
 # Install external eprosima libraries
 install_eprosima_libraries()
-install_boost(ALL thread system date_time chrono regex)
+install_boost(ALL thread system date_time chrono regex atomic)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
