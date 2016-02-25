@@ -20,7 +20,7 @@ flags = [
 max_time = time.ctime(0)
 selec_file = None
 
-real_path = os.path.realpath(__file__)
+real_path = os.path.dirname(os.path.realpath(__file__))
 
 for export_file in glob.glob(real_path + '/build/*/compile_commands.json'):
     file_time = time.ctime(os.path.getmtime(export_file))
@@ -29,8 +29,8 @@ for export_file in glob.glob(real_path + '/build/*/compile_commands.json'):
         selec_file = export_file
         max_time = file_time
 
-if selec_file != None and os.path.exists(os.path.realpath(selec_file)):
-  database = ycm_core.CompilationDatabase(os.path.realpath(selec_file))
+if selec_file != None and os.path.exists(os.path.dirname(os.path.realpath(selec_file))):
+  database = ycm_core.CompilationDatabase(os.path.dirname(os.path.realpath(selec_file)))
 else:
   database = None
 
