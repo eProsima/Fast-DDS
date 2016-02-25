@@ -1,7 +1,6 @@
 import os
 import ycm_core
 import glob
-import time
 
 flags = [
     '-x',
@@ -29,8 +28,8 @@ for export_file in glob.glob(real_path + '/build/*/compile_commands.json'):
         selec_file = export_file
         max_time = file_time
 
-if selec_file != None and os.path.exists(os.path.dirname(os.path.realpath(selec_file))):
-  database = ycm_core.CompilationDatabase(os.path.dirname(os.path.realpath(selec_file)))
+if selec_file != None and os.path.exists(os.path.dirname(selec_file)):
+  database = ycm_core.CompilationDatabase(os.path.dirname(selec_file))
 else:
   database = None
 
