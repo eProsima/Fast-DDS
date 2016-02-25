@@ -17,13 +17,13 @@ flags = [
     '-Wno-unknown-pragmas',
 ]
 
-max_time = time.ctime(0)
+max_time = 0
 selec_file = None
 
 real_path = os.path.dirname(os.path.realpath(__file__))
 
 for export_file in glob.glob(real_path + '/build/*/compile_commands.json'):
-    file_time = time.ctime(os.path.getmtime(export_file))
+    file_time = os.path.getmtime(export_file)
     
     if(file_time > max_time):
         selec_file = export_file
