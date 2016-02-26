@@ -63,8 +63,6 @@ int main(int argc, char** argv){
         ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
         ;
 
-
-	logUser("Starting");
 	int type;
 	int sub_number = 1;
 	int n_samples = c_n_samples;
@@ -162,6 +160,8 @@ int main(int argc, char** argv){
         cout << s_optionals << endl;
 		return -1;
 	}
+
+	logUser("Starting");
 
     switch (type)
     {

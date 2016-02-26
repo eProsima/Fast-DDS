@@ -11,29 +11,28 @@
  *
  */
 
-
-
 #include "ThroughputPublisher.h"
-#include "fastrtps/utils/TimeConversion.h"
 
-#include "fastrtps/attributes/ParticipantAttributes.h"
-#include "fastrtps/attributes/PublisherAttributes.h"
-#include "fastrtps/attributes/SubscriberAttributes.h"
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/utils/eClock.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include "fastrtps/publisher/Publisher.h"
-#include "fastrtps/subscriber/Subscriber.h"
-#include "fastrtps/subscriber/SampleInfo.h"
+#include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
-#include "fastrtps/Domain.h"
+#include <fastrtps/Domain.h>
 
 #include <map>
 
 
 
-ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){};
-ThroughputPublisher::DataPubListener::~DataPubListener(){};
+ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){}
+ThroughputPublisher::DataPubListener::~DataPubListener(){}
 
-void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
 
 	if(info.status == MATCHED_MATCHING)
@@ -47,9 +46,9 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* pub,M
 	}
 }
 
-ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){};
-ThroughputPublisher::CommandSubListener::~CommandSubListener(){};
-void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){}
+ThroughputPublisher::CommandSubListener::~CommandSubListener(){}
+void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -62,9 +61,9 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* 
 	}
 }
 
-ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){};
-ThroughputPublisher::CommandPubListener::~CommandPubListener(){};
-void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){}
+ThroughputPublisher::CommandPubListener::~CommandPubListener(){}
+void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -77,17 +76,14 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* pu
 	}
 }
 
-
-ThroughputPublisher::~ThroughputPublisher(){Domain::removeParticipant(mp_par);}
-
-ThroughputPublisher::ThroughputPublisher():
-																												sema(0),
+ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid): sema(0),
 #pragma warning(disable:4355)
-																												m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-																												ready(true)
+    m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+    ready(true)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.domainId = pid % 230;
 	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
@@ -106,28 +102,35 @@ ThroughputPublisher::ThroughputPublisher():
 	//REGISTER THE TYPES
 	Domain::registerType(mp_par,(TopicDataType*)&latency_t);
 	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
-	//Overhead
-	m_Clock.setTimeNow(&m_t1);
-	for(int i=0;i<1000;i++)
-		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
-	cout << "Overhead " << m_overhead << endl;
+
+    // Calculate overhead
+    t_start_ = boost::chrono::steady_clock::now();
+	for(int i= 0; i < 1000; ++i)
+        t_end_ = boost::chrono::steady_clock::now();
+	t_overhead_ = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) / 1001;
+	cout << "Overhead " << t_overhead_.count() << " us"  << endl;
 
 	//DATA PUBLISHER
 	PublisherAttributes Wparam;
-	Wparam.topic.topicDataType = "LatencyType";
+	Wparam.topic.topicDataType = "ThroughputType";
 	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicName = "LatencyUp";
+    std::ostringstream pt;
+    pt << "ThroughputTest_" << boost::asio::ip::host_name() << "_" << pid << "_UP";
+    Wparam.topic.topicName = pt.str();
 
-
-	//RELIABLE
-//	Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(1);
-//	Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
-//	Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
-//	Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
-	//BEST EFFORT:
-	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    if(reliable)
+    {
+        //RELIABLE
+        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(1);
+        Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
+        Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+        Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    }
+    else
+    {
+        //BEST EFFORT:
+        Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    }
 
 
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -145,7 +148,10 @@ ThroughputPublisher::ThroughputPublisher():
 	Rparam.topic.resourceLimitsQos.allocated_samples = 20;
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
-	Rparam.topic.topicName = "ThroughputCommandS2P";
+    std::ostringstream sct;
+    sct << "ThroughputTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_SUB2PUB";
+    Rparam.topic.topicName = sct.str();
+	Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
 	PublisherAttributes Wparam2;
 	Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
@@ -154,20 +160,23 @@ ThroughputPublisher::ThroughputPublisher():
 	Wparam2.topic.resourceLimitsQos.allocated_samples = 50;
 	Wparam2.topic.topicDataType = "ThroughputCommand";
 	Wparam2.topic.topicKind = NO_KEY;
-	Wparam2.topic.topicName = "ThroughputCommandP2S";
+    std::ostringstream pct;
+    pct << "ThroughputTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_PUB2SUB";
+    Wparam2.topic.topicName = pct.str();
 	Wparam2.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_par,Wparam2,(PublisherListener*)&this->m_CommandPubListener);
 
 	if(mp_datapub == nullptr || mp_commandsub == nullptr || mp_commandpub == nullptr)
 		ready = false;
-
-	//mp_par->stopParticipantAnnouncement();
-	eClock::my_sleep(5000);
-
-	output_xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
 }
 
-void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
+
+ThroughputPublisher::~ThroughputPublisher()
+{
+    Domain::removeParticipant(mp_par);
+}
+
+void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size)
 {
 	if(!ready)
 	{
@@ -188,23 +197,6 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 	sema.wait();
 	sema.wait();
 	cout << "Discovery complete"<<endl;
-
-	//////////////////////////////
-	char date_buffer[9];
-	char time_buffer[7];
-	time_t t = time(0);   // get time now
-	struct tm * now = localtime(&t);
-	strftime(date_buffer, 9, "%Y%m%d", now);
-	strftime(time_buffer, 7, "%H%M%S", now);
-
-	output_xml_name << "perf_Throughput_" << date_buffer << time_buffer << ".xml";
-
-	output_xml << "<report name=\"Throughput_" << date_buffer << time_buffer << "\" categ=\"Throughput\" >" << std::endl;
-	output_xml << "\t<start>" << std::endl;
-	output_xml << "\t\t<date format=\"YYYYMMDD\" val=\"" << date_buffer << "\" />" << std::endl;
-	output_xml << "\t\t<time format=\"HHMMSS\" val=\"" << time_buffer << "\" />" << std::endl;
-	output_xml << "\t</start>" << std::endl;
-	//////////////////////////////
 
 	ThroughputCommandType command;
 	SampleInfo_t info;
@@ -227,7 +219,7 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 			//cout << "Received command of type: "<< command << endl;
 			if(command.m_command == BEGIN)
 			{
-				if(!test(test_time,*dit,sit->first))
+				if(!test(test_time, recovery_time_ms, *dit,sit->first))
 				{
 					command.m_command = ALL_STOPS;
 					//	cout << "SEND COMMAND "<< command.m_command << endl;
@@ -240,40 +232,36 @@ void ThroughputPublisher::run(uint32_t test_time,int demand,int msg_size)
 	command.m_command = ALL_STOPS;
 	//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
-	
-	output_xml << "</report>" << std::endl;
-	std::ofstream outFile;
-	outFile.open(output_xml_name.str());
-	outFile << output_xml.str();
-	outFile.close();
 }
 
-bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
+bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
 {
-	LatencyType latency(size);
-	m_Clock.setTimeNow(&m_t2);
-	uint64_t timewait_us=0;
-	uint32_t samples=0;
+	ThroughputType latency(size);
+    t_end_ = boost::chrono::steady_clock::now();
+    boost::chrono::duration<double, boost::micro> timewait_us(0);
+    boost::chrono::duration<double, boost::micro> test_time_us = boost::chrono::seconds(test_time);
+	uint32_t samples = 0;
 	size_t aux;
 	ThroughputCommandType command;
 	SampleInfo_t info;
 	command.m_command = TEST_STARTS;
 	//cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
-	m_Clock.setTimeNow(&m_t1);
-	while(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)<test_time*1000000)
+
+    t_start_ = boost::chrono::steady_clock::now();
+	while(boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) < test_time_us)
 	{
-		for(uint32_t sample=0;sample<demand;sample++)
+		for(uint32_t sample = 0; sample < demand;sample++)
 		{
 			latency.seqnum++;
 			mp_datapub->write((void*)&latency);
 			//cout << sample << "*"<<std::flush;
 		}
-		m_Clock.setTimeNow(&m_t2);
+        t_end_ = boost::chrono::steady_clock::now();
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
-		eClock::my_sleep(5);
-		timewait_us+=(uint64_t)m_overhead+5;
+		eClock::my_sleep(recovery_time_ms);
+		timewait_us += t_overhead_;
 		//cout << "Removing all..."<<endl;
 		//mp_datapub->removeAllChange(&aux);
 
@@ -294,27 +282,12 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 			result.demand = demand;
 			result.payload_size = size+4+4;
 			result.publisher.send_samples = samples;
-			result.publisher.totaltime_us = (uint64_t)(TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1)-timewait_us);
+			result.publisher.totaltime_us = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) - timewait_us;
 			result.subscriber.recv_samples = command.m_lastrecsample-command.m_lostsamples;
-			result.subscriber.totaltime_us = command.m_totaltime;
+			result.subscriber.totaltime_us = boost::chrono::microseconds(command.m_totaltime);
 			result.subscriber.lost_samples = command.m_lostsamples;
 			result.compute();
 			m_timeStats.push_back(result);
-
-			output_xml << "\t<test name=\"" << result.payload_size << " bytes, " << result.demand << " demand\" executed=\"yes\" >" << std::endl;
-			output_xml << "\t\t<result>" << std::endl;
-			output_xml << "\t\t\t<success passed=\"yes\" state=\"100\" hasTimedOut=\"false\" />" << std::endl;
-			output_xml << "\t\t\t<metrics>" << std::endl;
-			output_xml << "\t\t\t\t<sent_samples unit=\"samples\" mesure=\"" << result.publisher.send_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<send_time unit=\"us\" mesure=\"" << result.publisher.totaltime_us << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<send_throughput unit=\"MBits/sec\" mesure=\"" << result.publisher.MBitssec << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<received_samples unit=\"samples\" mesure=\"" << result.subscriber.recv_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<lost_samples unit=\"samples\" mesure=\"" << result.subscriber.lost_samples << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<receive_time unit=\"us\" mesure=\"" << result.subscriber.totaltime_us << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t\t<receive_throughput unit=\"samples\" mesure=\"" << result.subscriber.MBitssec << "\" isRelevant=\"true\" />" << std::endl;
-			output_xml << "\t\t\t</metrics>" << std::endl;			
-			output_xml << "\t\t</result>" << std::endl;
-			output_xml << "\t</test>" << std::endl;
 
 			printResults(result);
 			mp_commandpub->removeAllChange(&aux);
@@ -332,7 +305,6 @@ bool ThroughputPublisher::test(uint32_t test_time,uint32_t demand,uint32_t size)
 	return false;
 
 }
-
 
 bool ThroughputPublisher::loadDemandsPayload()
 {

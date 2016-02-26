@@ -6,7 +6,9 @@
  *
  *************************************************************************/
 
-
+#include "ThroughputTypes.h"
+#include "ThroughputPublisher.h"
+#include "ThroughputSubscriber.h"
 
 #include <stdio.h>
 #include <string>
@@ -15,15 +17,13 @@
 #include <bitset>
 #include <cstdint>
 
-#include "fastrtps/utils/RTPSLog.h"
-#include "fastrtps/Domain.h"
+#include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/Domain.h>
+
+#include <boost/program_options.hpp>
+
 using namespace eprosima;
 using namespace fastrtps;
-
-#include "ThroughputTypes.h"
-
-#include "ThroughputPublisher.h"
-#include "ThroughputSubscriber.h"
 
 
 using namespace std;
@@ -43,82 +43,129 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 
 int main(int argc, char** argv){
+
 	Log::setVerbosity(VERB_ERROR);
 
-	cout << "Starting Throughput Test"<< endl;
+    boost::program_options::options_description p_optionals("Publisher optional options");
+    p_optionals.add_options()
+        ("help,h", "produce help message")
+        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
+        ("time,t", boost::program_options::value<uint32_t>()->default_value(5), "time of the test in seconds")
+        ("recovery_time", boost::program_options::value<uint32_t>()->default_value(5), "how long to sleep after writing a demand in milliseconds")
+        ("demand,d", boost::program_options::value<int>()->default_value(0), "number of sample sent in block")
+        ("msg_size,s", boost::program_options::value<int>()->default_value(0), "size of the message")
+        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+        ;
+
+    boost::program_options::options_description s_optionals("Subscriber optional options");
+    s_optionals.add_options()
+        ("help,h", "produce help message")
+        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
+        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+        ;
+
 	int type;
-	uint32_t test_time_sec = 5;
-	int n_subscribers = 1;
+	uint32_t test_time_sec = 5, recovery_time_ms = 5;
 	int demand = 0;
 	int msg_size = 0;
+    bool reliable = false;
+    uint32_t pid = 80;
+
 	if(argc > 1)
 	{
 		if(strcmp(argv[1],"publisher")==0)
+        {
 			type = 1;
-		if(strcmp(argv[1],"subscriber")==0)
+        }
+		else if(strcmp(argv[1],"subscriber")==0)
+        {
 			type = 2;
-		if(argc > 2 && type == 1)
+        }
+		else
 		{
-			std::istringstream iss( argv[2] );
-			if (!(iss >> n_subscribers) || n_subscribers !=1)
-			{
-				cout << "Currently only 1 subscriber is permitted. "<< endl;
-				n_subscribers = 1;
-			}
+			cout << "Usage: ThroughputTest <publisher|subscriber>"<< endl;
+            cout << p_optionals << endl;
+            cout << s_optionals << endl;
+            cout << "Note:\n\tIf no demand or msg_size is provided the .cvs file is used"<<endl;
+			return -1;
 		}
-		if(argc > 3 && type == 1)
-		{
-			std::istringstream iss( argv[3] );
-			if (!(iss >> test_time_sec))
-			{
-				cout << "Problem reading test time,using 30s as default value "<< endl;
-				test_time_sec = 5;
-			}
-		}
-		if (argc > 5 && type == 1)
-		{
-			std::istringstream iss_demand( argv[4] );
-			if (!(iss_demand >> demand))
-			{
-				cout << "Problem reading demand,using default demand vector "<< endl;
-				demand = 0;
-			}
-			std::istringstream iss_size( argv[5] );
-			if (!(iss_size >> msg_size))
-			{
-				cout << "Problem reading msg size,using default size vector "<< endl;
-				msg_size = 0;
-			}
-		}
+
+        boost::program_options::variables_map vm;
+
+        if(type == 1)
+        {
+            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, p_optionals), vm);
+            boost::program_options::notify(vm);
+
+            if(vm.count("help"))
+            {
+                cout << "Usage: ThroughputTest publisher"<< endl;
+                cout << p_optionals << endl;
+                return 0;
+            }
+
+            test_time_sec = vm["time"].as<uint32_t>();
+            recovery_time_ms = vm["recovery_time"].as<uint32_t>();
+            demand = vm["demand"].as<int>();
+            msg_size = vm["msg_size"].as<int>();
+        }
+        else
+        {
+            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, s_optionals), vm);
+            boost::program_options::notify(vm);
+
+            if(vm.count("help"))
+            {
+                cout << "Usage: ThroughputTest subscriber"<< endl;
+                cout << s_optionals << endl;
+                return 0;
+            }
+        }
+
+        std::string reliability = vm["reliability"].as<std::string>();
+
+        if(reliability.compare("reliable") == 0)
+        {
+            reliable = true;
+        }
+        else if(reliability.compare("besteffort") == 0)
+        {
+            reliable = false;
+        }
+        else
+        {
+            cout << "Bad argument for option --reliability. Valid values: \"reliable\"/\"besteffort\".\n" << endl;
+            cout << "Usage: ThroughputTest <publisher|subscriber>"<< endl;
+            cout << p_optionals << endl;
+            cout << s_optionals << endl;
+            return -1;
+        }
+
+        pid = vm["pid"].as<uint32_t>();
 	}
 	else
 	{
-		cout << "NEEDS publisher OR subscriber ARGUMENT"<<endl;
-		cout << "Optional arguments in brackets."<<endl;
-		cout << "If no demand or msg_size is provided the .cvs file is used"<<endl;
-		cout << "Usage: "<<endl;
-		cout << "ThroughputTest \"publisher\" [n_subscribers=1] [seconds=5] [demand] [msg_size]"<<endl;
-		cout << "ThroughputTest \"subscriber\""<<endl;
-		cout << "Example: "<< endl;
-		cout << "ThroughputTest publisher 1 5 100 16"<<endl;
-		cout << "ThroughputTest subscriber"<<endl;
-		return 0;
+        cout << "Usage: ThroughputTest <publisher|subscriber>"<< endl;
+        cout << p_optionals << endl;
+        cout << s_optionals << endl;
+		cout << "Note:\n\tIf no demand or msg_size is provided the .cvs file is used"<<endl;
+        return -1;
 	}
 
-
+	cout << "Starting Throughput Test"<< endl;
 
 	switch (type)
 	{
 	case 1:
 	{
-		ThroughputPublisher tpub;
-		tpub.run(test_time_sec,demand,msg_size);
+		ThroughputPublisher tpub(reliable, pid);
+		tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
 		break;
 	}
 	case 2:
 	{
 
-		ThroughputSubscriber tsub;
+		ThroughputSubscriber tsub(reliable, pid);
 		tsub.run();
 		break;
 	}

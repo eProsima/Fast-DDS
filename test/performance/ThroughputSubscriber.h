@@ -14,37 +14,37 @@
 #ifndef THROUGHPUTSUBSCRIBER_H_
 #define THROUGHPUTSUBSCRIBER_H_
 
+#include <boost/asio.hpp>
 
 #include "ThroughputTypes.h"
-#include "fastrtps/fastrtps_fwd.h"
-#include "fastrtps/utils/eClock.h"
 
-#include "fastrtps/publisher/PublisherListener.h"
-#include "fastrtps/subscriber/SubscriberListener.h"
-#include "fastrtps/subscriber/SampleInfo.h"
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/publisher/PublisherListener.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
 
 using namespace eprosima::fastrtps;
 
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include <boost/chrono.hpp>
 
 #include <fstream>
 #include <iostream>
+
 using namespace std;
 
 class ThroughputSubscriber
 {
 public:
-	ThroughputSubscriber();
+	ThroughputSubscriber(bool reliable, uint32_t pid);
 	virtual ~ThroughputSubscriber();
 	Participant* mp_par;
 	Subscriber* mp_datasub;
 	Publisher* mp_commandpubli;
 	Subscriber* mp_commandsub;
-	eClock m_Clock;
-
-	Time_t m_t1,m_t2;
-	double m_overhead;
+    boost::chrono::steady_clock::time_point t_start_, t_end_;
+    boost::chrono::duration<double, boost::micro> t_overhead_;
 	boost::interprocess::interprocess_semaphore sema;
 	class DataSubListener:public SubscriberListener
 	{
@@ -56,7 +56,7 @@ public:
 		uint32_t lastseqnum,saved_lastseqnum;
 		uint32_t lostsamples,saved_lostsamples;
 		bool first;
-		LatencyType* latencyin;
+		ThroughputType* throughputin;
 		SampleInfo_t info;
 		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);
@@ -88,7 +88,7 @@ public:
 	uint32_t m_datasize;
 	uint32_t m_demand;
 	void run();
-	LatencyDataType latency_t;
+	ThroughputDataType throughput_t;
 	ThroughputCommandDataType throuputcommand_t;
 };
 

@@ -14,33 +14,35 @@
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
 
-#include "ThroughputTypes.h"
-#include "fastrtps/fastrtps_fwd.h"
-#include "fastrtps/utils/eClock.h"
+#include <boost/asio.hpp>
 
-#include "fastrtps/publisher/PublisherListener.h"
-#include "fastrtps/subscriber/SubscriberListener.h"
+#include "ThroughputTypes.h"
+
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/publisher/PublisherListener.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
 
 using namespace eprosima::fastrtps;
 
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include <boost/chrono.hpp>
 
 #include <vector>
 #include <string>
+
 using namespace std;
 
 class ThroughputPublisher
 {
 public:
-	ThroughputPublisher();
+	ThroughputPublisher(bool reliable, uint32_t pid);
 	virtual ~ThroughputPublisher();
 	Participant* mp_par;
 	Publisher* mp_datapub;
 	Publisher* mp_commandpub;
 	Subscriber* mp_commandsub;
-	eClock m_Clock;
-	Time_t m_t1,m_t2;
-	double m_overhead;
+    boost::chrono::steady_clock::time_point t_start_, t_end_;
+    boost::chrono::duration<double, boost::micro> t_overhead_;
 	boost::interprocess::interprocess_semaphore sema;
 	class DataPubListener:public PublisherListener
 	{
@@ -71,17 +73,14 @@ public:
 
 	bool ready;
 
-	void run(uint32_t test_time,int demand = 0,int msg_size = 0);
-	bool test(uint32_t test_time,uint32_t demand,uint32_t size);
+	void run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size);
+	bool test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size);
 	std::vector<TroughputResults> m_timeStats;
-	LatencyDataType latency_t;
-		ThroughputCommandDataType throuputcommand_t;
+	ThroughputDataType latency_t;
+    ThroughputCommandDataType throuputcommand_t;
 
 	bool loadDemandsPayload();
 	std::map<uint32_t,std::vector<uint32_t>> m_demand_payload;
-
-	std::stringstream output_xml_name;
-	std::stringstream output_xml;
 };
 
 

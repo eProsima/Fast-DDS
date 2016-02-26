@@ -14,8 +14,11 @@
 #ifndef THROUGHPUTTYPES_H_
 #define THROUGHPUTTYPES_H_
 
-#include "fastrtps/TopicDataType.h"
-#include "fastrtps/utils/RTPSLog.h"
+#include <fastrtps/TopicDataType.h>
+#include <fastrtps/utils/RTPSLog.h>
+
+#include <boost/chrono.hpp>
+
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 
@@ -38,21 +41,21 @@ struct TroughputResults
 	uint32_t demand;
 	struct PublisherResults
 	{
-		uint64_t totaltime_us;
+        boost::chrono::duration<double, boost::micro>  totaltime_us;
 		uint64_t send_samples;
 		double MBitssec;
 	}publisher;
 	struct SubscriberResults
 	{
-		uint64_t totaltime_us;
+        boost::chrono::duration<double, boost::micro> totaltime_us;
 		uint64_t recv_samples;
 		uint32_t lost_samples;
 		double MBitssec;
 	}subscriber;
 	void compute()
 	{
-		publisher.MBitssec = (double)publisher.send_samples*payload_size*8/(double)publisher.totaltime_us;//bits/us==Mbits/s)
-		subscriber.MBitssec = (double)subscriber.recv_samples*payload_size*8/(double)subscriber.totaltime_us;
+		publisher.MBitssec = (double)publisher.send_samples * payload_size * 8 / publisher.totaltime_us.count();//bits/us==Mbits/s)
+		subscriber.MBitssec = (double)subscriber.recv_samples * payload_size * 8 / subscriber.totaltime_us.count();
 	}
 };
 
@@ -63,42 +66,31 @@ inline void printResultTitle()
 	printf("[ Bytes, Demand][Sent Samples,Send Time(us), MBits/sec][Rec Samples,Lost Samples,Rec Time(us), MBits/sec]\n");
 	printf("[------,-------][------------,-------------,----------][-----------,------------,------------,----------]\n");
 }
-#if defined(_WIN32)
+
 inline void printResults(TroughputResults& res)
 {
-	printf("%7u,%7u,%12.0f,%13.0f,%10.3f,%12.0f,%12.0f,%13.0f,%10.3f\n",res.payload_size,res.demand,(double)res.publisher.send_samples,
-																(double)res.publisher.totaltime_us,res.publisher.MBitssec,
-																(double)res.subscriber.recv_samples,(double)res.subscriber.lost_samples,(double)res.subscriber.totaltime_us,
+	printf("%7u,%7u,%12.0f,%13.0f,%10.3f,%12.0f,%12.0f,%13.0f,%10.3f\n", res.payload_size, res.demand, (double)res.publisher.send_samples,
+																res.publisher.totaltime_us.count(), res.publisher.MBitssec,
+																(double)res.subscriber.recv_samples,(double)res.subscriber.lost_samples, res.subscriber.totaltime_us.count(),
 																(double)res.subscriber.MBitssec);
 	//cout << "res: " <<res.payload_size << " "<<res.demand<< " "<<res.publisher.send_samples<< " "<<
 	//															res.publisher.totaltime_us<< " "<<res.publisher.MBitssec<< " "<<
 	//															res.subscriber.recv_samples<< " "<<res.subscriber.lost_samples<< " "<<res.subscriber.totaltime_us<< " "<<
 	//															res.subscriber.MBitssec<< " "<<endl;
 }
-#else
-inline void printResults(TroughputResults& res)
-{
-	printf("%7u,%7u,%12lu,%13lu,%10.3f,%12lu,%12u,%13lu,%10.3f\n",res.payload_size,res.demand,res.publisher.send_samples,
-																res.publisher.totaltime_us,res.publisher.MBitssec,
-																res.subscriber.recv_samples,res.subscriber.lost_samples,res.subscriber.totaltime_us,
-																res.subscriber.MBitssec);
-}
 
-#endif
-
-
-typedef struct LatencyType{
+typedef struct ThroughputType{
 	uint32_t seqnum;
 	std::vector<uint8_t> data;
-	LatencyType(uint16_t number):
+	ThroughputType(uint16_t number):
 		seqnum(0),
 		data(number,0)
 	{
 		//cout << "Created vector of "<< number << "/"<<data.size() << endl;
 	}
-}LatencyType;
+}ThroughputType;
 
-inline bool operator==(LatencyType& lt1,LatencyType& lt2)
+inline bool operator==(ThroughputType& lt1,ThroughputType& lt2)
 				{
 	if(lt1.seqnum!=lt2.seqnum)
 		return false;
@@ -113,16 +105,16 @@ inline bool operator==(LatencyType& lt1,LatencyType& lt2)
 				}
 
 
-class LatencyDataType: public TopicDataType
+class ThroughputDataType: public TopicDataType
 {
 public:
-	LatencyDataType()
+	ThroughputDataType()
 {
-		setName("LatencyType");
+		setName("ThroughputType");
 		m_typeSize = 25000;
 		m_isGetKeyDefined = false;
 };
-	~LatencyDataType(){};
+	~ThroughputDataType(){};
 	bool serialize(void*data,SerializedPayload_t* payload);
 	bool deserialize(SerializedPayload_t* payload,void * data);
 	void* createData();

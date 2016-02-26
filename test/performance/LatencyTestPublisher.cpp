@@ -100,9 +100,9 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 		return false;
 	Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
 	Domain::registerType(mp_participant,(TopicDataType*)&command_t);
-    t_start_ = boost::chrono::steady_clock::now();
 
     // Calculate overhead
+    t_start_ = boost::chrono::steady_clock::now();
 	for(int i= 0; i < 1000; ++i)
         t_end_ = boost::chrono::steady_clock::now();
 	t_overhead_ = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) / 1001;

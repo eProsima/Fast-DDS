@@ -13,11 +13,10 @@
 
 #include "ThroughputTypes.h"
 
-
 //Funciones de serializacion y deserializacion para el ejemplo
-bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
+bool ThroughputDataType::serialize(void*data,SerializedPayload_t* payload)
 {
-	LatencyType* lt = (LatencyType*)data;
+	ThroughputType* lt = (ThroughputType*)data;
 	*(uint32_t*)payload->data = lt->seqnum;
 	*(uint32_t*)(payload->data+4) = (uint32_t)lt->data.size();
 //	std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
@@ -26,11 +25,11 @@ bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 	return true;
 }
 
-bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
 	if(payload->length > 0)
 	{
-		LatencyType* lt = (LatencyType*)data;
+		ThroughputType* lt = (ThroughputType*)data;
 		lt->seqnum = *(uint32_t*)payload->data;
 		uint32_t siz = *(uint32_t*)(payload->data+4);
 		//std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
@@ -41,13 +40,13 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 	return true;
 }
 
-void* LatencyDataType::createData()
+void* ThroughputDataType::createData()
 {
-	return (void*)new LatencyType(this->m_typeSize);
+	return (void*)new ThroughputType(this->m_typeSize);
 }
-void LatencyDataType::deleteData(void* data)
+void ThroughputDataType::deleteData(void* data)
 {
-	delete((LatencyType*)data);
+	delete((ThroughputType*)data);
 }
 
 

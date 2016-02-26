@@ -12,17 +12,21 @@
  */
 
 #include "ThroughputSubscriber.h"
-#include "fastrtps/utils/TimeConversion.h"
 
-#include "fastrtps/attributes/ParticipantAttributes.h"
-#include "fastrtps/attributes/PublisherAttributes.h"
-#include "fastrtps/attributes/SubscriberAttributes.h"
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/utils/eClock.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include "fastrtps/publisher/Publisher.h"
-#include "fastrtps/subscriber/Subscriber.h"
-#include "fastrtps/subscriber/SampleInfo.h"
+#include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
-#include "fastrtps/Domain.h"
+#include <fastrtps/Domain.h>
+
+#include <boost/numeric/conversion/cast.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -32,22 +36,22 @@ int writecalls= 0;
 
 
 ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-														m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),latencyin(nullptr)
+    m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),throughputin(nullptr)
 {
+}
 
-};
 ThroughputSubscriber::DataSubListener::~DataSubListener()
 {
+}
 
-};
-
-void ThroughputSubscriber::DataSubListener::reset(){
+void ThroughputSubscriber::DataSubListener::reset()
+{
 	lastseqnum = 0;
 	first = true;
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -59,21 +63,21 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* su
 		cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
 	}
 }
-void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* sub)
+void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* /*sub*/)
 {
-	//	cout << "NEW DATA MSG: "<< latencyin->seqnum << endl;
-	while(m_up.mp_datasub->takeNextData((void*)latencyin,&info))
+	//	cout << "NEW DATA MSG: "<< throughputin->seqnum << endl;
+	while(m_up.mp_datasub->takeNextData((void*)throughputin,&info))
 	{
-		//myfile << latencyin.seqnum << ",";
+		//myfile << throughputin.seqnum << ",";
 		if(info.sampleKind == ALIVE)
 		{
-			//cout << "R:"<<latencyin->seqnum<<std::flush;
-			if((lastseqnum+1)<latencyin->seqnum)
+			//cout << "R:"<<throughputin->seqnum<<std::flush;
+			if((lastseqnum+1)<throughputin->seqnum)
 			{
-				lostsamples+=latencyin->seqnum-lastseqnum-1;
+				lostsamples+=throughputin->seqnum-lastseqnum-1;
 				//	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
 			}
-			lastseqnum = latencyin->seqnum;
+			lastseqnum = throughputin->seqnum;
 		}
 		else
 		{
@@ -91,9 +95,9 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
 
 
 
-ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){};
-ThroughputSubscriber::CommandSubListener::~CommandSubListener(){};
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){}
+ThroughputSubscriber::CommandSubListener::~CommandSubListener(){}
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -105,7 +109,7 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
 		cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
 	}
 }
-void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
+void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
 {
 	//cout << "Command Received: ";
 	if(m_up.mp_commandsub->takeNextData((void*)&m_commandin,&info))
@@ -122,7 +126,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			m_up.m_datasize = m_commandin.m_size;
 			m_up.m_demand = m_commandin.m_demand;
 			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-			m_up.m_DataSubListener.latencyin = new LatencyType(m_up.m_datasize);
+			m_up.m_DataSubListener.throughputin = new ThroughputType(m_up.m_datasize);
 			ThroughputCommandType command(BEGIN);
 			eClock::my_sleep(50);
 			m_up.m_DataSubListener.reset();
@@ -132,11 +136,11 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			break;
 		}
 		case (TEST_STARTS):{
-			m_up.m_Clock.setTimeNow(&m_up.m_t1);
+            m_up.t_start_ = boost::chrono::steady_clock::now();
 			break;
 		}
 		case (TEST_ENDS):{
-			m_up.m_Clock.setTimeNow(&m_up.m_t2);
+            m_up.t_end_ = boost::chrono::steady_clock::now();
 			m_up.m_DataSubListener.saveNumbers();
 			cout << "TEST ends, sending results"<<endl;
 			ThroughputCommandType comm;
@@ -145,7 +149,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 			comm.m_size = m_up.m_datasize+4+4;
 			comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
 			comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
-			comm.m_totaltime = (uint64_t)(TimeConv::Time_t2MicroSecondsDouble(m_up.m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_up.m_t1));
+			comm.m_totaltime = boost::numeric_cast<uint64_t>((boost::chrono::duration<double, boost::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
 			cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
 			cout << "Lost Samples: " << comm.m_lostsamples << endl;
 			cout << "Test of size "<<comm.m_size << " and demand "<<comm.m_demand << " ends."<<endl; 
@@ -163,9 +167,9 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub)
 	}
 }
 
-ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){};
-ThroughputSubscriber::CommandPubListener::~CommandPubListener(){};
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){}
+ThroughputSubscriber::CommandPubListener::~CommandPubListener(){}
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -182,14 +186,15 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* p
 
 ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
-ThroughputSubscriber::ThroughputSubscriber():
-																				sema(0),
+ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid):
+    sema(0),
 #pragma warning(disable:4355)
-																				m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-																				ready(true),m_datasize(0),m_demand(0)
+    m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+    ready(true),m_datasize(0),m_demand(0)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
+	PParam.rtps.builtin.domainId = pid % 230;
 	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
@@ -206,27 +211,35 @@ ThroughputSubscriber::ThroughputSubscriber():
 		return;
 	}
 	//REGISTER THE TYPES
-	Domain::registerType(mp_par,(TopicDataType*)&latency_t);
+	Domain::registerType(mp_par,(TopicDataType*)&throughput_t);
 	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
 
 
-	m_Clock.setTimeNow(&m_t1);
-	for(int i=0;i<1000;i++)
-		m_Clock.setTimeNow(&m_t2);
-	m_overhead = (TimeConv::Time_t2MicroSecondsDouble(m_t2)-TimeConv::Time_t2MicroSecondsDouble(m_t1))/1001;
-	cout << "Overhead " << m_overhead << endl;
+    t_start_ = boost::chrono::steady_clock::now();
+	for(int i = 0; i < 1000; ++i)
+        t_end_ = boost::chrono::steady_clock::now();
+	t_overhead_ = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) / 1001;
+	cout << "Overhead " << t_overhead_.count() << endl;
+
 	//SUBSCRIBER DATA
 	SubscriberAttributes Sparam;
-	Sparam.topic.topicDataType = "LatencyType";
+	Sparam.topic.topicDataType = "ThroughputType";
 	Sparam.topic.topicKind = NO_KEY;
-	Sparam.topic.topicName = "LatencyUp";
-	//RELIABLE
-	//Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
-	//Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    std::ostringstream st;
+    st << "ThroughputTest_" << boost::asio::ip::host_name() << "_" << pid << "_UP";
+    Sparam.topic.topicName = st.str();
 
-	//BEST EFFORT
-	Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-
+    if(reliable)
+    {
+        //RELIABLE
+        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+        Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    }
+    else
+    {
+        //BEST EFFORT
+        Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    }
 
 	Sparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Sparam.topic.historyQos.depth = 1000;
@@ -242,6 +255,9 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Rparam.topic.topicDataType = "ThroughputCommand";
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
+    std::ostringstream sct;
+    sct << "ThroughputTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_PUB2SUB";
+    Rparam.topic.topicName = sct.str();
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.historyQos.depth = 20;
 	Rparam.topic.resourceLimitsQos.max_samples = 20;
@@ -256,7 +272,9 @@ ThroughputSubscriber::ThroughputSubscriber():
 	Wparam.topic.resourceLimitsQos.max_samples = 50;
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
-	Wparam.topic.topicName = "ThroughputCommandS2P";
+    std::ostringstream pct;
+    pct << "ThroughputTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_SUB2PUB";
+    Wparam.topic.topicName = pct.str();
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
 
