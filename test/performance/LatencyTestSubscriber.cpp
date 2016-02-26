@@ -14,8 +14,6 @@
 #include "LatencyTestSubscriber.h"
 #include "fastrtps/utils/RTPSLog.h"
 
-#include <boost/asio.hpp>
-
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

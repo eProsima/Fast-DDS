@@ -14,8 +14,11 @@
 #ifndef LATENCYPUBLISHER_H_
 #define LATENCYPUBLISHER_H_
 
+#include <boost/asio.hpp>
+
 #include "LatencyTestTypes.h"
 
+#include <boost/thread/thread_time.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/chrono.hpp>
 

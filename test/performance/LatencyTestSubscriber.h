@@ -14,8 +14,10 @@
 #ifndef LATENCYTESTSUBSCRIBER_H_
 #define LATENCYTESTSUBSCRIBER_H_
 
-#include "LatencyTestTypes.h"
+#include <boost/asio.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include "LatencyTestTypes.h"
+
 class LatencyTestSubscriber {
 public:
 	LatencyTestSubscriber();

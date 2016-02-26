@@ -13,9 +13,7 @@
 
 #include "LatencyTestPublisher.h"
 #include "fastrtps/utils/RTPSLog.h"
-
-#include <boost/thread/thread_time.hpp>
-#include <boost/asio.hpp>
+#include <numeric>
 
 #define TIME_LIMIT_US 10000
 
@@ -54,8 +52,6 @@ LatencyTestPublisher::LatencyTestPublisher():
 	m_datasublistener.mp_up = this;
 	m_commandpublistener.mp_up = this;
 	m_commandsublistener.mp_up = this;
-
-	//output_jtl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
@@ -70,21 +66,21 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 	n_subscribers = n_sub;
 
 	//////////////////////////////
+	/*
 	char date_buffer[9];
 	char time_buffer[7];
 	time_t t = time(0);   // get time now
 	struct tm * now = localtime(&t);
 	strftime(date_buffer, 9, "%Y%m%d", now);
 	strftime(time_buffer, 7, "%H%M%S", now);
-
-	//output_jtl_name << "perf_LatencyTest_" << date_buffer << time_buffer << ".jtl";
+	*/
 	output_file_name << "perf_LatencyTest.csv";
-
-	//output_jtl << "<testResults version = \"1.2\">" << std::endl;
-
-	//output_jtl << "\t<sample t=\"" << TS.mean << "\" lb=\"" << n_samples << " samples of " << TS.nbytes << " bytes.\" />" << std::endl;
-
-	output_file << "\"" << n_samples << " samples of " << data_size_pub.at(0) + 4 << " bytes (us)\"" << std::endl;
+	for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it) {
+		output_file << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
+		if (it != data_size_pub.end() - 1)
+			output_file << ",";
+	}
+	output_file << std::endl;
 	//////////////////////////////
 
 	ParticipantAttributes PParam;
@@ -313,15 +309,14 @@ void LatencyTestPublisher::run()
 		if(!this->test(*ndata))
 			break;
 		eClock::my_sleep(100);
-		//		cout << "Enter number to start next text: ";
-		//		std::cin >> aux;
+		if (ndata != data_size_pub.end() - 1)
+			output_file << ",";
 	}
 	cout << "REMOVING PUBLISHER"<<endl;
 	Domain::removePublisher(this->mp_commandpub);
 	cout << "REMOVING SUBSCRIBER"<<endl;
 	Domain::removeSubscriber(mp_commandsub);
 
-	// output_jtl << "</testResults>" << std::endl;
 	std::ofstream outFile;
 	outFile.open(output_file_name.str());
 	outFile << output_file.str();
@@ -457,7 +452,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
-	output_file << TS.mean << std::endl;
+	output_file << "\"" << TS.mean << "\"";
 
 	printf("%8lu,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes, TS.received, TS.stdev, TS.mean,
