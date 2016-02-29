@@ -58,8 +58,9 @@ int main(int argc, char** argv){
         ("time,t", boost::program_options::value<uint32_t>()->default_value(5), "time of the test in seconds")
         ("recovery_time", boost::program_options::value<uint32_t>()->default_value(5), "how long to sleep after writing a demand in milliseconds")
         ("demand,d", boost::program_options::value<int>()->default_value(0), "number of sample sent in block")
-        ("msg_size,s", boost::program_options::value<int>()->default_value(0), "size of the message")
-        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+		("msg_size,s", boost::program_options::value<int>()->default_value(0), "size of the message")
+		("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+		("file,f", boost::program_options::value<std::string>(), "file to read the payload demands from")
         ;
 
     boost::program_options::options_description s_optionals("Subscriber optional options");
@@ -75,6 +76,7 @@ int main(int argc, char** argv){
 	int msg_size = 0;
     bool reliable = false;
     uint32_t pid = 80;
+	std::string file_name = "";
 
 	if(argc > 1)
 	{
@@ -108,6 +110,11 @@ int main(int argc, char** argv){
                 cout << p_optionals << endl;
                 return 0;
             }
+
+			if (vm.count("file"))
+			{
+				file_name = vm["file"].as<std::string>();
+			}
 
             test_time_sec = vm["time"].as<uint32_t>();
             recovery_time_ms = vm["recovery_time"].as<uint32_t>();
@@ -164,12 +171,12 @@ int main(int argc, char** argv){
 	case 1:
 	{
 		ThroughputPublisher tpub(reliable, pid);
+		tpub.file_name = file_name;
 		tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
 		break;
 	}
 	case 2:
 	{
-
 		ThroughputSubscriber tsub(reliable, pid);
 		tsub.run();
 		break;

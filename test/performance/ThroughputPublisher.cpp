@@ -323,20 +323,13 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 
 bool ThroughputPublisher::loadDemandsPayload()
 {
-	char* buf_dupenv = NULL;
-	size_t sz_dupenv = 0;
-	_dupenv_s(&buf_dupenv, &sz_dupenv, "CMAKE_CURRENT_SOURCE_DIR");
+	std::ifstream fi(file_name);
 
-	std::ifstream fi(std::string(buf_dupenv) + std::string("/") + "payloads_demands.csv");
-
-	if (buf_dupenv)
-		free(buf_dupenv);
-
-	cout << "Reading File: payloads_demands.csv" << endl;
+	cout << "Reading File: " << file_name << endl;
 	std::string DELIM = ";";
 	if(!fi.is_open())
 	{
-		std::cout << "Could not open file: "<<"payload_demands.csv" << " , closing." <<std::endl;
+		std::cout << "Could not open file: " << file_name << " , closing." << std::endl;
 		return false;
 	}
 
