@@ -42,7 +42,7 @@ bool ThroughputDataType::deserialize(SerializedPayload_t* payload,void * data)
 
 void* ThroughputDataType::createData()
 {
-	return (void*)new ThroughputType(this->m_typeSize);
+	return (void*)new ThroughputType((uint16_t)this->m_typeSize);
 }
 void ThroughputDataType::deleteData(void* data)
 {

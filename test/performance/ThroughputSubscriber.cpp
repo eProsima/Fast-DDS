@@ -126,7 +126,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*su
 			m_up.m_datasize = m_commandin.m_size;
 			m_up.m_demand = m_commandin.m_demand;
 			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-			m_up.m_DataSubListener.throughputin = new ThroughputType(m_up.m_datasize);
+			m_up.m_DataSubListener.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
 			ThroughputCommandType command(BEGIN);
 			eClock::my_sleep(50);
 			m_up.m_DataSubListener.reset();

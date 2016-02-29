@@ -20,6 +20,11 @@
 #include <fastrtps/utils/RTPSLog.h>
 #include <fastrtps/Domain.h>
 
+#if defined(_MSC_VER)
+#pragma warning (push)
+#pragma warning (disable:4512)
+#endif
+
 #include <boost/program_options.hpp>
 
 using namespace eprosima;
@@ -177,5 +182,6 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-
-
+#if defined(_MSC_VER)
+#pragma warning (pop)
+#endif

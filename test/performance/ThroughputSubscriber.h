@@ -75,6 +75,10 @@ public:
 		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
 		void onNewDataMessage(Subscriber* sub);
 		void saveNumbers();
+
+	private:
+
+		CommandSubListener& operator=(const CommandSubListener&);
 	}m_CommandSubListener;
 	class CommandPubListener:public PublisherListener
 	{
@@ -83,6 +87,10 @@ public:
 		virtual ~CommandPubListener();
 		ThroughputSubscriber& m_up;
 		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+
+	private:
+
+		CommandPubListener& operator=(const CommandPubListener&);
 	}m_CommandPubListener;
 	bool ready;
 	uint32_t m_datasize;

@@ -250,7 +250,7 @@ void LatencyTestSubscriber::run()
 bool LatencyTestSubscriber::test(uint32_t datasize)
 {
 	cout << "Preparing test with data size: " << datasize+4<<endl;
-	mp_latency = new LatencyType(datasize);
+	mp_latency = new LatencyType((uint16_t)datasize);
 	m_comm_sema.wait();
 	m_status = 0;
 	n_received = 0;

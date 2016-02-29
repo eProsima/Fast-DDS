@@ -249,7 +249,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 
 bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
 {
-	ThroughputType latency(size);
+	ThroughputType latency((uint16_t)size);
     t_end_ = boost::chrono::steady_clock::now();
     boost::chrono::duration<double, boost::micro> timewait_us(0);
     boost::chrono::duration<double, boost::micro> test_time_us = boost::chrono::seconds(test_time);
@@ -323,7 +323,15 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 
 bool ThroughputPublisher::loadDemandsPayload()
 {
-	std::ifstream fi(std::getenv("CMAKE_CURRENT_SOURCE_DIR") + std::string("/") + "payloads_demands.csv");
+	char* buf_dupenv = NULL;
+	size_t sz_dupenv = 0;
+	_dupenv_s(&buf_dupenv, &sz_dupenv, "CMAKE_CURRENT_SOURCE_DIR");
+
+	std::ifstream fi(std::string(buf_dupenv) + std::string("/") + "payloads_demands.csv");
+
+	if (buf_dupenv)
+		free(buf_dupenv);
+
 	cout << "Reading File: payloads_demands.csv" << endl;
 	std::string DELIM = ";";
 	if(!fi.is_open())

@@ -51,6 +51,10 @@ public:
 		virtual ~DataPubListener();
 		ThroughputPublisher& m_up;
 		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+
+	private:
+
+		DataPubListener& operator=(const DataPubListener&);
 	}m_DataPubListener;
 
 	class CommandSubListener:public SubscriberListener
@@ -60,6 +64,10 @@ public:
 		virtual ~CommandSubListener();
 		ThroughputPublisher& m_up;
 		void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
+
+	private:
+
+		CommandSubListener& operator=(const CommandSubListener&);
 	}m_CommandSubListener;
 	class CommandPubListener:public PublisherListener
 	{
@@ -68,6 +76,10 @@ public:
 		virtual ~CommandPubListener();
 		ThroughputPublisher& m_up;
 		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+
+	private:
+
+		CommandPubListener& operator=(const CommandPubListener&);
 	}m_CommandPubListener;
 
 

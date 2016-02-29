@@ -328,8 +328,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	//cout << "Beginning test of size: "<<datasize+4 <<endl;
 	m_status = 0;
 	n_received = 0;
-	mp_latency_in = new LatencyType(datasize);
-	mp_latency_out = new LatencyType(datasize);
+	mp_latency_in = new LatencyType((uint16_t)datasize);
+	mp_latency_out = new LatencyType((uint16_t)datasize);
 	times_.clear();
 	TestCommandType command;
 	command.m_command = READY;
@@ -393,7 +393,7 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 		auxstdev += pow(((*tit).count() - TS.mean), 2);
 	}
 	auxstdev = sqrt(auxstdev / times_.size());
-	TS.stdev = (uint64_t)round(auxstdev);
+	TS.stdev = (double)round(auxstdev);
 
 	std::sort(times_.begin(), times_.end());
 	double x= 0;
@@ -403,48 +403,48 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
     if(elem != times_.size())
     {
         if(dec == 0.0)
-            TS.p50 = ((times_.at(elem - 1) + times_.at(elem)).count() / 2.0);
+			TS.p50 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
         else
-            TS.p50 = times_.at(elem).count();
+			TS.p50 = times_.at((uint64_t)elem).count();
     }
     else
-        TS.p50 = times_.at(elem - 1).count();
+		TS.p50 = times_.at((uint64_t)elem - 1).count();
 
 	x = times_.size() * 0.9;
 	dec = modf(x,&elem);
     if(elem != times_.size())
     {
         if(dec == 0.0)
-            TS.p90 = ((times_.at(elem - 1) + times_.at(elem)).count() / 2.0);
+			TS.p90 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
         else
-            TS.p90 = times_.at(elem).count();
+			TS.p90 = times_.at((uint64_t)elem).count();
     }
     else
-        TS.p90 = times_.at(elem - 1).count();
+		TS.p90 = times_.at((uint64_t)elem - 1).count();
 
 	x = times_.size()*0.99;
 	dec = modf(x,&elem);
     if(elem != times_.size())
     {
         if(dec == 0.0)
-            TS.p99 = ((times_.at(elem - 1) + times_.at(elem)).count() / 2.0);
+			TS.p99 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
         else
-            TS.p99 = times_.at(elem).count();
+			TS.p99 = times_.at((uint64_t)elem).count();
     }
     else
-        TS.p99 = times_.at(elem - 1).count();
+		TS.p99 = times_.at((uint64_t)elem - 1).count();
 
 	x = times_.size()*0.9999;
 	dec = modf(x,&elem);
     if(elem != times_.size())
     {
         if(dec == 0.0)
-            TS.p9999 = ((times_.at(elem - 1) + times_.at(elem)).count() / 2.0);
+			TS.p9999 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
         else
-            TS.p9999 = times_.at(elem).count();
+			TS.p9999 = times_.at((uint64_t)elem).count();
     }
     else
-        TS.p9999 = times_.at(elem - 1).count();
+		TS.p9999 = times_.at((uint64_t)elem - 1).count();
 
 	m_stats.push_back(TS);
 }
