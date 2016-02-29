@@ -59,15 +59,15 @@ int main(int argc, char** argv){
         ("recovery_time", boost::program_options::value<uint32_t>()->default_value(5), "how long to sleep after writing a demand in milliseconds")
         ("demand,d", boost::program_options::value<int>()->default_value(0), "number of sample sent in block")
 		("msg_size,s", boost::program_options::value<int>()->default_value(0), "size of the message")
-		("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+		("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
 		("file,f", boost::program_options::value<std::string>(), "file to read the payload demands from")
         ;
 
     boost::program_options::options_description s_optionals("Subscriber optional options");
     s_optionals.add_options()
         ("help,h", "produce help message")
-        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
-        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+		("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
+		("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
         ;
 
 	int type;
@@ -75,7 +75,7 @@ int main(int argc, char** argv){
 	int demand = 0;
 	int msg_size = 0;
     bool reliable = false;
-    uint32_t pid = 80;
+    uint32_t seed = 80;
 	std::string file_name = "";
 
 	if(argc > 1)
@@ -153,7 +153,7 @@ int main(int argc, char** argv){
             return -1;
         }
 
-        pid = vm["pid"].as<uint32_t>();
+        seed = vm["seed"].as<uint32_t>();
 	}
 	else
 	{
@@ -170,14 +170,14 @@ int main(int argc, char** argv){
 	{
 	case 1:
 	{
-		ThroughputPublisher tpub(reliable, pid);
+		ThroughputPublisher tpub(reliable, seed);
 		tpub.file_name = file_name;
 		tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
 		break;
 	}
 	case 2:
 	{
-		ThroughputSubscriber tsub(reliable, pid);
+		ThroughputSubscriber tsub(reliable, seed);
 		tsub.run();
 		break;
 	}

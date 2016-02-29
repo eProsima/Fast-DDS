@@ -54,8 +54,8 @@ int main(int argc, char** argv){
         ("help,h", "produce help message")
         ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
         ("subscribers,n", boost::program_options::value<int>()->default_value(1), "number of subscribers")
-        ("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
-        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+		("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
+        ("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
         ;
 
     boost::program_options::options_description s_optionals("Subscriber optional options");
@@ -63,8 +63,8 @@ int main(int argc, char** argv){
         ("help,h", "produce help message")
         ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
         ("echo,e", boost::program_options::value<string>()->default_value("true"), "echo mode (\"true\"/\"false\")")
-        ("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
-        ("pid,p", boost::program_options::value<uint32_t>()->default_value(80), "pid of parent executable")
+		("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
+		("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
         ;
 
 	int type;
@@ -72,7 +72,7 @@ int main(int argc, char** argv){
 	int n_samples = c_n_samples;
 	bool echo = true;
     bool reliable = false;
-    uint32_t pid = 80;
+    uint32_t seed = 80;
 
 	if(argc > 1)
 	{
@@ -92,8 +92,16 @@ int main(int argc, char** argv){
 
         if(type == 1)
         {
-            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, p_optionals), vm);
-            boost::program_options::notify(vm);
+			try {
+				boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, p_optionals), vm);
+				boost::program_options::notify(vm);
+			}
+			catch (std::exception ex) {
+				cout << "Error: " << ex.what() << std::endl;
+				cout << "Usage: LatencyTest publisher" << endl;
+				cout << p_optionals << endl;
+				return -1;
+			}
 
             if(vm.count("help"))
             {
@@ -105,9 +113,17 @@ int main(int argc, char** argv){
             sub_number = vm["subscribers"].as<int>();
         }
         else
-        {
-            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, s_optionals), vm);
-            boost::program_options::notify(vm);
+		{
+			try {
+	            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, s_optionals), vm);
+		        boost::program_options::notify(vm);
+			}
+			catch (std::exception ex) {
+				cout << "Error: " << ex.what() << std::endl;
+				cout << "Usage: LatencyTest subscriber" << endl;
+				cout << s_optionals << endl;
+				return -1;
+			}
 
             if(vm.count("help"))
             {
@@ -155,7 +171,7 @@ int main(int argc, char** argv){
         }
 
         n_samples = vm["samples"].as<int>();
-        pid = vm["pid"].as<uint32_t>();
+        seed = vm["seed"].as<uint32_t>();
 	}
 	else
 	{
@@ -173,14 +189,14 @@ int main(int argc, char** argv){
             {
                 cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
                 LatencyTestPublisher latencyPub;
-                latencyPub.init(sub_number,n_samples, reliable, pid);
+                latencyPub.init(sub_number,n_samples, reliable, seed);
                 latencyPub.run();
                 break;
             }
         case 2:
             {
                 LatencyTestSubscriber latencySub;
-                latencySub.init(echo,n_samples, reliable, pid);
+                latencySub.init(echo,n_samples, reliable, seed);
                 latencySub.run();
                 break;
             }
