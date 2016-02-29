@@ -81,6 +81,9 @@ public:
 
 	bool loadDemandsPayload();
 	std::map<uint32_t,std::vector<uint32_t>> m_demand_payload;
+
+	std::stringstream output_file_name;
+	std::stringstream output_file;
 };
 
 

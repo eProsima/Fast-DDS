@@ -227,11 +227,24 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 					return;
 				}
 			}
+
+			if ((dit + 1) != sit->second.end())
+				output_file << ",";
 		}
+
+		sit++;
+		if (sit != m_demand_payload.end())
+			output_file << ",";
+		sit--;
 	}
 	command.m_command = ALL_STOPS;
 	//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
+
+	std::ofstream outFile;
+	outFile.open(output_file_name.str());
+	outFile << output_file.str();
+	outFile.close();
 }
 
 bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
@@ -288,6 +301,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 			result.subscriber.lost_samples = command.m_lostsamples;
 			result.compute();
 			m_timeStats.push_back(result);
+
+			output_file << "\"" << result.subscriber.MBitssec << "\"";
 
 			printResults(result);
 			mp_commandpub->removeAllChange(&aux);
@@ -363,6 +378,27 @@ bool ThroughputPublisher::loadDemandsPayload()
 		}
 	}
 	fi.close();
+
+	//////////////////////////////
+	/*
+	char date_buffer[9];
+	char time_buffer[7];
+	time_t t = time(0);   // get time now
+	struct tm * now = localtime(&t);
+	strftime(date_buffer, 9, "%Y%m%d", now);
+	strftime(time_buffer, 7, "%H%M%S", now);
+	*//*
+	output_file_name << "perf_ThroughputTest.csv";
+	for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it) {
+		output_file << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
+		if (it != data_size_pub.end() - 1)
+			output_file << ",";
+	}
+	output_file << std::endl;
+	//////////////////////////////*/
+
+	output_file_name << "perf_ThroughputTest.csv";
+
 	cout << "Performing test with this payloads/demands:"<<endl;
 	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
 	{
@@ -370,9 +406,19 @@ bool ThroughputPublisher::loadDemandsPayload()
 		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
 		{
 			printf("%6d, ",*dit);
+			output_file << "\"" << sit->first + 8 << " bytes; demand " << *dit << " (MBits/sec)\"";
+			if ((dit+1) != sit->second.end())
+				output_file << ",";
 		}
 		printf("\n");
+
+		sit++;
+		if (sit != m_demand_payload.end())
+			output_file << ",";
+		sit--;
 	}
+
+	output_file << std::endl;
 
 	return true;
 }
