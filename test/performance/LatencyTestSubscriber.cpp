@@ -214,7 +214,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*s
 		}
 		else if(command.m_command == DEFAULT)
 		{
-			logUser("Something is wrong");
+			std::cout << "Something is wrong" << std::endl;
 		}
 	}
 	//cout << "SAMPLE INFO: "<< mp_up->m_sampleinfo.writerGUID << mp_up->m_sampleinfo.sampleKind << endl;

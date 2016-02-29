@@ -165,7 +165,7 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
-	logUser("Starting");
+	std::cout << "Starting" << std::endl;
 
     switch (type)
     {

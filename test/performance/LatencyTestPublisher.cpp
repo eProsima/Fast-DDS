@@ -190,7 +190,7 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pu
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
+			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -208,7 +208,7 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
+			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -226,7 +226,7 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
+			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
@@ -244,7 +244,7 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber*
 		n_matched++;
 		if(n_matched > mp_up->n_subscribers)
 		{
-			logUser(C_RED<<"More matched subscribers than expected"<<C_DEF);
+			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
 			mp_up->m_disc_sema.post();
 		}
