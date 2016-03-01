@@ -35,7 +35,7 @@ using namespace std;
 class ThroughputPublisher
 {
 public:
-	ThroughputPublisher(bool reliable, uint32_t pid, bool hostname);
+	ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv);
 	virtual ~ThroughputPublisher();
 	Participant* mp_par;
 	Publisher* mp_datapub;
@@ -94,7 +94,8 @@ public:
 	bool loadDemandsPayload();
 	std::map<uint32_t,std::vector<uint32_t>> m_demand_payload;
 
-	std::string file_name;
+	std::string m_file_name;
+	bool m_export_csv;
 
 	std::stringstream output_file_name;
 	std::stringstream output_file;

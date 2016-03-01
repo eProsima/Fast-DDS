@@ -79,7 +79,8 @@ int main(int argc, char** argv)
 
     boost::program_options::options_description all_optionals("Allowed options");
     all_optionals.add_options()
-        ("hostname", "use hostname in topic name")
+		("hostname", "use hostname in topic name")
+		("export_csv", "export csv")
         ;
     all_optionals.add(g_optionals).add(p_optionals);
 
@@ -89,7 +90,8 @@ int main(int argc, char** argv)
 	int msg_size = 0;
     bool reliable = false;
     uint32_t seed = 80;
-    bool hostname = false;
+	bool hostname = false;
+	bool export_csv = false;
 	std::string file_name = "";
 
 	if(argc > 1)
@@ -161,6 +163,8 @@ int main(int argc, char** argv)
 
         if(vm.count("hostname"))
             hostname = true;
+		if (vm.count("export_csv"))
+			export_csv = true;
 	}
 	else
 	{
@@ -175,8 +179,8 @@ int main(int argc, char** argv)
 	{
 	case 1:
 	{
-		ThroughputPublisher tpub(reliable, seed, hostname);
-		tpub.file_name = file_name;
+		ThroughputPublisher tpub(reliable, seed, hostname, export_csv);
+		tpub.m_file_name = file_name;
 		tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
 		break;
 	}

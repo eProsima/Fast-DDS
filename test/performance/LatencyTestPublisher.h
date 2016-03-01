@@ -56,7 +56,8 @@ public:
 	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	unsigned int n_received;
-	bool init(int n_sub,int n_sam, bool reliable, uint32_t pid, bool hostname);
+	bool n_export_csv;
+	bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv);
 	void run();
 	void analizeTimes(uint32_t datasize);
 	bool test(uint32_t datasize);
@@ -102,8 +103,18 @@ public:
 	LatencyDataType latency_t;
 		TestCommandDataType command_t;
 		
-	std::stringstream output_file_name;
 	std::stringstream output_file;
+	std::stringstream output_file_16;
+	std::stringstream output_file_32;
+	std::stringstream output_file_64;
+	std::stringstream output_file_128;
+	std::stringstream output_file_256;
+	std::stringstream output_file_512;
+	std::stringstream output_file_1024;
+	std::stringstream output_file_2048;
+	std::stringstream output_file_4096;
+	std::stringstream output_file_8192;
+	std::stringstream output_file_16384;
 };
 
 

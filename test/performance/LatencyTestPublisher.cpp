@@ -60,10 +60,11 @@ LatencyTestPublisher::~LatencyTestPublisher()
 }
 
 
-bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname)
+bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv)
 {
 	n_samples = n_sam;
 	n_subscribers = n_sub;
+	n_export_csv = export_csv;
 
 	//////////////////////////////
 	/*
@@ -74,11 +75,48 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 	strftime(date_buffer, 9, "%Y%m%d", now);
 	strftime(time_buffer, 7, "%H%M%S", now);
 	*/
-	output_file_name << "perf_LatencyTest.csv";
 	for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it) {
 		output_file << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
 		if (it != data_size_pub.end() - 1)
 			output_file << ",";
+
+		switch (*it + 4) {
+		case 16: 
+			output_file_16 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 32:
+			output_file_32 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 64:
+			output_file_64 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 128:
+			output_file_128 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 256:
+			output_file_256 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 512:
+			output_file_512 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 1024:
+			output_file_1024 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 2048:
+			output_file_2048 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 4096:
+			output_file_4096 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 8192:
+			output_file_8192 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		case 16384:
+			output_file_16384 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			break;
+		default:
+			break;
+		}
 	}
 	output_file << std::endl;
 	//////////////////////////////
@@ -329,10 +367,45 @@ void LatencyTestPublisher::run()
 	cout << "REMOVING SUBSCRIBER"<<endl;
 	Domain::removeSubscriber(mp_commandsub);
 
-	std::ofstream outFile;
-	outFile.open(output_file_name.str());
-	outFile << output_file.str();
-	outFile.close();
+	if (n_export_csv) {
+		std::ofstream outFile;
+		outFile.open("perf_LatencyTest.csv");
+		outFile << output_file.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_16.csv");
+		outFile << output_file_16.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_32.csv");
+		outFile << output_file_32.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_64.csv");
+		outFile << output_file_64.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_128.csv");
+		outFile << output_file_128.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_256.csv");
+		outFile << output_file_256.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_512.csv");
+		outFile << output_file_512.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_1024.csv");
+		outFile << output_file_1024.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_2048.csv");
+		outFile << output_file_2048.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_4096.csv");
+		outFile << output_file_4096.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_8192.csv");
+		outFile << output_file_8192.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_16384.csv");
+		outFile << output_file_16384.str();
+		outFile.close();
+	}
 }
 
 bool LatencyTestPublisher::test(uint32_t datasize)
@@ -465,6 +538,44 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
 	output_file << "\"" << TS.mean << "\"";
+
+	switch (TS.nbytes) {
+	case 16:
+		output_file_16 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 32:
+		output_file_32 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 64:
+		output_file_64 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 128:
+		output_file_128 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 256:
+		output_file_256 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 512:
+		output_file_512 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 1024:
+		output_file_1024 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 2048:
+		output_file_2048 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 4096:
+		output_file_4096 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 8192:
+		output_file_8192 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	case 16384:
+		output_file_16384 << "\"" << TS.mean << "\"" << std::endl;
+		break;
+	default:
+		break;
+	}
 
 	printf("%8lu,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
 			TS.nbytes, TS.received, TS.stdev, TS.mean,

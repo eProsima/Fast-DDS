@@ -55,7 +55,7 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 	Domain::removeParticipant(mp_participant);
 }
 
-bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid, bool hostname)
+bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname)
 {
 	m_echo = echo;
 	n_samples = nsam;

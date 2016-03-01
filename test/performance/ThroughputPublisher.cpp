@@ -76,9 +76,9 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
 	}
 }
 
-ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname): sema(0),
+ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv): sema(0),
 #pragma warning(disable:4355)
-    m_DataPubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
+	m_DataPubListener(*this), m_CommandSubListener(*this), m_CommandPubListener(*this), m_export_csv(export_csv),
     ready(true)
 {
 	ParticipantAttributes PParam;
@@ -332,13 +332,13 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 
 bool ThroughputPublisher::loadDemandsPayload()
 {
-	std::ifstream fi(file_name);
+	std::ifstream fi(m_file_name);
 
-	cout << "Reading File: " << file_name << endl;
+	cout << "Reading File: " << m_file_name << endl;
 	std::string DELIM = ";";
 	if(!fi.is_open())
 	{
-		std::cout << "Could not open file: " << file_name << " , closing." << std::endl;
+		std::cout << "Could not open file: " << m_file_name << " , closing." << std::endl;
 		return false;
 	}
 

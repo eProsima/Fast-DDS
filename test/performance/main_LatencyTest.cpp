@@ -80,8 +80,9 @@ int main(int argc, char** argv)
     visible_s_optionals.add(g_optionals).add(s_optionals);
 
     boost::program_options::options_description all_optionals("Allowed options");
-    all_optionals.add_options()
-        ("hostname", "use hostname in topic name")
+	all_optionals.add_options()
+		("hostname", "use hostname in topic name")
+		("export_csv", "export csv")
         ;
     all_optionals.add(g_optionals).add(p_optionals).add(s_optionals);
 
@@ -91,14 +92,15 @@ int main(int argc, char** argv)
 	int n_samples = c_n_samples;
 	bool echo = true;
     bool reliable = false;
-    uint32_t seed = 80;
-    bool hostname = false;
+	uint32_t seed = 80;
+	bool hostname = false;
+	bool export_csv = false;
 
-	if(argc > 1)
+	if (argc > 1)
 	{
-		if(strcmp(argv[1],"publisher")==0)
+		if (strcmp(argv[1], "publisher") == 0)
 			type = 1;
-		else if(strcmp(argv[1],"subscriber")==0)
+		else if (strcmp(argv[1], "subscriber") == 0)
 			type = 2;
 		else
 		{
@@ -106,71 +108,73 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-        boost::program_options::variables_map vm;
-        try
-        {
-            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, all_optionals), vm);
-            boost::program_options::notify(vm);
-        }
-        catch (std::exception ex)
-        {
-            cout << "Error: " << ex.what() << std::endl;
-			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-            return -1;
-        }
-
-        if(type == 1)
-        {
-            sub_number = vm["subscribers"].as<int>();
-        }
-        else
+		boost::program_options::variables_map vm;
+		try
 		{
-            string s_echo = vm["echo"].as<std::string>();
-            
-            if(s_echo.compare("true") == 0)
-            {
-                echo = true;
-            }
-            else if(s_echo.compare("false") == 0)
-            {
-                echo = false;
-            }
-            else
-            {
-                cout << "Bad argument for option --echo. Valid values: \"true\"/\"false\".\n" << endl;
-                cout << LATENCY_TEST_USAGE_SUBSCRIBER << visible_s_optionals << endl;
-                return -1;
-            }
-        }
+			boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, all_optionals), vm);
+			boost::program_options::notify(vm);
+		}
+		catch (std::exception ex)
+		{
+			cout << "Error: " << ex.what() << std::endl;
+			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
+			return -1;
+		}
 
-        if(vm.count("help"))
-        {
-            cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-            return 0;
-        }
+		if (type == 1)
+		{
+			sub_number = vm["subscribers"].as<int>();
+		}
+		else
+		{
+			string s_echo = vm["echo"].as<std::string>();
 
-        std::string reliability = vm["reliability"].as<std::string>();
+			if (s_echo.compare("true") == 0)
+			{
+				echo = true;
+			}
+			else if (s_echo.compare("false") == 0)
+			{
+				echo = false;
+			}
+			else
+			{
+				cout << "Bad argument for option --echo. Valid values: \"true\"/\"false\".\n" << endl;
+				cout << LATENCY_TEST_USAGE_SUBSCRIBER << visible_s_optionals << endl;
+				return -1;
+			}
+		}
 
-        if(reliability.compare("reliable") == 0)
-        {
-            reliable = true;
-        }
-        else if(reliability.compare("besteffort") == 0)
-        {
-            reliable = false;
-        }
-        else
-        {
-            cout << "Bad argument for option --reliability. Valid values: \"reliable\"/\"besteffort\".\n" << endl;
-            cout << LATENCY_TEST_USAGE << visible_optionals << endl;
-            return -1;
-        }
+		if (vm.count("help"))
+		{
+			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
+			return 0;
+		}
 
-        n_samples = vm["samples"].as<int>();
-        seed = vm["seed"].as<uint32_t>();
+		std::string reliability = vm["reliability"].as<std::string>();
 
-        if(vm.count("hostname"))
-            hostname = true;
+		if (reliability.compare("reliable") == 0)
+		{
+			reliable = true;
+		}
+		else if (reliability.compare("besteffort") == 0)
+		{
+			reliable = false;
+		}
+		else
+		{
+			cout << "Bad argument for option --reliability. Valid values: \"reliable\"/\"besteffort\".\n" << endl;
+			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
+			return -1;
+		}
+
+		n_samples = vm["samples"].as<int>();
+		seed = vm["seed"].as<uint32_t>();
+
+		if (vm.count("hostname"))
+			hostname = true;
+		if (vm.count("export_csv"))
+			export_csv = true;
 	}
 	else
 	{
@@ -186,14 +190,14 @@ int main(int argc, char** argv)
             {
                 cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
                 LatencyTestPublisher latencyPub;
-                latencyPub.init(sub_number,n_samples, reliable, seed, hostname);
+                latencyPub.init(sub_number,n_samples, reliable, seed, hostname, export_csv);
                 latencyPub.run();
                 break;
             }
         case 2:
             {
                 LatencyTestSubscriber latencySub;
-                latencySub.init(echo,n_samples, reliable, seed, hostname);
+				latencySub.init(echo, n_samples, reliable, seed, hostname);
                 latencySub.run();
                 break;
             }
