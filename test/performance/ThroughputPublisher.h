@@ -96,9 +96,8 @@ public:
 
 	std::string m_file_name;
 	bool m_export_csv;
-
-	std::stringstream output_file_name;
 	std::stringstream output_file;
+	uint32_t payload;
 };
 
 

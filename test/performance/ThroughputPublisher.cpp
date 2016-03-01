@@ -187,32 +187,33 @@ ThroughputPublisher::~ThroughputPublisher()
 
 void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size)
 {
-	if(!ready)
+	if (!ready)
 	{
 
 		return;
 	}
-	if(demand == 0 || msg_size == 0)
+	if (demand == 0 || msg_size == 0)
 	{
-		if(!this->loadDemandsPayload())
+		if (!this->loadDemandsPayload())
 			return;
 	}
 	else
 	{
-		m_demand_payload[msg_size-8].push_back(demand);
+		payload = msg_size;
+		m_demand_payload[msg_size - 8].push_back(demand);
 	}
-	cout << "Waiting for discovery"<<endl;
+	cout << "Waiting for discovery" << endl;
 	sema.wait();
 	sema.wait();
 	sema.wait();
-	cout << "Discovery complete"<<endl;
+	cout << "Discovery complete" << endl;
 
 	ThroughputCommandType command;
 	SampleInfo_t info;
 	printResultTitle();
-	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)
+	for (auto sit = m_demand_payload.begin(); sit != m_demand_payload.end(); ++sit)
 	{
-		for(auto dit=sit->second.begin();dit!=sit->second.end();++dit)
+		for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
 		{
 			eClock::my_sleep(100);
 			//cout << "Starting test with demand: " << *dit << endl;
@@ -223,12 +224,12 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 			mp_commandpub->write((void*)&command);
 			command.m_command = DEFAULT;
 			mp_commandsub->waitForUnreadMessage();
-			mp_commandsub->takeNextData((void*)&command,&info);
+			mp_commandsub->takeNextData((void*)&command, &info);
 			//cout << "RECI COMMAND "<< command.m_command << endl;
 			//cout << "Received command of type: "<< command << endl;
-			if(command.m_command == BEGIN)
+			if (command.m_command == BEGIN)
 			{
-				if(!test(test_time, recovery_time_ms, *dit,sit->first))
+				if (!test(test_time, recovery_time_ms, *dit, sit->first))
 				{
 					command.m_command = ALL_STOPS;
 					//	cout << "SEND COMMAND "<< command.m_command << endl;
@@ -250,10 +251,12 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 	//	cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
 
-	std::ofstream outFile;
-	outFile.open(output_file_name.str());
-	outFile << output_file.str();
-	outFile.close();
+	if (m_export_csv) {
+		std::ofstream outFile;
+		outFile.open("perf_ThroughputTest_" + std::to_string(payload) + "B.csv");
+		outFile << output_file.str();
+		outFile.close();
+	}
 }
 
 bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
@@ -312,6 +315,17 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 			m_timeStats.push_back(result);
 
 			output_file << "\"" << result.subscriber.MBitssec << "\"";
+			if (m_export_csv) {
+				std::ofstream outFile;
+				std::string fileName = "perf_ThroughputTest_" +
+					std::to_string(result.payload_size) + "B_" +
+					std::to_string(result.demand) + "demand"
+					".csv";
+				outFile.open(fileName);
+				outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (MBits/sec)\"" << endl;
+				outFile << "\"" << result.subscriber.MBitssec << "\"";
+				outFile.close();
+			}
 
 			printResults(result);
 			mp_commandpub->removeAllChange(&aux);
@@ -353,7 +367,6 @@ bool ThroughputPublisher::loadDemandsPayload()
 		start = 0;
 		end = line.find(DELIM);
 		first = true;
-		uint32_t payload;
 		uint32_t demand;
 		more = true;
 		while(more)
@@ -389,6 +402,8 @@ bool ThroughputPublisher::loadDemandsPayload()
 	}
 	fi.close();
 
+	payload += 8;
+
 	//////////////////////////////
 	/*
 	char date_buffer[9];
@@ -406,8 +421,6 @@ bool ThroughputPublisher::loadDemandsPayload()
 	}
 	output_file << std::endl;
 	//////////////////////////////*/
-
-	output_file_name << "perf_ThroughputTest.csv";
 
 	cout << "Performing test with this payloads/demands:"<<endl;
 	for(auto sit=m_demand_payload.begin();sit!=m_demand_payload.end();++sit)

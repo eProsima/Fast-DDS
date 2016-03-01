@@ -1,6 +1,6 @@
 import shlex, subprocess, time, os, socket, sys
 
-payload_demands = os.environ.get("CMAKE_CURRENT_SOURCE_DIR") + "/payloads_demands_16.csv"
+payload_demands = os.environ.get("CMAKE_CURRENT_SOURCE_DIR") + "/payloads_demands_64.csv"
 
 command = os.environ.get("THROUGHPUT_TEST_BIN")
 subscriber_proc = subprocess.Popen([command, "subscriber"])
