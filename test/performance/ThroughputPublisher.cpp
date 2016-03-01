@@ -78,8 +78,8 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
 
 ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv): sema(0),
 #pragma warning(disable:4355)
-	m_DataPubListener(*this), m_CommandSubListener(*this), m_CommandPubListener(*this), m_export_csv(export_csv),
-    ready(true)
+	m_DataPubListener(*this), m_CommandSubListener(*this), m_CommandPubListener(*this),
+    ready(true), m_export_csv(export_csv)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
