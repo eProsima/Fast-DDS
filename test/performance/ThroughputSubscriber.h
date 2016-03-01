@@ -37,7 +37,7 @@ using namespace std;
 class ThroughputSubscriber
 {
 public:
-	ThroughputSubscriber(bool reliable, uint32_t pid);
+	ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname);
 	virtual ~ThroughputSubscriber();
 	Participant* mp_par;
 	Subscriber* mp_datasub;

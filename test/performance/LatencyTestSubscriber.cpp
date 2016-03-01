@@ -55,7 +55,7 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 	Domain::removeParticipant(mp_participant);
 }
 
-bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid)
+bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid, bool hostname)
 {
 	m_echo = echo;
 	n_samples = nsam;
@@ -81,7 +81,10 @@ bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid
 	PubDataparam.topic.topicDataType = "LatencyType";
 	PubDataparam.topic.topicKind = NO_KEY;
     std::ostringstream pt;
-    pt << "LatencyTest_" << boost::asio::ip::host_name() << "_" << pid << "_SUB2PUB";
+    pt << "LatencyTest_";
+    if(hostname)
+        pt << boost::asio::ip::host_name() << "_";
+    pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	PubDataparam.topic.historyQos.depth = n_samples +100;
@@ -103,7 +106,10 @@ bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid
 	SubDataparam.topic.topicDataType = "LatencyType";
 	SubDataparam.topic.topicKind = NO_KEY;
     std::ostringstream st;
-    st << "LatencyTest_" << boost::asio::ip::host_name() << "_" << pid << "_PUB2SUB";
+    st << "LatencyTest_";
+    if(hostname)
+        st << boost::asio::ip::host_name() << "_";
+    st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	SubDataparam.topic.historyQos.depth = 50;//n_samples+100;
@@ -124,7 +130,10 @@ bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid
 	PubCommandParam.topic.topicDataType = "TestCommandType";
 	PubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream pct;
-    pct << "LatencyTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_SUB2PUB";
+    pct << "LatencyTest_Command_";
+    if(hostname)
+        pct << boost::asio::ip::host_name() << "_";
+    pct << pid << "_SUB2PUB";
     PubCommandParam.topic.topicName = pct.str();
 	PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	PubCommandParam.topic.historyQos.depth = 100;
@@ -138,7 +147,10 @@ bool LatencyTestSubscriber::init(bool echo,int nsam, bool reliable, uint32_t pid
 	SubCommandParam.topic.topicDataType = "TestCommandType";
 	SubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream sct;
-    sct << "LatencyTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_PUB2SUB";
+    sct << "LatencyTest_Command_";
+    if(hostname)
+        sct << boost::asio::ip::host_name() << "_";
+    sct << pid << "_PUB2SUB";
     SubCommandParam.topic.topicName = sct.str();
 	SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubCommandParam.topic.historyQos.depth = 100;

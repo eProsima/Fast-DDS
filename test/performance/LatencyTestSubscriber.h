@@ -36,7 +36,7 @@ public:
 	int m_status;
 	int n_received;
 	int n_samples;
-	bool init(bool echo,int nsam, bool reliable, uint32_t pid);
+	bool init(bool echo,int nsam, bool reliable, uint32_t pid, bool hostname);
 	void run();
 	bool test(uint32_t datasize);
 	class DataPubListener : public PublisherListener

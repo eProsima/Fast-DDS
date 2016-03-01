@@ -45,27 +45,46 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 
 const int c_n_samples = 10000;
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
+    const char* const LATENCY_TEST_USAGE = "Usage: LatencyTest <publisher|subscriber>\n";
+    const char* const LATENCY_TEST_USAGE_SUBSCRIBER = "Usage: LatencyTest subscriber\n";
 
 	Log::setVerbosity(VERB_ERROR);
 
-    boost::program_options::options_description p_optionals("Publisher optional options");
+    boost::program_options::options_description p_optionals("Publisher options");
     p_optionals.add_options()
-        ("help,h", "produce help message")
-        ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
         ("subscribers,n", boost::program_options::value<int>()->default_value(1), "number of subscribers")
-		("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
-        ("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
         ;
 
-    boost::program_options::options_description s_optionals("Subscriber optional options");
+    boost::program_options::options_description s_optionals("Subscriber options");
     s_optionals.add_options()
+        ("echo,e", boost::program_options::value<string>()->default_value("true"), "echo mode (\"true\"/\"false\")")
+        ;
+
+    boost::program_options::options_description g_optionals("General options");
+    g_optionals.add_options()
         ("help,h", "produce help message")
         ("reliability,r", boost::program_options::value<string>()->default_value("besteffort"), "set reliability (\"reliable\"/\"besteffort\")")
-        ("echo,e", boost::program_options::value<string>()->default_value("true"), "echo mode (\"true\"/\"false\")")
 		("samples,s", boost::program_options::value<int>()->default_value(c_n_samples), "number of samples")
 		("seed", boost::program_options::value<uint32_t>()->default_value(80), "seed to calculate domain and topic, to isolate test")
         ;
+
+    boost::program_options::options_description visible_optionals("Allowed options");
+    visible_optionals.add(g_optionals).add(p_optionals).add(s_optionals);
+
+    boost::program_options::options_description visible_p_optionals("Allowed options");
+    visible_p_optionals.add(g_optionals).add(p_optionals);
+
+    boost::program_options::options_description visible_s_optionals("Allowed options");
+    visible_s_optionals.add(g_optionals).add(s_optionals);
+
+    boost::program_options::options_description all_optionals("Allowed options");
+    all_optionals.add_options()
+        ("hostname", "use hostname in topic name")
+        ;
+    all_optionals.add(g_optionals).add(p_optionals).add(s_optionals);
+
 
 	int type;
 	int sub_number = 1;
@@ -73,6 +92,7 @@ int main(int argc, char** argv){
 	bool echo = true;
     bool reliable = false;
     uint32_t seed = 80;
+    bool hostname = false;
 
 	if(argc > 1)
 	{
@@ -82,56 +102,29 @@ int main(int argc, char** argv){
 			type = 2;
 		else
 		{
-			cout << "Usage: LatencyTest <publisher|subscriber>"<< endl;
-            cout << p_optionals << endl;
-            cout << s_optionals << endl;
+			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
 			return -1;
 		}
 
         boost::program_options::variables_map vm;
+        try
+        {
+            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, all_optionals), vm);
+            boost::program_options::notify(vm);
+        }
+        catch (std::exception ex)
+        {
+            cout << "Error: " << ex.what() << std::endl;
+			cout << LATENCY_TEST_USAGE << visible_optionals << endl;
+            return -1;
+        }
 
         if(type == 1)
         {
-			try {
-				boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, p_optionals), vm);
-				boost::program_options::notify(vm);
-			}
-			catch (std::exception ex) {
-				cout << "Error: " << ex.what() << std::endl;
-				cout << "Usage: LatencyTest publisher" << endl;
-				cout << p_optionals << endl;
-				return -1;
-			}
-
-            if(vm.count("help"))
-            {
-                cout << "Usage: LatencyTest publisher"<< endl;
-                cout << p_optionals << endl;
-                return 0;
-            }
-
             sub_number = vm["subscribers"].as<int>();
         }
         else
 		{
-			try {
-	            boost::program_options::store(boost::program_options::parse_command_line(argc - 1, argv + 1, s_optionals), vm);
-		        boost::program_options::notify(vm);
-			}
-			catch (std::exception ex) {
-				cout << "Error: " << ex.what() << std::endl;
-				cout << "Usage: LatencyTest subscriber" << endl;
-				cout << s_optionals << endl;
-				return -1;
-			}
-
-            if(vm.count("help"))
-            {
-                cout << "Usage: LatencyTest subscriber"<< endl;
-                cout << s_optionals << endl;
-                return 0;
-            }
-
             string s_echo = vm["echo"].as<std::string>();
             
             if(s_echo.compare("true") == 0)
@@ -145,10 +138,15 @@ int main(int argc, char** argv){
             else
             {
                 cout << "Bad argument for option --echo. Valid values: \"true\"/\"false\".\n" << endl;
-                cout << "Usage: LatencyTest subscriber"<< endl;
-                cout << s_optionals << endl;
+                cout << LATENCY_TEST_USAGE_SUBSCRIBER << visible_s_optionals << endl;
                 return -1;
             }
+        }
+
+        if(vm.count("help"))
+        {
+            cout << LATENCY_TEST_USAGE << visible_optionals << endl;
+            return 0;
         }
 
         std::string reliability = vm["reliability"].as<std::string>();
@@ -164,20 +162,19 @@ int main(int argc, char** argv){
         else
         {
             cout << "Bad argument for option --reliability. Valid values: \"reliable\"/\"besteffort\".\n" << endl;
-            cout << "Usage: LatencyTest <publisher|subscriber>"<< endl;
-            cout << p_optionals << endl;
-            cout << s_optionals << endl;
+            cout << LATENCY_TEST_USAGE << visible_optionals << endl;
             return -1;
         }
 
         n_samples = vm["samples"].as<int>();
         seed = vm["seed"].as<uint32_t>();
+
+        if(vm.count("hostname"))
+            hostname = true;
 	}
 	else
 	{
-        cout << "Usage: LatencyTest <publisher|subscriber>"<< endl;
-        cout << p_optionals << endl;
-        cout << s_optionals << endl;
+        cout << LATENCY_TEST_USAGE << visible_optionals << endl;
 		return -1;
 	}
 
@@ -189,14 +186,14 @@ int main(int argc, char** argv){
             {
                 cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
                 LatencyTestPublisher latencyPub;
-                latencyPub.init(sub_number,n_samples, reliable, seed);
+                latencyPub.init(sub_number,n_samples, reliable, seed, hostname);
                 latencyPub.run();
                 break;
             }
         case 2:
             {
                 LatencyTestSubscriber latencySub;
-                latencySub.init(echo,n_samples, reliable, seed);
+                latencySub.init(echo,n_samples, reliable, seed, hostname);
                 latencySub.run();
                 break;
             }

@@ -56,7 +56,7 @@ public:
 	boost::interprocess::interprocess_semaphore m_data_sema;
 	int m_status;
 	unsigned int n_received;
-	bool init(int n_sub,int n_sam, bool reliable, uint32_t pid);
+	bool init(int n_sub,int n_sam, bool reliable, uint32_t pid, bool hostname);
 	void run();
 	void analizeTimes(uint32_t datasize);
 	bool test(uint32_t datasize);

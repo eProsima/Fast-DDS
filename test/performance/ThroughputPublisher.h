@@ -35,7 +35,7 @@ using namespace std;
 class ThroughputPublisher
 {
 public:
-	ThroughputPublisher(bool reliable, uint32_t pid);
+	ThroughputPublisher(bool reliable, uint32_t pid, bool hostname);
 	virtual ~ThroughputPublisher();
 	Participant* mp_par;
 	Publisher* mp_datapub;

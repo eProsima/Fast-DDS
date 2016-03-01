@@ -186,8 +186,7 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /
 
 ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
-ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid):
-    sema(0),
+ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname) : sema(0),
 #pragma warning(disable:4355)
     m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
     ready(true),m_datasize(0),m_demand(0)
@@ -226,7 +225,10 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid):
 	Sparam.topic.topicDataType = "ThroughputType";
 	Sparam.topic.topicKind = NO_KEY;
     std::ostringstream st;
-    st << "ThroughputTest_" << boost::asio::ip::host_name() << "_" << pid << "_UP";
+    st << "ThroughputTest_";
+    if(hostname)
+        st << boost::asio::ip::host_name() << "_";
+    st << pid << "_UP";
     Sparam.topic.topicName = st.str();
 
     if(reliable)
@@ -256,7 +258,10 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid):
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicName = "ThroughputCommandP2S";
     std::ostringstream sct;
-    sct << "ThroughputTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_PUB2SUB";
+    sct << "ThroughputTest_Command_";
+    if(hostname)
+        sct << boost::asio::ip::host_name() << "_";
+    sct << pid << "_PUB2SUB";
     Rparam.topic.topicName = sct.str();
 	Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
 	Rparam.topic.historyQos.depth = 20;
@@ -273,7 +278,10 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid):
 	Wparam.topic.topicDataType = "ThroughputCommand";
 	Wparam.topic.topicKind = NO_KEY;
     std::ostringstream pct;
-    pct << "ThroughputTest_Command_" << boost::asio::ip::host_name() << "_" << pid << "_SUB2PUB";
+    pct << "ThroughputTest_Command_";
+    if(hostname)
+        pct << boost::asio::ip::host_name() << "_";
+    pct << pid << "_SUB2PUB";
     Wparam.topic.topicName = pct.str();
 	Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
