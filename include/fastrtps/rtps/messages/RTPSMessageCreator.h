@@ -102,6 +102,12 @@ public:
 	static bool addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,const EntityId_t& writerId,
 			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag);
 
+	static bool addMessageHeartbeatFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const EntityId_t& readerId, const EntityId_t& writerId,
+		SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count);
+
+	static bool addSubmessageHeartbeatFrag(CDRMessage_t* msg, const EntityId_t& readerId, const EntityId_t& writerId,
+		SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count);
+
 	static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
 			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
