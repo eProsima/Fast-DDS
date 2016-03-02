@@ -49,7 +49,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest16
         ###############################################################################
         add_test(NAME ThroughputTest16
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_16.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 16)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest16 PROPERTY LABELS "NoMemoryCheck")
@@ -67,7 +67,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest32
         ###############################################################################
         add_test(NAME ThroughputTest32
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_32.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 32)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest32 PROPERTY LABELS "NoMemoryCheck")
@@ -85,7 +85,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest64
         ###############################################################################
         add_test(NAME ThroughputTest64
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_64.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 64)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest64 PROPERTY LABELS "NoMemoryCheck")
@@ -103,7 +103,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest128
         ###############################################################################
         add_test(NAME ThroughputTest128
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_128.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 128)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest128 PROPERTY LABELS "NoMemoryCheck")
@@ -121,7 +121,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest256
         ###############################################################################
         add_test(NAME ThroughputTest256
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_256.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 256)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest256 PROPERTY LABELS "NoMemoryCheck")
@@ -139,7 +139,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest512
         ###############################################################################
         add_test(NAME ThroughputTest512
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_512.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 512)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest512 PROPERTY LABELS "NoMemoryCheck")
@@ -157,7 +157,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest1024
         ###############################################################################
         add_test(NAME ThroughputTest1024
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_1024.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 1024)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest1024 PROPERTY LABELS "NoMemoryCheck")
@@ -175,7 +175,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest2048
         ###############################################################################
         add_test(NAME ThroughputTest2048
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_2048.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 2048)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest2048 PROPERTY LABELS "NoMemoryCheck")
@@ -193,7 +193,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest4096
         ###############################################################################
         add_test(NAME ThroughputTest4096
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_4096.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 4096)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest4096 PROPERTY LABELS "NoMemoryCheck")
@@ -211,7 +211,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # ThroughputTest8192
         ###############################################################################
         add_test(NAME ThroughputTest8192
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests_8192.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 8192)
 
         # Set test with label NoMemoryCheck
         set_property(TEST ThroughputTest8192 PROPERTY LABELS "NoMemoryCheck")
