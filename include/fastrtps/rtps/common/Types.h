@@ -80,7 +80,6 @@ typedef unsigned char octet;
 typedef unsigned char SubmessageFlag;
 typedef uint32_t BuiltinEndpointSet_t;
 typedef uint32_t Count_t;
-typedef uint32_t FragmentNumber_t;
 
 #define BIT0 0x1
 #define BIT1 0x2

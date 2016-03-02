@@ -739,7 +739,139 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 	return false;
 }
 
+bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last) {
+	
+	const char* const METHOD_NAME = "proc_Submsg_NackFrag";
 
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	//Assign message endianness
+	if (endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
+
+	GUID_t readerGUID, writerGUID;
+	readerGUID.guidPrefix = sourceGuidPrefix;
+	CDRMessage::readEntityId(msg, &readerGUID.entityId);
+	writerGUID.guidPrefix = destGuidPrefix;
+	CDRMessage::readEntityId(msg, &writerGUID.entityId);
+
+	SequenceNumber_t writerSN;
+	CDRMessage::readSequenceNumber(msg, &writerSN);
+
+	FragmentNumberSet_t fnState;
+	CDRMessage::readFragmentNumberSet(msg, &fnState);
+
+	uint32_t Ackcount;
+	CDRMessage::readUInt32(msg, &Ackcount);
+
+	if (smh->submessageLength == 0)
+		*last = true;
+
+	// XXX TODO VALIDATE DATA?
+
+	boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+	//Look for the correct writer to use the acknack
+	for (std::vector<RTPSWriter*>::iterator it = mp_threadListen->m_assocWriters.begin();
+		it != mp_threadListen->m_assocWriters.end(); ++it)
+	{
+		//Look for the readerProxy the acknack is from
+		boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
+		/* XXX TODO PROCESS
+		if ((*it)->getGuid() == writerGUID)
+		{
+			if ((*it)->getAttributes()->reliabilityKind == RELIABLE)
+			{
+				StatefulWriter* SF = (StatefulWriter*)(*it);
+
+				for (auto rit = SF->matchedReadersBegin(); rit != SF->matchedReadersEnd(); ++rit)
+				{
+					boost::lock_guard<boost::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
+
+					if ((*rit)->m_att.guid == readerGUID)
+					{
+						if ((*rit)->m_lastAcknackCount < Ackcount)
+						{
+							(*rit)->m_lastAcknackCount = Ackcount;
+							(*rit)->acked_changes_set(SNSet.base);
+							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
+							(*rit)->requested_changes_set(set_vec);
+							if (!(*rit)->m_isRequestedChangesEmpty || !finalFlag)
+							{
+								(*rit)->mp_nackResponse->restart_timer();
+							}
+
+							if (SF->getAttributes()->durabilityKind == VOLATILE)
+							{
+								// Clean history.
+								// TODO Change mechanism
+								SF->clean_history();
+							}
+
+						}
+						break;
+					}
+				}
+				return true;
+			}
+			else
+			{
+				logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ", C_BLUE);
+				return false;
+			}
+		}
+		*/
+	}
+	logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "
+		<< mp_threadListen->m_assocWriters.size() << " writers in this ListenResource)", C_BLUE);
+	return false;
+}
+
+bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last) {
+	//const char* const METHOD_NAME = "proc_Submsg_HeartbeatFrag";
+
+	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
+	//Assign message endianness
+	if (endiannessFlag)
+		msg->msg_endian = LITTLEEND;
+	else
+		msg->msg_endian = BIGEND;
+
+	GUID_t readerGUID, writerGUID;
+	readerGUID.guidPrefix = destGuidPrefix;
+	CDRMessage::readEntityId(msg, &readerGUID.entityId);
+	writerGUID.guidPrefix = sourceGuidPrefix;
+	CDRMessage::readEntityId(msg, &writerGUID.entityId);
+
+	SequenceNumber_t writerSN;
+	CDRMessage::readSequenceNumber(msg, &writerSN);
+
+	FragmentNumber_t lastFN;
+	CDRMessage::readUInt32(msg, (uint32_t*)&lastFN);
+
+	uint32_t HBCount;
+	CDRMessage::readUInt32(msg, &HBCount);
+
+	// XXX TODO VALIDATE DATA?
+
+	boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+	//Look for the correct reader and writers:
+	for (std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
+		it != mp_threadListen->m_assocReaders.end(); ++it)
+	{
+		/* XXX TODO PROCESS
+		if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))
+		{
+			(*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
+		}
+		*/
+	}
+
+	//Is the final message?
+	if (smh->submessageLength == 0)
+		*last = true;
+	return true;
+}
 
 
 }

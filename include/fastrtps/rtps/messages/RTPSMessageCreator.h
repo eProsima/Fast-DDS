@@ -17,6 +17,7 @@
 #include "../common/CDRMessage_t.h"
 #include "../common/Guid.h"
 #include "../common/SequenceNumber.h"
+#include "../common/FragmentNumber.h"
 #include "../common/CacheChange.h"
 
 
@@ -84,13 +85,16 @@ public:
 	 */
 
 	/// @{
-
-
-
+	
 	static bool addMessageData(CDRMessage_t* msg,GuidPrefix_t& guidprefix,CacheChange_t* change,
 			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
 	static bool addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
 			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
+
+	static bool addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix, CacheChange_t* change,
+		TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
+	static bool addSubmessageDataFrag(CDRMessage_t* msg, CacheChange_t* change,
+		TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
 
 	static bool addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
 			SequenceNumber_t& seqNumFirst,SequenceNumberSet_t& seqNumList,const EntityId_t& readerId,const EntityId_t& writerId);
@@ -98,22 +102,23 @@ public:
 
 	static bool addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,const EntityId_t& readerId,const EntityId_t& writerId,
 			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag);
-
 	static bool addSubmessageHeartbeat(CDRMessage_t* msg,const EntityId_t& readerId,const EntityId_t& writerId,
 			SequenceNumber_t& firstSN,SequenceNumber_t& lastSN, Count_t count,bool isFinal,bool livelinessFlag);
 
 	static bool addMessageHeartbeatFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const EntityId_t& readerId, const EntityId_t& writerId,
 		SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count);
-
 	static bool addSubmessageHeartbeatFrag(CDRMessage_t* msg, const EntityId_t& readerId, const EntityId_t& writerId,
 		SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count);
 
 	static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
 			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
-
 	static bool addSubmessageAcknack(CDRMessage_t* msg,
 			const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
+	static bool addMessageNackFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
+		const EntityId_t& readerId, const EntityId_t& writerId, SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count);
+	static bool addSubmessageNackFrag(CDRMessage_t* msg,
+		const EntityId_t& readerId, const EntityId_t& writerId, SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count);
 
 	static bool addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
 	static bool addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
