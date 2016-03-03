@@ -176,12 +176,14 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
-check_gtest()
-if(GTEST_FOUND)
-    enable_testing()
-    include(CTest)
-    add_subdirectory(test)
+if(NOT EPROSIMA_INSTALLER)
+    include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
+    check_gtest()
+    if(GTEST_FOUND)
+        enable_testing()
+        include(CTest)
+        add_subdirectory(test)
+    endif()
 endif()
 
 ###############################################################################
@@ -380,6 +382,8 @@ if(MSVC OR MSVC_IDE)
             libraries_x64Win64VS2010
             libraries_i86Win32VS2013
             libraries_x64Win64VS2013
+            libraries_i86Win32VS2015
+            libraries_x64Win64VS2015
             )
     else()
         set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})

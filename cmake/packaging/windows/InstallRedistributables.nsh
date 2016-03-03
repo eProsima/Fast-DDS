@@ -4,6 +4,8 @@ Var X64VS2010Needed
 Var I86VS2010Needed
 Var X64VS2013Needed
 Var I86VS2013Needed
+Var X64VS2015Needed
+Var I86VS2015Needed
 
 Function InstallRedistributables
 
@@ -11,6 +13,8 @@ Function InstallRedistributables
     StrCpy $I86VS2010Needed "1"
     StrCpy $X64VS2013Needed "1"
     StrCpy $I86VS2013Needed "1"
+    StrCpy $X64VS2015Needed "1"
+    StrCpy $I86VS2015Needed "1"
 
     # Check if it is necessary to install to x64VS2010
     ${If} ${RunningX64}
@@ -18,7 +22,7 @@ Function InstallRedistributables
         ${OrIf} ${SectionIsSelected} ${libraries_i86Win32VS2010}
 	    ClearErrors
             SetRegView 64
-            ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1D8E6291-B0D5-35EC-8441-6616F567A0F7}" "Version"
+            ReadRegDword $0 HKLM "SOFTWARE\Classes\Installer\Products\1926E8D15D0BCE53481466615F760A7F" "Version"
             IfErrors 0 VC2010RedistInstalled
             StrCpy $X64VS2010Needed "0"
         ${EndIf}
@@ -26,7 +30,7 @@ Function InstallRedistributables
         # Check if it is necessary to install to i86VS2010
         ${If} ${SectionIsSelected} ${libraries_i86Win32VS2010}
 	    ClearErrors
-            ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}" "Version"
+            ReadRegDword $0 HKLM "SOFTWARE\Classes\Installer\Products\1D5E3C0FEDA1E123187686FED06E995A" "Version"
             IfErrors 0 VC2010RedistInstalled
             StrCpy $I86VS2010Needed "0"
         ${EndIf}
@@ -40,7 +44,7 @@ Function InstallRedistributables
         ${OrIf} ${SectionIsSelected} ${libraries_i86Win32VS2013}
 	    ClearErrors
             SetRegView 64
-            ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{A749D8E6-B613-3BE3-8F5F-045C84EBA29B}" "Version"
+            ReadRegStr $0 HKLM "SOFTWARE\Classes\Installer\Dependencies\{050d4fc8-5d48-4b8f-8972-47c82c46020f}" "Version"
             IfErrors 0 VC2013RedistInstalled
             StrCpy $X64VS2013Needed "0"
         ${EndIf}
@@ -48,13 +52,35 @@ Function InstallRedistributables
         # Check if it is necessary to install to i86VS2013
         ${If} ${SectionIsSelected} ${libraries_i86Win32VS2013}
 	    ClearErrors
-            ReadRegDword $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{13A4EE12-23EA-3371-91EE-EFB36DDFFF3E}" "Version"
+            ReadRegStr $0 HKLM "SOFTWARE\Classes\Installer\Dependencies\{f65db027-aff3-4070-886a-0d87064aabb1}" "Version"
             IfErrors 0 VC2013RedistInstalled
             StrCpy $I86VS2013Needed "0"
         ${EndIf}
     ${EndIf}
 
     VC2013RedistInstalled:
+
+    # Check if it is necessary to install to x64VS2015
+    ${If} ${RunningX64}
+        ${If} ${SectionIsSelected} ${libraries_x64Win64VS2015}
+        ${OrIf} ${SectionIsSelected} ${libraries_i86Win32VS2015}
+	    ClearErrors
+            SetRegView 64
+            ReadRegStr $0 HKLM "SOFTWARE\Classes\Installer\Dependencies\{3ee5e5bb-b7cc-4556-8861-a00a82977d6c}" "Version"
+            IfErrors 0 VC2015RedistInstalled
+            StrCpy $X64VS2015Needed "0"
+        ${EndIf}
+    ${Else}
+        # Check if it is necessary to install to i86VS2015
+        ${If} ${SectionIsSelected} ${libraries_i86Win32VS2015}
+	    ClearErrors
+            ReadRegStr $0 HKLM "SOFTWARE\Classes\Installer\Dependencies\{23daf363-3020-4059-b3ae-dc4ad39fed19}" "Version"
+            IfErrors 0 VC2015RedistInstalled
+            StrCpy $I86VS2015Needed "0"
+        ${EndIf}
+    ${EndIf}
+
+    VC2015RedistInstalled:
 
     ${If} ${RunningX64}
         StrCmp $X64VS2010Needed "1" notinstall2010 install2010
@@ -66,14 +92,14 @@ Function InstallRedistributables
     messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2010 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2010
 
     ${If} ${RunningX64}
-        NSISdl::download http://download.microsoft.com/download/A/8/0/A80747C3-41BD-45DF-B505-E9710D2744E0/vcredist_x64.exe $TEMP\vcredist_x64.exe
+        NSISdl::download https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe $TEMP\vcredist_x64.exe
         Pop $R0 ; Get the return value
         StrCmp $R0 "success" 0 +3
         ExecWait "$TEMP\vcredist_x64.exe"
         Goto +2
         MessageBox MB_OK "vcredist_x64.exe download failed: $R0"
     ${Else}
-        NSISdl::download http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe $TEMP\vcredist_x86.exe
+        NSISdl::download https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe $TEMP\vcredist_x86.exe
         Pop $R0 ; Get the return value
         StrCmp $R0 "success" 0 +3
         ExecWait "$TEMP\vcredist_x86.exe"
@@ -109,5 +135,32 @@ Function InstallRedistributables
     ${EndIf}
 
     notinstall2013:
+
+    ${If} ${RunningX64}
+        StrCmp $X64VS2015Needed "1" notinstall2015 install2015
+    ${Else}
+        StrCmp $I86VS2015Needed "1" notinstall2015 install2015
+    ${EndIf}
+
+    install2015:
+    messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2015 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2015
+
+    ${If} ${RunningX64}
+        NSISdl::download http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x64.exe $TEMP\vcredist_x64.exe
+        Pop $R0 ; Get the return value
+        StrCmp $R0 "success" 0 +3
+        ExecWait "$TEMP\vcredist_x64.exe"
+        Goto +2
+        MessageBox MB_OK "vcredist_x64.exe download failed: $R0"
+    ${Else}
+        NSISdl::download http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x86.exe $TEMP\vcredist_x86.exe
+        Pop $R0 ; Get the return value
+        StrCmp $R0 "success" 0 +3
+        ExecWait "$TEMP\vcredist_x86.exe"
+        Goto +2
+        MessageBox MB_OK "vcredist_x86.exe download failed: $R0"
+    ${EndIf}
+
+    notinstall2015:
 
 FunctionEnd

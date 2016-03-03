@@ -9,9 +9,6 @@ macro(find_eprosima_package package)
             endforeach()
 
             set(${package}ExternalDir ${PROJECT_BINARY_DIR}/external/${package})
-            if(NOT MSVC AND NOT MSVC_IDE)
-                set(BUILD_OPTION "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
-            endif()
 
             if(MINION)
                 set(CMAKE_INSTALL_PREFIX_ "${CMAKE_INSTALL_PREFIX}")
@@ -25,6 +22,7 @@ macro(find_eprosima_package package)
                 "\${SOURCE_DIR_}"
                 "\${GENERATOR_}"
                 ${BUILD_OPTION}
+                "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                 ${USE_BOOST_}
                 "-DMINION=ON"
                 "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"
@@ -65,6 +63,12 @@ macro(find_eprosima_package package)
             endif()
 
             if(MSVC OR MSVC_IDE)
+                if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+                    set(BUILD_TYPE_GENERATION "Release")
+                else()
+                    set(BUILD_TYPE_GENERATION ${CMAKE_BUILD_TYPE})
+                endif()
+
                 execute_process(COMMAND ${CMAKE_COMMAND} --build . --config Debug
                     WORKING_DIRECTORY ${${package}ExternalDir}
                     RESULT_VARIABLE EXECUTE_RESULT
@@ -74,22 +78,13 @@ macro(find_eprosima_package package)
                     message(FATAL_ERROR "Cannot build Git submodule ${package} in Debug mode")
                 endif()
 
-                execute_process(COMMAND ${CMAKE_COMMAND} --build . --config Release
+                execute_process(COMMAND ${CMAKE_COMMAND} --build . --config ${BUILD_TYPE_GENERATION}
                     WORKING_DIRECTORY ${${package}ExternalDir}
                     RESULT_VARIABLE EXECUTE_RESULT
                     )
 
                 if(NOT EXECUTE_RESULT EQUAL 0)
-                    message(FATAL_ERROR "Cannot build Git submodule ${package} in Release mode")
-                endif()
-
-                execute_process(COMMAND ${CMAKE_COMMAND} --build . --config RelWithDebInfo
-                    WORKING_DIRECTORY ${${package}ExternalDir}
-                    RESULT_VARIABLE EXECUTE_RESULT
-                    )
-
-                if(NOT EXECUTE_RESULT EQUAL 0)
-                    message(FATAL_ERROR "Cannot build Git submodule ${package} in RelWithDebInfo mode")
+                    message(FATAL_ERROR "Cannot build Git submodule ${package} in ${BUILD_TYPE_GENERATION} mode")
                 endif()
             else()
                 execute_process(COMMAND ${CMAKE_COMMAND} --build .
@@ -120,19 +115,25 @@ macro(install_eprosima_libraries)
     if((MSVC OR MSVC_IDE) AND EPROSIMA_BUILD AND NOT MINION)
         if(EPROSIMA_INSTALLER)
             # Install includes. Take from x64Win64VS2013
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/${INCLUDE_INSTALL_DIR}/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2015/install/${INCLUDE_INSTALL_DIR}/
                 DESTINATION ${INCLUDE_INSTALL_DIR}
                 COMPONENT headers
                 OPTIONAL
                 )
 
             # Install licenses. Take from x64Win64VS2013
-            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2013/install/licenses/
+            install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/x64Win64VS2015/install/licenses/
                 DESTINATION ${LICENSE_INSTALL_DIR}
                 COMPONENT licenses
                 OPTIONAL
                 )
         else()
+            if("${CMAKE_BUILD_TYPE}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+                set(BUILD_TYPE_INSTALLATION "Release")
+            else()
+                set(BUILD_TYPE_INSTALLATION ${CMAKE_BUILD_TYPE})
+            endif()
+
             # Install includes
             install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${INCLUDE_INSTALL_DIR}/
                 DESTINATION ${INCLUDE_INSTALL_DIR}
@@ -154,7 +155,7 @@ macro(install_eprosima_libraries)
             install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${BIN_INSTALL_DIR}/
                 DESTINATION ${BIN_INSTALL_DIR}
                 COMPONENT libraries_${MSVC_ARCH}
-                CONFIGURATIONS Release
+                CONFIGURATIONS ${BUILD_TYPE_INSTALLATION}
                 OPTIONAL
                 FILES_MATCHING
                 PATTERN "*"
@@ -175,7 +176,7 @@ macro(install_eprosima_libraries)
             install(DIRECTORY ${PROJECT_BINARY_DIR}/external/install/${LIB_INSTALL_DIR}/
                 DESTINATION ${LIB_INSTALL_DIR}
                 COMPONENT libraries_${MSVC_ARCH}
-                CONFIGURATIONS Release
+                CONFIGURATIONS ${BUILD_TYPE_INSTALLATION}
                 OPTIONAL
                 FILES_MATCHING
                 PATTERN "*"

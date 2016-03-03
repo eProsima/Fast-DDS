@@ -45,6 +45,8 @@ macro(install_boost FILETYPE)
                     set(BOOST_ARCH "vc110")
                 elseif(MSVC12)
                     set(BOOST_ARCH "vc120")
+                elseif(MSVC14)
+                    set(BOOST_ARCH "vc140")
                 endif()
 
                 #Normalize path
