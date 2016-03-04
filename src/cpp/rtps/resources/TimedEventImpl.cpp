@@ -38,9 +38,12 @@ namespace eprosima
                         DESTROYED
                     } StateCode;
 
-                    TimerState() : code_(INACTIVE) {}
+                    TimerState(TimedEvent::AUTODESTRUCTION_MODE autodestruction) : code_(INACTIVE),
+                autodestruction_(autodestruction) {}
 
                     boost::atomic<StateCode> code_;
+
+                    TimedEvent::AUTODESTRUCTION_MODE autodestruction_;
             };
         }
     }
@@ -50,7 +53,7 @@ using namespace eprosima::fastrtps::rtps;
 
 TimedEventImpl::TimedEventImpl(TimedEvent* event, boost::asio::io_service &service, const boost::thread& event_thread, boost::posix_time::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction) :
 timer_(service, interval), m_interval_microsec(interval), mp_event(event),
-autodestruction_(autodestruction), state_(std::make_shared<TimerState>()), event_thread_id_(event_thread.get_id())
+autodestruction_(autodestruction), state_(std::make_shared<TimerState>(autodestruction)), event_thread_id_(event_thread.get_id())
 {
 	//TIME_INFINITE(m_timeInfinite);
 }
@@ -111,7 +114,7 @@ void TimedEventImpl::restart_timer()
         // If the event is running, reuse the state. In other case the event can be destroyed but there is no more
         // access to this running event information.
         if(code != TimerState::RUNNING && code != TimerState::INACTIVE)
-            state_.reset(new TimerState());
+            state_.reset(new TimerState(autodestruction_));
         state_.get()->code_.store(TimerState::WAITING, boost::memory_order_relaxed);
 
         timer_.expires_from_now(m_interval_microsec);
@@ -145,7 +148,7 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
 
     if(scode != TimerState::WAITING || !ret || ec == boost::asio::error::operation_aborted)
     {
-        if(scode != TimerState::DESTROYED && autodestruction_ == TimedEvent::ALLWAYS)
+        if(scode != TimerState::DESTROYED && state.get()->autodestruction_ == TimedEvent::ALLWAYS)
             delete this->mp_event;
         
         return;
@@ -167,13 +170,14 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
     scode = TimerState::RUNNING;
     ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::INACTIVE, boost::memory_order_relaxed);
 
+    //Unlock mutex
+    lock.unlock();
+
     cond_.notify_one();
 
-    if(autodestruction_ == TimedEvent::ALLWAYS ||
-            (code == TimedEvent::EVENT_SUCCESS && autodestruction_ == TimedEvent::ON_SUCCESS))
+    if(state.get()->autodestruction_ == TimedEvent::ALLWAYS ||
+            (code == TimedEvent::EVENT_SUCCESS && state.get()->autodestruction_ == TimedEvent::ON_SUCCESS))
     {
-        //Unlock mutex before delete the event.
-        lock.unlock();
         delete this->mp_event;
     }
 }
