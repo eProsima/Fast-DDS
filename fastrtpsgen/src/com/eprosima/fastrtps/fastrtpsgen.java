@@ -259,8 +259,9 @@ public class fastrtpsgen {
 			// In local for all products
 			//solution.addInclude("$(EPROSIMADIR)/code");
 			solution.addInclude("$(" + m_appEnv + ")/include");
+            solution.addLibraryPath("$(" + m_appEnv + ")/lib");
 			if(m_exampleOption != null) {
-				solution.addLibraryPath("$(" + m_appEnv + ")/lib");
+				solution.addLibraryPath("$(" + m_appEnv + ")/lib/" + m_exampleOption);
 			}
 
             // If Java, include jni headers
@@ -391,7 +392,7 @@ public class fastrtpsgen {
 		System.out.println("\twhere the options are:");
 		System.out.println("\t\t-help: shows this help");
 		System.out.println("\t\t-version: shows the current version of eProsima Fast RTPS.");
-		System.out.println("\t\t-example <platform>: Generates a solution for a specific platform (example: x64Win64VS2010)");
+		System.out.println("\t\t-example <platform>: Generates a solution for a specific platform (example: x64Win64VS2015)");
 		System.out.println("\t\t\tSupported platforms:");
 		for(int count = 0; count < m_platforms.size(); ++count)
 			System.out.println("\t\t\t * " + m_platforms.get(count));

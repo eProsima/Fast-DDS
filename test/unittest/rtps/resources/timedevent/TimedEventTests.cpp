@@ -128,11 +128,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
 
         ASSERT_TRUE(event->wait(200));
 
-        boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
-
-        if(MockEvent::destructed_ != 1)
-            MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
-
         ASSERT_EQ(MockEvent::destructed_, 0);
     }
 
@@ -159,7 +154,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 0, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, *env->thread_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     // Cancel ten times.
     for(int i = 0; i < 10; ++i)
@@ -168,11 +163,6 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
         event->cancel_timer();
 
         ASSERT_TRUE(event->wait(100));
-
-        boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
-
-        if(MockEvent::destructed_ != 1)
-            MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
 
         ASSERT_EQ(MockEvent::destructed_, 0);
     }
@@ -217,7 +207,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 0, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, *env->thread_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     for(int i = 0; i < 10; ++i)
         event->restart_timer();
@@ -267,7 +257,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_QuickCancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 0, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(env->service_, *env->thread_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
     event->cancel_timer();

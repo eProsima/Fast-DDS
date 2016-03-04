@@ -63,7 +63,7 @@ macro(check_msvc_arch)
         else()
             set(MSVC_ARCH "i86Win32VS2013")
         endif()
-    elseif(MSVC) # Expect VS2015
+    elseif(MSVC14)
         if(CMAKE_CL_64)
             set(MSVC_ARCH "x64Win64VS2015")
         else()
