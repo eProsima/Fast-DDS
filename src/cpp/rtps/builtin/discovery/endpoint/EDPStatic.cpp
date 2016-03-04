@@ -181,20 +181,20 @@ void EDPStatic::assignRemoteEndpoints(ParticipantProxyData* pdata)
 		{
 			if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status=="ALIVE")
 			{
-                ParticipantProxyData* pdata = nullptr;
+                ParticipantProxyData* pdata_aux = nullptr;
                 ReaderProxyData* rdata = nullptr;
 				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
-				if(!this->mp_PDP->lookupReaderProxyData(guid ,&rdata, &pdata))//IF NOT FOUND, we CREATE AND PAIR IT
+				if(!this->mp_PDP->lookupReaderProxyData(guid ,&rdata, &pdata_aux))//IF NOT FOUND, we CREATE AND PAIR IT
 				{
 					newRemoteReader(pdata,staticproperty.m_userId,staticproperty.m_entityId);
 				}
 			}
 			else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
 			{
-                ParticipantProxyData* pdata = nullptr;
+                ParticipantProxyData* pdata_aux = nullptr;
                 WriterProxyData* wdata = nullptr;
 				GUID_t guid(pdata->m_guid.guidPrefix,staticproperty.m_entityId);
-				if(!this->mp_PDP->lookupWriterProxyData(guid,&wdata, &pdata))//IF NOT FOUND, we CREATE AND PAIR IT
+				if(!this->mp_PDP->lookupWriterProxyData(guid,&wdata, &pdata_aux))//IF NOT FOUND, we CREATE AND PAIR IT
 				{
 					newRemoteWriter(pdata,staticproperty.m_userId,staticproperty.m_entityId);
 				}
@@ -243,19 +243,19 @@ bool EDPStatic::newRemoteReader(ParticipantProxyData* pdata,uint16_t userId,Enti
 		}
 		newRPD->m_key = newRPD->m_guid;
 		newRPD->m_RTPSParticipantKey = pdata->m_guid;
-        ParticipantProxyData* pdata = nullptr;
-		if(this->mp_PDP->addReaderProxyData(newRPD,false, nullptr, &pdata))
+        ParticipantProxyData* pdata_aux = nullptr;
+		if(this->mp_PDP->addReaderProxyData(newRPD,false, nullptr, &pdata_aux))
 		{
-            pdata->mp_mutex->lock();
+            pdata_aux->mp_mutex->lock();
 			//CHECK the locators:
 			if(newRPD->m_unicastLocatorList.empty() && newRPD->m_multicastLocatorList.empty())
 			{
-				newRPD->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-				newRPD->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+				newRPD->m_unicastLocatorList = pdata_aux->m_defaultUnicastLocatorList;
+				newRPD->m_multicastLocatorList = pdata_aux->m_defaultMulticastLocatorList;
 			}
 			newRPD->m_isAlive = true;
-            pdata->mp_mutex->unlock();
-			this->pairingReaderProxy(pdata, newRPD);
+            pdata_aux->mp_mutex->unlock();
+			this->pairingReaderProxy(pdata_aux, newRPD);
 			return true;
 		}
 	}
@@ -283,19 +283,19 @@ bool EDPStatic::newRemoteWriter(ParticipantProxyData* pdata,uint16_t userId,Enti
 		}
 		newWPD->m_key = newWPD->m_guid;
 		newWPD->m_RTPSParticipantKey = pdata->m_guid;
-        ParticipantProxyData* pdata = nullptr;
-        if(this->mp_PDP->addWriterProxyData(newWPD, false, nullptr, &pdata))
+        ParticipantProxyData* pdata_aux = nullptr;
+        if(this->mp_PDP->addWriterProxyData(newWPD, false, nullptr, &pdata_aux))
 		{
-            pdata->mp_mutex->lock();
+            pdata_aux->mp_mutex->lock();
 			//CHECK the locators:
 			if(newWPD->m_unicastLocatorList.empty() && newWPD->m_multicastLocatorList.empty())
 			{
-				newWPD->m_unicastLocatorList = pdata->m_defaultUnicastLocatorList;
-				newWPD->m_multicastLocatorList = pdata->m_defaultMulticastLocatorList;
+				newWPD->m_unicastLocatorList = pdata_aux->m_defaultUnicastLocatorList;
+				newWPD->m_multicastLocatorList = pdata_aux->m_defaultMulticastLocatorList;
 			}
 			newWPD->m_isAlive = true;
-            pdata->mp_mutex->unlock();
-			this->pairingWriterProxy(pdata, newWPD);
+            pdata_aux->mp_mutex->unlock();
+			this->pairingWriterProxy(pdata_aux, newWPD);
 			return true;
 		}
 	}
