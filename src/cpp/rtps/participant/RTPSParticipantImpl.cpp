@@ -225,7 +225,6 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		return false;
 	}
 
-
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -235,6 +234,14 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
 	if(SWriter==nullptr)
 		return false;
+
+	// NEW
+	// Set publication mode
+
+	SWriter->setAsync(param.is_async);
+
+	//END NEW
+	
 
 	//SWriter->setListener(inlisten);
 	//SWriter->setQos(param.qos,true);

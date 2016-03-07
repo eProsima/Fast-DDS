@@ -78,7 +78,7 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
     domainId_ = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id();
     hostname_ = boost::asio::ip::host_name();
 
-    initialized_ = true;
+	initialized_ = true;
 }
 
 void RTPSAsSocketWriter::send(const std::list<uint16_t> &msgs)
@@ -94,7 +94,6 @@ void RTPSAsSocketWriter::send(const std::list<uint16_t> &msgs)
 		ch->serializedPayload.length =
 			snprintf((char*)ch->serializedPayload.data, 255, "%s_%s_%" PRIu32 " %hu", text_.c_str(), hostname_.c_str(), domainId_, *it) + 1;
 #endif
-
 		history_->add_change(ch);
 	}
 }

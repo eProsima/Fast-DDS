@@ -45,6 +45,8 @@ public:
 	
 	//!
 	RTPSWriter* mp_writer;
+private:
+	bool mp_async_pub_activated = false;
 };
 }
 } /* namespace rtps */

@@ -51,6 +51,8 @@ public:
 	ReaderProxy* mp_RP;
 	//!Messages
 	RTPSMessageGroup_t m_cdrmessages;
+private:
+	bool mp_async_pub_activated = false;
 };
 }
 }

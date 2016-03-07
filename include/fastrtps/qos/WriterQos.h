@@ -63,6 +63,8 @@ public:
 	TopicDataQosPolicy m_topicData;
 	//!Group Data Qos, NOT implemented in the library.
 	GroupDataQosPolicy m_groupData;
+	//!Publication Mode Qos, implemented in the library.
+	PublishModeQosPolicy m_publishMode;
 	/**
 	 * Set Qos from another class
 	 * @param qos Reference from a WriterQos object.

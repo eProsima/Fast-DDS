@@ -54,7 +54,7 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
         std::list<uint16_t> msgs = reader.getNonReceivedMessages();
         if(msgs.empty())
             break;
-
+		//std::cout << "sending..." << writer.<< std::endl;
         writer.send(msgs);
         reader.block(*msgs.rbegin(), std::chrono::seconds(1));
     }

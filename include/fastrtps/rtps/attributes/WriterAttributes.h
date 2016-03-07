@@ -50,7 +50,7 @@ public:
 class  WriterAttributes
 {
 public:
-	WriterAttributes()
+	WriterAttributes() : is_async(false)
 	{
 		endpoint.endpointKind = WRITER;
 		endpoint.durabilityKind = TRANSIENT_LOCAL;
@@ -61,6 +61,8 @@ public:
 	EndpointAttributes endpoint;
 	//!Writer Times (only used for RELIABLE).
 	WriterTimes times;
+	//!Indicates if the Writer is asynchronous
+	bool is_async;
 };
 
 /**

@@ -32,6 +32,7 @@ UnsentChangesNotEmptyEvent::UnsentChangesNotEmptyEvent(RTPSWriter* writer,
         mp_writer(writer)
 {
 	// TODO Auto-generated constructor stub
+	mp_async_pub_activated = writer->isAsync();
 }
 
 UnsentChangesNotEmptyEvent::~UnsentChangesNotEmptyEvent()
@@ -48,7 +49,17 @@ void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 
 	if(code == EVENT_SUCCESS)
 	{
-		mp_writer->unsent_changes_not_empty();
+		if (!mp_async_pub_activated)
+		{
+			// SYNCHRONOUS PUBLICATION
+			mp_writer->unsent_changes_not_empty();
+		}
+		else
+		{
+			// ASYNCHRONOUS PUBLICATION
+			// TODO
+		}
+		
 	}
 	else if(code == EVENT_ABORT)
 	{

@@ -120,6 +120,19 @@ public:
 	* @return asserted liveliness
 	*/
 	RTPS_DllAPI inline void setLivelinessAsserted(bool l){ m_livelinessAsserted = l; };
+
+	/**
+	* Set the publication mode
+	* @return publication mode
+	*/
+	RTPS_DllAPI inline void setAsync(bool value){ m_is_async = value; };
+
+	/**
+	* Get the publication mode
+	* @return publication mode
+	*/
+	RTPS_DllAPI inline bool isAsync(){ return m_is_async; };
+
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -134,6 +147,8 @@ protected:
 	WriterHistory* mp_history;
 	//!Listener
 	WriterListener* mp_listener;
+	//Asynchronout publication activated
+	bool m_is_async;
 	/**
 	 * Initialize the header of hte CDRMessages.
 	 */

@@ -30,7 +30,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& 
 				m_livelinessAsserted(false),
 				mp_unsetChangesNotEmpty(nullptr),
 				mp_history(hist),
-				mp_listener(listen)
+				mp_listener(listen),
+				m_is_async(false)
 {
 	const char* const METHOD_NAME = "RTPSWriter";
 	mp_history->mp_writer = this;

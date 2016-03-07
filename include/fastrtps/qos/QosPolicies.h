@@ -425,6 +425,25 @@ public:
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
+/**
+* Enum PublishModeQosPolicyKind, different kinds of publication synchronism
+*/
+typedef enum PublishModeQosPolicyKind : octet{
+	SYNCHRONOUS_PUBLISH_MODE,	//!< Synchronous publication mode (default for writers).
+	ASYNCHRONOUS_PUBLISH_MODE	//!< Asynchronous publication mode.
+}PublishModeQosPolicyKind_t;
+
+/**
+* Class PublishModeQosPolicy, defines the publication mode for a specific writer.
+* kind: Default value SYNCHRONOUS_PUBLISH_MODE.
+*/
+class RTPS_DllAPI PublishModeQosPolicy : public QosPolicy {
+public:
+	PublishModeQosPolicyKind kind;
+	PublishModeQosPolicy() : kind(SYNCHRONOUS_PUBLISH_MODE){};
+	virtual ~PublishModeQosPolicy(){};
+};
+
 
 }
 }
