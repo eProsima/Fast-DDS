@@ -1,7 +1,4 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    option(PERFORMANCE_TESTS "Activate the building and execution of
-    performance tests" OFF)
-
     if(PERFORMANCE_TESTS)
         find_package(Threads REQUIRED)
         find_package(PythonInterp 3 REQUIRED)
