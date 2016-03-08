@@ -53,15 +53,21 @@ void ThroughputSubscriber::DataSubListener::reset()
 
 void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "DATA Sub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
+		++m_up.disc_count_;
 	}
 	else
 	{
 		cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+		--m_up.disc_count_;
 	}
+
+    lock.unlock();
+    m_up.disc_cond_.notify_one();
 }
 void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* /*sub*/)
 {
@@ -99,15 +105,21 @@ ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscribe
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){}
 void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
+        ++m_up.disc_count_;
 	}
 	else
 	{
 		cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+        --m_up.disc_count_;
 	}
+
+    lock.unlock();
+    m_up.disc_cond_.notify_one();
 }
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
 {
@@ -116,50 +128,56 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*su
 	{
 		//cout << "RECEIVED COMMAND: "<< m_commandin.m_command << endl;
 		switch(m_commandin.m_command)
-		{
-		default: break;
-		case (DEFAULT): break;
-		case (BEGIN):{
-			break;
-		}
-		case (READY_TO_START):{
-			m_up.m_datasize = m_commandin.m_size;
-			m_up.m_demand = m_commandin.m_demand;
-			//cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-			m_up.m_DataSubListener.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
-			ThroughputCommandType command(BEGIN);
-			eClock::my_sleep(50);
-			m_up.m_DataSubListener.reset();
-			//cout << "SEND COMMAND: "<< command.m_command << endl;
-			//cout << "writecall "<< ++writecalls << endl;
-			m_up.mp_commandpubli->write(&command);
-			break;
-		}
-		case (TEST_STARTS):{
-            m_up.t_start_ = boost::chrono::steady_clock::now();
-			break;
-		}
-		case (TEST_ENDS):{
-            m_up.t_end_ = boost::chrono::steady_clock::now();
-			m_up.m_DataSubListener.saveNumbers();
-			cout << "TEST ends, sending results"<<endl;
-			ThroughputCommandType comm;
-			comm.m_command = TEST_RESULTS;
-			comm.m_demand = m_up.m_demand;
-			comm.m_size = m_up.m_datasize+4+4;
-			comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
-			comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
-			comm.m_totaltime = boost::numeric_cast<uint64_t>((boost::chrono::duration<double, boost::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
-			cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
-			cout << "Lost Samples: " << comm.m_lostsamples << endl;
-			cout << "Test of size "<<comm.m_size << " and demand "<<comm.m_demand << " ends."<<endl; 
-			//cout << "SEND COMMAND: "<< comm.m_command << endl;
-			//cout << "writecall "<< ++writecalls << endl;
-			m_up.mp_commandpubli->write(&comm);
-			break;
-		}
-		case (ALL_STOPS): m_up.sema.post();break;
-		}
+        {
+            default: break;
+            case (DEFAULT): break;
+            case (BEGIN):{
+                             break;
+                         }
+            case (READY_TO_START):{
+                                      m_up.m_datasize = m_commandin.m_size;
+                                      m_up.m_demand = m_commandin.m_demand;
+                                      //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
+                                      m_up.m_DataSubListener.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
+                                      ThroughputCommandType command(BEGIN);
+                                      eClock::my_sleep(50);
+                                      m_up.m_DataSubListener.reset();
+                                      //cout << "SEND COMMAND: "<< command.m_command << endl;
+                                      //cout << "writecall "<< ++writecalls << endl;
+                                      m_up.mp_commandpubli->write(&command);
+                                      break;
+                                  }
+            case (TEST_STARTS):{
+                                   m_up.t_start_ = boost::chrono::steady_clock::now();
+                                   break;
+                               }
+            case (TEST_ENDS):{
+                                 m_up.t_end_ = boost::chrono::steady_clock::now();
+                                 m_up.m_DataSubListener.saveNumbers();
+                                 cout << "TEST ends, sending results"<<endl;
+                                 ThroughputCommandType comm;
+                                 comm.m_command = TEST_RESULTS;
+                                 comm.m_demand = m_up.m_demand;
+                                 comm.m_size = m_up.m_datasize+4+4;
+                                 comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
+                                 comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
+                                 comm.m_totaltime = boost::numeric_cast<uint64_t>((boost::chrono::duration<double, boost::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
+                                 cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
+                                 cout << "Lost Samples: " << comm.m_lostsamples << endl;
+                                 cout << "Test of size "<<comm.m_size << " and demand "<<comm.m_demand << " ends."<<endl; 
+                                 //cout << "SEND COMMAND: "<< comm.m_command << endl;
+                                 //cout << "writecall "<< ++writecalls << endl;
+                                 m_up.mp_commandpubli->write(&comm);
+                                 break;
+                             }
+            case (ALL_STOPS):
+                             {
+                                 boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+                                 ++m_up.stop_count_;
+                                 lock.unlock();
+                                 m_up.stop_cond_.notify_one();
+                             }
+        }
 	}
 	else
 	{
@@ -171,22 +189,28 @@ ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscribe
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){}
 void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
+        ++m_up.disc_count_;
 	}
 	else
 	{
 		cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+        --m_up.disc_count_;
 	}
+
+    lock.unlock();
+    m_up.disc_cond_.notify_one();
 }
 
 
 
 ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
 
-ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname) : sema(0),
+ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname) : disc_count_(0), stop_count_(0),
 #pragma warning(disable:4355)
     m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
     ready(true),m_datasize(0),m_demand(0)
@@ -297,12 +321,12 @@ void ThroughputSubscriber::run()
 	if(!ready)
 		return;
 	cout << "Waiting for discovery"<<endl;
-	sema.wait();
-	sema.wait();
-	sema.wait();
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    while(disc_count_ != 3) disc_cond_.wait(lock);
 	cout << "Discovery complete"<<endl;
 	//printLabelsSubscriber();
-	sema.wait();
+    if(stop_count_ == 0)
+        stop_cond_.wait(lock);
 	return;
 
 }

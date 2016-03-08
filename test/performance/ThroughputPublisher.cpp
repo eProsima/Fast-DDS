@@ -34,49 +34,66 @@ ThroughputPublisher::DataPubListener::~DataPubListener(){}
 
 void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "DATA Pub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
+        ++m_up.disc_count_;
 	}
 	else
 	{
 		cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+        --m_up.disc_count_;
 	}
+
+    lock.unlock();
+    m_up.disc_cond_.notify_one();
 }
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){}
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){}
 void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
+        ++m_up.disc_count_;
 	}
 	else
 	{
 		cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<endl;
+        --m_up.disc_count_;
 	}
+
+    lock.unlock();
+    m_up.disc_cond_.notify_one();
 }
 
 ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){}
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){}
 void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<endl;
-		m_up.sema.post();
+        ++m_up.disc_count_;
 	}
 	else
 	{
 		cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<endl;
+        --m_up.disc_count_;
 	}
+
+    lock.unlock();
+    m_up.disc_cond_.notify_one();
 }
 
-ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv): sema(0),
+ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv): disc_count_(0),
 #pragma warning(disable:4355)
 	m_DataPubListener(*this), m_CommandSubListener(*this), m_CommandPubListener(*this),
     ready(true), m_export_csv(export_csv)
@@ -203,9 +220,9 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 		m_demand_payload[msg_size - 8].push_back(demand);
 	}
 	cout << "Waiting for discovery" << endl;
-	sema.wait();
-	sema.wait();
-	sema.wait();
+    boost::unique_lock<boost::mutex> disc_lock(mutex_);
+    while(disc_count_ != 3) disc_cond_.wait(disc_lock);
+    disc_lock.unlock();
 	cout << "Discovery complete" << endl;
 
 	ThroughputCommandType command;

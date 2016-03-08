@@ -5,12 +5,14 @@ boost::mutex MockEvent::destruction_mutex_;
 boost::condition_variable MockEvent::destruction_cond_;
 
 MockEvent::MockEvent(boost::asio::io_service& service, const boost::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction) : 
-    TimedEvent(service, event_thread, milliseconds, autodestruction), successed_(0), cancelled_(0), semaphore_(0), autorestart_(autorestart)
+    TimedEvent(service, event_thread, milliseconds, autodestruction), successed_(0), cancelled_(0), sem_count_(0), autorestart_(autorestart)
 {
 }
 
 MockEvent::~MockEvent()
 {
+    destroy();
+
     destruction_mutex_.lock();
     ++destructed_;
     destruction_mutex_.unlock();
@@ -31,11 +33,22 @@ void MockEvent::event(EventCode code, const char* msg)
     else if(code == EventCode::EVENT_ABORT)
         cancelled_.fetch_add(1, boost::memory_order_relaxed);
 
-    semaphore_.post();
+    sem_mutex_.lock();
+    ++sem_count_;
+    sem_mutex_.unlock();
+    sem_cond_.notify_one();
 }
 
 bool MockEvent::wait(unsigned int milliseconds)
 {
-    boost::system_time const timeout = boost::get_system_time() + boost::posix_time::milliseconds(milliseconds);
-    return semaphore_.timed_wait(timeout);
+    boost::unique_lock<boost::mutex> lock(sem_mutex_);
+
+    if(sem_count_ == 0)
+    {
+        if(sem_cond_.wait_for(lock, boost::chrono::milliseconds(milliseconds)) != boost::cv_status::no_timeout)
+            return false;
+    }
+
+    --sem_count_;
+    return true;
 }
