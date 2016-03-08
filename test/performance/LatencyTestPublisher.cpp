@@ -38,9 +38,9 @@ LatencyTestPublisher::LatencyTestPublisher():
 												t_overhead_(0.0),
 												n_subscribers(0),
 												n_samples(0),
-												m_disc_sema(0),
-												m_comm_sema(0),
-												m_data_sema(0),
+												disc_count_(0),
+												comm_count_(0),
+												data_count_(0),
 												m_status(0),
 												n_received(0),
 												m_datapublistener(nullptr),
@@ -233,6 +233,8 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 
 void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
@@ -242,15 +244,23 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pu
 		{
 			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
-			mp_up->m_disc_sema.post();
 		}
-		else
-			mp_up->m_disc_sema.post();
+
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
@@ -260,15 +270,23 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*
 		{
 			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
-			mp_up->m_disc_sema.post();
 		}
-		else
-			mp_up->m_disc_sema.post();
+
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
@@ -278,15 +296,23 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /
 		{
 			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
-			mp_up->m_disc_sema.post();
-		}
-		else
-			mp_up->m_disc_sema.post();
+        }
+
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
@@ -296,11 +322,17 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber*
 		{
 			std::cout << "More matched subscribers than expected" << std::endl;
 			mp_up->m_status = -1;
-			mp_up->m_disc_sema.post();
 		}
-		else
-			mp_up->m_disc_sema.post();
+
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
@@ -316,8 +348,10 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* /*su
 			if(command.m_command == BEGIN)
 			{
 				//	cout << "POSTING"<<endl;
-				eClock::my_sleep(50);
-				mp_up->m_comm_sema.post();
+                mp_up->mutex_.lock();
+				++mp_up->comm_count_;
+                mp_up->mutex_.unlock();
+                mp_up->comm_cond_.notify_one();
 			}
 		}
 	}
@@ -336,19 +370,20 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* /*sub*/
 		mp_up->n_received++;
 	}
 
-    mp_up->m_data_sema.post();
+    mp_up->mutex_.lock();
+    ++mp_up->data_count_;
+    mp_up->mutex_.unlock();
+    mp_up->data_cond_.notify_one();
 }
 
 void LatencyTestPublisher::run()
 {
 	//WAIT FOR THE DISCOVERY PROCESS FO FINISH:
 	//EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-	for(uint8_t i = 0;i<n_subscribers*4;++i)
-	{
-		m_disc_sema.wait();
-		if(m_status == -1)
-			return;
-	}
+    boost::unique_lock<boost::mutex> disc_lock(mutex_);
+    while(disc_count_ != (n_subscribers * 4)) disc_cond_.wait(disc_lock);
+    disc_lock.unlock();
+
 	cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
 	printf("Printing round-trip times in us, statistics for %d samples\n",n_samples);
 	printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
@@ -419,13 +454,12 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	TestCommandType command;
 	command.m_command = READY;
 	mp_commandpub->write(&command);
+
 	//cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
-	for(uint8_t i = 0;i<n_subscribers;++i)
-	{
-		//cout << "WAITING"<<endl;
-		m_comm_sema.wait();
-		//cout << (int)i << " "<<std::flush;
-	}
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    while(comm_count_ != n_subscribers) comm_cond_.wait(lock);
+    --comm_count_;
+    lock.unlock();
 	//cout << endl;
 	//BEGIN THE TEST:
     
@@ -434,12 +468,15 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         mp_latency_in->seqnum = 0;
         mp_latency_out->seqnum = count;
         
-        boost::system_time timeout = boost::get_system_time() + boost::posix_time::seconds(1);
         t_start_ = boost::chrono::steady_clock::now();
 
         mp_datapub->write((void*)mp_latency_out);
 
-        m_data_sema.timed_wait(timeout);
+        lock.lock();
+        if(data_count_ == 0)
+            data_cond_.wait_for(lock, boost::chrono::seconds(1));
+        --data_count_;
+        lock.unlock();
     }
 
 	command.m_command = STOP;

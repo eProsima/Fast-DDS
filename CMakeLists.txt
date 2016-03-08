@@ -142,7 +142,7 @@ option(PERFORMANCE_TESTS "Activate the building and execution of performance tes
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
 set(BOOST_LIBRARIES_DEFAULT thread system date_time chrono regex atomic)
 if(PERFORMANCE_TESTS)
-    set(BOOST_LIBRARIES_DEFAULT ${BOOST_LIBRARIES_DEFAULT program_options)
+    set(BOOST_LIBRARIES_DEFAULT ${BOOST_LIBRARIES_DEFAULT} program_options)
 endif()
 check_boost(${BOOST_LIBRARIES_DEFAULT})
 
