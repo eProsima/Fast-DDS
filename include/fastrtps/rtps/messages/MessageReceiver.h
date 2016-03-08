@@ -114,6 +114,7 @@ private:
 	 * @return
 	 */
 	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_DataFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
 	bool proc_Submsg_Acknack(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_Heartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_Gap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);

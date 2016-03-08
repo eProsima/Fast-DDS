@@ -129,7 +129,7 @@ bool RTPSMessageCreator::addSubmessageNackFrag(CDRMessage_t* msg,
 	}
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::addSubmessageHeader(msg, ACKNACK, flags, (uint16_t)submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg, NACK_FRAG, flags, (uint16_t)submsgElem.length);
 	//Append Submessage elements to msg
 
 	CDRMessage::appendMsg(msg, &submsgElem);

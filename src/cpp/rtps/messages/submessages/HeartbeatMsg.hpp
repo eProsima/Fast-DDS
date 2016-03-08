@@ -110,7 +110,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(CDRMessage_t* msg, const Ent
 	CDRMessage::addInt32(&submsgElem, (int32_t)count);
 
 	//Once the submessage elements are added, the header is created
-	RTPSMessageCreator::addSubmessageHeader(msg, HEARTBEAT, flags, (uint16_t)submsgElem.length);
+	RTPSMessageCreator::addSubmessageHeader(msg, HEARTBEAT_FRAG, flags, (uint16_t)submsgElem.length);
 	//Append Submessage elements to msg
 	//Append Submessage elements to msg
 	CDRMessage::appendMsg(msg, &submsgElem);

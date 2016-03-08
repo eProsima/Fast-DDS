@@ -18,11 +18,38 @@
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "InstanceHandle.h"
+//#include "DataFragment.h"
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+* Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
+*  @ingroup COMMON_MODULE
+*/
+enum ChangeForReaderStatus_t{
+	UNSENT = 0,        //!< UNSENT
+	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
+	REQUESTED = 2,     //!< REQUESTED
+	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
+	UNDERWAY = 4       //!< UNDERWAY
+};
+/**
+* Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
+*  @ingroup COMMON_MODULE
+*/
+enum ChangeFromWriterStatus_t{
+	UNKNOWN = 0,
+	MISSING = 1,
+	//REQUESTED_WITH_NACK,
+	RECEIVED = 2,
+	LOST = 3
+};
+
+#endif
 
 /**
  * @enum ChangeKind_t, different types of CacheChange_t.
@@ -38,7 +65,6 @@ namespace rtps{
 	NOT_ALIVE_UNREGISTERED,//!< NOT_ALIVE_UNREGISTERED
 	NOT_ALIVE_DISPOSED_UNREGISTERED //!<NOT_ALIVE_DISPOSED_UNREGISTERED
 };
-
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
@@ -67,9 +93,10 @@ struct RTPS_DllAPI CacheChange_t{
 	CacheChange_t():
 		kind(ALIVE),
 		isRead(false),
-        is_untyped_(true)
+		is_untyped_(true),
+		dataFragments(new std::vector<uint32_t>()),
+		fragment_size(0)
 	{
-
 	}
 	
 	/**
@@ -81,10 +108,12 @@ struct RTPS_DllAPI CacheChange_t{
 		kind(ALIVE),
 		serializedPayload((uint16_t)payload_size),
 		isRead(false),
-        is_untyped_(is_untyped)
+		is_untyped_(is_untyped),
+		dataFragments(new std::vector<uint32_t>()),
+		fragment_size(0)
 	{
-
 	}
+
 	/*!
 	 * Copy a different change into this one. All the elements are copied, included the data, allocating new memory.
 	 * @param[in] ch_ptr Pointer to the change.
@@ -98,39 +127,41 @@ struct RTPS_DllAPI CacheChange_t{
 		sequenceNumber = ch_ptr->sequenceNumber;
 		sourceTimestamp = ch_ptr->sourceTimestamp;
         write_params = ch_ptr->write_params;
+		// XXX TODO copy dataFragments
 		return serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 	}
-	~CacheChange_t(){
 
+	~CacheChange_t(){
+		if (dataFragments)
+			delete dataFragments;
 	}
+
+	uint32_t getFragmentCount() { return (serializedPayload.length + fragment_size - 1) / fragment_size; }
+
+	std::vector<uint32_t>* getDataFragments() { return dataFragments; }
+
+	uint16_t getFragmentSize() { return fragment_size; }
+
+	void setFragmentSize(uint16_t fragment_size) {
+		this->fragment_size = fragment_size;
+		if (fragment_size == 0) {
+			dataFragments->clear();
+		} else if (getFragmentCount() != dataFragments->size()) {
+			dataFragments->clear();
+			dataFragments->reserve(getFragmentCount());
+		}
+	}
+
+private:
+
+	// Data fragments
+	std::vector<uint32_t>* dataFragments;
+	
+	// Fragment size
+	uint16_t fragment_size;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-/**
- * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
- *  @ingroup COMMON_MODULE
- */
-enum ChangeForReaderStatus_t{
-	UNSENT = 0,        //!< UNSENT
-	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
-	REQUESTED = 2,     //!< REQUESTED
-	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
-	UNDERWAY = 4       //!< UNDERWAY
-};
-/**
- * Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
- *  @ingroup COMMON_MODULE
- */
-enum ChangeFromWriterStatus_t{
-	UNKNOWN = 0,
-	MISSING = 1,
-	//REQUESTED_WITH_NACK,
-	RECEIVED = 2,
-	LOST = 3
-};
-
-
 
 /**
  * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
@@ -241,10 +272,8 @@ class ChangeFromWriter_t
 
 #endif
 
-
 }
 }
 }
-
 
 #endif /* CACHECHANGE_H_ */
