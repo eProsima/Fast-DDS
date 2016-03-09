@@ -13,14 +13,12 @@
  *
  */
 
-
+#include <cassert>
+#include <algorithm>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
-
-#include <algorithm>
-#include <cassert>
 
 inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 {
