@@ -16,10 +16,10 @@
 #include "Types.h"
 
 #include <vector>
-#include <cmath>
 #include <algorithm>
 #include <sstream>
 #include <limits.h>
+#include <cassert>
 
 namespace eprosima{
 namespace fastrtps{
@@ -234,7 +234,7 @@ inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& s
 }
 
 /**
- * Substract one SequenceNumber_t from another
+ * Subtract one SequenceNumber_t from another
  * @param seq Base SequenceNumber_t
  * @param inc SequenceNumber_t to substract
  * @return Result of the substraction
@@ -243,7 +243,7 @@ inline SequenceNumber_t operator-(SequenceNumber_t& seq, uint32_t inc)
 {
 	SequenceNumber_t res(seq.high, seq.low - inc);
 
-    if(res.low > seq.low)
+    if(inc > seq.low)
     {
         // Being the type of the parameter an 'uint32_t', the decrement of 'high' will be as much as 1.
         --res.high;
@@ -258,7 +258,7 @@ inline SequenceNumber_t operator-(SequenceNumber_t& seq, uint32_t inc)
  * @param inc SequenceNumber_t to add
  * @return Result of the addition
  */
-inline SequenceNumber_t operator+(SequenceNumber_t& seq, uint32_t inc)
+inline SequenceNumber_t operator+(const SequenceNumber_t& seq, const uint32_t inc)
 {
 	SequenceNumber_t res(seq.high, seq.low + inc);
 
@@ -269,6 +269,23 @@ inline SequenceNumber_t operator+(SequenceNumber_t& seq, uint32_t inc)
     }
 
 	return res;
+}
+
+/**
+ * Subtract one SequenceNumber_t to another
+ * @param minuend Minuend. Has to be greater than or equal to subtrahend.
+ * @param subtrahend Subtrahend.
+ * @return Result of the subtraction
+ */
+inline SequenceNumber_t operator-(const SequenceNumber_t& minuend, const SequenceNumber_t& subtrahend)
+{
+    assert(minuend >= subtrahend);
+	SequenceNumber_t res(minuend.high - subtrahend.high, minuend.low - subtrahend.low);
+
+    if(minuend.low < subtrahend.low)
+        --res.high;
+
+    return res;
 }
 
 #endif

@@ -247,10 +247,10 @@ TEST(SequenceNumber, LessThanOrEqualOperator)
 }
 
 /*!
- * @fn TEST(SequenceNumber, SubstractionOperator)
- * @brief This test checks the substraction operator for type SequenceNumber_t.
+ * @fn TEST(SequenceNumber, SubtractionOperator)
+ * @brief This test checks the subtraction operator for type SequenceNumber_t.
  */
-TEST(SequenceNumber, SubstractionOperator)
+TEST(SequenceNumber, SubtractionOperator)
 {
     SequenceNumber_t seq(4, 3);
 
@@ -354,6 +354,56 @@ TEST(SequenceNumber, AdditionOperator)
     expected_seq.low = UINT32_MAX;
 
     ASSERT_EQ(seq, expected_seq);
+}
+
+/*!
+ * @fn TEST(SequenceNumber, SubtractionBetweenSesOperator)
+ * @brief This test checks the subtraction operator between SequenceNumber_t.
+ * This operation has a limit: minuend has to be greater than or equal to subtrahend.
+ */
+TEST(SequenceNumber, SubtractionBetweenSesOperator)
+{
+    SequenceNumber_t minuend(4, 3);
+    SequenceNumber_t subtrahend(0, 7);
+
+    SequenceNumber_t res = minuend - subtrahend;
+
+    SequenceNumber_t expected_seq(3, UINT32_MAX - 3);
+
+    ASSERT_EQ(res, expected_seq);
+
+    minuend.high = INT32_MAX;
+    minuend.low = UINT32_MAX - 1;
+
+    subtrahend.high = 0;
+    subtrahend.low = (uint32_t)INT32_MAX;
+
+    res = minuend - subtrahend;
+
+    expected_seq.high = INT32_MAX;
+    expected_seq.low = (uint32_t)INT32_MAX;
+
+    ASSERT_EQ(res, expected_seq);
+
+    minuend.high = 25;
+    minuend.low = UINT32_MAX;
+
+    subtrahend.high = 0;
+    subtrahend.low = UINT32_MAX;
+
+    res = minuend - subtrahend;
+
+    expected_seq.high = 25;
+    expected_seq.low = 0;
+
+    ASSERT_EQ(res, expected_seq);
+
+    res = res - subtrahend;
+
+    expected_seq.high = 24;
+    expected_seq.low = 1;
+
+    ASSERT_EQ(res, expected_seq);
 }
 
 /*!

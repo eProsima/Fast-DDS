@@ -27,7 +27,7 @@ static const char* const CLASS_NAME = "RTPSMessageGroup";
 
 bool sort_changes_group (CacheChange_t* c1,CacheChange_t* c2)
 {
-	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
+	return(c1->sequenceNumber < c2->sequenceNumber);
 }
 
 bool sort_SeqNum(const SequenceNumber_t& s1,const SequenceNumber_t& s2)
@@ -52,7 +52,7 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* 
 		if(new_pair)
 		{
 			SequenceNumberSet_t seqset;
-			seqset.base = (*it)+1; // IN CASE IN THIS SEQNUMSET there is only 1 number.
+			seqset.base = (*it) + 1; // IN CASE IN THIS SEQNUMSET there is only 1 number.
 			pair_T pair(*it,seqset);
 			sequences->push_back(pair);
 			new_pair = false;
@@ -60,7 +60,7 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* 
 			count = 1;
 			continue;
 		}
-		if((*it).to64long() - sequences->back().first.to64long() == count) //CONTINUOUS FROM THE START
+		if((*it - sequences->back().first).low == count) //CONTINUOUS FROM THE START
 		{
 			++count;
 			sequences->back().second.base = (*it)+1;

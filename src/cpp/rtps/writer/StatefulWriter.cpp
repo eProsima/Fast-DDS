@@ -134,7 +134,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
 	const char* const METHOD_NAME = "change_removed_by_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	logInfo(RTPS_WRITER,"Change "<<a_change->sequenceNumber.to64long()<< " to be removed.");
+	logInfo(RTPS_WRITER,"Change "<< a_change->sequenceNumber << " to be removed.");
 	for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
 			it!=this->matched_readers.end();++it)
 	{
@@ -213,17 +213,17 @@ void StatefulWriter::unsent_changes_not_empty()
 				CacheChange_t* last;
 				mp_history->get_min_change(&first);
 				mp_history->get_max_change(&last);
-				if(first->sequenceNumber.to64long()>0 && last->sequenceNumber.to64long() >= first->sequenceNumber.to64long()  )
+				if(first->sequenceNumber > SequenceNumber_t(0,0) && last->sequenceNumber >= first->sequenceNumber)
 				{
-				incrementHBCount();
-				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-						c_EntityId_Unknown,m_guid.entityId,first->sequenceNumber,last->sequenceNumber,m_heartbeatCount,true,false);
-				std::vector<Locator_t>::iterator lit;
-				for(lit = (*rit)->m_att.endpoint.unicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.unicastLocatorList.end();++lit)
-					getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
-				for(lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.multicastLocatorList.end();++lit)
-					getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+                    incrementHBCount();
+                    CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
+                    RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
+                            c_EntityId_Unknown,m_guid.entityId,first->sequenceNumber,last->sequenceNumber,m_heartbeatCount,true,false);
+                    std::vector<Locator_t>::iterator lit;
+                    for(lit = (*rit)->m_att.endpoint.unicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.unicastLocatorList.end();++lit)
+                        getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+                    for(lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.multicastLocatorList.end();++lit)
+                        getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
 				}
 			}
 		}

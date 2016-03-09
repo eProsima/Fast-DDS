@@ -81,10 +81,10 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	{
 		m_changes.push_back(a_change);
 		updateMaxMinSeqNum();
-		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber.to64long() << " added with " << a_change->serializedPayload.length << " bytes");
+		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 		return true;
 	}
-	logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber.to64long() << " from "<< a_change->writerGUID << " not added.");
+	logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber << " from "<< a_change->writerGUID << " not added.");
 	return false;
 }
 
@@ -119,7 +119,7 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
 			return true;
 		}
 	}
-	logWarning(RTPS_HISTORY,"SequenceNumber "<<a_change->sequenceNumber.to64long()<< " not found");
+	logWarning(RTPS_HISTORY,"SequenceNumber "<<a_change->sequenceNumber << " not found");
 	return false;
 }
 

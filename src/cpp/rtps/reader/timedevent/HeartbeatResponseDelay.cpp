@@ -72,8 +72,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 			{
 				if(!sns.add((*cit)->seqNum))
 				{
-					logWarning(RTPS_READER,"Error adding seqNum "<<(*cit)->seqNum.to64long()
-							<< " with SeqNumSet Base: "<< sns.base.to64long());
+					logWarning(RTPS_READER,"Error adding seqNum " << (*cit)->seqNum
+							<< " with SeqNumSet Base: "<< sns.base);
 					break;
 				}
 			}
