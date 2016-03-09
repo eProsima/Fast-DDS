@@ -170,10 +170,10 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
     scode = TimerState::RUNNING;
     ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::INACTIVE, boost::memory_order_relaxed);
 
+    cond_.notify_one();
+
     //Unlock mutex
     lock.unlock();
-
-    cond_.notify_one();
 
     if(state.get()->autodestruction_ == TimedEvent::ALLWAYS ||
             (code == TimedEvent::EVENT_SUCCESS && state.get()->autodestruction_ == TimedEvent::ON_SUCCESS))
