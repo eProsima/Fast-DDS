@@ -39,11 +39,13 @@ namespace eprosima
                     } StateCode;
 
                     TimerState(TimedEvent::AUTODESTRUCTION_MODE autodestruction) : code_(INACTIVE),
-                autodestruction_(autodestruction) {}
+                    autodestruction_(autodestruction), notify_(true) {}
 
                     boost::atomic<StateCode> code_;
 
                     TimedEvent::AUTODESTRUCTION_MODE autodestruction_;
+
+                    bool notify_;
             };
         }
     }
@@ -119,6 +121,13 @@ void TimedEventImpl::restart_timer()
     // if the code indicate an event is already waiting, don't start other event.
     if(code != TimerState::DESTROYED && code != TimerState::WAITING)
     {
+        // If there is an event running, desattach state and set to not notify.
+        if(code == TimerState::RUNNING)
+        {
+            state_.get()->notify_ = false;
+            state_.reset(new TimerState(autodestruction_));
+        }
+
         state_.get()->code_.store(TimerState::WAITING, boost::memory_order_relaxed);
 
         timer_.expires_from_now(m_interval_microsec);
@@ -185,7 +194,7 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
     scode = TimerState::RUNNING;
     ret =  state.get()->code_.compare_exchange_strong(scode, TimerState::INACTIVE, boost::memory_order_relaxed);
 
-    if(scode == TimerState::DESTROYED)
+    if(scode == TimerState::DESTROYED && state.get()->notify_)
         cond_.notify_one();
 
     //Unlock mutex
