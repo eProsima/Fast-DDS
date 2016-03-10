@@ -367,12 +367,18 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* /*sub*/
         mp_up->t_end_ = boost::chrono::steady_clock::now();
         mp_up->times_.push_back(boost::chrono::duration<double, boost::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
 		mp_up->n_received++;
-	}
 
-    mp_up->mutex_.lock();
-    ++mp_up->data_count_;
-    mp_up->mutex_.unlock();
-    mp_up->data_cond_.notify_one();
+        // Reset seqnum from out data
+        mp_up->mp_latency_out->seqnum = 0;
+
+        mp_up->mutex_.lock();
+        if(mp_up->data_count_ == 0)
+        {
+            ++mp_up->data_count_;
+            mp_up->data_cond_.notify_one();
+        }
+        mp_up->mutex_.unlock();
+	}
 }
 
 void LatencyTestPublisher::run()
@@ -462,7 +468,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	//cout << endl;
 	//BEGIN THE TEST:
     
-    for(unsigned int count = 0; count < n_samples; ++count)
+    for(unsigned int count = 1; count <= n_samples; ++count)
     {
         mp_latency_in->seqnum = 0;
         mp_latency_out->seqnum = count;
@@ -473,8 +479,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
         lock.lock();
         if(data_count_ == 0)
-            data_cond_.wait_for(lock, boost::chrono::seconds(1));
-        --data_count_;
+            if(data_cond_.wait_for(lock, boost::chrono::seconds(1)) == boost::cv_status::no_timeout)
+                --data_count_;
         lock.unlock();
     }
 

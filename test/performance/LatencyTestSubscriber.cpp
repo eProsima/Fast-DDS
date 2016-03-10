@@ -112,9 +112,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	SubDataparam.topic.historyQos.depth = n_samples;
-	SubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
-	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
+	SubDataparam.topic.historyQos.depth = 1;
     if(reliable)
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15003;
