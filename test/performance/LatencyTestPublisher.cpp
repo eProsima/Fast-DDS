@@ -14,6 +14,7 @@
 #include "LatencyTestPublisher.h"
 #include "fastrtps/utils/RTPSLog.h"
 #include <numeric>
+#include <cmath>
 
 #define TIME_LIMIT_US 10000
 
@@ -157,8 +158,9 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	PubDataparam.topic.historyQos.depth = n_samples +100;
-	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples +100;//n_samples+100;
+	PubDataparam.topic.historyQos.depth = n_samples;
+	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
+	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
     if(!reliable)
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	Locator_t loc;
@@ -201,7 +203,8 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     PubCommandParam.topic.topicName = pct.str();
 	PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	PubCommandParam.topic.historyQos.depth = 100;
-	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 100;
+	PubCommandParam.topic.resourceLimitsQos.max_samples = 101;
+	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
 	PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == nullptr)
@@ -217,7 +220,8 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     SubCommandParam.topic.topicName = sct.str();
 	SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubCommandParam.topic.historyQos.depth = 100;
-	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 100;
+	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
+	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
@@ -500,8 +504,8 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 	TimeStats TS;
 	TS.nbytes = datasize+4;
     TS.received = n_received;
-	TS.m_min = *std::min_element(times_.begin(), times_.end());
-	TS.m_max = *std::max_element(times_.begin(), times_.end());
+    TS.m_min = *std::min_element(times_.begin(), times_.end());
+    TS.m_max = *std::max_element(times_.begin(), times_.end());
     TS.mean = std::accumulate(times_.begin(), times_.end(), boost::chrono::duration<double, boost::micro>(0)).count() / times_.size();
 
 	double auxstdev=0;
@@ -513,55 +517,31 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 	TS.stdev = (double)round(auxstdev);
 
 	std::sort(times_.begin(), times_.end());
-	double x= 0;
-	double elem, dec;
-	x = times_.size() * 0.5;
-	dec = modf(x, &elem);
-    if(elem != times_.size())
-    {
-        if(dec == 0.0)
-			TS.p50 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
-        else
-			TS.p50 = times_.at((uint64_t)elem).count();
-    }
-    else
-		TS.p50 = times_.at((uint64_t)elem - 1).count();
+	size_t elem;
 
-	x = times_.size() * 0.9;
-	dec = modf(x,&elem);
-    if(elem != times_.size())
-    {
-        if(dec == 0.0)
-			TS.p90 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
-        else
-			TS.p90 = times_.at((uint64_t)elem).count();
-    }
+	elem = (size_t)(times_.size() * 0.5);
+    if(elem >  0 && elem <= times_.size())
+        TS.p50 = times_.at(--elem).count();
     else
-		TS.p90 = times_.at((uint64_t)elem - 1).count();
+        TS.p50 = NAN;
 
-	x = times_.size()*0.99;
-	dec = modf(x,&elem);
-    if(elem != times_.size())
-    {
-        if(dec == 0.0)
-			TS.p99 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
-        else
-			TS.p99 = times_.at((uint64_t)elem).count();
-    }
+     elem = (size_t)times_.size() * 0.9;
+    if(elem >  0 && elem <= times_.size())
+        TS.p90 = times_.at(--elem).count();
     else
-		TS.p99 = times_.at((uint64_t)elem - 1).count();
+        TS.p90 = NAN;
 
-	x = times_.size()*0.9999;
-	dec = modf(x,&elem);
-    if(elem != times_.size())
-    {
-        if(dec == 0.0)
-			TS.p9999 = ((times_.at((uint64_t)elem - 1) + times_.at((uint64_t)elem)).count() / 2.0);
-        else
-			TS.p9999 = times_.at((uint64_t)elem).count();
-    }
+     elem = (size_t)times_.size() * 0.99;
+    if(elem >  0 && elem <= times_.size())
+        TS.p99 = times_.at(--elem).count();
     else
-		TS.p9999 = times_.at((uint64_t)elem - 1).count();
+        TS.p99 = NAN;
+
+     elem = (size_t)times_.size() * 0.9999;
+    if(elem >  0 && elem <= times_.size())
+        TS.p9999 = times_.at(--elem).count();
+    else
+        TS.p9999 = NAN;
 
 	m_stats.push_back(TS);
 }
