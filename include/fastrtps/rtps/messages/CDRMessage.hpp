@@ -13,13 +13,12 @@
  *
  */
 
-
+#include <cassert>
+#include <algorithm>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
-
-#include <algorithm>
 
 inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 {
@@ -439,10 +438,13 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 
 
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
-		SequenceNumberSet_t* sns) {
-	if(sns->base.to64long()== 0)
+		SequenceNumberSet_t* sns)
+{
+	if(sns->base == SequenceNumber_t(0, 0))
 		return false;
+
 	CDRMessage::addSequenceNumber(msg, &sns->base);
+
 	//Add set
 	if(sns->isSetEmpty())
 	{
@@ -452,31 +454,30 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 
 	SequenceNumber_t maxseqNum = sns->get_maxSeqNum();
 
-	uint32_t numBits = (uint32_t)(maxseqNum.to64long() - sns->base.to64long()+1);
+	uint32_t numBits = (maxseqNum - sns->base + 1).low;
+    assert((maxseqNum - sns->base + 1).high == 0);
+    assert(numBits < 256);
 
-	if(numBits > 256)
-	{
-		return false;
-	}
-
-	addUInt32(msg,numBits);
-	uint8_t n_longs = (uint8_t)((numBits+31)/32);
+	addUInt32(msg, numBits);
+	uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
 	int32_t* bitmap = new int32_t[n_longs];
-	for(uint32_t i= 0;i<n_longs;i++)
-	{
+
+	for(uint32_t i = 0; i < n_longs; i++)
 		bitmap[i] = 0;
-	}
+
 	uint32_t deltaN = 0;
-	for(std::vector<SequenceNumber_t>::iterator it=sns->get_begin();
-			it!=sns->get_end();++it)
+	for(std::vector<SequenceNumber_t>::iterator it = sns->get_begin();
+			it != sns->get_end(); ++it)
 	{
-		deltaN =(uint32_t)( it->to64long() - sns->base.to64long());
+		deltaN = (*it - sns->base).low;
+        assert((*it - sns->base).high == 0);
+        assert(deltaN < 256);
 		bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
 	}
+
 	for(uint32_t i= 0;i<n_longs;i++)
-	{
 		addInt32(msg,bitmap[i]);
-	}
+
 	delete[] bitmap;
 	return true;
 }

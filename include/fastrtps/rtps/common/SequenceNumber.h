@@ -16,9 +16,11 @@
 #include "Types.h"
 
 #include <vector>
-#include <cmath>
 #include <algorithm>
 #include <sstream>
+#include <limits.h>
+#include <cassert>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -26,14 +28,16 @@ namespace rtps{
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI SequenceNumber_t{
+struct RTPS_DllAPI SequenceNumber_t
+{
 	//!
 	int32_t high;
 	//!
 	uint32_t low;
 	
 	//!Default constructor
-	SequenceNumber_t(){
+	SequenceNumber_t()
+    {
 		high = 0;
 		low = 0;
 	}
@@ -41,28 +45,30 @@ struct RTPS_DllAPI SequenceNumber_t{
     /*!
      * @brief Copy constructor.
      */
-    SequenceNumber_t(const SequenceNumber_t &seq) : high(seq.high), low(seq.low)
+    SequenceNumber_t(const SequenceNumber_t& seq) : high(seq.high), low(seq.low)
     {
     }
 	
-	/**
+	/*!
 	* @param hi
 	* @param lo
 	*/
-	SequenceNumber_t(int32_t hi, uint32_t lo):
-		high(hi),low(lo)
+	SequenceNumber_t(int32_t hi, uint32_t lo): high(hi),low(lo)
 	{
-
 	}
 	
-	/** Convert the number to 64 bit.
+    // Check the target support 64bits.
+#ifdef LLONG_MAX
+	/*! Convert the number to 64 bit.
 	* @return 64 bit representation of the SequenceNumber
 	*/
-	uint64_t to64long(){
-		return ((uint64_t)high *(uint64_t)pow(2.0,32) + (uint64_t)low);
+	uint64_t to64long() const
+    {
+        return (((uint64_t)high) << 32) + low;
 	}
+#endif
 	
-	/**
+	/*!
 	* Assignment operator
 	* @param seq SequenceNumber_t to copy the data from
 	*/
@@ -74,21 +80,22 @@ struct RTPS_DllAPI SequenceNumber_t{
 	}
 
 
-	//!Increase SequenceNumber in 1.
-	SequenceNumber_t& operator++(){
-		if(low == pow(2.0,32))
-		{high++;low = 0;}
+	//! Increase SequenceNumber in 1.
+	SequenceNumber_t& operator++()
+    {
+		if(low == UINT32_MAX)
+		{ ++high; low = 0; }
 		else
-			low++;
+			++low;
+
 		return *this;
 	}
 	
-	SequenceNumber_t& operator++(int /*unused*/){
-		if(low == pow(2.0,32))
-		{high++;low = 0;}
-		else
-			low++;
-		return *this;
+	SequenceNumber_t operator++(int)
+    {
+        SequenceNumber_t result(*this);
+        ++(*this);
+        return result;
 	}
 	
 	/**
@@ -97,15 +104,14 @@ struct RTPS_DllAPI SequenceNumber_t{
 	*/
 	SequenceNumber_t& operator+=(int inc)
     {
-		if(this->low+inc>pow(2.0,32))
-		{
-			int module = (int)floor((inc+this->low)/pow(2.0,32));
-			this->high+=module;
-			this->low +=inc-((uint32_t)pow(2.0,32)*module);
-		}
-		else
-		{	this->low+=inc;
-		}
+        uint32_t aux_low = low;
+        low += inc;
+
+        if(low < aux_low)
+        {
+            // Being the type of the parameter an 'int', the increment of 'high' will be as much as 1.
+            ++high;
+        }
 
 		return *this;
     }
@@ -125,14 +131,13 @@ struct RTPS_DllAPI SequenceNumber_t{
  * @param sn2 Second SequenceNumber_t to compare
  * @return True if equal
  */
-inline bool operator==(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
-								{
-	if(sn1.high != sn2.high)
+inline bool operator==(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
+{
+	if(sn1.high != sn2.high || sn1.low != sn2.low)
 		return false;
-	if(sn1.low != sn2.low)
-		return false;
+
 	return true;
-								}
+}
 		
 /**
  * Compares two SequenceNumber_t.
@@ -140,14 +145,13 @@ inline bool operator==(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
  * @param sn2 Second SequenceNumber_t to compare
  * @return True if not equal
  */
-inline bool operator!=(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
-								{
-	if(sn1.high != sn2.high)
-		return true;
-	if(sn1.low != sn2.low)
-		return true;
-	return false;
-								}
+inline bool operator!=(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
+{
+	if(sn1.high == sn2.high && sn1.low == sn2.low)
+		return false;
+
+    return true;
+}
 								
 /**
  * Checks if a SequenceNumber_t is greater than other.
@@ -157,13 +161,13 @@ inline bool operator!=(const SequenceNumber_t& sn1,const SequenceNumber_t& sn2)
  */
 inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
 {
-	if(seq1.high>seq2.high)
+	if(seq1.high > seq2.high)
 		return true;
 	else if(seq1.high < seq2.high)
 		return false;
 	else
 	{
-		if(seq1.low>seq2.low)
+		if(seq1.low > seq2.low)
 			return true;
 	}
 	return false;
@@ -177,7 +181,7 @@ inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2
  */
 inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
 {
-	if(seq1.high>seq2.high)
+	if(seq1.high > seq2.high)
 		return false;
 	else if(seq1.high < seq2.high)
 		return true;
@@ -197,13 +201,13 @@ inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2
  */
 inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
 {
-	if(seq1.high>seq2.high)
+	if(seq1.high > seq2.high)
 		return true;
 	else if(seq1.high < seq2.high)
 		return false;
 	else
 	{
-		if(seq1.low>=seq2.low)
+		if(seq1.low >= seq2.low)
 			return true;
 	}
 	return false;
@@ -217,7 +221,7 @@ inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq
  */
 inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& seq2)
 {
-    if(seq1.high>seq2.high)
+    if(seq1.high > seq2.high)
         return false;
     else if(seq1.high < seq2.high)
         return true;
@@ -230,21 +234,21 @@ inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& s
 }
 
 /**
- * Substract one SequenceNumber_t from another
+ * Subtract one SequenceNumber_t from another
  * @param seq Base SequenceNumber_t
  * @param inc SequenceNumber_t to substract
  * @return Result of the substraction
  */
-inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
+inline SequenceNumber_t operator-(SequenceNumber_t& seq, uint32_t inc)
 {
-	SequenceNumber_t res(seq);
-	if((int64_t)res.low-(int64_t)inc < 0)
-	{
-		res.high--;
-		res.low = (uint32_t)(pow(2.0,32)-(inc-seq.low));
-	}
-	else
-		res.low-=(uint32_t)inc;
+	SequenceNumber_t res(seq.high, seq.low - inc);
+
+    if(inc > seq.low)
+    {
+        // Being the type of the parameter an 'uint32_t', the decrement of 'high' will be as much as 1.
+        --res.high;
+    }
+
 	return res;
 }
 
@@ -254,17 +258,34 @@ inline SequenceNumber_t operator-(SequenceNumber_t& seq,uint32_t inc)
  * @param inc SequenceNumber_t to add
  * @return Result of the addition
  */
-inline SequenceNumber_t operator+(SequenceNumber_t& seqin,uint64_t inc){
-	SequenceNumber_t seq(seqin);
-	if(seq.low+inc>pow(2.0,32))
-	{
-		int module = (int)floor((inc+seq.low)/pow(2.0,32));
-		seq.high+=module;
-		seq.low +=(uint32_t)(inc-(pow(2.0,32)*module));
-	}
-	else
-		seq.low+=(uint32_t)inc;
-	return seq;
+inline SequenceNumber_t operator+(const SequenceNumber_t& seq, const uint32_t inc)
+{
+	SequenceNumber_t res(seq.high, seq.low + inc);
+
+    if(res.low < seq.low)
+    {
+        // Being the type of the parameter an 'uint32_t', the increment of 'high' will be as much as 1.
+        ++res.high;
+    }
+
+	return res;
+}
+
+/**
+ * Subtract one SequenceNumber_t to another
+ * @param minuend Minuend. Has to be greater than or equal to subtrahend.
+ * @param subtrahend Subtrahend.
+ * @return Result of the subtraction
+ */
+inline SequenceNumber_t operator-(const SequenceNumber_t& minuend, const SequenceNumber_t& subtrahend)
+{
+    assert(minuend >= subtrahend);
+	SequenceNumber_t res(minuend.high - subtrahend.high, minuend.low - subtrahend.low);
+
+    if(minuend.low < subtrahend.low)
+        --res.high;
+
+    return res;
 }
 
 #endif
@@ -279,9 +300,9 @@ const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
  * @param s2 First SequenceNumber_t to compare
  * @return True if s1 is less than s2
  */
-inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
+inline bool sort_seqNum (SequenceNumber_t& s1, SequenceNumber_t& s2)
 {
-	return(s1.to64long() < s2.to64long());
+	return(s1 < s2);
 }
 
 /**
@@ -290,15 +311,21 @@ inline bool sort_seqNum (SequenceNumber_t& s1,SequenceNumber_t& s2)
  * @param seqNum
  * @return 
  */
-inline std::ostream& operator<<(std::ostream& output,const SequenceNumber_t& seqNum){
-	return output << ((uint64_t)seqNum.high *(uint64_t)pow(2.0,32) + (uint64_t)seqNum.low);
+inline std::ostream& operator<<(std::ostream& output, const SequenceNumber_t& seqNum)
+{
+#ifdef LLONG_MAX
+	return output << seqNum.to64long();
+#else
+    return output << "{high: " << seqNum.high << ", low: " << seqNum.low << "}";
+#endif
 }
 
-inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber_t>& seqNumSet){
-	for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
-		{
+inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber_t>& seqNumSet)
+{
+	for(std::vector<SequenceNumber_t>::iterator sit = seqNumSet.begin(); sit != seqNumSet.end(); ++sit)
+    {
 			output << *sit << " ";
-		}
+    }
 	return output;
 }
 
@@ -306,7 +333,8 @@ inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 //!@ingroup COMMON_MODULE
-class SequenceNumberSet_t{
+class SequenceNumberSet_t
+{
 public:
 	//!Base sequence number
 	SequenceNumber_t base;
@@ -329,12 +357,11 @@ public:
 	*/
 	bool add(SequenceNumber_t& in)
 	{
-		uint64_t base64 = base.to64long();
-		uint64_t in64 = in.to64long();
-		if(in64 >= base64 && in64<=base64+255 )
+		if(in >= base && in <= base + 255)
 			set.push_back(in);
 		else
 			return false;
+
 		return true;
 	}
 	
@@ -388,9 +415,9 @@ public:
 	* @return Set of SequenceNumbers
 	*/
 	std::vector<SequenceNumber_t> get_set()
-										{
+    {
 		return set;
-										}
+    }
 									
 	/**
 	* Get a string representation of the set
@@ -399,9 +426,20 @@ public:
 	std::string print()
 	{
 		std::stringstream ss;
-		ss<<base.to64long()<<":";
-		for(std::vector<SequenceNumber_t>::iterator it=set.begin();it!=set.end();++it)
-			ss<<it->to64long()<<"-";
+
+#ifdef LLONG_MAX
+		ss << base.to64long() << ":";
+#else
+		ss << "{high: " << base.high << ", low: " << base.low << "} :";
+#endif
+		for(std::vector<SequenceNumber_t>::iterator it = set.begin(); it != set.end(); ++it)
+        {
+#ifdef LLONG_MAX
+			ss << it->to64long() << "-";
+#else
+            ss << "{high: " << it->high << ", low: " << it->low << "} -";
+#endif
+        }
 		return ss.str();
 	}
 	
@@ -417,8 +455,9 @@ private:
  * @param sns SequenceNumber set
  * @return OStream.
  */
-inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns){
-	return output<< sns.print();
+inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns)
+{
+	return output << sns.print();
 }
 
 #endif

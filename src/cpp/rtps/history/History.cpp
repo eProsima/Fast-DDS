@@ -186,7 +186,7 @@ void History::print_changes_seqNum2()
 	for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
 			it!=m_changes.end();++it)
 	{
-		ss << (*it)->sequenceNumber.to64long() << "-";
+		ss << (*it)->sequenceNumber << "-";
 	}
 	ss << endl;
 	cout << ss.str();
