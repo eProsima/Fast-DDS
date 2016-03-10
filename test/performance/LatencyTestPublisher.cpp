@@ -479,8 +479,10 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
         lock.lock();
         if(data_count_ == 0)
-            if(data_cond_.wait_for(lock, boost::chrono::seconds(1)) == boost::cv_status::no_timeout)
-                --data_count_;
+            data_cond_.wait_for(lock, boost::chrono::seconds(1));
+
+        if(data_count_ != 0)
+            --data_count_;
         lock.unlock();
     }
 
@@ -555,41 +557,41 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
-	output_file << "\"" << TS.mean << "\"";
+	output_file << "\"" << TS.m_min.count() << "\"";
 
 	switch (TS.nbytes) {
 	case 16:
-		output_file_16 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_16 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 32:
-		output_file_32 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_32 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 64:
-		output_file_64 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_64 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 128:
-		output_file_128 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_128 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 256:
-		output_file_256 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_256 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 512:
-		output_file_512 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_512 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 1024:
-		output_file_1024 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_1024 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 2048:
-		output_file_2048 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_2048 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 4096:
-		output_file_4096 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_4096 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 8192:
-		output_file_8192 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_8192 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	case 16384:
-		output_file_16384 << "\"" << TS.mean << "\"" << std::endl;
+		output_file_16384 << "\"" << TS.m_min.count() << "\"" << std::endl;
 		break;
 	default:
 		break;
