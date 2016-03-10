@@ -56,7 +56,7 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* 
 			pair_T pair(*it,seqset);
 			sequences->push_back(pair);
 			new_pair = false;
-			seqnumset_init = false;
+			seqnumset_init = true;
 			count = 1;
 			continue;
 		}
@@ -68,15 +68,17 @@ void RTPSMessageGroup::prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* 
 		}
 		else
 		{
-			if(!seqnumset_init) //FIRST TIME SINCE it was continuous
+			if(seqnumset_init) //FIRST TIME SINCE it was continuous
 			{
 				sequences->back().second.base = *(it-1);
 				seqnumset_init = false;
 			}
+            // Try to add, If it fails the diference between *it and base is greater than 255.
 			if(sequences->back().second.add((*it)))
 				continue;
 			else
 			{
+                // Process again the sequence number in a new pair in next loop.
 				--it;
 				new_pair = true;
 			}

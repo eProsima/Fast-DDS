@@ -87,9 +87,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	PubDataparam.topic.historyQos.depth = n_samples +100;
-	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples +100;
-	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples +100;//n_samples+100;
+	PubDataparam.topic.historyQos.depth = n_samples + 100;
+	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 100;
     if(!reliable)
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -112,9 +111,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	SubDataparam.topic.historyQos.depth = 50;//n_samples+100;
-	SubDataparam.topic.resourceLimitsQos.max_samples = 50;//n_samples+100;
-	SubDataparam.topic.resourceLimitsQos.allocated_samples = 50;//n_samples+100;
+	SubDataparam.topic.historyQos.depth = n_samples + 100;
+	SubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples+100;
     if(reliable)
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15003;
@@ -137,8 +135,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     PubCommandParam.topic.topicName = pct.str();
 	PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	PubCommandParam.topic.historyQos.depth = 100;
-	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
-	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
+	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 100;
 	PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == nullptr)
@@ -154,8 +151,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     SubCommandParam.topic.topicName = sct.str();
 	SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubCommandParam.topic.historyQos.depth = 100;
-	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
-	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
+	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 100;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
