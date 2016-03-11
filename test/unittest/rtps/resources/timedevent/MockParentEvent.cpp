@@ -15,12 +15,6 @@ MockParentEvent::MockParentEvent(boost::asio::io_service& service, const boost::
 
 MockParentEvent::~MockParentEvent()
 {
-    if(event_ != nullptr)
-    {
-        delete event_;
-        event_ = nullptr;
-    }
-
     destroy();
 
     destruction_mutex_.lock();
