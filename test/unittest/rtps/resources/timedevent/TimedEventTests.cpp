@@ -418,7 +418,7 @@ TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
     boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(300));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
