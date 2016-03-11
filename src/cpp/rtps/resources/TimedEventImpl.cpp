@@ -77,9 +77,16 @@ void TimedEventImpl::destroy()
     if(code == TimerState::WAITING)
         timer_.cancel();
 
+    // If the destructor is executed in the event thread, tell the future cancelling or running event to not notify.
+    if(event_thread_id_ == boost::this_thread::get_id())
+    {
+        // It is safe to modify this variable because we are in the event thread.
+        state_.get()->notify_ = false;
+    }
+
     // If the event is waiting or running, wait it finishes.
     // Don't wait if it is the event thread.
-    if(code == TimerState::WAITING || (code == TimerState::RUNNING && event_thread_id_ != boost::this_thread::get_id()))
+    if((code == TimerState::WAITING || code == TimerState::RUNNING) && event_thread_id_ != boost::this_thread::get_id())
         cond_.wait(lock);
 }
 
@@ -167,7 +174,7 @@ void TimedEventImpl::event(const boost::system::error_code& ec, const std::share
             delete this->mp_event;
         }
         // If code is TimerState::DESTROYED, then the destructor is waiting because this event were in state TimerState::WAITING.
-        else if(scode == TimerState::DESTROYED)
+        else if(scode == TimerState::DESTROYED && state.get()->notify_)
         {
             boost::unique_lock<boost::mutex> lock(mutex_);
             cond_.notify_one();
