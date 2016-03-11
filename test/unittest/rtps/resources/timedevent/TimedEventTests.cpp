@@ -1,4 +1,5 @@
 #include "MockEvent.h"
+#include "MockParentEvent.h"
 
 #include <boost/random.hpp>
 #include <gtest/gtest.h>
@@ -396,6 +397,28 @@ TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
 
     if(MockEvent::destructed_ != 1)
         MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+
+    ASSERT_EQ(MockEvent::destructed_, 1);
+}
+
+/*!
+ * @fn TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
+ * This test checks an event can delete other event while the later is waiting.
+ * This test launches an event that internally will destroy other event.
+ */
+TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
+{
+    // Restart destriction counter.
+    MockEvent::destructed_ = 0;
+
+    MockParentEvent event(env->service_, *env->thread_, 10, 2);
+
+    event.restart_timer();
+
+    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+
+    if(MockEvent::destructed_ != 1)
+        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(300));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
