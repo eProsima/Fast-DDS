@@ -184,9 +184,10 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
                     <<change_to_add->sequenceNumber, C_BLUE);
             releaseCache(change_to_add);
+
             if(getGuid().entityId == c_EntityId_SPDPReader)
             {
-                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
+                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
             }
         }
     }
