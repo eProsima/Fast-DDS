@@ -28,7 +28,9 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 
     private:
 
-        boost::interprocess::interprocess_semaphore semaphore_;
+        int sem_count_;
+        boost::mutex sem_mutex_;
+        boost::condition_variable sem_cond_;
         bool autorestart_;
 };
 

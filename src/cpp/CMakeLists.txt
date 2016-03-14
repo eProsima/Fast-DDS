@@ -106,6 +106,8 @@ if(MSVC OR MSVC_IDE)
         generate_msvc_libraries(x64Win64VS2010)
         generate_msvc_libraries(i86Win32VS2013)
         generate_msvc_libraries(x64Win64VS2013)
+        generate_msvc_libraries(i86Win32VS2015)
+        generate_msvc_libraries(x64Win64VS2015)
     else()
         add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 
@@ -114,6 +116,7 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
 
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RELEASE_POSTFIX -${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
+        set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
         set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_static PROPERTIES DEBUG_POSTFIX d-${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION})
 
         # Export symbols in DLL library
@@ -203,6 +206,8 @@ if(MSVC OR MSVC_IDE)
         install_msvc_libraries(x64Win64VS2010)
         install_msvc_libraries(i86Win32VS2013)
         install_msvc_libraries(x64Win64VS2013)
+        install_msvc_libraries(i86Win32VS2015)
+        install_msvc_libraries(x64Win64VS2015)
     else()
         install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static
             EXPORT ${PROJECT_NAME}Targets

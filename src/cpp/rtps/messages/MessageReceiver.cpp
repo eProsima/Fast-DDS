@@ -398,7 +398,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//Get sequence number
 	CDRMessage::readSequenceNumber(msg,&ch->sequenceNumber);
 
-	if(ch->sequenceNumber.to64long()<=0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
+	if(ch->sequenceNumber <= SequenceNumber_t(0, 0) || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
 	{
 		logWarning(RTPS_MSG_IN,IDSTRING"Invalid message received, bad sequence Number",C_BLUE);
 		return false;
@@ -650,7 +650,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	CDRMessage::readSequenceNumber(msg,&gapStart);
 	SequenceNumberSet_t gapList;
 	CDRMessage::readSequenceNumberSet(msg,&gapList);
-	if(gapStart.to64long()<=0)
+	if(gapStart <= SequenceNumber_t(0, 0))
 		return false;
 
     boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());

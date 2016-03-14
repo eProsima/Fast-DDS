@@ -64,7 +64,7 @@ bool ReaderProxy::getChangeForReader(CacheChange_t* change,
 		if(it->seqNum == change->sequenceNumber)
 		{
 			*changeForReader = *it;
-			logInfo(RTPS_WRITER,"Change " << change->sequenceNumber.to64long()<< " found in Reader Proxy " << endl);
+			logInfo(RTPS_WRITER,"Change " << change->sequenceNumber << " found in Reader Proxy " << endl);
 			return true;
 		}
 	}
@@ -82,7 +82,7 @@ bool ReaderProxy::getChangeForReader(SequenceNumber_t& seq,ChangeForReader_t* ch
 		if(it->seqNum == seq)
 		{
 			*changeForReader = *it;
-			logInfo(RTPS_WRITER,"Change " << seq.to64long()<<" found in Reader Proxy " << endl);
+			logInfo(RTPS_WRITER,"Change " << seq <<" found in Reader Proxy " << endl);
 			return true;
 		}
 	}

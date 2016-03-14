@@ -176,7 +176,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber.to64long() <<" TO reader: "<< getGuid().entityId,C_BLUE);
+        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId,C_BLUE);
 
         CacheChange_t* change_to_add;
 
@@ -203,12 +203,12 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         if(!change_received(change_to_add, pWP, lock))
         {
-            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber.to64long(),C_BLUE);
+            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber, C_BLUE);
             releaseCache(change_to_add);
 
             if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
             {
-                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
+                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
             }
         }
     }
@@ -452,7 +452,7 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
         if((*it)->available_changes_min(&auxSeqNum))
         {
             //logUser("AVAILABLE MIN for writer: "<<(*it)->m_att.guid<< " : " << auxSeqNum);
-            if(auxSeqNum.to64long() > 0 && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
+            if(auxSeqNum > SequenceNumber_t(0, 0) && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
             {
                 available = true;
                 minSeqNum = auxSeqNum;
@@ -541,7 +541,7 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
     for(std::vector<CacheChange_t*>::iterator it = toremove.begin();
             it!=toremove.end();++it)
     {
-        logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber.to64long()<< " from " << (*it)->writerGUID << " because is no longer paired");
+        logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber << " from " << (*it)->writerGUID << " because is no longer paired");
         mp_history->remove_change(*it);
     }
     return readok;

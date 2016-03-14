@@ -72,7 +72,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "missing_changes_update";
-	logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: "<<seqNum.to64long()<<" missing.");
+	logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//	SequenceNumber_t seq = (seqNum)+1;
 	//	add_unknown_changes(seq);
@@ -104,7 +104,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 	SequenceNumber_t firstSN;
 	if(m_changesFromW.size()==0)
 	{
-		if(this->m_lastRemovedSeqNum.to64long()>0)
+		if(this->m_lastRemovedSeqNum > SequenceNumber_t(0,0))
 			firstSN = this->m_lastRemovedSeqNum;
 		else
 			firstSN = seq-1;
@@ -119,7 +119,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 		chw.seqNum = firstSN;
 		chw.status = UNKNOWN;
 		chw.is_relevant = true;
-		logInfo(RTPS_READER,"WP "<<this->m_att.guid << " adding unknown changes up to: "<<chw.seqNum.to64long());
+		logInfo(RTPS_READER,"WP "<<this->m_att.guid << " adding unknown changes up to: " << chw.seqNum);
 		m_changesFromW.push_back(chw);
         ++firstSN;
 	}
@@ -130,7 +130,7 @@ bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
 bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "lost_changes_update";
-	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum.to64long());
+	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//	SequenceNumber_t seq = (seqNum)+1;
 	//	add_unknown_changes(seq);
@@ -153,7 +153,7 @@ bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
 bool WriterProxy::received_change_set(CacheChange_t* change)
 {
 	const char* const METHOD_NAME = "received_change_set";
-	logInfo(RTPS_READER,m_att.guid.entityId<<": seqNum: "<<change->sequenceNumber.to64long());
+	logInfo(RTPS_READER,m_att.guid.entityId<<": seqNum: " << change->sequenceNumber);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_hasMaxAvailableSeqNumChanged = true;
 	m_hasMinAvailableSeqNumChanged = true;
@@ -238,7 +238,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 	//const char* const METHOD_NAME = "available_changes_max";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	//print_changes_fromWriter_test();
-	if(this->m_lastRemovedSeqNum.to64long() <= 0 && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+	if(this->m_lastRemovedSeqNum <= SequenceNumber_t(0,0) && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
     {
 		return false;
     }
@@ -284,7 +284,7 @@ bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
 bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
 {
 	//const char* const METHOD_NAME = "available_changes_min";
-	if(this->m_lastRemovedSeqNum.to64long() <= 0 && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+	if(this->m_lastRemovedSeqNum <= SequenceNumber_t(0, 0) && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
 		return false;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(m_hasMinAvailableSeqNumChanged)
@@ -339,7 +339,7 @@ void WriterProxy::print_changes_fromWriter_test2()
 	ss << this->m_att.guid.entityId<<": ";
 	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
 	{
-		ss << it->seqNum.to64long()<<"("<<it->isValid()<<","<<it->status<<")-";
+		ss << it->seqNum <<"("<<it->isValid()<<","<<it->status<<")-";
 	}
 	std::string auxstr = ss.str();
 	logInfo(RTPS_READER,auxstr;);

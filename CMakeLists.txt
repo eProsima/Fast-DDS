@@ -132,10 +132,19 @@ if(EPROSIMA_INSTALLER)
 endif()
 
 ###############################################################################
+# Performance tests
+###############################################################################
+option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
+
+###############################################################################
 # Check libraries
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
-check_boost(thread system date_time chrono regex atomic)
+set(BOOST_LIBRARIES_DEFAULT thread system date_time chrono regex atomic)
+if(PERFORMANCE_TESTS)
+    set(BOOST_LIBRARIES_DEFAULT ${BOOST_LIBRARIES_DEFAULT} program_options)
+endif()
+check_boost(${BOOST_LIBRARIES_DEFAULT})
 
 ###############################################################################
 # Load external eProsima projects.
@@ -176,9 +185,7 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
-check_gtest()
-if(GTEST_FOUND)
+if(NOT EPROSIMA_INSTALLER)
     enable_testing()
     include(CTest)
     add_subdirectory(test)
@@ -380,6 +387,8 @@ if(MSVC OR MSVC_IDE)
             libraries_x64Win64VS2010
             libraries_i86Win32VS2013
             libraries_x64Win64VS2013
+            libraries_i86Win32VS2015
+            libraries_x64Win64VS2015
             )
     else()
         set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
