@@ -216,6 +216,11 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
+bool StatefulReader::processDataFragMsg(CacheChange_t *change)
+{
+	return false;
+}
+
 bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
             SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag)
 {

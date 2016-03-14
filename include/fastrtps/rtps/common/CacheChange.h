@@ -136,7 +136,11 @@ struct RTPS_DllAPI CacheChange_t{
 			delete dataFragments;
 	}
 
-	uint32_t getFragmentCount() { return (serializedPayload.length + fragment_size - 1) / fragment_size; }
+	uint32_t getFragmentCount() { 
+		if (fragment_size == 0)
+			return 0;
+		return (serializedPayload.length + fragment_size - 1) / fragment_size;
+	}
 
 	std::vector<uint32_t>* getDataFragments() { return dataFragments; }
 

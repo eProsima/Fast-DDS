@@ -311,7 +311,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, CacheChange_t*
 		//extra flags. not in this version.
 		added_no_error &= CDRMessage::addUInt16(&submsgElem, 0);
 
-		//octet to inline Qos is 24, may change in future versions
+		//octet to inline Qos is 28, may change in future versions
 		added_no_error &= CDRMessage::addUInt16(&submsgElem, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
 
 		//Entity ids

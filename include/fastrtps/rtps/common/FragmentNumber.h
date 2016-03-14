@@ -44,6 +44,25 @@ public:
 	}
 
 	/**
+	* Compares object with other FragmentNumberSet_t.
+	* @param other FragmentNumberSet_t to compare
+	* @return True if equal
+	*/
+	bool operator==(const FragmentNumberSet_t& other) {
+
+		if (base != other.base)
+			return false;
+		if (set.size() != other.set.size())
+			return false;
+
+		for (size_t i = 0; i < set.size(); ++i)
+			if (set.at(i) != other.set.at(i))
+				return false;
+
+		return true;
+	}
+
+	/**
 	* Add a fragment number to the set
 	* @param in FragmentNumberSet_t to add
 	* @return True on success

@@ -658,9 +658,11 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		payload_size = smh->submsgLengthLarger;
 
 	// Calculate fragment number
-	uint32_t fragments_in_datafrag = ((payload_size - 2 - 2) + fragmentSize - 1) / fragmentSize; // Round up division formula
+	uint32_t fragments_in_datafrag = 0;
+	if (fragmentSize)
+		fragments_in_datafrag = ((payload_size - 2 - 2) + fragmentSize - 1) / fragmentSize; // Round up division formula
 
-	// Validations??? XXX
+	// Validations??? XXX TODO
 
 	msg->pos += 1;
 	octet encapsulation = 0;
@@ -673,12 +675,12 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	{
 		if (ch->serializedPayload.max_size >= payload_size - 2 - 2)
 		{
-			ch->serializedPayload.length = sampleSize;
+			ch->serializedPayload.length = (uint16_t) sampleSize;
 			CDRMessage::readData(msg,
 				ch->serializedPayload.data + fragmentStartingNum * fragmentSize,
 				(payload_size - 2 - 2));
 
-			for (int i = 0; i < fragments_in_datafrag; ++i) {
+			for (uint32_t i = 0; i < fragments_in_datafrag; ++i) {
 				ch->getDataFragments()->at(i + (fragmentStartingNum-1)) = 1;
 			}
 
@@ -694,7 +696,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	}
 	else if (keyFlag)
 	{
-		/*
+		/* XXX TODO
 		Endianness_t previous_endian = msg->msg_endian;
 		if (ch->serializedPayload.encapsulation == PL_CDR_BE)
 			msg->msg_endian = BIGEND;
@@ -723,7 +725,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	if (haveTimestamp)
 		ch->sourceTimestamp = this->timestamp;
 
-	/*
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 	logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: " << mp_threadListen->m_assocReaders.size(), C_BLUE);
 	//Look for the correct reader to add the change
@@ -732,10 +733,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	{
 		if ((*it)->acceptMsgDirectedTo(readerID))
 		{
-			(*it)->processDataMsg(ch);
+			//(*it)->processDatFragMsg(ch);
 		}
 	}
-	*/
 
 	logInfo(RTPS_MSG_IN, IDSTRING"Sub Message DATA processed", C_BLUE);
 

@@ -82,6 +82,14 @@ public:
 	RTPS_DllAPI virtual bool processDataMsg(CacheChange_t *change) = 0;
 
 	/**
+	* Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	*
+	* @param change Pointer to the CacheChange_t.
+	* @return true if the reader accepts message.
+	*/
+	RTPS_DllAPI virtual bool processDataFragMsg(CacheChange_t *change) = 0;
+
+	/**
 	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
 	 *
 	 * @return true if the reader accepts messages from the.
