@@ -151,6 +151,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	watt.endpoint.topicKind = att.topic.topicKind;
 	watt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
 	if(att.getEntityID()>0)
 		watt.endpoint.setEntityID((uint8_t)att.getEntityID());
 	if(att.getUserDefinedID()>0)

@@ -24,7 +24,8 @@
 
 using namespace eprosima::fastrtps;
 
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
 #include <boost/chrono.hpp>
 
 #include <vector>
@@ -43,7 +44,9 @@ public:
 	Subscriber* mp_commandsub;
     boost::chrono::steady_clock::time_point t_start_, t_end_;
     boost::chrono::duration<double, boost::micro> t_overhead_;
-	boost::interprocess::interprocess_semaphore sema;
+    boost::mutex mutex_;
+    int disc_count_;
+    boost::condition_variable disc_cond_;
 	class DataPubListener:public PublisherListener
 	{
 	public:

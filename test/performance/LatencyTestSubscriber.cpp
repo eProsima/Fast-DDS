@@ -30,9 +30,9 @@ LatencyTestSubscriber::LatencyTestSubscriber():
 						mp_datasub(nullptr),
 						mp_commandsub(nullptr),
 						mp_latency(nullptr),
-						m_disc_sema(0),
-						m_comm_sema(0),
-						m_data_sema(0),
+						disc_count_(0),
+						comm_count_(0),
+						data_count_(0),
 						m_status(0),
 						n_received(0),
 						n_samples(0),
@@ -87,9 +87,9 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
 	PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-	PubDataparam.topic.historyQos.depth = n_samples +100;
-	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples +100;
-	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples +100;//n_samples+100;
+	PubDataparam.topic.historyQos.depth = n_samples;
+	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
+	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
     if(!reliable)
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -112,9 +112,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
 	SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-	SubDataparam.topic.historyQos.depth = 50;//n_samples+100;
-	SubDataparam.topic.resourceLimitsQos.max_samples = 50;//n_samples+100;
-	SubDataparam.topic.resourceLimitsQos.allocated_samples = 50;//n_samples+100;
+	SubDataparam.topic.historyQos.depth = 1;
     if(reliable)
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	loc.port = 15003;
@@ -137,8 +135,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     PubCommandParam.topic.topicName = pct.str();
 	PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	PubCommandParam.topic.historyQos.depth = 100;
-	PubCommandParam.topic.resourceLimitsQos.max_samples = 50;
-	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
+	PubCommandParam.topic.resourceLimitsQos.max_samples = 101;
+	PubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
 	PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
 	if(mp_commandpub == nullptr)
@@ -154,8 +152,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     SubCommandParam.topic.topicName = sct.str();
 	SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 	SubCommandParam.topic.historyQos.depth = 100;
-	SubCommandParam.topic.resourceLimitsQos.max_samples = 50;
-	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 50;
+	SubCommandParam.topic.resourceLimitsQos.max_samples = 101;
+	SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
 	SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 	SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 	mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
@@ -168,40 +166,76 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
 
 void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		logUser("Data Pub Matched ",C_MAGENTA);
-		mp_up->m_disc_sema.post();
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		logUser("Data Sub Matched ",C_MAGENTA);
-		mp_up->m_disc_sema.post();
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 
 
 void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		logUser("Command Pub Matched ",C_MAGENTA);
-		mp_up->m_disc_sema.post();
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+
 	if(info.status == MATCHED_MATCHING)
 	{
 		logUser("Command Sub Matched ",C_MAGENTA);
-		mp_up->m_disc_sema.post();
+        ++mp_up->disc_count_;
 	}
+    else
+    {
+        --mp_up->disc_count_;
+    }
+
+    lock.unlock();
+    mp_up->disc_cond_.notify_one();
 }
 
 void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*sub*/)
@@ -213,16 +247,25 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*s
 		if(command.m_command == READY)
 		{
 			cout << "Publisher has new test ready..."<<endl;
-			mp_up->m_comm_sema.post();
+            mp_up->mutex_.lock();
+            ++mp_up->comm_count_;
+            mp_up->mutex_.unlock();
+            mp_up->comm_cond_.notify_one();
 		}
         else if(command.m_command == STOP)
         {
-            mp_up->m_data_sema.post();
+            mp_up->mutex_.lock();
+            ++mp_up->data_count_;
+            mp_up->mutex_.unlock();
+            mp_up->data_cond_.notify_one();
         }
 		else if(command.m_command == STOP_ERROR)
 		{
 			mp_up->m_status = -1;
-			mp_up->m_data_sema.post();
+            mp_up->mutex_.lock();
+            ++mp_up->data_count_;
+            mp_up->mutex_.unlock();
+            mp_up->data_cond_.notify_one();
 		}
 		else if(command.m_command == DEFAULT)
 		{
@@ -247,11 +290,12 @@ void LatencyTestSubscriber::run()
 {
 	//WAIT FOR THE DISCOVERY PROCESS FO FINISH:
 	//EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-	for(uint8_t i = 0;i<4;++i)
-	{
-		m_disc_sema.wait();
-	}
+    boost::unique_lock<boost::mutex> disc_lock(mutex_);
+    while(disc_count_ != 4) disc_cond_.wait(disc_lock);
+    disc_lock.unlock();
+
 	cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
+
 	for(std::vector<uint32_t>::iterator ndata = data_size_sub.begin();ndata!=data_size_sub.end();++ndata)
 	{
 		if(!this->test(*ndata))
@@ -263,14 +307,24 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
 {
 	cout << "Preparing test with data size: " << datasize+4<<endl;
 	mp_latency = new LatencyType((uint16_t)datasize);
-	m_comm_sema.wait();
+
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    if(comm_count_ == 0) comm_cond_.wait(lock);
+    --comm_count_;
+    lock.unlock();
+
 	m_status = 0;
 	n_received = 0;
 	TestCommandType command;
 	command.m_command = BEGIN;
 	cout << "Testing with data size: " << datasize+4<<endl;
 	mp_commandpub->write(&command);
-	m_data_sema.wait();
+
+    lock.lock();
+    if(data_count_ == 0) data_cond_.wait(lock);
+    --data_count_;
+    lock.unlock();
+
 	cout << "TEST OF SIZE: "<< datasize +4 << " ENDS"<<endl;
 	eClock::my_sleep(50);
 	size_t removed;

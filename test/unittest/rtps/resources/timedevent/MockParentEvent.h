@@ -1,20 +1,22 @@
-#ifndef _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
-#define  _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
+#ifndef _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKPARENTEVENT_H_
+#define  _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKPARENTEVENT_H_
 
 #include <fastrtps/rtps/resources/TimedEvent.h>
+#include "MockEvent.h"
 
 #include <boost/asio.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/atomic.hpp>
 #include <boost/thread.hpp>
 
-class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
+class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
     public:
 
-        MockEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+        MockParentEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
+                TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 
-        virtual ~MockEvent();
+        virtual ~MockParentEvent();
 
         void event(EventCode code, const char* msg= nullptr);
 
@@ -31,7 +33,10 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
         int sem_count_;
         boost::mutex sem_mutex_;
         boost::condition_variable sem_cond_;
-        bool autorestart_;
+        MockEvent *event_;
+        unsigned int countUntilDestruction_;
+        unsigned int currentCount_;
 };
 
-#endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
+#endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKPARENTEVENT_H_
+

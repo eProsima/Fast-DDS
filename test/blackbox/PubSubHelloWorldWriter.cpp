@@ -33,7 +33,7 @@ PubSubHelloWorldWriter::~PubSubHelloWorldWriter()
         Domain::removeParticipant(participant_);
 }
 
-void PubSubHelloWorldWriter::init()
+void PubSubHelloWorldWriter::init(bool async)
 {
 	//Create participant
 	ParticipantAttributes pattr;
@@ -49,6 +49,11 @@ void PubSubHelloWorldWriter::init()
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
     configPublisher(puattr);
+
+    // Asynchronous
+    if(async)
+        puattr.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
+
 	publisher_ = Domain::createPublisher(participant_, puattr, &listener_);
     ASSERT_NE(publisher_, nullptr);
 

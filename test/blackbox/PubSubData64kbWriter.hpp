@@ -53,7 +53,7 @@ class PubSubData64kbWriter
     public:
         PubSubData64kbWriter();
         virtual ~PubSubData64kbWriter();
-        void init();
+        void init(bool async = false);
         bool isInitialized() const { return initialized_; }
         void destroy();
         void send(const std::list<uint16_t> &msgs);
