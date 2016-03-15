@@ -33,7 +33,7 @@ PubSubData64kbWriter::~PubSubData64kbWriter()
         Domain::removeParticipant(participant_);
 }
 
-void PubSubData64kbWriter::init()
+void PubSubData64kbWriter::init(bool async)
 {
 	//Create participant
 	ParticipantAttributes pattr;
@@ -49,7 +49,12 @@ void PubSubData64kbWriter::init()
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "Data64kbType";
     configPublisher(puattr);
+
+    // Asynchronous
+    if(async)
+        puattr.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
 	publisher_ = Domain::createPublisher(participant_, puattr, &listener_);
+
     ASSERT_NE(publisher_, nullptr);
 
     initialized_ = true;

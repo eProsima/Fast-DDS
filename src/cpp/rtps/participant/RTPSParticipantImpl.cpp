@@ -15,6 +15,7 @@
 
 #include <fastrtps/rtps/resources/ResourceSend.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include "../resources/AsyncWriterThread.h"
 #include <fastrtps/rtps/resources/ListenResource.h>
 
 
@@ -67,6 +68,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
 				mp_send_thr(nullptr),
 				mp_event_thr(nullptr),
+                async_writers_thread_(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 				IdCounter(0),
@@ -86,6 +88,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_send_thr->initSend(this,loc,m_att.sendSocketBufferSize,m_att.use_IP4_to_send,m_att.use_IP6_to_send);
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
+    async_writers_thread_ = new AsyncWriterThread();
 	bool hasLocatorsDefined = true;
 	//If no default locator is defined you define one.
 	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
@@ -166,6 +169,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	delete(this->mp_ResourceSemaphore);
 	delete(this->mp_userParticipant);
 
+    delete(this->async_writers_thread_);
 	delete(this->mp_send_thr);
 	delete(this->mp_event_thr);
 	delete(this->mp_mutex);
@@ -235,16 +239,6 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	if(SWriter==nullptr)
 		return false;
 
-	// NEW
-	// Set publication mode
-
-	SWriter->setAsync(param.is_async);
-
-	//END NEW
-	
-
-	//SWriter->setListener(inlisten);
-	//SWriter->setQos(param.qos,true);
 	if(param.endpoint.reliabilityKind == RELIABLE)
 	{
 		if(!assignEndpointListenResources((Endpoint*)SWriter,isBuiltin))
@@ -253,7 +247,15 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    // Check asynchornous thread is running.
+    if(SWriter->isAsync())
+    {
+        async_writers_thread_->addWriter(SWriter);
+    }
+
 	m_allWriterList.push_back(SWriter);
 	if(!isBuiltin)
 		m_userWriterList.push_back(SWriter);

@@ -53,7 +53,7 @@ class PubSubHelloWorldWriter
     public:
         PubSubHelloWorldWriter();
         virtual ~PubSubHelloWorldWriter();
-        void init();
+        void init(bool async = false);
         bool isInitialized() const { return initialized_; }
         void destroy();
         void send(const std::list<uint16_t> &msgs);

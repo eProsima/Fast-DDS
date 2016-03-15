@@ -10,16 +10,23 @@
  * @file WriterAttributes.h
  *
  */
-
 #ifndef WRITERATTRIBUTES_H_
 #define WRITERATTRIBUTES_H_
 
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
 #include "EndpointAttributes.h"
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+
+typedef enum RTPSWriterPublishMode : octet
+{
+    SYNCHRONOUS_WRITER,
+    ASYNCHRONOUS_WRITER
+} RTPSWriterPublishMode;
 
 
 /**
@@ -50,7 +57,7 @@ public:
 class  WriterAttributes
 {
 public:
-	WriterAttributes() : is_async(false)
+	WriterAttributes() : mode(SYNCHRONOUS_WRITER)
 	{
 		endpoint.endpointKind = WRITER;
 		endpoint.durabilityKind = TRANSIENT_LOCAL;
@@ -61,8 +68,8 @@ public:
 	EndpointAttributes endpoint;
 	//!Writer Times (only used for RELIABLE).
 	WriterTimes times;
-	//!Indicates if the Writer is asynchronous
-	bool is_async;
+	//!Indicates if the Writer is synchronous or asynchronous
+	RTPSWriterPublishMode mode;
 };
 
 /**

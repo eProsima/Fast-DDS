@@ -122,16 +122,10 @@ public:
 	RTPS_DllAPI inline void setLivelinessAsserted(bool l){ m_livelinessAsserted = l; };
 
 	/**
-	* Set the publication mode
-	* @return publication mode
-	*/
-	RTPS_DllAPI inline void setAsync(bool value){ m_is_async = value; };
-
-	/**
 	* Get the publication mode
 	* @return publication mode
 	*/
-	RTPS_DllAPI inline bool isAsync(){ return m_is_async; };
+	RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
 protected:
 
@@ -148,7 +142,7 @@ protected:
 	//!Listener
 	WriterListener* mp_listener;
 	//Asynchronout publication activated
-	bool m_is_async;
+	bool is_async_;
 	/**
 	 * Initialize the header of hte CDRMessages.
 	 */

@@ -48,6 +48,7 @@ class RTPSParticipantListener;
 class ListenResource;
 class ResourceSend;
 class ResourceEvent;
+class AsyncWriterThread;
 class BuiltinProtocols;
 struct CDRMessage_t;
 class Endpoint;
@@ -147,6 +148,8 @@ private:
 	ResourceSend* mp_send_thr;
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
+    //! Asynchronous writers manager.
+    AsyncWriterThread *async_writers_thread_;
 	//! BuiltinProtocols of this RTPSParticipant
 	BuiltinProtocols* mp_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.

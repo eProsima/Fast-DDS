@@ -68,18 +68,8 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 	logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber << " added with "<<a_change->serializedPayload.length<< " bytes");
 	updateMaxMinSeqNum();
 
-	// NEW: ASYNC
+    mp_writer->unsent_change_added_to_history(a_change);
 
-	if (!mp_writer->isAsync())
-	{
-		mp_writer->unsent_change_added_to_history(a_change);
-	}
-	else
-	{
-		// TODO: Modify sending thread and use unsent_change_added_to_history from there
-	}
-	
-	
 	return true;
 }
 
@@ -107,8 +97,9 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
 		logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
 		return false;
 	}
+
 	for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
-			chit!=m_changes.end();++chit)
+            chit!=m_changes.end();++chit)
 	{
 		if((*chit)->sequenceNumber == a_change->sequenceNumber)
 		{
