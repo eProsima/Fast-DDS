@@ -248,14 +248,13 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		}
 	}
 
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
     // Check asynchornous thread is running.
     if(SWriter->isAsync())
     {
         async_writers_thread_->addWriter(SWriter);
     }
 
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);
 	if(!isBuiltin)
 		m_userWriterList.push_back(SWriter);
@@ -543,7 +542,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
 	bool found = false;
 	{
-
 		if(p_endpoint->getAttributes()->endpointKind == WRITER)
 		{
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -552,6 +550,9 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			{
 				if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 				{
+                    // If writer is asynchronous, remove from async thread.
+                    async_writers_thread_->removeWriter(*wit);
+
 					m_userWriterList.erase(wit);
 					found = true;
 					break;
@@ -587,6 +588,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		{
 			(*thit)->removeAssociatedEndpoint(p_endpoint);
 		}
+
 		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		bool continue_removing = true;
 		while(continue_removing)
