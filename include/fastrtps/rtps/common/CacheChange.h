@@ -24,32 +24,6 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-/**
-* Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
-*  @ingroup COMMON_MODULE
-*/
-enum ChangeForReaderStatus_t{
-	UNSENT = 0,        //!< UNSENT
-	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
-	REQUESTED = 2,     //!< REQUESTED
-	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
-	UNDERWAY = 4       //!< UNDERWAY
-};
-/**
-* Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
-*  @ingroup COMMON_MODULE
-*/
-enum ChangeFromWriterStatus_t{
-	UNKNOWN = 0,
-	MISSING = 1,
-	//REQUESTED_WITH_NACK,
-	RECEIVED = 2,
-	LOST = 3
-};
-
-#endif
 
 /**
  * @enum ChangeKind_t, different types of CacheChange_t.
@@ -64,6 +38,12 @@ enum ChangeFromWriterStatus_t{
 	NOT_ALIVE_DISPOSED,   //!< NOT_ALIVE_DISPOSED
 	NOT_ALIVE_UNREGISTERED,//!< NOT_ALIVE_UNREGISTERED
 	NOT_ALIVE_DISPOSED_UNREGISTERED //!<NOT_ALIVE_DISPOSED_UNREGISTERED
+};
+
+enum ChangeFragmentStatus_t
+{
+	NOT_PRESENT = 0,
+	PRESENT = 1
 };
 
 /**
@@ -139,9 +119,7 @@ struct RTPS_DllAPI CacheChange_t{
 	}
 
 	uint32_t getFragmentCount() { 
-		if (fragment_size == 0)
-			return 0;
-		return (serializedPayload.length + fragment_size - 1) / fragment_size;
+        return dataFragments->size();
 	}
 
 	std::vector<uint32_t>* getDataFragments() { return dataFragments; }
@@ -150,13 +128,20 @@ struct RTPS_DllAPI CacheChange_t{
 
 	void setFragmentSize(uint16_t fragment_size) {
 		this->fragment_size = fragment_size;
+
 		if (fragment_size == 0) {
 			dataFragments->clear();
-		} else if (getFragmentCount() != dataFragments->size()) {
-			dataFragments->clear();
-			dataFragments->reserve(getFragmentCount());
+		} 
+        else
+        {
+            uint32_t size = (serializedPayload.length + fragment_size - 1) / fragment_size;
+            if(size != dataFragments->size()) 
+            {
+                dataFragments->resize(size, ChangeFragmentStatus_t::NOT_PRESENT);
+            }
 		}
 	}
+
 
 private:
 
@@ -168,6 +153,29 @@ private:
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+* Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
+*  @ingroup COMMON_MODULE
+*/
+enum ChangeForReaderStatus_t{
+	UNSENT = 0,        //!< UNSENT
+	UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
+	REQUESTED = 2,     //!< REQUESTED
+	ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
+	UNDERWAY = 4       //!< UNDERWAY
+};
+/**
+* Enum ChangeFromWriterStatus_t, possible states for a CacheChange_t in a WriterProxy.
+*  @ingroup COMMON_MODULE
+*/
+enum ChangeFromWriterStatus_t{
+	UNKNOWN = 0,
+	MISSING = 1,
+	//REQUESTED_WITH_NACK,
+	RECEIVED = 2,
+	LOST = 3
+};
 
 /**
  * Struct ChangeForReader_t used to represent the state of a specific change with respect to a specific reader, as well as its relevance.
