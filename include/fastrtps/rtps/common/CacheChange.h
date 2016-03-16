@@ -118,7 +118,7 @@ struct RTPS_DllAPI CacheChange_t{
 			delete dataFragments;
 	}
 
-	uint32_t getFragmentCount() { 
+	size_t getFragmentCount() { 
         return dataFragments->size();
 	}
 

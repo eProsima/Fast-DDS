@@ -675,13 +675,15 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	{
 		if (ch->serializedPayload.max_size >= payload_size - 2 - 2)
 		{
-			ch->serializedPayload.length = (uint16_t) sampleSize;
+			uint32_t totalFragments = (sampleSize + fragmentSize - 1) / fragmentSize;
+			ch->serializedPayload.length = sampleSize - (totalFragments * (2 + 2)); // Minus encapsulation
+			ch->setFragmentSize(fragmentSize);
 			CDRMessage::readData(msg,
-				ch->serializedPayload.data + fragmentStartingNum * fragmentSize,
+				ch->serializedPayload.data + (fragmentStartingNum-1) * fragmentSize,
 				(payload_size - 2 - 2));
 
 			for (uint32_t i = 0; i < fragments_in_datafrag; ++i) {
-				ch->getDataFragments()->at(i + (fragmentStartingNum - 1)) = ChangeFromWriterStatus_t::UNKNOWN;
+				ch->getDataFragments()->at(i + (fragmentStartingNum - 1)) = ChangeFragmentStatus_t::PRESENT;
 			}
 
 			ch->kind = ALIVE;
