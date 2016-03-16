@@ -52,7 +52,7 @@ class RTPSWithRegistrationWriter
     public:
         RTPSWithRegistrationWriter();
         virtual ~RTPSWithRegistrationWriter();
-        void init();
+        void init(bool async = false);
         bool isInitialized() const { return initialized_; }
         void send(const std::list<uint16_t> &msgs);
         void matched();

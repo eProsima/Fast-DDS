@@ -19,7 +19,8 @@
 #include "LatencyTestTypes.h"
 
 #include <boost/thread/thread_time.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
 #include <boost/chrono.hpp>
 
 class TimeStats{
@@ -51,9 +52,13 @@ public:
 	SampleInfo_t m_sampleinfo;
 	std::vector<boost::chrono::duration<double, boost::micro>> times_;
 	std::vector<TimeStats> m_stats;
-	boost::interprocess::interprocess_semaphore m_disc_sema;
-	boost::interprocess::interprocess_semaphore m_comm_sema;
-	boost::interprocess::interprocess_semaphore m_data_sema;
+    boost::mutex mutex_;
+    int disc_count_;
+	boost::condition_variable disc_cond_;
+    int comm_count_;
+	boost::condition_variable comm_cond_;
+    int data_count_;
+	boost::condition_variable data_cond_;
 	int m_status;
 	unsigned int n_received;
 	bool n_export_csv;

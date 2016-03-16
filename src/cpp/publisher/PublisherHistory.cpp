@@ -140,7 +140,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 				{
 
 					logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
-							<< change->sequenceNumber.to64long()<< " added with key: "<<change->instanceHandle
+							<< change->sequenceNumber << " added with key: "<<change->instanceHandle
 							<< " and "<<change->serializedPayload.length<< " bytes");
 					vit->second.push_back(change);
 					if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)

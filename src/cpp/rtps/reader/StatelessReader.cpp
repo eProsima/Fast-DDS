@@ -158,7 +158,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber.to64long() <<" TO reader: "<< getGuid().entityId,C_BLUE);
+        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId,C_BLUE);
 
         CacheChange_t* change_to_add;
 
@@ -182,11 +182,12 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         if(!change_received(change_to_add))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
-                    <<change_to_add->sequenceNumber.to64long(),C_BLUE);
+                    <<change_to_add->sequenceNumber, C_BLUE);
             releaseCache(change_to_add);
+
             if(getGuid().entityId == c_EntityId_SPDPReader)
             {
-                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
+                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
             }
         }
     }

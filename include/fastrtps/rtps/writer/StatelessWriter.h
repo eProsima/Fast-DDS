@@ -14,9 +14,12 @@
 #ifndef STATELESSWRITER_H_
 #define STATELESSWRITER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "../common/Time_t.h"
 #include "RTPSWriter.h"
 #include "ReaderLocator.h"
+
+#include <list>
 
 namespace eprosima {
 namespace fastrtps{
@@ -106,7 +109,6 @@ private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
-
 };
 }
 } /* namespace rtps */

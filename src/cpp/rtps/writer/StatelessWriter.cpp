@@ -54,38 +54,65 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
 	const char* const METHOD_NAME = "unsent_change_added_to_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	std::vector<CacheChange_t*> change;
-	change.push_back(cptr);
-	LocatorList_t locList;
-	LocatorList_t locList2;
-	this->setLivelinessAsserted(true);
-	if(!reader_locator.empty()) //TODO change to m_reader_locator.
-	{
-		for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
-		{
-			locList.push_back(rit->locator);
-		}
 
-		if (this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
-		{
-			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-				&change, c_GuidPrefix_Unknown, c_EntityId_SPDPReader, locList, locList2, false);
-		}
-		else
-		{
-			RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-				&change, c_GuidPrefix_Unknown, c_EntityId_Unknown, locList, locList2, false);
-		}
-	}
-	else
-	{
-		logWarning(RTPS_WRITER, "No reader locator to send change");
-	}
+    if(!isAsync())
+    {
+        std::vector<CacheChange_t*> change;
+        change.push_back(cptr);
+        LocatorList_t locList;
+        LocatorList_t locList2;
+        this->setLivelinessAsserted(true);
+        if(!reader_locator.empty()) //TODO change to m_reader_locator.
+        {
+            for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+            {
+                locList.push_back(rit->locator);
+            }
+
+            if (this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+            {
+                RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+                        &change, c_GuidPrefix_Unknown, c_EntityId_SPDPReader, locList, locList2, false);
+            }
+            else
+            {
+                RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+                        &change, c_GuidPrefix_Unknown, c_EntityId_Unknown, locList, locList2, false);
+            }
+        }
+        else
+        {
+            logWarning(RTPS_WRITER, "No reader locator to send change");
+        }
+    }
+    else
+    {
+        for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
+            rit->unsent_changes.push_back(cptr);
+    }
 }
 
-bool StatelessWriter::change_removed_by_history(CacheChange_t* /*a_change*/)
+bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 {
-	return true;
+    bool returnedValue = false;
+
+    // If the writer is asynchronous, find change in unsent list and remove it.
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
+    {
+        for(auto it = rit->unsent_changes.begin(); it != rit->unsent_changes.end(); ++it)
+        {
+            if((*it)->sequenceNumber ==  change->sequenceNumber)
+            {
+                rit->unsent_changes.erase(it);
+                returnedValue = true;
+                break;
+            }
+        }
+    }
+
+    return returnedValue;
 }
 
 void StatelessWriter::unsent_changes_not_empty()
@@ -158,15 +185,17 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	{
 		unsent_changes_not_empty |= add_locator(rdata,*lit);
 	}
-	if(unsent_changes_not_empty)
+
+    // If writer is not asynchronous, resent of data is done by event thread.
+	if(unsent_changes_not_empty && !isAsync())
 	{
-		//unsent_changes_not_empty();
         if(this->mp_unsetChangesNotEmpty == nullptr)
         {
             this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
         }
 		this->mp_unsetChangesNotEmpty->restart_timer();
 	}
+
 	this->m_matched_readers.push_back(rdata);
 	logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);
 	return true;
@@ -336,6 +365,7 @@ bool StatelessWriter::remove_locator(Locator_t& loc)
 void StatelessWriter::unsent_changes_reset()
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
 	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit){
 		rit->unsent_changes.clear();
 		for(std::vector<CacheChange_t*>::iterator cit=mp_history->changesBegin();

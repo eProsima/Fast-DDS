@@ -78,7 +78,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 					(*it)->writerGUID == a_change->writerGUID)
 			{
 				logInfo(RTPS_HISTORY,"Change (seqNum: "
-						<< a_change->sequenceNumber.to64long()<< ") already in ReaderHistory";);
+						<< a_change->sequenceNumber << ") already in ReaderHistory";);
 				return false;
 			}
 			if((*it)->writerGUID == a_change->writerGUID &&
@@ -130,7 +130,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 				if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
 					m_isHistoryFull = true;
 				logInfo(SUBSCRIBER,this->mp_subImpl->getGuid().entityId
-						<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
+						<<": Change "<< a_change->sequenceNumber << " added from: "
 						<< a_change->writerGUID;);
 				//print_changes_seqNum();
 				return true;
@@ -219,7 +219,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 						std::sort(vit->second.begin(),vit->second.end(),sort_ReaderHistoryCache);
 					}
 					logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId
-							<<": Change "<< a_change->sequenceNumber.to64long()<< " added from: "
+							<<": Change "<< a_change->sequenceNumber << " added from: "
 							<< a_change->writerGUID<< " with KEY: "<< a_change->instanceHandle;);
 					//	print_changes_seqNum();
 					return true;
@@ -249,7 +249,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 	{
 		change->isRead = true;
 		this->decreaseUnreadCount();
-		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": reading "<< change->sequenceNumber.to64long());
+		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": reading "<< change->sequenceNumber );
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);
 		if(info!=nullptr)
@@ -293,7 +293,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
 		if(!change->isRead)
 			this->decreaseUnreadCount();
 		change->isRead = true;
-		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": taking seqNum"<< change->sequenceNumber.to64long() <<
+		logInfo(SUBSCRIBER,this->mp_reader->getGuid().entityId<<": taking seqNum"<< change->sequenceNumber <<
 				" from writer: "<< change->writerGUID);
 		if(change->kind == ALIVE)
 			this->mp_subImpl->getType()->deserialize(&change->serializedPayload,data);

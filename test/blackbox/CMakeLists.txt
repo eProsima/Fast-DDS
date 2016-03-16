@@ -16,16 +16,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/HelloWorldType.cpp
             types/Data64kb.cpp
             types/Data64kbType.cpp
+            types/Data1mb.cpp
+            types/Data1mbType.cpp
             RTPSAsSocketReader.cpp
             RTPSAsSocketWriter.cpp
             RTPSWithRegistrationReader.cpp
             RTPSWithRegistrationWriter.cpp
-            PubSubHelloWorldReader.cpp
-            PubSubHelloWorldWriter.cpp
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
-            PubSubData64kbReader.cpp
-            PubSubData64kbWriter.cpp
             )
         add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
         add_gtest(BlackboxTests ${BLACKBOXTESTS_SOURCE})

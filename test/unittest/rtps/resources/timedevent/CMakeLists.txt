@@ -5,9 +5,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
-        include(${PROJECT_SOURCE_DIR}/cmake/dev/gtest.cmake)
-
         set(TIMEDEVENTTESTS_SOURCE MockEvent.cpp
+            MockParentEvent.cpp
             TimedEventTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
@@ -18,7 +17,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
-        add_gtest(TimedEventTests ${BLACKBOXTESTS_SOURCE})
+        add_gtest(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
         target_compile_definitions(TimedEventTests PRIVATE BOOST_ALL_DYN_LINK FASTRTPS_NO_LIB)
         target_include_directories(TimedEventTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})

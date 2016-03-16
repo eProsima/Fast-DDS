@@ -105,7 +105,7 @@ bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin){
 	std::vector<CacheChange_t*>::iterator it;
 	for(it=unsent_changes.begin();it!=unsent_changes.end();++it)
 	{
-		if(cpoin->sequenceNumber.to64long() == (*it)->sequenceNumber.to64long())
+		if(cpoin->sequenceNumber == (*it)->sequenceNumber)
 		{
 			unsent_changes.erase(it);
 			return true;
