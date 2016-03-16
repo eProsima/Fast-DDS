@@ -681,7 +681,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 				(payload_size - 2 - 2));
 
 			for (uint32_t i = 0; i < fragments_in_datafrag; ++i) {
-				ch->getDataFragments()->at(i + (fragmentStartingNum-1)) = 1;
+				ch->getDataFragments()->at(i + (fragmentStartingNum - 1)) = ChangeFromWriterStatus_t::UNKNOWN;
 			}
 
 			ch->kind = ALIVE;

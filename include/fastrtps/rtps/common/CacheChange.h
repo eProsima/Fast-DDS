@@ -127,7 +127,9 @@ struct RTPS_DllAPI CacheChange_t{
 		sequenceNumber = ch_ptr->sequenceNumber;
 		sourceTimestamp = ch_ptr->sourceTimestamp;
         write_params = ch_ptr->write_params;
-		// XXX TODO copy dataFragments
+		fragment_size = ch_ptr->fragment_size;
+		dataFragments->clear();
+		dataFragments->insert(dataFragments->begin(), ch_ptr->dataFragments->begin(), ch_ptr->dataFragments->begin());
 		return serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 	}
 

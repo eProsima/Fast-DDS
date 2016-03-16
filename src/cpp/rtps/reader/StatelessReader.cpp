@@ -194,9 +194,103 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
-bool StatelessReader::processDataFragMsg(CacheChange_t *change)
+bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange)
 {
-	return false;
+	const char* const METHOD_NAME = "processDataFragMsg";
+
+	assert(incomingChange);
+
+	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+	if (acceptMsgFrom(incomingChange->writerGUID))
+	{
+		logInfo(RTPS_MSG_IN, IDSTRING"Trying to add change " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
+		
+		// Look in History for a CacheChange with same writerSN y writerId
+		CacheChange_t* existingChange = NULL;
+		for (std::vector<CacheChange_t*>::iterator it = getHistory()->changesBegin(); it != getHistory()->changesEnd(); ++it) {
+			CacheChange_t* current = *it;
+			if (current->writerGUID.entityId == incomingChange->writerGUID.entityId &&
+				current->sequenceNumber == incomingChange->sequenceNumber) {
+				existingChange = current;
+				break;
+			}
+		}
+
+		if (existingChange != NULL) { // If found, merge with new CacheChange
+
+			std::vector<int> incomingFragments;
+			bool lastFragmentIsPresent = false;
+			for (size_t i = 0; i < incomingChange->getFragmentCount(); ++i) {
+				if (incomingChange->getDataFragments()->at((int)i) == ChangeFromWriterStatus_t::UNKNOWN) {
+					incomingFragments.push_back((int)i);
+					if (i == incomingChange->getFragmentCount() - 1) {
+						lastFragmentIsPresent = true;
+					}
+				}
+			}
+			
+			size_t receivedSize = existingChange->getFragmentSize() * incomingFragments.size();
+			if (lastFragmentIsPresent)
+				receivedSize = incomingChange->serializedPayload.length - incomingFragments.at(0) * existingChange->getFragmentSize();
+
+			memcpy(existingChange->serializedPayload.data + incomingFragments.at(0) * existingChange->getFragmentSize(),
+				incomingChange->serializedPayload.data + incomingFragments.at(0) * existingChange->getFragmentSize(),
+				receivedSize);
+
+			for (auto it = incomingFragments.begin(); it != incomingFragments.end(); ++it) {
+				existingChange->getDataFragments()->at(*it) = ChangeFromWriterStatus_t::UNKNOWN;
+			}
+		}
+		else {
+			// If not found, insert new CacheChange
+
+			CacheChange_t* change_to_add;
+
+			if (reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
+			{
+				if (!change_to_add->copy(incomingChange))
+				{
+					logWarning(RTPS_MSG_IN, IDSTRING"Problem copying CacheChange, received data is: " << incomingChange->serializedPayload.length
+						<< " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
+					releaseCache(change_to_add);
+					return false;
+				}
+			}
+			else
+			{
+				logError(RTPS_MSG_IN, IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId, C_BLUE);
+				return false;
+			}
+
+			existingChange = change_to_add;
+		}
+
+		// Si están todos los fragmentos, llamar al listener
+		bool allFragments = true;
+		for (size_t i = 0; i < existingChange->getFragmentCount(); ++i) {
+			if (existingChange->getDataFragments()->at(i) == ChangeFromWriterStatus_t::UNKNOWN) {
+				allFragments = false;
+				break;
+			}
+		}
+
+		if (allFragments) {
+			lock.unlock(); // Next function has its own lock.
+			if (!change_received(existingChange))
+			{
+				logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << existingChange->sequenceNumber.to64long(), C_BLUE);
+				releaseCache(existingChange);
+				if (getGuid().entityId == c_EntityId_SPDPReader)
+				{
+					mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(existingChange->writerGUID.guidPrefix);
+				}
+			}
+		}
+
+	}
+
+	return true;
 }
 
 bool StatelessReader::processHeartbeatMsg(GUID_t& /*writerGUID*/, uint32_t /*hbCount*/, SequenceNumber_t& /*firstSN*/,
