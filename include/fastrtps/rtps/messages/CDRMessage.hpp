@@ -454,7 +454,8 @@ inline bool CDRMessage::addEntityId(CDRMessage_t* msg, const EntityId_t*ID) {
 
 
 inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
-		SequenceNumber_t* sn) {
+		const SequenceNumber_t* sn)
+{
 	addInt32(msg,sn->high);
 	addUInt32(msg,sn->low);
 
@@ -577,7 +578,7 @@ inline bool CDRMessage::addParameterStatus(CDRMessage_t* msg, octet status)
 }
 
 
-inline bool CDRMessage::addParameterKey(CDRMessage_t* msg, InstanceHandle_t* iHandle)
+inline bool CDRMessage::addParameterKey(CDRMessage_t* msg, const InstanceHandle_t* iHandle)
 {
 	if(msg->pos+20>=msg->max_size)
 	{

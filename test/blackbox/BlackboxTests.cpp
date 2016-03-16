@@ -136,8 +136,7 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
 
     writer.init(ip, port);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     for(unsigned int tries = 0; tries < 20; ++tries)
     {
@@ -175,8 +174,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
 
     writer.init(ip, port, true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     for(unsigned int tries = 0; tries < 20; ++tries)
     {
@@ -214,8 +212,7 @@ TEST(BlackBox, RTPSAsReliableSocket)
 
     writer.init(ip, port);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
 
@@ -248,8 +245,7 @@ TEST(BlackBox, AsyncRTPSAsReliableSocket)
 
     writer.init(ip, port, true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
 
@@ -281,8 +277,7 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
 
     writer.init();
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     for(unsigned int tries = 0; tries < 20; ++tries)
     {
@@ -319,8 +314,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
 
     writer.init(true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     for(unsigned int tries = 0; tries < 20; ++tries)
     {
@@ -357,8 +351,7 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
 
     writer.init();
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability
     reader.waitDiscovery();
@@ -393,8 +386,7 @@ TEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 
     writer.init(true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability
     reader.waitDiscovery();
@@ -428,8 +420,7 @@ TEST(BlackBox, PubSubAsNonReliableHelloworld)
 
     writer.init();
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     for(unsigned int tries = 0; tries < 20; ++tries)
     {
@@ -465,8 +456,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
 
     writer.init(true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     for(unsigned int tries = 0; tries < 20; ++tries)
     {
@@ -502,8 +492,7 @@ TEST(BlackBox, PubSubAsReliableHelloworld)
 
     writer.init();
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability
     reader.waitDiscovery();
@@ -537,8 +526,7 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
 
     writer.init(true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability
     reader.waitDiscovery();
@@ -595,8 +583,7 @@ TEST(BlackBox, ParticipantRemoval)
 
     writer.init();
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability.
     reader.waitDiscovery();
@@ -625,8 +612,7 @@ TEST(BlackBox, PubSubAsReliableData64kb)
 
     writer.init();
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability.
     reader.waitDiscovery();
@@ -655,8 +641,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
 
     writer.init(true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability.
     reader.waitDiscovery();
@@ -672,10 +657,19 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     reader.waitRemoval();
 }
 
-TEST(BlackBox, PubSubAsReliableData1mb)
+TEST(BlackBox, PubSubAsNonReliableData1mb)
 {
-    PubSubReader<Data1mbType, eprosima::fastrtps::RELIABLE_RELIABILITY_QOS> reader(default_data1mb_receiver);
-    PubSubWriter<Data1mbType, eprosima::fastrtps::RELIABLE_RELIABILITY_QOS> writer(default_data1mb_sender);
+    PubSubWriter<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> writer(default_data1mb_sender);
+    
+    writer.init();
+
+    ASSERT_FALSE(writer.isInitialized());
+}
+
+TEST(BlackBox, AsyncPubSubAsNonReliableData1mb)
+{
+    PubSubReader<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> reader(default_data1mb_receiver);
+    PubSubWriter<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> writer(default_data1mb_sender);
     const uint16_t nmsgs = 100;
     
     reader.init(nmsgs);
@@ -683,10 +677,9 @@ TEST(BlackBox, PubSubAsReliableData1mb)
     if(!reader.isInitialized())
         return;
 
-    writer.init();
+    writer.init(true);
 
-    if(!writer.isInitialized())
-        return;
+    ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability.
     reader.waitDiscovery();

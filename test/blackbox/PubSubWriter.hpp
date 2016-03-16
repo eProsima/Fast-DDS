@@ -78,26 +78,32 @@ class PubSubWriter
         eprosima::fastrtps::ParticipantAttributes pattr;
         pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
         participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
-        ASSERT_NE(participant_, nullptr);
 
-        // Register type
-        eprosima::fastrtps::Domain::registerType(participant_, &type_);
+        if(participant_ != nullptr)
+        {
+            // Register type
+            eprosima::fastrtps::Domain::registerType(participant_, &type_);
 
-        //Create publisher
-        eprosima::fastrtps::PublisherAttributes puattr;
-        puattr.topic.topicKind = NO_KEY;
-        puattr.topic.topicDataType = type_.getName();
-        configPublisher(puattr);
+            //Create publisher
+            eprosima::fastrtps::PublisherAttributes puattr;
+            puattr.topic.topicKind = NO_KEY;
+            puattr.topic.topicDataType = type_.getName();
+            configPublisher(puattr);
 
-        // Asynchronous
-        if(async)
-            puattr.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
+            // Asynchronous
+            if(async)
+                puattr.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
 
-        publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, puattr, &listener_);
+            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, puattr, &listener_);
 
-        ASSERT_NE(publisher_, nullptr);
+            if(publisher_ != nullptr)
+            {
+                initialized_ = true;
+                return;
+            }
 
-        initialized_ = true;
+            eprosima::fastrtps::Domain::removeParticipant(participant_);
+        }
     }
 
     bool isInitialized() const { return initialized_; }

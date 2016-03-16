@@ -118,13 +118,14 @@ struct RTPS_DllAPI CacheChange_t{
 			delete dataFragments;
 	}
 
-	uint32_t getFragmentCount() { 
-        return dataFragments->size();
+	uint32_t getFragmentCount() const
+    { 
+        return (uint32_t)dataFragments->size();
 	}
 
 	std::vector<uint32_t>* getDataFragments() { return dataFragments; }
 
-	uint16_t getFragmentSize() { return fragment_size; }
+	uint16_t getFragmentSize() const { return fragment_size; }
 
 	void setFragmentSize(uint16_t fragment_size) {
 		this->fragment_size = fragment_size;
