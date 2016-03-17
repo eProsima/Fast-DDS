@@ -76,10 +76,6 @@ namespace eprosima {
                     CDRMessage_t m_rtpsmsg_header;
                     CDRMessage_t m_rtpsmsg_submessage;
                     CDRMessage_t m_rtpsmsg_fullmsg;
-                    RTPSMessageGroup_t():
-                        m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
-                        m_rtpsmsg_submessage(RTPSMESSAGE_DEFAULT_SIZE),
-                        m_rtpsmsg_fullmsg(RTPSMESSAGE_DEFAULT_SIZE){};
                     RTPSMessageGroup_t(uint32_t payload):
                         m_rtpsmsg_header(RTPSMESSAGE_HEADER_SIZE),
                         m_rtpsmsg_submessage(payload+RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE),
