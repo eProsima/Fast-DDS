@@ -53,25 +53,28 @@ bool ReaderLocator::next_requested_change(CacheChange_t** cpoin)
 	return false;
 }
 
-bool ReaderLocator::next_unsent_change(CacheChange_t** cpoin)
+bool ReaderLocator::next_unsent_change(const CacheChange_t** cpoin)
 {
-	if(!unsent_changes.empty()){
-		std::vector<CacheChange_t*>::iterator it;
-		std::vector<CacheChange_t*>::iterator it2;
-		SequenceNumber_t minseqnum = unsent_changes[0]->sequenceNumber;
-		(*cpoin) = unsent_changes[0];
-		it2 = it;
-		for(it=unsent_changes.begin();it!=unsent_changes.end();++it)
+	if(!unsent_changes.empty())
+    {
+        auto it = unsent_changes.begin(), it2 = unsent_changes.begin();
+
+		SequenceNumber_t minseqnum = unsent_changes[0].getChange()->sequenceNumber;
+		(*cpoin) = unsent_changes[0].getChange();
+
+		for(it = unsent_changes.begin(); it != unsent_changes.end(); ++it)
 		{
-			if(minseqnum > (*it)->sequenceNumber)
+			if(minseqnum > it->getChange()->sequenceNumber)
 			{
-				minseqnum = (*it)->sequenceNumber;
-				(*cpoin) = *it;
+				minseqnum = it->getChange()->sequenceNumber;
+				(*cpoin) = it->getChange();
 				it2 = it;
 			}
 		}
+
 		return true;
 	}
+
 	return false;
 }
 
@@ -101,11 +104,11 @@ bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
 
 }
 
-bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin){
-	std::vector<CacheChange_t*>::iterator it;
-	for(it=unsent_changes.begin();it!=unsent_changes.end();++it)
+bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin)
+{
+	for(auto it = unsent_changes.begin(); it != unsent_changes.end(); ++it)
 	{
-		if(cpoin->sequenceNumber == (*it)->sequenceNumber)
+		if(cpoin->sequenceNumber == it->getChange()->sequenceNumber)
 		{
 			unsent_changes.erase(it);
 			return true;

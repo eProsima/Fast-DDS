@@ -157,7 +157,7 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	return true;
 }
 
-void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId)
+void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos,const CacheChange_t* change, const EntityId_t& ReaderId)
 {
 	const char* const METHOD_NAME = "prepareDataSubM";
 	ParameterList_t* inlineQos = NULL;
@@ -173,6 +173,184 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 		logError(RTPS_WRITER,"Problem adding DATA submsg to the CDRMessage, buffer too small";);
 }
 
+void RTPSMessageGroup::prepareDataFragSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos,
+        const CacheChange_t* change, const EntityId_t& ReaderId, uint32_t fragment_number)
+{
+	const char* const METHOD_NAME = "prepareDataFragSubM";
+	ParameterList_t* inlineQos = NULL;
+    
+	if(expectsInlineQos)
+	{
+		//TODOG INLINEQOS
+//		if(W->getInlineQos()->m_parameters.size()>0)
+//			inlineQos = W->getInlineQos();
+	}
+
+	CDRMessage::initCDRMsg(submsg);
+	bool added= RTPSMessageCreator::addSubmessageDataFrag(submsg, change, fragment_number, W->getAttributes()->topicKind, ReaderId, expectsInlineQos, inlineQos);
+	if(!added)
+		logError(RTPS_WRITER,"Problem adding DATA_FRAG submsg to the CDRMessage, buffer too small";);
+}
+
+uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
+		RTPSWriter* W,
+		std::vector<CacheChangeForGroup_t>& changes,
+        const GuidPrefix_t& remoteGuidPrefix,
+        const EntityId_t& ReaderId,
+		LocatorList_t& unicast,
+		LocatorList_t& multicast,
+		bool expectsInlineQos)
+{
+	const char* const METHOD_NAME = "send_Changes_AsData";
+	logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
+	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
+	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
+	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
+
+    auto cit = changes.begin();
+    uint32_t data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
+        (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
+         cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+
+    // Set header
+    CDRMessage::initCDRMsg(cdrmsg_fullmsg);
+    CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
+
+    // If there is a destinatary, send the INFO_DST submessage.
+    if(remoteGuidPrefix != c_GuidPrefix_Unknown)
+    {
+        RTPSMessageCreator::addSubmessageInfoDST(cdrmsg_fullmsg, remoteGuidPrefix);
+    }
+
+    // Insert INFO_TS submessage.
+    RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg, false); //Change here to add a INFO_TS for DATA.
+
+    bool dataInserted = false;
+
+    while(cdrmsg_fullmsg->length + data_msg_length < cdrmsg_fullmsg->max_size)
+    {
+        dataInserted = true;
+
+        if(!cit->isFragmented())
+        {
+            RTPSMessageGroup::prepareDataSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId);
+            cit = changes.erase(cit);
+        }
+        else
+        {
+            RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, cit->increaseLastFragmentNumber());
+
+            if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount())
+                cit = changes.erase(cit);
+        }
+
+        CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
+
+        if(cit != changes.end())
+        {
+            data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
+                (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
+                 cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+        }
+        else
+            break;
+
+    }
+
+    if(dataInserted)
+    {
+        for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
+            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+
+        for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
+            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+
+        return cdrmsg_fullmsg->length;
+    }
+    else
+    {
+        logError(RTPS_WRITER,"A problem occurred when adding a message");
+    }
+
+    return 0;
+}
+
+uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
+		RTPSWriter* W,
+		std::vector<CacheChangeForGroup_t>& changes,
+        const GuidPrefix_t& remoteGuidPrefix,
+        const EntityId_t& ReaderId,
+        const Locator_t& loc, bool expectsInlineQos)
+{
+	const char* const METHOD_NAME = "send_Changes_AsData";
+	logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
+	CDRMessage_t* cdrmsg_submessage = &msg_group->m_rtpsmsg_submessage;
+	CDRMessage_t* cdrmsg_header = &msg_group->m_rtpsmsg_header;
+	CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
+
+    auto cit = changes.begin();
+    uint32_t data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
+        (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
+         cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+
+    // Set header
+    CDRMessage::initCDRMsg(cdrmsg_fullmsg);
+    CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_header);
+
+    // If there is a destinatary, send the INFO_DST submessage.
+    if(remoteGuidPrefix != c_GuidPrefix_Unknown)
+    {
+        RTPSMessageCreator::addSubmessageInfoDST(cdrmsg_fullmsg, remoteGuidPrefix);
+    }
+
+    // Insert INFO_TS submessage.
+    RTPSMessageCreator::addSubmessageInfoTS_Now(cdrmsg_fullmsg, false); //Change here to add a INFO_TS for DATA.
+
+    bool dataInserted = false;
+
+    while(cdrmsg_fullmsg->length + data_msg_length < cdrmsg_fullmsg->max_size)
+    {
+        dataInserted = true;
+
+        if(!cit->isFragmented())
+        {
+            RTPSMessageGroup::prepareDataSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId);
+            cit = changes.erase(cit);
+        }
+        else
+        {
+            RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, cit->increaseLastFragmentNumber());
+
+            if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount())
+                cit = changes.erase(cit);
+        }
+
+        CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
+
+        if(cit != changes.end())
+        {
+            data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
+                (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
+                 cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+        }
+        else
+            break;
+
+    }
+
+    if(dataInserted)
+    {
+        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,loc);
+
+        return cdrmsg_fullmsg->length;
+    }
+    else
+    {
+        logError(RTPS_WRITER,"A problem occurred when adding a message");
+    }
+
+    return 0;
+}
 
 bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W, std::vector<CacheChange_t*>* changes,

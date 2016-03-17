@@ -86,14 +86,14 @@ public:
 
 	/// @{
 	
-	static bool addMessageData(CDRMessage_t* msg,GuidPrefix_t& guidprefix,CacheChange_t* change,
-			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
-	static bool addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
-			TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos);
+	static bool addMessageData(CDRMessage_t* msg, GuidPrefix_t& guidprefix, const CacheChange_t* change,
+			TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
+	static bool addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
+			TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
 
-	static bool addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix, CacheChange_t* change, uint32_t fragment_number,
+	static bool addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix, const CacheChange_t* change, uint32_t fragment_number,
 		TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
-	static bool addSubmessageDataFrag(CDRMessage_t* msg, CacheChange_t* change, uint32_t fragment_number,
+	static bool addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
 		TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos);
 
 	static bool addMessageGap(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,

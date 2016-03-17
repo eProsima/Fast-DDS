@@ -36,7 +36,7 @@ CacheChangePool::~CacheChangePool()
 	delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size,uint32_t payload_size,int32_t max_pool_size):mp_mutex(new boost::mutex())
+CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size) : mp_mutex(new boost::mutex())
 {
 	boost::lock_guard<boost::mutex> guard(*this->mp_mutex);
 	const char* const METHOD_NAME = "CacheChangePool";
