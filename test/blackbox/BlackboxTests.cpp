@@ -70,7 +70,8 @@ auto default_data64kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) 
     {
         if(info.sampleKind == ALIVE)
         {
-            ret = data.data()[0];
+            if(data.data().size() == 63996)
+                ret = data.data()[0];
         }
     }
 
@@ -100,7 +101,8 @@ auto default_data1mb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) -
     {
         if(info.sampleKind == ALIVE)
         {
-            ret = data.data()[0];
+            if(data.data().size() == 1024000)
+                ret = data.data()[0];
         }
     }
 
@@ -619,13 +621,19 @@ TEST(BlackBox, PubSubAsReliableData64kb)
 
     // Send some data.
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
     writer.send(msgs);
+    reader.block(*msgs.rbegin(), std::chrono::seconds(60));
 
-    // Destroy the writer participant.
-    writer.destroy();
-
-    // Check that reader receives the unmatched.
-    reader.waitRemoval();
+    msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
 }
 
 TEST(BlackBox, AsyncPubSubAsReliableData64kb)
@@ -648,13 +656,19 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
 
     // Send some data.
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
     writer.send(msgs);
+    reader.block(*msgs.rbegin(), std::chrono::seconds(60));
 
-    // Destroy the writer participant.
-    writer.destroy();
-
-    // Check that reader receives the unmatched.
-    reader.waitRemoval();
+    msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
 }
 
 TEST(BlackBox, PubSubAsNonReliableData1mb)
@@ -684,15 +698,25 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData1mb)
     // Because its volatile the durability.
     reader.waitDiscovery();
 
-    // Send some data.
+    for(unsigned int tries = 0; tries < 20; ++tries)
+    {
+        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        if(msgs.empty())
+            break;
+
+        writer.send(msgs);
+        reader.block(*msgs.rbegin(), std::chrono::seconds(2));
+    }
+
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-    writer.send(msgs);
-
-    // Destroy the writer participant.
-    writer.destroy();
-
-    // Check that reader receives the unmatched.
-    reader.waitRemoval();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
 }
 
 int main(int argc, char **argv)

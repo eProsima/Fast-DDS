@@ -118,16 +118,15 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 (*it)->mp_nackSupression->restart_timer();
             }
 
-            std::vector<CacheChange_t*> changeV;
-            changeV.push_back(change);
+            std::vector<CacheChangeForGroup_t> changes_to_send;
+            changes_to_send.push_back(CacheChangeForGroup_t(change));
 
-            RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                    &changeV,
-                    c_GuidPrefix_Unknown,
-                    c_EntityId_Unknown,
-                    unilocList,
-                    multilocList,
-                    expectsInlineQos);
+            uint32_t bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+                    changes_to_send, c_GuidPrefix_Unknown, c_EntityId_Unknown, unilocList,
+                    multilocList, expectsInlineQos);
+
+            if(bytesSent == 0 || changes_to_send.size() > 0)
+                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
 
             this->mp_periodicHB->restart_timer();
         }
@@ -192,7 +191,7 @@ void StatefulWriter::unsent_changes_not_empty()
 		std::vector<ChangeForReader_t*> ch_vec;
 		if((*rit)->unsent_changes(&ch_vec))
 		{
-			std::vector<CacheChange_t*> relevant_changes;
+			std::vector<CacheChangeForGroup_t> relevant_changes;
 			std::vector<SequenceNumber_t> not_relevant_changes;
 			std::vector<ChangeForReader_t*>::iterator cit;
 
@@ -202,7 +201,7 @@ void StatefulWriter::unsent_changes_not_empty()
 
 				if((*cit)->is_relevant && (*cit)->isValid())
 				{
-					relevant_changes.push_back((*cit)->getChange());
+					relevant_changes.push_back(CacheChangeForGroup_t((*cit)->getChange()));
 				}
 				else
 				{
@@ -214,14 +213,18 @@ void StatefulWriter::unsent_changes_not_empty()
 			{
 				if(!relevant_changes.empty())
 				{
-					//cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
-					RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)this,
-							&relevant_changes,
-                            (*rit)->m_att.guid.guidPrefix,
-                            (*rit)->m_att.guid.entityId,
-							(*rit)->m_att.endpoint.unicastLocatorList,
-							(*rit)->m_att.endpoint.multicastLocatorList,
-							(*rit)->m_att.expectsInlineQos);
+                    //cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
+                    uint32_t bytesSent = 0;
+                    do
+                    {
+                        RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+                                relevant_changes,
+                                (*rit)->m_att.guid.guidPrefix,
+                                (*rit)->m_att.guid.entityId,
+                                (*rit)->m_att.endpoint.unicastLocatorList,
+                                (*rit)->m_att.endpoint.multicastLocatorList,
+                                (*rit)->m_att.expectsInlineQos);
+                    } while(bytesSent > 0 && relevant_changes.size() > 0);
 				}
 				if(!not_relevant_changes.empty())
 					RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)this,

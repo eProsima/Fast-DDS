@@ -118,7 +118,9 @@ void StatelessWriter::unsent_changes_not_empty()
 {
 	const char* const METHOD_NAME = "unsent_changes_not_empty";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ReaderLocator>::iterator rit=reader_locator.begin();rit!=reader_locator.end();++rit)
+
+    // TODO Mejorar. Por cada locator crea otra vez los mensajes. Debería crear los mensajes y enviar el mismo a todos los locators.
+	for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
 	{
 		if(!rit->unsent_changes.empty())
 		{
@@ -130,7 +132,6 @@ void StatelessWriter::unsent_changes_not_empty()
                     bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
                             rit->unsent_changes, c_GuidPrefix_Unknown,
                             this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown, rit->locator, rit->expectsInlineQos);
-
                 } while(bytesSent > 0 && rit->unsent_changes.size() > 0);
 			}
 			//			else

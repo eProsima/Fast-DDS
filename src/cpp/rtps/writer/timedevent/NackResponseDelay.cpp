@@ -69,14 +69,14 @@ void NackResponseDelay::event(EventCode code, const char* msg)
             //cout << "REQUESTED CHANGES SIZE: "<< ch_vec.size() << endl;
             //	std::sort(ch_vec.begin(),ch_vec.end(),sort_chFR);
             //Get relevant data cache changes
-            std::vector<CacheChange_t*> relevant_changes;
+            std::vector<CacheChangeForGroup_t> relevant_changes;
             std::vector<SequenceNumber_t> not_relevant_changes;
             for (std::vector<ChangeForReader_t*>::iterator cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
             {
                 (*cit)->status = UNDERWAY;
                 if ((*cit)->is_relevant && (*cit)->isValid())
                 {
-                    relevant_changes.push_back((*cit)->getChange());
+                    relevant_changes.push_back(CacheChangeForGroup_t((*cit)->getChange()));
                 }
                 else
                 {
@@ -85,13 +85,20 @@ void NackResponseDelay::event(EventCode code, const char* msg)
             }
             mp_RP->m_isRequestedChangesEmpty = true;
             if (!relevant_changes.empty())
-                RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
-                        &relevant_changes,
-                        mp_RP->m_att.guid.guidPrefix,
-                        mp_RP->m_att.guid.entityId,
-                        mp_RP->m_att.endpoint.unicastLocatorList,
-                        mp_RP->m_att.endpoint.multicastLocatorList,
-                        mp_RP->m_att.expectsInlineQos);
+            {
+                uint32_t bytesSent = 0;
+                do
+                {
+                    RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
+                            relevant_changes,
+                            mp_RP->m_att.guid.guidPrefix,
+                            mp_RP->m_att.guid.entityId,
+                            mp_RP->m_att.endpoint.unicastLocatorList,
+                            mp_RP->m_att.endpoint.multicastLocatorList,
+                            mp_RP->m_att.expectsInlineQos);
+                } while(bytesSent > 0 && relevant_changes.size() > 0);
+            }
+
             if (!not_relevant_changes.empty())
                 RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
                         &not_relevant_changes,
@@ -99,6 +106,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                         mp_RP->m_att.guid.entityId,
                         &mp_RP->m_att.endpoint.unicastLocatorList,
                         &mp_RP->m_att.endpoint.multicastLocatorList);
+
             if (relevant_changes.empty() && not_relevant_changes.empty())
             {
                 CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
