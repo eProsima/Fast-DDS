@@ -632,6 +632,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	// READ SAMPLESIZE
 	uint32_t sampleSize;
 	CDRMessage::readUInt32(msg, &sampleSize);
+	sampleSize -= (2 + 2); // Minus encapsulation
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
 	if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG)
@@ -656,11 +657,13 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
 	else
 		payload_size = smh->submsgLengthLarger;
+	if (fragmentStartingNum == 1)
+		payload_size -= (2 + 2); // Minus encapsulation
 
 	// Calculate fragment number
 	uint32_t fragments_in_datafrag = 0;
 	if (fragmentSize)
-		fragments_in_datafrag = ((payload_size - 2 - 2) + fragmentSize - 1) / fragmentSize; // Round up division formula
+		fragments_in_datafrag = ((payload_size) + fragmentSize - 1) / fragmentSize; // Round up division formula
 
 	// Validations??? XXX TODO
 
@@ -673,25 +676,19 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
 	if (!keyFlag)
 	{
-		if (ch->serializedPayload.max_size >= payload_size - 2 - 2)
+		if (ch->serializedPayload.max_size >= payload_size)
 		{
-			uint32_t totalFragments = (sampleSize + fragmentSize - 1) / fragmentSize;
-			ch->serializedPayload.length = sampleSize - (totalFragments * (2 + 2)); // Minus encapsulation
+			ch->serializedPayload.length = payload_size;
 			ch->setFragmentSize(fragmentSize);
 			CDRMessage::readData(msg,
-				ch->serializedPayload.data + (fragmentStartingNum-1) * fragmentSize,
-				(payload_size - 2 - 2));
-
-			for (uint32_t i = 0; i < fragments_in_datafrag; ++i) {
-				ch->getDataFragments()->at(i + (fragmentStartingNum - 1)) = ChangeFragmentStatus_t::PRESENT;
-			}
+				ch->serializedPayload.data, payload_size);
 
 			ch->kind = ALIVE;
 		}
 		else
 		{
 			logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload larger than maximum allowed size "
-				"(" << payload_size - 2 - 2 << "/" << ch->serializedPayload.max_size << ")", C_BLUE);
+				"(" << payload_size << "/" << ch->serializedPayload.max_size << ")", C_BLUE);
 			//firstReader->releaseCache(ch);
 			return false;
 		}
@@ -735,7 +732,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	{
 		if ((*it)->acceptMsgDirectedTo(readerID))
 		{
-			//(*it)->processDatFragMsg(ch);
+			(*it)->processDataFragMsg(ch, sampleSize, fragmentStartingNum - 1);
 		}
 	}
 

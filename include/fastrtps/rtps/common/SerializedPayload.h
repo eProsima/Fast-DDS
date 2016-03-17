@@ -100,6 +100,20 @@ namespace eprosima{
                     return true;
                 }
 
+				/*!
+				* Allocate new space for fragmented data
+				* @param[in] serData Pointer to the structure to copy
+				* @return True if correct
+				*/
+				bool reserve_fragmented(SerializedPayload_t* serData)
+				{
+					length = serData->length;
+					max_size = serData->length;
+					encapsulation = serData->encapsulation;
+					data = (octet*)calloc(length, sizeof(octet));
+					return true;
+				}
+
                 //! Empty the payload
                 void empty()
                 {

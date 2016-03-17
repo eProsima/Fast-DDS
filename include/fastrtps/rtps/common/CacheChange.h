@@ -106,11 +106,40 @@ struct RTPS_DllAPI CacheChange_t{
 		instanceHandle = ch_ptr->instanceHandle;
 		sequenceNumber = ch_ptr->sequenceNumber;
 		sourceTimestamp = ch_ptr->sourceTimestamp;
-        write_params = ch_ptr->write_params;
-		fragment_size = ch_ptr->fragment_size;
+		write_params = ch_ptr->write_params;
+
+		bool ret = serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
+
+		setFragmentSize(ch_ptr->fragment_size);
 		dataFragments->clear();
-		dataFragments->insert(dataFragments->begin(), ch_ptr->dataFragments->begin(), ch_ptr->dataFragments->begin());
-		return serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
+		dataFragments->insert(dataFragments->begin(), ch_ptr->dataFragments->begin(), ch_ptr->dataFragments->end());
+
+		return ret;
+	}
+
+	bool copy(CacheChange_t* ch_ptr, uint32_t fragmentStartingNum)
+	{
+		kind = ch_ptr->kind;
+		writerGUID = ch_ptr->writerGUID;
+		instanceHandle = ch_ptr->instanceHandle;
+		sequenceNumber = ch_ptr->sequenceNumber;
+		sourceTimestamp = ch_ptr->sourceTimestamp;
+		write_params = ch_ptr->write_params;
+
+		dataFragments->clear();
+		setFragmentSize(ch_ptr->fragment_size);
+
+		bool ret = true;
+
+		memcpy(serializedPayload.data + fragmentStartingNum * fragment_size,
+			ch_ptr->serializedPayload.data, ch_ptr->serializedPayload.length);
+
+		for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + ch_ptr->getFragmentCount(); ++count)
+		{
+			dataFragments->at(count) = ChangeFragmentStatus_t::PRESENT;
+		}
+
+		return ret;
 	}
 
 	~CacheChange_t(){

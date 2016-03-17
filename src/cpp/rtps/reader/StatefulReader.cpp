@@ -216,7 +216,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
-bool StatefulReader::processDataFragMsg(CacheChange_t *change)
+bool StatefulReader::processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum)
 {
 	return false;
 }
