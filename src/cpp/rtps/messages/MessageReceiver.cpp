@@ -34,6 +34,7 @@
 #include <boost/thread/lock_guard.hpp>
 
 #include <limits>
+#include <cassert>
 
 
 #include <fastrtps/utils/RTPSLog.h>
@@ -483,7 +484,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 		{
 			if(ch->serializedPayload.max_size >= payload_size-2-2)
 			{
-				ch->serializedPayload.length = (uint16_t)(payload_size-2-2);
+				ch->serializedPayload.length = payload_size-2-2;
 				CDRMessage::readData(msg,ch->serializedPayload.data,ch->serializedPayload.length);
 				ch->kind = ALIVE;
 			}
@@ -657,13 +658,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
 	else
 		payload_size = smh->submsgLengthLarger;
-	if (fragmentStartingNum == 1)
-		payload_size -= (2 + 2); // Minus encapsulation
-
-	// Calculate fragment number
-	uint32_t fragments_in_datafrag = 0;
-	if (fragmentSize)
-		fragments_in_datafrag = ((payload_size) + fragmentSize - 1) / fragmentSize; // Round up division formula
 
 	// Validations??? XXX TODO
 
@@ -679,7 +673,12 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		if (ch->serializedPayload.max_size >= payload_size)
 		{
 			ch->serializedPayload.length = payload_size;
+
+			// TODO Mejorar el reubicar el vector de fragmentos.
 			ch->setFragmentSize(fragmentSize);
+			ch->getDataFragments()->clear();
+			ch->getDataFragments()->resize(fragmentsInSubmessage, ChangeFragmentStatus_t::PRESENT);
+			
 			CDRMessage::readData(msg,
 				ch->serializedPayload.data, payload_size);
 

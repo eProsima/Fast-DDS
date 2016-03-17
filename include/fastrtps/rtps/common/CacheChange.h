@@ -117,7 +117,7 @@ struct RTPS_DllAPI CacheChange_t{
 		return ret;
 	}
 
-	bool copy(CacheChange_t* ch_ptr, uint32_t fragmentStartingNum)
+	void copy_not_memcpy(CacheChange_t* ch_ptr)
 	{
 		kind = ch_ptr->kind;
 		writerGUID = ch_ptr->writerGUID;
@@ -126,20 +126,8 @@ struct RTPS_DllAPI CacheChange_t{
 		sourceTimestamp = ch_ptr->sourceTimestamp;
 		write_params = ch_ptr->write_params;
 
-		dataFragments->clear();
-		setFragmentSize(ch_ptr->fragment_size);
-
-		bool ret = true;
-
-		memcpy(serializedPayload.data + fragmentStartingNum * fragment_size,
-			ch_ptr->serializedPayload.data, ch_ptr->serializedPayload.length);
-
-		for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + ch_ptr->getFragmentCount(); ++count)
-		{
-			dataFragments->at(count) = ChangeFragmentStatus_t::PRESENT;
-		}
-
-		return ret;
+		// Copy certain values from serializedPayload
+		serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 	}
 
 	~CacheChange_t(){

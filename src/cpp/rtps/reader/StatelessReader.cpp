@@ -94,12 +94,24 @@ bool StatelessReader::change_received(CacheChange_t* change)
 	if(mp_history->received_change(change))
 	{
         boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+		
+		// If change is update, we know it is a fragmented cache change.
+		auto it = change->getDataFragments()->begin();
 
-		if(getListener() != nullptr)
+		for (; it != change->getDataFragments()->end(); ++it)
 		{
-            lock.unlock();
-			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
-            lock.lock();
+			if (*it == ChangeFragmentStatus_t::NOT_PRESENT)
+				break;
+		}
+
+		if (it == change->getDataFragments()->end())
+		{
+			if (getListener() != nullptr)
+			{
+				lock.unlock();
+				getListener()->onNewCacheChangeAdded((RTPSReader*)this, change);
+				lock.lock();
+			}
 		}
 
 		mp_history->postSemaphore();
@@ -121,7 +133,7 @@ bool StatelessReader::change_updated(CacheChange_t* change)
 			break;
 	}
 
-	if (it != change->getDataFragments()->end())
+	if (it == change->getDataFragments()->end())
 	{
 		if (getListener() != nullptr)
 		{
@@ -247,11 +259,19 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
 		if (existingChange != NULL) { // If found, merge with new CacheChange
 			
-			memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
-				incomingChange->serializedPayload.data, incomingChange->serializedPayload.length);
-
 			for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + incomingChange->getFragmentCount(); ++count)
 			{
+				if (count + 1 != existingChange->getFragmentCount())
+				{
+					memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
+						incomingChange->serializedPayload.data, incomingChange->getFragmentSize());
+				}
+				else
+				{
+					memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
+						incomingChange->serializedPayload.data, existingChange->serializedPayload.length - (count * existingChange->getFragmentSize()));
+				}
+
 				existingChange->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
 			}
 
@@ -269,25 +289,37 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
 			if (reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
 			{
+				change_to_add->copy_not_memcpy(incomingChange);
+
 				// The length of the serialized payload has to be sample size.
 				change_to_add->serializedPayload.length = sampleSize;
+				change_to_add->setFragmentSize(incomingChange->getFragmentSize());
 
-				if (!change_to_add->copy(incomingChange, fragmentStartingNum))
+				for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + incomingChange->getFragmentCount(); ++count)
 				{
-					logWarning(RTPS_MSG_IN, IDSTRING"Problem copying CacheChange, received data is: " << incomingChange->serializedPayload.length
-						<< " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size, C_BLUE);
-					releaseCache(change_to_add);
-					return false;
+					if (count + 1 != change_to_add->getFragmentCount())
+					{
+						memcpy(change_to_add->serializedPayload.data + fragmentStartingNum * change_to_add->getFragmentSize(),
+							incomingChange->serializedPayload.data, incomingChange->getFragmentSize());
+					}
+					else
+					{
+						memcpy(change_to_add->serializedPayload.data + fragmentStartingNum * change_to_add->getFragmentSize(),
+							incomingChange->serializedPayload.data, change_to_add->serializedPayload.length - (count * change_to_add->getFragmentSize()));
+					}
+
+					change_to_add->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
 				}
 
+
 				lock.unlock(); // Next function has its own lock.
-				if (!change_received(existingChange))
+				if (!change_received(change_to_add))
 				{
-					logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << existingChange->sequenceNumber.to64long(), C_BLUE);
-					releaseCache(existingChange);
+					logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_to_add->sequenceNumber.to64long(), C_BLUE);
+					releaseCache(change_to_add);
 					if (getGuid().entityId == c_EntityId_SPDPReader)
 					{
-						mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(existingChange->writerGUID.guidPrefix);
+						mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
 					}
 				}
 			}
