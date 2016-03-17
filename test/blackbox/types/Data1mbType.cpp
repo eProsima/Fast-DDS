@@ -36,7 +36,7 @@ bool Data1mbType::serialize(void *data, SerializedPayload_t *payload) {
 	eprosima::fastcdr::Cdr ser(fastbuffer); 	// Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 	p_type->serialize(ser); 	// Serialize the object:
-    payload->length = (uint16_t)ser.getSerializedDataLength(); 	//Get the serialized length
+    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
 	return true;
 }
 

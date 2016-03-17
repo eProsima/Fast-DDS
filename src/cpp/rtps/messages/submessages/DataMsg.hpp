@@ -239,7 +239,14 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
 	TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos) {
 
 	const char* const METHOD_NAME = "addSubmessageDataFrag";
-	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg(change->serializedPayload.length);
+
+	// Calculate fragment start
+	uint32_t fragment_start = change->getFragmentSize() * (fragment_number - 1);
+	uint32_t fragment_size = change->getFragmentSize();
+	if(fragment_number >= change->getFragmentCount()) // If last fragment, size may be smaller
+		fragment_size = change->serializedPayload.length - fragment_start;
+
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg(fragment_size);
 	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
 	//CDRMessage_t submsgElem;
@@ -299,17 +306,12 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
 		status = status | BIT(1);
 	}
 
-	// Calculate fragment start
-	uint32_t fragment_start = change->getFragmentSize() * fragment_number;
-	uint32_t fragment_size = change->getFragmentSize();
-	if ( fragment_number + 1 >= change->getFragmentCount() ) // If last fragment, size may be smaller
-		fragment_size = change->serializedPayload.length - fragment_start;
-
 	// TODO Check, because I saw init the message two times (other on RTPSMessageGroup::prepareDataSubM)
 	CDRMessage::initCDRMsg(&submsgElem);
 	bool added_no_error = true;
 
-	try{
+	try
+    {
 		//First we create the submsgElements:
 		//extra flags. not in this version.
 		added_no_error &= CDRMessage::addUInt16(&submsgElem, 0);
@@ -325,7 +327,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
 		added_no_error &= CDRMessage::addSequenceNumber(&submsgElem, &change->sequenceNumber);
 
 		// Add fragment starting number
-		added_no_error &= CDRMessage::addUInt32(&submsgElem, fragment_number+1); // fragments start in 1
+		added_no_error &= CDRMessage::addUInt32(&submsgElem, fragment_number); // fragments start in 1
 
 		// Add fragments in submessage
 		added_no_error &= CDRMessage::addUInt16(&submsgElem, 1); // we are sending one fragment
@@ -361,9 +363,13 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
 		//Add Serialized Payload XXX TODO
 		if (!keyFlag) // keyflag = 0 means that the serializedPayload SubmessageElement contains the serialized Data 
 		{
-			added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
-			added_no_error &= CDRMessage::addOctet(&submsgElem, (octet)change->serializedPayload.encapsulation); //ENCAPSULATION
-			added_no_error &= CDRMessage::addUInt16(&submsgElem, 0); //OPTIONS
+            // Encapsulation is added only in the first fragment.
+            if(fragment_number == 1)
+            {
+                added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
+                added_no_error &= CDRMessage::addOctet(&submsgElem, (octet)change->serializedPayload.encapsulation); //ENCAPSULATION
+                added_no_error &= CDRMessage::addUInt16(&submsgElem, 0); //OPTIONS
+            }
 			added_no_error &= CDRMessage::addData(&submsgElem,
 				change->serializedPayload.data + fragment_start,
 				fragment_size);
