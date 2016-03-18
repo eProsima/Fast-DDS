@@ -111,7 +111,11 @@ auto default_data300kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber)
                 }
 
                 if(count == 307201)
+                {
                     ret = data.data()[0];
+                    std::cout << "NUMBER " << ret << std::endl;
+                    std::cout << "SEQ " << info.sample_identity.sequence_number() << std::endl;
+                }
                 else
                     std::cout << "ERROR: received in position " << count << " the value " << static_cast<unsigned>(data.data()[count]) << " instead of " << static_cast<unsigned>((unsigned char)count) << std::endl;
             }
@@ -710,14 +714,15 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     // Because its volatile the durability.
     reader.waitDiscovery();
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
+    for(unsigned int tries = 0; tries < 1; ++tries)
     {
         std::list<uint16_t> msgs = reader.getNonReceivedMessages();
         if(msgs.empty())
             break;
 
         writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(2));
+        // Waiting, it needs more time than other tests because the fragments are large.
+        reader.block(*msgs.rbegin(), std::chrono::seconds(60));
     }
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();

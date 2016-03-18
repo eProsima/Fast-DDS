@@ -660,12 +660,17 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
 	// Validations??? XXX TODO
 
-	msg->pos += 1;
-	octet encapsulation = 0;
-	CDRMessage::readOctet(msg, &encapsulation);
+    // Only read encapsulation when is the first fragment.
+    // Rest of fragments don't have the encapsulation.
+    if(fragmentStartingNum == 1)
+    {
+        msg->pos += 1;
+        octet encapsulation = 0;
+        CDRMessage::readOctet(msg, &encapsulation);
 
-	ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
-	msg->pos += 2; //CDR Options, not used in this version
+        ch->serializedPayload.encapsulation = (uint16_t)encapsulation;
+        msg->pos += 2; //CDR Options, not used in this version
+    }
 
 	if (!keyFlag)
 	{
