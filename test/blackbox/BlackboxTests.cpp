@@ -60,6 +60,7 @@ auto default_helloworld_sender = [](eprosima::fastrtps::Publisher* publisher, co
 	}
 };
 
+const size_t data64kb_length = 63996;
 auto default_data64kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) -> uint16_t
 {
     uint16_t ret = 0;
@@ -70,8 +71,23 @@ auto default_data64kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) 
     {
         if(info.sampleKind == ALIVE)
         {
-            if(data.data().size() == 63996)
-                ret = data.data()[0];
+            if(data.data().size() == data64kb_length)
+            {
+                size_t count = 1;
+                for(;count < data64kb_length; ++count)
+                {
+                    if(data.data()[count] != (unsigned char)(count + data.data()[0]))
+                       break; 
+                }
+
+                if(count == data64kb_length)
+                {
+                    ret = data.data()[0];
+                }
+                else
+                    std::cout << "ERROR: received in position " << count << " the value " << static_cast<unsigned>(data.data()[count]) <<
+                        " instead of " << static_cast<unsigned>((unsigned char)(count + data.data()[0])) << std::endl;
+            }
         }
     }
 
@@ -81,16 +97,19 @@ auto default_data64kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) 
 auto default_data64kb_sender = [](eprosima::fastrtps::Publisher* publisher, const std::list<uint16_t>& msgs) -> void
 {
     Data64kbType::type data;
-    for(int i = 0; i < 63996; ++i)
-        data.data().push_back((unsigned char)i);
 
+    data.data().resize(data64kb_length);
     for(auto it = msgs.begin(); it != msgs.end(); ++it)
     {
         data.data()[0] = (unsigned char)*it;
+        for(size_t i = 1; i < data64kb_length; ++i)
+            data.data()[i] = (unsigned char)(i + data.data()[0]);
+
         ASSERT_EQ(publisher->write((void*)&data), true);
     }
 };
 
+const size_t data300kb_length = 307201;
 auto default_data300kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) -> uint16_t
 {
     uint16_t ret = 0;
@@ -101,21 +120,22 @@ auto default_data300kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber)
     {
         if(info.sampleKind == ALIVE)
         {
-            if(data.data().size() == 307201)
+            if(data.data().size() == data300kb_length)
             {
                 size_t count = 1;
-                for(;count < 307201; ++count)
+                for(;count < data300kb_length; ++count)
                 {
-                    if(data.data()[count] != (unsigned char)count)
+                    if(data.data()[count] != (unsigned char)(count + data.data()[0]))
                        break; 
                 }
 
-                if(count == 307201)
+                if(count == data300kb_length)
                 {
                     ret = data.data()[0];
                 }
                 else
-                    std::cout << "ERROR: received in position " << count << " the value " << static_cast<unsigned>(data.data()[count]) << " instead of " << static_cast<unsigned>((unsigned char)count) << std::endl;
+                    std::cout << "ERROR: received in position " << count << " the value " << static_cast<unsigned>(data.data()[count]) <<
+                        " instead of " << static_cast<unsigned>((unsigned char)(count + data.data()[0])) << std::endl;
             }
         }
     }
@@ -126,12 +146,14 @@ auto default_data300kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber)
 auto default_data300kb_sender = [](eprosima::fastrtps::Publisher* publisher, const std::list<uint16_t>& msgs) -> void
 {
     Data1mbType::type data;
-    for(size_t i = 0; i < 307201; ++i)
-        data.data().push_back((unsigned char)i);
+    data.data().resize(data300kb_length);
 
     for(auto it = msgs.begin(); it != msgs.end(); ++it)
     {
         data.data()[0] = (unsigned char)*it;
+        for(size_t i = 1; i < data300kb_length; ++i)
+            data.data()[i] = (unsigned char)(i + data.data()[0]);
+
         ASSERT_EQ(publisher->write((void*)&data), true);
     }
 };
