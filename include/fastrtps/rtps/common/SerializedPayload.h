@@ -22,7 +22,7 @@
  * @brief Maximum payload is maximum of UDP packet size minus 100bytes.
  * With those 100 bytes is posible to send RTPS Header plus RTPS Data submessage plus RTPS Heartbeat submessage.
  */
-#define PAYLOAD_MAX_SIZE 65436u
+#define PAYLOAD_MAX_SIZE 65430u
 
 namespace eprosima{
     namespace fastrtps{

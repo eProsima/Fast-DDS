@@ -26,7 +26,7 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl,GUID_t& guid,WriterAttributes& 
     Endpoint(impl,guid,att.endpoint),
     m_pushMode(true),
     //TODO 65536 put in constant or macro. It is max size of udp packet.
-    m_cdrmessages(impl->getAttributes().sendSocketBufferSize > 65536 ? 65536 : impl->getAttributes().sendSocketBufferSize),
+    m_cdrmessages(impl->getAttributes().sendSocketBufferSize > 65504 ? 65504 : impl->getAttributes().sendSocketBufferSize),
     m_livelinessAsserted(false),
     mp_unsetChangesNotEmpty(nullptr),
     mp_history(hist),

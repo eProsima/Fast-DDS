@@ -120,7 +120,7 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 		}
 
         // If it is big data, frament it.
-        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - 100) > PAYLOAD_MAX_SIZE ? PAYLOAD_MAX_SIZE : (mp_participant->getAttributes().rtps.sendSocketBufferSize - 100);
+        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - 106) > PAYLOAD_MAX_SIZE ? PAYLOAD_MAX_SIZE : (mp_participant->getAttributes().rtps.sendSocketBufferSize - 106);
 
         if(ch->serializedPayload.length > high_mark)
         {

@@ -40,7 +40,8 @@ namespace eprosima {
                 TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
                         p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
                         mp_RP(p_RP),
-                        m_cdrmessages(p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize > 65536 ? 65536 : p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize)
+                        //TODO Put in a macro
+                        m_cdrmessages(p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize > 65504 ? 65504 : p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize)
                 {
                     CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
                     RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->getGuid().guidPrefix);

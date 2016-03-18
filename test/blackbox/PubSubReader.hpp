@@ -100,7 +100,7 @@ class PubSubReader
             ASSERT_NE(subscriber_, nullptr);
 
             // Initialize list of msgs
-            for(uint16_t count = 0; count < nmsgs; ++count)
+            for(uint16_t count = 1; count <= nmsgs; ++count)
             {
                 msgs_.push_back(count);
             }
@@ -121,6 +121,7 @@ class PubSubReader
 
         void newNumber(uint16_t number)
         {
+            ASSERT_NE(number, 0);
             std::unique_lock<std::mutex> lock(mutex_);
             std::list<uint16_t>::iterator it = std::find(msgs_.begin(), msgs_.end(), number);
             ASSERT_NE(it, msgs_.end());

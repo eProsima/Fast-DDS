@@ -633,7 +633,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	// READ SAMPLESIZE
 	uint32_t sampleSize;
 	CDRMessage::readUInt32(msg, &sampleSize);
-	sampleSize -= (2 + 2); // Minus encapsulation
 
 	//Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
 	if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG)

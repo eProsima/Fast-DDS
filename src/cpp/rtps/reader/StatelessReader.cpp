@@ -259,24 +259,30 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
 		if (existingChange != NULL) { // If found, merge with new CacheChange
 			
+            bool wasUpdated = false;
+
 			for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + incomingChange->getFragmentCount(); ++count)
 			{
-				if (count + 1 != existingChange->getFragmentCount())
-				{
-					memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
-						incomingChange->serializedPayload.data, incomingChange->getFragmentSize());
-				}
-				else
-				{
-					memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
-						incomingChange->serializedPayload.data, existingChange->serializedPayload.length - (count * existingChange->getFragmentSize()));
-				}
+                if(existingChange->getDataFragments()->at(count) == ChangeFragmentStatus_t::NOT_PRESENT)
+                {
+                    if (count + 1 != existingChange->getFragmentCount())
+                    {
+                        memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
+                                incomingChange->serializedPayload.data, incomingChange->getFragmentSize());
+                    }
+                    else
+                    {
+                        memcpy(existingChange->serializedPayload.data + fragmentStartingNum * existingChange->getFragmentSize(),
+                                incomingChange->serializedPayload.data, existingChange->serializedPayload.length - (count * existingChange->getFragmentSize()));
+                    }
 
-				existingChange->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
+                    existingChange->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
+                    wasUpdated = true;
+                }
 			}
 
 			lock.unlock(); // Next function has its own lock.
-			if (!change_updated(existingChange))
+			if(wasUpdated && !change_updated(existingChange))
 			{
 				logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << existingChange->sequenceNumber.to64long(), C_BLUE);
 				releaseCache(existingChange);

@@ -91,7 +91,7 @@ auto default_data64kb_sender = [](eprosima::fastrtps::Publisher* publisher, cons
     }
 };
 
-auto default_data1mb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) -> uint16_t
+auto default_data300kb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) -> uint16_t
 {
     uint16_t ret = 0;
     Data1mbType::type data;
@@ -101,18 +101,30 @@ auto default_data1mb_receiver = [](eprosima::fastrtps::Subscriber* subscriber) -
     {
         if(info.sampleKind == ALIVE)
         {
-            if(data.data().size() == 1024000)
-                ret = data.data()[0];
+            if(data.data().size() == 307201)
+            {
+                size_t count = 1;
+                for(;count < 307201; ++count)
+                {
+                    if(data.data()[count] != (unsigned char)count)
+                       break; 
+                }
+
+                if(count == 307201)
+                    ret = data.data()[0];
+                else
+                    std::cout << "ERROR: received in position " << count << " the value " << static_cast<unsigned>(data.data()[count]) << " instead of " << static_cast<unsigned>((unsigned char)count) << std::endl;
+            }
         }
     }
 
     return ret;
 };
 
-auto default_data1mb_sender = [](eprosima::fastrtps::Publisher* publisher, const std::list<uint16_t>& msgs) -> void
+auto default_data300kb_sender = [](eprosima::fastrtps::Publisher* publisher, const std::list<uint16_t>& msgs) -> void
 {
     Data1mbType::type data;
-    for(int i = 0; i < 1024000; ++i)
+    for(size_t i = 0; i < 307201; ++i)
         data.data().push_back((unsigned char)i);
 
     for(auto it = msgs.begin(); it != msgs.end(); ++it)
@@ -671,19 +683,19 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     ASSERT_EQ(msgs.size(), 0);
 }
 
-TEST(BlackBox, PubSubAsNonReliableData1mb)
+TEST(BlackBox, PubSubAsNonReliableData300kb)
 {
-    PubSubWriter<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> writer(default_data1mb_sender);
+    PubSubWriter<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> writer(default_data300kb_sender);
     
     writer.init();
 
     ASSERT_FALSE(writer.isInitialized());
 }
 
-TEST(BlackBox, AsyncPubSubAsNonReliableData1mb)
+TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 {
-    PubSubReader<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> reader(default_data1mb_receiver);
-    PubSubWriter<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> writer(default_data1mb_sender);
+    PubSubReader<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> reader(default_data300kb_receiver);
+    PubSubWriter<Data1mbType, eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS> writer(default_data300kb_sender);
     const uint16_t nmsgs = 100;
     
     reader.init(nmsgs);
