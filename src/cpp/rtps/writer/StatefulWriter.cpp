@@ -217,7 +217,7 @@ void StatefulWriter::unsent_changes_not_empty()
                     uint32_t bytesSent = 0;
                     do
                     {
-                        RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+                        bytesSent =  RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
                                 relevant_changes,
                                 (*rit)->m_att.guid.guidPrefix,
                                 (*rit)->m_att.guid.entityId,
