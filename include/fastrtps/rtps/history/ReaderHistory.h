@@ -88,6 +88,9 @@ public:
 	RTPS_DllAPI void postSemaphore();
 	//!Wait for the semaphore
 	RTPS_DllAPI void waitSemaphore();
+
+	RTPS_DllAPI bool thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq);
+
 protected:
 	//!Pointer to the reader
 	RTPSReader* mp_reader;

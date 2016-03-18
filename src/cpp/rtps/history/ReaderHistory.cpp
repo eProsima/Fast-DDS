@@ -80,6 +80,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	if ((m_historyRecord[a_change->writerGUID].insert(a_change->sequenceNumber)).second)
 	{
 		m_changes.push_back(a_change);
+        sortCacheChanges();
 		updateMaxMinSeqNum();
 		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 		return true;
@@ -154,32 +155,10 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
 	return mp_semaphore->wait();
 }
 
-//
-//bool ReaderHistory::isUnreadCache()
-//{
-//	if(m_unreadCacheCount>0)
-//		return true;
-//	else
-//		return false;
-//}
-//
-//bool ReaderHistory::get_last_added_cache(CacheChange_t** change)
-//{
-//	if(mp_lastAddedCacheChange->sequenceNumber != mp_invalidCache->sequenceNumber)
-//	{
-//		*change = mp_lastAddedCacheChange;
-//		return true;
-//	}
-//	return false;
-//}
-//
-//
-//bool ReaderHistory::removeCacheChangesByKey(InstanceHandle_t& key)
-//{
-//	const char* const METHOD_NAME = "removeCacheChangesByKey";
-//	logError(RTPS_HISTORY,"Not Implemented yet";);
-//	return false;
-//}
+bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
+{
+    return m_historyRecord[guid].find(seq) != m_historyRecord[guid].end();
+}
 
 }
 } /* namespace rtps */

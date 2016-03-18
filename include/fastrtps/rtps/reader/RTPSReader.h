@@ -167,6 +167,8 @@ protected:
 	//!Expects Inline Qos.
 	bool m_expectsInlineQos;
 
+    std::vector<CacheChange_t*> cache_;
+
     private:
 
         RTPSReader& operator=(const RTPSReader&) NON_COPYABLE_CXX11;

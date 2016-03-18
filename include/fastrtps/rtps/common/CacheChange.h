@@ -111,8 +111,7 @@ struct RTPS_DllAPI CacheChange_t{
 		bool ret = serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 
 		setFragmentSize(ch_ptr->fragment_size);
-		dataFragments->clear();
-		dataFragments->insert(dataFragments->begin(), ch_ptr->dataFragments->begin(), ch_ptr->dataFragments->end());
+		dataFragments->assign(ch_ptr->dataFragments->begin(), ch_ptr->dataFragments->end());
 
 		return ret;
 	}
@@ -152,11 +151,10 @@ struct RTPS_DllAPI CacheChange_t{
 		} 
         else
         {
+            //TODO Mirar si cuando se compatibilice con RTI funciona el calculo, porque ellos
+            //en el sampleSize incluyen el padding.
             uint32_t size = (serializedPayload.length + fragment_size - 1) / fragment_size;
-            if(size != dataFragments->size()) 
-            {
-                dataFragments->resize(size, ChangeFragmentStatus_t::NOT_PRESENT);
-            }
+            dataFragments->assign(size, ChangeFragmentStatus_t::NOT_PRESENT);
 		}
 	}
 

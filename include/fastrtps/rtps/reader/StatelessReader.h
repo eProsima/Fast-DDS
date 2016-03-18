@@ -96,8 +96,6 @@ public:
 	 */
 	bool change_received(CacheChange_t* a_change);
 
-	bool change_updated(CacheChange_t* change);
-
 	/**
 	 * Read the next unread CacheChange_t from the history
 	 * @param change POinter to pointer of CacheChange_t
