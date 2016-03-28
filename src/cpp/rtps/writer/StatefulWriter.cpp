@@ -366,7 +366,7 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
             {
                 if(changeForReader.getStatus() != ACKNOWLEDGED)
                 {
-                    logInfo(RTPS_WRITER, "Change not acked. Relevant: " << changeForReader.is_relevant << " status: " << changeForReader.status << endl);
+                    logInfo(RTPS_WRITER, "Change not acked. Relevant: " << changeForReader.isRelevant() << " status: " << changeForReader.getStatus() << endl);
                     return false;
                 }
             }

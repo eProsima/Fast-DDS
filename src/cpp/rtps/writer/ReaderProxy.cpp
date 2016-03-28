@@ -71,7 +71,7 @@ bool ReaderProxy::getChangeForReader(const SequenceNumber_t& seqNum, ChangeForRe
     if(chit != m_changesForReader.end())
     {
         *changeForReader = *chit;
-        logInfo(RTPS_WRITER,"Change " << seq <<" found in Reader Proxy " << endl);
+        logInfo(RTPS_WRITER,"Change " << seqNum <<" found in Reader Proxy " << endl);
         return true;
     }
 
