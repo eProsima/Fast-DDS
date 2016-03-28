@@ -22,6 +22,8 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
+#include <cassert>
+
 using namespace eprosima::fastrtps::rtps;
 
 static const char* const CLASS_NAME = "ReaderProxy";
@@ -115,8 +117,13 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
+
             m_changesForReader.erase(chit);
-            m_changesForReader.insert(newch);
+
+            auto ret = m_changesForReader.insert(newch);
+            (void)ret;
+            assert(ret.second);
+
             m_isRequestedChangesEmpty = false;
         }
 	}
@@ -134,16 +141,23 @@ std::vector<const ChangeForReader_t*> ReaderProxy::requested_changes_to_underway
     std::vector<const ChangeForReader_t*> returnedValue;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-	for(auto it = m_changesForReader.begin(); it!=m_changesForReader.end(); ++it)
+    auto it = m_changesForReader.begin();
+    while(it != m_changesForReader.end())
 	{
 		if(it->getStatus() == REQUESTED)
 		{
             ChangeForReader_t newch(*it);
             newch.setStatus(UNDERWAY);
+
             m_changesForReader.erase(it);
+
             auto ret = m_changesForReader.insert(newch);
+            assert(ret.second);
             returnedValue.push_back(&(*ret.first));
+            it = ret.first;
 		}
+
+        ++it;
 	}
 
     return returnedValue;
@@ -154,16 +168,23 @@ std::vector<const ChangeForReader_t*> ReaderProxy::unsent_changes_to_underway()
     std::vector<const ChangeForReader_t*> returnedValue;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-	for(auto it = m_changesForReader.begin(); it!=m_changesForReader.end(); ++it)
+    auto it = m_changesForReader.begin();
+    while(it != m_changesForReader.end())
 	{
 		if(it->getStatus() == UNSENT)
 		{
             ChangeForReader_t newch(*it);
             newch.setStatus(UNDERWAY);
+
             m_changesForReader.erase(it);
+
             auto ret = m_changesForReader.insert(newch);
+            assert(ret.second);
             returnedValue.push_back(&(*ret.first));
+            it = ret.first;
 		}
+
+        ++it;
 	}
 
     return returnedValue;
@@ -172,15 +193,23 @@ std::vector<const ChangeForReader_t*> ReaderProxy::unsent_changes_to_underway()
 void ReaderProxy::underway_changes_to_unacknowledged()
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(auto it = m_changesForReader.begin(); it!=m_changesForReader.end(); ++it)
+
+    auto it = m_changesForReader.begin();
+    while(it != m_changesForReader.end())
 	{
 		if(it->getStatus() == UNDERWAY)
 		{
             ChangeForReader_t newch(*it);
             newch.setStatus(UNACKNOWLEDGED);
+
             m_changesForReader.erase(it);
-            m_changesForReader.insert(newch);
+
+            auto ret = m_changesForReader.insert(newch);
+            assert(ret.second);
+            it = ret.first;
 		}
+
+        ++it;
 	}
 }
 
@@ -188,15 +217,22 @@ void ReaderProxy::underway_changes_to_acknowledged()
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-	for(auto it = m_changesForReader.begin(); it!=m_changesForReader.end(); ++it)
+    auto it = m_changesForReader.begin();
+    while(it != m_changesForReader.end())
 	{
 		if(it->getStatus() == UNDERWAY)
 		{
             ChangeForReader_t newch(*it);
             newch.setStatus(ACKNOWLEDGED);
+
             m_changesForReader.erase(it);
-            m_changesForReader.insert(newch);
+
+            auto ret = m_changesForReader.insert(newch);
+            assert(ret.second);
+            it = ret.first;
 		}
+
+        ++it;
 	}
 
     cleanup();
@@ -218,8 +254,12 @@ void ReaderProxy::setNotValid(const CacheChange_t* change)
         {
             ChangeForReader_t newch(*chit);
             newch.notValid();
+
             m_changesForReader.erase(chit);
-            chit = m_changesForReader.insert(newch).first;
+
+            auto ret = m_changesForReader.insert(newch);
+            (void)ret;
+            assert(ret.second);
         }
     }
 
