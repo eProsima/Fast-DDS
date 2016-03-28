@@ -51,18 +51,10 @@ void NackSupressionDuration::event(EventCode code, const char* msg)
 	{
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
 		logInfo(RTPS_WRITER,"Changing underway to unacked for Reader: "<<mp_RP->m_att.guid);
-		for(std::vector<ChangeForReader_t>::iterator cit=mp_RP->m_changesForReader.begin();
-				cit!=mp_RP->m_changesForReader.end();++cit)
-		{
-			if(cit->status == UNDERWAY)
-			{
-				if(mp_RP->m_att.endpoint.reliabilityKind == RELIABLE)
-					cit->status = UNACKNOWLEDGED;
-				else
-					cit->status = ACKNOWLEDGED;
-			}
-		}
-
+        if(mp_RP->m_att.endpoint.reliabilityKind == RELIABLE)
+            mp_RP->underway_changes_to_unacknowledged();
+        else
+            mp_RP->underway_changes_to_acknowledged();
 	}
 	else if(code == EVENT_ABORT)
 	{

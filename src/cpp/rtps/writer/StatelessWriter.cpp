@@ -54,7 +54,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
 	const char* const METHOD_NAME = "unsent_change_added_to_history";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	std::vector<CacheChange_t*> change;
+	std::vector<const CacheChange_t*> change;
 	change.push_back(cptr);
 	LocatorList_t locList;
 	LocatorList_t locList2;
