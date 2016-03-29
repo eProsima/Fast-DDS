@@ -49,7 +49,6 @@ param_list(parameters) ::= <<>>
 param(parameter) ::= <<>>
 
 const_decl(ctx, parent, const) ::= <<
-const $const.typeCode.cppTypename$ $const.name$ = $const.value$;
 >>
 
 typedef_decl(ctx, parent, typedefs) ::= <<
