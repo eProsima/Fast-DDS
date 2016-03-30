@@ -239,7 +239,7 @@ inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& s
  * @param inc SequenceNumber_t to substract
  * @return Result of the substraction
  */
-inline SequenceNumber_t operator-(SequenceNumber_t& seq, uint32_t inc)
+inline SequenceNumber_t operator-(const SequenceNumber_t& seq, const uint32_t inc)
 {
 	SequenceNumber_t res(seq.high, seq.low - inc);
 

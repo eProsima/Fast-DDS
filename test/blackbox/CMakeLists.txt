@@ -26,6 +26,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ReqRepHelloWorldReplier.cpp
             PubSubData64kbReader.cpp
             PubSubData64kbWriter.cpp
+            PubSubKeepLastReader.cpp
+            PubSubKeepLastWriter.cpp
             )
         add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
         add_gtest(BlackboxTests ${BLACKBOXTESTS_SOURCE})

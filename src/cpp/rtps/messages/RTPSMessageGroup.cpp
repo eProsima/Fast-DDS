@@ -157,7 +157,7 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 	return true;
 }
 
-void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId)
+void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId)
 {
 	const char* const METHOD_NAME = "prepareDataSubM";
 	ParameterList_t* inlineQos = NULL;
@@ -168,14 +168,14 @@ void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool e
 //			inlineQos = W->getInlineQos();
 	}
 	CDRMessage::initCDRMsg(submsg);
-	bool added= RTPSMessageCreator::addSubmessageData(submsg,change,W->getAttributes()->topicKind,ReaderId,expectsInlineQos,inlineQos);
+	bool added= RTPSMessageCreator::addSubmessageData(submsg, change, W->getAttributes()->topicKind, ReaderId, expectsInlineQos, inlineQos);
 	if(!added)
 		logError(RTPS_WRITER,"Problem adding DATA submsg to the CDRMessage, buffer too small";);
 }
 
 
 bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-		RTPSWriter* W, std::vector<CacheChange_t*>* changes,
+		RTPSWriter* W, std::vector<const CacheChange_t*>* changes,
         const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
 		LocatorList_t& unicast, LocatorList_t& multicast,
 		bool expectsInlineQos)
@@ -188,12 +188,12 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 //	cout << "Msg group with sizes: "<<cdrmsg_submessage->max_size << " ";
 //	cout << cdrmsg_header->max_size << " ";
 //	cout << cdrmsg_fullmsg->max_size << " "<<endl;
-	std::vector<CacheChange_t*>::iterator cit =changes->begin();
+	std::vector<const CacheChange_t*>::iterator cit = changes->begin();
 
 	uint16_t data_msg_size = 0;
 	uint16_t change_n = 1;
 	//FIRST SUBMESSAGE
-	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
+	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos, *cit, ReaderId);
 	data_msg_size = (uint16_t)cdrmsg_submessage->length;
 	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{
@@ -250,7 +250,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 }
 
 bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-		RTPSWriter* W, std::vector<CacheChange_t*>* changes,
+		RTPSWriter* W, std::vector<const CacheChange_t*>* changes,
         const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
         const Locator_t& loc, bool expectsInlineQos)
 {
@@ -265,8 +265,8 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 	uint16_t data_msg_size = 0;
 	uint16_t change_n = 1;
 	//FIRST SUBMESSAGE
-	std::vector<CacheChange_t*>::iterator cit = changes->begin();
-	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos,*cit,ReaderId);
+	std::vector<const CacheChange_t*>::iterator cit = changes->begin();
+	RTPSMessageGroup::prepareDataSubM(W,cdrmsg_submessage, expectsInlineQos, *cit, ReaderId);
 	data_msg_size = (uint16_t)cdrmsg_submessage->length;
 	if(data_msg_size+(uint32_t)RTPSMESSAGE_HEADER_SIZE > msg_group->m_rtpsmsg_fullmsg.max_size)
 	{

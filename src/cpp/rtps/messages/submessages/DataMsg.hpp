@@ -21,7 +21,7 @@ namespace rtps{
 
 
 bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
-		GuidPrefix_t& guidprefix,CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos){
+		GuidPrefix_t& guidprefix, const CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos){
 
 	const char* const METHOD_NAME = "addMessageData";
 	try{
@@ -45,7 +45,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 
 
-bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg,CacheChange_t* change,
+bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
 		TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos) {
 	const char* const METHOD_NAME = "addSubmessageData";
 	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg(change->serializedPayload.length);
