@@ -88,7 +88,7 @@ static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqN
  */
 static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,
+		std::vector<const CacheChange_t*>* changes,
         const GuidPrefix_t& remoteGuidPrefix,
         const EntityId_t& ReaderId,
 		LocatorList_t& unicast,
@@ -106,7 +106,7 @@ static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
  */
 static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		RTPSWriter* W,
-		std::vector<CacheChange_t*>* changes,
+		std::vector<const CacheChange_t*>* changes,
         const GuidPrefix_t& remoteGuidPrefix,
         const EntityId_t& ReaderId,
 		const Locator_t& loc,
@@ -120,7 +120,7 @@ static bool send_Changes_AsData(RTPSMessageGroup_t* msg_group,
  * @param ReaderId
  * @return 
  */
-static void prepareDataSubM(RTPSWriter* W,CDRMessage_t* submsg,bool expectsInlineQos,CacheChange_t* change,const EntityId_t& ReaderId);
+static void prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId);
 
 
 };

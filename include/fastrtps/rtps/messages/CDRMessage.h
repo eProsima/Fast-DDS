@@ -92,11 +92,11 @@ namespace CDRMessage{
 	  inline bool addUInt32(CDRMessage_t*msg,uint32_t lo);
 	  inline bool addInt64(CDRMessage_t*msg,int64_t lo);
 	  inline bool addEntityId(CDRMessage_t*msg,const EntityId_t* id);
-	  inline bool addSequenceNumber(CDRMessage_t*msg,SequenceNumber_t* sn);
+	  inline bool addSequenceNumber(CDRMessage_t*msg, const SequenceNumber_t* sn);
 	  inline bool addSequenceNumberSet(CDRMessage_t*msg,SequenceNumberSet_t* sns);
 	  inline bool addLocator(CDRMessage_t*msg,Locator_t*loc);
 	  inline bool addParameterStatus(CDRMessage_t*msg,octet status);
-	  inline bool addParameterKey(CDRMessage_t*msg,InstanceHandle_t* iHandle);
+	  inline bool addParameterKey(CDRMessage_t*msg, const InstanceHandle_t* iHandle);
 	  inline bool addParameterSentinel(CDRMessage_t*msg);
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
 	  inline bool addString(CDRMessage_t*msg,std::string& in_str);

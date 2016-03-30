@@ -134,7 +134,7 @@ public:
 	* @param change Pointer to pointer to CacheChange_t, to store the change
 	* @return true on success
 	*/
-	bool get_change(SequenceNumber_t& seq,CacheChange_t** change);
+	bool get_change(SequenceNumber_t& seq, CacheChange_t** change);
 
 	/**
 	* Check if the writer is alive
