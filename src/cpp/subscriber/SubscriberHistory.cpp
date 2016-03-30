@@ -379,7 +379,12 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches:
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
-		return this->remove_change(change);
+		if(this->remove_change(change))
+        {
+            m_isHistoryFull = false;
+            return true;
+        }
+        return false;
 	}
 	else
 	{
@@ -401,6 +406,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change,t_v_Inst_Caches:
 				if(remove_change(change))
 				{
 					vit->second.erase(chit);
+                    m_isHistoryFull = false;
 					return true;
 				}
 			}
