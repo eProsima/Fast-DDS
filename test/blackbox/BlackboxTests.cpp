@@ -14,9 +14,12 @@
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "PubSubAsReliableData64kbReader.hpp"
 #include "PubSubAsReliableData64kbWriter.hpp"
+#include "PubSubKeepLastReader.hpp"
+#include "PubSubKeepLastWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
+#include <thread>
 #include <gtest/gtest.h>
 
 class BlackboxEnvironment : public ::testing::Environment
@@ -331,6 +334,43 @@ TEST(BlackBox, PubSubAsReliableData64kb)
 
     // Check that reader receives the unmatched.
     reader.waitRemoval();
+}
+
+// Test created to check bug #1555 (Github #31)
+TEST(BlackBox, PubSubKeepLast)
+{
+    PubSubKeepLastReader reader;
+    PubSubKeepLastWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability
+    reader.waitDiscovery();
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
+    writer.send(msgs);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    reader.read(*msgs.rbegin(), std::chrono::seconds(60));
+
+    msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
 }
 
 int main(int argc, char **argv)
