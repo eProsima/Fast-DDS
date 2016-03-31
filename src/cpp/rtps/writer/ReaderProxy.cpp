@@ -83,22 +83,12 @@ bool ReaderProxy::getChangeForReader(const SequenceNumber_t& seqNum, ChangeForRe
 bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    auto chit = m_changesForReader.find(ChangeForReader_t(seqNum));
+    
+    auto chit = m_changesForReader.begin();
 
-    if(chit != m_changesForReader.end())
+    while(chit != m_changesForReader.end() && chit->getSequenceNumber() < seqNum)
     {
-        if(chit == m_changesForReader.begin())
-        { // If first, remove and cleanup.
-            m_changesForReader.erase(chit);
-            cleanup();
-        }
-        else
-        {
-            ChangeForReader_t newch(*chit);
-            newch.setStatus(ACKNOWLEDGED);
-            m_changesForReader.erase(chit);
-            m_changesForReader.insert(newch);
-        }
+        chit = m_changesForReader.erase(chit);
     }
 
     return false;
@@ -213,6 +203,7 @@ void ReaderProxy::underway_changes_to_unacknowledged()
 	}
 }
 
+// TODO Study if cleanup is necessary
 void ReaderProxy::underway_changes_to_acknowledged()
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);

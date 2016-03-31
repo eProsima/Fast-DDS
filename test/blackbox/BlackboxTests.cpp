@@ -327,13 +327,19 @@ TEST(BlackBox, PubSubAsReliableData64kb)
 
     // Send some data.
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
     writer.send(msgs);
+    reader.block(*msgs.rbegin(), std::chrono::seconds(60));
 
-    // Destroy the writer participant.
-    writer.destroy();
-
-    // Check that reader receives the unmatched.
-    reader.waitRemoval();
+    msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
 }
 
 // Test created to check bug #1555 (Github #31)
@@ -359,8 +365,8 @@ TEST(BlackBox, PubSubKeepLast)
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
 
     writer.send(msgs);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    reader.read(*msgs.rbegin(), std::chrono::seconds(60));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    reader.read(*msgs.rbegin(), std::chrono::seconds(120));
 
     msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)

@@ -252,7 +252,7 @@ namespace eprosima
 
                 struct ChangeForReaderCmp
                 {
-                    bool operator()(const ChangeForReader_t& a, const ChangeForReader_t& b)
+                    bool operator()(const ChangeForReader_t& a, const ChangeForReader_t& b) const
                     {
                         return a.seq_num_ < b.seq_num_;
                     }

@@ -101,15 +101,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             else
                 changeForReader.setStatus(UNACKNOWLEDGED);
 
-            // Block access to ReaderProxy
-            (*it)->mp_mutex->lock();
             changeForReader.setRelevance((*it)->rtps_is_relevant(change));
             (*it)->m_changesForReader.insert(changeForReader);
             unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
             multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
             expectsInlineQos |= (*it)->m_att.expectsInlineQos;
-            // Release access before restart the timer.
-            (*it)->mp_mutex->unlock();
 
             (*it)->mp_nackSupression->restart_timer();
         }
