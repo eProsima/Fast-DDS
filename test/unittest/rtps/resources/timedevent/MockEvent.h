@@ -20,8 +20,8 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 
         bool wait(unsigned int milliseconds);
 
-        std::atomic_int32_t successed_;
-        std::atomic_int32_t cancelled_;
+        std::atomic<int> successed_;
+        std::atomic<int> cancelled_;
         static int destructed_;
         static std::mutex destruction_mutex_;
         static std::condition_variable destruction_cond_;
