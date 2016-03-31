@@ -594,7 +594,10 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             // TODO Ricardo: Study if isAlive attribute is necessary.
 			(*it)->isAlive = true;
             if((*it)->mp_leaseDurationTimer != nullptr)
+            {
+                (*it)->mp_leaseDurationTimer->cancel_timer();
                 (*it)->mp_leaseDurationTimer->restart_timer();
+            }
 			break;
 		}
 	}

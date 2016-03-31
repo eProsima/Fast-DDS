@@ -208,7 +208,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
             if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
             {
-                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
+                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
             }
         }
     }

@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
+#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
@@ -107,6 +108,8 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                     mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (*lit));
             }
         }
+        else
+            mp_RP->mp_nackSupression->restart_timer();
     }
     else if(code == EVENT_ABORT)
     {
