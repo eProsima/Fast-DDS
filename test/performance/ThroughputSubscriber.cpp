@@ -51,11 +51,11 @@ void ThroughputSubscriber::DataSubListener::reset()
 	lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& match_info)
 {
-    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.mutex_);
 
-	if(info.status == MATCHED_MATCHING)
+	if(match_info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "DATA Sub Matched"<<C_DEF<<endl;
 		++m_up.disc_count_;
@@ -72,7 +72,7 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*
 void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* /*sub*/)
 {
 	//	cout << "NEW DATA MSG: "<< throughputin->seqnum << endl;
-	while(m_up.mp_datasub->takeNextData((void*)throughputin,&info))
+	while(m_up.mp_datasub->takeNextData((void*)throughputin, &info))
 	{
 		//myfile << throughputin.seqnum << ",";
 		if(info.sampleKind == ALIVE)
@@ -103,11 +103,11 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
 
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){}
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){}
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& match_info)
 {
-    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.mutex_);
 
-	if(info.status == MATCHED_MATCHING)
+	if(match_info.status == MATCHED_MATCHING)
 	{
 		cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<endl;
         ++m_up.disc_count_;
@@ -148,11 +148,11 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*su
                                       break;
                                   }
             case (TEST_STARTS):{
-                                   m_up.t_start_ = boost::chrono::steady_clock::now();
+                                   m_up.t_start_ = std::chrono::steady_clock::now();
                                    break;
                                }
             case (TEST_ENDS):{
-                                 m_up.t_end_ = boost::chrono::steady_clock::now();
+                                 m_up.t_end_ = std::chrono::steady_clock::now();
                                  m_up.m_DataSubListener.saveNumbers();
                                  cout << "TEST ends, sending results"<<endl;
                                  ThroughputCommandType comm;
@@ -161,7 +161,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*su
                                  comm.m_size = m_up.m_datasize+4+4;
                                  comm.m_lastrecsample = m_up.m_DataSubListener.saved_lastseqnum;
                                  comm.m_lostsamples = m_up.m_DataSubListener.saved_lostsamples;
-                                 comm.m_totaltime = boost::numeric_cast<uint64_t>((boost::chrono::duration<double, boost::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
+                                 comm.m_totaltime = boost::numeric_cast<uint64_t>((std::chrono::duration<double, std::micro>(m_up.t_end_ - m_up.t_start_) - m_up.t_overhead_).count());
                                  cout << "Last Received Sample: " << comm.m_lastrecsample << endl;
                                  cout << "Lost Samples: " << comm.m_lostsamples << endl;
                                  cout << "Test of size "<<comm.m_size << " and demand "<<comm.m_demand << " ends."<<endl; 
@@ -172,7 +172,7 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* /*su
                              }
             case (ALL_STOPS):
                              {
-                                 boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+                                 std::unique_lock<std::mutex> lock(m_up.mutex_);
                                  ++m_up.stop_count_;
                                  lock.unlock();
                                  m_up.stop_cond_.notify_one();
@@ -189,7 +189,7 @@ ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscribe
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){}
 void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -238,10 +238,10 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
 
 
-    t_start_ = boost::chrono::steady_clock::now();
+    t_start_ = std::chrono::steady_clock::now();
 	for(int i = 0; i < 1000; ++i)
-        t_end_ = boost::chrono::steady_clock::now();
-	t_overhead_ = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) / 1001;
+        t_end_ = std::chrono::steady_clock::now();
+	t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
 	cout << "Overhead " << t_overhead_.count() << endl;
 
 	//SUBSCRIBER DATA
@@ -321,7 +321,7 @@ void ThroughputSubscriber::run()
 	if(!ready)
 		return;
 	cout << "Waiting for discovery"<<endl;
-    boost::unique_lock<boost::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     while(disc_count_ != 3) disc_cond_.wait(lock);
 	cout << "Discovery complete"<<endl;
 	//printLabelsSubscriber();
