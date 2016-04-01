@@ -120,6 +120,8 @@ public:
 	*/
 	TopicDataType* getType() {return mp_type;};
 
+    bool clean_history(unsigned int max = 0);
+
 private:
 	ParticipantImpl* mp_participant;
 	//! Pointer to the associated Data Writer.

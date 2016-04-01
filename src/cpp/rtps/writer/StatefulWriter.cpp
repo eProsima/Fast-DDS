@@ -371,13 +371,16 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
     return true;
 }
 
-void StatefulWriter::clean_history()
+bool StatefulWriter::clean_history(unsigned int max)
 {
+    const char* const METHOD_NAME = "clean_history";
+    logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> ackca;
+    bool limit = (max != 0);
 
     for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
-            cit != mp_history->changesEnd(); ++cit)
+            cit != mp_history->changesEnd() && (!limit || ackca.size() < max); ++cit)
     {
         bool acknowledge = true, linked = false;
 
@@ -407,6 +410,8 @@ void StatefulWriter::clean_history()
     {
         mp_history->remove_change_g(*cit);
     }
+
+    return (ackca.size() > 0);
 }
 
 /*

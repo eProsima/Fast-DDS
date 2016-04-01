@@ -90,7 +90,7 @@ public:
 	 */
 	bool is_acked_by_all(CacheChange_t* a_change);
 
-    void clean_history();
+    bool clean_history(unsigned int max = 0);
 
 	/**
 	 * Update the Attributes of the Writer.
