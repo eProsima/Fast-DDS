@@ -28,6 +28,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             PubSubData64kbWriter.cpp
             PubSubKeepLastReader.cpp
             PubSubKeepLastWriter.cpp
+            PubSubKeepAllReader.cpp
+            PubSubKeepAllWriter.cpp
+            PubSubKeepAllTransientReader.cpp
+            PubSubKeepAllTransientWriter.cpp
             )
         add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
         add_gtest(BlackboxTests ${BLACKBOXTESTS_SOURCE})

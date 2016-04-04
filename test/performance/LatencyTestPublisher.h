@@ -18,10 +18,8 @@
 
 #include "LatencyTestTypes.h"
 
-#include <boost/thread/thread_time.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/chrono.hpp>
+#include <condition_variable>
+#include <chrono>
 
 class TimeStats{
 public:
@@ -29,7 +27,7 @@ public:
 	~TimeStats(){}
 	uint64_t nbytes;
     unsigned int received;
-    boost::chrono::duration<double, boost::micro>  m_min, m_max;
+    std::chrono::duration<double, std::micro>  m_min, m_max;
 	double p50, p90, p99, p9999, mean, stdev;
 };
 
@@ -45,20 +43,20 @@ public:
 	Subscriber* mp_commandsub;
 	LatencyType* mp_latency_in;
 	LatencyType* mp_latency_out;
-    boost::chrono::steady_clock::time_point t_start_, t_end_;
-    boost::chrono::duration<double, boost::micro> t_overhead_;
+    std::chrono::steady_clock::time_point t_start_, t_end_;
+    std::chrono::duration<double, std::micro> t_overhead_;
 	int n_subscribers;
 	unsigned int n_samples;
 	SampleInfo_t m_sampleinfo;
-	std::vector<boost::chrono::duration<double, boost::micro>> times_;
+	std::vector<std::chrono::duration<double, std::micro>> times_;
 	std::vector<TimeStats> m_stats;
-    boost::mutex mutex_;
+    std::mutex mutex_;
     int disc_count_;
-	boost::condition_variable disc_cond_;
+	std::condition_variable disc_cond_;
     int comm_count_;
-	boost::condition_variable comm_cond_;
+	std::condition_variable comm_cond_;
     int data_count_;
-	boost::condition_variable data_cond_;
+	std::condition_variable data_cond_;
 	int m_status;
 	unsigned int n_received;
 	bool n_export_csv;

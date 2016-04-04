@@ -141,10 +141,10 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 	Domain::registerType(mp_participant,(TopicDataType*)&command_t);
 
     // Calculate overhead
-    t_start_ = boost::chrono::steady_clock::now();
+    t_start_ = std::chrono::steady_clock::now();
 	for(int i= 0; i < 1000; ++i)
-        t_end_ = boost::chrono::steady_clock::now();
-	t_overhead_ = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) / 1001;
+        t_end_ = std::chrono::steady_clock::now();
+	t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
 	cout << "Overhead " << t_overhead_.count() << " ns"  << endl;
 
 	// DATA PUBLISHER
@@ -232,7 +232,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 
 void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -258,7 +258,7 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pu
 
 void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -284,7 +284,7 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*
 
 void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -310,7 +310,7 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /
 
 void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -364,8 +364,8 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* /*sub*/
 
 	if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
 	{
-        mp_up->t_end_ = boost::chrono::steady_clock::now();
-        mp_up->times_.push_back(boost::chrono::duration<double, boost::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
+        mp_up->t_end_ = std::chrono::steady_clock::now();
+        mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
 		mp_up->n_received++;
 
         // Reset seqnum from out data
@@ -385,7 +385,7 @@ void LatencyTestPublisher::run()
 {
 	//WAIT FOR THE DISCOVERY PROCESS FO FINISH:
 	//EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    boost::unique_lock<boost::mutex> disc_lock(mutex_);
+    std::unique_lock<std::mutex> disc_lock(mutex_);
     while(disc_count_ != (n_subscribers * 4)) disc_cond_.wait(disc_lock);
     disc_lock.unlock();
 
@@ -461,7 +461,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 	mp_commandpub->write(&command);
 
 	//cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
-    boost::unique_lock<boost::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     while(comm_count_ != n_subscribers) comm_cond_.wait(lock);
     --comm_count_;
     lock.unlock();
@@ -473,13 +473,13 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         mp_latency_in->seqnum = 0;
         mp_latency_out->seqnum = count;
         
-        t_start_ = boost::chrono::steady_clock::now();
+        t_start_ = std::chrono::steady_clock::now();
 
         mp_datapub->write((void*)mp_latency_out);
 
         lock.lock();
         if(data_count_ == 0)
-            data_cond_.wait_for(lock, boost::chrono::seconds(1));
+            data_cond_.wait_for(lock, std::chrono::seconds(1));
 
         if(data_count_ != 0)
             --data_count_;
@@ -514,10 +514,10 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
     TS.received = n_received;
     TS.m_min = *std::min_element(times_.begin(), times_.end());
     TS.m_max = *std::max_element(times_.begin(), times_.end());
-    TS.mean = std::accumulate(times_.begin(), times_.end(), boost::chrono::duration<double, boost::micro>(0)).count() / times_.size();
+    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
 
 	double auxstdev=0;
-	for(std::vector<boost::chrono::duration<double, boost::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
+	for(std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
 	{
 		auxstdev += pow(((*tit).count() - TS.mean), 2);
 	}

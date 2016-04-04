@@ -16,6 +16,10 @@
 #include "PubSubAsReliableData64kbWriter.hpp"
 #include "PubSubKeepLastReader.hpp"
 #include "PubSubKeepLastWriter.hpp"
+#include "PubSubKeepAllReader.hpp"
+#include "PubSubKeepAllWriter.hpp"
+#include "PubSubKeepAllTransientReader.hpp"
+#include "PubSubKeepAllTransientWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -367,6 +371,94 @@ TEST(BlackBox, PubSubKeepLast)
     writer.send(msgs);
     std::this_thread::sleep_for(std::chrono::seconds(5));
     reader.read(*msgs.rbegin(), std::chrono::seconds(120));
+
+    msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
+}
+
+// Test created to check bug #1558 (Github #33)
+TEST(BlackBox, PubSubKeepAll)
+{
+    PubSubKeepAllReader reader;
+    PubSubKeepAllWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability
+    reader.waitDiscovery();
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
+    for(unsigned int tries = 0; tries < 20; ++tries)
+    {
+        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        if(msgs.empty())
+            break;
+
+        writer.send(msgs);
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+    }
+
+    msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
+}
+
+// Test created to check bug #1558 (Github #33)
+TEST(BlackBox, PubSubKeepAllTransient)
+{
+    PubSubKeepAllTransientReader reader;
+    PubSubKeepAllTransientWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability
+    reader.waitDiscovery();
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+
+    for(unsigned int tries = 0; tries < 20; ++tries)
+    {
+        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        if(msgs.empty())
+            break;
+
+        writer.send(msgs);
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+    }
 
     msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)

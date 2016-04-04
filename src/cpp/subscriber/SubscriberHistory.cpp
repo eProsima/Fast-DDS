@@ -64,31 +64,54 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 	}
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
+	if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
+	{
+        auto save_bigger = m_changes.rend();
+		for(auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)
+		{
+            if((*it)->writerGUID == a_change->writerGUID)
+            {
+                if((*it)->sequenceNumber == a_change->sequenceNumber)
+                {
+                    logInfo(RTPS_HISTORY,"Change (seqNum: "
+                            << a_change->sequenceNumber << ") already in ReaderHistory";);
+                    return false;
+                }
+                else if((*it)->sequenceNumber < a_change->sequenceNumber)
+                {
+                    //SINCE THE ELEMENTS ARE ORDERED WE CAN STOP SEARCHING NOW
+                    //ALL REMAINING ELEMENTS WOULD BE LOWER THAN THE ONE WE ARE LOOKING FOR.
+                    break;
+                }
+                else if(save_bigger == m_changes.rend())
+                    save_bigger = it;
+            }
+		}
+        if(m_isHistoryFull && save_bigger != m_changes.rend())
+        {
+            // This change must be not read.
+            assert(!(*save_bigger)->isRead);
+
+            if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+            {
+				this->remove_change_sub(*save_bigger);
+            }
+            else
+            {
+                t_v_Inst_Caches::iterator vit;
+                if(find_Key(*save_bigger,&vit))
+                {
+					this->remove_change_sub(*save_bigger, &vit);
+                }
+            }
+        }
+	}
+
 	if(m_isHistoryFull)
 	{
 		logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
 		return false;
-	}
-	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
-	if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
-	{
-		for(std::vector<CacheChange_t*>::reverse_iterator it=m_changes.rbegin();it!=m_changes.rend();++it)
-		{
-			if((*it)->sequenceNumber == a_change->sequenceNumber &&
-					(*it)->writerGUID == a_change->writerGUID)
-			{
-				logInfo(RTPS_HISTORY,"Change (seqNum: "
-						<< a_change->sequenceNumber << ") already in ReaderHistory";);
-				return false;
-			}
-			if((*it)->writerGUID == a_change->writerGUID &&
-					(*it)->sequenceNumber < a_change->sequenceNumber)
-			{
-				//SINCE THE ELEMENTS ARE ORDERED WE CAN STOP SEARCHING NOW
-				//ALL REMAINING ELEMENTS WOULD BE LOWER THAN THE ONE WE ARE LOOKING FOR.
-				break;
-			}
-		}
 	}
 	//NO KEY HISTORY
 	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)

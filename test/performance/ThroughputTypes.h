@@ -17,7 +17,7 @@
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/utils/RTPSLog.h>
 
-#include <boost/chrono.hpp>
+#include <chrono>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
@@ -41,13 +41,13 @@ struct TroughputResults
 	uint32_t demand;
 	struct PublisherResults
 	{
-        boost::chrono::duration<double, boost::micro>  totaltime_us;
+        std::chrono::duration<double, std::micro>  totaltime_us;
 		uint64_t send_samples;
 		double MBitssec;
 	}publisher;
 	struct SubscriberResults
 	{
-        boost::chrono::duration<double, boost::micro> totaltime_us;
+        std::chrono::duration<double, std::micro> totaltime_us;
 		uint64_t recv_samples;
 		uint32_t lost_samples;
 		double MBitssec;

@@ -15,8 +15,7 @@
 #define LATENCYTESTSUBSCRIBER_H_
 
 #include <boost/asio.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
+#include <condition_variable>
 #include "LatencyTestTypes.h"
 
 class LatencyTestSubscriber {
@@ -31,13 +30,13 @@ public:
 	Subscriber* mp_commandsub;
 	LatencyType* mp_latency;
 	SampleInfo_t m_sampleinfo;
-    boost::mutex mutex_;
+    std::mutex mutex_;
     int disc_count_;
-	boost::condition_variable disc_cond_;
+	std::condition_variable disc_cond_;
     int comm_count_;
-	boost::condition_variable comm_cond_;
+	std::condition_variable comm_cond_;
     int data_count_;
-	boost::condition_variable data_cond_;
+	std::condition_variable data_cond_;
 	int m_status;
 	int n_received;
 	int n_samples;
