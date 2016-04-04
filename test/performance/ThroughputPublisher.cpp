@@ -34,7 +34,7 @@ ThroughputPublisher::DataPubListener::~DataPubListener(){}
 
 void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -55,7 +55,7 @@ ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher&
 ThroughputPublisher::CommandSubListener::~CommandSubListener(){}
 void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -76,7 +76,7 @@ ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher&
 ThroughputPublisher::CommandPubListener::~CommandPubListener(){}
 void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -121,10 +121,10 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 	Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
 
     // Calculate overhead
-    t_start_ = boost::chrono::steady_clock::now();
+    t_start_ = std::chrono::steady_clock::now();
 	for(int i= 0; i < 1000; ++i)
-        t_end_ = boost::chrono::steady_clock::now();
-	t_overhead_ = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) / 1001;
+        t_end_ = std::chrono::steady_clock::now();
+	t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
 	cout << "Overhead " << t_overhead_.count() << " us"  << endl;
 
 	//DATA PUBLISHER
@@ -220,7 +220,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 		m_demand_payload[msg_size - 8].push_back(demand);
 	}
 	cout << "Waiting for discovery" << endl;
-    boost::unique_lock<boost::mutex> disc_lock(mutex_);
+    std::unique_lock<std::mutex> disc_lock(mutex_);
     while(disc_count_ != 3) disc_cond_.wait(disc_lock);
     disc_lock.unlock();
 	cout << "Discovery complete" << endl;
@@ -279,9 +279,9 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
 {
 	ThroughputType latency((uint16_t)size);
-    t_end_ = boost::chrono::steady_clock::now();
-    boost::chrono::duration<double, boost::micro> timewait_us(0);
-    boost::chrono::duration<double, boost::micro> test_time_us = boost::chrono::seconds(test_time);
+    t_end_ = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::micro> timewait_us(0);
+    std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
 	uint32_t samples = 0;
 	size_t aux;
 	ThroughputCommandType command;
@@ -290,8 +290,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 	//cout << "SEND COMMAND "<< command.m_command << endl;
 	mp_commandpub->write((void*)&command);
 
-    t_start_ = boost::chrono::steady_clock::now();
-	while(boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) < test_time_us)
+    t_start_ = std::chrono::steady_clock::now();
+	while(std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
 	{
 		for(uint32_t sample = 0; sample < demand;sample++)
 		{
@@ -299,7 +299,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 			mp_datapub->write((void*)&latency);
 			//cout << sample << "*"<<std::flush;
 		}
-        t_end_ = boost::chrono::steady_clock::now();
+        t_end_ = std::chrono::steady_clock::now();
 		samples+=demand;
 		//cout << "samples sent: "<<samples<< endl;
 		eClock::my_sleep(recovery_time_ms);
@@ -324,9 +324,9 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 			result.demand = demand;
 			result.payload_size = size+4+4;
 			result.publisher.send_samples = samples;
-			result.publisher.totaltime_us = boost::chrono::duration<double, boost::micro>(t_end_ - t_start_) - timewait_us;
+			result.publisher.totaltime_us = std::chrono::duration<double, std::micro>(t_end_ - t_start_) - timewait_us;
 			result.subscriber.recv_samples = command.m_lastrecsample-command.m_lostsamples;
-			result.subscriber.totaltime_us = boost::chrono::microseconds(command.m_totaltime);
+			result.subscriber.totaltime_us = std::chrono::microseconds(command.m_totaltime);
 			result.subscriber.lost_samples = command.m_lostsamples;
 			result.compute();
 			m_timeStats.push_back(result);

@@ -166,7 +166,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
 
 void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -184,7 +184,7 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*p
 
 void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -204,7 +204,7 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /
 
 void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -222,7 +222,7 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* 
 
 void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
-    boost::unique_lock<boost::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
 	if(info.status == MATCHED_MATCHING)
 	{
@@ -290,7 +290,7 @@ void LatencyTestSubscriber::run()
 {
 	//WAIT FOR THE DISCOVERY PROCESS FO FINISH:
 	//EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    boost::unique_lock<boost::mutex> disc_lock(mutex_);
+    std::unique_lock<std::mutex> disc_lock(mutex_);
     while(disc_count_ != 4) disc_cond_.wait(disc_lock);
     disc_lock.unlock();
 
@@ -308,7 +308,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
 	cout << "Preparing test with data size: " << datasize+4<<endl;
 	mp_latency = new LatencyType((uint16_t)datasize);
 
-    boost::unique_lock<boost::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     if(comm_count_ == 0) comm_cond_.wait(lock);
     --comm_count_;
     lock.unlock();

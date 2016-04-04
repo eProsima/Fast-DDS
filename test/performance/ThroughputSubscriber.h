@@ -26,9 +26,8 @@
 
 using namespace eprosima::fastrtps;
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/chrono.hpp>
+#include <condition_variable>
+#include <chrono>
 
 #include <fstream>
 #include <iostream>
@@ -44,13 +43,13 @@ public:
 	Subscriber* mp_datasub;
 	Publisher* mp_commandpubli;
 	Subscriber* mp_commandsub;
-    boost::chrono::steady_clock::time_point t_start_, t_end_;
-    boost::chrono::duration<double, boost::micro> t_overhead_;
-    boost::mutex mutex_;
+    std::chrono::steady_clock::time_point t_start_, t_end_;
+    std::chrono::duration<double, std::micro> t_overhead_;
+    std::mutex mutex_;
     int disc_count_;
-    boost::condition_variable disc_cond_;
+    std::condition_variable disc_cond_;
     int stop_count_;
-    boost::condition_variable stop_cond_;
+    std::condition_variable stop_cond_;
 	class DataSubListener:public SubscriberListener
 	{
 	public:

@@ -54,51 +54,29 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 	}
 
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
-	if(m_isHistoryFull && m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+	if(m_isHistoryFull && !this->mp_pubImpl->clean_history(1))
 	{
-		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId
-				<< " with KEEP ALL History ");
+		logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
 		return false;
 	}
 	//NO KEY HISTORY
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
-		bool add = false;
-		if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
-		{
-			add = true;
-		}
-		else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
-		{
-			if(m_changes.size()<(size_t)m_historyQos.depth)
-			{
-				add = true;
-			}
-			else
-			{
-				if(this->remove_change_pub(mp_minSeqCacheChange))
-				{
-					add =true;
-				}
-			}
-		}
-		if(add)
-		{
-			if(this->add_change(change))
-			{
-				if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
-				{
-					if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
-						m_isHistoryFull = true;
-				}
-				else
-				{
-					if((int32_t)m_changes.size()==m_historyQos.depth)
-						m_isHistoryFull = true;
-				}
-				return true;
-			}
-		}
+        if(this->add_change(change))
+        {
+            if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+            {
+                if((int32_t)m_changes.size()==m_resourceLimitsQos.max_samples)
+                    m_isHistoryFull = true;
+            }
+            else
+            {
+                if((int32_t)m_changes.size()==m_historyQos.depth)
+                    m_isHistoryFull = true;
+            }
+
+            return true;
+        }
 	}
 	//HISTORY WITH KEY
 	else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
@@ -158,6 +136,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change)
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -253,7 +232,13 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
 	boost::lock_guard<boost::recursive_mutex> guard(*this->mp_mutex);
 	if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
-		return this->remove_change(change);
+		if(this->remove_change(change))
+        {
+            m_isHistoryFull = false;
+            return true;
+        }
+
+        return false;
 	}
 	else
 	{
@@ -275,6 +260,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
 				if(remove_change(change))
 				{
 					vit->second.erase(chit);
+                    m_isHistoryFull = false;
 					return true;
 				}
 			}
