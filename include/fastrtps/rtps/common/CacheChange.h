@@ -87,7 +87,7 @@ namespace eprosima
                 // TODO Check pass uint32_t to serializedPayload that needs int16_t.
                 CacheChange_t(uint32_t payload_size, bool is_untyped = false):
                     kind(ALIVE),
-                    serializedPayload((uint16_t)payload_size),
+                    serializedPayload(payload_size),
                     isRead(false),
                     is_untyped_(is_untyped),
                     dataFragments(new std::vector<uint32_t>()),

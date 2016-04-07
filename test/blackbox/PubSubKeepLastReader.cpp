@@ -50,10 +50,7 @@ void PubSubKeepLastReader::init(uint16_t nmsgs)
 	SubscriberAttributes sattr;
 	sattr.topic.topicKind = NO_KEY;
 	sattr.topic.topicDataType = "HelloWorldType";
-    std::ostringstream t;
-    t << "PubSubAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
-    sattr.topic.topicName = t.str();
-    sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    configSubscriber(sattr);
     sattr.topic.historyQos.kind = eprosima::fastrtps::KEEP_LAST_HISTORY_QOS;
     sattr.topic.resourceLimitsQos.max_samples = 2;
     sattr.topic.historyQos.depth = 2;
