@@ -63,6 +63,7 @@ class PubSubKeepLastReader
         void matched();
         void unmatched();
         void data_received();
+        virtual void configSubscriber(SubscriberAttributes &sattr) = 0;
 
     private:
 

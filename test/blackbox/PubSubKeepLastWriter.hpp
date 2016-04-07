@@ -61,6 +61,7 @@ class PubSubKeepLastWriter
         void unmatched();
         void waitDiscovery();
         void waitRemoval();
+        virtual void configPublisher(PublisherAttributes &puattr) = 0;
 
     private:
 
