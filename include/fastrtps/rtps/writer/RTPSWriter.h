@@ -127,6 +127,8 @@ public:
 	*/
 	RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
+    virtual bool clean_history(unsigned int max = 0) = 0;
+
 protected:
 
 	//!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -153,6 +155,7 @@ protected:
 	 * @param change Pointer to the change to add.
 	 */
 	virtual void unsent_change_added_to_history(CacheChange_t* change)=0;
+
 	/**
 	 * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
 	 * @param a_change Pointer to the change that is going to be removed.

@@ -115,6 +115,16 @@ namespace eprosima {
                 static void prepare_SequenceNumberSet(std::vector<SequenceNumber_t>* changesSeqNum,
                         std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>* Sequences);
 
+                /**
+                 * @param msg_group
+                 * @param W
+                 * @param changes
+                 * @param unicast
+                 * @param multicast
+                 * @param expectsInlineQos
+                 * @param ReaderId
+                 * @return 
+                 */
                 static uint32_t send_Changes_AsData(RTPSMessageGroup_t* msg_group,
                         RTPSWriter* W,
                         std::vector<CacheChangeForGroup_t>& changes,
@@ -124,6 +134,15 @@ namespace eprosima {
                         LocatorList_t& multicast,
                         bool expectsInlineQos);
 
+                /**
+                 * @param msg_group
+                 * @param W
+                 * @param changes
+                 * @param loc
+                 * @param expectsInlineQos
+                 * @param ReaderId
+                 * @return 
+                 */
                 static uint32_t send_Changes_AsData(RTPSMessageGroup_t* msg_group,
                         RTPSWriter* W,
                         std::vector<CacheChangeForGroup_t>& changes,

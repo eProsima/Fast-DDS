@@ -19,7 +19,7 @@
 #include <fastrtps/utils/RTPSLog.h>
 
 namespace eprosima {
-    namespace fastrtps{
+    namespace fastrtps {
         namespace rtps {
 
             static const char* const CLASS_NAME = "RTPSMessageGroup";
@@ -157,7 +157,7 @@ namespace eprosima {
                 return true;
             }
 
-            void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos,const CacheChange_t* change, const EntityId_t& ReaderId)
+            void RTPSMessageGroup::prepareDataSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos, const CacheChange_t* change, const EntityId_t& ReaderId)
             {
                 const char* const METHOD_NAME = "prepareDataSubM";
                 ParameterList_t* inlineQos = NULL;
@@ -170,7 +170,7 @@ namespace eprosima {
                 CDRMessage::initCDRMsg(submsg);
                 bool added= RTPSMessageCreator::addSubmessageData(submsg,change,W->getAttributes()->topicKind,ReaderId,expectsInlineQos,inlineQos);
                 if(!added)
-                    logError(RTPS_WRITER,"Problem adding DATA submsg to the CDRMessage, buffer too small";);
+                    logError(RTPS_WRITER,"Problem adding DATA submsg to the CDRMessage, buffer too small");
             }
 
             void RTPSMessageGroup::prepareDataFragSubM(RTPSWriter* W, CDRMessage_t* submsg, bool expectsInlineQos,
@@ -193,12 +193,9 @@ namespace eprosima {
             }
 
             uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-                    RTPSWriter* W,
-                    std::vector<CacheChangeForGroup_t>& changes,
-                    const GuidPrefix_t& remoteGuidPrefix,
-                    const EntityId_t& ReaderId,
-                    LocatorList_t& unicast,
-                    LocatorList_t& multicast,
+                    RTPSWriter* W, std::vector<CacheChangeForGroup_t>& changes,
+                    const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
+                    LocatorList_t& unicast, LocatorList_t& multicast,
                     bool expectsInlineQos)
             {
                 const char* const METHOD_NAME = "send_Changes_AsData";
@@ -276,10 +273,8 @@ namespace eprosima {
             }
 
             uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-                    RTPSWriter* W,
-                    std::vector<CacheChangeForGroup_t>& changes,
-                    const GuidPrefix_t& remoteGuidPrefix,
-                    const EntityId_t& ReaderId,
+                    RTPSWriter* W, std::vector<CacheChangeForGroup_t>& changes,
+                    const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
                     const Locator_t& loc, bool expectsInlineQos)
             {
                 const char* const METHOD_NAME = "send_Changes_AsData";

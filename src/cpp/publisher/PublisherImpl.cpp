@@ -25,10 +25,8 @@
 
 #include <fastrtps/utils/RTPSLog.h>
 
-using namespace eprosima::fastrtps::rtps;
-
-namespace eprosima {
-namespace fastrtps {
+using namespace eprosima::fastrtps;
+using namespace ::rtps;
 
 
 static const char* const CLASS_NAME = "PublisherImpl";
@@ -261,7 +259,7 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*write
 		mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
 }
 
-} /* namespace pubsub */
-} /* namespace eprosima */
-
-
+bool PublisherImpl::clean_history(unsigned int max)
+{
+    return mp_writer->clean_history(max);
+}

@@ -1,6 +1,7 @@
 #include "MockEvent.h"
 #include "MockParentEvent.h"
 
+#include<thread>
 #include <boost/random.hpp>
 #include <gtest/gtest.h>
 
@@ -53,11 +54,11 @@ TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
         ASSERT_TRUE(event.wait(150));
     }
 
-    int successed = event.successed_.load(boost::memory_order_relaxed);
+    int successed = event.successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 10);
 
-    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(cancelled, 0);
 }
@@ -81,11 +82,11 @@ TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
         ASSERT_TRUE(event.wait(150));
     }
 
-    int successed = event.successed_.load(boost::memory_order_relaxed);
+    int successed = event.successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 0);
 
-    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(cancelled, 10);
 }
@@ -108,11 +109,11 @@ TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
     for(int i = 0; i < 10; ++i)
         ASSERT_TRUE(event.wait(150));
 
-    int successed = event.successed_.load(boost::memory_order_relaxed);
+    int successed = event.successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 1);
 
-    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(cancelled, 9);
 }
@@ -130,10 +131,10 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
 
     event->restart_timer();
     
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -161,21 +162,21 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
         ASSERT_EQ(MockEvent::destructed_, 0);
     }
 
-    int successed = event->successed_.load(boost::memory_order_relaxed);
+    int successed = event->successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 0);
 
-    int cancelled = event->cancelled_.load(boost::memory_order_relaxed);
+    int cancelled = event->cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(cancelled, 10);
 
     // Last event will be successful.
     event->restart_timer();
     
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -203,21 +204,21 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
         ASSERT_EQ(MockEvent::destructed_, 0);
     }
 
-    int successed = event->successed_.load(boost::memory_order_relaxed);
+    int successed = event->successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 0);
 
-    int cancelled = event->cancelled_.load(boost::memory_order_relaxed);
+    int cancelled = event->cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(cancelled, 10);
 
     // Last event will be successful.
     event->restart_timer();
     
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -240,10 +241,10 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
         event->restart_timer();
     }
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -266,10 +267,10 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
         event->restart_timer();
     }
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -287,10 +288,10 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_SuccessEvents)
 
     event->restart_timer();
     
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -309,10 +310,10 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_CancelEvents)
     event->restart_timer();
     event->cancel_timer();
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -331,10 +332,10 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_QuickCancelEvents)
     event->restart_timer();
     event->cancel_timer();
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -353,19 +354,19 @@ TEST(TimedEvent, EventNonAutoDestruct_AutoRestart)
     for(unsigned int i = 0; i < 100; ++i)
     {
         event->restart_timer();
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    int successed = event->successed_.load(boost::memory_order_relaxed);
+    int successed = event->successed_.load(std::memory_order_relaxed);
 
     ASSERT_GE(successed , 100);
 
     delete event;
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -382,7 +383,7 @@ TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
 
-    boost::mt19937 rng(std::time(0));
+    boost::mt19937 rng(static_cast<uint32_t>(std::time(nullptr)));
     boost::uniform_int<> range(10, 100);
     boost::variate_generator<boost::mt19937, boost::uniform_int<>> random(rng, range);
 
@@ -393,10 +394,10 @@ TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
 
     delete event;
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(100));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(100));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -415,10 +416,10 @@ TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
 
     event.restart_timer();
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::milliseconds(300));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::milliseconds(300));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }
@@ -498,8 +499,8 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
     while(event.wait(150))
         ++count;
 
-    int successed = event.successed_.load(boost::memory_order_relaxed);
-    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+    int successed = event.successed_.load(std::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed + cancelled, count);
 }
@@ -543,8 +544,8 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
     while(event.wait(150))
         ++count;
 
-    int successed = event.successed_.load(boost::memory_order_relaxed);
-    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+    int successed = event.successed_.load(std::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed + cancelled, count);
 }
@@ -588,8 +589,8 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
     while(event.wait(150))
         ++count;
 
-    int successed = event.successed_.load(boost::memory_order_relaxed);
-    int cancelled = event.cancelled_.load(boost::memory_order_relaxed);
+    int successed = event.successed_.load(std::memory_order_relaxed);
+    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed + cancelled, count);
 }
@@ -633,10 +634,10 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     boost::this_thread::sleep_for(boost::chrono::milliseconds(200));
     delete event;
 
-    boost::unique_lock<boost::mutex> lock(MockEvent::destruction_mutex_);
+    std::unique_lock<std::mutex> lock(MockEvent::destruction_mutex_);
 
     if(MockEvent::destructed_ != 1)
-        MockEvent::destruction_cond_.wait_for(lock, boost::chrono::seconds(1));
+        MockEvent::destruction_cond_.wait_for(lock, std::chrono::seconds(1));
 
     ASSERT_EQ(MockEvent::destructed_, 1);
 }

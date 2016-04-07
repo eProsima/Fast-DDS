@@ -60,15 +60,12 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
 		bool unacked_changes = false;
 		{//BEGIN PROTECTION
 			boost::lock_guard<boost::recursive_mutex> guardW(*mp_SFW->getMutex());
-			std::vector<ChangeForReader_t*> unack;
 			for(std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
-					it!=mp_SFW->matchedReadersEnd();++it)
+					it != mp_SFW->matchedReadersEnd(); ++it)
 			{
-				unack.clear();
 				if(!unacked_changes)
 				{
-					(*it)->unacked_changes(&unack);
-					if(!unack.empty())
+                    if((*it)->thereIsUnacknowledged())
 					{
 						unacked_changes= true;
 					}

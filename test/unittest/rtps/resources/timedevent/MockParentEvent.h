@@ -4,9 +4,9 @@
 #include <fastrtps/rtps/resources/TimedEvent.h>
 #include "MockEvent.h"
 
+#include <atomic>
+#include <condition_variable>
 #include <boost/asio.hpp>
-#include <boost/interprocess/sync/interprocess_semaphore.hpp>
-#include <boost/atomic.hpp>
 #include <boost/thread.hpp>
 
 class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
@@ -22,17 +22,17 @@ class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
 
         bool wait(unsigned int milliseconds);
 
-        boost::atomic_int successed_;
-        boost::atomic_int cancelled_;
+        std::atomic<int> successed_;
+        std::atomic<int> cancelled_;
         static int destructed_;
-        static boost::mutex destruction_mutex_;
-        static boost::condition_variable destruction_cond_;
+        static std::mutex destruction_mutex_;
+        static std::condition_variable destruction_cond_;
 
     private:
 
         int sem_count_;
-        boost::mutex sem_mutex_;
-        boost::condition_variable sem_cond_;
+        std::mutex sem_mutex_;
+        std::condition_variable sem_cond_;
         MockEvent *event_;
         unsigned int countUntilDestruction_;
         unsigned int currentCount_;
