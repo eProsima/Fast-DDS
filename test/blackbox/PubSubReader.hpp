@@ -30,9 +30,16 @@
 #include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
-template<class TypeSupport, eprosima::fastrtps::ReliabilityQosPolicyKind Mode>
+template<class TypeSupport>
 class PubSubReader 
 {
+    public:
+
+        typedef TypeSupport type_support;
+        typedef typename type_support::type type;
+
+    private:
+
     class Listener: public eprosima::fastrtps::SubscriberListener
     {
         public:
@@ -44,7 +51,8 @@ class PubSubReader
             {
                 ASSERT_NE(sub, nullptr);
 
-                reader_.newNumber(reader_.receiver_(sub));
+                bool ret = false;
+                reader_.receive_one(sub, ret);
             }
 
             void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, MatchingInfo& info)
@@ -66,13 +74,15 @@ class PubSubReader
 
     public:
 
-        typedef TypeSupport type_support;
-        typedef typename type_support::type type;
-
-
-        PubSubReader(std::function<uint16_t (eprosima::fastrtps::Subscriber*)> receiver) : listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
-        receiver_(receiver), participant_(nullptr), subscriber_(nullptr), initialized_(false), matched_(0)
+        PubSubReader(const std::string& topic_name) : listener_(*this), participant_(nullptr), subscriber_(nullptr),
+        topic_name_(topic_name), initialized_(false), matched_(0), receiving_(false), current_received_count_(0),
+        number_samples_expected_(0)
         {
+            subscriber_attr_.topic.topicDataType = type_.getName();
+            // Generate topic name
+            std::ostringstream t;
+            t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            subscriber_attr_.topic.topicName = t.str();
         }
 
         ~PubSubReader()
@@ -81,7 +91,7 @@ class PubSubReader
                 Domain::removeParticipant(participant_);
         }
 
-        void init(uint16_t nmsgs)
+        void init()
         {
             eprosima::fastrtps::ParticipantAttributes pattr;
             pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
@@ -92,18 +102,8 @@ class PubSubReader
             ASSERT_EQ(eprosima::fastrtps::Domain::registerType(participant_, &type_), true);
 
             //Create subscribe r
-            eprosima::fastrtps::SubscriberAttributes sattr;
-            sattr.topic.topicKind = NO_KEY;
-            sattr.topic.topicDataType = type_.getName();
-            configSubscriber(sattr);
-            subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, sattr, &listener_);
+            subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_, &listener_);
             ASSERT_NE(subscriber_, nullptr);
-
-            // Initialize list of msgs
-            for(uint16_t count = 1; count <= nmsgs; ++count)
-            {
-                msgs_.push_back(count);
-            }
 
             initialized_ = true;
         }
@@ -119,41 +119,63 @@ class PubSubReader
             }
         }
 
-        void newNumber(uint16_t number)
+        void expected_data(const std::list<type>& msgs)
         {
-            ASSERT_NE(number, 0);
             std::unique_lock<std::mutex> lock(mutex_);
-            std::list<uint16_t>::iterator it = std::find(msgs_.begin(), msgs_.end(), number);
-            ASSERT_NE(it, msgs_.end());
-            if(lastvalue_ == *it)
-                cv_.notify_one();
-            msgs_.erase(it);
+            total_msgs_ = msgs;
         }
 
-        std::list<uint16_t> getNonReceivedMessages()
+        void expected_data(std::list<type>&& msgs)
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            return msgs_;
+            total_msgs_ = std::move(msgs);
         }
 
-        uint16_t lastvalue_;
+        void startReception(size_t number_samples_expected = 0)
+        {
+            mutex_.lock();
+            current_received_count_ = 0;
+            if(number_samples_expected > 0)
+                number_samples_expected_ = number_samples_expected;
+            else
+                number_samples_expected_ = total_msgs_.size();
+            receiving_ = true;
+            mutex_.unlock();
 
-        void block(uint16_t lastvalue, const std::chrono::seconds &seconds)
+            bool ret = false;
+            do
+            {
+                receive_one(subscriber_, ret);
+            }
+            while(ret);
+        }
+
+        void stopReception()
+        {
+            mutex_.lock();
+            receiving_ = false;
+            mutex_.unlock();
+        }
+
+        std::list<type> block(const std::chrono::seconds &seconds)
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            lastvalue_ = lastvalue;
-            if(!msgs_.empty() && lastvalue_ == *msgs_.rbegin())
+            if(current_received_count_ != number_samples_expected_)
                 cv_.wait_for(lock, seconds);
+
+            return total_msgs_;
         }
 
         void waitDiscovery()
         {
+            std::cout << "Reader waiting for discovery..." << std::endl;
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             if(matched_ == 0)
                 cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
             ASSERT_NE(matched_, 0u);
+            std::cout << "Reader discovery phase finished" << std::endl;
         }
 
         void waitRemoval()
@@ -164,6 +186,66 @@ class PubSubReader
                 cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
             ASSERT_EQ(matched_, 0u);
+        }
+
+        /*** Function to change QoS ***/
+        PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+        {
+            subscriber_attr_.qos.m_reliability.kind = kind;
+            return *this;
+        }
+
+        PubSubReader& history_kind(const eprosima::fastrtps::HistoryQosPolicyKind kind)
+        {
+            subscriber_attr_.topic.historyQos.kind = kind;
+            return *this;
+        }
+
+        PubSubReader& history_depth(const int32_t depth)
+        {
+            subscriber_attr_.topic.historyQos.depth = depth;
+            return *this;
+        }
+
+        PubSubReader& resource_limits_max_samples(const int32_t max)
+        {
+            subscriber_attr_.topic.resourceLimitsQos.max_samples = max;
+            return *this;
+        }
+
+    private:
+
+        void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
+        {
+            returnedValue = false;
+            std::unique_lock<std::mutex> lock(mutex_);
+
+            if(receiving_)
+            {
+                type data;
+                SampleInfo_t info;
+
+                if(subscriber->takeNextData((void*)&data, &info))
+                {
+                    returnedValue = true;
+
+                    // Check order of changes.
+                    ASSERT_LT(last_seq, info.sample_identity.sequence_number());
+                    last_seq = info.sample_identity.sequence_number();
+
+                    if(info.sampleKind == ALIVE)
+                    {
+                        auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                        ASSERT_NE(it, total_msgs_.end()); 
+                        total_msgs_.erase(it);
+                        ++current_received_count_;
+                        std::cout << "CURTRENT " << current_received_count_ << std::endl;
+
+                        if(current_received_count_ == number_samples_expected_)
+                            cv_.notify_one();
+                    }
+                }
+            }
         }
 
         void matched()
@@ -180,46 +262,24 @@ class PubSubReader
             cvDiscovery_.notify_one();
         }
 
-        void configSubscriber(SubscriberAttributes &sattr)
-        {
-            std::string reliability_str;
-
-            if(mode_ == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            {
-                sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-                reliability_str = "AsReliable";
-            }
-            else
-            {
-                sattr.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-                reliability_str = "AsNonReliable";
-            }
-
-            std::ostringstream t;
-
-            t << "PubSub" << reliability_str << type_.getName() << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
-
-            sattr.topic.topicName = t.str();
-        }
-
-    private:
-
         PubSubReader& operator=(const PubSubReader&)NON_COPYABLE_CXX11;
 
-        const eprosima::fastrtps::ReliabilityQosPolicyKind mode_ = Mode;
-
-        std::function<uint16_t (eprosima::fastrtps::Subscriber*)> receiver_;
-
         eprosima::fastrtps::Participant *participant_;
+        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
         eprosima::fastrtps::Subscriber *subscriber_;
+        std::string topic_name_;
         bool initialized_;
-        std::list<uint16_t> msgs_;
+        std::list<type> total_msgs_;
         std::mutex mutex_;
         std::condition_variable cv_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
         unsigned int matched_;
+        bool receiving_;
         type_support type_;
+        SequenceNumber_t last_seq;
+        size_t current_received_count_;
+        size_t number_samples_expected_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_

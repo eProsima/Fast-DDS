@@ -160,6 +160,11 @@ bool ReaderHistory::thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq)
     return m_historyRecord[guid].find(seq) != m_historyRecord[guid].end();
 }
 
+bool ReaderHistory::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
+{
+    return m_historyRecord[guid].upper_bound(seq) != m_historyRecord[guid].end();
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

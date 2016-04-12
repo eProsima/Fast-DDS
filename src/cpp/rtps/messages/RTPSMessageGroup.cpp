@@ -98,7 +98,6 @@ namespace eprosima {
                     LocatorList_t* unicast, LocatorList_t* multicast)
             {
                 const char* const METHOD_NAME = "send_Changes_AsGap";
-                //cout << "CHANGES SEQ NUM: "<<changesSeqNum->size()<<endl;
                 std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>> Sequences;
                 RTPSMessageGroup::prepare_SequenceNumberSet(changesSeqNum,&Sequences);
                 std::vector<std::pair<SequenceNumber_t,SequenceNumberSet_t>>::iterator seqit = Sequences.begin();

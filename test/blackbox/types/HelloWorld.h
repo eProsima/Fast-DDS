@@ -82,6 +82,8 @@ public:
      * @param x Reference to the object HelloWorld that will be copied.
      */
     eProsima_user_DllExport HelloWorld& operator=(HelloWorld &&x);
+
+    eProsima_user_DllExport bool operator==(const HelloWorld &x) const;
     
     /*!
      * @brief This function sets a value in member index

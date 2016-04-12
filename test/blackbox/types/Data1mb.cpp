@@ -58,6 +58,14 @@ Data1mb& Data1mb::operator=(Data1mb &&x)
     return *this;
 }
 
+bool Data1mb::operator==(const Data1mb &x) const
+{
+    if(m_data == x.m_data)
+        return true;
+
+    return false;
+}
+
 size_t Data1mb::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;

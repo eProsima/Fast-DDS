@@ -29,7 +29,7 @@
 #include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
-template<class TypeSupport, eprosima::fastrtps::ReliabilityQosPolicyKind Mode>
+template<class TypeSupport>
 class PubSubWriter 
 {
     class Listener : public eprosima::fastrtps::PublisherListener
@@ -61,9 +61,14 @@ class PubSubWriter
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    PubSubWriter(std::function<void (eprosima::fastrtps::Publisher*, const std::list<uint16_t>&)> sender) : listener_(*this), sender_(sender), participant_(nullptr),
-    publisher_(nullptr), initialized_(false), matched_(0)
+    PubSubWriter(const std::string &topic_name) : listener_(*this), participant_(nullptr),
+    publisher_(nullptr), topic_name_(topic_name), initialized_(false), matched_(0)
     {
+            publisher_attr_.topic.topicDataType = type_.getName();
+            // Generate topic name
+            std::ostringstream t;
+            t << topic_name_ << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
+            publisher_attr_.topic.topicName = t.str();
     }
     
     ~PubSubWriter()
@@ -72,7 +77,7 @@ class PubSubWriter
             eprosima::fastrtps::Domain::removeParticipant(participant_);
     }
 
-    void init(bool async = false)
+    void init()
     {
         //Create participant
         eprosima::fastrtps::ParticipantAttributes pattr;
@@ -85,16 +90,7 @@ class PubSubWriter
             eprosima::fastrtps::Domain::registerType(participant_, &type_);
 
             //Create publisher
-            eprosima::fastrtps::PublisherAttributes puattr;
-            puattr.topic.topicKind = NO_KEY;
-            puattr.topic.topicDataType = type_.getName();
-            configPublisher(puattr);
-
-            // Asynchronous
-            if(async)
-                puattr.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
-
-            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, puattr, &listener_);
+            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, &listener_);
 
             if(publisher_ != nullptr)
             {
@@ -117,12 +113,87 @@ class PubSubWriter
         }
     }
 
-    void send(const std::list<uint16_t> &msgs)
+    void send(std::list<type>& msgs)
     {
-        waitDiscovery();
-
-        sender_(publisher_, msgs);
+        auto it = msgs.begin();
+        
+        while(it != msgs.end())
+        {
+            if(publisher_->write((void*)&(*it)))
+            {
+                it = msgs.erase(it);
+            }
+            else
+                break;
+        }
     }
+
+    void waitDiscovery()
+    {
+        std::cout << "Writer waiting for discovery..." << std::endl;
+        std::unique_lock<std::mutex> lock(mutex_);
+
+        if(matched_ == 0)
+            cv_.wait_for(lock, std::chrono::seconds(10));
+
+        ASSERT_NE(matched_, 0u);
+        std::cout << "Writer discovery phase finished" << std::endl;
+    }
+
+    void waitRemoval()
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+
+        if(matched_ != 0)
+            cv_.wait_for(lock, std::chrono::seconds(10));
+
+        ASSERT_EQ(matched_, 0u);
+    }
+
+    /*** Function to change QoS ***/
+    PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+    {
+        publisher_attr_.qos.m_reliability.kind = kind;
+        return *this;
+    }
+
+    PubSubWriter& asynchronously(const eprosima::fastrtps::PublishModeQosPolicyKind kind)
+    {
+        publisher_attr_.qos.m_publishMode.kind = kind;
+        return *this;
+    }
+
+    PubSubWriter& history_kind(const eprosima::fastrtps::HistoryQosPolicyKind kind)
+    {
+        publisher_attr_.topic.historyQos.kind = kind;
+        return *this;
+    }
+
+    PubSubWriter& history_depth(const int32_t depth)
+    {
+        publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriter& resource_limits_max_samples(const int32_t max)
+    {
+        publisher_attr_.topic.resourceLimitsQos.max_samples = max;
+        return *this;
+    }
+
+    PubSubWriter& heartbeat_period_seconds(int32_t sec)
+    {
+        publisher_attr_.times.heartbeatPeriod.seconds = sec;
+        return *this;
+    }
+
+    PubSubWriter& heartbeat_period_fraction(uint32_t frac)
+    {
+        publisher_attr_.times.heartbeatPeriod.fraction = frac;
+        return *this;
+    }
+
+    private:
 
     void matched()
     {
@@ -138,57 +209,12 @@ class PubSubWriter
         cv_.notify_one();
     }
 
-    void waitDiscovery()
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-
-        if(matched_ == 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
-
-        ASSERT_NE(matched_, 0u);
-    }
-
-    void waitRemoval()
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-
-        if(matched_ != 0)
-            cv_.wait_for(lock, std::chrono::seconds(10));
-
-        ASSERT_EQ(matched_, 0u);
-    }
-
-    void configPublisher(eprosima::fastrtps::PublisherAttributes& puattr)
-    {
-        std:: string reliability_str;
-
-        if(mode_ == eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        {
-            puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            reliability_str = "AsReliable";
-        }
-        else
-        {
-            puattr.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-            reliability_str = "AsNonReliable";
-        }
-
-        std::ostringstream t;
-
-        t << "PubSub" << reliability_str << type_.getName() << "_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
-
-        puattr.topic.topicName = t.str();
-    }
-
-    private:
-
     PubSubWriter& operator=(const PubSubWriter&)NON_COPYABLE_CXX11;
 
-    const eprosima::fastrtps::ReliabilityQosPolicyKind mode_ = Mode;
-    std::function<void (eprosima::fastrtps::Publisher*, const std::list<uint16_t>&)> sender_;
-
     eprosima::fastrtps::Participant *participant_;
+    eprosima::fastrtps::PublisherAttributes publisher_attr_;
     eprosima::fastrtps::Publisher *publisher_;
+    std::string topic_name_;
     bool initialized_;
     std::mutex mutex_;
     std::condition_variable cv_;

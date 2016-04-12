@@ -91,20 +91,26 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::change_received(CacheChange_t* change)
 {
-	if(mp_history->received_change(change))
-	{
-        boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    // Only make visible the change if there is not other with bigger sequence number.
+    // TODO Revisar si no hay que incluirlo.
+    if(!mp_history->thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
+    {
+        if(mp_history->received_change(change))
+        {
+            boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
-		if(getListener() != nullptr)
-		{
-            lock.unlock();
-			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
-            lock.lock();
-		}
+            if(getListener() != nullptr)
+            {
+                lock.unlock();
+                getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
+                lock.lock();
+            }
 
-		mp_history->postSemaphore();
-		return true;
-	}
+            mp_history->postSemaphore();
+            return true;
+        }
+    }
+
 	return false;
 }
 
