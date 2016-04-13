@@ -76,7 +76,7 @@ namespace eprosima
                  * Mark all changes up to the one indicated by the seqNum as Acknowledged.
                  * If seqNum == 30, changes 1-29 are marked as ack.
                  * @param seqNum Pointer to the seqNum
-                 * @return True if correct.
+                 * @return True if all changes are acknowledge and anyone with other state.
                  */
                 bool acked_changes_set(const SequenceNumber_t& seqNum);
 

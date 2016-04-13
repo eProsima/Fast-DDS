@@ -838,7 +838,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 						if((*rit)->m_lastAcknackCount < Ackcount)
 						{
 							(*rit)->m_lastAcknackCount = Ackcount;
-							(*rit)->acked_changes_set(SNSet.base);
+							bool maybe_all_acks = (*rit)->acked_changes_set(SNSet.base);
 							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
 							(*rit)->requested_changes_set(set_vec);
 							if(!(*rit)->m_isRequestedChangesEmpty || !finalFlag)
@@ -852,6 +852,11 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
                                 // TODO Change mechanism
                                 SF->clean_history();
                             }
+
+                            // Check if all CacheChange are acknowledge, because a user could be waiting
+                            // for this.
+                            if(maybe_all_acks)
+                                SF->check_for_all_acked();
 
 						}
 						break;

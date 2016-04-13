@@ -80,10 +80,11 @@ bool ReaderProxy::getChangeForReader(const SequenceNumber_t& seqNum, ChangeForRe
 	return false;
 }
 
+//TODO Return value for what?
 bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    
+
     auto chit = m_changesForReader.begin();
 
     while(chit != m_changesForReader.end() && chit->getSequenceNumber() < seqNum)
@@ -91,7 +92,7 @@ bool ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
         chit = m_changesForReader.erase(chit);
     }
 
-    return false;
+    return m_changesForReader.size() == 0;
 }
 
 bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)

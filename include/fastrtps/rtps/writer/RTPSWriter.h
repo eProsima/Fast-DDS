@@ -75,6 +75,9 @@ public:
 	 * @return True if acknowledged by all.
 	 */
 	RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* /*a_change*/){ return true; }
+
+	RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/){ return true; }
+    
 	/**
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes

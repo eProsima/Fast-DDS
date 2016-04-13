@@ -13,6 +13,7 @@
 
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
@@ -76,7 +77,10 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                 not_relevant_changes.push_back((*cit)->getSequenceNumber());
             }
         }
+
         mp_RP->m_isRequestedChangesEmpty = true;
+        bool thereAreChanges = !relevant_changes.empty() || !not_relevant_changes.empty();
+
         if(!relevant_changes.empty())
         {
             uint32_t bytesSent = 0;
@@ -91,6 +95,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                         mp_RP->m_att.expectsInlineQos);
             } while(bytesSent > 0 && relevant_changes.size() > 0);
         }
+
         if(!not_relevant_changes.empty())
             RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
                     &not_relevant_changes,
@@ -98,7 +103,8 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                     mp_RP->m_att.guid.entityId,
                     &mp_RP->m_att.endpoint.unicastLocatorList,
                     &mp_RP->m_att.endpoint.multicastLocatorList);
-        if(relevant_changes.empty() && not_relevant_changes.empty())
+
+        if(!thereAreChanges)
         {
             CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
             SequenceNumber_t first = mp_RP->mp_SFW->get_seq_num_min();
@@ -117,7 +123,9 @@ void NackResponseDelay::event(EventCode code, const char* msg)
             }
         }
         else
+        {
             mp_RP->mp_nackSupression->restart_timer();
+        }
     }
     else if(code == EVENT_ABORT)
     {

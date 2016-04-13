@@ -150,6 +150,11 @@ class PubSubWriter
         ASSERT_EQ(matched_, 0u);
     }
 
+    bool waitForAllAcked(const std::chrono::seconds& max_wait)
+    {
+        return publisher_->wait_for_all_acked(Time_t(max_wait.count(), 0));
+    }
+
     /*** Function to change QoS ***/
     PubSubWriter& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
     {
@@ -172,6 +177,12 @@ class PubSubWriter
     PubSubWriter& history_depth(const int32_t depth)
     {
         publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriter& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        publisher_attr_.qos.m_durability.kind = kind;
         return *this;
     }
 

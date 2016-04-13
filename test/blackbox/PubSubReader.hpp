@@ -157,11 +157,11 @@ class PubSubReader
             mutex_.unlock();
         }
 
-        std::list<type> block(const std::chrono::seconds &seconds)
+        std::list<type> block(const std::chrono::seconds &max_wait)
         {
             std::unique_lock<std::mutex> lock(mutex_);
             if(current_received_count_ != number_samples_expected_)
-                cv_.wait_for(lock, seconds);
+                cv_.wait_for(lock, max_wait);
 
             return total_msgs_;
         }
@@ -239,7 +239,6 @@ class PubSubReader
                         ASSERT_NE(it, total_msgs_.end()); 
                         total_msgs_.erase(it);
                         ++current_received_count_;
-                        std::cout << "CURTRENT " << current_received_count_ << std::endl;
 
                         if(current_received_count_ == number_samples_expected_)
                             cv_.notify_one();

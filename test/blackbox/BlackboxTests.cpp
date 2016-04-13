@@ -14,12 +14,6 @@
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "PubSubAsReliableKeepLastReader.hpp"
-#include "PubSubAsReliableKeepLastWriter.hpp"
-#include "PubSubKeepAllReader.hpp"
-#include "PubSubKeepAllWriter.hpp"
-#include "PubSubKeepAllTransientReader.hpp"
-#include "PubSubKeepAllTransientWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -833,7 +827,7 @@ TEST(BlackBox, PubSubKeepAll)
     reader.expected_data(data);
 
     unsigned int tries = 0;
-    for(; tries < 6 && !data.empty(); ++tries)
+    for(; tries < 5 && !data.empty(); ++tries)
     {
         // Backup data vector size.
         size_t previous_size = data.size();
@@ -842,73 +836,85 @@ TEST(BlackBox, PubSubKeepAll)
         // Store number samples sent.
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
-        std::cout << "sent_size " << sent_size << std::endl;
         ASSERT_LE(sent_size, 20);
         std::this_thread::sleep_for(std::chrono::seconds(1));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(10));
+        data = reader.block(std::chrono::seconds(4));
         reader.stopReception();
         // Should be received the data was sent.
-        std::cout << "received " << previous_size - data.size() << std::endl;
         ASSERT_EQ(previous_size - data.size(), sent_size);
+        //Wait for acknowledge, because then the history could be entirely again.
+        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
     }
     // To send 100 samples needs at least five tries.
-    ASSERT_GE(tries, 5);
+    ASSERT_EQ(tries, 5);
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
 
-/*
 // Test created to check bug #1558 (Github #33)
 TEST(BlackBox, PubSubKeepAllTransient)
 {
-    PubSubKeepAllTransientReader reader;
-    PubSubKeepAllTransientWriter writer;
-    const uint16_t nmsgs = 100;
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     
-    reader.init(nmsgs);
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init();
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+        resource_limits_max_samples(20).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 100).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
     reader.waitDiscovery();
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    auto data = default_helloword_data_generator();
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
+    reader.expected_data(data);
+
+    unsigned int tries = 0;
+    for(; tries < 5 && !data.empty(); ++tries)
     {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
-
-        writer.send(msgs);
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+        // Backup data vector size.
+        size_t previous_size = data.size();
+        // Send data
+        writer.send(data);
+        // Store number samples sent.
+        size_t sent_size = previous_size - data.size();
+        // In this test the history has 20 max_samples.
+        ASSERT_LE(sent_size, 20);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        reader.startReception(sent_size);
+        // Block reader until reception finished or timeout.
+        data = reader.block(std::chrono::seconds(4));
+        reader.stopReception();
+        // Should be received the data was sent.
+        ASSERT_EQ(previous_size - data.size(), sent_size);
+        //Wait for acknowledge, because then the history could be entirely again.
+        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
     }
+    // To send 100 samples needs at least five tries.
+    ASSERT_EQ(tries, 5);
 
-    msgs = reader.getNonReceivedMessages();
-    if(msgs.size() != 0)
-    {
-        std::cout << "Samples not received:";
-        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
-            std::cout << " " << *it << " ";
-        std::cout << std::endl;
-    }
-    ASSERT_EQ(msgs.size(), 0);
+    print_non_received_messages(data, default_helloworld_print);
+    ASSERT_EQ(data.size(), 0);
 }
-*/
 
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
-    eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_QUIET);
 #if defined(WIN32) && defined(_DEBUG)
     eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
 #endif

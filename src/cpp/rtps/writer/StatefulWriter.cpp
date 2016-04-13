@@ -30,18 +30,45 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 
 #include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/chrono/duration.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 
 static const char* const CLASS_NAME = "StatefulWriter";
 
+StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
+        WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
+    RTPSWriter(pimpl,guid,att,hist,listen),
+    mp_periodicHB(nullptr), m_times(att.times),
+    all_acked_mutex_(nullptr), all_acked_(false), all_acked_cond_(nullptr)
+{
+    m_heartbeatCount = 0;
+    if(guid.entityId == c_EntityId_SEDPPubWriter)
+        m_HBReaderEntityId = c_EntityId_SEDPPubReader;
+    else if(guid.entityId == c_EntityId_SEDPSubWriter)
+        m_HBReaderEntityId = c_EntityId_SEDPSubReader;
+    else if(guid.entityId == c_EntityId_WriterLiveliness)
+        m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
+    else
+        m_HBReaderEntityId = c_EntityId_Unknown;
+    mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
+    all_acked_mutex_ = new boost::mutex();
+    all_acked_cond_ = new boost::condition_variable();
+}
+
+
 StatefulWriter::~StatefulWriter()
 {
     const char* const METHOD_NAME = "~StatefulWriter";
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
+
+    delete all_acked_cond_;
+    delete all_acked_mutex_;
 
     // Destroy parent events
     if(mp_unsetChangesNotEmpty != nullptr)
@@ -55,24 +82,6 @@ StatefulWriter::~StatefulWriter()
     {
         delete(*it);
     }
-}
-
-StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
-    RTPSWriter(pimpl,guid,att,hist,listen),
-    mp_periodicHB(nullptr),
-    m_times(att.times)
-{
-    m_heartbeatCount = 0;
-    if(guid.entityId == c_EntityId_SEDPPubWriter)
-        m_HBReaderEntityId = c_EntityId_SEDPPubReader;
-    else if(guid.entityId == c_EntityId_SEDPSubWriter)
-        m_HBReaderEntityId = c_EntityId_SEDPSubReader;
-    else if(guid.entityId == c_EntityId_WriterLiveliness)
-        m_HBReaderEntityId= c_EntityId_ReaderLiveliness;
-    else
-        m_HBReaderEntityId = c_EntityId_Unknown;
-    mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 }
 
 /*
@@ -386,13 +395,15 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
 {
     const char* const METHOD_NAME = "is_acked_by_all";
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
     if(change->writerGUID != this->getGuid())
     {
         logWarning(RTPS_WRITER,"The given change is not from this Writer");
         return false;
     }
-    std::vector<ReaderProxy*>::iterator it;
-    for(it=matched_readers.begin();it!=matched_readers.end();++it)
+
+    for(auto it = matched_readers.begin(); it!=matched_readers.end(); ++it)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
         ChangeForReader_t changeForReader;
@@ -409,6 +420,59 @@ bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
         }
     }
     return true;
+}
+
+bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
+{
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    boost::unique_lock<boost::mutex> all_lock(*all_acked_mutex_);
+
+    all_acked_ = true;
+
+    for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
+    {
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        if((*it)->m_changesForReader.size() > 0)
+        {
+            all_acked_ = false;
+            break;
+        }
+    }
+    lock.unlock();
+
+    if(!all_acked_)
+    {
+        boost::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
+        if(all_acked_cond_->wait_for(all_lock, max_w)  == boost::cv_status::no_timeout)
+            all_acked_ = true;
+    }
+
+    return all_acked_;
+}
+
+void StatefulWriter::check_for_all_acked()
+{
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    boost::unique_lock<boost::mutex> all_lock(*all_acked_mutex_);
+
+    all_acked_ = true;
+
+    for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
+    {
+        boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
+        if((*it)->m_changesForReader.size() > 0)
+        {
+            all_acked_ = false;
+            break;
+        }
+    }
+    lock.unlock();
+
+    if(all_acked_)
+    {
+        all_lock.unlock();
+        all_acked_cond_->notify_all();
+    }
 }
 
 bool StatefulWriter::clean_history(unsigned int max)
