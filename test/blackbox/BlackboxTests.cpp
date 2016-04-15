@@ -55,10 +55,11 @@ std::list<HelloWorld> default_helloword_data_generator(size_t max = 0)
 }
 
 const size_t data64kb_length = 63996;
-std::list<Data64kb> default_data64kb_data_generator()
+std::list<Data64kb> default_data64kb_data_generator(size_t max = 0)
 {
     unsigned char index = 1;
-    std::list<Data64kb> returnedValue(100);
+    size_t maximum = max ? max : 100;
+    std::list<Data64kb> returnedValue(maximum);
 
     std::generate(returnedValue.begin(), returnedValue.end(), [&index] {
             Data64kb data;
@@ -74,10 +75,11 @@ std::list<Data64kb> default_data64kb_data_generator()
 }
 
 const size_t data300kb_length = 307201;
-std::list<Data1mb> default_data300kb_data_generator()
+std::list<Data1mb> default_data300kb_data_generator(size_t max = 0)
 {
     unsigned char index = 1;
-    std::list<Data1mb> returnedValue(100);
+    size_t maximum = max ? max : 100;
+    std::list<Data1mb> returnedValue(maximum);
 
     std::generate(returnedValue.begin(), returnedValue.end(), [&index] {
             Data1mb data;
@@ -113,7 +115,7 @@ void print_non_received_messages(const std::list<T>& data, const std::function<v
 {
     if(data.size() != 0)
     {
-        std::cout << "Samples not received:";
+        std::cout << "Samples not received: ";
         std::for_each(data.begin(), data.end(), printer);
         std::cout << std::endl;
     }
@@ -668,6 +670,15 @@ TEST(BlackBox, PubSubAsNonReliableData300kb)
     ASSERT_FALSE(writer.isInitialized());
 }
 
+TEST(BlackBox, PubSubAsReliableData300kb)
+{
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    
+    writer.init();
+
+    ASSERT_FALSE(writer.isInitialized());
+}
+
 TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
@@ -701,6 +712,40 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::seconds(5));
     }
+
+    print_non_received_messages(data, default_data300kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+TEST(BlackBox, AsyncPubSubAsReliableData300kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(1);
+    
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(5));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);

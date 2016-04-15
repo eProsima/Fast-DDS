@@ -216,6 +216,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
 
+            // TODO Merge this logic here and in StatefulReader in a new object FragmentCache.
             // Look in Cache for a CacheChange with same writerSN y writerId
             auto it = cache_.begin();
             for(; it != cache_.end(); ++it)
