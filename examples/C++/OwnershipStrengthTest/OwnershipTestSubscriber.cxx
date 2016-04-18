@@ -65,49 +65,38 @@ void OwnershipTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub
 	{
 		n_matched--;
 		cout << "Subscriber unmatched" << endl;
-      RemoveFromHierarchy(info.remoteEndpointGuid);
+      m_hierarchy.DeregisterPublisher(info.remoteEndpointGuid);
 	}
 }
 
-void OwnershipTestSubscriber::SubListener::AddToHierarchy(GUID_t guid, unsigned int ownershipStrength)
+bool OwnershipTestSubscriber::StrengthHierarchy::IsMessageStrong(const ExampleMessage& st, const SampleInfo_t& info)
 {
-   m_writerStrengthHierarchy[ownershipStrength].insert(guid);
+   unsigned int ownershipStrength = st.ownershipStrength();
+   GUID_t guid = info.sample_identity.writer_guid();
+
+   strengthMap[ownershipStrength].insert(guid);
+
+   std::set<GUID_t>& strongestWriters = strengthMap.rbegin()->second;
+   const GUID_t& prioritisedStrongestWriter = *(strongestWriters.begin());
+   bool strong = (guid == prioritisedStrongestWriter);
+
+   if (!strong)
+      cout << "Weak message received and discarded (strength " << ownershipStrength << ")" << endl;
+
+   return strong;
 }
 
-void OwnershipTestSubscriber::SubListener::RemoveFromHierarchy(GUID_t guid)
+void OwnershipTestSubscriber::StrengthHierarchy::DeregisterPublisher(GUID_t guid)
 {
-   for (auto &guidSet : m_writerStrengthHierarchy)
+   for (auto &guidSet : strengthMap)
    {
        size_t elementsErased = guidSet.second.erase(guid);
        if (elementsErased && guidSet.second.empty())
        {
-         m_writerStrengthHierarchy.erase(guidSet.first);
+         strengthMap.erase(guidSet.first);
          return;
        }
    }
-}
-
-void OwnershipTestSubscriber::SubListener::ProcessStrongMessage(const ExampleMessage& st, GUID_t guid)
-{
-   // We extract the strongest set from the back of the map
-   std::set<GUID_t>& strongestWriters = m_writerStrengthHierarchy.rbegin()->second;
-   const GUID_t& prioritisedStrongestWriter = *(strongestWriters.begin());
-
-   if(guid != prioritisedStrongestWriter)
-   {
-      cout << "Message with tied highest ownership strength discarded (lowest GUID prioritised)" << endl;
-      return;
-   }
-
-   ++n_msg;
-   cout << "Message received with index " << n_msg << ", and strength " << st.ownershipStrength() \
-   << ", reading \"" << st.message() << "\"" << endl;	
-}
-
-void OwnershipTestSubscriber::SubListener::ProcessWeakMessage(const ExampleMessage& st, GUID_t guid)
-{
-   unsigned int currentHighestStrength = m_writerStrengthHierarchy.rbegin()->first;
-   cout << "Weak message discarded (strength " << st.ownershipStrength() << " vs current maximum " << currentHighestStrength << ")." << endl;
 }
 
 void OwnershipTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
@@ -116,15 +105,13 @@ void OwnershipTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
    ExampleMessage st;
    
    if(sub->takeNextData(&st, &m_info) &&
-      m_info.sampleKind == ALIVE)
+      m_info.sampleKind == ALIVE && 
+      m_hierarchy.IsMessageStrong(st, m_info))
    {
-      GUID_t publisherGuid = m_info.sample_identity.writer_guid();
-      AddToHierarchy(publisherGuid, st.ownershipStrength());
-
-      if (m_writerStrengthHierarchy.rbegin()->first == st.ownershipStrength())
-          ProcessStrongMessage(st, publisherGuid); 
-      else 
-          ProcessWeakMessage(st, publisherGuid);
+      // User message handling here, for a strong message
+      ++n_msg;
+      cout << "Message received with index " << n_msg << ", and strength " << st.ownershipStrength() \
+      << ", reading \"" << st.message() << "\"" << endl;	
    }
 }
 

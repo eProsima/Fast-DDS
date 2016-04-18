@@ -36,6 +36,14 @@ private:
 	Participant *mp_participant;
 	Subscriber *mp_subscriber;
 	
+   class StrengthHierarchy
+   {
+   public:
+      bool IsMessageStrong(const ExampleMessage& st, const SampleInfo_t& info);
+      void DeregisterPublisher(GUID_t guid);
+      std::map<unsigned int, std::set<GUID_t> > strengthMap;
+   };
+
 	class SubListener : public SubscriberListener
 	{
 	public:
@@ -46,14 +54,9 @@ private:
 		SampleInfo_t m_info;
 		int n_matched;
 		int n_msg;
-
-      // A hierarchy of writers ordered by strength (multiple unique writer GUIDs may share same strength).
-      std::map<unsigned int, std::set<GUID_t> > m_writerStrengthHierarchy;
-      void AddToHierarchy(GUID_t guid, unsigned int ownershipStrength);
-      void RemoveFromHierarchy(GUID_t guid);
-      void ProcessStrongMessage(const ExampleMessage& st, GUID_t guid);
-      void ProcessWeakMessage(const ExampleMessage& st, GUID_t guid);
+      StrengthHierarchy m_hierarchy;
 	} m_listener;
+
 	ExampleMessagePubSubType myType;
 };
 

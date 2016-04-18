@@ -32,6 +32,20 @@
 #define eProsima_user_DllExport
 #endif
 
+#if defined(_WIN32)
+#if defined(EPROSIMA_USER_DLL_EXPORT)
+#if defined(HelloWorld_SOURCE)
+#define HelloWorld_DllAPI __declspec( dllexport )
+#else
+#define HelloWorld_DllAPI __declspec( dllimport )
+#endif // HelloWorld_SOURCE
+#else
+#define HelloWorld_DllAPI
+#endif
+#else
+#define HelloWorld_DllAPI
+#endif // _WIN32
+
 namespace eprosima
 {
     namespace fastcdr
@@ -39,7 +53,6 @@ namespace eprosima
         class Cdr;
     }
 }
-
 
 /*!
  * @brief This class represents the structure HelloWorld defined by the user in the IDL file.
@@ -110,19 +123,28 @@ public:
         return m_index;
     }
     /*!
-     * @brief This function sets a value in member message
-     * @param _message New value for member message
+     * @brief This function copies the value in member message
+     * @param _message New value to be copied in member message
      */
-    inline eProsima_user_DllExport void message(std::string _message)
+    inline eProsima_user_DllExport void message(const std::string &_message)
     {
         m_message = _message;
     }
 
     /*!
-     * @brief This function returns the value of member message
-     * @return Value of member message
+     * @brief This function moves the value in member message
+     * @param _message New value to be moved in member message
      */
-    inline eProsima_user_DllExport std::string message() const
+    inline eProsima_user_DllExport void message(std::string &&_message)
+    {
+        m_message = std::move(_message);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member message
+     * @return Constant reference to member message
+     */
+    inline eProsima_user_DllExport const std::string& message() const
     {
         return m_message;
     }
@@ -144,18 +166,6 @@ public:
      */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
-    /*!
-     * @brief This function returns the maximum serialized size of the Key of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
-
-    /*!
-     * @brief This function tells you if the Key has beedn defined for this type
-     */
-    eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -169,12 +179,26 @@ public:
      */
     eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
 
+
+
     /*!
-     * @brief This function serializes the key memebers of an object using CDR serialization.
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
-
     
 private:
     uint32_t m_index;
