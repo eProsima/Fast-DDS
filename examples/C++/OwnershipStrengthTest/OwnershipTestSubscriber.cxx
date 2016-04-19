@@ -48,6 +48,7 @@ bool OwnershipTestSubscriber::init()
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
 	Rparam.topic.topicName = "OwnershipTestPubSubTopic";
+   Rparam.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 	if(mp_subscriber == nullptr)
 		return false;
