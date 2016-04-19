@@ -21,6 +21,7 @@
 #include "OwnershipTestPubSubTypes.h"
 #include <set>
 #include <map>
+#include <boost/thread/mutex.hpp>
 
 
 using namespace eprosima::fastrtps;
@@ -42,6 +43,7 @@ private:
       bool IsMessageStrong(const ExampleMessage& st, const SampleInfo_t& info);
       void DeregisterPublisher(GUID_t guid);
       std::map<unsigned int, std::set<GUID_t> > strengthMap;
+      boost::mutex mapMutex;
    };
 
 	class SubListener : public SubscriberListener

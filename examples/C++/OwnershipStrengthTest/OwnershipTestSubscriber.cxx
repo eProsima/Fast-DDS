@@ -66,6 +66,7 @@ void OwnershipTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub
 	{
 		n_matched--;
 		cout << "Subscriber unmatched" << endl;
+
       m_hierarchy.DeregisterPublisher(info.remoteEndpointGuid);
 	}
 }
@@ -75,7 +76,9 @@ bool OwnershipTestSubscriber::StrengthHierarchy::IsMessageStrong(const ExampleMe
    unsigned int ownershipStrength = st.ownershipStrength();
    GUID_t guid = info.sample_identity.writer_guid();
 
+   mapMutex.lock();
    strengthMap[ownershipStrength].insert(guid);
+   mapMutex.unlock();
 
    std::set<GUID_t>& strongestWriters = strengthMap.rbegin()->second;
    const GUID_t& prioritisedStrongestWriter = *(strongestWriters.begin());
@@ -89,15 +92,17 @@ bool OwnershipTestSubscriber::StrengthHierarchy::IsMessageStrong(const ExampleMe
 
 void OwnershipTestSubscriber::StrengthHierarchy::DeregisterPublisher(GUID_t guid)
 {
+   mapMutex.lock();
    for (auto &guidSet : strengthMap)
    {
        size_t elementsErased = guidSet.second.erase(guid);
        if (elementsErased && guidSet.second.empty())
        {
          strengthMap.erase(guidSet.first);
-         return;
+         break;
        }
    }
+   mapMutex.unlock();
 }
 
 void OwnershipTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
