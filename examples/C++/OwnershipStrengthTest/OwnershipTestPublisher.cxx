@@ -25,7 +25,7 @@
 OwnershipTestPublisher::OwnershipTestPublisher() 
    :mp_participant(nullptr), 
     mp_publisher(nullptr), 
-    m_strength(DefaultStrength)
+    m_strength(DefaultStrength) 
     {}
 
 OwnershipTestPublisher::~OwnershipTestPublisher() {	Domain::removeParticipant(mp_participant);}

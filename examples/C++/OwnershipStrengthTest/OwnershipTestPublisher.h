@@ -46,6 +46,7 @@ private:
 	} m_listener;
 	ExampleMessagePubSubType myType;
 
+   // Keeps an ownership strength value that will be appended to each message.
    unsigned int m_strength;
    unsigned int m_messagesSent;
 

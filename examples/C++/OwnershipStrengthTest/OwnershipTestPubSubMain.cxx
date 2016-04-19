@@ -53,6 +53,9 @@ int main(int argc, char** argv)
 		case 1:
 		{
 			OwnershipTestPublisher mypub; 
+
+         // Takes an optional second parameter with the publisher ownership strength.
+         // If left out, will default to strength 10.
          if (argc > 2)
          {
             std::stringstream ss(argv[2]);

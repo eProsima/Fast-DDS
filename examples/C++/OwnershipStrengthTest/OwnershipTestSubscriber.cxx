@@ -67,6 +67,8 @@ void OwnershipTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub
 		n_matched--;
 		cout << "Subscriber unmatched" << endl;
 
+      // Must deregister here to make sure messages from weaker publishers are accepted.
+      // It is also possible to deregister on a lost deadline, if applicable.
       m_hierarchy.DeregisterPublisher(info.remoteEndpointGuid);
 	}
 }
@@ -77,12 +79,18 @@ bool OwnershipTestSubscriber::StrengthHierarchy::IsMessageStrong(const ExampleMe
    GUID_t guid = info.sample_identity.writer_guid();
 
    mapMutex.lock();
-   strengthMap[ownershipStrength].insert(guid);
-   mapMutex.unlock();
 
+   // The strength-GUID pair is inserted in the strength hierarchy, if unique.
+   strengthMap[ownershipStrength].insert(guid);
+
+   // The set of strongest writers is extracted from the back of the map (highest strength)
    std::set<GUID_t>& strongestWriters = strengthMap.rbegin()->second;
+
+   // The prioritised writer is arbitrarily chosen as the one with the lowest GUID, in case of a tie.
    const GUID_t& prioritisedStrongestWriter = *(strongestWriters.begin());
    bool strong = (guid == prioritisedStrongestWriter);
+
+   mapMutex.unlock();
 
    if (!strong)
       cout << "Weak message received and discarded (strength " << ownershipStrength << ")" << endl;
@@ -93,15 +101,11 @@ bool OwnershipTestSubscriber::StrengthHierarchy::IsMessageStrong(const ExampleMe
 void OwnershipTestSubscriber::StrengthHierarchy::DeregisterPublisher(GUID_t guid)
 {
    mapMutex.lock();
+
+   // We walk through the hierarchy and remove the publisher GUID
    for (auto &guidSet : strengthMap)
-   {
-       size_t elementsErased = guidSet.second.erase(guid);
-       if (elementsErased && guidSet.second.empty())
-       {
-         strengthMap.erase(guidSet.first);
-         break;
-       }
-   }
+       guidSet.second.erase(guid);
+
    mapMutex.unlock();
 }
 

@@ -36,13 +36,18 @@ public:
 private:
 	Participant *mp_participant;
 	Subscriber *mp_subscriber;
-	
+
    class StrengthHierarchy
    {
    public:
+      // Automatically adds a publisher to the hierarchy, and reports back whether it is the strongest.
       bool IsMessageStrong(const ExampleMessage& st, const SampleInfo_t& info);
+
+      // Deregisters a publisher removing it from the hierarchy.
       void DeregisterPublisher(GUID_t guid);
-      std::map<unsigned int, std::set<GUID_t> > strengthMap;
+
+      // Provides an ordered hierarchy of publishers, based on the Ownership Strength QoS parameter.
+      std::map<unsigned int, std::set<GUID_t> > strengthMap; // Keyed by Ownership Strength
       boost::mutex mapMutex;
    };
 
