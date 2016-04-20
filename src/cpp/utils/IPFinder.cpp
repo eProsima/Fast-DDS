@@ -120,6 +120,10 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name )
 
 	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
 	{
+
+		if (ifa->ifa_addr == NULL)
+			continue;
+
 		family = ifa->ifa_addr->sa_family;
 
 		if (family == AF_INET)
