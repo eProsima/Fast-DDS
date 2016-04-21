@@ -134,7 +134,7 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 inline bool CDRMessage::readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberSet_t* fns)
 {
 	bool valid = true;
-	valid &= CDRMessage::readUInt32(msg, (uint32_t*)&fns->base);
+	valid &= CDRMessage::readUInt32(msg, &fns->base);
 	uint32_t numBits;
 	valid &= CDRMessage::readUInt32(msg, &numBits);
 	int32_t bitmap;

@@ -145,9 +145,10 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                 // Fill the FragmentNumberSet_t bitmap.
                 for(; fit != cit->getDataFragments()->end(); ++fit)
                 {
-                    ++frag_num;
                     if(*fit == ChangeFragmentStatus_t::NOT_PRESENT)
                         frag_sns.add(frag_num);
+
+                    ++frag_num;
                 }
 
                 ++mp_WP->m_nackfragCount;
