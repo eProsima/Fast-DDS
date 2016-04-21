@@ -137,7 +137,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 
                 // Never should happend.
                 assert(frag_num != 0);
-                assert(fit == cit->getDataFragments()->end());
+                assert(fit != cit->getDataFragments()->end());
 
                 // Store FragmentNumberSet_t base.
                 frag_sns.base = frag_num;
