@@ -228,7 +228,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
                 if (!change_received(change_completed))
                 {
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << (*it)->sequenceNumber.to64long(), C_BLUE);
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
 
                     // Assert liveliness because if it is a participant discovery info.
                     if (getGuid().entityId == c_EntityId_SPDPReader)

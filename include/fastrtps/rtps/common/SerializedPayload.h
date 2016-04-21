@@ -19,8 +19,8 @@
 #include <stdlib.h>
 
 /*!
- * @brief Maximum payload is maximum of UDP packet size minus 536bytes.
- * With those 536 bytes is posible to send RTPS Header plus RTPS Data submessage plus RTPS Heartbeat submessage.
+ * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)
+ * With those 536 bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE) bytes is posible to send RTPS Header plus RTPS Data submessage plus RTPS Heartbeat submessage.
  */
 #define PAYLOAD_MAX_SIZE 65000u
 

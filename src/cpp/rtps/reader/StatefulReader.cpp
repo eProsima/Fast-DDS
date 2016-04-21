@@ -222,7 +222,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
     const char* const METHOD_NAME = "processDataFragMsg";
     WriterProxy *pWP = nullptr;
 
-    assert(change);
+    assert(incomingChange);
 
     boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
