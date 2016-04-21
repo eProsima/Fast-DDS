@@ -93,7 +93,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                     uncompleted_changes.push_back(uncomplete_change);
                 }
 			}
-			mp_WP->m_acknackCount++;
+			++mp_WP->m_acknackCount;
 			logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
 			bool final = false;
@@ -150,7 +150,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                         frag_sns.add(frag_num);
                 }
 
-                mp_WP->m_acknackCount++;
+                ++mp_WP->m_nackfragCount;
                 logInfo(RTPS_READER,"Sending NACKFRAG for sample" << cit->sequenceNumber << ": "<< frag_sns;);
                 CDRMessage::initCDRMsg(&m_heartbeat_response_msg);
                 RTPSMessageCreator::addMessageNackFrag(&m_heartbeat_response_msg, mp_WP->mp_SFR->getGuid().guidPrefix,

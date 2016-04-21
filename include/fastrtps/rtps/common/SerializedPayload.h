@@ -19,10 +19,10 @@
 #include <stdlib.h>
 
 /*!
- * @brief Maximum payload is maximum of UDP packet size minus 200bytes.
- * With those 200 bytes is posible to send RTPS Header plus RTPS Data submessage plus RTPS Heartbeat submessage.
+ * @brief Maximum payload is maximum of UDP packet size minus 536bytes.
+ * With those 536 bytes is posible to send RTPS Header plus RTPS Data submessage plus RTPS Heartbeat submessage.
  */
-#define PAYLOAD_MAX_SIZE 65336u
+#define PAYLOAD_MAX_SIZE 65000u
 
 namespace eprosima{
     namespace fastrtps{
