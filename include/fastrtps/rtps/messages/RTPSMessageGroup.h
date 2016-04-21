@@ -54,6 +54,11 @@ namespace eprosima {
                         return last_fragment_number_;
                     }
 
+                    void setLastFragmentNumber(uint32_t fragment_number)
+                    {
+                        last_fragment_number_ = fragment_number;
+                    }
+
                     uint32_t increaseLastFragmentNumber()
                     {
                         assert(isFragmented());

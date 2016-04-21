@@ -329,6 +329,21 @@ inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber
 	return output;
 }
 
+/*!
+ * @brief Defines the STL hash function for type SequenceNumber_t.
+ */
+struct SequenceNumberHash
+{
+    std::size_t operator()(const SequenceNumber_t& sequence_number) const
+    {
+#ifdef LLONG_MAX
+        return sequence_number.to64long();
+#else
+        return sequence_number.low;
+#endif
+    };
+};
+
 #endif
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.

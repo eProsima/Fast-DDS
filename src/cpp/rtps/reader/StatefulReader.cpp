@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/utils/RTPSLog.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "FragmentedChangePitStop.h"
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -232,124 +233,24 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
         {
             logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
 
-            // Look in Cache for a CacheChange with same writerSN y writerId
-            auto it = cache_.begin();
-            for(; it != cache_.end(); ++it)
+            // Fragments manager has to process incomming fragments.
+            // If CacheChange_t is completed, it will be returned;
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
+
+
+            if(change_completed != nullptr)
             {
-                if((*it)->writerGUID.entityId == incomingChange->writerGUID.entityId &&
-                        (*it)->sequenceNumber == incomingChange->sequenceNumber)
-                    break;
-            }
-
-            if (it != cache_.end())
-            { // If found, merge with new CacheChange
-
-                bool wasUpdated = false;
-
-                for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + incomingChange->getFragmentCount(); ++count)
+                if (!change_received(change_completed, pWP, lock))
                 {
-                    if((*it)->getDataFragments()->at(count) == ChangeFragmentStatus_t::NOT_PRESENT)
-                    {
-                        if (count + 1 != (*it)->getFragmentCount())
-                        {
-                            memcpy((*it)->serializedPayload.data + fragmentStartingNum * (*it)->getFragmentSize(),
-                                    incomingChange->serializedPayload.data, incomingChange->getFragmentSize());
-                        }
-                        else
-                        {
-                            memcpy((*it)->serializedPayload.data + fragmentStartingNum * (*it)->getFragmentSize(),
-                                    incomingChange->serializedPayload.data, (*it)->serializedPayload.length - (count * (*it)->getFragmentSize()));
-                        }
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
 
-                        (*it)->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
-                        wasUpdated = true;
-                    }
-                }
-
-                if(wasUpdated)
-                {
-                    auto fit = (*it)->getDataFragments()->begin();
-                    for(; fit != (*it)->getDataFragments()->end(); ++fit)
+                    // Assert liveliness because it is a participant discovery info.
+                    if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
                     {
-                        if(*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                            break;
+                        mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(incomingChange->writerGUID.guidPrefix);
                     }
 
-                    if(fit == (*it)->getDataFragments()->end())
-                    {
-                        CacheChange_t* change = *it;
-                        cache_.erase(it);
-
-                        if (!change_received(change, pWP, lock))
-                        {
-                            logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << (*it)->sequenceNumber.to64long(), C_BLUE);
-                            releaseCache((*it));
-                            if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
-                            {
-                                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness((*it)->writerGUID.guidPrefix);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // If not found, insert new CacheChange
-                CacheChange_t* change_to_add;
-
-                if (reserveCache(&change_to_add)) //Reserve a new cache from the corresponding cache pool
-                {
-                    change_to_add->copy_not_memcpy(incomingChange);
-
-                    // The length of the serialized payload has to be sample size.
-                    change_to_add->serializedPayload.length = sampleSize;
-                    change_to_add->setFragmentSize(incomingChange->getFragmentSize());
-
-                    for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + incomingChange->getFragmentCount(); ++count)
-                    {
-                        if (count + 1 != change_to_add->getFragmentCount())
-                        {
-                            memcpy(change_to_add->serializedPayload.data + fragmentStartingNum * change_to_add->getFragmentSize(),
-                                    incomingChange->serializedPayload.data, incomingChange->getFragmentSize());
-                        }
-                        else
-                        {
-                            memcpy(change_to_add->serializedPayload.data + fragmentStartingNum * change_to_add->getFragmentSize(),
-                                    incomingChange->serializedPayload.data, change_to_add->serializedPayload.length - (count * change_to_add->getFragmentSize()));
-                        }
-
-                        change_to_add->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
-                    }
-
-                    auto fit = change_to_add->getDataFragments()->begin();
-                    for(; fit != change_to_add->getDataFragments()->end(); ++fit)
-                    {
-                        if(*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                            break;
-                    }
-
-                    if(fit == change_to_add->getDataFragments()->end())
-                    {
-                        lock.unlock(); // Next function has its own lock.
-
-                        if (!change_received(change_to_add, pWP, lock))
-                        {
-                            logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_to_add->sequenceNumber.to64long(), C_BLUE);
-                            releaseCache(change_to_add);
-                            if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
-                            {
-                                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change_to_add->writerGUID.guidPrefix);
-                            }
-                        }
-
-                    }
-                    else
-                        cache_.push_back(change_to_add);
-                }
-                else
-                {
-                    logError(RTPS_MSG_IN, IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId, C_BLUE);
-                    return false;
+                    releaseCache(change_completed);
                 }
             }
 

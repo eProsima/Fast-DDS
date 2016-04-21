@@ -98,7 +98,7 @@ public:
 	* Get the begin of the set
 	* @return Vector iterator pointing to the begin of the set
 	*/
-	std::vector<FragmentNumber_t>::iterator get_begin()
+	std::vector<FragmentNumber_t>::const_iterator get_begin() const
 	{
 		return set.begin();
 	}
@@ -107,7 +107,7 @@ public:
 	* Get the end of the set
 	* @return Vector iterator pointing to the end of the set
 	*/
-	std::vector<FragmentNumber_t>::iterator get_end()
+	std::vector<FragmentNumber_t>::const_iterator get_end() const
 	{
 		return set.end();
 	}

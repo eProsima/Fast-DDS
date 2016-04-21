@@ -18,9 +18,11 @@
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
 #include "../common/CacheChange.h"
+#include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
 
 #include <set>
+#include <unordered_map>
 
 namespace boost
 {
@@ -148,13 +150,37 @@ namespace eprosima
                  */
                 bool minChange(std::vector<ChangeForReader_t*>* Changes, ChangeForReader_t* changeForReader);
 
-                //!Timed Event to manage the Acknack response delay.
-                NackResponseDelay* mp_nackResponse;
-                //!Timed Event to manage the delay to mark a change as UNACKED after sending it.
-                NackSupressionDuration* mp_nackSupression;
-                //!Last ack/nack count
-                uint32_t m_lastAcknackCount;
+                /*!
+                 * @brief Adds requested fragments. This fragments will be sent in next NackResponseDelay.
+                 * @param fragment_number_set FragmentNumberSet_t with information about request fragments.
+                 * @return True if there is at least one requested fragment. False in other case.
+                 * @remarks It is not thread-safe.
+                 */
+                bool requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set);
 
+                const std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash>&
+                    getRequestedFragments() const { return requested_fragments_; }
+
+                void clearRequestedFragments() { requested_fragments_.clear(); }
+
+                /*!
+                 * @brief Returns the last NACKFRAG count.
+                 * @return Last NACKFRAG count.
+                 */
+                uint32_t getLastNackfragCount() const { return lastNackfragCount_; }
+
+                /*!
+                 * @brief Sets the last NACKFRAG count.
+                 * @param lastNackfragCount New value for last NACKFRAG count.
+                 */
+                void setLastNackfragCount(uint32_t lastNackfragCount) { lastNackfragCount_ = lastNackfragCount; }
+
+                //! Timed Event to manage the Acknack response delay.
+                NackResponseDelay* mp_nackResponse;
+                //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
+                NackSupressionDuration* mp_nackSupression;
+                //! Last ack/nack count
+                uint32_t m_lastAcknackCount;
 
                 /**
                  * Filter a CacheChange_t, in this version always returns true.
@@ -168,6 +194,13 @@ namespace eprosima
 
                 //!Set of the changes and its state.
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
+
+                private:
+                //! Last  NACKFRAG count.
+                uint32_t lastNackfragCount_;
+                //TODO Temporal
+                //! Contains requested fragments per CacheChange_t.
+                std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash> requested_fragments_;
             };
         }
     } /* namespace rtps */

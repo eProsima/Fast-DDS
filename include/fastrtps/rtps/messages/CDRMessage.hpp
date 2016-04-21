@@ -538,7 +538,7 @@ inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
 
 	uint32_t deltaN = 0;
 
-	for (std::vector<FragmentNumber_t>::iterator it = fns->get_begin();
+	for (auto it = fns->get_begin();
 		it != fns->get_end(); ++it)
 	{
 		deltaN = (uint32_t)(*it - fns->base);

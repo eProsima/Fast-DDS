@@ -31,7 +31,7 @@ static const char* const CLASS_NAME = "ReaderProxy";
 ReaderProxy::ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
 				m_att(rdata), mp_SFW(SW), m_isRequestedChangesEmpty(true),
 				mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
-				mp_mutex(new boost::recursive_mutex())
+				mp_mutex(new boost::recursive_mutex()), lastNackfragCount_(0)
 {
 	const char* const METHOD_NAME = "ReaderProxy";
 	mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
@@ -299,4 +299,19 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	*changeForReader = **std::min_element(Changes->begin(),Changes->end(),change_min);
 	return true;
+}
+
+bool ReaderProxy::requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set)
+{
+    std::set<FragmentNumber_t> requested_fragments(frag_set.get_begin(), frag_set.get_end());
+    size_t requested_number = requested_fragments.size();
+
+    auto ret = requested_fragments_.insert(std::make_pair(sequence_number, std::move(requested_fragments)));
+
+    if(!ret.second)
+    {
+        ret.first->second.insert(requested_fragments.begin(), requested_fragments.end());
+    }
+
+    return requested_number > 0;
 }

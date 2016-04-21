@@ -18,7 +18,8 @@
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "InstanceHandle.h"
-//#include "DataFragment.h"
+
+#include <vector>
 
 namespace eprosima
 {
@@ -51,7 +52,8 @@ namespace eprosima
              * Structure CacheChange_t, contains information on a specific CacheChange.
              * @ingroup COMMON_MODULE
              */
-            struct RTPS_DllAPI CacheChange_t{
+            struct RTPS_DllAPI CacheChange_t
+            {
                 //!Kind of change, default value ALIVE.
                 ChangeKind_t kind;
                 //!GUID_t of the writer that generated this change.
@@ -70,7 +72,10 @@ namespace eprosima
                 WriteParams write_params;
                 bool is_untyped_;
 
-                //!Default constructor.
+                /*!
+                 * @brief Default constructor.
+                 * Creates an empty CacheChange_t.
+                 */
                 CacheChange_t():
                     kind(ALIVE),
                     isRead(false),
@@ -269,19 +274,6 @@ namespace eprosima
                 {
                     return seq_num_;
                 }
-
-                /**
-                 * Set the cache change
-                 * @param a_change Cache change
-                 */
-                //TODO Remove
-                /*bool setChange(const CacheChange_t* a_change)
-                  {
-                  m_isValid = true;
-                  seq_num_ = a_change->sequenceNumber;
-                  change = a_change;
-                  return true;
-                  }*/
 
                 //! Set change as not valid
                 void notValid()

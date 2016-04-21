@@ -132,6 +132,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 				bool read = false;
 				if(mp_minSeqCacheChange->isRead)
 					read = true;
+                //TODO Revisar. Es correcto que elimine el minimo aunque no este leido?
 				if(this->remove_change_sub(mp_minSeqCacheChange))
 				{
 					if(!read)

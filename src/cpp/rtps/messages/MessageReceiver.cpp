@@ -1018,8 +1018,6 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 	if (smh->submessageLength == 0)
 		*last = true;
 
-	// XXX TODO VALIDATE?
-
 	boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
 	//Look for the correct writer to use the acknack
 	for (std::vector<RTPSWriter*>::iterator it = mp_threadListen->m_assocWriters.begin();
@@ -1027,7 +1025,6 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 	{
 		//Look for the readerProxy the acknack is from
 		boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
-		/* XXX TODO PROCESS
 		if ((*it)->getGuid() == writerGUID)
 		{
 			if ((*it)->getAttributes()->reliabilityKind == RELIABLE)
@@ -1040,24 +1037,14 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 
 					if ((*rit)->m_att.guid == readerGUID)
 					{
-						if ((*rit)->m_lastAcknackCount < Ackcount)
+						if ((*rit)->getLastNackfragCount() < Ackcount)
 						{
-							(*rit)->m_lastAcknackCount = Ackcount;
-							(*rit)->acked_changes_set(SNSet.base);
-							std::vector<SequenceNumber_t> set_vec = SNSet.get_set();
-							(*rit)->requested_changes_set(set_vec);
-							if (!(*rit)->m_isRequestedChangesEmpty || !finalFlag)
+							(*rit)->setLastNackfragCount(Ackcount);
+                            // TODO Not doing Acknowledged.
+                            if((*rit)->requested_fragment_set(writerSN, fnState))
 							{
 								(*rit)->mp_nackResponse->restart_timer();
 							}
-
-							if (SF->getAttributes()->durabilityKind == VOLATILE)
-							{
-								// Clean history.
-								// TODO Change mechanism
-								SF->clean_history();
-							}
-
 						}
 						break;
 					}
@@ -1070,7 +1057,6 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 				return false;
 			}
 		}
-		*/
 	}
 	logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "
 		<< mp_threadListen->m_assocWriters.size() << " writers in this ListenResource)", C_BLUE);

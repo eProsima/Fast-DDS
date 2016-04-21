@@ -113,6 +113,8 @@ public:
 	std::vector<ChangeFromWriter_t> m_changesFromW;
 	//! Acknack Count
 	uint32_t m_acknackCount;
+    //! NACKFRAG Count
+    uint32_t m_nackfragCount;
 	//! LAst HEartbeatcount.
 	uint32_t m_lastHeartbeatCount;
 	//!Indicates if they are missing changes.

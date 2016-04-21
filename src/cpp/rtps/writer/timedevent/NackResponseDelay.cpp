@@ -126,6 +126,33 @@ void NackResponseDelay::event(EventCode code, const char* msg)
         {
             mp_RP->mp_nackSupression->restart_timer();
         }
+
+        // TODO Puesto a pelo. Mejorar.
+        logInfo(RTPS_WRITER,"Responding to NACKFRAG messages";);
+        auto requested_fragments = mp_RP->getRequestedFragments();
+
+        for(auto sequence_number_set : requested_fragments)
+        {
+            auto cfrit =  mp_RP->m_changesForReader.find(ChangeForReader_t(sequence_number_set.first));
+
+            if(cfrit != mp_RP->m_changesForReader.end())
+            {
+                for(auto fragment_number : sequence_number_set.second)
+                {
+
+                    CacheChangeForGroup_t cgr(cfrit->getChange());
+                    cgr.setLastFragmentNumber(fragment_number);
+                    std::vector<CacheChangeForGroup_t> requested_fragment{std::move(cgr)};
+                    RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
+                            requested_fragment,
+                            mp_RP->m_att.guid.guidPrefix,
+                            mp_RP->m_att.guid.entityId,
+                            mp_RP->m_att.endpoint.unicastLocatorList,
+                            mp_RP->m_att.endpoint.multicastLocatorList,
+                            mp_RP->m_att.expectsInlineQos);
+                }
+            }
+        }
     }
     else if(code == EVENT_ABORT)
     {
