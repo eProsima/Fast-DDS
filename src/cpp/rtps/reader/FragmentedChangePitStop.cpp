@@ -44,19 +44,21 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     }
 
     bool was_updated = false;
-    for (uint32_t count = fragmentStartingNum; count < fragmentStartingNum + incoming_change->getFragmentCount(); ++count)
+    for (uint32_t count = (fragmentStartingNum - 1); count < (fragmentStartingNum - 1) + incoming_change->getFragmentCount(); ++count)
     {
         if(original_change_cit->getChange()->getDataFragments()->at(count) == ChangeFragmentStatus_t::NOT_PRESENT)
         {
+            // All cases minus last fragment.
             if (count + 1 != original_change_cit->getChange()->getFragmentCount())
             {
-                memcpy(original_change_cit->getChange()->serializedPayload.data + fragmentStartingNum * original_change_cit->getChange()->getFragmentSize(),
-                        incoming_change->serializedPayload.data, incoming_change->getFragmentSize());
+                memcpy(original_change_cit->getChange()->serializedPayload.data + count * original_change_cit->getChange()->getFragmentSize(),
+                        incoming_change->serializedPayload.data + (count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize(), incoming_change->getFragmentSize());
             }
+            // Last fragment is a special case when copying.
             else
             {
-                memcpy(original_change_cit->getChange()->serializedPayload.data + fragmentStartingNum * original_change_cit->getChange()->getFragmentSize(),
-                        incoming_change->serializedPayload.data, original_change_cit->getChange()->serializedPayload.length - (count * original_change_cit->getChange()->getFragmentSize()));
+                memcpy(original_change_cit->getChange()->serializedPayload.data + count * original_change_cit->getChange()->getFragmentSize(),
+                        incoming_change->serializedPayload.data + (count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize(), original_change_cit->getChange()->serializedPayload.length - (count * original_change_cit->getChange()->getFragmentSize()));
             }
 
             original_change_cit->getChange()->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;

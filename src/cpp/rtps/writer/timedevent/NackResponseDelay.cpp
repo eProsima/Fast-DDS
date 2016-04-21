@@ -141,7 +141,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                 {
 
                     CacheChangeForGroup_t cgr(cfrit->getChange());
-                    cgr.setLastFragmentNumber(fragment_number);
+                    cgr.setLastFragmentNumber(fragment_number - 1);
                     std::vector<CacheChangeForGroup_t> requested_fragment{std::move(cgr)};
                     RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
                             requested_fragment,

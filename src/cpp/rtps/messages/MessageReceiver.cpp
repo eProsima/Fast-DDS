@@ -735,7 +735,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	{
 		if ((*it)->acceptMsgDirectedTo(readerID))
 		{
-			(*it)->processDataFragMsg(ch, sampleSize, fragmentStartingNum - 1);
+			(*it)->processDataFragMsg(ch, sampleSize, fragmentStartingNum);
 		}
 	}
 
