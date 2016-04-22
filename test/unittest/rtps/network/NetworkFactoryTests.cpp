@@ -8,6 +8,7 @@ class NetworkTests: public ::testing::Test
 {
    public:
    NetworkFactory networkFactoryUnderTest;
+   void HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels);
 };
 
 TEST_F(NetworkTests, registering_transport_with_descriptor_instantiates_and_populates_a_transport_with_descriptor_options)
@@ -15,12 +16,9 @@ TEST_F(NetworkTests, registering_transport_with_descriptor_instantiates_and_popu
    // Given
    const int ExpectedMaximumChannels = 10;
    const int ExpectedSupportedKind = 3;
-   MockTransport::TransportDescriptor mockTransportDescriptor;
-   mockTransportDescriptor.maximumChannels = ExpectedMaximumChannels;
-   mockTransportDescriptor.supportedKind = ExpectedSupportedKind;
 
    // When
-   networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
+   HELPER_RegisterTransportWithKindAndChannels(ExpectedSupportedKind, ExpectedMaximumChannels);
 
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
@@ -31,18 +29,34 @@ TEST_F(NetworkTests, registering_transport_with_descriptor_instantiates_and_popu
 TEST_F(NetworkTests, BuildSenderResource_returns_send_resource_for_a_kind_compatible_transport)
 {
    // Given
-   MockTransport::TransportDescriptor mockTransportDescriptor;
-   mockTransportDescriptor.supportedKind = 1;
-   mockTransportDescriptor.maximumChannels = 10;
-   networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
 
    Locator_t kindCompatibleLocator;
-   kindCompatibleLocator.kind = 1;
+   kindCompatibleLocator.kind = ArbitraryKind;
 
+   // When
    auto resources = networkFactoryUnderTest.BuildSenderResources(kindCompatibleLocator);
 
    // Then
    ASSERT_EQ(1, resources.size());
+}
+
+TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+
+   // When
+   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+
+   // Then
+   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+   ASSERT_TRUE(lastRegisteredTransport->AreLocatorChannelsOpen(locator));
 }
 
 TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_transport_is_kind_compatible)
@@ -63,6 +77,13 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_
    ASSERT_TRUE(resources.empty());
 }
 
+void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels)
+{
+   MockTransport::TransportDescriptor mockTransportDescriptor;
+   mockTransportDescriptor.supportedKind = kind;
+   mockTransportDescriptor.maximumChannels = channels;
+   networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
+}
 
 int main(int argc, char **argv)
 {

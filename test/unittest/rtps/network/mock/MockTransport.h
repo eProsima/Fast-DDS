@@ -25,8 +25,8 @@ class MockTransport: public TransportInterface
    //API implementation
    virtual bool AreLocatorChannelsOpen(Locator_t) const;
    virtual bool IsLocatorSupported(Locator_t) const;
-   virtual bool OpenLocatorChannels(Locator_t) { return false; };
-   virtual bool CloseLocatorChannels(Locator_t) { return false; };
+   virtual bool OpenLocatorChannels(Locator_t); 
+   virtual bool CloseLocatorChannels(Locator_t);
 
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress) { return false; };
 
@@ -36,17 +36,18 @@ class MockTransport: public TransportInterface
    typedef std::pair<Locator_t, std::vector<char> > LocatorMessagePair;
    void AppendMockMessageToReceive(LocatorMessagePair);
    std::vector<LocatorMessagePair> mockMessagesToReceive;
-   std::vector<LocatorMessagePair> recordMessagesSent;
+   std::vector<LocatorMessagePair> mockRecordMessagesSent;
+
+   // For the mock, locators will have a 1:1 relatonship with channels
+   typedef Locator_t Channel;
+   std::vector<Channel> mockOpenChannels;
+
 
    const static int DefaultKind = 1;
    int mockSupportedKind;
 
    const static int DefaultMaxChannels = 10;
    int mockMaximumChannels;
-
-   //Channel helpers
-   typedef int MockChannel;
-   std::vector<MockChannel> mockOpenChannels;
 
    //Helper persistent handles
    static std::vector<MockTransport*> mockTransportInstances;
