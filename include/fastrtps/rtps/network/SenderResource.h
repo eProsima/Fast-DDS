@@ -12,6 +12,12 @@ class SenderResource
 public:
    bool Send();
 
+   // Resources can only be transfered through move semantics. Copy and assignment are prohibited
+   SenderResource(){};
+   SenderResource(SenderResource&&){};
+   SenderResource(const SenderResource&) = delete;
+   SenderResource& operator=(const SenderResource&) = delete;
+
 private:
    std::function<void()> Cleanup();
 };

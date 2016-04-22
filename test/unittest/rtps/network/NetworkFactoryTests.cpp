@@ -56,7 +56,24 @@ TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_t
 
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   ASSERT_TRUE(lastRegisteredTransport->AreLocatorChannelsOpen(locator));
+   ASSERT_TRUE(lastRegisteredTransport->IsLocatorChannelOpen(locator));
+}
+
+TEST_F(NetworkTests, destroying_a_resource_will_close_all_channels_mapped_to_it_on_destruction)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+
+   // When
+   resources.clear();
+
+   // Then
+   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+   ASSERT_FALSE(lastRegisteredTransport->IsLocatorChannelOpen(locator));
 }
 
 TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_transport_is_kind_compatible)

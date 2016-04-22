@@ -12,10 +12,15 @@ std::vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t locat
    for(auto& transport : mRegisteredTransports)
    {
       if ( transport->IsLocatorSupported(locator) &&
-          !transport->AreLocatorChannelsOpen(locator) )
+          !transport->IsLocatorChannelOpen(locator) )
       {
-         transport->OpenLocatorChannels(locator);
          newSenderResources.emplace_back();
+         auto& newSenderResource = newSenderResources.back();
+         
+         // The channel that this locator maps to is opened
+         transport->OpenLocatorChannel(locator);
+
+         // The Sender resource is bundled with the right cleanup function;
       }
    }
    return newSenderResources;

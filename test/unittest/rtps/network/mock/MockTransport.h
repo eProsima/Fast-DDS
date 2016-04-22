@@ -23,10 +23,10 @@ class MockTransport: public TransportInterface
   ~MockTransport();
 
    //API implementation
-   virtual bool AreLocatorChannelsOpen(Locator_t) const;
+   virtual bool IsLocatorChannelOpen(Locator_t) const;
    virtual bool IsLocatorSupported(Locator_t) const;
-   virtual bool OpenLocatorChannels(Locator_t); 
-   virtual bool CloseLocatorChannels(Locator_t);
+   virtual bool OpenLocatorChannel(Locator_t); 
+   virtual bool CloseLocatorChannel(Locator_t);
 
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress) { return false; };
 
