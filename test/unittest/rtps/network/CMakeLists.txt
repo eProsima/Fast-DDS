@@ -3,13 +3,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        set(NETWORKFACTORYTESTS_SOURCE NetworkFactoryTests.cpp)
+        set(NETWORKFACTORYTESTS_SOURCE 
+            NetworkFactoryTests.cpp 
+            mock/MockTransport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp)
+
+        include_directories(mock/)
 
         add_executable(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
         add_gtest(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
         target_compile_definitions(NetworkFactoryTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(NetworkFactoryTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES})
+        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS})
     endif()
 endif()

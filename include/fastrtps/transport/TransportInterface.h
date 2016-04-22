@@ -1,8 +1,12 @@
 #ifndef TRANSPORT_INTERFACE_H
 #define TRANSPORT_INTERFACE_H
 
-#include "TransportChannel.h"
 #include <vector>
+#include <fastrtps/rtps/common/Locator.h>
+
+namespace eprosima{
+namespace fastrtps{
+namespace rtps{
 
 class TransportInterface
 {
@@ -17,5 +21,9 @@ public:
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress) = 0;
    virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress) = 0;
 };
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif
