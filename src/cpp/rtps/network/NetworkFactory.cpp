@@ -1,11 +1,12 @@
 #include <fastrtps/rtps/network/NetworkFactory.h>
+#include <utility>
 using namespace std;
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-std::vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t locator)
+vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t locator)
 {
    vector<SenderResource> newSenderResources; 
 
@@ -14,13 +15,8 @@ std::vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t locat
       if ( transport->IsLocatorSupported(locator) &&
           !transport->IsLocatorChannelOpen(locator) )
       {
-         newSenderResources.emplace_back();
-         auto& newSenderResource = newSenderResources.back();
-         
-         // The channel that this locator maps to is opened
-         transport->OpenLocatorChannel(locator);
-
-         // The Sender resource is bundled with the right cleanup function;
+         SenderResource newSenderResource(*transport, locator);
+         newSenderResources.push_back(move(newSenderResource));
       }
    }
    return newSenderResources;

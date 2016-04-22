@@ -2,6 +2,7 @@
 #define SENDER_RESOURCE_H
 
 #include <functional>
+#include <fastrtps/transport/TransportInterface.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -9,17 +10,24 @@ namespace rtps{
 
 class SenderResource 
 {
+   friend class NetworkFactory;
+
 public:
    bool Send();
 
-   // Resources can only be transfered through move semantics. Copy and assignment are prohibited
-   SenderResource(){};
-   SenderResource(SenderResource&&){};
-   SenderResource(const SenderResource&) = delete;
-   SenderResource& operator=(const SenderResource&) = delete;
+   // Resources can only be transfered through move semantics. Copy, assignment, and 
+   // construction outside of the factory are forbidden.
+   SenderResource(SenderResource&&);
+   ~SenderResource();
 
+   SenderResource()                                 = delete;
+   SenderResource(const SenderResource&)            = delete;
+   SenderResource& operator=(const SenderResource&) = delete;
+   
 private:
-   std::function<void()> Cleanup();
+   SenderResource(TransportInterface&, Locator_t);
+   Locator_t mOriginalGeneratingLocator;
+   TransportInterface& mAssociatedTransport;
 };
 
 } // namespace rtps

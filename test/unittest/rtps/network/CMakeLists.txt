@@ -6,7 +6,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(NETWORKFACTORYTESTS_SOURCE 
             NetworkFactoryTests.cpp 
             mock/MockTransport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp)
 
         include_directories(mock/)
 
