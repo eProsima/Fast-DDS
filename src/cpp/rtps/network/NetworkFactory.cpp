@@ -22,6 +22,22 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t locator)
    return newSenderResources;
 }
 
+vector<ReceiverResource> NetworkFactory::BuildReceiverResources(Locator_t locator)
+{
+   vector<ReceiverResource> newReceiverResources; 
+
+   for(auto& transport : mRegisteredTransports)
+   {
+      if ( transport->IsLocatorSupported(locator) &&
+          !transport->IsLocatorChannelOpen(locator) )
+      {
+         ReceiverResource newReceiverResource(*transport, locator);
+         newReceiverResources.push_back(move(newReceiverResource));
+      }
+   }
+   return newReceiverResources;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

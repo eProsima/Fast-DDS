@@ -44,6 +44,22 @@ TEST_F(NetworkTests, BuildSenderResource_returns_send_resource_for_a_kind_compat
    ASSERT_EQ(1, resources.size());
 }
 
+TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_compatible_transport)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+
+   Locator_t kindCompatibleLocator;
+   kindCompatibleLocator.kind = ArbitraryKind;
+
+   // When
+   auto resources = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator);
+
+   // Then
+   ASSERT_EQ(1, resources.size());
+}
+
 TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)
 {
    // Given

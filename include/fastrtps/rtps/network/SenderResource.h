@@ -14,7 +14,7 @@ class SenderResource
    friend class NetworkFactory;
 
 public:
-   // Sends to a destination locator, through the channel used to create the resource.
+   // Sends to a destination locator, through the channel managed by this resource.
    bool Send(const std::vector<char>& data, Locator_t destinationLocator);
 
    // Reports whether this resource supports the given local locator (i.e., said locator
