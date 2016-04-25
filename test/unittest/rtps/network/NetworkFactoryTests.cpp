@@ -1,7 +1,9 @@
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <MockTransport.h>
 #include <gtest/gtest.h>
+#include <vector>
 
+using namespace std;
 using namespace eprosima::fastrtps::rtps;
 
 class NetworkTests: public ::testing::Test 
@@ -92,6 +94,50 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_
 
    // Then
    ASSERT_TRUE(resources.empty());
+}
+
+TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible_transports_have_that_channel_open_already)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+
+   // When
+   // We do it again for a locator that maps to the same channel
+   locator.address[0]++; // Address can differ, since they map to the same port
+   auto secondBatchResources = networkFactoryUnderTest.BuildSenderResources(locator);
+
+   // Then
+   ASSERT_TRUE(secondBatchResources.empty());
+}
+
+TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator_and_to_the_specified_remote_locator)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+   auto& senderResource = resources.back();
+
+   // When
+   vector<char> testData { 'a', 'b', 'c' };
+   Locator_t destinationLocator;
+   destinationLocator.kind = 1;
+   destinationLocator.address[0] = 5;
+   senderResource.Send(testData, destinationLocator);
+
+   // Then
+   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+   const auto& messageSent = lastRegisteredTransport->mockMessagesSent.back();
+
+   ASSERT_EQ(messageSent.data, testData);
+   ASSERT_EQ(messageSent.origin, locator);
+   ASSERT_EQ(messageSent.destination, destinationLocator);
 }
 
 void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels)

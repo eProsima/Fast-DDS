@@ -28,18 +28,24 @@ class MockTransport: public TransportInterface
    virtual bool OpenLocatorChannel(Locator_t); 
    virtual bool CloseLocatorChannel(Locator_t);
 
-   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress) { return false; };
+   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress);
 
    virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress) { return false; };
 
    //Helpers and message record
-   typedef std::pair<Locator_t, std::vector<char> > LocatorMessagePair;
-   void AppendMockMessageToReceive(LocatorMessagePair);
-   std::vector<LocatorMessagePair> mockMessagesToReceive;
-   std::vector<LocatorMessagePair> mockRecordMessagesSent;
+   typedef struct
+   {
+      Locator_t origin;
+      Locator_t destination;
+      std::vector<char> data;
+   } MockMessage;
 
-   // For the mock, locators will have a 1:1 relatonship with channels
-   typedef Locator_t Channel;
+   void AppendMockMessageToReceive(MockMessage);
+   std::vector<MockMessage> mockMessagesToReceive;
+   std::vector<MockMessage> mockMessagesSent;
+
+   // For the mock, ports will have a 1:1 relatonship with channels
+   typedef uint32_t Channel;
    std::vector<Channel> mockOpenChannels;
 
 

@@ -29,14 +29,14 @@ public:
    virtual ~TransportInterface(){};
 
    // Must report whether the channel associated to this locator is open
-    virtual bool IsLocatorChannelOpen(Locator_t) const = 0;
+    virtual bool IsLocatorChannelOpen(Locator_t)  const = 0;
 
    // Must report whether the given locator is supported by this transport (typically inspecting it's "kind" value).
    virtual bool IsLocatorSupported(Locator_t)     const = 0;
 
    // Must the channel that maps to/from the given locator. This method must allocate, reserve and mark
    // any resources that are needed for said channel.
-   virtual bool OpenLocatorChannel(Locator_t)          = 0;
+   virtual bool OpenLocatorChannel(Locator_t)           = 0;
 
    // Must close the channel that maps to/from the given locator. 
    // IMPORTANT: It MUST be safe to call this method even during a Send and Receive operation. You must implement

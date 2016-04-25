@@ -34,7 +34,7 @@ MockTransport::~MockTransport()
 
 bool MockTransport::IsLocatorChannelOpen(Locator_t locator) const
 {
-  return (find(mockOpenChannels.begin(), mockOpenChannels.end(), locator) != mockOpenChannels.end());
+  return (find(mockOpenChannels.begin(), mockOpenChannels.end(), locator.port) != mockOpenChannels.end());
 }
 
 bool MockTransport::IsLocatorSupported(Locator_t locator) const
@@ -44,15 +44,20 @@ bool MockTransport::IsLocatorSupported(Locator_t locator) const
 
 bool MockTransport::OpenLocatorChannel(Locator_t locator)
 {  
-   mockOpenChannels.push_back(locator);
+   mockOpenChannels.push_back(locator.port);
    return true;
+}
+
+bool MockTransport::Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress)
+{
+   mockMessagesSent.push_back( {localChannel, remoteAddress, sendBuffer} );
 }
 
 bool MockTransport::CloseLocatorChannel(Locator_t locator)
 {
    mockOpenChannels.erase(std::remove(mockOpenChannels.begin(),
                                       mockOpenChannels.end(),
-                                      locator),
+                                      locator.port),
                                 mockOpenChannels.end());
    return true;
 }
