@@ -27,6 +27,7 @@ class MockTransport: public TransportInterface
    virtual bool IsLocatorSupported(Locator_t) const;
    virtual bool OpenLocatorChannel(Locator_t); 
    virtual bool CloseLocatorChannel(Locator_t);
+   virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
 
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress);
 

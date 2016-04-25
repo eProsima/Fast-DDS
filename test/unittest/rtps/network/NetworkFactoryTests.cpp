@@ -114,6 +114,26 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible
    ASSERT_TRUE(secondBatchResources.empty());
 }
 
+TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_locator)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+   auto& resource = resources.back();
+
+   // Then
+   ASSERT_TRUE(resource.SupportsLocator(locator));
+
+   // When
+   locator.port++;
+
+   // Then
+   ASSERT_FALSE(resource.SupportsLocator(locator));
+}
+
 TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator_and_to_the_specified_remote_locator)
 {
    // Given
