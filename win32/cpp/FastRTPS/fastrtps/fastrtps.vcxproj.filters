@@ -175,6 +175,15 @@
     <Filter Include="Source Files\eProsima_cpp\log">
       <UniqueIdentifier>{b00e06d2-10e0-4aef-a93a-7b2868b1f6b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\fastrtps\rtps\network">
+      <UniqueIdentifier>{8e4cb3b8-048f-4679-b24e-6a57789e594e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\fastrtps\transport">
+      <UniqueIdentifier>{cc3b45aa-09f9-4fab-8c87-a7251344cc1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rtps\network">
+      <UniqueIdentifier>{4557f076-2b74-4f36-8913-5721d1d80641}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\fastrtps\attributes\all_attributes.h">
@@ -540,6 +549,18 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\config\old_eprosima_stl_exports.hpp">
       <Filter>Header Files\fastrtps\config</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\network\NetworkFactory.h">
+      <Filter>Header Files\fastrtps\rtps\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\network\ReceiverResource.h">
+      <Filter>Header Files\fastrtps\rtps\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\network\SenderResource.h">
+      <Filter>Header Files\fastrtps\rtps\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\fastrtps\transport\TransportInterface.h">
+      <Filter>Header Files\fastrtps\transport</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\cpp\participant\Participant.cpp">
@@ -751,6 +772,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\thirdparty\eprosima-common-code\eProsima_cpp\log\Log.cpp">
       <Filter>Source Files\eProsima_cpp\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\network\NetworkFactory.cpp">
+      <Filter>Source Files\rtps\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\network\ReceiverResource.cpp">
+      <Filter>Source Files\rtps\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\network\SenderResource.cpp">
+      <Filter>Source Files\rtps\network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
