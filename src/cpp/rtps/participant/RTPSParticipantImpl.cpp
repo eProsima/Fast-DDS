@@ -65,7 +65,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		const GuidPrefix_t& guidP,
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
-				mp_send_thr(nullptr),
 				mp_event_thr(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
