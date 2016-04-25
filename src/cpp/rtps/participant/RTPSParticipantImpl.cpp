@@ -487,6 +487,21 @@ bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bo
 	return valid;
 }
 
+bool RTPSParticipantImpl::makeNewReceiverResources(Endpoint * pend, Locator_t locator){
+	/*	Thjis function...
+		- Asks the network factory for new resources
+		- Encapsulates the new resources within the ReceiverControlBlock list
+		- Associated the endpoint to the new elements in the list
+		- Launches the listener thread
+	*/
+	//TODO Implement this
+
+
+
+
+
+	return true;
+}
 bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list,bool isMulti,bool isFixed)
 {
 	bool valid = true;
@@ -496,9 +511,9 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 	{
 		added = false;
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
+		for (std::vector<ReceiverResource *>::iterator it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
 		{
-			if((*it)->isListeningTo(*lit))
+			if ((*it)->SupportsLocator(*lit))
 			{
 				(*it)->addAssociatedEndpoint(endp);
 				LocatorList_t locList = (*it)->getListenLocators();

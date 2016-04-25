@@ -225,6 +225,13 @@ private:
 	 */
 	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
 
+	/** Create the new ReceiverResources needed for a new Locator
+		@param pend - Pointer to the endpoint which triggered the creation of the Receivers
+		@param Locator - Reference for the creation of the Resources
+	*/
+	bool makeNewReceiverResources(Endpoint * pend, Locator_t Locator);
+
+
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
