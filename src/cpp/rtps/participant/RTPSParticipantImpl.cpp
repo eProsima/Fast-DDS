@@ -487,21 +487,53 @@ bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bo
 	return valid;
 }
 
-bool RTPSParticipantImpl::makeNewReceiverResources(Endpoint * pend, Locator_t locator){
+bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend, Locator_t locator, bool isBuiltIn){
 	/*	Thjis function...
 		- Asks the network factory for new resources
 		- Encapsulates the new resources within the ReceiverControlBlock list
 		- Associated the endpoint to the new elements in the list
 		- Launches the listener thread
 	*/
-	//TODO Implement this
+	// 1 - Ask the network factory to generate the elements that do still not exist
+	std::vector<ReceiverResource> newItems;
+	newItems = m_network_Factory.BuildReceiverResources(locator);
+	// 2 - For each generated element
+	for (auto it = newItems.begin(); it != newItems.end(); ++it){
+		// 2.1 - Initialize a ReceiverResourceControlBlock
+		ReceiverControlBlock newBlock;
+		newBlock.Receiver = std::move((*it)); // fix
+		// 2.2 - Push it to the list
+		m_receiverResourcelist.push_back(newBlock);
+	}
+	// 3 - Associate Endpoint with ReceiverResources (all of them, not just the new)
+	assignEndpointListenResources(pend,isBuiltIn); 
 
+	// 4 - Launch the Listening thread for all of the new ReceiveResources
+	for (auto it = newItems.begin(); it != newItems.end(); ++it = ){
+		(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it, locator);  //Why the mistake?
 
+	}
 
+	//note: Should the default locator list be updated with the creation of new ReceiveResources?
 
 
 	return true;
 }
+
+void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t locator){
+	std::vector<char> localBuffer;
+	for (;;){
+		//1 - Perform a blocking call to the receiver
+		receiver->Receiver.Receive(localBuffer, locator);
+		//2 - Output the data into the buffer
+
+		//3 - Call MessageReceiver methods
+
+	}
+
+}
+
+
 bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list,bool isMulti,bool isFixed)
 {
 	/* Note:
@@ -514,47 +546,36 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 	 */
 	bool found = false;
 	LocatorList_t finalList;
-	for(auto lit = list.begin();lit != list.end();++lit)
-	{
+	for(auto lit = list.begin();lit != list.end();++lit){
 		//Iteration of all Locators within the Locator list passed down as argument
 		added = false;
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		//Check among ReceiverResources whether the locator is supported or not
-		for (std::vector<ReceiverControlBlock *>::iterator it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
-		{
-			if ((*it)->Receiver->SupportsLocator(*lit))
-			{
+		for (std::vector<ReceiverControlBlock *>::iterator it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
+			if ((*it)->Receiver->SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
-				if (endp->getAttributes()->endpointKind == WRITER)
-				{
-					for (std::vector<RTPSWriter*>::iterator wit = (*it)->AssociatedWriters.begin(); wit != (*it)->AssociatedWriters.end(); ++wit)
-					{
-						if ((*wit)->getGuid().entityId == endp->getGuid().entityId)
-						{
+				if (endp->getAttributes()->endpointKind == WRITER){
+					for (std::vector<RTPSWriter*>::iterator wit = (*it)->AssociatedWriters.begin(); wit != (*it)->AssociatedWriters.end(); ++wit){
+						if ((*wit)->getGuid().entityId == endp->getGuid().entityId){
 							found = true;
 							break;
 						}
 					}
 					//After iterating among associated writers, add the new writer if it has not been found
-					if (!found)
-					{
+					if (!found){
 						(*it)->AssociatedWriters.push_back((RTPSWriter*)endp);
 						return true;
 					}
 				}
-				else if (endp->getAttributes()->endpointKind == READER)
-				{
-					for (std::vector<RTPSReader*>::iterator rit = (*it)->AssociatedReaders.begin(); rit != (*it)->AssociatedReaders.end(); ++rit)
-					{
-						if ((*rit)->getGuid().entityId == endp->getGuid().entityId)
-						{
+				else if (endp->getAttributes()->endpointKind == READER){
+					for (std::vector<RTPSReader*>::iterator rit = (*it)->AssociatedReaders.begin(); rit != (*it)->AssociatedReaders.end(); ++rit){
+						if ((*rit)->getGuid().entityId == endp->getGuid().entityId){
 							found = true;
 							break;
 						}
 					}
-					if (!found)
-					{
+					if (!found){
 						(*it)->AssociatedReaders.push_back((RTPSReader*)endp);
 						return true;
 					}

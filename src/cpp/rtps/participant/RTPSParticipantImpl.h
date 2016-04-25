@@ -82,6 +82,7 @@ typedef struct{
 	std::vector<RTPSReader *> AssociatedReaders;
 	uint32_t* buffer; //TODO Check definition and size as specified in the MessageReceiver class 
 	boost::mutex mtx; //Fix declaration
+	boost::thread* m_thread;
 } ReceiverControlBlock;
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -189,7 +190,7 @@ private:
 	//!Network Factory
 	NetworkFactory m_network_Factory;
 	//!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
-	std::vector<ReceiverControlBlock *> m_receiverResourcelist;
+	std::vector<ReceiverControlBlock> m_receiverResourcelist;
 	std::vector<SenderResource *> m_senderResource;
 
 	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
@@ -229,9 +230,14 @@ private:
 		@param pend - Pointer to the endpoint which triggered the creation of the Receivers
 		@param Locator - Reference for the creation of the Resources
 	*/
-	bool makeNewReceiverResources(Endpoint * pend, Locator_t Locator);
+	bool createAndAssociateReceiverswithEnpoint(Endpoint * pend, Locator_t Locator, bool isBuiltIn);
 	
-
+	/** Function to be called from a new thread, which takes cares of performing a blocking receive 
+		operation on the ReceiveResource
+		@param buffer - Position of the buffer we use to store data
+		@param locator - Locator that triggered the creation of the resource
+	*/
+	void performListenOperation(ReceiverControlBlock *receiver, Locator_t locator);
 
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
