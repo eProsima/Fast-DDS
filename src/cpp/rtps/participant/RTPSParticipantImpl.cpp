@@ -35,6 +35,7 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
 
+#include <boost/thread.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -495,28 +496,24 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 		- Launches the listener thread
 	*/
 	// 1 - Ask the network factory to generate the elements that do still not exist
-	std::vector<ReceiverResource> newItems;
+	std::vector<ReceiverResource> newItems;							//Store the newly created elements
 	newItems = m_network_Factory.BuildReceiverResources(locator);
 	// 2 - For each generated element
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
-		ReceiverControlBlock newBlock;
-		newBlock.Receiver = std::move((*it)); // fix
+		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
 		// 2.2 - Push it to the list
 		m_receiverResourcelist.push_back(newBlock);
 	}
 	// 3 - Associate Endpoint with ReceiverResources (all of them, not just the new)
 	assignEndpointListenResources(pend,isBuiltIn); 
 
-	// 4 - Launch the Listening thread for all of the new ReceiveResources
-	for (auto it = newItems.begin(); it != newItems.end(); ++it = ){
-		(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it, locator);  //Why the mistake?
-
+	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
+	for (auto it = m_receiverResourcelist.end() - newItems.size(); it != m_receiverResourcelist.end(); ++it){
+		if ((*it)->mp_thread == nullptr)
+				(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it, locator);
 	}
-
 	//note: Should the default locator list be updated with the creation of new ReceiveResources?
-
-
 	return true;
 }
 
