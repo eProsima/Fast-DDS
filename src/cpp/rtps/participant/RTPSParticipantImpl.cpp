@@ -504,43 +504,68 @@ bool RTPSParticipantImpl::makeNewReceiverResources(Endpoint * pend, Locator_t lo
 }
 bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list,bool isMulti,bool isFixed)
 {
-	bool valid = true;
+	/* Note:
+		The previous version of this function associated (or created) ListenResources and added the endpoint to them.
+		It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the paremeters.
+		
+		This has been removed becuase it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
+		one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
+		since its the NetworkFactory the one that takes care of Resource creation.
+	 */
+	bool found = false;
 	LocatorList_t finalList;
-	bool added = false;
 	for(auto lit = list.begin();lit != list.end();++lit)
 	{
+		//Iteration of all Locators within the Locator list passed down as argument
 		added = false;
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-		for (std::vector<ReceiverResource *>::iterator it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
+		//Check among ReceiverResources whether the locator is supported or not
+		for (std::vector<ReceiverControlBlock *>::iterator it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
 		{
-			if ((*it)->SupportsLocator(*lit))
+			if ((*it)->Receiver->SupportsLocator(*lit))
 			{
-				(*it)->addAssociatedEndpoint(endp);
-				LocatorList_t locList = (*it)->getListenLocators();
-				finalList.push_back(locList);
-				added = true;
+				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
+				found = false;
+				if (endp->getAttributes()->endpointKind == WRITER)
+				{
+					for (std::vector<RTPSWriter*>::iterator wit = (*it)->AssociatedWriters.begin(); wit != (*it)->AssociatedWriters.end(); ++wit)
+					{
+						if ((*wit)->getGuid().entityId == endp->getGuid().entityId)
+						{
+							found = true;
+							break;
+						}
+					}
+					//After iterating among associated writers, add the new writer if it has not been found
+					if (!found)
+					{
+						(*it)->AssociatedWriters.push_back((RTPSWriter*)endp);
+						return true;
+					}
+				}
+				else if (endp->getAttributes()->endpointKind == READER)
+				{
+					for (std::vector<RTPSReader*>::iterator rit = (*it)->AssociatedReaders.begin(); rit != (*it)->AssociatedReaders.end(); ++rit)
+					{
+						if ((*rit)->getGuid().entityId == endp->getGuid().entityId)
+						{
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+					{
+						(*it)->AssociatedReaders.push_back((RTPSReader*)endp);
+						return true;
+					}
+				}
+				// end association between reader/writer and the receive resources
 			}
 		}
-		if(added)
-			continue;
-		ListenResource* LR = new ListenResource(this,++m_threadID,false);
-		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
-		{
-			LR->addAssociatedEndpoint(endp);
-			LocatorList_t locList = LR->getListenLocators();
-			finalList.push_back(locList);
-			m_listenResourceList.push_back(LR);
-			added = true;
-		}
-		else
-		{
-			delete(LR);
-			valid &= false;
-		}
+		//Finished iteratig through all ListenResources for a single Locator (from the parameter list).
+		//Since this function is called after checking with NetFactory we do not have to create any more resource. 
 	}
-	if(valid && added)
-		list = finalList;
-	return valid;
+	return true;
 }
 
 

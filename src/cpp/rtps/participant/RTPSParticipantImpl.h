@@ -230,6 +230,7 @@ private:
 		@param Locator - Reference for the creation of the Resources
 	*/
 	bool makeNewReceiverResources(Endpoint * pend, Locator_t Locator);
+	
 
 
 	//!Participant Mutex
