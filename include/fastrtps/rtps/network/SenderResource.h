@@ -26,8 +26,7 @@ public:
    
 private:
    SenderResource(TransportInterface&, Locator_t);
-   Locator_t mOriginalGeneratingLocator;
-   TransportInterface& mAssociatedTransport;
+   std::function<void()> Cleanup;
 };
 
 } // namespace rtps

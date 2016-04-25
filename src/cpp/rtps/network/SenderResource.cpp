@@ -4,22 +4,21 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t locator):
-   mOriginalGeneratingLocator(locator),
-   mAssociatedTransport(transport)
+SenderResource::SenderResource(TransportInterface& transport, Locator_t locator)
 {
    transport.OpenLocatorChannel(locator);
+   Cleanup = [&transport,locator](){ transport.CloseLocatorChannel(locator); };
 }
 
-SenderResource::SenderResource(SenderResource&& rValueResource):
-   mOriginalGeneratingLocator(rValueResource.mOriginalGeneratingLocator),
-   mAssociatedTransport(rValueResource.mAssociatedTransport)
+SenderResource::SenderResource(SenderResource&& rValueResource)
 {
+   Cleanup.swap(rValueResource.Cleanup); 
 }
 
 SenderResource::~SenderResource()
 {
-   mAssociatedTransport.CloseLocatorChannel(mOriginalGeneratingLocator);
+   if (Cleanup)
+      Cleanup();
 }
 
 } // namespace rtps
