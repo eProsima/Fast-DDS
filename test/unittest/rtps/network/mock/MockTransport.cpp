@@ -58,6 +58,12 @@ bool MockTransport::Send(const std::vector<char>& sendBuffer, Locator_t localCha
    mockMessagesSent.push_back( {localChannel, remoteAddress, sendBuffer} );
 }
 
+bool MockTransport::Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress)
+{
+   receiveBuffer = mockMessagesToReceive.back().data;
+   mockMessagesToReceive.pop_back();
+}
+
 bool MockTransport::CloseLocatorChannel(Locator_t locator)
 {
    mockOpenChannels.erase(std::remove(mockOpenChannels.begin(),

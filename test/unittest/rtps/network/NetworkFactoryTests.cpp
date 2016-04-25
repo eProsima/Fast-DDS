@@ -60,6 +60,40 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_c
    ASSERT_EQ(1, resources.size());
 }
 
+TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multiple_transports_compatible)
+{
+   // Given
+   HELPER_RegisterTransportWithKindAndChannels(3, 10);
+   HELPER_RegisterTransportWithKindAndChannels(2, 10);
+   HELPER_RegisterTransportWithKindAndChannels(2, 10);
+
+   Locator_t locatorCompatibleWithTwoTransports;
+   locatorCompatibleWithTwoTransports.kind = 2;
+
+   // When
+   auto resources = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports);
+
+   // Then
+   ASSERT_EQ(2, resources.size());
+}
+
+TEST_F(NetworkTests, BuildSenderResource_returns_multiple_resources_if_multiple_transports_compatible)
+{
+   // Given
+   HELPER_RegisterTransportWithKindAndChannels(3, 10);
+   HELPER_RegisterTransportWithKindAndChannels(2, 10);
+   HELPER_RegisterTransportWithKindAndChannels(2, 10);
+
+   Locator_t locatorCompatibleWithTwoTransports;
+   locatorCompatibleWithTwoTransports.kind = 2;
+
+   // When
+   auto resources = networkFactoryUnderTest.BuildSenderResources(locatorCompatibleWithTwoTransports);
+
+   // Then
+   ASSERT_EQ(2, resources.size());
+}
+
 TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)
 {
    // Given
@@ -77,7 +111,24 @@ TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_t
    ASSERT_TRUE(lastRegisteredTransport->IsLocatorChannelOpen(locator));
 }
 
-TEST_F(NetworkTests, destroying_a_resource_will_close_all_channels_mapped_to_it_on_destruction)
+TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mapped_to_that_locator)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+
+   // When
+   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+
+   // Then
+   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+   ASSERT_TRUE(lastRegisteredTransport->IsLocatorChannelOpen(locator));
+}
+
+TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_to_it_on_destruction)
 {
    // Given
    int ArbitraryKind = 1;
@@ -85,6 +136,23 @@ TEST_F(NetworkTests, destroying_a_resource_will_close_all_channels_mapped_to_it_
    Locator_t locator;
    locator.kind = ArbitraryKind;
    auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+
+   // When
+   resources.clear();
+
+   // Then
+   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+   ASSERT_FALSE(lastRegisteredTransport->IsLocatorChannelOpen(locator));
+}
+
+TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mapped_to_it_on_destruction)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
 
    // When
    resources.clear();
@@ -128,6 +196,26 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible
 
    // Then
    ASSERT_TRUE(secondBatchResources.empty());
+}
+
+TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_a_locator)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+   auto& resource = resources.back();
+
+   // Then
+   ASSERT_TRUE(resource.SupportsLocator(locator));
+
+   // When
+   locator.port++;
+
+   // Then
+   ASSERT_FALSE(resource.SupportsLocator(locator));
 }
 
 TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_locator)
@@ -174,6 +262,34 @@ TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_out
    ASSERT_EQ(messageSent.data, testData);
    ASSERT_EQ(messageSent.origin, locator);
    ASSERT_EQ(messageSent.destination, destinationLocator);
+}
+
+TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_original_inbound_locator_and_from_the_specified_remote_locator)
+{
+   // Given
+   int ArbitraryKind = 1;
+   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+   Locator_t locator;
+   locator.kind = ArbitraryKind;
+   auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
+   auto& receiverResource = resources.back();
+
+   // When
+   Locator_t originLocator;
+   originLocator.kind = 1;
+   originLocator.address[0] = 5;
+
+   // We fabricate a message to be received from the mock.
+   vector<char> testData { 'a', 'b', 'c' };
+   MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+   MockTransport::MockMessage message {originLocator, locator, testData}; 
+
+   lastRegisteredTransport->mockMessagesToReceive.push_back(message);
+   vector<char> receivedData;
+   receiverResource.Receive(receivedData, originLocator);
+
+   // Then
+   ASSERT_EQ(receivedData, testData);
 }
 
 void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels)

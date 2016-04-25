@@ -31,7 +31,7 @@ class MockTransport: public TransportInterface
 
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress);
 
-   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress) { return false; };
+   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress);
 
    //Helpers and message record
    typedef struct
@@ -41,7 +41,6 @@ class MockTransport: public TransportInterface
       std::vector<char> data;
    } MockMessage;
 
-   void AppendMockMessageToReceive(MockMessage);
    std::vector<MockMessage> mockMessagesToReceive;
    std::vector<MockMessage> mockMessagesSent;
 
