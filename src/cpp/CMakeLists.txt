@@ -58,6 +58,7 @@ set_sources(
     subscriber/Subscriber.cpp 
     subscriber/SubscriberImpl.cpp 
     subscriber/SubscriberHistory.cpp 
+    transport/UDPv4Transport.cpp 
     qos/ParameterList.cpp 
     qos/ParameterTypes.cpp 
     qos/QosList.cpp 

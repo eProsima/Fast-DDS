@@ -56,12 +56,15 @@ bool MockTransport::DoLocatorsMatch(Locator_t left, Locator_t right) const
 bool MockTransport::Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress)
 {
    mockMessagesSent.push_back( {localChannel, remoteAddress, sendBuffer} );
+   return true;
 }
 
 bool MockTransport::Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress)
 {
+   (void)localChannel; (void)remoteAddress;
    receiveBuffer = mockMessagesToReceive.back().data;
    mockMessagesToReceive.pop_back();
+   return true;
 }
 
 bool MockTransport::CloseLocatorChannel(Locator_t locator)
