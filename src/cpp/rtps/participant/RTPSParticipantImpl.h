@@ -65,6 +65,24 @@ class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
 
+/*
+	Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
+	It contains:
+	-A ReceiverResource (as produced by the NetworkFactory Element)
+	-A list of associated wirters and readers
+	-A buffer for message storage
+	-A mutex for the lists
+	The idea is to create the thread that performs blocking calls to ReceiverResource.Receive and processes the message
+	from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
+
+*/
+typedef struct{
+	ReceiverResource Receiver;
+	std::vector<RTPSWriter *> AssociatedWriters;
+	std::vector<RTPSReader *> AssociatedReaders;
+	uint32_t* buffer; //TODO Check definition and size as specified in the MessageReceiver class 
+	boost::mutex mtx; //Fix declaration
+} ReceiverControlBlock;
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup RTPS_MODULE
@@ -123,8 +141,8 @@ public:
     void ResourceSemaphoreWait();
     //!Get Pointer to the Event Resource.
 	ResourceEvent& getEventResource();
-    //!Send Method
-    void sendSync(CDRMessage_t* msg, const Locator_t& loc);
+    //!Send Method - Deprecated - Stays here for reference purposes
+    //void sendSync(CDRMessage_t* msg, const Locator_t& loc);
     //!Get Send Mutex
     boost::recursive_mutex* getSendMutex();
     //!Get the participant Mutex
@@ -170,8 +188,8 @@ private:
 
 	//!Network Factory
 	NetworkFactory m_network_Factory;
-	//!Receiver Resource list
-	std::vector<ReceiverResource *> m_receiverResourcelist;
+	//!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
+	std::vector<ReceiverControlBlock *> m_receiverResourcelist;
 	std::vector<SenderResource *> m_senderResource;
 
 	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
@@ -206,6 +224,7 @@ private:
 	 * @return True if assigned.
 	 */
 	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
+
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
