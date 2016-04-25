@@ -43,6 +43,9 @@ set_sources(
     rtps/messages/submessages/DataMsg.hpp
     rtps/messages/submessages/GapMsg.hpp
     rtps/messages/submessages/HeartbeatMsg.hpp
+    rtps/network/NetworkFactory.cpp
+    rtps/network/SenderResource.cpp
+    rtps/network/ReceiverResource.cpp
     rtps/participant/RTPSParticipant.cpp 
     rtps/participant/RTPSParticipantImpl.cpp 
     rtps/RTPSDomain.cpp 

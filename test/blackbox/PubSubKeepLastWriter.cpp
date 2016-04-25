@@ -49,10 +49,7 @@ void PubSubKeepLastWriter::init()
 	PublisherAttributes puattr;
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
-    std::ostringstream t;
-    t << "PubSubAsReliableHelloworld_" << boost::asio::ip::host_name() << "_" << boost::interprocess::ipcdetail::get_current_process_id();
-    puattr.topic.topicName = t.str();
-    puattr.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    configPublisher(puattr);
     puattr.times.heartbeatPeriod.fraction = 4294967 * 200;
 	publisher_ = Domain::createPublisher(participant_, puattr, &listener_);
     ASSERT_NE(publisher_, nullptr);

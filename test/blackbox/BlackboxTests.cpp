@@ -14,8 +14,10 @@
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "PubSubAsReliableData64kbReader.hpp"
 #include "PubSubAsReliableData64kbWriter.hpp"
-#include "PubSubKeepLastReader.hpp"
-#include "PubSubKeepLastWriter.hpp"
+#include "PubSubAsNonReliableKeepLastReader.hpp"
+#include "PubSubAsNonReliableKeepLastWriter.hpp"
+#include "PubSubAsReliableKeepLastReader.hpp"
+#include "PubSubAsReliableKeepLastWriter.hpp"
 #include "PubSubKeepAllReader.hpp"
 #include "PubSubKeepAllWriter.hpp"
 #include "PubSubKeepAllTransientReader.hpp"
@@ -346,11 +348,53 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     ASSERT_EQ(msgs.size(), 0);
 }
 
-// Test created to check bug #1555 (Github #31)
-TEST(BlackBox, PubSubKeepLast)
+// Test created to check bug #1568 (Github #34)
+TEST(BlackBox, PubSubAsNonReliableKeepLast)
 {
-    PubSubKeepLastReader reader;
-    PubSubKeepLastWriter writer;
+    PubSubAsNonReliableKeepLastReader reader;
+    PubSubAsNonReliableKeepLastWriter writer;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(nmsgs);
+
+    if(!reader.isInitialized())
+        return;
+
+    writer.init();
+
+    if(!writer.isInitialized())
+        return;
+
+    // Because its volatile the durability
+    reader.waitDiscovery();
+
+    for(unsigned int tries = 0; tries < 51; ++tries)
+    {
+        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        if(msgs.empty())
+            break;
+
+        writer.send(msgs);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        reader.read(*msgs.rbegin(), std::chrono::seconds(2));
+    }
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
+}
+
+// Test created to check bug #1555 (Github #31)
+TEST(BlackBox, PubSubAsReliableKeepLast)
+{
+    PubSubAsReliableKeepLastReader reader;
+    PubSubAsReliableKeepLastWriter writer;
     const uint16_t nmsgs = 100;
     
     reader.init(nmsgs);
@@ -370,7 +414,7 @@ TEST(BlackBox, PubSubKeepLast)
 
     writer.send(msgs);
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    reader.read(*msgs.rbegin(), std::chrono::seconds(120));
+    reader.read(*msgs.rbegin(), std::chrono::seconds(10));
 
     msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
