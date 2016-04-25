@@ -34,6 +34,11 @@ class recursive_mutex;
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
 
+//Santi - Adding .h files for the new transport layers
+#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/network/SenderResource.h>
+
 namespace eprosima {
 namespace fastrtps{
 
@@ -143,8 +148,8 @@ private:
 	RTPSParticipantAttributes m_att;
 	//!Guid of the RTPSParticipant.
 	const GUID_t m_guid;
-	//! Sending resources.
-	ResourceSend* mp_send_thr;
+	//! Sending resources. - DEPRECATED -Stays commented for reference purposes
+	// ResourceSend* mp_send_thr;
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
 	//! BuiltinProtocols of this RTPSParticipant
@@ -162,8 +167,15 @@ private:
 	std::vector<RTPSWriter*> m_userWriterList;
 	//!Reader List
 	std::vector<RTPSReader*> m_userReaderList;
-	//!Listen Resource list
-	std::vector<ListenResource*> m_listenResourceList;
+
+	//!Network Factory
+	NetworkFactory m_network_Factory;
+	//!Receiver Resource list
+	std::vector<ReceiverResource *> m_receiverResourcelist;
+	std::vector<SenderResource *> m_senderResource;
+
+	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
+	// std::vector<ListenResource*> m_listenResourceList;
 	//!Participant Listener
 	RTPSParticipantListener* mp_participantListener;
 	//!Pointer to the user participant
