@@ -489,7 +489,7 @@ bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bo
 }
 
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend, Locator_t locator, bool isBuiltIn){
-	/*	Thjis function...
+	/*	This function...
 		- Asks the network factory for new resources
 		- Encapsulates the new resources within the ReceiverControlBlock list
 		- Associated the endpoint to the new elements in the list
@@ -497,7 +497,40 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 	*/
 	// 1 - Ask the network factory to generate the elements that do still not exist
 	std::vector<ReceiverResource> newItems;							//Store the newly created elements
-	newItems = m_network_Factory.BuildReceiverResources(locator);
+	std::vector<ReceiverResource> newItemsBuffer;
+	//Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
+	//In that case, just use the standard
+	if (pend->getAttributes()->unicastLocatorList.empty()){
+		//Default unicast
+		for (auto it = m_att.defaultUnicastLocatorList.begin(); it != m_att.defaultUnicastLocatorList.end(); ++it){
+			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
+			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
+			newItemsBuffer.clear();
+		}
+	}else{
+		//Endpoint unicast
+		for (auto it = pend->getAttributes()->unicastLocatorList.begin(); it != pend->getAttributes()->unicastLocatorList.end(); ++it){
+			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
+			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
+			newItemsBuffer.clear();
+		}
+	}
+	if (pend->getAttributes()->multicastLocatorList.empty()){
+		for (auto it = m_att.defaultMulticastLocatorList.begin(); it != m_att.defaultMulticastLocatorList.end(); ++it){
+			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
+			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
+			newItemsBuffer.clear();
+		}
+	}else{
+		for (auto it = pend->getAttributes()->multicastLocatorList.begin(); it != pend->getAttributes()->multicastLocatorList.end(); ++it){
+			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
+			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
+			newItemsBuffer.clear();
+		}
+	}
+
+	//newItems = m_network_Factory.BuildReceiverResources(pend->getAttributes()->unicastLocatorList);
+	//newItemsBuffer = m_network_Factory.BuildReceiverResources(pend->getAttributes()->multicastLocatorList);
 	// 2 - For each generated element
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
