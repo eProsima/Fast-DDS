@@ -715,7 +715,16 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 {
-	return mp_send_thr->sendSync(msg, loc);
+	//Translate data into standard contained and send
+	std::vector<char> buffer;
+	for (i = 0; i < msg->length; i++){
+		buffer.insert(msg->buffer[i]);
+	}
+	for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it){
+		(*it)->Send(buffer, loc);
+	}
+	return;
+	//return mp_send_thr->sendSync(msg, loc);
 }
 
 void RTPSParticipantImpl::announceRTPSParticipantState()
