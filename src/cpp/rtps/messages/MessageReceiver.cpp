@@ -327,7 +327,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	const char* const METHOD_NAME = "proc_Submsg_Data";
-    // boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
 
     // Reset param list
     m_ParamList.deleteParams();
