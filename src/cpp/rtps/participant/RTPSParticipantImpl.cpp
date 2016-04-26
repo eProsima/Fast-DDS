@@ -82,12 +82,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
-	mp_send_thr = new ResourceSend();
-	mp_send_thr->initSend(this,loc,m_att.sendSocketBufferSize,m_att.use_IP4_to_send,m_att.use_IP6_to_send);
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
 	bool hasLocatorsDefined = true;
 	//If no default locator is defined you define one.
+	//TODO Insert default locators here!!
+	/*	Commenting this block before removal since it is outdated
 	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
 		hasLocatorsDefined = false;
@@ -131,7 +131,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 			delete(LR);
 		}
 	}
-
+	*/
 
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
@@ -156,17 +156,20 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	while(m_userWriterList.size()>0)
 		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
-	//Destruct threads:
-	for(std::vector<ListenResource*>::iterator it=m_listenResourceList.begin();
-			it!=m_listenResourceList.end();++it)
+	//Destruct ReceiverResources:
+	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
 		delete(*it);
+
 
 	delete(this->mp_builtinProtocols);
 
 	delete(this->mp_ResourceSemaphore);
 	delete(this->mp_userParticipant);
 
-	delete(this->mp_send_thr);
+	//Destruct SenderResources
+	for (auto it = m_senderResource.begin; it != m_senderResource.end(); ++it)
+		delete(*it);
+
 	delete(this->mp_event_thr);
 	delete(this->mp_mutex);
 }
