@@ -1,7 +1,8 @@
 #include <MockTransport.h>
 #include <algorithm>
-using namespace std;
+#include <cstring>
 
+using namespace std;
 
 namespace eprosima{
 namespace fastrtps{
@@ -77,6 +78,12 @@ bool MockTransport::Receive(std::vector<char>& receiveBuffer, Locator_t localCha
    remoteAddress = mockMessagesToReceive.back().origin;
    mockMessagesToReceive.pop_back();
    return true;
+}
+
+Locator_t MockTransport::RemoteToMainLocal(Locator_t remote) const
+{
+   memset(remote.address, 0x00, sizeof(remote.address));
+   return remote;
 }
 
 bool MockTransport::CloseOutputChannel(Locator_t locator)

@@ -19,7 +19,9 @@ public:
 
    // Reports whether this resource supports the given local locator (i.e., said locator
    // maps to the transport channel managed by this resource).
-   bool SupportsLocator(Locator_t localLocator);
+   bool SupportsLocator(Locator_t local);
+   // Reports whether this resource can write to a remote locator.
+   bool CanSendToRemoteLocator(Locator_t remote);
 
    // Resources can only be transfered through move semantics. Copy, assignment, and 
    // construction outside of the factory are forbidden.
@@ -35,6 +37,7 @@ private:
    std::function<void()> Cleanup;
    std::function<bool(const std::vector<char>&, Locator_t)> SendThroughAssociatedChannel;
    std::function<bool(Locator_t)> LocatorMapsToManagedChannel;
+   std::function<bool(Locator_t)> ManagedChannelMapsToRemote;
 };
 
 } // namespace rtps

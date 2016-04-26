@@ -16,6 +16,8 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t locator)
                                   { return transport.Send(data, locator, destination); };
    LocatorMapsToManagedChannel = [&transport, locator](Locator_t locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
+   ManagedChannelMapsToRemote = [&transport, locator](Locator_t locatorToCheck) -> bool
+                                 { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
 }
 
 bool SenderResource::Send(const std::vector<char>& data, Locator_t destinationLocator)
@@ -28,11 +30,17 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
    Cleanup.swap(rValueResource.Cleanup); 
    SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
+   ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
 }
 
-bool SenderResource::SupportsLocator(Locator_t localLocator)
+bool SenderResource::SupportsLocator(Locator_t local)
 {
-   return LocatorMapsToManagedChannel(localLocator);
+   return LocatorMapsToManagedChannel(local);
+}
+
+bool SenderResource::CanSendToRemoteLocator(Locator_t remote)
+{
+   return ManagedChannelMapsToRemote(remote);
 }
 
 SenderResource::~SenderResource()

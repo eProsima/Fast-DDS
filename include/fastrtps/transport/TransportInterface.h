@@ -36,6 +36,9 @@ public:
    // Must report whether the given locator is supported by this transport (typically inspecting it's "kind" value).
    virtual bool IsLocatorSupported(Locator_t) const = 0;
 
+   // Returns the locator describing the main (most general) channel that can write to the provided remote locator.
+   virtual Locator_t RemoteToMainLocal(Locator_t remote) const = 0;
+
    // Must the channel that maps to/from the given locator. This method must allocate, reserve and mark
    // any resources that are needed for said channel.
    virtual bool OpenOutputChannel(Locator_t) = 0;

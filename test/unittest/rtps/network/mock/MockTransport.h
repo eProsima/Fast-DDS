@@ -32,6 +32,8 @@ class MockTransport: public TransportInterface
    virtual bool CloseOutputChannel(Locator_t);
    virtual bool CloseInputChannel(Locator_t);
 
+   virtual Locator_t RemoteToMainLocal(Locator_t) const;
+
    virtual bool IsLocatorSupported(Locator_t)  const;
    virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
 
