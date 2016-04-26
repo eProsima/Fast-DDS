@@ -320,7 +320,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
     if(enable)
     {
-        if(!assignEndpointListenResources((Endpoint*)SReader,isBuiltin))
+		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SReader, isBuiltin))
         {
             delete(SReader);
             return false;
