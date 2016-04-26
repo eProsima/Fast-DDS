@@ -363,5 +363,5 @@ void ListenResourceImpl::run_io_service()
 	}
 }
 }
-} /* namespace rtps */
-} /* namespace eprosima */
+}
+}

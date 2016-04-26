@@ -11,11 +11,12 @@ namespace rtps{
 
 class ReceiverResource 
 {
-   friend class NetworkFactory;
+friend class NetworkFactory;
 
 public:
-   // Performs a blocking receive from an origin locator,  through the channel managed by this resource.
-   bool Receive(std::vector<char>& data, Locator_t originLocator);
+   // Performs a blocking receive through the channel managed by this resource,
+   // notifying about the origin locator.
+   bool Receive(std::vector<char>& data, Locator_t& originLocator);
 
    // Reports whether this resource supports the given local locator (i.e., said locator
    // maps to the transport channel managed by this resource).
@@ -33,7 +34,7 @@ private:
 
    ReceiverResource(TransportInterface&, Locator_t);
    std::function<void()> Cleanup;
-   std::function<bool(std::vector<char>&, Locator_t)> ReceiveFromAssociatedChannel;
+   std::function<bool(std::vector<char>&, Locator_t&)> ReceiveFromAssociatedChannel;
    std::function<bool(Locator_t)> LocatorMapsToManagedChannel;
 };
 
