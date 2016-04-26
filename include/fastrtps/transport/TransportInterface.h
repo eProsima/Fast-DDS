@@ -56,9 +56,9 @@ public:
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator) = 0;
 
    // Must execute a blocking receive, on the inbound channel that maps to the localLocator, receiving from the
-   // address defined by remoteLocator. Must be threadsafe between channels, but not necessarily
+   // address that gets written to remoteLocator. Must be threadsafe between channels, but not necessarily
    // within the same channel.
-   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t remoteLocator) = 0;
+   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t& remoteLocator) = 0;
 };
 
 } // namespace rtps

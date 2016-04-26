@@ -238,7 +238,7 @@ TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_
    ASSERT_FALSE(resource.SupportsLocator(locator));
 }
 
-TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator_and_to_the_specified_remote_locator)
+TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator)
 {
    // Given
    int ArbitraryKind = 1;
@@ -260,7 +260,6 @@ TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_out
    const auto& messageSent = lastRegisteredTransport->mockMessagesSent.back();
 
    ASSERT_EQ(messageSent.data, testData);
-   ASSERT_EQ(messageSent.origin, locator);
    ASSERT_EQ(messageSent.destination, destinationLocator);
 }
 
@@ -274,22 +273,22 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
    auto& receiverResource = resources.back();
 
-   // When
+   vector<char> testData { 'a', 'b', 'c' };
    Locator_t originLocator;
    originLocator.kind = 1;
    originLocator.address[0] = 5;
-
-   // We fabricate a message to be received from the mock.
-   vector<char> testData { 'a', 'b', 'c' };
    MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   MockTransport::MockMessage message {originLocator, locator, testData}; 
-
+   MockTransport::MockMessage message {locator, originLocator, testData}; 
    lastRegisteredTransport->mockMessagesToReceive.push_back(message);
+
+   // When
    vector<char> receivedData;
-   receiverResource.Receive(receivedData, originLocator);
+   Locator_t receivedLocator;
+   receiverResource.Receive(receivedData, receivedLocator);
 
    // Then
    ASSERT_EQ(receivedData, testData);
+   ASSERT_EQ(receivedLocator, originLocator);
 }
 
 void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels)

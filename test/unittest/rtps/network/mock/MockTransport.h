@@ -36,13 +36,13 @@ class MockTransport: public TransportInterface
    virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
 
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress);
-   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t remoteAddress);
+   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t& remoteAddress);
 
    //Helpers and message record
    typedef struct
    {
-      Locator_t origin;
       Locator_t destination;
+      Locator_t origin;
       std::vector<char> data;
    } MockMessage;
 
