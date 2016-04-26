@@ -520,14 +520,30 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t locator){
 	std::vector<char> localBuffer;
-	for (;;){
-		//1 - Perform a blocking call to the receiver
-		receiver->Receiver.Receive(localBuffer, locator);
-		//2 - Output the data into the buffer
-
-		//3 - Call MessageReceiver methods
-
+	Locator_t input_locator;
+	//0 - Reset the buffer where the CDRMessage is going to be stored
+	CDRMessage::initCDRMsg(&receiver->mp_receiver->m_rec_msg);
+	//1 - Perform a blocking call to the receiver
+	receiver->Receiver.Receive(localBuffer, input_locator);
+	//2 - Output the data into struct's message receiver buffer
+	for (int i = 0; i < localBuffer.size(); i++){
+		receiver->mp_receiver->m_rec_msg.buffer = localBuffer.at(i);
 	}
+	receiver->mp_receiver->m_rec_msg.length = localBuffer.size();
+	//3 - Call MessageReceiver methods.
+		// The way this worked previously is the following: After receiving a message and putting it into the 
+		// message receiver, ListenResource.newCDRMessage(), which then calls the message receiver, was called.
+		// For the sake of fast integration, the funcionality of the newCRDMessage method is encapsulated here.
+		// Then the call to the messageReceiver is going to stay the same (and everything after that).
+		// Of course, since MessageReceiver was contained inside ListenResource and now it belongs to the Participant
+		// itself, it has to be adapted to its new location
+
+		//Since we already have the locator, there is no read need to perform any more operations
+
+	//Call to  messageReceiver trigger function
+	receiver->mp_receiver->processCDRMessager(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
+	//Call this function again
+	performListenOperation(receiver, locator);
 
 }
 
