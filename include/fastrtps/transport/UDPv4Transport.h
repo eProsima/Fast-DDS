@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/udp.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include "TransportInterface.h"
 #include <vector>
@@ -48,7 +49,7 @@ public:
    virtual bool CloseOutputChannel(Locator_t);
 
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
-   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t remoteLocator);
+   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t & remoteLocator);
 
 private:
    TransportDescriptor mDescriptor;
@@ -68,6 +69,11 @@ private:
    bool SendThroughSocket(const std::vector<char>& sendBuffer,
                           Locator_t remoteLocator,
                           boost::asio::ip::udp::socket& socket);
+
+   void StartAsyncListen(std::vector<char>& receiveBuffer,
+                         boost::asio::ip::udp::socket& socket, 
+                         Locator_t remoteLocator, 
+                         boost::interprocess::interprocess_semaphore& receiveSemaphore);
 };
 
 } // namespace rtps

@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace boost::asio;
+using namespace boost::interprocess;
 
 namespace eprosima{
 namespace fastrtps{
@@ -147,8 +148,8 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uin
       
    // Join all multicast groups;
    LocatorList_t localLocatorList;
-   IPFinder::getIP4Address(&locatorList);
- 	for(auto& locator : locatorList)
+   IPFinder::getIP4Address(&localLocatorList);
+ 	for(auto& locator : localLocatorList)
       socket.set_option(ip::multicast::join_group(anyIP, ip::address_v4::from_string(locator.to_IP4_string())));
 
    return socket;
@@ -178,9 +179,57 @@ bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLo
    return success;
 }
 
-bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t remoteLocator)
+static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
 {
-   return false;
+   Locator_t locator;
+
+   locator.port = endpoint.port();
+   auto ipBytes = endpoint.address().to_v4().to_bytes();
+   memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
+
+   return locator;
+}
+
+bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t& remoteLocator)
+{
+	const char* const METHOD_NAME = "Receive";
+
+   if (!IsInputChannelOpen(localLocator) ||
+       receiveBuffer.size() != mDescriptor.receiveBufferSize)
+      return false;
+
+   interprocess_semaphore receiveSemaphore(0);
+   bool success = false;
+
+   auto handler = [&success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
+   {
+	   if(error != boost::system::errc::success)
+      {
+		   logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
+      }
+      else 
+      {
+		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
+         success = true;
+      }
+      
+      receiveSemaphore.post();
+   };
+
+   ip::udp::endpoint senderEndpoint;
+
+   // For the time being, only one listening socket per port
+   auto& socket = mInputSockets[localLocator.port].back();
+   socket.async_receive_from(boost::asio::buffer(receiveBuffer),
+                             senderEndpoint,
+                             handler);
+
+   // We wait until the async receive handle posts this semaphore.
+   receiveSemaphore.wait();
+   if (success)
+      remoteLocator = EndpointToLocator(senderEndpoint);
+
+   return success;
 }
 
 bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
