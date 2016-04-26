@@ -43,6 +43,8 @@ public:
    virtual bool IsLocatorSupported(Locator_t)         const;
    virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
 
+   virtual Locator_t RemoteToMainLocal(Locator_t remote) const;
+
    virtual bool OpenInputChannel(Locator_t);
    virtual bool OpenOutputChannel(Locator_t);
 

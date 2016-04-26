@@ -24,8 +24,7 @@ bool UDPv4Transport::IsInputChannelOpen(Locator_t locator) const
    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
    auto mapIterator = mInputSockets.find(locator.port);
-   auto end = mInputSockets.end();
-   return mapIterator != end;
+   return mapIterator != mInputSockets.end();
 }
 
 bool UDPv4Transport::IsOutputChannelOpen(Locator_t locator) const
@@ -33,8 +32,7 @@ bool UDPv4Transport::IsOutputChannelOpen(Locator_t locator) const
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
 
    auto mapIterator = mOutputSockets.find(locator.port);
-   auto end = mOutputSockets.end();
-   return mapIterator != end;
+   return mapIterator != mOutputSockets.end();
 }
 
 bool UDPv4Transport::OpenOutputChannel(Locator_t locator)
@@ -177,6 +175,13 @@ bool UDPv4Transport::IsLocatorSupported(Locator_t locator) const
    return locator.kind == LOCATOR_KIND_UDPv4;
 }
 
+Locator_t UDPv4Transport::RemoteToMainLocal(Locator_t remote) const
+{
+   // All remotes are equally mapped to from the local 0.0.0.0:port (main output channel)
+   memset(remote.address, 0x00, sizeof(remote.address));
+   return remote;
+}
+
 bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
@@ -257,7 +262,7 @@ bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
 	const char* const METHOD_NAME = "SendThroughSocket";
 
 	boost::asio::ip::address_v4::bytes_type remoteAddress;
-   memcpy(&remoteAddress, &remoteLocator.address[12], 4*sizeof(remoteAddress));
+   memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
    auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), (uint16_t)remoteLocator.port);
    unsigned int bytesSent = 0;
    logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBuffer.size() << " bytes TO endpoint: " << destinationEndpoint
