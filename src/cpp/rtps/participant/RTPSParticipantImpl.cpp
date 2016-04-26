@@ -497,7 +497,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 	*/
 	// 1 - Ask the network factory to generate the elements that do still not exist
 	std::vector<ReceiverResource> newItems;							//Store the newly created elements
-	std::vector<ReceiverResource> newItemsBuffer;
+	std::vector<ReceiverResource> newItemsBuffer;					//Store intermediate results
 	//Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
 	//In that case, just use the standard
 	if (pend->getAttributes()->unicastLocatorList.empty()){
@@ -516,22 +516,21 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 		}
 	}
 	if (pend->getAttributes()->multicastLocatorList.empty()){
+		//Default multicast
 		for (auto it = m_att.defaultMulticastLocatorList.begin(); it != m_att.defaultMulticastLocatorList.end(); ++it){
 			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
 			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
 			newItemsBuffer.clear();
 		}
 	}else{
+		//Endpoint multicast
 		for (auto it = pend->getAttributes()->multicastLocatorList.begin(); it != pend->getAttributes()->multicastLocatorList.end(); ++it){
 			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
 			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
 			newItemsBuffer.clear();
 		}
 	}
-
-	//newItems = m_network_Factory.BuildReceiverResources(pend->getAttributes()->unicastLocatorList);
-	//newItemsBuffer = m_network_Factory.BuildReceiverResources(pend->getAttributes()->multicastLocatorList);
-	// 2 - For each generated element
+	// 2 - For each generated element...
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
 		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
@@ -539,11 +538,11 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 		// 2.2 - Push it to the list
 		m_receiverResourcelist.push_back(newBlock);
 	}
-	// 3 - Associate Endpoint with ReceiverResources (all of them, not just the new)
+	// 3 - Associate the Endpoint with ReceiverResources (all of them, not just the new)
 	assignEndpointListenResources(pend,isBuiltIn); 
 
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
-	for (auto it = m_receiverResourcelist.end() - newItems.size(); it != m_receiverResourcelist.end(); ++it){
+	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 		if ((*it)->mp_thread == nullptr)
 				(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
@@ -576,7 +575,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 	//Call to  messageReceiver trigger function
 	receiver->mp_receiver->processCDRMessager(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
 	//Call this function again
-	performListenOperation(receiver, locator);
+	performListenOperation(receiver);
 
 }
 
