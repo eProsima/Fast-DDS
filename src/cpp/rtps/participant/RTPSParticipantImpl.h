@@ -162,7 +162,8 @@ public:
 	*/
     inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
 
-    bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);
+    /* Not needed anymore, stays for reference pursposes
+	bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);*/
 
 private:
 	//!Attributes of the RTPSParticipant
@@ -211,6 +212,7 @@ private:
 	 * @return True if exists.
 	 */
 	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
+
 	/**
 	 * Assign an endpoint to the listenResources.
 	 * @param endp Pointer to the endpoint.
@@ -228,11 +230,11 @@ private:
 	 */
 	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
 
-	/** Create the new ReceiverResources needed for a new Locator
+	/** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
+		and consequently assignEndpoint2LocatorList
 		@param pend - Pointer to the endpoint which triggered the creation of the Receivers
-		@param Locator - Reference for the creation of the Resources
 	*/
-	bool createAndAssociateReceiverswithEnpoint(Endpoint * pend, Locator_t Locator, bool isBuiltIn);
+	bool createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn);
 	
 	/** Function to be called from a new thread, which takes cares of performing a blocking receive 
 		operation on the ReceiveResource

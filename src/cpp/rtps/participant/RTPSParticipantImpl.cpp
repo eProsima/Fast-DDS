@@ -240,7 +240,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	//SWriter->setQos(param.qos,true);
 	if(param.endpoint.reliabilityKind == RELIABLE)
 	{
-		if(!assignEndpointListenResources((Endpoint*)SWriter,isBuiltin))
+		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SWriter, isBuiltin))
 		{
 			delete(SWriter);
 			return false;
@@ -450,6 +450,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	return valid;
 }
 
+/* Not needed anymore, stays for reference pursposes
 bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed)
 {
 	bool valid = true;
@@ -486,9 +487,9 @@ bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bo
 	if(valid && added)
 		list = finalList;
 	return valid;
-}
+}*/
 
-bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend, Locator_t locator, bool isBuiltIn){
+bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn){
 	/*	This function...
 		- Asks the network factory for new resources
 		- Encapsulates the new resources within the ReceiverControlBlock list
@@ -573,7 +574,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 		//Since we already have the locator, there is no read need to perform any more operations
 
 	//Call to  messageReceiver trigger function
-	receiver->mp_receiver->processCDRMessager(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
+	receiver->mp_receiver->processCDRMessage(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
 	//Call this function again
 	performListenOperation(receiver);
 
