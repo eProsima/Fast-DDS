@@ -594,10 +594,9 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 	LocatorList_t finalList;
 	for(auto lit = list.begin();lit != list.end();++lit){
 		//Iteration of all Locators within the Locator list passed down as argument
-		added = false;
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		//Check among ReceiverResources whether the locator is supported or not
-		for (std::vector<ReceiverControlBlock *>::iterator it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
+		for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 			if ((*it)->Receiver->SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
