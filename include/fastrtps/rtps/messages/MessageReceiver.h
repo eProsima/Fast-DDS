@@ -36,7 +36,7 @@ public:
 	/**
 	* @param rec_buffer_size
 	*/
-	MessageReceiver(uint32_t rec_buffer_size);
+	MessageReceiver(uint32_t rec_buffer_size,ReceiverControlBlock *resourcepointer);
 	virtual ~MessageReceiver();
 	//!Reset the MessageReceiver to process a new message.
 	void reset();
@@ -49,7 +49,7 @@ public:
 	void processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,Locator_t* loc, CDRMessage_t*msg);
 
 	//!Pointer to the Listen Resource that contains this MessageReceiver.
-	ListenResource* mp_threadListen;
+
 	//!Received message
 	CDRMessage_t m_rec_msg;
 	//!PArameter list
@@ -58,6 +58,7 @@ public:
 
 
 private:
+	ReceiverControlBlock* receiver_resources;
 	CacheChange_t* mp_change;
 	//!Protocol version of the message
 	ProtocolVersion_t sourceVersion;

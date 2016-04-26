@@ -528,7 +528,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
-    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
 	//Look for the correct reader and writers:
 	for(std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
 			it != mp_threadListen->m_assocReaders.end(); ++it)
@@ -570,7 +570,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 
-    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
 	//Look for the correct writer to use the acknack
 	for(std::vector<RTPSWriter*>::iterator it=mp_threadListen->m_assocWriters.begin();
 			it!=mp_threadListen->m_assocWriters.end();++it)
@@ -653,7 +653,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart <= SequenceNumber_t(0, 0))
 		return false;
 
-    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
 	for(std::vector<RTPSReader*>::iterator it=mp_threadListen->m_assocReaders.begin();
 			it!=mp_threadListen->m_assocReaders.end();++it)
 	{
