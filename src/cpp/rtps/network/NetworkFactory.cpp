@@ -13,7 +13,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t locator)
    for(auto& transport : mRegisteredTransports)
    {
       if ( transport->IsLocatorSupported(locator) &&
-          !transport->IsLocatorChannelOpen(locator) )
+          !transport->IsOutputChannelOpen(locator) )
       {
          SenderResource newSenderResource(*transport, locator);
          newSenderResources.push_back(move(newSenderResource));
@@ -29,7 +29,7 @@ vector<ReceiverResource> NetworkFactory::BuildReceiverResources(Locator_t locato
    for(auto& transport : mRegisteredTransports)
    {
       if ( transport->IsLocatorSupported(locator) &&
-          !transport->IsLocatorChannelOpen(locator) )
+          !transport->IsInputChannelOpen(locator) )
       {
          ReceiverResource newReceiverResource(*transport, locator);
          newReceiverResources.push_back(move(newReceiverResource));

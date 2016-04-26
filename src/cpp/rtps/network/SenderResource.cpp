@@ -8,10 +8,10 @@ namespace rtps{
 SenderResource::SenderResource(TransportInterface& transport, Locator_t locator)
 {
    // Internal channel is open and assigned to this resource.
-   transport.OpenLocatorChannel(locator);
+   transport.OpenOutputChannel(locator);
 
    // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.CloseLocatorChannel(locator); };
+   Cleanup = [&transport,locator](){ transport.CloseOutputChannel(locator); };
    SendThroughAssociatedChannel = [&transport, locator](const vector<char>& data, Locator_t destination)-> bool
                                   { return transport.Send(data, locator, destination); };
    LocatorMapsToManagedChannel = [&transport, locator](Locator_t locatorToCheck) -> bool

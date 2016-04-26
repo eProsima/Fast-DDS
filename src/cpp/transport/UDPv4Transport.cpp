@@ -1,5 +1,6 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <utility>
+#include <cstring>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/RTPSLog.h>
 
@@ -17,41 +18,108 @@ UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
 {
 }
 
-bool UDPv4Transport::IsLocatorChannelOpen(Locator_t locator) const
+bool UDPv4Transport::IsInputChannelOpen(Locator_t locator) const
 {
-   auto mapIterator = mPortSocketMap.find(locator.port);
-   return mapIterator != mPortSocketMap.end();
+   auto mapIterator = mInputSockets.find(locator.port);
+   return mapIterator != mInputSockets.end();
 }
 
-bool UDPv4Transport::OpenLocatorChannel(Locator_t locator)
+bool UDPv4Transport::IsOutputChannelOpen(Locator_t locator) const
 {
-   if (IsLocatorChannelOpen(locator))
+   auto mapIterator = mOutputSockets.find(locator.port);
+   return mapIterator != mOutputSockets.end();
+}
+
+bool UDPv4Transport::OpenOutputChannel(Locator_t locator)
+{
+   if (IsOutputChannelOpen(locator))
       return false;   
    
-   return OpenAndBindSockets(locator.port);
+   return OpenAndBindOutputSockets(locator.port);
 }
 
-bool UDPv4Transport::OpenAndBindSockets(uint32_t port)
+bool UDPv4Transport::OpenInputChannel(Locator_t locator)
 {
-	const char* const METHOD_NAME = "OpenAndBindSockets";
+   if (IsInputChannelOpen(locator))
+      return false;   
+   
+   return OpenAndBindInputSockets(locator.port);
+}
+
+bool UDPv4Transport::CloseOutputChannel(Locator_t locator)
+{
+   if (!IsOutputChannelOpen(locator))
+      return false;   
+  
+   auto& sockets = mOutputSockets[locator.port];
+   for (auto& socket : sockets)
+   {
+      socket.cancel();
+      socket.close();
+   }
+
+   mOutputSockets.erase(locator.port);
+   return true;
+}
+
+bool UDPv4Transport::CloseInputChannel(Locator_t locator)
+{
+   if (!IsInputChannelOpen(locator))
+      return false;   
+  
+   auto& sockets = mInputSockets[locator.port];
+   for (auto& socket : sockets)
+   {
+      socket.cancel();
+      socket.close();
+   }
+
+   mInputSockets.erase(locator.port);
+   return true;
+}
+
+bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
+{
+	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
 
    try 
    {
-      // Multicast first, in vector index 0
-      mPortSocketMap[port].push_back(OpenAndBindSocket(ip::address_v4::any(), port));
-
       // Unicast output sockets, one per interface
       std::vector<IPFinder::info_IP> locNames;
       IPFinder::getIPs(&locNames);
       for (const auto& ip : locNames)
-         mPortSocketMap[port].push_back(OpenAndBindSocket(boost::asio::ip::address_v4::from_string(ip.name), port));
+         mOutputSockets[port].push_back(OpenAndBindSocket(boost::asio::ip::address_v4::from_string(ip.name), port));
    }
 	catch (boost::system::system_error const& e)
    {
 	   logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
-      mPortSocketMap.erase(port);
+      mOutputSockets.erase(port);
       return false;
    }
+
+   return true;
+}
+
+bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
+{
+	const char* const METHOD_NAME = "OpenAndBindInputSockets";
+
+   try 
+   {
+      // Single multicast 
+      std::vector<IPFinder::info_IP> locNames;
+      IPFinder::getIPs(&locNames);
+      for (const auto& ip : locNames)
+         mOutputSockets[port].push_back(OpenAndBindSocket(boost::asio::ip::address_v4::from_string(ip.name), port));
+   }
+	catch (boost::system::system_error const& e)
+   {
+	   logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+      mOutputSockets.erase(port);
+      return false;
+   }
+
+   // TODO needs work
 
    return true;
 }
@@ -77,6 +145,56 @@ bool UDPv4Transport::IsLocatorSupported(Locator_t locator) const
 {
    return locator.kind == LOCATOR_KIND_UDPv4;
 }
+
+bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
+{
+   if (!IsOutputChannelOpen(localLocator))
+      return false;
+
+   bool success = false;
+   auto& sockets = mOutputSockets[localLocator.port];
+   auto socketIt = sockets.begin() + 1; // We skip the multicast port
+   for (; socketIt != sockets.end(); socketIt++)
+      success |= SendThroughSocket(sendBuffer, remoteLocator, *socketIt);
+
+   return success;
+}
+
+bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t remoteLocator)
+{
+   return false;
+}
+
+bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
+                       Locator_t remoteLocator,
+                       boost::asio::ip::udp::socket& socket)
+{
+	const char* const METHOD_NAME = "SendThroughSocket";
+
+	boost::asio::ip::address_v4::bytes_type remoteAddress;
+   memcpy(&remoteAddress, &remoteLocator.address[12], 4*sizeof(remoteAddress));
+   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), (uint16_t)remoteLocator.port);
+
+   logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBuffer.size() << " bytes TO endpoint: " << destinationEndpoint
+         << " FROM " << socket.local_endpoint(), C_YELLOW);
+
+   unsigned int bytesSent = 0;
+   try 
+   {
+      bytesSent = socket.send_to(boost::asio::buffer(sendBuffer.data(), sendBuffer.size()), destinationEndpoint);
+   }
+   catch (const std::exception& error) 
+   {
+      logWarning(RTPS_MSG_OUT, "Error: " << error.what(), C_YELLOW);
+      return false;
+   }
+
+	logInfo (RTPS_MSG_OUT,"SENT " << bytesSent,C_YELLOW);
+   return true;
+}
+
+
+
 
 } // namespace rtps
 } // namespace fastrtps

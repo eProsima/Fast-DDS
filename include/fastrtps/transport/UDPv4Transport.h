@@ -24,31 +24,37 @@ public:
    UDPv4Transport(const TransportDescriptor&);
 
    // Checks whether there are open and bound sockets for the given port.
-   virtual bool IsLocatorChannelOpen(Locator_t) const;
+   virtual bool IsInputChannelOpen(Locator_t)         const;
+   virtual bool IsOutputChannelOpen(Locator_t)        const;
 
-   virtual bool IsLocatorSupported(Locator_t) const;
-
-   virtual bool OpenLocatorChannel(Locator_t);
-
-   virtual bool CloseLocatorChannel(Locator_t);
-
+   virtual bool IsLocatorSupported(Locator_t)         const;
    virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
 
-   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
+   virtual bool OpenInputChannel(Locator_t);
+   virtual bool OpenOutputChannel(Locator_t);
 
+   virtual bool CloseInputChannel(Locator_t);
+   virtual bool CloseOutputChannel(Locator_t);
+
+   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
    virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t remoteLocator);
 
 private:
    TransportDescriptor mDescriptor;
 
-   // For UDPv4, the notion of channel corresponds to a port. 
-   // Requesting a port with any IP  will trigger the binding of a socket per interface, plus
-   // a multicast receiver socket.
+   // For UDPv4, the notion of channel corresponds to a port + direction tuple.
+   // Requesting an output port with any IP will trigger the binding of a socket per network interface.
 	boost::asio::io_service mSendService;
-   std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mPortSocketMap;
+   std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; // Maps port to socket collection.
+   std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mInputSockets;  // Maps port to socket collection.
 
-   bool OpenAndBindSockets(uint32_t port);
+   bool OpenAndBindOutputSockets(uint16_t port);
+   bool OpenAndBindInputSockets(uint16_t port);
    boost::asio::ip::udp::socket OpenAndBindSocket(boost::asio::ip::address_v4, uint32_t port);
+
+   bool SendThroughSocket(const std::vector<char>& sendBuffer,
+                          Locator_t remoteLocator,
+                          boost::asio::ip::udp::socket& socket);
 };
 
 } // namespace rtps

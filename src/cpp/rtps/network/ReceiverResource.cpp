@@ -2,6 +2,7 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 
 using namespace std;
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -9,10 +10,10 @@ namespace rtps{
 ReceiverResource::ReceiverResource(TransportInterface& transport, Locator_t locator)
 {
    // Internal channel is open and assigned to this resource.
-   transport.OpenLocatorChannel(locator);
+   transport.OpenInputChannel(locator);
 
    // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.CloseLocatorChannel(locator); };
+   Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };
    ReceiveFromAssociatedChannel = [&transport, locator](vector<char>& data, Locator_t origin)-> bool
                                   { return transport.Receive(data, locator, origin); };
    LocatorMapsToManagedChannel = [&transport, locator](Locator_t locatorToCheck) -> bool
