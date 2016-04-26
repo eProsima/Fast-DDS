@@ -5,6 +5,7 @@
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
+#include <boost/thread.hpp>
 
 #include "TransportInterface.h"
 #include <vector>
@@ -58,6 +59,9 @@ private:
    // Outside granular mode,Requesting an output port with any IP will trigger 
    // the binding of a socket per network interface.
 	boost::asio::io_service mSendService;
+
+   mutable boost::recursive_mutex mOutputMapMutex;
+   mutable boost::recursive_mutex mInputMapMutex;
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; // Maps port to socket collection.
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mInputSockets;  // Maps port to socket collection.
 

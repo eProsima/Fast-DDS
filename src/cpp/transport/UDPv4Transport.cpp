@@ -21,14 +21,20 @@ UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
 
 bool UDPv4Transport::IsInputChannelOpen(Locator_t locator) const
 {
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
+
    auto mapIterator = mInputSockets.find(locator.port);
-   return mapIterator != mInputSockets.end();
+   auto end = mInputSockets.end();
+   return mapIterator != end;
 }
 
 bool UDPv4Transport::IsOutputChannelOpen(Locator_t locator) const
 {
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
+
    auto mapIterator = mOutputSockets.find(locator.port);
-   return mapIterator != mOutputSockets.end();
+   auto end = mOutputSockets.end();
+   return mapIterator != end;
 }
 
 bool UDPv4Transport::OpenOutputChannel(Locator_t locator)
@@ -51,7 +57,9 @@ bool UDPv4Transport::CloseOutputChannel(Locator_t locator)
 {
    if (!IsOutputChannelOpen(locator))
       return false;   
-  
+
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
+
    auto& sockets = mOutputSockets[locator.port];
    for (auto& socket : sockets)
    {
@@ -67,6 +75,8 @@ bool UDPv4Transport::CloseInputChannel(Locator_t locator)
 {
    if (!IsInputChannelOpen(locator))
       return false;   
+
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
   
    auto& sockets = mInputSockets[locator.port];
    for (auto& socket : sockets)
@@ -82,6 +92,8 @@ bool UDPv4Transport::CloseInputChannel(Locator_t locator)
 bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
+
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
 
    try 
    {
@@ -104,6 +116,8 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
+   
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
    try 
    {
@@ -116,8 +130,6 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
       mInputSockets.erase(port);
       return false;
    }
-
-   // TODO needs work
 
    return true;
 }
@@ -171,6 +183,8 @@ bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLo
        sendBuffer.size() != mDescriptor.sendBufferSize)
       return false;
 
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
+  
    bool success = false;
    auto& sockets = mOutputSockets[localLocator.port];
    for (auto& socket : sockets)
@@ -217,12 +231,16 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
    };
 
    ip::udp::endpoint senderEndpoint;
+   
+   { // lock scope
+      boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
-   // For the time being, only one listening socket per port
-   auto& socket = mInputSockets[localLocator.port].back();
-   socket.async_receive_from(boost::asio::buffer(receiveBuffer),
-                             senderEndpoint,
-                             handler);
+      // For the time being, only one listening socket per port
+      auto& socket = mInputSockets[localLocator.port].back();
+      socket.async_receive_from(boost::asio::buffer(receiveBuffer),
+                                senderEndpoint,
+                                handler);
+   }
 
    // We wait until the async receive handle posts this semaphore.
    receiveSemaphore.wait();
@@ -233,8 +251,8 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
 }
 
 bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
-                       Locator_t remoteLocator,
-                       boost::asio::ip::udp::socket& socket)
+                                       Locator_t remoteLocator,
+                                       boost::asio::ip::udp::socket& socket)
 {
 	const char* const METHOD_NAME = "SendThroughSocket";
 
