@@ -80,10 +80,12 @@ typedef struct{
 	ReceiverResource Receiver;
 	std::vector<RTPSWriter *> AssociatedWriters;
 	std::vector<RTPSReader *> AssociatedReaders;
-	uint32_t* buffer; //TODO Check definition and size as specified in the MessageReceiver class 
+	MessageReceiver* mp_receiver;
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
 } ReceiverControlBlock;
+
+
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
  * @ingroup RTPS_MODULE
