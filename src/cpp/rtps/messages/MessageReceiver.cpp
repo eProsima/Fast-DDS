@@ -38,7 +38,7 @@
 
 #include <fastrtps/utils/RTPSLog.h>
 
-#define IDSTRING "(ID:"<<this->mp_threadListen->m_ID<<") "<<
+
 
 using namespace eprosima::fastrtps;
 
@@ -49,9 +49,10 @@ namespace rtps {
 static const char* const CLASS_NAME = "MessageReceiver";
 
 
-MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
+MessageReceiver::MessageReceiver(uint32_t rec_buffer_size,ReceiverControlBlock *resourcepointer):
 												m_rec_msg(rec_buffer_size),
-												mp_change(nullptr)
+												mp_change(nullptr),
+												receiver_resources(resourcepointer)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
 	destVersion = c_ProtocolVersion;
@@ -65,7 +66,6 @@ MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 	defUniLoc.kind = LOCATOR_KIND_UDPv4;
 	LOCATOR_ADDRESS_INVALID(defUniLoc.address);
 	defUniLoc.port = LOCATOR_PORT_INVALID;
-	mp_threadListen = nullptr;
 	logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size,C_BLUE);
 	uint16_t max_payload = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 	mp_change = new CacheChange_t(max_payload, true);
@@ -327,7 +327,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	const char* const METHOD_NAME = "proc_Submsg_Data";
-    boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+    // boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
 
     // Reset param list
     m_ParamList.deleteParams();
