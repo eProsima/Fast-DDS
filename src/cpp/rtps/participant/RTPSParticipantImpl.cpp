@@ -634,7 +634,27 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 	}
 	return true;
 }
+bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
+	std::vector<SenderResource> newSenders;
+	std::vector<SenderResource> SendersBuffer;
+	if (pend->m_att.outLocatorList.empty()){
+		//Output locator ist is empty, use predetermined ones
 
+		//TO_DO
+
+	}
+	else{
+		//Output locators have been specified, create them
+		for (auto it = pend->m_att.outLocatorList.begin(); it != pend->m_att.outLocatorList.end(); ++it){
+			SendersBuffer = m_network_Factory.BuildSenderResources((*it));
+			newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
+			SendersBuffer.clear();
+		}
+	}
+	m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
+
+	return true;
+}
 
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
@@ -726,8 +746,8 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, const Locator_t& origin_lo
 			(*it)->Send(buffer, origin_loc);
 		}
 	}
+
 	return;
-	//return mp_send_thr->sendSync(msg, loc);
 }
 
 void RTPSParticipantImpl::announceRTPSParticipantState()

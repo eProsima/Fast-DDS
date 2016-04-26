@@ -243,6 +243,10 @@ private:
 	*/
 	void performListenOperation(ReceiverControlBlock *receiver);
 
+	/** Create non-existent SendResources based on the Locator list of the entity
+		@param pend - Pointer to the endpoint whose SenderResources are to be created
+	*/
+	bool createSendResources(Endpoint *pend);
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
