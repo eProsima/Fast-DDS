@@ -512,13 +512,13 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEnpoint(Endpoint * pend
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
 	for (auto it = m_receiverResourcelist.end() - newItems.size(); it != m_receiverResourcelist.end(); ++it){
 		if ((*it)->mp_thread == nullptr)
-				(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it, locator);
+				(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
 	//note: Should the default locator list be updated with the creation of new ReceiveResources?
 	return true;
 }
 
-void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t locator){
+void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver){
 	std::vector<char> localBuffer;
 	Locator_t input_locator;
 	//0 - Reset the buffer where the CDRMessage is going to be stored

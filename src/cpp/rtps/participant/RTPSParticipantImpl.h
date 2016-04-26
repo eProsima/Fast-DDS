@@ -239,7 +239,7 @@ private:
 		@param buffer - Position of the buffer we use to store data
 		@param locator - Locator that triggered the creation of the resource
 	*/
-	void performListenOperation(ReceiverControlBlock *receiver, Locator_t locator);
+	void performListenOperation(ReceiverControlBlock *receiver);
 
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
