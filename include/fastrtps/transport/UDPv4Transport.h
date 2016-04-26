@@ -16,9 +16,20 @@ namespace rtps{
 class UDPv4Transport : public TransportInterface
 {
 public:
-   // Transport configuration
+   /*Transport configuration
+    * - bufferSize: length of the buffers used for transmission. Passing
+    *               a buffer of different size will cause transmission to
+    *               fail.
+    *
+    * - granularMode: Off by default (false). If enabled, a sender/receiver
+    *                 resource will be returned per address, instead of per port.
+    *                 (this means the channel->(port, direction) equivalency is changed
+    *                 for channel->(port, IP, direction). 
+    * */
    typedef struct {
-      uint32_t bufferSize;
+      uint32_t sendBufferSize;
+      uint32_t receiveBufferSize;
+      bool granularMode;
    } TransportDescriptor;
 
    UDPv4Transport(const TransportDescriptor&);
@@ -43,14 +54,16 @@ private:
    TransportDescriptor mDescriptor;
 
    // For UDPv4, the notion of channel corresponds to a port + direction tuple.
-   // Requesting an output port with any IP will trigger the binding of a socket per network interface.
+   // Outside granular mode,Requesting an output port with any IP will trigger 
+   // the binding of a socket per network interface.
 	boost::asio::io_service mSendService;
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; // Maps port to socket collection.
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mInputSockets;  // Maps port to socket collection.
 
    bool OpenAndBindOutputSockets(uint16_t port);
    bool OpenAndBindInputSockets(uint16_t port);
-   boost::asio::ip::udp::socket OpenAndBindSocket(boost::asio::ip::address_v4, uint32_t port);
+   boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4, uint32_t port);
+   boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port);
 
    bool SendThroughSocket(const std::vector<char>& sendBuffer,
                           Locator_t remoteLocator,

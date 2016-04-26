@@ -11,7 +11,7 @@ namespace rtps{
 
 class ReceiverResource 
 {
-   friend class NetworkFactory;
+friend class NetworkFactory;
 
 public:
    // Performs a blocking receive through the channel managed by this resource,
