@@ -1,7 +1,6 @@
 #include "MockEvent.h"
 #include "MockParentEvent.h"
-
-#include<thread>
+#include <thread>
 #include <boost/random.hpp>
 #include <gtest/gtest.h>
 

@@ -1,6 +1,7 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <utility>
 #include <cstring>
+#include <algorithm>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/RTPSLog.h>
 
@@ -87,6 +88,16 @@ bool UDPv4Transport::CloseInputChannel(Locator_t locator)
    return true;
 }
 
+static void GetIP4s(vector<IPFinder::info_IP>& locNames)
+{
+   IPFinder::getIPs(&locNames);
+   // Filter out IP6
+   auto newEnd = remove_if(locNames.begin(), 
+                 locNames.end(),
+                 [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4;});
+   locNames.erase(newEnd, locNames.end());
+}
+
 bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
@@ -95,9 +106,9 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 
    try 
    {
-      // Unicast output sockets, one per interface
+      // Unicast output sockets, one per interface supporting IP4
       std::vector<IPFinder::info_IP> locNames;
-      IPFinder::getIPs(&locNames);
+      GetIP4s(locNames);
       for (const auto& ip : locNames)
          mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4::from_string(ip.name), port));
    }
