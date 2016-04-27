@@ -85,7 +85,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
 	bool hasLocatorsDefined = true;
-	//If no default locator is defined you define one.
+	//If no default locators are defined we define some.
 	/* The reasoning here is the following.
 		If the parameters of the RTPS Participant don't hold default listening locators for the creation
 		of Endpoints, we make some for Unicast only.
@@ -148,7 +148,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	if (m_att.defaultOutLocatorList.empty()){
 		hasLocatorsDefined = false;
 		Locator_t SendLocator;
-		/* Fill with desired default Send Locators*/
+		/*TODO - Fill with desired default Send Locators for our transports*/
 
 
 		m_att.defaultUnicastLocatorList.push_back(SendLocator);
@@ -476,9 +476,10 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	return valid;
 }
 
-/* Not needed anymore, stays for reference pursposes
+/* Commented for now 
 bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed)
 {
+		//Required for the built-in protocols
 	bool valid = true;
 	LocatorList_t finalList;
 	bool added = false;
@@ -513,7 +514,8 @@ bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bo
 	if(valid && added)
 		list = finalList;
 	return valid;
-}*/
+}
+*/
 
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn){
 	/*	This function...

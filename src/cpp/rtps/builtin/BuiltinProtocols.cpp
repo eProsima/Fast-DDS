@@ -69,6 +69,8 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	m_SPDP_WELL_KNOWN_UNICAST_PORT =
 			mp_participantImpl->getAttributes().port.getUnicastPort(m_att.domainId,mp_participantImpl->getAttributes().participantID);
 
+	/* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+	   Else -> Take them */
 	this->m_mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
 	m_mandatoryMulticastLocator.port = m_SPDP_WELL_KNOWN_MULTICAST_PORT;
 	m_mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
@@ -85,11 +87,13 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 			m_metatrafficMulticastLocatorList.push_back(*it);
 		}
 	}
+	//Create listen Resources (delegated until actual Endpoints are created)
+		//p_part->assignLocatorForBuiltin_unsafe(m_metatrafficMulticastLocatorList, true, false);
 
-    p_part->assignLocatorForBuiltin_unsafe(m_metatrafficMulticastLocatorList, true, false);
-
+	/* Same for metatrafficUnicastLocatorList */
 	if(m_att.metatrafficUnicastLocatorList.empty())
 	{
+		//Add default metatrafficUnicastLocators
 		LocatorList_t locators;
 		IPFinder::getIP4Address(&locators);
         for(std::vector<Locator_t>::iterator it=locators.begin();it!=locators.end();++it)
@@ -100,14 +104,15 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	}
 	else
 	{
+		//If locators existed, just import them to the class
 		for(std::vector<Locator_t>::iterator it = m_att.metatrafficUnicastLocatorList.begin();
 				it!=m_att.metatrafficUnicastLocatorList.end();++it)
 		{
 			m_metatrafficUnicastLocatorList.push_back(*it);
 		}
 	}
-
-    p_part->assignLocatorForBuiltin_unsafe(m_metatrafficUnicastLocatorList, false, false);
+	//Create listen Resources (delegated until actual Endpoints are created)
+		//p_part->assignLocatorForBuiltin_unsafe(m_metatrafficUnicastLocatorList, false, false);
 
 	if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
 	{
