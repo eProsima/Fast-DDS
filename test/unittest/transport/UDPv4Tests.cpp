@@ -56,6 +56,25 @@ TEST_F(UDPv4Tests, opening_and_closing_output_channel)
    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
 }
 
+TEST_F(UDPv4Tests, opening_and_closing_input_channel)
+{
+   // Given
+   HELPER_SetDescriptorDefaults(); 
+   UDPv4Transport transportUnderTest(descriptor);
+   Locator_t multicastFilterLocator;
+   multicastFilterLocator.kind = LOCATOR_KIND_UDPv4;
+   multicastFilterLocator.port = 7410; // arbitrary
+   multicastFilterLocator.set_IP4_address(239, 255, 0, 1); // 239.255.0.1 TODO TODO
+
+   // Then
+   ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
+   ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator));
+   ASSERT_TRUE  (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
+   ASSERT_TRUE  (transportUnderTest.CloseInputChannel(multicastFilterLocator));
+   ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
+   ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
    descriptor.sendBufferSize = 1024;

@@ -49,7 +49,8 @@ bool UDPv4Transport::OpenInputChannel(Locator_t locator)
    if (IsInputChannelOpen(locator))
       return false;   
    
-   return OpenAndBindInputSockets(locator.port);
+   auto multicastFilterIP = ip::address_v4::from_string(locator.to_IP4_string());
+   return OpenAndBindInputSockets(locator.port, multicastFilterIP);
 }
 
 bool UDPv4Transport::CloseOutputChannel(Locator_t locator)
@@ -122,7 +123,7 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
    return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
+bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v4 multicastFilterAddress)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
    
@@ -131,7 +132,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
    try 
    {
       // Single multicast port
-      mInputSockets[port].push_back(OpenAndBindMulticastInputSocket(port));
+      mInputSockets[port].push_back(OpenAndBindMulticastInputSocket(port, multicastFilterAddress));
    }
 	catch (boost::system::system_error const& e)
    {
@@ -155,7 +156,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(ip::
    return socket;
 }
 
-boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uint32_t port)
+boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uint32_t port, ip::address_v4 multicastFilterAddress)
 {
    ip::udp::socket socket(mSendService);
    socket.open(ip::udp::v4());
@@ -166,12 +167,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uin
 
    ip::udp::endpoint endpoint(anyIP, port);
    socket.bind(endpoint);
-      
-   // Join all multicast groups;
-   LocatorList_t localLocatorList;
-   IPFinder::getIP4Address(&localLocatorList);
- 	for(auto& locator : localLocatorList)
-      socket.set_option(ip::multicast::join_group(anyIP, ip::address_v4::from_string(locator.to_IP4_string())));
+   socket.set_option(ip::multicast::join_group(multicastFilterAddress));
 
    return socket;
 }

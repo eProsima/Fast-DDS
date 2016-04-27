@@ -68,9 +68,9 @@ private:
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mInputSockets;  // Maps port to socket collection.
 
    bool OpenAndBindOutputSockets(uint16_t port);
-   bool OpenAndBindInputSockets(uint16_t port);
+   bool OpenAndBindInputSockets(uint16_t port, boost::asio::ip::address_v4 multicastFilterAddress);
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4, uint32_t port);
-   boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port);
+   boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port, boost::asio::ip::address_v4 multicastFilterAddress);
 
    bool SendThroughSocket(const std::vector<char>& sendBuffer,
                           Locator_t remoteLocator,
