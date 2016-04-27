@@ -156,6 +156,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		if ((*it)->mp_thread == nullptr)
 			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
+	newItems.clear();
 	m_att.defaultUnicastLocatorList = defcopy;
 	if(!hasLocatorsDefined)
 		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
@@ -189,23 +190,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
 	m_att.defaultMulticastLocatorList = defcopy;
-
-	/*defcopy = m_att.defaultMulticastLocatorList;
-	m_att.defaultMulticastLocatorList.clear();
-	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
-	{
-		ListenResource* LR = new ListenResource(this,++m_threadID,true);
-		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,true,false))
-		{
-			m_att.defaultMulticastLocatorList.push_back(LR->getListenLocators());
-			this->m_listenResourceList.push_back(LR);
-		}
-		else
-		{
-			delete(LR);
-		}
-	}
-	*/
+	newItems.clear();
 
 	//Check if defaultOutLocatorsExist, create some if they don't
 	hasLocatorsDefined = true;
@@ -214,9 +199,30 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		Locator_t SendLocator;
 		/*TODO - Fill with desired default Send Locators for our transports*/
 
-
 		m_att.defaultUnicastLocatorList.push_back(SendLocator);
 	}
+	
+	std::vector<SenderResource *> newSenders;
+	std::vector<SenderResource *> newSendersBuffer;
+
+	//Create the default sendResources - For the same reason as in the ReceiverResources
+	defcopy = m_att.defaultOutLocatorList;
+	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
+		/* Try to build resources with that specific Locator*/
+		newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
+		while (newSendersBuffer.empty()){
+			//No ReceiverResources have been added, therefore we have to change the Locator 
+			(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
+																						//as it is useless now.
+			newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
+		}
+		//Now we DO have resources, and the new locator is already replacing the old one.
+		newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
+		newSendersBuffer.clear();
+	}
+	m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
+	m_att.defaultUnicastLocatorList = defcopy;
+
 	if (!hasLocatorsDefined)
 		logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
 
