@@ -667,9 +667,11 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 	std::vector<SenderResource> SendersBuffer;
 	if (pend->m_att.outLocatorList.empty()){
 		//Output locator ist is empty, use predetermined ones
-
-		//TO_DO
-
+		for (auto it = m_att.defaultOutLocatorList.begin(); it != m.att.defaultOutLocatorList.end(); ++i){
+			SendersBuffer = m_network_Factory.BuildSenderResources((*it));
+			newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
+			SendersBuffer.clear();
+		}
 	}
 	else{
 		//Output locators have been specified, create them
