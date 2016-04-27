@@ -86,12 +86,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	mp_event_thr->init_thread(this);
 	bool hasLocatorsDefined = true;
 	//If no default locator is defined you define one.
-	//TODO Insert default locators here!!
-	/*	Commenting this block before removal since it is outdated
+	/* The reasoning here is the following.
+		If the parameters of the RTPS Participant don't hold default listening locators for the creation
+		of Endpoints, we make some for Unicast only.
+		If there is at least one listen locator of any kind, we do not create any default ones.
+		If there are no sending locators defined, we create default ones for the transports we implement.
+	*/
 	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
+		//Default Unicast Locators
 		hasLocatorsDefined = false;
 		Locator_t loc2;
+
 		loc2.port=m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
 				m_att.port.offsetd3+
@@ -101,7 +107,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
-	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
+	/*	Here was the creation of listenResources for these default locators. Since the
+		creation of ReceiverResources is now delayed until an Entity that requires it is created,
+		there is no need to create the resources now.
+	*/
+
+	/*for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
 		ListenResource* LR = new ListenResource(this,++m_threadID,true);
 		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,false,false))
@@ -113,10 +124,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		{
 			delete(LR);
 		}
-	}
+	}*/
 	if(!hasLocatorsDefined)
 		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
-	defcopy = m_att.defaultMulticastLocatorList;
+	/*defcopy = m_att.defaultMulticastLocatorList;
 	m_att.defaultMulticastLocatorList.clear();
 	for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
@@ -132,6 +143,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		}
 	}
 	*/
+	//Check if defaultOutLocatorsExist, create some if they don't
+	hasLocatorsDefined = true;
+	if (m_att.defaultOutLocatorList.empty()){
+		hasLocatorsDefined = false;
+		Locator_t SendLocator;
+		/* Fill with desired default Send Locators*/
+
+
+		m_att.defaultUnicastLocatorList.push_back(SendLocator);
+	}
+	if (!hasLocatorsDefined)
+		logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
 
 	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
@@ -404,7 +427,7 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
 
 /*
  *
- * LISTEN RESOURCE METHODS
+ * RECEIVER RESOURCE METHODS
  *
  */
 
