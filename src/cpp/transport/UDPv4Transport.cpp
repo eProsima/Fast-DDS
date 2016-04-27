@@ -18,6 +18,17 @@ static const char* const CLASS_NAME = "UDPv4Transport";
 UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
    mDescriptor(descriptor)
 {
+   auto ioServiceFunction = [&](){
+      io_service::work work(mService);
+      mService.run();
+   };
+   ioServiceThread.reset(new boost::thread(ioServiceFunction));
+}
+
+UDPv4Transport::~UDPv4Transport()
+{
+   mService.stop();
+   ioServiceThread->join();
 }
 
 bool UDPv4Transport::IsInputChannelOpen(Locator_t locator) const
@@ -146,7 +157,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v4 multi
 
 boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(ip::address_v4 ipAddress, uint32_t port)
 {
-   ip::udp::socket socket(mSendService);
+   ip::udp::socket socket(mService);
    socket.open(ip::udp::v4());
    socket.set_option(socket_base::send_buffer_size(mDescriptor.sendBufferSize));
 
@@ -158,7 +169,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(ip::
 
 boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uint32_t port, ip::address_v4 multicastFilterAddress)
 {
-   ip::udp::socket socket(mSendService);
+   ip::udp::socket socket(mService);
    socket.open(ip::udp::v4());
    socket.set_option(socket_base::receive_buffer_size(mDescriptor.receiveBufferSize));
 	socket.set_option(ip::udp::socket::reuse_address( true ) );
@@ -184,7 +195,7 @@ bool UDPv4Transport::IsLocatorSupported(Locator_t locator) const
 
 Locator_t UDPv4Transport::RemoteToMainLocal(Locator_t remote) const
 {
-   // All remotes are equally mapped to from the local 0.0.0.0:port (main output channel)
+   // All remotes are equally mapped to from the local 0.0.0.0:port (main output channel). TODO: Implement granular mode to make this more flexible.
    memset(remote.address, 0x00, sizeof(remote.address));
    return remote;
 }

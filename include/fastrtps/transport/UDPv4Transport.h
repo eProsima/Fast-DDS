@@ -9,6 +9,7 @@
 
 #include "TransportInterface.h"
 #include <vector>
+#include <memory>
 #include <map>
 
 namespace eprosima{
@@ -35,6 +36,7 @@ public:
    } TransportDescriptor;
 
    UDPv4Transport(const TransportDescriptor&);
+   ~UDPv4Transport();
 
    // Checks whether there are open and bound sockets for the given port.
    virtual bool IsInputChannelOpen(Locator_t)         const;
@@ -60,7 +62,8 @@ private:
    // For UDPv4, the notion of channel corresponds to a port + direction tuple.
    // Outside granular mode,Requesting an output port with any IP will trigger 
    // the binding of a socket per network interface.
-	boost::asio::io_service mSendService;
+	boost::asio::io_service mService;
+   std::unique_ptr<boost::thread> ioServiceThread;
 
    mutable boost::recursive_mutex mOutputMapMutex;
    mutable boost::recursive_mutex mInputMapMutex;
