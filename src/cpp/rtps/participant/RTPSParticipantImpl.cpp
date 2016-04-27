@@ -264,6 +264,9 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
 	//SWriter->setListener(inlisten);
 	//SWriter->setQos(param.qos,true);
+
+	//Create SenderResources for this new Writer. 
+	createSendResources((Endpoint *)SWriter);
 	if(param.endpoint.reliabilityKind == RELIABLE)
 	{
 		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SWriter, isBuiltin))
@@ -339,6 +342,9 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
 	//SReader->setListener(inlisten);
 	//SReader->setQos(param.qos,true);
+	if (param.endpoint.reliabilityKind == RELIABLE)
+		createSendResources((Endpoint *)SReader);
+
 	if(isBuiltin)
 	{
 		SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
