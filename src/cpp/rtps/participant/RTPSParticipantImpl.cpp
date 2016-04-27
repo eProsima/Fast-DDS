@@ -633,7 +633,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
 		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
-		newBlock.mp_receiver = new MessageReceiver(listenSockSize);			//!! listenSockSize has to come from somewhere 
+		newBlock.mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);			//!! listenSockSize has to come from somewhere 
 		// 2.2 - Push it to the list
 		m_receiverResourcelist.push_back(newBlock);
 	}
