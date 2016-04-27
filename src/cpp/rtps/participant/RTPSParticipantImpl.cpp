@@ -107,10 +107,49 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	}
 	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
 	m_att.defaultUnicastLocatorList.clear();
-	/*	Here was the creation of listenResources for these default locators. Since the
-		creation of ReceiverResources is now delayed until an Entity that requires it is created,
-		there is no need to create the resources now.
+
+	/*	
+		Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and 
+		in order to maintain synchrony between the defaultLocator list and the actuar ReceiveResources,
+		We create the resources for these Locators now. Furthermore, in case these resources are taken, 
+		we create them on another Locator and then update de defaultList.
 	*/
+	std::vector<ReceiverResource *> newItems;
+	std::vector<ReceiverResource *> newItemsBuffer;
+
+	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
+		/* Try to build resources with that specific Locator*/
+		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
+		while (newItems.empty()){
+			//No ReceiverResources have been added, therefore we have to change the Locator 
+			switch ((*it).kind){
+			case LOCATOR_KIND_UDPv4:
+				//This is a completely made up rule
+				(*it).port += 10;
+				break;
+			case LOCATOR_KIND_UDPv6:
+				//TODO - Define the rules
+				break;
+			}
+			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));	
+		}
+		//Now we DO have resources, and the new locator is already replacing the old one.
+		newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
+		newItemsBuffer.clear();
+	}
+	// 2 - For each generated element...
+	for (auto it = newItems.begin(); it != newItems.end(); ++it){
+		// 2.1 - Initialize a ReceiverResourceControlBlock
+		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
+		newBlock.mp_receiver = new MessageReceiver(listenSockSize);			//!! listenSockSize has to come from somewhere 
+		// 2.2 - Push it to the list
+		m_receiverResourcelist.push_back(newBlock);
+	}
+	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
+	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
+		if ((*it)->mp_thread == nullptr)
+			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
+	}
 
 	/*for(LocatorListIterator lit = defcopy.begin();lit!=defcopy.end();++lit)
 	{
