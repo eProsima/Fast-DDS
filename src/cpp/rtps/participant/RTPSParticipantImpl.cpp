@@ -61,6 +61,18 @@ static EntityId_t TrustedWriter(const EntityId_t& reader)
 	return c_EntityId_Unknown;
 }
 
+Locator_t RTPSParticipant::applyLocatorAdaptRule(Locator_t loc){
+	switch ((*loc).kind){
+	case LOCATOR_KIND_UDPv4:
+		//This is a completely made up rule
+		(*loc).port += 10;
+		break;
+	case LOCATOR_KIND_UDPv6:
+		//TODO - Define the rules
+		break;
+	}
+
+}
 
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
 		const GuidPrefix_t& guidP,
@@ -122,15 +134,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
 		while (newItems.empty()){
 			//No ReceiverResources have been added, therefore we have to change the Locator 
-			switch ((*it).kind){
-			case LOCATOR_KIND_UDPv4:
-				//This is a completely made up rule
-				(*it).port += 10;
-				break;
-			case LOCATOR_KIND_UDPv6:
-				//TODO - Define the rules
-				break;
-			}
+			(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
+																						//as it is useless now.
 			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));	
 		}
 		//Now we DO have resources, and the new locator is already replacing the old one.

@@ -250,7 +250,7 @@ private:
 	/** When we want to create a new 
 
 	*/
-	void applyLocatorAdaptRule(Locator_t *loc);
+	Locator_t applyLocatorAdaptRule(Locator_t loc);
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
