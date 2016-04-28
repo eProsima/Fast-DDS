@@ -584,6 +584,8 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 		//Check among ReceiverResources whether the locator is supported or not
 		for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
+			//Take mutex for the resource since we are going to interact with shared resources
+			boost::lock_guard<boost::recursive_mutex> guard((*it)->mtx);
 			if ((*it)->Receiver->SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
