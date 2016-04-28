@@ -666,10 +666,11 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 	// 2 - Now we have ALL of the new items For each generated element...
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
-		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr };
+		
+		//ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr };
 	
 		// 2.2 - Push it to the list
-		m_receiverResourcelist.emplace_back({ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr });
+		m_receiverResourcelist.emplace_back({ std::move((*it)), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr });
 		
 		m_receiverResourcelist.back().mp_receiver.assignReceiverControlBlockPointer(m_receiverResourcelist.back());
 	}
