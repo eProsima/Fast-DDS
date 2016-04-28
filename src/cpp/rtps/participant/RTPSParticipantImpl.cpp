@@ -194,7 +194,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
 	//Destruct ReceiverResources
-	m_receiverResoucelist.clear();
+	m_receiverResourcelist.clear();
 
 	delete(this->mp_builtinProtocols);
 
@@ -543,11 +543,16 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 	//0 - Perform a blocking call to the receiver
 	receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going to be stored
-	CDRMessage::initCDRMsg(receiver->mp_receiver.m_rec_msg, RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
+	CDRMessage::initCDRMsg(&(receiver->mp_receiver.m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
-	for (int i = 0; i < localBuffer.size(); i++){
-		receiver->mp_receiver.m_rec_msg.buffer = localBuffer.at(i);
+	int i=0;
+	for(auto it=localBuffer.begin();it!=localBuffer.end();++it){
+		receiver->mp_receiver.m_rec_msg.buffer[i] = (*it);
 	}
+	//for (int i = 0; i < localBuffer.size(); i++){
+	//	receiver->mp_receiver.m_rec_msg.buffer[i] = localBuffer.at(i);
+	//}
+	
 	receiver->mp_receiver.m_rec_msg.length = localBuffer.size();
 	//3 - Call MessageReceiver methods.
 		// The way this worked previously is the following: After receiving a message and putting it into the 
@@ -560,7 +565,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 		//Since we already have the locator, there is no read need to perform any more operations
 
 	//Call to  messageReceiver trigger function
-	receiver->mp_receiver.processCDRMessage(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver.m_rec_msg);
+	receiver->mp_receiver.processCDRMsg(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver.m_rec_msg);
 	//Call this function again
 	performListenOperation(receiver);
 
@@ -792,7 +797,8 @@ void RTPSParticipantImpl::resetRTPSParticipantAnnouncement()
 
 void RTPSParticipantImpl::loose_next_change()
 {
-	this->mp_send_thr->loose_next_change();
+	//NOTE: This is replaced by the test transport
+	//this->mp_send_thr->loose_next_change();
 }
 
 
@@ -826,7 +832,8 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
 
 boost::recursive_mutex* RTPSParticipantImpl::getSendMutex()
 {
-	return mp_send_thr->getMutex();
+	//Member does not exist any more
+	//return mp_send_thr->getMutex();
 }
 
 void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP)
