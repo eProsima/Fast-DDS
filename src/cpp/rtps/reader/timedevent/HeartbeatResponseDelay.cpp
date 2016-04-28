@@ -97,11 +97,11 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 
 			for(lit = mp_WP->m_att.endpoint.unicastLocatorList.begin();
 					lit!=mp_WP->m_att.endpoint.unicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,(*lit));
+				mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,static_cast<Endpoint *>(mp_WP->mp_SFR),(*lit));
 
 			for(lit = mp_WP->m_att.endpoint.multicastLocatorList.begin();
 					lit!=mp_WP->m_att.endpoint.multicastLocatorList.end();++lit)
-				mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,(*lit));
+				mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,static_cast<Endpoint *>(mp_WP->mp_SFR),(*lit));
 
 		}
 
