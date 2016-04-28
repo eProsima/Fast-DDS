@@ -7,19 +7,6 @@ using namespace std;
 using namespace eprosima::fastrtps::rtps;
 using namespace boost::interprocess;
 
-	std::string to_IP6_string(Locator_t locator){
-		std::stringstream ss;
-		ss << std::hex;
-      for (int i = 0; i != 14; i+= 2) 
-      {
-         auto field = (locator.address[i] << 8) + locator.address[i+1];
-         ss << field << ":";
-      }
-      auto field = locator.address[14] + (locator.address[15] << 8);
-      ss << field;
-      return ss.str();
-      }
-
 class UDPv6Tests: public ::testing::Test 
 {
    public:
