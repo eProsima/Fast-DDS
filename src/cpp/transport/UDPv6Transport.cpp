@@ -47,7 +47,7 @@ bool UDPv6Transport::IsOutputChannelOpen(Locator_t locator) const
 
 bool UDPv6Transport::OpenOutputChannel(Locator_t locator)
 {
-   if (IsOutputChannelOpen(locator)
+   if (IsOutputChannelOpen(locator) ||
        !IsLocatorSupported(locator))
       return false;   
    
@@ -56,13 +56,13 @@ bool UDPv6Transport::OpenOutputChannel(Locator_t locator)
 
 static bool IsMulticastAddress(Locator_t locator)
 {
-   return locator.address[0] = 0xFF;
+   return locator.address[0] == 0xFF;
 }
 
 bool UDPv6Transport::OpenInputChannel(Locator_t locator)
 {
    if (IsInputChannelOpen(locator) ||
-       IsMulticastAddress(locator) ||
+       !IsMulticastAddress(locator) ||
        !IsLocatorSupported(locator))
       return false;   
    
@@ -106,13 +106,13 @@ bool UDPv6Transport::CloseInputChannel(Locator_t locator)
    return true;
 }
 
-static void GetIP4s(vector<IPFinder::info_IP>& locNames)
+static void GetIP6s(vector<IPFinder::info_IP>& locNames)
 {
    IPFinder::getIPs(&locNames);
-   // Filter out IP6
+   // Filter out IP4
    auto newEnd = remove_if(locNames.begin(), 
-                 locNames.end(),
-                 [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4;});
+                           locNames.end(),
+                           [](IPFinder::info_IP ip){return ip.type != IPFinder::IP6;});
    locNames.erase(newEnd, locNames.end());
 }
 
@@ -124,11 +124,11 @@ bool UDPv6Transport::OpenAndBindOutputSockets(uint16_t port)
 
    try 
    {
-      // Unicast output sockets, one per interface supporting IP4
+      // Unicast output sockets, one per interface supporting IP6
       std::vector<IPFinder::info_IP> locNames;
-      GetIP4s(locNames);
+      GetIP6s(locNames);
       for (const auto& ip : locNames)
-         mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4::from_string(ip.name), port));
+         mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v6::from_string(ip.name), port));
    }
 	catch (boost::system::system_error const& e)
    {
@@ -140,7 +140,7 @@ bool UDPv6Transport::OpenAndBindOutputSockets(uint16_t port)
    return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v4 multicastFilterAddress)
+bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v6 multicastFilterAddress)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
    
@@ -161,10 +161,10 @@ bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v4 multi
    return true;
 }
 
-boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(ip::address_v4 ipAddress, uint32_t port)
+boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(ip::address_v6 ipAddress, uint32_t port)
 {
    ip::udp::socket socket(mService);
-   socket.open(ip::udp::v4());
+   socket.open(ip::udp::v6());
    socket.set_option(socket_base::send_buffer_size(mDescriptor.sendBufferSize));
 
    ip::udp::endpoint endpoint(ipAddress, port);
@@ -173,14 +173,14 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(ip::
    return socket;
 }
 
-boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindMulticastInputSocket(uint32_t port, ip::address_v4 multicastFilterAddress)
+boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindMulticastInputSocket(uint32_t port, ip::address_v6 multicastFilterAddress)
 {
    ip::udp::socket socket(mService);
-   socket.open(ip::udp::v4());
+   socket.open(ip::udp::v6());
    socket.set_option(socket_base::receive_buffer_size(mDescriptor.receiveBufferSize));
 	socket.set_option(ip::udp::socket::reuse_address( true ) );
 	socket.set_option(ip::multicast::enable_loopback( true ) );
-   auto anyIP = ip::address_v4::any();
+   auto anyIP = ip::address_v6::any();
 
    ip::udp::endpoint endpoint(anyIP, port);
    socket.bind(endpoint);
@@ -201,7 +201,10 @@ bool UDPv6Transport::IsLocatorSupported(Locator_t locator) const
 
 Locator_t UDPv6Transport::RemoteToMainLocal(Locator_t remote) const
 {
-   // All remotes are equally mapped to from the local 0.0.0.0:port (main output channel). TODO: Implement granular mode to make this more flexible.
+   if (!IsLocatorSupported(remote))
+      return false;
+
+   // All remotes are equally mapped to from the local [0:0:0:0:0:0:0:0]:port (main output channel). TODO: Implement granular mode to make this more flexible.
    memset(remote.address, 0x00, sizeof(remote.address));
    return remote;
 }
@@ -227,8 +230,8 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
    Locator_t locator;
 
    locator.port = endpoint.port();
-   auto ipBytes = endpoint.address().to_v4().to_bytes();
-   memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
+   auto ipBytes = endpoint.address().to_v6().to_bytes();
+   memcpy(&locator.address[0], ipBytes.data(), sizeof(ipBytes));
 
    return locator;
 }
@@ -284,9 +287,9 @@ bool UDPv6Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
 {
 	const char* const METHOD_NAME = "SendThroughSocket";
 
-	boost::asio::ip::address_v4::bytes_type remoteAddress;
-   memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
-   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), (uint16_t)remoteLocator.port);
+	boost::asio::ip::address_v6::bytes_type remoteAddress;
+   memcpy(&remoteAddress, &remoteLocator.address[0], sizeof(remoteAddress));
+   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v6(remoteAddress), (uint16_t)remoteLocator.port);
    unsigned int bytesSent = 0;
    logInfo(RTPS_MSG_OUT,"UDPv6: " << sendBuffer.size() << " bytes TO endpoint: " << destinationEndpoint
          << " FROM " << socket.local_endpoint(), C_YELLOW);

@@ -55,13 +55,13 @@ bool UDPv4Transport::OpenOutputChannel(Locator_t locator)
 
 static bool IsMulticastAddress(Locator_t locator)
 {
-   return locator.address[12] >= 224 && locator.address[12] < 239;
+   return locator.address[12] >= 224 && locator.address[12] <= 239;
 }
 
 bool UDPv4Transport::OpenInputChannel(Locator_t locator)
 {
    if (IsInputChannelOpen(locator) ||
-       IsMulticastAddress(locator) ||
+       !IsMulticastAddress(locator) ||
        !IsLocatorSupported(locator))
       return false;   
    
@@ -200,6 +200,9 @@ bool UDPv4Transport::IsLocatorSupported(Locator_t locator) const
 
 Locator_t UDPv4Transport::RemoteToMainLocal(Locator_t remote) const
 {
+   if (!IsLocatorSupported(remote))
+      return false;
+
    // All remotes are equally mapped to from the local 0.0.0.0:port (main output channel). TODO: Implement granular mode to make this more flexible.
    memset(remote.address, 0x00, sizeof(remote.address));
    return remote;

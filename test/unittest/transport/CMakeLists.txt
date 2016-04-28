@@ -12,8 +12,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(UDPV6TESTS_SOURCE 
             UDPv6Tests.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp)
-            #${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp)
 
         include_directories(mock/)
 

@@ -117,6 +117,28 @@ public:
 		return addr;
 	}
 
+	bool set_IP6_address(uint16_t group0, uint16_t group1, uint16_t group2, uint16_t group3, 
+                        uint16_t group4, uint16_t group5, uint16_t group6, uint16_t group7)
+   {
+      address[0]  = (octet) (group0 >> 8);
+      address[1]  = (octet) group0;
+      address[2]  = (octet) (group1 >> 8);
+      address[3]  = (octet) group1;
+      address[4]  = (octet) (group2 >> 8);
+      address[5]  = (octet) group2;
+      address[6]  = (octet) (group3 >> 8);
+      address[7]  = (octet) group3;
+      address[8]  = (octet) (group4 >> 8);
+      address[9]  = (octet) group4;
+      address[10] = (octet) (group5 >> 8);
+      address[11] = (octet) group5;
+      address[12] = (octet) (group6 >> 8);
+      address[13] = (octet) group6;
+      address[14] = (octet) (group7 >> 8);
+      address[15] = (octet) group7;
+		return true;
+	}
+
 	std::string to_IP6_string(){
 		std::stringstream ss;
 		ss << std::hex;
