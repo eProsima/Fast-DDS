@@ -93,8 +93,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 		}
 	}
 	//Create ReceiverResources now and update the list with the REAL used ones
-		//p_part->assignLocatorForBuiltin_unsafe(m_metatrafficMulticastLocatorList, true, false);
-
+	p_part->createReceiverResources(m_metatrafficMulticastLocatorList, true);
 	/* INSERT DEFAULT UNICAST LOCATORS HERE */
 
 	if(m_att.metatrafficUnicastLocatorList.empty())
@@ -118,6 +117,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 		}
 	}
 	//Create ReceiverResources now and update the list with the REAL used ones
+	p_part->createReceiverResources(m_metatrafficUnicastLocatorList, true);
 		//p_part->assignLocatorForBuiltin_unsafe(m_metatrafficUnicastLocatorList, false, false);
 
 	if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
