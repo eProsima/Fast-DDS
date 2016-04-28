@@ -117,8 +117,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		loc2.kind = LOCATOR_KIND_UDPv4;
 		m_att.defaultUnicastLocatorList.push_back(loc2);
 	}
-	LocatorList_t defcopy = m_att.defaultUnicastLocatorList;
-	m_att.defaultUnicastLocatorList.clear();
 
 	/*	
 		Since nothing guarantees the correct creation of the Resources on the Locators we have specified, and 
@@ -126,72 +124,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		We create the resources for these Locators now. Furthermore, in case these resources are taken, 
 		we create them on another Locator and then update de defaultList.
 	*/
-	std::vector<ReceiverResource *> newItems;
-	std::vector<ReceiverResource *> newItemsBuffer;
-
-	//Unicast
-	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
-		/* Try to build resources with that specific Locator*/
-		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-		while (newItems.empty()){
-			//No ReceiverResources have been added, therefore we have to change the Locator 
-			(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
-																						//as it is useless now.
-			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));	
-		}
-		//Now we DO have resources, and the new locator is already replacing the old one.
-		newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
-		newItemsBuffer.clear();
-	}
-	// 2 - For each generated element...
-	for (auto it = newItems.begin(); it != newItems.end(); ++it){
-		// 2.1 - Initialize a ReceiverResourceControlBlock
-		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
-		newBlock.mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);			//!! listenSockSize has to come from somewhere 
-		// 2.2 - Push it to the list
-		m_receiverResourcelist.push_back(newBlock);
-	}
-	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
-	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
-		if ((*it)->mp_thread == nullptr)
-			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
-	}
-	newItems.clear();
-	m_att.defaultUnicastLocatorList = defcopy;
+	createReceiverResources(m_att.defaultUnicastLocatorList, true);
+	
 	if(!hasLocatorsDefined)
 		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 
 	//Multicast
-	defcopy = m_att.defaultMulticastLocatorList;
-	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
-		/* Try to build resources with that specific Locator*/
-		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-		while (newItems.empty()){
-			//No ReceiverResources have been added, therefore we have to change the Locator 
-			(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
-			//as it is useless now.
-			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-		}
-		//Now we DO have resources, and the new locator is already replacing the old one.
-		newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
-		newItemsBuffer.clear();
-	}
-	// 2 - For each generated element...
-	for (auto it = newItems.begin(); it != newItems.end(); ++it){
-		// 2.1 - Initialize a ReceiverResourceControlBlock
-		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
-		newBlock.mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);			//!! listenSockSize has to come from somewhere 
-		// 2.2 - Push it to the list
-		m_receiverResourcelist.push_back(newBlock);
-	}
-	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
-	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
-		if ((*it)->mp_thread == nullptr)
-			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
-	}
-	m_att.defaultMulticastLocatorList = defcopy;
-	newItems.clear();
-
+	createReceiverResources(m_att.defaultMulticastLocatorList, true);
+	
 	//Check if defaultOutLocatorsExist, create some if they don't
 	hasLocatorsDefined = true;
 	if (m_att.defaultOutLocatorList.empty()){
@@ -206,7 +146,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	std::vector<SenderResource *> newSendersBuffer;
 
 	//Create the default sendResources - For the same reason as in the ReceiverResources
-	defcopy = m_att.defaultOutLocatorList;
+	LocatorList_t defcopy = m_att.defaultOutLocatorList;
 	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
 		/* Try to build resources with that specific Locator*/
 		newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
@@ -221,7 +161,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		newSendersBuffer.clear();
 	}
 	m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
-	m_att.defaultUnicastLocatorList = defcopy;
+	m_att.defaultOutLocatorList = defcopy;
 
 	if (!hasLocatorsDefined)
 		logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
