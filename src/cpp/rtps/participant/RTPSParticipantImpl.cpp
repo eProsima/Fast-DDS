@@ -725,11 +725,11 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 		newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
 		newItemsBuffer.clear();
 	}
-	// 2 - For each generated element...
+	// 2 - Now we have ALL of the new items For each generated element...
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
 		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
-		newBlock.mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);			//!! listenSockSize has to come from somewhere 
+		newBlock.mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);	//Taking bufferSize from ParticipantParameters
 		// 2.2 - Push it to the list
 		m_receiverResourcelist.push_back(newBlock);
 	}
@@ -738,10 +738,6 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 		if ((*it)->mp_thread == nullptr)
 			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
-	newItems.clear();
-
-
-
 }
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
