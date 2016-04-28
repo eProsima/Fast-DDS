@@ -687,20 +687,17 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 	std::vector<SenderResource> SendersBuffer;
 	if (pend->m_att.outLocatorList.empty()){
 		//Output locator ist is empty, use predetermined ones
-		for (auto it = m_att.defaultOutLocatorList.begin(); it != m.att.defaultOutLocatorList.end(); ++i){
-			SendersBuffer = m_network_Factory.BuildSenderResources((*it));
-			newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
-			SendersBuffer.clear();
-		}
+		pend->m_att.outLocatorList = m_att.defaultOutLocatorList;		//Tag the Endpoint with the Default list so it can use it to send
+		//Already created them on constructor, so we can skip the creation
+		return true;
 	}
-	else{
-		//Output locators have been specified, create them
-		for (auto it = pend->m_att.outLocatorList.begin(); it != pend->m_att.outLocatorList.end(); ++it){
-			SendersBuffer = m_network_Factory.BuildSenderResources((*it));
-			newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
-			SendersBuffer.clear();
-		}
+	//Output locators have been specified, create them
+	for (auto it = pend->m_att.outLocatorList.begin(); it != pend->m_att.outLocatorList.end(); ++it){
+		SendersBuffer = m_network_Factory.BuildSenderResources((*it));
+		newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
+		SendersBuffer.clear();
 	}
+	
 	m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
 
 	return true;
@@ -739,6 +736,7 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
 }
+
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
 	bool found = false;
