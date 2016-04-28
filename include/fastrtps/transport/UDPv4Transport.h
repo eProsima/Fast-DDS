@@ -70,8 +70,11 @@ public:
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
    virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t & remoteLocator);
 
-private:
-   TransportDescriptor mDescriptor;
+protected:
+   // Constructor with no descriptor is necessary for implementations derived from this class.
+   UDPv4Transport();
+   uint32_t mSendBufferSize;
+   uint32_t mReceiveBufferSize;
 
    // For non-granular UDPv4, the notion of channel corresponds to a port + direction tuple.
 	boost::asio::io_service mService;
@@ -95,6 +98,7 @@ private:
                          boost::asio::ip::udp::socket& socket, 
                          Locator_t remoteLocator, 
                          boost::interprocess::interprocess_semaphore& receiveSemaphore);
+
 };
 
 } // namespace rtps

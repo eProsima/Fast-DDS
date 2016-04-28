@@ -16,7 +16,18 @@ namespace rtps{
 static const char* const CLASS_NAME = "UDPv4Transport";
 
 UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
-   mDescriptor(descriptor)
+   mSendBufferSize(descriptor.sendBufferSize),
+   mReceiveBufferSize(descriptor.receiveBufferSize)
+{
+   auto ioServiceFunction = [&]()
+   {
+      io_service::work work(mService);
+      mService.run();
+   };
+   ioServiceThread.reset(new boost::thread(ioServiceFunction));
+}
+
+UDPv4Transport::UDPv4Transport()
 {
    auto ioServiceFunction = [&]()
    {
@@ -158,7 +169,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(ip::
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v4());
-   socket.set_option(socket_base::send_buffer_size(mDescriptor.sendBufferSize));
+   socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
 
    ip::udp::endpoint endpoint(ipAddress, port);
    socket.bind(endpoint);
@@ -170,7 +181,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uin
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v4());
-   socket.set_option(socket_base::receive_buffer_size(mDescriptor.receiveBufferSize));
+   socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
 	socket.set_option(ip::udp::socket::reuse_address( true ) );
 	socket.set_option(ip::multicast::enable_loopback( true ) );
    auto anyIP = ip::address_v4::any();
@@ -204,7 +215,7 @@ Locator_t UDPv4Transport::RemoteToMainLocal(Locator_t remote) const
 bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
-       sendBuffer.size() != mDescriptor.sendBufferSize)
+       sendBuffer.size() != mSendBufferSize)
       return false;
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
@@ -233,7 +244,7 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
 	const char* const METHOD_NAME = "Receive";
 
    if (!IsInputChannelOpen(localLocator) ||
-       receiveBuffer.size() != mDescriptor.receiveBufferSize)
+       receiveBuffer.size() != mReceiveBufferSize)
       return false;
 
    interprocess_semaphore receiveSemaphore(0);

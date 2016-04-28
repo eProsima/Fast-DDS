@@ -9,7 +9,7 @@ namespace rtps{
 
 ReceiverResource::ReceiverResource(TransportInterface& transport, Locator_t locator)
 {
-   // Internal channel is open and assigned to this resource.
+   // Internal channel is opened and assigned to this resource.
    transport.OpenInputChannel(locator);
 
    // Implementation functions are bound to the right transport parameters

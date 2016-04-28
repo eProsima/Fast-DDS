@@ -7,7 +7,7 @@ namespace rtps{
 
 SenderResource::SenderResource(TransportInterface& transport, Locator_t locator)
 {
-   // Internal channel is open and assigned to this resource.
+   // Internal channel is opened and assigned to this resource.
    transport.OpenOutputChannel(locator);
 
    // Implementation functions are bound to the right transport parameters
