@@ -17,6 +17,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdint>
+#include <iomanip>
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -114,6 +115,19 @@ public:
 #endif
 
 		return addr;
+	}
+
+	std::string to_IP6_string(){
+		std::stringstream ss;
+		ss << std::hex;
+      for (int i = 0; i != 14; i+= 2) 
+      {
+         auto field = (address[i] << 8) + address[i+1];
+         ss << field << ":";
+      }
+      auto field = address[14] + (address[15] << 8);
+      ss << field;
+      return ss.str();
 	}
 };
 
