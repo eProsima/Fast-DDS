@@ -8,10 +8,6 @@ set_sources(
     utils/IPFinder.cpp 
     utils/md5.cpp 
     utils/StringMatching.cpp 
-    rtps/resources/ListenResourceImpl.cpp 
-    rtps/resources/ListenResource.cpp 
-    rtps/resources/ResourceSend.cpp 
-    rtps/resources/ResourceSendImpl.cpp 
     rtps/resources/ResourceEvent.cpp 
     rtps/resources/TimedEvent.cpp 
     rtps/resources/TimedEventImpl.cpp 

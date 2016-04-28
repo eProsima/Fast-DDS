@@ -38,6 +38,7 @@ class recursive_mutex;
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 namespace eprosima {
 namespace fastrtps{

@@ -19,11 +19,13 @@
 #include "../../qos/ParameterList.h"
 
 using namespace eprosima::fastrtps;
-
+using namespace boost::asio;
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+class RTPSWriter;
+class RTPSReader;
 class ListenResource;
 struct SubmessageHeader_t;
 
