@@ -551,51 +551,17 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 	//In that case, just use the standard
 	if (pend->getAttributes()->unicastLocatorList.empty()){
 		//Default unicast
-		for (auto it = m_att.defaultUnicastLocatorList.begin(); it != m_att.defaultUnicastLocatorList.end(); ++it){
-			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
-			newItemsBuffer.clear();
-		}
-	}else{
-		//Endpoint unicast
-		for (auto it = pend->getAttributes()->unicastLocatorList.begin(); it != pend->getAttributes()->unicastLocatorList.end(); ++it){
-			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
-			newItemsBuffer.clear();
-		}
+		pend->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
 	}
+	createReceiverResources(pend->getAttributes()->unicastLocatorList);
+		
 	if (pend->getAttributes()->multicastLocatorList.empty()){
-		//Default multicast
-		for (auto it = m_att.defaultMulticastLocatorList.begin(); it != m_att.defaultMulticastLocatorList.end(); ++it){
-			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
-			newItemsBuffer.clear();
-		}
-	}else{
-		//Endpoint multicast
-		for (auto it = pend->getAttributes()->multicastLocatorList.begin(); it != pend->getAttributes()->multicastLocatorList.end(); ++it){
-			newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-			newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
-			newItemsBuffer.clear();
-		}
+		//Default Multicast
+		pend->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
 	}
-	// 2 - For each generated element...
-	for (auto it = newItems.begin(); it != newItems.end(); ++it){
-		// 2.1 - Initialize a ReceiverResourceControlBlock
-		ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), nullptr, boost::mutex(), nullptr };
-		newBlock.mp_receiver = new MessageReceiver(m_att.listenSocketBufferSize);			//!! listenSockSize has to come from somewhere 
-		// 2.2 - Push it to the list
-		m_receiverResourcelist.push_back(newBlock);
-	}
-	// 3 - Associate the Endpoint with ReceiverResources (all of them, not just the new)
+	createReceiverResources(pend->getAttributes()->multicastLocatorList);
+	// 3 - Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
 	assignEndpointListenResources(pend,isBuiltIn); 
-
-	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
-	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
-		if ((*it)->mp_thread == nullptr)
-				(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
-	}
-	//note: Should the default locator list be updated with the creation of new ReceiveResources?
 	return true;
 }
 
@@ -697,7 +663,6 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 		newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
 		SendersBuffer.clear();
 	}
-	
 	m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
 
 	return true;
