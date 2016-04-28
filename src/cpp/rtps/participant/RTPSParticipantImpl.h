@@ -45,6 +45,7 @@ namespace fastrtps{
 	class WriterQos;
 	class ReaderQos;
 	class TopicAttributes;
+	class MessageReceiver;
 
 namespace rtps {
 
@@ -193,7 +194,8 @@ private:
 	NetworkFactory m_network_Factory;
 	//!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
 	std::vector<ReceiverControlBlock> m_receiverResourcelist;
-	std::vector<SenderResource > m_senderResource;
+	//!SenderResource List
+	std::vector<SenderResource> m_senderResource;
 
 	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
 	// std::vector<ListenResource*> m_listenResourceList;

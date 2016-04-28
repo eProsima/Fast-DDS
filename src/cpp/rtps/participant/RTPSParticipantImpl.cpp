@@ -107,6 +107,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
 		//Default Unicast Locators
+		/* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
 		hasLocatorsDefined = false;
 		Locator_t loc2;
 
@@ -820,8 +821,8 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
 {
 	//Translate data into standard contained and send
 	std::vector<char> buffer;
-	for (i = 0; i < msg->length; i++){
-		buffer.insert(msg->buffer[i]);
+	for (int i = 0; i < msg->length; i++){
+		buffer.push_back(msg->buffer[i]);
 	}
 	for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit){
 		for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it){
@@ -830,7 +831,6 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
 			}
 		}
 	}
-
 	return;
 }
 
