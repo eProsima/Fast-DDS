@@ -62,10 +62,10 @@ static EntityId_t TrustedWriter(const EntityId_t& reader)
 }
 
 Locator_t RTPSParticipant::applyLocatorAdaptRule(Locator_t loc){
-	switch ((*loc).kind){
+	switch (loc.kind){
 	case LOCATOR_KIND_UDPv4:
 		//This is a completely made up rule
-		(*loc).port += 10;
+		loc.port += 10;
 		break;
 	case LOCATOR_KIND_UDPv6:
 		//TODO - Define the rules
