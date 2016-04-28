@@ -149,9 +149,9 @@ bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
 		}
 		std::vector<Locator_t>::iterator lit;
 		for(lit = unicast->begin();lit!=unicast->end();++lit)
-			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 		for(lit = multicast->begin();lit!=multicast->end();++lit)
-			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
 	}while(gap_n < Sequences.size()); //There is still a message to add
 	return true;
@@ -234,10 +234,10 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		if(added)
 		{
 			for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
-				W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+				W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
 			for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
-				W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+				W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 		}
 		else
 		{
@@ -305,7 +305,7 @@ bool RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
 		}
 		if(added)
 		{
-			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,loc);
+			W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),loc);
 		}
 		else
 		{
