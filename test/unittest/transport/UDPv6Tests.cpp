@@ -113,6 +113,82 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
    ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 
+TEST_F(UDPv6Tests, send_and_receive_between_ports)
+{
+   UDPv6Transport transportUnderTest(descriptor);
+
+   Locator_t multicastLocator;
+   multicastLocator.port = 7410;
+   multicastLocator.kind = LOCATOR_KIND_UDPv6;
+   multicastLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0, 0);
+
+   Locator_t outputChannelLocator;
+   outputChannelLocator.port = 7400;
+   outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
+   ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
+   ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
+   vector<char> message = { 'H','e','l','l','o' };
+
+   auto sendThreadFunction = [&]()
+   {
+      Locator_t destinationLocator;
+      destinationLocator.port = 7410;
+      destinationLocator.kind = LOCATOR_KIND_UDPv6;
+      EXPECT_TRUE(transportUnderTest.Send(message, outputChannelLocator, multicastLocator));
+   };
+
+   auto receiveThreadFunction = [&]() 
+   {
+      vector<char> receiveBuffer(descriptor.receiveBufferSize);
+      Locator_t remoteLocatorToReceive;
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(message, receiveBuffer);
+   };
+
+   receiverThread.reset(new boost::thread(receiveThreadFunction));      
+   senderThread.reset(new boost::thread(sendThreadFunction));      
+   senderThread->join();
+   receiverThread->join();
+}
+
+TEST_F(UDPv6Tests, send_to_loopback)
+{
+   UDPv6Transport transportUnderTest(descriptor);
+
+   Locator_t multicastLocator;
+   multicastLocator.port = 7410;
+   multicastLocator.kind = LOCATOR_KIND_UDPv6;
+   multicastLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0, 0);
+
+   Locator_t outputChannelLocator;
+   outputChannelLocator.port = 7400;
+   outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
+   outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1); // Loopback
+   ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
+   ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
+   vector<char> message = { 'H','e','l','l','o' };
+
+   auto sendThreadFunction = [&]()
+   {
+      Locator_t destinationLocator;
+      destinationLocator.port = 7410;
+      destinationLocator.kind = LOCATOR_KIND_UDPv6;
+      EXPECT_TRUE(transportUnderTest.Send(message, outputChannelLocator, multicastLocator));
+   };
+
+   auto receiveThreadFunction = [&]()
+   {
+      vector<char> receiveBuffer(descriptor.receiveBufferSize);
+      Locator_t remoteLocatorToReceive;
+      EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
+      EXPECT_EQ(message, receiveBuffer);
+   };
+
+   receiverThread.reset(new boost::thread(receiveThreadFunction));
+   senderThread.reset(new boost::thread(sendThreadFunction));
+   senderThread->join();
+   receiverThread->join();
+}
 
 void UDPv6Tests::HELPER_SetDescriptorDefaults()
 {
