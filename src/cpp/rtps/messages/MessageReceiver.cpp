@@ -49,10 +49,9 @@ namespace rtps {
 static const char* const CLASS_NAME = "MessageReceiver";
 
 
-MessageReceiver::MessageReceiver(uint32_t rec_buffer_size,ReceiverControlBlock *resourcepointer):
+MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 												m_rec_msg(rec_buffer_size),
 												mp_change(nullptr),
-												receiver_resources(resourcepointer)
 {
 	const char* const METHOD_NAME = "MessageReceiver";
 	destVersion = c_ProtocolVersion;
@@ -327,7 +326,7 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg,	SubmessageHeader_t
 bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh, bool* last)
 {
 	const char* const METHOD_NAME = "proc_Submsg_Data";
-    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
+    boost::lock_guard<boost::mutex> guard(mtx);
 
     // Reset param list
     m_ParamList.deleteParams();
@@ -368,14 +367,14 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
 
 	RTPSReader* firstReader = nullptr;
-	if(receiver_resources->AssociatedReaders.empty())
+	if(AssociatedReaders.empty())
 	{
-		logWarning(RTPS_MSG_IN,IDSTRING"Data received in locator: "<<receiver_resources->AssociatedReaders<< ", when NO readers are listening",C_BLUE);
+		logWarning(RTPS_MSG_IN,IDSTRING"Data received in locator: "<<AssociatedReaders<< ", when NO readers are listening",C_BLUE);
 		return false;
 	}
 
-	for(std::vector<RTPSReader*>::iterator it=receiver_resources->AssociatedReaders.begin();
-		it != receiver_resources->AssociatedReaders.end(); ++it)
+	for(std::vector<RTPSReader*>::iterator it=AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
@@ -385,7 +384,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	}
 	if(firstReader == nullptr) //Reader not found
 	{
-		logWarning(RTPS_MSG_IN, IDSTRING"No Reader in this Locator (" << receiver_resources->AssociatedReaders << ")"
+		logWarning(RTPS_MSG_IN, IDSTRING"No Reader in this Locator (" << AssociatedReaders << ")"
 				" accepts this message (directed to: " <<readerID << ")",C_BLUE);
 		return false;
 	}
@@ -487,8 +486,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
 	logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: "<<mp_threadListen->m_assocReaders.size(),C_BLUE);
 	//Look for the correct reader to add the change
-	for(std::vector<RTPSReader*>::iterator it = receiver_resources->AssociatedReaders.begin();
-		it != receiver_resources->AssociatedReaders.end(); ++it)
+	for(std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerID))
 		{
@@ -528,10 +527,10 @@ bool MessageReceiver::proc_Submsg_Heartbeat(CDRMessage_t* msg,SubmessageHeader_t
 	uint32_t HBCount;
 	CDRMessage::readUInt32(msg,&HBCount);
 
-    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
+    boost::lock_guard<boost::mutex> guard(>mtx);
 	//Look for the correct reader and writers:
-	for (std::vector<RTPSReader*>::iterator it = receiver_resources->AssociatedReaders.begin();
-		it != receiver_resources->AssociatedReaders.end(); ++it)
+	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{
@@ -570,10 +569,10 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 	if(smh->submessageLength == 0)
 		*last = true;
 
-    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
+    boost::lock_guard<boost::mutex> guard(mtx);
 	//Look for the correct writer to use the acknack
-	for (std::vector<RTPSWriter*>::iterator it = receiver_resources->AssociatedWriters.begin();
-		it != receiver_resources->AssociatedWriters.end(); ++it)
+	for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
+		it != AssociatedWriters.end(); ++it)
 	{
         //Look for the readerProxy the acknack is from
         boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
@@ -622,7 +621,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
 		}
 	}
 	logInfo(RTPS_MSG_IN,IDSTRING"Acknack msg to UNKNOWN writer (I loooked through "
-		<< receiver_resources->AssociatedWriters.size() << " writers in this ListenResource)", C_BLUE);
+		<< AssociatedWriters.size() << " writers in this ListenResource)", C_BLUE);
 	return false;
 }
 
@@ -653,9 +652,9 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
 	if(gapStart <= SequenceNumber_t(0, 0))
 		return false;
 
-    boost::lock_guard<boost::mutex> guard(receiver_resources->mtx);
-	for (std::vector<RTPSReader*>::iterator it = receiver_resources->AssociatedReaders.begin();
-		it != receiver_resources->AssociatedReaders.end(); ++it)
+    boost::lock_guard<boost::mutex> guard(mtx);
+	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		if((*it)->acceptMsgDirectedTo(readerGUID.entityId))
 		{

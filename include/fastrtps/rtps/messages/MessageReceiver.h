@@ -36,7 +36,7 @@ public:
 	/**
 	* @param rec_buffer_size
 	*/
-	MessageReceiver(uint32_t rec_buffer_size,ReceiverControlBlock *resourcepointer);
+	MessageReceiver(uint32_t rec_buffer_size);
 	virtual ~MessageReceiver();
 	//!Reset the MessageReceiver to process a new message.
 	void reset();
@@ -56,9 +56,12 @@ public:
 	ParameterList_t m_ParamList;
 
 
-
+	std::vector<RTPSWriter *> AssociatedWriters;
+	std::vector<RTPSReader *> AssociatedReaders;
+	boost::mutex mtx;
 private:
-	ReceiverControlBlock* receiver_resources;
+
+	//ReceiverControlBlock* receiver_resources;
 	CacheChange_t* mp_change;
 	//!Protocol version of the message
 	ProtocolVersion_t sourceVersion;

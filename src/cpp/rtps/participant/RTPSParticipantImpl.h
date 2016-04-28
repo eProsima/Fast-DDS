@@ -73,15 +73,13 @@ class ReaderListener;
 	-A list of associated wirters and readers
 	-A buffer for message storage
 	-A mutex for the lists
-	The idea is to create the thread that performs blocking calls to ReceiverResource.Receive and processes the message
+	The idea is to create the thread that performs blocking calllto ReceiverResource.Receive and processes the message
 	from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
 
 */
 typedef struct{
 	ReceiverResource Receiver;
-	std::vector<RTPSWriter *> AssociatedWriters;
-	std::vector<RTPSReader *> AssociatedReaders;
-	MessageReceiver* mp_receiver;
+	MessageReceiver mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
 } ReceiverControlBlock;
