@@ -247,10 +247,18 @@ private:
 	*/
 	bool createSendResources(Endpoint *pend);
 	
-	/** When we want to create a new 
-
+	/** When we want to create a new Resource but the physical channel specified by the Locator
+	    can not be opened, we want to mutate the Locator to open a more or less equivalent channel.
+		@param loc -  Locator we want to change
 	*/
 	Locator_t applyLocatorAdaptRule(Locator_t loc);
+	/** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating 
+	    some and updating the list. DOES NOT associate endpoints with it.
+		@param Locator_list - Locator list to be used to create the ReceiverResources
+		@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+	*/
+	bool createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
+	*/
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
