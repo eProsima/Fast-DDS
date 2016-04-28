@@ -183,7 +183,7 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specifi
    ASSERT_FALSE(transportUnderTest.Receive(receiveBufferWrongSize, genericInputChannelLocator, originLocator));
 }
 
-TEST_F(UDPv4Tests, Outside_granular_mode_opening_any_output_address_opens_port_for_all_IP_addresses)
+TEST_F(UDPv4Tests, opening_any_output_address_opens_port_for_all_IP_addresses)
 {
    // Given
    UDPv4Transport transportUnderTest(descriptor);
@@ -205,7 +205,7 @@ TEST_F(UDPv4Tests, Outside_granular_mode_opening_any_output_address_opens_port_f
    ASSERT_TRUE(transportUnderTest.IsOutputChannelOpen(differentOutputChannelLocator));
 }
 
-TEST_F(UDPv4Tests, Outside_granular_mode_RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
+TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 {
    // Given
    UDPv4Transport transportUnderTest(descriptor);
