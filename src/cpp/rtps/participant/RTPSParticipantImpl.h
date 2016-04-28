@@ -252,13 +252,7 @@ private:
 		@param loc -  Locator we want to change
 	*/
 	Locator_t applyLocatorAdaptRule(Locator_t loc);
-	/** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating 
-	    some and updating the list. DOES NOT associate endpoints with it.
-		@param Locator_list - Locator list to be used to create the ReceiverResources
-		@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
-	*/
-	bool createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
-	*/
+	
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
@@ -360,6 +354,13 @@ public:
 	* @return Iterator pointing to the end of the user writer list
 	*/
 	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
+	/** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating
+	some and updating the list. DOES NOT associate endpoints with it.
+	@param Locator_list - Locator list to be used to create the ReceiverResources
+	@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+	*/
+	bool createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
 };
 
