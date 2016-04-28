@@ -106,7 +106,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	*/
 	if(m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
 	{
-		//Default Unicast Locators
+		//Default Unicast Locators in case they have not been provided
 		/* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
 		hasLocatorsDefined = false;
 		Locator_t loc2;
@@ -117,6 +117,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_att.port.participantIDGain*m_att.participantID;
 		loc2.kind = LOCATOR_KIND_UDPv4;
 		m_att.defaultUnicastLocatorList.push_back(loc2);
+		/* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
 	}
 
 	/*	
@@ -139,22 +140,24 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		hasLocatorsDefined = false;
 		Locator_t SendLocator;
 		/*TODO - Fill with desired default Send Locators for our transports*/
-
-		m_att.defaultUnicastLocatorList.push_back(SendLocator);
+		//Warning - Mock rule being used (and only for IPv4)!
+		SendLocator.port = m_att.port.portBase +
+			m_att.port.domainIDGain*PParam.builtin.domainId +
+			m_att.port.offsetd3 +
+			m_att.port.participantIDGain*m_att.participantID + 50;
+		SendLocator.kind = LOCATOR_KIND_UDPv4;
+		m_att.defaultOutLocatorList.push_back(SendLocator);
 	}
-	
+	//Create the default sendResources - For the same reason as in the ReceiverResources
 	std::vector<SenderResource *> newSenders;
 	std::vector<SenderResource *> newSendersBuffer;
-
-	//Create the default sendResources - For the same reason as in the ReceiverResources
 	LocatorList_t defcopy = m_att.defaultOutLocatorList;
 	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
 		/* Try to build resources with that specific Locator*/
 		newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
 		while (newSendersBuffer.empty()){
 			//No ReceiverResources have been added, therefore we have to change the Locator 
-			(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
-																						//as it is useless now.
+			(*it) = applyLocatorAdaptRule(*it);			//Mutate the Locator to find a suitable rule. Overwrite the old one as it is useless now.
 			newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
 		}
 		//Now we DO have resources, and the new locator is already replacing the old one.
