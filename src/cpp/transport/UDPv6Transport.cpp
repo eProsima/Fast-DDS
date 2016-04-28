@@ -285,7 +285,7 @@ bool UDPv6Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
 
 	boost::asio::ip::address_v6::bytes_type remoteAddress;
    memcpy(&remoteAddress, &remoteLocator.address[0], sizeof(remoteAddress));
-   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v6(remoteAddress), (uint16_t)remoteLocator.port);
+   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v6(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
    unsigned int bytesSent = 0;
    logInfo(RTPS_MSG_OUT,"UDPv6: " << sendBuffer.size() << " bytes TO endpoint: " << destinationEndpoint
          << " FROM " << socket.local_endpoint(), C_YELLOW);

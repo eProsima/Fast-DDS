@@ -105,7 +105,6 @@ bool UDPv4Transport::CloseInputChannel(Locator_t locator)
 static void GetIP4s(vector<IPFinder::info_IP>& locNames)
 {
    IPFinder::getIPs(&locNames);
-   // Filter out IP6
    auto newEnd = remove_if(locNames.begin(), 
                  locNames.end(),
                  [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4;});
@@ -120,7 +119,6 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 
    try 
    {
-      // Unicast output sockets, one per interface supporting IP4
       std::vector<IPFinder::info_IP> locNames;
       GetIP4s(locNames);
       for (const auto& ip : locNames)
@@ -199,7 +197,6 @@ Locator_t UDPv4Transport::RemoteToMainLocal(Locator_t remote) const
    if (!IsLocatorSupported(remote))
       return false;
 
-   // All remotes are equally mapped to from the local 0.0.0.0:port address
    memset(remote.address, 0x00, sizeof(remote.address));
    return remote;
 }
@@ -283,7 +280,7 @@ bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
 
 	boost::asio::ip::address_v4::bytes_type remoteAddress;
    memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
-   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), (uint16_t)remoteLocator.port);
+   auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
    unsigned int bytesSent = 0;
    logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBuffer.size() << " bytes TO endpoint: " << destinationEndpoint
          << " FROM " << socket.local_endpoint(), C_YELLOW);
