@@ -118,7 +118,11 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 	}
 	//Create ReceiverResources now and update the list with the REAL used ones
 	p_part->createReceiverResources(m_metatrafficUnicastLocatorList, true);
-		//p_part->assignLocatorForBuiltin_unsafe(m_metatrafficUnicastLocatorList, false, false);
+
+	/* 
+	In principle there is no need to create Senders now.  When a builtin Writer/Reader is created,
+	it will be applied to the DefaultOutLocatorList (already created).
+	*/
 
 	if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
 	{
