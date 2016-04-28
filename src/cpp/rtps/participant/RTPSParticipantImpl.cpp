@@ -71,7 +71,7 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc){
 		//TODO - Define the rest of rules
 		break;
 	}
-
+	return loc;
 }
 
 RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam,
@@ -88,7 +88,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_threadID(0)
 
 {
-	const char* const METHOD_NAME = "RTPSParticipantImpl";
+	//const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
 	m_att = PParam;
@@ -149,8 +149,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		m_att.defaultOutLocatorList.push_back(SendLocator);
 	}
 	//Create the default sendResources - For the same reason as in the ReceiverResources
-	std::vector<SenderResource *> newSenders;
-	std::vector<SenderResource *> newSendersBuffer;
+	std::vector<SenderResource > newSenders;
+	std::vector<SenderResource > newSendersBuffer;
 	LocatorList_t defcopy = m_att.defaultOutLocatorList;
 	for (auto it = defcopy.begin(); it != defcopy.end(); ++it){
 		/* Try to build resources with that specific Locator*/
@@ -193,10 +193,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	while(m_userWriterList.size()>0)
 		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
-	//Destruct ReceiverResources:
-	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
-		delete(*it);
-
+	//Destruct ReceiverResources
+	m_receiverResoucelist.clear();
 
 	delete(this->mp_builtinProtocols);
 
@@ -204,9 +202,10 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	delete(this->mp_userParticipant);
 
 	//Destruct SenderResources
-	for (auto it = m_senderResource.begin; it != m_senderResource.end(); ++it)
-		delete(*it);
+//	for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it)
+//		delete(*it);
 
+	m_senderResource.clear();
 	delete(this->mp_event_thr);
 	delete(this->mp_mutex);
 }
@@ -462,51 +461,51 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	In case are using the default list of Locators they have already been embedded to the parameters */
 
 	//UNICAST
-	assignEndpoint2LocatorList(endp, endp->getAttributes()->unicastLocatorList, !isBuiltin);
+	assignEndpoint2LocatorList(endp, endp->getAttributes()->unicastLocatorList, true, !isBuiltin);
 	//MULTICAST
-	assignEndpoint2LocatorList(endp, endp->getAttributes()->multicastLocatorList, !isBuiltin);
+	assignEndpoint2LocatorList(endp, endp->getAttributes()->multicastLocatorList, true, !isBuiltin);
 	return valid;
 }
 
 /* Commented for now 
-bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed)
-{
+//bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed)
+//{
 		//Required for the built-in protocols
-	bool valid = true;
-	LocatorList_t finalList;
-	bool added = false;
-	for(auto lit = list.begin();lit != list.end();++lit)
-	{
-		added = false;
-		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
-		{
-			if((*it)->isListeningTo(*lit))
-			{
-				LocatorList_t locList = (*it)->getListenLocators();
-				finalList.push_back(locList);
-				added = true;
-			}
-		}
-		if(added)
-			continue;
-		ListenResource* LR = new ListenResource(this,++m_threadID,false);
-		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
-		{
-			LocatorList_t locList = LR->getListenLocators();
-			finalList.push_back(locList);
-			m_listenResourceList.push_back(LR);
-			added = true;
-		}
-		else
-		{
-			delete(LR);
-			valid &= false;
-		}
-	}
-	if(valid && added)
-		list = finalList;
-	return valid;
-}
+//	bool valid = true;
+//	LocatorList_t finalList;
+//	bool added = false;
+//	for(auto lit = list.begin();lit != list.end();++lit)
+//	{
+//		added = false;
+//		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
+//		{
+//			if((*it)->isListeningTo(*lit))
+//			{
+//				LocatorList_t locList = (*it)->getListenLocators();
+//				finalList.push_back(locList);
+//				added = true;
+//			}
+//		}
+//		if(added)
+//			continue;
+//		ListenResource* LR = new ListenResource(this,++m_threadID,false);
+//		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
+//		{
+//			LocatorList_t locList = LR->getListenLocators();
+//			finalList.push_back(locList);
+//			m_listenResourceList.push_back(LR);
+//			added = true;
+//		}
+//		else
+//		{
+//			delete(LR);
+//			valid &= false;
+//		}
+//	}
+//	if(valid && added)
+//		list = finalList;
+//	return valid;
+//}
 */
 
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn){
@@ -544,7 +543,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 	//0 - Perform a blocking call to the receiver
 	receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going to be stored
-	CDRMessage::initCDRMsg(receiver->mp_receiver.m_rec_msg);
+	CDRMessage::initCDRMsg(receiver->mp_receiver.m_rec_msg, RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
 	for (int i = 0; i < localBuffer.size(); i++){
 		receiver->mp_receiver.m_rec_msg.buffer = localBuffer.at(i);
@@ -588,7 +587,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 			//Take mutex for the resource since we are going to interact with shared resources
 			//boost::lock_guard<boost::recursive_mutex> guard((*it)->mtx);
 			boost::lock_guard<boost::recursive_mutex> guard((*it)->mp_receiver.mtx);
-			if ((*it)->Receiver->SupportsLocator(*lit)){
+			if ((*it).Receiver.SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
 				if (endp->getAttributes()->endpointKind == WRITER){
@@ -722,30 +721,31 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		else
 			mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
 		//BUILTINPROTOCOLS
-		//Remove it from threadListenList
-		std::vector<ListenResource*>::iterator thit;
-		for(thit=m_listenResourceList.begin();
-				thit!=m_listenResourceList.end();thit++)
+		//Remove it from ReceiverResourceList
+		for(auto thit=m_receiverResourcelist.begin();
+				thit!=m_receiverResourcelist.end();thit++)
 		{
-			(*thit)->removeAssociatedEndpoint(p_endpoint);
+			//FIXME:Message Receiver Actually does not have a method to do this
+			//(*thit).mp_receiver.removeAssociatedEndpoint(p_endpoint);
 		}
 		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		bool continue_removing = true;
-		while(continue_removing)
-		{
-			continue_removing = false;
-			for(thit=m_listenResourceList.begin();
-					thit!=m_listenResourceList.end();thit++)
-			{
-				if(!(*thit)->hasAssociatedEndpoints() && ! (*thit)->m_isDefaultListenResource)
-				{
-					delete(*thit);
-					m_listenResourceList.erase(thit);
-					continue_removing = true;
-					break;
-				}
-			}
-		}
+		//FIXME: Come back and implement when MessageReceiver can act on its own AssociatedEnpoints
+		//while(continue_removing)
+		//{
+		//	continue_removing = false;
+		//	for(thit=m_listenResourceList.begin();
+		//			thit!=m_listenResourceList.end();thit++)
+		//	{
+		//		if(!(*thit)->hasAssociatedEndpoints() && ! (*thit)->m_isDefaultListenResource)
+		//		{
+		//			delete(*thit);
+		//			m_listenResourceList.erase(thit);
+		//			continue_removing = true;
+		//			break;
+		//		}
+		//	}
+		//}
 	}
 	//	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 	delete(p_endpoint);
@@ -767,8 +767,8 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
 	}
 	for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit){
 		for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it){
-			if ((*it)->SupportsLocator((*sit)){
-				(*it)->Send(buffer, destination_loc);
+			if ((*it).SupportsLocator((*sit)){
+				(*it).Send(buffer, destination_loc);
 			}
 		}
 	}
