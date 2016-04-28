@@ -454,45 +454,17 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
 
 bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
+	//Tag the endpoint with the ReceiverResources
 	const char* const METHOD_NAME = "assignEndpointListenResources";
 	bool valid = true;
-	//boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex()); //  Fixed bug #914
-	bool unicastempty = endp->getAttributes()->unicastLocatorList.empty();
-	bool multicastempty = endp->getAttributes()->multicastLocatorList.empty();
-    LocatorList_t uniList, mulList;
 
-    if(!unicastempty)
-        uniList = endp->getAttributes()->unicastLocatorList;
-    if(!multicastempty)
-        mulList = endp->getAttributes()->multicastLocatorList;
+	/* No need to check for emptiness on the lists, as it was already done on part function
+	In case are using the default list of Locators they have already been embedded to the parameters */
 
-	if(unicastempty && !isBuiltin && multicastempty)
-	{
-		std::string auxstr = endp->getAttributes()->endpointKind == WRITER ? "WRITER" : "READER";
-		logInfo(RTPS_PARTICIPANT,"Adding default Locator list to this " << auxstr);
-		valid &= assignEndpoint2LocatorList(endp,m_att.defaultUnicastLocatorList,false,false);
-        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
-		endp->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
-	}
-	else
-	{
-        valid &= assignEndpoint2LocatorList(endp, uniList, false, !isBuiltin);
-        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
-        endp->getAttributes()->unicastLocatorList = uniList;
-	}
+	//UNICAST
+	assignEndpoint2LocatorList(endp, endp->getAttributes()->unicastLocatorList, !isBuiltin);
 	//MULTICAST
-	if(multicastempty && !isBuiltin && unicastempty)
-	{
-		valid &= assignEndpoint2LocatorList(endp,m_att.defaultMulticastLocatorList,true,false);
-        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
-		endp->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
-	}
-	else
-	{
-        valid &= assignEndpoint2LocatorList(endp, mulList, true, !isBuiltin);
-        boost::lock_guard<boost::recursive_mutex> guard(*endp->getMutex());
-        endp->getAttributes()->multicastLocatorList = mulList;
-	}
+	assignEndpoint2LocatorList(endp, endp->getAttributes()->multicastLocatorList, !isBuiltin);
 	return valid;
 }
 
@@ -560,7 +532,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 		pend->getAttributes()->multicastLocatorList = m_att.defaultMulticastLocatorList;
 	}
 	createReceiverResources(pend->getAttributes()->multicastLocatorList);
-	// 3 - Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
+	// Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
 	assignEndpointListenResources(pend,isBuiltIn); 
 	return true;
 }

@@ -215,14 +215,14 @@ private:
 	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
 
 	/**
-	 * Assign an endpoint to the listenResources.
+	 * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
 	 * @param endp Pointer to the endpoint.
 	 * @param isBuiltin Boolean indicating if it is builtin.
 	 * @return True if correct.
 	 */
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
 
-	/** Assign an endpoint to a specific listen locator
+	/** Assign an endpoint to the ReceiverResources as specified specifically on parameter list
 	 * @param pend Pointer to the endpoint.
 	 * @param lit Locator list iterator.
 	 * @param isMulticast Boolean indicating that is multicast.
