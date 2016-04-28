@@ -228,7 +228,6 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
    descriptor.sendBufferSize = 5;
    descriptor.receiveBufferSize = 5;
-   descriptor.granularMode = false;
 }
 
 int main(int argc, char **argv)

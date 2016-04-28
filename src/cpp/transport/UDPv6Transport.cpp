@@ -95,12 +95,9 @@ bool UDPv6Transport::CloseInputChannel(Locator_t locator)
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
   
-   auto& sockets = mInputSockets[locator.port];
-   for (auto& socket : sockets)
-   {
-      socket.cancel();
-      socket.close();
-   }
+   auto& socket = mInputSockets.at(locator.port);
+   socket.cancel();
+   socket.close();
 
    mInputSockets.erase(locator.port);
    return true;
@@ -149,7 +146,7 @@ bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v6 multi
    try 
    {
       // Single multicast port
-      mInputSockets[port].push_back(OpenAndBindMulticastInputSocket(port, multicastFilterAddress));
+      mInputSockets.emplace(port, OpenAndBindMulticastInputSocket(port, multicastFilterAddress));
    }
 	catch (boost::system::system_error const& e)
    {
@@ -204,7 +201,7 @@ Locator_t UDPv6Transport::RemoteToMainLocal(Locator_t remote) const
    if (!IsLocatorSupported(remote))
       return false;
 
-   // All remotes are equally mapped to from the local [0:0:0:0:0:0:0:0]:port (main output channel). TODO: Implement granular mode to make this more flexible.
+   // All remotes are equally mapped to from the local [0:0:0:0:0:0:0:0]:port (main output channel).
    memset(remote.address, 0x00, sizeof(remote.address));
    return remote;
 }
@@ -267,8 +264,7 @@ bool UDPv6Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
    { // lock scope
       boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
 
-      // For the time being, only one listening socket per port
-      auto& socket = mInputSockets[localLocator.port].back();
+      auto& socket = mInputSockets.at(localLocator.port);
       socket.async_receive_from(boost::asio::buffer(receiveBuffer),
                                 senderEndpoint,
                                 handler);
