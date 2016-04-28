@@ -18,6 +18,9 @@
 #include "../common/all_common.h"
 #include "../../qos/ParameterList.h"
 
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/thread.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace boost::asio;
 namespace eprosima {

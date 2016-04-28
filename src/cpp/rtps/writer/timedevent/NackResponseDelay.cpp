@@ -103,9 +103,9 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                         first,last,mp_RP->mp_SFW->getHeartbeatCount(),true,false);
                 std::vector<Locator_t>::iterator lit;
                 for(lit = mp_RP->m_att.endpoint.unicastLocatorList.begin();lit!=mp_RP->m_att.endpoint.unicastLocatorList.end();++lit)
-                    mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
-                for (lit = mp_RP->m_att.endpoint.multicastLocatorList.begin(); lit != mp_RP->m_att.endpoint.multicastLocatorList.end(); ++lit)
-                    mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg, (*lit));
+                    mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,static_cast<Endpoint *>(mp_RP->mp_SFW),(*lit));
+                for (lit = mp_RP->m_att.endpoint.multicastLocatorList.begin();lit != mp_RP->m_att.endpoint.multicastLocatorList.end(); ++lit)
+                    mp_RP->mp_SFW->getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,static_cast<Endpoint *>(mp_RP->mp_SFW),(*lit));
             }
         }
         else
