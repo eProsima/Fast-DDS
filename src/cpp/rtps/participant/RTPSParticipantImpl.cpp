@@ -40,7 +40,7 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-#include <fastrtps/utils/RTPSLog.h>
+//#include <fastrtps/utils/RTPSLog.h>
 
 
 
@@ -129,7 +129,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	createReceiverResources(m_att.defaultUnicastLocatorList, true);
 	
 	if(!hasLocatorsDefined)
-		logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
+		//logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
 
 	//Multicast
 	createReceiverResources(m_att.defaultMulticastLocatorList, true);
@@ -168,14 +168,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	m_att.defaultOutLocatorList = defcopy;
 
 	if (!hasLocatorsDefined)
-		logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
+		//logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Send Locator List, adding Locators: " << m_att.defaultOutLocatorList);
 
-	logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
+	//logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
 	//START BUILTIN PROTOCOLS
 	mp_builtinProtocols = new BuiltinProtocols();
 	if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
 	{
-		logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
+		//logWarning(RTPS_PARTICIPANT, "The builtin protocols were not corecctly initialized");
 	}
 	//eClock::my_sleep(300);
 }
@@ -183,8 +183,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
-	const char* const METHOD_NAME = "~RTPSParticipantImpl";
-	logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
+	//const char* const METHOD_NAME = "~RTPSParticipantImpl";
+	//logInfo(RTPS_PARTICIPANT,"removing "<<this->getGuid());
 
 
 	while(m_userReaderList.size()>0)
@@ -220,9 +220,9 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		WriterAttributes& param,WriterHistory* hist,WriterListener* listen, const EntityId_t& entityId,bool isBuiltin)
 {
-	const char* const METHOD_NAME = "createWriter";
+	//const char* const METHOD_NAME = "createWriter";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
+	//logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -245,7 +245,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,WRITER))
 		{
-			logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
+			//logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
 			return false;
 		}
 	}
@@ -255,12 +255,12 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	}
 	if(!param.endpoint.unicastLocatorList.isValid())
 	{
-		logError(RTPS_PARTICIPANT,"Unicast Locator List for Writer contains invalid Locator");
+		//logError(RTPS_PARTICIPANT,"Unicast Locator List for Writer contains invalid Locator");
 		return false;
 	}
 	if(!param.endpoint.multicastLocatorList.isValid())
 	{
-		logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
+		//logError(RTPS_PARTICIPANT,"Multicast Locator List for Writer contains invalid Locator");
 		return false;
 	}
 
@@ -300,9 +300,9 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin, bool enable)
 {
-	const char* const METHOD_NAME = "createReader";
+	//const char* const METHOD_NAME = "createReader";
 	std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
-	logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
+	//logInfo(RTPS_PARTICIPANT," of type " << type,C_B_YELLOW);
 	EntityId_t entId;
 	if(entityId== c_EntityId_Unknown)
 	{
@@ -325,7 +325,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 		entId.value[0] = c[2];
 		if(this->existsEntityId(entId,WRITER))
 		{
-			logError(RTPS_PARTICIPANT,"A reader with the same entityId already exists in this RTPSParticipant");
+			//logError(RTPS_PARTICIPANT,"A reader with the same entityId already exists in this RTPSParticipant");
 			return false;
 		}
 	}
@@ -335,12 +335,12 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 	}
 	if(!param.endpoint.unicastLocatorList.isValid())
 	{
-		logError(RTPS_PARTICIPANT,"Unicast Locator List for Reader contains invalid Locator");
+		//logError(RTPS_PARTICIPANT,"Unicast Locator List for Reader contains invalid Locator");
 		return false;
 	}
 	if(!param.endpoint.multicastLocatorList.isValid())
 	{
-		logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
+		//logError(RTPS_PARTICIPANT,"Multicast Locator List for Reader contains invalid Locator");
 		return false;
 	}
 	RTPSReader* SReader = nullptr;
@@ -454,7 +454,7 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
 bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
 {
 	//Tag the endpoint with the ReceiverResources
-	const char* const METHOD_NAME = "assignEndpointListenResources";
+	//const char* const METHOD_NAME = "assignEndpointListenResources";
 	bool valid = true;
 
 	/* No need to check for emptiness on the lists, as it was already done on part function
@@ -591,7 +591,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
 				if (endp->getAttributes()->endpointKind == WRITER){
-					for (std::vector<RTPSWriter*>::iterator wit = (*it)->mp_receiver.AssociatedWriters.begin(); wit != (*it)->mp_receiver.AssociatedWriters.end(); ++wit){
+					for (std::vector<RTPSWriter*>::iterator wit = (*it).mp_receiver.AssociatedWriters.begin(); wit != (*it).mp_receiver.AssociatedWriters.end(); ++wit){
 						if ((*wit)->getGuid().entityId == endp->getGuid().entityId){
 							found = true;
 							break;
@@ -599,19 +599,19 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 					}
 					//After iterating among associated writers, add the new writer if it has not been found
 					if (!found){
-						(*it)->mp_receiver.AssociatedWriters.push_back((RTPSWriter*)endp);
+						(*it).mp_receiver.AssociatedWriters.push_back((RTPSWriter*)endp);
 						return true;
 					}
 				}
 				else if (endp->getAttributes()->endpointKind == READER){
-					for (std::vector<RTPSReader*>::iterator rit = (*it)->mp_receiver.AssociatedReaders.begin(); rit != (*it)->mp_receiver.AssociatedReaders.end(); ++rit){
+					for (std::vector<RTPSReader*>::iterator rit = (*it).mp_receiver.AssociatedReaders.begin(); rit != (*it).mp_receiver.AssociatedReaders.end(); ++rit){
 						if ((*rit)->getGuid().entityId == endp->getGuid().entityId){
 							found = true;
 							break;
 						}
 					}
 					if (!found){
-						(*it)->mp_receiver.AssociatedReaders.push_back((RTPSReader*)endp);
+						(*it).mp_receiver.AssociatedReaders.push_back((RTPSReader*)endp);
 						return true;
 					}
 				}
@@ -798,10 +798,10 @@ void RTPSParticipantImpl::loose_next_change()
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
-	const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
+	//const char* const METHOD_NAME = "newRemoteEndpointDiscovered";
 	if(m_att.builtin.use_STATIC_EndpointDiscoveryProtocol == false)
 	{
-		logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");
+		//logWarning(RTPS_PARTICIPANT,"Remote Endpoints can only be activated with static discovery protocol");
 		return false;
 	}
 	return mp_builtinProtocols->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid,userDefinedId,kind);
