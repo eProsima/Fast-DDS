@@ -26,6 +26,7 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastrtps/transport/UDPv4Transport.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -88,6 +89,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_threadID(0)
 
 {
+   UDPv4Transport::TransportDescriptor descriptor; 
+   descriptor.sendBufferSize = m_att.listenSocketBufferSize;
+   descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+   m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
+   
 	//const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
@@ -669,7 +675,7 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 		/* Try to build resources with that specific Locator*/
 		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
 		if (ApplyMutation){
-			while (newItems.empty()){
+			while (newItemsBuffer.empty()){
 				//No ReceiverResources have been added, therefore we have to change the Locator 
 				(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
 				//as it is useless now.
@@ -687,7 +693,7 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
 		// 2.2 - Push it to the list
-		m_receiverResourcelist.push_back(ReceiverControlBlock(ReceiverControlBlock(std::move(*it))));
+		m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it)));
 		m_receiverResourcelist.back().mp_receiver.init(m_att.listenSocketBufferSize);
 	}
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources

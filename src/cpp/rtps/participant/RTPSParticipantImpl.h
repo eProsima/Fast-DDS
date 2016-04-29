@@ -88,8 +88,14 @@ typedef struct ReceiverControlBlock{
 	}
 	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver))
 	{
-	origen.m_thread = nullptr;
+	   origen.m_thread = nullptr;
+      origen.mp_receiver.movedOut = true;
 	}
+   
+   private:
+   ReceiverControlBlock(const ReceiverControlBlock&) = delete;
+   const ReceiverControlBlock& operator=(const ReceiverControlBlock&) = delete;
+
 } ReceiverControlBlock;
 
 
