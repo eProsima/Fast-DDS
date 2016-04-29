@@ -23,6 +23,7 @@ class test_UDPv4Tests: public ::testing::Test
    void HELPER_SetDescriptorDefaults();
    void HELPER_WarmUpOutput(test_UDPv4Transport& transport);
    void HELPER_FillDataMessage(CDRMessage_t& message);
+   void HELPER_FillAckNackMessage(CDRMessage_t& message);
 
    test_UDPv4Transport::TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
@@ -43,12 +44,57 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
 
    // When
    vector<char> message;
+   message.resize(80);
+   ASSERT_LE(testDataMessage.length, message.size());
+   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+}
+
+TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
+{  
+   // Given
+   descriptor.dropAckNackMessages = true;
+   test_UDPv4Transport transportUnderTest(descriptor);
+   CDRMessage_t testDataMessage;
+   HELPER_FillAckNackMessage(testDataMessage);
+   HELPER_WarmUpOutput(transportUnderTest);
+   Locator_t locator;
+   locator.port = 7400;
+   locator.kind = LOCATOR_KIND_UDPv4;
+
+   // When
+   vector<char> message;
    message.resize(testDataMessage.length);
    memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+}
+
+TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
+{  
+   // Given
+   test_UDPv4Transport transportUnderTest(descriptor); // Default, no drops
+   CDRMessage_t testDataMessage;
+   HELPER_FillDataMessage(testDataMessage);
+   HELPER_WarmUpOutput(transportUnderTest);
+   Locator_t locator;
+   locator.port = 7400;
+   locator.kind = LOCATOR_KIND_UDPv4;
+
+   // When
+   vector<char> message;
+   message.resize(80);
+   ASSERT_LE(testDataMessage.length, message.size());
+   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
 }
 
 TEST_F(test_UDPv4Tests, Send_will_still_fail_on_bad_locators_without_dropping_as_expected)
@@ -99,6 +145,14 @@ void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message)
    CacheChange_t change;
    ParameterList_t parameters;
 	RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, &parameters);
+}
+
+void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)
+{
+   GuidPrefix_t prefix;
+   EntityId_t entityID;
+   SequenceNumberSet_t set;
+	RTPSMessageCreator::addMessageAcknack(&message, prefix, prefix, entityID, entityID, set, 0, false);
 }
 
 int main(int argc, char **argv)

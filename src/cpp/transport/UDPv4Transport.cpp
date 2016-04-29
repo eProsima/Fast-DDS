@@ -215,7 +215,7 @@ Locator_t UDPv4Transport::RemoteToMainLocal(Locator_t remote) const
 bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
-       sendBuffer.size() != mSendBufferSize)
+       sendBuffer.size() > mSendBufferSize)
       return false;
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);

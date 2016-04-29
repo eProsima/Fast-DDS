@@ -209,7 +209,7 @@ Locator_t UDPv6Transport::RemoteToMainLocal(Locator_t remote) const
 bool UDPv6Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
-       sendBuffer.size() != mDescriptor.sendBufferSize)
+       sendBuffer.size() > mDescriptor.sendBufferSize)
       return false;
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);

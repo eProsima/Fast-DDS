@@ -26,7 +26,7 @@ bool test_UDPv4Transport::Send(const vector<char>& sendBuffer, Locator_t localLo
 {
    if (PacketShouldDrop(sendBuffer)          &&
        IsOutputChannelOpen(localLocator)     &&
-       sendBuffer.size() == mSendBufferSize)
+       sendBuffer.size() <= mSendBufferSize)
    {
       LogDrop(sendBuffer);
       return true;
@@ -53,23 +53,32 @@ bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
    memcpy(cdrMessage.buffer, message.data(), message.size());
    cdrMessage.length = message.size();
 
-   return (mDropDataMessages && ContainsDataSubmessage(cdrMessage));
+   return ( (mDropDataMessages    && ContainsDataSubmessage(cdrMessage))    ||
+            (mDropAckNackMessages && ContainsAckNackSubmessage(cdrMessage)));
 }
 
 bool test_UDPv4Transport::ContainsDataSubmessage(CDRMessage_t& cdrMessage)
 {
    SubmessageHeader_t cdrSubMessageHeader;
 
+   bool contains = false;
    while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
-   {
-      if (cdrSubMessageHeader.submessageId == DATA)
-      {
-         cdrMessage.pos = 0;
-         return true;
-      }
-   }
+      if (contains |= (cdrSubMessageHeader.submessageId == DATA)) break;
+
    cdrMessage.pos = 0;
-   return false;
+   return contains;
+}
+
+bool test_UDPv4Transport::ContainsAckNackSubmessage(CDRMessage_t& cdrMessage)
+{
+   SubmessageHeader_t cdrSubMessageHeader;
+
+   bool contains = false;
+   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
+      if (contains |= (cdrSubMessageHeader.submessageId == ACKNACK)) break;
+
+   cdrMessage.pos = 0;
+   return contains;
 }
 
 bool test_UDPv4Transport::LogDrop(const std::vector<char>& message)
