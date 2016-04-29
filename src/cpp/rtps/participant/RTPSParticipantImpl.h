@@ -15,6 +15,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <stdio.h>
 #include <stdlib.h>
+#include <list>
 #include <sys/types.h>
 
 #if defined(_WIN32)
@@ -80,16 +81,16 @@ class ReaderListener;
 */
 typedef struct ReceiverControlBlock{
 	ReceiverResource Receiver;
-	MessageReceiver mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
+	MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
-	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec))
+	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec)), mp_receiver(nullptr)
 	{
 	}
-	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver))
+	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver)
 	{
 	   origen.m_thread = nullptr;
-      origen.mp_receiver.movedOut = true;
+      origen.mp_receiver = nullptr;
 	}
    
    private:
@@ -205,7 +206,7 @@ private:
 	//!Network Factory
 	NetworkFactory m_network_Factory;
 	//!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
-	std::vector<ReceiverControlBlock> m_receiverResourcelist;
+	std::list<ReceiverControlBlock> m_receiverResourcelist;
 	//!SenderResource List
 	std::vector<SenderResource> m_senderResource;
 

@@ -556,17 +556,17 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 	//0 - Perform a blocking call to the receiver
 	receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going to be stored
-	CDRMessage::initCDRMsg(&(receiver->mp_receiver.m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
+	CDRMessage::initCDRMsg(&(receiver->mp_receiver->m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
 	int i=0;
 	for(auto it=localBuffer.begin();it!=localBuffer.end();++it){
-		receiver->mp_receiver.m_rec_msg.buffer[i] = (*it);
+		receiver->mp_receiver->m_rec_msg.buffer[i] = (*it);
 	}
 	//for (int i = 0; i < localBuffer.size(); i++){
-	//	receiver->mp_receiver.m_rec_msg.buffer[i] = localBuffer.at(i);
+	//	receiver->mp_receiver->m_rec_msg.buffer[i] = localBuffer.at(i);
 	//}
 	
-	receiver->mp_receiver.m_rec_msg.length = localBuffer.size();
+	receiver->mp_receiver->m_rec_msg.length = localBuffer.size();
 	//3 - Call MessageReceiver methods.
 		// The way this worked previously is the following: After receiving a message and putting it into the 
 		// message receiver, ListenResource.newCDRMessage(), which then calls the message receiver, was called.
@@ -578,7 +578,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 		//Since we already have the locator, there is no read need to perform any more operations
 
 	//Call to  messageReceiver trigger function
-	receiver->mp_receiver.processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver.m_rec_msg);//FIXME:Call to getGUID()
+	receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);//FIXME:Call to getGUID()
 	//Call this function again
 	performListenOperation(receiver);
 
@@ -604,12 +604,12 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 			//Take mutex for the resource since we are going to interact with shared resources
 			//boost::lock_guard<boost::mutex> guard((*it).mtx);
-			boost::lock_guard<boost::mutex> guard((*it).mp_receiver.mtx);
+			boost::lock_guard<boost::mutex> guard((*it).mp_receiver->mtx);
 			if ((*it).Receiver.SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
 				if (endp->getAttributes()->endpointKind == WRITER){
-					for (std::vector<RTPSWriter*>::iterator wit = (*it).mp_receiver.AssociatedWriters.begin(); wit != (*it).mp_receiver.AssociatedWriters.end(); ++wit){
+					for (std::vector<RTPSWriter*>::iterator wit = (*it).mp_receiver->AssociatedWriters.begin(); wit != (*it).mp_receiver->AssociatedWriters.end(); ++wit){
 						if ((*wit)->getGuid().entityId == endp->getGuid().entityId){
 							found = true;
 							break;
@@ -617,19 +617,19 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 					}
 					//After iterating among associated writers, add the new writer if it has not been found
 					if (!found){
-						(*it).mp_receiver.AssociatedWriters.push_back((RTPSWriter*)endp);
+						(*it).mp_receiver->AssociatedWriters.push_back((RTPSWriter*)endp);
 						return true;
 					}
 				}
 				else if (endp->getAttributes()->endpointKind == READER){
-					for (std::vector<RTPSReader*>::iterator rit = (*it).mp_receiver.AssociatedReaders.begin(); rit != (*it).mp_receiver.AssociatedReaders.end(); ++rit){
+					for (std::vector<RTPSReader*>::iterator rit = (*it).mp_receiver->AssociatedReaders.begin(); rit != (*it).mp_receiver->AssociatedReaders.end(); ++rit){
 						if ((*rit)->getGuid().entityId == endp->getGuid().entityId){
 							found = true;
 							break;
 						}
 					}
 					if (!found){
-						(*it).mp_receiver.AssociatedReaders.push_back((RTPSReader*)endp);
+						(*it).mp_receiver->AssociatedReaders.push_back((RTPSReader*)endp);
 						return true;
 					}
 				}
@@ -694,7 +694,8 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 		// 2.1 - Initialize a ReceiverResourceControlBlock
 		// 2.2 - Push it to the list
 		m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it)));
-		m_receiverResourcelist.back().mp_receiver.init(m_att.listenSocketBufferSize);
+		m_receiverResourcelist.back().mp_receiver = new MessageReceiver();
+      m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
 	}
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
 	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
@@ -749,7 +750,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 				thit!=m_receiverResourcelist.end();thit++)
 		{
 			//FIXME:Message Receiver Actually does not have a method to do this
-			//(*thit).mp_receiver.removeAssociatedEndpoint(p_endpoint);
+			//(*thit).mp_receiver->removeAssociatedEndpoint(p_endpoint);
 		}
 		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		bool continue_removing = true;
