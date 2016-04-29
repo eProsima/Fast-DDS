@@ -54,29 +54,24 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_READER,"");
-		std::vector<ChangeFromWriter_t*> ch_vec;
-		{
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_WP->getMutex());
-		mp_WP->missing_changes(&ch_vec);
-		}
+		std::vector<const ChangeFromWriter_t*> ch_vec = mp_WP->missing_changes();
+
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
-			if(!mp_WP->available_changes_max(&sns.base)) //if no changes are available
-			{
-				logError(RTPS_READER,"No available changes max"<<endl;);
-			}
+            sns.base = mp_WP->available_changes_max();
 			sns.base++;
-			std::vector<ChangeFromWriter_t*>::iterator cit;
-			for(cit = ch_vec.begin();cit!=ch_vec.end();++cit)
+
+			for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
 			{
-				if(!sns.add((*cit)->seqNum))
+				if(!sns.add((*cit)->getSequenceNumber()))
 				{
-					logWarning(RTPS_READER,"Error adding seqNum " << (*cit)->seqNum
+					logWarning(RTPS_READER,"Error adding seqNum " << (*cit)->getSequenceNumber()
 							<< " with SeqNumSet Base: "<< sns.base);
 					break;
 				}
 			}
+
 			mp_WP->m_acknackCount++;
 			logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 

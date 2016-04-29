@@ -80,6 +80,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	if ((m_historyRecord[a_change->writerGUID].insert(a_change->sequenceNumber)).second)
 	{
 		m_changes.push_back(a_change);
+        sortCacheChanges();
 		updateMaxMinSeqNum();
 		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 		return true;

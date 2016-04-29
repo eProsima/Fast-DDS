@@ -355,7 +355,7 @@ public:
 	* @param in SequenceNumberSet_t to add
 	* @return True on success
 	*/
-	bool add(SequenceNumber_t& in)
+	bool add(const SequenceNumber_t& in)
 	{
 		if(in >= base && in <= base + 255)
 			set.push_back(in);

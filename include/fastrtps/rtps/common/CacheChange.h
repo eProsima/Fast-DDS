@@ -19,6 +19,8 @@
 #include "Time_t.h"
 #include "InstanceHandle.h"
 
+#include <cassert>
+
 namespace eprosima
 {
     namespace fastrtps
@@ -210,19 +212,6 @@ namespace eprosima
                             return seq_num_;
                         }
                         
-                        /**
-                         * Set the cache change
-                         * @param a_change Cache change
-                         */
-                        //TODO Remove
-                        /*bool setChange(const CacheChange_t* a_change)
-                        {
-                            m_isValid = true;
-                            seq_num_ = a_change->sequenceNumber;
-                            change = a_change;
-                            return true;
-                        }*/
-
                         //! Set change as not valid
                         void notValid()
                         {
@@ -264,58 +253,118 @@ namespace eprosima
                  */
                 class ChangeFromWriter_t
                 {
+                    friend struct ChangeFromWriterCmp;
+
                     public:
-                        ChangeFromWriter_t():status(UNKNOWN),is_relevant(true),m_isValid(false),change(NULL)
+
+                    ChangeFromWriter_t() : status_(UNKNOWN), is_relevant_(true),
+                        change_(nullptr)
                     {
 
                     }
-                        virtual ~ChangeFromWriter_t(){};
-                        //!Status
-                        ChangeFromWriterStatus_t status;
-                        //!Boolean specifying if this change is relevant
-                        bool is_relevant;
-                        //!Sequence number
-                        SequenceNumber_t seqNum;
-                        /**
-                         * Get the cache change
-                         * @return Cache change
-                         */
-                        CacheChange_t* getChange()
-                        {
-                            return change;
-                        }
-                        /**
-                         * Set the cache change
-                         * @param a_change Cache change
-                         */
-                        bool setChange(CacheChange_t* a_change)
-                        {
-                            m_isValid = true;
-                            seqNum = a_change->sequenceNumber;
-                            change = a_change;
-                            return true;
-                        }
-                        //! Set change as not valid
-                        void notValid()
-                        {
-                            is_relevant = false;
-                            m_isValid = false;
-                            change = NULL;
-                        }
-                        //! Set change as valid
-                        bool isValid()
-                        {
-                            return m_isValid;
-                        }
-                    private:
-                        bool m_isValid;
-                        CacheChange_t* change;
 
+                    ChangeFromWriter_t(const ChangeFromWriter_t& ch) : status_(ch.status_),
+                    is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_), change_(ch.change_)
+                    {
+                    }
+
+                    ChangeFromWriter_t(CacheChange_t* change) : status_(UNKNOWN),
+                    is_relevant_(true), seq_num_(change->sequenceNumber), change_(change)
+                    {
+                    }
+
+                    ChangeFromWriter_t(const SequenceNumber_t& seq_num) : status_(UNKNOWN),
+                    is_relevant_(true), seq_num_(seq_num), change_(nullptr)
+                    {
+                    }
+
+                    ~ChangeFromWriter_t(){};
+
+                    ChangeFromWriter_t& operator=(const ChangeFromWriter_t& ch)
+                    {
+                        status_ = ch.status_;
+                        is_relevant_ = ch.is_relevant_;
+                        seq_num_ = ch.seq_num_;
+                        change_ = ch.change_;
+                        return *this;
+                    }
+
+                    /**
+                     * Get the cache change
+                     * @return Cache change
+                     */
+                    CacheChange_t* getChange() const
+                    {
+                        return change_;
+                    }
+
+                    void setChange(CacheChange_t* change)
+                    {
+                        assert(change->sequenceNumber == seq_num_);
+                        change_ = change;
+                        seq_num_ = change->sequenceNumber;
+                    }
+
+                    void setStatus(const ChangeFromWriterStatus_t status)
+                    {
+                        status_ = status;
+                    }
+
+                    ChangeFromWriterStatus_t getStatus() const
+                    {
+                        return status_;
+                    }
+
+                    void setRelevance(const bool relevance)
+                    {
+                        is_relevant_ = relevance;
+                    }
+
+                    bool isRelevant() const
+                    {
+                        return is_relevant_;
+                    }
+
+                    const SequenceNumber_t getSequenceNumber() const
+                    {
+                        return seq_num_;
+                    }
+
+                    //! Set change as not valid
+                    void notValid()
+                    {
+                        is_relevant_ = false;
+                        change_ = nullptr;
+                    }
+
+                    //! Set change as valid
+                    bool isValid() const
+                    {
+                        return change_ != nullptr;
+                    }
+
+                    private:
+
+                        //!Status
+                        ChangeFromWriterStatus_t status_;
+
+                        //!Boolean specifying if this change is relevant
+                        bool is_relevant_;
+
+                        //!Sequence number
+                        SequenceNumber_t seq_num_;
+
+                        CacheChange_t* change_;
                 };
 
+                struct ChangeFromWriterCmp
+                {
+                    bool operator()(const ChangeFromWriter_t& a, const ChangeFromWriter_t& b) const
+                    {
+                        return a.seq_num_ < b.seq_num_;
+                    }
+                };
 #endif
-
-
             }
         }
     }
