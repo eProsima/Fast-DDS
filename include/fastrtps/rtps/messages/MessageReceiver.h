@@ -40,7 +40,7 @@ public:
 	/**
 	* @param rec_buffer_size
 	*/
-	//MessageReceiver(uint32_t rec_buffer_size);
+	MessageReceiver(uint32_t rec_buffer_size);
 	MessageReceiver();
 	virtual ~MessageReceiver();
 	//!Reset the MessageReceiver to process a new message.

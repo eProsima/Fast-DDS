@@ -48,8 +48,8 @@ namespace rtps {
 
 static const char* const CLASS_NAME = "MessageReceiver";
 
-
-/**MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
+MessageReceiver::MessageReceiver(){}
+MessageReceiver::MessageReceiver(uint32_t rec_buffer_size):
 												m_rec_msg(rec_buffer_size),
 												mp_change(nullptr)
 {
@@ -70,7 +70,7 @@ static const char* const CLASS_NAME = "MessageReceiver";
 	mp_change = new CacheChange_t(max_payload, true);
 	//cout << "MESSAGE RECEIVER CREATED WITH MAX SIZE: " << mp_change->serializedPayload.max_size << endl;
 }
-*/
+
 void MessageReceiver::init(uint32_t rec_buffer_size){
 	destVersion = c_ProtocolVersion;
 	sourceVersion = c_ProtocolVersion;
