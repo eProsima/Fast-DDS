@@ -53,8 +53,9 @@ bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
    memcpy(cdrMessage.buffer, message.data(), message.size());
    cdrMessage.length = message.size();
 
-   return ( (mDropDataMessages    && ContainsDataSubmessage(cdrMessage))    ||
-            (mDropAckNackMessages && ContainsAckNackSubmessage(cdrMessage)));
+   return ( (mDropDataMessages      && ContainsDataSubmessage(cdrMessage))      ||
+            (mDropAckNackMessages   && ContainsAckNackSubmessage(cdrMessage))   ||
+            (mDropHeartbeatMessages && ContainsHeartbeatSubmessage(cdrMessage)) );
 }
 
 bool test_UDPv4Transport::ContainsDataSubmessage(CDRMessage_t& cdrMessage)
@@ -76,6 +77,18 @@ bool test_UDPv4Transport::ContainsAckNackSubmessage(CDRMessage_t& cdrMessage)
    bool contains = false;
    while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
       if (contains |= (cdrSubMessageHeader.submessageId == ACKNACK)) break;
+
+   cdrMessage.pos = 0;
+   return contains;
+}
+
+bool test_UDPv4Transport::ContainsHeartbeatSubmessage(CDRMessage_t& cdrMessage)
+{
+   SubmessageHeader_t cdrSubMessageHeader;
+
+   bool contains = false;
+   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
+      if (contains |= (cdrSubMessageHeader.submessageId == HEARTBEAT)) break;
 
    cdrMessage.pos = 0;
    return contains;

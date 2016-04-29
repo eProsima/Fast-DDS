@@ -51,6 +51,7 @@ private:
    bool PacketShouldDrop(const std::vector<char>& message);
    bool ContainsDataSubmessage(CDRMessage_t& cdrMessage);
    bool ContainsAckNackSubmessage(CDRMessage_t& cdrMessage);
+   bool ContainsHeartbeatSubmessage(CDRMessage_t& cdrMessage);
 
    uint32_t ParseSequenceNumber(const std::vector<char>& message);
 };

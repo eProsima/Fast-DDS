@@ -24,6 +24,7 @@ class test_UDPv4Tests: public ::testing::Test
    void HELPER_WarmUpOutput(test_UDPv4Transport& transport);
    void HELPER_FillDataMessage(CDRMessage_t& message);
    void HELPER_FillAckNackMessage(CDRMessage_t& message);
+   void HELPER_FillHeartbeatMessage(CDRMessage_t& message);
 
    test_UDPv4Transport::TransportDescriptor descriptor;
    unique_ptr<boost::thread> senderThread;
@@ -60,6 +61,28 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
    HELPER_FillAckNackMessage(testDataMessage);
+   HELPER_WarmUpOutput(transportUnderTest);
+   Locator_t locator;
+   locator.port = 7400;
+   locator.kind = LOCATOR_KIND_UDPv4;
+
+   // When
+   vector<char> message;
+   message.resize(testDataMessage.length);
+   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+}
+
+TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
+{  
+   // Given
+   descriptor.dropHeartbeatMessages = true;
+   test_UDPv4Transport transportUnderTest(descriptor);
+   CDRMessage_t testDataMessage;
+   HELPER_FillHeartbeatMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
    locator.port = 7400;
@@ -153,6 +176,15 @@ void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)
    EntityId_t entityID;
    SequenceNumberSet_t set;
 	RTPSMessageCreator::addMessageAcknack(&message, prefix, prefix, entityID, entityID, set, 0, false);
+}
+
+void test_UDPv4Tests::HELPER_FillHeartbeatMessage(CDRMessage_t& message)
+{
+   GuidPrefix_t prefix;
+   EntityId_t entityID;
+   SequenceNumber_t sn1;
+   SequenceNumber_t sn2;
+	RTPSMessageCreator::addMessageHeartbeat(&message, prefix, entityID, entityID, sn1, sn2, 0, false, false);
 }
 
 int main(int argc, char **argv)
