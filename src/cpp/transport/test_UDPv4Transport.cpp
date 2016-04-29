@@ -35,15 +35,15 @@ bool test_UDPv4Transport::Send(const vector<char>& sendBuffer, Locator_t localLo
       return UDPv4Transport::Send(sendBuffer, localLocator, remoteLocator);
 }
 
-static bool ReadSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t* smh)
+static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 {
-	if(msg->length - msg->pos < 4)
+	if(msg.length - msg.pos < 4)
 		return false;
 
-	smh->submessageId = msg->buffer[msg->pos];msg->pos++;
-	smh->flags = msg->buffer[msg->pos];msg->pos++;
-	msg->msg_endian = smh->flags & BIT(0) ? LITTLEEND : BIGEND;
-	CDRMessage::readUInt16(msg,&smh->submessageLength);
+	smh.submessageId = msg.buffer[msg.pos];msg.pos++;
+	smh.flags = msg.buffer[msg.pos];msg.pos++;
+	msg.msg_endian = smh.flags & BIT(0) ? LITTLEEND : BIGEND;
+	CDRMessage::readUInt16(&msg, &smh.submessageLength);
 	return true;
 }
 
@@ -53,46 +53,36 @@ bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
    memcpy(cdrMessage.buffer, message.data(), message.size());
    cdrMessage.length = message.size();
 
-   return ( (mDropDataMessages      && ContainsDataSubmessage(cdrMessage))      ||
-            (mDropAckNackMessages   && ContainsAckNackSubmessage(cdrMessage))   ||
-            (mDropHeartbeatMessages && ContainsHeartbeatSubmessage(cdrMessage)) );
+   return ( (mDropDataMessages      && ContainsSubmessageOfID(cdrMessage, DATA))      ||
+            (mDropAckNackMessages   && ContainsSubmessageOfID(cdrMessage, ACKNACK))   ||
+            (mDropHeartbeatMessages && ContainsSubmessageOfID(cdrMessage, HEARTBEAT)) );
 }
 
-bool test_UDPv4Transport::ContainsDataSubmessage(CDRMessage_t& cdrMessage)
+bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID)
 {
+
+	if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
+      return false;
+
+   cdrMessage.pos =  0;
+   cdrMessage.pos += 4;  // RTPS header letters
+	cdrMessage.pos += 12; // RTPS version
+
    SubmessageHeader_t cdrSubMessageHeader;
+	while (cdrMessage.pos < cdrMessage.length)
+   {  
+      ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
+		if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
+         return false;
+      if (cdrSubMessageHeader.submessageId == ID)
+         return true;
 
-   bool contains = false;
-   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
-      if (contains |= (cdrSubMessageHeader.submessageId == DATA)) break;
+	   cdrMessage.pos += cdrSubMessageHeader.submessageLength;
+   }
 
-   cdrMessage.pos = 0;
-   return contains;
+   return false;
 }
 
-bool test_UDPv4Transport::ContainsAckNackSubmessage(CDRMessage_t& cdrMessage)
-{
-   SubmessageHeader_t cdrSubMessageHeader;
-
-   bool contains = false;
-   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
-      if (contains |= (cdrSubMessageHeader.submessageId == ACKNACK)) break;
-
-   cdrMessage.pos = 0;
-   return contains;
-}
-
-bool test_UDPv4Transport::ContainsHeartbeatSubmessage(CDRMessage_t& cdrMessage)
-{
-   SubmessageHeader_t cdrSubMessageHeader;
-
-   bool contains = false;
-   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
-      if (contains |= (cdrSubMessageHeader.submessageId == HEARTBEAT)) break;
-
-   cdrMessage.pos = 0;
-   return contains;
-}
 
 bool test_UDPv4Transport::LogDrop(const std::vector<char>& message)
 {
@@ -105,8 +95,14 @@ bool test_UDPv4Transport::LogDrop(const std::vector<char>& message)
    return false;
 }
 
-uint32_t test_UDPv4Transport::ParseSequenceNumber(const vector<char>& message)
+bool test_UDPv4Transport::ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage)
 {
+   return false;
+//   SubmessageHeader_t cdrSubMessageHeader;
+//
+//   bool contains = false;
+//   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
+//      if (contains |= (cdrSubMessageHeader.submessageId == HEARTBEAT)) break;
 }
 
 } // namespace rtps

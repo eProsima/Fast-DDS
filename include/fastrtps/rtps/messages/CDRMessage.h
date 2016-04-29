@@ -68,7 +68,7 @@ namespace CDRMessage{
 	 * Append given CDRMessage to existing CDR Message. Joins two messages into the first one if it has space.
 	 * @param[out] first Pointer to first message.
 	 * @param[in] second Pointer to second message.
-	 * @return True if correct.
+	 ** @return True if correct.
 	 */
 	  inline bool appendMsg(CDRMessage_t* first,CDRMessage_t* second);
 
