@@ -51,6 +51,7 @@ private:
    bool PacketShouldDrop(const std::vector<char>& message);
    bool ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID);
    bool ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage);
+   bool RandomChanceDrop();
 };
 
 } // namespace rtps

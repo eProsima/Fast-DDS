@@ -1,4 +1,5 @@
 #include <fastrtps/transport/test_UDPv4Transport.h>
+#include <cstdlib>
 
 using namespace std;
 
@@ -20,12 +21,13 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDes
    UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
    DropLog.clear();
    DropLogLength = descriptor.dropLogLength;
+   srand(time(NULL));
 }
 
 bool test_UDPv4Transport::Send(const vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
 {
-   if (PacketShouldDrop(sendBuffer)          &&
-       IsOutputChannelOpen(localLocator)     &&
+   if (PacketShouldDrop(sendBuffer) &&
+       IsOutputChannelOpen(localLocator) &&
        sendBuffer.size() <= mSendBufferSize)
    {
       LogDrop(sendBuffer);
@@ -56,18 +58,16 @@ bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
    return ( (mDropDataMessages      && ContainsSubmessageOfID(cdrMessage, DATA))      ||
             (mDropAckNackMessages   && ContainsSubmessageOfID(cdrMessage, ACKNACK))   ||
             (mDropHeartbeatMessages && ContainsSubmessageOfID(cdrMessage, HEARTBEAT)) || 
-             ContainsSequenceNumberToDrop(cdrMessage));
+             ContainsSequenceNumberToDrop(cdrMessage)                                 ||
+             RandomChanceDrop());
 }
 
 bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID)
 {
-
 	if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
       return false;
 
-   cdrMessage.pos =  0;
-   cdrMessage.pos += 4;  // RTPS header letters
-	cdrMessage.pos += 12; // RTPS version
+   cdrMessage.pos = 4 + 12; // RTPS header letters + RTPS version
 
    SubmessageHeader_t cdrSubMessageHeader;
 	while (cdrMessage.pos < cdrMessage.length)
@@ -118,6 +118,11 @@ bool test_UDPv4Transport::ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage)
       case DATA:
          cdrMessage.pos += (2+2+4+4); // Flagskip + Octets to QoS + entityID + entityID
          break;
+      case GAP:
+         cdrMessage.pos += (4+4); // entityID + entityID
+         break;
+      case HEARTBEAT:
+         cdrMessage.pos += (4+4); // entityID + entityID. We read FirstSN
       default:
 	      cdrMessage.pos += cdrSubMessageHeader.submessageLength;
          continue; // Messages without sequence number
@@ -139,6 +144,11 @@ bool test_UDPv4Transport::ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage)
    }
 
    return false;
+}
+
+bool test_UDPv4Transport::RandomChanceDrop()
+{
+   return mPercentageOfMessagesToDrop > (rand()%100);
 }
 
 } // namespace rtps

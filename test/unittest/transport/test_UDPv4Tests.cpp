@@ -98,6 +98,30 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }
 
+TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
+{  
+   // Given
+   descriptor.percentageOfMessagesToDrop = 100; // To avoid a non-deterministic test
+   test_UDPv4Transport transportUnderTest(descriptor);
+   CDRMessage_t testDataMessage;
+   HELPER_FillAckNackMessage(testDataMessage);
+   HELPER_WarmUpOutput(transportUnderTest);
+   Locator_t locator;
+   locator.port = 7400;
+   locator.kind = LOCATOR_KIND_UDPv4;
+
+   // When
+   vector<char> message;
+   message.resize(testDataMessage.length);
+   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_EQ(3, test_UDPv4Transport::DropLog.size());
+}
+
 TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
 {  
    // Given
