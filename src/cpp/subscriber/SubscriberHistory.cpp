@@ -108,18 +108,16 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
         }
 	}
 
-	if(m_isHistoryFull)
-	{
-		logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
-		return false;
-	}
 	//NO KEY HISTORY
 	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
 		bool add = false;
 		if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 		{
-			add = true;
+			if (!m_isHistoryFull)
+			{
+				add = true;
+			}
 		}
 		else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
 		{
@@ -129,9 +127,7 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 			}
 			else
 			{
-				bool read = false;
-				if(mp_minSeqCacheChange->isRead)
-					read = true;
+				bool read = mp_minSeqCacheChange->isRead;
 				if(this->remove_change_sub(mp_minSeqCacheChange))
 				{
 					if(!read)
@@ -159,11 +155,9 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 				return true;
 			}
 		}
-		else
-			return false;
 	}
 	//HISTORY WITH KEY
-	else if(mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+	else if(!m_isHistoryFull && mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
 	{
 		if(!a_change->instanceHandle.isDefined() && mp_subImpl->getType() !=nullptr)
 		{
@@ -248,10 +242,10 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 					return true;
 				}
 			}
-			else
-				return false;
 		}
 	}
+
+	logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
 	return false;
 }
 
