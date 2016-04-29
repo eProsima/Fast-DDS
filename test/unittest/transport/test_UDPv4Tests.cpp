@@ -44,7 +44,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    vector<char> message;
    message.resize(testDataMessage.length);
    memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-   
+   transportUnderTest.Send(message, arbitraryLocator, arbitraryLocator);
   
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }

@@ -1,6 +1,7 @@
 #ifndef TEST_UDPV4_TRANSPORT_H
 #define TEST_UDPV4_TRANSPORT_H
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/rtps/messages/RTPS_messages.h>
 #include <boost/thread.hpp>
 #include <vector>
 
@@ -44,6 +45,11 @@ private:
    bool mDropAckNackMessages;
    std::vector<uint32_t> mSequenceNumberDataMessagesToDrop;
    uint8_t mPercentageOfMessagesToDrop;
+
+   bool LogDrop(const std::vector<char>& message);
+   bool PacketShouldDrop(const std::vector<char>& message);
+   bool ContainsDataSubmessage(const std::vector<char>& message);
+   uint32_t ParseSequenceNumber(const std::vector<char>& message);
 };
 
 } // namespace rtps
