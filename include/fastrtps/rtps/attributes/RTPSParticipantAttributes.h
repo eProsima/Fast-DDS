@@ -194,9 +194,16 @@ public:
 	 */
 	LocatorList_t defaultMulticastLocatorList;
 	/**
+	 * Default list of Locators used to send messages through. Used to link with SenderResources in the case and 
+	 * Endpoint is created with NO outLocators. This list contains the default outLocators for the Transports implemented
+	 * by eProsima.
+	 */
+	LocatorList_t defaultOutLocatorList;
+	/**
 	 * Default send port that all Endpoints in the RTPSParticipant would use to send messages, default value 10040.
 	 * In this release all Endpoints use the same resource (socket) to send messages.
 	 */
+
 	uint32_t defaultSendPort;
 	//!Send socket buffer size for the send resource, default value 65536.
 	uint32_t sendSocketBufferSize;

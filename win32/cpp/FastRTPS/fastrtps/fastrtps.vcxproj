@@ -138,6 +138,9 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\messages\RTPSMessageCreator.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\messages\RTPSMessageGroup.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\messages\RTPS_messages.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\network\NetworkFactory.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\network\ReceiverResource.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\rtps\network\SenderResource.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\participant\RTPSParticipant.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\participant\RTPSParticipantDiscoveryInfo.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\rtps\participant\RTPSParticipantImpl.h" />
@@ -175,6 +178,7 @@
     <ClInclude Include="..\..\..\..\include\fastrtps\subscriber\SubscriberImpl.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\subscriber\SubscriberListener.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\TopicDataType.h" />
+    <ClInclude Include="..\..\..\..\include\fastrtps\transport\TransportInterface.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\eClock.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\IPFinder.h" />
     <ClInclude Include="..\..\..\..\include\fastrtps\utils\md5.h" />
@@ -227,6 +231,9 @@
     <ClCompile Include="..\..\..\..\src\cpp\rtps\messages\MessageReceiver.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\rtps\messages\RTPSMessageCreator.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\rtps\messages\RTPSMessageGroup.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\network\NetworkFactory.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\network\ReceiverResource.cpp" />
+    <ClCompile Include="..\..\..\..\src\cpp\rtps\network\SenderResource.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\rtps\participant\RTPSParticipant.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\rtps\participant\RTPSParticipantImpl.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\rtps\reader\RTPSReader.cpp" />

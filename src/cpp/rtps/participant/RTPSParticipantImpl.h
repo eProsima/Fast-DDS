@@ -34,12 +34,19 @@ class recursive_mutex;
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
 
+//Santi - Adding .h files for the new transport layers
+#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+
 namespace eprosima {
 namespace fastrtps{
 
 	class WriterQos;
 	class ReaderQos;
 	class TopicAttributes;
+	class MessageReceiver;
 
 namespace rtps {
 
@@ -59,6 +66,32 @@ class RTPSReader;
 class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
+
+/*
+	Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
+	It contains:
+	-A ReceiverResource (as produced by the NetworkFactory Element)
+	-A list of associated wirters and readers
+	-A buffer for message storage
+	-A mutex for the lists
+	The idea is to create the thread that performs blocking calllto ReceiverResource.Receive and processes the message
+	from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
+
+*/
+typedef struct ReceiverControlBlock{
+	ReceiverResource Receiver;
+	MessageReceiver mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
+	boost::mutex mtx; //Fix declaration
+	boost::thread* m_thread;
+	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec))
+	{
+	}
+	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver))
+	{
+	origen.m_thread = nullptr;
+	}
+} ReceiverControlBlock;
+
 
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -118,8 +151,8 @@ public:
     void ResourceSemaphoreWait();
     //!Get Pointer to the Event Resource.
 	ResourceEvent& getEventResource();
-    //!Send Method
-    void sendSync(CDRMessage_t* msg, const Locator_t& loc);
+    //!Send Method - Deprecated - Stays here for reference purposes
+	void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
     //!Get Send Mutex
     boost::recursive_mutex* getSendMutex();
     //!Get the participant Mutex
@@ -129,22 +162,22 @@ public:
 	* @return participant listener
 	*/
     inline RTPSParticipantListener* getListener(){return mp_participantListener;}
-
 	/**
 	* Get the participant
 	* @return participant
 	*/
     inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
 
-    bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);
+    /* Not needed anymore, stays for reference pursposes
+	bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);*/
 
 private:
 	//!Attributes of the RTPSParticipant
 	RTPSParticipantAttributes m_att;
 	//!Guid of the RTPSParticipant.
 	const GUID_t m_guid;
-	//! Sending resources.
-	ResourceSend* mp_send_thr;
+	//! Sending resources. - DEPRECATED -Stays commented for reference purposes
+	// ResourceSend* mp_send_thr;
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
 	//! BuiltinProtocols of this RTPSParticipant
@@ -162,8 +195,16 @@ private:
 	std::vector<RTPSWriter*> m_userWriterList;
 	//!Reader List
 	std::vector<RTPSReader*> m_userReaderList;
-	//!Listen Resource list
-	std::vector<ListenResource*> m_listenResourceList;
+
+	//!Network Factory
+	NetworkFactory m_network_Factory;
+	//!ReceiverControlBlock list - encapsulates all associated resources on a Receiving element
+	std::vector<ReceiverControlBlock> m_receiverResourcelist;
+	//!SenderResource List
+	std::vector<SenderResource> m_senderResource;
+
+	//!Listen Resource list - DEPRECATED - Stays commented for reference purposes
+	// std::vector<ListenResource*> m_listenResourceList;
 	//!Participant Listener
 	RTPSParticipantListener* mp_participantListener;
 	//!Pointer to the user participant
@@ -178,15 +219,16 @@ private:
 	 * @return True if exists.
 	 */
 	bool existsEntityId(const EntityId_t& ent,EndpointKind_t kind) const;
+
 	/**
-	 * Assign an endpoint to the listenResources.
+	 * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
 	 * @param endp Pointer to the endpoint.
 	 * @param isBuiltin Boolean indicating if it is builtin.
 	 * @return True if correct.
 	 */
 	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
 
-	/** Assign an endpoint to a specific listen locator
+	/** Assign an endpoint to the ReceiverResources as specified specifically on parameter list
 	 * @param pend Pointer to the endpoint.
 	 * @param lit Locator list iterator.
 	 * @param isMulticast Boolean indicating that is multicast.
@@ -194,6 +236,31 @@ private:
 	 * @return True if assigned.
 	 */
 	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
+
+	/** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
+		and consequently assignEndpoint2LocatorList
+		@param pend - Pointer to the endpoint which triggered the creation of the Receivers
+	*/
+	bool createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn);
+	
+	/** Function to be called from a new thread, which takes cares of performing a blocking receive 
+		operation on the ReceiveResource
+		@param buffer - Position of the buffer we use to store data
+		@param locator - Locator that triggered the creation of the resource
+	*/
+	void performListenOperation(ReceiverControlBlock *receiver);
+
+	/** Create non-existent SendResources based on the Locator list of the entity
+		@param pend - Pointer to the endpoint whose SenderResources are to be created
+	*/
+	bool createSendResources(Endpoint *pend);
+	
+	/** When we want to create a new Resource but the physical channel specified by the Locator
+	    can not be opened, we want to mutate the Locator to open a more or less equivalent channel.
+		@param loc -  Locator we want to change
+	*/
+	Locator_t applyLocatorAdaptRule(Locator_t loc);
+	
 	//!Participant Mutex
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
@@ -295,6 +362,13 @@ public:
 	* @return Iterator pointing to the end of the user writer list
 	*/
 	std::vector<RTPSWriter*>::iterator userWritersListEnd(){return m_userWriterList.end();};
+
+	/** Helper function that creates ReceiverResources based on a Locator_t List, possibly mutating
+	some and updating the list. DOES NOT associate endpoints with it.
+	@param Locator_list - Locator list to be used to create the ReceiverResources
+	@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
+	*/
+	bool createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
 };
 
