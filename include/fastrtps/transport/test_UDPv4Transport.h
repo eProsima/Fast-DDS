@@ -35,8 +35,8 @@ public:
    virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
   
    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-   static std::vector<std::vector<char> > mDropLog;
-   static uint32_t dropLogLength;
+   static std::vector<std::vector<char> > DropLog;
+   static uint32_t DropLogLength;
 
 private:
    bool mDropDataMessages;
