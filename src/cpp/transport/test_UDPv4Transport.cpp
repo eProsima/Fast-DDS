@@ -55,7 +55,8 @@ bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
 
    return ( (mDropDataMessages      && ContainsSubmessageOfID(cdrMessage, DATA))      ||
             (mDropAckNackMessages   && ContainsSubmessageOfID(cdrMessage, ACKNACK))   ||
-            (mDropHeartbeatMessages && ContainsSubmessageOfID(cdrMessage, HEARTBEAT)) );
+            (mDropHeartbeatMessages && ContainsSubmessageOfID(cdrMessage, HEARTBEAT)) || 
+             ContainsSequenceNumberToDrop(cdrMessage));
 }
 
 bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID)
@@ -97,12 +98,47 @@ bool test_UDPv4Transport::LogDrop(const std::vector<char>& message)
 
 bool test_UDPv4Transport::ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage)
 {
+	if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
+      return false;
+
+   cdrMessage.pos = 4 + 12; // RTPS header letters + RTPS version
+
+   SubmessageHeader_t cdrSubMessageHeader;
+	while (cdrMessage.pos < cdrMessage.length)
+   {  
+      ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
+		if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
+         return false;
+     
+      auto positionBeforeSubmessageData = cdrMessage.pos;
+    
+      // Skip ahead based on message fields
+      switch (cdrSubMessageHeader.submessageId)
+      {
+      case DATA:
+         cdrMessage.pos += (2+2+4+4); // Flagskip + Octets to QoS + entityID + entityID
+         break;
+      default:
+	      cdrMessage.pos += cdrSubMessageHeader.submessageLength;
+         continue; // Messages without sequence number
+      }
+
+      SequenceNumber_t sequenceNumber;
+      bool valid = CDRMessage::readInt32(&cdrMessage, &sequenceNumber.high);
+      valid &= CDRMessage::readUInt32(&cdrMessage, &sequenceNumber.low);
+      bool contained = find(mSequenceNumberDataMessagesToDrop.begin(),
+                            mSequenceNumberDataMessagesToDrop.end(),
+                            sequenceNumber) != mSequenceNumberDataMessagesToDrop.end();
+
+      if (valid && contained)
+         return true;
+
+      // Jump to the next submessage
+      cdrMessage.pos = positionBeforeSubmessageData;
+	   cdrMessage.pos += cdrSubMessageHeader.submessageLength;
+   }
+
    return false;
-//   SubmessageHeader_t cdrSubMessageHeader;
-//
-//   bool contains = false;
-//   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
-//      if (contains |= (cdrSubMessageHeader.submessageId == HEARTBEAT)) break;
 }
 
 } // namespace rtps

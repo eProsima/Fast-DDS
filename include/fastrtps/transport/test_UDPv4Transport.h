@@ -2,6 +2,7 @@
 #define TEST_UDPV4_TRANSPORT_H
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/rtps/messages/RTPS_messages.h>
+#include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <boost/thread.hpp>
 #include <vector>
@@ -25,7 +26,7 @@ public:
       bool dropDataMessages;
       bool dropHeartbeatMessages;
       bool dropAckNackMessages;
-      std::vector<uint32_t> sequenceNumberDataMessagesToDrop;
+      std::vector<SequenceNumber_t> sequenceNumberDataMessagesToDrop;
       uint8_t percentageOfMessagesToDrop;
 
       uint32_t dropLogLength; // logs dropped packets.
@@ -43,7 +44,7 @@ private:
    bool mDropDataMessages;
    bool mDropHeartbeatMessages;
    bool mDropAckNackMessages;
-   std::vector<uint32_t> mSequenceNumberDataMessagesToDrop;
+   std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
    uint8_t mPercentageOfMessagesToDrop;
 
    bool LogDrop(const std::vector<char>& message);

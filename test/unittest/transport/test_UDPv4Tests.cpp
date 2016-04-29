@@ -22,7 +22,7 @@ class test_UDPv4Tests: public ::testing::Test
 
    void HELPER_SetDescriptorDefaults();
    void HELPER_WarmUpOutput(test_UDPv4Transport& transport);
-   void HELPER_FillDataMessage(CDRMessage_t& message);
+   void HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber);
    void HELPER_FillAckNackMessage(CDRMessage_t& message);
    void HELPER_FillHeartbeatMessage(CDRMessage_t& message);
 
@@ -37,7 +37,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    descriptor.dropDataMessages = true;
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
-   HELPER_FillDataMessage(testDataMessage);
+   HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
    locator.port = 7400;
@@ -98,12 +98,40 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }
 
+TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
+{  
+   // Given
+   std::vector<SequenceNumber_t> sequenceNumbersToDrop(1);
+   sequenceNumbersToDrop.back().low = 1;
+
+   descriptor.sequenceNumberDataMessagesToDrop = sequenceNumbersToDrop;
+   test_UDPv4Transport transportUnderTest(descriptor);
+   CDRMessage_t testDataMessage;
+   HELPER_FillDataMessage(testDataMessage, sequenceNumbersToDrop.back());
+   HELPER_WarmUpOutput(transportUnderTest);
+   Locator_t locator;
+   locator.port = 7400;
+   locator.kind = LOCATOR_KIND_UDPv4;
+
+   // When
+   vector<char> message;
+   message.resize(testDataMessage.length);
+   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
+   ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+}
+
 TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
 {  
    // Given
+   descriptor.dropHeartbeatMessages = true;
+   descriptor.dropDataMessages = true;
+
    test_UDPv4Transport transportUnderTest(descriptor); // Default, no drops
    CDRMessage_t testDataMessage;
-   HELPER_FillDataMessage(testDataMessage);
+   HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
    locator.port = 7400;
@@ -126,7 +154,7 @@ TEST_F(test_UDPv4Tests, Send_will_still_fail_on_bad_locators_without_dropping_as
    descriptor.dropDataMessages = true;
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
-   HELPER_FillDataMessage(testDataMessage);
+   HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t badLocator;
    badLocator.kind = LOCATOR_KIND_UDPv6; // unsupported
@@ -160,13 +188,14 @@ void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
    ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator));
 }
 
-void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message)
+void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber)
 {
    GuidPrefix_t prefix;
    TopicKind_t topic = WITH_KEY;
    EntityId_t entityID;
    CacheChange_t change;
    ParameterList_t parameters;
+   change.sequenceNumber = sequenceNumber; // Here is where the SN propagates from
 	RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, &parameters);
 }
 
