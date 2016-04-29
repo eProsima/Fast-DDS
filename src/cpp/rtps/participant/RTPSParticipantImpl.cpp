@@ -161,10 +161,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 			newSendersBuffer = m_network_Factory.BuildSenderResources((*it));
 		}
 		//Now we DO have resources, and the new locator is already replacing the old one.
-		newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
+		for(auto mit= newSendersBuffer.begin(); mit!= newSendersBuffer.end(); ++mit){
+			newSenders.push_back(std::move(*mit));	
+		}
+		
+		//newSenders.insert(newSenders.end(), newSendersBuffer.begin(), newSendersBuffer.end());
 		newSendersBuffer.clear();
 	}
-	m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
+	for(auto mit=newSenders.begin(); mit!=newSenders.end();++mit){
+		m_senderResource.push_back(std::move(*mit));
+	}
+	//m_senderResource.insert(m_senderResource.end(), newSenders.begin(), newSenders.end());
 	m_att.defaultOutLocatorList = defcopy;
 
 	if (!hasLocatorsDefined)
@@ -590,8 +597,8 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		//Check among ReceiverResources whether the locator is supported or not
 		for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 			//Take mutex for the resource since we are going to interact with shared resources
-			//boost::lock_guard<boost::recursive_mutex> guard((*it)->mtx);
-			boost::lock_guard<boost::recursive_mutex> guard((*it)->mp_receiver.mtx);
+			//boost::lock_guard<boost::recursive_mutex> guard((*it).mtx);
+			boost::lock_guard<boost::recursive_mutex> guard((*it).mp_receiver.mtx);
 			if ((*it).Receiver.SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
@@ -640,17 +647,23 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 	//Output locators have been specified, create them
 	for (auto it = pend->m_att.outLocatorList.begin(); it != pend->m_att.outLocatorList.end(); ++it){
 		SendersBuffer = m_network_Factory.BuildSenderResources((*it));
-		newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
+		for(auto mit = SendersBuffer.begin(); mit!= SendersBuffer.end(); ++mit){
+			newSenders.push_back(std::move(*mit));
+		}
+		//newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
 		SendersBuffer.clear();
 	}
-	m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
+	for(auto mit = SendersBuffer.begin();mit!=SendersBuffer.end();++mit){
+		m_senderResource.push_back(std::move(*mit));
+	}
+	//m_senderResource.insert(m_senderResource.end(), SendersBuffer.begin(), SendersBuffer.end());
 
 	return true;
 }
 
 bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation){
-	std::vector<ReceiverResource *> newItems;
-	std::vector<ReceiverResource *> newItemsBuffer;
+	std::vector<ReceiverResource>  newItems;
+	std::vector<ReceiverResource> newItemsBuffer;
 
 	for (auto it = Locator_list.begin(); it != Locator_list.end(); ++it){
 		/* Try to build resources with that specific Locator*/
@@ -664,7 +677,10 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 			}
 		}
 		//Now we DO have resources, and the new locator is already replacing the old one.
-		newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
+		for(auto mit=newItemsBuffer.begin();mit!=newItemsBuffer.end();++mit){
+			newItems.push_back(std::move(*mit));
+		}
+		//newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
 		newItemsBuffer.clear();
 	}
 	// 2 - Now we have ALL of the new items For each generated element...
@@ -675,13 +691,11 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 	
 		// 2.2 - Push it to the list
 		m_receiverResourcelist.emplace_back({ std::move((*it)), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr });
-		
-		m_receiverResourcelist.back().mp_receiver.assignReceiverControlBlockPointer(m_receiverResourcelist.back());
 	}
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
 	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
-		if ((*it)->mp_thread == nullptr)
-			(*it)->mp_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
+		if ((*it).m_thread == nullptr)
+			(*it).m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
 	}
 }
 
@@ -772,7 +786,7 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
 	}
 	for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit){
 		for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it){
-			if ((*it).SupportsLocator((*sit)){
+			if ((*it).SupportsLocator((*sit))){
 				(*it).Send(buffer, destination_loc);
 			}
 		}
