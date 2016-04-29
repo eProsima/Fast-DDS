@@ -78,11 +78,14 @@ class ReaderListener;
 	from the Receiver, so the Transport Layer does not need to be aware of the existence of what is using it.
 
 */
-typedef struct{
+typedef struct ReceiverControlBlock{
 	ReceiverResource Receiver;
 	MessageReceiver mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
+	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec))
+	{
+	}
 } ReceiverControlBlock;
 
 
