@@ -572,7 +572,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 		//Since we already have the locator, there is no read need to perform any more operations
 
 	//Call to  messageReceiver trigger function
-	receiver->mp_receiver.processCDRMsg(mp_userParticipant->getGUID().guidprefix, &input_locator, &receiver->mp_receiver.m_rec_msg);
+	receiver->mp_receiver.processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver.m_rec_msg);//FIXME:Call to getGUID()
 	//Call this function again
 	performListenOperation(receiver);
 
@@ -597,8 +597,8 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		//Check among ReceiverResources whether the locator is supported or not
 		for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 			//Take mutex for the resource since we are going to interact with shared resources
-			//boost::lock_guard<boost::recursive_mutex> guard((*it).mtx);
-			boost::lock_guard<boost::recursive_mutex> guard((*it).mp_receiver.mtx);
+			//boost::lock_guard<boost::mutex> guard((*it).mtx);
+			boost::lock_guard<boost::mutex> guard((*it).mp_receiver.mtx);
 			if ((*it).Receiver.SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
 				found = false;
@@ -690,12 +690,13 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 		//ReceiverControlBlock newBlock{ std::move((*it)), std::vector<RTPSWriter *>(), std::vector<RTPSReader *>(), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr };
 	
 		// 2.2 - Push it to the list
-		m_receiverResourcelist.emplace_back({ std::move((*it)), MessageReceiver(m_att.listenSocketBufferSize), boost::mutex(), nullptr });
+		ReceiverControlBlock newBlock{std::move((*it)), MessageReceiver(m_att.listenSocketBufferSize),boost::mutex(),nullptr};
+		m_receiverResourcelist.emplace_back(std::move(newBlock));
 	}
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
 	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 		if ((*it).m_thread == nullptr)
-			(*it).m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation, this, it);	//Bugfix
+			(*it).m_thread = new boost::thread(RTPSParticipantImpl::performListenOperation, it);	//Bugfix
 	}
 }
 
