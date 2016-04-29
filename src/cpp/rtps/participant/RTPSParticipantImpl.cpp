@@ -687,13 +687,13 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 	for (auto it = newItems.begin(); it != newItems.end(); ++it){
 		// 2.1 - Initialize a ReceiverResourceControlBlock
 		// 2.2 - Push it to the list
-		m_receiverResourcelist.emplace_back(ReceiverControlBlock(std::move(*it));
-		m_receiverResourcelist.back.mp_receiver.init(m_att.listenSocketBufferSize);
+		m_receiverResourcelist.push_back(ReceiverControlBlock(ReceiverControlBlock(std::move(*it))));
+		m_receiverResourcelist.back().mp_receiver.init(m_att.listenSocketBufferSize);
 	}
 	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
 	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 		if ((*it).m_thread == nullptr)
-			(*it).m_thread = new boost::thread(RTPSParticipantImpl::performListenOperation, it);	//Bugfix
+			(*it).m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(*it));	//Bugfix
 	}
 }
 

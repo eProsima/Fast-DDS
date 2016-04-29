@@ -86,6 +86,10 @@ typedef struct ReceiverControlBlock{
 	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec))
 	{
 	}
+	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver))
+	{
+	origen.m_thread = nullptr;
+	}
 } ReceiverControlBlock;
 
 
