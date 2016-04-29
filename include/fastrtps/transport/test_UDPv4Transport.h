@@ -2,6 +2,7 @@
 #define TEST_UDPV4_TRANSPORT_H
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/rtps/messages/RTPS_messages.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 #include <boost/thread.hpp>
 #include <vector>
 
@@ -48,7 +49,7 @@ private:
 
    bool LogDrop(const std::vector<char>& message);
    bool PacketShouldDrop(const std::vector<char>& message);
-   bool ContainsDataSubmessage(const std::vector<char>& message);
+   bool ContainsDataSubmessage(CDRMessage_t& cdrMessage);
    uint32_t ParseSequenceNumber(const std::vector<char>& message);
 };
 

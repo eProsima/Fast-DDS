@@ -1,5 +1,4 @@
 #include <fastrtps/transport/test_UDPv4Transport.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
 
 using namespace std;
 
@@ -25,10 +24,15 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDes
 
 bool test_UDPv4Transport::Send(const vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
 {
-   if (PacketShouldDrop(sendBuffer))
+   if (PacketShouldDrop(sendBuffer)          &&
+       IsOutputChannelOpen(localLocator)     &&
+       sendBuffer.size() == mSendBufferSize)
+   {
       LogDrop(sendBuffer);
-   else
-      UDPv4Transport::Send(sendBuffer, localLocator, remoteLocator);
+      return true;
+   }
+   else   
+      return UDPv4Transport::Send(sendBuffer, localLocator, remoteLocator);
 }
 
 static bool ReadSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t* smh)
@@ -45,17 +49,18 @@ static bool ReadSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t* smh)
 
 bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
 {
-   return (mDropDataMessages && ContainsDataSubmessage(message));
-}
-
-bool test_UDPv4Transport::ContainsDataSubmessage(const std::vector<char>& message)
-{
    CDRMessage_t cdrMessage(message.size());;
    memcpy(cdrMessage.buffer, message.data(), message.size());
    cdrMessage.length = message.size();
+
+   return (mDropDataMessages && ContainsDataSubmessage(cdrMessage));
+}
+
+bool test_UDPv4Transport::ContainsDataSubmessage(CDRMessage_t& cdrMessage)
+{
    SubmessageHeader_t cdrSubMessageHeader;
 
-   while(ReadSubmessageHeader(&cdrMessage,&cdrSubMessageHeader))
+   while(ReadSubmessageHeader(&cdrMessage, &cdrSubMessageHeader))
    {
       if (cdrSubMessageHeader.submessageId == DATA)
       {
@@ -63,6 +68,7 @@ bool test_UDPv4Transport::ContainsDataSubmessage(const std::vector<char>& messag
          return true;
       }
    }
+   cdrMessage.pos = 0;
    return false;
 }
 

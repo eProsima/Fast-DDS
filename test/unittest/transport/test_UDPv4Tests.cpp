@@ -37,22 +37,45 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    CDRMessage_t testDataMessage;
    HELPER_FillDataMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
-   Locator_t arbitraryLocator;
-   arbitraryLocator.kind = LOCATOR_KIND_UDPv4;
+   Locator_t locator;
+   locator.port = 7400;
+   locator.kind = LOCATOR_KIND_UDPv4;
 
    // When
    vector<char> message;
    message.resize(testDataMessage.length);
    memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-   transportUnderTest.Send(message, arbitraryLocator, arbitraryLocator);
-  
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.Send(message, locator, locator));
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
+}
+
+TEST_F(test_UDPv4Tests, Send_will_still_fail_on_bad_locators_without_dropping_as_expected)
+{  
+   // Given
+   descriptor.dropDataMessages = true;
+   test_UDPv4Transport transportUnderTest(descriptor);
+   CDRMessage_t testDataMessage;
+   HELPER_FillDataMessage(testDataMessage);
+   HELPER_WarmUpOutput(transportUnderTest);
+   Locator_t badLocator;
+   badLocator.kind = LOCATOR_KIND_UDPv6; // unsupported
+
+   // When
+   vector<char> message;
+   message.resize(testDataMessage.length);
+   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+
+   // Then
+   ASSERT_FALSE(transportUnderTest.Send(message, badLocator, badLocator));
+   ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
 }
 
 void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
-   descriptor.sendBufferSize = 5;
-   descriptor.receiveBufferSize = 5;
+   descriptor.sendBufferSize = 80;
+   descriptor.receiveBufferSize = 80;
    descriptor.dropDataMessages = false;
    descriptor.dropAckNackMessages = false;
    descriptor.dropHeartbeatMessages = false;
