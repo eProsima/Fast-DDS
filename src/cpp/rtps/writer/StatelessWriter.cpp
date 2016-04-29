@@ -352,7 +352,31 @@ void StatelessWriter::unsent_changes_reset()
 //}
 
 
+bool StatelessWriter::clean_history(unsigned int max)
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
+	bool removed = false;
+	if (max == 0) {
+		max = mp_history->getHistorySize();
+	}
+
+	while (max--) {
+		CacheChange_t *cc;
+		if (!mp_history->get_min_change(&cc)) {
+			break;
+		}
+		if (mp_history->remove_change(cc)) {
+			removed = true;
+		}
+	}
+
+	if (removed) {
+		unsent_changes_reset();
+	}
+
+	return removed;
+}
 
 
 
