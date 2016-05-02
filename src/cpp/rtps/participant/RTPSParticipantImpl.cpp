@@ -557,8 +557,10 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 	//1 - Reset the buffer where the CDRMessage is going to be stored
 	CDRMessage::initCDRMsg(&(receiver->mp_receiver->m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
+	int i=0;
 	for(auto it=localBuffer.begin();it!=localBuffer.end();++it){
 		receiver->mp_receiver->m_rec_msg.buffer[i] = (*it);
+		i++;
 	}
 	
 	receiver->mp_receiver->m_rec_msg.length = localBuffer.size();
