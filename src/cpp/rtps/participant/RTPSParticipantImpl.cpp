@@ -549,22 +549,17 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 	return true;
 }
 
-void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver){
+void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator){
 	std::vector<char> localBuffer;
-	Locator_t input_locator;
    for(;;){	
 	//0 - Perform a blocking call to the receiver
 	receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going to be stored
 	CDRMessage::initCDRMsg(&(receiver->mp_receiver->m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
-	int i=0;
 	for(auto it=localBuffer.begin();it!=localBuffer.end();++it){
 		receiver->mp_receiver->m_rec_msg.buffer[i] = (*it);
 	}
-	//for (int i = 0; i < localBuffer.size(); i++){
-	//	receiver->mp_receiver->m_rec_msg.buffer[i] = localBuffer.at(i);
-	//}
 	
 	receiver->mp_receiver->m_rec_msg.length = localBuffer.size();
 	//3 - Call MessageReceiver methods.
@@ -668,41 +663,31 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 }
 
 bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation){
-	std::vector<ReceiverResource>  newItems;
 	std::vector<ReceiverResource> newItemsBuffer;
 
-	for (auto it = Locator_list.begin(); it != Locator_list.end(); ++it){
-		/* Try to build resources with that specific Locator*/
-		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-		if (ApplyMutation){
-			while (newItemsBuffer.empty()){
-				//No ReceiverResources have been added, therefore we have to change the Locator 
-				(*it) = applyLocatorAdaptRule(*it);											//Mutate the Locator to find a suitable rule. Overwrite the old one
-				//as it is useless now.
-				newItemsBuffer = m_network_Factory.BuildReceiverResources((*it));
-			}
+	for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc){
+		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it_loc));
+		if(ApplyMutation){
+			while(newItemsBuffer.empty()){
+				(*it_loc) = applyLocatorAdaptRule(*it_loc);
+				newItemsBuffer = m_network_Factory.BuildReceiverResources((*it_loc));
+			}	
 		}
-		//Now we DO have resources, and the new locator is already replacing the old one.
-		for(auto mit=newItemsBuffer.begin();mit!=newItemsBuffer.end();++mit){
-			newItems.push_back(std::move(*mit));
+		for(auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer){
+			//Push the new items into the ReceiverResource buffer
+			m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
+			//Create and init the MessageReceiver
+			m_receiverResourcelist.back().mp_receiver = new MessageReceiver();
+      			m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
+			//Init the thread
+			m_receiverResourcelist.back().m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
+
 		}
-		//newItems.insert(newItems.end(), newItemsBuffer.begin(), newItemsBuffer.end());
 		newItemsBuffer.clear();
-	}
-	// 2 - Now we have ALL of the new items For each generated element...
-	for (auto it = newItems.begin(); it != newItems.end(); ++it){
-		// 2.1 - Initialize a ReceiverResourceControlBlock
-		// 2.2 - Push it to the list
-		m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it)));
-		m_receiverResourcelist.back().mp_receiver = new MessageReceiver();
-      m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
-	}
-	// 4 - Launch the Listening thread for all of the uninitialized ReceiveResources
-	for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
-		if ((*it).m_thread == nullptr)
-			(*it).m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(*it));	//Bugfix
-	}
+	}	
 }
+
+
 
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {

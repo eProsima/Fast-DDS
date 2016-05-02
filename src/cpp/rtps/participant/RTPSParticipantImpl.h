@@ -255,7 +255,7 @@ private:
 		@param buffer - Position of the buffer we use to store data
 		@param locator - Locator that triggered the creation of the resource
 	*/
-	void performListenOperation(ReceiverControlBlock *receiver);
+	void performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator);
 
 	/** Create non-existent SendResources based on the Locator list of the entity
 		@param pend - Pointer to the endpoint whose SenderResources are to be created
