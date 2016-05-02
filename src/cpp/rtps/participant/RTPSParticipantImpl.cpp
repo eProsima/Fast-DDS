@@ -554,7 +554,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
    for(;;){	
 	//0 - Perform a blocking call to the receiver
 	receiver->Receiver.Receive(localBuffer, input_locator);
-	//1 - Reset the buffer where the CDRMessage is going to be stored
+	//1 - Reset the buffer where the CDRMessage is going t//FIXME:Call to getGUID()o be stored
 	CDRMessage::initCDRMsg(&(receiver->mp_receiver->m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
 	int i=0;
@@ -575,7 +575,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 		//Since we already have the locator, there is no read need to perform any more operations
 
 	//Call to  messageReceiver trigger function
-	receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);//FIXME:Call to getGUID()
+	receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
 	//Call this function again
    }	
 
@@ -784,6 +784,7 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
 		}
 	}
 	return;
+	//}
 }
 
 void RTPSParticipantImpl::announceRTPSParticipantState()
