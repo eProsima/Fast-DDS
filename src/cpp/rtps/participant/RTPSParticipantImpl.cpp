@@ -552,7 +552,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver){
 	std::vector<char> localBuffer;
 	Locator_t input_locator;
-	
+   for(;;){	
 	//0 - Perform a blocking call to the receiver
 	receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going to be stored
@@ -580,7 +580,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver)
 	//Call to  messageReceiver trigger function
 	receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);//FIXME:Call to getGUID()
 	//Call this function again
-	performListenOperation(receiver);
+   }	
 
 }
 
