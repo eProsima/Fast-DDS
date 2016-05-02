@@ -244,7 +244,7 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
 	const char* const METHOD_NAME = "Receive";
 
    if (!IsInputChannelOpen(localLocator) ||
-       receiveBuffer.size() < mReceiveBufferSize)
+       receiveBuffer.max_size() < mReceiveBufferSize)
       return false;
 
    interprocess_semaphore receiveSemaphore(0);
