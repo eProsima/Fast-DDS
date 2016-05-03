@@ -238,21 +238,24 @@ bool UDPv6Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
 	const char* const METHOD_NAME = "Receive";
 
    if (!IsInputChannelOpen(localLocator) ||
-       receiveBuffer.size() < mDescriptor.receiveBufferSize)
+       receiveBuffer.capacity() < mDescriptor.receiveBufferSize)
       return false;
 
+   receiveBuffer.resize(mDescriptor.receiveBufferSize);
    interprocess_semaphore receiveSemaphore(0);
    bool success = false;
 
-   auto handler = [&success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
+   auto handler = [&receiveBuffer, &success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
    {
 	   if(error != boost::system::errc::success)
       {
 		   logInfo(RTPS_MSG_IN, "Error while listening to socket...",C_BLUE);
+         receiveBuffer.resize(0);
       }
       else 
       {
 		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
+         receiveBuffer.resize(bytes_transferred);
          success = true;
       }
       
