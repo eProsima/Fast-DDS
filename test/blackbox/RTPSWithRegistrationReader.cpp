@@ -17,6 +17,7 @@
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 
+#include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
@@ -56,8 +57,21 @@ void RTPSWithRegistrationReader::init(uint32_t port, uint16_t nmsgs)
 	//Create reader
 	ReaderAttributes rattr;
     eprosima::fastrtps::ReaderQos Rqos;
-	Locator_t loc(port);
-	rattr.endpoint.unicastLocatorList.push_back(loc);
+   
+   LocatorList_t locators;
+   IPFinder::getIP4Address(&locators);
+
+   for(auto& locator : locators)
+   {
+      locator.port = port;
+	   rattr.endpoint.unicastLocatorList.push_back(locator);
+   }
+
+   Locator_t multicastLocator;
+   multicastLocator.port = port;
+   multicastLocator.set_IP4_address(239,255,1,4);
+   rattr.endpoint.multicastLocatorList.push_back(multicastLocator);
+
     configReader(rattr, Rqos);
 	reader_ = RTPSDomain::createRTPSReader(participant_, rattr, history_, &listener_);
     ASSERT_NE(reader_, nullptr);
