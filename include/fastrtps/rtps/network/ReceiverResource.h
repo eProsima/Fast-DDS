@@ -22,6 +22,9 @@ public:
    // maps to the transport channel managed by this resource).
    bool SupportsLocator(Locator_t localLocator);
 
+   // Aborts a blocking receive (thread safe).
+   void Abort();
+
    // Resources can only be transfered through move semantics. Copy, assignment, and 
    // construction outside of the factory are forbidden.
    ReceiverResource(ReceiverResource&&);

@@ -207,10 +207,15 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 		RTPSDomain::removeRTPSWriter(*m_userWriterList.begin());
 
 	//Destruct ReceiverResources
-	m_receiverResourcelist.clear();
+   for (auto& block : m_receiverResourcelist)
+   {
+      block.resourceAlive = false;
+      block.Receiver.Abort();
+      block.m_thread->join();
+   }
 
+   m_receiverResourcelist.clear();
 	delete(this->mp_builtinProtocols);
-
 	delete(this->mp_ResourceSemaphore);
 	delete(this->mp_userParticipant);
 
@@ -553,7 +558,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 	std::vector<char> localBuffer;
    localBuffer.reserve(m_att.listenSocketBufferSize);
 	bool receiver_result;
-   for(;;){	
+   while(receiver->resourceAlive){	
 	//0 - Perform a blocking call to the receiver
 	receiver_result=receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going t//FIXME:Call to getGUID()o be stored
@@ -580,7 +585,6 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 	receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
 	//Call this function again
    }	
-
 }
 
 

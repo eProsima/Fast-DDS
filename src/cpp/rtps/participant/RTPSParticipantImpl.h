@@ -84,10 +84,11 @@ typedef struct ReceiverControlBlock{
 	MessageReceiver* mp_receiver;		//Associated Readers/Writers inside of MessageReceiver
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
-	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec)), mp_receiver(nullptr)
+   bool resourceAlive;
+	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec)), mp_receiver(nullptr), resourceAlive(true)
 	{
 	}
-	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver)
+	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver),resourceAlive(true)
 	{
 	   origen.m_thread = nullptr;
       origen.mp_receiver = nullptr;

@@ -22,7 +22,8 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, Locator_t loca
 
 bool ReceiverResource::Receive(std::vector<char>& data, Locator_t& originLocator)
 {
-   return ReceiveFromAssociatedChannel(data, originLocator);
+   if (ReceiveFromAssociatedChannel)
+      return ReceiveFromAssociatedChannel(data, originLocator);
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
@@ -34,7 +35,14 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 
 bool ReceiverResource::SupportsLocator(Locator_t localLocator)
 {
-   return LocatorMapsToManagedChannel(localLocator);
+   if (LocatorMapsToManagedChannel)
+      return LocatorMapsToManagedChannel(localLocator);
+}
+
+void ReceiverResource::Abort()
+{
+   if (Cleanup)
+      Cleanup();
 }
 
 ReceiverResource::~ReceiverResource()
