@@ -17,6 +17,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../common/all_common.h"
 #include "../../qos/ParameterList.h"
+#include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
@@ -66,13 +68,14 @@ public:
 	CDRMessage_t m_rec_msg;
 	//!PArameter list
 	ParameterList_t m_ParamList;
+	// Functions to associate/remove associatedendpoints
+	void associateEndpoint(Endpoint *to_add);
+	void removeEndpoint(Endpoint *to_remove);
 
-
+private:
 	std::vector<RTPSWriter *> AssociatedWriters;
 	std::vector<RTPSReader *> AssociatedReaders;
 	boost::mutex mtx;
-private:
-
 	//ReceiverControlBlock* receiver_resources;
 	CacheChange_t* mp_change;
 	//!Protocol version of the message

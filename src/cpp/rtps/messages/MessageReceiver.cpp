@@ -95,6 +95,52 @@ MessageReceiver::~MessageReceiver()
 	//logInfo(RTPS_MSG_IN,"",C_BLUE);
 }
 
+void MessageReceiver::associateEndpoint(Endpoint *to_add){
+	bool found = false;	
+	boost::lock_guard<boost::mutex> guard(mtx);
+	if(to_add->getAttributes()->endpointKind == WRITER){
+		for(auto it = AssociatedWriters.begin();it != AssociatedWriters.end(); ++it){
+			if( (*it) == (RTPSWriter*)to_add ){
+				found = true;
+				break;
+			}
+		}
+		if(!found)	AssociatedWriters.push_back((RTPSWriter*)to_add);	
+	}else{
+		for(auto it = AssociatedReaders.begin();it != AssociatedReaders.end(); ++it){
+			if( (*it) == (RTPSReader*)to_add ){
+				found = true;
+				break;
+			}
+		}
+		if(!found)	AssociatedReaders.push_back((RTPSReader*)to_add);
+	}
+	return;
+}
+void MessageReceiver::removeEndpoint(Endpoint *to_remove){
+
+	boost::lock_guard<boost::mutex> guard(mtx);
+	if(to_remove->getAttributes()->endpointKind == WRITER){
+		RTPSWriter* var = (RTPSWriter *)to_remove;
+		for(auto it=AssociatedWriters.begin(); it !=AssociatedWriters.end(); ++it){
+			if ((*it) == var){
+				AssociatedWriters.erase(it);
+				break;
+			}		
+		}
+	}else{
+		RTPSReader *var = (RTPSReader *)to_remove;
+		for(auto it=AssociatedReaders.begin(); it !=AssociatedReaders.end(); ++it){
+			if ((*it) == var){
+				AssociatedReaders.erase(it);
+				break;
+			}		
+		}
+	}
+	return;
+}
+
+
 void MessageReceiver::reset(){
 	destVersion = c_ProtocolVersion;
 	sourceVersion = c_ProtocolVersion;

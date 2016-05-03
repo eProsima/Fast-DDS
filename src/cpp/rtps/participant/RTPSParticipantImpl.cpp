@@ -602,37 +602,12 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it){
 			//Take mutex for the resource since we are going to interact with shared resources
 			//boost::lock_guard<boost::mutex> guard((*it).mtx);
-			boost::lock_guard<boost::mutex> guard((*it).mp_receiver->mtx);
 			if ((*it).Receiver.SupportsLocator(*lit)){
 				//Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
-				found = false;
-				if (endp->getAttributes()->endpointKind == WRITER){
-					for (std::vector<RTPSWriter*>::iterator wit = (*it).mp_receiver->AssociatedWriters.begin(); wit != (*it).mp_receiver->AssociatedWriters.end(); ++wit){
-						if ((*wit)->getGuid().entityId == endp->getGuid().entityId){
-							found = true;
-							break;
-						}
-					}
-					//After iterating among associated writers, add the new writer if it has not been found
-					if (!found){
-						(*it).mp_receiver->AssociatedWriters.push_back((RTPSWriter*)endp);
-						return true;
-					}
-				}
-				else if (endp->getAttributes()->endpointKind == READER){
-					for (std::vector<RTPSReader*>::iterator rit = (*it).mp_receiver->AssociatedReaders.begin(); rit != (*it).mp_receiver->AssociatedReaders.end(); ++rit){
-						if ((*rit)->getGuid().entityId == endp->getGuid().entityId){
-							found = true;
-							break;
-						}
-					}
-					if (!found){
-						(*it).mp_receiver->AssociatedReaders.push_back((RTPSReader*)endp);
-						return true;
-					}
-				}
+				(*it).mp_receiver->associateEndpoint(endp);	
 				// end association between reader/writer and the receive resources
 			}
+
 		}
 		//Finished iteratig through all ListenResources for a single Locator (from the parameter list).
 		//Since this function is called after checking with NetFactory we do not have to create any more resource. 
