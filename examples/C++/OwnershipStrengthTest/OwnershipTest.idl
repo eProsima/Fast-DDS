@@ -1,0 +1,6 @@
+struct ExampleMessage
+{
+	unsigned long index;
+   unsigned long ownershipStrength;
+	string message;
+};

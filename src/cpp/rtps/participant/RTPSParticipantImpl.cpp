@@ -117,12 +117,23 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		hasLocatorsDefined = false;
 		Locator_t loc2;
 
-		loc2.port=m_att.port.portBase+
+		LocatorList_t loclist;
+		IPFinder::getIP4Address(&loclist);
+		for(auto it=loclist.begin();it!=loclist.end();++it){
+			(*it).port=m_att.port.portBase+
 				m_att.port.domainIDGain*PParam.builtin.domainId+
 				m_att.port.offsetd3+
 				m_att.port.participantIDGain*m_att.participantID;
-		loc2.kind = LOCATOR_KIND_UDPv4;
-		m_att.defaultUnicastLocatorList.push_back(loc2);
+			(*it).kind = LOCATOR_KIND_UDPv4;
+
+			m_att.defaultUnicastLocatorList.push_back((*it));
+		}
+		// FIXME -- We have to  discuss the rules for deafult locator assignment for each transport
+		loc2.port= m_att.port.portBase+
+				m_att.port.domainIDGain*PParam.builtin.domainId+
+				m_att.port.offsetd3+
+				m_att.port.participantIDGain*m_att.participantID;
+		loc2.set_IP4_address(239,255,1,4);
 		/* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
 	}
 
