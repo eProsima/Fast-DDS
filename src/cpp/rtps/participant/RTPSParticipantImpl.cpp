@@ -818,12 +818,6 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
 
 }
 
-boost::recursive_mutex* RTPSParticipantImpl::getSendMutex()
-{
-	//Member does not exist any more
-	//return mp_send_thr->getMutex();
-}
-
 void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP)
 {
 	this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
