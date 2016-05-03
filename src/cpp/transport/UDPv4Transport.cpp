@@ -242,15 +242,17 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
 bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t& remoteLocator)
 {
 	const char* const METHOD_NAME = "Receive";
-
+	int length;
    if (!IsInputChannelOpen(localLocator) ||
        receiveBuffer.max_size() < mReceiveBufferSize)
       return false;
 
+   receiveBuffer.resize(mReceiveBufferSize);
+
    interprocess_semaphore receiveSemaphore(0);
    bool success = false;
 
-   auto handler = [&success, METHOD_NAME, &receiveSemaphore](const boost::system::error_code& error, std::size_t bytes_transferred)
+   auto handler = [&success, METHOD_NAME, &receiveSemaphore,&length](const boost::system::error_code& error, std::size_t bytes_transferred)
    {
 	   if(error != boost::system::errc::success)
       {
@@ -260,6 +262,7 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
       {
 		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
          success = true;
+	 length = bytes_transferred;
       }
       
       receiveSemaphore.post();
@@ -277,9 +280,10 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
    }
 
    receiveSemaphore.wait();
-   if (success)
+   if (success){
       remoteLocator = EndpointToLocator(senderEndpoint);
-
+      receiveBuffer.resize(length);
+   }
    return success;
 }
 

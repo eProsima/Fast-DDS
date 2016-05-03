@@ -551,9 +551,10 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator){
 	std::vector<char> localBuffer;
+	bool receiver_result;
    for(;;){	
 	//0 - Perform a blocking call to the receiver
-	receiver->Receiver.Receive(localBuffer, input_locator);
+	receiver_result=receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going t//FIXME:Call to getGUID()o be stored
 	CDRMessage::initCDRMsg(&(receiver->mp_receiver->m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
@@ -563,7 +564,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 		i++;
 	}
 	
-	receiver->mp_receiver->m_rec_msg.length = localBuffer.size();
+	receiver->mp_receiver->m_rec_msg.length = i; //FIXME Pss down proper message length 
 	//3 - Call MessageReceiver methods.
 		// The way this worked previously is the following: After receiving a message and putting it into the 
 		// message receiver, ListenResource.newCDRMessage(), which then calls the message receiver, was called.
