@@ -146,7 +146,6 @@ void StatefulWriter::unsent_changes_not_empty()
     const char* const METHOD_NAME = "unsent_changes_not_empty";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     std::vector<ReaderProxy*>::iterator rit;
-    boost::lock_guard<boost::recursive_mutex> guard2(*this->getRTPSParticipant()->getSendMutex());
     for(rit=matched_readers.begin();rit!=matched_readers.end();++rit)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
