@@ -551,6 +551,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator){
 	std::vector<char> localBuffer;
+   localBuffer.reserve(m_att.listenSocketBufferSize);
 	bool receiver_result;
    for(;;){	
 	//0 - Perform a blocking call to the receiver
