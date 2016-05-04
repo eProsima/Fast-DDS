@@ -496,47 +496,6 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	return valid;
 }
 
-/* Commented for now 
-//bool RTPSParticipantImpl::assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed)
-//{
-		//Required for the built-in protocols
-//	bool valid = true;
-//	LocatorList_t finalList;
-//	bool added = false;
-//	for(auto lit = list.begin();lit != list.end();++lit)
-//	{
-//		added = false;
-//		for(std::vector<ListenResource*>::iterator it = m_listenResourceList.begin();it!=m_listenResourceList.end();++it)
-//		{
-//			if((*it)->isListeningTo(*lit))
-//			{
-//				LocatorList_t locList = (*it)->getListenLocators();
-//				finalList.push_back(locList);
-//				added = true;
-//			}
-//		}
-//		if(added)
-//			continue;
-//		ListenResource* LR = new ListenResource(this,++m_threadID,false);
-//		if(LR->init_thread(this,*lit,m_att.listenSocketBufferSize,isMulti,isFixed))
-//		{
-//			LocatorList_t locList = LR->getListenLocators();
-//			finalList.push_back(locList);
-//			m_listenResourceList.push_back(LR);
-//			added = true;
-//		}
-//		else
-//		{
-//			delete(LR);
-//			valid &= false;
-//		}
-//	}
-//	if(valid && added)
-//		list = finalList;
-//	return valid;
-//}
-*/
-
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn){
 	/*	This function...
 		- Asks the network factory for new resources
@@ -685,6 +644,9 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
+	for(auto it=m_receiverResourcelist.begin();it!=m_receiverResourcelist.end();++it){
+		(*it).mp_receiver->removeEndpoint(p_endpoint);
+	}
 	bool found = false;
 	{
 
@@ -725,30 +687,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
 		//BUILTINPROTOCOLS
 		//Remove it from ReceiverResourceList
-		for(auto thit=m_receiverResourcelist.begin();
-				thit!=m_receiverResourcelist.end();thit++)
-		{
-			//FIXME:Message Receiver Actually does not have a method to do this
-			//(*thit).mp_receiver->removeAssociatedEndpoint(p_endpoint);
-		}
+		
 		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 		bool continue_removing = true;
-		//FIXME: Come back and implement when MessageReceiver can act on its own AssociatedEnpoints
-		//while(continue_removing)
-		//{
-		//	continue_removing = false;
-		//	for(thit=m_listenResourceList.begin();
-		//			thit!=m_listenResourceList.end();thit++)
-		//	{
-		//		if(!(*thit)->hasAssociatedEndpoints() && ! (*thit)->m_isDefaultListenResource)
-		//		{
-		//			delete(*thit);
-		//			m_listenResourceList.erase(thit);
-		//			continue_removing = true;
-		//			break;
-		//		}
-		//	}
-		//}
+		
 	}
 	//	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 	delete(p_endpoint);
