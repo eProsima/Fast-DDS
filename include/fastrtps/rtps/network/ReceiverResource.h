@@ -20,7 +20,7 @@ public:
 
    // Reports whether this resource supports the given local locator (i.e., said locator
    // maps to the transport channel managed by this resource).
-   bool SupportsLocator(Locator_t localLocator);
+   bool SupportsLocator(const Locator_t& localLocator);
 
    // Aborts a blocking receive (thread safe).
    void Abort();
@@ -35,10 +35,10 @@ private:
    ReceiverResource(const ReceiverResource&)            = delete;
    ReceiverResource& operator=(const ReceiverResource&) = delete;
 
-   ReceiverResource(TransportInterface&, Locator_t);
+   ReceiverResource(TransportInterface&, const Locator_t&);
    std::function<void()> Cleanup;
    std::function<bool(std::vector<char>&, Locator_t&)> ReceiveFromAssociatedChannel;
-   std::function<bool(Locator_t)> LocatorMapsToManagedChannel;
+   std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
 };
 
 } // namespace rtps

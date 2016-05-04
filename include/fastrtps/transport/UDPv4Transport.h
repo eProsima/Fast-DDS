@@ -45,30 +45,30 @@ public:
    ~UDPv4Transport();
 
    // Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(Locator_t)         const;
-   virtual bool IsOutputChannelOpen(Locator_t)        const;
+   virtual bool IsInputChannelOpen(const Locator_t&)         const;
+   virtual bool IsOutputChannelOpen(const Locator_t&)        const;
 
    // Checks for UDPv4 kind.
-   virtual bool IsLocatorSupported(Locator_t)         const;
+   virtual bool IsLocatorSupported(const Locator_t&)         const;
 
    // Reports whether Locators correspond to the same port.
-   virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
-   virtual Locator_t RemoteToMainLocal(Locator_t remote) const;
+   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
+   virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const;
 
    // Starts listening on the specified port and joins the specified multicast group.
-   virtual bool OpenInputChannel(Locator_t multicastFilter);
+   virtual bool OpenInputChannel(const Locator_t& multicastFilter);
 
    // Opens a socket per interface on the given port.
-   virtual bool OpenOutputChannel(Locator_t);
+   virtual bool OpenOutputChannel(const Locator_t&);
 
    // Removes the listening socket for the specified port.
-   virtual bool CloseInputChannel(Locator_t);
+   virtual bool CloseInputChannel(const Locator_t&);
 
    // Removes all outbound sockets on the given port.
-   virtual bool CloseOutputChannel(Locator_t);
+   virtual bool CloseOutputChannel(const Locator_t&);
 
-   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
-   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t & remoteLocator);
+   virtual bool Send(const std::vector<char>& sendBuffer, const Locator_t& localLocator, const Locator_t& remoteLocator);
+   virtual bool Receive(std::vector<char>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator);
 
 protected:
    // Constructor with no descriptor is necessary for implementations derived from this class.
@@ -91,14 +91,8 @@ protected:
    boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port, boost::asio::ip::address_v4 multicastFilterAddress);
 
    bool SendThroughSocket(const std::vector<char>& sendBuffer,
-                          Locator_t remoteLocator,
+                          const Locator_t& remoteLocator,
                           boost::asio::ip::udp::socket& socket);
-
-   void StartAsyncListen(std::vector<char>& receiveBuffer,
-                         boost::asio::ip::udp::socket& socket, 
-                         Locator_t remoteLocator, 
-                         boost::interprocess::interprocess_semaphore& receiveSemaphore);
-
 };
 
 } // namespace rtps

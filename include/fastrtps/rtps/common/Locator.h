@@ -42,7 +42,7 @@ public:
 
 	//!Default constructor
 	Locator_t():kind(1),port(0)
-    {
+   {
 		LOCATOR_ADDRESS_INVALID(address);
 	}
 
@@ -97,7 +97,7 @@ public:
 		address[15] = (octet)d;
 		return true;
 	}
-	std::string to_IP4_string(){
+	std::string to_IP4_string() const {
 		std::stringstream ss;
 		ss << (int)address[12] << "." << (int)address[13] << "." << (int)address[14]<< "." << (int)address[15];
 		return ss.str();
@@ -139,7 +139,7 @@ public:
 		return true;
 	}
 
-	std::string to_IP6_string(){
+	std::string to_IP6_string() const{
 		std::stringstream ss;
 		ss << std::hex;
       for (int i = 0; i != 14; i+= 2) 

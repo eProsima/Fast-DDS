@@ -19,9 +19,9 @@ public:
       mRegisteredTransports.emplace_back(new TransportType(descriptor));
    }
 
-   std::vector<SenderResource>   BuildSenderResources                 (Locator_t local);
-   std::vector<SenderResource>   BuildSenderResourcesForRemoteLocator (Locator_t remote);
-   std::vector<ReceiverResource> BuildReceiverResources               (Locator_t local);
+   std::vector<SenderResource>   BuildSenderResources                 (const Locator_t& local);
+   std::vector<SenderResource>   BuildSenderResourcesForRemoteLocator (const Locator_t& remote);
+   std::vector<ReceiverResource> BuildReceiverResources               (const Locator_t& local);
 
 private:
    std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;

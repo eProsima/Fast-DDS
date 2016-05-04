@@ -15,13 +15,13 @@ class SenderResource
 
 public:
    // Sends to a destination locator, through the channel managed by this resource.
-   bool Send(const std::vector<char>& data, Locator_t destinationLocator);
+   bool Send(const std::vector<char>& data, const Locator_t& destinationLocator);
 
    // Reports whether this resource supports the given local locator (i.e., said locator
    // maps to the transport channel managed by this resource).
-   bool SupportsLocator(Locator_t local);
+   bool SupportsLocator(const Locator_t& local);
    // Reports whether this resource can write to a remote locator.
-   bool CanSendToRemoteLocator(Locator_t remote);
+   bool CanSendToRemoteLocator(const Locator_t& remote);
 
    // Resources can only be transfered through move semantics. Copy, assignment, and 
    // construction outside of the factory are forbidden.
@@ -33,11 +33,11 @@ private:
    SenderResource(const SenderResource&)            = delete;
    SenderResource& operator=(const SenderResource&) = delete;
 
-   SenderResource(TransportInterface&, Locator_t);
+   SenderResource(TransportInterface&, const Locator_t&);
    std::function<void()> Cleanup;
-   std::function<bool(const std::vector<char>&, Locator_t)> SendThroughAssociatedChannel;
-   std::function<bool(Locator_t)> LocatorMapsToManagedChannel;
-   std::function<bool(Locator_t)> ManagedChannelMapsToRemote;
+   std::function<bool(const std::vector<char>&, const Locator_t&)> SendThroughAssociatedChannel;
+   std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
+   std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
 };
 
 } // namespace rtps

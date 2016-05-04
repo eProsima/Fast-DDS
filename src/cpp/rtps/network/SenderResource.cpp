@@ -5,22 +5,22 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t locator)
+SenderResource::SenderResource(TransportInterface& transport, const Locator_t& locator)
 {
    // Internal channel is opened and assigned to this resource.
    transport.OpenOutputChannel(locator);
 
    // Implementation functions are bound to the right transport parameters
    Cleanup = [&transport,locator](){ transport.CloseOutputChannel(locator); };
-   SendThroughAssociatedChannel = [&transport, locator](const vector<char>& data, Locator_t destination)-> bool
+   SendThroughAssociatedChannel = [&transport, locator](const vector<char>& data, const Locator_t& destination)-> bool
                                   { return transport.Send(data, locator, destination); };
-   LocatorMapsToManagedChannel = [&transport, locator](Locator_t locatorToCheck) -> bool
+   LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
-   ManagedChannelMapsToRemote = [&transport, locator](Locator_t locatorToCheck) -> bool
+   ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
 }
 
-bool SenderResource::Send(const std::vector<char>& data, Locator_t destinationLocator)
+bool SenderResource::Send(const std::vector<char>& data, const Locator_t& destinationLocator)
 {
    return SendThroughAssociatedChannel(data, destinationLocator);
 }
@@ -33,12 +33,12 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
    ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
 }
 
-bool SenderResource::SupportsLocator(Locator_t local)
+bool SenderResource::SupportsLocator(const Locator_t& local)
 {
    return LocatorMapsToManagedChannel(local);
 }
 
-bool SenderResource::CanSendToRemoteLocator(Locator_t remote)
+bool SenderResource::CanSendToRemoteLocator(const Locator_t& remote)
 {
    return ManagedChannelMapsToRemote(remote);
 }

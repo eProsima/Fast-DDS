@@ -33,19 +33,19 @@ UDPv6Transport::~UDPv6Transport()
    ioServiceThread->join();
 }
 
-bool UDPv6Transport::IsInputChannelOpen(Locator_t locator) const
+bool UDPv6Transport::IsInputChannelOpen(const Locator_t& locator) const
 {
    boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
    return IsLocatorSupported(locator) && (mInputSockets.find(locator.port) != mInputSockets.end());
 }
 
-bool UDPv6Transport::IsOutputChannelOpen(Locator_t locator) const
+bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
    return IsLocatorSupported(locator) && (mOutputSockets.find(locator.port) != mOutputSockets.end());
 }
 
-bool UDPv6Transport::OpenOutputChannel(Locator_t locator)
+bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator)
 {
    if (IsOutputChannelOpen(locator) ||
        !IsLocatorSupported(locator))
@@ -54,12 +54,12 @@ bool UDPv6Transport::OpenOutputChannel(Locator_t locator)
    return OpenAndBindOutputSockets(locator.port);
 }
 
-static bool IsMulticastAddress(Locator_t locator)
+static bool IsMulticastAddress(const Locator_t& locator)
 {
    return locator.address[0] == 0xFF;
 }
 
-bool UDPv6Transport::OpenInputChannel(Locator_t locator)
+bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
 {
    if (IsInputChannelOpen(locator) ||
        !IsMulticastAddress(locator) ||
@@ -70,7 +70,7 @@ bool UDPv6Transport::OpenInputChannel(Locator_t locator)
    return OpenAndBindInputSockets(locator.port, multicastFilterIP);
 }
 
-bool UDPv6Transport::CloseOutputChannel(Locator_t locator)
+bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
 {
    if (!IsOutputChannelOpen(locator))
       return false;   
@@ -88,7 +88,7 @@ bool UDPv6Transport::CloseOutputChannel(Locator_t locator)
    return true;
 }
 
-bool UDPv6Transport::CloseInputChannel(Locator_t locator)
+bool UDPv6Transport::CloseInputChannel(const Locator_t& locator)
 {
    if (!IsInputChannelOpen(locator))
       return false;   
@@ -186,27 +186,28 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindMulticastInputSocket(uin
    return socket;
 }
 
-bool UDPv6Transport::DoLocatorsMatch(Locator_t left, Locator_t right) const
+bool UDPv6Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
    return left.port == right.port;
 }
 
-bool UDPv6Transport::IsLocatorSupported(Locator_t locator) const
+bool UDPv6Transport::IsLocatorSupported(const Locator_t& locator) const
 {
    return locator.kind == LOCATOR_KIND_UDPv6;
 }
 
-Locator_t UDPv6Transport::RemoteToMainLocal(Locator_t remote) const
+Locator_t UDPv6Transport::RemoteToMainLocal(const Locator_t& remote) const
 {
    if (!IsLocatorSupported(remote))
       return false;
 
    // All remotes are equally mapped to from the local [0:0:0:0:0:0:0:0]:port (main output channel).
-   memset(remote.address, 0x00, sizeof(remote.address));
+   Locator_t mainLocal(remote);
+   memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
    return remote;
 }
 
-bool UDPv6Transport::Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
+bool UDPv6Transport::Send(const std::vector<char>& sendBuffer, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
        sendBuffer.size() > mDescriptor.sendBufferSize)
@@ -233,7 +234,7 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
    return locator;
 }
 
-bool UDPv6Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLocator, Locator_t& remoteLocator)
+bool UDPv6Transport::Receive(std::vector<char>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator)
 {
 	const char* const METHOD_NAME = "Receive";
 
@@ -281,7 +282,7 @@ bool UDPv6Transport::Receive(std::vector<char>& receiveBuffer, Locator_t localLo
 }
 
 bool UDPv6Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
-                                       Locator_t remoteLocator,
+                                       const Locator_t& remoteLocator,
                                        boost::asio::ip::udp::socket& socket)
 {
 	const char* const METHOD_NAME = "SendThroughSocket";

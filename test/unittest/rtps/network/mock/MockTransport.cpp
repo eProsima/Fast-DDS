@@ -33,45 +33,45 @@ MockTransport::~MockTransport()
                                 mockTransportInstances.end());
 }
 
-bool MockTransport::IsOutputChannelOpen(Locator_t locator) const
+bool MockTransport::IsOutputChannelOpen(const Locator_t& locator) const
 {
   return (find(mockOpenOutputChannels.begin(), mockOpenOutputChannels.end(), locator.port) != mockOpenOutputChannels.end());
 }
 
-bool MockTransport::IsInputChannelOpen(Locator_t locator) const
+bool MockTransport::IsInputChannelOpen(const Locator_t& locator) const
 {
   return (find(mockOpenInputChannels.begin(), mockOpenInputChannels.end(), locator.port) != mockOpenInputChannels.end());
 }
 
-bool MockTransport::IsLocatorSupported(Locator_t locator) const
+bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
 {
    return locator.kind == mockSupportedKind;
 }
 
-bool MockTransport::OpenOutputChannel(Locator_t locator)
+bool MockTransport::OpenOutputChannel(const Locator_t& locator)
 {  
    mockOpenOutputChannels.push_back(locator.port);
    return true;
 }
 
-bool MockTransport::OpenInputChannel(Locator_t locator)
+bool MockTransport::OpenInputChannel(const Locator_t& locator)
 {  
    mockOpenInputChannels.push_back(locator.port);
    return true;
 }
 
-bool MockTransport::DoLocatorsMatch(Locator_t left, Locator_t right) const
+bool MockTransport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
    return left.port == right.port;
 }
 
-bool MockTransport::Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress)
+bool MockTransport::Send(const std::vector<char>& sendBuffer, const Locator_t& localChannel, const Locator_t& remoteAddress)
 {
    mockMessagesSent.push_back( { remoteAddress, localChannel, sendBuffer } );
    return true;
 }
 
-bool MockTransport::Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t& remoteAddress)
+bool MockTransport::Receive(std::vector<char>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress)
 {
    (void)localChannel;
    receiveBuffer = mockMessagesToReceive.back().data;
@@ -80,13 +80,14 @@ bool MockTransport::Receive(std::vector<char>& receiveBuffer, Locator_t localCha
    return true;
 }
 
-Locator_t MockTransport::RemoteToMainLocal(Locator_t remote) const
+Locator_t MockTransport::RemoteToMainLocal(const Locator_t& remote) const
 {
-   memset(remote.address, 0x00, sizeof(remote.address));
-   return remote;
+   Locator_t mainLocal(remote);
+   memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
+   return mainLocal;
 }
 
-bool MockTransport::CloseOutputChannel(Locator_t locator)
+bool MockTransport::CloseOutputChannel(const Locator_t& locator)
 {
    mockOpenOutputChannels.erase(std::remove(mockOpenOutputChannels.begin(),
                                       mockOpenOutputChannels.end(),
@@ -95,7 +96,7 @@ bool MockTransport::CloseOutputChannel(Locator_t locator)
    return true;
 }
 
-bool MockTransport::CloseInputChannel(Locator_t locator)
+bool MockTransport::CloseInputChannel(const Locator_t& locator)
 {
    mockOpenInputChannels.erase(std::remove(mockOpenInputChannels.begin(),
                                       mockOpenInputChannels.end(),

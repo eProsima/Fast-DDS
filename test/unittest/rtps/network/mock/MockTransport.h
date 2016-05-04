@@ -23,22 +23,22 @@ class MockTransport: public TransportInterface
   ~MockTransport();
 
    //API implementation
-   virtual bool IsOutputChannelOpen(Locator_t) const;
-   virtual bool IsInputChannelOpen(Locator_t)  const;
+   virtual bool IsOutputChannelOpen(const Locator_t&) const;
+   virtual bool IsInputChannelOpen(const Locator_t&)  const;
 
-   virtual bool OpenOutputChannel(Locator_t); 
-   virtual bool OpenInputChannel(Locator_t); 
+   virtual bool OpenOutputChannel(const Locator_t&); 
+   virtual bool OpenInputChannel(const Locator_t&); 
 
-   virtual bool CloseOutputChannel(Locator_t);
-   virtual bool CloseInputChannel(Locator_t);
+   virtual bool CloseOutputChannel(const Locator_t&);
+   virtual bool CloseInputChannel(const Locator_t&);
 
-   virtual Locator_t RemoteToMainLocal(Locator_t) const;
+   virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
 
-   virtual bool IsLocatorSupported(Locator_t)  const;
-   virtual bool DoLocatorsMatch(Locator_t, Locator_t) const;
+   virtual bool IsLocatorSupported(const Locator_t&)  const;
+   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
 
-   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localChannel, Locator_t remoteAddress);
-   virtual bool Receive(std::vector<char>& receiveBuffer, Locator_t localChannel, Locator_t& remoteAddress);
+   virtual bool Send(const std::vector<char>& sendBuffer, const Locator_t& localChannel, const Locator_t& remoteAddress);
+   virtual bool Receive(std::vector<char>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress);
 
    //Helpers and message record
    typedef struct

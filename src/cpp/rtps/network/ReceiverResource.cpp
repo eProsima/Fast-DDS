@@ -7,7 +7,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport, Locator_t locator)
+ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator)
 {
    // Internal channel is opened and assigned to this resource.
    transport.OpenInputChannel(locator);
@@ -16,7 +16,7 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, Locator_t loca
    Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };
    ReceiveFromAssociatedChannel = [&transport, locator](vector<char>& data, Locator_t& origin)-> bool
                                   { return transport.Receive(data, locator, origin); };
-   LocatorMapsToManagedChannel = [&transport, locator](Locator_t locatorToCheck) -> bool
+   LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
 }
 
@@ -33,7 +33,7 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
 }
 
-bool ReceiverResource::SupportsLocator(Locator_t localLocator)
+bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
 {
    if (LocatorMapsToManagedChannel)
       return LocatorMapsToManagedChannel(localLocator);
