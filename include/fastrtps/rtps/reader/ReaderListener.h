@@ -55,10 +55,11 @@ class RTPS_DllAPI InfectableReaderListener: public ReaderListener
 {
 public:
 	InfectableReaderListener(){attached_listener(nullptr)};
-	virtual ~InfectableReaderListener(){};
+	~InfectableReaderListener(){};
 	
-	bool attachListener(ReaderListener *secondary_listener);
-        bool detachListener();	
+	void attachListener(ReaderListener *secondary_listener);
+        void detachListener();	
+	bool hasReaderAttached();
 	
 private:
 	ReaderListener * attached_listener;

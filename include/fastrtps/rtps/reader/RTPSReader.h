@@ -118,6 +118,13 @@ public:
 	RTPS_DllAPI void releaseCache(CacheChange_t* change);
 
 	/**
+	 * Switch the ReaderListener kind for the Reader.
+	 * It is conscious of InfectableReaderListener and attaches
+	 * the new listener to it in case the Reader has one
+	 * */
+	RTPS_DllAPI bool setListener(ReaderListener* target);	
+
+	/**
 	 * Read the next unread CacheChange_t from the history
 	 * @param change POinter to pointer of CacheChange_t
 	 * @param wp Pointer to pointer to the WriterProxy
@@ -132,7 +139,6 @@ public:
 	 * @return True if read.
 	 */
 	RTPS_DllAPI virtual bool nextUntakenCache(CacheChange_t** change, WriterProxy** wp) = 0;
-	
 	/**
 	* @return True if the reader expects Inline QOS.
 	*/
