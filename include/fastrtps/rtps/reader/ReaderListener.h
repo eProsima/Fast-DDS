@@ -51,6 +51,21 @@ public:
 	virtual void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/){};
 };
 
+class RTPS_DllAPI InfectableReaderListener: public ReaderListener
+{
+public:
+	InfectableReaderListener(){attached_listener(nullptr)};
+	virtual ~InfectableReaderListener(){};
+	
+	bool attachListener(ReaderListener *secondary_listener);
+        bool detachListener();	
+	
+private:
+	ReaderListener * attached_listener;
+
+}
+
+//Namespace enders
 }
 }
 }
