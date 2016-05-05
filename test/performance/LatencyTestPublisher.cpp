@@ -87,47 +87,47 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 
 		switch (*it + 4) {
 		case 16: 
-			output_file_16 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_16 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_16 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 32:
-			output_file_32 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_32 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_32 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 64:
-			output_file_64 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_64 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_64 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 128:
-			output_file_128 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_128 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_128 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 256:
-			output_file_256 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_256 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_256 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 512:
-			output_file_512 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_512 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_512 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 1024:
-			output_file_1024 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_1024 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_1024 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 2048:
-			output_file_2048 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_2048 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_2048 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 4096:
-			output_file_4096 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_4096 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_4096 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 8192:
-			output_file_8192 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_8192 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_8192 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		case 16384:
-			output_file_16384 << "\"Minimum of " << n_samples << " samples (us)\"," << std::endl;
+			output_file_16384 << "\"Minimum of " << n_samples << " samples (us)\",";
 			output_file_16384 << "\"Average of " << n_samples << " samples (us)\"" << std::endl;
 			break;
 		default:
