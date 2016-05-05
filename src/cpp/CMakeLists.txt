@@ -31,6 +31,7 @@ set_sources(
     rtps/history/ReaderHistory.cpp 
     rtps/reader/timedevent/HeartbeatResponseDelay.cpp 
     rtps/reader/timedevent/WriterProxyLiveliness.cpp 
+    rtps/reader/ReaderListener.cpp
     rtps/reader/WriterProxy.cpp 
     rtps/reader/StatefulReader.cpp 
     rtps/reader/StatelessReader.cpp 
