@@ -35,7 +35,8 @@ HELLOWORLDTEST_TARGET= $(BASEDIR)/bin/$(EPROSIMA_TARGET)/HelloWorldTest
 
 HELLOWORLDTEST_INCLUDE_DIRS= $(INCLUDE_DIRS) -I$(BASEDIR)/../../../include \
                          						-I$(BASEDIR)/../../../thirdparty/eprosima-common-code \
-                         						-I$(BASEDIR)/../../../thirdparty/fastcdr/include
+                         						-I$(BASEDIR)/../../../thirdparty/fastcdr/include \
+                         						-I$(BASEDIR)/../../../build/Debug/include
 
 HELLOWORLDTEST_LIBS_RELEASE= $(LIBS) -L$(BASEDIR)/../../../lib/$(EPROSIMA_TARGET) -lfastrtps -lboost_system -lboost_thread -lboost_date_time \
 							 -L$(BASEDIR)/../../../thirdparty/fastcdr/lib/$(EPROSIMA_TARGET) -lfastcdr
