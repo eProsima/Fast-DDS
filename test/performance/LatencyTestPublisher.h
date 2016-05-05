@@ -106,7 +106,8 @@ public:
 	LatencyDataType latency_t;
 		TestCommandDataType command_t;
 		
-	std::stringstream output_file;
+	std::stringstream output_file_minimum;
+	std::stringstream output_file_average;
 	std::stringstream output_file_16;
 	std::stringstream output_file_32;
 	std::stringstream output_file_64;
