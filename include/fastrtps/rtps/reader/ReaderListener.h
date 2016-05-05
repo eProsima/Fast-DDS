@@ -54,7 +54,7 @@ public:
 class RTPS_DllAPI InfectableReaderListener: public ReaderListener
 {
 public:
-	InfectableReaderListener(){attached_listener(nullptr)};
+	InfectableReaderListener(){};
 	~InfectableReaderListener(){};
 	
 	void attachListener(ReaderListener *secondary_listener);
@@ -64,7 +64,7 @@ public:
 private:
 	ReaderListener * attached_listener;
 
-}
+};
 
 //Namespace enders
 }

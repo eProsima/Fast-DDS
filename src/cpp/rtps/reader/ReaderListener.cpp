@@ -4,7 +4,7 @@ Implementation of functions for InfectableReaderListener
 
 *********/
 
-#include <fastrtps/include/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/reader/ReaderListener.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -20,8 +20,10 @@ void InfectableReaderListener::detachListener(){
 }
 
 bool InfectableReaderListener::hasReaderAttached(){
-	if(attached_listener != nullprt)
+	if(attached_listener != nullptr)
 		return true;
 	return false;
 }
 
+//Namespace ends
+}}}

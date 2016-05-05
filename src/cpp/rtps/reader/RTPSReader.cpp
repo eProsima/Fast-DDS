@@ -17,6 +17,10 @@
 
 #include <fastrtps/utils/RTPSLog.h>
 
+#include <fastrtps/rtps/reader/ReaderListener.h>
+
+#include <typeinfo>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -66,21 +70,22 @@ void RTPSReader::releaseCache(CacheChange_t* change)
 		return mp_history->release_Cache(change);
 }
 
-void RTPSReader::setListener(ReaderListener *target){
+bool RTPSReader::setListener(ReaderListener *target){
 	//Check if the Reader has an infectable ReaderListener
 	//Add target as slave in case it has
 	//Free the old one and replace it with target if not
-	try{
-		dynamic_cast<InfectableReaderListener*>target;
-	}catch(std::bad_cast& bc){
-		//Host is not Infectable, replace and move on
+	InfectableReaderListener* readerlistener_cast= nullptr;
+	readerlistener_cast= dynamic_cast<InfectableReaderListener*>(target);
+	//Host is not Infectable, replace and move on
+	if(readerlistener_cast == nullptr){
 		delete mp_listener;
 		mp_listener = target;	
-		return;
+		return true;
+	}else{
+		//If we arrive here it means mp_listener is Infectable
+		readerlistener_cast->attachListener(target);
 	}
-	//If we arrive here it means mp_listener is Infectable
-	mp_listener->attachListener(target);
-	return;
+	return false;
 }
 
 
