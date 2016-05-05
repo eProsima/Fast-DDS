@@ -1,4 +1,4 @@
-if(NOT (MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
+if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 	message(STATUS "Building DeadlineQoS example...")
 	file(GLOB DLQOS_SOURCES "*.cxx")
 	
