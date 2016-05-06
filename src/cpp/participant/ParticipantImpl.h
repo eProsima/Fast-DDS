@@ -17,6 +17,7 @@
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -110,6 +111,8 @@ public:
 	* @return Participant attributes
 	*/
 	inline const ParticipantAttributes& getAttributes() const {return m_att;};
+
+	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
 	/**
 	* This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one

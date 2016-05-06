@@ -18,6 +18,9 @@
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 
+#include "../rtps/reader/StatefulReader.h"
+#include <utility>
+
 using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
@@ -65,7 +68,8 @@ public:
 	*/
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
-
+	
+	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 };
 
 }

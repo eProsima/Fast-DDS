@@ -180,6 +180,12 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	return pub;
 }
 
+
+std::pair<StatefulReader*,StatefulReader*> ParticipantImpl::getEDPReaders(){
+
+	return mp_rtpsParticipant->getEDPReaders();
+}
+
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {

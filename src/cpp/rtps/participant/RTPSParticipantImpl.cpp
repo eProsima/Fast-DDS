@@ -24,6 +24,7 @@
 
 #include <fastrtps/rtps/reader/StatelessReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 
@@ -607,24 +608,22 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
 	return *this->mp_event_thr;
 }
 
-StatefulReader* RTPSParticipantImpl::getEDPPubReader(){
-	EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
-	if(EDPPointer != nullptr)	//Means the EDP attached is actually non static and therefore it has Readers
 
-		return EDPPointer->mp_PubReader.first;
-	return nullptr;
+
+std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders(){
+	std::pair<StatefulReader*,StatefulReader*> buffer;
+	EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
+	if(EDPPointer != nullptr){	
+		//Means the EDP attached is actually non static and therefore it has Readers
+		buffer.first=EDPPointer->mp_SubReader.first;
+		buffer.second=EDPPointer->mp_PubReader.first;
+	}else{
+		buffer.first=nullptr;
+		buffer.second=nullptr;
+	}
+	return buffer;
 
 }
-
-StatefulReader* RTPSParticipantImpl::getEDPSubReader(){
-	EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
-	if(EDPPointer != nullptr)	//Means the EDP attached is actually non static and therefore it has Readers
-		return EDPPointer->mp_SubReader.first;
-	return nullptr;
-
-
-}
-
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, const Locator_t& loc)
 {

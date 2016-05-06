@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -112,6 +113,7 @@ public:
 	 */
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
 
+	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 private:
 	//!Pointer to the implementation.
 	RTPSParticipantImpl* mp_impl;

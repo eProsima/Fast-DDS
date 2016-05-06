@@ -133,9 +133,7 @@ public:
     inline RTPSParticipantListener* getListener(){return mp_participantListener;}
 	
     //!Get pointers to the StatefulReaders that make the EDP
-    StatefulReader* getEDPPubReader();
-    StatefulReader* getEDPSubReader();
-
+std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 	/**
 	* Get the participant
 	* @return participant

@@ -43,6 +43,11 @@ bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t e
 {
 	return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
 }
+std::pair<StatefulReader*,StatefulReader*> Participant::getEDPReaders(){
+	std::pair<StatefulReader *,StatefulReader*> buffer;
+
+	return mp_impl->getEDPReaders();
+}
 
 
 } /* namespace pubsub */
