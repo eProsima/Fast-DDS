@@ -66,6 +66,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 	n_samples = n_sam;
 	n_subscribers = n_sub;
 	n_export_csv = export_csv;
+    reliable_ = reliable;
 
 	//////////////////////////////
 	/*
@@ -77,49 +78,70 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 	strftime(time_buffer, 7, "%H%M%S", now);
 	*/
 	for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it) {
-		output_file << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
+		output_file_minimum << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
+		output_file_average << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
 		if (it != data_size_pub.end() - 1)
-			output_file << ",";
+        {
+			output_file_minimum << ",";
+			output_file_average << ",";
+        }
 
-		switch (*it + 4) {
+        std::string str_reliable = "besteffort";
+        if(reliable_)
+            str_reliable = "reliable";
+
+		switch (*it + 4)
+        {
 		case 16: 
-			output_file_16 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_16 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_16 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 32:
-			output_file_32 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_32 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_32 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 64:
-			output_file_64 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_64 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_64 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 128:
-			output_file_128 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_128 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_128 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 256:
-			output_file_256 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_256 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_256 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 512:
-			output_file_512 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_512 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_512 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 1024:
-			output_file_1024 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_1024 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_1024 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 2048:
-			output_file_2048 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_2048 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_2048 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 4096:
-			output_file_4096 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_4096 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_4096 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 8192:
-			output_file_8192 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_8192 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_8192 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		case 16384:
-			output_file_16384 << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"" << std::endl;
+			output_file_16384 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
+			output_file_16384 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
 			break;
 		default:
 			break;
 		}
 	}
-	output_file << std::endl;
+	output_file_minimum << std::endl;
+	output_file_average << std::endl;
 	//////////////////////////////
 
 	ParticipantAttributes PParam;
@@ -400,49 +422,60 @@ void LatencyTestPublisher::run()
 			break;
 		eClock::my_sleep(100);
 		if (ndata != data_size_pub.end() - 1)
-			output_file << ",";
+        {
+			output_file_minimum << ",";
+			output_file_average << ",";
+        }
 	}
 	cout << "REMOVING PUBLISHER"<<endl;
 	Domain::removePublisher(this->mp_commandpub);
 	cout << "REMOVING SUBSCRIBER"<<endl;
 	Domain::removeSubscriber(mp_commandsub);
 
-	if (n_export_csv) {
+    std::string str_reliable = "besteffort";
+    if(reliable_)
+        str_reliable = "reliable";
+
+	if (n_export_csv)
+    {
 		std::ofstream outFile;
-		outFile.open("perf_LatencyTest.csv");
-		outFile << output_file.str();
+		outFile.open("perf_LatencyTest_minimum_" + str_reliable + ".csv");
+		outFile << output_file_minimum.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_16.csv");
+		outFile.open("perf_LatencyTest_average_" + str_reliable + ".csv");
+		outFile << output_file_average.str();
+		outFile.close();
+		outFile.open("perf_LatencyTest_16_" + str_reliable + ".csv");
 		outFile << output_file_16.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_32.csv");
+		outFile.open("perf_LatencyTest_32_" + str_reliable + ".csv");
 		outFile << output_file_32.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_64.csv");
+		outFile.open("perf_LatencyTest_64_" + str_reliable + ".csv");
 		outFile << output_file_64.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_128.csv");
+		outFile.open("perf_LatencyTest_128_" + str_reliable + ".csv");
 		outFile << output_file_128.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_256.csv");
+		outFile.open("perf_LatencyTest_256_" + str_reliable + ".csv");
 		outFile << output_file_256.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_512.csv");
+		outFile.open("perf_LatencyTest_512_" + str_reliable + ".csv");
 		outFile << output_file_512.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_1024.csv");
+		outFile.open("perf_LatencyTest_1024_" + str_reliable + ".csv");
 		outFile << output_file_1024.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_2048.csv");
+		outFile.open("perf_LatencyTest_2048_" + str_reliable + ".csv");
 		outFile << output_file_2048.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_4096.csv");
+		outFile.open("perf_LatencyTest_4096_" + str_reliable + ".csv");
 		outFile << output_file_4096.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_8192.csv");
+		outFile.open("perf_LatencyTest_8192_" + str_reliable + ".csv");
 		outFile << output_file_8192.str();
 		outFile.close();
-		outFile.open("perf_LatencyTest_16384.csv");
+		outFile.open("perf_LatencyTest_16384_" + str_reliable + ".csv");
 		outFile << output_file_16384.str();
 		outFile.close();
 	}
@@ -557,41 +590,43 @@ void LatencyTestPublisher::analizeTimes(uint32_t datasize)
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {
-	output_file << "\"" << TS.m_min.count() << "\"";
+	output_file_minimum << "\"" << TS.m_min.count() << "\"";
+	output_file_average << "\"" << TS.mean << "\"";
 
-	switch (TS.nbytes) {
+	switch (TS.nbytes)
+    {
 	case 16:
-		output_file_16 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_16 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 32:
-		output_file_32 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_32 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 64:
-		output_file_64 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_64 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 128:
-		output_file_128 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_128 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 256:
-		output_file_256 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_256 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 512:
-		output_file_512 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_512 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 1024:
-		output_file_1024 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_1024 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 2048:
-		output_file_2048 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_2048 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 4096:
-		output_file_4096 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_4096 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 8192:
-		output_file_8192 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_8192 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	case 16384:
-		output_file_16384 << "\"" << TS.m_min.count() << "\"" << std::endl;
+		output_file_16384 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
 		break;
 	default:
 		break;
