@@ -69,16 +69,18 @@ void WriterProxy::for_each_set_status_from_and_maybe_remove(decltype(WriterProxy
                 auto hint = m_changesFromW.erase(it);
 
                 it = m_changesFromW.insert(hint, newch);
-            }
-            else
-            {
-                changesFromWLowMark_ = it->getSequenceNumber();
-                it = m_changesFromW.erase(it);
+                ++it;
                 continue;
             }
         }
 
-        ++it;
+        // UNKNOWN or MISSING at the beginning or
+        // LOST or RECEIVED at the beginning.
+        if(it == m_changesFromW.begin())
+        {
+            changesFromWLowMark_ = it->getSequenceNumber();
+            it = m_changesFromW.erase(it);
+        }
     }
 }
 
@@ -97,7 +99,6 @@ WriterProxy::~WriterProxy()
 }
 
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
-		Duration_t /*heartbeatResponse*/,
 		StatefulReader* SR) :
 												mp_SFR(SR),
 												m_att(watt),
@@ -107,8 +108,7 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 												mp_writerProxyLiveliness(nullptr),
 												m_heartbeatFinalFlag(false),
 												m_isAlive(true),
-												mp_mutex(new boost::recursive_mutex()),
-                                                changesFromWLowMark_()
+												mp_mutex(new boost::recursive_mutex())
 
 {
 	const char* const METHOD_NAME = "WriterProxy";
@@ -209,16 +209,11 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
                 bool will_be_the_last = maybe_add_changes_from_writer_up_to(seqNum, ChangeFromWriterStatus_t::LOST);
                 (void)will_be_the_last;
                 assert(will_be_the_last);
-
-                // Add requetes sequence number.
-                ChangeFromWriter_t newch(seqNum);
-                newch.setStatus(ChangeFromWriterStatus_t::LOST);
-                m_changesFromW.insert(m_changesFromW.end(), newch);
             }
             // Any in container, then not insert new lost.
             else
             {
-                changesFromWLowMark_ = seqNum;
+                changesFromWLowMark_ = seqNum - 1;
             }
         }
         else
@@ -226,7 +221,7 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
             // Find it. Must be there.
             auto last_it = m_changesFromW.find(ChangeFromWriter_t(seqNum));
             assert(last_it != m_changesFromW.end());
-            for_each_set_status_from_and_maybe_remove(m_changesFromW.begin(), ++last_it,
+            for_each_set_status_from_and_maybe_remove(m_changesFromW.begin(), last_it,
                     ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING,
                     ChangeFromWriterStatus_t::LOST);
         }
@@ -235,80 +230,25 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 	print_changes_fromWriter_test2();
 }
 
-bool WriterProxy::received_change_set(CacheChange_t* change)
+bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "received_change_set";
-
-    assert(change != nullptr);
-
-	logInfo(RTPS_READER,m_att.guid.entityId<<": seqNum: " << change->sequenceNumber);
-
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
-    // Check if CacheChange_t was already and it was already removed from changesFromW container.
-    if(change->sequenceNumber <= changesFromWLowMark_)
-    {
-        logInfo(RTPS_READER, "Change " << change->sequenceNumber << " <= than max available sequence number " << changesFromWLowMark_);
-        return false;
-    }
-
-    // Maybe create information because it is not in the m_changesFromW container.
-    bool will_be_the_last = maybe_add_changes_from_writer_up_to(change->sequenceNumber);
-
-    // If will be the last element, insert it at the end.
-    if(will_be_the_last)
-    {
-        // There are others.
-        if(m_changesFromW.size() > 0)
-        {
-            ChangeFromWriter_t chfw(change);
-            chfw.setStatus(RECEIVED);
-            m_changesFromW.insert(m_changesFromW.end(), chfw);
-        }
-        // Else not insert
-        else
-            changesFromWLowMark_ = change->sequenceNumber;
-    }
-    // Else it has to be found and change state.
-    else
-    {
-        auto chit = m_changesFromW.find(ChangeFromWriter_t(change));
-
-        // Has to be in the container.
-        assert(chit != m_changesFromW.end());
-        // Has not be received yet or lost.
-        assert(chit->getStatus() == UNKNOWN || chit->getStatus() == MISSING);
-
-        if(chit != m_changesFromW.begin())
-        {
-            ChangeFromWriter_t newch(*chit);
-            newch.setStatus(RECEIVED);
-
-            auto hint = m_changesFromW.erase(chit);
-
-            m_changesFromW.insert(hint, newch);
-        }
-        else
-        {
-            changesFromWLowMark_ = change->sequenceNumber;
-            m_changesFromW.erase(chit);
-            cleanup();
-        }
-
-    }
-
-    print_changes_fromWriter_test2();
-
-	return true;
+	logInfo(RTPS_READER, m_att.guid.entityId << ": seqNum: " << seqNum);
+    return received_change_set(seqNum, true);
 }
 
 bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
 {
-	const char* const METHOD_NAME = "irrelevant_change_set";
+    return received_change_set(seqNum, false);
+}
+
+bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_relevance)
+{
+	const char* const METHOD_NAME = "received_change_set";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
-    if(seqNum<= changesFromWLowMark_)
+    if(seqNum <= changesFromWLowMark_)
     {
         logInfo(RTPS_READER, "Change " << seqNum << " <= than max available sequence number " << changesFromWLowMark_);
         return false;
@@ -325,7 +265,7 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
         {
             ChangeFromWriter_t chfw(seqNum);
             chfw.setStatus(RECEIVED);
-            chfw.setRelevance(false);
+            chfw.setRelevance(is_relevance);
             m_changesFromW.insert(m_changesFromW.end(), chfw);
         }
         // Else not insert
@@ -346,7 +286,7 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
         {
             ChangeFromWriter_t newch(*chit);
             newch.setStatus(RECEIVED);
-            newch.setRelevance(false);
+            newch.setRelevance(is_relevance);
 
             auto hint = m_changesFromW.erase(chit);
 
@@ -358,6 +298,7 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
             m_changesFromW.erase(chit);
             cleanup();
         }
+
     }
 
     print_changes_fromWriter_test2();
@@ -366,19 +307,21 @@ bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
 }
 
 
-std::vector<const ChangeFromWriter_t*> WriterProxy::missing_changes()
+const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
 {
-    std::vector<const ChangeFromWriter_t*> returnedValue;
+    std::vector<ChangeFromWriter_t> returnedValue;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    auto it = m_changesFromW.begin();
-    while(it != m_changesFromW.end())
-	{
-        if(it->getStatus() == MISSING && it->isRelevant())
-            returnedValue.push_back(&(*it));
+    for(auto ch : m_changesFromW)
+    {
+        if(ch.getStatus() == MISSING)
+        {
+            // If MISSING, then is relevant.
+            assert(ch.isRelevant());
+            returnedValue.push_back(ch);
+        }
+    }
 
-        ++it;
-	}
 
     print_changes_fromWriter_test2();
 
@@ -387,7 +330,7 @@ std::vector<const ChangeFromWriter_t*> WriterProxy::missing_changes()
 
 
 
-const SequenceNumber_t  WriterProxy::available_changes_max() const
+const SequenceNumber_t WriterProxy::available_changes_max() const
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     return changesFromWLowMark_;
@@ -401,64 +344,11 @@ void WriterProxy::print_changes_fromWriter_test2()
 
 	for(auto it = m_changesFromW.begin(); it != m_changesFromW.end(); ++it)
 	{
-		ss << it->getSequenceNumber() <<"("<<it->isValid()<<","<<it->getStatus()<<")-";
+		ss << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
 	}
 
 	std::string auxstr = ss.str();
 	logInfo(RTPS_READER,auxstr;);
-}
-
-//bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
-//{
-//	const char* const METHOD_NAME = "removeChangesFromWriterUpTo";
-//	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-//	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-//	{
-//		if(it->seqNum < seq)
-//		{
-//			if(it->status == RECEIVED || it->status == LOST)
-//			{
-//				m_lastRemovedSeqNum = it->seqNum;
-//				m_changesFromW.erase(it);
-//				m_hasMinAvailableSeqNumChanged = true;
-//			}
-//		}
-//		else if(it->seqNum == seq)
-//		{
-//
-//			if(it->status == RECEIVED || it->status == LOST)
-//			{
-//				m_lastRemovedSeqNum = it->seqNum;
-//				m_changesFromW.erase(it);
-//				m_hasMinAvailableSeqNumChanged = true;
-//				logInfo(RTPS_READER,m_lastRemovedSeqNum.to64long()<< " OK";);
-//				return true;
-//			}
-//			else
-//			{
-//				logInfo(RTPS_READER,it->seqNum.to64long()<< " NOT OK";);
-//				return false;
-//			}
-//
-//		}
-//	}
-//	return false;
-//}
-
-CacheChange_t* WriterProxy::get_change(SequenceNumber_t& seq)
-{
-    CacheChange_t *returnedValue = nullptr;
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
-    auto chit = m_changesFromW.find(ChangeFromWriter_t(seq));
-
-    if(chit != m_changesFromW.end())
-    {
-        if(chit->isValid())
-            returnedValue = chit->getChange();
-    }
-
-    return returnedValue;
 }
 
 void WriterProxy::assertLiveliness()
@@ -475,37 +365,31 @@ void WriterProxy::assertLiveliness()
 	this->mp_writerProxyLiveliness->restart_timer();
 }
 
-void WriterProxy::setNotValid(const CacheChange_t *change)
+void WriterProxy::setNotValid(const SequenceNumber_t& seqNum)
 {
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // Check sequence number is in the container, because it was not clean up.
-    if(change->sequenceNumber < changesFromWLowMark_)
+    if(seqNum <= changesFromWLowMark_)
         return;
 
-    auto chit = m_changesFromW.find(ChangeFromWriter_t(change->sequenceNumber));
+    auto chit = m_changesFromW.find(ChangeFromWriter_t(seqNum));
 
     // Element must be in the container. In other case, bug.
     assert(chit != m_changesFromW.end());
-    // If the element will be set not valid, element must be received or lost.
+    // If the element will be set not valid, element must be received.
     // In other case, bug.
-    assert(chit->getStatus() == RECEIVED || chit->getStatus() == LOST);
+    assert(chit->getStatus() == RECEIVED);
 
-    if(chit == m_changesFromW.begin())
-    {
-        m_changesFromW.erase(chit);
-        // Maybe there are other to remove.
-        cleanup();
-    }
-    else
-    {
-        ChangeFromWriter_t newch(*chit);
-        newch.notValid();
+    // Cannot be in the beginning because process of cleanup
+    assert(chit != m_changesFromW.begin());
 
-        auto hint = m_changesFromW.erase(chit);
+    ChangeFromWriter_t newch(*chit);
+    newch.notValid();
 
-        m_changesFromW.insert(hint, newch);
-    }
+    auto hint = m_changesFromW.erase(chit);
+
+    m_changesFromW.insert(hint, newch);
 }
 
 void WriterProxy::cleanup()
@@ -525,12 +409,30 @@ bool WriterProxy::areThereMissing()
     bool returnedValue = false;
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    for(auto it = m_changesFromW.begin(); it != m_changesFromW.end(); ++it)
+    for(auto ch : m_changesFromW)
     {
-        if(it->getStatus() == ChangeFromWriterStatus_t::MISSING)
+        if(ch.getStatus() == ChangeFromWriterStatus_t::MISSING)
         {
             returnedValue = true;
             break;
+        }
+    }
+
+    return returnedValue;
+}
+
+size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seqNum)
+{
+    size_t returnedValue = 0;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    if(seqNum > changesFromWLowMark_)
+    {
+        for(auto ch = m_changesFromW.begin(); ch != m_changesFromW.end() && ch->getSequenceNumber() < seqNum; ++ch)
+        {
+            if(ch->getStatus() == ChangeFromWriterStatus_t::UNKNOWN ||
+                    ch->getStatus() == ChangeFromWriterStatus_t::MISSING)
+                ++returnedValue;
         }
     }
 

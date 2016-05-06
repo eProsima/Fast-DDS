@@ -50,7 +50,8 @@ void PubSubKeepLastWriter::init()
 	puattr.topic.topicKind = NO_KEY;
 	puattr.topic.topicDataType = "HelloWorldType";
     configPublisher(puattr);
-    puattr.times.heartbeatPeriod.fraction = 4294967 * 200;
+    puattr.times.heartbeatPeriod.seconds = 0;
+    puattr.times.heartbeatPeriod.fraction = 4294967 * 100;
 	publisher_ = Domain::createPublisher(participant_, puattr, &listener_);
     ASSERT_NE(publisher_, nullptr);
 

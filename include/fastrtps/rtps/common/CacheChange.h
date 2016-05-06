@@ -257,24 +257,18 @@ namespace eprosima
 
                     public:
 
-                    ChangeFromWriter_t() : status_(UNKNOWN), is_relevant_(true),
-                        change_(nullptr)
+                    ChangeFromWriter_t() : status_(UNKNOWN), is_relevant_(true)
                     {
 
                     }
 
                     ChangeFromWriter_t(const ChangeFromWriter_t& ch) : status_(ch.status_),
-                    is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_), change_(ch.change_)
-                    {
-                    }
-
-                    ChangeFromWriter_t(CacheChange_t* change) : status_(UNKNOWN),
-                    is_relevant_(true), seq_num_(change->sequenceNumber), change_(change)
+                    is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_)
                     {
                     }
 
                     ChangeFromWriter_t(const SequenceNumber_t& seq_num) : status_(UNKNOWN),
-                    is_relevant_(true), seq_num_(seq_num), change_(nullptr)
+                    is_relevant_(true), seq_num_(seq_num)
                     {
                     }
 
@@ -285,24 +279,7 @@ namespace eprosima
                         status_ = ch.status_;
                         is_relevant_ = ch.is_relevant_;
                         seq_num_ = ch.seq_num_;
-                        change_ = ch.change_;
                         return *this;
-                    }
-
-                    /**
-                     * Get the cache change
-                     * @return Cache change
-                     */
-                    CacheChange_t* getChange() const
-                    {
-                        return change_;
-                    }
-
-                    void setChange(CacheChange_t* change)
-                    {
-                        assert(change->sequenceNumber == seq_num_);
-                        change_ = change;
-                        seq_num_ = change->sequenceNumber;
                     }
 
                     void setStatus(const ChangeFromWriterStatus_t status)
@@ -334,27 +311,18 @@ namespace eprosima
                     void notValid()
                     {
                         is_relevant_ = false;
-                        change_ = nullptr;
-                    }
-
-                    //! Set change as valid
-                    bool isValid() const
-                    {
-                        return change_ != nullptr;
                     }
 
                     private:
 
-                        //!Status
+                        //! Status
                         ChangeFromWriterStatus_t status_;
 
-                        //!Boolean specifying if this change is relevant
+                        //! Boolean specifying if this change is relevant
                         bool is_relevant_;
 
-                        //!Sequence number
+                        //! Sequence number
                         SequenceNumber_t seq_num_;
-
-                        CacheChange_t* change_;
                 };
 
                 struct ChangeFromWriterCmp

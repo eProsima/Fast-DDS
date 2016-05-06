@@ -91,7 +91,7 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::change_received(CacheChange_t* change)
 {
-	if(mp_history->received_change(change))
+	if(mp_history->received_change(change, 0))
 	{
         boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 

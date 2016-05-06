@@ -54,7 +54,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_READER,"");
-		std::vector<const ChangeFromWriter_t*> ch_vec = mp_WP->missing_changes();
+		const std::vector<ChangeFromWriter_t> ch_vec = mp_WP->missing_changes();
 
 		if(!ch_vec.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
@@ -62,11 +62,11 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
             sns.base = mp_WP->available_changes_max();
 			sns.base++;
 
-			for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
+			for(auto ch : ch_vec)
 			{
-				if(!sns.add((*cit)->getSequenceNumber()))
+				if(!sns.add(ch.getSequenceNumber()))
 				{
-					logWarning(RTPS_READER,"Error adding seqNum " << (*cit)->getSequenceNumber()
+					logWarning(RTPS_READER,"Error adding seqNum " << ch.getSequenceNumber()
 							<< " with SeqNumSet Base: "<< sns.base);
 					break;
 				}

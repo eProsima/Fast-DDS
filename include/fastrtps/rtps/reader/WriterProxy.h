@@ -14,15 +14,17 @@
 #define WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-
-
-
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/CacheChange.h"
 #include "../attributes/ReaderAttributes.h"
 
 #include<set>
+
+// Testing purpose
+#ifndef TEST_FRIENDS
+#define TEST_FRIENDS
+#endif // TEST_FRIENDS
 
 namespace boost
 {
@@ -47,16 +49,18 @@ namespace eprosima
              */
             class WriterProxy
             {
+                TEST_FRIENDS
+
                 public:
+
                     ~WriterProxy();
 
                     /**
                      * Constructor.
                      * @param watt RemoteWriterAttributes.
-                     * @param heartbeatResponse Time the Reader should wait to respond to a heartbeat.
                      * @param SR Pointer to the StatefulReader.
                      */
-                    WriterProxy(RemoteWriterAttributes& watt,Duration_t heartbeatResponse,StatefulReader* SR);
+                    WriterProxy(RemoteWriterAttributes& watt, StatefulReader* SR);
 
                     /**
                      * Get the maximum sequenceNumber received from this Writer.
@@ -81,10 +85,10 @@ namespace eprosima
 
                     /**
                      * The provided change is marked as RECEIVED.
-                     * @param[in] change Pointer to the change
+                     * @param seqNum Sequence number of the change
                      * @return True if correct.
                      */
-                    bool received_change_set(CacheChange_t* change);
+                    bool received_change_set(const SequenceNumber_t& seqNum);
 
                     /**
                      * Set a change as RECEIVED and NOT RELEVANT.
@@ -93,7 +97,7 @@ namespace eprosima
                      */
                     bool irrelevant_change_set(const SequenceNumber_t& seqNum);
 
-                    void setNotValid(const CacheChange_t *change);
+                    void setNotValid(const SequenceNumber_t& seqNum);
 
                     bool areThereMissing();
 
@@ -102,7 +106,9 @@ namespace eprosima
                      * @param missing Pointer to vector of pointers to ChangeFromWriter_t structure.
                      * @return True if correct.
                      */
-                    std::vector<const ChangeFromWriter_t*>  missing_changes();
+                    const std::vector<ChangeFromWriter_t>  missing_changes();
+
+                    size_t unknown_missing_changes_up_to(const SequenceNumber_t& seqNum);
 
                     //! Pointer to associated StatefulReader.
                     StatefulReader* mp_SFR;
@@ -118,15 +124,6 @@ namespace eprosima
                     WriterProxyLiveliness* mp_writerProxyLiveliness;
                     //!Indicates if the heartbeat has the final flag set.
                     bool m_heartbeatFinalFlag;
-
-                    /**
-                     * Get a specific change by its sequence number
-                     *
-                     * @param seq Sequence number of the change
-                     * @param change Pointer to pointer to CacheChange_t, to store the change
-                     * @return true on success
-                     */
-                    CacheChange_t* get_change(SequenceNumber_t& seq);
 
                     /**
                      * Check if the writer is alive
@@ -161,6 +158,8 @@ namespace eprosima
                      * @remarks No thread-safe.
                      */
                     bool maybe_add_changes_from_writer_up_to(const SequenceNumber_t& sequence_number, const ChangeFromWriterStatus_t default_status = ChangeFromWriterStatus_t::UNKNOWN);
+
+                    bool received_change_set(const SequenceNumber_t& seqNum, bool is_relevance);
 
                     void cleanup();
 

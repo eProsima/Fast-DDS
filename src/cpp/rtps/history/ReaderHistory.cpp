@@ -51,7 +51,7 @@ ReaderHistory::~ReaderHistory()
 	delete(mp_semaphore);
 }
 
-bool ReaderHistory::received_change(CacheChange_t* change)
+bool ReaderHistory::received_change(CacheChange_t* change, size_t)
 {
 	return add_change(change);
 }

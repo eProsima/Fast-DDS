@@ -67,7 +67,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
             return false;
         }
     }
-    WriterProxy* wp = new WriterProxy(wdata,m_times.heartbeatResponseDelay,this);
+    WriterProxy* wp = new WriterProxy(wdata, this);
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
@@ -304,7 +304,7 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
 
     if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
     {
-        wp->setNotValid(a_change);
+        wp->setNotValid(a_change->sequenceNumber);
         return true;
     }
     else
@@ -330,10 +330,12 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
     boost::unique_lock<boost::recursive_mutex> writerProxyLock(*prox->getMutex());
 
+    size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
+
     // TODO Check order
-    if(this->mp_history->received_change(a_change))
+    if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
-        if(prox->received_change_set(a_change))
+        if(prox->received_change_set(a_change->sequenceNumber))
         {
             if(getListener()!=nullptr)
             {
@@ -392,10 +394,6 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
     return false;
 }
 
-
-
-
-//
 bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
     const char* const METHOD_NAME = "nextUntakenCache";
@@ -406,7 +404,7 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
             it!=mp_history->changesEnd();++it)
     {
         WriterProxy* wp;
-        if(this->matched_writer_lookup((*it)->writerGUID,&wp))
+        if(this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
             // TODO Revisar la comprobacion
             SequenceNumber_t seq = wp->available_changes_max();
@@ -452,7 +450,7 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
     }
     return takeok;
 }
-//
+
 // TODO Porque elimina aqui y no cuando hay unpairing
 bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 {

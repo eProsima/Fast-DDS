@@ -5,8 +5,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
-        set(TIMEDEVENTTESTS_SOURCE MockEvent.cpp
-            MockParentEvent.cpp
+        set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
+            mock/MockParentEvent.cpp
             TimedEventTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp

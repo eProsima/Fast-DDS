@@ -368,18 +368,25 @@ TEST(BlackBox, PubSubAsNonReliableKeepLast)
     // Because its volatile the durability
     reader.waitDiscovery();
 
-    for(unsigned int tries = 0; tries < 51; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    size_t last_size = msgs.size();
 
+    for(unsigned int tries = 0; tries < 60; ++tries)
+    {
         writer.send(msgs);
         std::this_thread::sleep_for(std::chrono::seconds(1));
         reader.read(*msgs.rbegin(), std::chrono::seconds(2));
+
+        msgs = reader.getNonReceivedMessages();
+
+        if(msgs.empty())
+            break;
+
+        ASSERT_EQ(msgs.size() + 2, last_size);
+        last_size = msgs.size();
+
     }
 
-    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
     {
         std::cout << "Samples not received:";
@@ -412,11 +419,25 @@ TEST(BlackBox, PubSubAsReliableKeepLast)
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
 
-    writer.send(msgs);
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+    size_t last_size = msgs.size();
 
-    msgs = reader.getNonReceivedMessages();
+    for(unsigned int tries = 0; tries < 50; ++tries)
+    {
+        writer.send(msgs);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+
+        msgs = reader.getNonReceivedMessages();
+
+        if(msgs.empty())
+            break;
+
+        ASSERT_EQ(msgs.size() + 2, last_size);
+        ASSERT_EQ(msgs.back(), msgs.size() - 1);
+        last_size = msgs.size();
+
+    }
+
     if(msgs.size() != 0)
     {
         std::cout << "Samples not received:";
@@ -448,19 +469,24 @@ TEST(BlackBox, PubSubKeepAll)
     reader.waitDiscovery();
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    size_t last_size = msgs.size();
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
+    for(unsigned int tries = 0; tries < 5; ++tries)
     {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        writer.send(msgs);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+
+        msgs = reader.getNonReceivedMessages();
+
         if(msgs.empty())
             break;
 
-        writer.send(msgs);
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+        ASSERT_EQ(msgs.size() + 20, last_size);
+        ASSERT_EQ(msgs.front(), 100 - msgs.size());
+        last_size = msgs.size();
     }
 
-    msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
     {
         std::cout << "Samples not received:";
@@ -492,19 +518,24 @@ TEST(BlackBox, PubSubKeepAllTransient)
     reader.waitDiscovery();
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    size_t last_size = msgs.size();
 
-    for(unsigned int tries = 0; tries < 20; ++tries)
+    for(unsigned int tries = 0; tries < 5; ++tries)
     {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        writer.send(msgs);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+
+        msgs = reader.getNonReceivedMessages();
+
         if(msgs.empty())
             break;
 
-        writer.send(msgs);
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        reader.read(*msgs.rbegin(), std::chrono::seconds(10));
+        ASSERT_EQ(msgs.size() + 20, last_size);
+        ASSERT_EQ(msgs.front(), 100 - msgs.size());
+        last_size = msgs.size();
     }
 
-    msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)
     {
         std::cout << "Samples not received:";
