@@ -33,6 +33,7 @@ class recursive_mutex;
 
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -59,6 +60,7 @@ class RTPSReader;
 class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
+class StatefulReader;
 
 /**
  * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and allows the creation and removal of writers and readers. It manages the send and receive threads.
@@ -129,6 +131,10 @@ public:
 	* @return participant listener
 	*/
     inline RTPSParticipantListener* getListener(){return mp_participantListener;}
+	
+    //!Get pointers to the StatefulReaders that make the EDP
+    StatefulReader* getEDPPubReader();
+    StatefulReader* getEDPSubReader();
 
 	/**
 	* Get the participant
