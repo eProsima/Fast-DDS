@@ -96,7 +96,7 @@ bool StatelessReader::change_received(CacheChange_t* change)
     // TODO Revisar si no hay que incluirlo.
     if(!mp_history->thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
     {
-        if(mp_history->received_change(change))
+        if(mp_history->received_change(change, 0))
         {
             boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 

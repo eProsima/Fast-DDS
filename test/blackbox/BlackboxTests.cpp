@@ -801,7 +801,7 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 }
 
 // Test created to check bug #1555 (Github #31)
-TEST(BlackBox, PubSubAsReliableKeepLast)
+TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -823,21 +823,29 @@ TEST(BlackBox, PubSubAsReliableKeepLast)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_helloword_data_generator();
+    auto data = default_helloword_data_generator(10);
 
     reader.expected_data(data);
 
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    reader.startReception();
-
-    // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(10));
+    unsigned int tries = 0;
+    for(; tries < 5 && !data.empty(); ++tries)
+    {
+        // Store previous data vector size.
+        size_t previous_size = data.size();
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        reader.startReception();
+        // Block reader until reception finished or timeout.
+        data = reader.block(std::chrono::seconds(1));
+        reader.stopReception();
+        // Should be received only two samples.
+        ASSERT_EQ(previous_size - data.size(), 2);
+        if(data.size() > 0)
+            ASSERT_EQ(data.back().index(), previous_size - 2);
+    }
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
@@ -889,6 +897,8 @@ TEST(BlackBox, PubSubKeepAll)
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
+        if(data.size() > 0)
+            ASSERT_EQ(data.front().index(), (sent_size * (tries + 1)) + 1);
         //Wait for acknowledge, because then the history could be entirely again.
         ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
     }
@@ -946,6 +956,8 @@ TEST(BlackBox, PubSubKeepAllTransient)
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
+        if(data.size() > 0)
+            ASSERT_EQ(data.front().index(), (sent_size * (tries + 1)) + 1);
         //Wait for acknowledge, because then the history could be entirely again.
         ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
     }

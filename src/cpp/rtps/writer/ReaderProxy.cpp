@@ -109,11 +109,9 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
 
-            m_changesForReader.erase(chit);
+            auto hint = m_changesForReader.erase(chit);
 
-            auto ret = m_changesForReader.insert(newch);
-            (void)ret;
-            assert(ret.second);
+            m_changesForReader.insert(hint, newch);
 
             m_isRequestedChangesEmpty = false;
         }
@@ -140,12 +138,10 @@ std::vector<const ChangeForReader_t*> ReaderProxy::requested_changes_to_underway
             ChangeForReader_t newch(*it);
             newch.setStatus(UNDERWAY);
 
-            m_changesForReader.erase(it);
+            auto hint = m_changesForReader.erase(it);
 
-            auto ret = m_changesForReader.insert(newch);
-            assert(ret.second);
-            returnedValue.push_back(&(*ret.first));
-            it = ret.first;
+            it = m_changesForReader.insert(hint, newch);
+            returnedValue.push_back(&(*it));
 		}
 
         ++it;
@@ -167,12 +163,10 @@ std::vector<const ChangeForReader_t*> ReaderProxy::unsent_changes_to_underway()
             ChangeForReader_t newch(*it);
             newch.setStatus(UNDERWAY);
 
-            m_changesForReader.erase(it);
+            auto hint = m_changesForReader.erase(it);
 
-            auto ret = m_changesForReader.insert(newch);
-            assert(ret.second);
-            returnedValue.push_back(&(*ret.first));
-            it = ret.first;
+            it = m_changesForReader.insert(hint, newch);
+            returnedValue.push_back(&(*it));
 		}
 
         ++it;
@@ -193,11 +187,9 @@ void ReaderProxy::underway_changes_to_unacknowledged()
             ChangeForReader_t newch(*it);
             newch.setStatus(UNACKNOWLEDGED);
 
-            m_changesForReader.erase(it);
+            auto hint = m_changesForReader.erase(it);
 
-            auto ret = m_changesForReader.insert(newch);
-            assert(ret.second);
-            it = ret.first;
+            it = m_changesForReader.insert(hint, newch);
 		}
 
         ++it;
@@ -217,11 +209,9 @@ void ReaderProxy::underway_changes_to_acknowledged()
             ChangeForReader_t newch(*it);
             newch.setStatus(ACKNOWLEDGED);
 
-            m_changesForReader.erase(it);
+            auto hint = m_changesForReader.erase(it);
 
-            auto ret = m_changesForReader.insert(newch);
-            assert(ret.second);
-            it = ret.first;
+            it = m_changesForReader.insert(hint, newch);
 		}
 
         ++it;
@@ -233,28 +223,30 @@ void ReaderProxy::underway_changes_to_acknowledged()
 void ReaderProxy::setNotValid(const CacheChange_t* change)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    // Check sequence number is in the container, because it was not clean up.
+    if(m_changesForReader.size() == 0 || change->sequenceNumber < m_changesForReader.begin()->getSequenceNumber())
+        return;
+
     auto chit = m_changesForReader.find(ChangeForReader_t(change));
 
-    if(chit != m_changesForReader.end())
+    // Element must be in the container. In other case, bug.
+    assert(chit != m_changesForReader.end());
+
+    if(chit == m_changesForReader.begin())
     {
-        if(chit == m_changesForReader.begin())
-        {
-            m_changesForReader.erase(chit);
-            cleanup();
-        }
-        else
-        {
-            ChangeForReader_t newch(*chit);
-            newch.notValid();
-
-            m_changesForReader.erase(chit);
-
-            auto ret = m_changesForReader.insert(newch);
-            (void)ret;
-            assert(ret.second);
-        }
+        m_changesForReader.erase(chit);
+        cleanup();
     }
+    else
+    {
+        ChangeForReader_t newch(*chit);
+        newch.notValid();
 
+        auto hint = m_changesForReader.erase(chit);
+
+        m_changesForReader.insert(hint, newch);
+    }
 }
 
 void ReaderProxy::cleanup()

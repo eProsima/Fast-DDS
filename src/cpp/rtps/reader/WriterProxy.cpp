@@ -23,9 +23,66 @@
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
 
-namespace eprosima {
-namespace fastrtps{
-namespace rtps {
+using namespace eprosima::fastrtps::rtps;
+
+/*!
+ * @brief Auxiliary function to change status in a range.
+ */
+void WriterProxy::for_each_set_status_from(decltype(WriterProxy::m_changesFromW)::iterator first,
+        decltype(WriterProxy::m_changesFromW)::iterator last,
+        ChangeFromWriterStatus_t status,
+        ChangeFromWriterStatus_t new_status)
+{
+    auto it = first;
+    while(it != last)
+    {
+        if(it->getStatus() == status)
+        {
+            ChangeFromWriter_t newch(*it);
+            newch.setStatus(new_status);
+
+            auto hint = m_changesFromW.erase(it);
+
+            it = m_changesFromW.insert(hint, newch);
+        }
+
+        ++it;
+    }
+}
+
+void WriterProxy::for_each_set_status_from_and_maybe_remove(decltype(WriterProxy::m_changesFromW)::iterator first,
+        decltype(WriterProxy::m_changesFromW)::iterator last,
+        ChangeFromWriterStatus_t status,
+        ChangeFromWriterStatus_t orstatus,
+        ChangeFromWriterStatus_t new_status)
+{
+    auto it = first;
+    while(it != last)
+    {
+        if(it->getStatus() == status || it->getStatus() == orstatus)
+        {
+            if(it != m_changesFromW.begin())
+            {
+                ChangeFromWriter_t newch(*it);
+                newch.setStatus(new_status);
+
+                auto hint = m_changesFromW.erase(it);
+
+                it = m_changesFromW.insert(hint, newch);
+                ++it;
+                continue;
+            }
+        }
+
+        // UNKNOWN or MISSING at the beginning or
+        // LOST or RECEIVED at the beginning.
+        if(it == m_changesFromW.begin())
+        {
+            changesFromWLowMark_ = it->getSequenceNumber();
+            it = m_changesFromW.erase(it);
+        }
+    }
+}
 
 static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 1;
 
@@ -42,21 +99,16 @@ WriterProxy::~WriterProxy()
 }
 
 WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
-		Duration_t /*heartbeatResponse*/,
 		StatefulReader* SR) :
 												mp_SFR(SR),
 												m_att(watt),
 												m_acknackCount(0),
 												m_nackfragCount(0),
 												m_lastHeartbeatCount(0),
-												m_isMissingChangesEmpty(true),
 												mp_heartbeatResponse(nullptr),
 												mp_writerProxyLiveliness(nullptr),
 												m_heartbeatFinalFlag(false),
-												m_hasMinAvailableSeqNumChanged(false),
-												m_hasMaxAvailableSeqNumChanged(false),
 												m_isAlive(true),
-												m_firstReceived(true),
 												mp_mutex(new boost::recursive_mutex())
 
 {
@@ -70,332 +122,234 @@ WriterProxy::WriterProxy(RemoteWriterAttributes& watt,
 	logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
 }
 
-bool WriterProxy::missing_changes_update(SequenceNumber_t& seqNum)
+void WriterProxy::missing_changes_update(const SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "missing_changes_update";
 	logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seqNum: " << seqNum <<" missing.");
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	//	SequenceNumber_t seq = (seqNum)+1;
-	//	add_unknown_changes(seq);
-	add_changes_from_writer_up_to(seqNum);
 
-	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
-	{
-		if(cit->status == MISSING)
-			m_isMissingChangesEmpty = false;
-		if(cit->status == UNKNOWN)
-		{
-			if(cit->seqNum <= seqNum)
-			{
-				cit->status = MISSING;
-				m_isMissingChangesEmpty = false;
-			}
-		}
+    // Check was not removed from container.
+    if(seqNum > changesFromWLowMark_)
+    {
+        if(m_changesFromW.size() == 0 || m_changesFromW.rbegin()->getSequenceNumber() < seqNum)
+        {
+            // Set already values in container.
+            for_each_set_status_from(m_changesFromW.begin(), m_changesFromW.end(),
+                    ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING);
 
-	}
-	m_hasMaxAvailableSeqNumChanged = true;
-	m_hasMinAvailableSeqNumChanged = true;
+            // Changes only already inserted values.
+            bool will_be_the_last = maybe_add_changes_from_writer_up_to(seqNum, ChangeFromWriterStatus_t::MISSING);
+            (void)will_be_the_last;
+            assert(will_be_the_last);
+
+            // Add requetes sequence number.
+            ChangeFromWriter_t newch(seqNum);
+            newch.setStatus(ChangeFromWriterStatus_t::MISSING);
+            m_changesFromW.insert(m_changesFromW.end(), newch);
+        }
+        else
+        {
+            // Find it. Must be there.
+            auto last_it = m_changesFromW.find(ChangeFromWriter_t(seqNum));
+            assert(last_it != m_changesFromW.end());
+            for_each_set_status_from(m_changesFromW.begin(), ++last_it,
+                    ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING);
+        }
+    }
+
 	print_changes_fromWriter_test2();
-	return true;
 }
 
-bool WriterProxy::add_changes_from_writer_up_to(SequenceNumber_t seq)
+bool WriterProxy::maybe_add_changes_from_writer_up_to(const SequenceNumber_t& sequence_number,
+        const ChangeFromWriterStatus_t default_status)
 {
-	const char* const METHOD_NAME = "add_changes_from_writer_up_to";
-	SequenceNumber_t firstSN;
-	if(m_changesFromW.size()==0)
-	{
-		if(this->m_lastRemovedSeqNum > SequenceNumber_t(0,0))
-			firstSN = this->m_lastRemovedSeqNum;
-		else
-			firstSN = seq-1;
-	}
-	else
-		firstSN = m_changesFromW.back().seqNum;
+    bool returnedValue = false;
+    // Check if CacheChange_t is in the container or not.
+    SequenceNumber_t lastSeqNum = changesFromWLowMark_;
 
-    ++firstSN;
-    while(firstSN <= seq)
-	{
-		ChangeFromWriter_t chw;
-		chw.seqNum = firstSN;
-		chw.status = UNKNOWN;
-		chw.is_relevant = true;
-		logInfo(RTPS_READER,"WP "<<this->m_att.guid << " adding unknown changes up to: " << chw.seqNum);
-		m_changesFromW.push_back(chw);
-        ++firstSN;
-	}
+    if(m_changesFromW.size() > 0)
+        lastSeqNum = m_changesFromW.rbegin()->getSequenceNumber();
 
-	return true;
+    if(sequence_number > lastSeqNum)
+    {
+        returnedValue = true;
+
+        // If it is not in the container, create info up to its sequence number.
+        ++lastSeqNum;
+        for(; lastSeqNum < sequence_number; ++lastSeqNum)
+        {
+            ChangeFromWriter_t newch(lastSeqNum);
+            newch.setStatus(default_status);
+            m_changesFromW.insert(m_changesFromW.end(), newch);
+        }
+    }
+
+    return returnedValue;
 }
 
-bool WriterProxy::lost_changes_update(SequenceNumber_t& seqNum)
+void WriterProxy::lost_changes_update(const SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "lost_changes_update";
 	logInfo(RTPS_READER,m_att.guid.entityId<<": up to seqNum: "<<seqNum);
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	//	SequenceNumber_t seq = (seqNum)+1;
-	//	add_unknown_changes(seq);
-	add_changes_from_writer_up_to(seqNum);
 
-	for(std::vector<ChangeFromWriter_t>::iterator cit=m_changesFromW.begin();cit!=m_changesFromW.end();++cit)
-	{
-		if(cit->status == UNKNOWN || cit->status == MISSING)
-		{
-			if(cit->seqNum < seqNum)
-				cit->status = LOST;
-		}
-	}
-	m_hasMaxAvailableSeqNumChanged = true;
-	m_hasMinAvailableSeqNumChanged = true;
+    // Check was not removed from container.
+    if(seqNum > changesFromWLowMark_)
+    {
+        if(m_changesFromW.size() == 0 || m_changesFromW.rbegin()->getSequenceNumber() < seqNum)
+        {
+            // Set already values in container.
+            for_each_set_status_from_and_maybe_remove(m_changesFromW.begin(), m_changesFromW.end(),
+                    ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING,
+                    ChangeFromWriterStatus_t::LOST);
+
+            // There is at least one not LOST or RECEIVED.
+            if(m_changesFromW.size() != 0)
+            {
+                // Changes only already inserted values.
+                bool will_be_the_last = maybe_add_changes_from_writer_up_to(seqNum, ChangeFromWriterStatus_t::LOST);
+                (void)will_be_the_last;
+                assert(will_be_the_last);
+            }
+            // Any in container, then not insert new lost.
+            else
+            {
+                changesFromWLowMark_ = seqNum - 1;
+            }
+        }
+        else
+        {
+            // Find it. Must be there.
+            auto last_it = m_changesFromW.find(ChangeFromWriter_t(seqNum));
+            assert(last_it != m_changesFromW.end());
+            for_each_set_status_from_and_maybe_remove(m_changesFromW.begin(), last_it,
+                    ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING,
+                    ChangeFromWriterStatus_t::LOST);
+        }
+    }
+
 	print_changes_fromWriter_test2();
-	return true;
 }
 
-bool WriterProxy::received_change_set(CacheChange_t* change)
+bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum)
 {
 	const char* const METHOD_NAME = "received_change_set";
-	logInfo(RTPS_READER,m_att.guid.entityId<<": seqNum: " << change->sequenceNumber);
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	m_hasMaxAvailableSeqNumChanged = true;
-	m_hasMinAvailableSeqNumChanged = true;
-	if(!this->m_firstReceived || m_changesFromW.size()>0)
-	{
-		add_changes_from_writer_up_to(change->sequenceNumber);
-		m_firstReceived = false;
-	}
-	else
-	{
-		ChangeFromWriter_t chfw;
-		chfw.setChange(change);
-		chfw.status = RECEIVED;
-		chfw.is_relevant = true;
-		m_changesFromW.push_back(chfw);
-		m_firstReceived = false;
-		print_changes_fromWriter_test2();
-		return true;
-	}
-	for(std::vector<ChangeFromWriter_t>::reverse_iterator cit=m_changesFromW.rbegin();cit!=m_changesFromW.rend();++cit)
-	{
-		if(cit->seqNum == change->sequenceNumber)
-		{
-			cit->setChange(change);
-			cit->status = RECEIVED;
-			print_changes_fromWriter_test2();
-			return true;
-		}
-	}
-	logError(RTPS_READER," Something has gone wrong";);
-	return false;
-
+	logInfo(RTPS_READER, m_att.guid.entityId << ": seqNum: " << seqNum);
+    return received_change_set(seqNum, true);
 }
 
-bool WriterProxy::irrelevant_change_set(SequenceNumber_t& seqNum)
+bool WriterProxy::irrelevant_change_set(const SequenceNumber_t& seqNum)
 {
-	const char* const METHOD_NAME = "irrelevant_change_set";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	m_hasMaxAvailableSeqNumChanged = true;
-	m_hasMinAvailableSeqNumChanged = true;
-	add_changes_from_writer_up_to(seqNum);
-	for(std::vector<ChangeFromWriter_t>::reverse_iterator cit=m_changesFromW.rbegin();cit!=m_changesFromW.rend();++cit)
-	{
-		if(cit->seqNum == seqNum)
-		{
-			cit->status = RECEIVED;
-			cit->is_relevant = false;
-			print_changes_fromWriter_test2();
-			return true;
-		}
-	}
-	logError(RTPS_READER,"Something has gone wrong"<<endl;);
-	return false;
+    return received_change_set(seqNum, false);
 }
 
-
-bool WriterProxy::missing_changes(std::vector<ChangeFromWriter_t*>* missing)
+bool WriterProxy::received_change_set(const SequenceNumber_t& seqNum, bool is_relevance)
 {
-	//const char* const METHOD_NAME = "missing_changes";
-	if(!m_changesFromW.empty())
-	{
-		boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-		missing->clear();
-		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-		{
-			if(it->status == MISSING && it->is_relevant)
-				missing->push_back(&(*it));
-		}
-		if(missing->empty())
-			m_isMissingChangesEmpty = true;
-		print_changes_fromWriter_test2();
-		return true;
-	}
-	else
-		return false;
-}
-
-
-
-bool WriterProxy::available_changes_max(SequenceNumber_t* seqNum)
-{
-	//const char* const METHOD_NAME = "available_changes_max";
+	const char* const METHOD_NAME = "received_change_set";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	//print_changes_fromWriter_test();
-	if(this->m_lastRemovedSeqNum <= SequenceNumber_t(0,0) && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
+
+    // Check if CacheChange_t was already and it was already removed from changesFromW container.
+    if(seqNum <= changesFromWLowMark_)
     {
-		return false;
+        logInfo(RTPS_READER, "Change " << seqNum << " <= than max available sequence number " << changesFromWLowMark_);
+        return false;
     }
-	if(m_hasMaxAvailableSeqNumChanged)
-	{
-		//Order changesFromWriter
-		//std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-		seqNum->high = 0;
-		seqNum->low = 0;
-		//We check the rest for the largest one with Status Received or lost
-		//ignoring the first one that are not valid.
-		//		bool first_ones = true;
-		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-		{
-			//				if(!it->isValid() && first_ones)
-			//				{
-			//					continue;
-			//				}
-			if((it->status == RECEIVED || it->status == LOST))
-			{
-				//	first_ones = false;
-				*seqNum = it->seqNum;
-				m_max_available_seqNum = it->seqNum;
-				m_hasMaxAvailableSeqNumChanged = false;
-			}
-			else
-				break;
-		}
-	}
-	else
-		*seqNum = this->m_max_available_seqNum;
 
-	if(*seqNum<this->m_lastRemovedSeqNum)
-	{
-		*seqNum = this->m_lastRemovedSeqNum;
-		m_max_available_seqNum = this->m_lastRemovedSeqNum;
-		m_hasMaxAvailableSeqNumChanged = false;
-	}
+    // Maybe create information because it is not in the m_changesFromW container.
+    bool will_be_the_last = maybe_add_changes_from_writer_up_to(seqNum);
+
+    // If will be the last element, insert it at the end.
+    if(will_be_the_last)
+    {
+        // There are others.
+        if(m_changesFromW.size() > 0)
+        {
+            ChangeFromWriter_t chfw(seqNum);
+            chfw.setStatus(RECEIVED);
+            chfw.setRelevance(is_relevance);
+            m_changesFromW.insert(m_changesFromW.end(), chfw);
+        }
+        // Else not insert
+        else
+            changesFromWLowMark_ = seqNum;
+    }
+    // Else it has to be found and change state.
+    else
+    {
+        auto chit = m_changesFromW.find(ChangeFromWriter_t(seqNum));
+
+        // Has to be in the container.
+        assert(chit != m_changesFromW.end());
+        // Has not be received yet or lost.
+        assert(chit->getStatus() == UNKNOWN || chit->getStatus() == MISSING);
+
+        if(chit != m_changesFromW.begin())
+        {
+            ChangeFromWriter_t newch(*chit);
+            newch.setStatus(RECEIVED);
+            newch.setRelevance(is_relevance);
+
+            auto hint = m_changesFromW.erase(chit);
+
+            m_changesFromW.insert(hint, newch);
+        }
+        else
+        {
+            changesFromWLowMark_ = seqNum;
+            m_changesFromW.erase(chit);
+            cleanup();
+        }
+
+    }
+
+    print_changes_fromWriter_test2();
+
 	return true;
 }
 
 
-bool WriterProxy::available_changes_min(SequenceNumber_t* seqNum)
+const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
 {
-	//const char* const METHOD_NAME = "available_changes_min";
-	if(this->m_lastRemovedSeqNum <= SequenceNumber_t(0, 0) && m_changesFromW.size() == 0) //NOT RECEIVED ANYTHING
-		return false;
+    std::vector<ChangeFromWriter_t> returnedValue;
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	if(m_hasMinAvailableSeqNumChanged)
-	{
-		//Order changesFromWriter
-		//	std::sort(m_changesFromW.begin(),m_changesFromW.end(),sort_chFW);
-		seqNum->high = 0;
-		seqNum->low = 0;
-		for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-		{
-			if(it->status == RECEIVED)
-			{
-                if(it->isValid())
-                {
-                    *seqNum = it->seqNum;
-                    this->m_min_available_seqNum = it->seqNum;
-                    m_hasMinAvailableSeqNumChanged = false;
-                    return true;
-                }
-                else
-                    continue;
-			}
-			else if(it->status == LOST)
-			{
-				continue;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-	else
-	{
-		*seqNum = this->m_min_available_seqNum;
-	}
-	if(*seqNum<=this->m_lastRemovedSeqNum)
-	{
-		*seqNum = this->m_lastRemovedSeqNum;
-		m_min_available_seqNum = this->m_lastRemovedSeqNum;
-		m_hasMinAvailableSeqNumChanged = false;
-		return false;
-	}
-	return true;
+
+    for(auto ch : m_changesFromW)
+    {
+        if(ch.getStatus() == MISSING)
+        {
+            // If MISSING, then is relevant.
+            assert(ch.isRelevant());
+            returnedValue.push_back(ch);
+        }
+    }
+
+
+    print_changes_fromWriter_test2();
+
+    return returnedValue;
 }
 
+
+
+const SequenceNumber_t WriterProxy::available_changes_max() const
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    return changesFromWLowMark_;
+}
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
 	const char* const METHOD_NAME = "status";
 	std::stringstream ss;
 	ss << this->m_att.guid.entityId<<": ";
-	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
+
+	for(auto it = m_changesFromW.begin(); it != m_changesFromW.end(); ++it)
 	{
-		ss << it->seqNum <<"("<<it->isValid()<<","<<it->status<<")-";
+		ss << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
 	}
+
 	std::string auxstr = ss.str();
 	logInfo(RTPS_READER,auxstr;);
-}
-
-//bool WriterProxy::removeChangesFromWriterUpTo(SequenceNumber_t& seq)
-//{
-//	const char* const METHOD_NAME = "removeChangesFromWriterUpTo";
-//	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-//	for(std::vector<ChangeFromWriter_t>::iterator it=m_changesFromW.begin();it!=m_changesFromW.end();++it)
-//	{
-//		if(it->seqNum < seq)
-//		{
-//			if(it->status == RECEIVED || it->status == LOST)
-//			{
-//				m_lastRemovedSeqNum = it->seqNum;
-//				m_changesFromW.erase(it);
-//				m_hasMinAvailableSeqNumChanged = true;
-//			}
-//		}
-//		else if(it->seqNum == seq)
-//		{
-//
-//			if(it->status == RECEIVED || it->status == LOST)
-//			{
-//				m_lastRemovedSeqNum = it->seqNum;
-//				m_changesFromW.erase(it);
-//				m_hasMinAvailableSeqNumChanged = true;
-//				logInfo(RTPS_READER,m_lastRemovedSeqNum.to64long()<< " OK";);
-//				return true;
-//			}
-//			else
-//			{
-//				logInfo(RTPS_READER,it->seqNum.to64long()<< " NOT OK";);
-//				return false;
-//			}
-//
-//		}
-//	}
-//	return false;
-//}
-
-bool WriterProxy::get_change(SequenceNumber_t& seq,CacheChange_t** change)
-{
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	for(std::vector<ChangeFromWriter_t>::iterator it = this->m_changesFromW.begin();
-			it!= this->m_changesFromW.end();++it)
-	{
-		if(it->seqNum == seq && it->isValid())
-		{
-			*change = it->getChange();
-			return true;
-		}
-	}
-	return false;
 }
 
 void WriterProxy::assertLiveliness()
@@ -412,8 +366,76 @@ void WriterProxy::assertLiveliness()
 	this->mp_writerProxyLiveliness->restart_timer();
 }
 
+void WriterProxy::setNotValid(const SequenceNumber_t& seqNum)
+{
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
+    // Check sequence number is in the container, because it was not clean up.
+    if(seqNum <= changesFromWLowMark_)
+        return;
 
+    auto chit = m_changesFromW.find(ChangeFromWriter_t(seqNum));
+
+    // Element must be in the container. In other case, bug.
+    assert(chit != m_changesFromW.end());
+    // If the element will be set not valid, element must be received.
+    // In other case, bug.
+    assert(chit->getStatus() == RECEIVED);
+
+    // Cannot be in the beginning because process of cleanup
+    assert(chit != m_changesFromW.begin());
+
+    ChangeFromWriter_t newch(*chit);
+    newch.notValid();
+
+    auto hint = m_changesFromW.erase(chit);
+
+    m_changesFromW.insert(hint, newch);
 }
-} /* namespace rtps */
-} /* namespace eprosima */
+
+void WriterProxy::cleanup()
+{
+    auto chit = m_changesFromW.begin();
+
+    while(chit != m_changesFromW.end() &&
+            (chit->getStatus() == RECEIVED || chit->getStatus() == LOST))
+    {
+        changesFromWLowMark_ = chit->getSequenceNumber();
+        chit = m_changesFromW.erase(chit);
+    }
+}
+
+bool WriterProxy::areThereMissing()
+{
+    bool returnedValue = false;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    for(auto ch : m_changesFromW)
+    {
+        if(ch.getStatus() == ChangeFromWriterStatus_t::MISSING)
+        {
+            returnedValue = true;
+            break;
+        }
+    }
+
+    return returnedValue;
+}
+
+size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seqNum)
+{
+    size_t returnedValue = 0;
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    if(seqNum > changesFromWLowMark_)
+    {
+        for(auto ch = m_changesFromW.begin(); ch != m_changesFromW.end() && ch->getSequenceNumber() < seqNum; ++ch)
+        {
+            if(ch->getStatus() == ChangeFromWriterStatus_t::UNKNOWN ||
+                    ch->getStatus() == ChangeFromWriterStatus_t::MISSING)
+                ++returnedValue;
+        }
+    }
+
+    return returnedValue;
+}

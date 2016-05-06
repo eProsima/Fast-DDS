@@ -137,6 +137,11 @@ endif()
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 
 ###############################################################################
+# Load CMake modules
+###############################################################################
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
+
+###############################################################################
 # Check libraries
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)

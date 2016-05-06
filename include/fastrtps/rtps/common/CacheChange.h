@@ -316,53 +316,84 @@ namespace eprosima
              */
             class ChangeFromWriter_t
             {
+                friend struct ChangeFromWriterCmp;
+
                 public:
-                ChangeFromWriter_t():status(UNKNOWN),is_relevant(true),m_isValid(false),change(NULL)
+
+                ChangeFromWriter_t() : status_(UNKNOWN), is_relevant_(true)
                 {
 
                 }
-                virtual ~ChangeFromWriter_t(){};
-                //!Status
-                ChangeFromWriterStatus_t status;
-                //!Boolean specifying if this change is relevant
-                bool is_relevant;
-                //!Sequence number
-                SequenceNumber_t seqNum;
-                /**
-                 * Get the cache change
-                 * @return Cache change
-                 */
-                CacheChange_t* getChange()
+
+                ChangeFromWriter_t(const ChangeFromWriter_t& ch) : status_(ch.status_),
+                is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_)
                 {
-                    return change;
                 }
-                /**
-                 * Set the cache change
-                 * @param a_change Cache change
-                 */
-                bool setChange(CacheChange_t* a_change)
+
+                ChangeFromWriter_t(const SequenceNumber_t& seq_num) : status_(UNKNOWN),
+                is_relevant_(true), seq_num_(seq_num)
                 {
-                    m_isValid = true;
-                    seqNum = a_change->sequenceNumber;
-                    change = a_change;
-                    return true;
                 }
+
+                ~ChangeFromWriter_t(){};
+
+                ChangeFromWriter_t& operator=(const ChangeFromWriter_t& ch)
+                {
+                    status_ = ch.status_;
+                    is_relevant_ = ch.is_relevant_;
+                    seq_num_ = ch.seq_num_;
+                    return *this;
+                }
+
+                void setStatus(const ChangeFromWriterStatus_t status)
+                {
+                    status_ = status;
+                }
+
+                ChangeFromWriterStatus_t getStatus() const
+                {
+                    return status_;
+                }
+
+                void setRelevance(const bool relevance)
+                {
+                    is_relevant_ = relevance;
+                }
+
+                bool isRelevant() const
+                {
+                    return is_relevant_;
+                }
+
+                const SequenceNumber_t getSequenceNumber() const
+                {
+                    return seq_num_;
+                }
+
                 //! Set change as not valid
                 void notValid()
                 {
-                    is_relevant = false;
-                    m_isValid = false;
-                    change = NULL;
+                    is_relevant_ = false;
                 }
-                //! Set change as valid
-                bool isValid()
-                {
-                    return m_isValid;
-                }
-                private:
-                bool m_isValid;
-                CacheChange_t* change;
 
+                private:
+
+                //! Status
+                ChangeFromWriterStatus_t status_;
+
+                //! Boolean specifying if this change is relevant
+                bool is_relevant_;
+
+                //! Sequence number
+                SequenceNumber_t seq_num_;
+            };
+
+            struct ChangeFromWriterCmp
+            {
+                bool operator()(const ChangeFromWriter_t& a, const ChangeFromWriter_t& b) const
+                {
+                    return a.seq_num_ < b.seq_num_;
+                }
             };
 #endif
         }

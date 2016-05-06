@@ -48,7 +48,7 @@ namespace eprosima
             class ReaderProxy
             {
                 public:
-                    virtual ~ReaderProxy();
+                    ~ReaderProxy();
 
                     /**
                      * Constructor.

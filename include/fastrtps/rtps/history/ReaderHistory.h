@@ -59,7 +59,7 @@ public:
 	* @param change Pointer to the change
 	* @return True if added.
 	*/
-	RTPS_DllAPI virtual bool received_change(CacheChange_t* change);
+	RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
 
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.

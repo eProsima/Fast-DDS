@@ -54,36 +54,26 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 		logInfo(RTPS_READER,"");
-        boost::lock_guard<boost::recursive_mutex> reader_guard(*mp_WP->mp_SFR->getMutex());
-        boost::lock_guard<boost::recursive_mutex> guard(*mp_WP->getMutex());
-
-        // Stores missing changes;
-		std::vector<ChangeFromWriter_t*> missing_changes;
+		const std::vector<ChangeFromWriter_t> missing_changes = mp_WP->missing_changes();
         // Stores missing changes but there is some fragments received.
         std::vector<CacheChange_t*> uncompleted_changes;
-
-        mp_WP->missing_changes(&missing_changes);
 
 		if(!missing_changes.empty() || !mp_WP->m_heartbeatFinalFlag)
 		{
 			SequenceNumberSet_t sns;
-			if(!mp_WP->available_changes_max(&sns.base)) //if no changes are available
-			{
-				logError(RTPS_READER,"No available changes max"<<endl;);
-			}
-
+            sns.base = mp_WP->available_changes_max();
 			sns.base++;
 
-			for(auto cit = missing_changes.begin();cit!=missing_changes.end();++cit)
+			for(auto ch : missing_changes)
 			{
                 // Check if the CacheChange_t is uncompleted.
-                CacheChange_t* uncomplete_change = mp_WP->mp_SFR->findCacheInFragmentedCachePitStop((*cit)->seqNum, mp_WP->m_att.guid);
+                CacheChange_t* uncomplete_change = mp_WP->mp_SFR->findCacheInFragmentedCachePitStop(ch.getSequenceNumber(), mp_WP->m_att.guid);
 
                 if(uncomplete_change == nullptr)
                 {
-                    if(!sns.add((*cit)->seqNum))
+                    if(!sns.add(ch.getSequenceNumber()))
                     {
-                        logWarning(RTPS_READER,"Error adding seqNum " << (*cit)->seqNum
+                        logWarning(RTPS_READER,"Error adding seqNum " << ch.getSequenceNumber()
                                 << " with SeqNumSet Base: "<< sns.base);
                         break;
                     }
@@ -93,7 +83,9 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                     uncompleted_changes.push_back(uncomplete_change);
                 }
 			}
-			++mp_WP->m_acknackCount;
+
+            // TODO Protect
+			mp_WP->m_acknackCount++;
 			logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
 			bool final = false;
