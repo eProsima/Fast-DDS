@@ -405,13 +405,40 @@ bool StatefulWriter::clean_history(unsigned int max)
             ackca.push_back(*cit);
     }
 
+    // If there are any entries that are acked by all matched readers, delete
+    // them. Then, delete the oldest unacked entries to get the delete total
+    // to 'max'. Deleting unacked entries happens if a reader goes down and
+    // that is not detected before history fills; we want reliable streams to
+    // live readers to continue uninterrupted. It could also happen in a single
+    // subscriber case if the publish rate exceeds available link capacity; in
+    // that case, something needs to give....
     for(std::vector<CacheChange_t*>::iterator cit = ackca.begin();
             cit != ackca.end(); ++cit)
     {
         mp_history->remove_change_g(*cit);
+        max--;
     }
 
-    return (ackca.size() > 0);
+    // delete oldest samples (just like for StatelessWriter)
+    while (max > 0) {
+        // get oldest change
+        CacheChange_t *cc;
+        if (!mp_history->get_min_change(&cc)) {
+            break; // XXX what can cause this
+        }
+
+        // XXX Remove from all reader's unsent changes? Testing without doing
+        // anything here seems to show it is working, but it seems like there
+        // should be dangling references.
+
+        // delete it
+        if (!mp_history->remove_change(cc)) {
+            break; // XXX what can cause this
+        }
+        max--;
+    }
+
+    return (max == 0);
 }
 
 /*
