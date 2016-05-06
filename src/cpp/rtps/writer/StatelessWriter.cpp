@@ -366,13 +366,20 @@ bool StatelessWriter::clean_history(unsigned int max)
 		if (!mp_history->get_min_change(&cc)) {
 			break;
 		}
+
+		// remove the cache change from all readers' unsent changes lists
+		for(std::vector<ReaderLocator>::iterator rit = reader_locator.begin(); rit != reader_locator.end(); ++rit) {
+			// these are normally (always?) empty vectors
+			std::vector<const CacheChange_t*>::iterator cit;
+			cit = std::find(rit->unsent_changes.begin(), rit->unsent_changes.end(), cc);
+			if (cit != rit->unsent_changes.end()) {
+				rit->unsent_changes.erase(cit);
+			}
+		}
+
 		if (mp_history->remove_change(cc)) {
 			removed = true;
 		}
-	}
-
-	if (removed) {
-		unsent_changes_reset();
 	}
 
 	return removed;
