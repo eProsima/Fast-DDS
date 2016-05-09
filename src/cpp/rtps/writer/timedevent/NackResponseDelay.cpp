@@ -86,7 +86,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
             uint32_t bytesSent = 0;
             do
             {
-                RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
+                bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
                         relevant_changes,
                         mp_RP->m_att.guid.guidPrefix,
                         mp_RP->m_att.guid.entityId,

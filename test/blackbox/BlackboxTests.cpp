@@ -602,7 +602,8 @@ TEST(BlackBox, PubSubAsReliableData64kb)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init();
+    writer.heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -611,7 +612,7 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_data64kb_data_generator();
+    auto data = default_data64kb_data_generator(30);
     
     reader.expected_data(data);
     reader.startReception();
@@ -636,7 +637,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -698,7 +701,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_data300kb_data_generator();
+    auto data = default_data300kb_data_generator(30);
     
     reader.expected_data(data);
     reader.startReception();
@@ -726,7 +729,9 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -893,7 +898,7 @@ TEST(BlackBox, PubSubKeepAll)
         std::this_thread::sleep_for(std::chrono::seconds(1));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(4));
+        data = reader.block(std::chrono::seconds(5));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
@@ -952,7 +957,7 @@ TEST(BlackBox, PubSubKeepAllTransient)
         std::this_thread::sleep_for(std::chrono::seconds(1));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(4));
+        data = reader.block(std::chrono::seconds(5));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
@@ -972,8 +977,6 @@ int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
-#if defined(WIN32) && defined(_DEBUG)
     eprosima::Log::setVerbosity(eprosima::LOG_VERBOSITY_LVL::VERB_ERROR);
-#endif
     return RUN_ALL_TESTS();
 }
