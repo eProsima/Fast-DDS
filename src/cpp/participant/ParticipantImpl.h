@@ -114,6 +114,8 @@ public:
 
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
 
+	int get_no_publishers(char *target_topic);
+
 	/**
 	* This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
 	* included in FastRTPS, for example when communicating with other implementations.

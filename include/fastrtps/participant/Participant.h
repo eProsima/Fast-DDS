@@ -77,6 +77,11 @@ public:
 	 * @return std::pair of pointers to the EDP Readers
 	 * */	
 	std::pair<StatefulReader*,StatefulReader*> getEDPReaders();
+	/**
+	 *  This method, taking a pointer to a string as an argument, returns the total number of Publishers
+	 *  on that topic that exist on the Participant
+	 */
+	int get_no_publishers(char *target_topic);
 };
 
 }

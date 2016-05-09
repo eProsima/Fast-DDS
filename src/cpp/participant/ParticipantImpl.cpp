@@ -186,6 +186,21 @@ std::pair<StatefulReader*,StatefulReader*> ParticipantImpl::getEDPReaders(){
 	return mp_rtpsParticipant->getEDPReaders();
 }
 
+int ParticipantImpl::get_no_publishers(char *target_topic){
+	int count = 0;
+	std::string target_string(target_topic);
+	//Calculate the number of publishers that match the target topic
+	
+	for(auto it=m_publishers.begin(); it!=m_publishers.end(); ++it){
+		if(target_string.compare( (*it).second->getAttributes().topic.topicName ) == 0){
+			//Strings are equal
+			count++;
+		}	
+
+	}
+	return count;	
+}
+
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {

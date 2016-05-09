@@ -48,6 +48,9 @@ std::pair<StatefulReader*,StatefulReader*> Participant::getEDPReaders(){
 
 	return mp_impl->getEDPReaders();
 }
+int Participant::get_no_publishers(char *target_topic){
+	return mp_impl->get_no_publishers(target_topic);
+}
 
 
 } /* namespace pubsub */
