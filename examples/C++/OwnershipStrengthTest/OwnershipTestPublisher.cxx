@@ -64,7 +64,7 @@ bool OwnershipTestPublisher::init()
 	return true;
 }
 
-void OwnershipTestPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void OwnershipTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{

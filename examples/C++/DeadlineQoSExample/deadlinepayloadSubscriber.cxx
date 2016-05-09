@@ -62,7 +62,7 @@ bool deadlinepayloadSubscriber::init()
 	return true;
 }
 
-void deadlinepayloadSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void deadlinepayloadSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{

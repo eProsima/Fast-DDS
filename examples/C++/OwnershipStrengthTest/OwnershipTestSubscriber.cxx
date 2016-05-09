@@ -55,7 +55,7 @@ bool OwnershipTestSubscriber::init()
 	return true;
 }
 
-void OwnershipTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void OwnershipTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{

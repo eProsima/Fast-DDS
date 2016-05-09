@@ -64,7 +64,7 @@ bool deadlinepayloadPublisher::init()
 	return true;
 }
 
-void deadlinepayloadPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void deadlinepayloadPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{
@@ -95,8 +95,6 @@ void deadlinepayloadPublisher::run()
 
 	/* Initialize your structure here */
 	
-	int msgsent = 0;
-	char ch = 'y';
 	while(true){
 		eClock::my_sleep(900);
 
@@ -110,7 +108,5 @@ void deadlinepayloadPublisher::run()
 				mp_publisher->write(&st);
 			}
 		}
-
-
 	}
 }
