@@ -183,18 +183,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
 				}
 				else
 				{
-					bool read = false;
-					if(vit->second.front()->isRead)
-						read = true;
-					if(this->remove_change_sub(vit->second.front(),&vit))
-					{
-						if(!read)
-						{
-							this->decreaseUnreadCount();
-						}
-						add = true;
-					}
-
                     // Try to substitude a older samples.
                     auto older_sample = m_changes.rend();
                     for(auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)

@@ -80,8 +80,8 @@ namespace eprosima
                     kind(ALIVE),
                     isRead(false),
                     is_untyped_(true),
-                    dataFragments(new std::vector<uint32_t>()),
-                    fragment_size(0)
+                    dataFragments_(new std::vector<uint32_t>()),
+                    fragment_size_(0)
                 {
                 }
 
@@ -95,8 +95,8 @@ namespace eprosima
                     serializedPayload(payload_size),
                     isRead(false),
                     is_untyped_(is_untyped),
-                    dataFragments(new std::vector<uint32_t>()),
-                    fragment_size(0)
+                    dataFragments_(new std::vector<uint32_t>()),
+                    fragment_size_(0)
                 {
                 }
 
@@ -116,8 +116,8 @@ namespace eprosima
 
                     bool ret = serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 
-                    setFragmentSize(ch_ptr->fragment_size);
-                    dataFragments->assign(ch_ptr->dataFragments->begin(), ch_ptr->dataFragments->end());
+                    setFragmentSize(ch_ptr->fragment_size_);
+                    dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
 
                     return ret;
                 }
@@ -135,32 +135,34 @@ namespace eprosima
                     serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
                 }
 
-                ~CacheChange_t(){
-                    if (dataFragments)
-                        delete dataFragments;
+                ~CacheChange_t()
+                {
+                    if (dataFragments_)
+                        delete dataFragments_;
                 }
 
                 uint32_t getFragmentCount() const
                 { 
-                    return (uint32_t)dataFragments->size();
+                    return (uint32_t)dataFragments_->size();
                 }
 
-                std::vector<uint32_t>* getDataFragments() { return dataFragments; }
+                std::vector<uint32_t>* getDataFragments() { return dataFragments_; }
 
-                uint16_t getFragmentSize() const { return fragment_size; }
+                uint16_t getFragmentSize() const { return fragment_size_; }
 
-                void setFragmentSize(uint16_t fragment_size) {
-                    this->fragment_size = fragment_size;
+                void setFragmentSize(uint16_t fragment_size)
+                {
+                    this->fragment_size_ = fragment_size;
 
                     if (fragment_size == 0) {
-                        dataFragments->clear();
+                        dataFragments_->clear();
                     } 
                     else
                     {
                         //TODO Mirar si cuando se compatibilice con RTI funciona el calculo, porque ellos
                         //en el sampleSize incluyen el padding.
                         uint32_t size = (serializedPayload.length + fragment_size - 1) / fragment_size;
-                        dataFragments->assign(size, ChangeFragmentStatus_t::NOT_PRESENT);
+                        dataFragments_->assign(size, ChangeFragmentStatus_t::NOT_PRESENT);
                     }
                 }
 
@@ -168,10 +170,10 @@ namespace eprosima
                 private:
 
                 // Data fragments
-                std::vector<uint32_t>* dataFragments;
+                std::vector<uint32_t>* dataFragments_;
 
                 // Fragment size
-                uint16_t fragment_size;
+                uint16_t fragment_size_;
             };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

@@ -152,7 +152,7 @@ class PubSubWriter
 
     bool waitForAllAcked(const std::chrono::seconds& max_wait)
     {
-        return publisher_->wait_for_all_acked(Time_t(max_wait.count(), 0));
+        return publisher_->wait_for_all_acked(Time_t((int32_t)max_wait.count(), 0));
     }
 
     /*** Function to change QoS ***/

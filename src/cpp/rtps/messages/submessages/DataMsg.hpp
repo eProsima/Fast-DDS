@@ -48,7 +48,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg, GuidPrefix_t& guidpre
 bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
 		TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos) {
 	const char* const METHOD_NAME = "addSubmessageData";
-	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg(change->serializedPayload.length);
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
 	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
 	//CDRMessage_t submsgElem;
@@ -245,7 +245,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
 	if(fragment_number >= change->getFragmentCount()) // If last fragment, size may be smaller
 		fragment_size = change->serializedPayload.length - fragment_start;
 
-	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg(fragment_size);
+	CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)fragment_size);
 	CDRMessage::initCDRMsg(&submsgElem);
 	//Create the two CDR msgs
 	//CDRMessage_t submsgElem;

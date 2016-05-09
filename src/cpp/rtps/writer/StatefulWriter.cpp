@@ -147,7 +147,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 else
                     changeForReader.setStatus(UNACKNOWLEDGED);
 
-                boost::lock_guard<boost::recursive_mutex> guard(*(*it)->mp_mutex);
+                boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
                 (*it)->m_changesForReader.insert(changeForReader);
             }

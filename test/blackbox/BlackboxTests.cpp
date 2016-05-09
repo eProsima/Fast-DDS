@@ -66,7 +66,7 @@ std::list<Data64kb> default_data64kb_data_generator(size_t max = 0)
             data.data().resize(data64kb_length);
             data.data()[0] = index;
             for(size_t i = 1; i < data64kb_length; ++i)
-                data.data()[i] = i + data.data()[0];
+                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
             ++index;
             return data;
             });
@@ -86,7 +86,7 @@ std::list<Data1mb> default_data300kb_data_generator(size_t max = 0)
             data.data().resize(data300kb_length);
             data.data()[0] = index;
             for(size_t i = 1; i < data300kb_length; ++i)
-                data.data()[i] = i + data.data()[0];
+                data.data()[i] = static_cast<unsigned char>(i + data.data()[0]);
             ++index;
             return data;
             });
@@ -645,7 +645,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_data64kb_data_generator();
+    auto data = default_data64kb_data_generator(30);
     
     reader.expected_data(data);
     reader.startReception();
@@ -735,7 +735,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     writer.waitDiscovery();
     reader.waitDiscovery();
 
-    auto data = default_data300kb_data_generator(1);
+    auto data = default_data300kb_data_generator(30);
     
     reader.expected_data(data);
     reader.startReception();

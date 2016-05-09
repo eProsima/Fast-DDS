@@ -337,9 +337,9 @@ struct SequenceNumberHash
     std::size_t operator()(const SequenceNumber_t& sequence_number) const
     {
 #ifdef LLONG_MAX
-        return sequence_number.to64long();
+        return static_cast<std::size_t>(sequence_number.to64long());
 #else
-        return sequence_number.low;
+        return static_cast<std::size_t>(sequence_number.low);
 #endif
     };
 };

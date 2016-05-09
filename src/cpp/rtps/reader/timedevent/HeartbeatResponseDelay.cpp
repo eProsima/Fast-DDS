@@ -150,8 +150,6 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                         mp_WP->m_att.guid.guidPrefix, mp_WP->mp_SFR->getGuid().entityId, mp_WP->m_att.guid.entityId,
                         cit->sequenceNumber, frag_sns, mp_WP->m_nackfragCount);
 
-                std::vector<Locator_t>::iterator lit;
-
                 for(auto lit = mp_WP->m_att.endpoint.unicastLocatorList.begin();
                         lit!=mp_WP->m_att.endpoint.unicastLocatorList.end();++lit)
                     mp_WP->mp_SFR->getRTPSParticipant()->sendSync(&m_heartbeat_response_msg,(*lit));

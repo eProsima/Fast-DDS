@@ -19,6 +19,7 @@ AsyncWriterThread::~AsyncWriterThread()
     {
         thread_->interrupt();
         thread_->join();
+        delete thread_;
     }
 }
 
@@ -97,7 +98,7 @@ void AsyncWriterThread::run()
             //TODO Make configurable the time.
             boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
         }
-        catch(boost::thread_interrupted e)
+        catch(boost::thread_interrupted /*e*/)
         {
             return;
         }
