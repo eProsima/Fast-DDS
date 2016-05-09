@@ -82,6 +82,10 @@ public:
 	 *  on that topic that exist on the Participant
 	 */
 	int get_no_publishers(char *target_topic);
+	/**
+	 * Analog to the previous method, but with subscribers
+	 * */
+	int get_no_subscribers(char *target_topic);
 };
 
 }

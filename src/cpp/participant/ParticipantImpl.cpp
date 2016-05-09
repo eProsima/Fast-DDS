@@ -201,6 +201,18 @@ int ParticipantImpl::get_no_publishers(char *target_topic){
 	return count;	
 }
 
+int ParticipantImpl::get_no_subscribers(char *target_topic){
+	int count = 0;
+	std::string target_string(target_topic);
+
+	for(auto it=m_subscribers.begin(); it!=m_subscribers.end(); ++it){
+		if(target_string.compare( (*it).second->getAttributes().topic.topicName ) == 0){
+			count++;
+		}
+	}
+	return count;
+
+}
 Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 		SubscriberListener* listen)
 {
