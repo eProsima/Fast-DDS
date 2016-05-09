@@ -24,6 +24,11 @@ bool InfectableReaderListener::hasReaderAttached(){
 		return true;
 	return false;
 }
+ReaderListener* InfectableReaderListener::getAttachedListener(){
+	if(attached_listener != nullptr)
+		return attached_listener;
+	return nullptr;
+}	
 
 //Namespace ends
 }}}

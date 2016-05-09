@@ -60,7 +60,7 @@ public:
 	void attachListener(ReaderListener *secondary_listener);
         void detachListener();	
 	bool hasReaderAttached();
-	
+	ReaderListener* getAttachedListener();	
 private:
 	ReaderListener * attached_listener;
 
