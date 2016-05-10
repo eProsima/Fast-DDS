@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_
-#define _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_
+#ifndef _TEST_PROFILING_RTPSASSOCKETREADER_HPP_
+#define _TEST_PROFILING_RTPSASSOCKETREADER_HPP_
 
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
@@ -69,4 +69,4 @@ class RTPSAsSocketReader
         std::string word_;
 };
 
-#endif // _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_
+#endif // _TEST_PROFILING_RTPSASSOCKETREADER_HPP_

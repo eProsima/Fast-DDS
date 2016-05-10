@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
-#define _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
+#ifndef _TEST_PROFILING_RTPSASSOCKETWRITER_HPP_
+#define _TEST_PROFILING_RTPSASSOCKETWRITER_HPP_
 
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
@@ -45,4 +45,4 @@ class RTPSAsSocketWriter
         std::string hostname_;
 };
 
-#endif // _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
+#endif // _TEST_PROFILING_RTPSASSOCKETWRITER_HPP_
