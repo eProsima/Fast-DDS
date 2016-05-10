@@ -5,8 +5,6 @@
 
 #include <string>
 
-std::list<HelloWorld> default_helloworld_data_generator();
-
 template<typename T>
 void print_non_received_messages(const std::list<T>& data, const std::function<void(const T&)>& printer)
 {
@@ -17,6 +15,7 @@ void print_non_received_messages(const std::list<T>& data, const std::function<v
         std::cout << std::endl;
     }
 }
+std::list<HelloWorld> default_helloworld_data_generator();
 
 int main(void)
 {
@@ -28,7 +27,6 @@ int main(void)
    writer.init();
    reader.init();
 
-   // Because its volatile the durability
    // Wait for discovery.
    writer.waitDiscovery();
    reader.waitDiscovery();
