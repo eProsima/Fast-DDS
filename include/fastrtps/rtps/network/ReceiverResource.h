@@ -39,6 +39,7 @@ private:
    std::function<void()> Cleanup;
    std::function<bool(std::vector<char>&, Locator_t&)> ReceiveFromAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
+   bool mValid; // Post-construction validity check for the NetworkFactory
 };
 
 } // namespace rtps

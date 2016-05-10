@@ -33,7 +33,8 @@ vector<SenderResource> NetworkFactory::BuildSenderResourcesForRemoteLocator(cons
           !transport->IsOutputChannelOpen(local) )
       {
          SenderResource newSenderResource(*transport, local);
-         newSenderResources.push_back(move(newSenderResource));
+         if (newSenderResource.mValid)
+            newSenderResources.push_back(move(newSenderResource));
       }
    }
    return newSenderResources;
@@ -49,7 +50,8 @@ vector<ReceiverResource> NetworkFactory::BuildReceiverResources(const Locator_t&
           !transport->IsInputChannelOpen(local) )
       {
          ReceiverResource newReceiverResource(*transport, local);
-         newReceiverResources.push_back(move(newReceiverResource));
+         if (newReceiverResource.mValid)
+            newReceiverResources.push_back(move(newReceiverResource));
       }
    }
    return newReceiverResources;

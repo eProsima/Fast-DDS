@@ -10,7 +10,9 @@ namespace rtps{
 ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator)
 {
    // Internal channel is opened and assigned to this resource.
-   transport.OpenInputChannel(locator);
+   mValid = transport.OpenInputChannel(locator);
+   if (!mValid)
+      return; // Invalid resource to be discarded by the factory.
 
    // Implementation functions are bound to the right transport parameters
    Cleanup = [&transport,locator](){ transport.CloseInputChannel(locator); };

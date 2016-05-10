@@ -8,7 +8,9 @@ namespace rtps{
 SenderResource::SenderResource(TransportInterface& transport, const Locator_t& locator)
 {
    // Internal channel is opened and assigned to this resource.
-   transport.OpenOutputChannel(locator);
+   mValid = transport.OpenOutputChannel(locator);
+   if (!mValid)
+      return; // Invalid resource, will be discarded by the factory.
 
    // Implementation functions are bound to the right transport parameters
    Cleanup = [&transport,locator](){ transport.CloseOutputChannel(locator); };
@@ -22,7 +24,8 @@ SenderResource::SenderResource(TransportInterface& transport, const Locator_t& l
 
 bool SenderResource::Send(const std::vector<char>& data, const Locator_t& destinationLocator)
 {
-   return SendThroughAssociatedChannel(data, destinationLocator);
+   if (SendThroughAssociatedChannel)
+      return SendThroughAssociatedChannel(data, destinationLocator);
 }
 
 SenderResource::SenderResource(SenderResource&& rValueResource)
@@ -35,12 +38,14 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
 
 bool SenderResource::SupportsLocator(const Locator_t& local)
 {
-   return LocatorMapsToManagedChannel(local);
+   if (LocatorMapsToManagedChannel)
+      return LocatorMapsToManagedChannel(local);
 }
 
 bool SenderResource::CanSendToRemoteLocator(const Locator_t& remote)
 {
-   return ManagedChannelMapsToRemote(remote);
+   if (ManagedChannelMapsToRemote)
+      return ManagedChannelMapsToRemote(remote);
 }
 
 SenderResource::~SenderResource()

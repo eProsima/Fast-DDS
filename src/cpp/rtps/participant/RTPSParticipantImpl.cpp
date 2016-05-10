@@ -621,7 +621,9 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 	for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc){
 		newItemsBuffer = m_network_Factory.BuildReceiverResources((*it_loc));
 		if(ApplyMutation){
-			while(newItemsBuffer.empty()){
+         int tries = 0;
+			while(newItemsBuffer.empty() && (tries < MutationTries)){
+            tries++;
 				(*it_loc) = applyLocatorAdaptRule(*it_loc);
 				newItemsBuffer = m_network_Factory.BuildReceiverResources((*it_loc));
 			}	

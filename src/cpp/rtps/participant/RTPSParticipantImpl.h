@@ -374,6 +374,7 @@ public:
 	@param Locator_list - Locator list to be used to create the ReceiverResources
 	@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
 	*/
+   static const int MutationTries = 5;
 	bool createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
 };
