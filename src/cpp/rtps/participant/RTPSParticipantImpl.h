@@ -230,10 +230,9 @@ private:
 	/**
 	 * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
 	 * @param endp Pointer to the endpoint.
-	 * @param isBuiltin Boolean indicating if it is builtin.
 	 * @return True if correct.
 	 */
-	bool assignEndpointListenResources(Endpoint* endp,bool isBuiltin);
+	bool assignEndpointListenResources(Endpoint* endp);
 
 	/** Assign an endpoint to the ReceiverResources as specified specifically on parameter list
 	 * @param pend Pointer to the endpoint.
@@ -248,7 +247,7 @@ private:
 		and consequently assignEndpoint2LocatorList
 		@param pend - Pointer to the endpoint which triggered the creation of the Receivers
 	*/
-	bool createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn);
+	bool createAndAssociateReceiverswithEndpoint(Endpoint * pend);
 	
 	/** Function to be called from a new thread, which takes cares of performing a blocking receive 
 		operation on the ReceiveResource
@@ -295,7 +294,7 @@ public:
 	bool createReader(RTPSReader** Reader, ReaderAttributes& param,ReaderHistory* hist,ReaderListener* listen,
 				const EntityId_t& entityId = c_EntityId_Unknown,bool isBuiltin = false, bool enable = true);
 
-    bool enableReader(RTPSReader *reader, bool isBuiltin = false);
+    bool enableReader(RTPSReader *reader);
 
 	/**
 	* Register a Writer in the BuiltinProtocols.
@@ -376,7 +375,7 @@ public:
 	@param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
 	*/
    static const int MutationTries = 5;
-	bool createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
+	void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
 
 };
 

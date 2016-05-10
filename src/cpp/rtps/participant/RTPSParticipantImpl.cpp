@@ -312,7 +312,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	createSendResources((Endpoint *)SWriter);
 	if(param.endpoint.reliabilityKind == RELIABLE)
 	{
-		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SWriter, isBuiltin))
+		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SWriter))
 		{
 			delete(SWriter);
 			return false;
@@ -395,7 +395,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
     if(enable)
     {
-		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SReader, isBuiltin))
+		if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SReader))
         {
             delete(SReader);
             return false;
@@ -410,9 +410,9 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 	return true;
 }
 
-bool RTPSParticipantImpl::enableReader(RTPSReader *reader, bool isBuiltin)
+bool RTPSParticipantImpl::enableReader(RTPSReader *reader)
 {
-    if(!assignEndpointListenResources((Endpoint*)reader,isBuiltin))
+    if(!assignEndpointListenResources((Endpoint*)reader))
     {
         return false;
     }
@@ -481,7 +481,7 @@ bool RTPSParticipantImpl::existsEntityId(const EntityId_t& ent,EndpointKind_t ki
  */
 
 
-bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBuiltin)
+bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp)
 {
 	//Tag the endpoint with the ReceiverResources
 	//const char* const METHOD_NAME = "assignEndpointListenResources";
@@ -497,7 +497,7 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	return valid;
 }
 
-bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend, bool isBuiltIn){
+bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend){
 	/*	This function...
 		- Asks the network factory for new resources
 		- Encapsulates the new resources within the ReceiverControlBlock list
@@ -521,7 +521,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 	}
 	createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
 	// Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
-	assignEndpointListenResources(pend,isBuiltIn); 
+	assignEndpointListenResources(pend); 
 	return true;
 }
 
@@ -597,7 +597,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend){
 	return true;
 }
 
-bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation){
+void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation){
 	std::vector<ReceiverResource> newItemsBuffer;
 
 	for(auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc){

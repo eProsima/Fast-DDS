@@ -125,7 +125,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 		return false;
 	}
 
-    if(!mp_RTPSParticipant->enableReader(mp_SPDPReader, true))
+    if(!mp_RTPSParticipant->enableReader(mp_SPDPReader))
         return false;
 
 	mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
