@@ -27,7 +27,6 @@
 #include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <gtest/gtest.h>
 
-bool haveIbeenCalled = false;
 
 class pub_dummy_listener:public PublisherListener
 {
@@ -50,20 +49,18 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
 	public:
 	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in){
 		CacheChange_t* change = (CacheChange_t*) change_in;
-		haveIbeenCalled = true;
 		if(change->kind == ALIVE){
 			WriterProxyData proxyData;
 			CDRMessage_t tempMsg;
 			tempMsg.msg_endian = change->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND:LITTLEEND;
 			tempMsg.length = change->serializedPayload.length;
 			memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
-			//if(proxyData.readFromCDRMessage(&tempMsg)){
-			//	topicNtypes[proxyData.m_topicName].insert(proxyData.m_typeName);		
-			//}
+			if(proxyData.readFromCDRMessage(&tempMsg)){
+				topicNtypes[proxyData.m_topicName].insert(proxyData.m_typeName);		
+			}
 		}
 	}
-	//std::map<std::string,std::set<std::string>> topicNtypes;
-	//bool haveIbeenCalled;
+	std::map<std::string,std::set<std::string>> topicNtypes;
 
 };
 
@@ -154,7 +151,6 @@ TEST(ros2features, SlaveListenerCallback){
 	HelloWorldType my_type;
 	pub_dummy_listener my_dummy_listener;
 	gettopicnamesandtypesReaderListener* slave_listener = new(gettopicnamesandtypesReaderListener);
-	haveIbeenCalled = false;
 	gettopicnamesandtypesReaderListener* slave_target;
 	bool result;	
 	p_attr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230 + 35;
@@ -174,8 +170,7 @@ TEST(ros2features, SlaveListenerCallback){
 	result = target->hasReaderAttached();
 	ASSERT_EQ(result,true);
 	slave_target =  dynamic_cast<gettopicnamesandtypesReaderListener*>(target->getAttachedListener());
-	//ASSERT_EQ(slave_target->topicNtypes.size(),0);
-	ASSERT_EQ(haveIbeenCalled,false);
+	ASSERT_EQ(slave_target->topicNtypes.size(),0);
 
 	Participant *my_participant2;
 	Publisher *my_publisher2;
@@ -193,9 +188,8 @@ TEST(ros2features, SlaveListenerCallback){
 	pub_attr2.topic.topicDataType = "HelloWorldType";
 	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
 	ASSERT_NE(my_publisher2, nullptr);
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-	//ASSERT_EQ(slave_target->topicNtypes.size(),1);
-	ASSERT_EQ(haveIbeenCalled,true);
+	//std::this_thread::sleep_for(std::chrono::seconds(5));
+	ASSERT_EQ(slave_target->topicNtypes.size(),1);
 }
 
 int main(int argc, char **argv)
