@@ -1,0 +1,4 @@
+struct Data64kb
+{
+    sequence<octet, 63996> data;
+};
