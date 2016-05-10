@@ -1,0 +1,42 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FilteringExampleTypes", "FilteringExampleTypes-x64Win64VS2015.vcxproj", "{5308B9F8-9C95-2591-8B9E-F46E829159BF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FilteringExamplePublisherSubscriber", "FilteringExamplePublisherSubscriber-x64Win64VS2015.vcxproj", "{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF} = {5308B9F8-9C95-2591-8B9E-F46E829159BF}
+	EndProjectSection
+
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug DLL|x64 = Debug DLL|x64
+		Release DLL|x64 = Release DLL|x64
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Debug DLL|x64.ActiveCfg = Debug DLL|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Debug DLL|x64.Build.0 = Debug DLL|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Debug DLL|x64.ActiveCfg = Debug DLL|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Debug DLL|x64.Build.0 = Debug DLL|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Release DLL|x64.ActiveCfg = Release DLL|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Release DLL|x64.Build.0 = Release DLL|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Release DLL|x64.ActiveCfg = Release DLL|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Release DLL|x64.Build.0 = Release DLL|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Debug|x64.ActiveCfg = Debug|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Debug|x64.Build.0 = Debug|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Debug|x64.ActiveCfg = Debug|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Debug|x64.Build.0 = Debug|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Release|x64.ActiveCfg = Release|x64
+		{5308B9F8-9C95-2591-8B9E-F46E829159BF}.Release|x64.Build.0 = Release|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Release|x64.ActiveCfg = Release|x64
+		{31BA6FA2-2BE1-BDD8-43EE-9711701BA969}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

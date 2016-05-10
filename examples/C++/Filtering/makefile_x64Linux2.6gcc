@@ -1,0 +1,69 @@
+CPP= g++
+CPPFLAGS = -c -Wall -fpic -m64 -O2 -std=c++0x
+LN= g++
+AR=ar
+LDFLAGS= -m64
+SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
+DEFINES= 
+
+INCLUDES= -I. -I$(FASTRTPSHOME)/include
+
+LIBS = -L$(FASTRTPSHOME)/lib -L$(FASTRTPSHOME)/lib/x64Linux2.6gcc -lboost_system -lboost_thread -lfastcdr -lfastrtps -lboost_system -lboost_thread -lboost_date_time $(SYSLIBS)
+
+DIRECTORIES= output.dir output/x64Linux2.6gcc.dir lib.dir lib/x64Linux2.6gcc.dir bin.dir bin/x64Linux2.6gcc.dir
+
+all: $(DIRECTORIES) FilteringExample FilteringExamplePublisherSubscriber
+
+
+FilteringExample_TARGET= lib/x64Linux2.6gcc/libFilteringExample.so
+FilteringExample_TARGET_Z= lib/x64Linux2.6gcc/libFilteringExample.a
+
+FilteringExample_CLIENT_EXAMPLE_TARGET= bin/x64Linux2.6gcc/FilteringExamplePublisherSubscriber
+FilteringExample_COMMON_SRC_CXXFILES = FilteringExample.cxx
+
+FilteringExample_COMMON_SRC_CPPFILES=
+
+FilteringExample_CLIENTSOURCES = FilteringExamplePubSubTypes.cxx \
+	FilteringExamplePublisher.cxx \
+	FilteringExampleSubscriber.cxx \
+	FilteringExamplePubSubMain.cxx
+
+FilteringExample_COMMONOBJS    = $(FilteringExample_COMMON_SRC_CXXFILES:%.cxx=output/x64Linux2.6gcc/%.o) $(FilteringExample_COMMON_SRC_CPPFILES:%.cpp=output/x64Linux2.6gcc/%.o)
+
+FilteringExample_CLIENTOBJS    = $(FilteringExample_CLIENTSOURCES:%.cxx=output/x64Linux2.6gcc/%.o)
+
+FilteringExampleOBJS+= $(FilteringExample_COMMONOBJS) $(FilteringExample_CLIENTOBJS)
+OBJS+= $(FilteringExampleOBJS)
+
+$(FilteringExample_TARGET): $(FilteringExample_COMMONOBJS)
+	$(LN) $(LDFLAGS) -shared -o $(FilteringExample_TARGET) $(FilteringExample_COMMONOBJS) $(LIBS) -Llib/x64Linux2.6gcc 
+
+$(FilteringExample_TARGET_Z): $(FilteringExample_COMMONOBJS)
+	$(AR) -cru $(FilteringExample_TARGET_Z) $(FilteringExample_COMMONOBJS)
+
+$(FilteringExample_CLIENT_EXAMPLE_TARGET): $(FilteringExampleOBJS) lib/x64Linux2.6gcc/libFilteringExample.a 
+	$(LN) $(LDFLAGS) -o $@ $(FilteringExampleOBJS) -Wl,-Bstatic -Llib/x64Linux2.6gcc -lFilteringExample  -Wl,-Bdynamic $(LIBS)
+
+FilteringExamplePublisherSubscriber : $(FilteringExample_CLIENT_EXAMPLE_TARGET)
+FilteringExample: $(FilteringExample_TARGET) $(FilteringExample_TARGET_Z) FilteringExamplePublisherSubscriber
+
+output/x64Linux2.6gcc/%.o:%.cxx
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $(DEFINES) -c $< -o $@
+
+output/x64Linux2.6gcc/%.o:%.cpp
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $(DEFINES) -c $< -o $@
+
+.PHONY: FilteringExample FilteringExamplePublisherSubscriber
+
+clean:
+	@rm -f $(OBJS)
+
+%.dir : 
+	@echo "Checking directory $*"
+	@if [ ! -d $* ]; then \
+
+		echo "Making directory $*"; \
+
+		mkdir -p $* ; \
+
+	fi;
