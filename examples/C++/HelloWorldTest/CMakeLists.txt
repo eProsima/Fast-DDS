@@ -1,8 +1,0 @@
-if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-	message(STATUS "Building DeadlineQoS example...")
-	file(GLOB HW_SOURCES_CXX "*.cxx")
-	file(GLOB HW_SOURCES_CPP "*.cpp")	
-	add_executable(helloworld ${HW_SOURCES_CXX} ${HW_SOURCES_CPP})
-	target_include_directories(helloworld PRIVATE ${Boost_INCLUDE_DIR})
-	target_link_libraries(helloworld fastrtps fastcdr ${Boost_LIBRARIES})
-endif()
