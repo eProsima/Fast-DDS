@@ -69,6 +69,7 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
         {
             thread_->interrupt();
             thread_->join();
+            delete thread_;
             thread_ = nullptr;
         }
     }

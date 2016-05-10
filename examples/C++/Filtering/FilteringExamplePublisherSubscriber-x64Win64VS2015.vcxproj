@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug DLL|x64">
+          <Configuration>Debug DLL</Configuration>
+          <Platform>x64</Platform>
+        </ProjectConfiguration>
+    <ProjectConfiguration Include="Release DLL|x64">
+          <Configuration>Release DLL</Configuration>
+          <Platform>x64</Platform>
+        </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+          <Configuration>Debug</Configuration>
+          <Platform>x64</Platform>
+        </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+          <Configuration>Release</Configuration>
+          <Platform>x64</Platform>
+        </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>FilteringExamplePublisherSubscriber</ProjectName>
+    <ProjectGuid>{5308B9F8-9C95-2591-8B9E-F46E829159BF}</ProjectGuid>
+    <RootNamespace>FilteringExamplePublisherSubscriber</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'" Label="Configuration">
+      <ConfigurationType>Application</ConfigurationType>
+      <UseDebugLibraries>true</UseDebugLibraries>
+      <UseOfMfc>false</UseOfMfc>
+      <CharacterSet>MultiByte</CharacterSet>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'" Label="Configuration">
+      <ConfigurationType>Application</ConfigurationType>
+      <UseDebugLibraries>false</UseDebugLibraries>
+      <UseOfMfc>false</UseOfMfc>
+      <CharacterSet>MultiByte</CharacterSet>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+      <ConfigurationType>Application</ConfigurationType>
+      <UseDebugLibraries>true</UseDebugLibraries>
+      <UseOfMfc>false</UseOfMfc>
+      <CharacterSet>MultiByte</CharacterSet>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+      <ConfigurationType>Application</ConfigurationType>
+      <UseDebugLibraries>false</UseDebugLibraries>
+      <UseOfMfc>false</UseOfMfc>
+      <CharacterSet>MultiByte</CharacterSet>
+    </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'">
+      <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <OutDir>.\bin\x64Win64VS2015\</OutDir>
+      <TargetName>$(ProjectName)d</TargetName>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'">
+      <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <OutDir>.\bin\x64Win64VS2015\</OutDir>
+      <TargetName>$(ProjectName)</TargetName>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <OutDir>.\bin\x64Win64VS2015\</OutDir>
+      <TargetName>$(ProjectName)d</TargetName>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <OutDir>.\bin\x64Win64VS2015\</OutDir>
+      <TargetName>$(ProjectName)</TargetName>
+    </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|x64'">
+      <ClCompile>
+        <WarningLevel>Level3</WarningLevel>
+        <Optimization>Disabled</Optimization>
+        <AdditionalIncludeDirectories>$(FASTRTPSHOME)/include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;EPROSIMA_ALL_DYN_LINK;BOOST_ALL_DYN_LINK;_DEBUG;</PreprocessorDefinitions>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        <PrecompiledHeaderFile>
+        </PrecompiledHeaderFile>
+        <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      </ClCompile>
+      <Link>
+        <GenerateDebugInformation>true</GenerateDebugInformation>
+        <AdditionalDependencies>FilteringExampleTypesd.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+        <AdditionalLibraryDirectories>$(FASTRTPSHOME)/lib;$(FASTRTPSHOME)/lib/x64Win64VS2015;.\lib\x64Win64VS2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      </Link>
+    </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|x64'">
+      <ClCompile>
+        <WarningLevel>Level3</WarningLevel>
+        <Optimization>MaxSpeed</Optimization>
+        <AdditionalIncludeDirectories>$(FASTRTPSHOME)/include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;EPROSIMA_ALL_DYN_LINK;BOOST_ALL_DYN_LINK;NDEBUG;</PreprocessorDefinitions>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        <PrecompiledHeaderFile>
+        </PrecompiledHeaderFile>
+        <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      </ClCompile>
+      <Link>
+        <GenerateDebugInformation>false</GenerateDebugInformation>
+        <AdditionalDependencies>FilteringExampleTypes.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+        <AdditionalLibraryDirectories>$(FASTRTPSHOME)/lib;$(FASTRTPSHOME)/lib/x64Win64VS2015;.\lib\x64Win64VS2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      </Link>
+    </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      <ClCompile>
+        <WarningLevel>Level3</WarningLevel>
+        <Optimization>Disabled</Optimization>
+        <AdditionalIncludeDirectories>$(FASTRTPSHOME)/include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;BOOST_ALL_DYN_LINK;_DEBUG;</PreprocessorDefinitions>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        <PrecompiledHeaderFile>
+        </PrecompiledHeaderFile>
+        <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      </ClCompile>
+      <Link>
+        <GenerateDebugInformation>true</GenerateDebugInformation>
+        <AdditionalDependencies>libFilteringExampleTypesd.lib;Shlwapi.lib;Iphlpapi.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+        <AdditionalLibraryDirectories>$(FASTRTPSHOME)/lib;$(FASTRTPSHOME)/lib/x64Win64VS2015;.\lib\x64Win64VS2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      </Link>
+    </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      <ClCompile>
+        <WarningLevel>Level3</WarningLevel>
+        <Optimization>MaxSpeed</Optimization>
+        <AdditionalIncludeDirectories>$(FASTRTPSHOME)/include;$(LIB_BOOST_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        <PreprocessorDefinitions>_WIN32_WINDOWS;WIN32;EPROSIMA_WIN32;BOOST_ALL_DYN_LINK;NDEBUG;</PreprocessorDefinitions>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        <PrecompiledHeaderFile>
+        </PrecompiledHeaderFile>
+        <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      </ClCompile>
+      <Link>
+        <GenerateDebugInformation>false</GenerateDebugInformation>
+        <AdditionalDependencies>libFilteringExampleTypes.lib;Shlwapi.lib;Iphlpapi.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+        <OutputFile>$(TargetDir)$(TargetName)$(TargetExt)</OutputFile>
+        <AdditionalLibraryDirectories>$(FASTRTPSHOME)/lib;$(FASTRTPSHOME)/lib/x64Win64VS2015;.\lib\x64Win64VS2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      </Link>
+    </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="FilteringExamplePubSubTypes.cxx" />
+    <ClCompile Include="FilteringExamplePublisher.cxx" />
+    <ClCompile Include="FilteringExampleSubscriber.cxx" />
+    <ClCompile Include="FilteringExamplePubSubMain.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FilteringExamplePubSubTypes.h" />
+    <ClInclude Include="FilteringExamplePublisher.h" />
+    <ClInclude Include="FilteringExampleSubscriber.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

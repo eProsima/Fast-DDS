@@ -62,7 +62,7 @@ void HelloWorldType::deleteData(void* data)
 	delete((HelloWorld*)data);
 }
 
-bool HelloWorldType::getKey(void* data, InstanceHandle_t* ihandle)
+bool HelloWorldType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/)
 {
 	return false;
 }

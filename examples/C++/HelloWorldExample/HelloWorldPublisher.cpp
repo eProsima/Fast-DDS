@@ -77,7 +77,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 	Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
 	if(info.status == MATCHED_MATCHING)
 	{

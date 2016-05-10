@@ -98,7 +98,7 @@ void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_message;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serializeKey(eprosima::fastcdr::Cdr& /*scdr*/) const
 {
 	 
 	 

@@ -197,6 +197,14 @@ if(NOT EPROSIMA_INSTALLER)
 endif()
 
 ###############################################################################
+# Examples 
+###############################################################################
+option(COMPILE_EXAMPLES "Build example" ON)
+if(COMPILE_EXAMPLES)
+	add_subdirectory(examples)
+endif()
+
+###############################################################################
 # Documentation
 ###############################################################################
 # Add an option to toggle the generation of the API documentation.
