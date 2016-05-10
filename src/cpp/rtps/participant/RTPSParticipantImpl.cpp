@@ -134,6 +134,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_att.port.offsetd3+
 				m_att.port.participantIDGain*m_att.participantID;
 		loc2.set_IP4_address(239,255,1,4);
+      m_att.defaultMulticastLocatorList.push_back(loc2);
 		/* INSERT DEFAULT MULTICAST LOCATORS FOR THE PARTICIPANT */
 	}
 
