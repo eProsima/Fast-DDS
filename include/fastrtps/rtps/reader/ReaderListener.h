@@ -54,15 +54,18 @@ public:
 class RTPS_DllAPI InfectableReaderListener: public ReaderListener
 {
 public:
-	InfectableReaderListener(){};
-	~InfectableReaderListener(){};
-	
+	InfectableReaderListener():attached_listener(nullptr){};
+	virtual ~InfectableReaderListener(){};
+
+	virtual void onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& /*info*/){};
+	virtual void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/){};
+
 	void attachListener(ReaderListener *secondary_listener);
         void detachListener();	
 	bool hasReaderAttached();
 	ReaderListener* getAttachedListener();	
-private:
-	ReaderListener * attached_listener;
+protected:
+	ReaderListener* attached_listener;
 
 };
 

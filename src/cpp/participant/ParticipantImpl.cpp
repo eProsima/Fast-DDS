@@ -192,7 +192,7 @@ int ParticipantImpl::get_no_publishers(char *target_topic){
 	//Calculate the number of publishers that match the target topic
 	
 	for(auto it=m_publishers.begin(); it!=m_publishers.end(); ++it){
-		if(target_string.compare( (*it).second->getAttributes().topic.topicDataType ) == 0){
+		if(target_string.compare( (*it).second->getAttributes().topic.topicName) == 0){
 			//Strings are equal
 			count++;
 		}	
@@ -206,7 +206,7 @@ int ParticipantImpl::get_no_subscribers(char *target_topic){
 	std::string target_string(target_topic);
 
 	for(auto it=m_subscribers.begin(); it!=m_subscribers.end(); ++it){
-		if(target_string.compare( (*it).second->getAttributes().topic.topicDataType ) == 0){
+		if(target_string.compare( (*it).second->getAttributes().topic.topicName) == 0){
 			count++;
 		}
 	}

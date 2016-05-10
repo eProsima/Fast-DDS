@@ -91,6 +91,9 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 				mp_SEDP->pairingWriterProxy(pdata, wdata);
 			}
 		}
+		//Call the slave, if it exists
+		if(attached_listener != nullptr)
+		attached_listener->onNewCacheChangeAdded(nullptr,change_in);
 	}
 	else
 	{
@@ -99,7 +102,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 		GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
 		this->mp_SEDP->removeWriterProxy(auxGUID);
 	}
-
+	
     //Removing change from history
     this->mp_SEDP->mp_PubReader.second->remove_change(change);
 
@@ -216,6 +219,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 				mp_SEDP->pairingReaderProxy(pdata, rdata);
 			}
 		}
+		//Call the slave, if it exists
+		if(attached_listener != nullptr)
+			attached_listener->onNewCacheChangeAdded(nullptr,change);
+
 	}
 	else
 	{
