@@ -37,7 +37,7 @@ RTPSWithRegistrationWriter::~RTPSWithRegistrationWriter()
 	delete(history_);
 }
 
-void RTPSWithRegistrationWriter::init()
+void RTPSWithRegistrationWriter::init(bool async)
 {
 	//Create participant
 	RTPSParticipantAttributes pattr;
@@ -56,6 +56,11 @@ void RTPSWithRegistrationWriter::init()
 	WriterAttributes wattr;
     eprosima::fastrtps::WriterQos Wqos;
     configWriter(wattr, Wqos);
+
+    // Asynchronous
+    if(async)
+        wattr.mode = ASYNCHRONOUS_WRITER;
+
 	writer_ = RTPSDomain::createRTPSWriter(participant_, wattr, history_, &listener_);
     ASSERT_NE(writer_, nullptr);
 

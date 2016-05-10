@@ -35,6 +35,12 @@ namespace rtps{
 //!@ingroup COMMON_MODULE
 class RTPS_DllAPI Locator_t{
 public:
+
+    /*!
+     * @brief Specifies the locator type. Valid values are:
+     * LOCATOR_KIND_UDPv4
+     * LOCATOR_KIND_UDPv6
+     */
 	int32_t kind;
 	uint32_t port;
 	octet address[16];

@@ -56,7 +56,7 @@ public:
 	* @param prox
 	* @return
 	*/
-	bool received_change(CacheChange_t* change);
+	bool received_change(CacheChange_t* change, size_t unknown_missing_changes_up_to);
 
 	/** @name Read or take data methods.
 	 * Methods to read or take data from the History.

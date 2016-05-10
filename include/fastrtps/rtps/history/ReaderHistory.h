@@ -59,7 +59,7 @@ public:
 	* @param change Pointer to the change
 	* @return True if added.
 	*/
-	RTPS_DllAPI virtual bool received_change(CacheChange_t* change);
+	RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
 
 	/**
 	 * Add a CacheChange_t to the ReaderHistory.
@@ -88,6 +88,11 @@ public:
 	RTPS_DllAPI void postSemaphore();
 	//!Wait for the semaphore
 	RTPS_DllAPI void waitSemaphore();
+
+	RTPS_DllAPI bool thereIsRecordOf(GUID_t& guid, SequenceNumber_t& seq);
+
+	RTPS_DllAPI bool thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq);
+
 protected:
 	//!Pointer to the reader
 	RTPSReader* mp_reader;

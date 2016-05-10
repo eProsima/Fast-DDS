@@ -71,6 +71,14 @@ public:
 	bool processDataMsg(CacheChange_t *change);
 
 	/**
+	* Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	*
+	* @param change Pointer to the CacheChange_t.
+	* @return true if the reader accepts message.
+	*/
+	bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum);
+
+	/**
 	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
 	 *
 	 * @return true if the reader accepts messages from the.

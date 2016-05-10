@@ -53,7 +53,7 @@ SubscriberHistory::~SubscriberHistory() {
 
 }
 
-bool SubscriberHistory::received_change(CacheChange_t* a_change)
+bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_missing_changes_up_to)
 {
 	const char* const METHOD_NAME = "add_change";
 
@@ -64,62 +64,15 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 	}
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	//CHECK IF THE SAME CHANGE IS ALREADY IN THE HISTORY:
-	if(a_change->sequenceNumber < mp_maxSeqCacheChange->sequenceNumber)
-	{
-        auto save_bigger = m_changes.rend();
-		for(auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)
-		{
-            if((*it)->writerGUID == a_change->writerGUID)
-            {
-                if((*it)->sequenceNumber == a_change->sequenceNumber)
-                {
-                    logInfo(RTPS_HISTORY,"Change (seqNum: "
-                            << a_change->sequenceNumber << ") already in ReaderHistory";);
-                    return false;
-                }
-                else if((*it)->sequenceNumber < a_change->sequenceNumber)
-                {
-                    //SINCE THE ELEMENTS ARE ORDERED WE CAN STOP SEARCHING NOW
-                    //ALL REMAINING ELEMENTS WOULD BE LOWER THAN THE ONE WE ARE LOOKING FOR.
-                    break;
-                }
-                else if(save_bigger == m_changes.rend())
-                    save_bigger = it;
-            }
-		}
-        if(m_isHistoryFull && save_bigger != m_changes.rend())
-        {
-            // This change must be not read.
-            assert(!(*save_bigger)->isRead);
 
-            if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
-            {
-				this->remove_change_sub(*save_bigger);
-            }
-            else
-            {
-                t_v_Inst_Caches::iterator vit;
-                if(find_Key(*save_bigger,&vit))
-                {
-					this->remove_change_sub(*save_bigger, &vit);
-                }
-            }
-        }
-	}
-
-	if(m_isHistoryFull)
-	{
-		logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
-		return false;
-	}
 	//NO KEY HISTORY
 	if(mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
 	{
 		bool add = false;
 		if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
 		{
-			add = true;
+            if(m_changes.size() + unknown_missing_changes_up_to < (size_t)m_resourceLimitsQos.max_samples)
+                add = true;
 		}
 		else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
 		{
@@ -129,21 +82,49 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 			}
 			else
 			{
-				bool read = false;
-				if(mp_minSeqCacheChange->isRead)
-					read = true;
-				if(this->remove_change_sub(mp_minSeqCacheChange))
-				{
-					if(!read)
-					{
-						this->decreaseUnreadCount();
-					}
-					add = true;
-				}
+                // Try to substitude a older samples.
+                auto older_sample = m_changes.rend();
+                for(auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)
+                {
+
+                    if((*it)->writerGUID == a_change->writerGUID)
+                    {
+                        if((*it)->sequenceNumber < a_change->sequenceNumber)
+                            older_sample = it;
+                        // Already received
+                        else if((*it)->sequenceNumber == a_change->sequenceNumber)
+                            return false;
+                    }
+                }
+
+                if(older_sample != m_changes.rend())
+                {
+                    bool read = (*older_sample)->isRead;
+
+                    if(this->remove_change_sub(*older_sample))
+                    {
+                        if(!read)
+                        {
+                            this->decreaseUnreadCount();
+                        }
+                        add = true;
+                    }
+                }
+                // Not discard, but not store and set as received.
+                else
+                    return true;
 			}
 		}
+
 		if(add)
 		{
+            if(m_isHistoryFull)
+            {
+                // Discarting the sample.
+                logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
+                return false;
+            }
+
 			if(this->add_change(a_change))
 			{
 				increaseUnreadCount();
@@ -159,8 +140,6 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 				return true;
 			}
 		}
-		else
-			return false;
 	}
 	//HISTORY WITH KEY
 	else if(mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
@@ -204,21 +183,49 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 				}
 				else
 				{
-					bool read = false;
-					if(vit->second.front()->isRead)
-						read = true;
-					if(this->remove_change_sub(vit->second.front(),&vit))
-					{
-						if(!read)
-						{
-							this->decreaseUnreadCount();
-						}
-						add = true;
-					}
+                    // Try to substitude a older samples.
+                    auto older_sample = m_changes.rend();
+                    for(auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)
+                    {
+
+                        if((*it)->writerGUID == a_change->writerGUID)
+                        {
+                            if((*it)->sequenceNumber < a_change->sequenceNumber)
+                                older_sample = it;
+                            // Already received
+                            else if((*it)->sequenceNumber == a_change->sequenceNumber)
+                                return false;
+                        }
+                    }
+
+                    if(older_sample != m_changes.rend())
+                    {
+                        bool read = (*older_sample)->isRead;
+
+                        if(this->remove_change_sub(*older_sample, &vit))
+                        {
+                            if(!read)
+                            {
+                                this->decreaseUnreadCount();
+                            }
+                            add = true;
+                        }
+                    }
+                    // Not discard, but not store and set as received.
+                    else
+                        return true;
 				}
 			}
+
 			if(add)
 			{
+                if(m_isHistoryFull)
+                {
+                    // Discarting the sample.
+                    logWarning(SUBSCRIBER,"Attempting to add Data to Full ReaderHistory: "<<this->mp_subImpl->getGuid().entityId);
+                    return false;
+                }
+
 				if(this->add_change(a_change))
 				{
 					increaseUnreadCount();
@@ -248,10 +255,9 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change)
 					return true;
 				}
 			}
-			else
-				return false;
 		}
 	}
+
 	return false;
 }
 

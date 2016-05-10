@@ -100,6 +100,7 @@ public:
 	bool m_export_csv;
 	std::stringstream output_file;
 	uint32_t payload;
+    bool reliable_;
 };
 
 

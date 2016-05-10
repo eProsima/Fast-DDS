@@ -15,6 +15,7 @@ set_sources(
     rtps/resources/ResourceEvent.cpp 
     rtps/resources/TimedEvent.cpp 
     rtps/resources/TimedEventImpl.cpp 
+    rtps/resources/AsyncWriterThread.cpp
     rtps/Endpoint.cpp 
     rtps/writer/RTPSWriter.cpp 
     rtps/writer/StatefulWriter.cpp 
@@ -35,6 +36,7 @@ set_sources(
     rtps/reader/StatefulReader.cpp 
     rtps/reader/StatelessReader.cpp 
     rtps/reader/RTPSReader.cpp 
+    rtps/reader/FragmentedChangePitStop.cpp
     rtps/messages/CDRMessagePool.cpp 
     rtps/messages/RTPSMessageCreator.cpp 
     rtps/messages/RTPSMessageGroup.cpp 

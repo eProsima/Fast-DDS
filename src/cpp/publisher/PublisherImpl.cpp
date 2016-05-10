@@ -12,6 +12,7 @@
  */
 
 #include "PublisherImpl.h"
+#include "../participant/ParticipantImpl.h"
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/publisher/PublisherListener.h>
@@ -39,7 +40,7 @@ PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
 										mp_type(pdatatype),
 										m_att(att),
 #pragma warning (disable : 4355 )
-										m_history(this,pdatatype->m_typeSize,att.topic.historyQos,att.topic.resourceLimitsQos),
+										m_history(this, pdatatype->m_typeSize, att.topic.historyQos, att.topic.resourceLimitsQos),
 										mp_listener(listen),
 #pragma warning (disable : 4355 )
 										m_writerListener(this),
@@ -67,11 +68,14 @@ bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void* data, WriteParams &wparams)
 {
 	const char* const METHOD_NAME = "create_new_change";
+
+    /// Preconditions
 	if (data == nullptr)
 	{
 		logError(PUBLISHER, "Data pointer not valid");
 		return false;
 	}
+
 	if(changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
 			changeKind == NOT_ALIVE_DISPOSED_UNREGISTERED)
 	{
@@ -81,12 +85,14 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 			return false;
 		}
 	}
+
 	InstanceHandle_t handle;
 	if(m_att.topic.topicKind == WITH_KEY)
 	{
 		mp_type->getKey(data,&handle);
 	}
-	CacheChange_t * ch = mp_writer->new_change(changeKind,handle);
+
+	CacheChange_t* ch = mp_writer->new_change(changeKind,handle);
 	if(ch != nullptr)
 	{
 		if(changeKind == ALIVE)
@@ -110,6 +116,17 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
 				return false;
 			}
 		}
+
+        // If it is big data, frament it.
+        uint32_t high_mark = (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE) > PAYLOAD_MAX_SIZE ? PAYLOAD_MAX_SIZE : (mp_participant->getAttributes().rtps.sendSocketBufferSize - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE);
+
+        if(ch->serializedPayload.length > high_mark)
+        {
+            /// Fragment the data.
+            // Set the fragment size to the cachechange.
+            // Note: high_mark will always be a value that can be casted to uint16_t)
+            ch->setFragmentSize((uint16_t)high_mark);
+        }
 
         if(&wparams != &WRITE_PARAM_DEFAULT)
         {
@@ -245,4 +262,9 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*write
 bool PublisherImpl::clean_history(unsigned int max)
 {
     return mp_writer->clean_history(max);
+}
+
+bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
+{
+    return mp_writer->wait_for_all_acked(max_wait);
 }
