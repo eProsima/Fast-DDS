@@ -15,6 +15,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps{
@@ -34,6 +35,19 @@ inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 #else
     msg->msg_endian = LITTLEEND;
 #endif
+	return true;
+}
+
+inline bool CDRMessage::wrapVector(CDRMessage_t* msg, std::vector<char>& vectorToWrap)
+{
+   msg->buffer = (octet*)vectorToWrap.data();
+   msg->length = vectorToWrap.size();
+   msg->max_size = vectorToWrap.capacity();
+   #if EPROSIMA_BIG_ENDIAN
+       msg->msg_endian = BIGEND;
+   #else
+       msg->msg_endian = LITTLEEND;
+   #endif
 	return true;
 }
 
