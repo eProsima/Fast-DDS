@@ -525,17 +525,18 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 	return true;
 }
 
-void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator){
-	std::vector<char> localBuffer;
-   localBuffer.reserve(m_att.listenSocketBufferSize);
-   while(receiver->resourceAlive){	
-	//0 - Perform a blocking call to the receiver
-	receiver->Receiver.Receive(localBuffer, input_locator);
-   
-   CDRMessage::wrapVector(&(receiver->mp_receiver->m_rec_msg), localBuffer);
-	
-	receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
-	//Call this function again
+void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator)
+{
+   while(receiver->resourceAlive)
+   {	
+      // Blocking receive.
+      receiver->Receiver.Receive(receiver->m_receiveBuffer, input_locator);
+
+      // Wraps a CDRMessage around the underlying vector array.
+      CDRMessage::wrapVector(&(receiver->mp_receiver->m_rec_msg), receiver->m_receiveBuffer);
+
+      // Processes the data through the CDR Message interface.
+      receiver->mp_receiver->processCDRMsg(getGuid().guidPrefix, &input_locator, &receiver->mp_receiver->m_rec_msg);
    }	
 }
 
@@ -615,9 +616,11 @@ bool RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
 			//Create and init the MessageReceiver
 			m_receiverResourcelist.back().mp_receiver = new MessageReceiver();
       			m_receiverResourcelist.back().mp_receiver->init(m_att.listenSocketBufferSize);
+
+         //Reserve the receive buffer
+         m_receiverResourcelist.back().m_receiveBuffer.reserve(m_att.listenSocketBufferSize);
 			//Init the thread
 			m_receiverResourcelist.back().m_thread = new boost::thread(&RTPSParticipantImpl::performListenOperation,this, &(m_receiverResourcelist.back()),(*it_loc));
-
 		}
 		newItemsBuffer.clear();
 	}	
