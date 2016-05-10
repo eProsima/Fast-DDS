@@ -16,12 +16,6 @@ Var CheckboxRadioButtons_State
 
 Var GroupBoxRadioButton
 
-Var RadioButtonX64_VS2010
-Var RadioButtonX64_VS2010_State
-
-Var RadioButtonI86_VS2010
-Var RadioButtonI86_VS2010_State
-
 Var RadioButtonX64_VS2013
 Var RadioButtonX64_VS2013_State
 
@@ -105,17 +99,10 @@ Function VariablesEntornoPage
         ### Fijamos los callbacks para cuando se haga click en los RadioButtones
 		${NSD_OnClick} $RadioButtonX64_VS2013 ClickX64_VS2013  
 	
-        ${NSD_CreateRadioButton} ${lib_radio_x0} ${lib_radio_y_2} 30% ${lib_radio_height} "&x64 VS2010 platforms."
-        Pop $RadioButtonX64_VS2010  
-        ### Fijamos los callbacks para cuando se haga click en los RadioButtones
-		${NSD_OnClick} $RadioButtonX64_VS2010 ClickX64_VS2010  
-
 		${NSD_CreateRadioButton} ${lib_radio_x1} ${lib_radio_y_0} 30% ${lib_radio_height} "&i86 VS2015 platforms."
         Pop $RadioButtonI86_VS2015
 		${NSD_CreateRadioButton} ${lib_radio_x1} ${lib_radio_y_1} 30% ${lib_radio_height} "&i86 VS2013 platforms."
         Pop $RadioButtonI86_VS2013
-        ${NSD_CreateRadioButton} ${lib_radio_x1} ${lib_radio_y_2} 30% ${lib_radio_height} "&i86 VS2010 platforms."
-        Pop $RadioButtonI86_VS2010
 		
 		Call EnableRadioX64
 		Call EnableRadioI86	
@@ -124,8 +111,6 @@ Function VariablesEntornoPage
 		Pop $RadioButtonI86_VS2015
 		${NSD_CreateRadioButton} ${lib_radio_x0} ${lib_radio_y_1} 50% ${lib_radio_height} "&i86 VS2013 platforms."
 		Pop $RadioButtonI86_VS2013
-        ${NSD_CreateRadioButton} ${lib_radio_x0} ${lib_radio_y_2} 50% ${lib_radio_height} "&i86 VS2010 platforms."
-        Pop $RadioButtonI86_VS2010
 		
 		Call EnableRadioI86	
     ${EndIf}
@@ -136,7 +121,6 @@ Function VariablesEntornoPage
 	${NSD_OnClick} $CheckboxRadioButtons ClickCheckboxRadioButtons
 	${NSD_OnClick} $RadioButtonI86_VS2015 ClickI86_VS2015 
 	${NSD_OnClick} $RadioButtonI86_VS2013 ClickI86_VS2013 
-    ${NSD_OnClick} $RadioButtonI86_VS2010 ClickI86_VS2010  
 	
 	Call SelectDefaultBestConfiguration
 
@@ -158,22 +142,16 @@ FunctionEnd
 Function ClickCheckboxRadioButtons
     ${NSD_GetState} $CheckboxRadioButtons $CheckboxRadioButtons_State
 	${If} $CheckboxRadioButtons_State == 0
-		 EnableWindow $RadioButtonX64_VS2010 0
-		 EnableWindow $RadioButtonI86_VS2010 0
 		 EnableWindow $RadioButtonX64_VS2013 0
 		 EnableWindow $RadioButtonI86_VS2013 0
 		 EnableWindow $RadioButtonX64_VS2015 0
 		 EnableWindow $RadioButtonI86_VS2015 0
 		 
-		 ${NSD_SetState} $RadioButtonX64_VS2010 0
-		 ${NSD_SetState} $RadioButtonI86_VS2010 0
 		 ${NSD_SetState} $RadioButtonX64_VS2013 0
 		 ${NSD_SetState} $RadioButtonI86_VS2013 0
 		 ${NSD_SetState} $RadioButtonX64_VS2015 0
 		 ${NSD_SetState} $RadioButtonI86_VS2015 0
 
-		 ${NSD_GetState} $RadioButtonI86_VS2010 $RadioButtonI86_VS2010_State
-		 ${NSD_GetState} $RadioButtonX64_VS2010 $RadioButtonX64_VS2010_State
 		 ${NSD_GetState} $RadioButtonX64_VS2013 $RadioButtonX64_VS2013_State
 		 ${NSD_GetState} $RadioButtonI86_VS2013 $RadioButtonI86_VS2013_State
 		 ${NSD_GetState} $RadioButtonI86_VS2015 $RadioButtonI86_VS2015_State
@@ -183,24 +161,6 @@ Function ClickCheckboxRadioButtons
 		Call EnableRadioI86
 		Call SelectDefaultBestConfiguration
 	${EndIf}
-FunctionEnd
-
-### Callback invocado cuando se pulsa el CheckBox x64
-### Sirve para deshabilitar el i86, pues no pueden aparecer a la vez
-### Tambien guardamos el estado en la variable _state
-Function ClickX64_VS2010
-    Call ResetStates
-    Pop $RadioButtonX64_VS2010
-    ${NSD_GetState} $RadioButtonX64_VS2010 $RadioButtonX64_VS2010_State
-FunctionEnd
-
-### Callback invocado cuando se pulsa el CheckBox i86
-### Sirve para deshabilitar el x64, pues no pueden aparecer a la vez
-### Tambien guardamos el estado en la variable _state
-Function ClickI86_VS2010
-    Call ResetStates
-    Pop $RadioButtonI86_VS2010
-    ${NSD_GetState} $RadioButtonI86_VS2010 $RadioButtonI86_VS2010_State
 FunctionEnd
 
 ### Callback invocado cuando se pulsa el CheckBox x64 VS2013
@@ -241,10 +201,6 @@ FunctionEnd
 
 Function ResetStates
     Push  0
-    Pop $RadioButtonX64_VS2010_State
-    Push  0
-    Pop $RadioButtonI86_VS2010_State
-    Push  0
     Pop $RadioButtonX64_VS2013_State
     Push  0
     Pop $RadioButtonI86_VS2013_State
@@ -262,18 +218,12 @@ Function SelectDefaultBestConfiguration
 		${ElseIf} ${SectionIsSelected} ${libraries_x64Win64VS2013}
 			${NSD_SetState} $RadioButtonX64_VS2013 1
 			${NSD_GetState} $RadioButtonX64_VS2013 $RadioButtonX64_VS2013_State
-		${ElseIf} ${SectionIsSelected} ${libraries_x64Win64VS2010}	
-			${NSD_SetState} $RadioButtonX64_VS2010 1
-			${NSD_GetState} $RadioButtonX64_VS2010 $RadioButtonX64_VS2010_State
 		${ElseIf} ${SectionIsSelected} ${libraries_i86Win32VS2015}	
 			${NSD_SetState} $RadioButtonI86_VS2015 1
 			${NSD_GetState} $RadioButtonI86_VS2015 $RadioButtonI86_VS2015_State		
 		${ElseIf} ${SectionIsSelected} ${libraries_i86Win32VS2013}	
 			${NSD_SetState} $RadioButtonI86_VS2013 1
 			${NSD_GetState} $RadioButtonI86_VS2013 $RadioButtonI86_VS2013_State
-		${ElseIf} ${SectionIsSelected} ${libraries_i86Win32VS2010}	
-			${NSD_SetState} $RadioButtonI86_VS2010 1
-			${NSD_GetState} $RadioButtonI86_VS2010 $RadioButtonI86_VS2010_State		
 		${EndIf}
 	${EndIf}
 FunctionEnd
@@ -305,15 +255,9 @@ Function EnableRadioX64
 			${Else}
 				EnableWindow $RadioButtonX64_VS2013 0
 			${EndIf}
-			${If} ${SectionIsSelected} ${libraries_x64Win64VS2010}
-				EnableWindow $RadioButtonX64_VS2010 1	
-			${Else}
-				EnableWindow $RadioButtonX64_VS2010 0
-			${EndIf}
 		${Else}
 			EnableWindow $RadioButtonX64_VS2015 0
 			EnableWindow $RadioButtonX64_VS2013 0
-			EnableWindow $RadioButtonX64_VS2010 0
 		${EndIf}
 	${EndIf}
 FunctionEnd
@@ -330,15 +274,9 @@ Function EnableRadioI86
 		${Else}
 			EnableWindow $RadioButtonI86_VS2013 0
 		${EndIf}
-		${If} ${SectionIsSelected} ${libraries_i86Win32VS2010}
-			EnableWindow $RadioButtonI86_VS2010 1	
-		${Else}
-			EnableWindow $RadioButtonI86_VS2010 0
-		${EndIf}
 	${Else}
 		EnableWindow $RadioButtonI86_VS2015 0
 		EnableWindow $RadioButtonI86_VS2013 0
-		EnableWindow $RadioButtonI86_VS2010 0
 	${EndIf}
 FunctionEnd
 
@@ -351,18 +289,6 @@ Function InstallVarEnvs
     ${If} $CheckboxScripts_State == ${BST_CHECKED}
        ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
        WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "Script location" 1
-    ${EndIf}
-    ${If} ${SectionIsSelected} ${libraries_x64Win64VS2010}
-        ${If} $RadioButtonX64_VS2010_State == ${BST_CHECKED}
-             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin\x64Win64VS2010"
-             WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location" 1
-        ${EndIf}
-    ${EndIf}
-    ${If} ${SectionIsSelected} ${libraries_i86Win32VS2010}
-        ${If} $RadioButtonI86_VS2010_State == ${BST_CHECKED}
-             ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin\i86Win32VS2010"
-             WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2010 libraries location" 1
-        ${EndIf}
     ${EndIf}
     ${If} ${SectionIsSelected} ${libraries_x64Win64VS2013}
         ${If} $RadioButtonX64_VS2013_State == ${BST_CHECKED}
@@ -402,16 +328,6 @@ Var RegKeyCheck
   ${If} $RegKeyCheck == 1
     DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "Script location"
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
-  ${EndIf}
-  ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location"
-  ${If} $RegKeyCheck == 1
-    DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2010 libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin\x64Win64VS2010"
-  ${EndIf}
-  ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2010 libraries location"
-  ${If} $RegKeyCheck == 1
-    DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "i86Win32VS2010 libraries location"
-    ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin\i86Win32VS2010"
   ${EndIf}
   ReadRegStr $RegKeyCheck HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\@CPACK_PACKAGE_INSTALL_REGISTRY_KEY@" "x64Win64VS2013 libraries location"
   ${If} $RegKeyCheck == 1
