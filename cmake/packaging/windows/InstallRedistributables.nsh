@@ -1,7 +1,5 @@
 !include x64.nsh
 
-Var X64VS2010Needed
-Var I86VS2010Needed
 Var X64VS2013Needed
 Var I86VS2013Needed
 Var X64VS2015Needed
@@ -9,34 +7,10 @@ Var I86VS2015Needed
 
 Function InstallRedistributables
 
-    StrCpy $X64VS2010Needed "1"
-    StrCpy $I86VS2010Needed "1"
     StrCpy $X64VS2013Needed "1"
     StrCpy $I86VS2013Needed "1"
     StrCpy $X64VS2015Needed "1"
     StrCpy $I86VS2015Needed "1"
-
-    # Check if it is necessary to install to x64VS2010
-    ${If} ${RunningX64}
-        ${If} ${SectionIsSelected} ${libraries_x64Win64VS2010}
-        ${OrIf} ${SectionIsSelected} ${libraries_i86Win32VS2010}
-	    ClearErrors
-            SetRegView 64
-            ReadRegDword $0 HKLM "SOFTWARE\Classes\Installer\Products\1926E8D15D0BCE53481466615F760A7F" "Version"
-            IfErrors 0 VC2010RedistInstalled
-            StrCpy $X64VS2010Needed "0"
-        ${EndIf}
-    ${Else}
-        # Check if it is necessary to install to i86VS2010
-        ${If} ${SectionIsSelected} ${libraries_i86Win32VS2010}
-	    ClearErrors
-            ReadRegDword $0 HKLM "SOFTWARE\Classes\Installer\Products\1D5E3C0FEDA1E123187686FED06E995A" "Version"
-            IfErrors 0 VC2010RedistInstalled
-            StrCpy $I86VS2010Needed "0"
-        ${EndIf}
-    ${EndIf}
-
-    VC2010RedistInstalled:
 
     # Check if it is necessary to install to x64VS2013
     ${If} ${RunningX64}
@@ -81,33 +55,6 @@ Function InstallRedistributables
     ${EndIf}
 
     VC2015RedistInstalled:
-
-    ${If} ${RunningX64}
-        StrCmp $X64VS2010Needed "1" notinstall2010 install2010
-    ${Else}
-        StrCmp $I86VS2010Needed "1" notinstall2010 install2010
-    ${EndIf}
-
-    install2010:
-    messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2010 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2010
-
-    ${If} ${RunningX64}
-        NSISdl::download https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe $TEMP\vcredist_x64.exe
-        Pop $R0 ; Get the return value
-        StrCmp $R0 "success" 0 +3
-        ExecWait "$TEMP\vcredist_x64.exe"
-        Goto +2
-        MessageBox MB_OK "vcredist_x64.exe download failed: $R0"
-    ${Else}
-        NSISdl::download https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe $TEMP\vcredist_x86.exe
-        Pop $R0 ; Get the return value
-        StrCmp $R0 "success" 0 +3
-        ExecWait "$TEMP\vcredist_x86.exe"
-        Goto +2
-        MessageBox MB_OK "vcredist_x86.exe download failed: $R0"
-    ${EndIf}
-
-    notinstall2010:
 
     ${If} ${RunningX64}
         StrCmp $X64VS2013Needed "1" notinstall2013 install2013

@@ -388,8 +388,6 @@ endif()
 if(MSVC OR MSVC_IDE)
     if(EPROSIMA_INSTALLER)
         set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL}
-            libraries_i86Win32VS2010
-            libraries_x64Win64VS2010
             libraries_i86Win32VS2013
             libraries_x64Win64VS2013
             libraries_i86Win32VS2015
