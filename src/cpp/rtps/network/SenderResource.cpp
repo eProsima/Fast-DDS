@@ -26,6 +26,7 @@ bool SenderResource::Send(const std::vector<char>& data, const Locator_t& destin
 {
    if (SendThroughAssociatedChannel)
       return SendThroughAssociatedChannel(data, destinationLocator);
+   return false;
 }
 
 SenderResource::SenderResource(SenderResource&& rValueResource)
@@ -40,12 +41,14 @@ bool SenderResource::SupportsLocator(const Locator_t& local)
 {
    if (LocatorMapsToManagedChannel)
       return LocatorMapsToManagedChannel(local);
+   return false;
 }
 
 bool SenderResource::CanSendToRemoteLocator(const Locator_t& remote)
 {
    if (ManagedChannelMapsToRemote)
       return ManagedChannelMapsToRemote(remote);
+   return false;
 }
 
 SenderResource::~SenderResource()

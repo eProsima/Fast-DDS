@@ -490,9 +490,9 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp,bool isBu
 	In case are using the default list of Locators they have already been embedded to the parameters */
 
 	//UNICAST
-	assignEndpoint2LocatorList(endp, endp->getAttributes()->unicastLocatorList, true, !isBuiltin);
+	assignEndpoint2LocatorList(endp, endp->getAttributes()->unicastLocatorList);
 	//MULTICAST
-	assignEndpoint2LocatorList(endp, endp->getAttributes()->multicastLocatorList, true, !isBuiltin);
+	assignEndpoint2LocatorList(endp, endp->getAttributes()->multicastLocatorList);
 	return valid;
 }
 
@@ -527,10 +527,9 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver, Locator_t input_locator){
 	std::vector<char> localBuffer;
    localBuffer.reserve(m_att.listenSocketBufferSize);
-	bool receiver_result;
    while(receiver->resourceAlive){	
 	//0 - Perform a blocking call to the receiver
-	receiver_result=receiver->Receiver.Receive(localBuffer, input_locator);
+	receiver->Receiver.Receive(localBuffer, input_locator);
 	//1 - Reset the buffer where the CDRMessage is going t//FIXME:Call to getGUID()o be stored
 	CDRMessage::initCDRMsg(&(receiver->mp_receiver->m_rec_msg), RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 	//2 - Output the data into struct's message receiver buffer
@@ -558,7 +557,7 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
 }
 
 
-bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list,bool isMulti,bool isFixed)
+bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_t& list)
 {
 	/* Note:
 		The previous version of this function associated (or created) ListenResources and added the endpoint to them.
@@ -568,7 +567,6 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp,LocatorList_
 		one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
 		since its the NetworkFactory the one that takes care of Resource creation.
 	 */
-	bool found = false;
 	LocatorList_t finalList;
 	for(auto lit = list.begin();lit != list.end();++lit){
 		//Iteration of all Locators within the Locator list passed down as argument
@@ -691,8 +689,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		//Remove it from ReceiverResourceList
 		
 		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
-		bool continue_removing = true;
-		
 	}
 	//	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
 	delete(p_endpoint);
@@ -709,7 +705,7 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
 {
 	//Translate data into standard contained and send
 	std::vector<char> buffer;
-	for (int i = 0; i < msg->length; i++){
+	for (unsigned int i = 0; i < msg->length; i++){
 		buffer.push_back(msg->buffer[i]);
 	}
 	for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit){

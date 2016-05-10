@@ -85,10 +85,10 @@ typedef struct ReceiverControlBlock{
 	boost::mutex mtx; //Fix declaration
 	boost::thread* m_thread;
    bool resourceAlive;
-	ReceiverControlBlock(ReceiverResource&& rec):m_thread(nullptr),Receiver(std::move(rec)), mp_receiver(nullptr), resourceAlive(true)
+	ReceiverControlBlock(ReceiverResource&& rec):Receiver(std::move(rec)), mp_receiver(nullptr), m_thread(nullptr), resourceAlive(true)
 	{
 	}
-	ReceiverControlBlock(ReceiverControlBlock&& origen):m_thread(origen.m_thread),Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver),resourceAlive(true)
+	ReceiverControlBlock(ReceiverControlBlock&& origen):Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver), m_thread(origen.m_thread), resourceAlive(true)
 	{
 	   origen.m_thread = nullptr;
       origen.mp_receiver = nullptr;
@@ -241,7 +241,7 @@ private:
 	 * @param isFixed Boolean indicating that is a fixed listenresource.
 	 * @return True if assigned.
 	 */
-	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list,bool isMulticast,bool isFixed);
+	bool assignEndpoint2LocatorList(Endpoint* pend,LocatorList_t& list);
 
 	/** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
 		and consequently assignEndpoint2LocatorList

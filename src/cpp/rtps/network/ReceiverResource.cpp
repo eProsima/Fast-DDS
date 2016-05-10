@@ -26,6 +26,7 @@ bool ReceiverResource::Receive(std::vector<char>& data, Locator_t& originLocator
 {
    if (ReceiveFromAssociatedChannel)
       return ReceiveFromAssociatedChannel(data, originLocator);
+   return false;
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
@@ -39,6 +40,7 @@ bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
 {
    if (LocatorMapsToManagedChannel)
       return LocatorMapsToManagedChannel(localLocator);
+   return false;
 }
 
 void ReceiverResource::Abort()
