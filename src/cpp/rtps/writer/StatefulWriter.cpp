@@ -416,7 +416,8 @@ bool StatefulWriter::clean_history(unsigned int max)
             cit != ackca.end(); ++cit)
     {
         mp_history->remove_change_g(*cit);
-        max--;
+        if (max > 0)
+            max--;
     }
 
     // delete oldest samples (just like for StatelessWriter)
