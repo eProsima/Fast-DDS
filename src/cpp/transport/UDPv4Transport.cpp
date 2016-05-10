@@ -310,6 +310,7 @@ bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
       return false;
    }
 
+   (void) bytesSent;
 	logInfo (RTPS_MSG_OUT,"SENT " << bytesSent,C_YELLOW);
    return true;
 }
