@@ -22,7 +22,7 @@ macro(generate_msvc_libraries platform)
         )
 
     add_custom_target(${PROJECT_NAME}_${platform} ALL
-        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DMINION=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ../../../..
+        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DMINION=ON -DEPROSIMA_INSTALLER_MINION=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ../../../..
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}
@@ -33,12 +33,12 @@ endmacro()
 
 macro(install_msvc_libraries platform)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${BIN_INSTALL_DIR}/
-        DESTINATION ${BIN_INSTALL_DIR}/${platform}
+        DESTINATION ${BIN_INSTALL_DIR}
         COMPONENT libraries_${platform}
         )
 
     install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${LIB_INSTALL_DIR}/
-        DESTINATION ${LIB_INSTALL_DIR}/${platform}
+        DESTINATION ${LIB_INSTALL_DIR}
         COMPONENT libraries_${platform}
         )
 

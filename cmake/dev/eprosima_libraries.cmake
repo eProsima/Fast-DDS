@@ -25,6 +25,7 @@ macro(find_eprosima_package package)
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                 ${USE_BOOST_}
                 "-DMINION=ON"
+                "-DEPROSIMA_INSTALLER_MINION=${EPROSIMA_INSTALLER_MINION}"
                 "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"
                 "-DINCLUDE_INSTALL_DIR:PATH=${INCLUDE_INSTALL_DIR}"
                 "-DLIB_INSTALL_DIR:PATH=${LIB_INSTALL_DIR}"
