@@ -188,8 +188,9 @@ TEST(ros2features, SlaveListenerCallback){
 	pub_attr2.topic.topicDataType = "HelloWorldType";
 	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
 	ASSERT_NE(my_publisher2, nullptr);
-	//std::this_thread::sleep_for(std::chrono::seconds(5));
 	ASSERT_EQ(slave_target->topicNtypes.size(),1);
+	
+	
 }
 
 int main(int argc, char **argv)
