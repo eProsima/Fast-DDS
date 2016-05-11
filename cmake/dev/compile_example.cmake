@@ -2,7 +2,7 @@ macro(compile_example example example_directory)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
 
         file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config/fastrtpsConfig.cmake
-            "include(${PROJECT_BINARY_DIR}/cmake/config/fastrtpsTargets.cmake)\n"
+            "include(\"${PROJECT_BINARY_DIR}/cmake/config/fastrtpsTargets.cmake\")\n"
             )
 
         # Separate CMAKE_PREFIX_PATH
