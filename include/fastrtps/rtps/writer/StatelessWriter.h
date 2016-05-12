@@ -102,7 +102,7 @@ public:
 	*/
 	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 
-    bool clean_history(unsigned int /*max = 0*/){ return false; }
+    bool clean_history(unsigned int max = 0);
 
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.

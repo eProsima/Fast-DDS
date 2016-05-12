@@ -352,7 +352,38 @@ void StatelessWriter::unsent_changes_reset()
 //}
 
 
+bool StatelessWriter::clean_history(unsigned int max)
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
+	bool removed = false;
+	if (max == 0) {
+		max = mp_history->getHistorySize();
+	}
+
+	while (max--) {
+		CacheChange_t *cc;
+		if (!mp_history->get_min_change(&cc)) {
+			break;
+		}
+
+		// remove the cache change from all readers' unsent changes lists
+		for(std::vector<ReaderLocator>::iterator rit = reader_locator.begin(); rit != reader_locator.end(); ++rit) {
+			// these are normally (always?) empty vectors
+			std::vector<const CacheChange_t*>::iterator cit;
+			cit = std::find(rit->unsent_changes.begin(), rit->unsent_changes.end(), cc);
+			if (cit != rit->unsent_changes.end()) {
+				rit->unsent_changes.erase(cit);
+			}
+		}
+
+		if (mp_history->remove_change(cc)) {
+			removed = true;
+		}
+	}
+
+	return removed;
+}
 
 
 
