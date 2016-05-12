@@ -327,7 +327,7 @@ install_boost(ALL thread system date_time chrono regex atomic)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
-    ${PROJECT_SOURCE_DIR}/LGPLv3_LICENSE.txt
+    ${PROJECT_SOURCE_DIR}/MPLv2_LICENSE.txt
     DESTINATION ${LICENSE_INSTALL_DIR}
     COMPONENT licenses
     )
