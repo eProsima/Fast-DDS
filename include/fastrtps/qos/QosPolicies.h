@@ -344,7 +344,7 @@ public:
  * max_samples: Default value 5000.
  * max_instances: Default value 10.
  * max_samples_per_instance: Default value 400.
- * allocated_samples: Default value 3000.
+ * allocated_samples: Default value 100.
  */
 class RTPS_DllAPI ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
 public:
@@ -353,7 +353,7 @@ public:
 	int32_t max_samples_per_instance;
 	int32_t allocated_samples;
 	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),QosPolicy(false),
-			max_samples(5000),max_instances(10),max_samples_per_instance(400),allocated_samples(3000){};
+			max_samples(5000),max_instances(10),max_samples_per_instance(400),allocated_samples(100){};
 	virtual ~ResourceLimitsQosPolicy(){};
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
