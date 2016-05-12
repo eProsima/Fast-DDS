@@ -1,10 +1,8 @@
-group VS2013;
+group VS;
 
-solution(solution, example, configurations, generateJava) ::= <<
+solution(solution, example, configurations, generateJava, vsVersion) ::= <<
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio $vsVersion$
 $solution.projects : {$projectReferences(solution=solution, project=it, example=example)$$if(it.containsInterfaces)$$projectReferencesExtra(solution=solution, project=it, example=example)$$endif$$if(generateJava)$$projectReferencesJava(solution=solution, project=it, example=example)$$endif$};separator="\n"$
 Global
 $\t$GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +18,9 @@ EndGlobal
 
 >>
 
-project(solution, project, example, configurations, local) ::= <<
+project(solution, project, example, configurations, vsVersion) ::= <<
 <?xml version="1.0" encoding="Windows-1252"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="$vsVersion$.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     $configurations:{<ProjectConfiguration Include="$it.name$|$it.platform$">
       <Configuration>$it.name$</Configuration>
@@ -40,7 +38,7 @@ project(solution, project, example, configurations, local) ::= <<
     <UseDebugLibraries>$if(it.debug)$true$else$false$endif$</UseDebugLibraries>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-	<PlatformToolset>v120</PlatformToolset>
+	<PlatformToolset>v$vsVersion$0</PlatformToolset>
   </PropertyGroup>};separator="\n"$
   <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -93,9 +91,9 @@ project(solution, project, example, configurations, local) ::= <<
 </Project>
 >>
 
-projectPubSub(solution, project, example, configurations, local) ::= <<
+projectPubSub(solution, project, example, configurations, vsVersion) ::= <<
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="$vsVersion$.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     $configurations:{<ProjectConfiguration Include="$it.name$|$it.platform$">
       <Configuration>$it.name$</Configuration>
@@ -113,7 +111,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
     <UseDebugLibraries>$if(it.debug)$true$else$false$endif$</UseDebugLibraries>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-	<PlatformToolset>v120</PlatformToolset>
+	<PlatformToolset>v$vsVersion$0</PlatformToolset>
   </PropertyGroup>};separator="\n"$
   <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -157,7 +155,7 @@ projectPubSub(solution, project, example, configurations, local) ::= <<
 </Project>
 >>
 
-projectJNI(solution, project, example, configurations, local) ::= <<
+projectJNI(solution, project, example, configurations, vsVersion) ::= <<
 <?xml version="1.0" encoding="Windows-1252"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
@@ -177,7 +175,7 @@ projectJNI(solution, project, example, configurations, local) ::= <<
     <UseDebugLibraries>$if(it.debug)$true$else$false$endif$</UseDebugLibraries>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-	<PlatformToolset>v120</PlatformToolset>
+	<PlatformToolset>v$vsVersion$0</PlatformToolset>
   </PropertyGroup>};separator="\n"$
   <Import Project="\$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -240,9 +238,9 @@ projectJNI(solution, project, example, configurations, local) ::= <<
 </Project>
 >>
 
-projectFiles(project) ::= <<
+projectFiles(project, vsVersion) ::= <<
 <?xml version="1.0" encoding="Windows-1252"?>
-<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="$vsVersion$.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
@@ -270,9 +268,9 @@ projectFiles(project) ::= <<
 </Project>
 >>
 
-projectFilesPubSub(project) ::= <<
+projectFilesPubSub(project, vsVersion) ::= <<
 <?xml version="1.0" encoding="Windows-1252"?>
-<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="$vsVersion$.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>

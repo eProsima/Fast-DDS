@@ -668,17 +668,17 @@ public class fastrtpsgen {
 					if (m_exampleOption.startsWith("i86")) 
 					{
 						if(m_exampleOption.charAt(m_exampleOption.length()-1) == '3')
-							returnedValue = genVS2013(solution, null);
+							returnedValue = genVS(solution, null, "12");
 						else
-							returnedValue = genVS2010(solution, null);
+							returnedValue = genVS(solution, null, "14");
 					} else if (m_exampleOption.startsWith("x64")) {
 						for (int index = 0; index < m_vsconfigurations.length; index++) {
 							m_vsconfigurations[index].setPlatform("x64");
 						}
 						if(m_exampleOption.charAt(m_exampleOption.length()-1) == '3')
-							returnedValue = genVS2013(solution, "x64");
+							returnedValue = genVS(solution, "x64", "12");
 						else
-							returnedValue = genVS2010(solution, "x64");
+							returnedValue = genVS(solution, "x64", "14");
 					} else {
 						returnedValue = false;
 					}
@@ -701,14 +701,15 @@ public class fastrtpsgen {
 		return returnedValue;
 	}
 
-	private boolean genVS2010(Solution solution, String arch) {
+	private boolean genVS(Solution solution, String arch, String vsVersion) {
 
-		final String METHOD_NAME = "genVS2010";
+		final String METHOD_NAME = "genVS";
 		boolean returnedValue = false;
 
-		StringTemplateGroup vsTemplates = StringTemplateGroup.loadGroup("VS2010", DefaultTemplateLexer.class, null);
+		StringTemplateGroup vsTemplates = StringTemplateGroup.loadGroup("VS", DefaultTemplateLexer.class, null);
 
-		if (vsTemplates != null) {
+		if (vsTemplates != null)
+        {
 			StringTemplate tsolution = vsTemplates.getInstanceOf("solution");
 			StringTemplate tproject = vsTemplates.getInstanceOf("project");
 			StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
@@ -730,132 +731,25 @@ public class fastrtpsgen {
 				tproject.setAttribute("solution", solution);
 				tproject.setAttribute("project", project);
 				tproject.setAttribute("example", m_exampleOption);
-				//tproject.setAttribute("local",  m_local);
+				tproject.setAttribute("vsVersion",  vsVersion);
 
 				tprojectFiles.setAttribute("project", project);
+				tprojectFiles.setAttribute("vsVersion", vsVersion);
 
 				tprojectPubSub.setAttribute("solution", solution);
 				tprojectPubSub.setAttribute("project", project);
 				tprojectPubSub.setAttribute("example", m_exampleOption);
+				tprojectPubSub.setAttribute("vsVersion", vsVersion);
 
 				tprojectFilesPubSub.setAttribute("project", project);
+				tprojectFilesPubSub.setAttribute("vsVersion", vsVersion);
 
                 if(m_languageOption == LANGUAGE.JAVA)
                 {
                     tprojectJNI.setAttribute("solution", solution);
                     tprojectJNI.setAttribute("project", project);
                     tprojectJNI.setAttribute("example", m_exampleOption);
-                    tprojectJNI.setAttribute("local", m_local);
-
-                    tprojectFilesJNI.setAttribute("project", project);
-                }
-
-				for (int index = 0; index < m_vsconfigurations.length; index++) {
-					tproject.setAttribute("configurations", m_vsconfigurations[index]);
-					tprojectPubSub.setAttribute("configurations", m_vsconfigurations[index]);
-                    if(m_languageOption == LANGUAGE.JAVA)
-                    {
-                        tprojectJNI.setAttribute("configurations", m_vsconfigurations[index]);
-                    }
-				}
-
-				if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj", tproject, m_replace)) {
-					if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "Types-" + m_exampleOption + ".vcxproj.filters", tprojectFiles, m_replace)) {
-						if(project.getHasStruct())
-						{
-							if (returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PublisherSubscriber-" + m_exampleOption + ".vcxproj", tprojectPubSub, m_replace)) {
-								returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PublisherSubscriber-" + m_exampleOption + ".vcxproj.filters", tprojectFilesPubSub, m_replace);
-							}
-						}
-					}
-				}
-
-                if(returnedValue && m_languageOption == LANGUAGE.JAVA)
-                {
-                    if(returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSubJNI-" + m_exampleOption + ".vcxproj", tprojectJNI, m_replace))
-                    {
-                        returnedValue = Utils.writeFile(m_outputDir + project.getName() + "PubSubJNI-" + m_exampleOption + ".vcxproj.filters", tprojectFilesJNI, m_replace);
-                    }
-                }
-
-				tproject.reset();
-				tprojectFiles.reset();
-				tprojectPubSub.reset();
-				tprojectFilesPubSub.reset();
-                if(m_languageOption == LANGUAGE.JAVA)
-                {
-                    tprojectJNI.reset();
-                    tprojectFilesJNI.reset();
-                }
-			}
-
-			if (returnedValue) {
-				tsolution.setAttribute("solution", solution);
-				tsolution.setAttribute("example", m_exampleOption);
-
-				// Project configurations
-				for (int index = 0; index < m_vsconfigurations.length; index++) {
-					tsolution.setAttribute("configurations", m_vsconfigurations[index]);
-				}
-
-                if(m_languageOption == LANGUAGE.JAVA)
-                    tsolution.setAttribute("generateJava", true);
-
-				returnedValue = Utils.writeFile(m_outputDir + "solution-" + m_exampleOption + ".sln", tsolution, m_replace);
-			}
-
-		} else {
-			System.out.println("ERROR<" + METHOD_NAME + ">: Cannot load the template group VS2010");
-		}
-
-		return returnedValue;
-	}
-
-	private boolean genVS2013(Solution solution, String arch) {
-
-		final String METHOD_NAME = "genVS2013";
-		boolean returnedValue = false;
-
-		StringTemplateGroup vsTemplates = StringTemplateGroup.loadGroup("VS2013", DefaultTemplateLexer.class, null);
-
-		if (vsTemplates != null) {
-			StringTemplate tsolution = vsTemplates.getInstanceOf("solution");
-			StringTemplate tproject = vsTemplates.getInstanceOf("project");
-			StringTemplate tprojectFiles = vsTemplates.getInstanceOf("projectFiles");
-			StringTemplate tprojectPubSub = vsTemplates.getInstanceOf("projectPubSub");
-			StringTemplate tprojectFilesPubSub = vsTemplates.getInstanceOf("projectFilesPubSub");
-            StringTemplate tprojectJNI = null;
-            StringTemplate tprojectFilesJNI = null;
-            if(m_languageOption == LANGUAGE.JAVA)
-            {
-                tprojectJNI = vsTemplates.getInstanceOf("projectJNI");
-                tprojectFilesJNI = vsTemplates.getInstanceOf("projectFilesJNI");
-            }
-
-			returnedValue = true;
-
-			for (int count = 0; returnedValue && (count < solution.getProjects().size()); ++count) {
-				Project project = (Project) solution.getProjects().get(count);
-
-				tproject.setAttribute("solution", solution);
-				tproject.setAttribute("project", project);
-				tproject.setAttribute("example", m_exampleOption);
-				//tproject.setAttribute("local",  m_local);
-
-				tprojectFiles.setAttribute("project", project);
-
-				tprojectPubSub.setAttribute("solution", solution);
-				tprojectPubSub.setAttribute("project", project);
-				tprojectPubSub.setAttribute("example", m_exampleOption);
-
-				tprojectFilesPubSub.setAttribute("project", project);
-
-                if(m_languageOption == LANGUAGE.JAVA)
-                {
-                    tprojectJNI.setAttribute("solution", solution);
-                    tprojectJNI.setAttribute("project", project);
-                    tprojectJNI.setAttribute("example", m_exampleOption);
-                    tprojectJNI.setAttribute("local", m_local);
+                    tprojectJNI.setAttribute("vsVersion", vsVersion);
 
                     tprojectFilesJNI.setAttribute("project", project);
                 }
@@ -911,6 +805,11 @@ public class fastrtpsgen {
 
                 if(m_languageOption == LANGUAGE.JAVA)
                     tsolution.setAttribute("generateJava", true);
+
+                String vsVersion_sol = "2013";
+                if(vsVersion.equals("14"))
+                    vsVersion_sol = "2015";
+                tsolution.setAttribute("vsVersion", vsVersion_sol);
 
 				returnedValue = Utils.writeFile(m_outputDir + "solution-" + m_exampleOption + ".sln", tsolution, m_replace);
 			}
