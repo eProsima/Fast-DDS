@@ -898,7 +898,7 @@ TEST(BlackBox, PubSubKeepAll)
         std::this_thread::sleep_for(std::chrono::seconds(1));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(5));
+        data = reader.block(std::chrono::seconds(20));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
@@ -957,7 +957,7 @@ TEST(BlackBox, PubSubKeepAllTransient)
         std::this_thread::sleep_for(std::chrono::seconds(1));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(5));
+        data = reader.block(std::chrono::seconds(20));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
