@@ -466,7 +466,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(1));
+        data = reader.block(std::chrono::seconds(20));
     }
 
     print_non_received_messages(data, default_helloworld_print);
@@ -535,7 +535,7 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
+    data = reader.block(std::chrono::seconds(20));
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
@@ -658,7 +658,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
+    data = reader.block(std::chrono::seconds(20));
 
     print_non_received_messages(data, default_data64kb_print);
     ASSERT_EQ(data.size(), 0);
@@ -713,7 +713,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(5));
+        data = reader.block(std::chrono::seconds(20));
     }
 
     print_non_received_messages(data, default_data300kb_print);
@@ -750,7 +750,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(5));
+    data = reader.block(std::chrono::seconds(20));
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
