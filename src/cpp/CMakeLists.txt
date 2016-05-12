@@ -135,8 +135,14 @@ if(MSVC OR MSVC_IDE)
             $<INSTALL_INTERFACE:include>
             )
 
-        # Link library to external win32 libraries.
-        target_link_libraries(${PROJECT_NAME}
+        # Made linked libraries PRIVATE to prevent local directories in Windows installer.
+        set(PRIVACY "")
+        if(EPROSIMA_INSTALLER_MINION)
+            set(PRIVACY "PRIVATE")
+        endif()
+
+        # Link library to external win32 libraries and boost.
+        target_link_libraries(${PROJECT_NAME} ${PRIVACY}
             ${Boost_LIBRARIES} iphlpapi Shlwapi
             )
     endif()

@@ -1,0 +1,28 @@
+# Set default behaviour, in case users don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files we want to always be normalized and converted 
+# to native line endings on checkout.
+*.c text
+*.cpp text
+*.cxx text
+*.h text
+*.java text
+*.stg text eol=lf
+*.idl text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.sln text eol=crlf
+*.vcxproj text eol=crlf
+*.vcxproj.filters text eol=crlf
+*.bat text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+
+# To diff LibreOffice documents.
+# It is needed next configuration value: diff.odf.textconv=odt2txt
+*.ods diff=odf
+*.odt diff=odf
+*.odp diff=odf

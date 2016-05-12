@@ -191,7 +191,7 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-if(NOT EPROSIMA_INSTALLER)
+if(NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     enable_testing()
     include(CTest)
     add_subdirectory(test)
