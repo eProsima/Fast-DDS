@@ -54,7 +54,7 @@ public:
 	/**
 	 * Write data with params to the topic.
 	 * @param Data Pointer to the data
-     * @param Extra parameters.
+    * @param wparams Extra write parameters.
 	 * @return True if correct
 	 * @par Calling example:
 	 * @snippet fastrtps_example.cpp ex_PublisherWrite

@@ -459,7 +459,6 @@ public:
 	ParameterPropertyList_t():Parameter_t(PID_PROPERTY_LIST,0){};
 	/**
 	 * Constructor using a parameter PID and the parameter length
-	 * @param pid Pid of the parameter
 	 * @param in_length Its associated length
 	 */
 	ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST,in_length){};

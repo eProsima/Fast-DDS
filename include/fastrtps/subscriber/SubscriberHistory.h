@@ -40,11 +40,11 @@ public:
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
 	
 	/**
-	*
-	* @param pimpl
-	* @param payloadMax
-	* @param history
-	* @param resource
+	* Constructor. Requires information about the subscriner.
+	* @param pimpl Pointer to the subscriber implementation
+	* @param payloadMax Maximum payload size per change
+	* @param history History QoS policy for the reader
+	* @param resource Resource Limit QoS policy for the reader
 	*/
 	SubscriberHistory(SubscriberImpl* pimpl,uint32_t payloadMax,
 			HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource);
