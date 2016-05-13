@@ -58,6 +58,8 @@ namespace eprosima
                      */
                 ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
 
+                void destroy_timers();
+
                 /**
                  * Get the ChangeForReader struct associated with a determined change
                  * @param[in] change Pointer to the change.

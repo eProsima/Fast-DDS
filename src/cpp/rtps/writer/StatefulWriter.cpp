@@ -74,14 +74,16 @@ StatefulWriter::~StatefulWriter()
     if(mp_unsetChangesNotEmpty != nullptr)
         delete mp_unsetChangesNotEmpty;
 
+    for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
+        it != matched_readers.end(); ++it)
+        (*it)->destroy_timers();
+
     if(mp_periodicHB !=nullptr)
         delete(mp_periodicHB);
 
     for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
             it!=matched_readers.end();++it)
-    {
         delete(*it);
-    }
 }
 
 /*
