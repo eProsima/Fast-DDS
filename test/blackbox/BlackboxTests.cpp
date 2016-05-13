@@ -790,7 +790,7 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception();
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::seconds(1));
@@ -841,7 +841,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception();
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::seconds(1));
@@ -895,7 +895,7 @@ TEST(BlackBox, PubSubKeepAll)
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
         ASSERT_LE(sent_size, 20);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
         data = reader.block(std::chrono::seconds(20));
@@ -905,7 +905,7 @@ TEST(BlackBox, PubSubKeepAll)
         if(data.size() > 0)
             ASSERT_EQ(data.front().index(), (sent_size * (tries + 1)) + 1);
         //Wait for acknowledge, because then the history could be entirely again.
-        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
+        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(20)));
     }
     // To send 100 samples needs at least five tries.
     ASSERT_EQ(tries, 5);
@@ -954,17 +954,17 @@ TEST(BlackBox, PubSubKeepAllTransient)
         size_t sent_size = previous_size - data.size();
         // In this test the history has 20 max_samples.
         ASSERT_LE(sent_size, 20);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         reader.startReception(sent_size);
         // Block reader until reception finished or timeout.
-        data = reader.block(std::chrono::seconds(20));
+        data = reader.block(std::chrono::seconds(20 ));
         reader.stopReception();
         // Should be received the data was sent.
         ASSERT_EQ(previous_size - data.size(), sent_size);
         if(data.size() > 0)
             ASSERT_EQ(data.front().index(), (sent_size * (tries + 1)) + 1);
         //Wait for acknowledge, because then the history could be entirely again.
-        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
+        ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(20)));
     }
     // To send 100 samples needs at least five tries.
     ASSERT_EQ(tries, 5);
