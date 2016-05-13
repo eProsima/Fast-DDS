@@ -144,7 +144,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterKey_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	ParameterKey_t(ParameterId_t pid,uint16_t in_length,InstanceHandle_t& ke):Parameter_t(pid,in_length),key(ke){};
@@ -166,7 +166,7 @@ public:
 		/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterLocator_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	ParameterLocator_t(ParameterId_t pid,uint16_t in_length,Locator_t& loc):Parameter_t(pid,in_length),locator(loc){};
@@ -189,7 +189,7 @@ public:
 		/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	ParameterString_t(ParameterId_t pid,uint16_t in_length,std::string& strin):Parameter_t(pid,in_length),m_string(strin){}
@@ -215,7 +215,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterPort_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),port(0){};
 	ParameterPort_t(ParameterId_t pid,uint16_t in_length,uint32_t po):Parameter_t(pid,in_length),port(po){};
@@ -239,7 +239,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	ParameterGuid_t(ParameterId_t pid,uint16_t in_length,GUID_t guidin):Parameter_t(pid,in_length),guid(guidin){};
@@ -273,7 +273,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterProtocolVersion_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){protocolVersion = c_ProtocolVersion;};
 	/**
@@ -296,7 +296,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterVendorId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){set_VendorId_eProsima(vendorId);};
 	/**
@@ -319,7 +319,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterIP4Address_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){this->setIP4Address(0,0,0,0);};
 	/**
@@ -343,7 +343,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterBool_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),value(false){};
 	ParameterBool_t(ParameterId_t pid,uint16_t in_length,bool inbool):Parameter_t(pid,in_length),value(inbool){};
@@ -367,7 +367,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterCount_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),count(0){};
 	/**
@@ -390,7 +390,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterEntityId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),entityId(ENTITYID_UNKNOWN){};
 	/**
@@ -413,7 +413,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterTime_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
 	/**
@@ -436,7 +436,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterBuiltinEndpointSet_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),endpointSet(0){};
 	/**
@@ -460,7 +460,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterPropertyList_t(ParameterId_t /*pid*/, uint16_t in_length) : Parameter_t(PID_PROPERTY_LIST,in_length){};
 	/**
@@ -484,7 +484,7 @@ public:
 	/**
 	 * Constructor using a parameter PID and the parameter length
 	 * @param pid Pid of the parameter
-	 * @param length Its associated length
+	 * @param in_length Its associated length
 	 */
 	ParameterSampleIdentity_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid,in_length), sample_id(SampleIdentity::unknown()) {}
 
