@@ -40,7 +40,7 @@ public:
 	typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
 	
 	/**
-	* Constructor. Requires information about the subscriner.
+	* Constructor. Requires information about the subscriner
 	* @param pimpl Pointer to the subscriber implementation
 	* @param payloadMax Maximum payload size per change
 	* @param history History QoS policy for the reader
@@ -51,9 +51,10 @@ public:
 	virtual ~SubscriberHistory();
 
 	/**
-	*
-	* @param change
-	* @param prox
+	* Called when a change is received by the Subscriber History. Will add the change to the history
+   * if it wasn't already present
+	* @param[in] change The received change
+	* @param unknown_missing_changes_up_to Number of missing changes before this one
 	* @return
 	*/
 	bool received_change(CacheChange_t* change, size_t unknown_missing_changes_up_to);
@@ -71,12 +72,12 @@ public:
 	
 	/**
 	 * Method to know whether there are unread CacheChange_t.
-	 * @return True if there are unread.
+	 * @return True if there are any unread changes.
 	 */
 	bool isUnreadCache();
 
 	/**
-	* This method is called when you want to remove a change from the SubscriberHistory.
+	* This method is called to remove a change from the SubscriberHistory.
 	* @param change Pointer to the CacheChange_t.
 	* @param vit Pointer to the iterator of the key-ordered cacheChange vector.
 	* @return True if removed.
