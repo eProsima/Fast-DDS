@@ -15,7 +15,7 @@
 #define READERLISTENER_H_
 
 #include "../common/MatchingInfo.h"
-
+#include <mutex>
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -65,6 +65,7 @@ public:
 	bool hasReaderAttached();
 	ReaderListener* getAttachedListener();	
 protected:
+	std::mutex attached_listener_mutex;
 	ReaderListener* attached_listener;
 
 };

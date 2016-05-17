@@ -92,8 +92,11 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const C
 			}
 		}
 		//Call the slave, if it exists
-		if(attached_listener != nullptr)
-		attached_listener->onNewCacheChangeAdded(nullptr,change_in);
+		if(attached_listener != nullptr){
+			attached_listener_mutex.lock();
+			attached_listener->onNewCacheChangeAdded(nullptr,change_in);
+			attached_listener_mutex.unlock();
+		}
 	}
 	else
 	{
