@@ -37,7 +37,7 @@ public:
 	* @param writer Pointer to the RTPSWriter.
 	* @param info Matching Information.
 	*/
-	virtual void onWriterMatched(RTPSWriter* /*writer*/,MatchingInfo& /*info*/){};
+	virtual void onWriterMatched(RTPSWriter* writer,MatchingInfo& info){(void)writer; (void)info;};
 };
 }
 }

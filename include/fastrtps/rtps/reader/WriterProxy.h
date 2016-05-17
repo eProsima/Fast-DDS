@@ -63,8 +63,7 @@ namespace eprosima
 
                     /**
                      * Get the maximum sequenceNumber received from this Writer.
-                     * @param[out] seqNum Pointer to the sequenceNumber
-                     * @return True if correct.
+                     * @return the maximum sequence number.
                      */
                     const SequenceNumber_t available_changes_max() const;
 
@@ -102,8 +101,7 @@ namespace eprosima
 
                     /**
                      * The method returns a vector containing all missing changes.
-                     * @param missing Pointer to vector of pointers to ChangeFromWriter_t structure.
-                     * @return True if correct.
+                     * @return Vector of missing changes..
                      */
                     const std::vector<ChangeFromWriter_t>  missing_changes();
 

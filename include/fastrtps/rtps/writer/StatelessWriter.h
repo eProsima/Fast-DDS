@@ -50,19 +50,19 @@ public:
 	bool change_removed_by_history(CacheChange_t* a_change);
 	/**
 	 * Add a matched reader.
-	 * @param rdata Pointer to the ReaderProxyData object added.
+	 * @param ratt Attributes of the reader to add.
 	 * @return True if added.
 	 */
 	bool matched_reader_add(RemoteReaderAttributes& ratt);
 	/**
 	 * Remove a matched reader.
-	 * @param rdata Pointer to the object to remove.
+	 * @param ratt Attributes of the reader to remove.
 	 * @return True if removed.
 	 */
 	bool matched_reader_remove(RemoteReaderAttributes& ratt);
 	/**
 	 * Tells us if a specific Reader is matched against this writer
-	 * @param rdata Pointer to the ReaderProxyData object
+	 * @param ratt Attributes of the reader to check.
 	 * @return True if it was matched.
 	 */
 	bool matched_reader_is_matched(RemoteReaderAttributes& ratt);
@@ -75,7 +75,8 @@ public:
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes
 	 */
-	void updateAttributes(WriterAttributes& /*att*/){
+	void updateAttributes(WriterAttributes& att){
+      (void)att;
 		//FOR NOW THERE IS NOTHING TO UPDATE.
 	};
 
@@ -101,7 +102,7 @@ public:
 
 	/**
 	* Get the number of matched readers
-	* @param Number of matched readers
+	* @return Number of matched readers
 	*/
 	inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 

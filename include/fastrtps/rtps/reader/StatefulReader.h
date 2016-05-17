@@ -76,26 +76,24 @@ public:
 
 	/**
 	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
-	 *
      * @param change Pointer to the CacheChange_t.
-	 * @return true if the reader accepts messages from the.
+	 * @return true if the reader accepts messages.
 	 */
 	bool processDataMsg(CacheChange_t *change);
 
 	/**
 	* Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
-	*
 	* @param change Pointer to the CacheChange_t.
    * @param sampleSize Size of the complete assembled message.
    * @param fragmentStartingNum fragment number of this particular fragment.
-	* @return true if the reader accepts messages from the.
+	* @return true if the reader accepts messages.
 	*/
 	bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum);
 
 	/**
 	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
 	 *
-	 * @return true if the reader accepts messages from the.
+	 * @return true if the reader accepts messages.
 	 */
     bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
             SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
