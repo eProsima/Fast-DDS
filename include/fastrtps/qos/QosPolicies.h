@@ -340,9 +340,9 @@ public:
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
    /**
     * Appends a name to the list of partition names.
-    * @param oc Name to append.
+    * @param name Name to append.
     */
-   RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string(oc)); hasChanged=true; };
+   RTPS_DllAPI inline void push_back(const char* name){ names.push_back(std::string(name)); hasChanged=true; };
    /**
     * Clears list of partition names
     */
@@ -377,9 +377,24 @@ public:
     * @return True if the modified CDRMessage is valid.
     */
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+   /**
+    * Appends topic data.
+    * @param oc Data octet.
+    */
 	RTPS_DllAPI inline void push_back(octet oc){ value.push_back(oc); };
+   /**
+    * Clears all topic data.
+    */
 	RTPS_DllAPI inline void clear(){ value.clear(); };
+   /**
+    * Overrides topic data vector.
+    * @param ocv Topic data octet vector.
+    */
 	RTPS_DllAPI inline void setValue(std::vector<octet> ocv){ value = ocv; };
+   /**
+    * Returns topic data
+    * @return Vector of data octets.
+    */
 	RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
 private:
 	std::vector<octet> value;
@@ -400,9 +415,24 @@ public:
     * @return True if the modified CDRMessage is valid.
     */
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
+   /**
+    * Appends group data.
+    * @param oc Data octet.
+    */
 	RTPS_DllAPI inline void push_back(octet oc){ value.push_back(oc); };
+   /**
+    * Clears all group data.
+    */
 	RTPS_DllAPI inline void clear(){ value.clear(); };
+   /**
+    * Overrides group data vector.
+    * @param ocv Group data octet vector.
+    */
 	RTPS_DllAPI inline void setValue(std::vector<octet> ocv){ value = ocv; };
+   /**
+    * Returns group data
+    * @return Vector of data octets.
+    */
 	RTPS_DllAPI inline std::vector<octet> getValue(){ return value; };
 private:
 	std::vector<octet> value;
