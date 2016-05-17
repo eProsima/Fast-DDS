@@ -48,7 +48,7 @@ public:
 	* @param type Type of endpoint
 	* @param status Status of the endpoint
 	* @param id User Id 
-	* @param end EntityId
+	* @param ent EntityId
 	* @return Pair of two strings.
 	*/
 	static std::pair<std::string,std::string> toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent);
@@ -133,7 +133,7 @@ public:
 	bool checkEntityId(ReaderProxyData* rdata);
 	/**
 	* This method checks the provided entityId against the topic type to see if it matches
-	* @param rdata Pointer to the writerProxyData
+	* @param wdata Pointer to the writerProxyData
 	* @return True if its correct. 
 	**/
 	bool checkEntityId(WriterProxyData* wdata);

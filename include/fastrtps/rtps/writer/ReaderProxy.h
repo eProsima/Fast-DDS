@@ -153,8 +153,9 @@ namespace eprosima
                 bool minChange(std::vector<ChangeForReader_t*>* Changes, ChangeForReader_t* changeForReader);
 
                 /*!
-                 * @brief Adds requested fragments. This fragments will be sent in next NackResponseDelay.
-                 * @param fragment_number_set FragmentNumberSet_t with information about request fragments.
+                 * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
+                 * @param[in] frag_set set containing the requested fragments to be sent.
+                 * @param[in] sequence_number Sequence number to be paired with the requested fragments.
                  * @return True if there is at least one requested fragment. False in other case.
                  * @remarks It is not thread-safe.
                  */
@@ -189,7 +190,7 @@ namespace eprosima
                  * @param change
                  * @return
                  */
-                inline bool rtps_is_relevant(CacheChange_t* /*change*/){return true;};
+                inline bool rtps_is_relevant(CacheChange_t* change){(void)change; return true;};
 
                 //!Mutex
                 boost::recursive_mutex* mp_mutex;

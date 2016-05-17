@@ -80,6 +80,7 @@ namespace eprosima{
                 /*!
                  * Copy another structure (including allocating new space for the data.)
                  * @param[in] serData Pointer to the structure to copy
+                 * @param with_limit if true, the function will fail when providing a payload too big
                  * @return True if correct
                  */
                 bool copy(SerializedPayload_t* serData, bool with_limit = true)

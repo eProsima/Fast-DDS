@@ -254,8 +254,8 @@ inline SequenceNumber_t operator-(const SequenceNumber_t& seq, const uint32_t in
 
 /**
  * Add one SequenceNumber_t to another
- * @param seqin Base SequenceNumber_t
- * @param inc SequenceNumber_t to add
+ * @param[in] seq Base sequence number
+ * @param inc value to add to the base
  * @return Result of the addition
  */
 inline SequenceNumber_t operator+(const SequenceNumber_t& seq, const uint32_t inc)
