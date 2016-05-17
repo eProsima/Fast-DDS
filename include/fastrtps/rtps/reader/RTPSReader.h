@@ -38,7 +38,7 @@ namespace eprosima
             class FragmentedChangePitStop;
 
             /**
-             * Class RTPSReader, manages the reception of data from the writers.
+             * Class RTPSReader, manages the reception of data from its matched writers.
              * @ingroup READER_MODULE
              */
             class RTPSReader : public Endpoint
@@ -53,16 +53,16 @@ namespace eprosima
                 virtual ~RTPSReader();
                 public:
                 /**
-                 * Add a matched writer represented by a WriterProxyData object.
-                 * @param wdata Pointer to the WPD object to add.
+                 * Add a matched writer represented by its attributes.
+                 * @param wdata Attributes of the writer to add.
                  * @return True if correctly added.
                  */
                 RTPS_DllAPI virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
 
                 /**
-                 * Remove a WriterProxyData from the matached writers.
-                 * @param wdata Pointer to the WPD object.
-                 * @return True if correct.
+                 * Remove a writer represented by its attributes from the matched writers.
+                 * @param wdata Attributes of the writer to remove.
+                 * @return True if correctly removed.
                  */
                 RTPS_DllAPI virtual bool matched_writer_remove(RemoteWriterAttributes& wdata) = 0;
 
