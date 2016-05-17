@@ -257,11 +257,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 			if (this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant", C_BLUE);
 			}
 			else
 			{
-				logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg received, processing.", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg received, processing.", C_BLUE);
 				valid = proc_Submsg_DataFrag(msg, &submsgh, &last_submsg);
 			}
 			break;
@@ -298,11 +298,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 			if (this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...", C_BLUE);
 			}
 			else
 			{
-				logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg received, processing...", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg received, processing...", C_BLUE);
 				valid = proc_Submsg_NackFrag(msg, &submsgh, &last_submsg);
 			}
 			break;
@@ -326,11 +326,11 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 			if (this->destGuidPrefix != RTPSParticipantguidprefix)
 			{
 				msg->pos += submsgh.submessageLength;
-				logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...", C_BLUE);
 			}
 			else
 			{
-				logInfo(RTPS_MSG_IN, IDSTRING"HeartbeatFrag Submsg received, processing...", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"HeartbeatFrag Submsg received, processing...", C_BLUE);
 				valid = proc_Submsg_HeartbeatFrag(msg, &submsgh, &last_submsg);
 			}
 			break;
@@ -588,7 +588,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-	//logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: "<<mp_threadListen->m_assocReaders.size(),C_BLUE);
+	//logInfo(RTPS_MSG_IN,IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: "<<AssociatedReaders.size(),C_BLUE);
 	//Look for the correct reader to add the change
 	for(std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
 		it != AssociatedReaders.end(); ++it)
@@ -605,8 +605,8 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
 
 bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t* smh, bool* last)
 {
-	const char* const METHOD_NAME = "proc_Submsg_DataFrag";
-	boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+	//const char* const METHOD_NAME = "proc_Submsg_DataFrag";
+   boost::lock_guard<boost::mutex> guard(mtx);
 
 	// Reset param list
 	m_ParamList.deleteParams();
@@ -614,7 +614,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	//READ and PROCESS
 	if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
 	{
-		logInfo(RTPS_MSG_IN, IDSTRING"Too short submessage received, ignoring", C_BLUE);
+		//logInfo(RTPS_MSG_IN, IDSTRING"Too short submessage received, ignoring", C_BLUE);
 		return false;
 	}
 	
@@ -640,15 +640,15 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	CDRMessage::readEntityId(msg, &readerID);
 
 	//WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-	if (mp_threadListen->m_assocReaders.empty())
+	if(AssociatedReaders.empty())
 	{
-		logWarning(RTPS_MSG_IN, IDSTRING"Data received in locator: " << mp_threadListen->getListenLocators() << ", when NO readers are listening", C_BLUE);
+		//logWarning(RTPS_MSG_IN, IDSTRING"Data received in locator: " << mp_threadListen->getListenLocators() << ", when NO readers are listening", C_BLUE);
 		return false;
 	}
 
 	RTPSReader* firstReader = nullptr;
-	for (std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
-		it != mp_threadListen->m_assocReaders.end(); ++it)
+	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		if ((*it)->acceptMsgDirectedTo(readerID)) //add
 		{
@@ -659,8 +659,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
 	if (firstReader == nullptr) //Reader not found
 	{
-		logWarning(RTPS_MSG_IN, IDSTRING"No Reader in this Locator (" << mp_threadListen->getListenLocators() << ")"
-			" accepts this message (directed to: " << readerID << ")", C_BLUE);
+		//logWarning(RTPS_MSG_IN, IDSTRING"No Reader in this Locator (" << mp_threadListen->getListenLocators() << ")"
+		//	" accepts this message (directed to: " << readerID << ")", C_BLUE);
 		return false;
 	}
 
@@ -675,7 +675,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
 	if (ch->sequenceNumber.to64long() <= 0 || (ch->sequenceNumber.high == -1 && ch->sequenceNumber.low == 0)) //message invalid //TODO make faster
 	{
-		logWarning(RTPS_MSG_IN, IDSTRING"Invalid message received, bad sequence Number", C_BLUE);
+		//logWarning(RTPS_MSG_IN, IDSTRING"Invalid message received, bad sequence Number", C_BLUE);
 		return false;
 	}
 
@@ -707,7 +707,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 
 		if (inlineQosSize <= 0)
 		{
-			logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
+			//logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
 			//firstReader->releaseCache(ch);
 			return false;
 		}
@@ -751,8 +751,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		}
 		else
 		{
-			logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload larger than maximum allowed size "
-				"(" << payload_size << "/" << ch->serializedPayload.max_size << ")", C_BLUE);
+			//logWarning(RTPS_MSG_IN, IDSTRING"Serialized Payload larger than maximum allowed size "
+			//	"(" << payload_size << "/" << ch->serializedPayload.max_size << ")", C_BLUE);
 			//firstReader->releaseCache(ch);
 			return false;
 		}
@@ -789,10 +789,10 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		ch->sourceTimestamp = this->timestamp;
 
 	//FIXME: DO SOMETHING WITH PARAMETERLIST CREATED.
-	logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: " << mp_threadListen->m_assocReaders.size(), C_BLUE);
+	//logInfo(RTPS_MSG_IN, IDSTRING"from Writer " << ch->writerGUID << "; possible RTPSReaders: " << AssociatedReaders.size(), C_BLUE);
 	//Look for the correct reader to add the change
-	for (std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
-		it != mp_threadListen->m_assocReaders.end(); ++it)
+	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		if ((*it)->acceptMsgDirectedTo(readerID))
 		{
@@ -800,7 +800,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 		}
 	}
 
-	logInfo(RTPS_MSG_IN, IDSTRING"Sub Message DATA processed", C_BLUE);
+	//logInfo(RTPS_MSG_IN, IDSTRING"Sub Message DATA processed", C_BLUE);
 
 	return true;
 }
@@ -1052,7 +1052,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
 
 bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last) {
 	
-	const char* const METHOD_NAME = "proc_Submsg_NackFrag";
+	//const char* const METHOD_NAME = "proc_Submsg_NackFrag";
 
 	bool endiannessFlag = smh->flags & BIT(0) ? true : false;
 	//Assign message endianness
@@ -1079,10 +1079,10 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 	if (smh->submessageLength == 0)
 		*last = true;
 
-	boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+	boost::lock_guard<boost::mutex> guard(mtx);
 	//Look for the correct writer to use the acknack
-	for (std::vector<RTPSWriter*>::iterator it = mp_threadListen->m_assocWriters.begin();
-		it != mp_threadListen->m_assocWriters.end(); ++it)
+	for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
+		it != AssociatedWriters.end(); ++it)
 	{
 		//Look for the readerProxy the acknack is from
 		boost::lock_guard<boost::recursive_mutex> guardW(*(*it)->getMutex());
@@ -1114,13 +1114,13 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 			}
 			else
 			{
-				logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ", C_BLUE);
+				//logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ", C_BLUE);
 				return false;
 			}
 		}
 	}
-	logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "
-		<< mp_threadListen->m_assocWriters.size() << " writers in this ListenResource)", C_BLUE);
+	//logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "
+	//	<< AssociatedWriters.size() << " writers in this ListenResource)", C_BLUE);
 	return false;
 }
 
@@ -1151,10 +1151,10 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHead
 
 	// XXX TODO VALIDATE DATA?
 
-	boost::lock_guard<boost::mutex> guard(*this->mp_threadListen->getMutex());
+	boost::lock_guard<boost::mutex> guard(mtx);
 	//Look for the correct reader and writers:
-	for (std::vector<RTPSReader*>::iterator it = mp_threadListen->m_assocReaders.begin();
-		it != mp_threadListen->m_assocReaders.end(); ++it)
+	for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
+		it != AssociatedReaders.end(); ++it)
 	{
 		/* XXX TODO PROCESS
 		if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))
