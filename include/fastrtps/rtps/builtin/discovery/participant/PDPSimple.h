@@ -64,7 +64,6 @@ public:
 	/**
 	 * Initialize the PDP.
 	 * @param part Pointer to the RTPSParticipant.
-	 * @param RTPSParticipantID RTPSParticipantID used to create the RTPSParticipant.
 	 * @return True on success
 	 */
 	bool initPDP(RTPSParticipantImpl* part);
@@ -72,6 +71,7 @@ public:
 	/**
 	 * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
 	 * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
+    * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
 	 */
 	void announceParticipantState(bool new_change, bool dispose = false);
 	//!Stop the RTPSParticipantAnnouncement (only used in tests).
@@ -106,33 +106,37 @@ public:
 	/**
 	 * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
 	 * @param[in] reader GUID_t of the reader we are looking for.
-	 * @param[out] rdata Pointer to pointer of the ReaderProxyData object.
+	 * @param rdata Pointer to pointer of the ReaderProxyData object.
+	 * @param pdata Pointer to pointer of the ParticipantProxyData object.
 	 * @return True if found.
 	 */
     bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData** rdata, ParticipantProxyData** pdata);
 	/**
 	 * This method returns a pointer to a WriterProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
 	 * @param[in] writer GUID_t of the writer we are looking for.
-	 * @param[out] rdata Pointer to pointer of the WriterProxyData object.
+	 * @param wdata Pointer to pointer of the WriterProxyData object.
+	 * @param pdata Pointer to pointer of the ParticipantProxyData object.
 	 * @return True if found.
 	 */
-    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData** rdata, ParticipantProxyData** pdata);
+    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData** wdata, ParticipantProxyData** pdata);
 	/**
 	 * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
 	 * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.
-	 * @param[out] pdata Pointer to pointer of the RTPSParticipantProxyData object.
+	 * @param pdata Pointer to pointer of the ParticipantProxyData object.
 	 * @return True if found.
 	 */
     bool lookupParticipantProxyData(const GUID_t& pguid,ParticipantProxyData** pdata);
 	/**
 	 * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
 	 * @param rdata Pointer to the ReaderProxyData object.
+	 * @param pdata Pointer to pointer of the ParticipantProxyData object.
 	 * @return true if found and deleted.
 	 */
     bool removeReaderProxyData(ParticipantProxyData* pdata, ReaderProxyData* rdata);
 	/**
 	 * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
 	 * @param wdata Pointer to the WriterProxyData object.
+	 * @param pdata Pointer to pointer of the ParticipantProxyData object.
 	 * @return true if found and deleted.
 	 */
     bool removeWriterProxyData(ParticipantProxyData* pdata, WriterProxyData* wdata);

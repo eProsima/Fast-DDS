@@ -69,16 +69,15 @@ public:
 	/**
 	 * Update the CDRMessage of a parameterList.
 	 * @param plist Pointer to the parameterList.
-	 * @param endian Endianness that the resulting CDRMEssage_t should have.
+	 * @param endian Endianness that the resulting CDRMessage_t should have.
 	 * @return True if correct.
 	 */
 	static bool updateCDRMsg(ParameterList_t* plist,Endianness_t endian);
 	/**
 	 * Read a parameterList from a CDRMessage
-	 * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is unexpected).
+	 * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
 	 * @param[out] plist Pointer to the parameter list.
-	 * @param[out] handle Pointer to the handle.
-	 * @param[out] chkind Pointer to the change Kind.
+	 * @param[out] change Pointer to the cache change.
 	 * @return Number of bytes of the parameter list.
 	 */
 	static int32_t readParameterListfromCDRMsg(CDRMessage_t* msg, ParameterList_t* plist, CacheChange_t* change);

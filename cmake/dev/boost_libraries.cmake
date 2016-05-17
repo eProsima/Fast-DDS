@@ -49,13 +49,18 @@ macro(install_boost FILETYPE)
                     set(BOOST_ARCH "vc140")
                 endif()
 
+                set(DIR_EXTENSION "")
+                if(EPROSIMA_INSTALLER_MINION)
+                    set(DIR_EXTENSION "/${MSVC_ARCH}")
+                endif()
+
                 #Normalize path
                 get_filename_component(BOOST_LIBRARYDIR_NORMALIZE ${BOOST_LIBRARYDIR} ABSOLUTE)
 
                 # Runtime
                 if(RUNTIME_FILES_)
                     install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
-                        DESTINATION ${BIN_INSTALL_DIR}
+                        DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
                         COMPONENT libraries_${MSVC_ARCH}
                         CONFIGURATIONS Debug
                         FILES_MATCHING
@@ -63,7 +68,7 @@ macro(install_boost FILETYPE)
                         )
 
                     install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
-                        DESTINATION ${BIN_INSTALL_DIR}
+                        DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
                         COMPONENT libraries_${MSVC_ARCH}
                         CONFIGURATIONS Release
                         FILES_MATCHING
@@ -75,7 +80,7 @@ macro(install_boost FILETYPE)
                 # Library
                 if(LIBRARY_FILES_)
                     install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
-                        DESTINATION ${LIB_INSTALL_DIR}
+                        DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
                         COMPONENT libraries_${MSVC_ARCH}
                         CONFIGURATIONS Debug
                         FILES_MATCHING
@@ -83,7 +88,7 @@ macro(install_boost FILETYPE)
                         )
 
                     install(DIRECTORY ${BOOST_LIBRARYDIR_NORMALIZE}/
-                        DESTINATION ${LIB_INSTALL_DIR}
+                        DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
                         COMPONENT libraries_${MSVC_ARCH}
                         CONFIGURATIONS Release
                         FILES_MATCHING

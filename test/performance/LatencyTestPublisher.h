@@ -103,10 +103,12 @@ public:
 		LatencyTestPublisher* mp_up;
 		int n_matched;
 	}m_commandsublistener;
+
 	LatencyDataType latency_t;
-		TestCommandDataType command_t;
+    TestCommandDataType command_t;
 		
-	std::stringstream output_file;
+	std::stringstream output_file_minimum;
+	std::stringstream output_file_average;
 	std::stringstream output_file_16;
 	std::stringstream output_file_32;
 	std::stringstream output_file_64;
@@ -118,6 +120,8 @@ public:
 	std::stringstream output_file_4096;
 	std::stringstream output_file_8192;
 	std::stringstream output_file_16384;
+
+    bool reliable_;
 };
 
 

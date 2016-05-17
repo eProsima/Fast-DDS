@@ -61,7 +61,7 @@ public:
 	virtual ~WLP();
 	/**
 	 * Initialize the WLP protocol.
-	 * @param prot Pointer to the BuiltinProtocols object.
+	 * @param p Pointer to the RTPS participant implementation.
 	 * @return true if the initialziacion was succesful.
 	 */
 	bool initWL(RTPSParticipantImpl* p);
@@ -84,13 +84,14 @@ public:
 	/**
 	 * Add a local writer to the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
-	 * @return True if correct.
+	 * @param wqos Quality of service policies for the writer.
+    * @return True if correct.
 	 */
 	bool addLocalWriter(RTPSWriter* W,WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
-	 * @param Pointer to the RTPSWriter.
-	 * @return True if correct.
+	 * @param W Pointer to the RTPSWriter.
+	 * @return True if removed.
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 

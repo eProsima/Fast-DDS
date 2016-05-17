@@ -16,7 +16,7 @@
 
 #if defined(_WIN32)
 #include <time.h>
-#include <windows.h> //I've ommited this line.
+#include <windows.h> 
 #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
   #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
 #else
@@ -46,7 +46,7 @@ namespace fastrtps{
 
 /**
  * Class eClock used to obtain the time and to sleep some processes.
- * Time measured since  in us since 1970.
+ * Time measured since 1970.
  * @ingroup UTILITIES_MODULE
  */
 class RTPS_DllAPI eClock {
@@ -77,7 +77,7 @@ public:
 	uint64_t intervalEnd();
 	
 	/**
-	* Sleep a thread
+	* Put the current thread to sleep.
 	* @param milliseconds Time to sleep
 	*/
 	static void my_sleep(uint32_t milliseconds);

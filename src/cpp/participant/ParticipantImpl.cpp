@@ -107,16 +107,25 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 
 	TopicDataType* p_type = nullptr;
 
+    /// Preconditions
+    // Check the type was registered.
 	if(!getRegisteredType(att.topic.getTopicDataType().c_str(),&p_type))
 	{
 		logError(PARTICIPANT,"Type : "<< att.topic.getTopicDataType() << " Not Registered");
 		return nullptr;
 	}
+    // Check the type supports keys.
 	if(att.topic.topicKind == WITH_KEY && !p_type->m_isGetKeyDefined)
 	{
 		logError(PARTICIPANT,"Keyed Topic needs getKey function");
 		return nullptr;
 	}
+    // Check the maximun size of the type and the asynchronous of the writer.
+    if(p_type->m_typeSize > PAYLOAD_MAX_SIZE && att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+    {
+		logError(PARTICIPANT,"Big data has to be sent using an asynchronous publisher");
+		return nullptr;
+    }
 	if(m_att.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol)
 	{
 		if(att.getUserDefinedID() <= 0)
@@ -151,6 +160,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
 	watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
 	watt.endpoint.topicKind = att.topic.topicKind;
 	watt.endpoint.unicastLocatorList = att.unicastLocatorList;
+	watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
 	if(att.getEntityID()>0)
 		watt.endpoint.setEntityID((uint8_t)att.getEntityID());
 	if(att.getUserDefinedID()>0)
@@ -283,11 +293,6 @@ bool ParticipantImpl::registerType(TopicDataType* type)
 	if (type->m_typeSize <= 0)
 	{
 		logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
-		return false;
-	}
-	if (type->m_typeSize > PAYLOAD_MAX_SIZE)
-	{
-		logError(PARTICIPANT, "Current version only supports types of sizes < " << PAYLOAD_MAX_SIZE);
 		return false;
 	}
 	if (std::string(type->getName()).size() <= 0)

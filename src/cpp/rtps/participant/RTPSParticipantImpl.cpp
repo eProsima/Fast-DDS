@@ -15,6 +15,7 @@
 
 #include <fastrtps/rtps/resources/ResourceSend.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include "../resources/AsyncWriterThread.h"
 #include <fastrtps/rtps/resources/ListenResource.h>
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -80,6 +81,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
 				mp_event_thr(nullptr),
+                async_writers_thread_(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 				IdCounter(0),
@@ -102,6 +104,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	loc.port = PParam.defaultSendPort;
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
+    async_writers_thread_ = new AsyncWriterThread();
 	bool hasLocatorsDefined = true;
 	//If no default locators are defined we define some.
 	/* The reasoning here is the following.
@@ -231,11 +234,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	delete(this->mp_ResourceSemaphore);
 	delete(this->mp_userParticipant);
 
-	//Destruct SenderResources
-//	for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it)
-//		delete(*it);
-
 	m_senderResource.clear();
+   delete(this->async_writers_thread_);
 	delete(this->mp_event_thr);
 	delete(this->mp_mutex);
 }
@@ -294,7 +294,6 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		return false;
 	}
 
-
 	RTPSWriter* SWriter = nullptr;
 	GUID_t guid(m_guid.guidPrefix,entId);
 	if(param.endpoint.reliabilityKind == BEST_EFFORT)
@@ -305,10 +304,6 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 	if(SWriter==nullptr)
 		return false;
 
-	//SWriter->setListener(inlisten);
-	//SWriter->setQos(param.qos,true);
-
-	//Create SenderResources for this new Writer. 
 	createSendResources((Endpoint *)SWriter);
 	if(param.endpoint.reliabilityKind == RELIABLE)
 	{
@@ -318,6 +313,13 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 			return false;
 		}
 	}
+
+    // Check asynchornous thread is running.
+    if(SWriter->isAsync())
+    {
+        async_writers_thread_->addWriter(SWriter);
+    }
+
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);
 	if(!isBuiltin)
@@ -635,7 +637,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 	}
 	bool found = false;
 	{
-
 		if(p_endpoint->getAttributes()->endpointKind == WRITER)
 		{
 			boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -644,6 +645,9 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			{
 				if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 				{
+                    // If writer is asynchronous, remove from async thread.
+                    async_writers_thread_->removeWriter(*wit);
+
 					m_userWriterList.erase(wit);
 					found = true;
 					break;
@@ -672,8 +676,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 		else
 			mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
 		//BUILTINPROTOCOLS
-		//Remove it from ReceiverResourceList
-		
 		boost::lock_guard<boost::recursive_mutex> guardParticipant(*mp_mutex);
 	}
 	//	boost::lock_guard<boost::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());

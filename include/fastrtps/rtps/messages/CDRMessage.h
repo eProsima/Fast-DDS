@@ -44,13 +44,14 @@ namespace CDRMessage{
 	  inline bool readData(CDRMessage_t* msg, octet* o, uint32_t length);
 	  inline bool readDataReversed(CDRMessage_t* msg, octet* o, uint32_t length);
 	  inline bool readInt32(CDRMessage_t* msg,int32_t* lo);
-	  inline bool readUInt32(CDRMessage_t* msg,uint32_t* ulo);
-	  inline bool readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* sn);
+	  inline bool readUInt32(CDRMessage_t* msg, uint32_t* ulo);
+	  inline bool readSequenceNumber(CDRMessage_t* msg, SequenceNumber_t* sn);
 	  inline bool readInt16(CDRMessage_t* msg,int16_t* i16);
 	  inline bool readUInt16(CDRMessage_t* msg,uint16_t* i16);
 	  inline bool readLocator(CDRMessage_t* msg,Locator_t* loc);
-	  inline bool readOctet(CDRMessage_t* msg,octet* o);
-	  inline bool readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* snset);
+	  inline bool readOctet(CDRMessage_t* msg, octet* o);
+	  inline bool readSequenceNumberSet(CDRMessage_t* msg, SequenceNumberSet_t* snset);
+	  inline bool readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberSet_t* snset);
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 	  inline bool readString(CDRMessage_t*msg,std::string* p_str);
 	  inline bool readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
@@ -95,7 +96,8 @@ namespace CDRMessage{
 	  inline bool addInt64(CDRMessage_t*msg,int64_t lo);
 	  inline bool addEntityId(CDRMessage_t*msg,const EntityId_t* id);
 	  inline bool addSequenceNumber(CDRMessage_t*msg, const SequenceNumber_t* sn);
-	  inline bool addSequenceNumberSet(CDRMessage_t*msg,SequenceNumberSet_t* sns);
+	  inline bool addSequenceNumberSet(CDRMessage_t*msg, SequenceNumberSet_t* sns);
+	  inline bool addFragmentNumberSet(CDRMessage_t*msg, FragmentNumberSet_t* fns);
 	  inline bool addLocator(CDRMessage_t*msg,Locator_t*loc);
 	  inline bool addParameterStatus(CDRMessage_t*msg,octet status);
 	  inline bool addParameterKey(CDRMessage_t*msg, const InstanceHandle_t* iHandle);

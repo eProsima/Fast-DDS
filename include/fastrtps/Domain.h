@@ -109,7 +109,7 @@ public:
 	 */
 	RTPS_DllAPI static bool unregisterType(Participant* part, const char* typeName);
 	/**
-	 * Stop and remove all participants and publishers and subscribers in this Domain.
+	 * Stop and remove all participants, publishers and subscribers in this Domain.
 	 */
 	RTPS_DllAPI static void stopAll();
 private:

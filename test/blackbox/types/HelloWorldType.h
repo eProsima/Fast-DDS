@@ -22,6 +22,8 @@ using namespace eprosima::fastrtps;
 
 class HelloWorldType:public TopicDataType {
 public:
+    typedef HelloWorld type;
+
 	HelloWorldType();
 	virtual ~HelloWorldType();
 	bool serialize(void*data,SerializedPayload_t* payload);
