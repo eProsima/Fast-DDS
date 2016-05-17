@@ -313,7 +313,7 @@ public:
 			access_scope(INSTANCE_PRESENTATION_QOS),
 			coherent_access(false),ordered_access(false){};
 	virtual ~PresentationQosPolicy(){};
-V  /**
+ /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
