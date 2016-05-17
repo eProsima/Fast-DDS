@@ -29,7 +29,7 @@ class EDP;
 }
 
 /**
- * Class QosPolicy is a base class for all the different QoS defined to the Writers and Readers.
+ * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */
 class RTPS_DllAPI QosPolicy{
 public:
@@ -37,6 +37,10 @@ public:
 	QosPolicy(bool b_sendAlways):hasChanged(false),m_sendAlways(b_sendAlways){};
 	virtual ~ QosPolicy(){};
 	bool hasChanged;
+   /**
+    * Whether it should always be sent.
+    * @return True if it should always be sent.
+    */
 	bool sendAlways(){return m_sendAlways;}
 protected:
 	bool m_sendAlways;
@@ -64,6 +68,11 @@ public:
 	DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),QosPolicy(true),kind(VOLATILE_DURABILITY_QOS){};
 	virtual ~DurabilityQosPolicy(){};
 	DurabilityQosPolicyKind_t kind;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -77,6 +86,11 @@ public:
 	DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite){	};
 	virtual ~DeadlineQosPolicy(){};
 	Duration_t period;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -90,6 +104,11 @@ public:
 	LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero){};
 	virtual ~LatencyBudgetQosPolicy(){};
 	Duration_t duration;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -120,6 +139,11 @@ public:
 	LivelinessQosPolicyKind kind;
 	Duration_t lease_duration;
 	Duration_t announcement_period;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -145,6 +169,11 @@ public:
 	virtual ~ReliabilityQosPolicy(){};
 	ReliabilityQosPolicyKind kind;
 	Duration_t max_blocking_time;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -168,6 +197,11 @@ public:
 	kind(SHARED_OWNERSHIP_QOS){};
 	virtual ~OwnershipQosPolicy(){};
 	OwnershipQosPolicyKind kind;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -192,6 +226,11 @@ public:
 	DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
 			kind(BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS){};
 	virtual ~DestinationOrderQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -205,10 +244,23 @@ public:
 	RTPS_DllAPI UserDataQosPolicy() :Parameter_t(PID_USER_DATA, 0), QosPolicy(false){};
 	RTPS_DllAPI virtual ~UserDataQosPolicy(){};
 
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
-
+   
+   /**
+    * Returns raw data vector.
+    * @return raw data as vector of octets.
+    * */
 	RTPS_DllAPI inline std::vector<octet> getDataVec(){ return dataVec; };
-	RTPS_DllAPI inline void setDataVec(std::vector<octet>& vec){ dataVec = vec; };
+   /**
+    * Sets raw data vector.
+    * @param vec raw data to set.
+    * */
+	RTPS_DllAPI inline void setDataVec(const std::vector<octet>& vec){ dataVec = vec; };
 private:
 	std::vector<octet> dataVec;
 };
@@ -224,6 +276,11 @@ public:
 	TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false),minimum_separation(c_TimeZero){};
 	virtual ~TimeBasedFilterQosPolicy(){};
 	Duration_t minimum_separation;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -256,6 +313,11 @@ public:
 			access_scope(INSTANCE_PRESENTATION_QOS),
 			coherent_access(false),ordered_access(false){};
 	virtual ~PresentationQosPolicy(){};
+V  /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -270,11 +332,31 @@ class  PartitionQosPolicy : private Parameter_t, public QosPolicy
 public:
 	RTPS_DllAPI PartitionQosPolicy() :Parameter_t(PID_PARTITION, 0), QosPolicy(false){};
 	RTPS_DllAPI virtual ~PartitionQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
-    RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string(oc)); hasChanged=true; };
+   /**
+    * Appends a name to the list of partition names.
+    * @param oc Name to append.
+    */
+   RTPS_DllAPI inline void push_back(const char* oc){ names.push_back(std::string(oc)); hasChanged=true; };
+   /**
+    * Clears list of partition names
+    */
 	RTPS_DllAPI inline void clear(){ names.clear(); };
+   /**
+    * Returns partition names.
+    * @return Vector of partition name strings.
+    */
 	RTPS_DllAPI inline std::vector<std::string> getNames(){ return names; };
-    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; };
+   /**
+    * Overrides partition names
+    * @param nam Vector of partition name strings.
+    */
+   RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; };
 private:
 	std::vector<std::string> names;
 };
@@ -289,6 +371,11 @@ class  TopicDataQosPolicy : private Parameter_t, public QosPolicy
 public:
 	RTPS_DllAPI TopicDataQosPolicy() :Parameter_t(PID_TOPIC_DATA, 0), QosPolicy(false){};
 	RTPS_DllAPI virtual ~TopicDataQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
 	RTPS_DllAPI inline void push_back(octet oc){ value.push_back(oc); };
 	RTPS_DllAPI inline void clear(){ value.clear(); };
@@ -307,6 +394,11 @@ class  GroupDataQosPolicy : private Parameter_t, public QosPolicy
 public:
 	RTPS_DllAPI GroupDataQosPolicy() :Parameter_t(PID_GROUP_DATA, 0), QosPolicy(false){}
 	RTPS_DllAPI virtual ~GroupDataQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	RTPS_DllAPI bool addToCDRMessage(CDRMessage_t* msg);
 	RTPS_DllAPI inline void push_back(octet oc){ value.push_back(oc); };
 	RTPS_DllAPI inline void clear(){ value.clear(); };
@@ -336,6 +428,11 @@ public:
 	HistoryQosPolicy():Parameter_t(PID_HISTORY,PARAMETER_KIND_LENGTH+4),QosPolicy(true),
 			kind(KEEP_LAST_HISTORY_QOS),depth(1000){};
 	virtual ~HistoryQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -355,6 +452,11 @@ public:
 	ResourceLimitsQosPolicy():Parameter_t(PID_RESOURCE_LIMITS,4+4+4),QosPolicy(false),
 			max_samples(5000),max_instances(10),max_samples_per_instance(400),allocated_samples(100){};
 	virtual ~ResourceLimitsQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -382,11 +484,16 @@ public:
 			history_kind(KEEP_LAST_HISTORY_QOS),
 			history_depth(1),max_samples(-1),max_instances(-1),max_samples_per_instance(-1){};
 	virtual ~DurabilityServiceQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
 /**
- * Class LifespanQosPolicy.
+ * Class LifespanQosPolicy, currently unimplemented.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * duration: Default value c_TimeInfinite.
  */
@@ -395,6 +502,11 @@ public:
 	LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeInfinite){};
 	virtual ~LifespanQosPolicy(){};
 	Duration_t duration;
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
@@ -407,13 +519,18 @@ public:
 	uint32_t value;
 	OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),QosPolicy(false),value(0){};
 	virtual ~OwnershipStrengthQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 
 
 
 /**
- * Class TransportPriorityQosPolicy.
+ * Class TransportPriorityQosPolicy, currently unimplemented.
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * value: Default value 0.
  */
@@ -422,6 +539,11 @@ public:
 	uint32_t value;
 	TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
 	virtual ~TransportPriorityQosPolicy(){};
+   /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
 	bool addToCDRMessage(CDRMessage_t* msg);
 };
 

@@ -20,7 +20,7 @@ namespace eprosima {
 namespace fastrtps {
 
 /**
- * Class ParticipantListener, used by the user to override certain virtual methods to program behaviour to certain events.
+ * Class ParticipantListener, overrides behaviour towards certain events.
  * @ingroup FASTRTPS_MODULE
  */
 class ParticipantListener {
@@ -29,7 +29,7 @@ public:
 	virtual ~ParticipantListener(){};
 	
 	/**
-	* This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or its removed.
+	* This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
 	* @param p Pointer to the Participant
 	* @param info DiscoveryInfo.
 	*/

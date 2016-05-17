@@ -59,10 +59,26 @@ public:
 #else
 	static bool getIPs(std::vector<info_IP>* vec_name);
 #endif
-	//!Get the IPAdresses in all interfaces.
+	/**
+    * Get the IP4Adresses in all interfaces.
+    * @param[out] locators List of locators to be populated with the IP4 addresses.
+    */
 	RTPS_DllAPI static bool getIP4Address(LocatorList_t* locators);
+	/**
+    * Get the IP6Adresses in all interfaces.
+    * @param[out] locators List of locators to be populated with the IP6 addresses.
+    */
 	RTPS_DllAPI static bool getIP6Address(LocatorList_t* locators);
+	/**
+    * Get all IP Adresses in all interfaces.
+    * @param[out] locators List of locators to be populated with the addresses.
+    */
 	RTPS_DllAPI static bool getAllIPAddress(LocatorList_t* locators);
+	/**
+    * Parses an IP4 string, populating a locator with its value.
+    * @param[in] str IP string to parse.
+    * @param[out] loc Locator to populate.
+    * */
 	RTPS_DllAPI static bool parseIP4(std::string& str,Locator_t* loc);
 	RTPS_DllAPI static bool parseIP6(std::string& str,Locator_t* loc);
 };

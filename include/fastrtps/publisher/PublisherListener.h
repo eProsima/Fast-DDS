@@ -24,7 +24,7 @@ namespace fastrtps {
 class Publisher;
 
 /**
- * Class PublisherListener, it should be used by the end user to implement specific callbacks to certain actions.
+ * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
  * @ingroup FASTRTPS_MODULE
  * @snippet fastrtps_example.cpp ex_PublisherListener
  */
@@ -34,7 +34,7 @@ public:
 	PublisherListener(){};
 	virtual ~PublisherListener(){};
 	/**
-	 * This method is called when the Publisher is matched (or unatched) against an endpoint.
+	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
 	 * @param pub Pointer to the associated Publisher
 	 * @param info Information regarding the matched subscriber
 	 */

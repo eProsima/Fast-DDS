@@ -31,7 +31,8 @@ namespace rtps{
 #define LOCATOR_KIND_UDPv6 2
 
 
-//!@brief Class Locator_t, uniquely identifies a address+port combination.
+//!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport. 
+//For example, an address+port combination in the case of UDP.
 //!@ingroup COMMON_MODULE
 class RTPS_DllAPI Locator_t{
 public:
