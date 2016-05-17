@@ -25,8 +25,10 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
 #include <boost/interprocess/detail/os_thread_functions.hpp>
+
 #include <gtest/gtest.h>
 
+#include <mutex>
 
 class pub_dummy_listener:public PublisherListener
 {
@@ -47,6 +49,8 @@ public:
 class gettopicnamesandtypesReaderListener:public ReaderListener
 {
 	public:
+	std::mutex mapmutex;
+	std::map<std::string,std::set<std::string>> topicNtypes;
 	void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in){
 		CacheChange_t* change = (CacheChange_t*) change_in;
 		if(change->kind == ALIVE){
@@ -56,12 +60,12 @@ class gettopicnamesandtypesReaderListener:public ReaderListener
 			tempMsg.length = change->serializedPayload.length;
 			memcpy(tempMsg.buffer,change->serializedPayload.data,tempMsg.length);
 			if(proxyData.readFromCDRMessage(&tempMsg)){
+				mapmutex.lock();
 				topicNtypes[proxyData.m_topicName].insert(proxyData.m_typeName);		
+				mapmutex.unlock();
 			}
 		}
 	}
-	std::map<std::string,std::set<std::string>> topicNtypes;
-
 };
 
 TEST(ros2features, EDPSlaveReaderAttachment)
@@ -170,7 +174,10 @@ TEST(ros2features, SlaveListenerCallback){
 	result = target->hasReaderAttached();
 	ASSERT_EQ(result,true);
 	slave_target =  dynamic_cast<gettopicnamesandtypesReaderListener*>(target->getAttachedListener());
+
+	slave_target->mapmutex.lock();
 	ASSERT_EQ(slave_target->topicNtypes.size(),0);
+	slave_target->mapmutex.unlock();
 
 	Participant *my_participant2;
 	Publisher *my_publisher2;
@@ -188,8 +195,10 @@ TEST(ros2features, SlaveListenerCallback){
 	pub_attr2.topic.topicDataType = "HelloWorldType";
 	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
 	ASSERT_NE(my_publisher2, nullptr);
+
+	slave_target->mapmutex.lock();
 	ASSERT_EQ(slave_target->topicNtypes.size(),1);
-	
+	slave_target->mapmutex.unlock();
 	
 }
 
