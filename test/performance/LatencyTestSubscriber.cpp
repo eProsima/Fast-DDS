@@ -90,6 +90,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
 	PubDataparam.topic.historyQos.depth = n_samples;
 	PubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
 	PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
+    PubDataparam.times.heartbeatPeriod.seconds = 0;
+    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
     if(!reliable)
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
 	//PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

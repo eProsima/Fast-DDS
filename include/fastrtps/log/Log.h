@@ -41,11 +41,7 @@ namespace eprosima {
 	/**
 	* LOG_CATEGORY enumeration forward declaration. Is defined for each application.
 	*/
-#if defined(_WIN32)
-enum RTPS_DllAPI LOG_CATEGORY;
-#else
-enum LOG_CATEGORY:uint32_t;
-#endif
+    enum LOG_CATEGORY : uint32_t;
 
 /**
 * Verbosity Level.
