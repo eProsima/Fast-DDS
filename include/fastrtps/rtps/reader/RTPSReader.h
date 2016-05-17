@@ -90,6 +90,8 @@ namespace eprosima
                  * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
                  *
                  * @param change Pointer to the CacheChange_t.
+                 * @param sampleSize Size of the complete, assembled message.
+                 * @param fragmentStartingNum Starting number of this particular fragment.
                  * @return true if the reader accepts message.
                  */
                 RTPS_DllAPI virtual bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum) = 0;

@@ -32,7 +32,7 @@ namespace rtps {
 class CDRMessagePool {
 public:
 	/**
-	* @param
+	* @param defaultGroupSize Number of messages per allocated group.
 	*/
 	CDRMessagePool(uint32_t defaultGroupSize);
 	virtual ~CDRMessagePool();
@@ -41,7 +41,7 @@ public:
 	CDRMessage_t& reserve_CDRMsg();
 	
 	/**
-	* @param payload
+	* @param payload Payload size for the reserved message.
 	*/
 	CDRMessage_t& reserve_CDRMsg(uint16_t payload);
 	

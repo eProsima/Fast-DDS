@@ -100,6 +100,7 @@ namespace eprosima {
                      * @param msg_group
                      * @param W
                      * @param changesSeqNum
+                     * @param remoteGuidPrefix
                      * @param readerId
                      * @param unicast
                      * @param multicast
@@ -124,6 +125,7 @@ namespace eprosima {
                  * @param msg_group
                  * @param W
                  * @param changes
+                 * @param remoteGuidPrefix
                  * @param unicast
                  * @param multicast
                  * @param expectsInlineQos
@@ -143,6 +145,7 @@ namespace eprosima {
                  * @param msg_group
                  * @param W
                  * @param changes
+                 * @param remoteGuidPrefix
                  * @param loc
                  * @param expectsInlineQos
                  * @param ReaderId

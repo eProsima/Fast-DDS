@@ -38,7 +38,7 @@ public:
 	* @param reader Matching reader
 	* @param info Matching information of the reader
 	*/
-	virtual void onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& /*info*/){};
+	virtual void onReaderMatched(RTPSReader* reader, MatchingInfo& info){(void)reader; (void)info;};
 	
 	/**
 	* This method is called when a new CacheChange_t is added to the ReaderHistory.
@@ -48,7 +48,7 @@ public:
 	* To remove the data call the remove_change method of the ReaderHistory.
 	* reader->getHistory()->remove_change((CacheChange_t*)change).
 	*/
-	virtual void onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/){};
+	virtual void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change){(void)reader; (void)change;};
 };
 
 }

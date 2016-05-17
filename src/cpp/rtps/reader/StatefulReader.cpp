@@ -396,6 +396,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                 {
                     lock.unlock();
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+                    lock.lock();
                 }
                 else if(a_change->sequenceNumber < maxSeqNumAvailable)
                 {
