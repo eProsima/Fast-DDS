@@ -76,7 +76,7 @@ public:
 	inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID)
 	{
 		return portBase+ domainIDGain * domainId	+ offsetd1	+ participantIDGain * RTPSParticipantID;
-	}
+}
 	//!PortBase, default value 7400.
 	uint16_t portBase;
 	//!DomainID gain, default value 250.
@@ -181,6 +181,7 @@ public:
 		use_IP4_to_send = true;
 		use_IP6_to_send = false;
 		participantID = -1;
+		udpv4_test_params = nullptr;
 }
 	virtual ~RTPSParticipantAttributes(){};
 	/**
@@ -225,6 +226,8 @@ public:
 	inline void setName(const char* nam){name = nam;}
 	//!Get the name of the participant.
 	inline const char* getName(){return name.c_str();}
+	//!Define wether we want the transport or its test version - Used by eProsima developers
+	test_UDPv4Transport::TransportDescriptor* udpv4_test_params;
 
 private:
 	//!Name of the participant.

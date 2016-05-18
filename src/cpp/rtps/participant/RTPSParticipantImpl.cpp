@@ -28,6 +28,7 @@
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -91,20 +92,30 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_threadID(0)
 
 {
-   UDPv4Transport::TransportDescriptor descriptor; 
-   descriptor.sendBufferSize = m_att.listenSocketBufferSize;
-   descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-   m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
-   
+
+   	m_att = PParam;
+   	if(m_att.udpv4_test_params != nullptr){
+		// Instanciate the test transport versiojn
+		test_UDPv4Transport::TransportDescriptor descriptor; 
+   		descriptor.sendBufferSize = m_att.listenSocketBufferSize;
+  		descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+   		m_network_Factory.RegisterTransport<test_UDPv4Transport>( );
+   	}else{
+		// Instanciate the regular version
+		UDPv4Transport::TransportDescriptor descriptor; 
+   		descriptor.sendBufferSize = m_att.listenSocketBufferSize;
+  		descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+   		m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
+
+   	}	
 	//const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	mp_userParticipant->mp_impl = this;
-	m_att = PParam;
 	Locator_t loc;
 	loc.port = PParam.defaultSendPort;
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
-    async_writers_thread_ = new AsyncWriterThread();
+        async_writers_thread_ = new AsyncWriterThread();
 	bool hasLocatorsDefined = true;
 	//If no default locators are defined we define some.
 	/* The reasoning here is the following.
