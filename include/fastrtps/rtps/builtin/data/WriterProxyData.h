@@ -32,7 +32,7 @@ struct CDRMessage_t;
 /**
  **@ingroup BUILTIN_MODULE
  */
-class WriterProxyData {
+class RTPS_DllAPI WriterProxyData {
 public:
 	WriterProxyData();
 	virtual ~WriterProxyData();
