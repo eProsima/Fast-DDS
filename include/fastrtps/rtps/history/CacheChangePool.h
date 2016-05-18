@@ -45,7 +45,7 @@ public:
 	* @param payload_size The payload size associated with the pool.
 	* @param max_pool_size Maximum payload size. If set to 0 the pool will keep reserving until something breaks.
 	*/
-	CacheChangePool(int32_t pool_size,uint32_t payload_size,int32_t max_pool_size);
+	CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size);
 	//!Reserve a Cache from the pool.
 	bool reserve_Cache(CacheChange_t** chan);
 	//!Release a Cache back to the pool.

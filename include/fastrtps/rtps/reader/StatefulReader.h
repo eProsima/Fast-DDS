@@ -76,16 +76,24 @@ public:
 
 	/**
 	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
-	 *
      * @param change Pointer to the CacheChange_t.
-	 * @return true if the reader accepts messages from the.
+	 * @return true if the reader accepts messages.
 	 */
 	bool processDataMsg(CacheChange_t *change);
 
 	/**
+	* Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	* @param change Pointer to the CacheChange_t.
+   * @param sampleSize Size of the complete assembled message.
+   * @param fragmentStartingNum fragment number of this particular fragment.
+	* @return true if the reader accepts messages.
+	*/
+	bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum);
+
+	/**
 	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
 	 *
-	 * @return true if the reader accepts messages from the.
+	 * @return true if the reader accepts messages.
 	 */
     bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
             SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
@@ -98,13 +106,14 @@ public:
 	 * @param prox Pointer to the WriterProxy.
 	 * @return True if correctly removed.
 	 */
-	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
+	bool change_removed_by_history(CacheChange_t* change ,WriterProxy* prox = nullptr);
 
 	/**
 	 * This method is called when a new change is received. This method calls the received_change of the History
 	 * and depending on the implementation performs different actions.
 	 * @param a_change Pointer of the change to add.
 	 * @param prox Pointer to the WriterProxy that adds the Change.
+	 * @param lock mutex protecting the StatefulReader.
 	 * @return True if added.
 	 */
 	bool change_received(CacheChange_t* a_change, WriterProxy* prox, boost::unique_lock<boost::recursive_mutex> &lock);
@@ -117,7 +126,8 @@ public:
 
 	/**
 	 * Read the next unread CacheChange_t from the history
-	 * @param change POinter to pointer of CacheChange_t
+	 * @param change Pointer to pointer of CacheChange_t
+	 * @param wpout Pointer to pointer the matched writer proxy
 	 * @return True if read.
 	 */
 	bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
@@ -125,6 +135,7 @@ public:
 	/**
 	 * Take the next CacheChange_t from the history;
 	 * @param change Pointer to pointer of CacheChange_t
+	 * @param wpout Pointer to pointer the matched writer proxy
 	 * @return True if read.
 	 */
 	bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);

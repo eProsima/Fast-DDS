@@ -96,7 +96,7 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
 ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv): disc_count_(0),
 #pragma warning(disable:4355)
 	m_DataPubListener(*this), m_CommandSubListener(*this), m_CommandPubListener(*this),
-    ready(true), m_export_csv(export_csv)
+    ready(true), m_export_csv(export_csv), reliable_(reliable)
 {
 	ParticipantAttributes PParam;
 	PParam.rtps.defaultSendPort = 10042;
@@ -270,7 +270,10 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 
 	if (m_export_csv) {
 		std::ofstream outFile;
-		outFile.open("perf_ThroughputTest_" + std::to_string(payload) + "B.csv");
+        std::string str_reliable = "besteffort";
+        if(reliable_)
+            str_reliable = "reliable";
+		outFile.open("perf_ThroughputTest_" + std::to_string(payload) + "B_" + str_reliable + ".csv");
 		outFile << output_file.str();
 		outFile.close();
 	}
@@ -334,12 +337,15 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 			output_file << "\"" << result.subscriber.MBitssec << "\"";
 			if (m_export_csv) {
 				std::ofstream outFile;
+                std::string str_reliable = "besteffort";
+                if(reliable_)
+                    str_reliable = "reliable";
 				std::string fileName = "perf_ThroughputTest_" +
-					std::to_string(result.payload_size) + "B_" +
+					std::to_string(result.payload_size) + "B_" + str_reliable + "_" + 
 					std::to_string(result.demand) + "demand"
 					".csv";
 				outFile.open(fileName);
-				outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (MBits/sec)\"" << endl;
+				outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << endl;
 				outFile << "\"" << result.subscriber.MBitssec << "\"";
 				outFile.close();
 			}

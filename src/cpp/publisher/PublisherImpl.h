@@ -122,6 +122,8 @@ public:
 
     bool clean_history(unsigned int max = 0);
 
+    bool wait_for_all_acked(const Time_t& max_wait);
+
 private:
 	ParticipantImpl* mp_participant;
 	//! Pointer to the associated Data Writer.

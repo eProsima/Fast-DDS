@@ -20,6 +20,7 @@
 #include "../common/Locator.h"
 #include "../common/Guid.h"
 #include "../common/SequenceNumber.h"
+#include "../messages/RTPSMessageGroup.h"
 
 
 namespace eprosima {
@@ -49,7 +50,7 @@ public:
 	//!Vector containing pointers to the requested changes by this reader.
 	std::vector<const CacheChange_t*> requested_changes;
 	//!Vector containing pointers to the unsent changes to this reader.
-	std::vector<const CacheChange_t*> unsent_changes;
+	std::vector<CacheChangeForGroup_t> unsent_changes;
 	//!Number of times this locator has been used (in case different readers use the same locator).
 	uint32_t n_used;
 

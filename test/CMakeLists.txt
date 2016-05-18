@@ -1,5 +1,6 @@
 add_subdirectory(blackbox)
 add_subdirectory(performance)
 add_subdirectory(unittest/rtps/common)
+add_subdirectory(unittest/rtps/reader)
 add_subdirectory(unittest/rtps/resources/timedevent)
 add_subdirectory(unittest/rtps/ros2features)

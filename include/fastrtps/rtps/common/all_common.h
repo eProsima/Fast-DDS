@@ -19,6 +19,7 @@
 #include "InstanceHandle.h"
 #include "Locator.h"
 #include "SequenceNumber.h"
+#include "FragmentNumber.h"
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "CacheChange.h"

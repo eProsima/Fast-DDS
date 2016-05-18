@@ -5,7 +5,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
 	find_package(Threads REQUIRED)
 	   
-	set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
+        set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 
         add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
         add_gtest(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})

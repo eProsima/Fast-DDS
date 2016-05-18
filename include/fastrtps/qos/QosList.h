@@ -21,16 +21,16 @@ namespace eprosima {
 namespace fastrtps {
 
 /**
- * QosList_t class contains two ParameterList_t for the Qos.
+ * QosList_t class contains two QoS parameter lists: One for all Qos policies and another for those that can be sent inline.
  * @ingroup PARAMETER_MODULE
  */
 class QosList_t {
 public:
 	QosList_t();
 	virtual ~QosList_t();
-	//! All the Qos as a parameter List.
+	//! All the Qos as a parameter list.
 	ParameterList_t allQos;
-	//! Only the Qos that can be send as inline.
+	//! Only the Qos that can be sent as inline.
 	ParameterList_t inlineQos;
 };
 
@@ -62,7 +62,6 @@ public:
 	static bool addQos(QosList_t* qos,ParameterId_t pid ,std::string& str1,std::string& str2);
 	static bool addQos(QosList_t* qos, ParameterId_t pid,	std::vector<octet>& ocVec);
 	static bool addQos(QosList_t* qos,ParameterId_t pid, const ParameterPropertyList_t& list);
-	//static bool addQos(QosList_t* qos,ParameterId_t pid,BuiltinEndpointSet_t endpointset);
 	///@}
 };
 

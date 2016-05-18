@@ -45,9 +45,9 @@ private:
 public:
 	/**
 	 * Initialize the builtin protocols.
-	 * @param attributes DiscoveryAttributes
-	 * @param RTPSParticipantID ID of the local RTPSParticipant.
-	 * @return True if correct.
+	 * @param attributes Discovery configuration attributes
+	 * @param p_part Pointer to the Participant implementation
+    * @return True if correct.
 	 */
 	bool initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes);
 	
@@ -81,20 +81,24 @@ public:
 
 	/**
 	 * Add a local Writer to the BuiltinProtocols.
-	 * @param w Pointer to the RTPSWriter.
+	 * @param w Pointer to the RTPSWriter
+    * @param topicAtt Attributes of the associated topic
+    * @param wqos QoS policies dictated by the publisher
 	 * @return True if correct.
 	 */
 	bool addLocalWriter(RTPSWriter* w,TopicAttributes& topicAtt,WriterQos& wqos);
 	/**
 	 * Add a local Reader to the BuiltinProtocols.
 	 * @param R Pointer to the RTPSReader.
+    * @param topicAtt Attributes of the associated topic
+    * @param rqos QoS policies dictated by the subscriber
 	 * @return True if correct.
 	 */
 	bool addLocalReader(RTPSReader* R,TopicAttributes& topicAtt, ReaderQos& rqos);
 	/**
 	 * Update a local Writer QOS
 	 * @param W Writer to update
-	 * @param qos New Writer QoS
+	 * @param wqos New Writer QoS
 	 * @return
 	 */
 	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);

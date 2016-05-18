@@ -62,11 +62,11 @@ bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
 
 }
 
-bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin){
-	std::vector<const CacheChange_t*>::iterator it;
-	for(it=unsent_changes.begin();it!=unsent_changes.end();++it)
+bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin)
+{
+	for(auto it = unsent_changes.begin(); it != unsent_changes.end(); ++it)
 	{
-		if(cpoin->sequenceNumber == (*it)->sequenceNumber)
+		if(cpoin->sequenceNumber == it->getChange()->sequenceNumber)
 		{
 			unsent_changes.erase(it);
 			return true;

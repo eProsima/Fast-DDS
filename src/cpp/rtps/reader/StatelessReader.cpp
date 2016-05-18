@@ -17,6 +17,7 @@
 #include <fastrtps/utils/RTPSLog.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "FragmentedChangePitStop.h"
 
 
 #include <boost/thread/recursive_mutex.hpp>
@@ -91,20 +92,26 @@ bool StatelessReader::matched_writer_is_matched(RemoteWriterAttributes& wdata)
 
 bool StatelessReader::change_received(CacheChange_t* change)
 {
-	if(mp_history->received_change(change))
-	{
-        boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+    // Only make visible the change if there is not other with bigger sequence number.
+    // TODO Revisar si no hay que incluirlo.
+    if(!mp_history->thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
+    {
+        if(mp_history->received_change(change, 0))
+        {
+            boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
 
-		if(getListener() != nullptr)
-		{
-            lock.unlock();
-			getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
-            lock.lock();
-		}
+            if(getListener() != nullptr)
+            {
+                lock.unlock();
+                getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
+                lock.lock();
+            }
 
-		mp_history->postSemaphore();
-		return true;
-	}
+            mp_history->postSemaphore();
+            return true;
+        }
+    }
+
 	return false;
 }
 
@@ -193,6 +200,50 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     }
 
     return true;
+}
+
+bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
+{
+	const char* const METHOD_NAME = "processDataFragMsg";
+
+	assert(incomingChange);
+
+	boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+	if (acceptMsgFrom(incomingChange->writerGUID))
+	{
+        // Check if CacheChange was received.
+        if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
+        {
+            logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
+
+            // Fragments manager has to process incomming fragments.
+            // If CacheChange_t is completed, it will be returned;
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
+
+            // If the change was completed, process it.
+            if(change_completed != nullptr)
+            {
+                lock.unlock(); // Next function has its own lock.
+
+                if (!change_received(change_completed))
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
+
+                    // Assert liveliness because if it is a participant discovery info.
+                    if (getGuid().entityId == c_EntityId_SPDPReader)
+                    {
+                        mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(incomingChange->writerGUID.guidPrefix);
+                    }
+
+                    // Release CacheChange_t.
+                    releaseCache(change_completed);
+                }
+            }
+		}
+	}
+
+	return true;
 }
 
 bool StatelessReader::processHeartbeatMsg(GUID_t& /*writerGUID*/, uint32_t /*hbCount*/, SequenceNumber_t& /*firstSN*/,

@@ -57,8 +57,10 @@ public:
     };
 	
 	/**
-	* @param serv IO service
+	* @param service IO service to run the event.
+   * @param event_thread starting thread for identification.
 	* @param milliseconds Interval of the timedEvent.
+   * @param autodestruction Self-destruct mode flag.
 	*/
     TimedEvent(boost::asio::io_service &service, const boost::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 	virtual ~TimedEvent();

@@ -24,11 +24,7 @@ namespace eprosima{
  * library. As long as the user defined categories stay larger than 1000 there shouldn't be any problem.
  *  @ingroup UTILITIES_MODULE
  */
-#if defined(_WIN32)
-enum RTPS_DllAPI LOG_CATEGORY
-#else
 enum LOG_CATEGORY : uint32_t
-#endif
 {
 	RTPS_PDP = 1,    //!< RTPS Participant Discovery Protocol log messages.
 	RTPS_EDP,        //!< RTPS Endpoint Discovery Protocol log messages.

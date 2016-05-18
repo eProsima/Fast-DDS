@@ -60,7 +60,7 @@ public:
 	 * @param prox Pointer to the WriterProxy.
 	 * @return True if correctly removed.
 	 */
-	bool change_removed_by_history(CacheChange_t*,WriterProxy* prox = nullptr);
+	bool change_removed_by_history(CacheChange_t* change,WriterProxy* prox = nullptr);
 
 	/**
 	 * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -69,6 +69,15 @@ public:
 	 * @return true if the reader accepts messages from the.
 	 */
 	bool processDataMsg(CacheChange_t *change);
+
+	/**
+	* Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+	* @param change Pointer to the CacheChange_t.
+   * @param sampleSize Size of the complete assembled message.
+   * @param fragmentStartingNum fragment number of this particular fragment.
+	* @return true if the reader accepts message.
+	*/
+	bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum);
 
 	/**
 	 * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -90,13 +99,15 @@ public:
 
 	/**
 	 * Read the next unread CacheChange_t from the history
-	 * @param change POinter to pointer of CacheChange_t
+	 * @param change Pointer to pointer of CacheChange_t
+	 * @param wpout Pointer to pointer of the matched writer proxy
 	 * @return True if read.
 	 */
 	bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
 	/**
 	 * Take the next CacheChange_t from the history;
 	 * @param change Pointer to pointer of CacheChange_t
+	 * @param wpout Pointer to pointer of the matched writer proxy
 	 * @return True if read.
 	 */
 	bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);

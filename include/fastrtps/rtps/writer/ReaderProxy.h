@@ -18,9 +18,11 @@
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
 #include "../common/CacheChange.h"
+#include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
 
 #include <set>
+#include <unordered_map>
 
 namespace boost
 {
@@ -46,7 +48,7 @@ namespace eprosima
             class ReaderProxy
             {
                 public:
-                    virtual ~ReaderProxy();
+                    ~ReaderProxy();
 
                     /**
                      * Constructor.
@@ -55,6 +57,8 @@ namespace eprosima
                      * @param SW Pointer to the StatefulWriter.
                      */
                 ReaderProxy(RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW);
+
+                void destroy_timers();
 
                 /**
                  * Get the ChangeForReader struct associated with a determined change
@@ -76,7 +80,7 @@ namespace eprosima
                  * Mark all changes up to the one indicated by the seqNum as Acknowledged.
                  * If seqNum == 30, changes 1-29 are marked as ack.
                  * @param seqNum Pointer to the seqNum
-                 * @return True if correct.
+                 * @return True if all changes are acknowledge and anyone with other state.
                  */
                 bool acked_changes_set(const SequenceNumber_t& seqNum);
 
@@ -148,26 +152,58 @@ namespace eprosima
                  */
                 bool minChange(std::vector<ChangeForReader_t*>* Changes, ChangeForReader_t* changeForReader);
 
-                //!Timed Event to manage the Acknack response delay.
-                NackResponseDelay* mp_nackResponse;
-                //!Timed Event to manage the delay to mark a change as UNACKED after sending it.
-                NackSupressionDuration* mp_nackSupression;
-                //!Last ack/nack count
-                uint32_t m_lastAcknackCount;
+                /*!
+                 * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
+                 * @param[in] frag_set set containing the requested fragments to be sent.
+                 * @param[in] sequence_number Sequence number to be paired with the requested fragments.
+                 * @return True if there is at least one requested fragment. False in other case.
+                 * @remarks It is not thread-safe.
+                 */
+                bool requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set);
 
+                const std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash>&
+                    getRequestedFragments() const { return requested_fragments_; }
+
+                void clearRequestedFragments() { requested_fragments_.clear(); }
+
+                /*!
+                 * @brief Returns the last NACKFRAG count.
+                 * @return Last NACKFRAG count.
+                 */
+                uint32_t getLastNackfragCount() const { return lastNackfragCount_; }
+
+                /*!
+                 * @brief Sets the last NACKFRAG count.
+                 * @param lastNackfragCount New value for last NACKFRAG count.
+                 */
+                void setLastNackfragCount(uint32_t lastNackfragCount) { lastNackfragCount_ = lastNackfragCount; }
+
+                //! Timed Event to manage the Acknack response delay.
+                NackResponseDelay* mp_nackResponse;
+                //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
+                NackSupressionDuration* mp_nackSupression;
+                //! Last ack/nack count
+                uint32_t m_lastAcknackCount;
 
                 /**
                  * Filter a CacheChange_t, in this version always returns true.
                  * @param change
                  * @return
                  */
-                inline bool rtps_is_relevant(CacheChange_t* /*change*/){return true;};
+                inline bool rtps_is_relevant(CacheChange_t* change){(void)change; return true;};
 
                 //!Mutex
                 boost::recursive_mutex* mp_mutex;
 
                 //!Set of the changes and its state.
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
+
+                private:
+                //! Last  NACKFRAG count.
+                uint32_t lastNackfragCount_;
+                //TODO Temporal
+                //! Contains requested fragments per CacheChange_t.
+                std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash> requested_fragments_;
             };
         }
     } /* namespace rtps */
