@@ -3,6 +3,12 @@
 std::vector<FlowFilter*> FlowFilter::ListeningFilters;
 std::recursive_mutex FlowFilter::ListeningFiltersMutex;
 
+FlowFilter::~FlowFilter()
+{
+   std::unique_lock<std::recursive_mutex> scopedLock(ListeningFiltersMutex);
+   ListeningFilters.erase(std::remove(ListeningFilters.begin(), ListeningFilters.end(), this), ListeningFilters.end());
+}
+
 void FlowFilter::NotifyFiltersChangeSent(const CacheChange_t* change)
 {
    std::unique_lock<std::recursive_mutex> scopedLock(ListeningFiltersMutex);
@@ -14,10 +20,4 @@ void FlowFilter::RegisterAsListeningFilter()
 {
    std::unique_lock<std::recursive_mutex> scopedLock(ListeningFiltersMutex);
    ListeningFilters.push_back(this);
-}
-
-void FlowFilter::DeregisterAsListeningFilter()
-{
-   std::unique_lock<std::recursive_mutex> scopedLock(ListeningFiltersMutex);
-   ListeningFilters.erase(std::remove(ListeningFilters.begin(), ListeningFilters.end(), this), ListeningFilters.end());
 }

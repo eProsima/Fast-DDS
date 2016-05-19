@@ -85,6 +85,9 @@ namespace eprosima
                 {
                 }
 
+                CacheChange_t(const CacheChange_t&) = delete;
+                const CacheChange_t& operator=(const CacheChange_t&) = delete;
+
                 /**
                  * Constructor with payload size
                  * @param payload_size Serialized payload size

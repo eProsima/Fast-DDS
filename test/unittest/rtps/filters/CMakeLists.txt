@@ -7,6 +7,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(THROTTLEFILTERTESTS_SOURCE 
             ThrottleFilterTests.cpp 
+            mock/mock.RTPSMessageGroup.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/FlowFilter.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/ThrottleFilter.cpp)
 
         include_directories(mock/)

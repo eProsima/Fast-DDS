@@ -21,22 +21,20 @@ class FlowFilter
    friend class RTPSMessageGroup;
 
    public:
-   virtual ~FlowFilter(){};
+   virtual ~FlowFilter();
    virtual std::vector<CacheChange_t*>       operator()(const std::vector<CacheChange_t*>) = 0;
    virtual std::vector<const CacheChange_t*> operator()(const std::vector<const CacheChange_t*>) = 0;
 
-
    protected:
-   virtual void NotifyChangeSent(const CacheChange_t*){};
-
+   // To be used by filters with interest in being called back when a change is sent.
    virtual void RegisterAsListeningFilter();
-   virtual void DeregisterAsListeningFilter();
 
    private:
    static std::vector<FlowFilter*> ListeningFilters;
    static std::recursive_mutex ListeningFiltersMutex;
    // To be called by the message group when a change is sent.
    static void NotifyFiltersChangeSent(const CacheChange_t*);
+   virtual void NotifyChangeSent(const CacheChange_t*){};
 };
 
 

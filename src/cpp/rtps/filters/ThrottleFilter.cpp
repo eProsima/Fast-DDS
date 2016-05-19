@@ -12,9 +12,7 @@ ThrottleFilter::ThrottleFilter(unsigned int throttlePeriodInMS):
 }
 
 ThrottleFilter::~ThrottleFilter()
-{
-   DeregisterAsListeningFilter();
-}
+{}
 
 std::vector<CacheChange_t*> ThrottleFilter::operator()(const std::vector<CacheChange_t*> changes)
 {
