@@ -10,6 +10,8 @@ macro(compile_example example example_directory)
         set(${example}_CMAKE_ARGS
             "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}"
             "-DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/config|${CMAKE_PREFIX_PATH_}"
+            "-DBOOST_ROOT:PATH=${BOOST_ROOT}"
+            "-DBOOST_LIBRARYDIR:PATH=${BOOST_LIBRARYDIR}"
             "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}")
         list(APPEND ${example}_CMAKE_ARGS LIST_SEPARATOR "|")
 
