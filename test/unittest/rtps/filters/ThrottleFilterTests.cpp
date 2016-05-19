@@ -26,10 +26,10 @@ class ThrottleFilterTests: public ::testing::Test
 
    ThrottleFilter throttle;
    CacheChange_t testChanges[numberOfTestChanges];
-   std::vector<CacheChange_t*> testChangeReferences;
+   std::vector<const CacheChange_t*> testChangeReferences;
 
    CacheChange_t otherChanges[numberOfTestChanges];
-   std::vector<CacheChange_t*> otherChangeReferences;
+   std::vector<const CacheChange_t*> otherChangeReferences;
 
    void HELPER_Send_change(const CacheChange_t* change)
    {

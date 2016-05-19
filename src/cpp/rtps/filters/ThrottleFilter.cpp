@@ -1,32 +1,36 @@
 #include <fastrtps/rtps/filters/ThrottleFilter.h>
 
+using namespace std;
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
 ThrottleFilter::ThrottleFilter(unsigned int throttlePeriodInMS):
    m_lastThrottleTimeInMs(0),
-   m_throttlePeriodInMs(throttlePeriodInMS)
+   m_throttlePeriodInMs(throttlePeriodInMS),
+   m_throttling(false)
 {
    RegisterAsListeningFilter();
 }
 
-ThrottleFilter::~ThrottleFilter()
-{}
-
-std::vector<CacheChange_t*> ThrottleFilter::operator()(const std::vector<CacheChange_t*> changes)
+vector<const CacheChange_t*> ThrottleFilter::operator()(vector<const CacheChange_t*> changes)
 {
-   return changes;
-}
+   unique_lock<recursive_mutex> scopedLock(m_mutex);
+   if (m_throttling)
+      changes.clear();
 
-std::vector<const CacheChange_t*> ThrottleFilter::operator()(const std::vector<const CacheChange_t*> changes)
-{
+   m_lastClearedChanges = changes;
    return changes;
 }
 
 void ThrottleFilter::NotifyChangeSent(const CacheChange_t* change)
 {
-   (void) change;
+   unique_lock<recursive_mutex> scopedLock(m_mutex);
+
+   // If the change was in our last cleared changes, we start throttling.
+   if (find(m_lastClearedChanges.begin(), m_lastClearedChanges.end(), change) != m_lastClearedChanges.end())
+      m_throttling = true;
 }
 
 } // namespace rtps

@@ -22,8 +22,7 @@ class FlowFilter
 
    public:
    virtual ~FlowFilter();
-   virtual std::vector<CacheChange_t*>       operator()(const std::vector<CacheChange_t*>) = 0;
-   virtual std::vector<const CacheChange_t*> operator()(const std::vector<const CacheChange_t*>) = 0;
+   virtual std::vector<const CacheChange_t*> operator()(std::vector<const CacheChange_t*>) = 0;
 
    protected:
    // To be used by filters with interest in being called back when a change is sent.
