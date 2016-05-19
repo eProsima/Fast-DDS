@@ -972,10 +972,7 @@ TEST(BlackBox, PubSubKeepAllTransient)
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
 }
-TEST(BlackBoxTests, Lossy_Data){
 
-
-}
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
