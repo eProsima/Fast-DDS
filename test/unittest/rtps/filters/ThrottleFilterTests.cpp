@@ -2,6 +2,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <gtest/gtest.h>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 using namespace eprosima::fastrtps::rtps;
@@ -84,6 +85,26 @@ TEST_F(ThrottleFilterTests, no_throttling_if_we_sent_a_change_the_filter_has_not
    filteredChanges = throttle(testChangeReferences);
    ASSERT_EQ(10, filteredChanges.size());
 }
+
+TEST_F(ThrottleFilterTests, throttling_lasts_for_the_time_specified_in_construction)
+{
+   // Given we got to the point of throttling
+   auto filteredChanges = throttle(testChangeReferences);
+   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
+   HELPER_Send_change(&testChanges[0]);
+
+   // when we wait less than the specified time, throttling is still active
+   std::this_thread::sleep_for(std::chrono::milliseconds(testThrottlePeriodInMs - 20));
+   filteredChanges = throttle(testChangeReferences);
+   ASSERT_EQ(0, filteredChanges.size());
+
+   // Then after the specified time, throttling is over
+   std::this_thread::sleep_for(std::chrono::milliseconds(40));
+   filteredChanges = throttle(testChangeReferences);
+   ASSERT_EQ(10, filteredChanges.size());
+}
+
+
 
 int main(int argc, char **argv)
 {
