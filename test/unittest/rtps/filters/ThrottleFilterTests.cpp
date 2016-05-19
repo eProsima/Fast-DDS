@@ -57,7 +57,7 @@ TEST_F(ThrottleFilterTests, throttle_filter_lets_changes_through_as_long_as_noth
    ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
 }
 
-TEST_F(ThrottleFilterTests, throttle_period_kicks_in_when_sending_a_message_we_just_cleared)
+TEST_F(ThrottleFilterTests, throttle_period_kicks_in_when_sending_a_change_we_just_cleared)
 {
    // Given we cleared the thest change vector
    auto filteredChanges = throttle(testChangeReferences);
@@ -69,6 +69,20 @@ TEST_F(ThrottleFilterTests, throttle_period_kicks_in_when_sending_a_message_we_j
    // Then we start throttling (filtering everything out)
    filteredChanges = throttle(testChangeReferences);
    ASSERT_EQ(0, filteredChanges.size());
+}
+
+TEST_F(ThrottleFilterTests, no_throttling_if_we_sent_a_change_the_filter_has_not_touched)
+{
+   // Given we cleared the "other" change vector
+   auto filteredChanges = throttle(otherChangeReferences);
+   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
+
+   // When when send a test change succesfully
+   HELPER_Send_change(&testChanges[0]);
+
+   // Then we don't filter anything out (we haven't cleared that particular change)
+   filteredChanges = throttle(testChangeReferences);
+   ASSERT_EQ(10, filteredChanges.size());
 }
 
 int main(int argc, char **argv)

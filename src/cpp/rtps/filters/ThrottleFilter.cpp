@@ -24,6 +24,18 @@ vector<const CacheChange_t*> ThrottleFilter::operator()(vector<const CacheChange
    return changes;
 }
 
+void ThrottleFilter::ThrottlePeriodCheck()
+{
+   if (!m_throttling)
+      return;
+}
+
+void ThrottleFilter::SleepUntilEndOfThrottling()
+{
+   if (!m_throttling)
+      return;
+}
+
 void ThrottleFilter::NotifyChangeSent(const CacheChange_t* change)
 {
    unique_lock<recursive_mutex> scopedLock(m_mutex);

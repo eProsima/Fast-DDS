@@ -20,13 +20,17 @@ class ThrottleFilter : public FlowFilter
 
    virtual std::vector<const CacheChange_t*> operator()(std::vector<const CacheChange_t*>);
 
+   void SleepUntilEndOfThrottling();
+
    private:
    virtual void NotifyChangeSent(const CacheChange_t*);
+   void ThrottlePeriodCheck();
    unsigned int m_lastThrottleTimeInMs;
    unsigned int m_throttlePeriodInMs;
    bool m_throttling;
    std::recursive_mutex m_mutex;
    std::vector<const CacheChange_t*> m_lastClearedChanges;
+
 };
 
 } // namespace rtps
