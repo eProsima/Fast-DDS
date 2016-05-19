@@ -15,6 +15,7 @@ set_sources(
     rtps/resources/ResourceEvent.cpp 
     rtps/resources/TimedEvent.cpp 
     rtps/resources/TimedEventImpl.cpp 
+    rtps/resources/AsyncWriterThread.cpp
     rtps/Endpoint.cpp 
     rtps/writer/RTPSWriter.cpp 
     rtps/writer/StatefulWriter.cpp 
@@ -35,6 +36,7 @@ set_sources(
     rtps/reader/StatefulReader.cpp 
     rtps/reader/StatelessReader.cpp 
     rtps/reader/RTPSReader.cpp 
+    rtps/reader/FragmentedChangePitStop.cpp
     rtps/messages/CDRMessagePool.cpp 
     rtps/messages/RTPSMessageCreator.cpp 
     rtps/messages/RTPSMessageGroup.cpp 
@@ -102,8 +104,6 @@ include_directories(${Boost_INCLUDE_DIR})
 # Create libraries
 if(MSVC OR MSVC_IDE)
     if(EPROSIMA_INSTALLER)
-        generate_msvc_libraries(i86Win32VS2010)
-        generate_msvc_libraries(x64Win64VS2010)
         generate_msvc_libraries(i86Win32VS2013)
         generate_msvc_libraries(x64Win64VS2013)
         generate_msvc_libraries(i86Win32VS2015)
@@ -135,8 +135,14 @@ if(MSVC OR MSVC_IDE)
             $<INSTALL_INTERFACE:include>
             )
 
-        # Link library to external win32 libraries.
-        target_link_libraries(${PROJECT_NAME}
+        # Made linked libraries PRIVATE to prevent local directories in Windows installer.
+        set(PRIVACY "")
+        if(EPROSIMA_INSTALLER_MINION)
+            set(PRIVACY "PRIVATE")
+        endif()
+
+        # Link library to external win32 libraries and boost.
+        target_link_libraries(${PROJECT_NAME} ${PRIVACY}
             ${Boost_LIBRARIES} iphlpapi Shlwapi
             )
     endif()
@@ -202,31 +208,34 @@ endif()
 # Install libraries
 if(MSVC OR MSVC_IDE)
     if(EPROSIMA_INSTALLER)
-        install_msvc_libraries(i86Win32VS2010)
-        install_msvc_libraries(x64Win64VS2010)
         install_msvc_libraries(i86Win32VS2013)
         install_msvc_libraries(x64Win64VS2013)
         install_msvc_libraries(i86Win32VS2015)
         install_msvc_libraries(x64Win64VS2015)
     else()
+        set(DIR_EXTENSION "")
+        if(EPROSIMA_INSTALLER_MINION)
+            set(DIR_EXTENSION "/${MSVC_ARCH}")
+        endif()
+
         install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static
             EXPORT ${PROJECT_NAME}Targets
-            RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-            ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+            RUNTIME DESTINATION ${BIN_INSTALL_DIR}${DIR_EXTENSION}
+            LIBRARY DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
+            ARCHIVE DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
             COMPONENT libraries_${MSVC_ARCH}
             )
 
         export(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}Targets.cmake)
         install(EXPORT ${PROJECT_NAME}Targets
-            DESTINATION ${LIB_INSTALL_DIR}/${PROJECT_NAME}/cmake
+            DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}/${PROJECT_NAME}/cmake
             COMPONENT cmake
             )
 
 
         # Install pdb files
         install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
-            DESTINATION ${LIB_INSTALL_DIR}
+            DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
             COMPONENT libraries_${MSVC_ARCH}
             CONFIGURATIONS Debug
             FILES_MATCHING

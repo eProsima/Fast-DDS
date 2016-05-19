@@ -27,7 +27,7 @@ class RTPSAsSocketWriter
     public:
         RTPSAsSocketWriter();
         virtual ~RTPSAsSocketWriter();
-        void init(std::string ip, uint32_t port);
+        void init(std::string ip, uint32_t port, bool async = false);
         bool isInitialized() const { return initialized_; }
         void send(const std::list<uint16_t> &msgs);
         virtual void configWriter(WriterAttributes &wattr) = 0;

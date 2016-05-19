@@ -60,6 +60,15 @@ HelloWorld& HelloWorld::operator=(HelloWorld &&x)
     return *this;
 }
 
+bool HelloWorld::operator==(const HelloWorld &x) const
+{
+    if(m_index == x.m_index &&
+            m_message == x.m_message)
+        return true;
+
+    return false;
+}
+
 size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t current_align = current_alignment;

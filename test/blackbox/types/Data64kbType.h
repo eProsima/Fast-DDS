@@ -28,6 +28,8 @@ using namespace eprosima::fastrtps;
  */
 class Data64kbType : public TopicDataType {
 public:
+    typedef Data64kb type;
+
 	Data64kbType();
 	virtual ~Data64kbType();
 	bool serialize(void *data, SerializedPayload_t *payload);

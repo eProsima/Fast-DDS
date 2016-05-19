@@ -17,6 +17,7 @@
 #include "../fastrtps_dll.h"
 #include <cstdio>
 #include "../rtps/common/Guid.h"
+#include "../rtps/common/Time_t.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -53,7 +54,7 @@ public:
 	/**
 	 * Write data with params to the topic.
 	 * @param Data Pointer to the data
-     * @param Extra parameters.
+    * @param wparams Extra write parameters.
 	 * @return True if correct
 	 * @par Calling example:
 	 * @snippet fastrtps_example.cpp ex_PublisherWrite
@@ -85,6 +86,8 @@ public:
 	 * @return True if all elements were removed.
 	 */
 	bool removeAllChange(size_t* removed = nullptr);
+
+    bool wait_for_all_acked(const Time_t& max_wait);
 
 	/**
 	 * Get the GUID_t of the associated RTPSWriter.

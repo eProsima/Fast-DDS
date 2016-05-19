@@ -1,7 +1,7 @@
 SUBDIRS = include src/cpp
 
 @PROJECT_NAME@_licenciasdir = $(datadir)/doc/@PROJECT_NAME@
-@PROJECT_NAME@_licencias_DATA = @PROJECT_NAME_UPPER@_LIBRARY_LICENSE.txt LGPLv3_LICENSE.txt
+@PROJECT_NAME@_licencias_DATA = @PROJECT_NAME_UPPER@_LIBRARY_LICENSE.txt MPLv2_LICENSE.txt
 
 @PROJECT_NAME@_scriptdir = $(bindir)
 @PROJECT_NAME@_script_SCRIPTS = .bin/@PROJECT_NAME@gen

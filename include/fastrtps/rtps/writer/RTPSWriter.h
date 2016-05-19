@@ -75,6 +75,9 @@ public:
 	 * @return True if acknowledged by all.
 	 */
 	RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* /*a_change*/){ return true; }
+
+	RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/){ return true; }
+    
 	/**
 	 * Update the Attributes of the Writer.
 	 * @param att New attributes
@@ -121,6 +124,12 @@ public:
 	*/
 	RTPS_DllAPI inline void setLivelinessAsserted(bool l){ m_livelinessAsserted = l; };
 
+	/**
+	* Get the publication mode
+	* @return publication mode
+	*/
+	RTPS_DllAPI inline bool isAsync(){ return is_async_; };
+
     virtual bool clean_history(unsigned int max = 0) = 0;
 
 protected:
@@ -137,6 +146,8 @@ protected:
 	WriterHistory* mp_history;
 	//!Listener
 	WriterListener* mp_listener;
+	//Asynchronout publication activated
+	bool is_async_;
 	/**
 	 * Initialize the header of hte CDRMessages.
 	 */

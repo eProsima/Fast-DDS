@@ -72,6 +72,7 @@ message(STATUS "To change de version modify the file configure.ac")
 ###############################################################################
 if(WIN32)
     option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
+    option(EPROSIMA_INSTALLER_MINION "Informs this is part of an installer" OFF)
 endif()
 
 ###############################################################################
@@ -137,6 +138,11 @@ endif()
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 
 ###############################################################################
+# Load CMake modules
+###############################################################################
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
+
+###############################################################################
 # Check libraries
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/dev/boost_libraries.cmake)
@@ -185,10 +191,18 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing
 ###############################################################################
-if(NOT EPROSIMA_INSTALLER)
+if(NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     enable_testing()
     include(CTest)
     add_subdirectory(test)
+endif()
+
+###############################################################################
+# Examples 
+###############################################################################
+option(COMPILE_EXAMPLES "Build example" ON)
+if(COMPILE_EXAMPLES)
+	add_subdirectory(examples)
 endif()
 
 ###############################################################################
@@ -313,7 +327,7 @@ install_boost(ALL thread system date_time chrono regex atomic)
 
 # Install licenses
 install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME_UPPER}_LIBRARY_LICENSE.txt
-    ${PROJECT_SOURCE_DIR}/LGPLv3_LICENSE.txt
+    ${PROJECT_SOURCE_DIR}/MPLv2_LICENSE.txt
     DESTINATION ${LICENSE_INSTALL_DIR}
     COMPONENT licenses
     )
@@ -383,8 +397,6 @@ endif()
 if(MSVC OR MSVC_IDE)
     if(EPROSIMA_INSTALLER)
         set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL}
-            libraries_i86Win32VS2010
-            libraries_x64Win64VS2010
             libraries_i86Win32VS2013
             libraries_x64Win64VS2013
             libraries_i86Win32VS2015

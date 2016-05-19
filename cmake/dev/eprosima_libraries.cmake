@@ -25,6 +25,7 @@ macro(find_eprosima_package package)
                 "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                 ${USE_BOOST_}
                 "-DMINION=ON"
+                "-DEPROSIMA_INSTALLER_MINION=${EPROSIMA_INSTALLER_MINION}"
                 "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}"
                 "-DINCLUDE_INSTALL_DIR:PATH=${INCLUDE_INSTALL_DIR}"
                 "-DLIB_INSTALL_DIR:PATH=${LIB_INSTALL_DIR}"
@@ -36,7 +37,7 @@ macro(find_eprosima_package package)
 
             file(MAKE_DIRECTORY ${${package}ExternalDir})
             file(WRITE ${${package}ExternalDir}/CMakeLists.txt
-                "cmake_minimum_required(VERSION 2.8.11)\n"
+                "cmake_minimum_required(VERSION 2.8.12)\n"
                 "include(ExternalProject)\n"
                 "set(SOURCE_DIR_ \"${PROJECT_SOURCE_DIR}/thirdparty/${package}\")\n"
                 "set(GENERATOR_ -G \"${CMAKE_GENERATOR}\")\n"
@@ -45,7 +46,7 @@ macro(find_eprosima_package package)
                 "ExternalProject_Add(${package}\n"
                 "CONFIGURE_COMMAND \"${CMAKE_COMMAND}\"\n"
                 "${${package}_CMAKE_ARGS}\n"
-                "DOWNLOAD_COMMAND echo\n"
+                "DOWNLOAD_COMMAND \"\"\n"
                 "UPDATE_COMMAND cd \"${PROJECT_SOURCE_DIR}\" && git submodule update --recursive --init \"thirdparty/${package}\"\n"
                 "SOURCE_DIR \${SOURCE_DIR_}\n"
                 "BINARY_DIR \"${${package}ExternalDir}/build\"\n"

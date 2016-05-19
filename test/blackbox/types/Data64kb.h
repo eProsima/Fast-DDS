@@ -95,6 +95,8 @@ public:
      * @param x Reference to the object Data64kb that will be copied.
      */
     eProsima_user_DllExport Data64kb& operator=(Data64kb &&x);
+
+    eProsima_user_DllExport bool operator==(const Data64kb &x) const;
     
     /*!
      * @brief This function copies the value in member data

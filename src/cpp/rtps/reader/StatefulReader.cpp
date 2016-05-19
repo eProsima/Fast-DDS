@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/utils/RTPSLog.h>
 #include "../participant/RTPSParticipantImpl.h"
+#include "FragmentedChangePitStop.h"
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -67,7 +68,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
             return false;
         }
     }
-    WriterProxy* wp = new WriterProxy(wdata,m_times.heartbeatResponseDelay,this);
+    WriterProxy* wp = new WriterProxy(wdata, this);
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
@@ -216,6 +217,53 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
+bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
+{
+    const char* const METHOD_NAME = "processDataFragMsg";
+    WriterProxy *pWP = nullptr;
+
+    assert(incomingChange);
+
+    boost::unique_lock<boost::recursive_mutex> lock(*mp_mutex);
+
+    if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
+    {
+        // Check if CacheChange was received.
+        if(!getHistory()->thereIsRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
+        {
+            logInfo(RTPS_MSG_IN, IDSTRING"Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " << getGuid().entityId, C_BLUE);
+
+            // Fragments manager has to process incomming fragments.
+            // If CacheChange_t is completed, it will be returned;
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(incomingChange, sampleSize, fragmentStartingNum);
+
+
+            if(change_completed != nullptr)
+            {
+                if (!change_received(change_completed, pWP, lock))
+                {
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long(), C_BLUE);
+
+                    // Assert liveliness because it is a participant discovery info.
+                    if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
+                    {
+                        mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(incomingChange->writerGUID.guidPrefix);
+                    }
+
+                    releaseCache(change_completed);
+                }
+            }
+
+            if(pWP != nullptr)
+            {
+                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+            }
+        }
+    }
+
+    return true;
+}
+
 bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
             SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag)
 {
@@ -241,7 +289,7 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
             }
             else if(finalFlag && !livelinessFlag)
             {
-                if(!pWP->m_isMissingChangesEmpty)
+                if(pWP->areThereMissing())
                     pWP->mp_heartbeatResponse->restart_timer();
             }
 
@@ -297,44 +345,14 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp, bool chec
     return false;
 }
 
-bool StatefulReader::change_removed_by_history(CacheChange_t* a_change,WriterProxy* wp)
+bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterProxy* wp)
 {
     const char* const METHOD_NAME = "change_removed_by_history";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    if(wp!=nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
+
+    if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
     {
-        boost::lock_guard<boost::recursive_mutex> guardWriterProxy(*wp->getMutex());
-        std::vector<int> to_remove;
-        bool continuous_removal = true;
-        for(size_t i = 0;i<wp->m_changesFromW.size();++i)
-        {
-            if(a_change->sequenceNumber == wp->m_changesFromW.at(i).seqNum)
-            {
-                wp->m_changesFromW.at(i).notValid();
-                if(continuous_removal)
-                {
-                    wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
-				    wp->m_hasMinAvailableSeqNumChanged = true;
-                    to_remove.push_back((int)i);
-                }
-                break;
-            }
-            if(!wp->m_changesFromW.at(i).isValid()
-                    && (wp->m_changesFromW.at(i).status == RECEIVED || wp->m_changesFromW.at(i).status == LOST)
-                    && continuous_removal)
-            {
-                wp->m_lastRemovedSeqNum = wp->m_changesFromW.at(i).seqNum;
-                wp->m_hasMinAvailableSeqNumChanged = true;
-                to_remove.push_back((int)i);
-                continue;
-            }
-            continuous_removal = false;
-        }
-        for(std::vector<int>::reverse_iterator it = to_remove.rbegin();
-                it!=to_remove.rend();++it)
-        {
-            wp->m_changesFromW.erase(wp->m_changesFromW.begin()+*it);
-        }
+        wp->setNotValid(a_change->sequenceNumber);
         return true;
     }
     else
@@ -360,28 +378,17 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
 
     boost::unique_lock<boost::recursive_mutex> writerProxyLock(*prox->getMutex());
 
-    //WITH THE WRITERPROXY FOUND:
-    //Check if we can add it
-    if(a_change->sequenceNumber <= prox->m_lastRemovedSeqNum)
+    size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
+
+    // TODO Check order
+    if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
-        logInfo(RTPS_READER, "Change "<<a_change->sequenceNumber<< " <= than last Removed Seq Number "<< prox->m_lastRemovedSeqNum);
-        return false;
-    }
-    SequenceNumber_t maxSeq;
-    prox->available_changes_max(&maxSeq);
-    if(a_change->sequenceNumber <= maxSeq)
-    {
-        logInfo(RTPS_READER, "Change "<<a_change->sequenceNumber<< " <= than max available Seqnum "<<maxSeq);
-        return false;
-    }
-    if(this->mp_history->received_change(a_change))
-    {
-        if(prox->received_change_set(a_change))
+        if(prox->received_change_set(a_change->sequenceNumber))
         {
             if(getListener()!=nullptr)
             {
                 SequenceNumber_t maxSeqNumAvailable;
-                prox->available_changes_max(&maxSeqNumAvailable);
+                maxSeqNumAvailable = prox->available_changes_max();
                 GUID_t proxGUID = prox->m_att.guid;
                 writerProxyLock.unlock();
 
@@ -389,6 +396,7 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
                 {
                     lock.unlock();
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this,a_change);
+                    lock.lock();
                 }
                 else if(a_change->sequenceNumber < maxSeqNumAvailable)
                 {
@@ -431,87 +439,32 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox,
             return true;
         }
     }
+
     return false;
 }
 
-
-
-
-//
 bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
     const char* const METHOD_NAME = "nextUntakenCache";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    SequenceNumber_t minSeqNum = c_SequenceNumber_Unknown;
-    SequenceNumber_t auxSeqNum;
-    WriterProxy* wp = nullptr;
-    bool available = false;
-    logInfo(RTPS_READER,this->getGuid().entityId<<": looking through: "<< matched_writers.size() << " WriterProxies");
-    for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();it!=matched_writers.end();++it)
-    {
-        if((*it)->available_changes_min(&auxSeqNum))
-        {
-            //logUser("AVAILABLE MIN for writer: "<<(*it)->m_att.guid<< " : " << auxSeqNum);
-            if(auxSeqNum > SequenceNumber_t(0, 0) && (minSeqNum > auxSeqNum || minSeqNum == c_SequenceNumber_Unknown))
-            {
-                available = true;
-                minSeqNum = auxSeqNum;
-                wp = *it;
-            }
-        }
-    }
-    //cout << "AVAILABLE? "<< available << endl;
-    if(available && wp->get_change(minSeqNum,change))
-    {
-        if(wpout !=nullptr)
-            *wpout = wp;
-        return true;
-        //		logInfo(RTPS_READER,this->getGuid().entityId<<": trying takeNextCacheChange: "<< min_change->sequenceNumber.to64long());
-        //		if(min_change->kind == ALIVE)
-        //			this->mp_type->deserialize(&min_change->serializedPayload,data);
-        //		if(wp->removeChangesFromWriterUpTo(min_change->sequenceNumber))
-        //		{
-        //			if(info!=NULL)
-        //			{
-        //				info->sampleKind = min_change->kind;
-        //				info->writerGUID = min_change->writerGUID;
-        //				info->sourceTimestamp = min_change->sourceTimestamp;
-        //				if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-        //					info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-        //				if(!min_change->isRead)
-        //					m_reader_cache.decreaseUnreadCount();
-        //				info->iHandle = min_change->instanceHandle;
-        //			}
-        //			if(!m_reader_cache.remove_change(min_change))
-        //				logWarning(RTPS_READER,"Problem removing change " << min_change->sequenceNumber <<" from ReaderHistory");
-        //			return true;
-        //		}
-    }
-    return false;
-}
-//
-bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
-{
-    const char* const METHOD_NAME = "nextUnreadCache";
-    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> toremove;
-    bool readok = false;
+    bool takeok = false;
     for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
             it!=mp_history->changesEnd();++it)
     {
-        if((*it)->isRead)
-            continue;
         WriterProxy* wp;
-        if(this->matched_writer_lookup((*it)->writerGUID,&wp))
+        if(this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
-            SequenceNumber_t seq;
-            wp->available_changes_max(&seq);
+            // TODO Revisar la comprobacion
+            SequenceNumber_t seq = wp->available_changes_max();
             if(seq >= (*it)->sequenceNumber)
             {
                 *change = *it;
                 if(wpout !=nullptr)
                     *wpout = wp;
-                return true;
+
+                takeok = true;
+                break;
                 //				if((*it)->kind == ALIVE)
                 //				{
                 //					this->mp_type->deserialize(&(*it)->serializedPayload,data);
@@ -544,6 +497,67 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
         logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber << " from " << (*it)->writerGUID << " because is no longer paired");
         mp_history->remove_change(*it);
     }
+    return takeok;
+}
+
+// TODO Porque elimina aqui y no cuando hay unpairing
+bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
+{
+    const char* const METHOD_NAME = "nextUnreadCache";
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    std::vector<CacheChange_t*> toremove;
+    bool readok = false;
+    for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+            it!=mp_history->changesEnd();++it)
+    {
+        if((*it)->isRead)
+            continue;
+        WriterProxy* wp;
+        if(this->matched_writer_lookup((*it)->writerGUID,&wp))
+        {
+            SequenceNumber_t seq;
+            seq = wp->available_changes_max();
+            if(seq >= (*it)->sequenceNumber)
+            {
+                *change = *it;
+                if(wpout !=nullptr)
+                    *wpout = wp;
+
+                readok = true;
+                break;
+                //				if((*it)->kind == ALIVE)
+                //				{
+                //					this->mp_type->deserialize(&(*it)->serializedPayload,data);
+                //				}
+                //				(*it)->isRead = true;
+                //				if(info!=NULL)
+                //				{
+                //					info->sampleKind = (*it)->kind;
+                //					info->writerGUID = (*it)->writerGUID;
+                //					info->sourceTimestamp = (*it)->sourceTimestamp;
+                //					info->iHandle = (*it)->instanceHandle;
+                //					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+                //						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
+                //				}
+                //				m_reader_cache.decreaseUnreadCount();
+                //				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
+                //				readok = true;
+                //				break;
+            }
+        }
+        else
+        {
+            toremove.push_back((*it));
+        }
+    }
+
+    for(std::vector<CacheChange_t*>::iterator it = toremove.begin();
+            it!=toremove.end();++it)
+    {
+        logWarning(RTPS_READER,"Removing change "<<(*it)->sequenceNumber << " from " << (*it)->writerGUID << " because is no longer paired");
+        mp_history->remove_change(*it);
+    }
+
     return readok;
 }
 

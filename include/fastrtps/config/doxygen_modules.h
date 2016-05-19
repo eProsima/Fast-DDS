@@ -34,7 +34,7 @@
  * @defgroup FASTRTPS_MODULE Publisher Subscriber Public API
  * @ingroup FASTRTPS_GENERAL_API
  * @brief Publisher Subscriber Public API
- * This Module contains the PPublisher Subscriber Layer created to facilitate the use of the RTPS protocol.
+ * This Module contains the Publisher Subscriber Layer created to facilitate the use of the RTPS protocol.
  */
 
 /** @defgroup FASTRTPS_ATTRIBUTES_MODULE Fast RTPS Attributes Module.
@@ -67,7 +67,7 @@
 
 /** @defgroup PARAMETER_MODULE Qos Module
  * @ingroup COMMON_MODULE
- * All the different Qos and parameters are included here.
+ * All QoS policies and parameters are included here.
  */
 
 /** @defgroup MANAGEMENT_MODULE Management Module

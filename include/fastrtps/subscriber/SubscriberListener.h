@@ -35,18 +35,13 @@ public:
 	 * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
 	 * @param sub Subscriber
 	 */
-	virtual void onNewDataMessage(Subscriber * /*sub*/){};
-//	/**
-//	 * Virtual method to be called when the History is Full.
-//	 * @param sub Subscriber
-//	 */
-//	virtual void onHistoryFull(Subscriber* sub){};
+	virtual void onNewDataMessage(Subscriber * sub){(void) sub;};
 	/**
 	 * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
 	 * @param sub Subscriber
 	 * @param info Matching information
 	 */
-	virtual void onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& /*info*/){};
+	virtual void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){(void)sub; (void)info;};
 };
 
 } /* namespace pubsub */

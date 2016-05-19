@@ -12,6 +12,7 @@
  */
 
 #include <fastrtps/rtps/Endpoint.h>
+#include "fastrtps/rtps/attributes/WriterAttributes.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 
@@ -25,7 +26,7 @@ Endpoint::Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& a
 		m_att(att),
 		mp_mutex(new boost::recursive_mutex())
 {
-
+	
 }
 
 Endpoint::~Endpoint() {

@@ -73,7 +73,7 @@ public:
 	 * @param[out] ihandle Pointer to the Handle.
 	 * @return True if correct.
 	 */
-	RTPS_DllAPI virtual bool getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/){ return false; }
+	RTPS_DllAPI virtual bool getKey(void* data, InstanceHandle_t* ihandle){ (void) data; (void) ihandle; return false; }
 
 	/**
 	* Set topic data type name

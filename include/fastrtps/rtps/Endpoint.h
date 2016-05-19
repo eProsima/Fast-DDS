@@ -35,10 +35,10 @@ class ResourceEvent;
 
 
 /**
- * Class Endpoint, all entities of the RTPS network are a specification of this class.
- * Although the RTPSParticipant is also defined as an endpoint in the RTPS specification in this implementation
- * the RTPSParticipant class DOESN'T inherit from this class. The elements needed where added directly to the
- * RTPSParticipant class. This way each instance of our class (Endpoint) has a pointer to the RTPSParticipant they belong to.
+ * Class Endpoint, all entities of the RTPS network derive from this class.
+ * Although the RTPSParticipant is also defined as an endpoint in the RTPS specification, in this implementation
+ * the RTPSParticipant class **does not** inherit from the endpoint class. Each Endpoint object owns a pointer to the 
+ * RTPSParticipant it belongs to.
  * @ingroup COMMON_MODULE
  */
 class Endpoint
@@ -68,13 +68,13 @@ public:
 	RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
 
 protected:
-	//!Pointer to the RTPSParticipant containing this endpoints
+	//!Pointer to the RTPSParticipant containing this endpoint.
 	RTPSParticipantImpl* mp_RTPSParticipant;
-	//! Guid of the Endpoint
+	//!Endpoint GUID
 	const GUID_t m_guid;
 	//!Endpoint Attributes
 	EndpointAttributes m_att;
-	//!Mutex of the object
+	//!Endpoint Mutex
 	boost::recursive_mutex* mp_mutex;
 
 private:

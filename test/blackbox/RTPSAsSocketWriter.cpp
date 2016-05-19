@@ -39,7 +39,7 @@ RTPSAsSocketWriter::~RTPSAsSocketWriter()
 	delete(history_);
 }
 
-void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
+void RTPSAsSocketWriter::init(std::string ip, uint32_t port, bool async)
 {
 	//Create participant
 	RTPSParticipantAttributes pattr;
@@ -62,6 +62,11 @@ void RTPSAsSocketWriter::init(std::string ip, uint32_t port)
 	loc.port = port;
 	wattr.endpoint.multicastLocatorList.push_back(loc);
     configWriter(wattr);
+
+    // Asynchronous
+    if(async)
+        wattr.mode = ASYNCHRONOUS_WRITER;
+
 	writer_ = RTPSDomain::createRTPSWriter(participant_, wattr, history_);
     ASSERT_NE(writer_, nullptr);
 
@@ -94,7 +99,6 @@ void RTPSAsSocketWriter::send(const std::list<uint16_t> &msgs)
 		ch->serializedPayload.length =
 			snprintf((char*)ch->serializedPayload.data, 255, "%s_%s_%" PRIu32 " %hu", text_.c_str(), hostname_.c_str(), domainId_, *it) + 1;
 #endif
-
 		history_->add_change(ch);
 	}
 }

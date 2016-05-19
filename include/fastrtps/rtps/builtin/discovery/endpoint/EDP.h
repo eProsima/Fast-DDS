@@ -65,7 +65,7 @@ public:
 	 * Remove remote endpoints from the endpoint discovery protocol
 	 * @param pdata Pointer to the ParticipantProxyData to remove
 	 */
-	virtual void removeRemoteEndpoints(ParticipantProxyData* /*pdata*/){};
+	virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){(void) pdata;};
 
 	/**
 	 * Abstract method that removes a local Reader from the discovery method
@@ -96,37 +96,43 @@ public:
 	/**
 	 * Create a new ReaderPD for a local Reader.
 	 * @param R Pointer to the RTPSReader.
+    * @param att Attributes of the associated topic
+    * @param qos QoS policies dictated by the subscriber
 	 * @return True if correct.
 	 */
-	bool newLocalReaderProxyData(RTPSReader* R,TopicAttributes& att, ReaderQos& wqos);
+	bool newLocalReaderProxyData(RTPSReader* R,TopicAttributes& att, ReaderQos& qos);
 	/**
 	 * Create a new ReaderPD for a local Writer.
 	 * @param W Pointer to the RTPSWriter.
+    * @param att Attributes of the associated topic
+    * @param qos QoS policies dictated by the publisher
 	 * @return True if correct.
 	 */
 	bool newLocalWriterProxyData(RTPSWriter* W,TopicAttributes& att, WriterQos& qos);
 	/**
 	 * A previously created Reader has been updated
 	 * @param R Pointer to the reader;
+    * @param qos QoS policies dictated by the subscriber
 	 * @return True if correctly updated
 	 */
 	bool updatedLocalReader(RTPSReader* R,ReaderQos& qos);
 	/**
 	 * A previously created Writer has been updated
 	 * @param W Pointer to the Writer
+    * @param qos QoS policies dictated by the publisher
 	 * @return True if correctly updated
 	 */
 	bool updatedLocalWriter(RTPSWriter* W,WriterQos& qos);
 	/**
 	 * Check the validity of a matching between a RTPSWriter and a ReaderProxyData object.
-	 * @param W Pointer to the writer.
+	 * @param wdata Pointer to the WriterProxyData object.
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return True if the two can be matched.
 	 */
 	bool validMatching(WriterProxyData* wdata,ReaderProxyData* rdata);
 	/**
 	 * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
-	 * @param R Pointer to the reader.
+	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @param wdata Pointer to the WriterProxyData object.
 	 * @return True if the two can be matched.
 	 */
@@ -145,6 +151,7 @@ public:
 	bool removeReaderProxy(const GUID_t& reader);
 	/**
 	 * Unpair a WriterProxyData object from all local readers.
+	 * @param pdata Pointer to the participant proxy data.
 	 * @param wdata Pointer to the WriterProxyData object.
 	 * @return True if correct.
 	 */
@@ -152,18 +159,21 @@ public:
 	/**
 	 * Unpair a ReaderProxyData object from all local writers.
 	 * @param rdata Pointer to the ReaderProxyData object.
+	 * @param pdata Pointer to the participant proxy data.
 	 * @return True if correct.
 	 */
     bool unpairReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata);
 
 	/**
 	 * Try to pair/unpair ReaderProxyData.
+	 * @param pdata Pointer to the participant proxy data.
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return True.
 	 */
     bool pairingReaderProxy(ParticipantProxyData* pdata, ReaderProxyData* rdata);
 	/**
 	 * Try to pair/unpair WriterProxyData.
+	 * @param pdata Pointer to the participant proxy data.
 	 * @param wdata Pointer to the WriterProxyData.
 	 * @return True.
 	 */

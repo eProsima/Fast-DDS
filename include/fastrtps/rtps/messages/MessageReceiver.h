@@ -114,12 +114,15 @@ private:
 	 * @return
 	 */
 	bool proc_Submsg_Data(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_DataFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
 	bool proc_Submsg_Acknack(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_Heartbeat(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_Gap(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_InfoTS(CDRMessage_t*msg, SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_InfoDST(CDRMessage_t*msg,SubmessageHeader_t* smh,bool*last);
 	bool proc_Submsg_InfoSRC(CDRMessage_t*msg,SubmessageHeader_t* smh,bool*last);
+	bool proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
+	bool proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHeader_t* smh, bool*last);
 
 	///@}
 

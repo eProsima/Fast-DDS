@@ -13,6 +13,7 @@
 
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
@@ -39,7 +40,9 @@ NackResponseDelay::~NackResponseDelay()
 NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
     TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
             p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
-    mp_RP(p_RP), m_cdrmessages(p_RP->mp_SFW->getTypeMaxSerialized())
+    mp_RP(p_RP),
+    //TODO Put in a macro
+    m_cdrmessages(p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize > 65504 ? 65504 : p_RP->mp_SFW->getRTPSParticipant()->getAttributes().sendSocketBufferSize)
 {
     CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_header);
     RTPSMessageCreator::addHeader(&m_cdrmessages.m_rtpsmsg_header,mp_RP->mp_SFW->getGuid().guidPrefix);
@@ -61,28 +64,38 @@ void NackResponseDelay::event(EventCode code, const char* msg)
 
         logInfo(RTPS_WRITER,"Requested "<<ch_vec.size() << " changes";);
         //Get relevant data cache changes
-        std::vector<const CacheChange_t*> relevant_changes;
+        std::vector<CacheChangeForGroup_t> relevant_changes;
         std::vector<SequenceNumber_t> not_relevant_changes;
         for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
         {
             if((*cit)->isRelevant() && (*cit)->isValid())
             {
-                relevant_changes.push_back((*cit)->getChange());
+                relevant_changes.push_back(CacheChangeForGroup_t((*cit)->getChange()));
             }
             else
             {
                 not_relevant_changes.push_back((*cit)->getSequenceNumber());
             }
         }
+
         mp_RP->m_isRequestedChangesEmpty = true;
+        bool thereAreChanges = !relevant_changes.empty() || !not_relevant_changes.empty();
+
         if(!relevant_changes.empty())
-            RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
-                    &relevant_changes,
-                    mp_RP->m_att.guid.guidPrefix,
-                    mp_RP->m_att.guid.entityId,
-                    mp_RP->m_att.endpoint.unicastLocatorList,
-                    mp_RP->m_att.endpoint.multicastLocatorList,
-                    mp_RP->m_att.expectsInlineQos);
+        {
+            uint32_t bytesSent = 0;
+            do
+            {
+                bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
+                        relevant_changes,
+                        mp_RP->m_att.guid.guidPrefix,
+                        mp_RP->m_att.guid.entityId,
+                        mp_RP->m_att.endpoint.unicastLocatorList,
+                        mp_RP->m_att.endpoint.multicastLocatorList,
+                        mp_RP->m_att.expectsInlineQos);
+            } while(bytesSent > 0 && relevant_changes.size() > 0);
+        }
+
         if(!not_relevant_changes.empty())
             RTPSMessageGroup::send_Changes_AsGap(&m_cdrmessages,(RTPSWriter*)mp_RP->mp_SFW,
                     &not_relevant_changes,
@@ -90,7 +103,8 @@ void NackResponseDelay::event(EventCode code, const char* msg)
                     mp_RP->m_att.guid.entityId,
                     &mp_RP->m_att.endpoint.unicastLocatorList,
                     &mp_RP->m_att.endpoint.multicastLocatorList);
-        if(relevant_changes.empty() && not_relevant_changes.empty())
+
+        if(!thereAreChanges)
         {
             CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
             SequenceNumber_t first = mp_RP->mp_SFW->get_seq_num_min();
@@ -109,7 +123,36 @@ void NackResponseDelay::event(EventCode code, const char* msg)
             }
         }
         else
+        {
             mp_RP->mp_nackSupression->restart_timer();
+        }
+
+        // TODO Puesto a pelo. Mejorar.
+        logInfo(RTPS_WRITER,"Responding to NACKFRAG messages";);
+        auto requested_fragments = mp_RP->getRequestedFragments();
+
+        for(auto sequence_number_set : requested_fragments)
+        {
+            auto cfrit =  mp_RP->m_changesForReader.find(ChangeForReader_t(sequence_number_set.first));
+
+            if(cfrit != mp_RP->m_changesForReader.end())
+            {
+                for(auto fragment_number : sequence_number_set.second)
+                {
+
+                    CacheChangeForGroup_t cgr(cfrit->getChange());
+                    cgr.setLastFragmentNumber(fragment_number - 1);
+                    std::vector<CacheChangeForGroup_t> requested_fragment{std::move(cgr)};
+                    RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)mp_RP->mp_SFW,
+                            requested_fragment,
+                            mp_RP->m_att.guid.guidPrefix,
+                            mp_RP->m_att.guid.entityId,
+                            mp_RP->m_att.endpoint.unicastLocatorList,
+                            mp_RP->m_att.endpoint.multicastLocatorList,
+                            mp_RP->m_att.expectsInlineQos);
+                }
+            }
+        }
     }
     else if(code == EVENT_ABORT)
     {

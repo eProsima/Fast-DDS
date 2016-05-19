@@ -43,7 +43,7 @@ class WLPListener: public ReaderListener {
 public:
 	/**
 	 * Constructor
-	 * @param Pointer to the WLP object.
+	 * @param pwlp Pointer to the WLP object.
 	 */
 	WLPListener(WLP* pwlp);
 	virtual ~WLPListener();

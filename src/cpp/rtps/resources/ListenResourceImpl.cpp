@@ -55,6 +55,7 @@ ListenResourceImpl::~ListenResourceImpl()
 		logInfo(RTPS_MSG_IN,IDSTRING"Removing listening thread " << mp_thread->get_id() <<" socket: "
 				<<m_listen_socket.local_endpoint() <<  " locators: " << mv_listenLoc,C_BLUE);
 
+        m_listen_socket.cancel();
 		m_listen_socket.close();
 
 		m_io_service.stop();
