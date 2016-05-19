@@ -178,9 +178,9 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 
 
 
-void StatefulWriter::unsent_changes_not_empty()
+void StatefulWriter::send_any_unsent_changes()
 {
-    const char* const METHOD_NAME = "unsent_changes_not_empty";
+    const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	 for(auto rit = matched_readers.begin(); rit != matched_readers.end(); ++rit)
     {
@@ -314,7 +314,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // If writer is not asynchronous, resent of data is done by event thread.
 	if(rp->m_changesForReader.size() > 0 && !isAsync())
 	{
-		//unsent_changes_not_empty();
+		//send_any_unsent_changes();
         if(this->mp_unsetChangesNotEmpty == nullptr)
         {
             this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);

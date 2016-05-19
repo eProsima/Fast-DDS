@@ -86,7 +86,7 @@ public:
 	/**
 	 * This methods trigger the send operation for unsent changes.
 	 */
-	RTPS_DllAPI virtual void unsent_changes_not_empty() = 0;
+	RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
 	
 	/**
 	* Get Min Seq Num in History.

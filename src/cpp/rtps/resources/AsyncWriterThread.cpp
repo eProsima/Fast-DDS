@@ -91,7 +91,7 @@ void AsyncWriterThread::run()
 
                 for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
                 {
-                    (*it)->unsent_changes_not_empty();
+                    (*it)->send_any_unsent_changes();
                 }
 
             }

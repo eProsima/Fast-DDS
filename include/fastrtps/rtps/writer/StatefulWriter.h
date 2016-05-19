@@ -82,7 +82,7 @@ namespace eprosima
                 /**
                  * Method to indicate that there are changes not sent in some of all ReaderProxy.
                  */
-                void unsent_changes_not_empty();
+                void send_any_unsent_changes();
                 //!Increment the HB count.
                 inline void incrementHBCount(){ ++m_heartbeatCount; };
                 /**

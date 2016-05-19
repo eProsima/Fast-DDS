@@ -48,7 +48,7 @@ void UnsentChangesNotEmptyEvent::event(EventCode code, const char* msg)
 
 	if(code == EVENT_SUCCESS)
 	{
-        mp_writer->unsent_changes_not_empty();
+        mp_writer->send_any_unsent_changes();
 	}
 	else if(code == EVENT_ABORT)
 	{

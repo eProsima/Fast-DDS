@@ -114,9 +114,9 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
     return returnedValue;
 }
 
-void StatelessWriter::unsent_changes_not_empty()
+void StatelessWriter::send_any_unsent_changes()
 {
-	const char* const METHOD_NAME = "unsent_changes_not_empty";
+	const char* const METHOD_NAME = "send_any_unsent_changes";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     // TODO Mejorar. Por cada locator crea otra vez los mensajes. Debería crear los mensajes y enviar el mismo a todos los locators.
@@ -171,20 +171,20 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 			}
 		}
 	}
-	bool unsent_changes_not_empty = false;
+	bool send_any_unsent_changes = false;
 	for(std::vector<Locator_t>::iterator lit = rdata.endpoint.unicastLocatorList.begin();
 			lit!=rdata.endpoint.unicastLocatorList.end();++lit)
 	{
-		unsent_changes_not_empty |= add_locator(rdata,*lit);
+		send_any_unsent_changes |= add_locator(rdata,*lit);
 	}
 	for(std::vector<Locator_t>::iterator lit = rdata.endpoint.multicastLocatorList.begin();
 			lit!=rdata.endpoint.multicastLocatorList.end();++lit)
 	{
-		unsent_changes_not_empty |= add_locator(rdata,*lit);
+		send_any_unsent_changes |= add_locator(rdata,*lit);
 	}
 
     // If writer is not asynchronous, resent of data is done by event thread.
-	if(unsent_changes_not_empty && !isAsync())
+	if(send_any_unsent_changes && !isAsync())
 	{
         if(this->mp_unsetChangesNotEmpty == nullptr)
         {
@@ -326,7 +326,7 @@ void StatelessWriter::unsent_changes_reset()
 			rit->unsent_changes.push_back(CacheChangeForGroup_t((*cit)));
 		}
 	}
-	unsent_changes_not_empty();
+	send_any_unsent_changes();
 }
 
 bool StatelessWriter::clean_history(unsigned int max)

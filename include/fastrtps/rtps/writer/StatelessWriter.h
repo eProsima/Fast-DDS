@@ -69,7 +69,7 @@ public:
 	/**
 	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
 	 */
-	void unsent_changes_not_empty();
+	void send_any_unsent_changes();
 
 	/**
 	 * Update the Attributes of the Writer.
