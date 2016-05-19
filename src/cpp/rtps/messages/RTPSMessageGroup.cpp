@@ -13,6 +13,7 @@
 
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastrtps/rtps/filters/FlowFilter.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include "../participant/RTPSParticipantImpl.h"
 
@@ -267,6 +268,9 @@ namespace eprosima {
                 {
                     logError(RTPS_WRITER,"A problem occurred when adding a message");
                 }
+
+                for (auto& change : changes)
+                   FlowFilter::NotifyFiltersChangeSent(change.getChange());
 
                 return 0;
             }

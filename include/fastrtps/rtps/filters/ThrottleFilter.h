@@ -6,9 +6,9 @@
 #include <chrono>
 
 /*
- * Lets changes through. If any of the changes it last
+ * Lets all changes through. If any of the changes it last
  * allowed is sent, it will filter everything out for
- * a period in milliseconds.
+ * a given period.
  */
 namespace eprosima{
 namespace fastrtps{
@@ -23,11 +23,11 @@ class ThrottleFilter : public FlowFilter
    private:
    virtual void NotifyChangeSent(const CacheChange_t*);
    void ThrottlePeriodCheck();
-   unsigned int m_throttlePeriodInMs;
-   bool m_throttling;
-   std::recursive_mutex m_mutex;
-   std::vector<const CacheChange_t*> m_lastClearedChanges;
-   std::chrono::time_point<std::chrono::high_resolution_clock> m_lastThrottleStartTime;
+   unsigned int mThrottlePeriodInMs;
+   bool mThrottling;
+   std::recursive_mutex mMutex;
+   std::vector<const CacheChange_t*> mLastClearedChanges;
+   std::chrono::time_point<std::chrono::high_resolution_clock> mLastThrottleStartTime;
 };
 
 } // namespace rtps

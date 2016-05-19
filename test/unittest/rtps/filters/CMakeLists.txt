@@ -5,13 +5,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
+        include_directories(mock/)
+
         set(THROTTLEFILTERTESTS_SOURCE 
             ThrottleFilterTests.cpp 
             mock/mock.RTPSMessageGroup.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/FlowFilter.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/ThrottleFilter.cpp)
-
-        include_directories(mock/)
 
         add_executable(ThrottleFilterTests ${THROTTLEFILTERTESTS_SOURCE})
         add_gtest(ThrottleFilterTests ${THROTTLEFILTERTESTS_SOURCE})
@@ -19,5 +19,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(ThrottleFilterTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(ThrottleFilterTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
+
+        set(QUANTITYFILTERTESTS_SOURCE 
+            QuantityFilterTests.cpp 
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/FlowFilter.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/QuantityFilter.cpp)
+
+        add_executable(QuantityFilterTests ${QUANTITYFILTERTESTS_SOURCE})
+        add_gtest(QuantityFilterTests ${QUANTITYFILTERTESTS_SOURCE})
+        target_compile_definitions(QuantityFilterTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(QuantityFilterTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(QuantityFilterTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
     endif()
 endif()

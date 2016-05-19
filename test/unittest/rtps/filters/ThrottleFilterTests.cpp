@@ -104,8 +104,6 @@ TEST_F(ThrottleFilterTests, throttling_lasts_for_the_time_specified_in_construct
    ASSERT_EQ(10, filteredChanges.size());
 }
 
-
-
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

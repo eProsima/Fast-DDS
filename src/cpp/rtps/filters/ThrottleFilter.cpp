@@ -15,37 +15,37 @@ ThrottleFilter::ThrottleFilter(unsigned int throttlePeriodInMS):
 
 vector<const CacheChange_t*> ThrottleFilter::operator()(vector<const CacheChange_t*> changes)
 {
-   unique_lock<recursive_mutex> scopedLock(m_mutex);
+   unique_lock<recursive_mutex> scopedLock(mMutex);
    ThrottlePeriodCheck();
-   if (m_throttling)
+   if (mThrottling)
       changes.clear();
 
-   m_lastClearedChanges = changes;
+   mLastClearedChanges = changes;
    return changes;
 }
 
 void ThrottleFilter::ThrottlePeriodCheck()
 {
-   unique_lock<recursive_mutex> scopedLock(m_mutex);
-   if (!m_throttling)
+   unique_lock<recursive_mutex> scopedLock(mMutex);
+   if (!mThrottling)
       return;
 
    auto now = chrono::high_resolution_clock::now();
-   auto period = chrono::duration_cast<chrono::milliseconds>(now - m_lastThrottleStartTime);
+   auto period = chrono::duration_cast<chrono::milliseconds>(now - mLastThrottleStartTime);
 
-   if (period.count() > m_throttlePeriodInMs)
-      m_throttling = false;
+   if (period.count() > mThrottlePeriodInMs)
+      mThrottling = false;
 }
 
 void ThrottleFilter::NotifyChangeSent(const CacheChange_t* change)
 {
-   unique_lock<recursive_mutex> scopedLock(m_mutex);
+   unique_lock<recursive_mutex> scopedLock(mMutex);
 
    // If the change was in our last cleared changes, we start throttling.
-   if (find(m_lastClearedChanges.begin(), m_lastClearedChanges.end(), change) != m_lastClearedChanges.end())
+   if (find(mLastClearedChanges.begin(), mLastClearedChanges.end(), change) != mLastClearedChanges.end())
    {
-      m_throttling = true;
-      m_lastThrottleStartTime = std::chrono::high_resolution_clock::now();
+      mThrottling = true;
+      mLastThrottleStartTime = std::chrono::high_resolution_clock::now();
    }
 }
 

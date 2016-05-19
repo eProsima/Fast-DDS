@@ -12,10 +12,9 @@ namespace rtps{
 
 /*
 * Flow Filters take a vector of cache changes (by reference) and return a filtered
-* vector, with a collection of changes this filter considers valid for sending. Note
-* that sending ANY ONE of these changes may invalidate the criteria and require a 
-* new call to the filter.
-*/
+* vector, with a collection of changes this filter considers valid for sending, 
+* ordered by its subjective priority.
+* */
 class FlowFilter 
 {
    friend class RTPSMessageGroup;

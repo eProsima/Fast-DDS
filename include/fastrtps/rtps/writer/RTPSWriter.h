@@ -17,6 +17,8 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
+#include "../filters/FlowFilter.h"
+#include <vector>
 
 
 
@@ -84,9 +86,15 @@ public:
 	 */
 	RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
 	/**
-	 * This methods trigger the send operation for unsent changes.
+	 * This method triggers the send operation for unsent changes.
 	 */
 	RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
+
+	/**
+	 * This method triggers the send operation for unsent changes,
+    * provided they are cleared by the given filters.
+	 */
+	//RTPS_DllAPI virtual void send_any_unsent_changes(const std::vector<FlowFilter*>* parentFilters) = 0;
 	
 	/**
 	* Get Min Seq Num in History.
