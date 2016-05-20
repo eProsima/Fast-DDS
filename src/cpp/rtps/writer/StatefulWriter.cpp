@@ -186,7 +186,10 @@ void StatefulWriter::send_any_unsent_changes()
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
 
-        std::vector<const ChangeForReader_t*> ch_vec = (*rit)->unsent_changes_to_underway();
+        std::vector<const ChangeForReader_t*> ch_vec = (*rit)->get_unsent_changes();
+        // TODO: Changes filtered here. the setting to underway will happen after the appropriate culling
+        (*rit)->set_changes_to_status(ch_vec, UNDERWAY);
+
         std::vector<CacheChangeForGroup_t> relevant_changes;
         std::vector<SequenceNumber_t> not_relevant_changes;
 

@@ -160,6 +160,40 @@ std::vector<const ChangeForReader_t*> ReaderProxy::requested_changes_to_underway
     return returnedValue;
 }
 
+std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
+{
+   std::vector<const ChangeForReader_t*> unsent_changes;
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+   auto it = m_changesForReader.begin();
+   for (; it!= m_changesForReader.end(); ++it)
+	{
+		if(it->getStatus() == UNSENT)
+         unsent_changes.push_back(&(*it));
+
+      ++it;
+	}
+
+    return unsent_changes;
+}
+
+void ReaderProxy::set_changes_to_status(std::vector<const ChangeForReader_t*> changes, ChangeForReaderStatus_t status) 
+{
+   for (auto change : changes)
+   {
+      for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
+      {
+         if (&(*it) == change){
+            ChangeForReader_t newch(*it);
+            newch.setStatus(status);
+            auto hint = m_changesForReader.erase(it);
+            m_changesForReader.insert(hint, newch);
+            break;
+         }
+      }
+   }
+}
+
 std::vector<const ChangeForReader_t*> ReaderProxy::unsent_changes_to_underway()
 {
     std::vector<const ChangeForReader_t*> returnedValue;
