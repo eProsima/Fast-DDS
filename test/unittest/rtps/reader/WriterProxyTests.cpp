@@ -1,5 +1,5 @@
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <gtest/gtest-death-test.h>
 
 #define TEST_FRIENDS \
     FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
@@ -315,6 +315,6 @@ namespace eprosima
 
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
