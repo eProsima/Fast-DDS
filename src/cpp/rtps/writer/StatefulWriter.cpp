@@ -176,17 +176,13 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     return true;
 }
 
-
-
-void StatefulWriter::send_any_unsent_changes()
+void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters)
 {
     const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	 for(auto rit = matched_readers.begin(); rit != matched_readers.end(); ++rit)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
-
-       // std::vector<const ChangeForReader_t*> ch_vec = (*rit)->unsent_changes_to_underway();
 
         std::vector<const ChangeForReader_t*> ch_vec = (*rit)->get_unsent_changes();
         // TODO: Changes filtered here. the setting to underway will happen after the appropriate culling
@@ -261,6 +257,12 @@ void StatefulWriter::send_any_unsent_changes()
         }
     }
 	logInfo(RTPS_WRITER, "Finish sending unsent changes");
+}
+
+void StatefulWriter::send_any_unsent_changes()
+{
+   std::vector<std::unique_ptr<FlowFilter>> noFilters;
+   send_any_unsent_changes(noFilters);
 }
 
 /*

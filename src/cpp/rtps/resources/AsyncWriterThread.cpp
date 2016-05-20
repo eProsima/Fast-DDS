@@ -45,6 +45,12 @@ bool AsyncWriterThread::addWriter(RTPSWriter* writer)
     return returnedValue;
 }
 
+void AsyncWriterThread::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+{
+   boost::lock_guard<boost::mutex> guard(mutex_);
+   m_filters.push_back(std::move(filter));
+}
+
 /*!
  * @brief This function removes a writer.
  * @param writer Asynchronous writer to be removed.

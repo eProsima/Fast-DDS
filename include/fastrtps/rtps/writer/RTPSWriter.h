@@ -89,6 +89,7 @@ public:
 	 * This method triggers the send operation for unsent changes.
 	 */
 	RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
+   RTPS_DllAPI virtual void send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters){(void)filters; send_any_unsent_changes();};
 
 	/**
 	 * This method triggers the send operation for unsent changes,

@@ -14,6 +14,7 @@
 #define _RTPS_RESOURCES_ASYNCWRITERTHREAD_H_
 
 #include <boost/thread/mutex.hpp>
+#include <fastrtps/rtps/filters/FlowFilter.h>
 #include <list>
 
 namespace boost
@@ -64,6 +65,12 @@ namespace eprosima
                      */
                     bool removeWriter(RTPSWriter* writer);
 
+                    /*!
+                     * @brief Adds a flow filter to the back of the filter list.
+                     * @param filter Filter to add.
+                     */
+                    void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+
                 private:
 
                     //! @brief This function run the thread.
@@ -77,6 +84,7 @@ namespace eprosima
 
                     //! List of asynchronous writers.
                    std::list<RTPSWriter*> async_writers;
+                   std::vector<std::unique_ptr<FlowFilter> > m_filters;
             };
         } // namespace rtps
     } // namespace fastrtps
