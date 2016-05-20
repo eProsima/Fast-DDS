@@ -38,7 +38,7 @@ namespace rtps{
  * @brief Structure CDRMessage_t, contains a serialized message.
  * @ingroup COMMON_MODULE
  */
-struct CDRMessage_t{
+struct RTPS_DllAPI CDRMessage_t{
 	//! Default constructor
 	CDRMessage_t(){
 		pos = 0;

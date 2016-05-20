@@ -187,7 +187,7 @@ bool WriterProxyData::toParameterList()
 	return true;
 }
 
-bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
+RTPS_DllAPI bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
 	//const char* const METHOD_NAME = "readFromCDRMessage";
 	if(ParameterList::readParameterListfromCDRMsg(msg, &m_parameterList, NULL)>0)

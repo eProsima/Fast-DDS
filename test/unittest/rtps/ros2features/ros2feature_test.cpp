@@ -29,6 +29,8 @@
 #include <gtest/gtest.h>
 
 #include <mutex>
+#include <chrono>
+#include <thread>
 
 class pub_dummy_listener:public PublisherListener
 {
@@ -195,7 +197,9 @@ TEST(ros2features, SlaveListenerCallback){
 	pub_attr2.topic.topicDataType = "HelloWorldType";
 	my_publisher2 = Domain::createPublisher(my_participant2, pub_attr2, &my_dummy_listener2);
 	ASSERT_NE(my_publisher2, nullptr);
-
+	
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	
 	slave_target->mapmutex.lock();
 	ASSERT_EQ(slave_target->topicNtypes.size(),1);
 	slave_target->mapmutex.unlock();
