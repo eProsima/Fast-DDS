@@ -54,11 +54,9 @@ public:
 #endif
 	IPFinder();
 	virtual ~IPFinder();
-#if defined(_WIN32)
+
 	RTPS_DllAPI static bool getIPs(std::vector<info_IP>* vec_name);
-#else
-	static bool getIPs(std::vector<info_IP>* vec_name);
-#endif
+
 	/**
     * Get the IP4Adresses in all interfaces.
     * @param[out] locators List of locators to be populated with the IP4 addresses.
