@@ -15,13 +15,15 @@ namespace eprosima
                 public:
 
                     // In real class, inherited from Endpoint base class.
-                    inline const GUID_t& getGuid() const { return GUID_t(); };
+                    inline const GUID_t& getGuid() const { return guid_; };
 
-                    inline ReaderTimes& getTimes(){return m_times;};
+                    inline ReaderTimes& getTimes(){return times_;};
 
                 private:
 
-                    ReaderTimes m_times;
+                    GUID_t guid_;
+
+                    ReaderTimes times_;
             };
         } // namespace rtps
     } // namespace fastrtps

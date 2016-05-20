@@ -1,6 +1,14 @@
 macro(compile_example example example_directory)
     if(NOT ((EPROSIMA_INSTALLER OR EPROSIMA_INSTALLER_MINION) AND (MSVC OR MSVC_IDE)))
 
+        # Check if example use boost
+        set(USE_BOOST_ "")
+        foreach(arg ${ARGN})
+            if("${arg}" STREQUAL "USE_BOOST")
+                set(USE_BOOST_ "-DBOOST_ROOT:PATH=${BOOST_ROOT}" "-DBOOST_LIBRARYDIR:PATH=${BOOST_LIBRARYDIR}")
+            endif()
+        endforeach()
+
         file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config/fastrtpsConfig.cmake
             "include(\"${PROJECT_BINARY_DIR}/cmake/config/fastrtpsTargets.cmake\")\n"
             )
@@ -10,8 +18,7 @@ macro(compile_example example example_directory)
         set(${example}_CMAKE_ARGS
             "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}"
             "-DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/config|${CMAKE_PREFIX_PATH_}"
-            "-DBOOST_ROOT:PATH=${BOOST_ROOT}"
-            "-DBOOST_LIBRARYDIR:PATH=${BOOST_LIBRARYDIR}"
+            ${USE_BOOST_}
             "-DBIN_INSTALL_DIR:PATH=${BIN_INSTALL_DIR}")
         list(APPEND ${example}_CMAKE_ARGS LIST_SEPARATOR "|")
 
