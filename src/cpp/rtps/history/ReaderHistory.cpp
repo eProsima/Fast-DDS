@@ -92,7 +92,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
         auto set_it_next = set_it;
         ++set_it_next;
         while(set_it_next != m_historyRecord[a_change->writerGUID].end() &&
-                *set_it == (*set_it_next + 1))
+                (*set_it + 1) == *set_it_next)
         {
             set_it = m_historyRecord[a_change->writerGUID].erase(set_it);
             set_it_next = set_it;
