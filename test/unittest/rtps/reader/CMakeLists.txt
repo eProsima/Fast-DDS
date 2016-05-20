@@ -8,6 +8,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(WRITERPROXYTESTS_SOURCE WriterProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/WriterProxy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             )
 
         if(WIN32)
@@ -24,7 +25,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(WriterProxyTests ${Boost_LIBRARIES}
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+            ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT})
     endif()
 endif()
