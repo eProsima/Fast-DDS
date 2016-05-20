@@ -17,11 +17,12 @@ namespace rtps{
 * */
 class FlowFilter 
 {
-   friend class RTPSMessageGroup;
-
    public:
+   // Called when a change is finally dispatched.
+   static void NotifyFiltersChangeSent(const CacheChangeForGroup_t*);
+
    virtual ~FlowFilter();
-   virtual std::vector<const CacheChange_t*> operator()(std::vector<const CacheChange_t*>) = 0;
+   virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
 
    protected:
    // To be used by filters with interest in being called back when a change is sent.
@@ -30,9 +31,8 @@ class FlowFilter
    private:
    static std::vector<FlowFilter*> ListeningFilters;
    static std::recursive_mutex ListeningFiltersMutex;
-   // To be called by the message group when a change is sent.
-   static void NotifyFiltersChangeSent(const CacheChange_t*);
-   virtual void NotifyChangeSent(const CacheChange_t*){};
+
+   virtual void NotifyChangeSent(const CacheChangeForGroup_t*){};
 };
 
 

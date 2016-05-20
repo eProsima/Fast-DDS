@@ -18,15 +18,15 @@ class ThrottleFilter : public FlowFilter
 {
    public:
    explicit ThrottleFilter(unsigned int throttlePeriodInMS);
-   virtual std::vector<const CacheChange_t*> operator()(std::vector<const CacheChange_t*>);
+   virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
    private:
-   virtual void NotifyChangeSent(const CacheChange_t*);
+   virtual void NotifyChangeSent(const CacheChangeForGroup_t*);
    void ThrottlePeriodCheck();
    unsigned int mThrottlePeriodInMs;
    bool mThrottling;
    std::recursive_mutex mMutex;
-   std::vector<const CacheChange_t*> mLastClearedChanges;
+   std::vector<const CacheChangeForGroup_t*> mLastClearedChanges;
    std::chrono::time_point<std::chrono::high_resolution_clock> mLastThrottleStartTime;
 };
 

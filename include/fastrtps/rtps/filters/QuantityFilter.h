@@ -15,7 +15,7 @@ class QuantityFilter : public FlowFilter
 {
    public:
    explicit QuantityFilter(unsigned int quantityToClear);
-   virtual std::vector<const CacheChange_t*> operator()(std::vector<const CacheChange_t*>);
+   virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
    private:
    unsigned int mQuantity;

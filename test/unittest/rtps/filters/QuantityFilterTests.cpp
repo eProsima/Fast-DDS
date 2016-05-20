@@ -4,7 +4,8 @@
 using namespace std;
 using namespace eprosima::fastrtps::rtps;
 
-static const testQuantity = 3;
+static const unsigned int testQuantity = 3;
+static const unsigned int numberOfTestChanges = 10;
 
 class QuantityFilterTests: public ::testing::Test 
 {
@@ -14,21 +15,21 @@ class QuantityFilterTests: public ::testing::Test
       qFilter(testQuantity)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
-         testChangeReferences.push_back(&testChanges[i]);
+         testChangesForGroup.emplace_back(&testChanges[i]);
    }
 
    QuantityFilter qFilter;
    CacheChange_t testChanges[numberOfTestChanges];
-   std::vector<const CacheChange_t*> testChangeReferences;
+   std::vector<CacheChangeForGroup_t> testChangesForGroup;
 };
 
 TEST_F(QuantityFilterTests, quantity_filter_lets_only_some_elements_through)
 {
    // When
-   auto filteredChanges = qFilter(testChangeReferences);
+   qFilter(testChangesForGroup);
 
    // Then
-   ASSERT_EQ(testQuantity, filteredChanges.size());
+   ASSERT_EQ(testQuantity, testChangesForGroup.size());
 }
 
 int main(int argc, char **argv)

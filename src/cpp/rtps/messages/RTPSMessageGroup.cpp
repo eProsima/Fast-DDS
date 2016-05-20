@@ -269,9 +269,6 @@ namespace eprosima {
                     logError(RTPS_WRITER,"A problem occurred when adding a message");
                 }
 
-                for (auto& change : changes)
-                   FlowFilter::NotifyFiltersChangeSent(change.getChange());
-
                 return 0;
             }
 

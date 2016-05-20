@@ -7,21 +7,22 @@ namespace fastrtps{
 namespace rtps{
 
 ThrottleFilter::ThrottleFilter(unsigned int throttlePeriodInMS):
-   m_throttlePeriodInMs(throttlePeriodInMS),
-   m_throttling(false)
+   mThrottlePeriodInMs(throttlePeriodInMS),
+   mThrottling(false)
 {
    RegisterAsListeningFilter();
 }
 
-vector<const CacheChange_t*> ThrottleFilter::operator()(vector<const CacheChange_t*> changes)
+void ThrottleFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 {
    unique_lock<recursive_mutex> scopedLock(mMutex);
    ThrottlePeriodCheck();
    if (mThrottling)
       changes.clear();
 
-   mLastClearedChanges = changes;
-   return changes;
+   mLastClearedChanges.clear();
+   for (auto& change : changes)
+      mLastClearedChanges.push_back(&change);
 }
 
 void ThrottleFilter::ThrottlePeriodCheck()
@@ -37,7 +38,7 @@ void ThrottleFilter::ThrottlePeriodCheck()
       mThrottling = false;
 }
 
-void ThrottleFilter::NotifyChangeSent(const CacheChange_t* change)
+void ThrottleFilter::NotifyChangeSent(const CacheChangeForGroup_t* change)
 {
    unique_lock<recursive_mutex> scopedLock(mMutex);
 

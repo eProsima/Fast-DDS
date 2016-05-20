@@ -7,16 +7,15 @@ namespace fastrtps{
 namespace rtps{
 
 QuantityFilter::QuantityFilter(unsigned int quantityToClear):
-   mQuantity(quantityToClear);
+   mQuantity(quantityToClear)
 {
 }
 
-vector<const CacheChange_t*> QuantityFilter::operator()(vector<const CacheChange_t*> changes)
+void QuantityFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 {
-   if (changes.size() > mQuantity)
-      changes.resize(mQuantity);
-
-   return changes;
+   if (changes.size() <= mQuantity)
+      return;
+   changes.erase(changes.begin() + mQuantity, changes.end());
 }
 
 

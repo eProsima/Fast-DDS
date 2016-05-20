@@ -9,7 +9,7 @@ FlowFilter::~FlowFilter()
    ListeningFilters.erase(std::remove(ListeningFilters.begin(), ListeningFilters.end(), this), ListeningFilters.end());
 }
 
-void FlowFilter::NotifyFiltersChangeSent(const CacheChange_t* change)
+void FlowFilter::NotifyFiltersChangeSent(const CacheChangeForGroup_t* change)
 {
    std::unique_lock<std::recursive_mutex> scopedLock(ListeningFiltersMutex);
    for (auto filter : ListeningFilters)

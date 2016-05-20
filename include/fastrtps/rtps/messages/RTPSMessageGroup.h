@@ -29,14 +29,26 @@ namespace eprosima {
             {
                 public:
 
-                    CacheChangeForGroup_t(const CacheChange_t* change) : change_(change),
-                    last_fragment_number_(0)
+                    CacheChangeForGroup_t(const CacheChange_t* change) : 
+                       change_(change),
+                       last_fragment_number_(0),
+                       fragments_cleared_for_sending_(change->getFragmentCount())
                 {
                 }
 
-                    CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : change_(c.change_),
-                    last_fragment_number_(c.last_fragment_number_)
+                    CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
+                       change_(c.change_),
+                       last_fragment_number_(c.last_fragment_number_),
+                       fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
                 {
+                }
+
+                const CacheChangeForGroup_t& operator=(const CacheChangeForGroup_t& c)
+                { 
+                    change_ = c.change_;
+                    last_fragment_number_ = c.last_fragment_number_;
+                    fragments_cleared_for_sending_ =c.fragments_cleared_for_sending_;
+                    return *this;
                 }
 
                     const CacheChange_t* getChange() const
@@ -70,6 +82,9 @@ namespace eprosima {
 
                     const CacheChange_t* change_;
                     uint32_t last_fragment_number_;
+
+                    // How many fragments can be sent in one go. Initialized to the maximum possible.
+                    uint32_t fragments_cleared_for_sending_;
             };
 
             /**

@@ -1,5 +1,4 @@
 #include <fastrtps/rtps/filters/ThrottleFilter.h>
-#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <gtest/gtest.h>
 #include <vector>
 #include <chrono>
@@ -20,88 +19,78 @@ class ThrottleFilterTests: public ::testing::Test
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {
-         testChangeReferences.push_back(&testChanges[i]);
-         otherChangeReferences.push_back(&otherChanges[i]);
+         testChangesForGroup.emplace_back(&testChanges[i]);
+         otherChangesForGroup.emplace_back(&otherChanges[i]);
       }
    }
 
    ThrottleFilter throttle;
    CacheChange_t testChanges[numberOfTestChanges];
-   std::vector<const CacheChange_t*> testChangeReferences;
+   std::vector<CacheChangeForGroup_t> testChangesForGroup;
 
    CacheChange_t otherChanges[numberOfTestChanges];
-   std::vector<const CacheChange_t*> otherChangeReferences;
-
-   void HELPER_Send_change(const CacheChange_t* change)
-   {
-      std::vector<CacheChangeForGroup_t> changesToSend;
-      changesToSend.emplace_back(change);
-      LocatorList_t ll;
-      RTPSMessageGroup::send_Changes_AsData(0, 0, changesToSend, GuidPrefix_t(), EntityId_t(), 
-                                            ll, ll, false);
-   
-   }
+   std::vector<CacheChangeForGroup_t> otherChangesForGroup;
 };
 
 TEST_F(ThrottleFilterTests, throttle_filter_lets_changes_through_as_long_as_nothing_is_sent)
 {
    // When
-   auto filteredChanges = throttle(testChangeReferences);
+   throttle(testChangesForGroup);
 
    // Then
-   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
+   ASSERT_EQ(numberOfTestChanges, testChangesForGroup.size());
 
    // When
-   filteredChanges = throttle(filteredChanges);
+   throttle(testChangesForGroup);
 
    // Then
-   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
+   ASSERT_EQ(numberOfTestChanges, testChangesForGroup.size());
 }
 
 TEST_F(ThrottleFilterTests, throttle_period_kicks_in_when_sending_a_change_we_just_cleared)
 {
    // Given we cleared the thest change vector
-   auto filteredChanges = throttle(testChangeReferences);
-   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
+   throttle(testChangesForGroup);
+   ASSERT_EQ(numberOfTestChanges, testChangesForGroup.size());
 
-   // When when send one of those changes succesfully
-   HELPER_Send_change(&testChanges[0]);
+   // When we send one of those changes succesfully
+   FlowFilter::NotifyFiltersChangeSent(&testChangesForGroup[0]);
 
    // Then we start throttling (filtering everything out)
-   filteredChanges = throttle(testChangeReferences);
-   ASSERT_EQ(0, filteredChanges.size());
+   throttle(testChangesForGroup);
+   ASSERT_EQ(0, testChangesForGroup.size());
 }
 
 TEST_F(ThrottleFilterTests, no_throttling_if_we_sent_a_change_the_filter_has_not_touched)
 {
    // Given we cleared the "other" change vector
-   auto filteredChanges = throttle(otherChangeReferences);
-   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
+   throttle(otherChangesForGroup);
+   ASSERT_EQ(numberOfTestChanges, otherChangesForGroup.size());
 
-   // When when send a test change succesfully
-   HELPER_Send_change(&testChanges[0]);
+   // When we send a test change succesfully
+   FlowFilter::NotifyFiltersChangeSent(&testChangesForGroup[0]);
 
    // Then we don't filter anything out (we haven't cleared that particular change)
-   filteredChanges = throttle(testChangeReferences);
-   ASSERT_EQ(10, filteredChanges.size());
+   throttle(testChangesForGroup);
+   ASSERT_EQ(numberOfTestChanges, testChangesForGroup.size());
 }
 
 TEST_F(ThrottleFilterTests, throttling_lasts_for_the_time_specified_in_construction)
 {
    // Given we got to the point of throttling
-   auto filteredChanges = throttle(testChangeReferences);
-   ASSERT_EQ(numberOfTestChanges, filteredChanges.size());
-   HELPER_Send_change(&testChanges[0]);
+   throttle(testChangesForGroup);
+   ASSERT_EQ(numberOfTestChanges, testChangesForGroup.size());
+   FlowFilter::NotifyFiltersChangeSent(&testChangesForGroup[0]);
 
    // when we wait less than the specified time, throttling is still active
    std::this_thread::sleep_for(std::chrono::milliseconds(testThrottlePeriodInMs - 20));
-   filteredChanges = throttle(testChangeReferences);
-   ASSERT_EQ(0, filteredChanges.size());
+   throttle(testChangesForGroup);
+   ASSERT_EQ(0, testChangesForGroup.size());
 
    // Then after the specified time, throttling is over
    std::this_thread::sleep_for(std::chrono::milliseconds(40));
-   filteredChanges = throttle(testChangeReferences);
-   ASSERT_EQ(10, filteredChanges.size());
+   throttle(otherChangesForGroup);
+   ASSERT_EQ(numberOfTestChanges, otherChangesForGroup.size());
 }
 
 int main(int argc, char **argv)
