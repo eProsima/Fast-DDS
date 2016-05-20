@@ -167,12 +167,8 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
 
    auto it = m_changesForReader.begin();
    for (; it!= m_changesForReader.end(); ++it)
-	{
 		if(it->getStatus() == UNSENT)
          unsent_changes.push_back(&(*it));
-
-      ++it;
-	}
 
     return unsent_changes;
 }
