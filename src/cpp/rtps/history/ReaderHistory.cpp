@@ -76,16 +76,33 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 	{
 		logError(RTPS_HISTORY,"The Writer GUID_t must be defined");
 	}
-	m_historyRecord.insert(std::make_pair(a_change->writerGUID,std::set<SequenceNumber_t>()));
-	if ((m_historyRecord[a_change->writerGUID].insert(a_change->sequenceNumber)).second)
+
+	if(m_historyRecord.insert(std::make_pair(a_change->writerGUID,std::set<SequenceNumber_t>())).second)
+        m_historyRecord[a_change->writerGUID].insert(SequenceNumber_t());
+
+	if(*m_historyRecord[a_change->writerGUID].begin() < a_change->sequenceNumber && m_historyRecord[a_change->writerGUID].insert(a_change->sequenceNumber).second)
 	{
 		m_changes.push_back(a_change);
         sortCacheChanges();
 		updateMaxMinSeqNum();
 		logInfo(RTPS_HISTORY, "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
+
+        // Clean history record
+        auto set_it = m_historyRecord[a_change->writerGUID].begin();
+        auto set_it_next = set_it;
+        ++set_it_next;
+        while(set_it_next != m_historyRecord[a_change->writerGUID].end() &&
+                *set_it == (*set_it_next + 1))
+        {
+            set_it = m_historyRecord[a_change->writerGUID].erase(set_it);
+            set_it_next = set_it;
+            ++set_it_next;
+        }
+
 		return true;
 	}
-	logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber << " from "<< a_change->writerGUID << " not added.");
+
+    logInfo(RTPS_HISTORY, "Change "<<  a_change->sequenceNumber << " from "<< a_change->writerGUID << " not added.");
 	return false;
 }
 
