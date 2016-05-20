@@ -86,6 +86,10 @@ bool RTPSParticipant::updateReader(RTPSReader* Reader,ReaderQos& rqos)
 	return mp_impl->updateLocalReader(Reader, rqos);
 }
 
+void RTPSParticipant::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+{
+   mp_impl->add_flow_filter(std::move(filter));
+}
 
 }
 } /* namespace rtps */

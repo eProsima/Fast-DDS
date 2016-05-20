@@ -15,6 +15,7 @@
 #define PARTICIPANT_H_
 
 #include "../rtps/common/Guid.h"
+#include "../rtps/filters/FlowFilter.h"
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 
@@ -66,6 +67,7 @@ public:
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
 
+   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
 };
 
 }

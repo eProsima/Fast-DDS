@@ -44,6 +44,11 @@ bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t e
 	return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
 }
 
+void Participant::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+{
+	return mp_impl->add_flow_filter(std::move(filter));
+}
+
 
 } /* namespace pubsub */
 } /* namespace eprosima */

@@ -179,6 +179,8 @@ public:
     /* Not needed anymore, stays for reference pursposes
 	bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);*/
 
+   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+
 private:
 	//!Attributes of the RTPSParticipant
 	RTPSParticipantAttributes m_att;

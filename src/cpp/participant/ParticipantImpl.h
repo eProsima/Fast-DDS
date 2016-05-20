@@ -16,6 +16,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/rtps/filters/FlowFilter.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 
 namespace eprosima{
@@ -123,6 +124,8 @@ public:
 	*/
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
+
+   void add_flow_filter(std::unique_ptr<FlowFilter>);
 
 private:
 	//!Participant Attributes

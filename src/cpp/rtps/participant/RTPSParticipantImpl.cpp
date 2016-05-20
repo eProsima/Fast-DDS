@@ -104,7 +104,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	loc.port = PParam.defaultSendPort;
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
-    async_writers_thread_ = new AsyncWriterThread();
+   async_writers_thread_ = new AsyncWriterThread();
 	bool hasLocatorsDefined = true;
 	//If no default locators are defined we define some.
 	/* The reasoning here is the following.
@@ -762,6 +762,10 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
 	this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
 }
 
+void RTPSParticipantImpl::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+{
+   (void) filter;
+}
 
 
 }

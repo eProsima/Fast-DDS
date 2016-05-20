@@ -15,6 +15,8 @@
 #define RTPSParticipant_H_
 
 #include <cstdlib>
+#include <memory>
+#include "../filters/FlowFilter.h"
 #include "../../fastrtps_dll.h"
 #include "../common/Guid.h"
 
@@ -111,6 +113,8 @@ public:
 	 * @return true on success
 	 */
 	bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
+
+   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
 
 private:
 	//!Pointer to the implementation.
