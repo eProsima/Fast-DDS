@@ -173,19 +173,16 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
     return unsent_changes;
 }
 
-void ReaderProxy::set_changes_to_status(std::vector<const ChangeForReader_t*> changes, ChangeForReaderStatus_t status) 
+void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status)
 {
-   for (auto change : changes)
+   for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
    {
-      for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
-      {
-         if (&(*it) == change){
-            ChangeForReader_t newch(*it);
-            newch.setStatus(status);
-            auto hint = m_changesForReader.erase(it);
-            m_changesForReader.insert(hint, newch);
-            break;
-         }
+      if (it->getChange() == change){
+         ChangeForReader_t newch(*it);
+         newch.setStatus(status);
+         auto hint = m_changesForReader.erase(it);
+         m_changesForReader.insert(hint, newch);
+         break;
       }
    }
 }

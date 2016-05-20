@@ -112,11 +112,11 @@ namespace eprosima
                 std::vector<const ChangeForReader_t*> get_unsent_changes() const;
 
                 /*!
-                 * @brief Sets a list of changes to a particular status (if present in the ReaderProxy)
-                 * @param changes List of changes to search and set.
+                 * @brief Sets a change to a particular status (if present in the ReaderProxy)
+                 * @param change change to search and set.
                  * @param status Status to apply.
                  */
-                void set_changes_to_status(std::vector<const ChangeForReader_t*> changes, ChangeForReaderStatus_t status);
+                void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
 
                 void underway_changes_to_unacknowledged();
 
