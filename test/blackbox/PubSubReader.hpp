@@ -188,6 +188,11 @@ class PubSubReader
             ASSERT_EQ(matched_, 0u);
         }
 
+        unsigned int getReceivedCount() const
+        {
+            return current_received_count_;
+        }
+
         /*** Function to change QoS ***/
         PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
         {

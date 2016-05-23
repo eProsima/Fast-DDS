@@ -83,12 +83,12 @@ TEST_F(ThrottleFilterTests, throttling_lasts_for_the_time_specified_in_construct
    FlowFilter::NotifyFiltersChangeSent(&testChangesForGroup[0]);
 
    // when we wait less than the specified time, throttling is still active
-   std::this_thread::sleep_for(std::chrono::milliseconds(testThrottlePeriodInMs - 20));
+   std::this_thread::sleep_for(std::chrono::milliseconds(testThrottlePeriodInMs - 50));
    throttle(testChangesForGroup);
    ASSERT_EQ(0, testChangesForGroup.size());
 
    // Then after the specified time, throttling is over
-   std::this_thread::sleep_for(std::chrono::milliseconds(40));
+   std::this_thread::sleep_for(std::chrono::milliseconds(100));
    throttle(otherChangesForGroup);
    ASSERT_EQ(numberOfTestChanges, otherChangesForGroup.size());
 }

@@ -104,6 +104,11 @@ class PubSubWriter
 
     bool isInitialized() const { return initialized_; }
 
+    eprosima::fastrtps::Participant* getParticipant()
+    {
+        return participant_;
+    }
+
     void destroy()
     {
         if(participant_ != nullptr)

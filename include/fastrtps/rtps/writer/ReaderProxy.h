@@ -97,6 +97,7 @@ namespace eprosima
                  * @return STL vector with the modified ChangeForReader_t.
                  */
                 std::vector<const ChangeForReader_t*> requested_changes_to_underway();
+                
 
                 /*!
                  * @brief Sets the UNSENT changes to UNDERWAY and returns a STL vector with the modified ChangeForReader_t.
@@ -107,9 +108,14 @@ namespace eprosima
                
                 /*!
                  * @brief Lists all unsent changes.
-                 * @return STL vector with the unsentchange list.
+                 * @return STL vector with the unsent change list.
                  */
                 std::vector<const ChangeForReader_t*> get_unsent_changes() const;
+                /*!
+                 * @brief Lists all requested changes.
+                 * @return STL vector with the requested change list.
+                 */
+                std::vector<const ChangeForReader_t*> get_requested_changes() const;
 
                 /*!
                  * @brief Sets a change to a particular status (if present in the ReaderProxy)
@@ -121,6 +127,8 @@ namespace eprosima
                 void underway_changes_to_unacknowledged();
 
                 void underway_changes_to_acknowledged();
+                
+                void requested_changes_to_unsent();
 
                 void setNotValid(const CacheChange_t* change);
 

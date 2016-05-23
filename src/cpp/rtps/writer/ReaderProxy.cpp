@@ -173,6 +173,19 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
     return unsent_changes;
 }
 
+std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
+{
+   std::vector<const ChangeForReader_t*> unsent_changes;
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+   auto it = m_changesForReader.begin();
+   for (; it!= m_changesForReader.end(); ++it)
+		if(it->getStatus() == REQUESTED)
+         unsent_changes.push_back(&(*it));
+
+    return unsent_changes;
+}
+
 void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status)
 {
    for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
@@ -231,6 +244,29 @@ void ReaderProxy::underway_changes_to_unacknowledged()
 
         ++it;
 	}
+}
+
+void ReaderProxy::requested_changes_to_unsent()
+{
+	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+
+    auto it = m_changesForReader.begin();
+    while(it != m_changesForReader.end())
+	{
+		if(it->getStatus() == REQUESTED)
+		{
+            ChangeForReader_t newch(*it);
+            newch.setStatus(UNSENT);
+
+            auto hint = m_changesForReader.erase(it);
+
+            it = m_changesForReader.insert(hint, newch);
+		}
+
+        ++it;
+	}
+
+    cleanup();
 }
 
 // TODO Study if cleanup is necessary

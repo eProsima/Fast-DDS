@@ -185,6 +185,7 @@ void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFil
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
 
         std::vector<const ChangeForReader_t*> ch_vec = (*rit)->get_unsent_changes();
+
         std::vector<CacheChangeForGroup_t> relevant_changes;
         std::vector<SequenceNumber_t> not_relevant_changes;
 

@@ -81,7 +81,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
 				mp_event_thr(nullptr),
-                async_writers_thread_(nullptr),
+            async_writers_thread_(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 				IdCounter(0),
@@ -314,11 +314,9 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 		}
 	}
 
-    // Check asynchornous thread is running.
-    if(SWriter->isAsync())
-    {
-        async_writers_thread_->addWriter(SWriter);
-    }
+   // Asynchronous thread runs regardless of mode because of
+   // nack response duties.
+   async_writers_thread_->addWriter(SWriter);
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);
@@ -645,8 +643,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			{
 				if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 				{
-                    // If writer is asynchronous, remove from async thread.
-                    async_writers_thread_->removeWriter(*wit);
+               // If writer is asynchronous, remove from async thread.
+               async_writers_thread_->removeWriter(*wit);
 
 					m_userWriterList.erase(wit);
 					found = true;
@@ -764,7 +762,7 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
 
 void RTPSParticipantImpl::add_flow_filter(std::unique_ptr<FlowFilter> filter)
 {
-   (void) filter;
+   async_writers_thread_->add_flow_filter(std::move(filter));
 }
 
 

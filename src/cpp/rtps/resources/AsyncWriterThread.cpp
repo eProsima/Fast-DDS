@@ -30,18 +30,15 @@ bool AsyncWriterThread::addWriter(RTPSWriter* writer)
 
     assert(writer != nullptr);
 
-    if(writer->isAsync())
-    {
-        boost::lock_guard<boost::mutex> guard(mutex_);
-        async_writers.push_back(writer);
-        returnedValue = true;
+     boost::lock_guard<boost::mutex> guard(mutex_);
+     async_writers.push_back(writer);
+     returnedValue = true;
 
-        // If thread not running, start it.
-        if(thread_ == nullptr)
-        {
-            thread_ = new boost::thread(&AsyncWriterThread::run, this);
-        }
-    }
+     // If thread not running, start it.
+     if(thread_ == nullptr)
+     {
+         thread_ = new boost::thread(&AsyncWriterThread::run, this);
+     }
 
     return returnedValue;
 }

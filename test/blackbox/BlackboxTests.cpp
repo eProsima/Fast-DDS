@@ -16,6 +16,7 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/filters/SizeFilter.h>
 
 #include <thread>
 #include <gtest/gtest.h>
