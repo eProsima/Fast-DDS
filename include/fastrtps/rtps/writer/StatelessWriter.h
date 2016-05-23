@@ -70,6 +70,7 @@ public:
 	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
 	 */
 	void send_any_unsent_changes();
+   void send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters);
 
 	/**
 	 * Update the Attributes of the Writer.

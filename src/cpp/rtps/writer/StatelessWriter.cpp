@@ -116,36 +116,43 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 
 void StatelessWriter::send_any_unsent_changes()
 {
+   std::vector<std::unique_ptr<FlowFilter>> noFilters;
+   send_any_unsent_changes(noFilters);
+}
+
+void StatelessWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters)
+{
 	const char* const METHOD_NAME = "send_any_unsent_changes";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    // TODO Mejorar. Por cada locator crea otra vez los mensajes. Debería crear los mensajes y enviar el mismo a todos los locators.
 	for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
 	{
-		if(!rit->unsent_changes.empty())
+      // Shallow copy the list and filter it.
+      auto unsent_changes_copy = rit->unsent_changes; 
+      for (auto& filter : filters)
+         (*filter)(unsent_changes_copy); 
+
+
+      // Remove the messages selected for sending from the original list
+      remove_if(rit->unsent_changes.begin(), rit->unsent_changes.end(),
+                [&](CacheChangeForGroup_t ccfg)->bool 
+                { for (auto& changeForGroup : unsent_changes_copy)
+                    if (changeForGroup.getChange() == ccfg.getChange()) return true;
+                  return false; 
+                });
+
+		if(!unsent_changes_copy.empty())
 		{
 			if(m_pushMode)
 			{
-                uint32_t bytesSent = 0;
-                do
-                {
-                    bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                            rit->unsent_changes, c_GuidPrefix_Unknown,
-                            this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown, rit->locator, rit->expectsInlineQos);
-                } while(bytesSent > 0 && rit->unsent_changes.size() > 0);
+             uint32_t bytesSent = 0;
+             do
+             {
+                 bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
+                         unsent_changes_copy, c_GuidPrefix_Unknown,
+                         this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown, rit->locator, rit->expectsInlineQos);
+             } while(bytesSent > 0 && unsent_changes_copy.size() > 0);
 			}
-			//			else
-			//			{
-			//				SequenceNumber_t first,last;
-			//				m_writer_cache.get_seq_num_min(&first,NULL);
-			//				m_writer_cache.get_seq_num_max(&last,NULL);
-			//				m_heartbeatCount++;
-			//				CDRMessage::initCDRMsg(&m_cdrmessages.m_rtpsmsg_fullmsg);
-			//				RTPSMessageCreator::addMessageHeartbeat(&m_cdrmessages.m_rtpsmsg_fullmsg,m_guid.guidPrefix,
-			//						ENTITYID_UNKNOWN,m_guid.entityId,first,last,m_heartbeatCount,true,false);
-			//				mp_send_thr->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,&rit->locator);
-			//				rit->unsent_changes.clear();
-			//			}
 		}
 	}
 	logInfo(RTPS_WRITER, "Finish sending unsent changes";);
