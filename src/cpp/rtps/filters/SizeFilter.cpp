@@ -32,9 +32,7 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
       }
    }
 
-   if (changes.size() <= mSize)
-      return;
-   changes.erase(changes.begin() + mSize, changes.end());
+   changes.erase(changes.begin() + clearedChanges, changes.end());
 }
 
 
