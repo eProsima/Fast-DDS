@@ -13,7 +13,6 @@
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -40,10 +39,6 @@ StatelessWriter::~StatelessWriter()
 {
 	const char* const METHOD_NAME = "~StatelessWriter";
 	logInfo(RTPS_WRITER,"StatelessWriter destructor";);
-
-    // Destroy parent events
-    if(mp_unsetChangesNotEmpty != nullptr)
-        delete mp_unsetChangesNotEmpty;
 }
 
 /*
@@ -188,16 +183,6 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 			lit!=rdata.endpoint.multicastLocatorList.end();++lit)
 	{
 		send_any_unsent_changes |= add_locator(rdata,*lit);
-	}
-
-    // If writer is not asynchronous, resent of data is done by event thread.
-	if(send_any_unsent_changes && !isAsync())
-	{
-        if(this->mp_unsetChangesNotEmpty == nullptr)
-        {
-            this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
-        }
-		this->mp_unsetChangesNotEmpty->restart_timer();
 	}
 
 	this->m_matched_readers.push_back(rdata);

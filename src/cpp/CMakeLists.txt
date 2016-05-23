@@ -21,7 +21,6 @@ set_sources(
     rtps/writer/timedevent/PeriodicHeartbeat.cpp 
     rtps/writer/timedevent/NackResponseDelay.cpp 
     rtps/writer/timedevent/NackSupressionDuration.cpp 
-    rtps/writer/timedevent/UnsentChangesNotEmptyEvent.cpp 
     rtps/history/CacheChangePool.cpp 
     rtps/history/History.cpp 
     rtps/history/WriterHistory.cpp 

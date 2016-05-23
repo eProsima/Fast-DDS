@@ -22,7 +22,6 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/writer/timedevent/UnsentChangesNotEmptyEvent.h>
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
@@ -69,10 +68,6 @@ StatefulWriter::~StatefulWriter()
 
     delete all_acked_cond_;
     delete all_acked_mutex_;
-
-    // Destroy parent events
-    if(mp_unsetChangesNotEmpty != nullptr)
-        delete mp_unsetChangesNotEmpty;
 
     for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
         it != matched_readers.end(); ++it)
@@ -328,17 +323,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 	logInfo(RTPS_WRITER, "Reader Proxy "<< rp->m_att.guid<< " added to " << this->m_guid.entityId << " with "
 			<<rp->m_att.endpoint.unicastLocatorList.size()<<"(u)-"
 			<<rp->m_att.endpoint.multicastLocatorList.size()<<"(m) locators");
-
-    // If writer is not asynchronous, resent of data is done by event thread.
-	if(rp->m_changesForReader.size() > 0 && !isAsync())
-	{
-		//send_any_unsent_changes();
-        if(this->mp_unsetChangesNotEmpty == nullptr)
-        {
-            this->mp_unsetChangesNotEmpty = new UnsentChangesNotEmptyEvent(this,1.0);
-        }
-		this->mp_unsetChangesNotEmpty->restart_timer();
-	}
 
 	return true;
 }

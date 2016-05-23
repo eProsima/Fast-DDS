@@ -26,7 +26,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class UnsentChangesNotEmptyEvent;
 class WriterListener;
 class WriterHistory;
 struct CacheChange_t;
@@ -39,7 +38,6 @@ struct CacheChange_t;
 class RTPSWriter : public Endpoint
 {
 	friend class WriterHistory;
-	friend class UnsentChangesNotEmptyEvent;
 	friend class RTPSParticipantImpl;
 	friend class RTPSMessageGroup;
 protected:
@@ -149,8 +147,6 @@ protected:
 	RTPSMessageGroup_t m_cdrmessages;
 	//!INdicates if the liveliness has been asserted
 	bool m_livelinessAsserted;
-	//!Event that manages unsent changes
-	UnsentChangesNotEmptyEvent* mp_unsetChangesNotEmpty;
 	//!WriterHistory
 	WriterHistory* mp_history;
 	//!Listener
