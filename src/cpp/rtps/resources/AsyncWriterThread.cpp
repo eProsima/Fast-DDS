@@ -12,7 +12,6 @@ using namespace eprosima::fastrtps::rtps;
 
 AsyncWriterThread::AsyncWriterThread() : thread_(nullptr)
 {
-   m_filters.emplace_back(new ThrottleFilter(1000)); // 1s delay.
 }
 
 AsyncWriterThread::~AsyncWriterThread()
@@ -105,7 +104,7 @@ void AsyncWriterThread::run()
             }
 
             //TODO Make configurable the time.
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
         }
         catch(boost::thread_interrupted /*e*/)
         {

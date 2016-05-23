@@ -30,5 +30,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(QuantityFilterTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(QuantityFilterTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
+
+        set(SIZEFILTERTESTS_SOURCE 
+            SizeFilterTests.cpp 
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/FlowFilter.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/SizeFilter.cpp)
+
+        add_executable(SizeFilterTests ${SIZEFILTERTESTS_SOURCE})
+        add_gtest(SizeFilterTests ${SIZEFILTERTESTS_SOURCE})
+        target_compile_definitions(SizeFilterTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(SizeFilterTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(SizeFilterTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
     endif()
 endif()

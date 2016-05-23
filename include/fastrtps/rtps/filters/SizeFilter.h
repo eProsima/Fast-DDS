@@ -1,24 +1,24 @@
-#ifndef QUANTITY_FILTER_H
-#define QUANTITY_FILTER_H
+#ifndef SIZE_FILTER_H
+#define SIZE_FILTER_H
 
 #include <fastrtps/rtps/filters/FlowFilter.h>
 #include <thread>
 
 /*
- * Simple filter that only clears the first N changes.
+ * Simple filter that only clears changes up to a certain accumulated payload size.
  */
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class QuantityFilter : public FlowFilter
+class SizeFilter : public FlowFilter
 {
    public:
-   explicit QuantityFilter(unsigned int quantityToClear);
+   explicit SizeFilter(unsigned int sizeToClear);
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
    private:
-   unsigned int mQuantity;
+   unsigned int mSize;
 };
 
 } // namespace rtps
