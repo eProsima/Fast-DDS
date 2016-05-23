@@ -20,7 +20,16 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
       auto& change = changes[clearedChanges];
       if (change.isFragmented())
       {
-         // Todo partial clearing
+         unsigned int fitting_fragments = min((mSize - accumulatedPayloadSize) / change.getChange()->getFragmentSize(),
+                                              change.getChange()->getFragmentCount());
+         if (fitting_fragments)
+         {
+            accumulatedPayloadSize += fitting_fragments * change.getChange()->getFragmentSize();
+            change.setFragmentsClearedForSending(fitting_fragments);
+            clearedChanges++;
+         }
+         else
+            break;
       }
       else
       {

@@ -61,7 +61,7 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
    }
 
    // And the last one is partially cleared
-   ASSERT_EQ(testChangesForGroup[6].getFragmentsClearedForSending(), 5); 
+   ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending(), 5); 
 }
 
 

@@ -71,6 +71,11 @@ namespace eprosima {
                         return fragments_cleared_for_sending_;
                     }
 
+                    void setFragmentsClearedForSending(uint32_t fragments)
+                    {
+                        fragments_cleared_for_sending_ = fragments;
+                    }
+
                     void setLastFragmentNumber(uint32_t fragment_number)
                     {
                         last_fragment_number_ = fragment_number;
