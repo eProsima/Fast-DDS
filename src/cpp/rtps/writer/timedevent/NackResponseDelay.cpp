@@ -60,6 +60,6 @@ void NackResponseDelay::event(EventCode code, const char* msg)
         logInfo(RTPS_WRITER,"Responding to Acknack msg";);
         boost::lock_guard<boost::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
         boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
-        mp_RP->requested_changes_to_unsent();
+        mp_RP->convert_status_on_all_changes(REQUESTED,UNSENT);
     }
 }

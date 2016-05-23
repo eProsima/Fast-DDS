@@ -135,31 +135,6 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 }
 
 
-std::vector<const ChangeForReader_t*> ReaderProxy::requested_changes_to_underway()
-{
-    std::vector<const ChangeForReader_t*> returnedValue;
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
-    auto it = m_changesForReader.begin();
-    while(it != m_changesForReader.end())
-	{
-		if(it->getStatus() == REQUESTED)
-		{
-            ChangeForReader_t newch(*it);
-            newch.setStatus(UNDERWAY);
-
-            auto hint = m_changesForReader.erase(it);
-
-            it = m_changesForReader.insert(hint, newch);
-            returnedValue.push_back(&(*it));
-		}
-
-        ++it;
-	}
-
-    return returnedValue;
-}
-
 std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
 {
    std::vector<const ChangeForReader_t*> unsent_changes;
@@ -200,42 +175,17 @@ void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForRea
    }
 }
 
-std::vector<const ChangeForReader_t*> ReaderProxy::unsent_changes_to_underway()
-{
-    std::vector<const ChangeForReader_t*> returnedValue;
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
-    auto it = m_changesForReader.begin();
-    while(it != m_changesForReader.end())
-	{
-		if(it->getStatus() == UNSENT)
-		{
-            ChangeForReader_t newch(*it);
-            newch.setStatus(UNDERWAY);
-
-            auto hint = m_changesForReader.erase(it);
-
-            it = m_changesForReader.insert(hint, newch);
-            returnedValue.push_back(&(*it));
-		}
-
-        ++it;
-	}
-
-    return returnedValue;
-}
-
-void ReaderProxy::underway_changes_to_unacknowledged()
+void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     auto it = m_changesForReader.begin();
     while(it != m_changesForReader.end())
 	{
-		if(it->getStatus() == UNDERWAY)
+		if(it->getStatus() == previous)
 		{
             ChangeForReader_t newch(*it);
-            newch.setStatus(UNACKNOWLEDGED);
+            newch.setStatus(next);
 
             auto hint = m_changesForReader.erase(it);
 
@@ -244,53 +194,6 @@ void ReaderProxy::underway_changes_to_unacknowledged()
 
         ++it;
 	}
-}
-
-void ReaderProxy::requested_changes_to_unsent()
-{
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
-    auto it = m_changesForReader.begin();
-    while(it != m_changesForReader.end())
-	{
-		if(it->getStatus() == REQUESTED)
-		{
-            ChangeForReader_t newch(*it);
-            newch.setStatus(UNSENT);
-
-            auto hint = m_changesForReader.erase(it);
-
-            it = m_changesForReader.insert(hint, newch);
-		}
-
-        ++it;
-	}
-
-    cleanup();
-}
-
-// TODO Study if cleanup is necessary
-void ReaderProxy::underway_changes_to_acknowledged()
-{
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-
-    auto it = m_changesForReader.begin();
-    while(it != m_changesForReader.end())
-	{
-		if(it->getStatus() == UNDERWAY)
-		{
-            ChangeForReader_t newch(*it);
-            newch.setStatus(ACKNOWLEDGED);
-
-            auto hint = m_changesForReader.erase(it);
-
-            it = m_changesForReader.insert(hint, newch);
-		}
-
-        ++it;
-	}
-
-    cleanup();
 }
 
 void ReaderProxy::setNotValid(const CacheChange_t* change)

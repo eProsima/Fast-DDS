@@ -92,21 +92,6 @@ namespace eprosima
                 bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
 
                 /*!
-                 * @brief Sets the REQUESTED changes to UNDERWAY and returns a STL vector with the modified ChangeForReader_t.
-                 * The content of the STL vector has to be used in the same synchronized code than the call of this function.
-                 * @return STL vector with the modified ChangeForReader_t.
-                 */
-                std::vector<const ChangeForReader_t*> requested_changes_to_underway();
-                
-
-                /*!
-                 * @brief Sets the UNSENT changes to UNDERWAY and returns a STL vector with the modified ChangeForReader_t.
-                 * The content of the STL vector has to be used in the same synchronized code than the call of this function.
-                 * @return STL vector with the modified ChangeForReader_t.
-                 */
-                std::vector<const ChangeForReader_t*> unsent_changes_to_underway();
-               
-                /*!
                  * @brief Lists all unsent changes.
                  * @return STL vector with the unsent change list.
                  */
@@ -123,12 +108,13 @@ namespace eprosima
                  * @param status Status to apply.
                  */
                 void set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status);
-
-                void underway_changes_to_unacknowledged();
-
-                void underway_changes_to_acknowledged();
-                
-                void requested_changes_to_unsent();
+               
+                /*
+                 * Converts all changes with a given status to a different status.
+                 * @param previous Status to change.
+                 * @param next Status to adopt.
+                 */
+                void convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next);
 
                 void setNotValid(const CacheChange_t* change);
 
@@ -156,14 +142,6 @@ namespace eprosima
 
                 //!Tells whether the requested changes list is empty
                 bool m_isRequestedChangesEmpty;
-
-                /**
-                 * Returns a list of CacheChange_t that have the passes status.
-                 * @param Changes Pointer to a vector of CacheChange_t pointers.
-                 * @param status Status to be used.
-                 * @return True if correctly obtained.
-                 */
-                bool changesList(std::vector<const ChangeForReader_t*>* Changes, const ChangeForReaderStatus_t status);
 
                 /**
                  * Return the minimum change in a vector of CacheChange_t.
