@@ -21,10 +21,13 @@ class FlowFilter
    // Called when a change is finally dispatched.
    static void NotifyFiltersChangeSent(const CacheChangeForGroup_t*);
 
-   virtual ~FlowFilter();
+   // Called to register a filter so it gets notified by static method above.
+   void RegisterAsListeningFilter();
 
-
+   // Filter operator
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
+
+   virtual ~FlowFilter();
 
    private:
    static std::vector<FlowFilter*> ListeningFilters;
