@@ -227,6 +227,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
       block.resourceAlive = false;
       block.Receiver.Abort();
       block.m_thread->join();
+      delete block.m_thread;
+      delete block.mp_receiver;
    }
 
    m_receiverResourcelist.clear();
