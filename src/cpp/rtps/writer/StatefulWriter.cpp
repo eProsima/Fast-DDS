@@ -185,10 +185,6 @@ void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFil
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
 
         std::vector<const ChangeForReader_t*> ch_vec = (*rit)->get_unsent_changes();
-        // TODO: Changes filtered here. the setting to underway will happen after the appropriate culling
-        for (auto changeForReader : ch_vec)
-           (*rit)->set_change_to_status(changeForReader->getChange(), UNDERWAY);
-
         std::vector<CacheChangeForGroup_t> relevant_changes;
         std::vector<SequenceNumber_t> not_relevant_changes;
 
@@ -201,8 +197,21 @@ void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFil
             else
             {
                 not_relevant_changes.push_back((*cit)->getSequenceNumber());
+                (*rit)->set_change_to_status((*cit)->getChange(), UNDERWAY);
             }
         }
+
+        // Clear all relevant changes through the parent filters
+        for (auto& filter : filters)
+           (*filter)(relevant_changes); 
+       
+        // Those that remain are set to UNDERWAY
+        for (auto& change : relevant_changes)
+           (*rit)->set_change_to_status(change.getChange(), UNDERWAY);
+
+        // And filters are notified about the changes being sent
+        for (const auto& change : relevant_changes)
+           FlowFilter::NotifyFiltersChangeSent(&change);
 
         if(m_pushMode)
         {

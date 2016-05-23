@@ -1,5 +1,6 @@
 #include "AsyncWriterThread.h"
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/filters/ThrottleFilter.h>
 
 #include <boost/thread.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -11,6 +12,7 @@ using namespace eprosima::fastrtps::rtps;
 
 AsyncWriterThread::AsyncWriterThread() : thread_(nullptr)
 {
+   m_filters.emplace_back(new ThrottleFilter(1000)); // 1s delay.
 }
 
 AsyncWriterThread::~AsyncWriterThread()
@@ -97,13 +99,13 @@ void AsyncWriterThread::run()
 
                 for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
                 {
-                    (*it)->send_any_unsent_changes();
+                    (*it)->send_any_unsent_changes(m_filters);
                 }
 
             }
 
             //TODO Make configurable the time.
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
         }
         catch(boost::thread_interrupted /*e*/)
         {

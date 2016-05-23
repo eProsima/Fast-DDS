@@ -22,11 +22,9 @@ class FlowFilter
    static void NotifyFiltersChangeSent(const CacheChangeForGroup_t*);
 
    virtual ~FlowFilter();
-   virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
 
-   protected:
-   // To be used by filters with interest in being called back when a change is sent.
-   virtual void RegisterAsListeningFilter();
+
+   virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
 
    private:
    static std::vector<FlowFilter*> ListeningFilters;
