@@ -1,6 +1,7 @@
 #include <fastrtps/rtps/filters/SizeFilter.h>
 
 using namespace std;
+using namespace boost::asio;
 
 namespace eprosima{
 namespace fastrtps{
@@ -9,16 +10,11 @@ namespace rtps{
 SizeFilter::SizeFilter(uint32_t sizeToClear, uint32_t refreshTimeMS):
    mSizeToClear(sizeToClear),
    mAccumulatedPayloadSize(0),
-   mRefreshTimeMS(refreshTimeMS),
-   mRefreshTimer(FlowFilter::FilterService, boost::posix_time::milliseconds(mRefreshTimeMS))
+   mRefreshTimeMS(refreshTimeMS)
 {
 }
 
-SizeFilter::~SizeFilter()
-{
-   std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
-   mRefreshTimer.cancel();
-}
+
 
 void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 {
@@ -57,26 +53,29 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
    }
 
    if (mAccumulatedPayloadSize != accumulatedPayloadSizeBeforeFiltering)
-      ScheduleRefresh();
+      ScheduleRefresh(mAccumulatedPayloadSize - accumulatedPayloadSizeBeforeFiltering);
    changes.erase(changes.begin() + clearedChanges, changes.end());
 }
 
-void SizeFilter::ScheduleRefresh()
+void SizeFilter::ScheduleRefresh(uint32_t sizeToOpen)
 {
-   auto refresh = [&](const boost::system::error_code& error)
+   shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(FlowFilter::FilterService));
+   auto refresh = [throwawayTimer, this, sizeToOpen]
+                   (const boost::system::error_code& error)
    {
-      if ((error == boost::asio::error::operation_aborted))
-         return;
-      else
+
+      std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
+      if ((error != boost::asio::error::operation_aborted) &&
+          FlowFilter::IsListening(this))
       {
-         std::unique_lock<std::recursive_mutex> scopedLockB(mSizeFilterMutex);
-         mAccumulatedPayloadSize = 0;
-      //// TODO: Poke the async thread.
+         throwawayTimer->cancel();
+         mAccumulatedPayloadSize = sizeToOpen > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToOpen;
+         // TODO: Poke the async thread.
       }
    };
 
-   mRefreshTimer.expires_from_now(boost::posix_time::milliseconds(mRefreshTimeMS));
-   mRefreshTimer.async_wait(refresh);
+   throwawayTimer->expires_from_now(boost::posix_time::milliseconds(mRefreshTimeMS));
+   throwawayTimer->async_wait(refresh);
 }
 
 } // namespace rtps

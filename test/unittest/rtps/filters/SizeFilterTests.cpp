@@ -94,11 +94,11 @@ TEST_F(SizeFilterTests, size_filter_resets_completely_after_its_refresh_period)
    ASSERT_EQ(0, testChangesForGroup.size());
 
    // When
-   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 100));
+   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
    
    // The filter should be open now
    sFilter(otherChangesForGroup);
-   ASSERT_EQ(5, otherChangesForGroup.size());
+   EXPECT_EQ(5, otherChangesForGroup.size());
 }
 
 int main(int argc, char **argv)

@@ -37,6 +37,13 @@ void FlowFilter::DeRegisterAsListeningFilter()
    ListeningFilters.erase(std::remove(ListeningFilters.begin(), ListeningFilters.end(), this), ListeningFilters.end());
 }
 
+bool FlowFilter::IsListening(FlowFilter* filter) 
+{
+   std::unique_lock<std::recursive_mutex> scopedLock(FlowFilterMutex);
+   auto it = find(ListeningFilters.begin(), ListeningFilters.end(), filter);
+   return it != ListeningFilters.end();
+}
+
 void FlowFilter::StartFilterService()
 {
    auto ioServiceFunction = [&]()

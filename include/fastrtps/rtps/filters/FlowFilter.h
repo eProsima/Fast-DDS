@@ -50,6 +50,7 @@ protected:
    // To be used by derived filters to schedule asynchronous operations.
    static std::recursive_mutex FlowFilterMutex;
 	static boost::asio::io_service FilterService;
+   static bool IsListening(FlowFilter*);
 };
 
 

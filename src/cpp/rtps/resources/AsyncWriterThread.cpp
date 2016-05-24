@@ -1,6 +1,5 @@
 #include "AsyncWriterThread.h"
 #include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/filters/ThrottleFilter.h>
 
 #include <boost/thread.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -101,7 +100,7 @@ void AsyncWriterThread::run()
             }
 
             //TODO Make configurable the time.
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
         }
         catch(boost::thread_interrupted /*e*/)
         {

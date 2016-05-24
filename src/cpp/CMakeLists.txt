@@ -79,7 +79,6 @@ set_sources(
     rtps/builtin/data/ParticipantProxyData.cpp 
     rtps/builtin/data/WriterProxyData.cpp 
     rtps/builtin/data/ReaderProxyData.cpp 
-    rtps/filters/ThrottleFilter.cpp 
     rtps/filters/QuantityFilter.cpp 
     rtps/filters/SizeFilter.cpp 
     rtps/filters/FlowFilter.cpp 

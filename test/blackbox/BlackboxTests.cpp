@@ -665,6 +665,47 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
     ASSERT_EQ(data.size(), 0);
 }
 
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithFiltering)
+{
+    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    const uint32_t maxSize = 68000;
+    const uint32_t refreshTimeMS = 500;
+    std::unique_ptr<SizeFilter> sizeFilter(new SizeFilter(maxSize, refreshTimeMS));
+    writer.getParticipant()->add_flow_filter(std::move(sizeFilter));
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data64kb_data_generator(30);
+    
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(20));
+
+    print_non_received_messages(data, default_data64kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
 TEST(BlackBox, PubSubAsNonReliableData300kb)
 {
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
