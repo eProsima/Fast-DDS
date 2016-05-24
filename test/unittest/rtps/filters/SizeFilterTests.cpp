@@ -7,6 +7,7 @@ using namespace eprosima::fastrtps::rtps;
 
 static const unsigned int testPayloadSize = 1000;
 static const unsigned int filterSize = 5500;
+static const unsigned int refreshTimeMS = 200;
 static const unsigned int numberOfTestChanges = 10;
 
 class SizeFilterTests: public ::testing::Test 
@@ -14,19 +15,25 @@ class SizeFilterTests: public ::testing::Test
    public:
 
    SizeFilterTests():
-      sFilter(filterSize)
+      sFilter(filterSize, refreshTimeMS)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {
          testChanges.emplace_back(new CacheChange_t(testPayloadSize));
          testChanges.back()->serializedPayload.length = testPayloadSize;
          testChangesForGroup.emplace_back(testChanges.back().get());
+
+         otherChanges.emplace_back(new CacheChange_t(testPayloadSize));
+         otherChanges.back()->serializedPayload.length = testPayloadSize;
+         otherChangesForGroup.emplace_back(otherChanges.back().get());
       }
    }
 
    SizeFilter sFilter;
    std::vector<std::unique_ptr<CacheChange_t>> testChanges;
+   std::vector<std::unique_ptr<CacheChange_t>> otherChanges;
    std::vector<CacheChangeForGroup_t> testChangesForGroup;
+   std::vector<CacheChangeForGroup_t> otherChangesForGroup;
 };
 
 TEST_F(SizeFilterTests, quantity_filter_lets_only_some_elements_through)
@@ -64,6 +71,17 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
    ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending(), 5); 
 }
 
+TEST_F(SizeFilterTests, quantity_filter_carries_over_multiple_attempts)
+{
+   // Given
+   sFilter(testChangesForGroup);
+
+   // when
+   sFilter(otherChangesForGroup);
+
+   // Then
+   ASSERT_EQ(0, otherChangesForGroup.size());
+}
 
 int main(int argc, char **argv)
 {

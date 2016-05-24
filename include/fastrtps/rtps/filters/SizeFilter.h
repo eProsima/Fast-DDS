@@ -6,6 +6,7 @@
 
 /*
  * Simple filter that only clears changes up to a certain accumulated payload size.
+ * It refreshes after a given time in MS.
  */
 namespace eprosima{
 namespace fastrtps{
@@ -14,11 +15,13 @@ namespace rtps{
 class SizeFilter : public FlowFilter
 {
    public:
-   explicit SizeFilter(unsigned int sizeToClear);
+   explicit SizeFilter(uint32_t sizeToClear, uint32_t refreshTimeMS);
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
    private:
-   unsigned int mSize;
+   uint32_t mSizeToClear;
+   uint32_t mAccumulatedPayloadSize;
+   uint32_t mRefreshTimeMS;
 };
 
 } // namespace rtps

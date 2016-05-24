@@ -9,9 +9,7 @@ namespace rtps{
 ThrottleFilter::ThrottleFilter(unsigned int throttlePeriodInMS):
    mThrottlePeriodInMs(throttlePeriodInMS),
    mThrottling(false)
-{
-   RegisterAsListeningFilter();
-}
+{}
 
 void ThrottleFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 {
