@@ -35,14 +35,6 @@ void FlowFilter::DeRegisterAsListeningFilter()
 {
    std::unique_lock<std::recursive_mutex> scopedLock(FlowFilterMutex);
    ListeningFilters.erase(std::remove(ListeningFilters.begin(), ListeningFilters.end(), this), ListeningFilters.end());
-
-   if (ListeningFilters.empty() && FilterThread)
-   {
-      // No listening filters, so there is no need for the filter thread.
-      FilterService.stop();
-      FilterThread->join();
-      FilterThread.reset();
-   }
 }
 
 void FlowFilter::StartFilterService()

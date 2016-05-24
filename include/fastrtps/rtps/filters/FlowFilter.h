@@ -37,7 +37,6 @@ private:
 
    static std::vector<FlowFilter*> ListeningFilters;
    static std::unique_ptr<boost::thread> FilterThread;
-   static std::recursive_mutex FlowFilterMutex;
    static void StartFilterService();
 
    // No copy, assignment or move! Filters are accessed by reference
@@ -49,6 +48,7 @@ private:
 
 protected:
    // To be used by derived filters to schedule asynchronous operations.
+   static std::recursive_mutex FlowFilterMutex;
 	static boost::asio::io_service FilterService;
 };
 

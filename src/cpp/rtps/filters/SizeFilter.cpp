@@ -24,7 +24,7 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 {
    std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
 
-   uint32_t accumulatedPayloadBeforeFiltering = mAccumulatedPayloadSize;
+   uint32_t accumulatedPayloadSizeBeforeFiltering = mAccumulatedPayloadSize;
    unsigned int clearedChanges = 0;
    while (clearedChanges < changes.size())
    {
@@ -44,17 +44,20 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
       }
       else
       {
-         mAccumulatedPayloadSize += change.getChange()->serializedPayload.length;
-         if (mAccumulatedPayloadSize <= mSizeToClear)
+         bool fits = (mAccumulatedPayloadSize + change.getChange()->serializedPayload.length) <= mSizeToClear;
+
+         if (fits)
+         {
+            mAccumulatedPayloadSize += change.getChange()->serializedPayload.length;
             clearedChanges++;
+         }
          else
             break;
       }
    }
 
-   if (accumulatedPayloadBeforeFiltering != mAccumulatedPayloadSize)
+   if (mAccumulatedPayloadSize != accumulatedPayloadSizeBeforeFiltering)
       ScheduleRefresh();
-
    changes.erase(changes.begin() + clearedChanges, changes.end());
 }
 
@@ -62,12 +65,14 @@ void SizeFilter::ScheduleRefresh()
 {
    auto refresh = [&](const boost::system::error_code& error)
    {
-      if (error == boost::asio::error::operation_aborted)
+      if ((error == boost::asio::error::operation_aborted))
          return;
-
-      std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
-      mAccumulatedPayloadSize = 0;
-      // TODO: Poke the async thread.
+      else
+      {
+         std::unique_lock<std::recursive_mutex> scopedLockB(mSizeFilterMutex);
+         mAccumulatedPayloadSize = 0;
+      //// TODO: Poke the async thread.
+      }
    };
 
    mRefreshTimer.expires_from_now(boost::posix_time::milliseconds(mRefreshTimeMS));
