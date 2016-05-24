@@ -14,14 +14,19 @@ namespace rtps{
 
 class SizeFilter : public FlowFilter
 {
-   public:
+public:
    explicit SizeFilter(uint32_t sizeToClear, uint32_t refreshTimeMS);
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
+   ~SizeFilter();
 
-   private:
+private:
    uint32_t mSizeToClear;
    uint32_t mAccumulatedPayloadSize;
    uint32_t mRefreshTimeMS;
+   boost::asio::deadline_timer mRefreshTimer;
+   std::recursive_mutex mSizeFilterMutex;
+
+   void ScheduleRefresh();
 };
 
 } // namespace rtps

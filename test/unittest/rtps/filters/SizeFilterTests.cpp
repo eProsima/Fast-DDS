@@ -7,7 +7,7 @@ using namespace eprosima::fastrtps::rtps;
 
 static const unsigned int testPayloadSize = 1000;
 static const unsigned int filterSize = 5500;
-static const unsigned int refreshTimeMS = 200;
+static const unsigned int refreshTimeMS = 100;
 static const unsigned int numberOfTestChanges = 10;
 
 class SizeFilterTests: public ::testing::Test 
@@ -36,7 +36,7 @@ class SizeFilterTests: public ::testing::Test
    std::vector<CacheChangeForGroup_t> otherChangesForGroup;
 };
 
-TEST_F(SizeFilterTests, quantity_filter_lets_only_some_elements_through)
+TEST_F(SizeFilterTests, size_filter_lets_only_some_elements_through)
 {
    // When
    sFilter(testChangesForGroup);
@@ -71,7 +71,7 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
    ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending(), 5); 
 }
 
-TEST_F(SizeFilterTests, quantity_filter_carries_over_multiple_attempts)
+TEST_F(SizeFilterTests, size_filter_carries_over_multiple_attempts)
 {
    // Given
    sFilter(testChangesForGroup);
@@ -81,6 +81,24 @@ TEST_F(SizeFilterTests, quantity_filter_carries_over_multiple_attempts)
 
    // Then
    ASSERT_EQ(0, otherChangesForGroup.size());
+}
+
+TEST_F(SizeFilterTests, size_filter_resets_completely_after_its_refresh_period)
+{
+   // Given
+   sFilter(testChangesForGroup);
+   ASSERT_EQ(5, testChangesForGroup.size());
+
+   // The filter is now fully closed, so filtering anything will throw all changes away.
+   sFilter(testChangesForGroup);
+   ASSERT_EQ(0, testChangesForGroup.size());
+
+   // When
+   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 100));
+   
+   // The filter should be open now
+   sFilter(otherChangesForGroup);
+   ASSERT_EQ(5, otherChangesForGroup.size());
 }
 
 int main(int argc, char **argv)

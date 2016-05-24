@@ -49,6 +49,7 @@ void FlowFilter::StartFilterService()
 {
    auto ioServiceFunction = [&]()
    {
+      FilterService.reset();
       boost::asio::io_service::work work(FilterService);
       FilterService.run();
    };

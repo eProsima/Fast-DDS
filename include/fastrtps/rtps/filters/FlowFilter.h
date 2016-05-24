@@ -37,7 +37,6 @@ private:
 
    static std::vector<FlowFilter*> ListeningFilters;
    static std::unique_ptr<boost::thread> FilterThread;
-	static boost::asio::io_service FilterService;
    static std::recursive_mutex FlowFilterMutex;
    static void StartFilterService();
 
@@ -49,9 +48,8 @@ private:
    FlowFilter(FlowFilter&&) = delete;
 
 protected:
-   // Schedules the filter to be updated in the future. Also
-   // wakes up the asynchronous thread when it happens.
-   void ScheduleCall(std::function<void()>, uint32_t ms);
+   // To be used by derived filters to schedule asynchronous operations.
+	static boost::asio::io_service FilterService;
 };
 
 
