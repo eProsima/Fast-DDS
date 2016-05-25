@@ -1,4 +1,4 @@
-#include "AsyncWriterThread.h"
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <boost/thread.hpp>
@@ -6,8 +6,11 @@
 
 #include <algorithm>
 #include <cassert>
+#include <stdexcept>
 
 using namespace eprosima::fastrtps::rtps;
+
+AsyncWriterThread* AsyncWriterThread::instance_ = nullptr;
 
 AsyncWriterThread::AsyncWriterThread() : thread_(nullptr)
 {
@@ -21,6 +24,14 @@ AsyncWriterThread::~AsyncWriterThread()
         thread_->join();
         delete thread_;
     }
+    instance_ = nullptr;
+}
+
+AsyncWriterThread* AsyncWriterThread::instance()
+{
+   if (!instance_)
+      instance_ = new AsyncWriterThread();
+   return instance_;
 }
 
 bool AsyncWriterThread::addWriter(RTPSWriter* writer)
@@ -40,12 +51,6 @@ bool AsyncWriterThread::addWriter(RTPSWriter* writer)
      }
 
     return returnedValue;
-}
-
-void AsyncWriterThread::add_flow_filter(std::unique_ptr<FlowFilter> filter)
-{
-   boost::lock_guard<boost::mutex> guard(mutex_);
-   m_filters.push_back(std::move(filter));
 }
 
 /*!
@@ -94,7 +99,7 @@ void AsyncWriterThread::run()
 
                 for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
                 {
-                    (*it)->send_any_unsent_changes(m_filters);
+                    (*it)->send_any_unsent_changes();
                 }
 
             }

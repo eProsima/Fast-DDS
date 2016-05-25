@@ -4,18 +4,25 @@
 #include <fastrtps/rtps/filters/FlowFilter.h>
 #include <thread>
 
-/*
- * Simple filter that only clears changes up to a certain accumulated payload size.
- * It refreshes after a given time in MS.
- */
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+struct SizeFilterDescriptor {
+   uint32_t sizeToClear;
+   uint32_t refreshTimeMS;
+};
+
+/*
+ * Simple filter that only clears changes up to a certain accumulated payload size.
+ * It refreshes after a given time in MS, in a staggered way (e.g. if it clears
+ * 500kb at t=0 and 800 kb at t=10, it will refresh 500kb at t = 0 + period, and
+ * then fully refresh at t = 10 + period).
+ */
 class SizeFilter : public FlowFilter
 {
 public:
-   SizeFilter(uint32_t sizeToClear, uint32_t refreshTimeMS);
+   SizeFilter(const SizeFilterDescriptor&);
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes);
 
 private:
@@ -24,7 +31,11 @@ private:
    uint32_t mRefreshTimeMS;
    std::recursive_mutex mSizeFilterMutex;
 
-   void ScheduleRefresh(uint32_t sizeToOpen);
+   /*
+    * Schedules the filter to be refreshed in period ms. When it does, its capacity
+    * will be partially restored, by "sizeToRestore" bytes.
+    */
+   void ScheduleRefresh(uint32_t sizeToRestore);
 };
 
 } // namespace rtps

@@ -70,7 +70,6 @@ public:
 	 * Method to indicate that there are changes not sent in some of all ReaderProxy.
 	 */
 	void send_any_unsent_changes();
-   void send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters);
 
 	/**
 	 * Update the Attributes of the Writer.
@@ -109,10 +108,13 @@ public:
 
     bool clean_history(unsigned int max = 0);
 
+   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+
 private:
 	//Duration_t resendDataPeriod; //FIXME: Not used yet.
 	std::vector<ReaderLocator> reader_locator;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
+   std::vector<std::unique_ptr<FlowFilter> > m_filters;
 };
 }
 } /* namespace rtps */

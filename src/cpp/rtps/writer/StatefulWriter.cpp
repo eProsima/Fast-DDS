@@ -13,6 +13,7 @@
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include "../participant/RTPSParticipantImpl.h"
 
@@ -63,6 +64,9 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 StatefulWriter::~StatefulWriter()
 {
+   if (AsyncWriterThread::instance())
+      AsyncWriterThread::instance()->removeWriter(this);
+
     const char* const METHOD_NAME = "~StatefulWriter";
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
@@ -171,7 +175,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     return true;
 }
 
-void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters)
+void StatefulWriter::send_any_unsent_changes()
 {
     const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
@@ -197,8 +201,12 @@ void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFil
             }
         }
 
+        // Clear all relevant changes through the local filters first
+        for (auto& filter : m_filters)
+           (*filter)(relevant_changes);
+
         // Clear all relevant changes through the parent filters
-        for (auto& filter : filters)
+        for (auto& filter : mp_RTPSParticipant->getFlowFilters())
            (*filter)(relevant_changes); 
        
         // Those that remain are set to UNDERWAY
@@ -238,7 +246,6 @@ void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFil
             {
                 this->mp_periodicHB->restart_timer();
             }
-
             (*rit)->mp_nackSupression->restart_timer();
         }
         else
@@ -265,16 +272,10 @@ void StatefulWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFil
 	logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
-void StatefulWriter::send_any_unsent_changes()
-{
-   std::vector<std::unique_ptr<FlowFilter>> noFilters;
-   send_any_unsent_changes(noFilters);
-}
 
 /*
  *	MATCHED_READER-RELATED METHODS
  */
-
 bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
 	const char* const METHOD_NAME = "matched_reader_add";
@@ -554,4 +555,9 @@ void StatefulWriter::updateTimes(WriterTimes& times)
         }
     }
     m_times = times;
+}
+
+void StatefulWriter::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+{
+   m_filters.push_back(std::move(filter));
 }

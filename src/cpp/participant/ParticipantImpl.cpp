@@ -376,10 +376,5 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16
 		return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
 }
 
-void ParticipantImpl::add_flow_filter(std::unique_ptr<FlowFilter> filter)
-{
-   this->mp_rtpsParticipant->add_flow_filter(std::move(filter));
-}
-
 } /* namespace pubsub */
 } /* namespace eprosima */

@@ -20,8 +20,6 @@
 #include "../filters/FlowFilter.h"
 #include <vector>
 
-
-
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -87,7 +85,6 @@ public:
 	 * This method triggers the send operation for unsent changes.
 	 */
 	RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
-   RTPS_DllAPI virtual void send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters){(void)filters; send_any_unsent_changes();};
 
 	/**
 	 * This method triggers the send operation for unsent changes,
@@ -137,7 +134,12 @@ public:
 	*/
 	RTPS_DllAPI inline bool isAsync(){ return is_async_; };
 
-    virtual bool clean_history(unsigned int max = 0) = 0;
+   virtual bool clean_history(unsigned int max = 0) = 0;
+   
+   /*
+    * Adds a flow filter that will apply to this writer exclusively.
+    */
+   virtual void add_flow_filter(std::unique_ptr<FlowFilter> filter) = 0;
 
 protected:
 

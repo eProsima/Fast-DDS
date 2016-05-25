@@ -80,9 +80,8 @@ class PubSubWriter
     void init()
     {
         //Create participant
-        eprosima::fastrtps::ParticipantAttributes pattr;
-        pattr.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
-        participant_ = eprosima::fastrtps::Domain::createParticipant(pattr);
+        participant_attr_.rtps.builtin.domainId = (uint32_t)boost::interprocess::ipcdetail::get_current_process_id() % 230;
+        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_);
 
         if(participant_ != nullptr)
         {
@@ -167,6 +166,15 @@ class PubSubWriter
         return *this;
     }
 
+    /*** Function to change QoS ***/
+    PubSubWriter& add_size_filter_descriptor_to_pparams(uint32_t sizeToClear, uint32_t periodInMs)
+    {
+        SizeFilterDescriptor descriptor {sizeToClear, periodInMs};
+        participant_attr_.rtps.sizeFilters.push_back(descriptor);
+
+        return *this;
+    }
+
     PubSubWriter& asynchronously(const eprosima::fastrtps::PublishModeQosPolicyKind kind)
     {
         publisher_attr_.qos.m_publishMode.kind = kind;
@@ -229,6 +237,7 @@ class PubSubWriter
 
     eprosima::fastrtps::Participant *participant_;
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
+    eprosima::fastrtps::ParticipantAttributes participant_attr_;
     eprosima::fastrtps::Publisher *publisher_;
     std::string topic_name_;
     bool initialized_;

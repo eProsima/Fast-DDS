@@ -15,6 +15,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
+#include "../filters/SizeFilter.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -226,9 +227,12 @@ public:
 	//!Get the name of the participant.
 	inline const char* getName(){return name.c_str();}
 
+   std::vector<SizeFilterDescriptor> sizeFilters;
+
 private:
 	//!Name of the participant.
 	std::string name;
+
 
 
 };

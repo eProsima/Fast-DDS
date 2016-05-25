@@ -197,6 +197,46 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     ASSERT_EQ(msgs.size(), 0);
 }
 
+TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFiltering)
+{
+    RTPSAsNonReliableSocketReader reader;
+    RTPSAsNonReliableSocketWriter writer;
+    std::string ip("239.255.1.4");
+    const uint32_t port = 22222;
+    const uint16_t nmsgs = 100;
+    
+    reader.init(ip, port, nmsgs);
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t sizeToClear = 440; // Roughly ten times the size of the payload being sent
+    uint32_t refreshTimeMS = 300;
+    writer.addSizeFilterDescriptorToWriterAttributes(sizeToClear, refreshTimeMS);
+    writer.init(ip, port, true);
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    for(unsigned int tries = 0; tries < 20; ++tries)
+    {
+        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+        if(msgs.empty())
+            break;
+
+        writer.send(msgs);
+        reader.block(*msgs.rbegin(), std::chrono::seconds(40));
+    }
+
+    std::list<uint16_t> msgs = reader.getNonReceivedMessages();
+    if(msgs.size() != 0)
+    {
+        std::cout << "Samples not received:";
+        for(std::list<uint16_t>::iterator it = msgs.begin(); it != msgs.end(); ++it)
+            std::cout << " " << *it << " ";
+        std::cout << std::endl;
+    }
+    ASSERT_EQ(msgs.size(), 0);
+}
+
 TEST(BlackBox, RTPSAsReliableSocket)
 {
     RTPSAsReliableSocketReader reader;
@@ -629,7 +669,7 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     ASSERT_EQ(data.size(), 0);
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData64kb)
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFiltering)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -638,52 +678,15 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kb)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        heartbeat_period_seconds(0).
-        heartbeat_period_fraction(4294967 * 500).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
-
-    auto data = default_data64kb_data_generator(30);
-    
-    reader.expected_data(data);
-    reader.startReception();
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
-
-    print_non_received_messages(data, default_data64kb_print);
-    ASSERT_EQ(data.size(), 0);
-}
-
-TEST(BlackBox, AsyncPubSubAsReliableData64kbWithFiltering)
-{
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
-    
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(reader.isInitialized());
+    uint32_t sizeToClear = 68000;
+    uint32_t periodInMs = 500;
+    writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).
         heartbeat_period_fraction(4294967 * 500).init();
 
     ASSERT_TRUE(writer.isInitialized());
-
-    const uint32_t maxSize = 68000;
-    const uint32_t refreshTimeMS = 500;
-    std::unique_ptr<SizeFilter> sizeFilter(new SizeFilter(maxSize, refreshTimeMS));
-    writer.getParticipant()->add_flow_filter(std::move(sizeFilter));
 
     // Because its volatile the durability
     // Wait for discovery.

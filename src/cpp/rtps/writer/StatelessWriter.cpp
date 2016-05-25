@@ -13,6 +13,8 @@
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include "../participant/RTPSParticipantImpl.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -37,6 +39,9 @@ StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 StatelessWriter::~StatelessWriter()
 {
+   if (AsyncWriterThread::instance())
+      AsyncWriterThread::instance()->removeWriter(this);
+
 	const char* const METHOD_NAME = "~StatelessWriter";
 	logInfo(RTPS_WRITER,"StatelessWriter destructor";);
 }
@@ -111,30 +116,30 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 
 void StatelessWriter::send_any_unsent_changes()
 {
-   std::vector<std::unique_ptr<FlowFilter>> noFilters;
-   send_any_unsent_changes(noFilters);
-}
-
-void StatelessWriter::send_any_unsent_changes(std::vector<std::unique_ptr<FlowFilter> >& filters)
-{
 	const char* const METHOD_NAME = "send_any_unsent_changes";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
 	for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
 	{
-      // Shallow copy the list and filter it.
+      // Shallow copy the list
       auto unsent_changes_copy = rit->unsent_changes; 
-      for (auto& filter : filters)
-         (*filter)(unsent_changes_copy); 
 
+      // Clear through local filters
+      for (auto& filter : m_filters)
+          (*filter)(unsent_changes_copy);
+
+      // Clear through parent filters
+      for (auto& filter : mp_RTPSParticipant->getFlowFilters())
+          (*filter)(unsent_changes_copy); 
 
       // Remove the messages selected for sending from the original list
-      remove_if(rit->unsent_changes.begin(), rit->unsent_changes.end(),
-                [&](CacheChangeForGroup_t ccfg)->bool 
-                { for (auto& changeForGroup : unsent_changes_copy)
-                    if (changeForGroup.getChange() == ccfg.getChange()) return true;
-                  return false; 
-                });
+      auto newEnd = remove_if(rit->unsent_changes.begin(), rit->unsent_changes.end(),
+                              [&](CacheChangeForGroup_t ccfg)->bool 
+                              { for (auto& changeForGroup : unsent_changes_copy)
+                                  if (changeForGroup.getChange() == ccfg.getChange()) return true;
+                                return false; 
+                              });
+      rit->unsent_changes.erase(newEnd, rit->unsent_changes.end());
 
 		if(!unsent_changes_copy.empty())
 		{
@@ -341,34 +346,10 @@ bool StatelessWriter::clean_history(unsigned int max)
     return at_least_one;
 }
 
-//
-//bool sort_cacheChanges (CacheChange_t* c1,CacheChange_t* c2)
-//{
-//	return(c1->sequenceNumber.to64long() < c2->sequenceNumber.to64long());
-//}
-
-
-
-
-
-
-//bool StatelessWriter::removeMinSeqCacheChange()
-//{
-//	return mp_history->remove_min_change();
-//}
-//
-//bool StatelessWriter::removeAllCacheChange(size_t* n_removed)
-//{
-//	size_t n_r=this->mp_history->getHistorySize();
-//	if(this->mp_history->remove_all_changes())
-//	{
-//		*n_removed = n_r;
-//		return true;
-//	}
-//	else
-//		return false;
-//}
-
+void StatelessWriter::add_flow_filter(std::unique_ptr<FlowFilter> filter)
+{
+   m_filters.push_back(std::move(filter));
+}
 
 
 } /* namespace rtps */

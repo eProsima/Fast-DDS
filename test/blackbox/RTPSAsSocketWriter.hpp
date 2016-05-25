@@ -32,6 +32,7 @@ class RTPSAsSocketWriter
         void send(const std::list<uint16_t> &msgs);
         virtual void configWriter(WriterAttributes &wattr) = 0;
         virtual void configRemoteReader(RemoteReaderAttributes &rattr, GUID_t &guid) = 0;
+
         virtual std::string getText() = 0;
 
     private:

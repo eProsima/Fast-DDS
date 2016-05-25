@@ -15,6 +15,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
+#include "../filters/SizeFilter.h"
 #include "EndpointAttributes.h"
 
 namespace eprosima{
@@ -70,6 +71,8 @@ public:
 	WriterTimes times;
 	//!Indicates if the Writer is synchronous or asynchronous
 	RTPSWriterPublishMode mode;
+   // Size Filters to be used exclusively by this writer
+   std::vector<SizeFilterDescriptor> sizeFilters;
 };
 
 /**

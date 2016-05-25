@@ -7,14 +7,12 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SizeFilter::SizeFilter(uint32_t sizeToClear, uint32_t refreshTimeMS):
-   mSizeToClear(sizeToClear),
+SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor):
+   mSizeToClear(descriptor.sizeToClear),
    mAccumulatedPayloadSize(0),
-   mRefreshTimeMS(refreshTimeMS)
+   mRefreshTimeMS(descriptor.refreshTimeMS)
 {
 }
-
-
 
 void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 {
@@ -57,19 +55,18 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
    changes.erase(changes.begin() + clearedChanges, changes.end());
 }
 
-void SizeFilter::ScheduleRefresh(uint32_t sizeToOpen)
+void SizeFilter::ScheduleRefresh(uint32_t sizeToRestore)
 {
    shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(FlowFilter::FilterService));
-   auto refresh = [throwawayTimer, this, sizeToOpen]
+   auto refresh = [throwawayTimer, this, sizeToRestore]
                    (const boost::system::error_code& error)
    {
-
-      std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
       if ((error != boost::asio::error::operation_aborted) &&
           FlowFilter::IsListening(this))
       {
+         std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
          throwawayTimer->cancel();
-         mAccumulatedPayloadSize = sizeToOpen > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToOpen;
+         mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
          // TODO: Poke the async thread.
       }
    };

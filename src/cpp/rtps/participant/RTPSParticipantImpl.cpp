@@ -15,7 +15,7 @@
 
 #include <fastrtps/rtps/resources/ResourceSend.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include "../resources/AsyncWriterThread.h"
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/resources/ListenResource.h>
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -81,7 +81,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 		RTPSParticipant* par,
 		RTPSParticipantListener* plisten):	m_guid(guidP,c_EntityId_RTPSParticipant),
 				mp_event_thr(nullptr),
-            async_writers_thread_(nullptr),
 				mp_builtinProtocols(nullptr),
 				mp_ResourceSemaphore(new boost::interprocess::interprocess_semaphore(0)),
 				IdCounter(0),
@@ -104,7 +103,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	loc.port = PParam.defaultSendPort;
 	mp_event_thr = new ResourceEvent();
 	mp_event_thr->init_thread(this);
-   async_writers_thread_ = new AsyncWriterThread();
+
+   for (const auto& descriptor : PParam.sizeFilters)
+   {
+      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor));
+      m_filters.push_back(std::move(filter));
+   }
+
 	bool hasLocatorsDefined = true;
 	//If no default locators are defined we define some.
 	/* The reasoning here is the following.
@@ -235,7 +240,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 	delete(this->mp_userParticipant);
 
 	m_senderResource.clear();
-   delete(this->async_writers_thread_);
 	delete(this->mp_event_thr);
 	delete(this->mp_mutex);
 }
@@ -316,13 +320,19 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
    // Asynchronous thread runs regardless of mode because of
    // nack response duties.
-   async_writers_thread_->addWriter(SWriter);
+   AsyncWriterThread::instance()->addWriter(SWriter);
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);
 	if(!isBuiltin)
 		m_userWriterList.push_back(SWriter);
 	*WriterOut = SWriter;
+
+   for (const auto& descriptor : param.sizeFilters)
+   {
+      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor));
+      SWriter->add_flow_filter(std::move(filter));
+   }
 	return true;
 }
 
@@ -643,9 +653,6 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 			{
 				if((*wit)->getGuid().entityId == p_endpoint->getGuid().entityId) //Found it
 				{
-               // If writer is asynchronous, remove from async thread.
-               async_writers_thread_->removeWriter(*wit);
-
 					m_userWriterList.erase(wit);
 					found = true;
 					break;
@@ -759,12 +766,6 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
 {
 	this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
 }
-
-void RTPSParticipantImpl::add_flow_filter(std::unique_ptr<FlowFilter> filter)
-{
-   async_writers_thread_->add_flow_filter(std::move(filter));
-}
-
 
 }
 } /* namespace rtps */

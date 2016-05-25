@@ -66,8 +66,6 @@ public:
 	*/
 	bool newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t userId,
 		EndpointKind_t kind);
-
-   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
 };
 
 }

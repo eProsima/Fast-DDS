@@ -10,12 +10,14 @@ static const unsigned int filterSize = 5500;
 static const unsigned int refreshTimeMS = 100;
 static const unsigned int numberOfTestChanges = 10;
 
+static const SizeFilterDescriptor testDescriptor = {filterSize, refreshTimeMS};
+
 class SizeFilterTests: public ::testing::Test 
 {
    public:
 
    SizeFilterTests():
-      sFilter(filterSize, refreshTimeMS)
+      sFilter(testDescriptor)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {

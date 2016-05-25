@@ -174,12 +174,9 @@ public:
 	* Get the participant
 	* @return participant
 	*/
-    inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;};
+    inline RTPSParticipant* getUserRTPSParticipant(){return mp_userParticipant;}
 
-    /* Not needed anymore, stays for reference pursposes
-	bool assignLocatorForBuiltin_unsafe(LocatorList_t& list, bool isMulti, bool isFixed);*/
-
-   void add_flow_filter(std::unique_ptr<FlowFilter> filter);
+    std::vector<std::unique_ptr<FlowFilter>>& getFlowFilters() { return m_filters;}
 
 private:
 	//!Attributes of the RTPSParticipant
@@ -190,8 +187,6 @@ private:
 	// ResourceSend* mp_send_thr;
 	//! Event Resource
 	ResourceEvent* mp_event_thr;
-    //! Asynchronous writers manager.
-   AsyncWriterThread *async_writers_thread_;
 	//! BuiltinProtocols of this RTPSParticipant
 	BuiltinProtocols* mp_builtinProtocols;
 	//!Semaphore to wait for the listen thread creation.
@@ -276,6 +271,10 @@ private:
 	boost::recursive_mutex* mp_mutex;
 	//!ListenThreadId
 	uint32_t m_threadID;
+   /*
+    * Flow filters for this participant.
+    */
+   std::vector<std::unique_ptr<FlowFilter> > m_filters; 
 public:
 	/**
 	 * Create a Writer in this RTPSParticipant.

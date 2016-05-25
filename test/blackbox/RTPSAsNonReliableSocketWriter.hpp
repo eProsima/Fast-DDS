@@ -15,6 +15,7 @@
 #define _TEST_BLACKBOX_RTPSASNONRELIABLESOCKETWRITER_HPP_
 
 #include "RTPSAsSocketWriter.hpp" 
+#include <fastrtps/rtps/filters/SizeFilter.h>
 
 class RTPSAsNonReliableSocketWriter : public RTPSAsSocketWriter
 {
@@ -22,6 +23,7 @@ class RTPSAsNonReliableSocketWriter : public RTPSAsSocketWriter
         void configWriter(WriterAttributes &wattr)
         {
             wattr.endpoint.reliabilityKind = BEST_EFFORT;
+            wattr.sizeFilters = sizeFiltersForWriter;
         }
 
         void configRemoteReader(RemoteReaderAttributes &/*rattr*/, GUID_t &/*ĝuid*/)
@@ -32,6 +34,14 @@ class RTPSAsNonReliableSocketWriter : public RTPSAsSocketWriter
         {
             return "RTPSAsNonReliableSocket";
         }
+
+        void addSizeFilterDescriptorToWriterAttributes(uint32_t sizeToClear, uint32_t refreshTimeMS)
+        {
+            SizeFilterDescriptor descriptor {sizeToClear, refreshTimeMS};
+            sizeFiltersForWriter.push_back(descriptor);
+        }
+
+        std::vector<SizeFilterDescriptor> sizeFiltersForWriter;
 };
 
 #endif // _TEST_BLACKBOX_RTPSASNONRELIABLESOCKETWRITER_HPP_
