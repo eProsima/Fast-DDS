@@ -65,7 +65,7 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 StatefulWriter::~StatefulWriter()
 {
    if (AsyncWriterThread::instance())
-      AsyncWriterThread::instance()->removeWriter(this);
+      AsyncWriterThread::instance()->removeWriter(*this);
 
     const char* const METHOD_NAME = "~StatefulWriter";
     logInfo(RTPS_WRITER,"StatefulWriter destructor");

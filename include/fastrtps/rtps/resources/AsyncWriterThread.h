@@ -33,27 +33,32 @@ namespace rtps
    class RTPSWriter;
 
    /*!
-    * @brief This singleton manages the thread which manages the asynchronous writers.
-    * This thread is created and running only when there are asynchrnous writers.
-    * @remarks This class is thread-safe.
+    * @brief This singleton owns a thread that manages asynchronous writes.
+    * Asynchronous writes happen directly (when using an async writer) and
+    * indirectly (when responding to a NACK).
     */
    class AsyncWriterThread
    {
        public:
            /*!
+            * @brief Returns the only singleton instance of AsyncWriterThread.
+            */
+           static AsyncWriterThread* instance();
+
+           /*!
             * @brief This function adds a writer to be managed by this thread.
             * Only asynchronous writers are permitted.
-            * @param writer Asynchronous writer to be added. Pointer cannot be null.
+            * @param writer Asynchronous writer to be added. 
             * @return Result of the operation.
             */
-           bool addWriter(RTPSWriter* writer);
+           bool addWriter(RTPSWriter& writer);
 
            /*!
             * @brief This function removes a writer.
-            * @param writer Asynchronous writer to be removed. Pointer cannot be null.
+            * @param writer Asynchronous writer to be removed.
             * @return Result of the operation.
             */
-           bool removeWriter(RTPSWriter* writer);
+           bool removeWriter(RTPSWriter& writer);
 
            /*
             * Wakes the thread up.
@@ -62,11 +67,6 @@ namespace rtps
            void wakeUp();
            //void wakeUp(RTPSParticipant* interestedParticipant);
            //void wakeUp(RTPSWriter * interestedWriter);
-
-           /*!
-            * @brief Returns the only singleton instance of AsyncWriterThread.
-            */
-           static AsyncWriterThread* instance();
 
            /*!
             * @brief Destructor

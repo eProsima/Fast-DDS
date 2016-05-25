@@ -322,7 +322,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
    // Asynchronous thread runs regardless of mode because of
    // nack response duties.
-   AsyncWriterThread::instance()->addWriter(SWriter);
+   AsyncWriterThread::instance()->addWriter(*SWriter);
 
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 	m_allWriterList.push_back(SWriter);

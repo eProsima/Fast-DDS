@@ -34,14 +34,12 @@ AsyncWriterThread* AsyncWriterThread::instance()
    return instance_;
 }
 
-bool AsyncWriterThread::addWriter(RTPSWriter* writer)
+bool AsyncWriterThread::addWriter(RTPSWriter& writer)
 {
     bool returnedValue = false;
 
-    assert(writer != nullptr);
-
      std::lock_guard<std::mutex> guard(mutex_);
-     async_writers.push_back(writer);
+     async_writers.push_back(&writer);
      returnedValue = true;
 
      // If thread not running, start it.
@@ -60,14 +58,12 @@ bool AsyncWriterThread::addWriter(RTPSWriter* writer)
  * @param writer Asynchronous writer to be removed.
  * @return Result of the operation.
  */
-bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
+bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
 {
     bool returnedValue = false;
 
-    assert(writer != nullptr);
-
     std::unique_lock<std::mutex> guard(mutex_);
-    auto it = std::find(async_writers.begin(), async_writers.end(), writer);
+    auto it = std::find(async_writers.begin(), async_writers.end(), &writer);
 
     if(it != async_writers.end())
     {
