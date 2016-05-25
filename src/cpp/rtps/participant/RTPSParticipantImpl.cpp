@@ -232,6 +232,8 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
       block.resourceAlive = false;
       block.Receiver.Abort();
       block.m_thread->join();
+      delete block.m_thread;
+      delete block.mp_receiver;
    }
 
    m_receiverResourcelist.clear();
@@ -540,7 +542,8 @@ void RTPSParticipantImpl::performListenOperation(ReceiverControlBlock *receiver,
    while(receiver->resourceAlive)
    {	
       // Blocking receive.
-      receiver->Receiver.Receive(receiver->m_receiveBuffer, input_locator);
+      if(!receiver->Receiver.Receive(receiver->m_receiveBuffer, input_locator))
+         continue;
 
       // Wraps a CDRMessage around the underlying vector array.
       CDRMessage::wrapVector(&(receiver->mp_receiver->m_rec_msg), receiver->m_receiveBuffer);

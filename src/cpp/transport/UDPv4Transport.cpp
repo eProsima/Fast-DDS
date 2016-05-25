@@ -273,6 +273,8 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, const Locator_t& 
    
    { // lock scope
       boost::unique_lock<boost::recursive_mutex> scopedLock(mInputMapMutex);
+      if (!IsInputChannelOpen(localLocator))
+         return false;
 
       auto& socket = mInputSockets.at(localLocator.port);
       socket.async_receive_from(boost::asio::buffer(receiveBuffer),

@@ -40,6 +40,10 @@ inline bool CDRMessage::initCDRMsg(CDRMessage_t*msg,uint32_t payload_size)
 
 inline bool CDRMessage::wrapVector(CDRMessage_t* msg, std::vector<char>& vectorToWrap)
 {
+   if (msg->buffer && !msg->wraps)
+      free(msg->buffer);
+
+   msg->wraps = true;
    msg->buffer = (octet*)vectorToWrap.data();
    msg->length = vectorToWrap.size();
    msg->max_size = vectorToWrap.capacity();
