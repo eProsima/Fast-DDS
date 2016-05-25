@@ -17,6 +17,7 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <thread>
 #include <gtest/gtest.h>
@@ -167,7 +168,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     std::string ip("239.255.1.4");
     const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
-    
+   
     reader.init(ip, port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
@@ -175,16 +176,9 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     writer.init(ip, port, true);
 
     ASSERT_TRUE(writer.isInitialized());
-
-    for(unsigned int tries = 0; tries < 20; ++tries)
-    {
-        std::list<uint16_t> msgs = reader.getNonReceivedMessages();
-        if(msgs.empty())
-            break;
-
-        writer.send(msgs);
-        reader.block(*msgs.rbegin(), std::chrono::seconds(2));
-    }
+    std::list<uint16_t> nonReceivedMessages = reader.getNonReceivedMessages();
+    writer.send(nonReceivedMessages);
+    reader.block(*nonReceivedMessages.rbegin(), std::chrono::seconds(20));
 
     std::list<uint16_t> msgs = reader.getNonReceivedMessages();
     if(msgs.size() != 0)

@@ -13,7 +13,10 @@
 #ifndef _RTPS_RESOURCES_ASYNCWRITERTHREAD_H_
 #define _RTPS_RESOURCES_ASYNCWRITERTHREAD_H_
 
-#include <boost/thread/mutex.hpp>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
 #include <list>
 
 namespace boost
@@ -52,6 +55,14 @@ namespace rtps
             */
            bool removeWriter(RTPSWriter* writer);
 
+           /*
+            * Wakes the thread up.
+            * @param interested
+            */
+           void wakeUp();
+           //void wakeUp(RTPSParticipant* interestedParticipant);
+           //void wakeUp(RTPSWriter * interestedWriter);
+
            /*!
             * @brief Returns the only singleton instance of AsyncWriterThread.
             */
@@ -80,15 +91,19 @@ namespace rtps
            void run();
 
            //! Thread
-           boost::thread* thread_;
+           std::thread* thread_;
 
            //! Mutex
-           boost::mutex mutex_;
+           std::mutex mutex_;
            
            static AsyncWriterThread* instance_;
 
            //! List of asynchronous writers.
-          std::list<RTPSWriter*> async_writers;
+           std::list<RTPSWriter*> async_writers;
+
+           std::atomic<bool> running_;
+           std::atomic<bool> run_scheduled_;
+           std::condition_variable cv_;
    };
 } // namespace rtps
 } // namespace fastrtps

@@ -13,6 +13,7 @@
 
 #include <fastrtps/rtps/writer/ReaderLocator.h>
 #include <fastrtps/rtps/common/CacheChange.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 
 namespace eprosima {
@@ -33,22 +34,30 @@ ReaderLocator::ReaderLocator(Locator_t& a_locator, bool expectsQos ){
 
 ReaderLocator::~ReaderLocator()
 {
-	//pDebugInfo("ReaderLocator destructor"<<endl;);
 }
 
-//void ReaderLocator::requested_changes_set(std::vector<SequenceNumber_t>& seqs,GUID_t& myGUID,HistoryCache* history) {
-//	std::vector<SequenceNumber_t>::iterator it;
-//	requested_changes.clear();
-//	for(it = seqs.begin();it!=seqs.end();++it)
-//	{
-//		CacheChange_t** cpoin = NULL;
-//
-//		if(history->get_change(*it,myGUID,cpoin))
-//			requested_changes.push_back(*cpoin);
-//	}
-//}
+void ReaderLocator::add_unsent_change(const CacheChangeForGroup_t& change)
+{
+   unsent_changes.push_back(change);
+   AsyncWriterThread::instance()->wakeUp();
+}
 
-bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
+void ReaderLocator::remove_all_unsent_changes()
+{
+   unsent_changes.clear();   
+}
+
+size_t ReaderLocator::count_unsent_changes() const
+{
+   return unsent_changes.size(); 
+}
+
+std::vector<CacheChangeForGroup_t> ReaderLocator::get_unsent_changes_copy() const
+{
+   return unsent_changes;
+}
+
+bool ReaderLocator::remove_requested_change(const CacheChange_t* cpoin){
 	std::vector<const CacheChange_t*>::iterator it;
 	for(it=requested_changes.begin();it!=requested_changes.end();++it)
 	{
@@ -62,7 +71,7 @@ bool ReaderLocator::remove_requested_change(CacheChange_t* cpoin){
 
 }
 
-bool ReaderLocator::remove_unsent_change(CacheChange_t* cpoin)
+bool ReaderLocator::remove_unsent_change(const CacheChange_t* cpoin)
 {
 	for(auto it = unsent_changes.begin(); it != unsent_changes.end(); ++it)
 	{

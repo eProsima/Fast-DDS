@@ -83,8 +83,9 @@ public:
 	RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
 	/**
 	 * This method triggers the send operation for unsent changes.
+    * @return number of messages sent
 	 */
-	RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
+	RTPS_DllAPI virtual uint32_t send_any_unsent_changes() = 0;
 
 	/**
 	 * This method triggers the send operation for unsent changes,

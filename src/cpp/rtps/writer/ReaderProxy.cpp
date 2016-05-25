@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/utils/RTPSLog.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
@@ -55,6 +56,18 @@ void ReaderProxy::destroy_timers()
     mp_nackResponse = nullptr;
     delete(mp_nackSupression);
     mp_nackSupression = nullptr;
+}
+
+void ReaderProxy::addChange(const ChangeForReader_t& change)
+{
+   m_changesForReader.insert(change);
+   if (change.getStatus() == UNSENT)
+      AsyncWriterThread::instance()->wakeUp();
+}
+
+size_t ReaderProxy::countChangesForReader() const
+{
+   return m_changesForReader.size();
 }
 
 bool ReaderProxy::getChangeForReader(const CacheChange_t* change,
@@ -163,21 +176,27 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
 
 void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForReaderStatus_t status)
 {
+   bool mustWakeUpAsyncThread = false; 
    for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
    {
       if (it->getChange() == change){
          ChangeForReader_t newch(*it);
          newch.setStatus(status);
+         if (status == UNSENT) mustWakeUpAsyncThread = true;
          auto hint = m_changesForReader.erase(it);
          m_changesForReader.insert(hint, newch);
          break;
       }
    }
+
+   if (mustWakeUpAsyncThread)
+      AsyncWriterThread::instance()->wakeUp();
 }
 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+   bool mustWakeUpAsyncThread = false; 
 
     auto it = m_changesForReader.begin();
     while(it != m_changesForReader.end())
@@ -186,7 +205,8 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
 		{
             ChangeForReader_t newch(*it);
             newch.setStatus(next);
-
+            if (next == UNSENT && previous != UNSENT)
+               mustWakeUpAsyncThread = true;
             auto hint = m_changesForReader.erase(it);
 
             it = m_changesForReader.insert(hint, newch);
@@ -194,6 +214,9 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
 
         ++it;
 	}
+
+   if (mustWakeUpAsyncThread)
+      AsyncWriterThread::instance()->wakeUp();
 }
 
 void ReaderProxy::setNotValid(const CacheChange_t* change)

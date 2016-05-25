@@ -21,6 +21,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(SIZEFILTERTESTS_SOURCE 
             SizeFilterTests.cpp 
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/AsyncWriterThread.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/FlowFilter.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/filters/SizeFilter.cpp)
 

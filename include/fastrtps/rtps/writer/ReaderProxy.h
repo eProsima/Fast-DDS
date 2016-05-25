@@ -60,6 +60,10 @@ namespace eprosima
 
                 void destroy_timers();
 
+                void addChange(const ChangeForReader_t&);
+
+                size_t countChangesForReader() const;
+                
                 /**
                  * Get the ChangeForReader struct associated with a determined change
                  * @param[in] change Pointer to the change.
@@ -195,9 +199,9 @@ namespace eprosima
                 boost::recursive_mutex* mp_mutex;
 
                 //!Set of the changes and its state.
+                private:
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
 
-                private:
                 //! Last  NACKFRAG count.
                 uint32_t lastNackfragCount_;
                 //TODO Temporal

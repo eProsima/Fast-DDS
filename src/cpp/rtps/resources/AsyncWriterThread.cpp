@@ -12,7 +12,7 @@ using namespace eprosima::fastrtps::rtps;
 
 AsyncWriterThread* AsyncWriterThread::instance_ = nullptr;
 
-AsyncWriterThread::AsyncWriterThread() : thread_(nullptr)
+AsyncWriterThread::AsyncWriterThread() : thread_(nullptr), running_(false), run_scheduled_(false)
 {
 }
 
@@ -20,7 +20,7 @@ AsyncWriterThread::~AsyncWriterThread()
 {
     if(thread_ != nullptr)
     {
-        thread_->interrupt();
+        running_ = false;
         thread_->join();
         delete thread_;
     }
@@ -40,14 +40,16 @@ bool AsyncWriterThread::addWriter(RTPSWriter* writer)
 
     assert(writer != nullptr);
 
-     boost::lock_guard<boost::mutex> guard(mutex_);
+     std::lock_guard<std::mutex> guard(mutex_);
      async_writers.push_back(writer);
      returnedValue = true;
 
      // If thread not running, start it.
      if(thread_ == nullptr)
      {
-         thread_ = new boost::thread(&AsyncWriterThread::run, this);
+         running_ = true;
+         run_scheduled_ = true;
+         thread_ = new std::thread(&AsyncWriterThread::run, this);
      }
 
     return returnedValue;
@@ -64,7 +66,7 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
 
     assert(writer != nullptr);
 
-    boost::lock_guard<boost::mutex> guard(mutex_);
+    std::unique_lock<std::mutex> guard(mutex_);
     auto it = std::find(async_writers.begin(), async_writers.end(), writer);
 
     if(it != async_writers.end())
@@ -75,8 +77,12 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
         // If there is not more asynchronous writers, stop the thread.
         if(async_writers.empty())
         {
-            thread_->interrupt();
+            running_ = false;
+            run_scheduled_ = false;
+            guard.unlock();
+            cv_.notify_all();
             thread_->join();
+            guard.lock();
             delete thread_;
             thread_ = nullptr;
         }
@@ -85,31 +91,26 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
     return returnedValue;
 }
 
+void AsyncWriterThread::wakeUp()
+{
+   run_scheduled_ = true;
+   cv_.notify_all();
+}
+
 void AsyncWriterThread::run()
 {
-    do
+    while(running_)
     {
-        try
-        {
-            // While the thread is in execution, it cannot be interrupted.
-            {
-                boost::this_thread::disable_interruption di;
+       std::unique_lock<std::mutex> guard(mutex_);
+       while(run_scheduled_ && running_)
+       {
+          run_scheduled_ = false;
+          for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
+          {
+              (*it)->send_any_unsent_changes();
+          }
+       }
 
-                boost::lock_guard<boost::mutex> guard(mutex_);
-
-                for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
-                {
-                    (*it)->send_any_unsent_changes();
-                }
-
-            }
-
-            //TODO Make configurable the time.
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-        }
-        catch(boost::thread_interrupted /*e*/)
-        {
-            return;
-        }
-    } while(1);
+       cv_.wait(guard);
+    }
 }

@@ -116,7 +116,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
                 (*it)->mp_mutex->lock();
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
-                (*it)->m_changesForReader.insert(changeForReader);
+                (*it)->addChange(changeForReader);
                 unilocList.push_back((*it)->m_att.endpoint.unicastLocatorList);
                 multilocList.push_back((*it)->m_att.endpoint.multicastLocatorList);
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
@@ -150,7 +150,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
                 boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
-                (*it)->m_changesForReader.insert(changeForReader);
+                (*it)->addChange(changeForReader);
             }
         }
 	}
@@ -175,10 +175,11 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     return true;
 }
 
-void StatefulWriter::send_any_unsent_changes()
+uint32_t StatefulWriter::send_any_unsent_changes()
 {
     const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    uint32_t messagesToSend = 0;
 	 for(auto rit = matched_readers.begin(); rit != matched_readers.end(); ++rit)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
@@ -217,9 +218,10 @@ void StatefulWriter::send_any_unsent_changes()
         for (const auto& change : relevant_changes)
            FlowFilter::NotifyFiltersChangeSent(&change);
 
+        messagesToSend += relevant_changes.size();
         if(m_pushMode)
         {
-            if(!relevant_changes.empty())
+            if(messagesToSend)
             {
                 //cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
                 uint32_t bytesSent = 0;
@@ -269,7 +271,9 @@ void StatefulWriter::send_any_unsent_changes()
             }
         }
     }
+
 	logInfo(RTPS_WRITER, "Finish sending unsent changes");
+   return messagesToSend;
 }
 
 
@@ -316,7 +320,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             changeForReader.setStatus(UNSENT);
         else
             changeForReader.setStatus(UNACKNOWLEDGED);
-        rp->m_changesForReader.insert(changeForReader);
+        rp->addChange(changeForReader);
     }
 
 	matched_readers.push_back(rp);
@@ -435,7 +439,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-        if((*it)->m_changesForReader.size() > 0)
+        if((*it)->countChangesForReader() > 0)
         {
             all_acked_ = false;
             break;
@@ -463,7 +467,7 @@ void StatefulWriter::check_for_all_acked()
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*it)->mp_mutex);
-        if((*it)->m_changesForReader.size() > 0)
+        if((*it)->countChangesForReader() > 0)
         {
             all_acked_ = false;
             break;

@@ -1,4 +1,5 @@
 #include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 using namespace std;
 using namespace boost::asio;
@@ -67,7 +68,7 @@ void SizeFilter::ScheduleRefresh(uint32_t sizeToRestore)
          std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
          throwawayTimer->cancel();
          mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
-         // TODO: Poke the async thread.
+         AsyncWriterThread::instance()->wakeUp();
       }
    };
 
