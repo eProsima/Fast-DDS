@@ -49,6 +49,7 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
+	LocatorList_t outLocatorList;
 		
 	/**
 	 * Get the user defined ID

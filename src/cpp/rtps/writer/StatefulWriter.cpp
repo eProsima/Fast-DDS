@@ -180,11 +180,9 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 
 void StatefulWriter::unsent_changes_not_empty()
 {
-	const char* const METHOD_NAME = "unsent_changes_not_empty";
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-	boost::lock_guard<boost::recursive_mutex> guard2(*this->getRTPSParticipant()->getSendMutex());
-
-	for(auto rit = matched_readers.begin(); rit != matched_readers.end(); ++rit)
+    const char* const METHOD_NAME = "unsent_changes_not_empty";
+    boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	 for(auto rit = matched_readers.begin(); rit != matched_readers.end(); ++rit)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
 
@@ -251,9 +249,9 @@ void StatefulWriter::unsent_changes_not_empty()
                         c_EntityId_Unknown,m_guid.entityId,first->sequenceNumber,last->sequenceNumber,m_heartbeatCount,true,false);
                 std::vector<Locator_t>::iterator lit;
                 for(lit = (*rit)->m_att.endpoint.unicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.unicastLocatorList.end();++lit)
-                    getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+                    getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(Endpoint *)this,(*lit));
                 for(lit = (*rit)->m_att.endpoint.multicastLocatorList.begin();lit!=(*rit)->m_att.endpoint.multicastLocatorList.end();++lit)
-                    getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(*lit));
+                    getRTPSParticipant()->sendSync(&m_cdrmessages.m_rtpsmsg_fullmsg,(Endpoint *)this,(*lit));
             }
         }
     }

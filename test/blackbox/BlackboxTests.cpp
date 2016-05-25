@@ -126,15 +126,15 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
 {
     RTPSAsNonReliableSocketReader reader;
     RTPSAsNonReliableSocketWriter writer;
-    std::string ip("239.255.1.4");
+    std::string multicast_reader_ip("239.255.1.4");
     const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
     
-    reader.init(ip, port, nmsgs);
+    reader.init(multicast_reader_ip, port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
-
-    writer.init(ip, port);
+    std::string writer_ip("0.0.0.0");
+    writer.init(writer_ip, port);
 
     ASSERT_TRUE(writer.isInitialized());
 

@@ -8,10 +8,6 @@ set_sources(
     utils/IPFinder.cpp 
     utils/md5.cpp 
     utils/StringMatching.cpp 
-    rtps/resources/ListenResourceImpl.cpp 
-    rtps/resources/ListenResource.cpp 
-    rtps/resources/ResourceSend.cpp 
-    rtps/resources/ResourceSendImpl.cpp 
     rtps/resources/ResourceEvent.cpp 
     rtps/resources/TimedEvent.cpp 
     rtps/resources/TimedEventImpl.cpp 
@@ -45,6 +41,9 @@ set_sources(
     rtps/messages/submessages/DataMsg.hpp
     rtps/messages/submessages/GapMsg.hpp
     rtps/messages/submessages/HeartbeatMsg.hpp
+    rtps/network/NetworkFactory.cpp
+    rtps/network/SenderResource.cpp
+    rtps/network/ReceiverResource.cpp
     rtps/participant/RTPSParticipant.cpp 
     rtps/participant/RTPSParticipantImpl.cpp 
     rtps/RTPSDomain.cpp 
@@ -57,6 +56,8 @@ set_sources(
     subscriber/Subscriber.cpp 
     subscriber/SubscriberImpl.cpp 
     subscriber/SubscriberHistory.cpp 
+    transport/UDPv4Transport.cpp 
+    transport/test_UDPv4Transport.cpp 
     qos/ParameterList.cpp 
     qos/ParameterTypes.cpp 
     qos/QosList.cpp 

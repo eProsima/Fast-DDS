@@ -2,6 +2,7 @@
 #define _RTPS_READER_STATEFULREADER_H_
 
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/common/Guid.h>
 
 namespace eprosima
 {
@@ -13,11 +14,16 @@ namespace eprosima
             {
                 public:
 
-                    inline ReaderTimes& getTimes(){return m_times;};
+                    // In real class, inherited from Endpoint base class.
+                    inline const GUID_t& getGuid() const { return guid_; };
+
+                    inline ReaderTimes& getTimes(){return times_;};
 
                 private:
 
-                    ReaderTimes m_times;
+                    GUID_t guid_;
+
+                    ReaderTimes times_;
             };
         } // namespace rtps
     } // namespace fastrtps

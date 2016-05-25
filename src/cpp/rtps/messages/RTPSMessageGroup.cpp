@@ -148,9 +148,9 @@ namespace eprosima {
                     }
                     std::vector<Locator_t>::iterator lit;
                     for(lit = unicast->begin();lit!=unicast->end();++lit)
-                        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+				            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
                     for(lit = multicast->begin();lit!=multicast->end();++lit)
-                        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+				            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
                 }while(gap_n < Sequences.size()); //There is still a message to add
                 return true;
@@ -256,10 +256,10 @@ namespace eprosima {
                 if(dataInserted)
                 {
                     for(std::vector<Locator_t>::iterator lit = unicast.begin();lit!=unicast.end();++lit)
-                        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+				            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
                     for(std::vector<Locator_t>::iterator lit = multicast.begin();lit!=multicast.end();++lit)
-                        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,(*lit));
+				            W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),(*lit));
 
                     return cdrmsg_fullmsg->length;
                 }
@@ -334,7 +334,7 @@ namespace eprosima {
 
                 if(dataInserted)
                 {
-                    W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,loc);
+				        W->getRTPSParticipant()->sendSync(cdrmsg_fullmsg,static_cast<Endpoint *>(W),loc);
 
                     return cdrmsg_fullmsg->length;
                 }

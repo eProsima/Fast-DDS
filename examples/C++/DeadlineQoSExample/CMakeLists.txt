@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project("DeadlineQoSExample")
 
 # Find requirements
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS thread system chrono regex)
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
 
