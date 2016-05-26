@@ -65,13 +65,15 @@ bool MockTransport::DoLocatorsMatch(const Locator_t& left, const Locator_t& righ
    return left.port == right.port;
 }
 
-bool MockTransport::Send(const std::vector<char>& sendBuffer, const Locator_t& localChannel, const Locator_t& remoteAddress)
+bool MockTransport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
-   mockMessagesSent.push_back( { remoteAddress, localChannel, sendBuffer } );
+   std::vector<octet> sendVector;
+   sendVector.assign(sendBuffer,sendBuffer + sendBufferSize);
+   mockMessagesSent.push_back( { remoteLocator, localLocator, sendVector } );
    return true;
 }
 
-bool MockTransport::Receive(std::vector<char>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress)
+bool MockTransport::Receive(std::vector<octet>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress)
 {
    (void)localChannel;
    receiveBuffer = mockMessagesToReceive.back().data;

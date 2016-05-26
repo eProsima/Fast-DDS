@@ -87,7 +87,7 @@ bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet
 
 bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
 {
-   if (size < DropLogLength)
+   if (DropLog.size() < DropLogLength)
    {
       vector<octet> message;
       message.assign(buffer, buffer + size);

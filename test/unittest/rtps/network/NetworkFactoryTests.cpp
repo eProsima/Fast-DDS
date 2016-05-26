@@ -249,17 +249,18 @@ TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_out
    auto& senderResource = resources.back();
 
    // When
-   vector<char> testData { 'a', 'b', 'c' };
+   const uint32_t testDataLength = 3;
+   const char testData[testDataLength] { 'a', 'b', 'c' };
    Locator_t destinationLocator;
    destinationLocator.kind = 1;
    destinationLocator.address[0] = 5;
-   senderResource.Send(testData, destinationLocator);
+   senderResource.Send((octet*)testData, testDataLength, destinationLocator);
 
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
    const auto& messageSent = lastRegisteredTransport->mockMessagesSent.back();
 
-   ASSERT_EQ(messageSent.data, testData);
+   ASSERT_TRUE(0 == memcmp(messageSent.data.data(), testData, testDataLength));
    ASSERT_EQ(messageSent.destination, destinationLocator);
 }
 
@@ -273,7 +274,7 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    auto resources = networkFactoryUnderTest.BuildReceiverResources(locator);
    auto& receiverResource = resources.back();
 
-   vector<char> testData { 'a', 'b', 'c' };
+   vector<octet> testData { 'a', 'b', 'c' };
    Locator_t originLocator;
    originLocator.kind = 1;
    originLocator.address[0] = 5;
@@ -282,7 +283,7 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    lastRegisteredTransport->mockMessagesToReceive.push_back(message);
 
    // When
-   vector<char> receivedData;
+   vector<octet> receivedData;
    Locator_t receivedLocator;
    receiverResource.Receive(receivedData, receivedLocator);
 

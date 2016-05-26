@@ -86,19 +86,19 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<char> message = { 'H','e','l','l','o' };
+   vector<octet> message = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv4;
-      EXPECT_TRUE(transportUnderTest.Send(message, outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<char> receiveBuffer(descriptor.receiveBufferSize);
+      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
       Locator_t remoteLocatorToReceive;
       EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(message, receiveBuffer);
@@ -125,19 +125,19 @@ TEST_F(UDPv4Tests, send_to_loopback)
    outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<char> message = { 'H','e','l','l','o' };
+   vector<octet> message = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv4;
-      EXPECT_TRUE(transportUnderTest.Send(message, outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<char> receiveBuffer(descriptor.receiveBufferSize);
+      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
       Locator_t remoteLocatorToReceive;
       EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(message, receiveBuffer);
@@ -163,8 +163,8 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_isnt_equal_to_size_specified_
    destinationLocator.port = 7410;
 
    // Then
-   vector<char> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-   ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize, genericOutputChannelLocator, destinationLocator));
+   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
+   ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
 TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specified_in_descriptor)
@@ -179,7 +179,7 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specifi
    Locator_t originLocator;
 
    // Then
-   vector<char> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
+   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
    ASSERT_FALSE(transportUnderTest.Receive(receiveBufferWrongSize, genericInputChannelLocator, originLocator));
 }
 
