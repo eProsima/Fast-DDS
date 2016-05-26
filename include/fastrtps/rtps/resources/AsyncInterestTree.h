@@ -3,6 +3,7 @@
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <mutex>
+#include <set>
 
 namespace eprosima {
 namespace fastrtps{

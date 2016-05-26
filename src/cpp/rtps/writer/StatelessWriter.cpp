@@ -126,9 +126,9 @@ uint32_t StatelessWriter::send_any_unsent_changes()
       // Remove the messages selected for sending from the original list
       for (auto& change : unsent_changes_copy)
          rit->remove_unsent_change(change.getChange());
-
-      messagesToSend += unsent_changes_copy.size();
-		if(messagesToSend)
+	    uint32_t messagesToSendForThisReader = unsent_changes_copy.size();
+        messagesToSend += messagesToSendForThisReader;
+		if(messagesToSendForThisReader)
 		{
 			if(m_pushMode)
 			{

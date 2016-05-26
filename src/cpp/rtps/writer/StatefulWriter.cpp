@@ -217,10 +217,11 @@ uint32_t StatefulWriter::send_any_unsent_changes()
         for (const auto& change : relevant_changes)
            FlowFilter::NotifyFiltersChangeSent(&change);
 
-        messagesToSend += relevant_changes.size();
-        if(m_pushMode)
+	    uint32_t messagesToSendForThisReader = relevant_changes.size();
+        messagesToSend += messagesToSendForThisReader;
+		if(m_pushMode)
         {
-            if(messagesToSend)
+            if(messagesToSendForThisReader)
             {
                 //cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
                 uint32_t bytesSent = 0;
