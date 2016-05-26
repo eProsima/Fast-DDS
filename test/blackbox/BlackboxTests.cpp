@@ -128,15 +128,14 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
 {
     RTPSAsNonReliableSocketReader reader;
     RTPSAsNonReliableSocketWriter writer;
-    std::string multicast_reader_ip("239.255.1.4");
+    std::string ip("239.255.1.4");
     const uint32_t port = 22222;
     const uint16_t nmsgs = 100;
     
-    reader.init(multicast_reader_ip, port, nmsgs);
+    reader.init(ip, port, nmsgs);
 
     ASSERT_TRUE(reader.isInitialized());
-    std::string writer_ip("0.0.0.0");
-    writer.init(writer_ip, port);
+    writer.init(ip, port);
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -570,7 +569,7 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_helloworld_print);
     ASSERT_EQ(data.size(), 0);
