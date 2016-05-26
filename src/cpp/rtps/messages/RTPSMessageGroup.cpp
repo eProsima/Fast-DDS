@@ -87,12 +87,6 @@ namespace eprosima {
                 }
             }
 
-
-
-
-
-
-
             bool RTPSMessageGroup::send_Changes_AsGap(RTPSMessageGroup_t* msg_group,
                     RTPSWriter* W, std::vector<SequenceNumber_t>* changesSeqNum,
                     const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& readerId,

@@ -190,7 +190,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     ASSERT_EQ(msgs.size(), 0);
 }
 
-TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFiltering)
+TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 {
     RTPSAsNonReliableSocketReader reader;
     RTPSAsNonReliableSocketWriter writer;
@@ -662,7 +662,7 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     ASSERT_EQ(data.size(), 0);
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFiltering)
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);

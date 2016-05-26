@@ -178,6 +178,8 @@ public:
 
     std::vector<std::unique_ptr<FlowFilter>>& getFlowFilters() { return m_filters;}
 
+    std::vector<RTPSWriter*> getAllWriters() const;
+
 private:
 	//!Attributes of the RTPSParticipant
 	RTPSParticipantAttributes m_att;

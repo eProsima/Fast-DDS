@@ -213,6 +213,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 	//eClock::my_sleep(300);
 }
 
+std::vector<RTPSWriter*> RTPSParticipantImpl::getAllWriters() const
+{
+   return m_allWriterList;
+}
 
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {

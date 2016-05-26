@@ -12,6 +12,7 @@ set_sources(
     rtps/resources/TimedEvent.cpp 
     rtps/resources/TimedEventImpl.cpp 
     rtps/resources/AsyncWriterThread.cpp
+    rtps/resources/AsyncInterestTree.cpp
     rtps/Endpoint.cpp 
     rtps/writer/RTPSWriter.cpp 
     rtps/writer/StatefulWriter.cpp 
@@ -79,7 +80,6 @@ set_sources(
     rtps/builtin/data/ParticipantProxyData.cpp 
     rtps/builtin/data/WriterProxyData.cpp 
     rtps/builtin/data/ReaderProxyData.cpp 
-    rtps/filters/QuantityFilter.cpp 
     rtps/filters/SizeFilter.cpp 
     rtps/filters/FlowFilter.cpp 
     fastrtps.rc
