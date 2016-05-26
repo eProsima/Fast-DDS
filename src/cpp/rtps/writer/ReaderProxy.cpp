@@ -62,7 +62,7 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
 {
    m_changesForReader.insert(change);
    if (change.getStatus() == UNSENT)
-      AsyncWriterThread::instance()->wakeUp();
+      AsyncWriterThread::wakeUp();
 }
 
 size_t ReaderProxy::countChangesForReader() const
@@ -190,7 +190,7 @@ void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForRea
    }
 
    if (mustWakeUpAsyncThread)
-      AsyncWriterThread::instance()->wakeUp();
+      AsyncWriterThread::wakeUp();
 }
 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
@@ -216,7 +216,7 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
 	}
 
    if (mustWakeUpAsyncThread)
-      AsyncWriterThread::instance()->wakeUp();
+      AsyncWriterThread::wakeUp();
 }
 
 void ReaderProxy::setNotValid(const CacheChange_t* change)

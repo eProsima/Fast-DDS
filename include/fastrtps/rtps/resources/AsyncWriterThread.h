@@ -33,7 +33,7 @@ namespace rtps
    class RTPSWriter;
 
    /*!
-    * @brief This singleton owns a thread that manages asynchronous writes.
+    * @brief This static class owns a thread that manages asynchronous writes.
     * Asynchronous writes happen directly (when using an async writer) and
     * indirectly (when responding to a NACK).
     */
@@ -41,69 +41,48 @@ namespace rtps
    {
        public:
            /*!
-            * @brief Returns the only singleton instance of AsyncWriterThread.
-            */
-           static AsyncWriterThread* instance();
-
-           /*!
-            * @brief This function adds a writer to be managed by this thread.
+            * @brief Adds a writer to be managed by this thread.
             * Only asynchronous writers are permitted.
             * @param writer Asynchronous writer to be added. 
             * @return Result of the operation.
             */
-           bool addWriter(RTPSWriter& writer);
+           static bool addWriter(RTPSWriter& writer);
 
            /*!
-            * @brief This function removes a writer.
+            * @brief Removes a writer.
             * @param writer Asynchronous writer to be removed.
             * @return Result of the operation.
             */
-           bool removeWriter(RTPSWriter& writer);
+           static bool removeWriter(RTPSWriter& writer);
 
            /*
             * Wakes the thread up.
-            * @param interested
             */
-           void wakeUp();
-           //void wakeUp(RTPSParticipant* interestedParticipant);
-           //void wakeUp(RTPSWriter * interestedWriter);
+           static void wakeUp();
 
            /*!
             * @brief Destructor
             * The destructor is not thread-safe.
             */
-           ~AsyncWriterThread();
 
        private:
-
-           /*!
-            * @brief Default constructor.
-            */
-           AsyncWriterThread();
-
-            //! Singleton, hence no copy.
+           AsyncWriterThread() = delete;
+           ~AsyncWriterThread() = delete;
            AsyncWriterThread(const AsyncWriterThread&) = delete;
-           
-            //! Singleton, hence no assignment.
            const AsyncWriterThread& operator=(const AsyncWriterThread&) = delete;
 
            //! @brief runs main method
-           void run();
+           static void run();
 
-           //! Thread
-           std::thread* thread_;
-
-           //! Mutex
-           std::mutex mutex_;
+           static std::thread* thread_;
+           static std::mutex mutex_;
            
-           static AsyncWriterThread* instance_;
-
            //! List of asynchronous writers.
-           std::list<RTPSWriter*> async_writers;
+           static std::list<RTPSWriter*> async_writers;
 
-           std::atomic<bool> running_;
-           std::atomic<bool> run_scheduled_;
-           std::condition_variable cv_;
+           static std::atomic<bool> running_;
+           static std::atomic<bool> run_scheduled_;
+           static std::condition_variable cv_;
    };
 } // namespace rtps
 } // namespace fastrtps

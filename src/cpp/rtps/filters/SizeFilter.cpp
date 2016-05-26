@@ -68,7 +68,7 @@ void SizeFilter::ScheduleRefresh(uint32_t sizeToRestore)
          std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
          throwawayTimer->cancel();
          mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
-         AsyncWriterThread::instance()->wakeUp();
+         AsyncWriterThread::wakeUp();
       }
    };
 

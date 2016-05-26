@@ -39,7 +39,7 @@ ReaderLocator::~ReaderLocator()
 void ReaderLocator::add_unsent_change(const CacheChangeForGroup_t& change)
 {
    unsent_changes.push_back(change);
-   AsyncWriterThread::instance()->wakeUp();
+   AsyncWriterThread::wakeUp();
 }
 
 void ReaderLocator::remove_all_unsent_changes()

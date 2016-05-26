@@ -10,45 +10,31 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-AsyncWriterThread* AsyncWriterThread::instance_ = nullptr;
+std::thread* AsyncWriterThread::thread_;
+std::mutex AsyncWriterThread::mutex_;
 
-AsyncWriterThread::AsyncWriterThread() : thread_(nullptr), running_(false), run_scheduled_(false)
-{
-}
+//! List of asynchronous writers.
+std::list<RTPSWriter*> AsyncWriterThread::async_writers;
 
-AsyncWriterThread::~AsyncWriterThread()
-{
-    if(thread_ != nullptr)
-    {
-        running_ = false;
-        thread_->join();
-        delete thread_;
-    }
-    instance_ = nullptr;
-}
-
-AsyncWriterThread* AsyncWriterThread::instance()
-{
-   if (!instance_)
-      instance_ = new AsyncWriterThread();
-   return instance_;
-}
+std::atomic<bool> AsyncWriterThread::running_;
+std::atomic<bool> AsyncWriterThread::run_scheduled_;
+std::condition_variable AsyncWriterThread::cv_;
 
 bool AsyncWriterThread::addWriter(RTPSWriter& writer)
 {
     bool returnedValue = false;
 
-     std::lock_guard<std::mutex> guard(mutex_);
-     async_writers.push_back(&writer);
-     returnedValue = true;
+    std::lock_guard<std::mutex> guard(mutex_);
+    async_writers.push_back(&writer);
+    returnedValue = true;
 
-     // If thread not running, start it.
-     if(thread_ == nullptr)
-     {
-         running_ = true;
-         run_scheduled_ = true;
-         thread_ = new std::thread(&AsyncWriterThread::run, this);
-     }
+    // If thread not running, start it.
+    if(thread_ == nullptr)
+    {
+        running_ = true;
+        run_scheduled_ = true;
+        thread_ = new std::thread(AsyncWriterThread::run);
+    }
 
     return returnedValue;
 }
