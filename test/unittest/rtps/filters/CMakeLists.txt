@@ -3,8 +3,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        find_package(Threads REQUIRED)
-
         include_directories(mock/)
 
         set(QUANTITYFILTERTESTS_SOURCE 
@@ -14,11 +12,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(QuantityFilterTests ${QUANTITYFILTERTESTS_SOURCE})
         add_gtest(QuantityFilterTests ${QUANTITYFILTERTESTS_SOURCE})
-        target_compile_definitions(QuantityFilterTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(QuantityFilterTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_compile_definitions(QuantityFilterTests PRIVATE FASTRTPS_NO_LIB BOOST_ALL_DYN_LINK)
+        target_include_directories(QuantityFilterTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(QuantityFilterTests ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
-
+        target_link_libraries(QuantityFilterTests ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${MOCKS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(QuantityFilterTests ${PRIVACY}
+                ${Boost_LIBRARIES} iphlpapi Shlwapi
+                )
+        endif()
         set(SIZEFILTERTESTS_SOURCE 
             SizeFilterTests.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/AsyncWriterThread.cpp
@@ -27,9 +29,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(SizeFilterTests ${SIZEFILTERTESTS_SOURCE})
         add_gtest(SizeFilterTests ${SIZEFILTERTESTS_SOURCE})
-        target_compile_definitions(SizeFilterTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(SizeFilterTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_compile_definitions(SizeFilterTests PRIVATE FASTRTPS_NO_LIB BOOST_ALL_DYN_LINK)
+        target_include_directories(SizeFilterTests PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
-        target_link_libraries(SizeFilterTests ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(SizeFilterTests ${Boost_LIBRARIES} ${GTEST_LIBRARIES} ${MOCKS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(SizeFilterTests ${PRIVACY}
+                ${Boost_LIBRARIES} iphlpapi Shlwapi
+                )
+        endif()
     endif()
 endif()
