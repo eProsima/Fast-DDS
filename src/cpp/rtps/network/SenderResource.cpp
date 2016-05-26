@@ -14,18 +14,18 @@ SenderResource::SenderResource(TransportInterface& transport, const Locator_t& l
 
    // Implementation functions are bound to the right transport parameters
    Cleanup = [&transport,locator](){ transport.CloseOutputChannel(locator); };
-   SendThroughAssociatedChannel = [&transport, locator](const vector<char>& data, const Locator_t& destination)-> bool
-                                  { return transport.Send(data, locator, destination); };
+   SendThroughAssociatedChannel = [&transport, locator](const octet* data, uint32_t dataSize, const Locator_t& destination)-> bool
+                                  { return transport.Send(data,dataSize, locator, destination); };
    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, locatorToCheck); };
    ManagedChannelMapsToRemote = [&transport, locator](const Locator_t& locatorToCheck) -> bool
                                  { return transport.DoLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck)); };
 }
 
-bool SenderResource::Send(const std::vector<char>& data, const Locator_t& destinationLocator)
+bool SenderResource::Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator)
 {
    if (SendThroughAssociatedChannel)
-      return SendThroughAssociatedChannel(data, destinationLocator);
+      return SendThroughAssociatedChannel(data, dataLength, destinationLocator);
    return false;
 }
 

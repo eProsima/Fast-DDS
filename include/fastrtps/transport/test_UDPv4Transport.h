@@ -34,10 +34,10 @@ public:
 
    test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor);
 
-   virtual bool Send(const std::vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator);
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
   
    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-   static std::vector<std::vector<char> > DropLog;
+   static std::vector<std::vector<octet> > DropLog;
    static uint32_t DropLogLength;
 
 private:
@@ -47,8 +47,8 @@ private:
    std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
    uint8_t mPercentageOfMessagesToDrop;
 
-   bool LogDrop(const std::vector<char>& message);
-   bool PacketShouldDrop(const std::vector<char>& message);
+   bool LogDrop(const octet* buffer, uint32_t size);
+   bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
    bool ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet ID);
    bool ContainsSequenceNumberToDrop(CDRMessage_t& cdrMessage);
    bool RandomChanceDrop();

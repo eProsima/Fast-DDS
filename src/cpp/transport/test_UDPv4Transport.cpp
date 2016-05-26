@@ -7,7 +7,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-vector<vector<char> > test_UDPv4Transport::DropLog;
+vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor):
@@ -24,17 +24,17 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDes
    srand(time(NULL));
 }
 
-bool test_UDPv4Transport::Send(const vector<char>& sendBuffer, Locator_t localLocator, Locator_t remoteLocator)
+bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
-   if (PacketShouldDrop(sendBuffer) &&
+   if (PacketShouldDrop(sendBuffer, sendBufferSize) &&
        IsOutputChannelOpen(localLocator) &&
-       sendBuffer.size() <= mSendBufferSize)
+       sendBufferSize <= mSendBufferSize)
    {
-      LogDrop(sendBuffer);
+      LogDrop(sendBuffer, sendBufferSize);
       return true;
    }
    else   
-      return UDPv4Transport::Send(sendBuffer, localLocator, remoteLocator);
+      return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
 }
 
 static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
@@ -49,11 +49,11 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 	return true;
 }
 
-bool test_UDPv4Transport::PacketShouldDrop(const std::vector<char>& message)
+bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize)
 {
-   CDRMessage_t cdrMessage(message.size());;
-   memcpy(cdrMessage.buffer, message.data(), message.size());
-   cdrMessage.length = message.size();
+   CDRMessage_t cdrMessage(sendBufferSize);;
+   memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
+   cdrMessage.length = sendBufferSize;
 
    return ( (mDropDataMessages      && ContainsSubmessageOfID(cdrMessage, DATA))      ||
             (mDropAckNackMessages   && ContainsSubmessageOfID(cdrMessage, ACKNACK))   ||
@@ -85,10 +85,12 @@ bool test_UDPv4Transport::ContainsSubmessageOfID(CDRMessage_t& cdrMessage, octet
 }
 
 
-bool test_UDPv4Transport::LogDrop(const std::vector<char>& message)
+bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
 {
    if (DropLog.size() < DropLogLength)
    {
+      vector<octet> message;
+      message.assign(buffer, buffer + size);
       DropLog.push_back(message);
       return true;
    }

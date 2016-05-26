@@ -114,19 +114,19 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
    outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<char> message = { 'H','e','l','l','o' };
+   vector<octet> message = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv6;
-      EXPECT_TRUE(transportUnderTest.Send(message, outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]() 
    {
-      vector<char> receiveBuffer(descriptor.receiveBufferSize);
+      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
       Locator_t remoteLocatorToReceive;
       EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(message, receiveBuffer);
@@ -153,19 +153,19 @@ TEST_F(UDPv6Tests, send_to_loopback)
    outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1); // Loopback
    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
-   vector<char> message = { 'H','e','l','l','o' };
+   vector<octet> message = { 'H','e','l','l','o' };
 
    auto sendThreadFunction = [&]()
    {
       Locator_t destinationLocator;
       destinationLocator.port = 7410;
       destinationLocator.kind = LOCATOR_KIND_UDPv6;
-      EXPECT_TRUE(transportUnderTest.Send(message, outputChannelLocator, multicastLocator));
+      EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
    };
 
    auto receiveThreadFunction = [&]()
    {
-      vector<char> receiveBuffer(descriptor.receiveBufferSize);
+      vector<octet> receiveBuffer(descriptor.receiveBufferSize);
       Locator_t remoteLocatorToReceive;
       EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(message, receiveBuffer);
