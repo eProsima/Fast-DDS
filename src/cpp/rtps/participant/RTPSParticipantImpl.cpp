@@ -106,7 +106,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
    for (const auto& descriptor : PParam.sizeFilters)
    {
-      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor));
+      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor, this));
       m_filters.push_back(std::move(filter));
    }
 
@@ -336,7 +336,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
 
    for (const auto& descriptor : param.sizeFilters)
    {
-      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor));
+      std::unique_ptr<FlowFilter> filter(new SizeFilter(descriptor, SWriter));
       SWriter->add_flow_filter(std::move(filter));
    }
 	return true;

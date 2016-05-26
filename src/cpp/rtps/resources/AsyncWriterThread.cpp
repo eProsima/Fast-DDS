@@ -12,13 +12,11 @@ using namespace eprosima::fastrtps::rtps;
 
 std::thread* AsyncWriterThread::thread_;
 std::mutex AsyncWriterThread::mutex_;
-
-//! List of asynchronous writers.
 std::list<RTPSWriter*> AsyncWriterThread::async_writers;
-
 std::atomic<bool> AsyncWriterThread::running_;
 std::atomic<bool> AsyncWriterThread::run_scheduled_;
 std::condition_variable AsyncWriterThread::cv_;
+AsyncInterestTree AsyncWriterThread::interestTree;
 
 bool AsyncWriterThread::addWriter(RTPSWriter& writer)
 {
@@ -73,8 +71,16 @@ bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
     return returnedValue;
 }
 
-void AsyncWriterThread::wakeUp()
+void AsyncWriterThread::wakeUp(const RTPSParticipantImpl* interestedParticipant)
 {
+   interestTree.RegisterInterest(interestedParticipant);
+   run_scheduled_ = true;
+   cv_.notify_all();
+}
+
+void AsyncWriterThread::wakeUp(const RTPSWriter* interestedWriter)
+{
+   interestTree.RegisterInterest(interestedWriter);
    run_scheduled_ = true;
    cv_.notify_all();
 }
@@ -87,10 +93,12 @@ void AsyncWriterThread::run()
        while(run_scheduled_ && running_)
        {
           run_scheduled_ = false;
-          for(auto it = async_writers.begin(); it != async_writers.end(); ++it)
-          {
-              (*it)->send_any_unsent_changes();
-          }
+          interestTree.Swap();
+          auto interestedWriters = interestTree.GetInterestedWriters();
+
+          for(auto writer : async_writers)
+             if (interestedWriters.count(writer))
+               writer->send_any_unsent_changes();
        }
 
        cv_.wait(guard);

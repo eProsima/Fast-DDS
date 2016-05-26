@@ -17,7 +17,7 @@ class SizeFilterTests: public ::testing::Test
    public:
 
    SizeFilterTests():
-      sFilter(testDescriptor)
+      sFilter(testDescriptor, (const RTPSWriter*)nullptr)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {
@@ -45,6 +45,8 @@ TEST_F(SizeFilterTests, size_filter_lets_only_some_elements_through)
 
    // Then
    ASSERT_EQ(filterSize/testPayloadSize, testChangesForGroup.size());
+
+   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
 TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granularity)
@@ -71,6 +73,7 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
 
    // And the last one is partially cleared
    ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending(), 5); 
+   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
 TEST_F(SizeFilterTests, size_filter_carries_over_multiple_attempts)
@@ -83,6 +86,7 @@ TEST_F(SizeFilterTests, size_filter_carries_over_multiple_attempts)
 
    // Then
    ASSERT_EQ(0, otherChangesForGroup.size());
+   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
 TEST_F(SizeFilterTests, size_filter_resets_completely_after_its_refresh_period)
@@ -101,6 +105,7 @@ TEST_F(SizeFilterTests, size_filter_resets_completely_after_its_refresh_period)
    // The filter should be open now
    sFilter(otherChangesForGroup);
    EXPECT_EQ(5, otherChangesForGroup.size());
+   std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 
 int main(int argc, char **argv)

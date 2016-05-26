@@ -10,7 +10,6 @@
  * @file RTPSWriter.h
  */
 
-
 #ifndef RTPSWRITER_H_
 #define RTPSWRITER_H_
 

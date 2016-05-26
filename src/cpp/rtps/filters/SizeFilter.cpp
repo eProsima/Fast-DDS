@@ -8,10 +8,21 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor):
+SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor, const RTPSWriter* associatedWriter):
    mSizeToClear(descriptor.sizeToClear),
    mAccumulatedPayloadSize(0),
-   mRefreshTimeMS(descriptor.refreshTimeMS)
+   mRefreshTimeMS(descriptor.refreshTimeMS),
+   mAssociatedParticipant(nullptr),
+   mAssociatedWriter(associatedWriter)
+{
+}
+
+SizeFilter::SizeFilter(const SizeFilterDescriptor& descriptor, const RTPSParticipantImpl* associatedParticipant):
+   mSizeToClear(descriptor.sizeToClear),
+   mAccumulatedPayloadSize(0),
+   mRefreshTimeMS(descriptor.refreshTimeMS),
+   mAssociatedParticipant(associatedParticipant),
+   mAssociatedWriter(nullptr)
 {
 }
 
@@ -68,7 +79,11 @@ void SizeFilter::ScheduleRefresh(uint32_t sizeToRestore)
          std::unique_lock<std::recursive_mutex> scopedLock(mSizeFilterMutex);
          throwawayTimer->cancel();
          mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
-         AsyncWriterThread::wakeUp();
+         
+         if (mAssociatedWriter)
+            AsyncWriterThread::wakeUp(mAssociatedWriter);
+         else if (mAssociatedParticipant)
+            AsyncWriterThread::wakeUp(mAssociatedParticipant);
       }
    };
 

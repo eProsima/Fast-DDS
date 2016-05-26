@@ -82,7 +82,10 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
     else
     {
         for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
+        {
             rit->add_unsent_change(CacheChangeForGroup_t(cptr));
+            AsyncWriterThread::wakeUp(this);
+        }
     }
 }
 
@@ -91,7 +94,7 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
     bool returnedValue = false;
 
     // If the writer is asynchronous, find change in unsent list and remove it.
-	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+	 boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
     for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
     {
@@ -216,6 +219,7 @@ bool StatelessWriter::add_locator(RemoteReaderAttributes& rdata,Locator_t& loc)
 				it!=mp_history->changesEnd();++it)
 		{
          rit->add_unsent_change(CacheChangeForGroup_t((*it)));
+         AsyncWriterThread::wakeUp(this);
 		}
 	}
 
@@ -306,6 +310,7 @@ void StatelessWriter::unsent_changes_reset()
 				cit!=mp_history->changesEnd();++cit)
       {
          rit->add_unsent_change(CacheChangeForGroup_t(*cit));    
+         AsyncWriterThread::wakeUp(this);
 		}
 	}
 	send_any_unsent_changes();

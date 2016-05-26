@@ -19,10 +19,7 @@
 #include <condition_variable>
 #include <list>
 
-namespace boost
-{
-    class thread;
-}
+#include <fastrtps/rtps/resources/AsyncInterestTree.h>
 
 namespace eprosima
 {
@@ -57,8 +54,15 @@ namespace rtps
 
            /*
             * Wakes the thread up.
+            * @param interestedParticipant The participant interested in an async write.
             */
-           static void wakeUp();
+           static void wakeUp(const RTPSParticipantImpl* interestedParticipant);
+
+           /*
+            * Wakes the thread up.
+            * @param interestedParticipant The writer interested in an async write.
+            */
+           static void wakeUp(const RTPSWriter* interestedWriter);
 
            /*!
             * @brief Destructor
@@ -79,6 +83,7 @@ namespace rtps
            
            //! List of asynchronous writers.
            static std::list<RTPSWriter*> async_writers;
+           static AsyncInterestTree interestTree;
 
            static std::atomic<bool> running_;
            static std::atomic<bool> run_scheduled_;
