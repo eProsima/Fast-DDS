@@ -38,6 +38,7 @@ private:
    static std::vector<FlowFilter*> ListeningFilters;
    static std::unique_ptr<boost::thread> FilterThread;
    static void StartFilterService();
+   static void StopFilterService();
 
    // No copy, assignment or move! Filters are accessed by reference
    // from several places.

@@ -35,6 +35,8 @@ void FlowFilter::DeRegisterAsListeningFilter()
 {
    std::unique_lock<std::recursive_mutex> scopedLock(FlowFilterMutex);
    ListeningFilters.erase(std::remove(ListeningFilters.begin(), ListeningFilters.end(), this), ListeningFilters.end());
+   if (ListeningFilters.empty() && FilterThread)
+      StopFilterService();
 }
 
 bool FlowFilter::IsListening(FlowFilter* filter) 
@@ -53,4 +55,11 @@ void FlowFilter::StartFilterService()
       FilterService.run();
    };
    FilterThread.reset(new boost::thread(ioServiceFunction));
+}
+
+void FlowFilter::StopFilterService()
+{
+   FilterService.stop();
+   FilterThread->join();
+   FilterThread.reset();
 }
