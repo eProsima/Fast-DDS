@@ -15,6 +15,7 @@
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
@@ -61,5 +62,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
         boost::lock_guard<boost::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
         boost::lock_guard<boost::recursive_mutex> guard(*mp_RP->mp_mutex);
         mp_RP->convert_status_on_all_changes(REQUESTED,UNSENT);
+        if (!mp_RP->getRequestedFragments().empty())
+           AsyncWriterThread::wakeUp(mp_RP->mp_SFW);
     }
 }

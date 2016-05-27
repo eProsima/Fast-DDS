@@ -38,7 +38,7 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
       if (change.isFragmented())
       {
          unsigned int fitting_fragments = min((mSizeToClear - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
-                                              change.getChange()->getFragmentCount());
+                                              change.getChange()->getFragmentCount() - change.getLastFragmentNumber());
          if (fitting_fragments)
          {
             mAccumulatedPayloadSize += fitting_fragments * change.getChange()->getFragmentSize();

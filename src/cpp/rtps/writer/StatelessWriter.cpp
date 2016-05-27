@@ -104,46 +104,70 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
     return returnedValue;
 }
 
+static void update_reader_locator_with_changes_to_send(ReaderLocator& reader_locator, const std::vector<CacheChangeForGroup_t>& changes)
+{
+   for (auto& change : changes)
+   {
+      auto it = std::find_if(reader_locator.unsent_changes.begin(),
+                             reader_locator.unsent_changes.end(),
+                             [&](const CacheChangeForGroup_t& locator_change){ 
+                                return change.getChange() == locator_change.getChange();});
+
+      if (change.isFragmented())
+      {
+         it->setLastFragmentNumber(change.getLastFragmentNumber() + change.getFragmentsClearedForSending());
+         if (it->getLastFragmentNumber() >= it->getChange()->getFragmentCount()) // We're done sending this fragmented message.
+            reader_locator.unsent_changes.erase(it);
+      }
+      else
+         reader_locator.unsent_changes.erase(it);
+   }
+}
+
 uint32_t StatelessWriter::send_any_unsent_changes()
 {
 	const char* const METHOD_NAME = "send_any_unsent_changes";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-   uint32_t messagesToSend = 0;
+   uint32_t number_of_changes_sent= 0;
 
 	for(auto rit = reader_locator.begin(); rit != reader_locator.end(); ++rit)
 	{
       // Shallow copy the list
-      auto unsent_changes_copy = rit->get_unsent_changes_copy(); 
+      auto changes_to_send = rit->get_unsent_changes_copy(); 
 
       // Clear through local filters
       for (auto& filter : m_filters)
-          (*filter)(unsent_changes_copy);
+          (*filter)(changes_to_send);
 
       // Clear through parent filters
       for (auto& filter : mp_RTPSParticipant->getFlowFilters())
-          (*filter)(unsent_changes_copy); 
+          (*filter)(changes_to_send); 
 
-      // Remove the messages selected for sending from the original list
-      for (auto& change : unsent_changes_copy)
-         rit->remove_unsent_change(change.getChange());
-	    uint32_t messagesToSendForThisReader = unsent_changes_copy.size();
-        messagesToSend += messagesToSendForThisReader;
-		if(messagesToSendForThisReader)
+      // Remove the messages selected for sending from the original list,
+      // and update those that were fragmented with the new sent index
+      update_reader_locator_with_changes_to_send(*rit, changes_to_send);
+
+      // Notify the filters
+      for (const auto& change : changes_to_send)
+          FlowFilter::NotifyFiltersChangeSent(&change);
+
+		if(!changes_to_send.empty())
 		{
+         number_of_changes_sent += changes_to_send.size();
 			if(m_pushMode)
 			{
              uint32_t bytesSent = 0;
              do
              {
                  bytesSent = RTPSMessageGroup::send_Changes_AsData(&m_cdrmessages, (RTPSWriter*)this,
-                         unsent_changes_copy, c_GuidPrefix_Unknown,
+                         changes_to_send, c_GuidPrefix_Unknown,
                          this->m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER ? c_EntityId_SPDPReader : c_EntityId_Unknown, rit->locator, rit->expectsInlineQos);
-             } while(bytesSent > 0 && unsent_changes_copy.size() > 0);
+             } while(bytesSent > 0 && changes_to_send.size() > 0);
 			}
 		}
 	}
 	logInfo(RTPS_WRITER, "Finish sending unsent changes";);
-   return messagesToSend;
+   return number_of_changes_sent;
 }
 
 

@@ -72,7 +72,6 @@ public:
 	 */
 	bool remove_unsent_change(const CacheChange_t* cpoin);
 
-private:
 	/**
     * Vector containing pointers to the unsent changes to this reader.
     * Must be kept private, it's crucial to notify the async writer

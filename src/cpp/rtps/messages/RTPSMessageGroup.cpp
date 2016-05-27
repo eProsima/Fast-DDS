@@ -186,6 +186,20 @@ namespace eprosima {
                     logError(RTPS_WRITER,"Problem adding DATA_FRAG submsg to the CDRMessage, buffer too small";);
             }
 
+            static uint32_t calculate_message_length_from_change(const CacheChangeForGroup_t& change)
+            {
+               if (change.isFragmented())
+               {
+                  bool one_fragment_left = change.getLastFragmentNumber() + 1 == change.getChange()->getFragmentCount();
+                  if (one_fragment_left)
+                     return change.getChange()->serializedPayload.length - (change.getChange()->getFragmentCount() - 1) * change.getChange()->getFragmentSize();
+                  else
+                     return change.getChange()->getFragmentSize();
+               }
+               else
+                  return change.getChange()->serializedPayload.length;
+            }
+
             uint32_t RTPSMessageGroup::send_Changes_AsData(RTPSMessageGroup_t* msg_group,
                     RTPSWriter* W, std::vector<CacheChangeForGroup_t>& changes,
                     const GuidPrefix_t& remoteGuidPrefix, const EntityId_t& ReaderId,
@@ -199,9 +213,7 @@ namespace eprosima {
                 CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
 
                 auto cit = changes.begin();
-                uint32_t data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
-                    (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
-                     cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+                uint32_t data_msg_length = calculate_message_length_from_change(*cit);
 
                 // Set header
                 CDRMessage::initCDRMsg(cdrmsg_fullmsg);
@@ -230,18 +242,21 @@ namespace eprosima {
                     else
                     {
                         RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, cit->increaseLastFragmentNumber());
-
-                        if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount())
+                        static unsigned int fragmentsSent = 0;
+                        fragmentsSent++;
+                        if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount()
+                           || (fragmentsSent == cit->getFragmentsClearedForSending()))
+                        {
+                            fragmentsSent = 0;
                             cit = changes.erase(cit);
+                        }
                     }
 
                     CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
 
                     if(cit != changes.end())
                     {
-                        data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
-                            (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
-                             cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+                        data_msg_length = calculate_message_length_from_change(*cit);
                     }
                     else
                         break;
@@ -278,9 +293,7 @@ namespace eprosima {
                 CDRMessage_t* cdrmsg_fullmsg = &msg_group->m_rtpsmsg_fullmsg;
 
                 auto cit = changes.begin();
-                uint32_t data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
-                    (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
-                     cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+                uint32_t data_msg_length = calculate_message_length_from_change(*cit);
 
                 // Set header
                 CDRMessage::initCDRMsg(cdrmsg_fullmsg);
@@ -309,18 +322,21 @@ namespace eprosima {
                     else
                     {
                         RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, cit->increaseLastFragmentNumber());
-
-                        if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount())
+                        static unsigned int fragmentsSent = 0;
+                        fragmentsSent++;
+                        if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount()
+                           || (fragmentsSent == cit->getFragmentsClearedForSending()))
+                        {
+                            fragmentsSent = 0;
                             cit = changes.erase(cit);
+                        }
                     }
 
                     CDRMessage::appendMsg(cdrmsg_fullmsg,cdrmsg_submessage);
 
                     if(cit != changes.end())
                     {
-                        data_msg_length = !cit->isFragmented() ? cit->getChange()->serializedPayload.length :
-                            (cit->getLastFragmentNumber() + 1 != cit->getChange()->getFragmentCount() ? cit->getChange()->getFragmentSize() :
-                             cit->getChange()->serializedPayload.length - ((cit->getChange()->getFragmentCount() - 1) * cit->getChange()->getFragmentSize()));
+                        data_msg_length = calculate_message_length_from_change(*cit);
                     }
                     else
                         break;

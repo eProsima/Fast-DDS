@@ -198,10 +198,10 @@ namespace eprosima
                 //!Mutex
                 boost::recursive_mutex* mp_mutex;
 
-                //!Set of the changes and its state.
-                private:
                 std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
 
+                //!Set of the changes and its state.
+                private:
                 //! Last  NACKFRAG count.
                 uint32_t lastNackfragCount_;
                 //TODO Temporal

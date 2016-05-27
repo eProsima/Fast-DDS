@@ -174,11 +174,32 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     return true;
 }
 
+static std::vector<CacheChangeForGroup_t> construct_changes_from_requested_fragments(ReaderProxy& readerProxy)
+{
+   std::vector<CacheChangeForGroup_t> changesForGroup;
+   auto requested_fragments = readerProxy.getRequestedFragments();
+
+   for (auto sequence_number_set : requested_fragments)
+   {
+      auto cfrit = readerProxy.m_changesForReader.find(ChangeForReader_t(sequence_number_set.first));
+
+      if (cfrit != readerProxy.m_changesForReader.end())
+      {
+         for (auto fragment_number : sequence_number_set.second)
+         {
+            changesForGroup.emplace_back(cfrit->getChange());
+            changesForGroup.back().setLastFragmentNumber(fragment_number - 1);
+         }
+      }
+   }
+   return changesForGroup;
+}
+
 uint32_t StatefulWriter::send_any_unsent_changes()
 {
     const char* const METHOD_NAME = "send_any_unsent_changes";
     boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
-    uint32_t messagesToSend = 0;
+    uint32_t number_of_changes_sent = 0;
 	 for(auto rit = matched_readers.begin(); rit != matched_readers.end(); ++rit)
     {
         boost::lock_guard<boost::recursive_mutex> rguard(*(*rit)->mp_mutex);
@@ -190,6 +211,7 @@ uint32_t StatefulWriter::send_any_unsent_changes()
 
         for(auto cit = ch_vec.begin(); cit != ch_vec.end(); ++cit)
         {
+                //cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
             if((*cit)->isRelevant() && (*cit)->isValid())
             {
                 relevant_changes.push_back((*cit)->getChange());
@@ -201,6 +223,9 @@ uint32_t StatefulWriter::send_any_unsent_changes()
             }
         }
 
+        auto changes_from_requested_fragments  = construct_changes_from_requested_fragments(**rit); 
+        relevant_changes.insert(relevant_changes.end(), changes_from_requested_fragments.begin(), changes_from_requested_fragments.end());
+
         // Clear all relevant changes through the local filters first
         for (auto& filter : m_filters)
            (*filter)(relevant_changes);
@@ -210,6 +235,7 @@ uint32_t StatefulWriter::send_any_unsent_changes()
            (*filter)(relevant_changes); 
        
         // Those that remain are set to UNDERWAY
+        // This will also set to underway those partially sent (TODO Heartbeat Frag)
         for (auto& change : relevant_changes)
            (*rit)->set_change_to_status(change.getChange(), UNDERWAY);
 
@@ -217,13 +243,11 @@ uint32_t StatefulWriter::send_any_unsent_changes()
         for (const auto& change : relevant_changes)
            FlowFilter::NotifyFiltersChangeSent(&change);
 
-	    uint32_t messagesToSendForThisReader = relevant_changes.size();
-        messagesToSend += messagesToSendForThisReader;
 		if(m_pushMode)
         {
-            if(messagesToSendForThisReader)
+            if(!relevant_changes.empty())
             {
-                //cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
+                number_of_changes_sent += relevant_changes.size();
                 uint32_t bytesSent = 0;
                 do
                 {
@@ -273,7 +297,7 @@ uint32_t StatefulWriter::send_any_unsent_changes()
     }
 
 	logInfo(RTPS_WRITER, "Finish sending unsent changes");
-   return messagesToSend;
+   return number_of_changes_sent;
 }
 
 
