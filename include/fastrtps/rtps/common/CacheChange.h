@@ -18,6 +18,7 @@
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "InstanceHandle.h"
+#include <fastrtps/rtps/common/FragmentNumber.h>
 
 #include <vector>
 
@@ -293,6 +294,16 @@ namespace eprosima
                     return change_ != nullptr;
                 }
 
+                FragmentNumberSet_t getUnsentFragments() const
+                {
+                    return unsent_fragments_;
+                }
+
+                void markFragmentsAsSent(FragmentNumberSet_t sentFragments)
+                {
+                  // TODO
+                }
+
                 private:
 
                 //!Status
@@ -305,6 +316,8 @@ namespace eprosima
                 SequenceNumber_t seq_num_;
 
                 const CacheChange_t* change_;
+
+                FragmentNumberSet_t unsent_fragments_;
             };
 
             struct ChangeForReaderCmp

@@ -17,6 +17,7 @@
 
 #include "../common/CDRMessage_t.h"
 #include "../../qos/ParameterList.h"
+#include <fastrtps/rtps/common/FragmentNumber.h>
 
 #include <vector>
 #include <cassert>
@@ -27,74 +28,79 @@ namespace eprosima {
 
             class CacheChangeForGroup_t
             {
-                public:
+            public:
 
-                    CacheChangeForGroup_t(const CacheChange_t* change) : 
-                       change_(change),
-                       last_fragment_number_(0),
-                       fragments_cleared_for_sending_(change->getFragmentCount())
+                CacheChangeForGroup_t(const CacheChange_t* change) : 
+                   change_(change)
+                {
+                    fragments_cleared_for_sending_.base = 0;
+                    for (uint32_t i = 0; i != change->getFragmentCount(); i++)
+                       fragments_cleared_for_sending_.add(i);
+
+                }
+
+                CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
+                   change_(c.change_),
+                   fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
                 {
                 }
 
-                    CacheChangeForGroup_t(const CacheChangeForGroup_t& c) : 
-                       change_(c.change_),
-                       last_fragment_number_(c.last_fragment_number_),
-                       fragments_cleared_for_sending_(c.fragments_cleared_for_sending_)
+                 CacheChangeForGroup_t(const ChangeForReader_t& c) : 
+                    change_(c.getChange()),
+                    fragments_cleared_for_sending_(c.getUnsentFragments())
                 {
                 }
 
                 const CacheChangeForGroup_t& operator=(const CacheChangeForGroup_t& c)
                 { 
                     change_ = c.change_;
-                    last_fragment_number_ = c.last_fragment_number_;
-                    fragments_cleared_for_sending_ =c.fragments_cleared_for_sending_;
+                    fragments_cleared_for_sending_ = c.fragments_cleared_for_sending_;
                     return *this;
                 }
 
-                    const CacheChange_t* getChange() const
-                    {
-                        return change_;
-                    }
+                const CacheChange_t* getChange() const
+                {
+                    return change_;
+                }
 
-                    bool isFragmented() const
-                    {
-                        return change_->getFragmentSize() != 0;
-                    }
+                bool isFragmented() const
+                {
+                    return change_->getFragmentSize() != 0;
+                }
 
-                    uint32_t getLastFragmentNumber() const
-                    {
-                        return last_fragment_number_;
-                    }
+                uint32_t getLastFragmentNumber() const
+                {
+                    return last_fragment_number_;
+                }
 
-                    uint32_t getFragmentsClearedForSending() const
-                    {
-                        return fragments_cleared_for_sending_;
-                    }
+                FragmentNumberSet_t getFragmentsClearedForSending() const
+                {
+                    return fragments_cleared_for_sending_;
+                }
 
-                    void setFragmentsClearedForSending(uint32_t fragments)
-                    {
-                        fragments_cleared_for_sending_ = fragments;
-                    }
+                void setFragmentsClearedForSending(FragmentNumberSet_t fragments)
+                {
+                    fragments_cleared_for_sending_ = fragments;
+                }
 
-                    void setLastFragmentNumber(uint32_t fragment_number)
-                    {
-                        last_fragment_number_ = fragment_number;
-                    }
+                void setLastFragmentNumber(uint32_t fragment_number)
+                {
+                    last_fragment_number_ = fragment_number;
+                }
 
-                    uint32_t increaseLastFragmentNumber()
-                    {
-                        assert(isFragmented());
-                        return ++last_fragment_number_;
-                    }
+                uint32_t increaseLastFragmentNumber()
+                {
+                    assert(isFragmented());
+                    return ++last_fragment_number_;
+                }
 
 
                 private:
-
-                    const CacheChange_t* change_;
                     uint32_t last_fragment_number_;
 
-                    // How many fragments can be sent in one go. Initialized to the maximum possible.
-                    uint32_t fragments_cleared_for_sending_;
+                    const CacheChange_t* change_;
+
+                    FragmentNumberSet_t fragments_cleared_for_sending_;
             };
 
             /**
