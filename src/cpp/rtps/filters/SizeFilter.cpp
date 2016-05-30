@@ -37,12 +37,17 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
       auto& change = changes[clearedChanges];
       if (change.isFragmented())
       {
-         unsigned int fitting_fragments = min((mSizeToClear - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
-                                              change.getChange()->getFragmentCount() - change.getLastFragmentNumber());
-         if (fitting_fragments)
+         unsigned int fittingFragments = min((mSizeToClear - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
+                                              static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
+         if (fittingFragments)
          {
-            mAccumulatedPayloadSize += fitting_fragments * change.getChange()->getFragmentSize();
-            change.setFragmentsClearedForSending(fitting_fragments);
+            mAccumulatedPayloadSize += fittingFragments * change.getChange()->getFragmentSize();
+
+            auto limitedFragments = change.getFragmentsClearedForSending();
+            while (limitedFragments.set.size() > fittingFragments)
+               limitedFragments.set.erase(std::prev(limitedFragments.set.end())); // remove biggest fragment
+
+            change.setFragmentsClearedForSending(limitedFragments);
             clearedChanges++;
          }
          else

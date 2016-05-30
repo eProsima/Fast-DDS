@@ -222,13 +222,17 @@ namespace eprosima
                 }
 
                 ChangeForReader_t(const ChangeForReader_t& ch) : status_(ch.status_),
-                is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_), change_(ch.change_)
+                is_relevant_(ch.is_relevant_), seq_num_(ch.seq_num_), change_(ch.change_),
+                unsent_fragments_(ch.unsent_fragments_)
                 {
                 }
 
                 ChangeForReader_t(const CacheChange_t* change) : status_(UNSENT),
                 is_relevant_(true), seq_num_(change->sequenceNumber), change_(change)
                 {
+                   if (change->getFragmentSize() != 0)
+                    for (uint32_t i = 1; i != change->getFragmentCount() + 1; i++)
+                       unsent_fragments_.add(i); // Indexed on 1
                 }
 
                 ChangeForReader_t(const SequenceNumber_t& seq_num) : status_(UNSENT),
@@ -244,6 +248,7 @@ namespace eprosima
                     is_relevant_ = ch.is_relevant_;
                     seq_num_ = ch.seq_num_;
                     change_ = ch.change_;
+                    unsent_fragments_ = ch.unsent_fragments_;
                     return *this;
                 }
 
@@ -301,7 +306,7 @@ namespace eprosima
 
                 void markFragmentsAsSent(FragmentNumberSet_t sentFragments)
                 {
-                  // TODO
+                    unsent_fragments_ -= sentFragments;
                 }
 
                 private:

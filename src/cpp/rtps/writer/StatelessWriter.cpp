@@ -115,8 +115,9 @@ static void update_reader_locator_with_changes_to_send(ReaderLocator& reader_loc
 
       if (change.isFragmented())
       {
-         it->setLastFragmentNumber(change.getLastFragmentNumber() + change.getFragmentsClearedForSending());
-         if (it->getLastFragmentNumber() >= it->getChange()->getFragmentCount()) // We're done sending this fragmented message.
+         // We remove the ones we are already sending.
+         it->setFragmentsClearedForSending(it->getFragmentsClearedForSending() - change.getFragmentsClearedForSending());
+         if (it->getFragmentsClearedForSending().isSetEmpty())
             reader_locator.unsent_changes.erase(it);
       }
       else

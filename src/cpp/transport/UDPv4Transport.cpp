@@ -219,6 +219,11 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
        sendBufferSize > mSendBufferSize)
       return false;
 
+   static uint32_t sent = 0;
+   if (sendBufferSize > 10000)
+      std::cout << "Sending big message at final endpoint!" << sent++ << std::endl;
+      
+
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
   
    bool success = false;
@@ -264,7 +269,10 @@ bool UDPv4Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t&
 		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
          receiveBuffer.resize(bytes_transferred);
          success = true;
-      }
+         static uint32_t received = 0;
+         if (bytes_transferred > 10000)
+            std::cout << "Received big message at final endpoint!" << received++ << std::endl;
+       }
       
       receiveSemaphore.post();
    };

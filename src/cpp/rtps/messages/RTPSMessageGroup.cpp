@@ -190,7 +190,13 @@ namespace eprosima {
             {
                if (change.isFragmented())
                {
-                  bool one_fragment_left = change.getLastFragmentNumber() + 1 == change.getChange()->getFragmentCount();
+                  auto fragsCleared = change.getFragmentsClearedForSending();
+                  if (fragsCleared.isSetEmpty())
+                     return 0;
+
+                  FragmentNumber_t fragmentToSend = (*fragsCleared.set.begin());
+
+                  bool one_fragment_left = fragmentToSend + 1 == change.getChange()->getFragmentCount();
                   if (one_fragment_left)
                      return change.getChange()->serializedPayload.length - (change.getChange()->getFragmentCount() - 1) * change.getChange()->getFragmentSize();
                   else
@@ -241,13 +247,14 @@ namespace eprosima {
                     }
                     else
                     {
-                        RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, cit->increaseLastFragmentNumber());
-                        static unsigned int fragmentsSent = 0;
-                        fragmentsSent++;
-                        if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount()
-                           || (fragmentsSent == cit->getFragmentsClearedForSending()))
+                        static uint32_t fragmentIndex = 0;
+                        auto fragmentsBegin = cit->getFragmentsClearedForSending().set.begin();
+                        auto fragmentsEnd= cit->getFragmentsClearedForSending().set.end();
+                        RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, *(std::next(fragmentsBegin, fragmentIndex)));
+                        fragmentIndex++;
+                        if(std::next(fragmentsBegin, fragmentIndex) == fragmentsEnd)
                         {
-                            fragmentsSent = 0;
+                            fragmentIndex = 0;
                             cit = changes.erase(cit);
                         }
                     }
@@ -321,13 +328,14 @@ namespace eprosima {
                     }
                     else
                     {
-                        RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, cit->increaseLastFragmentNumber());
-                        static unsigned int fragmentsSent = 0;
-                        fragmentsSent++;
-                        if(cit->getLastFragmentNumber() == cit->getChange()->getFragmentCount()
-                           || (fragmentsSent == cit->getFragmentsClearedForSending()))
+                        static uint32_t fragmentIndex = 0;
+                        auto fragmentsBegin = cit->getFragmentsClearedForSending().set.begin();
+                        auto fragmentsEnd= cit->getFragmentsClearedForSending().set.end();
+                        RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, *(std::next(fragmentsBegin, fragmentIndex)));
+                        fragmentIndex++;
+                        if(std::next(fragmentsBegin, fragmentIndex) == fragmentsEnd)
                         {
-                            fragmentsSent = 0;
+                            fragmentIndex = 0;
                             cit = changes.erase(cit);
                         }
                     }

@@ -608,6 +608,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
 	//const char* const METHOD_NAME = "proc_Submsg_DataFrag";
    boost::lock_guard<boost::mutex> guard(mtx);
 
+   static uint32_t msgsrec = 0;
+   if (smh->submessageLength > 10000)
+      std::cout << "Received big submessage! " << msgsrec++ << std::endl;
 	// Reset param list
 	m_ParamList.deleteParams();
 

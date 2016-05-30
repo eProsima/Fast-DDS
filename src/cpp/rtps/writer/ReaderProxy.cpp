@@ -193,6 +193,28 @@ void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForRea
       AsyncWriterThread::wakeUp(mp_SFW);
 }
 
+void ReaderProxy::mark_fragments_as_sent_for_change(const CacheChange_t* change, FragmentNumberSet_t fragments)
+{
+   bool mustWakeUpAsyncThread = false; 
+   for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
+   {
+      if (it->getChange() == change){
+         ChangeForReader_t newch(*it);
+         newch.markFragmentsAsSent(fragments);
+         if (newch.getUnsentFragments().isSetEmpty()) 
+            newch.setStatus(UNDERWAY);
+         else
+            mustWakeUpAsyncThread = true;
+         auto hint = m_changesForReader.erase(it);
+         m_changesForReader.insert(hint, newch);
+         break;
+      }
+   }
+
+   if (mustWakeUpAsyncThread)
+      AsyncWriterThread::wakeUp(mp_SFW);
+}
+
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);

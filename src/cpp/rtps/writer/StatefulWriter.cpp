@@ -181,15 +181,13 @@ static std::vector<CacheChangeForGroup_t> construct_changes_from_requested_fragm
 
    for (auto sequence_number_set : requested_fragments)
    {
+
       auto cfrit = readerProxy.m_changesForReader.find(ChangeForReader_t(sequence_number_set.first));
 
       if (cfrit != readerProxy.m_changesForReader.end())
       {
-         for (auto fragment_number : sequence_number_set.second)
-         {
-            changesForGroup.emplace_back(cfrit->getChange());
-            changesForGroup.back().setLastFragmentNumber(fragment_number - 1);
-         }
+         changesForGroup.emplace_back(cfrit->getChange());
+         changesForGroup.back().setFragmentsClearedForSending(FragmentNumberSet_t(sequence_number_set.second));
       }
    }
    return changesForGroup;
@@ -214,7 +212,7 @@ uint32_t StatefulWriter::send_any_unsent_changes()
                 //cout << "EXPECTSINLINE: "<< (*rit)->m_att.expectsInlineQos<< endl;
             if((*cit)->isRelevant() && (*cit)->isValid())
             {
-                relevant_changes.push_back((*cit)->getChange());
+                relevant_changes.emplace_back(**cit);
             }
             else
             {
@@ -234,10 +232,14 @@ uint32_t StatefulWriter::send_any_unsent_changes()
         for (auto& filter : mp_RTPSParticipant->getFlowFilters())
            (*filter)(relevant_changes); 
        
-        // Those that remain are set to UNDERWAY
-        // This will also set to underway those partially sent (TODO Heartbeat Frag)
+        // Those that remain are set to UNDERWAY or their unsent sets updated
         for (auto& change : relevant_changes)
-           (*rit)->set_change_to_status(change.getChange(), UNDERWAY);
+        {
+           if (change.isFragmented() && !change.getFragmentsClearedForSending().isSetEmpty())
+              (*rit)->mark_fragments_as_sent_for_change(change.getChange(), change.getFragmentsClearedForSending());
+           else
+              (*rit)->set_change_to_status(change.getChange(), UNDERWAY);
+        }
 
         // And filters are notified about the changes being sent
         for (const auto& change : relevant_changes)

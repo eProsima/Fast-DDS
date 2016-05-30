@@ -772,7 +772,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
 	// When doing fragmentation, it is necessary to have some degree of
 	// flow control not to overrun the receive buffer.
-	uint32_t sizeToClear = 300000;
+	uint32_t sizeToClear = 80000;
 	uint32_t periodInMs = 200;
 	writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
 

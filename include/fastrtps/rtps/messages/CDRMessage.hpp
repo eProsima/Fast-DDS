@@ -540,7 +540,7 @@ inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
 		return true;
 	}
 
-	FragmentNumber_t maxfragNum = fns->get_maxFragNum();
+	FragmentNumber_t maxfragNum = *(fns->set.end());
 
 	uint32_t numBits = (uint32_t)(maxfragNum - fns->base + 1);
 

@@ -68,11 +68,11 @@ TEST_F(SizeFilterTests, if_changes_are_fragmented_size_filter_provides_granulari
    // The first 5 are completely cleared
    for (int i = 0; i < 5; i++)
    {
-      ASSERT_EQ(testChangesForGroup[i].getFragmentsClearedForSending(), 10);
+      ASSERT_EQ(testChangesForGroup[i].getFragmentsClearedForSending().set.size(), 10);
    }
 
    // And the last one is partially cleared
-   ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending(), 5); 
+   ASSERT_EQ(testChangesForGroup[5].getFragmentsClearedForSending().set.size(), 5); 
    std::this_thread::sleep_for(std::chrono::milliseconds(refreshTimeMS + 20));
 }
 

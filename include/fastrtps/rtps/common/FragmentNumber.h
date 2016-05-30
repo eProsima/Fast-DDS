@@ -43,6 +43,18 @@ public:
 		return *this;
 	}
 
+   FragmentNumberSet_t(): base(0), set()
+   {
+   }
+
+   FragmentNumberSet_t(const std::set<FragmentNumber_t>& set2): base(0)
+   {
+      set = set2;
+      auto min = set.begin();
+      if (min != set.end())
+         base = *min;
+   }
+
 	/**
 	* Compares object with other FragmentNumberSet_t.
 	* @param other FragmentNumberSet_t to compare
@@ -61,7 +73,7 @@ public:
 	* @param in FragmentNumberSet_t to add
 	* @return True on success
 	*/
-	bool add(FragmentNumber_t& in)
+	bool add(FragmentNumber_t in)
 	{
 		if (in >= base && in <= base + 255)
 			set.insert(in);
@@ -71,19 +83,10 @@ public:
 	}
 
 	/**
-	* Get the maximum fragment number in the set
-	* @return maximum fragment number in the set
-	*/
-	FragmentNumber_t get_maxFragNum()
-	{
-		return *std::max_element(set.begin(), set.end());
-	}
-
-	/**
 	* Check if the set is empty
 	* @return True if the set is empty
 	*/
-	bool isSetEmpty()
+	bool isSetEmpty() const
 	{
 		return set.empty();
 	}
@@ -105,11 +108,6 @@ public:
 	{
 		return set.end();
 	}
-
-   const std::set<FragmentNumber_t>& getSet() const
-   {
-      return set;
-   }
 
 	/**
 	* Get the number of FragmentNumbers in the set
@@ -135,7 +133,7 @@ public:
 
    FragmentNumberSet_t& operator-=(const FragmentNumberSet_t& rhs)
    {
-      for ( auto element : rhs.getSet())
+      for ( auto element : rhs.set)
          set.erase(element);
       return *this;
    }
@@ -155,9 +153,9 @@ inline std::ostream& operator<<(std::ostream& output, FragmentNumberSet_t& sns){
 
 inline FragmentNumberSet_t operator-(FragmentNumberSet_t lhs, const FragmentNumberSet_t& rhs)
 {
-   for ( auto element : rhs.getSet())
+   for ( auto element : rhs.set)
       lhs.set.erase(element);
-   return rhs;
+   return lhs;
 }
 
 }
