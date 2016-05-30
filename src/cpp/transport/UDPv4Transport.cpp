@@ -220,10 +220,6 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
       return false;
       
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-   static int sent = 0;
-   if (sendBufferSize > 10000) 
-      std::cout << "Sending big packet " <<sent++ << " to " << remoteLocator.to_IP4_string() << std::endl;
-  
    bool success = false;
    auto& sockets = mOutputSockets[localLocator.port];
    for (auto& socket : sockets)
@@ -266,11 +262,8 @@ bool UDPv4Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t&
       {
 		   logInfo(RTPS_MSG_IN,"Msg processed (" << bytes_transferred << " bytes received), Socket async receive put again to listen ",C_BLUE);
          receiveBuffer.resize(bytes_transferred);
-         static int receive = 0;
-         if (bytes_transferred > 10000) 
-            std::cout << "Received big packet " << receive++ << std::endl;
          success = true;
-       }
+      }
       
       receiveSemaphore.post();
    };

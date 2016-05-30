@@ -82,8 +82,6 @@ namespace eprosima {
                     const CacheChange_t* change_;
 
                     FragmentNumberSet_t fragments_cleared_for_sending_;
-                    LocatorList_t unicast_outbound_locators_;
-                    LocatorList_t multicast_outbound_locators_;
             };
 
             /**

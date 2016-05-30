@@ -30,9 +30,7 @@ static const char* const CLASS_NAME = "StatelessWriter";
 StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
 		WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
 							RTPSWriter(pimpl,guid,att,hist,listen)
-{
-
-}
+{}
 
 StatelessWriter::~StatelessWriter()
 {
@@ -89,17 +87,15 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 {
 	 boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
+    auto newEnd = remove_if(m_unsent_changes.begin(), 
+                            m_unsent_changes.end(),
+                            [change](const CacheChangeForGroup_t& ccfg)
+                               {return ccfg.getChange() == change 
+                                || ccfg.getChange()->sequenceNumber == change->sequenceNumber;});
+    bool removed = newEnd != m_unsent_changes.end();
+    m_unsent_changes.erase(newEnd, m_unsent_changes.end());
 
-    for(auto it = m_unsent_changes.begin(); it != m_unsent_changes.end(); ++it)
-    {
-       if(change->sequenceNumber == it->getChange()->sequenceNumber)
-       {
-          m_unsent_changes.erase(it);
-          return true;
-       }
-    }
-
-    return false;
+    return removed;
 }
 
 void StatelessWriter::update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes)
