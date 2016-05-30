@@ -89,6 +89,8 @@ public:
 	*/
 	bool add_locator(RemoteReaderAttributes& rdata,Locator_t& loc);
 
+   void update_unsent_changes(const std::vector<CacheChangeForGroup_t>& changes);
+
 	/**
 	* Remove a remote locator from the writer.
 	*
@@ -115,6 +117,13 @@ private:
 	std::vector<ReaderLocator> reader_locator;
 	std::vector<RemoteReaderAttributes> m_matched_readers;
    std::vector<std::unique_ptr<FlowFilter> > m_filters;
+
+	/**
+    * Vector containing pointers to the unsent changes from this writer.
+    * it's crucial to notify the async writer
+    * thread when anything is pushed into it.
+    */	
+   std::vector<CacheChangeForGroup_t> m_unsent_changes;
 };
 }
 } /* namespace rtps */

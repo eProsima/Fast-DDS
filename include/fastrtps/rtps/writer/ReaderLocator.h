@@ -52,32 +52,12 @@ public:
 	//!Number of times this locator has been used (in case different readers use the same locator).
 	uint32_t n_used;
 
-   void   add_unsent_change(const CacheChangeForGroup_t&);
-   void   remove_all_unsent_changes(); 
-
-   size_t count_unsent_changes() const;
-   std::vector<CacheChangeForGroup_t> get_unsent_changes_copy() const;
-
 	/**
 	 * Remove change from requested list.
 	 * @param cpoin Pointer to change.
 	 * @return True if correct
 	 */
 	bool remove_requested_change(const CacheChange_t* cpoin);
-
-	/**
-	 * Remove change from unsent list.
-	 * @param cpoin Pointer to pointer
-	 * @return True if correct.
-	 */
-	bool remove_unsent_change(const CacheChange_t* cpoin);
-
-	/**
-    * Vector containing pointers to the unsent changes to this reader.
-    * Must be kept private, it's crucial to notify the async writer
-    * thread when anything is pushed into it.
-    */	
-   std::vector<CacheChangeForGroup_t> unsent_changes;
 };
 }
 } /* namespace rtps */

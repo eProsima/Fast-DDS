@@ -36,26 +36,6 @@ ReaderLocator::~ReaderLocator()
 {
 }
 
-void ReaderLocator::add_unsent_change(const CacheChangeForGroup_t& change)
-{
-   unsent_changes.push_back(change);
-}
-
-void ReaderLocator::remove_all_unsent_changes()
-{
-   unsent_changes.clear();   
-}
-
-size_t ReaderLocator::count_unsent_changes() const
-{
-   return unsent_changes.size(); 
-}
-
-std::vector<CacheChangeForGroup_t> ReaderLocator::get_unsent_changes_copy() const
-{
-   return unsent_changes;
-}
-
 bool ReaderLocator::remove_requested_change(const CacheChange_t* cpoin){
 	std::vector<const CacheChange_t*>::iterator it;
 	for(it=requested_changes.begin();it!=requested_changes.end();++it)
@@ -70,18 +50,6 @@ bool ReaderLocator::remove_requested_change(const CacheChange_t* cpoin){
 
 }
 
-bool ReaderLocator::remove_unsent_change(const CacheChange_t* cpoin)
-{
-	for(auto it = unsent_changes.begin(); it != unsent_changes.end(); ++it)
-	{
-		if(cpoin->sequenceNumber == it->getChange()->sequenceNumber)
-		{
-			unsent_changes.erase(it);
-			return true;
-		}
-	}
-	return false;
-}
 }
 } /* namespace rtps */
 } /* namespace eprosima */
