@@ -154,25 +154,6 @@ namespace eprosima {
                         LocatorList_t& unicast,
                         LocatorList_t& multicast,
                         bool expectsInlineQos);
-
-                /**
-                 * @param msg_group
-                 * @param W
-                 * @param changes
-                 * @param remoteGuidPrefix
-                 * @param loc
-                 * @param expectsInlineQos
-                 * @param ReaderId
-                 * @return 
-                 */
-                static uint32_t send_Changes_AsData(RTPSMessageGroup_t* msg_group,
-                        RTPSWriter* W,
-                        std::vector<CacheChangeForGroup_t>& changes,
-                        const GuidPrefix_t& remoteGuidPrefix,
-                        const EntityId_t& ReaderId,
-                        const Locator_t& loc,
-                        bool expectsInlineQos);
-
                 /**
                  * @param W
                  * @param submsg

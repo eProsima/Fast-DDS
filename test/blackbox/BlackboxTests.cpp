@@ -729,11 +729,11 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 
     ASSERT_TRUE(reader.isInitialized());
 	
-	// When doing fragmentation, it is necessary to have some degree of
-	// flow control not to overrun the receive buffer.
-	uint32_t sizeToClear = 300000;
-	uint32_t periodInMs = 200;
-	writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+      // When doing fragmentation, it is necessary to have some degree of
+      // flow control not to overrun the receive buffer.
+      uint32_t sizeToClear = 300000;
+      uint32_t periodInMs = 200;
+      writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
 
     writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
@@ -772,7 +772,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
 	// When doing fragmentation, it is necessary to have some degree of
 	// flow control not to overrun the receive buffer.
-	uint32_t sizeToClear = 80000;
+	uint32_t sizeToClear = 300000;
 	uint32_t periodInMs = 200;
 	writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
 
