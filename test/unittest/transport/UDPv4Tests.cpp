@@ -140,7 +140,6 @@ TEST_F(UDPv4Tests, send_to_loopback)
       Locator_t remoteLocatorToReceive;
       EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(message, receiveBuffer);
-      std::cout << "Received at " << remoteLocatorToReceive.to_IP4_string() << std::endl;
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -294,9 +293,6 @@ TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
    outputChannelLocator.set_IP4_address(111,111,111,111);
    vector<octet> message = { 'H','e','l','l','o' };
    ASSERT_FALSE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, Locator_t()));
-
-   outputChannelLocator.set_IP4_address(0,0,0,0);
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, Locator_t()));
 }
 
 void UDPv4Tests::HELPER_SetDescriptorDefaults()

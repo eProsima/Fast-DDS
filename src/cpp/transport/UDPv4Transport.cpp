@@ -285,7 +285,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
    {
       for (auto& locSocketPair : mGranularOutputSockets)
          if (locSocketPair.first.port == localLocator.port)
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, locSocketPair.first, locSocketPair.second);
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, locSocketPair.second);
    }
    else if (mGranularMode)
    {
