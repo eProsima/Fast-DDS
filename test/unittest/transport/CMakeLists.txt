@@ -9,6 +9,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp)
 
+        set(UDPV4TESTS_GRANULARMODE_SOURCE 
+            UDPv4Tests_granularMode.cpp 
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/GranularUDPv4Transport.cpp)
+
         set(UDPV6TESTS_SOURCE 
             UDPv6Tests.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
@@ -38,6 +44,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${Boost_LIBRARIES} ${MOCKS} )
 		if(MSVC OR MSVC_IDE)
 			target_link_libraries(UDPv4Tests ${PRIVACY}
+				${Boost_LIBRARIES} iphlpapi Shlwapi
+				)
+		endif()
+
+        add_executable(UDPv4Tests_granularMode ${UDPV4TESTS_GRANULARMODE_SOURCE})
+        add_gtest(UDPv4Tests_granularMode ${UDPV4TESTS_GRANULARMODE_SOURCE})
+        target_compile_definitions(UDPv4Tests_granularMode PRIVATE FASTRTPS_NO_LIB BOOST_ALL_DYN_LINK)
+        target_include_directories(UDPv4Tests_granularMode PRIVATE ${Boost_INCLUDE_DIR} ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
+        target_link_libraries(UDPv4Tests_granularMode ${GTEST_LIBRARIES} ${Boost_LIBRARIES} ${MOCKS} )
+		if(MSVC OR MSVC_IDE)
+			target_link_libraries(UDPv4Tests_granularMode ${PRIVACY}
 				${Boost_LIBRARIES} iphlpapi Shlwapi
 				)
 		endif()

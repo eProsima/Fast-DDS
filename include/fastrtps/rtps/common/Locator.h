@@ -192,7 +192,8 @@ inline bool IsLocatorValid(const Locator_t&loc)
 
 }
 
-inline bool operator==(const Locator_t&loc1,const Locator_t& loc2){
+inline bool operator==(const Locator_t&loc1,const Locator_t& loc2)
+{
 	if(loc1.kind!=loc2.kind)
 		return false;
 	if(loc1.port !=loc2.port)

@@ -33,20 +33,20 @@ public:
    virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
    virtual bool IsInputChannelOpen(const Locator_t&) const = 0;
 
-   // Must report whether the given locator is supported by this transport (typically inspecting it's "kind" value).
+   // Must report whether the given locator is supported by this transport (typically inspecting its "kind" value).
    virtual bool IsLocatorSupported(const Locator_t&) const = 0;
 
    // Returns the locator describing the main (most general) channel that can write to the provided remote locator.
    virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
 
-   // Must the channel that maps to/from the given locator. This method must allocate, reserve and mark
+   // Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
    // any resources that are needed for said channel.
    virtual bool OpenOutputChannel(const Locator_t&) = 0;
    virtual bool OpenInputChannel(const Locator_t&) = 0;
 
    // Must close the channel that maps to/from the given locator. 
    // IMPORTANT: It MUST be safe to call this method even during a Send and Receive operation. You must implement
-   // any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage
+   // any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
    virtual bool CloseOutputChannel(const Locator_t&) = 0;
    virtual bool CloseInputChannel(const Locator_t&) = 0;
 
