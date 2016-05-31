@@ -8,7 +8,6 @@
 using namespace std;
 using namespace boost::asio;
 using namespace boost::interprocess;
-
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -50,13 +49,31 @@ bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
    return IsLocatorSupported(locator) && (mInputSockets.find(locator.port) != mInputSockets.end());
 }
 
+static bool IsAnyAddress(const Locator_t& locator)
+{
+   static const octet anyAddr[4] = { 0, 0, 0, 0};
+   return memcmp(&locator.address[12], &anyAddr, 4) == 0;
+}
+
 bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-   if (mGranularMode)
-      return IsLocatorSupported(locator) && (mGranularOutputSockets.find(locator) != mGranularOutputSockets.end());
+   if (!IsLocatorSupported(locator))
+      return false;
+
+   if (mGranularMode && IsAnyAddress(locator))
+   {
+      // Slightly special case, in that 0.0.0.0 is considered as open in so far as there
+      // is any open channel with that port.
+      return find_if(mGranularOutputSockets.begin(), mGranularOutputSockets.end(), 
+                     [locator](const std::pair<const Locator_t, boost::asio::ip::udp::socket>& locSocketPair)
+                     { return locSocketPair.first.port == locator.port; }) != mGranularOutputSockets.end();
+
+   }
+   else if (mGranularMode)
+      return mGranularOutputSockets.find(locator) != mGranularOutputSockets.end();
    else 
-      return IsLocatorSupported(locator) && (mOutputSockets.find(locator.port) != mOutputSockets.end());
+      return mOutputSockets.find(locator.port) != mOutputSockets.end();
 }
 
 bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator)
@@ -263,9 +280,24 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
   
    bool success = false;
-   auto& sockets = mOutputSockets[localLocator.port];
-   for (auto& socket : sockets)
+
+   if (mGranularMode && IsAnyAddress(localLocator))
+   {
+      for (auto& locSocketPair : mGranularOutputSockets)
+         if (locSocketPair.first.port == localLocator.port)
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, locSocketPair.first, locSocketPair.second);
+   }
+   else if (mGranularMode)
+   {
+      auto& socket = mGranularOutputSockets.at(localLocator);
       success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
+   }
+   else
+   {
+      auto& sockets = mOutputSockets.at(localLocator.port);
+      for (auto& socket : sockets)
+         success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
+   }
 
    return success;
 }

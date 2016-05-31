@@ -92,9 +92,6 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
 
    auto sendThreadFunction = [&]()
    {
-      Locator_t destinationLocator;
-      destinationLocator.port = 7410;
-      destinationLocator.kind = LOCATOR_KIND_UDPv4;
       EXPECT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, multicastLocator));
    };
 
@@ -143,6 +140,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
       Locator_t remoteLocatorToReceive;
       EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, multicastLocator, remoteLocatorToReceive));
       EXPECT_EQ(message, receiveBuffer);
+      std::cout << "Received at " << remoteLocatorToReceive.to_IP4_string() << std::endl;
    };
 
    receiverThread.reset(new boost::thread(receiveThreadFunction));      
@@ -279,6 +277,26 @@ TEST_F(UDPv4Tests, granular_mode_opening_and_closing_output_channel)
    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(outputChannelLocator));
    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(outputChannelLocator));
+}
+
+TEST_F(UDPv4Tests, granular_send_to_wrong_interface)
+{
+   descriptor.granularMode = true;
+   UDPv4Transport transportUnderTest(descriptor);
+
+   Locator_t outputChannelLocator;
+   outputChannelLocator.port = 7400;
+   outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
+   outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
+   ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
+
+   //Sending through a different IP will NOT work in granular mode, except 0.0.0.0
+   outputChannelLocator.set_IP4_address(111,111,111,111);
+   vector<octet> message = { 'H','e','l','l','o' };
+   ASSERT_FALSE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, Locator_t()));
+
+   outputChannelLocator.set_IP4_address(0,0,0,0);
+   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), outputChannelLocator, Locator_t()));
 }
 
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
