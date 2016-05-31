@@ -304,9 +304,14 @@ namespace eprosima
                     return unsent_fragments_;
                 }
 
-                void markFragmentsAsSent(FragmentNumberSet_t sentFragments)
+                void markFragmentsAsSent(const FragmentNumberSet_t& sentFragments)
                 {
                     unsent_fragments_ -= sentFragments;
+                }
+
+                void markFragmentsAsUnsent(const FragmentNumberSet_t& unsentFragments)
+                {
+                    unsent_fragments_ += unsentFragments;
                 }
 
                 private:

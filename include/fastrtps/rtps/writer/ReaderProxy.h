@@ -162,14 +162,8 @@ namespace eprosima
                  * @param[in] frag_set set containing the requested fragments to be sent.
                  * @param[in] sequence_number Sequence number to be paired with the requested fragments.
                  * @return True if there is at least one requested fragment. False in other case.
-                 * @remarks It is not thread-safe.
                  */
-                bool requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set);
-
-                const std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash>&
-                    getRequestedFragments() const { return requested_fragments_; }
-
-                void clearRequestedFragments() { requested_fragments_.clear(); }
+                bool requested_fragment_set(SequenceNumber_t sequence_number, const FragmentNumberSet_t& frag_set);
 
                 /*!
                  * @brief Returns the last NACKFRAG count.
@@ -206,9 +200,6 @@ namespace eprosima
                 private:
                 //! Last  NACKFRAG count.
                 uint32_t lastNackfragCount_;
-                //TODO Temporal
-                //! Contains requested fragments per CacheChange_t.
-                std::unordered_map<SequenceNumber_t, std::set<FragmentNumber_t>, SequenceNumberHash> requested_fragments_;
             };
         }
     } /* namespace rtps */

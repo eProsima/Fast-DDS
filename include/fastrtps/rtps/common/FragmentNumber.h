@@ -138,6 +138,13 @@ public:
       return *this;
    }
 
+   FragmentNumberSet_t& operator+=(const FragmentNumberSet_t& rhs)
+   {
+      for ( auto element : rhs.set )
+         add(element);
+      return *this;
+   }
+
 	std::set<FragmentNumber_t> set;
 };
 
@@ -155,6 +162,13 @@ inline FragmentNumberSet_t operator-(FragmentNumberSet_t lhs, const FragmentNumb
 {
    for ( auto element : rhs.set)
       lhs.set.erase(element);
+   return lhs;
+}
+
+inline FragmentNumberSet_t operator+(FragmentNumberSet_t lhs, const FragmentNumberSet_t& rhs)
+{
+   for ( auto element : rhs.set)
+      lhs.add(element);
    return lhs;
 }
 

@@ -174,25 +174,6 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     return true;
 }
 
-static std::vector<CacheChangeForGroup_t> construct_changes_from_requested_fragments(ReaderProxy& readerProxy)
-{
-   std::vector<CacheChangeForGroup_t> changesForGroup;
-   auto requested_fragments = readerProxy.getRequestedFragments();
-
-   for (auto sequence_number_set : requested_fragments)
-   {
-
-      auto cfrit = readerProxy.m_changesForReader.find(ChangeForReader_t(sequence_number_set.first));
-
-      if (cfrit != readerProxy.m_changesForReader.end())
-      {
-         changesForGroup.emplace_back(cfrit->getChange());
-         changesForGroup.back().setFragmentsClearedForSending(FragmentNumberSet_t(sequence_number_set.second));
-      }
-   }
-   return changesForGroup;
-}
-
 uint32_t StatefulWriter::send_any_unsent_changes()
 {
     const char* const METHOD_NAME = "send_any_unsent_changes";
@@ -220,9 +201,6 @@ uint32_t StatefulWriter::send_any_unsent_changes()
                 (*rit)->set_change_to_status((*cit)->getChange(), UNDERWAY);
             }
         }
-
-        auto changes_from_requested_fragments  = construct_changes_from_requested_fragments(**rit); 
-        relevant_changes.insert(relevant_changes.end(), changes_from_requested_fragments.begin(), changes_from_requested_fragments.end());
 
         // Clear all relevant changes through the local filters first
         for (auto& filter : m_filters)

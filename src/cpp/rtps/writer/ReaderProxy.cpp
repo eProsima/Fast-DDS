@@ -314,17 +314,25 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
 	return true;
 }
 
-bool ReaderProxy::requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set)
+bool ReaderProxy::requested_fragment_set(SequenceNumber_t sequence_number, const FragmentNumberSet_t& frag_set)
 {
-    std::set<FragmentNumber_t> requested_fragments(frag_set.get_begin(), frag_set.get_end());
-    size_t requested_number = requested_fragments.size();
+	 boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);
 
-    auto ret = requested_fragments_.insert(std::make_pair(sequence_number, std::move(requested_fragments)));
+    // Locate the outbound change referenced by the NACK_FRAG
+    auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(), 
+                                  [sequence_number](const ChangeForReader_t& change)
+                                  {return change.getSequenceNumber() == sequence_number;});
+    if (changeIter == m_changesForReader.end())
+      return false;
 
-    if(!ret.second)
-    {
-        ret.first->second.insert(requested_fragments.begin(), requested_fragments.end());
-    }
+    ChangeForReader_t newch(*changeIter);
+    auto hint = m_changesForReader.erase(changeIter);
+    newch.markFragmentsAsUnsent(frag_set);
 
-    return requested_number > 0;
+    // If it was UNSENT, we shouldn't switch back to REQUESTED to prevent stalling.
+    if (newch.getStatus() != UNSENT)
+      newch.setStatus(REQUESTED);
+    m_changesForReader.insert(hint, newch);
+
+    return true;
 }
