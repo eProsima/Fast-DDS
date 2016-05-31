@@ -17,7 +17,8 @@ static const char* const CLASS_NAME = "UDPv4Transport";
 
 UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
    mSendBufferSize(descriptor.sendBufferSize),
-   mReceiveBufferSize(descriptor.receiveBufferSize)
+   mReceiveBufferSize(descriptor.receiveBufferSize),
+   mGranularMode(descriptor.granularMode)
 {
    auto ioServiceFunction = [&]()
    {
@@ -52,7 +53,10 @@ bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
 bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-   return IsLocatorSupported(locator) && (mOutputSockets.find(locator.port) != mOutputSockets.end());
+   if (mGranularMode)
+      return IsLocatorSupported(locator) && (mGranularOutputSockets.find(locator) != mGranularOutputSockets.end());
+   else 
+      return IsLocatorSupported(locator) && (mOutputSockets.find(locator.port) != mOutputSockets.end());
 }
 
 bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator)
@@ -60,8 +64,11 @@ bool UDPv4Transport::OpenOutputChannel(const Locator_t& locator)
    if (IsOutputChannelOpen(locator) ||
        !IsLocatorSupported(locator))
       return false;   
-   
-   return OpenAndBindOutputSockets(locator.port);
+  
+   if (mGranularMode)   
+      return OpenAndBindGranularOutputSocket(locator);
+   else
+      return OpenAndBindOutputSockets(locator.port);
 }
 
 static bool IsMulticastAddress(const Locator_t& locator)
@@ -86,15 +93,25 @@ bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
       return false;   
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-
-   auto& sockets = mOutputSockets[locator.port];
-   for (auto& socket : sockets)
+   if (mGranularMode)
    {
+      auto& socket = mGranularOutputSockets.at(locator);
       socket.cancel();
       socket.close();
+      mGranularOutputSockets.erase(locator);
+   }
+   else
+   {
+      auto& sockets = mOutputSockets.at(locator.port);
+      for (auto& socket : sockets)
+      {
+         socket.cancel();
+         socket.close();
+      }
+
+      mOutputSockets.erase(locator.port);
    }
 
-   mOutputSockets.erase(locator.port);
    return true;
 }
 
@@ -139,6 +156,27 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
    {
 	   logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
       mOutputSockets.erase(port);
+      return false;
+   }
+
+   return true;
+}
+
+bool UDPv4Transport::OpenAndBindGranularOutputSocket(Locator_t locator)
+{
+	const char* const METHOD_NAME = "OpenAndBindGranularOutputSocket";
+
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
+
+   try 
+   {
+      mGranularOutputSockets.insert(std::pair<Locator_t, boost::asio::ip::udp::socket>(locator, 
+         OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4::from_string(locator.to_IP4_string()), locator.port)));
+   }
+	catch (boost::system::system_error const& e)
+   {
+	   logInfo(RTPS_MSG_OUT, "UDPv4 Error binding at port: (" << locator.port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+      mGranularOutputSockets.erase(locator);
       return false;
    }
 
@@ -195,7 +233,10 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uin
 
 bool UDPv4Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-   return left.port == right.port;
+   if (mGranularMode)
+      return left == right;
+   else
+      return left.port == right.port;
 }
 
 bool UDPv4Transport::IsLocatorSupported(const Locator_t& locator) const

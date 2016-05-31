@@ -39,6 +39,7 @@ public:
    typedef struct {
       uint32_t sendBufferSize;
       uint32_t receiveBufferSize;
+      bool granularMode;
    } TransportDescriptor;
 
    UDPv4Transport(const TransportDescriptor&);
@@ -75,6 +76,7 @@ protected:
    UDPv4Transport();
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
+   bool mGranularMode;
 
    // For non-granular UDPv4, the notion of channel corresponds to a port + direction tuple.
 	boost::asio::io_service mService;
@@ -83,9 +85,11 @@ protected:
    mutable boost::recursive_mutex mOutputMapMutex;
    mutable boost::recursive_mutex mInputMapMutex;
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; // Maps port to socket collection.
+   std::map<Locator_t, boost::asio::ip::udp::socket> mGranularOutputSockets; // Maps address to socket, for granular mode
    std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets;  // Maps port to socket collection.
 
    bool OpenAndBindOutputSockets(uint16_t port);
+   bool OpenAndBindGranularOutputSocket(Locator_t locator);
    bool OpenAndBindInputSockets(uint16_t port, boost::asio::ip::address_v4 multicastFilterAddress);
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4, uint32_t port);
    boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port, boost::asio::ip::address_v4 multicastFilterAddress);
@@ -95,6 +99,19 @@ protected:
                           const Locator_t& remoteLocator,
                           boost::asio::ip::udp::socket& socket);
 };
+
+// Arbitrary comparison required for map and set indexing.
+inline bool operator<(const Locator_t& lhs, const Locator_t& rhs)
+{
+	if(lhs.port < rhs.port)
+		return true;
+	for(uint8_t i =0; i<16 ;i++)
+   {
+		if(lhs.address[i] < rhs.address[i])
+			return true;
+	}
+	return false;
+}
 
 } // namespace rtps
 } // namespace fastrtps

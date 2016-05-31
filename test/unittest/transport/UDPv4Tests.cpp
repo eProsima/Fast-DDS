@@ -1,9 +1,11 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <gtest/gtest.h>
 #include <boost/thread.hpp>
+#include <fastrtps/utils/IPFinder.h>
 #include <memory>
 
 using namespace std;
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace boost::interprocess;
 
@@ -224,10 +226,66 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
    ASSERT_EQ(mainLocalLocator.to_IP4_string(), "0.0.0.0");
 }
 
+TEST_F(UDPv4Tests, in_granular_mode_locators_match_if_port_AND_address_matches)
+{
+   // Given
+   descriptor.granularMode = true;
+   UDPv4Transport transportUnderTest(descriptor);
+   LocatorList_t ips;
+   IPFinder::getIP4Address(&ips);
+
+   // We need enough valid IPs for the test
+   ASSERT_GE(ips.size(), 2);
+   auto it = ips.begin();
+   Locator_t locatorAlpha = *(it++);
+   Locator_t locatorBeta = locatorAlpha;
+
+   // Then
+   ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+
+   locatorBeta = *(it++);
+   locatorAlpha.port = 5000;
+   locatorBeta.port = 5000;
+
+   // Then
+   ASSERT_FALSE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+}
+
+TEST_F(UDPv4Tests, granular_mode_opening_and_closing_output_channel)
+{
+   // Given
+   descriptor.granularMode = true;
+   UDPv4Transport transportUnderTest(descriptor);
+   LocatorList_t ips;
+   IPFinder::getIP4Address(&ips);
+
+   // We need enough valid IPs for the test
+   ASSERT_GE(ips.size(), 2);
+   auto it = ips.begin();
+
+   Locator_t outputChannelLocator = *(it++);
+   outputChannelLocator.port = 7400;
+   Locator_t otherLocatorSamePort = *(it++);
+   otherLocatorSamePort.port = 7400;
+
+   // Then
+   ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
+   ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(outputChannelLocator));
+   ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
+
+   // Granularity allows for this distinction to be made.
+   ASSERT_FALSE  (transportUnderTest.IsOutputChannelOpen(otherLocatorSamePort));
+
+   ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(outputChannelLocator));
+   ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(outputChannelLocator));
+   ASSERT_FALSE (transportUnderTest.CloseOutputChannel(outputChannelLocator));
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
    descriptor.sendBufferSize = 5;
    descriptor.receiveBufferSize = 5;
+   descriptor.granularMode = false;
 }
 
 int main(int argc, char **argv)
