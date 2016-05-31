@@ -250,10 +250,13 @@ namespace eprosima {
                         static uint32_t fragmentIndex = 0;
                         auto fragmentsBegin = cit->getFragmentsClearedForSending().set.begin();
                         auto fragmentsEnd= cit->getFragmentsClearedForSending().set.end();
-                        RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, *(std::next(fragmentsBegin, fragmentIndex)));
-                        fragmentIndex++;
-                        if(std::next(fragmentsBegin, fragmentIndex) == fragmentsEnd)
-                        {
+						if (std::next(fragmentsBegin, fragmentIndex) != fragmentsEnd)
+						{
+							RTPSMessageGroup::prepareDataFragSubM(W, cdrmsg_submessage, expectsInlineQos, cit->getChange(), ReaderId, *(std::next(fragmentsBegin, fragmentIndex)));
+							fragmentIndex++;
+						}
+						else                  
+						{
                             fragmentIndex = 0;
                             cit = changes.erase(cit);
                         }
