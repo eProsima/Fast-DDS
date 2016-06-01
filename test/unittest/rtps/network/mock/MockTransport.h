@@ -37,15 +37,15 @@ class MockTransport: public TransportInterface
    virtual bool IsLocatorSupported(const Locator_t&)  const;
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
 
-   virtual bool Send(const std::vector<char>& sendBuffer, const Locator_t& localChannel, const Locator_t& remoteAddress);
-   virtual bool Receive(std::vector<char>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress);
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+   virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localChannel, Locator_t& remoteAddress);
 
    //Helpers and message record
    typedef struct
    {
       Locator_t destination;
       Locator_t origin;
-      std::vector<char> data;
+      std::vector<octet> data;
    } MockMessage;
 
    std::vector<MockMessage> mockMessagesToReceive;

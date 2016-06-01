@@ -15,7 +15,7 @@ class SenderResource
 
 public:
    // Sends to a destination locator, through the channel managed by this resource.
-   bool Send(const std::vector<char>& data, const Locator_t& destinationLocator);
+   bool Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator);
 
    // Reports whether this resource supports the given local locator (i.e., said locator
    // maps to the transport channel managed by this resource).
@@ -35,7 +35,7 @@ private:
 
    SenderResource(TransportInterface&, const Locator_t&);
    std::function<void()> Cleanup;
-   std::function<bool(const std::vector<char>&, const Locator_t&)> SendThroughAssociatedChannel;
+   std::function<bool(const octet* data, uint32_t dataLength, const Locator_t&)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
    bool mValid; // Post-construction validity check for the NetworkFactory

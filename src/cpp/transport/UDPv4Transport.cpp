@@ -213,10 +213,10 @@ Locator_t UDPv4Transport::RemoteToMainLocal(const Locator_t& remote) const
    return mainLocal;
 }
 
-bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, const Locator_t& localLocator, const Locator_t& remoteLocator)
+bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
-       sendBuffer.size() > mSendBufferSize)
+       sendBufferSize > mSendBufferSize)
       return false;
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
@@ -224,7 +224,7 @@ bool UDPv4Transport::Send(const std::vector<char>& sendBuffer, const Locator_t& 
    bool success = false;
    auto& sockets = mOutputSockets[localLocator.port];
    for (auto& socket : sockets)
-      success |= SendThroughSocket(sendBuffer, remoteLocator, socket);
+      success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
 
    return success;
 }
@@ -240,7 +240,7 @@ static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
    return locator;
 }
 
-bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator)
+bool UDPv4Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator)
 {
 	const char* const METHOD_NAME = "Receive";
    if (!IsInputChannelOpen(localLocator) ||
@@ -289,7 +289,8 @@ bool UDPv4Transport::Receive(std::vector<char>& receiveBuffer, const Locator_t& 
    return success;
 }
 
-bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
+bool UDPv4Transport::SendThroughSocket(const octet* sendBuffer,
+                                       uint32_t sendBufferSize,
                                        const Locator_t& remoteLocator,
                                        boost::asio::ip::udp::socket& socket)
 {
@@ -299,12 +300,12 @@ bool UDPv4Transport::SendThroughSocket(const std::vector<char>& sendBuffer,
    memcpy(&remoteAddress, &remoteLocator.address[12], sizeof(remoteAddress));
    auto destinationEndpoint = ip::udp::endpoint(boost::asio::ip::address_v4(remoteAddress), static_cast<uint16_t>(remoteLocator.port));
    unsigned int bytesSent = 0;
-   logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBuffer.size() << " bytes TO endpoint: " << destinationEndpoint
+   logInfo(RTPS_MSG_OUT,"UDPv4: " << sendBufferSize << " bytes TO endpoint: " << destinationEndpoint
          << " FROM " << socket.local_endpoint(), C_YELLOW);
 
    try 
    {
-      bytesSent = socket.send_to(boost::asio::buffer(sendBuffer.data(), sendBuffer.size()), destinationEndpoint);
+      bytesSent = socket.send_to(boost::asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
    }
    catch (const std::exception& error) 
    {

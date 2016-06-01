@@ -67,8 +67,8 @@ public:
    // Removes all outbound sockets on the given port.
    virtual bool CloseOutputChannel(const Locator_t&);
 
-   virtual bool Send(const std::vector<char>& sendBuffer, const Locator_t& localLocator, const Locator_t& remoteLocator);
-   virtual bool Receive(std::vector<char>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator);
+   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+   virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator);
 
 private:
    TransportDescriptor mDescriptor;
@@ -87,7 +87,8 @@ private:
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v6, uint32_t port);
    boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port, boost::asio::ip::address_v6 multicastFilterAddress);
 
-   bool SendThroughSocket(const std::vector<char>& sendBuffer,
+   bool SendThroughSocket(const octet* sendBuffer,
+                          uint32_t sendBufferSize,
                           const Locator_t& remoteLocator,
                           boost::asio::ip::udp::socket& socket);
 };
