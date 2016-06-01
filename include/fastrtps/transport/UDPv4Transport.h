@@ -90,9 +90,10 @@ protected:
 
    bool OpenAndBindOutputSockets(uint16_t port);
    bool OpenAndBindGranularOutputSocket(Locator_t locator);
-   bool OpenAndBindInputSockets(uint16_t port, boost::asio::ip::address_v4 multicastFilterAddress);
+   bool OpenAndBindInputSockets(uint16_t port);
+
    boost::asio::ip::udp::socket OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4, uint32_t port);
-   boost::asio::ip::udp::socket OpenAndBindMulticastInputSocket(uint32_t port, boost::asio::ip::address_v4 multicastFilterAddress);
+   boost::asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port);
 
    bool SendThroughSocket(const octet* sendBuffer,
                           uint32_t sendBufferSize,

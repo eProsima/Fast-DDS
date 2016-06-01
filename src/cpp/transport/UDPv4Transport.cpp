@@ -95,13 +95,23 @@ static bool IsMulticastAddress(const Locator_t& locator)
 
 bool UDPv4Transport::OpenInputChannel(const Locator_t& locator)
 {
-   if (IsInputChannelOpen(locator) ||
-       !IsMulticastAddress(locator) ||
-       !IsLocatorSupported(locator))
+   if (!IsLocatorSupported(locator))
       return false;   
-   
-   auto multicastFilterIP = ip::address_v4::from_string(locator.to_IP4_string());
-   return OpenAndBindInputSockets(locator.port, multicastFilterIP);
+
+   bool success = false;
+
+   if (!IsInputChannelOpen(locator))
+      success = OpenAndBindInputSockets(locator.port);
+
+   if (IsMulticastAddress(locator))
+   {
+      // The multicast group will be joined silently, because we do not
+      // want to return another resource.
+      auto& socket = mInputSockets.at(locator.port);
+      socket.set_option(ip::multicast::join_group(ip::address_v4::from_string(locator.to_IP4_string())));
+   }
+
+   return success;
 }
 
 bool UDPv4Transport::CloseOutputChannel(const Locator_t& locator)
@@ -200,7 +210,7 @@ bool UDPv4Transport::OpenAndBindGranularOutputSocket(Locator_t locator)
    return true;
 }
 
-bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v4 multicastFilterAddress)
+bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
    
@@ -208,7 +218,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v4 multi
 
    try 
    {
-      mInputSockets.emplace(port, OpenAndBindMulticastInputSocket(port, multicastFilterAddress));
+      mInputSockets.emplace(port, OpenAndBindInputSocket(port));
    }
 	catch (boost::system::system_error const& e)
    {
@@ -232,7 +242,7 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(ip::
    return socket;
 }
 
-boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uint32_t port, ip::address_v4 multicastFilterAddress)
+boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindInputSocket(uint32_t port)
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v4());
@@ -243,7 +253,6 @@ boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindMulticastInputSocket(uin
 
    ip::udp::endpoint endpoint(anyIP, port);
    socket.bind(endpoint);
-   socket.set_option(ip::multicast::join_group(multicastFilterAddress));
 
    return socket;
 }

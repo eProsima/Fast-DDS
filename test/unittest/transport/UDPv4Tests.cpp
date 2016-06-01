@@ -162,7 +162,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_isnt_equal_to_size_specified_
    destinationLocator.port = 7410;
 
    // Then
-   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
+   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize - 10);
    ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
