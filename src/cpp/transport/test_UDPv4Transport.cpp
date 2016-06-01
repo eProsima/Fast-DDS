@@ -19,6 +19,7 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDes
 {
    UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
    UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
+   UDPv4Transport::mGranularMode = descriptor.granularMode;
    DropLog.clear();
    DropLogLength = descriptor.dropLogLength;
    srand(time(NULL));

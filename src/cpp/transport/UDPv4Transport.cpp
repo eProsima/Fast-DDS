@@ -17,7 +17,8 @@ static const char* const CLASS_NAME = "UDPv4Transport";
 UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
    mSendBufferSize(descriptor.sendBufferSize),
    mReceiveBufferSize(descriptor.receiveBufferSize),
-   mGranularMode(descriptor.granularMode)
+   mGranularMode(descriptor.granularMode),
+   mInterfaceWhiteList(descriptor.interfaceWhiteList)
 {
    auto ioServiceFunction = [&]()
    {
@@ -49,28 +50,13 @@ bool UDPv4Transport::IsInputChannelOpen(const Locator_t& locator) const
    return IsLocatorSupported(locator) && (mInputSockets.find(locator.port) != mInputSockets.end());
 }
 
-static bool IsAnyAddress(const Locator_t& locator)
-{
-   static const octet anyAddr[4] = { 0, 0, 0, 0};
-   return memcmp(&locator.address[12], &anyAddr, 4) == 0;
-}
-
 bool UDPv4Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
    if (!IsLocatorSupported(locator))
       return false;
 
-   if (mGranularMode && IsAnyAddress(locator))
-   {
-      // Slightly special case, in that 0.0.0.0 is considered as open in so far as there
-      // is any open channel with that port.
-      return find_if(mGranularOutputSockets.begin(), mGranularOutputSockets.end(), 
-                     [locator](const std::pair<const Locator_t, boost::asio::ip::udp::socket>& locSocketPair)
-                     { return locSocketPair.first.port == locator.port; }) != mGranularOutputSockets.end();
-
-   }
-   else if (mGranularMode)
+   if (mGranularMode)
       return mGranularOutputSockets.find(locator) != mGranularOutputSockets.end();
    else 
       return mOutputSockets.find(locator.port) != mOutputSockets.end();
@@ -166,6 +152,17 @@ static void GetIP4s(vector<IPFinder::info_IP>& locNames)
    locNames.erase(newEnd, locNames.end());
 }
 
+bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
+{
+   if (mInterfaceWhiteList.empty())
+      return true;
+   
+   if (ip == ip::address_v4::any())
+      return true;
+
+   return  find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
+}
+
 bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
@@ -174,10 +171,22 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
 
    try 
    {
-      std::vector<IPFinder::info_IP> locNames;
-      GetIP4s(locNames);
-      for (const auto& ip : locNames)
-         mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v4::from_string(ip.name), port));
+      // If there is no whitelist, we can simply open a generic output socket
+      // and gain efficiency.
+      if (mInterfaceWhiteList.empty())
+         mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(ip::address_v4::any(), port));
+      else
+      {
+         std::vector<IPFinder::info_IP> locNames;
+         GetIP4s(locNames);
+         for (const auto& infoIP : locNames)
+         {
+            auto ip = boost::asio::ip::address_v4::from_string(infoIP.name);
+            if (IsInterfaceAllowed(ip))
+               mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(ip, port));
+         }
+      }
+
    }
 	catch (boost::system::system_error const& e)
    {
@@ -189,9 +198,12 @@ bool UDPv4Transport::OpenAndBindOutputSockets(uint16_t port)
    return true;
 }
 
-bool UDPv4Transport::OpenAndBindGranularOutputSocket(Locator_t locator)
+bool UDPv4Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
 {
 	const char* const METHOD_NAME = "OpenAndBindGranularOutputSocket";
+   auto ip = boost::asio::ip::address_v4::from_string(locator.to_IP4_string());
+   if (!IsInterfaceAllowed(ip))
+      return false;
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
 
@@ -230,7 +242,7 @@ bool UDPv4Transport::OpenAndBindInputSockets(uint16_t port)
    return true;
 }
 
-boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(ip::address_v4 ipAddress, uint32_t port)
+boost::asio::ip::udp::socket UDPv4Transport::OpenAndBindUnicastOutputSocket(const ip::address_v4& ipAddress, uint32_t port)
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v4());
@@ -290,13 +302,7 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
   
    bool success = false;
 
-   if (mGranularMode && IsAnyAddress(localLocator))
-   {
-      for (auto& locSocketPair : mGranularOutputSockets)
-         if (locSocketPair.first.port == localLocator.port)
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, locSocketPair.second);
-   }
-   else if (mGranularMode)
+   if (mGranularMode)
    {
       auto& socket = mGranularOutputSockets.at(localLocator);
       success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);

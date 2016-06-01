@@ -148,7 +148,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
    receiverThread->join();
 }
 
-TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_isnt_equal_to_size_specified_in_descriptor)
+TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
 {
    // Given
    UDPv4Transport transportUnderTest(descriptor);
@@ -162,11 +162,11 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_isnt_equal_to_size_specified_
    destinationLocator.port = 7410;
 
    // Then
-   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize - 10);
+   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
    ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
-TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specified_in_descriptor)
+TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_is_smaller_than_size_specified_in_descriptor)
 {
    // Given
    UDPv4Transport transportUnderTest(descriptor);
@@ -178,7 +178,7 @@ TEST_F(UDPv4Tests, Receive_is_rejected_if_buffer_size_isnt_equal_to_size_specifi
    Locator_t originLocator;
 
    // Then
-   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
+   vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize - 1);
    ASSERT_FALSE(transportUnderTest.Receive(receiveBufferWrongSize, genericInputChannelLocator, originLocator));
 }
 

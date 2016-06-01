@@ -126,6 +126,7 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    // Given
    descriptor.dropHeartbeatMessages = true;
    descriptor.dropDataMessages = true;
+   descriptor.granularMode = false;
 
    test_UDPv4Transport transportUnderTest(descriptor); // Default, no drops
    CDRMessage_t testDataMessage;
