@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/filters/SizeFilter.h>
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <thread>
@@ -853,6 +854,62 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
     print_non_received_messages(data, default_data300kb_print);
     ASSERT_EQ(data.size(), 0);
+}
+
+TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+	// When doing fragmentation, it is necessary to have some degree of
+	// flow control not to overrun the receive buffer.
+	uint32_t sizeToClear = 300000;
+	uint32_t periodInMs = 200;
+	writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+
+   // To simulate lossy conditions, we are going to remove the default
+   // bultin transport, and instead use a lossy shim layer variant.
+    auto testTransport = std::make_shared<test_UDPv4Transport::TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    testTransport->granularMode = false;
+    testTransport->percentageOfMessagesToDrop = 10;
+    testTransport->dropLogLength = 10;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(30);
+    
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(30));
+
+    print_non_received_messages(data, default_data300kb_print);
+    ASSERT_EQ(data.size(), 0);
+
+    // Sanity check. Make sure we have dropped a few packets
+    ASSERT_EQ(test_UDPv4Transport::DropLog.size(), testTransport->dropLogLength);
 }
 
 // Test created to check bug #1568 (Github #34)
