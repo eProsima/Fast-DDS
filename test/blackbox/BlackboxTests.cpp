@@ -877,7 +877,8 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     testTransport->sendBufferSize = 65536;
     testTransport->receiveBufferSize = 65536;
     testTransport->granularMode = false;
-    testTransport->percentageOfMessagesToDrop = 10;
+    // We drop 20% of all data frags
+    testTransport->dropDataFragMessagesPercentage = 20;
     testTransport->dropLogLength = 10;
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);

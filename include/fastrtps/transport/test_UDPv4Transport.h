@@ -24,11 +24,14 @@ public:
       bool granularMode;
 
       // Test shim parameters
-      bool dropDataMessages;
-      bool dropHeartbeatMessages;
-      bool dropAckNackMessages;
-      std::vector<SequenceNumber_t> sequenceNumberDataMessagesToDrop;
+      uint8_t dropDataMessagesPercentage;
+      uint8_t dropDataFragMessagesPercentage;
+      uint8_t dropHeartbeatMessagesPercentage;
+      uint8_t dropAckNackMessagesPercentage;
+
+      // General drop percentage (indescriminate)
       uint8_t percentageOfMessagesToDrop;
+      std::vector<SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
       uint32_t dropLogLength; // logs dropped packets.
 
@@ -44,9 +47,10 @@ public:
    static uint32_t DropLogLength;
 
 private:
-   bool mDropDataMessages;
-   bool mDropHeartbeatMessages;
-   bool mDropAckNackMessages;
+   uint8_t mDropDataMessagesPercentage;
+   uint8_t mDropDataFragMessagesPercentage;
+   uint8_t mDropHeartbeatMessagesPercentage;
+   uint8_t mDropAckNackMessagesPercentage;
    std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
    uint8_t mPercentageOfMessagesToDrop;
 

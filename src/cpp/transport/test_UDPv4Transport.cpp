@@ -11,9 +11,10 @@ vector<vector<octet> > test_UDPv4Transport::DropLog;
 uint32_t test_UDPv4Transport::DropLogLength = 0;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor):
-   mDropDataMessages(descriptor.dropDataMessages),
-   mDropHeartbeatMessages(descriptor.dropHeartbeatMessages),
-   mDropAckNackMessages(descriptor.dropAckNackMessages),
+   mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
+   mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage),
+   mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage),
+   mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage),
    mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop),
    mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
 {
@@ -56,10 +57,11 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
    memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
    cdrMessage.length = sendBufferSize;
 
-   return ( (mDropDataMessages      && ContainsSubmessageOfID(cdrMessage, DATA))      ||
-            (mDropAckNackMessages   && ContainsSubmessageOfID(cdrMessage, ACKNACK))   ||
-            (mDropHeartbeatMessages && ContainsSubmessageOfID(cdrMessage, HEARTBEAT)) || 
-             ContainsSequenceNumberToDrop(cdrMessage)                                 ||
+   return ( (mDropDataMessagesPercentage      > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA))       ||
+            (mDropAckNackMessagesPercentage   > (rand()%100) && ContainsSubmessageOfID(cdrMessage, ACKNACK))    ||
+            (mDropHeartbeatMessagesPercentage > (rand()%100) && ContainsSubmessageOfID(cdrMessage, HEARTBEAT))  || 
+            (mDropDataFragMessagesPercentage  > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA_FRAG)) || 
+             ContainsSequenceNumberToDrop(cdrMessage)                                                           ||
              RandomChanceDrop());
 }
 

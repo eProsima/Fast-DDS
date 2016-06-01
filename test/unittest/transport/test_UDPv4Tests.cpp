@@ -34,7 +34,7 @@ class test_UDPv4Tests: public ::testing::Test
 TEST_F(test_UDPv4Tests, DATA_messages_dropped)
 {  
    // Given
-   descriptor.dropDataMessages = true;
+   descriptor.dropDataMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
    HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
@@ -51,7 +51,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
 TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
 {  
    // Given
-   descriptor.dropAckNackMessages = true;
+   descriptor.dropAckNackMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
    HELPER_FillAckNackMessage(testDataMessage);
@@ -68,7 +68,7 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
 TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
 {  
    // Given
-   descriptor.dropHeartbeatMessages = true;
+   descriptor.dropHeartbeatMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
    HELPER_FillHeartbeatMessage(testDataMessage);
@@ -124,8 +124,8 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
 TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
 {  
    // Given
-   descriptor.dropHeartbeatMessages = true;
-   descriptor.dropDataMessages = true;
+   descriptor.dropHeartbeatMessagesPercentage = 100;
+   descriptor.dropDataMessagesPercentage = 100;
    descriptor.granularMode = false;
 
    test_UDPv4Transport transportUnderTest(descriptor); // Default, no drops
@@ -145,7 +145,7 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
 TEST_F(test_UDPv4Tests, Send_will_still_fail_on_bad_locators_without_dropping_as_expected)
 {  
    // Given
-   descriptor.dropDataMessages = true;
+   descriptor.dropDataMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
    CDRMessage_t testDataMessage;
    HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
@@ -162,9 +162,10 @@ void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
    descriptor.sendBufferSize = 80;
    descriptor.receiveBufferSize = 80;
-   descriptor.dropDataMessages = false;
-   descriptor.dropAckNackMessages = false;
-   descriptor.dropHeartbeatMessages = false;
+   descriptor.dropDataMessagesPercentage = 0;
+   descriptor.dropDataFragMessagesPercentage = 0;
+   descriptor.dropAckNackMessagesPercentage = 0;
+   descriptor.dropHeartbeatMessagesPercentage = 0;
    descriptor.percentageOfMessagesToDrop = 0;
    descriptor.dropLogLength = 10;
 }
