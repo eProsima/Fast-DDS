@@ -43,14 +43,8 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    locator.port = 7400;
    locator.kind = LOCATOR_KIND_UDPv4;
 
-   // When
-   vector<octet> message;
-   message.resize(80);
-   ASSERT_LE(testDataMessage.length, message.size());
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-
    // Then
-   ASSERT_TRUE(transportUnderTest.Send(message.data(),message.size(), locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }
 
@@ -66,13 +60,8 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    locator.port = 7400;
    locator.kind = LOCATOR_KIND_UDPv4;
 
-   // When
-   vector<octet> message;
-   message.resize(testDataMessage.length);
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-
    // Then
-   ASSERT_TRUE(transportUnderTest.Send(message.data(),message.size(), locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }
 
@@ -88,13 +77,8 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    locator.port = 7400;
    locator.kind = LOCATOR_KIND_UDPv4;
 
-   // When
-   vector<octet> message;
-   message.resize(testDataMessage.length);
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-
    // Then
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }
 
@@ -110,15 +94,10 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
    locator.port = 7400;
    locator.kind = LOCATOR_KIND_UDPv4;
 
-   // When
-   vector<octet> message;
-   message.resize(testDataMessage.length);
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-
    // Then
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), locator, locator));
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), locator, locator));
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(3, test_UDPv4Transport::DropLog.size());
 }
 
@@ -137,13 +116,8 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
    locator.port = 7400;
    locator.kind = LOCATOR_KIND_UDPv4;
 
-   // When
-   vector<octet> message;
-   message.resize(testDataMessage.length);
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-
    // Then
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1, test_UDPv4Transport::DropLog.size());
 }
 
@@ -152,6 +126,7 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    // Given
    descriptor.dropHeartbeatMessages = true;
    descriptor.dropDataMessages = true;
+   descriptor.granularMode = false;
 
    test_UDPv4Transport transportUnderTest(descriptor); // Default, no drops
    CDRMessage_t testDataMessage;
@@ -160,15 +135,10 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    Locator_t locator;
    locator.port = 7400;
    locator.kind = LOCATOR_KIND_UDPv4;
-
-   // When
-   vector<octet> message;
-   message.resize(80);
-   ASSERT_LE(testDataMessage.length, message.size());
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
+   locator.set_IP4_address(239, 255, 1, 4);
 
    // Then
-   ASSERT_TRUE(transportUnderTest.Send(message.data(), message.size(), locator, locator));
+   ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
 }
 
@@ -183,13 +153,8 @@ TEST_F(test_UDPv4Tests, Send_will_still_fail_on_bad_locators_without_dropping_as
    Locator_t badLocator;
    badLocator.kind = LOCATOR_KIND_UDPv6; // unsupported
 
-   // When
-   vector<octet> message;
-   message.resize(testDataMessage.length);
-   memcpy(message.data(), testDataMessage.buffer, testDataMessage.length);
-
    // Then
-   ASSERT_FALSE(transportUnderTest.Send(message.data(), message.size(), badLocator, badLocator));
+   ASSERT_FALSE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, badLocator, badLocator));
    ASSERT_EQ(0, test_UDPv4Transport::DropLog.size());
 }
 

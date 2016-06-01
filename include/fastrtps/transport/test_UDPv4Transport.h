@@ -21,6 +21,7 @@ public:
       // UDPv4 layer parameters
       uint32_t sendBufferSize;
       uint32_t receiveBufferSize;
+      bool granularMode;
 
       // Test shim parameters
       bool dropDataMessages;

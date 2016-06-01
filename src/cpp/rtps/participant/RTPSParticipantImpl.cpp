@@ -93,6 +93,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
    UDPv4Transport::TransportDescriptor descriptor; 
    descriptor.sendBufferSize = m_att.listenSocketBufferSize;
    descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+   descriptor.granularMode = false;
    m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
    
 	//const char* const METHOD_NAME = "RTPSParticipantImpl";
