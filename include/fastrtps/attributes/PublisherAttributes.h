@@ -17,6 +17,7 @@
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/Time_t.h"
 #include "../rtps/attributes/WriterAttributes.h"
+#include <fastrtps/rtps/filters/SizeFilter.h>
 #include "TopicAttributes.h"
 #include "../qos/WriterQos.h"
 
@@ -48,6 +49,8 @@ public:
 	LocatorList_t unicastLocatorList;
 	//!Multicast locator list
 	LocatorList_t multicastLocatorList;
+   //!Size filter descriptors for this publisher's writer
+   std::vector<SizeFilterDescriptor> sizeFilters;
 
 	/**
 	 * Get the user defined ID
