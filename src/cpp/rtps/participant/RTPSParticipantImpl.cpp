@@ -90,11 +90,19 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 				m_threadID(0)
 
 {
-   UDPv4Transport::TransportDescriptor descriptor; 
-   descriptor.sendBufferSize = m_att.listenSocketBufferSize;
-   descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-   descriptor.granularMode = false;
-   m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
+   // Builtin transport by default
+   if (PParam.useBuiltinTransports)
+   {
+      UDPv4Transport::TransportDescriptor descriptor; 
+      descriptor.sendBufferSize = m_att.listenSocketBufferSize;
+      descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+      descriptor.granularMode = true;
+      m_network_Factory.RegisterTransport<UDPv4Transport>(descriptor);
+   }
+
+   // User defined transports
+   for (const auto& transportDescriptor : PParam.userTransports)
+      m_network_Factory.RegisterTransport(transportDescriptor.get());
    
 	//const char* const METHOD_NAME = "RTPSParticipantImpl";
 	boost::lock_guard<boost::recursive_mutex> guard(*mp_mutex);

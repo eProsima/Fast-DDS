@@ -19,6 +19,9 @@ public:
       mRegisteredTransports.emplace_back(new TransportType(descriptor));
    }
 
+   // Dynamic version
+   void RegisterTransport(const TransportDescriptorInterface* descriptor);
+
    std::vector<SenderResource>   BuildSenderResources                 (const Locator_t& local);
    std::vector<SenderResource>   BuildSenderResourcesForRemoteLocator (const Locator_t& remote);
    std::vector<ReceiverResource> BuildReceiverResources               (const Locator_t& local);

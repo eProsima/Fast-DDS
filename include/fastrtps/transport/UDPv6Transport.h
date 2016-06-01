@@ -36,9 +36,11 @@ public:
     *               a buffer of different size will cause transmission to
     *               fail.
     * */
-   typedef struct {
+   typedef struct TransportDescriptor: public TransportDescriptorInterface{
       uint32_t sendBufferSize;
       uint32_t receiveBufferSize;
+
+      virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 
    UDPv6Transport(const TransportDescriptor&);

@@ -20,5 +20,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(NetworkFactoryTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME})
         target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(NetworkFactoryTests fastrtps) # Later so mocks have precedence
     endif()
 endif()

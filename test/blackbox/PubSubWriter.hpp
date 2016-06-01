@@ -193,6 +193,18 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& disable_builtin_transport()
+    {
+        participant_attr_.rtps.useBuiltinTransports = false;
+        return *this;
+    }
+
+    PubSubWriter& add_user_transport_to_pparams(std::shared_ptr<TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
+        return *this;
+    }
+
     PubSubWriter& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
     {
         publisher_attr_.qos.m_durability.kind = kind;

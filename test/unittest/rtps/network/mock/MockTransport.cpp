@@ -1,4 +1,7 @@
 #include <MockTransport.h>
+#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/transport/UDPv6Transport.h>
 #include <algorithm>
 #include <cstring>
 

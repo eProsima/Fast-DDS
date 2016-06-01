@@ -64,6 +64,8 @@ public:
    virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator) = 0;
 };
 
+struct TransportDescriptorInterface {virtual ~TransportDescriptorInterface(){}};
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

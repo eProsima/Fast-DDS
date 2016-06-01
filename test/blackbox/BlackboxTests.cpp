@@ -17,9 +17,11 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/filters/SizeFilter.h>
+#include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <thread>
+#include <memory>
 #include <gtest/gtest.h>
 
 #define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
@@ -674,6 +676,53 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     uint32_t sizeToClear = 68000;
     uint32_t periodInMs = 500;
     writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        heartbeat_period_seconds(0).
+        heartbeat_period_fraction(4294967 * 500).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data64kb_data_generator(30);
+    
+    reader.expected_data(data);
+    reader.startReception();
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    data = reader.block(std::chrono::seconds(30));
+
+    print_non_received_messages(data, default_data64kb_print);
+    ASSERT_EQ(data.size(), 0);
+}
+
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
+{
+    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+    
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    uint32_t sizeToClear = 300000;
+    uint32_t periodInMs = 500;
+    writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
+
+    auto testTransport = std::make_shared<UDPv4Transport::TransportDescriptor>();
+    testTransport->sendBufferSize = 65536;
+    testTransport->receiveBufferSize = 65536;
+    testTransport->granularMode = false;
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
 
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
         heartbeat_period_seconds(0).

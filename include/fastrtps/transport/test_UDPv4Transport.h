@@ -17,7 +17,7 @@ namespace rtps{
 class test_UDPv4Transport : public UDPv4Transport
 {
 public:
-   typedef struct {
+   typedef struct TransportDescriptor : public TransportDescriptorInterface{
       // UDPv4 layer parameters
       uint32_t sendBufferSize;
       uint32_t receiveBufferSize;
@@ -31,6 +31,8 @@ public:
       uint8_t percentageOfMessagesToDrop;
 
       uint32_t dropLogLength; // logs dropped packets.
+
+      virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 
    test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor);

@@ -52,11 +52,13 @@ public:
     *
     * - interfaceWhiteList: Lists the allowed interfaces.
     */
-   typedef struct {
+   typedef struct TransportDescriptor: public TransportDescriptorInterface{
       uint32_t sendBufferSize;
       uint32_t receiveBufferSize;
       bool granularMode;
       std::vector<boost::asio::ip::address_v4> interfaceWhiteList;
+
+      virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 
    UDPv4Transport(const TransportDescriptor&);

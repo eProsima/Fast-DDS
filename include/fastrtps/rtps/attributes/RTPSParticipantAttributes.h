@@ -16,6 +16,7 @@
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
 #include "../filters/SizeFilter.h"
+#include <fastrtps/transport/TransportInterface.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -182,6 +183,7 @@ public:
 		use_IP4_to_send = true;
 		use_IP6_to_send = false;
 		participantID = -1;
+      useBuiltinTransports = true;
 }
 	virtual ~RTPSParticipantAttributes(){};
 	/**
@@ -226,8 +228,12 @@ public:
 	inline void setName(const char* nam){name = nam;}
 	//!Get the name of the participant.
 	inline const char* getName(){return name.c_str();}
-
+   //!User defined size filters to limit participant throughput
    std::vector<SizeFilterDescriptor> sizeFilters;
+   //!User defined transports to use alongside or in place of builtins.
+   std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
+   //!Set as false to disable the default UDPv4 implementation.
+   bool useBuiltinTransports;
 
 private:
 	//!Name of the participant.

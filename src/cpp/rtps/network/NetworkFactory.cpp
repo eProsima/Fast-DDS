@@ -1,4 +1,7 @@
 #include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/UDPv6Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <utility>
 using namespace std;
 
@@ -56,6 +59,16 @@ vector<ReceiverResource> NetworkFactory::BuildReceiverResources(const Locator_t&
       }
    }
    return newReceiverResources;
+}
+
+void NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descriptor)
+{
+   if (auto concrete = dynamic_cast<const UDPv4Transport::TransportDescriptor*> (descriptor))
+      RegisterTransport<UDPv4Transport> (*concrete);
+   if (auto concrete = dynamic_cast<const UDPv6Transport::TransportDescriptor*> (descriptor))
+      RegisterTransport<UDPv6Transport> (*concrete);
+   if (auto concrete = dynamic_cast<const test_UDPv4Transport::TransportDescriptor*> (descriptor))
+      RegisterTransport<test_UDPv4Transport> (*concrete);
 }
 
 } // namespace rtps
