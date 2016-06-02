@@ -9,6 +9,8 @@ std::unique_ptr<boost::asio::io_service> FlowFilter::FilterService;
 
 FlowFilter::FlowFilter()
 {
+   if (!FilterService)
+      FilterService.reset(new boost::asio::io_service);
    RegisterAsListeningFilter();
 }
 
@@ -52,7 +54,6 @@ void FlowFilter::StartFilterService()
 {
    auto ioServiceFunction = [&]()
    {
-      FilterService.reset(new boost::asio::io_service);
       FilterService->reset();
       boost::asio::io_service::work work(*FilterService);
       FilterService->run();
@@ -65,5 +66,4 @@ void FlowFilter::StopFilterService()
    FilterService->stop();
    FilterThread->join();
    FilterThread.reset();
-   FilterService.reset();
 }
