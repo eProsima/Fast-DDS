@@ -1,9 +1,11 @@
 #include <fastrtps/rtps/filters/FlowFilter.h>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
 
 std::vector<FlowFilter*> FlowFilter::ListeningFilters;
 std::recursive_mutex FlowFilter::FlowFilterMutex;
 std::unique_ptr<boost::thread> FlowFilter::FilterThread;
-boost::asio::io_service FlowFilter::FilterService;
+std::unique_ptr<boost::asio::io_service> FlowFilter::FilterService;
 
 FlowFilter::FlowFilter()
 {
@@ -50,16 +52,18 @@ void FlowFilter::StartFilterService()
 {
    auto ioServiceFunction = [&]()
    {
-      FilterService.reset();
-      boost::asio::io_service::work work(FilterService);
-      FilterService.run();
+      FilterService.reset(new boost::asio::io_service);
+      FilterService->reset();
+      boost::asio::io_service::work work(*FilterService);
+      FilterService->run();
    };
    FilterThread.reset(new boost::thread(ioServiceFunction));
 }
 
 void FlowFilter::StopFilterService()
 {
-   FilterService.stop();
+   FilterService->stop();
    FilterThread->join();
    FilterThread.reset();
+   FilterService.reset();
 }

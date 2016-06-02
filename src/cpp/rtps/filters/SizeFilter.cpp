@@ -1,5 +1,6 @@
 #include <fastrtps/rtps/filters/SizeFilter.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <boost/asio.hpp>
 
 using namespace std;
 using namespace boost::asio;
@@ -74,7 +75,7 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
 
 void SizeFilter::ScheduleRefresh(uint32_t sizeToRestore)
 {
-   shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(FlowFilter::FilterService));
+   shared_ptr<deadline_timer> throwawayTimer(make_shared<deadline_timer>(*FlowFilter::FilterService));
    auto refresh = [throwawayTimer, this, sizeToRestore]
                    (const boost::system::error_code& error)
    {

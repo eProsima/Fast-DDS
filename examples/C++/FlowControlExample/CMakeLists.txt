@@ -22,7 +22,7 @@ file(GLOB FLOWCONTROL_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB FLOWCONTROL_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(FlowControlExample ${FLOWCONTROL_EXAMPLE_SOURCES_CXX} ${FLOWCONTROL_EXAMPLE_SOURCES_CPP})
-target_include_directories(FlowControlExample PRIVATE ${Boost_INCLUDE_DIR})
+target_include_directories(FlowControlExample PRIVATE)
 target_link_libraries(FlowControlExample fastrtps fastcdr ${Boost_LIBRARIES})
 install(TARGETS FlowControlExample
     RUNTIME DESTINATION examples/C++/FlowControlExample/${BIN_INSTALL_DIR})
