@@ -304,6 +304,13 @@ namespace eprosima
                     return unsent_fragments_;
                 }
 
+                void markAllFragmentsAsUnsent()
+                {
+                   if (change_->getFragmentSize() != 0)
+                    for (uint32_t i = 1; i != change_->getFragmentCount() + 1; i++)
+                       unsent_fragments_.add(i); // Indexed on 1
+                }
+
                 void markFragmentsAsSent(const FragmentNumberSet_t& sentFragments)
                 {
                     unsent_fragments_ -= sentFragments;

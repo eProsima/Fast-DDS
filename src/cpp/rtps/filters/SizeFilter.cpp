@@ -40,6 +40,7 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
       {
          unsigned int fittingFragments = min((mSizeToClear - mAccumulatedPayloadSize) / change.getChange()->getFragmentSize(),
                                               static_cast<uint32_t>(change.getFragmentsClearedForSending().set.size()));
+
          if (fittingFragments)
          {
             mAccumulatedPayloadSize += fittingFragments * change.getChange()->getFragmentSize();
@@ -67,6 +68,7 @@ void SizeFilter::operator()(vector<CacheChangeForGroup_t>& changes)
             break;
       }
    }
+
 
    if (mAccumulatedPayloadSize != accumulatedPayloadSizeBeforeFiltering)
       ScheduleRefresh(mAccumulatedPayloadSize - accumulatedPayloadSizeBeforeFiltering);

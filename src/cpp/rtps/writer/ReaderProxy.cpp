@@ -131,6 +131,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
+            newch.markAllFragmentsAsUnsent();
 
             auto hint = m_changesForReader.erase(chit);
 
@@ -195,6 +196,7 @@ void ReaderProxy::set_change_to_status(const CacheChange_t* change, ChangeForRea
 
 void ReaderProxy::mark_fragments_as_sent_for_change(const CacheChange_t* change, FragmentNumberSet_t fragments)
 {
+   
    bool mustWakeUpAsyncThread = false; 
    for (auto it = m_changesForReader.begin(); it!= m_changesForReader.end(); ++it)
    {
