@@ -62,6 +62,13 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
             }
 
             original_change_cit->getChange()->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
+
+            if(fragmentStartingNum == 1)
+            {  
+                // Update encapsulation
+                original_change_cit->getChange()->serializedPayload.encapsulation = incoming_change->serializedPayload.encapsulation;
+            }
+
             was_updated = true;
         }
     }
