@@ -22,7 +22,14 @@
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4100)
+#endif  // _MSC_VER
 #include <boost/thread.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 
 #include <cassert>
 

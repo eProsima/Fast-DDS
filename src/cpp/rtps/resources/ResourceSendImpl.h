@@ -16,12 +16,26 @@
 #define RESOURCESENDIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4005)
+#endif  // _MSC_VER
 #include <boost/asio.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/address_v6.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4100)
+#endif  // _MSC_VER
 #include <boost/thread.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>

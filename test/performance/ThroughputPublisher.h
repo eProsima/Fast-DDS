@@ -14,7 +14,14 @@
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4005)
+#endif  // _MSC_VER
 #include <boost/asio.hpp>
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 
 #include "ThroughputTypes.h"
 

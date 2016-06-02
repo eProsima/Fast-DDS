@@ -19,7 +19,14 @@
 
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/RTPSLog.h>
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4005)
+#endif  // _MSC_VER
 #include "boost/asio.hpp"
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif  // _MSC_VER
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
