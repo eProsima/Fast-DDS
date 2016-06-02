@@ -60,7 +60,7 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
    return ( (mDropDataMessagesPercentage      > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA))       ||
             (mDropAckNackMessagesPercentage   > (rand()%100) && ContainsSubmessageOfID(cdrMessage, ACKNACK))    ||
             (mDropHeartbeatMessagesPercentage > (rand()%100) && ContainsSubmessageOfID(cdrMessage, HEARTBEAT))  || 
-            (mDropDataFragMessagesPercentage  > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA_FRAG)) || 
+            (mDropDataFragMessagesPercentage  > (rand()%100) && ContainsSubmessageOfID(cdrMessage, DATA_FRAG))  || 
              ContainsSequenceNumberToDrop(cdrMessage)                                                           ||
              RandomChanceDrop());
 }

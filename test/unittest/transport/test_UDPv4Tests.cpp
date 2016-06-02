@@ -168,6 +168,7 @@ void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
    descriptor.dropHeartbeatMessagesPercentage = 0;
    descriptor.percentageOfMessagesToDrop = 0;
    descriptor.dropLogLength = 10;
+   descriptor.granularMode = false;
 }
 
 void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)

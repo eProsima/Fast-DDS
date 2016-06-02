@@ -13,7 +13,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-/*
+/**
 * Flow Filters take a vector of cache changes (by reference) and return a filtered
 * vector, with a collection of changes this filter considers valid for sending, 
 * ordered by its subjective priority.
@@ -21,10 +21,10 @@ namespace rtps{
 class FlowFilter 
 {
 public:
-   // Called when a change is finally dispatched.
+   //! Called when a change is finally dispatched.
    static void NotifyFiltersChangeSent(const CacheChangeForGroup_t*);
 
-   // Filter operator
+   //! Filter operator
    virtual void operator()(std::vector<CacheChangeForGroup_t>& changes) = 0;
 
    virtual ~FlowFilter();
@@ -55,8 +55,6 @@ public:
    // To be used by derived filters to schedule asynchronous operations.
    static bool IsListening(FlowFilter*);
 };
-
-
 
 } // namespace rtps
 } // namespace fastrtps
