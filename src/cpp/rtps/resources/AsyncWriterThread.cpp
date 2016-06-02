@@ -86,7 +86,7 @@ bool AsyncWriterThread::removeWriter(RTPSWriter* writer)
 
 void AsyncWriterThread::run()
 {
-    do
+    for(; ; )
     {
         try
         {
@@ -110,5 +110,5 @@ void AsyncWriterThread::run()
         {
             return;
         }
-    } while(1);
+    }
 }
