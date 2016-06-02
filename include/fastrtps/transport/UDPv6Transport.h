@@ -28,7 +28,7 @@ namespace rtps{
  *       supported (both will be part of a future granular UDPv6 implementation). Again, channel = port + direction.
  */
 
-class UDPv6Transport : public TransportInterface
+RTPS_DllAPI class UDPv6Transport : public TransportInterface
 {
 public:
    /*Transport configuration
@@ -43,7 +43,7 @@ public:
       virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 
-   UDPv6Transport(const TransportDescriptor&);
+   RTPS_DllAPI UDPv6Transport(const TransportDescriptor&);
    ~UDPv6Transport();
 
    // Checks whether there are open and bound sockets for the given port.

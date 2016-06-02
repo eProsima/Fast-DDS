@@ -14,7 +14,7 @@ namespace rtps{
 /* This transport acts as a shim over UDPv4, allowing
  * packets to be dropped under certain criteria. */
 
-class test_UDPv4Transport : public UDPv4Transport
+RTPS_DllAPI class test_UDPv4Transport : public UDPv4Transport
 {
 public:
    typedef struct TransportDescriptor : public TransportDescriptorInterface{
@@ -38,13 +38,13 @@ public:
       virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 
-   test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor);
+   RTPS_DllAPI test_UDPv4Transport(const test_UDPv4Transport::TransportDescriptor& descriptor);
 
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
   
    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-   static std::vector<std::vector<octet> > DropLog;
-   static uint32_t DropLogLength;
+   RTPS_DllAPI static std::vector<std::vector<octet> > DropLog;
+   RTPS_DllAPI static uint32_t DropLogLength;
 
 private:
    uint8_t mDropDataMessagesPercentage;

@@ -37,7 +37,7 @@ namespace rtps{
  *       opened in a strict sense).
  */
 
-class UDPv4Transport : public TransportInterface
+RTPS_DllAPI class UDPv4Transport : public TransportInterface
 {
 public:
    /**
@@ -61,7 +61,7 @@ public:
       virtual ~TransportDescriptor(){}
    } TransportDescriptor;
 
-   UDPv4Transport(const TransportDescriptor&);
+   RTPS_DllAPI UDPv4Transport(const TransportDescriptor&);
    ~UDPv4Transport();
 
    //! Checks whether there are open and bound sockets for the given port.
