@@ -59,7 +59,7 @@ public:
       std::vector<boost::asio::ip::address_v4> interfaceWhiteList;
 
       virtual ~TransportDescriptor(){}
-      TransportDescriptor();
+      RTPS_DllAPI TransportDescriptor();
    } TransportDescriptor;
 
    RTPS_DllAPI UDPv4Transport(const TransportDescriptor&);

@@ -50,7 +50,7 @@ public:
       std::vector<boost::asio::ip::address_v6> interfaceWhiteList;
 
       virtual ~TransportDescriptor(){}
-      TransportDescriptor();
+      RTPS_DllAPI TransportDescriptor();
    } TransportDescriptor;
 
    RTPS_DllAPI UDPv6Transport(const TransportDescriptor&);
