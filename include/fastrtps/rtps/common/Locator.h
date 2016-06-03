@@ -17,6 +17,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdint>
+#include <cstring>
 #include <iomanip>
 namespace eprosima{
 namespace fastrtps{
@@ -48,9 +49,8 @@ public:
 	octet address[16];
 
 	//!Default constructor
-	Locator_t():kind(1),port(0)
+	Locator_t():kind(1),port(0),address{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
    {
-		LOCATOR_ADDRESS_INVALID(address);
 	}
 
 	Locator_t(Locator_t&& loc):
@@ -323,18 +323,6 @@ inline std::ostream& operator<<(std::ostream& output,const LocatorList_t& locLis
 	return output;
 }
 
-// Arbitrary comparison required for map and set indexing.
-inline bool operator<(const Locator_t& lhs, const Locator_t& rhs)
-{
-	if(lhs.port < rhs.port)
-		return true;
-	for(uint8_t i =0; i<16 ;i++)
-   {
-		if(lhs.address[i] < rhs.address[i])
-			return true;
-	}
-	return false;
-}
 
 }
 }

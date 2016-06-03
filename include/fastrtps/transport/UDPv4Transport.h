@@ -35,8 +35,8 @@ namespace rtps{
  *       multicast groups late is supported by attempting to open the channel again with the same port + a 
  *       multicast address (the OpenInputChannel function will fail, however, because no new channel has been
  *       opened in a strict sense).
+ * @ingroup TRANSPORT_MODULE
  */
-
 RTPS_DllAPI class UDPv4Transport : public TransportInterface
 {
 public:
@@ -139,8 +139,12 @@ protected:
 
    //! For non-granular UDPv4, the notion of output channel corresponds to a port.
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
+
+   struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
+                        {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
    //! For granular UDPv4, the notion of output channel corresponds to an address.
-   std::map<Locator_t, boost::asio::ip::udp::socket> mGranularOutputSockets;
+   std::map<Locator_t, boost::asio::ip::udp::socket, LocatorCompare> mGranularOutputSockets;
+
    //! For both modes, an input channel corresponds to a port.
    std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets; 
 

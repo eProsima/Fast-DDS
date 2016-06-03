@@ -16,16 +16,26 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-/* This is a non-granular UDPv6 implementation. It means the following:
- *    -> Opening an output channel by passing a locator will open a socket per interface on the given port.
+/**
+ * This is a default UDPv6 implementation.
+ *    - Opening an output channel by passing a locator will open a socket per interface on the given port.
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
  *
- *    -> Opening an input channel by passing a locator will open a socket listening on the given port on every
- *       interface, and join the multicast channel specified by the locator address. Hence, any locator that
- *       does not correspond to the multicast range will be rejected when opening an input channel. Joining
- *       multicast groups late is not currently supported. Listening on particular unicast ports is not yet 
- *       supported (both will be part of a future granular UDPv6 implementation). Again, channel = port + direction.
+ *    - In Granular mode, outbound channels correspond to a fully qualified IP address, so it is possible to
+ *       write to a particular network interface. Sending to ANY will still cause a send over every 
+ *       interface as expected.
+ *
+ *    - It is possible to provide a white list at construction, which limits the interfaces the transport 
+ *       will ever be able to interact with. If left empty, all interfaces are allowed.
+ *
+ *    - Opening an input channel by passing a locator will open a socket listening on the given port on every
+ *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator 
+ *       that does not correspond to the multicast range will simply open the port without a subsequent join. Joining
+ *       multicast groups late is supported by attempting to open the channel again with the same port + a 
+ *       multicast address (the OpenInputChannel function will fail, however, because no new channel has been
+ *       opened in a strict sense).
+ * @ingroup TRANSPORT_MODULE
  */
 
 RTPS_DllAPI class UDPv6Transport : public TransportInterface
@@ -65,7 +75,7 @@ public:
     */
    virtual bool IsOutputChannelOpen(const Locator_t&) const;
 
-   //! Checks for UDPv4 kind.
+   //! Checks for UDPv6 kind.
    virtual bool IsLocatorSupported(const Locator_t&) const;
 
    //! Reports whether Locators correspond to the same port.
@@ -74,7 +84,7 @@ public:
    /**
     * Converts a given remote locator (that is, a locator referring to a remote
     * destination) to the main local locator whose channel can write to that
-    * destination. In this case it will return a 0.0.0.0 address on that port.
+    * destination. In this case it will return a IP_ANY address on that port.
     */
    virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
 
@@ -97,7 +107,7 @@ public:
    virtual bool CloseOutputChannel(const Locator_t&);
 
    /**
-    * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
+    * Blocking Send through the specified channel. In both modes, using a localLocator of ANY will
     * send through all whitelisted interfaces provided the channel is open.
     * @param sendBuffer Slice into the raw data to send.
     * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.
@@ -116,8 +126,6 @@ public:
    virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator);
 
 private:
-   //! Constructor with no descriptor is necessary for implementations derived from this class.
-   UDPv6Transport();
    uint32_t mSendBufferSize;
    uint32_t mReceiveBufferSize;
    bool mGranularMode;
@@ -129,10 +137,13 @@ private:
    mutable boost::recursive_mutex mOutputMapMutex;
    mutable boost::recursive_mutex mInputMapMutex;
 
-   //! For non-granular UDPv4, the notion of output channel corresponds to a port.
+   //! For non-granular UDPv6, the notion of output channel corresponds to a port.
    std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
-   //! For granular UDPv4, the notion of output channel corresponds to an address.
-   std::map<Locator_t, boost::asio::ip::udp::socket> mGranularOutputSockets;
+   //! For granular UDPv6, the notion of output channel corresponds to an address.
+   struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
+                        {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
+   //! For granular UDPv6, the notion of output channel corresponds to an address.
+   std::map<Locator_t, boost::asio::ip::udp::socket, LocatorCompare> mGranularOutputSockets;
    //! For both modes, an input channel corresponds to a port.
    std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets; 
 

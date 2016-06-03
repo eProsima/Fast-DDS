@@ -16,6 +16,7 @@
 #include <bitset>
 #include <cstdint>
 #include <sstream>
+#include <valgrind/callgrind.h>
 
 #include <fastrtps/fastrtps_all.h>
 
@@ -184,6 +185,7 @@ int main(int argc, char** argv)
 
 	std::cout << "Starting" << std::endl;
 
+   CALLGRIND_START_INSTRUMENTATION;
     switch (type)
     {
         case 1:
@@ -202,6 +204,8 @@ int main(int argc, char** argv)
                 break;
             }
     }
+   CALLGRIND_STOP_INSTRUMENTATION;
+   CALLGRIND_DUMP_STATS;
 
 	eClock::my_sleep(1000);
 	
