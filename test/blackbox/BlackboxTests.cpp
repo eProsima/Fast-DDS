@@ -659,7 +659,7 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    data = reader.block(std::chrono::seconds(20));
+    data = reader.block(std::chrono::seconds(30));
 
     print_non_received_messages(data, default_data64kb_print);
     ASSERT_EQ(data.size(), 0);
@@ -719,9 +719,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTra
     writer.add_size_filter_descriptor_to_pparams(sizeToClear, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4Transport::TransportDescriptor>();
-    testTransport->sendBufferSize = 65536;
-    testTransport->receiveBufferSize = 65536;
-    testTransport->granularMode = false;
+    testTransport->granularMode = true;
     writer.disable_builtin_transport();
     writer.add_user_transport_to_pparams(testTransport);
 

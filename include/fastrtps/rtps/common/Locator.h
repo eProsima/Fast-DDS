@@ -323,6 +323,18 @@ inline std::ostream& operator<<(std::ostream& output,const LocatorList_t& locLis
 	return output;
 }
 
+// Arbitrary comparison required for map and set indexing.
+inline bool operator<(const Locator_t& lhs, const Locator_t& rhs)
+{
+	if(lhs.port < rhs.port)
+		return true;
+	for(uint8_t i =0; i<16 ;i++)
+   {
+		if(lhs.address[i] < rhs.address[i])
+			return true;
+	}
+	return false;
+}
 
 }
 }

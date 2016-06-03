@@ -14,10 +14,14 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+static const uint32_t maximumUDPSocketSize = 65536;
 static const char* const CLASS_NAME = "UDPv6Transport";
 
 UDPv6Transport::UDPv6Transport(const TransportDescriptor& descriptor):
-   mDescriptor(descriptor)
+   mSendBufferSize(descriptor.sendBufferSize),
+   mReceiveBufferSize(descriptor.receiveBufferSize),
+   mGranularMode(descriptor.granularMode),
+   mInterfaceWhiteList(descriptor.interfaceWhiteList)
 {
    auto ioServiceFunction = [&]()
    {
@@ -26,6 +30,12 @@ UDPv6Transport::UDPv6Transport(const TransportDescriptor& descriptor):
    };
    ioServiceThread.reset(new boost::thread(ioServiceFunction));
 }
+
+UDPv6Transport::TransportDescriptor::TransportDescriptor():
+   sendBufferSize(maximumUDPSocketSize),
+   receiveBufferSize(maximumUDPSocketSize),
+   granularMode(false)
+{}
 
 UDPv6Transport::~UDPv6Transport()
 {
@@ -42,7 +52,13 @@ bool UDPv6Transport::IsInputChannelOpen(const Locator_t& locator) const
 bool UDPv6Transport::IsOutputChannelOpen(const Locator_t& locator) const
 {
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-   return IsLocatorSupported(locator) && (mOutputSockets.find(locator.port) != mOutputSockets.end());
+   if (!IsLocatorSupported(locator))
+      return false;
+
+   if (mGranularMode)
+      return mGranularOutputSockets.find(locator) != mGranularOutputSockets.end();
+   else 
+      return mOutputSockets.find(locator.port) != mOutputSockets.end();
 }
 
 bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator)
@@ -50,8 +66,11 @@ bool UDPv6Transport::OpenOutputChannel(const Locator_t& locator)
    if (IsOutputChannelOpen(locator) ||
        !IsLocatorSupported(locator))
       return false;   
-   
-   return OpenAndBindOutputSockets(locator.port);
+  
+   if (mGranularMode)   
+      return OpenAndBindGranularOutputSocket(locator);
+   else
+      return OpenAndBindOutputSockets(locator.port);
 }
 
 static bool IsMulticastAddress(const Locator_t& locator)
@@ -61,13 +80,23 @@ static bool IsMulticastAddress(const Locator_t& locator)
 
 bool UDPv6Transport::OpenInputChannel(const Locator_t& locator)
 {
-   if (IsInputChannelOpen(locator) ||
-       !IsMulticastAddress(locator) ||
-       !IsLocatorSupported(locator))
+   if (!IsLocatorSupported(locator))
       return false;   
-   
-   auto multicastFilterIP = ip::address_v6::from_string(locator.to_IP6_string());
-   return OpenAndBindInputSockets(locator.port, multicastFilterIP);
+
+   bool success = false;
+
+   if (!IsInputChannelOpen(locator))
+      success = OpenAndBindInputSockets(locator.port);
+
+   if (IsMulticastAddress(locator))
+   {
+      // The multicast group will be joined silently, because we do not
+      // want to return another resource.
+      auto& socket = mInputSockets.at(locator.port);
+      socket.set_option(ip::multicast::join_group(ip::address_v6::from_string(locator.to_IP6_string())));
+   }
+
+   return success;
 }
 
 bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
@@ -76,15 +105,25 @@ bool UDPv6Transport::CloseOutputChannel(const Locator_t& locator)
       return false;   
 
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-
-   auto& sockets = mOutputSockets[locator.port];
-   for (auto& socket : sockets)
+   if (mGranularMode)
    {
+      auto& socket = mGranularOutputSockets.at(locator);
       socket.cancel();
       socket.close();
+      mGranularOutputSockets.erase(locator);
+   }
+   else
+   {
+      auto& sockets = mOutputSockets.at(locator.port);
+      for (auto& socket : sockets)
+      {
+         socket.cancel();
+         socket.close();
+      }
+
+      mOutputSockets.erase(locator.port);
    }
 
-   mOutputSockets.erase(locator.port);
    return true;
 }
 
@@ -113,6 +152,18 @@ static void GetIP6s(vector<IPFinder::info_IP>& locNames)
    locNames.erase(newEnd, locNames.end());
 }
 
+bool UDPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
+{
+   if (mInterfaceWhiteList.empty())
+      return true;
+   
+   if (ip == ip::address_v6::any())
+      return true;
+
+   return  find(mInterfaceWhiteList.begin(), mInterfaceWhiteList.end(), ip) != mInterfaceWhiteList.end();
+}
+
+
 bool UDPv6Transport::OpenAndBindOutputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindOutputSockets";
@@ -121,16 +172,51 @@ bool UDPv6Transport::OpenAndBindOutputSockets(uint16_t port)
 
    try 
    {
-      // Unicast output sockets, one per interface supporting IP6
-      std::vector<IPFinder::info_IP> locNames;
-      GetIP6s(locNames);
-      for (const auto& ip : locNames)
-         mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v6::from_string(ip.name), port));
+      // If there is no whitelist, we can simply open a generic output socket
+      // and gain efficiency.
+      if (mInterfaceWhiteList.empty())
+         mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(ip::address_v6::any(), port));
+      else
+      {
+         std::vector<IPFinder::info_IP> locNames;
+         GetIP6s(locNames);
+         for (const auto& infoIP : locNames)
+         {
+            auto ip = boost::asio::ip::address_v6::from_string(infoIP.name);
+            if (IsInterfaceAllowed(ip))
+               mOutputSockets[port].push_back(OpenAndBindUnicastOutputSocket(ip, port));
+         }
+      }
+
    }
 	catch (boost::system::system_error const& e)
    {
 	   logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
       mOutputSockets.erase(port);
+      return false;
+   }
+
+   return true;
+}
+
+bool UDPv6Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
+{
+	const char* const METHOD_NAME = "OpenAndBindGranularOutputSocket";
+   auto ip = boost::asio::ip::address_v6::from_string(locator.to_IP6_string());
+   if (!IsInterfaceAllowed(ip))
+      return false;
+
+   boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
+
+   try 
+   {
+      mGranularOutputSockets.insert(std::pair<Locator_t, boost::asio::ip::udp::socket>(locator, 
+         OpenAndBindUnicastOutputSocket(boost::asio::ip::address_v6::from_string(locator.to_IP6_string()), locator.port)));
+   }
+	catch (boost::system::system_error const& e)
+   {
+	   logInfo(RTPS_MSG_OUT, "UDPv6 Error binding at port: (" << locator.port << ")" << " with boost msg: "<<e.what() , C_YELLOW);
+      mGranularOutputSockets.erase(locator);
       return false;
    }
 
@@ -145,8 +231,7 @@ bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v6 multi
 
    try 
    {
-      // Single multicast port
-      mInputSockets.emplace(port, OpenAndBindMulticastInputSocket(port, multicastFilterAddress));
+      mInputSockets.emplace(port, OpenAndBindInputSocket(port));
    }
 	catch (boost::system::system_error const& e)
    {
@@ -170,7 +255,7 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(ip::
    return socket;
 }
 
-boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindMulticastInputSocket(uint32_t port, ip::address_v6 multicastFilterAddress)
+boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t port)
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v6());
@@ -181,14 +266,16 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindMulticastInputSocket(uin
 
    ip::udp::endpoint endpoint(anyIP, port);
    socket.bind(endpoint);
-   socket.set_option(ip::multicast::join_group(multicastFilterAddress));
 
    return socket;
 }
 
 bool UDPv6Transport::DoLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-   return left.port == right.port;
+   if (mGranularMode)
+      return left == right;
+   else
+      return left.port == right.port;
 }
 
 bool UDPv6Transport::IsLocatorSupported(const Locator_t& locator) const
@@ -210,15 +297,23 @@ Locator_t UDPv6Transport::RemoteToMainLocal(const Locator_t& remote) const
 bool UDPv6Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
    if (!IsOutputChannelOpen(localLocator) ||
-       sendBufferSize > mDescriptor.sendBufferSize)
+       sendBufferSize > mSendBufferSize)
       return false;
-
+      
    boost::unique_lock<boost::recursive_mutex> scopedLock(mOutputMapMutex);
-  
    bool success = false;
-   auto& sockets = mOutputSockets[localLocator.port];
-   for (auto& socket : sockets)
+
+   if (mGranularMode)
+   {
+      auto& socket = mGranularOutputSockets.at(localLocator);
       success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
+   }
+   else
+   {
+      auto& sockets = mOutputSockets.at(localLocator.port);
+      for (auto& socket : sockets)
+         success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, socket);
+   }
 
    return success;
 }

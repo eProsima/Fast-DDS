@@ -8,10 +8,12 @@
 using namespace std;
 using namespace boost::asio;
 using namespace boost::interprocess;
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+static const uint32_t maximumUDPSocketSize = 65536;
 static const char* const CLASS_NAME = "UDPv4Transport";
 
 UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
@@ -27,6 +29,12 @@ UDPv4Transport::UDPv4Transport(const TransportDescriptor& descriptor):
    };
    ioServiceThread.reset(new boost::thread(ioServiceFunction));
 }
+
+UDPv4Transport::TransportDescriptor::TransportDescriptor():
+   sendBufferSize(maximumUDPSocketSize),
+   receiveBufferSize(maximumUDPSocketSize),
+   granularMode(false)
+{}
 
 UDPv4Transport::UDPv4Transport()
 {

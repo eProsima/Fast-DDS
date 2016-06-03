@@ -18,18 +18,18 @@ namespace rtps{
 
 /**
  * This is a default UDPv4 implementation.
- *    -> Opening an output channel by passing a locator will open a socket per interface on the given port.
+ *    - Opening an output channel by passing a locator will open a socket per interface on the given port.
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
  *
- *    -> In Granular mode, outbound channels correspond to a fully qualified IP address, so it is possible to
+ *    - In Granular mode, outbound channels correspond to a fully qualified IP address, so it is possible to
  *       write to a particular network interface. Sending to 0.0.0.0 will still cause a send over every 
  *       interface as expected.
  *
- *    -> It is possible to provide a white list at construction, which limits the interfaces the transport 
+ *    - It is possible to provide a white list at construction, which limits the interfaces the transport 
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
- *    -> Opening an input channel by passing a locator will open a socket listening on the given port on every
+ *    - Opening an input channel by passing a locator will open a socket listening on the given port on every
  *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator 
  *       that does not correspond to the multicast range will simply open the port without a subsequent join. Joining
  *       multicast groups late is supported by attempting to open the channel again with the same port + a 
@@ -59,26 +59,44 @@ public:
       std::vector<boost::asio::ip::address_v4> interfaceWhiteList;
 
       virtual ~TransportDescriptor(){}
+      TransportDescriptor();
    } TransportDescriptor;
 
    RTPS_DllAPI UDPv4Transport(const TransportDescriptor&);
    ~UDPv4Transport();
 
    //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(const Locator_t&)         const;
-   virtual bool IsOutputChannelOpen(const Locator_t&)        const;
+   virtual bool IsInputChannelOpen(const Locator_t&) const;
+
+   /**
+    * Checks whether there are open and bound sockets for the given port,
+    * or in granular mode, for the given address.
+    */
+   virtual bool IsOutputChannelOpen(const Locator_t&) const;
 
    //! Checks for UDPv4 kind.
-   virtual bool IsLocatorSupported(const Locator_t&)         const;
+   virtual bool IsLocatorSupported(const Locator_t&) const;
 
    //! Reports whether Locators correspond to the same port.
    virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const;
-   virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const;
 
-   //! Starts listening on the specified port and joins the specified multicast group.
-   virtual bool OpenInputChannel(const Locator_t& multicastFilter);
+   /**
+    * Converts a given remote locator (that is, a locator referring to a remote
+    * destination) to the main local locator whose channel can write to that
+    * destination. In this case it will return a 0.0.0.0 address on that port.
+    */
+   virtual Locator_t RemoteToMainLocal(const Locator_t&) const;
 
-   //! Opens a socket per interface on the given port.
+   /**
+    * Starts listening on the specified port, and if the specified address is in the
+    * multicast range, it joins the specified multicast group,
+    */
+   virtual bool OpenInputChannel(const Locator_t&);
+
+   /**
+    * Opens a socket per interface on the given port (as long as they are white listed).
+    * In granular mode, it will only open a socket for the specified interface.
+    */
    virtual bool OpenOutputChannel(const Locator_t&);
 
    //! Removes the listening socket for the specified port.
@@ -87,7 +105,23 @@ public:
    //! Removes all outbound sockets on the given port.
    virtual bool CloseOutputChannel(const Locator_t&);
 
+   /**
+    * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
+    * send through all whitelisted interfaces provided the channel is open.
+    * @param sendBuffer Slice into the raw data to send.
+    * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.
+    * It must not exceed the sendBufferSize fed to this class during construction.
+    * @param localLocator Locator mapping to the channel we're sending from.
+    * @param remoteLocator Locator describing the remote destination we're sending to.
+    */
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator);
+   /**
+    * Blocking Receive from the specified channel.
+    * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
+    * capacity must not be less than the receiveBufferSize supplied to this class during construction.
+    * @param localLocator Locator mapping to the local channel we're listening to.
+    * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
+    */
    virtual bool Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator);
 
 protected:
@@ -97,15 +131,18 @@ protected:
    uint32_t mReceiveBufferSize;
    bool mGranularMode;
 
-   //! For non-granular UDPv4, the notion of channel corresponds to a port + direction tuple.
 	boost::asio::io_service mService;
    std::unique_ptr<boost::thread> ioServiceThread;
 
    mutable boost::recursive_mutex mOutputMapMutex;
    mutable boost::recursive_mutex mInputMapMutex;
-   std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; // Maps port to socket collection.
-   std::map<Locator_t, boost::asio::ip::udp::socket> mGranularOutputSockets; // Maps address to socket, for granular mode
-   std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets;  // Maps port to socket collection.
+
+   //! For non-granular UDPv4, the notion of output channel corresponds to a port.
+   std::map<uint16_t, std::vector<boost::asio::ip::udp::socket> > mOutputSockets; 
+   //! For granular UDPv4, the notion of output channel corresponds to an address.
+   std::map<Locator_t, boost::asio::ip::udp::socket> mGranularOutputSockets;
+   //! For both modes, an input channel corresponds to a port.
+   std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets; 
 
    bool IsInterfaceAllowed(const boost::asio::ip::address_v4& ip);
    std::vector<boost::asio::ip::address_v4> mInterfaceWhiteList;
@@ -122,19 +159,6 @@ protected:
                           const Locator_t& remoteLocator,
                           boost::asio::ip::udp::socket& socket);
 };
-
-// Arbitrary comparison required for map and set indexing.
-inline bool operator<(const Locator_t& lhs, const Locator_t& rhs)
-{
-	if(lhs.port < rhs.port)
-		return true;
-	for(uint8_t i =0; i<16 ;i++)
-   {
-		if(lhs.address[i] < rhs.address[i])
-			return true;
-	}
-	return false;
-}
 
 } // namespace rtps
 } // namespace fastrtps
