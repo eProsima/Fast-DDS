@@ -17,6 +17,7 @@
 #include "../common/Locator.h"
 #include "../filters/SizeFilter.h"
 #include <fastrtps/transport/TransportInterface.h>
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps{

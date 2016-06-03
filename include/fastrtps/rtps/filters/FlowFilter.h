@@ -4,6 +4,7 @@
 #include <vector>
 #include <mutex>
 #include <functional>
+#include <memory>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 

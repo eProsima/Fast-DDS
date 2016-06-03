@@ -18,6 +18,7 @@
 #include "../attributes/WriterAttributes.h"
 #include "../filters/FlowFilter.h"
 #include <vector>
+#include <memory>
 
 namespace eprosima {
 namespace fastrtps{
