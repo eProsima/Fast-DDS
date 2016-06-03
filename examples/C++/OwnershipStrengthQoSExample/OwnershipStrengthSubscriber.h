@@ -20,9 +20,8 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include "OwnershipStrengthPubSubTypes.h"
 #include <set>
+#include <mutex>
 #include <map>
-#include <boost/thread/mutex.hpp>
-
 
 using namespace eprosima::fastrtps;
 
@@ -48,7 +47,7 @@ private:
 
       // Provides an ordered hierarchy of publishers, based on the Ownership Strength QoS parameter.
       std::map<unsigned int, std::set<GUID_t> > strengthMap; // Keyed by Ownership Strength
-      boost::mutex mapMutex;
+      std::mutex mapMutex;
    };
 
 	class SubListener : public SubscriberListener
