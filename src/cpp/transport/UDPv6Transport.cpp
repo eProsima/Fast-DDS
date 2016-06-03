@@ -223,7 +223,7 @@ bool UDPv6Transport::OpenAndBindGranularOutputSocket(const Locator_t& locator)
    return true;
 }
 
-bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v6 multicastFilterAddress)
+bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port)
 {
 	const char* const METHOD_NAME = "OpenAndBindInputSockets";
    
@@ -243,11 +243,11 @@ bool UDPv6Transport::OpenAndBindInputSockets(uint16_t port, ip::address_v6 multi
    return true;
 }
 
-boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(ip::address_v6 ipAddress, uint32_t port)
+boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindUnicastOutputSocket(const ip::address_v6& ipAddress, uint32_t port)
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v6());
-   socket.set_option(socket_base::send_buffer_size(mDescriptor.sendBufferSize));
+   socket.set_option(socket_base::send_buffer_size(mSendBufferSize));
 
    ip::udp::endpoint endpoint(ipAddress, port);
    socket.bind(endpoint);
@@ -259,7 +259,7 @@ boost::asio::ip::udp::socket UDPv6Transport::OpenAndBindInputSocket(uint32_t por
 {
    ip::udp::socket socket(mService);
    socket.open(ip::udp::v6());
-   socket.set_option(socket_base::receive_buffer_size(mDescriptor.receiveBufferSize));
+   socket.set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
 	socket.set_option(ip::udp::socket::reuse_address( true ) );
 	socket.set_option(ip::multicast::enable_loopback( true ) );
    auto anyIP = ip::address_v6::any();
@@ -334,10 +334,10 @@ bool UDPv6Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t&
 	const char* const METHOD_NAME = "Receive";
 
    if (!IsInputChannelOpen(localLocator) ||
-       receiveBuffer.capacity() < mDescriptor.receiveBufferSize)
+       receiveBuffer.capacity() < mReceiveBufferSize)
       return false;
 
-   receiveBuffer.resize(mDescriptor.receiveBufferSize);
+   receiveBuffer.resize(mReceiveBufferSize);
    interprocess_semaphore receiveSemaphore(0);
    bool success = false;
 

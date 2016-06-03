@@ -53,8 +53,8 @@ public:
       TransportDescriptor();
    } TransportDescriptor;
 
-   RTPS_DllAPI UDPv4Transport(const TransportDescriptor&);
-   ~UDPv4Transport();
+   RTPS_DllAPI UDPv6Transport(const TransportDescriptor&);
+   ~UDPv6Transport();
 
    //! Checks whether there are open and bound sockets for the given port.
    virtual bool IsInputChannelOpen(const Locator_t&) const;
@@ -135,6 +135,10 @@ private:
    std::map<Locator_t, boost::asio::ip::udp::socket> mGranularOutputSockets;
    //! For both modes, an input channel corresponds to a port.
    std::map<uint16_t, boost::asio::ip::udp::socket> mInputSockets; 
+
+   bool IsInterfaceAllowed(const boost::asio::ip::address_v6& ip);
+   std::vector<boost::asio::ip::address_v6> mInterfaceWhiteList;
+
 
    bool OpenAndBindOutputSockets(uint16_t port);
    bool OpenAndBindGranularOutputSocket(const Locator_t& locator);
