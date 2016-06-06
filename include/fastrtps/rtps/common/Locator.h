@@ -49,8 +49,9 @@ public:
 	octet address[16];
 
 	//!Default constructor
-	Locator_t():kind(1),port(0),address{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+	Locator_t():kind(1),port(0)
    {
+      LOCATOR_ADDRESS_INVALID(address);
 	}
 
 	Locator_t(Locator_t&& loc):
