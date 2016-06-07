@@ -300,6 +300,7 @@ void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigne
    networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
 }
 
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

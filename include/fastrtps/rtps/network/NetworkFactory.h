@@ -56,6 +56,8 @@ public:
     */
    std::vector<ReceiverResource> BuildReceiverResources               (const Locator_t& local);
 
+   
+
 private:
    std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
 };

@@ -716,13 +716,16 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
 
 void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc)
 {
-	for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit){
-		for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it){
-			if ((*it).SupportsLocator((*sit))){
-				(*it).Send(msg->buffer, msg->length, destination_loc);
-			}
-		}
-	}
+   for (auto it = m_senderResource.begin(); it != m_senderResource.end(); ++it)
+   {
+      bool sendThroughResource = false;
+	   for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit)
+			if ((*it).SupportsLocator((*sit)))
+            sendThroughResource = true;
+
+      if (sendThroughResource)
+		   (*it).Send(msg->buffer, msg->length, destination_loc);
+   }
 }
 
 void RTPSParticipantImpl::announceRTPSParticipantState()
