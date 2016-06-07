@@ -198,7 +198,6 @@ uint32_t StatefulWriter::send_any_unsent_changes()
     uint32_t number_of_changes_sent = 0;
 
     m_readers_to_walk = matched_readers.size();
-
     // The reader proxy vector is walked in a different order each time 
     // to prevent persistent prioritization of a single reader
 	 while(wrap_around_readers())
