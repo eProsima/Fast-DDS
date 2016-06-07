@@ -720,8 +720,13 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint *pend, const Loca
    {
       bool sendThroughResource = false;
 	   for (auto sit = pend->m_att.outLocatorList.begin(); sit != pend->m_att.outLocatorList.end(); ++sit)
+      {
 			if ((*it).SupportsLocator((*sit)))
+         {
             sendThroughResource = true;
+            break;
+         }
+      }
 
       if (sendThroughResource)
 		   (*it).Send(msg->buffer, msg->length, destination_loc);

@@ -324,15 +324,11 @@ bool UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, cons
    return success;
 }
 
-static Locator_t EndpointToLocator(ip::udp::endpoint& endpoint)
+static void EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 {
-   Locator_t locator;
-
    locator.port = endpoint.port();
    auto ipBytes = endpoint.address().to_v4().to_bytes();
    memcpy(&locator.address[12], ipBytes.data(), sizeof(ipBytes));
-
-   return locator;
 }
 
 bool UDPv4Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t& localLocator, Locator_t& remoteLocator)
@@ -379,7 +375,7 @@ bool UDPv4Transport::Receive(std::vector<octet>& receiveBuffer, const Locator_t&
 
    receiveSemaphore.wait();
    if (success)
-      remoteLocator = EndpointToLocator(senderEndpoint);
+      EndpointToLocator(senderEndpoint, remoteLocator);
 
    return success;
 }
